@@ -1,0 +1,8 @@
+{
+  "name": "{{name}}",
+  "id": "dev.{{name}}.web",
+  "version": "0.0.0",
+  "build": 1,
+  "appearance": "system",
+  "theme": "../../packages/ui/theme.json"
+}

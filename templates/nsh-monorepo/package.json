@@ -1,0 +1,12 @@
+{
+  "name": "{{name}}",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev": "nsh run apps/web",
+    "check": "nsh check apps/web"
+  }
+}

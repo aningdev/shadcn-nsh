@@ -1,0 +1,13 @@
+{
+  "extends": "./.nsh/tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "nsh": ["./.nsh/types/nsh/index.d.ts"],
+      "nsh/*": ["./.nsh/types/nsh/*.d.ts"],
+      "*": ["./.nsh/types/*.d.ts"],
+      "@workspace/ui": ["../../packages/ui/index.ts"],
+      "@workspace/ui/*": ["../../packages/ui/*"]
+    }
+  },
+  "include": ["./**/*.ts", "./**/*.tsx"]
+}

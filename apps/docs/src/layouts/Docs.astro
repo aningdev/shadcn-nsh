@@ -1,0 +1,68 @@
+---
+import "../styles/global.css";
+
+interface Props {
+  title?: string;
+  description?: string;
+  frontmatter?: { title?: string; description?: string };
+}
+
+const title = Astro.props.title ?? Astro.props.frontmatter?.title ?? "Docs";
+const description = Astro.props.description ?? Astro.props.frontmatter?.description;
+const path = Astro.url.pathname;
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} · shadcn-nsh</title>
+    {description ? <meta name="description" content={description} /> : null}
+  </head>
+  <body>
+    <div class="site">
+      <header class="site-header">
+        <a class="brand" href="/">
+          shadcn-nsh
+        </a>
+        <nav class="nav" aria-label="Primary">
+          <a
+            href="/docs/getting-started"
+            aria-current={path.includes("getting-started") ? "page" : undefined}
+          >
+            Getting started
+          </a>
+          <a
+            href="/docs/components/button"
+            aria-current={path.includes("button") ? "page" : undefined}
+          >
+            Components
+          </a>
+          <a href="/llms.txt">llms.txt</a>
+        </nav>
+      </header>
+      <div class="layout">
+        <aside class="side">
+          <nav aria-label="Docs">
+            <a
+              href="/docs/getting-started"
+              aria-current={path.includes("getting-started") ? "page" : undefined}
+            >
+              Getting started
+            </a>
+            <a
+              href="/docs/components/button"
+              aria-current={path.includes("button") ? "page" : undefined}
+            >
+              Button
+            </a>
+          </nav>
+        </aside>
+        <main class="prose">
+          <slot />
+        </main>
+      </div>
+    </div>
+  </body>
+</html>

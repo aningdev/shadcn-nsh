@@ -1,0 +1,29 @@
+---
+import fs from "node:fs";
+import path from "node:path";
+
+interface Props {
+  name: string;
+  /** iframe height in px */
+  height?: number;
+}
+
+const { name, height = 280 } = Astro.props;
+const demoUrl = `/demos/${name}/index.html`;
+const demoDir = path.join(process.cwd(), "public", "demos", name);
+const ready = fs.existsSync(path.join(demoDir, "index.html"));
+---
+
+<div class="demo-frame">
+  {ready ? (
+    <iframe title={`Demo: ${name}`} src={demoUrl} style={`height:${height}px`} loading="lazy" />
+  ) : (
+    <div class="demo-fallback">
+      <p>
+        Web preview not built yet. From the repo root:
+        <code>bun run docs:demos</code>
+        then refresh. Native truth remains <code>bun run dev:gallery</code>.
+      </p>
+    </div>
+  )}
+</div>

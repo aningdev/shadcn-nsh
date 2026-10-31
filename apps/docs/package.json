@@ -1,0 +1,15 @@
+{
+  "name": "@shadcn-nsh/docs",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev --port 4321",
+    "build": "astro build",
+    "preview": "astro preview --port 4321",
+    "build:demos": "bun scripts/build-demos.ts"
+  },
+  "dependencies": {
+    "astro": "^7.4.4"
+  }
+}

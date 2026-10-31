@@ -151,5 +151,8 @@ vite.config.ts.timestamp-*
 # Native Shell generated
 .nsh/
 
+# Docs web demos (nsh package --target web)
+apps/docs/public/demos/
+
 # Bun
 bun.lockb

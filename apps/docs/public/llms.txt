@@ -1,0 +1,24 @@
+# shadcn-nsh
+
+Styled NSH component library (copy-into-app), analogous to shadcn/ui on Radix.
+
+## Commands
+
+- Create monorepo: `shadcn-nsh create <name>` → apps/web + packages/ui
+- Init existing app: `shadcn-nsh init`
+- Add component: `shadcn-nsh add <name>` (monorepo: `-c apps/web` writes packages/ui)
+- Registry URL template: `https://raw.githubusercontent.com/aningdev/shadcn-nsh/main/public/r/{name}.json`
+
+## Layout
+
+- Authoring: packages/theme, packages/ui, packages/cli
+- Gallery (native): apps/gallery
+- Docs (web): apps/docs
+- Consumer template: templates/nsh-monorepo
+
+## Docs
+
+- /docs/getting-started
+- /docs/components/button
+
+Theme source of truth is theme.json (nsh.json `theme`), not CSS.

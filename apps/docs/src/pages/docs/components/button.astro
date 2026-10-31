@@ -1,0 +1,41 @@
+---
+import DemoFrame from "../../../components/DemoFrame.astro";
+import Docs from "../../../layouts/Docs.astro";
+---
+
+<Docs title="Button" description="Styled button wrapping nsh/base Button.">
+  <h1>Button</h1>
+  <p class="lead">
+    Styled button on <code>nsh/base</code> Button. Variants: <code>default</code>,
+    <code>secondary</code>, <code>outline</code>, <code>destructive</code>, <code>ghost</code>.
+  </p>
+
+  <h2>Preview</h2>
+  <p>
+    Web preview (NSH <code>--target web</code>). For native behaviour use the gallery.
+  </p>
+  <DemoFrame name="button" height={300} />
+
+  <h2>Install</h2>
+  <pre><code>shadcn-nsh add button
+# monorepo:
+shadcn-nsh add button -c apps/web</code></pre>
+
+  <h2>Usage</h2>
+  <pre><code>{`import { Button } from "@workspace/ui/components/ui/button";
+// or after single-app add:
+// import { Button } from "./components/ui/button";
+
+<Button onPress={() => {}}>Default</Button>
+<Button variant="secondary">Secondary</Button>
+<Button variant="outline">Outline</Button>
+<Button variant="destructive">Destructive</Button>
+<Button variant="ghost">Ghost</Button>
+<Button disabled>Disabled</Button>`}</code></pre>
+
+  <h2>Source</h2>
+  <p>
+    Authoring package: <code>packages/ui/button.tsx</code>. Registry item: <code>button</code>
+    (depends on <code>theme</code>).
+  </p>
+</Docs>

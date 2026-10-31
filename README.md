@@ -14,9 +14,27 @@ git submodule update --init --recursive
 bun install
 ```
 
-## 在 NSH 应用中使用
+## 创建 monorepo（推荐）
 
-在已有 NSH 项目目录（含 `nsh.json`）：
+默认脚手架：`apps/web` + `packages/ui`（组件落在 packages）：
+
+```sh
+bun run shadcn-nsh -- create my-app
+cd my-app
+bun install
+bun run check
+bun run dev
+```
+
+继续添加组件：
+
+```sh
+shadcn-nsh add button -c apps/web
+```
+
+## 在已有单 app 中使用
+
+目录需已有 `nsh.json`（`nsh init`）：
 
 ```sh
 # 本地 registry（开发本仓时）
@@ -27,28 +45,20 @@ bun run shadcn-nsh -- init -c /path/to/app --registry 'http://127.0.0.1:4173/{na
 bun run shadcn-nsh -- add button -c /path/to/app --registry 'http://127.0.0.1:4173/{name}.json'
 ```
 
-push 到 GitHub 后，可省略 `--registry`，默认拉取：
+push 到 GitHub 后可省略 `--registry`，默认：
 
 `https://raw.githubusercontent.com/aningdev/shadcn-nsh/main/public/r/{name}.json`
-
-`init` 会写入：
-
-- `nsh-ui.json`（registry URL + aliases）
-- `theme.json` + `lib/theme.ts`
-- 更新 `nsh.json` 的 `"theme": "./theme.json"`
-
-`add button` 会写入 `components/ui/button.tsx`（并把 `@shadcn-nsh/theme` 改写成相对路径）。
 
 ## 本仓开发
 
 工具链：Bun + [Vite+](https://viteplus.dev)（`vp fmt` / `vp lint` / `vp check`）。
 
 ```sh
-bun run format
-bun run lint
 bun run check
 bun run check:gallery
 bun run dev:gallery
+bun run dev:docs
+bun run docs:demos      # 可选：打包 docs 内 NSH web 预览
 bun run registry:build
 ```
 
@@ -56,10 +66,12 @@ bun run registry:build
 
 ## 布局
 
-| 路径             | 包名                  | 说明               |
-| ---------------- | --------------------- | ------------------ |
-| `packages/theme` | `@shadcn-nsh/theme`   | design tokens      |
-| `packages/ui`    | `@shadcn-nsh/ui`      | styled 组件源      |
-| `packages/cli`   | `@shadcn-nsh/cli`     | `shadcn-nsh` CLI   |
-| `public/r`       | —                     | HTTP registry 产物 |
-| `apps/gallery`   | `@shadcn-nsh/gallery` | 演示应用           |
+| 路径                     | 包名 / 角色           | 说明                                          |
+| ------------------------ | --------------------- | --------------------------------------------- |
+| `packages/theme`         | `@shadcn-nsh/theme`   | design tokens（作者侧 registry 源）           |
+| `packages/ui`            | `@shadcn-nsh/ui`      | styled 组件源                                 |
+| `packages/cli`           | `@shadcn-nsh/cli`     | `create` / `init` / `add` / `build` / `serve` |
+| `public/r`               | —                     | HTTP registry 产物                            |
+| `apps/gallery`           | `@shadcn-nsh/gallery` | 原生验真 demo                                 |
+| `apps/docs`              | `@shadcn-nsh/docs`    | Astro 文档站（可选 web iframe 预览）          |
+| `templates/nsh-monorepo` | 消费方模板            | `create` 拷贝源；**不进**根 workspaces        |
