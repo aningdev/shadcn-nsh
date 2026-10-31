@@ -3,6 +3,8 @@ layout: ../../../layouts/Docs.astro
 title: Combobox
 description: Styled combobox wrapping nsh/base Combobox.
 component: true
+demo: combobox
+demoHeight: 400
 ---
 
 Styled combobox on `nsh/base` Combobox. Search defaults on; popup offset and list chrome are fixed.

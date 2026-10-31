@@ -3,6 +3,8 @@ layout: ../../../layouts/Docs.astro
 title: Tooltip
 description: Styled tooltip wrapping nsh/base Tooltip.
 component: true
+demo: tooltip
+demoHeight: 360
 ---
 
 Styled tooltip on `nsh/base` Tooltip. Pass the element as another control’s `tooltip={…}` prop.

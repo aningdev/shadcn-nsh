@@ -3,6 +3,8 @@ layout: ../../../layouts/Docs.astro
 title: Select
 description: Styled select wrapping nsh/base Select.
 component: true
+demo: select
+demoHeight: 360
 ---
 
 Styled select on `nsh/base` Select. Most value/open props pass through; appearance and popup offset are locked by the wrapper.

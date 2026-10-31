@@ -3,6 +3,7 @@ layout: ../../../layouts/Docs.astro
 title: Switch
 description: Styled switch wrapping nsh/base Switch.
 component: true
+demo: switch
 ---
 
 Styled wrapper on `nsh/base`.

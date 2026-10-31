@@ -3,6 +3,7 @@ layout: ../../../layouts/Docs.astro
 title: Slider
 description: Styled slider wrapping nsh/base Slider.
 component: true
+demo: slider
 ---
 
 Styled wrapper on `nsh/base`.

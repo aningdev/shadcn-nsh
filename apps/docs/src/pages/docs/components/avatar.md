@@ -3,6 +3,7 @@ layout: ../../../layouts/Docs.astro
 title: Avatar
 description: Styled avatar wrapping nsh/base Avatar.
 component: true
+demo: avatar
 ---
 
 Styled avatar on `nsh/base` Avatar, with optional `AvatarGroup`.

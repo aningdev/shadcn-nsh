@@ -16,6 +16,8 @@ interface Props {
     title?: string;
     description?: string;
     demo?: string;
+    /** Preview iframe height in px (default 300). */
+    demoHeight?: number | string;
     component?: boolean;
   };
 }
@@ -23,6 +25,15 @@ interface Props {
 const title = Astro.props.title ?? Astro.props.frontmatter?.title ?? "Docs";
 const description = Astro.props.description ?? Astro.props.frontmatter?.description;
 const demo = Astro.props.frontmatter?.demo;
+const rawDemoHeight = Astro.props.frontmatter?.demoHeight;
+const demoHeight =
+  typeof rawDemoHeight === "number" && Number.isFinite(rawDemoHeight)
+    ? rawDemoHeight
+    : typeof rawDemoHeight === "string" &&
+        rawDemoHeight.trim() !== "" &&
+        Number.isFinite(Number(rawDemoHeight))
+      ? Number(rawDemoHeight)
+      : 300;
 const isComponentPage = !!Astro.props.frontmatter?.component || !!demo;
 
 const path = Astro.url.pathname;
@@ -112,7 +123,7 @@ const showDocHeader = true;
                 <p>
                   Web preview (NSH <code>--target web</code>). For native behaviour use the gallery.
                 </p>
-                <DemoFrame name={demo} height={300} />
+                <DemoFrame name={demo} height={demoHeight} />
               </>
             ) : null
           }

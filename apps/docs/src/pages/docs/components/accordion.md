@@ -3,6 +3,7 @@ layout: ../../../layouts/Docs.astro
 title: Accordion
 description: Styled accordion wrapping nsh/base Accordion.
 component: true
+demo: accordion
 ---
 
 Styled accordion on `nsh/base`. Part names match base (`AccordionPanel`, not shadcn’s `AccordionContent`).

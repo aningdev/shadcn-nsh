@@ -3,6 +3,7 @@ layout: ../../../layouts/Docs.astro
 title: Checkbox
 description: Styled checkbox wrapping nsh/base Checkbox.
 component: true
+demo: checkbox
 ---
 
 Styled wrapper on `nsh/base`.

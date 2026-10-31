@@ -3,6 +3,7 @@ layout: ../../../layouts/Docs.astro
 title: Toggle Group
 description: Styled toggle group wrapping nsh/base ToggleGroup.
 component: true
+demo: toggle-group
 ---
 
 Styled toggle group on `nsh/base` (nsh element `toggle`). Re-exports `Toggle` for convenience.

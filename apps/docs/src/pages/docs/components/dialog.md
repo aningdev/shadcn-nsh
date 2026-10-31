@@ -3,6 +3,8 @@ layout: ../../../layouts/Docs.astro
 title: Dialog
 description: Styled dialog wrapping nsh/base Dialog.
 component: true
+demo: dialog
+demoHeight: 420
 ---
 
 Styled modal surface on `nsh/base` Dialog with fixed chrome (backdrop + card padding).

@@ -3,6 +3,7 @@ layout: ../../../layouts/Docs.astro
 title: Number Input
 description: Styled number input wrapping nsh/base NumberInput.
 component: true
+demo: number-input
 ---
 
 Styled wrapper on `nsh/base`.

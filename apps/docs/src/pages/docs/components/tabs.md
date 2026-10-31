@@ -3,6 +3,7 @@ layout: ../../../layouts/Docs.astro
 title: Tabs
 description: Styled tabs wrapping nsh/base Tabs.
 component: true
+demo: tabs
 ---
 
 Styled tabs on `nsh/base`. Root `Tabs` is a style shell; selection lives on each `Tab`.

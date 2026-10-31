@@ -3,6 +3,7 @@ layout: ../../../layouts/Docs.astro
 title: Radio Group
 description: Styled radio group wrapping nsh/base RadioGroup.
 component: true
+demo: radio-group
 ---
 
 Styled radio group on `nsh/base` (nsh element `radio`). Exports `RadioGroup` + `Radio`.

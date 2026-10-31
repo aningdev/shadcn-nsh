@@ -3,6 +3,7 @@ layout: ../../../layouts/Docs.astro
 title: Progress
 description: Styled progress wrapping nsh/base Progress.
 component: true
+demo: progress
 ---
 
 Styled wrapper on `nsh/base`.

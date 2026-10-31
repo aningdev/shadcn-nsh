@@ -3,6 +3,7 @@ layout: ../../../layouts/Docs.astro
 title: Pagination
 description: Styled pagination wrapping nsh/base Pagination.
 component: true
+demo: pagination
 ---
 
 Styled wrapper on `nsh/base`.

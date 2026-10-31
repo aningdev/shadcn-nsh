@@ -3,6 +3,7 @@ layout: ../../../layouts/Docs.astro
 title: Collapsible
 description: Styled collapsible wrapping nsh/base Collapsible.
 component: true
+demo: collapsible
 ---
 
 Styled collapsible on `nsh/base`. Trigger is `children`; panel is the `content` prop.

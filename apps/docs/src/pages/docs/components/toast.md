@@ -3,6 +3,8 @@ layout: ../../../layouts/Docs.astro
 title: Toast
 description: Styled toast wrapping nsh/base Toast.
 component: true
+demo: toast
+demoHeight: 360
 ---
 
 Styled toast stack on `nsh/base` `Toast` / `ToastStack`.

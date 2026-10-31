@@ -3,6 +3,7 @@ layout: ../../../layouts/Docs.astro
 title: Input
 description: Styled text input wrapping nsh/base Input.
 component: true
+demo: input
 ---
 
 Styled wrapper on `nsh/base`.
