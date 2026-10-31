@@ -1,5 +1,6 @@
 ---
 import Docs from "../layouts/Docs.astro";
+import { withBase } from "../lib/base";
 ---
 
 <Docs title="Docs" description="Styled NSH components — copy-into-app, monorepo-ready.">
@@ -13,7 +14,7 @@ import Docs from "../layouts/Docs.astro";
     Prefer <code>apps/gallery</code> for native / a11y checks.
   </div>
   <p>
-    Start with <a href="/docs/getting-started">Getting started</a> or jump to
-    <a href="/docs/components/button">Button</a>.
+    Start with <a href={withBase("docs/getting-started")}>Getting started</a> or jump to
+    <a href={withBase("docs/components/button")}>Button</a>.
   </p>
 </Docs>
