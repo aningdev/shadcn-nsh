@@ -1,0 +1,9 @@
+{
+  "name": "shadcn-nsh",
+  "private": true,
+  "workspaces": ["apps/*", "packages/*"],
+  "scripts": {
+    "dev:gallery": "nsh run apps/gallery",
+    "check:gallery": "nsh check apps/gallery"
+  }
+}

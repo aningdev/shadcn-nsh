@@ -147,3 +147,9 @@ vite.config.ts.timestamp-*
 
 # Turbo Repo
 .turbo
+
+# Native Shell generated
+.nsh/
+
+# Bun
+bun.lockb

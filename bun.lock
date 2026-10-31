@@ -1,0 +1,35 @@
+{
+  "lockfileVersion": 2,
+  "configVersion": 1,
+  "workspaces": {
+    "": {
+      "name": "shadcn-nsh",
+    },
+    "apps/gallery": {
+      "name": "@shadcn-nsh/gallery",
+      "version": "0.0.0",
+      "dependencies": {
+        "@shadcn-nsh/theme": "workspace:*",
+        "@shadcn-nsh/ui": "workspace:*",
+      },
+    },
+    "packages/theme": {
+      "name": "@shadcn-nsh/theme",
+      "version": "0.0.0",
+    },
+    "packages/ui": {
+      "name": "@shadcn-nsh/ui",
+      "version": "0.0.0",
+      "dependencies": {
+        "@shadcn-nsh/theme": "workspace:*",
+      },
+    },
+  },
+  "packages": {
+    "@shadcn-nsh/gallery": ["@shadcn-nsh/gallery@workspace:apps/gallery"],
+
+    "@shadcn-nsh/theme": ["@shadcn-nsh/theme@workspace:packages/theme"],
+
+    "@shadcn-nsh/ui": ["@shadcn-nsh/ui@workspace:packages/ui"],
+  }
+}

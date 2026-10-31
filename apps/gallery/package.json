@@ -1,0 +1,10 @@
+{
+  "name": "@shadcn-nsh/gallery",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@shadcn-nsh/theme": "workspace:*",
+    "@shadcn-nsh/ui": "workspace:*"
+  }
+}

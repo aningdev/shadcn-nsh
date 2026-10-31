@@ -1,0 +1,8 @@
+{
+  "name": "shadcn-nsh Gallery",
+  "id": "dev.shadcn-nsh.gallery",
+  "version": "0.0.0",
+  "build": 1,
+  "appearance": "system",
+  "theme": "../../packages/theme/theme.json"
+}

@@ -33,4 +33,15 @@
 
 ## 当前布局
 
-仓库处于初始化阶段：仅有 agent 指引与 `references/` 子模块，尚无应用代码、registry 或 CLI。新增产品代码前先更新本节。
+Bun workspaces（`apps/*`、`packages/*`）。垂直切片已通：theme → styled Button → gallery。
+
+| 路径 | 职责 |
+| --- | --- |
+| [`packages/theme`](packages/theme) | `theme.json` + `token()` 辅助（`@shadcn-nsh/theme`） |
+| [`packages/ui`](packages/ui) | 包装 `nsh/base` 的 styled 组件（`@shadcn-nsh/ui`） |
+| [`apps/gallery`](apps/gallery) | NSH demo 应用（`nsh.json` 的 `theme` 指向 `packages/theme/theme.json`） |
+| [`references/`](references/) | 只读 submodule |
+
+尚未开建：CLI、文档站、registry 构建管道。扩展布局时同步更新本节。
+
+常用命令：`bun install`、`bun run check:gallery`、`bun run dev:gallery`（需本机 `nsh`）。
