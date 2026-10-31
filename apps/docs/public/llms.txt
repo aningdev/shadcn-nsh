@@ -20,6 +20,8 @@ Styled NSH component library (copy-into-app), analogous to shadcn/ui on Radix.
 
 Hybrid IA: this site covers install, usage, variants/composition, and **this package’s** API deltas. Behavior, keyboard, a11y, platform notes, and full unstyled props → https://nsh.dev/elements (per-element pages). Do not treat this file as a fork of nsh `llms-full`.
 
+Component pages may embed a web Preview (`demo:` → `nsh package --target web` iframe). Native behaviour truth remains the gallery (`apps/gallery`), not docs iframes. Demo sources: `apps/docs/demos/<slug>.tsx`.
+
 - /docs/getting-started: Create a monorepo or init shadcn-nsh in an existing NSH app.
 - /docs/theme: theme.json is token truth; token() / @shadcn-nsh/theme helpers.
 - /docs/components: Phase-1 styled wrappers on nsh/base.

@@ -6,17 +6,18 @@
     "packages/*"
   ],
   "scripts": {
-    "prepare:types": "nsh check apps/gallery && nsh check templates/nsh-monorepo/apps/web && nsh check apps/docs/demos/button.tsx",
+    "prepare:types": "nsh check apps/gallery && nsh check templates/nsh-monorepo/apps/web && bun run check:demos",
     "dev:gallery": "nsh run apps/gallery",
     "check:gallery": "nsh check apps/gallery",
     "dev:docs": "bun --filter @shadcn-nsh/docs dev",
     "build:docs": "bun run docs:demos && bun --filter @shadcn-nsh/docs build",
     "check:docs": "bun --filter @shadcn-nsh/docs check",
     "docs:demos": "bun apps/docs/scripts/build-demos.ts",
+    "check:demos": "bun apps/docs/scripts/check-demos.ts",
     "registry:build": "bun packages/cli/src/index.ts build && vp fmt public/r",
     "registry:serve": "bun packages/cli/src/index.ts serve",
     "shadcn-nsh": "bun packages/cli/src/index.ts",
-    "check": "vp check --fix && nsh check apps/gallery && nsh check templates/nsh-monorepo/apps/web && nsh check apps/docs/demos/button.tsx && bun run check:docs"
+    "check": "vp check --fix && nsh check apps/gallery && nsh check templates/nsh-monorepo/apps/web && bun run check:demos && bun run check:docs"
   },
   "devDependencies": {
     "@types/bun": "^1.4.4",

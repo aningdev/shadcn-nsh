@@ -3,6 +3,8 @@ layout: ../../../layouts/Docs.astro
 title: Sheet
 description: Styled sheet wrapping nsh/base Sheet.
 component: true
+demo: sheet
+demoHeight: 420
 ---
 
 Styled sheet on `nsh/base` Sheet with fixed card chrome; defaults to `side="bottom"`.

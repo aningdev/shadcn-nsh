@@ -3,6 +3,7 @@ layout: ../../../layouts/Docs.astro
 title: Toggle
 description: Styled toggle wrapping nsh/base Toggle.
 component: true
+demo: toggle
 ---
 
 Styled wrapper on `nsh/base`.

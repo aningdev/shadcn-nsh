@@ -3,6 +3,7 @@ layout: ../../../layouts/Docs.astro
 title: Table
 description: Styled table wrapping nsh/base Table.
 component: true
+demo: table
 ---
 
 Styled table primitives on `nsh/base` Table parts.

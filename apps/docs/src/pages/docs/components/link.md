@@ -3,6 +3,7 @@ layout: ../../../layouts/Docs.astro
 title: Link
 description: Styled link wrapping nsh/base Link.
 component: true
+demo: link
 ---
 
 Styled wrapper on `nsh/base`.

@@ -3,6 +3,8 @@ layout: ../../../layouts/Docs.astro
 title: Dropdown Menu
 description: Styled menu wrapping nsh/base Menu.
 component: true
+demo: dropdown-menu
+demoHeight: 400
 ---
 
 Styled menu on `nsh/base` `Menu` (docs slug `dropdown-menu`; nsh element `menu`). Exports use shadcn-style `DropdownMenu*` names.

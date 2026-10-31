@@ -3,6 +3,8 @@ layout: ../../../layouts/Docs.astro
 title: Popover
 description: Styled popover wrapping nsh/base Popover.
 component: true
+demo: popover
+demoHeight: 360
 ---
 
 Styled popover on `nsh/base` Popover with fixed surface padding and offset.

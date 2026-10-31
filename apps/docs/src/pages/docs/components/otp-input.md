@@ -3,6 +3,7 @@ layout: ../../../layouts/Docs.astro
 title: OTP Input
 description: Styled OTP input wrapping nsh/base OtpInput.
 component: true
+demo: otp-input
 ---
 
 Styled wrapper on `nsh/base`.

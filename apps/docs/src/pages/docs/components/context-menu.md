@@ -3,6 +3,8 @@ layout: ../../../layouts/Docs.astro
 title: Context Menu
 description: Styled context menu wrapping nsh/base ContextMenu.
 component: true
+demo: context-menu
+demoHeight: 400
 ---
 
 Styled context menu on `nsh/base` `ContextMenu` (nsh element `menu`). Item / separator / sub re-export the dropdown-menu parts.
