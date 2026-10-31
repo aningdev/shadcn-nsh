@@ -1,0 +1,15 @@
+{
+  "name": "toggle",
+  "type": "registry:ui",
+  "title": "Toggle",
+  "description": "Styled toggle wrapping nsh/base Toggle.",
+  "registryDependencies": ["theme"],
+  "files": [
+    {
+      "path": "packages/ui/toggle.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/toggle.tsx",
+      "content": "import { colors, focusRing, radius } from \"@shadcn-nsh/theme\";\nimport type { JSX } from \"nsh\";\nimport { Toggle as BaseToggle } from \"nsh/base\";\n\nexport function Toggle(props: {\n  pressed?: boolean;\n  disabled?: boolean;\n  accessibilityLabel?: string | null;\n  children?: JSX.Element;\n  onChange?: (event: { pressed: boolean }) => void;\n}) {\n  return (\n    <BaseToggle\n      pressed={props.pressed}\n      disabled={props.disabled}\n      accessibilityLabel={props.accessibilityLabel}\n      onChange={props.onChange}\n      focusStyle={focusRing()}\n      style={{\n        height: 36,\n        paddingHorizontal: 12,\n        borderRadius: radius.control,\n        borderWidth: 1,\n        borderColor: props.pressed ? colors.accent : colors.border,\n        backgroundColor: props.pressed ? colors.accent : colors.background,\n        alignItems: \"center\",\n        justifyContent: \"center\",\n        opacity: props.disabled ? 0.5 : 1,\n      }}\n      pressedStyle={{\n        backgroundColor: colors.accent,\n        borderColor: colors.accent,\n      }}\n    >\n      {props.children}\n    </BaseToggle>\n  );\n}\n"
+    }
+  ]
+}

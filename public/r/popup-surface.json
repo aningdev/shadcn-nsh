@@ -1,0 +1,15 @@
+{
+  "name": "popup-surface",
+  "type": "registry:lib",
+  "title": "Popup surface",
+  "description": "Shared popup/menu surface and backdrop styles.",
+  "registryDependencies": ["theme"],
+  "files": [
+    {
+      "path": "packages/ui/lib/popup-surface.ts",
+      "type": "registry:lib",
+      "target": "lib/popup-surface.ts",
+      "content": "import { colors, radius } from \"@shadcn-nsh/theme\";\nimport type { ViewStyle } from \"nsh\";\n\n/** Shared surface for popovers, menus, and select/combobox popups. */\nexport function popupSurface(): ViewStyle {\n  return {\n    borderRadius: radius.control,\n    borderWidth: 1,\n    borderColor: colors.border,\n    backgroundColor: colors.card,\n    padding: 4,\n  };\n}\n\nexport function popupBackdrop(): ViewStyle {\n  return {\n    backgroundColor: \"color-mix(in srgb, black 40%, transparent)\",\n  };\n}\n"
+    }
+  ]
+}

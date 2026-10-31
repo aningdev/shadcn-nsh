@@ -21,6 +21,20 @@
       ]
     },
     {
+      "name": "popup-surface",
+      "type": "registry:lib",
+      "title": "Popup surface",
+      "description": "Shared popup/menu surface and backdrop styles.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/lib/popup-surface.ts",
+          "type": "registry:lib",
+          "target": "lib/popup-surface.ts"
+        }
+      ]
+    },
+    {
       "name": "button",
       "type": "registry:ui",
       "title": "Button",
@@ -31,6 +45,370 @@
           "path": "packages/ui/button.tsx",
           "type": "registry:ui",
           "target": "components/ui/button.tsx"
+        }
+      ]
+    },
+    {
+      "name": "input",
+      "type": "registry:ui",
+      "title": "Input",
+      "description": "Styled input wrapping nsh/base Input.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/input.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/input.tsx"
+        }
+      ]
+    },
+    {
+      "name": "checkbox",
+      "type": "registry:ui",
+      "title": "Checkbox",
+      "description": "Styled checkbox wrapping nsh/base Checkbox.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/checkbox.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/checkbox.tsx"
+        }
+      ]
+    },
+    {
+      "name": "radio-group",
+      "type": "registry:ui",
+      "title": "Radio Group",
+      "description": "Styled radio group wrapping nsh/base RadioGroup and Radio.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/radio-group.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/radio-group.tsx"
+        }
+      ]
+    },
+    {
+      "name": "switch",
+      "type": "registry:ui",
+      "title": "Switch",
+      "description": "Styled switch wrapping nsh/base Switch.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/switch.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/switch.tsx"
+        }
+      ]
+    },
+    {
+      "name": "slider",
+      "type": "registry:ui",
+      "title": "Slider",
+      "description": "Styled slider wrapping nsh/base Slider.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/slider.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/slider.tsx"
+        }
+      ]
+    },
+    {
+      "name": "progress",
+      "type": "registry:ui",
+      "title": "Progress",
+      "description": "Styled progress wrapping nsh/base Progress.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/progress.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/progress.tsx"
+        }
+      ]
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "title": "Select",
+      "description": "Styled select wrapping nsh/base Select.",
+      "registryDependencies": ["theme", "popup-surface"],
+      "files": [
+        {
+          "path": "packages/ui/select.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/select.tsx"
+        }
+      ]
+    },
+    {
+      "name": "combobox",
+      "type": "registry:ui",
+      "title": "Combobox",
+      "description": "Styled combobox wrapping nsh/base Combobox.",
+      "registryDependencies": ["theme", "popup-surface"],
+      "files": [
+        {
+          "path": "packages/ui/combobox.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/combobox.tsx"
+        }
+      ]
+    },
+    {
+      "name": "number-input",
+      "type": "registry:ui",
+      "title": "Number Input",
+      "description": "Styled number input wrapping nsh/base NumberInput.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/number-input.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/number-input.tsx"
+        }
+      ]
+    },
+    {
+      "name": "otp-input",
+      "type": "registry:ui",
+      "title": "OTP Input",
+      "description": "Styled OTP input wrapping nsh/base OtpInput.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/otp-input.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/otp-input.tsx"
+        }
+      ]
+    },
+    {
+      "name": "tabs",
+      "type": "registry:ui",
+      "title": "Tabs",
+      "description": "Styled tabs wrapping nsh/base Tabs and Tab.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/tabs.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tabs.tsx"
+        }
+      ]
+    },
+    {
+      "name": "toggle",
+      "type": "registry:ui",
+      "title": "Toggle",
+      "description": "Styled toggle wrapping nsh/base Toggle.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/toggle.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/toggle.tsx"
+        }
+      ]
+    },
+    {
+      "name": "toggle-group",
+      "type": "registry:ui",
+      "title": "Toggle Group",
+      "description": "Styled toggle group wrapping nsh/base ToggleGroup.",
+      "registryDependencies": ["theme", "toggle"],
+      "files": [
+        {
+          "path": "packages/ui/toggle-group.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/toggle-group.tsx"
+        }
+      ]
+    },
+    {
+      "name": "link",
+      "type": "registry:ui",
+      "title": "Link",
+      "description": "Styled link wrapping nsh/base Link.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/link.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/link.tsx"
+        }
+      ]
+    },
+    {
+      "name": "pagination",
+      "type": "registry:ui",
+      "title": "Pagination",
+      "description": "Styled pagination wrapping nsh/base Pagination.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/pagination.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/pagination.tsx"
+        }
+      ]
+    },
+    {
+      "name": "popover",
+      "type": "registry:ui",
+      "title": "Popover",
+      "description": "Styled popover wrapping nsh/base Popover.",
+      "registryDependencies": ["theme", "popup-surface"],
+      "files": [
+        {
+          "path": "packages/ui/popover.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/popover.tsx"
+        }
+      ]
+    },
+    {
+      "name": "tooltip",
+      "type": "registry:ui",
+      "title": "Tooltip",
+      "description": "Styled tooltip wrapping nsh/base Tooltip.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/tooltip.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tooltip.tsx"
+        }
+      ]
+    },
+    {
+      "name": "sheet",
+      "type": "registry:ui",
+      "title": "Sheet",
+      "description": "Styled sheet wrapping nsh/base Sheet.",
+      "registryDependencies": ["theme", "popup-surface"],
+      "files": [
+        {
+          "path": "packages/ui/sheet.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/sheet.tsx"
+        }
+      ]
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "title": "Dialog",
+      "description": "Styled dialog wrapping nsh/base Dialog.",
+      "registryDependencies": ["theme", "popup-surface"],
+      "files": [
+        {
+          "path": "packages/ui/dialog.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dialog.tsx"
+        }
+      ]
+    },
+    {
+      "name": "dropdown-menu",
+      "type": "registry:ui",
+      "title": "Dropdown Menu",
+      "description": "Styled menu wrapping nsh/base Menu and parts.",
+      "registryDependencies": ["theme", "popup-surface"],
+      "files": [
+        {
+          "path": "packages/ui/dropdown-menu.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dropdown-menu.tsx"
+        }
+      ]
+    },
+    {
+      "name": "context-menu",
+      "type": "registry:ui",
+      "title": "Context Menu",
+      "description": "Styled context menu wrapping nsh/base ContextMenu.",
+      "registryDependencies": ["theme", "popup-surface", "dropdown-menu"],
+      "files": [
+        {
+          "path": "packages/ui/context-menu.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/context-menu.tsx"
+        }
+      ]
+    },
+    {
+      "name": "collapsible",
+      "type": "registry:ui",
+      "title": "Collapsible",
+      "description": "Styled collapsible wrapping nsh/base Collapsible.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/collapsible.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/collapsible.tsx"
+        }
+      ]
+    },
+    {
+      "name": "accordion",
+      "type": "registry:ui",
+      "title": "Accordion",
+      "description": "Styled accordion wrapping nsh/base Accordion parts.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/accordion.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/accordion.tsx"
+        }
+      ]
+    },
+    {
+      "name": "toast",
+      "type": "registry:ui",
+      "title": "Toast",
+      "description": "Styled toast wrapping nsh/base Toast and ToastStack.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/toast.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/toast.tsx"
+        }
+      ]
+    },
+    {
+      "name": "avatar",
+      "type": "registry:ui",
+      "title": "Avatar",
+      "description": "Styled avatar wrapping nsh/base Avatar and AvatarGroup.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/avatar.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/avatar.tsx"
+        }
+      ]
+    },
+    {
+      "name": "table",
+      "type": "registry:ui",
+      "title": "Table",
+      "description": "Styled table wrapping nsh/base Table parts.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/table.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/table.tsx"
         }
       ]
     }

@@ -1,0 +1,15 @@
+{
+  "name": "pagination",
+  "type": "registry:ui",
+  "title": "Pagination",
+  "description": "Styled pagination wrapping nsh/base Pagination.",
+  "registryDependencies": ["theme"],
+  "files": [
+    {
+      "path": "packages/ui/pagination.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/pagination.tsx",
+      "content": "import { colors, focusRing, radius } from \"@shadcn-nsh/theme\";\nimport type { JSX } from \"nsh\";\nimport { Text } from \"nsh\";\nimport { Pagination as BasePagination, type PaginationItemState } from \"nsh/base\";\n\nexport function Pagination(props: {\n  page: number;\n  totalPages: number;\n  visiblePages?: number;\n  compact?: boolean;\n  disabled?: boolean;\n  accessibilityLabel?: string | null;\n  children?: JSX.Element;\n  onChange?: (event: { page: number }) => void;\n}) {\n  return (\n    <BasePagination\n      page={props.page}\n      totalPages={props.totalPages}\n      visiblePages={props.visiblePages}\n      compact={props.compact}\n      disabled={props.disabled}\n      accessibilityLabel={props.accessibilityLabel}\n      onChange={props.onChange}\n      style={{\n        flexDirection: \"row\",\n        alignItems: \"center\",\n        gap: 4,\n        opacity: props.disabled ? 0.5 : 1,\n      }}\n      itemStyle={{\n        minWidth: 36,\n        height: 36,\n        paddingHorizontal: 8,\n        borderRadius: radius.control,\n        borderWidth: 1,\n        borderColor: colors.border,\n        backgroundColor: colors.background,\n        color: colors.foreground,\n        fontSize: 14,\n        textAlign: \"center\",\n      }}\n      focusStyle={focusRing()}\n      renderItem={(item: PaginationItemState) => (\n        <Text\n          style={{\n            fontSize: 14,\n            fontWeight: item.current ? \"600\" : \"400\",\n            color: item.current ? colors.primary : colors.foreground,\n          }}\n        >\n          {item.kind === \"previous\" ? \"‹\" : item.kind === \"next\" ? \"›\" : item.kind === \"ellipsis\" ? \"…\" : String(item.page)}\n        </Text>\n      )}\n    >\n      {props.children}\n    </BasePagination>\n  );\n}\n"
+    }
+  ]
+}

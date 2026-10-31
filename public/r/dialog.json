@@ -1,0 +1,15 @@
+{
+  "name": "dialog",
+  "type": "registry:ui",
+  "title": "Dialog",
+  "description": "Styled dialog wrapping nsh/base Dialog.",
+  "registryDependencies": ["theme", "popup-surface"],
+  "files": [
+    {
+      "path": "packages/ui/dialog.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/dialog.tsx",
+      "content": "import { colors, radius } from \"@shadcn-nsh/theme\";\nimport type { JSX } from \"nsh\";\nimport { Dialog as BaseDialog } from \"nsh/base\";\nimport { popupBackdrop } from \"./lib/popup-surface\";\n\nexport function Dialog(props: {\n  open?: boolean;\n  animation?: \"slide\" | \"fade\" | \"none\";\n  children?: JSX.Element;\n  onOpen?: () => void;\n  onClose?: () => void;\n  onCancel?: () => void;\n  onOpenChange?: (event: { open: boolean; reason: string }) => void;\n}) {\n  return (\n    <BaseDialog\n      open={props.open}\n      animation={props.animation ?? \"fade\"}\n      onOpen={props.onOpen}\n      onClose={props.onClose}\n      onCancel={props.onCancel}\n      onOpenChange={props.onOpenChange as never}\n      backdropStyle={popupBackdrop()}\n      style={{\n        width: \"90%\",\n        maxWidth: 420,\n        alignSelf: \"center\",\n        marginTop: \"20%\",\n        padding: 20,\n        borderRadius: radius.control * 2,\n        borderWidth: 1,\n        borderColor: colors.border,\n        backgroundColor: colors.card,\n        gap: 12,\n      }}\n    >\n      {props.children}\n    </BaseDialog>\n  );\n}\n"
+    }
+  ]
+}

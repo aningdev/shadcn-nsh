@@ -1,0 +1,15 @@
+{
+  "name": "switch",
+  "type": "registry:ui",
+  "title": "Switch",
+  "description": "Styled switch wrapping nsh/base Switch.",
+  "registryDependencies": ["theme"],
+  "files": [
+    {
+      "path": "packages/ui/switch.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/switch.tsx",
+      "content": "import { colors, focusRing } from \"@shadcn-nsh/theme\";\nimport type { JSX } from \"nsh\";\nimport { Switch as BaseSwitch } from \"nsh/base\";\n\nexport function Switch(props: {\n  checked?: boolean;\n  disabled?: boolean;\n  accessibilityLabel?: string | null;\n  children?: JSX.Element;\n  onChange?: (event: { checked: boolean }) => void;\n}) {\n  const on = () => !!props.checked;\n\n  return (\n    <BaseSwitch\n      checked={props.checked}\n      disabled={props.disabled}\n      accessibilityLabel={props.accessibilityLabel}\n      onChange={props.onChange}\n      focusStyle={focusRing()}\n      style={{\n        flexDirection: \"row\",\n        alignItems: \"center\",\n        gap: 8,\n        opacity: props.disabled ? 0.5 : 1,\n      }}\n      trackStyle={{\n        width: 36,\n        height: 20,\n        borderRadius: 10,\n        padding: 2,\n        backgroundColor: on() ? colors.primary : colors.input,\n        justifyContent: \"center\",\n      }}\n      thumbClass=\"checked:translate-x-4\"\n      thumbStyle={{\n        width: 16,\n        height: 16,\n        borderRadius: 8,\n        backgroundColor: colors.background,\n      }}\n    >\n      {props.children}\n    </BaseSwitch>\n  );\n}\n"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "table",
+  "type": "registry:ui",
+  "title": "Table",
+  "description": "Styled table wrapping nsh/base Table parts.",
+  "registryDependencies": ["theme"],
+  "files": [
+    {
+      "path": "packages/ui/table.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/table.tsx",
+      "content": "import { colors } from \"@shadcn-nsh/theme\";\nimport type { JSX } from \"nsh\";\nimport {\n  Table as BaseTable,\n  TableBody as BaseTableBody,\n  TableCaption as BaseTableCaption,\n  TableCell as BaseTableCell,\n  TableFooter as BaseTableFooter,\n  TableHead as BaseTableHead,\n  TableHeader as BaseTableHeader,\n  TableRow as BaseTableRow,\n} from \"nsh/base\";\n\nexport function Table(props: { accessibilityLabel?: string | null; children?: JSX.Element }) {\n  return (\n    <BaseTable\n      accessibilityLabel={props.accessibilityLabel}\n      style={{ width: \"100%\", borderWidth: 1, borderColor: colors.border, borderRadius: 8, overflow: \"hidden\" }}\n    >\n      {props.children}\n    </BaseTable>\n  );\n}\n\nexport function TableHeader(props: { children?: JSX.Element }) {\n  return <BaseTableHeader style={{ backgroundColor: colors.muted }}>{props.children}</BaseTableHeader>;\n}\n\nexport function TableBody(props: { children?: JSX.Element }) {\n  return <BaseTableBody>{props.children}</BaseTableBody>;\n}\n\nexport function TableFooter(props: { children?: JSX.Element }) {\n  return <BaseTableFooter style={{ backgroundColor: colors.muted }}>{props.children}</BaseTableFooter>;\n}\n\nexport function TableRow(props: { children?: JSX.Element }) {\n  return (\n    <BaseTableRow style={{ flexDirection: \"row\", borderBottomWidth: 1, borderBottomColor: colors.border }}>\n      {props.children}\n    </BaseTableRow>\n  );\n}\n\nexport function TableHead(props: { children?: JSX.Element }) {\n  return (\n    <BaseTableHead style={{ flex: 1, paddingHorizontal: 12, paddingVertical: 10 }}>\n      {props.children}\n    </BaseTableHead>\n  );\n}\n\nexport function TableCell(props: { children?: JSX.Element }) {\n  return (\n    <BaseTableCell style={{ flex: 1, paddingHorizontal: 12, paddingVertical: 10 }}>\n      {props.children}\n    </BaseTableCell>\n  );\n}\n\nexport function TableCaption(props: { children?: JSX.Element }) {\n  return <BaseTableCaption style={{ padding: 12 }}>{props.children}</BaseTableCaption>;\n}\n"
+    }
+  ]
+}

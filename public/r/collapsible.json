@@ -1,0 +1,15 @@
+{
+  "name": "collapsible",
+  "type": "registry:ui",
+  "title": "Collapsible",
+  "description": "Styled collapsible wrapping nsh/base Collapsible.",
+  "registryDependencies": ["theme"],
+  "files": [
+    {
+      "path": "packages/ui/collapsible.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/collapsible.tsx",
+      "content": "import type { JSX } from \"nsh\";\nimport { Collapsible as BaseCollapsible } from \"nsh/base\";\n\nexport function Collapsible(props: {\n  open?: boolean;\n  reveal?: boolean;\n  content?: JSX.Element;\n  children?: JSX.Element;\n}) {\n  return (\n    <BaseCollapsible open={props.open} reveal={props.reveal ?? true} content={props.content} style={{ gap: 0 }}>\n      {props.children}\n    </BaseCollapsible>\n  );\n}\n"
+    }
+  ]
+}

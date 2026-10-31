@@ -1,0 +1,15 @@
+{
+  "name": "number-input",
+  "type": "registry:ui",
+  "title": "Number Input",
+  "description": "Styled number input wrapping nsh/base NumberInput.",
+  "registryDependencies": ["theme"],
+  "files": [
+    {
+      "path": "packages/ui/number-input.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/number-input.tsx",
+      "content": "import { colors, focusRing, radius } from \"@shadcn-nsh/theme\";\nimport type { JSX } from \"nsh\";\nimport { Text } from \"nsh\";\nimport { NumberInput as BaseNumberInput } from \"nsh/base\";\n\nexport function NumberInput(props: {\n  value?: number | null;\n  defaultValue?: number | null;\n  min?: number | null;\n  max?: number | null;\n  step?: number;\n  disabled?: boolean;\n  readonly?: boolean;\n  placeholder?: string | null;\n  accessibilityLabel?: string | null;\n  controlsRight?: boolean;\n  prefix?: JSX.Element;\n  suffix?: JSX.Element;\n  onChange?: (event: { value: number | null }) => void;\n  onSubmit?: (event: { value: number | null }) => void;\n}) {\n  const btn = {\n    width: 28,\n    height: 28,\n    borderRadius: 6,\n    borderWidth: 1,\n    borderColor: colors.border,\n    backgroundColor: colors.secondary,\n    alignItems: \"center\" as const,\n    justifyContent: \"center\" as const,\n  };\n\n  return (\n    <BaseNumberInput\n      value={props.value}\n      defaultValue={props.defaultValue}\n      min={props.min}\n      max={props.max}\n      step={props.step}\n      disabled={props.disabled}\n      readonly={props.readonly}\n      placeholder={props.placeholder}\n      accessibilityLabel={props.accessibilityLabel}\n      controlsRight={props.controlsRight ?? true}\n      prefix={props.prefix}\n      suffix={props.suffix}\n      onChange={props.onChange}\n      onSubmit={props.onSubmit}\n      style={{\n        height: 36,\n        flexDirection: \"row\",\n        alignItems: \"center\",\n        gap: 4,\n        opacity: props.disabled ? 0.5 : 1,\n      }}\n      inputStyle={{\n        flex: 1,\n        height: 36,\n        paddingHorizontal: 12,\n        borderRadius: radius.control,\n        borderWidth: 1,\n        borderColor: colors.input,\n        backgroundColor: colors.background,\n        color: colors.foreground,\n        fontSize: 14,\n        textAlign: \"center\",\n        ...focusRing(),\n      }}\n      decrementButtonStyle={btn}\n      incrementButtonStyle={btn}\n      decrementButton={<Text style={{ fontSize: 16, color: colors.foreground }}>−</Text>}\n      incrementButton={<Text style={{ fontSize: 16, color: colors.foreground }}>+</Text>}\n      controlsStyle={{ gap: 2 }}\n    />\n  );\n}\n"
+    }
+  ]
+}

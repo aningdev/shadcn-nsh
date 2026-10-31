@@ -1,0 +1,15 @@
+{
+  "name": "popover",
+  "type": "registry:ui",
+  "title": "Popover",
+  "description": "Styled popover wrapping nsh/base Popover.",
+  "registryDependencies": ["theme", "popup-surface"],
+  "files": [
+    {
+      "path": "packages/ui/popover.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/popover.tsx",
+      "content": "import type { JSX } from \"nsh\";\nimport { Popover as BasePopover } from \"nsh/base\";\nimport { popupSurface } from \"./lib/popup-surface\";\n\nexport function Popover(props: {\n  open?: boolean | null;\n  defaultOpen?: boolean;\n  trigger?: JSX.Element;\n  children?: JSX.Element;\n  onOpenChange?: (event: { open: boolean; reason: string }) => void;\n  onOpen?: () => void;\n  onClose?: () => void;\n}) {\n  return (\n    <BasePopover\n      open={props.open}\n      defaultOpen={props.defaultOpen}\n      trigger={props.trigger}\n      onOpenChange={props.onOpenChange as never}\n      onOpen={props.onOpen}\n      onClose={props.onClose}\n      offset={4}\n      popupStyle={{ ...popupSurface(), padding: 12, minWidth: 180 }}\n    >\n      {props.children}\n    </BasePopover>\n  );\n}\n"
+    }
+  ]
+}

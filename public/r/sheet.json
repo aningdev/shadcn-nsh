@@ -1,0 +1,15 @@
+{
+  "name": "sheet",
+  "type": "registry:ui",
+  "title": "Sheet",
+  "description": "Styled sheet wrapping nsh/base Sheet.",
+  "registryDependencies": ["theme", "popup-surface"],
+  "files": [
+    {
+      "path": "packages/ui/sheet.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/sheet.tsx",
+      "content": "import { colors, radius } from \"@shadcn-nsh/theme\";\nimport type { JSX, Placement } from \"nsh\";\nimport { Sheet as BaseSheet } from \"nsh/base\";\nimport { popupBackdrop } from \"./lib/popup-surface\";\n\nexport function Sheet(props: {\n  open?: boolean | null;\n  defaultOpen?: boolean;\n  side?: Placement;\n  closeOnSwipe?: boolean;\n  children?: JSX.Element;\n  onOpenChange?: (event: { open: boolean; reason: string }) => void;\n  onOpen?: () => void;\n  onClose?: () => void;\n}) {\n  return (\n    <BaseSheet\n      open={props.open}\n      defaultOpen={props.defaultOpen}\n      side={props.side ?? \"bottom\"}\n      closeOnSwipe={props.closeOnSwipe}\n      onOpenChange={props.onOpenChange as never}\n      onOpen={props.onOpen}\n      onClose={props.onClose}\n      backdropStyle={popupBackdrop()}\n      popupStyle={{\n        backgroundColor: colors.card,\n        borderTopLeftRadius: radius.control * 2,\n        borderTopRightRadius: radius.control * 2,\n        padding: 16,\n        minHeight: 160,\n      }}\n    >\n      {props.children}\n    </BaseSheet>\n  );\n}\n"
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "context-menu",
+  "type": "registry:ui",
+  "title": "Context Menu",
+  "description": "Styled context menu wrapping nsh/base ContextMenu.",
+  "registryDependencies": ["theme", "popup-surface", "dropdown-menu"],
+  "files": [
+    {
+      "path": "packages/ui/context-menu.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/context-menu.tsx",
+      "content": "import type { JSX } from \"nsh\";\nimport { ContextMenu as BaseContextMenu } from \"nsh/base\";\nimport { popupBackdrop, popupSurface } from \"./lib/popup-surface\";\n\nexport {\n  DropdownMenuItem as ContextMenuItem,\n  DropdownMenuSeparator as ContextMenuSeparator,\n  DropdownMenuSub as ContextMenuSub,\n} from \"./dropdown-menu\";\n\nexport function ContextMenu(props: {\n  open?: boolean | null;\n  disabled?: boolean;\n  trigger?: JSX.Element;\n  children?: JSX.Element;\n  onOpenChange?: (event: { open: boolean; reason: string }) => void;\n}) {\n  return (\n    <BaseContextMenu\n      open={props.open}\n      disabled={props.disabled}\n      trigger={props.trigger}\n      onOpenChange={props.onOpenChange as never}\n      offset={4}\n      popupStyle={{ ...popupSurface(), minWidth: 160 }}\n      backdropStyle={popupBackdrop()}\n    >\n      {props.children}\n    </BaseContextMenu>\n  );\n}\n"
+    }
+  ]
+}

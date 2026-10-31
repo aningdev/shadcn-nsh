@@ -34,8 +34,8 @@ const path = Astro.url.pathname;
             Getting started
           </a>
           <a
-            href="/docs/components/button"
-            aria-current={path.includes("button") ? "page" : undefined}
+            href="/docs/components"
+            aria-current={path.includes("/docs/components") ? "page" : undefined}
           >
             Components
           </a>
@@ -52,11 +52,25 @@ const path = Astro.url.pathname;
               Getting started
             </a>
             <a
+              href="/docs/components"
+              aria-current={
+                path === "/docs/components" || path === "/docs/components/" ? "page" : undefined
+              }
+            >
+              All components
+            </a>
+            <a
               href="/docs/components/button"
-              aria-current={path.includes("button") ? "page" : undefined}
+              aria-current={path.includes("/button") ? "page" : undefined}
             >
               Button
             </a>
+            <a href="/docs/components/input">Input</a>
+            <a href="/docs/components/checkbox">Checkbox</a>
+            <a href="/docs/components/select">Select</a>
+            <a href="/docs/components/tabs">Tabs</a>
+            <a href="/docs/components/dialog">Dialog</a>
+            <a href="/docs/components/table">Table</a>
           </nav>
         </aside>
         <main class="prose">

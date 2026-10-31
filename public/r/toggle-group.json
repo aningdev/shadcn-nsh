@@ -1,0 +1,15 @@
+{
+  "name": "toggle-group",
+  "type": "registry:ui",
+  "title": "Toggle Group",
+  "description": "Styled toggle group wrapping nsh/base ToggleGroup.",
+  "registryDependencies": ["theme", "toggle"],
+  "files": [
+    {
+      "path": "packages/ui/toggle-group.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/toggle-group.tsx",
+      "content": "import { colors, radius } from \"@shadcn-nsh/theme\";\nimport type { JSX } from \"nsh\";\nimport { ToggleGroup as BaseToggleGroup } from \"nsh/base\";\n\nexport function ToggleGroup(props: {\n  disabled?: boolean;\n  children?: JSX.Element;\n}) {\n  return (\n    <BaseToggleGroup\n      disabled={props.disabled}\n      style={{\n        flexDirection: \"row\",\n        gap: 4,\n        padding: 4,\n        borderRadius: radius.control,\n        borderWidth: 1,\n        borderColor: colors.border,\n        backgroundColor: colors.muted,\n        opacity: props.disabled ? 0.5 : 1,\n      }}\n    >\n      {props.children}\n    </BaseToggleGroup>\n  );\n}\n\nexport { Toggle } from \"./toggle\";\n"
+    }
+  ]
+}

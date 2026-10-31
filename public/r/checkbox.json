@@ -1,0 +1,15 @@
+{
+  "name": "checkbox",
+  "type": "registry:ui",
+  "title": "Checkbox",
+  "description": "Styled checkbox wrapping nsh/base Checkbox.",
+  "registryDependencies": ["theme"],
+  "files": [
+    {
+      "path": "packages/ui/checkbox.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/checkbox.tsx",
+      "content": "import { colors, focusRing, radius } from \"@shadcn-nsh/theme\";\nimport type { JSX } from \"nsh\";\nimport { Text, View } from \"nsh\";\nimport { Checkbox as BaseCheckbox } from \"nsh/base\";\n\nfunction CheckMark() {\n  return (\n    <Text style={{ fontSize: 12, fontWeight: \"700\", color: colors.primaryForeground, lineHeight: 14 }}>✓</Text>\n  );\n}\n\nfunction DashMark() {\n  return <View style={{ width: 10, height: 2, borderRadius: 1, backgroundColor: colors.primaryForeground }} />;\n}\n\nexport function Checkbox(props: {\n  checked?: boolean;\n  indeterminate?: boolean;\n  disabled?: boolean;\n  accessibilityLabel?: string | null;\n  children?: JSX.Element;\n  onChange?: (event: { checked: boolean }) => void;\n}) {\n  const on = () => !!props.checked || !!props.indeterminate;\n\n  return (\n    <BaseCheckbox\n      checked={props.checked}\n      indeterminate={props.indeterminate}\n      disabled={props.disabled}\n      accessibilityLabel={props.accessibilityLabel}\n      onChange={props.onChange}\n      focusStyle={focusRing()}\n      style={{\n        flexDirection: \"row\",\n        alignItems: \"center\",\n        gap: 8,\n        opacity: props.disabled ? 0.5 : 1,\n      }}\n      indicatorStyle={{\n        width: 16,\n        height: 16,\n        borderRadius: Math.min(4, radius.control),\n        borderWidth: 1,\n        borderColor: on() ? colors.primary : colors.input,\n        backgroundColor: on() ? colors.primary : \"transparent\",\n        alignItems: \"center\",\n        justifyContent: \"center\",\n      }}\n      indicator={\n        props.indeterminate ? <DashMark /> : props.checked ? <CheckMark /> : <View style={{ width: 16, height: 16 }} />\n      }\n    >\n      {props.children}\n    </BaseCheckbox>\n  );\n}\n"
+    }
+  ]
+}

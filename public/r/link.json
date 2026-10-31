@@ -1,0 +1,15 @@
+{
+  "name": "link",
+  "type": "registry:ui",
+  "title": "Link",
+  "description": "Styled link wrapping nsh/base Link.",
+  "registryDependencies": ["theme"],
+  "files": [
+    {
+      "path": "packages/ui/link.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/link.tsx",
+      "content": "import { colors, focusRing } from \"@shadcn-nsh/theme\";\nimport type { JSX } from \"nsh\";\nimport { Link as BaseLink } from \"nsh/base\";\n\nexport function Link(props: {\n  href?: string;\n  current?: boolean;\n  disabled?: boolean;\n  openWith?: \"system\" | \"app\";\n  accessibilityLabel?: string | null;\n  children?: JSX.Element;\n  onOpen?: (event: { href: string }) => void;\n  onPress?: () => void;\n}) {\n  return (\n    <BaseLink\n      href={props.href}\n      current={props.current}\n      disabled={props.disabled}\n      openWith={props.openWith}\n      accessibilityLabel={props.accessibilityLabel}\n      onOpen={props.onOpen as never}\n      onPress={props.onPress}\n      focusStyle={focusRing()}\n      style={{\n        opacity: props.disabled ? 0.5 : 1,\n      }}\n      hoverStyle={props.disabled ? undefined : { opacity: 0.8 }}\n    >\n      {props.children}\n    </BaseLink>\n  );\n}\n\n/** Convenience text-styled link label color. */\nexport const linkColor = () => colors.primary;\n"
+    }
+  ]
+}

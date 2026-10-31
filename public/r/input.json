@@ -1,0 +1,15 @@
+{
+  "name": "input",
+  "type": "registry:ui",
+  "title": "Input",
+  "description": "Styled input wrapping nsh/base Input.",
+  "registryDependencies": ["theme"],
+  "files": [
+    {
+      "path": "packages/ui/input.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/input.tsx",
+      "content": "import { colors, focusRing, radius } from \"@shadcn-nsh/theme\";\nimport type { InputRef, InputStyle, StyleProp } from \"nsh\";\nimport { Input as BaseInput } from \"nsh/base\";\n\nexport function Input(props: {\n  value?: string;\n  defaultValue?: string;\n  placeholder?: string;\n  disabled?: boolean;\n  masked?: boolean;\n  multiline?: boolean;\n  maxLength?: number;\n  accessibilityLabel?: string;\n  style?: StyleProp<InputStyle>;\n  ref?: InputRef;\n  onChange?: (event: { value: string }) => void;\n  onSubmit?: () => void;\n  onFocus?: () => void;\n  onBlur?: () => void;\n}) {\n  return (\n    <BaseInput\n      ref={props.ref}\n      value={props.value}\n      defaultValue={props.defaultValue}\n      placeholder={props.placeholder}\n      disabled={props.disabled}\n      masked={props.masked}\n      multiline={props.multiline}\n      maxLength={props.maxLength}\n      accessibilityLabel={props.accessibilityLabel}\n      onChange={props.onChange}\n      onSubmit={props.onSubmit}\n      onFocus={props.onFocus}\n      onBlur={props.onBlur}\n      focusStyle={focusRing()}\n      style={[\n        {\n          height: props.multiline ? undefined : 36,\n          minHeight: props.multiline ? 80 : 36,\n          paddingHorizontal: 12,\n          paddingVertical: props.multiline ? 8 : 0,\n          borderRadius: radius.control,\n          borderWidth: 1,\n          borderColor: colors.input,\n          backgroundColor: colors.background,\n          color: colors.foreground,\n          fontSize: 14,\n          opacity: props.disabled ? 0.5 : 1,\n        },\n        props.style ?? null,\n      ]}\n    />\n  );\n}\n"
+    }
+  ]
+}

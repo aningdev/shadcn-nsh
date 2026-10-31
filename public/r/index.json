@@ -9,10 +9,172 @@
       "description": "NSH design tokens (theme.json) and token() helpers (lib/theme.ts)."
     },
     {
+      "name": "popup-surface",
+      "type": "registry:lib",
+      "title": "Popup surface",
+      "description": "Shared popup/menu surface and backdrop styles."
+    },
+    {
       "name": "button",
       "type": "registry:ui",
       "title": "Button",
       "description": "Styled button wrapping nsh/base Button."
+    },
+    {
+      "name": "input",
+      "type": "registry:ui",
+      "title": "Input",
+      "description": "Styled input wrapping nsh/base Input."
+    },
+    {
+      "name": "checkbox",
+      "type": "registry:ui",
+      "title": "Checkbox",
+      "description": "Styled checkbox wrapping nsh/base Checkbox."
+    },
+    {
+      "name": "radio-group",
+      "type": "registry:ui",
+      "title": "Radio Group",
+      "description": "Styled radio group wrapping nsh/base RadioGroup and Radio."
+    },
+    {
+      "name": "switch",
+      "type": "registry:ui",
+      "title": "Switch",
+      "description": "Styled switch wrapping nsh/base Switch."
+    },
+    {
+      "name": "slider",
+      "type": "registry:ui",
+      "title": "Slider",
+      "description": "Styled slider wrapping nsh/base Slider."
+    },
+    {
+      "name": "progress",
+      "type": "registry:ui",
+      "title": "Progress",
+      "description": "Styled progress wrapping nsh/base Progress."
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "title": "Select",
+      "description": "Styled select wrapping nsh/base Select."
+    },
+    {
+      "name": "combobox",
+      "type": "registry:ui",
+      "title": "Combobox",
+      "description": "Styled combobox wrapping nsh/base Combobox."
+    },
+    {
+      "name": "number-input",
+      "type": "registry:ui",
+      "title": "Number Input",
+      "description": "Styled number input wrapping nsh/base NumberInput."
+    },
+    {
+      "name": "otp-input",
+      "type": "registry:ui",
+      "title": "OTP Input",
+      "description": "Styled OTP input wrapping nsh/base OtpInput."
+    },
+    {
+      "name": "tabs",
+      "type": "registry:ui",
+      "title": "Tabs",
+      "description": "Styled tabs wrapping nsh/base Tabs and Tab."
+    },
+    {
+      "name": "toggle",
+      "type": "registry:ui",
+      "title": "Toggle",
+      "description": "Styled toggle wrapping nsh/base Toggle."
+    },
+    {
+      "name": "toggle-group",
+      "type": "registry:ui",
+      "title": "Toggle Group",
+      "description": "Styled toggle group wrapping nsh/base ToggleGroup."
+    },
+    {
+      "name": "link",
+      "type": "registry:ui",
+      "title": "Link",
+      "description": "Styled link wrapping nsh/base Link."
+    },
+    {
+      "name": "pagination",
+      "type": "registry:ui",
+      "title": "Pagination",
+      "description": "Styled pagination wrapping nsh/base Pagination."
+    },
+    {
+      "name": "popover",
+      "type": "registry:ui",
+      "title": "Popover",
+      "description": "Styled popover wrapping nsh/base Popover."
+    },
+    {
+      "name": "tooltip",
+      "type": "registry:ui",
+      "title": "Tooltip",
+      "description": "Styled tooltip wrapping nsh/base Tooltip."
+    },
+    {
+      "name": "sheet",
+      "type": "registry:ui",
+      "title": "Sheet",
+      "description": "Styled sheet wrapping nsh/base Sheet."
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "title": "Dialog",
+      "description": "Styled dialog wrapping nsh/base Dialog."
+    },
+    {
+      "name": "dropdown-menu",
+      "type": "registry:ui",
+      "title": "Dropdown Menu",
+      "description": "Styled menu wrapping nsh/base Menu and parts."
+    },
+    {
+      "name": "context-menu",
+      "type": "registry:ui",
+      "title": "Context Menu",
+      "description": "Styled context menu wrapping nsh/base ContextMenu."
+    },
+    {
+      "name": "collapsible",
+      "type": "registry:ui",
+      "title": "Collapsible",
+      "description": "Styled collapsible wrapping nsh/base Collapsible."
+    },
+    {
+      "name": "accordion",
+      "type": "registry:ui",
+      "title": "Accordion",
+      "description": "Styled accordion wrapping nsh/base Accordion parts."
+    },
+    {
+      "name": "toast",
+      "type": "registry:ui",
+      "title": "Toast",
+      "description": "Styled toast wrapping nsh/base Toast and ToastStack."
+    },
+    {
+      "name": "avatar",
+      "type": "registry:ui",
+      "title": "Avatar",
+      "description": "Styled avatar wrapping nsh/base Avatar and AvatarGroup."
+    },
+    {
+      "name": "table",
+      "type": "registry:ui",
+      "title": "Table",
+      "description": "Styled table wrapping nsh/base Table parts."
     }
   ]
 }

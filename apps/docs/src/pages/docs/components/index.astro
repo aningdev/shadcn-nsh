@@ -1,0 +1,49 @@
+---
+import Docs from "../../../layouts/Docs.astro";
+
+const items = [
+  "button",
+  "input",
+  "checkbox",
+  "radio-group",
+  "switch",
+  "slider",
+  "progress",
+  "select",
+  "combobox",
+  "number-input",
+  "otp-input",
+  "tabs",
+  "toggle",
+  "toggle-group",
+  "link",
+  "pagination",
+  "popover",
+  "tooltip",
+  "sheet",
+  "dialog",
+  "dropdown-menu",
+  "context-menu",
+  "collapsible",
+  "accordion",
+  "toast",
+  "avatar",
+  "table",
+];
+---
+
+<Docs title="Components" description="Phase-1 styled wrappers on nsh/base.">
+  <h1>Components</h1>
+  <p class="lead">
+    Phase-1 inventory mirrors <code>nsh/base</code> as documented in
+    <code>references/nsh/website/elements</code>. Full map:
+    <code>packages/ui/COMPONENTS.md</code>.
+  </p>
+  <ul>
+    {items.map((name) => (
+      <li>
+        <a href={`/docs/components/${name}`}>{name}</a>
+      </li>
+    ))}
+  </ul>
+</Docs>

@@ -1,0 +1,15 @@
+{
+  "name": "tooltip",
+  "type": "registry:ui",
+  "title": "Tooltip",
+  "description": "Styled tooltip wrapping nsh/base Tooltip.",
+  "registryDependencies": ["theme"],
+  "files": [
+    {
+      "path": "packages/ui/tooltip.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/tooltip.tsx",
+      "content": "import { colors, radius } from \"@shadcn-nsh/theme\";\nimport type { JSX, Placement } from \"nsh\";\nimport { Tooltip as BaseTooltip } from \"nsh/base\";\n\n/** Put on any element's `tooltip={...}` prop. */\nexport function Tooltip(props: {\n  open?: boolean | null;\n  defaultOpen?: boolean;\n  placement?: Placement;\n  delay?: number;\n  disabled?: boolean;\n  children?: JSX.Element;\n  onOpenChange?: (event: { open: boolean; reason: string }) => void;\n}) {\n  return (\n    <BaseTooltip\n      open={props.open}\n      defaultOpen={props.defaultOpen}\n      placement={props.placement ?? \"top\"}\n      delay={props.delay}\n      disabled={props.disabled}\n      offset={6}\n      onOpenChange={props.onOpenChange as never}\n      style={{\n        paddingHorizontal: 10,\n        paddingVertical: 6,\n        borderRadius: radius.control,\n        backgroundColor: colors.foreground,\n      }}\n    >\n      {props.children}\n    </BaseTooltip>\n  );\n}\n"
+    }
+  ]
+}

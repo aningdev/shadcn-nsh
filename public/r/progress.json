@@ -1,0 +1,15 @@
+{
+  "name": "progress",
+  "type": "registry:ui",
+  "title": "Progress",
+  "description": "Styled progress wrapping nsh/base Progress.",
+  "registryDependencies": ["theme"],
+  "files": [
+    {
+      "path": "packages/ui/progress.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/progress.tsx",
+      "content": "import { colors } from \"@shadcn-nsh/theme\";\nimport type { JSX } from \"nsh\";\nimport { Progress as BaseProgress } from \"nsh/base\";\n\nexport function Progress(props: {\n  value?: number;\n  indeterminate?: boolean;\n  accessibilityLabel?: string | null;\n  children?: JSX.Element;\n}) {\n  const pct = () => Math.max(0, Math.min(100, props.value ?? 0));\n\n  return (\n    <BaseProgress\n      value={props.value}\n      indeterminate={props.indeterminate}\n      accessibilityLabel={props.accessibilityLabel}\n      style={{ gap: 8 }}\n      trackStyle={{\n        height: 6,\n        borderRadius: 3,\n        overflow: \"hidden\",\n        backgroundColor: colors.muted,\n      }}\n      indicatorStyle={\n        props.indeterminate\n          ? {\n              height: \"100%\",\n              width: \"33%\",\n              borderRadius: 3,\n              backgroundColor: colors.primary,\n            }\n          : {\n              height: \"100%\",\n              width: `${pct()}%`,\n              borderRadius: 3,\n              backgroundColor: colors.primary,\n            }\n      }\n    >\n      {props.children}\n    </BaseProgress>\n  );\n}\n"
+    }
+  ]
+}

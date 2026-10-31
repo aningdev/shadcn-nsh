@@ -1,0 +1,15 @@
+{
+  "name": "dropdown-menu",
+  "type": "registry:ui",
+  "title": "Dropdown Menu",
+  "description": "Styled menu wrapping nsh/base Menu and parts.",
+  "registryDependencies": ["theme", "popup-surface"],
+  "files": [
+    {
+      "path": "packages/ui/dropdown-menu.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/dropdown-menu.tsx",
+      "content": "import { colors, focusRing } from \"@shadcn-nsh/theme\";\nimport type { JSX } from \"nsh\";\nimport { Text, View } from \"nsh\";\nimport {\n  Menu as BaseMenu,\n  MenuItem as BaseMenuItem,\n  MenuSeparator as BaseMenuSeparator,\n  Submenu as BaseSubmenu,\n} from \"nsh/base\";\nimport { popupBackdrop, popupSurface } from \"./lib/popup-surface\";\n\nexport function DropdownMenu(props: {\n  open?: boolean | null;\n  defaultOpen?: boolean;\n  trigger?: JSX.Element;\n  children?: JSX.Element;\n  onOpenChange?: (event: { open: boolean; reason: string }) => void;\n}) {\n  return (\n    <BaseMenu\n      open={props.open}\n      defaultOpen={props.defaultOpen}\n      trigger={props.trigger}\n      onOpenChange={props.onOpenChange as never}\n      offset={4}\n      popupStyle={{ ...popupSurface(), minWidth: 160 }}\n      backdropStyle={popupBackdrop()}\n    >\n      {props.children}\n    </BaseMenu>\n  );\n}\n\nexport function DropdownMenuItem(props: {\n  disabled?: boolean;\n  checked?: boolean | null;\n  closeOnSelect?: boolean;\n  accessibilityLabel?: string | null;\n  children?: JSX.Element;\n  onSelect?: () => void;\n}) {\n  return (\n    <BaseMenuItem\n      disabled={props.disabled}\n      checked={props.checked}\n      closeOnSelect={props.closeOnSelect}\n      accessibilityLabel={props.accessibilityLabel}\n      onSelect={props.onSelect}\n      focusStyle={focusRing()}\n      style={{\n        height: 32,\n        paddingHorizontal: 8,\n        borderRadius: 6,\n        flexDirection: \"row\",\n        alignItems: \"center\",\n        gap: 8,\n        opacity: props.disabled ? 0.5 : 1,\n      }}\n      hoverStyle={props.disabled ? undefined : { backgroundColor: colors.accent }}\n      indicatorStyle={{ width: 16, height: 16, alignItems: \"center\", justifyContent: \"center\" }}\n      indicator={\n        props.checked ? (\n          <Text style={{ fontSize: 12, color: colors.primary }}>✓</Text>\n        ) : (\n          <View style={{ width: 16, height: 16 }} />\n        )\n      }\n    >\n      {props.children}\n    </BaseMenuItem>\n  );\n}\n\nexport function DropdownMenuSeparator() {\n  return (\n    <BaseMenuSeparator\n      style={{\n        height: 1,\n        marginVertical: 4,\n        marginHorizontal: 4,\n        backgroundColor: colors.border,\n      }}\n    />\n  );\n}\n\nexport function DropdownMenuSub(props: {\n  trigger?: JSX.Element;\n  children?: JSX.Element;\n}) {\n  return (\n    <BaseSubmenu trigger={props.trigger} style={{ minWidth: 140 }}>\n      {props.children}\n    </BaseSubmenu>\n  );\n}\n\n/** Alias matching shadcn naming — pass children as the menu `trigger`. */\nexport function DropdownMenuTrigger(props: { children?: JSX.Element }) {\n  return props.children;\n}\n"
+    }
+  ]
+}

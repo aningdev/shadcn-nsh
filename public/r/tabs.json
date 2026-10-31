@@ -1,0 +1,15 @@
+{
+  "name": "tabs",
+  "type": "registry:ui",
+  "title": "Tabs",
+  "description": "Styled tabs wrapping nsh/base Tabs and Tab.",
+  "registryDependencies": ["theme"],
+  "files": [
+    {
+      "path": "packages/ui/tabs.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/tabs.tsx",
+      "content": "import { colors, focusRing, radius } from \"@shadcn-nsh/theme\";\nimport type { JSX } from \"nsh\";\nimport { Tab as BaseTab, Tabs as BaseTabs } from \"nsh/base\";\n\nexport function Tabs(props: { children?: JSX.Element }) {\n  return (\n    <BaseTabs\n      style={{\n        flexDirection: \"row\",\n        gap: 4,\n        padding: 4,\n        borderRadius: radius.control,\n        backgroundColor: colors.muted,\n      }}\n      indicatorStyle={{ display: \"none\" }}\n    >\n      {props.children}\n    </BaseTabs>\n  );\n}\n\nexport function Tab(props: {\n  selected?: boolean;\n  disabled?: boolean;\n  accessibilityLabel?: string | null;\n  children?: JSX.Element;\n  onPress?: () => void;\n}) {\n  return (\n    <BaseTab\n      selected={props.selected}\n      disabled={props.disabled}\n      accessibilityLabel={props.accessibilityLabel}\n      onPress={props.onPress}\n      focusStyle={focusRing()}\n      style={{\n        height: 32,\n        paddingHorizontal: 12,\n        borderRadius: Math.max(4, radius.control - 2),\n        alignItems: \"center\",\n        justifyContent: \"center\",\n        backgroundColor: props.selected ? colors.background : \"transparent\",\n        opacity: props.disabled ? 0.5 : 1,\n      }}\n    >\n      {props.children}\n    </BaseTab>\n  );\n}\n"
+    }
+  ]
+}

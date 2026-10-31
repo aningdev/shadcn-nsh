@@ -1,0 +1,24 @@
+---
+import Docs from "../../../layouts/Docs.astro";
+const name = "toggle";
+const title = "Toggle";
+---
+
+<Docs title={title} description={`Styled ${title} wrapping nsh/base.`}>
+  <h1>{title}</h1>
+  <p class="lead">
+    Styled wrapper on <code>nsh/base</code>. See author map:
+    <code>packages/ui/COMPONENTS.md</code>.
+  </p>
+
+  <h2>Install</h2>
+  <pre><code>{`shadcn-nsh add ${name}
+# monorepo:
+shadcn-nsh add ${name} -c apps/web`}</code></pre>
+
+  <h2>Source</h2>
+  <p>
+    Authoring: <code>{`packages/ui/toggle.tsx`}</code>. Registry item: <code>{name}</code> (depends
+    on <code>theme</code>).
+  </p>
+</Docs>

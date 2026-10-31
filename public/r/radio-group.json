@@ -1,0 +1,15 @@
+{
+  "name": "radio-group",
+  "type": "registry:ui",
+  "title": "Radio Group",
+  "description": "Styled radio group wrapping nsh/base RadioGroup and Radio.",
+  "registryDependencies": ["theme"],
+  "files": [
+    {
+      "path": "packages/ui/radio-group.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/radio-group.tsx",
+      "content": "import { colors, focusRing } from \"@shadcn-nsh/theme\";\nimport type { JSX } from \"nsh\";\nimport { Text, View } from \"nsh\";\nimport { Radio as BaseRadio, RadioGroup as BaseRadioGroup } from \"nsh/base\";\n\nexport function RadioGroup(props: {\n  children?: JSX.Element;\n  style?: object;\n}) {\n  return (\n    <BaseRadioGroup style={[{ gap: 8 }, props.style ?? null]}>\n      {props.children}\n    </BaseRadioGroup>\n  );\n}\n\nexport function Radio(props: {\n  checked?: boolean;\n  disabled?: boolean;\n  accessibilityLabel?: string | null;\n  children?: JSX.Element;\n  onChange?: (event: { checked: boolean }) => void;\n}) {\n  return (\n    <BaseRadio\n      checked={props.checked}\n      disabled={props.disabled}\n      accessibilityLabel={props.accessibilityLabel}\n      onChange={props.onChange}\n      focusStyle={focusRing()}\n      style={{\n        flexDirection: \"row\",\n        alignItems: \"center\",\n        gap: 8,\n        opacity: props.disabled ? 0.5 : 1,\n      }}\n    >\n      <View\n        style={{\n          width: 16,\n          height: 16,\n          borderRadius: 8,\n          borderWidth: 1,\n          borderColor: props.checked ? colors.primary : colors.input,\n          alignItems: \"center\",\n          justifyContent: \"center\",\n        }}\n      >\n        {props.checked ? <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.primary }} /> : null}\n      </View>\n      {props.children ?? <Text style={{ fontSize: 14, color: colors.foreground }} />}\n    </BaseRadio>\n  );\n}\n"
+    }
+  ]
+}

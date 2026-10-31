@@ -1,0 +1,15 @@
+{
+  "name": "accordion",
+  "type": "registry:ui",
+  "title": "Accordion",
+  "description": "Styled accordion wrapping nsh/base Accordion parts.",
+  "registryDependencies": ["theme"],
+  "files": [
+    {
+      "path": "packages/ui/accordion.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/accordion.tsx",
+      "content": "import { colors, focusRing } from \"@shadcn-nsh/theme\";\nimport type { JSX } from \"nsh\";\nimport { Text } from \"nsh\";\nimport {\n  Accordion as BaseAccordion,\n  AccordionHeader as BaseAccordionHeader,\n  AccordionItem as BaseAccordionItem,\n  AccordionPanel as BaseAccordionPanel,\n  AccordionTrigger as BaseAccordionTrigger,\n} from \"nsh/base\";\n\nexport function Accordion(props: {\n  value?: string[];\n  multiple?: boolean;\n  disabled?: boolean;\n  children?: JSX.Element;\n  onChange?: (event: { value: string[] }) => void;\n}) {\n  return (\n    <BaseAccordion\n      value={props.value}\n      multiple={props.multiple}\n      disabled={props.disabled}\n      onChange={props.onChange}\n      style={{ opacity: props.disabled ? 0.5 : 1 }}\n    >\n      {props.children}\n    </BaseAccordion>\n  );\n}\n\nexport function AccordionItem(props: {\n  value: string;\n  disabled?: boolean;\n  children?: JSX.Element;\n}) {\n  return (\n    <BaseAccordionItem\n      value={props.value}\n      disabled={props.disabled}\n      style={{\n        borderBottomWidth: 1,\n        borderBottomColor: colors.border,\n      }}\n    >\n      {props.children}\n    </BaseAccordionItem>\n  );\n}\n\nexport function AccordionHeader(props: { level?: number; children?: JSX.Element }) {\n  return <BaseAccordionHeader level={props.level}>{props.children}</BaseAccordionHeader>;\n}\n\nexport function AccordionTrigger(props: {\n  accessibilityLabel?: string | null;\n  children?: JSX.Element;\n}) {\n  return (\n    <BaseAccordionTrigger\n      accessibilityLabel={props.accessibilityLabel}\n      focusStyle={focusRing()}\n      style={{\n        flexDirection: \"row\",\n        alignItems: \"center\",\n        justifyContent: \"space-between\",\n        paddingVertical: 12,\n        gap: 8,\n      }}\n    >\n      {props.children ?? <Text style={{ fontSize: 14, fontWeight: \"500\", color: colors.foreground }}>Section</Text>}\n    </BaseAccordionTrigger>\n  );\n}\n\nexport function AccordionPanel(props: {\n  reveal?: boolean;\n  keepMounted?: boolean;\n  accessibilityLabel?: string | null;\n  children?: JSX.Element;\n}) {\n  return (\n    <BaseAccordionPanel\n      reveal={props.reveal ?? true}\n      keepMounted={props.keepMounted}\n      accessibilityLabel={props.accessibilityLabel}\n    >\n      {props.children}\n    </BaseAccordionPanel>\n  );\n}\n"
+    }
+  ]
+}

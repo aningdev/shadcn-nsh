@@ -1,0 +1,15 @@
+{
+  "name": "otp-input",
+  "type": "registry:ui",
+  "title": "OTP Input",
+  "description": "Styled OTP input wrapping nsh/base OtpInput.",
+  "registryDependencies": ["theme"],
+  "files": [
+    {
+      "path": "packages/ui/otp-input.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/otp-input.tsx",
+      "content": "import { colors, focusRing, radius } from \"@shadcn-nsh/theme\";\nimport { OtpInput as BaseOtpInput } from \"nsh/base\";\n\nexport function OtpInput(props: {\n  length: number;\n  value?: string | null;\n  defaultValue?: string | null;\n  masked?: boolean;\n  disabled?: boolean;\n  groups?: number;\n  accessibilityLabel?: string | null;\n  onChange?: (event: { value: string }) => void;\n  onComplete?: (event: { value: string }) => void;\n}) {\n  return (\n    <BaseOtpInput\n      length={props.length}\n      value={props.value}\n      defaultValue={props.defaultValue}\n      masked={props.masked}\n      disabled={props.disabled}\n      groups={props.groups}\n      accessibilityLabel={props.accessibilityLabel}\n      onChange={props.onChange}\n      onComplete={props.onComplete as never}\n      style={{\n        flexDirection: \"row\",\n        gap: 8,\n        opacity: props.disabled ? 0.5 : 1,\n      }}\n      groupStyle={{ flexDirection: \"row\", gap: 8 }}\n      cellStyle={{\n        width: 40,\n        height: 44,\n        borderRadius: radius.control,\n        borderWidth: 1,\n        borderColor: colors.input,\n        backgroundColor: colors.background,\n        color: colors.foreground,\n        fontSize: 18,\n        fontWeight: \"600\",\n        textAlign: \"center\",\n        ...focusRing(),\n      }}\n      caretStyle={{\n        width: 2,\n        height: 20,\n        backgroundColor: colors.foreground,\n      }}\n    />\n  );\n}\n"
+    }
+  ]
+}
