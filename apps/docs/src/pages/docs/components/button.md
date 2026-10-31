@@ -22,14 +22,29 @@ shadcn-nsh add button -c apps/web
 import { Button } from "@workspace/ui/components/ui/button";
 
 <Button onPress={() => {}}>Default</Button>
+```
+
+## Examples
+
+### Variants
+
+```tsx
+<Button>Default</Button>
 <Button variant="secondary">Secondary</Button>
 <Button variant="outline">Outline</Button>
 <Button variant="destructive">Destructive</Button>
 <Button variant="ghost">Ghost</Button>
+```
+
+### Disabled
+
+```tsx
 <Button disabled>Disabled</Button>
 ```
 
-## Variants
+## API
+
+### Variants
 
 | `variant`     | Look                     |
 | ------------- | ------------------------ |
@@ -39,7 +54,7 @@ import { Button } from "@workspace/ui/components/ui/button";
 | `destructive` | Destructive fill         |
 | `ghost`       | No border/fill           |
 
-## API
+### Props
 
 | Prop       | Type            | Default     | Notes                                          |
 | ---------- | --------------- | ----------- | ---------------------------------------------- |
@@ -48,8 +63,16 @@ import { Button } from "@workspace/ui/components/ui/button";
 | `disabled` | `boolean`       | —           |                                                |
 | `onPress`  | `() => void`    | —           |                                                |
 
-<div class="callout">
+## Differences
 
-**Not forwarded** from `nsh/base` Button: press/selection chrome such as `selected`, `role`, custom children trees, and style hooks (`style` / `hoverStyle` / `activeStyle` / `focusStyle`, etc.). This wrapper owns look-and-feel; extend the copied source if you need base knobs.
+| Topic        | shadcn                                      | This package                                           |
+| ------------ | ------------------------------------------- | ------------------------------------------------------ |
+| Press event  | `onClick`                                   | `onPress`                                              |
+| Children     | arbitrary nodes / `asChild`                 | `children: string` only (rendered as styled `Text`)    |
+| Size / icon  | `size`, icon slots, `asChild`               | fixed height; no size / icon / `asChild` API           |
+| Link look    | `variant="link"`                            | use the `link` component                               |
+| Class hooks  | `className` / CVA                           | theme tokens + locked styles inside the wrapper        |
 
-</div>
+## Not forwarded
+
+From `nsh/base` Button: press/selection chrome such as `selected`, `role`, custom children trees, and style hooks (`style` / `hoverStyle` / `activeStyle` / `focusStyle`, `accessibilityLabel`). The wrapper owns look-and-feel and sets `accessibilityLabel` from the string label. Extend the copied source if you need base knobs.

@@ -7,7 +7,7 @@ demo: popover
 demoHeight: 360
 ---
 
-Styled popover on `nsh/base` Popover with fixed surface padding and offset.
+Styled anchored surface on `nsh/base` Popover with fixed surface padding and offset. Single root — pass the open control via `trigger`, compose body as `children`.
 
 ## Install
 
@@ -29,20 +29,64 @@ import { Text } from "nsh";
 </Popover>;
 ```
 
+## Composition
+
+```
+Popover
+├─ trigger (prop)
+└─ children (body — you own layout)
+```
+
+Unlike shadcn’s `PopoverTrigger` / `PopoverContent` tree, this wrapper is one `Popover` root.
+
+## Examples
+
+### Controlled open
+
+```tsx
+const [open, setOpen] = createSignal(false);
+
+<Popover
+  open={open()}
+  onOpenChange={(e) => setOpen(e.open)}
+  trigger={<Button onPress={() => setOpen(true)}>Open popover</Button>}
+>
+  <Text>Quick tip</Text>
+  <Button variant="outline" onPress={() => setOpen(false)}>
+    Close
+  </Button>
+</Popover>
+```
+
+### Uncontrolled
+
+```tsx
+<Popover defaultOpen={false} trigger={<Button onPress={() => {}}>Info</Button>}>
+  <Text>Default open state via defaultOpen</Text>
+</Popover>
+```
+
 ## API
 
-| Prop           | Type                                                 | Notes |
-| -------------- | ---------------------------------------------------- | ----- |
-| `open`         | `boolean \| null`                                    |       |
-| `defaultOpen`  | `boolean`                                            |       |
-| `trigger`      | `JSX.Element`                                        |       |
-| `children`     | `JSX.Element`                                        |       |
-| `onOpenChange` | `(event: { open: boolean; reason: string }) => void` |       |
-| `onOpen`       | `() => void`                                         |       |
-| `onClose`      | `() => void`                                         |       |
+| Prop           | Type                                                 | Notes           |
+| -------------- | ---------------------------------------------------- | --------------- |
+| `open`         | `boolean \| null`                                    | Controlled open |
+| `defaultOpen`  | `boolean`                                            |                 |
+| `trigger`      | `JSX.Element`                                        | Open control    |
+| `children`     | `JSX.Element`                                        | Body content    |
+| `onOpenChange` | `(event: { open: boolean; reason: string }) => void` |                 |
+| `onOpen`       | `() => void`                                         |                 |
+| `onClose`      | `() => void`                                         |                 |
 
-<div class="callout">
+## Differences
 
-**Not forwarded:** `offset` (fixed to `4`) and `popupStyle`.
+| Topic       | shadcn                                              | This package                                              |
+| ----------- | --------------------------------------------------- | --------------------------------------------------------- |
+| Parts       | `Popover` / `Trigger` / `Content` / `Anchor` / …    | single `Popover`; compose children yourself               |
+| Trigger     | `PopoverTrigger` inside the tree                    | `trigger` prop on the root                                |
+| Close UI    | app-built inside content                            | same — no built-in close control                          |
+| Presentation| Radix portal + content chrome                       | nsh Popover + fixed surface styles (`offset` locked to 4) |
 
-</div>
+## Not forwarded
+
+From `nsh/base` Popover: `offset` (fixed to `4`) and `popupStyle`. This wrapper does not set `backdropStyle` (unlike menu / select). Surface chrome is owned by the wrapper.

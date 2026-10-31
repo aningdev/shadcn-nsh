@@ -7,7 +7,7 @@ demo: select
 demoHeight: 360
 ---
 
-Styled select on `nsh/base` Select. Most value/open props pass through; appearance and popup offset are locked by the wrapper.
+Styled single-value picker on `nsh/base` Select. Pass options as `items[]` — appearance, popup offset, and list chrome are locked by the wrapper.
 
 ## Install
 
@@ -32,28 +32,87 @@ import { Select } from "@workspace/ui/components/ui/select";
 />;
 ```
 
+## Examples
+
+### Controlled value
+
+```tsx
+const [fruit, setFruit] = createSignal<string | null>("apple");
+
+<Select
+  value={fruit()}
+  onChange={(e) => setFruit(e.value)}
+  items={[
+    { value: "apple", title: "Apple" },
+    { value: "banana", title: "Banana" },
+    { value: "orange", title: "Orange" },
+  ]}
+/>;
+```
+
+### Searchable
+
+```tsx
+<Select
+  searchable
+  searchPlaceholder="Filter…"
+  items={[
+    { value: "apple", title: "Apple" },
+    { value: "apricot", title: "Apricot" },
+  ]}
+  placeholder="Fruit"
+/>;
+```
+
+### Custom trigger
+
+```tsx
+import { Text, View } from "nsh";
+
+<Select
+  items={[{ value: "a", title: "Alpha" }]}
+  trigger={
+    <View>
+      <Text>Open select</Text>
+    </View>
+  }
+/>;
+```
+
 ## API
 
-| Prop                 | Type                                                 | Notes                   |
-| -------------------- | ---------------------------------------------------- | ----------------------- |
-| `items`              | `SelectItem[]`                                       | Required                |
-| `value`              | `string \| null`                                     |                         |
-| `defaultValue`       | `string \| null`                                     |                         |
-| `open`               | `boolean \| null`                                    |                         |
-| `defaultOpen`        | `boolean`                                            |                         |
-| `searchable`         | `boolean`                                            |                         |
-| `searchPlaceholder`  | `string \| null`                                     |                         |
-| `cleanable`          | `boolean`                                            |                         |
-| `disabled`           | `boolean`                                            |                         |
-| `placeholder`        | `string`                                             | Default trigger label   |
-| `accessibilityLabel` | `string \| null`                                     |                         |
-| `trigger`            | `JSX.Element`                                        | Optional custom trigger |
-| `empty`              | `JSX.Element`                                        |                         |
-| `onChange`           | `(event: { value: string \| null }) => void`         |                         |
-| `onOpenChange`       | `(event: { open: boolean; reason: string }) => void` |                         |
+Re-exports types `SelectItem` and `SelectItemState` from `nsh/base`.
 
-<div class="callout">
+| Prop                 | Type                                                 | Default | Notes                                       |
+| -------------------- | ---------------------------------------------------- | ------- | ------------------------------------------- |
+| `items`              | `SelectItem[]`                                       | —       | Required; option list from `nsh/base`       |
+| `value`              | `string \| null`                                     | —       | Controlled selection                        |
+| `defaultValue`       | `string \| null`                                     | —       |                                             |
+| `open`               | `boolean \| null`                                    | —       | Controlled open                             |
+| `defaultOpen`        | `boolean`                                            | —       |                                             |
+| `searchable`         | `boolean`                                            | —       |                                             |
+| `searchPlaceholder`  | `string \| null`                                     | —       |                                             |
+| `cleanable`          | `boolean`                                            | —       |                                             |
+| `disabled`           | `boolean`                                            | —       |                                             |
+| `placeholder`        | `string`                                             | —       | Default trigger label when empty            |
+| `accessibilityLabel` | `string \| null`                                     | —       |                                             |
+| `trigger`            | `JSX.Element`                                        | —       | Custom trigger; default built-in if omitted |
+| `empty`              | `JSX.Element`                                        | —       | Empty-state slot                            |
+| `onChange`           | `(event: { value: string \| null }) => void`         | —       |                                             |
+| `onOpenChange`       | `(event: { open: boolean; reason: string }) => void` | —       |                                             |
 
-**Not forwarded:** `offset` (fixed to `4`), `popupStyle` / `backdropStyle` / list & item style hooks, and `renderItem`. Default trigger chrome is provided when `trigger` is omitted.
+## Differences
 
-</div>
+| Topic       | shadcn                                                                      | This package                                                      |
+| ----------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------- |
+| Options     | `Select` / `SelectTrigger` / `SelectContent` / `SelectItem` / `SelectValue` | single `Select` + required `items: SelectItem[]`                  |
+| Value       | item nodes inside content                                                   | `value` / `onChange` use `string \| null`                         |
+| Search      | not built into core Select                                                  | optional `searchable` / `searchPlaceholder` on the same root      |
+| Trigger     | `SelectTrigger` + `SelectValue` parts                                       | optional `trigger` prop; wrapper supplies a default               |
+| Presentation| Radix portal + content chrome                                               | nsh Select + fixed popup/list/item chrome from the wrapper        |
+
+Do not invent a Radix-style `SelectItem` children tree in app code — feed options through `items`.
+
+## Not forwarded
+
+From `nsh/base` Select: `offset` (fixed to `4`), `popupStyle` / `backdropStyle`, `listStyle` / `itemStyle` / `groupStyle` / `searchStyle` / `focusStyle`, and `renderItem`. Presentation and list rendering are owned by this wrapper.
