@@ -1,0 +1,34 @@
+---
+import type { Lang } from "../lib/site";
+
+export interface Heading {
+  depth: number;
+  slug: string;
+  text: string;
+}
+export interface Props {
+  headings?: Heading[];
+  lang?: Lang;
+}
+
+const { headings = [], lang = "en" } = Astro.props;
+const items = headings.filter((h) => h.depth === 2 || h.depth === 3);
+const label = lang === "zh-CN" ? "本页内容" : "On this page";
+---
+
+<nav class="toc" aria-label={label}>
+  {
+    items.length > 1 && (
+      <>
+        <p class="toc__label">{label}</p>
+        <ul>
+          {items.map((h) => (
+            <li class:list={["toc__item", { "toc__item--sub": h.depth === 3 }]}>
+              <a href={`#${h.slug}`}>{h.text}</a>
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
+</nav>

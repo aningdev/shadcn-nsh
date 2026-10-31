@@ -1,9 +1,13 @@
 ---
 import DemoFrame from "../components/DemoFrame.astro";
-import { withBase } from "../lib/base";
-import { components, getComponentBySlug } from "../lib/components";
-
-import "../styles/global.css";
+import Nav from "../components/Nav.astro";
+import Sidebar from "../components/Sidebar.astro";
+import SiteFooter from "../components/SiteFooter.astro";
+import Toc from "../components/Toc.astro";
+import { getComponentBySlug } from "../lib/components";
+import { neighbors, pageFromPath } from "../lib/nav";
+import { EDIT_BASE, BASE } from "../lib/site";
+import BaseLayout from "./BaseLayout.astro";
 
 interface Props {
   title?: string;
@@ -20,144 +24,287 @@ const title = Astro.props.title ?? Astro.props.frontmatter?.title ?? "Docs";
 const description = Astro.props.description ?? Astro.props.frontmatter?.description;
 const demo = Astro.props.frontmatter?.demo;
 const isComponentPage = !!Astro.props.frontmatter?.component || !!demo;
-const path = Astro.url.pathname;
-const normalize = (p: string) => p.replace(/\/+$/, "") || "/";
-const current = normalize(path);
-const isCurrent = (...candidates: string[]) =>
-  candidates.some((c) => current === normalize(withBase(c)));
 
-const slugMatch = current.match(/\/docs\/components\/([^/]+)$/);
-const componentDoc = isComponentPage && slugMatch ? getComponentBySlug(slugMatch[1]!) : undefined;
+const path = Astro.url.pathname;
+const base = BASE.replace(/\/+$/, "") || "";
+const pathNoBase = (base && path.startsWith(base) ? path.slice(base.length) : path).replace(
+  /\/+$/,
+  "",
+) || "/";
+
+const navPage = pageFromPath(path);
+const { prev, next } = neighbors(path);
+
+const slugMatch = pathNoBase.match(/^\/docs\/components\/([^/]+)$/);
+const componentDoc =
+  isComponentPage && slugMatch ? getComponentBySlug(slugMatch[1]!) : undefined;
 const nshUrl = componentDoc ? `https://nsh.dev/elements/${componentDoc.nshElement}` : undefined;
 const nshMdUrl = nshUrl ? `${nshUrl}.md` : undefined;
 const authoringFile = componentDoc ? `packages/ui/${componentDoc.slug}.tsx` : undefined;
+
+const editPath = navPage
+  ? navPage.componentSlug
+    ? `apps/docs/src/pages/docs/components/${navPage.componentSlug}.md`
+    : navPage.route === "/docs/components"
+      ? "apps/docs/src/pages/docs/components/index.astro"
+      : navPage.route === "/docs/theme"
+        ? "apps/docs/src/pages/docs/theme.md"
+        : navPage.route === "/docs/getting-started"
+          ? "apps/docs/src/pages/docs/getting-started.md"
+          : undefined
+  : undefined;
+
+const kicker =
+  navPage?.section === "components"
+    ? "Components"
+    : navPage?.section === "theme"
+      ? "Theme"
+      : navPage?.section === "getting-started"
+        ? "Getting started"
+        : "Docs";
+
+const showDocHeader = true;
 ---
 
-<!doctype html>
-<html lang="zh-CN">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title} · shadcn-nsh</title>
-    {description ? <meta name="description" content={description} /> : null}
-  </head>
-  <body>
-    <div class="site">
-      <header class="site-header">
-        <a class="brand" href={withBase()}>
-          shadcn-nsh
-        </a>
-        <nav class="nav" aria-label="Primary">
-          <a
-            href={withBase("docs/getting-started")}
-            aria-current={isCurrent("docs/getting-started") ? "page" : undefined}
-          >
-            Getting started
-          </a>
-          <a
-            href={withBase("docs/theme")}
-            aria-current={isCurrent("docs/theme") ? "page" : undefined}
-          >
-            Theme
-          </a>
-          <a
-            href={withBase("docs/components")}
-            aria-current={current.includes("/docs/components") ? "page" : undefined}
-          >
-            Components
-          </a>
-          <a href={withBase("llms.txt")}>llms.txt</a>
-        </nav>
-      </header>
-      <div class="layout">
-        <aside class="side">
-          <nav aria-label="Docs">
-            <a
-              href={withBase("docs/getting-started")}
-              aria-current={isCurrent("docs/getting-started") ? "page" : undefined}
-            >
-              Getting started
-            </a>
-            <a
-              href={withBase("docs/theme")}
-              aria-current={isCurrent("docs/theme") ? "page" : undefined}
-            >
-              Theme
-            </a>
-            <a
-              href={withBase("docs/components")}
-              aria-current={isCurrent("docs/components") ? "page" : undefined}
-            >
-              All components
-            </a>
-            {components.map((c) => (
-              <a
-                href={withBase(`docs/components/${c.slug}`)}
-                aria-current={isCurrent(`docs/components/${c.slug}`) ? "page" : undefined}
-              >
-                {c.title}
-              </a>
-            ))}
-          </nav>
-        </aside>
-        <main class="prose">
-          {isComponentPage ? (
-            <>
+<BaseLayout title={title} description={description}>
+  <Nav currentPath={path} />
+
+  <div class="docs-layout">
+    <Sidebar current={pathNoBase} title="Docs" />
+
+    <main class="docs-main" id="main">
+      <article class="doc-content">
+        {
+          showDocHeader ? (
+            <header class="doc-header">
+              <p class="doc-header__kicker">{kicker}</p>
               <h1>{title}</h1>
-              {componentDoc && nshUrl ? (
-                <p class="component-chrome">
-                  Base:{" "}
-                  <a href={nshUrl} rel="noopener noreferrer">
-                    nsh/base · {componentDoc.nshElement}
-                  </a>
-                  {" · "}
-                  <a href={nshMdUrl} rel="noopener noreferrer">
-                    .md
-                  </a>
-                  {componentDoc.slug !== componentDoc.nshElement ? (
-                    <>
-                      {" "}
-                      <span class="muted">
-                        (docs slug <code>{componentDoc.slug}</code>)
-                      </span>
-                    </>
-                  ) : null}
-                </p>
-              ) : null}
-              {demo ? (
-                <>
-                  <h2>Preview</h2>
-                  <p>
-                    Web preview (NSH <code>--target web</code>). For native behaviour use the
-                    gallery.
-                  </p>
-                  <DemoFrame name={demo} height={300} />
-                </>
-              ) : null}
-            </>
-          ) : null}
-          <slot />
-          {componentDoc && nshUrl ? (
-            <>
-              <h2>Behavior &amp; a11y</h2>
-              <p>
-                Keyboard, focus, platform notes, and the full unstyled API live on nsh — not on this
-                page. See{" "}
+            </header>
+          ) : null
+        }
+        <div class="doc-body">
+          {
+            componentDoc && nshUrl ? (
+              <p class="component-chrome">
+                Base:{" "}
                 <a href={nshUrl} rel="noopener noreferrer">
-                  {componentDoc.title} on nsh.dev
+                  nsh/base · {componentDoc.nshElement}
                 </a>
-                . This package is a curated styled wrapper; only props listed under API (when
-                present) are part of the public surface here.
+                {" · "}
+                <a href={nshMdUrl} rel="noopener noreferrer">
+                  .md
+                </a>
+                {componentDoc.slug !== componentDoc.nshElement ? (
+                  <>
+                    {" "}
+                    <span class="muted">
+                      (docs slug <code>{componentDoc.slug}</code>)
+                    </span>
+                  </>
+                ) : null}
               </p>
-              <h2>Source</h2>
-              <p>
-                Authoring: <code>{authoringFile}</code>. Registry: <code>{componentDoc.slug}</code>{" "}
-                (depends on <code>theme</code>).
-              </p>
-            </>
-          ) : null}
-        </main>
-      </div>
-    </div>
-  </body>
-</html>
+            ) : null
+          }
+          {
+            demo ? (
+              <>
+                <h2 id="preview">Preview</h2>
+                <p>
+                  Web preview (NSH <code>--target web</code>). For native behaviour use the gallery.
+                </p>
+                <DemoFrame name={demo} height={300} />
+              </>
+            ) : null
+          }
+          <slot />
+          {
+            componentDoc && nshUrl ? (
+              <>
+                <h2 id="behavior-a11y">Behavior &amp; a11y</h2>
+                <p>
+                  Keyboard, focus, platform notes, and the full unstyled API live on nsh — not on
+                  this page. See{" "}
+                  <a href={nshUrl} rel="noopener noreferrer">
+                    {componentDoc.title} on nsh.dev
+                  </a>
+                  . This package is a curated styled wrapper; only props listed under API (when
+                  present) are part of the public surface here.
+                </p>
+                <h2 id="source">Source</h2>
+                <p>
+                  Authoring: <code>{authoringFile}</code>. Registry:{" "}
+                  <code>{componentDoc.slug}</code> (depends on <code>theme</code>).
+                </p>
+              </>
+            ) : null
+          }
+        </div>
+      </article>
+
+      {
+        editPath ? (
+          <div class="doc-meta">
+            <a href={`${EDIT_BASE}${editPath}`} target="_blank" rel="noopener noreferrer">
+              <svg
+                viewBox="0 0 24 24"
+                width="14"
+                height="14"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+                ><path d="M12 20h9"></path><path d="M16.38 3.62a2.12 2.12 0 1 1 3 3L7.37 18.64a2 2 0 0 1-.86.5l-2.87.84.84-2.87a2 2 0 0 1 .5-.86z"></path></svg
+              >
+              Edit this page on GitHub
+            </a>
+          </div>
+        ) : null
+      }
+
+      {
+        prev || next ? (
+          <nav class="doc-pager" aria-label="Pagination">
+            {prev ? (
+              <a class="doc-pager__link" href={prev.href} rel="prev">
+                <span class="doc-pager__label">← Previous</span>
+                <span class="doc-pager__title">{prev.title}</span>
+              </a>
+            ) : (
+              <span />
+            )}
+            {next ? (
+              <a class="doc-pager__link doc-pager__link--next" href={next.href} rel="next">
+                <span class="doc-pager__label">Next →</span>
+                <span class="doc-pager__title">{next.title}</span>
+              </a>
+            ) : null}
+          </nav>
+        ) : null
+      }
+    </main>
+
+    <Toc lang="en" />
+  </div>
+
+  <SiteFooter />
+</BaseLayout>
+
+<script>
+  // Build TOC from rendered headings (Markdown layout pages have no content-collection headings).
+  const toc = document.querySelector(".toc");
+  const body = document.querySelector(".doc-body");
+  if (toc && body) {
+    const headings = [...body.querySelectorAll<HTMLHeadingElement>("h2, h3")].filter((h) => h.id);
+    if (headings.length > 1) {
+      const label = document.createElement("p");
+      label.className = "toc__label";
+      label.textContent = "On this page";
+      const ul = document.createElement("ul");
+      for (const h of headings) {
+        const li = document.createElement("li");
+        li.className = h.tagName === "H3" ? "toc__item toc__item--sub" : "toc__item";
+        const a = document.createElement("a");
+        a.href = `#${h.id}`;
+        a.textContent = h.textContent ?? "";
+        li.append(a);
+        ul.append(li);
+      }
+      toc.replaceChildren(label, ul);
+
+      const links = new Map<string, HTMLAnchorElement>();
+      toc.querySelectorAll<HTMLAnchorElement>('a[href^="#"]').forEach((a) => {
+        links.set(decodeURIComponent(a.hash.slice(1)), a);
+      });
+      const targets = [...links.keys()]
+        .map((id) => document.getElementById(id))
+        .filter((el): el is HTMLElement => el !== null);
+      let current: HTMLAnchorElement | null = null;
+      const setCurrent = (id: string | undefined) => {
+        const next = id ? (links.get(id) ?? null) : null;
+        if (next === current) return;
+        current?.classList.remove("is-current");
+        next?.classList.add("is-current");
+        current = next;
+      };
+      const seen = new Set<string>();
+      const observer = new IntersectionObserver(
+        (entries) => {
+          for (const entry of entries) {
+            if (entry.isIntersecting) seen.add(entry.target.id);
+            else seen.delete(entry.target.id);
+          }
+          const first = targets.find((el) => seen.has(el.id));
+          if (first) return setCurrent(first.id);
+          let passed: string | undefined;
+          for (const el of targets) if (el.getBoundingClientRect().top <= 88) passed = el.id;
+          if (passed) setCurrent(passed);
+        },
+        { rootMargin: "-88px 0px -55% 0px", threshold: 0 },
+      );
+      targets.forEach((el) => observer.observe(el));
+    }
+  }
+
+  const copyIcon =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></svg>';
+  const checkIcon =
+    '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg>';
+
+  for (const pre of document.querySelectorAll<HTMLPreElement>(".doc-content pre")) {
+    const code = pre.querySelector("code");
+    if (!code) continue;
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "doc-code-copy";
+    button.setAttribute("aria-label", "Copy code");
+    button.innerHTML = copyIcon;
+    let timer: ReturnType<typeof setTimeout> | undefined;
+    button.addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(code.textContent ?? "");
+        button.dataset.copied = "";
+        button.setAttribute("aria-label", "Copied");
+        button.innerHTML = checkIcon;
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+          delete button.dataset.copied;
+          button.setAttribute("aria-label", "Copy code");
+          button.innerHTML = copyIcon;
+        }, 1600);
+      } catch {}
+    });
+    pre.append(button);
+  }
+</script>
+
+<style is:global>
+  .component-chrome {
+    margin: 0 0 1.25rem;
+    font-size: 0.95rem;
+    color: var(--muted-foreground);
+  }
+  .component-chrome .muted {
+    color: var(--faint);
+  }
+  .demo-frame {
+    border: 1px solid var(--border);
+    border-radius: var(--radius-card);
+    overflow: hidden;
+    background: var(--card);
+    margin: 1.25rem 0;
+  }
+  .demo-frame iframe {
+    display: block;
+    width: 100%;
+    height: 280px;
+    border: 0;
+    background: var(--background);
+  }
+  .demo-fallback {
+    padding: 1.25rem;
+    color: var(--muted-foreground);
+    font-size: 0.95rem;
+  }
+</style>

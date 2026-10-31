@@ -2,6 +2,12 @@
 
 Astro docs site for shadcn-nsh (public copy-into-app docs + optional web demos).
 
+## Shell (NSH website)
+
+The chrome is a structural copy of `references/nsh/website`: sticky `site-nav` (burger under 860px), `docs-sidebar` (folding toggle under 960px), `docs-main` / `doc-content`, TOC, pager, footer, light/dark theme switch. Styles come from that site’s `global.css` + `ui.css`, with gallery tokens inlined as `styles/gallery-ui.css`.
+
+Do **not** invent a parallel layout — extend the NSH shell components under `src/components/` and `src/layouts/`.
+
 ## Hybrid IA
 
 This site documents the **styled / copy-into-app** layer only. Behavior, a11y, platform notes, and the full `nsh/base` API deep-link to `https://nsh.dev/elements/<nshElement>` (driven by `src/lib/components.ts`). Do **not** scrape or embed nsh Markdown into pages.
@@ -10,7 +16,7 @@ This site documents the **styled / copy-into-app** layer only. Behavior, a11y, p
 
 - Author as Markdown under `src/pages/docs/components/<slug>.md` (not `.astro`).
 - Frontmatter: `layout`, `title`, `description`, `component: true`; optional `demo: <name>` to inject `DemoFrame` (needs `bun run docs:demos`).
-- Do **not** put `# Title` in the body — `Docs.astro` renders `h1` from frontmatter when `component` / `demo` is set.
+- Do **not** put `# Title` in the body — `Docs.astro` renders `h1` from frontmatter.
 - Do **not** hand-write nsh.dev links, `## Behavior & a11y`, or `## Source` — the layout injects them from `nshElement` / slug (handles slug ≠ element, e.g. `dropdown-menu` → `menu`).
 - Rendered page contract (layout + body):
 
@@ -26,6 +32,7 @@ This site documents the **styled / copy-into-app** layer only. Behavior, a11y, p
   10. _(layout)_ Source
 
 - Nav / index list: `src/lib/components.ts` (keep in sync with Phase-1 registry UI items).
+- Sidebar order: `src/lib/nav.ts` (`SIDEBAR_PAGES`).
 
 ## Site pages
 

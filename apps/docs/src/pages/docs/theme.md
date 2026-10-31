@@ -4,8 +4,6 @@ title: Theme
 description: theme.json is the token source of truth; token() and @shadcn-nsh/theme helpers read it.
 ---
 
-# Theme
-
 Token truth for shadcn-nsh is **`theme.json`** (wired through `nsh.json` `theme`), not CSS variables you invent in the docs site. Styled wrappers read tokens via `token()` / `@shadcn-nsh/theme` helpers (`colors`, `radius`, `focusRing`).
 
 ## Install
