@@ -1,5 +1,6 @@
 import { colors } from "@shadcn-nsh/theme";
-import { Button } from "@shadcn-nsh/ui";
+// Avoid `@shadcn-nsh/ui` barrel: it pulls wrappers that need a newer `nsh/base`.
+import { Button } from "../../../packages/ui/button";
 import { mount, signal, Text, View } from "nsh";
 
 function App() {
