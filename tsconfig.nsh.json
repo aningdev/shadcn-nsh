@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "extends": "./tsconfig.base.json",
+  "compilerOptions": {
+    "lib": ["ES2023", "ESNext.Disposable"],
+    "jsx": "preserve",
+    "jsxImportSource": "nsh",
+    "types": [],
+    "paths": {
+      "nsh": ["./apps/gallery/.nsh/types/nsh/index.d.ts"],
+      "nsh/*": ["./apps/gallery/.nsh/types/nsh/*.d.ts"],
+      "@shadcn-nsh/theme": ["./packages/theme/index.ts"],
+      "@shadcn-nsh/theme/*": ["./packages/theme/*"],
+      "@shadcn-nsh/ui": ["./packages/ui/index.ts"],
+      "@shadcn-nsh/ui/*": ["./packages/ui/*"]
+    }
+  },
+  "files": [
+    "./apps/gallery/.nsh/types/nsh/globals.d.ts",
+    "./apps/gallery/.nsh/types/nsh/assets.d.ts",
+    "./apps/gallery/.nsh/types/nsh/tokens.d.ts"
+  ]
+}

@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+
 import type { NshUiConfig, RegistryItem } from "../types";
 import { defaultTarget } from "./paths";
 import { transformContent } from "./transform";
@@ -19,9 +20,7 @@ export async function installItems(
       }
 
       const targetRel = defaultTarget(file, config.aliases);
-      const absolute = path.isAbsolute(targetRel)
-        ? targetRel
-        : path.resolve(cwd, targetRel);
+      const absolute = path.isAbsolute(targetRel) ? targetRel : path.resolve(cwd, targetRel);
 
       try {
         await fs.access(absolute);

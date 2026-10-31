@@ -1,6 +1,6 @@
-import { mount, signal, Text, View } from "nsh";
 import { colors } from "@shadcn-nsh/theme";
 import { Button } from "@shadcn-nsh/ui";
+import { mount, signal, Text, View } from "nsh";
 
 function App() {
   const count = signal(0);

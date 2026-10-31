@@ -1,6 +1,8 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+
 import { Command } from "commander";
+
 import type { Registry, RegistryItem } from "../types";
 
 export const build = new Command()
@@ -17,7 +19,12 @@ export const build = new Command()
     const registry = JSON.parse(await fs.readFile(registryPath, "utf8")) as Registry;
     await fs.mkdir(outputDir, { recursive: true });
 
-    const catalog: { name: string; type: string; title?: string; description?: string }[] = [];
+    const catalog: {
+      name: string;
+      type: string;
+      title?: string;
+      description?: string;
+    }[] = [];
 
     for (const item of registry.items) {
       const built: RegistryItem = {

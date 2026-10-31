@@ -8,20 +8,20 @@
 
 只读参考，默认不在 submodule 内改代码或向上游提 PR（除非用户明确要求）。
 
-| 路径 | 用途 |
-| --- | --- |
-| [`references/shadcn-ui`](references/shadcn-ui) | 体系模式：registry、文档站、CLI、copy-into-app |
-| [`references/nsh`](references/nsh) | 平台与 unstyled 基础：`nsh` / `nsh/base`、Gallery 示例样式 |
+| 路径                                           | 用途                                                       |
+| ---------------------------------------------- | ---------------------------------------------------------- |
+| [`references/shadcn-ui`](references/shadcn-ui) | 体系模式：registry、文档站、CLI、copy-into-app             |
+| [`references/nsh`](references/nsh)             | 平台与 unstyled 基础：`nsh` / `nsh/base`、Gallery 示例样式 |
 
 克隆后若目录为空：`git submodule update --init --recursive`。
 
 ## 分层
 
-| 层 | 权威参考 | 本仓职责 |
-| --- | --- | --- |
-| 分发与作者体验 | `references/shadcn-ui`（`apps/v4/registry`、`packages/shadcn`） | `registry.json` → `public/r` + `packages/cli` |
-| 行为与 a11y | `references/nsh` 的 `nsh/base` | 组合与样式，不重写行为 |
-| 样式示例（非 API） | `references/nsh` 的 `examples/nsh-gallery-ui`、`examples/gallery` | 可借鉴 token/零件，勿当契约 |
+| 层                 | 权威参考                                                          | 本仓职责                                      |
+| ------------------ | ----------------------------------------------------------------- | --------------------------------------------- |
+| 分发与作者体验     | `references/shadcn-ui`（`apps/v4/registry`、`packages/shadcn`）   | `registry.json` → `public/r` + `packages/cli` |
+| 行为与 a11y        | `references/nsh` 的 `nsh/base`                                    | 组合与样式，不重写行为                        |
+| 样式示例（非 API） | `references/nsh` 的 `examples/nsh-gallery-ui`、`examples/gallery` | 可借鉴 token/零件，勿当契约                   |
 
 依赖向下：本库 → `nsh/base` → `nsh`。
 
@@ -37,22 +37,41 @@
 
 Bun workspaces（`apps/*`、`packages/*`）。copy-into-app 分发已通：`build` → `public/r` → `init` / `add`。
 
-| 路径 | 职责 |
-| --- | --- |
+| 路径                               | 职责                                                 |
+| ---------------------------------- | ---------------------------------------------------- |
 | [`packages/theme`](packages/theme) | `theme.json` + `token()` 辅助（`@shadcn-nsh/theme`） |
-| [`packages/ui`](packages/ui) | 包装 `nsh/base` 的 styled 组件（`@shadcn-nsh/ui`） |
-| [`packages/cli`](packages/cli) | `shadcn-nsh`：`build` / `init` / `add` / `serve` |
-| [`registry.json`](registry.json) | 源 catalog |
-| [`public/r`](public/r) | 可 HTTP 拉取的 registry 产物（提交进 git） |
-| [`apps/gallery`](apps/gallery) | 本仓 demo |
-| [`references/`](references/) | 只读 submodule |
+| [`packages/ui`](packages/ui)       | 包装 `nsh/base` 的 styled 组件（`@shadcn-nsh/ui`）   |
+| [`packages/cli`](packages/cli)     | `shadcn-nsh`：`build` / `init` / `add` / `serve`     |
+| [`registry.json`](registry.json)   | 源 catalog                                           |
+| [`public/r`](public/r)             | 可 HTTP 拉取的 registry 产物（提交进 git）           |
+| [`apps/gallery`](apps/gallery)     | 本仓 demo                                            |
+| [`references/`](references/)       | 只读 submodule                                       |
 
 尚未开建：文档站、多 style、npm publish。扩展布局时同步更新本节。
+
+## 工具链
+
+Bun 管理依赖与脚本；格式化 / lint / 工具面类型经 [Vite+](https://viteplus.dev)（`vp fmt` / `vp lint` / `vp check`，内置 Oxfmt / Oxlint），配置集中在根 `vite.config.ts`，不用 Prettier。
+
+### TypeScript 分层
+
+| 面           | 路径                                                   | extends                                                                                                                                                    | 类型权威                                       |
+| ------------ | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| 共享选项     | `tsconfig.base.json`                                   | —                                                                                                                                                          | —                                              |
+| NSH 组件作者 | `tsconfig.nsh.json` → `packages/theme`、`packages/ui`  | base + NSH JSX；`paths`/`files` 指向 **gallery `.nsh`（本仓唯一 types host）**                                                                             | `nsh check apps/gallery` 为主；`vp check` 可辅 |
+| NSH 应用     | `apps/gallery/tsconfig.json`                           | **仅** `./.nsh/tsconfig.json`；自带 `paths` 时须手写回填 `nsh` / `nsh/*` / `*`（TS **不合并** extends 的 paths）；只 `include` 本 app，用 paths 引用包入口 | `nsh check apps/gallery`                       |
+| 工具链       | `packages/cli`、根 `tsconfig.json`（`vite.config.ts`） | base；CLI 加 `types: ["node","bun"]`                                                                                                                       | `vp check`                                     |
+
+改 theme/ui 前先保证 gallery 的 `.nsh` 已生成（`nsh check apps/gallery` / `prepare:types`）。
+
+根 `check` = `vp check`（fmt + lint + 工具面类型）+ `nsh check apps/gallery`（NSH 面）。
 
 ## 常用命令
 
 ```sh
 bun install
+bun run check                   # vp check + nsh check apps/gallery
+bun run check:fix              # vp check --fix
 bun run registry:build
 bun run registry:serve          # http://127.0.0.1:4173/{name}.json
 bun run shadcn-nsh -- init -c <app> --registry 'http://127.0.0.1:4173/{name}.json'

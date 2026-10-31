@@ -1,8 +1,9 @@
-#!/usr/bin/env bun
+#!/usr/bin/env node
 import { Command } from "commander";
+
+import { add } from "./commands/add";
 import { build } from "./commands/build";
 import { init } from "./commands/init";
-import { add } from "./commands/add";
 import { serve } from "./commands/serve";
 
 const program = new Command()

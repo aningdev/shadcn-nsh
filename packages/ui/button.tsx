@@ -1,6 +1,6 @@
+import { colors, focusRing, radius } from "@shadcn-nsh/theme";
 import { Text } from "nsh";
 import { Button as BaseButton } from "nsh/base";
-import { colors, focusRing, radius } from "@shadcn-nsh/theme";
 
 export type ButtonVariant = "default" | "secondary" | "outline" | "destructive" | "ghost";
 

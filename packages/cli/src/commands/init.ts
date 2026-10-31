@@ -1,16 +1,14 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+
 import { Command } from "commander";
+
+import { DEFAULT_CONFIG, type NshUiConfig } from "../types";
 import { findNshJson, readJson, writeConfig, writeJson } from "../utils/config";
 import { installItems } from "../utils/install";
 import { resolveTree } from "../utils/registry";
-import { DEFAULT_CONFIG, type NshUiConfig } from "../types";
 
-export async function runInit(opts: {
-  cwd: string;
-  overwrite?: boolean;
-  registry?: string;
-}) {
+export async function runInit(opts: { cwd: string; overwrite?: boolean; registry?: string }) {
   const cwd = path.resolve(opts.cwd);
   const nshJsonPath = await findNshJson(cwd);
   if (!nshJsonPath) {
@@ -52,12 +50,7 @@ export const init = new Command()
   .option("-y, --yes", "skip confirmation", false)
   .option("--overwrite", "overwrite existing files", false)
   .option("--registry <url>", "registry URL template containing {name}")
-  .action(async (opts: {
-    cwd: string;
-    yes: boolean;
-    overwrite: boolean;
-    registry?: string;
-  }) => {
+  .action(async (opts: { cwd: string; yes: boolean; overwrite: boolean; registry?: string }) => {
     await runInit(opts);
     console.log("\nDone. Next: shadcn-nsh add button");
   });

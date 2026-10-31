@@ -12,10 +12,13 @@ export function relativeImport(fromFile: string, toModuleFile: string) {
   return rel.replace(/\\/g, "/").replace(/\.(tsx?|jsx?)$/, "");
 }
 
-export function defaultTarget(file: { path: string; type: string; target?: string }, aliases: {
-  ui: string;
-  lib: string;
-}) {
+export function defaultTarget(
+  file: { path: string; type: string; target?: string },
+  aliases: {
+    ui: string;
+    lib: string;
+  },
+) {
   if (file.target) return file.target;
   const base = path.basename(file.path);
   if (file.type === "registry:ui") return path.posix.join(aliases.ui.replace(/^\.\//, ""), base);

@@ -1,5 +1,6 @@
 import fs from "node:fs/promises";
 import path from "node:path";
+
 import { DEFAULT_CONFIG, type NshUiConfig } from "../types";
 
 export const CONFIG_FILE = "nsh-ui.json";

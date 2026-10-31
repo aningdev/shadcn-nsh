@@ -41,7 +41,12 @@ push 到 GitHub 后，可省略 `--registry`，默认拉取：
 
 ## 本仓开发
 
+工具链：Bun + [Vite+](https://viteplus.dev)（`vp fmt` / `vp lint` / `vp check`）。
+
 ```sh
+bun run format
+bun run lint
+bun run check
 bun run check:gallery
 bun run dev:gallery
 bun run registry:build
@@ -51,10 +56,10 @@ bun run registry:build
 
 ## 布局
 
-| 路径 | 包名 | 说明 |
-| --- | --- | --- |
-| `packages/theme` | `@shadcn-nsh/theme` | design tokens |
-| `packages/ui` | `@shadcn-nsh/ui` | styled 组件源 |
-| `packages/cli` | `@shadcn-nsh/cli` | `shadcn-nsh` CLI |
-| `public/r` | — | HTTP registry 产物 |
-| `apps/gallery` | `@shadcn-nsh/gallery` | 演示应用 |
+| 路径             | 包名                  | 说明               |
+| ---------------- | --------------------- | ------------------ |
+| `packages/theme` | `@shadcn-nsh/theme`   | design tokens      |
+| `packages/ui`    | `@shadcn-nsh/ui`      | styled 组件源      |
+| `packages/cli`   | `@shadcn-nsh/cli`     | `shadcn-nsh` CLI   |
+| `public/r`       | —                     | HTTP registry 产物 |
+| `apps/gallery`   | `@shadcn-nsh/gallery` | 演示应用           |

@@ -6,10 +6,19 @@
     "packages/*"
   ],
   "scripts": {
+    "prepare:types": "nsh check apps/gallery",
     "dev:gallery": "nsh run apps/gallery",
     "check:gallery": "nsh check apps/gallery",
     "registry:build": "bun packages/cli/src/index.ts build",
     "registry:serve": "bun packages/cli/src/index.ts serve",
-    "shadcn-nsh": "bun packages/cli/src/index.ts"
+    "shadcn-nsh": "bun packages/cli/src/index.ts",
+    "check": "vp check && nsh check apps/gallery",
+    "check:fix": "vp check --fix"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.4.4",
+    "@types/node": "^26.6.6",
+    "typescript": "^7.0.2",
+    "vite-plus": "^1.4.0"
   }
 }
