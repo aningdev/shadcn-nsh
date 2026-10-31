@@ -1,0 +1,6 @@
+[submodule "references/shadcn-ui"]
+	path = references/shadcn-ui
+	url = https://github.com/shadcn-ui/ui.git
+[submodule "references/nsh"]
+	path = references/nsh
+	url = https://github.com/longbridge/nsh.git
