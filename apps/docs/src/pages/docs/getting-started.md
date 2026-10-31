@@ -4,8 +4,6 @@ title: Getting started
 description: Create a monorepo or init shadcn-nsh in an existing NSH app.
 ---
 
-# Getting started
-
 ## Create a monorepo (default)
 
 Scaffolds `apps/web` + `packages/ui` (UI lands in packages):

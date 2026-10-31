@@ -1,0 +1,68 @@
+---
+import "../styles/global.css";
+import { BASE, SITE_DESCRIPTION, SITE_TITLE, SITE_URL } from "../lib/site";
+
+export interface Props {
+  title?: string;
+  description?: string;
+  lang?: string;
+}
+
+const { title, description = SITE_DESCRIPTION, lang = "en" } = Astro.props;
+
+const pageTitle =
+  !title || title === SITE_TITLE
+    ? `${SITE_TITLE} — styled components for Native Shell`
+    : title.startsWith(SITE_TITLE)
+      ? title
+      : `${title} · ${SITE_TITLE}`;
+
+const canonical = new URL(Astro.url.pathname.replace(/\/+$/, "") || "/", SITE_URL).href;
+---
+
+<!doctype html>
+<html lang={lang} class="dark" data-theme-pref="system">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{pageTitle}</title>
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="dark light" />
+    <meta name="theme-color" content="#1c1d20" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f7f7f4" media="(prefers-color-scheme: light)" />
+    <!-- Before first paint: `theme` in localStorage is "light" or "dark";
+         absent follows the system. <html> gets `dark` or `light`. -->
+    <script is:inline>
+      (function () {
+        var stored = null;
+        try {
+          stored = localStorage.getItem("theme");
+        } catch (e) {}
+        var pref = stored === "light" || stored === "dark" ? stored : "system";
+        var media = window.matchMedia("(prefers-color-scheme: dark)");
+        var root = document.documentElement;
+        var apply = function () {
+          var p = root.dataset.themePref;
+          var dark = p === "dark" || (p === "system" && media.matches);
+          root.classList.toggle("dark", dark);
+          root.classList.toggle("light", !dark);
+        };
+        root.dataset.themePref = pref;
+        apply();
+        media.addEventListener("change", apply);
+        window.__applyTheme = apply;
+      })();
+    </script>
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={SITE_TITLE} />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <link rel="alternate" type="text/plain" title="llms.txt" href={`${BASE}llms.txt`} />
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <slot />
+  </body>
+</html>

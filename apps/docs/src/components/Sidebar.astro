@@ -1,0 +1,124 @@
+---
+import {
+  SIDEBAR_GROUPS,
+  SIDEBAR_PAGES,
+  type SidebarGroupId,
+  type SidebarPage,
+} from "../lib/nav";
+
+export interface Props {
+  current: string;
+  title?: string;
+}
+
+const { current, title = "Docs" } = Astro.props;
+
+const normalize = (p: string) => p.replace(/\/+$/, "") || "/";
+const currentRoute = normalize(current);
+const currentPage = SIDEBAR_PAGES.find((page) => page.route === currentRoute);
+
+const groupLabel = (index: number) => {
+  const group = SIDEBAR_PAGES[index]!.group;
+  if (!group || group === SIDEBAR_PAGES[index - 1]?.group) return undefined;
+  return SIDEBAR_GROUPS[group as SidebarGroupId];
+};
+---
+
+<aside class="docs-sidebar" aria-label="Documentation">
+  <!-- Under 960px the list folds behind this button; it names the page you are on. -->
+  <button
+    class="docs-sidebar__toggle"
+    type="button"
+    aria-controls="docs-sidebar-nav"
+    aria-expanded="false"
+  >
+    <span class="docs-sidebar__toggle-label">
+      <span class="docs-sidebar__toggle-section">{title}</span>
+      {currentPage && <span class="docs-sidebar__toggle-page">{currentPage.title}</span>}
+    </span>
+    <svg
+      viewBox="0 0 24 24"
+      width="16"
+      height="16"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      aria-hidden="true"
+      ><path d="m6 9 6 6 6-6"></path></svg
+    >
+  </button>
+  <nav id="docs-sidebar-nav">
+    <p class="sidebar-group__title">{title}</p>
+    <ul class="sidebar-group__items">
+      {
+        SIDEBAR_PAGES.map((page: SidebarPage, index: number) => (
+          <>
+            {groupLabel(index) && (
+              <li class="sidebar-subgroup" role="presentation">
+                {groupLabel(index)}
+              </li>
+            )}
+            <li>
+              <a
+                href={page.href}
+                class:list={["sidebar-item", { active: page.route === currentRoute }]}
+                aria-current={page.route === currentRoute ? "page" : undefined}
+              >
+                {page.title}
+              </a>
+            </li>
+          </>
+        ))
+      }
+    </ul>
+  </nav>
+</aside>
+
+<script is:inline>
+  (function () {
+    var sidebar = document.querySelector(".docs-sidebar");
+    if (!sidebar) return;
+    var toggle = sidebar.querySelector(".docs-sidebar__toggle");
+    if (!toggle) return;
+    var nav = sidebar.querySelector("#docs-sidebar-nav");
+    sidebar.setAttribute("data-nav-ready", "");
+
+    function setOpen(open) {
+      sidebar.classList.toggle("is-mobile-open", open);
+      sidebar.setAttribute("data-mobile-open", String(open));
+      toggle.setAttribute("aria-expanded", String(open));
+      if (nav) nav.hidden = !open && window.matchMedia("(max-width: 959px)").matches;
+    }
+
+    // Start closed on narrow viewports once JS is ready (CSS also gates via data-nav-ready).
+    setOpen(false);
+
+    toggle.addEventListener("click", function (event) {
+      event.preventDefault();
+      event.stopPropagation();
+      setOpen(!sidebar.classList.contains("is-mobile-open"));
+    });
+
+    sidebar.querySelectorAll("a").forEach(function (a) {
+      a.addEventListener("click", function () {
+        if (window.matchMedia("(max-width: 959px)").matches) setOpen(false);
+      });
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (event.key === "Escape" && sidebar.classList.contains("is-mobile-open")) {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+
+    var active = sidebar.querySelector(".sidebar-item.active");
+    if (active && window.matchMedia("(min-width: 960px)").matches) {
+      var box = sidebar.getBoundingClientRect();
+      var item = active.getBoundingClientRect();
+      if (item.bottom > box.bottom || item.top < box.top) {
+        sidebar.scrollTop = active.offsetTop - sidebar.clientHeight / 2;
+      }
+    }
+  })();
+</script>

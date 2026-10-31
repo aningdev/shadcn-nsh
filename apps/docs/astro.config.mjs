@@ -1,3 +1,4 @@
+import tailwindcss from "@tailwindcss/vite";
 import { defineConfig } from "astro/config";
 
 // GitHub project Pages: https://aningdev.github.io/shadcn-nsh/
@@ -10,7 +11,10 @@ export default defineConfig({
   trailingSlash: "never",
   markdown: {
     shikiConfig: {
-      theme: "github-light",
+      theme: "github-dark",
     },
+  },
+  vite: {
+    plugins: [tailwindcss()],
   },
 });

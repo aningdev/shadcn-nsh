@@ -1,0 +1,22 @@
+---
+import Logo from "./Logo.astro";
+import { PRIMARY_NAV } from "../lib/nav";
+import { NSH_SITE_URL, REPO_URL, url } from "../lib/site";
+---
+
+<footer class="site-footer">
+  <div class="site-footer__brand">
+    <a href={url()} class="site-footer__name"><Logo class="site-footer__logo" /> shadcn-nsh</a>
+    <p>Styled components for Native Shell — copy into your app.</p>
+    <p>
+      Behavior and a11y live on{" "}
+      <a href={`${NSH_SITE_URL}/elements`} target="_blank" rel="noopener noreferrer">nsh.dev</a>.
+    </p>
+  </div>
+  <nav aria-label="Footer">
+    {PRIMARY_NAV.map((item) => <a href={item.href}>{item.label}</a>)}
+    <a href={REPO_URL} target="_blank" rel="noopener noreferrer">Source code</a>
+    <a href={`${REPO_URL}/issues`} target="_blank" rel="noopener noreferrer">Report an issue</a>
+    <a href={url("llms.txt")}>llms.txt</a>
+  </nav>
+</footer>
