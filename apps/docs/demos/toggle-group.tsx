@@ -1,6 +1,7 @@
 import { colors } from "@shadcn-nsh/theme";
-import { Toggle, ToggleGroup } from "../../../packages/ui/toggle-group";
 import { mount, signal, Text, View } from "nsh";
+
+import { Toggle, ToggleGroup } from "../../../packages/ui/toggle-group";
 
 function App() {
   const align = signal("left");
@@ -15,7 +16,9 @@ function App() {
         justifyContent: "center",
       }}
     >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Toggle Group</Text>
+      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>
+        Toggle Group
+      </Text>
       <ToggleGroup>
         <Toggle
           pressed={align() === "left"}
@@ -36,9 +39,7 @@ function App() {
           <Text style={{ fontSize: 13, color: colors.foreground }}>Right</Text>
         </Toggle>
       </ToggleGroup>
-      <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
-        Align: {() => align()}
-      </Text>
+      <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Align: {() => align()}</Text>
     </View>
   );
 }

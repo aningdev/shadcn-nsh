@@ -1,9 +1,16 @@
 import { colors } from "@shadcn-nsh/theme";
-import { Combobox } from "../../../packages/ui/combobox";
 import { mount, signal, Text, View } from "nsh";
 
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxItem,
+  ComboboxTrigger,
+  ComboboxValue,
+} from "../../../packages/ui/combobox";
+
 function App() {
-  const picks = signal<string[]>([]);
+  const tags = signal<string[]>(["react"]);
 
   return (
     <View
@@ -17,19 +24,18 @@ function App() {
       }}
     >
       <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Combobox</Text>
-      <Combobox
-        value={picks()}
-        onChange={({ value }) => picks.set(value)}
-        items={[
-          { value: "apple", title: "Apple" },
-          { value: "banana", title: "Banana" },
-          { value: "orange", title: "Orange" },
-          { value: "mango", title: "Mango" },
-        ]}
-        placeholder="Choose fruit…"
-      />
+      <Combobox multiple value={tags()} onChange={({ value }) => tags.set(value)}>
+        <ComboboxTrigger>
+          <ComboboxValue placeholder="Frameworks" />
+        </ComboboxTrigger>
+        <ComboboxContent>
+          <ComboboxItem value="react">React</ComboboxItem>
+          <ComboboxItem value="vue">Vue</ComboboxItem>
+          <ComboboxItem value="svelte">Svelte</ComboboxItem>
+        </ComboboxContent>
+      </Combobox>
       <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
-        {() => (picks().length ? picks().join(", ") : "None selected")}
+        Value: {() => tags().join(", ") || "—"}
       </Text>
     </View>
   );

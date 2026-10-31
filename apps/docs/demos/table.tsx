@@ -1,4 +1,6 @@
 import { colors } from "@shadcn-nsh/theme";
+import { mount, Text, View } from "nsh";
+
 import {
   Table,
   TableBody,
@@ -7,7 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from "../../../packages/ui/table";
-import { mount, Text, View } from "nsh";
 
 function App() {
   return (

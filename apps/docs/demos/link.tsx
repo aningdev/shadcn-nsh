@@ -1,6 +1,7 @@
 import { colors } from "@shadcn-nsh/theme";
-import { Link, linkColor } from "../../../packages/ui/link";
 import { mount, Text, View } from "nsh";
+
+import { Link, linkColor } from "../../../packages/ui/link";
 
 function App() {
   return (

@@ -21,11 +21,7 @@ shadcn-nsh add input -c apps/web
 ```tsx
 import { Input } from "@workspace/ui/components/ui/input";
 
-<Input
-  placeholder="Your name"
-  value={name()}
-  onChange={({ value }) => setName(value)}
-/>
+<Input placeholder="Your name" value={name()} onChange={({ value }) => setName(value)} />;
 ```
 
 ## Examples
@@ -35,11 +31,7 @@ import { Input } from "@workspace/ui/components/ui/input";
 ```tsx
 const [value, setValue] = createSignal("");
 
-<Input
-  placeholder="Your name"
-  value={value()}
-  onChange={({ value: v }) => setValue(v)}
-/>
+<Input placeholder="Your name" value={value()} onChange={({ value: v }) => setValue(v)} />;
 ```
 
 ### Multiline / masked
@@ -57,30 +49,30 @@ const [value, setValue] = createSignal("");
 
 ## API
 
-| Prop                 | Type                                      | Default | Notes                                      |
-| -------------------- | ----------------------------------------- | ------- | ------------------------------------------ |
-| `value`              | `string`                                  | —       | Controlled value                           |
-| `defaultValue`       | `string`                                  | —       | Uncontrolled initial                       |
-| `placeholder`        | `string`                                  | —       |                                            |
-| `disabled`           | `boolean`                                 | —       |                                            |
-| `masked`             | `boolean`                                 | —       | Password-style masking                     |
-| `multiline`          | `boolean`                                 | —       | Taller field + vertical padding            |
-| `maxLength`          | `number`                                  | —       |                                            |
-| `accessibilityLabel` | `string`                                  | —       |                                            |
-| `style`              | `StyleProp<InputStyle>`                   | —       | Merged after the wrapper’s base styles     |
-| `onChange`           | `(event: { value: string }) => void`      | —       |                                            |
-| `onSubmit`           | `() => void`                              | —       |                                            |
-| `onFocus`            | `() => void`                              | —       |                                            |
-| `onBlur`             | `() => void`                              | —       |                                            |
+| Prop                 | Type                                 | Default | Notes                                  |
+| -------------------- | ------------------------------------ | ------- | -------------------------------------- |
+| `value`              | `string`                             | —       | Controlled value                       |
+| `defaultValue`       | `string`                             | —       | Uncontrolled initial                   |
+| `placeholder`        | `string`                             | —       |                                        |
+| `disabled`           | `boolean`                            | —       |                                        |
+| `masked`             | `boolean`                            | —       | Password-style masking                 |
+| `multiline`          | `boolean`                            | —       | Taller field + vertical padding        |
+| `maxLength`          | `number`                             | —       |                                        |
+| `accessibilityLabel` | `string`                             | —       |                                        |
+| `style`              | `StyleProp<InputStyle>`              | —       | Merged after the wrapper’s base styles |
+| `onChange`           | `(event: { value: string }) => void` | —       |                                        |
+| `onSubmit`           | `() => void`                         | —       |                                        |
+| `onFocus`            | `() => void`                         | —       |                                        |
+| `onBlur`             | `() => void`                         | —       |                                        |
 
 ## Differences
 
-| Topic       | shadcn                                   | This package                                           |
-| ----------- | ---------------------------------------- | ------------------------------------------------------ |
-| Change API  | DOM `onChange` / `onChange(e)`           | `onChange({ value })`                                  |
-| Types       | native `<input>` attributes              | NSH field props (`masked`, `multiline`, …)             |
-| Styling     | `className`                              | locked chrome + optional merged `style`                |
-| Variants    | often size / file input variants         | none — fixed control height (taller when `multiline`)  |
+| Topic      | shadcn                           | This package                                          |
+| ---------- | -------------------------------- | ----------------------------------------------------- |
+| Change API | DOM `onChange` / `onChange(e)`   | `onChange({ value })`                                 |
+| Types      | native `<input>` attributes      | NSH field props (`masked`, `multiline`, …)            |
+| Styling    | `className`                      | locked chrome + optional merged `style`               |
+| Variants   | often size / file input variants | none — fixed control height (taller when `multiline`) |
 
 ## Not forwarded
 

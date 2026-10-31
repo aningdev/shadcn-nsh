@@ -1,10 +1,5 @@
 ---
-import {
-  SIDEBAR_GROUPS,
-  SIDEBAR_PAGES,
-  type SidebarGroupId,
-  type SidebarPage,
-} from "../lib/nav";
+import { SIDEBAR_GROUPS, SIDEBAR_PAGES, type SidebarGroupId, type SidebarPage } from "../lib/nav";
 
 export interface Props {
   current: string;
@@ -44,32 +39,31 @@ const groupLabel = (index: number) => {
       stroke="currentColor"
       stroke-width="2"
       aria-hidden="true"
-      ><path d="m6 9 6 6 6-6"></path></svg
     >
+      <path d="m6 9 6 6 6-6"></path>
+    </svg>
   </button>
   <nav id="docs-sidebar-nav">
     <p class="sidebar-group__title">{title}</p>
     <ul class="sidebar-group__items">
-      {
-        SIDEBAR_PAGES.map((page: SidebarPage, index: number) => (
-          <>
-            {groupLabel(index) && (
-              <li class="sidebar-subgroup" role="presentation">
-                {groupLabel(index)}
-              </li>
-            )}
-            <li>
-              <a
-                href={page.href}
-                class:list={["sidebar-item", { active: page.route === currentRoute }]}
-                aria-current={page.route === currentRoute ? "page" : undefined}
-              >
-                {page.title}
-              </a>
+      {SIDEBAR_PAGES.map((page: SidebarPage, index: number) => (
+        <>
+          {groupLabel(index) && (
+            <li class="sidebar-subgroup" role="presentation">
+              {groupLabel(index)}
             </li>
-          </>
-        ))
-      }
+          )}
+          <li>
+            <a
+              href={page.href}
+              class:list={["sidebar-item", { active: page.route === currentRoute }]}
+              aria-current={page.route === currentRoute ? "page" : undefined}
+            >
+              {page.title}
+            </a>
+          </li>
+        </>
+      ))}
     </ul>
   </nav>
 </aside>

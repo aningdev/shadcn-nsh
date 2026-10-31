@@ -68,14 +68,25 @@ shadcn has these; **no** matching `nsh/base` / website `group: base` export → 
 
 Compose labels with `Text` + controls; separators with `View` borders if needed.
 
-## Compound naming
+## Compound naming (shadcn-shaped facades)
 
-| shadcn                               | This package                                                                                | `nsh/base` |
-| ------------------------------------ | ------------------------------------------------------------------------------------------- | ---------- |
-| Accordion / Item / Trigger / Content | `Accordion` / `AccordionItem` / `AccordionTrigger` / `AccordionPanel` (+ `AccordionHeader`) | same       |
-| DropdownMenu\*                       | `Menu` / `MenuItem` / `MenuSeparator` / `Submenu`                                           | same       |
-| Table\*                              | `Table` / `TableHeader` / `TableBody` / `TableRow` / `TableHead` / `TableCell` / …          | same       |
-| Tabs / TabsTrigger                   | `Tabs` / `Tab`                                                                              | same       |
+Public Usage trees prefer shadcn part names. Internals still call `nsh/base` (items registries, `trigger` props, etc.).
+
+| shadcn                                    | This package                                                                                 | `nsh/base` under the hood                    |
+| ----------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| Dialog / Trigger / Content / …            | `Dialog` / `DialogTrigger` / `DialogContent` / Header / Title / Description / Footer / Close | single `Dialog`; Content owns the base root  |
+| Sheet / Trigger / Content / …             | same pattern                                                                                 | single `Sheet`                               |
+| Select / Trigger / Value / Content / Item | composition **or** data `items[]`                                                            | `Select` + `items` + `trigger`               |
+| Combobox / …                              | same                                                                                         | `Combobox` + `items`                         |
+| DropdownMenu\*                            | `DropdownMenu` / Trigger / Content / Item / Sub / …                                          | `Menu` / `MenuItem` / `Submenu`              |
+| ContextMenu\*                             | same                                                                                         | `ContextMenu`                                |
+| Popover / Trigger / Content               | composition; legacy `trigger` prop kept                                                      | `Popover`                                    |
+| Tooltip / Trigger / Content               | composition **or** string bubble for host `tooltip={}`                                       | `Tooltip` bubble                             |
+| Tabs / List / Trigger / Content           | `Tabs` / `TabsList` / `TabsTrigger` / `TabsContent` (+ legacy `Tab`)                         | `Tabs` + `Tab`; panels are app/`TabsContent` |
+| Accordion / Item / Trigger / Content      | `Accordion*` + `AccordionContent` (= `AccordionPanel`) + `AccordionHeader`                   | same parts                                   |
+| Collapsible / Trigger / Content           | composition; legacy `content` prop kept                                                      | `Collapsible`                                |
+| Toast / sonner                            | `toast()` + `Toaster` (+ `Toast` / `ToastStack` / `ToastManager`)                            | same                                         |
+| Table\*                                   | `Table` / `TableHeader` / `TableBody` / `TableRow` / `TableHead` / `TableCell` / …           | same                                         |
 
 ## Adding a component
 

@@ -16,13 +16,11 @@ import { components } from "../../../lib/components";
     <code>packages/ui/COMPONENTS.md</code> — this site does not list pages for them.
   </p>
   <ul>
-    {
-      components.map((c) => (
-        <li>
-          <a href={withBase(`docs/components/${c.slug}`)}>{c.title}</a>
-          <span style="color: var(--muted-foreground)"> — {c.description}</span>
-        </li>
-      ))
-    }
+    {components.map((c) => (
+      <li>
+        <a href={withBase(`docs/components/${c.slug}`)}>{c.title}</a>
+        <span style="color: var(--muted-foreground)"> — {c.description}</span>
+      </li>
+    ))}
   </ul>
 </Docs>

@@ -1,6 +1,7 @@
 import { colors } from "@shadcn-nsh/theme";
-import { Pagination } from "../../../packages/ui/pagination";
 import { mount, signal, Text, View } from "nsh";
+
+import { Pagination } from "../../../packages/ui/pagination";
 
 function App() {
   const page = signal(1);

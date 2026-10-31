@@ -29,7 +29,7 @@ import { Text } from "nsh";
   <Radio checked={value() === "b"} onChange={({ checked }) => checked && setValue("b")}>
     <Text>Option B</Text>
   </Radio>
-</RadioGroup>
+</RadioGroup>;
 ```
 
 ## Composition
@@ -55,7 +55,7 @@ const [radio, setRadio] = createSignal("a");
   <Radio checked={radio() === "b"} onChange={({ checked: v }) => v && setRadio("b")}>
     <Text>Option B</Text>
   </Radio>
-</RadioGroup>
+</RadioGroup>;
 ```
 
 ### Disabled option
@@ -80,29 +80,29 @@ const [radio, setRadio] = createSignal("a");
 
 ### `RadioGroup`
 
-| Prop       | Type           | Default | Notes                          |
-| ---------- | -------------- | ------- | ------------------------------ |
-| `children` | `JSX.Element`  | —       | Usually `Radio` children       |
-| `style`    | `object`       | —       | Merged after default `gap: 8`  |
+| Prop       | Type          | Default | Notes                         |
+| ---------- | ------------- | ------- | ----------------------------- |
+| `children` | `JSX.Element` | —       | Usually `Radio` children      |
+| `style`    | `object`      | —       | Merged after default `gap: 8` |
 
 ### `Radio`
 
-| Prop                 | Type                                      | Default | Notes                    |
-| -------------------- | ----------------------------------------- | ------- | ------------------------ |
-| `checked`            | `boolean`                                 | —       |                          |
-| `disabled`           | `boolean`                                 | —       |                          |
-| `accessibilityLabel` | `string \| null`                          | —       |                          |
-| `children`           | `JSX.Element`                             | —       | Label content            |
-| `onChange`           | `(event: { checked: boolean }) => void`   | —       |                          |
+| Prop                 | Type                                    | Default | Notes         |
+| -------------------- | --------------------------------------- | ------- | ------------- |
+| `checked`            | `boolean`                               | —       |               |
+| `disabled`           | `boolean`                               | —       |               |
+| `accessibilityLabel` | `string \| null`                        | —       |               |
+| `children`           | `JSX.Element`                           | —       | Label content |
+| `onChange`           | `(event: { checked: boolean }) => void` | —       |               |
 
 ## Differences
 
-| Topic       | shadcn                                           | This package                                              |
-| ----------- | ------------------------------------------------ | --------------------------------------------------------- |
-| Value API   | `RadioGroup` `value` / `onValueChange`           | no group value — each `Radio` is `checked` / `onChange`   |
-| Item API    | `RadioGroupItem` + external `Label`              | `Radio` with built-in indicator + label `children`        |
-| Change API  | string value on the group                        | `onChange({ checked })` per radio                         |
-| Parts       | Root / Item                                      | `RadioGroup` + `Radio`                                    |
+| Topic      | shadcn                                 | This package                                            |
+| ---------- | -------------------------------------- | ------------------------------------------------------- |
+| Value API  | `RadioGroup` `value` / `onValueChange` | no group value — each `Radio` is `checked` / `onChange` |
+| Item API   | `RadioGroupItem` + external `Label`    | `Radio` with built-in indicator + label `children`      |
+| Change API | string value on the group              | `onChange({ checked })` per radio                       |
+| Parts      | Root / Item                            | `RadioGroup` + `Radio`                                  |
 
 ## Not forwarded
 

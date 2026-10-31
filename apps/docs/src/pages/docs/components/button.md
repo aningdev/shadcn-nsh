@@ -21,7 +21,7 @@ shadcn-nsh add button -c apps/web
 ```tsx
 import { Button } from "@workspace/ui/components/ui/button";
 
-<Button onPress={() => {}}>Default</Button>
+<Button onPress={() => {}}>Default</Button>;
 ```
 
 ## Examples
@@ -65,13 +65,13 @@ import { Button } from "@workspace/ui/components/ui/button";
 
 ## Differences
 
-| Topic        | shadcn                                      | This package                                           |
-| ------------ | ------------------------------------------- | ------------------------------------------------------ |
-| Press event  | `onClick`                                   | `onPress`                                              |
-| Children     | arbitrary nodes / `asChild`                 | `children: string` only (rendered as styled `Text`)    |
-| Size / icon  | `size`, icon slots, `asChild`               | fixed height; no size / icon / `asChild` API           |
-| Link look    | `variant="link"`                            | use the `link` component                               |
-| Class hooks  | `className` / CVA                           | theme tokens + locked styles inside the wrapper        |
+| Topic       | shadcn                        | This package                                        |
+| ----------- | ----------------------------- | --------------------------------------------------- |
+| Press event | `onClick`                     | `onPress`                                           |
+| Children    | arbitrary nodes / `asChild`   | `children: string` only (rendered as styled `Text`) |
+| Size / icon | `size`, icon slots, `asChild` | fixed height; no size / icon / `asChild` API        |
+| Link look   | `variant="link"`              | use the `link` component                            |
+| Class hooks | `className` / CVA             | theme tokens + locked styles inside the wrapper     |
 
 ## Not forwarded
 

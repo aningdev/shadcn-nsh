@@ -3,7 +3,7 @@ import {
   Accordion,
   AccordionHeader,
   AccordionItem,
-  AccordionPanel,
+  AccordionContent,
   AccordionTrigger,
   Avatar,
   Button,
@@ -14,9 +14,12 @@ import {
   Radio,
   RadioGroup,
   Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Slider,
   Switch,
-  Tab,
   Table,
   TableBody,
   TableCell,
@@ -24,6 +27,9 @@ import {
   TableHeader,
   TableRow,
   Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
   Toggle,
   ToggleGroup,
 } from "@shadcn-nsh/ui";
@@ -107,25 +113,30 @@ function App() {
         </Section>
 
         <Section title="Select">
-          <Select
-            value={fruit()}
-            onChange={({ value }) => fruit.set(value)}
-            items={[
-              { value: "apple", title: "Apple" },
-              { value: "banana", title: "Banana" },
-              { value: "orange", title: "Orange" },
-            ]}
-          />
+          <Select value={fruit()} onChange={({ value }) => fruit.set(value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Fruit" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="apple">Apple</SelectItem>
+              <SelectItem value="banana">Banana</SelectItem>
+              <SelectItem value="orange">Orange</SelectItem>
+            </SelectContent>
+          </Select>
         </Section>
 
         <Section title="Tabs / Toggle">
-          <Tabs>
-            <Tab selected={tab() === "one"} onPress={() => tab.set("one")}>
-              <Text style={{ fontSize: 13, color: colors.foreground }}>One</Text>
-            </Tab>
-            <Tab selected={tab() === "two"} onPress={() => tab.set("two")}>
-              <Text style={{ fontSize: 13, color: colors.foreground }}>Two</Text>
-            </Tab>
+          <Tabs value={tab()} onValueChange={(v) => tab.set(v)}>
+            <TabsList>
+              <TabsTrigger value="one">One</TabsTrigger>
+              <TabsTrigger value="two">Two</TabsTrigger>
+            </TabsList>
+            <TabsContent value="one">
+              <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Panel one</Text>
+            </TabsContent>
+            <TabsContent value="two">
+              <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Panel two</Text>
+            </TabsContent>
           </Tabs>
           <ToggleGroup>
             <Toggle pressed={bold()} onChange={({ pressed }) => bold.set(pressed)}>
@@ -148,11 +159,11 @@ function App() {
                   </Text>
                 </AccordionTrigger>
               </AccordionHeader>
-              <AccordionPanel>
+              <AccordionContent>
                 <Text style={{ fontSize: 13, color: colors.mutedForeground, paddingBottom: 12 }}>
                   Orders leave the same day before 2 pm.
                 </Text>
-              </AccordionPanel>
+              </AccordionContent>
             </AccordionItem>
             <AccordionItem value="returns">
               <AccordionHeader>
@@ -162,11 +173,11 @@ function App() {
                   </Text>
                 </AccordionTrigger>
               </AccordionHeader>
-              <AccordionPanel>
+              <AccordionContent>
                 <Text style={{ fontSize: 13, color: colors.mutedForeground, paddingBottom: 12 }}>
                   Print the label within 30 days.
                 </Text>
-              </AccordionPanel>
+              </AccordionContent>
             </AccordionItem>
           </Accordion>
         </Section>

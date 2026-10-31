@@ -1,8 +1,15 @@
 import { colors } from "@shadcn-nsh/theme";
-import { Collapsible } from "../../../packages/ui/collapsible";
-import { mount, Text, View } from "nsh";
+import { mount, signal, Text, View } from "nsh";
+
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "../../../packages/ui/collapsible";
 
 function App() {
+  const open = signal(false);
+
   return (
     <View
       style={{
@@ -11,19 +18,17 @@ function App() {
         padding: 20,
         gap: 12,
         justifyContent: "center",
+        alignItems: "flex-start",
       }}
     >
       <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Collapsible</Text>
-      <Collapsible
-        content={
-          <Text style={{ fontSize: 13, color: colors.mutedForeground, paddingVertical: 8 }}>
-            Hidden until open — shipping leaves before 2 pm.
+      <Collapsible open={open()} onOpenChange={({ open: v }) => open.set(v)}>
+        <CollapsibleTrigger>Toggle</CollapsibleTrigger>
+        <CollapsibleContent>
+          <Text style={{ fontSize: 13, color: colors.mutedForeground, paddingTop: 8 }}>
+            Hidden until open.
           </Text>
-        }
-      >
-        <Text style={{ fontSize: 14, fontWeight: "500", color: colors.foreground }}>
-          Shipping details
-        </Text>
+        </CollapsibleContent>
       </Collapsible>
     </View>
   );

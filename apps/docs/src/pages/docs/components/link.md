@@ -48,11 +48,7 @@ import { Text } from "nsh";
 ### Open with + onOpen
 
 ```tsx
-<Link
-  href="https://nsh.dev"
-  openWith="system"
-  onOpen={(e) => console.log(e.href)}
->
+<Link href="https://nsh.dev" openWith="system" onOpen={(e) => console.log(e.href)}>
   <Text style={{ color: linkColor() }}>External</Text>
 </Link>
 ```
@@ -61,22 +57,22 @@ import { Text } from "nsh";
 
 ### `Link`
 
-| Prop                 | Type                                        | Default | Notes                    |
-| -------------------- | ------------------------------------------- | ------- | ------------------------ |
-| `href`               | `string`                                    | —       | Destination              |
-| `current`            | `boolean`                                   | —       | Current-page semantics   |
-| `disabled`           | `boolean`                                   | —       |                          |
-| `openWith`           | `"system" \| "app"`                         | —       | How to open the href     |
-| `accessibilityLabel` | `string \| null`                            | —       |                          |
-| `children`           | `JSX.Element`                               | —       | Label content            |
-| `onOpen`             | `(event: { href: string }) => void`         | —       |                          |
-| `onPress`            | `() => void`                                | —       |                          |
+| Prop                 | Type                                | Default | Notes                  |
+| -------------------- | ----------------------------------- | ------- | ---------------------- |
+| `href`               | `string`                            | —       | Destination            |
+| `current`            | `boolean`                           | —       | Current-page semantics |
+| `disabled`           | `boolean`                           | —       |                        |
+| `openWith`           | `"system" \| "app"`                 | —       | How to open the href   |
+| `accessibilityLabel` | `string \| null`                    | —       |                        |
+| `children`           | `JSX.Element`                       | —       | Label content          |
+| `onOpen`             | `(event: { href: string }) => void` | —       |                        |
+| `onPress`            | `() => void`                        | —       |                        |
 
 ### `linkColor`
 
-| Export      | Type         | Notes                         |
-| ----------- | ------------ | ----------------------------- |
-| `linkColor` | `() => color`| Returns theme `colors.primary`|
+| Export      | Type          | Notes                          |
+| ----------- | ------------- | ------------------------------ |
+| `linkColor` | `() => color` | Returns theme `colors.primary` |
 
 ## Differences
 

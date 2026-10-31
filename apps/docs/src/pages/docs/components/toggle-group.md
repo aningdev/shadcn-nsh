@@ -26,13 +26,10 @@ import { Text } from "nsh";
   <Toggle pressed={align() === "left"} onChange={({ pressed }) => pressed && setAlign("left")}>
     <Text>Left</Text>
   </Toggle>
-  <Toggle
-    pressed={align() === "center"}
-    onChange={({ pressed }) => pressed && setAlign("center")}
-  >
+  <Toggle pressed={align() === "center"} onChange={({ pressed }) => pressed && setAlign("center")}>
     <Text>Center</Text>
   </Toggle>
-</ToggleGroup>
+</ToggleGroup>;
 ```
 
 ## Composition
@@ -56,7 +53,7 @@ const [align, setAlign] = createSignal("left");
   <Toggle pressed={align() === "right"} onChange={({ pressed }) => pressed && setAlign("right")}>
     <Text>Right</Text>
   </Toggle>
-</ToggleGroup>
+</ToggleGroup>;
 ```
 
 ### Disabled group
@@ -73,10 +70,10 @@ const [align, setAlign] = createSignal("left");
 
 ### `ToggleGroup`
 
-| Prop       | Type           | Default | Notes                    |
-| ---------- | -------------- | ------- | ------------------------ |
-| `disabled` | `boolean`      | —       |                          |
-| `children` | `JSX.Element`  | —       | Usually `Toggle` items   |
+| Prop       | Type          | Default | Notes                  |
+| ---------- | ------------- | ------- | ---------------------- |
+| `disabled` | `boolean`     | —       |                        |
+| `children` | `JSX.Element` | —       | Usually `Toggle` items |
 
 ### `Toggle`
 
@@ -84,12 +81,12 @@ Re-exported from `./toggle`. See [Toggle](./toggle) for `pressed`, `disabled`, `
 
 ## Differences
 
-| Topic       | shadcn                                                | This package                                              |
-| ----------- | ----------------------------------------------------- | --------------------------------------------------------- |
-| Value API   | `type` / `value` / `onValueChange` on the group       | no group value — each `Toggle` is `pressed` / `onChange`  |
-| Orientation | `orientation`                                         | fixed horizontal row shell                                |
-| Variants    | `variant` / `size`                                    | none                                                      |
-| Exports     | group + item parts                                    | `ToggleGroup` + re-exported `Toggle`                      |
+| Topic       | shadcn                                          | This package                                             |
+| ----------- | ----------------------------------------------- | -------------------------------------------------------- |
+| Value API   | `type` / `value` / `onValueChange` on the group | no group value — each `Toggle` is `pressed` / `onChange` |
+| Orientation | `orientation`                                   | fixed horizontal row shell                               |
+| Variants    | `variant` / `size`                              | none                                                     |
+| Exports     | group + item parts                              | `ToggleGroup` + re-exported `Toggle`                     |
 
 ## Not forwarded
 

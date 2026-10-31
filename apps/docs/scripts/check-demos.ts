@@ -22,6 +22,8 @@ if (entries.length === 0) {
 // Prefer button as the canonical entry when present (stable prepare:types host).
 const entry = entries.includes("button.tsx") ? "button.tsx" : entries[0]!;
 const target = path.join(demosDir, entry);
-console.log(`nsh check ${path.relative(process.cwd(), target)} (demos app; ${entries.length} sources in tsconfig)`);
+console.log(
+  `nsh check ${path.relative(process.cwd(), target)} (demos app; ${entries.length} sources in tsconfig)`,
+);
 const result = spawnSync("nsh", ["check", target], { stdio: "inherit" });
-process.exit(result.status === 0 ? 0 : result.status ?? 1);
+process.exit(result.status === 0 ? 0 : (result.status ?? 1));

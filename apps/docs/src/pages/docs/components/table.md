@@ -139,11 +139,11 @@ Table
 
 ## Differences
 
-| Topic       | shadcn                                              | This package                                           |
-| ----------- | --------------------------------------------------- | ------------------------------------------------------ |
-| Parts       | `Table` / `Header` / `Body` / `Row` / `Head` / …    | same part names on nsh/base wrappers                   |
-| Styling     | `className` on each part                            | locked borders / muted bands / cell padding            |
-| Semantics   | HTML table in the browser                           | nsh table primitives (cross-platform)                  |
+| Topic     | shadcn                                           | This package                                |
+| --------- | ------------------------------------------------ | ------------------------------------------- |
+| Parts     | `Table` / `Header` / `Body` / `Row` / `Head` / … | same part names on nsh/base wrappers        |
+| Styling   | `className` on each part                         | locked borders / muted bands / cell padding |
+| Semantics | HTML table in the browser                        | nsh table primitives (cross-platform)       |
 
 ## Not forwarded
 

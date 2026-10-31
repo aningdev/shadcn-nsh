@@ -1,7 +1,8 @@
 import { colors } from "@shadcn-nsh/theme";
+import { mount, signal, Text, View } from "nsh";
+
 import { Button } from "../../../packages/ui/button";
 import { Progress } from "../../../packages/ui/progress";
-import { mount, signal, Text, View } from "nsh";
 
 function App() {
   const value = signal(55);

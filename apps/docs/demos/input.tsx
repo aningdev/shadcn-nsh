@@ -1,6 +1,7 @@
 import { colors } from "@shadcn-nsh/theme";
-import { Input } from "../../../packages/ui/input";
 import { mount, signal, Text, View } from "nsh";
+
+import { Input } from "../../../packages/ui/input";
 
 function App() {
   const value = signal("");
@@ -16,11 +17,7 @@ function App() {
       }}
     >
       <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Input</Text>
-      <Input
-        placeholder="Your name"
-        value={value()}
-        onChange={({ value: v }) => value.set(v)}
-      />
+      <Input placeholder="Your name" value={value()} onChange={({ value: v }) => value.set(v)} />
       <Input placeholder="Disabled" disabled />
       <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
         Value: {() => value() || "—"}

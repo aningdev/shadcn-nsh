@@ -2,7 +2,9 @@
 
 本仓库为 NSH 构建 **styled component-library 层**（社区/应用层）：在 `nsh/base` 的 unstyled 行为与无障碍结构之上，提供可复制进应用的品牌化组件与分发体验。角色对齐 shadcn/ui 之于 Radix。
 
-**不做**：改 `nsh` / `nsh/base` 本身；不把 Gallery 演示样式当成可发布 API。
+公开 API 优先 **shadcn 形 Composition**（`Trigger` / `Content` / `Item` / … facade）；内部仍适配 `nsh/base` 的 value/open/items/`trigger` 模型。无法抹平的差异写进各组件 docs 的 Differences。
+
+**不做**：改 `nsh` / `nsh/base` 本身；不把 Gallery 演示样式当成可发布 API；不新增无 base 的 Extensions。
 
 ## References
 

@@ -70,35 +70,35 @@ AvatarGroup
 
 ### `Avatar`
 
-| Prop                 | Type                                           | Default | Notes                                      |
-| -------------------- | ---------------------------------------------- | ------- | ------------------------------------------ |
-| `src`                | `string \| ImageAsset \| null`                 | —       | Image source                               |
-| `name`               | `string \| null`                               | —       | Used for initials fallback and a11y        |
-| `size`               | `number`                                       | `40`    | Wrapper-only; maps to width/height/radius  |
-| `accessibilityLabel` | `string \| null`                               | —       |                                            |
-| `fallbackDelay`      | `number`                                       | —       |                                            |
-| `fallback`           | `JSX.Element`                                  | initials from `name` | Overrides default initials       |
-| `children`           | `JSX.Element`                                  | —       |                                            |
-| `onStatusChange`     | `(event: { status: string }) => void`          | —       |                                            |
+| Prop                 | Type                                  | Default              | Notes                                     |
+| -------------------- | ------------------------------------- | -------------------- | ----------------------------------------- |
+| `src`                | `string \| ImageAsset \| null`        | —                    | Image source                              |
+| `name`               | `string \| null`                      | —                    | Used for initials fallback and a11y       |
+| `size`               | `number`                              | `40`                 | Wrapper-only; maps to width/height/radius |
+| `accessibilityLabel` | `string \| null`                      | —                    |                                           |
+| `fallbackDelay`      | `number`                              | —                    |                                           |
+| `fallback`           | `JSX.Element`                         | initials from `name` | Overrides default initials                |
+| `children`           | `JSX.Element`                         | —                    |                                           |
+| `onStatusChange`     | `(event: { status: string }) => void` | —                    |                                           |
 
 ### `AvatarGroup`
 
-| Prop                 | Type              | Default | Notes                                      |
-| -------------------- | ----------------- | ------- | ------------------------------------------ |
-| `limit`              | `number`          | —       | Visible avatars before overflow            |
-| `total`              | `number \| null`  | —       | Used with `limit` for default `+N` label   |
-| `accessibilityLabel` | `string \| null`  | —       |                                            |
-| `overflow`           | `JSX.Element`     | `+N` / `…` | Custom overflow content                 |
-| `children`           | `JSX.Element`     | —       | `Avatar` children                          |
+| Prop                 | Type             | Default    | Notes                                    |
+| -------------------- | ---------------- | ---------- | ---------------------------------------- |
+| `limit`              | `number`         | —          | Visible avatars before overflow          |
+| `total`              | `number \| null` | —          | Used with `limit` for default `+N` label |
+| `accessibilityLabel` | `string \| null` | —          |                                          |
+| `overflow`           | `JSX.Element`    | `+N` / `…` | Custom overflow content                  |
+| `children`           | `JSX.Element`    | —          | `Avatar` children                        |
 
 ## Differences
 
-| Topic      | shadcn                                         | This package                                              |
-| ---------- | ---------------------------------------------- | --------------------------------------------------------- |
-| Parts      | `Avatar` / `AvatarImage` / `AvatarFallback`    | single `Avatar` (+ optional `AvatarGroup`)                |
-| Fallback   | compose `AvatarFallback`                       | default initials from `name`; override with `fallback`    |
-| Size       | often via `className` / CSS                    | `size` number prop                                        |
-| Group      | not in core avatar                             | `AvatarGroup` with `limit` / `total` / `overflow`         |
+| Topic    | shadcn                                      | This package                                           |
+| -------- | ------------------------------------------- | ------------------------------------------------------ |
+| Parts    | `Avatar` / `AvatarImage` / `AvatarFallback` | single `Avatar` (+ optional `AvatarGroup`)             |
+| Fallback | compose `AvatarFallback`                    | default initials from `name`; override with `fallback` |
+| Size     | often via `className` / CSS                 | `size` number prop                                     |
+| Group    | not in core avatar                          | `AvatarGroup` with `limit` / `total` / `overflow`      |
 
 ## Not forwarded
 

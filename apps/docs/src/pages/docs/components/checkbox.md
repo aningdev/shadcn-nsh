@@ -24,7 +24,7 @@ import { Text } from "nsh";
 
 <Checkbox checked onChange={({ checked }) => console.log(checked)}>
   <Text>Accept terms</Text>
-</Checkbox>
+</Checkbox>;
 ```
 
 ## Examples
@@ -36,7 +36,7 @@ const [checked, setChecked] = createSignal(false);
 
 <Checkbox checked={checked()} onChange={({ checked: v }) => setChecked(v)}>
   <Text>Accept terms</Text>
-</Checkbox>
+</Checkbox>;
 ```
 
 ### Indeterminate
@@ -57,23 +57,23 @@ const [checked, setChecked] = createSignal(false);
 
 ## API
 
-| Prop                 | Type                                         | Default | Notes                          |
-| -------------------- | -------------------------------------------- | ------- | ------------------------------ |
-| `checked`            | `boolean`                                    | —       |                                |
-| `indeterminate`      | `boolean`                                    | —       | Shows dash indicator           |
-| `disabled`           | `boolean`                                    | —       |                                |
-| `accessibilityLabel` | `string \| null`                             | —       |                                |
-| `children`           | `JSX.Element`                                | —       | Label / adjacent content       |
-| `onChange`           | `(event: { checked: boolean }) => void`      | —       |                                |
+| Prop                 | Type                                    | Default | Notes                    |
+| -------------------- | --------------------------------------- | ------- | ------------------------ |
+| `checked`            | `boolean`                               | —       |                          |
+| `indeterminate`      | `boolean`                               | —       | Shows dash indicator     |
+| `disabled`           | `boolean`                               | —       |                          |
+| `accessibilityLabel` | `string \| null`                        | —       |                          |
+| `children`           | `JSX.Element`                           | —       | Label / adjacent content |
+| `onChange`           | `(event: { checked: boolean }) => void` | —       |                          |
 
 ## Differences
 
-| Topic       | shadcn                                      | This package                                           |
-| ----------- | ------------------------------------------- | ------------------------------------------------------ |
-| Parts       | `Checkbox` root + indicator slot            | single `Checkbox`; indicator is built in               |
-| Label       | often sibling `Label` + `htmlFor`           | put label `Text` in `children`                         |
-| Change API  | `checked` / `onCheckedChange`               | `checked` / `onChange({ checked })`                    |
-| Class hooks | `className` / CVA                           | theme tokens + locked styles inside the wrapper        |
+| Topic       | shadcn                            | This package                                    |
+| ----------- | --------------------------------- | ----------------------------------------------- |
+| Parts       | `Checkbox` root + indicator slot  | single `Checkbox`; indicator is built in        |
+| Label       | often sibling `Label` + `htmlFor` | put label `Text` in `children`                  |
+| Change API  | `checked` / `onCheckedChange`     | `checked` / `onChange({ checked })`             |
+| Class hooks | `className` / CVA                 | theme tokens + locked styles inside the wrapper |
 
 ## Not forwarded
 

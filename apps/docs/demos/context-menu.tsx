@@ -1,10 +1,12 @@
 import { colors } from "@shadcn-nsh/theme";
+import { mount, signal, Text, View } from "nsh";
+
 import {
   ContextMenu,
+  ContextMenuContent,
   ContextMenuItem,
-  ContextMenuSeparator,
+  ContextMenuTrigger,
 } from "../../../packages/ui/context-menu";
-import { mount, signal, Text, View } from "nsh";
 
 function App() {
   const last = signal("—");
@@ -17,42 +19,42 @@ function App() {
         padding: 20,
         gap: 12,
         justifyContent: "center",
+        alignItems: "flex-start",
       }}
     >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Context Menu</Text>
-      <ContextMenu
-        trigger={
+      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>
+        Context Menu
+      </Text>
+      <ContextMenu>
+        <ContextMenuTrigger>
           <View
             style={{
-              padding: 20,
+              width: 180,
+              height: 80,
               borderRadius: 8,
               borderWidth: 1,
               borderColor: colors.border,
-              backgroundColor: colors.muted,
-              minHeight: 96,
+              borderStyle: "dashed",
+              alignItems: "center",
               justifyContent: "center",
+              backgroundColor: colors.muted,
             }}
           >
-            <Text style={{ fontSize: 14, color: colors.foreground }}>
-              Right-click (or long-press) this area
+            <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+              Right-click / long-press
             </Text>
           </View>
-        }
-      >
-        <ContextMenuItem onSelect={() => last.set("Copy")}>
-          <Text style={{ fontSize: 14, color: colors.foreground }}>Copy</Text>
-        </ContextMenuItem>
-        <ContextMenuItem onSelect={() => last.set("Paste")}>
-          <Text style={{ fontSize: 14, color: colors.foreground }}>Paste</Text>
-        </ContextMenuItem>
-        <ContextMenuSeparator />
-        <ContextMenuItem onSelect={() => last.set("Delete")}>
-          <Text style={{ fontSize: 14, color: colors.foreground }}>Delete</Text>
-        </ContextMenuItem>
+        </ContextMenuTrigger>
+        <ContextMenuContent>
+          <ContextMenuItem onSelect={() => last.set("Copy")}>
+            <Text style={{ fontSize: 14, color: colors.foreground }}>Copy</Text>
+          </ContextMenuItem>
+          <ContextMenuItem onSelect={() => last.set("Paste")}>
+            <Text style={{ fontSize: 14, color: colors.foreground }}>Paste</Text>
+          </ContextMenuItem>
+        </ContextMenuContent>
       </ContextMenu>
-      <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
-        Last: {() => last()}
-      </Text>
+      <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Last: {() => last()}</Text>
     </View>
   );
 }

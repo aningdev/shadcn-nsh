@@ -1,12 +1,13 @@
 import { colors } from "@shadcn-nsh/theme";
+import { mount, signal, Text, View } from "nsh";
+
 import {
   Accordion,
+  AccordionContent,
   AccordionHeader,
   AccordionItem,
-  AccordionPanel,
   AccordionTrigger,
 } from "../../../packages/ui/accordion";
-import { mount, signal, Text, View } from "nsh";
 
 function App() {
   const open = signal(["shipping"]);
@@ -31,11 +32,11 @@ function App() {
               </Text>
             </AccordionTrigger>
           </AccordionHeader>
-          <AccordionPanel>
+          <AccordionContent>
             <Text style={{ fontSize: 13, color: colors.mutedForeground, paddingBottom: 12 }}>
-              Orders leave the same day before 2 pm.
+              Ships in 2–3 days.
             </Text>
-          </AccordionPanel>
+          </AccordionContent>
         </AccordionItem>
         <AccordionItem value="returns">
           <AccordionHeader>
@@ -45,11 +46,11 @@ function App() {
               </Text>
             </AccordionTrigger>
           </AccordionHeader>
-          <AccordionPanel>
+          <AccordionContent>
             <Text style={{ fontSize: 13, color: colors.mutedForeground, paddingBottom: 12 }}>
-              Print the label within 30 days.
+              30-day return window.
             </Text>
-          </AccordionPanel>
+          </AccordionContent>
         </AccordionItem>
       </Accordion>
     </View>

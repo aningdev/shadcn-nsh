@@ -1,13 +1,13 @@
 ---
 layout: ../../../layouts/Docs.astro
 title: Select
-description: Styled select wrapping nsh/base Select.
+description: Styled select with Trigger / Content / Item composition; items still drive nsh/base under the hood.
 component: true
 demo: select
 demoHeight: 360
 ---
 
-Styled single-value picker on `nsh/base` Select. Pass options as `items[]` — appearance, popup offset, and list chrome are locked by the wrapper.
+Single-value select. Composition parts collect into `nsh/base` `items` + `trigger` slots while keeping a shadcn-shaped Usage tree.
 
 ## Install
 
@@ -20,99 +20,90 @@ shadcn-nsh add select -c apps/web
 ## Usage
 
 ```tsx
-import { Select } from "@workspace/ui/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@workspace/ui/components/ui/select";
 
-<Select
-  items={[
-    { value: "apple", title: "Apple" },
-    { value: "orange", title: "Orange" },
-  ]}
-  placeholder="Fruit"
-  onChange={(e) => console.log(e.value)}
-/>;
+<Select value={fruit()} onChange={({ value }) => fruit.set(value)}>
+  <SelectTrigger>
+    <SelectValue placeholder="Fruit" />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="apple">Apple</SelectItem>
+    <SelectItem value="banana">Banana</SelectItem>
+  </SelectContent>
+</Select>;
+```
+
+## Composition
+
+```
+Select
+├── SelectTrigger
+│   └── SelectValue
+└── SelectContent
+    ├── SelectGroup
+    │   ├── SelectLabel
+    │   └── SelectItem*
+    └── SelectItem*
 ```
 
 ## Examples
 
-### Controlled value
+### Data `items` (no parts)
+
+Still supported when you already have an array — skips the composition registry:
 
 ```tsx
-const [fruit, setFruit] = createSignal<string | null>("apple");
-
 <Select
   value={fruit()}
-  onChange={(e) => setFruit(e.value)}
+  onChange={({ value }) => fruit.set(value)}
   items={[
     { value: "apple", title: "Apple" },
     { value: "banana", title: "Banana" },
-    { value: "orange", title: "Orange" },
   ]}
-/>;
+/>
 ```
 
 ### Searchable
 
 ```tsx
-<Select
-  searchable
-  searchPlaceholder="Filter…"
-  items={[
-    { value: "apple", title: "Apple" },
-    { value: "apricot", title: "Apricot" },
-  ]}
-  placeholder="Fruit"
-/>;
-```
-
-### Custom trigger
-
-```tsx
-import { Text, View } from "nsh";
-
-<Select
-  items={[{ value: "a", title: "Alpha" }]}
-  trigger={
-    <View>
-      <Text>Open select</Text>
-    </View>
-  }
-/>;
+<Select searchable value={fruit()} onChange={({ value }) => fruit.set(value)}>
+  <SelectTrigger>
+    <SelectValue />
+  </SelectTrigger>
+  <SelectContent>
+    <SelectItem value="apple">Apple</SelectItem>
+    <SelectItem value="banana">Banana</SelectItem>
+  </SelectContent>
+</Select>
 ```
 
 ## API
 
-Re-exports types `SelectItem` and `SelectItemState` from `nsh/base`.
+### `Select`
 
-| Prop                 | Type                                                 | Default | Notes                                       |
-| -------------------- | ---------------------------------------------------- | ------- | ------------------------------------------- |
-| `items`              | `SelectItem[]`                                       | —       | Required; option list from `nsh/base`       |
-| `value`              | `string \| null`                                     | —       | Controlled selection                        |
-| `defaultValue`       | `string \| null`                                     | —       |                                             |
-| `open`               | `boolean \| null`                                    | —       | Controlled open                             |
-| `defaultOpen`        | `boolean`                                            | —       |                                             |
-| `searchable`         | `boolean`                                            | —       |                                             |
-| `searchPlaceholder`  | `string \| null`                                     | —       |                                             |
-| `cleanable`          | `boolean`                                            | —       |                                             |
-| `disabled`           | `boolean`                                            | —       |                                             |
-| `placeholder`        | `string`                                             | —       | Default trigger label when empty            |
-| `accessibilityLabel` | `string \| null`                                     | —       |                                             |
-| `trigger`            | `JSX.Element`                                        | —       | Custom trigger; default built-in if omitted |
-| `empty`              | `JSX.Element`                                        | —       | Empty-state slot                            |
-| `onChange`           | `(event: { value: string \| null }) => void`         | —       |                                             |
-| `onOpenChange`       | `(event: { open: boolean; reason: string }) => void` | —       |                                             |
+| Prop                                    | Type                                         | Notes                                               |
+| --------------------------------------- | -------------------------------------------- | --------------------------------------------------- |
+| `value` / `defaultValue`                | `string \| null`                             |                                                     |
+| `items`                                 | `SelectItem[]`                               | Data mode; when set, composition parts are not used |
+| `searchable` / `cleanable` / `disabled` | `boolean`                                    |                                                     |
+| `onChange`                              | `(event: { value: string \| null }) => void` |                                                     |
+
+`SelectItem` children must be **strings** (become `title` in the base items model).
 
 ## Differences
 
-| Topic       | shadcn                                                                      | This package                                                      |
-| ----------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| Options     | `Select` / `SelectTrigger` / `SelectContent` / `SelectItem` / `SelectValue` | single `Select` + required `items: SelectItem[]`                  |
-| Value       | item nodes inside content                                                   | `value` / `onChange` use `string \| null`                         |
-| Search      | not built into core Select                                                  | optional `searchable` / `searchPlaceholder` on the same root      |
-| Trigger     | `SelectTrigger` + `SelectValue` parts                                       | optional `trigger` prop; wrapper supplies a default               |
-| Presentation| Radix portal + content chrome                                               | nsh Select + fixed popup/list/item chrome from the wrapper        |
-
-Do not invent a Radix-style `SelectItem` children tree in app code — feed options through `items`.
+| Topic                     | shadcn                      | This package                                                               |
+| ------------------------- | --------------------------- | -------------------------------------------------------------------------- |
+| List model                | Item children are real rows | Items register into base `items[]`; popup rows still use base `renderItem` |
+| Viewport / scroll buttons | Radix Content parts         | Owned by nsh Select (desktop popup / phone sheet)                          |
+| Item body                 | arbitrary JSX               | string label only in the composition facade                                |
 
 ## Not forwarded
 
-From `nsh/base` Select: `offset` (fixed to `4`), `popupStyle` / `backdropStyle`, `listStyle` / `itemStyle` / `groupStyle` / `searchStyle` / `focusStyle`, and `renderItem`. Presentation and list rendering are owned by this wrapper.
+Base style slots (`popupStyle`, `listStyle`, `renderItem`, …) stay locked in the wrapper.
