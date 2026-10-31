@@ -1,5 +1,6 @@
 ---
 import DemoFrame from "../components/DemoFrame.astro";
+import { withBase } from "../lib/base";
 import { components } from "../lib/components";
 import "../styles/global.css";
 
@@ -19,6 +20,10 @@ const description = Astro.props.description ?? Astro.props.frontmatter?.descript
 const demo = Astro.props.frontmatter?.demo;
 const isComponentPage = !!Astro.props.frontmatter?.component || !!demo;
 const path = Astro.url.pathname;
+const normalize = (p: string) => p.replace(/\/+$/, "") || "/";
+const current = normalize(path);
+const isCurrent = (...candidates: string[]) =>
+  candidates.some((c) => current === normalize(withBase(c)));
 ---
 
 <!doctype html>
@@ -32,51 +37,48 @@ const path = Astro.url.pathname;
   <body>
     <div class="site">
       <header class="site-header">
-        <a class="brand" href="/">
+        <a class="brand" href={withBase()}>
           shadcn-nsh
         </a>
         <nav class="nav" aria-label="Primary">
           <a
-            href="/docs/getting-started"
-            aria-current={path.includes("getting-started") ? "page" : undefined}
+            href={withBase("docs/getting-started")}
+            aria-current={isCurrent("docs/getting-started") ? "page" : undefined}
           >
             Getting started
           </a>
           <a
-            href="/docs/components"
-            aria-current={path.includes("/docs/components") ? "page" : undefined}
+            href={withBase("docs/components")}
+            aria-current={
+              current.includes("/docs/components") ? "page" : undefined
+            }
           >
             Components
           </a>
-          <a href="/llms.txt">llms.txt</a>
+          <a href={withBase("llms.txt")}>llms.txt</a>
         </nav>
       </header>
       <div class="layout">
         <aside class="side">
           <nav aria-label="Docs">
             <a
-              href="/docs/getting-started"
-              aria-current={path.includes("getting-started") ? "page" : undefined}
+              href={withBase("docs/getting-started")}
+              aria-current={isCurrent("docs/getting-started") ? "page" : undefined}
             >
               Getting started
             </a>
             <a
-              href="/docs/components"
-              aria-current={
-                path === "/docs/components" || path === "/docs/components/" ? "page" : undefined
-              }
+              href={withBase("docs/components")}
+              aria-current={isCurrent("docs/components") ? "page" : undefined}
             >
               All components
             </a>
             {
               components.map((c) => (
                 <a
-                  href={`/docs/components/${c.slug}`}
+                  href={withBase(`docs/components/${c.slug}`)}
                   aria-current={
-                    path === `/docs/components/${c.slug}` ||
-                    path === `/docs/components/${c.slug}/`
-                      ? "page"
-                      : undefined
+                    isCurrent(`docs/components/${c.slug}`) ? "page" : undefined
                   }
                 >
                   {c.title}

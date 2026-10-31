@@ -1,6 +1,7 @@
 ---
 import fs from "node:fs";
 import path from "node:path";
+import { withBase } from "../lib/base";
 
 interface Props {
   name: string;
@@ -9,7 +10,7 @@ interface Props {
 }
 
 const { name, height = 280 } = Astro.props;
-const demoUrl = `/demos/${name}/index.html`;
+const demoUrl = withBase(`demos/${name}/index.html`);
 const demoDir = path.join(process.cwd(), "public", "demos", name);
 const ready = fs.existsSync(path.join(demoDir, "index.html"));
 ---

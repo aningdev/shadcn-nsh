@@ -1,5 +1,6 @@
 ---
 import Docs from "../../../layouts/Docs.astro";
+import { withBase } from "../../../lib/base";
 import { components } from "../../../lib/components";
 ---
 
@@ -14,7 +15,7 @@ import { components } from "../../../lib/components";
     {
       components.map((c) => (
         <li>
-          <a href={`/docs/components/${c.slug}`}>{c.title}</a>
+          <a href={withBase(`docs/components/${c.slug}`)}>{c.title}</a>
         </li>
       ))
     }
