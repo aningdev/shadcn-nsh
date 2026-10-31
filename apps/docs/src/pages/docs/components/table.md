@@ -5,7 +5,7 @@ description: Styled table wrapping nsh/base Table.
 component: true
 ---
 
-Styled wrapper on `nsh/base`. Behavior and a11y: [Table](https://nsh.dev/elements/table).
+Styled table primitives on `nsh/base` Table parts.
 
 ## Install
 
@@ -31,19 +31,39 @@ import { Text } from "nsh";
 <Table>
   <TableHeader>
     <TableRow>
-      <TableHead><Text>Name</Text></TableHead>
-      <TableHead><Text>Role</Text></TableHead>
+      <TableHead>
+        <Text>Name</Text>
+      </TableHead>
+      <TableHead>
+        <Text>Role</Text>
+      </TableHead>
     </TableRow>
   </TableHeader>
   <TableBody>
     <TableRow>
-      <TableCell><Text>Ada</Text></TableCell>
-      <TableCell><Text>Engineer</Text></TableCell>
+      <TableCell>
+        <Text>Ada</Text>
+      </TableCell>
+      <TableCell>
+        <Text>Engineer</Text>
+      </TableCell>
     </TableRow>
   </TableBody>
-</Table>
+</Table>;
 ```
 
-## Source
+## Composition
 
-Authoring: `packages/ui/table.tsx`. Registry: `table` (depends on `theme`).
+```
+Table
+├─ TableHeader
+│  └─ TableRow → TableHead*
+├─ TableBody
+│  └─ TableRow → TableCell*
+├─ TableFooter (optional)
+└─ TableCaption (optional)
+```
+
+## API
+
+Parts take `children` (and `Table` also takes `accessibilityLabel?`). Styling is owned by the wrappers; no extra behavior props beyond base structure.

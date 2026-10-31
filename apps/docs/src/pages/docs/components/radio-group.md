@@ -5,7 +5,7 @@ description: Styled radio group wrapping nsh/base RadioGroup.
 component: true
 ---
 
-Styled wrapper on `nsh/base`. Behavior and a11y: [Radio Group](https://nsh.dev/elements/radio).
+Styled radio group on `nsh/base` (nsh element `radio`). Exports `RadioGroup` + `Radio`.
 
 ## Install
 
@@ -22,11 +22,24 @@ import { Radio, RadioGroup } from "@workspace/ui/components/ui/radio-group";
 import { Text } from "nsh";
 
 <RadioGroup>
-  <Radio checked onChange={() => {}}><Text>Option A</Text></Radio>
-  <Radio onChange={() => {}}><Text>Option B</Text></Radio>
-</RadioGroup>
+  <Radio checked onChange={() => {}}>
+    <Text>Option A</Text>
+  </Radio>
+  <Radio onChange={() => {}}>
+    <Text>Option B</Text>
+  </Radio>
+</RadioGroup>;
 ```
 
-## Source
+## Composition
 
-Authoring: `packages/ui/radio-group.tsx`. Registry: `radio-group` (depends on `theme`).
+```
+RadioGroup
+└─ Radio*
+```
+
+## API
+
+**`RadioGroup`** — `children?`, `style?`
+
+**`Radio`** — `checked?`, `disabled?`, `accessibilityLabel?`, `children?`, `onChange?`

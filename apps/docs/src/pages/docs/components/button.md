@@ -6,7 +6,7 @@ component: true
 demo: button
 ---
 
-Styled button on `nsh/base` Button. Variants: `default`, `secondary`, `outline`, `destructive`, `ghost`.
+Styled button on `nsh/base` Button. Adds brand variants; children are a string label.
 
 ## Install
 
@@ -29,6 +29,27 @@ import { Button } from "@workspace/ui/components/ui/button";
 <Button disabled>Disabled</Button>
 ```
 
-## Source
+## Variants
 
-Authoring: `packages/ui/button.tsx`. Registry: `button` (depends on `theme`).
+| `variant`     | Look                     |
+| ------------- | ------------------------ |
+| `default`     | Primary fill             |
+| `secondary`   | Secondary fill           |
+| `outline`     | Border, transparent fill |
+| `destructive` | Destructive fill         |
+| `ghost`       | No border/fill           |
+
+## API
+
+| Prop       | Type            | Default     | Notes                                          |
+| ---------- | --------------- | ----------- | ---------------------------------------------- |
+| `children` | `string`        | —           | Label text (also used as `accessibilityLabel`) |
+| `variant`  | `ButtonVariant` | `"default"` | See Variants                                   |
+| `disabled` | `boolean`       | —           |                                                |
+| `onPress`  | `() => void`    | —           |                                                |
+
+<div class="callout">
+
+**Not forwarded** from `nsh/base` Button: press/selection chrome such as `selected`, `role`, custom children trees, and style hooks (`style` / `hoverStyle` / `activeStyle` / `focusStyle`, etc.). This wrapper owns look-and-feel; extend the copied source if you need base knobs.
+
+</div>

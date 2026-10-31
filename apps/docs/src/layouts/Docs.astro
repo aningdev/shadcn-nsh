@@ -1,7 +1,8 @@
 ---
 import DemoFrame from "../components/DemoFrame.astro";
 import { withBase } from "../lib/base";
-import { components } from "../lib/components";
+import { components, getComponentBySlug } from "../lib/components";
+
 import "../styles/global.css";
 
 interface Props {
@@ -24,6 +25,12 @@ const normalize = (p: string) => p.replace(/\/+$/, "") || "/";
 const current = normalize(path);
 const isCurrent = (...candidates: string[]) =>
   candidates.some((c) => current === normalize(withBase(c)));
+
+const slugMatch = current.match(/\/docs\/components\/([^/]+)$/);
+const componentDoc = isComponentPage && slugMatch ? getComponentBySlug(slugMatch[1]!) : undefined;
+const nshUrl = componentDoc ? `https://nsh.dev/elements/${componentDoc.nshElement}` : undefined;
+const nshMdUrl = nshUrl ? `${nshUrl}.md` : undefined;
+const authoringFile = componentDoc ? `packages/ui/${componentDoc.slug}.tsx` : undefined;
 ---
 
 <!doctype html>
@@ -48,10 +55,14 @@ const isCurrent = (...candidates: string[]) =>
             Getting started
           </a>
           <a
+            href={withBase("docs/theme")}
+            aria-current={isCurrent("docs/theme") ? "page" : undefined}
+          >
+            Theme
+          </a>
+          <a
             href={withBase("docs/components")}
-            aria-current={
-              current.includes("/docs/components") ? "page" : undefined
-            }
+            aria-current={current.includes("/docs/components") ? "page" : undefined}
           >
             Components
           </a>
@@ -68,44 +79,83 @@ const isCurrent = (...candidates: string[]) =>
               Getting started
             </a>
             <a
+              href={withBase("docs/theme")}
+              aria-current={isCurrent("docs/theme") ? "page" : undefined}
+            >
+              Theme
+            </a>
+            <a
               href={withBase("docs/components")}
               aria-current={isCurrent("docs/components") ? "page" : undefined}
             >
               All components
             </a>
-            {
-              components.map((c) => (
-                <a
-                  href={withBase(`docs/components/${c.slug}`)}
-                  aria-current={
-                    isCurrent(`docs/components/${c.slug}`) ? "page" : undefined
-                  }
-                >
-                  {c.title}
-                </a>
-              ))
-            }
+            {components.map((c) => (
+              <a
+                href={withBase(`docs/components/${c.slug}`)}
+                aria-current={isCurrent(`docs/components/${c.slug}`) ? "page" : undefined}
+              >
+                {c.title}
+              </a>
+            ))}
           </nav>
         </aside>
         <main class="prose">
-          {
-            isComponentPage ? (
-              <>
-                <h1>{title}</h1>
-                {demo ? (
-                  <>
-                    <h2>Preview</h2>
-                    <p>
-                      Web preview (NSH <code>--target web</code>). For native behaviour use the
-                      gallery.
-                    </p>
-                    <DemoFrame name={demo} height={300} />
-                  </>
-                ) : null}
-              </>
-            ) : null
-          }
+          {isComponentPage ? (
+            <>
+              <h1>{title}</h1>
+              {componentDoc && nshUrl ? (
+                <p class="component-chrome">
+                  Base:{" "}
+                  <a href={nshUrl} rel="noopener noreferrer">
+                    nsh/base · {componentDoc.nshElement}
+                  </a>
+                  {" · "}
+                  <a href={nshMdUrl} rel="noopener noreferrer">
+                    .md
+                  </a>
+                  {componentDoc.slug !== componentDoc.nshElement ? (
+                    <>
+                      {" "}
+                      <span class="muted">
+                        (docs slug <code>{componentDoc.slug}</code>)
+                      </span>
+                    </>
+                  ) : null}
+                </p>
+              ) : null}
+              {demo ? (
+                <>
+                  <h2>Preview</h2>
+                  <p>
+                    Web preview (NSH <code>--target web</code>). For native behaviour use the
+                    gallery.
+                  </p>
+                  <DemoFrame name={demo} height={300} />
+                </>
+              ) : null}
+            </>
+          ) : null}
           <slot />
+          {componentDoc && nshUrl ? (
+            <>
+              <h2>Behavior &amp; a11y</h2>
+              <p>
+                Keyboard, focus, platform notes, and the full unstyled API live on nsh — not on this
+                page. See{" "}
+                <a href={nshUrl} rel="noopener noreferrer">
+                  {componentDoc.title} on nsh.dev
+                </a>
+                . This package is a curated styled wrapper; only props listed under API (when
+                present) are part of the public surface here.
+              </p>
+              <h2>Source</h2>
+              <p>
+                Authoring: <code>{authoringFile}</code>. Registry: <code>{componentDoc.slug}</code>{" "}
+                (depends on <code>theme</code>).
+              </p>
+            </>
+          ) : null}
         </main>
       </div>
     </div>

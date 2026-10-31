@@ -5,7 +5,7 @@ description: Styled sheet wrapping nsh/base Sheet.
 component: true
 ---
 
-Styled wrapper on `nsh/base`. Behavior and a11y: [Sheet](https://nsh.dev/elements/sheet).
+Styled sheet on `nsh/base` Sheet with fixed card chrome; defaults to `side="bottom"`.
 
 ## Install
 
@@ -23,9 +23,24 @@ import { Text } from "nsh";
 
 <Sheet open onOpenChange={(e) => console.log(e.open)}>
   <Text>Sheet body</Text>
-</Sheet>
+</Sheet>;
 ```
 
-## Source
+## API
 
-Authoring: `packages/ui/sheet.tsx`. Registry: `sheet` (depends on `theme`).
+| Prop           | Type                                                 | Default    | Notes     |
+| -------------- | ---------------------------------------------------- | ---------- | --------- |
+| `open`         | `boolean \| null`                                    | —          |           |
+| `defaultOpen`  | `boolean`                                            | —          |           |
+| `side`         | `Placement`                                          | `"bottom"` |           |
+| `closeOnSwipe` | `boolean`                                            | —          | Forwarded |
+| `children`     | `JSX.Element`                                        | —          |           |
+| `onOpenChange` | `(event: { open: boolean; reason: string }) => void` | —          |           |
+| `onOpen`       | `() => void`                                         | —          |           |
+| `onClose`      | `() => void`                                         | —          |           |
+
+<div class="callout">
+
+**Not forwarded:** `popupStyle` / `backdropStyle` and other surface chrome. Side default is owned here (`"bottom"`).
+
+</div>

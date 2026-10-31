@@ -5,7 +5,7 @@ description: Styled text input wrapping nsh/base Input.
 component: true
 ---
 
-Styled wrapper on `nsh/base`. Behavior and a11y: [Input](https://nsh.dev/elements/input).
+Styled wrapper on `nsh/base`.
 
 ## Install
 
@@ -20,9 +20,5 @@ shadcn-nsh add input -c apps/web
 ```tsx
 import { Input } from "@workspace/ui/components/ui/input";
 
-<Input placeholder="Email" onChange={(e) => console.log(e.value)} />
+<Input placeholder="Email" onChange={(e) => console.log(e.value)} />;
 ```
-
-## Source
-
-Authoring: `packages/ui/input.tsx`. Registry: `input` (depends on `theme`).

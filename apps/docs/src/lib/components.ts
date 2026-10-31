@@ -3,10 +3,18 @@
 export type ComponentDoc = {
   slug: string;
   title: string;
-  /** Path under https://nsh.dev/elements/ */
+  /** Path under https://nsh.dev/elements/ (slug may differ, e.g. dropdown-menu → menu). */
   nshElement: string;
   description: string;
 };
+
+export function getComponentBySlug(slug: string): ComponentDoc | undefined {
+  return components.find((c) => c.slug === slug);
+}
+
+export function nshElementHref(nshElement: string): string {
+  return `https://nsh.dev/elements/${nshElement}`;
+}
 
 export const components: ComponentDoc[] = [
   {

@@ -5,7 +5,7 @@ description: Styled avatar wrapping nsh/base Avatar.
 component: true
 ---
 
-Styled wrapper on `nsh/base`. Behavior and a11y: [Avatar](https://nsh.dev/elements/avatar).
+Styled avatar on `nsh/base` Avatar, with optional `AvatarGroup`.
 
 ## Install
 
@@ -18,11 +18,27 @@ shadcn-nsh add avatar -c apps/web
 ## Usage
 
 ```tsx
-import { Avatar } from "@workspace/ui/components/ui/avatar";
+import { Avatar, AvatarGroup } from "@workspace/ui/components/ui/avatar";
 
 <Avatar name="Ada Lovelace" />
+
+<AvatarGroup limit={3} total={5}>
+  <Avatar name="Ada" />
+  <Avatar name="Grace" />
+  <Avatar name="Katherine" />
+</AvatarGroup>
 ```
 
-## Source
+## Composition
 
-Authoring: `packages/ui/avatar.tsx`. Registry: `avatar` (depends on `theme`).
+```
+Avatar
+AvatarGroup
+└─ Avatar*
+```
+
+## API
+
+**`Avatar`** — `src?`, `name?`, `size?` (default `40`), `accessibilityLabel?`, `fallbackDelay?`, `fallback?`, `children?`, `onStatusChange?`
+
+**`AvatarGroup`** — `limit?`, `total?`, `accessibilityLabel?`, `overflow?`, `children?`

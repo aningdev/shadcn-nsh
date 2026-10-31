@@ -5,7 +5,7 @@ description: Styled switch wrapping nsh/base Switch.
 component: true
 ---
 
-Styled wrapper on `nsh/base`. Behavior and a11y: [Switch](https://nsh.dev/elements/switch).
+Styled wrapper on `nsh/base`.
 
 ## Install
 
@@ -23,9 +23,5 @@ import { Text } from "nsh";
 
 <Switch checked onChange={(e) => console.log(e.checked)}>
   <Text>Notifications</Text>
-</Switch>
+</Switch>;
 ```
-
-## Source
-
-Authoring: `packages/ui/switch.tsx`. Registry: `switch` (depends on `theme`).

@@ -5,7 +5,7 @@ description: Styled progress wrapping nsh/base Progress.
 component: true
 ---
 
-Styled wrapper on `nsh/base`. Behavior and a11y: [Progress](https://nsh.dev/elements/progress).
+Styled wrapper on `nsh/base`.
 
 ## Install
 
@@ -20,9 +20,5 @@ shadcn-nsh add progress -c apps/web
 ```tsx
 import { Progress } from "@workspace/ui/components/ui/progress";
 
-<Progress value={60} />
+<Progress value={60} />;
 ```
-
-## Source
-
-Authoring: `packages/ui/progress.tsx`. Registry: `progress` (depends on `theme`).

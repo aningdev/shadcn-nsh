@@ -5,7 +5,7 @@ description: Styled accordion wrapping nsh/base Accordion.
 component: true
 ---
 
-Styled wrapper on `nsh/base`. Behavior and a11y: [Accordion](https://nsh.dev/elements/accordion).
+Styled accordion on `nsh/base`. Part names match base (`AccordionPanel`, not shadcn’s `AccordionContent`).
 
 ## Install
 
@@ -30,13 +30,43 @@ import { Text } from "nsh";
 <Accordion>
   <AccordionItem value="one">
     <AccordionHeader>
-      <AccordionTrigger><Text>Section one</Text></AccordionTrigger>
+      <AccordionTrigger>
+        <Text>Section one</Text>
+      </AccordionTrigger>
     </AccordionHeader>
-    <AccordionPanel><Text>Panel content</Text></AccordionPanel>
+    <AccordionPanel>
+      <Text>Panel content</Text>
+    </AccordionPanel>
   </AccordionItem>
-</Accordion>
+</Accordion>;
 ```
 
-## Source
+## Composition
 
-Authoring: `packages/ui/accordion.tsx`. Registry: `accordion` (depends on `theme`).
+```
+Accordion
+└─ AccordionItem
+   ├─ AccordionHeader
+   │  └─ AccordionTrigger
+   └─ AccordionPanel
+```
+
+## API
+
+**`Accordion`**
+
+| Prop       | Type                                   | Notes                 |
+| ---------- | -------------------------------------- | --------------------- |
+| `value`    | `string[]`                             | Controlled open items |
+| `multiple` | `boolean`                              |                       |
+| `disabled` | `boolean`                              |                       |
+| `onChange` | `(event: { value: string[] }) => void` |                       |
+| `children` | `JSX.Element`                          |                       |
+
+**`AccordionItem`** — `value`, `disabled`, `children`
+
+**`AccordionHeader`** — `level?`, `children`
+
+**`AccordionTrigger`** — `accessibilityLabel?`, `children`
+
+**`AccordionPanel`** — `reveal?` (default `true`), `keepMounted?`, `accessibilityLabel?`, `children`
