@@ -6,7 +6,7 @@ component: true
 demo: toggle
 ---
 
-Styled wrapper on `nsh/base`.
+Styled pressable toggle on `nsh/base` Toggle. Uses `pressed` / `onChange({ pressed })` — not a click boolean.
 
 ## Install
 
@@ -22,7 +22,50 @@ shadcn-nsh add toggle -c apps/web
 import { Toggle } from "@workspace/ui/components/ui/toggle";
 import { Text } from "nsh";
 
-<Toggle pressed onChange={(e) => console.log(e.pressed)}>
+<Toggle pressed={bold()} onChange={({ pressed }) => setBold(pressed)}>
   <Text>Bold</Text>
-</Toggle>;
+</Toggle>
 ```
+
+## Examples
+
+### Controlled
+
+```tsx
+const [bold, setBold] = createSignal(false);
+
+<Toggle pressed={bold()} onChange={({ pressed }) => setBold(pressed)}>
+  <Text>Bold</Text>
+</Toggle>
+```
+
+### Disabled
+
+```tsx
+<Toggle disabled pressed>
+  <Text>Disabled</Text>
+</Toggle>
+```
+
+## API
+
+| Prop                 | Type                                       | Default | Notes              |
+| -------------------- | ------------------------------------------ | ------- | ------------------ |
+| `pressed`            | `boolean`                                  | —       |                    |
+| `disabled`           | `boolean`                                  | —       |                    |
+| `accessibilityLabel` | `string \| null`                           | —       |                    |
+| `children`           | `JSX.Element`                              | —       | Label / icon       |
+| `onChange`           | `(event: { pressed: boolean }) => void`    | —       |                    |
+
+## Differences
+
+| Topic       | shadcn                                      | This package                                           |
+| ----------- | ------------------------------------------- | ------------------------------------------------------ |
+| Press event | `onPressedChange` / sometimes `onClick`     | `onChange({ pressed })`                                |
+| Variants    | `variant` / `size` via CVA                  | none — fixed height and accent pressed look            |
+| Grouping    | often with `ToggleGroup` value API          | standalone; see `toggle-group` for a visual row shell  |
+| Class hooks | `className`                                 | theme tokens + locked styles                           |
+
+## Not forwarded
+
+From `nsh/base` Toggle: `focusStyle`, `style`, and `pressedStyle`. The wrapper owns the focus ring, border/background, and pressed accent colors.

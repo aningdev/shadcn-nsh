@@ -18,39 +18,41 @@ Styled NSH component library (copy-into-app), analogous to shadcn/ui on Radix.
 
 ## Docs (this site)
 
-Hybrid IA: this site covers install, usage, variants/composition, and **this package’s** API deltas. Behavior, keyboard, a11y, platform notes, and full unstyled props → https://nsh.dev/elements (per-element pages). Do not treat this file as a fork of nsh `llms-full`.
+Hybrid IA: this site covers install, usage, composition/examples, **this package’s** API, Differences (vs shadcn), and Not forwarded (vs `nsh/base`). Behavior, keyboard, a11y, platform notes, and full unstyled props → https://nsh.dev/elements (per-element pages). Do not treat this file as a fork of nsh `llms-full`.
+
+Extensions / Phase-2 → `packages/ui/COMPONENTS.md` (not listed as pages here).
 
 Component pages may embed a web Preview (`demo:` → `nsh package --target web` iframe). Native behaviour truth remains the gallery (`apps/gallery`), not docs iframes. Demo sources: `apps/docs/demos/<slug>.tsx`.
 
 - /docs/getting-started: Create a monorepo or init shadcn-nsh in an existing NSH app.
 - /docs/theme: theme.json is token truth; token() / @shadcn-nsh/theme helpers.
 - /docs/components: Phase-1 styled wrappers on nsh/base.
+- /docs/components/accordion: Styled accordion wrapping nsh/base Accordion. → https://nsh.dev/elements/accordion
+- /docs/components/avatar: Styled avatar wrapping nsh/base Avatar. → https://nsh.dev/elements/avatar
 - /docs/components/button: Styled button wrapping nsh/base Button. → https://nsh.dev/elements/button
-- /docs/components/input: Styled text input wrapping nsh/base Input. → https://nsh.dev/elements/input
 - /docs/components/checkbox: Styled checkbox wrapping nsh/base Checkbox. → https://nsh.dev/elements/checkbox
-- /docs/components/radio-group: Styled radio group wrapping nsh/base RadioGroup. → https://nsh.dev/elements/radio
-- /docs/components/switch: Styled switch wrapping nsh/base Switch. → https://nsh.dev/elements/switch
-- /docs/components/slider: Styled slider wrapping nsh/base Slider. → https://nsh.dev/elements/slider
-- /docs/components/progress: Styled progress wrapping nsh/base Progress. → https://nsh.dev/elements/progress
-- /docs/components/select: Styled select wrapping nsh/base Select. → https://nsh.dev/elements/select
+- /docs/components/collapsible: Styled collapsible wrapping nsh/base Collapsible. → https://nsh.dev/elements/collapsible
 - /docs/components/combobox: Styled combobox wrapping nsh/base Combobox. → https://nsh.dev/elements/combobox
-- /docs/components/number-input: Styled number input wrapping nsh/base NumberInput. → https://nsh.dev/elements/number-input
+- /docs/components/context-menu: Styled context menu wrapping nsh/base ContextMenu. → https://nsh.dev/elements/menu
+- /docs/components/dialog: Styled dialog wrapping nsh/base Dialog. → https://nsh.dev/elements/dialog
+- /docs/components/dropdown-menu: Styled menu wrapping nsh/base Menu. → https://nsh.dev/elements/menu
+- /docs/components/input: Styled text input wrapping nsh/base Input. → https://nsh.dev/elements/input
 - /docs/components/otp-input: Styled OTP input wrapping nsh/base OtpInput. → https://nsh.dev/elements/otp-input
+- /docs/components/pagination: Styled pagination wrapping nsh/base Pagination. → https://nsh.dev/elements/pagination
+- /docs/components/popover: Styled popover wrapping nsh/base Popover. → https://nsh.dev/elements/popover
+- /docs/components/progress: Styled progress wrapping nsh/base Progress. → https://nsh.dev/elements/progress
+- /docs/components/radio-group: Styled radio group wrapping nsh/base RadioGroup. → https://nsh.dev/elements/radio
+- /docs/components/select: Styled select wrapping nsh/base Select. → https://nsh.dev/elements/select
+- /docs/components/sheet: Styled sheet wrapping nsh/base Sheet. → https://nsh.dev/elements/sheet
+- /docs/components/slider: Styled slider wrapping nsh/base Slider. → https://nsh.dev/elements/slider
+- /docs/components/toast: Styled toast wrapping nsh/base Toast. → https://nsh.dev/elements/toast
+- /docs/components/switch: Styled switch wrapping nsh/base Switch. → https://nsh.dev/elements/switch
+- /docs/components/table: Styled table wrapping nsh/base Table. → https://nsh.dev/elements/table
 - /docs/components/tabs: Styled tabs wrapping nsh/base Tabs. → https://nsh.dev/elements/tabs
 - /docs/components/toggle: Styled toggle wrapping nsh/base Toggle. → https://nsh.dev/elements/toggle
 - /docs/components/toggle-group: Styled toggle group wrapping nsh/base ToggleGroup. → https://nsh.dev/elements/toggle
-- /docs/components/link: Styled link wrapping nsh/base Link. → https://nsh.dev/elements/link
-- /docs/components/pagination: Styled pagination wrapping nsh/base Pagination. → https://nsh.dev/elements/pagination
-- /docs/components/popover: Styled popover wrapping nsh/base Popover. → https://nsh.dev/elements/popover
 - /docs/components/tooltip: Styled tooltip wrapping nsh/base Tooltip. → https://nsh.dev/elements/tooltip
-- /docs/components/sheet: Styled sheet wrapping nsh/base Sheet. → https://nsh.dev/elements/sheet
-- /docs/components/dialog: Styled dialog wrapping nsh/base Dialog. → https://nsh.dev/elements/dialog
-- /docs/components/dropdown-menu: Styled menu wrapping nsh/base Menu. → https://nsh.dev/elements/menu
-- /docs/components/context-menu: Styled context menu wrapping nsh/base ContextMenu. → https://nsh.dev/elements/menu
-- /docs/components/collapsible: Styled collapsible wrapping nsh/base Collapsible. → https://nsh.dev/elements/collapsible
-- /docs/components/accordion: Styled accordion wrapping nsh/base Accordion. → https://nsh.dev/elements/accordion
-- /docs/components/toast: Styled toast wrapping nsh/base Toast. → https://nsh.dev/elements/toast
-- /docs/components/avatar: Styled avatar wrapping nsh/base Avatar. → https://nsh.dev/elements/avatar
-- /docs/components/table: Styled table wrapping nsh/base Table. → https://nsh.dev/elements/table
+- /docs/components/link: Styled link wrapping nsh/base Link. → https://nsh.dev/elements/link
+- /docs/components/number-input: Styled number input wrapping nsh/base NumberInput. → https://nsh.dev/elements/number-input
 
 Theme source of truth is theme.json (nsh.json `theme`), not CSS. Behavior details: https://nsh.dev/elements

@@ -6,7 +6,7 @@ component: true
 demo: collapsible
 ---
 
-Styled collapsible on `nsh/base`. Trigger is `children`; panel is the `content` prop.
+Styled collapsible on `nsh/base`. Trigger is `children`; panel is the `content` prop — one root, not a Trigger/Content tree.
 
 ## Install
 
@@ -22,24 +22,49 @@ shadcn-nsh add collapsible -c apps/web
 import { Collapsible } from "@workspace/ui/components/ui/collapsible";
 import { Text } from "nsh";
 
-<Collapsible open content={<Text>Hidden until open</Text>}>
-  <Text>Trigger</Text>
+<Collapsible
+  content={<Text>Hidden until open — shipping leaves before 2 pm.</Text>}
+>
+  <Text>Shipping details</Text>
 </Collapsible>;
 ```
 
-## Composition
+## Examples
 
+### Controlled open
+
+```tsx
+<Collapsible open content={<Text>Panel body</Text>}>
+  <Text>Always showing when open</Text>
+</Collapsible>
 ```
-Collapsible
-├─ children → trigger
-└─ content  → panel
+
+### Reveal off
+
+```tsx
+<Collapsible reveal={false} content={<Text>No reveal animation</Text>}>
+  <Text>Details</Text>
+</Collapsible>
 ```
 
 ## API
 
-| Prop       | Type          | Default | Notes             |
-| ---------- | ------------- | ------- | ----------------- |
-| `open`     | `boolean`     | —       |                   |
-| `reveal`   | `boolean`     | `true`  |                   |
-| `content`  | `JSX.Element` | —       | Collapsible panel |
-| `children` | `JSX.Element` | —       | Trigger           |
+| Prop      | Type          | Default | Notes                         |
+| --------- | ------------- | ------- | ----------------------------- |
+| `open`    | `boolean`     | —       | Controlled open               |
+| `reveal`  | `boolean`     | `true`  |                               |
+| `content` | `JSX.Element` | —       | Collapsible panel             |
+| `children`| `JSX.Element` | —       | Trigger / always-visible slot |
+
+## Differences
+
+| Topic       | shadcn                                              | This package                                      |
+| ----------- | --------------------------------------------------- | ------------------------------------------------- |
+| Parts       | `Collapsible` / `CollapsibleTrigger` / `Content`    | single `Collapsible`; `children` + `content`      |
+| Trigger     | nested `CollapsibleTrigger`                         | `children` is the trigger                         |
+| Panel       | `CollapsibleContent`                                | `content` prop                                    |
+| Class hooks | `className` / CVA                                   | theme tokens + locked styles inside the wrapper   |
+
+## Not forwarded
+
+From `nsh/base` Collapsible: style hooks (`style`, …). The wrapper hardcodes `gap: 0` and defaults `reveal` to `true`. Extend the copied source if you need base knobs.
