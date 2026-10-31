@@ -5,7 +5,7 @@ description: Styled tooltip wrapping nsh/base Tooltip.
 component: true
 ---
 
-Styled wrapper on `nsh/base`. Behavior and a11y: [Tooltip](https://nsh.dev/elements/tooltip).
+Styled tooltip on `nsh/base` Tooltip. Pass the element as another control’s `tooltip={…}` prop.
 
 ## Install
 
@@ -22,11 +22,32 @@ import { Button } from "@workspace/ui/components/ui/button";
 import { Tooltip } from "@workspace/ui/components/ui/tooltip";
 import { Text } from "nsh";
 
-<Button tooltip={<Tooltip><Text>Add item</Text></Tooltip>} onPress={() => {}}>
+<Button
+  tooltip={
+    <Tooltip>
+      <Text>Add item</Text>
+    </Tooltip>
+  }
+  onPress={() => {}}
+>
   Add
-</Button>
+</Button>;
 ```
 
-## Source
+## API
 
-Authoring: `packages/ui/tooltip.tsx`. Registry: `tooltip` (depends on `theme`).
+| Prop           | Type                                                 | Default | Notes |
+| -------------- | ---------------------------------------------------- | ------- | ----- |
+| `open`         | `boolean \| null`                                    | —       |       |
+| `defaultOpen`  | `boolean`                                            | —       |       |
+| `placement`    | `Placement`                                          | `"top"` |       |
+| `delay`        | `number`                                             | —       |       |
+| `disabled`     | `boolean`                                            | —       |       |
+| `children`     | `JSX.Element`                                        | —       |       |
+| `onOpenChange` | `(event: { open: boolean; reason: string }) => void` | —       |       |
+
+<div class="callout">
+
+**Not forwarded:** `offset` (fixed to `6`) and tooltip `style` chrome.
+
+</div>

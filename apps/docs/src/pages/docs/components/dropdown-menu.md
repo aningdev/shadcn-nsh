@@ -5,7 +5,7 @@ description: Styled menu wrapping nsh/base Menu.
 component: true
 ---
 
-Styled wrapper on `nsh/base`. Behavior and a11y: [Dropdown Menu](https://nsh.dev/elements/menu).
+Styled menu on `nsh/base` `Menu` (docs slug `dropdown-menu`; nsh element `menu`). Exports use shadcn-style `DropdownMenu*` names.
 
 ## Install
 
@@ -23,16 +23,55 @@ import {
   DropdownMenu,
   DropdownMenuItem,
   DropdownMenuSeparator,
+  DropdownMenuSub,
 } from "@workspace/ui/components/ui/dropdown-menu";
 import { Text } from "nsh";
 
 <DropdownMenu trigger={<Button onPress={() => {}}>Menu</Button>}>
-  <DropdownMenuItem onSelect={() => {}}><Text>Profile</Text></DropdownMenuItem>
+  <DropdownMenuItem onSelect={() => {}}>
+    <Text>Profile</Text>
+  </DropdownMenuItem>
   <DropdownMenuSeparator />
-  <DropdownMenuItem onSelect={() => {}}><Text>Log out</Text></DropdownMenuItem>
-</DropdownMenu>
+  <DropdownMenuItem onSelect={() => {}}>
+    <Text>Log out</Text>
+  </DropdownMenuItem>
+</DropdownMenu>;
 ```
 
-## Source
+## Composition
 
-Authoring: `packages/ui/dropdown-menu.tsx`. Registry: `dropdown-menu` (depends on `theme`).
+```
+DropdownMenu
+├─ trigger (prop)
+├─ DropdownMenuItem
+├─ DropdownMenuSeparator
+└─ DropdownMenuSub
+   ├─ trigger (prop)
+   └─ …items
+```
+
+`DropdownMenuTrigger` is a naming alias that returns its children — pass the real trigger via the `trigger` prop on `DropdownMenu` / `DropdownMenuSub`.
+
+## API
+
+**`DropdownMenu`**
+
+| Prop           | Type                                                 | Notes |
+| -------------- | ---------------------------------------------------- | ----- |
+| `open`         | `boolean \| null`                                    |       |
+| `defaultOpen`  | `boolean`                                            |       |
+| `trigger`      | `JSX.Element`                                        |       |
+| `children`     | `JSX.Element`                                        |       |
+| `onOpenChange` | `(event: { open: boolean; reason: string }) => void` |       |
+
+**`DropdownMenuItem`** — `disabled?`, `checked?`, `closeOnSelect?`, `accessibilityLabel?`, `children?`, `onSelect?`
+
+**`DropdownMenuSeparator`** — no props
+
+**`DropdownMenuSub`** — `trigger?`, `children?`
+
+<div class="callout">
+
+**Not forwarded:** popup `offset` (fixed to `4`), `popupStyle` / `backdropStyle`, and other menu chrome knobs. Item indicator chrome is owned by the wrapper.
+
+</div>

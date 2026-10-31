@@ -5,7 +5,7 @@ description: Styled popover wrapping nsh/base Popover.
 component: true
 ---
 
-Styled wrapper on `nsh/base`. Behavior and a11y: [Popover](https://nsh.dev/elements/popover).
+Styled popover on `nsh/base` Popover with fixed surface padding and offset.
 
 ## Install
 
@@ -24,9 +24,23 @@ import { Text } from "nsh";
 
 <Popover trigger={<Button onPress={() => {}}>Open</Button>}>
   <Text>Popover content</Text>
-</Popover>
+</Popover>;
 ```
 
-## Source
+## API
 
-Authoring: `packages/ui/popover.tsx`. Registry: `popover` (depends on `theme`).
+| Prop           | Type                                                 | Notes |
+| -------------- | ---------------------------------------------------- | ----- |
+| `open`         | `boolean \| null`                                    |       |
+| `defaultOpen`  | `boolean`                                            |       |
+| `trigger`      | `JSX.Element`                                        |       |
+| `children`     | `JSX.Element`                                        |       |
+| `onOpenChange` | `(event: { open: boolean; reason: string }) => void` |       |
+| `onOpen`       | `() => void`                                         |       |
+| `onClose`      | `() => void`                                         |       |
+
+<div class="callout">
+
+**Not forwarded:** `offset` (fixed to `4`) and `popupStyle`.
+
+</div>

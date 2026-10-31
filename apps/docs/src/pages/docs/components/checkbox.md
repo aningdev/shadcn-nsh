@@ -5,7 +5,7 @@ description: Styled checkbox wrapping nsh/base Checkbox.
 component: true
 ---
 
-Styled wrapper on `nsh/base`. Behavior and a11y: [Checkbox](https://nsh.dev/elements/checkbox).
+Styled wrapper on `nsh/base`.
 
 ## Install
 
@@ -23,9 +23,5 @@ import { Text } from "nsh";
 
 <Checkbox checked onChange={(e) => console.log(e.checked)}>
   <Text>Accept terms</Text>
-</Checkbox>
+</Checkbox>;
 ```
-
-## Source
-
-Authoring: `packages/ui/checkbox.tsx`. Registry: `checkbox` (depends on `theme`).

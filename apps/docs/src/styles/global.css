@@ -171,6 +171,59 @@ pre {
   font-size: 1.05rem;
 }
 
+.prose .component-chrome {
+  margin: 0 0 1.25rem;
+  font-size: 0.95rem;
+  color: var(--muted);
+}
+
+.prose .component-chrome .muted {
+  color: var(--muted);
+}
+
+.prose .callout {
+  border-left: 3px solid var(--accent);
+  background: var(--bg-elevated);
+  padding: 0.75rem 1rem;
+  margin: 1rem 0 1.25rem;
+  border-radius: 0 8px 8px 0;
+}
+
+.prose .callout > :first-child {
+  margin-top: 0;
+}
+
+.prose .callout > :last-child {
+  margin-bottom: 0;
+}
+
+.prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+  margin: 1rem 0 1.25rem;
+}
+
+.prose th,
+.prose td {
+  border: 1px solid var(--border);
+  padding: 0.5rem 0.65rem;
+  text-align: left;
+  vertical-align: top;
+}
+
+.prose th {
+  background: var(--bg-elevated);
+  font-weight: 600;
+}
+
+.prose pre.parts,
+.prose .parts {
+  font-family: var(--mono);
+  font-size: 0.85rem;
+  line-height: 1.45;
+}
+
 .note {
   border-left: 3px solid var(--accent);
   background: var(--bg-elevated);

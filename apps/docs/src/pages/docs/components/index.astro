@@ -12,12 +12,10 @@ import { components } from "../../../lib/components";
     <code>packages/ui/COMPONENTS.md</code>.
   </p>
   <ul>
-    {
-      components.map((c) => (
-        <li>
-          <a href={withBase(`docs/components/${c.slug}`)}>{c.title}</a>
-        </li>
-      ))
-    }
+    {components.map((c) => (
+      <li>
+        <a href={withBase(`docs/components/${c.slug}`)}>{c.title}</a>
+      </li>
+    ))}
   </ul>
 </Docs>

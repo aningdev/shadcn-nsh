@@ -5,7 +5,7 @@ description: Styled toast wrapping nsh/base Toast.
 component: true
 ---
 
-Styled wrapper on `nsh/base`. Behavior and a11y: [Toast](https://nsh.dev/elements/toast).
+Styled toast stack on `nsh/base` `Toast` / `ToastStack`.
 
 ## Install
 
@@ -22,9 +22,35 @@ import { Toast, ToastStack } from "@workspace/ui/components/ui/toast";
 
 <ToastStack>
   <Toast title="Saved" description="Your changes were saved." />
-</ToastStack>
+</ToastStack>;
 ```
 
-## Source
+## Composition
 
-Authoring: `packages/ui/toast.tsx`. Registry: `toast` (depends on `theme`).
+```
+ToastStack
+└─ Toast
+```
+
+## API
+
+**`ToastStack`**
+
+| Prop               | Type                                     | Default      | Notes |
+| ------------------ | ---------------------------------------- | ------------ | ----- |
+| `placement`        | `Anchor`                                 | `"topRight"` |       |
+| `motion`           | `ToastMotion`                            | —            |       |
+| `children`         | `JSX.Element`                            | —            |       |
+| `onExpandedChange` | `(event: { expanded: boolean }) => void` | —            |       |
+| `onCancel`         | `() => void`                             | —            |       |
+
+**`Toast`**
+
+| Prop                 | Type                    | Notes                              |
+| -------------------- | ----------------------- | ---------------------------------- |
+| `transitionStatus`   | `ToastTransitionStatus` |                                    |
+| `title`              | `string`                | Used when `children` omitted       |
+| `description`        | `string`                |                                    |
+| `accessibilityLabel` | `string \| null`        | Defaults to `title`                |
+| `children`           | `JSX.Element`           | Overrides title/description layout |
+| `onDismissRequest`   | `() => void`            |                                    |

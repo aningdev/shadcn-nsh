@@ -5,7 +5,7 @@ description: Styled toggle group wrapping nsh/base ToggleGroup.
 component: true
 ---
 
-Styled wrapper on `nsh/base`. Behavior and a11y: [Toggle Group](https://nsh.dev/elements/toggle).
+Styled toggle group on `nsh/base` (nsh element `toggle`). Re-exports `Toggle` for convenience.
 
 ## Install
 
@@ -23,12 +23,27 @@ import { ToggleGroup } from "@workspace/ui/components/ui/toggle-group";
 import { Text } from "nsh";
 
 <ToggleGroup>
-  <Toggle pressed onChange={() => {}}><Text>Left</Text></Toggle>
-  <Toggle onChange={() => {}}><Text>Center</Text></Toggle>
-  <Toggle onChange={() => {}}><Text>Right</Text></Toggle>
-</ToggleGroup>
+  <Toggle pressed onChange={() => {}}>
+    <Text>Left</Text>
+  </Toggle>
+  <Toggle onChange={() => {}}>
+    <Text>Center</Text>
+  </Toggle>
+  <Toggle onChange={() => {}}>
+    <Text>Right</Text>
+  </Toggle>
+</ToggleGroup>;
 ```
 
-## Source
+## Composition
 
-Authoring: `packages/ui/toggle-group.tsx`. Registry: `toggle-group` (depends on `theme`).
+```
+ToggleGroup
+└─ Toggle*
+```
+
+## API
+
+**`ToggleGroup`** — `disabled?`, `children?`
+
+Use [Toggle](./toggle) props on each child. Group value orchestration from base is not wrapped beyond layout chrome — compose pressed state on each `Toggle`.

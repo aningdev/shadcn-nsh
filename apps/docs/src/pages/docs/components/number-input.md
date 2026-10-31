@@ -5,7 +5,7 @@ description: Styled number input wrapping nsh/base NumberInput.
 component: true
 ---
 
-Styled wrapper on `nsh/base`. Behavior and a11y: [Number Input](https://nsh.dev/elements/number-input).
+Styled wrapper on `nsh/base`.
 
 ## Install
 
@@ -20,9 +20,5 @@ shadcn-nsh add number-input -c apps/web
 ```tsx
 import { NumberInput } from "@workspace/ui/components/ui/number-input";
 
-<NumberInput defaultValue={1} min={0} max={99} onChange={(e) => console.log(e.value)} />
+<NumberInput defaultValue={1} min={0} max={99} onChange={(e) => console.log(e.value)} />;
 ```
-
-## Source
-
-Authoring: `packages/ui/number-input.tsx`. Registry: `number-input` (depends on `theme`).

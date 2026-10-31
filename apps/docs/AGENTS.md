@@ -2,14 +2,35 @@
 
 Astro docs site for shadcn-nsh (public copy-into-app docs + optional web demos).
 
+## Hybrid IA
+
+This site documents the **styled / copy-into-app** layer only. Behavior, a11y, platform notes, and the full `nsh/base` API deep-link to `https://nsh.dev/elements/<nshElement>` (driven by `src/lib/components.ts`). Do **not** scrape or embed nsh Markdown into pages.
+
 ## Component pages
 
 - Author as Markdown under `src/pages/docs/components/<slug>.md` (not `.astro`).
 - Frontmatter: `layout`, `title`, `description`, `component: true`; optional `demo: <name>` to inject `DemoFrame` (needs `bun run docs:demos`).
-- Do not put `# Title` in the body — `Docs.astro` renders `h1` from frontmatter when `component` / `demo` is set.
-- Sections: short standfirst (link behavior to `https://nsh.dev/elements/…`) → Install → Usage → Source.
-- Usage imports use consumer paths: `@workspace/ui/components/ui/<slug>`.
+- Do **not** put `# Title` in the body — `Docs.astro` renders `h1` from frontmatter when `component` / `demo` is set.
+- Do **not** hand-write nsh.dev links, `## Behavior & a11y`, or `## Source` — the layout injects them from `nshElement` / slug (handles slug ≠ element, e.g. `dropdown-menu` → `menu`).
+- Rendered page contract (layout + body):
+
+  1. Title (`h1` from frontmatter)
+  2. _(layout)_ nsh chrome — `nsh.dev/elements/<nshElement>` (+ `.md`)
+  3. _(layout)_ Preview — only when `demo` is set
+  4. Short standfirst (body; no mandatory nsh link)
+  5. Install
+  6. Usage — consumer imports `@workspace/ui/components/ui/<slug>`
+  7. Variants and/or Composition — when the wrapper adds variants or exposes multiple parts
+  8. API — **this package’s** props / variants only; add a **Not forwarded** callout when the wrapper narrows base (do not invent props)
+  9. _(layout)_ Behavior & a11y → outbound nsh
+  10. _(layout)_ Source
+
 - Nav / index list: `src/lib/components.ts` (keep in sync with Phase-1 registry UI items).
+
+## Site pages
+
+- Getting started, Theme (`theme.json` / `token()` as truth), Components index.
+- `public/llms.txt`: TOC for this site + pointers to `nsh.dev/elements` for behavior; do not fork nsh `llms-full`.
 
 ## Demos
 

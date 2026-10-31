@@ -5,7 +5,7 @@ description: Styled context menu wrapping nsh/base ContextMenu.
 component: true
 ---
 
-Styled wrapper on `nsh/base`. Behavior and a11y: [Context Menu](https://nsh.dev/elements/menu).
+Styled context menu on `nsh/base` `ContextMenu` (nsh element `menu`). Item / separator / sub re-export the dropdown-menu parts.
 
 ## Install
 
@@ -18,17 +18,48 @@ shadcn-nsh add context-menu -c apps/web
 ## Usage
 
 ```tsx
-import {
-  ContextMenu,
-  ContextMenuItem,
-} from "@workspace/ui/components/ui/context-menu";
+import { ContextMenu, ContextMenuItem } from "@workspace/ui/components/ui/context-menu";
 import { Text, View } from "nsh";
 
-<ContextMenu trigger={<View><Text>Right-click me</Text></View>}>
-  <ContextMenuItem onSelect={() => {}}><Text>Copy</Text></ContextMenuItem>
-</ContextMenu>
+<ContextMenu
+  trigger={
+    <View>
+      <Text>Right-click me</Text>
+    </View>
+  }
+>
+  <ContextMenuItem onSelect={() => {}}>
+    <Text>Copy</Text>
+  </ContextMenuItem>
+</ContextMenu>;
 ```
 
-## Source
+## Composition
 
-Authoring: `packages/ui/context-menu.tsx`. Registry: `context-menu` (depends on `theme`).
+```
+ContextMenu
+├─ trigger (prop)
+├─ ContextMenuItem   (= DropdownMenuItem)
+├─ ContextMenuSeparator
+└─ ContextMenuSub
+```
+
+## API
+
+**`ContextMenu`**
+
+| Prop           | Type                                                 | Notes |
+| -------------- | ---------------------------------------------------- | ----- |
+| `open`         | `boolean \| null`                                    |       |
+| `disabled`     | `boolean`                                            |       |
+| `trigger`      | `JSX.Element`                                        |       |
+| `children`     | `JSX.Element`                                        |       |
+| `onOpenChange` | `(event: { open: boolean; reason: string }) => void` |       |
+
+Item / separator / sub props match [Dropdown Menu](./dropdown-menu).
+
+<div class="callout">
+
+**Not forwarded:** popup `offset` (fixed to `4`) and `popupStyle` / `backdropStyle`.
+
+</div>

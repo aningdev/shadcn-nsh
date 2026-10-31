@@ -5,7 +5,7 @@ description: Styled collapsible wrapping nsh/base Collapsible.
 component: true
 ---
 
-Styled wrapper on `nsh/base`. Behavior and a11y: [Collapsible](https://nsh.dev/elements/collapsible).
+Styled collapsible on `nsh/base`. Trigger is `children`; panel is the `content` prop.
 
 ## Install
 
@@ -23,9 +23,22 @@ import { Text } from "nsh";
 
 <Collapsible open content={<Text>Hidden until open</Text>}>
   <Text>Trigger</Text>
-</Collapsible>
+</Collapsible>;
 ```
 
-## Source
+## Composition
 
-Authoring: `packages/ui/collapsible.tsx`. Registry: `collapsible` (depends on `theme`).
+```
+Collapsible
+├─ children → trigger
+└─ content  → panel
+```
+
+## API
+
+| Prop       | Type          | Default | Notes             |
+| ---------- | ------------- | ------- | ----------------- |
+| `open`     | `boolean`     | —       |                   |
+| `reveal`   | `boolean`     | `true`  |                   |
+| `content`  | `JSX.Element` | —       | Collapsible panel |
+| `children` | `JSX.Element` | —       | Trigger           |
