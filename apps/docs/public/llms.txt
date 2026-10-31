@@ -18,7 +18,34 @@ Styled NSH component library (copy-into-app), analogous to shadcn/ui on Radix.
 
 ## Docs
 
-- /docs/getting-started
-- /docs/components/button
+- /docs/getting-started: Create a monorepo or init shadcn-nsh in an existing NSH app.
+- /docs/components: Phase-1 styled wrappers on nsh/base.
+- /docs/components/button: Styled button wrapping nsh/base Button.
+- /docs/components/input: Styled text input wrapping nsh/base Input.
+- /docs/components/checkbox: Styled checkbox wrapping nsh/base Checkbox.
+- /docs/components/radio-group: Styled radio group wrapping nsh/base RadioGroup.
+- /docs/components/switch: Styled switch wrapping nsh/base Switch.
+- /docs/components/slider: Styled slider wrapping nsh/base Slider.
+- /docs/components/progress: Styled progress wrapping nsh/base Progress.
+- /docs/components/select: Styled select wrapping nsh/base Select.
+- /docs/components/combobox: Styled combobox wrapping nsh/base Combobox.
+- /docs/components/number-input: Styled number input wrapping nsh/base NumberInput.
+- /docs/components/otp-input: Styled OTP input wrapping nsh/base OtpInput.
+- /docs/components/tabs: Styled tabs wrapping nsh/base Tabs.
+- /docs/components/toggle: Styled toggle wrapping nsh/base Toggle.
+- /docs/components/toggle-group: Styled toggle group wrapping nsh/base ToggleGroup.
+- /docs/components/link: Styled link wrapping nsh/base Link.
+- /docs/components/pagination: Styled pagination wrapping nsh/base Pagination.
+- /docs/components/popover: Styled popover wrapping nsh/base Popover.
+- /docs/components/tooltip: Styled tooltip wrapping nsh/base Tooltip.
+- /docs/components/sheet: Styled sheet wrapping nsh/base Sheet.
+- /docs/components/dialog: Styled dialog wrapping nsh/base Dialog.
+- /docs/components/dropdown-menu: Styled menu wrapping nsh/base Menu.
+- /docs/components/context-menu: Styled context menu wrapping nsh/base ContextMenu.
+- /docs/components/collapsible: Styled collapsible wrapping nsh/base Collapsible.
+- /docs/components/accordion: Styled accordion wrapping nsh/base Accordion.
+- /docs/components/toast: Styled toast wrapping nsh/base Toast.
+- /docs/components/avatar: Styled avatar wrapping nsh/base Avatar.
+- /docs/components/table: Styled table wrapping nsh/base Table.
 
-Theme source of truth is theme.json (nsh.json `theme`), not CSS.
+Theme source of truth is theme.json (nsh.json `theme`), not CSS. Behavior details: https://nsh.dev/elements

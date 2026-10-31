@@ -118,6 +118,14 @@ pre {
   }
 }
 
+.side {
+  position: sticky;
+  top: 1rem;
+  align-self: start;
+  max-height: calc(100vh - 2rem);
+  overflow: auto;
+}
+
 .side nav {
   display: flex;
   flex-direction: column;

@@ -1,14 +1,23 @@
 ---
+import DemoFrame from "../components/DemoFrame.astro";
+import { components } from "../lib/components";
 import "../styles/global.css";
 
 interface Props {
   title?: string;
   description?: string;
-  frontmatter?: { title?: string; description?: string };
+  frontmatter?: {
+    title?: string;
+    description?: string;
+    demo?: string;
+    component?: boolean;
+  };
 }
 
 const title = Astro.props.title ?? Astro.props.frontmatter?.title ?? "Docs";
 const description = Astro.props.description ?? Astro.props.frontmatter?.description;
+const demo = Astro.props.frontmatter?.demo;
+const isComponentPage = !!Astro.props.frontmatter?.component || !!demo;
 const path = Astro.url.pathname;
 ---
 
@@ -59,21 +68,41 @@ const path = Astro.url.pathname;
             >
               All components
             </a>
-            <a
-              href="/docs/components/button"
-              aria-current={path.includes("/button") ? "page" : undefined}
-            >
-              Button
-            </a>
-            <a href="/docs/components/input">Input</a>
-            <a href="/docs/components/checkbox">Checkbox</a>
-            <a href="/docs/components/select">Select</a>
-            <a href="/docs/components/tabs">Tabs</a>
-            <a href="/docs/components/dialog">Dialog</a>
-            <a href="/docs/components/table">Table</a>
+            {
+              components.map((c) => (
+                <a
+                  href={`/docs/components/${c.slug}`}
+                  aria-current={
+                    path === `/docs/components/${c.slug}` ||
+                    path === `/docs/components/${c.slug}/`
+                      ? "page"
+                      : undefined
+                  }
+                >
+                  {c.title}
+                </a>
+              ))
+            }
           </nav>
         </aside>
         <main class="prose">
+          {
+            isComponentPage ? (
+              <>
+                <h1>{title}</h1>
+                {demo ? (
+                  <>
+                    <h2>Preview</h2>
+                    <p>
+                      Web preview (NSH <code>--target web</code>). For native behaviour use the
+                      gallery.
+                    </p>
+                    <DemoFrame name={demo} height={300} />
+                  </>
+                ) : null}
+              </>
+            ) : null
+          }
           <slot />
         </main>
       </div>
