@@ -7,9 +7,12 @@
     "dev": "astro dev --port 4321",
     "build": "astro build",
     "preview": "astro preview --port 4321",
+    "check": "astro sync && tsc --noEmit --runExternalCode",
     "build:demos": "bun scripts/build-demos.ts"
   },
   "dependencies": {
+    "@astrojs/compiler-rs": "^0.5.2",
+    "@astrojs/ts-content-mapper": "^0.2.0",
     "astro": "^7.4.4"
   }
 }

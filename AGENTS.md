@@ -59,22 +59,25 @@ Bun 管理依赖与脚本；格式化 / lint / 工具面类型经 [Vite+](https:
 
 ### TypeScript 分层
 
-| 面           | 路径                                                   | extends                                                                                                                                                    | 类型权威                                       |
-| ------------ | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
-| 共享选项     | `tsconfig.base.json`                                   | —                                                                                                                                                          | —                                              |
-| NSH 组件作者 | `tsconfig.nsh.json` → `packages/theme`、`packages/ui`  | base + NSH JSX；`paths`/`files` 指向 **gallery `.nsh`（本仓唯一 types host）**                                                                             | `nsh check apps/gallery` 为主；`vp check` 可辅 |
-| NSH 应用     | `apps/gallery/tsconfig.json`                           | **仅** `./.nsh/tsconfig.json`；自带 `paths` 时须手写回填 `nsh` / `nsh/*` / `*`（TS **不合并** extends 的 paths）；只 `include` 本 app，用 paths 引用包入口 | `nsh check apps/gallery`                       |
-| 工具链       | `packages/cli`、根 `tsconfig.json`（`vite.config.ts`） | base；CLI 加 `types: ["node","bun"]`                                                                                                                       | `vp check`                                     |
+| 面            | 路径                                                   | extends                                                                                                                                                    | 类型权威                                                                                |
+| ------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| 共享选项      | `tsconfig.base.json`                                   | —                                                                                                                                                          | —                                                                                       |
+| NSH 组件作者  | `tsconfig.nsh.json` → `packages/theme`、`packages/ui`  | base + NSH JSX；`paths`/`files` 指向 **gallery `.nsh`（本仓唯一 types host）**                                                                             | `nsh check apps/gallery` 为主；`vp check` 可辅                                          |
+| NSH 应用      | `apps/gallery/tsconfig.json`                           | **仅** `./.nsh/tsconfig.json`；自带 `paths` 时须手写回填 `nsh` / `nsh/*` / `*`（TS **不合并** extends 的 paths）；只 `include` 本 app，用 paths 引用包入口 | `nsh check apps/gallery`                                                                |
+| Docs（Astro） | `apps/docs/tsconfig.json`                              | `astro/tsconfigs/strict` + `contentMappers`（`@astrojs/ts-content-mapper` → `.astro`）                                                                     | `astro sync && tsc --noEmit --runExternalCode`（不用 `astro check` / `@astrojs/check`） |
+| 工具链        | `packages/cli`、根 `tsconfig.json`（`vite.config.ts`） | base；CLI 加 `types: ["node","bun"]`                                                                                                                       | `vp check`                                                                              |
+
+TypeScript 为 **7.1**（content mapper 所需；状态仍 experimental / beta）。`astro check` 方向是弃用或内部转调 `tsc`；TS 7 不再提供旧 Language Service API，故官方推荐原生 `tsc` + content mapper。
 
 改 theme/ui 前先保证 gallery 的 `.nsh` 已生成（`nsh check apps/gallery` / `prepare:types`）。
 
-根 `check` = `vp check`（fmt + lint + 工具面类型）+ `nsh check apps/gallery`（NSH 面）。
+根 `check` = `vp check`（fmt + lint + 工具面类型）+ `nsh check`（NSH 面）+ `check:docs`（Astro/`tsc`）。
 
 ## 常用命令
 
 ```sh
 bun install
-bun run check                   # vp check + nsh check apps/gallery
+bun run check                   # vp check + nsh check + check:docs
 bun run check:fix              # vp check --fix
 bun run registry:build
 bun run registry:serve          # http://127.0.0.1:4173/{name}.json
@@ -82,6 +85,7 @@ bun run shadcn-nsh -- create <name>
 bun run shadcn-nsh -- init -c <app> --registry 'http://127.0.0.1:4173/{name}.json'
 bun run shadcn-nsh -- add button -c <app> --registry 'http://127.0.0.1:4173/{name}.json'
 bun run check:gallery
+bun run check:docs              # astro sync && tsc --noEmit --runExternalCode
 bun run dev:gallery
 bun run dev:docs
 bun run docs:demos              # nsh package demos → apps/docs/public/demos

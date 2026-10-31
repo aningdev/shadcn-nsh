@@ -7,10 +7,10 @@
 
 与参考对齐的 **Phone `NavStack` + Desktop 侧栏** 壳（搜索、`DemoPage`/`Card`、`lazy`、持久化上次 demo、根级 Toaster），侧栏只挂 **本库已导出组件** 的 lazy demo。
 
-| 做 | 不做 |
-| -- | ---- |
-| 壳结构仿参考 `App` / `nav` / `ui` / `TitleBar` | 1:1 搬 Apps、Primitives、Styling、Motion、Platform |
-| demo 只 import `@shadcn-nsh/ui` + 本目录壳零件 | 依赖参考 `nsh-gallery-ui` 当契约 |
+| 做                                                 | 不做                                                |
+| -------------------------------------------------- | --------------------------------------------------- |
+| 壳结构仿参考 `App` / `nav` / `ui` / `TitleBar`     | 1:1 搬 Apps、Primitives、Styling、Motion、Platform  |
+| demo 只 import `@shadcn-nsh/ui` + 本目录壳零件     | 依赖参考 `nsh-gallery-ui` 当契约                    |
 | 缺口写入 [GAPS.md](./GAPS.md)，随 UI 补全再加 demo | 搬参考 `tests` / `Bench` / `tools` / lucide codegen |
 
 当前 [`App.tsx`](./App.tsx) 仍是单页冒烟；完整壳与按组件拆分的 demos **暂缓**（与参考差距大，先跟 `@shadcn-nsh/ui` 一起补）。

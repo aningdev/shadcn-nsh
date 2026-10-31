@@ -11,18 +11,17 @@
     "check:gallery": "nsh check apps/gallery",
     "dev:docs": "bun --filter @shadcn-nsh/docs dev",
     "build:docs": "bun --filter @shadcn-nsh/docs build",
+    "check:docs": "bun --filter @shadcn-nsh/docs check",
     "docs:demos": "bun apps/docs/scripts/build-demos.ts",
     "registry:build": "bun packages/cli/src/index.ts build && vp fmt public/r",
     "registry:serve": "bun packages/cli/src/index.ts serve",
     "shadcn-nsh": "bun packages/cli/src/index.ts",
-    "check": "vp check && nsh check apps/gallery && nsh check templates/nsh-monorepo/apps/web && nsh check apps/docs/demos/button.tsx",
-    "check:fix": "vp check --fix"
+    "check": "vp check --fix && nsh check apps/gallery && nsh check templates/nsh-monorepo/apps/web && nsh check apps/docs/demos/button.tsx && bun run check:docs"
   },
   "devDependencies": {
-    "@astrojs/compiler-rs": "^0.5.2",
     "@types/bun": "^1.4.4",
     "@types/node": "^26.6.6",
-    "typescript": "^7.0.2",
+    "typescript": "7.1.0-beta",
     "vite-plus": "^1.4.0"
   }
 }
