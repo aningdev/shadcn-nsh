@@ -1,0 +1,12 @@
+{
+  "name": "@shadcn-nsh/cli",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "bin": {
+    "shadcn-nsh": "./src/index.ts"
+  },
+  "dependencies": {
+    "commander": "^13.1.0"
+  }
+}

@@ -1,0 +1,38 @@
+{
+  "name": "shadcn-nsh",
+  "homepage": "https://github.com/aningdev/shadcn-nsh",
+  "items": [
+    {
+      "name": "theme",
+      "type": "registry:theme",
+      "title": "Theme",
+      "description": "NSH design tokens (theme.json) and token() helpers (lib/theme.ts).",
+      "files": [
+        {
+          "path": "packages/theme/theme.json",
+          "type": "registry:file",
+          "target": "theme.json"
+        },
+        {
+          "path": "packages/theme/theme.ts",
+          "type": "registry:lib",
+          "target": "lib/theme.ts"
+        }
+      ]
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "Button",
+      "description": "Styled button wrapping nsh/base Button.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/button.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/button.tsx"
+        }
+      ]
+    }
+  ]
+}

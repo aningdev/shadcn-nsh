@@ -13,6 +13,16 @@
         "@shadcn-nsh/ui": "workspace:*",
       },
     },
+    "packages/cli": {
+      "name": "@shadcn-nsh/cli",
+      "version": "0.0.0",
+      "bin": {
+        "shadcn-nsh": "./src/index.ts",
+      },
+      "dependencies": {
+        "commander": "^13.1.0",
+      },
+    },
     "packages/theme": {
       "name": "@shadcn-nsh/theme",
       "version": "0.0.0",
@@ -26,10 +36,14 @@
     },
   },
   "packages": {
+    "@shadcn-nsh/cli": ["@shadcn-nsh/cli@workspace:packages/cli"],
+
     "@shadcn-nsh/gallery": ["@shadcn-nsh/gallery@workspace:apps/gallery"],
 
     "@shadcn-nsh/theme": ["@shadcn-nsh/theme@workspace:packages/theme"],
 
     "@shadcn-nsh/ui": ["@shadcn-nsh/ui@workspace:packages/ui"],
+
+    "commander": ["commander@13.1.0", "", {}, "sha512-/rFeCpNJQbhSZjGVwO9RFV3xPqbnERS8MmIQzCtD/zl6gpJuV/bMLuN92oG3F7d8oDEHHRrujSXNUr8fpjntKw=="],
   }
 }

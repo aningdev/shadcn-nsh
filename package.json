@@ -1,9 +1,15 @@
 {
   "name": "shadcn-nsh",
   "private": true,
-  "workspaces": ["apps/*", "packages/*"],
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "scripts": {
     "dev:gallery": "nsh run apps/gallery",
-    "check:gallery": "nsh check apps/gallery"
+    "check:gallery": "nsh check apps/gallery",
+    "registry:build": "bun packages/cli/src/index.ts build",
+    "registry:serve": "bun packages/cli/src/index.ts serve",
+    "shadcn-nsh": "bun packages/cli/src/index.ts"
   }
 }

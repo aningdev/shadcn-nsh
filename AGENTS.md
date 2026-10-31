@@ -8,40 +8,57 @@
 
 只读参考，默认不在 submodule 内改代码或向上游提 PR（除非用户明确要求）。
 
-| 路径                                           | 用途                                                       |
-| ---------------------------------------------- | ---------------------------------------------------------- |
-| [`references/shadcn-ui`](references/shadcn-ui) | 体系模式：registry、文档站、CLI、copy-into-app             |
-| [`references/nsh`](references/nsh)             | 平台与 unstyled 基础：`nsh` / `nsh/base`、Gallery 示例样式 |
+| 路径 | 用途 |
+| --- | --- |
+| [`references/shadcn-ui`](references/shadcn-ui) | 体系模式：registry、文档站、CLI、copy-into-app |
+| [`references/nsh`](references/nsh) | 平台与 unstyled 基础：`nsh` / `nsh/base`、Gallery 示例样式 |
 
 克隆后若目录为空：`git submodule update --init --recursive`。
 
 ## 分层
 
-| 层                 | 权威参考                                                          | 本仓职责                     |
-| ------------------ | ----------------------------------------------------------------- | ---------------------------- |
-| 分发与作者体验     | `references/shadcn-ui`（`apps/v4/registry`、`packages/shadcn`）   | 后续仿 registry / docs / CLI |
-| 行为与 a11y        | `references/nsh` 的 `nsh/base`                                    | 组合与样式，不重写行为       |
-| 样式示例（非 API） | `references/nsh` 的 `examples/nsh-gallery-ui`、`examples/gallery` | 可借鉴 token/零件，勿当契约  |
+| 层 | 权威参考 | 本仓职责 |
+| --- | --- | --- |
+| 分发与作者体验 | `references/shadcn-ui`（`apps/v4/registry`、`packages/shadcn`） | `registry.json` → `public/r` + `packages/cli` |
+| 行为与 a11y | `references/nsh` 的 `nsh/base` | 组合与样式，不重写行为 |
+| 样式示例（非 API） | `references/nsh` 的 `examples/nsh-gallery-ui`、`examples/gallery` | 可借鉴 token/零件，勿当契约 |
 
 依赖向下：本库 → `nsh/base` → `nsh`。
 
+主题真源是 **`theme.json`（`nsh.json` 的 `theme`）**，不是 CSS；`lib/theme.ts` 仅为 `token()` 辅助。
+
 ## 何时读参考
 
-- **Registry / CLI / 组件源码组织** — 读 `references/shadcn-ui`：先 `CONTRIBUTING.md`，再 `apps/v4/registry`。
+- **Registry / CLI / 组件源码组织** — 读 `references/shadcn-ui`：先 `CONTRIBUTING.md`，再 `apps/v4/registry`；本仓实现见 `packages/cli`。
 - **控件行为、parts、平台差异、Tailwind/theme** — 读 `references/nsh` 与 [nsh.dev/llms.txt](https://nsh.dev/llms.txt)。
 - **组件库架构约定** — 对齐 NSH Coding Guides 的 library 边界。
 
 ## 当前布局
 
-Bun workspaces（`apps/*`、`packages/*`）。垂直切片已通：theme → styled Button → gallery。
+Bun workspaces（`apps/*`、`packages/*`）。copy-into-app 分发已通：`build` → `public/r` → `init` / `add`。
 
 | 路径 | 职责 |
 | --- | --- |
 | [`packages/theme`](packages/theme) | `theme.json` + `token()` 辅助（`@shadcn-nsh/theme`） |
 | [`packages/ui`](packages/ui) | 包装 `nsh/base` 的 styled 组件（`@shadcn-nsh/ui`） |
-| [`apps/gallery`](apps/gallery) | NSH demo 应用（`nsh.json` 的 `theme` 指向 `packages/theme/theme.json`） |
+| [`packages/cli`](packages/cli) | `shadcn-nsh`：`build` / `init` / `add` / `serve` |
+| [`registry.json`](registry.json) | 源 catalog |
+| [`public/r`](public/r) | 可 HTTP 拉取的 registry 产物（提交进 git） |
+| [`apps/gallery`](apps/gallery) | 本仓 demo |
 | [`references/`](references/) | 只读 submodule |
 
-尚未开建：CLI、文档站、registry 构建管道。扩展布局时同步更新本节。
+尚未开建：文档站、多 style、npm publish。扩展布局时同步更新本节。
 
-常用命令：`bun install`、`bun run check:gallery`、`bun run dev:gallery`（需本机 `nsh`）。
+## 常用命令
+
+```sh
+bun install
+bun run registry:build
+bun run registry:serve          # http://127.0.0.1:4173/{name}.json
+bun run shadcn-nsh -- init -c <app> --registry 'http://127.0.0.1:4173/{name}.json'
+bun run shadcn-nsh -- add button -c <app> --registry 'http://127.0.0.1:4173/{name}.json'
+bun run check:gallery
+bun run dev:gallery
+```
+
+默认远程模板（push 后）：`https://raw.githubusercontent.com/aningdev/shadcn-nsh/main/public/r/{name}.json`。
