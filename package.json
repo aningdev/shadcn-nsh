@@ -1,5 +1,5 @@
 {
-  "name": "shadcn-nsh",
+  "name": "shadcn-nsh-monorepo",
   "private": true,
   "workspaces": [
     "apps/*",
@@ -17,6 +17,7 @@
     "registry:build": "bun packages/cli/src/index.ts build && vp fmt public/r",
     "registry:serve": "bun packages/cli/src/index.ts serve",
     "shadcn-nsh": "bun packages/cli/src/index.ts",
+    "cli:build": "bun --filter shadcn-nsh build",
     "check": "vp check --fix && nsh check apps/gallery && nsh check templates/nsh-monorepo/apps/web && bun run check:demos && bun run check:docs"
   },
   "devDependencies": {

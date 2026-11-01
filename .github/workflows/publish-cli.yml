@@ -1,0 +1,75 @@
+name: Publish shadcn-nsh CLI
+
+on:
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "npm publish --dry-run (no upload)"
+        type: boolean
+        default: false
+      tag:
+        description: "npm dist-tag (empty = latest)"
+        required: false
+        type: string
+        default: ""
+  push:
+    tags:
+      - "v*"
+      - "cli-v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: publish-cli
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: packages/cli
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+
+      - name: Install dependencies
+        working-directory: .
+        run: bun install --frozen-lockfile
+
+      - name: Build CLI
+        run: bun run build
+
+      - name: Pack summary
+        run: npm pack --dry-run
+
+      - name: Publish to npm
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          if [ -z "${NODE_AUTH_TOKEN}" ]; then
+            echo "NPM_TOKEN secret is missing; cannot publish."
+            exit 1
+          fi
+
+          EXTRA_ARGS=()
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.dry_run }}" = "true" ]; then
+            EXTRA_ARGS+=(--dry-run)
+          fi
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ -n "${{ inputs.tag }}" ]; then
+            EXTRA_ARGS+=(--tag "${{ inputs.tag }}")
+          fi
+
+          npm publish --access public "${EXTRA_ARGS[@]}"

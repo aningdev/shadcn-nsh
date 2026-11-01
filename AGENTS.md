@@ -39,21 +39,21 @@
 
 Bun workspaces（`apps/*`、`packages/*`）。copy-into-app：`build` → `public/r` → `create` / `init` / `add`。
 
-| 路径                                               | 职责                                                        |
-| -------------------------------------------------- | ----------------------------------------------------------- |
-| [`packages/theme`](packages/theme)                 | `theme.json` + `token()` 辅助（`@shadcn-nsh/theme`）        |
-| [`packages/ui`](packages/ui)                       | 包装 `nsh/base` 的 styled 组件（`@shadcn-nsh/ui`）          |
-| [`packages/cli`](packages/cli)                     | `shadcn-nsh`：`create` / `build` / `init` / `add` / `serve` |
-| [`registry.json`](registry.json)                   | 源 catalog                                                  |
-| [`public/r`](public/r)                             | 可 HTTP 拉取的 registry 产物（提交进 git）                  |
-| [`apps/gallery`](apps/gallery)                     | 原生验真 demo（workspace 依赖作者包）                       |
-| [`apps/docs`](apps/docs)                           | Astro 文档站；可选 `docs:demos` 打 NSH web 预览             |
-| [`templates/nsh-monorepo`](templates/nsh-monorepo) | 消费方 starter（`create` 拷贝）；**不进**根 workspaces      |
-| [`references/`](references/)                       | 只读 submodule                                              |
+| 路径                                               | 职责                                                                 |
+| -------------------------------------------------- | -------------------------------------------------------------------- |
+| [`packages/theme`](packages/theme)                 | `theme.json` + `token()` 辅助（`@shadcn-nsh/theme`）                 |
+| [`packages/ui`](packages/ui)                       | 包装 `nsh/base` 的 styled 组件（`@shadcn-nsh/ui`）                   |
+| [`packages/cli`](packages/cli)                     | npm 包 `shadcn-nsh`（`create` / `build` / `init` / `add` / `serve`） |
+| [`registry.json`](registry.json)                   | 源 catalog                                                           |
+| [`public/r`](public/r)                             | 可 HTTP 拉取的 registry 产物（提交进 git）                           |
+| [`apps/gallery`](apps/gallery)                     | 原生验真 demo（workspace 依赖作者包）                                |
+| [`apps/docs`](apps/docs)                           | Astro 文档站；可选 `docs:demos` 打 NSH web 预览                      |
+| [`templates/nsh-monorepo`](templates/nsh-monorepo) | 消费方 starter（`create` 拷贝）；**不进**根 workspaces               |
+| [`references/`](references/)                       | 只读 submodule                                                       |
 
 **三面分工**：gallery = 原生验真；docs = 公开说明 + web 示意；template/`create` = 消费方 monorepo（`apps/web` + `packages/ui`）。作者侧 `packages/ui`（`@shadcn-nsh/ui`）≠ 模板内 `packages/ui`（`@workspace/ui` copy-into-app 落点）。
 
-尚未开建：多 style、npm publish。扩展布局时同步更新本节。
+CLI 已可发布为 unscoped npm 包 `shadcn-nsh`（`.github/workflows/publish-cli.yml`：`workflow_dispatch` / `v*` 标签）。尚未开建：多 style。扩展布局时同步更新本节。
 
 ## 工具链
 
@@ -86,6 +86,8 @@ bun run registry:serve          # http://127.0.0.1:4173/{name}.json
 bun run shadcn-nsh -- create <name>
 bun run shadcn-nsh -- init -c <app> --registry 'http://127.0.0.1:4173/{name}.json'
 bun run shadcn-nsh -- add button -c <app> --registry 'http://127.0.0.1:4173/{name}.json'
+bun run cli:build               # packages/cli → dist/（发布前）
+bunx shadcn-nsh@latest add button   # 消费方（npm 发布后）
 bun run check:gallery
 bun run check:docs              # astro sync && tsc --noEmit --runExternalCode
 bun run dev:gallery

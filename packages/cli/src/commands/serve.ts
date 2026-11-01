@@ -1,4 +1,5 @@
 import fs from "node:fs/promises";
+import http from "node:http";
 import path from "node:path";
 
 import { Command } from "commander";
@@ -13,10 +14,9 @@ export const serve = new Command()
     const root = path.resolve(opts.cwd, opts.dir);
     const port = Number(opts.port);
 
-    const server = Bun.serve({
-      port,
-      async fetch(req) {
-        const url = new URL(req.url);
+    const server = http.createServer(async (req, res) => {
+      try {
+        const url = new URL(req.url ?? "/", `http://127.0.0.1:${port}`);
         let pathname = url.pathname;
         if (pathname === "/") pathname = "/index.json";
         if (pathname.startsWith("/r/")) pathname = pathname.slice(2); // "/r/x" → "/x"
@@ -24,25 +24,35 @@ export const serve = new Command()
 
         const filePath = path.join(root, pathname);
         if (!filePath.startsWith(root)) {
-          return new Response("Forbidden", { status: 403 });
+          res.writeHead(403, { "content-type": "text/plain; charset=utf-8" });
+          res.end("Forbidden");
+          return;
         }
 
         try {
           const body = await fs.readFile(filePath);
-          return new Response(body, {
-            headers: {
-              "content-type": "application/json; charset=utf-8",
-              "access-control-allow-origin": "*",
-            },
+          res.writeHead(200, {
+            "content-type": "application/json; charset=utf-8",
+            "access-control-allow-origin": "*",
           });
+          res.end(body);
         } catch {
-          return new Response(`Not found: ${pathname}`, { status: 404 });
+          res.writeHead(404, { "content-type": "text/plain; charset=utf-8" });
+          res.end(`Not found: ${pathname}`);
         }
-      },
+      } catch (error) {
+        res.writeHead(500, { "content-type": "text/plain; charset=utf-8" });
+        res.end(error instanceof Error ? error.message : String(error));
+      }
+    });
+
+    await new Promise<void>((resolve, reject) => {
+      server.once("error", reject);
+      server.listen(port, "127.0.0.1", () => resolve());
     });
 
     console.log(`Serving ${root}`);
-    console.log(`  http://127.0.0.1:${server.port}/index.json`);
-    console.log(`  http://127.0.0.1:${server.port}/button.json`);
-    console.log(`CLI: --registry http://127.0.0.1:${server.port}/{name}.json`);
+    console.log(`  http://127.0.0.1:${port}/index.json`);
+    console.log(`  http://127.0.0.1:${port}/button.json`);
+    console.log(`CLI: --registry http://127.0.0.1:${port}/{name}.json`);
   });

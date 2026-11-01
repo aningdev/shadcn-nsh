@@ -11,10 +11,19 @@ import { runInit } from "./init";
 const PLACEHOLDER = "{{name}}";
 const APP_NAME_TOKEN = "__APP_NAME__";
 
-function templateRoot() {
-  // packages/cli/src/commands → ../../../../templates/nsh-monorepo
+async function templateRoot() {
   const here = path.dirname(fileURLToPath(import.meta.url));
-  return path.resolve(here, "../../../../templates/nsh-monorepo");
+  // Published dist/, local src/, and monorepo-relative layouts.
+  const candidates = [
+    path.resolve(here, "templates/nsh-monorepo"),
+    path.resolve(here, "../templates/nsh-monorepo"),
+    path.resolve(here, "../../templates/nsh-monorepo"),
+    path.resolve(here, "../../../../templates/nsh-monorepo"),
+  ];
+  for (const candidate of candidates) {
+    if (await pathExists(path.join(candidate, "package.json"))) return candidate;
+  }
+  return candidates[0]!;
 }
 
 async function pathExists(p: string) {
@@ -81,7 +90,7 @@ export async function runCreate(opts: {
   const parent = path.resolve(opts.cwd ?? process.cwd());
   const dest = path.join(parent, name);
 
-  const src = templateRoot();
+  const src = await templateRoot();
   if (!(await pathExists(path.join(src, "package.json")))) {
     throw new Error(`Template not found at ${src}`);
   }

@@ -1,12 +1,46 @@
 {
-  "name": "@shadcn-nsh/cli",
-  "version": "0.0.0",
-  "private": true,
-  "bin": {
-    "shadcn-nsh": "./src/index.ts"
+  "name": "shadcn-nsh",
+  "version": "0.1.0",
+  "description": "Add styled NSH components (copy-into-app) from the shadcn-nsh registry",
+  "keywords": [
+    "cli",
+    "components",
+    "nsh",
+    "registry",
+    "shadcn"
+  ],
+  "homepage": "https://github.com/aningdev/shadcn-nsh#readme",
+  "bugs": {
+    "url": "https://github.com/aningdev/shadcn-nsh/issues"
   },
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/aningdev/shadcn-nsh.git",
+    "directory": "packages/cli"
+  },
+  "bin": {
+    "shadcn-nsh": "./dist/index.js"
+  },
+  "files": [
+    "dist"
+  ],
   "type": "module",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup && node ./scripts/copy-templates.mjs",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "bun run build"
+  },
   "dependencies": {
     "commander": "^15.0.0"
+  },
+  "devDependencies": {
+    "tsup": "^8.5.0"
+  },
+  "engines": {
+    "node": ">=20"
   }
 }
