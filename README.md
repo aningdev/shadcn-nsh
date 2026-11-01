@@ -19,7 +19,10 @@ bun install
 默认脚手架：`apps/web` + `packages/ui`（组件落在 packages）：
 
 ```sh
+# 本仓开发：
 bun run shadcn-nsh -- create my-app
+# 或发布后：
+# bunx shadcn-nsh@latest create my-app
 cd my-app
 bun install
 bun run check
@@ -29,7 +32,7 @@ bun run dev
 继续添加组件：
 
 ```sh
-shadcn-nsh add button -c apps/web
+bunx shadcn-nsh@latest add button -c apps/web
 ```
 
 ## 在已有单 app 中使用
@@ -70,7 +73,7 @@ bun run registry:build
 | ------------------------ | --------------------- | --------------------------------------------- |
 | `packages/theme`         | `@shadcn-nsh/theme`   | design tokens（作者侧 registry 源）           |
 | `packages/ui`            | `@shadcn-nsh/ui`      | styled 组件源                                 |
-| `packages/cli`           | `@shadcn-nsh/cli`     | `create` / `init` / `add` / `build` / `serve` |
+| `packages/cli`           | `shadcn-nsh` (npm)    | `create` / `init` / `add` / `build` / `serve` |
 | `public/r`               | —                     | HTTP registry 产物                            |
 | `apps/gallery`           | `@shadcn-nsh/gallery` | 原生验真 demo                                 |
 | `apps/docs`              | `@shadcn-nsh/docs`    | Astro 文档站（可选 web iframe 预览）          |
