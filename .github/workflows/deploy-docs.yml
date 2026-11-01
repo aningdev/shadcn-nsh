@@ -26,18 +26,79 @@ jobs:
         with:
           bun-version: latest
 
+      - name: Cache Bun package downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            bun-${{ runner.os }}-
+
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      - name: Install NSH (from source — release CLI lacks newer nsh/base exports used by packages/ui)
+      # install.sh --source clones longbridge/nsh@main into ~/.nsh/source and
+      # cargo build --release -p nsh-cli (~10m cold). Key on that commit so a
+      # hit restores the built CLI + Cargo registries; restore-keys warm
+      # incremental rebuilds when main moves.
+      - name: Resolve NSH main SHA
+        id: nsh
+        run: |
+          sha="$(git ls-remote https://github.com/longbridge/nsh.git refs/heads/main | awk '{print $1}')"
+          if [ -z "$sha" ]; then
+            echo "Failed to resolve longbridge/nsh main SHA" >&2
+            exit 1
+          fi
+          echo "sha=$sha" >> "$GITHUB_OUTPUT"
+          echo "NSH main @ $sha"
+
+      - name: Cache NSH source install + Cargo
+        id: cache-nsh
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.nsh
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+          key: nsh-src-${{ runner.os }}-${{ steps.nsh.outputs.sha }}
+          restore-keys: |
+            nsh-src-${{ runner.os }}-
+
+      - name: Install llvm + wasm target
         run: |
           rustup target add wasm32-unknown-unknown
           sudo apt-get update
           sudo apt-get install -y llvm
+
+      - name: Install NSH (from source — release CLI lacks newer nsh/base exports used by packages/ui)
+        run: |
+          set -eu
+          nsh_sha="${{ steps.nsh.outputs.sha }}"
+          nsh_bin="$HOME/.nsh/bin/nsh"
+          nsh_exe="$HOME/.nsh/source/target/release/nsh"
+
+          link_nsh() {
+            mkdir -p "$HOME/.nsh/bin" "$HOME/.local/bin"
+            ln -sfn "$nsh_exe" "$nsh_bin"
+            ln -sfn "$nsh_bin" "$HOME/.local/bin/nsh"
+            echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+            # Prefer the toolchain that matches the NSH source checkout (edition 2024).
+            echo "$(dirname "$(rustup which cargo)")" >> "$GITHUB_PATH"
+          }
+
+          if [ "${{ steps.cache-nsh.outputs.cache-hit }}" = "true" ] \
+            && [ -x "$nsh_exe" ] \
+            && [ "$(git -C "$HOME/.nsh/source" rev-parse HEAD 2>/dev/null || true)" = "$nsh_sha" ]; then
+            echo "NSH cache hit for $nsh_sha — skipping source rebuild"
+            link_nsh
+            "$HOME/.local/bin/nsh" -V
+            exit 0
+          fi
+
           curl -fsSL https://nsh.dev/install.sh | sh -s -- --source
-          echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-          # Prefer the toolchain that matches the NSH source checkout (edition 2024).
-          echo "$(dirname "$(rustup which cargo)")" >> "$GITHUB_PATH"
+          link_nsh
+          "$HOME/.local/bin/nsh" -V
 
       - name: Build docs
         run: bun run build:docs
