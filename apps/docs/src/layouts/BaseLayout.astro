@@ -62,7 +62,9 @@ const canonical = new URL(Astro.url.pathname.replace(/\/+$/, "") || "/", SITE_UR
     <link rel="alternate" type="text/plain" title="llms.txt" href={`${BASE}llms.txt`} />
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
+    <a class="skip-link" href="#main">
+      Skip to content
+    </a>
     <slot />
   </body>
 </html>

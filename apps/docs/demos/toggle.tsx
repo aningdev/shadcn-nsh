@@ -1,6 +1,7 @@
 import { colors } from "@shadcn-nsh/theme";
-import { Toggle } from "../../../packages/ui/toggle";
 import { mount, signal, Text, View } from "nsh";
+
+import { Toggle } from "../../../packages/ui/toggle";
 
 function App() {
   const bold = signal(false);

@@ -51,16 +51,14 @@ export const SIDEBAR_PAGES: SidebarPage[] = [
     group: "components",
     section: "components",
   },
-  ...components.map(
-    (c): SidebarPage => ({
-      route: `/docs/components/${c.slug}`,
-      href: url(`docs/components/${c.slug}`),
-      title: c.title,
-      group: "components",
-      section: "components",
-      componentSlug: c.slug,
-    }),
-  ),
+  ...components.map((c): SidebarPage => ({
+    route: `/docs/components/${c.slug}`,
+    href: url(`docs/components/${c.slug}`),
+    title: c.title,
+    group: "components",
+    section: "components",
+    componentSlug: c.slug,
+  })),
 ];
 
 function normalizePath(pathname: string): string {

@@ -35,7 +35,7 @@ import { OtpInput } from "@workspace/ui/components/ui/otp-input";
 ```tsx
 const [code, setCode] = createSignal("");
 
-<OtpInput length={6} value={code()} onChange={(e) => setCode(e.value)} />
+<OtpInput length={6} value={code()} onChange={(e) => setCode(e.value)} />;
 ```
 
 ### Masked / grouped
@@ -52,26 +52,26 @@ const [code, setCode] = createSignal("");
 
 ## API
 
-| Prop                 | Type                                     | Default | Notes              |
-| -------------------- | ---------------------------------------- | ------- | ------------------ |
-| `length`             | `number`                                 | —       | Required cell count |
-| `value`              | `string \| null`                         | —       | Controlled value   |
-| `defaultValue`       | `string \| null`                         | —       |                    |
-| `masked`             | `boolean`                                | —       | Hide digits        |
-| `disabled`           | `boolean`                                | —       |                    |
-| `groups`             | `number`                                 | —       | Split into groups  |
-| `accessibilityLabel` | `string \| null`                         | —       |                    |
-| `onChange`           | `(event: { value: string }) => void`     | —       |                    |
-| `onComplete`         | `(event: { value: string }) => void`     | —       | Fires when filled  |
+| Prop                 | Type                                 | Default | Notes               |
+| -------------------- | ------------------------------------ | ------- | ------------------- |
+| `length`             | `number`                             | —       | Required cell count |
+| `value`              | `string \| null`                     | —       | Controlled value    |
+| `defaultValue`       | `string \| null`                     | —       |                     |
+| `masked`             | `boolean`                            | —       | Hide digits         |
+| `disabled`           | `boolean`                            | —       |                     |
+| `groups`             | `number`                             | —       | Split into groups   |
+| `accessibilityLabel` | `string \| null`                     | —       |                     |
+| `onChange`           | `(event: { value: string }) => void` | —       |                     |
+| `onComplete`         | `(event: { value: string }) => void` | —       | Fires when filled   |
 
 ## Differences
 
-| Topic       | shadcn                                              | This package                                      |
-| ----------- | --------------------------------------------------- | ------------------------------------------------- |
-| Parts       | `InputOTP` / `InputOTPGroup` / `InputOTPSlot` / …   | single `OtpInput`                                 |
-| Length      | compose N slots                                     | `length` prop                                     |
-| Complete    | app-level                                           | `onComplete` on the control                       |
-| Class hooks | `className` / CVA                                   | theme tokens + locked cell/caret styles           |
+| Topic       | shadcn                                            | This package                            |
+| ----------- | ------------------------------------------------- | --------------------------------------- |
+| Parts       | `InputOTP` / `InputOTPGroup` / `InputOTPSlot` / … | single `OtpInput`                       |
+| Length      | compose N slots                                   | `length` prop                           |
+| Complete    | app-level                                         | `onComplete` on the control             |
+| Class hooks | `className` / CVA                                 | theme tokens + locked cell/caret styles |
 
 ## Not forwarded
 

@@ -31,7 +31,7 @@ import { Pagination } from "@workspace/ui/components/ui/pagination";
 ```tsx
 const [page, setPage] = createSignal(1);
 
-<Pagination page={page()} totalPages={8} onChange={(e) => setPage(e.page)} />
+<Pagination page={page()} totalPages={8} onChange={(e) => setPage(e.page)} />;
 ```
 
 ### Compact / disabled
@@ -48,25 +48,25 @@ const [page, setPage] = createSignal(1);
 
 ## API
 
-| Prop                 | Type                                    | Default | Notes                    |
-| -------------------- | --------------------------------------- | ------- | ------------------------ |
-| `page`               | `number`                                | —       | Current page (required)  |
-| `totalPages`         | `number`                                | —       | Total pages (required)   |
-| `visiblePages`       | `number`                                | —       | Window of numbered items |
-| `compact`            | `boolean`                               | —       | Compact layout           |
-| `disabled`           | `boolean`                               | —       |                          |
-| `accessibilityLabel` | `string \| null`                        | —       |                          |
-| `children`           | `JSX.Element`                           | —       | Optional slot            |
-| `onChange`           | `(event: { page: number }) => void`     | —       |                          |
+| Prop                 | Type                                | Default | Notes                    |
+| -------------------- | ----------------------------------- | ------- | ------------------------ |
+| `page`               | `number`                            | —       | Current page (required)  |
+| `totalPages`         | `number`                            | —       | Total pages (required)   |
+| `visiblePages`       | `number`                            | —       | Window of numbered items |
+| `compact`            | `boolean`                           | —       | Compact layout           |
+| `disabled`           | `boolean`                           | —       |                          |
+| `accessibilityLabel` | `string \| null`                    | —       |                          |
+| `children`           | `JSX.Element`                       | —       | Optional slot            |
+| `onChange`           | `(event: { page: number }) => void` | —       |                          |
 
 ## Differences
 
-| Topic       | shadcn                                                          | This package                                           |
-| ----------- | --------------------------------------------------------------- | ------------------------------------------------------ |
-| Parts       | `Pagination` / `Content` / `Item` / `Link` / `Previous` / …     | single `Pagination` with built-in item render          |
-| Navigation  | compose links yourself                                          | `page` + `totalPages` + `onChange`                     |
-| Labels      | text / icons via children                                       | fixed ‹ › … / page number chrome                       |
-| Class hooks | `className` / CVA                                               | theme tokens + locked item styles                      |
+| Topic       | shadcn                                                      | This package                                  |
+| ----------- | ----------------------------------------------------------- | --------------------------------------------- |
+| Parts       | `Pagination` / `Content` / `Item` / `Link` / `Previous` / … | single `Pagination` with built-in item render |
+| Navigation  | compose links yourself                                      | `page` + `totalPages` + `onChange`            |
+| Labels      | text / icons via children                                   | fixed ‹ › … / page number chrome              |
+| Class hooks | `className` / CVA                                           | theme tokens + locked item styles             |
 
 ## Not forwarded
 

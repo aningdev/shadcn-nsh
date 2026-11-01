@@ -1,6 +1,7 @@
 import { colors } from "@shadcn-nsh/theme";
-import { Switch } from "../../../packages/ui/switch";
 import { mount, signal, Text, View } from "nsh";
+
+import { Switch } from "../../../packages/ui/switch";
 
 function App() {
   const on = signal(true);

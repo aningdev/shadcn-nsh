@@ -1,6 +1,13 @@
 import { colors } from "@shadcn-nsh/theme";
-import { Select } from "../../../packages/ui/select";
 import { mount, signal, Text, View } from "nsh";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../../../packages/ui/select";
 
 function App() {
   const fruit = signal<string | null>("apple");
@@ -17,15 +24,16 @@ function App() {
       }}
     >
       <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Select</Text>
-      <Select
-        value={fruit()}
-        onChange={({ value }) => fruit.set(value)}
-        items={[
-          { value: "apple", title: "Apple" },
-          { value: "banana", title: "Banana" },
-          { value: "orange", title: "Orange" },
-        ]}
-      />
+      <Select value={fruit()} onChange={({ value }) => fruit.set(value)}>
+        <SelectTrigger>
+          <SelectValue placeholder="Fruit" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="apple">Apple</SelectItem>
+          <SelectItem value="banana">Banana</SelectItem>
+          <SelectItem value="orange">Orange</SelectItem>
+        </SelectContent>
+      </Select>
       <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
         Value: {() => fruit() ?? "—"}
       </Text>

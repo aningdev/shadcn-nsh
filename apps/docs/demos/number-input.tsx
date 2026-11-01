@@ -1,6 +1,7 @@
 import { colors } from "@shadcn-nsh/theme";
-import { NumberInput } from "../../../packages/ui/number-input";
 import { mount, signal, Text, View } from "nsh";
+
+import { NumberInput } from "../../../packages/ui/number-input";
 
 function App() {
   const n = signal<number | null>(1);
@@ -15,7 +16,9 @@ function App() {
         justifyContent: "center",
       }}
     >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Number Input</Text>
+      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>
+        Number Input
+      </Text>
       <NumberInput value={n()} min={0} max={99} step={1} onChange={({ value }) => n.set(value)} />
       <NumberInput value={3} disabled />
       <Text style={{ fontSize: 13, color: colors.mutedForeground }}>

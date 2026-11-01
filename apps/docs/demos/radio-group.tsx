@@ -1,6 +1,7 @@
 import { colors } from "@shadcn-nsh/theme";
-import { Radio, RadioGroup } from "../../../packages/ui/radio-group";
 import { mount, signal, Text, View } from "nsh";
+
+import { Radio, RadioGroup } from "../../../packages/ui/radio-group";
 
 function App() {
   const radio = signal("a");
@@ -27,9 +28,7 @@ function App() {
           <Text style={{ fontSize: 14, color: colors.foreground }}>Option C</Text>
         </Radio>
       </RadioGroup>
-      <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
-        Selected: {() => radio()}
-      </Text>
+      <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Selected: {() => radio()}</Text>
     </View>
   );
 }

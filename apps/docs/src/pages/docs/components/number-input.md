@@ -21,13 +21,7 @@ shadcn-nsh add number-input -c apps/web
 ```tsx
 import { NumberInput } from "@workspace/ui/components/ui/number-input";
 
-<NumberInput
-  value={1}
-  min={0}
-  max={99}
-  step={1}
-  onChange={(e) => console.log(e.value)}
-/>;
+<NumberInput value={1} min={0} max={99} step={1} onChange={(e) => console.log(e.value)} />;
 ```
 
 ## Examples
@@ -37,7 +31,7 @@ import { NumberInput } from "@workspace/ui/components/ui/number-input";
 ```tsx
 const [n, setN] = createSignal<number | null>(1);
 
-<NumberInput value={n()} min={0} max={99} onChange={(e) => setN(e.value)} />
+<NumberInput value={n()} min={0} max={99} onChange={(e) => setN(e.value)} />;
 ```
 
 ### Disabled / readonly
@@ -52,32 +46,27 @@ const [n, setN] = createSignal<number | null>(1);
 ```tsx
 import { Text } from "nsh";
 
-<NumberInput
-  value={10}
-  prefix={<Text>$</Text>}
-  suffix={<Text>USD</Text>}
-  onChange={(e) => {}}
-/>
+<NumberInput value={10} prefix={<Text>$</Text>} suffix={<Text>USD</Text>} onChange={(e) => {}} />;
 ```
 
 ## API
 
-| Prop                 | Type                                              | Default | Notes                         |
-| -------------------- | ------------------------------------------------- | ------- | ----------------------------- |
-| `value`              | `number \| null`                                  | —       | Controlled value              |
-| `defaultValue`       | `number \| null`                                  | —       |                               |
-| `min`                | `number \| null`                                  | —       |                               |
-| `max`                | `number \| null`                                  | —       |                               |
-| `step`               | `number`                                          | —       |                               |
-| `disabled`           | `boolean`                                         | —       |                               |
-| `readonly`           | `boolean`                                         | —       |                               |
-| `placeholder`        | `string \| null`                                  | —       |                               |
-| `accessibilityLabel` | `string \| null`                                  | —       |                               |
-| `controlsRight`      | `boolean`                                         | `true`  | Place ± controls on the right |
-| `prefix`             | `JSX.Element`                                     | —       |                               |
-| `suffix`             | `JSX.Element`                                     | —       |                               |
-| `onChange`           | `(event: { value: number \| null }) => void`      | —       |                               |
-| `onSubmit`           | `(event: { value: number \| null }) => void`      | —       |                               |
+| Prop                 | Type                                         | Default | Notes                         |
+| -------------------- | -------------------------------------------- | ------- | ----------------------------- |
+| `value`              | `number \| null`                             | —       | Controlled value              |
+| `defaultValue`       | `number \| null`                             | —       |                               |
+| `min`                | `number \| null`                             | —       |                               |
+| `max`                | `number \| null`                             | —       |                               |
+| `step`               | `number`                                     | —       |                               |
+| `disabled`           | `boolean`                                    | —       |                               |
+| `readonly`           | `boolean`                                    | —       |                               |
+| `placeholder`        | `string \| null`                             | —       |                               |
+| `accessibilityLabel` | `string \| null`                             | —       |                               |
+| `controlsRight`      | `boolean`                                    | `true`  | Place ± controls on the right |
+| `prefix`             | `JSX.Element`                                | —       |                               |
+| `suffix`             | `JSX.Element`                                | —       |                               |
+| `onChange`           | `(event: { value: number \| null }) => void` | —       |                               |
+| `onSubmit`           | `(event: { value: number \| null }) => void` | —       |                               |
 
 ## Differences
 

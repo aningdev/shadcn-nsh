@@ -21,10 +21,7 @@ shadcn-nsh add slider -c apps/web
 ```tsx
 import { Slider } from "@workspace/ui/components/ui/slider";
 
-<Slider
-  value={volume()}
-  onChange={({ value }) => setVolume(value as number)}
-/>
+<Slider value={volume()} onChange={({ value }) => setVolume(value as number)} />;
 ```
 
 ## Examples
@@ -34,7 +31,7 @@ import { Slider } from "@workspace/ui/components/ui/slider";
 ```tsx
 const [volume, setVolume] = createSignal(40);
 
-<Slider value={volume()} onChange={({ value }) => setVolume(value as number)} />
+<Slider value={volume()} onChange={({ value }) => setVolume(value as number)} />;
 ```
 
 ### Range / step
@@ -52,31 +49,31 @@ const [volume, setVolume] = createSignal(40);
 
 ## API
 
-| Prop                 | Type                                              | Default | Notes                                      |
-| -------------------- | ------------------------------------------------- | ------- | ------------------------------------------ |
-| `value`              | `SliderValue \| null`                             | —       | Controlled (`SliderValue` from `nsh/base`) |
-| `defaultValue`       | `SliderValue`                                     | —       | Uncontrolled initial                       |
-| `min`                | `number`                                          | —       |                                            |
-| `max`                | `number`                                          | —       |                                            |
-| `step`               | `number`                                          | —       |                                            |
-| `scale`              | `SliderScale`                                     | —       | From `nsh/base` (not re-exported)          |
-| `axis`               | `Axis`                                            | —       | `"vertical"` switches layout styles        |
-| `disabled`           | `boolean`                                         | —       |                                            |
-| `accessibilityLabel` | `string \| null`                                  | —       |                                            |
-| `children`           | `JSX.Element`                                     | —       |                                            |
-| `onChange`           | `(event: { value: SliderValue }) => void`         | —       |                                            |
-| `onChangeEnd`        | `(event: { value: SliderValue }) => void`         | —       |                                            |
+| Prop                 | Type                                      | Default | Notes                                      |
+| -------------------- | ----------------------------------------- | ------- | ------------------------------------------ |
+| `value`              | `SliderValue \| null`                     | —       | Controlled (`SliderValue` from `nsh/base`) |
+| `defaultValue`       | `SliderValue`                             | —       | Uncontrolled initial                       |
+| `min`                | `number`                                  | —       |                                            |
+| `max`                | `number`                                  | —       |                                            |
+| `step`               | `number`                                  | —       |                                            |
+| `scale`              | `SliderScale`                             | —       | From `nsh/base` (not re-exported)          |
+| `axis`               | `Axis`                                    | —       | `"vertical"` switches layout styles        |
+| `disabled`           | `boolean`                                 | —       |                                            |
+| `accessibilityLabel` | `string \| null`                          | —       |                                            |
+| `children`           | `JSX.Element`                             | —       |                                            |
+| `onChange`           | `(event: { value: SliderValue }) => void` | —       |                                            |
+| `onChangeEnd`        | `(event: { value: SliderValue }) => void` | —       |                                            |
 
 `Axis`, `SliderScale`, and `SliderValue` are imported from `nsh/base` in the wrapper source and are **not** re-exported from this package.
 
 ## Differences
 
-| Topic       | shadcn                                      | This package                                           |
-| ----------- | ------------------------------------------- | ------------------------------------------------------ |
-| Parts       | `Slider` / `Track` / `Range` / `Thumb`      | single `Slider`; chrome built in                       |
-| Value       | often `number[]`                            | `SliderValue` from nsh/base                            |
-| Orientation | `orientation`                               | `axis`                                                 |
-| Change API  | `onValueChange`                             | `onChange` / `onChangeEnd` with `{ value }`            |
+| Topic       | shadcn                                 | This package                                |
+| ----------- | -------------------------------------- | ------------------------------------------- |
+| Parts       | `Slider` / `Track` / `Range` / `Thumb` | single `Slider`; chrome built in            |
+| Value       | often `number[]`                       | `SliderValue` from nsh/base                 |
+| Orientation | `orientation`                          | `axis`                                      |
+| Change API  | `onValueChange`                        | `onChange` / `onChangeEnd` with `{ value }` |
 
 ## Not forwarded
 

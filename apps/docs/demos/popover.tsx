@@ -1,7 +1,15 @@
 import { colors } from "@shadcn-nsh/theme";
-import { Button } from "../../../packages/ui/button";
-import { Popover } from "../../../packages/ui/popover";
 import { mount, signal, Text, View } from "nsh";
+
+import { Button } from "../../../packages/ui/button";
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "../../../packages/ui/popover";
 
 function App() {
   const open = signal(false);
@@ -18,22 +26,19 @@ function App() {
       }}
     >
       <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Popover</Text>
-      <Popover
-        open={open()}
-        onOpenChange={({ open: v }) => open.set(v)}
-        trigger={<Button onPress={() => open.set(true)}>Open popover</Button>}
-      >
-        <View style={{ gap: 8 }}>
-          <Text style={{ fontSize: 14, fontWeight: "600", color: colors.foreground }}>
-            Quick tip
-          </Text>
-          <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
-            Popover content with fixed offset and surface chrome.
-          </Text>
+      <Popover open={open()} onOpenChange={({ open: v }) => open.set(v)}>
+        <PopoverTrigger>Open popover</PopoverTrigger>
+        <PopoverContent>
+          <PopoverHeader>
+            <PopoverTitle>Quick tip</PopoverTitle>
+            <PopoverDescription>
+              Popover Trigger / Content composition with fixed surface chrome.
+            </PopoverDescription>
+          </PopoverHeader>
           <Button variant="outline" onPress={() => open.set(false)}>
             Close
           </Button>
-        </View>
+        </PopoverContent>
       </Popover>
     </View>
   );

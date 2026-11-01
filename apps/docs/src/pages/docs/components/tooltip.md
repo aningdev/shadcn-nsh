@@ -1,106 +1,54 @@
 ---
 layout: ../../../layouts/Docs.astro
 title: Tooltip
-description: Styled tooltip wrapping nsh/base Tooltip.
+description: Tooltip bubble and Trigger / Content composition.
 component: true
 demo: tooltip
-demoHeight: 360
+demoHeight: 300
 ---
 
-Styled hover/focus hint on `nsh/base` Tooltip. Prefer attaching it via a host element’s `tooltip={…}` prop (see source comment). The styled `Button` in this package does **not** forward `tooltip` — use an `nsh` / `nsh/base` host that accepts it.
+Two shapes: **string bubble** for host `tooltip={…}`, or **Trigger / Content** composition.
 
 ## Install
 
 ```sh
 shadcn-nsh add tooltip
-# monorepo:
-shadcn-nsh add tooltip -c apps/web
 ```
 
 ## Usage
 
 ```tsx
-import { Tooltip } from "@workspace/ui/components/ui/tooltip";
-import { Text } from "nsh";
-import { Button as BaseButton } from "nsh/base";
+import { Tooltip, TooltipTrigger, TooltipContent } from "@workspace/ui/components/ui/tooltip";
 
-<BaseButton
-  tooltip={
-    <Tooltip>
-      <Text>Add item</Text>
-    </Tooltip>
-  }
-  onPress={() => {}}
->
-  <Text>Add</Text>
-</BaseButton>;
+<Tooltip>
+  <TooltipTrigger>Hover me</TooltipTrigger>
+  <TooltipContent>Add item</TooltipContent>
+</Tooltip>;
 ```
 
-## Examples
-
-### Placement
+### Host prop bubble
 
 ```tsx
-<BaseButton
-  tooltip={
-    <Tooltip placement="bottom">
-      <Text>Below the control</Text>
-    </Tooltip>
-  }
-  onPress={() => {}}
->
-  <Text>Hover me</Text>
-</BaseButton>
+<SomeHost tooltip={<Tooltip>Add item</Tooltip>} />
 ```
 
-### Delay
+## Composition
 
-```tsx
-<BaseButton
-  tooltip={
-    <Tooltip delay={400}>
-      <Text>Slightly delayed</Text>
-    </Tooltip>
-  }
-  onPress={() => {}}
->
-  <Text>Wait…</Text>
-</BaseButton>
+```
+Tooltip
+├── TooltipTrigger
+└── TooltipContent
 ```
 
-### Controlled open
-
-```tsx
-const [open, setOpen] = createSignal(false);
-
-<Tooltip open={open()} onOpenChange={(e) => setOpen(e.open)}>
-  <Text>Forced open state</Text>
-</Tooltip>
-```
-
-## API
-
-| Prop           | Type                                                 | Default | Notes              |
-| -------------- | ---------------------------------------------------- | ------- | ------------------ |
-| `open`         | `boolean \| null`                                    | —       | Controlled open    |
-| `defaultOpen`  | `boolean`                                            | —       |                    |
-| `placement`    | `Placement`                                          | `"top"` |                    |
-| `delay`        | `number`                                             | —       |                    |
-| `disabled`     | `boolean`                                            | —       |                    |
-| `children`     | `JSX.Element`                                        | —       | Tip content        |
-| `onOpenChange` | `(event: { open: boolean; reason: string }) => void` | —       |                    |
-
-`Placement` is the nsh placement type.
+(`TooltipProvider` is a passthrough for shadcn familiarity.)
 
 ## Differences
 
-| Topic       | shadcn                                                         | This package                                                                  |
-| ----------- | -------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| Parts       | `Tooltip` / `TooltipTrigger` / `TooltipContent` / `TooltipProvider` | single `Tooltip`; host via element `tooltip={…}` (or controlled `open`)  |
-| Trigger     | wrap a trigger as a child                                      | typically assigned to another element’s `tooltip` prop                        |
-| Provider    | `TooltipProvider` for shared delay                             | per-instance `delay` / `placement` on `Tooltip`                               |
-| Presentation| Radix portal + content chrome                                  | nsh Tooltip + fixed padding/radius/foreground fill (`offset` locked to `6`)   |
+| Topic      | shadcn        | This package                                                                   |
+| ---------- | ------------- | ------------------------------------------------------------------------------ |
+| Attachment | wrap Trigger  | composition uses host `tooltip` under the hood; string `Tooltip` is the bubble |
+| Provider   | delay context | passthrough                                                                    |
 
 ## Not forwarded
 
-From `nsh/base` Tooltip: `offset` (fixed to `6`) and `style` (padding, radius, foreground background). Presentation defaults `placement` to `"top"` when omitted.
+Bubble chrome locked; styled `Button` does not forward `tooltip` — use composition or a base host.

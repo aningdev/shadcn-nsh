@@ -24,7 +24,7 @@ import { Text } from "nsh";
 
 <Switch checked={on()} onChange={({ checked }) => setOn(checked)}>
   <Text>Notifications</Text>
-</Switch>
+</Switch>;
 ```
 
 ## Examples
@@ -36,7 +36,7 @@ const [on, setOn] = createSignal(true);
 
 <Switch checked={on()} onChange={({ checked: v }) => setOn(v)}>
   <Text>Notifications</Text>
-</Switch>
+</Switch>;
 ```
 
 ### Disabled
@@ -49,22 +49,22 @@ const [on, setOn] = createSignal(true);
 
 ## API
 
-| Prop                 | Type                                      | Default | Notes                |
-| -------------------- | ----------------------------------------- | ------- | -------------------- |
-| `checked`            | `boolean`                                 | —       |                      |
-| `disabled`           | `boolean`                                 | —       |                      |
-| `accessibilityLabel` | `string \| null`                          | —       |                      |
-| `children`           | `JSX.Element`                             | —       | Optional label       |
-| `onChange`           | `(event: { checked: boolean }) => void`   | —       |                      |
+| Prop                 | Type                                    | Default | Notes          |
+| -------------------- | --------------------------------------- | ------- | -------------- |
+| `checked`            | `boolean`                               | —       |                |
+| `disabled`           | `boolean`                               | —       |                |
+| `accessibilityLabel` | `string \| null`                        | —       |                |
+| `children`           | `JSX.Element`                           | —       | Optional label |
+| `onChange`           | `(event: { checked: boolean }) => void` | —       |                |
 
 ## Differences
 
-| Topic       | shadcn                                      | This package                                           |
-| ----------- | ------------------------------------------- | ------------------------------------------------------ |
-| Change API  | `onCheckedChange`                           | `onChange({ checked })`                                |
-| Label       | often sibling `Label`                       | optional label via `children`                          |
-| Thumb/track | style via `className`                       | locked track / thumb styles in the wrapper             |
-| Size        | size variants common                        | fixed dimensions                                       |
+| Topic       | shadcn                | This package                               |
+| ----------- | --------------------- | ------------------------------------------ |
+| Change API  | `onCheckedChange`     | `onChange({ checked })`                    |
+| Label       | often sibling `Label` | optional label via `children`              |
+| Thumb/track | style via `className` | locked track / thumb styles in the wrapper |
+| Size        | size variants common  | fixed dimensions                           |
 
 ## Not forwarded
 

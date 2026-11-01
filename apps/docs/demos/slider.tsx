@@ -1,6 +1,7 @@
 import { colors } from "@shadcn-nsh/theme";
-import { Slider } from "../../../packages/ui/slider";
 import { mount, signal, Text, View } from "nsh";
+
+import { Slider } from "../../../packages/ui/slider";
 
 function App() {
   const volume = signal(40);

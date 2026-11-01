@@ -91,3 +91,13 @@ export function AccordionPanel(props: {
     </BaseAccordionPanel>
   );
 }
+
+/** shadcn-shaped alias for `AccordionPanel`. */
+export function AccordionContent(props: {
+  reveal?: boolean;
+  keepMounted?: boolean;
+  accessibilityLabel?: string | null;
+  children?: JSX.Element;
+}) {
+  return <AccordionPanel {...props} />;
+}

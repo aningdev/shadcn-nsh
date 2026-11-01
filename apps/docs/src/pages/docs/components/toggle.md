@@ -24,7 +24,7 @@ import { Text } from "nsh";
 
 <Toggle pressed={bold()} onChange={({ pressed }) => setBold(pressed)}>
   <Text>Bold</Text>
-</Toggle>
+</Toggle>;
 ```
 
 ## Examples
@@ -36,7 +36,7 @@ const [bold, setBold] = createSignal(false);
 
 <Toggle pressed={bold()} onChange={({ pressed }) => setBold(pressed)}>
   <Text>Bold</Text>
-</Toggle>
+</Toggle>;
 ```
 
 ### Disabled
@@ -49,22 +49,22 @@ const [bold, setBold] = createSignal(false);
 
 ## API
 
-| Prop                 | Type                                       | Default | Notes              |
-| -------------------- | ------------------------------------------ | ------- | ------------------ |
-| `pressed`            | `boolean`                                  | —       |                    |
-| `disabled`           | `boolean`                                  | —       |                    |
-| `accessibilityLabel` | `string \| null`                           | —       |                    |
-| `children`           | `JSX.Element`                              | —       | Label / icon       |
-| `onChange`           | `(event: { pressed: boolean }) => void`    | —       |                    |
+| Prop                 | Type                                    | Default | Notes        |
+| -------------------- | --------------------------------------- | ------- | ------------ |
+| `pressed`            | `boolean`                               | —       |              |
+| `disabled`           | `boolean`                               | —       |              |
+| `accessibilityLabel` | `string \| null`                        | —       |              |
+| `children`           | `JSX.Element`                           | —       | Label / icon |
+| `onChange`           | `(event: { pressed: boolean }) => void` | —       |              |
 
 ## Differences
 
-| Topic       | shadcn                                      | This package                                           |
-| ----------- | ------------------------------------------- | ------------------------------------------------------ |
-| Press event | `onPressedChange` / sometimes `onClick`     | `onChange({ pressed })`                                |
-| Variants    | `variant` / `size` via CVA                  | none — fixed height and accent pressed look            |
-| Grouping    | often with `ToggleGroup` value API          | standalone; see `toggle-group` for a visual row shell  |
-| Class hooks | `className`                                 | theme tokens + locked styles                           |
+| Topic       | shadcn                                  | This package                                          |
+| ----------- | --------------------------------------- | ----------------------------------------------------- |
+| Press event | `onPressedChange` / sometimes `onClick` | `onChange({ pressed })`                               |
+| Variants    | `variant` / `size` via CVA              | none — fixed height and accent pressed look           |
+| Grouping    | often with `ToggleGroup` value API      | standalone; see `toggle-group` for a visual row shell |
+| Class hooks | `className`                             | theme tokens + locked styles                          |
 
 ## Not forwarded
 

@@ -27,8 +27,8 @@ Extensions (shadcn-only pieces with no `nsh/base` export) and Phase-2 components
   3. _(layout)_ **Preview** — only when `demo` is set
   4. Short standfirst (body; no mandatory nsh link)
   5. **Install**
-  6. **Usage** — consumer imports `@workspace/ui/components/ui/<slug>`; document **this** package’s API shape (do not copy Radix-shaped trees into Usage)
-  7. **Composition** — when the wrapper exposes multiple parts (ASCII tree / list)
+  6. **Usage** — consumer imports `@workspace/ui/components/ui/<slug>`; document **this** package’s public API. Prefer shadcn-shaped composition trees when `@shadcn-nsh/ui` exports those facades (Trigger/Content/Item/…); do not paste Radix props that we do not implement
+  7. **Composition** — ASCII tree of exported parts (required for compound components)
   8. **Examples** — 1–3 short vignettes (shadcn density, not full ports)
   9. **API** — this package’s props / variants only (optional **Variants** subsection when the wrapper adds look variants)
   10. **Differences** — vs shadcn: naming, parts, events (`onPress`), single-root vs compound trees, etc.
