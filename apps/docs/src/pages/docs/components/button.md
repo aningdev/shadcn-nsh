@@ -13,14 +13,8 @@ demo: button
 ```bash
 npx shadcn-nsh@latest add button
 bunx shadcn-nsh@latest add button
-pnpm dlx shadcn-nsh@latest add button
+pnx shadcn-nsh@latest add button
 yarn dlx shadcn-nsh@latest add button
-```
-
-Monorepo (point at the app that owns `components.json`):
-
-```bash
-bunx shadcn-nsh@latest add button -c apps/web
 ```
 
 ## Usage
@@ -31,9 +25,16 @@ import { Button } from "@workspace/ui/components/ui/button";
 <Button onPress={() => {}}>Default</Button>;
 ```
 
-## Examples
+## Size
 
-### Variants
+```tsx
+<Button size="xs">Extra small</Button>
+<Button size="sm">Small</Button>
+<Button size="default">Default</Button>
+<Button size="lg">Large</Button>
+```
+
+## Variants
 
 ```tsx
 <Button>Default</Button>
@@ -44,36 +45,85 @@ import { Button } from "@workspace/ui/components/ui/button";
 <Button variant="link">Link</Button>
 ```
 
-### Size
-
-```tsx
-<Button size="xs">Extra small</Button>
-<Button size="sm">Small</Button>
-<Button size="default">Default</Button>
-<Button size="lg">Large</Button>
-<Button size="icon" accessibilityLabel="Add">
-  <Text>+</Text>
-</Button>
-```
-
-### Disabled
+## Disabled
 
 ```tsx
 <Button disabled>Disabled</Button>
 ```
 
+## Selected
+
+```tsx
+const [on, setOn] = createSignal(false);
+
+<Button selected={on()} onPress={() => setOn(!on())}>
+  Bold
+</Button>;
+```
+
+## Icon
+
+```tsx
+<Button size="icon" accessibilityLabel="Add">
+  <Text>+</Text>
+</Button>
+<Button size="icon-xs" accessibilityLabel="Close">
+  <Text>×</Text>
+</Button>
+<Button size="icon-sm" variant="outline" accessibilityLabel="Settings">
+  <Text>⚙</Text>
+</Button>
+<Button size="icon-lg" variant="secondary" accessibilityLabel="More">
+  <Text>⋯</Text>
+</Button>
+```
+
+## With Icon
+
+```tsx
+<Button>
+  <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+    <Text>+</Text>
+    <Text>New project</Text>
+  </View>
+</Button>
+```
+
+## As Link
+
+Use `buttonVariants` with `Link` so the control stays a real link (nsh/base `Link`), not a Button with a fake `asChild`. Same idea as shadcn `bases/base`: do not force button role onto a link.
+
+```tsx
+import { buttonVariants } from "@workspace/ui/components/ui/button";
+import { Link } from "@workspace/ui/components/ui/link";
+import { Text } from "nsh";
+
+const look = buttonVariants({ variant: "outline", size: "lg" });
+
+<Link
+  href="https://nsh.dev"
+  style={look.style}
+  hoverStyle={look.hoverStyle}
+  activeStyle={look.activeStyle}
+>
+  <Text style={look.label}>Open nsh.dev</Text>
+</Link>;
+```
+
+For a link-_looking_ press target that is still a button, use `variant="link"` on `Button`.
+
 ## API
 
 ### Variants
 
-| `variant`     | Look                                   |
-| ------------- | -------------------------------------- |
-| `default`     | Primary fill                           |
-| `secondary`   | Secondary fill                         |
-| `outline`     | Border, transparent fill               |
-| `destructive` | Destructive fill                       |
-| `ghost`       | No border/fill                         |
-| `link`        | Primary text, underline (still Button) |
+| `variant`     | Look                                     |
+| ------------- | ---------------------------------------- |
+| `default`     | Primary fill                             |
+| `secondary`   | Secondary fill                           |
+| `outline`     | Border, background fill                  |
+| `destructive` | Soft destructive tint + destructive text |
+| `ghost`       | No border/fill                           |
+| `link`        | Primary text (still `nsh/base` Button)   |
 
 ### Sizes
 
@@ -99,26 +149,27 @@ import { Button } from "@workspace/ui/components/ui/button";
 | `selected`           | `boolean`               | —           | Forwarded; wrapper applies `selectedStyle`             |
 | `accessibilityLabel` | `string \| null`        | —           | Forwarded; defaults to string `children` when omitted  |
 | `role`               | `string \| null`        | —           | Forwarded (base default `"button"`)                    |
-| `onPress`            | `() => void`            | —           |                                                        |
 
 ### Events
 
-| Event     | Notes                                       |
-| --------- | ------------------------------------------- |
-| `onPress` | Tap / click / keyboard activate (from base) |
+| Event         | Notes                                                          |
+| ------------- | -------------------------------------------------------------- |
+| `onPress`     | Tap / click / keyboard activate (from base)                    |
+| `onPressDown` | Press began (from base); for custom press feedback             |
+| `onPressUp`   | Press ended / cancelled (from base); for custom press feedback |
 
-`buttonVariants({ variant, size })` returns token-backed `style` / `label` / hover·active·selected looks for reuse outside the component.
+`buttonVariants({ variant, size })` returns token-backed `style` / `label` / hover·active·selected looks for reuse (including on `Link`).
 
 ## Differences
 
-| Topic           | shadcn (`bases/base`)       | This package                                                         |
-| --------------- | --------------------------- | -------------------------------------------------------------------- |
-| Press event     | DOM `onClick`               | `onPress`                                                            |
-| Children        | arbitrary nodes / `asChild` | `string \| JSX.Element`; no `asChild`                                |
-| Link affordance | `variant="link"` on Button  | same `variant="link"` (still `nsh/base` Button; LinkButton deferred) |
-| Class hooks     | `className` / CVA           | theme tokens + `buttonVariants` style helper                         |
-| Size matrix     | `default`…`icon-lg`         | same size names; token sizes approximate, not CSS-pixel locked       |
+| Topic           | shadcn (`bases/base`)                        | This package                                                         |
+| --------------- | -------------------------------------------- | -------------------------------------------------------------------- |
+| Press event     | DOM `onClick`                                | `onPress` / `onPressDown` / `onPressUp`                              |
+| Children        | arbitrary nodes / Slot                       | `string \| JSX.Element`; no `asChild`                                |
+| Link affordance | `buttonVariants` on `<a>`; avoid Button+Slot | `buttonVariants` on `Link`; or `variant="link"` on Button            |
+| Class hooks     | `className` / CVA                            | theme tokens + `buttonVariants` style helper                         |
+| Size matrix     | `default`…`icon-lg`                          | same names; token sizes approximate nova scale, not CSS-pixel locked |
 
 ## Not forwarded
 
-From `nsh/base` Button: `onPressDown` / `onPressUp`, and style hooks (`style` / `hoverStyle` / `activeStyle` / `focusStyle` / `selectedStyle` / `disabledStyle`, `class`). The wrapper owns look-and-feel. Extend the copied source if you need those knobs.
+From `nsh/base` Button: style hooks (`style` / `hoverStyle` / `activeStyle` / `focusStyle` / `selectedStyle` / `disabledStyle`, `class`). The wrapper owns look-and-feel. Extend the copied source if you need those knobs.

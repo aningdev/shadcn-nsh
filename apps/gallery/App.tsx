@@ -7,8 +7,10 @@ import {
   AccordionTrigger,
   Avatar,
   Button,
+  buttonVariants,
   Checkbox,
   Input,
+  Link,
   Pagination,
   Progress,
   Radio,
@@ -57,6 +59,7 @@ function App() {
   const bold = signal(false);
   const page = signal(1);
   const open = signal(["shipping"]);
+  const outlineLink = buttonVariants({ variant: "outline", size: "sm" });
 
   return (
     <Scroll style={{ flex: 1, backgroundColor: colors.background }}>
@@ -93,10 +96,21 @@ function App() {
               LG
             </Button>
             <Button size="icon" accessibilityLabel="Add" onPress={() => count.set(count() + 1)}>
-              <Text style={{ fontSize: 18, fontWeight: "600", color: colors.primaryForeground }}>
+              <Text style={{ fontSize: 16, fontWeight: "600", color: colors.primaryForeground }}>
                 +
               </Text>
             </Button>
+            <Button selected={bold()} variant="outline" onPress={() => bold.set(!bold())}>
+              Selected
+            </Button>
+            <Link
+              href="https://nsh.dev"
+              style={outlineLink.style}
+              hoverStyle={outlineLink.hoverStyle}
+              activeStyle={outlineLink.activeStyle}
+            >
+              <Text style={outlineLink.label}>As Link</Text>
+            </Link>
           </View>
         </Section>
 

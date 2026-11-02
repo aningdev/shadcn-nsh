@@ -72,6 +72,21 @@ const kicker =
         : "Docs";
 
 const showDocHeader = true;
+
+/**
+ * Render markdown once, then (when a demo exists) place standfirst paragraphs
+ * above Preview so page order matches the component docs template.
+ */
+const rawBody = await Astro.slots.render("default");
+let standfirstHtml = "";
+let bodyHtml = rawBody;
+if (demo) {
+  const h2Match = rawBody.match(/<h2\b/i);
+  if (h2Match?.index != null && h2Match.index > 0) {
+    standfirstHtml = rawBody.slice(0, h2Match.index).trim();
+    bodyHtml = rawBody.slice(h2Match.index);
+  }
+}
 ---
 
 <BaseLayout title={title} description={description}>
@@ -109,6 +124,7 @@ const showDocHeader = true;
               ) : null}
             </p>
           ) : null}
+          {standfirstHtml ? <div class="doc-standfirst" set:html={standfirstHtml} /> : null}
           {demo ? (
             <>
               <h2 id="preview">Preview</h2>
@@ -118,7 +134,7 @@ const showDocHeader = true;
               <DemoFrame name={demo} height={demoHeight} />
             </>
           ) : null}
-          <slot />
+          <div class="doc-md" set:html={bodyHtml} />
           {componentDoc && nshUrl ? (
             <>
               <h2 id="behavior-a11y">Behavior &amp; a11y</h2>
@@ -278,6 +294,11 @@ const showDocHeader = true;
 </script>
 
 <style is:global>
+  /* Transparent wrappers so slot HTML split does not change markdown flow. */
+  .doc-standfirst,
+  .doc-md {
+    display: contents;
+  }
   .component-chrome {
     margin: 0 0 1.25rem;
     font-size: 0.95rem;

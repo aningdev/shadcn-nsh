@@ -1,5 +1,5 @@
 import { colors, focusRing } from "@shadcn-nsh/theme";
-import type { JSX } from "nsh";
+import type { JSX, ViewStyle } from "nsh";
 import { Link as BaseLink } from "nsh/base";
 
 export function Link(props: {
@@ -11,6 +11,11 @@ export function Link(props: {
   children?: JSX.Element;
   onOpen?: (event: { href: string }) => void;
   onPress?: () => void;
+  /** Optional look overrides — compose with `buttonVariants` for link-as-button. */
+  style?: ViewStyle;
+  hoverStyle?: ViewStyle;
+  activeStyle?: ViewStyle;
+  focusStyle?: ViewStyle;
 }) {
   return (
     <BaseLink
@@ -21,11 +26,13 @@ export function Link(props: {
       accessibilityLabel={props.accessibilityLabel}
       onOpen={props.onOpen as never}
       onPress={props.onPress}
-      focusStyle={focusRing()}
+      focusStyle={props.focusStyle ?? focusRing()}
       style={{
         opacity: props.disabled ? 0.5 : 1,
+        ...props.style,
       }}
-      hoverStyle={props.disabled ? undefined : { opacity: 0.8 }}
+      hoverStyle={props.disabled ? undefined : (props.hoverStyle ?? { opacity: 0.8 })}
+      activeStyle={props.disabled ? undefined : props.activeStyle}
     >
       {props.children}
     </BaseLink>

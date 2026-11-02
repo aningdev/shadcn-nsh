@@ -24,6 +24,8 @@ export type ButtonProps = {
   accessibilityLabel?: string | null;
   role?: string | null;
   onPress?: () => void;
+  onPressDown?: () => void;
+  onPressUp?: () => void;
 };
 
 type ButtonLabelStyle = {
@@ -40,6 +42,7 @@ type ButtonVariantsResult = {
   selectedStyle?: ViewStyle;
 };
 
+/** Sizes aligned with shadcn `bases/base` + nova token scale (not CSS-pixel locked). */
 function sizeLook(size: ButtonSize): {
   height: number;
   paddingHorizontal: number;
@@ -51,19 +54,19 @@ function sizeLook(size: ButtonSize): {
     case "xs":
       return { height: 24, paddingHorizontal: 8, fontSize: 12, gap: 4, icon: false };
     case "sm":
-      return { height: 32, paddingHorizontal: 12, fontSize: 13, gap: 6, icon: false };
+      return { height: 28, paddingHorizontal: 10, fontSize: 13, gap: 4, icon: false };
     case "lg":
-      return { height: 40, paddingHorizontal: 24, fontSize: 14, gap: 8, icon: false };
+      return { height: 36, paddingHorizontal: 10, fontSize: 14, gap: 6, icon: false };
     case "icon-xs":
       return { height: 24, paddingHorizontal: 0, fontSize: 12, gap: 0, icon: true };
     case "icon-sm":
-      return { height: 32, paddingHorizontal: 0, fontSize: 13, gap: 0, icon: true };
+      return { height: 28, paddingHorizontal: 0, fontSize: 13, gap: 0, icon: true };
     case "icon":
-      return { height: 36, paddingHorizontal: 0, fontSize: 14, gap: 0, icon: true };
+      return { height: 32, paddingHorizontal: 0, fontSize: 14, gap: 0, icon: true };
     case "icon-lg":
-      return { height: 40, paddingHorizontal: 0, fontSize: 14, gap: 0, icon: true };
+      return { height: 36, paddingHorizontal: 0, fontSize: 14, gap: 0, icon: true };
     default:
-      return { height: 36, paddingHorizontal: 16, fontSize: 14, gap: 8, icon: false };
+      return { height: 32, paddingHorizontal: 10, fontSize: 14, gap: 6, icon: false };
   }
 }
 
@@ -83,19 +86,19 @@ function variantLook(variant: ButtonVariant): {
         borderColor: colors.secondary,
         color: colors.secondaryForeground,
         borderWidth: 1,
-        hover: { backgroundColor: alpha(colors.secondary, 0.8) },
-        active: { opacity: 0.86 },
+        hover: { backgroundColor: alpha(colors.secondary, 0.85) },
+        active: { opacity: 0.9 },
         selected: { backgroundColor: colors.accent, borderColor: colors.accent },
       };
     case "outline":
       return {
-        backgroundColor: "transparent",
+        backgroundColor: colors.background,
         borderColor: colors.border,
         color: colors.foreground,
         borderWidth: 1,
-        hover: { backgroundColor: colors.accent },
-        active: { opacity: 0.86 },
-        selected: { backgroundColor: colors.accent, borderColor: colors.accent },
+        hover: { backgroundColor: colors.muted, borderColor: colors.border },
+        active: { opacity: 0.9 },
+        selected: { backgroundColor: colors.muted, borderColor: colors.border },
       };
     case "ghost":
       return {
@@ -103,19 +106,19 @@ function variantLook(variant: ButtonVariant): {
         borderColor: "transparent",
         color: colors.foreground,
         borderWidth: 1,
-        hover: { backgroundColor: colors.accent },
-        active: { opacity: 0.86 },
-        selected: { backgroundColor: colors.accent },
+        hover: { backgroundColor: colors.muted },
+        active: { opacity: 0.9 },
+        selected: { backgroundColor: colors.muted },
       };
     case "destructive":
       return {
-        backgroundColor: colors.destructive,
-        borderColor: colors.destructive,
-        color: colors.primaryForeground,
+        backgroundColor: alpha(colors.destructive, 0.12),
+        borderColor: "transparent",
+        color: colors.destructive,
         borderWidth: 1,
-        hover: { opacity: 0.92 },
-        active: { opacity: 0.86 },
-        selected: { opacity: 0.92 },
+        hover: { backgroundColor: alpha(colors.destructive, 0.2) },
+        active: { opacity: 0.9 },
+        selected: { backgroundColor: alpha(colors.destructive, 0.22) },
       };
     case "link":
       return {
@@ -123,7 +126,7 @@ function variantLook(variant: ButtonVariant): {
         borderColor: "transparent",
         color: colors.primary,
         borderWidth: 0,
-        hover: { opacity: 0.8 },
+        hover: { opacity: 0.85 },
         active: { opacity: 0.7 },
       };
     default:
@@ -132,14 +135,20 @@ function variantLook(variant: ButtonVariant): {
         borderColor: colors.primary,
         color: colors.primaryForeground,
         borderWidth: 1,
-        hover: { opacity: 0.92 },
-        active: { opacity: 0.86 },
+        hover: {
+          backgroundColor: alpha(colors.primary, 0.8),
+          borderColor: alpha(colors.primary, 0.8),
+        },
+        active: { opacity: 0.9 },
         selected: { backgroundColor: alpha(colors.primary, 0.85) },
       };
   }
 }
 
-/** Style helper aligned with shadcn `buttonVariants` (tokens + ViewStyle, not className). */
+/**
+ * Style helper aligned with shadcn `buttonVariants` (theme tokens + ViewStyle, not className).
+ * Compose with `Link` for link-as-button (do not fake `asChild` on Button).
+ */
 export function buttonVariants(options?: {
   variant?: ButtonVariant | null;
   size?: ButtonSize | null;
@@ -152,7 +161,8 @@ export function buttonVariants(options?: {
 
   return {
     style: {
-      height: s.height,
+      height: isLink ? undefined : s.height,
+      minHeight: isLink ? s.height : undefined,
       width: s.icon ? s.height : undefined,
       paddingHorizontal: s.icon || isLink ? 0 : s.paddingHorizontal,
       borderRadius: radius.control,
@@ -198,8 +208,6 @@ export function Button(props: ButtonProps) {
             fontSize: label.fontSize,
             fontWeight: label.fontWeight,
             color: label.color,
-            textDecorationLine: variant() === "link" ? "underline" : undefined,
-            textDecorationColor: label.color,
           }}
         >
           {children}
@@ -212,6 +220,8 @@ export function Button(props: ButtonProps) {
   return (
     <BaseButton
       onPress={props.onPress}
+      onPressDown={props.onPressDown}
+      onPressUp={props.onPressUp}
       disabled={props.disabled}
       selected={props.selected}
       accessibilityLabel={accessibilityLabel()}
