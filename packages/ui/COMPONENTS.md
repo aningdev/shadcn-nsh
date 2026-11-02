@@ -79,19 +79,19 @@ Compose labels with `Text` + controls; separators with `View` borders if needed.
 
 Public Usage trees prefer shadcn part names. Internals still call `nsh/base` (items registries, `trigger` props, etc.).
 
-| shadcn                          | This package                                                                                   | `nsh/base` under the hood                    |
-| ------------------------------- | ---------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| shadcn                          | This package                                                                                                                           | `nsh/base` under the hood                    |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------- |
 | Dialog / Trigger / Content / …  | `Dialog` / `DialogTrigger` / `DialogContent` / Header / Title / Description / Footer / Close; full base prop + style-hook pass-through | single `Dialog`; Content owns the base root  |
-| Sheet / Trigger / Content / …   | same pattern; full base prop + style-hook pass-through                                       | single `Sheet`; Content owns the base root   |
-| DropdownMenu\*                  | composition; Group / Label / Shortcut; legacy `trigger` kept; full base pass-through           | `Menu` / `MenuItem` / `Submenu`              |
-| ContextMenu\*                   | composition; Item/Sub/… re-export Dropdown Menu; full base pass-through                        | `ContextMenu`                                |
-| Popover / Trigger / Content     | composition; Header / Title / Description; legacy `trigger` kept; full base pass-through       | `Popover`                                    |
-| Tooltip / Trigger / Content     | composition **or** string bubble for host `tooltip={}`; Provider delay; full base pass-through | `Tooltip` bubble                             |
-| Tabs / List / Trigger / Content | `Tabs` / `TabsList` / `TabsTrigger` / `TabsContent` (+ legacy `Tab`)                           | `Tabs` + `Tab`; panels are app/`TabsContent` |
-| Collapsible / Trigger / Content | composition + full base pass-through; legacy `content` kept (no `reveal` on store 0.3.0)     | `Collapsible`                                |
-| Toast / sonner                  | `toast()` + `Toaster` (+ `Toast` / `ToastStack` / `ToastManager`); full base prop pass-through | same                                         |
-| Table\*                         | `Table` / `TableHeader` / `TableBody` / `TableRow` / `TableHead` / `TableCell` / …             | same                                         |
-| RadioGroup / Item               | `RadioGroup` / `RadioGroupItem` (+ `Radio` alias)                                              | `RadioGroup` + `Radio`                       |
+| Sheet / Trigger / Content / …   | same pattern; full base prop + style-hook pass-through                                                                                 | single `Sheet`; Content owns the base root   |
+| DropdownMenu\*                  | composition; Group / Label / Shortcut; legacy `trigger` kept; full base pass-through                                                   | `Menu` / `MenuItem` / `Submenu`              |
+| ContextMenu\*                   | composition; Item/Sub/… re-export Dropdown Menu; full base pass-through                                                                | `ContextMenu`                                |
+| Popover / Trigger / Content     | composition; Header / Title / Description; legacy `trigger` kept; full base pass-through                                               | `Popover`                                    |
+| Tooltip / Trigger / Content     | composition **or** string bubble for host `tooltip={}`; Provider delay; full base pass-through                                         | `Tooltip` bubble                             |
+| Tabs / List / Trigger / Content | `Tabs` / `TabsList` / `TabsTrigger` / `TabsContent` (+ legacy `Tab`)                                                                   | `Tabs` + `Tab`; panels are app/`TabsContent` |
+| Collapsible / Trigger / Content | composition + full base pass-through; legacy `content` kept (no `reveal` on store 0.3.0)                                               | `Collapsible`                                |
+| Toast / sonner                  | `toast()` + `Toaster` (+ `Toast` / `ToastStack` / `ToastManager`); full base prop pass-through                                         | same                                         |
+| Table\*                         | `Table` / `TableHeader` / `TableBody` / `TableRow` / `TableHead` / `TableCell` / …                                                     | same                                         |
+| RadioGroup / Item               | `RadioGroup` / `RadioGroupItem` (+ `Radio` alias)                                                                                      | `RadioGroup` + `Radio`                       |
 
 ## Adding a component
 
