@@ -136,8 +136,8 @@
       "name": "popover",
       "type": "registry:ui",
       "title": "Popover",
-      "description": "Styled popover wrapping nsh/base Popover.",
-      "registryDependencies": ["theme", "popup-surface"],
+      "description": "Styled popover wrapping nsh/base Popover — theme tokens + Trigger / Content; full base prop pass-through.",
+      "registryDependencies": ["theme", "popup-surface", "button"],
       "files": [
         {
           "path": "packages/ui/popover.tsx",

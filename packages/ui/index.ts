@@ -43,6 +43,12 @@ export {
   PopoverHeader,
   PopoverTitle,
   PopoverTrigger,
+  type PopoverContentProps,
+  type PopoverDescriptionProps,
+  type PopoverHeaderProps,
+  type PopoverProps,
+  type PopoverTitleProps,
+  type PopoverTriggerProps,
 } from "./popover";
 export { Progress } from "./progress";
 export { Radio, RadioGroup } from "./radio-group";

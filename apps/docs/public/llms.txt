@@ -34,7 +34,7 @@ Component pages may embed a web Preview (`demo:` → `nsh package --target web` 
 - /docs/components/dialog: Styled dialog wrapping nsh/base Dialog. → https://nsh.dev/elements/dialog
 - /docs/components/dropdown-menu: Styled menu wrapping nsh/base Menu. → https://nsh.dev/elements/menu
 - /docs/components/input: Styled text input wrapping nsh/base Input. → https://nsh.dev/elements/input
-- /docs/components/popover: Styled popover wrapping nsh/base Popover. → https://nsh.dev/elements/popover
+- /docs/components/popover: Styled popover wrapping nsh/base Popover — theme tokens + Trigger / Content; full base prop pass-through. → https://nsh.dev/elements/popover
 - /docs/components/progress: Styled progress wrapping nsh/base Progress. → https://nsh.dev/elements/progress
 - /docs/components/radio-group: Styled radio group wrapping nsh/base RadioGroup. → https://nsh.dev/elements/radio
 - /docs/components/sheet: Styled sheet wrapping nsh/base Sheet. → https://nsh.dev/elements/sheet
