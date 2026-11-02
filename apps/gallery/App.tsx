@@ -571,6 +571,9 @@ function App() {
           <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
             Ctx open: {() => (ctxOpen() ? "yes" : "no")} · Last: {() => ctxLast()} · Sidebar:{" "}
             {() => (ctxSidebar() ? "on" : "off")}
+          </Text>
+        </Section>
+
         <Section title="Dialog">
           <Dialog open={dialogOpen()} onOpenChange={(next) => dialogOpen.set(next)}>
             <DialogTrigger>Open dialog</DialogTrigger>
@@ -600,6 +603,8 @@ function App() {
           <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
             Dialog open: {() => (dialogOpen() ? "yes" : "no")}
           </Text>
+        </Section>
+
         <Section title="Toast">
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
             <Button onPress={() => toast("Copied", { description: "Link on clipboard" })}>
