@@ -116,6 +116,7 @@ export const components: ComponentDoc[] = [
     slug: "tooltip",
     title: "Tooltip",
     nshElement: "tooltip",
-    description: "Styled tooltip wrapping nsh/base Tooltip.",
+    description:
+      "Styled tooltip wrapping nsh/base Tooltip — theme tokens + Trigger / Content; full base prop pass-through.",
   },
 ];

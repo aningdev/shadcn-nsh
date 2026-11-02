@@ -17,6 +17,10 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
 } from "@shadcn-nsh/ui";
 import { mount, Scroll, signal, Text, View } from "nsh";
 
@@ -39,6 +43,7 @@ function App() {
   const progress = signal(40);
   const tab = signal("one");
   const bold = signal(false);
+  const tipOpen = signal(false);
 
   return (
     <Scroll style={{ flex: 1, backgroundColor: colors.background }}>
@@ -128,6 +133,37 @@ function App() {
               <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Panel two</Text>
             </TabsContent>
           </Tabs>
+        </Section>
+
+        <Section title="Tooltip">
+          <Tooltip>
+            <TooltipTrigger>Hover me</TooltipTrigger>
+            <TooltipContent>Add item</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger>Bottom</TooltipTrigger>
+            <TooltipContent placement="bottom" align="start">
+              Below the trigger
+            </TooltipContent>
+          </Tooltip>
+          <TooltipProvider delay={0}>
+            <Tooltip>
+              <TooltipTrigger>Instant</TooltipTrigger>
+              <TooltipContent>Shows at once</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <Tooltip open={tipOpen()} onOpenChange={(next) => tipOpen.set(next)}>
+            <TooltipTrigger>Pinned</TooltipTrigger>
+            <TooltipContent style={{ paddingHorizontal: 14 }}>
+              Controlled — useful on touch
+            </TooltipContent>
+          </Tooltip>
+          <View tooltip={<Tooltip>Host bubble</Tooltip>}>
+            <Text style={{ fontSize: 14, color: colors.foreground }}>Host tooltip=</Text>
+          </View>
+          <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+            Tip open: {() => (tipOpen() ? "yes" : "no")}
+          </Text>
         </Section>
 
         <Section title="Table">
