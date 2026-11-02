@@ -122,7 +122,7 @@
       "name": "tabs",
       "type": "registry:ui",
       "title": "Tabs",
-      "description": "Styled tabs wrapping nsh/base Tabs and Tab.",
+      "description": "Styled tabs wrapping nsh/base Tabs / Tab — List / Trigger / Content; full base prop pass-through.",
       "registryDependencies": ["theme"],
       "files": [
         {

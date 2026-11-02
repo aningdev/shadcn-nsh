@@ -117,7 +117,8 @@ export const components: ComponentDoc[] = [
     slug: "tabs",
     title: "Tabs",
     nshElement: "tabs",
-    description: "Styled tabs wrapping nsh/base Tabs.",
+    description:
+      "Styled tabs wrapping nsh/base Tabs / Tab — theme tokens + List / Trigger / Content; full base prop pass-through.",
   },
   {
     slug: "tooltip",
