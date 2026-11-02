@@ -3,9 +3,7 @@
   "type": "registry:ui",
   "title": "Checkbox",
   "description": "Styled checkbox wrapping nsh/base Checkbox.",
-  "registryDependencies": [
-    "theme"
-  ],
+  "registryDependencies": ["theme"],
   "files": [
     {
       "path": "packages/ui/checkbox.tsx",

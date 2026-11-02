@@ -3,9 +3,7 @@
   "type": "registry:ui",
   "title": "Number Input",
   "description": "Styled number input wrapping nsh/base NumberInput.",
-  "registryDependencies": [
-    "theme"
-  ],
+  "registryDependencies": ["theme"],
   "files": [
     {
       "path": "packages/ui/number-input.tsx",

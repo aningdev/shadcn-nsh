@@ -3,9 +3,7 @@
   "type": "registry:ui",
   "title": "Link",
   "description": "Styled link wrapping nsh/base Link.",
-  "registryDependencies": [
-    "theme"
-  ],
+  "registryDependencies": ["theme"],
   "files": [
     {
       "path": "packages/ui/link.tsx",

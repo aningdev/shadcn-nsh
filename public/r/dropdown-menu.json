@@ -3,10 +3,7 @@
   "type": "registry:ui",
   "title": "Dropdown Menu",
   "description": "Styled menu wrapping nsh/base Menu and parts.",
-  "registryDependencies": [
-    "theme",
-    "popup-surface"
-  ],
+  "registryDependencies": ["theme", "popup-surface"],
   "files": [
     {
       "path": "packages/ui/dropdown-menu.tsx",

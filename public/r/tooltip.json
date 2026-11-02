@@ -3,9 +3,7 @@
   "type": "registry:ui",
   "title": "Tooltip",
   "description": "Styled tooltip wrapping nsh/base Tooltip.",
-  "registryDependencies": [
-    "theme"
-  ],
+  "registryDependencies": ["theme"],
   "files": [
     {
       "path": "packages/ui/tooltip.tsx",

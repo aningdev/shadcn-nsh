@@ -3,9 +3,7 @@
   "type": "registry:lib",
   "title": "Popup surface",
   "description": "Shared popup/menu surface and backdrop styles.",
-  "registryDependencies": [
-    "theme"
-  ],
+  "registryDependencies": ["theme"],
   "files": [
     {
       "path": "packages/ui/lib/popup-surface.ts",

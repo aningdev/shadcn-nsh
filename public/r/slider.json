@@ -3,9 +3,7 @@
   "type": "registry:ui",
   "title": "Slider",
   "description": "Styled slider wrapping nsh/base Slider.",
-  "registryDependencies": [
-    "theme"
-  ],
+  "registryDependencies": ["theme"],
   "files": [
     {
       "path": "packages/ui/slider.tsx",

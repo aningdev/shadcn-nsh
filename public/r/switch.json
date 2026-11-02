@@ -3,9 +3,7 @@
   "type": "registry:ui",
   "title": "Switch",
   "description": "Styled switch wrapping nsh/base Switch.",
-  "registryDependencies": [
-    "theme"
-  ],
+  "registryDependencies": ["theme"],
   "files": [
     {
       "path": "packages/ui/switch.tsx",

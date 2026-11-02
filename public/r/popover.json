@@ -3,10 +3,7 @@
   "type": "registry:ui",
   "title": "Popover",
   "description": "Styled popover wrapping nsh/base Popover.",
-  "registryDependencies": [
-    "theme",
-    "popup-surface"
-  ],
+  "registryDependencies": ["theme", "popup-surface"],
   "files": [
     {
       "path": "packages/ui/popover.tsx",

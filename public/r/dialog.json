@@ -3,10 +3,7 @@
   "type": "registry:ui",
   "title": "Dialog",
   "description": "Styled dialog wrapping nsh/base Dialog.",
-  "registryDependencies": [
-    "theme",
-    "popup-surface"
-  ],
+  "registryDependencies": ["theme", "popup-surface"],
   "files": [
     {
       "path": "packages/ui/dialog.tsx",

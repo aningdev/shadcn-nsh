@@ -3,9 +3,7 @@
   "type": "registry:ui",
   "title": "Tabs",
   "description": "Styled tabs wrapping nsh/base Tabs and Tab.",
-  "registryDependencies": [
-    "theme"
-  ],
+  "registryDependencies": ["theme"],
   "files": [
     {
       "path": "packages/ui/tabs.tsx",

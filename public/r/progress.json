@@ -3,9 +3,7 @@
   "type": "registry:ui",
   "title": "Progress",
   "description": "Styled progress wrapping nsh/base Progress.",
-  "registryDependencies": [
-    "theme"
-  ],
+  "registryDependencies": ["theme"],
   "files": [
     {
       "path": "packages/ui/progress.tsx",

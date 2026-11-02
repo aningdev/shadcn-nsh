@@ -3,9 +3,7 @@
   "type": "registry:ui",
   "title": "Toggle",
   "description": "Styled toggle wrapping nsh/base Toggle.",
-  "registryDependencies": [
-    "theme"
-  ],
+  "registryDependencies": ["theme"],
   "files": [
     {
       "path": "packages/ui/toggle.tsx",

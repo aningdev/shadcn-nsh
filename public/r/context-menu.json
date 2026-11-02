@@ -3,11 +3,7 @@
   "type": "registry:ui",
   "title": "Context Menu",
   "description": "Styled context menu wrapping nsh/base ContextMenu.",
-  "registryDependencies": [
-    "theme",
-    "popup-surface",
-    "dropdown-menu"
-  ],
+  "registryDependencies": ["theme", "popup-surface", "dropdown-menu"],
   "files": [
     {
       "path": "packages/ui/context-menu.tsx",
