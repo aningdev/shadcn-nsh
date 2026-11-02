@@ -92,7 +92,8 @@ export const components: ComponentDoc[] = [
     slug: "sheet",
     title: "Sheet",
     nshElement: "sheet",
-    description: "Styled sheet wrapping nsh/base Sheet.",
+    description:
+      "Styled sheet wrapping nsh/base Sheet — theme tokens + Trigger / Content; full base prop pass-through.",
   },
   {
     slug: "toast",

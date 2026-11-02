@@ -26,6 +26,14 @@ import {
   Progress,
   RadioGroup,
   RadioGroupItem,
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
   Switch,
   Table,
   TableBody,
@@ -74,6 +82,7 @@ function App() {
   const ctxSidebar = signal(true);
   const popoverOpen = signal(false);
   const tipOpen = signal(false);
+  const sheetOpen = signal(false);
 
   return (
     <Scroll style={{ flex: 1, backgroundColor: colors.background }}>
@@ -304,6 +313,48 @@ function App() {
           </View>
           <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
             Tip open: {() => (tipOpen() ? "yes" : "no")}
+          </Text>
+        </Section>
+
+        <Section title="Sheet">
+          <Sheet open={sheetOpen()} onOpenChange={(next) => sheetOpen.set(next)}>
+            <SheetTrigger>Open sheet</SheetTrigger>
+            <SheetContent side="bottom">
+              <SheetHeader>
+                <SheetTitle>Bottom sheet</SheetTitle>
+                <SheetDescription>
+                  Trigger / Content with edge chrome. Backdrop, Escape, or Close dismisses.
+                </SheetDescription>
+              </SheetHeader>
+              <SheetFooter>
+                <SheetClose>Close</SheetClose>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
+          <Sheet>
+            <SheetTrigger>Right side</SheetTrigger>
+            <SheetContent side="right">
+              <SheetHeader>
+                <SheetTitle>Side drawer</SheetTitle>
+                <SheetDescription>side right</SheetDescription>
+              </SheetHeader>
+              <SheetFooter>
+                <SheetClose>Done</SheetClose>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
+          <Sheet>
+            <SheetTrigger>Style merge</SheetTrigger>
+            <SheetContent side="bottom" popupStyle={{ padding: 24, minHeight: 200 }}>
+              <SheetTitle style={{ fontSize: 18 }}>Merged chrome</SheetTitle>
+              <SheetDescription>Consumer popupStyle wins per key</SheetDescription>
+              <SheetFooter>
+                <SheetClose>Close</SheetClose>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
+          <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+            Sheet open: {() => (sheetOpen() ? "yes" : "no")}
           </Text>
         </Section>
 
