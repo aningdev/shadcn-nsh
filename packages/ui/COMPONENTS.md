@@ -15,43 +15,50 @@ Authoritative base inventory and API shapes: [`references/nsh/website/elements`]
 
 ## Toolchain
 
-Official docs track **main**. The published CLI tag `v0.3.0` is older; this repo develops against an `nsh` built from [`references/nsh`](../../references/nsh) so types match `website/elements`. Consumers on store `v0.3.0` may lack newer base exports until they upgrade.
+This repo develops and deploys against the **published store CLI** (`curl …/install.sh | sh`, currently **0.3.0** / commit `76fa8a7`). Phase-1 only wraps `nsh/base` exports that release registers. Newer base components that exist on `nsh` main (Accordion, Select, Link, …) are **out of Phase-1** until a store release ships them — do not require `install.sh --source`.
 
-## Phase-1 status (website `group: base` ∩ core parity)
+## Phase-1 status (store `nsh` 0.3.0 ∩ core parity)
 
-| website                                                               | `nsh/base`              | registry        | shadcn          | Status |
-| --------------------------------------------------------------------- | ----------------------- | --------------- | --------------- | ------ |
-| [button](../../references/nsh/website/elements/button.md)             | `Button`                | `button`        | `button`        | done   |
-| [input](../../references/nsh/website/elements/input.md)               | `Input`                 | `input`         | `input`         | done   |
-| [checkbox](../../references/nsh/website/elements/checkbox.md)         | `Checkbox`              | `checkbox`      | `checkbox`      | done   |
-| [radio](../../references/nsh/website/elements/radio.md)               | `RadioGroup`, `Radio`   | `radio-group`   | `radio-group`   | done   |
-| [switch](../../references/nsh/website/elements/switch.md)             | `Switch`                | `switch`        | `switch`        | done   |
-| [slider](../../references/nsh/website/elements/slider.md)             | `Slider`                | `slider`        | `slider`        | done   |
-| [progress](../../references/nsh/website/elements/progress.md)         | `Progress`              | `progress`      | `progress`      | done   |
-| [select](../../references/nsh/website/elements/select.md)             | `Select`                | `select`        | `select`        | done   |
-| [combobox](../../references/nsh/website/elements/combobox.md)         | `Combobox`              | `combobox`      | `combobox`      | done   |
-| [number-input](../../references/nsh/website/elements/number-input.md) | `NumberInput`           | `number-input`  | —               | done   |
-| [otp-input](../../references/nsh/website/elements/otp-input.md)       | `OtpInput`              | `otp-input`     | `input-otp`     | done   |
-| [tabs](../../references/nsh/website/elements/tabs.md)                 | `Tabs`, `Tab`           | `tabs`          | `tabs`          | done   |
-| [toggle](../../references/nsh/website/elements/toggle.md)             | `Toggle`                | `toggle`        | `toggle`        | done   |
-| [toggle](../../references/nsh/website/elements/toggle.md)             | `ToggleGroup`           | `toggle-group`  | `toggle-group`  | done   |
-| [link](../../references/nsh/website/elements/link.md)                 | `Link`                  | `link`          | —               | done   |
-| [pagination](../../references/nsh/website/elements/pagination.md)     | `Pagination`            | `pagination`    | `pagination`    | done   |
-| [popover](../../references/nsh/website/elements/popover.md)           | `Popover`               | `popover`       | `popover`       | done   |
-| [tooltip](../../references/nsh/website/elements/tooltip.md)           | `Tooltip`               | `tooltip`       | `tooltip`       | done   |
-| [sheet](../../references/nsh/website/elements/sheet.md)               | `Sheet`                 | `sheet`         | `sheet`         | done   |
-| [dialog](../../references/nsh/website/elements/dialog.md)             | `Dialog`                | `dialog`        | `dialog`        | done   |
-| [menu](../../references/nsh/website/elements/menu.md)                 | `Menu`, …               | `dropdown-menu` | `dropdown-menu` | done   |
-| [menu](../../references/nsh/website/elements/menu.md)                 | `ContextMenu`, …        | `context-menu`  | `context-menu`  | done   |
-| [collapsible](../../references/nsh/website/elements/collapsible.md)   | `Collapsible`           | `collapsible`   | `collapsible`   | done   |
-| [accordion](../../references/nsh/website/elements/accordion.md)       | `Accordion*`            | `accordion`     | `accordion`     | done   |
-| [toast](../../references/nsh/website/elements/toast.md)               | `Toast`, `ToastStack`   | `toast`         | sonner / toast  | done   |
-| [avatar](../../references/nsh/website/elements/avatar.md)             | `Avatar`, `AvatarGroup` | `avatar`        | `avatar`        | done   |
-| [table](../../references/nsh/website/elements/table.md)               | `Table*`                | `table`         | `table`         | done   |
+| website                                                             | `nsh/base`            | registry        | shadcn          | Status |
+| ------------------------------------------------------------------- | --------------------- | --------------- | --------------- | ------ |
+| [button](../../references/nsh/website/elements/button.md)           | `Button`              | `button`        | `button`        | done   |
+| [input](../../references/nsh/website/elements/input.md)             | `Input`               | `input`         | `input`         | done   |
+| [checkbox](../../references/nsh/website/elements/checkbox.md)       | `Checkbox`            | `checkbox`      | `checkbox`      | done   |
+| [radio](../../references/nsh/website/elements/radio.md)             | `RadioGroup`, `Radio` | `radio-group`   | `radio-group`   | done   |
+| [switch](../../references/nsh/website/elements/switch.md)           | `Switch`              | `switch`        | `switch`        | done   |
+| [progress](../../references/nsh/website/elements/progress.md)       | `Progress`            | `progress`      | `progress`      | done   |
+| [tabs](../../references/nsh/website/elements/tabs.md)               | `Tabs`, `Tab`         | `tabs`          | `tabs`          | done   |
+| [popover](../../references/nsh/website/elements/popover.md)         | `Popover`             | `popover`       | `popover`       | done   |
+| [tooltip](../../references/nsh/website/elements/tooltip.md)         | `Tooltip`             | `tooltip`       | `tooltip`       | done   |
+| [sheet](../../references/nsh/website/elements/sheet.md)             | `Sheet`               | `sheet`         | `sheet`         | done   |
+| [dialog](../../references/nsh/website/elements/dialog.md)           | `Dialog`              | `dialog`        | `dialog`        | done   |
+| [menu](../../references/nsh/website/elements/menu.md)               | `Menu`, …             | `dropdown-menu` | `dropdown-menu` | done   |
+| [menu](../../references/nsh/website/elements/menu.md)               | `ContextMenu`, …      | `context-menu`  | `context-menu`  | done   |
+| [collapsible](../../references/nsh/website/elements/collapsible.md) | `Collapsible`         | `collapsible`   | `collapsible`   | done   |
+| [toast](../../references/nsh/website/elements/toast.md)             | `Toast`, `ToastStack` | `toast`         | sonner / toast  | done   |
+| [table](../../references/nsh/website/elements/table.md)             | `Table*`              | `table`         | `table`         | done   |
 
-Also: registry `theme` (`theme.json` + `lib/theme.ts`).
+Also: registry `theme` (`theme.json` + `lib/theme.ts`), `popup-surface`.
 
-## Not in Phase-1 (still base / documented)
+## Requires newer store `nsh` (dropped from Phase-1)
+
+Present on `nsh` **main** / website, **absent** from store CLI `0.3.0` `nsh/base` registry — removed from `@shadcn-nsh/ui`, registry, docs, demos, and gallery until a store release exports them:
+
+| website / base      | Was registry   | Notes                                       |
+| ------------------- | -------------- | ------------------------------------------- |
+| Accordion\*         | `accordion`    | Missing on 0.3.0                            |
+| Avatar, AvatarGroup | `avatar`       | Missing on 0.3.0                            |
+| Combobox            | `combobox`     | Missing on 0.3.0                            |
+| Link                | `link`         | Missing on 0.3.0 (overlaps prior Button PR) |
+| NumberInput         | `number-input` | Missing on 0.3.0                            |
+| OtpInput            | `otp-input`    | Missing on 0.3.0                            |
+| Pagination          | `pagination`   | Missing on 0.3.0                            |
+| Select              | `select`       | Missing on 0.3.0                            |
+| Slider              | `slider`       | Missing on 0.3.0                            |
+| Toggle              | `toggle`       | Missing on 0.3.0                            |
+| ToggleGroup         | `toggle-group` | Missing on 0.3.0                            |
+
+## Not in Phase-1 (still base / documented on main)
 
 | Kind           | website / base                                                | Reason                    |
 | -------------- | ------------------------------------------------------------- | ------------------------- |
@@ -72,27 +79,25 @@ Compose labels with `Text` + controls; separators with `View` borders if needed.
 
 Public Usage trees prefer shadcn part names. Internals still call `nsh/base` (items registries, `trigger` props, etc.).
 
-| shadcn                                    | This package                                                                                 | `nsh/base` under the hood                    |
-| ----------------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------- |
-| Dialog / Trigger / Content / …            | `Dialog` / `DialogTrigger` / `DialogContent` / Header / Title / Description / Footer / Close | single `Dialog`; Content owns the base root  |
-| Sheet / Trigger / Content / …             | same pattern                                                                                 | single `Sheet`                               |
-| Select / Trigger / Value / Content / Item | composition **or** data `items[]`                                                            | `Select` + `items` + `trigger`               |
-| Combobox / …                              | same                                                                                         | `Combobox` + `items`                         |
-| DropdownMenu\*                            | `DropdownMenu` / Trigger / Content / Item / Sub / …                                          | `Menu` / `MenuItem` / `Submenu`              |
-| ContextMenu\*                             | same                                                                                         | `ContextMenu`                                |
-| Popover / Trigger / Content               | composition; legacy `trigger` prop kept                                                      | `Popover`                                    |
-| Tooltip / Trigger / Content               | composition **or** string bubble for host `tooltip={}`                                       | `Tooltip` bubble                             |
-| Tabs / List / Trigger / Content           | `Tabs` / `TabsList` / `TabsTrigger` / `TabsContent` (+ legacy `Tab`)                         | `Tabs` + `Tab`; panels are app/`TabsContent` |
-| Accordion / Item / Trigger / Content      | `Accordion*` + `AccordionContent` (= `AccordionPanel`) + `AccordionHeader`                   | same parts                                   |
-| Collapsible / Trigger / Content           | composition; legacy `content` prop kept                                                      | `Collapsible`                                |
-| Toast / sonner                            | `toast()` + `Toaster` (+ `Toast` / `ToastStack` / `ToastManager`)                            | same                                         |
-| Table\*                                   | `Table` / `TableHeader` / `TableBody` / `TableRow` / `TableHead` / `TableCell` / …           | same                                         |
+| shadcn                          | This package                                                                                 | `nsh/base` under the hood                    |
+| ------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------- |
+| Dialog / Trigger / Content / …  | `Dialog` / `DialogTrigger` / `DialogContent` / Header / Title / Description / Footer / Close | single `Dialog`; Content owns the base root  |
+| Sheet / Trigger / Content / …   | same pattern                                                                                 | single `Sheet`                               |
+| DropdownMenu\*                  | `DropdownMenu` / Trigger / Content / Item / Sub / …                                          | `Menu` / `MenuItem` / `Submenu`              |
+| ContextMenu\*                   | same                                                                                         | `ContextMenu`                                |
+| Popover / Trigger / Content     | composition; legacy `trigger` prop kept                                                      | `Popover`                                    |
+| Tooltip / Trigger / Content     | composition **or** string bubble for host `tooltip={}`                                       | `Tooltip` bubble                             |
+| Tabs / List / Trigger / Content | `Tabs` / `TabsList` / `TabsTrigger` / `TabsContent` (+ legacy `Tab`)                         | `Tabs` + `Tab`; panels are app/`TabsContent` |
+| Collapsible / Trigger / Content | composition; legacy `content` prop kept                                                      | `Collapsible`                                |
+| Toast / sonner                  | `toast()` + `Toaster` (+ `Toast` / `ToastStack` / `ToastManager`)                            | same                                         |
+| Table\*                         | `Table` / `TableHeader` / `TableBody` / `TableRow` / `TableHead` / `TableCell` / …           | same                                         |
 
 ## Adding a component
 
-1. Style `nsh/base` in `packages/ui/<name>.tsx` (tokens from `@shadcn-nsh/theme`).
-2. Export from `packages/ui/index.ts`.
-3. Register in `registry.json` (`registryDependencies: ["theme"]`, `target: components/ui/<name>.tsx`).
-4. `bun run registry:build`.
-5. Gallery (+ optional docs demo / page).
-6. Update this file’s status column.
+1. Confirm the export exists on the **store** CLI’s `nsh/base` (not only on `references/nsh` main).
+2. Style `nsh/base` in `packages/ui/<name>.tsx` (tokens from `@shadcn-nsh/theme`).
+3. Export from `packages/ui/index.ts`.
+4. Register in `registry.json` (`registryDependencies: ["theme"]`, `target: components/ui/<name>.tsx`).
+5. `bun run registry:build`.
+6. Gallery (+ optional docs demo / page).
+7. Update this file’s status column.

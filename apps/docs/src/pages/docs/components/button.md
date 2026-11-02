@@ -6,7 +6,7 @@ component: true
 demo: button
 ---
 
-[`nsh/base`](https://nsh.dev/modules/nsh-base) owns presses, disabled / selected, keyboard focus, and the button role for screen readers — unstyled on every platform. This package is the styled layer on top: brand variants, sizes, and theme tokens, the same role a community library plays above `nsh/base`. [`Button`](https://nsh.dev/elements/button) is a press target whose look comes from those tokens; behavior stays on base. For navigation / URL affordances use [`Link`](./link), not a button lookalike.
+[`nsh/base`](https://nsh.dev/modules/nsh-base) owns presses, disabled / selected, keyboard focus, and the button role for screen readers — unstyled on every platform. This package is the styled layer on top: brand variants, sizes, and theme tokens, the same role a community library plays above `nsh/base`. [`Button`](https://nsh.dev/elements/button) is a press target whose look comes from those tokens; behavior stays on base. Do not put a link look on Button (`variant="link"` is omitted); a styled `Link` wrapper needs a newer store `nsh` than 0.3.0.
 
 ## Install
 
@@ -137,13 +137,13 @@ const [on, setOn] = createSignal(false);
 
 ## Differences
 
-| Topic           | shadcn (`bases/base`)      | This package                                                                                          |
-| --------------- | -------------------------- | ----------------------------------------------------------------------------------------------------- |
-| Press event     | DOM `onClick`              | `onPress` / `onPressDown` / `onPressUp`                                                               |
-| Children        | arbitrary nodes / Slot     | `string \| JSX.Element`; no `asChild`                                                                 |
-| Link affordance | `variant="link"` on Button | **Omitted** — this registry has a real [`Link`](./link) on `nsh/base`; do not put link look on Button |
-| Class hooks     | `className` / CVA          | theme tokens + `buttonVariants` style helper                                                          |
-| Size matrix     | `default`…`icon-lg`        | same names; token sizes approximate nova scale, not CSS-pixel locked                                  |
+| Topic           | shadcn (`bases/base`)      | This package                                                                                                      |
+| --------------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| Press event     | DOM `onClick`              | `onPress` / `onPressDown` / `onPressUp`                                                                           |
+| Children        | arbitrary nodes / Slot     | `string \| JSX.Element`; no `asChild`                                                                             |
+| Link affordance | `variant="link"` on Button | **Omitted** — do not fake links on Button; store `nsh` 0.3.0 has no `Link` in `nsh/base` for a styled wrapper yet |
+| Class hooks     | `className` / CVA          | theme tokens + `buttonVariants` style helper                                                                      |
+| Size matrix     | `default`…`icon-lg`        | same names; token sizes approximate nova scale, not CSS-pixel locked                                              |
 
 ## Not forwarded
 

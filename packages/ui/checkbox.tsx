@@ -37,7 +37,7 @@ export function Checkbox(props: {
       indeterminate={props.indeterminate}
       disabled={props.disabled}
       accessibilityLabel={props.accessibilityLabel}
-      onChange={props.onChange}
+      onChange={(checked) => props.onChange?.({ checked })}
       focusStyle={focusRing()}
       style={{
         flexDirection: "row",

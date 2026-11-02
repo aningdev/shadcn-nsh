@@ -1,7 +1,7 @@
 import { colors, radius } from "@shadcn-nsh/theme";
-import type { JSX, Placement } from "nsh";
+import type { JSX } from "nsh";
 import { context, Text, View } from "nsh";
-import { Tooltip as BaseTooltip } from "nsh/base";
+import { Tooltip as BaseTooltip, type Placement } from "nsh/base";
 
 import { Button } from "./button";
 import {
@@ -47,7 +47,9 @@ function Bubble(props: {
       delay={props.delay}
       disabled={props.disabled}
       offset={6}
-      onOpenChange={props.onOpenChange as never}
+      onOpenChange={
+        props.onOpenChange ? (open, reason) => props.onOpenChange?.({ open, reason }) : undefined
+      }
       style={bubbleStyle()}
     >
       {props.children}

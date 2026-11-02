@@ -103,8 +103,8 @@ export function DialogContent(props: { children?: JSX.Element }) {
         ctx.setOpen(false);
         ctx.onCancel?.();
       }}
-      onOpenChange={(event) => {
-        ctx.setOpen(event.open, event.reason);
+      onOpenChange={(open, reason) => {
+        ctx.setOpen(open, reason);
       }}
       backdropStyle={popupBackdrop()}
       style={{

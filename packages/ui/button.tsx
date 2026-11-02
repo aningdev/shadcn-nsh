@@ -3,7 +3,7 @@ import type { JSX, ViewStyle } from "nsh";
 import { Text } from "nsh";
 import { Button as BaseButton } from "nsh/base";
 
-/** shadcn `bases/base` also has `link`; this registry omits it — use the `Link` component. */
+/** shadcn `bases/base` also has `link`; this registry omits it (no store-CLI `nsh/base` Link yet). */
 export type ButtonVariant = "default" | "outline" | "secondary" | "ghost" | "destructive";
 
 export type ButtonSize =

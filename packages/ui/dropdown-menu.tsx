@@ -44,7 +44,9 @@ export function DropdownMenu(props: {
         open={props.open}
         defaultOpen={props.defaultOpen}
         trigger={props.trigger}
-        onOpenChange={props.onOpenChange as never}
+        onOpenChange={
+          props.onOpenChange ? (open, reason) => props.onOpenChange?.({ open, reason }) : undefined
+        }
         offset={4}
         popupStyle={{ ...popupSurface(), minWidth: 160 }}
         backdropStyle={popupBackdrop()}
@@ -98,7 +100,7 @@ export function DropdownMenuContent(props: { children?: JSX.Element }) {
     <BaseMenu
       open={ctx.open()}
       trigger={(triggerAccessor?.() as JSX.Element) ?? <View />}
-      onOpenChange={(event) => ctx.setOpen(event.open)}
+      onOpenChange={(open) => ctx.setOpen(open)}
       offset={4}
       popupStyle={{ ...popupSurface(), minWidth: 160 }}
       backdropStyle={popupBackdrop()}
@@ -116,10 +118,11 @@ export function DropdownMenuItem(props: {
   children?: JSX.Element;
   onSelect?: () => void;
 }) {
+  // Store nsh 0.3.0 MenuItem has no checked/indicator — paint a mark in children.
+  const showMark = props.checked != null;
   return (
     <BaseMenuItem
       disabled={props.disabled}
-      checked={props.checked}
       closeOnSelect={props.closeOnSelect}
       accessibilityLabel={props.accessibilityLabel}
       onSelect={props.onSelect}
@@ -134,16 +137,17 @@ export function DropdownMenuItem(props: {
         opacity: props.disabled ? 0.5 : 1,
       }}
       hoverStyle={props.disabled ? undefined : { backgroundColor: colors.accent }}
-      indicatorStyle={{ width: 16, height: 16, alignItems: "center", justifyContent: "center" }}
-      indicator={
-        props.checked ? (
-          <Text style={{ fontSize: 12, color: colors.primary }}>✓</Text>
-        ) : (
-          <View style={{ width: 16, height: 16 }} />
-        )
-      }
     >
-      {props.children}
+      {showMark ? (
+        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+          <View style={{ width: 16, height: 16, alignItems: "center", justifyContent: "center" }}>
+            {props.checked ? <Text style={{ fontSize: 12, color: colors.primary }}>✓</Text> : null}
+          </View>
+          {props.children}
+        </View>
+      ) : (
+        props.children
+      )}
     </BaseMenuItem>
   );
 }

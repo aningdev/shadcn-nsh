@@ -1,7 +1,7 @@
 import { colors, radius } from "@shadcn-nsh/theme";
-import type { JSX, Placement } from "nsh";
+import type { JSX } from "nsh";
 import { context, Text, View } from "nsh";
-import { Sheet as BaseSheet } from "nsh/base";
+import { Sheet as BaseSheet, type Placement } from "nsh/base";
 
 import { Button } from "./button";
 import { createOpenState, type OpenState } from "./lib/open-state";
@@ -94,7 +94,7 @@ export function SheetContent(props: { side?: Placement; children?: JSX.Element }
       open={ctx.open()}
       side={side}
       closeOnSwipe={ctx.closeOnSwipe}
-      onOpenChange={(event) => ctx.setOpen(event.open, event.reason)}
+      onOpenChange={(open, reason) => ctx.setOpen(open, reason)}
       onOpen={ctx.onOpen}
       onClose={ctx.onClose}
       backdropStyle={popupBackdrop()}

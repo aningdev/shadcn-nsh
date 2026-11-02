@@ -42,7 +42,6 @@ export function TabsList(props: { children?: JSX.Element }) {
         borderRadius: radius.control,
         backgroundColor: colors.muted,
       }}
-      indicatorStyle={{ display: "none" }}
     >
       {props.children}
     </BaseTabs>
