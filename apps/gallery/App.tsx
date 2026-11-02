@@ -39,6 +39,7 @@ function App() {
   const progress = signal(40);
   const tab = signal("one");
   const bold = signal(false);
+  const name = signal("");
 
   return (
     <Scroll style={{ flex: 1, backgroundColor: colors.background }}>
@@ -90,7 +91,18 @@ function App() {
         </Section>
 
         <Section title="Input">
-          <Input placeholder="Your name" />
+          <View style={{ gap: 8 }}>
+            <Input placeholder="Your name" value={name()} onChange={(v) => name.set(v)} />
+            <Input placeholder="Disabled" disabled />
+            <Input
+              placeholder="Style merge"
+              style={{ paddingHorizontal: 16 }}
+              focusStyle={{ borderColor: colors.primary }}
+            />
+            <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+              Value: {() => name() || "—"}
+            </Text>
+          </View>
         </Section>
 
         <Section title="Checkbox / Switch / Radio">

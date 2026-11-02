@@ -35,7 +35,7 @@ export {
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "./dropdown-menu";
-export { Input } from "./input";
+export { Input, type InputProps } from "./input";
 export {
   Popover,
   PopoverContent,
