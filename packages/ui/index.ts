@@ -56,7 +56,7 @@ export {
   SheetTitle,
   SheetTrigger,
 } from "./sheet";
-export { Switch } from "./switch";
+export { Switch, type SwitchProps, type SwitchSize } from "./switch";
 export {
   Table,
   TableBody,

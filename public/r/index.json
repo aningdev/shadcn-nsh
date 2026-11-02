@@ -42,7 +42,7 @@
       "name": "switch",
       "type": "registry:ui",
       "title": "Switch",
-      "description": "Styled switch wrapping nsh/base Switch."
+      "description": "Styled switch wrapping nsh/base Switch — theme tokens + size; full base prop pass-through."
     },
     {
       "name": "progress",
