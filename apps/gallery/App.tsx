@@ -62,6 +62,8 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
+  toast,
+  Toaster,
 } from "@shadcn-nsh/ui";
 import { mount, Scroll, signal, Text, View } from "nsh";
 
@@ -598,8 +600,24 @@ function App() {
           <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
             Dialog open: {() => (dialogOpen() ? "yes" : "no")}
           </Text>
+        <Section title="Toast">
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
+            <Button onPress={() => toast("Copied", { description: "Link on clipboard" })}>
+              Show toast
+            </Button>
+            <Button
+              variant="secondary"
+              onPress={() => toast("Merged chrome", { description: "stackStyle wins per key" })}
+            >
+              Style merge
+            </Button>
+            <Button variant="outline" onPress={() => toast.dismiss()}>
+              Dismiss all
+            </Button>
+          </View>
         </Section>
       </View>
+      <Toaster placement="topRight" stackStyle={{ maxWidth: 360 }} />
     </Scroll>
   );
 }

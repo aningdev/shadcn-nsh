@@ -112,5 +112,15 @@ export {
   type TabsProps,
   type TabsTriggerProps,
 } from "./tabs";
-export { toast, Toast, Toaster, ToastManager, ToastStack } from "./toast";
+export {
+  toast,
+  Toast,
+  Toaster,
+  ToastManager,
+  ToastStack,
+  type ToastProps,
+  type ToastStackProps,
+  type ToasterProps,
+} from "./toast";
+export type { Anchor, ToastEntry, ToastMotion, ToastOptions, ToastTransitionStatus } from "./toast";
 export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";

@@ -234,7 +234,7 @@
       "name": "toast",
       "type": "registry:ui",
       "title": "Toast",
-      "description": "Styled toast wrapping nsh/base Toast and ToastStack.",
+      "description": "Styled toast wrapping nsh/base Toast / ToastStack — theme tokens + sonner-shaped toast() / Toaster; full base prop pass-through.",
       "registryDependencies": ["theme"],
       "files": [
         {
