@@ -48,8 +48,7 @@ export {
   PopoverTitle,
   PopoverTrigger,
 } from "./popover";
-<<<<<<< HEAD
-export { Progress } from "./progress";
+export { Progress, type ProgressProps } from "./progress";
 export {
   Radio,
   RadioGroup,
@@ -58,10 +57,6 @@ export {
   type RadioGroupProps,
   type RadioProps,
 } from "./radio-group";
-=======
-export { Progress, type ProgressProps } from "./progress";
-export { Radio, RadioGroup } from "./radio-group";
->>>>>>> origin/cursor/progress-style-passthrough-b2f5
 export {
   Sheet,
   SheetClose,
