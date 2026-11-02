@@ -174,7 +174,18 @@ function App() {
         </Section>
 
         <Section title="Progress">
-          <Progress value={progress()} />
+          <Progress value={progress()} accessibilityLabel="Upload" />
+          <Progress indeterminate accessibilityLabel="Connecting" />
+          <Progress
+            value={progress()}
+            style={{ gap: 8 }}
+            trackStyle={{ height: 8 }}
+            indicatorStyle={{ backgroundColor: colors.destructive }}
+          >
+            <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+              Progress style merge
+            </Text>
+          </Progress>
           <View style={{ flexDirection: "row", gap: 8 }}>
             <Button size="sm" onPress={() => progress.set(Math.max(0, progress() - 10))}>
               −10

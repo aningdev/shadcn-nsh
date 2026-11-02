@@ -20,8 +20,16 @@ function App() {
       <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>
         Progress · {() => value()}%
       </Text>
-      <Progress value={value()} />
-      <Progress indeterminate />
+      <Progress value={value()} accessibilityLabel="Upload" />
+      <Progress indeterminate accessibilityLabel="Connecting" />
+      <Progress
+        value={value()}
+        style={{ gap: 8 }}
+        trackStyle={{ height: 8 }}
+        indicatorStyle={{ backgroundColor: colors.destructive }}
+      >
+        <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Style merge</Text>
+      </Progress>
       <View style={{ flexDirection: "row", gap: 8 }}>
         <Button variant="outline" onPress={() => value.set(Math.max(0, value() - 10))}>
           −10
