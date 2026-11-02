@@ -16,7 +16,7 @@ export function Switch(props: {
       checked={props.checked}
       disabled={props.disabled}
       accessibilityLabel={props.accessibilityLabel}
-      onChange={props.onChange}
+      onChange={(checked) => props.onChange?.({ checked })}
       focusStyle={focusRing()}
       style={{
         flexDirection: "row",

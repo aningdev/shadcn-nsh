@@ -62,8 +62,8 @@ export function Toaster(props: { placement?: Anchor; motion?: ToastMotion }) {
 
   return (
     <Overlay
+      pointerEvents="box-none"
       style={{
-        pointerEvents: "box-none",
         left: 0,
         right: 0,
         top: 0,
@@ -127,7 +127,7 @@ export function ToastStack(props: {
     <BaseToastStack
       placement={props.placement ?? "topRight"}
       motion={props.motion}
-      onExpandedChange={props.onExpandedChange}
+      onExpandedChange={(open) => props.onExpandedChange?.({ expanded: open })}
       onCancel={props.onCancel}
       style={{ gap: 8, padding: 12, maxWidth: 360 }}
     >

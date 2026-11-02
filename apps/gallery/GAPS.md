@@ -10,7 +10,7 @@ UI 落地后：加 demo → 删本表对应行 → 更新 COMPONENTS.md。
 | 项                                                               | 状态     | 说明                                                |
 | ---------------------------------------------------------------- | -------- | --------------------------------------------------- |
 | Phone / Desktop 壳（nav、侧栏、DemoPage、lazy、rememberDemo）    | **暂缓** | 目标见 [AGENTS.md](./AGENTS.md)；现为单页 `App.tsx` |
-| Phase-1 `@shadcn-nsh/ui` 分屏 demos（约 27）                     | **暂缓** | Accordion…Tooltip；组件已有，缺 gallery 壳与拆页    |
+| Phase-1 `@shadcn-nsh/ui` 分屏 demos（store 0.3.0 子集）          | **暂缓** | Button…Tooltip；组件已有，缺 gallery 壳与拆页       |
 | 本目录壳零件（Card / Appear / Press / 精简 Icon，不进 registry） | **暂缓** | 随壳一起做                                          |
 
 ## Apps（非本层）
@@ -53,9 +53,9 @@ UI 落地后：加 demo → 删本表对应行 → 更新 COMPONENTS.md。
 
 ## Components — Phase-1 已有 UI、缺 gallery 拆页（随壳一起补）
 
-Accordion, Avatar, Button, Checkbox, Collapsible, Combobox, Context menu, Dialog, Dropdown menu, Input, Link, NumberInput, OtpInput, Pagination, Popover, Progress, Radio, Select, Sheet, Slider, Switch, Table, Tabs, Toast, Toggle, ToggleGroup, Tooltip
+Button, Checkbox, Collapsible, Context menu, Dialog, Dropdown menu, Input, Popover, Progress, Radio, Sheet, Switch, Table, Tabs, Toast, Tooltip
 
-（参考里 Menu 对应本库 `dropdown-menu` + `context-menu`。）
+（参考里 Menu 对应本库 `dropdown-menu` + `context-menu`。Accordion / Select / Link / … 需更新 store `nsh`，见 COMPONENTS.md。）
 
 ## Styling / Motion / Platform（非本层）
 

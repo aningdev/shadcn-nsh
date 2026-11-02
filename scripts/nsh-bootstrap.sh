@@ -1,12 +1,12 @@
 #!/usr/bin/env bash
 # Ensure a usable NSH CLI for this repo, then regenerate every .nsh types host.
 #
-# The GitHub release CLI (currently 0.3.0) predates several nsh/base exports
-# that packages/ui imports (notably Accordion). Missing `.nsh` folders are a
-# separate, later step — `nsh check` creates them. Symptom of an old CLI:
-#   error: `nsh/base` has no export `Accordion` in packages/ui/accordion.tsx
+# This repo targets the **store / GitHub release CLI** (currently 0.3.0), not
+# `install.sh --source`. Phase-1 `@shadcn-nsh/ui` only wraps `nsh/base` exports
+# present in that release. Missing `.nsh` folders are a separate step —
+# `nsh check` creates them.
 #
-# Same requirement as .github/workflows/deploy-docs.yml (install.sh --source).
+# Same install path as .github/workflows/deploy-docs.yml.
 set -euo pipefail
 
 root="$(cd "$(dirname "$0")/.." && pwd)"
@@ -19,47 +19,48 @@ die() {
   exit 1
 }
 
-need_source_nsh() {
+need_store_nsh() {
   cat <<'EOF' >&2
-nsh: this repo needs a source-built CLI so nsh/base exports Accordion (and peers).
+nsh: install the published store CLI (release tarball), not --source:
 
-The release tarball (nsh 0.3.0) is too old. Install from source (Git + Rust):
+  curl -fsSL https://nsh.dev/install.sh | sh
 
-  curl -fsSL https://nsh.dev/install.sh | sh -s -- --source
-
-Or build the pinned submodule and link it:
-
-  (cd references/nsh && cargo build --release --locked -p nsh-cli)
-  mkdir -p ~/.nsh/bin ~/.local/bin
-  ln -sfn "$(pwd)/references/nsh" ~/.nsh/source
-  ln -sfn "$(pwd)/references/nsh/target/release/nsh" ~/.nsh/bin/nsh
-  ln -sfn ~/.nsh/bin/nsh ~/.local/bin/nsh
-
-Then re-run: bun run nsh:bootstrap
+Then ensure ~/.local/bin (or ~/.nsh/bin) is on PATH and re-run:
+  bun run nsh:bootstrap
 EOF
 }
 
 command -v nsh >/dev/null 2>&1 || {
-  need_source_nsh
+  need_store_nsh
   exit 1
 }
 
 nsh_bin="$(command -v nsh)"
 printf 'nsh: %s (%s)\n' "$(nsh -V 2>/dev/null || true)" "$nsh_bin"
 
-# Cheap probe: release 0.3.0 binaries lack Accordion; source builds embed it.
-# Prefer grepping the Mach-O directly — piping `strings` can trip binary-mode grep.
-if ! grep -aobF 'Accordion' "$nsh_bin" >/dev/null 2>&1; then
-  need_source_nsh
-  exit 1
+# Reject source-checkout installs that point at a cargo-built binary under ~/.nsh/source
+# when the user still thinks they need main — we want the store release for CI parity.
+if [[ -L "$nsh_bin" ]]; then
+  target="$(readlink -f "$nsh_bin" 2>/dev/null || readlink "$nsh_bin" || true)"
+  if [[ "${target:-}" == *'/.nsh/source/'* ]] || [[ "${target:-}" == *'/target/release/nsh' ]]; then
+    printf 'nsh: warning — %s looks like a source build; prefer store CLI for this repo\n' "$nsh_bin" >&2
+  fi
 fi
 
 printf 'nsh: regenerating .nsh types hosts (prepare:types)…\n'
 bun run prepare:types
 
-if [[ ! -f "$base_dts" ]] || ! grep -q 'Accordion' "$base_dts"; then
-  die "nsh: $base_dts still has no Accordion after prepare:types — CLI/runtime mismatch"
+if [[ ! -f "$base_dts" ]]; then
+  die "nsh: missing $base_dts after prepare:types"
 fi
 
-printf 'nsh: OK — Accordion present in %s\n' "$base_dts"
-printf 'nsh: next: bun run dev:gallery\n'
+# Sanity: store 0.3.0 has Button; Accordion is intentionally out of Phase-1.
+if ! grep -q 'Button' "$base_dts"; then
+  die "nsh: $base_dts has no Button — unexpected CLI/runtime"
+fi
+if grep -q 'Accordion' "$base_dts"; then
+  printf 'nsh: note — Accordion present in types (newer than store 0.3.0 pin); Phase-1 still omits it until we re-expand\n'
+fi
+
+printf 'nsh: OK — types host ready at %s\n' "$base_dts"
+printf 'nsh: next: bun run check:gallery / bun run dev:gallery\n'

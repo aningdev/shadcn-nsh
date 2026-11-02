@@ -37,7 +37,7 @@ Extensions (shadcn-only pieces with no `nsh/base` export) and Phase-2 components
   13. _(layout)_ **Source**
 
 - Capability: only forward a missing base prop in `packages/ui` when it is clearly a wrapper gap and product-needed; otherwise document under Differences / Not forwarded. No Extensions pages, no Phase-2 components.
-- Nav / index list: `src/lib/components.ts` — order is shadcn radix meta filtered to Phase-1, then nsh-only `link` / `number-input`.
+- Nav / index list: `src/lib/components.ts` — Phase-1 only (store CLI `nsh/base` exports). Newer base-only pieces stay out until a store release ships them.
 - Sidebar order: `src/lib/nav.ts` (`SIDEBAR_PAGES`, derived from `components`).
 
 ## Site pages

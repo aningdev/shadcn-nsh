@@ -73,12 +73,11 @@ TypeScript 为 **7.1**（content mapper 所需；状态仍 experimental / beta�
 
 改 theme/ui 前先保证 gallery 的 `.nsh` 已生成（`nsh check apps/gallery` / `prepare:types`）。
 
-**NSH CLI**：本仓 `packages/ui` 依赖比 GitHub release（当前 `0.3.0`）更新的 `nsh/base` 导出（如 `Accordion`）。`curl …/install.sh | sh` 装的 store 包会在 `dev:gallery` 报 `nsh/base has no export Accordion`——这不是缺 `.nsh` 目录。需从源码安装（与 docs CI 相同）：
+**NSH CLI**：本仓 Phase-1 对齐 **store / GitHub release CLI**（当前 `0.3.0`）。不要用 `install.sh --source`——docs CI 与本地都装 release tarball。比 0.3.0 新的 base 导出（Accordion、Select、Link 等）已从 `@shadcn-nsh/ui` / registry / docs 拿掉，见 `packages/ui/COMPONENTS.md`。
 
 ```sh
-curl -fsSL https://nsh.dev/install.sh | sh -s -- --source
-# 或用 pinned submodule：见 scripts/nsh-bootstrap.sh 提示
-bun run nsh:bootstrap           # 探测 Accordion + 跑 prepare:types
+curl -fsSL https://nsh.dev/install.sh | sh
+bun run nsh:bootstrap           # prepare:types（生成各 .nsh）
 ```
 
 根 `check` = `vp check`（fmt + lint + 工具面类型）+ `nsh check`（NSH 面）+ `check:docs`（Astro/`tsc`）。
@@ -87,7 +86,7 @@ bun run nsh:bootstrap           # 探测 Accordion + 跑 prepare:types
 
 ```sh
 bun install
-bun run nsh:bootstrap           # 确认源码版 nsh + 生成各 .nsh types host
+bun run nsh:bootstrap           # store CLI + 生成各 .nsh types host
 bun run check                   # vp check + nsh check + check:docs
 bun run check:fix              # vp check --fix
 bun run registry:build

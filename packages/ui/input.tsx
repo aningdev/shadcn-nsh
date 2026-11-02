@@ -1,5 +1,5 @@
 import { colors, focusRing, radius } from "@shadcn-nsh/theme";
-import type { InputStyle, StyleProp } from "nsh";
+import type { StyleProp, TextStyle } from "nsh";
 import { Input as BaseInput } from "nsh/base";
 
 export function Input(props: {
@@ -11,7 +11,7 @@ export function Input(props: {
   multiline?: boolean;
   maxLength?: number;
   accessibilityLabel?: string;
-  style?: StyleProp<InputStyle>;
+  style?: StyleProp<TextStyle>;
   onChange?: (event: { value: string }) => void;
   onSubmit?: () => void;
   onFocus?: () => void;
@@ -27,8 +27,8 @@ export function Input(props: {
       multiline={props.multiline}
       maxLength={props.maxLength}
       accessibilityLabel={props.accessibilityLabel}
-      onChange={props.onChange}
-      onSubmit={props.onSubmit}
+      onChange={(text) => props.onChange?.({ value: text })}
+      onSubmit={() => props.onSubmit?.()}
       onFocus={props.onFocus}
       onBlur={props.onBlur}
       focusStyle={focusRing()}

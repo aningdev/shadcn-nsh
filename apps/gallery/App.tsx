@@ -1,25 +1,11 @@
 import { colors } from "@shadcn-nsh/theme";
 import {
-  Accordion,
-  AccordionHeader,
-  AccordionItem,
-  AccordionContent,
-  AccordionTrigger,
-  Avatar,
   Button,
   Checkbox,
   Input,
-  Link,
-  Pagination,
   Progress,
   Radio,
   RadioGroup,
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-  Slider,
   Switch,
   Table,
   TableBody,
@@ -31,8 +17,6 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-  Toggle,
-  ToggleGroup,
 } from "@shadcn-nsh/ui";
 import { mount, Scroll, signal, Text, View } from "nsh";
 
@@ -52,12 +36,9 @@ function App() {
   const checked = signal(true);
   const radio = signal("a");
   const on = signal(true);
-  const volume = signal(40);
-  const fruit = signal<string | null>("apple");
+  const progress = signal(40);
   const tab = signal("one");
   const bold = signal(false);
-  const page = signal(1);
-  const open = signal(["shipping"]);
 
   return (
     <Scroll style={{ flex: 1, backgroundColor: colors.background }}>
@@ -66,7 +47,7 @@ function App() {
           shadcn-nsh
         </Text>
         <Text style={{ fontSize: 14, color: colors.mutedForeground }}>
-          Phase-1 styled wrappers on nsh/base. Clicks: {() => count()}
+          Phase-1 styled wrappers on store nsh/base (0.3.x). Clicks: {() => count()}
         </Text>
 
         <Section title="Button">
@@ -101,20 +82,6 @@ function App() {
           </View>
         </Section>
 
-        <Section title="Link">
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 16, alignItems: "center" }}>
-            <Link href="https://nsh.dev" onPress={() => {}}>
-              Open nsh.dev
-            </Link>
-            <Link href="https://nsh.dev" current onPress={() => {}}>
-              Current
-            </Link>
-            <Link href="https://nsh.dev" disabled>
-              Disabled
-            </Link>
-          </View>
-        </Section>
-
         <Section title="Input">
           <Input placeholder="Your name" />
         </Section>
@@ -136,25 +103,19 @@ function App() {
           </RadioGroup>
         </Section>
 
-        <Section title="Slider / Progress">
-          <Slider value={volume()} onChange={({ value }) => volume.set(value as number)} />
-          <Progress value={volume()} />
+        <Section title="Progress">
+          <Progress value={progress()} />
+          <View style={{ flexDirection: "row", gap: 8 }}>
+            <Button size="sm" onPress={() => progress.set(Math.max(0, progress() - 10))}>
+              −10
+            </Button>
+            <Button size="sm" onPress={() => progress.set(Math.min(100, progress() + 10))}>
+              +10
+            </Button>
+          </View>
         </Section>
 
-        <Section title="Select">
-          <Select value={fruit()} onChange={({ value }) => fruit.set(value)}>
-            <SelectTrigger>
-              <SelectValue placeholder="Fruit" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="apple">Apple</SelectItem>
-              <SelectItem value="banana">Banana</SelectItem>
-              <SelectItem value="orange">Orange</SelectItem>
-            </SelectContent>
-          </Select>
-        </Section>
-
-        <Section title="Tabs / Toggle">
+        <Section title="Tabs">
           <Tabs value={tab()} onValueChange={(v) => tab.set(v)}>
             <TabsList>
               <TabsTrigger value="one">One</TabsTrigger>
@@ -167,52 +128,6 @@ function App() {
               <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Panel two</Text>
             </TabsContent>
           </Tabs>
-          <ToggleGroup>
-            <Toggle pressed={bold()} onChange={({ pressed }) => bold.set(pressed)}>
-              <Text style={{ fontSize: 13, color: colors.foreground }}>Bold</Text>
-            </Toggle>
-          </ToggleGroup>
-        </Section>
-
-        <Section title="Pagination">
-          <Pagination page={page()} totalPages={8} onChange={({ page: p }) => page.set(p)} />
-        </Section>
-
-        <Section title="Accordion">
-          <Accordion value={open()} onChange={({ value }) => open.set(value)}>
-            <AccordionItem value="shipping">
-              <AccordionHeader>
-                <AccordionTrigger>
-                  <Text style={{ fontSize: 14, fontWeight: "500", color: colors.foreground }}>
-                    Shipping
-                  </Text>
-                </AccordionTrigger>
-              </AccordionHeader>
-              <AccordionContent>
-                <Text style={{ fontSize: 13, color: colors.mutedForeground, paddingBottom: 12 }}>
-                  Orders leave the same day before 2 pm.
-                </Text>
-              </AccordionContent>
-            </AccordionItem>
-            <AccordionItem value="returns">
-              <AccordionHeader>
-                <AccordionTrigger>
-                  <Text style={{ fontSize: 14, fontWeight: "500", color: colors.foreground }}>
-                    Returns
-                  </Text>
-                </AccordionTrigger>
-              </AccordionHeader>
-              <AccordionContent>
-                <Text style={{ fontSize: 13, color: colors.mutedForeground, paddingBottom: 12 }}>
-                  Print the label within 30 days.
-                </Text>
-              </AccordionContent>
-            </AccordionItem>
-          </Accordion>
-        </Section>
-
-        <Section title="Avatar">
-          <Avatar name="Ada Lovelace" />
         </Section>
 
         <Section title="Table">

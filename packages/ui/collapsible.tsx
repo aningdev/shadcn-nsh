@@ -36,12 +36,7 @@ export function Collapsible(props: {
   // Legacy: trigger children + content prop.
   if (props.content != null) {
     return (
-      <BaseCollapsible
-        open={props.open}
-        reveal={props.reveal ?? true}
-        content={props.content}
-        style={{ gap: 0 }}
-      >
+      <BaseCollapsible open={props.open} content={props.content} style={{ gap: 0 }}>
         {props.children}
       </BaseCollapsible>
     );
@@ -77,7 +72,6 @@ function CollapsibleHost() {
   return (
     <BaseCollapsible
       open={ctx.open()}
-      reveal={ctx.reveal ?? true}
       content={(contentAccessor?.() as JSX.Element) ?? <View />}
       style={{ gap: 0 }}
     >

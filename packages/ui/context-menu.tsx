@@ -47,7 +47,9 @@ export function ContextMenu(props: {
         open={props.open}
         disabled={props.disabled}
         trigger={props.trigger}
-        onOpenChange={props.onOpenChange as never}
+        onOpenChange={
+          props.onOpenChange ? (open, reason) => props.onOpenChange?.({ open, reason }) : undefined
+        }
         offset={4}
         popupStyle={{ ...popupSurface(), minWidth: 160 }}
         backdropStyle={popupBackdrop()}
@@ -84,7 +86,7 @@ export function ContextMenuContent(props: { children?: JSX.Element }) {
       open={ctx.open()}
       disabled={ctx.disabled}
       trigger={(triggerAccessor?.() as JSX.Element) ?? <View />}
-      onOpenChange={(event) => ctx.setOpen(event.open)}
+      onOpenChange={(open) => ctx.setOpen(open)}
       offset={4}
       popupStyle={{ ...popupSurface(), minWidth: 160 }}
       backdropStyle={popupBackdrop()}

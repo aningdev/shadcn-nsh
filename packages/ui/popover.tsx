@@ -50,7 +50,9 @@ export function Popover(props: {
         open={props.open}
         defaultOpen={props.defaultOpen}
         trigger={props.trigger}
-        onOpenChange={props.onOpenChange as never}
+        onOpenChange={
+          props.onOpenChange ? (open, reason) => props.onOpenChange?.({ open, reason }) : undefined
+        }
         onOpen={props.onOpen}
         onClose={props.onClose}
         offset={4}
@@ -104,7 +106,7 @@ export function PopoverContent(props: { children?: JSX.Element }) {
     <BasePopover
       open={ctx.open()}
       trigger={(triggerAccessor?.() as JSX.Element) ?? <View />}
-      onOpenChange={(event) => ctx.setOpen(event.open)}
+      onOpenChange={(open) => ctx.setOpen(open)}
       onOpen={ctx.onOpen}
       onClose={ctx.onClose}
       offset={4}

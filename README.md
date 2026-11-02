@@ -7,16 +7,15 @@ Agent 与贡献约定见 [`AGENTS.md`](AGENTS.md)。参考源码以 git submodul
 ## 前置
 
 - [Bun](https://bun.com)
-- [NSH CLI](https://nsh.dev/docs/installation)（`nsh`）— **需源码版**，不要只用 release tarball
+- [NSH CLI](https://nsh.dev/docs/installation)（`nsh`）— **store / release tarball**（当前 `0.3.0`），不要用 `install.sh --source`
 
-GitHub 上的 `nsh 0.3.0` release **没有**本仓 `packages/ui` 用到的部分 `nsh/base` 导出（例如 `Accordion`）。只跑 `curl …/install.sh | sh` 时，`bun run dev:gallery` 会报 `nsh/base has no export Accordion`。这不是缺 `.nsh` 目录；docs CI 同样用 `--source` 安装。
+Phase-1 只包装 store CLI 已有的 `nsh/base` 导出。比 0.3.0 新的组件（Accordion、Select、Link 等）暂不进 registry，见 [`packages/ui/COMPONENTS.md`](packages/ui/COMPONENTS.md)。
 
 ```sh
 git submodule update --init --recursive
-# 源码安装（Git + Rust）；或对照 references/nsh 自建 CLI
-curl -fsSL https://nsh.dev/install.sh | sh -s -- --source
+curl -fsSL https://nsh.dev/install.sh | sh
 bun install
-bun run nsh:bootstrap   # 探测 Accordion + prepare:types（生成各 .nsh）
+bun run nsh:bootstrap   # prepare:types（生成各 .nsh）
 ```
 
 ## 创建 monorepo（推荐）

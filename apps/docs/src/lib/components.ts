@@ -16,20 +16,12 @@ export function nshElementHref(nshElement: string): string {
   return `https://nsh.dev/elements/${nshElement}`;
 }
 
-/** Sidebar / index order: shadcn radix meta filtered to Phase-1, then nsh-only `link` / `number-input`. */
+/**
+ * Sidebar / index order: shadcn-ish meta filtered to components available on
+ * the published store CLI `nsh` (currently 0.3.0). Newer base-only pieces
+ * (Accordion, Select, Link, …) stay out until a store release exports them.
+ */
 export const components: ComponentDoc[] = [
-  {
-    slug: "accordion",
-    title: "Accordion",
-    nshElement: "accordion",
-    description: "Styled accordion wrapping nsh/base Accordion.",
-  },
-  {
-    slug: "avatar",
-    title: "Avatar",
-    nshElement: "avatar",
-    description: "Styled avatar wrapping nsh/base Avatar.",
-  },
   {
     slug: "button",
     title: "Button",
@@ -47,12 +39,6 @@ export const components: ComponentDoc[] = [
     title: "Collapsible",
     nshElement: "collapsible",
     description: "Styled collapsible wrapping nsh/base Collapsible.",
-  },
-  {
-    slug: "combobox",
-    title: "Combobox",
-    nshElement: "combobox",
-    description: "Styled combobox wrapping nsh/base Combobox.",
   },
   {
     slug: "context-menu",
@@ -79,18 +65,6 @@ export const components: ComponentDoc[] = [
     description: "Styled text input wrapping nsh/base Input.",
   },
   {
-    slug: "otp-input",
-    title: "OTP Input",
-    nshElement: "otp-input",
-    description: "Styled OTP input wrapping nsh/base OtpInput.",
-  },
-  {
-    slug: "pagination",
-    title: "Pagination",
-    nshElement: "pagination",
-    description: "Styled pagination wrapping nsh/base Pagination.",
-  },
-  {
     slug: "popover",
     title: "Popover",
     nshElement: "popover",
@@ -109,22 +83,10 @@ export const components: ComponentDoc[] = [
     description: "Styled radio group wrapping nsh/base RadioGroup.",
   },
   {
-    slug: "select",
-    title: "Select",
-    nshElement: "select",
-    description: "Styled select wrapping nsh/base Select.",
-  },
-  {
     slug: "sheet",
     title: "Sheet",
     nshElement: "sheet",
     description: "Styled sheet wrapping nsh/base Sheet.",
-  },
-  {
-    slug: "slider",
-    title: "Slider",
-    nshElement: "slider",
-    description: "Styled slider wrapping nsh/base Slider.",
   },
   {
     slug: "toast",
@@ -151,33 +113,9 @@ export const components: ComponentDoc[] = [
     description: "Styled tabs wrapping nsh/base Tabs.",
   },
   {
-    slug: "toggle",
-    title: "Toggle",
-    nshElement: "toggle",
-    description: "Styled toggle wrapping nsh/base Toggle.",
-  },
-  {
-    slug: "toggle-group",
-    title: "Toggle Group",
-    nshElement: "toggle",
-    description: "Styled toggle group wrapping nsh/base ToggleGroup.",
-  },
-  {
     slug: "tooltip",
     title: "Tooltip",
     nshElement: "tooltip",
     description: "Styled tooltip wrapping nsh/base Tooltip.",
-  },
-  {
-    slug: "link",
-    title: "Link",
-    nshElement: "link",
-    description: "Styled link wrapping nsh/base Link.",
-  },
-  {
-    slug: "number-input",
-    title: "Number Input",
-    nshElement: "number-input",
-    description: "Styled number input wrapping nsh/base NumberInput.",
   },
 ];
