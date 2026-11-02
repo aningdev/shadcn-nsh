@@ -55,19 +55,13 @@ function App() {
   const progress = signal(40);
   const tab = signal("one");
   const bold = signal(false);
-<<<<<<< HEAD
   const name = signal("");
-  const menuOpen = signal(false);
-  const menuLast = signal("—");
-  const menuSidebar = signal(true);
-=======
   const menuOpen = signal(false);
   const menuLast = signal("—");
   const menuSidebar = signal(true);
   const ctxOpen = signal(false);
   const ctxLast = signal("—");
   const ctxSidebar = signal(true);
->>>>>>> origin/cursor/context-menu-paradigm-e4e6
 
   return (
     <Scroll style={{ flex: 1, backgroundColor: colors.background }}>
@@ -292,8 +286,6 @@ function App() {
             Menu open: {() => (menuOpen() ? "yes" : "no")} · Last: {() => menuLast()}
           </Text>
         </Section>
-<<<<<<< HEAD
-=======
 
         <Section title="Context Menu">
           <ContextMenu open={ctxOpen()} onOpenChange={(next) => ctxOpen.set(next)}>
@@ -360,7 +352,6 @@ function App() {
             {() => (ctxSidebar() ? "on" : "off")}
           </Text>
         </Section>
->>>>>>> origin/cursor/context-menu-paradigm-e4e6
       </View>
     </Scroll>
   );
