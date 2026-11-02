@@ -2,6 +2,9 @@ import { colors } from "@shadcn-nsh/theme";
 import {
   Button,
   Checkbox,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
   Input,
   Progress,
   Radio,
@@ -39,6 +42,7 @@ function App() {
   const progress = signal(40);
   const tab = signal("one");
   const bold = signal(false);
+  const collapsibleOpen = signal(false);
 
   return (
     <Scroll style={{ flex: 1, backgroundColor: colors.background }}>
@@ -128,6 +132,25 @@ function App() {
               <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Panel two</Text>
             </TabsContent>
           </Tabs>
+        </Section>
+
+        <Section title="Collapsible">
+          <Collapsible open={collapsibleOpen()} onOpenChange={(next) => collapsibleOpen.set(next)}>
+            <CollapsibleTrigger>Toggle</CollapsibleTrigger>
+            <CollapsibleContent>
+              <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+                Controlled panel — Hidden until open.
+              </Text>
+            </CollapsibleContent>
+          </Collapsible>
+          <Collapsible defaultOpen>
+            <CollapsibleTrigger>Style merge</CollapsibleTrigger>
+            <CollapsibleContent style={{ gap: 12 }}>
+              <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+                Consumer style wins per key over region chrome.
+              </Text>
+            </CollapsibleContent>
+          </Collapsible>
         </Section>
 
         <Section title="Table">

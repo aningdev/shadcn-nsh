@@ -96,7 +96,7 @@
       "name": "collapsible",
       "type": "registry:ui",
       "title": "Collapsible",
-      "description": "Styled collapsible wrapping nsh/base Collapsible."
+      "description": "Styled collapsible wrapping nsh/base Collapsible — theme tokens + Trigger / Content; full base prop pass-through."
     },
     {
       "name": "toast",

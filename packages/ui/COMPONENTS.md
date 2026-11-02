@@ -88,7 +88,7 @@ Public Usage trees prefer shadcn part names. Internals still call `nsh/base` (it
 | Popover / Trigger / Content     | composition; legacy `trigger` prop kept                                                      | `Popover`                                    |
 | Tooltip / Trigger / Content     | composition **or** string bubble for host `tooltip={}`                                       | `Tooltip` bubble                             |
 | Tabs / List / Trigger / Content | `Tabs` / `TabsList` / `TabsTrigger` / `TabsContent` (+ legacy `Tab`)                         | `Tabs` + `Tab`; panels are app/`TabsContent` |
-| Collapsible / Trigger / Content | composition; legacy `content` prop kept                                                      | `Collapsible`                                |
+| Collapsible / Trigger / Content | composition + full base pass-through; legacy `content` kept (no `reveal` on store 0.3.0)     | `Collapsible`                                |
 | Toast / sonner                  | `toast()` + `Toaster` (+ `Toast` / `ToastStack` / `ToastManager`)                            | same                                         |
 | Table\*                         | `Table` / `TableHeader` / `TableBody` / `TableRow` / `TableHead` / `TableCell` / …           | same                                         |
 
