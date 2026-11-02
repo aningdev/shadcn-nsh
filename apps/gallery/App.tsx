@@ -139,8 +139,20 @@ function App() {
           >
             <Text style={{ fontSize: 14, color: colors.foreground }}>Style merge</Text>
           </Checkbox>
-          <Switch checked={on()} onChange={({ checked: v }) => on.set(v)}>
+          <Switch checked={on()} onChange={(v) => on.set(v)}>
             <Text style={{ fontSize: 14, color: colors.foreground }}>Notifications</Text>
+          </Switch>
+          <Switch size="sm" checked={on()} onChange={(v) => on.set(v)}>
+            <Text style={{ fontSize: 14, color: colors.foreground }}>Small switch</Text>
+          </Switch>
+          <Switch
+            checked={on()}
+            onChange={(v) => on.set(v)}
+            style={{ gap: 12 }}
+            trackStyle={{ width: 44 }}
+            thumbClass="checked:translate-x-5"
+          >
+            <Text style={{ fontSize: 14, color: colors.foreground }}>Switch style merge</Text>
           </Switch>
           <RadioGroup>
             <RadioGroupItem checked={radio() === "a"} onChange={() => radio.set("a")}>

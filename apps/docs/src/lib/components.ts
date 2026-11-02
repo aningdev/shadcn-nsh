@@ -102,7 +102,8 @@ export const components: ComponentDoc[] = [
     slug: "switch",
     title: "Switch",
     nshElement: "switch",
-    description: "Styled switch wrapping nsh/base Switch.",
+    description:
+      "Styled switch wrapping nsh/base Switch — theme tokens + size; full base prop pass-through.",
   },
   {
     slug: "table",
