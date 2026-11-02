@@ -1,19 +1,20 @@
 ---
 layout: ../../../layouts/Docs.astro
 title: Button
-description: Styled button wrapping nsh/base Button.
+description: Styled button wrapping nsh/base Button — variants and sizes on theme tokens.
 component: true
 demo: button
 ---
 
-Styled button on `nsh/base` Button. Adds brand variants; children are a string label.
+[`nsh/base`](https://nsh.dev/modules/nsh-base) owns presses, disabled / selected, keyboard focus, and the button role for screen readers — unstyled on every platform. This package is the styled layer on top: brand variants, sizes, and theme tokens, the same role a community library plays above `nsh/base`. [`Button`](https://nsh.dev/elements/button) is a press target whose look comes from those tokens; behavior stays on base. For navigation / URL affordances use [`Link`](./link), not a button lookalike.
 
 ## Install
 
-```sh
-shadcn-nsh add button
-# monorepo:
-shadcn-nsh add button -c apps/web
+```bash
+npx shadcn-nsh@latest add button
+bunx shadcn-nsh@latest add button
+pnx shadcn-nsh@latest add button
+yarn dlx shadcn-nsh@latest add button
 ```
 
 ## Usage
@@ -24,9 +25,16 @@ import { Button } from "@workspace/ui/components/ui/button";
 <Button onPress={() => {}}>Default</Button>;
 ```
 
-## Examples
+## Size
 
-### Variants
+```tsx
+<Button size="xs">Extra small</Button>
+<Button size="sm">Small</Button>
+<Button size="default">Default</Button>
+<Button size="lg">Large</Button>
+```
+
+## Variants
 
 ```tsx
 <Button>Default</Button>
@@ -36,43 +44,107 @@ import { Button } from "@workspace/ui/components/ui/button";
 <Button variant="ghost">Ghost</Button>
 ```
 
-### Disabled
+## Disabled
 
 ```tsx
 <Button disabled>Disabled</Button>
+```
+
+## Selected
+
+```tsx
+const [on, setOn] = createSignal(false);
+
+<Button selected={on()} onPress={() => setOn(!on())}>
+  Bold
+</Button>;
+```
+
+## Icon
+
+```tsx
+<Button size="icon" accessibilityLabel="Add">
+  <Text>+</Text>
+</Button>
+<Button size="icon-xs" accessibilityLabel="Close">
+  <Text>×</Text>
+</Button>
+<Button size="icon-sm" variant="outline" accessibilityLabel="Settings">
+  <Text>⚙</Text>
+</Button>
+<Button size="icon-lg" variant="secondary" accessibilityLabel="More">
+  <Text>⋯</Text>
+</Button>
+```
+
+## With Icon
+
+```tsx
+<Button>
+  <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+    <Text>+</Text>
+    <Text>New project</Text>
+  </View>
+</Button>
 ```
 
 ## API
 
 ### Variants
 
-| `variant`     | Look                     |
-| ------------- | ------------------------ |
-| `default`     | Primary fill             |
-| `secondary`   | Secondary fill           |
-| `outline`     | Border, transparent fill |
-| `destructive` | Destructive fill         |
-| `ghost`       | No border/fill           |
+| `variant`     | Look                                     |
+| ------------- | ---------------------------------------- |
+| `default`     | Primary fill                             |
+| `secondary`   | Secondary fill                           |
+| `outline`     | Border, background fill                  |
+| `destructive` | Soft destructive tint + destructive text |
+| `ghost`       | No border/fill                           |
+
+### Sizes
+
+| `size`    | Notes                       |
+| --------- | --------------------------- |
+| `default` | Text button, default height |
+| `xs`      | Compact text                |
+| `sm`      | Small text                  |
+| `lg`      | Large text                  |
+| `icon`    | Square icon hit target      |
+| `icon-xs` | Compact square              |
+| `icon-sm` | Small square                |
+| `icon-lg` | Large square                |
 
 ### Props
 
-| Prop       | Type            | Default     | Notes                                          |
-| ---------- | --------------- | ----------- | ---------------------------------------------- |
-| `children` | `string`        | —           | Label text (also used as `accessibilityLabel`) |
-| `variant`  | `ButtonVariant` | `"default"` | See Variants                                   |
-| `disabled` | `boolean`       | —           |                                                |
-| `onPress`  | `() => void`    | —           |                                                |
+| Prop                 | Type                    | Default     | Notes                                                  |
+| -------------------- | ----------------------- | ----------- | ------------------------------------------------------ |
+| `children`           | `string \| JSX.Element` | —           | Arbitrary content; strings get a themed `Text` wrapper |
+| `variant`            | `ButtonVariant`         | `"default"` | See Variants                                           |
+| `size`               | `ButtonSize`            | `"default"` | See Sizes                                              |
+| `disabled`           | `boolean`               | —           | Forwarded to base                                      |
+| `selected`           | `boolean`               | —           | Forwarded; wrapper applies `selectedStyle`             |
+| `accessibilityLabel` | `string \| null`        | —           | Forwarded; defaults to string `children` when omitted  |
+| `role`               | `string \| null`        | —           | Forwarded (base default `"button"`)                    |
+
+### Events
+
+| Event         | Notes                                                          |
+| ------------- | -------------------------------------------------------------- |
+| `onPress`     | Tap / click / keyboard activate (from base)                    |
+| `onPressDown` | Press began (from base); for custom press feedback             |
+| `onPressUp`   | Press ended / cancelled (from base); for custom press feedback |
+
+`buttonVariants({ variant, size })` returns token-backed `style` / `label` / hover·active·selected looks for Button reuse.
 
 ## Differences
 
-| Topic       | shadcn                        | This package                                        |
-| ----------- | ----------------------------- | --------------------------------------------------- |
-| Press event | `onClick`                     | `onPress`                                           |
-| Children    | arbitrary nodes / `asChild`   | `children: string` only (rendered as styled `Text`) |
-| Size / icon | `size`, icon slots, `asChild` | fixed height; no size / icon / `asChild` API        |
-| Link look   | `variant="link"`              | use the `link` component                            |
-| Class hooks | `className` / CVA             | theme tokens + locked styles inside the wrapper     |
+| Topic           | shadcn (`bases/base`)      | This package                                                                                          |
+| --------------- | -------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Press event     | DOM `onClick`              | `onPress` / `onPressDown` / `onPressUp`                                                               |
+| Children        | arbitrary nodes / Slot     | `string \| JSX.Element`; no `asChild`                                                                 |
+| Link affordance | `variant="link"` on Button | **Omitted** — this registry has a real [`Link`](./link) on `nsh/base`; do not put link look on Button |
+| Class hooks     | `className` / CVA          | theme tokens + `buttonVariants` style helper                                                          |
+| Size matrix     | `default`…`icon-lg`        | same names; token sizes approximate nova scale, not CSS-pixel locked                                  |
 
 ## Not forwarded
 
-From `nsh/base` Button: press/selection chrome such as `selected`, `role`, custom children trees, and style hooks (`style` / `hoverStyle` / `activeStyle` / `focusStyle`, `accessibilityLabel`). The wrapper owns look-and-feel and sets `accessibilityLabel` from the string label. Extend the copied source if you need base knobs.
+From `nsh/base` Button: style hooks (`style` / `hoverStyle` / `activeStyle` / `focusStyle` / `selectedStyle` / `disabledStyle`, `class`). The wrapper owns look-and-feel. Extend the copied source if you need those knobs.

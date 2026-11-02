@@ -9,6 +9,7 @@ import {
   Button,
   Checkbox,
   Input,
+  Link,
   Pagination,
   Progress,
   Radio,
@@ -69,7 +70,7 @@ function App() {
         </Text>
 
         <Section title="Button">
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12, alignItems: "center" }}>
             <Button onPress={() => count.set(count() + 1)}>Default</Button>
             <Button variant="secondary" onPress={() => count.set(count() + 1)}>
               Secondary
@@ -83,6 +84,34 @@ function App() {
             <Button variant="destructive" onPress={() => count.set(count() + 1)}>
               Destructive
             </Button>
+            <Button size="sm" onPress={() => count.set(count() + 1)}>
+              SM
+            </Button>
+            <Button size="lg" onPress={() => count.set(count() + 1)}>
+              LG
+            </Button>
+            <Button size="icon" accessibilityLabel="Add" onPress={() => count.set(count() + 1)}>
+              <Text style={{ fontSize: 16, fontWeight: "600", color: colors.primaryForeground }}>
+                +
+              </Text>
+            </Button>
+            <Button selected={bold()} variant="outline" onPress={() => bold.set(!bold())}>
+              Selected
+            </Button>
+          </View>
+        </Section>
+
+        <Section title="Link">
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 16, alignItems: "center" }}>
+            <Link href="https://nsh.dev" onPress={() => {}}>
+              Open nsh.dev
+            </Link>
+            <Link href="https://nsh.dev" current onPress={() => {}}>
+              Current
+            </Link>
+            <Link href="https://nsh.dev" disabled>
+              Disabled
+            </Link>
           </View>
         </Section>
 
