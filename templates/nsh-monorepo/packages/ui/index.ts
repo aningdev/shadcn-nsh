@@ -1,5 +1,5 @@
 export { Button, type ButtonVariant } from "./components/ui/button";
-<<<<<<< HEAD
+export { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./components/ui/collapsible";
 export {
   Table,
   TableBody,
@@ -18,7 +18,4 @@ export {
   type TableProps,
   type TableRowProps,
 } from "./components/ui/table";
-=======
-export { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./components/ui/collapsible";
->>>>>>> origin/cursor/collapsible-paradigm-e6b1
 export * from "./lib/theme";
