@@ -24,6 +24,9 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
   Input,
   Popover,
   PopoverContent,
@@ -92,6 +95,7 @@ function App() {
   const tipOpen = signal(false);
   const sheetOpen = signal(false);
   const dialogOpen = signal(false);
+  const collapsibleOpen = signal(false);
 
   return (
     <Scroll style={{ flex: 1, backgroundColor: colors.background }}>
@@ -365,6 +369,25 @@ function App() {
           <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
             Sheet open: {() => (sheetOpen() ? "yes" : "no")}
           </Text>
+        </Section>
+
+        <Section title="Collapsible">
+          <Collapsible open={collapsibleOpen()} onOpenChange={(next) => collapsibleOpen.set(next)}>
+            <CollapsibleTrigger>Toggle</CollapsibleTrigger>
+            <CollapsibleContent>
+              <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+                Controlled panel — Hidden until open.
+              </Text>
+            </CollapsibleContent>
+          </Collapsible>
+          <Collapsible defaultOpen>
+            <CollapsibleTrigger>Style merge</CollapsibleTrigger>
+            <CollapsibleContent style={{ gap: 12 }}>
+              <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+                Consumer style wins per key over region chrome.
+              </Text>
+            </CollapsibleContent>
+          </Collapsible>
         </Section>
 
         <Section title="Table">

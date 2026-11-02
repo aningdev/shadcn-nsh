@@ -39,7 +39,8 @@ export const components: ComponentDoc[] = [
     slug: "collapsible",
     title: "Collapsible",
     nshElement: "collapsible",
-    description: "Styled collapsible wrapping nsh/base Collapsible.",
+    description:
+      "Styled collapsible wrapping nsh/base Collapsible — theme tokens + Trigger / Content; full base prop pass-through.",
   },
   {
     slug: "context-menu",
