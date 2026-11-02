@@ -17,6 +17,12 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
   Input,
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
   Progress,
   RadioGroup,
   RadioGroupItem,
@@ -62,6 +68,7 @@ function App() {
   const ctxOpen = signal(false);
   const ctxLast = signal("—");
   const ctxSidebar = signal(true);
+  const popoverOpen = signal(false);
 
   return (
     <Scroll style={{ flex: 1, backgroundColor: colors.background }}>
@@ -238,6 +245,30 @@ function App() {
               <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Panel two</Text>
             </TabsContent>
           </Tabs>
+        </Section>
+
+        <Section title="Popover">
+          <Popover open={popoverOpen()} onOpenChange={(next) => popoverOpen.set(next)}>
+            <PopoverTrigger>Open popover</PopoverTrigger>
+            <PopoverContent>
+              <PopoverHeader>
+                <PopoverTitle>Quick tip</PopoverTitle>
+                <PopoverDescription>
+                  Trigger / Content with surface chrome. Outside press or Escape closes.
+                </PopoverDescription>
+              </PopoverHeader>
+              <Button variant="outline" onPress={() => popoverOpen.set(false)}>
+                Close
+              </Button>
+            </PopoverContent>
+          </Popover>
+          <Popover>
+            <PopoverTrigger>Style merge</PopoverTrigger>
+            <PopoverContent popupStyle={{ padding: 20, minWidth: 320 }}>
+              <PopoverTitle style={{ fontSize: 16 }}>Merged chrome</PopoverTitle>
+              <PopoverDescription>Consumer popupStyle wins per key</PopoverDescription>
+            </PopoverContent>
+          </Popover>
         </Section>
 
         <Section title="Table">

@@ -47,6 +47,12 @@ export {
   PopoverHeader,
   PopoverTitle,
   PopoverTrigger,
+  type PopoverContentProps,
+  type PopoverDescriptionProps,
+  type PopoverHeaderProps,
+  type PopoverProps,
+  type PopoverTitleProps,
+  type PopoverTriggerProps,
 } from "./popover";
 export { Progress, type ProgressProps } from "./progress";
 export {

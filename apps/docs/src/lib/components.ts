@@ -71,7 +71,8 @@ export const components: ComponentDoc[] = [
     slug: "popover",
     title: "Popover",
     nshElement: "popover",
-    description: "Styled popover wrapping nsh/base Popover.",
+    description:
+      "Styled popover wrapping nsh/base Popover — theme tokens + Trigger / Content; full base prop pass-through.",
   },
   {
     slug: "progress",
