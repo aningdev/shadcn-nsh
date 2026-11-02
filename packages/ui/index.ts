@@ -1,5 +1,5 @@
 export { Button, type ButtonVariant } from "./button";
-export { Checkbox } from "./checkbox";
+export { Checkbox, type CheckboxProps } from "./checkbox";
 export { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./collapsible";
 export {
   ContextMenu,

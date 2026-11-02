@@ -32,7 +32,8 @@ export const components: ComponentDoc[] = [
     slug: "checkbox",
     title: "Checkbox",
     nshElement: "checkbox",
-    description: "Styled checkbox wrapping nsh/base Checkbox.",
+    description:
+      "Styled checkbox wrapping nsh/base Checkbox — theme tokens + default mark; full base prop pass-through.",
   },
   {
     slug: "collapsible",
