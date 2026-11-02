@@ -192,8 +192,8 @@
       "name": "dropdown-menu",
       "type": "registry:ui",
       "title": "Dropdown Menu",
-      "description": "Styled menu wrapping nsh/base Menu and parts.",
-      "registryDependencies": ["theme", "popup-surface"],
+      "description": "Styled menu wrapping nsh/base Menu — theme tokens + Trigger / Content / Item; full base prop pass-through.",
+      "registryDependencies": ["theme", "popup-surface", "button"],
       "files": [
         {
           "path": "packages/ui/dropdown-menu.tsx",
@@ -206,7 +206,7 @@
       "name": "context-menu",
       "type": "registry:ui",
       "title": "Context Menu",
-      "description": "Styled context menu wrapping nsh/base ContextMenu.",
+      "description": "Styled context menu wrapping nsh/base ContextMenu — theme tokens + Trigger / Content / Item; full base prop pass-through.",
       "registryDependencies": ["theme", "popup-surface", "dropdown-menu"],
       "files": [
         {

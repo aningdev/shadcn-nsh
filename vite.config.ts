@@ -4,6 +4,9 @@ import { defineConfig } from "vite-plus";
 // oxlint discovery also skips .gitignore matches. Only list paths that are
 // tracked (or otherwise walked) but should stay out of fmt/lint.
 const ignoreVendored = ["references/**", ".agents/skills"];
+// Docs types authority is `check:docs` (astro sync + tsc); vp type-aware lint
+// does not load `astro/client`, so `import.meta.env` fails without this exclude.
+const ignoreLint = [...ignoreVendored, "apps/docs/**"];
 
 export default defineConfig({
   resolve: { tsconfigPaths: true },
@@ -20,7 +23,7 @@ export default defineConfig({
     rules: {},
     options: { typeAware: true, typeCheck: true },
     plugins: ["eslint", "typescript", "react", "import", "promise", "node", "vitest"],
-    ignorePatterns: ignoreVendored,
+    ignorePatterns: ignoreLint,
   },
 
   staged: {

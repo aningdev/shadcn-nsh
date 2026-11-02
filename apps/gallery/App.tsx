@@ -2,6 +2,20 @@ import { colors } from "@shadcn-nsh/theme";
 import {
   Button,
   Checkbox,
+  ContextMenu,
+  ContextMenuCheckboxItem,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuLabel,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
   Input,
   Progress,
   Radio,
@@ -39,6 +53,12 @@ function App() {
   const progress = signal(40);
   const tab = signal("one");
   const bold = signal(false);
+  const menuOpen = signal(false);
+  const menuLast = signal("—");
+  const menuSidebar = signal(true);
+  const ctxOpen = signal(false);
+  const ctxLast = signal("—");
+  const ctxSidebar = signal(true);
 
   return (
     <Scroll style={{ flex: 1, backgroundColor: colors.background }}>
@@ -157,6 +177,110 @@ function App() {
               </TableRow>
             </TableBody>
           </Table>
+        </Section>
+
+        <Section title="Dropdown Menu">
+          <DropdownMenu open={menuOpen()} onOpenChange={(next) => menuOpen.set(next)}>
+            <DropdownMenuTrigger>Open menu</DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>Account</DropdownMenuLabel>
+              <DropdownMenuItem onSelect={() => menuLast.set("Profile")}>
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Profile</Text>
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => menuLast.set("Settings")}>
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Settings</Text>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuCheckboxItem
+                checked={menuSidebar()}
+                closeOnSelect={false}
+                onSelect={() => menuSidebar.set(!menuSidebar())}
+              >
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Show sidebar</Text>
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onSelect={() => menuLast.set("Log out")}>
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Log out</Text>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger>Style merge</DropdownMenuTrigger>
+            <DropdownMenuContent popupStyle={{ minWidth: 220, padding: 8 }}>
+              <DropdownMenuItem style={{ height: 36 }} onSelect={() => menuLast.set("Merged")}>
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Merged chrome</Text>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+            Menu open: {() => (menuOpen() ? "yes" : "no")} · Last: {() => menuLast()}
+          </Text>
+        </Section>
+
+        <Section title="Context Menu">
+          <ContextMenu open={ctxOpen()} onOpenChange={(next) => ctxOpen.set(next)}>
+            <ContextMenuTrigger>
+              <View
+                style={{
+                  width: 180,
+                  height: 80,
+                  borderRadius: 8,
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                  borderStyle: "dashed",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: colors.muted,
+                }}
+              >
+                <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+                  Right-click / long-press
+                </Text>
+              </View>
+            </ContextMenuTrigger>
+            <ContextMenuContent>
+              <ContextMenuLabel>Edit</ContextMenuLabel>
+              <ContextMenuItem onSelect={() => ctxLast.set("Copy")}>
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Copy</Text>
+              </ContextMenuItem>
+              <ContextMenuItem onSelect={() => ctxLast.set("Paste")}>
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Paste</Text>
+              </ContextMenuItem>
+              <ContextMenuSeparator />
+              <ContextMenuCheckboxItem
+                checked={ctxSidebar()}
+                closeOnSelect={false}
+                onSelect={() => ctxSidebar.set(!ctxSidebar())}
+              >
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Show sidebar</Text>
+              </ContextMenuCheckboxItem>
+            </ContextMenuContent>
+          </ContextMenu>
+          <ContextMenu>
+            <ContextMenuTrigger>
+              <View
+                style={{
+                  paddingHorizontal: 12,
+                  paddingVertical: 8,
+                  borderRadius: 6,
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                  backgroundColor: colors.card,
+                }}
+              >
+                <Text style={{ fontSize: 13, color: colors.foreground }}>Style merge target</Text>
+              </View>
+            </ContextMenuTrigger>
+            <ContextMenuContent popupStyle={{ minWidth: 220, padding: 8 }}>
+              <ContextMenuItem style={{ height: 36 }} onSelect={() => ctxLast.set("Merged")}>
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Merged chrome</Text>
+              </ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
+          <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+            Ctx open: {() => (ctxOpen() ? "yes" : "no")} · Last: {() => ctxLast()} · Sidebar:{" "}
+            {() => (ctxSidebar() ? "on" : "off")}
+          </Text>
         </Section>
       </View>
     </Scroll>
