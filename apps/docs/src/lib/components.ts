@@ -50,7 +50,8 @@ export const components: ComponentDoc[] = [
     slug: "dialog",
     title: "Dialog",
     nshElement: "dialog",
-    description: "Styled dialog wrapping nsh/base Dialog.",
+    description:
+      "Styled dialog wrapping nsh/base Dialog — theme tokens + Trigger / Content; full base prop pass-through.",
   },
   {
     slug: "dropdown-menu",
