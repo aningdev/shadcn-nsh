@@ -1,12 +1,12 @@
 ---
 layout: ../../../layouts/Docs.astro
 title: Button
-description: Styled button wrapping nsh/base Button — variants and sizes on theme tokens.
+description: Styled button wrapping nsh/base Button — variants and sizes on theme tokens; full base prop pass-through.
 component: true
 demo: button
 ---
 
-[`nsh/base`](https://nsh.dev/modules/nsh-base) owns presses, disabled / selected, keyboard focus, and the button role for screen readers — unstyled on every platform. This package is the styled layer on top: brand variants, sizes, and theme tokens, the same role a community library plays above `nsh/base`. [`Button`](https://nsh.dev/elements/button) is a press target whose look comes from those tokens; behavior stays on base. Do not put a link look on Button (`variant="link"` is omitted); a styled `Link` wrapper needs a newer store `nsh` than 0.3.0.
+[`nsh/base`](https://nsh.dev/modules/nsh-base) owns presses, disabled / selected, keyboard focus, and the button role for screen readers — unstyled on every platform. This package is the styled layer on top: brand variants, sizes, and theme tokens, the same role a community library plays above `nsh/base`. [`Button`](https://nsh.dev/elements/button) is a press target whose look comes from those tokens; behavior and style hooks stay on base and are forwarded. Do not put a link look on Button (`variant="link"` is omitted); use a separate Link when the store CLI exports it.
 
 ## Install
 
@@ -88,6 +88,16 @@ const [on, setOn] = createSignal(false);
 </Button>
 ```
 
+## Style override
+
+Wrapper defaults from `variant` / `size`, then consumer styles shallow-merge on top (consumer wins per key). `class` concatenates when both are set.
+
+```tsx
+<Button style={{ paddingHorizontal: 24 }} hoverStyle={{ opacity: 0.8 }}>
+  Wider
+</Button>
+```
+
 ## API
 
 ### Variants
@@ -115,15 +125,27 @@ const [on, setOn] = createSignal(false);
 
 ### Props
 
-| Prop                 | Type                    | Default     | Notes                                                  |
-| -------------------- | ----------------------- | ----------- | ------------------------------------------------------ |
-| `children`           | `string \| JSX.Element` | —           | Arbitrary content; strings get a themed `Text` wrapper |
-| `variant`            | `ButtonVariant`         | `"default"` | See Variants                                           |
-| `size`               | `ButtonSize`            | `"default"` | See Sizes                                              |
-| `disabled`           | `boolean`               | —           | Forwarded to base                                      |
-| `selected`           | `boolean`               | —           | Forwarded; wrapper applies `selectedStyle`             |
-| `accessibilityLabel` | `string \| null`        | —           | Forwarded; defaults to string `children` when omitted  |
-| `role`               | `string \| null`        | —           | Forwarded (base default `"button"`)                    |
+| Prop                 | Type                    | Default     | Notes                                                     |
+| -------------------- | ----------------------- | ----------- | --------------------------------------------------------- |
+| `children`           | `string \| JSX.Element` | —           | Arbitrary content; strings get a themed `Text` wrapper    |
+| `variant`            | `ButtonVariant`         | `"default"` | Theme layer only (no `link`)                              |
+| `size`               | `ButtonSize`            | `"default"` | Theme layer                                               |
+| `disabled`           | `boolean`               | —           | Forwarded to base                                         |
+| `selected`           | `boolean`               | —           | Forwarded                                                 |
+| `accessibilityLabel` | `string \| null`        | —           | Forwarded; defaults to string `children` when omitted     |
+| `role`               | `AccessibilityRole`     | —           | Forwarded (base default `"button"`)                       |
+| `class`              | `string`                | —           | Forwarded; concatenated after any wrapper class           |
+| `style`              | `StyleProp<ViewStyle>`  | —           | Merged over variant/size defaults (consumer wins per key) |
+| `hoverStyle`         | `StyleProp<ViewStyle>`  | —           | Merged over variant defaults                              |
+| `activeStyle`        | `StyleProp<ViewStyle>`  | —           | Merged over variant defaults                              |
+| `focusStyle`         | `StyleProp<ViewStyle>`  | —           | Merged over theme focus ring                              |
+| `selectedStyle`      | `StyleProp<ViewStyle>`  | —           | Merged over variant defaults                              |
+| `disabledStyle`      | `StyleProp<ViewStyle>`  | —           | Merged over wrapper `{ opacity: 0.5 }`                    |
+| `classList`          | object                  | —           | Forwarded (`ComponentHostProps`)                          |
+| `testID`             | string                  | —           | Forwarded                                                 |
+| `tooltip`            | string                  | —           | Forwarded                                                 |
+| `onLayout`           | function                | —           | Forwarded                                                 |
+| `ref`                | ref                     | —           | Forwarded                                                 |
 
 ### Events
 
@@ -133,18 +155,18 @@ const [on, setOn] = createSignal(false);
 | `onPressDown` | Press began (from base); for custom press feedback             |
 | `onPressUp`   | Press ended / cancelled (from base); for custom press feedback |
 
-`buttonVariants({ variant, size })` returns token-backed `style` / `label` / hover·active·selected looks for Button reuse.
+`buttonVariants({ variant, size })` returns token-backed `style` / `label` / hover·active·selected·disabled looks for Button reuse.
 
 ## Differences
 
-| Topic           | shadcn (`bases/base`)      | This package                                                                                                      |
-| --------------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| Press event     | DOM `onClick`              | `onPress` / `onPressDown` / `onPressUp`                                                                           |
-| Children        | arbitrary nodes / Slot     | `string \| JSX.Element`; no `asChild`                                                                             |
-| Link affordance | `variant="link"` on Button | **Omitted** — do not fake links on Button; store `nsh` 0.3.0 has no `Link` in `nsh/base` for a styled wrapper yet |
-| Class hooks     | `className` / CVA          | theme tokens + `buttonVariants` style helper                                                                      |
-| Size matrix     | `default`…`icon-lg`        | same names; token sizes approximate nova scale, not CSS-pixel locked                                              |
+| Topic           | shadcn (`bases/base`)      | This package                                                                                   |
+| --------------- | -------------------------- | ---------------------------------------------------------------------------------------------- |
+| Press event     | DOM `onClick`              | `onPress` / `onPressDown` / `onPressUp`                                                        |
+| Children        | arbitrary nodes / Slot     | `string \| JSX.Element`; no `asChild`                                                          |
+| Link affordance | `variant="link"` on Button | **Omitted** — Link is a separate component (needs a store `nsh` that exports `nsh/base` Link)  |
+| Class hooks     | `className` / CVA          | `class` + theme tokens + `buttonVariants`; consumer `style` / state styles merge over defaults |
+| Size matrix     | `default`…`icon-lg`        | same names; token sizes approximate nova scale, not CSS-pixel locked                           |
 
 ## Not forwarded
 
-From `nsh/base` Button: style hooks (`style` / `hoverStyle` / `activeStyle` / `focusStyle` / `selectedStyle` / `disabledStyle`, `class`). The wrapper owns look-and-feel. Extend the copied source if you need those knobs.
+None — all `nsh/base` Button props are forwarded. The wrapper only adds `variant` / `size` and merges its token defaults under consumer style hooks (`class` concatenates).

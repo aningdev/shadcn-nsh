@@ -81,6 +81,13 @@ function App() {
             <Button selected={bold()} variant="outline" onPress={() => bold.set(!bold())}>
               Selected
             </Button>
+            <Button
+              onPress={() => count.set(count() + 1)}
+              style={{ paddingHorizontal: 24 }}
+              hoverStyle={{ opacity: 0.75 }}
+            >
+              Style merge
+            </Button>
           </View>
         </Section>
 
