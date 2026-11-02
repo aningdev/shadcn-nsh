@@ -14,10 +14,7 @@
     },
     {
       "name": "Comments",
-      "scope": [
-        "comment",
-        "punctuation.definition.comment"
-      ],
+      "scope": ["comment", "punctuation.definition.comment"],
       "settings": {
         "foreground": "#6e7781",
         "fontStyle": "italic"
@@ -43,21 +40,14 @@
     },
     {
       "name": "Operators (symbols) keep the code colour",
-      "scope": [
-        "keyword.operator"
-      ],
+      "scope": ["keyword.operator"],
       "settings": {
         "foreground": "#24292f"
       }
     },
     {
       "name": "Strings, regular expressions, escapes, insertions",
-      "scope": [
-        "string",
-        "string.regexp",
-        "constant.character.escape",
-        "markup.inserted"
-      ],
+      "scope": ["string", "string.regexp", "constant.character.escape", "markup.inserted"],
       "settings": {
         "foreground": "#116329"
       }
@@ -132,27 +122,21 @@
     },
     {
       "name": "Deletions",
-      "scope": [
-        "markup.deleted"
-      ],
+      "scope": ["markup.deleted"],
       "settings": {
         "foreground": "#cf222e"
       }
     },
     {
       "name": "Bold",
-      "scope": [
-        "markup.bold"
-      ],
+      "scope": ["markup.bold"],
       "settings": {
         "fontStyle": "bold"
       }
     },
     {
       "name": "Italic",
-      "scope": [
-        "markup.italic"
-      ],
+      "scope": ["markup.italic"],
       "settings": {
         "fontStyle": "italic"
       }

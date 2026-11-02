@@ -1,6 +1,8 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
+
 import { createHighlighter } from "shiki";
+
 import { themes } from "./markdown.js";
 
 // Component demos live in `apps/docs/demos/<name>.tsx` and package to

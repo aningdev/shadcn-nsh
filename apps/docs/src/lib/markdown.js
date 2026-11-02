@@ -8,18 +8,7 @@ const theme = (name) =>
 
 export const themes = { light: theme("light"), dark: theme("dark") };
 
-export const langs = [
-  "tsx",
-  "ts",
-  "js",
-  "json",
-  "sh",
-  "bash",
-  "diff",
-  "html",
-  "yaml",
-  "css",
-];
+export const langs = ["tsx", "ts", "js", "json", "sh", "bash", "diff", "html", "yaml", "css"];
 
 /** Package-manager fence langs highlight as shell. */
 export const langAlias = {

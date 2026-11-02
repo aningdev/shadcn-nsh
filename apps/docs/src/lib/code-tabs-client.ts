@@ -26,7 +26,8 @@ function select(group: HTMLElement, key: string): boolean {
 
 function selectEverywhere(key: string, origin?: HTMLElement) {
   const top = origin?.getBoundingClientRect().top;
-  for (const group of document.querySelectorAll<HTMLElement>("[data-code-tabs]")) select(group, key);
+  for (const group of document.querySelectorAll<HTMLElement>("[data-code-tabs]"))
+    select(group, key);
   if (origin && top !== undefined) {
     const moved = origin.getBoundingClientRect().top - top;
     if (moved) window.scrollBy(0, moved);

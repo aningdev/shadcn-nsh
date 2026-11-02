@@ -29,7 +29,10 @@ function layoutDemo(demo: HTMLElement, all: HTMLElement[]) {
     const size = LAYOUTS[(demo.dataset.layout as Layout) ?? "mobile"];
     const room = stage.clientWidth - parseFloat(getComputedStyle(stage).paddingLeft) * 2;
     const width = Math.round(Math.max(280, Math.min(size.width, room || size.width)));
-    const height = Math.max(MIN_HEIGHT, Math.min(size.height, Math.round(width * (size.height / size.width))));
+    const height = Math.max(
+      MIN_HEIGHT,
+      Math.min(size.height, Math.round(width * (size.height / size.width))),
+    );
     phone.style.setProperty("--phone-w", String(width));
     phone.style.setProperty("--phone-h", String(height));
     if (frame) {
@@ -64,7 +67,8 @@ function layoutDemo(demo: HTMLElement, all: HTMLElement[]) {
       if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
       event.preventDefault();
       const at = buttons.indexOf(b);
-      const next = buttons[(at + (event.key === "ArrowRight" ? 1 : buttons.length - 1)) % buttons.length]!;
+      const next =
+        buttons[(at + (event.key === "ArrowRight" ? 1 : buttons.length - 1)) % buttons.length]!;
       apply(next.dataset.demoLayout as Layout, true);
       next.focus();
     });
