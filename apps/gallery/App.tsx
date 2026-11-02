@@ -2,6 +2,13 @@ import { colors } from "@shadcn-nsh/theme";
 import {
   Button,
   Checkbox,
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
   Input,
   Progress,
   Radio,
@@ -39,6 +46,9 @@ function App() {
   const progress = signal(40);
   const tab = signal("one");
   const bold = signal(false);
+  const menuOpen = signal(false);
+  const menuLast = signal("—");
+  const menuSidebar = signal(true);
 
   return (
     <Scroll style={{ flex: 1, backgroundColor: colors.background }}>
@@ -157,6 +167,44 @@ function App() {
               </TableRow>
             </TableBody>
           </Table>
+        </Section>
+
+        <Section title="Dropdown Menu">
+          <DropdownMenu open={menuOpen()} onOpenChange={(next) => menuOpen.set(next)}>
+            <DropdownMenuTrigger>Open menu</DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>Account</DropdownMenuLabel>
+              <DropdownMenuItem onSelect={() => menuLast.set("Profile")}>
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Profile</Text>
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => menuLast.set("Settings")}>
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Settings</Text>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuCheckboxItem
+                checked={menuSidebar()}
+                closeOnSelect={false}
+                onSelect={() => menuSidebar.set(!menuSidebar())}
+              >
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Show sidebar</Text>
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onSelect={() => menuLast.set("Log out")}>
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Log out</Text>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger>Style merge</DropdownMenuTrigger>
+            <DropdownMenuContent popupStyle={{ minWidth: 220, padding: 8 }}>
+              <DropdownMenuItem style={{ height: 36 }} onSelect={() => menuLast.set("Merged")}>
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Merged chrome</Text>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+            Menu open: {() => (menuOpen() ? "yes" : "no")} · Last: {() => menuLast()}
+          </Text>
         </Section>
       </View>
     </Scroll>
