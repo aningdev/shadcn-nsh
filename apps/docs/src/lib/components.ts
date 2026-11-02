@@ -74,7 +74,8 @@ export const components: ComponentDoc[] = [
     slug: "progress",
     title: "Progress",
     nshElement: "progress",
-    description: "Styled progress wrapping nsh/base Progress.",
+    description:
+      "Styled progress wrapping nsh/base Progress — theme tokens; full base prop pass-through.",
   },
   {
     slug: "radio-group",

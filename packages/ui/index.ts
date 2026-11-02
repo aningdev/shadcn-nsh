@@ -44,7 +44,7 @@ export {
   PopoverTitle,
   PopoverTrigger,
 } from "./popover";
-export { Progress } from "./progress";
+export { Progress, type ProgressProps } from "./progress";
 export { Radio, RadioGroup } from "./radio-group";
 export {
   Sheet,

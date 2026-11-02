@@ -108,7 +108,7 @@
       "name": "progress",
       "type": "registry:ui",
       "title": "Progress",
-      "description": "Styled progress wrapping nsh/base Progress.",
+      "description": "Styled progress wrapping nsh/base Progress — theme tokens; full base prop pass-through.",
       "registryDependencies": ["theme"],
       "files": [
         {
