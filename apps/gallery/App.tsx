@@ -16,6 +16,14 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
   Input,
   Popover,
   PopoverContent,
@@ -83,6 +91,7 @@ function App() {
   const popoverOpen = signal(false);
   const tipOpen = signal(false);
   const sheetOpen = signal(false);
+  const dialogOpen = signal(false);
 
   return (
     <Scroll style={{ flex: 1, backgroundColor: colors.background }}>
@@ -537,6 +546,34 @@ function App() {
           <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
             Ctx open: {() => (ctxOpen() ? "yes" : "no")} · Last: {() => ctxLast()} · Sidebar:{" "}
             {() => (ctxSidebar() ? "on" : "off")}
+        <Section title="Dialog">
+          <Dialog open={dialogOpen()} onOpenChange={(next) => dialogOpen.set(next)}>
+            <DialogTrigger>Open dialog</DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Confirm action</DialogTitle>
+                <DialogDescription>
+                  Trigger / Content with card chrome. Backdrop, Escape, or Close dismisses.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <DialogClose>Cancel</DialogClose>
+                <DialogClose variant="default">Confirm</DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          <Dialog>
+            <DialogTrigger>Style merge</DialogTrigger>
+            <DialogContent style={{ padding: 32, maxWidth: 480 }}>
+              <DialogTitle style={{ fontSize: 18 }}>Merged chrome</DialogTitle>
+              <DialogDescription>Consumer style wins per key</DialogDescription>
+              <DialogFooter>
+                <DialogClose>Close</DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+            Dialog open: {() => (dialogOpen() ? "yes" : "no")}
           </Text>
         </Section>
       </View>

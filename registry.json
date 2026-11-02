@@ -178,8 +178,8 @@
       "name": "dialog",
       "type": "registry:ui",
       "title": "Dialog",
-      "description": "Styled dialog wrapping nsh/base Dialog.",
-      "registryDependencies": ["theme", "popup-surface"],
+      "description": "Styled dialog wrapping nsh/base Dialog — theme tokens + Trigger / Content; full base prop pass-through.",
+      "registryDependencies": ["theme", "popup-surface", "button"],
       "files": [
         {
           "path": "packages/ui/dialog.tsx",

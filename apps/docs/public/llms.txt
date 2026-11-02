@@ -31,7 +31,7 @@ Component pages may embed a web Preview (`demo:` → `nsh package --target web` 
 - /docs/components/checkbox: Styled checkbox wrapping nsh/base Checkbox. → https://nsh.dev/elements/checkbox
 - /docs/components/collapsible: Styled collapsible wrapping nsh/base Collapsible. → https://nsh.dev/elements/collapsible
 - /docs/components/context-menu: Styled context menu wrapping nsh/base ContextMenu — theme tokens + Trigger / Content / Item; full base prop pass-through. → https://nsh.dev/elements/menu
-- /docs/components/dialog: Styled dialog wrapping nsh/base Dialog. → https://nsh.dev/elements/dialog
+- /docs/components/dialog: Styled dialog wrapping nsh/base Dialog — theme tokens + Trigger / Content; full base prop pass-through. → https://nsh.dev/elements/dialog
 - /docs/components/dropdown-menu: Styled menu wrapping nsh/base Menu — theme tokens + Trigger / Content / Item; full base prop pass-through. → https://nsh.dev/elements/menu
 - /docs/components/input: Styled text input wrapping nsh/base Input. → https://nsh.dev/elements/input
 - /docs/components/popover: Styled popover wrapping nsh/base Popover — theme tokens + Trigger / Content; full base prop pass-through. → https://nsh.dev/elements/popover
