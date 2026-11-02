@@ -44,7 +44,8 @@ export const components: ComponentDoc[] = [
     slug: "context-menu",
     title: "Context Menu",
     nshElement: "menu",
-    description: "Styled context menu wrapping nsh/base ContextMenu.",
+    description:
+      "Styled context menu wrapping nsh/base ContextMenu — theme tokens + Trigger / Content / Item; full base prop pass-through.",
   },
   {
     slug: "dialog",

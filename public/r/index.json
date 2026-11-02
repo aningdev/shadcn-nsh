@@ -90,7 +90,7 @@
       "name": "context-menu",
       "type": "registry:ui",
       "title": "Context Menu",
-      "description": "Styled context menu wrapping nsh/base ContextMenu."
+      "description": "Styled context menu wrapping nsh/base ContextMenu — theme tokens + Trigger / Content / Item; full base prop pass-through."
     },
     {
       "name": "collapsible",

@@ -2,6 +2,13 @@ import { colors } from "@shadcn-nsh/theme";
 import {
   Button,
   Checkbox,
+  ContextMenu,
+  ContextMenuCheckboxItem,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuLabel,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
@@ -48,10 +55,19 @@ function App() {
   const progress = signal(40);
   const tab = signal("one");
   const bold = signal(false);
+<<<<<<< HEAD
   const name = signal("");
   const menuOpen = signal(false);
   const menuLast = signal("—");
   const menuSidebar = signal(true);
+=======
+  const menuOpen = signal(false);
+  const menuLast = signal("—");
+  const menuSidebar = signal(true);
+  const ctxOpen = signal(false);
+  const ctxLast = signal("—");
+  const ctxSidebar = signal(true);
+>>>>>>> origin/cursor/context-menu-paradigm-e4e6
 
   return (
     <Scroll style={{ flex: 1, backgroundColor: colors.background }}>
@@ -276,6 +292,75 @@ function App() {
             Menu open: {() => (menuOpen() ? "yes" : "no")} · Last: {() => menuLast()}
           </Text>
         </Section>
+<<<<<<< HEAD
+=======
+
+        <Section title="Context Menu">
+          <ContextMenu open={ctxOpen()} onOpenChange={(next) => ctxOpen.set(next)}>
+            <ContextMenuTrigger>
+              <View
+                style={{
+                  width: 180,
+                  height: 80,
+                  borderRadius: 8,
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                  borderStyle: "dashed",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: colors.muted,
+                }}
+              >
+                <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+                  Right-click / long-press
+                </Text>
+              </View>
+            </ContextMenuTrigger>
+            <ContextMenuContent>
+              <ContextMenuLabel>Edit</ContextMenuLabel>
+              <ContextMenuItem onSelect={() => ctxLast.set("Copy")}>
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Copy</Text>
+              </ContextMenuItem>
+              <ContextMenuItem onSelect={() => ctxLast.set("Paste")}>
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Paste</Text>
+              </ContextMenuItem>
+              <ContextMenuSeparator />
+              <ContextMenuCheckboxItem
+                checked={ctxSidebar()}
+                closeOnSelect={false}
+                onSelect={() => ctxSidebar.set(!ctxSidebar())}
+              >
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Show sidebar</Text>
+              </ContextMenuCheckboxItem>
+            </ContextMenuContent>
+          </ContextMenu>
+          <ContextMenu>
+            <ContextMenuTrigger>
+              <View
+                style={{
+                  paddingHorizontal: 12,
+                  paddingVertical: 8,
+                  borderRadius: 6,
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                  backgroundColor: colors.card,
+                }}
+              >
+                <Text style={{ fontSize: 13, color: colors.foreground }}>Style merge target</Text>
+              </View>
+            </ContextMenuTrigger>
+            <ContextMenuContent popupStyle={{ minWidth: 220, padding: 8 }}>
+              <ContextMenuItem style={{ height: 36 }} onSelect={() => ctxLast.set("Merged")}>
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Merged chrome</Text>
+              </ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
+          <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+            Ctx open: {() => (ctxOpen() ? "yes" : "no")} · Last: {() => ctxLast()} · Sidebar:{" "}
+            {() => (ctxSidebar() ? "on" : "off")}
+          </Text>
+        </Section>
+>>>>>>> origin/cursor/context-menu-paradigm-e4e6
       </View>
     </Scroll>
   );
