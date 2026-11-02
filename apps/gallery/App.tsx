@@ -87,8 +87,16 @@ function App() {
         </Section>
 
         <Section title="Checkbox / Switch / Radio">
-          <Checkbox checked={checked()} onChange={({ checked: v }) => checked.set(v)}>
+          <Checkbox checked={checked()} onChange={(v) => checked.set(v)}>
             <Text style={{ fontSize: 14, color: colors.foreground }}>Accept terms</Text>
+          </Checkbox>
+          <Checkbox
+            checked={checked()}
+            onChange={(v) => checked.set(v)}
+            style={{ gap: 12 }}
+            indicatorStyle={{ width: 20, height: 20 }}
+          >
+            <Text style={{ fontSize: 14, color: colors.foreground }}>Style merge</Text>
           </Checkbox>
           <Switch checked={on()} onChange={({ checked: v }) => on.set(v)}>
             <Text style={{ fontSize: 14, color: colors.foreground }}>Notifications</Text>

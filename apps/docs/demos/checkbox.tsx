@@ -18,13 +18,13 @@ function App() {
       }}
     >
       <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Checkbox</Text>
-      <Checkbox checked={checked()} onChange={({ checked: v }) => checked.set(v)}>
+      <Checkbox checked={checked()} onChange={(v) => checked.set(v)}>
         <Text style={{ fontSize: 14, color: colors.foreground }}>Accept terms</Text>
       </Checkbox>
       <Checkbox
         indeterminate={mixed()}
         checked={false}
-        onChange={({ checked: v }) => {
+        onChange={(v) => {
           mixed.set(false);
           checked.set(v);
         }}
@@ -33,6 +33,14 @@ function App() {
       </Checkbox>
       <Checkbox disabled checked>
         <Text style={{ fontSize: 14, color: colors.foreground }}>Disabled</Text>
+      </Checkbox>
+      <Checkbox
+        checked={checked()}
+        onChange={(v) => checked.set(v)}
+        style={{ gap: 12 }}
+        indicatorStyle={{ width: 20, height: 20 }}
+      >
+        <Text style={{ fontSize: 14, color: colors.foreground }}>Style merge</Text>
       </Checkbox>
     </View>
   );
