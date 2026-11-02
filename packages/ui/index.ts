@@ -67,6 +67,18 @@ export {
   TableHeader,
   TableRow,
 } from "./table";
-export { Tab, Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
+export {
+  Tab,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  type TabProps,
+  type TabsContentProps,
+  type TabsListProps,
+  type TabsListVariant,
+  type TabsProps,
+  type TabsTriggerProps,
+} from "./tabs";
 export { toast, Toast, Toaster, ToastManager, ToastStack } from "./toast";
 export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
