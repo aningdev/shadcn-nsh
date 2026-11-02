@@ -32,11 +32,11 @@ Extensions (shadcn-only pieces with no `nsh/base` export) and Phase-2 components
   8. **Examples** — thematic `##` sections (Size, Variants, …); code required; shadcn density, not full ports
   9. **API** — Props table + Events table (not “Methods”); optional **Variants** / **Sizes** when the wrapper adds look
   10. **Differences** — vs shadcn `bases/base`: naming, parts, events (`onPress`), single-root vs compound trees, etc.
-  11. **Not forwarded** — vs `nsh/base` narrowing (style/presentation knobs the wrapper owns; do not invent props)
+  11. **Not forwarded** — vs `nsh/base` intentional gaps only. Styled wrappers must **not** strip or rewrite base methods/API; they add a theme/style layer (`variant` / `size` / tokens) and forward the rest. For style hooks (`style`, `class`, `hoverStyle`, `activeStyle`, `focusStyle`, `selectedStyle`, `disabledStyle`): wrapper defaults from variant/size, then shallow-merge consumer on top (consumer wins per key); concatenate `class` when both are set. Button is the paradigm — its Not forwarded should be empty or nearly empty. No `variant="link"` on Button (Link is separate).
   12. _(layout)_ **Behavior & a11y** → outbound nsh
   13. _(layout)_ **Source**
 
-- Capability: only forward a missing base prop in `packages/ui` when it is clearly a wrapper gap and product-needed; otherwise document under Differences / Not forwarded. No Extensions pages, no Phase-2 components.
+- Capability: prefer full base pass-through (Button paradigm). Document only true intentional gaps under Not forwarded; do not invent props. No Extensions pages, no Phase-2 components.
 - Nav / index list: `src/lib/components.ts` — Phase-1 only (store CLI `nsh/base` exports). Newer base-only pieces stay out until a store release ships them.
 - Sidebar order: `src/lib/nav.ts` (`SIDEBAR_PAGES`, derived from `components`).
 
