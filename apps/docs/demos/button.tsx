@@ -73,6 +73,10 @@ function App() {
           </Text>
         </View>
       </Button>
+
+      <Button onPress={bump} style={{ paddingHorizontal: 24 }} hoverStyle={{ opacity: 0.75 }}>
+        Style merge
+      </Button>
     </View>
   );
 }
