@@ -4,8 +4,8 @@ import {
   Checkbox,
   Input,
   Progress,
-  Radio,
   RadioGroup,
+  RadioGroupItem,
   Switch,
   Table,
   TableBody,
@@ -94,12 +94,21 @@ function App() {
             <Text style={{ fontSize: 14, color: colors.foreground }}>Notifications</Text>
           </Switch>
           <RadioGroup>
-            <Radio checked={radio() === "a"} onChange={({ checked: v }) => v && radio.set("a")}>
+            <RadioGroupItem checked={radio() === "a"} onChange={() => radio.set("a")}>
               <Text style={{ fontSize: 14, color: colors.foreground }}>Option A</Text>
-            </Radio>
-            <Radio checked={radio() === "b"} onChange={({ checked: v }) => v && radio.set("b")}>
+            </RadioGroupItem>
+            <RadioGroupItem checked={radio() === "b"} onChange={() => radio.set("b")}>
               <Text style={{ fontSize: 14, color: colors.foreground }}>Option B</Text>
-            </Radio>
+            </RadioGroupItem>
+          </RadioGroup>
+          <RadioGroup style={{ gap: 16 }}>
+            <RadioGroupItem
+              checked={radio() === "a"}
+              onChange={() => radio.set("a")}
+              style={{ gap: 12 }}
+            >
+              <Text style={{ fontSize: 14, color: colors.foreground }}>Radio style merge</Text>
+            </RadioGroupItem>
           </RadioGroup>
         </Section>
 
