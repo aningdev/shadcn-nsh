@@ -91,6 +91,7 @@ Public Usage trees prefer shadcn part names. Internals still call `nsh/base` (it
 | Collapsible / Trigger / Content | composition; legacy `content` prop kept                                                      | `Collapsible`                                |
 | Toast / sonner                  | `toast()` + `Toaster` (+ `Toast` / `ToastStack` / `ToastManager`)                            | same                                         |
 | Table\*                         | `Table` / `TableHeader` / `TableBody` / `TableRow` / `TableHead` / `TableCell` / …           | same                                         |
+| RadioGroup / Item               | `RadioGroup` / `RadioGroupItem` (+ `Radio` alias)                                            | `RadioGroup` + `Radio`                       |
 
 ## Adding a component
 

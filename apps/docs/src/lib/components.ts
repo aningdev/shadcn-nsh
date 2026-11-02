@@ -83,7 +83,8 @@ export const components: ComponentDoc[] = [
     slug: "radio-group",
     title: "Radio Group",
     nshElement: "radio",
-    description: "Styled radio group wrapping nsh/base RadioGroup.",
+    description:
+      "Styled radio group wrapping nsh/base RadioGroup / Radio — theme tokens + default circle; full base prop pass-through.",
   },
   {
     slug: "sheet",

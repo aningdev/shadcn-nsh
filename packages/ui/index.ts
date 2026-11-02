@@ -49,7 +49,14 @@ export {
   PopoverTrigger,
 } from "./popover";
 export { Progress } from "./progress";
-export { Radio, RadioGroup } from "./radio-group";
+export {
+  Radio,
+  RadioGroup,
+  RadioGroupItem,
+  type RadioGroupItemProps,
+  type RadioGroupProps,
+  type RadioProps,
+} from "./radio-group";
 export {
   Sheet,
   SheetClose,
