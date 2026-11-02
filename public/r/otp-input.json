@@ -3,7 +3,9 @@
   "type": "registry:ui",
   "title": "OTP Input",
   "description": "Styled OTP input wrapping nsh/base OtpInput.",
-  "registryDependencies": ["theme"],
+  "registryDependencies": [
+    "theme"
+  ],
   "files": [
     {
       "path": "packages/ui/otp-input.tsx",

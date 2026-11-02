@@ -3,7 +3,9 @@
   "type": "registry:ui",
   "title": "Table",
   "description": "Styled table wrapping nsh/base Table parts.",
-  "registryDependencies": ["theme"],
+  "registryDependencies": [
+    "theme"
+  ],
   "files": [
     {
       "path": "packages/ui/table.tsx",

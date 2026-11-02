@@ -3,7 +3,10 @@
   "type": "registry:ui",
   "title": "Sheet",
   "description": "Styled sheet wrapping nsh/base Sheet.",
-  "registryDependencies": ["theme", "popup-surface"],
+  "registryDependencies": [
+    "theme",
+    "popup-surface"
+  ],
   "files": [
     {
       "path": "packages/ui/sheet.tsx",

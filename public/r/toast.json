@@ -3,7 +3,9 @@
   "type": "registry:ui",
   "title": "Toast",
   "description": "Styled toast wrapping nsh/base Toast and ToastStack.",
-  "registryDependencies": ["theme"],
+  "registryDependencies": [
+    "theme"
+  ],
   "files": [
     {
       "path": "packages/ui/toast.tsx",

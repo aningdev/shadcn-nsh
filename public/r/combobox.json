@@ -3,7 +3,10 @@
   "type": "registry:ui",
   "title": "Combobox",
   "description": "Styled combobox wrapping nsh/base Combobox.",
-  "registryDependencies": ["theme", "popup-surface"],
+  "registryDependencies": [
+    "theme",
+    "popup-surface"
+  ],
   "files": [
     {
       "path": "packages/ui/combobox.tsx",

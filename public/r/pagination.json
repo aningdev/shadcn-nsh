@@ -3,7 +3,9 @@
   "type": "registry:ui",
   "title": "Pagination",
   "description": "Styled pagination wrapping nsh/base Pagination.",
-  "registryDependencies": ["theme"],
+  "registryDependencies": [
+    "theme"
+  ],
   "files": [
     {
       "path": "packages/ui/pagination.tsx",

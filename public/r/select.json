@@ -3,7 +3,10 @@
   "type": "registry:ui",
   "title": "Select",
   "description": "Styled select wrapping nsh/base Select.",
-  "registryDependencies": ["theme", "popup-surface"],
+  "registryDependencies": [
+    "theme",
+    "popup-surface"
+  ],
   "files": [
     {
       "path": "packages/ui/select.tsx",

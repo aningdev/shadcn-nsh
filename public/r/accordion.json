@@ -3,7 +3,9 @@
   "type": "registry:ui",
   "title": "Accordion",
   "description": "Styled accordion wrapping nsh/base Accordion parts.",
-  "registryDependencies": ["theme"],
+  "registryDependencies": [
+    "theme"
+  ],
   "files": [
     {
       "path": "packages/ui/accordion.tsx",

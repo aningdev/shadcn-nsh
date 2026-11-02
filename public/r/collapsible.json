@@ -3,7 +3,9 @@
   "type": "registry:ui",
   "title": "Collapsible",
   "description": "Styled collapsible wrapping nsh/base Collapsible.",
-  "registryDependencies": ["theme"],
+  "registryDependencies": [
+    "theme"
+  ],
   "files": [
     {
       "path": "packages/ui/collapsible.tsx",

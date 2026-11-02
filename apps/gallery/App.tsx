@@ -69,7 +69,7 @@ function App() {
         </Text>
 
         <Section title="Button">
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12, alignItems: "center" }}>
             <Button onPress={() => count.set(count() + 1)}>Default</Button>
             <Button variant="secondary" onPress={() => count.set(count() + 1)}>
               Secondary
@@ -82,6 +82,20 @@ function App() {
             </Button>
             <Button variant="destructive" onPress={() => count.set(count() + 1)}>
               Destructive
+            </Button>
+            <Button variant="link" onPress={() => count.set(count() + 1)}>
+              Link
+            </Button>
+            <Button size="sm" onPress={() => count.set(count() + 1)}>
+              SM
+            </Button>
+            <Button size="lg" onPress={() => count.set(count() + 1)}>
+              LG
+            </Button>
+            <Button size="icon" accessibilityLabel="Add" onPress={() => count.set(count() + 1)}>
+              <Text style={{ fontSize: 18, fontWeight: "600", color: colors.primaryForeground }}>
+                +
+              </Text>
             </Button>
           </View>
         </Section>

@@ -25,13 +25,13 @@ Extensions (shadcn-only pieces with no `nsh/base` export) and Phase-2 components
   1. Title (`h1` from frontmatter)
   2. _(layout)_ nsh chrome — `nsh.dev/elements/<nshElement>` (+ `.md`)
   3. _(layout)_ **Preview** — only when `demo` is set
-  4. Short standfirst (body; no mandatory nsh link)
-  5. **Install**
+  4. **Standfirst** (body, no H2) — Frame like `references/nsh/website/modules/nsh-base.md`: `nsh/base` owns behavior/state/focus/a11y; this package is the styled layer (variants/sizes/tokens). One sentence on *this* component. Links: [nsh/base module](https://nsh.dev/modules/nsh-base) + `https://nsh.dev/elements/<nshElement>`. (Layout still injects Preview above the slot today.)
+  5. **Install** — package-manager commands only for `shadcn-nsh@latest add <slug>` (`npx` / `bunx` / `pnpm dlx` / `yarn dlx`); monorepo `-c apps/web` note OK. **No Manual** section.
   6. **Usage** — consumer imports `@workspace/ui/components/ui/<slug>`; document **this** package’s public API. Prefer shadcn-shaped composition trees when `@shadcn-nsh/ui` exports those facades (Trigger/Content/Item/…); do not paste Radix props that we do not implement
   7. **Composition** — ASCII tree of exported parts (required for compound components)
-  8. **Examples** — 1–3 short vignettes (shadcn density, not full ports)
-  9. **API** — this package’s props / variants only (optional **Variants** subsection when the wrapper adds look variants)
-  10. **Differences** — vs shadcn: naming, parts, events (`onPress`), single-root vs compound trees, etc.
+  8. **Examples** — thematic vignettes (Size, Variants, …); shadcn density, not full ports
+  9. **API** — Props table + Events table (not “Methods”); optional **Variants** / **Sizes** when the wrapper adds look
+  10. **Differences** — vs shadcn `bases/base`: naming, parts, events (`onPress`), single-root vs compound trees, etc.
   11. **Not forwarded** — vs `nsh/base` narrowing (style/presentation knobs the wrapper owns; do not invent props)
   12. _(layout)_ **Behavior & a11y** → outbound nsh
   13. _(layout)_ **Source**

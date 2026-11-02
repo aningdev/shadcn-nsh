@@ -1,1 +1,1 @@
-export { colors, focusRing, radius } from "./theme";
+export { alpha, colors, focusRing, radius } from "./theme";

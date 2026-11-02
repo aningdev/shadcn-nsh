@@ -3,7 +3,9 @@
   "type": "registry:ui",
   "title": "Input",
   "description": "Styled input wrapping nsh/base Input.",
-  "registryDependencies": ["theme"],
+  "registryDependencies": [
+    "theme"
+  ],
   "files": [
     {
       "path": "packages/ui/input.tsx",

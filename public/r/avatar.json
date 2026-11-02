@@ -3,7 +3,9 @@
   "type": "registry:ui",
   "title": "Avatar",
   "description": "Styled avatar wrapping nsh/base Avatar and AvatarGroup.",
-  "registryDependencies": ["theme"],
+  "registryDependencies": [
+    "theme"
+  ],
   "files": [
     {
       "path": "packages/ui/avatar.tsx",
