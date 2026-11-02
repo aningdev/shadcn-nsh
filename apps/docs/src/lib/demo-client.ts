@@ -1,7 +1,7 @@
-/** Phone / Desktop frame sizes (matches `LAYOUTS` in `demo.js`). */
+/** Phone / Desktop frame sizes (keep in sync with `LAYOUTS` in `demo.js`). */
 const LAYOUTS = {
   mobile: { width: 390, height: 844 },
-  desktop: { width: 1024, height: 900 },
+  desktop: { width: 1024, height: 640 },
 } as const;
 type Layout = keyof typeof LAYOUTS;
 
@@ -58,7 +58,17 @@ function layoutDemo(demo: HTMLElement, all: HTMLElement[]) {
       }
     }
   };
-  for (const b of buttons) b.addEventListener("click", () => apply(b.dataset.demoLayout as Layout, true));
+  for (const b of buttons) {
+    b.addEventListener("click", () => apply(b.dataset.demoLayout as Layout, true));
+    b.addEventListener("keydown", (event) => {
+      if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
+      event.preventDefault();
+      const at = buttons.indexOf(b);
+      const next = buttons[(at + (event.key === "ArrowRight" ? 1 : buttons.length - 1)) % buttons.length]!;
+      apply(next.dataset.demoLayout as Layout, true);
+      next.focus();
+    });
+  }
   demo.addEventListener("demo-layout", (e) => apply((e as CustomEvent<Layout>).detail, false));
   apply(savedLayout(), false);
 }
