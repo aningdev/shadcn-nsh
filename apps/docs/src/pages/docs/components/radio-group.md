@@ -10,10 +10,19 @@ demo: radio-group
 
 ## Install
 
-```bash
+```npx tabs
 npx shadcn-nsh@latest add radio-group
+```
+
+```bunx tabs
 bunx shadcn-nsh@latest add radio-group
+```
+
+```pnx tabs
 pnx shadcn-nsh@latest add radio-group
+```
+
+```yarn tabs
 yarn dlx shadcn-nsh@latest add radio-group
 ```
 

@@ -10,10 +10,19 @@ demo: progress
 
 ## Install
 
-```bash
+```npx tabs
 npx shadcn-nsh@latest add progress
+```
+
+```bunx tabs
 bunx shadcn-nsh@latest add progress
+```
+
+```pnx tabs
 pnx shadcn-nsh@latest add progress
+```
+
+```yarn tabs
 yarn dlx shadcn-nsh@latest add progress
 ```
 

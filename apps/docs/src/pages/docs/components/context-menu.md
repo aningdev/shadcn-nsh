@@ -11,10 +11,19 @@ demoHeight: 480
 
 ## Install
 
-```bash
+```npx tabs
 npx shadcn-nsh@latest add context-menu
+```
+
+```bunx tabs
 bunx shadcn-nsh@latest add context-menu
+```
+
+```pnx tabs
 pnx shadcn-nsh@latest add context-menu
+```
+
+```yarn tabs
 yarn dlx shadcn-nsh@latest add context-menu
 ```
 
