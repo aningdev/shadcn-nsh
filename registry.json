@@ -66,7 +66,7 @@
       "name": "checkbox",
       "type": "registry:ui",
       "title": "Checkbox",
-      "description": "Styled checkbox wrapping nsh/base Checkbox.",
+      "description": "Styled checkbox wrapping nsh/base Checkbox — theme tokens + default mark; full base prop pass-through.",
       "registryDependencies": ["theme"],
       "files": [
         {
@@ -80,7 +80,7 @@
       "name": "radio-group",
       "type": "registry:ui",
       "title": "Radio Group",
-      "description": "Styled radio group wrapping nsh/base RadioGroup and Radio.",
+      "description": "Styled radio group wrapping nsh/base RadioGroup / Radio — theme tokens + default circle; full base prop pass-through.",
       "registryDependencies": ["theme"],
       "files": [
         {
@@ -94,7 +94,7 @@
       "name": "switch",
       "type": "registry:ui",
       "title": "Switch",
-      "description": "Styled switch wrapping nsh/base Switch.",
+      "description": "Styled switch wrapping nsh/base Switch — theme tokens + size; full base prop pass-through.",
       "registryDependencies": ["theme"],
       "files": [
         {
@@ -108,7 +108,7 @@
       "name": "progress",
       "type": "registry:ui",
       "title": "Progress",
-      "description": "Styled progress wrapping nsh/base Progress.",
+      "description": "Styled progress wrapping nsh/base Progress — theme tokens; full base prop pass-through.",
       "registryDependencies": ["theme"],
       "files": [
         {
@@ -122,7 +122,7 @@
       "name": "tabs",
       "type": "registry:ui",
       "title": "Tabs",
-      "description": "Styled tabs wrapping nsh/base Tabs and Tab.",
+      "description": "Styled tabs wrapping nsh/base Tabs / Tab — List / Trigger / Content; full base prop pass-through.",
       "registryDependencies": ["theme"],
       "files": [
         {
@@ -136,8 +136,8 @@
       "name": "popover",
       "type": "registry:ui",
       "title": "Popover",
-      "description": "Styled popover wrapping nsh/base Popover.",
-      "registryDependencies": ["theme", "popup-surface"],
+      "description": "Styled popover wrapping nsh/base Popover — theme tokens + Trigger / Content; full base prop pass-through.",
+      "registryDependencies": ["theme", "popup-surface", "button"],
       "files": [
         {
           "path": "packages/ui/popover.tsx",
@@ -150,8 +150,8 @@
       "name": "tooltip",
       "type": "registry:ui",
       "title": "Tooltip",
-      "description": "Styled tooltip wrapping nsh/base Tooltip.",
-      "registryDependencies": ["theme"],
+      "description": "Styled tooltip wrapping nsh/base Tooltip — theme tokens + Trigger / Content; full base prop pass-through.",
+      "registryDependencies": ["theme", "button"],
       "files": [
         {
           "path": "packages/ui/tooltip.tsx",
@@ -164,8 +164,8 @@
       "name": "sheet",
       "type": "registry:ui",
       "title": "Sheet",
-      "description": "Styled sheet wrapping nsh/base Sheet.",
-      "registryDependencies": ["theme", "popup-surface"],
+      "description": "Styled sheet wrapping nsh/base Sheet — theme tokens + Trigger / Content; full base prop pass-through.",
+      "registryDependencies": ["theme", "popup-surface", "button"],
       "files": [
         {
           "path": "packages/ui/sheet.tsx",
@@ -178,8 +178,8 @@
       "name": "dialog",
       "type": "registry:ui",
       "title": "Dialog",
-      "description": "Styled dialog wrapping nsh/base Dialog.",
-      "registryDependencies": ["theme", "popup-surface"],
+      "description": "Styled dialog wrapping nsh/base Dialog — theme tokens + Trigger / Content; full base prop pass-through.",
+      "registryDependencies": ["theme", "popup-surface", "button"],
       "files": [
         {
           "path": "packages/ui/dialog.tsx",
@@ -192,8 +192,8 @@
       "name": "dropdown-menu",
       "type": "registry:ui",
       "title": "Dropdown Menu",
-      "description": "Styled menu wrapping nsh/base Menu and parts.",
-      "registryDependencies": ["theme", "popup-surface"],
+      "description": "Styled menu wrapping nsh/base Menu — theme tokens + Trigger / Content / Item; full base prop pass-through.",
+      "registryDependencies": ["theme", "popup-surface", "button"],
       "files": [
         {
           "path": "packages/ui/dropdown-menu.tsx",
@@ -206,7 +206,7 @@
       "name": "context-menu",
       "type": "registry:ui",
       "title": "Context Menu",
-      "description": "Styled context menu wrapping nsh/base ContextMenu.",
+      "description": "Styled context menu wrapping nsh/base ContextMenu — theme tokens + Trigger / Content / Item; full base prop pass-through.",
       "registryDependencies": ["theme", "popup-surface", "dropdown-menu"],
       "files": [
         {
@@ -220,8 +220,8 @@
       "name": "collapsible",
       "type": "registry:ui",
       "title": "Collapsible",
-      "description": "Styled collapsible wrapping nsh/base Collapsible.",
-      "registryDependencies": ["theme"],
+      "description": "Styled collapsible wrapping nsh/base Collapsible — theme tokens + Trigger / Content; full base prop pass-through.",
+      "registryDependencies": ["theme", "button"],
       "files": [
         {
           "path": "packages/ui/collapsible.tsx",
@@ -234,7 +234,7 @@
       "name": "toast",
       "type": "registry:ui",
       "title": "Toast",
-      "description": "Styled toast wrapping nsh/base Toast and ToastStack.",
+      "description": "Styled toast wrapping nsh/base Toast / ToastStack — theme tokens + sonner-shaped toast() / Toaster; full base prop pass-through.",
       "registryDependencies": ["theme"],
       "files": [
         {

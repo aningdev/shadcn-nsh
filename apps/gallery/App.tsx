@@ -2,10 +2,49 @@ import { colors } from "@shadcn-nsh/theme";
 import {
   Button,
   Checkbox,
+  ContextMenu,
+  ContextMenuCheckboxItem,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuLabel,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+  DropdownMenu,
+  DropdownMenuCheckboxItem,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
   Input,
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
   Progress,
-  Radio,
   RadioGroup,
+  RadioGroupItem,
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
   Switch,
   Table,
   TableBody,
@@ -19,6 +58,12 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+  toast,
+  Toaster,
 } from "@shadcn-nsh/ui";
 import { mount, Scroll, signal, Text, View } from "nsh";
 
@@ -41,6 +86,18 @@ function App() {
   const progress = signal(40);
   const tab = signal("one");
   const bold = signal(false);
+  const name = signal("");
+  const menuOpen = signal(false);
+  const menuLast = signal("—");
+  const menuSidebar = signal(true);
+  const ctxOpen = signal(false);
+  const ctxLast = signal("—");
+  const ctxSidebar = signal(true);
+  const popoverOpen = signal(false);
+  const tipOpen = signal(false);
+  const sheetOpen = signal(false);
+  const dialogOpen = signal(false);
+  const collapsibleOpen = signal(false);
 
   return (
     <Scroll style={{ flex: 1, backgroundColor: colors.background }}>
@@ -81,32 +138,90 @@ function App() {
             <Button selected={bold()} variant="outline" onPress={() => bold.set(!bold())}>
               Selected
             </Button>
+            <Button
+              onPress={() => count.set(count() + 1)}
+              style={{ paddingHorizontal: 24 }}
+              hoverStyle={{ opacity: 0.75 }}
+            >
+              Style merge
+            </Button>
           </View>
         </Section>
 
         <Section title="Input">
-          <Input placeholder="Your name" />
+          <View style={{ gap: 8 }}>
+            <Input placeholder="Your name" value={name()} onChange={(v) => name.set(v)} />
+            <Input placeholder="Disabled" disabled />
+            <Input
+              placeholder="Style merge"
+              style={{ paddingHorizontal: 16 }}
+              focusStyle={{ borderColor: colors.primary }}
+            />
+            <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+              Value: {() => name() || "—"}
+            </Text>
+          </View>
         </Section>
 
         <Section title="Checkbox / Switch / Radio">
-          <Checkbox checked={checked()} onChange={({ checked: v }) => checked.set(v)}>
+          <Checkbox checked={checked()} onChange={(v) => checked.set(v)}>
             <Text style={{ fontSize: 14, color: colors.foreground }}>Accept terms</Text>
           </Checkbox>
-          <Switch checked={on()} onChange={({ checked: v }) => on.set(v)}>
+          <Checkbox
+            checked={checked()}
+            onChange={(v) => checked.set(v)}
+            style={{ gap: 12 }}
+            indicatorStyle={{ width: 20, height: 20 }}
+          >
+            <Text style={{ fontSize: 14, color: colors.foreground }}>Style merge</Text>
+          </Checkbox>
+          <Switch checked={on()} onChange={(v) => on.set(v)}>
             <Text style={{ fontSize: 14, color: colors.foreground }}>Notifications</Text>
           </Switch>
+          <Switch size="sm" checked={on()} onChange={(v) => on.set(v)}>
+            <Text style={{ fontSize: 14, color: colors.foreground }}>Small switch</Text>
+          </Switch>
+          <Switch
+            checked={on()}
+            onChange={(v) => on.set(v)}
+            style={{ gap: 12 }}
+            trackStyle={{ width: 44 }}
+            thumbClass="checked:translate-x-5"
+          >
+            <Text style={{ fontSize: 14, color: colors.foreground }}>Switch style merge</Text>
+          </Switch>
           <RadioGroup>
-            <Radio checked={radio() === "a"} onChange={({ checked: v }) => v && radio.set("a")}>
+            <RadioGroupItem checked={radio() === "a"} onChange={() => radio.set("a")}>
               <Text style={{ fontSize: 14, color: colors.foreground }}>Option A</Text>
-            </Radio>
-            <Radio checked={radio() === "b"} onChange={({ checked: v }) => v && radio.set("b")}>
+            </RadioGroupItem>
+            <RadioGroupItem checked={radio() === "b"} onChange={() => radio.set("b")}>
               <Text style={{ fontSize: 14, color: colors.foreground }}>Option B</Text>
-            </Radio>
+            </RadioGroupItem>
+          </RadioGroup>
+          <RadioGroup style={{ gap: 16 }}>
+            <RadioGroupItem
+              checked={radio() === "a"}
+              onChange={() => radio.set("a")}
+              style={{ gap: 12 }}
+            >
+              <Text style={{ fontSize: 14, color: colors.foreground }}>Radio style merge</Text>
+            </RadioGroupItem>
           </RadioGroup>
         </Section>
 
         <Section title="Progress">
-          <Progress value={progress()} />
+          <Progress value={progress()} accessibilityLabel="Upload" />
+          <Progress indeterminate accessibilityLabel="Connecting" />
+          <Progress
+            value={progress()}
+            style={{ gap: 8 }}
+            trackStyle={{ height: 8 }}
+            indicatorStyle={{ backgroundColor: colors.destructive }}
+          >
+            <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+              Progress style merge
+            </Text>
+          </Progress>
           <View style={{ flexDirection: "row", gap: 8 }}>
             <Button size="sm" onPress={() => progress.set(Math.max(0, progress() - 10))}>
               −10
@@ -122,6 +237,9 @@ function App() {
             <TabsList>
               <TabsTrigger value="one">One</TabsTrigger>
               <TabsTrigger value="two">Two</TabsTrigger>
+              <TabsTrigger value="three" disabled>
+                Disabled
+              </TabsTrigger>
             </TabsList>
             <TabsContent value="one">
               <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Panel one</Text>
@@ -130,6 +248,148 @@ function App() {
               <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Panel two</Text>
             </TabsContent>
           </Tabs>
+          <Tabs defaultValue="a">
+            <TabsList variant="line">
+              <TabsTrigger value="a">Line A</TabsTrigger>
+              <TabsTrigger value="b">Line B</TabsTrigger>
+            </TabsList>
+            <TabsContent value="a">
+              <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Line panel A</Text>
+            </TabsContent>
+            <TabsContent value="b">
+              <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Line panel B</Text>
+            </TabsContent>
+          </Tabs>
+          <Tabs value={tab()} onValueChange={(v) => tab.set(v)} style={{ gap: 16 }}>
+            <TabsList style={{ gap: 8 }}>
+              <TabsTrigger value="one" style={{ paddingHorizontal: 16 }}>
+                Style merge
+              </TabsTrigger>
+              <TabsTrigger value="two">Two</TabsTrigger>
+            </TabsList>
+            <TabsContent value="one">
+              <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Merged chrome</Text>
+            </TabsContent>
+            <TabsContent value="two">
+              <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Panel two</Text>
+            </TabsContent>
+          </Tabs>
+        </Section>
+
+        <Section title="Popover">
+          <Popover open={popoverOpen()} onOpenChange={(next) => popoverOpen.set(next)}>
+            <PopoverTrigger>Open popover</PopoverTrigger>
+            <PopoverContent>
+              <PopoverHeader>
+                <PopoverTitle>Quick tip</PopoverTitle>
+                <PopoverDescription>
+                  Trigger / Content with surface chrome. Outside press or Escape closes.
+                </PopoverDescription>
+              </PopoverHeader>
+              <Button variant="outline" onPress={() => popoverOpen.set(false)}>
+                Close
+              </Button>
+            </PopoverContent>
+          </Popover>
+          <Popover>
+            <PopoverTrigger>Style merge</PopoverTrigger>
+            <PopoverContent popupStyle={{ padding: 20, minWidth: 320 }}>
+              <PopoverTitle style={{ fontSize: 16 }}>Merged chrome</PopoverTitle>
+              <PopoverDescription>Consumer popupStyle wins per key</PopoverDescription>
+            </PopoverContent>
+          </Popover>
+        </Section>
+
+        <Section title="Tooltip">
+          <Tooltip>
+            <TooltipTrigger>Hover me</TooltipTrigger>
+            <TooltipContent>Add item</TooltipContent>
+          </Tooltip>
+          <Tooltip>
+            <TooltipTrigger>Bottom</TooltipTrigger>
+            <TooltipContent placement="bottom" align="start">
+              Below the trigger
+            </TooltipContent>
+          </Tooltip>
+          <TooltipProvider delay={0}>
+            <Tooltip>
+              <TooltipTrigger>Instant</TooltipTrigger>
+              <TooltipContent>Shows at once</TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+          <Tooltip open={tipOpen()} onOpenChange={(next) => tipOpen.set(next)}>
+            <TooltipTrigger>Pinned</TooltipTrigger>
+            <TooltipContent style={{ paddingHorizontal: 14 }}>
+              Controlled — useful on touch
+            </TooltipContent>
+          </Tooltip>
+          <View tooltip={<Tooltip>Host bubble</Tooltip>}>
+            <Text style={{ fontSize: 14, color: colors.foreground }}>Host tooltip=</Text>
+          </View>
+          <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+            Tip open: {() => (tipOpen() ? "yes" : "no")}
+          </Text>
+        </Section>
+
+        <Section title="Sheet">
+          <Sheet open={sheetOpen()} onOpenChange={(next) => sheetOpen.set(next)}>
+            <SheetTrigger>Open sheet</SheetTrigger>
+            <SheetContent side="bottom">
+              <SheetHeader>
+                <SheetTitle>Bottom sheet</SheetTitle>
+                <SheetDescription>
+                  Trigger / Content with edge chrome. Backdrop, Escape, or Close dismisses.
+                </SheetDescription>
+              </SheetHeader>
+              <SheetFooter>
+                <SheetClose>Close</SheetClose>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
+          <Sheet>
+            <SheetTrigger>Right side</SheetTrigger>
+            <SheetContent side="right">
+              <SheetHeader>
+                <SheetTitle>Side drawer</SheetTitle>
+                <SheetDescription>side right</SheetDescription>
+              </SheetHeader>
+              <SheetFooter>
+                <SheetClose>Done</SheetClose>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
+          <Sheet>
+            <SheetTrigger>Style merge</SheetTrigger>
+            <SheetContent side="bottom" popupStyle={{ padding: 24, minHeight: 200 }}>
+              <SheetTitle style={{ fontSize: 18 }}>Merged chrome</SheetTitle>
+              <SheetDescription>Consumer popupStyle wins per key</SheetDescription>
+              <SheetFooter>
+                <SheetClose>Close</SheetClose>
+              </SheetFooter>
+            </SheetContent>
+          </Sheet>
+          <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+            Sheet open: {() => (sheetOpen() ? "yes" : "no")}
+          </Text>
+        </Section>
+
+        <Section title="Collapsible">
+          <Collapsible open={collapsibleOpen()} onOpenChange={(next) => collapsibleOpen.set(next)}>
+            <CollapsibleTrigger>Toggle</CollapsibleTrigger>
+            <CollapsibleContent>
+              <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+                Controlled panel — Hidden until open.
+              </Text>
+            </CollapsibleContent>
+          </Collapsible>
+          <Collapsible defaultOpen>
+            <CollapsibleTrigger>Style merge</CollapsibleTrigger>
+            <CollapsibleContent style={{ gap: 12 }}>
+              <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+                Consumer style wins per key over region chrome.
+              </Text>
+            </CollapsibleContent>
+          </Collapsible>
         </Section>
 
         <Section title="Table">
@@ -209,7 +469,160 @@ function App() {
             </TableBody>
           </Table>
         </Section>
+
+        <Section title="Dropdown Menu">
+          <DropdownMenu open={menuOpen()} onOpenChange={(next) => menuOpen.set(next)}>
+            <DropdownMenuTrigger>Open menu</DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuLabel>Account</DropdownMenuLabel>
+              <DropdownMenuItem onSelect={() => menuLast.set("Profile")}>
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Profile</Text>
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => menuLast.set("Settings")}>
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Settings</Text>
+              </DropdownMenuItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuCheckboxItem
+                checked={menuSidebar()}
+                closeOnSelect={false}
+                onSelect={() => menuSidebar.set(!menuSidebar())}
+              >
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Show sidebar</Text>
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem onSelect={() => menuLast.set("Log out")}>
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Log out</Text>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <DropdownMenu>
+            <DropdownMenuTrigger>Style merge</DropdownMenuTrigger>
+            <DropdownMenuContent popupStyle={{ minWidth: 220, padding: 8 }}>
+              <DropdownMenuItem style={{ height: 36 }} onSelect={() => menuLast.set("Merged")}>
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Merged chrome</Text>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+          <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+            Menu open: {() => (menuOpen() ? "yes" : "no")} · Last: {() => menuLast()}
+          </Text>
+        </Section>
+
+        <Section title="Context Menu">
+          <ContextMenu open={ctxOpen()} onOpenChange={(next) => ctxOpen.set(next)}>
+            <ContextMenuTrigger>
+              <View
+                style={{
+                  width: 180,
+                  height: 80,
+                  borderRadius: 8,
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                  borderStyle: "dashed",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  backgroundColor: colors.muted,
+                }}
+              >
+                <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+                  Right-click / long-press
+                </Text>
+              </View>
+            </ContextMenuTrigger>
+            <ContextMenuContent>
+              <ContextMenuLabel>Edit</ContextMenuLabel>
+              <ContextMenuItem onSelect={() => ctxLast.set("Copy")}>
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Copy</Text>
+              </ContextMenuItem>
+              <ContextMenuItem onSelect={() => ctxLast.set("Paste")}>
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Paste</Text>
+              </ContextMenuItem>
+              <ContextMenuSeparator />
+              <ContextMenuCheckboxItem
+                checked={ctxSidebar()}
+                closeOnSelect={false}
+                onSelect={() => ctxSidebar.set(!ctxSidebar())}
+              >
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Show sidebar</Text>
+              </ContextMenuCheckboxItem>
+            </ContextMenuContent>
+          </ContextMenu>
+          <ContextMenu>
+            <ContextMenuTrigger>
+              <View
+                style={{
+                  paddingHorizontal: 12,
+                  paddingVertical: 8,
+                  borderRadius: 6,
+                  borderWidth: 1,
+                  borderColor: colors.border,
+                  backgroundColor: colors.card,
+                }}
+              >
+                <Text style={{ fontSize: 13, color: colors.foreground }}>Style merge target</Text>
+              </View>
+            </ContextMenuTrigger>
+            <ContextMenuContent popupStyle={{ minWidth: 220, padding: 8 }}>
+              <ContextMenuItem style={{ height: 36 }} onSelect={() => ctxLast.set("Merged")}>
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Merged chrome</Text>
+              </ContextMenuItem>
+            </ContextMenuContent>
+          </ContextMenu>
+          <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+            Ctx open: {() => (ctxOpen() ? "yes" : "no")} · Last: {() => ctxLast()} · Sidebar:{" "}
+            {() => (ctxSidebar() ? "on" : "off")}
+          </Text>
+        </Section>
+
+        <Section title="Dialog">
+          <Dialog open={dialogOpen()} onOpenChange={(next) => dialogOpen.set(next)}>
+            <DialogTrigger>Open dialog</DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                <DialogTitle>Confirm action</DialogTitle>
+                <DialogDescription>
+                  Trigger / Content with card chrome. Backdrop, Escape, or Close dismisses.
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <DialogClose>Cancel</DialogClose>
+                <DialogClose variant="default">Confirm</DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          <Dialog>
+            <DialogTrigger>Style merge</DialogTrigger>
+            <DialogContent style={{ padding: 32, maxWidth: 480 }}>
+              <DialogTitle style={{ fontSize: 18 }}>Merged chrome</DialogTitle>
+              <DialogDescription>Consumer style wins per key</DialogDescription>
+              <DialogFooter>
+                <DialogClose>Close</DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+          <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+            Dialog open: {() => (dialogOpen() ? "yes" : "no")}
+          </Text>
+        </Section>
+
+        <Section title="Toast">
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12 }}>
+            <Button onPress={() => toast("Copied", { description: "Link on clipboard" })}>
+              Show toast
+            </Button>
+            <Button
+              variant="secondary"
+              onPress={() => toast("Merged chrome", { description: "stackStyle wins per key" })}
+            >
+              Style merge
+            </Button>
+            <Button variant="outline" onPress={() => toast.dismiss()}>
+              Dismiss all
+            </Button>
+          </View>
+        </Section>
       </View>
+      <Toaster placement="topRight" stackStyle={{ maxWidth: 360 }} />
     </Scroll>
   );
 }

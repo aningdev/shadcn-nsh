@@ -1,7 +1,7 @@
 import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
-import { Radio, RadioGroup } from "../../../packages/ui/radio-group";
+import { RadioGroup, RadioGroupItem } from "../../../packages/ui/radio-group";
 
 function App() {
   const radio = signal("a");
@@ -18,15 +18,27 @@ function App() {
     >
       <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Radio Group</Text>
       <RadioGroup>
-        <Radio checked={radio() === "a"} onChange={({ checked: v }) => v && radio.set("a")}>
+        <RadioGroupItem checked={radio() === "a"} onChange={() => radio.set("a")}>
           <Text style={{ fontSize: 14, color: colors.foreground }}>Option A</Text>
-        </Radio>
-        <Radio checked={radio() === "b"} onChange={({ checked: v }) => v && radio.set("b")}>
+        </RadioGroupItem>
+        <RadioGroupItem checked={radio() === "b"} onChange={() => radio.set("b")}>
           <Text style={{ fontSize: 14, color: colors.foreground }}>Option B</Text>
-        </Radio>
-        <Radio checked={radio() === "c"} onChange={({ checked: v }) => v && radio.set("c")}>
+        </RadioGroupItem>
+        <RadioGroupItem checked={radio() === "c"} onChange={() => radio.set("c")}>
           <Text style={{ fontSize: 14, color: colors.foreground }}>Option C</Text>
-        </Radio>
+        </RadioGroupItem>
+      </RadioGroup>
+      <RadioGroupItem disabled checked={false}>
+        <Text style={{ fontSize: 14, color: colors.foreground }}>Disabled</Text>
+      </RadioGroupItem>
+      <RadioGroup style={{ gap: 16 }}>
+        <RadioGroupItem
+          checked={radio() === "a"}
+          onChange={() => radio.set("a")}
+          style={{ gap: 12 }}
+        >
+          <Text style={{ fontSize: 14, color: colors.foreground }}>Style merge</Text>
+        </RadioGroupItem>
       </RadioGroup>
       <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Selected: {() => radio()}</Text>
     </View>

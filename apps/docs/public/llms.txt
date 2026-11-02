@@ -30,18 +30,18 @@ Component pages may embed a web Preview (`demo:` → `nsh package --target web` 
 - /docs/components/button: Styled button wrapping nsh/base Button. → https://nsh.dev/elements/button
 - /docs/components/checkbox: Styled checkbox wrapping nsh/base Checkbox. → https://nsh.dev/elements/checkbox
 - /docs/components/collapsible: Styled collapsible wrapping nsh/base Collapsible. → https://nsh.dev/elements/collapsible
-- /docs/components/context-menu: Styled context menu wrapping nsh/base ContextMenu. → https://nsh.dev/elements/menu
-- /docs/components/dialog: Styled dialog wrapping nsh/base Dialog. → https://nsh.dev/elements/dialog
-- /docs/components/dropdown-menu: Styled menu wrapping nsh/base Menu. → https://nsh.dev/elements/menu
+- /docs/components/context-menu: Styled context menu wrapping nsh/base ContextMenu — theme tokens + Trigger / Content / Item; full base prop pass-through. → https://nsh.dev/elements/menu
+- /docs/components/dialog: Styled dialog wrapping nsh/base Dialog — theme tokens + Trigger / Content; full base prop pass-through. → https://nsh.dev/elements/dialog
+- /docs/components/dropdown-menu: Styled menu wrapping nsh/base Menu — theme tokens + Trigger / Content / Item; full base prop pass-through. → https://nsh.dev/elements/menu
 - /docs/components/input: Styled text input wrapping nsh/base Input. → https://nsh.dev/elements/input
-- /docs/components/popover: Styled popover wrapping nsh/base Popover. → https://nsh.dev/elements/popover
+- /docs/components/popover: Styled popover wrapping nsh/base Popover — theme tokens + Trigger / Content; full base prop pass-through. → https://nsh.dev/elements/popover
 - /docs/components/progress: Styled progress wrapping nsh/base Progress. → https://nsh.dev/elements/progress
-- /docs/components/radio-group: Styled radio group wrapping nsh/base RadioGroup. → https://nsh.dev/elements/radio
-- /docs/components/sheet: Styled sheet wrapping nsh/base Sheet. → https://nsh.dev/elements/sheet
+- /docs/components/radio-group: Styled radio group wrapping nsh/base RadioGroup / Radio — theme tokens + default circle; full base prop pass-through. → https://nsh.dev/elements/radio
+- /docs/components/sheet: Styled sheet wrapping nsh/base Sheet — theme tokens + Trigger / Content; full base prop pass-through. → https://nsh.dev/elements/sheet
 - /docs/components/toast: Styled toast wrapping nsh/base Toast. → https://nsh.dev/elements/toast
 - /docs/components/switch: Styled switch wrapping nsh/base Switch. → https://nsh.dev/elements/switch
 - /docs/components/table: Styled table wrapping nsh/base Table. → https://nsh.dev/elements/table
-- /docs/components/tabs: Styled tabs wrapping nsh/base Tabs. → https://nsh.dev/elements/tabs
-- /docs/components/tooltip: Styled tooltip wrapping nsh/base Tooltip. → https://nsh.dev/elements/tooltip
+- /docs/components/tabs: Styled tabs wrapping nsh/base Tabs / Tab — theme tokens + List / Trigger / Content; full base prop pass-through. → https://nsh.dev/elements/tabs
+- /docs/components/tooltip: Styled tooltip wrapping nsh/base Tooltip — theme tokens + Trigger / Content; full base prop pass-through. → https://nsh.dev/elements/tooltip
 
 Theme source of truth is theme.json (nsh.json `theme`), not CSS. Behavior details: https://nsh.dev/elements

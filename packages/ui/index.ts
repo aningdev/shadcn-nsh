@@ -1,13 +1,22 @@
 export { Button, type ButtonVariant } from "./button";
-export { Checkbox } from "./checkbox";
-export { Collapsible, CollapsibleContent, CollapsibleTrigger } from "./collapsible";
+export { Checkbox, type CheckboxProps } from "./checkbox";
+export {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+  type CollapsibleContentProps,
+  type CollapsibleProps,
+  type CollapsibleTriggerProps,
+} from "./collapsible";
 export {
   ContextMenu,
   ContextMenuCheckboxItem,
   ContextMenuContent,
+  ContextMenuGroup,
   ContextMenuItem,
   ContextMenuLabel,
   ContextMenuSeparator,
+  ContextMenuShortcut,
   ContextMenuSub,
   ContextMenuSubContent,
   ContextMenuSubTrigger,
@@ -27,15 +36,17 @@ export {
   DropdownMenu,
   DropdownMenuCheckboxItem,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
+  DropdownMenuShortcut,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
 } from "./dropdown-menu";
-export { Input } from "./input";
+export { Input, type InputProps } from "./input";
 export {
   Popover,
   PopoverContent,
@@ -43,9 +54,22 @@ export {
   PopoverHeader,
   PopoverTitle,
   PopoverTrigger,
+  type PopoverContentProps,
+  type PopoverDescriptionProps,
+  type PopoverHeaderProps,
+  type PopoverProps,
+  type PopoverTitleProps,
+  type PopoverTriggerProps,
 } from "./popover";
-export { Progress } from "./progress";
-export { Radio, RadioGroup } from "./radio-group";
+export { Progress, type ProgressProps } from "./progress";
+export {
+  Radio,
+  RadioGroup,
+  RadioGroupItem,
+  type RadioGroupItemProps,
+  type RadioGroupProps,
+  type RadioProps,
+} from "./radio-group";
 export {
   Sheet,
   SheetClose,
@@ -56,7 +80,7 @@ export {
   SheetTitle,
   SheetTrigger,
 } from "./sheet";
-export { Switch } from "./switch";
+export { Switch, type SwitchProps, type SwitchSize } from "./switch";
 export {
   Table,
   TableBody,
@@ -75,6 +99,28 @@ export {
   type TableProps,
   type TableRowProps,
 } from "./table";
-export { Tab, Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
-export { toast, Toast, Toaster, ToastManager, ToastStack } from "./toast";
+export {
+  Tab,
+  Tabs,
+  TabsContent,
+  TabsList,
+  TabsTrigger,
+  type TabProps,
+  type TabsContentProps,
+  type TabsListProps,
+  type TabsListVariant,
+  type TabsProps,
+  type TabsTriggerProps,
+} from "./tabs";
+export {
+  toast,
+  Toast,
+  Toaster,
+  ToastManager,
+  ToastStack,
+  type ToastProps,
+  type ToastStackProps,
+  type ToasterProps,
+} from "./toast";
+export type { Anchor, ToastEntry, ToastMotion, ToastOptions, ToastTransitionStatus } from "./toast";
 export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";

@@ -20,7 +20,20 @@ function App() {
       <Button onPress={() => toast("Copied", { description: "Link on clipboard" })}>
         Show toast
       </Button>
-      <Toaster placement="topRight" />
+      <Button
+        variant="secondary"
+        onPress={() =>
+          toast("Style merge", {
+            description: "Consumer stackStyle / toast chrome still apply.",
+          })
+        }
+      >
+        Another toast
+      </Button>
+      <Button variant="outline" onPress={() => toast.dismiss()}>
+        Dismiss all
+      </Button>
+      <Toaster placement="topRight" stackStyle={{ maxWidth: 360 }} />
     </View>
   );
 }

@@ -32,31 +32,36 @@ export const components: ComponentDoc[] = [
     slug: "checkbox",
     title: "Checkbox",
     nshElement: "checkbox",
-    description: "Styled checkbox wrapping nsh/base Checkbox.",
+    description:
+      "Styled checkbox wrapping nsh/base Checkbox — theme tokens + default mark; full base prop pass-through.",
   },
   {
     slug: "collapsible",
     title: "Collapsible",
     nshElement: "collapsible",
-    description: "Styled collapsible wrapping nsh/base Collapsible.",
+    description:
+      "Styled collapsible wrapping nsh/base Collapsible — theme tokens + Trigger / Content; full base prop pass-through.",
   },
   {
     slug: "context-menu",
     title: "Context Menu",
     nshElement: "menu",
-    description: "Styled context menu wrapping nsh/base ContextMenu.",
+    description:
+      "Styled context menu wrapping nsh/base ContextMenu — theme tokens + Trigger / Content / Item; full base prop pass-through.",
   },
   {
     slug: "dialog",
     title: "Dialog",
     nshElement: "dialog",
-    description: "Styled dialog wrapping nsh/base Dialog.",
+    description:
+      "Styled dialog wrapping nsh/base Dialog — theme tokens + Trigger / Content; full base prop pass-through.",
   },
   {
     slug: "dropdown-menu",
     title: "Dropdown Menu",
     nshElement: "menu",
-    description: "Styled menu wrapping nsh/base Menu.",
+    description:
+      "Styled menu wrapping nsh/base Menu — theme tokens + Trigger / Content / Item; full base prop pass-through.",
   },
   {
     slug: "input",
@@ -68,37 +73,43 @@ export const components: ComponentDoc[] = [
     slug: "popover",
     title: "Popover",
     nshElement: "popover",
-    description: "Styled popover wrapping nsh/base Popover.",
+    description:
+      "Styled popover wrapping nsh/base Popover — theme tokens + Trigger / Content; full base prop pass-through.",
   },
   {
     slug: "progress",
     title: "Progress",
     nshElement: "progress",
-    description: "Styled progress wrapping nsh/base Progress.",
+    description:
+      "Styled progress wrapping nsh/base Progress — theme tokens; full base prop pass-through.",
   },
   {
     slug: "radio-group",
     title: "Radio Group",
     nshElement: "radio",
-    description: "Styled radio group wrapping nsh/base RadioGroup.",
+    description:
+      "Styled radio group wrapping nsh/base RadioGroup / Radio — theme tokens + default circle; full base prop pass-through.",
   },
   {
     slug: "sheet",
     title: "Sheet",
     nshElement: "sheet",
-    description: "Styled sheet wrapping nsh/base Sheet.",
+    description:
+      "Styled sheet wrapping nsh/base Sheet — theme tokens + Trigger / Content; full base prop pass-through.",
   },
   {
     slug: "toast",
     title: "Toast",
     nshElement: "toast",
-    description: "Styled toast wrapping nsh/base Toast.",
+    description:
+      "Styled toast wrapping nsh/base Toast / ToastStack — theme tokens + sonner-shaped toast() / Toaster; full base prop pass-through.",
   },
   {
     slug: "switch",
     title: "Switch",
     nshElement: "switch",
-    description: "Styled switch wrapping nsh/base Switch.",
+    description:
+      "Styled switch wrapping nsh/base Switch — theme tokens + size; full base prop pass-through.",
   },
   {
     slug: "table",
@@ -111,12 +122,14 @@ export const components: ComponentDoc[] = [
     slug: "tabs",
     title: "Tabs",
     nshElement: "tabs",
-    description: "Styled tabs wrapping nsh/base Tabs.",
+    description:
+      "Styled tabs wrapping nsh/base Tabs / Tab — theme tokens + List / Trigger / Content; full base prop pass-through.",
   },
   {
     slug: "tooltip",
     title: "Tooltip",
     nshElement: "tooltip",
-    description: "Styled tooltip wrapping nsh/base Tooltip.",
+    description:
+      "Styled tooltip wrapping nsh/base Tooltip — theme tokens + Trigger / Content; full base prop pass-through.",
   },
 ];

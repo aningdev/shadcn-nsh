@@ -1,9 +1,9 @@
 import { alpha, colors, focusRing, radius } from "@shadcn-nsh/theme";
-import type { JSX, ViewStyle } from "nsh";
+import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { Text } from "nsh";
-import { Button as BaseButton } from "nsh/base";
+import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/base";
 
-/** shadcn `bases/base` also has `link`; this registry omits it (no store-CLI `nsh/base` Link yet). */
+/** shadcn `bases/base` also has `link`; this registry omits it — Link is a separate component. */
 export type ButtonVariant = "default" | "outline" | "secondary" | "ghost" | "destructive";
 
 export type ButtonSize =
@@ -16,17 +16,14 @@ export type ButtonSize =
   | "icon-sm"
   | "icon-lg";
 
-export type ButtonProps = {
+/**
+ * Theme layer on `nsh/base` Button: `variant` / `size` only.
+ * All base props (behavior + style hooks) pass through; string `children` get a themed `Text`.
+ */
+export type ButtonProps = Omit<BaseButtonProps, "children"> & {
   children?: string | JSX.Element;
   variant?: ButtonVariant;
   size?: ButtonSize;
-  disabled?: boolean;
-  selected?: boolean;
-  accessibilityLabel?: string | null;
-  role?: string | null;
-  onPress?: () => void;
-  onPressDown?: () => void;
-  onPressUp?: () => void;
 };
 
 type ButtonLabelStyle = {
@@ -41,7 +38,25 @@ type ButtonVariantsResult = {
   hoverStyle?: ViewStyle;
   activeStyle?: ViewStyle;
   selectedStyle?: ViewStyle;
+  disabledStyle?: ViewStyle;
 };
+
+/** Concatenate wrapper + consumer `class` when both are set. */
+function mergeClass(base?: string | null, consumer?: string | null): string | undefined {
+  if (base && consumer) return `${base} ${consumer}`;
+  return consumer ?? base ?? undefined;
+}
+
+/** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
+function mergeStyle(
+  base?: StyleProp<ViewStyle> | null,
+  consumer?: StyleProp<ViewStyle> | null,
+): StyleProp<ViewStyle> | undefined {
+  if (base == null && consumer == null) return undefined;
+  if (base == null) return consumer ?? undefined;
+  if (consumer == null) return base ?? undefined;
+  return [base, consumer];
+}
 
 /** Sizes aligned with shadcn `bases/base` + nova token scale (not CSS-pixel locked). */
 function sizeLook(size: ButtonSize): {
@@ -171,22 +186,38 @@ export function buttonVariants(options?: {
     hoverStyle: v.hover,
     activeStyle: v.active,
     selectedStyle: v.selected,
+    disabledStyle: { opacity: 0.5 },
   };
 }
 
 export function Button(props: ButtonProps) {
-  const variant = () => props.variant ?? "default";
-  const size = () => props.size ?? "default";
-  const look = () => buttonVariants({ variant: variant(), size: size() });
-  const disabled = () => !!props.disabled;
+  const {
+    variant: variantProp,
+    size: sizeProp,
+    children,
+    class: className,
+    style,
+    hoverStyle,
+    activeStyle,
+    focusStyle,
+    selectedStyle,
+    disabledStyle,
+    accessibilityLabel,
+    ...rest
+  } = props;
 
-  const accessibilityLabel = () => {
-    if (props.accessibilityLabel !== undefined) return props.accessibilityLabel;
-    return typeof props.children === "string" ? props.children : undefined;
+  const look = () =>
+    buttonVariants({
+      variant: variantProp ?? "default",
+      size: sizeProp ?? "default",
+    });
+
+  const resolvedAccessibilityLabel = () => {
+    if (accessibilityLabel !== undefined) return accessibilityLabel;
+    return typeof children === "string" ? children : undefined;
   };
 
   const content = () => {
-    const children = props.children;
     if (typeof children === "string") {
       const label = look().label;
       return (
@@ -206,21 +237,15 @@ export function Button(props: ButtonProps) {
 
   return (
     <BaseButton
-      onPress={props.onPress}
-      onPressDown={props.onPressDown}
-      onPressUp={props.onPressUp}
-      disabled={props.disabled}
-      selected={props.selected}
-      accessibilityLabel={accessibilityLabel()}
-      role={props.role as never}
-      focusStyle={focusRing()}
-      hoverStyle={disabled() ? undefined : look().hoverStyle}
-      activeStyle={disabled() ? undefined : look().activeStyle}
-      selectedStyle={look().selectedStyle}
-      style={{
-        ...look().style,
-        opacity: disabled() ? 0.5 : 1,
-      }}
+      {...rest}
+      accessibilityLabel={resolvedAccessibilityLabel()}
+      class={mergeClass(undefined, className)}
+      style={mergeStyle(look().style, style)}
+      hoverStyle={mergeStyle(look().hoverStyle, hoverStyle)}
+      activeStyle={mergeStyle(look().activeStyle, activeStyle)}
+      focusStyle={mergeStyle(focusRing(), focusStyle)}
+      selectedStyle={mergeStyle(look().selectedStyle, selectedStyle)}
+      disabledStyle={mergeStyle(look().disabledStyle, disabledStyle)}
     >
       {content()}
     </BaseButton>
