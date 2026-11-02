@@ -108,7 +108,7 @@
       "name": "table",
       "type": "registry:ui",
       "title": "Table",
-      "description": "Styled table wrapping nsh/base Table parts."
+      "description": "Styled table wrapping nsh/base Table parts — theme tokens + full base prop pass-through."
     }
   ]
 }

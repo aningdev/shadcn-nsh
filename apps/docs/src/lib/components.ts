@@ -104,7 +104,8 @@ export const components: ComponentDoc[] = [
     slug: "table",
     title: "Table",
     nshElement: "table",
-    description: "Styled table wrapping nsh/base Table.",
+    description:
+      "Styled table wrapping nsh/base Table parts — theme tokens + full base prop pass-through.",
   },
   {
     slug: "tabs",

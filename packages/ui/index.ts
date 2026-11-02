@@ -66,6 +66,14 @@ export {
   TableHead,
   TableHeader,
   TableRow,
+  type TableBodyProps,
+  type TableCaptionProps,
+  type TableCellProps,
+  type TableFooterProps,
+  type TableHeadProps,
+  type TableHeaderProps,
+  type TableProps,
+  type TableRowProps,
 } from "./table";
 export { Tab, Tabs, TabsContent, TabsList, TabsTrigger } from "./tabs";
 export { toast, Toast, Toaster, ToastManager, ToastStack } from "./toast";
