@@ -92,7 +92,8 @@ export const components: ComponentDoc[] = [
     slug: "toast",
     title: "Toast",
     nshElement: "toast",
-    description: "Styled toast wrapping nsh/base Toast.",
+    description:
+      "Styled toast wrapping nsh/base Toast / ToastStack — theme tokens + sonner-shaped toast() / Toaster; full base prop pass-through.",
   },
   {
     slug: "switch",
