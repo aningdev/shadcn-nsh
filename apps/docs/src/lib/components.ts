@@ -56,7 +56,8 @@ export const components: ComponentDoc[] = [
     slug: "dropdown-menu",
     title: "Dropdown Menu",
     nshElement: "menu",
-    description: "Styled menu wrapping nsh/base Menu.",
+    description:
+      "Styled menu wrapping nsh/base Menu — theme tokens + Trigger / Content / Item; full base prop pass-through.",
   },
   {
     slug: "input",

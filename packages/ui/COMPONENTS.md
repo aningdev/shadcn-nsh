@@ -83,8 +83,8 @@ Public Usage trees prefer shadcn part names. Internals still call `nsh/base` (it
 | ------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------- |
 | Dialog / Trigger / Content / …  | `Dialog` / `DialogTrigger` / `DialogContent` / Header / Title / Description / Footer / Close | single `Dialog`; Content owns the base root  |
 | Sheet / Trigger / Content / …   | same pattern                                                                                 | single `Sheet`                               |
-| DropdownMenu\*                  | `DropdownMenu` / Trigger / Content / Item / Sub / …                                          | `Menu` / `MenuItem` / `Submenu`              |
-| ContextMenu\*                   | same                                                                                         | `ContextMenu`                                |
+| DropdownMenu\*                  | composition; Group / Label / Shortcut; legacy `trigger` kept; full base pass-through         | `Menu` / `MenuItem` / `Submenu`              |
+| ContextMenu\*                   | same item/sub facades (re-export)                                                            | `ContextMenu`                                |
 | Popover / Trigger / Content     | composition; legacy `trigger` prop kept                                                      | `Popover`                                    |
 | Tooltip / Trigger / Content     | composition **or** string bubble for host `tooltip={}`                                       | `Tooltip` bubble                             |
 | Tabs / List / Trigger / Content | `Tabs` / `TabsList` / `TabsTrigger` / `TabsContent` (+ legacy `Tab`)                         | `Tabs` + `Tab`; panels are app/`TabsContent` |

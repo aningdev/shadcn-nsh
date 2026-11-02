@@ -84,7 +84,7 @@
       "name": "dropdown-menu",
       "type": "registry:ui",
       "title": "Dropdown Menu",
-      "description": "Styled menu wrapping nsh/base Menu and parts."
+      "description": "Styled menu wrapping nsh/base Menu — theme tokens + Trigger / Content / Item; full base prop pass-through."
     },
     {
       "name": "context-menu",
