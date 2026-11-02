@@ -65,7 +65,6 @@ function App() {
   const progress = signal(40);
   const tab = signal("one");
   const bold = signal(false);
-<<<<<<< HEAD
   const name = signal("");
   const menuOpen = signal(false);
   const menuLast = signal("—");
@@ -74,9 +73,7 @@ function App() {
   const ctxLast = signal("—");
   const ctxSidebar = signal(true);
   const popoverOpen = signal(false);
-=======
   const tipOpen = signal(false);
->>>>>>> origin/cursor/tooltip-paradigm-de72
 
   return (
     <Scroll style={{ flex: 1, backgroundColor: colors.background }}>
