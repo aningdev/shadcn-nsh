@@ -4,7 +4,8 @@ import { Button as BaseButton } from "nsh/base";
 
 import { alpha, colors, focusRing, radius } from "../../lib/theme";
 
-export type ButtonVariant = "default" | "outline" | "secondary" | "ghost" | "destructive" | "link";
+/** shadcn `bases/base` also has `link`; this registry omits it — use the `Link` component. */
+export type ButtonVariant = "default" | "outline" | "secondary" | "ghost" | "destructive";
 
 export type ButtonSize =
   | "default"
@@ -121,15 +122,6 @@ function variantLook(variant: ButtonVariant): {
         active: { opacity: 0.9 },
         selected: { backgroundColor: alpha(colors.destructive, 0.22) },
       };
-    case "link":
-      return {
-        backgroundColor: "transparent",
-        borderColor: "transparent",
-        color: colors.primary,
-        borderWidth: 0,
-        hover: { opacity: 0.85 },
-        active: { opacity: 0.7 },
-      };
     default:
       return {
         backgroundColor: colors.primary,
@@ -146,10 +138,7 @@ function variantLook(variant: ButtonVariant): {
   }
 }
 
-/**
- * Style helper aligned with shadcn `buttonVariants` (theme tokens + ViewStyle, not className).
- * Compose with `Link` for link-as-button (do not fake `asChild` on Button).
- */
+/** Style helper aligned with shadcn `buttonVariants` (theme tokens + ViewStyle, not className). */
 export function buttonVariants(options?: {
   variant?: ButtonVariant | null;
   size?: ButtonSize | null;
@@ -158,14 +147,12 @@ export function buttonVariants(options?: {
   const size = options?.size ?? "default";
   const s = sizeLook(size);
   const v = variantLook(variant);
-  const isLink = variant === "link";
 
   return {
     style: {
-      height: isLink ? undefined : s.height,
-      minHeight: isLink ? s.height : undefined,
+      height: s.height,
       width: s.icon ? s.height : undefined,
-      paddingHorizontal: s.icon || isLink ? 0 : s.paddingHorizontal,
+      paddingHorizontal: s.icon ? 0 : s.paddingHorizontal,
       borderRadius: radius.control,
       borderWidth: v.borderWidth,
       flexDirection: "row",

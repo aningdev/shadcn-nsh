@@ -7,7 +7,6 @@ import {
   AccordionTrigger,
   Avatar,
   Button,
-  buttonVariants,
   Checkbox,
   Input,
   Link,
@@ -59,7 +58,6 @@ function App() {
   const bold = signal(false);
   const page = signal(1);
   const open = signal(["shipping"]);
-  const outlineLink = buttonVariants({ variant: "outline", size: "sm" });
 
   return (
     <Scroll style={{ flex: 1, backgroundColor: colors.background }}>
@@ -86,9 +84,6 @@ function App() {
             <Button variant="destructive" onPress={() => count.set(count() + 1)}>
               Destructive
             </Button>
-            <Button variant="link" onPress={() => count.set(count() + 1)}>
-              Link
-            </Button>
             <Button size="sm" onPress={() => count.set(count() + 1)}>
               SM
             </Button>
@@ -103,13 +98,19 @@ function App() {
             <Button selected={bold()} variant="outline" onPress={() => bold.set(!bold())}>
               Selected
             </Button>
-            <Link
-              href="https://nsh.dev"
-              style={outlineLink.style}
-              hoverStyle={outlineLink.hoverStyle}
-              activeStyle={outlineLink.activeStyle}
-            >
-              <Text style={outlineLink.label}>As Link</Text>
+          </View>
+        </Section>
+
+        <Section title="Link">
+          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 16, alignItems: "center" }}>
+            <Link href="https://nsh.dev" onPress={() => {}}>
+              Open nsh.dev
+            </Link>
+            <Link href="https://nsh.dev" current onPress={() => {}}>
+              Current
+            </Link>
+            <Link href="https://nsh.dev" disabled>
+              Disabled
             </Link>
           </View>
         </Section>

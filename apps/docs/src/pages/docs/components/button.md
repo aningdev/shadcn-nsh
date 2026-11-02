@@ -6,7 +6,7 @@ component: true
 demo: button
 ---
 
-[`nsh/base`](https://nsh.dev/modules/nsh-base) owns presses, disabled / selected, keyboard focus, and the button role for screen readers — unstyled on every platform. This package is the styled layer on top: brand variants, sizes, and theme tokens, the same role a community library plays above `nsh/base`. [`Button`](https://nsh.dev/elements/button) is a press target whose look comes from those tokens; behavior stays on base.
+[`nsh/base`](https://nsh.dev/modules/nsh-base) owns presses, disabled / selected, keyboard focus, and the button role for screen readers — unstyled on every platform. This package is the styled layer on top: brand variants, sizes, and theme tokens, the same role a community library plays above `nsh/base`. [`Button`](https://nsh.dev/elements/button) is a press target whose look comes from those tokens; behavior stays on base. For navigation / URL affordances use [`Link`](./link), not a button lookalike.
 
 ## Install
 
@@ -42,7 +42,6 @@ import { Button } from "@workspace/ui/components/ui/button";
 <Button variant="outline">Outline</Button>
 <Button variant="destructive">Destructive</Button>
 <Button variant="ghost">Ghost</Button>
-<Button variant="link">Link</Button>
 ```
 
 ## Disabled
@@ -89,29 +88,6 @@ const [on, setOn] = createSignal(false);
 </Button>
 ```
 
-## As Link
-
-Use `buttonVariants` with `Link` so the control stays a real link (nsh/base `Link`), not a Button with a fake `asChild`. Same idea as shadcn `bases/base`: do not force button role onto a link.
-
-```tsx
-import { buttonVariants } from "@workspace/ui/components/ui/button";
-import { Link } from "@workspace/ui/components/ui/link";
-import { Text } from "nsh";
-
-const look = buttonVariants({ variant: "outline", size: "lg" });
-
-<Link
-  href="https://nsh.dev"
-  style={look.style}
-  hoverStyle={look.hoverStyle}
-  activeStyle={look.activeStyle}
->
-  <Text style={look.label}>Open nsh.dev</Text>
-</Link>;
-```
-
-For a link-_looking_ press target that is still a button, use `variant="link"` on `Button`.
-
 ## API
 
 ### Variants
@@ -123,7 +99,6 @@ For a link-_looking_ press target that is still a button, use `variant="link"` o
 | `outline`     | Border, background fill                  |
 | `destructive` | Soft destructive tint + destructive text |
 | `ghost`       | No border/fill                           |
-| `link`        | Primary text (still `nsh/base` Button)   |
 
 ### Sizes
 
@@ -158,17 +133,17 @@ For a link-_looking_ press target that is still a button, use `variant="link"` o
 | `onPressDown` | Press began (from base); for custom press feedback             |
 | `onPressUp`   | Press ended / cancelled (from base); for custom press feedback |
 
-`buttonVariants({ variant, size })` returns token-backed `style` / `label` / hover·active·selected looks for reuse (including on `Link`).
+`buttonVariants({ variant, size })` returns token-backed `style` / `label` / hover·active·selected looks for Button reuse.
 
 ## Differences
 
-| Topic           | shadcn (`bases/base`)                        | This package                                                         |
-| --------------- | -------------------------------------------- | -------------------------------------------------------------------- |
-| Press event     | DOM `onClick`                                | `onPress` / `onPressDown` / `onPressUp`                              |
-| Children        | arbitrary nodes / Slot                       | `string \| JSX.Element`; no `asChild`                                |
-| Link affordance | `buttonVariants` on `<a>`; avoid Button+Slot | `buttonVariants` on `Link`; or `variant="link"` on Button            |
-| Class hooks     | `className` / CVA                            | theme tokens + `buttonVariants` style helper                         |
-| Size matrix     | `default`…`icon-lg`                          | same names; token sizes approximate nova scale, not CSS-pixel locked |
+| Topic           | shadcn (`bases/base`)      | This package                                                                                          |
+| --------------- | -------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Press event     | DOM `onClick`              | `onPress` / `onPressDown` / `onPressUp`                                                               |
+| Children        | arbitrary nodes / Slot     | `string \| JSX.Element`; no `asChild`                                                                 |
+| Link affordance | `variant="link"` on Button | **Omitted** — this registry has a real [`Link`](./link) on `nsh/base`; do not put link look on Button |
+| Class hooks     | `className` / CVA          | theme tokens + `buttonVariants` style helper                                                          |
+| Size matrix     | `default`…`icon-lg`        | same names; token sizes approximate nova scale, not CSS-pixel locked                                  |
 
 ## Not forwarded
 
