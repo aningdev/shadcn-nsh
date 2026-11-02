@@ -150,8 +150,8 @@
       "name": "tooltip",
       "type": "registry:ui",
       "title": "Tooltip",
-      "description": "Styled tooltip wrapping nsh/base Tooltip.",
-      "registryDependencies": ["theme"],
+      "description": "Styled tooltip wrapping nsh/base Tooltip — theme tokens + Trigger / Content; full base prop pass-through.",
+      "registryDependencies": ["theme", "button"],
       "files": [
         {
           "path": "packages/ui/tooltip.tsx",

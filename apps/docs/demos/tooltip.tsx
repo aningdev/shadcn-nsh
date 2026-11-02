@@ -1,16 +1,23 @@
 import { colors } from "@shadcn-nsh/theme";
-import { mount, Text, View } from "nsh";
+import { mount, signal, Text, View } from "nsh";
 
-import { Tooltip, TooltipContent, TooltipTrigger } from "../../../packages/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../../../packages/ui/tooltip";
 
 function App() {
+  const open = signal(false);
+
   return (
     <View
       style={{
         flex: 1,
         backgroundColor: colors.background,
         padding: 20,
-        gap: 12,
+        gap: 16,
         justifyContent: "center",
         alignItems: "flex-start",
       }}
@@ -20,8 +27,29 @@ function App() {
         <TooltipTrigger>Hover me</TooltipTrigger>
         <TooltipContent>Add item</TooltipContent>
       </Tooltip>
+      <Tooltip>
+        <TooltipTrigger>Bottom placement</TooltipTrigger>
+        <TooltipContent placement="bottom" align="start">
+          Below the trigger
+        </TooltipContent>
+      </Tooltip>
+      <TooltipProvider delay={0}>
+        <Tooltip>
+          <TooltipTrigger>Instant</TooltipTrigger>
+          <TooltipContent>Shows at once</TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+      <Tooltip open={open()} onOpenChange={(next) => open.set(next)}>
+        <TooltipTrigger>Pinned</TooltipTrigger>
+        <TooltipContent style={{ paddingHorizontal: 14 }}>
+          Controlled open — useful on touch
+        </TooltipContent>
+      </Tooltip>
+      <View tooltip={<Tooltip>Host bubble</Tooltip>}>
+        <Text style={{ fontSize: 14, color: colors.foreground }}>Rest here (host tooltip=)</Text>
+      </View>
       <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
-        Host-prop bubble still works: tooltip={"{"}&lt;Tooltip&gt;Add item&lt;/Tooltip&gt;{"}"}
+        Open: {() => (open() ? "yes" : "no")}
       </Text>
     </View>
   );
