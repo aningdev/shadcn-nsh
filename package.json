@@ -6,6 +6,7 @@
     "packages/*"
   ],
   "scripts": {
+    "nsh:bootstrap": "bash scripts/nsh-bootstrap.sh",
     "prepare:types": "nsh check apps/gallery && nsh check templates/nsh-monorepo/apps/web && bun run check:demos",
     "dev:gallery": "nsh run apps/gallery",
     "check:gallery": "nsh check apps/gallery",
