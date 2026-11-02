@@ -164,8 +164,8 @@
       "name": "sheet",
       "type": "registry:ui",
       "title": "Sheet",
-      "description": "Styled sheet wrapping nsh/base Sheet.",
-      "registryDependencies": ["theme", "popup-surface"],
+      "description": "Styled sheet wrapping nsh/base Sheet — theme tokens + Trigger / Content; full base prop pass-through.",
+      "registryDependencies": ["theme", "popup-surface", "button"],
       "files": [
         {
           "path": "packages/ui/sheet.tsx",

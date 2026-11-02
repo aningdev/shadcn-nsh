@@ -82,7 +82,7 @@ Public Usage trees prefer shadcn part names. Internals still call `nsh/base` (it
 | shadcn                          | This package                                                                                 | `nsh/base` under the hood                    |
 | ------------------------------- | -------------------------------------------------------------------------------------------- | -------------------------------------------- |
 | Dialog / Trigger / Content / …  | `Dialog` / `DialogTrigger` / `DialogContent` / Header / Title / Description / Footer / Close | single `Dialog`; Content owns the base root  |
-| Sheet / Trigger / Content / …   | same pattern                                                                                 | single `Sheet`                               |
+| Sheet / Trigger / Content / …   | same pattern; full base prop + style-hook pass-through                                       | single `Sheet`; Content owns the base root   |
 | DropdownMenu\*                  | `DropdownMenu` / Trigger / Content / Item / Sub / …                                          | `Menu` / `MenuItem` / `Submenu`              |
 | ContextMenu\*                   | same                                                                                         | `ContextMenu`                                |
 | Popover / Trigger / Content     | composition; legacy `trigger` prop kept                                                      | `Popover`                                    |
