@@ -283,22 +283,6 @@ export function Toaster(props: ToasterProps) {
     }
   };
 
-  // Explicit `children` prop: some JSX hosts (template tsconfig) do not infer function JSX children.
-  const toastRows = (t: () => ToastEntry) => {
-    const content = () => t().value as ToastContent;
-    return (
-      <Toast
-        transitionStatus={t().status}
-        title={content().title}
-        description={content().description}
-        onDismissRequest={() => {
-          defaultManager.dismiss(t().id);
-          syncVisible();
-        }}
-      />
-    );
-  };
-
   return (
     <Overlay
       pointerEvents="box-none"
@@ -324,9 +308,24 @@ export function Toaster(props: ToasterProps) {
           else dismissNewest();
         }}
       >
-        {/* nsh global `<Each>` — keyed toast rows */}
-        {/* oxlint-disable-next-line react/jsx-no-undef, react/no-children-prop */}
-        <Each of={visible()} key={(t: ToastEntry) => t.id} children={toastRows} />
+        {/* nsh global `<Each>` — keyed toast rows; function child, not `children=` prop */}
+        {/* oxlint-disable-next-line react/jsx-no-undef */}
+        <Each of={visible()} key={(t: ToastEntry) => t.id}>
+          {(t) => {
+            const content = () => t().value as ToastContent;
+            return (
+              <Toast
+                transitionStatus={t().status}
+                title={content().title}
+                description={content().description}
+                onDismissRequest={() => {
+                  defaultManager.dismiss(t().id);
+                  syncVisible();
+                }}
+              />
+            );
+          }}
+        </Each>
       </ToastStack>
     </Overlay>
   );

@@ -10,10 +10,19 @@ demo: button
 
 ## Install
 
-```bash
+```npx tabs
 npx shadcn-nsh@latest add button
+```
+
+```bunx tabs
 bunx shadcn-nsh@latest add button
+```
+
+```pnx tabs
 pnx shadcn-nsh@latest add button
+```
+
+```yarn tabs
 yarn dlx shadcn-nsh@latest add button
 ```
 

@@ -1310,6 +1310,18 @@ html[lang^="zh"] .toc__label {
   pre[data-language="bash"]::before {
     content: "Shell";
   }
+  pre[data-language="npx"]::before {
+    content: "npx";
+  }
+  pre[data-language="bunx"]::before {
+    content: "bunx";
+  }
+  pre[data-language="pnx"]::before {
+    content: "pnx";
+  }
+  pre[data-language="yarn"]::before {
+    content: "yarn";
+  }
   pre[data-language="tsx"]::before {
     content: "TSX";
   }

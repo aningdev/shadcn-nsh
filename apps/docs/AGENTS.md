@@ -25,8 +25,8 @@ Extensions (shadcn-only pieces with no `nsh/base` export) and Phase-2 components
   1. Title (`h1` from frontmatter)
   2. _(layout)_ nsh chrome — `nsh.dev/elements/<nshElement>` (+ `.md`)
   3. **Standfirst** (body, no H2) — Frame like `references/nsh/website/modules/nsh-base.md`: `nsh/base` owns behavior/state/focus/a11y; this package is the styled layer (variants/sizes/tokens). One sentence on _this_ component. Links: [nsh/base module](https://nsh.dev/modules/nsh-base) + `https://nsh.dev/elements/<nshElement>`. Layout splits body so standfirst renders **above** Preview when `demo` is set.
-  4. _(layout)_ **Preview** — only when `demo` is set
-  5. **Install** — package-manager commands only for `shadcn-nsh@latest add <slug>` (`npx` / `bunx` / `pnx` / optional `yarn dlx`). **No Manual.** **No** Monorepo / `-c` / `components.json` notes in Install.
+  4. _(layout)_ **Preview** — NSH-style demo panel (`DemoFrame`): Preview | Source, Phone | Desktop, `demos/<slug>.tsx` filename, Shiki-highlighted source; preview iframe from `docs:demos`
+  5. **Install** — consecutive ` ```npx tabs` / `bunx` / `pnx` / optional `yarn` fences (remark CodeTabs + copy). Commands only: `… shadcn-nsh@latest add <slug>`. **No Manual.** **No** Monorepo / `-c` / `components.json` notes in Install.
   6. **Usage** — consumer imports `@workspace/ui/components/ui/<slug>`; document **this** package’s public API. Prefer shadcn-shaped composition trees when `@shadcn-nsh/ui` exports those facades (Trigger/Content/Item/…); do not paste Radix props that we do not implement
   7. **Composition** — ASCII tree of exported parts (required for compound components)
   8. **Examples** — thematic `##` sections (Size, Variants, …); code required; shadcn density, not full ports
@@ -55,6 +55,6 @@ One main web demo per component (NSH convention). Docs iframes are **illustrativ
 3. **Content:** short interaction + this package’s variants; do not teach base Inspector / Playground.
 4. **Page:** set `demo: <slug>` (and `demoHeight` when overlays need more room).
 5. **Build:** `bun run docs:demos` (also run by `build:docs`) packages each source with `nsh package --target web` into `public/demos/<slug>/` (gitignored). Concurrent, limited; validates every `demo:` ↔ `demos/<slug>.tsx`.
-6. **Types / check:** `nsh check apps/docs/demos` (via root `prepare:types` / `check`). Missing artifact → DemoFrame fallback; CI must produce the package when `demo:` is set.
+6. **Types / check:** `nsh check apps/docs/demos` (via root `prepare:types` / `check`). Missing artifact → source-only panel + `bun run docs:demos` hint; CI must produce the package when `demo:` is set.
 
-Do **not** port NSH shared WASM player, `el-*`, or Playground into this site.
+Demo panel chrome (and fenced `tabs` CodeTabs / dual allsum Shiki themes) is ported from `references/nsh/website`. Phone | Desktop resizes the web iframe; there is no shared WASM player / Playground. Do **not** port those.

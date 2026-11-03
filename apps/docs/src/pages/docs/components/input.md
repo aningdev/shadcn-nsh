@@ -10,10 +10,19 @@ demo: input
 
 ## Install
 
-```bash
+```npx tabs
 npx shadcn-nsh@latest add input
+```
+
+```bunx tabs
 bunx shadcn-nsh@latest add input
+```
+
+```pnx tabs
 pnx shadcn-nsh@latest add input
+```
+
+```yarn tabs
 yarn dlx shadcn-nsh@latest add input
 ```
 

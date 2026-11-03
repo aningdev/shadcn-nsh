@@ -11,10 +11,19 @@ demoHeight: 480
 
 ## Install
 
-```bash
+```npx tabs
 npx shadcn-nsh@latest add dialog
+```
+
+```bunx tabs
 bunx shadcn-nsh@latest add dialog
+```
+
+```pnx tabs
 pnx shadcn-nsh@latest add dialog
+```
+
+```yarn tabs
 yarn dlx shadcn-nsh@latest add dialog
 ```
 

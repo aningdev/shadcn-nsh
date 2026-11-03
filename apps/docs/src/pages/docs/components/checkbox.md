@@ -10,10 +10,19 @@ demo: checkbox
 
 ## Install
 
-```bash
+```npx tabs
 npx shadcn-nsh@latest add checkbox
+```
+
+```bunx tabs
 bunx shadcn-nsh@latest add checkbox
+```
+
+```pnx tabs
 pnx shadcn-nsh@latest add checkbox
+```
+
+```yarn tabs
 yarn dlx shadcn-nsh@latest add checkbox
 ```
 

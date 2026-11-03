@@ -10,10 +10,19 @@ demo: switch
 
 ## Install
 
-```bash
+```npx tabs
 npx shadcn-nsh@latest add switch
+```
+
+```bunx tabs
 bunx shadcn-nsh@latest add switch
+```
+
+```pnx tabs
 pnx shadcn-nsh@latest add switch
+```
+
+```yarn tabs
 yarn dlx shadcn-nsh@latest add switch
 ```
 

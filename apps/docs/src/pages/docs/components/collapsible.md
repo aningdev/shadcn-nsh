@@ -11,10 +11,19 @@ demoHeight: 300
 
 ## Install
 
-```bash
+```npx tabs
 npx shadcn-nsh@latest add collapsible
+```
+
+```bunx tabs
 bunx shadcn-nsh@latest add collapsible
+```
+
+```pnx tabs
 pnx shadcn-nsh@latest add collapsible
+```
+
+```yarn tabs
 yarn dlx shadcn-nsh@latest add collapsible
 ```
 

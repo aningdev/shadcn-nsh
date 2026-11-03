@@ -11,10 +11,19 @@ demoHeight: 420
 
 ## Install
 
-```bash
+```npx tabs
 npx shadcn-nsh@latest add popover
+```
+
+```bunx tabs
 bunx shadcn-nsh@latest add popover
+```
+
+```pnx tabs
 pnx shadcn-nsh@latest add popover
+```
+
+```yarn tabs
 yarn dlx shadcn-nsh@latest add popover
 ```
 

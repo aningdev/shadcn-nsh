@@ -8,13 +8,21 @@ Token truth for shadcn-nsh is **`theme.json`** (wired through `nsh.json` `theme`
 
 ## Install
 
-```sh
-shadcn-nsh add theme
-# monorepo:
-shadcn-nsh add theme -c apps/web
+```npx tabs
+npx shadcn-nsh@latest add theme
 ```
 
-Registry item `theme` copies `theme.json` and a small `lib/theme.ts` into the consumer app / `packages/ui`.
+```bunx tabs
+bunx shadcn-nsh@latest add theme
+```
+
+```pnx tabs
+pnx shadcn-nsh@latest add theme
+```
+
+```yarn tabs
+yarn dlx shadcn-nsh@latest add theme
+```
 
 ## `theme.json`
 
