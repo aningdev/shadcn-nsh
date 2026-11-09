@@ -1,5 +1,10 @@
-import { colors, radius } from "@shadcn-nsh/theme";
+import { colors, finish, radius } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
+
+/** Overlay-family one-shadow (`finish.menu`). Prefer this over per-component boxShadow. */
+export function overlayShadow(): ViewStyle {
+  return { boxShadow: finish.menu.boxShadow };
+}
 
 /** Shared surface for popovers, menus, and select/combobox popups. */
 export function popupSurface(): ViewStyle {
@@ -9,6 +14,7 @@ export function popupSurface(): ViewStyle {
     borderColor: colors.border,
     backgroundColor: colors.card,
     padding: 4,
+    ...overlayShadow(),
   };
 }
 

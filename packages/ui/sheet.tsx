@@ -10,7 +10,7 @@ import {
 
 import { Button, type ButtonVariant } from "./button";
 import { createOpenState, type OpenState } from "./lib/open-state";
-import { popupBackdrop } from "./lib/popup-surface";
+import { overlayShadow, popupBackdrop } from "./lib/popup-surface";
 
 /**
  * Composition root (shadcn `Sheet`): holds open state for Trigger / Content.
@@ -128,6 +128,7 @@ function contentPopupChrome(side: Placement): ViewStyle {
     backgroundColor: colors.card,
     padding: 16,
     gap: 6,
+    ...overlayShadow(),
   };
 
   switch (side) {

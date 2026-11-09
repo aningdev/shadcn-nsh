@@ -63,7 +63,8 @@ export type Finish = {
   backdropFilter?: string;
 };
 
-export type FinishName = "card" | "raised" | "hover" | "pressed" | "on" | "accent";
+/** Control states + overlay `menu` (popup-family one-shadow). */
+export type FinishName = "card" | "raised" | "hover" | "pressed" | "on" | "accent" | "menu";
 
 const isDark = () => colorScheme() !== "light";
 
@@ -84,10 +85,20 @@ function themedFinish<T extends object>(dark: T, light: T): T {
  */
 export const finish = themedFinish<Record<FinishName, Finish>>(finishes.dark, finishes.light);
 
+/** Duration tokens (ms). Align press with NSH Design Guides / Gallery. */
+export const duration = {
+  press: 150,
+} as const;
+
+/** Easing tokens for short control transitions. */
+export const easing = {
+  press: "ease-out",
+} as const;
+
 /** Press / state easing shared by controls. */
 export const pressEasing = {
-  transitionDuration: 150,
-  transitionTimingFunction: "ease-out",
+  transitionDuration: duration.press,
+  transitionTimingFunction: easing.press,
 } satisfies ViewStyle;
 
 /** Transition for press sink + optional CSS property names the states change. */

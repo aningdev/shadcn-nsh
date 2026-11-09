@@ -1,6 +1,8 @@
 export {
   alpha,
   colors,
+  duration,
+  easing,
   finish,
   focusRing,
   pressEasing,

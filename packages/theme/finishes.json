@@ -17,6 +17,9 @@
     },
     "accent": {
       "boxShadow": "inset 0 0 0 1px rgba(255,255,255,0.14), inset 0 1px 1px rgba(255,255,255,0.18), 0 1px 1px rgba(0,0,0,0.2)"
+    },
+    "menu": {
+      "boxShadow": "0 1px 0 rgba(0,0,0,0.4), 0 16px 32px -10px rgba(0,0,0,0.6)"
     }
   },
   "light": {
@@ -37,6 +40,9 @@
     },
     "accent": {
       "boxShadow": "inset 0 1px 0 rgba(255,255,255,0.35), inset 0 -1px 0 rgba(0,0,0,0.06), 0 1px 0 rgba(10,15,25,0.08)"
+    },
+    "menu": {
+      "boxShadow": "0 1px 0 rgba(10,15,25,0.04), 0 12px 28px -10px rgba(10,15,25,0.22)"
     }
   }
 }
