@@ -5,7 +5,6 @@
 CLI for adding styled NSH components (copy-into-app) from the shadcn-nsh registry.
 
 ```sh
-bunx shadcn-nsh@latest create my-app
 bunx shadcn-nsh@latest init -c apps/web
 bunx shadcn-nsh@latest add button
 ```

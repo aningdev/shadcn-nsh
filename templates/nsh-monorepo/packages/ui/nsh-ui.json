@@ -1,9 +1,0 @@
-{
-  "registry": "https://raw.githubusercontent.com/aningdev/shadcn-nsh/main/public/r/{name}.json",
-  "aliases": {
-    "components": "./components",
-    "ui": "./components/ui",
-    "lib": "./lib",
-    "theme": "./lib/theme"
-  }
-}

@@ -35,7 +35,7 @@ _Avoid_: shadcn-behavior port, hidden divergence
 _Avoid_: shadcn registry id（如 `dropdown-menu`）, mixed add-menu/import-DropdownMenu, permanent/temporary registry aliases
 
 **Composition-only**:
-复合 Styled Component 只提供 Composition Facade；Author Package、registry、gallery、docs、template 同步删除 legacy `trigger` / 旧 prop 双路径，不设长期 deprecated 窗。
+复合 Styled Component 只提供 Composition Facade；Author Package、registry、gallery、docs 同步删除 legacy `trigger` / 旧 prop 双路径，不设长期 deprecated 窗。
 _Avoid_: long-term dual API, legacy trigger path, staggered freeze-only
 
 **Theme Source**:

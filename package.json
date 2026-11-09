@@ -7,7 +7,7 @@
   ],
   "scripts": {
     "nsh:bootstrap": "bash scripts/nsh-bootstrap.sh",
-    "prepare:types": "nsh check apps/gallery && nsh check templates/nsh-monorepo/apps/web && bun run check:demos",
+    "prepare:types": "nsh check apps/gallery && bun run check:demos",
     "dev:gallery": "nsh run apps/gallery",
     "check:gallery": "nsh check apps/gallery",
     "dev:docs": "bun --filter @shadcn-nsh/docs dev",
@@ -19,7 +19,7 @@
     "registry:serve": "bun packages/cli/src/index.ts serve",
     "shadcn-nsh": "bun packages/cli/src/index.ts",
     "cli:build": "bun --filter shadcn-nsh build",
-    "check": "vp check --fix && nsh check apps/gallery && nsh check templates/nsh-monorepo/apps/web && bun run check:demos && bun run check:docs"
+    "check": "vp check --fix && nsh check apps/gallery && bun run check:demos && bun run check:docs"
   },
   "devDependencies": {
     "@types/bun": "^1.4.4",

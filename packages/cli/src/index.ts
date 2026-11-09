@@ -3,7 +3,6 @@ import { Command } from "commander";
 import packageJson from "../package.json" with { type: "json" };
 import { add } from "./commands/add";
 import { build } from "./commands/build";
-import { create } from "./commands/create";
 import { init } from "./commands/init";
 import { serve } from "./commands/serve";
 
@@ -12,7 +11,6 @@ const program = new Command()
   .description("Add styled NSH components (copy-into-app) from the shadcn-nsh registry")
   .version(packageJson.version);
 
-program.addCommand(create);
 program.addCommand(build);
 program.addCommand(init);
 program.addCommand(add);

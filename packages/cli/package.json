@@ -30,7 +30,7 @@
     "access": "public"
   },
   "scripts": {
-    "build": "tsup && node ./scripts/copy-templates.mjs",
+    "build": "tsup",
     "typecheck": "tsc --noEmit",
     "prepublishOnly": "bun run build"
   },

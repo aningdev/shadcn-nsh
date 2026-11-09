@@ -20,30 +20,9 @@ bun install
 bun run nsh:bootstrap   # prepare:types (generate each .nsh)
 ```
 
-## Create a monorepo (recommended)
+## Use in an existing NSH app
 
-Default scaffold: `apps/web` + `packages/ui` (components land in packages):
-
-```sh
-# Developing this repo:
-bun run shadcn-nsh -- create my-app
-# Or after publish:
-# bunx shadcn-nsh@latest create my-app
-cd my-app
-bun install
-bun run check
-bun run dev
-```
-
-Add more components:
-
-```sh
-bunx shadcn-nsh@latest add button -c apps/web
-```
-
-## Use in an existing single app
-
-The directory must already have `nsh.json` (`nsh init`):
+The directory must already have `nsh.json` (`nsh init`). Consumer monorepo scaffolding (`create`) is deferred.
 
 ```sh
 # Local registry (when developing this repo)
@@ -75,12 +54,11 @@ After changing `packages/ui` or `packages/theme`, run `bun run registry:build` a
 
 ## Layout
 
-| Path                     | Package / role        | Notes                                         |
-| ------------------------ | --------------------- | --------------------------------------------- |
-| `packages/theme`         | `@shadcn-nsh/theme`   | design tokens (author-side registry source)   |
-| `packages/ui`            | `@shadcn-nsh/ui`      | styled component sources                      |
-| `packages/cli`           | `shadcn-nsh` (npm)    | `create` / `init` / `add` / `build` / `serve` |
-| `public/r`               | —                     | HTTP registry artifacts                       |
-| `apps/gallery`           | `@shadcn-nsh/gallery` | native verification demos                     |
-| `apps/docs`              | `@shadcn-nsh/docs`    | Astro docs (optional web iframe previews)     |
-| `templates/nsh-monorepo` | consumer template     | `create` copy source; **not** in root workspaces |
+| Path             | Package / role        | Notes                                       |
+| ---------------- | --------------------- | ------------------------------------------- |
+| `packages/theme` | `@shadcn-nsh/theme`   | design tokens (author-side registry source) |
+| `packages/ui`    | `@shadcn-nsh/ui`      | styled component sources                    |
+| `packages/cli`   | `shadcn-nsh` (npm)    | `init` / `add` / `build` / `serve`          |
+| `public/r`       | —                     | HTTP registry artifacts                     |
+| `apps/gallery`   | `@shadcn-nsh/gallery` | native verification demos                   |
+| `apps/docs`      | `@shadcn-nsh/docs`    | Astro docs (optional web iframe previews)   |

@@ -5,7 +5,6 @@
 从 shadcn-nsh registry 向应用复制 styled NSH 组件的 CLI。
 
 ```sh
-bunx shadcn-nsh@latest create my-app
 bunx shadcn-nsh@latest init -c apps/web
 bunx shadcn-nsh@latest add button
 ```

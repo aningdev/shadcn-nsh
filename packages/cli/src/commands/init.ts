@@ -21,7 +21,7 @@ export async function runInit(opts: {
     const nshJsonPath = await findNshJson(cwd);
     if (!nshJsonPath) {
       throw new Error(
-        `No nsh.json in ${cwd}. Create an NSH app first (nsh init), or use: shadcn-nsh create <name>`,
+        `No nsh.json in ${cwd}. Create an NSH app first (nsh init), then run shadcn-nsh init.`,
       );
     }
   } else if (ws.apps.length === 0) {
