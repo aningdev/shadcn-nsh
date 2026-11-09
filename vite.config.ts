@@ -3,7 +3,7 @@ import { defineConfig } from "vite-plus";
 // vp fmt already respects .gitignore + .prettierignore and skips node_modules.
 // oxlint discovery also skips .gitignore matches. Only list paths that are
 // tracked (or otherwise walked) but should stay out of fmt/lint.
-const ignoreVendored = ["references/**", ".agents/skills"];
+const ignoreVendored = ["references/**", ".agents/**"];
 // Docs types authority is `check:docs` (astro sync + tsc); vp type-aware lint
 // does not load `astro/client`, so `import.meta.env` fails without this exclude.
 const ignoreLint = [...ignoreVendored, "apps/docs/**"];
