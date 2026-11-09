@@ -1,7 +1,7 @@
 import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
-import { OtpInput } from "../../../packages/ui/otp-input";
+import { OtpInput } from "@/packages/ui/otp-input";
 
 function App() {
   const code = signal("");

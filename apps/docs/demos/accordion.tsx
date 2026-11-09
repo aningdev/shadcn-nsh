@@ -7,7 +7,7 @@ import {
   AccordionHeader,
   AccordionItem,
   AccordionTrigger,
-} from "../../../packages/ui/accordion";
+} from "@/packages/ui/accordion";
 
 function App() {
   const open = signal(["shipping"]);

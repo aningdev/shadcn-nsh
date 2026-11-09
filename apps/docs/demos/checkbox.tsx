@@ -1,7 +1,7 @@
 import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
-import { Checkbox } from "../../../packages/ui/checkbox";
+import { Checkbox } from "@/packages/ui/checkbox";
 
 function App() {
   const checked = signal(true);

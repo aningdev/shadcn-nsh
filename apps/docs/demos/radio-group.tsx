@@ -1,7 +1,7 @@
 import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
-import { RadioGroup, RadioGroupItem } from "../../../packages/ui/radio-group";
+import { RadioGroup, RadioGroupItem } from "@/packages/ui/radio-group";
 
 function App() {
   const radio = signal("a");

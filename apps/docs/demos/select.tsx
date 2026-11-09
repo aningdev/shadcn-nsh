@@ -7,7 +7,7 @@ import {
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "../../../packages/ui/select";
+} from "@/packages/ui/select";
 
 function App() {
   const fruit = signal<string | null>("apple");

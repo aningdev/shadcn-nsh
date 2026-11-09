@@ -10,7 +10,7 @@ import {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
-} from "../../../packages/ui/sheet";
+} from "@/packages/ui/sheet";
 
 function App() {
   const open = signal(false);

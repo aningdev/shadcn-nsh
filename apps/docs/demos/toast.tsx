@@ -1,8 +1,8 @@
 import { colors } from "@shadcn-nsh/theme";
 import { mount, Text, View } from "nsh";
 
-import { Button } from "../../../packages/ui/button";
-import { toast, Toaster } from "../../../packages/ui/toast";
+import { Button } from "@/packages/ui/button";
+import { toast, Toaster } from "@/packages/ui/toast";
 
 function App() {
   return (

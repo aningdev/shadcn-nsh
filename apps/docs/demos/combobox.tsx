@@ -7,7 +7,7 @@ import {
   ComboboxItem,
   ComboboxTrigger,
   ComboboxValue,
-} from "../../../packages/ui/combobox";
+} from "@/packages/ui/combobox";
 
 function App() {
   const tags = signal<string[]>(["react"]);

@@ -5,6 +5,7 @@
       "nsh": ["./.nsh/types/nsh/index.d.ts"],
       "nsh/*": ["./.nsh/types/nsh/*.d.ts"],
       "*": ["./.nsh/types/*.d.ts"],
+      "@/*": ["../../../*"],
       "@shadcn-nsh/theme": ["../../../packages/theme/index.ts"],
       "@shadcn-nsh/theme/*": ["../../../packages/theme/*"],
       "@shadcn-nsh/ui": ["../../../packages/ui/index.ts"],

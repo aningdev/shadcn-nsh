@@ -10,7 +10,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
-} from "../../../packages/ui/dialog";
+} from "@/packages/ui/dialog";
 
 function App() {
   const open = signal(false);

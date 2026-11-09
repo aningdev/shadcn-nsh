@@ -9,7 +9,7 @@ import {
   MenuLabel,
   MenuSeparator,
   MenuTrigger,
-} from "../../../packages/ui/menu";
+} from "@/packages/ui/menu";
 
 function App() {
   const open = signal(false);

@@ -1,7 +1,7 @@
 import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
-import { Input } from "../../../packages/ui/input";
+import { Input } from "@/packages/ui/input";
 
 function App() {
   const value = signal("");

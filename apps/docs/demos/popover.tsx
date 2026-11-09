@@ -1,7 +1,7 @@
 import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
-import { Button } from "../../../packages/ui/button";
+import { Button } from "@/packages/ui/button";
 import {
   Popover,
   PopoverContent,
@@ -9,7 +9,7 @@ import {
   PopoverHeader,
   PopoverTitle,
   PopoverTrigger,
-} from "../../../packages/ui/popover";
+} from "@/packages/ui/popover";
 
 function App() {
   const open = signal(false);

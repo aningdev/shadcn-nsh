@@ -51,7 +51,7 @@ Extensions (shadcn-only pieces with no `nsh/base` export) and Phase-2 components
 One main web demo per component (NSH convention). Docs iframes are **illustrative**; native truth remains `apps/gallery`. Prefer the existing demos system (`demos/<slug>.tsx` → `docs:demos` → `public/demos/<slug>/`); do **not** invent a second preview strategy.
 
 1. **File:** `demos/<slug>.tsx` — `<slug>` matches `src/lib/components.ts` / the page filename.
-2. **Imports:** `../../../packages/ui/<module>` (not `@shadcn-nsh/ui` barrel — avoids base version skew); theme via `@shadcn-nsh/theme`.
+2. **Imports:** `@/packages/ui/<module>` (not `@shadcn-nsh/ui` barrel — avoids base version skew); theme via `@shadcn-nsh/theme`. `@` → repo root（`nsh.json` `resolve.alias` `"@"` + demos `tsconfig` `paths` `"@/*"`）。
 3. **Content:** short interaction + this package’s variants; do not teach base Inspector / Playground.
 4. **Page:** set `demo: <slug>` (and `demoHeight` when overlays need more room).
 5. **Build:** `bun run docs:demos` (also run by `build:docs`) packages each source with `nsh package --target web` into `public/demos/<slug>/` (gitignored). Concurrent, limited; validates every `demo:` ↔ `demos/<slug>.tsx`.

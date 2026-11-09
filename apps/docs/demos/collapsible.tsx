@@ -5,7 +5,7 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
-} from "../../../packages/ui/collapsible";
+} from "@/packages/ui/collapsible";
 
 function App() {
   const open = signal(false);

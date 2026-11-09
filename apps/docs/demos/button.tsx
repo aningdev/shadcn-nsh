@@ -2,7 +2,7 @@ import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 // Avoid `@shadcn-nsh/ui` barrel: it pulls wrappers that need a newer `nsh/base`.
-import { Button } from "../../../packages/ui/button";
+import { Button } from "@/packages/ui/button";
 
 function App() {
   const count = signal(0);

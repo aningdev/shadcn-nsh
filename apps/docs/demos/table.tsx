@@ -10,7 +10,7 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "../../../packages/ui/table";
+} from "@/packages/ui/table";
 
 function App() {
   return (

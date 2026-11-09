@@ -1,7 +1,7 @@
 import { colors } from "@shadcn-nsh/theme";
 import { mount, Text, View } from "nsh";
 
-import { Avatar, AvatarGroup } from "../../../packages/ui/avatar";
+import { Avatar, AvatarGroup } from "@/packages/ui/avatar";
 
 function App() {
   return (

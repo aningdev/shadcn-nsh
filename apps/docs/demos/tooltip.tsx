@@ -6,7 +6,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from "../../../packages/ui/tooltip";
+} from "@/packages/ui/tooltip";
 
 function App() {
   const open = signal(false);

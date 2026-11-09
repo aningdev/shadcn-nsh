@@ -1,7 +1,7 @@
 import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
-import { Toggle, ToggleGroup } from "../../../packages/ui/toggle-group";
+import { Toggle, ToggleGroup } from "@/packages/ui/toggle-group";
 
 function App() {
   const align = signal("left");

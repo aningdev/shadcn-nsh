@@ -9,7 +9,7 @@ import {
   ContextMenuLabel,
   ContextMenuSeparator,
   ContextMenuTrigger,
-} from "../../../packages/ui/context-menu";
+} from "@/packages/ui/context-menu";
 
 function App() {
   const open = signal(false);
