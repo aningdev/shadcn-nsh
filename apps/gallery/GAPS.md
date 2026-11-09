@@ -1,9 +1,9 @@
 # Gallery gaps vs `references/nsh/examples/gallery`
 
 对照参考侧栏 `groups`：下列项 **现在没有**（或不应有）本仓 gallery demo。  
-原因分两类：**非本层**（primitives / 示例应用 / 平台示意）与 **UI 未包**（`nsh/base` 有、`@shadcn-nsh/ui` 尚未 styled；阶段见 [`packages/ui/COMPONENTS.md`](../../packages/ui/COMPONENTS.md)）。
+原因分两类：**非本层**（primitives / 示例应用 / 平台示意）与 **UI 未包**（`nsh/base` 有、`@shadcn-nsh/ui` 尚未 styled；阶段见 [`packages/ui/README.md`](../../packages/ui/README.md)）。
 
-UI 落地后：加 demo → 删本表对应行 → 更新 COMPONENTS.md。
+UI 落地后：加 demo → 删本表对应行 → 更新 `packages/ui/README.md`。
 
 ## 状态：壳与 Phase-1 demos
 
@@ -36,7 +36,7 @@ UI 落地后：加 demo → 删本表对应行 → 更新 COMPONENTS.md。
 
 ## Components — UI 未包（后续补 `@shadcn-nsh/ui` 再开 demo）
 
-| 参考 demo                             | 阻塞                                         | 计划阶段（COMPONENTS.md） |
+| 参考 demo                             | 阻塞                                         | 计划阶段（ui/README） |
 | ------------------------------------- | -------------------------------------------- | ------------------------- |
 | ColorPicker                           | 无 `packages/ui` 导出                        | Phase-2                   |
 | DatePicker（及 Calendar / TimeField） | 同上                                         | Phase-2                   |

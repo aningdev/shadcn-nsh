@@ -1,5 +1,7 @@
 # shadcn-nsh
 
+[中文](./README.zh.md)
+
 CLI for adding styled NSH components (copy-into-app) from the shadcn-nsh registry.
 
 ```sh

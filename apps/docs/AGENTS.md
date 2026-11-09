@@ -12,7 +12,7 @@ Do **not** invent a parallel layout — extend the NSH shell components under `s
 
 This site documents the **styled / copy-into-app** layer only. Behavior, a11y, platform notes, and the full `nsh/base` API deep-link to `https://nsh.dev/elements/<nshElement>` (driven by `src/lib/components.ts`). Do **not** scrape or embed nsh Markdown into pages.
 
-Extensions (shadcn-only pieces with no `nsh/base` export) and Phase-2 components are **out of scope** for this site — see `packages/ui/COMPONENTS.md`.
+Extensions (shadcn-only pieces with no `nsh/base` export) and Phase-2 components are **out of scope** for this site — see `packages/ui/README.md`.
 
 ## Component pages
 
@@ -43,7 +43,7 @@ Extensions (shadcn-only pieces with no `nsh/base` export) and Phase-2 components
 ## Site pages
 
 - Getting started, Theme (`theme.json` / `token()` as truth), Components index.
-- Components index must note that Extensions / Phase-2 live in `packages/ui/COMPONENTS.md` and are not listed here.
+- Components index must note that Extensions / Phase-2 live in `packages/ui/README.md` and are not listed here.
 - `public/llms.txt`: TOC for this site + pointers to `nsh.dev/elements` for behavior; do not fork nsh `llms-full`.
 
 ## Demos

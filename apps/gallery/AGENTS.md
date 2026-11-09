@@ -17,7 +17,7 @@
 
 ## 补全顺序
 
-1. [`packages/ui/COMPONENTS.md`](../../packages/ui/COMPONENTS.md) 里组件 status → done 并 registry 可 `add`。
+1. [`packages/ui/README.md`](../../packages/ui/README.md) 里组件 status → done 并 registry 可 `add`。
 2. 在本 app 加对应 `demos/*` + 侧栏 `DemoEntry`。
 3. 从 [GAPS.md](./GAPS.md) 删掉该行。
 

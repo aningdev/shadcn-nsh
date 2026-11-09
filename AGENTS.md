@@ -73,7 +73,7 @@ TypeScript 为 **7.1**（content mapper 所需；状态仍 experimental / beta�
 
 改 theme/ui 前先保证 gallery 的 `.nsh` 已生成（`nsh check apps/gallery` / `prepare:types`）。
 
-**NSH CLI**：本仓 Phase-1 对齐 **store / GitHub release CLI**（当前 `0.4.0`）。不要用 `install.sh --source`——docs CI 与本地都装 release tarball。仅包装该 release 已注册的 `nsh/base` 导出；清单与缺口见 `packages/ui/COMPONENTS.md`。
+**NSH CLI**：本仓 Phase-1 对齐 **store / GitHub release CLI**（当前 `0.4.0`）。不要用 `install.sh --source`——docs CI 与本地都装 release tarball。仅包装该 release 已注册的 `nsh/base` 导出；清单与缺口见 `packages/ui/README.md`。
 
 ```sh
 curl -fsSL https://nsh.dev/install.sh | sh

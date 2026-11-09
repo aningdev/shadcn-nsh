@@ -1,5 +1,7 @@
 # NSH monorepo starter
 
+[中文](./README.zh.md)
+
 Consumer layout for [shadcn-nsh](https://github.com/aningdev/shadcn-nsh): NSH app in `apps/web`, styled UI in `packages/ui` (copy-into-app).
 
 ```sh

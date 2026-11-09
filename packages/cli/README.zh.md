@@ -1,5 +1,7 @@
 # shadcn-nsh
 
+[English](./README.md)
+
 从 shadcn-nsh registry 向应用复制 styled NSH 组件的 CLI。
 
 ```sh

@@ -1,31 +1,33 @@
 # shadcn-nsh
 
-为 [Native Shell (NSH)](https://github.com/longbridge/nsh) 构建的 styled UI 体系：在 `nsh/base` 之上提供可复制进应用的组件与分发体验，模式对齐 [shadcn/ui](https://github.com/shadcn-ui/ui)。
+[中文](./README.zh.md)
 
-Agent 与贡献约定见 [`AGENTS.md`](AGENTS.md)。参考源码以 git submodule 挂在 [`references/`](references/)。
+Styled UI for [Native Shell (NSH)](https://github.com/longbridge/nsh): copy-into-app components and distribution on top of `nsh/base`, patterned after [shadcn/ui](https://github.com/shadcn-ui/ui).
 
-## 前置
+Agent and contribution rules: [`AGENTS.md`](AGENTS.md). Reference sources live as git submodules under [`references/`](references/).
+
+## Prerequisites
 
 - [Bun](https://bun.com)
-- [NSH CLI](https://nsh.dev/docs/installation)（`nsh`）— **store / release tarball**（当前 `0.4.0`），不要用 `install.sh --source`
+- [NSH CLI](https://nsh.dev/docs/installation) (`nsh`) — **store / release tarball** (currently `0.4.0`); do not use `install.sh --source`
 
-Phase-1 只包装 store CLI 已有的 `nsh/base` 导出；清单与 Phase-2 缺口见 [`packages/ui/COMPONENTS.md`](packages/ui/COMPONENTS.md)。
+Phase-1 only wraps `nsh/base` exports present on the store CLI; inventory and Phase-2 gaps: [`packages/ui/README.md`](packages/ui/README.md).
 
 ```sh
 git submodule update --init --recursive
 curl -fsSL https://nsh.dev/install.sh | sh
 bun install
-bun run nsh:bootstrap   # prepare:types（生成各 .nsh）
+bun run nsh:bootstrap   # prepare:types (generate each .nsh)
 ```
 
-## 创建 monorepo（推荐）
+## Create a monorepo (recommended)
 
-默认脚手架：`apps/web` + `packages/ui`（组件落在 packages）：
+Default scaffold: `apps/web` + `packages/ui` (components land in packages):
 
 ```sh
-# 本仓开发：
+# Developing this repo:
 bun run shadcn-nsh -- create my-app
-# 或发布后：
+# Or after publish:
 # bunx shadcn-nsh@latest create my-app
 cd my-app
 bun install
@@ -33,52 +35,52 @@ bun run check
 bun run dev
 ```
 
-继续添加组件：
+Add more components:
 
 ```sh
 bunx shadcn-nsh@latest add button -c apps/web
 ```
 
-## 在已有单 app 中使用
+## Use in an existing single app
 
-目录需已有 `nsh.json`（`nsh init`）：
+The directory must already have `nsh.json` (`nsh init`):
 
 ```sh
-# 本地 registry（开发本仓时）
+# Local registry (when developing this repo)
 bun run registry:build
-bun run registry:serve   # 另开终端
+bun run registry:serve   # separate terminal
 
 bun run shadcn-nsh -- init -c /path/to/app --registry 'http://127.0.0.1:4173/{name}.json'
 bun run shadcn-nsh -- add button -c /path/to/app --registry 'http://127.0.0.1:4173/{name}.json'
 ```
 
-push 到 GitHub 后可省略 `--registry`，默认：
+After push to GitHub you can omit `--registry`. Default:
 
 `https://raw.githubusercontent.com/aningdev/shadcn-nsh/main/public/r/{name}.json`
 
-## 本仓开发
+## Develop in this repo
 
-工具链：Bun + [Vite+](https://viteplus.dev)（`vp fmt` / `vp lint` / `vp check`）。
+Toolchain: Bun + [Vite+](https://viteplus.dev) (`vp fmt` / `vp lint` / `vp check`).
 
 ```sh
 bun run check
 bun run check:gallery
 bun run dev:gallery
 bun run dev:docs
-bun run docs:demos      # 可选：打包 docs 内 NSH web 预览
+bun run docs:demos      # optional: package NSH web previews for docs
 bun run registry:build
 ```
 
-改 `packages/ui` 或 `packages/theme` 后务必 `bun run registry:build`，再提交 `public/r`。
+After changing `packages/ui` or `packages/theme`, run `bun run registry:build` and commit `public/r`.
 
-## 布局
+## Layout
 
-| 路径                     | 包名 / 角色           | 说明                                          |
+| Path                     | Package / role        | Notes                                         |
 | ------------------------ | --------------------- | --------------------------------------------- |
-| `packages/theme`         | `@shadcn-nsh/theme`   | design tokens（作者侧 registry 源）           |
-| `packages/ui`            | `@shadcn-nsh/ui`      | styled 组件源                                 |
+| `packages/theme`         | `@shadcn-nsh/theme`   | design tokens (author-side registry source)   |
+| `packages/ui`            | `@shadcn-nsh/ui`      | styled component sources                      |
 | `packages/cli`           | `shadcn-nsh` (npm)    | `create` / `init` / `add` / `build` / `serve` |
-| `public/r`               | —                     | HTTP registry 产物                            |
-| `apps/gallery`           | `@shadcn-nsh/gallery` | 原生验真 demo                                 |
-| `apps/docs`              | `@shadcn-nsh/docs`    | Astro 文档站（可选 web iframe 预览）          |
-| `templates/nsh-monorepo` | 消费方模板            | `create` 拷贝源；**不进**根 workspaces        |
+| `public/r`               | —                     | HTTP registry artifacts                       |
+| `apps/gallery`           | `@shadcn-nsh/gallery` | native verification demos                     |
+| `apps/docs`              | `@shadcn-nsh/docs`    | Astro docs (optional web iframe previews)     |
+| `templates/nsh-monorepo` | consumer template     | `create` copy source; **not** in root workspaces |
