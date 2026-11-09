@@ -128,7 +128,7 @@ Remaining `InputProps` / `CommonProps` from `nsh/base` also pass through.
 
 | Event                 | Notes                                                           |
 | --------------------- | --------------------------------------------------------------- |
-| `onChange`            | `(text: string) => void` — store CLI `nsh` 0.3.0 base signature |
+| `onChange`            | `(text: string) => void` — store CLI `nsh` 0.4.0 base signature |
 | `onSubmit`            | `(e: { text: string }) => void` when return submits             |
 | `onFocus` / `onBlur`  | Focus gained / lost                                             |
 | `onSelectionChange`   | `{ start, end }`                                                |
@@ -144,7 +144,7 @@ Remaining `InputProps` / `CommonProps` from `nsh/base` also pass through.
 | ------------ | ------------------------------------- | ----------------------------------------------------------------------------------------- |
 | Root         | `@base-ui/react/input` + `className`  | `nsh/base` `Input` + theme tokens                                                         |
 | HTML `type`  | `type="password" \| "email" \| …`     | `masked` / `keyboardType` / `autoComplete` (no DOM `type`)                                |
-| Change event | DOM `onChange` / `event.target.value` | `onChange(text: string)` (store `nsh` 0.3.0; newer nsh website docs may show `{ value }`) |
+| Change event | DOM `onChange` / `event.target.value` | `onChange(text: string)` (store `nsh` 0.4.0; newer nsh website docs may show `{ value }`) |
 | Variants     | none on `bases/base` Input            | none — token chrome only                                                                  |
 | Class hooks  | `className` / `cn-input`              | `class` + token `style`; consumer `style` / state styles merge over defaults              |
 | File input   | `type="file"`                         | **Not in base** — omit                                                                    |

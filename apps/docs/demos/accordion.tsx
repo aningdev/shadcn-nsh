@@ -3,7 +3,7 @@ import { mount, signal, Text, View } from "nsh";
 
 import {
   Accordion,
-  AccordionContent,
+  AccordionPanel,
   AccordionHeader,
   AccordionItem,
   AccordionTrigger,
@@ -32,11 +32,11 @@ function App() {
               </Text>
             </AccordionTrigger>
           </AccordionHeader>
-          <AccordionContent>
+          <AccordionPanel>
             <Text style={{ fontSize: 13, color: colors.mutedForeground, paddingBottom: 12 }}>
               Ships in 2–3 days.
             </Text>
-          </AccordionContent>
+          </AccordionPanel>
         </AccordionItem>
         <AccordionItem value="returns">
           <AccordionHeader>
@@ -46,11 +46,11 @@ function App() {
               </Text>
             </AccordionTrigger>
           </AccordionHeader>
-          <AccordionContent>
+          <AccordionPanel>
             <Text style={{ fontSize: 13, color: colors.mutedForeground, paddingBottom: 12 }}>
               30-day return window.
             </Text>
-          </AccordionContent>
+          </AccordionPanel>
         </AccordionItem>
       </Accordion>
     </View>

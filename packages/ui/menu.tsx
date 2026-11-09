@@ -22,24 +22,24 @@ import {
 } from "./lib/open-state";
 import { popupBackdrop, popupSurface } from "./lib/popup-surface";
 
-/**
- * Composition root (shadcn `DropdownMenu`): holds open state for Trigger /
- * Content. Prefer composition; legacy `trigger` still mounts a single
- * `nsh/base` Menu with full base prop + style-hook pass-through.
- */
-export type DropdownMenuProps = Omit<BaseMenuProps, "children"> & {
+/** Composition root for `nsh/base` Menu: open state + trigger slot for Trigger / Content. */
+export type MenuProps = {
+  open?: boolean | null;
+  defaultOpen?: boolean;
   children?: JSX.Element;
+  onOpenChange?: (event: { open: boolean; reason: OpenChangeReason }) => void;
+  onOpen?: () => void;
+  onClose?: () => void;
+  onCancel?: () => void;
 };
 
 /**
- * Theme layer on `nsh/base` Menu as shadcn `DropdownMenuContent`. All base
- * props + style hooks pass through; consumer styles shallow-merge over
- * defaults. Open / trigger / lifecycle events are owned by the
- * {@link DropdownMenu} context (or the legacy single-root). Defaults mirror
- * shadcn `bases/base` (`placement`/`side` bottom, `align` start,
- * `offset`/`sideOffset` 4).
+ * Theme layer on `nsh/base` Menu as `MenuContent`. All base props + style hooks
+ * pass through; consumer styles shallow-merge over defaults. Open / trigger /
+ * lifecycle events are owned by the {@link Menu} context. Defaults: placement
+ * bottom, align start, offset 4.
  */
-export type DropdownMenuContentProps = Omit<
+export type MenuContentProps = Omit<
   BaseMenuProps,
   | "trigger"
   | "open"
@@ -54,63 +54,53 @@ export type DropdownMenuContentProps = Omit<
 };
 
 /** Opens the menu. String children render as a Button; otherwise a pressable View. */
-export type DropdownMenuTriggerProps = {
+export type MenuTriggerProps = {
   children?: string | JSX.Element;
   disabled?: boolean;
   class?: string | null;
   style?: StyleProp<ViewStyle>;
 };
 
-/**
- * Theme layer on `nsh/base` MenuItem. Store CLI `nsh` 0.3.0 has no
- * `checked` / `indicator` — when `checked` is set, the wrapper paints a
- * leading mark in children (app-layer checkbox / radio look).
- */
-export type DropdownMenuItemProps = Omit<BaseMenuItemProps, "children"> & {
-  /** App-layer check mark (store 0.3.0 MenuItem has no `checked`). */
-  checked?: boolean | null;
-  children?: JSX.Element;
-};
+/** Theme layer on `nsh/base` MenuItem — forwards `checked` / `indicator` to base. */
+export type MenuItemProps = BaseMenuItemProps;
 
-/** Checkbox-shaped item — sets `checked` on {@link DropdownMenuItem}. */
-export type DropdownMenuCheckboxItemProps = Omit<DropdownMenuItemProps, "checked"> & {
+/** Checkbox-shaped item — sets `checked` on {@link MenuItem}. */
+export type MenuCheckboxItemProps = Omit<MenuItemProps, "checked"> & {
   checked?: boolean | null;
 };
 
-/** App group wrapper (shadcn `DropdownMenuGroup`; not an `nsh/base` part). */
-export type DropdownMenuGroupProps = {
+/** App group wrapper (not an `nsh/base` part). */
+export type MenuGroupProps = {
   children?: JSX.Element;
   class?: string | null;
   style?: StyleProp<ViewStyle>;
 };
 
-/** App label text (shadcn `DropdownMenuLabel`; not an `nsh/base` part). */
-export type DropdownMenuLabelProps = {
+/** App label text (not an `nsh/base` part). */
+export type MenuLabelProps = {
   children?: string | JSX.Element;
   class?: string | null;
   style?: StyleProp<TextStyle | ViewStyle>;
 };
 
 /** Theme layer on `nsh/base` MenuSeparator. */
-export type DropdownMenuSeparatorProps = BaseMenuSeparatorProps;
+export type MenuSeparatorProps = BaseMenuSeparatorProps;
 
-/** App trailing shortcut hint (shadcn `DropdownMenuShortcut`). */
-export type DropdownMenuShortcutProps = {
+/** App trailing shortcut hint (not an `nsh/base` part). */
+export type MenuShortcutProps = {
   children?: string | JSX.Element;
   class?: string | null;
   style?: StyleProp<TextStyle | ViewStyle>;
 };
 
-/**
- * Composition root for a nested menu (shadcn `DropdownMenuSub`). Legacy
- * `trigger` still mounts a single `nsh/base` Submenu with full pass-through.
- */
-export type DropdownMenuSubProps = Omit<BaseSubmenuProps, "children"> & {
+/** Composition root for a nested `nsh/base` Submenu: trigger slot only. */
+export type MenuSubProps = {
   children?: JSX.Element;
+  disabled?: boolean;
 };
 
 /** Item that opens a submenu. String children get a chevron row. */
-export type DropdownMenuSubTriggerProps = {
+export type MenuSubTriggerProps = {
   children?: string | JSX.Element;
   disabled?: boolean;
   class?: string | null;
@@ -120,7 +110,7 @@ export type DropdownMenuSubTriggerProps = {
 };
 
 /** Nested menu body — mounts `nsh/base` Submenu with the SubTrigger slot. */
-export type DropdownMenuSubContentProps = Omit<BaseSubmenuProps, "trigger" | "children"> & {
+export type MenuSubContentProps = Omit<BaseSubmenuProps, "trigger" | "children"> & {
   children?: JSX.Element;
 };
 
@@ -135,7 +125,7 @@ const MenuContext = context<MenuContextValue | null>(null);
 
 function useMenu() {
   const ctx = MenuContext();
-  if (!ctx) throw new Error("DropdownMenu parts must be used within <DropdownMenu>");
+  if (!ctx) throw new Error("Menu parts must be used within <Menu>");
   return ctx;
 }
 
@@ -159,14 +149,7 @@ function mergeStyle<T extends ViewStyle | TextStyle>(
   return [base, consumer];
 }
 
-function bridgeOpenChange(
-  onOpenChange?: (open: boolean, reason: OpenChangeReason) => void,
-): ((event: { open: boolean; reason: string }) => void) | undefined {
-  if (!onOpenChange) return undefined;
-  return (event) => onOpenChange(event.open, event.reason as OpenChangeReason);
-}
-
-/** Popup / sheet chrome — aligned with shadcn `cn-dropdown-menu-content` padding. */
+/** Popup / sheet chrome — aligned with shadcn `cn-menu-content` padding. */
 function contentPopupChrome(): ViewStyle {
   return {
     ...popupSurface(),
@@ -229,91 +212,17 @@ function submenuChrome(): ViewStyle {
   return { minWidth: 140 };
 }
 
-function renderBaseMenu(props: BaseMenuProps) {
-  const {
-    class: className,
-    style,
-    hoverStyle,
-    activeStyle,
-    focusStyle,
-    disabledStyle,
-    popupClass,
-    popupStyle,
-    backdropClass,
-    backdropStyle,
-    placement = "bottom",
-    align = "start",
-    offset = 4,
-    ...rest
-  } = props;
-
-  return (
-    <BaseMenu
-      {...rest}
-      placement={placement}
-      align={align}
-      offset={offset}
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(undefined, style)}
-      hoverStyle={mergeStyle(undefined, hoverStyle)}
-      activeStyle={mergeStyle(undefined, activeStyle)}
-      focusStyle={mergeStyle(undefined, focusStyle)}
-      disabledStyle={mergeStyle(undefined, disabledStyle)}
-      popupClass={mergeClass(undefined, popupClass)}
-      popupStyle={mergeStyle(contentPopupChrome(), popupStyle)}
-      backdropClass={mergeClass(undefined, backdropClass)}
-      backdropStyle={mergeStyle(popupBackdrop(), backdropStyle)}
-    />
-  );
+function defaultCheckIndicator(): JSX.Element {
+  return <Text style={{ fontSize: 12, color: colors.primary }}>✓</Text>;
 }
 
-function renderBaseSubmenu(props: BaseSubmenuProps) {
-  const {
-    class: className,
-    style,
-    hoverStyle,
-    activeStyle,
-    focusStyle,
-    disabledStyle,
-    ...rest
-  } = props;
+export function Menu(props: MenuProps) {
+  const { open, defaultOpen, children, onOpenChange, onOpen, onClose, onCancel } = props;
 
-  return (
-    <BaseSubmenu
-      {...rest}
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(submenuChrome(), style)}
-      hoverStyle={mergeStyle(undefined, hoverStyle)}
-      activeStyle={mergeStyle(undefined, activeStyle)}
-      focusStyle={mergeStyle(undefined, focusStyle)}
-      disabledStyle={mergeStyle(undefined, disabledStyle)}
-    />
-  );
-}
-
-export function DropdownMenu(props: DropdownMenuProps) {
-  const { open, defaultOpen, trigger, children, onOpenChange, onOpen, onClose, onCancel, ...rest } =
-    props;
-
-  // Legacy: single-root with trigger prop and item children.
-  if (trigger != null) {
-    return renderBaseMenu({
-      ...rest,
-      open,
-      defaultOpen,
-      trigger,
-      children,
-      onOpen,
-      onClose,
-      onCancel,
-      onOpenChange,
-    });
-  }
-
-  const state = createOpenState({
+  const state = createOpenState<OpenChangeReason>({
     open,
     defaultOpen,
-    onOpenChange: bridgeOpenChange(onOpenChange),
+    onOpenChange,
   });
   const triggerSlot = createTriggerSlot();
 
@@ -332,7 +241,7 @@ export function DropdownMenu(props: DropdownMenuProps) {
   );
 }
 
-export function DropdownMenuTrigger(props: DropdownMenuTriggerProps) {
+export function MenuTrigger(props: MenuTriggerProps) {
   const ctx = useMenu();
   const { children, disabled, class: className, style } = props;
 
@@ -357,7 +266,7 @@ export function DropdownMenuTrigger(props: DropdownMenuTriggerProps) {
   return <View style={{ width: 0, height: 0 }} />;
 }
 
-export function DropdownMenuContent(props: DropdownMenuContentProps) {
+export function MenuContent(props: MenuContentProps) {
   const ctx = useMenu();
   const triggerAccessor = ctx.trigger.get();
   const {
@@ -386,7 +295,7 @@ export function DropdownMenuContent(props: DropdownMenuContentProps) {
       placement={placement}
       align={align}
       offset={offset}
-      onOpenChange={(open, reason) => ctx.setOpen(open, reason)}
+      onOpenChange={({ open, reason }) => ctx.setOpen(open, reason)}
       onOpen={ctx.onOpen}
       onClose={ctx.onClose}
       onCancel={ctx.onCancel}
@@ -406,9 +315,10 @@ export function DropdownMenuContent(props: DropdownMenuContentProps) {
   );
 }
 
-export function DropdownMenuItem(props: DropdownMenuItemProps) {
+export function MenuItem(props: MenuItemProps) {
   const {
     checked,
+    indicator,
     disabled,
     closeOnSelect,
     accessibilityLabel,
@@ -420,25 +330,25 @@ export function DropdownMenuItem(props: DropdownMenuItemProps) {
     activeStyle,
     focusStyle,
     disabledStyle,
+    indicatorClass,
+    indicatorStyle,
+    checkedStyle,
+    role,
     ...rest
   } = props;
 
-  // Store nsh 0.3.0 MenuItem has no checked/indicator — paint a mark in children.
-  const showMark = checked != null;
-  const body = showMark ? (
-    <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-      <View style={{ width: 16, height: 16, alignItems: "center", justifyContent: "center" }}>
-        {checked ? <Text style={{ fontSize: 12, color: colors.primary }}>✓</Text> : null}
-      </View>
-      {children}
-    </View>
-  ) : (
-    children
-  );
+  const resolvedIndicator =
+    indicator ?? (checked != null ? defaultCheckIndicator() : undefined);
 
   return (
     <BaseMenuItem
       {...rest}
+      checked={checked}
+      role={role}
+      indicator={resolvedIndicator}
+      indicatorClass={indicatorClass}
+      indicatorStyle={indicatorStyle}
+      checkedStyle={checkedStyle}
       disabled={disabled}
       closeOnSelect={closeOnSelect}
       accessibilityLabel={accessibilityLabel}
@@ -450,17 +360,17 @@ export function DropdownMenuItem(props: DropdownMenuItemProps) {
       focusStyle={mergeStyle(focusRing(), focusStyle)}
       disabledStyle={mergeStyle(undefined, disabledStyle)}
     >
-      {body}
+      {children}
     </BaseMenuItem>
   );
 }
 
-export function DropdownMenuCheckboxItem(props: DropdownMenuCheckboxItemProps) {
+export function MenuCheckboxItem(props: MenuCheckboxItemProps) {
   const { checked, ...rest } = props;
-  return <DropdownMenuItem {...rest} checked={checked ?? false} />;
+  return <MenuItem {...rest} checked={checked ?? false} />;
 }
 
-export function DropdownMenuGroup(props: DropdownMenuGroupProps) {
+export function MenuGroup(props: MenuGroupProps) {
   const { children, class: className, style } = props;
   return (
     <View class={mergeClass(undefined, className)} style={mergeStyle(undefined, style)}>
@@ -469,7 +379,7 @@ export function DropdownMenuGroup(props: DropdownMenuGroupProps) {
   );
 }
 
-export function DropdownMenuLabel(props: DropdownMenuLabelProps) {
+export function MenuLabel(props: MenuLabelProps) {
   const { children, class: className, style } = props;
   if (typeof children !== "string" && children != null) {
     return (
@@ -491,7 +401,7 @@ export function DropdownMenuLabel(props: DropdownMenuLabelProps) {
   );
 }
 
-export function DropdownMenuSeparator(props: DropdownMenuSeparatorProps = {}) {
+export function MenuSeparator(props: MenuSeparatorProps = {}) {
   const {
     class: className,
     style,
@@ -515,7 +425,7 @@ export function DropdownMenuSeparator(props: DropdownMenuSeparatorProps = {}) {
   );
 }
 
-export function DropdownMenuShortcut(props: DropdownMenuShortcutProps) {
+export function MenuShortcut(props: MenuShortcutProps) {
   const { children, class: className, style } = props;
   if (typeof children !== "string" && children != null) {
     return (
@@ -537,17 +447,8 @@ export function DropdownMenuShortcut(props: DropdownMenuShortcutProps) {
   );
 }
 
-export function DropdownMenuSub(props: DropdownMenuSubProps) {
-  const { trigger, children, disabled, ...rest } = props;
-
-  if (trigger != null) {
-    return renderBaseSubmenu({
-      ...rest,
-      trigger,
-      disabled,
-      children,
-    });
-  }
+export function MenuSub(props: MenuSubProps) {
+  const { children, disabled } = props;
 
   const triggerSlot = createTriggerSlot();
   return (
@@ -555,9 +456,9 @@ export function DropdownMenuSub(props: DropdownMenuSubProps) {
   );
 }
 
-export function DropdownMenuSubTrigger(props: DropdownMenuSubTriggerProps) {
+export function MenuSubTrigger(props: MenuSubTriggerProps) {
   const ctx = SubContext();
-  if (!ctx) throw new Error("DropdownMenuSubTrigger must be used within <DropdownMenuSub>");
+  if (!ctx) throw new Error("MenuSubTrigger must be used within <MenuSub>");
   const { children, disabled, class: className, style, hoverStyle, activeStyle } = props;
   const isDisabled = disabled ?? ctx.disabled;
 
@@ -592,9 +493,9 @@ export function DropdownMenuSubTrigger(props: DropdownMenuSubTriggerProps) {
   return <View style={{ width: 0, height: 0 }} />;
 }
 
-export function DropdownMenuSubContent(props: DropdownMenuSubContentProps) {
+export function MenuSubContent(props: MenuSubContentProps) {
   const ctx = SubContext();
-  if (!ctx) throw new Error("DropdownMenuSubContent must be used within <DropdownMenuSub>");
+  if (!ctx) throw new Error("MenuSubContent must be used within <MenuSub>");
   const triggerAccessor = ctx.trigger.get();
   const {
     children,

@@ -81,10 +81,10 @@
       "description": "Styled dialog wrapping nsh/base Dialog — theme tokens + Trigger / Content; full base prop pass-through."
     },
     {
-      "name": "dropdown-menu",
+      "name": "menu",
       "type": "registry:ui",
-      "title": "Dropdown Menu",
-      "description": "Styled menu wrapping nsh/base Menu — theme tokens + Trigger / Content / Item; full base prop pass-through."
+      "title": "Menu",
+      "description": "Styled menu wrapping nsh/base Menu — theme tokens + Trigger / Content / Item; composition-only."
     },
     {
       "name": "context-menu",
@@ -109,6 +109,72 @@
       "type": "registry:ui",
       "title": "Table",
       "description": "Styled table wrapping nsh/base Table parts — theme tokens + full base prop pass-through."
+    },
+    {
+      "name": "accordion",
+      "type": "registry:ui",
+      "title": "Accordion",
+      "description": "Styled accordion wrapping nsh/base Accordion — theme tokens + Header / Trigger / Panel; composition-only."
+    },
+    {
+      "name": "avatar",
+      "type": "registry:ui",
+      "title": "Avatar",
+      "description": "Styled avatar wrapping nsh/base Avatar / AvatarGroup — theme tokens + fallback."
+    },
+    {
+      "name": "combobox",
+      "type": "registry:ui",
+      "title": "Combobox",
+      "description": "Styled combobox wrapping nsh/base Combobox — theme tokens + Trigger / Content / Item; composition-only."
+    },
+    {
+      "name": "link",
+      "type": "registry:ui",
+      "title": "Link",
+      "description": "Styled link wrapping nsh/base Link — theme tokens + underline label."
+    },
+    {
+      "name": "number-input",
+      "type": "registry:ui",
+      "title": "Number Input",
+      "description": "Styled number input wrapping nsh/base NumberInput — theme tokens + stepper chrome."
+    },
+    {
+      "name": "otp-input",
+      "type": "registry:ui",
+      "title": "OTP Input",
+      "description": "Styled OTP input wrapping nsh/base OtpInput — theme tokens + cell chrome."
+    },
+    {
+      "name": "pagination",
+      "type": "registry:ui",
+      "title": "Pagination",
+      "description": "Styled pagination wrapping nsh/base Pagination — theme tokens + item chrome."
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "title": "Select",
+      "description": "Styled select wrapping nsh/base Select — theme tokens + Trigger / Content / Item; composition-only."
+    },
+    {
+      "name": "slider",
+      "type": "registry:ui",
+      "title": "Slider",
+      "description": "Styled slider wrapping nsh/base Slider — theme tokens + track/range/thumb."
+    },
+    {
+      "name": "toggle",
+      "type": "registry:ui",
+      "title": "Toggle",
+      "description": "Styled toggle wrapping nsh/base Toggle — theme tokens + pressed chrome."
+    },
+    {
+      "name": "toggle-group",
+      "type": "registry:ui",
+      "title": "Toggle Group",
+      "description": "Styled toggle group wrapping nsh/base ToggleGroup — muted container + Toggle re-export."
     }
   ]
 }

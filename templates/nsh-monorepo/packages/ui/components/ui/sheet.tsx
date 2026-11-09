@@ -1,3 +1,4 @@
+import { colors, radius } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, Text, View } from "nsh";
 import {
@@ -7,10 +8,9 @@ import {
   type SheetProps as BaseSheetProps,
 } from "nsh/base";
 
-import { createOpenState, type OpenState } from "../../lib/open-state";
-import { popupBackdrop } from "../../lib/popup-surface";
-import { colors, radius } from "../../lib/theme";
 import { Button, type ButtonVariant } from "./button";
+import { createOpenState, type OpenState } from "./lib/open-state";
+import { popupBackdrop } from "./lib/popup-surface";
 
 /**
  * Composition root (shadcn `Sheet`): holds open state for Trigger / Content.
@@ -24,7 +24,7 @@ export type SheetProps = {
   /** Default swipe-to-dismiss for Content when omitted. */
   closeOnSwipe?: boolean;
   children?: JSX.Element;
-  onOpenChange?: (open: boolean, reason: OpenChangeReason) => void;
+  onOpenChange?: (event: { open: boolean; reason: OpenChangeReason }) => void;
   onOpen?: () => void;
   onClose?: () => void;
   onCancel?: () => void;
@@ -121,13 +121,6 @@ function mergeStyle<T extends ViewStyle | TextStyle>(
   return [base, consumer];
 }
 
-function bridgeOpenChange(
-  onOpenChange?: (open: boolean, reason: OpenChangeReason) => void,
-): ((event: { open: boolean; reason: string }) => void) | undefined {
-  if (!onOpenChange) return undefined;
-  return (event) => onOpenChange(event.open, event.reason as OpenChangeReason);
-}
-
 /** Panel chrome by edge — aligned with shadcn `cn-sheet-content` / data-side. */
 function contentPopupChrome(side: Placement): ViewStyle {
   const radiusEdge = radius.control * 2;
@@ -209,10 +202,10 @@ export function Sheet(props: SheetProps) {
     onCancel,
   } = props;
 
-  const state = createOpenState({
+  const state = createOpenState<OpenChangeReason>({
     open,
     defaultOpen,
-    onOpenChange: bridgeOpenChange(onOpenChange),
+    onOpenChange,
   });
 
   return (
@@ -306,7 +299,7 @@ export function SheetContent(props: SheetContentProps) {
       open={ctx.open()}
       side={side}
       closeOnSwipe={closeOnSwipe}
-      onOpenChange={(open, reason) => ctx.setOpen(open, reason)}
+      onOpenChange={({ open, reason }) => ctx.setOpen(open, reason)}
       onOpen={ctx.onOpen}
       onClose={ctx.onClose}
       onCancel={ctx.onCancel}

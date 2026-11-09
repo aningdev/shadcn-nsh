@@ -27,7 +27,7 @@ function App() {
       }}
     >
       <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Dialog</Text>
-      <Dialog open={open()} onOpenChange={(next) => open.set(next)}>
+      <Dialog open={open()} onOpenChange={({ open: next }) => open.set(next)}>
         <DialogTrigger>Open dialog</DialogTrigger>
         <DialogContent>
           <DialogHeader>

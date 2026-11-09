@@ -1,3 +1,4 @@
+import { colors, radius } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, Text, View } from "nsh";
 import {
@@ -6,10 +7,9 @@ import {
   type DialogProps as BaseDialogProps,
 } from "nsh/base";
 
-import { createOpenState, type OpenState } from "../../lib/open-state";
-import { popupBackdrop } from "../../lib/popup-surface";
-import { colors, radius } from "../../lib/theme";
 import { Button, type ButtonVariant } from "./button";
+import { createOpenState, type OpenState } from "./lib/open-state";
+import { popupBackdrop } from "./lib/popup-surface";
 
 /**
  * Composition root (shadcn `Dialog`): holds open state for Trigger / Content.
@@ -29,7 +29,7 @@ export type DialogProps = {
   /** Default swipe-to-dismiss for Content when omitted. */
   closeOnSwipe?: boolean;
   children?: JSX.Element;
-  onOpenChange?: (open: boolean, reason: DialogChangeReason) => void;
+  onOpenChange?: (event: { open: boolean; reason: DialogChangeReason }) => void;
   onOpen?: () => void;
   onClose?: () => void;
   onCancel?: () => void;
@@ -129,13 +129,6 @@ function mergeStyle<T extends ViewStyle | TextStyle>(
   return [base, consumer];
 }
 
-function bridgeOpenChange(
-  onOpenChange?: (open: boolean, reason: DialogChangeReason) => void,
-): ((event: { open: boolean; reason: string }) => void) | undefined {
-  if (!onOpenChange) return undefined;
-  return (event) => onOpenChange(event.open, event.reason as DialogChangeReason);
-}
-
 /** Centered card chrome — aligned with shadcn `cn-dialog-content` / max-w-lg padding. */
 function contentPopupChrome(): ViewStyle {
   return {
@@ -190,10 +183,10 @@ export function Dialog(props: DialogProps) {
     onCancel,
   } = props;
 
-  const state = createOpenState({
+  const state = createOpenState<DialogChangeReason>({
     open,
     defaultOpen,
-    onOpenChange: bridgeOpenChange(onOpenChange),
+    onOpenChange,
   });
 
   return (
@@ -293,7 +286,7 @@ export function DialogContent(props: DialogContentProps) {
       closeOnEscape={closeOnEscape}
       closeOnBackdropPress={closeOnBackdropPress}
       closeOnSwipe={closeOnSwipe}
-      onOpenChange={(open, reason) => ctx.setOpen(open, reason)}
+      onOpenChange={({ open, reason }) => ctx.setOpen(open, reason)}
       onOpen={ctx.onOpen}
       onClose={ctx.onClose}
       onCancel={ctx.onCancel}

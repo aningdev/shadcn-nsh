@@ -26,7 +26,7 @@ function App() {
       }}
     >
       <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Popover</Text>
-      <Popover open={open()} onOpenChange={(next) => open.set(next)}>
+      <Popover open={open()} onOpenChange={({ open: next }) => open.set(next)}>
         <PopoverTrigger>Open popover</PopoverTrigger>
         <PopoverContent>
           <PopoverHeader>

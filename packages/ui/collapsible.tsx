@@ -14,27 +14,23 @@ import {
 } from "./lib/open-state";
 
 /**
- * Composition root (shadcn `Collapsible`): holds open state for Trigger /
- * Content. Prefer composition; legacy `content` still mounts a single
- * `nsh/base` Collapsible with full base prop + style-hook pass-through.
- * Store CLI `nsh` 0.3.0 has no `reveal` (website docs may show it).
+ * Composition root for `nsh/base` Collapsible: open state + trigger slot.
+ * Base has no open events; `onOpenChange` is composition-only.
  */
-export type CollapsibleProps = Omit<BaseCollapsibleProps, "children"> & {
-  children?: JSX.Element;
+export type CollapsibleProps = {
+  open?: boolean | null;
   /** Uncontrolled initial open (composition / invented — not on base). */
   defaultOpen?: boolean;
-  /**
-   * Open change (composition / invented — base has no collapsible events).
-   * Signature matches shadcn `bases/base` (`(open: boolean) => void`).
-   */
-  onOpenChange?: (open: boolean) => void;
+  children?: JSX.Element;
+  /** Open change (composition-only — matches nsh 0.4 event object shape). */
+  onOpenChange?: (event: { open: boolean }) => void;
 };
 
 /**
  * Theme layer on `nsh/base` Collapsible as shadcn `CollapsibleContent`.
  * All base props + style hooks pass through; consumer styles shallow-merge
- * over defaults. Open / trigger are owned by the {@link Collapsible} context
- * (or the legacy single-root). `children` become base `content`.
+ * over defaults. Open / trigger are owned by the {@link Collapsible} context.
+ * `children` become base `content`.
  */
 export type CollapsibleContentProps = Omit<
   BaseCollapsibleProps,
@@ -88,13 +84,6 @@ function rootChrome(): ViewStyle {
   };
 }
 
-function bridgeOpenChange(
-  onOpenChange?: (open: boolean) => void,
-): ((event: { open: boolean; reason: string }) => void) | undefined {
-  if (!onOpenChange) return undefined;
-  return (event) => onOpenChange(event.open);
-}
-
 function renderBaseCollapsible(props: BaseCollapsibleProps) {
   const {
     class: className,
@@ -120,22 +109,12 @@ function renderBaseCollapsible(props: BaseCollapsibleProps) {
 }
 
 export function Collapsible(props: CollapsibleProps) {
-  const { open, defaultOpen, content, children, onOpenChange, ...rest } = props;
-
-  // Legacy: single-root with content prop and trigger children.
-  if (content != null) {
-    return renderBaseCollapsible({
-      ...rest,
-      open,
-      content,
-      children,
-    });
-  }
+  const { open, defaultOpen, children, onOpenChange } = props;
 
   const state = createOpenState({
     open,
     defaultOpen,
-    onOpenChange: bridgeOpenChange(onOpenChange),
+    onOpenChange: onOpenChange ? (event) => onOpenChange({ open: event.open }) : undefined,
   });
   const triggerSlot = createTriggerSlot();
 

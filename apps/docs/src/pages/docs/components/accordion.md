@@ -1,7 +1,7 @@
 ---
 layout: ../../../layouts/Docs.astro
 title: Accordion
-description: Accordion with Item / Trigger / Content (Panel) composition.
+description: Accordion with Item / Trigger / Panel composition.
 component: true
 demo: accordion
 demoHeight: 360
@@ -21,7 +21,7 @@ import {
   AccordionItem,
   AccordionHeader,
   AccordionTrigger,
-  AccordionContent,
+  AccordionPanel,
 } from "@workspace/ui/components/ui/accordion";
 
 <Accordion value={open()} onChange={({ value }) => open.set(value)}>
@@ -29,7 +29,7 @@ import {
     <AccordionHeader>
       <AccordionTrigger>Section A</AccordionTrigger>
     </AccordionHeader>
-    <AccordionContent>Body</AccordionContent>
+    <AccordionPanel>Body</AccordionPanel>
   </AccordionItem>
 </Accordion>;
 ```
@@ -41,16 +41,16 @@ Accordion
 └── AccordionItem
     ├── AccordionHeader
     │   └── AccordionTrigger
-    └── AccordionContent  (= AccordionPanel)
+    └── AccordionPanel
 ```
 
 ## Differences
 
-| Topic        | shadcn                   | This package                                |
-| ------------ | ------------------------ | ------------------------------------------- |
-| Content name | AccordionContent         | `AccordionContent` alias + `AccordionPanel` |
-| Value        | string / string[] + type | always `string[]`; `multiple` flag          |
-| Header       | often omitted            | keep `AccordionHeader` for nsh a11y         |
+| Topic        | shadcn                   | This package                         |
+| ------------ | ------------------------ | ------------------------------------ |
+| Panel name   | AccordionContent         | `AccordionPanel` (`nsh/base` symbol) |
+| Value        | string / string[] + type | always `string[]`; `multiple` flag   |
+| Header       | often omitted            | keep `AccordionHeader` for nsh a11y  |
 
 ## Not forwarded
 

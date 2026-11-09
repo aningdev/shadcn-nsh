@@ -48,24 +48,12 @@ Combobox
     └── ComboboxItem*
 ```
 
-## Examples
-
-### Data `items`
-
-```tsx
-<Combobox
-  items={[{ value: "react", title: "React" }]}
-  value={tags()}
-  onChange={({ value }) => tags.set(value)}
-/>
-```
-
 ## Differences
 
 | Topic         | shadcn                     | This package                |
 | ------------- | -------------------------- | --------------------------- |
-| Input / chips | ComboboxInput, chips parts | internal `searchable` field |
-| Item body     | JSX                        | string label → base `items` |
+| Input / filter | ComboboxInput, chips parts | base filters as you type (`triggerButton` + `inputStyle`); no `searchable` flag |
+| Item body      | JSX                        | string label → base `items` / composition `ComboboxItem` |
 
 ## Not forwarded
 

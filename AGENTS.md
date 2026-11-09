@@ -1,10 +1,10 @@
 # AGENTS.md
 
-本仓库为 NSH 构建 **styled component-library 层**（社区/应用层）：在 `nsh/base` 的 unstyled 行为与无障碍结构之上，提供可复制进应用的品牌化组件与分发体验。角色对齐 shadcn/ui 之于 Radix。
+本仓库为 NSH 构建 **styled component-library 层**（社区/应用层）：在 `nsh/base` 的 unstyled 行为与无障碍结构之上，提供可复制进应用的品牌化组件与分发体验。分发模式对齐 shadcn/ui；行为权威仍是 `nsh/base`。
 
-公开 API 优先 **shadcn 形 Composition**（`Trigger` / `Content` / `Item` / … facade）；内部仍适配 `nsh/base` 的 value/open/items/`trigger` 模型。无法抹平的差异写进各组件 docs 的 Differences。
+产品单元是 **Styled Component**（Copy-into-app）：双主目标为品牌外观（`theme.json` / `token()`）与 registry/CLI 分发。复合控件公开 **Composition Facade**（`Trigger` / `Content` / `Item` 等角色），**家族名与 registry id 跟 `nsh/base` 符号**（如 `Menu` / `MenuTrigger` / `add menu`），不是 shadcn 的 `DropdownMenu*` / `dropdown-menu`。内部仍适配 base 的 value/open/items/`trigger` 模型；对外 **Composition-only**（不保留 legacy 单根 `trigger` 双路径）。无法抹平的差异写进各组件 docs 的 Differences。词汇见 [`GLOSSARY.md`](GLOSSARY.md)；决策见 [`docs/adr/0001-styled-component-scope-and-naming.md`](docs/adr/0001-styled-component-scope-and-naming.md)。
 
-**不做**：改 `nsh` / `nsh/base` 本身；不把 Gallery 演示样式当成可发布 API；不新增无 base 的 Extensions。
+**不做**：改 `nsh` / `nsh/base` 本身；不把 Gallery 演示样式当成可发布 API；不新增无 base 的 Extensions；不为旧 shadcn 形 registry id 提供 alias。
 
 ## References
 
@@ -73,7 +73,7 @@ TypeScript 为 **7.1**（content mapper 所需；状态仍 experimental / beta�
 
 改 theme/ui 前先保证 gallery 的 `.nsh` 已生成（`nsh check apps/gallery` / `prepare:types`）。
 
-**NSH CLI**：本仓 Phase-1 对齐 **store / GitHub release CLI**（当前 `0.3.0`）。不要用 `install.sh --source`——docs CI 与本地都装 release tarball。比 0.3.0 新的 base 导出（Accordion、Select、Link 等）已从 `@shadcn-nsh/ui` / registry / docs 拿掉，见 `packages/ui/COMPONENTS.md`。
+**NSH CLI**：本仓 Phase-1 对齐 **store / GitHub release CLI**（当前 `0.4.0`）。不要用 `install.sh --source`——docs CI 与本地都装 release tarball。仅包装该 release 已注册的 `nsh/base` 导出；清单与缺口见 `packages/ui/COMPONENTS.md`。
 
 ```sh
 curl -fsSL https://nsh.dev/install.sh | sh

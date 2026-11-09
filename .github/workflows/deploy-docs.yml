@@ -37,14 +37,14 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      # Store / GitHub release CLI (currently 0.3.0). Phase-1 UI only uses
+      # Store / GitHub release CLI (currently 0.4.0). Phase-1 UI only uses
       # nsh/base exports from this release — no cargo/source rebuild.
       - name: Cache NSH store install
         id: cache-nsh
         uses: actions/cache@v4
         with:
           path: ~/.nsh
-          key: nsh-store-${{ runner.os }}-0.3.0
+          key: nsh-store-${{ runner.os }}-0.4.0
           restore-keys: |
             nsh-store-${{ runner.os }}-
 

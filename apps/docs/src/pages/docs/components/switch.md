@@ -117,7 +117,7 @@ Remaining `SwitchProps` / `ComponentHostProps` from `nsh/base` also pass through
 
 | Event      | Notes                                                               |
 | ---------- | ------------------------------------------------------------------- |
-| `onChange` | `(checked: boolean) => void` — store CLI `nsh` 0.3.0 base signature |
+| `onChange` | `(checked: boolean) => void` — store CLI `nsh` 0.4.0 base signature |
 
 ### Sizes
 
@@ -132,7 +132,7 @@ Remaining `SwitchProps` / `ComponentHostProps` from `nsh/base` also pass through
 | ------------ | ------------------------------------------ | ----------------------------------------------------------------------------------------------- |
 | Root         | `@base-ui/react/switch` Root + Thumb       | `nsh/base` `Switch` + theme tokens; single export                                               |
 | Label        | sibling `Label` / `FieldLabel` + `htmlFor` | put label `Text` in `children`                                                                  |
-| Change event | `onCheckedChange`                          | `onChange(checked: boolean)` (store `nsh` 0.3.0; newer nsh website docs may show `{ checked }`) |
+| Change event | `onCheckedChange`                          | `onChange(checked: boolean)` (store `nsh` 0.4.0; newer nsh website docs may show `{ checked }`) |
 | Sizes        | `sm` / `default` via `data-size` + CSS     | same size names; token `trackStyle` / `thumbStyle` + travel `thumbClass`                        |
 | Class hooks  | `className` / `cn-switch*`                 | `class` + token `style` / `trackStyle` / `thumbStyle`; consumer styles merge over defaults      |
 

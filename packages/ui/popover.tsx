@@ -16,21 +16,21 @@ import {
 } from "./lib/open-state";
 import { popupSurface } from "./lib/popup-surface";
 
-/**
- * Composition root (shadcn `Popover`): holds open state for Trigger / Content.
- * Prefer composition; legacy `trigger` still mounts a single `nsh/base` Popover
- * with full base prop + style-hook pass-through.
- */
-export type PopoverProps = Omit<BasePopoverProps, "children"> & {
+/** Composition root for `nsh/base` Popover: open state + trigger slot. */
+export type PopoverProps = {
+  open?: boolean | null;
+  defaultOpen?: boolean;
   children?: JSX.Element;
+  onOpenChange?: (event: { open: boolean; reason: OpenChangeReason }) => void;
+  onOpen?: () => void;
+  onClose?: () => void;
+  onCancel?: () => void;
 };
 
 /**
- * Theme layer on `nsh/base` Popover as shadcn `PopoverContent`. All base props
- * + style hooks pass through; consumer styles shallow-merge over defaults.
- * Open / trigger / lifecycle events are owned by the {@link Popover} context
- * (or the legacy single-root). Defaults mirror shadcn `bases/base`
- * (`placement`/`side` bottom, `align` center, `offset`/`sideOffset` 4).
+ * Theme layer on `nsh/base` Popover as `PopoverContent`. Open / trigger /
+ * lifecycle events are owned by the {@link Popover} context. Defaults: placement
+ * bottom, align center, offset 4.
  */
 export type PopoverContentProps = Omit<
   BasePopoverProps,
@@ -129,70 +129,13 @@ function descriptionChrome(): TextStyle {
   return { fontSize: 13, color: colors.mutedForeground };
 }
 
-function bridgeOpenChange(
-  onOpenChange?: (open: boolean, reason: OpenChangeReason) => void,
-): ((event: { open: boolean; reason: string }) => void) | undefined {
-  if (!onOpenChange) return undefined;
-  return (event) => onOpenChange(event.open, event.reason as OpenChangeReason);
-}
-
-function renderBasePopover(props: BasePopoverProps) {
-  const {
-    class: className,
-    style,
-    hoverStyle,
-    activeStyle,
-    focusStyle,
-    disabledStyle,
-    popupClass,
-    popupStyle,
-    placement = "bottom",
-    align = "center",
-    offset = 4,
-    ...rest
-  } = props;
-
-  return (
-    <BasePopover
-      {...rest}
-      placement={placement}
-      align={align}
-      offset={offset}
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(undefined, style)}
-      hoverStyle={mergeStyle(undefined, hoverStyle)}
-      activeStyle={mergeStyle(undefined, activeStyle)}
-      focusStyle={mergeStyle(undefined, focusStyle)}
-      disabledStyle={mergeStyle(undefined, disabledStyle)}
-      popupClass={mergeClass(undefined, popupClass)}
-      popupStyle={mergeStyle(contentPopupChrome(), popupStyle)}
-    />
-  );
-}
-
 export function Popover(props: PopoverProps) {
-  const { open, defaultOpen, trigger, children, onOpenChange, onOpen, onClose, onCancel, ...rest } =
-    props;
+  const { open, defaultOpen, children, onOpenChange, onOpen, onClose, onCancel } = props;
 
-  // Legacy: single-root with trigger prop and body children.
-  if (trigger != null) {
-    return renderBasePopover({
-      ...rest,
-      open,
-      defaultOpen,
-      trigger,
-      children,
-      onOpen,
-      onClose,
-      onCancel,
-      onOpenChange,
-    });
-  }
-
-  const state = createOpenState({
+  const state = createOpenState<OpenChangeReason>({
     open,
     defaultOpen,
-    onOpenChange: bridgeOpenChange(onOpenChange),
+    onOpenChange,
   });
   const triggerSlot = createTriggerSlot();
 
@@ -263,7 +206,7 @@ export function PopoverContent(props: PopoverContentProps) {
       placement={placement}
       align={align}
       offset={offset}
-      onOpenChange={(open, reason) => ctx.setOpen(open, reason)}
+      onOpenChange={({ open, reason }) => ctx.setOpen(open, reason)}
       onOpen={ctx.onOpen}
       onClose={ctx.onClose}
       onCancel={ctx.onCancel}

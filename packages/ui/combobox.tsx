@@ -3,8 +3,9 @@ import type { JSX } from "nsh";
 import { cleanup, context, Text, View } from "nsh";
 import {
   Combobox as BaseCombobox,
+  type OpenChangeReason,
+  type SelectEntry,
   type SelectItem as SelectItemData,
-  type SelectItemState,
 } from "nsh/base";
 
 import {
@@ -15,28 +16,26 @@ import {
 } from "./lib/open-state";
 import { popupBackdrop, popupSurface } from "./lib/popup-surface";
 
-export type { SelectItemData, SelectItemState };
+export type { SelectItemData, SelectEntry };
 
-type ComboboxRootProps = {
-  items?: SelectItemData[];
+/** Composition root for `nsh/base` Combobox: value/open state + item registry + trigger slot. */
+export type ComboboxProps = {
   multiple?: boolean;
   value?: string[] | null;
   defaultValue?: string[];
   open?: boolean | null;
   defaultOpen?: boolean;
-  searchable?: boolean;
-  searchPlaceholder?: string | null;
   cleanable?: boolean;
   disabled?: boolean;
   placeholder?: string;
   accessibilityLabel?: string | null;
-  /** @deprecated Prefer `<ComboboxTrigger>`. */
-  trigger?: JSX.Element;
   empty?: JSX.Element;
   children?: JSX.Element;
   onChange?: (event: { value: string[] }) => void;
-  onOpenChange?: (event: { open: boolean; reason: string }) => void;
+  onOpenChange?: (event: { open: boolean; reason: OpenChangeReason }) => void;
 };
+
+type ComboboxRootProps = ComboboxProps;
 
 type ComboboxContextValue = {
   items: ItemRegistry<SelectItemData>;
@@ -101,8 +100,6 @@ function StyledCombobox(props: {
   defaultValue?: string[];
   open?: boolean | null;
   defaultOpen?: boolean;
-  searchable?: boolean;
-  searchPlaceholder?: string | null;
   cleanable?: boolean;
   disabled?: boolean;
   placeholder?: string;
@@ -110,7 +107,7 @@ function StyledCombobox(props: {
   trigger?: JSX.Element;
   empty?: JSX.Element;
   onChange?: (event: { value: string[] }) => void;
-  onOpenChange?: (event: { open: boolean; reason: string }) => void;
+  onOpenChange?: (event: { open: boolean; reason: OpenChangeReason }) => void;
 }) {
   const label = () => {
     const values = props.value ?? [];
@@ -156,16 +153,15 @@ function StyledCombobox(props: {
       defaultValue={props.defaultValue}
       open={props.open}
       defaultOpen={props.defaultOpen}
-      searchable={props.searchable ?? true}
-      searchPlaceholder={props.searchPlaceholder}
       cleanable={props.cleanable}
       disabled={props.disabled}
       accessibilityLabel={props.accessibilityLabel}
       offset={4}
-      trigger={trigger}
+      placeholder={props.placeholder}
+      triggerButton={trigger}
       empty={props.empty}
       onChange={props.onChange}
-      onOpenChange={props.onOpenChange as never}
+      onOpenChange={props.onOpenChange}
       popupStyle={popupSurface()}
       backdropStyle={popupBackdrop()}
       listStyle={{ maxHeight: 240 }}
@@ -176,70 +172,49 @@ function StyledCombobox(props: {
         fontSize: 14,
         color: colors.foreground,
       }}
-      searchStyle={{
-        height: 32,
-        margin: 4,
-        paddingHorizontal: 8,
-        borderRadius: 6,
+      inputStyle={{
+        height: 36,
+        paddingHorizontal: 12,
+        borderRadius: radius.control,
         borderWidth: 1,
         borderColor: colors.input,
+        backgroundColor: colors.background,
         fontSize: 14,
         color: colors.foreground,
+        ...focusRing(),
       }}
-      focusStyle={focusRing()}
-      renderItem={(item: SelectItemState) => (
-        <View
-          style={{
-            height: 32,
-            paddingHorizontal: 8,
-            borderRadius: 6,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            backgroundColor: item.highlighted ? colors.accent : "transparent",
-            opacity: item.disabled ? 0.4 : 1,
-          }}
-        >
-          <Text
+      renderItem={(item: SelectEntry) => {
+        const selected = (props.value ?? []).includes(item.value);
+        return (
+          <View
             style={{
-              fontSize: 14,
-              fontWeight: item.selected ? "600" : "400",
-              color: colors.foreground,
+              height: 32,
+              paddingHorizontal: 8,
+              borderRadius: 6,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              opacity: item.disabled ? 0.4 : 1,
             }}
           >
-            {item.title}
-          </Text>
-          {item.selected ? <Text style={{ fontSize: 12, color: colors.primary }}>✓</Text> : null}
-        </View>
-      )}
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: selected ? "600" : "400",
+                color: colors.foreground,
+              }}
+            >
+              {item.title}
+            </Text>
+            {selected ? <Text style={{ fontSize: 12, color: colors.primary }}>✓</Text> : null}
+          </View>
+        );
+      }}
     />
   );
 }
 
 export function Combobox(props: ComboboxRootProps) {
-  if (props.items) {
-    return (
-      <StyledCombobox
-        items={props.items}
-        multiple={props.multiple}
-        value={props.value}
-        defaultValue={props.defaultValue}
-        open={props.open}
-        defaultOpen={props.defaultOpen}
-        searchable={props.searchable}
-        searchPlaceholder={props.searchPlaceholder}
-        cleanable={props.cleanable}
-        disabled={props.disabled}
-        placeholder={props.placeholder}
-        accessibilityLabel={props.accessibilityLabel}
-        trigger={props.trigger}
-        empty={props.empty}
-        onChange={props.onChange}
-        onOpenChange={props.onOpenChange}
-      />
-    );
-  }
-
   const items = createItemRegistry<SelectItemData>([]);
   const trigger = createTriggerSlot();
   const empty = createTriggerSlot();
@@ -318,8 +293,6 @@ export function ComboboxContent(props: { children?: JSX.Element }) {
         defaultValue={root.defaultValue}
         open={root.open}
         defaultOpen={root.defaultOpen}
-        searchable={root.searchable}
-        searchPlaceholder={root.searchPlaceholder}
         cleanable={root.cleanable}
         disabled={root.disabled}
         placeholder={root.placeholder}

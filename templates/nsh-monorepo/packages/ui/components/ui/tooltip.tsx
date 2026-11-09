@@ -1,3 +1,4 @@
+import { colors, radius } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, Text, View } from "nsh";
 import {
@@ -6,22 +7,17 @@ import {
   type TooltipProps as BaseTooltipProps,
 } from "nsh/base";
 
+import { Button } from "./button";
 import {
   createOpenState,
   createTriggerSlot,
   type OpenState,
   type TriggerSlot,
-} from "../../lib/open-state";
-import { colors, radius } from "../../lib/theme";
-import { Button } from "./button";
+} from "./lib/open-state";
 
-/**
- * Composition root (shadcn `Tooltip`) **or** string-label bubble for host
- * `tooltip={…}`. Prefer composition; string / standalone Content still mount a
- * single `nsh/base` Tooltip with full base prop + style-hook pass-through.
- */
+/** Composition root for `nsh/base` Tooltip: Trigger + Content only. */
 export type TooltipProps = Omit<BaseTooltipProps, "children"> & {
-  children?: string | JSX.Element;
+  children?: JSX.Element;
 };
 
 /**
@@ -121,13 +117,6 @@ function labelChrome(): TextStyle {
   return { fontSize: 12, color: colors.background };
 }
 
-function bridgeOpenChange(
-  onOpenChange?: (open: boolean, reason: OpenChangeReason) => void,
-): ((event: { open: boolean; reason: string }) => void) | undefined {
-  if (!onOpenChange) return undefined;
-  return (event) => onOpenChange(event.open, event.reason as OpenChangeReason);
-}
-
 function wrapLabel(children?: string | JSX.Element) {
   if (typeof children === "string") {
     return <Text style={labelChrome()}>{children}</Text>;
@@ -169,18 +158,8 @@ function renderBaseTooltip(props: BaseTooltipProps) {
 }
 
 /**
- * Composition root (Trigger + Content) **or** string-label bubble for `tooltip={…}` hosts.
- *
- * ```tsx
- * // Host prop (bubble)
- * <View tooltip={<Tooltip>Add item</Tooltip>} />
- *
- * // Composition
- * <Tooltip>
- *   <TooltipTrigger>Hint</TooltipTrigger>
- *   <TooltipContent>Details</TooltipContent>
- * </Tooltip>
- * ```
+ * Composition root (Trigger + Content). For host `tooltip={…}`, use
+ * {@link TooltipContent} standalone.
  */
 export function Tooltip(props: TooltipProps) {
   const {
@@ -196,31 +175,12 @@ export function Tooltip(props: TooltipProps) {
     margin,
     delay,
     disabled,
-    ...rest
   } = props;
 
-  if (typeof children === "string") {
-    return renderBaseTooltip({
-      ...rest,
-      open,
-      defaultOpen,
-      placement,
-      align,
-      offset,
-      margin,
-      delay,
-      disabled,
-      onOpenChange,
-      onOpen,
-      onClose,
-      children: wrapLabel(children),
-    });
-  }
-
-  const state = createOpenState({
+  const state = createOpenState<OpenChangeReason>({
     open,
     defaultOpen,
-    onOpenChange: bridgeOpenChange(onOpenChange),
+    onOpenChange,
   });
 
   return (
@@ -252,7 +212,6 @@ function TooltipAnchor() {
   if (!ctx) return <View style={{ width: 0, height: 0 }} />;
   const triggerAccessor = ctx.trigger.get();
   const contentProps = ctx.content.get();
-  // No Trigger registered → treat as legacy bubble with element children already rendered above.
   if (!triggerAccessor) return <View style={{ width: 0, height: 0 }} />;
 
   const {
@@ -286,9 +245,9 @@ function TooltipAnchor() {
     margin: margin ?? ctx.margin,
     delay: delay ?? ctx.delay ?? providerDelay,
     disabled: disabled ?? ctx.disabled,
-    onOpenChange: (next, reason) => {
-      ctx.setOpen(next, reason);
-      onOpenChange?.(next, reason);
+    onOpenChange: (event) => {
+      ctx.setOpen(event.open, event.reason);
+      onOpenChange?.(event);
     },
     onOpen: onOpen ?? ctx.onOpen,
     onClose: onClose ?? ctx.onClose,

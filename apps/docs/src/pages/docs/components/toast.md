@@ -7,7 +7,7 @@ demo: toast
 demoHeight: 480
 ---
 
-[`nsh/base`](https://nsh.dev/modules/nsh-base) owns toast lifecycle (`ToastManager`), stack layout / expand-on-hover (`ToastStack`), swipe-to-dismiss, Escape / back, and the alert role — unstyled on every platform. This package is the styled layer on top: card chrome, theme tokens, and a sonner-shaped `toast()` + `<Toaster />` convenience over those primitives, the same role a community library plays above `nsh/base`. A [`Toast`](https://nsh.dev/elements/toast) is a short message over the app; mount `<Toaster />` once and call `toast()` from anywhere. Store CLI `nsh` 0.3.0 `onExpandedChange` is `(expanded: boolean) => void` (newer website samples may show an object event).
+[`nsh/base`](https://nsh.dev/modules/nsh-base) owns toast lifecycle (`ToastManager`), stack layout / expand-on-hover (`ToastStack`), swipe-to-dismiss, Escape / back, and the alert role — unstyled on every platform. This package is the styled layer on top: card chrome, theme tokens, and a sonner-shaped `toast()` + `<Toaster />` convenience over those primitives, the same role a community library plays above `nsh/base`. A [`Toast`](https://nsh.dev/elements/toast) is a short message over the app; mount `<Toaster />` once and call `toast()` from anywhere. Store CLI `nsh` 0.4.0 `onExpandedChange` is `(expanded: boolean) => void` (newer website samples may show an object event).
 
 ## Install
 
@@ -121,7 +121,7 @@ Requires `<Toaster />` mounted (starts the lifecycle tick).
 
 | Event              | Notes                                                                                                       |
 | ------------------ | ----------------------------------------------------------------------------------------------------------- |
-| `onExpandedChange` | `(expanded: boolean) => void` — store CLI `nsh` 0.3.0 (pointer / finger expands the stack; pauses timeouts) |
+| `onExpandedChange` | `(expanded: boolean) => void` — store CLI `nsh` 0.4.0 (pointer / finger expands the stack; pauses timeouts) |
 | `onCancel`         | `() => void` — Escape / back; default dismisses the newest toast                                            |
 
 ### `Toast` Props
@@ -153,7 +153,7 @@ Remaining `ToastProps` / `ComponentHostProps` from `nsh/base` also pass through.
 | `style`                                                       | `StyleProp<ViewStyle>`        | —            | Merged over stack chrome (`gap` / `maxWidth`) |
 | `hoverStyle` / `activeStyle` / `focusStyle` / `disabledStyle` | `StyleProp<ViewStyle>`        | —            | Forwarded / merge                             |
 | `children`                                                    | `JSX.Element`                 | —            | Toast items, oldest first                     |
-| `onExpandedChange`                                            | `(expanded: boolean) => void` | —            | Store 0.3.0 signature                         |
+| `onExpandedChange`                                            | `(expanded: boolean) => void` | —            | Store 0.4.0 signature                         |
 | `onCancel`                                                    | `() => void`                  | —            | Escape / back                                 |
 
 Remaining `ToastStackProps` / `ComponentHostProps` from `nsh/base` also pass through.
@@ -172,8 +172,8 @@ Re-exported from `nsh/base` unchanged (`push` / `dismiss` / `dismissAll` / `adva
 | Placement          | CSS viewport / sonner `position`                                | `Anchor` on `ToastStack` / `Toaster` (`topRight`, `bottomCenter`, …)                             |
 | Expand             | Base UI data-expanded                                           | `ToastStack` expand-on-hover / finger; pause via `advance(expanded)`                             |
 | Class hooks        | `className` / `cn-toast*`                                       | `class` + token `style`; consumer styles merge over defaults                                     |
-| `onExpandedChange` | —                                                               | store `nsh` 0.3.0 `(expanded: boolean)`; newer website samples may show `{ expanded }`           |
+| `onExpandedChange` | —                                                               | store `nsh` 0.4.0 `(expanded: boolean)`; newer website samples may show `{ expanded }`           |
 
 ## Not forwarded
 
-None for store CLI `nsh` 0.3.0 `Toast` / `ToastStack` props — all are forwarded. The wrapper only applies card / stack / Overlay chrome, sonner-shaped `toast()` + `Toaster`, convenience `title` / `description`, default enter / exit / swipe classes, and merges defaults under consumer style hooks (`class` concatenates).
+None for store CLI `nsh` 0.4.0 `Toast` / `ToastStack` props — all are forwarded. The wrapper only applies card / stack / Overlay chrome, sonner-shaped `toast()` + `Toaster`, convenience `title` / `description`, default enter / exit / swipe classes, and merges defaults under consumer style hooks (`class` concatenates).

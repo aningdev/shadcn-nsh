@@ -18,13 +18,22 @@ function App() {
     >
       <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Radio Group</Text>
       <RadioGroup>
-        <RadioGroupItem checked={radio() === "a"} onChange={() => radio.set("a")}>
+        <RadioGroupItem
+          checked={radio() === "a"}
+          onChange={({ checked }) => checked && radio.set("a")}
+        >
           <Text style={{ fontSize: 14, color: colors.foreground }}>Option A</Text>
         </RadioGroupItem>
-        <RadioGroupItem checked={radio() === "b"} onChange={() => radio.set("b")}>
+        <RadioGroupItem
+          checked={radio() === "b"}
+          onChange={({ checked }) => checked && radio.set("b")}
+        >
           <Text style={{ fontSize: 14, color: colors.foreground }}>Option B</Text>
         </RadioGroupItem>
-        <RadioGroupItem checked={radio() === "c"} onChange={() => radio.set("c")}>
+        <RadioGroupItem
+          checked={radio() === "c"}
+          onChange={({ checked }) => checked && radio.set("c")}
+        >
           <Text style={{ fontSize: 14, color: colors.foreground }}>Option C</Text>
         </RadioGroupItem>
       </RadioGroup>

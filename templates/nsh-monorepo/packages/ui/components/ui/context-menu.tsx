@@ -11,45 +11,44 @@ import {
   createTriggerSlot,
   type OpenState,
   type TriggerSlot,
-} from "../../lib/open-state";
-import { popupBackdrop, popupSurface } from "../../lib/popup-surface";
+} from "./lib/open-state";
+import { popupBackdrop, popupSurface } from "./lib/popup-surface";
 
 export {
-  DropdownMenuCheckboxItem as ContextMenuCheckboxItem,
-  DropdownMenuGroup as ContextMenuGroup,
-  DropdownMenuItem as ContextMenuItem,
-  DropdownMenuLabel as ContextMenuLabel,
-  DropdownMenuSeparator as ContextMenuSeparator,
-  DropdownMenuShortcut as ContextMenuShortcut,
-  DropdownMenuSub as ContextMenuSub,
-  DropdownMenuSubContent as ContextMenuSubContent,
-  DropdownMenuSubTrigger as ContextMenuSubTrigger,
-  type DropdownMenuCheckboxItemProps as ContextMenuCheckboxItemProps,
-  type DropdownMenuGroupProps as ContextMenuGroupProps,
-  type DropdownMenuItemProps as ContextMenuItemProps,
-  type DropdownMenuLabelProps as ContextMenuLabelProps,
-  type DropdownMenuSeparatorProps as ContextMenuSeparatorProps,
-  type DropdownMenuShortcutProps as ContextMenuShortcutProps,
-  type DropdownMenuSubContentProps as ContextMenuSubContentProps,
-  type DropdownMenuSubProps as ContextMenuSubProps,
-  type DropdownMenuSubTriggerProps as ContextMenuSubTriggerProps,
-} from "./dropdown-menu";
+  MenuCheckboxItem as ContextMenuCheckboxItem,
+  MenuGroup as ContextMenuGroup,
+  MenuItem as ContextMenuItem,
+  MenuLabel as ContextMenuLabel,
+  MenuSeparator as ContextMenuSeparator,
+  MenuShortcut as ContextMenuShortcut,
+  MenuSub as ContextMenuSub,
+  MenuSubContent as ContextMenuSubContent,
+  MenuSubTrigger as ContextMenuSubTrigger,
+  type MenuCheckboxItemProps as ContextMenuCheckboxItemProps,
+  type MenuGroupProps as ContextMenuGroupProps,
+  type MenuItemProps as ContextMenuItemProps,
+  type MenuLabelProps as ContextMenuLabelProps,
+  type MenuSeparatorProps as ContextMenuSeparatorProps,
+  type MenuShortcutProps as ContextMenuShortcutProps,
+  type MenuSubContentProps as ContextMenuSubContentProps,
+  type MenuSubProps as ContextMenuSubProps,
+  type MenuSubTriggerProps as ContextMenuSubTriggerProps,
+} from "./menu";
 
-/**
- * Composition root (shadcn `ContextMenu`): holds open state for Trigger /
- * Content. Prefer composition; legacy `trigger` still mounts a single
- * `nsh/base` ContextMenu with full base prop + style-hook pass-through.
- */
-export type ContextMenuProps = Omit<BaseContextMenuProps, "children"> & {
+/** Composition root for `nsh/base` ContextMenu: open state + trigger slot. */
+export type ContextMenuProps = {
+  open?: boolean | null;
+  disabled?: boolean;
   children?: JSX.Element;
+  onOpenChange?: (event: { open: boolean; reason: OpenChangeReason }) => void;
+  onOpen?: () => void;
+  onClose?: () => void;
+  onCancel?: () => void;
 };
 
 /**
- * Theme layer on `nsh/base` ContextMenu as shadcn `ContextMenuContent`. All
- * base props + style hooks pass through; consumer styles shallow-merge over
- * defaults. Open / trigger / lifecycle events are owned by the
- * {@link ContextMenu} context (or the legacy single-root). Default `offset`
- * is `4` (gap from the pointer / long-press target).
+ * Theme layer on `nsh/base` ContextMenu as `ContextMenuContent`. Open / trigger /
+ * lifecycle events are owned by the {@link ContextMenu} context. Default offset 4.
  */
 export type ContextMenuContentProps = Omit<
   BaseContextMenuProps,
@@ -98,13 +97,6 @@ function mergeStyle(
   return [base, consumer];
 }
 
-function bridgeOpenChange(
-  onOpenChange?: (open: boolean, reason: OpenChangeReason) => void,
-): ((event: { open: boolean; reason: string }) => void) | undefined {
-  if (!onOpenChange) return undefined;
-  return (event) => onOpenChange(event.open, event.reason as OpenChangeReason);
-}
-
 /** Popup / sheet chrome — aligned with menu surface padding. */
 function contentPopupChrome(): ViewStyle {
   return {
@@ -113,62 +105,12 @@ function contentPopupChrome(): ViewStyle {
   };
 }
 
-function renderBaseContextMenu(props: BaseContextMenuProps) {
-  const {
-    class: className,
-    style,
-    hoverStyle,
-    activeStyle,
-    focusStyle,
-    disabledStyle,
-    popupClass,
-    popupStyle,
-    backdropClass,
-    backdropStyle,
-    offset = 4,
-    ...rest
-  } = props;
-
-  return (
-    <BaseContextMenu
-      {...rest}
-      offset={offset}
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(undefined, style)}
-      hoverStyle={mergeStyle(undefined, hoverStyle)}
-      activeStyle={mergeStyle(undefined, activeStyle)}
-      focusStyle={mergeStyle(undefined, focusStyle)}
-      disabledStyle={mergeStyle(undefined, disabledStyle)}
-      popupClass={mergeClass(undefined, popupClass)}
-      popupStyle={mergeStyle(contentPopupChrome(), popupStyle)}
-      backdropClass={mergeClass(undefined, backdropClass)}
-      backdropStyle={mergeStyle(popupBackdrop(), backdropStyle)}
-    />
-  );
-}
-
 export function ContextMenu(props: ContextMenuProps) {
-  const { open, disabled, trigger, children, onOpenChange, onOpen, onClose, onCancel, ...rest } =
-    props;
+  const { open, disabled, children, onOpenChange, onOpen, onClose, onCancel } = props;
 
-  // Legacy: single-root with trigger prop and item children.
-  if (trigger != null) {
-    return renderBaseContextMenu({
-      ...rest,
-      open,
-      disabled,
-      trigger,
-      children,
-      onOpen,
-      onClose,
-      onCancel,
-      onOpenChange,
-    });
-  }
-
-  const state = createOpenState({
+  const state = createOpenState<OpenChangeReason>({
     open,
-    onOpenChange: bridgeOpenChange(onOpenChange),
+    onOpenChange,
   });
   const triggerSlot = createTriggerSlot();
 
@@ -231,7 +173,7 @@ export function ContextMenuContent(props: ContextMenuContentProps) {
       disabled={ctx.disabled}
       trigger={(triggerAccessor?.() as JSX.Element) ?? <View />}
       offset={offset}
-      onOpenChange={(open, reason) => ctx.setOpen(open, reason)}
+      onOpenChange={({ open, reason }) => ctx.setOpen(open, reason)}
       onOpen={ctx.onOpen}
       onClose={ctx.onClose}
       onCancel={ctx.onCancel}

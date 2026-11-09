@@ -7,9 +7,9 @@ Agent 与贡献约定见 [`AGENTS.md`](AGENTS.md)。参考源码以 git submodul
 ## 前置
 
 - [Bun](https://bun.com)
-- [NSH CLI](https://nsh.dev/docs/installation)（`nsh`）— **store / release tarball**（当前 `0.3.0`），不要用 `install.sh --source`
+- [NSH CLI](https://nsh.dev/docs/installation)（`nsh`）— **store / release tarball**（当前 `0.4.0`），不要用 `install.sh --source`
 
-Phase-1 只包装 store CLI 已有的 `nsh/base` 导出。比 0.3.0 新的组件（Accordion、Select、Link 等）暂不进 registry，见 [`packages/ui/COMPONENTS.md`](packages/ui/COMPONENTS.md)。
+Phase-1 只包装 store CLI 已有的 `nsh/base` 导出；清单与 Phase-2 缺口见 [`packages/ui/COMPONENTS.md`](packages/ui/COMPONENTS.md)。
 
 ```sh
 git submodule update --init --recursive

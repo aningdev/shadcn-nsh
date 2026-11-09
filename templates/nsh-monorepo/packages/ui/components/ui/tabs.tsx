@@ -58,7 +58,7 @@ export type TabsContentProps = {
 };
 
 /**
- * Theme layer on `nsh/base` Tab for direct / legacy use (no composition
+ * Theme layer on the `nsh/base` {@link Tab} symbol for direct use (no composition
  * `value`). Prefer {@link TabsTrigger} inside {@link TabsList}. All base props
  * + style hooks pass through; consumer styles shallow-merge over defaults.
  */
@@ -126,7 +126,7 @@ function listChrome(variant: TabsListVariant, orientation: "horizontal" | "verti
   };
 }
 
-/** Pill indicator substitute on the selected tab (store CLI 0.3.0 has no list indicator). */
+/** Pill indicator substitute on the selected tab (wrapper chrome; not a base list indicator). */
 function triggerSelectedChrome(variant: TabsListVariant): ViewStyle {
   if (variant === "line") {
     return {
@@ -282,10 +282,7 @@ export function TabsTrigger(props: TabsTriggerProps) {
   );
 }
 
-/**
- * Direct / legacy `nsh/base` Tab with token chrome.
- * @deprecated Prefer `TabsTrigger` inside `TabsList`.
- */
+/** `nsh/base` Tab with token chrome; for composition layouts prefer `TabsTrigger`. */
 export function Tab(props: TabProps) {
   const {
     class: className,

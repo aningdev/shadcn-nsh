@@ -164,7 +164,7 @@ Remaining `TableProps` / `ComponentHostProps` from `nsh/base` also pass through 
 
 ### Events
 
-None on store CLI `nsh` 0.3.0 Table parts — layout / a11y only.
+None on store CLI `nsh` 0.4.0 Table parts — layout / a11y only.
 
 ### `TableHeader` / `TableBody` / `TableFooter` Props
 
@@ -218,4 +218,4 @@ Base already lays the row out as a flex row; remaining `TableRowProps` / `Compon
 
 ## Not forwarded
 
-None for store CLI `nsh` 0.3.0 Table part props — all are forwarded. The wrapper only applies theme chrome (border / muted bands / row hover / cell padding) and merges defaults under consumer style hooks (`class` concatenates).
+None for store CLI `nsh` 0.4.0 Table part props — all are forwarded. The wrapper only applies theme chrome (border / muted bands / row hover / cell padding) and merges defaults under consumer style hooks (`class` concatenates).

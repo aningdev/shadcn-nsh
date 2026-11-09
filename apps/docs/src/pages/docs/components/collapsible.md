@@ -7,7 +7,7 @@ demo: collapsible
 demoHeight: 300
 ---
 
-[`nsh/base`](https://nsh.dev/modules/nsh-base) owns expand / collapse of the `content` slot and leaves the trigger and look to the app — unstyled on every platform. This package is the styled layer on top: a shadcn-shaped `Collapsible` / `CollapsibleTrigger` / `CollapsibleContent` tree, region chrome, and theme tokens, the same role a community library plays above `nsh/base`. A [`Collapsible`](https://nsh.dev/elements/collapsible) shows its content after the trigger while open. Store CLI `nsh` 0.3.0 has no `reveal` spring (website docs may show it) — open / close is instant.
+[`nsh/base`](https://nsh.dev/modules/nsh-base) owns expand / collapse of the `content` slot and leaves the trigger and look to the app — unstyled on every platform. This package is the styled layer on top: a shadcn-shaped `Collapsible` / `CollapsibleTrigger` / `CollapsibleContent` tree, region chrome, and theme tokens, the same role a community library plays above `nsh/base`. A [`Collapsible`](https://nsh.dev/elements/collapsible) shows its content after the trigger while open. Store `nsh` 0.4.0 supports base `reveal` on `CollapsibleContent` (height spring); off by default for instant show/hide.
 
 ## Install
 
@@ -75,32 +75,17 @@ Wrapper region chrome (`gap: 8`), then consumer styles shallow-merge on top (con
 </CollapsibleContent>
 ```
 
-## Legacy content
-
-```tsx
-<Collapsible open={open()} content={<Text>Body in the content slot</Text>} style={{ gap: 12 }}>
-  <Button onPress={() => open.set(!open())}>Toggle</Button>
-</Collapsible>
-```
-
 ## API
 
 ### `Collapsible` Props
 
-| Prop            | Type                   | Default | Notes                                                                                 |
-| --------------- | ---------------------- | ------- | ------------------------------------------------------------------------------------- |
-| `open`          | `boolean`              | —       | Controlled open (composition root or legacy single-root)                              |
-| `defaultOpen`   | `boolean`              | `false` | Uncontrolled initial open (composition invents this — not on base)                    |
-| `content`       | `JSX.Element`          | —       | **Deprecated** legacy single-root; prefer `CollapsibleTrigger` + `CollapsibleContent` |
-| `children`      | `JSX.Element`          | —       | Composition parts, or trigger children when `content` is set                          |
-| `class`         | `string`               | —       | Host class; concatenated (legacy)                                                     |
-| `style`         | `StyleProp<ViewStyle>` | —       | Host style merge over region chrome (legacy)                                          |
-| `hoverStyle`    | `StyleProp<ViewStyle>` | —       | Forwarded / merge (legacy)                                                            |
-| `activeStyle`   | `StyleProp<ViewStyle>` | —       | Forwarded / merge (legacy)                                                            |
-| `focusStyle`    | `StyleProp<ViewStyle>` | —       | Forwarded / merge (legacy)                                                            |
-| `disabledStyle` | `StyleProp<ViewStyle>` | —       | Forwarded / merge (legacy)                                                            |
+| Prop          | Type              | Default | Notes                                                     |
+| ------------- | ----------------- | ------- | --------------------------------------------------------- |
+| `open`        | `boolean \| null` | —       | Controlled open state                                     |
+| `defaultOpen` | `boolean`         | `false` | Uncontrolled initial open (composition — not on base)     |
+| `children`    | `JSX.Element`     | —       | `CollapsibleTrigger`, `CollapsibleContent`                |
 
-Remaining `CollapsibleProps` / `ComponentHostProps` from `nsh/base` also pass through on the legacy single-root.
+Host chrome and style hooks belong on `CollapsibleContent`, not the root.
 
 ### Events
 
@@ -143,10 +128,10 @@ Remaining presentation `CollapsibleProps` / `ComponentHostProps` from `nsh/base`
 | Parts       | Root / Trigger / Content (Panel)                  | same names; Content is `nsh/base` `Collapsible`                                                       |
 | Open state  | Root owns `open` / `defaultOpen` / `onOpenChange` | same on composition root; base itself has no events — wrapper invents `defaultOpen` / `onOpenChange`  |
 | Trigger     | Base UI Trigger (`render` / asChild)              | string → `Button`; else pressable `View` with `accessibilityState.expanded`                           |
-| Reveal      | CSS height / data-state animate                   | store `nsh` 0.3.0 has **no** `reveal`; open / close is instant (newer website docs may show `reveal`) |
-| Legacy      | —                                                 | deprecated `content` prop still mounts a single-root `Collapsible`                                    |
+| Reveal      | CSS height / data-state animate                   | pass `reveal` on `CollapsibleContent` for base height spring (`reveal={true}`)                        |
+| Composition-only | optional single-root in some shadcn ports      | root holds open state only — use `CollapsibleTrigger` + `CollapsibleContent`                          |
 | Class hooks | `className` / `cn-collapsible*`                   | `class` + token `style`; consumer styles merge over defaults                                          |
 
 ## Not forwarded
 
-None for store CLI `nsh` 0.3.0 `Collapsible` props — all are forwarded on Content (and on the legacy single-root). The wrapper only applies region chrome (`gap: 8`), composition open state / Trigger, and merges defaults under consumer style hooks (`class` concatenates). Newer `nsh` website `reveal` is absent from 0.3.0 and therefore not part of this surface.
+None for store CLI `nsh` 0.4.0 `Collapsible` props — all are forwarded on Content (open / trigger owned by the composition root). The wrapper only applies region chrome (`gap: 8`), composition open state / Trigger, and merges defaults under consumer style hooks (`class` concatenates). 

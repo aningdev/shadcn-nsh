@@ -54,21 +54,6 @@ Select
 
 ## Examples
 
-### Data `items` (no parts)
-
-Still supported when you already have an array — skips the composition registry:
-
-```tsx
-<Select
-  value={fruit()}
-  onChange={({ value }) => fruit.set(value)}
-  items={[
-    { value: "apple", title: "Apple" },
-    { value: "banana", title: "Banana" },
-  ]}
-/>
-```
-
 ### Searchable
 
 ```tsx
@@ -90,8 +75,8 @@ Still supported when you already have an array — skips the composition registr
 | Prop                                    | Type                                         | Notes                                               |
 | --------------------------------------- | -------------------------------------------- | --------------------------------------------------- |
 | `value` / `defaultValue`                | `string \| null`                             |                                                     |
-| `items`                                 | `SelectItem[]`                               | Data mode; when set, composition parts are not used |
 | `searchable` / `cleanable` / `disabled` | `boolean`                                    |                                                     |
+| `onOpenChange`                          | `(event: { open: boolean; reason: OpenChangeReason }) => void` | Root open state |
 | `onChange`                              | `(event: { value: string \| null }) => void` |                                                     |
 
 `SelectItem` children must be **strings** (become `title` in the base items model).

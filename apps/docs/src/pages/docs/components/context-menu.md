@@ -7,7 +7,7 @@ demo: context-menu
 demoHeight: 480
 ---
 
-[`nsh/base`](https://nsh.dev/modules/nsh-base) owns open state, secondary-click / long-press open, focus, Escape / press-outside / backdrop dismiss, desktop popup vs phone sheet presentation, cascading `Submenu`, and the popup / backdrop hosts — unstyled on every platform. This package is the styled layer on top: a shadcn-shaped `ContextMenu` / `ContextMenuTrigger` / `ContextMenuContent` tree (plus Item / CheckboxItem / Group / Label / Separator / Shortcut / Sub), popup surface chrome, and theme tokens, the same role a community library plays above `nsh/base`. A [`ContextMenu`](https://nsh.dev/elements/menu) is the menu that opens about its trigger — right-click at the pointer on desktop, or a held finger as a sheet on touch. Store CLI `nsh` 0.3.0 MenuItem has no `checked` / `indicator` — the wrapper paints a leading mark when `checked` is set; newer website docs may show native checkable items.
+[`nsh/base`](https://nsh.dev/modules/nsh-base) owns open state, secondary-click / long-press open, focus, Escape / press-outside / backdrop dismiss, desktop popup vs phone sheet presentation, cascading `Submenu`, and the popup / backdrop hosts — unstyled on every platform. This package is the styled layer on top: a shadcn-shaped `ContextMenu` / `ContextMenuTrigger` / `ContextMenuContent` tree (plus Item / CheckboxItem / Group / Label / Separator / Shortcut / Sub), popup surface chrome, and theme tokens, the same role a community library plays above `nsh/base`. A [`ContextMenu`](https://nsh.dev/elements/menu) is the menu that opens about its trigger — right-click at the pointer on desktop, or a held finger as a sheet on touch. Store `nsh` 0.4.0 `MenuItem` forwards `checked` / `indicator` to base; checkbox items use the same parts as `menu`.
 
 ## Install
 
@@ -64,7 +64,7 @@ ContextMenu
         └── ContextMenuSubContent (nsh/base Submenu)
 ```
 
-Item / CheckboxItem / Group / Label / Separator / Shortcut / Sub parts are the same implementations as Dropdown Menu (re-exported aliases).
+Item / CheckboxItem / Group / Label / Separator / Shortcut / Sub parts are the same implementations as Menu (re-exported aliases).
 
 ## Controlled
 
@@ -93,7 +93,7 @@ Desktops: gap between the pointer and the popup. Default `4`.
 
 ## Checkbox item
 
-Store `nsh` 0.3.0 has no MenuItem `checked` — the wrapper paints a ✓ when `checked` is set. Prefer `closeOnSelect={false}` so the menu stays open while the value flips.
+Prefer `closeOnSelect={false}` on checkable items so the menu stays open while the value flips.
 
 ```tsx
 const sidebar = signal(true);
@@ -119,40 +119,23 @@ Wrapper popup chrome (`popupSurface` + min width) and backdrop tint, then consum
 </ContextMenuContent>
 ```
 
-## Legacy trigger
-
-```tsx
-<ContextMenu trigger={<View>Right-click me</View>}>
-  <ContextMenuItem onSelect={() => {}}>Copy</ContextMenuItem>
-</ContextMenu>
-```
-
 ## API
 
 ### `ContextMenu` Props
 
-| Prop            | Type                   | Default | Notes                                                                                 |
-| --------------- | ---------------------- | ------- | ------------------------------------------------------------------------------------- |
-| `open`          | `boolean \| null`      | —       | Controlled open (composition root or legacy single-root)                              |
-| `disabled`      | `boolean`              | —       | Secondary click / long-press do nothing                                               |
-| `trigger`       | `JSX.Element`          | —       | **Deprecated** legacy single-root; prefer `ContextMenuTrigger` + `ContextMenuContent` |
-| `children`      | `JSX.Element`          | —       | Composition parts, or items when `trigger` is set                                     |
-| `offset`        | `number`               | —       | Legacy path only — composition puts this on Content (default there `4`)               |
-| `margin`        | `number`               | —       | Forwarded (legacy)                                                                    |
-| `popupClass`    | `string`               | —       | Forwarded / merge (legacy)                                                            |
-| `popupStyle`    | `StyleProp<ViewStyle>` | —       | Merged over popup chrome (legacy)                                                     |
-| `backdropClass` | `string`               | —       | Forwarded / merge (legacy)                                                            |
-| `backdropStyle` | `StyleProp<ViewStyle>` | —       | Merged over `popupBackdrop()` (legacy)                                                |
-| `class`         | `string`               | —       | Host class; concatenated (legacy)                                                     |
-| `style`         | `StyleProp<ViewStyle>` | —       | Host style merge (legacy)                                                             |
+| Prop       | Type              | Default | Notes                                                                 |
+| ---------- | ----------------- | ------- | --------------------------------------------------------------------- |
+| `open`     | `boolean \| null` | —       | Controlled open state                                                 |
+| `disabled` | `boolean`         | —       | Secondary click / long-press do nothing                               |
+| `children` | `JSX.Element`     | —       | `ContextMenuTrigger`, `ContextMenuContent`, and nested items          |
 
-Remaining `ContextMenuProps` / `ComponentHostProps` from `nsh/base` also pass through on the legacy single-root. Store 0.3.0 has no `defaultOpen` / `placement` / `align` on ContextMenu (pointer-anchored).
+Offset, popup chrome, and backdrop props belong on `ContextMenuContent`, not the root. Store 0.4.0 has no `defaultOpen` / `placement` / `align` on ContextMenu (pointer-anchored).
 
 ### Events
 
 | Event          | Notes                                                                                                |
 | -------------- | ---------------------------------------------------------------------------------------------------- |
-| `onOpenChange` | `(open: boolean, reason: OpenChangeReason) => void` — store CLI `nsh` 0.3.0 (not `{ open, reason }`) |
+| `onOpenChange` | `(event: { open: boolean; reason: OpenChangeReason }) => void` |
 | `onOpen`       | `() => void` when shown                                                                              |
 | `onClose`      | `() => void` when gone                                                                               |
 | `onCancel`     | `() => void` when the user tries to dismiss without choosing (Escape / outside / backdrop)           |
@@ -192,11 +175,11 @@ Remaining presentation `ContextMenuProps` / `ComponentHostProps` from `nsh/base`
 
 ### `ContextMenuItem` / `ContextMenuCheckboxItem` Props
 
-Same as Dropdown Menu Item / CheckboxItem — `disabled`, app-layer `checked` mark, `closeOnSelect`, `accessibilityLabel`, `onSelect`, and style-hook merge over item chrome + `focusRing()` / accent hover.
+Same as Menu Item / CheckboxItem — `disabled`, app-layer `checked` mark, `closeOnSelect`, `accessibilityLabel`, `onSelect`, and style-hook merge over item chrome + `focusRing()` / accent hover.
 
 ### `ContextMenuGroup` / `ContextMenuLabel` / `ContextMenuShortcut` / `ContextMenuSeparator` / `ContextMenuSub*` Props
 
-Same as the Dropdown Menu aliases — see Dropdown Menu API. Separator forwards all `MenuSeparatorProps`; Sub / SubContent forward `SubmenuProps` with style merge.
+Same as the Menu aliases — see Menu API. Separator forwards all `MenuSeparatorProps`; Sub / SubContent forward `SubmenuProps` with style merge.
 
 ## Differences
 
@@ -204,15 +187,15 @@ Same as the Dropdown Menu aliases — see Dropdown Menu API. Separator forwards 
 | ------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
 | Parts               | Root / Trigger / Content / Item / Sub / Group / … | same names; Content is `nsh/base` `ContextMenu`; SubContent is `Submenu`                          |
 | Portal / Positioner | Base UI Portal + Positioner                       | base places the popup / sheet; no separate Portal export                                          |
-| Positioning         | `side` / `sideOffset` / `align` / `alignOffset`   | store 0.3.0 ContextMenu is pointer-anchored — only `offset` / `margin` (no `placement` / `align`) |
-| Radio items         | `ContextMenuRadioGroup` / `RadioItem`             | no store radio role — use `checked` on Item / CheckboxItem (painted mark)                         |
-| Checkable items     | Base UI CheckboxItem indicator                    | store 0.3.0 MenuItem has no `checked` / `indicator`; wrapper paints ✓ when `checked` set          |
-| Change event        | Root `onOpenChange`                               | `(open, reason)` per store `nsh` 0.3.0; newer website docs may show `{ open, reason }`            |
-| Enter / exit        | CSS animate classes                               | store 0.3.0 has no `popupStarting*` / `popupEnding*` / `onPosition`                               |
-| Shared parts        | separate file, shared look                        | Item / Label / Separator / Sub / Group / Shortcut re-export Dropdown Menu implementations         |
-| Legacy              | —                                                 | deprecated `trigger` prop still mounts a single-root `ContextMenu`                                |
+| Positioning         | `side` / `sideOffset` / `align` / `alignOffset`   | store 0.4.0 ContextMenu is pointer-anchored — only `offset` / `margin` (no `placement` / `align`) |
+| Radio items         | `ContextMenuRadioGroup` / `RadioItem`             | no store radio role — use `checked` on Item / CheckboxItem with `indicator`                       |
+| Checkable items     | Radix CheckboxItem subtree                        | base `MenuItem` `checked` + `indicator`; wrapper default mark when omitted                        |
+| Change event        | Root `onOpenChange`                               | `{ open, reason }` object events per store `nsh` 0.4.0            |
+| Enter / exit        | CSS animate classes                               | store 0.4.0 has no `popupStarting*` / `popupEnding*` / `onPosition`                               |
+| Shared parts        | separate file, shared look                        | Item / Label / Separator / Sub / Group / Shortcut re-export Menu implementations                  |
+| Composition-only    | optional single-root in some shadcn ports         | root holds open state only — use `ContextMenuTrigger` + `ContextMenuContent`                      |
 | Class hooks         | `className` / `cn-context-menu*`                  | `class` + `popupClass` / `backdropClass` / token styles; consumer merges over defaults            |
 
 ## Not forwarded
 
-None for store CLI `nsh` 0.3.0 `ContextMenu` / `MenuItem` / `MenuSeparator` / `Submenu` props — all are forwarded on Content / Item / Separator / Sub (open / lifecycle / `disabled` owned by the composition root). The wrapper only applies popup + backdrop chrome, item look, composition open state, and merges defaults under consumer style hooks (`class` / `popupClass` / `backdropClass` concatenate). App-layer `checked` on Item / CheckboxItem is not a base 0.3.0 prop (painted mark). Newer `nsh` main enter/exit / `onPosition` / native checkable MenuItem hooks are absent from 0.3.0 and therefore not part of this surface.
+None for store CLI `nsh` 0.4.0 `ContextMenu` / `MenuItem` / `MenuSeparator` / `Submenu` props — all are forwarded on Content / Item / Separator / Sub (open / lifecycle / `disabled` owned by the composition root). The wrapper only applies popup + backdrop chrome, item look, composition open state, and merges defaults under consumer style hooks (`class` / `popupClass` / `backdropClass` concatenate). Enter/exit animation hooks pass through on `ContextMenuContent` when set; this wrapper only supplies default popup chrome.

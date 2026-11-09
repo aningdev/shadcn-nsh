@@ -148,7 +148,7 @@ Remaining `RadioProps` / `ComponentHostProps` from `nsh/base` also pass through.
 
 | Event      | Notes                                                                                                         |
 | ---------- | ------------------------------------------------------------------------------------------------------------- |
-| `onChange` | `(checked: boolean) => void` on the item — store CLI `nsh` 0.3.0; fires with `true` when asking to be checked |
+| `onChange` | `(checked: boolean) => void` on the item — store CLI `nsh` 0.4.0; fires with `true` when asking to be checked |
 
 ## Differences
 
@@ -157,7 +157,7 @@ Remaining `RadioProps` / `ComponentHostProps` from `nsh/base` also pass through.
 | Value API    | `RadioGroup` `value` / `onValueChange`      | no group value — each item is `checked` / `onChange` (nsh/base model)                                    |
 | Parts        | `RadioGroup` / `RadioGroupItem` + Indicator | same part names; `Radio` alias; default circle composed as children (base has no Indicator slot)         |
 | Label        | sibling `Label` / `FieldLabel` + `htmlFor`  | put label `Text` in `children`                                                                           |
-| Change event | string value on the group                   | `onChange(checked: boolean)` per item (store `nsh` 0.3.0; newer nsh website docs may show `{ checked }`) |
+| Change event | string value on the group                   | `onChange(checked: boolean)` per item (store `nsh` 0.4.0; newer nsh website docs may show `{ checked }`) |
 | Variants     | none on `bases/base` RadioGroup             | none — token chrome + default circle only                                                                |
 | Class hooks  | `className` / `cn-radio-group*`             | `class` + token `style`; consumer styles merge over defaults                                             |
 

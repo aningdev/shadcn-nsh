@@ -1,5 +1,11 @@
 import { colors } from "@shadcn-nsh/theme";
 import {
+  Accordion,
+  AccordionPanel,
+  AccordionItem,
+  AccordionTrigger,
+  Avatar,
+  AvatarGroup,
   Button,
   Checkbox,
   ContextMenu,
@@ -9,13 +15,13 @@ import {
   ContextMenuLabel,
   ContextMenuSeparator,
   ContextMenuTrigger,
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
+  Menu,
+  MenuCheckboxItem,
+  MenuContent,
+  MenuItem,
+  MenuLabel,
+  MenuSeparator,
+  MenuTrigger,
   Dialog,
   DialogClose,
   DialogContent,
@@ -27,7 +33,16 @@ import {
   Collapsible,
   CollapsibleContent,
   CollapsibleTrigger,
+  Combobox,
+  ComboboxContent,
+  ComboboxItem,
+  ComboboxTrigger,
+  ComboboxValue,
   Input,
+  Link,
+  NumberInput,
+  OtpInput,
+  Pagination,
   Popover,
   PopoverContent,
   PopoverDescription,
@@ -37,7 +52,13 @@ import {
   Progress,
   RadioGroup,
   RadioGroupItem,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Sheet,
+  Slider,
   SheetClose,
   SheetContent,
   SheetDescription,
@@ -58,6 +79,8 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
+  Toggle,
+  ToggleGroup,
   Tooltip,
   TooltipContent,
   TooltipProvider,
@@ -98,6 +121,14 @@ function App() {
   const sheetOpen = signal(false);
   const dialogOpen = signal(false);
   const collapsibleOpen = signal(false);
+  const accordionOpen = signal(["section-1"]);
+  const fruit = signal<string | null>("apple");
+  const tags = signal<string[]>(["react"]);
+  const page = signal(1);
+  const volume = signal(40);
+  const quantity = signal(2);
+  const otp = signal("");
+  const textAlign = signal("left");
 
   return (
     <Scroll style={{ flex: 1, backgroundColor: colors.background }}>
@@ -106,7 +137,7 @@ function App() {
           shadcn-nsh
         </Text>
         <Text style={{ fontSize: 14, color: colors.mutedForeground }}>
-          Phase-1 styled wrappers on store nsh/base (0.3.x). Clicks: {() => count()}
+          Phase-1 styled wrappers on store nsh/base (0.4.0). Clicks: {() => count()}
         </Text>
 
         <Section title="Button">
@@ -150,7 +181,7 @@ function App() {
 
         <Section title="Input">
           <View style={{ gap: 8 }}>
-            <Input placeholder="Your name" value={name()} onChange={(v) => name.set(v)} />
+            <Input placeholder="Your name" value={name()} onChange={({ value: v }) => name.set(v)} />
             <Input placeholder="Disabled" disabled />
             <Input
               placeholder="Style merge"
@@ -164,26 +195,26 @@ function App() {
         </Section>
 
         <Section title="Checkbox / Switch / Radio">
-          <Checkbox checked={checked()} onChange={(v) => checked.set(v)}>
+          <Checkbox checked={checked()} onChange={({ checked: v }) => checked.set(v)}>
             <Text style={{ fontSize: 14, color: colors.foreground }}>Accept terms</Text>
           </Checkbox>
           <Checkbox
             checked={checked()}
-            onChange={(v) => checked.set(v)}
+            onChange={({ checked: v }) => checked.set(v)}
             style={{ gap: 12 }}
             indicatorStyle={{ width: 20, height: 20 }}
           >
             <Text style={{ fontSize: 14, color: colors.foreground }}>Style merge</Text>
           </Checkbox>
-          <Switch checked={on()} onChange={(v) => on.set(v)}>
+          <Switch checked={on()} onChange={({ checked: v }) => on.set(v)}>
             <Text style={{ fontSize: 14, color: colors.foreground }}>Notifications</Text>
           </Switch>
-          <Switch size="sm" checked={on()} onChange={(v) => on.set(v)}>
+          <Switch size="sm" checked={on()} onChange={({ checked: v }) => on.set(v)}>
             <Text style={{ fontSize: 14, color: colors.foreground }}>Small switch</Text>
           </Switch>
           <Switch
             checked={on()}
-            onChange={(v) => on.set(v)}
+            onChange={({ checked: v }) => on.set(v)}
             style={{ gap: 12 }}
             trackStyle={{ width: 44 }}
             thumbClass="checked:translate-x-5"
@@ -191,17 +222,23 @@ function App() {
             <Text style={{ fontSize: 14, color: colors.foreground }}>Switch style merge</Text>
           </Switch>
           <RadioGroup>
-            <RadioGroupItem checked={radio() === "a"} onChange={() => radio.set("a")}>
+            <RadioGroupItem
+              checked={radio() === "a"}
+              onChange={({ checked }) => checked && radio.set("a")}
+            >
               <Text style={{ fontSize: 14, color: colors.foreground }}>Option A</Text>
             </RadioGroupItem>
-            <RadioGroupItem checked={radio() === "b"} onChange={() => radio.set("b")}>
+            <RadioGroupItem
+              checked={radio() === "b"}
+              onChange={({ checked }) => checked && radio.set("b")}
+            >
               <Text style={{ fontSize: 14, color: colors.foreground }}>Option B</Text>
             </RadioGroupItem>
           </RadioGroup>
           <RadioGroup style={{ gap: 16 }}>
             <RadioGroupItem
               checked={radio() === "a"}
-              onChange={() => radio.set("a")}
+              onChange={({ checked }) => checked && radio.set("a")}
               style={{ gap: 12 }}
             >
               <Text style={{ fontSize: 14, color: colors.foreground }}>Radio style merge</Text>
@@ -277,7 +314,7 @@ function App() {
         </Section>
 
         <Section title="Popover">
-          <Popover open={popoverOpen()} onOpenChange={(next) => popoverOpen.set(next)}>
+          <Popover open={popoverOpen()} onOpenChange={({ open: next }) => popoverOpen.set(next)}>
             <PopoverTrigger>Open popover</PopoverTrigger>
             <PopoverContent>
               <PopoverHeader>
@@ -317,13 +354,13 @@ function App() {
               <TooltipContent>Shows at once</TooltipContent>
             </Tooltip>
           </TooltipProvider>
-          <Tooltip open={tipOpen()} onOpenChange={(next) => tipOpen.set(next)}>
+          <Tooltip open={tipOpen()} onOpenChange={({ open: next }) => tipOpen.set(next)}>
             <TooltipTrigger>Pinned</TooltipTrigger>
             <TooltipContent style={{ paddingHorizontal: 14 }}>
               Controlled — useful on touch
             </TooltipContent>
           </Tooltip>
-          <View tooltip={<Tooltip>Host bubble</Tooltip>}>
+          <View tooltip={<TooltipContent>Host bubble</TooltipContent>}>
             <Text style={{ fontSize: 14, color: colors.foreground }}>Host tooltip=</Text>
           </View>
           <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
@@ -332,7 +369,7 @@ function App() {
         </Section>
 
         <Section title="Sheet">
-          <Sheet open={sheetOpen()} onOpenChange={(next) => sheetOpen.set(next)}>
+          <Sheet open={sheetOpen()} onOpenChange={({ open: next }) => sheetOpen.set(next)}>
             <SheetTrigger>Open sheet</SheetTrigger>
             <SheetContent side="bottom">
               <SheetHeader>
@@ -374,7 +411,7 @@ function App() {
         </Section>
 
         <Section title="Collapsible">
-          <Collapsible open={collapsibleOpen()} onOpenChange={(next) => collapsibleOpen.set(next)}>
+          <Collapsible open={collapsibleOpen()} onOpenChange={({ open: next }) => collapsibleOpen.set(next)}>
             <CollapsibleTrigger>Toggle</CollapsibleTrigger>
             <CollapsibleContent>
               <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
@@ -470,46 +507,46 @@ function App() {
           </Table>
         </Section>
 
-        <Section title="Dropdown Menu">
-          <DropdownMenu open={menuOpen()} onOpenChange={(next) => menuOpen.set(next)}>
-            <DropdownMenuTrigger>Open menu</DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuLabel>Account</DropdownMenuLabel>
-              <DropdownMenuItem onSelect={() => menuLast.set("Profile")}>
+        <Section title="Menu">
+          <Menu open={menuOpen()} onOpenChange={({ open: next }) => menuOpen.set(next)}>
+            <MenuTrigger>Open menu</MenuTrigger>
+            <MenuContent>
+              <MenuLabel>Account</MenuLabel>
+              <MenuItem onSelect={() => menuLast.set("Profile")}>
                 <Text style={{ fontSize: 14, color: colors.foreground }}>Profile</Text>
-              </DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => menuLast.set("Settings")}>
+              </MenuItem>
+              <MenuItem onSelect={() => menuLast.set("Settings")}>
                 <Text style={{ fontSize: 14, color: colors.foreground }}>Settings</Text>
-              </DropdownMenuItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuCheckboxItem
+              </MenuItem>
+              <MenuSeparator />
+              <MenuCheckboxItem
                 checked={menuSidebar()}
                 closeOnSelect={false}
                 onSelect={() => menuSidebar.set(!menuSidebar())}
               >
                 <Text style={{ fontSize: 14, color: colors.foreground }}>Show sidebar</Text>
-              </DropdownMenuCheckboxItem>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem onSelect={() => menuLast.set("Log out")}>
+              </MenuCheckboxItem>
+              <MenuSeparator />
+              <MenuItem onSelect={() => menuLast.set("Log out")}>
                 <Text style={{ fontSize: 14, color: colors.foreground }}>Log out</Text>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-          <DropdownMenu>
-            <DropdownMenuTrigger>Style merge</DropdownMenuTrigger>
-            <DropdownMenuContent popupStyle={{ minWidth: 220, padding: 8 }}>
-              <DropdownMenuItem style={{ height: 36 }} onSelect={() => menuLast.set("Merged")}>
+              </MenuItem>
+            </MenuContent>
+          </Menu>
+          <Menu>
+            <MenuTrigger>Style merge</MenuTrigger>
+            <MenuContent popupStyle={{ minWidth: 220, padding: 8 }}>
+              <MenuItem style={{ height: 36 }} onSelect={() => menuLast.set("Merged")}>
                 <Text style={{ fontSize: 14, color: colors.foreground }}>Merged chrome</Text>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+              </MenuItem>
+            </MenuContent>
+          </Menu>
           <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
             Menu open: {() => (menuOpen() ? "yes" : "no")} · Last: {() => menuLast()}
           </Text>
         </Section>
 
         <Section title="Context Menu">
-          <ContextMenu open={ctxOpen()} onOpenChange={(next) => ctxOpen.set(next)}>
+          <ContextMenu open={ctxOpen()} onOpenChange={({ open: next }) => ctxOpen.set(next)}>
             <ContextMenuTrigger>
               <View
                 style={{
@@ -575,7 +612,7 @@ function App() {
         </Section>
 
         <Section title="Dialog">
-          <Dialog open={dialogOpen()} onOpenChange={(next) => dialogOpen.set(next)}>
+          <Dialog open={dialogOpen()} onOpenChange={({ open: next }) => dialogOpen.set(next)}>
             <DialogTrigger>Open dialog</DialogTrigger>
             <DialogContent>
               <DialogHeader>
@@ -603,6 +640,83 @@ function App() {
           <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
             Dialog open: {() => (dialogOpen() ? "yes" : "no")}
           </Text>
+        </Section>
+
+        <Section title="Accordion / Avatar / Link">
+          <Accordion value={accordionOpen()} onChange={({ value }) => accordionOpen.set(value)}>
+            <AccordionItem value="section-1">
+              <AccordionTrigger>
+                <Text style={{ fontSize: 14, color: colors.foreground }}>Section 1</Text>
+              </AccordionTrigger>
+              <AccordionPanel>
+                <Text style={{ fontSize: 13, color: colors.mutedForeground, paddingBottom: 8 }}>
+                  Accordion panel content.
+                </Text>
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <Avatar name="Ada Lovelace" />
+            <AvatarGroup limit={2} total={4}>
+              <Avatar name="A" size={36} />
+              <Avatar name="B" size={36} />
+              <Avatar name="C" size={36} />
+            </AvatarGroup>
+          </View>
+          <Link href="https://nsh.dev">nsh.dev</Link>
+        </Section>
+
+        <Section title="Select / Combobox / Slider / Inputs">
+          <Select value={fruit()} onChange={({ value }) => fruit.set(value)}>
+            <SelectTrigger>
+              <SelectValue placeholder="Fruit" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="apple">Apple</SelectItem>
+              <SelectItem value="banana">Banana</SelectItem>
+            </SelectContent>
+          </Select>
+          <Combobox multiple value={tags()} onChange={({ value }) => tags.set(value)}>
+            <ComboboxTrigger>
+              <ComboboxValue placeholder="Tags" />
+            </ComboboxTrigger>
+            <ComboboxContent>
+              <ComboboxItem value="react">React</ComboboxItem>
+              <ComboboxItem value="vue">Vue</ComboboxItem>
+            </ComboboxContent>
+          </Combobox>
+          <Slider value={volume()} onChange={({ value }) => volume.set(value as number)} />
+          <NumberInput
+            value={quantity()}
+            min={0}
+            max={20}
+            onChange={({ value }) => value != null && quantity.set(value)}
+          />
+          <OtpInput length={4} value={otp()} onChange={({ value }) => otp.set(value)} />
+          <Pagination page={page()} totalPages={5} onChange={({ page: p }) => page.set(p)} />
+        </Section>
+
+        <Section title="Toggle group">
+          <ToggleGroup>
+            <Toggle
+              pressed={textAlign() === "left"}
+              onChange={({ pressed }) => pressed && textAlign.set("left")}
+            >
+              <Text style={{ fontSize: 13, color: colors.foreground }}>L</Text>
+            </Toggle>
+            <Toggle
+              pressed={textAlign() === "center"}
+              onChange={({ pressed }) => pressed && textAlign.set("center")}
+            >
+              <Text style={{ fontSize: 13, color: colors.foreground }}>C</Text>
+            </Toggle>
+            <Toggle
+              pressed={textAlign() === "right"}
+              onChange={({ pressed }) => pressed && textAlign.set("right")}
+            >
+              <Text style={{ fontSize: 13, color: colors.foreground }}>R</Text>
+            </Toggle>
+          </ToggleGroup>
         </Section>
 
         <Section title="Toast">

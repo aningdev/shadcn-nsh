@@ -17,7 +17,7 @@ function App() {
       }}
     >
       <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Input</Text>
-      <Input placeholder="Your name" value={value()} onChange={(v) => value.set(v)} />
+      <Input placeholder="Your name" value={value()} onChange={({ value: v }) => value.set(v)} />
       <Input placeholder="Disabled" disabled />
       <Input
         placeholder="Style merge"

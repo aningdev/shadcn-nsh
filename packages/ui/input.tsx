@@ -1,5 +1,5 @@
 import { colors, focusRing, radius } from "@shadcn-nsh/theme";
-import type { StyleProp, TextStyle } from "nsh";
+import type { InputStyle, StyleProp } from "nsh";
 import { Input as BaseInput, type InputProps as BaseInputProps } from "nsh/base";
 
 /**
@@ -17,9 +17,9 @@ function mergeClass(base?: string | null, consumer?: string | null): string | un
 
 /** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
 function mergeStyle(
-  base?: StyleProp<TextStyle> | null,
-  consumer?: StyleProp<TextStyle> | null,
-): StyleProp<TextStyle> | undefined {
+  base?: StyleProp<InputStyle> | null,
+  consumer?: StyleProp<InputStyle> | null,
+): StyleProp<InputStyle> | undefined {
   if (base == null && consumer == null) return undefined;
   if (base == null) return consumer ?? undefined;
   if (consumer == null) return base ?? undefined;
@@ -27,7 +27,7 @@ function mergeStyle(
 }
 
 /** Default look aligned with shadcn `cn-input` (h-8-ish) + theme tokens. */
-function inputChrome(multiline: boolean): TextStyle {
+function inputChrome(multiline: boolean): InputStyle {
   return {
     height: multiline ? undefined : 32,
     minHeight: multiline ? 80 : 32,

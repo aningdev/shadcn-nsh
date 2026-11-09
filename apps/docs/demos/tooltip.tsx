@@ -39,13 +39,13 @@ function App() {
           <TooltipContent>Shows at once</TooltipContent>
         </Tooltip>
       </TooltipProvider>
-      <Tooltip open={open()} onOpenChange={(next) => open.set(next)}>
+      <Tooltip open={open()} onOpenChange={({ open: next }) => open.set(next)}>
         <TooltipTrigger>Pinned</TooltipTrigger>
         <TooltipContent style={{ paddingHorizontal: 14 }}>
           Controlled open — useful on touch
         </TooltipContent>
       </Tooltip>
-      <View tooltip={<Tooltip>Host bubble</Tooltip>}>
+      <View tooltip={<TooltipContent>Host bubble</TooltipContent>}>
         <Text style={{ fontSize: 14, color: colors.foreground }}>Rest here (host tooltip=)</Text>
       </View>
       <Text style={{ fontSize: 13, color: colors.mutedForeground }}>

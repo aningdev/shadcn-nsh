@@ -189,16 +189,16 @@
       ]
     },
     {
-      "name": "dropdown-menu",
+      "name": "menu",
       "type": "registry:ui",
-      "title": "Dropdown Menu",
-      "description": "Styled menu wrapping nsh/base Menu — theme tokens + Trigger / Content / Item; full base prop pass-through.",
+      "title": "Menu",
+      "description": "Styled menu wrapping nsh/base Menu — theme tokens + Trigger / Content / Item; composition-only.",
       "registryDependencies": ["theme", "popup-surface", "button"],
       "files": [
         {
-          "path": "packages/ui/dropdown-menu.tsx",
+          "path": "packages/ui/menu.tsx",
           "type": "registry:ui",
-          "target": "components/ui/dropdown-menu.tsx"
+          "target": "components/ui/menu.tsx"
         }
       ]
     },
@@ -207,7 +207,7 @@
       "type": "registry:ui",
       "title": "Context Menu",
       "description": "Styled context menu wrapping nsh/base ContextMenu — theme tokens + Trigger / Content / Item; full base prop pass-through.",
-      "registryDependencies": ["theme", "popup-surface", "dropdown-menu"],
+      "registryDependencies": ["theme", "popup-surface", "menu"],
       "files": [
         {
           "path": "packages/ui/context-menu.tsx",
@@ -255,6 +255,170 @@
           "path": "packages/ui/table.tsx",
           "type": "registry:ui",
           "target": "components/ui/table.tsx"
+        }
+      ]
+    },
+    {
+      "name": "accordion",
+      "type": "registry:ui",
+      "title": "Accordion",
+      "description": "Styled accordion wrapping nsh/base Accordion — theme tokens + Header / Trigger / Panel; composition-only.",
+      "registryDependencies": ["theme", "button"],
+      "files": [
+        {
+          "path": "packages/ui/accordion.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/accordion.tsx"
+        }
+      ]
+    },
+    {
+      "name": "avatar",
+      "type": "registry:ui",
+      "title": "Avatar",
+      "description": "Styled avatar wrapping nsh/base Avatar / AvatarGroup — theme tokens + fallback.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/avatar.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/avatar.tsx"
+        }
+      ]
+    },
+    {
+      "name": "combobox",
+      "type": "registry:ui",
+      "title": "Combobox",
+      "description": "Styled combobox wrapping nsh/base Combobox — theme tokens + Trigger / Content / Item; composition-only.",
+      "registryDependencies": ["theme", "popup-surface"],
+      "files": [
+        {
+          "path": "packages/ui/combobox.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/combobox.tsx"
+        },
+        {
+          "path": "packages/ui/lib/open-state.ts",
+          "type": "registry:lib",
+          "target": "lib/open-state.ts"
+        }
+      ]
+    },
+    {
+      "name": "link",
+      "type": "registry:ui",
+      "title": "Link",
+      "description": "Styled link wrapping nsh/base Link — theme tokens + underline label.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/link.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/link.tsx"
+        }
+      ]
+    },
+    {
+      "name": "number-input",
+      "type": "registry:ui",
+      "title": "Number Input",
+      "description": "Styled number input wrapping nsh/base NumberInput — theme tokens + stepper chrome.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/number-input.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/number-input.tsx"
+        }
+      ]
+    },
+    {
+      "name": "otp-input",
+      "type": "registry:ui",
+      "title": "OTP Input",
+      "description": "Styled OTP input wrapping nsh/base OtpInput — theme tokens + cell chrome.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/otp-input.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/otp-input.tsx"
+        }
+      ]
+    },
+    {
+      "name": "pagination",
+      "type": "registry:ui",
+      "title": "Pagination",
+      "description": "Styled pagination wrapping nsh/base Pagination — theme tokens + item chrome.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/pagination.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/pagination.tsx"
+        }
+      ]
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "title": "Select",
+      "description": "Styled select wrapping nsh/base Select — theme tokens + Trigger / Content / Item; composition-only.",
+      "registryDependencies": ["theme", "popup-surface"],
+      "files": [
+        {
+          "path": "packages/ui/select.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/select.tsx"
+        },
+        {
+          "path": "packages/ui/lib/open-state.ts",
+          "type": "registry:lib",
+          "target": "lib/open-state.ts"
+        }
+      ]
+    },
+    {
+      "name": "slider",
+      "type": "registry:ui",
+      "title": "Slider",
+      "description": "Styled slider wrapping nsh/base Slider — theme tokens + track/range/thumb.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/slider.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/slider.tsx"
+        }
+      ]
+    },
+    {
+      "name": "toggle",
+      "type": "registry:ui",
+      "title": "Toggle",
+      "description": "Styled toggle wrapping nsh/base Toggle — theme tokens + pressed chrome.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/toggle.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/toggle.tsx"
+        }
+      ]
+    },
+    {
+      "name": "toggle-group",
+      "type": "registry:ui",
+      "title": "Toggle Group",
+      "description": "Styled toggle group wrapping nsh/base ToggleGroup — muted container + Toggle re-export.",
+      "registryDependencies": ["theme", "toggle"],
+      "files": [
+        {
+          "path": "packages/ui/toggle-group.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/toggle-group.tsx"
         }
       ]
     }

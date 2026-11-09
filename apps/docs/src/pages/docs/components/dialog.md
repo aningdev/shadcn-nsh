@@ -7,7 +7,7 @@ demo: dialog
 demoHeight: 480
 ---
 
-[`nsh/base`](https://nsh.dev/modules/nsh-base) owns open state, backdrop dismiss, Escape / back, optional swipe-to-close on sheet presentations, and the popup / backdrop hosts — unstyled on every platform. This package is the styled layer on top: a shadcn-shaped `Dialog` / `DialogTrigger` / `DialogContent` tree (plus Header / Footer / Title / Description / Close), centered card chrome, and theme tokens, the same role a community library plays above `nsh/base`. A [`Dialog`](https://nsh.dev/elements/dialog) presents content over the rest of the app in its own native window layer. Store CLI `nsh` 0.3.0 styles the popup with `class` / `style` and the backdrop with `backdropClass` / `backdropStyle` (no separate Overlay / Portal exports).
+[`nsh/base`](https://nsh.dev/modules/nsh-base) owns open state, backdrop dismiss, Escape / back, optional swipe-to-close on sheet presentations, and the popup / backdrop hosts — unstyled on every platform. This package is the styled layer on top: a shadcn-shaped `Dialog` / `DialogTrigger` / `DialogContent` tree (plus Header / Footer / Title / Description / Close), centered card chrome, and theme tokens, the same role a community library plays above `nsh/base`. A [`Dialog`](https://nsh.dev/elements/dialog) presents content over the rest of the app in its own native window layer. Store CLI `nsh` 0.4.0 styles the popup with `class` / `style` and the backdrop with `backdropClass` / `backdropStyle` (no separate Overlay / Portal exports).
 
 ## Install
 
@@ -147,7 +147,7 @@ Wrapper popup chrome (card fill, border, radius, padding / max width) and backdr
 
 | Event          | Notes                                                                                                  |
 | -------------- | ------------------------------------------------------------------------------------------------------ |
-| `onOpenChange` | `(open: boolean, reason: DialogChangeReason) => void` — store CLI `nsh` 0.3.0 (not `{ open, reason }`) |
+| `onOpenChange` | `(event: { open: boolean; reason: DialogChangeReason }) => void` |
 | `onOpen`       | `() => void` when the dialog has come in                                                               |
 | `onClose`      | `() => void` when gone                                                                                 |
 | `onCancel`     | `() => void` when the user tries to dismiss (Escape / backdrop / swipe), whether or not it closed      |
@@ -208,10 +208,10 @@ Remaining `DialogProps` from `nsh/base` also pass through. Open / lifecycle even
 | Overlay / Portal  | Base UI Backdrop + Portal                     | base owns backdrop; no separate Portal / Overlay exports                                |
 | Close control     | auto X via `showCloseButton`                  | explicit `DialogClose`; no `showCloseButton`                                            |
 | Default animation | CSS fade / zoom                               | wrapper `"fade"` for card chrome; nsh/base alone defaults `"slide"`                     |
-| Change event      | Root `onOpenChange`                           | `(open, reason)` per store `nsh` 0.3.0; newer website docs may show `{ open, reason }`  |
+| Change event      | Root `onOpenChange`                           | `{ open, reason }` object events per store `nsh` 0.4.0  |
 | Class hooks       | `className` / `cn-dialog*`                    | `class` + `backdropClass` / token styles; consumer merges over defaults                 |
 | Native sheet      | —                                             | set `presentation="pageSheet"` / `"formSheet"` on Content (iOS); or use Sheet for edges |
 
 ## Not forwarded
 
-None for store CLI `nsh` 0.3.0 `Dialog` props — all are forwarded on Content (open / lifecycle owned by the composition root). The wrapper only applies popup + backdrop chrome, composition open state, and merges defaults under consumer style hooks (`class` / `backdropClass` concatenate). Newer website docs may show object-shaped `onOpenChange` events; this surface matches store 0.3.0 `(open, reason)`.
+None for store CLI `nsh` 0.4.0 `Dialog` props — all are forwarded on Content (open / lifecycle owned by the composition root). The wrapper only applies popup + backdrop chrome, composition open state, and merges defaults under consumer style hooks (`class` / `backdropClass` concatenate). Newer website docs may show object-shaped `onOpenChange` events; this surface matches store 0.4.0 `(open, reason)`.

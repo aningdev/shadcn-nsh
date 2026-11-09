@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Ensure a usable NSH CLI for this repo, then regenerate every .nsh types host.
 #
-# This repo targets the **store / GitHub release CLI** (currently 0.3.0), not
+# This repo targets the **store / GitHub release CLI** (currently 0.4.0), not
 # `install.sh --source`. Phase-1 `@shadcn-nsh/ui` only wraps `nsh/base` exports
 # present in that release. Missing `.nsh` folders are a separate step —
 # `nsh check` creates them.
@@ -54,12 +54,12 @@ if [[ ! -f "$base_dts" ]]; then
   die "nsh: missing $base_dts after prepare:types"
 fi
 
-# Sanity: store 0.3.0 has Button; Accordion is intentionally out of Phase-1.
+# Sanity: store 0.4.0 has Button + Accordion (form-control expansion).
 if ! grep -q 'Button' "$base_dts"; then
   die "nsh: $base_dts has no Button — unexpected CLI/runtime"
 fi
-if grep -q 'Accordion' "$base_dts"; then
-  printf 'nsh: note — Accordion present in types (newer than store 0.3.0 pin); Phase-1 still omits it until we re-expand\n'
+if ! grep -q 'Accordion' "$base_dts"; then
+  die "nsh: $base_dts has no Accordion — expected on store 0.4.0"
 fi
 
 printf 'nsh: OK — types host ready at %s\n' "$base_dts"

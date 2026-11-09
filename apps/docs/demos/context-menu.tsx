@@ -30,7 +30,7 @@ function App() {
       <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>
         Context Menu
       </Text>
-      <ContextMenu open={open()} onOpenChange={(next) => open.set(next)}>
+      <ContextMenu open={open()} onOpenChange={({ open: next }) => open.set(next)}>
         <ContextMenuTrigger>
           <View
             style={{

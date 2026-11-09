@@ -122,7 +122,7 @@ Remaining `CheckboxProps` / `ComponentHostProps` from `nsh/base` also pass throu
 
 | Event      | Notes                                                               |
 | ---------- | ------------------------------------------------------------------- |
-| `onChange` | `(checked: boolean) => void` — store CLI `nsh` 0.3.0 base signature |
+| `onChange` | `(checked: boolean) => void` — store CLI `nsh` 0.4.0 base signature |
 
 ## Differences
 
@@ -130,7 +130,7 @@ Remaining `CheckboxProps` / `ComponentHostProps` from `nsh/base` also pass throu
 | ------------ | ------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | Root         | `@base-ui/react/checkbox` Root + Indicator  | `nsh/base` `Checkbox` + theme tokens; single export                                             |
 | Label        | sibling `Label` / `FieldLabel` + `htmlFor`  | put label `Text` in `children`                                                                  |
-| Change event | `onCheckedChange`                           | `onChange(checked: boolean)` (store `nsh` 0.3.0; newer nsh website docs may show `{ checked }`) |
+| Change event | `onCheckedChange`                           | `onChange(checked: boolean)` (store `nsh` 0.4.0; newer nsh website docs may show `{ checked }`) |
 | Variants     | none on `bases/base` Checkbox               | none — token chrome + default mark only                                                         |
 | Class hooks  | `className` / `cn-checkbox`                 | `class` + token `style` / `indicatorStyle`; consumer styles merge over defaults                 |
 | Indicator    | always `CheckboxPrimitive.Indicator` + icon | default check / dash; override with `indicator`                                                 |

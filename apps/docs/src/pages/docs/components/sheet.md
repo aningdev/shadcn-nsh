@@ -7,7 +7,7 @@ demo: sheet
 demoHeight: 480
 ---
 
-[`nsh/base`](https://nsh.dev/modules/nsh-base) owns open state, backdrop dismiss, Escape / back, optional swipe-to-close on the bottom edge, and the panel / backdrop hosts — unstyled on every platform. This package is the styled layer on top: a shadcn-shaped `Sheet` / `SheetTrigger` / `SheetContent` tree (plus Header / Footer / Title / Description / Close), edge chrome by `side`, and theme tokens, the same role a community library plays above `nsh/base`. A [`Sheet`](https://nsh.dev/elements/sheet) is a panel at an edge of the screen over a backdrop. Store CLI `nsh` 0.3.0 has no enter/exit class hooks — surface look is `popupClass` / `popupStyle` and `backdropClass` / `backdropStyle` only.
+[`nsh/base`](https://nsh.dev/modules/nsh-base) owns open state, backdrop dismiss, Escape / back, optional swipe-to-close on the bottom edge, and the panel / backdrop hosts — unstyled on every platform. This package is the styled layer on top: a shadcn-shaped `Sheet` / `SheetTrigger` / `SheetContent` tree (plus Header / Footer / Title / Description / Close), edge chrome by `side`, and theme tokens, the same role a community library plays above `nsh/base`. A [`Sheet`](https://nsh.dev/elements/sheet) is a panel at an edge of the screen over a backdrop. Store CLI `nsh` 0.4.0 has no enter/exit class hooks — surface look is `popupClass` / `popupStyle` and `backdropClass` / `backdropStyle` only.
 
 ## Install
 
@@ -144,7 +144,7 @@ Wrapper panel chrome (card fill, edge radius, padding / min size by `side`) and 
 
 | Event          | Notes                                                                                                |
 | -------------- | ---------------------------------------------------------------------------------------------------- |
-| `onOpenChange` | `(open: boolean, reason: OpenChangeReason) => void` — store CLI `nsh` 0.3.0 (not `{ open, reason }`) |
+| `onOpenChange` | `(event: { open: boolean; reason: OpenChangeReason }) => void` |
 | `onOpen`       | `() => void` when the panel has come in                                                              |
 | `onClose`      | `() => void` when gone                                                                               |
 | `onCancel`     | `() => void` when the user tries to dismiss (Escape / backdrop / swipe), whether or not it closed    |
@@ -211,11 +211,11 @@ Remaining presentation `SheetProps` / `ComponentHostProps` from `nsh/base` also 
 | Default `side`   | `"right"`                                     | `"bottom"` (nsh/base); set `side="right"` for drawer look                              |
 | Close control    | auto X via `showCloseButton`                  | explicit `SheetClose`; no `showCloseButton`                                            |
 | Portal / Overlay | Base UI Portal + Backdrop                     | base owns backdrop; no separate Portal / Overlay exports                               |
-| Change event     | Root `onOpenChange`                           | `(open, reason)` per store `nsh` 0.3.0; newer website docs may show `{ open, reason }` |
-| Enter / exit     | CSS animate classes                           | store 0.3.0 has no enter/exit class hooks on Sheet                                     |
+| Change event     | Root `onOpenChange`                           | `{ open, reason }` object events per store `nsh` 0.4.0 |
+| Enter / exit     | CSS animate classes                           | store 0.4.0 has no enter/exit class hooks on Sheet                                     |
 | Native sheet     | —                                             | use Dialog `presentation="pageSheet"` (not this wrapper)                               |
 | Class hooks      | `className` / `cn-sheet*`                     | `class` + `popupClass` / `backdropClass` / token styles; consumer merges over defaults |
 
 ## Not forwarded
 
-None for store CLI `nsh` 0.3.0 `Sheet` props — all are forwarded on Content (open / lifecycle owned by the composition root). The wrapper only applies panel + backdrop chrome, composition open state, and merges defaults under consumer style hooks (`class` / `popupClass` / `backdropClass` concatenate). Newer website docs may show object-shaped `onOpenChange` events; this surface matches store 0.3.0 `(open, reason)`.
+None for store CLI `nsh` 0.4.0 `Sheet` props — all are forwarded on Content (open / lifecycle owned by the composition root). The wrapper only applies panel + backdrop chrome, composition open state, and merges defaults under consumer style hooks (`class` / `popupClass` / `backdropClass` concatenate). Newer website docs may show object-shaped `onOpenChange` events; this surface matches store 0.4.0 `(open, reason)`.

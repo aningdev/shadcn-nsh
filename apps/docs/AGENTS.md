@@ -19,7 +19,7 @@ Extensions (shadcn-only pieces with no `nsh/base` export) and Phase-2 components
 - Author as Markdown under `src/pages/docs/components/<slug>.md` (not `.astro`).
 - Frontmatter: `layout`, `title`, `description`, `component: true`; optional `demo: <slug>` to inject `DemoFrame` (needs `bun run docs:demos`); optional `demoHeight` (px, default `300`; use ~360–480 for overlays).
 - Do **not** put `# Title` in the body — `Docs.astro` renders `h1` from frontmatter.
-- Do **not** hand-write nsh.dev links, `## Behavior & a11y`, or `## Source` — the layout injects them from `nshElement` / slug (handles slug ≠ element, e.g. `dropdown-menu` → `menu`).
+- Do **not** hand-write nsh.dev links, `## Behavior & a11y`, or `## Source` — the layout injects them from `nshElement` / slug when they differ.
 - Rendered page contract (layout + body), aligned with shadcn section intent:
 
   1. Title (`h1` from frontmatter)
@@ -27,11 +27,11 @@ Extensions (shadcn-only pieces with no `nsh/base` export) and Phase-2 components
   3. **Standfirst** (body, no H2) — Frame like `references/nsh/website/modules/nsh-base.md`: `nsh/base` owns behavior/state/focus/a11y; this package is the styled layer (variants/sizes/tokens). One sentence on _this_ component. Links: [nsh/base module](https://nsh.dev/modules/nsh-base) + `https://nsh.dev/elements/<nshElement>`. Layout splits body so standfirst renders **above** Preview when `demo` is set.
   4. _(layout)_ **Preview** — NSH-style demo panel (`DemoFrame`): Preview | Source, Phone | Desktop, `demos/<slug>.tsx` filename, Shiki-highlighted source; preview iframe from `docs:demos`
   5. **Install** — consecutive ` ```npx tabs` / `bunx` / `pnx` / optional `yarn` fences (remark CodeTabs + copy). Commands only: `… shadcn-nsh@latest add <slug>`. **No Manual.** **No** Monorepo / `-c` / `components.json` notes in Install.
-  6. **Usage** — consumer imports `@workspace/ui/components/ui/<slug>`; document **this** package’s public API. Prefer shadcn-shaped composition trees when `@shadcn-nsh/ui` exports those facades (Trigger/Content/Item/…); do not paste Radix props that we do not implement
+  6. **Usage** — consumer imports `@workspace/ui/components/ui/<slug>`; document **this** package’s public API. Use shadcn **composition roles** (Trigger / Content / Item / …) with **nsh/base family export names** (`MenuTrigger`, not `DropdownMenuTrigger`); registry page slugs follow nsh kebab ids (`menu`, `context-menu`, …). Do not paste Radix props that we do not implement
   7. **Composition** — ASCII tree of exported parts (required for compound components)
   8. **Examples** — thematic `##` sections (Size, Variants, …); code required; shadcn density, not full ports
   9. **API** — Props table + Events table (not “Methods”); optional **Variants** / **Sizes** when the wrapper adds look
-  10. **Differences** — vs shadcn `bases/base`: naming, parts, events (`onPress`), single-root vs compound trees, etc.
+  10. **Differences** — vs shadcn `bases/base`: naming, parts, events (`onPress`), composition-only roots, etc.
   11. **Not forwarded** — vs `nsh/base` intentional gaps only. Styled wrappers must **not** strip or rewrite base methods/API; they add a theme/style layer (`variant` / `size` / tokens) and forward the rest. For style hooks (`style`, `class`, `hoverStyle`, `activeStyle`, `focusStyle`, `selectedStyle`, `disabledStyle`): wrapper defaults from variant/size, then shallow-merge consumer on top (consumer wins per key); concatenate `class` when both are set. Button is the paradigm — its Not forwarded should be empty or nearly empty. No `variant="link"` on Button (Link is separate).
   12. _(layout)_ **Behavior & a11y** → outbound nsh
   13. _(layout)_ **Source**

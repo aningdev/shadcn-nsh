@@ -3,8 +3,9 @@ import type { JSX } from "nsh";
 import { cleanup, context, signal, Text, View, type Signal } from "nsh";
 import {
   Select as BaseSelect,
+  type OpenChangeReason,
+  type SelectEntry,
   type SelectItem as SelectItemData,
-  type SelectItemState,
 } from "nsh/base";
 
 import {
@@ -15,7 +16,7 @@ import {
 } from "./lib/open-state";
 import { popupBackdrop, popupSurface } from "./lib/popup-surface";
 
-export type { SelectItemData, SelectItemState };
+export type { SelectItemData, SelectEntry };
 
 type SelectContextValue = {
   items: ItemRegistry<SelectItemData>;
@@ -26,8 +27,8 @@ type SelectContextValue = {
   root: SelectRootProps;
 };
 
-type SelectRootProps = {
-  items?: SelectItemData[];
+/** Composition root for `nsh/base` Select: value/open state + item registry + trigger slot. */
+export type SelectProps = {
   value?: string | null;
   defaultValue?: string | null;
   open?: boolean | null;
@@ -38,13 +39,13 @@ type SelectRootProps = {
   disabled?: boolean;
   placeholder?: string;
   accessibilityLabel?: string | null;
-  /** @deprecated Prefer `<SelectTrigger>`. */
-  trigger?: JSX.Element;
   empty?: JSX.Element;
   children?: JSX.Element;
   onChange?: (event: { value: string | null }) => void;
-  onOpenChange?: (event: { open: boolean; reason: string }) => void;
+  onOpenChange?: (event: { open: boolean; reason: OpenChangeReason }) => void;
 };
+
+type SelectRootProps = SelectProps;
 
 const SelectContext = context<SelectContextValue | null>(null);
 const SelectGroupContext = context<Signal<string | undefined> | null>(null);
@@ -107,7 +108,7 @@ function StyledSelect(props: {
   trigger?: JSX.Element;
   empty?: JSX.Element;
   onChange?: (event: { value: string | null }) => void;
-  onOpenChange?: (event: { open: boolean; reason: string }) => void;
+  onOpenChange?: (event: { open: boolean; reason: OpenChangeReason }) => void;
 }) {
   const trigger = props.trigger ?? (
     <View
@@ -158,7 +159,7 @@ function StyledSelect(props: {
       trigger={trigger}
       empty={props.empty}
       onChange={props.onChange}
-      onOpenChange={props.onOpenChange as never}
+      onOpenChange={props.onOpenChange}
       popupStyle={popupSurface()}
       backdropStyle={popupBackdrop()}
       listStyle={{ maxHeight: 240 }}
@@ -185,59 +186,38 @@ function StyledSelect(props: {
         color: colors.foreground,
       }}
       focusStyle={focusRing()}
-      renderItem={(item: SelectItemState) => (
-        <View
-          style={{
-            height: 32,
-            paddingHorizontal: 8,
-            borderRadius: 6,
-            flexDirection: "row",
-            alignItems: "center",
-            justifyContent: "space-between",
-            backgroundColor: item.highlighted ? colors.accent : "transparent",
-            opacity: item.disabled ? 0.4 : 1,
-          }}
-        >
-          <Text
+      renderItem={(item: SelectEntry) => {
+        const selected = props.value === item.value;
+        return (
+          <View
             style={{
-              fontSize: 14,
-              fontWeight: item.selected ? "600" : "400",
-              color: colors.foreground,
+              height: 32,
+              paddingHorizontal: 8,
+              borderRadius: 6,
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              opacity: item.disabled ? 0.4 : 1,
             }}
           >
-            {item.title}
-          </Text>
-          {item.selected ? <Text style={{ fontSize: 12, color: colors.primary }}>✓</Text> : null}
-        </View>
-      )}
+            <Text
+              style={{
+                fontSize: 14,
+                fontWeight: selected ? "600" : "400",
+                color: colors.foreground,
+              }}
+            >
+              {item.title}
+            </Text>
+            {selected ? <Text style={{ fontSize: 12, color: colors.primary }}>✓</Text> : null}
+          </View>
+        );
+      }}
     />
   );
 }
 
 export function Select(props: SelectRootProps) {
-  // Data-driven API (nsh-native): keep working for galleries and lists.
-  if (props.items) {
-    return (
-      <StyledSelect
-        items={props.items}
-        value={props.value}
-        defaultValue={props.defaultValue}
-        open={props.open}
-        defaultOpen={props.defaultOpen}
-        searchable={props.searchable}
-        searchPlaceholder={props.searchPlaceholder}
-        cleanable={props.cleanable}
-        disabled={props.disabled}
-        placeholder={props.placeholder}
-        accessibilityLabel={props.accessibilityLabel}
-        trigger={props.trigger}
-        empty={props.empty}
-        onChange={props.onChange}
-        onOpenChange={props.onOpenChange}
-      />
-    );
-  }
-
   const items = createItemRegistry<SelectItemData>([]);
   const trigger = createTriggerSlot();
   const ctx: SelectContextValue = {

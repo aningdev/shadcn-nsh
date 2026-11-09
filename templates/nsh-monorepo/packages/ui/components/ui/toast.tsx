@@ -1,3 +1,4 @@
+import { colors, radius } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { Overlay, safeArea, signal, Text, View } from "nsh";
 import {
@@ -12,8 +13,6 @@ import {
   type ToastStackProps as BaseToastStackProps,
   type ToastTransitionStatus,
 } from "nsh/base";
-
-import { colors, radius } from "../../lib/theme";
 
 export { ToastManager };
 export type { Anchor, ToastEntry, ToastMotion, ToastOptions, ToastTransitionStatus };
@@ -34,7 +33,7 @@ export type ToastProps = Omit<BaseToastProps, "children"> & {
 /**
  * Theme layer on `nsh/base` ToastStack. All base props + style hooks pass
  * through; consumer styles shallow-merge over stack chrome (`gap` / padding /
- * maxWidth). Store CLI `nsh` 0.3.0 `onExpandedChange` is `(expanded: boolean)`.
+ * maxWidth).
  */
 export type ToastStackProps = Omit<BaseToastStackProps, "children"> & {
   children?: JSX.Element;
@@ -60,7 +59,7 @@ export type ToasterProps = {
   stackActiveStyle?: StyleProp<ViewStyle>;
   stackFocusStyle?: StyleProp<ViewStyle>;
   stackDisabledStyle?: StyleProp<ViewStyle>;
-  onExpandedChange?: (expanded: boolean) => void;
+  onExpandedChange?: (event: { expanded: boolean }) => void;
   onCancel?: () => void;
 };
 
@@ -286,9 +285,8 @@ export function Toaster(props: ToasterProps) {
 
   return (
     <Overlay
-      pointerEvents="box-none"
       class={mergeClass(undefined, className)}
-      style={mergeStyle(overlayChrome(placement), style)}
+      style={mergeStyle(mergeStyle(overlayChrome(placement), { pointerEvents: "box-none" }), style)}
     >
       <ToastStack
         placement={placement}
@@ -300,9 +298,9 @@ export function Toaster(props: ToasterProps) {
         activeStyle={stackActiveStyle}
         focusStyle={stackFocusStyle}
         disabledStyle={stackDisabledStyle}
-        onExpandedChange={(open) => {
+        onExpandedChange={({ expanded: open }) => {
           expanded.set(open);
-          onExpandedChange?.(open);
+          onExpandedChange?.({ expanded: open });
         }}
         onCancel={() => {
           if (onCancel) onCancel();

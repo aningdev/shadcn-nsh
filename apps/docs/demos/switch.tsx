@@ -17,10 +17,10 @@ function App() {
       }}
     >
       <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Switch</Text>
-      <Switch checked={on()} onChange={(v) => on.set(v)}>
+      <Switch checked={on()} onChange={({ checked: v }) => on.set(v)}>
         <Text style={{ fontSize: 14, color: colors.foreground }}>Notifications</Text>
       </Switch>
-      <Switch size="sm" checked={on()} onChange={(v) => on.set(v)}>
+      <Switch size="sm" checked={on()} onChange={({ checked: v }) => on.set(v)}>
         <Text style={{ fontSize: 14, color: colors.foreground }}>Small</Text>
       </Switch>
       <Switch disabled checked={false}>
@@ -28,7 +28,7 @@ function App() {
       </Switch>
       <Switch
         checked={on()}
-        onChange={(v) => on.set(v)}
+        onChange={({ checked: v }) => on.set(v)}
         style={{ gap: 12 }}
         trackStyle={{ width: 44 }}
         thumbClass="checked:translate-x-5"

@@ -7,7 +7,7 @@ demo: popover
 demoHeight: 420
 ---
 
-[`nsh/base`](https://nsh.dev/modules/nsh-base) owns open state, focus, Escape / press-outside dismiss, placement against the trigger, and the expanded trigger for screen readers — unstyled on every platform. This package is the styled layer on top: a shadcn-shaped `Popover` / `PopoverTrigger` / `PopoverContent` tree (plus Header / Title / Description), popup surface chrome, and theme tokens, the same role a community library plays above `nsh/base`. A [`Popover`](https://nsh.dev/elements/popover) shows content next to its trigger on top of everything else. Store CLI `nsh` 0.3.0 has no popup enter/exit class hooks (`popupStartingStyle` / `onPosition` land in newer docs) — surface look is `popupClass` / `popupStyle` only.
+[`nsh/base`](https://nsh.dev/modules/nsh-base) owns open state, focus, Escape / press-outside dismiss, placement against the trigger, and the expanded trigger for screen readers — unstyled on every platform. This package is the styled layer on top: a shadcn-shaped `Popover` / `PopoverTrigger` / `PopoverContent` tree (plus Header / Title / Description), popup surface chrome, and theme tokens, the same role a community library plays above `nsh/base`. A [`Popover`](https://nsh.dev/elements/popover) shows content next to its trigger on top of everything else. Store CLI `nsh` 0.4.0 has no popup enter/exit class hooks (`popupStartingStyle` / `onPosition` land in newer docs) — surface look is `popupClass` / `popupStyle` only.
 
 ## Install
 
@@ -96,42 +96,23 @@ Wrapper popup chrome (`popupSurface` + padding / min width), then consumer style
 </PopoverContent>
 ```
 
-## Legacy trigger
-
-```tsx
-<Popover trigger={<Button>Details</Button>} defaultOpen={false}>
-  <Text>Body in the popup</Text>
-</Popover>
-```
-
 ## API
 
 ### `Popover` Props
 
-| Prop                  | Type                   | Default | Notes                                                                                   |
-| --------------------- | ---------------------- | ------- | --------------------------------------------------------------------------------------- |
-| `open`                | `boolean \| null`      | —       | Controlled open (composition root or legacy single-root)                                |
-| `defaultOpen`         | `boolean`              | `false` | Uncontrolled initial open                                                               |
-| `trigger`             | `JSX.Element`          | —       | **Deprecated** legacy single-root; prefer `PopoverTrigger` + `PopoverContent`           |
-| `children`            | `JSX.Element`          | —       | Composition parts, or popup body when `trigger` is set                                  |
-| `placement`           | `Placement`            | —       | Legacy path only — composition puts this on `PopoverContent` (default there `"bottom"`) |
-| `align`               | `Align`                | —       | Legacy path only — composition default on Content is `"center"`                         |
-| `offset`              | `number`               | —       | Legacy path only — composition default on Content is `4`                                |
-| `margin`              | `number`               | —       | Forwarded (legacy)                                                                      |
-| `closeOnEscape`       | `boolean`              | —       | Forwarded (legacy)                                                                      |
-| `closeOnPressOutside` | `boolean`              | —       | Forwarded (legacy)                                                                      |
-| `popupClass`          | `string`               | —       | Forwarded / merge (legacy)                                                              |
-| `popupStyle`          | `StyleProp<ViewStyle>` | —       | Merged over popup chrome (legacy)                                                       |
-| `class`               | `string`               | —       | Host class; concatenated (legacy)                                                       |
-| `style`               | `StyleProp<ViewStyle>` | —       | Host style merge (legacy)                                                               |
+| Prop          | Type              | Default | Notes                                                    |
+| ------------- | ----------------- | ------- | -------------------------------------------------------- |
+| `open`        | `boolean \| null` | —       | Controlled open state                                    |
+| `defaultOpen` | `boolean`         | `false` | Uncontrolled initial open                                |
+| `children`    | `JSX.Element`     | —       | `PopoverTrigger`, `PopoverContent`, and nested chrome    |
 
-Remaining `PopoverProps` / `ComponentHostProps` from `nsh/base` also pass through on the legacy single-root.
+Placement, popup chrome, and dismiss flags belong on `PopoverContent`, not the root.
 
 ### Events
 
 | Event          | Notes                                                                                                   |
 | -------------- | ------------------------------------------------------------------------------------------------------- |
-| `onOpenChange` | `(open: boolean, reason: OpenChangeReason) => void` — store CLI `nsh` 0.3.0 (not `{ open, reason }`)    |
+| `onOpenChange` | `(event: { open: boolean; reason: OpenChangeReason }) => void`    |
 | `onOpen`       | `() => void` when shown                                                                                 |
 | `onClose`      | `() => void` when gone                                                                                  |
 | `onCancel`     | `() => void` when the user tries to dismiss (Escape / outside), whether or not close flags let it close |
@@ -185,13 +166,13 @@ Remaining presentation `PopoverProps` / `ComponentHostProps` from `nsh/base` als
 | Topic        | shadcn (`bases/base`)                                   | This package                                                                           |
 | ------------ | ------------------------------------------------------- | -------------------------------------------------------------------------------------- |
 | Parts        | Root / Trigger / Content / Header / Title / Description | same names; Content is `nsh/base` `Popover`                                            |
-| Positioning  | `side` / `sideOffset` / `align` / `alignOffset`         | base `placement` / `offset` / `align` (no `alignOffset` on store 0.3.0)                |
+| Positioning  | `side` / `sideOffset` / `align` / `alignOffset`         | base `placement` / `offset` / `align` (no `alignOffset` on store 0.4.0)                |
 | Portal       | Base UI Portal + Positioner                             | base places the popup; no separate Portal export                                       |
-| Change event | Root `onOpenChange`                                     | `(open, reason)` per store `nsh` 0.3.0; newer website docs may show `{ open, reason }` |
-| Enter / exit | CSS animate classes                                     | store 0.3.0 has no `popupStarting*` / `popupEnding*` / `onPosition`                    |
-| Legacy       | —                                                       | deprecated `trigger` prop still mounts a single-root `Popover`                         |
+| Change event | Root `onOpenChange`                                     | `{ open, reason }` object events per store `nsh` 0.4.0 |
+| Enter / exit | CSS animate classes                                     | store 0.4.0 has no `popupStarting*` / `popupEnding*` / `onPosition`                    |
+| Composition-only | optional single-root in some shadcn ports             | root holds open state only — use `PopoverTrigger` + `PopoverContent`                   |
 | Class hooks  | `className` / `cn-popover*`                             | `class` + `popupClass` / token `popupStyle`; consumer styles merge over defaults       |
 
 ## Not forwarded
 
-None for store CLI `nsh` 0.3.0 `Popover` props — all are forwarded on Content (and on the legacy single-root). The wrapper only applies popup surface chrome, composition open state, and merges defaults under consumer style hooks (`class` / `popupClass` concatenate). Newer `nsh` main enter/exit / `onPosition` hooks are absent from 0.3.0 and therefore not part of this surface.
+None for store CLI `nsh` 0.4.0 `Popover` props — all are forwarded on Content (open / lifecycle owned by the composition root). The wrapper only applies popup surface chrome, composition open state, and merges defaults under consumer style hooks (`class` / `popupClass` concatenate). Newer `nsh` main enter/exit / `onPosition` hooks are absent from 0.4.0 and therefore not part of this surface.

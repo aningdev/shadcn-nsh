@@ -7,7 +7,7 @@ demo: tooltip
 demoHeight: 420
 ---
 
-[`nsh/base`](https://nsh.dev/modules/nsh-base) owns hover delay, open state, placement against the host, and pointer-passthrough so the trigger keeps working — unstyled on every platform. This package is the styled layer on top: a shadcn-shaped `Tooltip` / `TooltipTrigger` / `TooltipContent` tree (plus `TooltipProvider` for a shared delay), bubble chrome, and theme tokens, the same role a community library plays above `nsh/base`. A [`Tooltip`](https://nsh.dev/elements/tooltip) is the hint bubble given as a host's `tooltip={…}` prop. Store CLI `nsh` 0.3.0 has no enter/exit class hooks (`startingClass` / `endingClass` land in newer docs) — surface look is `class` / `style` only.
+[`nsh/base`](https://nsh.dev/modules/nsh-base) owns hover delay, open state, placement against the host, and pointer-passthrough so the trigger keeps working — unstyled on every platform. This package is the styled layer on top: a shadcn-shaped `Tooltip` / `TooltipTrigger` / `TooltipContent` tree (plus `TooltipProvider` for a shared delay), bubble chrome, and theme tokens, the same role a community library plays above `nsh/base`. A [`Tooltip`](https://nsh.dev/elements/tooltip) is the hint bubble given as a host's `tooltip={…}` prop. Store CLI `nsh` 0.4.0 has no enter/exit class hooks (`startingClass` / `endingClass` land in newer docs) — surface look is `class` / `style` only.
 
 ## Install
 
@@ -52,7 +52,7 @@ TooltipProvider (optional delay)
     └── TooltipContent (nsh/base Tooltip bubble)
 ```
 
-String children on `Tooltip` (or standalone `TooltipContent`) still render the bubble for host `tooltip={…}`.
+Use standalone `TooltipContent` for host `tooltip={…}`; the composition root is `TooltipTrigger` + `TooltipContent` only.
 
 ## Controlled
 
@@ -100,10 +100,10 @@ Wrapper bubble chrome (`foreground` fill, padding, radius), then consumer styles
 <TooltipContent style={{ paddingHorizontal: 14, maxWidth: 320 }}>Merged chrome</TooltipContent>
 ```
 
-## Host prop bubble
+## Host `tooltip`
 
 ```tsx
-<View tooltip={<Tooltip>Add item</Tooltip>}>
+<View tooltip={<TooltipContent>Add item</TooltipContent>}>
   <Text>Icon</Text>
 </View>
 
@@ -116,27 +116,25 @@ Wrapper bubble chrome (`foreground` fill, padding, radius), then consumer styles
 
 ### `Tooltip` Props
 
-| Prop          | Type                    | Default | Notes                                                                            |
-| ------------- | ----------------------- | ------- | -------------------------------------------------------------------------------- |
-| `open`        | `boolean \| null`       | —       | Controlled open (composition root or string bubble)                              |
-| `defaultOpen` | `boolean`               | `false` | Uncontrolled initial open                                                        |
-| `children`    | `string \| JSX.Element` | —       | String → bubble for host `tooltip={…}`; else Trigger / Content parts             |
-| `placement`   | `Placement`             | —       | String-bubble path, or composition default for Content (Content default `"top"`) |
-| `align`       | `Align`                 | —       | Same — composition default on Content is `"center"`                              |
-| `offset`      | `number`                | —       | Same — composition default on Content is `4`                                     |
-| `margin`      | `number`                | —       | Forwarded                                                                        |
-| `delay`       | `number`                | —       | Ms before show; composition default for Content (base default `500`)             |
-| `disabled`    | `boolean`               | —       | Never shows; blocks Trigger                                                      |
-| `class`       | `string`                | —       | Bubble class; concatenated (string bubble)                                       |
-| `style`       | `StyleProp<ViewStyle>`  | —       | Merged over bubble chrome (string bubble)                                        |
+| Prop          | Type              | Default | Notes                                                          |
+| ------------- | ----------------- | ------- | -------------------------------------------------------------- |
+| `open`        | `boolean \| null` | —       | Controlled open state                                          |
+| `defaultOpen` | `boolean`         | `false` | Uncontrolled initial open                                      |
+| `children`    | `JSX.Element`     | —       | `TooltipTrigger` + `TooltipContent`                            |
+| `placement`   | `Placement`       | —       | Default for Content when Content omits it (`"top"`)            |
+| `align`       | `Align`           | —       | Default for Content when omitted (`"center"`)                    |
+| `offset`      | `number`          | —       | Default for Content when omitted (`4`)                         |
+| `margin`      | `number`          | —       | Default for Content when omitted                               |
+| `delay`       | `number`          | —       | Ms before show; default for Content (base default `500`)       |
+| `disabled`    | `boolean`         | —       | Never shows; blocks Trigger                                    |
 
-Remaining `TooltipProps` / `ComponentHostProps` from `nsh/base` also pass through on the string-bubble path.
+Bubble chrome, placement overrides, and host props belong on `TooltipContent` (including standalone `tooltip={…}` hosts).
 
 ### Events
 
 | Event          | Notes                                                                                                |
 | -------------- | ---------------------------------------------------------------------------------------------------- |
-| `onOpenChange` | `(open: boolean, reason: OpenChangeReason) => void` — store CLI `nsh` 0.3.0 (not `{ open, reason }`) |
+| `onOpenChange` | `(event: { open: boolean; reason: OpenChangeReason }) => void` |
 | `onOpen`       | `() => void` when shown                                                                              |
 | `onClose`      | `() => void` when gone                                                                               |
 
@@ -159,8 +157,8 @@ Remaining `TooltipProps` / `ComponentHostProps` from `nsh/base` also pass throug
 | `margin`        | `number`                | —          | Forwarded                                      |
 | `delay`         | `number`                | —          | Overrides Provider / Root; base default `500`  |
 | `disabled`      | `boolean`               | —          | Forwarded                                      |
-| `open`          | `boolean \| null`       | —          | Standalone bubble only (composition uses Root) |
-| `defaultOpen`   | `boolean`               | —          | Standalone bubble only                         |
+| `open`          | `boolean \| null`       | —          | Standalone host bubble (composition uses Root) |
+| `defaultOpen`   | `boolean`               | —          | Standalone host bubble                         |
 | `children`      | `string \| JSX.Element` | —          | String → themed label `Text`                   |
 | `class`         | `string`                | —          | Concatenated after any wrapper class           |
 | `style`         | `StyleProp<ViewStyle>`  | —          | Merged over bubble chrome                      |
@@ -190,14 +188,14 @@ Remaining presentation `TooltipProps` / `ComponentHostProps` from `nsh/base` als
 | Topic        | shadcn (`bases/base`)                           | This package                                                                             |
 | ------------ | ----------------------------------------------- | ---------------------------------------------------------------------------------------- |
 | Parts        | Provider / Root / Trigger / Content (+ Arrow)   | same names without Arrow; Content is the `nsh/base` `Tooltip` bubble                     |
-| Attachment   | Trigger wraps the host                          | composition mounts a host `View` with `tooltip={bubble}`; string `Tooltip` is the bubble |
-| Positioning  | `side` / `sideOffset` / `align` / `alignOffset` | base `placement` / `offset` / `align` (no `alignOffset` on store 0.3.0)                  |
+| Attachment   | Trigger wraps the host                          | composition mounts a host `View` with `tooltip={TooltipContent}`; host bubbles use Content standalone |
+| Positioning  | `side` / `sideOffset` / `align` / `alignOffset` | base `placement` / `offset` / `align` (no `alignOffset` on store 0.4.0)                  |
 | Portal       | Base UI Portal + Positioner                     | base places the hint overlay; no separate Portal export                                  |
-| Change event | Root `onOpenChange`                             | `(open, reason)` per store `nsh` 0.3.0; newer website docs may show `{ open, reason }`   |
-| Enter / exit | CSS animate classes                             | store 0.3.0 has no `startingClass` / `endingClass` / `startingStyle` / `endingStyle`     |
+| Change event | Root `onOpenChange`                             | `{ open, reason }` object events per store `nsh` 0.4.0   |
+| Enter / exit | CSS animate classes                             | store 0.4.0 has no `startingClass` / `endingClass` / `startingStyle` / `endingStyle`     |
 | Provider     | delay (+ skipDelayDuration etc.)                | `delay` only                                                                             |
 | Class hooks  | `className` / `cn-tooltip*`                     | `class` + token `style`; consumer styles merge over defaults                             |
 
 ## Not forwarded
 
-None for store CLI `nsh` 0.3.0 `Tooltip` props — all are forwarded on Content (and on the string-bubble root). The wrapper only applies bubble chrome, composition open state / host `tooltip` wiring, and merges defaults under consumer style hooks (`class` concatenates). Newer `nsh` main enter/exit hooks are absent from 0.3.0 and therefore not part of this surface.
+None for store CLI `nsh` 0.4.0 `Tooltip` props — all are forwarded on Content (open / lifecycle owned by the composition root when nested). The wrapper only applies bubble chrome, composition open state / host `tooltip` wiring, and merges defaults under consumer style hooks (`class` concatenates). Newer `nsh` main enter/exit hooks are absent from 0.4.0 and therefore not part of this surface.
