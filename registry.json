@@ -6,12 +6,17 @@
       "name": "theme",
       "type": "registry:theme",
       "title": "Theme",
-      "description": "NSH design tokens (theme.json) and token() helpers (lib/theme.ts).",
+      "description": "NSH design tokens (theme.json), surface finishes, and token() helpers (lib/theme.ts).",
       "files": [
         {
           "path": "packages/theme/theme.json",
           "type": "registry:file",
           "target": "theme.json"
+        },
+        {
+          "path": "packages/theme/finishes.json",
+          "type": "registry:file",
+          "target": "lib/finishes.json"
         },
         {
           "path": "packages/theme/theme.ts",

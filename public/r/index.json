@@ -6,7 +6,7 @@
       "name": "theme",
       "type": "registry:theme",
       "title": "Theme",
-      "description": "NSH design tokens (theme.json) and token() helpers (lib/theme.ts)."
+      "description": "NSH design tokens (theme.json), surface finishes, and token() helpers (lib/theme.ts)."
     },
     {
       "name": "popup-surface",

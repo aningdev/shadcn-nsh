@@ -1,1 +1,12 @@
-export { alpha, colors, focusRing, radius } from "./theme";
+export {
+  alpha,
+  colors,
+  finish,
+  focusRing,
+  pressEasing,
+  pressSink,
+  pressTransition,
+  radius,
+  type Finish,
+  type FinishName,
+} from "./theme";

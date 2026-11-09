@@ -1,6 +1,6 @@
-import { alpha, colors, focusRing, radius } from "@shadcn-nsh/theme";
+import { alpha, colors, finish, focusRing, pressSink, radius } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
-import { Text } from "nsh";
+import { platform, Text } from "nsh";
 import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/base";
 
 /** shadcn `bases/base` also has `link`; this registry omits it — Link is a separate component. */
@@ -39,6 +39,7 @@ type ButtonVariantsResult = {
   activeStyle?: ViewStyle;
   selectedStyle?: ViewStyle;
   disabledStyle?: ViewStyle;
+  hitSlop?: number;
 };
 
 /** Concatenate wrapper + consumer `class` when both are set. */
@@ -56,6 +57,16 @@ function mergeStyle(
   if (base == null) return consumer ?? undefined;
   if (consumer == null) return base ?? undefined;
   return [base, consumer];
+}
+
+/** Smallest comfortable finger target (Accessibility touch targets). */
+const TOUCH_TARGET = 44;
+
+/** Hit slop so a finger gets 44pt without growing the visual control; none on desktop. */
+function touchHitSlop(height: number): number | undefined {
+  if (platform.desktop) return undefined;
+  const slop = Math.max(0, (TOUCH_TARGET - height) / 2);
+  return slop || undefined;
 }
 
 /** Sizes aligned with shadcn `bases/base` + nova token scale (not CSS-pixel locked). */
@@ -91,20 +102,34 @@ function variantLook(variant: ButtonVariant): {
   borderColor: string;
   color: string;
   borderWidth: number;
+  boxShadow?: string;
   hover?: ViewStyle;
   active?: ViewStyle;
   selected?: ViewStyle;
 } {
+  const sink = pressSink(0.97);
   switch (variant) {
     case "secondary":
       return {
         backgroundColor: colors.secondary,
-        borderColor: colors.secondary,
+        borderColor: colors.border,
         color: colors.secondaryForeground,
         borderWidth: 1,
-        hover: { backgroundColor: alpha(colors.secondary, 0.85) },
-        active: { opacity: 0.9 },
-        selected: { backgroundColor: colors.accent, borderColor: colors.accent },
+        boxShadow: finish.raised.boxShadow,
+        hover: {
+          backgroundColor: alpha(colors.secondary, 0.85),
+          boxShadow: finish.hover.boxShadow,
+        },
+        active: {
+          backgroundColor: colors.secondary,
+          boxShadow: finish.pressed.boxShadow,
+          ...sink.activeStyle,
+        },
+        selected: {
+          backgroundColor: colors.accent,
+          borderColor: colors.border,
+          boxShadow: finish.on.boxShadow,
+        },
       };
     case "outline":
       return {
@@ -112,9 +137,14 @@ function variantLook(variant: ButtonVariant): {
         borderColor: colors.border,
         color: colors.foreground,
         borderWidth: 1,
+        boxShadow: finish.card.boxShadow,
         hover: { backgroundColor: colors.muted, borderColor: colors.border },
-        active: { opacity: 0.9 },
-        selected: { backgroundColor: colors.muted, borderColor: colors.border },
+        active: { opacity: 0.9, ...sink.activeStyle },
+        selected: {
+          backgroundColor: colors.muted,
+          borderColor: colors.border,
+          boxShadow: finish.on.boxShadow,
+        },
       };
     case "ghost":
       return {
@@ -123,8 +153,8 @@ function variantLook(variant: ButtonVariant): {
         color: colors.foreground,
         borderWidth: 1,
         hover: { backgroundColor: colors.muted },
-        active: { opacity: 0.9 },
-        selected: { backgroundColor: colors.muted },
+        active: { opacity: 0.9, ...sink.activeStyle },
+        selected: { backgroundColor: colors.muted, boxShadow: finish.on.boxShadow },
       };
     case "destructive":
       return {
@@ -132,9 +162,13 @@ function variantLook(variant: ButtonVariant): {
         borderColor: "transparent",
         color: colors.destructive,
         borderWidth: 1,
+        boxShadow: finish.card.boxShadow,
         hover: { backgroundColor: alpha(colors.destructive, 0.2) },
-        active: { opacity: 0.9 },
-        selected: { backgroundColor: alpha(colors.destructive, 0.22) },
+        active: { opacity: 0.9, ...sink.activeStyle },
+        selected: {
+          backgroundColor: alpha(colors.destructive, 0.22),
+          boxShadow: finish.on.boxShadow,
+        },
       };
     default:
       return {
@@ -142,12 +176,19 @@ function variantLook(variant: ButtonVariant): {
         borderColor: colors.primary,
         color: colors.primaryForeground,
         borderWidth: 1,
+        boxShadow: finish.accent.boxShadow,
         hover: {
           backgroundColor: alpha(colors.primary, 0.8),
           borderColor: alpha(colors.primary, 0.8),
         },
-        active: { opacity: 0.9 },
-        selected: { backgroundColor: alpha(colors.primary, 0.85) },
+        active: {
+          opacity: 0.88,
+          ...sink.activeStyle,
+        },
+        selected: {
+          backgroundColor: alpha(colors.primary, 0.85),
+          boxShadow: finish.accent.boxShadow,
+        },
       };
   }
 }
@@ -161,6 +202,7 @@ export function buttonVariants(options?: {
   const size = options?.size ?? "default";
   const s = sizeLook(size);
   const v = variantLook(variant);
+  const sink = pressSink(0.97, "background-color, border-color, box-shadow, opacity");
 
   return {
     style: {
@@ -175,8 +217,8 @@ export function buttonVariants(options?: {
       gap: s.gap,
       backgroundColor: v.backgroundColor,
       borderColor: v.borderColor,
-      transitionProperty: "background-color, border-color, opacity",
-      transitionDuration: 120,
+      boxShadow: v.boxShadow,
+      ...sink.transition,
     },
     label: {
       color: v.color,
@@ -187,6 +229,7 @@ export function buttonVariants(options?: {
     activeStyle: v.active,
     selectedStyle: v.selected,
     disabledStyle: { opacity: 0.5 },
+    hitSlop: touchHitSlop(s.height),
   };
 }
 
@@ -203,6 +246,7 @@ export function Button(props: ButtonProps) {
     selectedStyle,
     disabledStyle,
     accessibilityLabel,
+    hitSlop,
     ...rest
   } = props;
 
@@ -239,6 +283,7 @@ export function Button(props: ButtonProps) {
     <BaseButton
       {...rest}
       accessibilityLabel={resolvedAccessibilityLabel()}
+      hitSlop={hitSlop ?? look().hitSlop}
       class={mergeClass(undefined, className)}
       style={mergeStyle(look().style, style)}
       hoverStyle={mergeStyle(look().hoverStyle, hoverStyle)}
