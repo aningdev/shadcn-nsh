@@ -1,6 +1,6 @@
 import { alpha, colors, finish, focusRing, pressSink, radius } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
-import { platform, Text } from "nsh";
+import { computed, platform, split, Text } from "nsh";
 import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/base";
 
 /** shadcn `bases/base` also has `link`; this registry omits it — Link is a separate component. */
@@ -41,12 +41,6 @@ type ButtonVariantsResult = {
   disabledStyle?: ViewStyle;
   hitSlop?: number;
 };
-
-/** Concatenate wrapper + consumer `class` when both are set. */
-function mergeClass(base?: string | null, consumer?: string | null): string | undefined {
-  if (base && consumer) return `${base} ${consumer}`;
-  return consumer ?? base ?? undefined;
-}
 
 /** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
 function mergeStyle(
@@ -97,7 +91,10 @@ function sizeLook(size: ButtonSize): {
   }
 }
 
-function variantLook(variant: ButtonVariant): {
+function variantLook(
+  variant: ButtonVariant,
+  sink: ReturnType<typeof pressSink>,
+): {
   backgroundColor: string;
   borderColor: string;
   color: string;
@@ -107,7 +104,6 @@ function variantLook(variant: ButtonVariant): {
   active?: ViewStyle;
   selected?: ViewStyle;
 } {
-  const sink = pressSink(0.97);
   switch (variant) {
     case "secondary":
       return {
@@ -201,8 +197,8 @@ export function buttonVariants(options?: {
   const variant = options?.variant ?? "default";
   const size = options?.size ?? "default";
   const s = sizeLook(size);
-  const v = variantLook(variant);
   const sink = pressSink(0.97, "background-color, border-color, box-shadow, opacity");
+  const v = variantLook(variant, sink);
 
   return {
     style: {
@@ -234,34 +230,26 @@ export function buttonVariants(options?: {
 }
 
 export function Button(props: ButtonProps) {
-  const {
-    variant: variantProp,
-    size: sizeProp,
-    children,
-    class: className,
-    style,
-    hoverStyle,
-    activeStyle,
-    focusStyle,
-    selectedStyle,
-    disabledStyle,
-    accessibilityLabel,
-    hitSlop,
-    ...rest
-  } = props;
+  // Props are read where used (never destructured) so `variant` / `size` / `style` follow signals.
+  const [, rest] = split(props, [
+    "variant",
+    "size",
+    "children",
+    "style",
+    "hoverStyle",
+    "activeStyle",
+    "focusStyle",
+    "selectedStyle",
+    "disabledStyle",
+    "hitSlop",
+  ]);
 
-  const look = () =>
-    buttonVariants({
-      variant: variantProp ?? "default",
-      size: sizeProp ?? "default",
-    });
-
-  const resolvedAccessibilityLabel = () => {
-    if (accessibilityLabel !== undefined) return accessibilityLabel;
-    return typeof children === "string" ? children : undefined;
-  };
+  const look = computed(() =>
+    buttonVariants({ variant: props.variant ?? "default", size: props.size ?? "default" }),
+  );
 
   const content = () => {
+    const children = props.children;
     if (typeof children === "string") {
       const label = look().label;
       return (
@@ -282,15 +270,13 @@ export function Button(props: ButtonProps) {
   return (
     <BaseButton
       {...rest}
-      accessibilityLabel={resolvedAccessibilityLabel()}
-      hitSlop={hitSlop ?? look().hitSlop}
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(look().style, style)}
-      hoverStyle={mergeStyle(look().hoverStyle, hoverStyle)}
-      activeStyle={mergeStyle(look().activeStyle, activeStyle)}
-      focusStyle={mergeStyle(focusRing(), focusStyle)}
-      selectedStyle={mergeStyle(look().selectedStyle, selectedStyle)}
-      disabledStyle={mergeStyle(look().disabledStyle, disabledStyle)}
+      hitSlop={props.hitSlop ?? look().hitSlop}
+      style={mergeStyle(look().style, props.style)}
+      hoverStyle={mergeStyle(look().hoverStyle, props.hoverStyle)}
+      activeStyle={mergeStyle(look().activeStyle, props.activeStyle)}
+      focusStyle={mergeStyle(focusRing(), props.focusStyle)}
+      selectedStyle={mergeStyle(look().selectedStyle, props.selectedStyle)}
+      disabledStyle={mergeStyle(look().disabledStyle, props.disabledStyle)}
     >
       {content()}
     </BaseButton>
