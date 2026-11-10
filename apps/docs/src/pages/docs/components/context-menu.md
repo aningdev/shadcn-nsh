@@ -7,7 +7,7 @@ demo: context-menu
 demoHeight: 480
 ---
 
-[`nsh/base`](https://nsh.dev/modules/nsh-base) owns open state, secondary-click / long-press open, focus, Escape / press-outside / backdrop dismiss, desktop popup vs phone sheet presentation, cascading `Submenu`, and the popup / backdrop hosts — unstyled on every platform. This package is the styled layer on top: a shadcn-shaped `ContextMenu` / `ContextMenuTrigger` / `ContextMenuContent` tree (plus Item / CheckboxItem / Group / Label / Separator / Shortcut / Sub), popup surface chrome, and theme tokens, the same role a community library plays above `nsh/base`. A [`ContextMenu`](https://nsh.dev/elements/menu) is the menu that opens about its trigger — right-click at the pointer on desktop, or a held finger as a sheet on touch. Store `nsh` 0.4.0 `MenuItem` forwards `checked` / `indicator` to base; checkbox items use the same parts as `menu`.
+[`nsh/base`](https://nsh.dev/modules/nsh-base) owns open state, secondary-click / long-press open, focus, Escape / press-outside / backdrop dismiss, desktop popup vs phone sheet presentation, cascading `Submenu`, and the popup / backdrop hosts — unstyled on every platform. This package is the styled layer on top: a shadcn-shaped `ContextMenu` / `ContextMenuTrigger` / `ContextMenuContent` tree (plus Item / CheckboxItem / RadioItem / Group / Label / Separator / Shortcut / Sub), the same row look as `menu`, and theme tokens. A [`ContextMenu`](https://nsh.dev/elements/menu) is the menu that opens about its trigger — right-click at the pointer on desktop, or a held finger as a sheet on touch. Checkbox and radio items are the menu parts, re-exported.
 
 ## Install
 
@@ -56,7 +56,7 @@ ContextMenu
 └── ContextMenuContent (nsh/base ContextMenu)
     ├── ContextMenuLabel (app)
     ├── ContextMenuGroup (app)
-    │   ├── ContextMenuItem / CheckboxItem
+    │   ├── ContextMenuItem / CheckboxItem / RadioItem
     │   └── ContextMenuShortcut (app)
     ├── ContextMenuSeparator (nsh/base MenuSeparator)
     └── ContextMenuSub
@@ -64,7 +64,7 @@ ContextMenu
         └── ContextMenuSubContent (nsh/base Submenu)
 ```
 
-Item / CheckboxItem / Group / Label / Separator / Shortcut / Sub parts are the same implementations as Menu (re-exported aliases).
+Item / CheckboxItem / RadioItem / Group / Label / Separator / Shortcut / Sub parts are the same implementations as Menu (re-exported aliases).
 
 ## Controlled
 
@@ -175,7 +175,7 @@ Remaining presentation `ContextMenuProps` / `ComponentHostProps` from `nsh/base`
 
 ### `ContextMenuItem` / `ContextMenuCheckboxItem` Props
 
-Same as Menu Item / CheckboxItem — `disabled`, app-layer `checked` mark, `closeOnSelect`, `accessibilityLabel`, `onSelect`, and style-hook merge over item chrome + `focusRing()` / accent hover.
+Same as Menu Item / CheckboxItem / RadioItem — the row look (accent hover and keyboard highlight, deeper press, 0.5 disabled), a check or a dot, and style-hook merge.
 
 ### `ContextMenuGroup` / `ContextMenuLabel` / `ContextMenuShortcut` / `ContextMenuSeparator` / `ContextMenuSub*` Props
 
@@ -188,11 +188,13 @@ Same as the Menu aliases — see Menu API. Separator forwards all `MenuSeparator
 | Parts               | Root / Trigger / Content / Item / Sub / Group / … | same names; Content is `nsh/base` `ContextMenu`; SubContent is `Submenu`                          |
 | Portal / Positioner | Base UI Portal + Positioner                       | base places the popup / sheet; no separate Portal export                                          |
 | Positioning         | `side` / `sideOffset` / `align` / `alignOffset`   | store 0.4.0 ContextMenu is pointer-anchored — only `offset` / `margin` (no `placement` / `align`) |
-| Radio items         | `ContextMenuRadioGroup` / `RadioItem`             | no store radio role — use `checked` on Item / CheckboxItem with `indicator`                       |
-| Checkable items     | Radix CheckboxItem subtree                        | base `MenuItem` `checked` + `indicator`; wrapper default mark when omitted                        |
+| Radio items         | `ContextMenuRadioGroup` / `RadioItem`             | `ContextMenuRadioItem` — the menu's dot row; no group part                                        |
+| Checkable items     | Radix CheckboxItem subtree                        | same check mark as `MenuCheckboxItem`                                                             |
+| Row focus           | `focus:bg-accent`                                 | the menu row's `accent` fill, not `focusRing()`                                                   |
+| Touch surface       | sheet                                             | the menu's card sheet, not `popupSurface()`                                                       |
 | Change event        | Root `onOpenChange`                               | `{ open, reason }` object events per store `nsh` 0.4.0                                            |
-| Enter / exit        | CSS animate classes                               | store 0.4.0 has no `popupStarting*` / `popupEnding*` / `onPosition`                               |
-| Shared parts        | separate file, shared look                        | Item / Label / Separator / Sub / Group / Shortcut re-export Menu implementations                  |
+| Enter / exit        | CSS animate classes                               | the menu's 100 ms fade and 4-point rise; `null` turns a phase off                                 |
+| Shared parts        | separate file, shared look                        | Item / RadioItem / Label / Separator / Sub / Group / Shortcut re-export Menu                      |
 | Composition-only    | optional single-root in some shadcn ports         | root holds open state only — use `ContextMenuTrigger` + `ContextMenuContent`                      |
 | Class hooks         | `className` / `cn-context-menu*`                  | `class` + `popupClass` / `backdropClass` / token styles; consumer merges over defaults            |
 

@@ -3,6 +3,7 @@ import {
   MenuCheckboxItem,
   MenuContent,
   MenuItem,
+  MenuRadioItem,
   MenuSub,
   MenuSubContent,
   MenuSubTrigger,
@@ -15,8 +16,49 @@ function App() {
   const changes = signal(0);
   const selected = signal(0);
   const off = signal(false);
+  const picked = signal("none");
+  const sidebar = signal(true);
+  const sort = signal("Name");
   return (
     <View>
+      <Text>picked {() => picked()}</Text>
+      <Text>sidebar {() => (sidebar() ? "on" : "off")}</Text>
+      <Text>sort {() => sort()}</Text>
+      <Menu>
+        <MenuTrigger>Open K</MenuTrigger>
+        <MenuContent>
+          <MenuItem onSelect={() => picked.set("A")}>
+            <Text>Key A</Text>
+          </MenuItem>
+          <MenuItem disabled onSelect={() => picked.set("B")}>
+            <Text>Key B</Text>
+          </MenuItem>
+          <MenuItem onSelect={() => picked.set("C")}>
+            <Text>Key C</Text>
+          </MenuItem>
+          <MenuCheckboxItem
+            checked={sidebar()}
+            closeOnSelect={false}
+            onSelect={() => sidebar.set(!sidebar())}
+          >
+            <Text>Sidebar</Text>
+          </MenuCheckboxItem>
+          <MenuRadioItem
+            checked={sort() === "Name"}
+            closeOnSelect={false}
+            onSelect={() => sort.set("Name")}
+          >
+            <Text>By name</Text>
+          </MenuRadioItem>
+          <MenuRadioItem
+            checked={sort() === "Date"}
+            closeOnSelect={false}
+            onSelect={() => sort.set("Date")}
+          >
+            <Text>By date</Text>
+          </MenuRadioItem>
+        </MenuContent>
+      </Menu>
       <Text>changes {() => changes()}</Text>
       <Text>selected {() => selected()}</Text>
       <BaseButton onPress={() => off.set(true)}>

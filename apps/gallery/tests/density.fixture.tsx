@@ -4,6 +4,7 @@ import {
   dialogTitleStyle,
   knobTravel,
   popoverSurface,
+  menuRow,
   switchGeometry,
   switchSlop,
   toggleVariants,
@@ -16,6 +17,7 @@ function App() {
   const small = switchGeometry("sm", false);
   const regular = switchGeometry("default", false);
   const pointer = switchGeometry("default", true);
+  const row = menuRow();
   return (
     <View>
       <Text>{`desktop=${platform.desktop}`}</Text>
@@ -24,6 +26,7 @@ function App() {
       <Text>{`travel=${knobTravel(pointer)}|${knobTravel(regular)}|${knobTravel(small)}`}</Text>
       <Text>{`slop=${JSON.stringify(switchSlop(regular))}`}</Text>
       <Text>{`overlay=${popoverSurface().padding}|${dialogTitleStyle().fontSize}|${dialogBodyStyle().fontSize}|${dialogBodyStyle().lineHeight}`}</Text>
+      <Text>{`menu=${row.minHeight}|${row.font}|${row.note}|${row.icon}`}</Text>
     </View>
   );
 }

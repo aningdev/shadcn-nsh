@@ -277,7 +277,7 @@
       "type": "registry:ui",
       "title": "Menu",
       "description": "Styled menu wrapping nsh/base Menu — theme tokens + Trigger / Content / Item; composition-only.",
-      "registryDependencies": ["theme", "button", "open-state"],
+      "registryDependencies": ["theme", "button", "open-state", "density", "follow"],
       "files": [
         {
           "path": "packages/ui/menu.tsx",

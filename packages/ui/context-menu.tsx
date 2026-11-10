@@ -1,4 +1,5 @@
-import { popupBackdrop, popupSurface } from "@shadcn-nsh/theme";
+// Source: examples/nsh-gallery-ui/look/menu.tsx @ 64ab8a1d (baseline), see NOTICE.
+import { popupBackdrop } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { context, split, View } from "nsh";
 import {
@@ -8,12 +9,14 @@ import {
 } from "nsh/base";
 
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
+import { menuPopupChrome } from "./menu";
 
 export {
   MenuCheckboxItem as ContextMenuCheckboxItem,
   MenuGroup as ContextMenuGroup,
   MenuItem as ContextMenuItem,
   MenuLabel as ContextMenuLabel,
+  MenuRadioItem as ContextMenuRadioItem,
   MenuSeparator as ContextMenuSeparator,
   MenuShortcut as ContextMenuShortcut,
   MenuSub as ContextMenuSub,
@@ -23,6 +26,7 @@ export {
   type MenuGroupProps as ContextMenuGroupProps,
   type MenuItemProps as ContextMenuItemProps,
   type MenuLabelProps as ContextMenuLabelProps,
+  type MenuRadioItemProps as ContextMenuRadioItemProps,
   type MenuSeparatorProps as ContextMenuSeparatorProps,
   type MenuShortcutProps as ContextMenuShortcutProps,
   type MenuSubContentProps as ContextMenuSubContentProps,
@@ -33,6 +37,8 @@ export {
 /** Composition root for `nsh/base` ContextMenu: open state + trigger slot. */
 export type ContextMenuProps = {
   open?: boolean | null;
+  /** Open at first, while `open` is not set. */
+  defaultOpen?: boolean;
   disabled?: boolean;
   children?: JSX.Element;
   onOpenChange?: (event: { open: boolean; reason: OpenChangeReason }) => void;
@@ -84,14 +90,6 @@ function mergeStyle(
   if (base == null) return consumer ?? undefined;
   if (consumer == null) return base ?? undefined;
   return [base, consumer];
-}
-
-/** Popup / sheet chrome — aligned with menu surface padding. */
-function contentPopupChrome(): ViewStyle {
-  return {
-    ...popupSurface(),
-    minWidth: 160,
-  };
 }
 
 /** Composition root: a menu opened at the pointer. */
@@ -182,7 +180,7 @@ export function ContextMenuContent(props: ContextMenuContentProps) {
       onOpen={ctx.onOpen}
       onClose={ctx.onClose}
       onCancel={ctx.onCancel}
-      popupStyle={mergeStyle({ ...contentPopupChrome(), ...motion.style }, props.popupStyle)}
+      popupStyle={mergeStyle({ ...menuPopupChrome(), ...motion.style }, props.popupStyle)}
       backdropStyle={mergeStyle(popupBackdrop(), props.backdropStyle)}
       popupStartingStyle={defaultStarting() ? motion.startingStyle : props.popupStartingStyle}
       popupEndingStyle={defaultEnding() ? motion.endingStyle : props.popupEndingStyle}

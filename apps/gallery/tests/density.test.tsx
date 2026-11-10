@@ -33,6 +33,13 @@ test("a popover's padding and a dialog's type grow on a touch screen", async () 
   expect(find(touch.texts(), "overlay=")).toBe("16|20|15|21");
 });
 
+test("a menu row is a 26-point line with a pointer and a 46-point finger row on a touch screen", async () => {
+  const desktop = await open("./density.fixture.tsx", { platform: "macos" });
+  const touch = await open("./density.fixture.tsx", { platform: "ios" });
+  expect(find(desktop.texts(), "menu=")).toBe("26|13|11.5|14");
+  expect(find(touch.texts(), "menu=")).toBe("46|16|14|18");
+});
+
 test("a toggle is compact with a pointer and roomier, with a hit slop, on a touch screen", async () => {
   const desktop = await open("./density.fixture.tsx", { platform: "macos" });
   const touch = await open("./density.fixture.tsx", { platform: "ios" });
