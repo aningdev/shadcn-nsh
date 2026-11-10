@@ -204,6 +204,7 @@ function defaultCheckIndicator(): JSX.Element {
   return <Text style={{ fontSize: 12, color: colors.primary }}>✓</Text>;
 }
 
+/** Composition root: owns the open state the parts below read. */
 export function Menu(props: MenuProps) {
   // `props` itself is the options bag: `open` / `onOpenChange` are read when used.
   const state = createOpenState<OpenChangeReason>(props);
@@ -230,6 +231,7 @@ export function Menu(props: MenuProps) {
   );
 }
 
+/** Opens the menu; a string child renders a `Button`. */
 export function MenuTrigger(props: MenuTriggerProps) {
   const ctx = useMenu();
 
@@ -259,6 +261,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
   return <View style={{ width: 0, height: 0 }} />;
 }
 
+/** The popup surface of the menu, with its entrance motion as the default. */
 export function MenuContent(props: MenuContentProps) {
   const ctx = useMenu();
   const triggerAccessor = ctx.trigger.get();
@@ -312,6 +315,7 @@ export function MenuContent(props: MenuContentProps) {
   );
 }
 
+/** One row of the menu, with its hover, pressed and disabled looks. */
 export function MenuItem(props: MenuItemProps) {
   // Defaulted: indicator, style, hoverStyle, focusStyle. Everything else passes through.
   const [, rest] = split(props, ["children", "indicator", "style", "hoverStyle", "focusStyle"]);
@@ -329,11 +333,13 @@ export function MenuItem(props: MenuItemProps) {
   );
 }
 
+/** A menu row that can be checked. */
 export function MenuCheckboxItem(props: MenuCheckboxItemProps) {
   const [, rest] = split(props, ["checked"]);
   return <MenuItem {...rest} checked={props.checked ?? false} />;
 }
 
+/** Groups related rows. */
 export function MenuGroup(props: MenuGroupProps) {
   return (
     <View class={props.class ?? undefined} style={props.style}>
@@ -342,6 +348,7 @@ export function MenuGroup(props: MenuGroupProps) {
   );
 }
 
+/** A group's title. */
 export function MenuLabel(props: MenuLabelProps) {
   if (typeof props.children !== "string" && props.children != null) {
     return (
@@ -360,11 +367,13 @@ export function MenuLabel(props: MenuLabelProps) {
   );
 }
 
+/** A hairline between groups. */
 export function MenuSeparator(props: MenuSeparatorProps = {}) {
   const [, rest] = split(props, ["style"]);
   return <BaseMenuSeparator {...rest} style={mergeStyle(separatorChrome(), props.style)} />;
 }
 
+/** The shortcut shown at a row's trailing edge. */
 export function MenuShortcut(props: MenuShortcutProps) {
   if (typeof props.children !== "string" && props.children != null) {
     return (
@@ -386,6 +395,7 @@ export function MenuShortcut(props: MenuShortcutProps) {
   );
 }
 
+/** The root of a submenu. */
 export function MenuSub(props: MenuSubProps) {
   const triggerSlot = createSlot();
   return (
@@ -402,6 +412,7 @@ export function MenuSub(props: MenuSubProps) {
   );
 }
 
+/** The row that opens a submenu. */
 export function MenuSubTrigger(props: MenuSubTriggerProps) {
   const ctx = SubContext();
   if (!ctx) throw new Error("MenuSubTrigger must be used within <MenuSub>");
@@ -439,6 +450,7 @@ export function MenuSubTrigger(props: MenuSubTriggerProps) {
   return <View style={{ width: 0, height: 0 }} />;
 }
 
+/** The popup of a submenu. */
 export function MenuSubContent(props: MenuSubContentProps) {
   const ctx = SubContext();
   if (!ctx) throw new Error("MenuSubContent must be used within <MenuSub>");

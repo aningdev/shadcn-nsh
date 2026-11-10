@@ -17,6 +17,7 @@ import { pressSink } from "./lib/press";
 /** `default` is bare while off (a toolbar's tool); `outline` sits on an edge while off. */
 export type ToggleVariant = "default" | "outline";
 
+/** A height step: a pointer gets 24 / 28 / 34 points, a touch screen 32 / 38 / 44. */
 export type ToggleSize = "default" | "sm" | "lg";
 
 /**
@@ -104,6 +105,7 @@ export function toggleVariants(options?: {
   };
 }
 
+/** A two-state button: `variant` and `size` over `nsh/base` Toggle; every base prop passes through. */
 export function Toggle(props: ToggleProps) {
   // Props are read where used (never destructured) so `variant` / `size` / `pressed` follow signals.
   const [, rest] = split(props, [

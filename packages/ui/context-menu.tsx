@@ -94,6 +94,7 @@ function contentPopupChrome(): ViewStyle {
   };
 }
 
+/** Composition root: a menu opened at the pointer. */
 export function ContextMenu(props: ContextMenuProps) {
   // `props` itself is the options bag: `open` / `onOpenChange` are read when used.
   const state = createOpenState<OpenChangeReason>(props);
@@ -123,6 +124,7 @@ export function ContextMenu(props: ContextMenuProps) {
   );
 }
 
+/** The area that opens the menu. */
 export function ContextMenuTrigger(props: ContextMenuTriggerProps) {
   const ctx = useContextMenu();
 
@@ -139,6 +141,7 @@ export function ContextMenuTrigger(props: ContextMenuTriggerProps) {
   return <View style={{ width: 0, height: 0 }} />;
 }
 
+/** The popup surface, reusing the menu's parts. */
 export function ContextMenuContent(props: ContextMenuContentProps) {
   const ctx = useContextMenu();
   const triggerAccessor = ctx.trigger.get();

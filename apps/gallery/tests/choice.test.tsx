@@ -14,6 +14,15 @@ test("a toggle, a checkbox and a radio take a press and report it", async () => 
   expect(has(app.texts(), "option=b")).toBe(true);
 });
 
+test("a switch and a toggle in a group take a press and report it", async () => {
+  const app = await open("./choice.fixture.tsx");
+  await app.press("text:Wi-Fi");
+  await app.press("text:Left");
+  await app.wait(50);
+  expect(has(app.texts(), "wifi=true")).toBe(true);
+  expect(has(app.texts(), "left=true")).toBe(true);
+});
+
 test("a toggle follows a value changed after mount (its label turns from muted to text)", async () => {
   const app = await open("./choice.fixture.tsx");
   const before = app.spanStyle("text:Bold").color;

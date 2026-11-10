@@ -134,6 +134,7 @@ function CheckboxMark(props: { mark: () => Mark }) {
   );
 }
 
+/** A checkbox: a sunk box with the fill and the mark springing in; every base prop passes through. */
 export function Checkbox(props: CheckboxProps) {
   // Props are read where used (never destructured) so `checked` / `indeterminate` follow signals.
   const [, rest] = split(props, [

@@ -36,6 +36,7 @@ function trackChrome(): ViewStyle {
   };
 }
 
+/** The inset track holding a row of toggles; every base prop passes through. */
 export function ToggleGroup(props: ToggleGroupProps) {
   const [, rest] = split(props, ["style"]);
 

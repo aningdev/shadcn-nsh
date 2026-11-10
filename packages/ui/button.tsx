@@ -19,6 +19,7 @@ import { pressSink } from "./lib/press";
 /** shadcn `bases/base` also has `link`; this registry omits it — Link is a separate component. */
 export type ButtonVariant = "default" | "outline" | "secondary" | "ghost" | "destructive";
 
+/** A height and padding step; the `icon*` sizes are square. */
 export type ButtonSize =
   | "default"
   | "xs"
@@ -232,6 +233,7 @@ export function buttonVariants(options?: {
   return look(options?.variant ?? "default", options?.size ?? "default");
 }
 
+/** A pressable control: `variant` and `size` over `nsh/base` Button; every base prop passes through. */
 export function Button(props: ButtonProps) {
   // Props are read where used (never destructured) so `variant` / `size` / `style` follow signals.
   const [, rest] = split(props, [

@@ -117,6 +117,7 @@ function descriptionChrome(): TextStyle {
   return { fontSize: 13, color: colors.mutedForeground };
 }
 
+/** Composition root: owns the open state the parts below read. */
 export function Popover(props: PopoverProps) {
   // `props` itself is the options bag: `open` / `onOpenChange` are read when used.
   const state = createOpenState<OpenChangeReason>(props);
@@ -143,6 +144,7 @@ export function Popover(props: PopoverProps) {
   );
 }
 
+/** Opens the popover; a string child renders a `Button`. */
 export function PopoverTrigger(props: PopoverTriggerProps) {
   const ctx = usePopover();
 
@@ -171,6 +173,7 @@ export function PopoverTrigger(props: PopoverTriggerProps) {
   return <View style={{ width: 0, height: 0 }} />;
 }
 
+/** The popup surface, with its entrance motion as the default. */
 export function PopoverContent(props: PopoverContentProps) {
   const ctx = usePopover();
   const triggerAccessor = ctx.trigger.get();
@@ -222,6 +225,7 @@ export function PopoverContent(props: PopoverContentProps) {
   );
 }
 
+/** The header block of the popup content. */
 export function PopoverHeader(props: PopoverHeaderProps) {
   return (
     <View class={props.class ?? undefined} style={mergeStyle(headerChrome(), props.style)}>
@@ -230,6 +234,7 @@ export function PopoverHeader(props: PopoverHeaderProps) {
   );
 }
 
+/** The popup's title; a string child gets themed text. */
 export function PopoverTitle(props: PopoverTitleProps) {
   if (typeof props.children !== "string" && props.children != null) {
     return (
@@ -248,6 +253,7 @@ export function PopoverTitle(props: PopoverTitleProps) {
   );
 }
 
+/** The popup's description; a string child gets themed text. */
 export function PopoverDescription(props: PopoverDescriptionProps) {
   if (typeof props.children !== "string" && props.children != null) {
     return (

@@ -273,6 +273,7 @@ function TooltipAnchor() {
   );
 }
 
+/** Anchors the tooltip to its child; a string child renders a `Button`. */
 export function TooltipTrigger(props: TooltipTriggerProps) {
   const ctx = useTooltip();
   const blocked = () => props.disabled || ctx.disabled;
@@ -298,6 +299,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
   return <View style={{ width: 0, height: 0 }} />;
 }
 
+/** The bubble, with its fade as the default; also usable standalone for a host `tooltip={…}`. */
 export function TooltipContent(props: TooltipContentProps) {
   const ctx = TooltipContext();
   const providerDelay = TooltipDelayContext();
@@ -316,6 +318,7 @@ export function TooltipContent(props: TooltipContentProps) {
   return <View style={{ width: 0, height: 0 }} />;
 }
 
+/** Shares one delay between the tooltips under it. */
 export function TooltipProvider(props: TooltipProviderProps) {
   return (
     <TooltipDelayContext.Provider value={props.delay}>

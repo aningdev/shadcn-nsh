@@ -74,6 +74,7 @@ function rootChrome(): ViewStyle {
   return { flexDirection: "row", alignItems: "center", gap: 8 };
 }
 
+/** A switch: a sunk track and a knob that springs across; every base prop passes through. */
 export function Switch(props: SwitchProps) {
   // Props are read where used (never destructured) so `checked` / `size` follow signals.
   const [, rest] = split(props, [

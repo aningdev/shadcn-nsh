@@ -25,6 +25,7 @@ export type RadioGroupProps = BaseRadioGroupProps;
  * nsh/base-aligned alias.
  */
 export type RadioProps = BaseRadioProps;
+/** Props of one option: those of `Radio`. */
 export type RadioGroupItemProps = RadioProps;
 
 /** Wrapper default, then consumer: both set, both apply. */
@@ -105,6 +106,7 @@ function RadioRing(props: { on: () => boolean }) {
   );
 }
 
+/** The column of options; the app owns which one is checked. */
 export function RadioGroup(props: RadioGroupProps) {
   const [, rest] = split(props, ["style"]);
 
