@@ -1,39 +1,40 @@
 # AGENTS.md
 
-本仓库为 NSH 构建 **styled component-library 层**（社区/应用层）：在 `nsh/base` 的 unstyled 行为与无障碍结构之上，提供可复制进应用的品牌化组件与分发体验。分发模式对齐 shadcn/ui；行为权威仍是 `nsh/base`。
+本仓库为 NSH 构建 **styled component-library 层**（社区/应用层）：在 `nsh/base` 的 unstyled 行为与无障碍结构之上，提供可复制进应用的品牌化组件与分发体验。分发模式对齐 shadcn/ui；行为权威仍是 `nsh/base`；**视觉与状态设计的来源是 `references/nsh/examples/nsh-gallery-ui`，本库是它的规范化、可分发版本**（配色用 shadcn neutral），路线图见 [`docs/roadmap.md`](docs/roadmap.md)。
 
 产品单元是 **Styled Component**（Copy-into-app）：双主目标为品牌外观（`theme.json` / `token()`）与 registry/CLI 分发。复合控件公开 **Composition Facade**（`Trigger` / `Content` / `Item` 等角色），**家族名与 registry id 跟 `nsh/base` 符号**（如 `Menu` / `MenuTrigger` / `add menu`），不是 shadcn 的 `DropdownMenu*` / `dropdown-menu`。内部仍适配 base 的 value/open/items/`trigger` 模型；对外 **Composition-only**（不保留 legacy 单根 `trigger` 双路径）。无法抹平的差异写进各组件 docs 的 Differences。词汇见 [`GLOSSARY.md`](GLOSSARY.md)；写或改组件前读 [`packages/ui/README.zh.md`](packages/ui/README.zh.md)（范围规则、组件包、配方、文件内顺序、改造方法）；写或改主题（颜色、半径、阴影）前读 [`packages/theme/README.zh.md`](packages/theme/README.zh.md)；动效与过渡的约定在 `packages/ui/README.zh.md` 的“组件内的动效”。新决策追加到这两份 README 的“决策记录”。
 
-**不做**：改 `nsh` / `nsh/base` 本身；不把 Gallery 演示样式当成可发布 API；不新增无 base 的 Extensions；不为旧 shadcn 形 registry id 提供 alias。
+**不做**：改 `nsh` / `nsh/base` 本身；不搬 gallery-ui 的品牌色、终端形态、声音和网站 playground 适配；不新增无 base 的 Extensions；不为旧 shadcn 形 registry id 提供 alias。
 
 ## References
 
 只读参考，默认不在 submodule 内改代码或向上游提 PR（除非用户明确要求）。
 
-| 路径                                           | 用途                                                       |
-| ---------------------------------------------- | ---------------------------------------------------------- |
-| [`references/shadcn-ui`](references/shadcn-ui) | 体系模式：registry、文档站、CLI、copy-into-app             |
-| [`references/nsh`](references/nsh)             | 平台与 unstyled 基础：`nsh` / `nsh/base`、Gallery 示例样式 |
+| 路径                                           | 用途                                                          |
+| ---------------------------------------------- | ------------------------------------------------------------- |
+| [`references/shadcn-ui`](references/shadcn-ui) | 体系模式：registry、文档站、CLI、copy-into-app                |
+| [`references/nsh`](references/nsh)             | 平台与 unstyled 基础：`nsh` / `nsh/base`；视觉来源 gallery-ui |
 
 克隆后若目录为空：`git submodule update --init --recursive`。
 
 ## 分层
 
-| 层                 | 权威参考                                                          | 本仓职责                                      |
-| ------------------ | ----------------------------------------------------------------- | --------------------------------------------- |
-| 分发与作者体验     | `references/shadcn-ui`（`apps/v4/registry`、`packages/shadcn`）   | `registry.json` → `public/r` + `packages/cli` |
-| 行为与 a11y        | `references/nsh` 的 `nsh/base`                                    | 组合与样式，不重写行为                        |
-| 样式示例（非 API） | `references/nsh` 的 `examples/nsh-gallery-ui`、`examples/gallery` | 可借鉴 token/零件，勿当契约                   |
+| 层             | 权威参考                                                        | 本仓职责                                                                  |
+| -------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| 分发与作者体验 | `references/shadcn-ui`（`apps/v4/registry`、`packages/shadcn`） | `registry.json` → `public/r` + `packages/cli`                             |
+| 行为与 a11y    | `references/nsh` 的 `nsh/base`                                  | 组合与样式，不重写行为                                                    |
+| 视觉与状态来源 | `references/nsh` 的 `examples/nsh-gallery-ui`（`look/*`）       | 规范化移植：取状态设计与几何，颜色走 neutral，文件头记基线提交 `64ab8a1d` |
 
 依赖向下：本库 → `nsh/base` → `nsh`。
 
-主题真源是 **`theme.json`（`nsh.json` 的 `theme`）**，不是 CSS；`lib/theme.ts` 仅为 `token()` 辅助。
+主题真源是 **`theme.json`（`nsh.json` 的 `theme`）**，不是 CSS；`lib/theme.ts` 读取它，并提供 `token()` 辅助、finish、焦点环和 disabled 外观。
 
 ## 何时读参考
 
 - **Registry / CLI / 组件源码组织** — 读 `references/shadcn-ui`：先 `CONTRIBUTING.md`，再 `apps/v4/registry`；本仓实现见 `packages/cli`。
 - **控件行为、parts、平台差异、Tailwind/theme** — 读 `references/nsh` 与 [nsh.dev/llms.txt](https://nsh.dev/llms.txt)。
 - **组件库架构约定** — 对齐 NSH Coding Guides 的 library 边界。
+- **组件的视觉与状态设计** — 读 `references/nsh/examples/nsh-gallery-ui/README.md` 与对应 `look/*`；移植循环见 [`docs/roadmap.md`](docs/roadmap.md) §6。
 
 ## 布局
 

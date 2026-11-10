@@ -18,7 +18,7 @@ Consumed by [`@shadcn-nsh/ui`](../ui) and shipped as registry `theme` (`theme.js
 
 `theme.json` is plain shadcn `cssVars` with every color written as oklch: NSH reads it, types it and follows the appearance by itself. Shadows are not tokens in NSH (it drops them from `cssVars`), so the shapes live in `theme.ts` and the colors come from the tokens above.
 
-**Not in the theme:** motion and transitions (`nsh`'s own values, written in each component, see the UI README), sizes, type scale and per-variant opacities (a component's `look()`). Why: the theme is not a general design system, and those values are `nsh`'s or one component's internals, not brand. Add a token only when a component consumes it; add a helper only when several components need the same value.
+**Not in the theme:** motion and transitions (`nsh`'s own values, written in each component or, when several share them, in a `lib` module; see the UI README), sizes, type scale and per-variant opacities (a component's `look()`). Why: the theme is not a general design system, and those values are `nsh`'s or one component's internals, not brand. Add a token only when a component consumes it; add a helper only when several components need the same value.
 
 **Colors.** Components read semantic tokens only; raw hex / `rgb` / palette classes are a review finding. `alpha(colors.x, a)` keeps the semantic source.
 

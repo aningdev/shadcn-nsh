@@ -45,6 +45,10 @@ _Avoid_: 新增共享抽象层, 骨架 helper
 **Theme Source**:
 品牌色、半径、间距等默认的真源是 `theme.json`（经 `token()`）；组件文件只组合与合并，不另立并行真源。
 
+**Reference Look**:
+`references/nsh/examples/nsh-gallery-ui/look/*`：NSH 自己的共享视觉与状态设计（上游自述为内部层，不作为应用 API 发布）。本库把它**规范化移植**——取状态设计与几何，颜色换成 shadcn neutral，去掉外部耦合——并在文件头记录来源与基线提交（`64ab8a1d`）。
+_Avoid_: 照搬品牌色, 自动同步上游, 把它当作 API 契约
+
 **Extension**:
 shadcn 有、但无对应 `nsh/base` 导出的零件（如 badge、card、label）；因无 base 导出而不进入 Registry Completeness。
 _Avoid_: styled primitive, gallery demo chrome

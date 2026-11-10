@@ -95,6 +95,17 @@ shadcn 有这些；**没有**对应的 `nsh/base` / website `group: base` 导出
 | Table\*                         | `Table` / `TableHeader` / `TableBody` / `TableRow` / `TableHead` / `TableCell` / …                                             | 同左                                     |
 | RadioGroup / Item               | `RadioGroup` / `RadioGroupItem`（+ `Radio` 别名）                                                                              | `RadioGroup` + `Radio`                   |
 
+## 来源与同步
+
+这些组件的视觉与状态设计来自 NSH 自己的共享 UI 层 `references/nsh/examples/nsh-gallery-ui`（上游称它是内部层，不作为应用 API 发布）。我们**按家族一次性**移植：取状态设计和几何，颜色通过 shadcn neutral 调色板表达（`colors.*`、`finish`、`alpha()`），不带走终端形态、声音和网站 playground 适配，并给组件加上 Composition Facade。
+
+- **基线：** `64ab8a1d`，即 `references/nsh` 固定的提交（`examples/nsh-gallery-ui` 最后一次改动是 `d96fc35c`，2026-11-09）。
+- **移植文件的文件头：** `// Source: examples/nsh-gallery-ui/look/<file> @ 64ab8a1d`，并指向 `NOTICE`。
+- **store 与 main：** 本仓库按 store `nsh` 0.4.0 开发，参考实现跟随 `main`。以 store 的 `.nsh/types` 做类型检查；store 没有的 base 能力写进组件的 Differences，不移植。
+- **许可：** 移植部分保持 Apache-2.0（Longbridge），见 `NOTICE`。
+- **同步：** 手动。基线变动时，逐家族把该家族的 look 文件与文件头里的提交对照。没有自动同步。
+- **计划与顺序：** [`docs/roadmap.md`](../../docs/roadmap.md)。
+
 ## 范围规则
 
 | 规则                                                                                                                                             | 原因                                                                            |
@@ -212,7 +223,7 @@ Composition Facade，基于复合 `nsh/base` 控件（`Root` / `Trigger` / `Cont
 
 现状：`registry:build` 校验 `registryDependencies`，`bun run test:unit` 覆盖 CLI 的导入改写与 `theme.json` 合并，`bun run test:gallery` 覆盖组件与主题 helper；评审用的 grep 有三项：`mergeClass(undefined` / `mergeStyle(undefined`、对 `props` 的 `const {`、主题白名单之外的字面量时长。
 
-计划（尚未实现）：`check:recipes`，接入 `bun run check`，覆盖这三项 grep、doc comment（R7）、文档章节、每个组件是否有演示和测试；配合 `scripts/recipes-allowlist.json` 列出按规则暂时豁免的组件（条目只减不增，清空后删除该文件）。
+计划（尚未实现）：`check:recipes`，以及在 `packages/ui/*.tsx` 里出现颜色字面量就失败的守门检查（hex、`rgb(`、`rgba(`、`hsl(`、命名色；`"transparent"` 放行，R5），两者读取**同一份**白名单，接入 `bun run check`，覆盖这三项 grep、doc comment（R7）、文档章节、每个组件是否有演示和测试；配合 `scripts/recipes-allowlist.json` 列出按规则暂时豁免的组件（条目只减不增，清空后删除该文件）。
 
 ## 规则的迁移状态
 
@@ -224,7 +235,7 @@ Composition Facade，基于复合 `nsh/base` 控件（`Root` / `Trigger` / `Cont
 
 ## 组件内的动效
 
-动效是组件的事，不属于主题：数值来自 `nsh` 自己的文档，每个组件在自己的 `look()` 或弹层旁边写所需的几行。这里没有任何东西是 `theme.json` 里的 token，也没有共用的动效 helper（R1：少量重复不值得抽象）。
+动效是组件的事，不属于主题：数值来自 `nsh` 自己的文档，每个组件在自己的 `look()` 或弹层旁边写所需的几行。这里没有任何东西是 `theme.json` 里的 token。多个组件必须手感一致的动效放进 `lib` 模块（`press`：按下的下沉与缓动；`density`：指针 / 触屏尺寸；第二个组件需要时才加，R1）；只用一次的几行留在组件里。
 
 **本库不增加动效系统。** `nsh` 已经拥有这些原语并写明了数值（[Animation](https://nsh.dev/docs/animation)、Design Guides 的 “Motion”、各元素文档）。组件做四件事：（1）为每个场景选定 `nsh` 的原语，（2）只用 `nsh` 已记载的数值，（3）注入按家族区分的默认值，（4）按下文处理减少动效。
 
@@ -319,4 +330,5 @@ Composition Facade，基于复合 `nsh/base` 控件（`Root` / `Trigger` / `Cont
 - 2026-11-10 —— R5 改为最小值加 padding，不用固定尺寸。原因：NSH Coding Guides（“让文本容器随文本增长”）。
 - 2026-11-10 —— 新增 R7（doc comment）与 R8（沿用 shadcn 的 variant 命名）。
 - 2026-11-10 —— 组件包（六类产物）是迁移的完成标准。
+- 2026-11-10 —— 按压手感和密度在第二个组件需要时抽成共享的 `lib` 模块。原因：参考实现里它们被多个 look 共用（R1：多个文件行为必须一致）。这细化了之前的“没有共享动效 helper”；只用一次的仍留在组件里。
 - 2026-11-10 —— 主题只保存颜色、半径、阴影、焦点环和唯一的 disabled 外观；动效、尺寸、字体刻度和 variant 透明度留在使用它们的组件里。原因：它们是 `nsh` 的值或某个组件的内部细节，不是品牌，把它们做成 token 需要 `brand` 段、JSON 导入和 CLI 改写。gallery 夹具需要一个指向 `theme.json` 的 `tests/nsh.json`，因为 `nsh test` 读取入口文件旁边的 `nsh.json`，而自定义颜色 token（`custom-shadow-ink`、`custom-highlight`、`custom-backdrop`）就在那里。

@@ -95,6 +95,17 @@ Public names follow `nsh/base` symbols (`MenuTrigger`, not `DropdownMenuTrigger`
 | Table\*                         | `Table` / `TableHeader` / `TableBody` / `TableRow` / `TableHead` / `TableCell` / …                                                     | same                                         |
 | RadioGroup / Item               | `RadioGroup` / `RadioGroupItem` (+ `Radio` alias)                                                                                      | `RadioGroup` + `Radio`                       |
 
+## Source and sync
+
+The look and state design of these components come from NSH's own shared UI layer, `references/nsh/examples/nsh-gallery-ui` (upstream calls it an internal layer, not an application API). We port it **per family, once**: take the state design and the geometry, express colours through the shadcn neutral palette (`colors.*`, `finish`, `alpha()`), leave out the Terminal idiom, sounds and the website playground adapters, and give the component a Composition Facade.
+
+- **Baseline:** `64ab8a1d`, the commit pinned in `references/nsh` (`examples/nsh-gallery-ui` last changed in `d96fc35c`, 2026-11-09).
+- **Header of an adapted file:** `// Source: examples/nsh-gallery-ui/look/<file> @ 64ab8a1d` and a pointer to `NOTICE`.
+- **Store versus main:** this repo develops against the store `nsh` 0.4.0, the reference follows `main`. Type-check against the store's `.nsh/types`; a base capability the store lacks goes in the component's Differences, it is not ported.
+- **License:** the adapted parts stay Apache-2.0 (Longbridge); see `NOTICE`.
+- **Sync:** manual. When the baseline moves, compare the family's look file with the header's commit, family by family. There is no automatic sync.
+- **Plan and order:** [`docs/roadmap.md`](../../docs/roadmap.md).
+
 ## Scope rules
 
 | Rule                                                                                                                                                                                | Why                                                               |
@@ -212,7 +223,7 @@ Order of the rest: `toggle` + `toggle-group` → `switch`, `checkbox`, `radio-gr
 
 Today: `registry:build` enforces `registryDependencies`, `bun run test:unit` covers the CLI's import rewriting, the `theme.json` merge and the theme file's contract (official keys, `custom-` prefix, oklch), and `bun run test:gallery` covers the components and the theme helpers; the review greps are `mergeClass(undefined` / `mergeStyle(undefined`, `const {` over `props`, and literal durations outside the theme whitelist.
 
-Planned (not yet built): `check:recipes`, wired into `bun run check`, covering the three greps, doc comments (R7), docs sections, and the presence of a demo and a test per component; with `scripts/recipes-allowlist.json` listing components still exempt per rule (entries only get removed; the file is deleted when empty).
+Planned (not yet built): `check:recipes`, and a guard that fails on a colour literal in `packages/ui/*.tsx` (hex, `rgb(`, `rgba(`, `hsl(`, a named colour; `"transparent"` is allowed, R5), both reading the **one** allowlist, wired into `bun run check`, covering the three greps, doc comments (R7), docs sections, and the presence of a demo and a test per component; with `scripts/recipes-allowlist.json` listing components still exempt per rule (entries only get removed; the file is deleted when empty).
 
 ## Migration status of the rules
 
@@ -224,7 +235,7 @@ Planned (not yet built): `check:recipes`, wired into `bun run check`, covering t
 
 ## Motion in components
 
-Motion is a component concern, not part of the theme: the values come from `nsh`'s own docs and each component writes the few lines it needs, in its `look()` or beside its popup. Nothing here is a token in `theme.json`, and no shared motion helper exists (R1: a few duplicated lines do not earn one).
+Motion is a component concern, not part of the theme: the values come from `nsh`'s own docs and each component writes the few lines it needs, in its `look()` or beside its popup. Nothing here is a token in `theme.json`. Motion that several components must feel the same lives in a `lib` module (`press`, the sink and ease of a pressed control, and `density`, the pointer / touch sizes; both are added when a second component needs them, R1); a few lines used once stay in the component.
 
 **The library adds no motion system.** `nsh` already owns the primitives and documents their values ([Animation](https://nsh.dev/docs/animation), Design Guides "Motion", the element docs). Components (1) pick the `nsh` primitive per scene, (2) use only the values `nsh` already documents, (3) inject per-family defaults, and (4) handle reduced motion as below.
 
@@ -319,4 +330,5 @@ A default applies only while the consumer's hook is `undefined`; `null` turns it
 - 2026-11-10 — R5 is minimums plus padding, not fixed sizes. Why: NSH Coding Guides ("let text containers grow with their text").
 - 2026-11-10 — R7 (doc comments) and R8 (shadcn variant names) added.
 - 2026-11-10 — The component package (six artifacts) is the definition of done for a migration.
+- 2026-11-10 — Press feel and density are shared `lib` modules once a second component needs them. Why: the reference shares them across many looks (R1: behaviour that must match across files). This refines the earlier "no shared motion helper"; everything used once stays in the component.
 - 2026-11-10 — The theme holds colors, radius, shadows, the focus ring and the one disabled look; motion, sizes, type scale and variant opacities stay in the components that use them. Why: those are `nsh`'s values or one component's internals, not brand, and tokenizing them needed a `brand` section, a JSON import and CLI rewriting. Gallery fixtures need a `tests/nsh.json` pointing at `theme.json`, since `nsh test` reads the `nsh.json` beside the entry, and the custom color tokens (`custom-shadow-ink`, `custom-highlight`, `custom-backdrop`) live there.

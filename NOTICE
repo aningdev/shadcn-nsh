@@ -1,0 +1,18 @@
+shadcn-nsh
+Copyright (c) 2026 Aning (MIT License, see LICENSE)
+
+This project adapts the shared UI layer of NSH (Native Shell):
+
+  Source:   https://github.com/longbridge/nsh
+  Path:     examples/nsh-gallery-ui/
+  Baseline: 64ab8a1d (the commit pinned in references/nsh)
+  Copyright 2026 Longbridge <https://longbridge.com>
+  License:  Apache License, Version 2.0
+            https://www.apache.org/licenses/LICENSE-2.0
+
+What was changed: the looks of the shared controls (their state design and
+geometry) are re-expressed as copy-into-app components over `nsh/base`, with the
+shadcn neutral palette in place of the original colours, the Terminal idiom,
+sounds and the website playground adapters left out, and a Composition Facade
+API. Each adapted file names its source file and the baseline commit in a header
+comment, and keeps this notice's license: Apache-2.0 for the adapted parts.
