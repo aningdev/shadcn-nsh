@@ -95,12 +95,228 @@ shadcn 有这些；**没有**对应的 `nsh/base` / website `group: base` 导出
 | Table\*                         | `Table` / `TableHeader` / `TableBody` / `TableRow` / `TableHead` / `TableCell` / …                                             | 同左                                     |
 | RadioGroup / Item               | `RadioGroup` / `RadioGroupItem`（+ `Radio` 别名）                                                                              | `RadioGroup` + `Radio`                   |
 
-## 新增组件
+## 范围规则
 
-1. 确认导出存在于 **store** CLI 的 `nsh/base`（不只是 `references/nsh` main）。
-2. 在 `packages/ui/<name>.tsx` 给 `nsh/base` 加样式（token 来自 `@shadcn-nsh/theme`）。
-3. 从 `packages/ui/index.ts` 导出。
-4. 写入 `registry.json`（`registryDependencies: ["theme"]`，`target: components/ui/<name>.tsx`）。
-5. `bun run registry:build`。
-6. Gallery（+ 可选 docs demo / 页面）。
-7. 更新本 README 的状态列。
+| 规则                                                                                                                                             | 原因                                                                            |
+| ------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------- |
+| **Registry 完整性。** store CLI 上 `nsh/base` 的每个导出都在范围内；轻量条目也要接入主题（不做裸 re-export）。没有 base 导出的 Extensions 不做。 | `add` 的覆盖面跟着 base 走；不做 shadcn-only 零件。                             |
+| **命名跟 `nsh/base` 符号**（`Menu` → `menu` / `MenuTrigger`），不用 shadcn id（`dropdown-menu`）。旧 id 直接删除，不留别名。                     | 只有一个真源；混用命名（`add menu` + `DropdownMenu`）会造成虚假的 shadcn 对齐。 |
+| **复合控件只用 Composition**（`Root` / `Trigger` / `Content` / `Item`）。根上不暴露消费者 `trigger`，不保留旧的双路径。                          | 两套 API 就是两个真源。                                                         |
+| **行为留在 `nsh/base`。** 无法抹平的差异写进组件文档的 Differences。                                                                             | 我们负责样式与组合，不重写行为。                                                |
+| **外观来自 [`@shadcn-nsh/theme`](../theme)**，动效跟 nsh Animation，写在各组件里（见下文）。                                                     | 品牌只有一个来源；不另建动效系统。                                              |
+
+## 组件包
+
+一个组件不只是一个源码文件。随组件一起交付、一起变化的单元是六类产物（`<id>` 是 `nsh/base` 符号的 kebab-case）：
+
+| #   | 产物          | 位置                                          | 约定                                                                                                                                                                   |
+| --- | ------------- | --------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | 源码          | `packages/ui/<id>.tsx`                        | 一个家族一个文件。满足共享规则与 Leaf 或 Family 配方。文件内顺序见下文。                                                                                               |
+| 2   | Registry 条目 | `registry.json`                               | `name` = `<id>`；`registryDependencies` 等于实际 import（`registry:build` 校验）；`theme` 是独立条目，不内联；`target: components/ui/<id>.tsx`。                       |
+| 3   | 公开面        | `packages/ui/index.ts`                        | 只导出组件、`xVariants()` 辅助函数和 props 类型。`lib/*` 保持内部。                                                                                                    |
+| 4   | 文档页        | `apps/docs/src/pages/docs/components/<id>.md` | 固定章节：Install、Usage、Composition（部件表）、API、Differences（对 shadcn 与对 `nsh/base` 的差异）、Accessibility。docs 只放 web 示意，以 gallery 的演示为准。      |
+| 5   | 验证          | `apps/gallery` + `apps/gallery/tests`         | 原生 gallery 演示。Leaf 必须有 reactive 测试（挂载后改 prop 要能跟随）；Family 必须有行为测试（打开、关闭、键盘激活）。涉及减少动效的控件用 `reducedMotion: true` 测。 |
+| 6   | 构建产物      | `public/r/<id>.json`                          | 由 `bun run registry:build` 从 1 和 2 生成，与源码同一个 commit 提交。手改后执行 `vp fmt public/r`。                                                                   |
+
+复制之后代码归应用所有（copy, then own）。Registry 条目不带版本号，也不会自动更新；`add --overwrite` 会覆盖文件。破坏性变更记在组件的 Differences。
+
+**新增组件：** 先确认该导出存在于 **store** CLI 的 `nsh/base`（不只是 `references/nsh` main）。然后产出上面六类产物，把 `theme` 加进 `registryDependencies`，并更新 Phase-1 表的状态列。
+
+## 配方
+
+配方（Recipe）是组件必须满足的规则集。它约束结构与依赖，不约束外观：外观归主题，动效归各组件，行为归 `nsh/base`。
+
+### 共享规则
+
+| #      | 规则                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | 原因                                                                    |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| **R1** | **先自包含。** 组件只 import `theme`、`nsh`、`nsh/base`，以及 R2 登记的例外。只有当多个文件的行为必须一致时才新增共享 helper；重复八行不算。                                                                                                                                                                                                                                                                                                                              | 每个 import 都是应用要安装的 registry 依赖。                            |
+| **R2** | **允许的横向 import：** 作为原语层的 `button`；同家族复用并 re-export（`context-menu` → `menu`，`toggle-group` → `toggle`）。其他情况需要先在此登记。                                                                                                                                                                                                                                                                                                                     | 保持依赖图浅。                                                          |
+| **R3** | **不解构 props。** 在使用处读 `props.x`，其余用 `split(props, keys)` 透传，默认值写在 JSX 里（`props.x ?? d`），派生值用 `computed`。依赖 props 的样式包只算一次，不在每个调用处重算。                                                                                                                                                                                                                                                                                    | 解构出来的 prop 只读一次，不跟随变化（nsh `jsx-and-components`）。      |
+| **R4** | **只在有默认值时合并。** 消费者的值原样透传。只有包装层有默认值时才写 `[default, consumer]`；禁止 `mergeClass(undefined, x)` 和 `mergeStyle(undefined, x)`。不设共享 merge helper：`theme` 不增加非 token 工具，`lib/` 也不增加。                                                                                                                                                                                                                                         | 恒等调用是噪声；共享 helper 会为几行代码引入 registry 依赖。            |
+| **R5** | **外观来自主题，几何用最小值。** 颜色、圆角、阴影、焦点环和 disabled 外观只来自 `theme`。其余（几何、字号、variant 透明度、动效）都是字面量，集中在文件顶部的单个 `look` 函数里，写成 `minHeight` / `minWidth` 加 padding，不写固定 `height` / `width`。有意固定的几何（正方形图标按钮）要在注释里说明理由。不带外观含义的布局字面量（`borderWidth: 1`、为布局稳定的 `"transparent"` 边框）可以放进 `look` 并加注释。动效白名单（见下文）之外的时长或曲线不得写成字面量。 | NSH：控件框体随标签和用户字号增长；没有 spacing token（主题保持克制）。 |
+| **R6** | **公开面。** `xVariants()` 辅助函数和组件类型是公开的。`lib/*` 是内部的，版本之间签名可以变化。                                                                                                                                                                                                                                                                                                                                                                           | 复制了 `lib/*` 的应用不应被一次改名破坏。                               |
+| **R7** | **每个导出的 prop、类型和 `xVariants` 选项都要有 doc comment。**                                                                                                                                                                                                                                                                                                                                                                                                          | nsh Public API design。                                                 |
+| **R8** | **variant 与 size 的取值沿用 shadcn 命名。** 新增取值要在组件的 Differences 里写明理由。                                                                                                                                                                                                                                                                                                                                                                                  | 对齐 shadcn 是产品目标；nsh 的“variant 要少”针对的是一次性页面需求。    |
+
+### Leaf 配方（模板：`button`）
+
+单部件组件，基于一个 `nsh/base` 控件。
+
+- **必须：** props 类型为 `Omit<BaseProps, "children"> & { variant 轴; children?: string | JSX.Element }`。纯函数 `xVariants(options)` 返回 `style`、`label`、各状态样式（`hover` / `active` / `selected` / `disabled`）和 `hitSlop`。状态样式沿用 `nsh/base` 暴露的类型化名字（`checkedStyle`、`indeterminateStyle` 等），每个都是 `[default, consumer]`，消费者优先。非主部件的样式透传 `<part>Class` / `<part>Style`。默认带焦点环、从字符串 children 得到的无障碍标签（`nsh/base` 已推导的除外）和触屏 `hitSlop`。未知 variant 回退到 `default`。
+- **禁止：** 重新实现 base 行为；import 另一个 leaf（`button` 除外，见 R2）；解构 props（R3）。
+- **可以不同：** variant 轴、标签渲染、尺寸字面量。
+
+### Family 配方（模板：`popover`）
+
+Composition Facade，基于复合 `nsh/base` 控件（`Root` / `Trigger` / `Content` / `Item` 及装饰部件）。不弹出的多部件控件（`tabs`、`accordion`、`collapsible`、`table`、`toast`、`pagination`）也用它；下面的 popup 条款对它们不适用。
+
+- **Root** 只持有 `createOpenState`，以及 base 有 `trigger` prop 时的 `createSlot`；生命周期回调放进 context；渲染 Provider 与 children，不携带 `Content` 的 props。context hook 抛出 `"X parts must be used within <X>"`。
+- **Trigger** 填充 slot 并返回占位（base 没有 `trigger` prop 时直接渲染）。两条分支都透传 `disabled`、`class`、`style`。字符串 child 渲染 `Button`；非字符串 child 可聚焦、可用键盘触发并带 role。
+- **Content** 去掉 Root 持有的 props，popup 用 `popupSurface()`、modal 用 `modalSurface()`，主题定义了的再配 `overlayMotion(kind)`；只有当消费者的 hook 为 `undefined` 时才应用默认值。
+- **Item** 适配 base 的 item，带焦点环，除非自己有默认值，否则透传状态样式。
+- **装饰部件**（`Title`、`Description`、`Label`、`Shortcut`、`Header`、`Footer`）是文本部件：字符串 child 渲染带主题的 `Text`，其他原样渲染。
+- **禁止：** import 另一个家族（R2）；为单个部件发明 disabled 外观；增加隐藏 Root / Trigger / Content 骨架的 helper，因为差异（reason 类型、Sub 部件、内容 slot）正是 bug 的所在。
+- **可以不同：** popup 类型、是否有 slot 或 items、动效类型。
+
+随 Family 配方一起定下的决定（随 `dialog` 与 `sheet` 迁移时落地）：`modalSurface()` 与 `popupSurface()` 一起放进 `theme`，供 `Dialog` 和 `Sheet` 用（modal 的圆角和 padding 不同；不新增 `overlayMotion` 种类，modal 动效仍由 base 持有）。`Dialog` 与 `Sheet` 的 Root 不再携带 Content 的 props（`animation`、`presentation`、`closeOnEscape`、`closeOnBackdropPress`、`closeOnSwipe`），它们移到 `Content`，不留别名。`createTriggerSlot` 改名为 `createSlot`。
+
+## 文件内顺序
+
+源码文件自上而下顺序固定，评审者总能在同一位置找到同样的东西。
+
+**Leaf**
+
+1. imports
+2. 公开类型（props、variant 联合类型；每个都有文档，R7）
+3. 私有常量与 helper（`TOUCH_TARGET`、`touchHitSlop`、有默认值时文件内的 `mergeStyle`）
+4. `look()` —— 所有几何字面量，R5
+5. `xVariants()` —— 纯函数，公开
+6. 组件
+
+**Family**
+
+1. imports
+2. 类型
+3. context 及其 hook
+4. chrome / `look`（表面、尺寸）
+5. Root
+6. Trigger
+7. Content
+8. Item（及 Sub 部件）
+9. 装饰部件
+
+## 改造方法
+
+一个家族一个 commit，按这个循环：
+
+1. 先写或补测试，并看到它失败（Leaf：reactive；Family：行为）。
+2. 按配方改源码，对照下面的完成标准。
+3. 更新文档页（固定章节）、gallery 演示和 `index.ts`。
+4. `bun run registry:build`、`bun run check`，`public/r` 与源码一起提交。
+5. 把该组件从白名单中移除（检查脚本存在之后）。
+6. commit message 写明它使哪些规则达标。
+
+剩余顺序：`toggle` + `toggle-group` → `switch`、`checkbox`、`radio-group` → `input`、`number-input`、`otp-input`、`slider`、`progress`、`avatar`、`link` → `dialog` + `sheet` → `select` + `combobox` → `collapsible`、`accordion`、`tabs`、`table`、`pagination`、`toast`。脚手架 skill 等 Leaf 各组迁完再写，让它固化已验证有效的做法。
+
+### 完成标准（Definition of Done）
+
+- [ ] R1–R8 成立；Leaf 或 Family 配方成立
+- [ ] 遵循文件内顺序
+- [ ] 文档页章节齐全，Differences 已填写
+- [ ] 存在 gallery 演示，并在亮色和暗色下检查过
+- [ ] 存在测试（reactive 或行为；有减少动效行为的控件要测）
+- [ ] `public/r/<id>.json` 已重建并提交
+
+### 检查
+
+现状：`registry:build` 校验 `registryDependencies`，`bun run test:unit` 覆盖 CLI 的导入改写与 `theme.json` 合并，`bun run test:gallery` 覆盖组件与主题 helper；评审用的 grep 有三项：`mergeClass(undefined` / `mergeStyle(undefined`、对 `props` 的 `const {`、主题白名单之外的字面量时长。
+
+计划（尚未实现）：`check:recipes`，接入 `bun run check`，覆盖这三项 grep、doc comment（R7）、文档章节、每个组件是否有演示和测试；配合 `scripts/recipes-allowlist.json` 列出按规则暂时豁免的组件（条目只减不增，清空后删除该文件）。
+
+## 规则的迁移状态
+
+| 状态       | 组件                                                                                                 |
+| ---------- | ---------------------------------------------------------------------------------------------------- |
+| 已迁移     | `popover`、`tooltip`、`menu`、`context-menu`                                                         |
+| 试点，未完 | `button` —— R3、主题持有的外观和本地按压 helper 已完成；待做：单个 `look()` 函数与 `min*` 几何（R5） |
+| 未迁移     | 其余所有组件                                                                                         |
+
+## 组件内的动效
+
+动效是组件的事，不属于主题：数值来自 `nsh` 自己的文档，每个组件在自己的 `look()` 或弹层旁边写所需的几行。这里没有任何东西是 `theme.json` 里的 token，也没有共用的动效 helper（R1：少量重复不值得抽象）。
+
+**本库不增加动效系统。** `nsh` 已经拥有这些原语并写明了数值（[Animation](https://nsh.dev/docs/animation)、Design Guides 的 “Motion”、各元素文档）。组件做四件事：（1）为每个场景选定 `nsh` 的原语，（2）只用 `nsh` 已记载的数值，（3）注入按家族区分的默认值，（4）按下文处理减少动效。
+
+### Animation 的工具箱，以及我们在哪里用
+
+它们都在 UI 线程运行，每帧不回调 JS；只有无法预先描述的东西才用 `requestAnimationFrame`。
+
+| 工具（Animation 文档）                                                 | 我们的用法                                                                                               | 减少动效（nsh）                                       |
+| ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| **Transitions**（`transitionProperty` 等）                             | 控件状态：hover、pressed、checked、selected、open。弹层出现 / 消失与 `starting*` / `ending*` hook 配合。 | 按写的播放。由**我们**选择更平静的替代（见下）。      |
+| **Motion**（`createMotion`、`motions.*` 预设）                         | 内容入场、列表交错、校验提示（`shake`）、循环。只能 opt-in。                                             | 自动：motion 直接落在终点，不移动。退出仍以隐藏结束。 |
+| **Layout animations**（`LayoutAnimation`）                             | 列表插入 / 删除 / 重排（`easeInEaseOut`、`spring`）。不用于展开面板。                                    | 按写的播放：`reduceMotion()` 时不调用。               |
+| **Animated values**、**Keyframe animations**                           | 只用于必须跟随手势的值，或预设里没有的循环。凡是 transition 能表达的状态变化，一律不用。                 | 按写的播放。                                          |
+| base 持有（`reveal`、`Dialog.animation`、sheet 滑入、Tabs 指示器弹簧） | Accordion / Collapsible 的高度展开、modal。透传或开关，不在外面再包一层动画。                            | 由 base 处理。                                        |
+
+**一个场景只用一种原语。** 混用机制是重复动画和闪烁的起点。
+
+| 场景                                                                                          | 原语                                              |
+| --------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| 控件状态（hover / pressed / checked / selected / open）                                       | Transitions                                       |
+| 弹层出现 / 消失（`Popover`、`Menu`、`ContextMenu`、`Select`、`Combobox`、`Tooltip`、`Toast`） | `starting*` / `ending*` hook + transitions        |
+| Modal（`Dialog`、`AlertDialog`、`Sheet`）                                                     | base 持有（`animation`、sheet 滑入）              |
+| 高度展开（`Accordion`、`Collapsible`、`Tree`）                                                | base 的 `reveal`                                  |
+| 内容入场、交错、提示、循环                                                                    | `createMotion` / `motions.*` / `Animated.stagger` |
+| 布局插入 / 删除 / 重排                                                                        | `LayoutAnimation`                                 |
+
+### 数值
+
+- **我们发布的默认值使用白名单**： 时长 `100` / `120` / `150` / `180` / `200` / `300` ms；曲线 `ease-out` 和 `cubic-bezier(0.2, 0, 0, 1)`；属性组 `transition-colors` / `-opacity` / `-transform` / `transition`（style 路径要写明属性）。`transition-all` 只用于元素文档写了它的地方。新增数值需要 `nsh` 的来源并记入决策记录。
+- **预设是 `nsh` 自己的数值**，不需要白名单条目：直接按名字用 `motions.fadeInUp`、`shake` 等。自定义关键帧需要在组件 Differences 里写理由。
+- **优先 class，部件只接受 style 时才用 style。** 弹层、toast、chevron 通过 class hook 逐字照搬元素文档；控件和 base API 只有 `ViewStyle` 的部件用等价的 style。两者是同一机制。
+
+### 减少动效
+
+用户要求减少动效时 `reduceMotion()` 为 true。`nsh` 的要求：把大幅移动换成淡入或即时变化。
+
+- **按压。** `button.tsx` 里的按压 helper 去掉 scale（位移），保留 ≤ 150 ms 的颜色 / 阴影渐变。这是预期做法，不是缺陷。
+- **样式过渡** 只有在产生位移时才读 `reduceMotion()`。颜色渐变不需要归零。
+- **Motion** 我们无需处理。只有当某个 motion 承载用户需要的含义（进度 spinner）时，才传 `ignoreReduceMotion: true`。
+- **弹层与 modal** 由 base 持有：base 会立即显示和隐藏；这里不读 `reduceMotion()`。
+- 返回 style 的 helper 是快照。`buttonVariants()` 之类必须在 `computed`（或其他响应式作用域）里调用，才能跟随该设置的变化。
+
+### 控件状态
+
+- **Hover：** 轻微的指针反馈，不能是唯一线索。只改填充并保持 rest 阴影；无位移、无缩放。
+- **Pressed：** 即时反馈。所有 variant 都用 `pressed-opacity` 加 `scale(0.97)`；secondary 另外用 `finish.control.pressed`。
+- **按压缩放**（`button.tsx` 里的 helper，需要时复制到用到它的控件）用于 `Button`、`Toggle` 和可按压的行。`Switch`、`Checkbox`、`RadioGroup`、`Input` 只用 `transition-colors`。
+- **焦点：** outline 光晕不在任何过渡列表里。`border-color` 保留在过渡列表里，所以边框随 hover 颜色渐变，不会跳变。
+- **可按压控件的过渡属性：** `background-color`、`border-color`、`box-shadow`、`opacity`（加上 `pressTransition` 的 `transform`），150 ms `ease-out`。
+- 布局变化不通过 transition 动画；确实需要时用 `LayoutAnimation`。
+
+### 默认值要窄
+
+默认只开启：出现 / 消失、展开 / 收起、按压。内容入场、校验提示和循环都是 opt-in，用 `motions.*`（或 gallery 的原生循环）编写，不写新的关键帧。
+
+- **入场列表：** 延迟 `Math.min(index, 10) * 60` ms，这样很靠后追加的行不用等；一组用 `Animated.stagger`。
+- **删除一行：** `await row.play("fadeOutLeft")`，然后 `LayoutAnimation.easeInEaseOut()`，再移除。
+- **无效字段：** `shake`（opt-in，绝不作默认）。
+
+### 弹层
+
+| 家族 / 组件                      | 默认（来源）                                                                                                | 位置                                     |
+| -------------------------------- | ----------------------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| `Popover`                        | 150 ms，从 `opacity-0 scale-95`（popover.md）                                                               | 在 `popover.tsx` 内联                    |
+| `Menu`、`ContextMenu`            | 100 ms，从 `opacity-0 -translate-y-1`（menu.md）                                                            | 在 `menu.tsx` 与 `context-menu.tsx` 内联 |
+| `Tooltip`                        | 100 ms 淡入（tooltip.md）                                                                                   | 在 `tooltip.tsx` 内联                    |
+| `Toast`                          | 200 ms，`opacity-0 translate-y-4` → `opacity-0 scale-95`（toast.md）                                        | `toast.tsx`                              |
+| `Dialog`、`AlertDialog`、`Sheet` | base 的 `animation` / sheet 滑入                                                                            | 仅透传                                   |
+| `Accordion`、`Collapsible`       | `reveal`；chevron 150–200 ms `transition-transform`                                                         | 两者默认用 `reveal`                      |
+| `Input`                          | `transition-colors`，150 ms                                                                                 | style                                    |
+| `Select`、`Combobox`             | **无入场 / 退场**：base 只暴露 `popupClass` / `popupStyle`，触屏 sheet 用 base 的动效。Differences 里注明。 | 透传                                     |
+| `Progress`                       | 180 ms `translate` 滑动，`cubic-bezier(0.2, 0, 0, 1)`；不确定态用原生循环                                   | 后续阶段                                 |
+
+每个弹层内容部件用几行显式代码持有 `{ style, startingStyle, endingStyle }`。
+
+### 注入与覆盖
+
+只有当消费者的 hook 为 `undefined` 时才应用默认值；`null` 关闭默认；消费者设置了某个阶段就完整接管它（不通过拼接 class 来改时长，因为后写的 `duration-*` 不能可靠覆盖先写的）。样式阶段按 key 合并为 `[default, consumer]`，且只在存在默认值时才写。中断与连续性（弹层在退场中途重新打开、关闭的弹层等退场结束再离开）归 base；本库不保留 `closing` 状态。
+
+## 被否决的方案
+
+- 把 `mergeClass` / `mergeStyle` 移进 `theme`，或新增 `lib/merge.ts`：要么用非 token 工具扩大公开 API，要么为几行代码给每个组件加一个 registry 依赖。真正的问题是那些恒等调用。
+- 为 Family 骨架做 `createPopupRoot` helper：差异（是否有 slot、Sub 部件、reason 类型）会让它的接口比它省下的重复更重。
+- 从 `button` 推出一个统一配方：单部件控件没有 Root、Trigger 或 Content。
+- spacing / size / 字体刻度的 token 层，以及把动效、按压、透明度做成 token 或 `theme.json` 的 `brand` 段：主题不是通用设计系统。这些值要么是 `nsh` 自己的（动效），要么是单个组件的内部细节（尺寸、色调），都不属于品牌；这次尝试引入了 JSON 导入、CLI 路径改写和合并步骤，已撤回。
+- 第三种“有状态 leaf”配方，以及兼容路径（shadcn id、旧 `trigger`、旧的 Dialog/Sheet Root props）：会产生两个真源。
+- 只收录品牌化条目（跳过轻量条目）、长期双 API：`add` 的覆盖面必须跟着 base。
+
+## 决策记录
+
+- 2026-11-10 —— 四份 ADR 合并进本 README 与 theme README，ADR 目录已删除。以后的新决策写在这里，每条一行并附原因。
+- 2026-11-10 —— R5 改为最小值加 padding，不用固定尺寸。原因：NSH Coding Guides（“让文本容器随文本增长”）。
+- 2026-11-10 —— 新增 R7（doc comment）与 R8（沿用 shadcn 的 variant 命名）。
+- 2026-11-10 —— 组件包（六类产物）是迁移的完成标准。
+- 2026-11-10 —— 主题只保存颜色、半径、阴影、焦点环和唯一的 disabled 外观；动效、尺寸、字体刻度和 variant 透明度留在使用它们的组件里。原因：它们是 `nsh` 的值或某个组件的内部细节，不是品牌，把它们做成 token 需要 `brand` 段、JSON 导入和 CLI 改写。gallery 夹具需要一个指向 `theme.json` 的 `tests/nsh.json`，因为 `nsh test` 读取入口文件旁边的 `nsh.json`，而自定义颜色 token（`custom-shadow-ink`、`custom-highlight`、`custom-backdrop`）就在那里。

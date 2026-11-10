@@ -2,7 +2,7 @@
 
 Date: 2026-11-09  
 Scope: organize a **surface-depth + motion** system for `@shadcn-nsh/theme`, referencing native HIG/M3, NSH Design Guides + Gallery, shadcn/ui, and mainstream design systems.  
-Decision record: [`docs/adr/0002-theme-finish-and-motion.md`](../adr/0002-theme-finish-and-motion.md).
+Decisions and rules: [`packages/theme/README.md`](../../packages/theme/README.md).
 
 ## Sources
 
@@ -52,26 +52,26 @@ Closest analogy to this repo’s seed: **Radix classic inset active + DTCG multi
 
 ## Capability matrix (what we can own)
 
-| Concern                                  | Own in `@shadcn-nsh/theme`? | Mechanism                           |
-| ---------------------------------------- | --------------------------- | ----------------------------------- |
-| Brand colors / radius                    | Yes                         | `theme.json`                        |
-| Control surface depth (raised/pressed/…) | Yes                         | `finishes.json` → `finish.*`        |
-| Overlay floating shadow                  | Yes                         | `finish.menu` (shared popup family) |
-| Press sink + short transitions           | Yes                         | `pressSink` / `duration` / `easing` |
-| Overlay enter/exit choreography          | Later                       | Component + NSH animation APIs      |
-| Android Material elevation / iOS glass   | Document only (phase 1)     | Platform props; not dual API yet    |
+| Concern                                  | Own in `@shadcn-nsh/theme`? | Mechanism                            |
+| ---------------------------------------- | --------------------------- | ------------------------------------ |
+| Brand colors / radius                    | Yes                         | `theme.json`                         |
+| Control surface depth (raised/pressed/…) | Yes                         | `theme.ts` → `finish.*`              |
+| Overlay floating shadow                  | Yes                         | `finish.popup` (shared popup family) |
+| Press sink + short transitions           | Yes                         | `pressSink` / `duration` / `easing`  |
+| Overlay enter/exit choreography          | Later                       | Component + NSH animation APIs       |
+| Android Material elevation / iOS glass   | Document only (phase 1)     | Platform props; not dual API yet     |
 
 ## Recommendation adopted
 
-See [ADR 0002](../adr/0002-theme-finish-and-motion.md): three layers — **colors**, **finish** (controls + overlay `menu`), **motion** — without MUI-style shadow arrays and without claiming shadcn default parity for shadows.
+See the [theme README](../../packages/theme/README.md): layers — **colors**, **finish** (controls + overlay `menu`), **state**, **motion** — without MUI-style shadow arrays and without claiming shadcn default parity for shadows.
 
 ### Implementation mapping (this repo)
 
-| Layer             | Files                              | Consumers                                               |
-| ----------------- | ---------------------------------- | ------------------------------------------------------- |
-| Colors            | `packages/theme/theme.json`        | All styled wrappers                                     |
-| Finish (controls) | `finishes.json` → `finish.raised`… | `packages/ui/button.tsx`                                |
-| Finish (overlay)  | `finish.menu`                      | `packages/ui/lib/popup-surface.ts`, dialog/sheet chrome |
-| Motion            | `pressSink`, `duration`, `easing`  | Button (and future leaf controls)                       |
+| Layer             | Files                               | Consumers                                               |
+| ----------------- | ----------------------------------- | ------------------------------------------------------- |
+| Colors            | `packages/theme/theme.json`         | All styled wrappers                                     |
+| Finish (controls) | `theme.ts` → `finish.control.rest`… | `packages/ui/button.tsx`                                |
+| Finish (overlay)  | `finish.popup`                      | `packages/ui/lib/popup-surface.ts`, dialog/sheet chrome |
+| Motion            | `pressSink`, `duration`, `easing`   | Button (and future leaf controls)                       |
 
 Closest external analogues: Radix Themes classic inset press + DTCG semantic shadows (finish); NSH Design Guides one-shadow popups; Tailwind/shadcn `active:scale` convention (`pressSink` as a named theme helper).

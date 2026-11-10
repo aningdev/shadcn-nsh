@@ -4,7 +4,7 @@
 
 为 [Native Shell (NSH)](https://github.com/longbridge/nsh) 构建的 styled UI 体系：在 `nsh/base` 之上提供可复制进应用的组件与分发体验，模式对齐 [shadcn/ui](https://github.com/shadcn-ui/ui)。
 
-Agent 与贡献约定见 [`AGENTS.md`](AGENTS.md)。词汇见 [`GLOSSARY.md`](GLOSSARY.md)，决策见 [`docs/adr/`](docs/adr/)。参考源码以 git submodule 挂在 [`references/`](references/)。
+Agent 与贡献约定见 [`AGENTS.md`](AGENTS.md)。词汇见 [`GLOSSARY.md`](GLOSSARY.md)，规则与决策见 [`packages/ui/README.zh.md`](packages/ui/README.zh.md)（组件）和 [`packages/theme/README.zh.md`](packages/theme/README.zh.md)（主题、动效）。参考源码以 git submodule 挂在 [`references/`](references/)。
 
 ## 前置
 

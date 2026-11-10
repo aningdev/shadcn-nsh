@@ -150,13 +150,13 @@ Composite overlays keep their own Trigger parts; a styled Button is a valid pres
 
 ### Variants
 
-| `variant`     | Look                                               |
-| ------------- | -------------------------------------------------- |
-| `default`     | Primary fill + `finish.accent` depth               |
-| `secondary`   | Secondary fill + raised / hover / pressed `finish` |
-| `outline`     | Border, background fill + light depth              |
-| `destructive` | Soft destructive tint + destructive text           |
-| `ghost`       | No border/fill; muted hover                        |
+| `variant`     | Look                                                  |
+| ------------- | ----------------------------------------------------- |
+| `default`     | Primary fill + `finish.filled` depth                  |
+| `secondary`   | Secondary fill + `finish.control` rest / pressed / on |
+| `outline`     | Border, background fill + light depth                 |
+| `destructive` | Soft destructive tint + destructive text              |
+| `ghost`       | No border/fill; muted hover                           |
 
 ### Sizes
 
@@ -208,16 +208,16 @@ Composite overlays keep their own Trigger parts; a styled Button is a valid pres
 
 ## Differences
 
-| Topic           | shadcn (`bases/base`)      | This package                                                                                  |
-| --------------- | -------------------------- | --------------------------------------------------------------------------------------------- |
-| Press event     | DOM `onClick`              | `onPress` / `onPressDown` / `onPressUp`                                                       |
-| Children        | arbitrary nodes / Slot     | `string \| JSX.Element`; no `asChild`                                                         |
-| Link affordance | `variant="link"` on Button | **Omitted** — Link is a separate component (needs a store `nsh` that exports `nsh/base` Link) |
-| Class hooks     | `className` / CVA          | `class` + theme tokens + `buttonVariants` / `finish`; consumer styles merge over defaults     |
-| Size matrix     | `default`…`icon-lg`        | same names; token sizes approximate nova scale, not CSS-pixel locked                          |
-| Loading         | often a Spinner slot       | compose children + `disabled` (dims); no Gallery-style undimmed `busy` prop                   |
-| Touch target    | CSS / size                 | non-desktop default `hitSlop` toward 44pt                                                     |
-| Press motion    | CSS                        | `pressSink` scale on `activeStyle` (honors reduced motion)                                    |
+| Topic           | shadcn (`bases/base`)      | This package                                                                                       |
+| --------------- | -------------------------- | -------------------------------------------------------------------------------------------------- |
+| Press event     | DOM `onClick`              | `onPress` / `onPressDown` / `onPressUp`                                                            |
+| Children        | arbitrary nodes / Slot     | `string \| JSX.Element`; no `asChild`                                                              |
+| Link affordance | `variant="link"` on Button | **Omitted** — Link is a separate component (needs a store `nsh` that exports `nsh/base` Link)      |
+| Class hooks     | `className` / CVA          | `class` + theme tokens + `buttonVariants` / `finish`; consumer styles merge over defaults          |
+| Size matrix     | `default`…`icon-lg`        | same names; token sizes approximate nova scale, not CSS-pixel locked                               |
+| Loading         | often a Spinner slot       | compose children + `disabled` (dims); no Gallery-style undimmed `busy` prop                        |
+| Touch target    | CSS / size                 | non-desktop default `hitSlop` toward 44pt                                                          |
+| Press motion    | CSS                        | `pressSink` scale on `activeStyle` (reduced motion removes the scale, keeps the short colour fade) |
 
 ## Not forwarded
 

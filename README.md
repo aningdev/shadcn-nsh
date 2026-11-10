@@ -4,7 +4,7 @@
 
 Styled UI for [Native Shell (NSH)](https://github.com/longbridge/nsh): copy-into-app components and distribution on top of `nsh/base`, patterned after [shadcn/ui](https://github.com/shadcn-ui/ui).
 
-Agent and contribution rules: [`AGENTS.md`](AGENTS.md). Vocabulary: [`GLOSSARY.md`](GLOSSARY.md). Decisions: [`docs/adr/`](docs/adr/). Reference sources live as git submodules under [`references/`](references/).
+Agent and contribution rules: [`AGENTS.md`](AGENTS.md). Vocabulary: [`GLOSSARY.md`](GLOSSARY.md). Rules and decisions: [`packages/ui/README.md`](packages/ui/README.md) (components) and [`packages/theme/README.md`](packages/theme/README.md) (theme, motion). Reference sources live as git submodules under [`references/`](references/).
 
 ## Prerequisites
 

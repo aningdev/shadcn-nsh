@@ -39,7 +39,7 @@ _Avoid_: shadcn registry id（如 `dropdown-menu`）, mixed add-menu/import-Drop
 _Avoid_: long-term dual API, legacy trigger path, staggered freeze-only
 
 **Recipe**:
-组件必须满足的结构与依赖规则集，分 leaf（单部件，模板 `button`）与 family（Composition Facade，模板 `popover`）两种；只约束结构，外观归 theme，行为归 `nsh/base`。见 ADR 0004。
+组件必须满足的结构与依赖规则集，分 leaf（单部件，模板 `button`）与 family（Composition Facade，模板 `popover`）两种；只约束结构，外观归 theme，行为归 `nsh/base`。见 [`packages/ui/README.zh.md`](packages/ui/README.zh.md) 的“配方”。
 _Avoid_: 新增共享抽象层, 骨架 helper
 
 **Theme Source**:
