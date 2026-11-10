@@ -38,6 +38,10 @@ _Avoid_: shadcn registry id（如 `dropdown-menu`）, mixed add-menu/import-Drop
 复合 Styled Component 只提供 Composition Facade；Author Package、registry、gallery、docs 同步删除 legacy `trigger` / 旧 prop 双路径，不设长期 deprecated 窗。
 _Avoid_: long-term dual API, legacy trigger path, staggered freeze-only
 
+**Recipe**:
+组件必须满足的结构与依赖规则集，分 leaf（单部件，模板 `button`）与 family（Composition Facade，模板 `popover`）两种；只约束结构，外观归 theme，行为归 `nsh/base`。见 ADR 0004。
+_Avoid_: 新增共享抽象层, 骨架 helper
+
 **Theme Source**:
 品牌色、半径、间距等默认的真源是 `theme.json`（经 `token()`）；组件文件只组合与合并，不另立并行真源。
 
