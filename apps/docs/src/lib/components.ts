@@ -272,4 +272,39 @@ export const components: ComponentDoc[] = [
     description:
       "Styled tree wrapping nsh/base Tree — theme tokens + depth, chevron, and selection.",
   },
+  {
+    slug: "color-picker",
+    title: "Color Picker",
+    nshElement: "color-picker",
+    description:
+      "Styled color picker wrapping nsh/base ColorPicker and its parts — field well, focus ring, checkerboard.",
+  },
+  {
+    slug: "diff-view",
+    title: "Diff View",
+    nshElement: "diff-view",
+    description:
+      "Styled diff wrapping nsh/base DiffView — primary and destructive tints for added and deleted lines.",
+  },
+  {
+    slug: "editor",
+    title: "Editor",
+    nshElement: "editor",
+    description:
+      "Styled code editor wrapping nsh/base Editor — field well, gutter, selection and completion menu.",
+  },
+  {
+    slug: "nav-stack",
+    title: "Nav Stack",
+    nshElement: "nav-stack",
+    description:
+      "Styled navigation stack wrapping nsh/base NavStack and NavPage — page fill, system header colors, desktop bar.",
+  },
+  {
+    slug: "text-view",
+    title: "Text View",
+    nshElement: "text-view",
+    description:
+      "Styled document view wrapping nsh/base TextView — theme tokens for text, links, code and alerts.",
+  },
 ];

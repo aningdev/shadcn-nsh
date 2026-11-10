@@ -277,6 +277,42 @@
       "type": "registry:ui",
       "title": "Carousel",
       "description": "Styled carousel wrapping nsh/base Carousel and its parts — theme tokens, button arrows, and pagination dots."
+    },
+    {
+      "name": "part-style",
+      "type": "registry:lib",
+      "title": "Part style",
+      "description": "Merge a themed part's classes and styles. null drops the default."
+    },
+    {
+      "name": "color-picker",
+      "type": "registry:ui",
+      "title": "Color Picker",
+      "description": "Styled color picker wrapping nsh/base ColorPicker and its parts — field well, focus ring, checkerboard."
+    },
+    {
+      "name": "text-view",
+      "type": "registry:ui",
+      "title": "Text View",
+      "description": "Styled document view wrapping nsh/base TextView — theme tokens for text, links, code and alerts."
+    },
+    {
+      "name": "editor",
+      "type": "registry:ui",
+      "title": "Editor",
+      "description": "Styled code editor wrapping nsh/base Editor — field well, gutter, selection and completion menu."
+    },
+    {
+      "name": "diff-view",
+      "type": "registry:ui",
+      "title": "Diff View",
+      "description": "Styled diff wrapping nsh/base DiffView — primary and destructive tints for added and deleted lines."
+    },
+    {
+      "name": "nav-stack",
+      "type": "registry:ui",
+      "title": "Nav Stack",
+      "description": "Styled navigation stack wrapping nsh/base NavStack and NavPage — page fill, system header colors, desktop bar."
     }
   ]
 }

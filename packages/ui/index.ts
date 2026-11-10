@@ -294,3 +294,39 @@ export { springs } from "./lib/follow";
 export { optionClass } from "./lib/listbox";
 export { groupSink, motionDuration, pressSink } from "./lib/press";
 export { TimeField, timeFieldVariants, type TimeFieldProps } from "./time-field";
+export {
+  ColorArea,
+  ColorEyeDropper,
+  ColorField,
+  ColorPicker,
+  ColorSlider,
+  ColorSwatch,
+  colorPickerVariants,
+  type ColorAreaProps,
+  type ColorEyeDropperProps,
+  type ColorFieldProps,
+  type ColorPickerChrome,
+  type ColorPickerProps,
+  type ColorSliderProps,
+  type ColorSwatchProps,
+} from "./color-picker";
+export { DiffView, diffViewVariants, type DiffViewLook, type DiffViewProps } from "./diff-view";
+export { Editor, editorVariants, type EditorLook, type EditorProps } from "./editor";
+export {
+  NavHeader,
+  NavPage,
+  NavStack,
+  createNavStack,
+  navStackVariants,
+  type NavHeaderProps,
+  type NavPageProps,
+  type NavStackChrome,
+  type NavStackProps,
+} from "./nav-stack";
+export {
+  TextView,
+  textViewVariants,
+  type TextViewDocument,
+  type TextViewLook,
+  type TextViewProps,
+} from "./text-view";

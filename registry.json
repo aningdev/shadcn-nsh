@@ -657,6 +657,90 @@
           "target": "components/ui/carousel.tsx"
         }
       ]
+    },
+    {
+      "name": "part-style",
+      "type": "registry:lib",
+      "title": "Part style",
+      "description": "Merge a themed part's classes and styles. null drops the default.",
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "packages/ui/lib/part-style.ts",
+          "type": "registry:lib",
+          "target": "lib/part-style.ts"
+        }
+      ]
+    },
+    {
+      "name": "color-picker",
+      "type": "registry:ui",
+      "title": "Color Picker",
+      "description": "Styled color picker wrapping nsh/base ColorPicker and its parts — field well, focus ring, checkerboard.",
+      "registryDependencies": ["theme", "density", "field", "part-style"],
+      "files": [
+        {
+          "path": "packages/ui/color-picker.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/color-picker.tsx"
+        }
+      ]
+    },
+    {
+      "name": "text-view",
+      "type": "registry:ui",
+      "title": "Text View",
+      "description": "Styled document view wrapping nsh/base TextView — theme tokens for text, links, code and alerts.",
+      "registryDependencies": ["theme", "part-style"],
+      "files": [
+        {
+          "path": "packages/ui/text-view.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/text-view.tsx"
+        }
+      ]
+    },
+    {
+      "name": "editor",
+      "type": "registry:ui",
+      "title": "Editor",
+      "description": "Styled code editor wrapping nsh/base Editor — field well, gutter, selection and completion menu.",
+      "registryDependencies": ["theme", "field", "part-style"],
+      "files": [
+        {
+          "path": "packages/ui/editor.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/editor.tsx"
+        }
+      ]
+    },
+    {
+      "name": "diff-view",
+      "type": "registry:ui",
+      "title": "Diff View",
+      "description": "Styled diff wrapping nsh/base DiffView — primary and destructive tints for added and deleted lines.",
+      "registryDependencies": ["theme", "part-style"],
+      "files": [
+        {
+          "path": "packages/ui/diff-view.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/diff-view.tsx"
+        }
+      ]
+    },
+    {
+      "name": "nav-stack",
+      "type": "registry:ui",
+      "title": "Nav Stack",
+      "description": "Styled navigation stack wrapping nsh/base NavStack and NavPage — page fill, system header colors, desktop bar.",
+      "registryDependencies": ["theme", "part-style"],
+      "files": [
+        {
+          "path": "packages/ui/nav-stack.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/nav-stack.tsx"
+        }
+      ]
     }
   ]
 }

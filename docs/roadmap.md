@@ -129,7 +129,7 @@ neutral 的层次有限，所以不先做基础设施，先用 **button + switch
 
 ### P3 扩展（Registry 完整性）
 
-`Command`、`Tree`、`DataTable`（`data-table`）、`Scrollbar`（`scrollbar`）、`Calendar`、`DatePicker`、`TimeField`、`Resizable`（`resizable`）、`DockArea`（`dock-area`）与 `Carousel`（`carousel`）已进入 registry（store `nsh` 0.4.0 有导出）。Resizable / DockArea 只取 workspace 里 base 0.4.0 暴露的形状，Carousel 没有参考 look，从主题搭。仍未做：`ColorPicker`（有导出，尚未包装）、`EmojiPicker`（store 0.4.0 无导出）、`ScrollArea`（无 base 导出，滚动条用 `Scrollbar`）、`Segmented`（无 base 导出，见 Extensions）、拆分按钮。准入仍是 store CLI 上存在对应 `nsh/base` 导出。
+`Command`、`Tree`、`DataTable`（`data-table`）、`Scrollbar`（`scrollbar`）、`Calendar`、`DatePicker`、`TimeField`、`Resizable`（`resizable`）、`DockArea`（`dock-area`）与 `Carousel`（`carousel`）已进入 registry（store `nsh` 0.4.0 有导出）。Resizable / DockArea 只取 workspace 里 base 0.4.0 暴露的形状，Carousel 没有参考 look，从主题搭。`ColorPicker`（`color-picker`，含 Area / Slider / Field / Swatch / EyeDropper）、`TextView`、`Editor`、`DiffView`、`NavStack` / `NavPage`（`nav-stack`）也已进入：薄主题层，不新增 token。仍未做：`EmojiPicker`（store 0.4.0 无导出）、`ScrollArea`（无 base 导出，滚动条用 `Scrollbar`）、`Segmented`（无 base 导出，见 Extensions）、拆分按钮。准入仍是 store CLI 上存在对应 `nsh/base` 导出。
 
 ## 6. 每个家族的完成循环
 
