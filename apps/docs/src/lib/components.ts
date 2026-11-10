@@ -1,4 +1,4 @@
-/** Phase-1 registry UI items for docs nav / index (excludes theme, popup-surface). */
+/** Phase-1 registry UI items for docs nav / index (excludes theme and open-state). */
 
 export type ComponentDoc = {
   slug: string;

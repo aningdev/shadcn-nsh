@@ -3,7 +3,7 @@
   "type": "registry:ui",
   "title": "Collapsible",
   "description": "Styled collapsible wrapping nsh/base Collapsible — theme tokens + Trigger / Content; full base prop pass-through.",
-  "registryDependencies": ["theme", "button"],
+  "registryDependencies": ["theme", "button", "open-state"],
   "files": [
     {
       "path": "packages/ui/collapsible.tsx",

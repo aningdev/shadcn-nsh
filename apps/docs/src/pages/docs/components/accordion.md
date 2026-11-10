@@ -46,11 +46,11 @@ Accordion
 
 ## Differences
 
-| Topic        | shadcn                   | This package                         |
-| ------------ | ------------------------ | ------------------------------------ |
-| Panel name   | AccordionContent         | `AccordionPanel` (`nsh/base` symbol) |
-| Value        | string / string[] + type | always `string[]`; `multiple` flag   |
-| Header       | often omitted            | keep `AccordionHeader` for nsh a11y  |
+| Topic      | shadcn                   | This package                         |
+| ---------- | ------------------------ | ------------------------------------ |
+| Panel name | AccordionContent         | `AccordionPanel` (`nsh/base` symbol) |
+| Value      | string / string[] + type | always `string[]`; `multiple` flag   |
+| Header     | often omitted            | keep `AccordionHeader` for nsh a11y  |
 
 ## Not forwarded
 

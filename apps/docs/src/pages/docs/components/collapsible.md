@@ -79,11 +79,11 @@ Wrapper region chrome (`gap: 8`), then consumer styles shallow-merge on top (con
 
 ### `Collapsible` Props
 
-| Prop          | Type              | Default | Notes                                                     |
-| ------------- | ----------------- | ------- | --------------------------------------------------------- |
-| `open`        | `boolean \| null` | —       | Controlled open state                                     |
-| `defaultOpen` | `boolean`         | `false` | Uncontrolled initial open (composition — not on base)     |
-| `children`    | `JSX.Element`     | —       | `CollapsibleTrigger`, `CollapsibleContent`                |
+| Prop          | Type              | Default | Notes                                                 |
+| ------------- | ----------------- | ------- | ----------------------------------------------------- |
+| `open`        | `boolean \| null` | —       | Controlled open state                                 |
+| `defaultOpen` | `boolean`         | `false` | Uncontrolled initial open (composition — not on base) |
+| `children`    | `JSX.Element`     | —       | `CollapsibleTrigger`, `CollapsibleContent`            |
 
 Host chrome and style hooks belong on `CollapsibleContent`, not the root.
 
@@ -123,15 +123,15 @@ Remaining presentation `CollapsibleProps` / `ComponentHostProps` from `nsh/base`
 
 ## Differences
 
-| Topic       | shadcn (`bases/base`)                             | This package                                                                                          |
-| ----------- | ------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| Parts       | Root / Trigger / Content (Panel)                  | same names; Content is `nsh/base` `Collapsible`                                                       |
-| Open state  | Root owns `open` / `defaultOpen` / `onOpenChange` | same on composition root; base itself has no events — wrapper invents `defaultOpen` / `onOpenChange`  |
-| Trigger     | Base UI Trigger (`render` / asChild)              | string → `Button`; else pressable `View` with `accessibilityState.expanded`                           |
-| Reveal      | CSS height / data-state animate                   | pass `reveal` on `CollapsibleContent` for base height spring (`reveal={true}`)                        |
-| Composition-only | optional single-root in some shadcn ports      | root holds open state only — use `CollapsibleTrigger` + `CollapsibleContent`                          |
-| Class hooks | `className` / `cn-collapsible*`                   | `class` + token `style`; consumer styles merge over defaults                                          |
+| Topic            | shadcn (`bases/base`)                             | This package                                                                                         |
+| ---------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Parts            | Root / Trigger / Content (Panel)                  | same names; Content is `nsh/base` `Collapsible`                                                      |
+| Open state       | Root owns `open` / `defaultOpen` / `onOpenChange` | same on composition root; base itself has no events — wrapper invents `defaultOpen` / `onOpenChange` |
+| Trigger          | Base UI Trigger (`render` / asChild)              | string → `Button`; else pressable `View` with `accessibilityState.expanded`                          |
+| Reveal           | CSS height / data-state animate                   | pass `reveal` on `CollapsibleContent` for base height spring (`reveal={true}`)                       |
+| Composition-only | optional single-root in some shadcn ports         | root holds open state only — use `CollapsibleTrigger` + `CollapsibleContent`                         |
+| Class hooks      | `className` / `cn-collapsible*`                   | `class` + token `style`; consumer styles merge over defaults                                         |
 
 ## Not forwarded
 
-None for store CLI `nsh` 0.4.0 `Collapsible` props — all are forwarded on Content (open / trigger owned by the composition root). The wrapper only applies region chrome (`gap: 8`), composition open state / Trigger, and merges defaults under consumer style hooks (`class` concatenates). 
+None for store CLI `nsh` 0.4.0 `Collapsible` props — all are forwarded on Content (open / trigger owned by the composition root). The wrapper only applies region chrome (`gap: 8`), composition open state / Trigger, and merges defaults under consumer style hooks (`class` concatenates).

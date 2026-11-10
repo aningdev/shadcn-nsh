@@ -1,5 +1,5 @@
-import { colors, focusRing, radius } from "@shadcn-nsh/theme";
-import type { JSX } from "nsh";
+import { colors, focusRing, popupBackdrop, popupSurface, radius } from "@shadcn-nsh/theme";
+import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { cleanup, context, Text, View } from "nsh";
 import {
   Combobox as BaseCombobox,
@@ -14,9 +14,19 @@ import {
   type ItemRegistry,
   type TriggerSlot,
 } from "./lib/open-state";
-import { popupBackdrop, popupSurface } from "./lib/popup-surface";
 
 export type { SelectItemData, SelectEntry };
+
+/** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
+function mergeStyle<T extends ViewStyle>(
+  base?: StyleProp<T> | null,
+  consumer?: StyleProp<T> | null,
+): StyleProp<T> | undefined {
+  if (base == null && consumer == null) return undefined;
+  if (base == null) return consumer ?? undefined;
+  if (consumer == null) return base ?? undefined;
+  return [base, consumer];
+}
 
 /** Composition root for `nsh/base` Combobox: value/open state + item registry + trigger slot. */
 export type ComboboxProps = {
@@ -31,6 +41,17 @@ export type ComboboxProps = {
   accessibilityLabel?: string | null;
   empty?: JSX.Element;
   children?: JSX.Element;
+  /**
+   * The popup chrome over the shared surface. `nsh/base` Combobox has no
+   * `popupStarting*` / `popupEnding*` hooks, so there is no entrance/exit to
+   * set here (ADR 0003); on phones the popup is base's sheet, with its own
+   * motion.
+   */
+  popupClass?: string | null;
+  popupStyle?: StyleProp<ViewStyle>;
+  /** Touch screens: the backdrop behind the sheet. */
+  backdropClass?: string | null;
+  backdropStyle?: StyleProp<ViewStyle>;
   onChange?: (event: { value: string[] }) => void;
   onOpenChange?: (event: { open: boolean; reason: OpenChangeReason }) => void;
 };
@@ -106,6 +127,10 @@ function StyledCombobox(props: {
   accessibilityLabel?: string | null;
   trigger?: JSX.Element;
   empty?: JSX.Element;
+  popupClass?: string | null;
+  popupStyle?: StyleProp<ViewStyle>;
+  backdropClass?: string | null;
+  backdropStyle?: StyleProp<ViewStyle>;
   onChange?: (event: { value: string[] }) => void;
   onOpenChange?: (event: { open: boolean; reason: OpenChangeReason }) => void;
 }) {
@@ -162,8 +187,10 @@ function StyledCombobox(props: {
       empty={props.empty}
       onChange={props.onChange}
       onOpenChange={props.onOpenChange}
-      popupStyle={popupSurface()}
-      backdropStyle={popupBackdrop()}
+      popupClass={props.popupClass}
+      popupStyle={mergeStyle(popupSurface(), props.popupStyle)}
+      backdropClass={props.backdropClass}
+      backdropStyle={mergeStyle(popupBackdrop(), props.backdropStyle)}
       listStyle={{ maxHeight: 240 }}
       itemStyle={{
         height: 32,
@@ -299,6 +326,10 @@ export function ComboboxContent(props: { children?: JSX.Element }) {
         accessibilityLabel={root.accessibilityLabel}
         trigger={(triggerAccessor?.() as JSX.Element) ?? defaultTrigger(ctx)}
         empty={(emptyAccessor?.() as JSX.Element) ?? root.empty ?? undefined}
+        popupClass={root.popupClass}
+        popupStyle={root.popupStyle}
+        backdropClass={root.backdropClass}
+        backdropStyle={root.backdropStyle}
         onChange={root.onChange}
         onOpenChange={root.onOpenChange}
       />

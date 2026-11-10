@@ -1,4 +1,4 @@
-import { colors, radius } from "@shadcn-nsh/theme";
+import { colors, overlayShadow, popupBackdrop, radius } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, Text, View } from "nsh";
 import {
@@ -10,7 +10,6 @@ import {
 
 import { Button, type ButtonVariant } from "./button";
 import { createOpenState, type OpenState } from "./lib/open-state";
-import { overlayShadow, popupBackdrop } from "./lib/popup-surface";
 
 /**
  * Composition root (shadcn `Sheet`): holds open state for Trigger / Content.

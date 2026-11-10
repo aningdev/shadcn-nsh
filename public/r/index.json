@@ -9,10 +9,10 @@
       "description": "NSH design tokens (theme.json), surface finishes, and token() helpers (lib/theme.ts)."
     },
     {
-      "name": "popup-surface",
+      "name": "open-state",
       "type": "registry:lib",
-      "title": "Popup surface",
-      "description": "Shared popup/menu surface and backdrop styles."
+      "title": "Open state",
+      "description": "Controlled/uncontrolled open flag, trigger slot, and item registry shared by composition roots."
     },
     {
       "name": "button",

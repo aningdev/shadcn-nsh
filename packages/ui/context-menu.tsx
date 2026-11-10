@@ -1,3 +1,4 @@
+import { overlayMotion, popupBackdrop, popupSurface } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { context, View } from "nsh";
 import {
@@ -12,7 +13,6 @@ import {
   type OpenState,
   type TriggerSlot,
 } from "./lib/open-state";
-import { popupBackdrop, popupSurface } from "./lib/popup-surface";
 
 export {
   MenuCheckboxItem as ContextMenuCheckboxItem,
@@ -160,11 +160,20 @@ export function ContextMenuContent(props: ContextMenuContentProps) {
     disabledStyle,
     popupClass,
     popupStyle,
+    popupStartingStyle,
+    popupEndingStyle,
     backdropClass,
     backdropStyle,
     offset = 4,
     ...rest
   } = props;
+
+  // menu.md: the menu surface at the pointer; 100 ms, from 4 points above. Either hook
+  // of a phase set by the consumer owns that phase (`null` turns it off).
+  const motion = overlayMotion("menu");
+  const defaultStartingStyle =
+    props.popupStartingClass === undefined && popupStartingStyle === undefined;
+  const defaultEndingStyle = props.popupEndingClass === undefined && popupEndingStyle === undefined;
 
   return (
     <BaseContextMenu
@@ -184,9 +193,11 @@ export function ContextMenuContent(props: ContextMenuContentProps) {
       focusStyle={mergeStyle(undefined, focusStyle)}
       disabledStyle={mergeStyle(undefined, disabledStyle)}
       popupClass={mergeClass(undefined, popupClass)}
-      popupStyle={mergeStyle(contentPopupChrome(), popupStyle)}
+      popupStyle={mergeStyle({ ...contentPopupChrome(), ...motion.style }, popupStyle)}
       backdropClass={mergeClass(undefined, backdropClass)}
       backdropStyle={mergeStyle(popupBackdrop(), backdropStyle)}
+      popupStartingStyle={defaultStartingStyle ? motion.startingStyle : popupStartingStyle}
+      popupEndingStyle={defaultEndingStyle ? motion.endingStyle : popupEndingStyle}
     >
       {children}
     </BaseContextMenu>

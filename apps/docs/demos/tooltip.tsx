@@ -1,12 +1,7 @@
 import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/packages/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/packages/ui/tooltip";
 
 function App() {
   const open = signal(false);

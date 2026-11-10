@@ -142,12 +142,12 @@ Wrapper panel chrome (card fill, edge radius, padding / min size by `side`) and 
 
 ### Events
 
-| Event          | Notes                                                                                                |
-| -------------- | ---------------------------------------------------------------------------------------------------- |
-| `onOpenChange` | `(event: { open: boolean; reason: OpenChangeReason }) => void` |
-| `onOpen`       | `() => void` when the panel has come in                                                              |
-| `onClose`      | `() => void` when gone                                                                               |
-| `onCancel`     | `() => void` when the user tries to dismiss (Escape / backdrop / swipe), whether or not it closed    |
+| Event          | Notes                                                                                             |
+| -------------- | ------------------------------------------------------------------------------------------------- |
+| `onOpenChange` | `(event: { open: boolean; reason: OpenChangeReason }) => void`                                    |
+| `onOpen`       | `() => void` when the panel has come in                                                           |
+| `onClose`      | `() => void` when gone                                                                            |
+| `onCancel`     | `() => void` when the user tries to dismiss (Escape / backdrop / swipe), whether or not it closed |
 
 ### `SheetTrigger` Props
 
@@ -211,7 +211,7 @@ Remaining presentation `SheetProps` / `ComponentHostProps` from `nsh/base` also 
 | Default `side`   | `"right"`                                     | `"bottom"` (nsh/base); set `side="right"` for drawer look                              |
 | Close control    | auto X via `showCloseButton`                  | explicit `SheetClose`; no `showCloseButton`                                            |
 | Portal / Overlay | Base UI Portal + Backdrop                     | base owns backdrop; no separate Portal / Overlay exports                               |
-| Change event     | Root `onOpenChange`                           | `{ open, reason }` object events per store `nsh` 0.4.0 |
+| Change event     | Root `onOpenChange`                           | `{ open, reason }` object events per store `nsh` 0.4.0                                 |
 | Enter / exit     | CSS animate classes                           | store 0.4.0 has no enter/exit class hooks on Sheet                                     |
 | Native sheet     | —                                             | use Dialog `presentation="pageSheet"` (not this wrapper)                               |
 | Class hooks      | `className` / `cn-sheet*`                     | `class` + `popupClass` / `backdropClass` / token styles; consumer merges over defaults |

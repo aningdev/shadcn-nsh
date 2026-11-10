@@ -50,10 +50,10 @@ Combobox
 
 ## Differences
 
-| Topic         | shadcn                     | This package                |
-| ------------- | -------------------------- | --------------------------- |
+| Topic          | shadcn                     | This package                                                                    |
+| -------------- | -------------------------- | ------------------------------------------------------------------------------- |
 | Input / filter | ComboboxInput, chips parts | base filters as you type (`triggerButton` + `inputStyle`); no `searchable` flag |
-| Item body      | JSX                        | string label → base `items` / composition `ComboboxItem` |
+| Item body      | JSX                        | string label → base `items` / composition `ComboboxItem`                        |
 
 ## Not forwarded
 

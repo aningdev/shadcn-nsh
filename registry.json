@@ -26,16 +26,16 @@
       ]
     },
     {
-      "name": "popup-surface",
+      "name": "open-state",
       "type": "registry:lib",
-      "title": "Popup surface",
-      "description": "Shared popup/menu surface and backdrop styles.",
-      "registryDependencies": ["theme"],
+      "title": "Open state",
+      "description": "Controlled/uncontrolled open flag, trigger slot, and item registry shared by composition roots.",
+      "registryDependencies": [],
       "files": [
         {
-          "path": "packages/ui/lib/popup-surface.ts",
+          "path": "packages/ui/lib/open-state.ts",
           "type": "registry:lib",
-          "target": "lib/popup-surface.ts"
+          "target": "lib/open-state.ts"
         }
       ]
     },
@@ -142,7 +142,7 @@
       "type": "registry:ui",
       "title": "Popover",
       "description": "Styled popover wrapping nsh/base Popover — theme tokens + Trigger / Content; full base prop pass-through.",
-      "registryDependencies": ["theme", "popup-surface", "button"],
+      "registryDependencies": ["theme", "button", "open-state"],
       "files": [
         {
           "path": "packages/ui/popover.tsx",
@@ -156,7 +156,7 @@
       "type": "registry:ui",
       "title": "Tooltip",
       "description": "Styled tooltip wrapping nsh/base Tooltip — theme tokens + Trigger / Content; full base prop pass-through.",
-      "registryDependencies": ["theme", "button"],
+      "registryDependencies": ["theme", "button", "open-state"],
       "files": [
         {
           "path": "packages/ui/tooltip.tsx",
@@ -170,7 +170,7 @@
       "type": "registry:ui",
       "title": "Sheet",
       "description": "Styled sheet wrapping nsh/base Sheet — theme tokens + Trigger / Content; full base prop pass-through.",
-      "registryDependencies": ["theme", "popup-surface", "button"],
+      "registryDependencies": ["theme", "button", "open-state"],
       "files": [
         {
           "path": "packages/ui/sheet.tsx",
@@ -184,7 +184,7 @@
       "type": "registry:ui",
       "title": "Dialog",
       "description": "Styled dialog wrapping nsh/base Dialog — theme tokens + Trigger / Content; full base prop pass-through.",
-      "registryDependencies": ["theme", "popup-surface", "button"],
+      "registryDependencies": ["theme", "button", "open-state"],
       "files": [
         {
           "path": "packages/ui/dialog.tsx",
@@ -198,7 +198,7 @@
       "type": "registry:ui",
       "title": "Menu",
       "description": "Styled menu wrapping nsh/base Menu — theme tokens + Trigger / Content / Item; composition-only.",
-      "registryDependencies": ["theme", "popup-surface", "button"],
+      "registryDependencies": ["theme", "button", "open-state"],
       "files": [
         {
           "path": "packages/ui/menu.tsx",
@@ -212,7 +212,7 @@
       "type": "registry:ui",
       "title": "Context Menu",
       "description": "Styled context menu wrapping nsh/base ContextMenu — theme tokens + Trigger / Content / Item; full base prop pass-through.",
-      "registryDependencies": ["theme", "popup-surface", "menu"],
+      "registryDependencies": ["theme", "menu", "open-state"],
       "files": [
         {
           "path": "packages/ui/context-menu.tsx",
@@ -226,7 +226,7 @@
       "type": "registry:ui",
       "title": "Collapsible",
       "description": "Styled collapsible wrapping nsh/base Collapsible — theme tokens + Trigger / Content; full base prop pass-through.",
-      "registryDependencies": ["theme", "button"],
+      "registryDependencies": ["theme", "button", "open-state"],
       "files": [
         {
           "path": "packages/ui/collapsible.tsx",
@@ -296,17 +296,12 @@
       "type": "registry:ui",
       "title": "Combobox",
       "description": "Styled combobox wrapping nsh/base Combobox — theme tokens + Trigger / Content / Item; composition-only.",
-      "registryDependencies": ["theme", "popup-surface"],
+      "registryDependencies": ["theme", "open-state"],
       "files": [
         {
           "path": "packages/ui/combobox.tsx",
           "type": "registry:ui",
           "target": "components/ui/combobox.tsx"
-        },
-        {
-          "path": "packages/ui/lib/open-state.ts",
-          "type": "registry:lib",
-          "target": "lib/open-state.ts"
         }
       ]
     },
@@ -371,17 +366,12 @@
       "type": "registry:ui",
       "title": "Select",
       "description": "Styled select wrapping nsh/base Select — theme tokens + Trigger / Content / Item; composition-only.",
-      "registryDependencies": ["theme", "popup-surface"],
+      "registryDependencies": ["theme", "open-state"],
       "files": [
         {
           "path": "packages/ui/select.tsx",
           "type": "registry:ui",
           "target": "components/ui/select.tsx"
-        },
-        {
-          "path": "packages/ui/lib/open-state.ts",
-          "type": "registry:lib",
-          "target": "lib/open-state.ts"
         }
       ]
     },

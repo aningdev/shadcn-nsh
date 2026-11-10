@@ -72,12 +72,12 @@ Select
 
 ### `Select`
 
-| Prop                                    | Type                                         | Notes                                               |
-| --------------------------------------- | -------------------------------------------- | --------------------------------------------------- |
-| `value` / `defaultValue`                | `string \| null`                             |                                                     |
-| `searchable` / `cleanable` / `disabled` | `boolean`                                    |                                                     |
+| Prop                                    | Type                                                           | Notes           |
+| --------------------------------------- | -------------------------------------------------------------- | --------------- |
+| `value` / `defaultValue`                | `string \| null`                                               |                 |
+| `searchable` / `cleanable` / `disabled` | `boolean`                                                      |                 |
 | `onOpenChange`                          | `(event: { open: boolean; reason: OpenChangeReason }) => void` | Root open state |
-| `onChange`                              | `(event: { value: string \| null }) => void` |                                                     |
+| `onChange`                              | `(event: { value: string \| null }) => void`                   |                 |
 
 `SelectItem` children must be **strings** (become `title` in the base items model).
 

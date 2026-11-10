@@ -181,7 +181,11 @@ function App() {
 
         <Section title="Input">
           <View style={{ gap: 8 }}>
-            <Input placeholder="Your name" value={name()} onChange={({ value: v }) => name.set(v)} />
+            <Input
+              placeholder="Your name"
+              value={name()}
+              onChange={({ value: v }) => name.set(v)}
+            />
             <Input placeholder="Disabled" disabled />
             <Input
               placeholder="Style merge"
@@ -411,7 +415,10 @@ function App() {
         </Section>
 
         <Section title="Collapsible">
-          <Collapsible open={collapsibleOpen()} onOpenChange={({ open: next }) => collapsibleOpen.set(next)}>
+          <Collapsible
+            open={collapsibleOpen()}
+            onOpenChange={({ open: next }) => collapsibleOpen.set(next)}
+          >
             <CollapsibleTrigger>Toggle</CollapsibleTrigger>
             <CollapsibleContent>
               <Text style={{ fontSize: 13, color: colors.mutedForeground }}>

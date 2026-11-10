@@ -123,22 +123,22 @@ Wrapper popup chrome (`popupSurface` + min width) and backdrop tint, then consum
 
 ### `ContextMenu` Props
 
-| Prop       | Type              | Default | Notes                                                                 |
-| ---------- | ----------------- | ------- | --------------------------------------------------------------------- |
-| `open`     | `boolean \| null` | —       | Controlled open state                                                 |
-| `disabled` | `boolean`         | —       | Secondary click / long-press do nothing                               |
-| `children` | `JSX.Element`     | —       | `ContextMenuTrigger`, `ContextMenuContent`, and nested items          |
+| Prop       | Type              | Default | Notes                                                        |
+| ---------- | ----------------- | ------- | ------------------------------------------------------------ |
+| `open`     | `boolean \| null` | —       | Controlled open state                                        |
+| `disabled` | `boolean`         | —       | Secondary click / long-press do nothing                      |
+| `children` | `JSX.Element`     | —       | `ContextMenuTrigger`, `ContextMenuContent`, and nested items |
 
 Offset, popup chrome, and backdrop props belong on `ContextMenuContent`, not the root. Store 0.4.0 has no `defaultOpen` / `placement` / `align` on ContextMenu (pointer-anchored).
 
 ### Events
 
-| Event          | Notes                                                                                                |
-| -------------- | ---------------------------------------------------------------------------------------------------- |
-| `onOpenChange` | `(event: { open: boolean; reason: OpenChangeReason }) => void` |
-| `onOpen`       | `() => void` when shown                                                                              |
-| `onClose`      | `() => void` when gone                                                                               |
-| `onCancel`     | `() => void` when the user tries to dismiss without choosing (Escape / outside / backdrop)           |
+| Event          | Notes                                                                                      |
+| -------------- | ------------------------------------------------------------------------------------------ |
+| `onOpenChange` | `(event: { open: boolean; reason: OpenChangeReason }) => void`                             |
+| `onOpen`       | `() => void` when shown                                                                    |
+| `onClose`      | `() => void` when gone                                                                     |
+| `onCancel`     | `() => void` when the user tries to dismiss without choosing (Escape / outside / backdrop) |
 
 ### `ContextMenuTrigger` Props
 
@@ -190,7 +190,7 @@ Same as the Menu aliases — see Menu API. Separator forwards all `MenuSeparator
 | Positioning         | `side` / `sideOffset` / `align` / `alignOffset`   | store 0.4.0 ContextMenu is pointer-anchored — only `offset` / `margin` (no `placement` / `align`) |
 | Radio items         | `ContextMenuRadioGroup` / `RadioItem`             | no store radio role — use `checked` on Item / CheckboxItem with `indicator`                       |
 | Checkable items     | Radix CheckboxItem subtree                        | base `MenuItem` `checked` + `indicator`; wrapper default mark when omitted                        |
-| Change event        | Root `onOpenChange`                               | `{ open, reason }` object events per store `nsh` 0.4.0            |
+| Change event        | Root `onOpenChange`                               | `{ open, reason }` object events per store `nsh` 0.4.0                                            |
 | Enter / exit        | CSS animate classes                               | store 0.4.0 has no `popupStarting*` / `popupEnding*` / `onPosition`                               |
 | Shared parts        | separate file, shared look                        | Item / Label / Separator / Sub / Group / Shortcut re-export Menu implementations                  |
 | Composition-only    | optional single-root in some shadcn ports         | root holds open state only — use `ContextMenuTrigger` + `ContextMenuContent`                      |

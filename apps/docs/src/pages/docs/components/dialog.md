@@ -145,12 +145,12 @@ Wrapper popup chrome (card fill, border, radius, padding / max width) and backdr
 
 ### Events
 
-| Event          | Notes                                                                                                  |
-| -------------- | ------------------------------------------------------------------------------------------------------ |
-| `onOpenChange` | `(event: { open: boolean; reason: DialogChangeReason }) => void` |
-| `onOpen`       | `() => void` when the dialog has come in                                                               |
-| `onClose`      | `() => void` when gone                                                                                 |
-| `onCancel`     | `() => void` when the user tries to dismiss (Escape / backdrop / swipe), whether or not it closed      |
+| Event          | Notes                                                                                             |
+| -------------- | ------------------------------------------------------------------------------------------------- |
+| `onOpenChange` | `(event: { open: boolean; reason: DialogChangeReason }) => void`                                  |
+| `onOpen`       | `() => void` when the dialog has come in                                                          |
+| `onClose`      | `() => void` when gone                                                                            |
+| `onCancel`     | `() => void` when the user tries to dismiss (Escape / backdrop / swipe), whether or not it closed |
 
 ### `DialogTrigger` Props
 
@@ -208,7 +208,7 @@ Remaining `DialogProps` from `nsh/base` also pass through. Open / lifecycle even
 | Overlay / Portal  | Base UI Backdrop + Portal                     | base owns backdrop; no separate Portal / Overlay exports                                |
 | Close control     | auto X via `showCloseButton`                  | explicit `DialogClose`; no `showCloseButton`                                            |
 | Default animation | CSS fade / zoom                               | wrapper `"fade"` for card chrome; nsh/base alone defaults `"slide"`                     |
-| Change event      | Root `onOpenChange`                           | `{ open, reason }` object events per store `nsh` 0.4.0  |
+| Change event      | Root `onOpenChange`                           | `{ open, reason }` object events per store `nsh` 0.4.0                                  |
 | Class hooks       | `className` / `cn-dialog*`                    | `class` + `backdropClass` / token styles; consumer merges over defaults                 |
 | Native sheet      | —                                             | set `presentation="pageSheet"` / `"formSheet"` on Content (iOS); or use Sheet for edges |
 

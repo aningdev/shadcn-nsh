@@ -15,10 +15,12 @@ Design-token and surface helpers for shadcn-nsh. Three layers (see [`docs/adr/00
 | `raised` / `hover` / `pressed` / `on` / `accent` / `card` | Control surfaces (e.g. Button)                                          |
 | `menu`                                                    | Popup-family **one** soft shadow (menu, popover, select, dialog, sheet) |
 
-Fills always come from `colors.*`; finishes supply `boxShadow` (depth only).
+Fills always come from `colors.*`; finishes supply `boxShadow` (depth only). Overlay chrome is shared: `popupSurface()`, `popupBackdrop()`, `overlayShadow()`.
 
 ### Motion
 
 `pressSink(0.97)` + `duration.press` (150ms) / `easing.press` — NSH Design Guides press example; honors `reduceMotion()`.
+
+`overlayMotion(kind)` — popup entrance/exit values from the `nsh/base` element docs (`popover` 150 ms / `menu` 100 ms / `tooltip` 100 ms fade), applied by each styled popup part.
 
 Consumed by [`@shadcn-nsh/ui`](../ui) and shipped as registry `theme` (`theme.json` + `lib/finishes.json` + `lib/theme.ts`). After edits: `bun run registry:build` from the repo root and commit `public/r`.

@@ -37,19 +37,19 @@ UI 落地后：加 demo → 删本表对应行 → 更新 `packages/ui/README.md
 ## Components — UI 未包（后续补 `@shadcn-nsh/ui` 再开 demo）
 
 | 参考 demo                             | 阻塞                                         | 计划阶段（ui/README） |
-| ------------------------------------- | -------------------------------------------- | ------------------------- |
-| ColorPicker                           | 无 `packages/ui` 导出                        | Phase-2                   |
-| DatePicker（及 Calendar / TimeField） | 同上                                         | Phase-2                   |
-| DataTable                             | 同上                                         | Separate milestones       |
-| DiffView                              | 同上                                         | Separate milestones       |
-| Dock                                  | 同上                                         | Separate milestones       |
-| Editor                                | 同上                                         | Separate milestones       |
-| NavStack                              | 壳用 `nsh/base`；不单独做 styled registry 项 | App shell                 |
-| Plot                                  | 同上                                         | Separate milestones       |
-| Resizable                             | 同上                                         | Phase-1.5 / later         |
-| RichEditor                            | 同上                                         | Separate milestones       |
-| TextView                              | 同上                                         | Separate milestones       |
-| Toolbar                               | 同上                                         | Phase-1.5 / later         |
+| ------------------------------------- | -------------------------------------------- | --------------------- |
+| ColorPicker                           | 无 `packages/ui` 导出                        | Phase-2               |
+| DatePicker（及 Calendar / TimeField） | 同上                                         | Phase-2               |
+| DataTable                             | 同上                                         | Separate milestones   |
+| DiffView                              | 同上                                         | Separate milestones   |
+| Dock                                  | 同上                                         | Separate milestones   |
+| Editor                                | 同上                                         | Separate milestones   |
+| NavStack                              | 壳用 `nsh/base`；不单独做 styled registry 项 | App shell             |
+| Plot                                  | 同上                                         | Separate milestones   |
+| Resizable                             | 同上                                         | Phase-1.5 / later     |
+| RichEditor                            | 同上                                         | Separate milestones   |
+| TextView                              | 同上                                         | Separate milestones   |
+| Toolbar                               | 同上                                         | Phase-1.5 / later     |
 
 ## Components — Phase-1 已有 UI、缺 gallery 拆页（随壳一起补）
 

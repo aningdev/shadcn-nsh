@@ -128,12 +128,12 @@ Placement, popup chrome, and presentation props belong on `MenuContent`, not the
 
 ### Events
 
-| Event          | Notes                                                                                                |
-| -------------- | ---------------------------------------------------------------------------------------------------- |
-| `onOpenChange` | `(event: { open: boolean; reason: OpenChangeReason }) => void` |
-| `onOpen`       | `() => void` when shown                                                                              |
-| `onClose`      | `() => void` when gone                                                                               |
-| `onCancel`     | `() => void` when the user tries to dismiss without choosing (Escape / outside / backdrop)           |
+| Event          | Notes                                                                                      |
+| -------------- | ------------------------------------------------------------------------------------------ |
+| `onOpenChange` | `(event: { open: boolean; reason: OpenChangeReason }) => void`                             |
+| `onOpen`       | `() => void` when shown                                                                    |
+| `onClose`      | `() => void` when gone                                                                     |
+| `onCancel`     | `() => void` when the user tries to dismiss without choosing (Escape / outside / backdrop) |
 
 ### `MenuTrigger` Props
 
@@ -173,15 +173,15 @@ Remaining presentation `MenuProps` / `ComponentHostProps` from `nsh/base` also p
 
 ### `MenuItem` / `MenuCheckboxItem` Props
 
-| Prop                            | Type              | Default | Notes                                                                               |
-| ------------------------------- | ----------------- | ------- | ----------------------------------------------------------------------------------- |
-| `disabled`                      | `boolean`         | —       | Forwarded                                                                           |
-| `checked`                       | `boolean \| null` | —       | Forwarded to base `MenuItem`; CheckboxItem defaults false when omitted            |
-| `closeOnSelect`                 | `boolean`         | —       | Forwarded (base default `true`)                                                     |
-| `accessibilityLabel`            | `string \| null`  | —       | Forwarded                                                                           |
-| `onSelect`                      | `() => void`      | —       | Forwarded                                                                           |
-| `children`                      | `JSX.Element`     | —       | Item content                                                                        |
-| `class` / `style` / style hooks | —                 | —       | Merged over item chrome + `focusRing()` / accent hover                              |
+| Prop                            | Type              | Default | Notes                                                                  |
+| ------------------------------- | ----------------- | ------- | ---------------------------------------------------------------------- |
+| `disabled`                      | `boolean`         | —       | Forwarded                                                              |
+| `checked`                       | `boolean \| null` | —       | Forwarded to base `MenuItem`; CheckboxItem defaults false when omitted |
+| `closeOnSelect`                 | `boolean`         | —       | Forwarded (base default `true`)                                        |
+| `accessibilityLabel`            | `string \| null`  | —       | Forwarded                                                              |
+| `onSelect`                      | `() => void`      | —       | Forwarded                                                              |
+| `children`                      | `JSX.Element`     | —       | Item content                                                           |
+| `class` / `style` / style hooks | —                 | —       | Merged over item chrome + `focusRing()` / accent hover                 |
 
 ### `MenuGroup` / `MenuLabel` / `MenuShortcut` Props
 
@@ -206,17 +206,17 @@ All `MenuSeparatorProps` / `ComponentHostProps` from `nsh/base` — `class` / `s
 
 ## Differences
 
-| Topic               | shadcn (`bases/base`)                             | This package                                                                             |
-| ------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| Parts               | Root / Trigger / Content / Item / Sub / Group / … | same names; Content is `nsh/base` `Menu`; SubContent is `Submenu`                        |
-| Portal / Positioner | Base UI Portal + Positioner                       | base places the popup / sheet; no separate Portal export                                 |
-| Positioning         | `side` / `sideOffset` / `align` / `alignOffset`   | base `placement` / `offset` / `align` (no `alignOffset` on store 0.4.0)                  |
-| Radio items         | `MenuRadioGroup` / `RadioItem`                    | no store radio role — use `checked` on Item / CheckboxItem with `indicator`              |
-| Checkable items     | Radix CheckboxItem subtree                        | base `MenuItem` `checked` + `indicator`; wrapper default mark when omitted               |
-| Change event        | Root `onOpenChange`                               | `{ open, reason }` object events per store `nsh` 0.4.0   |
-| Enter / exit        | CSS animate classes                               | store 0.4.0 has no `popupStarting*` / `popupEnding*` / `onPosition`                      |
-| Composition-only    | optional single-root in some shadcn ports         | root holds open state only — use `MenuTrigger` + `MenuContent`                           |
-| Class hooks         | `className` / `cn-menu*`                          | `class` + `popupClass` / `backdropClass` / token styles; consumer merges over defaults   |
+| Topic               | shadcn (`bases/base`)                             | This package                                                                           |
+| ------------------- | ------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| Parts               | Root / Trigger / Content / Item / Sub / Group / … | same names; Content is `nsh/base` `Menu`; SubContent is `Submenu`                      |
+| Portal / Positioner | Base UI Portal + Positioner                       | base places the popup / sheet; no separate Portal export                               |
+| Positioning         | `side` / `sideOffset` / `align` / `alignOffset`   | base `placement` / `offset` / `align` (no `alignOffset` on store 0.4.0)                |
+| Radio items         | `MenuRadioGroup` / `RadioItem`                    | no store radio role — use `checked` on Item / CheckboxItem with `indicator`            |
+| Checkable items     | Radix CheckboxItem subtree                        | base `MenuItem` `checked` + `indicator`; wrapper default mark when omitted             |
+| Change event        | Root `onOpenChange`                               | `{ open, reason }` object events per store `nsh` 0.4.0                                 |
+| Enter / exit        | CSS animate classes                               | store 0.4.0 has no `popupStarting*` / `popupEnding*` / `onPosition`                    |
+| Composition-only    | optional single-root in some shadcn ports         | root holds open state only — use `MenuTrigger` + `MenuContent`                         |
+| Class hooks         | `className` / `cn-menu*`                          | `class` + `popupClass` / `backdropClass` / token styles; consumer merges over defaults |
 
 ## Not forwarded
 

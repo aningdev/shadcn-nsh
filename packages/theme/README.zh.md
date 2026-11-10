@@ -15,10 +15,12 @@ shadcn-nsh 的 token / 表面辅助。三层（见 [`docs/adr/0002-theme-finish-
 | `raised` / `hover` / `pressed` / `on` / `accent` / `card` | 控件表面（如 Button）                                            |
 | `menu`                                                    | 浮层家族 **一把** 软阴影（menu、popover、select、dialog、sheet） |
 
-填色始终来自 `colors.*`；finish 只提供 `boxShadow`（深度）。
+填色始终来自 `colors.*`；finish 只提供 `boxShadow`（深度）。浮层外观共用：`popupSurface()`、`popupBackdrop()`、`overlayShadow()`。
 
 ### 动效
 
 `pressSink(0.97)` + `duration.press`（150ms）/ `easing.press` — 对齐 NSH Design Guides 按压示例；尊重 `reduceMotion()`。
+
+`overlayMotion(kind)` — 弹层入场/退场值，来自 `nsh/base` 元素文档（`popover` 150ms / `menu` 100ms / `tooltip` 100ms 淡入），由各弹层组件应用为默认。
 
 由 [`@shadcn-nsh/ui`](../ui) 消费，并以 registry `theme` 分发（`theme.json` + `lib/finishes.json` + `lib/theme.ts`）。修改后在仓库根执行 `bun run registry:build`，并提交 `public/r`。

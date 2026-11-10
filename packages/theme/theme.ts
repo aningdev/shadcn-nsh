@@ -85,6 +85,28 @@ function themedFinish<T extends object>(dark: T, light: T): T {
  */
 export const finish = themedFinish<Record<FinishName, Finish>>(finishes.dark, finishes.light);
 
+/** Overlay-family one-shadow (`finish.menu`). Prefer this over per-component `boxShadow`. */
+export function overlayShadow(): ViewStyle {
+  return { boxShadow: finish.menu.boxShadow };
+}
+
+/** Shared surface for popovers, menus, and select/combobox popups. */
+export function popupSurface(): ViewStyle {
+  return {
+    borderRadius: radius.control,
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.card,
+    padding: 4,
+    ...overlayShadow(),
+  };
+}
+
+/** The dimming behind what is modal (dialogs, sheets, touch-screen pickers). */
+export function popupBackdrop(): ViewStyle {
+  return { backgroundColor: "color-mix(in srgb, black 40%, transparent)" };
+}
+
 /** Duration tokens (ms). Align press with NSH Design Guides / Gallery. */
 export const duration = {
   press: 150,
@@ -119,5 +141,55 @@ export function pressSink(scale = 0.97, also?: string) {
       return reduceMotion() ? {} : { transform: [{ scale }] };
     },
     transition: pressTransition(also),
+  };
+}
+
+/**
+ * Popup entrance/exit, from the `nsh/base` element docs: popover.md
+ * (`transition-all duration-150 ease-out` + `opacity-0 scale-95`), menu.md
+ * (`duration-100` + `opacity-0 -translate-y-1`) and tooltip.md
+ * (`transition-opacity duration-100` + `opacity-0`).
+ *
+ * `style` goes on the popup's own look (`style` / `popupStyle`); `startingStyle`
+ * and `endingStyle` are its first and last frames. `nsh/base` shows and hides
+ * them at once when the user asks for less motion, so nothing here reads
+ * `reduceMotion()`.
+ */
+export type OverlayMotionKind = "popover" | "menu" | "tooltip";
+
+export type OverlayMotion = {
+  style: ViewStyle;
+  startingStyle: ViewStyle;
+  endingStyle: ViewStyle;
+};
+
+function overlayTransition(properties: string, ms: number): ViewStyle {
+  return {
+    transitionProperty: properties,
+    transitionDuration: ms,
+    transitionTimingFunction: "ease-out",
+  };
+}
+
+export function overlayMotion(kind: OverlayMotionKind): OverlayMotion {
+  if (kind === "tooltip") {
+    // tooltip.md: a 100 ms fade, no movement.
+    const hidden: ViewStyle = { opacity: 0 };
+    return { style: overlayTransition("opacity", 100), startingStyle: hidden, endingStyle: hidden };
+  }
+  if (kind === "menu") {
+    // menu.md: 100 ms, from 4 points above.
+    return {
+      style: overlayTransition("opacity, transform", 100),
+      startingStyle: { opacity: 0, transform: [{ translateY: -4 }] },
+      endingStyle: { opacity: 0 },
+    };
+  }
+  // popover.md: 150 ms, from 95 % of its size.
+  const hidden: ViewStyle = { opacity: 0, transform: [{ scale: 0.95 }] };
+  return {
+    style: overlayTransition("opacity, transform", 150),
+    startingStyle: hidden,
+    endingStyle: hidden,
   };
 }

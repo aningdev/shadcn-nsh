@@ -1,4 +1,4 @@
-import { colors } from "@shadcn-nsh/theme";
+import { colors, overlayMotion, popupSurface } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, Text, View } from "nsh";
 import {
@@ -14,7 +14,6 @@ import {
   type OpenState,
   type TriggerSlot,
 } from "./lib/open-state";
-import { popupSurface } from "./lib/popup-surface";
 
 /** Composition root for `nsh/base` Popover: open state + trigger slot. */
 export type PopoverProps = {
@@ -192,11 +191,20 @@ export function PopoverContent(props: PopoverContentProps) {
     disabledStyle,
     popupClass,
     popupStyle,
+    popupStartingStyle,
+    popupEndingStyle,
     placement = "bottom",
     align = "center",
     offset = 4,
     ...rest
   } = props;
+
+  // popover.md: 150 ms, from 95 % of its size. Either hook of a phase set by the
+  // consumer owns that phase (`null` turns it off); the classes left in `...rest` pass through.
+  const motion = overlayMotion("popover");
+  const defaultStartingStyle =
+    props.popupStartingClass === undefined && popupStartingStyle === undefined;
+  const defaultEndingStyle = props.popupEndingClass === undefined && popupEndingStyle === undefined;
 
   return (
     <BasePopover
@@ -217,7 +225,9 @@ export function PopoverContent(props: PopoverContentProps) {
       focusStyle={mergeStyle(undefined, focusStyle)}
       disabledStyle={mergeStyle(undefined, disabledStyle)}
       popupClass={mergeClass(undefined, popupClass)}
-      popupStyle={mergeStyle(contentPopupChrome(), popupStyle)}
+      popupStyle={mergeStyle({ ...contentPopupChrome(), ...motion.style }, popupStyle)}
+      popupStartingStyle={defaultStartingStyle ? motion.startingStyle : popupStartingStyle}
+      popupEndingStyle={defaultEndingStyle ? motion.endingStyle : popupEndingStyle}
     >
       {children}
     </BasePopover>

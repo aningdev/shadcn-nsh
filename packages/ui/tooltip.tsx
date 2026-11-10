@@ -1,4 +1,4 @@
-import { colors, radius } from "@shadcn-nsh/theme";
+import { colors, overlayMotion, radius } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, Text, View } from "nsh";
 import {
@@ -15,9 +15,27 @@ import {
   type TriggerSlot,
 } from "./lib/open-state";
 
-/** Composition root for `nsh/base` Tooltip: Trigger + Content only. */
-export type TooltipProps = Omit<BaseTooltipProps, "children"> & {
+/**
+ * Composition root for `nsh/base` Tooltip: Trigger + Content only.
+ *
+ * Only the props the root actually honors are listed: the bubble's look,
+ * `class` / `style` and the entrance/exit hooks live on {@link TooltipContent}
+ * (the root has no surface of its own). `nsh/base`'s full prop set stays
+ * available on Content and on standalone `tooltip={…}` use.
+ */
+export type TooltipProps = {
+  open?: boolean | null;
+  defaultOpen?: boolean;
+  placement?: BaseTooltipProps["placement"];
+  align?: BaseTooltipProps["align"];
+  offset?: number;
+  margin?: number;
+  delay?: number;
+  disabled?: boolean;
   children?: JSX.Element;
+  onOpenChange?: (event: { open: boolean; reason: OpenChangeReason }) => void;
+  onOpen?: () => void;
+  onClose?: () => void;
 };
 
 /**
@@ -135,9 +153,17 @@ function renderBaseTooltip(props: BaseTooltipProps) {
     placement = "top",
     align = "center",
     offset = 4,
+    startingStyle,
+    endingStyle,
     children,
     ...rest
   } = props;
+
+  // tooltip.md: a 100 ms fade. Either hook of a phase set by the consumer owns that
+  // phase (`null` turns it off); the classes left in `...rest` pass through.
+  const motion = overlayMotion("tooltip");
+  const defaultStartingStyle = props.startingClass === undefined && startingStyle === undefined;
+  const defaultEndingStyle = props.endingClass === undefined && endingStyle === undefined;
 
   return (
     <BaseTooltip
@@ -146,11 +172,13 @@ function renderBaseTooltip(props: BaseTooltipProps) {
       align={align}
       offset={offset}
       class={mergeClass(undefined, className)}
-      style={mergeStyle(bubbleChrome(), style)}
+      style={mergeStyle({ ...bubbleChrome(), ...motion.style }, style)}
       hoverStyle={mergeStyle(undefined, hoverStyle)}
       activeStyle={mergeStyle(undefined, activeStyle)}
       focusStyle={mergeStyle(undefined, focusStyle)}
       disabledStyle={mergeStyle(undefined, disabledStyle)}
+      startingStyle={defaultStartingStyle ? motion.startingStyle : startingStyle}
+      endingStyle={defaultEndingStyle ? motion.endingStyle : endingStyle}
     >
       {children}
     </BaseTooltip>

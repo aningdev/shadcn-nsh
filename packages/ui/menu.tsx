@@ -1,4 +1,4 @@
-import { colors, focusRing } from "@shadcn-nsh/theme";
+import { colors, focusRing, overlayMotion, popupBackdrop, popupSurface } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, Text, View } from "nsh";
 import {
@@ -20,7 +20,6 @@ import {
   type OpenState,
   type TriggerSlot,
 } from "./lib/open-state";
-import { popupBackdrop, popupSurface } from "./lib/popup-surface";
 
 /** Composition root for `nsh/base` Menu: open state + trigger slot for Trigger / Content. */
 export type MenuProps = {
@@ -279,6 +278,8 @@ export function MenuContent(props: MenuContentProps) {
     disabledStyle,
     popupClass,
     popupStyle,
+    popupStartingStyle,
+    popupEndingStyle,
     backdropClass,
     backdropStyle,
     placement = "bottom",
@@ -286,6 +287,13 @@ export function MenuContent(props: MenuContentProps) {
     offset = 4,
     ...rest
   } = props;
+
+  // menu.md: 100 ms, from 4 points above. Either hook of a phase set by the consumer
+  // owns that phase (`null` turns it off); the classes left in `...rest` pass through.
+  const motion = overlayMotion("menu");
+  const defaultStartingStyle =
+    props.popupStartingClass === undefined && popupStartingStyle === undefined;
+  const defaultEndingStyle = props.popupEndingClass === undefined && popupEndingStyle === undefined;
 
   return (
     <BaseMenu
@@ -306,9 +314,11 @@ export function MenuContent(props: MenuContentProps) {
       focusStyle={mergeStyle(undefined, focusStyle)}
       disabledStyle={mergeStyle(undefined, disabledStyle)}
       popupClass={mergeClass(undefined, popupClass)}
-      popupStyle={mergeStyle(contentPopupChrome(), popupStyle)}
+      popupStyle={mergeStyle({ ...contentPopupChrome(), ...motion.style }, popupStyle)}
       backdropClass={mergeClass(undefined, backdropClass)}
       backdropStyle={mergeStyle(popupBackdrop(), backdropStyle)}
+      popupStartingStyle={defaultStartingStyle ? motion.startingStyle : popupStartingStyle}
+      popupEndingStyle={defaultEndingStyle ? motion.endingStyle : popupEndingStyle}
     >
       {children}
     </BaseMenu>
@@ -337,8 +347,7 @@ export function MenuItem(props: MenuItemProps) {
     ...rest
   } = props;
 
-  const resolvedIndicator =
-    indicator ?? (checked != null ? defaultCheckIndicator() : undefined);
+  const resolvedIndicator = indicator ?? (checked != null ? defaultCheckIndicator() : undefined);
 
   return (
     <BaseMenuItem

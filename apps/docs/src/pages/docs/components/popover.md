@@ -100,11 +100,11 @@ Wrapper popup chrome (`popupSurface` + padding / min width), then consumer style
 
 ### `Popover` Props
 
-| Prop          | Type              | Default | Notes                                                    |
-| ------------- | ----------------- | ------- | -------------------------------------------------------- |
-| `open`        | `boolean \| null` | —       | Controlled open state                                    |
-| `defaultOpen` | `boolean`         | `false` | Uncontrolled initial open                                |
-| `children`    | `JSX.Element`     | —       | `PopoverTrigger`, `PopoverContent`, and nested chrome    |
+| Prop          | Type              | Default | Notes                                                 |
+| ------------- | ----------------- | ------- | ----------------------------------------------------- |
+| `open`        | `boolean \| null` | —       | Controlled open state                                 |
+| `defaultOpen` | `boolean`         | `false` | Uncontrolled initial open                             |
+| `children`    | `JSX.Element`     | —       | `PopoverTrigger`, `PopoverContent`, and nested chrome |
 
 Placement, popup chrome, and dismiss flags belong on `PopoverContent`, not the root.
 
@@ -112,7 +112,7 @@ Placement, popup chrome, and dismiss flags belong on `PopoverContent`, not the r
 
 | Event          | Notes                                                                                                   |
 | -------------- | ------------------------------------------------------------------------------------------------------- |
-| `onOpenChange` | `(event: { open: boolean; reason: OpenChangeReason }) => void`    |
+| `onOpenChange` | `(event: { open: boolean; reason: OpenChangeReason }) => void`                                          |
 | `onOpen`       | `() => void` when shown                                                                                 |
 | `onClose`      | `() => void` when gone                                                                                  |
 | `onCancel`     | `() => void` when the user tries to dismiss (Escape / outside), whether or not close flags let it close |
@@ -163,15 +163,15 @@ Remaining presentation `PopoverProps` / `ComponentHostProps` from `nsh/base` als
 
 ## Differences
 
-| Topic        | shadcn (`bases/base`)                                   | This package                                                                           |
-| ------------ | ------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| Parts        | Root / Trigger / Content / Header / Title / Description | same names; Content is `nsh/base` `Popover`                                            |
-| Positioning  | `side` / `sideOffset` / `align` / `alignOffset`         | base `placement` / `offset` / `align` (no `alignOffset` on store 0.4.0)                |
-| Portal       | Base UI Portal + Positioner                             | base places the popup; no separate Portal export                                       |
-| Change event | Root `onOpenChange`                                     | `{ open, reason }` object events per store `nsh` 0.4.0 |
-| Enter / exit | CSS animate classes                                     | store 0.4.0 has no `popupStarting*` / `popupEnding*` / `onPosition`                    |
-| Composition-only | optional single-root in some shadcn ports             | root holds open state only — use `PopoverTrigger` + `PopoverContent`                   |
-| Class hooks  | `className` / `cn-popover*`                             | `class` + `popupClass` / token `popupStyle`; consumer styles merge over defaults       |
+| Topic            | shadcn (`bases/base`)                                   | This package                                                                     |
+| ---------------- | ------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| Parts            | Root / Trigger / Content / Header / Title / Description | same names; Content is `nsh/base` `Popover`                                      |
+| Positioning      | `side` / `sideOffset` / `align` / `alignOffset`         | base `placement` / `offset` / `align` (no `alignOffset` on store 0.4.0)          |
+| Portal           | Base UI Portal + Positioner                             | base places the popup; no separate Portal export                                 |
+| Change event     | Root `onOpenChange`                                     | `{ open, reason }` object events per store `nsh` 0.4.0                           |
+| Enter / exit     | CSS animate classes                                     | store 0.4.0 has no `popupStarting*` / `popupEnding*` / `onPosition`              |
+| Composition-only | optional single-root in some shadcn ports               | root holds open state only — use `PopoverTrigger` + `PopoverContent`             |
+| Class hooks      | `className` / `cn-popover*`                             | `class` + `popupClass` / token `popupStyle`; consumer styles merge over defaults |
 
 ## Not forwarded
 

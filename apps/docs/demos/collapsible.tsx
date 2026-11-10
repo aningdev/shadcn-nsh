@@ -1,11 +1,7 @@
 import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/packages/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/packages/ui/collapsible";
 
 function App() {
   const open = signal(false);

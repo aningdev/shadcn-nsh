@@ -39,10 +39,10 @@ NSH resolves these into runtime tokens. Prefer editing JSON over hard-coding hex
 
 Light/dark semantic **surface depth** (`finish.*`). Depth only: pair with `colors.*` for fills.
 
-| Role                                                      | Use                                                                                                               |
-| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `raised` / `hover` / `pressed` / `on` / `accent` / `card` | Control surfaces (e.g. [Button](/docs/components/button))                                                         |
-| `menu`                                                    | Popup-family **one** soft shadow — menus, popovers, selects, dialogs, sheets via `popupSurface` / `overlayShadow` |
+| Role                                                      | Use                                                                                                         |
+| --------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `raised` / `hover` / `pressed` / `on` / `accent` / `card` | Control surfaces (e.g. [Button](/docs/components/button))                                                   |
+| `menu`                                                    | Popup-family **one** soft shadow — used by the shared chrome helpers `popupSurface` / `overlayShadow` below |
 
 ```tsx
 import { colors, finish } from "@shadcn-nsh/theme";
@@ -50,8 +50,10 @@ import { colors, finish } from "@shadcn-nsh/theme";
 // control
 style={{ backgroundColor: colors.secondary, boxShadow: finish.raised.boxShadow }}
 
-// overlay (prefer shared helpers in ui)
-boxShadow: finish.menu.boxShadow
+// overlay (prefer the shared helpers)
+import { popupBackdrop, popupSurface } from "@shadcn-nsh/theme";
+style={popupSurface()}
+// backdropStyle={popupBackdrop()}
 ```
 
 ## Motion
@@ -64,7 +66,7 @@ const sink = pressSink(0.97, "background-color, border-color, box-shadow, opacit
 // duration.press === 150, easing.press === "ease-out"; honors reduceMotion()
 ```
 
-Enter/exit overlay choreography is **not** part of this theme layer yet.
+Motion is **not** redefined here: it follows [`nsh` Animation](https://nsh.dev/docs/animation) and its element docs, as recorded in [ADR 0003](https://github.com/aningdev/shadcn-nsh/blob/main/docs/adr/0003-motion-policy.md). This package owns the press helpers above and `overlayMotion()` (150 ms popover, 100 ms menu/tooltip, values from the `nsh/base` element docs); each styled popup part applies it as its default, with `undefined` injecting the default and `null` turning it off. Dialog/Sheet keep `nsh/base`'s own motion, and Select/Combobox have no entrance hooks to set.
 
 ## `token()` and helpers
 

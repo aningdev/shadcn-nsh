@@ -116,27 +116,27 @@ Wrapper bubble chrome (`foreground` fill, padding, radius), then consumer styles
 
 ### `Tooltip` Props
 
-| Prop          | Type              | Default | Notes                                                          |
-| ------------- | ----------------- | ------- | -------------------------------------------------------------- |
-| `open`        | `boolean \| null` | —       | Controlled open state                                          |
-| `defaultOpen` | `boolean`         | `false` | Uncontrolled initial open                                      |
-| `children`    | `JSX.Element`     | —       | `TooltipTrigger` + `TooltipContent`                            |
-| `placement`   | `Placement`       | —       | Default for Content when Content omits it (`"top"`)            |
-| `align`       | `Align`           | —       | Default for Content when omitted (`"center"`)                    |
-| `offset`      | `number`          | —       | Default for Content when omitted (`4`)                         |
-| `margin`      | `number`          | —       | Default for Content when omitted                               |
-| `delay`       | `number`          | —       | Ms before show; default for Content (base default `500`)       |
-| `disabled`    | `boolean`         | —       | Never shows; blocks Trigger                                    |
+| Prop          | Type              | Default | Notes                                                    |
+| ------------- | ----------------- | ------- | -------------------------------------------------------- |
+| `open`        | `boolean \| null` | —       | Controlled open state                                    |
+| `defaultOpen` | `boolean`         | `false` | Uncontrolled initial open                                |
+| `children`    | `JSX.Element`     | —       | `TooltipTrigger` + `TooltipContent`                      |
+| `placement`   | `Placement`       | —       | Default for Content when Content omits it (`"top"`)      |
+| `align`       | `Align`           | —       | Default for Content when omitted (`"center"`)            |
+| `offset`      | `number`          | —       | Default for Content when omitted (`4`)                   |
+| `margin`      | `number`          | —       | Default for Content when omitted                         |
+| `delay`       | `number`          | —       | Ms before show; default for Content (base default `500`) |
+| `disabled`    | `boolean`         | —       | Never shows; blocks Trigger                              |
 
 Bubble chrome, placement overrides, and host props belong on `TooltipContent` (including standalone `tooltip={…}` hosts).
 
 ### Events
 
-| Event          | Notes                                                                                                |
-| -------------- | ---------------------------------------------------------------------------------------------------- |
+| Event          | Notes                                                          |
+| -------------- | -------------------------------------------------------------- |
 | `onOpenChange` | `(event: { open: boolean; reason: OpenChangeReason }) => void` |
-| `onOpen`       | `() => void` when shown                                                                              |
-| `onClose`      | `() => void` when gone                                                                               |
+| `onOpen`       | `() => void` when shown                                        |
+| `onClose`      | `() => void` when gone                                         |
 
 ### `TooltipTrigger` Props
 
@@ -185,16 +185,16 @@ Remaining presentation `TooltipProps` / `ComponentHostProps` from `nsh/base` als
 
 ## Differences
 
-| Topic        | shadcn (`bases/base`)                           | This package                                                                             |
-| ------------ | ----------------------------------------------- | ---------------------------------------------------------------------------------------- |
-| Parts        | Provider / Root / Trigger / Content (+ Arrow)   | same names without Arrow; Content is the `nsh/base` `Tooltip` bubble                     |
+| Topic        | shadcn (`bases/base`)                           | This package                                                                                          |
+| ------------ | ----------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Parts        | Provider / Root / Trigger / Content (+ Arrow)   | same names without Arrow; Content is the `nsh/base` `Tooltip` bubble                                  |
 | Attachment   | Trigger wraps the host                          | composition mounts a host `View` with `tooltip={TooltipContent}`; host bubbles use Content standalone |
-| Positioning  | `side` / `sideOffset` / `align` / `alignOffset` | base `placement` / `offset` / `align` (no `alignOffset` on store 0.4.0)                  |
-| Portal       | Base UI Portal + Positioner                     | base places the hint overlay; no separate Portal export                                  |
-| Change event | Root `onOpenChange`                             | `{ open, reason }` object events per store `nsh` 0.4.0   |
-| Enter / exit | CSS animate classes                             | store 0.4.0 has no `startingClass` / `endingClass` / `startingStyle` / `endingStyle`     |
-| Provider     | delay (+ skipDelayDuration etc.)                | `delay` only                                                                             |
-| Class hooks  | `className` / `cn-tooltip*`                     | `class` + token `style`; consumer styles merge over defaults                             |
+| Positioning  | `side` / `sideOffset` / `align` / `alignOffset` | base `placement` / `offset` / `align` (no `alignOffset` on store 0.4.0)                               |
+| Portal       | Base UI Portal + Positioner                     | base places the hint overlay; no separate Portal export                                               |
+| Change event | Root `onOpenChange`                             | `{ open, reason }` object events per store `nsh` 0.4.0                                                |
+| Enter / exit | CSS animate classes                             | store 0.4.0 has no `startingClass` / `endingClass` / `startingStyle` / `endingStyle`                  |
+| Provider     | delay (+ skipDelayDuration etc.)                | `delay` only                                                                                          |
+| Class hooks  | `className` / `cn-tooltip*`                     | `class` + token `style`; consumer styles merge over defaults                                          |
 
 ## Not forwarded
 
