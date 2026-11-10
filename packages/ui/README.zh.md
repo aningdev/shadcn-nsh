@@ -225,7 +225,7 @@ Composition Facade，基于复合 `nsh/base` 控件（`Root` / `Trigger` / `Cont
 
 颜色守门检查（`packages/cli/src/ui-guards.test.ts`，属于 `test:unit`）：`packages/ui/*.tsx` 或 `packages/theme/theme.ts` 里出现颜色字面量就失败（hex、`rgb(`、`rgba(`、`hsl(`、`oklch(`、命名色；`"transparent"` 放行，R5）。`scripts/recipes-allowlist.json` 是按规则豁免组件的**唯一**清单，只减不增，某个条目对应的文件已经不再违规时测试会失败。现在它是空的。
 
-计划（尚未实现），在第三个家族之前：`check:recipes`，接入 `bun run check`，覆盖三项 grep、doc comment（R7）、文档章节、每个组件是否有演示和测试，读取同一份白名单。
+`bun run check:recipes`（属于 `bun run check`）运行同一个文件，并按组件检查迁移清单里可以机械判断的部分：没有 `mergeClass(undefined` / `mergeStyle(undefined`（R4）、没有解构 props（R3）、没有 `nsh` 文档之外的时长、每个导出都有 doc comment（R7）、文档页有 Install、Usage、API 和 Differences、gallery 里有点名该组件的测试。仍然不满足某条规则的组件都在白名单里，已迁移的组件不允许在。
 
 ## 视觉核对
 

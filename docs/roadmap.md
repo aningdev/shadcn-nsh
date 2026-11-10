@@ -1,6 +1,6 @@
 # 项目规划：`nsh-gallery-ui` 的规范化、可分发版本
 
-状态：你已确认。**P0 完成**（现有改动已拆成三个提交；`AGENTS.md`、`GLOSSARY.md`、`NOTICE`、ui README 的"来源与同步"、README 矛盾已修）。**试点 S、P1、家族 2 已完成**（neutral 经你确认可用；截图流程见 ui README“视觉核对”）。下一步：`check:recipes`，然后家族 3。规则与决策记录在 [`packages/ui/README.zh.md`](../packages/ui/README.zh.md) 和 [`packages/theme/README.zh.md`](../packages/theme/README.zh.md)；本文只讲**做什么、按什么顺序、怎么验收**。
+状态：你已确认。**P0 完成**（现有改动已拆成三个提交；`AGENTS.md`、`GLOSSARY.md`、`NOTICE`、ui README 的"来源与同步"、README 矛盾已修）。**试点 S、P1、家族 2 已完成**（neutral 经你确认可用；截图流程见 ui README“视觉核对”）。`check:recipes` 已完成。下一步：家族 3。规则与决策记录在 [`packages/ui/README.zh.md`](../packages/ui/README.zh.md) 和 [`packages/theme/README.zh.md`](../packages/theme/README.zh.md)；本文只讲**做什么、按什么顺序、怎么验收**。
 
 ## 1. 目标
 

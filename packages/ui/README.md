@@ -225,7 +225,7 @@ Today: `registry:build` enforces `registryDependencies`, `bun run test:unit` cov
 
 The colour guard (`packages/cli/src/ui-guards.test.ts`, part of `test:unit`) fails on a colour literal in `packages/ui/*.tsx` or `packages/theme/theme.ts` (hex, `rgb(`, `rgba(`, `hsl(`, `oklch(`, a named colour; `"transparent"` is allowed, R5). `scripts/recipes-allowlist.json` is the **one** list of components exempt from a rule; it only shrinks, and an entry whose file no longer breaks the rule fails the test. It is empty today.
 
-Planned (not yet built), before the third family: `check:recipes`, wired into `bun run check`, covering the three greps, doc comments (R7), docs sections, and the presence of a demo and a test per component, reading the same allowlist.
+`bun run check:recipes` (part of `bun run check`) runs the same file and adds the mechanical part of the migration checklist per component: no `mergeClass(undefined` / `mergeStyle(undefined` (R4), no destructured props (R3), no duration outside the ones `nsh` documents, a doc comment on every export (R7), a docs page with Install, Usage, API and Differences, and a gallery test that names the component. Every component still failing a rule is on the allowlist; a migrated component must not be.
 
 ## Visual check
 

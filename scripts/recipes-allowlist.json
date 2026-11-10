@@ -1,3 +1,62 @@
 {
-  "colour-literals": []
+  "colour-literals": [],
+  "merge-undefined": [
+    "collapsible.tsx",
+    "dialog.tsx",
+    "input.tsx",
+    "progress.tsx",
+    "sheet.tsx",
+    "table.tsx",
+    "tabs.tsx",
+    "toast.tsx"
+  ],
+  "props-destructure": [
+    "collapsible.tsx",
+    "dialog.tsx",
+    "input.tsx",
+    "progress.tsx",
+    "sheet.tsx",
+    "table.tsx",
+    "tabs.tsx",
+    "toast.tsx"
+  ],
+  "duration-literal": [],
+  "doc-comments": [
+    "accordion.tsx",
+    "avatar.tsx",
+    "collapsible.tsx",
+    "combobox.tsx",
+    "dialog.tsx",
+    "input.tsx",
+    "link.tsx",
+    "number-input.tsx",
+    "otp-input.tsx",
+    "pagination.tsx",
+    "progress.tsx",
+    "select.tsx",
+    "sheet.tsx",
+    "slider.tsx",
+    "table.tsx",
+    "tabs.tsx",
+    "toast.tsx"
+  ],
+  "docs-sections": ["accordion.tsx", "combobox.tsx"],
+  "has-test": [
+    "accordion.tsx",
+    "avatar.tsx",
+    "collapsible.tsx",
+    "combobox.tsx",
+    "dialog.tsx",
+    "input.tsx",
+    "link.tsx",
+    "number-input.tsx",
+    "otp-input.tsx",
+    "pagination.tsx",
+    "progress.tsx",
+    "sheet.tsx",
+    "slider.tsx",
+    "table.tsx",
+    "tabs.tsx",
+    "toast.tsx"
+  ]
 }
