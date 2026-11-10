@@ -91,6 +91,20 @@
       ]
     },
     {
+      "name": "dates",
+      "type": "registry:lib",
+      "title": "Dates",
+      "description": "Shared calendar day, time segment, and time-well chrome for Calendar, DatePicker, and TimeField.",
+      "registryDependencies": ["theme", "density", "field"],
+      "files": [
+        {
+          "path": "packages/ui/lib/dates.tsx",
+          "type": "registry:lib",
+          "target": "lib/dates.tsx"
+        }
+      ]
+    },
+    {
       "name": "meter",
       "type": "registry:lib",
       "title": "Meter",
@@ -549,6 +563,56 @@
           "path": "packages/ui/tree.tsx",
           "type": "registry:ui",
           "target": "components/ui/tree.tsx"
+        }
+      ]
+    },
+    {
+      "name": "calendar",
+      "type": "registry:ui",
+      "title": "Calendar",
+      "description": "Styled calendar wrapping nsh/base Calendar \u2014 theme tokens for days, range, today, and month toggles.",
+      "registryDependencies": ["dates"],
+      "files": [
+        {
+          "path": "packages/ui/calendar.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/calendar.tsx"
+        }
+      ]
+    },
+    {
+      "name": "date-picker",
+      "type": "registry:ui",
+      "title": "Date Picker",
+      "description": "Styled date picker wrapping nsh/base DatePicker \u2014 theme tokens + Trigger; composition-only.",
+      "registryDependencies": [
+        "theme",
+        "dates",
+        "density",
+        "field",
+        "listbox",
+        "open-state",
+        "press"
+      ],
+      "files": [
+        {
+          "path": "packages/ui/date-picker.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/date-picker.tsx"
+        }
+      ]
+    },
+    {
+      "name": "time-field",
+      "type": "registry:ui",
+      "title": "Time Field",
+      "description": "Styled time field wrapping nsh/base TimeField \u2014 theme tokens for the well and segments.",
+      "registryDependencies": ["dates"],
+      "files": [
+        {
+          "path": "packages/ui/time-field.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/time-field.tsx"
         }
       ]
     }

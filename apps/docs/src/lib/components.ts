@@ -54,6 +54,13 @@ export const components: ComponentDoc[] = [
     description: "Styled command palette wrapping nsh/base Command — theme tokens + default rows.",
   },
   {
+    slug: "calendar",
+    title: "Calendar",
+    nshElement: "calendar",
+    description:
+      "Styled calendar wrapping nsh/base Calendar \u2014 theme tokens for days, range, today, and month toggles.",
+  },
+  {
     slug: "checkbox",
     title: "Checkbox",
     nshElement: "checkbox",
@@ -80,6 +87,13 @@ export const components: ComponentDoc[] = [
     nshElement: "data-table",
     description:
       "Styled data table wrapping nsh/base DataTable — theme tokens for selection, stripe, and header chrome.",
+  },
+  {
+    slug: "date-picker",
+    title: "Date Picker",
+    nshElement: "date-picker",
+    description:
+      "Styled date picker wrapping nsh/base DatePicker \u2014 theme tokens + Trigger; composition-only.",
   },
   {
     slug: "dialog",
@@ -202,6 +216,13 @@ export const components: ComponentDoc[] = [
     nshElement: "tabs",
     description:
       "Styled tabs wrapping nsh/base Tabs / Tab — theme tokens + List / Trigger / Content; full base prop pass-through.",
+  },
+  {
+    slug: "time-field",
+    title: "Time Field",
+    nshElement: "time-field",
+    description:
+      "Styled time field wrapping nsh/base TimeField \u2014 theme tokens for the well and segments.",
   },
   {
     slug: "toggle",

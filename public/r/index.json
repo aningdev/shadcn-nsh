@@ -39,6 +39,12 @@
       "description": "Shared select and combobox chrome: the chevron, the option row, the popup and the touch sheet."
     },
     {
+      "name": "dates",
+      "type": "registry:lib",
+      "title": "Dates",
+      "description": "Shared calendar day, time segment, and time-well chrome for Calendar, DatePicker, and TimeField."
+    },
+    {
       "name": "meter",
       "type": "registry:lib",
       "title": "Meter",
@@ -235,6 +241,24 @@
       "type": "registry:ui",
       "title": "Tree",
       "description": "Styled tree wrapping nsh/base Tree — theme tokens + depth, chevron, and selection."
+    },
+    {
+      "name": "calendar",
+      "type": "registry:ui",
+      "title": "Calendar",
+      "description": "Styled calendar wrapping nsh/base Calendar — theme tokens for days, range, today, and month toggles."
+    },
+    {
+      "name": "date-picker",
+      "type": "registry:ui",
+      "title": "Date Picker",
+      "description": "Styled date picker wrapping nsh/base DatePicker — theme tokens + Trigger; composition-only."
+    },
+    {
+      "name": "time-field",
+      "type": "registry:ui",
+      "title": "Time Field",
+      "description": "Styled time field wrapping nsh/base TimeField — theme tokens for the well and segments."
     }
   ]
 }

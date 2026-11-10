@@ -15,6 +15,7 @@ export {
   type AvatarProps,
 } from "./avatar";
 export { Button, buttonVariants, type ButtonSize, type ButtonVariant } from "./button";
+export { Calendar, calendarVariants, type CalendarProps } from "./calendar";
 export { Checkbox, type CheckboxProps } from "./checkbox";
 export {
   Combobox,
@@ -51,6 +52,15 @@ export {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "./context-menu";
+export {
+  DatePicker,
+  DatePickerTrigger,
+  DatePickerValue,
+  datePickerPopupChrome,
+  datePickerVariants,
+  type DatePickerProps,
+  type DateRangePreset,
+} from "./date-picker";
 export {
   Dialog,
   DialogClose,
@@ -256,3 +266,4 @@ export { fieldTransitionClass } from "./lib/field";
 export { springs } from "./lib/follow";
 export { optionClass } from "./lib/listbox";
 export { groupSink, motionDuration, pressSink } from "./lib/press";
+export { TimeField, timeFieldVariants, type TimeFieldProps } from "./time-field";

@@ -125,10 +125,11 @@ neutral 的层次有限，所以不先做基础设施，先用 **button + switch
 | 6   | 浮层（**已完成**）               | `tooltip`、`popover`、`dialog`、`sheet`、`toast`              | `overlay.ts`                                                | L    | 已加 `modalSurface()`；Dialog / Sheet Root 属性在 Content 上 |
 | 7   | 导航与披露（**已完成**，本分支） | `tabs`、`accordion`、`collapsible`、`link`、`pagination`      | `tabs.tsx`、`disclosure.tsx`、`nav.tsx`                     | M    | 不新增 token；禁用一律 0.5                                   |
 | 8   | 度量与其他（**已完成**）         | `progress`、`slider`、`avatar`、`table`                       | `meter.ts`、`slider.ts`、`avatar.ts`、`data-table.ts`       | M    | `progress` 的不确定态循环用 `ignoreReduceMotion`             |
+| 9   | 日期（**已完成**）               | `calendar`、`date-picker`、`time-field`                       | `listbox.tsx` 的日历半段、`field.tsx` 的 `timeFieldClass`   | M    | 不新增 token；弹层复用 listbox；`ColorPicker` 仍未做         |
 
 ### P3 扩展（Registry 完整性）
 
-`Command`、`Tree`、`DataTable`（`data-table`）与 `Scrollbar`（`scrollbar`）已进入 registry（store `nsh` 0.4.0 有导出）。仍未做：`EmojiPicker`（store 0.4.0 无导出）、`ScrollArea`（无 base 导出，滚动条用 `Scrollbar`）、`Segmented`（无 base 导出，见 Extensions）、拆分按钮。准入仍是 store CLI 上存在对应 `nsh/base` 导出。
+`Command`、`Tree`、`DataTable`（`data-table`）、`Scrollbar`（`scrollbar`）、`Calendar`、`DatePicker` 与 `TimeField` 已进入 registry（store `nsh` 0.4.0 有导出）。仍未做：`ColorPicker`（有导出，尚未包装）、`EmojiPicker`（store 0.4.0 无导出）、`ScrollArea`（无 base 导出，滚动条用 `Scrollbar`）、`Segmented`（无 base 导出，见 Extensions）、拆分按钮。准入仍是 store CLI 上存在对应 `nsh/base` 导出。
 
 ## 6. 每个家族的完成循环
 
