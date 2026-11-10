@@ -33,6 +33,12 @@
       "description": "Shared text-field chrome: the sunk well, the quiet edge, the 2-point focus edge, and the one disabled look."
     },
     {
+      "name": "listbox",
+      "type": "registry:lib",
+      "title": "Listbox",
+      "description": "Shared select and combobox chrome: the chevron, the option row, the popup and the touch sheet."
+    },
+    {
       "name": "open-state",
       "type": "registry:lib",
       "title": "Open state",

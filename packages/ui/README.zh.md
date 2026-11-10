@@ -240,12 +240,12 @@ bun run shots apps/gallery/pilot.tsx /tmp/shots pilot   # 生成 pilot-light.png
 
 ## 规则的迁移状态
 
-| 状态   | 组件                                                                                                                                                                                                  |
-| ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 已迁移 | Family 配方：`popover`、`tooltip`、`menu`、`context-menu`。Leaf 配方（按参考实现移植）：`button`、`switch`、`toggle`、`toggle-group`、`checkbox`、`radio-group`、`input`、`number-input`、`otp-input` |
-| 未迁移 | 其余所有组件                                                                                                                                                                                          |
+| 状态   | 组件                                                                                                                                                                                                                        |
+| ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 已迁移 | Family 配方：`popover`、`tooltip`、`menu`、`context-menu`、`select`、`combobox`。Leaf 配方（按参考实现移植）：`button`、`switch`、`toggle`、`toggle-group`、`checkbox`、`radio-group`、`input`、`number-input`、`otp-input` |
+| 未迁移 | 其余所有组件                                                                                                                                                                                                                |
 
-共享的 `lib` 模块，都是第二个组件需要时才加的（R1）：`follow`（switch、checkbox、radio）、`press`（button、toggle，以及 checkbox 与 radio 的 group sink）、`density`（button、switch、toggle、checkbox、radio、input、number-input、otp-input）、`field`（input、number-input、otp-input 共用的边、凹陷和焦点）。
+共享的 `lib` 模块，都是第二个组件需要时才加的（R1）：`follow`（switch、checkbox、radio，以及 select 与 combobox 的 chevron）、`press`（button、toggle，以及 checkbox 与 radio 的 group sink）、`density`（button、switch、toggle、checkbox、radio、input、number-input、otp-input、select、combobox）、`field`（input、number-input、otp-input 共用的边、凹陷和焦点）、`listbox`（select 与 combobox 共用的 chevron、行、弹层和触屏 sheet）。
 
 ## 组件内的动效
 
@@ -311,17 +311,17 @@ bun run shots apps/gallery/pilot.tsx /tmp/shots pilot   # 生成 pilot-light.png
 
 ### 弹层
 
-| 家族 / 组件                      | 默认（来源）                                                                                                | 位置                                        |
-| -------------------------------- | ----------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| `Popover`                        | 150 ms，从 `opacity-0 scale-95`（popover.md）                                                               | 在 `popover.tsx` 内联                       |
-| `Menu`、`ContextMenu`            | 100 ms，从 `opacity-0 -translate-y-1`（menu.md）                                                            | 在 `menu.tsx` 与 `context-menu.tsx` 内联    |
-| `Tooltip`                        | 100 ms 淡入（tooltip.md）                                                                                   | 在 `tooltip.tsx` 内联                       |
-| `Toast`                          | 200 ms，`opacity-0 translate-y-4` → `opacity-0 scale-95`（toast.md）                                        | `toast.tsx`                                 |
-| `Dialog`、`AlertDialog`、`Sheet` | base 的 `animation` / sheet 滑入                                                                            | 仅透传                                      |
-| `Accordion`、`Collapsible`       | `reveal`；chevron 150–200 ms `transition-transform`                                                         | 两者默认用 `reveal`                         |
-| `Input`、`NumberInput`           | `transition-colors`，150 ms（步进按钮 100 ms）                                                              | class（`field.ts`；`motion-reduce` 可取消） |
-| `Select`、`Combobox`             | **无入场 / 退场**：base 只暴露 `popupClass` / `popupStyle`，触屏 sheet 用 base 的动效。Differences 里注明。 | 透传                                        |
-| `Progress`                       | 180 ms `translate` 滑动，`cubic-bezier(0.2, 0, 0, 1)`；不确定态用原生循环                                   | 后续阶段                                    |
+| 家族 / 组件                      | 默认（来源）                                                                                                                                            | 位置                                        |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
+| `Popover`                        | 150 ms，从 `opacity-0 scale-95`（popover.md）                                                                                                           | 在 `popover.tsx` 内联                       |
+| `Menu`、`ContextMenu`            | 100 ms，从 `opacity-0 -translate-y-1`（menu.md）                                                                                                        | 在 `menu.tsx` 与 `context-menu.tsx` 内联    |
+| `Tooltip`                        | 100 ms 淡入（tooltip.md）                                                                                                                               | 在 `tooltip.tsx` 内联                       |
+| `Toast`                          | 200 ms，`opacity-0 translate-y-4` → `opacity-0 scale-95`（toast.md）                                                                                    | `toast.tsx`                                 |
+| `Dialog`、`AlertDialog`、`Sheet` | base 的 `animation` / sheet 滑入                                                                                                                        | 仅透传                                      |
+| `Accordion`、`Collapsible`       | `reveal`；chevron 150–200 ms `transition-transform`                                                                                                     | 两者默认用 `reveal`                         |
+| `Input`、`NumberInput`           | `transition-colors`，150 ms（步进按钮 100 ms）                                                                                                          | class（`field.ts`；`motion-reduce` 可取消） |
+| `Select`、`Combobox`             | **无入场 / 退场**：base 只暴露 `popupClass` / `popupStyle`，触屏 sheet 用 base 的动效。chevron 用 `follow` 的 control 弹簧；行的高亮是 `duration-100`。 | `listbox.tsx`；Differences 里注明           |
+| `Progress`                       | 180 ms `translate` 滑动，`cubic-bezier(0.2, 0, 0, 1)`；不确定态用原生循环                                                                               | 后续阶段                                    |
 
 每个弹层内容部件用几行显式代码持有 `{ style, startingStyle, endingStyle }`。
 
@@ -347,3 +347,4 @@ bun run shots apps/gallery/pilot.tsx /tmp/shots pilot   # 生成 pilot-light.png
 - 2026-11-10 —— 按压手感和密度在第二个组件需要时抽成共享的 `lib` 模块。原因：参考实现里它们被多个 look 共用（R1：多个文件行为必须一致）。这细化了之前的“没有共享动效 helper”；只用一次的仍留在组件里。
 - 2026-11-10 —— 主题只保存颜色、半径、阴影、焦点环和唯一的 disabled 外观；动效、尺寸、字体刻度和 variant 透明度留在使用它们的组件里。原因：它们是 `nsh` 的值或某个组件的内部细节，不是品牌，把它们做成 token 需要 `brand` 段、JSON 导入和 CLI 改写。gallery 夹具需要一个指向 `theme.json` 的 `tests/nsh.json`，因为 `nsh test` 读取入口文件旁边的 `nsh.json`，而自定义颜色 token（`custom-shadow-ink`、`custom-highlight`、`custom-backdrop`）就在那里。
 - 2026-11-10 —— 字段焦点是贴在边上的 2pt `colors.ring`（`outlineOffset: -1`），不用 `focusRing()` 的 3px 外晕。原因：参考要把焦点画在 border 上，外晕会被 `overflow: hidden` 裁掉。hover 边用 `muted-foreground` 代替参考的 `faint`；凹陷用 `finish.control.pressed` 代替 `finish.field`。步进按钮的 disabled 用主题的 0.5，不用参考的 0.35。
+- 2026-11-10 —— 列表选择：参考的 raised 用 `secondary` + `finish.control.rest`，faint 边用 `muted-foreground`，危险用 `destructive`，焦点沿用字段的 2pt ring。行的高亮只能走 `itemClass`（base 每个条目只画一次，没有 item 的状态 style）。按下用 `pressSink`，不用参考的 70% 透明度。禁用和行的 disabled 用 0.5，不用 0.4 / 0.35。勾用 `foreground`，因为 `accent` 在这套主题里是填充不是墨色。chevron 用 `follow` 的 control 弹簧。触屏弹层是底部 sheet（上圆角 20，最高 70%），指针弹层用 `popupSurface`。combobox 的边用 `focus-within` class，因为内联 `borderColor` 会压过 class，而 base 没有 `focusWithinStyle`。

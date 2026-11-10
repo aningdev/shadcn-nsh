@@ -15,6 +15,7 @@ export {
   ComboboxItem,
   ComboboxTrigger,
   ComboboxValue,
+  comboboxVariants,
   type ComboboxProps,
 } from "./combobox";
 export {
@@ -104,6 +105,8 @@ export {
   SelectSeparator,
   SelectTrigger,
   SelectValue,
+  selectPopupChrome,
+  selectVariants,
   type SelectItemData,
   type SelectEntry,
   type SelectProps,

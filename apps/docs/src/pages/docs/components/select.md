@@ -72,23 +72,31 @@ Select
 
 ### `Select`
 
-| Prop                                    | Type                                                           | Notes           |
-| --------------------------------------- | -------------------------------------------------------------- | --------------- |
-| `value` / `defaultValue`                | `string \| null`                                               |                 |
-| `searchable` / `cleanable` / `disabled` | `boolean`                                                      |                 |
-| `onOpenChange`                          | `(event: { open: boolean; reason: OpenChangeReason }) => void` | Root open state |
-| `onChange`                              | `(event: { value: string \| null }) => void`                   |                 |
+| Prop                                    | Type                                                           | Notes                                                    |
+| --------------------------------------- | -------------------------------------------------------------- | -------------------------------------------------------- |
+| `value` / `defaultValue`                | `string \| null`                                               | Uncontrolled updates the trigger; pass `value` to own it |
+| `open` / `defaultOpen`                  | `boolean`                                                      |                                                          |
+| `searchable` / `cleanable` / `disabled` | `boolean`                                                      | The prop is `cleanable`, matching base                   |
+| `invalid`                               | `boolean`                                                      | Danger edge. Not a base prop                             |
+| `placeholder`                           | `string`                                                       | Shown by `SelectValue` while nothing is chosen           |
+| `popupClass` / `popupStyle`             | class / style                                                  | Merged over the shared popup (or the touch sheet)        |
+| `backdropClass` / `backdropStyle`       | class / style                                                  | Touch sheet only                                         |
+| `onOpenChange`                          | `(event: { open: boolean; reason: OpenChangeReason }) => void` |                                                          |
+| `onChange`                              | `(event: { value: string \| null }) => void`                   | `null` when the clear button clears it                   |
 
-`SelectItem` children must be **strings** (become `title` in the base items model).
+`SelectItem` children must be **strings** (they become `title`). `SelectTrigger` accepts `class`, `style`, the state styles, and `testID`.
 
 ## Differences
 
-| Topic                     | shadcn                      | This package                                                               |
-| ------------------------- | --------------------------- | -------------------------------------------------------------------------- |
-| List model                | Item children are real rows | Items register into base `items[]`; popup rows still use base `renderItem` |
-| Viewport / scroll buttons | Radix Content parts         | Owned by nsh Select (desktop popup / phone sheet)                          |
-| Item body                 | arbitrary JSX               | string label only in the composition facade                                |
+| Topic                     | shadcn                      | This package                                                                                         |
+| ------------------------- | --------------------------- | ---------------------------------------------------------------------------------------------------- |
+| List model                | Item children are real rows | Items register into base `items[]`; the row is drawn once, so highlight and check are `itemClass`    |
+| Viewport / scroll buttons | Radix Content parts         | Owned by nsh Select: a popup on a pointer, a bottom sheet on touch                                   |
+| Item body                 | arbitrary JSX               | string label only                                                                                    |
+| Invalid                   | form-level                  | `invalid` on the root paints the danger edge                                                         |
+| Separator                 | `SelectSeparator` is a row  | The part is kept, but base has no row separator; use `SelectGroup`                                   |
+| Open / close motion       | Radix animation             | Base exposes `popupClass` / `popupStyle` only. The chevron springs; the sheet uses base's own motion |
 
 ## Not forwarded
 
-Base style slots (`popupStyle`, `listStyle`, `renderItem`, …) stay locked in the wrapper.
+`placement`, `align`, `offset` (4) and `margin` (8) stay at the reference values. `listStyle` caps a pointer list at 240; the touch sheet caps itself at 70% of the window. `renderItem`, `itemClass` and `searchStyle` stay in the wrapper.

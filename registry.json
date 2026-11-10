@@ -77,6 +77,20 @@
       ]
     },
     {
+      "name": "listbox",
+      "type": "registry:lib",
+      "title": "Listbox",
+      "description": "Shared select and combobox chrome: the chevron, the option row, the popup and the touch sheet.",
+      "registryDependencies": ["theme", "field", "density", "follow"],
+      "files": [
+        {
+          "path": "packages/ui/lib/listbox.tsx",
+          "type": "registry:lib",
+          "target": "lib/listbox.tsx"
+        }
+      ]
+    },
+    {
       "name": "open-state",
       "type": "registry:lib",
       "title": "Open state",
@@ -347,7 +361,7 @@
       "type": "registry:ui",
       "title": "Combobox",
       "description": "Styled combobox wrapping nsh/base Combobox — theme tokens + Trigger / Content / Item; composition-only.",
-      "registryDependencies": ["theme", "open-state"],
+      "registryDependencies": ["theme", "density", "press", "field", "open-state", "listbox"],
       "files": [
         {
           "path": "packages/ui/combobox.tsx",
@@ -417,7 +431,7 @@
       "type": "registry:ui",
       "title": "Select",
       "description": "Styled select wrapping nsh/base Select — theme tokens + Trigger / Content / Item; composition-only.",
-      "registryDependencies": ["theme", "open-state"],
+      "registryDependencies": ["theme", "density", "press", "field", "open-state", "listbox"],
       "files": [
         {
           "path": "packages/ui/select.tsx",

@@ -1,13 +1,7 @@
-import {
-  colors,
-  disabledOpacity,
-  focusRing,
-  popupBackdrop,
-  popupSurface,
-  radius,
-} from "@shadcn-nsh/theme";
+// Source: examples/nsh-gallery-ui/look/listbox.tsx @ 64ab8a1d (baseline), see NOTICE.
+import { colors, disabledOpacity, finish, popupBackdrop, radius } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
-import { cleanup, context, signal, Text, View, type Signal } from "nsh";
+import { cleanup, computed, context, signal, Text, View, type Signal } from "nsh";
 import {
   Select as BaseSelect,
   type OpenChangeReason,
@@ -15,7 +9,30 @@ import {
   type SelectItem as SelectItemData,
 } from "nsh/base";
 
-import { createItemRegistry, createSlot, type ItemRegistry, type Slot } from "./lib/open-state";
+import { isPointer, touchHitSlop } from "./lib/density";
+import { fieldFocusStyle } from "./lib/field";
+import {
+  clearButtonLook,
+  listboxClearInset,
+  listboxMargin,
+  listboxMetrics,
+  listboxOffset,
+  listboxPopup,
+  listboxSearch,
+  ListboxChevron,
+  ListboxEmpty,
+  ListboxHeader,
+  optionClass,
+  OptionRow,
+} from "./lib/listbox";
+import {
+  createItemRegistry,
+  createOpenState,
+  createSlot,
+  type ItemRegistry,
+  type Slot,
+} from "./lib/open-state";
+import { pressSink } from "./lib/press";
 
 export type { SelectItemData, SelectEntry };
 
@@ -30,16 +47,113 @@ function mergeStyle<T extends ViewStyle>(
   return [base, consumer];
 }
 
-type SelectContextValue = {
-  items: ItemRegistry<SelectItemData>;
-  trigger: Slot;
-  value: () => string | null | undefined;
-  placeholder: () => string;
-  disabled: () => boolean | undefined;
-  root: SelectRootProps;
+type PickerState = {
+  open: () => boolean;
+  invalid: () => boolean;
+  disabled: () => boolean;
+  clearable: () => boolean;
 };
 
-/** Composition root for `nsh/base` Select: value/open state + item registry + trigger slot. */
+type PickerLook = {
+  style: ViewStyle;
+  hoverStyle?: ViewStyle;
+  focusStyle: ViewStyle;
+  activeStyle: ViewStyle;
+  disabledStyle: ViewStyle;
+  hitSlop?: number;
+  rowMinHeight: number;
+};
+
+/**
+ * Raised picker row. `secondary` plus `finish.control.rest` stands in for the reference's
+ * `raised` (this theme has no raised fill). The open edge is `muted-foreground` (its faint),
+ * danger is `destructive`, focus is the field's 2-point ring. Press is `pressSink`, not a
+ * 70% fade. Disabled is the theme's 0.5.
+ */
+function look(state: PickerState): PickerLook {
+  const sink = pressSink(
+    0.97,
+    "background-color, border-color, box-shadow, outline-color, opacity",
+  );
+  return {
+    get style(): ViewStyle {
+      const m = listboxMetrics();
+      const clearable = state.clearable();
+      const invalid = state.invalid();
+      return {
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 8,
+        minHeight: m.line,
+        ...(isPointer() ? { minWidth: 180, flexShrink: 1 } : { flex: 1 }),
+        paddingLeft: 10,
+        paddingRight: clearable ? listboxClearInset() + m.clear + 8 : 10,
+        borderRadius: radius.control,
+        borderCurve: "continuous",
+        borderWidth: 1,
+        backgroundColor: colors.secondary,
+        borderColor: invalid
+          ? colors.destructive
+          : state.open()
+            ? colors.mutedForeground
+            : colors.border,
+        boxShadow: finish.control.rest,
+        outlineStyle: "solid",
+        outlineWidth: 2,
+        outlineOffset: -1,
+        outlineColor: "transparent",
+        opacity: disabledOpacity(state.disabled()),
+        ...sink.transition,
+      };
+    },
+    get hoverStyle() {
+      if (state.disabled() || state.invalid()) return undefined;
+      return { borderColor: colors.mutedForeground };
+    },
+    get focusStyle() {
+      return fieldFocusStyle(state.invalid());
+    },
+    get activeStyle() {
+      return sink.activeStyle;
+    },
+    disabledStyle: { opacity: disabledOpacity() },
+    get hitSlop() {
+      return touchHitSlop(listboxMetrics().line);
+    },
+    get rowMinHeight() {
+      return listboxMetrics().row;
+    },
+  };
+}
+
+/**
+ * The picker's chrome. Geometry only: the gallery's touch test reads `minHeight` and `minWidth`.
+ */
+export function selectVariants(options?: {
+  open?: boolean;
+  invalid?: boolean;
+  disabled?: boolean;
+  clearable?: boolean;
+}): PickerLook {
+  return look({
+    open: () => !!options?.open,
+    invalid: () => !!options?.invalid,
+    disabled: () => !!options?.disabled,
+    clearable: () => !!options?.clearable,
+  });
+}
+
+/**
+ * Popup chrome the gallery touch test reads. Pointer is `popup|6|none`; a touch screen is the
+ * bottom sheet `sheet|20|20|70%|10|34`.
+ */
+export function selectPopupChrome(): string {
+  const popup = listboxPopup();
+  if (isPointer()) return `popup|${popup.padding}|${popup.maxHeight ?? "none"}`;
+  return `sheet|${popup.borderTopLeftRadius}|${popup.borderTopRightRadius}|${popup.maxHeight}|${popup.paddingTop}|${popup.paddingBottom}`;
+}
+
+/** Composition root for `nsh/base` Select. `invalid` is this library's; base has no such flag. */
 export type SelectProps = {
   value?: string | null;
   defaultValue?: string | null;
@@ -49,15 +163,16 @@ export type SelectProps = {
   searchPlaceholder?: string | null;
   cleanable?: boolean;
   disabled?: boolean;
+  /** Danger edge. Not a base prop. */
+  invalid?: boolean;
   placeholder?: string;
   accessibilityLabel?: string | null;
   empty?: JSX.Element;
   children?: JSX.Element;
   /**
-   * The popup chrome over the shared surface. `nsh/base` Select has no
-   * `popupStarting*` / `popupEnding*` hooks, so there is no entrance/exit to
-   * set here (see the theme README); on phones the popup is base's sheet, with its own
-   * motion.
+   * Popup chrome over the shared surface. Base Select has no `popupStarting*` / `popupEnding*`
+   * hooks, so there is no entrance to set. On a touch screen the popup is base's sheet; the
+   * sheet's top radius and cap are `listboxPopup`.
    */
   popupClass?: string | null;
   popupStyle?: StyleProp<ViewStyle>;
@@ -68,7 +183,31 @@ export type SelectProps = {
   onOpenChange?: (event: { open: boolean; reason: OpenChangeReason }) => void;
 };
 
-type SelectRootProps = SelectProps;
+type SelectTriggerProps = {
+  children?: JSX.Element;
+  class?: string | null;
+  style?: StyleProp<ViewStyle>;
+  hoverStyle?: StyleProp<ViewStyle>;
+  focusStyle?: StyleProp<ViewStyle>;
+  activeStyle?: StyleProp<ViewStyle>;
+  disabledStyle?: StyleProp<ViewStyle>;
+  hitSlop?: number;
+  testID?: string;
+};
+
+type SelectContextValue = {
+  items: ItemRegistry<SelectItemData>;
+  trigger: Slot;
+  open: () => boolean;
+  setOpen: (next: boolean, reason?: string) => void;
+  value: () => string | null;
+  change: (event: { value: string | null }) => void;
+  placeholder: () => string;
+  disabled: () => boolean;
+  invalid: () => boolean;
+  cleanable: () => boolean;
+  root: SelectProps;
+};
 
 const SelectContext = context<SelectContextValue | null>(null);
 const SelectGroupContext = context<Signal<string | undefined> | null>(null);
@@ -79,280 +218,164 @@ function useSelect() {
   return ctx;
 }
 
-function defaultTrigger(ctx: SelectContextValue) {
-  const title = () => {
-    const v = ctx.value();
-    if (v == null) return ctx.placeholder();
-    return ctx.items.items().find((i) => i.value === v)?.title ?? ctx.placeholder();
-  };
-
+function triggerView(ctx: SelectContextValue, props: SelectTriggerProps) {
+  const chrome = look({
+    open: ctx.open,
+    invalid: ctx.invalid,
+    disabled: ctx.disabled,
+    clearable: ctx.cleanable,
+  });
   return (
     <View
-      style={{
-        height: 36,
-        minWidth: 160,
-        paddingHorizontal: 12,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 8,
-        borderRadius: radius.control,
-        borderWidth: 1,
-        borderColor: colors.input,
-        backgroundColor: colors.background,
-        opacity: disabledOpacity(ctx.disabled()),
-      }}
+      testID={props.testID}
+      hitSlop={props.hitSlop ?? chrome.hitSlop}
+      class={props.class ?? undefined}
+      style={mergeStyle(chrome.style, props.style)}
+      hoverStyle={
+        chrome.hoverStyle != null
+          ? mergeStyle(chrome.hoverStyle, props.hoverStyle)
+          : props.hoverStyle
+      }
+      focusStyle={mergeStyle(chrome.focusStyle, props.focusStyle)}
+      activeStyle={mergeStyle(chrome.activeStyle, props.activeStyle)}
+      disabledStyle={mergeStyle(chrome.disabledStyle, props.disabledStyle)}
     >
-      <Text
-        style={{
-          fontSize: 14,
-          color: ctx.value() == null ? colors.mutedForeground : colors.foreground,
-        }}
-      >
-        {title()}
-      </Text>
-      <Text style={{ fontSize: 12, color: colors.mutedForeground }}>▾</Text>
+      <View style={{ flex: 1, minWidth: 0 }}>{props.children ?? <SelectValue />}</View>
+      <ListboxChevron open={ctx.open} hidden={ctx.cleanable} />
     </View>
   );
 }
 
-function StyledSelect(props: {
-  items: SelectItemData[];
-  value?: string | null;
-  defaultValue?: string | null;
-  open?: boolean | null;
-  defaultOpen?: boolean;
-  searchable?: boolean;
-  searchPlaceholder?: string | null;
-  cleanable?: boolean;
-  disabled?: boolean;
-  placeholder?: string;
-  accessibilityLabel?: string | null;
-  trigger?: JSX.Element;
-  empty?: JSX.Element;
-  popupClass?: string | null;
-  popupStyle?: StyleProp<ViewStyle>;
-  backdropClass?: string | null;
-  backdropStyle?: StyleProp<ViewStyle>;
-  onChange?: (event: { value: string | null }) => void;
-  onOpenChange?: (event: { open: boolean; reason: OpenChangeReason }) => void;
-}) {
-  const trigger = props.trigger ?? (
-    <View
-      style={{
-        height: 36,
-        minWidth: 160,
-        paddingHorizontal: 12,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 8,
-        borderRadius: radius.control,
-        borderWidth: 1,
-        borderColor: colors.input,
-        backgroundColor: colors.background,
-        opacity: disabledOpacity(props.disabled),
-      }}
-    >
-      <Text
-        style={{
-          fontSize: 14,
-          color: props.value == null ? colors.mutedForeground : colors.foreground,
-        }}
-      >
-        {(() => {
-          const v = props.value;
-          if (v == null) return props.placeholder ?? "Select…";
-          return props.items.find((i) => i.value === v)?.title ?? props.placeholder ?? "Select…";
-        })()}
-      </Text>
-      <Text style={{ fontSize: 12, color: colors.mutedForeground }}>▾</Text>
-    </View>
-  );
-
-  return (
-    <BaseSelect
-      items={props.items}
-      value={props.value}
-      defaultValue={props.defaultValue}
-      open={props.open}
-      defaultOpen={props.defaultOpen}
-      searchable={props.searchable}
-      searchPlaceholder={props.searchPlaceholder}
-      cleanable={props.cleanable}
-      disabled={props.disabled}
-      accessibilityLabel={props.accessibilityLabel}
-      offset={4}
-      trigger={trigger}
-      empty={props.empty}
-      onChange={props.onChange}
-      onOpenChange={props.onOpenChange}
-      popupClass={props.popupClass}
-      popupStyle={mergeStyle(popupSurface(), props.popupStyle)}
-      backdropClass={props.backdropClass}
-      backdropStyle={mergeStyle(popupBackdrop(), props.backdropStyle)}
-      listStyle={{ maxHeight: 240 }}
-      itemStyle={{
-        height: 32,
-        paddingHorizontal: 8,
-        borderRadius: 6,
-        fontSize: 14,
-        color: colors.foreground,
-      }}
-      groupStyle={{
-        paddingHorizontal: 8,
-        paddingTop: 8,
-        paddingBottom: 4,
-      }}
-      searchStyle={{
-        height: 32,
-        margin: 4,
-        paddingHorizontal: 8,
-        borderRadius: 6,
-        borderWidth: 1,
-        borderColor: colors.input,
-        fontSize: 14,
-        color: colors.foreground,
-      }}
-      focusStyle={focusRing()}
-      renderItem={(item: SelectEntry) => {
-        const selected = props.value === item.value;
-        return (
-          <View
-            style={{
-              height: 32,
-              paddingHorizontal: 8,
-              borderRadius: 6,
-              flexDirection: "row",
-              alignItems: "center",
-              justifyContent: "space-between",
-              opacity: disabledOpacity(item.disabled),
-            }}
-          >
-            <Text
-              style={{
-                fontSize: 14,
-                fontWeight: selected ? "600" : "400",
-                color: colors.foreground,
-              }}
-            >
-              {item.title}
-            </Text>
-            {selected ? <Text style={{ fontSize: 12, color: colors.primary }}>✓</Text> : null}
-          </View>
-        );
-      }}
-    />
-  );
-}
-
-export function Select(props: SelectRootProps) {
+/** Root. Holds the open flag, the value mirror and the item registry. Put Trigger before Content. */
+export function Select(props: SelectProps) {
+  const state = createOpenState<OpenChangeReason>(props);
   const items = createItemRegistry<SelectItemData>([]);
   const trigger = createSlot();
+  const picked = signal(false);
+  const chosen = signal<string | null>(null);
+  const value = () => {
+    if (props.value !== undefined) return props.value ?? null;
+    if (picked()) return chosen();
+    return props.defaultValue ?? null;
+  };
+  const change = (event: { value: string | null }) => {
+    if (props.value === undefined) {
+      picked.set(true);
+      chosen.set(event.value);
+    }
+    props.onChange?.(event);
+  };
   const ctx: SelectContextValue = {
     items,
     trigger,
-    value: () => props.value,
+    open: state.open,
+    setOpen: state.setOpen,
+    value,
+    change,
     placeholder: () => props.placeholder ?? "Select…",
-    disabled: () => props.disabled,
+    disabled: () => !!props.disabled,
+    invalid: () => !!props.invalid,
+    cleanable: () => !!props.cleanable,
     root: props,
   };
-
   return <SelectContext.Provider value={ctx}>{props.children}</SelectContext.Provider>;
 }
 
-export function SelectTrigger(props: { children?: JSX.Element }) {
+/** The pressed row. Children are the value; the chevron is ours. */
+export function SelectTrigger(props: SelectTriggerProps) {
   const ctx = useSelect();
-  ctx.trigger.set(() => (
-    <View
-      style={{
-        height: 36,
-        minWidth: 160,
-        paddingHorizontal: 12,
-        flexDirection: "row",
-        alignItems: "center",
-        justifyContent: "space-between",
-        gap: 8,
-        borderRadius: radius.control,
-        borderWidth: 1,
-        borderColor: colors.input,
-        backgroundColor: colors.background,
-        opacity: disabledOpacity(ctx.disabled()),
-      }}
-    >
-      <View style={{ flex: 1 }}>{props.children ?? <SelectValue />}</View>
-      <Text style={{ fontSize: 12, color: colors.mutedForeground }}>▾</Text>
-    </View>
-  ));
+  ctx.trigger.set(() => triggerView(ctx, props));
   return <View style={{ width: 0, height: 0 }} />;
 }
 
+/** The chosen title, or a placeholder. Reads the root's value, including an uncontrolled one. */
 export function SelectValue(props: { placeholder?: string }) {
   const ctx = useSelect();
-  const v = ctx.value();
-  const label =
-    v == null
-      ? (props.placeholder ?? ctx.placeholder())
-      : (ctx.items.items().find((i) => i.value === v)?.title ??
-        props.placeholder ??
-        ctx.placeholder());
-
+  // Read in the tree, not before it: the items register as Content's children, after a
+  // body read would have snapshotted an empty list and left the placeholder up.
+  const shown = () => {
+    const value = ctx.value();
+    if (value == null) return props.placeholder ?? ctx.placeholder();
+    return ctx.items.items().find((item) => item.value === value)?.title ?? value;
+  };
   return (
     <Text
       style={{
-        fontSize: 14,
-        color: v == null ? colors.mutedForeground : colors.foreground,
+        fontSize: listboxMetrics().label,
+        get color() {
+          return ctx.value() == null ? colors.mutedForeground : colors.foreground;
+        },
+        numberOfLines: 1,
       }}
     >
-      {label}
+      {shown()}
     </Text>
   );
 }
 
+/** Mounts base Select. Popup props stay on the root; this part is where the list is built. */
 export function SelectContent(props: { children?: JSX.Element }) {
   const ctx = useSelect();
-  const triggerAccessor = ctx.trigger.get();
   const root = ctx.root;
-
+  const triggerAccessor = ctx.trigger.get();
+  const clear = clearButtonLook(true);
+  // `fieldWell` copies token strings. A computed read in JSX rebuilds them when the scheme changes;
+  // a plain object decoded once stays the scheme the popup first opened in.
+  const search = computed(listboxSearch);
   return (
-    <View style={{ gap: 0 }}>
+    <View>
       {props.children}
-      <StyledSelect
+      <BaseSelect
         items={ctx.items.items()}
-        value={root.value}
-        defaultValue={root.defaultValue}
-        open={root.open}
-        defaultOpen={root.defaultOpen}
+        value={ctx.value()}
+        open={ctx.open()}
         searchable={root.searchable}
         searchPlaceholder={root.searchPlaceholder}
         cleanable={root.cleanable}
-        disabled={root.disabled}
-        placeholder={root.placeholder}
+        disabled={ctx.disabled()}
         accessibilityLabel={root.accessibilityLabel}
-        trigger={(triggerAccessor?.() as JSX.Element) ?? defaultTrigger(ctx)}
-        empty={root.empty}
+        offset={listboxOffset}
+        margin={listboxMargin}
+        trigger={(triggerAccessor?.() as JSX.Element) ?? triggerView(ctx, {})}
+        empty={root.empty ?? <ListboxEmpty />}
         popupClass={root.popupClass}
-        popupStyle={root.popupStyle}
+        popupStyle={mergeStyle(
+          listboxPopup(isPointer() ? { minWidth: 180 } : undefined),
+          root.popupStyle,
+        )}
         backdropClass={root.backdropClass}
-        backdropStyle={root.backdropStyle}
-        onChange={root.onChange}
-        onOpenChange={root.onOpenChange}
+        backdropStyle={mergeStyle(popupBackdrop(), root.backdropStyle)}
+        listStyle={isPointer() ? { maxHeight: 240 } : undefined}
+        itemClass={optionClass}
+        itemStyle={{ fontSize: 14, color: colors.foreground, borderRadius: radius.control }}
+        renderItem={(item) => <OptionRow item={item} />}
+        renderGroup={(group) => <ListboxHeader group={group} />}
+        searchClass={search().searchClass}
+        searchStyle={search().searchStyle}
+        clearButtonClass={clear.clearButtonClass}
+        clearButtonStyle={clear.clearButtonStyle}
+        clearButton={clear.clearButton}
+        onChange={ctx.change}
+        onOpenChange={(event) => ctx.setOpen(event.open, event.reason)}
       />
     </View>
   );
 }
 
+/** A section. `SelectLabel` names it; the items inside join that section. */
 export function SelectGroup(props: { children?: JSX.Element }) {
   const label = signal<string | undefined>(undefined);
   return <SelectGroupContext.Provider value={label}>{props.children}</SelectGroupContext.Provider>;
 }
 
+/** The section's name. Renders nothing; the popup header shows it. */
 export function SelectLabel(props: { children?: string }) {
   const label = SelectGroupContext();
   label?.set(props.children);
   return <View style={{ width: 0, height: 0 }} />;
 }
 
+/** One choice. The string child is the row's title. `group` overrides the section it sits in. */
 export function SelectItem(props: {
   value: string;
   disabled?: boolean;
@@ -371,6 +394,10 @@ export function SelectItem(props: {
   return <View style={{ width: 0, height: 0 }} />;
 }
 
+/**
+ * Kept so the composition matches the usual select parts. Base Select has no row separator;
+ * sections are `SelectGroup`.
+ */
 export function SelectSeparator() {
   return <View style={{ width: 0, height: 0 }} />;
 }
