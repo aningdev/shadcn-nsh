@@ -1,6 +1,6 @@
 # 项目规划：`nsh-gallery-ui` 的规范化、可分发版本
 
-状态：你已确认。**P0 完成**（现有改动已拆成三个提交；`AGENTS.md`、`GLOSSARY.md`、`NOTICE`、ui README 的"来源与同步"、README 矛盾已修）。**试点 S、P1、家族 2、家族 3 已完成**（neutral 经你确认可用；截图流程见 ui README“视觉核对”）。`check:recipes` 已完成。**家族 4、7 已完成**。家族 6（`tooltip`、`popover`、`dialog`、`sheet`、`toast`）已完成。家族 8（`progress`、`slider`、`avatar`、`table`）已完成。下一步：家族 5（`menu`、`context-menu` 重做）。规则与决策记录在 [`packages/ui/README.zh.md`](../packages/ui/README.zh.md) 和 [`packages/theme/README.zh.md`](../packages/theme/README.zh.md)；本文只讲**做什么、按什么顺序、怎么验收**。
+状态：你已确认。**P0 完成**（现有改动已拆成三个提交；`AGENTS.md`、`GLOSSARY.md`、`NOTICE`、ui README 的"来源与同步"、README 矛盾已修）。**试点 S、P1、家族 2、家族 3 已完成**（neutral 经你确认可用；截图流程见 ui README“视觉核对”）。`check:recipes` 已完成。**家族 4–8 已完成**，27 个组件全部按参考 look 迁移，`recipes-allowlist.json` 已全空（M4）。下一步：删除白名单、做触屏与动效的真机核对，再决定 P3。规则与决策记录在 [`packages/ui/README.zh.md`](../packages/ui/README.zh.md) 和 [`packages/theme/README.zh.md`](../packages/theme/README.zh.md)；本文只讲**做什么、按什么顺序、怎么验收**。
 
 ## 1. 目标
 
