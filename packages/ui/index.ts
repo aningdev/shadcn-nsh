@@ -157,6 +157,13 @@ export {
   type SwitchSize,
 } from "./switch";
 export {
+  Scrollbar,
+  scrollbarTheme,
+  scrollbarVariants,
+  type ScrollbarChrome,
+  type ScrollbarProps,
+} from "./scrollbar";
+export {
   Toggle,
   toggleVariants,
   type ToggleProps,
@@ -182,6 +189,13 @@ export {
   type TableProps,
   type TableRowProps,
 } from "./table";
+export {
+  DataTable,
+  dataTableFitPadding,
+  dataTableVariants,
+  type DataTableLook,
+  type DataTableProps,
+} from "./data-table";
 export {
   Tab,
   Tabs,

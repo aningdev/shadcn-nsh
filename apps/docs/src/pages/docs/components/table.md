@@ -9,7 +9,7 @@ demoHeight: 360
 
 [`nsh/base`](https://nsh.dev/modules/nsh-base) owns the table, row group, row, column header, and cell roles. This package paints the card, the header and footer bands, the row hairline and hover, and an optional selected fill. A string child of `TableHead`, `TableCell`, or `TableCaption` is drawn as themed text; anything else is rendered as it is.
 
-For many rows, sorting, column resize, or a selection model, use `DataTable` on `nsh/base`. That control is out of phase 1 here. The reference look (`data-table.ts`) is that control's classes; the parts below take the chrome that maps onto a composition table.
+For many rows, sorting, column resize, or a selection model, use [`DataTable`](./data-table). The reference look (`data-table.ts`) is that control's classes; the parts below take the chrome that maps onto a composition table.
 
 ## Install
 
@@ -88,7 +88,7 @@ Every part forwards `class`, `style`, and the state style hooks. A default is me
 
 | Topic              | Reference (`data-table.ts`)                         | This package                                                                    |
 | ------------------ | --------------------------------------------------- | ------------------------------------------------------------------------------- |
-| Control            | `DataTable` classes (`classes={dataTableClasses}`)  | Composition `Table`. `DataTable` is out of phase 1                              |
+| Control            | `DataTable` classes (`classes={dataTableClasses}`)  | Composition `Table`. The scrolling table is [`DataTable`](./data-table)         |
 | Zebra              | `rowOdd` at `muted` 35%                             | Not drawn. Base rows have no index                                              |
 | Selection          | Row, cell, and column selection, drawn by DataTable | `selected` on `TableRow` only (`primary` at 12%, the reference's `rowSelected`) |
 | Sort, resize, drag | Indicator, handle, and drop line classes            | Not on these parts. Base `Table` has no such state                              |

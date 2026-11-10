@@ -483,6 +483,34 @@
       ]
     },
     {
+      "name": "data-table",
+      "type": "registry:ui",
+      "title": "Data Table",
+      "description": "Styled data table wrapping nsh/base DataTable — theme tokens for selection, stripe, and header chrome.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/data-table.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/data-table.tsx"
+        }
+      ]
+    },
+    {
+      "name": "scrollbar",
+      "type": "registry:ui",
+      "title": "Scrollbar",
+      "description": "Styled scrollbar wrapping nsh/base Scrollbar — theme tokens for the thumb, plus setTheme.",
+      "registryDependencies": ["theme", "density"],
+      "files": [
+        {
+          "path": "packages/ui/scrollbar.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/scrollbar.tsx"
+        }
+      ]
+    },
+    {
       "name": "toggle-group",
       "type": "registry:ui",
       "title": "Toggle Group",

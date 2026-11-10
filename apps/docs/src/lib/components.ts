@@ -75,6 +75,13 @@ export const components: ComponentDoc[] = [
       "Styled context menu wrapping nsh/base ContextMenu — theme tokens + Trigger / Content / Item; full base prop pass-through.",
   },
   {
+    slug: "data-table",
+    title: "Data Table",
+    nshElement: "data-table",
+    description:
+      "Styled data table wrapping nsh/base DataTable — theme tokens for selection, stripe, and header chrome.",
+  },
+  {
     slug: "dialog",
     title: "Dialog",
     nshElement: "dialog",
@@ -146,6 +153,13 @@ export const components: ComponentDoc[] = [
     nshElement: "select",
     description:
       "Styled select wrapping nsh/base Select — theme tokens + Trigger / Content / Item; composition-only.",
+  },
+  {
+    slug: "scrollbar",
+    title: "Scrollbar",
+    nshElement: "scrollbar",
+    description:
+      "Styled scrollbar wrapping nsh/base Scrollbar — theme tokens for the thumb, plus setTheme.",
   },
   {
     slug: "sheet",

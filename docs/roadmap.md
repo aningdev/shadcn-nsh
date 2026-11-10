@@ -128,7 +128,7 @@ neutral 的层次有限，所以不先做基础设施，先用 **button + switch
 
 ### P3 扩展（Registry 完整性）
 
-`Command` 与 `Tree` 已进入 registry（store `nsh` 0.4.0：单根控件，默认行与主题挂钩，不做 Composition Facade）。仍未做：`EmojiPicker`（store 0.4.0 无导出）、`DataTable`、`ScrollArea`、`Segmented`（无 base 导出，见 Extensions）、拆分按钮。准入仍是 store CLI 上存在对应 `nsh/base` 导出。
+`Command`、`Tree`、`DataTable`（`data-table`）与 `Scrollbar`（`scrollbar`）已进入 registry（store `nsh` 0.4.0 有导出）。仍未做：`EmojiPicker`（store 0.4.0 无导出）、`ScrollArea`（无 base 导出，滚动条用 `Scrollbar`）、`Segmented`（无 base 导出，见 Extensions）、拆分按钮。准入仍是 store CLI 上存在对应 `nsh/base` 导出。
 
 ## 6. 每个家族的完成循环
 

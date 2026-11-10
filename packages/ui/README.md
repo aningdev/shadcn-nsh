@@ -56,17 +56,19 @@ This repo develops and deploys against the **published store CLI** (`curl …/in
 | [toggle](../../references/nsh/website/elements/toggle.md)             | `ToggleGroup`           | `toggle-group` | `toggle-group` | done   |
 | [command](../../references/nsh/website/elements/command.md)           | `Command`               | `command`      | `command`      | done   |
 | [tree](../../references/nsh/website/elements/tree.md)                 | `Tree`                  | `tree`         | `tree`         | done   |
+| [data-table](../../references/nsh/website/elements/data-table.md)     | `DataTable`             | `data-table`   | —              | done   |
+| [scrollbar](../../references/nsh/website/elements/scrollbar.md)       | `Scrollbar`             | `scrollbar`    | —              | done   |
 
 Also: registry `theme` (`theme.json` + `lib/theme.ts` + surface/motion helpers) and `open-state` (composition plumbing).
 
 ## Not in Phase-1 (still base / documented on main)
 
-| Kind           | website / base                                                | Reason                    |
-| -------------- | ------------------------------------------------------------- | ------------------------- |
-| Dates / color  | Calendar, TimeField, DatePicker, ColorPicker                  | Phase-2                   |
-| Layout         | Resizable, Scrollbar, Toolbar                                 | Phase-1.5 / later         |
-| Shell / system | NavStack, AlertDialog                                         | App shell / native alerts |
-| Heavy          | Editor, RichEditor, DiffView, TextView, DataTable, Dock, Plot | Separate milestones       |
+| Kind           | website / base                                     | Reason                    |
+| -------------- | -------------------------------------------------- | ------------------------- |
+| Dates / color  | Calendar, TimeField, DatePicker, ColorPicker       | Phase-2                   |
+| Layout         | Resizable, Toolbar                                 | Phase-1.5 / later         |
+| Shell / system | NavStack, AlertDialog                              | App shell / native alerts |
+| Heavy          | Editor, RichEditor, DiffView, TextView, Dock, Plot | Separate milestones       |
 
 ## Extensions (intentionally not built)
 
@@ -243,12 +245,12 @@ Put the two images in the pull request, next to the reference's same control. Th
 
 ## Migration status of the rules
 
-| Status       | Components                                                                                                                                                                                                                                                                                                                                                                                      |
-| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Migrated     | Family recipe: `popover`, `tooltip`, `menu`, `context-menu`, `select`, `combobox`, `tabs`, `accordion`, `collapsible`, `pagination`, `dialog`, `sheet`, `toast`, `table`. Leaf recipe, ported from the reference look: `button`, `switch`, `toggle`, `toggle-group`, `checkbox`, `radio-group`, `input`, `number-input`, `otp-input`, `link`, `progress`, `slider`, `avatar`, `command`, `tree` |
-| Not migrated | every other component                                                                                                                                                                                                                                                                                                                                                                           |
+| Status       | Components                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| ------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Migrated     | Family recipe: `popover`, `tooltip`, `menu`, `context-menu`, `select`, `combobox`, `tabs`, `accordion`, `collapsible`, `pagination`, `dialog`, `sheet`, `toast`, `table`. Leaf recipe, ported from the reference look: `button`, `switch`, `toggle`, `toggle-group`, `checkbox`, `radio-group`, `input`, `number-input`, `otp-input`, `link`, `progress`, `slider`, `avatar`, `command`, `tree`, `data-table`, `scrollbar` |
+| Not migrated | every other component                                                                                                                                                                                                                                                                                                                                                                                                      |
 
-Shared `lib` modules, each added when a second component needed it (R1): `follow` (switch, checkbox, radio, and the select / combobox chevron), `press` (button, toggle, the group sink of checkbox and radio, and family 7's press, and the close of toast), `density` (button, switch, toggle, checkbox, radio, input, number-input, otp-input, select, combobox, and the pointer / touch sizes of tabs, accordion, collapsible, link, pagination, and popover, dialog, sheet, toast, slider, avatar, command, tree), `field` (the edge, the recess and the focus shared by input, number-input and otp-input), `listbox` (the chevron, row, popup and touch sheet shared by select and combobox), `meter` (the recessed track and fill progress and slider share).
+Shared `lib` modules, each added when a second component needed it (R1): `follow` (switch, checkbox, radio, and the select / combobox chevron), `press` (button, toggle, the group sink of checkbox and radio, and family 7's press, and the close of toast), `density` (button, switch, toggle, checkbox, radio, input, number-input, otp-input, select, combobox, and the pointer / touch sizes of tabs, accordion, collapsible, link, pagination, and popover, dialog, sheet, toast, slider, avatar, command, tree, scrollbar), `field` (the edge, the recess and the focus shared by input, number-input and otp-input), `listbox` (the chevron, row, popup and touch sheet shared by select and combobox), `meter` (the recessed track and fill progress and slider share).
 
 ## Motion in components
 
@@ -325,6 +327,7 @@ Only appear / disappear, expand / collapse and press are on by default. Content 
 | `Input`, `NumberInput`           | `transition-colors`, 150 ms (step buttons 100 ms)                                                                                                                                               | class (`field.ts`; `motion-reduce` cancels it) |
 | `Select`, `Combobox`             | **no entrance / exit**: base exposes `popupClass` / `popupStyle` only, and the touch-screen sheet has base motion. The chevron uses `follow`'s control spring; row highlight is `duration-100`. | `listbox.tsx`; Differences note it             |
 | `Progress`                       | 180 ms `translate` glide, `cubic-bezier(0.2, 0, 0, 1)`; indeterminate loop sets `ignoreReduceMotion`                                                                                            | `progress.tsx`                                 |
+| `Scrollbar`                      | Thumb `duration-300` `transition-all` (scrollbar.md). Enter 300 / exit 500 are native `motion`; base skips them under reduced motion                                                            | `scrollbar.tsx`                                |
 
 Each popup content part holds `{ style, startingStyle, endingStyle }` as a few explicit lines.
 
@@ -356,3 +359,4 @@ A default applies only while the consumer's hook is `undefined`; `null` turns it
 - 2026-11-10 — A progress bar and a slider share a sunk rail: `muted`, an inset `border` and `finish.control.pressed` (the reference's `colors.track` / `finish.track`); the run is `primary` with `finish.filled`, not the citrus gradient. A disabled slider stays at 0.5, not the reference's 0.35. Avatar initials sit on `muted` with `foreground` type and a `border` edge. The reference's per-name hues are a second palette, so they are not computed and no `custom-*` identity tokens are added; `up` / `warn` / `danger` are not added either. The indeterminate loop sets `ignoreReduceMotion` (the reference rests in the middle) because that motion is the signal that work is still going.
 - 2026-11-10 — Menu rows use the reference state: `accent` for hover and keyboard (not `focusRing()`, which the popup clips), a 10% `foreground` press and no sink, and the theme's disabled 0.5 rather than the reference's 0.35. Separators are a `border` hairline with no groove, because the theme has no `finish.groove` and this round does not add surface helpers. Touch menus use a card sheet (20-point top corners) instead of `popupSurface()`, which is the floating popup. Why: family 5 only swaps the look; popup helpers stay with family 6.
 - 2026-11-11 — Command and Tree are single `nsh/base` controls, so they stay leaves (default chrome + `renderItem`), not a Composition Facade. Highlight is `accent` with a `ring` edge, not the reference's brand tint; disabled stays 0.5, not 0.4. Key caps use `secondary` (light `card` equals `background`). Tree chevron is a `›` with `duration-200`, not an icon, and `reveal` defaults on. No new tokens.
+- 2026-11-10 — DataTable and Scrollbar add no tokens. The table keeps the reference opacities (`primary` at 8/10/12%, `muted` at 35/50/60%) and drops the terminal resize handle. Rise and fall stay on the column (`positiveClass` / `negativeClass`): the theme has no `up` / `down`. The thumb is `muted-foreground`, not gallery `scrollbar-thumb`, and its width hover stays on the class. Enter 300 and exit 500 are scrollbar.md's native fade, not a CSS `duration-*`. Why: color comes only from the theme that already exists, and 500 is the element doc's exit.

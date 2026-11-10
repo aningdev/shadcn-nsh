@@ -207,6 +207,18 @@
       "description": "Styled toggle wrapping nsh/base Toggle — theme tokens + pressed chrome."
     },
     {
+      "name": "data-table",
+      "type": "registry:ui",
+      "title": "Data Table",
+      "description": "Styled data table wrapping nsh/base DataTable — theme tokens for selection, stripe, and header chrome."
+    },
+    {
+      "name": "scrollbar",
+      "type": "registry:ui",
+      "title": "Scrollbar",
+      "description": "Styled scrollbar wrapping nsh/base Scrollbar — theme tokens for the thumb, plus setTheme."
+    },
+    {
       "name": "toggle-group",
       "type": "registry:ui",
       "title": "Toggle Group",

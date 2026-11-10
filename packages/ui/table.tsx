@@ -22,8 +22,8 @@ import {
 } from "nsh/base";
 
 /**
- * Theme layer on `nsh/base` Table: a bordered card. DataTable (sort, resize, selection)
- * is a different base control and is out of phase 1.
+ * Theme layer on `nsh/base` Table: a bordered card. Sorting, resize, and selection
+ * belong to `DataTable`, a different base control.
  */
 export type TableProps = BaseTableProps;
 
