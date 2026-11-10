@@ -225,6 +225,23 @@ Today: `registry:build` enforces `registryDependencies`, `bun run test:unit` cov
 
 Planned (not yet built): `check:recipes`, and a guard that fails on a colour literal in `packages/ui/*.tsx` (hex, `rgb(`, `rgba(`, `hsl(`, a named colour; `"transparent"` is allowed, R5), both reading the **one** allowlist, wired into `bun run check`, covering the three greps, doc comments (R7), docs sections, and the presence of a demo and a test per component; with `scripts/recipes-allowlist.json` listing components still exempt per rule (entries only get removed; the file is deleted when empty).
 
+## Visual check
+
+A family is not done until its light and dark appearance have been looked at. `apps/gallery/pilot.tsx` is the pilot page (the button and the switch, every kind, size and state); a family gets a page of its own in the gallery.
+
+```sh
+# steps on stdin; needs the Screen Recording and Accessibility permissions
+cat > /tmp/steps.txt <<'EOF'
+await app.setColorScheme("light"); await app.wait(400);
+await app.screenshot("light.png");
+await app.setColorScheme("dark"); await app.wait(400);
+await app.screenshot("dark.png");
+EOF
+nsh test apps/gallery/pilot.tsx --target macos < /tmp/steps.txt
+```
+
+Put the two images in the pull request, next to the reference's same control. The check is by eye; screenshots do not run in CI.
+
 ## Migration status of the rules
 
 | Status       | Components                                                                                                                     |

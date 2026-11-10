@@ -225,6 +225,23 @@ Composition Facade，基于复合 `nsh/base` 控件（`Root` / `Trigger` / `Cont
 
 计划（尚未实现）：`check:recipes`，以及在 `packages/ui/*.tsx` 里出现颜色字面量就失败的守门检查（hex、`rgb(`、`rgba(`、`hsl(`、命名色；`"transparent"` 放行，R5），两者读取**同一份**白名单，接入 `bun run check`，覆盖这三项 grep、doc comment（R7）、文档章节、每个组件是否有演示和测试；配合 `scripts/recipes-allowlist.json` 列出按规则暂时豁免的组件（条目只减不增，清空后删除该文件）。
 
+## 视觉核对
+
+一个家族只有在亮色和暗色两种外观下都看过，才算完成。`apps/gallery/pilot.tsx` 是试点页面（button 和 switch 的所有种类、尺寸和状态）；每个家族在 gallery 里有自己的页面。
+
+```sh
+# 步骤从标准输入读入；需要“屏幕录制”和“辅助功能”权限
+cat > /tmp/steps.txt <<'EOF'
+await app.setColorScheme("light"); await app.wait(400);
+await app.screenshot("light.png");
+await app.setColorScheme("dark"); await app.wait(400);
+await app.screenshot("dark.png");
+EOF
+nsh test apps/gallery/pilot.tsx --target macos < /tmp/steps.txt
+```
+
+把两张图放进 PR，并与参考实现里同一个控件对照。核对靠人眼；截图不在 CI 里运行。
+
 ## 规则的迁移状态
 
 | 状态       | 组件                                                                                                 |
