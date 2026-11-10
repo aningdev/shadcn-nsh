@@ -20,7 +20,8 @@
     "shadcn-nsh": "bun packages/cli/src/index.ts",
     "cli:build": "bun --filter shadcn-nsh build",
     "check": "vp check --fix && nsh check apps/gallery && bun run check:demos && bun run check:docs",
-    "test:gallery": "nsh test apps/gallery"
+    "test:gallery": "nsh test apps/gallery",
+    "test:unit": "bun test ./packages/cli ./packages/theme"
   },
   "devDependencies": {
     "@types/bun": "^1.4.4",
