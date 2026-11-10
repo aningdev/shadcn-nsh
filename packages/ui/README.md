@@ -223,22 +223,19 @@ Order of the rest: `toggle` + `toggle-group` → `switch`, `checkbox`, `radio-gr
 
 Today: `registry:build` enforces `registryDependencies`, `bun run test:unit` covers the CLI's import rewriting, the `theme.json` merge and the theme file's contract (official keys, `custom-` prefix, oklch), and `bun run test:gallery` covers the components and the theme helpers; the review greps are `mergeClass(undefined` / `mergeStyle(undefined`, `const {` over `props`, and literal durations outside the theme whitelist.
 
-Planned (not yet built): `check:recipes`, and a guard that fails on a colour literal in `packages/ui/*.tsx` (hex, `rgb(`, `rgba(`, `hsl(`, a named colour; `"transparent"` is allowed, R5), both reading the **one** allowlist, wired into `bun run check`, covering the three greps, doc comments (R7), docs sections, and the presence of a demo and a test per component; with `scripts/recipes-allowlist.json` listing components still exempt per rule (entries only get removed; the file is deleted when empty).
+The colour guard (`packages/cli/src/ui-guards.test.ts`, part of `test:unit`) fails on a colour literal in `packages/ui/*.tsx` or `packages/theme/theme.ts` (hex, `rgb(`, `rgba(`, `hsl(`, `oklch(`, a named colour; `"transparent"` is allowed, R5). `scripts/recipes-allowlist.json` is the **one** list of components exempt from a rule; it only shrinks, and an entry whose file no longer breaks the rule fails the test. It is empty today.
+
+Planned (not yet built), before the third family: `check:recipes`, wired into `bun run check`, covering the three greps, doc comments (R7), docs sections, and the presence of a demo and a test per component, reading the same allowlist.
 
 ## Visual check
 
 A family is not done until its light and dark appearance have been looked at. `apps/gallery/pilot.tsx` is the pilot page (the button and the switch, every kind, size and state); a family gets a page of its own in the gallery.
 
 ```sh
-# steps on stdin; needs the Screen Recording and Accessibility permissions
-cat > /tmp/steps.txt <<'EOF'
-await app.setColorScheme("light"); await app.wait(400);
-await app.screenshot("light.png");
-await app.setColorScheme("dark"); await app.wait(400);
-await app.screenshot("dark.png");
-EOF
-nsh test apps/gallery/pilot.tsx --target macos < /tmp/steps.txt
+bun run shots apps/gallery/pilot.tsx /tmp/shots pilot   # writes pilot-light.png and pilot-dark.png
 ```
+
+`scripts/shots.sh` runs `nsh test <entry> --target macos` with `app.setColorScheme` and `app.screenshot`; it needs the Screen Recording and Accessibility permissions. Gallery pages share `apps/gallery/demo-kit.tsx` (`Page`, `Panel`, `Row`, `Flow`).
 
 Put the two images in the pull request, next to the reference's same control. The check is by eye; screenshots do not run in CI.
 
