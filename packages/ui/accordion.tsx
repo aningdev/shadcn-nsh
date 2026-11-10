@@ -94,12 +94,16 @@ function panelChrome(): ViewStyle {
   return { paddingBottom: isPointer() ? 12 : 14, gap: 6 };
 }
 
+/** Chevron turn. `motion-reduce` drops the rotation. */
+export const accordionChevronClass =
+  "transition-transform duration-200 group-aria-expanded:rotate-180 motion-reduce:transition-none";
+
 /** Points down; `group-aria-expanded` on the trigger turns it up. */
 function AccordionChevron(props: { size: number }) {
   const mark = props.size * 0.42;
   return (
     <View
-      class="transition-transform duration-200 group-aria-expanded:rotate-180 motion-reduce:transition-none"
+      class={accordionChevronClass}
       style={{
         width: props.size,
         height: props.size,

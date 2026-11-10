@@ -1,7 +1,7 @@
 // Source: examples/nsh-gallery-ui/look/overlay.ts @ 64ab8a1d (baseline), see NOTICE.
 import { alpha, colors, finish, focusRing, hovered, radius } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
-import { Overlay, safeArea, signal, split, Text, View } from "nsh";
+import { Overlay, reduceMotion, safeArea, signal, split, Text, View } from "nsh";
 import {
   Toast as BaseToast,
   ToastManager,
@@ -17,6 +17,12 @@ import {
 
 import { touchHitSlop } from "./lib/density";
 import { pressSink } from "./lib/press";
+
+/** Toast entrance class: 200 ms, dropped when motion is reduced. `motion-reduce` cancels it too. */
+export function toastMotionClass(): string {
+  const duration = reduceMotion() ? "" : "duration-200 ";
+  return `transition-all ${duration}ease-out motion-reduce:transition-none`;
+}
 
 export { ToastManager };
 export type { Anchor, ToastEntry, ToastMotion, ToastOptions, ToastTransitionStatus };
@@ -149,7 +155,7 @@ function look() {
       minWidth: 200,
     } satisfies ViewStyle,
     // toast.md: 200 ms. A set `class` owns the whole class (a later duration does not override).
-    motion: "transition-all duration-200 ease-out",
+    motion: toastMotionClass(),
     enter: "opacity-0 translate-y-4",
     exit: "opacity-0 scale-95",
     title: { fontSize: 14, fontWeight: "600", color: colors.foreground } satisfies TextStyle,

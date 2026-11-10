@@ -32,7 +32,7 @@ export type AvatarGroupProps = BaseAvatarGroupProps & {
 };
 
 /** The picture fades in once it has loaded. `motion-reduce` drops the fade. */
-const PICTURE =
+export const avatarPictureClass =
   "rounded-full overflow-hidden transition-opacity duration-300 motion-reduce:transition-none";
 
 /**
@@ -198,7 +198,7 @@ export function Avatar(props: AvatarProps) {
         fallbackDelay={props.fallbackDelay ?? 300}
         class={props.class ?? undefined}
         style={{ width: inner(), height: inner(), overflow: "visible" }}
-        imageClass={mergeClass(PICTURE, props.imageClass)}
+        imageClass={mergeClass(avatarPictureClass, props.imageClass)}
         imageStyle={mergeStyle({ width: "100%", height: "100%" }, props.imageStyle)}
         fallbackClass={mergeClass("items-center justify-center", props.fallbackClass)}
         fallbackStyle={mergeStyle(picture(), props.fallbackStyle)}

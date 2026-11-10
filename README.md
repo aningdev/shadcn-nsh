@@ -52,6 +52,8 @@ bun run registry:build
 
 After changing `packages/ui` or `packages/theme`, run `bun run registry:build` and commit `public/r`.
 
+Touch and motion check: [`docs/verification.md`](docs/verification.md).
+
 ## Layout
 
 | Path             | Package / role        | Notes                                       |

@@ -6,6 +6,7 @@ import { Slider as BaseSlider, type SliderProps as BaseSliderProps } from "nsh/b
 
 import { isPointer } from "./lib/density";
 import { sunkTrack, trackFill } from "./lib/meter";
+import { motionDuration } from "./lib/press";
 
 /**
  * Theme layer on `nsh/base` Slider: a sunk rail, a primary run and a round thumb.
@@ -58,14 +59,14 @@ function mergeStyle(
   return [base, consumer];
 }
 
-/** Pointer: 14 thumb, 6 rail, 20 band. Touch: 20, 8, 32. The vertical run is 128 / 144. */
+/** Pointer: 14 thumb, 6 rail, 20 band. Touch: 20 thumb, 8 rail, 44 band. The vertical run is 128 / 144. */
 function metrics(): SliderMetrics {
   const pointer = isPointer();
   const thumb = pointer ? 14 : 20;
   return {
     thumb,
     rail: pointer ? 6 : 8,
-    band: pointer ? 20 : 32,
+    band: pointer ? 20 : 44,
     run: pointer ? 128 : 144,
     inset: thumb / 2,
   };
@@ -88,7 +89,7 @@ function look(vertical: boolean, beside: boolean): SliderLook {
       gap: beside ? 8 : 0,
       ...(vertical ? { width: m.band, height: m.run } : { minHeight: m.band }),
       transitionProperty: "opacity",
-      transitionDuration: 150,
+      transitionDuration: motionDuration(150),
       transitionTimingFunction: "ease-out",
     },
     trackStyle: vertical

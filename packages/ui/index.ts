@@ -4,10 +4,12 @@ export {
   AccordionItem,
   AccordionPanel,
   AccordionTrigger,
+  accordionChevronClass,
 } from "./accordion";
 export {
   Avatar,
   AvatarGroup,
+  avatarPictureClass,
   avatarVariants,
   type AvatarGroupProps,
   type AvatarProps,
@@ -31,6 +33,7 @@ export {
   type CollapsibleContentProps,
   type CollapsibleProps,
   type CollapsibleTriggerProps,
+  collapsibleChevronClass,
 } from "./collapsible";
 export { Command, commandVariants, type CommandProps } from "./command";
 export {
@@ -75,6 +78,7 @@ export {
   MenuSubContent,
   MenuSubTrigger,
   MenuTrigger,
+  menuPopupMotion,
   menuRow,
   type MenuCheckboxItemProps,
   type MenuContentProps,
@@ -92,7 +96,12 @@ export {
 } from "./menu";
 export { Input, inputVariants, type InputProps } from "./input";
 export { Link, linkColor, linkVariants, type LinkProps, type LinkVariant } from "./link";
-export { NumberInput, numberInputVariants, type NumberInputProps } from "./number-input";
+export {
+  NumberInput,
+  numberInputVariants,
+  numberStepClass,
+  type NumberInputProps,
+} from "./number-input";
 export { OtpInput, otpInputVariants, type OtpInputProps } from "./otp-input";
 export { Pagination, paginationVariants, type PaginationProps } from "./pagination";
 export {
@@ -102,6 +111,7 @@ export {
   PopoverHeader,
   PopoverTitle,
   PopoverTrigger,
+  popoverMotion,
   popoverSurface,
   type PopoverContentProps,
   type PopoverDescriptionProps,
@@ -110,7 +120,7 @@ export {
   type PopoverTitleProps,
   type PopoverTriggerProps,
 } from "./popover";
-export { Progress, progressVariants, type ProgressProps } from "./progress";
+export { Progress, progressSweep, progressVariants, type ProgressProps } from "./progress";
 export {
   Select,
   SelectContent,
@@ -159,6 +169,7 @@ export {
 export {
   Scrollbar,
   scrollbarTheme,
+  scrollbarThumbMotion,
   scrollbarVariants,
   type ScrollbarChrome,
   type ScrollbarProps,
@@ -180,6 +191,7 @@ export {
   TableHead,
   TableHeader,
   TableRow,
+  tableRowClass,
   type TableBodyProps,
   type TableCaptionProps,
   type TableCellProps,
@@ -220,6 +232,7 @@ export {
   ToastTitle,
   Toaster,
   toastCloseActive,
+  toastMotionClass,
   type ToastCloseProps,
   type ToastDescriptionProps,
   type ToastProps,
@@ -235,6 +248,11 @@ export {
   TooltipTrigger,
   tooltipBubbleStyle,
   tooltipLabelStyle,
+  tooltipMotion,
   tooltipNoteStyle,
 } from "./tooltip";
-export { Tree, treeVariants, type TreeProps } from "./tree";
+export { Tree, treeChevronClass, treeVariants, type TreeProps } from "./tree";
+export { fieldTransitionClass } from "./lib/field";
+export { springs } from "./lib/follow";
+export { optionClass } from "./lib/listbox";
+export { groupSink, motionDuration, pressSink } from "./lib/press";

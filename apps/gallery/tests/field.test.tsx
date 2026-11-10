@@ -36,11 +36,11 @@ test("a field is compact with a pointer and roomier on a touch screen", async ()
   const touch = await open("./field.fixture.tsx", { platform: "ios" });
   expect(find(desktop.texts(), "desktop=")).toBe("true");
   expect(find(touch.texts(), "desktop=")).toBe("false");
-  // Input 28 vs 46. Number well 32 vs 44. OTP cell 36×44 text 18 vs 44×52 text 20.
+  // Input 28 vs 46. Number well 32 vs 88 (two 44-point steppers). OTP cell 36×44 text 18 vs 44×52 text 20.
   expect(find(desktop.texts(), "input=")).toBe("28");
   expect(find(touch.texts(), "input=")).toBe("46");
   expect(find(desktop.texts(), "number=")).toBe("32");
-  expect(find(touch.texts(), "number=")).toBe("44");
+  expect(find(touch.texts(), "number=")).toBe("88");
   expect(find(desktop.texts(), "otp=")).toBe("36|44|18");
   expect(find(touch.texts(), "otp=")).toBe("44|52|20");
 });

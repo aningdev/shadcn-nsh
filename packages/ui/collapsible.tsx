@@ -114,11 +114,15 @@ function panelChrome(): ViewStyle {
  * Points along the row, in a lane as wide as its stroke (half the icon), and
  * turns down while open.
  */
+/** Chevron turn. `motion-reduce` drops the rotation. */
+export const collapsibleChevronClass =
+  "transition-transform duration-150 motion-reduce:transition-none";
+
 function CollapsibleChevron(props: { open: boolean; size: number }) {
   const mark = props.size * 0.42;
   return (
     <View
-      class="transition-transform duration-150 motion-reduce:transition-none"
+      class={collapsibleChevronClass}
       style={{
         width: props.size / 2,
         height: props.size,

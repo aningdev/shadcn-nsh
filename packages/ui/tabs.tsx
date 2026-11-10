@@ -110,7 +110,8 @@ type TabsChrome = {
  */
 function look(variant: TabsListVariant, orientation: "horizontal" | "vertical"): TabsChrome {
   const pointer = isPointer();
-  const trackMin = pointer ? 30 : 40;
+  // Touch: 52, so a tab inside the 3-point inset and 1-point border is a 44-point target.
+  const trackMin = pointer ? 30 : 52;
   const inset = 3;
   const horizontal = orientation !== "vertical";
   const sink = pressSink(0.97, "background-color, border-color, opacity");

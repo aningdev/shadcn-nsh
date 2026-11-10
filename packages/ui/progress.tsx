@@ -26,6 +26,17 @@ type ProgressLook = {
 const GLIDE =
   "w-full transition duration-180 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none";
 
+/**
+ * Indeterminate sweep. It keeps moving when motion is reduced (`ignoreReduceMotion`):
+ * the loop is the "still working" signal. 800 ms, alternate, the reference's curve.
+ */
+export const progressSweep = {
+  duration: 800,
+  iterations: "infinite" as const,
+  direction: "alternate" as const,
+  ignoreReduceMotion: true,
+};
+
 /** The rail's weight, in points. A fixed stroke: the fill's percentage height needs a definite parent. */
 const RAIL = 6;
 
@@ -108,11 +119,11 @@ export function Progress(props: ProgressProps) {
     }
     void sweep.play({
       keyframes: { translateX: [0, 1] },
-      duration: 800,
+      duration: progressSweep.duration,
       easing: Easing.bezier(0.42, 0, 0.58, 1),
-      iterations: "infinite",
-      direction: "alternate",
-      ignoreReduceMotion: true,
+      iterations: progressSweep.iterations,
+      direction: progressSweep.direction,
+      ignoreReduceMotion: progressSweep.ignoreReduceMotion,
     });
   });
   cleanup(() => sweep.stop());

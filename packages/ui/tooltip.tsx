@@ -10,6 +10,7 @@ import {
 
 import { Button } from "./button";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
+import { motionDuration } from "./lib/press";
 
 /**
  * Composition root for `nsh/base` Tooltip: Trigger + Content only.
@@ -150,6 +151,15 @@ export function tooltipNoteStyle(): TextStyle {
   return look(false).note;
 }
 
+/** Tooltip entrance: a 100 ms fade, or 0 when motion is reduced. */
+export function tooltipMotion(): ViewStyle {
+  return {
+    transitionProperty: "opacity",
+    transitionDuration: motionDuration(100),
+    transitionTimingFunction: "ease-out",
+  };
+}
+
 function wrapLabel(children?: string | JSX.Element) {
   if (typeof children === "string") {
     return <Text style={look(false).label}>{children}</Text>;
@@ -175,11 +185,7 @@ function TooltipBubble(props: BaseTooltipProps & { rich?: boolean }) {
   // tooltip.md: a 100 ms fade. Either hook of a phase set by the consumer owns that
   // phase (`null` turns it off); the classes left in `rest` pass through.
   const motion = {
-    style: {
-      transitionProperty: "opacity",
-      transitionDuration: 100,
-      transitionTimingFunction: "ease-out",
-    },
+    style: tooltipMotion(),
     startingStyle: { opacity: 0 },
     endingStyle: { opacity: 0 },
   } satisfies Record<"style" | "startingStyle" | "endingStyle", ViewStyle>;

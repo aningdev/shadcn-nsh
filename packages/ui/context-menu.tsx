@@ -9,7 +9,7 @@ import {
 } from "nsh/base";
 
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
-import { menuPopupChrome } from "./menu";
+import { menuPopupChrome, menuPopupMotion } from "./menu";
 
 export {
   MenuCheckboxItem as ContextMenuCheckboxItem,
@@ -156,11 +156,7 @@ export function ContextMenuContent(props: ContextMenuContentProps) {
   // menu.md: the menu surface at the pointer; 100 ms, from 4 points above. Either hook
   // of a phase set by the consumer owns that phase (`null` turns it off).
   const motion = {
-    style: {
-      transitionProperty: "opacity, transform",
-      transitionDuration: 100,
-      transitionTimingFunction: "ease-out",
-    },
+    style: menuPopupMotion(),
     startingStyle: { opacity: 0, transform: [{ translateY: -4 }] },
     endingStyle: { opacity: 0 },
   } satisfies Record<"style" | "startingStyle" | "endingStyle", ViewStyle>;

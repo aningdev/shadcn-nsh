@@ -62,7 +62,7 @@ test("tabs, a link and pagination are compact with a pointer and roomier on a to
   expect(find(desktop.texts(), "link=")).toBe("24|undefined");
   expect(find(desktop.texts(), "pages=")).toBe("32|40");
   expect(find(touch.texts(), "desktop=")).toBe("false");
-  expect(find(touch.texts(), "tabs=")).toBe("40");
+  expect(find(touch.texts(), "tabs=")).toBe("52");
   expect(find(touch.texts(), "link=")).toBe("32|6");
   expect(find(touch.texts(), "pages=")).toBe("44|44");
 });

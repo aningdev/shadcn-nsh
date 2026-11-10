@@ -52,6 +52,8 @@ bun run registry:build
 
 改 `packages/ui` 或 `packages/theme` 后务必 `bun run registry:build`，再提交 `public/r`。
 
+触屏与动效核对：[`docs/verification.md`](docs/verification.md)。
+
 ## 布局
 
 | 路径             | 包名 / 角色           | 说明                                 |

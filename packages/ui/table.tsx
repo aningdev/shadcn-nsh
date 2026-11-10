@@ -64,7 +64,7 @@ export type TableCaptionProps = Omit<BaseTableCaptionProps, "children"> & {
 };
 
 /** Rows ease their fill. `motion-reduce` drops it. */
-const ROW_CLASS = "transition-colors duration-150 motion-reduce:transition-none";
+export const tableRowClass = "transition-colors duration-150 motion-reduce:transition-none";
 
 /** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
 function mergeStyle(
@@ -271,7 +271,7 @@ export function TableRow(props: TableRowProps) {
   return (
     <BaseTableRow
       {...rest}
-      class={mergeClass(ROW_CLASS, props.class)}
+      class={mergeClass(tableRowClass, props.class)}
       style={mergeStyle(chrome(), props.style)}
       hoverStyle={mergeStyle(hover(), props.hoverStyle)}
       activeStyle={props.activeStyle}

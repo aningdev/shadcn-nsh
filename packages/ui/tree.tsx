@@ -69,6 +69,10 @@ export function treeVariants(): TreeChrome {
   return look();
 }
 
+/** Chevron turn. `motion-reduce` drops the rotation. */
+export const treeChevronClass =
+  "items-center justify-center transition-transform duration-200 ease-out group-aria-expanded:rotate-90 motion-reduce:transition-none";
+
 /**
  * Default row: a chevron that turns 90° while the folder is open (leaves keep
  * the slot so labels line up), then the label indented by depth.
@@ -87,7 +91,7 @@ function TreeRow(props: { entry: TreeEntry }) {
       }}
     >
       <View
-        class="items-center justify-center transition-transform duration-200 ease-out group-aria-expanded:rotate-90 motion-reduce:transition-none"
+        class={treeChevronClass}
         style={{
           width: chrome.chevron,
           height: chrome.chevron,

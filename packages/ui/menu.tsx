@@ -25,6 +25,7 @@ import { Button } from "./button";
 import { isPointer } from "./lib/density";
 import { follow } from "./lib/follow";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
+import { motionDuration } from "./lib/press";
 
 /** Composition root for `nsh/base` Menu: open state + trigger slot for Trigger / Content. */
 export type MenuProps = {
@@ -192,7 +193,7 @@ function look() {
           return colors.foreground;
         },
         transitionProperty: "background-color, opacity",
-        transitionDuration: 150,
+        transitionDuration: motionDuration(150),
         transitionTimingFunction: "ease-out",
       };
     },
@@ -271,6 +272,18 @@ export function menuRow() {
 /** The menu popup on a pointer (at least 200 wide), or the touch sheet. Shared with context menus. */
 export function menuPopupChrome(): ViewStyle {
   return look().popup();
+}
+
+/**
+ * Menu and context-menu entrance: opacity and a 4-point rise over 100 ms.
+ * Duration is 0 when the user asked for less motion.
+ */
+export function menuPopupMotion(): ViewStyle {
+  return {
+    transitionProperty: "opacity, transform",
+    transitionDuration: motionDuration(100),
+    transitionTimingFunction: "ease-out",
+  };
 }
 
 /**
@@ -423,11 +436,7 @@ export function MenuContent(props: MenuContentProps) {
   // menu.md: 100 ms, from 4 points above. Either hook of a phase set by the consumer
   // owns that phase (`null` turns it off); the classes left in `rest` pass through.
   const motion = {
-    style: {
-      transitionProperty: "opacity, transform",
-      transitionDuration: 100,
-      transitionTimingFunction: "ease-out",
-    },
+    style: menuPopupMotion(),
     startingStyle: { opacity: 0, transform: [{ translateY: -4 }] },
     endingStyle: { opacity: 0 },
   } satisfies Record<"style" | "startingStyle" | "endingStyle", ViewStyle>;

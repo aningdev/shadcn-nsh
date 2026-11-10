@@ -9,6 +9,8 @@ import {
   type DataTableStyles,
 } from "nsh/base";
 
+import { isPointer, TOUCH_TARGET } from "./lib/density";
+
 /**
  * Theme layer on `nsh/base` DataTable. Every base prop passes through.
  * Sorting, selection, resize, and column moves stay in base.
@@ -148,11 +150,16 @@ export function dataTableVariants(): DataTableLook {
 
 /** A table that scrolls both ways. Base owns selection, sorting, resize, and moving columns. */
 export function DataTable<T>(props: DataTableProps<T>) {
-  const [, rest] = split(props, ["classes", "styles"]);
+  const [, rest] = split(props, ["classes", "styles", "rowHeight", "headerHeight"]);
   const chrome = computed(look);
+  const finger = !isPointer();
   return (
     <BaseDataTable
       {...rest}
+      rowHeight={props.rowHeight ?? (finger ? TOUCH_TARGET : undefined)}
+      headerHeight={
+        props.headerHeight !== undefined ? props.headerHeight : finger ? TOUCH_TARGET : undefined
+      }
       classes={mergeClasses(chrome().classes, props.classes)}
       styles={mergeStyles(chrome().styles, props.styles)}
     />

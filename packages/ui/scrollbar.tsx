@@ -54,6 +54,9 @@ function mergeStyle(
   return [base, consumer];
 }
 
+/** Thumb fade and widen. `motion-reduce` drops it. `transition-all` is what scrollbar.md writes. */
+export const scrollbarThumbMotion = "transition-all duration-300 motion-reduce:transition-none";
+
 /**
  * The gallery bar without `scrollbar-thumb` (that token is not in this theme).
  * The thumb is `muted-foreground`; its rest thickness is a class so the pointer can widen it.
@@ -65,7 +68,7 @@ function look(axis: Axis): ScrollbarChrome {
   const cross = axis === "horizontal" ? "h" : "w";
   const rest = pointer ? `${cross}-1.5` : `${cross}-[3px]`;
   const hover = cross === "h" ? "hover:h-2 active:h-2" : "hover:w-2 active:w-2";
-  const thumbClass = `${rest} rounded-full opacity-60 transition-all duration-300 ${hover} hover:opacity-90 active:opacity-100 motion-reduce:transition-none`;
+  const thumbClass = `${rest} rounded-full opacity-60 ${scrollbarThumbMotion} ${hover} hover:opacity-90 active:opacity-100`;
   const pad = pointer ? "p-1" : "p-0.5";
   const along =
     axis === "horizontal"

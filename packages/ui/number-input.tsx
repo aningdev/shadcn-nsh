@@ -41,7 +41,7 @@ type NumberLook = {
 };
 
 /** Step buttons: lit under the pointer, darker while pressed, faded where a step does nothing. */
-const STEP_PRESS =
+export const numberStepClass =
   "items-center justify-center transition-colors duration-100 motion-reduce:transition-none enabled:hover:bg-accent active:bg-muted disabled:opacity-50";
 
 /** Wrapper default, then consumer: both set, both apply. */
@@ -61,15 +61,17 @@ function mergeStyle<S>(
 }
 
 /**
- * The number well: 32 high with a pointer, 44 on a touch screen (the reference's
- * `h-8` / `h-11`), text 14 / 15. A pair of chevrons at the end, or − / + split
- * around the field. Glyphs are text: this package does not ship the gallery's icons.
+ * The number well: 32 high with a pointer. On a touch screen a split pair is 44,
+ * and stacked steppers are 88 so each chevron is a 44-point target (the reference's
+ * `h-8` / `h-11` grew a second row). Text is 14 / 15. Glyphs are text: this package
+ * does not ship the gallery's icons.
  */
 function look(state: FieldChrome & { controlsRight?: boolean }): NumberLook {
   const pointer = isPointer();
-  const min = pointer ? 32 : 44;
   const pair = state.controlsRight ?? true;
-  const step = min;
+  // Stacked steppers share the well. On a finger each half is 44, so the well is 88.
+  const min = pointer ? 32 : pair ? 88 : 44;
+  const step = pointer ? 32 : 44;
   return {
     style: {
       flexDirection: "row",
@@ -98,7 +100,12 @@ function look(state: FieldChrome & { controlsRight?: boolean }): NumberLook {
       ? { flex: 1, borderBottomWidth: 1, borderBottomColor: colors.border }
       : { width: step, borderLeftWidth: 1, borderLeftColor: colors.border },
     controlsStyle: pair
-      ? { width: step, borderLeftWidth: 1, borderLeftColor: colors.border }
+      ? {
+          width: step,
+          minHeight: min,
+          borderLeftWidth: 1,
+          borderLeftColor: colors.border,
+        }
       : undefined,
     glyph: pointer ? 16 : 18,
   };
@@ -169,8 +176,8 @@ export function NumberInput(props: NumberInputProps) {
       focusWithinStyle={mergeStyle(current().focusWithinStyle, props.focusWithinStyle)}
       disabledStyle={mergeStyle(current().disabledStyle, props.disabledStyle)}
       inputStyle={mergeStyle(current().inputStyle, props.inputStyle)}
-      decrementButtonClass={mergeClass(STEP_PRESS, props.decrementButtonClass)}
-      incrementButtonClass={mergeClass(STEP_PRESS, props.incrementButtonClass)}
+      decrementButtonClass={mergeClass(numberStepClass, props.decrementButtonClass)}
+      incrementButtonClass={mergeClass(numberStepClass, props.incrementButtonClass)}
       decrementButtonStyle={mergeStyle(current().decrementButtonStyle, props.decrementButtonStyle)}
       incrementButtonStyle={mergeStyle(current().incrementButtonStyle, props.incrementButtonStyle)}
       controlsStyle={

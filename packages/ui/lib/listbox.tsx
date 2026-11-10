@@ -21,7 +21,7 @@ export function listboxMetrics() {
     clear: pointer ? 16 : 20,
     row: pointer ? 30 : 44,
     rowPad: pointer ? 3 : 7,
-    search: pointer ? 32 : 40,
+    search: pointer ? 32 : 44,
   };
 }
 

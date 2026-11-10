@@ -11,6 +11,7 @@ import {
 import { Button } from "./button";
 import { isPointer } from "./lib/density";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
+import { motionDuration } from "./lib/press";
 
 /** Composition root for `nsh/base` Popover: open state + trigger slot. */
 export type PopoverProps = {
@@ -121,6 +122,15 @@ export function popoverSurface(compact?: boolean): ViewStyle {
   return look(Boolean(compact)).surface;
 }
 
+/** Popover entrance: fade and scale from 95% over 150 ms, or 0 when motion is reduced. */
+export function popoverMotion(): ViewStyle {
+  return {
+    transitionProperty: "opacity, transform",
+    transitionDuration: motionDuration(150),
+    transitionTimingFunction: "ease-out",
+  };
+}
+
 /** Composition root: owns the open state the parts below read. */
 export function Popover(props: PopoverProps) {
   // `props` itself is the options bag: `open` / `onOpenChange` are read when used.
@@ -198,11 +208,7 @@ export function PopoverContent(props: PopoverContentProps) {
   // popover.md: 150 ms, from 95 % of its size. Either hook of a phase set by the
   // consumer owns that phase (`null` turns it off); the classes left in `rest` pass through.
   const motion = {
-    style: {
-      transitionProperty: "opacity, transform",
-      transitionDuration: 150,
-      transitionTimingFunction: "ease-out",
-    },
+    style: popoverMotion(),
     startingStyle: { opacity: 0, transform: [{ scale: 0.95 }] },
     endingStyle: { opacity: 0, transform: [{ scale: 0.95 }] },
   } satisfies Record<"style" | "startingStyle" | "endingStyle", ViewStyle>;

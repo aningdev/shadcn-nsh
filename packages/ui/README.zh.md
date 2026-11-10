@@ -290,10 +290,10 @@ bun run shots apps/gallery/pilot.tsx /tmp/shots pilot   # 生成 pilot-light.png
 
 用户要求减少动效时 `reduceMotion()` 为 true。`nsh` 的要求：把大幅移动换成淡入或即时变化。
 
-- **按压。** `button.tsx` 里的按压 helper 去掉 scale（位移），保留 ≤ 150 ms 的颜色 / 阴影渐变。这是预期做法，不是缺陷。
-- **样式过渡** 只有在产生位移时才读 `reduceMotion()`。颜色渐变不需要归零。
+- **按压。** 按压 helper 去掉 scale，并把 `transitionDuration` 设为 0。颜色变化也变成即时。
+- **样式过渡** 走 `motionDuration()`（减少动效时为 0）。class 过渡保留时长，并加上 `motion-reduce:transition-none`，效果相同。
 - **Motion** 我们无需处理。只有当某个 motion 承载用户需要的含义（进度 spinner）时，才传 `ignoreReduceMotion: true`。
-- **弹层与 modal** 由 base 持有：base 会立即显示和隐藏；这里不读 `reduceMotion()`。
+- **弹层** 自己的入场时长在减少动效时为 0。Modal 仍由 base 持有：base 会立即显示和隐藏。
 - 返回 style 的 helper 是快照。`buttonVariants()` 之类必须在 `computed`（或其他响应式作用域）里调用，才能跟随该设置的变化。
 
 ### 控件状态
@@ -358,4 +358,5 @@ bun run shots apps/gallery/pilot.tsx /tmp/shots pilot   # 生成 pilot-light.png
 - 2026-11-10 —— 进度条和滑杆共用凹陷轨道：`muted`、内描边 `border`、`finish.control.pressed`（参考的 `colors.track` / `finish.track`）；填充是 `primary` 加 `finish.filled`，不用柑橘渐变。滑杆禁用仍是 0.5，不是参考的 0.35。头像首字母落在 `muted` 上，字用 `foreground`，边用 `border`。参考的按名字取色是另一套色板，不算进组件，也不加 `custom-*` 身份色；同样不新增 `up` / `warn` / `danger`。不确定进度的循环带 `ignoreReduceMotion`（参考在减少动效时停在中间），因为这段运动本身就是“仍在进行”。
 - 2026-11-10 —— 菜单行对齐参考状态：悬停和键盘都用 `accent` 填充（不用 `focusRing()`，弹层会裁掉外晕），按下是 `foreground` 的 10% 且不缩放，禁用仍是主题的 0.5（参考是 0.35）。分隔线是 `border` 发丝线，没有凹槽，因为主题没有 `finish.groove`，这一轮不加表面 helper。触屏菜单用卡片式 sheet（顶角 20），不用 `popupSurface()`（那是浮层）。原因：家族 5 只换外观；浮层 helper 归家族 6。
 - 2026-11-11 —— Command 与 Tree 在 `nsh/base` 里是单根控件，所以做成 Leaf（默认外观 + `renderItem`），不做 Composition Facade。高亮用 `accent` 加 `ring` 边，不用参考的品牌色 tint；禁用仍是 0.5，不是 0.4。快捷键帽用 `secondary`（亮色 `card` 与 `background` 相同）。Tree 的 chevron 是 `›` 加 `duration-200`，没有图标集；`reveal` 默认开启。不新增 token。
+- 2026-11-12 —— 减少动效时样式 `transitionDuration` 为 0（`motionDuration`），包括按压的颜色和弹层入场。class 动效保留时长并加 `motion-reduce:transition-none`。不到 44 的触屏目标（tabs 内框、滑杆带、堆叠的数字步进、checkbox / radio / 带标签的 switch 行、select 搜索、data-table 行）加到 44；不新增 token。原因：iOS 核对把 44 当作点击区，减少动效不应再等一段过渡。
 - 2026-11-10 —— DataTable / Scrollbar 不新增 token。表格沿用参考的透明度（`primary` 的 8/10/12%，`muted` 的 35/50/60%），终端的缩放手柄分支去掉。涨跌色留在列的 `positiveClass` / `negativeClass`：主题没有 `up` / `down`。拇指用 `muted-foreground`，不用 gallery 的 `scrollbar-thumb`，宽度 hover 留在 class。淡入 300、淡出 500 来自 scrollbar.md 的原生 motion，不是 CSS `duration-*`。原因：颜色只来自现有主题，500 是元素文档写的退出时长。

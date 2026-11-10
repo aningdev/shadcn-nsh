@@ -57,9 +57,9 @@ test("the rail stays 6, and the thumb and avatar grow on a touch screen", async 
   expect(find(touch.texts(), "desktop=")).toBe("false");
   expect(find(desktop.texts(), "rail=")).toBe("6");
   expect(find(touch.texts(), "rail=")).toBe("6");
-  // Thumb 14, rail 6, band 20, vertical run 128. Touch: 20, 8, 32, 144.
+  // Thumb 14, rail 6, band 20, vertical run 128. Touch: 20, 8, 44, 144.
   expect(find(desktop.texts(), "thumb=")).toBe("14|6|20|128");
-  expect(find(touch.texts(), "thumb=")).toBe("20|8|32|144");
+  expect(find(touch.texts(), "thumb=")).toBe("20|8|44|144");
   // Avatar side 32, initials 11. Touch: 40 and 14.
   expect(find(desktop.texts(), "avatar=")).toBe("32|11");
   expect(find(touch.texts(), "avatar=")).toBe("40|14");

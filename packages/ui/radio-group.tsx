@@ -9,7 +9,7 @@ import {
   type RadioProps as BaseRadioProps,
 } from "nsh/base";
 
-import { choiceBox } from "./lib/density";
+import { choiceBox, isPointer, TOUCH_TARGET } from "./lib/density";
 import { follow } from "./lib/follow";
 import { groupSink } from "./lib/press";
 
@@ -51,7 +51,13 @@ function groupChrome(): ViewStyle {
 
 /** Row around the ring + label — aligned with shadcn horizontal Field + item. */
 function rootChrome(): ViewStyle {
-  return { flexDirection: "row", alignItems: "center", gap: 8 };
+  // The ring stays 22. The row is the press target, so a finger still gets 44.
+  return {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    ...(isPointer() ? {} : { minWidth: TOUCH_TARGET, minHeight: TOUCH_TARGET }),
+  };
 }
 
 /**

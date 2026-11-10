@@ -7,18 +7,18 @@ import type { DataTableColumn } from "nsh/base";
 import { Page, Panel } from "./demo-kit";
 
 const columns: DataTableColumn[] = [
-  { key: "name", title: "Name", width: 96, fixed: true },
-  { key: "city", title: "City", width: 84 },
+  { key: "name", title: "Name", width: 60, fixed: true },
+  { key: "city", title: "City", width: 56 },
   {
     key: "score",
     title: "Score",
-    width: 72,
+    width: 110,
     align: "end",
     sortable: true,
     positiveClass: "text-primary",
     negativeClass: "text-destructive",
   },
-  { key: "role", title: "Role", width: 96 },
+  { key: "role", title: "Role", width: 88 },
 ];
 
 const rows = [
@@ -37,8 +37,8 @@ const cellRows = [
   { name: "Ken", city: "Lima" },
 ];
 
-/** The table's box. Wider than the viewport so the fixed edge is on screen. */
-const frame = { width: 280, height: 140 };
+/** The table's box. Touch rows are 44, so the frame holds the header and every row. */
+const frame = { width: 318, height: 196 };
 
 function Caption(props: { children: string }) {
   return (
@@ -55,7 +55,7 @@ mount(() => (
       <View style={frame}>
         <DataTable
           accessibilityLabel="People"
-          style={{ width: 280, height: 140 }}
+          style={{ width: 318, height: 196 }}
           columns={columns}
           data={rows}
           stripe
@@ -64,10 +64,10 @@ mount(() => (
         />
       </View>
       <Caption>Selected cell</Caption>
-      <View style={{ width: 280, height: 108 }}>
+      <View style={{ width: 318, height: 148 }}>
         <DataTable
           accessibilityLabel="Cells"
-          style={{ width: 280, height: 108 }}
+          style={{ width: 318, height: 148 }}
           columns={cellColumns}
           data={cellRows}
           cellSelectable

@@ -4,7 +4,7 @@ import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { split, Text, View } from "nsh";
 import { Checkbox as BaseCheckbox, type CheckboxProps as BaseCheckboxProps } from "nsh/base";
 
-import { choiceBox } from "./lib/density";
+import { choiceBox, isPointer, TOUCH_TARGET } from "./lib/density";
 import { follow } from "./lib/follow";
 import { groupSink } from "./lib/press";
 
@@ -48,7 +48,13 @@ const centered = {
 
 /** Row around the indicator + label — aligned with shadcn horizontal Field + checkbox. */
 function rootChrome(): ViewStyle {
-  return { flexDirection: "row", alignItems: "center", gap: 8 };
+  // The box stays 22. The row is the press target, so a finger still gets 44.
+  return {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    ...(isPointer() ? {} : { minWidth: TOUCH_TARGET, minHeight: TOUCH_TARGET }),
+  };
 }
 
 /** The empty box: sunk into the surface, edged like a field. */

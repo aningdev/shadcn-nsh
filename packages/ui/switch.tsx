@@ -6,6 +6,7 @@ import { Switch as BaseSwitch, type SwitchProps as BaseSwitchProps } from "nsh/b
 
 import { isPointer, TOUCH_TARGET } from "./lib/density";
 import { follow, springs } from "./lib/follow";
+import { motionDuration } from "./lib/press";
 
 /** Aligns with shadcn `bases/base` Switch `size`. */
 export type SwitchSize = "default" | "sm";
@@ -71,7 +72,13 @@ function mergeStyle(
 
 /** Row around the track + label — aligned with shadcn horizontal Field + switch. */
 function rootChrome(): ViewStyle {
-  return { flexDirection: "row", alignItems: "center", gap: 8 };
+  // A label used to drop the hit slop and leave a 24-point row. The row is 44 on a finger.
+  return {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 8,
+    ...(isPointer() ? {} : { minHeight: TOUCH_TARGET }),
+  };
 }
 
 /** A switch: a sunk track and a knob that springs across; every base prop passes through. */
@@ -110,7 +117,7 @@ export function Switch(props: SwitchProps) {
       // Off, a sunk well; on, the filled control's edge.
       boxShadow: on() ? finish.filled : finish.control.pressed,
       transitionProperty: "border-color, box-shadow",
-      transitionDuration: 150,
+      transitionDuration: motionDuration(150),
     };
   };
 

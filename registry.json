@@ -179,7 +179,7 @@
       "type": "registry:ui",
       "title": "Switch",
       "description": "Styled switch wrapping nsh/base Switch — theme tokens + size; full base prop pass-through.",
-      "registryDependencies": ["theme", "density", "follow"],
+      "registryDependencies": ["theme", "density", "follow", "press"],
       "files": [
         {
           "path": "packages/ui/switch.tsx",
@@ -221,7 +221,7 @@
       "type": "registry:ui",
       "title": "Popover",
       "description": "Styled popover wrapping nsh/base Popover — theme tokens + Trigger / Content; full base prop pass-through.",
-      "registryDependencies": ["theme", "button", "open-state", "density"],
+      "registryDependencies": ["theme", "button", "open-state", "density", "press"],
       "files": [
         {
           "path": "packages/ui/popover.tsx",
@@ -235,7 +235,7 @@
       "type": "registry:ui",
       "title": "Tooltip",
       "description": "Styled tooltip wrapping nsh/base Tooltip — theme tokens + Trigger / Content; full base prop pass-through.",
-      "registryDependencies": ["theme", "button", "open-state"],
+      "registryDependencies": ["theme", "button", "open-state", "press"],
       "files": [
         {
           "path": "packages/ui/tooltip.tsx",
@@ -277,7 +277,7 @@
       "type": "registry:ui",
       "title": "Menu",
       "description": "Styled menu wrapping nsh/base Menu — theme tokens + Trigger / Content / Item; composition-only.",
-      "registryDependencies": ["theme", "button", "open-state", "density", "follow"],
+      "registryDependencies": ["theme", "button", "open-state", "density", "follow", "press"],
       "files": [
         {
           "path": "packages/ui/menu.tsx",
@@ -459,7 +459,7 @@
       "type": "registry:ui",
       "title": "Slider",
       "description": "Styled slider wrapping nsh/base Slider — theme tokens + track/range/thumb.",
-      "registryDependencies": ["theme", "density", "meter"],
+      "registryDependencies": ["theme", "density", "meter", "press"],
       "files": [
         {
           "path": "packages/ui/slider.tsx",
@@ -487,7 +487,7 @@
       "type": "registry:ui",
       "title": "Data Table",
       "description": "Styled data table wrapping nsh/base DataTable — theme tokens for selection, stripe, and header chrome.",
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["theme", "density"],
       "files": [
         {
           "path": "packages/ui/data-table.tsx",
