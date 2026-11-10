@@ -27,6 +27,12 @@
       "description": "An animated value that springs to a control's state, with the control and move springs."
     },
     {
+      "name": "field",
+      "type": "registry:lib",
+      "title": "Field",
+      "description": "Shared text-field chrome: the sunk well, the quiet edge, the 2-point focus edge, and the one disabled look."
+    },
+    {
       "name": "open-state",
       "type": "registry:lib",
       "title": "Open state",

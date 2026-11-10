@@ -51,27 +51,36 @@ import { Text } from "nsh";
 
 ## API
 
-| Prop                 | Type                                         | Default | Notes                         |
-| -------------------- | -------------------------------------------- | ------- | ----------------------------- |
-| `value`              | `number \| null`                             | —       | Controlled value              |
-| `defaultValue`       | `number \| null`                             | —       |                               |
-| `min`                | `number \| null`                             | —       |                               |
-| `max`                | `number \| null`                             | —       |                               |
-| `step`               | `number`                                     | —       |                               |
-| `disabled`           | `boolean`                                    | —       |                               |
-| `readonly`           | `boolean`                                    | —       |                               |
-| `placeholder`        | `string \| null`                             | —       |                               |
-| `accessibilityLabel` | `string \| null`                             | —       |                               |
-| `controlsRight`      | `boolean`                                    | `true`  | Place ± controls on the right |
-| `prefix`             | `JSX.Element`                                | —       |                               |
-| `suffix`             | `JSX.Element`                                | —       |                               |
-| `onChange`           | `(event: { value: number \| null }) => void` | —       |                               |
-| `onSubmit`           | `(event: { value: number \| null }) => void` | —       |                               |
+| Prop                 | Type                                         | Default | Notes                                                                                     |
+| -------------------- | -------------------------------------------- | ------- | ----------------------------------------------------------------------------------------- |
+| `value`              | `number \| null`                             | —       | Controlled value                                                                          |
+| `defaultValue`       | `number \| null`                             | —       |                                                                                           |
+| `min`                | `number \| null`                             | —       |                                                                                           |
+| `max`                | `number \| null`                             | —       |                                                                                           |
+| `step`               | `number`                                     | —       |                                                                                           |
+| `invalid`            | `boolean`                                    | —       | Danger edge, including focus. This wrapper's; base has no such flag                       |
+| `disabled`           | `boolean`                                    | —       |                                                                                           |
+| `readonly`           | `boolean`                                    | —       |                                                                                           |
+| `placeholder`        | `string \| null`                             | —       |                                                                                           |
+| `accessibilityLabel` | `string \| null`                             | —       |                                                                                           |
+| `controlsRight`      | `boolean`                                    | `true`  | Chevrons at the end. `false` splits − / + around the field. Base itself defaults to split |
+| `prefix`             | `JSX.Element`                                | —       |                                                                                           |
+| `suffix`             | `JSX.Element`                                | —       |                                                                                           |
+| `onChange`           | `(event: { value: number \| null }) => void` | —       |                                                                                           |
+| `onSubmit`           | `(event: { value: number \| null }) => void` | —       |                                                                                           |
 
 ## Differences
 
 nsh-only — no shadcn/Radix counterpart in the usual registry set. Closest shadcn pattern is a plain `Input` with `type="number"`; this package wraps `nsh/base` NumberInput with stepper buttons, `min` / `max` / `step`, and `prefix` / `suffix` slots.
 
+| Topic    | shadcn                | This package                                                                       |
+| -------- | --------------------- | ---------------------------------------------------------------------------------- |
+| Root     | `Input type="number"` | `nsh/base` `NumberInput` + theme tokens                                            |
+| Steppers | none                  | chevrons at the end (`controlsRight`, the default) or − / + split around the field |
+| Focus    | browser outline       | 2-point edge on the well while focus is inside it                                  |
+| Density  | one size              | 32 high with a pointer, 44 on a touch screen (minimums)                            |
+| Invalid  | `aria-invalid`        | `invalid` paints the well's edge in the danger tone                                |
+
 ## Not forwarded
 
-From `nsh/base` NumberInput: style hooks (`style`, `inputStyle`, `decrementButtonStyle`, `incrementButtonStyle`, `controlsStyle`, …) and the decrement/increment button elements. The wrapper owns chrome, defaults `controlsRight` to `true`, and supplies − / + glyphs. Extend the copied source if you need base knobs.
+None — all `nsh/base` NumberInput props are forwarded. The wrapper applies the well, defaults `controlsRight` to `true`, and supplies text glyphs (▲ / ▼, or − / +) when the button elements are omitted. Consumer styles win per key.

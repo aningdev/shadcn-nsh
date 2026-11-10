@@ -52,27 +52,30 @@ const [code, setCode] = createSignal("");
 
 ## API
 
-| Prop                 | Type                                 | Default | Notes               |
-| -------------------- | ------------------------------------ | ------- | ------------------- |
-| `length`             | `number`                             | —       | Required cell count |
-| `value`              | `string \| null`                     | —       | Controlled value    |
-| `defaultValue`       | `string \| null`                     | —       |                     |
-| `masked`             | `boolean`                            | —       | Hide digits         |
-| `disabled`           | `boolean`                            | —       |                     |
-| `groups`             | `number`                             | —       | Split into groups   |
-| `accessibilityLabel` | `string \| null`                     | —       |                     |
-| `onChange`           | `(event: { value: string }) => void` | —       |                     |
-| `onComplete`         | `(event: { value: string }) => void` | —       | Fires when filled   |
+| Prop                 | Type                                 | Default | Notes                                              |
+| -------------------- | ------------------------------------ | ------- | -------------------------------------------------- |
+| `length`             | `number`                             | —       | Required cell count                                |
+| `value`              | `string \| null`                     | —       | Controlled value                                   |
+| `defaultValue`       | `string \| null`                     | —       |                                                    |
+| `masked`             | `boolean`                            | —       | Hide digits                                        |
+| `invalid`            | `boolean`                            | —       | Danger edge and tint on every cell. This wrapper's |
+| `disabled`           | `boolean`                            | —       |                                                    |
+| `groups`             | `number`                             | —       | Split into groups                                  |
+| `accessibilityLabel` | `string \| null`                     | —       |                                                    |
+| `onChange`           | `(event: { value: string }) => void` | —       |                                                    |
+| `onComplete`         | `(event: { value: string }) => void` | —       | Fires when filled                                  |
 
 ## Differences
 
-| Topic       | shadcn                                            | This package                            |
-| ----------- | ------------------------------------------------- | --------------------------------------- |
-| Parts       | `InputOTP` / `InputOTPGroup` / `InputOTPSlot` / … | single `OtpInput`                       |
-| Length      | compose N slots                                   | `length` prop                           |
-| Complete    | app-level                                         | `onComplete` on the control             |
-| Class hooks | `className` / CVA                                 | theme tokens + locked cell/caret styles |
+| Topic       | shadcn                                            | This package                                                         |
+| ----------- | ------------------------------------------------- | -------------------------------------------------------------------- |
+| Parts       | `InputOTP` / `InputOTPGroup` / `InputOTPSlot` / … | single `OtpInput`                                                    |
+| Length      | compose N slots                                   | `length` prop                                                        |
+| Complete    | app-level                                         | `onComplete` on the control                                          |
+| Class hooks | `className` / CVA                                 | theme tokens; consumer `cellStyle` / `cellClass` merge over defaults |
+| Density     | one slot size                                     | 36×44 text 18 with a pointer, 44×52 text 20 on a touch screen        |
+| Invalid     | `aria-invalid` on the input                       | `invalid` paints every cell in the danger tone                       |
 
 ## Not forwarded
 
-From `nsh/base` OtpInput: style hooks (`style`, `groupStyle`, `cellStyle`, `caretStyle`, …). Cell sizing, borders, focus ring, and caret are fixed by this wrapper. Extend the copied source if you need base knobs.
+None — all `nsh/base` OtpInput props are forwarded. Empty, filled and focused cells are classes (`cellStyle` wins over `cellClass`, so those states stay on the class). `invalid` is a style, so it wins over them. Consumer styles win per key.

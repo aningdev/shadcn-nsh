@@ -75,10 +75,10 @@ export {
   type MenuSubTriggerProps,
   type MenuTriggerProps,
 } from "./menu";
-export { Input, type InputProps } from "./input";
+export { Input, inputVariants, type InputProps } from "./input";
 export { Link, linkColor } from "./link";
-export { NumberInput } from "./number-input";
-export { OtpInput } from "./otp-input";
+export { NumberInput, numberInputVariants, type NumberInputProps } from "./number-input";
+export { OtpInput, otpInputVariants, type OtpInputProps } from "./otp-input";
 export { Pagination } from "./pagination";
 export {
   Popover,

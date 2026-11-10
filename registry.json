@@ -63,6 +63,20 @@
       ]
     },
     {
+      "name": "field",
+      "type": "registry:lib",
+      "title": "Field",
+      "description": "Shared text-field chrome: the sunk well, the quiet edge, the 2-point focus edge, and the one disabled look.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/lib/field.ts",
+          "type": "registry:lib",
+          "target": "lib/field.ts"
+        }
+      ]
+    },
+    {
       "name": "open-state",
       "type": "registry:lib",
       "title": "Open state",
@@ -95,7 +109,7 @@
       "type": "registry:ui",
       "title": "Input",
       "description": "Styled input wrapping nsh/base Input.",
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["theme", "density", "field"],
       "files": [
         {
           "path": "packages/ui/input.tsx",
@@ -361,7 +375,7 @@
       "type": "registry:ui",
       "title": "Number Input",
       "description": "Styled number input wrapping nsh/base NumberInput — theme tokens + stepper chrome.",
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["theme", "density", "field"],
       "files": [
         {
           "path": "packages/ui/number-input.tsx",
@@ -375,7 +389,7 @@
       "type": "registry:ui",
       "title": "OTP Input",
       "description": "Styled OTP input wrapping nsh/base OtpInput — theme tokens + cell chrome.",
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["theme", "density", "field"],
       "files": [
         {
           "path": "packages/ui/otp-input.tsx",

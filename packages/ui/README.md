@@ -241,12 +241,12 @@ Put the two images in the pull request, next to the reference's same control. Th
 
 ## Migration status of the rules
 
-| Status       | Components                                                                                                                                                                        |
-| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Migrated     | Family recipe: `popover`, `tooltip`, `menu`, `context-menu`. Leaf recipe, ported from the reference look: `button`, `switch`, `toggle`, `toggle-group`, `checkbox`, `radio-group` |
-| Not migrated | every other component                                                                                                                                                             |
+| Status       | Components                                                                                                                                                                                                              |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Migrated     | Family recipe: `popover`, `tooltip`, `menu`, `context-menu`. Leaf recipe, ported from the reference look: `button`, `switch`, `toggle`, `toggle-group`, `checkbox`, `radio-group`, `input`, `number-input`, `otp-input` |
+| Not migrated | every other component                                                                                                                                                                                                   |
 
-Shared `lib` modules, each added when a second component needed it (R1): `follow` (switch, checkbox, radio), `press` (button, toggle, the group sink of checkbox and radio), `density` (button, switch, toggle, checkbox, radio).
+Shared `lib` modules, each added when a second component needed it (R1): `follow` (switch, checkbox, radio), `press` (button, toggle, the group sink of checkbox and radio), `density` (button, switch, toggle, checkbox, radio, input, number-input, otp-input), `field` (the edge, the recess and the focus shared by input, number-input and otp-input).
 
 ## Motion in components
 
@@ -312,17 +312,17 @@ Only appear / disappear, expand / collapse and press are on by default. Content 
 
 ### Popups
 
-| Family / components              | Default (source)                                                                                                                        | Where                                       |
-| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------- |
-| `Popover`                        | 150 ms, from `opacity-0 scale-95` (popover.md)                                                                                          | inline in `popover.tsx`                     |
-| `Menu`, `ContextMenu`            | 100 ms, from `opacity-0 -translate-y-1` (menu.md)                                                                                       | inline in `menu.tsx` and `context-menu.tsx` |
-| `Tooltip`                        | 100 ms fade (tooltip.md)                                                                                                                | inline in `tooltip.tsx`                     |
-| `Toast`                          | 200 ms, `opacity-0 translate-y-4` → `opacity-0 scale-95` (toast.md)                                                                     | `toast.tsx`                                 |
-| `Dialog`, `AlertDialog`, `Sheet` | base `animation` / sheet slide                                                                                                          | pass-through only                           |
-| `Accordion`, `Collapsible`       | `reveal`; chevron 150–200 ms `transition-transform`                                                                                     | `reveal` default on both                    |
-| `Input`                          | `transition-colors`, 150 ms                                                                                                             | style                                       |
-| `Select`, `Combobox`             | **no entrance / exit**: base exposes `popupClass` / `popupStyle` only, and the touch-screen sheet has base motion. Differences note it. | pass-through                                |
-| `Progress`                       | 180 ms `translate` glide, `cubic-bezier(0.2, 0, 0, 1)`; indeterminate native loop                                                       | later phase                                 |
+| Family / components              | Default (source)                                                                                                                        | Where                                          |
+| -------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| `Popover`                        | 150 ms, from `opacity-0 scale-95` (popover.md)                                                                                          | inline in `popover.tsx`                        |
+| `Menu`, `ContextMenu`            | 100 ms, from `opacity-0 -translate-y-1` (menu.md)                                                                                       | inline in `menu.tsx` and `context-menu.tsx`    |
+| `Tooltip`                        | 100 ms fade (tooltip.md)                                                                                                                | inline in `tooltip.tsx`                        |
+| `Toast`                          | 200 ms, `opacity-0 translate-y-4` → `opacity-0 scale-95` (toast.md)                                                                     | `toast.tsx`                                    |
+| `Dialog`, `AlertDialog`, `Sheet` | base `animation` / sheet slide                                                                                                          | pass-through only                              |
+| `Accordion`, `Collapsible`       | `reveal`; chevron 150–200 ms `transition-transform`                                                                                     | `reveal` default on both                       |
+| `Input`, `NumberInput`           | `transition-colors`, 150 ms (step buttons 100 ms)                                                                                       | class (`field.ts`; `motion-reduce` cancels it) |
+| `Select`, `Combobox`             | **no entrance / exit**: base exposes `popupClass` / `popupStyle` only, and the touch-screen sheet has base motion. Differences note it. | pass-through                                   |
+| `Progress`                       | 180 ms `translate` glide, `cubic-bezier(0.2, 0, 0, 1)`; indeterminate native loop                                                       | later phase                                    |
 
 Each popup content part holds `{ style, startingStyle, endingStyle }` as a few explicit lines.
 
@@ -347,3 +347,4 @@ A default applies only while the consumer's hook is `undefined`; `null` turns it
 - 2026-11-10 — The component package (six artifacts) is the definition of done for a migration.
 - 2026-11-10 — Press feel and density are shared `lib` modules once a second component needs them. Why: the reference shares them across many looks (R1: behaviour that must match across files). This refines the earlier "no shared motion helper"; everything used once stays in the component.
 - 2026-11-10 — The theme holds colors, radius, shadows, the focus ring and the one disabled look; motion, sizes, type scale and variant opacities stay in the components that use them. Why: those are `nsh`'s values or one component's internals, not brand, and tokenizing them needed a `brand` section, a JSON import and CLI rewriting. Gallery fixtures need a `tests/nsh.json` pointing at `theme.json`, since `nsh test` reads the `nsh.json` beside the entry, and the custom color tokens (`custom-shadow-ink`, `custom-highlight`, `custom-backdrop`) live there.
+- 2026-11-10 — A field's focus is a 2-point `colors.ring` edge (`outlineOffset: -1`), not `focusRing()`'s 3px halo. Why: the reference paints focus on the border, and a halo is clipped by `overflow: hidden`. The hover edge uses `muted-foreground` for the reference's `faint`; the recess uses `finish.control.pressed` for `finish.field`. Step buttons use the theme's disabled 0.5, not the reference's 0.35.
