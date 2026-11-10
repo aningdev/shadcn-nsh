@@ -30,6 +30,8 @@ export const colors = tokens({
   border: "border",
   input: "input",
   ring: "ring",
+  popover: "popover",
+  popoverForeground: "popover-foreground",
   backdrop: "custom-backdrop",
   highlight: "custom-highlight",
   shadowInk: "custom-shadow-ink",
@@ -160,4 +162,21 @@ export function popupSurface(): ViewStyle {
 /** The dimming behind what is modal (dialogs, sheets, touch-screen pickers). */
 export function popupBackdrop(): ViewStyle {
   return { backgroundColor: colors.backdrop };
+}
+
+/**
+ * The card of a modal (dialog, sheet): the popup family's fill, edge and shadow, with the
+ * larger radius and padding a modal uses. A popup stays on `popupSurface` (the control
+ * radius, 4 points of padding). A sheet's edge overrides the radius and the padding.
+ */
+export function modalSurface(): ViewStyle {
+  return {
+    borderRadius: 16,
+    borderCurve: "continuous",
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.card,
+    padding: 20,
+    ...overlayShadow(),
+  };
 }

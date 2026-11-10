@@ -126,19 +126,21 @@ Requires `<Toaster />` mounted (starts the lifecycle tick).
 
 ### `Toast` Props
 
-| Prop                                                          | Type                                  | Default                       | Notes                                          |
-| ------------------------------------------------------------- | ------------------------------------- | ----------------------------- | ---------------------------------------------- |
-| `transitionStatus`                                            | `"starting" \| "present" \| "ending"` | —                             | Lifecycle phase from the manager               |
-| `title` / `description`                                       | `string`                              | —                             | Convenience text when `children` omitted       |
-| `startingClass` / `endingClass` / `swipingClass`              | `string`                              | enter / exit / swipe defaults | Concatenated over wrapper motion classes       |
-| `swipeDirection`                                              | `SwipeDirection \| null`              | —                             | Forwarded (`null` disables swipe)              |
-| `swipeThreshold`                                              | `number`                              | —                             | Forwarded                                      |
-| `accessibilityLabel`                                          | `string \| null`                      | title + description           | Forwarded                                      |
-| `class`                                                       | `string`                              | —                             | Concatenated over transition class             |
-| `style`                                                       | `StyleProp<ViewStyle>`                | —                             | Merged over card chrome                        |
-| `hoverStyle` / `activeStyle` / `focusStyle` / `disabledStyle` | `StyleProp<ViewStyle>`                | —                             | Forwarded / merge                              |
-| `children`                                                    | `JSX.Element`                         | —                             | Custom body (skips title / description chrome) |
-| `onDismissRequest`                                            | `() => void`                          | —                             | Swipe dismissed                                |
+| Prop                                                          | Type                                  | Default                       | Notes                                                                                  |
+| ------------------------------------------------------------- | ------------------------------------- | ----------------------------- | -------------------------------------------------------------------------------------- |
+| `transitionStatus`                                            | `"starting" \| "present" \| "ending"` | —                             | Lifecycle phase from the manager                                                       |
+| `title` / `description`                                       | `string`                              | —                             | Convenience text when `children` omitted                                               |
+| `startingClass`                                               | `string \| null`                      | `opacity-0 translate-y-4`     | Replaces the default when set (`null` turns it off). No `startingStyle` on store 0.4.0 |
+| `endingClass`                                                 | `string \| null`                      | `opacity-0 scale-95`          | Replaces the default when set                                                          |
+| `swipingClass`                                                | `string \| null`                      | `transition-none`             | Replaces the default when set                                                          |
+| `swipeDirection`                                              | `SwipeDirection \| null`              | —                             | Forwarded (`null` disables swipe)                                                      |
+| `swipeThreshold`                                              | `number`                              | —                             | Forwarded                                                                              |
+| `accessibilityLabel`                                          | `string \| null`                      | title + description           | Forwarded                                                                              |
+| `class`                                                       | `string \| null`                      | `transition-all duration-200` | Replaces the motion class when set                                                     |
+| `style`                                                       | `StyleProp<ViewStyle>`                | —                             | Merged over the raised row                                                             |
+| `hoverStyle` / `activeStyle` / `focusStyle` / `disabledStyle` | `StyleProp<ViewStyle>`                | —                             | Forwarded / merge                                                                      |
+| `children`                                                    | `JSX.Element`                         | —                             | Custom body (skips title / description chrome)                                         |
+| `onDismissRequest`                                            | `() => void`                          | —                             | Swipe dismissed                                                                        |
 
 Remaining `ToastProps` / `ComponentHostProps` from `nsh/base` also pass through.
 
@@ -164,16 +166,17 @@ Re-exported from `nsh/base` unchanged (`push` / `dismiss` / `dismissAll` / `adva
 
 ## Differences
 
-| Topic              | shadcn (`bases/base` toast / sonner)                            | This package                                                                                     |
-| ------------------ | --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| Public surface     | Base UI `Toaster` + parts, or sonner `Toaster`                  | sonner-shaped `toast()` + `Toaster`; low-level `Toast` / `ToastStack` / `ToastManager`           |
-| Parts              | `Toast` / `ToastTitle` / `ToastDescription` / `ToastAction` / … | title / description convenience props (or custom `children`); no separate Title / Action exports |
-| Manager            | `createToastManager` / sonner internals                         | `nsh/base` `ToastManager`                                                                        |
-| Placement          | CSS viewport / sonner `position`                                | `Anchor` on `ToastStack` / `Toaster` (`topRight`, `bottomCenter`, …)                             |
-| Expand             | Base UI data-expanded                                           | `ToastStack` expand-on-hover / finger; pause via `advance(expanded)`                             |
-| Class hooks        | `className` / `cn-toast*`                                       | `class` + token `style`; consumer styles merge over defaults                                     |
-| `onExpandedChange` | —                                                               | store `nsh` 0.4.0 `(expanded: boolean)`; newer website samples may show `{ expanded }`           |
+| Topic              | shadcn (`bases/base` toast / sonner)                            | This package                                                                                                |
+| ------------------ | --------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| Public surface     | Base UI `Toaster` + parts, or sonner `Toaster`                  | sonner-shaped `toast()` + `Toaster`; low-level `Toast` / `ToastStack` / `ToastManager`                      |
+| Parts              | `Toast` / `ToastTitle` / `ToastDescription` / `ToastAction` / … | `ToastTitle` / `ToastDescription` / `ToastClose`, plus title / description props when `children` is omitted |
+| Surface            | sonner card                                                     | raised row: card fill, `finish.control.rest`, border; close cross sinks to 90% (still when reduced)         |
+| Manager            | `createToastManager` / sonner internals                         | `nsh/base` `ToastManager`                                                                                   |
+| Placement          | CSS viewport / sonner `position`                                | `Anchor` on `ToastStack` / `Toaster` (`topRight`, `bottomCenter`, …)                                        |
+| Expand             | Base UI data-expanded                                           | `ToastStack` expand-on-hover / finger; pause via `advance(expanded)`                                        |
+| Class hooks        | `className` / `cn-toast*`                                       | `class` + token `style`; consumer styles merge over defaults                                                |
+| `onExpandedChange` | —                                                               | store `nsh` 0.4.0 `(expanded: boolean)`; newer website samples may show `{ expanded }`                      |
 
 ## Not forwarded
 
-None for store CLI `nsh` 0.4.0 `Toast` / `ToastStack` props — all are forwarded. The wrapper only applies card / stack / Overlay chrome, sonner-shaped `toast()` + `Toaster`, convenience `title` / `description`, default enter / exit / swipe classes, and merges defaults under consumer style hooks (`class` concatenates).
+None for store CLI `nsh` 0.4.0 `Toast` / `ToastStack` props — all are forwarded. The wrapper applies the raised row, stack width and overlay insets, sonner-shaped `toast()` + `Toaster`, convenience `title` / `description`, and toast.md's 200 ms classes while the consumer left that hook unset. Store 0.4.0 has no `startingStyle` / `endingStyle` on Toast, so the entrance is `startingClass` only. A set `class` replaces the motion class instead of being concatenated.

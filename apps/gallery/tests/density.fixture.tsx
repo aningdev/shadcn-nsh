@@ -1,6 +1,9 @@
 import {
   buttonVariants,
+  dialogBodyStyle,
+  dialogTitleStyle,
   knobTravel,
+  popoverSurface,
   switchGeometry,
   switchSlop,
   toggleVariants,
@@ -20,6 +23,7 @@ function App() {
       <Text>{`toggle=${toggle.style.minHeight}|${toggle.hitSlop}`}</Text>
       <Text>{`travel=${knobTravel(pointer)}|${knobTravel(regular)}|${knobTravel(small)}`}</Text>
       <Text>{`slop=${JSON.stringify(switchSlop(regular))}`}</Text>
+      <Text>{`overlay=${popoverSurface().padding}|${dialogTitleStyle().fontSize}|${dialogBodyStyle().fontSize}|${dialogBodyStyle().lineHeight}`}</Text>
     </View>
   );
 }

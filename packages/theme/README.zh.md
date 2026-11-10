@@ -49,7 +49,7 @@ styled / copy-into-app 层的品牌外观：颜色、半径、阴影、焦点环
 | `filled`          | 实心品牌填充上的控件                                             |
 | `popup`           | 浮层家族 **一把** 软阴影（menu、popover、select、dialog、sheet） |
 
-hover 没有对应条目：它保持 rest 的阴影，状态样式只改填充。浮层外观共用：`popupSurface()`、`popupBackdrop()`、`overlayShadow()`；`modalSurface()` 随 `dialog` / `sheet` 迁移时加入。
+hover 没有对应条目：它保持 rest 的阴影，状态样式只改填充。浮层外观共用：`popupSurface()`、`popupBackdrop()`、`overlayShadow()`、`modalSurface()`（dialog / sheet 的卡片：圆角 16、padding 20）。
 
 ## 状态
 
@@ -70,7 +70,7 @@ const ring = focusRing();
 
 - `token(name)` —— 响应式读取当前主题中的命名 token
 - `colors.*` / `radius.control` —— `token()` 之上的薄 getter；`alpha(color, a)` —— 指定透明度的颜色
-- `finish.control.*` / `finish.filled` / `finish.popup` —— 表面深度；`popupSurface()` / `popupBackdrop()` / `overlayShadow()` —— 浮层外观
+- `finish.control.*` / `finish.filled` / `finish.popup` —— 表面深度；`popupSurface()` / `modalSurface()` / `popupBackdrop()` / `overlayShadow()` —— 浮层外观
 - `focusRing()`、`disabledOpacity()` —— 共用的状态外观
 
 调整品牌就是改 `theme.json`（颜色、半径、阴影颜色）或 `theme.ts` 里的 `finish`（阴影形状）。
@@ -95,3 +95,4 @@ const ring = focusRing();
 - 2026-11-10 —— disabled 透明度处处是 0.5（select 与 combobox 的选项原为 0.4）。原因：只有一种禁用外观。
 - 2026-11-10 —— hover 只改填充并保持 rest 阴影；`finish.hover` 删除（它与 `raised` 相同）。原因：状态样式会合并到基础样式之上，重复写阴影是噪声。
 - 2026-11-10 —— 我们自己的键带 `custom-` 前缀，所有颜色都用 oklch，`theme.json` 保留 NSH 默认主题的每个键及其官方值。原因：这个文件同时混着 NSH 的标准和我们的，JSON 没有注释，前缀加测试是唯一能区分它们的办法；oklch 是官方主题使用的格式。
+- 2026-11-11 —— 加入 `modalSurface()`（圆角 16、padding 20、边、`card` 填充、popup 阴影），给 dialog 和 sheet。原因：modal 的圆角和内边距与 `popupSurface`（控件圆角、padding 4）不同；不新增 token，不新增 `overlayMotion`，sheet 的分边几何在组件里盖过圆角和 padding。

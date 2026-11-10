@@ -91,7 +91,7 @@ const open = signal(false);
 
 ## Animation
 
-`animation` on `DialogContent` (or a default on `Dialog`) — `"slide"` | `"fade"` | `"none"`. Content wins when both are set. Wrapper default is `"fade"` (centered card); nsh/base defaults to `"slide"`.
+`animation` on `DialogContent` — `"slide"` | `"fade"` | `"none"`. The root does not take it. Wrapper default is `"fade"` (centered card); nsh/base defaults to `"slide"`. Modal motion stays on base.
 
 ```tsx
 <Dialog>
@@ -104,7 +104,7 @@ const open = signal(false);
 
 ## Presentation
 
-`presentation` on Content (or root default) — `"fullScreen"` | `"pageSheet"` | `"formSheet"`. iOS sheet forms keep what is behind visible; on other platforms the dialog is a transparent layer and app chrome (popup + backdrop) is what shows.
+`presentation` on `DialogContent` — `"fullScreen"` | `"pageSheet"` | `"formSheet"`. iOS sheet forms keep what is behind visible; on other platforms the dialog is a transparent layer and app chrome (popup + backdrop) is what shows.
 
 ```tsx
 <Dialog>
@@ -117,7 +117,7 @@ const open = signal(false);
 
 ## Style override
 
-Wrapper popup chrome (card fill, border, radius, padding / max width) and backdrop tint, then consumer styles shallow-merge on top (consumer wins per key). `class` / `backdropClass` concatenate when both are set.
+Card chrome is `modalSurface()` (16-point corners, 20 points of padding, the popup shadow) at 90% of the window, then consumer `style` wins per key. The backdrop is `popupBackdrop()`. `class` / `backdropClass` pass through; there is no wrapper class to concatenate.
 
 ```tsx
 <DialogContent
@@ -132,16 +132,13 @@ Wrapper popup chrome (card fill, border, radius, padding / max width) and backdr
 
 ### `Dialog` Props
 
-| Prop                   | Type                                         | Default | Notes                                              |
-| ---------------------- | -------------------------------------------- | ------- | -------------------------------------------------- |
-| `open`                 | `boolean \| null`                            | —       | Controlled open                                    |
-| `defaultOpen`          | `boolean`                                    | `false` | Uncontrolled initial open                          |
-| `animation`            | `"slide" \| "fade" \| "none"`                | —       | Default for Content when Content omits `animation` |
-| `presentation`         | `"fullScreen" \| "pageSheet" \| "formSheet"` | —       | Default for Content when omitted                   |
-| `closeOnEscape`        | `boolean`                                    | —       | Default for Content when omitted                   |
-| `closeOnBackdropPress` | `boolean`                                    | —       | Default for Content when omitted                   |
-| `closeOnSwipe`         | `boolean`                                    | —       | Default for Content when omitted                   |
-| `children`             | `JSX.Element`                                | —       | Composition parts                                  |
+| Prop          | Type              | Default | Notes                     |
+| ------------- | ----------------- | ------- | ------------------------- |
+| `open`        | `boolean \| null` | —       | Controlled open           |
+| `defaultOpen` | `boolean`         | `false` | Uncontrolled initial open |
+| `children`    | `JSX.Element`     | —       | Composition parts         |
+
+`animation`, `presentation`, `closeOnEscape`, `closeOnBackdropPress` and `closeOnSwipe` are not root props. Set them on `DialogContent`.
 
 ### Events
 
@@ -175,11 +172,11 @@ Wrapper popup chrome (card fill, border, radius, padding / max width) and backdr
 
 | Prop                   | Type                                         | Default  | Notes                                                         |
 | ---------------------- | -------------------------------------------- | -------- | ------------------------------------------------------------- |
-| `animation`            | `"slide" \| "fade" \| "none"`                | `"fade"` | Overrides root default; nsh/base alone defaults to `"slide"`  |
-| `presentation`         | `"fullScreen" \| "pageSheet" \| "formSheet"` | —        | Forwarded; falls back to root default                         |
-| `closeOnEscape`        | `boolean`                                    | —        | Forwarded; falls back to root default                         |
-| `closeOnBackdropPress` | `boolean`                                    | —        | Forwarded; falls back to root default                         |
-| `closeOnSwipe`         | `boolean`                                    | —        | Forwarded; falls back to root default                         |
+| `animation`            | `"slide" \| "fade" \| "none"`                | `"fade"` | Centered card; nsh/base alone defaults to `"slide"`           |
+| `presentation`         | `"fullScreen" \| "pageSheet" \| "formSheet"` | —        | Forwarded                                                     |
+| `closeOnEscape`        | `boolean`                                    | —        | Forwarded                                                     |
+| `closeOnBackdropPress` | `boolean`                                    | —        | Forwarded                                                     |
+| `closeOnSwipe`         | `boolean`                                    | —        | Forwarded                                                     |
 | `statusBar`            | `StatusBar`                                  | —        | Forwarded                                                     |
 | `ios` / `android`      | platform bags                                | —        | Forwarded                                                     |
 | `class`                | `string`                                     | —        | Popup class; concatenated                                     |
@@ -209,7 +206,9 @@ Remaining `DialogProps` from `nsh/base` also pass through. Open / lifecycle even
 | Close control     | auto X via `showCloseButton`                  | explicit `DialogClose`; no `showCloseButton`                                            |
 | Default animation | CSS fade / zoom                               | wrapper `"fade"` for card chrome; nsh/base alone defaults `"slide"`                     |
 | Change event      | Root `onOpenChange`                           | `{ open, reason }` object events per store `nsh` 0.4.0                                  |
-| Class hooks       | `className` / `cn-dialog*`                    | `class` + `backdropClass` / token styles; consumer merges over defaults                 |
+| Class hooks       | `className` / `cn-dialog*`                    | `class` + `backdropClass` / token styles; consumer `style` merges over `modalSurface()` |
+| Root props        | Root holds open state and content flags       | open state only; `animation` / `presentation` / `closeOn*` live on Content, no alias    |
+| Density           | one type size                                 | title 17 / 20 and text 13 / 15, pointer / touch                                         |
 | Native sheet      | —                                             | set `presentation="pageSheet"` / `"formSheet"` on Content (iOS); or use Sheet for edges |
 
 ## Not forwarded

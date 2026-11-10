@@ -1,4 +1,5 @@
-import { colors, disabledOpacity, radius } from "@shadcn-nsh/theme";
+// Source: examples/nsh-gallery-ui/look/overlay.ts @ 64ab8a1d (baseline), see NOTICE.
+import { colors, disabledOpacity } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, split, Text, View } from "nsh";
 import {
@@ -43,6 +44,8 @@ export type TooltipProps = {
  */
 export type TooltipContentProps = Omit<BaseTooltipProps, "children"> & {
   children?: string | JSX.Element;
+  /** More than a line: 10 points of padding and 8-point corners, in a column. */
+  rich?: boolean;
 };
 
 /** Hosts the element the pointer rests on. String children render as a Button. */
@@ -109,30 +112,53 @@ function mergeStyle<T extends ViewStyle | TextStyle>(
   return [base, consumer];
 }
 
-/** Bubble chrome — aligned with shadcn `cn-tooltip-content` (fg fill / bg text). */
-function bubbleChrome(): ViewStyle {
+/**
+ * A popover-coloured bubble (not inverted text): one line is a row, 8 by 4
+ * points, 6-point corners; `rich` is a column, 10 points of padding, 8-point corners.
+ */
+function look(rich: boolean) {
   return {
-    paddingHorizontal: 10,
-    paddingVertical: 6,
-    borderRadius: radius.control,
-    backgroundColor: colors.foreground,
-    maxWidth: 288,
+    bubble: {
+      flexDirection: rich ? "column" : "row",
+      alignItems: rich ? "flex-start" : "center",
+      gap: 8,
+      paddingHorizontal: rich ? 10 : 8,
+      paddingVertical: rich ? 10 : 4,
+      borderRadius: rich ? 8 : 6,
+      borderCurve: "continuous",
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.popover,
+    } satisfies ViewStyle,
+    label: { fontSize: 12, color: colors.popoverForeground } satisfies TextStyle,
+    note: { fontSize: 12, color: colors.mutedForeground } satisfies TextStyle,
   };
 }
 
-function labelChrome(): TextStyle {
-  return { fontSize: 12, color: colors.background };
+/** The tooltip bubble, the same style {@link TooltipContent} puts on the hint. */
+export function tooltipBubbleStyle(rich?: boolean): ViewStyle {
+  return look(Boolean(rich)).bubble;
+}
+
+/** A tooltip's text. */
+export function tooltipLabelStyle(): TextStyle {
+  return look(false).label;
+}
+
+/** A tooltip's quieter text: a shortcut, a time. */
+export function tooltipNoteStyle(): TextStyle {
+  return look(false).note;
 }
 
 function wrapLabel(children?: string | JSX.Element) {
   if (typeof children === "string") {
-    return <Text style={labelChrome()}>{children}</Text>;
+    return <Text style={look(false).label}>{children}</Text>;
   }
-  return children ?? <Text style={labelChrome()} />;
+  return children ?? <Text style={look(false).label} />;
 }
 
 /** The themed bubble over `nsh/base` Tooltip; shared by composition and standalone use. */
-function TooltipBubble(props: BaseTooltipProps) {
+function TooltipBubble(props: BaseTooltipProps & { rich?: boolean }) {
   // Only what this part defaults is split off; class, hover/active/focus/disabled styles pass through.
   const [, rest] = split(props, [
     "children",
@@ -142,7 +168,9 @@ function TooltipBubble(props: BaseTooltipProps) {
     "offset",
     "startingStyle",
     "endingStyle",
+    "rich",
   ]);
+  const chrome = look(Boolean(props.rich));
 
   // tooltip.md: a 100 ms fade. Either hook of a phase set by the consumer owns that
   // phase (`null` turns it off); the classes left in `rest` pass through.
@@ -165,7 +193,7 @@ function TooltipBubble(props: BaseTooltipProps) {
       placement={props.placement ?? "top"}
       align={props.align ?? "center"}
       offset={props.offset ?? 4}
-      style={mergeStyle({ ...bubbleChrome(), ...motion.style }, props.style)}
+      style={mergeStyle({ ...chrome.bubble, ...motion.style }, props.style)}
       startingStyle={defaultStarting() ? motion.startingStyle : props.startingStyle}
       endingStyle={defaultEnding() ? motion.endingStyle : props.endingStyle}
     >

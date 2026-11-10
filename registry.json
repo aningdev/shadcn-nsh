@@ -207,7 +207,7 @@
       "type": "registry:ui",
       "title": "Popover",
       "description": "Styled popover wrapping nsh/base Popover — theme tokens + Trigger / Content; full base prop pass-through.",
-      "registryDependencies": ["theme", "button", "open-state"],
+      "registryDependencies": ["theme", "button", "open-state", "density"],
       "files": [
         {
           "path": "packages/ui/popover.tsx",
@@ -235,7 +235,7 @@
       "type": "registry:ui",
       "title": "Sheet",
       "description": "Styled sheet wrapping nsh/base Sheet — theme tokens + Trigger / Content; full base prop pass-through.",
-      "registryDependencies": ["theme", "button", "open-state"],
+      "registryDependencies": ["theme", "button", "open-state", "density"],
       "files": [
         {
           "path": "packages/ui/sheet.tsx",
@@ -249,7 +249,7 @@
       "type": "registry:ui",
       "title": "Dialog",
       "description": "Styled dialog wrapping nsh/base Dialog — theme tokens + Trigger / Content; full base prop pass-through.",
-      "registryDependencies": ["theme", "button", "open-state"],
+      "registryDependencies": ["theme", "button", "open-state", "density"],
       "files": [
         {
           "path": "packages/ui/dialog.tsx",
@@ -305,7 +305,7 @@
       "type": "registry:ui",
       "title": "Toast",
       "description": "Styled toast wrapping nsh/base Toast / ToastStack — theme tokens + sonner-shaped toast() / Toaster; full base prop pass-through.",
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["theme", "density", "press"],
       "files": [
         {
           "path": "packages/ui/toast.tsx",

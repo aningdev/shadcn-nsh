@@ -7,6 +7,7 @@ export {
   focusRing,
   hovered,
   mix,
+  modalSurface,
   overlayShadow,
   popupBackdrop,
   popupSurface,

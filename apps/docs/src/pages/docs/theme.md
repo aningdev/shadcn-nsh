@@ -47,11 +47,11 @@ NSH resolves `cssVars` into runtime tokens. Prefer editing JSON over hard-coding
 
 Light/dark semantic **surface depth** (`finish.*`). Depth only: pair with `colors.*` for fills.
 
-| Role                                       | Use                                                                                                         |
-| ------------------------------------------ | ----------------------------------------------------------------------------------------------------------- |
-| `control.rest` / `flat` / `pressed` / `on` | Bordered control surfaces (e.g. [Button](/docs/components/button)); a hover keeps `rest`                    |
-| `filled`                                   | A control on a solid brand fill                                                                             |
-| `popup`                                    | Popup-family **one** soft shadow — used by the shared chrome helpers `popupSurface` / `overlayShadow` below |
+| Role                                       | Use                                                                                                |
+| ------------------------------------------ | -------------------------------------------------------------------------------------------------- |
+| `control.rest` / `flat` / `pressed` / `on` | Bordered control surfaces (e.g. [Button](/docs/components/button)); a hover keeps `rest`           |
+| `filled`                                   | A control on a solid brand fill                                                                    |
+| `popup`                                    | Popup-family **one** soft shadow — used by `popupSurface` / `modalSurface` / `overlayShadow` below |
 
 A component names a role; it writes no shadow of its own.
 
@@ -62,8 +62,9 @@ import { colors, finish } from "@shadcn-nsh/theme";
 style={{ backgroundColor: colors.secondary, boxShadow: finish.control.rest }}
 
 // overlay (prefer the shared helpers)
-import { popupBackdrop, popupSurface } from "@shadcn-nsh/theme";
+import { modalSurface, popupBackdrop, popupSurface } from "@shadcn-nsh/theme";
 style={popupSurface()}
+// a dialog or sheet card: style={modalSurface()}
 // backdropStyle={popupBackdrop()}
 ```
 

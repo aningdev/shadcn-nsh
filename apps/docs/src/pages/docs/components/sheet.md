@@ -90,7 +90,7 @@ const open = signal(false);
 
 ## Side
 
-`side` on `SheetContent` (or a default on `Sheet`) — `"top"` | `"right"` | `"bottom"` | `"left"`. Content wins when both are set. Default is `"bottom"` (nsh/base); shadcn `bases/base` defaults to `"right"`.
+`side` on `SheetContent` — `"top"` | `"right"` | `"bottom"` | `"left"`. The root does not take it. Default is `"bottom"` (nsh/base); shadcn `bases/base` defaults to `"right"`. A bottom sheet draws the grabber first.
 
 ```tsx
 <Sheet>
@@ -103,12 +103,12 @@ const open = signal(false);
 
 ## Swipe
 
-Bottom sheets can follow a downward drag when `closeOnSwipe` is set (root default or on Content).
+Bottom sheets can follow a downward drag when `closeOnSwipe` is set on Content. Base leaves it off.
 
 ```tsx
-<Sheet closeOnSwipe>
+<Sheet>
   <SheetTrigger>Swipeable</SheetTrigger>
-  <SheetContent side="bottom">
+  <SheetContent side="bottom" closeOnSwipe>
     <SheetTitle>Drag down to dismiss</SheetTitle>
   </SheetContent>
 </Sheet>
@@ -116,7 +116,7 @@ Bottom sheets can follow a downward drag when `closeOnSwipe` is set (root defaul
 
 ## Style override
 
-Wrapper panel chrome (card fill, edge radius, padding / min size by `side`) and backdrop tint, then consumer styles shallow-merge on top (consumer wins per key). `class` / `popupClass` / `backdropClass` concatenate when both are set. Host style hooks on Content also merge.
+Panel chrome starts from `modalSurface()` (fill, edge, popup shadow) and then each edge sets its own corners and padding. A side drawer is at most 360 points wide. Consumer `popupStyle` wins per key. The backdrop is `popupBackdrop()`. There is no wrapper class to concatenate.
 
 ```tsx
 <SheetContent
@@ -132,13 +132,13 @@ Wrapper panel chrome (card fill, edge radius, padding / min size by `side`) and 
 
 ### `Sheet` Props
 
-| Prop           | Type              | Default | Notes                                                 |
-| -------------- | ----------------- | ------- | ----------------------------------------------------- |
-| `open`         | `boolean \| null` | —       | Controlled open                                       |
-| `defaultOpen`  | `boolean`         | `false` | Uncontrolled initial open                             |
-| `side`         | `Placement`       | —       | Default for Content when Content omits `side`         |
-| `closeOnSwipe` | `boolean`         | —       | Default for Content when Content omits `closeOnSwipe` |
-| `children`     | `JSX.Element`     | —       | Composition parts                                     |
+| Prop          | Type              | Default | Notes                     |
+| ------------- | ----------------- | ------- | ------------------------- |
+| `open`        | `boolean \| null` | —       | Controlled open           |
+| `defaultOpen` | `boolean`         | `false` | Uncontrolled initial open |
+| `children`    | `JSX.Element`     | —       | Composition parts         |
+
+`side`, `closeOnSwipe`, `closeOnEscape` and `closeOnBackdropPress` are not root props. Set them on `SheetContent`.
 
 ### Events
 
@@ -170,28 +170,28 @@ Wrapper panel chrome (card fill, edge radius, padding / min size by `side`) and 
 
 ### `SheetContent` Props
 
-| Prop                   | Type                   | Default    | Notes                                                      |
-| ---------------------- | ---------------------- | ---------- | ---------------------------------------------------------- |
-| `side`                 | `Placement`            | `"bottom"` | Edge; overrides root default (shadcn default is `"right"`) |
-| `closeOnEscape`        | `boolean`              | —          | Forwarded                                                  |
-| `closeOnBackdropPress` | `boolean`              | —          | Forwarded                                                  |
-| `closeOnSwipe`         | `boolean`              | —          | Forwarded; falls back to root default                      |
-| `popupClass`           | `string`               | —          | Concatenated after any wrapper class                       |
-| `popupStyle`           | `StyleProp<ViewStyle>` | —          | Merged over edge chrome                                    |
-| `backdropClass`        | `string`               | —          | Concatenated                                               |
-| `backdropStyle`        | `StyleProp<ViewStyle>` | —          | Merged over `popupBackdrop()`                              |
-| `children`             | `JSX.Element`          | —          | Panel body                                                 |
-| `class`                | `string`               | —          | Host class; concatenated                                   |
-| `style`                | `StyleProp<ViewStyle>` | —          | Host style merge                                           |
-| `hoverStyle`           | `StyleProp<ViewStyle>` | —          | Forwarded / merge                                          |
-| `activeStyle`          | `StyleProp<ViewStyle>` | —          | Forwarded / merge                                          |
-| `focusStyle`           | `StyleProp<ViewStyle>` | —          | Forwarded / merge                                          |
-| `disabledStyle`        | `StyleProp<ViewStyle>` | —          | Forwarded / merge                                          |
-| `classList`            | object                 | —          | Forwarded                                                  |
-| `testID`               | string                 | —          | Forwarded                                                  |
-| `tooltip`              | string                 | —          | Forwarded                                                  |
-| `onLayout`             | function               | —          | Forwarded                                                  |
-| `ref`                  | ref                    | —          | Forwarded                                                  |
+| Prop                   | Type                   | Default    | Notes                                                         |
+| ---------------------- | ---------------------- | ---------- | ------------------------------------------------------------- |
+| `side`                 | `Placement`            | `"bottom"` | Edge (shadcn default is `"right"`). Bottom draws the grabber. |
+| `closeOnEscape`        | `boolean`              | —          | Forwarded                                                     |
+| `closeOnBackdropPress` | `boolean`              | —          | Forwarded                                                     |
+| `closeOnSwipe`         | `boolean`              | —          | Forwarded; base defaults to off                               |
+| `popupClass`           | `string`               | —          | Concatenated after any wrapper class                          |
+| `popupStyle`           | `StyleProp<ViewStyle>` | —          | Merged over edge chrome                                       |
+| `backdropClass`        | `string`               | —          | Concatenated                                                  |
+| `backdropStyle`        | `StyleProp<ViewStyle>` | —          | Merged over `popupBackdrop()`                                 |
+| `children`             | `JSX.Element`          | —          | Panel body                                                    |
+| `class`                | `string`               | —          | Host class; concatenated                                      |
+| `style`                | `StyleProp<ViewStyle>` | —          | Host style merge                                              |
+| `hoverStyle`           | `StyleProp<ViewStyle>` | —          | Forwarded / merge                                             |
+| `activeStyle`          | `StyleProp<ViewStyle>` | —          | Forwarded / merge                                             |
+| `focusStyle`           | `StyleProp<ViewStyle>` | —          | Forwarded / merge                                             |
+| `disabledStyle`        | `StyleProp<ViewStyle>` | —          | Forwarded / merge                                             |
+| `classList`            | object                 | —          | Forwarded                                                     |
+| `testID`               | string                 | —          | Forwarded                                                     |
+| `tooltip`              | string                 | —          | Forwarded                                                     |
+| `onLayout`             | function               | —          | Forwarded                                                     |
+| `ref`                  | ref                    | —          | Forwarded                                                     |
 
 Remaining presentation `SheetProps` / `ComponentHostProps` from `nsh/base` also pass through. Open / lifecycle events come from the `Sheet` context.
 
@@ -212,7 +212,9 @@ Remaining presentation `SheetProps` / `ComponentHostProps` from `nsh/base` also 
 | Close control    | auto X via `showCloseButton`                  | explicit `SheetClose`; no `showCloseButton`                                            |
 | Portal / Overlay | Base UI Portal + Backdrop                     | base owns backdrop; no separate Portal / Overlay exports                               |
 | Change event     | Root `onOpenChange`                           | `{ open, reason }` object events per store `nsh` 0.4.0                                 |
-| Enter / exit     | CSS animate classes                           | store 0.4.0 has no enter/exit class hooks on Sheet                                     |
+| Enter / exit     | CSS animate classes                           | base owns the slide; this wrapper does not add a transition                            |
+| Root props       | Root holds open state and `side`              | open state only; `side` and `closeOn*` live on Content, no alias                       |
+| Grabber          | —                                             | a bottom sheet draws a 36×5 `muted` pill first                                         |
 | Native sheet     | —                                             | use Dialog `presentation="pageSheet"` (not this wrapper)                               |
 | Class hooks      | `className` / `cn-sheet*`                     | `class` + `popupClass` / `backdropClass` / token styles; consumer merges over defaults |
 

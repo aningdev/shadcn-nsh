@@ -7,7 +7,7 @@ demo: popover
 demoHeight: 420
 ---
 
-[`nsh/base`](https://nsh.dev/modules/nsh-base) owns open state, focus, Escape / press-outside dismiss, placement against the trigger, and the expanded trigger for screen readers — unstyled on every platform. This package is the styled layer on top: a shadcn-shaped `Popover` / `PopoverTrigger` / `PopoverContent` tree (plus Header / Title / Description), popup surface chrome, and theme tokens, the same role a community library plays above `nsh/base`. A [`Popover`](https://nsh.dev/elements/popover) shows content next to its trigger on top of everything else. Store CLI `nsh` 0.4.0 has no popup enter/exit class hooks (`popupStartingStyle` / `onPosition` land in newer docs) — surface look is `popupClass` / `popupStyle` only.
+[`nsh/base`](https://nsh.dev/modules/nsh-base) owns open state, focus, Escape / press-outside dismiss, placement against the trigger, and the expanded trigger for screen readers — unstyled on every platform. This package is the styled layer on top: a shadcn-shaped `Popover` / `PopoverTrigger` / `PopoverContent` tree (plus Header / Title / Description), popup surface chrome, and theme tokens, the same role a community library plays above `nsh/base`. A [`Popover`](https://nsh.dev/elements/popover) shows content next to its trigger on top of everything else. The surface is `popupSurface()` with 14 points of padding on a pointer and 16 on a touch screen (rows 12 apart). `compact` uses 12 and 4. It scales in from 95% over 150 ms.
 
 ## Install
 
@@ -88,7 +88,7 @@ const open = signal(false);
 
 ## Style override
 
-Wrapper popup chrome (`popupSurface` + padding / min width), then consumer styles shallow-merge on top (consumer wins per key). `class` / `popupClass` concatenate when both are set. Host style hooks on Content also merge.
+Wrapper popup chrome (`popupSurface` plus the padding above, `minWidth` 200 or 160 when `compact`), then consumer `popupStyle` wins per key. Host style hooks on Content pass through.
 
 ```tsx
 <PopoverContent popupStyle={{ padding: 20, minWidth: 320 }} style={{ alignSelf: "flex-start" }}>
@@ -139,6 +139,7 @@ Placement, popup chrome, and dismiss flags belong on `PopoverContent`, not the r
 | `popupClass`          | `string`               | —          | Concatenated after any wrapper class                         |
 | `popupStyle`          | `StyleProp<ViewStyle>` | —          | Merged over surface chrome (`padding` / `minWidth` / border) |
 | `children`            | `JSX.Element`          | —          | Popup body                                                   |
+| `compact`             | `boolean`              | —          | 12-point padding, rows 4 apart                               |
 | `class`               | `string`               | —          | Host class; concatenated                                     |
 | `style`               | `StyleProp<ViewStyle>` | —          | Host style merge                                             |
 | `hoverStyle`          | `StyleProp<ViewStyle>` | —          | Forwarded / merge                                            |
@@ -169,7 +170,8 @@ Remaining presentation `PopoverProps` / `ComponentHostProps` from `nsh/base` als
 | Positioning      | `side` / `sideOffset` / `align` / `alignOffset`         | base `placement` / `offset` / `align` (no `alignOffset` on store 0.4.0)          |
 | Portal           | Base UI Portal + Positioner                             | base places the popup; no separate Portal export                                 |
 | Change event     | Root `onOpenChange`                                     | `{ open, reason }` object events per store `nsh` 0.4.0                           |
-| Enter / exit     | CSS animate classes                                     | store 0.4.0 has no `popupStarting*` / `popupEnding*` / `onPosition`              |
+| Enter / exit     | CSS animate classes                                     | 150 ms from `scale(0.95)` via `popupStartingStyle` / `popupEndingStyle`          |
+| Density          | one padding                                             | 14 points with a pointer, 16 on a touch screen; `compact` is 12 either way       |
 | Composition-only | optional single-root in some shadcn ports               | root holds open state only — use `PopoverTrigger` + `PopoverContent`             |
 | Class hooks      | `className` / `cn-popover*`                             | `class` + `popupClass` / token `popupStyle`; consumer styles merge over defaults |
 

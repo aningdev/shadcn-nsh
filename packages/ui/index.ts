@@ -49,6 +49,9 @@ export {
   DialogHeader,
   DialogTitle,
   DialogTrigger,
+  dialogBodyStyle,
+  dialogCardStyle,
+  dialogTitleStyle,
 } from "./dialog";
 export {
   Menu,
@@ -88,6 +91,7 @@ export {
   PopoverHeader,
   PopoverTitle,
   PopoverTrigger,
+  popoverSurface,
   type PopoverContentProps,
   type PopoverDescriptionProps,
   type PopoverHeaderProps,
@@ -129,6 +133,8 @@ export {
   SheetHeader,
   SheetTitle,
   SheetTrigger,
+  sheetGrabberStyle,
+  sheetPanelStyle,
 } from "./sheet";
 export {
   knobTravel,
@@ -182,12 +188,27 @@ export {
 export {
   toast,
   Toast,
-  Toaster,
+  ToastClose,
+  ToastDescription,
   ToastManager,
   ToastStack,
+  ToastTitle,
+  Toaster,
+  toastCloseActive,
+  type ToastCloseProps,
+  type ToastDescriptionProps,
   type ToastProps,
   type ToastStackProps,
+  type ToastTitleProps,
   type ToasterProps,
 } from "./toast";
 export type { Anchor, ToastEntry, ToastMotion, ToastOptions, ToastTransitionStatus } from "./toast";
-export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./tooltip";
+export {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+  tooltipBubbleStyle,
+  tooltipLabelStyle,
+  tooltipNoteStyle,
+} from "./tooltip";

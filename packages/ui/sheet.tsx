@@ -1,6 +1,7 @@
-import { colors, disabledOpacity, overlayShadow, popupBackdrop, radius } from "@shadcn-nsh/theme";
+// Source: examples/nsh-gallery-ui/look/overlay.ts @ 64ab8a1d (baseline), see NOTICE.
+import { colors, disabledOpacity, focusRing, modalSurface, popupBackdrop } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
-import { context, Text, View } from "nsh";
+import { context, keyboardFrame, safeArea, split, Text, View, windowSize } from "nsh";
 import {
   Sheet as BaseSheet,
   type OpenChangeReason,
@@ -9,19 +10,16 @@ import {
 } from "nsh/base";
 
 import { Button, type ButtonVariant } from "./button";
+import { isPointer } from "./lib/density";
 import { createOpenState, type OpenState } from "./lib/open-state";
 
 /**
- * Composition root (shadcn `Sheet`): holds open state for Trigger / Content.
- * Panel look and base props live on {@link SheetContent}.
+ * Composition root for `nsh/base` Sheet. Open state only: `side` and the
+ * `closeOn*` flags live on {@link SheetContent}.
  */
 export type SheetProps = {
   open?: boolean | null;
   defaultOpen?: boolean;
-  /** Default edge for {@link SheetContent} when Content omits `side` (base default `"bottom"`). */
-  side?: Placement;
-  /** Default swipe-to-dismiss for Content when omitted. */
-  closeOnSwipe?: boolean;
   children?: JSX.Element;
   onOpenChange?: (event: { open: boolean; reason: OpenChangeReason }) => void;
   onOpen?: () => void;
@@ -30,10 +28,9 @@ export type SheetProps = {
 };
 
 /**
- * Theme layer on `nsh/base` Sheet as shadcn `SheetContent`. All base props +
- * style hooks pass through; consumer styles shallow-merge over defaults.
- * Open / lifecycle events are owned by the {@link Sheet} context.
- * `side` defaults to `"bottom"` (nsh/base); shadcn `bases/base` defaults to `"right"`.
+ * Theme layer on `nsh/base` Sheet as `SheetContent`. All base props and style
+ * hooks pass through. Open and lifecycle events come from the {@link Sheet}
+ * context. `side` defaults to `"bottom"` (base); shadcn defaults to `"right"`.
  */
 export type SheetContentProps = Omit<
   BaseSheetProps,
@@ -59,7 +56,7 @@ export type SheetCloseProps = {
   style?: StyleProp<ViewStyle>;
 };
 
-/** App chrome around title / description (not an `nsh/base` part). */
+/** App chrome around title and description (not an `nsh/base` part). */
 export type SheetHeaderProps = {
   children?: JSX.Element;
   class?: string | null;
@@ -88,8 +85,6 @@ export type SheetDescriptionProps = {
 };
 
 type SheetContextValue = OpenState & {
-  side?: Placement;
-  closeOnSwipe?: boolean;
   onOpen?: () => void;
   onClose?: () => void;
   onCancel?: () => void;
@@ -103,12 +98,6 @@ function useSheet() {
   return ctx;
 }
 
-/** Concatenate wrapper + consumer `class` when both are set. */
-function mergeClass(base?: string | null, consumer?: string | null): string | undefined {
-  if (base && consumer) return `${base} ${consumer}`;
-  return consumer ?? base ?? undefined;
-}
-
 /** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
 function mergeStyle<T extends ViewStyle | TextStyle>(
   base?: StyleProp<T> | null,
@@ -120,263 +109,274 @@ function mergeStyle<T extends ViewStyle | TextStyle>(
   return [base, consumer];
 }
 
-/** Panel chrome by edge — aligned with shadcn `cn-sheet-content` / data-side. */
-function contentPopupChrome(side: Placement): ViewStyle {
-  const radiusEdge = radius.control * 2;
-  const base: ViewStyle = {
-    backgroundColor: colors.card,
-    padding: 16,
-    gap: 6,
-    ...overlayShadow(),
-  };
-
-  switch (side) {
-    case "top":
-      return {
-        ...base,
-        width: "100%",
-        minHeight: 160,
-        borderBottomLeftRadius: radiusEdge,
-        borderBottomRightRadius: radiusEdge,
-      };
-    case "left":
-      return {
-        ...base,
-        height: "100%",
-        minWidth: 288,
-        borderTopRightRadius: radiusEdge,
-        borderBottomRightRadius: radiusEdge,
-      };
-    case "right":
-      return {
-        ...base,
-        height: "100%",
-        minWidth: 288,
-        borderTopLeftRadius: radiusEdge,
-        borderBottomLeftRadius: radiusEdge,
-      };
-    case "bottom":
-    default:
-      return {
-        ...base,
-        width: "100%",
-        minHeight: 160,
-        borderTopLeftRadius: radiusEdge,
-        borderTopRightRadius: radiusEdge,
-      };
-  }
-}
-
-function headerChrome(): ViewStyle {
-  return { gap: 6, marginBottom: 8 };
-}
-
-function footerChrome(): ViewStyle {
+/**
+ * Fill, edge and shadow from `modalSurface`. The dialog's uniform radius and
+ * padding are not copied: each edge sets its own.
+ */
+function modalChrome(): ViewStyle {
+  const surface = modalSurface();
   return {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    flexWrap: "wrap",
-    gap: 8,
-    marginTop: 12,
+    backgroundColor: surface.backgroundColor,
+    borderColor: surface.borderColor,
+    boxShadow: surface.boxShadow,
+    borderCurve: "continuous",
   };
 }
 
-function titleChrome(): TextStyle {
-  return { fontSize: 16, fontWeight: "600", color: colors.foreground };
+/**
+ * The panel at one edge. Bottom and top span the width the base already
+ * anchors (no `width` / `height` of our own: a percentage fights those
+ * anchors). A side drawer is a fixed width on purpose, at most 360 and 48
+ * short of a narrow window. The grabber is a 36×5 pill, not a text box.
+ */
+function look(side: Placement) {
+  const pointer = isPointer();
+  const chrome = modalChrome();
+  const horizontal = side === "bottom" || side === "top";
+  const bottom = side === "bottom";
+  const panel: ViewStyle = horizontal
+    ? {
+        ...chrome,
+        borderWidth: 1,
+        ...(bottom
+          ? {
+              borderBottomWidth: 0,
+              borderTopLeftRadius: 20,
+              borderTopRightRadius: 20,
+              paddingTop: 8,
+            }
+          : {
+              borderTopWidth: 0,
+              borderBottomLeftRadius: 20,
+              borderBottomRightRadius: 20,
+              paddingTop: safeArea().top + 16,
+              paddingBottom: 20,
+            }),
+        maxHeight: windowSize().height - (bottom ? safeArea().top : safeArea().bottom) - 24,
+        paddingHorizontal: 16,
+        ...(bottom
+          ? { paddingBottom: Math.max(safeArea().bottom, keyboardFrame().height) + 16 }
+          : {}),
+        gap: 14,
+      }
+    : {
+        ...chrome,
+        width: Math.min(360, windowSize().width - 48),
+        paddingHorizontal: 20,
+        paddingTop: safeArea().top + 16,
+        paddingBottom: safeArea().bottom + 16,
+        gap: 16,
+        ...(side === "right"
+          ? { borderLeftWidth: 1, borderTopLeftRadius: 16, borderBottomLeftRadius: 16 }
+          : { borderRightWidth: 1, borderTopRightRadius: 16, borderBottomRightRadius: 16 }),
+      };
+  return {
+    panel,
+    grabber: {
+      width: 36,
+      height: 5,
+      borderRadius: 3,
+      alignSelf: "center",
+      backgroundColor: colors.muted,
+    } satisfies ViewStyle,
+    header: { gap: 4 } satisfies ViewStyle,
+    footer: {
+      flexDirection: "row",
+      justifyContent: "flex-end",
+      flexWrap: "wrap",
+      gap: 8,
+    } satisfies ViewStyle,
+    title: {
+      fontSize: pointer ? 17 : 20,
+      fontWeight: "600",
+      color: colors.foreground,
+    } satisfies TextStyle,
+    body: {
+      fontSize: pointer ? 13 : 15,
+      lineHeight: pointer ? 19 : 21,
+      color: colors.mutedForeground,
+    } satisfies TextStyle,
+  };
 }
 
-function descriptionChrome(): TextStyle {
-  return { fontSize: 13, color: colors.mutedForeground };
+/** The sheet panel at `side`, the same style {@link SheetContent} puts on the popup. */
+export function sheetPanelStyle(side: Placement = "bottom"): ViewStyle {
+  return look(side).panel;
 }
 
+/** The grabber a bottom sheet draws first. */
+export function sheetGrabberStyle(): ViewStyle {
+  return look("bottom").grabber;
+}
+
+/** Composition root: owns the open state the parts below read. */
 export function Sheet(props: SheetProps) {
-  const {
-    open,
-    defaultOpen,
-    side,
-    closeOnSwipe,
-    children,
-    onOpenChange,
-    onOpen,
-    onClose,
-    onCancel,
-  } = props;
-
-  const state = createOpenState<OpenChangeReason>({
-    open,
-    defaultOpen,
-    onOpenChange,
-  });
-
+  const state = createOpenState<OpenChangeReason>(props);
   return (
     <SheetContext.Provider
       value={{
         ...state,
-        side,
-        closeOnSwipe,
-        onOpen,
-        onClose,
-        onCancel,
+        get onOpen() {
+          return props.onOpen;
+        },
+        get onClose() {
+          return props.onClose;
+        },
+        get onCancel() {
+          return props.onCancel;
+        },
       }}
     >
-      {children}
+      {props.children}
     </SheetContext.Provider>
   );
 }
 
+/** Opens the sheet; a string child renders a `Button`. */
 export function SheetTrigger(props: SheetTriggerProps) {
   const ctx = useSheet();
-  const { children, disabled, class: className, style } = props;
-  const open = () => ctx.setOpen(true);
-
-  if (typeof children === "string") {
+  const open = () => {
+    if (!props.disabled) ctx.setOpen(true);
+  };
+  if (typeof props.children === "string") {
     return (
-      <Button disabled={disabled} onPress={open}>
-        {children}
+      <Button
+        disabled={props.disabled}
+        class={props.class ?? undefined}
+        style={props.style}
+        onPress={open}
+      >
+        {props.children}
       </Button>
     );
   }
-
   return (
     <View
-      class={mergeClass(undefined, className)}
-      onPress={disabled ? undefined : open}
-      style={mergeStyle({ opacity: disabledOpacity(disabled) }, style)}
+      accessible
+      role="button"
+      accessibilityState={{ disabled: props.disabled }}
+      class={props.class ?? undefined}
+      focusStyle={focusRing()}
+      onPress={props.disabled ? undefined : open}
+      style={props.disabled ? mergeStyle({ opacity: disabledOpacity() }, props.style) : props.style}
     >
-      {children}
+      {props.children}
     </View>
   );
 }
 
+/** Closes the sheet; a string child renders a `Button` (outline unless `variant` is set). */
 export function SheetClose(props: SheetCloseProps) {
   const ctx = useSheet();
-  const { children, variant = "outline", disabled, class: className, style } = props;
-
-  if (typeof children !== "string" && children != null) {
+  const close = () => {
+    if (!props.disabled) ctx.setOpen(false);
+  };
+  if (typeof props.children !== "string" && props.children != null) {
     return (
       <View
-        class={mergeClass(undefined, className)}
-        onPress={disabled ? undefined : () => ctx.setOpen(false)}
-        style={mergeStyle({ opacity: disabledOpacity(disabled) }, style)}
+        accessible
+        role="button"
+        accessibilityState={{ disabled: props.disabled }}
+        class={props.class ?? undefined}
+        focusStyle={focusRing()}
+        onPress={props.disabled ? undefined : close}
+        style={
+          props.disabled ? mergeStyle({ opacity: disabledOpacity() }, props.style) : props.style
+        }
       >
-        {children}
+        {props.children}
       </View>
     );
   }
-
   return (
-    <Button disabled={disabled} variant={variant} onPress={() => ctx.setOpen(false)}>
-      {children ?? "Close"}
+    <Button
+      disabled={props.disabled}
+      variant={props.variant ?? "outline"}
+      class={props.class ?? undefined}
+      style={props.style}
+      onPress={close}
+    >
+      {props.children ?? "Close"}
     </Button>
   );
 }
 
+/** The panel at `side`, with the backdrop dimmed. A bottom sheet leads with the grabber. */
 export function SheetContent(props: SheetContentProps) {
   const ctx = useSheet();
-  const {
-    children,
-    side: sideProp,
-    closeOnSwipe: closeOnSwipeProp,
-    class: className,
-    style,
-    hoverStyle,
-    activeStyle,
-    focusStyle,
-    disabledStyle,
-    popupClass,
-    popupStyle,
-    backdropClass,
-    backdropStyle,
-    ...rest
-  } = props;
-
-  const side = sideProp ?? ctx.side ?? "bottom";
-  const closeOnSwipe = closeOnSwipeProp ?? ctx.closeOnSwipe;
-
+  const side = props.side ?? "bottom";
+  const chrome = look(side);
+  const [, rest] = split(props, ["children", "side", "popupStyle", "backdropStyle"]);
   return (
     <BaseSheet
       {...rest}
       open={ctx.open()}
       side={side}
-      closeOnSwipe={closeOnSwipe}
       onOpenChange={({ open, reason }) => ctx.setOpen(open, reason)}
       onOpen={ctx.onOpen}
       onClose={ctx.onClose}
       onCancel={ctx.onCancel}
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(undefined, style)}
-      hoverStyle={mergeStyle(undefined, hoverStyle)}
-      activeStyle={mergeStyle(undefined, activeStyle)}
-      focusStyle={mergeStyle(undefined, focusStyle)}
-      disabledStyle={mergeStyle(undefined, disabledStyle)}
-      popupClass={mergeClass(undefined, popupClass)}
-      popupStyle={mergeStyle(contentPopupChrome(side), popupStyle)}
-      backdropClass={mergeClass(undefined, backdropClass)}
-      backdropStyle={mergeStyle(popupBackdrop(), backdropStyle)}
+      popupStyle={mergeStyle(chrome.panel, props.popupStyle)}
+      backdropStyle={mergeStyle(popupBackdrop(), props.backdropStyle)}
     >
-      {children}
+      {side === "bottom" ? <View style={chrome.grabber} /> : null}
+      {props.children}
     </BaseSheet>
   );
 }
 
+/** The header block of the panel. */
 export function SheetHeader(props: SheetHeaderProps) {
-  const { children, class: className, style } = props;
   return (
-    <View class={mergeClass(undefined, className)} style={mergeStyle(headerChrome(), style)}>
-      {children}
+    <View class={props.class ?? undefined} style={mergeStyle(look("bottom").header, props.style)}>
+      {props.children}
     </View>
   );
 }
 
+/** The footer row of the panel. */
 export function SheetFooter(props: SheetFooterProps) {
-  const { children, class: className, style } = props;
   return (
-    <View class={mergeClass(undefined, className)} style={mergeStyle(footerChrome(), style)}>
-      {children}
+    <View class={props.class ?? undefined} style={mergeStyle(look("bottom").footer, props.style)}>
+      {props.children}
     </View>
   );
 }
 
+/** The panel's title; a string child gets the sheet type. */
 export function SheetTitle(props: SheetTitleProps) {
-  const { children, class: className, style } = props;
-  if (typeof children !== "string" && children != null) {
+  if (typeof props.children !== "string" && props.children != null) {
     return (
-      <View
-        class={mergeClass(undefined, className)}
-        style={mergeStyle(undefined, style as StyleProp<ViewStyle> | null)}
-      >
-        {children}
+      <View class={props.class ?? undefined} style={props.style as StyleProp<ViewStyle>}>
+        {props.children}
       </View>
     );
   }
   return (
     <Text
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(titleChrome(), style as StyleProp<TextStyle> | null)}
+      class={props.class ?? undefined}
+      style={mergeStyle(look("bottom").title, props.style as StyleProp<TextStyle>)}
     >
-      {children}
+      {props.children}
     </Text>
   );
 }
 
+/** The panel's description; a string child gets the sheet type. */
 export function SheetDescription(props: SheetDescriptionProps) {
-  const { children, class: className, style } = props;
-  if (typeof children !== "string" && children != null) {
+  if (typeof props.children !== "string" && props.children != null) {
     return (
-      <View
-        class={mergeClass(undefined, className)}
-        style={mergeStyle(undefined, style as StyleProp<ViewStyle> | null)}
-      >
-        {children}
+      <View class={props.class ?? undefined} style={props.style as StyleProp<ViewStyle>}>
+        {props.children}
       </View>
     );
   }
   return (
     <Text
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(descriptionChrome(), style as StyleProp<TextStyle> | null)}
+      class={props.class ?? undefined}
+      style={mergeStyle(look("bottom").body, props.style as StyleProp<TextStyle>)}
     >
-      {children}
+      {props.children}
     </Text>
   );
 }

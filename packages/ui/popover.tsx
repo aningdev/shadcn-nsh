@@ -1,3 +1,4 @@
+// Source: examples/nsh-gallery-ui/look/overlay.ts @ 64ab8a1d (baseline), see NOTICE.
 import { colors, disabledOpacity, focusRing, popupSurface } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, split, Text, View } from "nsh";
@@ -8,6 +9,7 @@ import {
 } from "nsh/base";
 
 import { Button } from "./button";
+import { isPointer } from "./lib/density";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 
 /** Composition root for `nsh/base` Popover: open state + trigger slot. */
@@ -38,6 +40,8 @@ export type PopoverContentProps = Omit<
   | "children"
 > & {
   children?: JSX.Element;
+  /** A line or two: 12 points of padding and 4 between rows, instead of 14 / 16 and 12. */
+  compact?: boolean;
 };
 
 /** Opens the popover. String children render as a Button; otherwise a pressable View. */
@@ -95,26 +99,26 @@ function mergeStyle<T extends ViewStyle | TextStyle>(
   return [base, consumer];
 }
 
-/** Popup surface chrome — aligned with shadcn `cn-popover-content` / w-72 padding. */
-function contentPopupChrome(): ViewStyle {
+/**
+ * The popup surface every menu shares, with the popover's own room: 14 points
+ * of padding with a pointer and 16 on a touch screen, rows 12 apart. Compact
+ * is 12 and 4. `minWidth` keeps a short note from hugging its text.
+ */
+function look(compact: boolean) {
+  const room = compact
+    ? { padding: 12, gap: 4, minWidth: 160 }
+    : { padding: isPointer() ? 14 : 16, gap: 12, minWidth: 200 };
   return {
-    ...popupSurface(),
-    padding: 16,
-    minWidth: 288,
-    gap: 4,
+    surface: { ...popupSurface(), ...room } satisfies ViewStyle,
+    header: { gap: 4 } satisfies ViewStyle,
+    title: { fontSize: 14, fontWeight: "600", color: colors.foreground } satisfies TextStyle,
+    description: { fontSize: 13, color: colors.mutedForeground } satisfies TextStyle,
   };
 }
 
-function headerChrome(): ViewStyle {
-  return { gap: 4, marginBottom: 4 };
-}
-
-function titleChrome(): TextStyle {
-  return { fontSize: 14, fontWeight: "600", color: colors.foreground };
-}
-
-function descriptionChrome(): TextStyle {
-  return { fontSize: 13, color: colors.mutedForeground };
+/** The popover surface, the same style {@link PopoverContent} puts on the popup. */
+export function popoverSurface(compact?: boolean): ViewStyle {
+  return look(Boolean(compact)).surface;
 }
 
 /** Composition root: owns the open state the parts below read. */
@@ -186,7 +190,10 @@ export function PopoverContent(props: PopoverContentProps) {
     "placement",
     "align",
     "offset",
+    "compact",
   ]);
+
+  const chrome = look(Boolean(props.compact));
 
   // popover.md: 150 ms, from 95 % of its size. Either hook of a phase set by the
   // consumer owns that phase (`null` turns it off); the classes left in `rest` pass through.
@@ -216,7 +223,7 @@ export function PopoverContent(props: PopoverContentProps) {
       onOpen={ctx.onOpen}
       onClose={ctx.onClose}
       onCancel={ctx.onCancel}
-      popupStyle={mergeStyle({ ...contentPopupChrome(), ...motion.style }, props.popupStyle)}
+      popupStyle={mergeStyle({ ...chrome.surface, ...motion.style }, props.popupStyle)}
       popupStartingStyle={defaultStarting() ? motion.startingStyle : props.popupStartingStyle}
       popupEndingStyle={defaultEnding() ? motion.endingStyle : props.popupEndingStyle}
     >
@@ -228,7 +235,7 @@ export function PopoverContent(props: PopoverContentProps) {
 /** The header block of the popup content. */
 export function PopoverHeader(props: PopoverHeaderProps) {
   return (
-    <View class={props.class ?? undefined} style={mergeStyle(headerChrome(), props.style)}>
+    <View class={props.class ?? undefined} style={mergeStyle(look(false).header, props.style)}>
       {props.children}
     </View>
   );
@@ -246,7 +253,7 @@ export function PopoverTitle(props: PopoverTitleProps) {
   return (
     <Text
       class={props.class ?? undefined}
-      style={mergeStyle(titleChrome(), props.style as StyleProp<TextStyle> | null)}
+      style={mergeStyle(look(false).title, props.style as StyleProp<TextStyle> | null)}
     >
       {props.children}
     </Text>
@@ -265,7 +272,7 @@ export function PopoverDescription(props: PopoverDescriptionProps) {
   return (
     <Text
       class={props.class ?? undefined}
-      style={mergeStyle(descriptionChrome(), props.style as StyleProp<TextStyle> | null)}
+      style={mergeStyle(look(false).description, props.style as StyleProp<TextStyle> | null)}
     >
       {props.children}
     </Text>

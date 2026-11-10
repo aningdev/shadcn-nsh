@@ -7,7 +7,7 @@ demo: tooltip
 demoHeight: 420
 ---
 
-[`nsh/base`](https://nsh.dev/modules/nsh-base) owns hover delay, open state, placement against the host, and pointer-passthrough so the trigger keeps working — unstyled on every platform. This package is the styled layer on top: a shadcn-shaped `Tooltip` / `TooltipTrigger` / `TooltipContent` tree (plus `TooltipProvider` for a shared delay), bubble chrome, and theme tokens, the same role a community library plays above `nsh/base`. A [`Tooltip`](https://nsh.dev/elements/tooltip) is the hint bubble given as a host's `tooltip={…}` prop. Store CLI `nsh` 0.4.0 has no enter/exit class hooks (`startingClass` / `endingClass` land in newer docs) — surface look is `class` / `style` only.
+[`nsh/base`](https://nsh.dev/modules/nsh-base) owns hover delay, open state, placement against the host, and pointer-passthrough so the trigger keeps working — unstyled on every platform. This package is the styled layer on top: a shadcn-shaped `Tooltip` / `TooltipTrigger` / `TooltipContent` tree (plus `TooltipProvider` for a shared delay), bubble chrome, and theme tokens, the same role a community library plays above `nsh/base`. A [`Tooltip`](https://nsh.dev/elements/tooltip) is the hint bubble given as a host's `tooltip={…}` prop. The bubble is the popover surface (border, popover fill, popover foreground), not inverted text. One line is 8 by 4 points with 6-point corners; `rich` is a column with 10 points of padding and 8-point corners. It fades in over 100 ms.
 
 ## Install
 
@@ -159,7 +159,8 @@ Bubble chrome, placement overrides, and host props belong on `TooltipContent` (i
 | `disabled`      | `boolean`               | —          | Forwarded                                      |
 | `open`          | `boolean \| null`       | —          | Standalone host bubble (composition uses Root) |
 | `defaultOpen`   | `boolean`               | —          | Standalone host bubble                         |
-| `children`      | `string \| JSX.Element` | —          | String → themed label `Text`                   |
+| `children`      | `string \| JSX.Element` | —          | String → 12-point popover foreground           |
+| `rich`          | `boolean`               | —          | Column, 10-point padding, 8-point corners      |
 | `class`         | `string`                | —          | Concatenated after any wrapper class           |
 | `style`         | `StyleProp<ViewStyle>`  | —          | Merged over bubble chrome                      |
 | `hoverStyle`    | `StyleProp<ViewStyle>`  | —          | Forwarded / merge                              |
@@ -192,7 +193,8 @@ Remaining presentation `TooltipProps` / `ComponentHostProps` from `nsh/base` als
 | Positioning  | `side` / `sideOffset` / `align` / `alignOffset` | base `placement` / `offset` / `align` (no `alignOffset` on store 0.4.0)                               |
 | Portal       | Base UI Portal + Positioner                     | base places the hint overlay; no separate Portal export                                               |
 | Change event | Root `onOpenChange`                             | `{ open, reason }` object events per store `nsh` 0.4.0                                                |
-| Enter / exit | CSS animate classes                             | store 0.4.0 has no `startingClass` / `endingClass` / `startingStyle` / `endingStyle`                  |
+| Enter / exit | CSS animate classes                             | 100 ms opacity fade via `startingStyle` / `endingStyle` unless the consumer sets that phase           |
+| Bubble       | inverted foreground fill                        | popover fill and foreground, with a border; `rich` for more than a line                               |
 | Provider     | delay (+ skipDelayDuration etc.)                | `delay` only                                                                                          |
 | Class hooks  | `className` / `cn-tooltip*`                     | `class` + token `style`; consumer styles merge over defaults                                          |
 

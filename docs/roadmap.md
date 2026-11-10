@@ -1,6 +1,6 @@
 # 项目规划：`nsh-gallery-ui` 的规范化、可分发版本
 
-状态：你已确认。**P0 完成**（现有改动已拆成三个提交；`AGENTS.md`、`GLOSSARY.md`、`NOTICE`、ui README 的"来源与同步"、README 矛盾已修）。**试点 S、P1、家族 2、家族 3 已完成**（neutral 经你确认可用；截图流程见 ui README“视觉核对”）。`check:recipes` 已完成。**家族 4、7 已完成**。下一步：家族 5（`menu`、`context-menu` 重做）。规则与决策记录在 [`packages/ui/README.zh.md`](../packages/ui/README.zh.md) 和 [`packages/theme/README.zh.md`](../packages/theme/README.zh.md)；本文只讲**做什么、按什么顺序、怎么验收**。
+状态：你已确认。**P0 完成**（现有改动已拆成三个提交；`AGENTS.md`、`GLOSSARY.md`、`NOTICE`、ui README 的"来源与同步"、README 矛盾已修）。**试点 S、P1、家族 2、家族 3 已完成**（neutral 经你确认可用；截图流程见 ui README“视觉核对”）。`check:recipes` 已完成。**家族 4、7 已完成**。家族 6（`tooltip`、`popover`、`dialog`、`sheet`、`toast`）已完成。下一步：家族 5（`menu`、`context-menu` 重做）。规则与决策记录在 [`packages/ui/README.zh.md`](../packages/ui/README.zh.md) 和 [`packages/theme/README.zh.md`](../packages/theme/README.zh.md)；本文只讲**做什么、按什么顺序、怎么验收**。
 
 ## 1. 目标
 
@@ -115,16 +115,16 @@ neutral 的层次有限，所以不先做基础设施，先用 **button + switch
 
 每个家族一个提交，走统一循环（见 §6）。顺序按依赖和体量：
 
-| 序  | 家族                             | 我们的组件                                                    | 参考 look                                                   | 体量 | 备注                                                            |
-| --- | -------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------- | ---- | --------------------------------------------------------------- |
-| 1   | 按钮（试点 S 已做部分在此补全）  | `button`                                                      | `look/button.ts`（含 icon / round / split）                 | M    | 先用它验证"移植 + 规范化"的真实成本；split 按钮放在后续         |
-| 2   | 切换与选择（**已完成**）         | `toggle`、`toggle-group`、`switch`、`checkbox`、`radio-group` | `tool.ts`、`switch.ts` + `switch-geometry.ts`、`choice.tsx` | M    | 开关旋钮行程用算术测试                                          |
-| 3   | 字段（**已完成**）               | `input`、`number-input`、`otp-input`                          | `field.tsx`                                                 | M    | 焦点边、无效、只读、禁用的优先级                                |
-| 4   | 列表选择（**已完成**）           | `select`、`combobox`                                          | `listbox.tsx`（565 行，最大）                               | L    | 触屏下是 sheet                                                  |
-| 5   | 菜单（重做）                     | `menu`、`context-menu`                                        | `menu.tsx`                                                  | M    | 已按 Family 配方迁移过，这次只换值与状态                        |
-| 6   | 浮层                             | `tooltip`、`popover`、`dialog`、`sheet`、`toast`              | `overlay.ts`                                                | L    | 同时加 `modalSurface()`；Dialog / Sheet Root 属性迁移到 Content |
-| 7   | 导航与披露（**已完成**，本分支） | `tabs`、`accordion`、`collapsible`、`link`、`pagination`      | `tabs.tsx`、`disclosure.tsx`、`nav.tsx`                     | M    | 不新增 token；禁用一律 0.5                                      |
-| 8   | 度量与其他                       | `progress`、`slider`、`avatar`、`table`                       | `meter.ts`、`slider.ts`、`avatar.ts`、`data-table.ts`       | M    | `progress` 的不确定态循环用 `ignoreReduceMotion`                |
+| 序  | 家族                             | 我们的组件                                                    | 参考 look                                                   | 体量 | 备注                                                         |
+| --- | -------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------- | ---- | ------------------------------------------------------------ |
+| 1   | 按钮（试点 S 已做部分在此补全）  | `button`                                                      | `look/button.ts`（含 icon / round / split）                 | M    | 先用它验证"移植 + 规范化"的真实成本；split 按钮放在后续      |
+| 2   | 切换与选择（**已完成**）         | `toggle`、`toggle-group`、`switch`、`checkbox`、`radio-group` | `tool.ts`、`switch.ts` + `switch-geometry.ts`、`choice.tsx` | M    | 开关旋钮行程用算术测试                                       |
+| 3   | 字段（**已完成**）               | `input`、`number-input`、`otp-input`                          | `field.tsx`                                                 | M    | 焦点边、无效、只读、禁用的优先级                             |
+| 4   | 列表选择（**已完成**）           | `select`、`combobox`                                          | `listbox.tsx`（565 行，最大）                               | L    | 触屏下是 sheet                                               |
+| 5   | 菜单（重做）                     | `menu`、`context-menu`                                        | `menu.tsx`                                                  | M    | 已按 Family 配方迁移过，这次只换值与状态                     |
+| 6   | 浮层（**已完成**）               | `tooltip`、`popover`、`dialog`、`sheet`、`toast`              | `overlay.ts`                                                | L    | 已加 `modalSurface()`；Dialog / Sheet Root 属性在 Content 上 |
+| 7   | 导航与披露（**已完成**，本分支） | `tabs`、`accordion`、`collapsible`、`link`、`pagination`      | `tabs.tsx`、`disclosure.tsx`、`nav.tsx`                     | M    | 不新增 token；禁用一律 0.5                                   |
+| 8   | 度量与其他                       | `progress`、`slider`、`avatar`、`table`                       | `meter.ts`、`slider.ts`、`avatar.ts`、`data-table.ts`       | M    | `progress` 的不确定态循环用 `ignoreReduceMotion`             |
 
 ### P3 扩展（Registry 完整性）
 

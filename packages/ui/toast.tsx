@@ -1,6 +1,7 @@
-import { colors, radius } from "@shadcn-nsh/theme";
+// Source: examples/nsh-gallery-ui/look/overlay.ts @ 64ab8a1d (baseline), see NOTICE.
+import { alpha, colors, finish, focusRing, hovered, radius } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
-import { Overlay, safeArea, signal, Text, View } from "nsh";
+import { Overlay, safeArea, signal, split, Text, View } from "nsh";
 import {
   Toast as BaseToast,
   ToastManager,
@@ -14,13 +15,15 @@ import {
   type ToastTransitionStatus,
 } from "nsh/base";
 
+import { touchHitSlop } from "./lib/density";
+import { pressSink } from "./lib/press";
+
 export { ToastManager };
 export type { Anchor, ToastEntry, ToastMotion, ToastOptions, ToastTransitionStatus };
 
 /**
- * Theme layer on `nsh/base` Toast. All base props + style hooks pass through;
- * consumer styles shallow-merge over defaults. Optional `title` / `description`
- * render default text chrome when `children` is omitted (sonner / gallery-shaped).
+ * Theme layer on `nsh/base` Toast. All base props and style hooks pass through.
+ * Optional `title` / `description` render when `children` is omitted.
  */
 export type ToastProps = Omit<BaseToastProps, "children"> & {
   children?: JSX.Element;
@@ -30,10 +33,35 @@ export type ToastProps = Omit<BaseToastProps, "children"> & {
   description?: string;
 };
 
+/** The toast's title; a string child gets the toast type. */
+export type ToastTitleProps = {
+  children?: string | JSX.Element;
+  class?: string | null;
+  style?: StyleProp<TextStyle | ViewStyle>;
+};
+
+/** The toast's description; a string child gets the quieter type. */
+export type ToastDescriptionProps = {
+  children?: string | JSX.Element;
+  class?: string | null;
+  style?: StyleProp<TextStyle | ViewStyle>;
+};
+
+/** The toast's close cross. Pressed, it sinks; reduced motion keeps the colour only. */
+export type ToastCloseProps = {
+  children?: JSX.Element;
+  disabled?: boolean;
+  class?: string | null;
+  style?: StyleProp<ViewStyle>;
+  hoverStyle?: StyleProp<ViewStyle>;
+  activeStyle?: StyleProp<ViewStyle>;
+  focusStyle?: StyleProp<ViewStyle>;
+  accessibilityLabel?: string | null;
+  onPress?: () => void;
+};
+
 /**
- * Theme layer on `nsh/base` ToastStack. All base props + style hooks pass
- * through; consumer styles shallow-merge over stack chrome (`gap` / padding /
- * maxWidth).
+ * Theme layer on `nsh/base` ToastStack. All base props and style hooks pass through.
  */
 export type ToastStackProps = Omit<BaseToastStackProps, "children"> & {
   children?: JSX.Element;
@@ -47,13 +75,13 @@ export type ToasterProps = {
   placement?: Anchor;
   motion?: ToastMotion;
   closeOnEscape?: boolean;
-  /** Overlay host `class` (concatenated). */
+  /** Overlay host `class`. */
   class?: string | null;
-  /** Overlay host style; merged over edge / safe-area chrome. */
+  /** Overlay host style, merged over the edge and the safe area. */
   style?: StyleProp<ViewStyle>;
-  /** ToastStack `class` (concatenated). */
+  /** ToastStack `class`. */
   stackClass?: string | null;
-  /** ToastStack style; merged over stack chrome. */
+  /** ToastStack style, merged over the stack chrome. */
   stackStyle?: StyleProp<ViewStyle>;
   stackHoverStyle?: StyleProp<ViewStyle>;
   stackActiveStyle?: StyleProp<ViewStyle>;
@@ -88,12 +116,6 @@ function ensureTick() {
   }, 50);
 }
 
-/** Concatenate wrapper + consumer `class` when both are set. */
-function mergeClass(base?: string | null, consumer?: string | null): string | undefined {
-  if (base && consumer) return `${base} ${consumer}`;
-  return consumer ?? base ?? undefined;
-}
-
 /** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
 function mergeStyle<T extends ViewStyle | TextStyle>(
   base?: StyleProp<T> | null,
@@ -105,55 +127,76 @@ function mergeStyle<T extends ViewStyle | TextStyle>(
   return [base, consumer];
 }
 
-/** Card chrome for a toast item — aligned with gallery raised toast. */
-function toastChrome(): ViewStyle {
+/**
+ * A raised row (card fill, control edge). The close cross is 24 points square
+ * on purpose; a finger's hit slop brings it to 44. Enter and exit are toast.md's
+ * 200 ms (16 points up, then 95%).
+ */
+function look() {
   return {
-    padding: 12,
-    borderRadius: radius.control,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.card,
-    gap: 4,
-    minWidth: 240,
+    root: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 12,
+      paddingVertical: 12,
+      paddingHorizontal: 14,
+      borderRadius: radius.control,
+      borderCurve: "continuous",
+      borderWidth: 1,
+      borderColor: colors.border,
+      backgroundColor: colors.card,
+      boxShadow: finish.control.rest,
+      minWidth: 200,
+    } satisfies ViewStyle,
+    // toast.md: 200 ms. A set `class` owns the whole class (a later duration does not override).
+    motion: "transition-all duration-200 ease-out",
+    enter: "opacity-0 translate-y-4",
+    exit: "opacity-0 scale-95",
+    title: { fontSize: 14, fontWeight: "600", color: colors.foreground } satisfies TextStyle,
+    text: {
+      fontSize: 13,
+      color: colors.mutedForeground,
+      fontVariant: ["tabular-nums"],
+    } satisfies TextStyle,
+    close: {
+      minWidth: 24,
+      minHeight: 24,
+      alignItems: "center",
+      justifyContent: "center",
+      borderRadius: 12,
+    } satisfies ViewStyle,
+    stack: { gap: 8, padding: 12, minWidth: 280, maxWidth: 360 } satisfies ViewStyle,
   };
 }
 
-function toastMotionClass(): string {
-  return "transition-all duration-200 ease-out";
-}
-
-function titleChrome(): TextStyle {
-  return { fontSize: 14, fontWeight: "600", color: colors.foreground };
-}
-
-function descriptionChrome(): TextStyle {
-  return { fontSize: 13, color: colors.mutedForeground };
-}
-
-/** Stack width / gap — app places the Overlay; stack owns item layout chrome. */
-function stackChrome(): ViewStyle {
+function closeActive(): ViewStyle {
   return {
-    gap: 8,
-    padding: 12,
-    maxWidth: 360,
-    width: 340,
+    backgroundColor: alpha(colors.foreground, 0.1),
+    ...pressSink(0.9, "background-color").activeStyle,
   };
+}
+
+/** The close cross's pressed style: the sink, or only the colour when motion is reduced. */
+export function toastCloseActive(): ViewStyle {
+  return closeActive();
 }
 
 function overlayChrome(placement: Anchor): ViewStyle {
-  const left = placement.toLowerCase().includes("left");
-  const center = placement.toLowerCase().includes("center");
-  const bottom = placement.toLowerCase().includes("bottom");
+  const name = placement.toLowerCase();
+  const left = name.includes("left");
+  const center = name.includes("center");
+  const bottom = name.includes("bottom");
   return {
     left: 0,
     right: 0,
     top: 0,
     bottom: 0,
-    padding: 12,
+    paddingHorizontal: 12,
     paddingTop: safeArea().top + 12,
     paddingBottom: safeArea().bottom + 12,
     alignItems: left ? "flex-start" : center ? "center" : "flex-end",
     justifyContent: bottom ? "flex-end" : "flex-start",
+    pointerEvents: "box-none",
   };
 }
 
@@ -182,97 +225,127 @@ toast.dismiss = (id?: string) => {
   syncVisible();
 };
 
+/** The toast's title; a string child gets the semibold type. */
+export function ToastTitle(props: ToastTitleProps) {
+  if (typeof props.children !== "string" && props.children != null) {
+    return (
+      <View class={props.class ?? undefined} style={props.style as StyleProp<ViewStyle>}>
+        {props.children}
+      </View>
+    );
+  }
+  return (
+    <Text
+      class={props.class ?? undefined}
+      style={mergeStyle(look().title, props.style as StyleProp<TextStyle>)}
+    >
+      {props.children}
+    </Text>
+  );
+}
+
+/** The toast's description; a string child gets the quieter type. */
+export function ToastDescription(props: ToastDescriptionProps) {
+  if (typeof props.children !== "string" && props.children != null) {
+    return (
+      <View class={props.class ?? undefined} style={props.style as StyleProp<ViewStyle>}>
+        {props.children}
+      </View>
+    );
+  }
+  return (
+    <Text
+      class={props.class ?? undefined}
+      style={mergeStyle(look().text, props.style as StyleProp<TextStyle>)}
+    >
+      {props.children}
+    </Text>
+  );
+}
+
+/** The close cross. Stringless: pass `children` to replace the mark. */
+export function ToastClose(props: ToastCloseProps) {
+  const sink = pressSink(0.9, "background-color");
+  return (
+    <View
+      accessible
+      role="button"
+      accessibilityLabel={props.accessibilityLabel ?? "Dismiss"}
+      accessibilityState={{ disabled: props.disabled }}
+      hitSlop={touchHitSlop(24)}
+      class={props.class ?? undefined}
+      onPress={props.disabled ? undefined : props.onPress}
+      hoverStyle={mergeStyle(hovered(), props.hoverStyle)}
+      activeStyle={mergeStyle(closeActive(), props.activeStyle)}
+      focusStyle={mergeStyle(focusRing(), props.focusStyle)}
+      style={mergeStyle({ ...look().close, ...sink.transition }, props.style)}
+    >
+      {props.children ?? (
+        <Text style={{ fontSize: 16, lineHeight: 16, color: colors.mutedForeground }}>×</Text>
+      )}
+    </View>
+  );
+}
+
+/** A raised toast row. Enter and exit apply only while the consumer left that phase unset. */
 export function Toast(props: ToastProps) {
-  const {
-    class: className,
-    style,
-    hoverStyle,
-    activeStyle,
-    focusStyle,
-    disabledStyle,
-    startingClass,
-    endingClass,
-    swipingClass,
-    accessibilityLabel,
-    title,
-    description,
-    children,
-    ...rest
-  } = props;
-
-  const label = accessibilityLabel ?? ([title, description].filter(Boolean).join(". ") || null);
-
+  const [, rest] = split(props, [
+    "children",
+    "title",
+    "description",
+    "class",
+    "style",
+    "startingClass",
+    "endingClass",
+    "swipingClass",
+    "accessibilityLabel",
+  ]);
+  const label =
+    props.accessibilityLabel ??
+    ([props.title, props.description].filter(Boolean).join(". ") || undefined);
   return (
     <BaseToast
       {...rest}
       accessibilityLabel={label}
-      class={mergeClass(toastMotionClass(), className)}
-      style={mergeStyle(toastChrome(), style)}
-      hoverStyle={mergeStyle(undefined, hoverStyle)}
-      activeStyle={mergeStyle(undefined, activeStyle)}
-      focusStyle={mergeStyle(undefined, focusStyle)}
-      disabledStyle={mergeStyle(undefined, disabledStyle)}
-      startingClass={mergeClass("opacity-0 translate-y-4", startingClass)}
-      endingClass={mergeClass("opacity-0 scale-95", endingClass)}
-      swipingClass={mergeClass("transition-none", swipingClass)}
+      class={props.class === undefined ? look().motion : props.class}
+      style={mergeStyle(look().root, props.style)}
+      startingClass={props.startingClass === undefined ? look().enter : props.startingClass}
+      endingClass={props.endingClass === undefined ? look().exit : props.endingClass}
+      swipingClass={props.swipingClass === undefined ? "transition-none" : props.swipingClass}
     >
-      {children ?? (
-        <View style={{ gap: 2 }}>
-          {title ? <Text style={titleChrome()}>{title}</Text> : null}
-          {description ? <Text style={descriptionChrome()}>{description}</Text> : null}
+      {props.children ?? (
+        <View style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 12 }}>
+          <View style={{ flex: 1, gap: 2 }}>
+            {props.title ? <ToastTitle>{props.title}</ToastTitle> : null}
+            {props.description ? <ToastDescription>{props.description}</ToastDescription> : null}
+          </View>
+          {props.onDismissRequest ? (
+            <ToastClose onPress={() => props.onDismissRequest?.()} />
+          ) : null}
         </View>
       )}
     </BaseToast>
   );
 }
 
+/** The stack the toasts sit in. The app places it; this only sets its width and gap. */
 export function ToastStack(props: ToastStackProps) {
-  const {
-    class: className,
-    style,
-    hoverStyle,
-    activeStyle,
-    focusStyle,
-    disabledStyle,
-    placement,
-    children,
-    ...rest
-  } = props;
-
+  const [, rest] = split(props, ["style", "placement", "children"]);
   return (
     <BaseToastStack
       {...rest}
-      placement={placement ?? "topRight"}
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(stackChrome(), style)}
-      hoverStyle={mergeStyle(undefined, hoverStyle)}
-      activeStyle={mergeStyle(undefined, activeStyle)}
-      focusStyle={mergeStyle(undefined, focusStyle)}
-      disabledStyle={mergeStyle(undefined, disabledStyle)}
+      placement={props.placement ?? "topRight"}
+      style={mergeStyle(look().stack, props.style)}
     >
-      {children}
+      {props.children}
     </BaseToastStack>
   );
 }
 
+/** The default stack, in an overlay inset by the safe area. */
 export function Toaster(props: ToasterProps) {
   ensureTick();
-  const {
-    placement = "topRight",
-    motion,
-    closeOnEscape,
-    class: className,
-    style,
-    stackClass,
-    stackStyle,
-    stackHoverStyle,
-    stackActiveStyle,
-    stackFocusStyle,
-    stackDisabledStyle,
-    onExpandedChange,
-    onCancel,
-  } = props;
-
+  const placement = props.placement ?? "topRight";
   const dismissNewest = () => {
     const newest = visible()
       .filter((t) => t.status !== "ending")
@@ -282,28 +355,27 @@ export function Toaster(props: ToasterProps) {
       syncVisible();
     }
   };
-
   return (
     <Overlay
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(mergeStyle(overlayChrome(placement), { pointerEvents: "box-none" }), style)}
+      class={props.class ?? undefined}
+      style={mergeStyle(overlayChrome(placement), props.style)}
     >
       <ToastStack
         placement={placement}
-        motion={motion}
-        closeOnEscape={closeOnEscape}
-        class={stackClass ?? undefined}
-        style={stackStyle}
-        hoverStyle={stackHoverStyle}
-        activeStyle={stackActiveStyle}
-        focusStyle={stackFocusStyle}
-        disabledStyle={stackDisabledStyle}
+        motion={props.motion}
+        closeOnEscape={props.closeOnEscape}
+        class={props.stackClass ?? undefined}
+        style={props.stackStyle}
+        hoverStyle={props.stackHoverStyle}
+        activeStyle={props.stackActiveStyle}
+        focusStyle={props.stackFocusStyle}
+        disabledStyle={props.stackDisabledStyle}
         onExpandedChange={({ expanded: open }) => {
           expanded.set(open);
-          onExpandedChange?.({ expanded: open });
+          props.onExpandedChange?.({ expanded: open });
         }}
         onCancel={() => {
-          if (onCancel) onCancel();
+          if (props.onCancel) props.onCancel();
           else dismissNewest();
         }}
       >

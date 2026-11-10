@@ -49,7 +49,7 @@ Surface depth, `boxShadow` only; fills stay on `colors.*`. A finish is chosen by
 | `filled`          | A control on a solid brand fill                                         |
 | `popup`           | Popup-family **one** soft shadow (menu, popover, select, dialog, sheet) |
 
-A hover has no entry: it keeps the rest shadow and the state style changes the fill only. Overlay chrome is shared: `popupSurface()`, `popupBackdrop()`, `overlayShadow()`; `modalSurface()` is added with the `dialog` / `sheet` migration.
+A hover has no entry: it keeps the rest shadow and the state style changes the fill only. Overlay chrome is shared: `popupSurface()`, `popupBackdrop()`, `overlayShadow()`, `modalSurface()` (the dialog / sheet card: 16-point corners, 20 points of padding).
 
 ## State
 
@@ -70,7 +70,7 @@ const ring = focusRing();
 
 - `token(name)` — reactive read of a named token from the active theme
 - `colors.*` / `radius.control` — thin getters over `token()`; `alpha(color, a)` — a color at opacity `a`
-- `finish.control.*` / `finish.filled` / `finish.popup` — surface depth; `popupSurface()` / `popupBackdrop()` / `overlayShadow()` — overlay chrome
+- `finish.control.*` / `finish.filled` / `finish.popup` — surface depth; `popupSurface()` / `modalSurface()` / `popupBackdrop()` / `overlayShadow()` — overlay chrome
 - `focusRing()`, `disabledOpacity()` — shared state looks
 
 Changing the brand means editing `theme.json` (colors, radius, shadow colors) or `finish` in `theme.ts` (shadow shapes).
@@ -95,3 +95,4 @@ Changing the brand means editing `theme.json` (colors, radius, shadow colors) or
 - 2026-11-10 — The disabled opacity is 0.5 everywhere (select and combobox items were 0.4). Why: one disabled look.
 - 2026-11-10 — Hover changes the fill only and keeps the rest shadow; `finish.hover` is gone (it equalled `raised`). Why: a state style merges over the base style, so a repeated shadow is noise.
 - 2026-11-10 — Our own keys carry a `custom-` prefix, every color is oklch, and `theme.json` keeps every key of NSH's default theme with its official value. Why: the file mixes NSH's standard with ours, and a prefix plus a test is the only way to tell them apart in JSON, which has no comments; oklch is what the official theme uses.
+- 2026-11-11 — Added `modalSurface()` (16-point corners, 20 points of padding, the edge, the card fill, the popup shadow) for dialog and sheet. Why: a modal's radius and padding differ from `popupSurface` (the control radius, 4 points of padding); no new token and no `overlayMotion`. A sheet's per-edge geometry overrides the radius and the padding.

@@ -1,6 +1,7 @@
-import { colors, disabledOpacity, overlayShadow, popupBackdrop, radius } from "@shadcn-nsh/theme";
+// Source: examples/nsh-gallery-ui/look/overlay.ts @ 64ab8a1d (baseline), see NOTICE.
+import { colors, disabledOpacity, focusRing, modalSurface, popupBackdrop } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
-import { context, Text, View } from "nsh";
+import { context, split, Text, View } from "nsh";
 import {
   Dialog as BaseDialog,
   type DialogChangeReason,
@@ -8,25 +9,16 @@ import {
 } from "nsh/base";
 
 import { Button, type ButtonVariant } from "./button";
+import { isPointer } from "./lib/density";
 import { createOpenState, type OpenState } from "./lib/open-state";
 
 /**
- * Composition root (shadcn `Dialog`): holds open state for Trigger / Content.
- * Panel look and base props live on {@link DialogContent}.
+ * Composition root for `nsh/base` Dialog. Open state only: the card's
+ * `animation`, `presentation` and `closeOn*` flags live on {@link DialogContent}.
  */
 export type DialogProps = {
   open?: boolean | null;
   defaultOpen?: boolean;
-  /** Default animation for {@link DialogContent} when Content omits `animation`. */
-  animation?: "slide" | "fade" | "none";
-  /** Default presentation for Content when omitted. */
-  presentation?: BaseDialogProps["presentation"];
-  /** Default Escape / back dismiss for Content when omitted. */
-  closeOnEscape?: boolean;
-  /** Default backdrop-press dismiss for Content when omitted. */
-  closeOnBackdropPress?: boolean;
-  /** Default swipe-to-dismiss for Content when omitted. */
-  closeOnSwipe?: boolean;
   children?: JSX.Element;
   onOpenChange?: (event: { open: boolean; reason: DialogChangeReason }) => void;
   onOpen?: () => void;
@@ -35,10 +27,9 @@ export type DialogProps = {
 };
 
 /**
- * Theme layer on `nsh/base` Dialog as shadcn `DialogContent`. All base props +
- * style hooks pass through; consumer styles shallow-merge over defaults.
- * Open / lifecycle events are owned by the {@link Dialog} context.
- * Wrapper default `animation` is `"fade"` (centered card); nsh/base defaults to `"slide"`.
+ * Theme layer on `nsh/base` Dialog as `DialogContent`. All base props and style
+ * hooks pass through. Open and lifecycle events come from the {@link Dialog}
+ * context. Default `animation` is `"fade"` (a centered card); base defaults to `"slide"`.
  */
 export type DialogContentProps = Omit<
   BaseDialogProps,
@@ -64,7 +55,7 @@ export type DialogCloseProps = {
   style?: StyleProp<ViewStyle>;
 };
 
-/** App chrome around title / description (not an `nsh/base` part). */
+/** App chrome around title and description (not an `nsh/base` part). */
 export type DialogHeaderProps = {
   children?: JSX.Element;
   class?: string | null;
@@ -93,11 +84,6 @@ export type DialogDescriptionProps = {
 };
 
 type DialogContextValue = OpenState & {
-  animation?: "slide" | "fade" | "none";
-  presentation?: BaseDialogProps["presentation"];
-  closeOnEscape?: boolean;
-  closeOnBackdropPress?: boolean;
-  closeOnSwipe?: boolean;
   onOpen?: () => void;
   onClose?: () => void;
   onCancel?: () => void;
@@ -111,12 +97,6 @@ function useDialog() {
   return ctx;
 }
 
-/** Concatenate wrapper + consumer `class` when both are set. */
-function mergeClass(base?: string | null, consumer?: string | null): string | undefined {
-  if (base && consumer) return `${base} ${consumer}`;
-  return consumer ?? base ?? undefined;
-}
-
 /** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
 function mergeStyle<T extends ViewStyle | TextStyle>(
   base?: StyleProp<T> | null,
@@ -128,236 +108,232 @@ function mergeStyle<T extends ViewStyle | TextStyle>(
   return [base, consumer];
 }
 
-/** Centered card chrome — aligned with shadcn `cn-dialog-content` / max-w-lg padding. */
-function contentPopupChrome(): ViewStyle {
+/**
+ * The card, its type and its chrome. The card is 90% of the window on purpose
+ * (a dialog is a card, not a hug of its title). Title 17 / 20 and text 13 / 15
+ * follow the pointer.
+ */
+function look() {
+  const pointer = isPointer();
   return {
-    width: "90%",
-    maxWidth: 512,
-    alignSelf: "center",
-    marginTop: "20%",
-    padding: 24,
-    gap: 16,
-    borderRadius: radius.control * 2,
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.card,
-    ...overlayShadow(),
+    card: {
+      ...modalSurface(),
+      width: "90%",
+      maxWidth: "90%",
+      margin: "auto",
+      gap: 12,
+    } satisfies ViewStyle,
+    header: { gap: 4 } satisfies ViewStyle,
+    footer: {
+      flexDirection: "row",
+      justifyContent: "flex-end",
+      flexWrap: "wrap",
+      gap: 8,
+    } satisfies ViewStyle,
+    title: {
+      fontSize: pointer ? 17 : 20,
+      fontWeight: "600",
+      color: colors.foreground,
+    } satisfies TextStyle,
+    body: {
+      fontSize: pointer ? 13 : 15,
+      lineHeight: pointer ? 19 : 21,
+      color: colors.mutedForeground,
+    } satisfies TextStyle,
   };
 }
 
-function headerChrome(): ViewStyle {
-  return { gap: 6 };
+/** The dialog card, the same style {@link DialogContent} puts on the popup. */
+export function dialogCardStyle(): ViewStyle {
+  return look().card;
 }
 
-function footerChrome(): ViewStyle {
-  return {
-    flexDirection: "row",
-    justifyContent: "flex-end",
-    flexWrap: "wrap",
-    gap: 8,
-    marginTop: 4,
-  };
+/** The dialog title's type. */
+export function dialogTitleStyle(): TextStyle {
+  return look().title;
 }
 
-function titleChrome(): TextStyle {
-  return { fontSize: 16, fontWeight: "600", color: colors.foreground };
+/** The dialog description's type. */
+export function dialogBodyStyle(): TextStyle {
+  return look().body;
 }
 
-function descriptionChrome(): TextStyle {
-  return { fontSize: 13, color: colors.mutedForeground };
-}
-
+/** Composition root: owns the open state the parts below read. */
 export function Dialog(props: DialogProps) {
-  const {
-    open,
-    defaultOpen,
-    animation,
-    presentation,
-    closeOnEscape,
-    closeOnBackdropPress,
-    closeOnSwipe,
-    children,
-    onOpenChange,
-    onOpen,
-    onClose,
-    onCancel,
-  } = props;
-
-  const state = createOpenState<DialogChangeReason>({
-    open,
-    defaultOpen,
-    onOpenChange,
-  });
-
+  const state = createOpenState<DialogChangeReason>(props);
   return (
     <DialogContext.Provider
       value={{
         ...state,
-        animation,
-        presentation,
-        closeOnEscape,
-        closeOnBackdropPress,
-        closeOnSwipe,
-        onOpen,
-        onClose,
-        onCancel,
+        get onOpen() {
+          return props.onOpen;
+        },
+        get onClose() {
+          return props.onClose;
+        },
+        get onCancel() {
+          return props.onCancel;
+        },
       }}
     >
-      {children}
+      {props.children}
     </DialogContext.Provider>
   );
 }
 
+/** Opens the dialog; a string child renders a `Button`. */
 export function DialogTrigger(props: DialogTriggerProps) {
   const ctx = useDialog();
-  const { children, disabled, class: className, style } = props;
-  const open = () => ctx.setOpen(true);
-
-  if (typeof children === "string") {
+  const open = () => {
+    if (!props.disabled) ctx.setOpen(true);
+  };
+  if (typeof props.children === "string") {
     return (
-      <Button disabled={disabled} onPress={open}>
-        {children}
+      <Button
+        disabled={props.disabled}
+        class={props.class ?? undefined}
+        style={props.style}
+        onPress={open}
+      >
+        {props.children}
       </Button>
     );
   }
-
   return (
     <View
-      class={mergeClass(undefined, className)}
-      onPress={disabled ? undefined : open}
-      style={mergeStyle({ opacity: disabledOpacity(disabled) }, style)}
+      accessible
+      role="button"
+      accessibilityState={{ disabled: props.disabled }}
+      class={props.class ?? undefined}
+      focusStyle={focusRing()}
+      onPress={props.disabled ? undefined : open}
+      style={props.disabled ? mergeStyle({ opacity: disabledOpacity() }, props.style) : props.style}
     >
-      {children}
+      {props.children}
     </View>
   );
 }
 
+/** Closes the dialog; a string child renders a `Button` (outline unless `variant` is set). */
 export function DialogClose(props: DialogCloseProps) {
   const ctx = useDialog();
-  const { children, variant = "outline", disabled, class: className, style } = props;
-
-  if (typeof children !== "string" && children != null) {
+  const close = () => {
+    if (!props.disabled) ctx.setOpen(false);
+  };
+  if (typeof props.children !== "string" && props.children != null) {
     return (
       <View
-        class={mergeClass(undefined, className)}
-        onPress={disabled ? undefined : () => ctx.setOpen(false)}
-        style={mergeStyle({ opacity: disabledOpacity(disabled) }, style)}
+        accessible
+        role="button"
+        accessibilityState={{ disabled: props.disabled }}
+        class={props.class ?? undefined}
+        focusStyle={focusRing()}
+        onPress={props.disabled ? undefined : close}
+        style={
+          props.disabled ? mergeStyle({ opacity: disabledOpacity() }, props.style) : props.style
+        }
       >
-        {children}
+        {props.children}
       </View>
     );
   }
-
   return (
-    <Button disabled={disabled} variant={variant} onPress={() => ctx.setOpen(false)}>
-      {children ?? "Close"}
+    <Button
+      disabled={props.disabled}
+      variant={props.variant ?? "outline"}
+      class={props.class ?? undefined}
+      style={props.style}
+      onPress={close}
+    >
+      {props.children ?? "Close"}
     </Button>
   );
 }
 
+/** The card, with the backdrop dimmed. Motion stays on base (`animation`). */
 export function DialogContent(props: DialogContentProps) {
   const ctx = useDialog();
-  const {
-    children,
-    animation: animationProp,
-    presentation: presentationProp,
-    closeOnEscape: closeOnEscapeProp,
-    closeOnBackdropPress: closeOnBackdropPressProp,
-    closeOnSwipe: closeOnSwipeProp,
-    class: className,
-    style,
-    backdropClass,
-    backdropStyle,
-    ...rest
-  } = props;
-
-  const animation = animationProp ?? ctx.animation ?? "fade";
-  const presentation = presentationProp ?? ctx.presentation;
-  const closeOnEscape = closeOnEscapeProp ?? ctx.closeOnEscape;
-  const closeOnBackdropPress = closeOnBackdropPressProp ?? ctx.closeOnBackdropPress;
-  const closeOnSwipe = closeOnSwipeProp ?? ctx.closeOnSwipe;
-
+  const chrome = look();
+  const [, rest] = split(props, [
+    "children",
+    "style",
+    "backdropStyle",
+    "animation",
+    "class",
+    "backdropClass",
+  ]);
   return (
     <BaseDialog
       {...rest}
       open={ctx.open()}
-      animation={animation}
-      presentation={presentation}
-      closeOnEscape={closeOnEscape}
-      closeOnBackdropPress={closeOnBackdropPress}
-      closeOnSwipe={closeOnSwipe}
+      animation={props.animation ?? "fade"}
       onOpenChange={({ open, reason }) => ctx.setOpen(open, reason)}
       onOpen={ctx.onOpen}
       onClose={ctx.onClose}
       onCancel={ctx.onCancel}
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(contentPopupChrome(), style)}
-      backdropClass={mergeClass(undefined, backdropClass)}
-      backdropStyle={mergeStyle(popupBackdrop(), backdropStyle)}
+      class={props.class ?? undefined}
+      style={mergeStyle(chrome.card, props.style)}
+      backdropClass={props.backdropClass ?? undefined}
+      backdropStyle={mergeStyle(popupBackdrop(), props.backdropStyle)}
     >
-      {children}
+      {props.children}
     </BaseDialog>
   );
 }
 
+/** The header block of the card. */
 export function DialogHeader(props: DialogHeaderProps) {
-  const { children, class: className, style } = props;
   return (
-    <View class={mergeClass(undefined, className)} style={mergeStyle(headerChrome(), style)}>
-      {children}
+    <View class={props.class ?? undefined} style={mergeStyle(look().header, props.style)}>
+      {props.children}
     </View>
   );
 }
 
+/** The footer row of the card. */
 export function DialogFooter(props: DialogFooterProps) {
-  const { children, class: className, style } = props;
   return (
-    <View class={mergeClass(undefined, className)} style={mergeStyle(footerChrome(), style)}>
-      {children}
+    <View class={props.class ?? undefined} style={mergeStyle(look().footer, props.style)}>
+      {props.children}
     </View>
   );
 }
 
+/** The card's title; a string child gets the dialog type. */
 export function DialogTitle(props: DialogTitleProps) {
-  const { children, class: className, style } = props;
-  if (typeof children !== "string" && children != null) {
+  if (typeof props.children !== "string" && props.children != null) {
     return (
-      <View
-        class={mergeClass(undefined, className)}
-        style={mergeStyle(undefined, style as StyleProp<ViewStyle> | null)}
-      >
-        {children}
+      <View class={props.class ?? undefined} style={props.style as StyleProp<ViewStyle>}>
+        {props.children}
       </View>
     );
   }
+  // Read in the JSX so a scheme change re-runs it. A helper outside the element does not.
   return (
     <Text
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(titleChrome(), style as StyleProp<TextStyle> | null)}
+      class={props.class ?? undefined}
+      style={mergeStyle(look().title, props.style as StyleProp<TextStyle>)}
     >
-      {children}
+      {props.children}
     </Text>
   );
 }
 
+/** The card's description; a string child gets the dialog type. */
 export function DialogDescription(props: DialogDescriptionProps) {
-  const { children, class: className, style } = props;
-  if (typeof children !== "string" && children != null) {
+  if (typeof props.children !== "string" && props.children != null) {
     return (
-      <View
-        class={mergeClass(undefined, className)}
-        style={mergeStyle(undefined, style as StyleProp<ViewStyle> | null)}
-      >
-        {children}
+      <View class={props.class ?? undefined} style={props.style as StyleProp<ViewStyle>}>
+        {props.children}
       </View>
     );
   }
   return (
     <Text
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(descriptionChrome(), style as StyleProp<TextStyle> | null)}
+      class={props.class ?? undefined}
+      style={mergeStyle(look().body, props.style as StyleProp<TextStyle>)}
     >
-      {children}
+      {props.children}
     </Text>
   );
 }
