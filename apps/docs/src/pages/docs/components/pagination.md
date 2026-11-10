@@ -48,26 +48,31 @@ const [page, setPage] = createSignal(1);
 
 ## API
 
-| Prop                 | Type                                | Default | Notes                    |
-| -------------------- | ----------------------------------- | ------- | ------------------------ |
-| `page`               | `number`                            | —       | Current page (required)  |
-| `totalPages`         | `number`                            | —       | Total pages (required)   |
-| `visiblePages`       | `number`                            | —       | Window of numbered items |
-| `compact`            | `boolean`                           | —       | Compact layout           |
-| `disabled`           | `boolean`                           | —       |                          |
-| `accessibilityLabel` | `string \| null`                    | —       |                          |
-| `children`           | `JSX.Element`                       | —       | Optional slot            |
-| `onChange`           | `(event: { page: number }) => void` | —       |                          |
+| Prop                 | Type                                | Default      | Notes                                                                               |
+| -------------------- | ----------------------------------- | ------------ | ----------------------------------------------------------------------------------- |
+| `page`               | `number`                            | —            | Current page (required)                                                             |
+| `totalPages`         | `number`                            | —            | Total pages (required)                                                              |
+| `visiblePages`       | `number`                            | —            | Window of numbered items                                                            |
+| `compact`            | `boolean`                           | —            | Compact layout                                                                      |
+| `disabled`           | `boolean`                           | —            |                                                                                     |
+| `accessibilityLabel` | `string \| null`                    | —            |                                                                                     |
+| `children`           | `JSX.Element`                       | —            | Optional slot                                                                       |
+| `onChange`           | `(event: { page: number }) => void` | —            |                                                                                     |
+| `itemClass`          | `string`                            | —            | Concatenated after the state classes (`selected:`, `hover:`, `disabled:opacity-50`) |
+| `itemStyle`          | `StyleProp<TextStyle>`              | —            | Merged over the outlined box. Keep color off it so the state classes can paint.     |
+| `renderItem`         | `(item) => JSX.Element`             | ‹ › … / page | Replaces the default glyphs.                                                        |
 
 ## Differences
 
-| Topic       | shadcn                                                      | This package                                  |
-| ----------- | ----------------------------------------------------------- | --------------------------------------------- |
-| Parts       | `Pagination` / `Content` / `Item` / `Link` / `Previous` / … | single `Pagination` with built-in item render |
-| Navigation  | compose links yourself                                      | `page` + `totalPages` + `onChange`            |
-| Labels      | text / icons via children                                   | fixed ‹ › … / page number chrome              |
-| Class hooks | `className` / CVA                                           | theme tokens + locked item styles             |
+| Topic       | shadcn                                                      | This package                                                                                         |
+| ----------- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| Parts       | `Pagination` / `Content` / `Item` / `Link` / `Previous` / … | single `Pagination` with built-in item render                                                        |
+| Navigation  | compose links yourself                                      | `page` + `totalPages` + `onChange`                                                                   |
+| Labels      | text / icons via children                                   | fixed ‹ › … / page number chrome                                                                     |
+| Item states | per-part components                                         | one `itemClass`: selected is primary, hover is accent, press is muted, disabled is the theme opacity |
+| Density     | one control size                                            | pointer 32 (40 when `compact`); touch 44                                                             |
+| Class hooks | `className` / CVA                                           | `itemClass` / `itemStyle` / `renderItem` merge over the defaults                                     |
 
 ## Not forwarded
 
-From `nsh/base` Pagination: `style`, `itemStyle`, `focusStyle`, and `renderItem`. The wrapper owns layout, item chrome, and previous/next/ellipsis glyphs. Extend the copied source if you need base knobs.
+None. `style`, `itemStyle`, `itemClass`, and `renderItem` pass through. Base has no per-item style hooks, so item states stay classes. Glyphs stay ‹ › … (no icon set).

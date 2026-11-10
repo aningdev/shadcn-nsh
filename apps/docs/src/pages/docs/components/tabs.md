@@ -7,7 +7,7 @@ demo: tabs
 demoHeight: 320
 ---
 
-[`nsh/base`](https://nsh.dev/modules/nsh-base) owns presses, keyboard activation (including arrow keys in a list), the disabled state, and the tab / tablist roles for screen readers — unstyled on every platform. This package is the styled layer on top: a shadcn-shaped `Tabs` / `TabsList` / `TabsTrigger` / `TabsContent` tree, muted pill or line chrome, and theme tokens, the same role a community library plays above `nsh/base`. [`Tabs`](https://nsh.dev/elements/tabs) switch between sections of one place; the list holds no value — each tab is told `selected` and reports `onPress`. The composition root holds the string value for you (shadcn-like); under the hood `TabsList` is `nsh/base` `Tabs` and `TabsTrigger` is `Tab`. Store CLI `nsh` 0.4.0 has no list `indicatorClass` / `indicatorStyle`; selected fill (or line underline) is applied on the trigger via `selectedStyle`.
+[`nsh/base`](https://nsh.dev/modules/nsh-base) owns presses, keyboard activation (including arrow keys in a list), the disabled state, and the tab / tablist roles for screen readers — unstyled on every platform. This package is the styled layer on top: a shadcn-shaped `Tabs` / `TabsList` / `TabsTrigger` / `TabsContent` tree, muted pill or line chrome, and theme tokens, the same role a community library plays above `nsh/base`. [`Tabs`](https://nsh.dev/elements/tabs) switch between sections of one place; the list holds no value — each tab is told `selected` and reports `onPress`. The composition root holds the string value for you (shadcn-like); under the hood `TabsList` is `nsh/base` `Tabs` and `TabsTrigger` is `Tab`. The list draws the traveling indicator (`indicatorStyle`): a sunk pill thumb, or a primary underline on `line`.
 
 ## Install
 
@@ -150,29 +150,29 @@ Wrapper token chrome, then consumer styles shallow-merge on top (consumer wins p
 | `onLayout`      | function               | —           | Forwarded                                          |
 | `ref`           | ref                    | —           | Forwarded                                          |
 
-Remaining `TabsProps` / `ComponentHostProps` from `nsh/base` (the tablist) also pass through. Store CLI `nsh` 0.4.0 does not export list `indicatorClass` / `indicatorStyle`.
+Remaining `TabsProps` / `ComponentHostProps` from `nsh/base` (the tablist) also pass through, including `indicatorClass` / `indicatorStyle`. The wrapper paints the traveling thumb (or the underline) through `indicatorStyle`.
 
 ### `TabsTrigger` / `Tab` Props
 
-| Prop                 | Type                    | Default | Notes                                                              |
-| -------------------- | ----------------------- | ------- | ------------------------------------------------------------------ |
-| `value`              | `string`                | —       | Required on `TabsTrigger`; selects via the `Tabs` context          |
-| `selected`           | `boolean`               | —       | On `Tab` only — `TabsTrigger` derives this from context            |
-| `disabled`           | `boolean`               | —       | Forwarded; wrapper merges `{ opacity: 0.5 }` under `disabledStyle` |
-| `accessibilityLabel` | `string \| null`        | —       | Forwarded; string children default the label on `TabsTrigger`      |
-| `children`           | `string \| JSX.Element` | —       | Label; string children wrap in `Text` on `TabsTrigger`             |
-| `class`              | `string`                | —       | Forwarded; concatenated after any wrapper class                    |
-| `style`              | `StyleProp<ViewStyle>`  | —       | Merged over trigger chrome                                         |
-| `hoverStyle`         | `StyleProp<ViewStyle>`  | —       | Forwarded / merge                                                  |
-| `activeStyle`        | `StyleProp<ViewStyle>`  | —       | Forwarded / merge                                                  |
-| `focusStyle`         | `StyleProp<ViewStyle>`  | —       | Merged over theme focus ring                                       |
-| `disabledStyle`      | `StyleProp<ViewStyle>`  | —       | Merged over wrapper `{ opacity: 0.5 }`                             |
-| `selectedStyle`      | `StyleProp<ViewStyle>`  | —       | Merged over pill fill or line underline                            |
-| `classList`          | object                  | —       | Forwarded                                                          |
-| `testID`             | string                  | —       | Forwarded                                                          |
-| `tooltip`            | string                  | —       | Forwarded                                                          |
-| `onLayout`           | function                | —       | Forwarded                                                          |
-| `ref`                | ref                     | —       | Forwarded                                                          |
+| Prop                 | Type                    | Default | Notes                                                                               |
+| -------------------- | ----------------------- | ------- | ----------------------------------------------------------------------------------- |
+| `value`              | `string`                | —       | Required on `TabsTrigger`; selects via the `Tabs` context                           |
+| `selected`           | `boolean`               | —       | On `Tab` only — `TabsTrigger` derives this from context                             |
+| `disabled`           | `boolean`               | —       | Forwarded; wrapper merges `{ opacity: 0.5 }` under `disabledStyle`                  |
+| `accessibilityLabel` | `string \| null`        | —       | Forwarded; string children default the label on `TabsTrigger`                       |
+| `children`           | `string \| JSX.Element` | —       | Label; string children wrap in `Text` on `TabsTrigger`                              |
+| `class`              | `string`                | —       | Forwarded; concatenated after any wrapper class                                     |
+| `style`              | `StyleProp<ViewStyle>`  | —       | Merged over trigger chrome                                                          |
+| `hoverStyle`         | `StyleProp<ViewStyle>`  | —       | Forwarded / merge                                                                   |
+| `activeStyle`        | `StyleProp<ViewStyle>`  | —       | Forwarded / merge                                                                   |
+| `focusStyle`         | `StyleProp<ViewStyle>`  | —       | Merged over theme focus ring                                                        |
+| `disabledStyle`      | `StyleProp<ViewStyle>`  | —       | Merged over wrapper `{ opacity: 0.5 }`                                              |
+| `selectedStyle`      | `StyleProp<ViewStyle>`  | —       | Consumer paint on the tab. The selection mark is the list indicator, not this hook. |
+| `classList`          | object                  | —       | Forwarded                                                                           |
+| `testID`             | string                  | —       | Forwarded                                                                           |
+| `tooltip`            | string                  | —       | Forwarded                                                                           |
+| `onLayout`           | function                | —       | Forwarded                                                                           |
+| `ref`                | ref                     | —       | Forwarded                                                                           |
 
 Remaining `TabProps` / `ComponentHostProps` from `nsh/base` also pass through. `Tab` is the `nsh/base` symbol; `TabsTrigger` is the composition role that wraps it (prefer `TabsTrigger` in shadcn-shaped trees).
 
@@ -193,23 +193,23 @@ Remaining `TabProps` / `ComponentHostProps` from `nsh/base` also pass through. `
 
 ### Variants (`TabsList`)
 
-| Variant   | Notes                                                                |
-| --------- | -------------------------------------------------------------------- |
-| `default` | Muted pill rail; selected trigger gets background fill               |
-| `line`    | Transparent rail with border; selected trigger gets bottom underline |
+| Variant   | Notes                                                                          |
+| --------- | ------------------------------------------------------------------------------ |
+| `default` | Muted pill track (`colors.muted`) with a traveling thumb (`colors.background`) |
+| `line`    | Hairline rail; the indicator is a 2-point `colors.primary` underline           |
 
 ## Differences
 
-| Topic        | shadcn (`bases/base`)                   | This package                                                                                 |
-| ------------ | --------------------------------------- | -------------------------------------------------------------------------------------------- |
-| Value API    | `Tabs` root `value` / `onValueChange`   | same on the composition root; `nsh/base` list still holds none                               |
-| Parts        | `Tabs` / `List` / `Trigger` / `Content` | same names; `Tab` alias for direct base use; `TabsContent` is app `View` (base has no panel) |
-| List vs root | Base UI Root + List                     | root is our context `View`; list is `nsh/base` `Tabs`                                        |
-| Indicator    | CSS `after:` / data-active fill         | store `nsh` 0.4.0 has no list indicator hooks — selected chrome via trigger `selectedStyle`  |
-| Change event | string on the root                      | root `onValueChange`; each tab also has `onPress()` (nsh/base)                               |
-| `variant`    | on `TabsList` (`default` / `line`)      | same wrapper-only prop                                                                       |
-| Class hooks  | `className` / `cn-tabs*`                | `class` + token `style`; consumer styles merge over defaults                                 |
+| Topic        | shadcn (`bases/base`)                   | This package                                                                                          |
+| ------------ | --------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| Value API    | `Tabs` root `value` / `onValueChange`   | same on the composition root; `nsh/base` list still holds none                                        |
+| Parts        | `Tabs` / `List` / `Trigger` / `Content` | same names; `Tab` alias for direct base use; `TabsContent` is app `View` (base has no panel)          |
+| List vs root | Base UI Root + List                     | root is our context `View`; list is `nsh/base` `Tabs`                                                 |
+| Indicator    | CSS `after:` / data-active fill         | traveling `indicatorStyle`: thumb stands in for gallery `finish.thumb`, underline is `colors.primary` |
+| Change event | string on the root                      | root `onValueChange`; each tab also has `onPress()` (nsh/base)                                        |
+| `variant`    | on `TabsList` (`default` / `line`)      | same wrapper-only prop                                                                                |
+| Class hooks  | `className` / `cn-tabs*`                | `class` + token `style`; consumer styles merge over defaults                                          |
 
 ## Not forwarded
 
-None for store CLI `nsh` 0.4.0 `Tabs` / `Tab` props — all are forwarded. The wrapper only applies token chrome, a composition value root, and merges defaults under consumer style hooks (`class` concatenates). Newer `nsh` main list `indicatorClass` / `indicatorStyle` are absent from 0.4.0 and therefore not part of this surface.
+None. Base `Tabs` / `Tab` props are forwarded, including `indicatorStyle`. The wrapper paints the track and the indicator, and merges defaults under consumer style hooks.

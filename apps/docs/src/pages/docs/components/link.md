@@ -66,14 +66,16 @@ String children render as an underlined primary label. Prefer this for the defau
 
 ### Props
 
-| Prop                 | Type                    | Default | Notes                                          |
-| -------------------- | ----------------------- | ------- | ---------------------------------------------- |
-| `href`               | `string`                | —       | Destination                                    |
-| `current`            | `boolean`               | —       | Current-page semantics (heavier label weight)  |
-| `disabled`           | `boolean`               | —       | Forwarded                                      |
-| `openWith`           | `"system" \| "app"`     | —       | How to open the href                           |
-| `accessibilityLabel` | `string \| null`        | —       | Defaults to string `children` when omitted     |
-| `children`           | `string \| JSX.Element` | —       | Strings get a themed underlined `Text` wrapper |
+| Prop                                                                    | Type                    | Default     | Notes                                                      |
+| ----------------------------------------------------------------------- | ----------------------- | ----------- | ---------------------------------------------------------- |
+| `href`                                                                  | `string`                | —           | Destination                                                |
+| `current`                                                               | `boolean`               | —           | Current-page semantics (heavier label weight)              |
+| `disabled`                                                              | `boolean`               | —           | Forwarded                                                  |
+| `openWith`                                                              | `"system" \| "app"`     | —           | How to open the href                                       |
+| `accessibilityLabel`                                                    | `string \| null`        | —           | Defaults to string `children` when omitted                 |
+| `variant`                                                               | `"default" \| "quiet"`  | `"default"` | `quiet` uses `colors.mutedForeground`                      |
+| `children`                                                              | `string \| JSX.Element` | —           | Strings get a themed label; element children are the app's |
+| `style` / `hoverStyle` / `activeStyle` / `focusStyle` / `disabledStyle` | `StyleProp`             | —           | Merged over the text-link chrome                           |
 
 ### Events
 
@@ -84,19 +86,21 @@ String children render as an underlined primary label. Prefer this for the defau
 
 ### `linkColor`
 
-| Export      | Type          | Notes                                    |
-| ----------- | ------------- | ---------------------------------------- |
-| `linkColor` | `() => color` | Theme `colors.primary` for custom `Text` |
+| Export      | Type                | Notes                                                                                    |
+| ----------- | ------------------- | ---------------------------------------------------------------------------------------- |
+| `linkColor` | `(state?) => color` | No arguments is still `colors.primary`. A state resolves disabled, current, and `quiet`. |
 
 ## Differences
 
-| Topic         | shadcn (`bases/base`)                        | This package                                                        |
-| ------------- | -------------------------------------------- | ------------------------------------------------------------------- |
-| Link look     | Often `Button variant="link"` or `<a>` + CVA | Dedicated `Link` on `nsh/base` (nsh-only registry item)             |
-| Button `link` | `variant="link"` on Button                   | **Not on Button** — use this component; see also [Button](./button) |
-| Navigation    | App router / `<a href>`                      | `href` + `openWith` / `onOpen` from `nsh/base`                      |
-| Class hooks   | `className`                                  | theme tokens + locked text-link styles inside the wrapper           |
+| Topic         | shadcn (`bases/base`)                        | This package                                                                                              |
+| ------------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
+| Link look     | Often `Button variant="link"` or `<a>` + CVA | Dedicated `Link` on `nsh/base` (nsh-only registry item)                                                   |
+| Button `link` | `variant="link"` on Button                   | **Not on Button** — use this component; see also [Button](./button)                                       |
+| Navigation    | App router / `<a href>`                      | `href` + `openWith` / `onOpen` from `nsh/base`                                                            |
+| Underline     | often `text-decoration` or opacity           | hairline at `alpha(color, 0.35)` that turns solid on hover; the press sinks (`pressSink`), not an opacity |
+| Visited       | a visited color                              | none — this theme has no violet token                                                                     |
+| Class hooks   | `className`                                  | `class` plus style hooks; consumer styles merge over the chrome                                           |
 
 ## Not forwarded
 
-From `nsh/base` Link: style hooks (`style` / `hoverStyle` / `activeStyle` / `focusStyle` / `disabledStyle`, `class`). The wrapper owns the text-link look (underline, primary color, hover opacity). Extend the copied source if you need those knobs.
+None. Base link props and style hooks pass through. Hover and press are theme helpers (`alpha`, `pressSink`), not scattered opacities.

@@ -1,51 +1,25 @@
 {
   "colour-literals": [],
-  "merge-undefined": [
-    "collapsible.tsx",
-    "dialog.tsx",
-    "progress.tsx",
-    "sheet.tsx",
-    "table.tsx",
-    "tabs.tsx",
-    "toast.tsx"
-  ],
-  "props-destructure": [
-    "collapsible.tsx",
-    "dialog.tsx",
-    "progress.tsx",
-    "sheet.tsx",
-    "table.tsx",
-    "tabs.tsx",
-    "toast.tsx"
-  ],
+  "merge-undefined": ["dialog.tsx", "progress.tsx", "sheet.tsx", "table.tsx", "toast.tsx"],
+  "props-destructure": ["dialog.tsx", "progress.tsx", "sheet.tsx", "table.tsx", "toast.tsx"],
   "duration-literal": [],
   "doc-comments": [
-    "accordion.tsx",
     "avatar.tsx",
-    "collapsible.tsx",
     "dialog.tsx",
-    "link.tsx",
-    "pagination.tsx",
     "progress.tsx",
     "sheet.tsx",
     "slider.tsx",
     "table.tsx",
-    "tabs.tsx",
     "toast.tsx"
   ],
-  "docs-sections": ["accordion.tsx"],
+  "docs-sections": [],
   "has-test": [
-    "accordion.tsx",
     "avatar.tsx",
-    "collapsible.tsx",
     "dialog.tsx",
-    "link.tsx",
-    "pagination.tsx",
     "progress.tsx",
     "sheet.tsx",
     "slider.tsx",
     "table.tsx",
-    "tabs.tsx",
     "toast.tsx"
   ]
 }

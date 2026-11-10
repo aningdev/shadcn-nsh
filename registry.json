@@ -193,7 +193,7 @@
       "type": "registry:ui",
       "title": "Tabs",
       "description": "Styled tabs wrapping nsh/base Tabs / Tab — List / Trigger / Content; full base prop pass-through.",
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["theme", "density", "press"],
       "files": [
         {
           "path": "packages/ui/tabs.tsx",
@@ -291,7 +291,7 @@
       "type": "registry:ui",
       "title": "Collapsible",
       "description": "Styled collapsible wrapping nsh/base Collapsible — theme tokens + Trigger / Content; full base prop pass-through.",
-      "registryDependencies": ["theme", "button", "open-state"],
+      "registryDependencies": ["theme", "density", "press", "open-state"],
       "files": [
         {
           "path": "packages/ui/collapsible.tsx",
@@ -333,7 +333,7 @@
       "type": "registry:ui",
       "title": "Accordion",
       "description": "Styled accordion wrapping nsh/base Accordion — theme tokens + Header / Trigger / Panel; composition-only.",
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["theme", "density", "press"],
       "files": [
         {
           "path": "packages/ui/accordion.tsx",
@@ -375,7 +375,7 @@
       "type": "registry:ui",
       "title": "Link",
       "description": "Styled link wrapping nsh/base Link — theme tokens + underline label.",
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["theme", "density", "press"],
       "files": [
         {
           "path": "packages/ui/link.tsx",
@@ -417,7 +417,7 @@
       "type": "registry:ui",
       "title": "Pagination",
       "description": "Styled pagination wrapping nsh/base Pagination — theme tokens + item chrome.",
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["theme", "density"],
       "files": [
         {
           "path": "packages/ui/pagination.tsx",

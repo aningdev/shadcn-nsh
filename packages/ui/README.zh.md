@@ -240,12 +240,12 @@ bun run shots apps/gallery/pilot.tsx /tmp/shots pilot   # 生成 pilot-light.png
 
 ## 规则的迁移状态
 
-| 状态   | 组件                                                                                                                                                                                                                        |
-| ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 已迁移 | Family 配方：`popover`、`tooltip`、`menu`、`context-menu`、`select`、`combobox`。Leaf 配方（按参考实现移植）：`button`、`switch`、`toggle`、`toggle-group`、`checkbox`、`radio-group`、`input`、`number-input`、`otp-input` |
-| 未迁移 | 其余所有组件                                                                                                                                                                                                                |
+| 状态   | 组件                                                                                                                                                                                                                                                                                  |
+| ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 已迁移 | Family 配方：`popover`、`tooltip`、`menu`、`context-menu`、`tabs`、`accordion`、`collapsible`、`pagination`、`select`、`combobox`。Leaf 配方（按参考实现移植）：`button`、`switch`、`toggle`、`toggle-group`、`checkbox`、`radio-group`、`link`、`input`、`number-input`、`otp-input` |
+| 未迁移 | 其余所有组件                                                                                                                                                                                                                                                                          |
 
-共享的 `lib` 模块，都是第二个组件需要时才加的（R1）：`follow`（switch、checkbox、radio，以及 select 与 combobox 的 chevron）、`press`（button、toggle，以及 checkbox 与 radio 的 group sink）、`density`（button、switch、toggle、checkbox、radio、input、number-input、otp-input、select、combobox）、`field`（input、number-input、otp-input 共用的边、凹陷和焦点）、`listbox`（select 与 combobox 共用的 chevron、行、弹层和触屏 sheet）。
+共享的 `lib` 模块，都是第二个组件需要时才加的（R1）：`follow`（switch、checkbox、radio，以及 select 与 combobox 的 chevron）、`press`（button、toggle，以及 checkbox 与 radio 的 group sink；家族 7 的按下也用它）、`density`（button、switch、toggle、checkbox、radio、input、number-input、otp-input、select、combobox，以及 tabs、accordion、collapsible、link、pagination 的指针 / 触屏尺寸）、`field`（input、number-input、otp-input 共用的边、凹陷和焦点）、`listbox`（select 与 combobox 共用的 chevron、行、弹层和触屏 sheet）。
 
 ## 组件内的动效
 
@@ -348,3 +348,4 @@ bun run shots apps/gallery/pilot.tsx /tmp/shots pilot   # 生成 pilot-light.png
 - 2026-11-10 —— 主题只保存颜色、半径、阴影、焦点环和唯一的 disabled 外观；动效、尺寸、字体刻度和 variant 透明度留在使用它们的组件里。原因：它们是 `nsh` 的值或某个组件的内部细节，不是品牌，把它们做成 token 需要 `brand` 段、JSON 导入和 CLI 改写。gallery 夹具需要一个指向 `theme.json` 的 `tests/nsh.json`，因为 `nsh test` 读取入口文件旁边的 `nsh.json`，而自定义颜色 token（`custom-shadow-ink`、`custom-highlight`、`custom-backdrop`）就在那里。
 - 2026-11-10 —— 字段焦点是贴在边上的 2pt `colors.ring`（`outlineOffset: -1`），不用 `focusRing()` 的 3px 外晕。原因：参考要把焦点画在 border 上，外晕会被 `overflow: hidden` 裁掉。hover 边用 `muted-foreground` 代替参考的 `faint`；凹陷用 `finish.control.pressed` 代替 `finish.field`。步进按钮的 disabled 用主题的 0.5，不用参考的 0.35。
 - 2026-11-10 —— 列表选择：参考的 raised 用 `secondary` + `finish.control.rest`，faint 边用 `muted-foreground`，危险用 `destructive`，焦点沿用字段的 2pt ring。行的高亮只能走 `itemClass`（base 每个条目只画一次，没有 item 的状态 style）。按下用 `pressSink`，不用参考的 70% 透明度。禁用和行的 disabled 用 0.5，不用 0.4 / 0.35。勾用 `foreground`，因为 `accent` 在这套主题里是填充不是墨色。chevron 用 `follow` 的 control 弹簧。触屏弹层是底部 sheet（上圆角 20，最高 70%），指针弹层用 `popupSurface`。combobox 的边用 `focus-within` class，因为内联 `borderColor` 会压过 class，而 base 没有 `focusWithinStyle`。
+- 2026-11-10 —— 家族 7 不新增 token。轨道用 `colors.muted` + `finish.control.pressed` 代替 gallery 的 `finish.track`，滑块用 `colors.background` + `finish.control.rest` 代替 `finish.thumb`，下划线用 `colors.primary`（gallery 的 accent 在这里是品牌色）。禁用一律 `disabledOpacity()`（0.5），不用参考实现的 0.4 / 0.35。链接没有 visited：主题没有 violet。原因：颜色只来自现有主题。

@@ -1,6 +1,7 @@
-import { colors, disabledOpacity, focusRing, radius } from "@shadcn-nsh/theme";
+// Source: examples/nsh-gallery-ui/look/tabs.tsx @ 64ab8a1d (baseline), see NOTICE.
+import { colors, disabledOpacity, finish, focusRing, hovered, radius } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
-import { context, signal, Text, View } from "nsh";
+import { computed, context, signal, split, Text, View } from "nsh";
 import {
   Tab as BaseTab,
   Tabs as BaseTabs,
@@ -8,37 +9,39 @@ import {
   type TabsProps as BaseTabsProps,
 } from "nsh/base";
 
+import { isPointer } from "./lib/density";
+import { pressSink } from "./lib/press";
+
 /**
  * Composition root (shadcn `Tabs`): holds the selected value and orientation.
- * `nsh/base` has no value-holding root — the list is {@link TabsList} / `BaseTabs`.
+ * `nsh/base` has no value-holding root — the list is {@link TabsList}.
  */
 export type TabsProps = {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
-  /** shadcn `bases/base` orientation — maps to root flex + list axis. */
+  /** shadcn `bases/base` orientation — root axis, and the list's. */
   orientation?: "horizontal" | "vertical";
   children?: JSX.Element;
   class?: string | null;
   style?: StyleProp<ViewStyle>;
 };
 
-/** shadcn `bases/base` TabsList look — `default` muted pill rail; `line` underline. */
+/** shadcn `bases/base` TabsList look — `default` pill track; `line` underline. */
 export type TabsListVariant = "default" | "line";
 
 /**
- * Theme layer on `nsh/base` Tabs (the tablist). All base props + style hooks
- * pass through; consumer styles shallow-merge over defaults. Wrapper-only
- * `variant` mirrors shadcn `bases/base` (`default` | `line`).
+ * Theme layer on `nsh/base` Tabs (the tablist). Base props pass through.
+ * `variant` is wrapper-only (`default` | `line`). The traveling indicator is
+ * `indicatorStyle` (base draws it behind the tabs).
  */
 export type TabsListProps = BaseTabsProps & {
   variant?: TabsListVariant;
 };
 
 /**
- * Theme layer on `nsh/base` Tab as a shadcn `TabsTrigger`: `value` selects via
- * the {@link Tabs} context. All other base props + style hooks pass through;
- * consumer styles shallow-merge over defaults. `selected` is owned by context.
+ * Theme layer on `nsh/base` Tab as a shadcn `TabsTrigger`. `value` selects via
+ * the {@link Tabs} context. `selected` is owned by that context.
  */
 export type TabsTriggerProps = Omit<BaseTabProps, "selected" | "children"> & {
   value: string;
@@ -46,7 +49,7 @@ export type TabsTriggerProps = Omit<BaseTabProps, "selected" | "children"> & {
 };
 
 /**
- * Panel next to the list — app content (not an `nsh/base` part). Shown while
+ * Panel beside the list — app content, not an `nsh/base` part. Shown while
  * its `value` matches the {@link Tabs} context.
  */
 export type TabsContentProps = {
@@ -58,10 +61,11 @@ export type TabsContentProps = {
 
 /**
  * Theme layer on the `nsh/base` {@link Tab} symbol for direct use (no composition
- * `value`). Prefer {@link TabsTrigger} inside {@link TabsList}. All base props
- * + style hooks pass through; consumer styles shallow-merge over defaults.
+ * value). Prefer {@link TabsTrigger} inside {@link TabsList}.
  */
-export type TabProps = BaseTabProps;
+export type TabProps = Omit<BaseTabProps, "children"> & {
+  children?: string | JSX.Element;
+};
 
 type TabsContextValue = {
   value: () => string;
@@ -70,15 +74,10 @@ type TabsContextValue = {
 };
 
 const TabsContext = context<TabsContextValue | null>(null);
+const ListVariantContext = context<TabsListVariant>("default");
 
 function useTabs() {
   return TabsContext();
-}
-
-/** Concatenate wrapper + consumer `class` when both are set. */
-function mergeClass(base?: string | null, consumer?: string | null): string | undefined {
-  if (base && consumer) return `${base} ${consumer}`;
-  return consumer ?? base ?? undefined;
 }
 
 /** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
@@ -92,76 +91,185 @@ function mergeStyle(
   return [base, consumer];
 }
 
-function rootChrome(orientation: "horizontal" | "vertical"): ViewStyle {
-  return {
-    flexDirection: orientation === "vertical" ? "row" : "column",
-    alignItems: orientation === "vertical" ? "stretch" : "stretch",
-    gap: 8,
-  };
-}
+type TabsChrome = {
+  track: ViewStyle;
+  indicator: ViewStyle;
+  tab: ViewStyle;
+  hover: ViewStyle;
+  active: ViewStyle;
+  focus: ViewStyle;
+  disabled: ViewStyle;
+  labelSize: number;
+};
 
-function listChrome(variant: TabsListVariant, orientation: "horizontal" | "vertical"): ViewStyle {
-  const axis: ViewStyle = {
-    flexDirection: orientation === "vertical" ? "column" : "row",
-    alignSelf: "flex-start",
-  };
-  if (variant === "line") {
-    return {
-      ...axis,
-      gap: 4,
-      padding: 0,
-      backgroundColor: "transparent",
-      borderBottomWidth: orientation === "horizontal" ? 1 : 0,
-      borderRightWidth: orientation === "vertical" ? 1 : 0,
-      borderColor: colors.border,
-    };
-  }
-  return {
-    ...axis,
-    gap: 4,
-    padding: 4,
-    borderRadius: radius.control,
-    backgroundColor: colors.muted,
-  };
-}
+/**
+ * Pill track or underline row. The thumb stands in for gallery `finish.thumb`
+ * (`colors.background` + `finish.control.rest`); the sunk track stands in for
+ * `finish.track` (`colors.muted` + `finish.control.pressed`). The underline is
+ * `colors.primary` (gallery accent, which this theme does not have).
+ */
+function look(variant: TabsListVariant, orientation: "horizontal" | "vertical"): TabsChrome {
+  const pointer = isPointer();
+  const trackMin = pointer ? 30 : 40;
+  const inset = 3;
+  const horizontal = orientation !== "vertical";
+  const sink = pressSink(0.97, "background-color, border-color, opacity");
+  const pill = variant !== "line";
+  const thumbRadius = (trackMin - 2 * (inset + 1)) / 2;
 
-/** Pill indicator substitute on the selected tab (wrapper chrome; not a base list indicator). */
-function triggerSelectedChrome(variant: TabsListVariant): ViewStyle {
-  if (variant === "line") {
-    return {
-      borderBottomWidth: 2,
-      borderBottomColor: colors.foreground,
-      marginBottom: -1,
-    };
-  }
-  return {
-    backgroundColor: colors.background,
-  };
-}
+  const track: ViewStyle = pill
+    ? {
+        flexDirection: horizontal ? "row" : "column",
+        alignItems: "stretch",
+        alignSelf: "stretch",
+        minHeight: horizontal ? trackMin : undefined,
+        minWidth: horizontal ? undefined : trackMin,
+        padding: inset,
+        gap: 2,
+        borderRadius: trackMin / 2,
+        borderCurve: "continuous",
+        borderWidth: 1,
+        borderColor: colors.border,
+        backgroundColor: colors.muted,
+        boxShadow: finish.control.pressed,
+      }
+    : {
+        flexDirection: horizontal ? "row" : "column",
+        alignItems: "stretch",
+        alignSelf: "stretch",
+        gap: 2,
+        paddingTop: horizontal ? 3 : 0,
+        paddingLeft: horizontal ? 0 : 3,
+        borderBottomWidth: horizontal ? 1 : 0,
+        borderRightWidth: horizontal ? 0 : 1,
+        borderColor: colors.border,
+      };
 
-function triggerChrome(variant: TabsListVariant): ViewStyle {
-  return {
-    height: 32,
-    paddingHorizontal: 12,
-    borderRadius: variant === "line" ? 0 : Math.max(4, radius.control - 2),
+  const indicator: ViewStyle = pill
+    ? {
+        ...(horizontal ? { top: inset, bottom: inset } : { left: inset, right: inset }),
+        borderRadius: thumbRadius,
+        borderCurve: "continuous",
+        borderWidth: 1,
+        borderColor: colors.border,
+        backgroundColor: colors.background,
+        boxShadow: finish.control.rest,
+      }
+    : horizontal
+      ? { bottom: 0, height: 2, borderRadius: 1, backgroundColor: colors.primary }
+      : { right: 0, width: 2, borderRadius: 1, backgroundColor: colors.primary };
+
+  const tab: ViewStyle = {
+    // Share extra track width, but never shrink below the label. `flexBasis: 0`
+    // collapses the tab when the list's width is its content.
+    flexGrow: pill ? 1 : 0,
+    flexShrink: 0,
     alignItems: "center",
     justifyContent: "center",
-    backgroundColor: "transparent",
+    ...(pill
+      ? { paddingHorizontal: 6, borderWidth: 1, borderColor: "transparent" }
+      : {
+          minHeight: horizontal ? trackMin : undefined,
+          minWidth: horizontal ? undefined : trackMin,
+          paddingHorizontal: horizontal ? 8 : 6,
+          paddingVertical: horizontal ? 0 : 8,
+          marginBottom: horizontal ? 4 : 0,
+          marginRight: horizontal ? 0 : 4,
+          borderRadius: radius.control,
+          borderCurve: "continuous" as const,
+        }),
+    ...sink.transition,
   };
-}
 
-function contentChrome(): ViewStyle {
   return {
-    flex: 1,
-    marginTop: 0,
+    track,
+    indicator,
+    tab,
+    hover: hovered(),
+    active: sink.activeStyle,
+    focus: focusRing(),
+    disabled: { opacity: disabledOpacity() },
+    labelSize: 13,
   };
 }
 
-function defaultLabel(selected: boolean, children: string): JSX.Element {
+/** Pill-track height for the current idiom. Tabs have no `hitSlop`; the track itself grows on touch. */
+export function tabsMetrics() {
+  return { minHeight: look("default", "horizontal").track.minHeight as number };
+}
+
+/** Composition root: the selected value, then the list and panels. */
+export function Tabs(props: TabsProps) {
+  const [, rest] = split(props, [
+    "value",
+    "defaultValue",
+    "onValueChange",
+    "orientation",
+    "children",
+    "class",
+    "style",
+  ]);
+  const uncontrolled = signal(props.value ?? props.defaultValue ?? "");
+  const value = () => (props.value != null ? props.value : uncontrolled());
+  const orientation = () => props.orientation ?? "horizontal";
+
+  return (
+    <TabsContext.Provider
+      value={{
+        value,
+        orientation,
+        onValueChange: (next) => {
+          if (props.value == null) uncontrolled.set(next);
+          props.onValueChange?.(next);
+        },
+      }}
+    >
+      <View
+        {...rest}
+        class={props.class ?? undefined}
+        style={mergeStyle(
+          {
+            flexDirection: orientation() === "vertical" ? "row" : "column",
+            alignItems: "stretch",
+            gap: 8,
+          },
+          props.style,
+        )}
+      >
+        {props.children}
+      </View>
+    </TabsContext.Provider>
+  );
+}
+
+/** The tab list: pill track or underline, with the traveling indicator behind the tabs. */
+export function TabsList(props: TabsListProps) {
+  const ctx = useTabs();
+  const [, rest] = split(props, ["variant", "style", "indicatorStyle", "children"]);
+  const variant = () => props.variant ?? "default";
+  const chrome = computed(() => look(variant(), ctx?.orientation() ?? "horizontal"));
+
+  return (
+    <ListVariantContext.Provider value={variant()}>
+      <BaseTabs
+        {...rest}
+        indicatorStyle={mergeStyle(chrome().indicator, props.indicatorStyle)}
+        style={mergeStyle(chrome().track, props.style)}
+      >
+        {props.children}
+      </BaseTabs>
+    </ListVariantContext.Provider>
+  );
+}
+
+function tabLabel(children: string | JSX.Element | undefined, selected: boolean, size: number) {
+  if (typeof children !== "string") return children;
   return (
     <Text
       style={{
-        fontSize: 13,
+        numberOfLines: 1,
+        flexShrink: 0,
+        fontSize: size,
         fontWeight: "500",
         color: selected ? colors.foreground : colors.mutedForeground,
       }}
@@ -171,158 +279,108 @@ function defaultLabel(selected: boolean, children: string): JSX.Element {
   );
 }
 
-const ListVariantContext = context<TabsListVariant>("default");
-
-export function Tabs(props: TabsProps) {
-  const {
-    value,
-    defaultValue,
-    onValueChange,
-    orientation = "horizontal",
-    children,
-    class: className,
-    style,
-  } = props;
-  const uncontrolled = signal(defaultValue ?? "");
-  const ctx: TabsContextValue = {
-    value: () => value ?? uncontrolled(),
-    onValueChange: (next) => {
-      if (value == null) uncontrolled.set(next);
-      onValueChange?.(next);
-    },
-    orientation: () => orientation,
-  };
-
-  return (
-    <TabsContext.Provider value={ctx}>
-      <View
-        class={mergeClass(undefined, className)}
-        style={mergeStyle(rootChrome(orientation), style)}
-      >
-        {children}
-      </View>
-    </TabsContext.Provider>
-  );
-}
-
-export function TabsList(props: TabsListProps) {
-  const {
-    class: className,
-    style,
-    hoverStyle,
-    activeStyle,
-    focusStyle,
-    disabledStyle,
-    variant = "default",
-    children,
-    ...rest
-  } = props;
-  const tabs = useTabs();
-  const orientation = tabs?.orientation() ?? "horizontal";
-
-  return (
-    <ListVariantContext.Provider value={variant}>
-      <BaseTabs
-        {...rest}
-        class={mergeClass(undefined, className)}
-        style={mergeStyle(listChrome(variant, orientation), style)}
-        hoverStyle={mergeStyle(undefined, hoverStyle)}
-        activeStyle={mergeStyle(undefined, activeStyle)}
-        focusStyle={mergeStyle(undefined, focusStyle)}
-        disabledStyle={mergeStyle(undefined, disabledStyle)}
-      >
-        {children}
-      </BaseTabs>
-    </ListVariantContext.Provider>
-  );
-}
-
+/** A tab in the list. String children become the label; selection follows the root value. */
 export function TabsTrigger(props: TabsTriggerProps) {
-  const {
-    class: className,
-    style,
-    hoverStyle,
-    activeStyle,
-    focusStyle,
-    disabledStyle,
-    selectedStyle,
-    value,
-    disabled,
-    accessibilityLabel,
-    children,
-    onPress,
-    ...rest
-  } = props;
   const ctx = useTabs();
   const variant = ListVariantContext();
-  const selected = () => (ctx ? ctx.value() === value : false);
-  const on = selected();
+  const [, rest] = split(props, [
+    "value",
+    "children",
+    "style",
+    "hoverStyle",
+    "activeStyle",
+    "focusStyle",
+    "disabledStyle",
+    "selectedStyle",
+    "onPress",
+    "accessibilityLabel",
+  ]);
+  const chrome = computed(() => look(variant, ctx?.orientation() ?? "horizontal"));
+  const selected = () => (ctx ? ctx.value() === props.value : false);
 
   return (
     <BaseTab
       {...rest}
-      selected={on}
-      disabled={disabled}
-      accessibilityLabel={accessibilityLabel ?? (typeof children === "string" ? children : null)}
+      selected={selected()}
+      accessibilityLabel={
+        props.accessibilityLabel !== undefined
+          ? props.accessibilityLabel
+          : typeof props.children === "string"
+            ? props.children
+            : undefined
+      }
       onPress={() => {
-        ctx?.onValueChange(value);
-        onPress?.();
+        ctx?.onValueChange(props.value);
+        props.onPress?.();
       }}
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(triggerChrome(variant), style)}
-      hoverStyle={mergeStyle(undefined, hoverStyle)}
-      activeStyle={mergeStyle(undefined, activeStyle)}
-      focusStyle={mergeStyle(focusRing(), focusStyle)}
-      disabledStyle={mergeStyle({ opacity: disabledOpacity() }, disabledStyle)}
-      selectedStyle={mergeStyle(triggerSelectedChrome(variant), selectedStyle)}
+      style={mergeStyle(chrome().tab, props.style)}
+      hoverStyle={mergeStyle(
+        selected() || props.disabled ? null : chrome().hover,
+        props.hoverStyle,
+      )}
+      activeStyle={mergeStyle(chrome().active, props.activeStyle)}
+      focusStyle={mergeStyle(chrome().focus, props.focusStyle)}
+      disabledStyle={mergeStyle(chrome().disabled, props.disabledStyle)}
+      selectedStyle={props.selectedStyle}
     >
-      {typeof children === "string" ? defaultLabel(on, children) : children}
+      {tabLabel(props.children, selected(), chrome().labelSize)}
     </BaseTab>
   );
 }
 
-/** `nsh/base` Tab with token chrome; for composition layouts prefer `TabsTrigger`. */
+/** A `nsh/base` tab with the same chrome, for a list whose value the app owns. */
 export function Tab(props: TabProps) {
-  const {
-    class: className,
-    style,
-    hoverStyle,
-    activeStyle,
-    focusStyle,
-    disabledStyle,
-    selectedStyle,
-    selected,
-    children,
-    ...rest
-  } = props;
+  const ctx = useTabs();
+  const variant = ListVariantContext();
+  const [, rest] = split(props, [
+    "children",
+    "selected",
+    "style",
+    "hoverStyle",
+    "activeStyle",
+    "focusStyle",
+    "disabledStyle",
+    "selectedStyle",
+    "accessibilityLabel",
+  ]);
+  const chrome = computed(() => look(variant, ctx?.orientation() ?? "horizontal"));
 
   return (
     <BaseTab
       {...rest}
-      selected={selected}
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(triggerChrome("default"), style)}
-      hoverStyle={mergeStyle(undefined, hoverStyle)}
-      activeStyle={mergeStyle(undefined, activeStyle)}
-      focusStyle={mergeStyle(focusRing(), focusStyle)}
-      disabledStyle={mergeStyle({ opacity: disabledOpacity() }, disabledStyle)}
-      selectedStyle={mergeStyle(triggerSelectedChrome("default"), selectedStyle)}
+      selected={props.selected}
+      accessibilityLabel={
+        props.accessibilityLabel !== undefined
+          ? props.accessibilityLabel
+          : typeof props.children === "string"
+            ? props.children
+            : undefined
+      }
+      style={mergeStyle(chrome().tab, props.style)}
+      hoverStyle={mergeStyle(
+        props.selected || props.disabled ? null : chrome().hover,
+        props.hoverStyle,
+      )}
+      activeStyle={mergeStyle(chrome().active, props.activeStyle)}
+      focusStyle={mergeStyle(chrome().focus, props.focusStyle)}
+      disabledStyle={mergeStyle(chrome().disabled, props.disabledStyle)}
+      selectedStyle={props.selectedStyle}
     >
-      {children}
+      {tabLabel(props.children, !!props.selected, chrome().labelSize)}
     </BaseTab>
   );
 }
 
+/** The panel for one value. Hidden, not unmounted, while another value is selected. */
 export function TabsContent(props: TabsContentProps) {
-  const { value, children, class: className, style } = props;
   const ctx = useTabs();
-  const show = () => ctx != null && ctx.value() === value;
+  const shown = () => (ctx ? ctx.value() === props.value : false);
   return (
     <View
-      class={mergeClass(undefined, className)}
-      style={mergeStyle({ ...contentChrome(), display: show() ? "flex" : "none" }, style)}
+      class={props.class ?? undefined}
+      style={mergeStyle({ display: shown() ? "flex" : "none" }, props.style)}
     >
-      {children}
+      {props.children}
     </View>
   );
 }

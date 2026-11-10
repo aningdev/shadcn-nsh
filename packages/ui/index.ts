@@ -77,10 +77,10 @@ export {
   type MenuTriggerProps,
 } from "./menu";
 export { Input, inputVariants, type InputProps } from "./input";
-export { Link, linkColor } from "./link";
+export { Link, linkColor, linkVariants, type LinkProps, type LinkVariant } from "./link";
 export { NumberInput, numberInputVariants, type NumberInputProps } from "./number-input";
 export { OtpInput, otpInputVariants, type OtpInputProps } from "./otp-input";
-export { Pagination } from "./pagination";
+export { Pagination, paginationVariants, type PaginationProps } from "./pagination";
 export {
   Popover,
   PopoverContent,
@@ -171,6 +171,7 @@ export {
   TabsContent,
   TabsList,
   TabsTrigger,
+  tabsMetrics,
   type TabProps,
   type TabsContentProps,
   type TabsListProps,
