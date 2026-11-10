@@ -1,6 +1,6 @@
 import { overlayMotion, popupBackdrop, popupSurface } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
-import { context, View } from "nsh";
+import { context, split, View } from "nsh";
 import {
   ContextMenu as BaseContextMenu,
   type ContextMenuProps as BaseContextMenuProps,
@@ -75,12 +75,6 @@ function useContextMenu() {
   return ctx;
 }
 
-/** Concatenate wrapper + consumer `class` when both are set. */
-function mergeClass(base?: string | null, consumer?: string | null): string | undefined {
-  if (base && consumer) return `${base} ${consumer}`;
-  return consumer ?? base ?? undefined;
-}
-
 /** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
 function mergeStyle(
   base?: StyleProp<ViewStyle> | null,
@@ -101,12 +95,8 @@ function contentPopupChrome(): ViewStyle {
 }
 
 export function ContextMenu(props: ContextMenuProps) {
-  const { open, disabled, children, onOpenChange, onOpen, onClose, onCancel } = props;
-
-  const state = createOpenState<OpenChangeReason>({
-    open,
-    onOpenChange,
-  });
+  // `props` itself is the options bag: `open` / `onOpenChange` are read when used.
+  const state = createOpenState<OpenChangeReason>(props);
   const triggerSlot = createSlot();
 
   return (
@@ -114,30 +104,37 @@ export function ContextMenu(props: ContextMenuProps) {
       value={{
         ...state,
         trigger: triggerSlot,
-        disabled,
-        onOpen,
-        onClose,
-        onCancel,
+        get disabled() {
+          return props.disabled;
+        },
+        get onOpen() {
+          return props.onOpen;
+        },
+        get onClose() {
+          return props.onClose;
+        },
+        get onCancel() {
+          return props.onCancel;
+        },
       }}
     >
-      {children}
+      {props.children}
     </ContextMenuContext.Provider>
   );
 }
 
 export function ContextMenuTrigger(props: ContextMenuTriggerProps) {
   const ctx = useContextMenu();
-  const { children, class: className, style } = props;
 
   ctx.trigger.set(() => {
-    if (className != null || style != null) {
+    if (props.class != null || props.style != null) {
       return (
-        <View class={mergeClass(undefined, className)} style={mergeStyle(undefined, style)}>
-          {children ?? <View />}
+        <View class={props.class ?? undefined} style={props.style}>
+          {props.children ?? <View />}
         </View>
       );
     }
-    return children ?? <View />;
+    return props.children ?? <View />;
   });
   return <View style={{ width: 0, height: 0 }} />;
 }
@@ -145,30 +142,23 @@ export function ContextMenuTrigger(props: ContextMenuTriggerProps) {
 export function ContextMenuContent(props: ContextMenuContentProps) {
   const ctx = useContextMenu();
   const triggerAccessor = ctx.trigger.get();
-  const {
-    children,
-    class: className,
-    style,
-    hoverStyle,
-    activeStyle,
-    focusStyle,
-    disabledStyle,
-    popupClass,
-    popupStyle,
-    popupStartingStyle,
-    popupEndingStyle,
-    backdropClass,
-    backdropStyle,
-    offset = 4,
-    ...rest
-  } = props;
+  // Only what this part defaults or owns is split off; the rest (class, style, hover…) passes through.
+  const [, rest] = split(props, [
+    "children",
+    "popupStyle",
+    "backdropStyle",
+    "popupStartingStyle",
+    "popupEndingStyle",
+    "offset",
+  ]);
 
   // menu.md: the menu surface at the pointer; 100 ms, from 4 points above. Either hook
   // of a phase set by the consumer owns that phase (`null` turns it off).
   const motion = overlayMotion("menu");
-  const defaultStartingStyle =
-    props.popupStartingClass === undefined && popupStartingStyle === undefined;
-  const defaultEndingStyle = props.popupEndingClass === undefined && popupEndingStyle === undefined;
+  const defaultStarting = () =>
+    props.popupStartingClass === undefined && props.popupStartingStyle === undefined;
+  const defaultEnding = () =>
+    props.popupEndingClass === undefined && props.popupEndingStyle === undefined;
 
   return (
     <BaseContextMenu
@@ -176,25 +166,17 @@ export function ContextMenuContent(props: ContextMenuContentProps) {
       open={ctx.open()}
       disabled={ctx.disabled}
       trigger={(triggerAccessor?.() as JSX.Element) ?? <View />}
-      offset={offset}
+      offset={props.offset ?? 4}
       onOpenChange={({ open, reason }) => ctx.setOpen(open, reason)}
       onOpen={ctx.onOpen}
       onClose={ctx.onClose}
       onCancel={ctx.onCancel}
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(undefined, style)}
-      hoverStyle={mergeStyle(undefined, hoverStyle)}
-      activeStyle={mergeStyle(undefined, activeStyle)}
-      focusStyle={mergeStyle(undefined, focusStyle)}
-      disabledStyle={mergeStyle(undefined, disabledStyle)}
-      popupClass={mergeClass(undefined, popupClass)}
-      popupStyle={mergeStyle({ ...contentPopupChrome(), ...motion.style }, popupStyle)}
-      backdropClass={mergeClass(undefined, backdropClass)}
-      backdropStyle={mergeStyle(popupBackdrop(), backdropStyle)}
-      popupStartingStyle={defaultStartingStyle ? motion.startingStyle : popupStartingStyle}
-      popupEndingStyle={defaultEndingStyle ? motion.endingStyle : popupEndingStyle}
+      popupStyle={mergeStyle({ ...contentPopupChrome(), ...motion.style }, props.popupStyle)}
+      backdropStyle={mergeStyle(popupBackdrop(), props.backdropStyle)}
+      popupStartingStyle={defaultStarting() ? motion.startingStyle : props.popupStartingStyle}
+      popupEndingStyle={defaultEnding() ? motion.endingStyle : props.popupEndingStyle}
     >
-      {children}
+      {props.children}
     </BaseContextMenu>
   );
 }

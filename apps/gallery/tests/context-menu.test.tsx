@@ -1,0 +1,17 @@
+import { expect, open, test } from "nsh/test";
+
+test("secondary click opens the menu and reports one change", async () => {
+  const app = await open("./context-menu.fixture.tsx", { platform: "macos" });
+  await app.rightClick("text:Area");
+  await app.waitFor("text:Copy");
+  expect(app.texts()).toContain("changes 1");
+});
+
+test("disabled follows a signal that changes after mount", async () => {
+  const app = await open("./context-menu.fixture.tsx", { platform: "macos" });
+  await app.press("text:Flip");
+  await app.wait(100);
+  await app.rightClick("text:Area").catch(() => {});
+  await app.wait(200);
+  expect(app.shows("Copy")).toBe(false);
+});
