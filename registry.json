@@ -91,6 +91,20 @@
       ]
     },
     {
+      "name": "meter",
+      "type": "registry:lib",
+      "title": "Meter",
+      "description": "The sunk rail and primary run shared by Progress and Slider.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/lib/meter.ts",
+          "type": "registry:lib",
+          "target": "lib/meter.ts"
+        }
+      ]
+    },
+    {
       "name": "open-state",
       "type": "registry:lib",
       "title": "Open state",
@@ -179,7 +193,7 @@
       "type": "registry:ui",
       "title": "Progress",
       "description": "Styled progress wrapping nsh/base Progress — theme tokens; full base prop pass-through.",
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["meter"],
       "files": [
         {
           "path": "packages/ui/progress.tsx",
@@ -347,7 +361,7 @@
       "type": "registry:ui",
       "title": "Avatar",
       "description": "Styled avatar wrapping nsh/base Avatar / AvatarGroup — theme tokens + fallback.",
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["theme", "density"],
       "files": [
         {
           "path": "packages/ui/avatar.tsx",
@@ -445,7 +459,7 @@
       "type": "registry:ui",
       "title": "Slider",
       "description": "Styled slider wrapping nsh/base Slider — theme tokens + track/range/thumb.",
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["theme", "density", "meter"],
       "files": [
         {
           "path": "packages/ui/slider.tsx",

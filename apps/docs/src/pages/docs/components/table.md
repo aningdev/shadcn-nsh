@@ -1,13 +1,15 @@
 ---
 layout: ../../../layouts/Docs.astro
 title: Table
-description: Styled table wrapping nsh/base Table parts — theme tokens + full base prop pass-through.
+description: Styled table wrapping nsh/base Table parts.
 component: true
 demo: table
 demoHeight: 360
 ---
 
-[`nsh/base`](https://nsh.dev/modules/nsh-base) owns table semantics (table / rowgroup / row / columnheader / cell roles) and the unstyled part tree — no colors, borders, or paddings of its own. This package is the styled layer on top: bordered card chrome, muted header / footer bands, row hover, and cell padding via theme tokens, the same role a community library plays above `nsh/base`. A [`Table`](https://nsh.dev/elements/table) lays out a few app-authored rows; for many rows, sorting, or selection use DataTable on nsh (out of Phase-1).
+[`nsh/base`](https://nsh.dev/modules/nsh-base) owns the table, row group, row, column header, and cell roles. This package paints the card, the header and footer bands, the row hairline and hover, and an optional selected fill. A string child of `TableHead`, `TableCell`, or `TableCaption` is drawn as themed text; anything else is rendered as it is.
+
+For many rows, sorting, column resize, or a selection model, use `DataTable` on `nsh/base`. That control is out of phase 1 here. The reference look (`data-table.ts`) is that control's classes; the parts below take the chrome that maps onto a composition table.
 
 ## Install
 
@@ -38,184 +40,62 @@ import {
   TableHeader,
   TableRow,
 } from "@workspace/ui/components/ui/table";
-import { Text } from "nsh";
 
-<Table accessibilityLabel="Team roster">
+<Table accessibilityLabel="Recent invoices">
   <TableHeader>
     <TableRow>
-      <TableHead>
-        <Text>Name</Text>
-      </TableHead>
-      <TableHead>
-        <Text>Role</Text>
-      </TableHead>
+      <TableHead>Invoice</TableHead>
+      <TableHead>Status</TableHead>
     </TableRow>
   </TableHeader>
   <TableBody>
     <TableRow>
-      <TableCell>
-        <Text>Ada</Text>
-      </TableCell>
-      <TableCell>
-        <Text>Engineer</Text>
-      </TableCell>
+      <TableCell>INV1</TableCell>
+      <TableCell>Paid</TableCell>
+    </TableRow>
+    <TableRow selected>
+      <TableCell>INV2</TableCell>
+      <TableCell>Hold</TableCell>
     </TableRow>
   </TableBody>
 </Table>;
 ```
 
-## Composition
-
-```
-Table
-├── TableHeader
-│   └── TableRow → TableHead*
-├── TableBody
-│   └── TableRow → TableCell*
-├── TableFooter
-│   └── TableRow → TableCell*
-└── TableCaption
-```
-
-Parts match shadcn `bases/base` and store `nsh/base` exports (`Table` / `Header` / `Body` / `Footer` / `Row` / `Head` / `Cell` / `Caption`).
-
-## Caption + footer
-
-```tsx
-<Table accessibilityLabel="Inventory">
-  <TableHeader>
-    <TableRow>
-      <TableHead>
-        <Text>Item</Text>
-      </TableHead>
-      <TableHead>
-        <Text>Qty</Text>
-      </TableHead>
-    </TableRow>
-  </TableHeader>
-  <TableBody>
-    <TableRow>
-      <TableCell>
-        <Text>Widgets</Text>
-      </TableCell>
-      <TableCell>
-        <Text>12</Text>
-      </TableCell>
-    </TableRow>
-  </TableBody>
-  <TableFooter>
-    <TableRow>
-      <TableCell>
-        <Text>Total</Text>
-      </TableCell>
-      <TableCell>
-        <Text>12</Text>
-      </TableCell>
-    </TableRow>
-  </TableFooter>
-  <TableCaption>
-    <Text>Inventory snapshot</Text>
-  </TableCaption>
-</Table>
-```
-
-## Style override
-
-Wrapper chrome (outer border / radius, muted header / footer, row border + hover, cell padding), then consumer styles shallow-merge on top (consumer wins per key). `class` concatenates when both are set. Host style hooks on every part also merge.
-
-```tsx
-<Table style={{ borderRadius: 12 }} class="my-table">
-  <TableHeader style={{ backgroundColor: "transparent" }}>
-    <TableRow>
-      <TableHead style={{ flex: 2, paddingHorizontal: 16 }}>
-        <Text>Name</Text>
-      </TableHead>
-      <TableHead>
-        <Text>Role</Text>
-      </TableHead>
-    </TableRow>
-  </TableHeader>
-  <TableBody>
-    <TableRow hoverStyle={{ backgroundColor: "transparent" }}>
-      <TableCell style={{ flex: 2 }}>
-        <Text>Ada</Text>
-      </TableCell>
-      <TableCell>
-        <Text>Engineer</Text>
-      </TableCell>
-    </TableRow>
-  </TableBody>
-</Table>
-```
-
 ## API
 
-### `Table` Props
+### Parts
 
-| Prop                                                          | Type                   | Default | Notes                                      |
-| ------------------------------------------------------------- | ---------------------- | ------- | ------------------------------------------ |
-| `accessibilityLabel`                                          | `string \| null`       | —       | What screen readers call the table         |
-| `class`                                                       | `string`               | —       | Concatenated                               |
-| `style`                                                       | `StyleProp<ViewStyle>` | —       | Merged over outer border / radius chrome   |
-| `hoverStyle` / `activeStyle` / `focusStyle` / `disabledStyle` | `StyleProp<ViewStyle>` | —       | Forwarded / merge                          |
-| `children`                                                    | `JSX.Element`          | —       | Header / body / footer / caption (or rows) |
+| Part           | Role          | Chrome                                                                                    |
+| -------------- | ------------- | ----------------------------------------------------------------------------------------- |
+| `Table`        | table         | Full width, `border`, `radius.control`, `background`                                      |
+| `TableHeader`  | header band   | `muted` at 50%, a line under it                                                           |
+| `TableBody`    | body          | None. The rows carry the lines                                                            |
+| `TableFooter`  | footer band   | `muted` at 50%, a line over it                                                            |
+| `TableRow`     | row           | `border` at 60% along the bottom. Hover is `muted` at 60%. `selected` is `primary` at 12% |
+| `TableHead`    | column header | Cell padding. A string is muted, medium, 13                                               |
+| `TableCell`    | cell          | `flex: 1`, 8 points of padding. A string is foreground, 13                                |
+| `TableCaption` | caption       | 8 points of padding. A string is muted, 12                                                |
 
-Remaining `TableProps` / `ComponentHostProps` from `nsh/base` also pass through (`classList`, `testID`, `tooltip`, `onLayout`, `ref`, …).
+Every part forwards `class`, `style`, and the state style hooks. A default is merged only where the part has one; the consumer wins per key. `class` is appended after the row's color transition (`duration-150`, cancelled by `motion-reduce`).
 
-### Events
+### `TableRow`
 
-None on store CLI `nsh` 0.4.0 Table parts — layout / a11y only.
-
-### `TableHeader` / `TableBody` / `TableFooter` Props
-
-| Prop                                                          | Type                   | Default | Notes                                                                  |
-| ------------------------------------------------------------- | ---------------------- | ------- | ---------------------------------------------------------------------- |
-| `class`                                                       | `string`               | —       | Concatenated                                                           |
-| `style`                                                       | `StyleProp<ViewStyle>` | —       | Header / footer merge over muted band chrome; body has no style chrome |
-| `hoverStyle` / `activeStyle` / `focusStyle` / `disabledStyle` | `StyleProp<ViewStyle>` | —       | Forwarded / merge                                                      |
-| `children`                                                    | `JSX.Element`          | —       | Rows                                                                   |
-
-### `TableRow` Props
-
-| Prop                                           | Type                   | Default | Notes                                       |
-| ---------------------------------------------- | ---------------------- | ------- | ------------------------------------------- |
-| `class`                                        | `string`               | —       | Concatenated                                |
-| `style`                                        | `StyleProp<ViewStyle>` | —       | Merged over bottom-border chrome            |
-| `hoverStyle`                                   | `StyleProp<ViewStyle>` | —       | Merged over muted/50 hover (shadcn-aligned) |
-| `activeStyle` / `focusStyle` / `disabledStyle` | `StyleProp<ViewStyle>` | —       | Forwarded / merge                           |
-| `children`                                     | `JSX.Element`          | —       | `TableHead` / `TableCell`                   |
-
-Base already lays the row out as a flex row; remaining `TableRowProps` / `ComponentHostProps` pass through.
-
-### `TableHead` / `TableCell` Props
-
-| Prop                                                          | Type                   | Default | Notes                                       |
-| ------------------------------------------------------------- | ---------------------- | ------- | ------------------------------------------- |
-| `class`                                                       | `string`               | —       | Concatenated                                |
-| `style`                                                       | `StyleProp<ViewStyle>` | —       | Merged over `flex: 1` + padding cell chrome |
-| `hoverStyle` / `activeStyle` / `focusStyle` / `disabledStyle` | `StyleProp<ViewStyle>` | —       | Forwarded / merge                           |
-| `children`                                                    | `JSX.Element`          | —       | Cell content (often `Text`)                 |
-
-### `TableCaption` Props
-
-| Prop                                                          | Type                   | Default | Notes                        |
-| ------------------------------------------------------------- | ---------------------- | ------- | ---------------------------- |
-| `class`                                                       | `string`               | —       | Concatenated                 |
-| `style`                                                       | `StyleProp<ViewStyle>` | —       | Merged over caption padding  |
-| `hoverStyle` / `activeStyle` / `focusStyle` / `disabledStyle` | `StyleProp<ViewStyle>` | —       | Forwarded / merge            |
-| `children`                                                    | `JSX.Element`          | —       | Visible note about the table |
+| Prop       | Type      | Default | Notes                                            |
+| ---------- | --------- | ------- | ------------------------------------------------ |
+| `selected` | `boolean` | —       | This wrapper's. Base `TableRow` has no such flag |
 
 ## Differences
 
-| Topic      | shadcn (`bases/base` table)                         | This package                                                       |
-| ---------- | --------------------------------------------------- | ------------------------------------------------------------------ |
-| Parts      | `Table` / `Header` / `Body` / `Footer` / `Row` / …  | same names on `nsh/base` wrappers                                  |
-| Container  | outer `div` (`cn-table-container`) + HTML `<table>` | single `Table` host (border / overflow / width chrome on the root) |
-| Styling    | `className` + CSS (`cn-table*`)                     | token `style` + `class`; consumer styles merge over defaults       |
-| Semantics  | HTML table in the browser                           | nsh table primitives (cross-platform roles)                        |
-| Cell width | CSS / `className`                                   | app sets `style` widths / `flex` (defaults `flex: 1`)              |
-| DataTable  | separate / app                                      | nsh `DataTable` exists; **out of Phase-1** (heavy)                 |
+| Topic              | Reference (`data-table.ts`)                         | This package                                                                    |
+| ------------------ | --------------------------------------------------- | ------------------------------------------------------------------------------- |
+| Control            | `DataTable` classes (`classes={dataTableClasses}`)  | Composition `Table`. `DataTable` is out of phase 1                              |
+| Zebra              | `rowOdd` at `muted` 35%                             | Not drawn. Base rows have no index                                              |
+| Selection          | Row, cell, and column selection, drawn by DataTable | `selected` on `TableRow` only (`primary` at 12%, the reference's `rowSelected`) |
+| Sort, resize, drag | Indicator, handle, and drop line classes            | Not on these parts. Base `Table` has no such state                              |
+| Header padding     | `pl-2 pr-1`, leaving room for a sort icon           | Same 8-point padding as the cells, so the text lines up                         |
+| Terminal           | The resize handle hides until hover                 | Dropped, with the rest of the terminal branch                                   |
+| shadcn             | `Table` + `data-[state=selected]`                   | Same part names. `selected` is a boolean, not a data attribute                  |
 
 ## Not forwarded
 
-None for store CLI `nsh` 0.4.0 Table part props — all are forwarded. The wrapper only applies theme chrome (border / muted bands / row hover / cell padding) and merges defaults under consumer style hooks (`class` concatenates).
+None — every `nsh/base` prop of each part passes through. `selected` is not a base prop and is not forwarded.

@@ -1,20 +1,43 @@
-import { colors } from "@shadcn-nsh/theme";
+// Source: examples/nsh-gallery-ui/look/meter.ts @ 64ab8a1d (baseline), see NOTICE.
 import type { StyleProp, ViewStyle } from "nsh";
+import { cleanup, computed, createAnimatedValue, createMotion, effect, Easing, split } from "nsh";
 import { Progress as BaseProgress, type ProgressProps as BaseProgressProps } from "nsh/base";
 
+import { sunkTrack, trackFill } from "./lib/meter";
+
 /**
- * Theme layer on `nsh/base` Progress: token track / indicator chrome
- * (shadcn `bases/base` Progress has no `variant` / `size`). All base props
- * + style hooks pass through; consumer styles shallow-merge over defaults.
- * Base owns determinate indicator width from `value`; indeterminate uses a
- * default `w-1/3` indicator class (overridable).
+ * Theme layer on `nsh/base` Progress. shadcn `bases/base` Progress has no `variant` / `size`.
+ * Every base prop passes through; consumer styles win per key.
  */
 export type ProgressProps = BaseProgressProps;
 
-/** Concatenate wrapper + consumer `class` when both are set. */
-function mergeClass(base?: string | null, consumer?: string | null): string | undefined {
-  if (base && consumer) return `${base} ${consumer}`;
-  return consumer ?? base ?? undefined;
+type ProgressLook = {
+  style: ViewStyle;
+  trackStyle: ViewStyle;
+  indicatorClass: string;
+  indicatorStyle: ViewStyle;
+};
+
+/**
+ * Determinate glide: the fill is the whole track, slid back by what is left
+ * (`translate`), on the 180 ms move curve. `motion-reduce` drops the glide.
+ * `duration-180` is the documented move duration.
+ */
+const GLIDE =
+  "w-full transition duration-180 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none";
+
+/** The rail's weight, in points. A fixed stroke: the fill's percentage height needs a definite parent. */
+const RAIL = 6;
+
+/** A determinate fill's `translate` for `value` percent (0 to 100): off to the left by what is left. */
+function remaining(value: number): string {
+  const clamped = Math.max(0, Math.min(100, Number.isFinite(value) ? value : 0));
+  return `${clamped - 100}% 0`;
+}
+
+/** Wrapper default, then consumer: both set, both apply. */
+function mergeClass(base: string, consumer?: string | null): string {
+  return consumer ? `${base} ${consumer}` : base;
 }
 
 /** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
@@ -28,66 +51,94 @@ function mergeStyle(
   return [base, consumer];
 }
 
-/** Column around the track + label — aligned with shadcn root `gap`. */
-function rootChrome(): ViewStyle {
-  return {
-    gap: 12,
-    alignItems: "stretch",
-  };
-}
-
-/** Track rail (~h-1 / rounded-full) with muted fill — shadcn `bases/base` nova. */
-function trackChrome(): ViewStyle {
-  return {
-    height: 4,
-    borderRadius: 9999,
-    overflow: "hidden",
-    backgroundColor: colors.muted,
-  };
-}
-
 /**
- * Indicator fill. Width is omitted while determinate — `nsh/base` sets it from
- * `value`. Indeterminate width comes from `indicatorClass` (`w-1/3` default).
+ * The bar's chrome. `value` (0 to 100) places the determinate fill; `indeterminate` selects
+ * the sweeping third instead of the glide. Call it where those are read.
  */
-function indicatorChrome(): ViewStyle {
+export function progressVariants(options?: {
+  /** Determinate percent, 0 to 100. */
+  value?: number;
+  /** Unknown extent: the indicator is a third of the track, not the gliding fill. */
+  indeterminate?: boolean;
+}): ProgressLook {
+  const indeterminate = !!options?.indeterminate;
   return {
-    height: "100%",
-    borderRadius: 9999,
-    backgroundColor: colors.primary,
+    style: { gap: 8, alignItems: "stretch" },
+    trackStyle: {
+      height: RAIL,
+      minHeight: RAIL,
+      borderRadius: RAIL / 2,
+      overflow: "hidden",
+      ...sunkTrack(),
+    },
+    indicatorClass: indeterminate ? "w-1/3" : GLIDE,
+    indicatorStyle: {
+      height: "100%",
+      borderRadius: RAIL / 2,
+      ...trackFill(),
+      ...(indeterminate ? {} : { translate: remaining(options?.value ?? 0) }),
+    },
   };
 }
 
+/** A linear progress bar: the sunk rail and the primary run, gliding to each value. */
 export function Progress(props: ProgressProps) {
-  const {
-    class: className,
-    style,
-    hoverStyle,
-    activeStyle,
-    focusStyle,
-    disabledStyle,
-    trackClass,
-    trackStyle,
-    indicatorClass,
-    indicatorStyle,
-    indeterminate,
-    ...rest
-  } = props;
+  // Props are read where used (never destructured) so `value` / `indeterminate` follow signals.
+  const [, rest] = split(props, [
+    "class",
+    "style",
+    "trackClass",
+    "trackStyle",
+    "indicatorClass",
+    "indicatorStyle",
+    "onLayout",
+  ]);
+
+  // A third of the track crossing it and back. `translateX` runs 0 to 1; `travel` is two
+  // thirds of the laid-out width, so the third starts at the left and ends flush right.
+  // The loop keeps playing when the user asks for less motion (`ignoreReduceMotion`):
+  // the sweep is the "still working" signal, not decoration. The reference rests at the middle.
+  const sweep = createMotion();
+  const travel = createAnimatedValue(0);
+  const shift = sweep.translateX.mul(travel);
+  effect(() => {
+    if (!props.indeterminate) {
+      sweep.stop();
+      return;
+    }
+    void sweep.play({
+      keyframes: { translateX: [0, 1] },
+      duration: 800,
+      easing: Easing.bezier(0.42, 0, 0.58, 1),
+      iterations: "infinite",
+      direction: "alternate",
+      ignoreReduceMotion: true,
+    });
+  });
+  cleanup(() => sweep.stop());
+
+  const current = computed(() =>
+    progressVariants({ value: props.value, indeterminate: props.indeterminate }),
+  );
+  const indicatorStyle = computed(() => {
+    const base = current().indicatorStyle;
+    if (!props.indeterminate) return base;
+    return { ...base, transform: [{ translateX: shift }] };
+  });
 
   return (
     <BaseProgress
       {...rest}
-      indeterminate={indeterminate}
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(rootChrome(), style)}
-      hoverStyle={mergeStyle(undefined, hoverStyle)}
-      activeStyle={mergeStyle(undefined, activeStyle)}
-      focusStyle={mergeStyle(undefined, focusStyle)}
-      disabledStyle={mergeStyle(undefined, disabledStyle)}
-      trackClass={mergeClass(undefined, trackClass)}
-      trackStyle={mergeStyle(trackChrome(), trackStyle)}
-      indicatorClass={mergeClass(indeterminate ? "w-1/3" : undefined, indicatorClass)}
-      indicatorStyle={mergeStyle(indicatorChrome(), indicatorStyle)}
+      class={props.class ?? undefined}
+      style={mergeStyle(current().style, props.style)}
+      trackClass={props.trackClass ?? undefined}
+      trackStyle={mergeStyle(current().trackStyle, props.trackStyle)}
+      indicatorClass={mergeClass(current().indicatorClass, props.indicatorClass)}
+      indicatorStyle={mergeStyle(indicatorStyle(), props.indicatorStyle)}
+      onLayout={(event) => {
+        travel.set((event.bounds.size.width * 2) / 3);
+        props.onLayout?.(event);
+      }}
     />
   );
 }

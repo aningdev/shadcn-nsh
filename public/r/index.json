@@ -39,6 +39,12 @@
       "description": "Shared select and combobox chrome: the chevron, the option row, the popup and the touch sheet."
     },
     {
+      "name": "meter",
+      "type": "registry:lib",
+      "title": "Meter",
+      "description": "The sunk rail and primary run shared by Progress and Slider."
+    },
+    {
       "name": "open-state",
       "type": "registry:lib",
       "title": "Open state",

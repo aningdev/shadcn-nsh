@@ -5,7 +5,13 @@ export {
   AccordionPanel,
   AccordionTrigger,
 } from "./accordion";
-export { Avatar, AvatarGroup } from "./avatar";
+export {
+  Avatar,
+  AvatarGroup,
+  avatarVariants,
+  type AvatarGroupProps,
+  type AvatarProps,
+} from "./avatar";
 export { Button, buttonVariants, type ButtonSize, type ButtonVariant } from "./button";
 export { Checkbox, type CheckboxProps } from "./checkbox";
 export {
@@ -99,7 +105,7 @@ export {
   type PopoverTitleProps,
   type PopoverTriggerProps,
 } from "./popover";
-export { Progress, type ProgressProps } from "./progress";
+export { Progress, progressVariants, type ProgressProps } from "./progress";
 export {
   Select,
   SelectContent,
@@ -115,7 +121,7 @@ export {
   type SelectEntry,
   type SelectProps,
 } from "./select";
-export { Slider } from "./slider";
+export { Slider, sliderVariants, type SliderProps } from "./slider";
 export {
   Radio,
   RadioGroup,

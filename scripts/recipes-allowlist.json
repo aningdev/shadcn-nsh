@@ -1,9 +1,9 @@
 {
   "colour-literals": [],
-  "merge-undefined": ["progress.tsx", "table.tsx"],
-  "props-destructure": ["progress.tsx", "table.tsx"],
+  "merge-undefined": [],
+  "props-destructure": [],
   "duration-literal": [],
-  "doc-comments": ["avatar.tsx", "progress.tsx", "slider.tsx", "table.tsx"],
+  "doc-comments": [],
   "docs-sections": [],
-  "has-test": ["avatar.tsx", "progress.tsx", "slider.tsx", "table.tsx"]
+  "has-test": []
 }

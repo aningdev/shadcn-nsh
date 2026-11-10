@@ -1,19 +1,29 @@
 ---
 layout: ../../../layouts/Docs.astro
 title: Avatar
-description: Styled avatar wrapping nsh/base Avatar.
+description: Styled avatar wrapping nsh/base Avatar and AvatarGroup.
 component: true
 demo: avatar
 ---
 
-Styled avatar on `nsh/base` Avatar. Defaults to initials from `name`; pair with `AvatarGroup` for overlapping stacks and overflow.
+[`nsh/base`](https://nsh.dev/modules/nsh-base) owns image loading and the accessible name. This package draws a round picture, initials on `muted`, or a small figure when there is no name. Children — a badge — sit on the picture and are not clipped.
 
 ## Install
 
-```sh
-shadcn-nsh add avatar
-# monorepo:
-shadcn-nsh add avatar -c apps/web
+```npx tabs
+npx shadcn-nsh@latest add avatar
+```
+
+```bunx tabs
+bunx shadcn-nsh@latest add avatar
+```
+
+```pnx tabs
+pnx shadcn-nsh@latest add avatar
+```
+
+```yarn tabs
+yarn dlx shadcn-nsh@latest add avatar
 ```
 
 ## Usage
@@ -22,84 +32,68 @@ shadcn-nsh add avatar -c apps/web
 import { Avatar, AvatarGroup } from "@workspace/ui/components/ui/avatar";
 
 <Avatar name="Ada Lovelace" />
-<AvatarGroup limit={3} total={4}>
-  <Avatar name="Ada Lovelace" />
-  <Avatar name="Grace Hopper" />
-  <Avatar name="Alan Turing" />
+
+<AvatarGroup limit={3} total={8} accessibilityLabel="8 members">
+  <Avatar name="Ada Lovelace" ring style={{ marginLeft: 0 }} />
+  <Avatar name="Grace Hopper" ring style={{ marginLeft: -8 }} />
 </AvatarGroup>
 ```
 
-## Composition
+The side is 32 with a pointer and 40 on a touch screen. Pass `size` to both the avatars and the group so the overflow chip matches. Overlap is a negative margin on each avatar after the first (`-size / 4`); the group does not pull its children.
 
-```
-AvatarGroup
-├─ Avatar*
-└─ overflow (default "+N" / "…")
-```
+## Picture
 
-## Examples
-
-### Size
+`fallbackDelay` waits 300 ms so a fast image does not flash the initials. The picture fades in (300 ms; `motion-reduce` drops it).
 
 ```tsx
-<Avatar name="Ada Lovelace" />
-<Avatar name="Grace Hopper" size={32} />
-<Avatar name="Alan Turing" size={48} />
+<Avatar name="Grace Hopper" src={url} />
 ```
 
-### Image + fallback
+## Ring
 
-```tsx
-<Avatar
-  src="https://example.com/ada.jpg"
-  name="Ada Lovelace"
-  onStatusChange={(e) => console.log(e.status)}
-/>
-```
-
-### Custom overflow
-
-```tsx
-<AvatarGroup limit={2} total={5} overflow={<Text>+more</Text>}>
-  <Avatar name="Ada Lovelace" />
-  <Avatar name="Grace Hopper" />
-</AvatarGroup>
-```
+`ring` insets the picture by 2 points and paints the card surface in the gap, so stacked pictures do not touch. In light mode `background` and `card` are the same white, so the ring reads as a gap rather than a halo.
 
 ## API
 
-### `Avatar`
+### Avatar
 
-| Prop                 | Type                                  | Default              | Notes                                     |
-| -------------------- | ------------------------------------- | -------------------- | ----------------------------------------- |
-| `src`                | `string \| ImageAsset \| null`        | —                    | Image source                              |
-| `name`               | `string \| null`                      | —                    | Used for initials fallback and a11y       |
-| `size`               | `number`                              | `40`                 | Wrapper-only; maps to width/height/radius |
-| `accessibilityLabel` | `string \| null`                      | —                    |                                           |
-| `fallbackDelay`      | `number`                              | —                    |                                           |
-| `fallback`           | `JSX.Element`                         | initials from `name` | Overrides default initials                |
-| `children`           | `JSX.Element`                         | —                    |                                           |
-| `onStatusChange`     | `(event: { status: string }) => void` | —                    |                                           |
+| Prop                              | Type                   | Default              | Notes                                                                   |
+| --------------------------------- | ---------------------- | -------------------- | ----------------------------------------------------------------------- |
+| `src`                             | `string \| ImageAsset` | —                    | Forwarded. The fallback shows while it loads, on error, and without one |
+| `name`                            | `string`               | —                    | The accessible name and the initials                                    |
+| `size`                            | `number`               | 32 / 40              | Square side. Pointer / touch                                            |
+| `ring`                            | `boolean`              | —                    | Card-colored ring. The picture is `size - 4`                            |
+| `fallbackDelay`                   | `number`               | `300`                | Forwarded. `0` shows the fallback at once                               |
+| `fallback`                        | `JSX.Element`          | initials or a figure | Replaces the initials                                                   |
+| `imageClass` / `imageStyle`       |                        | —                    | Class is appended after the round fade                                  |
+| `fallbackClass` / `fallbackStyle` |                        | —                    | Merged over the `muted` fill                                            |
+| `children`                        | `JSX.Element`          | —                    | Drawn over the picture, not clipped                                     |
+| `onStatusChange`                  | `({ status }) => void` | —                    | `"idle" \| "loading" \| "loaded" \| "error"`                            |
 
-### `AvatarGroup`
+`avatarVariants({ size })` returns `{ side, fontSize, color, backgroundColor, borderColor }`. The colors are `foreground`, `muted` and `border`.
 
-| Prop                 | Type             | Default    | Notes                                    |
-| -------------------- | ---------------- | ---------- | ---------------------------------------- |
-| `limit`              | `number`         | —          | Visible avatars before overflow          |
-| `total`              | `number \| null` | —          | Used with `limit` for default `+N` label |
-| `accessibilityLabel` | `string \| null` | —          |                                          |
-| `overflow`           | `JSX.Element`    | `+N` / `…` | Custom overflow content                  |
-| `children`           | `JSX.Element`    | —          | `Avatar` children                        |
+### AvatarGroup
+
+| Prop                 | Type          | Default     | Notes                                                       |
+| -------------------- | ------------- | ----------- | ----------------------------------------------------------- |
+| `limit`              | `number`      | `3`         | How many avatars stay in the tree                           |
+| `total`              | `number`      | —           | People the group stands for. The chip shows `total - limit` |
+| `size`               | `number`      | 32 / 40     | The overflow chip                                           |
+| `overflow`           | `JSX.Element` | `+N` or `…` | Replaces the count. `…` when `total` is omitted             |
+| `accessibilityLabel` | `string`      | —           | The group                                                   |
 
 ## Differences
 
-| Topic    | shadcn                                      | This package                                           |
-| -------- | ------------------------------------------- | ------------------------------------------------------ |
-| Parts    | `Avatar` / `AvatarImage` / `AvatarFallback` | single `Avatar` (+ optional `AvatarGroup`)             |
-| Fallback | compose `AvatarFallback`                    | default initials from `name`; override with `fallback` |
-| Size     | often via `className` / CSS                 | `size` number prop                                     |
-| Group    | not in core avatar                          | `AvatarGroup` with `limit` / `total` / `overflow`      |
+| Topic     | Reference (`avatar.ts`)                               | This package                                                                            |
+| --------- | ----------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| Identity  | Twelve OkLCH hues, one per name                       | `muted` / `foreground` / `border`. Neutral has no identity scale; no `custom-*` hues    |
+| Portraits | GitHub pictures of named maintainers, `AVATAR_BROKEN` | Not part of the component. Pass any `src`. A broken `src` shows the initials            |
+| Presence  | `up` / `warn` / `danger` / `faint` dots               | No status scale. Draw a dot as `children` with a theme color                            |
+| Size      | The caller passes `side` (demos use 32/40 and 36/44)  | Default 32 / 40                                                                         |
+| Group     | The demo sets the overlap and the ring                | `ring` is a prop. Overlap stays a margin, because the group cannot restyle its children |
+| Delay     | The demo passes 300                                   | Default 300                                                                             |
+| shadcn    | `Avatar` / `AvatarFallback` / `AvatarImage`           | `Avatar` and `AvatarGroup`, matching `nsh/base`. No separate Image or Fallback export   |
 
 ## Not forwarded
 
-From `nsh/base` Avatar / AvatarGroup: style chrome (`style`, `imageStyle`, `fallbackStyle`, `overflowStyle`). The wrapper owns dimensions, muted background, and default initials / overflow text.
+None — every `nsh/base` Avatar and AvatarGroup prop passes through. `size` and `ring` are this wrapper's.

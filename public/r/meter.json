@@ -1,0 +1,15 @@
+{
+  "name": "meter",
+  "type": "registry:lib",
+  "title": "Meter",
+  "description": "The sunk rail and primary run shared by Progress and Slider.",
+  "registryDependencies": ["theme"],
+  "files": [
+    {
+      "path": "packages/ui/lib/meter.ts",
+      "type": "registry:lib",
+      "target": "lib/meter.ts",
+      "content": "// Source: examples/nsh-gallery-ui/look/meter.ts, slider.ts @ 64ab8a1d (baseline), see NOTICE.\nimport { colors, finish } from \"@shadcn-nsh/theme\";\nimport type { ViewStyle } from \"nsh\";\n\n/**\n * The sunk rail shared by a progress track and a slider indicator, so a level and a\n * slider read alike. `muted` stands in for the reference's `track`; the inset hairline\n * and `finish.control.pressed` stand in for `finish.track`.\n */\nexport function sunkTrack(): ViewStyle {\n  return {\n    backgroundColor: colors.muted,\n    boxShadow: `inset 0 0 0 1px ${colors.border}, ${finish.control.pressed}`,\n  };\n}\n\n/**\n * The run along that rail (a progress fill, a slider range). `primary` with the filled\n * edge stands in for the reference's citrus gradient (`finish.fill`).\n */\nexport function trackFill(): ViewStyle {\n  return {\n    backgroundColor: colors.primary,\n    boxShadow: finish.filled,\n  };\n}\n"
+    }
+  ]
+}
