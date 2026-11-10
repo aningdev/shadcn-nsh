@@ -1,4 +1,4 @@
-import { colors, focusRing, radius } from "@shadcn-nsh/theme";
+import { colors, disabledOpacity, focusRing, radius } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { Text } from "nsh";
 import { NumberInput as BaseNumberInput } from "nsh/base";
@@ -51,7 +51,7 @@ export function NumberInput(props: {
         flexDirection: "row",
         alignItems: "center",
         gap: 4,
-        opacity: props.disabled ? 0.5 : 1,
+        opacity: disabledOpacity(props.disabled),
       }}
       inputStyle={{
         flex: 1,

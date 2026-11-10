@@ -1,6 +1,6 @@
-import { alpha, colors, finish, focusRing, pressSink, radius } from "@shadcn-nsh/theme";
+import { alpha, colors, disabledOpacity, finish, focusRing, radius } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
-import { computed, platform, split, Text } from "nsh";
+import { computed, platform, reduceMotion, split, Text } from "nsh";
 import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/base";
 
 /** shadcn `bases/base` also has `link`; this registry omits it — Link is a separate component. */
@@ -29,7 +29,7 @@ export type ButtonProps = Omit<BaseButtonProps, "children"> & {
 type ButtonLabelStyle = {
   color: string;
   fontSize: number;
-  fontWeight: "500";
+  fontWeight: "500" | "600" | "700";
 };
 
 type ButtonVariantsResult = {
@@ -53,6 +53,27 @@ function mergeStyle(
   return [base, consumer];
 }
 
+/** Opacity of a pressed control: it dims as it sinks. */
+const PRESSED_OPACITY = 0.88;
+
+/**
+ * Press feedback (NSH Design Guides "Motion"): the control sinks while active and eases back
+ * with the state changes beside it (`also`: CSS property names). Reduced motion removes the
+ * sink, the movement, and keeps the short colour fade.
+ */
+function pressSink(also: string) {
+  return {
+    get activeStyle(): ViewStyle {
+      return reduceMotion() ? {} : { transform: [{ scale: 0.97 }] };
+    },
+    transition: {
+      transitionProperty: `${also}, transform`,
+      transitionDuration: 150,
+      transitionTimingFunction: "ease-out",
+    } satisfies ViewStyle,
+  };
+}
+
 /** Smallest comfortable finger target (Accessibility touch targets). */
 const TOUCH_TARGET = 44;
 
@@ -73,21 +94,69 @@ function sizeLook(size: ButtonSize): {
 } {
   switch (size) {
     case "xs":
-      return { height: 24, paddingHorizontal: 8, fontSize: 12, gap: 4, icon: false };
+      return {
+        height: 24,
+        paddingHorizontal: 8,
+        fontSize: 12,
+        gap: 4,
+        icon: false,
+      };
     case "sm":
-      return { height: 28, paddingHorizontal: 10, fontSize: 13, gap: 4, icon: false };
+      return {
+        height: 28,
+        paddingHorizontal: 10,
+        fontSize: 13,
+        gap: 4,
+        icon: false,
+      };
     case "lg":
-      return { height: 36, paddingHorizontal: 10, fontSize: 14, gap: 6, icon: false };
+      return {
+        height: 36,
+        paddingHorizontal: 10,
+        fontSize: 14,
+        gap: 6,
+        icon: false,
+      };
     case "icon-xs":
-      return { height: 24, paddingHorizontal: 0, fontSize: 12, gap: 0, icon: true };
+      return {
+        height: 24,
+        paddingHorizontal: 0,
+        fontSize: 12,
+        gap: 0,
+        icon: true,
+      };
     case "icon-sm":
-      return { height: 28, paddingHorizontal: 0, fontSize: 13, gap: 0, icon: true };
+      return {
+        height: 28,
+        paddingHorizontal: 0,
+        fontSize: 13,
+        gap: 0,
+        icon: true,
+      };
     case "icon":
-      return { height: 32, paddingHorizontal: 0, fontSize: 14, gap: 0, icon: true };
+      return {
+        height: 32,
+        paddingHorizontal: 0,
+        fontSize: 14,
+        gap: 0,
+        icon: true,
+      };
     case "icon-lg":
-      return { height: 36, paddingHorizontal: 0, fontSize: 14, gap: 0, icon: true };
+      return {
+        height: 36,
+        paddingHorizontal: 0,
+        fontSize: 14,
+        gap: 0,
+        icon: true,
+      };
     default:
-      return { height: 32, paddingHorizontal: 10, fontSize: 14, gap: 6, icon: false };
+      return {
+        height: 32,
+        paddingHorizontal: 10,
+        fontSize: 14,
+        gap: 6,
+        icon: false,
+      };
   }
 }
 
@@ -111,20 +180,17 @@ function variantLook(
         borderColor: colors.border,
         color: colors.secondaryForeground,
         borderWidth: 1,
-        boxShadow: finish.raised.boxShadow,
-        hover: {
-          backgroundColor: alpha(colors.secondary, 0.85),
-          boxShadow: finish.hover.boxShadow,
-        },
+        boxShadow: finish.control.rest,
+        hover: { backgroundColor: alpha(colors.secondary, 0.8) },
         active: {
           backgroundColor: colors.secondary,
-          boxShadow: finish.pressed.boxShadow,
+          boxShadow: finish.control.pressed,
           ...sink.activeStyle,
         },
         selected: {
           backgroundColor: colors.accent,
           borderColor: colors.border,
-          boxShadow: finish.on.boxShadow,
+          boxShadow: finish.control.on,
         },
       };
     case "outline":
@@ -133,13 +199,13 @@ function variantLook(
         borderColor: colors.border,
         color: colors.foreground,
         borderWidth: 1,
-        boxShadow: finish.card.boxShadow,
+        boxShadow: finish.control.flat,
         hover: { backgroundColor: colors.muted, borderColor: colors.border },
-        active: { opacity: 0.9, ...sink.activeStyle },
+        active: { opacity: PRESSED_OPACITY, ...sink.activeStyle },
         selected: {
           backgroundColor: colors.muted,
           borderColor: colors.border,
-          boxShadow: finish.on.boxShadow,
+          boxShadow: finish.control.on,
         },
       };
     case "ghost":
@@ -149,8 +215,8 @@ function variantLook(
         color: colors.foreground,
         borderWidth: 1,
         hover: { backgroundColor: colors.muted },
-        active: { opacity: 0.9, ...sink.activeStyle },
-        selected: { backgroundColor: colors.muted, boxShadow: finish.on.boxShadow },
+        active: { opacity: PRESSED_OPACITY, ...sink.activeStyle },
+        selected: { backgroundColor: colors.muted, boxShadow: finish.control.on },
       };
     case "destructive":
       return {
@@ -158,12 +224,12 @@ function variantLook(
         borderColor: "transparent",
         color: colors.destructive,
         borderWidth: 1,
-        boxShadow: finish.card.boxShadow,
+        boxShadow: finish.control.flat,
         hover: { backgroundColor: alpha(colors.destructive, 0.2) },
-        active: { opacity: 0.9, ...sink.activeStyle },
+        active: { opacity: PRESSED_OPACITY, ...sink.activeStyle },
         selected: {
           backgroundColor: alpha(colors.destructive, 0.22),
-          boxShadow: finish.on.boxShadow,
+          boxShadow: finish.control.on,
         },
       };
     default:
@@ -172,19 +238,16 @@ function variantLook(
         borderColor: colors.primary,
         color: colors.primaryForeground,
         borderWidth: 1,
-        boxShadow: finish.accent.boxShadow,
+        boxShadow: finish.filled,
         hover: {
           backgroundColor: alpha(colors.primary, 0.8),
           borderColor: alpha(colors.primary, 0.8),
         },
         active: {
-          opacity: 0.88,
+          opacity: PRESSED_OPACITY,
           ...sink.activeStyle,
         },
-        selected: {
-          backgroundColor: alpha(colors.primary, 0.85),
-          boxShadow: finish.accent.boxShadow,
-        },
+        selected: { backgroundColor: alpha(colors.primary, 0.85) },
       };
   }
 }
@@ -197,7 +260,7 @@ export function buttonVariants(options?: {
   const variant = options?.variant ?? "default";
   const size = options?.size ?? "default";
   const s = sizeLook(size);
-  const sink = pressSink(0.97, "background-color, border-color, box-shadow, opacity");
+  const sink = pressSink("background-color, border-color, box-shadow, opacity");
   const v = variantLook(variant, sink);
 
   return {
@@ -224,7 +287,7 @@ export function buttonVariants(options?: {
     hoverStyle: v.hover,
     activeStyle: v.active,
     selectedStyle: v.selected,
-    disabledStyle: { opacity: 0.5 },
+    disabledStyle: { opacity: disabledOpacity() },
     hitSlop: touchHitSlop(s.height),
   };
 }

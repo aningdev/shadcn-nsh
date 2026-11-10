@@ -1,4 +1,4 @@
-import { colors, focusRing, radius } from "@shadcn-nsh/theme";
+import { colors, disabledOpacity, focusRing, radius } from "@shadcn-nsh/theme";
 import type { InputStyle, StyleProp } from "nsh";
 import { Input as BaseInput, type InputProps as BaseInputProps } from "nsh/base";
 
@@ -66,7 +66,7 @@ export function Input(props: InputProps) {
       hoverStyle={mergeStyle(undefined, hoverStyle)}
       activeStyle={mergeStyle(undefined, activeStyle)}
       focusStyle={mergeStyle(focusRing(), focusStyle)}
-      disabledStyle={mergeStyle({ opacity: 0.5 }, disabledStyle)}
+      disabledStyle={mergeStyle({ opacity: disabledOpacity() }, disabledStyle)}
     />
   );
 }

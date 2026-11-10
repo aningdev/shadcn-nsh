@@ -1,7 +1,5 @@
 import type { Tokens, ViewStyle } from "nsh";
-import { colorScheme, reduceMotion, token } from "nsh";
-
-import finishes from "./finishes.json";
+import { colorScheme, token } from "nsh";
 
 /** Reactive getters over `theme.json` tokens. */
 function tokens<K extends string>(names: Record<K, keyof Tokens>): Record<K, string> {
@@ -32,6 +30,7 @@ export const colors = tokens({
   border: "border",
   input: "input",
   ring: "ring",
+  backdrop: "custom-backdrop",
 });
 
 export const radius = {
@@ -54,40 +53,70 @@ export const focusRing = (offset = 0): ViewStyle => ({
   outlineOffset: offset,
 });
 
-/** Surface depth: shadows (and optional edges). Fills stay on `colors.*`. */
-export type Finish = {
-  boxShadow: string;
-  borderColor?: string;
-  backgroundColor?: string;
-  backgroundImage?: string;
-  backdropFilter?: string;
-};
-
-/** Control states + overlay `menu` (popup-family one-shadow). */
-export type FinishName = "card" | "raised" | "hover" | "pressed" | "on" | "accent" | "menu";
-
-const isDark = () => colorScheme() !== "light";
-
-function themedFinish<T extends object>(dark: T, light: T): T {
-  const out = {} as T;
-  for (const key of Object.keys(dark) as (keyof T)[]) {
-    Object.defineProperty(out, key, {
-      enumerable: true,
-      get: () => (isDark() ? dark : light)[key],
-    });
-  }
-  return out;
+/** The one disabled look: a dimmed control. `disabled` defaults to true, for a `disabledStyle`. */
+export function disabledOpacity(disabled: unknown = true): number {
+  return disabled ? 0.5 : 1;
 }
 
 /**
- * Light/dark surface finishes from `finishes.json`.
- * Depth only — pair with `colors.*` for brand fills (not Gallery citrus swaps).
+ * Surface depth, `boxShadow` strings only (fills stay on `colors.*`), picked by what the
+ * surface is, never by which component draws it:
+ * - `control`: a bordered control. `rest` is the raised edge, `flat` a hairline (outline,
+ *   destructive), `pressed` the sunk press, `on` a selected or toggled-on control. A hover
+ *   needs no entry: it keeps `rest`, the state style changes the fill only.
+ * - `filled`: a control on a solid brand fill.
+ * - `popup`: the one soft shadow of the popup family (menu, popover, select, dialog, sheet).
+ *
+ * The colors are the `custom-shadow-ink` and `custom-highlight` tokens of `theme.json`; the shapes are here.
  */
-export const finish = themedFinish<Record<FinishName, Finish>>(finishes.dark, finishes.light);
+export type Finish = {
+  control: { rest: string; flat: string; pressed: string; on: string };
+  filled: string;
+  popup: string;
+};
 
-/** Overlay-family one-shadow (`finish.menu`). Prefer this over per-component `boxShadow`. */
+const ink = (a: number) => alpha(token("custom-shadow-ink"), a);
+const light = (a: number) => alpha(token("custom-highlight"), a);
+
+function finishLight(): Finish {
+  return {
+    control: {
+      rest: `inset 0 1px 0 ${light(1)}, inset 0 2px 0 ${light(0.6)}, 0 1px 0 ${ink(0.05)}`,
+      flat: `0 1px 0 ${ink(0.04)}`,
+      pressed: `inset 0 1px 1px ${ink(0.1)}`,
+      on: `inset 0 1px 0 ${light(0.35)}, 0 1px 0 ${ink(0.05)}`,
+    },
+    filled: `inset 0 1px 0 ${light(0.35)}, inset 0 -1px 0 ${ink(0.06)}, 0 1px 0 ${ink(0.08)}`,
+    popup: `0 1px 0 ${ink(0.04)}, 0 12px 28px -10px ${ink(0.22)}`,
+  };
+}
+
+function finishDark(): Finish {
+  return {
+    control: {
+      rest: `inset 0 0 0 1px ${light(0.06)}, inset 0 1px 1px ${light(0.08)}, 0 1px 1px ${ink(0.12)}`,
+      flat: `0 1px 0 ${ink(0.35)}`,
+      pressed: `inset 0 1px 1px ${ink(0.18)}`,
+      on: `inset 0 0 0 1px ${light(0.1)}, inset 0 1px 1px ${light(0.12)}, 0 1px 1px ${ink(0.12)}`,
+    },
+    filled: `inset 0 0 0 1px ${light(0.14)}, inset 0 1px 1px ${light(0.18)}, 0 1px 1px ${ink(0.2)}`,
+    popup: `0 1px 0 ${ink(0.4)}, 0 16px 32px -10px ${ink(0.6)}`,
+  };
+}
+
+const isDark = () => colorScheme() !== "light";
+const finishNow = () => (isDark() ? finishDark() : finishLight());
+
+/** Light/dark surface finishes; each role follows the appearance where it is read. */
+export const finish: Finish = Object.defineProperties({} as Finish, {
+  control: { enumerable: true, get: () => finishNow().control },
+  filled: { enumerable: true, get: () => finishNow().filled },
+  popup: { enumerable: true, get: () => finishNow().popup },
+});
+
+/** Overlay-family one-shadow (`finish.popup`). Prefer this over per-component `boxShadow`. */
 export function overlayShadow(): ViewStyle {
-  return { boxShadow: finish.menu.boxShadow };
+  return { boxShadow: finish.popup };
 }
 
 /** Shared surface for popovers, menus, and select/combobox popups. */
@@ -104,92 +133,5 @@ export function popupSurface(): ViewStyle {
 
 /** The dimming behind what is modal (dialogs, sheets, touch-screen pickers). */
 export function popupBackdrop(): ViewStyle {
-  return { backgroundColor: "color-mix(in srgb, black 40%, transparent)" };
-}
-
-/** Duration tokens (ms). Align press with NSH Design Guides / Gallery. */
-export const duration = {
-  press: 150,
-} as const;
-
-/** Easing tokens for short control transitions. */
-export const easing = {
-  press: "ease-out",
-} as const;
-
-/** Press / state easing shared by controls. */
-export const pressEasing = {
-  transitionDuration: duration.press,
-  transitionTimingFunction: easing.press,
-} satisfies ViewStyle;
-
-/** Transition for press sink + optional CSS property names the states change. */
-export function pressTransition(also?: string): ViewStyle {
-  return {
-    transitionProperty: also ? `${also}, transform` : "transform",
-    ...pressEasing,
-  };
-}
-
-/**
- * Press feedback: sink to `scale` while active (none with reduced motion).
- * Spread `activeStyle` into the control's `activeStyle` and `transition` into `style`.
- */
-export function pressSink(scale = 0.97, also?: string) {
-  return {
-    get activeStyle(): ViewStyle {
-      return reduceMotion() ? {} : { transform: [{ scale }] };
-    },
-    transition: pressTransition(also),
-  };
-}
-
-/**
- * Popup entrance/exit, from the `nsh/base` element docs: popover.md
- * (`transition-all duration-150 ease-out` + `opacity-0 scale-95`), menu.md
- * (`duration-100` + `opacity-0 -translate-y-1`) and tooltip.md
- * (`transition-opacity duration-100` + `opacity-0`).
- *
- * `style` goes on the popup's own look (`style` / `popupStyle`); `startingStyle`
- * and `endingStyle` are its first and last frames. `nsh/base` shows and hides
- * them at once when the user asks for less motion, so nothing here reads
- * `reduceMotion()`.
- */
-export type OverlayMotionKind = "popover" | "menu" | "tooltip";
-
-export type OverlayMotion = {
-  style: ViewStyle;
-  startingStyle: ViewStyle;
-  endingStyle: ViewStyle;
-};
-
-function overlayTransition(properties: string, ms: number): ViewStyle {
-  return {
-    transitionProperty: properties,
-    transitionDuration: ms,
-    transitionTimingFunction: "ease-out",
-  };
-}
-
-export function overlayMotion(kind: OverlayMotionKind): OverlayMotion {
-  if (kind === "tooltip") {
-    // tooltip.md: a 100 ms fade, no movement.
-    const hidden: ViewStyle = { opacity: 0 };
-    return { style: overlayTransition("opacity", 100), startingStyle: hidden, endingStyle: hidden };
-  }
-  if (kind === "menu") {
-    // menu.md: 100 ms, from 4 points above.
-    return {
-      style: overlayTransition("opacity, transform", 100),
-      startingStyle: { opacity: 0, transform: [{ translateY: -4 }] },
-      endingStyle: { opacity: 0 },
-    };
-  }
-  // popover.md: 150 ms, from 95 % of its size.
-  const hidden: ViewStyle = { opacity: 0, transform: [{ scale: 0.95 }] };
-  return {
-    style: overlayTransition("opacity, transform", 150),
-    startingStyle: hidden,
-    endingStyle: hidden,
-  };
+  return { backgroundColor: colors.backdrop };
 }

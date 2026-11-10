@@ -1,4 +1,4 @@
-import { colors, focusRing } from "@shadcn-nsh/theme";
+import { colors, disabledOpacity, focusRing } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { Text } from "nsh";
 import {
@@ -22,7 +22,7 @@ export function Accordion(props: {
       multiple={props.multiple}
       disabled={props.disabled}
       onChange={props.onChange}
-      style={{ opacity: props.disabled ? 0.5 : 1 }}
+      style={{ opacity: disabledOpacity(props.disabled) }}
     >
       {props.children}
     </BaseAccordion>

@@ -6,17 +6,12 @@
       "name": "theme",
       "type": "registry:theme",
       "title": "Theme",
-      "description": "NSH design tokens (theme.json), surface finishes, and token() helpers (lib/theme.ts).",
+      "description": "NSH design tokens (theme.json) and token() / surface / motion helpers (lib/theme.ts).",
       "files": [
         {
           "path": "packages/theme/theme.json",
           "type": "registry:file",
           "target": "theme.json"
-        },
-        {
-          "path": "packages/theme/finishes.json",
-          "type": "registry:file",
-          "target": "lib/finishes.json"
         },
         {
           "path": "packages/theme/theme.ts",
@@ -226,7 +221,7 @@
       "type": "registry:ui",
       "title": "Collapsible",
       "description": "Styled collapsible wrapping nsh/base Collapsible — theme tokens + Trigger / Content; full base prop pass-through.",
-      "registryDependencies": ["button", "open-state"],
+      "registryDependencies": ["theme", "button", "open-state"],
       "files": [
         {
           "path": "packages/ui/collapsible.tsx",

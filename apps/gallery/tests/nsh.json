@@ -1,0 +1,7 @@
+{
+  "name": "shadcn-nsh Gallery tests",
+  "id": "dev.shadcn-nsh.gallery.tests",
+  "version": "0.0.0",
+  "build": 1,
+  "theme": "../../../packages/theme/theme.json"
+}

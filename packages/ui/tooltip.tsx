@@ -1,4 +1,4 @@
-import { colors, overlayMotion, radius } from "@shadcn-nsh/theme";
+import { colors, disabledOpacity, radius } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, split, Text, View } from "nsh";
 import {
@@ -146,7 +146,15 @@ function TooltipBubble(props: BaseTooltipProps) {
 
   // tooltip.md: a 100 ms fade. Either hook of a phase set by the consumer owns that
   // phase (`null` turns it off); the classes left in `rest` pass through.
-  const motion = overlayMotion("tooltip");
+  const motion = {
+    style: {
+      transitionProperty: "opacity",
+      transitionDuration: 100,
+      transitionTimingFunction: "ease-out",
+    },
+    startingStyle: { opacity: 0 },
+    endingStyle: { opacity: 0 },
+  } satisfies Record<"style" | "startingStyle" | "endingStyle", ViewStyle>;
   const defaultStarting = () =>
     props.startingClass === undefined && props.startingStyle === undefined;
   const defaultEnding = () => props.endingClass === undefined && props.endingStyle === undefined;
@@ -281,7 +289,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
     return (
       <View
         class={props.class ?? undefined}
-        style={mergeStyle({ opacity: blocked() ? 0.5 : 1 }, props.style)}
+        style={mergeStyle({ opacity: disabledOpacity(blocked()) }, props.style)}
       >
         {children ?? <View />}
       </View>

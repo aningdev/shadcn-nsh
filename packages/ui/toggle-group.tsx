@@ -1,4 +1,4 @@
-import { colors, radius } from "@shadcn-nsh/theme";
+import { colors, disabledOpacity, radius } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { ToggleGroup as BaseToggleGroup } from "nsh/base";
 
@@ -14,7 +14,7 @@ export function ToggleGroup(props: { disabled?: boolean; children?: JSX.Element 
         borderWidth: 1,
         borderColor: colors.border,
         backgroundColor: colors.muted,
-        opacity: props.disabled ? 0.5 : 1,
+        opacity: disabledOpacity(props.disabled),
       }}
     >
       {props.children}

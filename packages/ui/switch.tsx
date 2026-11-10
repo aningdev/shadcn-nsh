@@ -1,4 +1,4 @@
-import { colors, focusRing } from "@shadcn-nsh/theme";
+import { colors, disabledOpacity, focusRing } from "@shadcn-nsh/theme";
 import type { StyleProp, ViewStyle } from "nsh";
 import { Switch as BaseSwitch, type SwitchProps as BaseSwitchProps } from "nsh/base";
 
@@ -127,7 +127,7 @@ export function Switch(props: SwitchProps) {
       hoverStyle={mergeStyle(undefined, hoverStyle)}
       activeStyle={mergeStyle(undefined, activeStyle)}
       focusStyle={mergeStyle(focusRing(), focusStyle)}
-      disabledStyle={mergeStyle({ opacity: 0.5 }, disabledStyle)}
+      disabledStyle={mergeStyle({ opacity: disabledOpacity() }, disabledStyle)}
       checkedStyle={mergeStyle(undefined, checkedStyle)}
       trackClass={mergeClass(undefined, trackClass)}
       trackStyle={mergeStyle(trackChrome(on, look), trackStyle)}

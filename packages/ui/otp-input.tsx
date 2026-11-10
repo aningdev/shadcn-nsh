@@ -1,4 +1,4 @@
-import { colors, focusRing, radius } from "@shadcn-nsh/theme";
+import { colors, disabledOpacity, focusRing, radius } from "@shadcn-nsh/theme";
 import { OtpInput as BaseOtpInput } from "nsh/base";
 
 export function OtpInput(props: {
@@ -26,7 +26,7 @@ export function OtpInput(props: {
       style={{
         flexDirection: "row",
         gap: 8,
-        opacity: props.disabled ? 0.5 : 1,
+        opacity: disabledOpacity(props.disabled),
       }}
       groupStyle={{ flexDirection: "row", gap: 8 }}
       cellStyle={{

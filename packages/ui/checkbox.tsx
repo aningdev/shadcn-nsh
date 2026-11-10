@@ -1,4 +1,4 @@
-import { colors, focusRing, radius } from "@shadcn-nsh/theme";
+import { colors, disabledOpacity, focusRing, radius } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { Text, View } from "nsh";
 import { Checkbox as BaseCheckbox, type CheckboxProps as BaseCheckboxProps } from "nsh/base";
@@ -30,7 +30,12 @@ function mergeStyle(
 function CheckMark() {
   return (
     <Text
-      style={{ fontSize: 12, fontWeight: "700", color: colors.primaryForeground, lineHeight: 14 }}
+      style={{
+        fontSize: 12,
+        fontWeight: "700",
+        color: colors.primaryForeground,
+        lineHeight: 14,
+      }}
     >
       ✓
     </Text>
@@ -104,7 +109,7 @@ export function Checkbox(props: CheckboxProps) {
       hoverStyle={mergeStyle(undefined, hoverStyle)}
       activeStyle={mergeStyle(undefined, activeStyle)}
       focusStyle={mergeStyle(focusRing(), focusStyle)}
-      disabledStyle={mergeStyle({ opacity: 0.5 }, disabledStyle)}
+      disabledStyle={mergeStyle({ opacity: disabledOpacity() }, disabledStyle)}
       checkedStyle={mergeStyle(undefined, checkedStyle)}
       indeterminateStyle={mergeStyle(undefined, indeterminateStyle)}
       indicatorClass={mergeClass(undefined, indicatorClass)}

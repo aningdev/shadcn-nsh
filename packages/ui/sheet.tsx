@@ -1,4 +1,4 @@
-import { colors, overlayShadow, popupBackdrop, radius } from "@shadcn-nsh/theme";
+import { colors, disabledOpacity, overlayShadow, popupBackdrop, radius } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, Text, View } from "nsh";
 import {
@@ -241,7 +241,7 @@ export function SheetTrigger(props: SheetTriggerProps) {
     <View
       class={mergeClass(undefined, className)}
       onPress={disabled ? undefined : open}
-      style={mergeStyle({ opacity: disabled ? 0.5 : 1 }, style)}
+      style={mergeStyle({ opacity: disabledOpacity(disabled) }, style)}
     >
       {children}
     </View>
@@ -257,7 +257,7 @@ export function SheetClose(props: SheetCloseProps) {
       <View
         class={mergeClass(undefined, className)}
         onPress={disabled ? undefined : () => ctx.setOpen(false)}
-        style={mergeStyle({ opacity: disabled ? 0.5 : 1 }, style)}
+        style={mergeStyle({ opacity: disabledOpacity(disabled) }, style)}
       >
         {children}
       </View>

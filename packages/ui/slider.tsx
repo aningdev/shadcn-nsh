@@ -1,4 +1,4 @@
-import { colors, focusRing } from "@shadcn-nsh/theme";
+import { colors, disabledOpacity, focusRing } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { Slider as BaseSlider, type Axis, type SliderScale, type SliderValue } from "nsh/base";
 
@@ -32,7 +32,7 @@ export function Slider(props: {
       onChange={props.onChange}
       onChangeEnd={props.onChangeEnd}
       style={{
-        opacity: props.disabled ? 0.5 : 1,
+        opacity: disabledOpacity(props.disabled),
         ...(vertical()
           ? { height: 128, width: 20, alignItems: "center" }
           : { height: 20, justifyContent: "center" }),

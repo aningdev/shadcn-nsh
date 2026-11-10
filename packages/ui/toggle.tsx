@@ -1,4 +1,4 @@
-import { colors, focusRing, radius } from "@shadcn-nsh/theme";
+import { colors, disabledOpacity, focusRing, radius } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { Toggle as BaseToggle } from "nsh/base";
 
@@ -25,7 +25,7 @@ export function Toggle(props: {
         backgroundColor: props.pressed ? colors.accent : colors.background,
         alignItems: "center",
         justifyContent: "center",
-        opacity: props.disabled ? 0.5 : 1,
+        opacity: disabledOpacity(props.disabled),
       }}
       pressedStyle={{
         backgroundColor: colors.accent,

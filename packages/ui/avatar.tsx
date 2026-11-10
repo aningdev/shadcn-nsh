@@ -50,7 +50,11 @@ export function Avatar(props: {
       fallback={
         props.fallback ?? (
           <Text
-            style={{ fontSize: size() * 0.35, fontWeight: "600", color: colors.mutedForeground }}
+            style={{
+              fontSize: size() * 0.35,
+              fontWeight: "600",
+              color: colors.mutedForeground,
+            }}
           >
             {initials()}
           </Text>
@@ -90,7 +94,13 @@ export function AvatarGroup(props: {
       }}
       overflow={
         props.overflow ?? (
-          <Text style={{ fontSize: 12, fontWeight: "600", color: colors.secondaryForeground }}>
+          <Text
+            style={{
+              fontSize: 12,
+              fontWeight: "600",
+              color: colors.secondaryForeground,
+            }}
+          >
             {more() > 0 ? `+${more()}` : "…"}
           </Text>
         )

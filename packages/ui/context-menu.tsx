@@ -1,4 +1,4 @@
-import { overlayMotion, popupBackdrop, popupSurface } from "@shadcn-nsh/theme";
+import { popupBackdrop, popupSurface } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { context, split, View } from "nsh";
 import {
@@ -154,7 +154,15 @@ export function ContextMenuContent(props: ContextMenuContentProps) {
 
   // menu.md: the menu surface at the pointer; 100 ms, from 4 points above. Either hook
   // of a phase set by the consumer owns that phase (`null` turns it off).
-  const motion = overlayMotion("menu");
+  const motion = {
+    style: {
+      transitionProperty: "opacity, transform",
+      transitionDuration: 100,
+      transitionTimingFunction: "ease-out",
+    },
+    startingStyle: { opacity: 0, transform: [{ translateY: -4 }] },
+    endingStyle: { opacity: 0 },
+  } satisfies Record<"style" | "startingStyle" | "endingStyle", ViewStyle>;
   const defaultStarting = () =>
     props.popupStartingClass === undefined && props.popupStartingStyle === undefined;
   const defaultEnding = () =>

@@ -1,4 +1,4 @@
-import { colors, focusRing, overlayMotion, popupBackdrop, popupSurface } from "@shadcn-nsh/theme";
+import { colors, disabledOpacity, focusRing, popupBackdrop, popupSurface } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, split, Text, View } from "nsh";
 import {
@@ -153,7 +153,7 @@ function itemChrome(disabled?: boolean): ViewStyle {
     flexDirection: "row",
     alignItems: "center",
     gap: 8,
-    opacity: disabled ? 0.5 : 1,
+    opacity: disabledOpacity(disabled),
   };
 }
 
@@ -250,7 +250,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
         accessibilityState={{ disabled: props.disabled }}
         class={props.class ?? undefined}
         focusStyle={focusRing()}
-        style={mergeStyle({ opacity: props.disabled ? 0.5 : 1 }, props.style)}
+        style={mergeStyle({ opacity: disabledOpacity(props.disabled) }, props.style)}
       >
         {children}
       </View>
@@ -276,7 +276,15 @@ export function MenuContent(props: MenuContentProps) {
 
   // menu.md: 100 ms, from 4 points above. Either hook of a phase set by the consumer
   // owns that phase (`null` turns it off); the classes left in `rest` pass through.
-  const motion = overlayMotion("menu");
+  const motion = {
+    style: {
+      transitionProperty: "opacity, transform",
+      transitionDuration: 100,
+      transitionTimingFunction: "ease-out",
+    },
+    startingStyle: { opacity: 0, transform: [{ translateY: -4 }] },
+    endingStyle: { opacity: 0 },
+  } satisfies Record<"style" | "startingStyle" | "endingStyle", ViewStyle>;
   const defaultStarting = () =>
     props.popupStartingClass === undefined && props.popupStartingStyle === undefined;
   const defaultEnding = () =>
@@ -418,7 +426,7 @@ export function MenuSubTrigger(props: MenuSubTriggerProps) {
       <View
         class={props.class ?? undefined}
         style={mergeStyle(
-          { opacity: isDisabled() ? 0.5 : 1, flexDirection: "row", alignItems: "center" },
+          { opacity: disabledOpacity(isDisabled()), flexDirection: "row", alignItems: "center" },
           props.style,
         )}
         hoverStyle={props.hoverStyle}

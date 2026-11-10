@@ -1,4 +1,11 @@
-import { colors, focusRing, popupBackdrop, popupSurface, radius } from "@shadcn-nsh/theme";
+import {
+  colors,
+  disabledOpacity,
+  focusRing,
+  popupBackdrop,
+  popupSurface,
+  radius,
+} from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { cleanup, context, signal, Text, View, type Signal } from "nsh";
 import {
@@ -49,7 +56,7 @@ export type SelectProps = {
   /**
    * The popup chrome over the shared surface. `nsh/base` Select has no
    * `popupStarting*` / `popupEnding*` hooks, so there is no entrance/exit to
-   * set here (ADR 0003); on phones the popup is base's sheet, with its own
+   * set here (see the theme README); on phones the popup is base's sheet, with its own
    * motion.
    */
   popupClass?: string | null;
@@ -93,7 +100,7 @@ function defaultTrigger(ctx: SelectContextValue) {
         borderWidth: 1,
         borderColor: colors.input,
         backgroundColor: colors.background,
-        opacity: ctx.disabled() ? 0.5 : 1,
+        opacity: disabledOpacity(ctx.disabled()),
       }}
     >
       <Text
@@ -144,7 +151,7 @@ function StyledSelect(props: {
         borderWidth: 1,
         borderColor: colors.input,
         backgroundColor: colors.background,
-        opacity: props.disabled ? 0.5 : 1,
+        opacity: disabledOpacity(props.disabled),
       }}
     >
       <Text
@@ -219,7 +226,7 @@ function StyledSelect(props: {
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "space-between",
-              opacity: item.disabled ? 0.4 : 1,
+              opacity: disabledOpacity(item.disabled),
             }}
           >
             <Text
@@ -270,7 +277,7 @@ export function SelectTrigger(props: { children?: JSX.Element }) {
         borderWidth: 1,
         borderColor: colors.input,
         backgroundColor: colors.background,
-        opacity: ctx.disabled() ? 0.5 : 1,
+        opacity: disabledOpacity(ctx.disabled()),
       }}
     >
       <View style={{ flex: 1 }}>{props.children ?? <SelectValue />}</View>

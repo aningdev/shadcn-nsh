@@ -1,4 +1,4 @@
-import { colors, focusRing, radius } from "@shadcn-nsh/theme";
+import { colors, disabledOpacity, focusRing, radius } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { Text } from "nsh";
 import { Pagination as BasePagination, type PaginationItemState } from "nsh/base";
@@ -26,7 +26,7 @@ export function Pagination(props: {
         flexDirection: "row",
         alignItems: "center",
         gap: 4,
-        opacity: props.disabled ? 0.5 : 1,
+        opacity: disabledOpacity(props.disabled),
       }}
       itemStyle={{
         minWidth: 36,

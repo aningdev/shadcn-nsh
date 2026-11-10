@@ -1,3 +1,4 @@
+import { disabledOpacity } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { context, View } from "nsh";
 import {
@@ -143,7 +144,7 @@ export function CollapsibleTrigger(props: CollapsibleTriggerProps) {
         accessibilityState={{ expanded: ctx.open() }}
         class={mergeClass(undefined, className)}
         onPress={disabled ? undefined : () => ctx.setOpen(!ctx.open())}
-        style={mergeStyle({ alignSelf: "flex-start", opacity: disabled ? 0.5 : 1 }, style)}
+        style={mergeStyle({ alignSelf: "flex-start", opacity: disabledOpacity(disabled) }, style)}
       >
         {children}
       </View>

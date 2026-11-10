@@ -1,4 +1,4 @@
-import { colors, focusRing, overlayMotion, popupSurface } from "@shadcn-nsh/theme";
+import { colors, disabledOpacity, focusRing, popupSurface } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, split, Text, View } from "nsh";
 import {
@@ -162,7 +162,7 @@ export function PopoverTrigger(props: PopoverTriggerProps) {
         accessibilityState={{ disabled: props.disabled }}
         class={props.class ?? undefined}
         focusStyle={focusRing()}
-        style={mergeStyle({ opacity: props.disabled ? 0.5 : 1 }, props.style)}
+        style={mergeStyle({ opacity: disabledOpacity(props.disabled) }, props.style)}
       >
         {children}
       </View>
@@ -187,7 +187,15 @@ export function PopoverContent(props: PopoverContentProps) {
 
   // popover.md: 150 ms, from 95 % of its size. Either hook of a phase set by the
   // consumer owns that phase (`null` turns it off); the classes left in `rest` pass through.
-  const motion = overlayMotion("popover");
+  const motion = {
+    style: {
+      transitionProperty: "opacity, transform",
+      transitionDuration: 150,
+      transitionTimingFunction: "ease-out",
+    },
+    startingStyle: { opacity: 0, transform: [{ scale: 0.95 }] },
+    endingStyle: { opacity: 0, transform: [{ scale: 0.95 }] },
+  } satisfies Record<"style" | "startingStyle" | "endingStyle", ViewStyle>;
   const defaultStarting = () =>
     props.popupStartingClass === undefined && props.popupStartingStyle === undefined;
   const defaultEnding = () =>

@@ -1,4 +1,4 @@
-import { colors, focusRing, radius } from "@shadcn-nsh/theme";
+import { colors, disabledOpacity, focusRing, radius } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { context, signal, Text, View } from "nsh";
 import {
@@ -273,7 +273,7 @@ export function TabsTrigger(props: TabsTriggerProps) {
       hoverStyle={mergeStyle(undefined, hoverStyle)}
       activeStyle={mergeStyle(undefined, activeStyle)}
       focusStyle={mergeStyle(focusRing(), focusStyle)}
-      disabledStyle={mergeStyle({ opacity: 0.5 }, disabledStyle)}
+      disabledStyle={mergeStyle({ opacity: disabledOpacity() }, disabledStyle)}
       selectedStyle={mergeStyle(triggerSelectedChrome(variant), selectedStyle)}
     >
       {typeof children === "string" ? defaultLabel(on, children) : children}
@@ -305,7 +305,7 @@ export function Tab(props: TabProps) {
       hoverStyle={mergeStyle(undefined, hoverStyle)}
       activeStyle={mergeStyle(undefined, activeStyle)}
       focusStyle={mergeStyle(focusRing(), focusStyle)}
-      disabledStyle={mergeStyle({ opacity: 0.5 }, disabledStyle)}
+      disabledStyle={mergeStyle({ opacity: disabledOpacity() }, disabledStyle)}
       selectedStyle={mergeStyle(triggerSelectedChrome("default"), selectedStyle)}
     >
       {children}

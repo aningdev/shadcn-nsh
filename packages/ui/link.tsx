@@ -1,4 +1,4 @@
-import { colors, focusRing } from "@shadcn-nsh/theme";
+import { colors, disabledOpacity, focusRing } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { Text } from "nsh";
 import { Link as BaseLink } from "nsh/base";
@@ -50,7 +50,7 @@ export function Link(props: {
       focusStyle={focusRing()}
       style={{
         alignSelf: "flex-start",
-        opacity: props.disabled ? 0.5 : 1,
+        opacity: disabledOpacity(props.disabled),
       }}
       hoverStyle={props.disabled ? undefined : { opacity: 0.8 }}
       activeStyle={props.disabled ? undefined : { opacity: 0.7 }}
