@@ -2,7 +2,7 @@
 
 本仓库为 NSH 构建 **styled component-library 层**（社区/应用层）：在 `nsh/base` 的 unstyled 行为与无障碍结构之上，提供可复制进应用的品牌化组件与分发体验。分发模式对齐 shadcn/ui；行为权威仍是 `nsh/base`。
 
-产品单元是 **Styled Component**（Copy-into-app）：双主目标为品牌外观（`theme.json` / `token()`）与 registry/CLI 分发。复合控件公开 **Composition Facade**（`Trigger` / `Content` / `Item` 等角色），**家族名与 registry id 跟 `nsh/base` 符号**（如 `Menu` / `MenuTrigger` / `add menu`），不是 shadcn 的 `DropdownMenu*` / `dropdown-menu`。内部仍适配 base 的 value/open/items/`trigger` 模型；对外 **Composition-only**（不保留 legacy 单根 `trigger` 双路径）。无法抹平的差异写进各组件 docs 的 Differences。词汇见 [`GLOSSARY.md`](GLOSSARY.md)；决策见 [`docs/adr/0001-styled-component-scope-and-naming.md`](docs/adr/0001-styled-component-scope-and-naming.md)。
+产品单元是 **Styled Component**（Copy-into-app）：双主目标为品牌外观（`theme.json` / `token()`）与 registry/CLI 分发。复合控件公开 **Composition Facade**（`Trigger` / `Content` / `Item` 等角色），**家族名与 registry id 跟 `nsh/base` 符号**（如 `Menu` / `MenuTrigger` / `add menu`），不是 shadcn 的 `DropdownMenu*` / `dropdown-menu`。内部仍适配 base 的 value/open/items/`trigger` 模型；对外 **Composition-only**（不保留 legacy 单根 `trigger` 双路径）。无法抹平的差异写进各组件 docs 的 Differences。词汇见 [`GLOSSARY.md`](GLOSSARY.md)；决策见 [`docs/adr/`](docs/adr/)（范围与命名：[0001](docs/adr/0001-styled-component-scope-and-naming.md)）。
 
 **不做**：改 `nsh` / `nsh/base` 本身；不把 Gallery 演示样式当成可发布 API；不新增无 base 的 Extensions；不为旧 shadcn 形 registry id 提供 alias。
 
@@ -35,70 +35,31 @@
 - **控件行为、parts、平台差异、Tailwind/theme** — 读 `references/nsh` 与 [nsh.dev/llms.txt](https://nsh.dev/llms.txt)。
 - **组件库架构约定** — 对齐 NSH Coding Guides 的 library 边界。
 
-## 当前布局
+## 布局
 
-Bun workspaces（`apps/*`、`packages/*`）。copy-into-app：`build` → `public/r` → `init` / `add`。
+Bun workspaces（`apps/*`、`packages/*`）；路径与包名见 [`README.md`](README.md) 的 Layout。copy-into-app：`build` → `public/r` → `init` / `add`。
 
-| 路径                               | 职责                                                                |
-| ---------------------------------- | ------------------------------------------------------------------- |
-| [`packages/theme`](packages/theme) | `theme.json` + `token()` 辅助（`@shadcn-nsh/theme`）                |
-| [`packages/ui`](packages/ui)       | 包装 `nsh/base` 的 styled 组件（`@shadcn-nsh/ui`）                  |
-| [`packages/cli`](packages/cli)     | npm 包 `shadcn-nsh`（`build` / `init` / `add` / `serve`）           |
-| [`registry.json`](registry.json)   | 源 catalog                                                          |
-| [`public/r`](public/r)             | 可 HTTP 拉取的 registry 产物（提交进 git）                          |
-| [`apps/gallery`](apps/gallery)     | 原生验真 demo（workspace 依赖作者包）                               |
-| [`apps/docs`](apps/docs)           | Astro 文档站；可选 `docs:demos` 打 NSH web 预览                     |
-| [`references/`](references/)       | 只读 submodule                                                      |
+**两面分工**：gallery = 原生验真；docs = 公开说明 + web 示意。作者侧 `packages/ui`（`@shadcn-nsh/ui`）是 registry 源；消费方落点通常是应用内或 `@workspace/ui`（copy-into-app）。扩展布局时同步更新 README 的 Layout。
 
-**两面分工**：gallery = 原生验真；docs = 公开说明 + web 示意。消费方 monorepo 模板（`create` / `templates/nsh-monorepo`）暂缓，以后再做。作者侧 `packages/ui`（`@shadcn-nsh/ui`）是 registry 源；消费方落点通常是应用内或 `@workspace/ui`（copy-into-app）。
+## 工作约定
 
-CLI 已可发布为 unscoped npm 包 `shadcn-nsh`（`.github/workflows/publish-cli.yml`：`workflow_dispatch` / `v*` 标签）。尚未开建：多 style、消费方 `create` 模板。扩展布局时同步更新本节。
+- 改 `packages/ui` 或 `packages/theme` 后必须 `bun run registry:build`，并提交 `public/r`。
+- `public/r` 提交进 git，可以直接手改；手改后建议 `vp fmt public/r`。`apps/docs/public/demos` 是产物（已 gitignore），不要手改。
+- 改 theme/ui 前先保证 gallery 的 `.nsh` 已生成：`bun run nsh:bootstrap`。
 
 ## 工具链
 
-Bun 管理依赖与脚本；格式化 / lint / 工具面类型经 [Vite+](https://viteplus.dev)（`vp fmt` / `vp lint` / `vp check`，内置 Oxfmt / Oxlint），配置集中在根 `vite.config.ts`，不用 Prettier。
+Bun 管理依赖与脚本；格式化 / lint / 工具面类型经 [Vite+](https://viteplus.dev)（`vp fmt` / `vp lint` / `vp check`），配置集中在根 `vite.config.ts`，不用 Prettier。
 
-### TypeScript 分层
-
-| 面            | 路径                                                   | extends                                                                                                                                                    | 类型权威                                                                                |
-| ------------- | ------------------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| 共享选项      | `tsconfig.base.json`                                   | —                                                                                                                                                          | —                                                                                       |
-| NSH 组件作者  | `tsconfig.nsh.json` → `packages/theme`、`packages/ui`  | base + NSH JSX；`paths`/`files` 指向 **gallery `.nsh`（本仓唯一 types host）**                                                                             | `nsh check apps/gallery` 为主；`vp check` 可辅                                          |
-| NSH 应用      | `apps/gallery/tsconfig.json`                           | **仅** `./.nsh/tsconfig.json`；自带 `paths` 时须手写回填 `nsh` / `nsh/*` / `*`（TS **不合并** extends 的 paths）；只 `include` 本 app，用 paths 引用包入口 | `nsh check apps/gallery`                                                                |
-| Docs（Astro） | `apps/docs/tsconfig.json`                              | `astro/tsconfigs/strict` + `contentMappers`（`@astrojs/ts-content-mapper` → `.astro`）                                                                     | `astro sync && tsc --noEmit --runExternalCode`（不用 `astro check` / `@astrojs/check`） |
-| 工具链        | `packages/cli`、根 `tsconfig.json`（`vite.config.ts`） | base；CLI 加 `types: ["node","bun"]`                                                                                                                       | `vp check`                                                                              |
-
-TypeScript 为 **7.1**（content mapper 所需；状态仍 experimental / beta）。`astro check` 方向是弃用或内部转调 `tsc`；TS 7 不再提供旧 Language Service API，故官方推荐原生 `tsc` + content mapper。
-
-改 theme/ui 前先保证 gallery 的 `.nsh` 已生成（`nsh check apps/gallery` / `prepare:types`）。
-
-**NSH CLI**：本仓 Phase-1 对齐 **store / GitHub release CLI**（当前 `0.4.0`）。不要用 `install.sh --source`——docs CI 与本地都装 release tarball。仅包装该 release 已注册的 `nsh/base` 导出；清单与缺口见 `packages/ui/README.md`。
-
-```sh
-curl -fsSL https://nsh.dev/install.sh | sh
-bun run nsh:bootstrap           # prepare:types（生成各 .nsh）
-```
-
-根 `check` = `vp check`（fmt + lint + 工具面类型）+ `nsh check`（NSH 面）+ `check:docs`（Astro/`tsc`）。
+TypeScript 分层（tsconfig 的 extends、types host、各面类型权威）、TS 7.1 与 NSH CLI（store release，勿用 `install.sh --source`）见 [`docs/toolchain.md`](docs/toolchain.md)。
 
 ## 常用命令
 
 ```sh
-bun install
-bun run nsh:bootstrap           # store CLI + 生成各 .nsh types host
-bun run check                   # vp check + nsh check + check:docs
-bun run check:fix              # vp check --fix
-bun run registry:build
-bun run registry:serve          # http://127.0.0.1:4173/{name}.json
-bun run shadcn-nsh -- init -c <app> --registry 'http://127.0.0.1:4173/{name}.json'
-bun run shadcn-nsh -- add button -c <app> --registry 'http://127.0.0.1:4173/{name}.json'
-bun run cli:build               # packages/cli → dist/（发布前）
-bunx shadcn-nsh@latest add button   # 消费方（npm 发布后）
-bun run check:gallery
-bun run check:docs              # astro sync && tsc --noEmit --runExternalCode
-bun run dev:gallery
-bun run dev:docs
-bun run docs:demos              # nsh package demos → apps/docs/public/demos
+bun run nsh:bootstrap   # 生成各 .nsh types host
+bun run check           # vp check --fix → nsh check → check:demos → check:docs（会改文件）
+bun run registry:build  # registry.json → public/r
+bun run registry:serve  # http://127.0.0.1:4173/{name}.json
 ```
 
-默认远程 registry（push 后）：`https://raw.githubusercontent.com/aningdev/shadcn-nsh/main/public/r/{name}.json`。
+其余脚本（`dev:*`、`check:*`、`docs:demos`、`cli:build`）见根 `package.json`；`init` / `add` 用法与默认远程 registry 见 [`README.md`](README.md)。

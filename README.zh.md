@@ -4,7 +4,7 @@
 
 为 [Native Shell (NSH)](https://github.com/longbridge/nsh) 构建的 styled UI 体系：在 `nsh/base` 之上提供可复制进应用的组件与分发体验，模式对齐 [shadcn/ui](https://github.com/shadcn-ui/ui)。
 
-Agent 与贡献约定见 [`AGENTS.md`](AGENTS.md)。参考源码以 git submodule 挂在 [`references/`](references/)。
+Agent 与贡献约定见 [`AGENTS.md`](AGENTS.md)。词汇见 [`GLOSSARY.md`](GLOSSARY.md)，决策见 [`docs/adr/`](docs/adr/)。参考源码以 git submodule 挂在 [`references/`](references/)。
 
 ## 前置
 
@@ -54,11 +54,13 @@ bun run registry:build
 
 ## 布局
 
-| 路径             | 包名 / 角色           | 说明                                |
-| ---------------- | --------------------- | ----------------------------------- |
-| `packages/theme` | `@shadcn-nsh/theme`   | design tokens（作者侧 registry 源） |
-| `packages/ui`    | `@shadcn-nsh/ui`      | styled 组件源                       |
-| `packages/cli`   | `shadcn-nsh` (npm)    | `init` / `add` / `build` / `serve`  |
-| `public/r`       | —                     | HTTP registry 产物                  |
-| `apps/gallery`   | `@shadcn-nsh/gallery` | 原生验真 demo                       |
+| 路径             | 包名 / 角色           | 说明                                 |
+| ---------------- | --------------------- | ------------------------------------ |
+| `packages/theme` | `@shadcn-nsh/theme`   | design tokens（作者侧 registry 源）  |
+| `packages/ui`    | `@shadcn-nsh/ui`      | styled 组件源                        |
+| `packages/cli`   | `shadcn-nsh` (npm)    | `init` / `add` / `build` / `serve`   |
+| `registry.json`  | —                     | 源 catalog                           |
+| `public/r`       | —                     | HTTP registry 产物（提交进 git）     |
+| `apps/gallery`   | `@shadcn-nsh/gallery` | 原生验真 demo                        |
 | `apps/docs`      | `@shadcn-nsh/docs`    | Astro 文档站（可选 web iframe 预览） |
+| `references/`    | —                     | 只读 git submodule                   |

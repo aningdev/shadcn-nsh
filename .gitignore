@@ -156,3 +156,7 @@ apps/docs/public/demos/
 
 # Bun
 bun.lockb
+
+# Claude Code local overrides
+.claude/settings.local.json
+.claude/.check-stamp

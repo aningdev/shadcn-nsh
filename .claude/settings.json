@@ -1,0 +1,52 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(bun run check)",
+      "Bash(bun run check:*)",
+      "Bash(bun run registry:build)",
+      "Bash(bun run nsh:bootstrap)",
+      "Bash(bun run prepare:types)",
+      "Bash(bun run cli:build)",
+      "Bash(nsh check:*)",
+      "Bash(vp check:*)",
+      "Bash(vp fmt:*)",
+      "Bash(vp lint:*)",
+      "Bash(git status:*)",
+      "Bash(git diff:*)",
+      "Bash(git log:*)",
+      "Bash(git show:*)"
+    ],
+    "deny": [
+      "Edit(references/**)",
+      "Write(references/**)",
+      "Edit(apps/docs/public/demos/**)",
+      "Write(apps/docs/public/demos/**)",
+      "Read(bun.lock)",
+      "Read(node_modules/**)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/fmt.sh\""
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bash \"$CLAUDE_PROJECT_DIR/.claude/hooks/stop-check.sh\"",
+            "timeout": 600
+          }
+        ]
+      }
+    ]
+  }
+}

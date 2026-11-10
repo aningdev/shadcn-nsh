@@ -4,7 +4,7 @@
 
 Styled UI for [Native Shell (NSH)](https://github.com/longbridge/nsh): copy-into-app components and distribution on top of `nsh/base`, patterned after [shadcn/ui](https://github.com/shadcn-ui/ui).
 
-Agent and contribution rules: [`AGENTS.md`](AGENTS.md). Reference sources live as git submodules under [`references/`](references/).
+Agent and contribution rules: [`AGENTS.md`](AGENTS.md). Vocabulary: [`GLOSSARY.md`](GLOSSARY.md). Decisions: [`docs/adr/`](docs/adr/). Reference sources live as git submodules under [`references/`](references/).
 
 ## Prerequisites
 
@@ -59,6 +59,8 @@ After changing `packages/ui` or `packages/theme`, run `bun run registry:build` a
 | `packages/theme` | `@shadcn-nsh/theme`   | design tokens (author-side registry source) |
 | `packages/ui`    | `@shadcn-nsh/ui`      | styled component sources                    |
 | `packages/cli`   | `shadcn-nsh` (npm)    | `init` / `add` / `build` / `serve`          |
-| `public/r`       | —                     | HTTP registry artifacts                     |
+| `registry.json`  | —                     | source catalog                              |
+| `public/r`       | —                     | HTTP registry artifacts (committed)         |
 | `apps/gallery`   | `@shadcn-nsh/gallery` | native verification demos                   |
 | `apps/docs`      | `@shadcn-nsh/docs`    | Astro docs (optional web iframe previews)   |
+| `references/`    | —                     | read-only git submodules                    |
