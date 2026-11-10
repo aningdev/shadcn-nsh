@@ -1,6 +1,6 @@
 import { colors, focusRing, overlayMotion, popupBackdrop, popupSurface } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
-import { context, Text, View } from "nsh";
+import { context, split, Text, View } from "nsh";
 import {
   Menu as BaseMenu,
   MenuItem as BaseMenuItem,
@@ -126,12 +126,6 @@ function useMenu() {
 type SubContextValue = { trigger: Slot; disabled?: boolean };
 const SubContext = context<SubContextValue | null>(null);
 
-/** Concatenate wrapper + consumer `class` when both are set. */
-function mergeClass(base?: string | null, consumer?: string | null): string | undefined {
-  if (base && consumer) return `${base} ${consumer}`;
-  return consumer ?? base ?? undefined;
-}
-
 /** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
 function mergeStyle<T extends ViewStyle | TextStyle>(
   base?: StyleProp<T> | null,
@@ -211,13 +205,8 @@ function defaultCheckIndicator(): JSX.Element {
 }
 
 export function Menu(props: MenuProps) {
-  const { open, defaultOpen, children, onOpenChange, onOpen, onClose, onCancel } = props;
-
-  const state = createOpenState<OpenChangeReason>({
-    open,
-    defaultOpen,
-    onOpenChange,
-  });
+  // `props` itself is the options bag: `open` / `onOpenChange` are read when used.
+  const state = createOpenState<OpenChangeReason>(props);
   const triggerSlot = createSlot();
 
   return (
@@ -225,33 +214,43 @@ export function Menu(props: MenuProps) {
       value={{
         ...state,
         trigger: triggerSlot,
-        onOpen,
-        onClose,
-        onCancel,
+        get onOpen() {
+          return props.onOpen;
+        },
+        get onClose() {
+          return props.onClose;
+        },
+        get onCancel() {
+          return props.onCancel;
+        },
       }}
     >
-      {children}
+      {props.children}
     </MenuContext.Provider>
   );
 }
 
 export function MenuTrigger(props: MenuTriggerProps) {
   const ctx = useMenu();
-  const { children, disabled, class: className, style } = props;
 
+  // Base toggles the menu on a press of the trigger; no onPress of our own.
   ctx.trigger.set(() => {
+    const children = props.children;
     if (typeof children === "string") {
       return (
-        <Button disabled={disabled} onPress={() => ctx.setOpen(true)}>
+        <Button disabled={props.disabled} class={props.class ?? undefined} style={props.style}>
           {children}
         </Button>
       );
     }
     return (
       <View
-        class={mergeClass(undefined, className)}
-        onPress={disabled ? undefined : () => ctx.setOpen(true)}
-        style={mergeStyle({ opacity: disabled ? 0.5 : 1 }, style)}
+        accessible
+        role="button"
+        accessibilityState={{ disabled: props.disabled }}
+        class={props.class ?? undefined}
+        focusStyle={focusRing()}
+        style={mergeStyle({ opacity: props.disabled ? 0.5 : 1 }, props.style)}
       >
         {children}
       </View>
@@ -263,217 +262,152 @@ export function MenuTrigger(props: MenuTriggerProps) {
 export function MenuContent(props: MenuContentProps) {
   const ctx = useMenu();
   const triggerAccessor = ctx.trigger.get();
-  const {
-    children,
-    class: className,
-    style,
-    hoverStyle,
-    activeStyle,
-    focusStyle,
-    disabledStyle,
-    popupClass,
-    popupStyle,
-    popupStartingStyle,
-    popupEndingStyle,
-    backdropClass,
-    backdropStyle,
-    placement = "bottom",
-    align = "start",
-    offset = 4,
-    ...rest
-  } = props;
+  // Only what this part defaults or owns is split off; the rest (class, style, hover…) passes through.
+  const [, rest] = split(props, [
+    "children",
+    "popupStyle",
+    "backdropStyle",
+    "popupStartingStyle",
+    "popupEndingStyle",
+    "placement",
+    "align",
+    "offset",
+  ]);
 
   // menu.md: 100 ms, from 4 points above. Either hook of a phase set by the consumer
-  // owns that phase (`null` turns it off); the classes left in `...rest` pass through.
+  // owns that phase (`null` turns it off); the classes left in `rest` pass through.
   const motion = overlayMotion("menu");
-  const defaultStartingStyle =
-    props.popupStartingClass === undefined && popupStartingStyle === undefined;
-  const defaultEndingStyle = props.popupEndingClass === undefined && popupEndingStyle === undefined;
+  const defaultStarting = () =>
+    props.popupStartingClass === undefined && props.popupStartingStyle === undefined;
+  const defaultEnding = () =>
+    props.popupEndingClass === undefined && props.popupEndingStyle === undefined;
 
   return (
     <BaseMenu
       {...rest}
       open={ctx.open()}
       trigger={(triggerAccessor?.() as JSX.Element) ?? <View />}
-      placement={placement}
-      align={align}
-      offset={offset}
+      placement={props.placement ?? "bottom"}
+      align={props.align ?? "start"}
+      offset={props.offset ?? 4}
       onOpenChange={({ open, reason }) => ctx.setOpen(open, reason)}
       onOpen={ctx.onOpen}
       onClose={ctx.onClose}
       onCancel={ctx.onCancel}
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(undefined, style)}
-      hoverStyle={mergeStyle(undefined, hoverStyle)}
-      activeStyle={mergeStyle(undefined, activeStyle)}
-      focusStyle={mergeStyle(undefined, focusStyle)}
-      disabledStyle={mergeStyle(undefined, disabledStyle)}
-      popupClass={mergeClass(undefined, popupClass)}
-      popupStyle={mergeStyle({ ...contentPopupChrome(), ...motion.style }, popupStyle)}
-      backdropClass={mergeClass(undefined, backdropClass)}
-      backdropStyle={mergeStyle(popupBackdrop(), backdropStyle)}
-      popupStartingStyle={defaultStartingStyle ? motion.startingStyle : popupStartingStyle}
-      popupEndingStyle={defaultEndingStyle ? motion.endingStyle : popupEndingStyle}
+      popupStyle={mergeStyle({ ...contentPopupChrome(), ...motion.style }, props.popupStyle)}
+      backdropStyle={mergeStyle(popupBackdrop(), props.backdropStyle)}
+      popupStartingStyle={defaultStarting() ? motion.startingStyle : props.popupStartingStyle}
+      popupEndingStyle={defaultEnding() ? motion.endingStyle : props.popupEndingStyle}
     >
-      {children}
+      {props.children}
     </BaseMenu>
   );
 }
 
 export function MenuItem(props: MenuItemProps) {
-  const {
-    checked,
-    indicator,
-    disabled,
-    closeOnSelect,
-    accessibilityLabel,
-    children,
-    onSelect,
-    class: className,
-    style,
-    hoverStyle,
-    activeStyle,
-    focusStyle,
-    disabledStyle,
-    indicatorClass,
-    indicatorStyle,
-    checkedStyle,
-    role,
-    ...rest
-  } = props;
-
-  const resolvedIndicator = indicator ?? (checked != null ? defaultCheckIndicator() : undefined);
+  // Defaulted: indicator, style, hoverStyle, focusStyle. Everything else passes through.
+  const [, rest] = split(props, ["children", "indicator", "style", "hoverStyle", "focusStyle"]);
 
   return (
     <BaseMenuItem
       {...rest}
-      checked={checked}
-      role={role}
-      indicator={resolvedIndicator}
-      indicatorClass={indicatorClass}
-      indicatorStyle={indicatorStyle}
-      checkedStyle={checkedStyle}
-      disabled={disabled}
-      closeOnSelect={closeOnSelect}
-      accessibilityLabel={accessibilityLabel}
-      onSelect={onSelect}
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(itemChrome(disabled), style)}
-      hoverStyle={mergeStyle(itemHoverChrome(disabled), hoverStyle)}
-      activeStyle={mergeStyle(undefined, activeStyle)}
-      focusStyle={mergeStyle(focusRing(), focusStyle)}
-      disabledStyle={mergeStyle(undefined, disabledStyle)}
+      indicator={props.indicator ?? (props.checked != null ? defaultCheckIndicator() : undefined)}
+      style={mergeStyle(itemChrome(props.disabled), props.style)}
+      hoverStyle={mergeStyle(itemHoverChrome(props.disabled), props.hoverStyle)}
+      focusStyle={mergeStyle(focusRing(), props.focusStyle)}
     >
-      {children}
+      {props.children}
     </BaseMenuItem>
   );
 }
 
 export function MenuCheckboxItem(props: MenuCheckboxItemProps) {
-  const { checked, ...rest } = props;
-  return <MenuItem {...rest} checked={checked ?? false} />;
+  const [, rest] = split(props, ["checked"]);
+  return <MenuItem {...rest} checked={props.checked ?? false} />;
 }
 
 export function MenuGroup(props: MenuGroupProps) {
-  const { children, class: className, style } = props;
   return (
-    <View class={mergeClass(undefined, className)} style={mergeStyle(undefined, style)}>
-      {children}
+    <View class={props.class ?? undefined} style={props.style}>
+      {props.children}
     </View>
   );
 }
 
 export function MenuLabel(props: MenuLabelProps) {
-  const { children, class: className, style } = props;
-  if (typeof children !== "string" && children != null) {
+  if (typeof props.children !== "string" && props.children != null) {
     return (
-      <View
-        class={mergeClass(undefined, className)}
-        style={mergeStyle(undefined, style as StyleProp<ViewStyle> | null)}
-      >
-        {children}
+      <View class={props.class ?? undefined} style={props.style as StyleProp<ViewStyle> | null}>
+        {props.children}
       </View>
     );
   }
   return (
     <Text
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(labelChrome(), style as StyleProp<TextStyle> | null)}
+      class={props.class ?? undefined}
+      style={mergeStyle(labelChrome(), props.style as StyleProp<TextStyle> | null)}
     >
-      {children}
+      {props.children}
     </Text>
   );
 }
 
 export function MenuSeparator(props: MenuSeparatorProps = {}) {
-  const {
-    class: className,
-    style,
-    hoverStyle,
-    activeStyle,
-    focusStyle,
-    disabledStyle,
-    ...rest
-  } = props;
-
-  return (
-    <BaseMenuSeparator
-      {...rest}
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(separatorChrome(), style)}
-      hoverStyle={mergeStyle(undefined, hoverStyle)}
-      activeStyle={mergeStyle(undefined, activeStyle)}
-      focusStyle={mergeStyle(undefined, focusStyle)}
-      disabledStyle={mergeStyle(undefined, disabledStyle)}
-    />
-  );
+  const [, rest] = split(props, ["style"]);
+  return <BaseMenuSeparator {...rest} style={mergeStyle(separatorChrome(), props.style)} />;
 }
 
 export function MenuShortcut(props: MenuShortcutProps) {
-  const { children, class: className, style } = props;
-  if (typeof children !== "string" && children != null) {
+  if (typeof props.children !== "string" && props.children != null) {
     return (
       <View
-        class={mergeClass(undefined, className)}
-        style={mergeStyle({ marginLeft: "auto" }, style as StyleProp<ViewStyle> | null)}
+        class={props.class ?? undefined}
+        style={mergeStyle({ marginLeft: "auto" }, props.style as StyleProp<ViewStyle> | null)}
       >
-        {children}
+        {props.children}
       </View>
     );
   }
   return (
     <Text
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(shortcutChrome(), style as StyleProp<TextStyle> | null)}
+      class={props.class ?? undefined}
+      style={mergeStyle(shortcutChrome(), props.style as StyleProp<TextStyle> | null)}
     >
-      {children}
+      {props.children}
     </Text>
   );
 }
 
 export function MenuSub(props: MenuSubProps) {
-  const { children, disabled } = props;
-
   const triggerSlot = createSlot();
   return (
-    <SubContext.Provider value={{ trigger: triggerSlot, disabled }}>{children}</SubContext.Provider>
+    <SubContext.Provider
+      value={{
+        trigger: triggerSlot,
+        get disabled() {
+          return props.disabled;
+        },
+      }}
+    >
+      {props.children}
+    </SubContext.Provider>
   );
 }
 
 export function MenuSubTrigger(props: MenuSubTriggerProps) {
   const ctx = SubContext();
   if (!ctx) throw new Error("MenuSubTrigger must be used within <MenuSub>");
-  const { children, disabled, class: className, style, hoverStyle, activeStyle } = props;
-  const isDisabled = disabled ?? ctx.disabled;
+  const isDisabled = () => props.disabled ?? ctx.disabled;
 
   ctx.trigger.set(() => {
+    const children = props.children;
     if (typeof children === "string") {
       return (
         <View
-          class={mergeClass(undefined, className)}
-          style={mergeStyle(subTriggerChrome(isDisabled), style)}
-          hoverStyle={mergeStyle(itemHoverChrome(isDisabled), hoverStyle)}
-          activeStyle={mergeStyle(undefined, activeStyle)}
+          class={props.class ?? undefined}
+          style={mergeStyle(subTriggerChrome(isDisabled()), props.style)}
+          hoverStyle={mergeStyle(itemHoverChrome(isDisabled()), props.hoverStyle)}
+          activeStyle={props.activeStyle}
         >
           <Text style={{ fontSize: 14, color: colors.foreground }}>{children}</Text>
           <Text style={{ fontSize: 12, color: colors.mutedForeground }}>›</Text>
@@ -482,13 +416,13 @@ export function MenuSubTrigger(props: MenuSubTriggerProps) {
     }
     return (
       <View
-        class={mergeClass(undefined, className)}
+        class={props.class ?? undefined}
         style={mergeStyle(
-          { opacity: isDisabled ? 0.5 : 1, flexDirection: "row", alignItems: "center" },
-          style,
+          { opacity: isDisabled() ? 0.5 : 1, flexDirection: "row", alignItems: "center" },
+          props.style,
         )}
-        hoverStyle={mergeStyle(undefined, hoverStyle)}
-        activeStyle={mergeStyle(undefined, activeStyle)}
+        hoverStyle={props.hoverStyle}
+        activeStyle={props.activeStyle}
       >
         {children ?? <View />}
       </View>
@@ -501,33 +435,16 @@ export function MenuSubContent(props: MenuSubContentProps) {
   const ctx = SubContext();
   if (!ctx) throw new Error("MenuSubContent must be used within <MenuSub>");
   const triggerAccessor = ctx.trigger.get();
-  const {
-    children,
-    disabled,
-    back,
-    class: className,
-    style,
-    hoverStyle,
-    activeStyle,
-    focusStyle,
-    disabledStyle,
-    ...rest
-  } = props;
+  const [, rest] = split(props, ["children", "disabled", "style"]);
 
   return (
     <BaseSubmenu
       {...rest}
-      disabled={disabled ?? ctx.disabled}
-      back={back}
+      disabled={props.disabled ?? ctx.disabled}
       trigger={(triggerAccessor?.() as JSX.Element) ?? <View />}
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(submenuChrome(), style)}
-      hoverStyle={mergeStyle(undefined, hoverStyle)}
-      activeStyle={mergeStyle(undefined, activeStyle)}
-      focusStyle={mergeStyle(undefined, focusStyle)}
-      disabledStyle={mergeStyle(undefined, disabledStyle)}
+      style={mergeStyle(submenuChrome(), props.style)}
     >
-      {children}
+      {props.children}
     </BaseSubmenu>
   );
 }
