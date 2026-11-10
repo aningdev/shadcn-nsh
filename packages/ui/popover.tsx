@@ -1,6 +1,6 @@
-import { colors, overlayMotion, popupSurface } from "@shadcn-nsh/theme";
+import { colors, focusRing, overlayMotion, popupSurface } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
-import { context, Text, View } from "nsh";
+import { context, split, Text, View } from "nsh";
 import {
   Popover as BasePopover,
   type OpenChangeReason,
@@ -84,12 +84,6 @@ function usePopover() {
   return ctx;
 }
 
-/** Concatenate wrapper + consumer `class` when both are set. */
-function mergeClass(base?: string | null, consumer?: string | null): string | undefined {
-  if (base && consumer) return `${base} ${consumer}`;
-  return consumer ?? base ?? undefined;
-}
-
 /** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
 function mergeStyle<T extends ViewStyle | TextStyle>(
   base?: StyleProp<T> | null,
@@ -124,13 +118,8 @@ function descriptionChrome(): TextStyle {
 }
 
 export function Popover(props: PopoverProps) {
-  const { open, defaultOpen, children, onOpenChange, onOpen, onClose, onCancel } = props;
-
-  const state = createOpenState<OpenChangeReason>({
-    open,
-    defaultOpen,
-    onOpenChange,
-  });
+  // `props` itself is the options bag: `open` / `onOpenChange` are read when used.
+  const state = createOpenState<OpenChangeReason>(props);
   const triggerSlot = createSlot();
 
   return (
@@ -138,33 +127,42 @@ export function Popover(props: PopoverProps) {
       value={{
         ...state,
         trigger: triggerSlot,
-        onOpen,
-        onClose,
-        onCancel,
+        get onOpen() {
+          return props.onOpen;
+        },
+        get onClose() {
+          return props.onClose;
+        },
+        get onCancel() {
+          return props.onCancel;
+        },
       }}
     >
-      {children}
+      {props.children}
     </PopoverContext.Provider>
   );
 }
 
 export function PopoverTrigger(props: PopoverTriggerProps) {
   const ctx = usePopover();
-  const { children, disabled, class: className, style } = props;
 
   ctx.trigger.set(() => {
+    const children = props.children;
     if (typeof children === "string") {
       return (
-        <Button disabled={disabled} onPress={() => ctx.setOpen(true)}>
+        <Button disabled={props.disabled} class={props.class ?? undefined} style={props.style}>
           {children}
         </Button>
       );
     }
     return (
       <View
-        class={mergeClass(undefined, className)}
-        onPress={disabled ? undefined : () => ctx.setOpen(true)}
-        style={mergeStyle({ opacity: disabled ? 0.5 : 1 }, style)}
+        accessible
+        role="button"
+        accessibilityState={{ disabled: props.disabled }}
+        class={props.class ?? undefined}
+        focusStyle={focusRing()}
+        style={mergeStyle({ opacity: props.disabled ? 0.5 : 1 }, props.style)}
       >
         {children}
       </View>
@@ -176,108 +174,86 @@ export function PopoverTrigger(props: PopoverTriggerProps) {
 export function PopoverContent(props: PopoverContentProps) {
   const ctx = usePopover();
   const triggerAccessor = ctx.trigger.get();
-  const {
-    children,
-    class: className,
-    style,
-    hoverStyle,
-    activeStyle,
-    focusStyle,
-    disabledStyle,
-    popupClass,
-    popupStyle,
-    popupStartingStyle,
-    popupEndingStyle,
-    placement = "bottom",
-    align = "center",
-    offset = 4,
-    ...rest
-  } = props;
+  // Only what this part defaults or owns is split off; the rest (class, style, hover…) passes through.
+  const [, rest] = split(props, [
+    "children",
+    "popupStyle",
+    "popupStartingStyle",
+    "popupEndingStyle",
+    "placement",
+    "align",
+    "offset",
+  ]);
 
   // popover.md: 150 ms, from 95 % of its size. Either hook of a phase set by the
-  // consumer owns that phase (`null` turns it off); the classes left in `...rest` pass through.
+  // consumer owns that phase (`null` turns it off); the classes left in `rest` pass through.
   const motion = overlayMotion("popover");
-  const defaultStartingStyle =
-    props.popupStartingClass === undefined && popupStartingStyle === undefined;
-  const defaultEndingStyle = props.popupEndingClass === undefined && popupEndingStyle === undefined;
+  const defaultStarting = () =>
+    props.popupStartingClass === undefined && props.popupStartingStyle === undefined;
+  const defaultEnding = () =>
+    props.popupEndingClass === undefined && props.popupEndingStyle === undefined;
 
   return (
     <BasePopover
       {...rest}
       open={ctx.open()}
       trigger={(triggerAccessor?.() as JSX.Element) ?? <View />}
-      placement={placement}
-      align={align}
-      offset={offset}
+      placement={props.placement ?? "bottom"}
+      align={props.align ?? "center"}
+      offset={props.offset ?? 4}
       onOpenChange={({ open, reason }) => ctx.setOpen(open, reason)}
       onOpen={ctx.onOpen}
       onClose={ctx.onClose}
       onCancel={ctx.onCancel}
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(undefined, style)}
-      hoverStyle={mergeStyle(undefined, hoverStyle)}
-      activeStyle={mergeStyle(undefined, activeStyle)}
-      focusStyle={mergeStyle(undefined, focusStyle)}
-      disabledStyle={mergeStyle(undefined, disabledStyle)}
-      popupClass={mergeClass(undefined, popupClass)}
-      popupStyle={mergeStyle({ ...contentPopupChrome(), ...motion.style }, popupStyle)}
-      popupStartingStyle={defaultStartingStyle ? motion.startingStyle : popupStartingStyle}
-      popupEndingStyle={defaultEndingStyle ? motion.endingStyle : popupEndingStyle}
+      popupStyle={mergeStyle({ ...contentPopupChrome(), ...motion.style }, props.popupStyle)}
+      popupStartingStyle={defaultStarting() ? motion.startingStyle : props.popupStartingStyle}
+      popupEndingStyle={defaultEnding() ? motion.endingStyle : props.popupEndingStyle}
     >
-      {children}
+      {props.children}
     </BasePopover>
   );
 }
 
 export function PopoverHeader(props: PopoverHeaderProps) {
-  const { children, class: className, style } = props;
   return (
-    <View class={mergeClass(undefined, className)} style={mergeStyle(headerChrome(), style)}>
-      {children}
+    <View class={props.class ?? undefined} style={mergeStyle(headerChrome(), props.style)}>
+      {props.children}
     </View>
   );
 }
 
 export function PopoverTitle(props: PopoverTitleProps) {
-  const { children, class: className, style } = props;
-  if (typeof children !== "string" && children != null) {
+  if (typeof props.children !== "string" && props.children != null) {
     return (
-      <View
-        class={mergeClass(undefined, className)}
-        style={mergeStyle(undefined, style as StyleProp<ViewStyle> | null)}
-      >
-        {children}
+      <View class={props.class ?? undefined} style={props.style as StyleProp<ViewStyle> | null}>
+        {props.children}
       </View>
     );
   }
   return (
     <Text
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(titleChrome(), style as StyleProp<TextStyle> | null)}
+      class={props.class ?? undefined}
+      style={mergeStyle(titleChrome(), props.style as StyleProp<TextStyle> | null)}
     >
-      {children}
+      {props.children}
     </Text>
   );
 }
 
 export function PopoverDescription(props: PopoverDescriptionProps) {
-  const { children, class: className, style } = props;
-  if (typeof children !== "string" && children != null) {
+  if (typeof props.children !== "string" && props.children != null) {
     return (
-      <View
-        class={mergeClass(undefined, className)}
-        style={mergeStyle(undefined, style as StyleProp<ViewStyle> | null)}
-      >
-        {children}
+      <View class={props.class ?? undefined} style={props.style as StyleProp<ViewStyle> | null}>
+        {props.children}
       </View>
     );
   }
   return (
     <Text
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(descriptionChrome(), style as StyleProp<TextStyle> | null)}
+      class={props.class ?? undefined}
+      style={mergeStyle(descriptionChrome(), props.style as StyleProp<TextStyle> | null)}
     >
-      {children}
+      {props.children}
     </Text>
   );
 }

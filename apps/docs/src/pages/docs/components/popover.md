@@ -119,12 +119,12 @@ Placement, popup chrome, and dismiss flags belong on `PopoverContent`, not the r
 
 ### `PopoverTrigger` Props
 
-| Prop       | Type                    | Default | Notes                                           |
-| ---------- | ----------------------- | ------- | ----------------------------------------------- |
-| `children` | `string \| JSX.Element` | —       | String → themed `Button`; else pressable `View` |
-| `disabled` | `boolean`               | —       | Blocks open                                     |
-| `class`    | `string`                | —       | On the pressable `View` (non-string children)   |
-| `style`    | `StyleProp<ViewStyle>`  | —       | Merged over `{ opacity }` when disabled         |
+| Prop       | Type                    | Default | Notes                                                                  |
+| ---------- | ----------------------- | ------- | ---------------------------------------------------------------------- |
+| `children` | `string \| JSX.Element` | —       | String → themed `Button`; else a focusable `View` with `role="button"` |
+| `disabled` | `boolean`               | —       | Blocks open; follows later changes                                     |
+| `class`    | `string`                | —       | On the `Button` (string) or the `View` (other children)                |
+| `style`    | `StyleProp<ViewStyle>`  | —       | On the `Button` or the `View`; merged over `{ opacity }` when disabled |
 
 ### `PopoverContent` Props
 
