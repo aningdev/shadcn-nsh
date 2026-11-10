@@ -6,7 +6,7 @@ export {
   AccordionTrigger,
 } from "./accordion";
 export { Avatar, AvatarGroup } from "./avatar";
-export { Button, type ButtonVariant } from "./button";
+export { Button, buttonVariants, type ButtonSize, type ButtonVariant } from "./button";
 export { Checkbox, type CheckboxProps } from "./checkbox";
 export {
   Combobox,
@@ -127,7 +127,15 @@ export {
   SheetTitle,
   SheetTrigger,
 } from "./sheet";
-export { Switch, type SwitchProps, type SwitchSize } from "./switch";
+export {
+  knobTravel,
+  Switch,
+  switchGeometry,
+  switchSlop,
+  type SwitchGeometry,
+  type SwitchProps,
+  type SwitchSize,
+} from "./switch";
 export { Toggle } from "./toggle";
 export { ToggleGroup } from "./toggle-group";
 export {

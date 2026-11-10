@@ -208,16 +208,16 @@ Composite overlays keep their own Trigger parts; a styled Button is a valid pres
 
 ## Differences
 
-| Topic           | shadcn (`bases/base`)      | This package                                                                                       |
-| --------------- | -------------------------- | -------------------------------------------------------------------------------------------------- |
-| Press event     | DOM `onClick`              | `onPress` / `onPressDown` / `onPressUp`                                                            |
-| Children        | arbitrary nodes / Slot     | `string \| JSX.Element`; no `asChild`                                                              |
-| Link affordance | `variant="link"` on Button | **Omitted** — Link is a separate component (needs a store `nsh` that exports `nsh/base` Link)      |
-| Class hooks     | `className` / CVA          | `class` + theme tokens + `buttonVariants` / `finish`; consumer styles merge over defaults          |
-| Size matrix     | `default`…`icon-lg`        | same names; token sizes approximate nova scale, not CSS-pixel locked                               |
-| Loading         | often a Spinner slot       | compose children + `disabled` (dims); no Gallery-style undimmed `busy` prop                        |
-| Touch target    | CSS / size                 | non-desktop default `hitSlop` toward 44pt                                                          |
-| Press motion    | CSS                        | `pressSink` scale on `activeStyle` (reduced motion removes the scale, keeps the short colour fade) |
+| Topic           | shadcn (`bases/base`)      | This package                                                                                                                                                               |
+| --------------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Press event     | DOM `onClick`              | `onPress` / `onPressDown` / `onPressUp`                                                                                                                                    |
+| Children        | arbitrary nodes / Slot     | `string \| JSX.Element`; no `asChild`                                                                                                                                      |
+| Link affordance | `variant="link"` on Button | **Omitted** — Link is a separate component (needs a store `nsh` that exports `nsh/base` Link)                                                                              |
+| Class hooks     | `className` / CVA          | `class` + theme tokens + `buttonVariants` / `finish`; consumer styles merge over defaults                                                                                  |
+| Size matrix     | `default`…`icon-lg`        | same names; a pointer gets the compact sizes (24 / 28 / 32 / 36), a touch screen the roomier ones (32 / 36 / 40 / 48); heights are minimums, a button grows with its label |
+| Loading         | often a Spinner slot       | compose children + `disabled` (dims); no Gallery-style undimmed `busy` prop                                                                                                |
+| Touch target    | CSS / size                 | on a touch screen the size is roomier and `hitSlop` makes up the rest to 44pt; none with a pointer                                                                         |
+| Press motion    | CSS                        | the control sinks to 97% while pressed (icon-only: 90%); reduced motion removes the sink and keeps the short colour fade                                                   |
 
 ## Not forwarded
 

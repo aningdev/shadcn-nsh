@@ -1,23 +1,61 @@
-import { colors, disabledOpacity, focusRing } from "@shadcn-nsh/theme";
-import type { StyleProp, ViewStyle } from "nsh";
+// Source: examples/nsh-gallery-ui/look/switch.ts, switch-geometry.ts @ 64ab8a1d (baseline), see NOTICE.
+import { colors, disabledOpacity, finish, focusRing } from "@shadcn-nsh/theme";
+import type { AnimatedValue, StyleProp, ViewStyle } from "nsh";
+import { computed, createAnimatedValue, effect, platform, reduceMotion, split } from "nsh";
 import { Switch as BaseSwitch, type SwitchProps as BaseSwitchProps } from "nsh/base";
 
 /** Aligns with shadcn `bases/base` Switch `size`. */
 export type SwitchSize = "default" | "sm";
 
 /**
- * Theme layer on `nsh/base` Switch: token track / thumb chrome + `size`
- * (shadcn `bases/base` Switch). All base props + style hooks pass through;
- * consumer styles shallow-merge over defaults.
+ * Theme layer on `nsh/base` Switch: a sunk track that fills when on, and a knob that springs
+ * across natively. All base props + style hooks pass through; consumer styles win per key.
  */
 export type SwitchProps = BaseSwitchProps & {
   size?: SwitchSize;
 };
 
-/** Concatenate wrapper + consumer `class` when both are set. */
-function mergeClass(base?: string | null, consumer?: string | null): string | undefined {
-  if (base && consumer) return `${base} ${consumer}`;
-  return consumer ?? base ?? undefined;
+/** A switch's track and knob, in points. */
+export type SwitchGeometry = {
+  /** The track's outer width. */
+  width: number;
+  /** The track's outer height. */
+  height: number;
+  /** The track's border, on every side. */
+  border: number;
+  /** The track's padding, between its border and the knob, on every side. */
+  inset: number;
+  /** The knob's diameter. */
+  knob: number;
+};
+
+/**
+ * The sizes: 28 × 16 with a pointer, whichever `size`; on a touch screen 42 × 24 (`sm`: 34 × 20).
+ * The track is exactly the knob plus its border and inset on each side, so the knob sits as far
+ * from the top and the bottom as from the near end.
+ */
+export function switchGeometry(size: SwitchSize, pointer: boolean): SwitchGeometry {
+  if (pointer) return { width: 28, height: 16, border: 1, inset: 1, knob: 12 };
+  if (size === "sm") return { width: 34, height: 20, border: 1, inset: 1, knob: 16 };
+  return { width: 42, height: 24, border: 1, inset: 1, knob: 20 };
+}
+
+/**
+ * How far the knob travels from off to on. Off, it rests `border + inset` from the leading edge;
+ * on, it must end the same distance from the trailing edge.
+ */
+export function knobTravel(g: SwitchGeometry): number {
+  return g.width - 2 * (g.border + g.inset) - g.knob;
+}
+
+/** Smallest comfortable finger target (Accessibility touch targets). */
+const TOUCH_TARGET = 44;
+
+/** How far presses count past a switch that is all track, so a finger gets 44pt on each axis. */
+export function switchSlop(g: SwitchGeometry) {
+  const v = Math.max(0, (TOUCH_TARGET - g.height) / 2);
+  const h = Math.max(0, (TOUCH_TARGET - g.width) / 2);
+  return { top: v, bottom: v, left: h, right: h };
 }
 
 /** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
@@ -31,108 +69,100 @@ function mergeStyle(
   return [base, consumer];
 }
 
-type SizeLook = {
-  trackWidth: number;
-  trackHeight: number;
-  trackRadius: number;
-  trackPadding: number;
-  thumbSize: number;
-  thumbTranslateClass: string;
-};
+/** The knob's spring: a thumb or an indicator traveling (gpui-kit's `spring_move`). */
+const MOVE_SPRING = { stiffness: 504, damping: 38 };
 
-/** Sizes aligned with shadcn `bases/base` + nova token scale (not CSS-pixel locked). */
-function sizeLook(size: SwitchSize): SizeLook {
-  switch (size) {
-    case "sm":
-      // travel = 28 − 2×2 − 12 = 12 → translate-x-3
-      return {
-        trackWidth: 28,
-        trackHeight: 16,
-        trackRadius: 8,
-        trackPadding: 2,
-        thumbSize: 12,
-        thumbTranslateClass: "checked:translate-x-3",
-      };
-    default:
-      // travel = 36 − 2×2 − 16 = 16 → translate-x-4
-      return {
-        trackWidth: 36,
-        trackHeight: 20,
-        trackRadius: 10,
-        trackPadding: 2,
-        thumbSize: 16,
-        thumbTranslateClass: "checked:translate-x-4",
-      };
-  }
+/**
+ * An animated value that springs to `target()` each time it changes, natively: JS only starts
+ * each spring. With reduced motion it lands at once.
+ */
+function follow(target: () => number): AnimatedValue {
+  const value = createAnimatedValue(target());
+  let shown = target();
+  effect(() => {
+    const next = target();
+    if (next === shown) return;
+    shown = next;
+    if (reduceMotion()) value.set(next);
+    else void value.spring(next, MOVE_SPRING);
+  });
+  return value;
 }
 
 /** Row around the track + label — aligned with shadcn horizontal Field + switch. */
 function rootChrome(): ViewStyle {
-  return {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-  };
-}
-
-/** Track pill with primary fill while checked. */
-function trackChrome(on: boolean, look: SizeLook): ViewStyle {
-  return {
-    width: look.trackWidth,
-    height: look.trackHeight,
-    borderRadius: look.trackRadius,
-    padding: look.trackPadding,
-    backgroundColor: on ? colors.primary : colors.input,
-    justifyContent: "center",
-  };
-}
-
-/** Thumb circle inside the track. */
-function thumbChrome(look: SizeLook): ViewStyle {
-  return {
-    width: look.thumbSize,
-    height: look.thumbSize,
-    borderRadius: look.thumbSize / 2,
-    backgroundColor: colors.background,
-  };
+  return { flexDirection: "row", alignItems: "center", gap: 8 };
 }
 
 export function Switch(props: SwitchProps) {
-  const {
-    class: className,
-    style,
-    hoverStyle,
-    activeStyle,
-    focusStyle,
-    disabledStyle,
-    checkedStyle,
-    trackClass,
-    trackStyle,
-    thumbClass,
-    thumbStyle,
-    checked,
-    size = "default",
-    ...rest
-  } = props;
+  // Props are read where used (never destructured) so `checked` / `size` follow signals.
+  const [, rest] = split(props, [
+    "size",
+    "style",
+    "focusStyle",
+    "disabledStyle",
+    "trackStyle",
+    "thumbStyle",
+    "hitSlop",
+  ]);
 
-  const look = sizeLook(size);
-  const on = !!checked;
+  const geometry = computed(() => switchGeometry(props.size ?? "default", platform.desktop));
+  const on = () => !!props.checked;
+  const progress = follow(() => (on() ? 1 : 0));
+  const travel = computed(() =>
+    progress.interpolate({ inputRange: [0, 1], outputRange: [0, knobTravel(geometry())] }),
+  );
+
+  const track = (): ViewStyle => {
+    const g = geometry();
+    return {
+      width: g.width,
+      height: g.height,
+      borderRadius: g.height / 2,
+      padding: g.inset,
+      borderWidth: g.border,
+      backgroundColor: progress.interpolate({
+        inputRange: [0, 1],
+        outputRange: [colors.input, colors.primary],
+      }),
+      borderColor: on() ? colors.primary : colors.border,
+      // Off, a sunk well; on, the filled control's edge.
+      boxShadow: on() ? finish.filled : finish.control.pressed,
+      transitionProperty: "border-color, box-shadow",
+      transitionDuration: 150,
+    };
+  };
+
+  const thumb = (): ViewStyle => {
+    const g = geometry();
+    return {
+      width: g.knob,
+      height: g.knob,
+      borderRadius: g.knob / 2,
+      borderWidth: 1,
+      borderColor: colors.border,
+      // On, the knob takes the foreground of the track's fill (the track is `primary`, which is
+      // near-white in the dark appearance, so a white knob would vanish on it).
+      backgroundColor: progress.interpolate({
+        inputRange: [0, 1],
+        outputRange: [colors.highlight, colors.primaryForeground],
+      }),
+      boxShadow: finish.control.flat,
+      transform: [{ translateX: travel() }],
+    };
+  };
 
   return (
     <BaseSwitch
       {...rest}
-      checked={checked}
-      class={mergeClass(undefined, className)}
-      style={mergeStyle(rootChrome(), style)}
-      hoverStyle={mergeStyle(undefined, hoverStyle)}
-      activeStyle={mergeStyle(undefined, activeStyle)}
-      focusStyle={mergeStyle(focusRing(), focusStyle)}
-      disabledStyle={mergeStyle({ opacity: disabledOpacity() }, disabledStyle)}
-      checkedStyle={mergeStyle(undefined, checkedStyle)}
-      trackClass={mergeClass(undefined, trackClass)}
-      trackStyle={mergeStyle(trackChrome(on, look), trackStyle)}
-      thumbClass={mergeClass(look.thumbTranslateClass, thumbClass)}
-      thumbStyle={mergeStyle(thumbChrome(look), thumbStyle)}
+      hitSlop={
+        props.hitSlop ?? (props.children || platform.desktop ? undefined : switchSlop(geometry()))
+      }
+      style={mergeStyle(rootChrome(), props.style)}
+      focusStyle={mergeStyle(focusRing(), props.focusStyle)}
+      disabledStyle={mergeStyle({ opacity: disabledOpacity() }, props.disabledStyle)}
+      trackStyle={mergeStyle(track(), props.trackStyle)}
+      thumbStyle={mergeStyle(thumb(), props.thumbStyle)}
     />
   );
 }
