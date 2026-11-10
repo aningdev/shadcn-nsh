@@ -31,6 +31,8 @@ export const colors = tokens({
   input: "input",
   ring: "ring",
   backdrop: "custom-backdrop",
+  highlight: "custom-highlight",
+  shadowInk: "custom-shadow-ink",
 });
 
 export const radius = {
@@ -42,6 +44,11 @@ export const radius = {
 /** `color` at opacity `a` (0–1). NSH accepts `color-mix` with resolved colors, not `var(--*)`. */
 export function alpha(color: string, a: number) {
   return `color-mix(in srgb, ${color} ${a * 100}%, transparent)`;
+}
+
+/** `a` with `pct` (0–1) of `b` mixed in: both opaque colors, a state fill a step lighter or deeper. */
+export function mix(a: string, b: string, pct: number) {
+  return `color-mix(in srgb, ${a}, ${b} ${pct * 100}%)`;
 }
 
 /** Keyboard focus ring for controls. */

@@ -4,6 +4,7 @@ export {
   disabledOpacity,
   finish,
   focusRing,
+  mix,
   overlayShadow,
   popupBackdrop,
   popupSurface,
