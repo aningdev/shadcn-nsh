@@ -1,6 +1,6 @@
 import { colors, overlayMotion, radius } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
-import { context, Text, View } from "nsh";
+import { context, split, Text, View } from "nsh";
 import {
   Tooltip as BaseTooltip,
   type OpenChangeReason,
@@ -98,12 +98,6 @@ function createContentSlot(): ContentSlot {
   };
 }
 
-/** Concatenate wrapper + consumer `class` when both are set. */
-function mergeClass(base?: string | null, consumer?: string | null): string | undefined {
-  if (base && consumer) return `${base} ${consumer}`;
-  return consumer ?? base ?? undefined;
-}
-
 /** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
 function mergeStyle<T extends ViewStyle | TextStyle>(
   base?: StyleProp<T> | null,
@@ -137,45 +131,37 @@ function wrapLabel(children?: string | JSX.Element) {
   return children ?? <Text style={labelChrome()} />;
 }
 
-function renderBaseTooltip(props: BaseTooltipProps) {
-  const {
-    class: className,
-    style,
-    hoverStyle,
-    activeStyle,
-    focusStyle,
-    disabledStyle,
-    placement = "top",
-    align = "center",
-    offset = 4,
-    startingStyle,
-    endingStyle,
-    children,
-    ...rest
-  } = props;
+/** The themed bubble over `nsh/base` Tooltip; shared by composition and standalone use. */
+function TooltipBubble(props: BaseTooltipProps) {
+  // Only what this part defaults is split off; class, hover/active/focus/disabled styles pass through.
+  const [, rest] = split(props, [
+    "children",
+    "style",
+    "placement",
+    "align",
+    "offset",
+    "startingStyle",
+    "endingStyle",
+  ]);
 
   // tooltip.md: a 100 ms fade. Either hook of a phase set by the consumer owns that
-  // phase (`null` turns it off); the classes left in `...rest` pass through.
+  // phase (`null` turns it off); the classes left in `rest` pass through.
   const motion = overlayMotion("tooltip");
-  const defaultStartingStyle = props.startingClass === undefined && startingStyle === undefined;
-  const defaultEndingStyle = props.endingClass === undefined && endingStyle === undefined;
+  const defaultStarting = () =>
+    props.startingClass === undefined && props.startingStyle === undefined;
+  const defaultEnding = () => props.endingClass === undefined && props.endingStyle === undefined;
 
   return (
     <BaseTooltip
       {...rest}
-      placement={placement}
-      align={align}
-      offset={offset}
-      class={mergeClass(undefined, className)}
-      style={mergeStyle({ ...bubbleChrome(), ...motion.style }, style)}
-      hoverStyle={mergeStyle(undefined, hoverStyle)}
-      activeStyle={mergeStyle(undefined, activeStyle)}
-      focusStyle={mergeStyle(undefined, focusStyle)}
-      disabledStyle={mergeStyle(undefined, disabledStyle)}
-      startingStyle={defaultStartingStyle ? motion.startingStyle : startingStyle}
-      endingStyle={defaultEndingStyle ? motion.endingStyle : endingStyle}
+      placement={props.placement ?? "top"}
+      align={props.align ?? "center"}
+      offset={props.offset ?? 4}
+      style={mergeStyle({ ...bubbleChrome(), ...motion.style }, props.style)}
+      startingStyle={defaultStarting() ? motion.startingStyle : props.startingStyle}
+      endingStyle={defaultEnding() ? motion.endingStyle : props.endingStyle}
     >
-      {children}
+      {props.children}
     </BaseTooltip>
   );
 }
@@ -185,26 +171,7 @@ function renderBaseTooltip(props: BaseTooltipProps) {
  * {@link TooltipContent} standalone.
  */
 export function Tooltip(props: TooltipProps) {
-  const {
-    open,
-    defaultOpen,
-    children,
-    onOpenChange,
-    onOpen,
-    onClose,
-    placement,
-    align,
-    offset,
-    margin,
-    delay,
-    disabled,
-  } = props;
-
-  const state = createOpenState<OpenChangeReason>({
-    open,
-    defaultOpen,
-    onOpenChange,
-  });
+  const state = createOpenState<OpenChangeReason>(props);
 
   return (
     <TooltipContext.Provider
@@ -212,19 +179,36 @@ export function Tooltip(props: TooltipProps) {
         ...state,
         trigger: createSlot(),
         content: createContentSlot(),
-        placement,
-        align,
-        offset,
-        margin,
-        delay,
-        disabled,
-        onOpen,
-        onClose,
+        get placement() {
+          return props.placement;
+        },
+        get align() {
+          return props.align;
+        },
+        get offset() {
+          return props.offset;
+        },
+        get margin() {
+          return props.margin;
+        },
+        get delay() {
+          return props.delay;
+        },
+        get disabled() {
+          return props.disabled;
+        },
+        get onOpen() {
+          return props.onOpen;
+        },
+        get onClose() {
+          return props.onClose;
+        },
       }}
     >
       <View style={{ gap: 0 }}>
-        {children}
-        <TooltipAnchor />
+        {props.children}
+        {/* After Trigger / Content have filled their slots. */}
+        {() => <TooltipAnchor />}
       </View>
     </TooltipContext.Provider>
   );
@@ -234,54 +218,45 @@ function TooltipAnchor() {
   const ctx = TooltipContext();
   if (!ctx) return <View style={{ width: 0, height: 0 }} />;
   const triggerAccessor = ctx.trigger.get();
-  const contentProps = ctx.content.get();
+  const content: TooltipContentProps = ctx.content.get() ?? {};
   if (!triggerAccessor) return <View style={{ width: 0, height: 0 }} />;
 
-  const {
-    children,
-    class: className,
-    style,
-    hoverStyle,
-    activeStyle,
-    focusStyle,
-    disabledStyle,
-    placement,
-    align,
-    offset,
-    margin,
-    delay,
-    disabled,
-    onOpenChange,
-    onOpen,
-    onClose,
-    ...rest
-  } = contentProps ?? {};
+  // Owned here: what falls back to the root / provider, the open state wiring and the label.
+  const [, rest] = split(content, [
+    "children",
+    "placement",
+    "align",
+    "offset",
+    "margin",
+    "delay",
+    "disabled",
+    "onOpenChange",
+    "onOpen",
+    "onClose",
+  ]);
 
   const providerDelay = TooltipDelayContext();
 
-  const bubble = renderBaseTooltip({
-    ...rest,
-    open: ctx.open(),
-    placement: placement ?? ctx.placement ?? "top",
-    align: align ?? ctx.align ?? "center",
-    offset: offset ?? ctx.offset ?? 4,
-    margin: margin ?? ctx.margin,
-    delay: delay ?? ctx.delay ?? providerDelay,
-    disabled: disabled ?? ctx.disabled,
-    onOpenChange: (event) => {
-      ctx.setOpen(event.open, event.reason);
-      onOpenChange?.(event);
-    },
-    onOpen: onOpen ?? ctx.onOpen,
-    onClose: onClose ?? ctx.onClose,
-    class: className,
-    style,
-    hoverStyle,
-    activeStyle,
-    focusStyle,
-    disabledStyle,
-    children: wrapLabel(children),
-  });
+  const bubble = (
+    <TooltipBubble
+      {...rest}
+      open={ctx.open()}
+      placement={content.placement ?? ctx.placement ?? "top"}
+      align={content.align ?? ctx.align ?? "center"}
+      offset={content.offset ?? ctx.offset ?? 4}
+      margin={content.margin ?? ctx.margin}
+      delay={content.delay ?? ctx.delay ?? providerDelay}
+      disabled={content.disabled ?? ctx.disabled}
+      onOpenChange={(event) => {
+        ctx.setOpen(event.open, event.reason);
+        content.onOpenChange?.(event);
+      }}
+      onOpen={content.onOpen ?? ctx.onOpen}
+      onClose={content.onClose ?? ctx.onClose}
+    >
+      {wrapLabel(content.children)}
+    </TooltipBubble>
+  );
 
   return (
     <View tooltip={bubble} style={{ alignSelf: "flex-start" }}>
@@ -292,17 +267,21 @@ function TooltipAnchor() {
 
 export function TooltipTrigger(props: TooltipTriggerProps) {
   const ctx = useTooltip();
-  const { children, disabled, class: className, style } = props;
-  const blocked = disabled || ctx.disabled;
+  const blocked = () => props.disabled || ctx.disabled;
 
   ctx.trigger.set(() => {
+    const children = props.children;
     if (typeof children === "string") {
-      return <Button disabled={blocked}>{children}</Button>;
+      return (
+        <Button disabled={blocked()} class={props.class ?? undefined} style={props.style}>
+          {children}
+        </Button>
+      );
     }
     return (
       <View
-        class={mergeClass(undefined, className)}
-        style={mergeStyle({ opacity: blocked ? 0.5 : 1 }, style)}
+        class={props.class ?? undefined}
+        style={mergeStyle({ opacity: blocked() ? 0.5 : 1 }, props.style)}
       >
         {children ?? <View />}
       </View>
@@ -317,35 +296,12 @@ export function TooltipContent(props: TooltipContentProps) {
 
   if (!ctx) {
     // Standalone: use as host `tooltip={<TooltipContent>…</TooltipContent>}`.
-    const {
-      children,
-      class: className,
-      style,
-      hoverStyle,
-      activeStyle,
-      focusStyle,
-      disabledStyle,
-      placement = "top",
-      align = "center",
-      offset = 4,
-      delay,
-      ...rest
-    } = props;
-
-    return renderBaseTooltip({
-      ...rest,
-      placement,
-      align,
-      offset,
-      delay: delay ?? providerDelay,
-      class: className,
-      style,
-      hoverStyle,
-      activeStyle,
-      focusStyle,
-      disabledStyle,
-      children: wrapLabel(children),
-    });
+    const [, rest] = split(props, ["children", "delay"]);
+    return (
+      <TooltipBubble {...rest} delay={props.delay ?? providerDelay}>
+        {wrapLabel(props.children)}
+      </TooltipBubble>
+    );
   }
 
   ctx.content.set(props);
@@ -353,11 +309,10 @@ export function TooltipContent(props: TooltipContentProps) {
 }
 
 export function TooltipProvider(props: TooltipProviderProps) {
-  const { children, delay, class: className, style } = props;
   return (
-    <TooltipDelayContext.Provider value={delay}>
-      <View class={mergeClass(undefined, className)} style={mergeStyle(undefined, style)}>
-        {children}
+    <TooltipDelayContext.Provider value={props.delay}>
+      <View class={props.class ?? undefined} style={props.style}>
+        {props.children}
       </View>
     </TooltipDelayContext.Provider>
   );

@@ -140,12 +140,12 @@ Bubble chrome, placement overrides, and host props belong on `TooltipContent` (i
 
 ### `TooltipTrigger` Props
 
-| Prop       | Type                    | Default | Notes                                         |
-| ---------- | ----------------------- | ------- | --------------------------------------------- |
-| `children` | `string \| JSX.Element` | —       | String → themed `Button`; else wrapped `View` |
-| `disabled` | `boolean`               | —       | Visual disable; Root `disabled` also blocks   |
-| `class`    | `string`                | —       | On the wrapper `View` (non-string children)   |
-| `style`    | `StyleProp<ViewStyle>`  | —       | Merged over `{ opacity }` when disabled       |
+| Prop       | Type                    | Default | Notes                                                                  |
+| ---------- | ----------------------- | ------- | ---------------------------------------------------------------------- |
+| `children` | `string \| JSX.Element` | —       | String → themed `Button`; else wrapped `View`                          |
+| `disabled` | `boolean`               | —       | Visual disable; Root `disabled` also blocks                            |
+| `class`    | `string`                | —       | On the `Button` (string) or the wrapper `View`                         |
+| `style`    | `StyleProp<ViewStyle>`  | —       | On the `Button` or the `View`; merged over `{ opacity }` when disabled |
 
 ### `TooltipContent` Props
 
