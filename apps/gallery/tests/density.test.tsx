@@ -25,3 +25,11 @@ test("a standalone switch gets a 44 point target on a touch screen", async () =>
   // 24 tall and 42 wide: 10 above and below, 1 either side.
   expect(slop).toEqual({ top: 10, bottom: 10, left: 1, right: 1 });
 });
+
+test("a toggle is compact with a pointer and roomier, with a hit slop, on a touch screen", async () => {
+  const desktop = await open("./density.fixture.tsx", { platform: "macos" });
+  const touch = await open("./density.fixture.tsx", { platform: "ios" });
+  expect(find(desktop.texts(), "toggle=")).toBe("28|undefined");
+  // 38 tall, and presses count 3 points past it: 44.
+  expect(find(touch.texts(), "toggle=")).toBe("38|3");
+});

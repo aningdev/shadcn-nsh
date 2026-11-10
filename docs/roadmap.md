@@ -1,6 +1,6 @@
 # 项目规划：`nsh-gallery-ui` 的规范化、可分发版本
 
-状态：你已确认。**P0 完成**（现有改动已拆成三个提交；`AGENTS.md`、`GLOSSARY.md`、`NOTICE`、ui README 的"来源与同步"、README 矛盾已修）。**试点 S 已完成，待你看亮暗截图后判断 neutral 是否够用**（截图见 PR 说明；流程已写进 ui README“视觉核对”）。规则与决策记录在 [`packages/ui/README.zh.md`](../packages/ui/README.zh.md) 和 [`packages/theme/README.zh.md`](../packages/theme/README.zh.md)；本文只讲**做什么、按什么顺序、怎么验收**。
+状态：你已确认。**P0 完成**（现有改动已拆成三个提交；`AGENTS.md`、`GLOSSARY.md`、`NOTICE`、ui README 的"来源与同步"、README 矛盾已修）。**试点 S、P1、家族 2 已完成**（neutral 经你确认可用；截图流程见 ui README“视觉核对”）。下一步：`check:recipes`，然后家族 3。规则与决策记录在 [`packages/ui/README.zh.md`](../packages/ui/README.zh.md) 和 [`packages/theme/README.zh.md`](../packages/theme/README.zh.md)；本文只讲**做什么、按什么顺序、怎么验收**。
 
 ## 1. 目标
 
@@ -86,13 +86,13 @@ neutral 的层次有限，所以不先做基础设施，先用 **button + switch
 
 ### P1 地基（试点通过之后）
 
-| 项                         | 状态                       | 说明                                                                                                                                                                                            |
-| -------------------------- | -------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 守门测试                   | **完成**                   | `packages/cli/src/ui-guards.test.ts`：组件和 `theme.ts` 里不许有颜色字面量；红绿都验证过；白名单是 `scripts/recipes-allowlist.json`（现为空，只减不增）。检查结果：现有组件本来就没有颜色字面量 |
-| gallery 演示               | **完成**                   | `apps/gallery/demo-kit.tsx`（`Page`、`Panel`、`Row`、`Flow`），试点页已改用它；每个家族一页，随家族建                                                                                           |
-| 视觉验证流程               | **完成**                   | `bun run shots <entry> <out-dir> [name]`；试点已跑通                                                                                                                                            |
-| `lib/press`、`lib/density` | **推迟到第二个消费者出现** | 按 R1，只被一个组件用就不抽。现在 `press` 只有 button 用，`density` 的尺寸也只在 button 和 switch 各自的 `look()` 里。**家族 2**（toggle、checkbox、radio）同时需要两者，在那个提交里抽出       |
-| `theme` 补充               | 无                         | 试点只新增了 `mix()` 与两个读取器，没有新的 `custom-*` 键；之后按映射表在有消费者时加                                                                                                           |
+| 项                                       | 状态                    | 说明                                                                                                                                                                                            |
+| ---------------------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 守门测试                                 | **完成**                | `packages/cli/src/ui-guards.test.ts`：组件和 `theme.ts` 里不许有颜色字面量；红绿都验证过；白名单是 `scripts/recipes-allowlist.json`（现为空，只减不增）。检查结果：现有组件本来就没有颜色字面量 |
+| gallery 演示                             | **完成**                | `apps/gallery/demo-kit.tsx`（`Page`、`Panel`、`Row`、`Flow`），试点页已改用它；每个家族一页，随家族建                                                                                           |
+| 视觉验证流程                             | **完成**                | `bun run shots <entry> <out-dir> [name]`；试点已跑通                                                                                                                                            |
+| `lib/press`、`lib/density`、`lib/follow` | **完成**（家族 2 抽出） | 第二个消费者出现时才抽（R1）：`follow` 给 switch、checkbox、radio；`press` 给 button、toggle；`density` 给 button、switch、toggle、checkbox、radio                                              |
+| `theme` 补充                             | 无                      | 试点只新增了 `mix()` 与两个读取器，没有新的 `custom-*` 键；之后按映射表在有消费者时加                                                                                                           |
 
 #### 参考实现的角色 → neutral 映射（P1 起草，逐家族补全）
 
@@ -118,7 +118,7 @@ neutral 的层次有限，所以不先做基础设施，先用 **button + switch
 | 序  | 家族                            | 我们的组件                                                    | 参考 look                                                   | 体量 | 备注                                                            |
 | --- | ------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------- | ---- | --------------------------------------------------------------- |
 | 1   | 按钮（试点 S 已做部分在此补全） | `button`                                                      | `look/button.ts`（含 icon / round / split）                 | M    | 先用它验证"移植 + 规范化"的真实成本；split 按钮放在后续         |
-| 2   | 切换与选择                      | `toggle`、`toggle-group`、`switch`、`checkbox`、`radio-group` | `tool.ts`、`switch.ts` + `switch-geometry.ts`、`choice.tsx` | M    | 开关旋钮行程用算术测试                                          |
+| 2   | 切换与选择（**已完成**）        | `toggle`、`toggle-group`、`switch`、`checkbox`、`radio-group` | `tool.ts`、`switch.ts` + `switch-geometry.ts`、`choice.tsx` | M    | 开关旋钮行程用算术测试                                          |
 | 3   | 字段                            | `input`、`number-input`、`otp-input`                          | `field.tsx`                                                 | M    | 焦点边、无效、只读、禁用的优先级                                |
 | 4   | 列表选择                        | `select`、`combobox`                                          | `listbox.tsx`（565 行，最大）                               | L    | 触屏下是 sheet                                                  |
 | 5   | 菜单（重做）                    | `menu`、`context-menu`                                        | `menu.tsx`                                                  | M    | 已按 Family 配方迁移过，这次只换值与状态                        |

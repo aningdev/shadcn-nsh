@@ -9,6 +9,24 @@
       "description": "NSH design tokens (theme.json) and token() / surface / motion helpers (lib/theme.ts)."
     },
     {
+      "name": "density",
+      "type": "registry:lib",
+      "title": "Density",
+      "description": "Pointer versus touch: the 44-point target and hit slop, and the checkbox / radio box sizes."
+    },
+    {
+      "name": "press",
+      "type": "registry:lib",
+      "title": "Press",
+      "description": "Press feedback: the sink and its ease, and the group sink of a box in a pressed row."
+    },
+    {
+      "name": "follow",
+      "type": "registry:lib",
+      "title": "Follow",
+      "description": "An animated value that springs to a control's state, with the control and move springs."
+    },
+    {
       "name": "open-state",
       "type": "registry:lib",
       "title": "Open state",

@@ -126,14 +126,15 @@ Remaining `CheckboxProps` / `ComponentHostProps` from `nsh/base` also pass throu
 
 ## Differences
 
-| Topic        | shadcn (`bases/base`)                       | This package                                                                                    |
-| ------------ | ------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Root         | `@base-ui/react/checkbox` Root + Indicator  | `nsh/base` `Checkbox` + theme tokens; single export                                             |
-| Label        | sibling `Label` / `FieldLabel` + `htmlFor`  | put label `Text` in `children`                                                                  |
-| Change event | `onCheckedChange`                           | `onChange(checked: boolean)` (store `nsh` 0.4.0; newer nsh website docs may show `{ checked }`) |
-| Variants     | none on `bases/base` Checkbox               | none — token chrome + default mark only                                                         |
-| Class hooks  | `className` / `cn-checkbox`                 | `class` + token `style` / `indicatorStyle`; consumer styles merge over defaults                 |
-| Indicator    | always `CheckboxPrimitive.Indicator` + icon | default check / dash; override with `indicator`                                                 |
+| Topic        | shadcn (`bases/base`)                       | This package                                                                                                                                                      |
+| ------------ | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Root         | `@base-ui/react/checkbox` Root + Indicator  | `nsh/base` `Checkbox` + theme tokens; single export                                                                                                               |
+| Label        | sibling `Label` / `FieldLabel` + `htmlFor`  | put label `Text` in `children`                                                                                                                                    |
+| Change event | `onCheckedChange`                           | `onChange(checked: boolean)` (store `nsh` 0.4.0; newer nsh website docs may show `{ checked }`)                                                                   |
+| Variants     | none on `bases/base` Checkbox               | none — token chrome + default mark only                                                                                                                           |
+| Class hooks  | `className` / `cn-checkbox`                 | `class` + token `style` / `indicatorStyle`; consumer styles merge over defaults                                                                                   |
+| Indicator    | always `CheckboxPrimitive.Indicator` + icon | default check / dash; override with `indicator`                                                                                                                   |
+| Box          | `size-4`, no state animation                | 16 points with a pointer, 22 on a touch screen; sunk into the surface, filled in on a spring, the mark growing in from 75%; sinks to 90% while its row is pressed |
 
 ## Not forwarded
 

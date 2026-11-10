@@ -85,9 +85,9 @@ Re-exported from `./toggle`. See [Toggle](./toggle) for `pressed`, `disabled`, `
 | ----------- | ----------------------------------------------- | -------------------------------------------------------- |
 | Value API   | `type` / `value` / `onValueChange` on the group | no group value — each `Toggle` is `pressed` / `onChange` |
 | Orientation | `orientation`                                   | fixed horizontal row shell                               |
-| Variants    | `variant` / `size`                              | none                                                     |
+| Variants    | `variant` / `size`                              | none on the group; its `Toggle`s take `variant` / `size` |
 | Exports     | group + item parts                              | `ToggleGroup` + re-exported `Toggle`                     |
 
 ## Not forwarded
 
-From `nsh/base` ToggleGroup: `style` only (muted bordered row). No `type` / `value` / `orientation` props are exposed — extend the copied source if you need base grouping knobs.
+None — all `nsh/base` ToggleGroup props are forwarded. The wrapper adds the inset track (a row 2 points apart, 3 points inside its edge) under the consumer's `style`. No `type` / `value` / `orientation` props are exposed — extend the copied source if you need base grouping knobs.

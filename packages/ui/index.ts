@@ -136,8 +136,14 @@ export {
   type SwitchProps,
   type SwitchSize,
 } from "./switch";
-export { Toggle } from "./toggle";
-export { ToggleGroup } from "./toggle-group";
+export {
+  Toggle,
+  toggleVariants,
+  type ToggleProps,
+  type ToggleSize,
+  type ToggleVariant,
+} from "./toggle";
+export { ToggleGroup, type ToggleGroupProps } from "./toggle-group";
 export {
   Table,
   TableBody,

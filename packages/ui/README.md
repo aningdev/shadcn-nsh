@@ -241,11 +241,12 @@ Put the two images in the pull request, next to the reference's same control. Th
 
 ## Migration status of the rules
 
-| Status       | Components                                                                                                                     |
-| ------------ | ------------------------------------------------------------------------------------------------------------------------------ |
-| Migrated     | `popover`, `tooltip`, `menu`, `context-menu`                                                                                   |
-| Pilot, open  | `button` — R3, the theme-owned look and a local press helper done; still to do: one `look()` function and `min*` geometry (R5) |
-| Not migrated | every other component                                                                                                          |
+| Status       | Components                                                                                                                                                                        |
+| ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Migrated     | Family recipe: `popover`, `tooltip`, `menu`, `context-menu`. Leaf recipe, ported from the reference look: `button`, `switch`, `toggle`, `toggle-group`, `checkbox`, `radio-group` |
+| Not migrated | every other component                                                                                                                                                             |
+
+Shared `lib` modules, each added when a second component needed it (R1): `follow` (switch, checkbox, radio), `press` (button, toggle, the group sink of checkbox and radio), `density` (button, switch, toggle, checkbox, radio).
 
 ## Motion in components
 

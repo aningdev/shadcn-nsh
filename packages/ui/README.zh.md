@@ -240,11 +240,12 @@ bun run shots apps/gallery/pilot.tsx /tmp/shots pilot   # 生成 pilot-light.png
 
 ## 规则的迁移状态
 
-| 状态       | 组件                                                                                                 |
-| ---------- | ---------------------------------------------------------------------------------------------------- |
-| 已迁移     | `popover`、`tooltip`、`menu`、`context-menu`                                                         |
-| 试点，未完 | `button` —— R3、主题持有的外观和本地按压 helper 已完成；待做：单个 `look()` 函数与 `min*` 几何（R5） |
-| 未迁移     | 其余所有组件                                                                                         |
+| 状态   | 组件                                                                                                                                                            |
+| ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 已迁移 | Family 配方：`popover`、`tooltip`、`menu`、`context-menu`。Leaf 配方（按参考实现移植）：`button`、`switch`、`toggle`、`toggle-group`、`checkbox`、`radio-group` |
+| 未迁移 | 其余所有组件                                                                                                                                                    |
+
+共享的 `lib` 模块，都是第二个组件需要时才加的（R1）：`follow`（switch、checkbox、radio）、`press`（button、toggle，以及 checkbox 与 radio 的 group sink）、`density`（button、switch、toggle、checkbox、radio）。
 
 ## 组件内的动效
 

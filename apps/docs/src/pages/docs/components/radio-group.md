@@ -152,14 +152,15 @@ Remaining `RadioProps` / `ComponentHostProps` from `nsh/base` also pass through.
 
 ## Differences
 
-| Topic        | shadcn (`bases/base`)                       | This package                                                                                             |
-| ------------ | ------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
-| Value API    | `RadioGroup` `value` / `onValueChange`      | no group value — each item is `checked` / `onChange` (nsh/base model)                                    |
-| Parts        | `RadioGroup` / `RadioGroupItem` + Indicator | same part names; `Radio` alias; default circle composed as children (base has no Indicator slot)         |
-| Label        | sibling `Label` / `FieldLabel` + `htmlFor`  | put label `Text` in `children`                                                                           |
-| Change event | string value on the group                   | `onChange(checked: boolean)` per item (store `nsh` 0.4.0; newer nsh website docs may show `{ checked }`) |
-| Variants     | none on `bases/base` RadioGroup             | none — token chrome + default circle only                                                                |
-| Class hooks  | `className` / `cn-radio-group*`             | `class` + token `style`; consumer styles merge over defaults                                             |
+| Topic        | shadcn (`bases/base`)                       | This package                                                                                                                                                               |
+| ------------ | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Value API    | `RadioGroup` `value` / `onValueChange`      | no group value — each item is `checked` / `onChange` (nsh/base model)                                                                                                      |
+| Parts        | `RadioGroup` / `RadioGroupItem` + Indicator | same part names; `Radio` alias; default circle composed as children (base has no Indicator slot)                                                                           |
+| Label        | sibling `Label` / `FieldLabel` + `htmlFor`  | put label `Text` in `children`                                                                                                                                             |
+| Change event | string value on the group                   | `onChange(checked: boolean)` per item (store `nsh` 0.4.0; newer nsh website docs may show `{ checked }`)                                                                   |
+| Variants     | none on `bases/base` RadioGroup             | none — token chrome + default circle only                                                                                                                                  |
+| Class hooks  | `className` / `cn-radio-group*`             | `class` + token `style`; consumer styles merge over defaults                                                                                                               |
+| Ring         | `size-4`, no state animation                | 16 points with a pointer, 22 on a touch screen; sunk into the surface, filled in on a spring, the dot growing in from half its size; sinks to 90% while its row is pressed |
 
 ## Not forwarded
 
