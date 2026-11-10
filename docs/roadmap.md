@@ -115,17 +115,18 @@ neutral 的层次有限，所以不先做基础设施，先用 **button + switch
 
 每个家族一个提交，走统一循环（见 §6）。顺序按依赖和体量：
 
-| 序  | 家族                             | 我们的组件                                                    | 参考 look                                                   | 体量 | 备注                                                         |
-| --- | -------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------- | ---- | ------------------------------------------------------------ |
-| 1   | 按钮（试点 S 已做部分在此补全）  | `button`                                                      | `look/button.ts`（含 icon / round / split）                 | M    | 先用它验证"移植 + 规范化"的真实成本；split 按钮放在后续      |
-| 2   | 切换与选择（**已完成**）         | `toggle`、`toggle-group`、`switch`、`checkbox`、`radio-group` | `tool.ts`、`switch.ts` + `switch-geometry.ts`、`choice.tsx` | M    | 开关旋钮行程用算术测试                                       |
-| 3   | 字段（**已完成**）               | `input`、`number-input`、`otp-input`                          | `field.tsx`                                                 | M    | 焦点边、无效、只读、禁用的优先级                             |
-| 4   | 列表选择（**已完成**）           | `select`、`combobox`                                          | `listbox.tsx`（565 行，最大）                               | L    | 触屏下是 sheet                                               |
-| 5   | 菜单（**已完成**）               | `menu`、`context-menu`                                        | `menu.tsx`                                                  | M    | 参考 look 已移植                                             |
-| 6   | 浮层（**已完成**）               | `tooltip`、`popover`、`dialog`、`sheet`、`toast`              | `overlay.ts`                                                | L    | 已加 `modalSurface()`；Dialog / Sheet Root 属性在 Content 上 |
-| 7   | 导航与披露（**已完成**，本分支） | `tabs`、`accordion`、`collapsible`、`link`、`pagination`      | `tabs.tsx`、`disclosure.tsx`、`nav.tsx`                     | M    | 不新增 token；禁用一律 0.5                                   |
-| 8   | 度量与其他（**已完成**）         | `progress`、`slider`、`avatar`、`table`                       | `meter.ts`、`slider.ts`、`avatar.ts`、`data-table.ts`       | M    | `progress` 的不确定态循环用 `ignoreReduceMotion`             |
-| 9   | 日期（**已完成**）               | `calendar`、`date-picker`、`time-field`                       | `listbox.tsx` 的日历半段、`field.tsx` 的 `timeFieldClass`   | M    | 不新增 token；弹层复用 listbox；`ColorPicker` 仍未做         |
+| 序  | 家族                             | 我们的组件                                                    | 参考 look                                                   | 体量 | 备注                                                          |
+| --- | -------------------------------- | ------------------------------------------------------------- | ----------------------------------------------------------- | ---- | ------------------------------------------------------------- |
+| 1   | 按钮（试点 S 已做部分在此补全）  | `button`                                                      | `look/button.ts`（含 icon / round / split）                 | M    | 先用它验证"移植 + 规范化"的真实成本；split 按钮放在后续       |
+| 2   | 切换与选择（**已完成**）         | `toggle`、`toggle-group`、`switch`、`checkbox`、`radio-group` | `tool.ts`、`switch.ts` + `switch-geometry.ts`、`choice.tsx` | M    | 开关旋钮行程用算术测试                                        |
+| 3   | 字段（**已完成**）               | `input`、`number-input`、`otp-input`                          | `field.tsx`                                                 | M    | 焦点边、无效、只读、禁用的优先级                              |
+| 4   | 列表选择（**已完成**）           | `select`、`combobox`                                          | `listbox.tsx`（565 行，最大）                               | L    | 触屏下是 sheet                                                |
+| 5   | 菜单（**已完成**）               | `menu`、`context-menu`                                        | `menu.tsx`                                                  | M    | 参考 look 已移植                                              |
+| 6   | 浮层（**已完成**）               | `tooltip`、`popover`、`dialog`、`sheet`、`toast`              | `overlay.ts`                                                | L    | 已加 `modalSurface()`；Dialog / Sheet Root 属性在 Content 上  |
+| 7   | 导航与披露（**已完成**，本分支） | `tabs`、`accordion`、`collapsible`、`link`、`pagination`      | `tabs.tsx`、`disclosure.tsx`、`nav.tsx`                     | M    | 不新增 token；禁用一律 0.5                                    |
+| 8   | 度量与其他（**已完成**）         | `progress`、`slider`、`avatar`、`table`                       | `meter.ts`、`slider.ts`、`avatar.ts`、`data-table.ts`       | M    | `progress` 的不确定态循环用 `ignoreReduceMotion`              |
+| 9   | 日期（**已完成**）               | `calendar`、`date-picker`、`time-field`                       | `listbox.tsx` 的日历半段、`field.tsx` 的 `timeFieldClass`   | M    | 不新增 token；弹层复用 listbox；`ColorPicker` 仍未做          |
+| 10  | 表面与工具条（**已完成**）       | `alert-dialog`、`hover-card`、`toolbar`                       | `overlay.ts`、`tool.ts`                                     | M    | 系统 AlertDialog 无样式钩子，卡片走 Dialog；动作 id 对齐 base |
 
 ### P3 扩展（Registry 完整性）
 

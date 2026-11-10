@@ -231,6 +231,20 @@
       ]
     },
     {
+      "name": "hover-card",
+      "type": "registry:ui",
+      "title": "Hover Card",
+      "description": "Styled hover card wrapping nsh/base HoverCard — theme tokens + Trigger / Content; full base prop pass-through.",
+      "registryDependencies": ["theme", "button", "open-state", "density"],
+      "files": [
+        {
+          "path": "packages/ui/hover-card.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/hover-card.tsx"
+        }
+      ]
+    },
+    {
       "name": "popover",
       "type": "registry:ui",
       "title": "Popover",
@@ -283,6 +297,20 @@
           "path": "packages/ui/dialog.tsx",
           "type": "registry:ui",
           "target": "components/ui/dialog.tsx"
+        }
+      ]
+    },
+    {
+      "name": "alert-dialog",
+      "type": "registry:ui",
+      "title": "Alert Dialog",
+      "description": "Styled confirmation card — theme tokens on nsh/base Dialog, with an app-owned action id.",
+      "registryDependencies": ["theme", "button", "open-state", "density"],
+      "files": [
+        {
+          "path": "packages/ui/alert-dialog.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/alert-dialog.tsx"
         }
       ]
     },
@@ -535,6 +563,20 @@
           "path": "packages/ui/toggle-group.tsx",
           "type": "registry:ui",
           "target": "components/ui/toggle-group.tsx"
+        }
+      ]
+    },
+    {
+      "name": "toolbar",
+      "type": "registry:ui",
+      "title": "Toolbar",
+      "description": "Styled toolbar wrapping nsh/base Toolbar, ToolbarGroup, and ToolbarSeparator.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/toolbar.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/toolbar.tsx"
         }
       ]
     },

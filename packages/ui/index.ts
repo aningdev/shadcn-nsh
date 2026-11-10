@@ -81,6 +81,27 @@ export {
   type DateRangePreset,
 } from "./date-picker";
 export {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+  alertDialogBodyStyle,
+  alertDialogCardStyle,
+  alertDialogTitleStyle,
+  type AlertDialogActionProps,
+  type AlertDialogContentProps,
+  type AlertDialogDescriptionProps,
+  type AlertDialogFooterProps,
+  type AlertDialogHeaderProps,
+  type AlertDialogProps,
+  type AlertDialogTitleProps,
+  type AlertDialogTriggerProps,
+} from "./alert-dialog";
+export {
   Dialog,
   DialogClose,
   DialogContent,
@@ -133,6 +154,21 @@ export {
 } from "./number-input";
 export { OtpInput, otpInputVariants, type OtpInputProps } from "./otp-input";
 export { Pagination, paginationVariants, type PaginationProps } from "./pagination";
+export {
+  HoverCard,
+  HoverCardContent,
+  HoverCardDescription,
+  HoverCardHeader,
+  HoverCardTitle,
+  HoverCardTrigger,
+  hoverCardSurface,
+  type HoverCardContentProps,
+  type HoverCardDescriptionProps,
+  type HoverCardHeaderProps,
+  type HoverCardProps,
+  type HoverCardTitleProps,
+  type HoverCardTriggerProps,
+} from "./hover-card";
 export {
   Popover,
   PopoverContent,
@@ -219,6 +255,16 @@ export {
   type ToggleVariant,
 } from "./toggle";
 export { ToggleGroup, type ToggleGroupProps } from "./toggle-group";
+export {
+  Toolbar,
+  ToolbarGroup,
+  ToolbarSeparator,
+  toolbarRuleStyle,
+  toolbarTrackStyle,
+  type ToolbarGroupProps,
+  type ToolbarProps,
+  type ToolbarSeparatorProps,
+} from "./toolbar";
 export {
   Table,
   TableBody,

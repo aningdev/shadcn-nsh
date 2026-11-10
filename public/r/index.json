@@ -99,6 +99,12 @@
       "description": "Styled tabs wrapping nsh/base Tabs / Tab — List / Trigger / Content; full base prop pass-through."
     },
     {
+      "name": "hover-card",
+      "type": "registry:ui",
+      "title": "Hover Card",
+      "description": "Styled hover card wrapping nsh/base HoverCard — theme tokens + Trigger / Content; full base prop pass-through."
+    },
+    {
       "name": "popover",
       "type": "registry:ui",
       "title": "Popover",
@@ -121,6 +127,12 @@
       "type": "registry:ui",
       "title": "Dialog",
       "description": "Styled dialog wrapping nsh/base Dialog — theme tokens + Trigger / Content; full base prop pass-through."
+    },
+    {
+      "name": "alert-dialog",
+      "type": "registry:ui",
+      "title": "Alert Dialog",
+      "description": "Styled confirmation card — theme tokens on nsh/base Dialog, with an app-owned action id."
     },
     {
       "name": "menu",
@@ -229,6 +241,12 @@
       "type": "registry:ui",
       "title": "Toggle Group",
       "description": "Styled toggle group wrapping nsh/base ToggleGroup — muted container + Toggle re-export."
+    },
+    {
+      "name": "toolbar",
+      "type": "registry:ui",
+      "title": "Toolbar",
+      "description": "Styled toolbar wrapping nsh/base Toolbar, ToolbarGroup, and ToolbarSeparator."
     },
     {
       "name": "command",

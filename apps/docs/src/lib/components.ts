@@ -29,6 +29,13 @@ export const components: ComponentDoc[] = [
       "Styled accordion wrapping nsh/base Accordion — theme tokens + Item / Trigger / Panel; composition-only.",
   },
   {
+    slug: "alert-dialog",
+    title: "Alert Dialog",
+    nshElement: "alert-dialog",
+    description:
+      "Styled confirmation card — theme tokens on nsh/base Dialog, with an app-owned action id.",
+  },
+  {
     slug: "avatar",
     title: "Avatar",
     nshElement: "avatar",
@@ -122,6 +129,13 @@ export const components: ComponentDoc[] = [
     nshElement: "menu",
     description:
       "Styled menu wrapping nsh/base Menu — theme tokens + Trigger / Content / Item; full base prop pass-through.",
+  },
+  {
+    slug: "hover-card",
+    title: "Hover Card",
+    nshElement: "hover-card",
+    description:
+      "Styled hover card wrapping nsh/base HoverCard — theme tokens + Trigger / Content.",
   },
   {
     slug: "input",
@@ -257,6 +271,12 @@ export const components: ComponentDoc[] = [
     nshElement: "toggle",
     description:
       "Styled toggle group wrapping nsh/base ToggleGroup — muted container; re-exports Toggle.",
+  },
+  {
+    slug: "toolbar",
+    title: "Toolbar",
+    nshElement: "toolbar",
+    description: "Styled toolbar wrapping nsh/base Toolbar, ToolbarGroup, and ToolbarSeparator.",
   },
   {
     slug: "tooltip",

@@ -49,11 +49,10 @@ UI 落地后：加 demo → 删本表对应行 → 更新 `packages/ui/README.md
 | Resizable                             | 同上                                         | Phase-1.5 / later     |
 | RichEditor                            | 同上                                         | Separate milestones   |
 | TextView                              | 同上                                         | Separate milestones   |
-| Toolbar                               | 同上                                         | Phase-1.5 / later     |
 
 ## Components — Phase-1 已有 UI、缺 gallery 拆页（随壳一起补）
 
-Accordion, Avatar, Button, Checkbox, Collapsible, Combobox, Context menu, Dialog, Input, Link, Menu, Number input, Otp input, Pagination, Popover, Progress, Radio, Select, Sheet, Slider, Switch, Table, Tabs, Toast, Toggle, Toggle group, Tooltip
+Accordion, Alert dialog, Avatar, Button, Checkbox, Collapsible, Combobox, Context menu, Dialog, Hover card, Input, Link, Menu, Number input, Otp input, Pagination, Popover, Progress, Radio, Select, Sheet, Slider, Switch, Table, Tabs, Toast, Toggle, Toggle group, Toolbar, Tooltip
 
 ## Styling / Motion / Platform（非本层）
 
