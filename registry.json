@@ -226,7 +226,7 @@
       "type": "registry:ui",
       "title": "Collapsible",
       "description": "Styled collapsible wrapping nsh/base Collapsible — theme tokens + Trigger / Content; full base prop pass-through.",
-      "registryDependencies": ["theme", "button", "open-state"],
+      "registryDependencies": ["button", "open-state"],
       "files": [
         {
           "path": "packages/ui/collapsible.tsx",
@@ -268,7 +268,7 @@
       "type": "registry:ui",
       "title": "Accordion",
       "description": "Styled accordion wrapping nsh/base Accordion — theme tokens + Header / Trigger / Panel; composition-only.",
-      "registryDependencies": ["theme", "button"],
+      "registryDependencies": ["theme"],
       "files": [
         {
           "path": "packages/ui/accordion.tsx",

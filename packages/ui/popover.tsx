@@ -8,12 +8,7 @@ import {
 } from "nsh/base";
 
 import { Button } from "./button";
-import {
-  createOpenState,
-  createTriggerSlot,
-  type OpenState,
-  type TriggerSlot,
-} from "./lib/open-state";
+import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 
 /** Composition root for `nsh/base` Popover: open state + trigger slot. */
 export type PopoverProps = {
@@ -75,7 +70,7 @@ export type PopoverDescriptionProps = {
 };
 
 type PopoverContextValue = OpenState & {
-  trigger: TriggerSlot;
+  trigger: Slot;
   onOpen?: () => void;
   onClose?: () => void;
   onCancel?: () => void;
@@ -136,7 +131,7 @@ export function Popover(props: PopoverProps) {
     defaultOpen,
     onOpenChange,
   });
-  const triggerSlot = createTriggerSlot();
+  const triggerSlot = createSlot();
 
   return (
     <PopoverContext.Provider

@@ -4,6 +4,7 @@ import path from "node:path";
 import { Command } from "commander";
 
 import type { Registry, RegistryItem } from "../types";
+import { checkRegistryDependencies } from "../utils/registry";
 
 export const build = new Command()
   .name("build")
@@ -17,6 +18,12 @@ export const build = new Command()
     const outputDir = path.resolve(cwd, opts.output);
 
     const registry = JSON.parse(await fs.readFile(registryPath, "utf8")) as Registry;
+    const problems = await checkRegistryDependencies(registry, path.dirname(registryPath));
+    if (problems.length > 0) {
+      for (const problem of problems) console.error(`registry: ${problem}`);
+      process.exitCode = 1;
+      return;
+    }
     await fs.mkdir(outputDir, { recursive: true });
 
     const catalog: {

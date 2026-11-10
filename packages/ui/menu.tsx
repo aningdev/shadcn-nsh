@@ -14,12 +14,7 @@ import {
 } from "nsh/base";
 
 import { Button } from "./button";
-import {
-  createOpenState,
-  createTriggerSlot,
-  type OpenState,
-  type TriggerSlot,
-} from "./lib/open-state";
+import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 
 /** Composition root for `nsh/base` Menu: open state + trigger slot for Trigger / Content. */
 export type MenuProps = {
@@ -114,7 +109,7 @@ export type MenuSubContentProps = Omit<BaseSubmenuProps, "trigger" | "children">
 };
 
 type MenuContextValue = OpenState & {
-  trigger: TriggerSlot;
+  trigger: Slot;
   onOpen?: () => void;
   onClose?: () => void;
   onCancel?: () => void;
@@ -128,7 +123,7 @@ function useMenu() {
   return ctx;
 }
 
-type SubContextValue = { trigger: TriggerSlot; disabled?: boolean };
+type SubContextValue = { trigger: Slot; disabled?: boolean };
 const SubContext = context<SubContextValue | null>(null);
 
 /** Concatenate wrapper + consumer `class` when both are set. */
@@ -223,7 +218,7 @@ export function Menu(props: MenuProps) {
     defaultOpen,
     onOpenChange,
   });
-  const triggerSlot = createTriggerSlot();
+  const triggerSlot = createSlot();
 
   return (
     <MenuContext.Provider
@@ -459,7 +454,7 @@ export function MenuShortcut(props: MenuShortcutProps) {
 export function MenuSub(props: MenuSubProps) {
   const { children, disabled } = props;
 
-  const triggerSlot = createTriggerSlot();
+  const triggerSlot = createSlot();
   return (
     <SubContext.Provider value={{ trigger: triggerSlot, disabled }}>{children}</SubContext.Provider>
   );

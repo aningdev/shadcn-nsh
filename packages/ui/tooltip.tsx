@@ -8,12 +8,7 @@ import {
 } from "nsh/base";
 
 import { Button } from "./button";
-import {
-  createOpenState,
-  createTriggerSlot,
-  type OpenState,
-  type TriggerSlot,
-} from "./lib/open-state";
+import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 
 /**
  * Composition root for `nsh/base` Tooltip: Trigger + Content only.
@@ -72,7 +67,7 @@ type ContentSlot = {
 };
 
 type TooltipContextValue = OpenState & {
-  trigger: TriggerSlot;
+  trigger: Slot;
   content: ContentSlot;
   placement?: BaseTooltipProps["placement"];
   align?: BaseTooltipProps["align"];
@@ -215,7 +210,7 @@ export function Tooltip(props: TooltipProps) {
     <TooltipContext.Provider
       value={{
         ...state,
-        trigger: createTriggerSlot(),
+        trigger: createSlot(),
         content: createContentSlot(),
         placement,
         align,

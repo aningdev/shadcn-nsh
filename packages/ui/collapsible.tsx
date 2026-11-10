@@ -6,12 +6,7 @@ import {
 } from "nsh/base";
 
 import { Button } from "./button";
-import {
-  createOpenState,
-  createTriggerSlot,
-  type OpenState,
-  type TriggerSlot,
-} from "./lib/open-state";
+import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 
 /**
  * Composition root for `nsh/base` Collapsible: open state + trigger slot.
@@ -48,7 +43,7 @@ export type CollapsibleTriggerProps = {
 };
 
 type CollapsibleContextValue = OpenState & {
-  trigger: TriggerSlot;
+  trigger: Slot;
 };
 
 const CollapsibleContext = context<CollapsibleContextValue | null>(null);
@@ -116,7 +111,7 @@ export function Collapsible(props: CollapsibleProps) {
     defaultOpen,
     onOpenChange: onOpenChange ? (event) => onOpenChange({ open: event.open }) : undefined,
   });
-  const triggerSlot = createTriggerSlot();
+  const triggerSlot = createSlot();
 
   return (
     <CollapsibleContext.Provider

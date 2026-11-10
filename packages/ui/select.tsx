@@ -8,12 +8,7 @@ import {
   type SelectItem as SelectItemData,
 } from "nsh/base";
 
-import {
-  createItemRegistry,
-  createTriggerSlot,
-  type ItemRegistry,
-  type TriggerSlot,
-} from "./lib/open-state";
+import { createItemRegistry, createSlot, type ItemRegistry, type Slot } from "./lib/open-state";
 
 export type { SelectItemData, SelectEntry };
 
@@ -30,7 +25,7 @@ function mergeStyle<T extends ViewStyle>(
 
 type SelectContextValue = {
   items: ItemRegistry<SelectItemData>;
-  trigger: TriggerSlot;
+  trigger: Slot;
   value: () => string | null | undefined;
   placeholder: () => string;
   disabled: () => boolean | undefined;
@@ -246,7 +241,7 @@ function StyledSelect(props: {
 
 export function Select(props: SelectRootProps) {
   const items = createItemRegistry<SelectItemData>([]);
-  const trigger = createTriggerSlot();
+  const trigger = createSlot();
   const ctx: SelectContextValue = {
     items,
     trigger,

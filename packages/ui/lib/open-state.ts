@@ -27,12 +27,12 @@ export function createOpenState<Reason extends string = string>(options: {
 }
 
 /** Mutable slot filled by a Trigger part before Content reads it. */
-export type TriggerSlot = {
+export type Slot = {
   get: () => (() => unknown) | undefined;
   set: (accessor: () => unknown) => void;
 };
 
-export function createTriggerSlot(): TriggerSlot {
+export function createSlot(): Slot {
   let accessor: (() => unknown) | undefined;
   return {
     get: () => accessor,

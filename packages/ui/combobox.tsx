@@ -8,12 +8,7 @@ import {
   type SelectItem as SelectItemData,
 } from "nsh/base";
 
-import {
-  createItemRegistry,
-  createTriggerSlot,
-  type ItemRegistry,
-  type TriggerSlot,
-} from "./lib/open-state";
+import { createItemRegistry, createSlot, type ItemRegistry, type Slot } from "./lib/open-state";
 
 export type { SelectItemData, SelectEntry };
 
@@ -60,8 +55,8 @@ type ComboboxRootProps = ComboboxProps;
 
 type ComboboxContextValue = {
   items: ItemRegistry<SelectItemData>;
-  trigger: TriggerSlot;
-  empty: TriggerSlot;
+  trigger: Slot;
+  empty: Slot;
   value: () => string[] | null | undefined;
   placeholder: () => string;
   disabled: () => boolean | undefined;
@@ -243,8 +238,8 @@ function StyledCombobox(props: {
 
 export function Combobox(props: ComboboxRootProps) {
   const items = createItemRegistry<SelectItemData>([]);
-  const trigger = createTriggerSlot();
-  const empty = createTriggerSlot();
+  const trigger = createSlot();
+  const empty = createSlot();
   const ctx: ComboboxContextValue = {
     items,
     trigger,

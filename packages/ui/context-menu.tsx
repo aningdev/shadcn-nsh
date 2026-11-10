@@ -7,12 +7,7 @@ import {
   type OpenChangeReason,
 } from "nsh/base";
 
-import {
-  createOpenState,
-  createTriggerSlot,
-  type OpenState,
-  type TriggerSlot,
-} from "./lib/open-state";
+import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 
 export {
   MenuCheckboxItem as ContextMenuCheckboxItem,
@@ -65,7 +60,7 @@ export type ContextMenuTriggerProps = {
 };
 
 type ContextMenuContextValue = OpenState & {
-  trigger: TriggerSlot;
+  trigger: Slot;
   disabled?: boolean;
   onOpen?: () => void;
   onClose?: () => void;
@@ -112,7 +107,7 @@ export function ContextMenu(props: ContextMenuProps) {
     open,
     onOpenChange,
   });
-  const triggerSlot = createTriggerSlot();
+  const triggerSlot = createSlot();
 
   return (
     <ContextMenuContext.Provider
