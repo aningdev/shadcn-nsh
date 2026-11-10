@@ -205,7 +205,7 @@ One family per commit, in this loop:
 2. Bring the source to the recipe, checking the Definition of Done below.
 3. Update the docs page (fixed sections), the gallery demo and `index.ts`.
 4. `bun run registry:build`, `bun run check`, commit `public/r` with the source.
-5. Remove the component from the allowlist (when the check script exists).
+5. Run `bun run check:recipes`; there is no exemption list, so every rule applies to the component.
 6. The commit message says which rules it brought into line.
 
 Order of the rest: `toggle` + `toggle-group` → `switch`, `checkbox`, `radio-group` → `input`, `number-input`, `otp-input`, `slider`, `progress`, `avatar`, `link` → `dialog` + `sheet` → `select` + `combobox` → `collapsible`, `accordion`, `tabs`, `table`, `pagination`, `toast`. A scaffold skill is written after the Leaf groups are migrated, so it encodes what worked.
@@ -223,9 +223,9 @@ Order of the rest: `toggle` + `toggle-group` → `switch`, `checkbox`, `radio-gr
 
 Today: `registry:build` enforces `registryDependencies`, `bun run test:unit` covers the CLI's import rewriting, the `theme.json` merge and the theme file's contract (official keys, `custom-` prefix, oklch), and `bun run test:gallery` covers the components and the theme helpers; the review greps are `mergeClass(undefined` / `mergeStyle(undefined`, `const {` over `props`, and literal durations outside the theme whitelist.
 
-The colour guard (`packages/cli/src/ui-guards.test.ts`, part of `test:unit`) fails on a colour literal in `packages/ui/*.tsx` or `packages/theme/theme.ts` (hex, `rgb(`, `rgba(`, `hsl(`, `oklch(`, a named colour; `"transparent"` is allowed, R5). `scripts/recipes-allowlist.json` is the **one** list of components exempt from a rule; it only shrinks, and an entry whose file no longer breaks the rule fails the test. It is empty today.
+The colour guard (`packages/cli/src/ui-guards.test.ts`, part of `test:unit`) fails on a colour literal in `packages/ui/*.tsx` or `packages/theme/theme.ts` (hex, `rgb(`, `rgba(`, `hsl(`, `oklch(`, a named colour; `"transparent"` is allowed, R5). No component is exempt from a rule (the allowlist that tracked the migration is gone).
 
-`bun run check:recipes` (part of `bun run check`) runs the same file and adds the mechanical part of the migration checklist per component: no `mergeClass(undefined` / `mergeStyle(undefined` (R4), no destructured props (R3), no duration outside the ones `nsh` documents, a doc comment on every export (R7), a docs page with Install, Usage, API and Differences, and a gallery test that names the component. Every component still failing a rule is on the allowlist; a migrated component must not be.
+`bun run check:recipes` (part of `bun run check`) runs the same file and adds the mechanical part of the migration checklist per component: no `mergeClass(undefined` / `mergeStyle(undefined` (R4), no destructured props (R3), no duration outside the ones `nsh` documents, a doc comment on every export (R7), a docs page with Install, Usage, API and Differences, and a gallery test that names the component. Every component is held to every rule.
 
 ## Visual check
 

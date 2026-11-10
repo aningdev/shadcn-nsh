@@ -7,8 +7,8 @@ import { readdirSync, readFileSync } from "node:fs";
  * theme change reaches every control. A color written out, or a token's value spliced into a
  * class string, would not. `"transparent"` is not a color (R5 allows it as a layout literal).
  *
- * `scripts/recipes-allowlist.json` is the one list of components still exempt from a rule. It
- * only shrinks: an entry whose file no longer breaks the rule fails, so it gets removed.
+ * No component is exempt: every one is on the reference look, so a rule broken by any source
+ * fails.
  *
  * The recipe rules below (R3, R4, R7, the motion whitelist, the docs page and the test) are the
  * mechanical part of the migration checklist; `bun run check:recipes` runs this file.
@@ -16,8 +16,6 @@ import { readdirSync, readFileSync } from "node:fs";
 
 const root = new URL("../../../", import.meta.url);
 const read = (path: string) => readFileSync(new URL(path, root), "utf8");
-
-const allowlist = JSON.parse(read("scripts/recipes-allowlist.json")) as Record<string, string[]>;
 
 /** The sources the guards read: the components and the theme's helpers. */
 const sources = [
@@ -46,19 +44,9 @@ const breaks = (path: string, patterns: RegExp[]) => patterns.some((p) => p.test
 
 describe("component sources", () => {
   for (const [rule, patterns] of Object.entries(rules)) {
-    const exempt = allowlist[rule] ?? [];
-
-    test(`${rule}: no source breaks it unless it is on the allowlist`, () => {
+    test(`${rule}: no source breaks it`, () => {
       const offenders = sources.filter((path) => breaks(path, patterns));
-      const unexpected = offenders.filter((path) => !exempt.some((name) => path.endsWith(name)));
-      expect(unexpected, `${rule} in ${unexpected.join(", ")}`).toEqual([]);
-    });
-
-    test(`${rule}: every allowlist entry still breaks it`, () => {
-      const stale = exempt.filter((name) =>
-        sources.every((path) => !path.endsWith(name) || !breaks(path, patterns)),
-      );
-      expect(stale, `remove from the allowlist: ${stale.join(", ")}`).toEqual([]);
+      expect(offenders, `${rule} in ${offenders.join(", ")}`).toEqual([]);
     });
   }
 
@@ -144,22 +132,12 @@ const recipeRules: Record<string, (c: Component) => boolean> = {
 
 describe("component recipes", () => {
   for (const [rule, breaksRule] of Object.entries(recipeRules)) {
-    const exempt = allowlist[rule] ?? [];
-
-    test(`${rule}: only the components on the allowlist break it`, () => {
-      const unexpected = components.filter((c) => breaksRule(c) && !exempt.includes(c.file));
+    test(`${rule}: no component breaks it`, () => {
+      const offenders = components.filter((c) => breaksRule(c));
       expect(
-        unexpected.map((c) => c.file),
+        offenders.map((c) => c.file),
         `${rule} broken by`,
       ).toEqual([]);
-    });
-
-    test(`${rule}: every allowlist entry still breaks it`, () => {
-      const stale = exempt.filter((file) => {
-        const component = components.find((c) => c.file === file);
-        return !component || !breaksRule(component);
-      });
-      expect(stale, `remove from the allowlist: ${stale.join(", ")}`).toEqual([]);
     });
   }
 });

@@ -205,7 +205,7 @@ Composition Facade，基于复合 `nsh/base` 控件（`Root` / `Trigger` / `Cont
 2. 按配方改源码，对照下面的完成标准。
 3. 更新文档页（固定章节）、gallery 演示和 `index.ts`。
 4. `bun run registry:build`、`bun run check`，`public/r` 与源码一起提交。
-5. 把该组件从白名单中移除（检查脚本存在之后）。
+5. 运行 `bun run check:recipes`；已经没有豁免清单，每条规则都适用于该组件。
 6. commit message 写明它使哪些规则达标。
 
 剩余顺序：`toggle` + `toggle-group` → `switch`、`checkbox`、`radio-group` → `input`、`number-input`、`otp-input`、`slider`、`progress`、`avatar`、`link` → `dialog` + `sheet` → `select` + `combobox` → `collapsible`、`accordion`、`tabs`、`table`、`pagination`、`toast`。脚手架 skill 等 Leaf 各组迁完再写，让它固化已验证有效的做法。
@@ -223,9 +223,9 @@ Composition Facade，基于复合 `nsh/base` 控件（`Root` / `Trigger` / `Cont
 
 现状：`registry:build` 校验 `registryDependencies`，`bun run test:unit` 覆盖 CLI 的导入改写与 `theme.json` 合并，`bun run test:gallery` 覆盖组件与主题 helper；评审用的 grep 有三项：`mergeClass(undefined` / `mergeStyle(undefined`、对 `props` 的 `const {`、主题白名单之外的字面量时长。
 
-颜色守门检查（`packages/cli/src/ui-guards.test.ts`，属于 `test:unit`）：`packages/ui/*.tsx` 或 `packages/theme/theme.ts` 里出现颜色字面量就失败（hex、`rgb(`、`rgba(`、`hsl(`、`oklch(`、命名色；`"transparent"` 放行，R5）。`scripts/recipes-allowlist.json` 是按规则豁免组件的**唯一**清单，只减不增，某个条目对应的文件已经不再违规时测试会失败。现在它是空的。
+颜色守门检查（`packages/cli/src/ui-guards.test.ts`，属于 `test:unit`）：`packages/ui/*.tsx` 或 `packages/theme/theme.ts` 里出现颜色字面量就失败（hex、`rgb(`、`rgba(`、`hsl(`、`oklch(`、命名色；`"transparent"` 放行，R5）。没有组件可以豁免规则（记录迁移进度的白名单已经删除）。
 
-`bun run check:recipes`（属于 `bun run check`）运行同一个文件，并按组件检查迁移清单里可以机械判断的部分：没有 `mergeClass(undefined` / `mergeStyle(undefined`（R4）、没有解构 props（R3）、没有 `nsh` 文档之外的时长、每个导出都有 doc comment（R7）、文档页有 Install、Usage、API 和 Differences、gallery 里有点名该组件的测试。仍然不满足某条规则的组件都在白名单里，已迁移的组件不允许在。
+`bun run check:recipes`（属于 `bun run check`）运行同一个文件，并按组件检查迁移清单里可以机械判断的部分：没有 `mergeClass(undefined` / `mergeStyle(undefined`（R4）、没有解构 props（R3）、没有 `nsh` 文档之外的时长、每个导出都有 doc comment（R7）、文档页有 Install、Usage、API 和 Differences、gallery 里有点名该组件的测试。每个组件都受每条规则约束。
 
 ## 视觉核对
 
