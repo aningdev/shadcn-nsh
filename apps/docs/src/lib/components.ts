@@ -48,6 +48,12 @@ export const components: ComponentDoc[] = [
       "Styled combobox wrapping nsh/base Combobox — theme tokens + Trigger / Content / Item; composition-only.",
   },
   {
+    slug: "command",
+    title: "Command",
+    nshElement: "command",
+    description: "Styled command palette wrapping nsh/base Command — theme tokens + default rows.",
+  },
+  {
     slug: "checkbox",
     title: "Checkbox",
     nshElement: "checkbox",
@@ -202,5 +208,12 @@ export const components: ComponentDoc[] = [
     nshElement: "tooltip",
     description:
       "Styled tooltip wrapping nsh/base Tooltip — theme tokens + Trigger / Content; full base prop pass-through.",
+  },
+  {
+    slug: "tree",
+    title: "Tree",
+    nshElement: "tree",
+    description:
+      "Styled tree wrapping nsh/base Tree — theme tokens + depth, chevron, and selection.",
   },
 ];

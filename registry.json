@@ -495,6 +495,34 @@
           "target": "components/ui/toggle-group.tsx"
         }
       ]
+    },
+    {
+      "name": "command",
+      "type": "registry:ui",
+      "title": "Command",
+      "description": "Styled command palette wrapping nsh/base Command — theme tokens + default rows.",
+      "registryDependencies": ["theme", "density"],
+      "files": [
+        {
+          "path": "packages/ui/command.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/command.tsx"
+        }
+      ]
+    },
+    {
+      "name": "tree",
+      "type": "registry:ui",
+      "title": "Tree",
+      "description": "Styled tree wrapping nsh/base Tree — theme tokens + depth, chevron, and selection.",
+      "registryDependencies": ["theme", "density"],
+      "files": [
+        {
+          "path": "packages/ui/tree.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tree.tsx"
+        }
+      ]
     }
   ]
 }

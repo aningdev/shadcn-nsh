@@ -211,6 +211,18 @@
       "type": "registry:ui",
       "title": "Toggle Group",
       "description": "Styled toggle group wrapping nsh/base ToggleGroup — muted container + Toggle re-export."
+    },
+    {
+      "name": "command",
+      "type": "registry:ui",
+      "title": "Command",
+      "description": "Styled command palette wrapping nsh/base Command — theme tokens + default rows."
+    },
+    {
+      "name": "tree",
+      "type": "registry:ui",
+      "title": "Tree",
+      "description": "Styled tree wrapping nsh/base Tree — theme tokens + depth, chevron, and selection."
     }
   ]
 }

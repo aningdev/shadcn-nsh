@@ -54,6 +54,8 @@
 | [slider](../../references/nsh/website/elements/slider.md)             | `Slider`                | `slider`       | `slider`       | done |
 | [toggle](../../references/nsh/website/elements/toggle.md)             | `Toggle`                | `toggle`       | `toggle`       | done |
 | [toggle](../../references/nsh/website/elements/toggle.md)             | `ToggleGroup`           | `toggle-group` | `toggle-group` | done |
+| [command](../../references/nsh/website/elements/command.md)           | `Command`               | `command`      | `command`      | done |
+| [tree](../../references/nsh/website/elements/tree.md)                 | `Tree`                  | `tree`         | `tree`         | done |
 
 另有：registry `theme`（`theme.json` + `lib/theme.ts` + 表面/动效 helper）与 `open-state`（组合状态辅助）。
 
@@ -240,12 +242,12 @@ bun run shots apps/gallery/pilot.tsx /tmp/shots pilot   # 生成 pilot-light.png
 
 ## 规则的迁移状态
 
-| 状态   | 组件                                                                                                                                                                                                                                                                                                                                                       |
-| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 已迁移 | Family 配方：`popover`、`tooltip`、`menu`、`context-menu`、`tabs`、`accordion`、`collapsible`、`pagination`、`select`、`combobox`、`dialog`、`sheet`、`toast`、`table`。Leaf 配方（按参考实现移植）：`button`、`switch`、`toggle`、`toggle-group`、`checkbox`、`radio-group`、`link`、`input`、`number-input`、`otp-input`、`progress`、`slider`、`avatar` |
-| 未迁移 | 其余所有组件                                                                                                                                                                                                                                                                                                                                               |
+| 状态   | 组件                                                                                                                                                                                                                                                                                                                                                                          |
+| ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 已迁移 | Family 配方：`popover`、`tooltip`、`menu`、`context-menu`、`tabs`、`accordion`、`collapsible`、`pagination`、`select`、`combobox`、`dialog`、`sheet`、`toast`、`table`。Leaf 配方（按参考实现移植）：`button`、`switch`、`toggle`、`toggle-group`、`checkbox`、`radio-group`、`link`、`input`、`number-input`、`otp-input`、`progress`、`slider`、`avatar`、`command`、`tree` |
+| 未迁移 | 其余所有组件                                                                                                                                                                                                                                                                                                                                                                  |
 
-共享的 `lib` 模块，都是第二个组件需要时才加的（R1）：`follow`（switch、checkbox、radio，以及 select 与 combobox 的 chevron、菜单勾选标记）、`press`（button、toggle，以及 checkbox 与 radio 的 group sink；家族 7 的按下也用它、toast 的关闭）、`density`（button、switch、toggle、checkbox、radio、input、number-input、otp-input、select、combobox，以及 tabs、accordion、collapsible、link、pagination 的指针 / 触屏尺寸、popover、dialog、sheet、toast、slider、avatar、menu）、`field`（input、number-input、otp-input 共用的边、凹陷和焦点）、`listbox`（select 与 combobox 共用的 chevron、行、弹层和触屏 sheet）、`meter`（progress、slider 共用的凹陷轨道和填充）。
+共享的 `lib` 模块，都是第二个组件需要时才加的（R1）：`follow`（switch、checkbox、radio，以及 select 与 combobox 的 chevron、菜单勾选标记）、`press`（button、toggle，以及 checkbox 与 radio 的 group sink；家族 7 的按下也用它、toast 的关闭）、`density`（button、switch、toggle、checkbox、radio、input、number-input、otp-input、select、combobox，以及 tabs、accordion、collapsible、link、pagination 的指针 / 触屏尺寸、popover、dialog、sheet、toast、slider、avatar、menu、command、tree）、`field`（input、number-input、otp-input 共用的边、凹陷和焦点）、`listbox`（select 与 combobox 共用的 chevron、行、弹层和触屏 sheet）、`meter`（progress、slider 共用的凹陷轨道和填充）。
 
 ## 组件内的动效
 
@@ -352,3 +354,4 @@ bun run shots apps/gallery/pilot.tsx /tmp/shots pilot   # 生成 pilot-light.png
 - 2026-11-11 —— 浮层按 `overlay.ts` 移植：tooltip 用 popover 表面而不是反色；toast 的凸起用 `card` + `finish.control.rest`；sheet 抓手用 `muted`（5 点药丸放不下控件阴影）；dialog / sheet 的 Root 不再转发 Content 的开关。原因：neutral 亮色下 `card` 与 `background` 相同，层次靠边和阴影；参考的 `raised` / `faint` 没有对应 token。
 - 2026-11-10 —— 进度条和滑杆共用凹陷轨道：`muted`、内描边 `border`、`finish.control.pressed`（参考的 `colors.track` / `finish.track`）；填充是 `primary` 加 `finish.filled`，不用柑橘渐变。滑杆禁用仍是 0.5，不是参考的 0.35。头像首字母落在 `muted` 上，字用 `foreground`，边用 `border`。参考的按名字取色是另一套色板，不算进组件，也不加 `custom-*` 身份色；同样不新增 `up` / `warn` / `danger`。不确定进度的循环带 `ignoreReduceMotion`（参考在减少动效时停在中间），因为这段运动本身就是“仍在进行”。
 - 2026-11-10 —— 菜单行对齐参考状态：悬停和键盘都用 `accent` 填充（不用 `focusRing()`，弹层会裁掉外晕），按下是 `foreground` 的 10% 且不缩放，禁用仍是主题的 0.5（参考是 0.35）。分隔线是 `border` 发丝线，没有凹槽，因为主题没有 `finish.groove`，这一轮不加表面 helper。触屏菜单用卡片式 sheet（顶角 20），不用 `popupSurface()`（那是浮层）。原因：家族 5 只换外观；浮层 helper 归家族 6。
+- 2026-11-11 —— Command 与 Tree 在 `nsh/base` 里是单根控件，所以做成 Leaf（默认外观 + `renderItem`），不做 Composition Facade。高亮用 `accent` 加 `ring` 边，不用参考的品牌色 tint；禁用仍是 0.5，不是 0.4。快捷键帽用 `secondary`（亮色 `card` 与 `background` 相同）。Tree 的 chevron 是 `›` 加 `duration-200`，没有图标集；`reveal` 默认开启。不新增 token。

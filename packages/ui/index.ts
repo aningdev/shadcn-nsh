@@ -32,6 +32,7 @@ export {
   type CollapsibleProps,
   type CollapsibleTriggerProps,
 } from "./collapsible";
+export { Command, commandVariants, type CommandProps } from "./command";
 export {
   ContextMenu,
   ContextMenuCheckboxItem,
@@ -222,3 +223,4 @@ export {
   tooltipLabelStyle,
   tooltipNoteStyle,
 } from "./tooltip";
+export { Tree, treeVariants, type TreeProps } from "./tree";
