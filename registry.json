@@ -570,7 +570,7 @@
       "name": "calendar",
       "type": "registry:ui",
       "title": "Calendar",
-      "description": "Styled calendar wrapping nsh/base Calendar \u2014 theme tokens for days, range, today, and month toggles.",
+      "description": "Styled calendar wrapping nsh/base Calendar — theme tokens for days, range, today, and month toggles.",
       "registryDependencies": ["dates"],
       "files": [
         {
@@ -584,7 +584,7 @@
       "name": "date-picker",
       "type": "registry:ui",
       "title": "Date Picker",
-      "description": "Styled date picker wrapping nsh/base DatePicker \u2014 theme tokens + Trigger; composition-only.",
+      "description": "Styled date picker wrapping nsh/base DatePicker — theme tokens + Trigger; composition-only.",
       "registryDependencies": [
         "theme",
         "dates",
@@ -606,13 +606,55 @@
       "name": "time-field",
       "type": "registry:ui",
       "title": "Time Field",
-      "description": "Styled time field wrapping nsh/base TimeField \u2014 theme tokens for the well and segments.",
+      "description": "Styled time field wrapping nsh/base TimeField — theme tokens for the well and segments.",
       "registryDependencies": ["dates"],
       "files": [
         {
           "path": "packages/ui/time-field.tsx",
           "type": "registry:ui",
           "target": "components/ui/time-field.tsx"
+        }
+      ]
+    },
+    {
+      "name": "resizable",
+      "type": "registry:ui",
+      "title": "Resizable",
+      "description": "Styled resizable panels wrapping nsh/base ResizablePanelGroup / ResizablePanel — theme tokens for the handle and panel.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/resizable.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/resizable.tsx"
+        }
+      ]
+    },
+    {
+      "name": "dock-area",
+      "type": "registry:ui",
+      "title": "Dock Area",
+      "description": "Styled dock workspace wrapping nsh/base DockArea — theme tokens for tabs, handles, and docks.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/dock-area.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dock-area.tsx"
+        }
+      ]
+    },
+    {
+      "name": "carousel",
+      "type": "registry:ui",
+      "title": "Carousel",
+      "description": "Styled carousel wrapping nsh/base Carousel and its parts — theme tokens, button arrows, and pagination dots.",
+      "registryDependencies": ["theme", "button", "density"],
+      "files": [
+        {
+          "path": "packages/ui/carousel.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/carousel.tsx"
         }
       ]
     }

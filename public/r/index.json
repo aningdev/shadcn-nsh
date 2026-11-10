@@ -259,6 +259,24 @@
       "type": "registry:ui",
       "title": "Time Field",
       "description": "Styled time field wrapping nsh/base TimeField — theme tokens for the well and segments."
+    },
+    {
+      "name": "resizable",
+      "type": "registry:ui",
+      "title": "Resizable",
+      "description": "Styled resizable panels wrapping nsh/base ResizablePanelGroup / ResizablePanel — theme tokens for the handle and panel."
+    },
+    {
+      "name": "dock-area",
+      "type": "registry:ui",
+      "title": "Dock Area",
+      "description": "Styled dock workspace wrapping nsh/base DockArea — theme tokens for tabs, handles, and docks."
+    },
+    {
+      "name": "carousel",
+      "type": "registry:ui",
+      "title": "Carousel",
+      "description": "Styled carousel wrapping nsh/base Carousel and its parts — theme tokens, button arrows, and pagination dots."
     }
   ]
 }

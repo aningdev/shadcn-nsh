@@ -25,42 +25,78 @@
 
 ## Phase-1 状态（store `nsh` 0.4.0 ∩ core 对齐）
 
-| website                                                               | `nsh/base`              | registry       | shadcn         | 状态 |
-| --------------------------------------------------------------------- | ----------------------- | -------------- | -------------- | ---- |
-| [button](../../references/nsh/website/elements/button.md)             | `Button`                | `button`       | `button`       | done |
-| [input](../../references/nsh/website/elements/input.md)               | `Input`                 | `input`        | `input`        | done |
-| [checkbox](../../references/nsh/website/elements/checkbox.md)         | `Checkbox`              | `checkbox`     | `checkbox`     | done |
-| [radio](../../references/nsh/website/elements/radio.md)               | `RadioGroup`, `Radio`   | `radio-group`  | `radio-group`  | done |
-| [switch](../../references/nsh/website/elements/switch.md)             | `Switch`                | `switch`       | `switch`       | done |
-| [progress](../../references/nsh/website/elements/progress.md)         | `Progress`              | `progress`     | `progress`     | done |
-| [tabs](../../references/nsh/website/elements/tabs.md)                 | `Tabs`, `Tab`           | `tabs`         | `tabs`         | done |
-| [popover](../../references/nsh/website/elements/popover.md)           | `Popover`               | `popover`      | `popover`      | done |
-| [tooltip](../../references/nsh/website/elements/tooltip.md)           | `Tooltip`               | `tooltip`      | `tooltip`      | done |
-| [sheet](../../references/nsh/website/elements/sheet.md)               | `Sheet`                 | `sheet`        | `sheet`        | done |
-| [dialog](../../references/nsh/website/elements/dialog.md)             | `Dialog`                | `dialog`       | `dialog`       | done |
-| [menu](../../references/nsh/website/elements/menu.md)                 | `Menu`, …               | `menu`         | `menu`         | done |
-| [menu](../../references/nsh/website/elements/menu.md)                 | `ContextMenu`, …        | `context-menu` | `context-menu` | done |
-| [collapsible](../../references/nsh/website/elements/collapsible.md)   | `Collapsible`           | `collapsible`  | `collapsible`  | done |
-| [toast](../../references/nsh/website/elements/toast.md)               | `Toast`, `ToastStack`   | `toast`        | sonner / toast | done |
-| [table](../../references/nsh/website/elements/table.md)               | `Table*`                | `table`        | `table`        | done |
-| [accordion](../../references/nsh/website/elements/accordion.md)       | `Accordion*`            | `accordion`    | `accordion`    | done |
-| [avatar](../../references/nsh/website/elements/avatar.md)             | `Avatar`, `AvatarGroup` | `avatar`       | `avatar`       | done |
-| [combobox](../../references/nsh/website/elements/combobox.md)         | `Combobox`              | `combobox`     | `combobox`     | done |
-| [link](../../references/nsh/website/elements/link.md)                 | `Link`                  | `link`         | `link`         | done |
-| [number-input](../../references/nsh/website/elements/number-input.md) | `NumberInput`           | `number-input` | `number-input` | done |
-| [otp-input](../../references/nsh/website/elements/otp-input.md)       | `OtpInput`              | `otp-input`    | `otp-input`    | done |
-| [pagination](../../references/nsh/website/elements/pagination.md)     | `Pagination`            | `pagination`   | `pagination`   | done |
-| [select](../../references/nsh/website/elements/select.md)             | `Select`                | `select`       | `select`       | done |
-| [slider](../../references/nsh/website/elements/slider.md)             | `Slider`                | `slider`       | `slider`       | done |
-| [toggle](../../references/nsh/website/elements/toggle.md)             | `Toggle`                | `toggle`       | `toggle`       | done |
-| [toggle](../../references/nsh/website/elements/toggle.md)             | `ToggleGroup`           | `toggle-group` | `toggle-group` | done |
-| [command](../../references/nsh/website/elements/command.md)           | `Command`               | `command`      | `command`      | done |
-| [tree](../../references/nsh/website/elements/tree.md)                 | `Tree`                  | `tree`         | `tree`         | done |
-| [data-table](../../references/nsh/website/elements/data-table.md)     | `DataTable`             | `data-table`   | —              | done |
-| [scrollbar](../../references/nsh/website/elements/scrollbar.md)       | `Scrollbar`             | `scrollbar`    | —              | done |
-| [calendar](../../references/nsh/website/elements/calendar.md)         | `Calendar`              | `calendar`     | `calendar`     | done |
-| [date-picker](../../references/nsh/website/elements/date-picker.md)   | `DatePicker`            | `date-picker`  | `date-picker`  | done |
-| [time-field](../../references/nsh/website/elements/time-field.md)     | `TimeField`             | `time-field`   | `time-field`   | done |
+| website                                                               | `nsh/base`                              | registry       | shadcn         | 状态 |
+| --------------------------------------------------------------------- | --------------------------------------- | -------------- | -------------- | ---- |
+| [button](../../references/nsh/website/elements/button.md)             | `Button`                                | `button`       | `button`       | done |
+| [input](../../references/nsh/website/elements/input.md)               | `Input`                                 | `input`        | `input`        | done |
+| [checkbox](../../references/nsh/website/elements/checkbox.md)         | `Checkbox`                              | `checkbox`     | `checkbox`     | done |
+| [radio](../../references/nsh/website/elements/radio.md)               | `RadioGroup`, `Radio`                   | `radio-group`  | `radio-group`  | done |
+| [switch](../../references/nsh/website/elements/switch.md)             | `Switch`                                | `switch`       | `switch`       | done |
+| [progress](../../references/nsh/website/elements/progress.md)         | `Progress`                              | `progress`     | `progress`     | done |
+| [tabs](../../references/nsh/website/elements/tabs.md)                 | `Tabs`, `Tab`                           | `tabs`         | `tabs`         | done |
+| [popover](../../references/nsh/website/elements/popover.md)           | `Popover`                               | `popover`      | `popover`      | done |
+| [tooltip](../../references/nsh/website/elements/tooltip.md)           | `Tooltip`                               | `tooltip`      | `tooltip`      | done |
+| [sheet](../../references/nsh/website/elements/sheet.md)               | `Sheet`                                 | `sheet`        | `sheet`        | done |
+| [dialog](../../references/nsh/website/elements/dialog.md)             | `Dialog`                                | `dialog`       | `dialog`       | done |
+| [menu](../../references/nsh/website/elements/menu.md)                 | `Menu`, …                               | `menu`         | `menu`         | done |
+| [menu](../../references/nsh/website/elements/menu.md)                 | `ContextMenu`, …                        | `context-menu` | `context-menu` | done |
+| [collapsible](../../references/nsh/website/elements/collapsible.md)   | `Collapsible`                           | `collapsible`  | `collapsible`  | done |
+| [toast](../../references/nsh/website/elements/toast.md)               | `Toast`, `ToastStack`                   | `toast`        | sonner / toast | done |
+| [table](../../references/nsh/website/elements/table.md)               | `Table*`                                | `table`        | `table`        | done |
+| [accordion](../../references/nsh/website/elements/accordion.md)       | `Accordion*`                            | `accordion`    | `accordion`    | done |
+| [avatar](../../references/nsh/website/elements/avatar.md)             | `Avatar`, `AvatarGroup`                 | `avatar`       | `avatar`       | done |
+| [combobox](../../references/nsh/website/elements/combobox.md)         | `Combobox`                              | `combobox`     | `combobox`     | done |
+| [link](../../references/nsh/website/elements/link.md)                 | `Link`                                  | `link`         | `link`         | done |
+| [number-input](../../references/nsh/website/elements/number-input.md) | `NumberInput`                           | `number-input` | `number-input` | done |
+| [otp-input](../../references/nsh/website/elements/otp-input.md)       | `OtpInput`                              | `otp-input`    | `otp-input`    | done |
+| [pagination](../../references/nsh/website/elements/pagination.md)     | `Pagination`                            | `pagination`   | `pagination`   | done |
+| [select](../../references/nsh/website/elements/select.md)             | `Select`                                | `select`       | `select`       | done |
+| [slider](../../references/nsh/website/elements/slider.md)             | `Slider`                                | `slider`       | `slider`       | done |
+| [toggle](../../references/nsh/website/elements/toggle.md)             | `Toggle`                                | `toggle`       | `toggle`       | done |
+| [toggle](../../references/nsh/website/elements/toggle.md)             | `ToggleGroup`                           | `toggle-group` | `toggle-group` | done |
+| [command](../../references/nsh/website/elements/command.md)           | `Command`                               | `command`      | `command`      | done |
+| [tree](../../references/nsh/website/elements/tree.md)                 | `Tree`                                  | `tree`         | `tree`         | done |
+| [data-table](../../references/nsh/website/elements/data-table.md)     | `DataTable`                             | `data-table`   | —              | done |
+| [scrollbar](../../references/nsh/website/elements/scrollbar.md)       | `Scrollbar`                             | `scrollbar`    | —              | done |
+| [calendar](../../references/nsh/website/elements/calendar.md)         | `Calendar`                              | `calendar`     | `calendar`     | done |
+| [date-picker](../../references/nsh/website/elements/date-picker.md)   | `DatePicker`                            | `date-picker`  | `date-picker`  | done |
+| [time-field](../../references/nsh/website/elements/time-field.md)     | `TimeField`                             | `time-field`   | `time-field`   | done |
+| website                                                               | `nsh/base`                              | registry       | shadcn         | 状态 |
+| --------------------------------------------------------------------- | --------------------------------------- | -------------- | -------------- | ---- |
+| [button](../../references/nsh/website/elements/button.md)             | `Button`                                | `button`       | `button`       | done |
+| [input](../../references/nsh/website/elements/input.md)               | `Input`                                 | `input`        | `input`        | done |
+| [checkbox](../../references/nsh/website/elements/checkbox.md)         | `Checkbox`                              | `checkbox`     | `checkbox`     | done |
+| [radio](../../references/nsh/website/elements/radio.md)               | `RadioGroup`, `Radio`                   | `radio-group`  | `radio-group`  | done |
+| [switch](../../references/nsh/website/elements/switch.md)             | `Switch`                                | `switch`       | `switch`       | done |
+| [progress](../../references/nsh/website/elements/progress.md)         | `Progress`                              | `progress`     | `progress`     | done |
+| [tabs](../../references/nsh/website/elements/tabs.md)                 | `Tabs`, `Tab`                           | `tabs`         | `tabs`         | done |
+| [popover](../../references/nsh/website/elements/popover.md)           | `Popover`                               | `popover`      | `popover`      | done |
+| [tooltip](../../references/nsh/website/elements/tooltip.md)           | `Tooltip`                               | `tooltip`      | `tooltip`      | done |
+| [sheet](../../references/nsh/website/elements/sheet.md)               | `Sheet`                                 | `sheet`        | `sheet`        | done |
+| [dialog](../../references/nsh/website/elements/dialog.md)             | `Dialog`                                | `dialog`       | `dialog`       | done |
+| [menu](../../references/nsh/website/elements/menu.md)                 | `Menu`, …                               | `menu`         | `menu`         | done |
+| [menu](../../references/nsh/website/elements/menu.md)                 | `ContextMenu`, …                        | `context-menu` | `context-menu` | done |
+| [collapsible](../../references/nsh/website/elements/collapsible.md)   | `Collapsible`                           | `collapsible`  | `collapsible`  | done |
+| [toast](../../references/nsh/website/elements/toast.md)               | `Toast`, `ToastStack`                   | `toast`        | sonner / toast | done |
+| [table](../../references/nsh/website/elements/table.md)               | `Table*`                                | `table`        | `table`        | done |
+| [accordion](../../references/nsh/website/elements/accordion.md)       | `Accordion*`                            | `accordion`    | `accordion`    | done |
+| [avatar](../../references/nsh/website/elements/avatar.md)             | `Avatar`, `AvatarGroup`                 | `avatar`       | `avatar`       | done |
+| [combobox](../../references/nsh/website/elements/combobox.md)         | `Combobox`                              | `combobox`     | `combobox`     | done |
+| [link](../../references/nsh/website/elements/link.md)                 | `Link`                                  | `link`         | `link`         | done |
+| [number-input](../../references/nsh/website/elements/number-input.md) | `NumberInput`                           | `number-input` | `number-input` | done |
+| [otp-input](../../references/nsh/website/elements/otp-input.md)       | `OtpInput`                              | `otp-input`    | `otp-input`    | done |
+| [pagination](../../references/nsh/website/elements/pagination.md)     | `Pagination`                            | `pagination`   | `pagination`   | done |
+| [select](../../references/nsh/website/elements/select.md)             | `Select`                                | `select`       | `select`       | done |
+| [slider](../../references/nsh/website/elements/slider.md)             | `Slider`                                | `slider`       | `slider`       | done |
+| [toggle](../../references/nsh/website/elements/toggle.md)             | `Toggle`                                | `toggle`       | `toggle`       | done |
+| [toggle](../../references/nsh/website/elements/toggle.md)             | `ToggleGroup`                           | `toggle-group` | `toggle-group` | done |
+| [command](../../references/nsh/website/elements/command.md)           | `Command`                               | `command`      | `command`      | done |
+| [tree](../../references/nsh/website/elements/tree.md)                 | `Tree`                                  | `tree`         | `tree`         | done |
+| [data-table](../../references/nsh/website/elements/data-table.md)     | `DataTable`                             | `data-table`   | —              | done |
+| [scrollbar](../../references/nsh/website/elements/scrollbar.md)       | `Scrollbar`                             | `scrollbar`    | —              | done |
+| [resizable](../../references/nsh/website/elements/resizable.md)       | `ResizablePanelGroup`, `ResizablePanel` | `resizable`    | `resizable`    | done |
+| [dock](../../references/nsh/website/elements/dock.md)                 | `DockArea`                              | `dock-area`    | —              | done |
+| [carousel](../../references/nsh/website/elements/carousel.md)         | `Carousel`, …                           | `carousel`     | `carousel`     | done |
 
 另有：registry `theme`（`theme.json` + `lib/theme.ts` + 表面/动效 helper）与 `open-state`（组合状态辅助）。
 
@@ -72,6 +108,12 @@
 | Layout         | Resizable, Toolbar                                 | Phase-1.5 / later       |
 | Shell / system | NavStack, AlertDialog                              | App shell / 原生 alerts |
 | Heavy          | Editor, RichEditor, DiffView, TextView, Dock, Plot | 单独里程碑              |
+| 类别           | website / base                                     | 原因                    |
+| -------------- | --------------------------------------------       | ----------------------- |
+| Dates / color  | Calendar, TimeField, DatePicker, ColorPicker       | Phase-2                 |
+| Layout         | Toolbar                                            | Phase-1.5 / later       |
+| Shell / system | NavStack, AlertDialog                              | App shell / 原生 alerts |
+| Heavy          | Editor, RichEditor, DiffView, TextView, Plot       | 单独里程碑              |
 
 ## Extensions（故意不做）
 
@@ -251,6 +293,10 @@ bun run shots apps/gallery/pilot.tsx /tmp/shots pilot   # 生成 pilot-light.png
 | ------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 已迁移 | Family 配方：`popover`、`tooltip`、`menu`、`context-menu`、`tabs`、`accordion`、`collapsible`、`pagination`、`select`、`combobox`、`dialog`、`sheet`、`toast`、`table`、`date-picker`。Leaf 配方（按参考实现移植）：`button`、`switch`、`toggle`、`toggle-group`、`checkbox`、`radio-group`、`link`、`input`、`number-input`、`otp-input`、`progress`、`slider`、`avatar`、`command`、`tree`、`data-table`、`scrollbar`、`calendar`、`time-field` |
 | 未迁移 | 其余所有组件                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| 状态   | 组件                                                                                                                                                                                                                                                                                                                                                                                                                                              |
+| ------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------    |
+| 已迁移 | Family 配方：`popover`、`tooltip`、`menu`、`context-menu`、`tabs`、`accordion`、`collapsible`、`pagination`、`select`、`combobox`、`dialog`、`sheet`、`toast`、`table`、`resizable`、`carousel`。Leaf 配方（按参考实现移植）：`button`、`switch`、`toggle`、`toggle-group`、`checkbox`、`radio-group`、`link`、`input`、`number-input`、`otp-input`、`progress`、`slider`、`avatar`、`command`、`tree`、`data-table`、`scrollbar`、`dock-area`    |
+| 未迁移 | 其余所有组件                                                                                                                                                                                                                                                                                                                                                                                                                                      |
 
 共享的 `lib` 模块，都是第二个组件需要时才加的（R1）：`follow`（switch、checkbox、radio，以及 select 与 combobox 的 chevron、菜单勾选标记）、`press`（button、toggle，以及 checkbox 与 radio 的 group sink；家族 7 的按下也用它、toast 的关闭）、`density`（button、switch、toggle、checkbox、radio、input、number-input、otp-input、select、combobox，以及 tabs、accordion、collapsible、link、pagination 的指针 / 触屏尺寸、popover、dialog、sheet、toast、slider、avatar、menu、command、tree、scrollbar）、`field`（input、number-input、otp-input 共用的边、凹陷和焦点）、`listbox`（select 与 combobox 共用的 chevron、行、弹层和触屏 sheet）、`meter`（progress、slider 共用的凹陷轨道和填充）、`dates`（calendar、date-picker、time-field 共用的日期格子、时间段和时间井）。
 
@@ -363,4 +409,5 @@ bun run shots apps/gallery/pilot.tsx /tmp/shots pilot   # 生成 pilot-light.png
 - 2026-11-11 —— Command 与 Tree 在 `nsh/base` 里是单根控件，所以做成 Leaf（默认外观 + `renderItem`），不做 Composition Facade。高亮用 `accent` 加 `ring` 边，不用参考的品牌色 tint；禁用仍是 0.5，不是 0.4。快捷键帽用 `secondary`（亮色 `card` 与 `background` 相同）。Tree 的 chevron 是 `›` 加 `duration-200`，没有图标集；`reveal` 默认开启。不新增 token。
 - 2026-11-12 —— 减少动效时样式 `transitionDuration` 为 0（`motionDuration`），包括按压的颜色和弹层入场。class 动效保留时长并加 `motion-reduce:transition-none`。不到 44 的触屏目标（tabs 内框、滑杆带、堆叠的数字步进、checkbox / radio / 带标签的 switch 行、select 搜索、data-table 行）加到 44；不新增 token。原因：iOS 核对把 44 当作点击区，减少动效不应再等一段过渡。
 - 2026-11-11 —— 日期不新增 token。今天用 `accent`（参考的安静填充），选中日和范围端点用 `primary`，范围中段是 `accent` 色带，其他月份和禁用用 `muted-foreground`，禁用透明度仍是 0.5（箭头不用参考的 0.3）。键盘日是 `ring` 边。月份名是英文：base 0.4.0 没有 locale。DatePicker 的触发器和弹层复用列表选择的行与 sheet；弹层没有入场 hook。时间井用字段的凹陷，聚焦段用 `primary` 填充。原因：颜色只来自现有主题。
+- 2026-11-11 —— Resizable、DockArea、Carousel 不新增 token。手柄拇指沿用参考 class（`muted-foreground`、`duration-150`，静止时隐藏）；发丝线用 `border`，悬停和焦点用 `ring`，拖动用 `primary`，因为内联颜色会压过 `group-*`。Dock 下划线和落点用 `primary` / `accent`，不用柑橘色；遮罩复用 `custom-backdrop`。轮播箭头是 `button` 的 secondary `icon-sm` 再画圆，禁用 0.5 而不是 0.3，指示药丸用 `primary` 而不是 `accentFill`。原因：颜色只来自现有主题，而且箭头本身已是按钮，不能再套一层 `Button`。
 - 2026-11-10 —— DataTable / Scrollbar 不新增 token。表格沿用参考的透明度（`primary` 的 8/10/12%，`muted` 的 35/50/60%），终端的缩放手柄分支去掉。涨跌色留在列的 `positiveClass` / `negativeClass`：主题没有 `up` / `down`。拇指用 `muted-foreground`，不用 gallery 的 `scrollbar-thumb`，宽度 hover 留在 class。淡入 300、淡出 500 来自 scrollbar.md 的原生 motion，不是 CSS `duration-*`。原因：颜色只来自现有主题，500 是元素文档写的退出时长。

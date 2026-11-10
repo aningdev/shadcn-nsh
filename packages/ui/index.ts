@@ -16,6 +16,24 @@ export {
 } from "./avatar";
 export { Button, buttonVariants, type ButtonSize, type ButtonVariant } from "./button";
 export { Calendar, calendarVariants, type CalendarProps } from "./calendar";
+export {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPagination,
+  CarouselPaginationItem,
+  CarouselPrevious,
+  carouselVariants,
+  type CarouselChrome,
+  type CarouselContentProps,
+  type CarouselItemProps,
+  type CarouselNextProps,
+  type CarouselPaginationItemProps,
+  type CarouselPaginationProps,
+  type CarouselPreviousProps,
+  type CarouselProps,
+} from "./carousel";
 export { Checkbox, type CheckboxProps } from "./checkbox";
 export {
   Combobox,
@@ -52,6 +70,7 @@ export {
   ContextMenuSubTrigger,
   ContextMenuTrigger,
 } from "./context-menu";
+export { DockArea, dockAreaVariants, type DockAreaChrome, type DockAreaProps } from "./dock-area";
 export {
   DatePicker,
   DatePickerTrigger,
@@ -131,6 +150,14 @@ export {
   type PopoverTriggerProps,
 } from "./popover";
 export { Progress, progressSweep, progressVariants, type ProgressProps } from "./progress";
+export {
+  ResizablePanel,
+  ResizablePanelGroup,
+  resizableVariants,
+  type ResizableChrome,
+  type ResizablePanelGroupProps,
+  type ResizablePanelProps,
+} from "./resizable";
 export {
   Select,
   SelectContent,

@@ -41,6 +41,13 @@ export const components: ComponentDoc[] = [
     description: "Styled button wrapping nsh/base Button.",
   },
   {
+    slug: "carousel",
+    title: "Carousel",
+    nshElement: "carousel",
+    description:
+      "Styled carousel wrapping nsh/base Carousel and its parts — theme tokens, button arrows, and pagination dots.",
+  },
+  {
     slug: "combobox",
     title: "Combobox",
     nshElement: "combobox",
@@ -103,6 +110,13 @@ export const components: ComponentDoc[] = [
       "Styled dialog wrapping nsh/base Dialog — theme tokens + Trigger / Content; full base prop pass-through.",
   },
   {
+    slug: "dock-area",
+    title: "Dock Area",
+    nshElement: "dock",
+    description:
+      "Styled dock workspace wrapping nsh/base DockArea — theme tokens for tabs, handles, and docks.",
+  },
+  {
     slug: "menu",
     title: "Menu",
     nshElement: "menu",
@@ -160,6 +174,13 @@ export const components: ComponentDoc[] = [
     nshElement: "radio",
     description:
       "Styled radio group wrapping nsh/base RadioGroup / Radio — theme tokens + default circle; full base prop pass-through.",
+  },
+  {
+    slug: "resizable",
+    title: "Resizable",
+    nshElement: "resizable",
+    description:
+      "Styled resizable panels wrapping nsh/base ResizablePanelGroup / ResizablePanel — theme tokens for the handle and panel.",
   },
   {
     slug: "select",

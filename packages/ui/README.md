@@ -25,42 +25,78 @@ This repo develops and deploys against the **published store CLI** (`curl …/in
 
 ## Phase-1 status (store `nsh` 0.4.0 ∩ core parity)
 
-| website                                                               | `nsh/base`              | registry       | shadcn         | Status |
-| --------------------------------------------------------------------- | ----------------------- | -------------- | -------------- | ------ |
-| [button](../../references/nsh/website/elements/button.md)             | `Button`                | `button`       | `button`       | done   |
-| [input](../../references/nsh/website/elements/input.md)               | `Input`                 | `input`        | `input`        | done   |
-| [checkbox](../../references/nsh/website/elements/checkbox.md)         | `Checkbox`              | `checkbox`     | `checkbox`     | done   |
-| [radio](../../references/nsh/website/elements/radio.md)               | `RadioGroup`, `Radio`   | `radio-group`  | `radio-group`  | done   |
-| [switch](../../references/nsh/website/elements/switch.md)             | `Switch`                | `switch`       | `switch`       | done   |
-| [progress](../../references/nsh/website/elements/progress.md)         | `Progress`              | `progress`     | `progress`     | done   |
-| [tabs](../../references/nsh/website/elements/tabs.md)                 | `Tabs`, `Tab`           | `tabs`         | `tabs`         | done   |
-| [popover](../../references/nsh/website/elements/popover.md)           | `Popover`               | `popover`      | `popover`      | done   |
-| [tooltip](../../references/nsh/website/elements/tooltip.md)           | `Tooltip`               | `tooltip`      | `tooltip`      | done   |
-| [sheet](../../references/nsh/website/elements/sheet.md)               | `Sheet`                 | `sheet`        | `sheet`        | done   |
-| [dialog](../../references/nsh/website/elements/dialog.md)             | `Dialog`                | `dialog`       | `dialog`       | done   |
-| [menu](../../references/nsh/website/elements/menu.md)                 | `Menu`, …               | `menu`         | `menu`         | done   |
-| [menu](../../references/nsh/website/elements/menu.md)                 | `ContextMenu`, …        | `context-menu` | `context-menu` | done   |
-| [collapsible](../../references/nsh/website/elements/collapsible.md)   | `Collapsible`           | `collapsible`  | `collapsible`  | done   |
-| [toast](../../references/nsh/website/elements/toast.md)               | `Toast`, `ToastStack`   | `toast`        | sonner / toast | done   |
-| [table](../../references/nsh/website/elements/table.md)               | `Table*`                | `table`        | `table`        | done   |
-| [accordion](../../references/nsh/website/elements/accordion.md)       | `Accordion*`            | `accordion`    | `accordion`    | done   |
-| [avatar](../../references/nsh/website/elements/avatar.md)             | `Avatar`, `AvatarGroup` | `avatar`       | `avatar`       | done   |
-| [combobox](../../references/nsh/website/elements/combobox.md)         | `Combobox`              | `combobox`     | `combobox`     | done   |
-| [link](../../references/nsh/website/elements/link.md)                 | `Link`                  | `link`         | `link`         | done   |
-| [number-input](../../references/nsh/website/elements/number-input.md) | `NumberInput`           | `number-input` | `number-input` | done   |
-| [otp-input](../../references/nsh/website/elements/otp-input.md)       | `OtpInput`              | `otp-input`    | `otp-input`    | done   |
-| [pagination](../../references/nsh/website/elements/pagination.md)     | `Pagination`            | `pagination`   | `pagination`   | done   |
-| [select](../../references/nsh/website/elements/select.md)             | `Select`                | `select`       | `select`       | done   |
-| [slider](../../references/nsh/website/elements/slider.md)             | `Slider`                | `slider`       | `slider`       | done   |
-| [toggle](../../references/nsh/website/elements/toggle.md)             | `Toggle`                | `toggle`       | `toggle`       | done   |
-| [toggle](../../references/nsh/website/elements/toggle.md)             | `ToggleGroup`           | `toggle-group` | `toggle-group` | done   |
-| [command](../../references/nsh/website/elements/command.md)           | `Command`               | `command`      | `command`      | done   |
-| [tree](../../references/nsh/website/elements/tree.md)                 | `Tree`                  | `tree`         | `tree`         | done   |
-| [data-table](../../references/nsh/website/elements/data-table.md)     | `DataTable`             | `data-table`   | —              | done   |
-| [scrollbar](../../references/nsh/website/elements/scrollbar.md)       | `Scrollbar`             | `scrollbar`    | —              | done   |
-| [calendar](../../references/nsh/website/elements/calendar.md)         | `Calendar`              | `calendar`     | `calendar`     | done   |
-| [date-picker](../../references/nsh/website/elements/date-picker.md)   | `DatePicker`            | `date-picker`  | `date-picker`  | done   |
-| [time-field](../../references/nsh/website/elements/time-field.md)     | `TimeField`             | `time-field`   | `time-field`   | done   |
+| website                                                               | `nsh/base`                              | registry       | shadcn         | Status |
+| --------------------------------------------------------------------- | --------------------------------------- | -------------- | -------------- | ------ |
+| [button](../../references/nsh/website/elements/button.md)             | `Button`                                | `button`       | `button`       | done   |
+| [input](../../references/nsh/website/elements/input.md)               | `Input`                                 | `input`        | `input`        | done   |
+| [checkbox](../../references/nsh/website/elements/checkbox.md)         | `Checkbox`                              | `checkbox`     | `checkbox`     | done   |
+| [radio](../../references/nsh/website/elements/radio.md)               | `RadioGroup`, `Radio`                   | `radio-group`  | `radio-group`  | done   |
+| [switch](../../references/nsh/website/elements/switch.md)             | `Switch`                                | `switch`       | `switch`       | done   |
+| [progress](../../references/nsh/website/elements/progress.md)         | `Progress`                              | `progress`     | `progress`     | done   |
+| [tabs](../../references/nsh/website/elements/tabs.md)                 | `Tabs`, `Tab`                           | `tabs`         | `tabs`         | done   |
+| [popover](../../references/nsh/website/elements/popover.md)           | `Popover`                               | `popover`      | `popover`      | done   |
+| [tooltip](../../references/nsh/website/elements/tooltip.md)           | `Tooltip`                               | `tooltip`      | `tooltip`      | done   |
+| [sheet](../../references/nsh/website/elements/sheet.md)               | `Sheet`                                 | `sheet`        | `sheet`        | done   |
+| [dialog](../../references/nsh/website/elements/dialog.md)             | `Dialog`                                | `dialog`       | `dialog`       | done   |
+| [menu](../../references/nsh/website/elements/menu.md)                 | `Menu`, …                               | `menu`         | `menu`         | done   |
+| [menu](../../references/nsh/website/elements/menu.md)                 | `ContextMenu`, …                        | `context-menu` | `context-menu` | done   |
+| [collapsible](../../references/nsh/website/elements/collapsible.md)   | `Collapsible`                           | `collapsible`  | `collapsible`  | done   |
+| [toast](../../references/nsh/website/elements/toast.md)               | `Toast`, `ToastStack`                   | `toast`        | sonner / toast | done   |
+| [table](../../references/nsh/website/elements/table.md)               | `Table*`                                | `table`        | `table`        | done   |
+| [accordion](../../references/nsh/website/elements/accordion.md)       | `Accordion*`                            | `accordion`    | `accordion`    | done   |
+| [avatar](../../references/nsh/website/elements/avatar.md)             | `Avatar`, `AvatarGroup`                 | `avatar`       | `avatar`       | done   |
+| [combobox](../../references/nsh/website/elements/combobox.md)         | `Combobox`                              | `combobox`     | `combobox`     | done   |
+| [link](../../references/nsh/website/elements/link.md)                 | `Link`                                  | `link`         | `link`         | done   |
+| [number-input](../../references/nsh/website/elements/number-input.md) | `NumberInput`                           | `number-input` | `number-input` | done   |
+| [otp-input](../../references/nsh/website/elements/otp-input.md)       | `OtpInput`                              | `otp-input`    | `otp-input`    | done   |
+| [pagination](../../references/nsh/website/elements/pagination.md)     | `Pagination`                            | `pagination`   | `pagination`   | done   |
+| [select](../../references/nsh/website/elements/select.md)             | `Select`                                | `select`       | `select`       | done   |
+| [slider](../../references/nsh/website/elements/slider.md)             | `Slider`                                | `slider`       | `slider`       | done   |
+| [toggle](../../references/nsh/website/elements/toggle.md)             | `Toggle`                                | `toggle`       | `toggle`       | done   |
+| [toggle](../../references/nsh/website/elements/toggle.md)             | `ToggleGroup`                           | `toggle-group` | `toggle-group` | done   |
+| [command](../../references/nsh/website/elements/command.md)           | `Command`                               | `command`      | `command`      | done   |
+| [tree](../../references/nsh/website/elements/tree.md)                 | `Tree`                                  | `tree`         | `tree`         | done   |
+| [data-table](../../references/nsh/website/elements/data-table.md)     | `DataTable`                             | `data-table`   | —              | done   |
+| [scrollbar](../../references/nsh/website/elements/scrollbar.md)       | `Scrollbar`                             | `scrollbar`    | —              | done   |
+| [calendar](../../references/nsh/website/elements/calendar.md)         | `Calendar`                              | `calendar`     | `calendar`     | done   |
+| [date-picker](../../references/nsh/website/elements/date-picker.md)   | `DatePicker`                            | `date-picker`  | `date-picker`  | done   |
+| [time-field](../../references/nsh/website/elements/time-field.md)     | `TimeField`                             | `time-field`   | `time-field`   | done   |
+| website                                                               | `nsh/base`                              | registry       | shadcn         | Status |
+| --------------------------------------------------------------------- | --------------------------------------- | -------------- | -------------- | ------ |
+| [button](../../references/nsh/website/elements/button.md)             | `Button`                                | `button`       | `button`       | done   |
+| [input](../../references/nsh/website/elements/input.md)               | `Input`                                 | `input`        | `input`        | done   |
+| [checkbox](../../references/nsh/website/elements/checkbox.md)         | `Checkbox`                              | `checkbox`     | `checkbox`     | done   |
+| [radio](../../references/nsh/website/elements/radio.md)               | `RadioGroup`, `Radio`                   | `radio-group`  | `radio-group`  | done   |
+| [switch](../../references/nsh/website/elements/switch.md)             | `Switch`                                | `switch`       | `switch`       | done   |
+| [progress](../../references/nsh/website/elements/progress.md)         | `Progress`                              | `progress`     | `progress`     | done   |
+| [tabs](../../references/nsh/website/elements/tabs.md)                 | `Tabs`, `Tab`                           | `tabs`         | `tabs`         | done   |
+| [popover](../../references/nsh/website/elements/popover.md)           | `Popover`                               | `popover`      | `popover`      | done   |
+| [tooltip](../../references/nsh/website/elements/tooltip.md)           | `Tooltip`                               | `tooltip`      | `tooltip`      | done   |
+| [sheet](../../references/nsh/website/elements/sheet.md)               | `Sheet`                                 | `sheet`        | `sheet`        | done   |
+| [dialog](../../references/nsh/website/elements/dialog.md)             | `Dialog`                                | `dialog`       | `dialog`       | done   |
+| [menu](../../references/nsh/website/elements/menu.md)                 | `Menu`, …                               | `menu`         | `menu`         | done   |
+| [menu](../../references/nsh/website/elements/menu.md)                 | `ContextMenu`, …                        | `context-menu` | `context-menu` | done   |
+| [collapsible](../../references/nsh/website/elements/collapsible.md)   | `Collapsible`                           | `collapsible`  | `collapsible`  | done   |
+| [toast](../../references/nsh/website/elements/toast.md)               | `Toast`, `ToastStack`                   | `toast`        | sonner / toast | done   |
+| [table](../../references/nsh/website/elements/table.md)               | `Table*`                                | `table`        | `table`        | done   |
+| [accordion](../../references/nsh/website/elements/accordion.md)       | `Accordion*`                            | `accordion`    | `accordion`    | done   |
+| [avatar](../../references/nsh/website/elements/avatar.md)             | `Avatar`, `AvatarGroup`                 | `avatar`       | `avatar`       | done   |
+| [combobox](../../references/nsh/website/elements/combobox.md)         | `Combobox`                              | `combobox`     | `combobox`     | done   |
+| [link](../../references/nsh/website/elements/link.md)                 | `Link`                                  | `link`         | `link`         | done   |
+| [number-input](../../references/nsh/website/elements/number-input.md) | `NumberInput`                           | `number-input` | `number-input` | done   |
+| [otp-input](../../references/nsh/website/elements/otp-input.md)       | `OtpInput`                              | `otp-input`    | `otp-input`    | done   |
+| [pagination](../../references/nsh/website/elements/pagination.md)     | `Pagination`                            | `pagination`   | `pagination`   | done   |
+| [select](../../references/nsh/website/elements/select.md)             | `Select`                                | `select`       | `select`       | done   |
+| [slider](../../references/nsh/website/elements/slider.md)             | `Slider`                                | `slider`       | `slider`       | done   |
+| [toggle](../../references/nsh/website/elements/toggle.md)             | `Toggle`                                | `toggle`       | `toggle`       | done   |
+| [toggle](../../references/nsh/website/elements/toggle.md)             | `ToggleGroup`                           | `toggle-group` | `toggle-group` | done   |
+| [command](../../references/nsh/website/elements/command.md)           | `Command`                               | `command`      | `command`      | done   |
+| [tree](../../references/nsh/website/elements/tree.md)                 | `Tree`                                  | `tree`         | `tree`         | done   |
+| [data-table](../../references/nsh/website/elements/data-table.md)     | `DataTable`                             | `data-table`   | —              | done   |
+| [scrollbar](../../references/nsh/website/elements/scrollbar.md)       | `Scrollbar`                             | `scrollbar`    | —              | done   |
+| [resizable](../../references/nsh/website/elements/resizable.md)       | `ResizablePanelGroup`, `ResizablePanel` | `resizable`    | `resizable`    | done   |
+| [dock](../../references/nsh/website/elements/dock.md)                 | `DockArea`                              | `dock-area`    | —              | done   |
+| [carousel](../../references/nsh/website/elements/carousel.md)         | `Carousel`, …                           | `carousel`     | `carousel`     | done   |
 
 Also: registry `theme` (`theme.json` + `lib/theme.ts` + surface/motion helpers) and `open-state` (composition plumbing).
 
@@ -72,6 +108,12 @@ Also: registry `theme` (`theme.json` + `lib/theme.ts` + surface/motion helpers) 
 | Layout         | Resizable, Toolbar                                 | Phase-1.5 / later         |
 | Shell / system | NavStack, AlertDialog                              | App shell / native alerts |
 | Heavy          | Editor, RichEditor, DiffView, TextView, Dock, Plot | Separate milestones       |
+| Kind           | website / base                                     | Reason                    |
+| -------------- | --------------------------------------------       | ------------------------- |
+| Dates / color  | Calendar, TimeField, DatePicker, ColorPicker       | Phase-2                   |
+| Layout         | Toolbar                                            | Phase-1.5 / later         |
+| Shell / system | NavStack, AlertDialog                              | App shell / native alerts |
+| Heavy          | Editor, RichEditor, DiffView, TextView, Plot       | Separate milestones       |
 
 ## Extensions (intentionally not built)
 
@@ -252,6 +294,10 @@ Put the two images in the pull request, next to the reference's same control. Th
 | ------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Migrated     | Family recipe: `popover`, `tooltip`, `menu`, `context-menu`, `select`, `combobox`, `tabs`, `accordion`, `collapsible`, `pagination`, `dialog`, `sheet`, `toast`, `table`, `date-picker`. Leaf recipe, ported from the reference look: `button`, `switch`, `toggle`, `toggle-group`, `checkbox`, `radio-group`, `input`, `number-input`, `otp-input`, `link`, `progress`, `slider`, `avatar`, `command`, `tree`, `data-table`, `scrollbar`, `calendar`, `time-field` |
 | Not migrated | every other component                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| Status       | Components                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| ------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------    |
+| Migrated     | Family recipe: `popover`, `tooltip`, `menu`, `context-menu`, `select`, `combobox`, `tabs`, `accordion`, `collapsible`, `pagination`, `dialog`, `sheet`, `toast`, `table`, `resizable`, `carousel`. Leaf recipe, ported from the reference look: `button`, `switch`, `toggle`, `toggle-group`, `checkbox`, `radio-group`, `input`, `number-input`, `otp-input`, `link`, `progress`, `slider`, `avatar`, `command`, `tree`, `data-table`, `scrollbar`, `dock-area`    |
+| Not migrated | every other component                                                                                                                                                                                                                                                                                                                                                                                                                                               |
 
 Shared `lib` modules, each added when a second component needed it (R1): `follow` (switch, checkbox, radio, and the select / combobox chevron), `press` (button, toggle, the group sink of checkbox and radio, and family 7's press, and the close of toast), `density` (button, switch, toggle, checkbox, radio, input, number-input, otp-input, select, combobox, and the pointer / touch sizes of tabs, accordion, collapsible, link, pagination, and popover, dialog, sheet, toast, slider, avatar, command, tree, scrollbar), `field` (the edge, the recess and the focus shared by input, number-input and otp-input), `listbox` (the chevron, row, popup and touch sheet shared by select and combobox), `meter` (the recessed track and fill progress and slider share), `dates` (the day cell, time segment, and time well shared by calendar, date-picker, and time-field).
 
@@ -364,4 +410,5 @@ A default applies only while the consumer's hook is `undefined`; `null` turns it
 - 2026-11-11 — Command and Tree are single `nsh/base` controls, so they stay leaves (default chrome + `renderItem`), not a Composition Facade. Highlight is `accent` with a `ring` edge, not the reference's brand tint; disabled stays 0.5, not 0.4. Key caps use `secondary` (light `card` equals `background`). Tree chevron is a `›` with `duration-200`, not an icon, and `reveal` defaults on. No new tokens.
 - 2026-11-12 — Reduced motion sets style `transitionDuration` to 0 (`motionDuration`), including press colour and popup entrances. Class motion keeps its duration and adds `motion-reduce:transition-none`. Touch targets that were short of 44 (tabs inner box, slider band, stacked number steppers, checkbox / radio / labeled switch rows, select search, data-table rows) grow to 44; no new tokens. Why: the iOS check treated 44 as the hit target, and reduced motion should not wait on a transition.
 - 2026-11-11 — Dates add no tokens. Today is `accent` (the reference's quiet fill), a selected day and a range's ends are `primary`, a range's middle is an `accent` band, and other months and disabled days are `muted-foreground`. Disabled stays 0.5, not the reference's 0.3 on the arrows. The keyboard day is a `ring` edge. Month names are English: base 0.4.0 has no locale. DatePicker's trigger and popup reuse the list row and the touch sheet; the popup has no entrance hook. The time well is the field recess, and the focused segment fills with `primary`. Why: color comes only from the theme that already exists.
+- 2026-11-11 — Resizable, DockArea and Carousel add no tokens. The handle thumb stays the reference class (`muted-foreground`, `duration-150`, hidden until hover or drag); the hairline is `border`, hover and focus `ring`, drag `primary`, because an inline color would beat `group-*`. Dock underline and the drop target use `primary` / `accent` instead of citrus; the backdrop reuses `custom-backdrop`. The carousel arrow is `button` secondary `icon-sm` made round, disabled at 0.5 not 0.3, and the pill is `primary` not `accentFill`. Why: color comes only from the theme that already exists, and the arrow must not nest a second button.
 - 2026-11-10 — DataTable and Scrollbar add no tokens. The table keeps the reference opacities (`primary` at 8/10/12%, `muted` at 35/50/60%) and drops the terminal resize handle. Rise and fall stay on the column (`positiveClass` / `negativeClass`): the theme has no `up` / `down`. The thumb is `muted-foreground`, not gallery `scrollbar-thumb`, and its width hover stays on the class. Enter 300 and exit 500 are scrollbar.md's native fade, not a CSS `duration-*`. Why: color comes only from the theme that already exists, and 500 is the element doc's exit.
