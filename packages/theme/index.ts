@@ -1,9 +1,11 @@
 export {
   alpha,
   colors,
+  controlFill,
   disabledOpacity,
   finish,
   focusRing,
+  hovered,
   mix,
   overlayShadow,
   popupBackdrop,

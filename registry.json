@@ -21,6 +21,48 @@
       ]
     },
     {
+      "name": "density",
+      "type": "registry:lib",
+      "title": "Density",
+      "description": "Pointer versus touch: the 44-point target and hit slop, and the checkbox / radio box sizes.",
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "packages/ui/lib/density.ts",
+          "type": "registry:lib",
+          "target": "lib/density.ts"
+        }
+      ]
+    },
+    {
+      "name": "press",
+      "type": "registry:lib",
+      "title": "Press",
+      "description": "Press feedback: the sink and its ease, and the group sink of a box in a pressed row.",
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "packages/ui/lib/press.ts",
+          "type": "registry:lib",
+          "target": "lib/press.ts"
+        }
+      ]
+    },
+    {
+      "name": "follow",
+      "type": "registry:lib",
+      "title": "Follow",
+      "description": "An animated value that springs to a control's state, with the control and move springs.",
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "packages/ui/lib/follow.ts",
+          "type": "registry:lib",
+          "target": "lib/follow.ts"
+        }
+      ]
+    },
+    {
       "name": "open-state",
       "type": "registry:lib",
       "title": "Open state",
@@ -39,7 +81,7 @@
       "type": "registry:ui",
       "title": "Button",
       "description": "Styled button wrapping nsh/base Button.",
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["theme", "density", "press"],
       "files": [
         {
           "path": "packages/ui/button.tsx",
@@ -67,7 +109,7 @@
       "type": "registry:ui",
       "title": "Checkbox",
       "description": "Styled checkbox wrapping nsh/base Checkbox — theme tokens + default mark; full base prop pass-through.",
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["theme", "density", "follow", "press"],
       "files": [
         {
           "path": "packages/ui/checkbox.tsx",
@@ -81,7 +123,7 @@
       "type": "registry:ui",
       "title": "Radio Group",
       "description": "Styled radio group wrapping nsh/base RadioGroup / Radio — theme tokens + default circle; full base prop pass-through.",
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["theme", "density", "follow", "press"],
       "files": [
         {
           "path": "packages/ui/radio-group.tsx",
@@ -95,7 +137,7 @@
       "type": "registry:ui",
       "title": "Switch",
       "description": "Styled switch wrapping nsh/base Switch — theme tokens + size; full base prop pass-through.",
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["theme", "density", "follow"],
       "files": [
         {
           "path": "packages/ui/switch.tsx",
@@ -389,7 +431,7 @@
       "type": "registry:ui",
       "title": "Toggle",
       "description": "Styled toggle wrapping nsh/base Toggle — theme tokens + pressed chrome.",
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["theme", "density", "press"],
       "files": [
         {
           "path": "packages/ui/toggle.tsx",

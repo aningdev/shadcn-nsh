@@ -1,0 +1,15 @@
+{
+  "name": "density",
+  "type": "registry:lib",
+  "title": "Density",
+  "description": "Pointer versus touch: the 44-point target and hit slop, and the checkbox / radio box sizes.",
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "packages/ui/lib/density.ts",
+      "type": "registry:lib",
+      "target": "lib/density.ts",
+      "content": "// Source: examples/nsh-gallery-ui/look/button.ts, surface.tsx (`pointer`, `slop`) @ 64ab8a1d (baseline), see NOTICE.\nimport { platform } from \"nsh\";\n\n/** Smallest comfortable finger target (Accessibility touch targets), in points. */\nexport const TOUCH_TARGET = 44;\n\n/** Whether a pointer is the way in (a desktop OS, or the web in the desktop idiom), else a finger. */\nexport const isPointer = () => platform.desktop;\n\n/**\n * How far presses count past a control `size` points tall, so a finger gets `TOUCH_TARGET`\n * without the control looking bigger. None with a pointer.\n */\nexport function touchHitSlop(size: number): number | undefined {\n  if (isPointer()) return undefined;\n  const slop = Math.max(0, (TOUCH_TARGET - size) / 2);\n  return slop || undefined;\n}\n\n/**\n * The box of a checkbox or the ring of a radio, in points: 16 with a pointer, 22 on a touch screen\n * (`control`), its corner radius, the mark's size, the radio's dot.\n */\nexport function choiceBox() {\n  return isPointer()\n    ? { control: 16, corner: 5, check: 12, dot: 6 }\n    : { control: 22, corner: 7, check: 16, dot: 8 };\n}\n"
+    }
+  ]
+}

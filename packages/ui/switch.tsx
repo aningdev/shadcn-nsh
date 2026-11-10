@@ -1,8 +1,11 @@
 // Source: examples/nsh-gallery-ui/look/switch.ts, switch-geometry.ts @ 64ab8a1d (baseline), see NOTICE.
 import { colors, disabledOpacity, finish, focusRing } from "@shadcn-nsh/theme";
-import type { AnimatedValue, StyleProp, ViewStyle } from "nsh";
-import { computed, createAnimatedValue, effect, platform, reduceMotion, split } from "nsh";
+import type { StyleProp, ViewStyle } from "nsh";
+import { computed, split } from "nsh";
 import { Switch as BaseSwitch, type SwitchProps as BaseSwitchProps } from "nsh/base";
+
+import { isPointer, TOUCH_TARGET } from "./lib/density";
+import { follow, springs } from "./lib/follow";
 
 /** Aligns with shadcn `bases/base` Switch `size`. */
 export type SwitchSize = "default" | "sm";
@@ -48,9 +51,6 @@ export function knobTravel(g: SwitchGeometry): number {
   return g.width - 2 * (g.border + g.inset) - g.knob;
 }
 
-/** Smallest comfortable finger target (Accessibility touch targets). */
-const TOUCH_TARGET = 44;
-
 /** How far presses count past a switch that is all track, so a finger gets 44pt on each axis. */
 export function switchSlop(g: SwitchGeometry) {
   const v = Math.max(0, (TOUCH_TARGET - g.height) / 2);
@@ -67,26 +67,6 @@ function mergeStyle(
   if (base == null) return consumer ?? undefined;
   if (consumer == null) return base ?? undefined;
   return [base, consumer];
-}
-
-/** The knob's spring: a thumb or an indicator traveling (gpui-kit's `spring_move`). */
-const MOVE_SPRING = { stiffness: 504, damping: 38 };
-
-/**
- * An animated value that springs to `target()` each time it changes, natively: JS only starts
- * each spring. With reduced motion it lands at once.
- */
-function follow(target: () => number): AnimatedValue {
-  const value = createAnimatedValue(target());
-  let shown = target();
-  effect(() => {
-    const next = target();
-    if (next === shown) return;
-    shown = next;
-    if (reduceMotion()) value.set(next);
-    else void value.spring(next, MOVE_SPRING);
-  });
-  return value;
 }
 
 /** Row around the track + label — aligned with shadcn horizontal Field + switch. */
@@ -106,9 +86,9 @@ export function Switch(props: SwitchProps) {
     "hitSlop",
   ]);
 
-  const geometry = computed(() => switchGeometry(props.size ?? "default", platform.desktop));
+  const geometry = computed(() => switchGeometry(props.size ?? "default", isPointer()));
   const on = () => !!props.checked;
-  const progress = follow(() => (on() ? 1 : 0));
+  const progress = follow(() => (on() ? 1 : 0), springs.move);
   const travel = computed(() =>
     progress.interpolate({ inputRange: [0, 1], outputRange: [0, knobTravel(geometry())] }),
   );
@@ -156,7 +136,7 @@ export function Switch(props: SwitchProps) {
     <BaseSwitch
       {...rest}
       hitSlop={
-        props.hitSlop ?? (props.children || platform.desktop ? undefined : switchSlop(geometry()))
+        props.hitSlop ?? (props.children || isPointer() ? undefined : switchSlop(geometry()))
       }
       style={mergeStyle(rootChrome(), props.style)}
       focusStyle={mergeStyle(focusRing(), props.focusStyle)}

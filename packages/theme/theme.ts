@@ -51,6 +51,25 @@ export function mix(a: string, b: string, pct: number) {
   return `color-mix(in srgb, ${a}, ${b} ${pct * 100}%)`;
 }
 
+/** A pressable under the pointer: a whisper of the text colour over its surface, quieter than pressed. */
+export const hovered = (): ViewStyle => ({ backgroundColor: alpha(colors.foreground, 0.05) });
+
+/**
+ * The fill steps of a raised control (`secondary`): lighter under the pointer, deeper pressed,
+ * and deeper again when it is on, so on and off read apart at a glance in both appearances.
+ */
+export const controlFill = {
+  get hover() {
+    return mix(colors.secondary, colors.highlight, 0.5);
+  },
+  get pressed() {
+    return mix(colors.secondary, colors.shadowInk, 0.06);
+  },
+  get on() {
+    return mix(colors.secondary, colors.foreground, 0.1);
+  },
+};
+
 /** Keyboard focus ring for controls. */
 export const focusRing = (offset = 0): ViewStyle => ({
   borderColor: colors.ring,

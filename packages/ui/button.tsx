@@ -1,8 +1,20 @@
 // Source: examples/nsh-gallery-ui/look/button.ts @ 64ab8a1d (baseline), see NOTICE.
-import { alpha, colors, disabledOpacity, finish, focusRing, mix, radius } from "@shadcn-nsh/theme";
+import {
+  alpha,
+  colors,
+  controlFill,
+  disabledOpacity,
+  finish,
+  focusRing,
+  hovered,
+  radius,
+} from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
-import { computed, platform, reduceMotion, split, Text } from "nsh";
+import { computed, split, Text } from "nsh";
 import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/base";
+
+import { isPointer, touchHitSlop } from "./lib/density";
+import { pressSink } from "./lib/press";
 
 /** shadcn `bases/base` also has `link`; this registry omits it — Link is a separate component. */
 export type ButtonVariant = "default" | "outline" | "secondary" | "ghost" | "destructive";
@@ -52,34 +64,6 @@ function mergeStyle(
   if (base == null) return consumer ?? undefined;
   if (consumer == null) return base ?? undefined;
   return [base, consumer];
-}
-
-/**
- * Press feedback (NSH Design Guides "Motion"): the control sinks to `scale` while active and
- * eases back with the state changes beside it (`also`: CSS property names). Reduced motion
- * removes the sink, the movement, and keeps the short colour fade.
- */
-function pressSink(scale: number, also: string) {
-  return {
-    get activeStyle(): ViewStyle {
-      return reduceMotion() ? {} : { transform: [{ scale }] };
-    },
-    transition: {
-      transitionProperty: `${also}, transform`,
-      transitionDuration: 150,
-      transitionTimingFunction: "ease-out",
-    } satisfies ViewStyle,
-  };
-}
-
-/** Smallest comfortable finger target (Accessibility touch targets). */
-const TOUCH_TARGET = 44;
-
-/** Hit slop so a finger gets 44pt without growing the visual control; none with a pointer. */
-function touchHitSlop(height: number): number | undefined {
-  if (platform.desktop) return undefined;
-  const slop = Math.max(0, (TOUCH_TARGET - height) / 2);
-  return slop || undefined;
 }
 
 type SizeLook = {
@@ -135,9 +119,7 @@ type VariantLook = {
  * `secondary` and the theme's two tones; a filled one dims; a bare one whispers the text color.
  */
 function variantLook(variant: ButtonVariant, sink: ReturnType<typeof pressSink>): VariantLook {
-  const hoverFill = mix(colors.secondary, colors.highlight, 0.5);
-  const pressedFill = mix(colors.secondary, colors.shadowInk, 0.06);
-  const onFill = mix(colors.secondary, colors.foreground, 0.1);
+  const { hover: hoverFill, pressed: pressedFill, on: onFill } = controlFill;
   switch (variant) {
     case "secondary":
       return {
@@ -172,7 +154,7 @@ function variantLook(variant: ButtonVariant, sink: ReturnType<typeof pressSink>)
         backgroundColor: "transparent",
         borderColor: "transparent",
         color: colors.foreground,
-        hover: { backgroundColor: alpha(colors.foreground, 0.05) },
+        hover: hovered(),
         active: {
           backgroundColor: pressedFill,
           boxShadow: finish.control.pressed,
@@ -209,8 +191,7 @@ function variantLook(variant: ButtonVariant, sink: ReturnType<typeof pressSink>)
 
 /** Everything a button looks like at one variant and size: geometry first, then the variant. */
 function look(variant: ButtonVariant, size: ButtonSize): ButtonVariantsResult {
-  const pointer = platform.desktop;
-  const s = sizeLook(size, pointer);
+  const s = sizeLook(size, isPointer());
   // An icon-only button sinks further (90%): there is less of it to move.
   const sink = pressSink(
     s.icon ? 0.9 : 0.97,
