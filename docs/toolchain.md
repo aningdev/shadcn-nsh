@@ -12,16 +12,16 @@
 
 升级步骤：
 
-1. 升级 CLI，记下 `nsh --version` 的提交。
+1. 升级 CLI，记下 `nsh --version` 的提交。优先 `nsh update nightly`；若发布的 nightly 落后于 `main`，用 `curl -fsSL https://nsh.dev/install.sh | sh -s -- --source`（需 Rust）。源码安装的 CLI 跑 `port:render` 时，若本机没有 `llvm-ar` 编不出 wasm，可依赖已有的 `~/.nsh/runtime`（`scripts/port/render.ts` 会自动设 `NSH_RUNTIME`）。
 2. `git -C references/nsh fetch && git -C references/nsh checkout <该提交>`。
 3. 把 `port-map.json` 的 `upstream.commit` 改成该提交的完整哈希。
 4. `bun run port:check`：按报错处理"清单里有、上游没有"和"上游有、清单里没有"的条目。
 5. `bun run port:vendor`，再跑 `nsh check next/demos`、`bun run port:render`。
 6. 提交子模块指针、`port-map.json` 和被改写的区域，三者同一个 commit。
 
-当前状态（2026-11-11）：CLI 是 `c5214aa`，基线是 `3614be87`，CLI 落后 151 个提交，其中包含 `focusVisibleStyle`。因此外壳暂时把 `look.focusVisibleStyle` 接到 `focusStyle`；两者对齐后改回 `focusVisibleStyle`，并把 `port:check` 的这条警告改成报错。
+当前状态（2026-11-11）：CLI 与基线均为 `30f87b7c`（由 `install.sh --source` 装到 main；发布的 nightly 频道当时仍停在 `c5214aa`）。外壳使用 `focusVisibleStyle`；`port:check` 在 CLI 落后于基线时报错。
 
-`scripts/nsh-bootstrap.sh` 的注释仍写着"用 store release"，切换时一并改掉；它的行为（生成 types host、检查 `Button` 与 `Accordion` 存在）不受影响。
+发布的 nightly 追上 main 之后，可改回 `nsh update nightly`。`scripts/nsh-bootstrap.sh` 的注释仍写着"用 store release"，切换时一并改掉；它的行为（生成 types host、检查 `Button` 与 `Accordion` 存在）不受影响。
 
 ## TypeScript 分层
 

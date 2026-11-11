@@ -1,7 +1,7 @@
 {
   "upstream": {
     "path": "references/nsh/examples/nsh-gallery-ui",
-    "commit": "3614be876cfc55263c868925d48653de9b5a5328"
+    "commit": "30f87b7c53bde6c03eb13a3f2d4f78ff0c53cde8"
   },
   "root": "next",
   "files": {
@@ -130,7 +130,25 @@
       "pending": true
     },
     "look/tool.ts": {
-      "pending": true
+      "pending": true,
+      "symbols": {
+        "ToggleSize": "ui/toggle.tsx",
+        "Live": "ui/toggle.tsx",
+        "ToggleLookOptions": "ui/toggle.tsx",
+        "ToggleDimensions": "ui/toggle.tsx",
+        "pointer": "ui/toggle.tsx",
+        "toggleSizes": "ui/toggle.tsx",
+        "TOUCH_TARGET": "ui/toggle.tsx",
+        "slop": "ui/toggle.tsx",
+        "sink": "ui/toggle.tsx",
+        "transition": "ui/toggle.tsx",
+        "read": "ui/toggle.tsx",
+        "dimensions": "ui/toggle.tsx",
+        "toggleLook": "ui/toggle.tsx",
+        "ink": "ui/toggle.tsx",
+        "toggleLabel": "ui/toggle.tsx",
+        "toggleGlyph": "ui/toggle.tsx"
+      }
     },
     "look/workspace.tsx": {
       "pending": true

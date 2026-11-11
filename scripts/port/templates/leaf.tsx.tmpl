@@ -1,0 +1,55 @@
+// A {{id}}: the look (`{{lookFn}}` and its companions) and the `{{Id}}` that wears it.
+// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
+// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+// TODO(port): add imports the region needs (`@shadcn-nsh/theme`, `nsh`, `./lib/*`).
+import type { JSX } from "nsh";
+import { split, Text } from "nsh";
+import { {{Base}} as Base{{Id}}, type {{Base}}Props as Base{{Id}}Props } from "nsh/base";
+
+// @port {{upstream}}
+// @port end
+
+/**
+ * `nsh/base`'s {{Base}} in the look of `{{lookFn}}`. Every base prop passes through; the style
+ * props go over the look's. TODO(port): document axes and drop any that the look does not have.
+ */
+export type {{Id}}Props = Omit<Base{{Id}}Props, "children"> & {
+  /** TODO(port): the look's variant axis, or remove. */
+  variant?: string;
+  /** TODO(port): the look's size axis, or remove. */
+  size?: string;
+  /** A string is the label; anything else is drawn as given. */
+  children?: string | JSX.Element;
+};
+
+/** A {{id}}. TODO(port): wire the look's options and any busy / selected axes. */
+export function {{Id}}(props: {{Id}}Props) {
+  const [, rest] = split(props, [
+    "variant",
+    "size",
+    "children",
+    "style",
+    "hoverStyle",
+    "activeStyle",
+    "focusVisibleStyle",
+    "disabledStyle",
+  ]);
+  // TODO(port): pass Live readers into the look (`size: () => props.size`).
+  const look = {{lookFn}}(/* TODO(port): kind / options */);
+  return (
+    <Base{{Id}}
+      {...rest}
+      style={[look.style, props.style ?? null]}
+      hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
+      activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}
+      focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
+      disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
+    >
+      {typeof props.children === "string" ? (
+        <Text /* TODO(port): style={{{labelFn}}(...)} */>{props.children}</Text>
+      ) : (
+        props.children
+      )}
+    </Base{{Id}}>
+  );
+}

@@ -26,7 +26,8 @@
     "shots": "bash scripts/shots.sh",
     "port:vendor": "bun scripts/port/vendor.ts",
     "port:check": "bun scripts/port/check.ts",
-    "port:render": "bun scripts/port/render.ts"
+    "port:render": "bun scripts/port/render.ts",
+    "port:new": "bun scripts/port/new.ts"
   },
   "devDependencies": {
     "@types/bun": "^1.4.4",

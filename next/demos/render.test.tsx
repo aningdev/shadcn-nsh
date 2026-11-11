@@ -18,6 +18,7 @@ const cases: Case[] = [
   { id: "button" },
   { id: "switch" },
   { id: "dialog", steps: (app) => app.press("Delete item…") },
+  { id: "toggle" },
 ];
 
 // A desktop platform starts the page in the desktop idiom at any width; without one the page

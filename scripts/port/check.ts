@@ -43,7 +43,7 @@ if (head !== map.upstream.commit) {
 }
 
 // The CLI must be built from the pinned commit or a later one: upstream's looks use what the
-// runtime of their own commit has. A warning until the two are brought together.
+// runtime of their own commit has.
 const cli = /\(([0-9a-f]{7,})/.exec(spawnSync("nsh", ["--version"], { encoding: "utf8" }).stdout);
 if (cli) {
   const behind = spawnSync(
@@ -52,8 +52,8 @@ if (cli) {
     { encoding: "utf8" },
   ).stdout.trim();
   if (behind !== "" && behind !== "0") {
-    console.warn(
-      `port: warning: the nsh CLI (${cli[1]}) is ${behind} commits behind the pinned upstream`,
+    problems.push(
+      `the nsh CLI (${cli[1]}) is ${behind} commits behind the pinned upstream; upgrade it and move the submodule (docs/toolchain.md)`,
     );
   }
 }
@@ -152,6 +152,26 @@ try {
 } finally {
   for (const { temp } of scratch) fs.rmSync(temp, { force: true });
 }
+
+// Skeletons leave `TODO(port)` until the shell / demos / docs are filled in.
+function walkTodos(dir: string) {
+  if (!fs.existsSync(dir)) return;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const abs = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      if (entry.name === "shots" || entry.name === "node_modules" || entry.name === ".nsh")
+        continue;
+      walkTodos(abs);
+      continue;
+    }
+    if (!/\.(tsx?|md|json)$/.test(entry.name)) continue;
+    const text = fs.readFileSync(abs, "utf8");
+    if (text.includes("TODO(port)")) {
+      problems.push(`${path.relative(repo, abs)}: unfinished TODO(port)`);
+    }
+  }
+}
+walkTodos(path.join(repo, map.root));
 
 const total = counts.ported + counts.pending + counts.excluded;
 console.log(

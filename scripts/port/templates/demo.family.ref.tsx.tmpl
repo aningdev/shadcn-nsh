@@ -1,0 +1,33 @@
+// The reference of `{{id}}.tsx`: the same page as upstream writes a {{id}}, the look spread
+// on `nsh/base`'s {{Base}}. The render check requires the two to draw the same pixels.
+import { colors } from "@shadcn-nsh/theme";
+import { mount, signal, Text, View } from "nsh";
+import { {{Base}} } from "nsh/base";
+
+// TODO(port): import the look helpers and rebuild the page without the composition shell.
+
+function App() {
+  const open = signal(false);
+  const last = signal("–");
+
+  return (
+    <View style={{ flex: 1, backgroundColor: colors.background, padding: 20, gap: 14 }}>
+      <Text style={{ fontSize: 22, fontWeight: "700", color: colors.text }}>{{Id}}</Text>
+      <View style={{ flexDirection: "row" }}>
+        {/* TODO(port): trigger that sets open, content that spreads the look on {{Base}} */}
+        <{{Base}}
+          open={open()}
+          onOpenChange={({ open: next, reason }) => {
+            open.set(next);
+            last.set(`${next ? "open" : "closed"}: ${reason}`);
+          }}
+        >
+          <Text>TODO(port)</Text>
+        </{{Base}}>
+      </View>
+      <Text style={{ fontSize: 13, color: colors.muted }}>{last()}</Text>
+    </View>
+  );
+}
+
+mount(App);

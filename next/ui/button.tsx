@@ -440,7 +440,7 @@ export function splitButtonLook(kind: Live<ButtonKind> = "primary", o?: ButtonLo
 
 /**
  * `nsh/base`'s Button in the look of `buttonLook`. Every base prop passes through; the style
- * props (`style`, `hoverStyle`, `activeStyle`, `focusStyle`, `disabledStyle`) go over the look's.
+ * props (`style`, `hoverStyle`, `activeStyle`, `focusVisibleStyle`, `disabledStyle`) go over the look's.
  */
 export type ButtonProps = Omit<BaseButtonProps, "children"> & {
   /** Default `primary`, the main action, as upstream's own `Button`. */
@@ -464,7 +464,7 @@ export function Button(props: ButtonProps) {
     "style",
     "hoverStyle",
     "activeStyle",
-    "focusStyle",
+    "focusVisibleStyle",
     "disabledStyle",
     "hitSlop",
   ]);
@@ -485,8 +485,7 @@ export function Button(props: ButtonProps) {
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}
-      // Store nsh 0.4.0 has `focusStyle` only; `focusVisibleStyle` once a release has it.
-      focusStyle={[look.focusVisibleStyle, props.focusStyle ?? null]}
+      focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
       disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     >
       <If when={props.busy}>

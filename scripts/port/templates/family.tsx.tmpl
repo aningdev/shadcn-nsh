@@ -1,0 +1,167 @@
+// A {{id}}: the look and the parts that wear it (Root, Trigger, Content, Close).
+// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
+// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+// TODO(port): add imports the region needs (`@shadcn-nsh/theme`, `nsh`, `./lib/*`).
+import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
+import { context, split, Text, View } from "nsh";
+import {
+  {{Base}} as Base{{Id}},
+  type {{Base}}Props as Base{{Id}}Props,
+} from "nsh/base";
+
+import { Button, type ButtonKind } from "./button";
+import { createOpenState, type OpenState } from "./lib/open-state";
+
+// @port {{upstream}}
+// @port end
+
+/** The root: it owns whether the {{id}} is open, and nothing of how it looks. */
+export type {{Id}}Props = {
+  /** Controlled; leave it out and the root keeps the state (`defaultOpen`). */
+  open?: boolean | null;
+  defaultOpen?: boolean;
+  children?: JSX.Element;
+  onOpenChange?: (event: { open: boolean; reason: string }) => void;
+  onOpen?: () => void;
+  onClose?: () => void;
+};
+
+/**
+ * The content. Every prop of `nsh/base`'s {{Base}} passes through but the ones the root owns;
+ * style props go over the look's. TODO(port): document defaults and drop unused axes.
+ */
+export type {{Id}}ContentProps = Omit<
+  Base{{Id}}Props,
+  "open" | "onOpenChange" | "onOpen" | "onClose"
+> & {
+  /** TODO(port): content-only axes, or remove. */
+  children?: JSX.Element;
+};
+
+/** What opens the {{id}}: a string is a `Button`'s label, anything else a pressable of its own. */
+export type {{Id}}TriggerProps = {
+  children?: string | JSX.Element;
+  /** The button's variant, for a string child (default `secondary`). */
+  variant?: ButtonKind;
+  disabled?: boolean;
+  style?: StyleProp<ViewStyle>;
+};
+
+/** What closes the {{id}}: as `{{Id}}Trigger`; `onPress` runs before it closes. */
+export type {{Id}}CloseProps = {{Id}}TriggerProps & {
+  onPress?: () => void;
+};
+
+/** A text part of the content. TODO(port): drop if the look has no title/description. */
+export type {{Id}}TextProps = {
+  children?: string | JSX.Element;
+  style?: StyleProp<TextStyle>;
+};
+
+type {{Id}}ContextValue = OpenState & Pick<{{Id}}Props, "onOpen" | "onClose">;
+
+const {{Id}}Context = context<{{Id}}ContextValue | null>(null);
+
+function use{{Id}}() {
+  const ctx = {{Id}}Context();
+  if (!ctx) throw new Error("{{Id}} parts must be used within <{{Id}}>");
+  return ctx;
+}
+
+/** The root of a {{id}}'s parts. */
+export function {{Id}}(props: {{Id}}Props) {
+  const state = createOpenState(props);
+  return (
+    <{{Id}}Context.Provider
+      value={{
+        ...state,
+        get onOpen() {
+          return props.onOpen;
+        },
+        get onClose() {
+          return props.onClose;
+        },
+      }}
+    >
+      {props.children}
+    </{{Id}}Context.Provider>
+  );
+}
+
+/** A button of the content, or its trigger: a `Button` for a string, else a pressable view. */
+function Action(props: {{Id}}TriggerProps & { onPress: () => void }) {
+  if (typeof props.children === "string") {
+    return (
+      <Button
+        variant={props.variant ?? "secondary"}
+        disabled={props.disabled}
+        style={props.style}
+        onPress={props.onPress}
+      >
+        {props.children}
+      </Button>
+    );
+  }
+  return (
+    <View
+      accessible
+      role="button"
+      accessibilityState={{ disabled: props.disabled }}
+      onPress={props.disabled ? undefined : props.onPress}
+      style={props.style}
+    >
+      {props.children}
+    </View>
+  );
+}
+
+/** Opens the {{id}}. */
+export function {{Id}}Trigger(props: {{Id}}TriggerProps) {
+  const ctx = use{{Id}}();
+  return (
+    <Action {...props} onPress={() => ctx.setOpen(true)}>
+      {props.children}
+    </Action>
+  );
+}
+
+/** Closes the {{id}}, after its own `onPress`. */
+export function {{Id}}Close(props: {{Id}}CloseProps) {
+  const ctx = use{{Id}}();
+  return (
+    <Action
+      {...props}
+      onPress={() => {
+        props.onPress?.();
+        ctx.setOpen(false, "closePress");
+      }}
+    >
+      {props.children}
+    </Action>
+  );
+}
+
+/** The content surface. TODO(port): apply the look and wire base props. */
+export function {{Id}}Content(props: {{Id}}ContentProps) {
+  const ctx = use{{Id}}();
+  const [, rest] = split(props, ["children", "style"]);
+  // TODO(port): const look = {{lookFn}}(...);
+  return (
+    <Base{{Id}}
+      {...rest}
+      open={ctx.open()}
+      onOpenChange={({ open, reason }) => ctx.setOpen(open, reason)}
+      onOpen={ctx.onOpen}
+      onClose={ctx.onClose}
+      style={[/* TODO(port): look */, props.style ?? null]}
+    >
+      {props.children}
+    </Base{{Id}}>
+  );
+}
+
+/** TODO(port): title / description helpers, or remove. */
+export function {{Id}}Title(props: {{Id}}TextProps) {
+  if (typeof props.children !== "string") return props.children;
+  return <Text style={[/* TODO(port): title look */, props.style ?? null]}>{props.children}</Text>;
+}

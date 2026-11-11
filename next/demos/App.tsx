@@ -3,7 +3,7 @@
 import { colors } from "@shadcn-nsh/theme";
 import { mount, Text, View } from "nsh";
 
-const demos = ["button", "switch", "dialog"];
+const demos = ["button", "switch", "dialog", "toggle"];
 
 function App() {
   return (

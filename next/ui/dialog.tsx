@@ -152,7 +152,7 @@ function Action(props: DialogTriggerProps & { onPress: () => void }) {
       accessible
       role="button"
       accessibilityState={{ disabled: props.disabled }}
-      focusStyle={focusRing()}
+      focusVisibleStyle={focusRing()}
       onPress={props.disabled ? undefined : props.onPress}
       style={props.style}
     >

@@ -89,7 +89,7 @@ The look is a function, for a pressable of your own.
 
 ## API
 
-Every prop of [`nsh/base` Button](https://nsh.dev/elements/button) passes through. `style`, `hoverStyle`, `activeStyle`, `focusStyle` and `disabledStyle` go over the look's.
+Every prop of [`nsh/base` Button](https://nsh.dev/elements/button) passes through. `style`, `hoverStyle`, `activeStyle`, `focusVisibleStyle` and `disabledStyle` go over the look's.
 
 | Prop       | Type                                                          | Default     |
 | ---------- | ------------------------------------------------------------- | ----------- |
