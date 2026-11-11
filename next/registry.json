@@ -1,0 +1,97 @@
+{
+  "name": "shadcn-nsh",
+  "homepage": "https://github.com/aningdev/shadcn-nsh",
+  "items": [
+    {
+      "name": "theme",
+      "type": "registry:theme",
+      "title": "Theme",
+      "description": "The design tokens (theme.json), the finishes (finishes.json) and the roles that read them (lib/theme.ts).",
+      "files": [
+        { "path": "theme/theme.json", "type": "registry:file", "target": "theme.json" },
+        { "path": "theme/finishes.json", "type": "registry:lib", "target": "lib/finishes.json" },
+        { "path": "theme/theme.ts", "type": "registry:lib", "target": "lib/theme.ts" }
+      ]
+    },
+    {
+      "name": "press",
+      "type": "registry:lib",
+      "title": "Press",
+      "description": "A press's feedback: the sink and its ease.",
+      "registryDependencies": [],
+      "files": [{ "path": "ui/lib/press.ts", "type": "registry:lib", "target": "lib/press.ts" }]
+    },
+    {
+      "name": "switch-geometry",
+      "type": "registry:lib",
+      "title": "Switch geometry",
+      "description": "A switch's sizes and the arithmetic of its knob.",
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "ui/lib/switch-geometry.ts",
+          "type": "registry:lib",
+          "target": "lib/switch-geometry.ts"
+        }
+      ]
+    },
+    {
+      "name": "overlay",
+      "type": "registry:lib",
+      "title": "Overlay",
+      "description": "The scrim behind what is modal.",
+      "registryDependencies": [],
+      "files": [{ "path": "ui/lib/overlay.ts", "type": "registry:lib", "target": "lib/overlay.ts" }]
+    },
+    {
+      "name": "open-state",
+      "type": "registry:lib",
+      "title": "Open state",
+      "description": "The controlled or uncontrolled open flag of a composition root.",
+      "registryDependencies": [],
+      "files": [
+        { "path": "ui/lib/open-state.ts", "type": "registry:lib", "target": "lib/open-state.ts" }
+      ]
+    },
+    {
+      "name": "spinner",
+      "type": "registry:ui",
+      "title": "Spinner",
+      "description": "A turning ring: work going on.",
+      "registryDependencies": ["theme"],
+      "files": [
+        { "path": "ui/spinner.tsx", "type": "registry:ui", "target": "components/ui/spinner.tsx" }
+      ]
+    },
+    {
+      "name": "button",
+      "type": "registry:ui",
+      "title": "Button",
+      "description": "A button, and the looks of buttons (icon, round, split) to spread on nsh/base's.",
+      "registryDependencies": ["theme", "press", "spinner"],
+      "files": [
+        { "path": "ui/button.tsx", "type": "registry:ui", "target": "components/ui/button.tsx" }
+      ]
+    },
+    {
+      "name": "switch",
+      "type": "registry:ui",
+      "title": "Switch",
+      "description": "A switch whose knob springs across a sunk track.",
+      "registryDependencies": ["theme", "switch-geometry"],
+      "files": [
+        { "path": "ui/switch.tsx", "type": "registry:ui", "target": "components/ui/switch.tsx" }
+      ]
+    },
+    {
+      "name": "dialog",
+      "type": "registry:ui",
+      "title": "Dialog",
+      "description": "A card dialog: Trigger, Content, Title, Description, Footer and Close.",
+      "registryDependencies": ["theme", "button", "overlay", "open-state"],
+      "files": [
+        { "path": "ui/dialog.tsx", "type": "registry:ui", "target": "components/ui/dialog.tsx" }
+      ]
+    }
+  ]
+}

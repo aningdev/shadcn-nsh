@@ -19,7 +19,7 @@ import { View, mount } from "nsh";
 import { Window } from "nsh/desktop";
 
 // The shot is the window, not the scroll. Tall enough for every open list under its trigger.
-Window.setFrame({ size: { width: 680, height: 1960 }, animated: false });
+Window.get("main")?.setBounds({ size: { width: 680, height: 1960 }, animated: false });
 
 import { Page, Panel, Row } from "./demo-kit";
 

@@ -1,5 +1,7 @@
 # @shadcn-nsh/theme
 
+> **旧实现的说明。** 本文描述的是切换前的 `packages/theme`（neutral 配色与旧配方），不再按它修改代码。新的规范、流程和检查见 [`docs/port-plan.md`](../../docs/port-plan.md)，新代码在 `next/`。切换完成时本文会被重写。
+
 [English](./README.md)
 
 styled / copy-into-app 层的品牌外观：颜色、半径、阴影、焦点环和唯一的 disabled 外观。这是**本包在 `nsh` 之上的增量**，不是 NSH 的设计 token，也不是 shadcn 默认脚手架。组件结构规则和动效见 [`@shadcn-nsh/ui` README](../ui)。

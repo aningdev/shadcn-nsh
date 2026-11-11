@@ -1,0 +1,13 @@
+{
+  "name": "shadcn-nsh port demos",
+  "id": "dev.shadcn-nsh.port-demos",
+  "version": "0.0.0",
+  "build": 1,
+  "appearance": "system",
+  "theme": "../theme/theme.json",
+  "resolve": {
+    "alias": {
+      "@shadcn-nsh/theme": "../theme/index.ts"
+    }
+  }
+}

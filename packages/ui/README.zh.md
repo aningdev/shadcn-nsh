@@ -1,5 +1,7 @@
 # @shadcn-nsh/ui
 
+> **旧实现的说明。** 本文描述的是切换前的 `packages/ui`（neutral 配色与旧配方），不再按它修改代码。新的规范、流程和检查见 [`docs/port-plan.md`](../../docs/port-plan.md)，新代码在 `next/`。切换完成时本文会被重写。
+
 [English](./README.md)
 
 在 [`nsh/base`](https://nsh.dev/elements) 之上的 **styled copy-into-app 层**：行为与无障碍留在 base；本包通过 [`theme.json` / `token()`](../theme) 加品牌外观，并向 `shadcn-nsh add` 提供 registry 项。
@@ -203,7 +205,7 @@ shadcn 有这些；**没有**对应的 `nsh/base` / website `group: base` 导出
 - **store 与 main：** 本仓库按 store `nsh` 0.4.0 开发，参考实现跟随 `main`。以 store 的 `.nsh/types` 做类型检查；store 没有的 base 能力写进组件的 Differences，不移植。
 - **许可：** 移植部分保持 Apache-2.0（Longbridge），见 `NOTICE`。
 - **同步：** 手动。基线变动时，逐家族把该家族的 look 文件与文件头里的提交对照。没有自动同步。
-- **计划与顺序：** [`docs/roadmap.md`](../../docs/roadmap.md)。
+- **计划与顺序：** [`docs/port-plan.md`](../../docs/port-plan.md)。
 
 ## 范围规则
 

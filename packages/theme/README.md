@@ -1,5 +1,7 @@
 # @shadcn-nsh/theme
 
+> **Describes the legacy implementation.** This page covers `packages/theme` as it is before the cutover (the neutral palette and the old recipes); do not change code by it. The current rules, flow and checks are in [`docs/port-plan.md`](../../docs/port-plan.md), and new code lives in `next/`. This page is rewritten at the cutover.
+
 [中文](./README.zh.md)
 
 The brand look of the styled / copy-into-app layer: colors, radius, shadows, the focus ring and one disabled look. This is **this package's increment** on top of `nsh`, not NSH design tokens and not shadcn's default scaffold. Component structure rules and motion live in the [`@shadcn-nsh/ui` README](../ui).

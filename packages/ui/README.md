@@ -1,5 +1,7 @@
 # @shadcn-nsh/ui
 
+> **Describes the legacy implementation.** This page covers `packages/ui` as it is before the cutover (the neutral palette and the old recipes); do not change code by it. The current rules, flow and checks are in [`docs/port-plan.md`](../../docs/port-plan.md), and new code lives in `next/`. This page is rewritten at the cutover.
+
 [中文](./README.zh.md)
 
 Styled copy-into-app layer on top of [`nsh/base`](https://nsh.dev/elements): behavior and a11y stay in base; this package adds brand look via [`theme.json` / `token()`](../theme) helpers and ships registry items for `shadcn-nsh add`.
@@ -203,7 +205,7 @@ The look and state design of these components come from NSH's own shared UI laye
 - **Store versus main:** this repo develops against the store `nsh` 0.4.0, the reference follows `main`. Type-check against the store's `.nsh/types`; a base capability the store lacks goes in the component's Differences, it is not ported.
 - **License:** the adapted parts stay Apache-2.0 (Longbridge); see `NOTICE`.
 - **Sync:** manual. When the baseline moves, compare the family's look file with the header's commit, family by family. There is no automatic sync.
-- **Plan and order:** [`docs/roadmap.md`](../../docs/roadmap.md).
+- **Plan and order:** [`docs/port-plan.md`](../../docs/port-plan.md).
 
 ## Scope rules
 

@@ -1,66 +1,91 @@
 # AGENTS.md
 
-本仓库为 NSH 构建 **styled component-library 层**（社区/应用层）：在 `nsh/base` 的 unstyled 行为与无障碍结构之上，提供可复制进应用的品牌化组件与分发体验。分发模式对齐 shadcn/ui；行为权威仍是 `nsh/base`；**视觉与状态设计的来源是 `references/nsh/examples/nsh-gallery-ui`，本库是它的规范化、可分发版本**（配色用 shadcn neutral），路线图见 [`docs/roadmap.md`](docs/roadmap.md)。
+本仓库把 NSH 官方示例共享的 UI 层 `references/nsh/examples/nsh-gallery-ui`（下称**上游**）整理成 shadcn 模式的组件库：一个组件一个文件，经 registry 和 CLI 复制进应用（Copy-into-app），复制后归应用所有。
 
-产品单元是 **Styled Component**（Copy-into-app）：双主目标为品牌外观（`theme.json` / `token()`）与 registry/CLI 分发。复合控件公开 **Composition Facade**（`Trigger` / `Content` / `Item` 等角色），**家族名与 registry id 跟 `nsh/base` 符号**（如 `Menu` / `MenuTrigger` / `add menu`），不是 shadcn 的 `DropdownMenu*` / `dropdown-menu`。内部仍适配 base 的 value/open/items/`trigger` 模型；对外 **Composition-only**（不保留 legacy 单根 `trigger` 双路径）。无法抹平的差异写进各组件 docs 的 Differences。词汇见 [`GLOSSARY.md`](GLOSSARY.md)；写或改组件前读 [`packages/ui/README.zh.md`](packages/ui/README.zh.md)（范围规则、组件包、配方、文件内顺序、改造方法）；写或改主题（颜色、半径、阴影）前读 [`packages/theme/README.zh.md`](packages/theme/README.zh.md)；动效与过渡的约定在 `packages/ui/README.zh.md` 的“组件内的动效”。新决策追加到这两份 README 的“决策记录”。
+三方各管一件事，互不交叉：
 
-**不做**：改 `nsh` / `nsh/base` 本身；不搬 gallery-ui 的品牌色、终端形态、声音和网站 playground 适配；不新增无 base 的 Extensions；不为旧 shadcn 形 registry id 提供 alias。
+| 权威                  | 管什么                                                              |
+| --------------------- | ------------------------------------------------------------------- |
+| 上游 `nsh-gallery-ui` | 主题、外观、状态、几何、variant 的集合与取值                        |
+| shadcn                | 分发方式、目录、一组件一文件、组合角色（`Trigger` / `Content` / …） |
+| `nsh/base`            | 行为与无障碍                                                        |
+
+这是**打包**项目：上游已有的一律由脚本搬运（`bun run port:vendor`），位于 `// @port <上游文件>` 与 `// @port end` 之间，不手改、不换色、不改名。本仓只写组件外壳、registry / CLI 和文档站。上游每个声明的去向记在 [`port-map.json`](port-map.json)。
+
+**写或改任何组件、主题、演示之前，读 [`docs/port-plan.md`](docs/port-plan.md)**：规范（第 4 节）、每个组件的流程（第 5 节）、检查（第 6 节）、工作包与顺序（第 7 节）。词汇见 [`GLOSSARY.md`](GLOSSARY.md)。
+
+**不做**：改 `nsh` / `nsh/base`；改 `// @port` 区域内的文字；在外壳里写颜色或自定外观；搬上游的声音和 NSH 网站的 demo 适配；为旧 registry id 提供别名。
+
+## 过渡期：两套代码并存
+
+| 目录                                                           | 状态                                                                                         |
+| -------------------------------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `next/`（`theme`、`ui`、`demos`、`docs`、`registry.json`）     | **新代码，所有移植工作在这里做**                                                             |
+| `packages/theme`、`packages/ui`、`apps/docs/demos`、`public/r` | 旧实现（neutral 配色、R1–R8 配方）。只读：不再按旧规范修改，等全部家族完成后由"切换"一次替换 |
+| `packages/cli`、`apps/docs` 的站点外壳、`apps/gallery` 的测试  | 保留并继续使用                                                                               |
+
+`packages/ui/README*`、`packages/theme/README*`、`apps/docs/AGENTS.md`、`apps/gallery/AGENTS.md` 描述的是旧实现，与本文件冲突时以本文件和 `docs/port-plan.md` 为准。
 
 ## References
 
 只读参考，默认不在 submodule 内改代码或向上游提 PR（除非用户明确要求）。
 
-| 路径                                           | 用途                                                          |
-| ---------------------------------------------- | ------------------------------------------------------------- |
-| [`references/shadcn-ui`](references/shadcn-ui) | 体系模式：registry、文档站、CLI、copy-into-app                |
-| [`references/nsh`](references/nsh)             | 平台与 unstyled 基础：`nsh` / `nsh/base`；视觉来源 gallery-ui |
+| 路径                                           | 用途                                                                  |
+| ---------------------------------------------- | --------------------------------------------------------------------- |
+| [`references/nsh`](references/nsh)             | 上游：`examples/nsh-gallery-ui`（搬运来源）；`nsh` / `nsh/base`；文档 |
+| [`references/shadcn-ui`](references/shadcn-ui) | 体系模式：registry、文档站、CLI、copy-into-app                        |
 
 克隆后若目录为空：`git submodule update --init --recursive`。
 
-## 分层
-
-| 层             | 权威参考                                                        | 本仓职责                                                                  |
-| -------------- | --------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| 分发与作者体验 | `references/shadcn-ui`（`apps/v4/registry`、`packages/shadcn`） | `registry.json` → `public/r` + `packages/cli`                             |
-| 行为与 a11y    | `references/nsh` 的 `nsh/base`                                  | 组合与样式，不重写行为                                                    |
-| 视觉与状态来源 | `references/nsh` 的 `examples/nsh-gallery-ui`（`look/*`）       | 规范化移植：取状态设计与几何，颜色走 neutral，文件头记基线提交 `64ab8a1d` |
-
-依赖向下：本库 → `nsh/base` → `nsh`。
-
-主题真源是 **`theme.json`（`nsh.json` 的 `theme`）**，不是 CSS；`lib/theme.ts` 读取它，并提供 `token()` 辅助、finish、焦点环和 disabled 外观。
+**上游基线跟 CLI 走。** `references/nsh` 固定的提交必须等于 `nsh --version` 显示的提交，`port-map.json` 的 `commit` 与它相同。升级步骤见 [`docs/toolchain.md`](docs/toolchain.md)。
 
 ## 何时读参考
 
-- **Registry / CLI / 组件源码组织** — 读 `references/shadcn-ui`：先 `CONTRIBUTING.md`，再 `apps/v4/registry`；本仓实现见 `packages/cli`。
-- **控件行为、parts、平台差异、Tailwind/theme** — 读 `references/nsh` 与 [nsh.dev/llms.txt](https://nsh.dev/llms.txt)。
-- **组件库架构约定** — 对齐 NSH Coding Guides 的 library 边界。
-- **组件的视觉与状态设计** — 读 `references/nsh/examples/nsh-gallery-ui/README.md` 与对应 `look/*`；移植循环见 [`docs/roadmap.md`](docs/roadmap.md) §6。
+- **某个控件长什么样、有哪些状态** — 上游的 `look/*` 与 `README.md`；它在 NSH 网站上的用法见 `references/nsh/website/demos/el-<id>.tsx`。
+- **控件行为、parts、平台差异** — `references/nsh` 与 [nsh.dev/llms.txt](https://nsh.dev/llms.txt)。
+- **Registry / CLI / 文档页的组织** — `references/shadcn-ui`：先 `CONTRIBUTING.md`，再 `apps/v4/registry`；本仓实现见 `packages/cli`。
 
-## 布局
+## 分层
 
-Bun workspaces（`apps/*`、`packages/*`）；路径与包名见 [`README.md`](README.md) 的 Layout。copy-into-app：`build` → `public/r` → `init` / `add`。
+```
+上游 nsh-gallery-ui（固定提交）
+   │  port:vendor
+   ▼
+theme            theme.json + finishes.json + theme.ts
+ui/lib           没有所属控件的共享部分（press、overlay、surface…）
+ui/<id>.tsx      一个组件 = 上游 look（// @port 区域）+ 外壳（手写）
+demos、docs      演示与文档页
+   │
+   ▼
+registry.json → public/r → shadcn-nsh add
+```
 
-**两面分工**：gallery = 原生验真；docs = 公开说明 + web 示意。作者侧 `packages/ui`（`@shadcn-nsh/ui`）是 registry 源；消费方落点通常是应用内或 `@workspace/ui`（copy-into-app）。扩展布局时同步更新 README 的 Layout。
+依赖向下：本库 → `nsh/base` → `nsh`。主题真源是 `theme.json` 与 `finishes.json`，都原样取自上游。
 
 ## 工作约定
 
-- 改 `packages/ui` 或 `packages/theme` 后必须 `bun run registry:build`，并提交 `public/r`。
-- `public/r` 提交进 git，可以直接手改；手改后建议 `vp fmt public/r`。`apps/docs/public/demos` 是产物（已 gitignore），不要手改。
-- 改 theme/ui 前先保证 gallery 的 `.nsh` 已生成：`bun run nsh:bootstrap`。
+- 新组件用脚手架起步（建成后；见 `docs/port-plan.md` WP-0），不从空文件或旧组件复制。
+- 一个家族一个 commit；提交前 `port:check`、`nsh check next/demos`、`port:render`、`vp check` 全部通过，四张截图人眼看过。
+- `// @port` 区域只由 `port:vendor` 写入。要偏离上游，在 `port-map.json` 的 `replace` 里登记并写 `why`。
+- 切换完成之前，不运行 `registry:build` 去覆盖 `public/r`（它仍对应旧实现）。
 
 ## 工具链
 
 Bun 管理依赖与脚本；格式化 / lint / 工具面类型经 [Vite+](https://viteplus.dev)（`vp fmt` / `vp lint` / `vp check`），配置集中在根 `vite.config.ts`，不用 Prettier。
 
-TypeScript 分层（tsconfig 的 extends、types host、各面类型权威）、TS 7.1 与 NSH CLI（store release，勿用 `install.sh --source`）见 [`docs/toolchain.md`](docs/toolchain.md)。
+NSH CLI 用 **nightly**，以上游 `main` 为准开发。TypeScript 分层、types host、CLI 与上游基线的对齐见 [`docs/toolchain.md`](docs/toolchain.md)。
 
 ## 常用命令
 
 ```sh
-bun run nsh:bootstrap   # 生成各 .nsh types host
-bun run check           # vp check --fix → nsh check → check:demos → check:docs（会改文件）
-bun run registry:build  # registry.json → public/r
-bun run registry:serve  # http://127.0.0.1:4173/{name}.json
+bun run port:vendor            # 按 port-map.json 从上游填充区域与复制文件
+bun run port:check             # 清单完整、区域与上游一致、CLI 不落后于基线（--status 列出待办）
+bun run port:render            # 渲染比对：组件与"look 展开在 nsh/base 上"截图相同
+nsh check next/demos           # 新代码的类型检查
+nsh run next/demos/button.tsx  # 运行一个演示
+
+bun run nsh:bootstrap          # 生成各 .nsh types host
+bun run check                  # 旧实现的全套检查（会改文件）
 ```
 
-其余脚本（`dev:*`、`check:*`、`docs:demos`、`cli:build`）见根 `package.json`；`init` / `add` 用法与默认远程 registry 见 [`README.md`](README.md)。
+其余脚本见根 `package.json`；`init` / `add` 用法见 [`README.md`](README.md)。

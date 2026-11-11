@@ -1,0 +1,145 @@
+{
+  "upstream": {
+    "path": "references/nsh/examples/nsh-gallery-ui",
+    "commit": "3614be876cfc55263c868925d48653de9b5a5328"
+  },
+  "root": "next",
+  "files": {
+    "README.md": {
+      "exclude": "upstream's own description of the layer"
+    },
+    "package.json": {
+      "exclude": "upstream packaging"
+    },
+    "css.js": {
+      "exclude": "CSS variables for the NSH website"
+    },
+    "demo.ts": {
+      "exclude": "the NSH website's demo adapter (stage, inspector, log)"
+    },
+    "palette.ts": {
+      "exclude": "the NSH website's demo adapter"
+    },
+    "photos.ts": {
+      "exclude": "demo content, not a look"
+    },
+    "sound.ts": {
+      "exclude": "sounds are out of scope"
+    },
+    "emoji.tsx": {
+      "pending": true
+    },
+    "theme.json": {
+      "copy": "theme/theme.json"
+    },
+    "finishes.json": {
+      "copy": "theme/finishes.json"
+    },
+    "theme.ts": {
+      "to": "theme/theme.ts"
+    },
+    "look/press.ts": {
+      "to": "ui/lib/press.ts"
+    },
+    "look/switch-geometry.ts": {
+      "to": "ui/lib/switch-geometry.ts"
+    },
+    "look/button.ts": {
+      "to": "ui/button.tsx"
+    },
+    "look/switch.ts": {
+      "to": "ui/switch.tsx"
+    },
+    "look/overlay.ts": {
+      "symbols": {
+        "pointer": "ui/dialog.tsx",
+        "backdrop": "ui/lib/overlay.ts",
+        "dialogCard": "ui/dialog.tsx",
+        "dialogTitle": "ui/dialog.tsx",
+        "dialogText": "ui/dialog.tsx"
+      },
+      "pending": true
+    },
+    "index.tsx": {
+      "symbols": {
+        "Spinner": "ui/spinner.tsx"
+      },
+      "pending": true
+    },
+    "avatar.ts": {
+      "pending": true
+    },
+    "color-format.ts": {
+      "pending": true
+    },
+    "command.tsx": {
+      "pending": true
+    },
+    "data-table.ts": {
+      "pending": true
+    },
+    "icons.tsx": {
+      "pending": true
+    },
+    "popup.tsx": {
+      "pending": true
+    },
+    "scrollbar-theme.ts": {
+      "pending": true
+    },
+    "segmented.tsx": {
+      "pending": true
+    },
+    "slider.ts": {
+      "pending": true
+    },
+    "tree.tsx": {
+      "pending": true
+    },
+    "look/choice.tsx": {
+      "pending": true
+    },
+    "look/color.tsx": {
+      "pending": true
+    },
+    "look/disclosure.tsx": {
+      "pending": true
+    },
+    "look/field.tsx": {
+      "pending": true
+    },
+    "look/listbox.tsx": {
+      "pending": true
+    },
+    "look/menu.tsx": {
+      "pending": true
+    },
+    "look/meter.ts": {
+      "pending": true
+    },
+    "look/nav.tsx": {
+      "pending": true
+    },
+    "look/plot.ts": {
+      "pending": true
+    },
+    "look/surface.tsx": {
+      "pending": true
+    },
+    "look/tabs.tsx": {
+      "pending": true
+    },
+    "look/tool.ts": {
+      "pending": true
+    },
+    "look/workspace.tsx": {
+      "pending": true
+    },
+    "tests/App.tsx": {
+      "pending": true
+    },
+    "tests/nsh.json": {
+      "pending": true
+    }
+  }
+}

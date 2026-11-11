@@ -160,3 +160,6 @@ bun.lockb
 # Claude Code local overrides
 .claude/settings.local.json
 .claude/.check-stamp
+
+# Render check screenshots (bun run port:render)
+**/demos/shots/
