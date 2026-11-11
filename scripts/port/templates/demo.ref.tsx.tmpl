@@ -1,55 +1,33 @@
 // The reference of `{{id}}.tsx`: the same page as upstream writes a {{id}}, the look spread
 // on `nsh/base`'s {{Base}}. The render check requires the two to draw the same pixels.
-import { colors, radius } from "@shadcn-nsh/theme";
-import type { JSX } from "nsh";
-import { mount, Text, View } from "nsh";
+import { mount, Text } from "nsh";
 import { {{Base}} } from "nsh/base";
 
 import { {{lookFn}} } from "../ui/{{id}}";
-
-function Section(props: { title: string; children: JSX.Element }) {
-  return (
-    <View style={{ gap: 8 }}>
-      <Text style={{ fontSize: 12, color: colors.muted }}>{props.title}</Text>
-      <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
-        {props.children}
-      </View>
-    </View>
-  );
-}
+import { DemoCard, DemoPage, DemoSection } from "./kit";
 
 function App() {
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background, padding: 20, gap: 14 }}>
-      <Text style={{ fontSize: 22, fontWeight: "700", color: colors.text }}>{{Id}}</Text>
-      <View
-        style={{
-          backgroundColor: colors.surface,
-          borderColor: colors.border,
-          borderWidth: 1,
-          borderRadius: radius.card,
-          padding: 16,
-          gap: 16,
-        }}
-      >
-        <Section title="Variant">
+    <DemoPage title="{{Id}}">
+      <DemoCard>
+        <DemoSection title="Variant">
           {/* TODO(port): same controls as {{id}}.tsx, look spread on {{Base}} */}
           <{{Base}} {...{{lookFn}}(/* TODO(port): options */)}>
             <Text>{{Id}}</Text>
           </{{Base}}>
-        </Section>
-        <Section title="Size">
+        </DemoSection>
+        <DemoSection title="Size">
           <{{Base}}>
             <Text>{{Id}}</Text>
           </{{Base}}>
-        </Section>
-        <Section title="States">
+        </DemoSection>
+        <DemoSection title="States">
           <{{Base}} disabled>
             <Text>{{Id}}</Text>
           </{{Base}}>
-        </Section>
-      </View>
-    </View>
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

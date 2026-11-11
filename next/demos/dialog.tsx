@@ -1,5 +1,4 @@
-import { colors } from "@shadcn-nsh/theme";
-import { mount, signal, Text, View } from "nsh";
+import { mount, signal, View } from "nsh";
 
 import {
   Dialog,
@@ -10,13 +9,13 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "../ui/dialog";
+import { DemoPage } from "./kit";
 
 function App() {
   const last = signal("–");
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background, padding: 20, gap: 14 }}>
-      <Text style={{ fontSize: 22, fontWeight: "700", color: colors.text }}>Dialog</Text>
+    <DemoPage title="Dialog" note={() => last()}>
       <View style={{ flexDirection: "row" }}>
         <Dialog
           onOpenChange={({ open, reason }) => last.set(`${open ? "open" : "closed"}: ${reason}`)}
@@ -34,8 +33,7 @@ function App() {
           </DialogContent>
         </Dialog>
       </View>
-      <Text style={{ fontSize: 13, color: colors.muted }}>{last()}</Text>
-    </View>
+    </DemoPage>
   );
 }
 

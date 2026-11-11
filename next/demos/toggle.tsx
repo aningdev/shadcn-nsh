@@ -1,38 +1,16 @@
-import { colors, radius } from "@shadcn-nsh/theme";
-import type { JSX } from "nsh";
-import { mount, signal, Text, View } from "nsh";
+import { mount, signal } from "nsh";
 
 import { Toggle } from "../ui/toggle";
-
-function Section(props: { title: string; children: JSX.Element }) {
-  return (
-    <View style={{ gap: 8 }}>
-      <Text style={{ fontSize: 12, color: colors.muted }}>{props.title}</Text>
-      <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
-        {props.children}
-      </View>
-    </View>
-  );
-}
+import { DemoCard, DemoPage, DemoSection } from "./kit";
 
 function App() {
   const bold = signal(true);
   const starred = signal(false);
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background, padding: 20, gap: 14 }}>
-      <Text style={{ fontSize: 22, fontWeight: "700", color: colors.text }}>Toggle</Text>
-      <View
-        style={{
-          backgroundColor: colors.surface,
-          borderColor: colors.border,
-          borderWidth: 1,
-          borderRadius: radius.card,
-          padding: 16,
-          gap: 16,
-        }}
-      >
-        <Section title="Variant">
+    <DemoPage title="Toggle" note={() => `bold ${String(bold())} · starred ${String(starred())}`}>
+      <DemoCard>
+        <DemoSection title="Variant">
           <Toggle pressed={bold()} onChange={({ pressed }) => bold.set(pressed)}>
             Ghost
           </Toggle>
@@ -43,8 +21,8 @@ function App() {
           >
             Outline
           </Toggle>
-        </Section>
-        <Section title="Size">
+        </DemoSection>
+        <DemoSection title="Size">
           <Toggle size="small" pressed>
             Small
           </Toggle>
@@ -52,8 +30,8 @@ function App() {
           <Toggle size="large" pressed>
             Large
           </Toggle>
-        </Section>
-        <Section title="States">
+        </DemoSection>
+        <DemoSection title="States">
           <Toggle pressed={bold()} onChange={({ pressed }) => bold.set(pressed)}>
             On
           </Toggle>
@@ -62,12 +40,9 @@ function App() {
             Disabled
           </Toggle>
           <Toggle disabled>Disabled</Toggle>
-        </Section>
-      </View>
-      <Text style={{ fontSize: 13, color: colors.muted }}>
-        bold {String(bold())} · starred {String(starred())}
-      </Text>
-    </View>
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

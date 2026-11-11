@@ -68,6 +68,48 @@
       ]
     },
     {
+      "name": "icons",
+      "type": "registry:lib",
+      "title": "Icons",
+      "description": "Line glyphs and the check mark drawn for the looks.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "ui/lib/icons.tsx",
+          "type": "registry:lib",
+          "target": "lib/icons.tsx"
+        }
+      ]
+    },
+    {
+      "name": "popup",
+      "type": "registry:lib",
+      "title": "Popup",
+      "description": "The shared popup surface and the motion it comes in with.",
+      "registryDependencies": ["theme", "icons"],
+      "files": [
+        {
+          "path": "ui/lib/popup.tsx",
+          "type": "registry:lib",
+          "target": "lib/popup.tsx"
+        }
+      ]
+    },
+    {
+      "name": "surface",
+      "type": "registry:lib",
+      "title": "Surface",
+      "description": "Density, section surfaces, and list rows whose hover fill bleeds.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "ui/lib/surface.tsx",
+          "type": "registry:lib",
+          "target": "lib/surface.tsx"
+        }
+      ]
+    },
+    {
       "name": "open-state",
       "type": "registry:lib",
       "title": "Open state",

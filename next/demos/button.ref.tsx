@@ -1,8 +1,6 @@
 // The reference of `button.tsx`: the same page as upstream writes a button, the look spread
 // on `nsh/base`'s Button. The render check requires the two to draw the same pixels.
-import { colors, radius } from "@shadcn-nsh/theme";
-import type { JSX } from "nsh";
-import { mount, signal, Text, View } from "nsh";
+import { mount, signal, Text } from "nsh";
 import { Button } from "nsh/base";
 
 import {
@@ -12,17 +10,7 @@ import {
   type ButtonLookOptions,
   type ButtonSize,
 } from "../ui/button";
-
-function Section(props: { title: string; children: JSX.Element }) {
-  return (
-    <View style={{ gap: 8 }}>
-      <Text style={{ fontSize: 12, color: colors.muted }}>{props.title}</Text>
-      <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
-        {props.children}
-      </View>
-    </View>
-  );
-}
+import { DemoCard, DemoPage, DemoSection } from "./kit";
 
 function Plain(props: {
   label: string;
@@ -56,40 +44,27 @@ function App() {
   const press = () => presses.update((n) => n + 1);
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background, padding: 20, gap: 14 }}>
-      <Text style={{ fontSize: 22, fontWeight: "700", color: colors.text }}>Button</Text>
-      <View
-        style={{
-          backgroundColor: colors.surface,
-          borderColor: colors.border,
-          borderWidth: 1,
-          borderRadius: radius.card,
-          padding: 16,
-          gap: 16,
-        }}
-      >
-        <Section title="Kinds">
+    <DemoPage title="Button" note={() => `Pressed ${presses()}× · pinned ${String(pinned())}`}>
+      <DemoCard>
+        <DemoSection title="Kinds">
           <Plain label="Primary" kind="primary" onPress={press} />
           <Plain label="Secondary" onPress={press} />
           <Plain label="Ghost" kind="ghost" onPress={press} />
           <Plain label="Delete" kind="danger" onPress={press} />
-        </Section>
-        <Section title="Sizes">
+        </DemoSection>
+        <DemoSection title="Sizes">
           <Plain label="Small" size="small" onPress={press} />
           <Plain label="Regular" onPress={press} />
           <Plain label="Large" size="large" onPress={press} />
-        </Section>
-        <Section title="States">
+        </DemoSection>
+        <DemoSection title="States">
           <Plain label="Pinned" selected={pinned()} onPress={() => pinned.set(!pinned())} />
           <Plain label="Save" kind="primary" onPress={press} />
           <Plain label="Disabled" kind="primary" disabled />
           <Plain label="Disabled" disabled />
-        </Section>
-      </View>
-      <Text style={{ fontSize: 13, color: colors.muted }}>
-        Pressed {presses()}× · pinned {String(pinned())}
-      </Text>
-    </View>
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

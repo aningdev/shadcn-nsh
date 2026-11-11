@@ -1,12 +1,12 @@
 // The reference of `dialog.tsx`: the looks spread on `nsh/base`'s Dialog and Button, as
 // upstream's dialog demo (`el-dialog`) writes them.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, platform, signal, Text, View } from "nsh";
 import { Button, Dialog } from "nsh/base";
 
 import { buttonLabel, buttonLook } from "../ui/button";
 import { dialogCard, dialogText, dialogTitle } from "../ui/dialog";
 import { backdrop } from "../ui/lib/overlay";
+import { DemoPage } from "./kit";
 
 const desktop = platform.desktop;
 
@@ -15,8 +15,7 @@ function App() {
   const last = signal("–");
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background, padding: 20, gap: 14 }}>
-      <Text style={{ fontSize: 22, fontWeight: "700", color: colors.text }}>Dialog</Text>
+    <DemoPage title="Dialog" note={() => last()}>
       <View style={{ flexDirection: "row" }}>
         <Button
           onPress={() => {
@@ -28,7 +27,6 @@ function App() {
           <Text style={buttonLabel("primary")}>Delete item…</Text>
         </Button>
       </View>
-      <Text style={{ fontSize: 13, color: colors.muted }}>{last()}</Text>
 
       <Dialog
         open={open()}
@@ -58,7 +56,7 @@ function App() {
           </Button>
         </View>
       </Dialog>
-    </View>
+    </DemoPage>
   );
 }
 

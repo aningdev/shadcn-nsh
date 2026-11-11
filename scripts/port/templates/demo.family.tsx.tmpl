@@ -1,5 +1,4 @@
-import { colors } from "@shadcn-nsh/theme";
-import { mount, signal, Text, View } from "nsh";
+import { mount, signal, View } from "nsh";
 
 import {
   {{Id}},
@@ -7,13 +6,13 @@ import {
   {{Id}}Content,
   {{Id}}Trigger,
 } from "../ui/{{id}}";
+import { DemoPage } from "./kit";
 
 function App() {
   const last = signal("–");
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background, padding: 20, gap: 14 }}>
-      <Text style={{ fontSize: 22, fontWeight: "700", color: colors.text }}>{{Id}}</Text>
+    <DemoPage title="{{Id}}" note={() => last()}>
       <View style={{ flexDirection: "row" }}>
         {/* TODO(port): fill the composition to match the upstream demo */}
         <{{Id}}
@@ -25,8 +24,7 @@ function App() {
           </{{Id}}Content>
         </{{Id}}>
       </View>
-      <Text style={{ fontSize: 13, color: colors.muted }}>{last()}</Text>
-    </View>
+    </DemoPage>
   );
 }
 

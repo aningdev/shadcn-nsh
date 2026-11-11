@@ -128,8 +128,8 @@ vp check                       # 格式与 lint
 
 1. **规范落地（已完成）。** `AGENTS.md`、`GLOSSARY.md`、`docs/toolchain.md` 已按新规范重写；`roadmap.md`、`verification.md` 已删除；`packages/ui` 与 `packages/theme` 的 README 顶部加了"旧实现"提示。其余文档在切换时处理（第 8 节）。
 2. **脚手架（已完成）。** `bun run port:new`（`scripts/port/new.ts` + `templates/`）。之后的新组件一律由它起步。
-3. **搬运共享部分。** `look/surface.tsx`（密度、行、卡片表面）→ `ui/lib/surface.tsx`；`popup.tsx` → `ui/lib/popup.tsx`；`icons.tsx` → `ui/lib/icons.tsx`；`look/press.ts` 已完成。
-4. **演示套件。** 用 `sectionSurface`、`listRow` 等替换样板 demo 里手写的卡片和行，抽成 `next/demos/kit.tsx`（不进 registry）。
+3. **搬运共享部分（已完成）。** `look/surface.tsx` → `ui/lib/surface.tsx`；`popup.tsx` → `ui/lib/popup.tsx`；`icons.tsx` → `ui/lib/icons.tsx`；`look/press.ts` 已完成。
+4. **演示套件（已完成）。** `next/demos/kit.tsx`（`DemoPage` / `DemoCard` / `DemoSection`，不进 registry）；样板与 toggle 的 demo / ref 已改用它，`switch` 的行用 `listRow`。
 5. **待建的检查。** 第 6 节的总览页、截图基线、props 断言、演示覆盖、颜色守门的范围调整。
 6. **CLI。** `theme-merge.ts` 目前只合并 `custom-*` 键，新主题没有这个前缀：改成"缺的键就补"，并更新它的测试和 `theme-contract.test.ts`。`init` 的默认行为不变。
 7. **对齐 CLI 与上游基线（已完成，`30f87b7c`）。** 按 `docs/toolchain.md` 的升级步骤；外壳用 `focusVisibleStyle`；`port:check` 在 CLI 落后时报错。

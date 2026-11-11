@@ -1,19 +1,7 @@
-import { colors, radius } from "@shadcn-nsh/theme";
-import type { JSX } from "nsh";
-import { mount, signal, Text, View } from "nsh";
+import { mount, signal } from "nsh";
 
 import { Button } from "../ui/button";
-
-function Section(props: { title: string; children: JSX.Element }) {
-  return (
-    <View style={{ gap: 8 }}>
-      <Text style={{ fontSize: 12, color: colors.muted }}>{props.title}</Text>
-      <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
-        {props.children}
-      </View>
-    </View>
-  );
-}
+import { DemoCard, DemoPage, DemoSection } from "./kit";
 
 function App() {
   const presses = signal(0);
@@ -26,19 +14,9 @@ function App() {
   };
 
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background, padding: 20, gap: 14 }}>
-      <Text style={{ fontSize: 22, fontWeight: "700", color: colors.text }}>Button</Text>
-      <View
-        style={{
-          backgroundColor: colors.surface,
-          borderColor: colors.border,
-          borderWidth: 1,
-          borderRadius: radius.card,
-          padding: 16,
-          gap: 16,
-        }}
-      >
-        <Section title="Kinds">
+    <DemoPage title="Button" note={() => `Pressed ${presses()}× · pinned ${String(pinned())}`}>
+      <DemoCard>
+        <DemoSection title="Kinds">
           <Button variant="primary" onPress={press}>
             Primary
           </Button>
@@ -51,8 +29,8 @@ function App() {
           <Button variant="danger" onPress={press}>
             Delete
           </Button>
-        </Section>
-        <Section title="Sizes">
+        </DemoSection>
+        <DemoSection title="Sizes">
           <Button variant="secondary" size="small" onPress={press}>
             Small
           </Button>
@@ -62,8 +40,8 @@ function App() {
           <Button variant="secondary" size="large" onPress={press}>
             Large
           </Button>
-        </Section>
-        <Section title="States">
+        </DemoSection>
+        <DemoSection title="States">
           <Button variant="secondary" selected={pinned()} onPress={() => pinned.set(!pinned())}>
             Pinned
           </Button>
@@ -76,12 +54,9 @@ function App() {
           <Button variant="secondary" disabled>
             Disabled
           </Button>
-        </Section>
-      </View>
-      <Text style={{ fontSize: 13, color: colors.muted }}>
-        Pressed {presses()}× · pinned {String(pinned())}
-      </Text>
-    </View>
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

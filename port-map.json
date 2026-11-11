@@ -79,10 +79,10 @@
       "pending": true
     },
     "icons.tsx": {
-      "pending": true
+      "to": "ui/lib/icons.tsx"
     },
     "popup.tsx": {
-      "pending": true
+      "to": "ui/lib/popup.tsx"
     },
     "scrollbar-theme.ts": {
       "pending": true
@@ -124,7 +124,7 @@
       "pending": true
     },
     "look/surface.tsx": {
-      "pending": true
+      "to": "ui/lib/surface.tsx"
     },
     "look/tabs.tsx": {
       "pending": true
