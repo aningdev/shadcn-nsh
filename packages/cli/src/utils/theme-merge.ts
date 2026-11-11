@@ -7,8 +7,8 @@ const isObject = (value: unknown): value is Json =>
  * Adds the keys of `incoming` that `existing` lacks, at any depth; a value `existing` already
  * has stays as it is. Returns the merged theme and how many keys were added.
  *
- * An app that brought its own `theme.json` keeps its colors and gains the `custom-*` tokens the
- * copied `theme.ts` reads (the shadow tones and the backdrop).
+ * An app that brought its own `theme.json` keeps its colors and gains any tokens the copied
+ * theme / `theme.ts` reads that it did not already define.
  */
 export function mergeTheme(existing: Json, incoming: Json): { theme: Json; added: number } {
   let added = 0;

@@ -110,8 +110,8 @@ vp check                       # 格式与 lint
 | `port:check`                    | 已建       | 第 4 节 P1–P3                                                                                                                                      |
 | `port:render`                   | 已建       | P4。需要本机有 Chrome / Edge / Chromium；无需屏幕录制权限                                                                                          |
 | `registry:build` 的依赖校验     | 已有       | P6                                                                                                                                                 |
-| 颜色守门（`ui-guards.test.ts`） | 需改       | 扫描范围改为组件文件里区域**之外**的部分；`theme.ts` 整体放行（上游的焦点环含颜色字面量）                                                          |
-| props 超集断言                  | 待建       | 每个组件一行类型断言，例如 `Omit<BaseButtonProps, "children"> extends Omit<ButtonProps, ...>`；放在 `next/ui/types.test-d.ts`，由 `nsh check` 覆盖 |
+| 颜色守门（`ui-guards.test.ts`） | 已改       | `next/ui` 扫区域**之外**；`theme.ts` 与 `@port` 区域内放行                                                                                         |
+| props 超集断言                  | 已建       | `next/demos/props.test-d.ts`，由 `nsh check next/demos` 覆盖                                                                                       |
 | 总览页（contact sheet）         | 待建       | `port:render` 已产出全部截图；加一个脚本把 `shots/*.png` 拼成一页 HTML，供人一次看完。每个家族合并前看一遍                                         |
 | 截图基线                        | 待建       | 把 `shots/` 的一份副本提交进 `next/demos/baseline/`，`port:render` 增加"与基线相同"的比对，改动即可见                                              |
 | 演示覆盖                        | 待建       | 脚本核对：每个组件的每个 `variant` / `size` 取值都在它的 demo 里出现过                                                                             |
@@ -130,8 +130,8 @@ vp check                       # 格式与 lint
 2. **脚手架（已完成）。** `bun run port:new`（`scripts/port/new.ts` + `templates/`）。之后的新组件一律由它起步。
 3. **搬运共享部分（已完成）。** `look/surface.tsx` → `ui/lib/surface.tsx`；`popup.tsx` → `ui/lib/popup.tsx`；`icons.tsx` → `ui/lib/icons.tsx`；`look/press.ts` 已完成。
 4. **演示套件（已完成）。** `next/demos/kit.tsx`（`DemoPage` / `DemoCard` / `DemoSection`，不进 registry）；样板与 toggle 的 demo / ref 已改用它，`switch` 的行用 `listRow`。
-5. **待建的检查。** 第 6 节的总览页、截图基线、props 断言、演示覆盖、颜色守门的范围调整。
-6. **CLI。** `theme-merge.ts` 目前只合并 `custom-*` 键，新主题没有这个前缀：改成"缺的键就补"，并更新它的测试和 `theme-contract.test.ts`。`init` 的默认行为不变。
+5. **待建的检查（部分完成）。** 颜色守门已扫 `next/ui` 的区域外代码；props 超集断言在 `next/demos/props.test-d.ts`。仍待建：总览页、截图基线、演示覆盖。
+6. **CLI（已完成）。** `mergeTheme` 对任意缺键补齐（不再特指 `custom-*`）；`theme-contract.test.ts` 对照 `next/theme/theme.json`：覆盖 NSH 默认主题的全部键，亮暗成对。`init` 的默认行为不变。
 7. **对齐 CLI 与上游基线（已完成，`30f87b7c`）。** 按 `docs/toolchain.md` 的升级步骤；外壳用 `focusVisibleStyle`；`port:check` 在 CLI 落后时报错。
 
 #### 脚手架

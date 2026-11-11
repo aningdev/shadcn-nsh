@@ -34,7 +34,7 @@ export async function installItems(
           path.basename(absolute) === "theme.json" &&
           (await mergeThemeFile(absolute, file.content))
         ) {
-          console.log(`merge ${path.relative(cwd, absolute)} (added missing custom-* keys)`);
+          console.log(`merge ${path.relative(cwd, absolute)} (added missing keys)`);
           written.push(path.relative(cwd, absolute));
         } else {
           console.log(`skip ${path.relative(cwd, absolute)} (exists)`);
@@ -53,7 +53,7 @@ export async function installItems(
   return written;
 }
 
-/** Adds the `custom-*` keys an existing `theme.json` lacks. True when it changed the file. */
+/** Adds the keys an existing `theme.json` lacks from the incoming one. True when it changed the file. */
 async function mergeThemeFile(file: string, incoming: string) {
   const existing = JSON.parse(await fs.readFile(file, "utf8")) as Record<string, unknown>;
   const { theme, added } = mergeTheme(existing, JSON.parse(incoming) as Record<string, unknown>);

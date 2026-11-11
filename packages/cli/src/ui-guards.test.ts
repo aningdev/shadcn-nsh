@@ -42,6 +42,15 @@ const rules: Record<string, RegExp[]> = {
 
 const breaks = (path: string, patterns: RegExp[]) => patterns.some((p) => p.test(code(path)));
 
+/** Strip `// @port …` … `// @port end` regions: colour there is upstream's, not the shell's. */
+const shellCode = (path: string) =>
+  code(path).replace(/\/\/ @port [^\n]*\n[\s\S]*?\/\/ @port end/g, "");
+
+/** Ported components under `next/ui` (one file each); lib helpers are vendor-only. */
+const nextSources = readdirSync(new URL("next/ui/", root))
+  .filter((file) => file.endsWith(".tsx"))
+  .map((file) => `next/ui/${file}`);
+
 describe("component sources", () => {
   for (const [rule, patterns] of Object.entries(rules)) {
     test(`${rule}: no source breaks it`, () => {
@@ -56,6 +65,22 @@ describe("component sources", () => {
     expect(rules["colour-literals"].some((p) => p.test('{ backgroundColor: "transparent" }'))).toBe(
       false,
     );
+  });
+});
+
+describe("ported shells (next/ui)", () => {
+  test("colour-literals: no shell outside a port region breaks it", () => {
+    const offenders = nextSources.filter((path) =>
+      rules["colour-literals"].some((p) => p.test(shellCode(path))),
+    );
+    expect(offenders, `colour-literals in ${offenders.join(", ")}`).toEqual([]);
+  });
+
+  test("the region strip leaves shell code for the guard to see", () => {
+    const sample = `// @port look/x.ts\nconst a = "#fff";\n// @port end\nconst b = "#000";`;
+    const stripped = sample.replace(/\/\/ @port [^\n]*\n[\s\S]*?\/\/ @port end/g, "");
+    expect(rules["colour-literals"].some((p) => p.test(stripped))).toBe(true);
+    expect(stripped.includes("#fff")).toBe(false);
   });
 });
 

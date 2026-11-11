@@ -6,38 +6,38 @@ describe("mergeTheme", () => {
   test("adds missing keys at any depth and keeps existing values", () => {
     const existing = {
       name: "mine",
-      cssVars: { theme: { radius: "1rem" }, light: { primary: "oklch(0.4 0.1 250)" } },
+      cssVars: { theme: { radius: "1rem" }, light: { primary: "#3366ff" } },
     };
     const incoming = {
-      name: "shadcn-nsh",
+      name: "gallery",
       cssVars: {
-        theme: { radius: "0.625rem" },
+        theme: { radius: "10px", "radius-card": "12px", scrim: "rgba(0,0,0,0.45)" },
         light: {
-          primary: "oklch(0.2 0 0)",
-          "custom-shadow-ink": "oklch(0.1686 0.0226 263.69)",
-          "custom-backdrop": "oklch(0 0 0 / 0.4)",
+          primary: "#c6ef6a",
+          brand: "#c6ef6a",
+          inset: "#f0f1f4",
         },
-        dark: { "custom-backdrop": "oklch(0 0 0 / 0.4)" },
+        dark: { brand: "#c6ef6a" },
       },
     };
     const { theme, added } = mergeTheme(existing, incoming);
     expect(theme).toEqual({
       name: "mine",
       cssVars: {
-        theme: { radius: "1rem" },
+        theme: { radius: "1rem", "radius-card": "12px", scrim: "rgba(0,0,0,0.45)" },
         light: {
-          primary: "oklch(0.4 0.1 250)",
-          "custom-shadow-ink": "oklch(0.1686 0.0226 263.69)",
-          "custom-backdrop": "oklch(0 0 0 / 0.4)",
+          primary: "#3366ff",
+          brand: "#c6ef6a",
+          inset: "#f0f1f4",
         },
-        dark: { "custom-backdrop": "oklch(0 0 0 / 0.4)" },
+        dark: { brand: "#c6ef6a" },
       },
     });
-    expect(added).toBe(3);
+    expect(added).toBe(5);
   });
 
   test("changes nothing when the app already has every key", () => {
-    const theme = { cssVars: { theme: { radius: "1rem" } } };
+    const theme = { cssVars: { theme: { radius: "1rem", scrim: "rgba(0,0,0,0.45)" } } };
     expect(mergeTheme(theme, theme)).toEqual({ theme, added: 0 });
   });
 });
