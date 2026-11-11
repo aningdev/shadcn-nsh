@@ -141,7 +141,7 @@
       "name": "button",
       "type": "registry:ui",
       "title": "Button",
-      "description": "A button, and the looks of buttons (icon, round, split) to spread on nsh/base's.",
+      "description": "A button, an icon button, a round button, and a split button.",
       "registryDependencies": ["theme", "press", "spinner"],
       "files": [
         {

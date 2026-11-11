@@ -105,18 +105,18 @@ vp check                       # 格式与 lint
 
 ## 6. 自动检查：现状与待办
 
-| 检查                            | 状态       | 说明                                                                                                                                               |
-| ------------------------------- | ---------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `port:check`                    | 已建       | 第 4 节 P1–P3                                                                                                                                      |
-| `port:render`                   | 已建       | P4。需要本机有 Chrome / Edge / Chromium；无需屏幕录制权限                                                                                          |
-| `registry:build` 的依赖校验     | 已有       | P6                                                                                                                                                 |
-| 颜色守门（`ui-guards.test.ts`） | 已改       | `next/ui` 扫区域**之外**；`theme.ts` 与 `@port` 区域内放行                                                                                         |
-| props 超集断言                  | 已建       | `next/demos/props.test-d.ts`，由 `nsh check next/demos` 覆盖                                                                                       |
-| 总览页（contact sheet）         | 待建       | `port:render` 已产出全部截图；加一个脚本把 `shots/*.png` 拼成一页 HTML，供人一次看完。每个家族合并前看一遍                                         |
-| 截图基线                        | 待建       | 把 `shots/` 的一份副本提交进 `next/demos/baseline/`，`port:render` 增加"与基线相同"的比对，改动即可见                                              |
-| 演示覆盖                        | 待建       | 脚本核对：每个组件的每个 `variant` / `size` 取值都在它的 demo 里出现过                                                                             |
-| `check:recipes`                 | 切换时删除 | 它检查的 R1–R8 属于旧规范；其中"每个导出有 doc comment""文档页章节齐全""demo 存在"三项并入新的检查                                                 |
-| `bun run check`                 | 切换时改   | 加入 `port:check`；`port:render` 较慢（每组约 1.5 秒），放进 CI 而不是每次本地检查                                                                 |
+| 检查                            | 状态       | 说明                                                                                                       |
+| ------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------- |
+| `port:check`                    | 已建       | 第 4 节 P1–P3                                                                                              |
+| `port:render`                   | 已建       | P4。需要本机有 Chrome / Edge / Chromium；无需屏幕录制权限                                                  |
+| `registry:build` 的依赖校验     | 已有       | P6                                                                                                         |
+| 颜色守门（`ui-guards.test.ts`） | 已改       | `next/ui` 扫区域**之外**；`theme.ts` 与 `@port` 区域内放行                                                 |
+| props 超集断言                  | 已建       | `next/demos/props.test-d.ts`，由 `nsh check next/demos` 覆盖                                               |
+| 总览页（contact sheet）         | 待建       | `port:render` 已产出全部截图；加一个脚本把 `shots/*.png` 拼成一页 HTML，供人一次看完。每个家族合并前看一遍 |
+| 截图基线                        | 待建       | 把 `shots/` 的一份副本提交进 `next/demos/baseline/`，`port:render` 增加"与基线相同"的比对，改动即可见      |
+| 演示覆盖                        | 待建       | 脚本核对：每个组件的每个 `variant` / `size` 取值都在它的 demo 里出现过                                     |
+| `check:recipes`                 | 切换时删除 | 它检查的 R1–R8 属于旧规范；其中"每个导出有 doc comment""文档页章节齐全""demo 存在"三项并入新的检查         |
+| `bun run check`                 | 切换时改   | 加入 `port:check`；`port:render` 较慢（每组约 1.5 秒），放进 CI 而不是每次本地检查                         |
 
 `port:check` 的两个已知限制：它比较的是格式化后的文本，所以只要 `vp fmt` 的行为不变就稳定；它不检查区域**之外**是否偷放了外观，这由 P7 负责。
 
@@ -166,7 +166,7 @@ bun run port:new <id> --from <上游文件> [--symbols a,b,c] [--base <nsh/base 
 
 | 序  | 上游文件                                                                  | 目标组件                                                                             |
 | --- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
-| 1   | `look/button.ts`（余下的外壳）、`index.tsx` 的 `Button` 相关              | `button` 补 `IconButton`、`RoundButton`、`SplitButton` 外壳                          |
+| 1   | `look/button.ts`（余下的外壳）、`index.tsx` 的 `Button` 相关              | `button` 补 `IconButton`、`RoundButton`、`SplitButton` 外壳（已完成）                |
 | 2   | `look/choice.tsx`、`look/tool.ts`、`look/switch.ts`（已完成）             | `checkbox`、`radio-group`、`toggle`、`toggle-group`、`toolbar`                       |
 | 3   | `look/field.tsx`                                                          | `input`、`number-input`、`otp-input`、`time-field`                                   |
 | 4   | `look/overlay.ts`（余下的）、`popup.tsx`                                  | `tooltip`、`popover`、`hover-card`、`sheet`、`toast`、`alert-dialog`                 |

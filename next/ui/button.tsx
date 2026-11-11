@@ -14,8 +14,8 @@ import {
   TERMINAL_ROW,
   tints,
 } from "@shadcn-nsh/theme";
-import type { JSX, TextStyle, ViewStyle } from "nsh";
-import { platform, split, Text, token } from "nsh";
+import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
+import { context, platform, split, Text, token, View } from "nsh";
 import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/base";
 
 import { pressSink, pressTransition } from "./lib/press";
@@ -498,4 +498,194 @@ export function Button(props: ButtonProps) {
       )}
     </BaseButton>
   );
+}
+
+/**
+ * An icon-only button in the look of `iconButtonLook`. Every base prop passes through; the style
+ * props go over the look's. Pass an icon (or any content) as `children`; `iconButtonGlyph` sizes it.
+ */
+export type IconButtonProps = Omit<BaseButtonProps, "children"> & {
+  /** Default `ghost`: bare until the pointer is over it; `secondary`: raised. */
+  variant?: "ghost" | "secondary";
+  /** `danger`: its icon in the danger tone, the tone's tint under the pointer. */
+  tone?: "danger";
+  /** Chosen (a favorite, a shown sidebar): the accent's tint; overrides hover. */
+  on?: boolean;
+  children?: JSX.Element;
+};
+
+/** A square icon button. `on` (or base `selected`) shows it as chosen. */
+export function IconButton(props: IconButtonProps) {
+  const [, rest] = split(props, [
+    "variant",
+    "tone",
+    "on",
+    "children",
+    "style",
+    "hoverStyle",
+    "activeStyle",
+    "focusVisibleStyle",
+    "disabledStyle",
+    "hitSlop",
+  ]);
+  const options: IconButtonLookOptions = {
+    on: () => props.on ?? props.selected,
+    tone: props.tone,
+    variant: props.variant,
+    disabled: () => props.disabled,
+  };
+  const look = iconButtonLook(options);
+  return (
+    <BaseButton
+      {...rest}
+      selected={props.selected ?? props.on}
+      hitSlop={props.hitSlop ?? look.hitSlop}
+      style={[look.style, props.style ?? null]}
+      hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
+      activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}
+      focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
+      disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
+    >
+      {props.children}
+    </BaseButton>
+  );
+}
+
+/**
+ * A round icon button in the look of `roundButtonLook`. Every base prop passes through; the style
+ * props go over the look's. Pass an icon as `children`; `roundButtonGlyph` sizes and tints it.
+ */
+export type RoundButtonProps = Omit<BaseButtonProps, "children"> & {
+  /** Default `primary`, the citrus fill; `secondary` raised. */
+  variant?: "primary" | "secondary";
+  /** Side length in points (default 28 with a pointer, 40 on a touch screen). */
+  size?: number;
+  children?: JSX.Element;
+};
+
+/** A round icon button of a `variant` and a `size`. */
+export function RoundButton(props: RoundButtonProps) {
+  const [, rest] = split(props, [
+    "variant",
+    "size",
+    "children",
+    "style",
+    "hoverStyle",
+    "activeStyle",
+    "focusVisibleStyle",
+    "disabledStyle",
+    "hitSlop",
+  ]);
+  const variant = props.variant ?? "primary";
+  const look = roundButtonLook(variant, {
+    size: props.size,
+    disabled: () => props.disabled,
+  });
+  return (
+    <BaseButton
+      {...rest}
+      hitSlop={props.hitSlop ?? look.hitSlop}
+      style={[look.style, props.style ?? null]}
+      hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
+      activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}
+      focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
+      disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
+    >
+      {props.children}
+    </BaseButton>
+  );
+}
+
+type SplitContextValue = {
+  look: ReturnType<typeof splitButtonLook>;
+  kind: () => ButtonKind;
+  options: ButtonLookOptions;
+};
+
+const SplitContext = context<SplitContextValue | null>(null);
+
+function useSplit() {
+  const ctx = SplitContext();
+  if (!ctx) throw new Error("SplitButton parts must be used within <SplitButton>");
+  return ctx;
+}
+
+/** The frame of a split button: a main action and a menu half in one silhouette. */
+export type SplitButtonProps = {
+  /** Default `primary`. */
+  variant?: ButtonKind;
+  /** Default `regular`. */
+  size?: ButtonSize;
+  disabled?: boolean;
+  style?: StyleProp<ViewStyle>;
+  children?: JSX.Element;
+};
+
+/**
+ * One half of a split button. A string child is the label in `buttonLabel`; anything else is
+ * drawn as given. Spread `buttonGlyph` on an icon for the menu half.
+ */
+export type SplitButtonSegmentProps = Omit<BaseButtonProps, "children"> & {
+  children?: string | JSX.Element;
+};
+
+/** The hairline between the two halves. */
+export type SplitButtonDividerProps = {
+  style?: StyleProp<ViewStyle>;
+};
+
+/** The frame that clips the two halves of a split button. */
+export function SplitButton(props: SplitButtonProps) {
+  const kind = () => props.variant ?? "primary";
+  const options: ButtonLookOptions = {
+    size: () => props.size,
+    disabled: () => props.disabled,
+  };
+  const look = splitButtonLook(kind, options);
+  return (
+    <SplitContext.Provider value={{ look, kind, options }}>
+      <View style={[look.frame.style, props.style ?? null]}>{props.children}</View>
+    </SplitContext.Provider>
+  );
+}
+
+/** A pressable half of a `SplitButton`. */
+export function SplitButtonSegment(props: SplitButtonSegmentProps) {
+  const ctx = useSplit();
+  const [, rest] = split(props, [
+    "children",
+    "style",
+    "hoverStyle",
+    "activeStyle",
+    "focusVisibleStyle",
+    "disabledStyle",
+    "hitSlop",
+  ]);
+  const segment = ctx.look.segment({
+    selected: () => props.selected,
+    disabled: () => props.disabled,
+  });
+  return (
+    <BaseButton
+      {...rest}
+      hitSlop={props.hitSlop ?? segment.hitSlop}
+      style={[segment.style, props.style ?? null]}
+      hoverStyle={[segment.hoverStyle ?? null, props.hoverStyle ?? null]}
+      activeStyle={[segment.activeStyle ?? null, props.activeStyle ?? null]}
+      focusVisibleStyle={[segment.focusVisibleStyle, props.focusVisibleStyle ?? null]}
+      disabledStyle={[props.disabledStyle ?? null]}
+    >
+      {typeof props.children === "string" ? (
+        <Text style={buttonLabel(ctx.kind, ctx.options)}>{props.children}</Text>
+      ) : (
+        props.children
+      )}
+    </BaseButton>
+  );
+}
+
+/** The hairline between a split button's halves. */
+export function SplitButtonDivider(props: SplitButtonDividerProps = {}) {
+  const ctx = useSplit();
+  return <View style={[ctx.look.divider, props.style ?? null]} />;
 }

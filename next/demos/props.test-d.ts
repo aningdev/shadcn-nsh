@@ -9,7 +9,12 @@ import type {
   ToggleProps as BaseToggleProps,
 } from "nsh/base";
 
-import type { ButtonProps } from "../ui/button";
+import type {
+  ButtonProps,
+  IconButtonProps,
+  RoundButtonProps,
+  SplitButtonSegmentProps,
+} from "../ui/button";
 import type { DialogContentProps } from "../ui/dialog";
 import type { SwitchProps } from "../ui/switch";
 import type { ToggleProps } from "../ui/toggle";
@@ -26,6 +31,13 @@ type KeepsBase<Base, Shell, Dropped extends PropertyKey> =
 type _button = Assert<
   KeepsBase<BaseButtonProps, ButtonProps, "children" | "variant" | "size" | "busy">
 >;
+type _iconButton = Assert<
+  KeepsBase<BaseButtonProps, IconButtonProps, "children" | "variant" | "tone" | "on">
+>;
+type _roundButton = Assert<
+  KeepsBase<BaseButtonProps, RoundButtonProps, "children" | "variant" | "size">
+>;
+type _splitSegment = Assert<KeepsBase<BaseButtonProps, SplitButtonSegmentProps, "children">>;
 type _switch = Assert<KeepsBase<BaseSwitchProps, SwitchProps, "size">>;
 type _toggle = Assert<KeepsBase<BaseToggleProps, ToggleProps, "children" | "variant" | "size">>;
 type _dialogContent = Assert<
@@ -36,4 +48,4 @@ type _dialogContent = Assert<
   >
 >;
 
-export type { _button, _switch, _toggle, _dialogContent };
+export type { _button, _iconButton, _roundButton, _splitSegment, _switch, _toggle, _dialogContent };

@@ -1,11 +1,24 @@
 import { mount, signal } from "nsh";
 
-import { Button } from "../ui/button";
+import {
+  Button,
+  buttonGlyph,
+  IconButton,
+  iconButtonGlyph,
+  RoundButton,
+  roundButtonGlyph,
+  SplitButton,
+  SplitButtonDivider,
+  SplitButtonSegment,
+} from "../ui/button";
+import { Icon } from "../ui/lib/icons";
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 
 function App() {
   const presses = signal(0);
   const pinned = signal(true);
+  const starred = signal(false);
+  const menuOpen = signal(false);
   const saving = signal(false);
   const press = () => presses.update((n) => n + 1);
   const save = () => {
@@ -54,6 +67,48 @@ function App() {
           <Button variant="secondary" disabled>
             Disabled
           </Button>
+        </DemoSection>
+        <DemoSection title="Icon">
+          <IconButton accessibilityLabel="Search" onPress={press} on={starred()}>
+            <Icon name="search" {...iconButtonGlyph({ on: () => starred() })} />
+          </IconButton>
+          <IconButton
+            accessibilityLabel="Star"
+            variant="secondary"
+            on={starred()}
+            onPress={() => starred.set(!starred())}
+          >
+            <Icon name="star" {...iconButtonGlyph({ variant: "secondary", on: () => starred() })} />
+          </IconButton>
+          <IconButton accessibilityLabel="Delete" tone="danger" onPress={press}>
+            <Icon name="trash" {...iconButtonGlyph({ tone: "danger" })} />
+          </IconButton>
+          <RoundButton accessibilityLabel="Play" onPress={press}>
+            <Icon name="play" {...roundButtonGlyph("primary")} />
+          </RoundButton>
+          <RoundButton accessibilityLabel="Plus" variant="secondary" onPress={press}>
+            <Icon name="plus" {...roundButtonGlyph("secondary")} />
+          </RoundButton>
+        </DemoSection>
+        <DemoSection title="Split">
+          <SplitButton variant="primary">
+            <SplitButtonSegment onPress={press}>Save</SplitButtonSegment>
+            <SplitButtonDivider />
+            <SplitButtonSegment
+              accessibilityLabel="More save options"
+              selected={menuOpen()}
+              onPress={() => menuOpen.set(!menuOpen())}
+            >
+              <Icon name="chevron-down" {...buttonGlyph("primary")} />
+            </SplitButtonSegment>
+          </SplitButton>
+          <SplitButton variant="secondary">
+            <SplitButtonSegment onPress={press}>Export</SplitButtonSegment>
+            <SplitButtonDivider />
+            <SplitButtonSegment accessibilityLabel="More export options" onPress={press}>
+              <Icon name="chevron-down" {...buttonGlyph("secondary")} />
+            </SplitButtonSegment>
+          </SplitButton>
         </DemoSection>
       </DemoCard>
     </DemoPage>

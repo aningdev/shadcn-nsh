@@ -1,6 +1,6 @@
 ---
 title: Button
-description: A button, in five variants and three sizes.
+description: A button, an icon button, a round button, and a split button.
 component: true
 demo: button
 ---
@@ -77,6 +77,38 @@ A string is the label. Anything else is drawn as given; `buttonLabel` and `butto
 </Button>
 ```
 
+### Icon button
+
+A square icon-only button. `on` shows it as chosen.
+
+```tsx
+<IconButton accessibilityLabel="Star" on={starred()} onPress={toggle}>
+  <Icon name="star" {...iconButtonGlyph({ on: starred })} />
+</IconButton>
+```
+
+### Round button
+
+```tsx
+<RoundButton accessibilityLabel="Play" onPress={play}>
+  <Icon name="play" {...roundButtonGlyph("primary")} />
+</RoundButton>
+```
+
+### Split button
+
+A main action and a menu half in one silhouette.
+
+```tsx
+<SplitButton variant="primary">
+  <SplitButtonSegment onPress={save}>Save</SplitButtonSegment>
+  <SplitButtonDivider />
+  <SplitButtonSegment accessibilityLabel="More" onPress={openMenu}>
+    <Icon name="chevron-down" {...buttonGlyph("primary")} />
+  </SplitButtonSegment>
+</SplitButton>
+```
+
 ### The look alone
 
 The look is a function, for a pressable of your own.
@@ -89,6 +121,8 @@ The look is a function, for a pressable of your own.
 
 ## API
 
+### Button
+
 Every prop of [`nsh/base` Button](https://nsh.dev/elements/button) passes through. `style`, `hoverStyle`, `activeStyle`, `focusVisibleStyle` and `disabledStyle` go over the look's.
 
 | Prop       | Type                                                          | Default     |
@@ -97,3 +131,29 @@ Every prop of [`nsh/base` Button](https://nsh.dev/elements/button) passes throug
 | `size`     | `"small" \| "regular" \| "large"`                             | `"regular"` |
 | `busy`     | `boolean`                                                     | `false`     |
 | `children` | `string \| JSX.Element`                                       |             |
+
+### IconButton
+
+| Prop       | Type                     | Default   |
+| ---------- | ------------------------ | --------- |
+| `variant`  | `"ghost" \| "secondary"` | `"ghost"` |
+| `tone`     | `"danger"`               |           |
+| `on`       | `boolean`                | `false`   |
+| `children` | `JSX.Element`            |           |
+
+### RoundButton
+
+| Prop       | Type                       | Default     |
+| ---------- | -------------------------- | ----------- |
+| `variant`  | `"primary" \| "secondary"` | `"primary"` |
+| `size`     | `number`                   | 28 / 40     |
+| `children` | `JSX.Element`              |             |
+
+### SplitButton
+
+| Prop      | Type                                                          | Default     |
+| --------- | ------------------------------------------------------------- | ----------- |
+| `variant` | `"primary" \| "secondary" \| "accent" \| "ghost" \| "danger"` | `"primary"` |
+| `size`    | `"small" \| "regular" \| "large"`                             | `"regular"` |
+
+`SplitButtonSegment` takes every prop of [`nsh/base` Button](https://nsh.dev/elements/button); a string child is the label.
