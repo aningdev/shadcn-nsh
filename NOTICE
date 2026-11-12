@@ -5,7 +5,7 @@ This project adapts the shared UI layer of NSH (Native Shell):
 
   Source:   https://github.com/longbridge/nsh
   Path:     examples/nsh-gallery-ui/
-  Baseline: 64ab8a1d (the commit pinned in references/nsh)
+  Baseline: 30f87b7c (the commit pinned in port-map.json)
   Copyright 2026 Longbridge <https://longbridge.com>
   License:  Apache License, Version 2.0
             https://www.apache.org/licenses/LICENSE-2.0
