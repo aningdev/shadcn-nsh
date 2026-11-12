@@ -61,7 +61,7 @@ registry.json            registry 清单，`bun run registry:build` 生成 publi
 | P2  | **上游代码只由脚本写入。** 它位于 `// @port <上游文件>` 与 `// @port end` 之间。要改，就改上游基线或 `port-map.json`，不改区域内的文字 | `port:check`（重新生成并格式化后必须与现有文件相同） |
 | P3  | **偏离上游必须登记。** 与上游文字不同的声明写进 `replace`，带 `why`                                                                    | `port:check`                                         |
 | P4  | **外壳不改变渲染。** 每个组件有 `demos/<id>.tsx` 和 `demos/<id>.ref.tsx`，两者截图相同                                                 | `port:render`                                        |
-| P5  | **外壳不缩减能力。** 组件 props 是 `nsh/base` 对应 props 加上自己的轴（`variant`、`size` 等）；样式类 props 叠在 look 之上，使用者优先 | 类型断言（待建，见第 6 节）                          |
+| P5  | **外壳不缩减能力。** 组件 props 是 `nsh/base` 对应 props 加上自己的轴（`variant`、`size` 等）；样式类 props 叠在 look 之上，使用者优先 | 类型断言（已建，见第 6 节）                          |
 | P6  | **依赖如实。** `registryDependencies` 等于实际 import                                                                                  | `registry:build`（已有）                             |
 | P7  | **外壳里没有外观。** 区域之外不出现颜色字面量；几何字面量只允许来自上游 demo 的布局，并在注释里写明出处                                | 颜色守门测试（已有，改扫描范围）；几何靠评审         |
 
@@ -105,19 +105,19 @@ vp check                       # 格式与 lint
 
 ## 6. 自动检查：现状与待办
 
-| 检查                            | 状态 | 说明                                                                                                                                       |
-| ------------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------ |
-| `port:check`                    | 已建 | 第 4 节 P1–P3                                                                                                                              |
-| `port:render`                   | 已建 | P4 的指针那一半：亮 / 暗各一组（51 × 2 = 102 组截图）。需要本机有 Chrome / Edge / Chromium；无头浏览器始终只量到精细指针，所以它不渲染触屏 |
-| `port:render:touch`             | 已建 | P4 的触屏那一半：在 iOS 模拟器上打开同一批页面（`render-touch.test.tsx`），亮 / 暗各一组。需要 Xcode 的 iPhone 模拟器和 `nsh-ios-host`     |
-| `registry:build` 的依赖校验     | 已有 | P6                                                                                                                                         |
-| 颜色守门（`ui-guards.test.ts`） | 已改 | `packages/ui` 扫区域**之外**；`theme.ts` 与 `@port` 区域内放行                                                                             |
-| props 超集断言                  | 已建 | `apps/docs/demos/props.test-d.ts`，由 `nsh check apps/docs/demos` 覆盖                                                                     |
-| 总览页（contact sheet）         | 待建 | `port:render` 已产出全部截图；加一个脚本把 `shots/*.png` 拼成一页 HTML，供人一次看完。每个家族合并前看一遍                                 |
-| 截图基线                        | 待建 | 把 `shots/` 的一份副本提交进 `apps/docs/demos/baseline/`，`port:render` 增加"与基线相同"的比对，改动即可见                                 |
-| 演示覆盖                        | 待建 | 脚本核对：每个组件的每个 `variant` / `size` 取值都在它的 demo 里出现过                                                                     |
-| `check:recipes`                 | 已删 | 它检查的 R1–R8 属于旧规范；其中"每个导出有 doc comment""文档页章节齐全""demo 存在"三项并入新的检查                                         |
-| `bun run check`                 | 已改 | 含 `port:check`；`port:render` 较慢（每组约 1.5 秒，102 组近 3 分钟），放进 CI 而不是每次本地检查                                          |
+| 检查                            | 状态 | 说明                                                                                                                                                                                                                                              |
+| ------------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `port:check`                    | 已建 | 第 4 节 P1–P3                                                                                                                                                                                                                                     |
+| `port:render`                   | 已建 | P4 的指针那一半：亮 / 暗各一组（51 × 2 = 102 组截图），结束时与提交的基线逐字节比较。需要本机有 Chrome / Edge / Chromium；无头浏览器始终只量到精细指针，所以它不渲染触屏。没有外壳的组件（`selfReference`）只截图，不比较参照页，并把理由打印出来 |
+| `port:render:touch`             | 已建 | P4 的触屏那一半：在 iOS 模拟器上打开同一批页面（`render-touch.test.tsx`），亮 / 暗各一组，之后跑外观切换检查（`appearance-touch.test.tsx`）。需要 Xcode 的 iPhone 模拟器和 `nsh-ios-host`                                                         |
+| `port:coverage`                 | 已建 | 每个组件自己声明的 `variant` / `size` / `kind` / `tone` 取值都在它的 demo 里；`selfReference` 只出现在没有外壳的组件上。已加入 `bun run check`                                                                                                    |
+| `port:sheet`                    | 已建 | 把 `shots/*.png` 拼成 `shots/index.html`（不进 git）：一行一个组件，指针 / 触屏、亮 / 暗，组件与参照页并排；一对不同或缺少一张即标记。每个家族合并前看一遍                                                                                        |
+| `port:baseline`                 | 已建 | `--update` 把指针截图（组件与参照页）复制进 `apps/docs/demos/baseline/`（已提交，190 张）；不带参数时与最新截图逐字节比较并列出改动。`port:render` 全量跑完会自动比较                                                                             |
+| `registry:build` 的依赖校验     | 已有 | P6                                                                                                                                                                                                                                                |
+| 颜色守门（`ui-guards.test.ts`） | 已改 | `packages/ui` 扫区域**之外**；`theme.ts` 与 `@port` 区域内放行                                                                                                                                                                                    |
+| props 超集断言                  | 已建 | `apps/docs/demos/props.test-d.ts`：全部 77 个包住 `nsh/base` 控件的外壳 props 类型；`nsh check apps/docs/demos` 覆盖                                                                                                                              |
+| `check:recipes`                 | 已删 | 它检查的 R1–R8 属于旧规范；其中"每个导出有 doc comment""文档页章节齐全""demo 存在"三项并入新的检查                                                                                                                                                |
+| `bun run check`                 | 已改 | 含 `port:check` 与 `port:coverage`；`port:render` 较慢（每组约 1.5 秒，102 组近 3 分钟），放进 CI 而不是每次本地检查                                                                                                                              |
 
 `port:check` 的两个已知限制：它比较的是格式化后的文本，所以只要 `vp fmt` 的行为不变就稳定；它不检查区域**之外**是否偷放了外观，这由 P7 负责。
 
@@ -131,7 +131,7 @@ vp check                       # 格式与 lint
 2. **脚手架（已完成）。** `bun run port:new`（`scripts/port/new.ts` + `templates/`）。之后的新组件一律由它起步。
 3. **搬运共享部分（已完成）。** `look/surface.tsx` → `ui/lib/surface.tsx`；`popup.tsx` → `ui/lib/popup.tsx`；`icons.tsx` → `ui/lib/icons.tsx`；`look/press.ts` 已完成。
 4. **演示套件（已完成）。** `apps/docs/demos/kit.tsx`（`DemoPage` / `DemoCard` / `DemoSection`，不进 registry）；样板与 toggle 的 demo / ref 已改用它，`switch` 的行用 `listRow`。
-5. **待建的检查（部分完成）。** 颜色守门已扫 `packages/ui` 的区域外代码；props 超集断言在 `apps/docs/demos/props.test-d.ts`。仍待建：总览页、截图基线、演示覆盖。
+5. **检查（已完成）。** 颜色守门已扫 `packages/ui` 的区域外代码；props 超集断言在 `apps/docs/demos/props.test-d.ts`（全部外壳）；总览页、截图基线与演示覆盖分别由 `port:sheet`、`port:baseline`、`port:coverage` 负责。
 6. **CLI（已完成）。** `mergeTheme` 对任意缺键补齐（不再特指 `custom-*`）；`theme-contract.test.ts` 对照 `packages/theme/theme.json`：覆盖 NSH 默认主题的全部键，亮暗成对。`init` 的默认行为不变。
 7. **对齐 CLI 与上游基线（已完成）。** 按 `docs/toolchain.md` 的升级步骤；外壳用 `focusVisibleStyle`；`port:check` 在安装的 CLI 与基线不同时警告，`bun run port:bump` 把基线移到 `nsh --version` 的提交（现为 `f4d68f7`）。
 
@@ -228,6 +228,6 @@ bun run port:new <id> --from <上游文件> [--symbols a,b,c] [--base <nsh/base 
 | -------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
 | 上游改了 look 的接口或拆了文件                     | 升级基线时 `port:check` 会逐条列出"清单里有、上游没有"和"上游有、清单里没有"；按报错调整路由，再 `port:vendor`               |
 | CLI 落后于上游基线时，搬入的代码类型通过但表现不同 | 保持 CLI 与基线对齐（第 2 节第 2 条）；`port:render` 只能证明外壳没有改变渲染，每个家族仍对照 nsh.dev 的在线 demo 人眼看一遍 |
-| 截图在不同机器上不逐字节相同                       | 比对的是同一次运行里的两张图，不跨机器；基线比对（待建）若不稳定，改为像素容差                                               |
+| 截图在不同机器上不逐字节相同                       | 比对的是同一次运行里的两张图，不跨机器；基线比对（已建）测得本机逐字节稳定，换机器若字体不同则改为像素容差                   |
 | 上游一个文件被许多组件依赖，单个组件带进的文件多   | 按声明拆分（归属规则 2）已经缓解；`icons.tsx` 较大，必要时按使用的图标拆                                                     |
 | 许可                                               | 移植内容保持 Apache-2.0（Longbridge），文件头与 `NOTICE` 注明                                                                |
