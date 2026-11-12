@@ -1,10 +1,11 @@
 // Ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE). The region
 // below is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`, not here.
 import { alpha } from "@shadcn-nsh/theme";
-import { View } from "nsh";
+import { reduceMotion, View } from "nsh";
 
 // @port index.tsx
-/** A ring turning with its top arc in `tint`: work going on. */
+/** A ring turning with its top arc in `tint`: work going on. It stands still
+ * when the user asks for less motion. */
 export function Spinner(props: { size: number; tint: string }) {
   return (
     <View
@@ -15,7 +16,7 @@ export function Spinner(props: { size: number; tint: string }) {
         borderWidth: Math.max(1.5, props.size / 8),
         borderColor: alpha(props.tint, 0.25),
         borderTopColor: props.tint,
-        animationName: "spin",
+        animationName: reduceMotion() ? undefined : "spin",
         animationDuration: 800,
         animationTimingFunction: "linear",
         animationIterationCount: "infinite",

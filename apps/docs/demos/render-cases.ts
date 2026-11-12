@@ -54,6 +54,7 @@ export const cases: Case[] = [
   { id: "progress" },
   { id: "slider" },
   { id: "avatar" },
+  { id: "spinner", selfReference: "upstream's own Spinner, with no shell to compare against" },
   { id: "badge", selfReference: "upstream's own Badge, with no shell to compare against" },
   { id: "status", selfReference: "upstream's own Status, with no shell to compare against" },
   { id: "stat", selfReference: "upstream's own Stat, with no shell to compare against" },

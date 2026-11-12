@@ -107,6 +107,12 @@
         "Meter": "packages/ui/meter.tsx",
         "Legend": "packages/ui/plot.tsx"
       },
+      "replace": {
+        "Spinner": {
+          "with": "/** A ring turning with its top arc in `tint`: work going on. It stands still\n * when the user asks for less motion. */\nexport function Spinner(props: { size: number; tint: string }) {\n  return (\n    <View\n      style={{\n        width: props.size,\n        height: props.size,\n        borderRadius: props.size / 2,\n        borderWidth: Math.max(1.5, props.size / 8),\n        borderColor: alpha(props.tint, 0.25),\n        borderTopColor: props.tint,\n        animationName: reduceMotion() ? undefined : \"spin\",\n        animationDuration: 800,\n        animationTimingFunction: \"linear\",\n        animationIterationCount: \"infinite\",\n      }}\n    />\n  );\n}",
+          "why": "the web runtime stops keyframes when the user asks for less motion, the iOS one runs them: an endless ring would turn for a user who asked not to, and the appearance check cannot compare two phases"
+        }
+      },
       "exclude": {
         "hint": "demo kit helper",
         "bindRefresh": "demo kit helper",

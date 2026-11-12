@@ -19,7 +19,8 @@ const platform = { platform: "macos" } as const;
 for (const { id, steps, selfReference } of cases) {
   for (const colorScheme of schemes) {
     test(`${id}: pointer, ${colorScheme}`, async () => {
-      // A manual clock: animations land at once and a spinner stands still.
+      // A manual clock and reduced motion: animations land at once and endless ones (a spinner)
+      // do not run. `render.ts` passes the browser the media flag the web target does not apply.
       const options = { ...platform, colorScheme, reducedMotion: true, clock: {} };
       const ours = await open(`./${id}.tsx`, options);
       // No shell: the reference page draws the same component, so there is nothing to compare.

@@ -22,7 +22,7 @@
 | -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 上游代码由脚本搬入，不手抄 | `bun run port:vendor` 按 `port-map.json` 填充；403 个声明已移植，0 个待办，34 个排除                                                                                  |
 | 搬入的代码与上游一致       | `bun run port:check` 通过；把按钮高度 28 改成 30 后它报错，恢复后通过                                                                                                 |
-| 外壳不改变渲染             | `bun run port:render`：51 个组件 × 亮 / 暗共 102 组指针截图，与"look 直接展开在 `nsh/base` 控件上"逐字节相同；触屏那一半在 iOS 模拟器上跑 `bun run port:render:touch` |
+| 外壳不改变渲染             | `bun run port:render`：52 个组件 × 亮 / 暗共 104 组指针截图，与"look 直接展开在 `nsh/base` 控件上"逐字节相同；触屏那一半在 iOS 模拟器上跑 `bun run port:render:touch` |
 | 能复制进应用               | 用现有 CLI 把 `button`、`switch`、`dialog` 加进一个空应用，类型检查通过，能运行。CLI 不需要改                                                                         |
 | 仓库原有检查               | `vp check` 0 错误，`test:unit` 16 项通过                                                                                                                              |
 
@@ -108,16 +108,16 @@ vp check                       # 格式与 lint
 | 检查                            | 状态 | 说明                                                                                                                                                                                                                                              |
 | ------------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `port:check`                    | 已建 | 第 4 节 P1–P3                                                                                                                                                                                                                                     |
-| `port:render`                   | 已建 | P4 的指针那一半：亮 / 暗各一组（51 × 2 = 102 组截图），结束时与提交的基线逐字节比较。需要本机有 Chrome / Edge / Chromium；无头浏览器始终只量到精细指针，所以它不渲染触屏。没有外壳的组件（`selfReference`）只截图，不比较参照页，并把理由打印出来 |
+| `port:render`                   | 已建 | P4 的指针那一半：亮 / 暗各一组（52 × 2 = 104 组截图），结束时与提交的基线逐字节比较。需要本机有 Chrome / Edge / Chromium；无头浏览器始终只量到精细指针，所以它不渲染触屏。没有外壳的组件（`selfReference`）只截图，不比较参照页，并把理由打印出来 |
 | `port:render:touch`             | 已建 | P4 的触屏那一半：在 iOS 模拟器上打开同一批页面（`render-touch.test.tsx`），亮 / 暗各一组，之后跑外观切换检查（`appearance-touch.test.tsx`）。需要 Xcode 的 iPhone 模拟器和 `nsh-ios-host`                                                         |
 | `port:coverage`                 | 已建 | 每个组件自己声明的 `variant` / `size` / `kind` / `tone` 取值都在它的 demo 里；`selfReference` 只出现在没有外壳的组件上。已加入 `bun run check`                                                                                                    |
 | `port:sheet`                    | 已建 | 把 `shots/*.png` 拼成 `shots/index.html`（不进 git）：一行一个组件，指针 / 触屏、亮 / 暗，组件与参照页并排；一对不同或缺少一张即标记。每个家族合并前看一遍                                                                                        |
-| `port:baseline`                 | 已建 | `--update` 把指针截图（组件与参照页）复制进 `apps/docs/demos/baseline/`（已提交，190 张）；不带参数时与最新截图逐字节比较并列出改动。`port:render` 全量跑完会自动比较                                                                             |
+| `port:baseline`                 | 已建 | `--update` 把指针截图（组件与参照页）复制进 `apps/docs/demos/baseline/`（已提交，192 张）；不带参数时与最新截图逐字节比较并列出改动。`port:render` 全量跑完会自动比较                                                                             |
 | `registry:build` 的依赖校验     | 已有 | P6                                                                                                                                                                                                                                                |
 | 颜色守门（`ui-guards.test.ts`） | 已改 | `packages/ui` 扫区域**之外**；`theme.ts` 与 `@port` 区域内放行                                                                                                                                                                                    |
 | props 超集断言                  | 已建 | `apps/docs/demos/props.test-d.ts`：全部 77 个包住 `nsh/base` 控件的外壳 props 类型；`nsh check apps/docs/demos` 覆盖                                                                                                                              |
 | `check:recipes`                 | 已删 | 它检查的 R1–R8 属于旧规范；其中"每个导出有 doc comment""文档页章节齐全""demo 存在"三项并入新的检查                                                                                                                                                |
-| `bun run check`                 | 已改 | 含 `port:check` 与 `port:coverage`；`port:render` 较慢（每组约 1.5 秒，102 组近 3 分钟），放进 CI 而不是每次本地检查                                                                                                                              |
+| `bun run check`                 | 已改 | 含 `port:check` 与 `port:coverage`；`port:render` 较慢（每组约 1.5 秒，104 组近 3 分钟），放进 CI 而不是每次本地检查                                                                                                                              |
 
 `port:check` 的两个已知限制：它比较的是格式化后的文本，所以只要 `vp fmt` 的行为不变就稳定；它不检查区域**之外**是否偷放了外观，这由 P7 负责。
 

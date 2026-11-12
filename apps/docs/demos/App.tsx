@@ -38,6 +38,7 @@ const demos = [
   "progress",
   "slider",
   "avatar",
+  "spinner",
   "badge",
   "status",
   "stat",

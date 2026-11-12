@@ -63,27 +63,37 @@ function browser(): string | undefined {
 }
 
 /**
- * `exe` with the GPU left alone, as a script `--browser` can name. On the GPU Chrome draws the
- * antialiased corner of a rounded edge (a `Status` dot's) a level off (1/255) now and then, so a
- * page differs from itself (`status: pointer, dark`, about one run in six); drawn on the CPU the
- * two pictures match every time. CI runners reach no GPU either. Windows spawns no script: there
- * the check runs as it did, with `nsh`'s own browser and flags.
+ * `exe` with the flags the comparison needs, as a script `--browser` can name. The GPU is left
+ * alone: on it Chrome draws the antialiased corner of a rounded edge (a `Status` dot's) a level
+ * off (1/255) now and then, so a page differs from itself (`status: pointer, dark`, about one
+ * run in six); drawn on the CPU the two pictures match every time. And the user asks for less
+ * motion: the test pages pass `reducedMotion`, which the web target does not emulate (only a
+ * headless engine does), so the runtime's `.nsh-reduce` would never switch off transitions and
+ * endless animations — a spinner would turn with the wall clock, a few degrees apart between
+ * two runs. Windows spawns no script: there the check runs as it did, with `nsh`'s own browser
+ * and flags.
  */
-function withoutGpu(exe: string): string | undefined {
+function browserWithFlags(exe: string): string | undefined {
   if (process.platform === "win32") return undefined;
   const dir = fs.mkdtempSync(path.join(os.tmpdir(), "nsh-render-"));
   const script = path.join(dir, "browser");
   const quoted = `'${exe.replaceAll("'", `'\\''`)}'`;
-  fs.writeFileSync(script, `#!/bin/sh\nexec ${quoted} --disable-gpu "$@"\n`, { mode: 0o755 });
+  fs.writeFileSync(
+    script,
+    `#!/bin/sh\nexec ${quoted} --disable-gpu --force-prefers-reduced-motion "$@"\n`,
+    {
+      mode: 0o755,
+    },
+  );
   return script;
 }
 
 const given = process.argv.includes("--browser");
 const exe = given ? undefined : browser();
-const software = exe ? withoutGpu(exe) : undefined;
+const software = exe ? browserWithFlags(exe) : undefined;
 if (!given && !software) {
   console.log(
-    "render: no browser found to run without the GPU; a rounded corner may differ by 1/255",
+    "render: no browser found to run without the GPU or with reduced motion; a rounded corner may differ by 1/255 and endless animations move between runs",
   );
 }
 

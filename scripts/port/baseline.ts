@@ -11,7 +11,8 @@
  * on a visual change until the change is reviewed and the baseline moved.
  *
  * The screenshots are stable byte for byte on the same machine without the GPU (Chrome draws
- * rounded corners a level off on one): two full `port:render` runs compared 190/190 identical
+ * rounded corners a level off on one) and with reduced motion (an endless animation would
+ * otherwise move between runs): two full `port:render` runs compared 192/192 identical
  * (2026-11-12, macOS). A different machine may still draw type and antialiasing differently;
  * then the comparison is a review aid, not a gate (docs/toolchain.md).
  */

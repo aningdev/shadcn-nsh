@@ -3,6 +3,7 @@ layout: ../../../layouts/Docs.astro
 title: Spinner
 description: "A turning ring: work going on."
 component: true
+demo: spinner
 ---
 
 ## Installation
