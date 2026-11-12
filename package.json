@@ -14,6 +14,7 @@
     "build:docs": "bun run docs:demos && bun --filter @shadcn-nsh/docs build",
     "check:docs": "bun --filter @shadcn-nsh/docs check",
     "docs:demos": "bun apps/docs/scripts/build-demos.ts",
+    "docs:components": "bun apps/docs/scripts/build-components.ts && vp fmt apps/docs/src/lib/components.generated.ts",
     "check:demos": "bun apps/docs/scripts/check-demos.ts",
     "registry:build": "bun packages/cli/src/index.ts build && vp fmt public/r",
     "registry:serve": "bun packages/cli/src/index.ts serve",

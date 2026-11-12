@@ -46,7 +46,10 @@ const { prev, next } = neighbors(path);
 
 const slugMatch = pathNoBase.match(/^\/docs\/components\/([^/]+)$/);
 const componentDoc = isComponentPage && slugMatch ? getComponentBySlug(slugMatch[1]!) : undefined;
-const nshUrl = componentDoc ? `https://nsh.dev/elements/${componentDoc.nshElement}` : undefined;
+const nshUrl =
+  componentDoc?.nshElement != null
+    ? `https://nsh.dev/elements/${componentDoc.nshElement}`
+    : undefined;
 const nshMdUrl = nshUrl ? `${nshUrl}.md` : undefined;
 const authoringFile = componentDoc ? `packages/ui/${componentDoc.slug}.tsx` : undefined;
 
@@ -144,6 +147,10 @@ if (demo) {
                 . This package is a curated styled wrapper; only props listed under API (when
                 present) are part of the public surface here.
               </p>
+            </>
+          ) : null}
+          {componentDoc ? (
+            <>
               <h2 id="source">Source</h2>
               <p>
                 Authoring: <code>{authoringFile}</code>. Registry: <code>{componentDoc.slug}</code>{" "}

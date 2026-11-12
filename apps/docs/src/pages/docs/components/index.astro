@@ -4,16 +4,19 @@ import { withBase } from "../../../lib/base";
 import { components } from "../../../lib/components";
 ---
 
-<Docs title="Components" description="Phase-1 styled wrappers on nsh/base.">
+<Docs
+  title="Components"
+  description="Copy-into-app components for Native Shell, built on nsh/base."
+>
   <p>
-    Phase-1 inventory mirrors <code>nsh/base</code> as documented on{" "}
-    <a href="https://nsh.dev/elements">nsh.dev/elements</a>. Each page covers Install, Usage,
-    Composition / Examples when useful, API, Differences (vs shadcn), and Not forwarded (vs base);
-    behavior deep-links to nsh.
+    {components.length} components, one page each: Installation, Usage, Examples and API. Behavior,
+    keyboard support and the full unstyled props live on{" "}
+    <a href="https://nsh.dev/elements">nsh.dev/elements</a>; each page links its base element.
   </p>
   <p>
-    Extensions (no matching <code>nsh/base</code> export) and Phase-2 components are documented in{" "}
-    <code>packages/ui/COMPONENTS.md</code> — this site does not list pages for them.
+    The list is generated from <code>registry.json</code> and these pages, so every{" "}
+    <code>registry:ui</code> item has a page and every page has an item. Add one with{" "}
+    <code>npx shadcn-nsh@latest add &lt;name&gt;</code>.
   </p>
   <ul>
     {components.map((c) => (

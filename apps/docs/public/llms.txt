@@ -21,7 +21,7 @@ Copy-into-app styled components for [Native Shell (NSH)](https://nsh.dev), built
 
 Every page links its base element on https://nsh.dev/elements; behavior, keyboard support and the full unstyled API live there, not here.
 
-- /docs/components/spinner: A turning ring: work going on. → https://nsh.dev/elements/spinner
+- /docs/components/spinner: A turning ring: work going on. → styled on `nsh` View (no base element)
 - /docs/components/badge: A small capsule label in neutral, toned, or outline styles. → https://nsh.dev/elements/badge
 - /docs/components/button: A button, an icon button, a round button, and a split button. → https://nsh.dev/elements/button
 - /docs/components/switch: A switch whose knob springs across a sunk track. → https://nsh.dev/elements/switch
@@ -55,9 +55,9 @@ Every page links its base element on https://nsh.dev/elements; behavior, keyboar
 - /docs/components/link: A text link with underline motion, on the shared nav look. → https://nsh.dev/elements/link
 - /docs/components/pagination: A pager of page numbers and chevron arrows. → https://nsh.dev/elements/pagination
 - /docs/components/progress: A determinate or indeterminate bar on the shared meter rail. → https://nsh.dev/elements/progress
-- /docs/components/meter: A horizontal meter with optional limit marker. → https://nsh.dev/elements/progress
-- /docs/components/stat: A label above a value for metric grids. → https://nsh.dev/elements/stat
-- /docs/components/status: A dot and label for quiet row or header state. → https://nsh.dev/elements/status
+- /docs/components/meter: A horizontal meter with optional limit marker. → styled on `nsh` View with the progress looks (no base element)
+- /docs/components/stat: A label above a value for metric grids. → styled on `nsh` Text and View (no base element)
+- /docs/components/status: A dot and label for quiet row or header state. → styled on `nsh` Text and View (no base element)
 - /docs/components/slider: A sunk rail with a citrus fill and round thumb. → https://nsh.dev/elements/slider
 - /docs/components/avatar: A round picture or named initials on the identity ring. → https://nsh.dev/elements/avatar
 - /docs/components/data-table: A card-styled spreadsheet with sorting, selection, and resize. → https://nsh.dev/elements/data-table
