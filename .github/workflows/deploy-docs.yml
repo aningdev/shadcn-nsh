@@ -43,7 +43,7 @@ jobs:
       - name: Setup NSH
         uses: ./.github/actions/setup-nsh
         with:
-          channel: ${{ vars.NSH_CHANNEL || 'nightly' }}
+          channel: ${{ vars.NSH_CHANNEL }}
 
       - name: Build docs
         run: bun run build:docs

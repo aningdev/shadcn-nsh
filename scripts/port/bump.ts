@@ -105,7 +105,15 @@ const mapFile = path.join(repo, "port-map.json");
 const mapText = fs.readFileSync(mapFile, "utf8");
 const pinned = `"commit": "${baseline}"`;
 if (mapText.split(pinned).length !== 2) die(`port-map.json does not have exactly one ${pinned}`);
-fs.writeFileSync(mapFile, mapText.replace(pinned, `"commit": "${commit}"`));
+let nextText = mapText.replace(pinned, `"commit": "${commit}"`);
+// What CI installs follows the installed CLI: its release tag, or the nightly.
+const installed = spawnSync("nsh", ["--version"], { encoding: "utf8" }).stdout ?? "";
+const release = /^nsh (\d+\.\d+\.\d+)/.exec(installed.trim())?.[1];
+const tag = /nightly/.test(installed) ? "nightly" : release ? `v${release}` : null;
+if (tag && map.upstream.cli && tag !== map.upstream.cli && wanted === cliCommit()) {
+  nextText = nextText.replace(`"cli": "${map.upstream.cli}"`, `"cli": "${tag}"`);
+}
+fs.writeFileSync(mapFile, nextText);
 
 // 3. What changed since the baseline, in the map's terms.
 const dir = upstreamDir(updated);

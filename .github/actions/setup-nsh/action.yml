@@ -12,12 +12,11 @@ description: >-
 inputs:
   channel:
     description: >-
-      `nightly` (default) installs the nightly build of upstream `main`; a
-      release tag such as `v0.5.0` installs that release instead. Pin a release
-      while the nightly lags the baseline: a nightly older than it lacks the
-      declarations the ported shells use.
+      What to install: a release tag such as `v0.5.0`, or `nightly`. Empty (the
+      default) installs `port-map.json`'s `upstream.cli`, the CLI the baseline
+      was moved to, so CI runs exactly what the code is written for.
     required: false
-    default: nightly
+    default: ""
 
 outputs:
   version:
@@ -27,28 +26,34 @@ outputs:
 runs:
   using: composite
   steps:
-    # The cache key is the UTC date: the nightly is rebuilt daily, so a new day
-    # downloads once and every run that day restores `~/.nsh`.
-    - name: Date the nightly
+    # A release is fixed, so it caches by its tag; the nightly is rebuilt daily,
+    # so it caches by the UTC date.
+    - name: Choose the CLI
       id: day
       shell: bash
-      run: echo "day=$(date -u +%Y-%m-%d)" >> "$GITHUB_OUTPUT"
+      env:
+        NSH_CHANNEL: ${{ inputs.channel }}
+      run: |
+        set -euo pipefail
+        channel="${NSH_CHANNEL:-$(node -p "require('./port-map.json').upstream.cli || 'nightly'")}"
+        echo "channel=$channel" >> "$GITHUB_OUTPUT"
+        if [ "$channel" = nightly ]; then echo "day=$(date -u +%Y-%m-%d)"; else echo "day=release"; fi >> "$GITHUB_OUTPUT"
 
     - name: Restore ~/.nsh
       id: cache
       uses: actions/cache@v4
       with:
         path: ~/.nsh
-        key: nsh-${{ inputs.channel }}-${{ runner.os }}-${{ steps.day.outputs.day }}
+        key: nsh-${{ steps.day.outputs.channel }}-${{ runner.os }}-${{ steps.day.outputs.day }}
 
     - name: Install the CLI
       id: install
       shell: bash
       env:
-        NSH_CHANNEL: ${{ inputs.channel }}
+        NSH_CHANNEL: ${{ steps.day.outputs.channel }}
       run: |
         set -euo pipefail
-        channel="${NSH_CHANNEL:-nightly}"
+        channel="$NSH_CHANNEL"
         if [ "${{ steps.cache.outputs.cache-hit }}" != "true" ]; then
           if [ "$channel" = nightly ]; then
             curl -fsSL https://nsh.dev/install.sh | sh -s -- --nightly
@@ -84,6 +89,6 @@ runs:
         case "$baseline" in
           "$cli"*) ;;
           *)
-            echo "::warning::installed nightly $cli differs from the baseline ${baseline:0:7}: run \`bun run port:bump\` and commit the result"
+            echo "::warning::installed CLI $cli differs from the baseline ${baseline:0:7}: run \`bun run port:bump\` and commit the result"
             ;;
         esac

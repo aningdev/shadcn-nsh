@@ -28,17 +28,21 @@ die() {
   exit 1
 }
 
+# What to install: port-map.json's upstream.cli (a release tag, or nightly).
+cli_version="$(bun -e 'console.log(require("./port-map.json").upstream.cli ?? "nightly")')"
+if [[ "$cli_version" == nightly ]]; then
+  install_cmd='curl -fsSL https://nsh.dev/install.sh | sh -s -- --nightly'
+else
+  install_cmd="curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=$cli_version sh"
+fi
+
 command -v nsh >/dev/null 2>&1 || {
-  cat >&2 <<'EOF'
-nsh: no CLI on PATH. Install it — the project never builds NSH:
+  cat >&2 <<EOF
+nsh: no CLI on PATH. Install the one the baseline uses (port-map.json upstream.cli) — the
+project never builds NSH:
 
-  curl -fsSL https://nsh.dev/install.sh | sh -s -- --nightly
-  export PATH="$HOME/.local/bin:$PATH"     # the installer links it there
-
-The CLI must print the baseline commit (docs/toolchain.md). While the nightly is
-older than the baseline, install a release that is not:
-
-  curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=vX.Y.Z sh
+  $install_cmd
+  export PATH="\$HOME/.local/bin:\$PATH"     # the installer links it there
 EOF
   exit 1
 }

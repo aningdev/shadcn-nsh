@@ -15,11 +15,12 @@ export PATH="$HOME/.local/bin:$PATH"
 
 **基线是一个提交**：装到的 nightly 打印的那个。三处必须等于它，缺一不可：
 
-| 哪里   | 怎么读                                              |
-| ------ | --------------------------------------------------- |
-| CLI    | `nsh --version` 括号里的哈希：`nsh 0.5.0 (f4d68f7)` |
-| 清单   | `port-map.json` 的 `upstream.commit`（40 位）       |
-| 子模块 | `git -C references/nsh rev-parse HEAD`              |
+| 哪里       | 怎么读                                                                                       |
+| ---------- | -------------------------------------------------------------------------------------------- |
+| CLI        | `nsh --version` 括号里的哈希：`nsh 0.5.0 (f4d68f7)`                                          |
+| 清单       | `port-map.json` 的 `upstream.commit`（40 位）                                                |
+| 安装的 CLI | `port-map.json` 的 `upstream.cli`：构建出该提交的 release tag（当前 `v0.5.0`），或 `nightly` |
+| 子模块     | `git -C references/nsh rev-parse HEAD`                                                       |
 
 **nightly 动了，项目跟着动**：`bun run port:bump`（不带参数时用它打印的提交）移动清单与子模块，再 `port:vendor`，一个 commit。`bun run port:check` 在两者不同时只发 warning（新旧方向一样），提示的正是它；`bash scripts/nsh-bootstrap.sh` 在同一情况下停下，给出同样的提示。
 
@@ -41,11 +42,11 @@ curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=v0.5.0 sh
 
 ### CI
 
-| 文件                                | 做什么                                                                                                                                                                                                                                                                                                        |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `.github/actions/setup-nsh`         | 用 `install.sh --nightly` 装 CLI（`channel` 输入可换成 release tag，工作流读 `NSH_CHANNEL` 仓库变量），按 **UTC 日期**缓存 `~/.nsh`，链 `~/.local/bin`、打印 `nsh --version`；装到的提交与基线不同时发 `::warning::` 并继续，提示 `bun run port:bump`。没有 Rust / cargo / clang / llvm，也不设 `NSH_RUNTIME` |
-| `.github/workflows/check.yml`       | 每个 PR：`port:check`、两个 `nsh check`、`test:unit`、`check:docs`、`port:render`。渲染比对要 Chrome（runner 自带）；截图留作 artifact                                                                                                                                                                        |
-| `.github/workflows/deploy-docs.yml` | 同一个 action，然后 `bun run build:docs`（`docs:demos` 逐个打包演示，再 Astro 构建）。它不读 `references/nsh`，所以不取子模块                                                                                                                                                                                 |
+| 文件                                | 做什么                                                                                                                                                                        |
+| ----------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.github/actions/setup-nsh`         | 用 `install.sh` 装 `port-map.json` 的 `upstream.cli`（release 按 tag 缓存，`nightly` 按 UTC 日期缓存）；仓库变量 `NSH_CHANNEL` 可覆盖；装上的提交与基线不同只发 `::warning::` |
+| `.github/workflows/check.yml`       | 每个 PR：`port:check`、两个 `nsh check`、`test:unit`、`check:docs`、`port:render`。渲染比对要 Chrome（runner 自带）；截图留作 artifact                                        |
+| `.github/workflows/deploy-docs.yml` | 同一个 action，然后 `bun run build:docs`（`docs:demos` 逐个打包演示，再 Astro 构建）。它不读 `references/nsh`，所以不取子模块                                                 |
 
 缓存的 key 是 `nsh-<channel>-<os>-<UTC 日期>`：nightly 每天重建，于是每天第一次下载，当天其余运行直接恢复。
 
@@ -62,7 +63,7 @@ curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=v0.5.0 sh
 省略提交时用 `nsh --version` 打印的那个：先装 nightly，再把基线移到它（顺序见上一节）。按顺序做：
 
 1. fetch，把 `references/nsh` checkout 到该提交（子模块有本地改动时拒绝）；
-2. 把 `port-map.json` 的 `upstream.commit` 改成它（只替换那一个哈希，不动文件格式）；
+2. 把 `port-map.json` 的 `upstream.commit` 改成它（只替换那一个哈希，不动文件格式）； 装的是 release 时，`upstream.cli` 一并改成它的 tag；
 3. 按清单的说法报变化，每条都给出目标文件：
    - 上游**新增**的声明 —— 没有路由就是清单的缺口；
    - 上游**删掉**的声明 —— 清单还路由着它，要先清掉；

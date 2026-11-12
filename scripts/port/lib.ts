@@ -26,7 +26,12 @@ export type FileEntry = {
 };
 
 export type PortMap = {
-  upstream: { path: string; commit: string };
+  upstream: {
+    path: string;
+    commit: string;
+    /** What to install: a release tag (`v0.5.0`) whose build is `commit`, or `nightly`. */
+    cli?: string;
+  };
   /** The directory the targets are relative to. */
   root: string;
   files: Record<string, FileEntry>;

@@ -39,11 +39,11 @@ jobs:
 
       # Installed with the official installer, never built; the baseline follows
       # the installed commit, so a moved nightly is a warning, not a failure
-      # (docs/toolchain.md). `NSH_CHANNEL` pins a release while the nightly lags.
+      # (docs/toolchain.md). The version installed is `port-map.json`'s `upstream.cli`; the repository variable `NSH_CHANNEL` overrides it.
       - name: Setup NSH
         uses: ./.github/actions/setup-nsh
         with:
-          channel: ${{ vars.NSH_CHANNEL || 'nightly' }}
+          channel: ${{ vars.NSH_CHANNEL }}
 
       # The port's gate: map complete, `// @port` regions equal to upstream, the
       # installed CLI against the baseline (docs/port-plan.md P1–P3).
