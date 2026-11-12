@@ -177,8 +177,9 @@ const html = `<!doctype html>
   .cell.differs .tag { color: var(--bad); }
   .cell.missing .tag { color: var(--warn); }
   .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-items: start; }
-  .pair.self { grid-template-columns: 1fr auto; }
-  .selfnote { display: flex; flex-direction: column; justify-content: center; gap: 4px; color: var(--muted); font-size: 11px; }
+  .pair.self { grid-template-columns: 1fr; }
+  .pair.self a { min-width: 0; }
+  .selfnote { display: flex; flex-direction: column; gap: 2px; color: var(--muted); font-size: 11px; }
   .selfnote span { font-style: italic; }
   .cell.self .tag { color: var(--muted); }
   .pair img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 4px; background: #fff; }
