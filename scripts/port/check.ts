@@ -5,6 +5,10 @@
  *   3. a ported region or copy differs from upstream (run `bun run port:vendor`);
  *   4. the map names a file or declaration upstream does not have.
  *
+ * Warns when the commit `nsh --version` prints is not the baseline: the baseline
+ * follows the installed CLI, and the nightly moves on its own, so that is a
+ * `bun run port:bump` reminder rather than a failure (docs/toolchain.md).
+ *
  *   bun scripts/port/check.ts            # the gate
  *   bun scripts/port/check.ts --status   # also list what is pending, by file
  */
@@ -30,6 +34,7 @@ import {
 
 const map = readMap();
 const problems: string[] = [];
+const warnings: string[] = [];
 const counts = { ported: 0, pending: 0, excluded: 0 };
 const pendingByFile = new Map<string, string[]>();
 
@@ -43,20 +48,19 @@ if (head !== map.upstream.commit) {
   );
 }
 
-// The CLI must be built from the pinned commit or a later one: upstream's looks use what the
-// runtime of their own commit has.
-const cli = /\(([0-9a-f]{7,})/.exec(spawnSync("nsh", ["--version"], { encoding: "utf8" }).stdout);
-if (cli) {
-  const behind = spawnSync(
-    "git",
-    ["-C", path.join(repo, "references/nsh"), "rev-list", "--count", `${cli[1]}..${head}`],
-    { encoding: "utf8" },
-  ).stdout.trim();
-  if (behind !== "" && behind !== "0") {
-    problems.push(
-      `the nsh CLI (${cli[1]}) is ${behind} commits behind the pinned upstream; upgrade it and move the submodule (docs/toolchain.md)`,
-    );
-  }
+// The installed CLI against the baseline. It never fails the gate in either direction
+// (older or newer): the baseline is whatever the installed CLI prints, and the nightly
+// moves on its own — `bun run port:bump` is how the two agree again.
+const version = (spawnSync("nsh", ["--version"], { encoding: "utf8" }).stdout ?? "").trim();
+const installed = /\(([0-9a-f]{7,})/.exec(version)?.[1];
+if (!installed) {
+  warnings.push(
+    `no nsh CLI on PATH (${version || "not found"}): install it with 'curl -fsSL https://nsh.dev/install.sh | sh -s -- --nightly' (docs/toolchain.md)`,
+  );
+} else if (!map.upstream.commit.startsWith(installed)) {
+  warnings.push(
+    `installed nightly ${installed} differs from baseline ${map.upstream.commit.slice(0, 7)}: run \`bun run port:bump\``,
+  );
 }
 
 // 2 and 4. Every upstream file and declaration is accounted for, and nothing else is.
@@ -185,6 +189,9 @@ if (process.argv.includes("--status")) {
   for (const [file, names] of pendingByFile) {
     if (map.files[file].pending !== true) console.log(`  pending  ${file}: ${names.join(", ")}`);
   }
+}
+if (warnings.length > 0) {
+  for (const warning of warnings) console.error(`port: warning — ${warning}`);
 }
 if (problems.length > 0) {
   for (const problem of problems) console.error(`port: ${problem}`);
