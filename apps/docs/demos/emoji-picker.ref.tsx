@@ -1,11 +1,13 @@
-// The reference of `emoji-picker.tsx`: the same static chrome (no live EmojiPicker).
+// The reference of `emoji-picker.tsx`: the same page; the picker is upstream's own component,
+// so this page draws it too (the case declares itself a self-reference).
 import { colors } from "@shadcn-nsh/theme";
-import { mount, Text, View } from "nsh";
+import { mount, signal, Text, View } from "nsh";
 
 import {
   emojiGroups,
   EmojiHeading,
   emojiPickerClasses,
+  EmojiPanel,
   EmojiPreview,
   EmojiTabs,
 } from "@/packages/ui/emoji-picker";
@@ -13,8 +15,12 @@ import {
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 
 function App() {
+  const picked = signal<string | null>(null);
   return (
-    <DemoPage title="Emoji picker">
+    <DemoPage
+      title="Emoji picker"
+      note={() => (picked() ? `Picked ${picked()}` : "Pick an emoji…")}
+    >
       <DemoCard>
         <DemoSection title="Chrome">
           <View
@@ -53,6 +59,11 @@ function App() {
             </View>
             <EmojiPreview entry={null} hint="Pick an emoji…" />
           </View>
+        </DemoSection>
+      </DemoCard>
+      <DemoCard>
+        <DemoSection title="Picker">
+          <EmojiPanel recent={["😀", "🎉", "👍"]} onSelect={({ emoji }) => picked.set(emoji)} />
         </DemoSection>
       </DemoCard>
     </DemoPage>

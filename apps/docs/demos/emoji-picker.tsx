@@ -1,10 +1,11 @@
 import { colors } from "@shadcn-nsh/theme";
-import { mount, Text, View } from "nsh";
+import { mount, signal, Text, View } from "nsh";
 
 import {
   emojiGroups,
   EmojiHeading,
   emojiPickerClasses,
+  EmojiPanel,
   EmojiPreview,
   EmojiTabs,
 } from "@/packages/ui/emoji-picker";
@@ -12,8 +13,12 @@ import {
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 
 function App() {
+  const picked = signal<string | null>(null);
   return (
-    <DemoPage title="Emoji picker">
+    <DemoPage
+      title="Emoji picker"
+      note={() => (picked() ? `Picked ${picked()}` : "Pick an emoji…")}
+    >
       <DemoCard>
         <DemoSection title="Chrome">
           <View
@@ -52,6 +57,11 @@ function App() {
             </View>
             <EmojiPreview entry={null} hint="Pick an emoji…" />
           </View>
+        </DemoSection>
+      </DemoCard>
+      <DemoCard>
+        <DemoSection title="Picker">
+          <EmojiPanel recent={["😀", "🎉", "👍"]} onSelect={({ emoji }) => picked.set(emoji)} />
         </DemoSection>
       </DemoCard>
     </DemoPage>
