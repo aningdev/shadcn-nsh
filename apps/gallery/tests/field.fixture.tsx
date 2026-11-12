@@ -8,7 +8,6 @@ import {
   fieldLook,
   fieldSize,
   numberInputClasses,
-  otpCellLook,
 } from "../../../packages/ui";
 
 function App() {
@@ -19,7 +18,6 @@ function App() {
   const done = signal("");
   const input = fieldLook();
   const numberH = numberInputClasses.frame.includes("h-8") ? 32 : 88;
-  const otp = otpCellLook();
   return (
     <View>
       <Input

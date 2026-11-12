@@ -1,6 +1,6 @@
 import { mount, Text, View } from "nsh";
 
-import { Button, Toast, toastCloseLook, toastText, toastTitle } from "../../../packages/ui";
+import { Toast, toastCloseLook, toastText, toastTitle } from "../../../packages/ui";
 
 function closeSink() {
   const active = toastCloseLook().activeStyle;

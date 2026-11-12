@@ -12,7 +12,6 @@ import {
   progressLook,
   progressRail,
   progressSweep,
-  sliderLook,
 } from "../../../packages/ui";
 
 function App() {
@@ -28,7 +27,6 @@ function App() {
     const translate = bar().indicatorStyle.translate;
     return typeof translate === "string" ? translate : "sweep";
   };
-  const slider = sliderLook();
   const pointer = platform.desktop;
   const thumb = pointer ? 14 : 20;
   const railH = pointer ? 6 : 8;

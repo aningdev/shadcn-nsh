@@ -52,9 +52,10 @@ function View(props: TextViewProps) {
 
 /** A Markdown, HTML or block document. */
 export const TextView = Object.assign(View, {
-  parse: BaseTextView.parse,
-  parseHtml: BaseTextView.parseHtml,
-  plainText: BaseTextView.plainText,
+  // Bound: these are methods of the base export, and detaching one loses its receiver.
+  parse: BaseTextView.parse.bind(BaseTextView),
+  parseHtml: BaseTextView.parseHtml.bind(BaseTextView),
+  plainText: BaseTextView.plainText.bind(BaseTextView),
 });
 
 export type { TextViewDocument };

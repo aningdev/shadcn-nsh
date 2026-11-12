@@ -1,14 +1,7 @@
 import { Text, View, mount, signal } from "nsh";
 import { ColorPicker, ColorSwatch } from "nsh/base";
 
-import {
-  ColorPanel,
-  DiffView,
-  Editor,
-  TextView,
-  colorAreaLook,
-  fieldLook,
-} from "../../../packages/ui";
+import { ColorPanel, DiffView, Editor, TextView, fieldLook } from "../../../packages/ui";
 
 function App() {
   const color = signal("none");

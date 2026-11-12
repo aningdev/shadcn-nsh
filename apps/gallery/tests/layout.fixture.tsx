@@ -13,8 +13,6 @@ import {
   ResizablePanel,
   ResizablePanelGroup,
   carouselArrowLook,
-  carouselDotItemLook,
-  carouselPaginationLook,
   carouselSizes,
   resizableHandleLook,
 } from "../../../packages/ui";
@@ -75,7 +73,6 @@ function App() {
   const start = signal(0);
   const loop = signal(2);
   const arrow = carouselArrowLook();
-  const dotLook = carouselDotItemLook();
   const sink = () => {
     const activeStyle = arrow.activeStyle;
     return activeStyle != null && "transform" in activeStyle ? "move" : "still";

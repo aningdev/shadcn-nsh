@@ -28,6 +28,33 @@ export default defineConfig({
     options: { typeAware: true, typeCheck: true },
     plugins: ["eslint", "typescript", "react", "import", "promise", "node", "vitest"],
     ignorePatterns: ignoreLint,
+    // Upstream text inside `// @port` regions is written by `bun run port:vendor`
+    // and must stay byte-identical to its source, so a finding there cannot be
+    // fixed in place: it would come back on the next vendor run and `port:check`
+    // would fail. Each entry names the upstream file that holds the text. Fix it
+    // upstream, or in the shell around it.
+    overrides: [
+      // theme.ts: `v.spring(next, spring)` returns the animation's promise, dropped on purpose.
+      {
+        files: ["packages/theme/theme.ts"],
+        rules: { "typescript/no-floating-promises": "off" },
+      },
+      // look/meter.ts: `sweep.keyframes(…)` returns the animation's promise, dropped on purpose.
+      {
+        files: ["packages/ui/progress.tsx"],
+        rules: { "typescript/no-floating-promises": "off" },
+      },
+      // emoji.tsx: tabs mapped without keys; a ref callback assigns a `let` declared in the body.
+      {
+        files: ["packages/ui/emoji-picker.tsx"],
+        rules: { "react/immutability": "off", "react/jsx-key": "off" },
+      },
+      // look/color.tsx: menus and swatches mapped without keys; a `let` timer is reassigned in `onPress`.
+      {
+        files: ["packages/ui/color-picker.tsx"],
+        rules: { "react/immutability": "off", "react/jsx-key": "off" },
+      },
+    ],
   },
 
   staged: {

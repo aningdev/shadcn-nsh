@@ -16,7 +16,10 @@ function App() {
   const docs = signal(0);
   const italic = signal(false);
   const locked = signal(false);
-  const track = computed(() => toolbarTrack().backgroundColor);
+  const track = computed(() => {
+    const value = toolbarTrack().backgroundColor;
+    return typeof value === "string" ? value : "gone";
+  });
   const ink = computed(() => colors.text);
   return (
     <View style={{ gap: 12, padding: 16 }}>
