@@ -19,6 +19,7 @@ import {
   readRegion,
   regions,
   renderRegion,
+  portPaths,
   repo,
   route,
   targetPath,
@@ -171,7 +172,7 @@ function walkTodos(dir: string) {
     }
   }
 }
-walkTodos(path.join(repo, map.root));
+for (const root of portPaths(map).todoRoots) walkTodos(root);
 
 const total = counts.ported + counts.pending + counts.excluded;
 console.log(

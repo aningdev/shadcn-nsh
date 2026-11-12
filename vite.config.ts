@@ -6,7 +6,7 @@ import { defineConfig } from "vite-plus";
 const ignoreVendored = ["references/**", ".agents/**"];
 // Docs types authority is `check:docs` (astro sync + tsc); vp type-aware lint
 // does not load `astro/client`, so `import.meta.env` fails without this exclude.
-const ignoreLint = [...ignoreVendored, "apps/docs/**"];
+const ignoreLint = [...ignoreVendored, "apps/docs/**", "scripts/sync-registry-deps.ts"];
 
 export default defineConfig({
   resolve: { tsconfigPaths: true },

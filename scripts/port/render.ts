@@ -8,9 +8,9 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
-import { readMap, repo } from "./lib";
+import { portPaths, readMap, repo } from "./lib";
 
-const demos = path.join(repo, readMap().root, "demos");
+const demos = portPaths(readMap()).demos;
 const shots = path.join(demos, "shots");
 fs.rmSync(shots, { recursive: true, force: true });
 fs.mkdirSync(shots, { recursive: true });

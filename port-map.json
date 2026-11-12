@@ -3,7 +3,7 @@
     "path": "references/nsh/examples/nsh-gallery-ui",
     "commit": "30f87b7c53bde6c03eb13a3f2d4f78ff0c53cde8"
   },
-  "root": "next",
+  "root": ".",
   "files": {
     "README.md": {
       "exclude": "upstream's own description of the layer"
@@ -27,137 +27,422 @@
       "exclude": "sounds are out of scope"
     },
     "emoji.tsx": {
-      "pending": true
+      "to": "packages/ui/emoji-picker.tsx",
+      "replace": {
+        "emojiPickerClasses": {
+          "with": "/** The classes of the picker's parts. */\nexport const emojiPickerClasses = {\n  searchBar: `flex-row items-center gap-2 rounded-lg bg-raised ${platform.desktop ? \"mx-2.5 mt-2 h-8 pl-2.5 pr-1\" : \"mx-3 mt-1 h-10 pl-3 pr-1.5\"}`,\n  search: `flex-1 ${platform.desktop ? \"text-[13px]\" : \"text-base\"} text-foreground placeholder:text-muted-foreground`,\n  list: \"mt-1 flex-1\",\n  /** Eight points each side: some glyphs (🫡) reach past their cell. */\n  row: \"px-2\",\n  group: platform.desktop ? \"px-3 pt-2.5 pb-1\" : \"px-3.5 pt-3 pb-1.5\",\n  /** A cell: quiet until the pointer or the keys are on it (one gray for both, as Slack's), sunk while pressed. */\n  item: platform.desktop\n    ? \"size-9 items-center justify-center rounded-md text-[22px] transition-colors duration-100 motion-reduce:transition-none hover:bg-raised focus:bg-raised active:scale-90\"\n    : \"h-12 flex-1 items-center justify-center rounded-lg text-[28px] active:bg-raised\",\n};",
+          "why": "demo.ts is excluded; use platform.desktop instead of demo's desktop"
+        },
+        "EmojiHeading": {
+          "with": "/** A group's heading: quiet semibold, as Slack's. */\nexport function EmojiHeading(props: { group: EmojiGroup }) {\n  return <Text style={{ fontSize: platform.desktop ? 11.5 : 13, fontWeight: \"600\", color: colors.muted }}>{props.group.label}</Text>;\n}",
+          "why": "demo.ts is excluded; use platform.desktop instead of demo's desktop"
+        },
+        "EmojiTabs": {
+          "with": "/** The groups' tabs: the group at the top selected, a press scrolls there. */\nexport function EmojiTabs(props: { group: string; groups: typeof emojiGroups; onPress: (id: EmojiGroupId) => void }) {\n  return (\n    <Tabs\n      class={`flex-row justify-between ${platform.desktop ? \"mx-2 mt-1.5 h-9 items-start\" : \"mx-1 h-12 items-end border-t border-border\"}`}\n      indicatorClass={platform.desktop ? \"bottom-0 mx-2 h-0.5 rounded-full bg-foreground\" : \"top-0 mx-3 h-0.5 rounded-full bg-foreground\"}\n    >\n      {props.groups.map((g) => (\n        <Tab\n          selected={props.group === g.id}\n          onPress={() => props.onPress(g.id)}\n          accessibilityLabel={g.label}\n          tooltip={platform.desktop ? g.label : undefined}\n          class={`items-center justify-center rounded-md hover:bg-raised focus-visible:outline-2 focus-visible:outline-ring ${platform.desktop ? \"h-8 w-8\" : \"h-11 flex-1\"}`}\n        >\n          <Icon name={g.icon} size={platform.desktop ? 17 : 21} tint={props.group === g.id ? colors.text : colors.faint} />\n        </Tab>\n      ))}\n    </Tabs>\n  );\n}",
+          "why": "demo.ts is excluded; use platform.desktop instead of demo's desktop"
+        },
+        "EmojiTones": {
+          "with": "/**\n * The skin tone hand beside the search field: a press lays the six tones\n * out beside it, a press on one takes it (Slack's).\n */\nexport function EmojiTones(props: { tone: EmojiSkinTone; onChange: (tone: EmojiSkinTone) => void }) {\n  const open = signal(false);\n  const current = () => TONES.find((t) => t.tone === props.tone) ?? TONES[0];\n  const hand = (t: (typeof TONES)[number], onPress: () => void, selected = false) => (\n    <View\n      role=\"button\"\n      accessibilityLabel={t.label}\n      accessibilityState={{ selected }}\n      onPress={onPress}\n      class={`items-center justify-center rounded-md hover:bg-hover active:scale-90 ${platform.desktop ? \"size-6\" : \"size-8\"}`}\n      style={selected ? { backgroundColor: colors.background } : undefined}\n    >\n      <Text style={{ fontSize: platform.desktop ? 15 : 19 }}>{t.hand}</Text>\n    </View>\n  );\n  return (\n    <If when={open()} else={hand(current(), () => open.set(true))}>\n      <View style={{ flexDirection: \"row\", gap: 1 }}>\n        {TONES.map((t) =>\n          hand(\n            t,\n            () => {\n              props.onChange(t.tone);\n              open.set(false);\n            },\n            t.tone === props.tone,\n          ),\n        )}\n      </View>\n    </If>\n  );\n}",
+          "why": "demo.ts is excluded; use platform.desktop instead of demo's desktop"
+        },
+        "EmojiPanel": {
+          "with": "/**\n * The whole picker: tabs, search with the skin tone hand, the grid, the\n * preview on a desktop (the tabs at the bottom on a phone, `fill`ing the\n * sheet). `recent` leads; the skin tone is kept here for the demo's life.\n */\nexport function EmojiPanel(props: {\n  onSelect: (e: { emoji: string; base: string }) => void;\n  onCancel?: () => void;\n  recent?: string[];\n  fill?: boolean;\n  class?: string;\n}) {\n  const tone = signal<EmojiSkinTone>(\"none\");\n  const group = signal<string>(\"\");\n  const active = signal<EmojiEntry | null>(null);\n  let picker: EmojiPickerRef | undefined;\n  const groups = () => emojiGroups.filter((g) => g.id !== \"recent\" || (props.recent?.length ?? 0) > 0);\n  const tabs = () => <EmojiTabs group={group() || groups()[0].id} groups={groups()} onPress={(id) => picker?.scrollToGroup(id)} />;\n  return (\n    <EmojiPicker\n      ref={(r) => (picker = r)}\n      class={props.class ?? (props.fill ? \"flex-1\" : \"h-[392px] w-[342px]\")}\n      recent={props.recent ?? []}\n      skinTone={tone()}\n      groupLabels={emojiGroupLabels}\n      columns={platform.desktop ? 9 : 8}\n      emojiVersion=\"15.1\"\n      autoFocus={platform.desktop}\n      placeholder=\"Search emoji\"\n      accessibilityLabel=\"Emoji\"\n      searchAccessibilityLabel=\"Search emoji\"\n      onSelect={({ emoji, base }) => props.onSelect({ emoji, base })}\n      onCancel={props.onCancel}\n      onGroupChange={({ group: next }) => group.set(next)}\n      onHighlightChange={({ highlighted }) => active.set(highlighted)}\n      searchBarClass={emojiPickerClasses.searchBar}\n      searchClass={emojiPickerClasses.search}\n      listClass={emojiPickerClasses.list}\n      rowClass={emojiPickerClasses.row}\n      groupClass={emojiPickerClasses.group}\n      itemClass={emojiPickerClasses.item}\n      searchPrefix={<Icon name=\"search\" size={platform.desktop ? 14 : 16} tint={colors.faint} />}\n      searchSuffix={<EmojiTones tone={tone()} onChange={(next) => tone.set(next)} />}\n      header={props.fill ? undefined : tabs()}\n      footer={props.fill ? tabs() : <EmojiPreview entry={active()} hint=\"Pick an emoji…\" />}\n      empty={\n        <View style={{ flex: 1, alignItems: \"center\", justifyContent: \"center\", gap: 6, paddingBottom: 24 }}>\n          <Text style={{ fontSize: 28 }}>🔍</Text>\n          <Text style={{ fontSize: 13, color: colors.muted }}>No emoji found</Text>\n        </View>\n      }\n      loading={\n        <View style={{ flex: 1, alignItems: \"center\", justifyContent: \"center\" }}>\n          <Text style={{ fontSize: 13, color: colors.faint }}>Loading emoji…</Text>\n        </View>\n      }\n      renderGroup={(g) => <EmojiHeading group={g} />}\n    />\n  );\n}",
+          "why": "demo.ts is excluded; use platform.desktop instead of demo's desktop"
+        }
+      }
     },
     "theme.json": {
-      "copy": "theme/theme.json"
+      "copy": "packages/theme/theme.json"
     },
     "finishes.json": {
-      "copy": "theme/finishes.json"
+      "copy": "packages/theme/finishes.json"
     },
     "theme.ts": {
-      "to": "theme/theme.ts"
+      "to": "packages/theme/theme.ts"
     },
     "look/press.ts": {
-      "to": "ui/lib/press.ts"
+      "to": "packages/ui/lib/press.ts"
     },
     "look/switch-geometry.ts": {
-      "to": "ui/lib/switch-geometry.ts"
+      "to": "packages/ui/lib/switch-geometry.ts"
     },
     "look/button.ts": {
-      "to": "ui/button.tsx"
+      "to": "packages/ui/button.tsx"
     },
     "look/switch.ts": {
-      "to": "ui/switch.tsx"
+      "to": "packages/ui/switch.tsx"
     },
     "look/overlay.ts": {
       "symbols": {
-        "pointer": "ui/dialog.tsx",
-        "backdrop": "ui/lib/overlay.ts",
-        "dialogCard": "ui/dialog.tsx",
-        "dialogTitle": "ui/dialog.tsx",
-        "dialogText": "ui/dialog.tsx"
-      },
-      "pending": true
+        "pointer": ["packages/ui/dialog.tsx", "packages/ui/popover.tsx", "packages/ui/toast.tsx"],
+        "backdrop": "packages/ui/lib/overlay.ts",
+        "dialogCard": "packages/ui/dialog.tsx",
+        "dialogTitle": "packages/ui/dialog.tsx",
+        "dialogText": "packages/ui/dialog.tsx",
+        "TooltipLookOptions": "packages/ui/tooltip.tsx",
+        "tooltipLook": "packages/ui/tooltip.tsx",
+        "tooltipText": "packages/ui/tooltip.tsx",
+        "tooltipNote": "packages/ui/tooltip.tsx",
+        "PopoverLookOptions": "packages/ui/popover.tsx",
+        "popoverLook": "packages/ui/popover.tsx",
+        "SheetSide": "packages/ui/sheet.tsx",
+        "sheetPanel": "packages/ui/sheet.tsx",
+        "sheetGrabber": "packages/ui/sheet.tsx",
+        "toastLook": "packages/ui/toast.tsx",
+        "toastTitle": "packages/ui/toast.tsx",
+        "toastText": "packages/ui/toast.tsx",
+        "toastAction": "packages/ui/toast.tsx",
+        "toastActionLook": "packages/ui/toast.tsx",
+        "toastActionLabel": "packages/ui/toast.tsx",
+        "toastCloseLook": "packages/ui/toast.tsx"
+      }
     },
     "index.tsx": {
       "symbols": {
-        "Spinner": "ui/spinner.tsx"
+        "Spinner": "packages/ui/spinner.tsx",
+        "Badge": "packages/ui/badge.tsx",
+        "Status": "packages/ui/status.tsx",
+        "Stat": "packages/ui/stat.tsx",
+        "Meter": "packages/ui/meter.tsx",
+        "Legend": "packages/ui/plot.tsx"
       },
-      "pending": true
+      "exclude": {
+        "hint": "demo kit helper",
+        "bindRefresh": "demo kit helper",
+        "Press": "demo kit pressable; pressSink lives in ui/lib/press",
+        "tabPress": "demo kit helper",
+        "Appear": "demo kit enter animation",
+        "IconTile": "demo kit decoration",
+        "pointer": "private density flag for gallery demos",
+        "SectionHead": "demo kit; demos use DemoSection",
+        "focusedSection": "gallery screenshot filter",
+        "Card": "demo kit section card; demos use DemoCard",
+        "Inset": "demo kit padding",
+        "Caption": "demo kit helper",
+        "Figure": "demo kit helper",
+        "LastEvent": "demo kit helper",
+        "LabeledToggle": "demo kit helper",
+        "Row": "demo kit list row",
+        "ButtonVariant": "superseded by ButtonKind on ui/button",
+        "Button": "gallery wrapper with sound; look is ui/button",
+        "ToggleButton": "gallery wrapper; look is ui/button",
+        "RoundButton": "gallery wrapper; look is ui/button",
+        "Section": "demo kit; demos use DemoSection",
+        "Toggle": "gallery switch wrapper with sound; look is ui/switch",
+        "Sheet": "gallery sheet wrapper with sound; look is ui/sheet",
+        "Tip": "gallery tooltip wrapper; look is ui/tooltip"
+      }
     },
     "avatar.ts": {
-      "pending": true
+      "symbols": {
+        "avatarHue": "packages/ui/avatar.tsx",
+        "avatarIdentity": "packages/ui/avatar.tsx",
+        "MAINTAINERS": "packages/ui/avatar.tsx",
+        "avatarPortrait": "packages/ui/avatar.tsx",
+        "AVATAR_BROKEN": "packages/ui/avatar.tsx",
+        "oklch": "packages/ui/avatar.tsx",
+        "HUES": "packages/ui/avatar.tsx",
+        "hash": "packages/ui/avatar.tsx"
+      }
     },
     "color-format.ts": {
-      "pending": true
+      "to": "packages/ui/lib/color-format.ts"
     },
     "command.tsx": {
-      "pending": true
+      "to": "packages/ui/command.tsx"
     },
     "data-table.ts": {
-      "pending": true
+      "symbols": {
+        "dataTableClasses": "packages/ui/data-table.tsx",
+        "dataTableFitPadding": "packages/ui/data-table.tsx"
+      }
     },
     "icons.tsx": {
-      "to": "ui/lib/icons.tsx"
+      "to": "packages/ui/lib/icons.tsx"
     },
     "popup.tsx": {
-      "to": "ui/lib/popup.tsx"
+      "to": "packages/ui/lib/popup.tsx"
     },
     "scrollbar-theme.ts": {
-      "pending": true
+      "symbols": {
+        "touch": "packages/ui/scrollbar.tsx",
+        "scrollbarTheme": "packages/ui/scrollbar.tsx"
+      }
     },
     "segmented.tsx": {
-      "pending": true
+      "exclude": "gallery wrapper; look is segmentedLook; shell is composition in ui/segmented.tsx"
     },
     "slider.ts": {
-      "pending": true
+      "symbols": {
+        "SliderLookOptions": "packages/ui/slider.tsx",
+        "sliderValueClass": "packages/ui/slider.tsx",
+        "sliderValueStyle": "packages/ui/slider.tsx",
+        "sliderLook": "packages/ui/slider.tsx",
+        "sliderFill": "packages/ui/slider.tsx"
+      }
     },
     "tree.tsx": {
-      "pending": true
+      "to": "packages/ui/tree.tsx"
     },
     "look/choice.tsx": {
-      "pending": true
+      "symbols": {
+        "CheckboxMarkKind": "packages/ui/checkbox.tsx",
+        "ChoiceOptions": "packages/ui/checkbox.tsx",
+        "dims": ["packages/ui/checkbox.tsx", "packages/ui/radio-group.tsx"],
+        "choiceWell": "packages/ui/checkbox.tsx",
+        "centered": "packages/ui/checkbox.tsx",
+        "choiceSink": "packages/ui/checkbox.tsx",
+        "CheckboxLook": "packages/ui/checkbox.tsx",
+        "checkboxLook": "packages/ui/checkbox.tsx",
+        "ChoiceLight": "packages/ui/checkbox.tsx",
+        "MARK_WEIGHT": "packages/ui/checkbox.tsx",
+        "CheckboxMark": "packages/ui/checkbox.tsx",
+        "Live": ["packages/ui/checkbox.tsx", "packages/ui/radio-group.tsx"],
+        "read": ["packages/ui/checkbox.tsx", "packages/ui/radio-group.tsx"],
+        "RadioRing": "packages/ui/radio-group.tsx",
+        "ChoiceTileOptions": "packages/ui/radio-group.tsx",
+        "ChoiceTileLook": "packages/ui/radio-group.tsx",
+        "choiceTileLook": "packages/ui/radio-group.tsx"
+      }
     },
     "look/color.tsx": {
-      "pending": true
+      "to": "packages/ui/color-picker.tsx"
     },
     "look/disclosure.tsx": {
-      "pending": true
+      "symbols": {
+        "DisclosureTriggerOptions": "packages/ui/accordion.tsx",
+        "disclosureTriggerLook": "packages/ui/accordion.tsx",
+        "DisclosureChevron": "packages/ui/accordion.tsx",
+        "DisclosurePanelOptions": "packages/ui/accordion.tsx",
+        "disclosurePanel": "packages/ui/accordion.tsx"
+      }
     },
     "look/field.tsx": {
-      "pending": true
+      "symbols": {
+        "pointer": [
+          "packages/ui/input.tsx",
+          "packages/ui/number-input.tsx",
+          "packages/ui/otp-input.tsx",
+          "packages/ui/time-field.tsx"
+        ],
+        "Live": ["packages/ui/input.tsx", "packages/ui/otp-input.tsx"],
+        "read": ["packages/ui/input.tsx", "packages/ui/otp-input.tsx"],
+        "fieldSize": "packages/ui/input.tsx",
+        "FieldLookOptions": "packages/ui/input.tsx",
+        "EdgeOptions": "packages/ui/input.tsx",
+        "edgeClass": "packages/ui/input.tsx",
+        "fieldEdge": "packages/ui/input.tsx",
+        "frame": "packages/ui/input.tsx",
+        "fieldLook": "packages/ui/input.tsx",
+        "FieldTextOptions": "packages/ui/input.tsx",
+        "fieldText": "packages/ui/input.tsx",
+        "inputLook": "packages/ui/input.tsx",
+        "press": "packages/ui/number-input.tsx",
+        "numberInputClasses": "packages/ui/number-input.tsx",
+        "numberInputText": "packages/ui/number-input.tsx",
+        "STEP_GLYPHS": "packages/ui/number-input.tsx",
+        "NumberStep": "packages/ui/number-input.tsx",
+        "numberInputSteps": "packages/ui/number-input.tsx",
+        "otpCells": "packages/ui/otp-input.tsx",
+        "OtpCellOptions": "packages/ui/otp-input.tsx",
+        "otpCellLook": "packages/ui/otp-input.tsx",
+        "timeFieldClass": "packages/ui/time-field.tsx"
+      }
     },
     "look/listbox.tsx": {
-      "pending": true
+      "symbols": {
+        "pointer": [
+          "packages/ui/lib/listbox.tsx",
+          "packages/ui/select.tsx",
+          "packages/ui/combobox.tsx",
+          "packages/ui/calendar.tsx"
+        ],
+        "Live": [
+          "packages/ui/select.tsx",
+          "packages/ui/combobox.tsx",
+          "packages/ui/date-picker.tsx"
+        ],
+        "read": [
+          "packages/ui/select.tsx",
+          "packages/ui/combobox.tsx",
+          "packages/ui/date-picker.tsx"
+        ],
+        "ListboxPopupOptions": "packages/ui/lib/listbox.tsx",
+        "listboxPopup": "packages/ui/lib/listbox.tsx",
+        "optionClass": "packages/ui/lib/listbox.tsx",
+        "listboxProps": "packages/ui/lib/listbox.tsx",
+        "Chevron": [
+          "packages/ui/lib/listbox.tsx",
+          "packages/ui/select.tsx",
+          "packages/ui/combobox.tsx"
+        ],
+        "clearInset": ["packages/ui/lib/listbox.tsx", "packages/ui/select.tsx"],
+        "ClearButtonOptions": "packages/ui/lib/listbox.tsx",
+        "clearButtonLook": "packages/ui/lib/listbox.tsx",
+        "OptionRow": "packages/ui/lib/listbox.tsx",
+        "ListboxHeader": "packages/ui/lib/listbox.tsx",
+        "ListboxEmpty": "packages/ui/lib/listbox.tsx",
+        "listboxFooter": "packages/ui/lib/listbox.tsx",
+        "listboxSearch": "packages/ui/lib/listbox.tsx",
+        "PickerLookOptions": "packages/ui/select.tsx",
+        "pickerLook": "packages/ui/select.tsx",
+        "PickerProps": "packages/ui/select.tsx",
+        "Picker": "packages/ui/select.tsx",
+        "ComboboxLookOptions": "packages/ui/combobox.tsx",
+        "comboboxLook": "packages/ui/combobox.tsx",
+        "ComboToggle": "packages/ui/combobox.tsx",
+        "CalendarItemProps": "packages/ui/calendar.tsx",
+        "CalendarItem": "packages/ui/calendar.tsx",
+        "TimeSegment": "packages/ui/calendar.tsx",
+        "calendarLook": "packages/ui/calendar.tsx",
+        "DateTrigger": "packages/ui/date-picker.tsx",
+        "DatePickerLookOptions": "packages/ui/date-picker.tsx",
+        "datePickerLook": "packages/ui/date-picker.tsx",
+        "MONTHS": "packages/ui/calendar.tsx",
+        "WEEKDAY_INITIALS": "packages/ui/calendar.tsx",
+        "WEEKDAYS": "packages/ui/calendar.tsx",
+        "cell": "packages/ui/calendar.tsx",
+        "monthGap": ["packages/ui/calendar.tsx", "packages/ui/date-picker.tsx"],
+        "weekGap": "packages/ui/calendar.tsx",
+        "cellRadius": "packages/ui/calendar.tsx",
+        "quietFill": "packages/ui/calendar.tsx",
+        "pressedFill": "packages/ui/calendar.tsx",
+        "columnOf": "packages/ui/calendar.tsx",
+        "triggerIcon": ["packages/ui/select.tsx", "packages/ui/calendar.tsx"]
+      }
     },
     "look/menu.tsx": {
-      "pending": true
+      "symbols": {
+        "MenuItemDimensions": "packages/ui/menu.tsx",
+        "menuItemSize": "packages/ui/menu.tsx",
+        "menuHighlight": "packages/ui/menu.tsx",
+        "menuPressed": "packages/ui/menu.tsx",
+        "MenuItemLookOptions": "packages/ui/menu.tsx",
+        "menuItemLook": "packages/ui/menu.tsx",
+        "MenuItemTextOptions": "packages/ui/menu.tsx",
+        "menuItemLabel": "packages/ui/menu.tsx",
+        "menuItemNote": "packages/ui/menu.tsx",
+        "menuItemGlyph": "packages/ui/menu.tsx",
+        "MenuPopupOptions": "packages/ui/menu.tsx",
+        "menuPopup": "packages/ui/menu.tsx",
+        "MenuLabel": "packages/ui/menu.tsx",
+        "menuSeparator": "packages/ui/menu.tsx",
+        "SubmenuRow": "packages/ui/menu.tsx",
+        "SubmenuBack": "packages/ui/menu.tsx",
+        "inset": "packages/ui/menu.tsx",
+        "pointer": "packages/ui/menu.tsx"
+      }
     },
     "look/meter.ts": {
-      "pending": true
+      "symbols": {
+        "progressGlide": "packages/ui/progress.tsx",
+        "progressRemaining": "packages/ui/progress.tsx",
+        "progressRail": "packages/ui/progress.tsx",
+        "progressFill": "packages/ui/progress.tsx",
+        "ProgressSweep": "packages/ui/progress.tsx",
+        "progressSweep": "packages/ui/progress.tsx",
+        "ProgressLookOptions": "packages/ui/progress.tsx",
+        "progressLook": "packages/ui/progress.tsx",
+        "Live": "packages/ui/progress.tsx",
+        "read": "packages/ui/progress.tsx"
+      }
     },
     "look/nav.tsx": {
-      "pending": true
+      "symbols": {
+        "carouselSizes": "packages/ui/carousel.tsx",
+        "CarouselArrowOptions": "packages/ui/carousel.tsx",
+        "carouselArrowLook": "packages/ui/carousel.tsx",
+        "carouselPaginationLook": "packages/ui/carousel.tsx",
+        "carouselDotItemLook": "packages/ui/carousel.tsx",
+        "CarouselDot": "packages/ui/carousel.tsx",
+        "fade": "packages/ui/carousel.tsx",
+        "linkSize": "packages/ui/link.tsx",
+        "LinkState": "packages/ui/link.tsx",
+        "linkColor": "packages/ui/link.tsx",
+        "linkLook": "packages/ui/link.tsx",
+        "LinkText": "packages/ui/link.tsx",
+        "tint": "packages/ui/link.tsx",
+        "slide": "packages/ui/link.tsx",
+        "paginationItemClass": "packages/ui/pagination.tsx",
+        "paginationArrows": "packages/ui/pagination.tsx",
+        "pointer": [
+          "packages/ui/carousel.tsx",
+          "packages/ui/link.tsx",
+          "packages/ui/pagination.tsx"
+        ],
+        "pageItem": "packages/ui/pagination.tsx"
+      }
     },
     "look/plot.ts": {
-      "pending": true
+      "to": "packages/ui/plot.tsx"
     },
     "look/surface.tsx": {
-      "to": "ui/lib/surface.tsx"
+      "to": "packages/ui/lib/surface.tsx"
     },
     "look/tabs.tsx": {
-      "pending": true
+      "symbols": {
+        "TabState": "packages/ui/tabs.tsx",
+        "TabLook": "packages/ui/tabs.tsx",
+        "tabsLook": "packages/ui/tabs.tsx",
+        "underlineTabsLook": "packages/ui/tabs.tsx",
+        "TAB_ICON_ROOM": "packages/ui/tabs.tsx",
+        "TabTitle": "packages/ui/tabs.tsx",
+        "hoverOf": "packages/ui/tabs.tsx",
+        "SegmentedSize": "packages/ui/segmented.tsx",
+        "SegmentedLookOptions": "packages/ui/segmented.tsx",
+        "segmentedLook": "packages/ui/segmented.tsx",
+        "pointer": "packages/ui/segmented.tsx",
+        "Live": ["packages/ui/tabs.tsx", "packages/ui/segmented.tsx"],
+        "read": ["packages/ui/tabs.tsx", "packages/ui/segmented.tsx"]
+      }
     },
     "look/tool.ts": {
-      "pending": true,
       "symbols": {
-        "ToggleSize": "ui/toggle.tsx",
-        "Live": "ui/toggle.tsx",
-        "ToggleLookOptions": "ui/toggle.tsx",
-        "ToggleDimensions": "ui/toggle.tsx",
-        "pointer": "ui/toggle.tsx",
-        "toggleSizes": "ui/toggle.tsx",
-        "TOUCH_TARGET": "ui/toggle.tsx",
-        "slop": "ui/toggle.tsx",
-        "sink": "ui/toggle.tsx",
-        "transition": "ui/toggle.tsx",
-        "read": "ui/toggle.tsx",
-        "dimensions": "ui/toggle.tsx",
-        "toggleLook": "ui/toggle.tsx",
-        "ink": "ui/toggle.tsx",
-        "toggleLabel": "ui/toggle.tsx",
-        "toggleGlyph": "ui/toggle.tsx"
+        "ToggleSize": "packages/ui/toggle.tsx",
+        "Live": "packages/ui/toggle.tsx",
+        "ToggleLookOptions": "packages/ui/toggle.tsx",
+        "ToggleDimensions": "packages/ui/toggle.tsx",
+        "pointer": "packages/ui/toggle.tsx",
+        "toggleSizes": "packages/ui/toggle.tsx",
+        "TOUCH_TARGET": "packages/ui/toggle.tsx",
+        "slop": "packages/ui/toggle.tsx",
+        "sink": "packages/ui/toggle.tsx",
+        "transition": "packages/ui/toggle.tsx",
+        "read": "packages/ui/toggle.tsx",
+        "dimensions": "packages/ui/toggle.tsx",
+        "toggleLook": "packages/ui/toggle.tsx",
+        "ink": "packages/ui/toggle.tsx",
+        "toggleLabel": "packages/ui/toggle.tsx",
+        "toggleGlyph": "packages/ui/toggle.tsx",
+        "ToolbarTrackOptions": "packages/ui/toolbar.tsx",
+        "toolbarTrack": "packages/ui/toolbar.tsx",
+        "toolbarRule": "packages/ui/toolbar.tsx"
       }
     },
     "look/workspace.tsx": {
-      "pending": true
+      "symbols": {
+        "handleThumb": "packages/ui/resizable.tsx",
+        "resizableHandle": "packages/ui/resizable.tsx",
+        "resizableHandleLook": "packages/ui/resizable.tsx",
+        "dockClasses": "packages/ui/dock-area.tsx",
+        "DockTab": "packages/ui/dock-area.tsx",
+        "dockTabCloseClass": "packages/ui/dock-area.tsx",
+        "DockDragPreview": "packages/ui/dock-area.tsx",
+        "diffViewStyles": "packages/ui/diff-view.tsx",
+        "diffHunkTone": "packages/ui/diff-view.tsx",
+        "HunkAction": "packages/ui/diff-view.tsx",
+        "DIFF_PAD": "packages/ui/diff-view.tsx",
+        "DiffHunkActions": "packages/ui/diff-view.tsx",
+        "textViewLinkClasses": "packages/ui/text-view.tsx",
+        "textViewCaretClass": "packages/ui/text-view.tsx",
+        "richEditorClasses": "packages/ui/editor.tsx"
+      }
     },
     "tests/App.tsx": {
-      "pending": true
+      "exclude": "upstream gallery test harness"
     },
     "tests/nsh.json": {
-      "pending": true
+      "exclude": "upstream gallery test harness"
     }
   }
 }

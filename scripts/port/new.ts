@@ -8,7 +8,17 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
-import { declarations, readMap, repo, route, targetPath, type PortMap, upstreamDir } from "./lib";
+import {
+  declarations,
+  defaultUiRel,
+  portPaths,
+  readMap,
+  repo,
+  route,
+  targetPath,
+  type PortMap,
+  upstreamDir,
+} from "./lib";
 
 const templatesDir = path.join(import.meta.dir, "templates");
 
@@ -216,7 +226,7 @@ function registryDeps(source: string, id: string): string[] {
 }
 
 function updateRegistry(map: PortMap, args: Args, Id: string, uiRel: string) {
-  const registryPath = path.join(repo, map.root, "registry.json");
+  const registryPath = portPaths(map).registry;
   const registry = JSON.parse(fs.readFileSync(registryPath, "utf8")) as {
     items: {
       name: string;
@@ -283,7 +293,8 @@ function main() {
   const map = readMap();
   const Id = toPascal(args.id);
   const camel = toCamel(args.id);
-  const uiRel = `ui/${args.id}.tsx`;
+  const uiRel = defaultUiRel(map, args.id);
+  const paths = portPaths(map);
   const vars = {
     id: args.id,
     Id,
@@ -314,27 +325,13 @@ function main() {
 
   const demoTemplate = args.family ? "demo.family.tsx.tmpl" : "demo.tsx.tmpl";
   const refTemplate = args.family ? "demo.family.ref.tsx.tmpl" : "demo.ref.tsx.tmpl";
-  writeNew(
-    path.join(repo, map.root, "demos", `${args.id}.tsx`),
-    render(readTemplate(demoTemplate), vars),
-  );
-  writeNew(
-    path.join(repo, map.root, "demos", `${args.id}.ref.tsx`),
-    render(readTemplate(refTemplate), vars),
-  );
-  writeNew(
-    path.join(repo, map.root, "docs", `${args.id}.md`),
-    render(readTemplate("docs.md.tmpl"), vars),
-  );
+  writeNew(path.join(paths.demos, `${args.id}.tsx`), render(readTemplate(demoTemplate), vars));
+  writeNew(path.join(paths.demos, `${args.id}.ref.tsx`), render(readTemplate(refTemplate), vars));
+  writeNew(path.join(paths.docs, `${args.id}.md`), render(readTemplate("docs.md.tmpl"), vars));
 
+  patchList(path.join(paths.demos, "App.tsx"), /const demos = \[[^\]]*\]/, args.id, "array");
   patchList(
-    path.join(repo, map.root, "demos", "App.tsx"),
-    /const demos = \[[^\]]*\]/,
-    args.id,
-    "array",
-  );
-  patchList(
-    path.join(repo, map.root, "demos", "render.test.tsx"),
+    path.join(paths.demos, "render.test.tsx"),
     /const cases: Case\[] = \[[\s\S]*?\];/,
     args.id,
     "cases",
@@ -344,12 +341,12 @@ function main() {
 
   const fmt = [
     targetPath(map, uiRel),
-    path.join(repo, map.root, "demos", `${args.id}.tsx`),
-    path.join(repo, map.root, "demos", `${args.id}.ref.tsx`),
-    path.join(repo, map.root, "demos", "App.tsx"),
-    path.join(repo, map.root, "demos", "render.test.tsx"),
-    path.join(repo, map.root, "docs", `${args.id}.md`),
-    path.join(repo, map.root, "registry.json"),
+    path.join(paths.demos, `${args.id}.tsx`),
+    path.join(paths.demos, `${args.id}.ref.tsx`),
+    path.join(paths.demos, "App.tsx"),
+    path.join(paths.demos, "render.test.tsx"),
+    path.join(paths.docs, `${args.id}.md`),
+    paths.registry,
     path.join(repo, "port-map.json"),
   ];
   spawnSync("vp", ["fmt", ...fmt], { cwd: repo, stdio: "inherit" });
