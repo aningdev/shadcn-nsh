@@ -1,0 +1,124 @@
+name: Setup NSH
+description: >-
+  Build the NSH CLI and the web runtimes from `references/nsh`, at the commit
+  `port-map.json` pins, cache them by that commit, and put `nsh` on PATH with
+  `NSH_RUNTIME` pointing at the runtimes. The code is written against the
+  nightly / source CLI, not a store release, so a workflow that uses the CLI
+  must use this action. See docs/toolchain.md.
+
+  The repository must be checked out with `submodules: recursive`, and Bun must
+  be set up first (the scripts read `port-map.json` with it).
+
+inputs:
+  commit:
+    description: >-
+      The `references/nsh` commit to build (default: `port-map.json`'s
+      `upstream.commit`).
+    required: false
+    default: ""
+
+outputs:
+  commit:
+    description: The full commit the CLI and runtimes were built from.
+    value: ${{ steps.pin.outputs.commit }}
+
+runs:
+  using: composite
+  steps:
+    - name: Resolve the pinned commit
+      id: pin
+      shell: bash
+      run: |
+        set -euo pipefail
+        commit='${{ inputs.commit }}'
+        if [ -z "$commit" ]; then
+          commit="$(node -p "require('./port-map.json').upstream.commit")"
+        fi
+        if ! [[ "$commit" =~ ^[0-9a-f]{40}$ ]]; then
+          echo "::error::'$commit' is not a full commit: pass the 40-digit commit, or set references/nsh and port-map.json (bun run port:bump)"
+          exit 1
+        fi
+        printf 'Building NSH at %s\n' "$commit"
+        echo "commit=$commit" >> "$GITHUB_OUTPUT"
+        {
+          echo "NSH_PIN=$commit"
+          echo "NSH_BUILD=$HOME/.nsh-sync"
+        } >> "$GITHUB_ENV"
+
+    - name: Check the submodule is at the pin
+      shell: bash
+      run: |
+        set -euo pipefail
+        if [ ! -e references/nsh/.git ]; then
+          echo "::error::references/nsh is missing: the checkout needs 'submodules: recursive'"
+          exit 1
+        fi
+        head="$(git -C references/nsh rev-parse HEAD)"
+        if [ "$head" != "$NSH_PIN" ]; then
+          echo "::error::references/nsh is at $head, port-map.json pins $NSH_PIN: the CLI must be built from the pinned commit. Run 'git submodule update --init references/nsh' in the workflow, or move the baseline with 'bun run port:bump'. See docs/toolchain.md."
+          exit 1
+        fi
+
+    - name: Install the web runtimes' C tools
+      if: runner.os == 'Linux'
+      shell: bash
+      run: |
+        # The web runtime's C code (zstd) is compiled for wasm32: clang compiles
+        # it, llvm-ar archives it, and the host build of the CLI's bindgen needs
+        # libclang. Upstream's own website workflow installs the same three.
+        sudo apt-get update -qq
+        sudo apt-get install -y -qq --no-install-recommends clang llvm libclang-dev
+        clang --version | head -1
+        llvm-ar --version | head -1
+
+    - name: Setup Rust
+      uses: dtolnay/rust-toolchain@stable
+      with:
+        targets: wasm32-unknown-unknown
+
+    - name: Cache the CLI and web runtimes
+      id: cache
+      uses: actions/cache@v4
+      with:
+        path: ~/.nsh-sync
+        # Per commit: a new baseline builds once, then every run restores it. The
+        # script is in the key so a change to the build itself cannot restore a
+        # tree made the old way.
+        key: nsh-sync-${{ runner.os }}-${{ steps.pin.outputs.commit }}-${{ hashFiles('scripts/nsh-build.sh') }}
+
+    - name: Cache Cargo downloads
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.cargo/registry
+          ~/.cargo/git
+        key: nsh-cargo-${{ runner.os }}-${{ hashFiles('references/nsh/Cargo.lock') }}
+        restore-keys: |
+          nsh-cargo-${{ runner.os }}-
+
+    - name: Build the CLI and web runtimes
+      if: steps.cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: bash scripts/nsh-build.sh "$NSH_BUILD"
+
+    - name: Install and verify
+      shell: bash
+      run: |
+        set -euo pipefail
+        mkdir -p "$HOME/.local/bin"
+        ln -sfn "$NSH_BUILD/bin/nsh" "$HOME/.local/bin/nsh"
+        echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+        # `nsh package --target web` (docs demos) and `nsh test --target web`
+        # (render check) find their runtimes here instead of rebuilding them.
+        echo "NSH_RUNTIME=$NSH_BUILD/runtime" >> "$GITHUB_ENV"
+        printf 'nsh: %s\n' "$("$HOME/.local/bin/nsh" --version)"
+        for file in web/nsh-browser.wasm web/nsh-dev.wasm web/nsh.js; do
+          if [ ! -f "$NSH_BUILD/runtime/$file" ]; then
+            echo "::error::$NSH_BUILD/runtime/$file is missing: the cached runtime is incomplete, drop the nsh-sync cache and re-run"
+            exit 1
+          fi
+        done
+
+    - name: Check the CLI's commit is the baseline
+      shell: bash
+      run: bash scripts/nsh-version.sh

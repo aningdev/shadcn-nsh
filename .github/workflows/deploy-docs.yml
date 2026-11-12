@@ -20,6 +20,10 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
+        with:
+          # The `nsh` CLI is built from references/nsh at the commit port-map.json
+          # pins, so the submodule has to be there.
+          submodules: recursive
 
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
@@ -37,39 +41,12 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      # Store / GitHub release CLI (currently 0.4.0). Phase-1 UI only uses
-      # nsh/base exports from this release — no cargo/source rebuild.
-      - name: Cache NSH store install
-        id: cache-nsh
-        uses: actions/cache@v4
-        with:
-          path: ~/.nsh
-          key: nsh-store-${{ runner.os }}-0.4.0
-          restore-keys: |
-            nsh-store-${{ runner.os }}-
-
-      - name: Install NSH (store CLI release)
-        run: |
-          set -eu
-          nsh_bin="$HOME/.nsh/bin/nsh"
-
-          link_nsh() {
-            mkdir -p "$HOME/.local/bin"
-            ln -sfn "$nsh_bin" "$HOME/.local/bin/nsh"
-            echo "$HOME/.local/bin" >> "$GITHUB_PATH"
-          }
-
-          if [ "${{ steps.cache-nsh.outputs.cache-hit }}" = "true" ] \
-            && [ -x "$nsh_bin" ]; then
-            echo "NSH store cache hit — skipping download"
-            link_nsh
-            "$HOME/.local/bin/nsh" -V
-            exit 0
-          fi
-
-          curl -fsSL https://nsh.dev/install.sh | sh
-          link_nsh
-          "$HOME/.local/bin/nsh" -V
+      # The CLI the code is written for: built from the pinned upstream commit, with
+      # the web runtimes `bun run docs:demos` packages the demos with. A store release
+      # or an older nightly does not have what the ported code uses; the action fails
+      # when `nsh --version`'s commit is not the baseline (docs/toolchain.md).
+      - name: Setup NSH
+        uses: ./.github/actions/setup-nsh
 
       - name: Build docs
         run: bun run build:docs
