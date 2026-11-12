@@ -1,0 +1,87 @@
+name: Check
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          # The port's checks compare the repo with references/nsh at the pinned
+          # commit, and the CLI is built from it.
+          submodules: recursive
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+
+      - name: Cache Bun package downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/.bun/install/cache
+          key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
+          restore-keys: |
+            bun-${{ runner.os }}-
+
+      - name: Install dependencies
+        run: bun install --frozen-lockfile
+
+      # Built from references/nsh at port-map.json's commit, cached by that commit;
+      # fails when `nsh --version`'s commit is not the baseline (docs/toolchain.md).
+      - name: Setup NSH
+        uses: ./.github/actions/setup-nsh
+
+      # The port's gate: map complete, `// @port` regions equal to upstream, CLI not
+      # behind the baseline (docs/port-plan.md P1–P3).
+      - name: Port check
+        run: bun run port:check
+
+      - name: Type check the demos
+        run: nsh check apps/docs/demos
+
+      - name: Type check the gallery
+        run: nsh check apps/gallery
+
+      - name: Unit tests
+        run: bun run test:unit
+
+      - name: Check the docs site
+        run: bun run check:docs
+
+      # Each component's screenshot must equal the same page written against nsh/base
+      # directly (P4). `nsh test --target web` drives a headless Chrome, which the
+      # runner image has; say so plainly when it does not.
+      - name: Find Chrome
+        run: |
+          for browser in google-chrome google-chrome-stable chromium chromium-browser; do
+            if command -v "$browser" >/dev/null 2>&1; then
+              "$browser" --version
+              exit 0
+            fi
+          done
+          echo "::error::no Chrome, Edge or Chromium on PATH: bun run port:render runs nsh test --target web in a headless browser"
+          exit 1
+
+      - name: Render check
+        run: bun run port:render
+
+      - name: Upload render screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: render-shots
+          path: apps/docs/demos/shots
+          if-no-files-found: ignore
+          retention-days: 7
