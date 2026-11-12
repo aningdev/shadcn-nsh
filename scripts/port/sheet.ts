@@ -111,10 +111,10 @@ for (const { id, selfReference } of cases) {
   const differs = pairs.filter((_, i) => states[i] === "differs");
   const missing = pairs.filter((_, i) => states[i] === "missing");
   const status = differs.length > 0 ? "differs" : missing.length > 0 ? "missing" : "same";
-  if (status === "same") sameRows += 1;
-  else if (status === "differs") differingRows += 1;
-  else missingRows += 1;
-  if (selfReference) selfRows += 1;
+  if (status === "differs") differingRows += 1;
+  else if (status === "missing") missingRows += 1;
+  else if (selfReference) selfRows += 1;
+  else sameRows += 1;
   const note = selfReference
     ? `self-reference — ${selfReference}`
     : status === "same"
