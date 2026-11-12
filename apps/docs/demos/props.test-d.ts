@@ -171,8 +171,13 @@ type Assert<T extends true> = T;
  * one of the shell's, with a type the base's fits into. The shell's own axes (a tab's
  * `value`, a button's `variant`) are not looked at: they are additions, not omissions.
  */
-type KeepsBase<Base, Shell, Dropped extends PropertyKey> =
-  Omit<Base, Dropped> extends Pick<Shell, Extract<keyof Shell, keyof Base>> ? true : false;
+type KeepsBase<Base, Shell, Dropped extends PropertyKey> = [
+  Exclude<Exclude<keyof Base, Dropped>, keyof Shell>,
+] extends [never]
+  ? Omit<Base, Dropped> extends Pick<Shell, Extract<keyof Shell, keyof Base>>
+    ? true
+    : false
+  : false;
 
 /** `AccordionProps`. */
 type _accordion = Assert<KeepsBase<BaseAccordionProps, AccordionProps, never>>;
