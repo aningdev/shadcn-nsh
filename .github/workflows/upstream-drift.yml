@@ -89,7 +89,7 @@ jobs:
             printf '```\n%s\n```\n\n' "$(git -C references/nsh diff --shortstat "$baseline..$main" -- "$dir")"
             echo 'Next steps ([`docs/toolchain.md`](https://github.com/aningdev/shadcn-nsh/blob/main/docs/toolchain.md)):'
             echo
-            printf '1. Install a CLI built from `%s`: `curl -fsSL https://nsh.dev/install.sh | sh -s -- --source`, or `bun run nsh:build` from a checkout at that commit.\n' "${main:0:7}"
+            printf '1. Install a CLI that prints a commit at or after `%s`: `curl -fsSL https://nsh.dev/install.sh | sh -s -- --nightly` (never build one; `NSH_VERSION=vX.Y.Z` installs a release).\n' "${main:0:7}"
             printf '2. `bun run port:bump %s` — checks the submodule out there, reports what changed in `port-map.json`'"'"'s terms, refills the regions and type checks the demos.\n' "$main"
             echo '3. Review the diff, look at the four screenshots (`bun run port:render`), commit the submodule pointer, `port-map.json` and the regions together.'
             echo

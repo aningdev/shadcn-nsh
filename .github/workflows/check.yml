@@ -18,8 +18,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
         with:
-          # The port's checks compare the repo with references/nsh at the pinned
-          # commit, and the CLI is built from it.
+          # `port:check` compares the repo with references/nsh at the baseline.
           submodules: recursive
 
       - name: Setup Bun
@@ -38,13 +37,16 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
-      # Built from references/nsh at port-map.json's commit, cached by that commit;
-      # fails when `nsh --version`'s commit is not the baseline (docs/toolchain.md).
+      # Installed with the official installer, never built; the baseline follows
+      # the installed commit, so a moved nightly is a warning, not a failure
+      # (docs/toolchain.md). `NSH_CHANNEL` pins a release while the nightly lags.
       - name: Setup NSH
         uses: ./.github/actions/setup-nsh
+        with:
+          channel: ${{ vars.NSH_CHANNEL || 'nightly' }}
 
-      # The port's gate: map complete, `// @port` regions equal to upstream, CLI not
-      # behind the baseline (docs/port-plan.md P1–P3).
+      # The port's gate: map complete, `// @port` regions equal to upstream, the
+      # installed CLI against the baseline (docs/port-plan.md P1–P3).
       - name: Port check
         run: bun run port:check
 
