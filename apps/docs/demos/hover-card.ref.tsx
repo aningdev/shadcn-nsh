@@ -16,7 +16,9 @@ function App() {
     <DemoPage title="Hover Card" note={() => last()}>
       <DemoCard>
         <DemoSection title="Default">
-          <View style={{ height: 180, alignItems: "center", justifyContent: "center" }}>
+          <View
+            style={{ width: "100%", height: 180, alignItems: "center", justifyContent: "center" }}
+          >
             <HoverCard
               open
               placement="bottom"

@@ -19,7 +19,9 @@ function App() {
     <DemoPage title="Popover" note={() => last()}>
       <DemoCard>
         <DemoSection title="Default">
-          <View style={{ height: 200, alignItems: "center", justifyContent: "center" }}>
+          <View
+            style={{ width: "100%", height: 200, alignItems: "center", justifyContent: "center" }}
+          >
             <Popover
               open
               onOpenChange={({ open, reason }) =>
@@ -41,7 +43,9 @@ function App() {
           </View>
         </DemoSection>
         <DemoSection title="Compact">
-          <View style={{ height: 120, alignItems: "center", justifyContent: "center" }}>
+          <View
+            style={{ width: "100%", height: 120, alignItems: "center", justifyContent: "center" }}
+          >
             <Popover open>
               <PopoverTrigger>Note</PopoverTrigger>
               <PopoverContent compact placement="top">
