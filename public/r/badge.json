@@ -1,0 +1,15 @@
+{
+  "name": "badge",
+  "type": "registry:ui",
+  "title": "Badge",
+  "description": "A small capsule label in neutral, toned, or outline styles.",
+  "registryDependencies": ["theme"],
+  "files": [
+    {
+      "path": "packages/ui/badge.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/badge.tsx",
+      "content": "// A small capsule label. Ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).\n// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.\nimport { colors, terminal, TERMINAL_ROW, toneColor, toneTint, type Tone } from \"@shadcn-nsh/theme\";\nimport { token, View, Text } from \"nsh\";\n\n// @port index.tsx\n/**\n * A small label in a capsule (a word on its row in the terminal), after\n * shadcn/ui's secondary badge: 20 points tall, flat, no shadow; a neutral\n * badge on the theme's `muted` fill in the text color, a toned one on its\n * tone's tint in the tone's color, `outline` an edge in the tone's color.\n */\nexport function Badge(props: { label: string; tone?: Tone; outline?: boolean }) {\n  const tone = () => props.tone ?? \"neutral\";\n  return (\n    <View\n      style={{\n        paddingHorizontal: terminal ? 0 : 8,\n        height: terminal ? TERMINAL_ROW : 20,\n        borderRadius: 10,\n        justifyContent: \"center\",\n        backgroundColor: props.outline\n          ? \"transparent\"\n          : tone() === \"neutral\"\n            ? token(\"muted\")\n            : toneTint(tone()),\n        borderWidth: props.outline ? 1 : 0,\n        borderColor: props.outline ? toneColor(tone()) : undefined,\n        // A change of tone (a window turning active) crosses over.\n        transitionProperty: \"colors\",\n        transitionDuration: 160,\n      }}\n    >\n      <Text\n        style={{\n          fontSize: 12,\n          fontWeight: \"500\",\n          color: tone() === \"neutral\" ? colors.text : toneColor(tone()),\n          numberOfLines: 1,\n          fontVariant: [\"tabular-nums\"],\n        }}\n      >\n        {props.label}\n      </Text>\n    </View>\n  );\n}\n// @port end\n"
+    }
+  ]
+}

@@ -6,331 +6,373 @@
       "name": "theme",
       "type": "registry:theme",
       "title": "Theme",
-      "description": "NSH design tokens (theme.json) and token() / surface / motion helpers (lib/theme.ts)."
-    },
-    {
-      "name": "density",
-      "type": "registry:lib",
-      "title": "Density",
-      "description": "Pointer versus touch: the 44-point target and hit slop, and the checkbox / radio box sizes."
+      "description": "The design tokens (theme.json), the finishes (finishes.json) and the roles that read them (lib/theme.ts)."
     },
     {
       "name": "press",
       "type": "registry:lib",
       "title": "Press",
-      "description": "Press feedback: the sink and its ease, and the group sink of a box in a pressed row."
+      "description": "A press's feedback: the sink and its ease."
     },
     {
-      "name": "follow",
+      "name": "switch-geometry",
       "type": "registry:lib",
-      "title": "Follow",
-      "description": "An animated value that springs to a control's state, with the control and move springs."
+      "title": "Switch geometry",
+      "description": "A switch's sizes and the arithmetic of its knob."
     },
     {
-      "name": "field",
+      "name": "overlay",
       "type": "registry:lib",
-      "title": "Field",
-      "description": "Shared text-field chrome: the sunk well, the quiet edge, the 2-point focus edge, and the one disabled look."
+      "title": "Overlay",
+      "description": "The scrim behind what is modal."
     },
     {
-      "name": "listbox",
+      "name": "icons",
       "type": "registry:lib",
-      "title": "Listbox",
-      "description": "Shared select and combobox chrome: the chevron, the option row, the popup and the touch sheet."
+      "title": "Icons",
+      "description": "Line glyphs and the check mark drawn for the looks."
     },
     {
-      "name": "dates",
+      "name": "color-format",
       "type": "registry:lib",
-      "title": "Dates",
-      "description": "Shared calendar day, time segment, and time-well chrome for Calendar, DatePicker, and TimeField."
+      "title": "Color format",
+      "description": "A picked color written in each of the picker's formats, and the ink that reads on it."
     },
     {
-      "name": "meter",
+      "name": "popup",
       "type": "registry:lib",
-      "title": "Meter",
-      "description": "The sunk rail and primary run shared by Progress and Slider."
+      "title": "Popup",
+      "description": "The shared popup surface and the motion it comes in with."
+    },
+    {
+      "name": "surface",
+      "type": "registry:lib",
+      "title": "Surface",
+      "description": "Density, section surfaces, and list rows whose hover fill bleeds."
     },
     {
       "name": "open-state",
       "type": "registry:lib",
       "title": "Open state",
-      "description": "Controlled/uncontrolled open flag, trigger slot, and item registry shared by composition roots."
+      "description": "The controlled or uncontrolled open flag of a composition root."
+    },
+    {
+      "name": "spinner",
+      "type": "registry:ui",
+      "title": "Spinner",
+      "description": "A turning ring: work going on."
+    },
+    {
+      "name": "badge",
+      "type": "registry:ui",
+      "title": "Badge",
+      "description": "A small capsule label in neutral, toned, or outline styles."
     },
     {
       "name": "button",
       "type": "registry:ui",
       "title": "Button",
-      "description": "Styled button wrapping nsh/base Button."
-    },
-    {
-      "name": "input",
-      "type": "registry:ui",
-      "title": "Input",
-      "description": "Styled input wrapping nsh/base Input."
-    },
-    {
-      "name": "checkbox",
-      "type": "registry:ui",
-      "title": "Checkbox",
-      "description": "Styled checkbox wrapping nsh/base Checkbox — theme tokens + default mark; full base prop pass-through."
-    },
-    {
-      "name": "radio-group",
-      "type": "registry:ui",
-      "title": "Radio Group",
-      "description": "Styled radio group wrapping nsh/base RadioGroup / Radio — theme tokens + default circle; full base prop pass-through."
+      "description": "A button, an icon button, a round button, and a split button."
     },
     {
       "name": "switch",
       "type": "registry:ui",
       "title": "Switch",
-      "description": "Styled switch wrapping nsh/base Switch — theme tokens + size; full base prop pass-through."
-    },
-    {
-      "name": "progress",
-      "type": "registry:ui",
-      "title": "Progress",
-      "description": "Styled progress wrapping nsh/base Progress — theme tokens; full base prop pass-through."
-    },
-    {
-      "name": "tabs",
-      "type": "registry:ui",
-      "title": "Tabs",
-      "description": "Styled tabs wrapping nsh/base Tabs / Tab — List / Trigger / Content; full base prop pass-through."
-    },
-    {
-      "name": "hover-card",
-      "type": "registry:ui",
-      "title": "Hover Card",
-      "description": "Styled hover card wrapping nsh/base HoverCard — theme tokens + Trigger / Content; full base prop pass-through."
-    },
-    {
-      "name": "popover",
-      "type": "registry:ui",
-      "title": "Popover",
-      "description": "Styled popover wrapping nsh/base Popover — theme tokens + Trigger / Content; full base prop pass-through."
-    },
-    {
-      "name": "tooltip",
-      "type": "registry:ui",
-      "title": "Tooltip",
-      "description": "Styled tooltip wrapping nsh/base Tooltip — theme tokens + Trigger / Content; full base prop pass-through."
-    },
-    {
-      "name": "sheet",
-      "type": "registry:ui",
-      "title": "Sheet",
-      "description": "Styled sheet wrapping nsh/base Sheet — theme tokens + Trigger / Content; full base prop pass-through."
+      "description": "A switch whose knob springs across a sunk track."
     },
     {
       "name": "dialog",
       "type": "registry:ui",
       "title": "Dialog",
-      "description": "Styled dialog wrapping nsh/base Dialog — theme tokens + Trigger / Content; full base prop pass-through."
-    },
-    {
-      "name": "alert-dialog",
-      "type": "registry:ui",
-      "title": "Alert Dialog",
-      "description": "Styled confirmation card — theme tokens on nsh/base Dialog, with an app-owned action id."
-    },
-    {
-      "name": "menu",
-      "type": "registry:ui",
-      "title": "Menu",
-      "description": "Styled menu wrapping nsh/base Menu — theme tokens + Trigger / Content / Item; composition-only."
-    },
-    {
-      "name": "context-menu",
-      "type": "registry:ui",
-      "title": "Context Menu",
-      "description": "Styled context menu wrapping nsh/base ContextMenu — theme tokens + Trigger / Content / Item; full base prop pass-through."
-    },
-    {
-      "name": "collapsible",
-      "type": "registry:ui",
-      "title": "Collapsible",
-      "description": "Styled collapsible wrapping nsh/base Collapsible — theme tokens + Trigger / Content; full base prop pass-through."
-    },
-    {
-      "name": "toast",
-      "type": "registry:ui",
-      "title": "Toast",
-      "description": "Styled toast wrapping nsh/base Toast / ToastStack — theme tokens + sonner-shaped toast() / Toaster; full base prop pass-through."
-    },
-    {
-      "name": "table",
-      "type": "registry:ui",
-      "title": "Table",
-      "description": "Styled table wrapping nsh/base Table parts — theme tokens + full base prop pass-through."
-    },
-    {
-      "name": "accordion",
-      "type": "registry:ui",
-      "title": "Accordion",
-      "description": "Styled accordion wrapping nsh/base Accordion — theme tokens + Header / Trigger / Panel; composition-only."
-    },
-    {
-      "name": "avatar",
-      "type": "registry:ui",
-      "title": "Avatar",
-      "description": "Styled avatar wrapping nsh/base Avatar / AvatarGroup — theme tokens + fallback."
-    },
-    {
-      "name": "combobox",
-      "type": "registry:ui",
-      "title": "Combobox",
-      "description": "Styled combobox wrapping nsh/base Combobox — theme tokens + Trigger / Content / Item; composition-only."
-    },
-    {
-      "name": "link",
-      "type": "registry:ui",
-      "title": "Link",
-      "description": "Styled link wrapping nsh/base Link — theme tokens + underline label."
-    },
-    {
-      "name": "number-input",
-      "type": "registry:ui",
-      "title": "Number Input",
-      "description": "Styled number input wrapping nsh/base NumberInput — theme tokens + stepper chrome."
-    },
-    {
-      "name": "otp-input",
-      "type": "registry:ui",
-      "title": "OTP Input",
-      "description": "Styled OTP input wrapping nsh/base OtpInput — theme tokens + cell chrome."
-    },
-    {
-      "name": "pagination",
-      "type": "registry:ui",
-      "title": "Pagination",
-      "description": "Styled pagination wrapping nsh/base Pagination — theme tokens + item chrome."
-    },
-    {
-      "name": "select",
-      "type": "registry:ui",
-      "title": "Select",
-      "description": "Styled select wrapping nsh/base Select — theme tokens + Trigger / Content / Item; composition-only."
-    },
-    {
-      "name": "slider",
-      "type": "registry:ui",
-      "title": "Slider",
-      "description": "Styled slider wrapping nsh/base Slider — theme tokens + track/range/thumb."
+      "description": "A card dialog: Trigger, Content, Title, Description, Footer and Close."
     },
     {
       "name": "toggle",
       "type": "registry:ui",
       "title": "Toggle",
-      "description": "Styled toggle wrapping nsh/base Toggle — theme tokens + pressed chrome."
+      "description": "A two-state button, bare or outlined, with a label or an icon."
     },
     {
-      "name": "data-table",
+      "name": "checkbox",
       "type": "registry:ui",
-      "title": "Data Table",
-      "description": "Styled data table wrapping nsh/base DataTable — theme tokens for selection, stripe, and header chrome."
+      "title": "Checkbox",
+      "description": "A sunk box that fills in citrus, with a check or a dash springing in."
     },
     {
-      "name": "scrollbar",
+      "name": "radio-group",
       "type": "registry:ui",
-      "title": "Scrollbar",
-      "description": "Styled scrollbar wrapping nsh/base Scrollbar — theme tokens for the thumb, plus setTheme."
+      "title": "Radio Group",
+      "description": "A sunk ring that fills in citrus, with a dot growing in — alone or as a choice tile."
     },
     {
       "name": "toggle-group",
       "type": "registry:ui",
       "title": "Toggle Group",
-      "description": "Styled toggle group wrapping nsh/base ToggleGroup — muted container + Toggle re-export."
+      "description": "A row or column of toggles on the inset toolbar track."
     },
     {
       "name": "toolbar",
       "type": "registry:ui",
       "title": "Toolbar",
-      "description": "Styled toolbar wrapping nsh/base Toolbar, ToolbarGroup, and ToolbarSeparator."
+      "description": "An inset track of tools, with groups and hairline separators."
     },
     {
-      "name": "command",
+      "name": "input",
       "type": "registry:ui",
-      "title": "Command",
-      "description": "Styled command palette wrapping nsh/base Command — theme tokens + default rows."
+      "title": "Input",
+      "description": "A sunk text field — single-line, multiline, masked, or invalid."
     },
     {
-      "name": "tree",
+      "name": "number-input",
       "type": "registry:ui",
-      "title": "Tree",
-      "description": "Styled tree wrapping nsh/base Tree — theme tokens + depth, chevron, and selection."
+      "title": "Number Input",
+      "description": "A sunk number field with − / + or stacked chevron steppers."
     },
     {
-      "name": "calendar",
+      "name": "otp-input",
       "type": "registry:ui",
-      "title": "Calendar",
-      "description": "Styled calendar wrapping nsh/base Calendar — theme tokens for days, range, today, and month toggles."
-    },
-    {
-      "name": "date-picker",
-      "type": "registry:ui",
-      "title": "Date Picker",
-      "description": "Styled date picker wrapping nsh/base DatePicker — theme tokens + Trigger; composition-only."
+      "title": "OTP Input",
+      "description": "One-time code cells that lift out of sunk wells as digits fill in."
     },
     {
       "name": "time-field",
       "type": "registry:ui",
       "title": "Time Field",
-      "description": "Styled time field wrapping nsh/base TimeField — theme tokens for the well and segments."
+      "description": "A sunk well for a time of day, one segment at a time."
     },
     {
-      "name": "resizable",
+      "name": "tooltip",
       "type": "registry:ui",
-      "title": "Resizable",
-      "description": "Styled resizable panels wrapping nsh/base ResizablePanelGroup / ResizablePanel — theme tokens for the handle and panel."
+      "title": "Tooltip",
+      "description": "A popover-coloured hint bubble on any element's tooltip prop."
     },
     {
-      "name": "dock-area",
+      "name": "popover",
       "type": "registry:ui",
-      "title": "Dock Area",
-      "description": "Styled dock workspace wrapping nsh/base DockArea — theme tokens for tabs, handles, and docks."
+      "title": "Popover",
+      "description": "A popup panel that grows from its trigger, on the shared menu surface."
+    },
+    {
+      "name": "hover-card",
+      "type": "registry:ui",
+      "title": "Hover Card",
+      "description": "A preview card that grows from its trigger, on the shared popover surface."
+    },
+    {
+      "name": "sheet",
+      "type": "registry:ui",
+      "title": "Sheet",
+      "description": "A panel that slides in from an edge of the screen over a scrim."
+    },
+    {
+      "name": "toast",
+      "type": "registry:ui",
+      "title": "Toast",
+      "description": "A raised banner with a title, optional description, action and close."
+    },
+    {
+      "name": "alert-dialog",
+      "type": "registry:ui",
+      "title": "Alert Dialog",
+      "description": "A confirmation card that waits for an action, on the shared dialog look."
+    },
+    {
+      "name": "menu",
+      "type": "registry:ui",
+      "title": "Menu",
+      "description": "A menu of items, separators and submenus on the shared menu look."
+    },
+    {
+      "name": "context-menu",
+      "type": "registry:ui",
+      "title": "Context Menu",
+      "description": "A menu at the pointer, on the shared menu look."
+    },
+    {
+      "name": "listbox",
+      "type": "registry:lib",
+      "title": "Listbox",
+      "description": "Shared list popup, rows, search and clear looks for select, combobox and date picker."
+    },
+    {
+      "name": "select",
+      "type": "registry:ui",
+      "title": "Select",
+      "description": "A list of choices from a field trigger, on the shared listbox look."
+    },
+    {
+      "name": "combobox",
+      "type": "registry:ui",
+      "title": "Combobox",
+      "description": "A searchable field with a list of choices, on the shared listbox look."
+    },
+    {
+      "name": "calendar",
+      "type": "registry:ui",
+      "title": "Calendar",
+      "description": "A month of days to pick a date or a range, on the shared calendar look."
+    },
+    {
+      "name": "date-picker",
+      "type": "registry:ui",
+      "title": "Date Picker",
+      "description": "A calendar in a popup from a field trigger, on the shared listbox look."
+    },
+    {
+      "name": "tabs",
+      "type": "registry:ui",
+      "title": "Tabs",
+      "description": "A pill track or underlined row with a traveling indicator."
+    },
+    {
+      "name": "segmented",
+      "type": "registry:ui",
+      "title": "Segmented",
+      "description": "A sunk track whose raised thumb springs to the selected segment."
+    },
+    {
+      "name": "accordion",
+      "type": "registry:ui",
+      "title": "Accordion",
+      "description": "List rows that reveal panels with a turning chevron."
+    },
+    {
+      "name": "collapsible",
+      "type": "registry:ui",
+      "title": "Collapsible",
+      "description": "A disclosure row that reveals a panel beneath it."
     },
     {
       "name": "carousel",
       "type": "registry:ui",
       "title": "Carousel",
-      "description": "Styled carousel wrapping nsh/base Carousel and its parts — theme tokens, button arrows, and pagination dots."
+      "description": "Snapping slides with round arrows and a traveling dot pill."
     },
     {
-      "name": "part-style",
-      "type": "registry:lib",
-      "title": "Part style",
-      "description": "Merge a themed part's classes and styles. null drops the default."
-    },
-    {
-      "name": "color-picker",
+      "name": "link",
       "type": "registry:ui",
-      "title": "Color Picker",
-      "description": "Styled color picker wrapping nsh/base ColorPicker and its parts — field well, focus ring, checkerboard."
+      "title": "Link",
+      "description": "A text link with underline motion, on the shared nav look."
+    },
+    {
+      "name": "pagination",
+      "type": "registry:ui",
+      "title": "Pagination",
+      "description": "A pager of page numbers and chevron arrows."
+    },
+    {
+      "name": "progress",
+      "type": "registry:ui",
+      "title": "Progress",
+      "description": "A determinate or indeterminate bar on the shared meter rail."
+    },
+    {
+      "name": "meter",
+      "type": "registry:ui",
+      "title": "Meter",
+      "description": "A horizontal meter with optional limit marker."
+    },
+    {
+      "name": "stat",
+      "type": "registry:ui",
+      "title": "Stat",
+      "description": "A label above a value for metric grids."
+    },
+    {
+      "name": "status",
+      "type": "registry:ui",
+      "title": "Status",
+      "description": "A dot and label for quiet row or header state."
+    },
+    {
+      "name": "slider",
+      "type": "registry:ui",
+      "title": "Slider",
+      "description": "A sunk rail with a citrus fill and round thumb."
+    },
+    {
+      "name": "avatar",
+      "type": "registry:ui",
+      "title": "Avatar",
+      "description": "A round picture or named initials on the identity ring."
+    },
+    {
+      "name": "data-table",
+      "type": "registry:ui",
+      "title": "DataTable",
+      "description": "A card-styled spreadsheet with sorting, selection, and resize."
+    },
+    {
+      "name": "table",
+      "type": "registry:ui",
+      "title": "Table",
+      "description": "A composition table wearing the shared data-table classes."
+    },
+    {
+      "name": "tree",
+      "type": "registry:ui",
+      "title": "Tree",
+      "description": "A card-framed tree with chevron rows and folder icons."
+    },
+    {
+      "name": "command",
+      "type": "registry:ui",
+      "title": "Command",
+      "description": "A command palette with search, groups, and shortcut keys."
+    },
+    {
+      "name": "scrollbar",
+      "type": "registry:ui",
+      "title": "Scrollbar",
+      "description": "Hover-reveal scroll bars for scroll views and lists."
+    },
+    {
+      "name": "plot",
+      "type": "registry:ui",
+      "title": "Plot",
+      "description": "Chart colors, grid, cross line and tooltip for nsh/base/plot."
+    },
+    {
+      "name": "resizable",
+      "type": "registry:ui",
+      "title": "Resizable",
+      "description": "Resize handles with a quiet hairline and a growing thumb."
+    },
+    {
+      "name": "dock-area",
+      "type": "registry:ui",
+      "title": "DockArea",
+      "description": "Dockable workspace chrome: tabs, splits, and edge docks."
+    },
+    {
+      "name": "diff-view",
+      "type": "registry:ui",
+      "title": "DiffView",
+      "description": "Up/down tints for additions and deletions, with hunk actions."
     },
     {
       "name": "text-view",
       "type": "registry:ui",
-      "title": "Text View",
-      "description": "Styled document view wrapping nsh/base TextView — theme tokens for text, links, code and alerts."
+      "title": "TextView",
+      "description": "Brand links and a streaming caret for Markdown documents."
+    },
+    {
+      "name": "emoji-picker",
+      "type": "registry:ui",
+      "title": "Emoji picker",
+      "description": "Gallery look for nsh/base EmojiPicker: tabs, search, tones and preview."
     },
     {
       "name": "editor",
       "type": "registry:ui",
       "title": "Editor",
-      "description": "Styled code editor wrapping nsh/base Editor — field well, gutter, selection and completion menu."
+      "description": "Rich document typography and code editor pass-through."
     },
     {
-      "name": "diff-view",
+      "name": "color-picker",
       "type": "registry:ui",
-      "title": "Diff View",
-      "description": "Styled diff wrapping nsh/base DiffView — primary and destructive tints for added and deleted lines."
-    },
-    {
-      "name": "nav-stack",
-      "type": "registry:ui",
-      "title": "Nav Stack",
-      "description": "Styled navigation stack wrapping nsh/base NavStack and NavPage — page fill, system header colors, desktop bar."
+      "title": "ColorPicker",
+      "description": "Area, sliders, joined fields, swatches, and popover trigger."
     }
   ]
 }

@@ -1,15 +1,15 @@
 {
   "name": "meter",
-  "type": "registry:lib",
+  "type": "registry:ui",
   "title": "Meter",
-  "description": "The sunk rail and primary run shared by Progress and Slider.",
-  "registryDependencies": ["theme"],
+  "description": "A horizontal meter with optional limit marker.",
+  "registryDependencies": ["progress", "theme"],
   "files": [
     {
-      "path": "packages/ui/lib/meter.ts",
-      "type": "registry:lib",
-      "target": "lib/meter.ts",
-      "content": "// Source: examples/nsh-gallery-ui/look/meter.ts, slider.ts @ 64ab8a1d (baseline), see NOTICE.\nimport { colors, finish } from \"@shadcn-nsh/theme\";\nimport type { ViewStyle } from \"nsh\";\n\n/**\n * The sunk rail shared by a progress track and a slider indicator, so a level and a\n * slider read alike. `muted` stands in for the reference's `track`; the inset hairline\n * and `finish.control.pressed` stand in for `finish.track`.\n */\nexport function sunkTrack(): ViewStyle {\n  return {\n    backgroundColor: colors.muted,\n    boxShadow: `inset 0 0 0 1px ${colors.border}, ${finish.control.pressed}`,\n  };\n}\n\n/**\n * The run along that rail (a progress fill, a slider range). `primary` with the filled\n * edge stands in for the reference's citrus gradient (`finish.fill`).\n */\nexport function trackFill(): ViewStyle {\n  return {\n    backgroundColor: colors.primary,\n    boxShadow: finish.filled,\n  };\n}\n"
+      "path": "packages/ui/meter.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/meter.tsx",
+      "content": "// A thin horizontal meter with an optional marker. Ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).\n// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.\nimport { colors, terminal, TERMINAL_ROW, toneColor, type Tone } from \"@shadcn-nsh/theme\";\nimport { View } from \"nsh\";\n\nimport { progressFill, progressGlide, progressRail, progressRemaining } from \"./progress\";\n\n// @port index.tsx\n/** A horizontal meter with an optional marker (a limit), `value` from 0\n * to 1: a progress bar's rail and fill (`look/meter.ts`), the fill gliding\n * to each new value; half a row in the terminal, so its fill is a solid bar\n * rather than a rule. */\nexport function Meter(props: { value: number; tone?: Tone; marker?: number }) {\n  return (\n    // The marker stands past the rail, which clips its fill: they sit side\n    // by side in a view of the rail's height.\n    <View style={{ height: terminal ? TERMINAL_ROW / 2 : 6 }}>\n      {terminal ? (\n        <View style={{ height: TERMINAL_ROW / 2, backgroundColor: colors.track }}>\n          <View\n            style={{\n              width: `${Math.max(0, Math.min(1, props.value)) * 100}%`,\n              height: TERMINAL_ROW / 2,\n              backgroundColor:\n                props.tone && props.tone !== \"accent\" ? toneColor(props.tone) : colors.accentFill,\n            }}\n          />\n        </View>\n      ) : (\n        <View style={progressRail(6)}>\n          <View\n            class={progressGlide}\n            style={{\n              ...progressFill(6, props.tone),\n              translate: progressRemaining(props.value * 100),\n            }}\n          />\n        </View>\n      )}\n      <If when={props.marker !== undefined}>\n        <View\n          style={{\n            position: \"absolute\",\n            left: `${(props.marker ?? 0) * 100}%`,\n            top: -4,\n            width: 2,\n            height: 12,\n            borderRadius: 1,\n            backgroundColor: colors.text,\n          }}\n        />\n      </If>\n    </View>\n  );\n}\n// @port end\n"
     }
   ]
 }

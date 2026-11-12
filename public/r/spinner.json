@@ -1,0 +1,15 @@
+{
+  "name": "spinner",
+  "type": "registry:ui",
+  "title": "Spinner",
+  "description": "A turning ring: work going on.",
+  "registryDependencies": ["theme"],
+  "files": [
+    {
+      "path": "packages/ui/spinner.tsx",
+      "type": "registry:ui",
+      "target": "components/ui/spinner.tsx",
+      "content": "// Ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE). The region\n// below is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`, not here.\nimport { alpha } from \"@shadcn-nsh/theme\";\nimport { View } from \"nsh\";\n\n// @port index.tsx\n/** A ring turning with its top arc in `tint`: work going on. */\nexport function Spinner(props: { size: number; tint: string }) {\n  return (\n    <View\n      style={{\n        width: props.size,\n        height: props.size,\n        borderRadius: props.size / 2,\n        borderWidth: Math.max(1.5, props.size / 8),\n        borderColor: alpha(props.tint, 0.25),\n        borderTopColor: props.tint,\n        animationName: \"spin\",\n        animationDuration: 800,\n        animationTimingFunction: \"linear\",\n        animationIterationCount: \"infinite\",\n      }}\n    />\n  );\n}\n// @port end\n"
+    }
+  ]
+}
