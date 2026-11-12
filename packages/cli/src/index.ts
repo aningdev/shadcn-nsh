@@ -3,6 +3,7 @@ import { Command } from "commander";
 import packageJson from "../package.json" with { type: "json" };
 import { add } from "./commands/add";
 import { build } from "./commands/build";
+import { diff } from "./commands/diff";
 import { init } from "./commands/init";
 import { list } from "./commands/list";
 import { serve } from "./commands/serve";
@@ -16,6 +17,7 @@ const program = new Command()
 program.addCommand(build);
 program.addCommand(init);
 program.addCommand(add);
+program.addCommand(diff);
 program.addCommand(list);
 program.addCommand(view);
 program.addCommand(serve);
