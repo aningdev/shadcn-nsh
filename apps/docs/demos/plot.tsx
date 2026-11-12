@@ -27,8 +27,6 @@ const ROWS = Array.from({ length: 10 }, (_, minute) => ({
 
 function App() {
   const row = signal(ROWS.length - 1);
-  const color = seriesColor(0);
-  const line = colors.border;
 
   return (
     <DemoPage title="Plot">
@@ -45,7 +43,7 @@ function App() {
               style={{
                 height: 180,
                 borderWidth: 1,
-                borderColor: line,
+                borderColor: colors.border,
                 borderRadius: 8,
                 padding: 8,
               }}
@@ -60,10 +58,10 @@ function App() {
               >
                 <Grid style={plotGrid()} />
                 <Grid style={plotBaseline()} />
-                <Area backgroundStyle={plotWash(color)} style={{ fill: "transparent" }} />
+                <Area backgroundStyle={plotWash(seriesColor(0))} style={{ fill: "transparent" }} />
                 <Line
-                  style={{ stroke: color, strokeWidth: 2 }}
-                  hoverDotStyle={plotHoverDot(color)}
+                  style={{ stroke: seriesColor(0), strokeWidth: 2 }}
+                  hoverDotStyle={plotHoverDot(seriesColor(0))}
                 />
                 <PlotAxis
                   placement="right"

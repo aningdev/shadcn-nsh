@@ -12,8 +12,6 @@ const LINES = Array.from({ length: 24 }, (_, i) => ({
 }));
 
 function App() {
-  const muted = colors.muted;
-  const line = colors.border;
   const theme = scrollbarTheme;
   let inbox: ScrollRef | undefined;
 
@@ -26,7 +24,7 @@ function App() {
               width: 280,
               height: 240,
               borderWidth: 1,
-              borderColor: line,
+              borderColor: colors.border,
               borderRadius: 8,
               overflow: "hidden",
             }}
@@ -36,7 +34,7 @@ function App() {
                 <View class="border-border flex-row gap-3 border-b px-3 py-2.5">
                   <View style={{ flex: 1, gap: 2 }}>
                     <Text style={{ fontSize: 13, fontWeight: "500" }}>{m.title}</Text>
-                    <Text style={{ fontSize: 12, color: muted }}>{m.body}</Text>
+                    <Text style={{ fontSize: 12, color: colors.muted }}>{m.body}</Text>
                   </View>
                 </View>
               ))}

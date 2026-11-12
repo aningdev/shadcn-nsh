@@ -21,14 +21,19 @@ fs.mkdirSync(shots, { recursive: true });
 // here; a caller that sets it still gets it through `process.env`.
 const env = { ...process.env };
 
-const result = spawnSync(
-  "nsh",
-  ["test", "render-touch.test.tsx", "--target", "ios", ...process.argv.slice(2)],
-  { cwd: demos, stdio: "inherit", env },
-);
-if (result.error) {
-  console.error(`port:render:touch: cannot run nsh: ${result.error.message}`);
-  process.exit(1);
+// The touch render check, then the appearance check (a page switched to dark at run time).
+let status = 0;
+for (const file of ["render-touch.test.tsx", "appearance-touch.test.tsx"]) {
+  const result = spawnSync("nsh", ["test", file, "--target", "ios", ...process.argv.slice(2)], {
+    cwd: demos,
+    stdio: "inherit",
+    env,
+  });
+  if (result.error) {
+    console.error(`port:render:touch: cannot run nsh: ${result.error.message}`);
+    process.exit(1);
+  }
+  if (result.status !== 0) status = result.status ?? 1;
 }
 console.log(`touch screenshots: ${path.relative(repo, shots)}`);
-process.exit(result.status ?? 1);
+process.exit(status);

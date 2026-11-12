@@ -12,8 +12,6 @@ const layout: DockAreaLayout = {
 };
 
 function App() {
-  const line = colors.border;
-
   return (
     <DemoPage title="Dock area">
       <DemoCard>
@@ -24,7 +22,7 @@ function App() {
               width: 360,
               maxWidth: "100%",
               borderWidth: 1,
-              borderColor: line,
+              borderColor: colors.border,
               borderRadius: 8,
               overflow: "hidden",
             }}
