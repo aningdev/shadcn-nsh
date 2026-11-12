@@ -1,10 +1,10 @@
-// Tree: expanded, collapsed, selected, disabled row, and a disabled tree.
-// The shot window is 390 wide, so each tree has a fixed width and labels stay one line.
-import { colors } from "@shadcn-nsh/theme";
-import { Tree } from "@shadcn-nsh/ui";
 import { mount, Text, View } from "nsh";
 import type { TreeItem } from "nsh/base";
 
+// Tree: expanded, collapsed, selected, disabled row, and a disabled tree.
+// The shot window is 390 wide, so each tree has a fixed width and labels stay one line.
+import { colors } from "../../packages/theme";
+import { Tree } from "../../packages/ui";
 import { Page, Panel } from "./demo-kit";
 
 const files: TreeItem[] = [
@@ -29,9 +29,7 @@ const box = { width: 300 };
 
 function Caption(props: { children: string }) {
   return (
-    <Text style={{ fontSize: 12, color: colors.mutedForeground, numberOfLines: 1 }}>
-      {props.children}
-    </Text>
+    <Text style={{ fontSize: 12, color: colors.muted, numberOfLines: 1 }}>{props.children}</Text>
   );
 }
 

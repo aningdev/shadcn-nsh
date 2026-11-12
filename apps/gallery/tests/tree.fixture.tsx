@@ -1,6 +1,7 @@
-import { Tree } from "@shadcn-nsh/ui";
 import { mount, signal, Text, View } from "nsh";
 import type { TreeItem } from "nsh/base";
+
+import { Tree } from "../../../packages/ui";
 
 const files: TreeItem[] = [
   {

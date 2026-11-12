@@ -1,6 +1,7 @@
-import { Command } from "@shadcn-nsh/ui";
 import { mount, signal, Text, View } from "nsh";
 import type { CommandItem } from "nsh/base";
+
+import { Command } from "../../../packages/ui";
 
 const items: CommandItem[] = [
   { id: "new", label: "New File", group: "File", shortcut: "mod+n" },

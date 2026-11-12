@@ -1,12 +1,13 @@
+import { mount, signal, Text, View } from "nsh";
+import { Button as BaseButton } from "nsh/base";
+
 import {
   AlertDialog,
   AlertDialogAction,
   AlertDialogContent,
   AlertDialogDescription,
   AlertDialogTrigger,
-} from "@shadcn-nsh/ui";
-import { mount, signal, Text, View } from "nsh";
-import { Button as BaseButton } from "nsh/base";
+} from "../../../packages/ui";
 
 function App() {
   const action = signal("none");

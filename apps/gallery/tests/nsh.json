@@ -1,7 +1,14 @@
 {
-  "name": "shadcn-nsh Gallery tests",
-  "id": "dev.shadcn-nsh.gallery.tests",
+  "name": "shadcn-nsh Gallery fixtures",
+  "id": "dev.shadcn-nsh.gallery-fixtures",
   "version": "0.0.0",
   "build": 1,
-  "theme": "../../../packages/theme/theme.json"
+  "appearance": "system",
+  "theme": "../../../packages/theme/theme.json",
+  "resolve": {
+    "alias": {
+      "@shadcn-nsh/theme": "../../../packages/theme/index.ts",
+      "@shadcn-nsh/ui": "../../../packages/ui/index.ts"
+    }
+  }
 }

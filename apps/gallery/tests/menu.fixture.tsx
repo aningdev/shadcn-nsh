@@ -1,3 +1,6 @@
+import { mount, signal, Text, View } from "nsh";
+import { Button as BaseButton } from "nsh/base";
+
 import {
   Menu,
   MenuCheckboxItem,
@@ -8,9 +11,7 @@ import {
   MenuSubContent,
   MenuSubTrigger,
   MenuTrigger,
-} from "@shadcn-nsh/ui";
-import { mount, signal, Text, View } from "nsh";
-import { Button as BaseButton } from "nsh/base";
+} from "../../../packages/ui";
 
 function App() {
   const changes = signal(0);

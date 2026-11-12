@@ -1,6 +1,7 @@
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "@shadcn-nsh/ui";
 import { mount, signal, Text, View } from "nsh";
 import { Button as BaseButton } from "nsh/base";
+
+import { Button, HoverCard } from "../../../packages/ui";
 
 function App() {
   const changes = signal(0);
@@ -11,25 +12,23 @@ function App() {
       <BaseButton onPress={() => off.set(true)}>
         <Text>Flip</Text>
       </BaseButton>
-      <HoverCard onOpenChange={() => changes.set(changes() + 1)}>
-        <HoverCardTrigger>Open A</HoverCardTrigger>
-        <HoverCardContent openDelay={0} closeDelay={0}>
-          <Text>Body A</Text>
-        </HoverCardContent>
+      <HoverCard
+        onOpenChange={() => changes.set(changes() + 1)}
+        trigger={<Button variant="secondary">Open A</Button>}
+      >
+        <Text>Body A</Text>
       </HoverCard>
-      <HoverCard>
-        <HoverCardTrigger>
-          <Text>Open B</Text>
-        </HoverCardTrigger>
-        <HoverCardContent openDelay={0} closeDelay={0}>
-          <Text>Body B</Text>
-        </HoverCardContent>
+      <HoverCard trigger={<Button variant="secondary">Open B</Button>}>
+        <Text>Body B</Text>
       </HoverCard>
-      <HoverCard>
-        <HoverCardTrigger disabled={off()}>Open C</HoverCardTrigger>
-        <HoverCardContent openDelay={0} closeDelay={0}>
-          <Text>Body C</Text>
-        </HoverCardContent>
+      <HoverCard
+        trigger={
+          <Button variant="secondary" disabled={off()}>
+            Open C
+          </Button>
+        }
+      >
+        <Text>Body C</Text>
       </HoverCard>
     </View>
   );

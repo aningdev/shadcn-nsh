@@ -13,6 +13,6 @@ test("disabled menu text stays foreground in light and dark", async () => {
     expect(paste).toBe(plain);
     expect(share).toBe(plain);
     // Light ink is near-black, dark ink near-white. A frozen first paint fails one of these.
-    expect(plain.toLowerCase().startsWith(scheme === "light" ? "#0a0a0a" : "#fafafa")).toBe(true);
+    expect(plain.toLowerCase().startsWith(scheme === "light" ? "#101319" : "#eeeff1")).toBe(true);
   }
 });

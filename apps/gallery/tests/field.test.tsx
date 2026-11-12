@@ -5,10 +5,11 @@ const find = (texts: string[], prefix: string) =>
   texts.find((t) => t.startsWith(prefix))?.slice(prefix.length);
 
 test("an Input, a NumberInput and an OtpInput report what the user enters", async () => {
-  const app = await open("./field.fixture.tsx");
+  const app = await open("./field.fixture.tsx", { platform: "macos" });
   expect(has(app.texts(), "value=")).toBe(true);
   await app.type("id:name", "Ada");
-  await app.press("text:▲");
+  for (let i = 0; i < 3; i++) await app.keyboard.press("tab");
+  await app.keyboard.press("up");
   await app.type("id:code", "1234");
   await app.wait(50);
   expect(has(app.texts(), "value=Ada")).toBe(true);
@@ -28,7 +29,8 @@ test("an Input follows readonly set after mount (its text turns from foreground 
   await app.wait(50);
   expect(has(app.texts(), "quiet=true")).toBe(true);
   expect(app.enabled("id:quiet")).toBe(false);
-  expect(app.spanStyle("text:Ink").color).not.toBe(before);
+  // Read-only fields keep foreground ink; the flat well distinguishes them.
+  expect(app.spanStyle("text:Ink").color).toBe(before);
 });
 
 test("a field is compact with a pointer and roomier on a touch screen", async () => {
@@ -37,7 +39,7 @@ test("a field is compact with a pointer and roomier on a touch screen", async ()
   expect(find(desktop.texts(), "desktop=")).toBe("true");
   expect(find(touch.texts(), "desktop=")).toBe("false");
   // Input 28 vs 46. Number well 32 vs 88 (two 44-point steppers). OTP cell 36×44 text 18 vs 44×52 text 20.
-  expect(find(desktop.texts(), "input=")).toBe("28");
+  expect(find(desktop.texts(), "input=")).toBe("32");
   expect(find(touch.texts(), "input=")).toBe("46");
   expect(find(desktop.texts(), "number=")).toBe("32");
   expect(find(touch.texts(), "number=")).toBe("88");

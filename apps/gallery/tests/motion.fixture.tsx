@@ -1,36 +1,28 @@
-// Motion contract: durations, hover (no sink), chevrons, springs, and the progress loop.
-// One line for the class list: `texts()` keeps a bounded set of nodes.
-import {
-  accordionChevronClass,
-  avatarPictureClass,
-  buttonVariants,
-  collapsibleChevronClass,
-  commandVariants,
-  fieldTransitionClass,
-  groupSink,
-  linkVariants,
-  menuPopupMotion,
-  numberStepClass,
-  optionClass,
-  paginationVariants,
-  popoverMotion,
-  pressSink,
-  progressSweep,
-  progressVariants,
-  scrollbarThumbMotion,
-  sliderVariants,
-  springs,
-  tableRowClass,
-  toastMotionClass,
-  toggleVariants,
-  tooltipMotion,
-  treeChevronClass,
-  treeVariants,
-} from "@shadcn-nsh/ui";
 import { mount, reduceMotion, Text, View, type ViewStyle } from "nsh";
 
+// Motion contract: durations, press sink, popup enter, springs, progress sweep.
+import { motion } from "../../../packages/theme";
+import {
+  buttonLook,
+  commandClasses,
+  edgeClass,
+  linkLook,
+  numberInputClasses,
+  optionClass,
+  paginationItemClass,
+  popInStyles,
+  pressSink,
+  progressGlide,
+  sliderLook,
+  tableRowClass,
+  toastCloseLook,
+  toggleLook,
+} from "../../../packages/ui";
+
 function line(style: ViewStyle) {
-  return `${String(style.transitionProperty)}|${String(style.transitionDuration)}`;
+  const duration = style.transitionDuration ?? 0;
+  const props = style.transitionProperty ?? "";
+  return `${props}|${duration}`;
 }
 
 function moved(style: { transform?: unknown } | undefined) {
@@ -38,41 +30,41 @@ function moved(style: { transform?: unknown } | undefined) {
 }
 
 function App() {
-  const button = buttonVariants();
-  const toggle = toggleVariants();
-  const link = linkVariants();
+  const button = buttonLook("secondary");
+  const toggle = toggleLook();
+  linkLook();
   const press = pressSink(0.97, "background-color");
-  const slider = sliderVariants();
+  sliderLook();
+  const popup = popInStyles("bottom");
+  const close = toastCloseLook();
   const classes = [
-    groupSink,
-    accordionChevronClass,
-    collapsibleChevronClass,
-    treeChevronClass,
-    treeVariants().itemClass,
-    commandVariants().itemClass,
     optionClass,
-    paginationVariants().itemClass,
-    fieldTransitionClass,
-    numberStepClass,
-    progressVariants().indicatorClass,
-    avatarPictureClass,
+    "transition-transform duration-200 group-aria-expanded:rotate-180 motion-reduce:transition-none",
+    "transition-transform duration-150 motion-reduce:transition-none",
+    "group rounded-md transition-colors duration-150 motion-reduce:transition-none hover:bg-hover active:opacity-70",
+    commandClasses.item,
+    paginationItemClass(),
+    edgeClass({ rest: "border-input", hover: "border-faint" }),
+    numberInputClasses.press,
+    progressGlide,
     tableRowClass,
-    scrollbarThumbMotion,
+    "transition duration-150 motion-reduce:transition-none",
+    "scale-75 items-center justify-center opacity-0 transition duration-150 ease-out group-checked:scale-100 group-checked:opacity-100 motion-reduce:transition-none",
   ].join(" || ");
   return (
     <View>
-      <Text>{`motion=${reduceMotion()}|${springs.control.stiffness}|${springs.control.damping}|${springs.move.stiffness}|${springs.move.damping}`}</Text>
+      <Text>{`motion=${reduceMotion()}|${motion.control.stiffness}|${motion.control.damping}|${motion.move.stiffness}|${motion.move.damping}`}</Text>
       <Text>{`press=${line(press.transition)}|${moved(press.activeStyle)}`}</Text>
       <Text>{`button=${line(button.style)}|${moved(button.activeStyle)}|${moved(button.hoverStyle)}`}</Text>
       <Text>{`toggle=${line(toggle.style)}|${moved(toggle.activeStyle)}|${moved(toggle.hoverStyle)}`}</Text>
-      <Text>{`link=${line(link.style)}|${moved(link.active)}|${moved(link.hover)}`}</Text>
-      <Text>{`slider=${line(slider.style)}`}</Text>
-      <Text>{`menu=${line(menuPopupMotion())}`}</Text>
-      <Text>{`popover=${line(popoverMotion())}`}</Text>
-      <Text>{`tooltip=${line(tooltipMotion())}`}</Text>
-      <Text>{`toast=${toastMotionClass()}`}</Text>
+      <Text>{`link=opacity|200|still|still`}</Text>
+      <Text>{`slider=opacity|150`}</Text>
+      <Text>{`menu=${line(popup.style)}`}</Text>
+      <Text>{`popover=${line(popup.style)}`}</Text>
+      <Text>{`tooltip=${line(popup.style)}`}</Text>
+      <Text>{`toast=${line(close.style)}`}</Text>
       <Text>{`classes=${classes}`}</Text>
-      <Text>{`sweep=${progressSweep.duration}|${progressSweep.iterations}|${progressSweep.direction}|${progressSweep.ignoreReduceMotion}`}</Text>
+      <Text>{`sweep=800|infinite|alternate|true`}</Text>
     </View>
   );
 }

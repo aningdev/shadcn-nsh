@@ -1,8 +1,8 @@
-// Scrollbar: the thumb visible (always) over a fixed list, nothing open over it.
-import { colors } from "@shadcn-nsh/theme";
-import { Scrollbar } from "@shadcn-nsh/ui";
 import { Scroll, Text, View, mount, type ScrollRef } from "nsh";
 
+// Scrollbar: the thumb visible (always) over a fixed list, nothing open over it.
+import { colors } from "../../packages/theme";
+import { Scrollbar } from "../../packages/ui";
 import { Page, Panel } from "./demo-kit";
 
 const messages = [
@@ -22,7 +22,7 @@ function row(line: string) {
       style={{
         width: 260,
         fontSize: 13,
-        color: colors.foreground,
+        color: colors.text,
         padding: 8,
         numberOfLines: 1,
       }}
@@ -39,9 +39,7 @@ mount(() => {
   return (
     <Page>
       <Panel title="Scrollbar">
-        <Text style={{ fontSize: 12, color: colors.mutedForeground, numberOfLines: 1 }}>
-          Always on
-        </Text>
+        <Text style={{ fontSize: 12, color: colors.muted, numberOfLines: 1 }}>Always on</Text>
         <View style={{ width: 280, height: 180, position: "relative" }}>
           <Scroll
             ref={inbox}

@@ -1,24 +1,24 @@
-/* oxlint-disable react/jsx-no-undef -- <Each> is an NSH global */
-// Pilot S: the button and the switch, every kind, size and state, on the page and on a card.
-import { Button, Switch } from "@shadcn-nsh/ui";
 import { mount } from "nsh";
 
+/* oxlint-disable react/jsx-no-undef -- <Each> is an NSH global */
+// Pilot S: the button and the switch, every kind, size and state, on the page and on a card.
+import { Button, IconButton, Switch } from "../../packages/ui";
 import { Flow, Page, Panel, Row } from "./demo-kit";
 
-const variants = ["default", "secondary", "outline", "ghost", "destructive"] as const;
-const sizes = ["xs", "sm", "default", "lg"] as const;
+const kinds = ["primary", "accent", "secondary", "ghost", "danger"] as const;
+const sizes = ["small", "regular", "large"] as const;
 
 mount(() => (
   <Page>
     <Panel title="Button — kinds">
       <Row label="rest">
         <Flow>
-          <Each of={[...variants]}>{(v) => <Button variant={v()}>{v()}</Button>}</Each>
+          <Each of={[...kinds]}>{(v) => <Button variant={v()}>{v()}</Button>}</Each>
         </Flow>
       </Row>
       <Row label="disabled">
         <Flow>
-          <Each of={[...variants]}>
+          <Each of={[...kinds]}>
             {(v) => (
               <Button variant={v()} disabled>
                 {v()}
@@ -29,7 +29,7 @@ mount(() => (
       </Row>
       <Row label="selected">
         <Flow>
-          <Each of={[...variants]}>
+          <Each of={[...kinds]}>
             {(v) => (
               <Button variant={v()} selected>
                 {v()}
@@ -53,18 +53,15 @@ mount(() => (
       </Row>
       <Row label="icon">
         <Flow>
-          <Button size="icon-xs" variant="outline">
+          <IconButton variant="secondary" accessibilityLabel="xs">
             +
-          </Button>
-          <Button size="icon-sm" variant="outline">
+          </IconButton>
+          <IconButton variant="secondary" accessibilityLabel="sm">
             +
-          </Button>
-          <Button size="icon" variant="outline">
+          </IconButton>
+          <IconButton variant="secondary" accessibilityLabel="md">
             +
-          </Button>
-          <Button size="icon-lg" variant="outline">
-            +
-          </Button>
+          </IconButton>
         </Flow>
       </Row>
     </Panel>
@@ -77,10 +74,10 @@ mount(() => (
           <Switch checked disabled />
         </Flow>
       </Row>
-      <Row label="sm">
+      <Row label="small">
         <Flow>
-          <Switch size="sm" checked={false} />
-          <Switch size="sm" checked />
+          <Switch size="small" checked={false} />
+          <Switch size="small" checked />
         </Flow>
       </Row>
     </Panel>

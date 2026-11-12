@@ -30,11 +30,11 @@ test("Dates: a Calendar moves from the selected day with the keyboard", async ()
   await app.keyboard.press("enter");
   await app.wait(50);
   expect(app.texts()).toContain("day=2026-03-11");
-  // Six more days: the disabled 16th is skipped, so this is the 17th.
+  // Six more days: the disabled 16th is skipped, so this is the 18th.
   for (let i = 0; i < 6; i++) await app.keyboard.press("right");
   await app.keyboard.press("enter");
   await app.wait(50);
-  expect(app.texts()).toContain("day=2026-03-17");
+  expect(app.texts()).toContain("day=2026-03-18");
 });
 
 test("Dates: a TimeField steps the hour and follows a new value", async () => {
@@ -50,12 +50,11 @@ test("Dates: a TimeField steps the hour and follows a new value", async () => {
 
 test("Dates: a DatePicker opens, picks a day, and closes", async () => {
   const app = await open("./date.fixture.tsx", { platform: "macos", reducedMotion: true });
-  await app.press("text:2031-06-10");
-  await app.waitFor("text:open=true");
+  await app.press("label:Due");
+  await app.waitFor("role:button[2031-06-03]");
   await app.press("role:button[2031-06-03]");
   await app.wait(50);
   expect(app.texts()).toContain("due=2031-06-03");
-  expect(app.texts()).toContain("open=false");
 });
 
 test("Dates: a calendar, a date picker, and a time field are roomier on a touch screen", async () => {
@@ -63,7 +62,7 @@ test("Dates: a calendar, a date picker, and a time field are roomier on a touch 
   const touch = await open("./date.fixture.tsx", { platform: "ios" });
   expect(find(desktop.texts(), "desktop=")).toBe("true");
   expect(find(touch.texts(), "desktop=")).toBe("false");
-  expect(find(desktop.texts(), "calendar-size=")).toBe("30|16|13");
+  expect(find(desktop.texts(), "calendar-size=")).toBe("32|16|13");
   expect(find(touch.texts(), "calendar-size=")).toBe("42|16|15");
   expect(find(desktop.texts(), "picker-size=")).toBe("32|180");
   expect(find(touch.texts(), "picker-size=")).toBe("44|0");

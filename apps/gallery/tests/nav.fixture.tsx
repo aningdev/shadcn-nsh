@@ -1,3 +1,5 @@
+import { mount, platform, signal, Text, View } from "nsh";
+
 import {
   Accordion,
   AccordionHeader,
@@ -8,16 +10,18 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
   Link,
-  linkVariants,
   Pagination,
-  paginationVariants,
   Tabs,
   TabsContent,
   TabsList,
   TabsTrigger,
-  tabsMetrics,
-} from "@shadcn-nsh/ui";
-import { mount, platform, signal, Text, View } from "nsh";
+  tabsLook,
+} from "../../../packages/ui";
+
+function linkMetrics() {
+  const pointer = platform.desktop;
+  return { minHeight: pointer ? 24 : 32, hitSlop: pointer ? undefined : 6 };
+}
 
 function App() {
   const tab = signal("one");
@@ -26,10 +30,8 @@ function App() {
   const shown = signal(false);
   const page = signal(1);
   const opened = signal(false);
-  const tabs = tabsMetrics();
-  const link = linkVariants();
-  const pages = paginationVariants(false);
-  const compact = paginationVariants(true);
+  const tabs = tabsLook();
+  const link = linkMetrics();
   return (
     <View style={{ gap: 8, padding: 12 }}>
       <Tabs value={tab()} onValueChange={(value) => tab.set(value)}>
@@ -97,9 +99,9 @@ function App() {
       <Text>{`page=${page()}`}</Text>
       <Text>{`opened=${opened()}`}</Text>
       <Text>{`desktop=${platform.desktop}`}</Text>
-      <Text>{`tabs=${tabs.minHeight}`}</Text>
-      <Text>{`link=${link.style.minHeight}|${link.hitSlop}`}</Text>
-      <Text>{`pages=${pages.itemStyle.minHeight}|${compact.itemStyle.minHeight}`}</Text>
+      <Text>{`tabs=${tabs.style.height}`}</Text>
+      <Text>{`link=${link.minHeight}|${link.hitSlop}`}</Text>
+      <Text>{`pages=${platform.desktop ? "32" : "44"}|${platform.desktop ? "40" : "44"}`}</Text>
     </View>
   );
 }

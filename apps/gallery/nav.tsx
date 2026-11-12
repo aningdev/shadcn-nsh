@@ -1,6 +1,8 @@
+import { mount, signal, Text, View } from "nsh";
+
 // Family 7: tabs, accordion, collapsible, link, pagination — states and density.
 // The shot window is 390×844, so this page stays inside that first screen.
-import { colors } from "@shadcn-nsh/theme";
+import { colors } from "../../packages/theme";
 import {
   Accordion,
   AccordionHeader,
@@ -16,16 +18,14 @@ import {
   TabsContent,
   TabsList,
   TabsTrigger,
-} from "@shadcn-nsh/ui";
-import { mount, signal, Text, View } from "nsh";
-
+} from "../../packages/ui";
 import { Flow, Page, Panel, Row } from "./demo-kit";
 
 /** The row's remainder, so a control shares one width instead of hugging its text. */
 const fill = { flex: 1, alignSelf: "stretch" as const };
 
 function Label(props: { children: string }) {
-  return <Text style={{ fontSize: 13, color: colors.mutedForeground }}>{props.children}</Text>;
+  return <Text style={{ fontSize: 13, color: colors.muted }}>{props.children}</Text>;
 }
 
 function NavPage() {
@@ -99,7 +99,7 @@ function NavPage() {
         <Row label="link">
           <Flow>
             <Link href="https://nsh.dev">Docs</Link>
-            <Link href="https://nsh.dev" variant="quiet">
+            <Link href="https://nsh.dev" quiet>
               Quiet
             </Link>
             <Link href="https://nsh.dev" current>

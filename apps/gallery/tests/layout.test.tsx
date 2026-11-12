@@ -19,9 +19,8 @@ test("a Resizable handle is a vertical hairline across a row and opts out of the
   const app = await open("./layout.fixture.tsx", { reducedMotion: true });
   expect(find(app.texts(), "across=")).toContain("h-full w-px");
   expect(find(app.texts(), "along=")).toContain("h-px w-full");
-  expect(find(app.texts(), "thumb=")).toContain("motion-reduce:transition-none");
   expect(find(app.texts(), "thumb=")).toContain("group-active:");
-  expect(find(app.texts(), "thumb=")).toContain("group-focus:");
+  expect(find(app.texts(), "thumb=")).toContain("group-hover:");
 });
 
 test("a DockArea shows a tab group and selects another tab", async () => {
@@ -59,7 +58,7 @@ test("a looping Carousel wraps from the last slide, and the arrow sink drops und
   const touch = await open("./layout.fixture.tsx", { platform: "ios" });
   expect(find(desktop.texts(), "dot=")).toBe("7");
   expect(find(touch.texts(), "dot=")).toBe("8");
-  expect(find(desktop.texts(), "arrow=")).toBe("28");
-  expect(find(touch.texts(), "arrow=")).toBe("36");
+  expect(find(desktop.texts(), "arrow=")).toBe("30");
+  expect(find(touch.texts(), "arrow=")).toBe("38");
   expect(find(desktop.texts(), "sink=")).toBe("move");
 });

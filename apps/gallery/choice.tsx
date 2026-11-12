@@ -1,15 +1,15 @@
-/* oxlint-disable react/jsx-no-undef -- <Each> is an NSH global */
-// Family 2: toggle, toggle group, checkbox, radio group — every kind, size and state.
-import { colors } from "@shadcn-nsh/theme";
-import { Checkbox, RadioGroup, RadioGroupItem, Toggle, ToggleGroup } from "@shadcn-nsh/ui";
 import { mount, Text } from "nsh";
 
+/* oxlint-disable react/jsx-no-undef -- <Each> is an NSH global */
+// Family 2: toggle, toggle group, checkbox, radio group — every kind, size and state.
+import { colors } from "../../packages/theme";
+import { Checkbox, RadioGroup, RadioGroupItem, Toggle, ToggleGroup } from "../../packages/ui";
 import { Flow, Page, Panel, Row } from "./demo-kit";
 
-const sizes = ["sm", "default", "lg"] as const;
+const sizes = ["small", "regular", "large"] as const;
 
 function Label(props: { children: string }) {
-  return <Text style={{ fontSize: 14, color: colors.foreground }}>{props.children}</Text>;
+  return <Text style={{ fontSize: 14, color: colors.text }}>{props.children}</Text>;
 }
 
 mount(() => (
@@ -56,10 +56,10 @@ mount(() => (
       <Row label="icon">
         <Flow>
           <Toggle pressed={false}>
-            <Text style={{ fontWeight: "700", color: colors.mutedForeground }}>B</Text>
+            <Text style={{ fontWeight: "700", color: colors.muted }}>B</Text>
           </Toggle>
           <Toggle pressed>
-            <Text style={{ fontWeight: "700", color: colors.foreground }}>B</Text>
+            <Text style={{ fontWeight: "700", color: colors.text }}>B</Text>
           </Toggle>
         </Flow>
       </Row>

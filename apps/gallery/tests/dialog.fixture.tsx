@@ -1,6 +1,7 @@
-import { Dialog, DialogClose, DialogContent, DialogTrigger } from "@shadcn-nsh/ui";
 import { mount, signal, Text, View } from "nsh";
 import { Button as BaseButton } from "nsh/base";
+
+import { Dialog, DialogClose, DialogContent, DialogTrigger } from "../../../packages/ui";
 
 function App() {
   const changes = signal(0);

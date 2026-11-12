@@ -1,15 +1,14 @@
+import { Text, View, mount, signal } from "nsh";
+import { ColorPicker, ColorSwatch } from "nsh/base";
+
 import {
-  ColorArea,
-  ColorField,
-  ColorPicker,
-  ColorSlider,
-  ColorSwatch,
+  ColorPanel,
   DiffView,
   Editor,
   TextView,
-  colorPickerVariants,
-} from "@shadcn-nsh/ui";
-import { Text, View, mount, signal } from "nsh";
+  colorAreaLook,
+  fieldLook,
+} from "../../../packages/ui";
 
 function App() {
   const color = signal("none");
@@ -19,20 +18,32 @@ function App() {
   const locked = signal("keep");
   const link = signal("none");
   const stats = signal("none");
-  const fieldClass = colorPickerVariants().field.className;
+  const fill = signal("#336699ff");
+  const fieldClass = fieldLook().class;
   return (
     <View style={{ padding: 12, gap: 8 }}>
       <Text>{`motion=${fieldClass}`}</Text>
-      <ColorPicker defaultValue="#336699" onChange={(event) => color.set(event.formatted)}>
-        <ColorArea accessibilityLabel="Plane" style={{ width: 160, height: 64 }} />
-        <ColorSlider accessibilityLabel="Hue" channel="hue" style={{ width: 220, height: 28 }} />
-        <ColorSwatch color="#ff0000" accessibilityLabel="Red" />
-        <ColorField testID="hex" accessibilityLabel="Hex" style={{ width: 120 }} />
+      <ColorPicker
+        value={fill()}
+        onChange={({ value, formatted }) => {
+          fill.set(value);
+          color.set(formatted);
+        }}
+      >
+        <View accessibilityLabel="Plane" style={{ gap: 8 }}>
+          <ColorPanel
+            name="Fill"
+            value={fill()}
+            format="hex"
+            onFormatChange={() => {}}
+            swatches={["#ff0000", "#00ff00", "#0000ff"]}
+          />
+        </View>
       </ColorPicker>
       <Text>{`color=${color()}`}</Text>
 
-      <ColorPicker disabled defaultValue="#336699" onChange={() => blocked.set("changed")}>
-        <ColorSwatch color="#00ff00" accessibilityLabel="Locked" />
+      <ColorPicker disabled value="#336699" onChange={() => blocked.set("changed")}>
+        <ColorSwatch color="#00ff00" />
       </ColorPicker>
       <Text>{`blocked=${blocked()}`}</Text>
 

@@ -1,25 +1,22 @@
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@shadcn-nsh/ui";
-import { mount, signal, Text } from "nsh";
+import { mount, signal, Text, View } from "nsh";
 import { Button as BaseButton } from "nsh/base";
+
+import { Button, Tooltip } from "../../../packages/ui";
 
 function App() {
   const off = signal(false);
   return (
-    <TooltipProvider delay={0}>
+    <View style={{ gap: 8, padding: 12 }}>
       <BaseButton onPress={() => off.set(true)}>
         <Text>Flip</Text>
       </BaseButton>
-      <Tooltip>
-        <TooltipTrigger disabled={off()}>Hover A</TooltipTrigger>
-        <TooltipContent>Tip A</TooltipContent>
-      </Tooltip>
-      <Tooltip>
-        <TooltipTrigger>
-          <Text>Hover B</Text>
-        </TooltipTrigger>
-        <TooltipContent>Tip B</TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
+      <Button variant="secondary" disabled={off()} tooltip={<Tooltip>Tip A</Tooltip>}>
+        Hover A
+      </Button>
+      <Button variant="secondary" tooltip={<Tooltip>Tip B</Tooltip>}>
+        Hover B
+      </Button>
+    </View>
   );
 }
 

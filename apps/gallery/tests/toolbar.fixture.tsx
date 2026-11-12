@@ -1,4 +1,6 @@
-import { colors } from "@shadcn-nsh/theme";
+import { computed, mount, signal, Text, View } from "nsh";
+
+import { colors } from "../../../packages/theme";
 import {
   Button,
   Link,
@@ -6,17 +8,16 @@ import {
   Toolbar,
   ToolbarGroup,
   ToolbarSeparator,
-  toolbarTrackStyle,
-} from "@shadcn-nsh/ui";
-import { computed, mount, signal, Text, View } from "nsh";
+  toolbarTrack,
+} from "../../../packages/ui";
 
 function App() {
   const bold = signal(0);
   const docs = signal(0);
   const italic = signal(false);
   const locked = signal(false);
-  const track = computed(() => toolbarTrackStyle().backgroundColor);
-  const ink = computed(() => colors.foreground);
+  const track = computed(() => toolbarTrack().backgroundColor);
+  const ink = computed(() => colors.text);
   return (
     <View style={{ gap: 12, padding: 16 }}>
       <Text>{() => `bold ${bold()}`}</Text>

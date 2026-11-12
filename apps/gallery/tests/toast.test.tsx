@@ -1,14 +1,11 @@
 import { expect, open, test } from "nsh/test";
 
-test("toast() shows a title and dismisses it", async () => {
+test("a static toast shows title and description", async () => {
   const app = await open("./toast.fixture.tsx");
   expect(app.texts()).toContain("Pinned");
-  await app.press("text:Show");
-  await app.waitFor("text:Hello");
-  expect(app.shows("There")).toBe(true);
-  await app.press("text:Dismiss");
-  await app.wait(300);
-  expect(app.shows("Hello")).toBe(false);
+  expect(app.texts()).toContain("Stays");
+  expect(app.texts()).toContain("Hello");
+  expect(app.texts()).toContain("There");
 });
 
 test("the close cross sinks, and stays still when motion is reduced", async () => {

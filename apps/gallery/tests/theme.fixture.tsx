@@ -1,13 +1,14 @@
-import { colors, disabledOpacity, finish } from "@shadcn-nsh/theme";
 import { mount, Text, View } from "nsh";
+
+import { colors, finish } from "../../../packages/theme";
 
 function App() {
   return (
     <View>
-      <Text>{`rest=${finish.control.rest}`}</Text>
-      <Text>{`popup=${finish.popup}`}</Text>
-      <Text>{`disabled=${disabledOpacity()}|${disabledOpacity(true)}|${disabledOpacity(false)}`}</Text>
-      <Text>{`backdrop=${colors.backdrop}`}</Text>
+      <Text>{`raised=${finish.raised.backgroundColor}`}</Text>
+      <Text>{`menu=${finish.menu.borderColor}`}</Text>
+      <Text>{`text=${colors.text}`}</Text>
+      <Text>{`muted=${colors.muted}`}</Text>
     </View>
   );
 }

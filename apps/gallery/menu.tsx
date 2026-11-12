@@ -1,7 +1,9 @@
+import { Text, View, mount } from "nsh";
+
 // Family 5: menu and context menu. The menu popup is an overlay, so its panel reserves
 // the height of the open rows. A context menu anchors to the pointer; with no click yet
 // that point is (0, 0), so this demo leaves it closed on its own trigger.
-import { alpha, colors } from "@shadcn-nsh/theme";
+import { alpha, colors } from "../../packages/theme";
 import {
   ContextMenu,
   ContextMenuCheckboxItem,
@@ -26,9 +28,7 @@ import {
   MenuSubContent,
   MenuSubTrigger,
   MenuTrigger,
-} from "@shadcn-nsh/ui";
-import { Text, View, mount } from "nsh";
-
+} from "../../packages/ui";
 import { Page, Panel } from "./demo-kit";
 
 /** Wider than the label, so the popup does not shrink-wrap and the shortcut stays on one line. */
@@ -42,15 +42,15 @@ mount(() => (
         <Menu defaultOpen>
           <MenuTrigger>File</MenuTrigger>
           <MenuContent popupStyle={popup}>
-            <MenuLabel>File</MenuLabel>
+            <MenuLabel text="File" />
             <MenuItem>
-              <Text>New window</Text>
+              New window
               <MenuShortcut>⌘N</MenuShortcut>
             </MenuItem>
             <MenuItem style={{ backgroundColor: colors.accent }}>
               <Text>Highlighted</Text>
             </MenuItem>
-            <MenuItem style={{ backgroundColor: alpha(colors.foreground, 0.1) }}>
+            <MenuItem style={{ backgroundColor: alpha(colors.text, 0.1) }}>
               <Text>Pressed</Text>
             </MenuItem>
             <MenuItem disabled>
@@ -63,7 +63,7 @@ mount(() => (
             <MenuCheckboxItem checked={false}>
               <Text>Show minimap</Text>
             </MenuCheckboxItem>
-            <MenuLabel>Sort by</MenuLabel>
+            <MenuLabel text="Sort by" />
             <MenuRadioItem checked>
               <Text>Name</Text>
             </MenuRadioItem>
@@ -97,13 +97,13 @@ mount(() => (
               borderRadius: 8,
             }}
           >
-            <Text style={{ fontSize: 13, color: colors.foreground, numberOfLines: 1 }}>
+            <Text style={{ fontSize: 13, color: colors.text, numberOfLines: 1 }}>
               Right-click or hold
             </Text>
           </View>
         </ContextMenuTrigger>
         <ContextMenuContent popupStyle={popup}>
-          <ContextMenuLabel>Edit</ContextMenuLabel>
+          <ContextMenuLabel text="Edit" />
           <ContextMenuItem>
             <Text>Copy</Text>
             <ContextMenuShortcut>⌘C</ContextMenuShortcut>

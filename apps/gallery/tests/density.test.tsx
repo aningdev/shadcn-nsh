@@ -7,7 +7,7 @@ test("a button is compact with a pointer and roomier, with a hit slop, on a touc
   const desktop = await open("./density.fixture.tsx", { platform: "macos" });
   const touch = await open("./density.fixture.tsx", { platform: "ios" });
   expect(find(desktop.texts(), "desktop=")).toBe("true");
-  expect(find(desktop.texts(), "button=")).toBe("32|undefined");
+  expect(find(desktop.texts(), "button=")).toBe("28|undefined");
   expect(find(touch.texts(), "desktop=")).toBe("false");
   // 40 tall, and presses count 2 points past it: 44.
   expect(find(touch.texts(), "button=")).toBe("40|2");

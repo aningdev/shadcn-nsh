@@ -1,16 +1,34 @@
-import {
-  Calendar,
-  calendarVariants,
-  DatePicker,
-  DatePickerTrigger,
-  DatePickerValue,
-  datePickerPopupChrome,
-  datePickerVariants,
-  TimeField,
-  timeFieldVariants,
-} from "@shadcn-nsh/ui";
 import { mount, platform, signal, Text, View } from "nsh";
 import { Button } from "nsh/base";
+
+import {
+  Calendar,
+  DatePicker,
+  DateTrigger,
+  TimeField,
+  calendarLook,
+  datePickerLook,
+  listboxPopup,
+  pickerLook,
+  timeFieldClass,
+} from "../../../packages/ui";
+
+function popupChrome() {
+  const p = listboxPopup();
+  if (platform.desktop) {
+    return `popup|${p.padding}|none`;
+  }
+  return `sheet|${p.borderTopLeftRadius}|${p.borderTopRightRadius}|${p.maxHeight}|${p.paddingHorizontal}|${p.paddingBottom}`;
+}
+
+function pickerSize() {
+  const look = pickerLook({ open: false });
+  return `${look.style.height}|${look.style.minWidth ?? 0}`;
+}
+
+function timeSize() {
+  return timeFieldClass.includes("h-8") ? 32 : 44;
+}
 
 function App() {
   const day = signal("2026-03-10");
@@ -18,20 +36,15 @@ function App() {
   const time = signal("09:30");
   const due = signal("2031-06-10");
   const open = signal(false);
-  const calendar = calendarVariants();
-  const picker = datePickerVariants();
-  const field = timeFieldVariants();
   return (
     <View style={{ gap: 8, padding: 12 }}>
       <Text>desktop={String(platform.desktop)}</Text>
       <Text>
-        calendar-size={calendar.cell}|{calendar.monthGap}|{calendar.day}
+        calendar-size={calendarLook.cell}|{calendarLook.monthGap}|{platform.desktop ? 13 : 15}
       </Text>
-      <Text>
-        picker-size={picker.style.minHeight}|{picker.style.minWidth ?? 0}
-      </Text>
-      <Text>popup={datePickerPopupChrome()}</Text>
-      <Text>time-size={field.style.minHeight}</Text>
+      <Text>picker-size={pickerSize()}</Text>
+      <Text>popup={popupChrome()}</Text>
+      <Text>time-size={timeSize()}</Text>
       <Calendar
         value={day()}
         disabledMatcher={(date) => date === "2026-03-16"}
@@ -56,15 +69,14 @@ function App() {
         <Text>Set time</Text>
       </Button>
       <DatePicker
+        {...datePickerLook()}
         accessibilityLabel="Due"
         value={due()}
+        open={open()}
         onChange={({ value }) => due.set(typeof value === "string" ? value : "none")}
         onOpenChange={({ open: next }) => open.set(next)}
-      >
-        <DatePickerTrigger testID="due">
-          <DatePickerValue />
-        </DatePickerTrigger>
-      </DatePicker>
+        trigger={<DateTrigger title={due()} placeholder={false} open={open()} />}
+      />
       <Text>due={due()}</Text>
       <Text>open={String(open())}</Text>
     </View>

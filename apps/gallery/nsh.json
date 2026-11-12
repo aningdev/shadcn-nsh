@@ -4,5 +4,11 @@
   "version": "0.0.0",
   "build": 1,
   "appearance": "system",
-  "theme": "../../packages/theme/theme.json"
+  "theme": "../../packages/theme/theme.json",
+  "resolve": {
+    "alias": {
+      "@shadcn-nsh/theme": "../../packages/theme/index.ts",
+      "@shadcn-nsh/ui": "../../packages/ui/index.ts"
+    }
+  }
 }

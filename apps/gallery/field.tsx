@@ -1,21 +1,17 @@
-// Family 3: input, number input, one-time code — every state the field well has.
-import { colors } from "@shadcn-nsh/theme";
-import { Input, NumberInput, OtpInput } from "@shadcn-nsh/ui";
 import { Text, View, mount } from "nsh";
 
+// Family 3: input, number input, one-time code — every state the field well has.
+import { colors } from "../../packages/theme";
+import { Input, NumberInput, OtpInput } from "../../packages/ui";
 import { Flow, Page, Panel, Row } from "./demo-kit";
 
 /** The row's remainder, so every text field shares one width instead of hugging its text. */
 const fill = { flex: 1 };
 
-/**
- * Label above the control. Six cells are 36 wide with 8 between them (256 altogether);
- * beside the row's 84-point label a 390-wide page has about 222 left, so they clip.
- */
 function Stack(props: { label: string; children: unknown }) {
   return (
     <View style={{ gap: 6 }}>
-      <Text style={{ fontSize: 12, color: colors.mutedForeground }}>{props.label}</Text>
+      <Text style={{ fontSize: 12, color: colors.muted }}>{props.label}</Text>
       {props.children as never}
     </View>
   );
@@ -59,9 +55,6 @@ mount(() => (
           <NumberInput value={3} min={0} max={9} controlsRight={false} />
         </Flow>
       </Row>
-      <Row label="invalid">
-        <NumberInput value={3} invalid />
-      </Row>
       <Row label="readonly">
         <NumberInput value={3} readonly />
       </Row>
@@ -78,9 +71,6 @@ mount(() => (
       </Stack>
       <Stack label="filled">
         <OtpInput length={6} value="123456" />
-      </Stack>
-      <Stack label="invalid">
-        <OtpInput length={6} value="12" invalid />
       </Stack>
       <Stack label="masked">
         <OtpInput length={4} value="12" masked />

@@ -1,6 +1,9 @@
+import { mount, Text, View } from "nsh";
+import type { DockAreaLayout } from "nsh/base";
+
 // Layout family: resizable handles, a dock's tab group, carousel ends and loop.
 // The shot window is 390×844, so every state sits in that first screen.
-import { colors } from "@shadcn-nsh/theme";
+import { colors } from "../../packages/theme";
 import {
   Carousel,
   CarouselContent,
@@ -12,11 +15,8 @@ import {
   DockArea,
   ResizablePanel,
   ResizablePanelGroup,
-  resizableVariants,
-} from "@shadcn-nsh/ui";
-import { mount, Text, View } from "nsh";
-import type { DockAreaLayout } from "nsh/base";
-
+  resizableHandleLook,
+} from "../../packages/ui";
 import { Flow, Page, Panel, Row } from "./demo-kit";
 
 const NAMES = ["Harbor", "Dunes", "Glacier"];
@@ -32,15 +32,13 @@ const dockLayout: DockAreaLayout = {
 
 function Quiet(props: { children: string }) {
   return (
-    <Text style={{ fontSize: 13, color: colors.foreground, numberOfLines: 1 }}>
-      {props.children}
-    </Text>
+    <Text style={{ fontSize: 13, color: colors.text, numberOfLines: 1 }}>{props.children}</Text>
   );
 }
 
 /** A still grip. The live handle only shows these once the pointer is on it. */
 function Grip(props: { label: string; kind: "hover" | "drag" | "focus" }) {
-  const chrome = () => resizableVariants();
+  const chrome = resizableHandleLook("horizontal");
   return (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
       <View style={{ width: 16, height: 36, alignItems: "center", justifyContent: "center" }}>
@@ -53,7 +51,7 @@ function Grip(props: { label: string; kind: "hover" | "drag" | "focus" }) {
             backgroundColor: colors.border,
           }}
         />
-        <View style={chrome()[props.kind]} />
+        <View class={chrome.handleThumbClass} />
       </View>
       <Quiet>{props.label}</Quiet>
     </View>

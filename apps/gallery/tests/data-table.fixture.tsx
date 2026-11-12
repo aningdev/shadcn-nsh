@@ -1,6 +1,7 @@
-import { DataTable } from "@shadcn-nsh/ui";
 import { mount, signal, Text, View } from "nsh";
 import { Button as BaseButton, type DataTableColumn } from "nsh/base";
+
+import { DataTable } from "../../../packages/ui";
 
 const columns: DataTableColumn[] = [
   { key: "name", title: "Name", width: 100 },

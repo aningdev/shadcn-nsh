@@ -1,20 +1,26 @@
-import { toast, Toast, Toaster, toastCloseActive } from "@shadcn-nsh/ui";
 import { mount, Text, View } from "nsh";
-import { Button as BaseButton } from "nsh/base";
+
+import { Button, Toast, toastCloseLook, toastText, toastTitle } from "../../../packages/ui";
+
+function closeSink() {
+  const active = toastCloseLook().activeStyle;
+  return active?.transform ? "sink" : "still";
+}
 
 function App() {
-  const active = toastCloseActive();
   return (
-    <View>
-      <Toaster />
-      <Text>{`close=${active.transform ? "sink" : "still"}`}</Text>
-      <BaseButton onPress={() => toast("Hello", { description: "There" })}>
-        <Text>Show</Text>
-      </BaseButton>
-      <BaseButton onPress={() => toast.dismiss()}>
-        <Text>Dismiss</Text>
-      </BaseButton>
-      <Toast transitionStatus="present" title="Pinned" description="Stays" />
+    <View style={{ gap: 8, padding: 12 }}>
+      <Text>{`close=${closeSink()}`}</Text>
+      <Toast title="Pinned" description="Stays" />
+      <Toast>
+        <View style={{ flex: 1, gap: 2 }}>
+          <Text style={toastTitle()}>Hello</Text>
+          <Text style={toastText()}>There</Text>
+        </View>
+        <View {...toastCloseLook()} accessibilityLabel="Dismiss">
+          <Text style={{ fontSize: 14 }}>×</Text>
+        </View>
+      </Toast>
     </View>
   );
 }

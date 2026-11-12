@@ -1,3 +1,5 @@
+import { mount, Text } from "nsh";
+
 import {
   Menu,
   MenuContent,
@@ -6,20 +8,15 @@ import {
   MenuSubContent,
   MenuSubTrigger,
   MenuTrigger,
-} from "@shadcn-nsh/ui";
-import { mount, Text } from "nsh";
+} from "../../../packages/ui";
 
 function App() {
   return (
     <Menu defaultOpen>
       <MenuTrigger>Open</MenuTrigger>
       <MenuContent>
-        <MenuItem>
-          <Text>Plain</Text>
-        </MenuItem>
-        <MenuItem disabled>
-          <Text>Paste</Text>
-        </MenuItem>
+        <MenuItem>Plain</MenuItem>
+        <MenuItem disabled>Paste</MenuItem>
         <MenuSub>
           <MenuSubTrigger disabled>Share</MenuSubTrigger>
           <MenuSubContent>

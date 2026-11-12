@@ -1,10 +1,10 @@
-// Command palette: groups, shortcut, checked, disabled, and an empty query.
-// The shot window is 390 wide, so each palette has a fixed width and labels stay one line.
-import { colors } from "@shadcn-nsh/theme";
-import { Command } from "@shadcn-nsh/ui";
 import { mount, Text, View } from "nsh";
 import type { CommandItem } from "nsh/base";
 
+// Command palette: groups, shortcut, checked, disabled, and an empty query.
+// The shot window is 390 wide, so each palette has a fixed width and labels stay one line.
+import { colors } from "../../packages/theme";
+import { Command } from "../../packages/ui";
 import { Page, Panel } from "./demo-kit";
 
 const commands: CommandItem[] = [
@@ -18,9 +18,7 @@ const box = { width: 300 };
 
 function Caption(props: { children: string }) {
   return (
-    <Text style={{ fontSize: 12, color: colors.mutedForeground, numberOfLines: 1 }}>
-      {props.children}
-    </Text>
+    <Text style={{ fontSize: 12, color: colors.muted, numberOfLines: 1 }}>{props.children}</Text>
   );
 }
 

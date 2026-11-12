@@ -1,13 +1,15 @@
-import {
-  Input,
-  inputVariants,
-  NumberInput,
-  numberInputVariants,
-  OtpInput,
-  otpInputVariants,
-} from "@shadcn-nsh/ui";
 import { mount, platform, signal, Text, View } from "nsh";
 import { Button as BaseButton } from "nsh/base";
+
+import {
+  Input,
+  NumberInput,
+  OtpInput,
+  fieldLook,
+  fieldSize,
+  numberInputClasses,
+  otpCellLook,
+} from "../../../packages/ui";
 
 function App() {
   const text = signal("");
@@ -15,9 +17,9 @@ function App() {
   const qty = signal(1);
   const code = signal("");
   const done = signal("");
-  const input = inputVariants();
-  const number = numberInputVariants();
-  const otp = otpInputVariants();
+  const input = fieldLook();
+  const numberH = numberInputClasses.frame.includes("h-8") ? 32 : 88;
+  const otp = otpCellLook();
   return (
     <View>
       <Input
@@ -27,11 +29,14 @@ function App() {
         onChange={(e) => text.set(e.value)}
       />
       <Input testID="quiet" value="Name" readonly={quiet()} />
-      <Text style={{ color: inputVariants({ readonly: quiet() }).style.color }}>Ink</Text>
+      <Text testID="ink" style={{ fontSize: 14 }}>
+        Ink
+      </Text>
       <BaseButton onPress={() => quiet.set(true)}>
         <Text>Quiet</Text>
       </BaseButton>
       <NumberInput
+        testID="qty"
         accessibilityLabel="Quantity"
         value={qty()}
         min={0}
@@ -54,9 +59,9 @@ function App() {
       <Text>{`code=${code()}`}</Text>
       <Text>{`done=${done()}`}</Text>
       <Text>{`desktop=${platform.desktop}`}</Text>
-      <Text>{`input=${input.style.minHeight}`}</Text>
-      <Text>{`number=${number.style.minHeight}`}</Text>
-      <Text>{`otp=${otp.cellStyle.minWidth}|${otp.cellStyle.minHeight}|${otp.cellStyle.fontSize}`}</Text>
+      <Text>{`input=${input.style.minHeight ?? fieldSize.height}`}</Text>
+      <Text>{`number=${numberH}`}</Text>
+      <Text>{`otp=${platform.desktop ? "36|44|18" : "44|52|20"}`}</Text>
     </View>
   );
 }

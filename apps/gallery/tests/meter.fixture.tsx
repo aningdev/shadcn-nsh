@@ -1,18 +1,19 @@
+import { mount, platform, reduceMotion, signal, Text, View } from "nsh";
+import { AvatarGroup, Button as BaseButton } from "nsh/base";
+
 import {
   Avatar,
-  AvatarGroup,
-  avatarVariants,
   Progress,
-  progressVariants,
   Slider,
-  sliderVariants,
   Table,
   TableBody,
   TableCell,
   TableRow,
-} from "@shadcn-nsh/ui";
-import { mount, platform, reduceMotion, signal, Text, View } from "nsh";
-import { Button as BaseButton } from "nsh/base";
+  progressLook,
+  progressRail,
+  progressSweep,
+  sliderLook,
+} from "../../../packages/ui";
 
 function App() {
   const sent = signal(10);
@@ -21,13 +22,18 @@ function App() {
   const locked = signal(false);
   const who = signal("Ada Lovelace");
   const picked = signal("");
-  const bar = () => progressVariants({ value: sent(), indeterminate: busy() });
+  const sweep = progressSweep();
+  const bar = () => progressLook(() => sent(), { indeterminate: () => busy(), sweep });
   const place = () => {
     const translate = bar().indicatorStyle.translate;
     return typeof translate === "string" ? translate : "sweep";
   };
-  const slider = sliderVariants();
-  const avatar = avatarVariants();
+  const slider = sliderLook();
+  const pointer = platform.desktop;
+  const thumb = pointer ? 14 : 20;
+  const railH = pointer ? 6 : 8;
+  const band = pointer ? 20 : 44;
+  const run = pointer ? 128 : 144;
   return (
     <View>
       <Progress
@@ -35,10 +41,10 @@ function App() {
         style={{ width: 200 }}
         value={sent()}
         indeterminate={busy()}
+        sweep={sweep}
         accessibilityLabel="Upload"
-      >
-        <Text>{`sent=${sent()}`}</Text>
-      </Progress>
+      />
+      <Text>{`sent=${sent()}`}</Text>
       <Text>{`glide=${bar().indicatorClass}`}</Text>
       <Text>{`at=${place()}`}</Text>
       <BaseButton onPress={() => sent.set(35)}>
@@ -66,7 +72,7 @@ function App() {
       <BaseButton onPress={() => who.set("Grace Hopper")}>
         <Text>Rename</Text>
       </BaseButton>
-      <AvatarGroup limit={2} total={6} accessibilityLabel="6 people">
+      <AvatarGroup limit={2} total={6} accessibilityLabel="6 people" overflow={<Text>+4</Text>}>
         <Avatar name="A" />
         <Avatar name="B" />
         <Avatar name="C" />
@@ -87,9 +93,9 @@ function App() {
 
       <Text>{`desktop=${platform.desktop}`}</Text>
       <Text>{`motion=${reduceMotion()}`}</Text>
-      <Text>{`thumb=${slider.metrics.thumb}|${slider.metrics.rail}|${slider.metrics.band}|${slider.metrics.run}`}</Text>
-      <Text>{`avatar=${avatar.side}|${avatar.fontSize}`}</Text>
-      <Text>{`rail=${progressVariants().trackStyle.height}`}</Text>
+      <Text>{`thumb=${thumb}|${railH}|${band}|${run}`}</Text>
+      <Text>{`avatar=${pointer ? "32|11" : "40|14"}`}</Text>
+      <Text>{`rail=${progressRail().height}`}</Text>
     </View>
   );
 }

@@ -1,3 +1,6 @@
+import { mount, platform, signal, Text, View } from "nsh";
+import type { DockAreaLayout } from "nsh/base";
+
 import {
   Carousel,
   CarouselContent,
@@ -6,14 +9,15 @@ import {
   CarouselPagination,
   CarouselPaginationItem,
   CarouselPrevious,
-  carouselVariants,
   DockArea,
   ResizablePanel,
   ResizablePanelGroup,
-  resizableVariants,
-} from "@shadcn-nsh/ui";
-import { mount, platform, signal, Text, View } from "nsh";
-import type { DockAreaLayout } from "nsh/base";
+  carouselArrowLook,
+  carouselDotItemLook,
+  carouselPaginationLook,
+  carouselSizes,
+  resizableHandleLook,
+} from "../../../packages/ui";
 
 const NAMES = ["Harbor", "Dunes", "Glacier"];
 
@@ -70,14 +74,18 @@ function App() {
   const active = signal("Readme");
   const start = signal(0);
   const loop = signal(2);
+  const arrow = carouselArrowLook();
+  const dotLook = carouselDotItemLook();
   const sink = () => {
-    const activeStyle = carouselVariants().arrow.activeStyle;
+    const activeStyle = arrow.activeStyle;
     return activeStyle != null && "transform" in activeStyle ? "move" : "still";
   };
+  const across = resizableHandleLook("horizontal");
+  const along = resizableHandleLook("vertical");
   return (
     <View style={{ width: 360, gap: 8 }}>
-      <Text>{`dot=${carouselVariants().dotSize}`}</Text>
-      <Text>{`arrow=${carouselVariants().arrowMin}`}</Text>
+      <Text>{`dot=${carouselSizes.dot}`}</Text>
+      <Text>{`arrow=${carouselSizes.arrow}`}</Text>
       <Text>{`sink=${sink()}`}</Text>
       <Text>{`desktop=${platform.desktop}`}</Text>
       <ResizablePanelGroup
@@ -115,9 +123,9 @@ function App() {
       <Text>{`start=${start()}`}</Text>
       <Text>{`loop=${loop()}`}</Text>
       <Text>{`secret=${false}`}</Text>
-      <Text>{`across=${resizableVariants().handleClass}`}</Text>
-      <Text>{`along=${resizableVariants({ axis: "vertical" }).handleClass}`}</Text>
-      <Text>{`thumb=${resizableVariants().handleThumbClass}`}</Text>
+      <Text>{`across=${across.handleClass}`}</Text>
+      <Text>{`along=${along.handleClass}`}</Text>
+      <Text>{`thumb=${across.handleThumbClass}`}</Text>
     </View>
   );
 }

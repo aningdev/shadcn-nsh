@@ -1,6 +1,14 @@
-import { Checkbox, RadioGroup, RadioGroupItem, Switch, Toggle, ToggleGroup } from "@shadcn-nsh/ui";
 import { mount, signal, Text, View } from "nsh";
 import { Button as BaseButton } from "nsh/base";
+
+import {
+  Checkbox,
+  RadioGroup,
+  RadioGroupItem,
+  Switch,
+  Toggle,
+  ToggleGroup,
+} from "../../../packages/ui";
 
 function App() {
   const pressed = signal(false);

@@ -1,9 +1,9 @@
-// DataTable: selection, stripe, sort, a fixed column, and a selected cell, on one 390-wide page.
-import { colors } from "@shadcn-nsh/theme";
-import { DataTable } from "@shadcn-nsh/ui";
 import { Text, View, mount } from "nsh";
 import type { DataTableColumn } from "nsh/base";
 
+// DataTable: selection, stripe, sort, a fixed column, and a selected cell, on one 390-wide page.
+import { colors } from "../../packages/theme";
+import { DataTable } from "../../packages/ui";
 import { Page, Panel } from "./demo-kit";
 
 const columns: DataTableColumn[] = [
@@ -42,9 +42,7 @@ const frame = { width: 318, height: 196 };
 
 function Caption(props: { children: string }) {
   return (
-    <Text style={{ fontSize: 12, color: colors.mutedForeground, numberOfLines: 1 }}>
-      {props.children}
-    </Text>
+    <Text style={{ fontSize: 12, color: colors.muted, numberOfLines: 1 }}>{props.children}</Text>
   );
 }
 

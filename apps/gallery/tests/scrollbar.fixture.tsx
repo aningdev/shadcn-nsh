@@ -1,13 +1,13 @@
-import { Scrollbar, scrollbarVariants } from "@shadcn-nsh/ui";
 import { mount, platform, signal, Scroll, Text, View, type ScrollRef } from "nsh";
+
+import { Scrollbar, scrollbarTheme } from "../../../packages/ui";
 
 function App() {
   const offset = signal(0);
-  // NSH fills this binding through `ref={inbox}`.
   // eslint-disable-next-line no-unassigned-vars
   let inbox: ScrollRef | undefined;
-  const chrome = () => scrollbarVariants();
-  const across = () => scrollbarVariants({ axis: "horizontal" });
+  const chrome = scrollbarTheme.vertical!;
+  const across = scrollbarTheme.horizontal!;
   return (
     <View>
       <View style={{ width: 200, height: 120, position: "relative" }}>
@@ -24,10 +24,10 @@ function App() {
       </View>
       <Text>{`offset=${offset()}`}</Text>
       <Text>{`desktop=${platform.desktop}`}</Text>
-      <Text>{`thumb=${chrome().thumbClass}`}</Text>
-      <Text>{`across=${across().thumbClass}`}</Text>
-      <Text>{`motion=${chrome().motion.enter}|${chrome().motion.exit}`}</Text>
-      <Text>{`mode=${chrome().mode}`}</Text>
+      <Text>{`thumb=${chrome.thumbClass}`}</Text>
+      <Text>{`across=${across.thumbClass}`}</Text>
+      <Text>{`motion=${scrollbarTheme.motion!.enter}|${scrollbarTheme.motion!.exit}`}</Text>
+      <Text>{`mode=${scrollbarTheme.mode}`}</Text>
     </View>
   );
 }

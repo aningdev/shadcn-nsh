@@ -1,13 +1,14 @@
+import { Scroll, Text, View } from "nsh";
+
 // Page furniture shared by the gallery's family pages: a scrolling page on the theme's
 // background, titled panels on a card, labelled rows. Part of the gallery, not of the registry.
-import { colors, radius } from "@shadcn-nsh/theme";
-import { Scroll, Text, View } from "nsh";
+import { colors, radius } from "../../packages/theme";
 
 /** A labelled row: the label on the left, the controls wrapping beside it. */
 export function Row(props: { label: string; children: unknown }) {
   return (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-      <Text style={{ fontSize: 12, color: colors.mutedForeground, width: 84 }}>{props.label}</Text>
+      <Text style={{ fontSize: 12, color: colors.muted, width: 84 }}>{props.label}</Text>
       {props.children as never}
     </View>
   );
@@ -32,12 +33,10 @@ export function Panel(props: { title: string; children: unknown }) {
         borderRadius: radius.control,
         borderWidth: 1,
         borderColor: colors.border,
-        backgroundColor: colors.card,
+        backgroundColor: colors.surface,
       }}
     >
-      <Text style={{ fontSize: 14, fontWeight: "600", color: colors.foreground }}>
-        {props.title}
-      </Text>
+      <Text style={{ fontSize: 14, fontWeight: "600", color: colors.text }}>{props.title}</Text>
       {props.children as never}
     </View>
   );
