@@ -51,13 +51,3 @@ test("a DiffView reports lines added and deleted", async () => {
   expect(app.texts().some((line) => line.includes("gamma"))).toBe(true);
   expect(app.texts().some((line) => line.includes("beta"))).toBe(true);
 });
-
-// no styled NavStack in port
-test.skip("a NavStack pushes a page and Back pops it", async () => {
-  const app = await open("./nav-stack.fixture.tsx", { platform: "macos", reducedMotion: true });
-  expect(has(app.texts(), "top=Inbox")).toBe(true);
-  await app.press("text:Open");
-  await app.waitFor("text:top=Note");
-  await app.press("text:Back");
-  await app.waitFor("text:top=Inbox");
-});
