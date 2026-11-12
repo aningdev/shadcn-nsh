@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Hover Card
 description: A preview card that grows from its trigger, on the shared popover surface.
 component: true

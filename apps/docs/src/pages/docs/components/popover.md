@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Popover
 description: A popup panel that grows from its trigger, on the shared menu surface.
 component: true

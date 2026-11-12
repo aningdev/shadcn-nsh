@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Toast
 description: A raised banner with a title, optional description, action and close.
 component: true

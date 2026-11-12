@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Avatar
 description: A round picture or name-colored initials on the identity ring.
 component: true

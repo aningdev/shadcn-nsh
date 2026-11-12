@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Input
 description: A sunk text field — single-line, multiline, masked, or invalid.
 component: true

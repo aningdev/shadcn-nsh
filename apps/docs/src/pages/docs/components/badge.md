@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Badge
 description: A small capsule label in a neutral, toned, or outline style.
 component: true

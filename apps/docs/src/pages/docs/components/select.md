@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Select
 description: A list of choices from a field trigger, on the shared listbox look.
 component: true

@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Meter
 description: A horizontal meter with an optional limit marker.
 component: true

@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Tooltip
 description: A popover-coloured hint bubble on any element's `tooltip` prop.
 component: true

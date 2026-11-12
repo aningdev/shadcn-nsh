@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Link
 description: A text link with underline motion, on the shared nav look.
 component: true
@@ -19,6 +20,38 @@ import { Link } from "@/components/ui/link";
 
 ```tsx
 <Link href="https://nsh.dev">Native Shell</Link>
+```
+
+## Examples
+
+### Quiet
+
+A quiet link sits in a footer: muted, with no resting underline.
+
+```tsx
+<Link href="#docs" quiet>
+  Documentation
+</Link>
+```
+
+### Current
+
+The page a link names is the one shown.
+
+```tsx
+<Link href="#here" current>
+  Current page
+</Link>
+```
+
+### External
+
+`icon` adds the arrow a site outside the app gets.
+
+```tsx
+<Link href="https://example.com" icon>
+  External
+</Link>
 ```
 
 ## API

@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Toolbar
 description: An inset track of tools, with groups and hairline separators.
 component: true

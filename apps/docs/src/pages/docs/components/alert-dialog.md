@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Alert Dialog
 description: A confirmation card that waits for an action, on the shared dialog look.
 component: true
@@ -44,6 +45,47 @@ import {
     </AlertDialogFooter>
   </AlertDialogContent>
 </AlertDialog>
+```
+
+## Examples
+
+### Roles
+
+`role` picks the action's button: `cancel` is secondary, `destructive` danger, anything else primary.
+
+```tsx
+<AlertDialogFooter>
+  <AlertDialogAction id="cancel" role="cancel">
+    Cancel
+  </AlertDialogAction>
+  <AlertDialogAction id="delete" role="destructive">
+    Delete
+  </AlertDialogAction>
+</AlertDialogFooter>
+```
+
+### The chosen action
+
+`onAction` reports the `id` of the action pressed, or `null` when the card closed without one.
+
+```tsx
+<AlertDialog onAction={({ action }) => remove(action)}>…</AlertDialog>
+```
+
+### Trigger
+
+A string child is a `Button`; `variant` picks its kind.
+
+```tsx
+<AlertDialogTrigger variant="danger">Delete file…</AlertDialogTrigger>
+```
+
+### Dismissal
+
+Escape, backdrop and swipe close are off by default; `onOpenChange` still reports every change.
+
+```tsx
+<AlertDialog onOpenChange={({ open, reason }) => log(open, reason)}>…</AlertDialog>
 ```
 
 ## API

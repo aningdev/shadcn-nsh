@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Collapsible
 description: A disclosure row that reveals a panel beneath it.
 component: true
@@ -23,6 +24,28 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
   <CollapsibleContent>…</CollapsibleContent>
 </Collapsible>
 ```
+
+## Examples
+
+### Open by default
+
+```tsx
+<Collapsible defaultOpen>
+  <CollapsibleTrigger first>Shipping details</CollapsibleTrigger>
+  <CollapsibleContent>Orders leave within a day.</CollapsibleContent>
+</Collapsible>
+```
+
+### Closed
+
+```tsx
+<Collapsible>
+  <CollapsibleTrigger>Returns</CollapsibleTrigger>
+  <CollapsibleContent>Within 30 days, unused and in its box.</CollapsibleContent>
+</Collapsible>
+```
+
+`first` drops the row's top divider; `start` lines the trigger and the panel up past a leading icon.
 
 ## API
 

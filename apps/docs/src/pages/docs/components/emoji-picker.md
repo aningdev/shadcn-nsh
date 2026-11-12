@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Emoji picker
 description: Tabs, search, skin tones and grid styled for nsh/base EmojiPicker.
 component: true

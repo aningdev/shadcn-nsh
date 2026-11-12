@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Table
 description: Composition parts for a bordered table card using the shared data-table classes.
 component: true

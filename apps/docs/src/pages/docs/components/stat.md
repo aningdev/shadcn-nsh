@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Stat
 description: A label above a value for metric grids.
 component: true

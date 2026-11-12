@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Pagination
 description: Page numbers and chevrons with the current page lit primary.
 component: true

@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: OTP Input
 description: One-time code cells that lift out of sunk wells as digits fill in.
 component: true

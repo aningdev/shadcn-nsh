@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Tabs
 description: A pill track or underlined row with a traveling indicator.
 component: true

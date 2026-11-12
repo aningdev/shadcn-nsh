@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Menu
 description: A menu of items, separators and submenus on the shared menu look.
 component: true

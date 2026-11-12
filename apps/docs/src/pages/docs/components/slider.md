@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Slider
 description: A sunk rail, citrus fill, and round thumb with a focus ring.
 component: true

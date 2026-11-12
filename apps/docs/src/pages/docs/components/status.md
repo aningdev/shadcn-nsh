@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Status
 description: A dot and label for quiet state in rows or headers.
 component: true

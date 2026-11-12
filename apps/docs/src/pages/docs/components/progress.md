@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Progress
 description: A determinate or indeterminate bar on the shared meter rail.
 component: true

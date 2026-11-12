@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Toggle
 description: A two-state button, in two variants and three sizes.
 component: true

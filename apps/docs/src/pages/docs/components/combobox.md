@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Combobox
 description: A searchable field with a list of choices, on the shared listbox look.
 component: true

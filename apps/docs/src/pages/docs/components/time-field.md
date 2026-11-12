@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Time Field
 description: A sunk well for a time of day, one segment at a time.
 component: true

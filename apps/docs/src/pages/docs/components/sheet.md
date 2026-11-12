@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Sheet
 description: A panel that slides in from an edge of the screen over a scrim.
 component: true

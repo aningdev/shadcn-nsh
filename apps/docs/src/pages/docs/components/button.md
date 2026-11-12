@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Button
 description: A button, an icon button, a round button, and a split button.
 component: true

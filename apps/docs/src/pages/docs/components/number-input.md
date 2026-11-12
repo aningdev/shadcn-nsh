@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Number Input
 description: A sunk number field with − / + or stacked chevron steppers.
 component: true

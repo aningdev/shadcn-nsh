@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Context Menu
 description: A menu at the pointer, on the shared menu look.
 component: true
@@ -31,6 +32,48 @@ import {
     <ContextMenuItem onSelect={() => {}}>Copy</ContextMenuItem>
   </ContextMenuContent>
 </ContextMenu>
+```
+
+## Examples
+
+### A surface
+
+Any view can be the trigger; the menu opens at the pointer on a secondary click or a long press.
+
+```tsx
+<ContextMenu>
+  <ContextMenuTrigger>
+    <View style={{ height: 150 }}>Right click or hold</View>
+  </ContextMenuTrigger>
+  <ContextMenuContent margin={8}>
+    <ContextMenuItem onSelect={() => copy()}>Copy</ContextMenuItem>
+    <ContextMenuItem onSelect={() => paste()}>Paste</ContextMenuItem>
+  </ContextMenuContent>
+</ContextMenu>
+```
+
+### Separator and danger
+
+```tsx
+<ContextMenuItem onSelect={() => cut()}>Cut</ContextMenuItem>
+<ContextMenuSeparator />
+<ContextMenuItem danger onSelect={() => remove()}>Delete</ContextMenuItem>
+```
+
+### Keep it open
+
+`closeOnSelect={false}` leaves the menu up for a toggle inside it.
+
+```tsx
+<ContextMenuItem closeOnSelect={false} onSelect={() => setPinned(!pinned())}>
+  <Text style={menuItemLabel()}>{() => (pinned() ? "Unpin" : "Pin")}</Text>
+</ContextMenuItem>
+```
+
+### Open change
+
+```tsx
+<ContextMenu onOpenChange={({ open, reason }) => log(open, reason)}>…</ContextMenu>
 ```
 
 ## API

@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Checkbox
 description: A sunk box that fills in citrus, with a check or a dash springing in.
 component: true

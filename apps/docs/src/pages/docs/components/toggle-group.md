@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Toggle Group
 description: A row or column of toggles on the inset toolbar track.
 component: true

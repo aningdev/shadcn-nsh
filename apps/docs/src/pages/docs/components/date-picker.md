@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Date Picker
 description: A calendar in a popup from a field trigger, on the shared listbox look.
 component: true

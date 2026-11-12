@@ -1,4 +1,5 @@
 ---
+layout: ../../../layouts/Docs.astro
 title: Segmented
 description: A sunk track whose raised thumb springs to the selected segment.
 component: true
