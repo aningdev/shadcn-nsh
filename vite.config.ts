@@ -21,6 +21,10 @@ export default defineConfig({
   lint: {
     jsPlugins: [{ name: "vite-plus", specifier: "vite-plus/oxlint-plugin" }],
     rules: {},
+    // NSH's JSX runtime provides exactly two globals, `<If>` and `<Each>`; they
+    // are never imported. Listing them keeps `react(jsx-no-undef)` on for every
+    // other name. See https://nsh.dev/llms.txt.
+    globals: { If: "readonly", Each: "readonly" },
     options: { typeAware: true, typeCheck: true },
     plugins: ["eslint", "typescript", "react", "import", "promise", "node", "vitest"],
     ignorePatterns: ignoreLint,
