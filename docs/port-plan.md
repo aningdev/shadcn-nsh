@@ -1,6 +1,6 @@
 # 移植方案：把 `nsh-gallery-ui` 做成 Copy-into-app 组件
 
-状态：样板已完成（`button`、`switch`、`dialog`、`spinner`），三项检查已跑通。本文是交给后续代理执行的方案，取代了原来的 `roadmap.md`。执行前先读完第 1–5 节。
+状态：全部上游声明已移植（403 项，0 待办，34 项带理由排除）。`port:check`、`port:render`（指针，亮 / 暗）和 iOS 上的触屏比对已建。本文是交给后续代理执行的方案，取代了原来的 `roadmap.md`。执行前先读完第 1–5 节。
 
 ## 1. 目标
 
@@ -18,13 +18,13 @@
 
 ## 2. 样板验证了什么
 
-| 验证项                     | 结果                                                                                                                 |
-| -------------------------- | -------------------------------------------------------------------------------------------------------------------- |
-| 上游代码由脚本搬入，不手抄 | `bun run port:vendor` 按 `port-map.json` 填充；77 个声明已移植，344 个待办，8 个排除                                 |
-| 搬入的代码与上游一致       | `bun run port:check` 通过；把按钮高度 28 改成 30 后它报错，恢复后通过                                                |
-| 外壳不改变渲染             | `bun run port:render`：3 个组件 × 指针 / 触屏 × 亮 / 暗共 12 组截图，与"look 直接展开在 `nsh/base` 控件上"逐字节相同 |
-| 能复制进应用               | 用现有 CLI 把 `button`、`switch`、`dialog` 加进一个空应用，类型检查通过，能运行。CLI 不需要改                        |
-| 仓库原有检查               | `vp check` 0 错误，`test:unit` 16 项通过                                                                             |
+| 验证项                     | 结果                                                                                                                                                                  |
+| -------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 上游代码由脚本搬入，不手抄 | `bun run port:vendor` 按 `port-map.json` 填充；403 个声明已移植，0 个待办，34 个排除                                                                                  |
+| 搬入的代码与上游一致       | `bun run port:check` 通过；把按钮高度 28 改成 30 后它报错，恢复后通过                                                                                                 |
+| 外壳不改变渲染             | `bun run port:render`：51 个组件 × 亮 / 暗共 102 组指针截图，与"look 直接展开在 `nsh/base` 控件上"逐字节相同；触屏那一半在 iOS 模拟器上跑 `bun run port:render:touch` |
+| 能复制进应用               | 用现有 CLI 把 `button`、`switch`、`dialog` 加进一个空应用，类型检查通过，能运行。CLI 不需要改                                                                         |
+| 仓库原有检查               | `vp check` 0 错误，`test:unit` 16 项通过                                                                                                                              |
 
 过程中确认的三个事实，会影响后续工作：
 
@@ -34,23 +34,22 @@
 
 ## 3. 目录
 
-样板放在暂存目录 `next/`，与现有代码并存，互不影响。全部家族完成后一次切换（第 7 节 WP-切换）。
+代码分布如下（切换已完成，`port-map.json` 的 `root` 为仓库根）：
 
 ```
 port-map.json            上游每个文件、每个声明的去向（唯一清单）
-scripts/port/            vendor.ts（搬运）、check.ts（核对）、render.ts（渲染比对）
-next/
-  theme/                 theme.json、finishes.json（原样复制）、theme.ts（脚本填充）
-  ui/<id>.tsx            组件：上游 look（脚本填充的区域）+ 外壳（手写）
-  ui/lib/*.ts            没有所属控件的共享部分：press、overlay、switch-geometry、open-state
-  demos/<id>.tsx         演示，也是文档站的示例源码
-  demos/<id>.ref.tsx     参照页：同一页面，按上游写法把 look 展开在 nsh/base 控件上
-  demos/render.test.tsx  渲染比对
-  docs/<id>.md           文档页（样板：docs/button.md）
-  registry.json          暂存的 registry
+scripts/port/            vendor.ts（搬运）、check.ts（核对）、render.ts（指针渲染比对）、
+                         render-touch.ts（iOS 上的触屏比对）
+packages/theme/          theme.json、finishes.json（原样复制）、theme.ts（脚本填充）
+packages/ui/<id>.tsx     组件：上游 look（脚本填充的区域）+ 外壳（手写）
+packages/ui/lib/*.tsx    没有所属控件的共享部分：press、overlay、switch-geometry、open-state
+apps/docs/demos/<id>.tsx 演示，也是文档站的示例源码
+apps/docs/demos/<id>.ref.tsx 参照页：同一页面，按上游写法把 look 展开在 nsh/base 控件上
+apps/docs/demos/render.test.tsx       指针渲染比对（亮 / 暗）
+apps/docs/demos/render-touch.test.tsx 触屏渲染比对（iOS 模拟器）
+apps/docs/src/pages/docs/components/<id>.md 文档页（样板：button.md）
+registry.json            registry 清单，`bun run registry:build` 生成 public/r
 ```
-
-切换后 `next/theme` → `packages/theme`，`next/ui` → `packages/ui`，`next/demos` → `apps/docs/demos`，`next/registry.json` → `registry.json`，`port-map.json` 的 `root` 改掉即可。
 
 ## 4. 规范
 
@@ -73,7 +72,7 @@ next/
 3. 没有所属控件的，进 `ui/lib/<上游文件名>`：`backdrop` → `ui/lib/overlay.ts`，`look/press.ts` → `ui/lib/press.ts`。
 4. 主题相关的（`theme.ts`、两个 JSON）进 `theme/`。
 
-### 外壳写法（样板确立的约定，见 `next/ui/button.tsx`、`dialog.tsx`）
+### 外壳写法（样板确立的约定，见 `packages/ui/button.tsx`、`dialog.tsx`）
 
 - 不解构 props。用 `split(props, [...])` 取走外壳自己处理的键，其余 `{...rest}` 透传。
 - look 的选项传读取函数（`size: () => props.size`），这是上游 `Live<>` 的用法，外观随 props 变化。
@@ -90,14 +89,15 @@ next/
 bun run port:new <id> --from <上游文件> …   # 1–3. 路由、目标文件、填充区域、演示与文档骨架（脚手架，WP-0）
 #    脚手架建成之前手工做：改 port-map.json → 建带空区域的目标文件 → bun run port:vendor → 补 import
 # 4. 填外壳的差异、两个演示页、文档页（所有 TODO(port)）
-# 5. 核对 next/registry.json 的条目
+# 5. 核对 registry.json 的条目
 bun run port:check             # 清单与一致性
-nsh check next/demos/button.tsx   # 类型（demos 目录的所有文件都在它的 tsconfig 里）
-bun run port:render            # 渲染比对；截图在 next/demos/shots/
+nsh check apps/docs/demos/button.tsx   # 类型（demos 目录的所有文件都在它的 tsconfig 里）
+bun run port:render            # 指针渲染比对；截图在 apps/docs/demos/shots/
+bun run port:render:touch      # 触屏渲染比对（iOS 模拟器；同一 shots/）
 vp check                       # 格式与 lint
 ```
 
-完成标准：以上全部通过；亮 / 暗、指针 / 触屏四张截图人眼看过，没有裁切、错位、看不清的文字；`port-map.json` 里该控件相关的声明不再是 `pending`。一个家族一个 commit。
+完成标准：以上全部通过；指针的亮 / 暗两张、触屏的亮 / 暗两张（模拟器可用时）人眼看过，没有裁切、错位、看不清的文字；`port-map.json` 里该控件相关的声明不再是 `pending`。一个家族一个 commit。
 
 文档页的要求：照 shadcn 的篇幅，章节固定为 Installation、Usage、Examples、API。Usage 只放 import 和一行最简用法；Examples 一个轴一小节；API 只列外壳自己加的 props，其余一句话指向 `nsh/base`。不解释实现，不写"与上游的差异"以外的背景。
 
@@ -105,18 +105,19 @@ vp check                       # 格式与 lint
 
 ## 6. 自动检查：现状与待办
 
-| 检查                            | 状态       | 说明                                                                                                       |
-| ------------------------------- | ---------- | ---------------------------------------------------------------------------------------------------------- |
-| `port:check`                    | 已建       | 第 4 节 P1–P3                                                                                              |
-| `port:render`                   | 已建       | P4。需要本机有 Chrome / Edge / Chromium；无需屏幕录制权限                                                  |
-| `registry:build` 的依赖校验     | 已有       | P6                                                                                                         |
-| 颜色守门（`ui-guards.test.ts`） | 已改       | `next/ui` 扫区域**之外**；`theme.ts` 与 `@port` 区域内放行                                                 |
-| props 超集断言                  | 已建       | `next/demos/props.test-d.ts`，由 `nsh check next/demos` 覆盖                                               |
-| 总览页（contact sheet）         | 待建       | `port:render` 已产出全部截图；加一个脚本把 `shots/*.png` 拼成一页 HTML，供人一次看完。每个家族合并前看一遍 |
-| 截图基线                        | 待建       | 把 `shots/` 的一份副本提交进 `next/demos/baseline/`，`port:render` 增加"与基线相同"的比对，改动即可见      |
-| 演示覆盖                        | 待建       | 脚本核对：每个组件的每个 `variant` / `size` 取值都在它的 demo 里出现过                                     |
-| `check:recipes`                 | 切换时删除 | 它检查的 R1–R8 属于旧规范；其中"每个导出有 doc comment""文档页章节齐全""demo 存在"三项并入新的检查         |
-| `bun run check`                 | 切换时改   | 加入 `port:check`；`port:render` 较慢（每组约 1.5 秒），放进 CI 而不是每次本地检查                         |
+| 检查                            | 状态 | 说明                                                                                                                                       |
+| ------------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------ |
+| `port:check`                    | 已建 | 第 4 节 P1–P3                                                                                                                              |
+| `port:render`                   | 已建 | P4 的指针那一半：亮 / 暗各一组（51 × 2 = 102 组截图）。需要本机有 Chrome / Edge / Chromium；无头浏览器始终只量到精细指针，所以它不渲染触屏 |
+| `port:render:touch`             | 已建 | P4 的触屏那一半：在 iOS 模拟器上打开同一批页面（`render-touch.test.tsx`），亮 / 暗各一组。需要 Xcode 的 iPhone 模拟器和 `nsh-ios-host`     |
+| `registry:build` 的依赖校验     | 已有 | P6                                                                                                                                         |
+| 颜色守门（`ui-guards.test.ts`） | 已改 | `packages/ui` 扫区域**之外**；`theme.ts` 与 `@port` 区域内放行                                                                             |
+| props 超集断言                  | 已建 | `apps/docs/demos/props.test-d.ts`，由 `nsh check apps/docs/demos` 覆盖                                                                     |
+| 总览页（contact sheet）         | 待建 | `port:render` 已产出全部截图；加一个脚本把 `shots/*.png` 拼成一页 HTML，供人一次看完。每个家族合并前看一遍                                 |
+| 截图基线                        | 待建 | 把 `shots/` 的一份副本提交进 `apps/docs/demos/baseline/`，`port:render` 增加"与基线相同"的比对，改动即可见                                 |
+| 演示覆盖                        | 待建 | 脚本核对：每个组件的每个 `variant` / `size` 取值都在它的 demo 里出现过                                                                     |
+| `check:recipes`                 | 已删 | 它检查的 R1–R8 属于旧规范；其中"每个导出有 doc comment""文档页章节齐全""demo 存在"三项并入新的检查                                         |
+| `bun run check`                 | 已改 | 含 `port:check`；`port:render` 较慢（每组约 1.5 秒，102 组近 3 分钟），放进 CI 而不是每次本地检查                                          |
 
 `port:check` 的两个已知限制：它比较的是格式化后的文本，所以只要 `vp fmt` 的行为不变就稳定；它不检查区域**之外**是否偷放了外观，这由 P7 负责。
 
@@ -129,9 +130,9 @@ vp check                       # 格式与 lint
 1. **规范落地（已完成）。** `AGENTS.md`、`GLOSSARY.md`、`docs/toolchain.md` 已按新规范重写；`roadmap.md`、`verification.md` 已删除；`packages/ui` 与 `packages/theme` 的 README 顶部加了"旧实现"提示。其余文档在切换时处理（第 8 节）。
 2. **脚手架（已完成）。** `bun run port:new`（`scripts/port/new.ts` + `templates/`）。之后的新组件一律由它起步。
 3. **搬运共享部分（已完成）。** `look/surface.tsx` → `ui/lib/surface.tsx`；`popup.tsx` → `ui/lib/popup.tsx`；`icons.tsx` → `ui/lib/icons.tsx`；`look/press.ts` 已完成。
-4. **演示套件（已完成）。** `next/demos/kit.tsx`（`DemoPage` / `DemoCard` / `DemoSection`，不进 registry）；样板与 toggle 的 demo / ref 已改用它，`switch` 的行用 `listRow`。
-5. **待建的检查（部分完成）。** 颜色守门已扫 `next/ui` 的区域外代码；props 超集断言在 `next/demos/props.test-d.ts`。仍待建：总览页、截图基线、演示覆盖。
-6. **CLI（已完成）。** `mergeTheme` 对任意缺键补齐（不再特指 `custom-*`）；`theme-contract.test.ts` 对照 `next/theme/theme.json`：覆盖 NSH 默认主题的全部键，亮暗成对。`init` 的默认行为不变。
+4. **演示套件（已完成）。** `apps/docs/demos/kit.tsx`（`DemoPage` / `DemoCard` / `DemoSection`，不进 registry）；样板与 toggle 的 demo / ref 已改用它，`switch` 的行用 `listRow`。
+5. **待建的检查（部分完成）。** 颜色守门已扫 `packages/ui` 的区域外代码；props 超集断言在 `apps/docs/demos/props.test-d.ts`。仍待建：总览页、截图基线、演示覆盖。
+6. **CLI（已完成）。** `mergeTheme` 对任意缺键补齐（不再特指 `custom-*`）；`theme-contract.test.ts` 对照 `packages/theme/theme.json`：覆盖 NSH 默认主题的全部键，亮暗成对。`init` 的默认行为不变。
 7. **对齐 CLI 与上游基线（已完成，`30f87b7c`）。** 按 `docs/toolchain.md` 的升级步骤；外壳用 `focusVisibleStyle`；`port:check` 在 CLI 落后时报错。
 
 #### 脚手架
@@ -146,19 +147,19 @@ bun run port:new <id> --from <上游文件> [--symbols a,b,c] [--base <nsh/base 
 
 它做的事，按顺序：
 
-| 步骤 | 产物                                    | 内容                                                                                                                                                                                                                                                                                                                     |
-| ---- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| 1    | `port-map.json`                         | 把 `--symbols`（省略则整个文件）路由到 `ui/<id>.tsx`；已有路由时报错，不覆盖                                                                                                                                                                                                                                             |
-| 2    | `next/ui/<id>.tsx`                      | 三行文件头、空的 `// @port` 区域、外壳骨架。单部件（默认）：`<Id>Props = Omit<Base<Id>Props, "children"> & { variant?; size?; children? }`，`split`、look 选项用读取函数、样式数组、`focusVisibleStyle` 接线、字符串 children。`--family`：Root（`createOpenState` + context）、Trigger、Content、Close 以及 `use<Id>()` |
-| 3    | `bun run port:vendor`                   | 填充区域；把区域里用到而未 import 的名字列出来，提示从 `@shadcn-nsh/theme`、`nsh` 或 `./lib/*` 补上                                                                                                                                                                                                                      |
-| 4    | `next/demos/<id>.tsx`、`<id>.ref.tsx`   | 同一个页面骨架的两份：标题、一张卡片、`Variant` / `Size` / `States` 三个小节的占位；参照页用 `nsh/base` 控件加 look 展开                                                                                                                                                                                                 |
-| 5    | `next/demos/render.test.tsx`、`App.tsx` | 各加一行                                                                                                                                                                                                                                                                                                                 |
-| 6    | `next/docs/<id>.md`                     | Installation、Usage、Examples、API 四节的骨架，按 `next/docs/button.md`                                                                                                                                                                                                                                                  |
-| 7    | `next/registry.json`                    | 加条目；`registryDependencies` 由实际 import 推出                                                                                                                                                                                                                                                                        |
+| 步骤 | 产物                                                                  | 内容                                                                                                                                                                                                                                                                                                                     |
+| ---- | --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1    | `port-map.json`                                                       | 把 `--symbols`（省略则整个文件）路由到 `ui/<id>.tsx`；已有路由时报错，不覆盖                                                                                                                                                                                                                                             |
+| 2    | `packages/ui/<id>.tsx`                                                | 三行文件头、空的 `// @port` 区域、外壳骨架。单部件（默认）：`<Id>Props = Omit<Base<Id>Props, "children"> & { variant?; size?; children? }`，`split`、look 选项用读取函数、样式数组、`focusVisibleStyle` 接线、字符串 children。`--family`：Root（`createOpenState` + context）、Trigger、Content、Close 以及 `use<Id>()` |
+| 3    | `bun run port:vendor`                                                 | 填充区域；把区域里用到而未 import 的名字列出来，提示从 `@shadcn-nsh/theme`、`nsh` 或 `./lib/*` 补上                                                                                                                                                                                                                      |
+| 4    | `apps/docs/demos/<id>.tsx`、`<id>.ref.tsx`                            | 同一个页面骨架的两份：标题、一张卡片、`Variant` / `Size` / `States` 三个小节的占位；参照页用 `nsh/base` 控件加 look 展开                                                                                                                                                                                                 |
+| 5    | `apps/docs/demos/render.test.tsx`、`render-touch.test.tsx`、`App.tsx` | 各加一行                                                                                                                                                                                                                                                                                                                 |
+| 6    | `apps/docs/src/pages/docs/components/<id>.md`                         | Installation、Usage、Examples、API 四节的骨架，按 `apps/docs/src/pages/docs/components/button.md`                                                                                                                                                                                                                        |
+| 7    | `registry.json`                                                       | 加条目；`registryDependencies` 由实际 import 推出                                                                                                                                                                                                                                                                        |
 
-骨架里需要人填的地方用 `TODO(port)` 标出；`port:check` 在 `next/` 下发现 `TODO(port)` 时报错，所以填完才能过检查。模板取自三个样板：单部件看 `next/ui/button.tsx` 与 `switch.tsx`，复合看 `next/ui/dialog.tsx`。实现放在 `scripts/port/new.ts`，模板放在 `scripts/port/templates/`。
+骨架里需要人填的地方用 `TODO(port)` 标出；`port:check` 在移植目录下发现 `TODO(port)` 时报错，所以填完才能过检查。模板取自三个样板：单部件看 `packages/ui/button.tsx` 与 `switch.tsx`，复合看 `packages/ui/dialog.tsx`。实现放在 `scripts/port/new.ts`，模板放在 `scripts/port/templates/`。
 
-验收：用它重新生成 `button` 的骨架，与现有 `next/ui/button.tsx` 的外壳部分只差填空处；再用它做 WP-1 的第一个新组件，全程不需要参考旧的 `packages/ui`。
+验收：用它重新生成 `button` 的骨架，与现有 `packages/ui/button.tsx` 的外壳部分只差填空处；再用它做 WP-1 的第一个新组件，全程不需要参考旧的 `packages/ui`。
 
 ### WP-1 … WP-10 按家族移植
 
@@ -180,9 +181,9 @@ bun run port:new <id> --from <上游文件> [--symbols a,b,c] [--base <nsh/base 
 
 现有 `packages/ui/<id>.tsx` 里的组合外壳（Root / Trigger / Content 的接线、`createOpenState`、`createSlot`、items 注册）可以直接复用；其中的 `look()`、`xVariants()`、对 `@shadcn-nsh/theme` 旧接口的调用全部丢弃。上游没有对应 look 的组件（现有的 `nav-stack`）在第 11 步单独决定去留。
 
-### WP-切换
+### WP-切换（已完成）
 
-1. `git mv` 把 `next/theme`、`next/ui`、`next/demos` 移到 `packages/theme`、`packages/ui`、`apps/docs/demos`，覆盖旧文件；`next/registry.json` 覆盖 `registry.json`；`port-map.json` 的 `root` 改为对应路径（三个目录不同根时，把 `root` 设为仓库根，目标路径写全）。
+1. 暂存目录已并入正式路径：`packages/theme`、`packages/ui`、`apps/docs/demos`、`registry.json`；`port-map.json` 的 `root` 为仓库根，目标路径写全。
 2. 删除：旧的 `packages/ui/lib/{density,follow,field,listbox,meter,dates,part-style}`、`scripts/recipes-allowlist.json`（如仍在）、`check:recipes`。
 3. `apps/gallery`：`App.tsx` 与各家族页改用新组件；行为测试里按旧 variant 名和旧尺寸写的断言逐个改。
 4. `apps/docs`：组件页的 variant 表、示例代码改成新 API；`src/lib/components.ts` 的清单由 `port-map.json` 和 `registry.json` 生成；`DemoFrame` 默认 Desktop。

@@ -26,6 +26,7 @@
     "port:vendor": "bun scripts/port/vendor.ts",
     "port:check": "bun scripts/port/check.ts",
     "port:render": "bun scripts/port/render.ts",
+    "port:render:touch": "bun scripts/port/render-touch.ts",
     "port:new": "bun scripts/port/new.ts"
   },
   "devDependencies": {

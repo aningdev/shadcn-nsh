@@ -42,12 +42,30 @@ TypeScript 为 **7.1**（Astro content mapper 所需）。它不提供 JS 解析
 
 ## 检查的组成
 
-| 命令                        | 范围                                                                            |
-| --------------------------- | ------------------------------------------------------------------------------- |
-| `bun run port:check`        | 清单完整；`// @port` 区域与上游一致；CLI 不落后于基线                           |
-| `bun run port:render`       | `apps/docs/demos/render.test.tsx`；截图在 `apps/docs/demos/shots/`              |
-| `nsh check apps/docs/demos` | 移植 UI + 演示的类型                                                            |
-| `nsh check apps/gallery`    | Gallery 行为夹具与冒烟页                                                        |
-| `vp check`                  | 全仓格式、lint、工具面类型                                                      |
-| `bun run check`             | `vp check --fix` → `port:check` → demos → gallery → docs（见根 `package.json`） |
-| `bun run registry:build`    | 根据 `registry.json` 生成 `public/r`                                            |
+| 命令                        | 范围                                                                                |
+| --------------------------- | ----------------------------------------------------------------------------------- |
+| `bun run port:check`        | 清单完整；`// @port` 区域与上游一致；CLI 不落后于基线                               |
+| `bun run port:render`       | `apps/docs/demos/render.test.tsx`：指针，亮 / 暗；截图在 `apps/docs/demos/shots/`   |
+| `bun run port:render:touch` | `apps/docs/demos/render-touch.test.tsx`：iOS 模拟器上的触屏，亮 / 暗；同一 `shots/` |
+| `nsh check apps/docs/demos` | 移植 UI + 演示的类型                                                                |
+| `nsh check apps/gallery`    | Gallery 行为夹具与冒烟页                                                            |
+| `vp check`                  | 全仓格式、lint、工具面类型                                                          |
+| `bun run check`             | `vp check --fix` → `port:check` → demos → gallery → docs（见根 `package.json`）     |
+| `bun run registry:build`    | 根据 `registry.json` 生成 `public/r`                                                |
+
+### 渲染比对的两半
+
+`port:render` 用无头浏览器（Chrome / Edge / Chromium），它始终只量到精细指针：在 `--target web` 上强制不了触屏，所以这一半只跑指针。触屏那一半 `port:render:touch` 用 `nsh test render-touch.test.tsx --target ios`，在 iOS 模拟器上打开同一批演示与参照页（`open(…, { platform: "ios" })`），亮 / 暗各一组，截图落在同一个 `shots/`。
+
+两份测试共用的用例表、截图比较和 **200 ms 的定身等待**在 `apps/docs/demos/render-cases.ts`：手动时钟把两页的入场过渡（弹层 150 ms、颜色 160 ms）走完再截图，避免一页停在过渡中途而另一页已经落定。这是确定性的等待，不是失败重试。
+
+iOS 那一半需要 Xcode 的 iPhone 模拟器，以及 `~/.nsh/runtime/ios/iphonesimulator/nsh-ios-host`。源码安装的 CLI 的 runtime 树可能没有它，从 `nsh` 的 checkout 构建：
+
+```sh
+cd <nsh checkout>   # 即 `nsh --version` 的提交
+cargo build -p nsh-ios-host --target aarch64-apple-ios-sim --release
+mkdir -p ~/.nsh/runtime/ios/iphonesimulator
+cp target/aarch64-apple-ios-sim/release/nsh-ios-host ~/.nsh/runtime/ios/iphonesimulator/
+```
+
+没有模拟器或 host 时脚本报出缺的那一项并以非零退出；`port:render` 不受影响。
