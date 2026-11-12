@@ -1,93 +1,57 @@
 ---
-layout: ../../../layouts/Docs.astro
 title: Toggle Group
-description: Styled toggle group wrapping nsh/base ToggleGroup.
+description: A row or column of toggles on the inset toolbar track.
 component: true
 demo: toggle-group
 ---
 
-Styled muted row shell on `nsh/base` ToggleGroup. Re-exports `Toggle` for convenience — selection state still lives on each `Toggle`.
-
-## Install
+## Installation
 
 ```sh
-shadcn-nsh add toggle-group
-# monorepo:
-shadcn-nsh add toggle-group -c apps/web
+npx shadcn-nsh@latest add toggle-group
 ```
 
 ## Usage
 
 ```tsx
-import { Toggle, ToggleGroup } from "@workspace/ui/components/ui/toggle-group";
-import { Text } from "nsh";
-
-<ToggleGroup>
-  <Toggle pressed={align() === "left"} onChange={({ pressed }) => pressed && setAlign("left")}>
-    <Text>Left</Text>
-  </Toggle>
-  <Toggle pressed={align() === "center"} onChange={({ pressed }) => pressed && setAlign("center")}>
-    <Text>Center</Text>
-  </Toggle>
-</ToggleGroup>;
+import { Toggle, ToggleGroup } from "@/components/ui/toggle-group";
 ```
-
-## Composition
-
-```
-ToggleGroup
-└─ Toggle*
-```
-
-## Examples
-
-### Exclusive selection in the app
 
 ```tsx
-const [align, setAlign] = createSignal("left");
-
-<ToggleGroup>
-  <Toggle pressed={align() === "left"} onChange={({ pressed }) => pressed && setAlign("left")}>
-    <Text>Left</Text>
-  </Toggle>
-  <Toggle pressed={align() === "right"} onChange={({ pressed }) => pressed && setAlign("right")}>
-    <Text>Right</Text>
-  </Toggle>
-</ToggleGroup>;
-```
-
-### Disabled group
-
-```tsx
-<ToggleGroup disabled>
-  <Toggle pressed>
-    <Text>Locked</Text>
+<ToggleGroup accessibilityLabel="Style">
+  <Toggle pressed={bold()} onChange={({ pressed }) => bold.set(pressed)}>
+    Bold
   </Toggle>
 </ToggleGroup>
 ```
 
+## Examples
+
+### Vertical
+
+```tsx
+<ToggleGroup vertical accessibilityLabel="Style">
+  <Toggle pressed={bold()}>Bold</Toggle>
+</ToggleGroup>
+```
+
+### Inside a Toolbar
+
+```tsx
+<Toolbar>
+  <ToggleGroup inset={false} accessibilityLabel="Style">
+    <Toggle pressed={bold()}>B</Toggle>
+  </ToggleGroup>
+</Toolbar>
+```
+
+`inset={false}` skips the track when a parent `Toolbar` already wears it.
+
 ## API
 
-### `ToggleGroup`
+Every prop of [`nsh/base` ToggleGroup](https://nsh.dev/elements/toggle-group) passes through. `style` goes over the look's. `Toggle` is re-exported from the toggle package.
 
-| Prop       | Type          | Default | Notes                  |
-| ---------- | ------------- | ------- | ---------------------- |
-| `disabled` | `boolean`     | —       |                        |
-| `children` | `JSX.Element` | —       | Usually `Toggle` items |
-
-### `Toggle`
-
-Re-exported from `./toggle`. See [Toggle](./toggle) for `pressed`, `disabled`, `accessibilityLabel`, `children`, and `onChange`.
-
-## Differences
-
-| Topic       | shadcn                                          | This package                                             |
-| ----------- | ----------------------------------------------- | -------------------------------------------------------- |
-| Value API   | `type` / `value` / `onValueChange` on the group | no group value — each `Toggle` is `pressed` / `onChange` |
-| Orientation | `orientation`                                   | fixed horizontal row shell                               |
-| Variants    | `variant` / `size`                              | none on the group; its `Toggle`s take `variant` / `size` |
-| Exports     | group + item parts                              | `ToggleGroup` + re-exported `Toggle`                     |
-
-## Not forwarded
-
-None — all `nsh/base` ToggleGroup props are forwarded. The wrapper adds the inset track (a row 2 points apart, 3 points inside its edge) under the consumer's `style`. No `type` / `value` / `orientation` props are exposed — extend the copied source if you need base grouping knobs.
+| Prop       | Type      | Default |
+| ---------- | --------- | ------- |
+| `vertical` | `boolean` |         |
+| `inset`    | `boolean` | `true`  |

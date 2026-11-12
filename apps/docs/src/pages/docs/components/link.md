@@ -1,106 +1,34 @@
 ---
-layout: ../../../layouts/Docs.astro
 title: Link
-description: Styled link wrapping nsh/base Link — text-link look on theme tokens.
+description: A text link with underline motion, on the shared nav look.
 component: true
 demo: link
 ---
 
-[`nsh/base`](https://nsh.dev/modules/nsh-base) owns presses, keyboard activation, disabled, `href` opening, and the link role for screen readers. This package is the styled layer on top: a primary text-link look with theme tokens. [`Link`](https://nsh.dev/elements/link) navigates somewhere; for press targets that are not URLs use [`Button`](./button) — Button does **not** ship `variant="link"`.
+## Installation
 
-## Install
-
-```bash
+```sh
 npx shadcn-nsh@latest add link
-bunx shadcn-nsh@latest add link
-pnx shadcn-nsh@latest add link
-yarn dlx shadcn-nsh@latest add link
 ```
 
 ## Usage
 
 ```tsx
-import { Link, linkColor } from "@workspace/ui/components/ui/link";
-import { Text } from "nsh";
-
-<Link href="https://nsh.dev">Open nsh.dev</Link>;
-
-<Link href="https://nsh.dev">
-  <Text style={{ color: linkColor() }}>Custom label</Text>
-</Link>;
+import { Link } from "@/components/ui/link";
 ```
 
-## Text link
-
-String children render as an underlined primary label. Prefer this for the default text-link look.
-
 ```tsx
-<Link href="https://nsh.dev">Read the docs</Link>
-```
-
-## Current page
-
-```tsx
-<Link href="/docs" current>
-  Docs
-</Link>
-```
-
-## Disabled
-
-```tsx
-<Link href="https://nsh.dev" disabled>
-  Unavailable
-</Link>
-```
-
-## Open with + onOpen
-
-```tsx
-<Link href="https://nsh.dev" openWith="system" onOpen={(e) => console.log(e.href)}>
-  External
-</Link>
+<Link href="https://nsh.dev">Native Shell</Link>
 ```
 
 ## API
 
-### Props
+Uses `linkLook` and `LinkText`. Every prop of [`nsh/base` Link](https://nsh.dev/elements/link) passes through.
 
-| Prop                                                                    | Type                    | Default     | Notes                                                      |
-| ----------------------------------------------------------------------- | ----------------------- | ----------- | ---------------------------------------------------------- |
-| `href`                                                                  | `string`                | —           | Destination                                                |
-| `current`                                                               | `boolean`               | —           | Current-page semantics (heavier label weight)              |
-| `disabled`                                                              | `boolean`               | —           | Forwarded                                                  |
-| `openWith`                                                              | `"system" \| "app"`     | —           | How to open the href                                       |
-| `accessibilityLabel`                                                    | `string \| null`        | —           | Defaults to string `children` when omitted                 |
-| `variant`                                                               | `"default" \| "quiet"`  | `"default"` | `quiet` uses `colors.mutedForeground`                      |
-| `children`                                                              | `string \| JSX.Element` | —           | Strings get a themed label; element children are the app's |
-| `style` / `hoverStyle` / `activeStyle` / `focusStyle` / `disabledStyle` | `StyleProp`             | —           | Merged over the text-link chrome                           |
-
-### Events
-
-| Event     | Notes                               |
-| --------- | ----------------------------------- |
-| `onOpen`  | `(event: { href: string }) => void` |
-| `onPress` | Press reported after / with opening |
-
-### `linkColor`
-
-| Export      | Type                | Notes                                                                                    |
-| ----------- | ------------------- | ---------------------------------------------------------------------------------------- |
-| `linkColor` | `(state?) => color` | No arguments is still `colors.primary`. A state resolves disabled, current, and `quiet`. |
-
-## Differences
-
-| Topic         | shadcn (`bases/base`)                        | This package                                                                                              |
-| ------------- | -------------------------------------------- | --------------------------------------------------------------------------------------------------------- |
-| Link look     | Often `Button variant="link"` or `<a>` + CVA | Dedicated `Link` on `nsh/base` (nsh-only registry item)                                                   |
-| Button `link` | `variant="link"` on Button                   | **Not on Button** — use this component; see also [Button](./button)                                       |
-| Navigation    | App router / `<a href>`                      | `href` + `openWith` / `onOpen` from `nsh/base`                                                            |
-| Underline     | often `text-decoration` or opacity           | hairline at `alpha(color, 0.35)` that turns solid on hover; the press sinks (`pressSink`), not an opacity |
-| Visited       | a visited color                              | none — this theme has no violet token                                                                     |
-| Class hooks   | `className`                                  | `class` plus style hooks; consumer styles merge over the chrome                                           |
-
-## Not forwarded
-
-None. Base link props and style hooks pass through. Hover and press are theme helpers (`alpha`, `pressSink`), not scattered opacities.
+| Prop      | Type      | Notes              |
+| --------- | --------- | ------------------ |
+| `quiet`   | `boolean` | Muted footer style |
+| `current` | `boolean` | Current page       |
+| `visited` | `boolean` | Violet once opened |
+| `inline`  | `boolean` | In a paragraph     |
+| `icon`    | `boolean` | External arrow     |

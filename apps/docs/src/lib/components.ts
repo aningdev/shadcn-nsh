@@ -1,4 +1,4 @@
-/** Phase-1 registry UI items for docs nav / index (excludes theme and open-state). */
+/** Docs nav / index: one entry per component page (from registry + ported docs). */
 
 export type ComponentDoc = {
   slug: string;
@@ -16,98 +16,96 @@ export function nshElementHref(nshElement: string): string {
   return `https://nsh.dev/elements/${nshElement}`;
 }
 
-/**
- * Sidebar / index order: shadcn-ish meta filtered to Phase-1 components on
- * the published store CLI `nsh` (currently 0.4.0).
- */
 export const components: ComponentDoc[] = [
   {
     slug: "accordion",
     title: "Accordion",
     nshElement: "accordion",
-    description:
-      "Styled accordion wrapping nsh/base Accordion — theme tokens + Item / Trigger / Panel; composition-only.",
+    description: "List rows that reveal panels with a turning chevron.",
   },
   {
     slug: "alert-dialog",
     title: "Alert Dialog",
     nshElement: "alert-dialog",
-    description:
-      "Styled confirmation card — theme tokens on nsh/base Dialog, with an app-owned action id.",
+    description: "A confirmation card that waits for an action, on the shared dialog look.",
   },
   {
     slug: "avatar",
     title: "Avatar",
     nshElement: "avatar",
-    description: "Styled avatar wrapping nsh/base Avatar / AvatarGroup — theme tokens + fallback.",
+    description: "A round picture or name-colored initials on the identity ring.",
+  },
+  {
+    slug: "badge",
+    title: "Badge",
+    nshElement: "badge",
+    description: "A small capsule label in a neutral, toned, or outline style.",
   },
   {
     slug: "button",
     title: "Button",
     nshElement: "button",
-    description: "Styled button wrapping nsh/base Button.",
-  },
-  {
-    slug: "carousel",
-    title: "Carousel",
-    nshElement: "carousel",
-    description:
-      "Styled carousel wrapping nsh/base Carousel and its parts — theme tokens, button arrows, and pagination dots.",
-  },
-  {
-    slug: "combobox",
-    title: "Combobox",
-    nshElement: "combobox",
-    description:
-      "Styled combobox wrapping nsh/base Combobox — theme tokens + Trigger / Content / Item; composition-only.",
-  },
-  {
-    slug: "command",
-    title: "Command",
-    nshElement: "command",
-    description: "Styled command palette wrapping nsh/base Command — theme tokens + default rows.",
+    description: "A button, an icon button, a round button, and a split button.",
   },
   {
     slug: "calendar",
     title: "Calendar",
     nshElement: "calendar",
-    description:
-      "Styled calendar wrapping nsh/base Calendar \u2014 theme tokens for days, range, today, and month toggles.",
+    description: "A month of days to pick a date or a range, on the shared calendar look.",
+  },
+  {
+    slug: "carousel",
+    title: "Carousel",
+    nshElement: "carousel",
+    description: "Snapping slides with round arrows and a traveling dot pill.",
   },
   {
     slug: "checkbox",
     title: "Checkbox",
     nshElement: "checkbox",
-    description:
-      "Styled checkbox wrapping nsh/base Checkbox — theme tokens + default mark; full base prop pass-through.",
+    description: "A sunk box that fills in citrus, with a check or a dash springing in.",
   },
   {
     slug: "collapsible",
     title: "Collapsible",
     nshElement: "collapsible",
-    description:
-      "Styled collapsible wrapping nsh/base Collapsible — theme tokens + Trigger / Content; full base prop pass-through.",
+    description: "A disclosure row that reveals a panel beneath it.",
+  },
+  {
+    slug: "color-picker",
+    title: "ColorPicker",
+    nshElement: "color-picker",
+    description: "Area, sliders, joined fields, swatches, and a popover trigger.",
+  },
+  {
+    slug: "combobox",
+    title: "Combobox",
+    nshElement: "combobox",
+    description: "A searchable field with a list of choices, on the shared listbox look.",
+  },
+  {
+    slug: "command",
+    title: "Command",
+    nshElement: "command",
+    description: "A search palette with sectioned, virtualized rows.",
   },
   {
     slug: "context-menu",
     title: "Context Menu",
-    nshElement: "menu",
-    description:
-      "Styled context menu wrapping nsh/base ContextMenu — theme tokens + Trigger / Content / Item; full base prop pass-through.",
+    nshElement: "context-menu",
+    description: "A menu at the pointer, on the shared menu look.",
   },
   {
     slug: "data-table",
-    title: "Data Table",
+    title: "DataTable",
     nshElement: "data-table",
-    description:
-      "Styled data table wrapping nsh/base DataTable — theme tokens for selection, stripe, and header chrome.",
+    description: "A striped table with sortable, resizable columns.",
   },
   {
     slug: "date-picker",
     title: "Date Picker",
     nshElement: "date-picker",
-    description:
-      "Styled date picker wrapping nsh/base DatePicker \u2014 theme tokens + Trigger; composition-only.",
+    description: "A calendar in a popup from a field trigger, on the shared listbox look.",
   },
   {
     slug: "dialog",
@@ -117,119 +115,149 @@ export const components: ComponentDoc[] = [
       "Styled dialog wrapping nsh/base Dialog — theme tokens + Trigger / Content; full base prop pass-through.",
   },
   {
-    slug: "dock-area",
-    title: "Dock Area",
-    nshElement: "dock",
-    description:
-      "Styled dock workspace wrapping nsh/base DockArea — theme tokens for tabs, handles, and docks.",
+    slug: "diff-view",
+    title: "DiffView",
+    nshElement: "diff-view",
+    description: "Up and down tints for additions and deletions, with hunk actions.",
   },
   {
-    slug: "menu",
-    title: "Menu",
-    nshElement: "menu",
-    description:
-      "Styled menu wrapping nsh/base Menu — theme tokens + Trigger / Content / Item; full base prop pass-through.",
+    slug: "dock-area",
+    title: "DockArea",
+    nshElement: "dock-area",
+    description: "Dockable workspace chrome for tabs, splits, and edge docks.",
+  },
+  {
+    slug: "editor",
+    title: "Editor",
+    nshElement: "editor",
+    description: "Rich document typography and a code editor pass-through.",
+  },
+  {
+    slug: "emoji-picker",
+    title: "Emoji picker",
+    nshElement: "emoji-picker",
+    description: "Tabs, search, skin tones and grid styled for nsh/base EmojiPicker.",
   },
   {
     slug: "hover-card",
     title: "Hover Card",
     nshElement: "hover-card",
-    description:
-      "Styled hover card wrapping nsh/base HoverCard — theme tokens + Trigger / Content.",
+    description: "A preview card that grows from its trigger, on the shared popover surface.",
   },
   {
     slug: "input",
     title: "Input",
     nshElement: "input",
-    description: "Styled text input wrapping nsh/base Input.",
+    description: "A sunk text field — single-line, multiline, masked, or invalid.",
   },
   {
     slug: "link",
     title: "Link",
     nshElement: "link",
-    description: "Styled link wrapping nsh/base Link — theme tokens + underline label.",
+    description: "A text link with underline motion, on the shared nav look.",
+  },
+  {
+    slug: "menu",
+    title: "Menu",
+    nshElement: "menu",
+    description: "A menu of items, separators and submenus on the shared menu look.",
+  },
+  {
+    slug: "meter",
+    title: "Meter",
+    nshElement: "meter",
+    description: "A horizontal meter with an optional limit marker.",
   },
   {
     slug: "number-input",
     title: "Number Input",
     nshElement: "number-input",
-    description:
-      "Styled number input wrapping nsh/base NumberInput — theme tokens + stepper chrome.",
+    description: "A sunk number field with − / + or stacked chevron steppers.",
   },
   {
     slug: "otp-input",
     title: "OTP Input",
     nshElement: "otp-input",
-    description: "Styled OTP input wrapping nsh/base OtpInput — theme tokens + cell chrome.",
+    description: "One-time code cells that lift out of sunk wells as digits fill in.",
   },
   {
     slug: "pagination",
     title: "Pagination",
     nshElement: "pagination",
-    description: "Styled pagination wrapping nsh/base Pagination — theme tokens + item chrome.",
+    description: "Page numbers and chevrons with the current page lit primary.",
+  },
+  {
+    slug: "plot",
+    title: "Plot",
+    nshElement: "plot",
+    description: "Chart colors, grid, cross line and tooltip for nsh/base/plot.",
   },
   {
     slug: "popover",
     title: "Popover",
     nshElement: "popover",
-    description:
-      "Styled popover wrapping nsh/base Popover — theme tokens + Trigger / Content; full base prop pass-through.",
+    description: "A popup panel that grows from its trigger, on the shared menu surface.",
   },
   {
     slug: "progress",
     title: "Progress",
     nshElement: "progress",
-    description:
-      "Styled progress wrapping nsh/base Progress — theme tokens; full base prop pass-through.",
+    description: "A determinate or indeterminate bar on the shared meter rail.",
   },
   {
     slug: "radio-group",
     title: "Radio Group",
-    nshElement: "radio",
+    nshElement: "radio-group",
     description:
-      "Styled radio group wrapping nsh/base RadioGroup / Radio — theme tokens + default circle; full base prop pass-through.",
+      "A sunk ring that fills in citrus, with a dot growing in — alone or as a choice tile.",
   },
   {
     slug: "resizable",
     title: "Resizable",
     nshElement: "resizable",
-    description:
-      "Styled resizable panels wrapping nsh/base ResizablePanelGroup / ResizablePanel — theme tokens for the handle and panel.",
-  },
-  {
-    slug: "select",
-    title: "Select",
-    nshElement: "select",
-    description:
-      "Styled select wrapping nsh/base Select — theme tokens + Trigger / Content / Item; composition-only.",
+    description: "Resize handles with a quiet hairline and a growing thumb.",
   },
   {
     slug: "scrollbar",
     title: "Scrollbar",
     nshElement: "scrollbar",
-    description:
-      "Styled scrollbar wrapping nsh/base Scrollbar — theme tokens for the thumb, plus setTheme.",
+    description: "A hover scroll bar in the shared gallery theme.",
+  },
+  {
+    slug: "segmented",
+    title: "Segmented",
+    nshElement: "segmented",
+    description: "A sunk track whose raised thumb springs to the selected segment.",
+  },
+  {
+    slug: "select",
+    title: "Select",
+    nshElement: "select",
+    description: "A list of choices from a field trigger, on the shared listbox look.",
   },
   {
     slug: "sheet",
     title: "Sheet",
     nshElement: "sheet",
-    description:
-      "Styled sheet wrapping nsh/base Sheet — theme tokens + Trigger / Content; full base prop pass-through.",
-  },
-  {
-    slug: "toast",
-    title: "Toast",
-    nshElement: "toast",
-    description:
-      "Styled toast wrapping nsh/base Toast / ToastStack — theme tokens + sonner-shaped toast() / Toaster; full base prop pass-through.",
+    description: "A panel that slides in from an edge of the screen over a scrim.",
   },
   {
     slug: "slider",
     title: "Slider",
     nshElement: "slider",
-    description:
-      "Styled slider wrapping nsh/base Slider — theme tokens + track/range/thumb chrome.",
+    description: "A sunk rail, citrus fill, and round thumb with a focus ring.",
+  },
+  {
+    slug: "stat",
+    title: "Stat",
+    nshElement: "stat",
+    description: "A label above a value for metric grids.",
+  },
+  {
+    slug: "status",
+    title: "Status",
+    nshElement: "status",
+    description: "A dot and label for quiet state in rows or headers.",
   },
   {
     slug: "switch",
@@ -242,89 +270,60 @@ export const components: ComponentDoc[] = [
     slug: "table",
     title: "Table",
     nshElement: "table",
-    description:
-      "Styled table wrapping nsh/base Table parts — theme tokens + full base prop pass-through.",
+    description: "Composition parts for a bordered table card using the shared data-table classes.",
   },
   {
     slug: "tabs",
     title: "Tabs",
     nshElement: "tabs",
-    description:
-      "Styled tabs wrapping nsh/base Tabs / Tab — theme tokens + List / Trigger / Content; full base prop pass-through.",
+    description: "A pill track or underlined row with a traveling indicator.",
+  },
+  {
+    slug: "text-view",
+    title: "TextView",
+    nshElement: "text-view",
+    description: "Brand-colored links and a pulsing streaming caret.",
   },
   {
     slug: "time-field",
     title: "Time Field",
     nshElement: "time-field",
-    description:
-      "Styled time field wrapping nsh/base TimeField \u2014 theme tokens for the well and segments.",
+    description: "A sunk well for a time of day, one segment at a time.",
+  },
+  {
+    slug: "toast",
+    title: "Toast",
+    nshElement: "toast",
+    description: "A raised banner with a title, optional description, action and close.",
+  },
+  {
+    slug: "toggle-group",
+    title: "Toggle Group",
+    nshElement: "toggle-group",
+    description: "A row or column of toggles on the inset toolbar track.",
   },
   {
     slug: "toggle",
     title: "Toggle",
     nshElement: "toggle",
-    description: "Styled toggle wrapping nsh/base Toggle — theme tokens + pressed chrome.",
-  },
-  {
-    slug: "toggle-group",
-    title: "Toggle Group",
-    nshElement: "toggle",
-    description:
-      "Styled toggle group wrapping nsh/base ToggleGroup — muted container; re-exports Toggle.",
+    description: "A two-state button, in two variants and three sizes.",
   },
   {
     slug: "toolbar",
     title: "Toolbar",
     nshElement: "toolbar",
-    description: "Styled toolbar wrapping nsh/base Toolbar, ToolbarGroup, and ToolbarSeparator.",
+    description: "An inset track of tools, with groups and hairline separators.",
   },
   {
     slug: "tooltip",
     title: "Tooltip",
     nshElement: "tooltip",
-    description:
-      "Styled tooltip wrapping nsh/base Tooltip — theme tokens + Trigger / Content; full base prop pass-through.",
+    description: "A popover-coloured hint bubble on any element's `tooltip` prop.",
   },
   {
     slug: "tree",
     title: "Tree",
     nshElement: "tree",
-    description:
-      "Styled tree wrapping nsh/base Tree — theme tokens + depth, chevron, and selection.",
-  },
-  {
-    slug: "color-picker",
-    title: "Color Picker",
-    nshElement: "color-picker",
-    description:
-      "Styled color picker wrapping nsh/base ColorPicker and its parts — field well, focus ring, checkerboard.",
-  },
-  {
-    slug: "diff-view",
-    title: "Diff View",
-    nshElement: "diff-view",
-    description:
-      "Styled diff wrapping nsh/base DiffView — primary and destructive tints for added and deleted lines.",
-  },
-  {
-    slug: "editor",
-    title: "Editor",
-    nshElement: "editor",
-    description:
-      "Styled code editor wrapping nsh/base Editor — field well, gutter, selection and completion menu.",
-  },
-  {
-    slug: "nav-stack",
-    title: "Nav Stack",
-    nshElement: "nav-stack",
-    description:
-      "Styled navigation stack wrapping nsh/base NavStack and NavPage — page fill, system header colors, desktop bar.",
-  },
-  {
-    slug: "text-view",
-    title: "Text View",
-    nshElement: "text-view",
-    description:
-      "Styled document view wrapping nsh/base TextView — theme tokens for text, links, code and alerts.",
+    description: "A virtualized tree with chevrons and folder icons.",
   },
 ];

@@ -120,15 +120,15 @@ export async function demoPanelHtml(name, { base = "/" } = {}) {
     </figure>`;
   }
 
-  return `<figure class="demo" data-demo="${escape(name)}" data-view="preview" data-layout="mobile" data-pagefind-ignore>
+  return `<figure class="demo" data-demo="${escape(name)}" data-view="preview" data-layout="desktop" data-pagefind-ignore>
     <figcaption class="demo__bar">
       <div class="demo__views" data-slot="tabs-list" data-size="xs" role="tablist" aria-label="${escape(t.label)}">
         <button type="button" data-slot="tabs-trigger" role="tab" id="${id}-tab-preview" aria-controls="${id}-preview" aria-selected="true" data-demo-view="preview">${escape(t.preview)}</button>
         <button type="button" data-slot="tabs-trigger" role="tab" id="${id}-tab-source" aria-controls="${id}-source" aria-selected="false" tabindex="-1" data-demo-view="source">${escape(t.source)}</button>
       </div>
       <div class="demo__layouts" data-slot="toggle-group" data-variant="segmented" data-size="xs" role="radiogroup" aria-label="${escape(t.layout)}">
-        <button type="button" data-slot="toggle-group-item" role="radio" aria-checked="true" data-demo-layout="mobile">${escape(t.mobile)}</button>
-        <button type="button" data-slot="toggle-group-item" role="radio" aria-checked="false" tabindex="-1" data-demo-layout="desktop">${escape(t.desktop)}</button>
+        <button type="button" data-slot="toggle-group-item" role="radio" aria-checked="false" tabindex="-1" data-demo-layout="mobile">${escape(t.mobile)}</button>
+        <button type="button" data-slot="toggle-group-item" role="radio" aria-checked="true" data-demo-layout="desktop">${escape(t.desktop)}</button>
       </div>
       <span class="demo__file">${escape(file)}</span>
       <div class="demo__actions" data-slot="button-group" role="group">
@@ -136,7 +136,7 @@ export async function demoPanelHtml(name, { base = "/" } = {}) {
       </div>
     </figcaption>
     <div class="demo__body">
-    <div class="demo__stage" id="${id}-preview" role="tabpanel" aria-labelledby="${id}-tab-preview" data-active>${phoneHtml(name, { base })}</div>
+    <div class="demo__stage" id="${id}-preview" role="tabpanel" aria-labelledby="${id}-tab-preview" data-active>${phoneHtml(name, { base, layout: "desktop" })}</div>
     <div class="demo__code" id="${id}-source" role="tabpanel" aria-labelledby="${id}-tab-source">${code}</div>
     </div>
   </figure>`;

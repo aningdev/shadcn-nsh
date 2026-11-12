@@ -1,224 +1,159 @@
 ---
-layout: ../../../layouts/Docs.astro
 title: Button
-description: Styled button wrapping nsh/base Button — variants and sizes on theme tokens; full base prop pass-through.
+description: A button, an icon button, a round button, and a split button.
 component: true
 demo: button
-demoHeight: 420
 ---
 
-[`nsh/base`](https://nsh.dev/modules/nsh-base) owns presses, disabled / selected, keyboard focus, and the button role for screen readers — unstyled on every platform. This package is the styled layer on top: brand variants, sizes, theme tokens, and surface `finish` depth, the same role a community library plays above `nsh/base`. [`Button`](https://nsh.dev/elements/button) is a press target whose look comes from those tokens; behavior and style hooks stay on base and are forwarded. Do not put a link look on Button (`variant="link"` is omitted); use a separate Link when the store CLI exports it.
+## Installation
 
-## Install
-
-```npx tabs
+```sh
 npx shadcn-nsh@latest add button
-```
-
-```bunx tabs
-bunx shadcn-nsh@latest add button
-```
-
-```pnx tabs
-pnx shadcn-nsh@latest add button
-```
-
-```yarn tabs
-yarn dlx shadcn-nsh@latest add button
 ```
 
 ## Usage
 
 ```tsx
-import { Button } from "@workspace/ui/components/ui/button";
-
-<Button onPress={() => {}}>Default</Button>;
+import { Button } from "@/components/ui/button";
 ```
 
-## Variants
-
-Primary actions, quiet secondary work, outline / ghost chrome, and destructive.
-
 ```tsx
-<Button>Default</Button>
-<Button variant="secondary">Secondary</Button>
-<Button variant="outline">Outline</Button>
-<Button variant="ghost">Ghost</Button>
-<Button variant="destructive">Destructive</Button>
+<Button onPress={save}>Save</Button>
 ```
 
-## Size
+## Examples
 
-Text sizes and square icon targets (same names as shadcn; heights are theme points, not CSS-pixel locked).
+### Variant
 
 ```tsx
-<Button size="xs">Extra small</Button>
-<Button size="sm">Small</Button>
-<Button size="default">Default</Button>
-<Button size="lg">Large</Button>
+<Button variant="primary">Save</Button>
+<Button variant="secondary">Cancel</Button>
+<Button variant="ghost">Skip</Button>
+<Button variant="danger">Delete</Button>
 ```
 
-## Icon
-
-Icon-only controls: use `size="icon"` (or `icon-xs` / `icon-sm` / `icon-lg`) and set `accessibilityLabel`.
+### Size
 
 ```tsx
-<Button size="icon" accessibilityLabel="Add">
-  <Text>+</Text>
+<Button size="small">Small</Button>
+<Button size="regular">Regular</Button>
+<Button size="large">Large</Button>
+```
+
+A size is compact with a pointer (24 / 28 / 34 points) and roomier on a touch screen (36 / 40 / 48), where a hit slop makes the target 44 points.
+
+### Selected
+
+```tsx
+<Button variant="secondary" selected={open()} onPress={toggle}>
+  Filters
 </Button>
 ```
 
-## With Icon
+### Busy
 
-Compose icon + label as children — there is no `icon` prop.
+A spinner before the label, and no second press.
 
 ```tsx
-<Button>
-  <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-    <Text>+</Text>
-    <Text>New project</Text>
-  </View>
+<Button busy={saving()} onPress={save}>
+  Save
 </Button>
 ```
 
-## Loading
-
-Show in-flight work by composing children and setting `disabled` so presses stop. This dims via `disabledStyle` (unlike Gallery’s `busy`, which stays full opacity).
+### Disabled
 
 ```tsx
-const saving = signal(false);
-
-<Button
-  disabled={saving()}
-  onPress={() => {
-    saving.set(true);
-    /* …then saving.set(false) */
-  }}
->
-  <Text>{() => (saving() ? "Saving…" : "Save")}</Text>
-</Button>;
+<Button disabled>Save</Button>
 ```
 
-## Selected
+### With an icon, or any content
 
-Use base `selected` for a pressed-in / current tool look (menu open, format toggled).
-
-```tsx
-const on = signal(false);
-
-<Button selected={on()} onPress={() => on.set(!on())} variant="outline">
-  Bold
-</Button>;
-```
-
-## Disabled
-
-Forward `disabled` to base. Pair with copy or a control that explains why when the action is locked.
+A string is the label. Anything else is drawn as given; `buttonLabel` and `buttonGlyph` give it the button's type and icon size.
 
 ```tsx
-<Button disabled>Disabled</Button>
-
-<Button disabled={!ready()} accessibilityLabel="Publish unavailable until ready">
-  Publish
+<Button variant="secondary">
+  <Icon name="plus" {...buttonGlyph("secondary")} />
+  <Text style={buttonLabel("secondary")}>New file</Text>
 </Button>
 ```
 
-## Style override
+### Icon button
 
-Wrapper defaults from `variant` / `size` / `finish`, then consumer styles shallow-merge on top (consumer wins per key). `class` concatenates when both are set.
+A square icon-only button. `on` shows it as chosen.
 
 ```tsx
-<Button style={{ paddingHorizontal: 24 }} hoverStyle={{ opacity: 0.8 }}>
-  Wider
-</Button>
+<IconButton accessibilityLabel="Star" on={starred()} onPress={toggle}>
+  <Icon name="star" {...iconButtonGlyph({ on: starred })} />
+</IconButton>
 ```
 
-## As a trigger
-
-Composite overlays keep their own Trigger parts; a styled Button is a valid press child when you compose by hand. See [Menu](/docs/components/menu) and [Dialog](/docs/components/dialog) for the family APIs.
+### Round button
 
 ```tsx
-<Menu>
-  <MenuTrigger>
-    <Button variant="outline">Open</Button>
-  </MenuTrigger>
-  <MenuContent>{/* … */}</MenuContent>
-</Menu>
+<RoundButton accessibilityLabel="Play" onPress={play}>
+  <Icon name="play" {...roundButtonGlyph("primary")} />
+</RoundButton>
+```
+
+### Split button
+
+A main action and a menu half in one silhouette.
+
+```tsx
+<SplitButton variant="primary">
+  <SplitButtonSegment onPress={save}>Save</SplitButtonSegment>
+  <SplitButtonDivider />
+  <SplitButtonSegment accessibilityLabel="More" onPress={openMenu}>
+    <Icon name="chevron-down" {...buttonGlyph("primary")} />
+  </SplitButtonSegment>
+</SplitButton>
+```
+
+### The look alone
+
+The look is a function, for a pressable of your own.
+
+```tsx
+<View onPress={open} {...buttonLook("ghost")}>
+  <Text style={buttonLabel("ghost")}>Open</Text>
+</View>
 ```
 
 ## API
 
-### Variants
+### Button
 
-| `variant`     | Look                                                  |
-| ------------- | ----------------------------------------------------- |
-| `default`     | Primary fill + `finish.filled` depth                  |
-| `secondary`   | Secondary fill + `finish.control` rest / pressed / on |
-| `outline`     | Border, background fill + light depth                 |
-| `destructive` | Soft destructive tint + destructive text              |
-| `ghost`       | No border/fill; muted hover                           |
+Every prop of [`nsh/base` Button](https://nsh.dev/elements/button) passes through. `style`, `hoverStyle`, `activeStyle`, `focusVisibleStyle` and `disabledStyle` go over the look's.
 
-### Sizes
+| Prop       | Type                                                          | Default     |
+| ---------- | ------------------------------------------------------------- | ----------- |
+| `variant`  | `"primary" \| "secondary" \| "accent" \| "ghost" \| "danger"` | `"primary"` |
+| `size`     | `"small" \| "regular" \| "large"`                             | `"regular"` |
+| `busy`     | `boolean`                                                     | `false`     |
+| `children` | `string \| JSX.Element`                                       |             |
 
-| `size`    | Notes                       |
-| --------- | --------------------------- |
-| `default` | Text button, default height |
-| `xs`      | Compact text                |
-| `sm`      | Small text                  |
-| `lg`      | Large text                  |
-| `icon`    | Square icon hit target      |
-| `icon-xs` | Compact square              |
-| `icon-sm` | Small square                |
-| `icon-lg` | Large square                |
+### IconButton
 
-### Props
+| Prop       | Type                     | Default   |
+| ---------- | ------------------------ | --------- |
+| `variant`  | `"ghost" \| "secondary"` | `"ghost"` |
+| `tone`     | `"danger"`               |           |
+| `on`       | `boolean`                | `false`   |
+| `children` | `JSX.Element`            |           |
 
-| Prop                 | Type                    | Default     | Notes                                                     |
-| -------------------- | ----------------------- | ----------- | --------------------------------------------------------- |
-| `children`           | `string \| JSX.Element` | —           | Arbitrary content; strings get a themed `Text` wrapper    |
-| `variant`            | `ButtonVariant`         | `"default"` | Theme layer only (no `link`)                              |
-| `size`               | `ButtonSize`            | `"default"` | Theme layer                                               |
-| `disabled`           | `boolean`               | —           | Forwarded to base                                         |
-| `selected`           | `boolean`               | —           | Forwarded                                                 |
-| `accessibilityLabel` | `string \| null`        | —           | Forwarded; defaults to string `children` when omitted     |
-| `role`               | `AccessibilityRole`     | —           | Forwarded (base default `"button"`)                       |
-| `hitSlop`            | `number \| Edges`       | touch 44pt  | Forwarded; wrapper defaults a touch slop off desktop      |
-| `class`              | `string`                | —           | Forwarded; concatenated after any wrapper class           |
-| `style`              | `StyleProp<ViewStyle>`  | —           | Merged over variant/size defaults (consumer wins per key) |
-| `hoverStyle`         | `StyleProp<ViewStyle>`  | —           | Merged over variant defaults                              |
-| `activeStyle`        | `StyleProp<ViewStyle>`  | —           | Merged over variant defaults (includes press sink)        |
-| `focusStyle`         | `StyleProp<ViewStyle>`  | —           | Merged over theme focus ring                              |
-| `selectedStyle`      | `StyleProp<ViewStyle>`  | —           | Merged over variant defaults                              |
-| `disabledStyle`      | `StyleProp<ViewStyle>`  | —           | Merged over wrapper `{ opacity: 0.5 }`                    |
-| `classList`          | object                  | —           | Forwarded (`ComponentHostProps`)                          |
-| `testID`             | string                  | —           | Forwarded                                                 |
-| `tooltip`            | string                  | —           | Forwarded                                                 |
-| `onLayout`           | function                | —           | Forwarded                                                 |
-| `ref`                | ref                     | —           | Forwarded                                                 |
+### RoundButton
 
-### Events
+| Prop       | Type                       | Default     |
+| ---------- | -------------------------- | ----------- |
+| `variant`  | `"primary" \| "secondary"` | `"primary"` |
+| `size`     | `number`                   | 28 / 40     |
+| `children` | `JSX.Element`              |             |
 
-| Event         | Notes                                                          |
-| ------------- | -------------------------------------------------------------- |
-| `onPress`     | Tap / click / keyboard activate (from base)                    |
-| `onPressDown` | Press began (from base); for custom press feedback             |
-| `onPressUp`   | Press ended / cancelled (from base); for custom press feedback |
+### SplitButton
 
-`buttonVariants({ variant, size })` returns token-backed `style` / `label` / hover·active·selected·disabled looks (and default `hitSlop`) for Button reuse.
+| Prop      | Type                                                          | Default     |
+| --------- | ------------------------------------------------------------- | ----------- |
+| `variant` | `"primary" \| "secondary" \| "accent" \| "ghost" \| "danger"` | `"primary"` |
+| `size`    | `"small" \| "regular" \| "large"`                             | `"regular"` |
 
-## Differences
-
-| Topic           | shadcn (`bases/base`)      | This package                                                                                                                                                               |
-| --------------- | -------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Press event     | DOM `onClick`              | `onPress` / `onPressDown` / `onPressUp`                                                                                                                                    |
-| Children        | arbitrary nodes / Slot     | `string \| JSX.Element`; no `asChild`                                                                                                                                      |
-| Link affordance | `variant="link"` on Button | **Omitted** — Link is a separate component (needs a store `nsh` that exports `nsh/base` Link)                                                                              |
-| Class hooks     | `className` / CVA          | `class` + theme tokens + `buttonVariants` / `finish`; consumer styles merge over defaults                                                                                  |
-| Size matrix     | `default`…`icon-lg`        | same names; a pointer gets the compact sizes (24 / 28 / 32 / 36), a touch screen the roomier ones (32 / 36 / 40 / 48); heights are minimums, a button grows with its label |
-| Loading         | often a Spinner slot       | compose children + `disabled` (dims); no Gallery-style undimmed `busy` prop                                                                                                |
-| Touch target    | CSS / size                 | on a touch screen the size is roomier and `hitSlop` makes up the rest to 44pt; none with a pointer                                                                         |
-| Press motion    | CSS                        | the control sinks to 97% while pressed (icon-only: 90%); reduced motion removes the sink and keeps the short colour fade                                                   |
-
-## Not forwarded
-
-None — all `nsh/base` Button props are forwarded. The wrapper only adds `variant` / `size` and merges its token / `finish` defaults under consumer style hooks (`class` concatenates; default `hitSlop` applies when the consumer omits it).
+`SplitButtonSegment` takes every prop of [`nsh/base` Button](https://nsh.dev/elements/button); a string child is the label.

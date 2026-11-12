@@ -1,167 +1,71 @@
 ---
-layout: ../../../layouts/Docs.astro
 title: Radio Group
-description: Styled radio group wrapping nsh/base RadioGroup / Radio — theme tokens + default circle; full base prop pass-through.
+description: A sunk ring that fills in citrus, with a dot growing in — alone or as a choice tile.
 component: true
 demo: radio-group
 ---
 
-[`nsh/base`](https://nsh.dev/modules/nsh-base) owns presses, keyboard activation (including arrow keys in a group), the disabled state, and the radio / radiogroup roles for screen readers — unstyled on every platform. This package is the styled layer on top: a default circle indicator, row / group chrome, and theme tokens, the same role a community library plays above `nsh/base`. [`Radio`](https://nsh.dev/elements/radio) is one option of a set the user picks exactly one of; the group holds no value — each item is told `checked` and reports `onChange`. shadcn `bases/base` RadioGroup has no `variant` / `size`; this wrapper adds theme defaults only.
+## Installation
 
-## Install
-
-```npx tabs
+```sh
 npx shadcn-nsh@latest add radio-group
-```
-
-```bunx tabs
-bunx shadcn-nsh@latest add radio-group
-```
-
-```pnx tabs
-pnx shadcn-nsh@latest add radio-group
-```
-
-```yarn tabs
-yarn dlx shadcn-nsh@latest add radio-group
 ```
 
 ## Usage
 
 ```tsx
-import { RadioGroup, RadioGroupItem } from "@workspace/ui/components/ui/radio-group";
-import { Text } from "nsh";
+import { Radio, RadioGroup } from "@/components/ui/radio-group";
+```
 
+```tsx
 <RadioGroup>
-  <RadioGroupItem checked={value() === "a"} onChange={() => setValue("a")}>
-    <Text>Option A</Text>
-  </RadioGroupItem>
-  <RadioGroupItem checked={value() === "b"} onChange={() => setValue("b")}>
-    <Text>Option B</Text>
-  </RadioGroupItem>
-</RadioGroup>;
-```
-
-## Composition
-
-```
-RadioGroup
-└─ RadioGroupItem* (alias: Radio)
-   ├─ (default circle indicator)
-   └─ children (label)
-```
-
-## Controlled
-
-```tsx
-const [plan, setPlan] = createSignal("a");
-
-<RadioGroup>
-  <RadioGroupItem checked={plan() === "a"} onChange={() => setPlan("a")}>
-    <Text>Option A</Text>
-  </RadioGroupItem>
-  <RadioGroupItem checked={plan() === "b"} onChange={() => setPlan("b")}>
-    <Text>Option B</Text>
-  </RadioGroupItem>
-</RadioGroup>;
-```
-
-## Disabled
-
-```tsx
-<RadioGroupItem disabled checked={false}>
-  <Text>Unavailable</Text>
-</RadioGroupItem>
-```
-
-## Orientation
-
-```tsx
-<RadioGroup style={{ flexDirection: "row", gap: 16 }}>
-  <RadioGroupItem checked={plan() === "a"} onChange={() => setPlan("a")}>
-    <Text>A</Text>
-  </RadioGroupItem>
-  <RadioGroupItem checked={plan() === "b"} onChange={() => setPlan("b")}>
-    <Text>B</Text>
-  </RadioGroupItem>
+  <Radio checked={plan() === "pro"} onChange={() => plan.set("pro")}>
+    Pro
+  </Radio>
 </RadioGroup>
 ```
 
-## Style override
+## Examples
 
-Wrapper token chrome and default circle, then consumer styles shallow-merge on top (consumer wins per key). `class` concatenates when both are set. Label content stays in `children`; the circle is composed ahead of it (base has no `indicator` prop).
+### Scale
 
 ```tsx
-<RadioGroup style={{ gap: 16 }}>
-  <RadioGroupItem
-    checked={plan() === "a"}
-    onChange={() => setPlan("a")}
-    style={{ gap: 12 }}
-    focusStyle={{ borderColor: colors.primary }}
-  >
-    <Text>Spaced</Text>
-  </RadioGroupItem>
-</RadioGroup>
+<Radio scale={0.8}>Small</Radio>
+<Radio>Regular</Radio>
+<Radio scale={1.25}>Large</Radio>
+```
+
+### Tile
+
+```tsx
+<Radio variant="tile" checked={on()} onChange={() => on.set(true)}>
+  Option A
+</Radio>
+```
+
+### Disabled
+
+```tsx
+<Radio checked disabled>
+  Team
+</Radio>
+```
+
+### The look alone
+
+```tsx
+<Radio class="group" checked={on()} {...choiceTileLook(() => on())}>
+  <RadioRing on={on()} />
+  Option A
+</Radio>
 ```
 
 ## API
 
-### `RadioGroup` Props
+Every prop of [`nsh/base` Radio](https://nsh.dev/elements/radio) and [`RadioGroup`](https://nsh.dev/elements/radio-group) passes through. Style props go over the look's. The row is the `group` the ring sinks with while pressed. `RadioGroupItem` is an alias of `Radio`.
 
-| Prop        | Type                   | Default | Notes                                            |
-| ----------- | ---------------------- | ------- | ------------------------------------------------ |
-| `children`  | `JSX.Element`          | —       | Usually `RadioGroupItem` / `Radio` children      |
-| `class`     | `string`               | —       | Forwarded; concatenated after any wrapper class  |
-| `style`     | `StyleProp<ViewStyle>` | —       | Merged over default `{ gap: 8 }` (consumer wins) |
-| `classList` | object                 | —       | Forwarded                                        |
-| `testID`    | string                 | —       | Forwarded                                        |
-| `tooltip`   | string                 | —       | Forwarded                                        |
-| `onLayout`  | function               | —       | Forwarded                                        |
-| `ref`       | ref                    | —       | Forwarded                                        |
-
-Remaining `RadioGroupProps` / `ComponentHostProps` from `nsh/base` also pass through.
-
-### `RadioGroupItem` / `Radio` Props
-
-| Prop                 | Type                   | Default | Notes                                                              |
-| -------------------- | ---------------------- | ------- | ------------------------------------------------------------------ |
-| `checked`            | `boolean`              | —       | Controlled value (from base); app owns exclusive selection         |
-| `disabled`           | `boolean`              | —       | Forwarded; wrapper merges `{ opacity: 0.5 }` under `disabledStyle` |
-| `accessibilityLabel` | `string \| null`       | —       | Forwarded                                                          |
-| `children`           | `JSX.Element`          | —       | Label / adjacent content after the default circle                  |
-| `class`              | `string`               | —       | Forwarded; concatenated after any wrapper class                    |
-| `style`              | `StyleProp<ViewStyle>` | —       | Merged over row chrome (`flexDirection` / `gap`)                   |
-| `hoverStyle`         | `StyleProp<ViewStyle>` | —       | Forwarded / merge                                                  |
-| `activeStyle`        | `StyleProp<ViewStyle>` | —       | Forwarded / merge                                                  |
-| `focusStyle`         | `StyleProp<ViewStyle>` | —       | Merged over theme focus ring                                       |
-| `disabledStyle`      | `StyleProp<ViewStyle>` | —       | Merged over wrapper `{ opacity: 0.5 }`                             |
-| `checkedStyle`       | `StyleProp<ViewStyle>` | —       | Forwarded / merge                                                  |
-| `classList`          | object                 | —       | Forwarded                                                          |
-| `testID`             | string                 | —       | Forwarded                                                          |
-| `tooltip`            | string                 | —       | Forwarded                                                          |
-| `onLayout`           | function               | —       | Forwarded                                                          |
-| `ref`                | ref                    | —       | Forwarded                                                          |
-
-Remaining `RadioProps` / `ComponentHostProps` from `nsh/base` also pass through. `Radio` is an alias of `RadioGroupItem`.
-
-### Events
-
-| Event      | Notes                                                                                                         |
-| ---------- | ------------------------------------------------------------------------------------------------------------- |
-| `onChange` | `(checked: boolean) => void` on the item — store CLI `nsh` 0.4.0; fires with `true` when asking to be checked |
-
-## Differences
-
-| Topic        | shadcn (`bases/base`)                       | This package                                                                                                                                                               |
-| ------------ | ------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Value API    | `RadioGroup` `value` / `onValueChange`      | no group value — each item is `checked` / `onChange` (nsh/base model)                                                                                                      |
-| Parts        | `RadioGroup` / `RadioGroupItem` + Indicator | same part names; `Radio` alias; default circle composed as children (base has no Indicator slot)                                                                           |
-| Label        | sibling `Label` / `FieldLabel` + `htmlFor`  | put label `Text` in `children`                                                                                                                                             |
-| Change event | string value on the group                   | `onChange(checked: boolean)` per item (store `nsh` 0.4.0; newer nsh website docs may show `{ checked }`)                                                                   |
-| Variants     | none on `bases/base` RadioGroup             | none — token chrome + default circle only                                                                                                                                  |
-| Class hooks  | `className` / `cn-radio-group*`             | `class` + token `style`; consumer styles merge over defaults                                                                                                               |
-| Ring         | `size-4`, no state animation                | 16 points with a pointer, 22 on a touch screen; sunk into the surface, filled in on a spring, the dot growing in from half its size; sinks to 90% while its row is pressed |
-
-## Not forwarded
-
-None — all `nsh/base` RadioGroup / Radio props are forwarded. The wrapper only applies token chrome, a default circle composed ahead of label `children` (base has no `indicator` prop), and merges its defaults under consumer style hooks (`class` concatenates).
+| Prop       | Type                    | Default  |
+| ---------- | ----------------------- | -------- |
+| `variant`  | `"ring" \| "tile"`      | `"ring"` |
+| `scale`    | `number`                | `1`      |
+| `children` | `string \| JSX.Element` |          |

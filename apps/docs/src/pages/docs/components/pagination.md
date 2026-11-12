@@ -1,78 +1,52 @@
 ---
-layout: ../../../layouts/Docs.astro
 title: Pagination
-description: Styled pagination wrapping nsh/base Pagination.
+description: Page numbers and chevrons with the current page lit primary.
 component: true
 demo: pagination
 ---
 
-Styled page control on `nsh/base` Pagination. Owns item rendering (‹ › … / page numbers); pass `page`, `totalPages`, and `onChange`.
-
-## Install
+## Installation
 
 ```sh
-shadcn-nsh add pagination
-# monorepo:
-shadcn-nsh add pagination -c apps/web
+npx shadcn-nsh@latest add pagination
 ```
 
 ## Usage
 
 ```tsx
-import { Pagination } from "@workspace/ui/components/ui/pagination";
+import { Pagination } from "@/components/ui/pagination";
+```
 
-<Pagination page={1} totalPages={8} onChange={(e) => console.log(e.page)} />;
+```tsx
+<Pagination page={page()} totalPages={pages()} onChange={({ page }) => page.set(page)} />
 ```
 
 ## Examples
 
-### Controlled page
+### Compact
+
+A `compact` pager keeps Previous, a child label, and Next on one row.
 
 ```tsx
-const [page, setPage] = createSignal(1);
-
-<Pagination page={page()} totalPages={8} onChange={(e) => setPage(e.page)} />;
+<Pagination compact outlined page={chapter()} totalPages={12}>
+  <Text>Chapter {chapter()} of 12</Text>
+</Pagination>
 ```
 
-### Compact / disabled
+### Custom items
 
 ```tsx
-<Pagination page={2} totalPages={5} compact disabled />
-```
+import { paginationArrows, paginationItemClass } from "@/components/ui/pagination";
 
-### Visible page window
-
-```tsx
-<Pagination page={4} totalPages={20} visiblePages={5} onChange={(e) => {}} />
+<Pagination itemClass={paginationItemClass({ outlined: true })} renderItem={paginationArrows} />;
 ```
 
 ## API
 
-| Prop                 | Type                                | Default      | Notes                                                                               |
-| -------------------- | ----------------------------------- | ------------ | ----------------------------------------------------------------------------------- |
-| `page`               | `number`                            | —            | Current page (required)                                                             |
-| `totalPages`         | `number`                            | —            | Total pages (required)                                                              |
-| `visiblePages`       | `number`                            | —            | Window of numbered items                                                            |
-| `compact`            | `boolean`                           | —            | Compact layout                                                                      |
-| `disabled`           | `boolean`                           | —            |                                                                                     |
-| `accessibilityLabel` | `string \| null`                    | —            |                                                                                     |
-| `children`           | `JSX.Element`                       | —            | Optional slot                                                                       |
-| `onChange`           | `(event: { page: number }) => void` | —            |                                                                                     |
-| `itemClass`          | `string`                            | —            | Concatenated after the state classes (`selected:`, `hover:`, `disabled:opacity-50`) |
-| `itemStyle`          | `StyleProp<TextStyle>`              | —            | Merged over the outlined box. Keep color off it so the state classes can paint.     |
-| `renderItem`         | `(item) => JSX.Element`             | ‹ › … / page | Replaces the default glyphs.                                                        |
+Uses `paginationItemClass` and `paginationArrows` by default. Every prop of [`nsh/base` Pagination](https://nsh.dev/elements/pagination) passes through.
 
-## Differences
-
-| Topic       | shadcn                                                      | This package                                                                                         |
-| ----------- | ----------------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Parts       | `Pagination` / `Content` / `Item` / `Link` / `Previous` / … | single `Pagination` with built-in item render                                                        |
-| Navigation  | compose links yourself                                      | `page` + `totalPages` + `onChange`                                                                   |
-| Labels      | text / icons via children                                   | fixed ‹ › … / page number chrome                                                                     |
-| Item states | per-part components                                         | one `itemClass`: selected is primary, hover is accent, press is muted, disabled is the theme opacity |
-| Density     | one control size                                            | pointer 32 (40 when `compact`); touch 44                                                             |
-| Class hooks | `className` / CVA                                           | `itemClass` / `itemStyle` / `renderItem` merge over the defaults                                     |
-
-## Not forwarded
-
-None. `style`, `itemStyle`, `itemClass`, and `renderItem` pass through. Base has no per-item style hooks, so item states stay classes. Glyphs stay ‹ › … (no icon set).
+| Prop       | Type      | Notes                    |
+| ---------- | --------- | ------------------------ |
+| `outlined` | `boolean` | Outlined Previous / Next |
+| `compact`  | `boolean` | Label slot between ends  |
+| `page`     | `number`  | Current page (1-based)   |

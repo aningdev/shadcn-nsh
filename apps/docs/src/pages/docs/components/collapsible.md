@@ -1,138 +1,34 @@
 ---
-layout: ../../../layouts/Docs.astro
 title: Collapsible
-description: Styled collapsible wrapping nsh/base Collapsible — theme tokens + Trigger / Content; full base prop pass-through.
+description: A disclosure row that reveals a panel beneath it.
 component: true
 demo: collapsible
-demoHeight: 300
 ---
 
-[`nsh/base`](https://nsh.dev/modules/nsh-base) owns expand / collapse of the `content` slot and leaves the trigger and look to the app — unstyled on every platform. This package is the styled layer on top: a shadcn-shaped `Collapsible` / `CollapsibleTrigger` / `CollapsibleContent` tree, region chrome, and theme tokens, the same role a community library plays above `nsh/base`. A [`Collapsible`](https://nsh.dev/elements/collapsible) shows its content after the trigger while open. `reveal` defaults on (base defaults off). A string trigger is a disclosure row, not a Button.
+## Installation
 
-## Install
-
-```npx tabs
+```sh
 npx shadcn-nsh@latest add collapsible
-```
-
-```bunx tabs
-bunx shadcn-nsh@latest add collapsible
-```
-
-```pnx tabs
-pnx shadcn-nsh@latest add collapsible
-```
-
-```yarn tabs
-yarn dlx shadcn-nsh@latest add collapsible
 ```
 
 ## Usage
 
 ```tsx
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@workspace/ui/components/ui/collapsible";
-
-<Collapsible>
-  <CollapsibleTrigger>Toggle</CollapsibleTrigger>
-  <CollapsibleContent>
-    <Text>Hidden until open.</Text>
-  </CollapsibleContent>
-</Collapsible>;
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 ```
-
-## Composition
-
-```
-Collapsible
-├── CollapsibleTrigger
-└── CollapsibleContent (nsh/base Collapsible)
-```
-
-## Controlled
 
 ```tsx
-const open = signal(false);
-
-<Collapsible open={open()} onOpenChange={({ open: next }) => open.set(next)}>
-  <CollapsibleTrigger>Toggle</CollapsibleTrigger>
-  <CollapsibleContent>
-    <Text>Controlled panel</Text>
-  </CollapsibleContent>
-</Collapsible>;
-```
-
-## Style override
-
-Wrapper region chrome (`gap: 8`), then consumer styles shallow-merge on top (consumer wins per key). `class` concatenates when both are set. Host style hooks on Content also merge.
-
-```tsx
-<CollapsibleContent style={{ gap: 12 }} class="my-collapsible">
-  <Text>Merged</Text>
-</CollapsibleContent>
+<Collapsible defaultOpen>
+  <CollapsibleTrigger first>Title</CollapsibleTrigger>
+  <CollapsibleContent>…</CollapsibleContent>
+</Collapsible>
 ```
 
 ## API
 
-### `Collapsible` Props
+Uses `disclosureTriggerLook`, `DisclosureChevron`, and `disclosurePanel` from accordion. Composition: `Collapsible`, `CollapsibleTrigger`, `CollapsibleContent`.
 
-| Prop          | Type              | Default | Notes                                                 |
-| ------------- | ----------------- | ------- | ----------------------------------------------------- |
-| `open`        | `boolean \| null` | —       | Controlled open state                                 |
-| `defaultOpen` | `boolean`         | `false` | Uncontrolled initial open (composition — not on base) |
-| `children`    | `JSX.Element`     | —       | `CollapsibleTrigger`, `CollapsibleContent`            |
-
-Host chrome and style hooks belong on `CollapsibleContent`, not the root.
-
-### Events
-
-| Event          | Notes                                                                                            |
-| -------------- | ------------------------------------------------------------------------------------------------ |
-| `onOpenChange` | `(event: { open: boolean }) => void` — composition invents this (base has no collapsible events) |
-
-### `CollapsibleTrigger` Props
-
-| Prop       | Type                    | Default | Notes                                                                                                                                         |
-| ---------- | ----------------------- | ------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `children` | `string \| JSX.Element` | —       | String is the title of a disclosure row (`role="button"`), not a Button. A chevron is always drawn and turns 90° while open (`duration-150`). |
-| `disabled` | `boolean`               | —       | Blocks toggle                                                                                                                                 |
-| `class`    | `string`                | —       | On the pressable `View` (non-string children)                                                                                                 |
-| `style`    | `StyleProp<ViewStyle>`  | —       | Merged over `{ alignSelf, opacity }` when disabled                                                                                            |
-
-### `CollapsibleContent` Props
-
-| Prop            | Type                   | Default | Notes                                                         |
-| --------------- | ---------------------- | ------- | ------------------------------------------------------------- |
-| `children`      | `JSX.Element`          | —       | Becomes base `content` (shown while open)                     |
-| `class`         | `string`               | —       | Host class; concatenated                                      |
-| `reveal`        | `boolean`              | `true`  | Base defaults off; this wrapper defaults the height spring on |
-| `style`         | `StyleProp<ViewStyle>` | —       | Merged over the region. Panel padding is on an inner view     |
-| `hoverStyle`    | `StyleProp<ViewStyle>` | —       | Forwarded / merge                                             |
-| `activeStyle`   | `StyleProp<ViewStyle>` | —       | Forwarded / merge                                             |
-| `focusStyle`    | `StyleProp<ViewStyle>` | —       | Forwarded / merge                                             |
-| `disabledStyle` | `StyleProp<ViewStyle>` | —       | Forwarded / merge                                             |
-| `classList`     | object                 | —       | Forwarded                                                     |
-| `testID`        | string                 | —       | Forwarded                                                     |
-| `tooltip`       | string                 | —       | Forwarded                                                     |
-| `onLayout`      | function               | —       | Forwarded                                                     |
-| `ref`           | ref                    | —       | Forwarded                                                     |
-
-Remaining presentation `CollapsibleProps` / `ComponentHostProps` from `nsh/base` also pass through. Open / trigger come from the `Collapsible` context.
-
-## Differences
-
-| Topic            | shadcn (`bases/base`)                             | This package                                                                                         |
-| ---------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------- |
-| Parts            | Root / Trigger / Content (Panel)                  | same names; Content is `nsh/base` `Collapsible`                                                      |
-| Open state       | Root owns `open` / `defaultOpen` / `onOpenChange` | same on composition root; base itself has no events — wrapper invents `defaultOpen` / `onOpenChange` |
-| Trigger          | Base UI Trigger (`render` / asChild)              | disclosure row (`role="button"`), never a Button; chevron turns 90° while open                       |
-| Reveal           | CSS height / data-state animate                   | `reveal` defaults on; pass `reveal={false}` for an instant swap                                      |
-| Composition-only | optional single-root in some shadcn ports         | root holds open state only — use `CollapsibleTrigger` + `CollapsibleContent`                         |
-| Class hooks      | `className` / `cn-collapsible*`                   | `class` + token `style`; consumer styles merge over defaults                                         |
-
-## Not forwarded
-
-None for store CLI `nsh` 0.4.0 `Collapsible` props — all are forwarded on Content (open / trigger owned by the composition root). The wrapper draws the disclosure row and defaults `reveal` on. `defaultOpen` / `onOpenChange` are composition-only (base has no open events).
+| Prop (on `CollapsibleTrigger`) | Type      | Default |
+| ------------------------------ | --------- | ------- |
+| `first`                        | `boolean` |         |
+| `start`                        | `number`  |         |

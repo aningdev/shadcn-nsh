@@ -1,112 +1,66 @@
 ---
-layout: ../../../layouts/Docs.astro
 title: Slider
-description: Styled slider wrapping nsh/base Slider — sunk rail, round thumb.
+description: A sunk rail, citrus fill, and round thumb with a focus ring.
 component: true
 demo: slider
 ---
 
-[`nsh/base`](https://nsh.dev/modules/nsh-base) owns the value, the step, the keyboard, dragging, and each thumb's role. This package paints the sunk rail, the primary run, and a round thumb. A pointer gets a 14-point thumb on a 6-point rail in a 20-point band; a touch screen gets 20, 8, and 32.
+## Installation
 
-## Install
-
-```npx tabs
+```sh
 npx shadcn-nsh@latest add slider
-```
-
-```bunx tabs
-bunx shadcn-nsh@latest add slider
-```
-
-```pnx tabs
-pnx shadcn-nsh@latest add slider
-```
-
-```yarn tabs
-yarn dlx shadcn-nsh@latest add slider
 ```
 
 ## Usage
 
 ```tsx
-import { Slider } from "@workspace/ui/components/ui/slider";
+import { Slider } from "nsh/base";
 
-<Slider value={volume()} onChange={({ value }) => setVolume(value as number)} />;
+import { sliderFill, sliderLook } from "@/components/ui/slider";
 ```
 
-## Range
-
 ```tsx
+const look = sliderLook();
+
 <Slider
-  value={price()}
-  min={0}
-  max={1000}
-  step={10}
-  onChange={({ value }) => setPrice(value as [number, number])}
-/>
+  value={volume()}
+  onChange={({ value }) => volume.set(value as number)}
+  rangeStyle={sliderFill(0, volume() / 100)}
+  {...look}
+/>;
 ```
 
-## Vertical
+## Examples
 
-The run is 128 points with a pointer and 144 on a touch screen (the reference's `h-32` / `h-36`).
+### Value column
 
 ```tsx
-<Slider axis="vertical" value={band()} min={-12} max={12} />
+import { sliderValueClass, sliderValueStyle } from "@/components/ui/slider";
+
+<Slider {...sliderLook({ value: true })}>
+  <Text class={sliderValueClass} style={sliderValueStyle()}>
+    64%
+  </Text>
+</Slider>;
 ```
 
-## Value beside the track
-
-`children` sit in a row after the track. The track flexes.
+### Vertical
 
 ```tsx
-<Slider value={strength()} onChange={({ value }) => setStrength(value as number)}>
-  <Text>64%</Text>
-</Slider>
+sliderLook({ vertical: true });
+sliderFill(0, level / 100, true);
 ```
+
+### Disabled
+
+Opacity on the track comes from the look's `disabled:opacity-50` class on `trackClass`.
 
 ## API
 
-### Props
+Uses `sliderLook`, `sliderFill`, `sliderValueClass`, and `sliderValueStyle`. Every prop of [`nsh/base` Slider](https://nsh.dev/elements/slider) passes through.
 
-| Prop                        | Type                         | Default           | Notes                                                               |
-| --------------------------- | ---------------------------- | ----------------- | ------------------------------------------------------------------- |
-| `value`                     | `number \| [number, number]` | —                 | Controlled (from base)                                              |
-| `defaultValue`              | `SliderValue`                | `0`               | Forwarded                                                           |
-| `min` / `max` / `step`      | `number`                     | `0` / `100` / `1` | Forwarded                                                           |
-| `scale`                     | `"linear" \| "logarithmic"`  | `"linear"`        | Forwarded                                                           |
-| `axis`                      | `"horizontal" \| "vertical"` | `"horizontal"`    | Read when drawing the chrome. Base reads it when the slider is made |
-| `disabled`                  | `boolean`                    | —                 | Root fades to 0.5                                                   |
-| `accessibilityLabel`        | `string`                     | —                 | The thumb (the end thumb of a range)                                |
-| `startAccessibilityLabel`   | `string`                     | —                 | A range's start thumb                                               |
-| `trackStyle`                | `StyleProp<ViewStyle>`       | —                 | Merged over the press band                                          |
-| `indicatorStyle`            | `StyleProp<ViewStyle>`       | —                 | Merged over the sunk rail                                           |
-| `rangeStyle`                | `StyleProp<ViewStyle>`       | —                 | Merged over the primary run                                         |
-| `thumbClass` / `thumbStyle` |                              | —                 | Class is appended after the brightness transition                   |
-| `focusWithinStyle`          | `StyleProp<ViewStyle>`       | —                 | Merged over the focus ring on the control                           |
-| `disabledStyle`             | `StyleProp<ViewStyle>`       | —                 | Merged over `{ opacity: 0.5 }`                                      |
-| `children`                  | `JSX.Element`                | —                 | Beside the track (horizontal) or under it                           |
-
-`sliderVariants({ axis })` returns the chrome and `{ thumb, rail, band, run, inset }`.
-
-### Events
-
-| Event         | Notes                                                            |
-| ------------- | ---------------------------------------------------------------- |
-| `onChange`    | `{ value }` as the pointer, a key, or a screen reader changes it |
-| `onChangeEnd` | `{ value }` once, when the change ends                           |
-
-## Differences
-
-| Topic      | Reference (`slider.ts`)                                       | This package                                                                                                                                                      |
-| ---------- | ------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Rail / run | `colors.track`, `finish.track`, citrus `finish.fill`          | Shared with Progress: `muted` plus `finish.control.pressed`, `primary` plus `finish.filled`                                                                       |
-| Thumb      | `finish.knob`, `hover:brightness-105`, `active:brightness-95` | `background` disc, `border`, `finish.control.rest`. The same brightness classes. Brightness above 1 does not draw on Apple, so the hover lighten is a no-op there |
-| Disabled   | The track at 35%                                              | The whole control at 0.5 — the one disabled look                                                                                                                  |
-| Focus      | A ring on the rail (`focus-within` on the indicator)          | `focusRing()` on the root. Base exposes `focusWithinStyle` on the root, not on the indicator                                                                      |
-| Hit target | A 32-point band on touch; no extra slop                       | The same. `Slider`'s typed props have no `hitSlop`                                                                                                                |
-| Vertical   | `h-32` / `h-36`                                               | 128 / 144, a fixed run                                                                                                                                            |
-| shadcn     | —                                                             | No `variant` / `size`                                                                                                                                             |
-
-## Not forwarded
-
-None — every `nsh/base` Slider prop passes through.
+| Export / option | Type      | Default                  |
+| --------------- | --------- | ------------------------ |
+| `value`         | `boolean` | Show value column layout |
+| `vertical`      | `boolean` | Horizontal rail          |
+| `showValue`     | on shell  | Same as look `value`     |
