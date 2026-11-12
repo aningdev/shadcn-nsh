@@ -1,7 +1,12 @@
 import { mount, signal, Text, View } from "nsh";
 
-import { Button } from "@/packages/ui/button";
-import { Tooltip, tooltipNote, tooltipText } from "@/packages/ui/tooltip";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+  tooltipNote,
+  tooltipText,
+} from "@/packages/ui/tooltip";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 
@@ -13,47 +18,31 @@ function App() {
       <DemoCard>
         <DemoSection title="Placement">
           <View style={{ flexDirection: "row", gap: 48, paddingVertical: 40 }}>
-            <Button
-              variant="secondary"
-              tooltip={
-                <Tooltip
-                  open
-                  placement="top"
-                  onOpenChange={({ open, reason }) =>
-                    last.set(`${open ? "shown" : "hidden"} · ${reason}`)
-                  }
-                >
-                  Add to favorites
-                </Tooltip>
+            <Tooltip
+              open
+              placement="top"
+              onOpenChange={({ open, reason }) =>
+                last.set(`${open ? "shown" : "hidden"} · ${reason}`)
               }
             >
-              Top
-            </Button>
-            <Button
-              variant="secondary"
-              tooltip={
-                <Tooltip open placement="bottom">
-                  Share with your team
-                </Tooltip>
-              }
-            >
-              Bottom
-            </Button>
+              <TooltipTrigger>Top</TooltipTrigger>
+              <TooltipContent>Add to favorites</TooltipContent>
+            </Tooltip>
+            <Tooltip open placement="bottom">
+              <TooltipTrigger>Bottom</TooltipTrigger>
+              <TooltipContent>Share with your team</TooltipContent>
+            </Tooltip>
           </View>
         </DemoSection>
         <DemoSection title="Rich">
           <View style={{ paddingVertical: 40 }}>
-            <Button
-              variant="secondary"
-              tooltip={
-                <Tooltip open rich>
-                  <Text class={tooltipText}>Delete forever</Text>
-                  <Text class={tooltipNote}>⌘⌫</Text>
-                </Tooltip>
-              }
-            >
-              Rich
-            </Button>
+            <Tooltip open>
+              <TooltipTrigger>Rich</TooltipTrigger>
+              <TooltipContent rich>
+                <Text class={tooltipText}>Delete forever</Text>
+                <Text class={tooltipNote}>⌘⌫</Text>
+              </TooltipContent>
+            </Tooltip>
           </View>
         </DemoSection>
       </DemoCard>

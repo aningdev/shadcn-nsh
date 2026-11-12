@@ -1,8 +1,7 @@
 import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
-import { Button } from "@/packages/ui/button";
-import { HoverCard } from "@/packages/ui/hover-card";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/packages/ui/hover-card";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 
@@ -16,19 +15,19 @@ function App() {
           <View style={{ height: 180, alignItems: "center", justifyContent: "center" }}>
             <HoverCard
               open
-              placement="bottom"
-              width={240}
               onOpenChange={({ open, reason }) =>
                 last.set(`${open ? "opened" : "closed"} · ${reason}`)
               }
-              trigger={<Button variant="secondary">@nsh</Button>}
             >
-              <Text style={{ fontSize: 14, fontWeight: "600", color: colors.text }}>
-                Native Shell
-              </Text>
-              <Text style={{ fontSize: 12, color: colors.muted }}>
-                A UI toolkit for desktop and touch.
-              </Text>
+              <HoverCardTrigger>@nsh</HoverCardTrigger>
+              <HoverCardContent placement="bottom" width={240}>
+                <Text style={{ fontSize: 14, fontWeight: "600", color: colors.text }}>
+                  Native Shell
+                </Text>
+                <Text style={{ fontSize: 12, color: colors.muted }}>
+                  A UI toolkit for desktop and touch.
+                </Text>
+              </HoverCardContent>
             </HoverCard>
           </View>
         </DemoSection>

@@ -13,6 +13,11 @@ const FRAMES = [
   { value: "solid", title: "Solid" },
 ];
 
+const promptOf = (values: string[]) =>
+  values.length === 0
+    ? "Pick a framework"
+    : values.map((v) => FRAMES.find((f) => f.value === v)?.title ?? v).join(", ");
+
 function App() {
   const value = signal<string[]>(["react"]);
   const open = signal(true);
@@ -28,7 +33,7 @@ function App() {
             items={FRAMES}
             value={value()}
             open={open()}
-            placeholder="Pick a framework"
+            placeholder={promptOf(value())}
             onChange={({ value: next }) => {
               value.set(next);
               last.set(next.join(", ") || "–");
@@ -37,6 +42,7 @@ function App() {
               open.set(next);
               last.set(`${next ? "opened" : "closed"} · ${reason}`);
             }}
+            accessibilityLabel="Framework"
             class={look.class}
             style={look.style}
             inputClass={look.inputClass}

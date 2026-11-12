@@ -2,15 +2,19 @@
 // The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
 // Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
 import { terminal } from "@shadcn-nsh/theme";
-import { split } from "nsh";
+import type { JSX, ViewStyle } from "nsh";
+import { context, signal, split, View } from "nsh";
 import {
   DatePicker as BaseDatePicker,
   type CalendarEntry,
   type DatePickerProps as BaseDatePickerProps,
+  type DatePickerValue,
+  type OpenChangeReason,
 } from "nsh/base";
 
 import { CalendarItem, calendarLook, TimeSegment } from "./calendar";
 import { listboxPopup } from "./lib/listbox";
+import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import { backdrop } from "./lib/overlay";
 import { Picker, type PickerProps } from "./select";
 import { timeFieldClass } from "./time-field";
@@ -99,15 +103,155 @@ export function datePickerLook(o?: DatePickerLookOptions) {
 }
 // @port end
 
-/**
- * `nsh/base`'s DatePicker with `datePickerLook` defaults. Pass `trigger` (often a `DateTrigger`).
- */
-/** `nsh/base`'s DatePicker with `datePickerLook` defaults. Pass `trigger` (often a `DateTrigger`). */
-export type DatePickerProps = BaseDatePickerProps;
+/** The root: it owns the open flag and the value its parts show. */
+export type DatePickerProps = {
+  /** The value (controlled); leave it out and the root keeps it (`defaultValue`). */
+  value?: DatePickerValue;
+  defaultValue?: DatePickerValue;
+  /** Controlled; leave it out and the root keeps the state (`defaultOpen`). */
+  open?: boolean | null;
+  defaultOpen?: boolean;
+  /** It does not open, and the trigger takes the disabled look. */
+  disabled?: boolean;
+  /** A clear button while there is a value. */
+  cleanable?: boolean;
+  /** The trigger's words while there is no value (default "Pick a date"). */
+  placeholder?: string;
+  children?: JSX.Element;
+  onChange?: (event: { value: DatePickerValue }) => void;
+  onOpenChange?: (event: { open: boolean; reason: OpenChangeReason }) => void;
+  onOpen?: () => void;
+  onClose?: () => void;
+  onCancel?: () => void;
+};
 
-/** A date picker: calendar in a listbox popup, field trigger. */
+/**
+ * The calendar's popup. Every prop of `nsh/base`'s DatePicker passes through but the ones the
+ * root owns; `datePickerLook` fills the popup, the scrim, the calendar and the time's row by
+ * default. Its parts are the `DatePickerTrigger` above it.
+ */
+export type DatePickerContentProps = Omit<
+  BaseDatePickerProps,
+  | "value"
+  | "defaultValue"
+  | "open"
+  | "defaultOpen"
+  | "disabled"
+  | "cleanable"
+  | "trigger"
+  | "onChange"
+  | "onOpenChange"
+  | "onOpen"
+  | "onClose"
+  | "onCancel"
+  | "children"
+> & {
+  children?: JSX.Element;
+};
+
+/** The pressed field: a `DateTrigger` (a calendar, the value or the placeholder, no chevron). */
+export type DatePickerTriggerProps = {
+  /** What it says instead of the value (default: the value, else the root's `placeholder`). */
+  title?: string;
+  /** Draw the title as a placeholder (muted), whatever the value. */
+  placeholder?: boolean;
+  /** Edged in the danger tone. */
+  invalid?: boolean;
+  /** The app's own clear button lies over the end: room for it (default: the root's `cleanable`). */
+  clearable?: boolean;
+  style?: ViewStyle;
+};
+
+type DatePickerContextValue = OpenState & {
+  trigger: Slot;
+  value: () => DatePickerValue;
+  change: (event: { value: DatePickerValue }) => void;
+  root: DatePickerProps;
+};
+
+const DatePickerContext = context<DatePickerContextValue | null>(null);
+
+function useDatePicker() {
+  const ctx = DatePickerContext();
+  if (!ctx) throw new Error("DatePicker parts must be used within <DatePicker>");
+  return ctx;
+}
+
+/** The trigger's words: a date as it is (the time space-separated), a range's two ends, else the placeholder. */
+function titleOf(ctx: DatePickerContextValue): string {
+  const value = ctx.value();
+  if (typeof value === "string") return value.replace("T", " ");
+  if (Array.isArray(value)) return `${value[0] ?? "…"} – ${value[1] ?? "…"}`;
+  return ctx.root.placeholder ?? "Pick a date";
+}
+
+/** The trigger the base root draws: the app's `DatePickerTrigger`, or a `DateTrigger` of the value. */
+function triggerOf(ctx: DatePickerContextValue): JSX.Element {
+  const build = ctx.trigger.get();
+  if (build) return build() as JSX.Element;
+  return (
+    <DateTrigger
+      title={titleOf(ctx)}
+      placeholder={ctx.value() == null}
+      open={ctx.open()}
+      disabled={ctx.root.disabled}
+      clearable={ctx.root.cleanable}
+    />
+  );
+}
+
+/** The root of a date picker's parts. Put `DatePickerTrigger` before `DatePickerContent`. */
 export function DatePicker(props: DatePickerProps) {
+  const state = createOpenState<OpenChangeReason>(props);
+  const trigger = createSlot();
+  const picked = signal(false);
+  const chosen = signal<DatePickerValue>(null);
+  const value = () => {
+    if (props.value !== undefined) return props.value ?? null;
+    if (picked()) return chosen();
+    return props.defaultValue ?? null;
+  };
+  const change = (event: { value: DatePickerValue }) => {
+    if (props.value === undefined) {
+      picked.set(true);
+      chosen.set(event.value);
+    }
+    props.onChange?.(event);
+  };
+  const ctx: DatePickerContextValue = {
+    ...state,
+    trigger,
+    value,
+    change,
+    root: props,
+  };
+  return <DatePickerContext.Provider value={ctx}>{props.children}</DatePickerContext.Provider>;
+}
+
+/** The pressed field: a `DateTrigger` that follows the root's open state, value and `disabled`. */
+export function DatePickerTrigger(props: DatePickerTriggerProps) {
+  const ctx = useDatePicker();
+  ctx.trigger.set(() => (
+    <DateTrigger
+      title={props.title ?? titleOf(ctx)}
+      placeholder={props.placeholder ?? ctx.value() == null}
+      open={ctx.open()}
+      disabled={ctx.root.disabled}
+      invalid={props.invalid}
+      clearable={props.clearable ?? ctx.root.cleanable}
+      style={props.style}
+    />
+  ));
+  return null;
+}
+
+/** The calendar in its popup, opened by the `DatePickerTrigger` above it. */
+export function DatePickerContent(props: DatePickerContentProps) {
+  const ctx = useDatePicker();
   const [, rest] = split(props, [
+    "children",
+    "numberOfMonths",
+    "firstDayOfWeek",
     "popupStyle",
     "backdropStyle",
     "offset",
@@ -126,36 +270,51 @@ export function DatePicker(props: DatePickerProps) {
     "segmentClass",
     "separatorStyle",
     "renderSegment",
-    "numberOfMonths",
-    "firstDayOfWeek",
   ]);
-  const look = datePickerLook({
-    months: () => props.numberOfMonths ?? 1,
-    firstDayOfWeek: () => props.firstDayOfWeek ?? 0,
-  });
   return (
-    <BaseDatePicker
-      {...rest}
-      numberOfMonths={props.numberOfMonths}
-      firstDayOfWeek={props.firstDayOfWeek}
-      offset={props.offset ?? look.offset}
-      margin={props.margin ?? look.margin}
-      popupStyle={[look.popupStyle, props.popupStyle ?? null]}
-      backdropStyle={[look.backdropStyle, props.backdropStyle ?? null]}
-      contentStyle={[look.contentStyle, props.contentStyle ?? null]}
-      presetsStyle={[look.presetsStyle, props.presetsStyle ?? null]}
-      presetStyle={[look.presetStyle, props.presetStyle ?? null]}
-      presetClass={props.presetClass ?? look.presetClass}
-      calendarStyle={[look.calendarStyle, props.calendarStyle ?? null]}
-      headerStyle={[look.headerStyle, props.headerStyle ?? null]}
-      bodyStyle={[look.bodyStyle, props.bodyStyle ?? null]}
-      itemClass={props.itemClass ?? look.itemClass}
-      renderItem={props.renderItem ?? look.renderItem}
-      timeStyle={[look.timeStyle, props.timeStyle ?? null]}
-      timeFieldClass={props.timeFieldClass ?? look.timeFieldClass}
-      segmentClass={props.segmentClass ?? look.segmentClass}
-      separatorStyle={[look.separatorStyle, props.separatorStyle ?? null]}
-      renderSegment={props.renderSegment ?? look.renderSegment}
-    />
+    <View>
+      {props.children}
+      {() => {
+        const look = datePickerLook({
+          months: () => props.numberOfMonths ?? 1,
+          firstDayOfWeek: () => props.firstDayOfWeek ?? 0,
+        });
+        return (
+          <BaseDatePicker
+            {...rest}
+            value={ctx.value()}
+            open={ctx.open()}
+            disabled={ctx.root.disabled}
+            cleanable={ctx.root.cleanable}
+            trigger={triggerOf(ctx)}
+            numberOfMonths={props.numberOfMonths}
+            firstDayOfWeek={props.firstDayOfWeek}
+            offset={props.offset ?? look.offset}
+            margin={props.margin ?? look.margin}
+            popupStyle={[look.popupStyle, props.popupStyle ?? null]}
+            backdropStyle={[look.backdropStyle, props.backdropStyle ?? null]}
+            contentStyle={[look.contentStyle, props.contentStyle ?? null]}
+            presetsStyle={[look.presetsStyle, props.presetsStyle ?? null]}
+            presetStyle={[look.presetStyle, props.presetStyle ?? null]}
+            presetClass={props.presetClass ?? look.presetClass}
+            calendarStyle={[look.calendarStyle, props.calendarStyle ?? null]}
+            headerStyle={[look.headerStyle, props.headerStyle ?? null]}
+            bodyStyle={[look.bodyStyle, props.bodyStyle ?? null]}
+            itemClass={props.itemClass ?? look.itemClass}
+            renderItem={props.renderItem ?? look.renderItem}
+            timeStyle={[look.timeStyle, props.timeStyle ?? null]}
+            timeFieldClass={props.timeFieldClass ?? look.timeFieldClass}
+            segmentClass={props.segmentClass ?? look.segmentClass}
+            separatorStyle={[look.separatorStyle, props.separatorStyle ?? null]}
+            renderSegment={props.renderSegment ?? look.renderSegment}
+            onChange={ctx.change}
+            onOpenChange={({ open, reason }) => ctx.setOpen(open, reason)}
+            onOpen={ctx.root.onOpen}
+            onClose={ctx.root.onClose}
+            onCancel={ctx.root.onCancel}
+          />
+        );
+      }}
+    </View>
   );
 }

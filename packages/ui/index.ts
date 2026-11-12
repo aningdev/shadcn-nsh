@@ -33,8 +33,29 @@ export * from "./radio-group";
 export * from "./resizable";
 export * from "./scrollbar";
 export * from "./segmented";
-export type { PickerLookOptions, PickerProps, SelectProps } from "./select";
-export { pickerLook, Picker, Select } from "./select";
+export type {
+  PickerLookOptions,
+  PickerProps,
+  SelectContentProps,
+  SelectGroupProps,
+  SelectItemProps,
+  SelectLabelProps,
+  SelectProps,
+  SelectTriggerProps,
+  SelectValueProps,
+} from "./select";
+export {
+  pickerLook,
+  Picker,
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectSeparator,
+  SelectTrigger,
+  SelectValue,
+} from "./select";
 export * from "./sheet";
 export * from "./slider";
 export * from "./spinner";

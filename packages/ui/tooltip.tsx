@@ -1,9 +1,16 @@
 // A tooltip: the look (`tooltipLook`, `tooltipText`, `tooltipNote`) and the `Tooltip` that wears it.
 // The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
 // Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
-import type { JSX } from "nsh";
-import { split, Text } from "nsh";
-import { Tooltip as BaseTooltip, type TooltipProps as BaseTooltipProps } from "nsh/base";
+import type { JSX, StyleProp, ViewStyle } from "nsh";
+import { context, split, Text, View } from "nsh";
+import {
+  Tooltip as BaseTooltip,
+  type OpenChangeReason,
+  type TooltipProps as BaseTooltipProps,
+} from "nsh/base";
+
+import { Button, type ButtonKind } from "./button";
+import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 
 // @port look/overlay.ts
 /** Options of `tooltipLook`. */
@@ -36,19 +43,78 @@ export const tooltipNote = "text-xs text-muted-foreground";
 // @port end
 
 /**
- * `nsh/base`'s Tooltip in the look of `tooltipLook`. Every base prop passes through; `class`
- * goes over the look's. Pass it as any element's `tooltip={…}` prop.
+ * The root: it owns whether the hint shows, and the trigger and content slots. `nsh/base` takes a
+ * tooltip as the host element's `tooltip` prop, so the root renders one host view around its
+ * trigger; `TooltipContent` can also be used on its own as `tooltip={<TooltipContent>…</TooltipContent>}`.
  */
-export type TooltipProps = Omit<BaseTooltipProps, "children"> & {
+export type TooltipProps = {
+  /** Shown (controlled); leave it out and the root keeps the state (`defaultOpen`). */
+  open?: boolean | null;
+  defaultOpen?: boolean;
+  /** The side of the trigger it goes on (default `top`). */
+  placement?: BaseTooltipProps["placement"];
+  /** How it lines up with the trigger (default `center`). */
+  align?: BaseTooltipProps["align"];
+  /** The gap between the trigger and the hint (default 4). */
+  offset?: number;
+  /** The distance it keeps from the edges of the safe area (default 4). */
+  margin?: number;
+  /** Milliseconds the pointer rests on the trigger before it shows (default 500). */
+  delay?: number;
+  /** No tooltip: it neither shows nor asks to. */
+  disabled?: boolean;
+  children?: JSX.Element;
+  onOpenChange?: (event: { open: boolean; reason: OpenChangeReason }) => void;
+  onOpen?: () => void;
+  onClose?: () => void;
+};
+
+/** The host that shows the hint: a string is a `Button`'s label, anything else the element itself. */
+export type TooltipTriggerProps = {
+  children?: string | JSX.Element;
+  /** The button's variant, for a string child (default `secondary`). */
+  variant?: ButtonKind;
+  /** The button takes no press (a string child). */
+  disabled?: boolean;
+  style?: StyleProp<ViewStyle>;
+};
+
+/**
+ * The hint's bubble. Every prop of `nsh/base`'s Tooltip passes through; `class` goes over
+ * `tooltipLook`'s. In composition the root's open state, placement, delay and events win unless
+ * set here; alone, it is the host's `tooltip={<TooltipContent>…</TooltipContent>}`.
+ */
+export type TooltipContentProps = Omit<BaseTooltipProps, "children"> & {
   /** More than a line: a column with more padding. */
   rich?: boolean;
   /** A string is the label in `tooltipText`; anything else is drawn as given. */
   children?: string | JSX.Element;
 };
 
-/** A tooltip bubble. Use as `tooltip={<Tooltip>Hint</Tooltip>}` on a host. */
-export function Tooltip(props: TooltipProps) {
-  const [, rest] = split(props, ["rich", "children", "class"]);
+type TooltipContextValue = OpenState & {
+  trigger: Slot;
+  content: Slot;
+  placement?: BaseTooltipProps["placement"];
+  align?: BaseTooltipProps["align"];
+  offset?: number;
+  margin?: number;
+  delay?: number;
+  disabled?: boolean;
+  onOpen?: () => void;
+  onClose?: () => void;
+};
+
+const TooltipContext = context<TooltipContextValue | null>(null);
+
+function useTooltip() {
+  const ctx = TooltipContext();
+  if (!ctx) throw new Error("Tooltip parts must be used within <Tooltip>");
+  return ctx;
+}
+
+/** The bubble itself: `tooltipLook`'s classes, a string child in `tooltipText`. */
+function Bubble(props: TooltipContentProps) {
+  const [, rest] = split(props, ["children", "rich", "class"]);
   const look = tooltipLook({ rich: props.rich });
   return (
     <BaseTooltip {...rest} class={props.class ? `${look.class} ${props.class}` : look.class}>
@@ -58,5 +124,121 @@ export function Tooltip(props: TooltipProps) {
         props.children
       )}
     </BaseTooltip>
+  );
+}
+
+/** The root of a tooltip's parts. */
+export function Tooltip(props: TooltipProps) {
+  const state = createOpenState<OpenChangeReason>(props);
+  const trigger = createSlot();
+  const content = createSlot();
+  return (
+    <TooltipContext.Provider
+      value={{
+        ...state,
+        trigger,
+        content,
+        get placement() {
+          return props.placement;
+        },
+        get align() {
+          return props.align;
+        },
+        get offset() {
+          return props.offset;
+        },
+        get margin() {
+          return props.margin;
+        },
+        get delay() {
+          return props.delay;
+        },
+        get disabled() {
+          return props.disabled;
+        },
+        get onOpen() {
+          return props.onOpen;
+        },
+        get onClose() {
+          return props.onClose;
+        },
+      }}
+    >
+      <View style={{ gap: 0 }}>
+        {props.children}
+        {() => <TooltipAnchor />}
+      </View>
+    </TooltipContext.Provider>
+  );
+}
+
+/** What the pointer rests on: a `Button` for a string, else the element as it is. */
+export function TooltipTrigger(props: TooltipTriggerProps) {
+  const ctx = useTooltip();
+  ctx.trigger.set(() => {
+    if (typeof props.children === "string") {
+      return (
+        <Button
+          variant={props.variant ?? "secondary"}
+          disabled={props.disabled}
+          style={props.style}
+        >
+          {props.children}
+        </Button>
+      );
+    }
+    return props.children ?? <View />;
+  });
+  return null;
+}
+
+/** The bubble. Inside `Tooltip` it feeds the root's host; alone it is the host's `tooltip`. */
+export function TooltipContent(props: TooltipContentProps) {
+  const ctx = TooltipContext();
+  if (!ctx) return <Bubble {...props} />;
+  ctx.content.set(() => props);
+  return null;
+}
+
+/** The host view the base tooltip is on, around the trigger, once the parts have registered. */
+function TooltipAnchor() {
+  const ctx = TooltipContext();
+  if (!ctx) return null;
+  const build = ctx.trigger.get();
+  if (!build) return null;
+  const content = ctx.content.get() as (() => TooltipContentProps) | undefined;
+  if (!content) return build() as JSX.Element;
+  return (
+    <View
+      tooltip={<AnchorBubble content={content()} ctx={ctx} />}
+      style={{ alignSelf: "flex-start" }}
+    >
+      {build() as JSX.Element}
+    </View>
+  );
+}
+
+function AnchorBubble(props: { content: TooltipContentProps; ctx: TooltipContextValue }) {
+  const content = props.content;
+  const ctx = props.ctx;
+  return (
+    <Bubble
+      {...content}
+      open={ctx.open()}
+      placement={content.placement ?? ctx.placement}
+      align={content.align ?? ctx.align}
+      offset={content.offset ?? ctx.offset}
+      margin={content.margin ?? ctx.margin}
+      delay={content.delay ?? ctx.delay}
+      disabled={content.disabled ?? ctx.disabled}
+      onOpenChange={(event) => {
+        ctx.setOpen(event.open, event.reason);
+        content.onOpenChange?.(event);
+      }}
+      onOpen={content.onOpen ?? ctx.onOpen}
+      onClose={content.onClose ?? ctx.onClose}
+    >
+      {content.children}
+    </Bubble>
   );
 }

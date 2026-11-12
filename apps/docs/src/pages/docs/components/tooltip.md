@@ -14,11 +14,14 @@ npx shadcn-nsh@latest add tooltip
 ## Usage
 
 ```tsx
-import { Tooltip } from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 ```
 
 ```tsx
-<Button tooltip={<Tooltip>Add to favorites</Tooltip>}>Star</Button>
+<Tooltip>
+  <TooltipTrigger>Add to favorites</TooltipTrigger>
+  <TooltipContent>Add to favorites</TooltipContent>
+</Tooltip>
 ```
 
 ## Examples
@@ -26,32 +29,46 @@ import { Tooltip } from "@/components/ui/tooltip";
 ### Placement
 
 ```tsx
-<Button tooltip={<Tooltip placement="top">Hint</Tooltip>}>Top</Button>
-<Button tooltip={<Tooltip placement="bottom">Hint</Tooltip>}>Bottom</Button>
+<Tooltip placement="top">…</Tooltip>
+<Tooltip placement="bottom">…</Tooltip>
 ```
 
 ### Rich
 
+A title and a note in a column, 10 points of padding.
+
 ```tsx
-<Tooltip rich>
+<TooltipContent rich>
   <Text class={tooltipText}>Delete forever</Text>
   <Text class={tooltipNote}>⌘⌫</Text>
-</Tooltip>
+</TooltipContent>
 ```
 
-### The look alone
+### On any element's `tooltip` prop
+
+`nsh/base` takes a hint as a host's `tooltip`; `TooltipContent` alone is that hint.
 
 ```tsx
-<Tooltip class={tooltipLook().class}>
-  <Text class={tooltipText}>Hint</Text>
-</Tooltip>
+<Button tooltip={<TooltipContent>Add to favorites</TooltipContent>}>Star</Button>
+```
+
+### A trigger of your own
+
+A string child is a `Button`; anything else is the element itself.
+
+```tsx
+<TooltipTrigger variant="ghost">Star</TooltipTrigger>
+<TooltipTrigger>
+  <Icon name="star" size={16} tint={colors.muted} />
+</TooltipTrigger>
 ```
 
 ## API
 
-Every prop of [`nsh/base` Tooltip](https://nsh.dev/elements/tooltip) passes through. `class` goes over the look's. Pass the bubble as any element's `tooltip={…}` prop.
+`nsh/base`'s Tooltip is the bubble itself, shown through a host's `tooltip` prop, so the root renders one host view around its trigger. `TooltipContent` mounts [`nsh/base` Tooltip](https://nsh.dev/elements/tooltip); every base prop passes through and `class` goes over `tooltipLook`'s.
 
-| Prop       | Type                    | Default |
-| ---------- | ----------------------- | ------- |
-| `rich`     | `boolean`               |         |
-| `children` | `string \| JSX.Element` |         |
+| Part             | Notes                                                                                                                         |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------- |
+| `Tooltip`        | `open` / `defaultOpen`, `placement`, `align`, `offset`, `margin`, `delay`, `disabled`, `onOpenChange`, `onOpen`, `onClose`    |
+| `TooltipTrigger` | The host: `variant` (a string child's `Button`), `disabled`, `style`                                                          |
+| `TooltipContent` | The bubble: `rich`, and base's `placement`, `align`, `offset`, `margin`, `delay`, `disabled`; alone, it is a host's `tooltip` |

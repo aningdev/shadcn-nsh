@@ -240,7 +240,7 @@
       "name": "radio-group",
       "type": "registry:ui",
       "title": "Radio Group",
-      "description": "A sunk ring that fills in citrus, with a dot growing in — alone or as a choice tile.",
+      "description": "A sunk ring that fills in citrus, with a dot growing in \u2014 alone or as a choice tile.",
       "registryDependencies": ["checkbox", "press", "surface", "theme"],
       "files": [
         {
@@ -282,7 +282,7 @@
       "name": "input",
       "type": "registry:ui",
       "title": "Input",
-      "description": "A sunk text field — single-line, multiline, masked, or invalid.",
+      "description": "A sunk text field \u2014 single-line, multiline, masked, or invalid.",
       "registryDependencies": ["theme"],
       "files": [
         {
@@ -296,7 +296,7 @@
       "name": "number-input",
       "type": "registry:ui",
       "title": "Number Input",
-      "description": "A sunk number field with − / + or stacked chevron steppers.",
+      "description": "A sunk number field with \u2212 / + or stacked chevron steppers.",
       "registryDependencies": ["icons", "input", "theme"],
       "files": [
         {
@@ -339,7 +339,7 @@
       "type": "registry:ui",
       "title": "Tooltip",
       "description": "A popover-coloured hint bubble on any element's tooltip prop.",
-      "registryDependencies": [],
+      "registryDependencies": ["button", "open-state"],
       "files": [
         {
           "path": "packages/ui/tooltip.tsx",
@@ -353,7 +353,7 @@
       "type": "registry:ui",
       "title": "Popover",
       "description": "A popup panel that grows from its trigger, on the shared menu surface.",
-      "registryDependencies": ["popup"],
+      "registryDependencies": ["button", "open-state", "popup", "theme"],
       "files": [
         {
           "path": "packages/ui/popover.tsx",
@@ -367,7 +367,7 @@
       "type": "registry:ui",
       "title": "Hover Card",
       "description": "A preview card that grows from its trigger, on the shared popover surface.",
-      "registryDependencies": ["popover", "popup"],
+      "registryDependencies": ["button", "open-state", "popover", "popup", "theme"],
       "files": [
         {
           "path": "packages/ui/hover-card.tsx",
@@ -465,7 +465,7 @@
       "type": "registry:ui",
       "title": "Select",
       "description": "A list of choices from a field trigger, on the shared listbox look.",
-      "registryDependencies": ["icons", "input", "listbox", "surface", "theme"],
+      "registryDependencies": ["icons", "input", "listbox", "open-state", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/select.tsx",
@@ -479,7 +479,15 @@
       "type": "registry:ui",
       "title": "Combobox",
       "description": "A searchable field with a list of choices, on the shared listbox look.",
-      "registryDependencies": ["icons", "input", "listbox", "surface", "theme"],
+      "registryDependencies": [
+        "button",
+        "icons",
+        "input",
+        "listbox",
+        "open-state",
+        "surface",
+        "theme"
+      ],
       "files": [
         {
           "path": "packages/ui/combobox.tsx",
@@ -507,7 +515,15 @@
       "type": "registry:ui",
       "title": "Date Picker",
       "description": "A calendar in a popup from a field trigger, on the shared listbox look.",
-      "registryDependencies": ["calendar", "listbox", "overlay", "select", "theme", "time-field"],
+      "registryDependencies": [
+        "calendar",
+        "listbox",
+        "open-state",
+        "overlay",
+        "select",
+        "theme",
+        "time-field"
+      ],
       "files": [
         {
           "path": "packages/ui/date-picker.tsx",

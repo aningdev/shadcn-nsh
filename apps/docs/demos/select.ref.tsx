@@ -31,6 +31,7 @@ function App() {
             items={LANGUAGES}
             value={language()}
             open={open()}
+            placeholder="Choose a language"
             onChange={({ value: next }) => {
               language.set(next);
               last.set(titleOf(LANGUAGES, next) ?? "–");

@@ -1,6 +1,6 @@
 import { mount, signal } from "nsh";
 
-import { Combobox, ComboToggle, OptionRow } from "@/packages/ui/combobox";
+import { Combobox, ComboboxContent, ComboboxItem, ComboboxTrigger } from "@/packages/ui/combobox";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 
@@ -21,11 +21,8 @@ function App() {
       <DemoCard>
         <DemoSection title="Framework">
           <Combobox
-            items={FRAMES}
             value={value()}
             open={open()}
-            listOpen={open()}
-            filled={value().length > 0}
             placeholder="Pick a framework"
             onChange={({ value: next }) => {
               value.set(next);
@@ -35,9 +32,15 @@ function App() {
               open.set(next);
               last.set(`${next ? "opened" : "closed"} · ${reason}`);
             }}
-            triggerButton={<ComboToggle open={open()} />}
-            renderItem={(item) => <OptionRow item={item} />}
-          />
+          >
+            <ComboboxTrigger />
+            <ComboboxContent accessibilityLabel="Framework">
+              <ComboboxItem value="react">React</ComboboxItem>
+              <ComboboxItem value="vue">Vue</ComboboxItem>
+              <ComboboxItem value="svelte">Svelte</ComboboxItem>
+              <ComboboxItem value="solid">Solid</ComboboxItem>
+            </ComboboxContent>
+          </Combobox>
         </DemoSection>
       </DemoCard>
     </DemoPage>

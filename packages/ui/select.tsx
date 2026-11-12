@@ -3,16 +3,26 @@
 // Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
 import { alpha, colors, finish, radius, terminal, TERMINAL_COLUMN } from "@shadcn-nsh/theme";
 import type { JSX, ViewStyle } from "nsh";
-import { platform, reduceMotion, split, Text, View } from "nsh";
+import { cleanup, context, platform, reduceMotion, signal, split, Text, View } from "nsh";
 import {
   Select as BaseSelect,
+  type OpenChangeReason,
   type SelectEntry,
+  type SelectItem as SelectItemData,
   type SelectProps as BaseSelectProps,
 } from "nsh/base";
 
 import { fieldSize } from "./input";
 import { Icon, type IconName } from "./lib/icons";
 import { listboxProps, ListboxEmpty, ListboxHeader, OptionRow } from "./lib/listbox";
+import {
+  createItemRegistry,
+  createOpenState,
+  createSlot,
+  type ItemRegistry,
+  type OpenState,
+  type Slot,
+} from "./lib/open-state";
 import { controlSize } from "./lib/surface";
 
 export {
@@ -213,18 +223,229 @@ export function Picker(props: PickerProps) {
 }
 // @port end
 
-/**
- * `nsh/base`'s Select with `listboxProps` and `OptionRow` by default. Pass `trigger` (often a
- * `Picker`); every base prop passes through over the look's.
- */
-export type SelectProps = BaseSelectProps & {
-  /** Least popup width with a pointer (forwarded to `listboxProps`). */
-  minWidth?: number;
+/** The root: it owns the open flag, the value and the items its parts register. */
+export type SelectProps = {
+  /** Controlled; leave it out and the root keeps the state (`defaultValue`). */
+  value?: string | null;
+  defaultValue?: string | null;
+  /** Controlled; leave it out and the root keeps the state (`defaultOpen`). */
+  open?: boolean | null;
+  defaultOpen?: boolean;
+  /** It does not open, and the trigger takes the disabled look. */
+  disabled?: boolean;
+  /** A clear button while an item is chosen. */
+  cleanable?: boolean;
+  /** What the trigger says when nothing is chosen; `SelectValue`'s `placeholder` wins. */
+  placeholder?: string;
+  children?: JSX.Element;
+  /** The user chose another item: its value, `null` when the clear button cleared it. */
+  onChange?: (event: { value: string | null }) => void;
+  onOpenChange?: (event: { open: boolean; reason: OpenChangeReason }) => void;
+  onOpen?: () => void;
+  onClose?: () => void;
+  onCancel?: () => void;
 };
 
-/** A select: the shared listbox popup and rows, with the app's trigger. */
+/**
+ * The field. Every prop of `nsh/base`'s Select passes through but the ones the root owns;
+ * `popupStyle`, `backdropStyle`, `itemClass`, `renderItem`, `renderGroup`, `empty`, `offset` and
+ * `margin` go over `listboxProps`' and `OptionRow`'s. Its items are the `SelectItem` children
+ * unless `items` is given.
+ */
+export type SelectContentProps = Omit<
+  BaseSelectProps,
+  | "items"
+  | "value"
+  | "defaultValue"
+  | "open"
+  | "defaultOpen"
+  | "placeholder"
+  | "cleanable"
+  | "disabled"
+  | "trigger"
+  | "onChange"
+  | "onOpenChange"
+  | "onOpen"
+  | "onClose"
+  | "onCancel"
+  | "children"
+> & {
+  /** The rows, when they are not `SelectItem` children (a list the app already holds). */
+  items?: SelectItemData[];
+  /** Least popup width with a pointer (forwarded to `listboxProps`). */
+  minWidth?: number;
+  children?: JSX.Element;
+};
+
+/** The pressed row: a `Picker` whose title is the chosen title or the placeholder. */
+export type SelectTriggerProps = {
+  /** A `SelectValue` (its placeholder); a string is the placeholder itself. */
+  children?: string | JSX.Element;
+  /** An icon before the title, in the muted color (none in the terminal). */
+  icon?: IconName;
+  /** Content before the title (a flag, a status's dot). */
+  lead?: JSX.Element;
+  /** Edged in the danger tone. */
+  invalid?: boolean;
+  /** The app's own clear button lies over the end: room for it. */
+  clearable?: boolean;
+  /** `pickerLook`'s `kind`: the field's well (the default) or an outline button. */
+  kind?: "field" | "outline";
+  /** The chevron at the end (the default). */
+  chevron?: boolean;
+  style?: ViewStyle;
+};
+
+/** The chosen title, or the placeholder: set by `SelectValue`, else the root's `placeholder`. */
+export type SelectValueProps = {
+  placeholder?: string;
+};
+
+/** One choice: the string child is its title and what the trigger shows while it is chosen. */
+export type SelectItemProps = {
+  value: string;
+  disabled?: boolean;
+  /** Its section, when it is not inside a `SelectGroup`. */
+  group?: string;
+  children?: string;
+};
+
+/** A section of items under `SelectLabel`'s name (the list's header). */
+export type SelectGroupProps = {
+  children?: JSX.Element;
+};
+
+/** A section's name. It draws nothing itself: the list's header shows it. */
+export type SelectLabelProps = {
+  children?: string;
+};
+
+type SelectContextValue = OpenState & {
+  items: ItemRegistry<SelectItemData>;
+  trigger: Slot;
+  value: () => string | null;
+  change: (event: { value: string | null }) => void;
+  /** The placeholder: `SelectValue`'s, else the root's, else "Select…". */
+  prompt: () => string;
+  setPrompt: (next: string | undefined) => void;
+  root: SelectProps;
+};
+
+const SelectContext = context<SelectContextValue | null>(null);
+const SelectGroupContext = context<{ label?: string } | null>(null);
+
+function useSelect() {
+  const ctx = SelectContext();
+  if (!ctx) throw new Error("Select parts must be used within <Select>");
+  return ctx;
+}
+
+/** The title of the trigger: the chosen item's title, else the placeholder. */
+function titleOf(ctx: SelectContextValue): string {
+  const value = ctx.value();
+  if (value == null) return ctx.prompt();
+  return ctx.items.items().find((item) => item.value === value)?.title ?? value;
+}
+
+/** The trigger the base root renders: the app's `SelectTrigger`, or a `Picker` of the value. */
+function triggerOf(ctx: SelectContextValue): JSX.Element {
+  const build = ctx.trigger.get();
+  if (build) return build() as JSX.Element;
+  return (
+    <Picker
+      title={titleOf(ctx)}
+      placeholder={ctx.value() == null}
+      open={ctx.open()}
+      disabled={ctx.root.disabled}
+      clearable={ctx.root.cleanable}
+    />
+  );
+}
+
+/** The root of a select's parts. Put `SelectTrigger` before `SelectContent`. */
 export function Select(props: SelectProps) {
+  const state = createOpenState<OpenChangeReason>(props);
+  const items = createItemRegistry<SelectItemData>([]);
+  const trigger = createSlot();
+  const prompt = signal<string | undefined>(undefined);
+  const picked = signal(false);
+  const chosen = signal<string | null>(null);
+  const value = () => {
+    if (props.value !== undefined) return props.value ?? null;
+    if (picked()) return chosen();
+    return props.defaultValue ?? null;
+  };
+  const change = (event: { value: string | null }) => {
+    if (props.value === undefined) {
+      picked.set(true);
+      chosen.set(event.value);
+    }
+    props.onChange?.(event);
+  };
+  return (
+    <SelectContext.Provider
+      value={{
+        ...state,
+        items,
+        trigger,
+        value,
+        change,
+        prompt: () => prompt() ?? props.placeholder ?? "Select…",
+        setPrompt: (next) => prompt.set(next),
+        get root() {
+          return props;
+        },
+      }}
+    >
+      {props.children}
+    </SelectContext.Provider>
+  );
+}
+
+/**
+ * The pressed field: a `Picker` that follows the root's open state, value and `disabled`. Its
+ * child is a `SelectValue` (the placeholder while nothing is chosen).
+ */
+export function SelectTrigger(props: SelectTriggerProps) {
+  const ctx = useSelect();
+  ctx.trigger.set(() => (
+    <Picker
+      title={titleOf(ctx)}
+      placeholder={ctx.value() == null}
+      open={ctx.open()}
+      disabled={ctx.root.disabled}
+      invalid={props.invalid}
+      clearable={props.clearable ?? ctx.root.cleanable}
+      icon={props.icon}
+      lead={props.lead}
+      kind={props.kind}
+      chevron={props.chevron}
+      style={props.style}
+    />
+  ));
+  if (typeof props.children === "string") {
+    ctx.setPrompt(props.children);
+    return null;
+  }
+  return props.children;
+}
+
+/** Sets the trigger's placeholder. It draws nothing of its own. */
+export function SelectValue(props: SelectValueProps) {
+  const ctx = useSelect();
+  ctx.setPrompt(props.placeholder);
+  return null;
+}
+
+/**
+ * The list: `nsh/base`'s Select with `listboxProps` and `OptionRow` by default, opened by the
+ * `SelectTrigger` above it. Its children are the `SelectGroup`s and `SelectItem`s.
+ */
+export function SelectContent(props: SelectContentProps) {
+  const ctx = useSelect();
   const [, rest] = split(props, [
+    "children",
+    "items",
     "minWidth",
     "popupStyle",
     "backdropStyle",
@@ -235,18 +456,70 @@ export function Select(props: SelectProps) {
     "renderGroup",
     "empty",
   ]);
-  const chrome = listboxProps({ minWidth: props.minWidth });
   return (
-    <BaseSelect
-      {...rest}
-      offset={props.offset ?? chrome.offset}
-      margin={props.margin ?? chrome.margin}
-      popupStyle={[chrome.popupStyle, props.popupStyle ?? null]}
-      backdropStyle={[chrome.backdropStyle, props.backdropStyle ?? null]}
-      itemClass={props.itemClass ?? chrome.itemClass}
-      renderItem={props.renderItem ?? ((item: SelectEntry) => <OptionRow item={item} />)}
-      renderGroup={props.renderGroup ?? ((group) => <ListboxHeader group={group} />)}
-      empty={props.empty ?? <ListboxEmpty label="No results" />}
-    />
+    <View>
+      {props.children}
+      {() => {
+        const chrome = listboxProps({ minWidth: props.minWidth });
+        return (
+          <BaseSelect
+            {...rest}
+            items={props.items ?? ctx.items.items()}
+            value={ctx.value()}
+            open={ctx.open()}
+            disabled={ctx.root.disabled}
+            cleanable={ctx.root.cleanable}
+            placeholder={ctx.prompt()}
+            trigger={triggerOf(ctx)}
+            offset={props.offset ?? chrome.offset}
+            margin={props.margin ?? chrome.margin}
+            popupStyle={[chrome.popupStyle, props.popupStyle ?? null]}
+            backdropStyle={[chrome.backdropStyle, props.backdropStyle ?? null]}
+            itemClass={props.itemClass ?? chrome.itemClass}
+            renderItem={props.renderItem ?? ((item: SelectEntry) => <OptionRow item={item} />)}
+            renderGroup={props.renderGroup ?? ((group) => <ListboxHeader group={group} />)}
+            empty={props.empty ?? <ListboxEmpty label="No results" />}
+            onChange={ctx.change}
+            onOpenChange={({ open, reason }) => ctx.setOpen(open, reason)}
+            onOpen={ctx.root.onOpen}
+            onClose={ctx.root.onClose}
+            onCancel={ctx.root.onCancel}
+          />
+        );
+      }}
+    </View>
   );
+}
+
+/** A section of a list: its items take `SelectLabel`'s name as their group. */
+export function SelectGroup(props: SelectGroupProps) {
+  const group: { label?: string } = {};
+  return <SelectGroupContext.Provider value={group}>{props.children}</SelectGroupContext.Provider>;
+}
+
+/** A section's name: the list's header. It draws nothing itself. */
+export function SelectLabel(props: SelectLabelProps) {
+  const group = SelectGroupContext();
+  if (group) group.label = props.children;
+  return null;
+}
+
+/** One choice of a list. The string child is the row's title. */
+export function SelectItem(props: SelectItemProps) {
+  const ctx = useSelect();
+  const group = SelectGroupContext();
+  const item: SelectItemData = {
+    value: props.value,
+    title: props.children ?? props.value,
+    disabled: props.disabled,
+    group: props.group ?? group?.label,
+  };
+  ctx.items.register(item);
+  cleanup(() => ctx.items.unregister(item.value));
+  return null;
+}
+
+/** A hairline between sections. `nsh/base`'s Select separates them by their headers alone. */
+export function SelectSeparator() {
+  return null;
 }

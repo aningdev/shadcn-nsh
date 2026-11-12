@@ -1,8 +1,14 @@
 import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
-import { Button } from "@/packages/ui/button";
-import { Popover } from "@/packages/ui/popover";
+import {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "@/packages/ui/popover";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 
@@ -16,34 +22,31 @@ function App() {
           <View style={{ height: 200, alignItems: "center", justifyContent: "center" }}>
             <Popover
               open
-              placement="bottom"
-              offset={8}
-              width={260}
               onOpenChange={({ open, reason }) =>
                 last.set(`${open ? "opened" : "closed"} · ${reason}`)
               }
-              trigger={<Button variant="primary">Order 1024</Button>}
             >
-              <View style={{ gap: 2 }}>
-                <Text style={{ fontSize: 14, fontWeight: "600", color: colors.text }}>
-                  Shipped yesterday
-                </Text>
-                <Text style={{ fontSize: 12, color: colors.muted }}>
-                  Arriving Friday. The trigger, a press outside and Escape close this.
-                </Text>
-              </View>
+              <PopoverTrigger variant="primary">Order 1024</PopoverTrigger>
+              <PopoverContent placement="bottom" offset={8} width={260}>
+                <PopoverHeader style={{ gap: 2 }}>
+                  <PopoverTitle style={{ fontSize: 14, fontWeight: "600", color: colors.text }}>
+                    Shipped yesterday
+                  </PopoverTitle>
+                  <PopoverDescription style={{ fontSize: 12, color: colors.muted }}>
+                    Arriving Friday. The trigger, a press outside and Escape close this.
+                  </PopoverDescription>
+                </PopoverHeader>
+              </PopoverContent>
             </Popover>
           </View>
         </DemoSection>
         <DemoSection title="Compact">
           <View style={{ height: 120, alignItems: "center", justifyContent: "center" }}>
-            <Popover
-              open
-              compact
-              placement="top"
-              trigger={<Button variant="secondary">Note</Button>}
-            >
-              <Text style={{ fontSize: 12, color: colors.text }}>A small note</Text>
+            <Popover open>
+              <PopoverTrigger>Note</PopoverTrigger>
+              <PopoverContent compact placement="top">
+                <Text style={{ fontSize: 12, color: colors.text }}>A small note</Text>
+              </PopoverContent>
             </Popover>
           </View>
         </DemoSection>

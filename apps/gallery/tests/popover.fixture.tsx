@@ -1,7 +1,7 @@
 import { mount, signal, Text, View } from "nsh";
 import { Button as BaseButton } from "nsh/base";
 
-import { Button, Popover } from "../../../packages/ui";
+import { Popover, PopoverContent, PopoverTrigger } from "../../../packages/ui";
 
 function App() {
   const changes = signal(0);
@@ -12,32 +12,33 @@ function App() {
       <BaseButton onPress={() => off.set(true)}>
         <Text>Flip</Text>
       </BaseButton>
-      <Popover
-        onOpenChange={() => changes.set(changes() + 1)}
-        trigger={<Button variant="secondary">Open A</Button>}
-      >
-        <Text>Body A</Text>
+      <Popover onOpenChange={() => changes.set(changes() + 1)}>
+        <PopoverTrigger>Open A</PopoverTrigger>
+        <PopoverContent>
+          <Text>Body A</Text>
+        </PopoverContent>
       </Popover>
-      <Popover trigger={<Button variant="secondary">Open B</Button>}>
-        <Text>Body B</Text>
+      <Popover>
+        <PopoverTrigger>
+          <Text>Open B</Text>
+        </PopoverTrigger>
+        <PopoverContent>
+          <Text>Body B</Text>
+        </PopoverContent>
       </Popover>
-      <Popover
-        trigger={
-          <Button variant="secondary" disabled={off()}>
-            Open C
-          </Button>
-        }
-      >
-        <Text>Body C</Text>
+      <Popover>
+        <PopoverTrigger disabled={off()}>Open C</PopoverTrigger>
+        <PopoverContent>
+          <Text>Body C</Text>
+        </PopoverContent>
       </Popover>
-      <Popover
-        trigger={
-          <Button variant="secondary" disabled={off()}>
-            Open D
-          </Button>
-        }
-      >
-        <Text>Body D</Text>
+      <Popover>
+        <PopoverTrigger disabled={off()}>
+          <Text>Open D</Text>
+        </PopoverTrigger>
+        <PopoverContent>
+          <Text>Body D</Text>
+        </PopoverContent>
       </Popover>
     </View>
   );

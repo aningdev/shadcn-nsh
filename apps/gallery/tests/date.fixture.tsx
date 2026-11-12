@@ -4,10 +4,10 @@ import { Button } from "nsh/base";
 import {
   Calendar,
   DatePicker,
-  DateTrigger,
+  DatePickerContent,
+  DatePickerTrigger,
   TimeField,
   calendarLook,
-  datePickerLook,
   listboxPopup,
   pickerLook,
   timeFieldClass,
@@ -69,14 +69,14 @@ function App() {
         <Text>Set time</Text>
       </Button>
       <DatePicker
-        {...datePickerLook()}
-        accessibilityLabel="Due"
         value={due()}
         open={open()}
         onChange={({ value }) => due.set(typeof value === "string" ? value : "none")}
         onOpenChange={({ open: next }) => open.set(next)}
-        trigger={<DateTrigger title={due()} placeholder={false} open={open()} />}
-      />
+      >
+        <DatePickerTrigger />
+        <DatePickerContent accessibilityLabel="Due" />
+      </DatePicker>
       <Text>due={due()}</Text>
       <Text>open={String(open())}</Text>
     </View>

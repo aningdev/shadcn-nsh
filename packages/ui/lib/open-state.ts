@@ -1,4 +1,4 @@
-import { signal } from "nsh";
+import { signal, type Signal } from "nsh";
 
 /** Controlled/uncontrolled open flag shared by composition roots. */
 export type OpenState = {
@@ -40,6 +40,54 @@ export function createSlot(): Slot {
     get: () => accessor,
     set: (next) => {
       accessor = next;
+    },
+  };
+}
+
+/** What a registered item is: the row a select or a combobox lists. */
+export type RegisteredItem = {
+  value: string;
+  title: string;
+  disabled?: boolean;
+  group?: string | null;
+};
+
+/** The items a composition root's `…Item` parts register (a select's choices). */
+export type ItemRegistry<T extends RegisteredItem> = {
+  items: Signal<T[]>;
+  register: (item: T) => void;
+  unregister: (value: string) => void;
+};
+
+/**
+ * Items registered by the parts under a root (the rows of a listbox). An item is kept in
+ * registration order; registering the same item again notifies nothing, so a part that runs again
+ * on a re-render does not loop the root.
+ */
+export function createItemRegistry<T extends RegisteredItem>(initial: T[] = []): ItemRegistry<T> {
+  const items = signal<T[]>(initial);
+  const same = (a: T, b: T) =>
+    a.value === b.value && a.title === b.title && a.disabled === b.disabled && a.group === b.group;
+  return {
+    items,
+    register: (item) => {
+      items.update((list) => {
+        const at = list.findIndex((found) => found.value === item.value);
+        if (at >= 0 && same(list[at]!, item)) return list;
+        const next = list.slice();
+        if (at >= 0) next[at] = item;
+        else next.push(item);
+        return next;
+      });
+    },
+    unregister: (value) => {
+      items.update((list) => {
+        const at = list.findIndex((found) => found.value === value);
+        if (at < 0) return list;
+        const next = list.slice();
+        next.splice(at, 1);
+        return next;
+      });
     },
   };
 }

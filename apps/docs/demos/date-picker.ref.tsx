@@ -45,7 +45,6 @@ function App() {
                 title={value() ?? "Pick a date"}
                 placeholder={value() === null}
                 open={open()}
-                clearable={value() !== null}
                 style={trigger}
               />
             }

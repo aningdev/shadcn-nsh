@@ -1,6 +1,12 @@
 import { mount, platform, signal } from "nsh";
 
-import { OptionRow, Picker, Select } from "@/packages/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/packages/ui/select";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 
@@ -26,9 +32,9 @@ function App() {
       <DemoCard>
         <DemoSection title="Language">
           <Select
-            items={LANGUAGES}
             value={language()}
             open={open()}
+            placeholder="Choose a language"
             onChange={({ value: next }) => {
               language.set(next);
               last.set(titleOf(LANGUAGES, next) ?? "–");
@@ -37,17 +43,17 @@ function App() {
               open.set(next);
               last.set(`${next ? "opened" : "closed"} · ${reason}`);
             }}
-            accessibilityLabel="Language"
-            trigger={
-              <Picker
-                title={titleOf(LANGUAGES, language()) ?? "Choose a language"}
-                placeholder={language() === null}
-                open={open()}
-                style={trigger}
-              />
-            }
-            renderItem={(item) => <OptionRow item={item} />}
-          />
+          >
+            <SelectTrigger style={trigger}>
+              <SelectValue placeholder="Choose a language" />
+            </SelectTrigger>
+            <SelectContent accessibilityLabel="Language">
+              <SelectItem value="en">English</SelectItem>
+              <SelectItem value="de">Deutsch</SelectItem>
+              <SelectItem value="fr">Français</SelectItem>
+              <SelectItem value="ja">日本語</SelectItem>
+            </SelectContent>
+          </Select>
         </DemoSection>
       </DemoCard>
     </DemoPage>

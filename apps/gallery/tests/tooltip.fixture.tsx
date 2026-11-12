@@ -1,7 +1,7 @@
 import { mount, signal, Text, View } from "nsh";
 import { Button as BaseButton } from "nsh/base";
 
-import { Button, Tooltip } from "../../../packages/ui";
+import { Button, Tooltip, TooltipContent, TooltipTrigger } from "../../../packages/ui";
 
 function App() {
   const off = signal(false);
@@ -10,12 +10,18 @@ function App() {
       <BaseButton onPress={() => off.set(true)}>
         <Text>Flip</Text>
       </BaseButton>
-      <Button variant="secondary" disabled={off()} tooltip={<Tooltip>Tip A</Tooltip>}>
-        Hover A
-      </Button>
-      <Button variant="secondary" tooltip={<Tooltip>Tip B</Tooltip>}>
-        Hover B
-      </Button>
+      <Tooltip>
+        <TooltipTrigger>
+          <Button variant="secondary" disabled={off()}>
+            Hover A
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent>Tip A</TooltipContent>
+      </Tooltip>
+      <Tooltip>
+        <TooltipTrigger>Hover B</TooltipTrigger>
+        <TooltipContent>Tip B</TooltipContent>
+      </Tooltip>
     </View>
   );
 }

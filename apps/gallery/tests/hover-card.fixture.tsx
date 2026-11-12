@@ -1,7 +1,7 @@
 import { mount, signal, Text, View } from "nsh";
 import { Button as BaseButton } from "nsh/base";
 
-import { Button, HoverCard } from "../../../packages/ui";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "../../../packages/ui";
 
 function App() {
   const changes = signal(0);
@@ -12,23 +12,25 @@ function App() {
       <BaseButton onPress={() => off.set(true)}>
         <Text>Flip</Text>
       </BaseButton>
-      <HoverCard
-        onOpenChange={() => changes.set(changes() + 1)}
-        trigger={<Button variant="secondary">Open A</Button>}
-      >
-        <Text>Body A</Text>
+      <HoverCard onOpenChange={() => changes.set(changes() + 1)}>
+        <HoverCardTrigger>Open A</HoverCardTrigger>
+        <HoverCardContent>
+          <Text>Body A</Text>
+        </HoverCardContent>
       </HoverCard>
-      <HoverCard trigger={<Button variant="secondary">Open B</Button>}>
-        <Text>Body B</Text>
+      <HoverCard>
+        <HoverCardTrigger>
+          <Text>Open B</Text>
+        </HoverCardTrigger>
+        <HoverCardContent>
+          <Text>Body B</Text>
+        </HoverCardContent>
       </HoverCard>
-      <HoverCard
-        trigger={
-          <Button variant="secondary" disabled={off()}>
-            Open C
-          </Button>
-        }
-      >
-        <Text>Body C</Text>
+      <HoverCard>
+        <HoverCardTrigger disabled={off()}>Open C</HoverCardTrigger>
+        <HoverCardContent>
+          <Text>Body C</Text>
+        </HoverCardContent>
       </HoverCard>
     </View>
   );

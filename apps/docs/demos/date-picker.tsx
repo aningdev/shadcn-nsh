@@ -1,6 +1,6 @@
 import { mount, platform, signal } from "nsh";
 
-import { DatePicker, DateTrigger } from "@/packages/ui/date-picker";
+import { DatePicker, DatePickerContent, DatePickerTrigger } from "@/packages/ui/date-picker";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 
@@ -27,16 +27,10 @@ function App() {
               open.set(next);
               last.set(`${next ? "opened" : "closed"} · ${reason}`);
             }}
-            trigger={
-              <DateTrigger
-                title={value() ?? "Pick a date"}
-                placeholder={value() === null}
-                open={open()}
-                clearable={value() !== null}
-                style={trigger}
-              />
-            }
-          />
+          >
+            <DatePickerTrigger style={trigger} />
+            <DatePickerContent />
+          </DatePicker>
         </DemoSection>
       </DemoCard>
     </DemoPage>

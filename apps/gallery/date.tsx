@@ -2,7 +2,13 @@ import { mount, signal, Text } from "nsh";
 
 // Dates: calendar states, time segments, and a closed date picker.
 import { colors } from "../../packages/theme";
-import { Calendar, DatePicker, DateTrigger, TimeField } from "../../packages/ui";
+import {
+  Calendar,
+  DatePicker,
+  DatePickerContent,
+  DatePickerTrigger,
+  TimeField,
+} from "../../packages/ui";
 import { Page, Panel, Row } from "./demo-kit";
 
 const fill = { flex: 1, alignSelf: "stretch" as const };
@@ -62,53 +68,36 @@ function DatesPage() {
       </Panel>
       <Panel title="Date picker">
         <Row label="value">
-          <DatePicker
-            value={due}
-            open={open()}
-            onOpenChange={({ open: next }) => open.set(next)}
-            style={fill}
-            trigger={<DateTrigger title={due} placeholder={false} open={open()} style={fill} />}
-          />
+          <DatePicker value={due} open={open()} onOpenChange={({ open: next }) => open.set(next)}>
+            <DatePickerTrigger style={fill} />
+            <DatePickerContent style={fill} />
+          </DatePicker>
         </Row>
         <Row label="empty">
-          <DatePicker
-            open={emptyOpen()}
-            onOpenChange={({ open: next }) => emptyOpen.set(next)}
-            style={fill}
-            trigger={
-              <DateTrigger title="Pick a date" placeholder open={emptyOpen()} style={fill} />
-            }
-          />
+          <DatePicker open={emptyOpen()} onOpenChange={({ open: next }) => emptyOpen.set(next)}>
+            <DatePickerTrigger style={fill} />
+            <DatePickerContent style={fill} />
+          </DatePicker>
         </Row>
         <Row label="clear">
           <DatePicker
             value={clearVal()}
             open={clearOpen()}
+            cleanable
             onOpenChange={({ open: next }) => clearOpen.set(next)}
             onChange={({ value }) => {
               if (typeof value === "string") clearVal.set(value);
             }}
-            style={fill}
-            trigger={
-              <DateTrigger
-                title={clearVal()}
-                placeholder={false}
-                open={clearOpen()}
-                clearable
-                style={fill}
-              />
-            }
-          />
+          >
+            <DatePickerTrigger style={fill} />
+            <DatePickerContent style={fill} />
+          </DatePicker>
         </Row>
         <Row label="disabled">
-          <DatePicker
-            disabled
-            value={due}
-            style={fill}
-            trigger={
-              <DateTrigger title={due} placeholder={false} open={false} disabled style={fill} />
-            }
-          />
+          <DatePicker disabled value={due}>
+            <DatePickerTrigger style={fill} />
+            <DatePickerContent style={fill} />
+          </DatePicker>
         </Row>
       </Panel>
     </Page>

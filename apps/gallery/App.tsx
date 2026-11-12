@@ -7,7 +7,9 @@ import {
   Button,
   Checkbox,
   Combobox,
-  ComboToggle,
+  ComboboxContent,
+  ComboboxItem,
+  ComboboxTrigger,
   Dialog,
   DialogClose,
   DialogContent,
@@ -16,6 +18,8 @@ import {
   DialogTitle,
   DialogTrigger,
   HoverCard,
+  HoverCardContent,
+  HoverCardTrigger,
   Input,
   Menu,
   MenuCheckboxItem,
@@ -24,13 +28,17 @@ import {
   MenuLabel,
   MenuSeparator,
   MenuTrigger,
-  OptionRow,
-  Picker,
   Popover,
+  PopoverContent,
+  PopoverTrigger,
   Progress,
   Radio,
   RadioGroup,
   Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   Sheet,
   SheetClose,
   SheetContent,
@@ -44,6 +52,8 @@ import {
   Toast,
   Toggle,
   Tooltip,
+  TooltipContent,
+  TooltipTrigger,
 } from "../../packages/ui";
 
 function Section(props: { title: string; children: unknown }) {
@@ -54,21 +64,6 @@ function Section(props: { title: string; children: unknown }) {
     </View>
   );
 }
-
-const LANGS = [
-  { value: "en", title: "English" },
-  { value: "de", title: "Deutsch" },
-  { value: "fr", title: "Français" },
-];
-
-const FRAMES = [
-  { value: "react", title: "React" },
-  { value: "vue", title: "Vue" },
-  { value: "svelte", title: "Svelte" },
-];
-
-const titleOf = (items: { value: string; title: string }[], value: string | null) =>
-  items.find((i) => i.value === value)?.title;
 
 function App() {
   const count = signal(0);
@@ -190,25 +185,23 @@ function App() {
         <Section title="Overlays">
           <View style={{ gap: 14, minHeight: 120 }}>
             <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 12, alignItems: "center" }}>
-              <Popover
-                placement="bottom"
-                width={220}
-                trigger={<Button variant="secondary">Popover</Button>}
-              >
-                <Text style={{ fontSize: 13, color: colors.text }}>Floating panel content.</Text>
+              <Popover>
+                <PopoverTrigger>Popover</PopoverTrigger>
+                <PopoverContent placement="bottom" width={220}>
+                  <Text style={{ fontSize: 13, color: colors.text }}>Floating panel content.</Text>
+                </PopoverContent>
               </Popover>
-              <Button
-                variant="secondary"
-                tooltip={<Tooltip placement="top">Shortcut hint</Tooltip>}
-              >
-                Tooltip host
-              </Button>
-              <HoverCard
-                placement="bottom"
-                width={200}
-                trigger={<Button variant="ghost">Hover card</Button>}
-              >
-                <Text style={{ fontSize: 13, color: colors.muted }}>Opens on hover or focus.</Text>
+              <Tooltip placement="top">
+                <TooltipTrigger>Tooltip host</TooltipTrigger>
+                <TooltipContent>Shortcut hint</TooltipContent>
+              </Tooltip>
+              <HoverCard>
+                <HoverCardTrigger variant="ghost">Hover card</HoverCardTrigger>
+                <HoverCardContent placement="bottom" width={200}>
+                  <Text style={{ fontSize: 13, color: colors.muted }}>
+                    Opens on hover or focus.
+                  </Text>
+                </HoverCardContent>
               </HoverCard>
             </View>
             <View style={{ width: 200 }}>
@@ -236,33 +229,33 @@ function App() {
         <Section title="Select · Combobox">
           <View style={{ gap: 12, maxWidth: 280 }}>
             <Select
-              items={LANGS}
               value={language()}
               open={langOpen()}
+              placeholder="Choose language"
               onChange={({ value: next }) => language.set(next)}
               onOpenChange={({ open }) => langOpen.set(open)}
-              accessibilityLabel="Language"
-              trigger={
-                <Picker
-                  title={titleOf(LANGS, language()) ?? "Choose language"}
-                  placeholder={language() === null}
-                  open={langOpen()}
-                />
-              }
-              renderItem={(item) => <OptionRow item={item} />}
-            />
+            >
+              <SelectTrigger>
+                <SelectValue placeholder="Choose language" />
+              </SelectTrigger>
+              <SelectContent accessibilityLabel="Language">
+                <SelectItem value="en">English</SelectItem>
+                <SelectItem value="de">Deutsch</SelectItem>
+              </SelectContent>
+            </Select>
             <Combobox
-              items={FRAMES}
               value={frames()}
               open={comboOpen()}
-              listOpen={comboOpen()}
-              filled={frames().length > 0}
               placeholder="Framework"
               onChange={({ value: next }) => frames.set(next)}
               onOpenChange={({ open }) => comboOpen.set(open)}
-              triggerButton={<ComboToggle open={comboOpen()} />}
-              renderItem={(item) => <OptionRow item={item} />}
-            />
+            >
+              <ComboboxTrigger />
+              <ComboboxContent accessibilityLabel="Framework">
+                <ComboboxItem value="react">React</ComboboxItem>
+                <ComboboxItem value="vue">Vue</ComboboxItem>
+              </ComboboxContent>
+            </Combobox>
           </View>
         </Section>
 
