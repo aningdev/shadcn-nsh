@@ -4,6 +4,7 @@ import packageJson from "../package.json" with { type: "json" };
 import { add } from "./commands/add";
 import { build } from "./commands/build";
 import { init } from "./commands/init";
+import { list } from "./commands/list";
 import { serve } from "./commands/serve";
 
 const program = new Command()
@@ -14,6 +15,7 @@ const program = new Command()
 program.addCommand(build);
 program.addCommand(init);
 program.addCommand(add);
+program.addCommand(list);
 program.addCommand(serve);
 
 program.parse();

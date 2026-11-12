@@ -1,7 +1,7 @@
 import fs from "node:fs/promises";
 import path from "node:path";
 
-import type { NshUiConfig, Registry, RegistryItem } from "../types";
+import type { NshUiConfig, Registry, RegistryIndex, RegistryItem } from "../types";
 
 export function itemUrl(config: NshUiConfig, name: string, registryOverride?: string) {
   const template = registryOverride ?? config.registry;
@@ -9,6 +9,18 @@ export function itemUrl(config: NshUiConfig, name: string, registryOverride?: st
     throw new Error(`Registry URL must contain {name}: ${template}`);
   }
   return template.replaceAll("{name}", name);
+}
+
+/**
+ * The catalog beside the items: the item URL with `index` in place of the item's name
+ * (`…/r/{name}.json` → `…/r/index.json`).
+ */
+export function indexUrl(config: NshUiConfig, registryOverride?: string) {
+  const template = registryOverride ?? config.registry;
+  if (!template.includes("{name}")) {
+    throw new Error(`Registry URL must contain {name}: ${template}`);
+  }
+  return template.replaceAll("{name}", "index");
 }
 
 export async function fetchItem(
@@ -22,6 +34,22 @@ export async function fetchItem(
     throw new Error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`);
   }
   return (await res.json()) as RegistryItem;
+}
+
+/** Fetch the catalog (`index.json`). */
+export async function fetchIndex(
+  config: NshUiConfig,
+  registryOverride?: string,
+): Promise<RegistryIndex> {
+  const url = indexUrl(config, registryOverride);
+  const res = await fetch(url);
+  if (!res.ok) {
+    throw new Error(
+      `Failed to fetch ${url}: ${res.status} ${res.statusText}. ` +
+        "A registry needs an index.json (bun run registry:build writes one).",
+    );
+  }
+  return (await res.json()) as RegistryIndex;
 }
 
 /** Fetch item and recursive registryDependencies (depth-first, deduped). */

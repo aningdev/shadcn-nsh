@@ -3,7 +3,7 @@ import path from "node:path";
 
 import { Command } from "commander";
 
-import type { Registry, RegistryItem } from "../types";
+import type { Registry, RegistryIndexItem, RegistryItem } from "../types";
 import { checkRegistryDependencies } from "../utils/registry";
 
 export const build = new Command()
@@ -26,12 +26,7 @@ export const build = new Command()
     }
     await fs.mkdir(outputDir, { recursive: true });
 
-    const catalog: {
-      name: string;
-      type: string;
-      title?: string;
-      description?: string;
-    }[] = [];
+    const catalog: RegistryIndexItem[] = [];
 
     for (const item of registry.items) {
       const built: RegistryItem = {
@@ -55,6 +50,12 @@ export const build = new Command()
         type: item.type,
         title: item.title,
         description: item.description,
+        // The targets `list` checks and `add` writes, without the contents.
+        files: item.files.map((file) => ({
+          path: file.path,
+          type: file.type,
+          target: file.target,
+        })),
       });
       console.log(`built ${path.relative(cwd, outFile)}`);
     }

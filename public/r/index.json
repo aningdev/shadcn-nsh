@@ -6,373 +6,817 @@
       "name": "theme",
       "type": "registry:theme",
       "title": "Theme",
-      "description": "The design tokens (theme.json), the finishes (finishes.json) and the roles that read them (lib/theme.ts)."
+      "description": "The design tokens (theme.json), the finishes (finishes.json) and the roles that read them (lib/theme.ts).",
+      "files": [
+        {
+          "path": "packages/theme/theme.json",
+          "type": "registry:file",
+          "target": "theme.json"
+        },
+        {
+          "path": "packages/theme/finishes.json",
+          "type": "registry:lib",
+          "target": "lib/finishes.json"
+        },
+        {
+          "path": "packages/theme/theme.ts",
+          "type": "registry:lib",
+          "target": "lib/theme.ts"
+        }
+      ]
     },
     {
       "name": "press",
       "type": "registry:lib",
       "title": "Press",
-      "description": "A press's feedback: the sink and its ease."
+      "description": "A press's feedback: the sink and its ease.",
+      "files": [
+        {
+          "path": "packages/ui/lib/press.ts",
+          "type": "registry:lib",
+          "target": "lib/press.ts"
+        }
+      ]
     },
     {
       "name": "switch-geometry",
       "type": "registry:lib",
       "title": "Switch geometry",
-      "description": "A switch's sizes and the arithmetic of its knob."
+      "description": "A switch's sizes and the arithmetic of its knob.",
+      "files": [
+        {
+          "path": "packages/ui/lib/switch-geometry.ts",
+          "type": "registry:lib",
+          "target": "lib/switch-geometry.ts"
+        }
+      ]
     },
     {
       "name": "overlay",
       "type": "registry:lib",
       "title": "Overlay",
-      "description": "The scrim behind what is modal."
+      "description": "The scrim behind what is modal.",
+      "files": [
+        {
+          "path": "packages/ui/lib/overlay.ts",
+          "type": "registry:lib",
+          "target": "lib/overlay.ts"
+        }
+      ]
     },
     {
       "name": "icons",
       "type": "registry:lib",
       "title": "Icons",
-      "description": "Line glyphs and the check mark drawn for the looks."
+      "description": "Line glyphs and the check mark drawn for the looks.",
+      "files": [
+        {
+          "path": "packages/ui/lib/icons.tsx",
+          "type": "registry:lib",
+          "target": "lib/icons.tsx"
+        }
+      ]
     },
     {
       "name": "color-format",
       "type": "registry:lib",
       "title": "Color format",
-      "description": "A picked color written in each of the picker's formats, and the ink that reads on it."
+      "description": "A picked color written in each of the picker's formats, and the ink that reads on it.",
+      "files": [
+        {
+          "path": "packages/ui/lib/color-format.ts",
+          "type": "registry:lib",
+          "target": "lib/color-format.ts"
+        }
+      ]
     },
     {
       "name": "popup",
       "type": "registry:lib",
       "title": "Popup",
-      "description": "The shared popup surface and the motion it comes in with."
+      "description": "The shared popup surface and the motion it comes in with.",
+      "files": [
+        {
+          "path": "packages/ui/lib/popup.tsx",
+          "type": "registry:lib",
+          "target": "lib/popup.tsx"
+        }
+      ]
     },
     {
       "name": "surface",
       "type": "registry:lib",
       "title": "Surface",
-      "description": "Density, section surfaces, and list rows whose hover fill bleeds."
+      "description": "Density, section surfaces, and list rows whose hover fill bleeds.",
+      "files": [
+        {
+          "path": "packages/ui/lib/surface.tsx",
+          "type": "registry:lib",
+          "target": "lib/surface.tsx"
+        }
+      ]
     },
     {
       "name": "open-state",
       "type": "registry:lib",
       "title": "Open state",
-      "description": "The controlled or uncontrolled open flag of a composition root."
+      "description": "The controlled or uncontrolled open flag of a composition root.",
+      "files": [
+        {
+          "path": "packages/ui/lib/open-state.ts",
+          "type": "registry:lib",
+          "target": "lib/open-state.ts"
+        }
+      ]
     },
     {
       "name": "spinner",
       "type": "registry:ui",
       "title": "Spinner",
-      "description": "A turning ring: work going on."
+      "description": "A turning ring: work going on.",
+      "files": [
+        {
+          "path": "packages/ui/spinner.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/spinner.tsx"
+        }
+      ]
     },
     {
       "name": "badge",
       "type": "registry:ui",
       "title": "Badge",
-      "description": "A small capsule label in neutral, toned, or outline styles."
+      "description": "A small capsule label in neutral, toned, or outline styles.",
+      "files": [
+        {
+          "path": "packages/ui/badge.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/badge.tsx"
+        }
+      ]
     },
     {
       "name": "button",
       "type": "registry:ui",
       "title": "Button",
-      "description": "A button, an icon button, a round button, and a split button."
+      "description": "A button, an icon button, a round button, and a split button.",
+      "files": [
+        {
+          "path": "packages/ui/button.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/button.tsx"
+        }
+      ]
     },
     {
       "name": "switch",
       "type": "registry:ui",
       "title": "Switch",
-      "description": "A switch whose knob springs across a sunk track."
+      "description": "A switch whose knob springs across a sunk track.",
+      "files": [
+        {
+          "path": "packages/ui/switch.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/switch.tsx"
+        }
+      ]
     },
     {
       "name": "dialog",
       "type": "registry:ui",
       "title": "Dialog",
-      "description": "A card dialog: Trigger, Content, Title, Description, Footer and Close."
+      "description": "A card dialog: Trigger, Content, Title, Description, Footer and Close.",
+      "files": [
+        {
+          "path": "packages/ui/dialog.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dialog.tsx"
+        }
+      ]
     },
     {
       "name": "toggle",
       "type": "registry:ui",
       "title": "Toggle",
-      "description": "A two-state button, bare or outlined, with a label or an icon."
+      "description": "A two-state button, bare or outlined, with a label or an icon.",
+      "files": [
+        {
+          "path": "packages/ui/toggle.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/toggle.tsx"
+        }
+      ]
     },
     {
       "name": "checkbox",
       "type": "registry:ui",
       "title": "Checkbox",
-      "description": "A sunk box that fills in citrus, with a check or a dash springing in."
+      "description": "A sunk box that fills in citrus, with a check or a dash springing in.",
+      "files": [
+        {
+          "path": "packages/ui/checkbox.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/checkbox.tsx"
+        }
+      ]
     },
     {
       "name": "radio-group",
       "type": "registry:ui",
       "title": "Radio Group",
-      "description": "A sunk ring that fills in citrus, with a dot growing in — alone or as a choice tile."
+      "description": "A sunk ring that fills in citrus, with a dot growing in — alone or as a choice tile.",
+      "files": [
+        {
+          "path": "packages/ui/radio-group.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/radio-group.tsx"
+        }
+      ]
     },
     {
       "name": "toggle-group",
       "type": "registry:ui",
       "title": "Toggle Group",
-      "description": "A row or column of toggles on the inset toolbar track."
+      "description": "A row or column of toggles on the inset toolbar track.",
+      "files": [
+        {
+          "path": "packages/ui/toggle-group.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/toggle-group.tsx"
+        }
+      ]
     },
     {
       "name": "toolbar",
       "type": "registry:ui",
       "title": "Toolbar",
-      "description": "An inset track of tools, with groups and hairline separators."
+      "description": "An inset track of tools, with groups and hairline separators.",
+      "files": [
+        {
+          "path": "packages/ui/toolbar.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/toolbar.tsx"
+        }
+      ]
     },
     {
       "name": "input",
       "type": "registry:ui",
       "title": "Input",
-      "description": "A sunk text field — single-line, multiline, masked, or invalid."
+      "description": "A sunk text field — single-line, multiline, masked, or invalid.",
+      "files": [
+        {
+          "path": "packages/ui/input.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/input.tsx"
+        }
+      ]
     },
     {
       "name": "number-input",
       "type": "registry:ui",
       "title": "Number Input",
-      "description": "A sunk number field with − / + or stacked chevron steppers."
+      "description": "A sunk number field with − / + or stacked chevron steppers.",
+      "files": [
+        {
+          "path": "packages/ui/number-input.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/number-input.tsx"
+        }
+      ]
     },
     {
       "name": "otp-input",
       "type": "registry:ui",
       "title": "OTP Input",
-      "description": "One-time code cells that lift out of sunk wells as digits fill in."
+      "description": "One-time code cells that lift out of sunk wells as digits fill in.",
+      "files": [
+        {
+          "path": "packages/ui/otp-input.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/otp-input.tsx"
+        }
+      ]
     },
     {
       "name": "time-field",
       "type": "registry:ui",
       "title": "Time Field",
-      "description": "A sunk well for a time of day, one segment at a time."
+      "description": "A sunk well for a time of day, one segment at a time.",
+      "files": [
+        {
+          "path": "packages/ui/time-field.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/time-field.tsx"
+        }
+      ]
     },
     {
       "name": "tooltip",
       "type": "registry:ui",
       "title": "Tooltip",
-      "description": "A popover-coloured hint bubble on any element's tooltip prop."
+      "description": "A popover-coloured hint bubble on any element's tooltip prop.",
+      "files": [
+        {
+          "path": "packages/ui/tooltip.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tooltip.tsx"
+        }
+      ]
     },
     {
       "name": "popover",
       "type": "registry:ui",
       "title": "Popover",
-      "description": "A popup panel that grows from its trigger, on the shared menu surface."
+      "description": "A popup panel that grows from its trigger, on the shared menu surface.",
+      "files": [
+        {
+          "path": "packages/ui/popover.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/popover.tsx"
+        }
+      ]
     },
     {
       "name": "hover-card",
       "type": "registry:ui",
       "title": "Hover Card",
-      "description": "A preview card that grows from its trigger, on the shared popover surface."
+      "description": "A preview card that grows from its trigger, on the shared popover surface.",
+      "files": [
+        {
+          "path": "packages/ui/hover-card.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/hover-card.tsx"
+        }
+      ]
     },
     {
       "name": "sheet",
       "type": "registry:ui",
       "title": "Sheet",
-      "description": "A panel that slides in from an edge of the screen over a scrim."
+      "description": "A panel that slides in from an edge of the screen over a scrim.",
+      "files": [
+        {
+          "path": "packages/ui/sheet.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/sheet.tsx"
+        }
+      ]
     },
     {
       "name": "toast",
       "type": "registry:ui",
       "title": "Toast",
-      "description": "A raised banner with a title, optional description, action and close."
+      "description": "A raised banner with a title, optional description, action and close.",
+      "files": [
+        {
+          "path": "packages/ui/toast.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/toast.tsx"
+        }
+      ]
     },
     {
       "name": "alert-dialog",
       "type": "registry:ui",
       "title": "Alert Dialog",
-      "description": "A confirmation card that waits for an action, on the shared dialog look."
+      "description": "A confirmation card that waits for an action, on the shared dialog look.",
+      "files": [
+        {
+          "path": "packages/ui/alert-dialog.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/alert-dialog.tsx"
+        }
+      ]
     },
     {
       "name": "menu",
       "type": "registry:ui",
       "title": "Menu",
-      "description": "A menu of items, separators and submenus on the shared menu look."
+      "description": "A menu of items, separators and submenus on the shared menu look.",
+      "files": [
+        {
+          "path": "packages/ui/menu.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/menu.tsx"
+        }
+      ]
     },
     {
       "name": "context-menu",
       "type": "registry:ui",
       "title": "Context Menu",
-      "description": "A menu at the pointer, on the shared menu look."
+      "description": "A menu at the pointer, on the shared menu look.",
+      "files": [
+        {
+          "path": "packages/ui/context-menu.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/context-menu.tsx"
+        }
+      ]
     },
     {
       "name": "listbox",
       "type": "registry:lib",
       "title": "Listbox",
-      "description": "Shared list popup, rows, search and clear looks for select, combobox and date picker."
+      "description": "Shared list popup, rows, search and clear looks for select, combobox and date picker.",
+      "files": [
+        {
+          "path": "packages/ui/lib/listbox.tsx",
+          "type": "registry:lib",
+          "target": "lib/listbox.tsx"
+        }
+      ]
     },
     {
       "name": "select",
       "type": "registry:ui",
       "title": "Select",
-      "description": "A list of choices from a field trigger, on the shared listbox look."
+      "description": "A list of choices from a field trigger, on the shared listbox look.",
+      "files": [
+        {
+          "path": "packages/ui/select.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/select.tsx"
+        }
+      ]
     },
     {
       "name": "combobox",
       "type": "registry:ui",
       "title": "Combobox",
-      "description": "A searchable field with a list of choices, on the shared listbox look."
+      "description": "A searchable field with a list of choices, on the shared listbox look.",
+      "files": [
+        {
+          "path": "packages/ui/combobox.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/combobox.tsx"
+        }
+      ]
     },
     {
       "name": "calendar",
       "type": "registry:ui",
       "title": "Calendar",
-      "description": "A month of days to pick a date or a range, on the shared calendar look."
+      "description": "A month of days to pick a date or a range, on the shared calendar look.",
+      "files": [
+        {
+          "path": "packages/ui/calendar.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/calendar.tsx"
+        }
+      ]
     },
     {
       "name": "date-picker",
       "type": "registry:ui",
       "title": "Date Picker",
-      "description": "A calendar in a popup from a field trigger, on the shared listbox look."
+      "description": "A calendar in a popup from a field trigger, on the shared listbox look.",
+      "files": [
+        {
+          "path": "packages/ui/date-picker.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/date-picker.tsx"
+        }
+      ]
     },
     {
       "name": "tabs",
       "type": "registry:ui",
       "title": "Tabs",
-      "description": "A pill track or underlined row with a traveling indicator."
+      "description": "A pill track or underlined row with a traveling indicator.",
+      "files": [
+        {
+          "path": "packages/ui/tabs.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tabs.tsx"
+        }
+      ]
     },
     {
       "name": "segmented",
       "type": "registry:ui",
       "title": "Segmented",
-      "description": "A sunk track whose raised thumb springs to the selected segment."
+      "description": "A sunk track whose raised thumb springs to the selected segment.",
+      "files": [
+        {
+          "path": "packages/ui/segmented.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/segmented.tsx"
+        }
+      ]
     },
     {
       "name": "accordion",
       "type": "registry:ui",
       "title": "Accordion",
-      "description": "List rows that reveal panels with a turning chevron."
+      "description": "List rows that reveal panels with a turning chevron.",
+      "files": [
+        {
+          "path": "packages/ui/accordion.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/accordion.tsx"
+        }
+      ]
     },
     {
       "name": "collapsible",
       "type": "registry:ui",
       "title": "Collapsible",
-      "description": "A disclosure row that reveals a panel beneath it."
+      "description": "A disclosure row that reveals a panel beneath it.",
+      "files": [
+        {
+          "path": "packages/ui/collapsible.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/collapsible.tsx"
+        }
+      ]
     },
     {
       "name": "carousel",
       "type": "registry:ui",
       "title": "Carousel",
-      "description": "Snapping slides with round arrows and a traveling dot pill."
+      "description": "Snapping slides with round arrows and a traveling dot pill.",
+      "files": [
+        {
+          "path": "packages/ui/carousel.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/carousel.tsx"
+        }
+      ]
     },
     {
       "name": "link",
       "type": "registry:ui",
       "title": "Link",
-      "description": "A text link with underline motion, on the shared nav look."
+      "description": "A text link with underline motion, on the shared nav look.",
+      "files": [
+        {
+          "path": "packages/ui/link.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/link.tsx"
+        }
+      ]
     },
     {
       "name": "pagination",
       "type": "registry:ui",
       "title": "Pagination",
-      "description": "A pager of page numbers and chevron arrows."
+      "description": "A pager of page numbers and chevron arrows.",
+      "files": [
+        {
+          "path": "packages/ui/pagination.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/pagination.tsx"
+        }
+      ]
     },
     {
       "name": "progress",
       "type": "registry:ui",
       "title": "Progress",
-      "description": "A determinate or indeterminate bar on the shared meter rail."
+      "description": "A determinate or indeterminate bar on the shared meter rail.",
+      "files": [
+        {
+          "path": "packages/ui/progress.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/progress.tsx"
+        }
+      ]
     },
     {
       "name": "meter",
       "type": "registry:ui",
       "title": "Meter",
-      "description": "A horizontal meter with optional limit marker."
+      "description": "A horizontal meter with optional limit marker.",
+      "files": [
+        {
+          "path": "packages/ui/meter.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/meter.tsx"
+        }
+      ]
     },
     {
       "name": "stat",
       "type": "registry:ui",
       "title": "Stat",
-      "description": "A label above a value for metric grids."
+      "description": "A label above a value for metric grids.",
+      "files": [
+        {
+          "path": "packages/ui/stat.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/stat.tsx"
+        }
+      ]
     },
     {
       "name": "status",
       "type": "registry:ui",
       "title": "Status",
-      "description": "A dot and label for quiet row or header state."
+      "description": "A dot and label for quiet row or header state.",
+      "files": [
+        {
+          "path": "packages/ui/status.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/status.tsx"
+        }
+      ]
     },
     {
       "name": "slider",
       "type": "registry:ui",
       "title": "Slider",
-      "description": "A sunk rail with a citrus fill and round thumb."
+      "description": "A sunk rail with a citrus fill and round thumb.",
+      "files": [
+        {
+          "path": "packages/ui/slider.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/slider.tsx"
+        }
+      ]
     },
     {
       "name": "avatar",
       "type": "registry:ui",
       "title": "Avatar",
-      "description": "A round picture or named initials on the identity ring."
+      "description": "A round picture or named initials on the identity ring.",
+      "files": [
+        {
+          "path": "packages/ui/avatar.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/avatar.tsx"
+        }
+      ]
     },
     {
       "name": "data-table",
       "type": "registry:ui",
       "title": "DataTable",
-      "description": "A card-styled spreadsheet with sorting, selection, and resize."
+      "description": "A card-styled spreadsheet with sorting, selection, and resize.",
+      "files": [
+        {
+          "path": "packages/ui/data-table.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/data-table.tsx"
+        }
+      ]
     },
     {
       "name": "table",
       "type": "registry:ui",
       "title": "Table",
-      "description": "A composition table wearing the shared data-table classes."
+      "description": "A composition table wearing the shared data-table classes.",
+      "files": [
+        {
+          "path": "packages/ui/table.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/table.tsx"
+        }
+      ]
     },
     {
       "name": "tree",
       "type": "registry:ui",
       "title": "Tree",
-      "description": "A card-framed tree with chevron rows and folder icons."
+      "description": "A card-framed tree with chevron rows and folder icons.",
+      "files": [
+        {
+          "path": "packages/ui/tree.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/tree.tsx"
+        }
+      ]
     },
     {
       "name": "command",
       "type": "registry:ui",
       "title": "Command",
-      "description": "A command palette with search, groups, and shortcut keys."
+      "description": "A command palette with search, groups, and shortcut keys.",
+      "files": [
+        {
+          "path": "packages/ui/command.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/command.tsx"
+        }
+      ]
     },
     {
       "name": "scrollbar",
       "type": "registry:ui",
       "title": "Scrollbar",
-      "description": "Hover-reveal scroll bars for scroll views and lists."
+      "description": "Hover-reveal scroll bars for scroll views and lists.",
+      "files": [
+        {
+          "path": "packages/ui/scrollbar.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/scrollbar.tsx"
+        }
+      ]
     },
     {
       "name": "plot",
       "type": "registry:ui",
       "title": "Plot",
-      "description": "Chart colors, grid, cross line and tooltip for nsh/base/plot."
+      "description": "Chart colors, grid, cross line and tooltip for nsh/base/plot.",
+      "files": [
+        {
+          "path": "packages/ui/plot.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/plot.tsx"
+        }
+      ]
     },
     {
       "name": "resizable",
       "type": "registry:ui",
       "title": "Resizable",
-      "description": "Resize handles with a quiet hairline and a growing thumb."
+      "description": "Resize handles with a quiet hairline and a growing thumb.",
+      "files": [
+        {
+          "path": "packages/ui/resizable.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/resizable.tsx"
+        }
+      ]
     },
     {
       "name": "dock-area",
       "type": "registry:ui",
       "title": "DockArea",
-      "description": "Dockable workspace chrome: tabs, splits, and edge docks."
+      "description": "Dockable workspace chrome: tabs, splits, and edge docks.",
+      "files": [
+        {
+          "path": "packages/ui/dock-area.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/dock-area.tsx"
+        }
+      ]
     },
     {
       "name": "diff-view",
       "type": "registry:ui",
       "title": "DiffView",
-      "description": "Up/down tints for additions and deletions, with hunk actions."
+      "description": "Up/down tints for additions and deletions, with hunk actions.",
+      "files": [
+        {
+          "path": "packages/ui/diff-view.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/diff-view.tsx"
+        }
+      ]
     },
     {
       "name": "text-view",
       "type": "registry:ui",
       "title": "TextView",
-      "description": "Brand links and a streaming caret for Markdown documents."
+      "description": "Brand links and a streaming caret for Markdown documents.",
+      "files": [
+        {
+          "path": "packages/ui/text-view.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/text-view.tsx"
+        }
+      ]
     },
     {
       "name": "emoji-picker",
       "type": "registry:ui",
       "title": "Emoji picker",
-      "description": "Gallery look for nsh/base EmojiPicker: tabs, search, tones and preview."
+      "description": "Gallery look for nsh/base EmojiPicker: tabs, search, tones and preview.",
+      "files": [
+        {
+          "path": "packages/ui/emoji-picker.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/emoji-picker.tsx"
+        }
+      ]
     },
     {
       "name": "editor",
       "type": "registry:ui",
       "title": "Editor",
-      "description": "Rich document typography and code editor pass-through."
+      "description": "Rich document typography and code editor pass-through.",
+      "files": [
+        {
+          "path": "packages/ui/editor.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/editor.tsx"
+        }
+      ]
     },
     {
       "name": "color-picker",
       "type": "registry:ui",
       "title": "ColorPicker",
-      "description": "Area, sliders, joined fields, swatches, and popover trigger."
+      "description": "Area, sliders, joined fields, swatches, and popover trigger.",
+      "files": [
+        {
+          "path": "packages/ui/color-picker.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/color-picker.tsx"
+        }
+      ]
     }
   ]
 }

@@ -20,7 +20,7 @@ describe("mergeTheme", () => {
         dark: { brand: "#c6ef6a" },
       },
     };
-    const { theme, added } = mergeTheme(existing, incoming);
+    const { theme, added, missing } = mergeTheme(existing, incoming);
     expect(theme).toEqual({
       name: "mine",
       cssVars: {
@@ -34,10 +34,17 @@ describe("mergeTheme", () => {
       },
     });
     expect(added).toBe(5);
+    expect(missing).toEqual([
+      "cssVars.theme.radius-card",
+      "cssVars.theme.scrim",
+      "cssVars.light.brand",
+      "cssVars.light.inset",
+      "cssVars.dark",
+    ]);
   });
 
   test("changes nothing when the app already has every key", () => {
     const theme = { cssVars: { theme: { radius: "1rem", scrim: "rgba(0,0,0,0.45)" } } };
-    expect(mergeTheme(theme, theme)).toEqual({ theme, added: 0 });
+    expect(mergeTheme(theme, theme)).toEqual({ theme, added: 0, missing: [] });
   });
 });

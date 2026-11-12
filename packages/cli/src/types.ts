@@ -21,6 +21,19 @@ export type Registry = {
   items: RegistryItem[];
 };
 
+/** One item as `index.json` lists it: everything `add` / `list` need, without the file contents. */
+export type RegistryIndexItem = Pick<
+  RegistryItem,
+  "name" | "type" | "title" | "description" | "files"
+>;
+
+/** `public/r/index.json`: the catalog `list` and `add --all` read. */
+export type RegistryIndex = {
+  name: string;
+  homepage: string;
+  items: RegistryIndexItem[];
+};
+
 export type NshUiConfig = {
   registry: string;
   aliases: {
