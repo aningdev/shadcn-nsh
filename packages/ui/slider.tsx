@@ -1,185 +1,145 @@
-// Source: examples/nsh-gallery-ui/slider.ts @ 64ab8a1d (baseline), see NOTICE.
-import { colors, disabledOpacity, finish, focusRing } from "@shadcn-nsh/theme";
-import type { StyleProp, ViewStyle } from "nsh";
-import { computed, split } from "nsh";
+// A slider: the look (`sliderLook` and its companions) and the `Slider` that wears it.
+// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
+// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+import { alpha, colors, finish } from "@shadcn-nsh/theme";
+import type { JSX, TextStyle, ViewStyle } from "nsh";
+import { platform, split, Text } from "nsh";
 import { Slider as BaseSlider, type SliderProps as BaseSliderProps } from "nsh/base";
 
-import { isPointer } from "./lib/density";
-import { sunkTrack, trackFill } from "./lib/meter";
-import { motionDuration } from "./lib/press";
+// @port slider.ts
+/** Options of `sliderLook`. */
+export interface SliderLookOptions {
+  /** A vertical slider: the rail 8 wide, the thumb 8 × 16. */
+  vertical?: boolean;
+  /** The value column after the track (`children`: a 42-point label). */
+  value?: boolean;
+}
+
+/** The value column's label (`<Text class={sliderValueClass}
+ * style={sliderValueStyle()}>`): 42 points, right aligned, monospaced, its
+ * line as tall as its type so it centers on the rail. */
+export const sliderValueClass = "w-[42px] text-right font-mono text-[11px] leading-none";
+
+/** The value column label's color: the soft text color (60% of the
+ * text's). */
+export const sliderValueStyle = (): TextStyle => ({ color: alpha(colors.text, 0.6) });
 
 /**
- * Theme layer on `nsh/base` Slider: a sunk rail, a primary run and a round thumb.
- * shadcn `bases/base` Slider has no `variant` / `size`. Every base prop passes through;
- * consumer styles win per key.
+ * A `Slider`'s parts (spread them: `<Slider {...sliderLook()}>`): a rail
+ * sunk into the surface and a round thumb on it: a 6-point rail and a
+ * 14-point thumb with a pointer (a 20-point band around the rail takes
+ * presses), 8 and 20 on a touch screen (a 32-point band). Under the pointer the thumb lightens, the
+ * keyboard's focus rings the thumb in the theme's `ring` (not after a press
+ * or a drag), a disabled slider fades to 50% (transitions still with reduced
+ * motion).
+ *
+ * Only what never changes is here, so the spread reads no signal: a spread
+ * is evaluated where the slider is made, and a signal read there would make
+ * the slider again when it changes (in the middle of a drag). The colors are
+ * getters, read by the slider's props as the appearance changes; the fill
+ * (`rangeStyle={sliderFill(..)}`) and `disabled` are props of their own.
  */
-export type SliderProps = BaseSliderProps;
-
-type SliderMetrics = {
-  /** Thumb diameter. A circle, so the side is fixed rather than a minimum. */
-  thumb: number;
-  /** Rail thickness. A fixed stroke, like the progress rail. */
-  rail: number;
-  /** The press band around the rail. Fixed so the thumb stays centered in it. */
-  band: number;
-  /** Vertical run, the reference's `h-32` / `h-36`. Fixed so the thumb has a track to travel. */
-  run: number;
-  /** Half a thumb, kept clear at each end so the thumb stays inside the rail. */
-  inset: number;
-};
-
-type SliderLook = {
-  metrics: SliderMetrics;
-  style: ViewStyle;
-  trackStyle: ViewStyle;
-  indicatorStyle: ViewStyle;
-  rangeStyle: ViewStyle;
-  thumbStyle: ViewStyle;
-  focusWithinStyle: ViewStyle;
-  disabledStyle: ViewStyle;
-};
-
-/** The thumb eases its brightness. `motion-reduce` drops it. Brightness above 1 does not draw on Apple. */
-const THUMB_CLASS =
-  "rounded-full transition duration-150 motion-reduce:transition-none hover:brightness-105 active:brightness-95 focus:outline-none disabled:brightness-100";
-
-/** Wrapper default, then consumer: both set, both apply. */
-function mergeClass(base: string, consumer?: string | null): string {
-  return consumer ? `${base} ${consumer}` : base;
-}
-
-/** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
-function mergeStyle(
-  base?: StyleProp<ViewStyle> | null,
-  consumer?: StyleProp<ViewStyle> | null,
-): StyleProp<ViewStyle> | undefined {
-  if (base == null && consumer == null) return undefined;
-  if (base == null) return consumer ?? undefined;
-  if (consumer == null) return base ?? undefined;
-  return [base, consumer];
-}
-
-/** Pointer: 14 thumb, 6 rail, 20 band. Touch: 20 thumb, 8 rail, 44 band. The vertical run is 128 / 144. */
-function metrics(): SliderMetrics {
-  const pointer = isPointer();
+export function sliderLook(o: SliderLookOptions = {}) {
+  const vertical = !!o.vertical;
+  const pointer = platform.desktop;
   const thumb = pointer ? 14 : 20;
+  // The band keeps half a thumb free at each end, so the thumbs stay inside.
+  const band = vertical
+    ? `${pointer ? "w-5" : "w-8"} ${pointer ? "h-32" : "h-36"} items-center ${pointer ? "py-[7px]" : "py-[10px]"}`
+    : `${pointer ? "h-5" : "h-8"} justify-center ${pointer ? "px-[7px]" : "px-[10px]"}`;
+  const fade = "transition duration-150 motion-reduce:transition-none";
   return {
-    thumb,
-    rail: pointer ? 6 : 8,
-    band: pointer ? 20 : 44,
-    run: pointer ? 128 : 144,
-    inset: thumb / 2,
+    class: o.value ? "flex-row items-center gap-2" : undefined,
+    trackClass: `${band} ${o.value ? "flex-1" : ""} cursor-pointer ${fade} disabled:opacity-50 disabled:cursor-not-allowed`,
+    indicatorClass: `${vertical ? (pointer ? "w-1.5" : "w-2") + " h-full" : pointer ? "h-1.5" : "h-2"} rounded-full`,
+    get indicatorStyle(): ViewStyle {
+      return {
+        backgroundColor: colors.track,
+        boxShadow: `inset 0 0 0 1px ${finish.track.borderColor}, ${finish.track.boxShadow}`,
+      };
+    },
+    rangeClass: "rounded-full",
+    // The keyboard's ring on the thumb that has the focus (`focus-visible:`:
+    // not after a press or a drag). An outline, which the knob's shadow in
+    // `thumbStyle` leaves alone.
+    thumbClass: `rounded-full ${fade} hover:brightness-105 active:brightness-95 focus-visible:outline-3 focus-visible:outline-ring/50 disabled:brightness-100`,
+    get thumbStyle(): ViewStyle {
+      return { width: thumb, height: thumb, borderWidth: 1, ...finish.knob };
+    },
   };
 }
 
 /**
- * The slider's chrome. `axis` `"vertical"` turns the rail upright. `beside` lays a value
- * (`children`) in a row after the track. Call it where those are read.
+ * A `Slider`'s fill (`rangeStyle`): the accent's run along the rail, a
+ * little lighter at the top, edged a shade deeper. `from` and `to` are where
+ * the fill starts and ends along the track, from 0 to 1 (unused: the run is
+ * one color along its length, kept for the callers).
  */
-function look(vertical: boolean, beside: boolean): SliderLook {
-  const m = metrics();
-  const rail = vertical
-    ? { width: m.rail, height: "100%" as const }
-    : { height: m.rail, width: "100%" as const };
+export function sliderFill(_from: number, _to: number, vertical = false): ViewStyle {
   return {
-    metrics: m,
-    style: {
-      flexDirection: beside ? "row" : "column",
-      alignItems: vertical || beside ? "center" : "stretch",
-      gap: beside ? 8 : 0,
-      ...(vertical ? { width: m.band, height: m.run } : { minHeight: m.band }),
-      transitionProperty: "opacity",
-      transitionDuration: motionDuration(150),
-      transitionTimingFunction: "ease-out",
-    },
-    trackStyle: vertical
-      ? {
-          width: m.band,
-          height: "100%",
-          alignItems: "center",
-          justifyContent: "center",
-          paddingVertical: m.inset,
-        }
-      : {
-          height: m.band,
-          minHeight: m.band,
-          justifyContent: "center",
-          paddingHorizontal: m.inset,
-          ...(beside ? { flex: 1 } : { width: "100%" }),
-        },
-    indicatorStyle: {
-      ...rail,
-      borderRadius: m.rail / 2,
-      ...sunkTrack(),
-    },
-    rangeStyle: {
-      borderRadius: m.rail / 2,
-      ...trackFill(),
-    },
-    thumbStyle: {
-      width: m.thumb,
-      height: m.thumb,
-      borderRadius: m.thumb / 2,
-      borderWidth: 1,
-      borderColor: colors.border,
-      backgroundColor: colors.background,
-      // The reference's `finish.knob`: a raised disc on the sunk rail.
-      boxShadow: finish.control.rest,
-    },
-    focusWithinStyle: focusRing(),
-    disabledStyle: { opacity: disabledOpacity() },
+    backgroundImage: vertical
+      ? finish.fill.backgroundImage?.replace("180deg", "90deg")
+      : finish.fill.backgroundImage,
+    borderWidth: 1,
+    borderColor: finish.fill.borderColor,
   };
 }
+// @port end
 
 /**
- * The slider's chrome and its pointer / touch sizes. `axis` `"vertical"` turns the rail
- * upright. Call it where `axis` is read.
+ * `nsh/base`'s Slider with `sliderLook` and `sliderFill`. Every base prop passes through;
+ * look classes / styles are defaults the caller can override.
  */
-export function sliderVariants(options?: {
-  /** The track's direction. Default horizontal, `min` at the start. */
-  axis?: "horizontal" | "vertical" | null;
-}): SliderLook {
-  return look(options?.axis === "vertical", false);
-}
+export type SliderProps = BaseSliderProps & {
+  /** Lay a value column after the track (`children`, or a formatted number). */
+  showValue?: boolean;
+};
 
-/** A value along a sunk rail. A string is not a label: pass `children` for a value beside it. */
+/** A slider on the shared rail and citrus fill. */
 export function Slider(props: SliderProps) {
-  // Props are read where used (never destructured) so `axis` / `disabled` / `style` follow signals.
   const [, rest] = split(props, [
+    "showValue",
+    "axis",
     "class",
-    "style",
     "trackClass",
-    "trackStyle",
     "indicatorClass",
     "indicatorStyle",
     "rangeClass",
     "rangeStyle",
     "thumbClass",
     "thumbStyle",
-    "focusWithinStyle",
-    "disabledStyle",
     "children",
   ]);
-
-  const current = computed(() => look(props.axis === "vertical", props.children != null));
-
+  const vertical = props.axis === "vertical";
+  const look = sliderLook({ vertical, value: props.showValue });
+  const value = props.value;
+  const fillTo =
+    typeof value === "number"
+      ? (value - (props.min ?? 0)) / ((props.max ?? 100) - (props.min ?? 0) || 1)
+      : Array.isArray(value)
+        ? (value[1] - (props.min ?? 0)) / ((props.max ?? 100) - (props.min ?? 0) || 1)
+        : 0;
+  const label =
+    props.children ??
+    (props.showValue && typeof value === "number" ? (
+      <Text class={sliderValueClass} style={sliderValueStyle()}>
+        {String(value)}
+      </Text>
+    ) : undefined);
   return (
     <BaseSlider
       {...rest}
-      class={props.class ?? undefined}
-      style={mergeStyle(current().style, props.style)}
-      trackClass={props.trackClass ?? undefined}
-      trackStyle={mergeStyle(current().trackStyle, props.trackStyle)}
-      indicatorClass={props.indicatorClass ?? undefined}
-      indicatorStyle={mergeStyle(current().indicatorStyle, props.indicatorStyle)}
-      rangeClass={props.rangeClass ?? undefined}
-      rangeStyle={mergeStyle(current().rangeStyle, props.rangeStyle)}
-      thumbClass={mergeClass(THUMB_CLASS, props.thumbClass)}
-      thumbStyle={mergeStyle(current().thumbStyle, props.thumbStyle)}
-      focusWithinStyle={mergeStyle(current().focusWithinStyle, props.focusWithinStyle)}
-      disabledStyle={mergeStyle(current().disabledStyle, props.disabledStyle)}
+      axis={props.axis}
+      class={props.class ?? look.class}
+      trackClass={props.trackClass ?? look.trackClass}
+      indicatorClass={props.indicatorClass ?? look.indicatorClass}
+      indicatorStyle={[look.indicatorStyle, props.indicatorStyle ?? null]}
+      rangeClass={props.rangeClass ?? look.rangeClass}
+      rangeStyle={[sliderFill(0, fillTo, vertical), props.rangeStyle ?? null]}
+      thumbClass={props.thumbClass ?? look.thumbClass}
+      thumbStyle={[look.thumbStyle, props.thumbStyle ?? null]}
     >
-      {props.children}
+      {label as JSX.Element | undefined}
     </BaseSlider>
   );
 }

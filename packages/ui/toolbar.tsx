@@ -1,7 +1,9 @@
-// Source: examples/nsh-gallery-ui/look/tool.ts @ 64ab8a1d (baseline), see NOTICE.
-import { colors, disabledOpacity } from "@shadcn-nsh/theme";
-import type { StyleProp, ViewStyle } from "nsh";
-import { computed, context, split } from "nsh";
+// A toolbar: the look (`toolbarTrack`, `toolbarRule`) and the parts that wear it.
+// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
+// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+import { colors, terminal, TERMINAL_GAP } from "@shadcn-nsh/theme";
+import type { ViewStyle } from "nsh";
+import { context, split } from "nsh";
 import {
   Toolbar as BaseToolbar,
   ToolbarGroup as BaseToolbarGroup,
@@ -11,21 +13,61 @@ import {
   type ToolbarSeparatorProps as BaseToolbarSeparatorProps,
 } from "nsh/base";
 
+// @port look/tool.ts
+/** Options of `toolbarTrack`. */
+export interface ToolbarTrackOptions {
+  /** A column of tools (a `Toolbar`'s `axis="vertical"`). */
+  vertical?: boolean;
+}
+
 /**
- * Theme layer on `nsh/base` Toolbar: the inset track. Items keep their own
- * look (`Button`, `Toggle`, `Link`). `axis` is read when the bar is made.
+ * The inset track a toolbar or a `ToggleGroup` sits in: its tools in a row
+ * (a column when `vertical`) 2 points apart, 3 points inside its edge, on
+ * the inset with the border's edge. A terminal sets each tool as its label
+ * two columns apart and wraps a row too narrow for them.
+ */
+export function toolbarTrack(o?: ToolbarTrackOptions): ViewStyle {
+  return {
+    flexDirection: o?.vertical ? "column" : "row",
+    alignItems: o?.vertical && terminal ? "flex-start" : "center",
+    gap: terminal ? TERMINAL_GAP : 2,
+    flexWrap: terminal && !o?.vertical ? "wrap" : undefined,
+    padding: 3,
+    borderRadius: 10,
+    borderCurve: "continuous",
+    borderWidth: 1,
+    borderColor: colors.border,
+    backgroundColor: colors.inset,
+  };
+}
+
+/** A hairline between runs of a toolbar's tools (a `ToolbarSeparator`'s or a view's `style`): 18 points tall in a row, across a column. */
+export function toolbarRule(vertical = false): ViewStyle {
+  return vertical
+    ? {
+        height: 1,
+        alignSelf: "stretch",
+        marginVertical: 4,
+        marginHorizontal: 6,
+        backgroundColor: colors.line,
+      }
+    : { width: 1, height: 18, marginHorizontal: 4, backgroundColor: colors.line };
+}
+// @port end
+
+/**
+ * `nsh/base`'s Toolbar in the look of `toolbarTrack`. Every base prop passes through; `style`
+ * goes over the look's. Items keep their own look (`Button`, `Toggle`, …).
  */
 export type ToolbarProps = BaseToolbarProps;
 
-/** Theme layer on `nsh/base` ToolbarGroup: a run along the toolbar's axis. */
+/** A named run of items along the toolbar's axis. */
 export type ToolbarGroupProps = BaseToolbarGroupProps;
 
-/** Theme layer on `nsh/base` ToolbarSeparator: a hairline, never a tab stop. */
+/** A hairline between runs; never a tab stop. */
 export type ToolbarSeparatorProps = BaseToolbarSeparatorProps;
 
-type ToolbarContextValue = {
-  vertical: boolean;
-};
+type ToolbarContextValue = { vertical: boolean };
 
 const ToolbarContext = context<ToolbarContextValue | null>(null);
 
@@ -35,85 +77,49 @@ function useToolbar() {
   return ctx;
 }
 
-/** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
-function mergeStyle(
-  base?: StyleProp<ViewStyle> | null,
-  consumer?: StyleProp<ViewStyle> | null,
-): StyleProp<ViewStyle> | undefined {
-  if (base == null && consumer == null) return undefined;
-  if (base == null) return consumer ?? undefined;
-  if (consumer == null) return base ?? undefined;
-  return [base, consumer];
-}
-
-/**
- * The inset track (`toolbarTrack`): tools 2 points apart, 3 points inside the
- * edge, on `muted` (the reference's inset) with the border's edge. Call it from
- * `computed`: a bare read snapshots the resolved color and the bar stays dark
- * after a switch to light.
- * The rule is a hairline, not a control, so its thickness is a fixed 1 point
- * and its length a fixed 18 (a row) — it must not grow with a label.
- */
-function look(vertical: boolean) {
+/** A run's direction and gap, matching `toolbarTrack`'s tools. */
+function groupChrome(vertical: boolean): ViewStyle {
   return {
-    bar: {
-      flexDirection: vertical ? "column" : "row",
-      alignItems: "center",
-      gap: 2,
-      padding: 3,
-      borderRadius: 10,
-      borderCurve: "continuous",
-      borderWidth: 1,
-      borderColor: colors.border,
-      backgroundColor: colors.muted,
-    } satisfies ViewStyle,
-    group: {
-      flexDirection: vertical ? "column" : "row",
-      alignItems: "center",
-      gap: 2,
-    } satisfies ViewStyle,
-    rule: (vertical
-      ? {
-          height: 1,
-          alignSelf: "stretch",
-          marginVertical: 4,
-          marginHorizontal: 6,
-          backgroundColor: colors.border,
-        }
-      : {
-          width: 1,
-          height: 18,
-          marginHorizontal: 4,
-          backgroundColor: colors.border,
-        }) satisfies ViewStyle,
+    flexDirection: vertical ? "column" : "row",
+    alignItems: "center",
+    gap: terminal ? TERMINAL_GAP : 2,
   };
 }
 
-/** The inset track, the same style {@link Toolbar} puts on the bar. */
-export function toolbarTrackStyle(vertical?: boolean): ViewStyle {
-  return look(Boolean(vertical)).bar;
+/**
+ * Live color reads over `toolbarTrack` / `toolbarRule`, so the bar follows the scheme where the
+ * style is applied (same reason as ToggleGroup's inset track).
+ */
+function liveTrack(vertical: boolean): ViewStyle {
+  const base = toolbarTrack({ vertical });
+  return {
+    ...base,
+    get backgroundColor() {
+      return colors.inset;
+    },
+    get borderColor() {
+      return colors.border;
+    },
+  };
 }
 
-/** The hairline, the same style {@link ToolbarSeparator} puts on the rule. */
-export function toolbarRuleStyle(vertical?: boolean): ViewStyle {
-  return look(Boolean(vertical)).rule;
+function liveRule(vertical: boolean): ViewStyle {
+  const base = toolbarRule(vertical);
+  return {
+    ...base,
+    get backgroundColor() {
+      return colors.line;
+    },
+  };
 }
 
 /** The bar: one toolbar for screen readers, arrow keys along `axis`. */
 export function Toolbar(props: ToolbarProps) {
   const [, rest] = split(props, ["style", "axis"]);
   const vertical = props.axis === "vertical";
-  const bar = computed(() => toolbarTrackStyle(vertical));
   return (
     <ToolbarContext.Provider value={{ vertical }}>
-      <BaseToolbar
-        {...rest}
-        axis={props.axis}
-        style={mergeStyle(
-          props.disabled ? { ...bar(), opacity: disabledOpacity() } : bar(),
-          props.style,
-        )}
-      />
+      <BaseToolbar {...rest} axis={props.axis} style={[liveTrack(vertical), props.style ?? null]} />
     </ToolbarContext.Provider>
   );
 }
@@ -122,23 +128,12 @@ export function Toolbar(props: ToolbarProps) {
 export function ToolbarGroup(props: ToolbarGroupProps) {
   const bar = useToolbar();
   const [, rest] = split(props, ["style"]);
-  return (
-    <BaseToolbarGroup
-      {...rest}
-      style={mergeStyle(
-        props.disabled
-          ? { ...look(bar.vertical).group, opacity: disabledOpacity() }
-          : look(bar.vertical).group,
-        props.style,
-      )}
-    />
-  );
+  return <BaseToolbarGroup {...rest} style={[groupChrome(bar.vertical), props.style ?? null]} />;
 }
 
 /** A hairline between runs. Not a stop of the keyboard focus. */
 export function ToolbarSeparator(props: ToolbarSeparatorProps) {
   const bar = useToolbar();
   const [, rest] = split(props, ["style"]);
-  const rule = computed(() => toolbarRuleStyle(bar.vertical));
-  return <BaseToolbarSeparator {...rest} style={mergeStyle(rule(), props.style)} />;
+  return <BaseToolbarSeparator {...rest} style={[liveRule(bar.vertical), props.style ?? null]} />;
 }

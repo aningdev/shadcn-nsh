@@ -1,364 +1,62 @@
-// Source: examples/nsh-gallery-ui/look/overlay.ts @ 64ab8a1d (baseline), see NOTICE.
-import { colors, disabledOpacity } from "@shadcn-nsh/theme";
-import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
-import { context, split, Text, View } from "nsh";
-import {
-  Tooltip as BaseTooltip,
-  type OpenChangeReason,
-  type TooltipProps as BaseTooltipProps,
-} from "nsh/base";
+// A tooltip: the look (`tooltipLook`, `tooltipText`, `tooltipNote`) and the `Tooltip` that wears it.
+// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
+// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+import type { JSX } from "nsh";
+import { split, Text } from "nsh";
+import { Tooltip as BaseTooltip, type TooltipProps as BaseTooltipProps } from "nsh/base";
 
-import { Button } from "./button";
-import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
-import { motionDuration } from "./lib/press";
-
-/**
- * Composition root for `nsh/base` Tooltip: Trigger + Content only.
- *
- * Only the props the root actually honors are listed: the bubble's look,
- * `class` / `style` and the entrance/exit hooks live on {@link TooltipContent}
- * (the root has no surface of its own). `nsh/base`'s full prop set stays
- * available on Content and on standalone `tooltip={…}` use.
- */
-export type TooltipProps = {
-  open?: boolean | null;
-  defaultOpen?: boolean;
-  placement?: BaseTooltipProps["placement"];
-  align?: BaseTooltipProps["align"];
-  offset?: number;
-  margin?: number;
-  delay?: number;
-  disabled?: boolean;
-  children?: JSX.Element;
-  onOpenChange?: (event: { open: boolean; reason: OpenChangeReason }) => void;
-  onOpen?: () => void;
-  onClose?: () => void;
-};
-
-/**
- * Theme layer on `nsh/base` Tooltip as shadcn `TooltipContent`. All base props
- * + style hooks pass through; consumer styles shallow-merge over defaults.
- * Open / lifecycle events are owned by the {@link Tooltip} context when used
- * in composition (standalone Content still accepts them). Defaults mirror
- * shadcn `bases/base` (`placement`/`side` top, `align` center, `offset`/
- * `sideOffset` 4).
- */
-export type TooltipContentProps = Omit<BaseTooltipProps, "children"> & {
-  children?: string | JSX.Element;
-  /** More than a line: 10 points of padding and 8-point corners, in a column. */
+// @port look/overlay.ts
+/** Options of `tooltipLook`. */
+export interface TooltipLookOptions {
+  /** More than a line (a title, a list): 10 points of padding, its rows 8 apart, larger corners. */
   rich?: boolean;
-};
+}
 
-/** Hosts the element the pointer rests on. String children render as a Button. */
-export type TooltipTriggerProps = {
+/**
+ * A tooltip's bubble (`class`, on the view inside `nsh/base`'s `Tooltip`):
+ * the theme's `popover` surface with the border's edge, not the text's
+ * color inverted, so it reads as the menus and popovers do in both
+ * appearances. One line: a row 8 points apart, 8 by 4 points of padding,
+ * 6-point corners; `rich`: a column, 10 points of padding, 8-point corners.
+ * Its text takes `tooltipText`, a shortcut or a note `tooltipNote`.
+ */
+export function tooltipLook(o?: TooltipLookOptions) {
+  return {
+    class: o?.rich
+      ? "gap-2 rounded-lg border border-border bg-popover p-2.5"
+      : "flex-row items-center gap-2 rounded-md border border-border bg-popover px-2 py-1",
+  };
+}
+
+/** A tooltip's text (`class`): 12 points in the popover's foreground. */
+export const tooltipText = "text-xs text-popover-foreground";
+
+/** A tooltip's quieter text (`class`): a shortcut's keys, a time. */
+export const tooltipNote = "text-xs text-muted-foreground";
+// @port end
+
+/**
+ * `nsh/base`'s Tooltip in the look of `tooltipLook`. Every base prop passes through; `class`
+ * goes over the look's. Pass it as any element's `tooltip={…}` prop.
+ */
+export type TooltipProps = Omit<BaseTooltipProps, "children"> & {
+  /** More than a line: a column with more padding. */
+  rich?: boolean;
+  /** A string is the label in `tooltipText`; anything else is drawn as given. */
   children?: string | JSX.Element;
-  disabled?: boolean;
-  class?: string | null;
-  style?: StyleProp<ViewStyle>;
 };
 
-/** Optional delay default for nested tooltips (shadcn `TooltipProvider`). */
-export type TooltipProviderProps = {
-  children?: JSX.Element;
-  delay?: number;
-  class?: string | null;
-  style?: StyleProp<ViewStyle>;
-};
-
-type ContentSlot = {
-  get: () => TooltipContentProps | undefined;
-  set: (props: TooltipContentProps) => void;
-};
-
-type TooltipContextValue = OpenState & {
-  trigger: Slot;
-  content: ContentSlot;
-  placement?: BaseTooltipProps["placement"];
-  align?: BaseTooltipProps["align"];
-  offset?: number;
-  margin?: number;
-  delay?: number;
-  disabled?: boolean;
-  onOpen?: () => void;
-  onClose?: () => void;
-};
-
-const TooltipContext = context<TooltipContextValue | null>(null);
-const TooltipDelayContext = context<number | undefined>(undefined);
-
-function useTooltip() {
-  const ctx = TooltipContext();
-  if (!ctx) throw new Error("Tooltip parts must be used within <Tooltip>");
-  return ctx;
-}
-
-function createContentSlot(): ContentSlot {
-  let props: TooltipContentProps | undefined;
-  return {
-    get: () => props,
-    set: (next) => {
-      props = next;
-    },
-  };
-}
-
-/** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
-function mergeStyle<T extends ViewStyle | TextStyle>(
-  base?: StyleProp<T> | null,
-  consumer?: StyleProp<T> | null,
-): StyleProp<T> | undefined {
-  if (base == null && consumer == null) return undefined;
-  if (base == null) return consumer ?? undefined;
-  if (consumer == null) return base ?? undefined;
-  return [base, consumer];
-}
-
-/**
- * A popover-coloured bubble (not inverted text): one line is a row, 8 by 4
- * points, 6-point corners; `rich` is a column, 10 points of padding, 8-point corners.
- */
-function look(rich: boolean) {
-  return {
-    bubble: {
-      flexDirection: rich ? "column" : "row",
-      alignItems: rich ? "flex-start" : "center",
-      gap: 8,
-      paddingHorizontal: rich ? 10 : 8,
-      paddingVertical: rich ? 10 : 4,
-      borderRadius: rich ? 8 : 6,
-      borderCurve: "continuous",
-      borderWidth: 1,
-      borderColor: colors.border,
-      backgroundColor: colors.popover,
-    } satisfies ViewStyle,
-    label: { fontSize: 12, color: colors.popoverForeground } satisfies TextStyle,
-    note: { fontSize: 12, color: colors.mutedForeground } satisfies TextStyle,
-  };
-}
-
-/** The tooltip bubble, the same style {@link TooltipContent} puts on the hint. */
-export function tooltipBubbleStyle(rich?: boolean): ViewStyle {
-  return look(Boolean(rich)).bubble;
-}
-
-/** A tooltip's text. */
-export function tooltipLabelStyle(): TextStyle {
-  return look(false).label;
-}
-
-/** A tooltip's quieter text: a shortcut, a time. */
-export function tooltipNoteStyle(): TextStyle {
-  return look(false).note;
-}
-
-/** Tooltip entrance: a 100 ms fade, or 0 when motion is reduced. */
-export function tooltipMotion(): ViewStyle {
-  return {
-    transitionProperty: "opacity",
-    transitionDuration: motionDuration(100),
-    transitionTimingFunction: "ease-out",
-  };
-}
-
-function wrapLabel(children?: string | JSX.Element) {
-  if (typeof children === "string") {
-    return <Text style={look(false).label}>{children}</Text>;
-  }
-  return children ?? <Text style={look(false).label} />;
-}
-
-/** The themed bubble over `nsh/base` Tooltip; shared by composition and standalone use. */
-function TooltipBubble(props: BaseTooltipProps & { rich?: boolean }) {
-  // Only what this part defaults is split off; class, hover/active/focus/disabled styles pass through.
-  const [, rest] = split(props, [
-    "children",
-    "style",
-    "placement",
-    "align",
-    "offset",
-    "startingStyle",
-    "endingStyle",
-    "rich",
-  ]);
-  const chrome = look(Boolean(props.rich));
-
-  // tooltip.md: a 100 ms fade. Either hook of a phase set by the consumer owns that
-  // phase (`null` turns it off); the classes left in `rest` pass through.
-  const motion = {
-    style: tooltipMotion(),
-    startingStyle: { opacity: 0 },
-    endingStyle: { opacity: 0 },
-  } satisfies Record<"style" | "startingStyle" | "endingStyle", ViewStyle>;
-  const defaultStarting = () =>
-    props.startingClass === undefined && props.startingStyle === undefined;
-  const defaultEnding = () => props.endingClass === undefined && props.endingStyle === undefined;
-
-  return (
-    <BaseTooltip
-      {...rest}
-      placement={props.placement ?? "top"}
-      align={props.align ?? "center"}
-      offset={props.offset ?? 4}
-      style={mergeStyle({ ...chrome.bubble, ...motion.style }, props.style)}
-      startingStyle={defaultStarting() ? motion.startingStyle : props.startingStyle}
-      endingStyle={defaultEnding() ? motion.endingStyle : props.endingStyle}
-    >
-      {props.children}
-    </BaseTooltip>
-  );
-}
-
-/**
- * Composition root (Trigger + Content). For host `tooltip={…}`, use
- * {@link TooltipContent} standalone.
- */
+/** A tooltip bubble. Use as `tooltip={<Tooltip>Hint</Tooltip>}` on a host. */
 export function Tooltip(props: TooltipProps) {
-  const state = createOpenState<OpenChangeReason>(props);
-
+  const [, rest] = split(props, ["rich", "children", "class"]);
+  const look = tooltipLook({ rich: props.rich });
   return (
-    <TooltipContext.Provider
-      value={{
-        ...state,
-        trigger: createSlot(),
-        content: createContentSlot(),
-        get placement() {
-          return props.placement;
-        },
-        get align() {
-          return props.align;
-        },
-        get offset() {
-          return props.offset;
-        },
-        get margin() {
-          return props.margin;
-        },
-        get delay() {
-          return props.delay;
-        },
-        get disabled() {
-          return props.disabled;
-        },
-        get onOpen() {
-          return props.onOpen;
-        },
-        get onClose() {
-          return props.onClose;
-        },
-      }}
-    >
-      <View style={{ gap: 0 }}>
-        {props.children}
-        {/* After Trigger / Content have filled their slots. */}
-        {() => <TooltipAnchor />}
-      </View>
-    </TooltipContext.Provider>
-  );
-}
-
-function TooltipAnchor() {
-  const ctx = TooltipContext();
-  if (!ctx) return <View style={{ width: 0, height: 0 }} />;
-  const triggerAccessor = ctx.trigger.get();
-  const content: TooltipContentProps = ctx.content.get() ?? {};
-  if (!triggerAccessor) return <View style={{ width: 0, height: 0 }} />;
-
-  // Owned here: what falls back to the root / provider, the open state wiring and the label.
-  const [, rest] = split(content, [
-    "children",
-    "placement",
-    "align",
-    "offset",
-    "margin",
-    "delay",
-    "disabled",
-    "onOpenChange",
-    "onOpen",
-    "onClose",
-  ]);
-
-  const providerDelay = TooltipDelayContext();
-
-  const bubble = (
-    <TooltipBubble
-      {...rest}
-      open={ctx.open()}
-      placement={content.placement ?? ctx.placement ?? "top"}
-      align={content.align ?? ctx.align ?? "center"}
-      offset={content.offset ?? ctx.offset ?? 4}
-      margin={content.margin ?? ctx.margin}
-      delay={content.delay ?? ctx.delay ?? providerDelay}
-      disabled={content.disabled ?? ctx.disabled}
-      onOpenChange={(event) => {
-        ctx.setOpen(event.open, event.reason);
-        content.onOpenChange?.(event);
-      }}
-      onOpen={content.onOpen ?? ctx.onOpen}
-      onClose={content.onClose ?? ctx.onClose}
-    >
-      {wrapLabel(content.children)}
-    </TooltipBubble>
-  );
-
-  return (
-    <View tooltip={bubble} style={{ alignSelf: "flex-start" }}>
-      {(triggerAccessor() as JSX.Element) ?? <View />}
-    </View>
-  );
-}
-
-/** Anchors the tooltip to its child; a string child renders a `Button`. */
-export function TooltipTrigger(props: TooltipTriggerProps) {
-  const ctx = useTooltip();
-  const blocked = () => props.disabled || ctx.disabled;
-
-  ctx.trigger.set(() => {
-    const children = props.children;
-    if (typeof children === "string") {
-      return (
-        <Button disabled={blocked()} class={props.class ?? undefined} style={props.style}>
-          {children}
-        </Button>
-      );
-    }
-    return (
-      <View
-        class={props.class ?? undefined}
-        style={mergeStyle({ opacity: disabledOpacity(blocked()) }, props.style)}
-      >
-        {children ?? <View />}
-      </View>
-    );
-  });
-  return <View style={{ width: 0, height: 0 }} />;
-}
-
-/** The bubble, with its fade as the default; also usable standalone for a host `tooltip={…}`. */
-export function TooltipContent(props: TooltipContentProps) {
-  const ctx = TooltipContext();
-  const providerDelay = TooltipDelayContext();
-
-  if (!ctx) {
-    // Standalone: use as host `tooltip={<TooltipContent>…</TooltipContent>}`.
-    const [, rest] = split(props, ["children", "delay"]);
-    return (
-      <TooltipBubble {...rest} delay={props.delay ?? providerDelay}>
-        {wrapLabel(props.children)}
-      </TooltipBubble>
-    );
-  }
-
-  ctx.content.set(props);
-  return <View style={{ width: 0, height: 0 }} />;
-}
-
-/** Shares one delay between the tooltips under it. */
-export function TooltipProvider(props: TooltipProviderProps) {
-  return (
-    <TooltipDelayContext.Provider value={props.delay}>
-      <View class={props.class ?? undefined} style={props.style}>
-        {props.children}
-      </View>
-    </TooltipDelayContext.Provider>
+    <BaseTooltip {...rest} class={props.class ? `${look.class} ${props.class}` : look.class}>
+      {typeof props.children === "string" ? (
+        <Text class={tooltipText}>{props.children}</Text>
+      ) : (
+        props.children
+      )}
+    </BaseTooltip>
   );
 }

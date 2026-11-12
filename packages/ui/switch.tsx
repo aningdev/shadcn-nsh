@@ -1,156 +1,148 @@
-// Source: examples/nsh-gallery-ui/look/switch.ts, switch-geometry.ts @ 64ab8a1d (baseline), see NOTICE.
-import { colors, disabledOpacity, finish, focusRing } from "@shadcn-nsh/theme";
-import type { StyleProp, ViewStyle } from "nsh";
-import { computed, split } from "nsh";
+// A switch: the look (`switchLook`) and the `Switch` that wears it.
+// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
+// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+import {
+  colors,
+  finish,
+  follow,
+  motion,
+  terminal,
+  TERMINAL_COLUMN,
+  TERMINAL_ROW,
+} from "@shadcn-nsh/theme";
+import type { ViewStyle } from "nsh";
+import { platform, split } from "nsh";
 import { Switch as BaseSwitch, type SwitchProps as BaseSwitchProps } from "nsh/base";
 
-import { isPointer, TOUCH_TARGET } from "./lib/density";
-import { follow, springs } from "./lib/follow";
-import { motionDuration } from "./lib/press";
+import {
+  knobTravel,
+  type SwitchGeometry,
+  switchGeometries,
+  switchSlop,
+} from "./lib/switch-geometry";
 
-/** Aligns with shadcn `bases/base` Switch `size`. */
-export type SwitchSize = "default" | "sm";
+// @port look/switch.ts
+/** A switch's size on a touch screen; with a pointer both are 28 × 16. */
+export type SwitchSize = "small" | "regular";
+
+/** The props `switchLook` gives a `Switch`. */
+export interface SwitchLook {
+  /** Mirrors the track right to left, so the knob rests at the start there. */
+  readonly trackClass: string;
+  readonly trackStyle: ViewStyle;
+  readonly thumbStyle: ViewStyle;
+}
+
+const pointer = platform.desktop;
+
+/** The track and knob of a size, here (a pointer, a touch screen, the terminal). */
+function geometry(size: SwitchSize): SwitchGeometry {
+  if (terminal)
+    return {
+      width: 5 * TERMINAL_COLUMN,
+      height: TERMINAL_ROW,
+      border: 1,
+      inset: 0,
+      knob: TERMINAL_ROW,
+    };
+  return pointer ? switchGeometries.pointer : switchGeometries[size];
+}
 
 /**
- * Theme layer on `nsh/base` Switch: a sunk track that fills when on, and a knob that springs
- * across natively. All base props + style hooks pass through; consumer styles win per key.
+ * The gallery's switch, as the props of `Switch`'s parts (spread them:
+ * `<Switch {...switchLook(() => on())}>`): a track sunk into the surface
+ * that turns citrus, and a knob that springs across, both natively. The
+ * knob keeps its size on and off; on, it is white with an olive edge
+ * (`finish.knobOn`). `on` is the value the app owns: the knob follows it,
+ * from a press or from elsewhere. 28 × 16 with a pointer; on a touch screen
+ * 42 × 24 (`small`: 34 × 20); the terminal's is one row, as wide as its
+ * glyph (`[off]`). The knob is as far from the track's edge on as off
+ * (`knobTravel`). Read the styles in JSX, so the appearance is followed.
+ * A switch that stands alone takes `switchHitSlop` too; one that is a row
+ * with its label is its own target.
+ */
+export function switchLook(on: () => boolean, size: SwitchSize = "regular"): SwitchLook {
+  const g = geometry(size);
+  // The knob travels as gpui-kit's does (`spring_move`), the track's color
+  // with it; with reduced motion both change in place.
+  const t = follow(() => (on() ? 1 : 0), motion.move);
+  const x = t.interpolate({ inputRange: [0, 1], outputRange: [0, knobTravel(g)] });
+  return {
+    // The knob sits at the track's physical left (`left`, which keeps its
+    // side) and travels right; right to left the whole track is mirrored, so
+    // it rests at the start and springs toward the end in either direction.
+    trackClass: "rtl:-scale-x-100",
+    get trackStyle(): ViewStyle {
+      return {
+        width: g.width,
+        height: g.height,
+        borderRadius: g.height / 2,
+        padding: g.inset,
+        backgroundColor: t.interpolate({
+          inputRange: [0, 1],
+          outputRange: [colors.track, colors.accentFill],
+        }),
+        borderWidth: g.border,
+        borderColor: on() ? finish.fill.borderColor : finish.track.borderColor,
+        boxShadow: on() ? finish.fill.boxShadow : finish.track.boxShadow,
+        transitionProperty: "border-color, box-shadow",
+        transitionDuration: 150,
+      };
+    },
+    get thumbStyle(): ViewStyle {
+      return {
+        position: "absolute",
+        left: g.inset,
+        top: g.inset,
+        width: g.knob,
+        height: g.knob,
+        borderRadius: g.knob / 2,
+        borderWidth: 1,
+        ...(on() ? finish.knobOn : finish.knob),
+        transform: [{ translateX: x }],
+      };
+    },
+  };
+}
+
+/**
+ * The hit slop of a switch that stands alone (its track is all of it), so
+ * a finger gets 44 points without the track looking bigger: none with a
+ * pointer or in the terminal. Leave it off a switch that is a row with its
+ * label: the row is the target, and a slop would reach into the rows next
+ * to it, which take presses before it where they overlap.
+ */
+export function switchHitSlop(
+  size: SwitchSize = "regular",
+): { top: number; bottom: number; left: number; right: number } | undefined {
+  return pointer || terminal ? undefined : switchSlop(geometry(size));
+}
+// @port end
+
+/**
+ * `nsh/base`'s Switch in the look of `switchLook`. Every base prop passes through; `trackClass`,
+ * `trackStyle` and `thumbStyle` go over the look's.
  */
 export type SwitchProps = BaseSwitchProps & {
+  /** Its size on a touch screen (default `regular`); read once, as `switchLook` does. */
   size?: SwitchSize;
 };
 
-/** A switch's track and knob, in points. */
-export type SwitchGeometry = {
-  /** The track's outer width. */
-  width: number;
-  /** The track's outer height. */
-  height: number;
-  /** The track's border, on every side. */
-  border: number;
-  /** The track's padding, between its border and the knob, on every side. */
-  inset: number;
-  /** The knob's diameter. */
-  knob: number;
-};
-
 /**
- * The sizes: 28 × 16 with a pointer, whichever `size`; on a touch screen 42 × 24 (`sm`: 34 × 20).
- * The track is exactly the knob plus its border and inset on each side, so the knob sits as far
- * from the top and the bottom as from the near end.
+ * A switch. Alone (no children) it takes `switchHitSlop`, so a finger gets 44 points; with
+ * children it is a row with its label, and the row is the target.
  */
-export function switchGeometry(size: SwitchSize, pointer: boolean): SwitchGeometry {
-  if (pointer) return { width: 28, height: 16, border: 1, inset: 1, knob: 12 };
-  if (size === "sm") return { width: 34, height: 20, border: 1, inset: 1, knob: 16 };
-  return { width: 42, height: 24, border: 1, inset: 1, knob: 20 };
-}
-
-/**
- * How far the knob travels from off to on. Off, it rests `border + inset` from the leading edge;
- * on, it must end the same distance from the trailing edge.
- */
-export function knobTravel(g: SwitchGeometry): number {
-  return g.width - 2 * (g.border + g.inset) - g.knob;
-}
-
-/** How far presses count past a switch that is all track, so a finger gets 44pt on each axis. */
-export function switchSlop(g: SwitchGeometry) {
-  const v = Math.max(0, (TOUCH_TARGET - g.height) / 2);
-  const h = Math.max(0, (TOUCH_TARGET - g.width) / 2);
-  return { top: v, bottom: v, left: h, right: h };
-}
-
-/** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
-function mergeStyle(
-  base?: StyleProp<ViewStyle> | null,
-  consumer?: StyleProp<ViewStyle> | null,
-): StyleProp<ViewStyle> | undefined {
-  if (base == null && consumer == null) return undefined;
-  if (base == null) return consumer ?? undefined;
-  if (consumer == null) return base ?? undefined;
-  return [base, consumer];
-}
-
-/** Row around the track + label — aligned with shadcn horizontal Field + switch. */
-function rootChrome(): ViewStyle {
-  // A label used to drop the hit slop and leave a 24-point row. The row is 44 on a finger.
-  return {
-    flexDirection: "row",
-    alignItems: "center",
-    gap: 8,
-    ...(isPointer() ? {} : { minHeight: TOUCH_TARGET }),
-  };
-}
-
-/** A switch: a sunk track and a knob that springs across; every base prop passes through. */
 export function Switch(props: SwitchProps) {
-  // Props are read where used (never destructured) so `checked` / `size` follow signals.
-  const [, rest] = split(props, [
-    "size",
-    "style",
-    "focusStyle",
-    "disabledStyle",
-    "trackStyle",
-    "thumbStyle",
-    "hitSlop",
-  ]);
-
-  const geometry = computed(() => switchGeometry(props.size ?? "default", isPointer()));
-  const on = () => !!props.checked;
-  const progress = follow(() => (on() ? 1 : 0), springs.move);
-  const travel = computed(() =>
-    progress.interpolate({ inputRange: [0, 1], outputRange: [0, knobTravel(geometry())] }),
-  );
-
-  const track = (): ViewStyle => {
-    const g = geometry();
-    return {
-      width: g.width,
-      height: g.height,
-      borderRadius: g.height / 2,
-      padding: g.inset,
-      borderWidth: g.border,
-      backgroundColor: progress.interpolate({
-        inputRange: [0, 1],
-        outputRange: [colors.input, colors.primary],
-      }),
-      borderColor: on() ? colors.primary : colors.border,
-      // Off, a sunk well; on, the filled control's edge.
-      boxShadow: on() ? finish.filled : finish.control.pressed,
-      transitionProperty: "border-color, box-shadow",
-      transitionDuration: motionDuration(150),
-    };
-  };
-
-  const thumb = (): ViewStyle => {
-    const g = geometry();
-    return {
-      width: g.knob,
-      height: g.knob,
-      borderRadius: g.knob / 2,
-      borderWidth: 1,
-      borderColor: colors.border,
-      // On, the knob takes the foreground of the track's fill (the track is `primary`, which is
-      // near-white in the dark appearance, so a white knob would vanish on it).
-      backgroundColor: progress.interpolate({
-        inputRange: [0, 1],
-        outputRange: [colors.highlight, colors.primaryForeground],
-      }),
-      boxShadow: finish.control.flat,
-      transform: [{ translateX: travel() }],
-    };
-  };
-
+  const [, rest] = split(props, ["size", "trackClass", "trackStyle", "thumbStyle", "hitSlop"]);
+  const size = props.size ?? "regular";
+  const look = switchLook(() => props.checked ?? false, size);
   return (
     <BaseSwitch
       {...rest}
-      hitSlop={
-        props.hitSlop ?? (props.children || isPointer() ? undefined : switchSlop(geometry()))
-      }
-      style={mergeStyle(rootChrome(), props.style)}
-      focusStyle={mergeStyle(focusRing(), props.focusStyle)}
-      disabledStyle={mergeStyle({ opacity: disabledOpacity() }, props.disabledStyle)}
-      trackStyle={mergeStyle(track(), props.trackStyle)}
-      thumbStyle={mergeStyle(thumb(), props.thumbStyle)}
+      hitSlop={props.hitSlop ?? (props.children == null ? switchHitSlop(size) : undefined)}
+      trackClass={props.trackClass ? `${look.trackClass} ${props.trackClass}` : look.trackClass}
+      trackStyle={[look.trackStyle, props.trackStyle ?? null]}
+      thumbStyle={[look.thumbStyle, props.thumbStyle ?? null]}
     />
   );
 }

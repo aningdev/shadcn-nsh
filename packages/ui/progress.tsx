@@ -1,155 +1,172 @@
-// Source: examples/nsh-gallery-ui/look/meter.ts @ 64ab8a1d (baseline), see NOTICE.
-import type { StyleProp, ViewStyle } from "nsh";
-import { cleanup, computed, createAnimatedValue, createMotion, effect, Easing, split } from "nsh";
+// A progress: the look (`progressLook` and its companions) and the `Progress` that wears it.
+// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
+// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+import { colors, finish, type Tone, toneColor } from "@shadcn-nsh/theme";
+import type { AnimatedValue, ViewStyle } from "nsh";
+import { cleanup, createAnimatedValue, Easing, effect, reduceMotion, split } from "nsh";
 import { Progress as BaseProgress, type ProgressProps as BaseProgressProps } from "nsh/base";
 
-import { sunkTrack, trackFill } from "./lib/meter";
+// @port look/meter.ts
+/** A value, or a function reading it where the look is applied (a signal). */
+type Live<T> = T | (() => T);
+
+const read = <T,>(v: Live<T> | undefined): T | undefined =>
+  typeof v === "function" ? (v as () => T)() : v;
 
 /**
- * Theme layer on `nsh/base` Progress. shadcn `bases/base` Progress has no `variant` / `size`.
- * Every base prop passes through; consumer styles win per key.
+ * A determinate fill's classes: the whole track's width, slid back by what
+ * is left to do (`progressRemaining`), so a new value glides there on
+ * gpui-kit's 180 ms `easing_move` curve (and a new tone fades in); the track
+ * clips it. At once with reduced motion.
  */
-export type ProgressProps = BaseProgressProps;
-
-type ProgressLook = {
-  style: ViewStyle;
-  trackStyle: ViewStyle;
-  indicatorClass: string;
-  indicatorStyle: ViewStyle;
-};
-
-/**
- * Determinate glide: the fill is the whole track, slid back by what is left
- * (`translate`), on the 180 ms move curve. `motion-reduce` drops the glide.
- * `duration-180` is the documented move duration.
- */
-const GLIDE =
+export const progressGlide =
   "w-full transition duration-180 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:transition-none";
 
-/**
- * Indeterminate sweep. It keeps moving when motion is reduced (`ignoreReduceMotion`):
- * the loop is the "still working" signal. 800 ms, alternate, the reference's curve.
- */
-export const progressSweep = {
-  duration: 800,
-  iterations: "infinite" as const,
-  direction: "alternate" as const,
-  ignoreReduceMotion: true,
-};
+/** A determinate fill's `translate` for `value` percent (0 to 100). */
+export const progressRemaining = (value: number) => `${Math.max(0, Math.min(100, value)) - 100}% 0`;
 
-/** The rail's weight, in points. A fixed stroke: the fill's percentage height needs a definite parent. */
-const RAIL = 6;
-
-/** A determinate fill's `translate` for `value` percent (0 to 100): off to the left by what is left. */
-function remaining(value: number): string {
-  const clamped = Math.max(0, Math.min(100, Number.isFinite(value) ? value : 0));
-  return `${clamped - 100}% 0`;
-}
-
-/** Wrapper default, then consumer: both set, both apply. */
-function mergeClass(base: string, consumer?: string | null): string {
-  return consumer ? `${base} ${consumer}` : base;
-}
-
-/** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
-function mergeStyle(
-  base?: StyleProp<ViewStyle> | null,
-  consumer?: StyleProp<ViewStyle> | null,
-): StyleProp<ViewStyle> | undefined {
-  if (base == null && consumer == null) return undefined;
-  if (base == null) return consumer ?? undefined;
-  if (consumer == null) return base ?? undefined;
-  return [base, consumer];
-}
-
-/**
- * The bar's chrome. `value` (0 to 100) places the determinate fill; `indeterminate` selects
- * the sweeping third instead of the glide. Call it where those are read.
- */
-export function progressVariants(options?: {
-  /** Determinate percent, 0 to 100. */
-  value?: number;
-  /** Unknown extent: the indicator is a third of the track, not the gliding fill. */
-  indeterminate?: boolean;
-}): ProgressLook {
-  const indeterminate = !!options?.indeterminate;
+/** A bar's rail, `height` points tall (default 6): the slider's sunk track,
+ * its edge drawn inside so the fill keeps the whole height, clipping the
+ * fill. */
+export function progressRail(height = 6): ViewStyle {
   return {
-    style: { gap: 8, alignItems: "stretch" },
-    trackStyle: {
-      height: RAIL,
-      minHeight: RAIL,
-      borderRadius: RAIL / 2,
-      overflow: "hidden",
-      ...sunkTrack(),
-    },
-    indicatorClass: indeterminate ? "w-1/3" : GLIDE,
-    indicatorStyle: {
-      height: "100%",
-      borderRadius: RAIL / 2,
-      ...trackFill(),
-      ...(indeterminate ? {} : { translate: remaining(options?.value ?? 0) }),
-    },
+    height,
+    borderRadius: height / 2,
+    overflow: "hidden",
+    backgroundColor: colors.track,
+    boxShadow: `inset 0 0 0 1px ${finish.track.borderColor}, ${finish.track.boxShadow}`,
   };
 }
 
-/** A linear progress bar: the sunk rail and the primary run, gliding to each value. */
+/** A bar's fill, `height` points tall (default 6): the slider's citrus run
+ * (`finish.fill`'s gradient), or a tone's color (`up` for done, `warn`,
+ * `danger`; `accent` is the run). Neither has an edge, so a tone's bar and
+ * the run read as one kind of bar. */
+export function progressFill(height = 6, tone?: Tone): ViewStyle {
+  return tone && tone !== "accent"
+    ? { height, borderRadius: height / 2, backgroundColor: toneColor(tone) }
+    : { height, borderRadius: height / 2, backgroundImage: finish.fill.backgroundImage };
+}
+
+/** An indeterminate bar's sweep (`progressSweep()`), for `progressLook`'s `sweep`. */
+export interface ProgressSweep {
+  /** Spread on the `Progress` (its `onLayout`): its width is the track's,
+   * so keep its padding on a view around it. */
+  onLayout: (event: { bounds: { size: { width: number } } }) => void;
+  /** Where the sweep is, 0 to 1, times `travel`. */
+  readonly sweep: AnimatedValue;
+  /** Two thirds of the track: how far the third that sweeps crosses. */
+  readonly travel: AnimatedValue;
+}
+
+/**
+ * The sweep of indeterminate bars: a third of the track crossing it and
+ * back every 800 ms, eased in and out, looped natively, so no JS runs per
+ * crossing; it rests in the middle with reduced motion. Make one in a
+ * component (it stops with it) and pass it to the `progressLook` of every
+ * bar that may be indeterminate; spread its `onLayout` on one of them.
+ */
+export function progressSweep(): ProgressSweep {
+  const sweep = createAnimatedValue(0);
+  const travel = createAnimatedValue(0);
+  effect(() => {
+    if (reduceMotion()) sweep.set(0.5);
+    else
+      sweep.keyframes([0, 1], {
+        duration: 800,
+        easing: Easing.bezier(0.42, 0, 0.58, 1),
+        iterations: "infinite",
+        direction: "alternate",
+      });
+  });
+  cleanup(() => void sweep.stop());
+  return {
+    onLayout: ({ bounds }) => travel.set((bounds.size.width * 2) / 3),
+    sweep,
+    travel,
+  };
+}
+
+/** Options of `progressLook`. */
+export interface ProgressLookOptions {
+  /** The rail's and the fill's height, default 6 (4 for a thin bar under a row). */
+  height?: number;
+  /** The fill's tone: the citrus run by default, `up` once done. */
+  tone?: Live<Tone | undefined>;
+  /** The bar has no value yet (pass the same to the `Progress`'s `indeterminate`). */
+  indeterminate?: Live<boolean | undefined>;
+  /** The sweep an indeterminate bar's third follows. */
+  sweep?: ProgressSweep;
+}
+
+/**
+ * A `Progress`'s parts (spread them: `<Progress value={v()} {...progressLook(() => v())}>`):
+ * the rail (`progressRail`), and a fill (`progressFill`) that glides to each
+ * new value (`progressGlide`), or, indeterminate, a third of the track
+ * following `sweep`.
+ */
+export function progressLook(value: Live<number>, o?: ProgressLookOptions) {
+  const height = o?.height ?? 6;
+  const indeterminate = () => !!read(o?.indeterminate);
+  return {
+    get trackStyle(): ViewStyle {
+      return progressRail(height);
+    },
+    get indicatorClass(): string {
+      return indeterminate() ? "w-1/3" : progressGlide;
+    },
+    get indicatorStyle(): ViewStyle {
+      const fill = progressFill(height, read(o?.tone));
+      if (!indeterminate()) return { ...fill, translate: progressRemaining(read(value) ?? 0) };
+      return o?.sweep
+        ? { ...fill, transform: [{ translateX: o.sweep.sweep.mul(o.sweep.travel) }] }
+        : { ...fill, translate: "100% 0" };
+    },
+  };
+}
+// @port end
+
+/**
+ * `nsh/base`'s Progress with `progressLook`. Every base prop passes through; track / indicator
+ * styles go over the look's.
+ */
+export type ProgressProps = BaseProgressProps & {
+  /** Rail and fill height (default 6). */
+  height?: number;
+  /** Fill tone; default citrus run. */
+  tone?: Tone;
+  /** Shared sweep for indeterminate bars. */
+  sweep?: ProgressSweep;
+};
+
+/** A progress bar on the shared meter rail. */
 export function Progress(props: ProgressProps) {
-  // Props are read where used (never destructured) so `value` / `indeterminate` follow signals.
   const [, rest] = split(props, [
-    "class",
-    "style",
-    "trackClass",
+    "height",
+    "tone",
+    "sweep",
+    "value",
+    "indeterminate",
     "trackStyle",
     "indicatorClass",
     "indicatorStyle",
     "onLayout",
   ]);
-
-  // A third of the track crossing it and back. `translateX` runs 0 to 1; `travel` is two
-  // thirds of the laid-out width, so the third starts at the left and ends flush right.
-  // The loop keeps playing when the user asks for less motion (`ignoreReduceMotion`):
-  // the sweep is the "still working" signal, not decoration. The reference rests at the middle.
-  const sweep = createMotion();
-  const travel = createAnimatedValue(0);
-  const shift = sweep.translateX.mul(travel);
-  effect(() => {
-    if (!props.indeterminate) {
-      sweep.stop();
-      return;
-    }
-    void sweep.play({
-      keyframes: { translateX: [0, 1] },
-      duration: progressSweep.duration,
-      easing: Easing.bezier(0.42, 0, 0.58, 1),
-      iterations: progressSweep.iterations,
-      direction: progressSweep.direction,
-      ignoreReduceMotion: progressSweep.ignoreReduceMotion,
-    });
+  const look = progressLook(() => props.value ?? 0, {
+    height: props.height,
+    tone: () => props.tone,
+    indeterminate: () => props.indeterminate,
+    sweep: props.sweep,
   });
-  cleanup(() => sweep.stop());
-
-  const current = computed(() =>
-    progressVariants({ value: props.value, indeterminate: props.indeterminate }),
-  );
-  const indicatorStyle = computed(() => {
-    const base = current().indicatorStyle;
-    if (!props.indeterminate) return base;
-    return { ...base, transform: [{ translateX: shift }] };
-  });
-
   return (
     <BaseProgress
       {...rest}
-      class={props.class ?? undefined}
-      style={mergeStyle(current().style, props.style)}
-      trackClass={props.trackClass ?? undefined}
-      trackStyle={mergeStyle(current().trackStyle, props.trackStyle)}
-      indicatorClass={mergeClass(current().indicatorClass, props.indicatorClass)}
-      indicatorStyle={mergeStyle(indicatorStyle(), props.indicatorStyle)}
-      onLayout={(event) => {
-        travel.set((event.bounds.size.width * 2) / 3);
-        props.onLayout?.(event);
-      }}
+      value={props.value}
+      indeterminate={props.indeterminate}
+      onLayout={props.onLayout ?? props.sweep?.onLayout}
+      trackStyle={[look.trackStyle, props.trackStyle ?? null]}
+      indicatorClass={props.indicatorClass ?? look.indicatorClass}
+      indicatorStyle={[look.indicatorStyle, props.indicatorStyle ?? null]}
     />
   );
 }

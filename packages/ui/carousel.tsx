@@ -1,8 +1,9 @@
-// Source: examples/nsh-gallery-ui/look/nav.tsx @ 64ab8a1d (baseline), see NOTICE.
-// Pagination dots also follow examples/nsh-gallery-ui/look/tabs.tsx (the traveling indicator).
-import { alpha, colors, focusRing, radius } from "@shadcn-nsh/theme";
-import type { StyleProp, TextStyle, ViewStyle } from "nsh";
-import { computed, split, Text, View } from "nsh";
+// A carousel: the look (`carouselArrowLook`, pagination) on `nsh/base` carousel parts.
+// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
+// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+import { alpha, colors, finish, focusRing, terminal } from "@shadcn-nsh/theme";
+import type { JSX, ViewStyle } from "nsh";
+import { platform, split, Text, View } from "nsh";
 import {
   Carousel as BaseCarousel,
   CarouselContent as BaseContent,
@@ -20,240 +21,288 @@ import {
   type CarouselProps as BaseCarouselProps,
 } from "nsh/base";
 
-import { buttonVariants } from "./button";
-import { isPointer } from "./lib/density";
+import { Icon } from "./lib/icons";
+import { pressSink, pressTransition } from "./lib/press";
 
-/** Theme layer on `nsh/base` Carousel. Index, looping and swipes stay in base. */
-export type CarouselProps = BaseCarouselProps;
+// @port look/nav.tsx
+const pointer = platform.desktop;
 
-/** Theme layer on `nsh/base` CarouselContent, the snap viewport. */
-export type CarouselContentProps = BaseContentProps;
+// Carousel ---------------------------------------------------------------
 
-/** Theme layer on `nsh/base` CarouselItem. Default width is one slide per view. */
-export type CarouselItemProps = BaseItemProps;
+/** A carousel's controls: an arrow's side and its icon, a pagination dot
+ * and the touch-sized item around it. Compact with a pointer, roomier on a
+ * touch screen. */
+export const carouselSizes = pointer
+  ? { arrow: 30, arrowIcon: 16, dot: 7, hit: 15 }
+  : { arrow: 38, arrowIcon: 18, dot: 8, hit: 22 };
 
-/** Theme layer on `nsh/base` CarouselPrevious. The arrow reuses `buttonVariants`. */
-export type CarouselPreviousProps = BasePreviousProps;
+/** The properties a carousel control's states change, eased as a press. */
+const fade: ViewStyle = pressTransition("background-color, border-color, opacity");
 
-/** Theme layer on `nsh/base` CarouselNext. Same look as previous. */
-export type CarouselNextProps = BaseNextProps;
-
-/** Theme layer on `nsh/base` CarouselPagination, with a pill that travels to the shown slide. */
-export type CarouselPaginationProps = BasePaginationProps;
-
-/** Theme layer on `nsh/base` CarouselPaginationItem. `index` is the slide it shows. */
-export type CarouselPaginationItemProps = BasePaginationItemProps;
-
-/** What `buttonVariants` returns for the arrow. Snapshotted, so read it inside `computed`. */
-type ArrowLook = ReturnType<typeof buttonVariants>;
-
-/**
- * Slide chrome, the round arrow, and the dots.
- * The arrow is a `button` secondary icon, made round; previous and next are already buttons, so this does not nest one.
- */
-export type CarouselChrome = {
-  root: ViewStyle;
-  content: ViewStyle;
-  item: ViewStyle;
-  /** Secondary icon button, plus a full corner so the minimum box reads as a circle. */
-  arrow: ArrowLook;
-  round: ViewStyle;
-  pagination: ViewStyle;
-  /** Pill over the shown dot. `primary` stands in for the reference accent. */
-  indicator: ViewStyle;
-  dotItem: ViewStyle;
-  dotFocus: ViewStyle;
-  /** The quiet circle. A fixed mark (7 pointer / 8 touch), not a text box. */
-  dot: ViewStyle;
-  dotClass: string;
-  label: TextStyle;
-  /** Dot diameter, for a density check. */
-  dotSize: number;
-  /** Smallest arrow box, the button `icon-sm` step (28 pointer / 36 touch). */
-  arrowMin: number;
-};
-
-/** Wrapper defaults, then consumer — consumer wins per key. */
-function mergeStyle(
-  base?: StyleProp<ViewStyle> | null,
-  consumer?: StyleProp<ViewStyle> | null,
-): StyleProp<ViewStyle> | undefined {
-  if (base == null && consumer == null) return undefined;
-  if (base == null) return consumer ?? undefined;
-  if (consumer == null) return base ?? undefined;
-  return [base, consumer];
-}
-
-/** Concatenate wrapper + consumer `class` when both are set. */
-function mergeClass(base: string, consumer?: string | null): string {
-  return consumer ? `${base} ${consumer}` : base;
+/** Options of `carouselArrowLook`. */
+export interface CarouselArrowOptions {
+  /** Over a photo: glass (`finish.glass`), so the photo shows through. */
+  glass?: boolean;
+  /** Its side, default `carouselSizes.arrow`. */
+  side?: number;
 }
 
 /**
- * Dots from the reference (`carouselSizes`): 7 / 15 with a pointer, 8 / 22 on a touch screen.
- * The arrow's box comes from `button` `icon-sm` (28 / 36), not the reference's fixed 30 / 38.
+ * A carousel's arrow (spread it on `CarouselPrevious` / `CarouselNext`, or a
+ * round control beside them): a circle, raised on a card or glass over a
+ * photo, with an icon in the text color (`carouselSizes.arrowIcon`). Under
+ * the pointer it takes the hover fill; pressed it sinks to 92% (none with
+ * reduced motion); keyboard focus: `focusRing(2)`; with nothing to move to
+ * it fades to 30%. A terminal sizes it to its glyph.
  */
-function look(): CarouselChrome {
-  const pointer = isPointer();
-  const dotSize = pointer ? 7 : 8;
-  const hit = pointer ? 15 : 22;
-  const inset = (hit - dotSize) / 2;
-  const arrow = buttonVariants({ variant: "secondary", size: "icon-sm" });
+export function carouselArrowLook(o?: CarouselArrowOptions) {
   return {
-    root: { gap: 8, alignSelf: "stretch" },
-    // A floor so an empty viewport is still a slide, not a hairline. The app sets the real height.
-    content: { minHeight: 48, alignSelf: "stretch" },
-    item: {
-      flexShrink: 0,
-      alignItems: "center",
-      justifyContent: "center",
-      padding: 8,
-      borderRadius: radius.control,
-      backgroundColor: colors.muted,
+    get style(): ViewStyle {
+      if (terminal)
+        return { alignItems: "center", justifyContent: "center", flexShrink: 0, ...fade };
+      const side = o?.side ?? carouselSizes.arrow;
+      return {
+        width: side,
+        height: side,
+        borderRadius: side / 2,
+        alignItems: "center",
+        justifyContent: "center",
+        borderWidth: 1,
+        ...(o?.glass ? finish.glass : finish.raised),
+        ...fade,
+      };
     },
-    arrow,
-    round: { borderRadius: 999 },
-    pagination: {
-      flexDirection: "row",
-      alignItems: "center",
-      justifyContent: "center",
+    get hoverStyle(): ViewStyle {
+      return { ...finish.hover };
     },
-    indicator: {
-      top: inset,
-      bottom: inset,
-      marginHorizontal: 1,
-      borderRadius: dotSize / 2,
-      backgroundColor: colors.primary,
+    get activeStyle(): ViewStyle {
+      return pressSink(0.92).activeStyle;
     },
-    dotItem: {
-      minWidth: hit + 4,
-      minHeight: hit,
-      alignItems: "center",
-      justifyContent: "center",
-      borderRadius: hit / 2,
+    get focusVisibleStyle(): ViewStyle {
+      return focusRing(2);
     },
-    dotFocus: focusRing(),
-    dot: {
-      width: dotSize,
-      height: dotSize,
-      borderRadius: dotSize / 2,
-      backgroundColor: alpha(colors.foreground, 0.24),
-    },
-    dotClass:
-      "opacity-70 group-hover:opacity-100 group-selected:opacity-0 transition-opacity duration-150 motion-reduce:transition-none",
-    label: { fontSize: pointer ? 13 : 15, fontWeight: "500", color: colors.foreground },
-    dotSize,
-    arrowMin: pointer ? 28 : 36,
+    disabledStyle: { opacity: 0.5 } as ViewStyle,
   };
 }
 
-/** Carousel chrome for the current idiom. Call it where the theme is read. */
-export function carouselVariants(): CarouselChrome {
-  return look();
+/**
+ * A `CarouselPagination`'s look (spread it): its items in a row, and the
+ * indicator, a citrus pill a dot high and two wide that springs to the item
+ * of the slide shown, over its dot (`CarouselDot`). Hidden in a terminal,
+ * whose dots are glyphs.
+ */
+export function carouselPaginationLook() {
+  return {
+    style: {
+      flexDirection: "row",
+      alignItems: "center",
+      gap: terminal ? 8 : undefined,
+    } as ViewStyle,
+    get indicatorStyle(): ViewStyle {
+      if (terminal) return { display: "none" };
+      const inset = (carouselSizes.hit - carouselSizes.dot) / 2;
+      return {
+        top: inset,
+        bottom: inset,
+        marginHorizontal: 1,
+        borderRadius: carouselSizes.dot / 2,
+        backgroundColor: colors.accentFill,
+      };
+    },
+  };
 }
 
-/** The slides and the controls the app lays out in it. */
+/** A `CarouselPaginationItem`'s look (spread it): a touch-sized item around
+ * its dot, the `group` its dot follows, the keyboard's focus ring. */
+export function carouselDotItemLook() {
+  return {
+    class: "group",
+    style: (terminal
+      ? {}
+      : {
+          width: carouselSizes.hit + 4,
+          height: carouselSizes.hit,
+          alignItems: "center",
+          justifyContent: "center",
+          borderRadius: carouselSizes.hit / 2,
+        }) as ViewStyle,
+    get focusVisibleStyle(): ViewStyle {
+      return focusRing();
+    },
+  };
+}
+
+/** The dot of a pagination item: a quiet circle that brightens under the
+ * pointer and hides under the pill on the slide shown; a glyph, filled on
+ * the slide shown, in a terminal. */
+export function CarouselDot(props: { selected: boolean }) {
+  return terminal ? (
+    <Text style={{ color: props.selected ? colors.accent : colors.muted }}>
+      {props.selected ? "●" : "○"}
+    </Text>
+  ) : (
+    <View
+      class="group-selected:opacity-0 opacity-70 group-hover:opacity-100"
+      style={{
+        width: carouselSizes.dot,
+        height: carouselSizes.dot,
+        borderRadius: carouselSizes.dot / 2,
+        backgroundColor: alpha(colors.text, 0.24),
+        ...fade,
+      }}
+    />
+  );
+}
+// @port end
+
+/** `nsh/base` Carousel. Index, looping and swipes stay in base. */
+export type CarouselProps = BaseCarouselProps;
+
+/** Snap viewport. */
+export type CarouselContentProps = BaseContentProps;
+
+/** One slide. Default width is one slide per view (`w-full`). */
+export type CarouselItemProps = BaseItemProps;
+
+function mergeClass(base: string, extra?: string | null): string | undefined {
+  if (extra == null) return base;
+  return `${base} ${extra}`;
+}
+
+/** Options for arrow chrome on previous / next. */
+export type CarouselArrowProps = CarouselArrowOptions;
+
+/** Pagination with a pill that travels to the shown slide. */
+export type CarouselPaginationProps = BasePaginationProps;
+
+export type CarouselPaginationItemProps = BasePaginationItemProps;
+
+export type CarouselPreviousProps = BasePreviousProps & CarouselArrowOptions;
+export type CarouselNextProps = BaseNextProps & CarouselArrowOptions;
+
+function mergeArrowChild(mark: "previous" | "next", children: JSX.Element | undefined) {
+  if (children !== undefined) return children;
+  if (terminal) {
+    return <Text>{mark === "previous" ? "‹" : "›"}</Text>;
+  }
+  const icon = carouselSizes.arrowIcon;
+  const tint = colors.text;
+  if (mark === "previous") {
+    return <Icon name="back" size={icon} tint={tint} />;
+  }
+  return (
+    <View style={{ transform: [{ scaleX: -1 }] }}>
+      <Icon name="back" size={icon} tint={tint} />
+    </View>
+  );
+}
+
+/** Slides and controls the app lays out around it. */
 export function Carousel(props: CarouselProps) {
   const [, rest] = split(props, ["class", "style"]);
-  const chrome = computed(() => carouselVariants());
   return (
-    <BaseCarousel {...rest} class={props.class} style={mergeStyle(chrome().root, props.style)} />
-  );
-}
-
-/** The snap viewport. One slide fills it unless an item sets its own size. */
-export function CarouselContent(props: CarouselContentProps) {
-  const [, rest] = split(props, ["class", "style"]);
-  const chrome = computed(() => carouselVariants());
-  return (
-    <BaseContent {...rest} class={props.class} style={mergeStyle(chrome().content, props.style)} />
-  );
-}
-
-/** One slide. `w-full` is one slide per view; override it for a row of cards. */
-export function CarouselItem(props: CarouselItemProps) {
-  const [, rest] = split(props, ["class", "style"]);
-  const chrome = computed(() => carouselVariants());
-  return (
-    <BaseItem
+    <BaseCarousel
       {...rest}
-      class={mergeClass("w-full", props.class)}
-      style={mergeStyle(chrome().item, props.style)}
+      class={props.class}
+      style={overlayStyle({ gap: 8, alignSelf: "stretch" }, props.style)}
     />
   );
 }
 
-function ArrowGlyph(props: { mark: string }) {
-  const chrome = computed(() => carouselVariants());
-  const label = () => chrome().arrow.label;
+/** Snap viewport. */
+export function CarouselContent(props: CarouselContentProps) {
+  const [, rest] = split(props, ["class", "style"]);
   return (
-    <Text style={{ color: label().color, fontSize: label().fontSize, fontWeight: "500" }}>
-      {props.mark}
-    </Text>
+    <BaseContent
+      {...rest}
+      class={props.class}
+      style={overlayStyle({ minHeight: 48, alignSelf: "stretch" }, props.style)}
+    />
   );
 }
 
-/** Moves to the previous slide. Disabled on the first unless the carousel loops. */
+/** One slide. */
+export function CarouselItem(props: CarouselItemProps) {
+  const [, rest] = split(props, ["class", "style"]);
+  return (
+    <BaseItem
+      {...rest}
+      class={mergeClass("w-full", props.class)}
+      style={overlayStyle(
+        { flexShrink: 0, alignItems: "center", justifyContent: "center" },
+        props.style,
+      )}
+    />
+  );
+}
+
+function overlayStyle<T>(base: T, extra: T | null | undefined): T | (T | null)[] {
+  return extra == null ? base : [base, extra];
+}
+
+/** Previous slide control. */
 export function CarouselPrevious(props: CarouselPreviousProps) {
   const [, rest] = split(props, [
+    "glass",
+    "side",
     "class",
     "style",
     "hoverStyle",
     "activeStyle",
-    "focusStyle",
+    "focusVisibleStyle",
     "disabledStyle",
     "children",
     "accessibilityLabel",
   ]);
-  const chrome = computed(() => carouselVariants());
-  const arrow = () => chrome().arrow;
+  const look = carouselArrowLook({ glass: props.glass, side: props.side });
   return (
     <BasePrevious
       {...rest}
       accessibilityLabel={props.accessibilityLabel ?? "Previous slide"}
       class={props.class}
-      style={mergeStyle(mergeStyle(arrow().style, chrome().round), props.style)}
-      hoverStyle={mergeStyle(arrow().hoverStyle, props.hoverStyle)}
-      activeStyle={mergeStyle(arrow().activeStyle, props.activeStyle)}
-      focusStyle={mergeStyle(focusRing(), props.focusStyle)}
-      disabledStyle={mergeStyle(arrow().disabledStyle, props.disabledStyle)}
+      style={overlayStyle(look.style, props.style)}
+      hoverStyle={overlayStyle(look.hoverStyle, props.hoverStyle)}
+      activeStyle={overlayStyle(look.activeStyle, props.activeStyle)}
+      focusVisibleStyle={overlayStyle(look.focusVisibleStyle, props.focusVisibleStyle)}
+      disabledStyle={overlayStyle(look.disabledStyle, props.disabledStyle)}
     >
-      {props.children ?? <ArrowGlyph mark="‹" />}
+      {mergeArrowChild("previous", props.children)}
     </BasePrevious>
   );
 }
 
-/** Moves to the next slide. Disabled on the last unless the carousel loops. */
+/** Next slide control. */
 export function CarouselNext(props: CarouselNextProps) {
   const [, rest] = split(props, [
+    "glass",
+    "side",
     "class",
     "style",
     "hoverStyle",
     "activeStyle",
-    "focusStyle",
+    "focusVisibleStyle",
     "disabledStyle",
     "children",
     "accessibilityLabel",
   ]);
-  const chrome = computed(() => carouselVariants());
-  const arrow = () => chrome().arrow;
+  const look = carouselArrowLook({ glass: props.glass, side: props.side });
   return (
     <BaseNext
       {...rest}
       accessibilityLabel={props.accessibilityLabel ?? "Next slide"}
       class={props.class}
-      style={mergeStyle(mergeStyle(arrow().style, chrome().round), props.style)}
-      hoverStyle={mergeStyle(arrow().hoverStyle, props.hoverStyle)}
-      activeStyle={mergeStyle(arrow().activeStyle, props.activeStyle)}
-      focusStyle={mergeStyle(focusRing(), props.focusStyle)}
-      disabledStyle={mergeStyle(arrow().disabledStyle, props.disabledStyle)}
+      style={overlayStyle(look.style, props.style)}
+      hoverStyle={overlayStyle(look.hoverStyle, props.hoverStyle)}
+      activeStyle={overlayStyle(look.activeStyle, props.activeStyle)}
+      focusVisibleStyle={overlayStyle(look.focusVisibleStyle, props.focusVisibleStyle)}
+      disabledStyle={overlayStyle(look.disabledStyle, props.disabledStyle)}
     >
-      {props.children ?? <ArrowGlyph mark="›" />}
+      {mergeArrowChild("next", props.children)}
     </BaseNext>
   );
 }
 
-/** Dots for the slides, and a pill that springs onto the one shown. */
+/** Dot row and traveling indicator. */
 export function CarouselPagination(props: CarouselPaginationProps) {
   const [, rest] = split(props, [
     "class",
@@ -262,32 +311,38 @@ export function CarouselPagination(props: CarouselPaginationProps) {
     "indicatorStyle",
     "accessibilityLabel",
   ]);
-  const chrome = computed(() => carouselVariants());
+  const look = carouselPaginationLook();
   return (
     <BasePagination
       {...rest}
       accessibilityLabel={props.accessibilityLabel ?? "Choose a slide"}
       class={props.class}
-      style={mergeStyle(chrome().pagination, props.style)}
+      style={overlayStyle(look.style, props.style)}
       indicatorClass={props.indicatorClass}
-      indicatorStyle={mergeStyle(chrome().indicator, props.indicatorStyle)}
+      indicatorStyle={overlayStyle(look.indicatorStyle, props.indicatorStyle)}
     />
   );
 }
 
-/** One dot. Selected, it hides under the pagination pill (`group-selected:`). */
+/** One pagination dot. */
 export function CarouselPaginationItem(props: CarouselPaginationItemProps) {
-  const [, rest] = split(props, ["class", "style", "focusStyle", "children", "accessibilityLabel"]);
-  const chrome = computed(() => carouselVariants());
+  const [, rest] = split(props, [
+    "class",
+    "style",
+    "focusVisibleStyle",
+    "children",
+    "accessibilityLabel",
+  ]);
+  const look = carouselDotItemLook();
   return (
     <BasePaginationItem
       {...rest}
       accessibilityLabel={props.accessibilityLabel ?? `Slide ${props.index + 1}`}
-      class={mergeClass("group", props.class)}
-      style={mergeStyle(chrome().dotItem, props.style)}
-      focusStyle={mergeStyle(chrome().dotFocus, props.focusStyle)}
+      class={mergeClass(look.class, props.class)}
+      style={overlayStyle(look.style, props.style)}
+      focusVisibleStyle={overlayStyle(look.focusVisibleStyle, props.focusVisibleStyle)}
     >
-      {props.children ?? <View class={chrome().dotClass} style={chrome().dot} />}
+      {props.children ?? <CarouselDot selected={false} />}
     </BasePaginationItem>
   );
 }

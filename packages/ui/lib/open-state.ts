@@ -1,4 +1,4 @@
-import { signal, type Signal } from "nsh";
+import { signal } from "nsh";
 
 /** Controlled/uncontrolled open flag shared by composition roots. */
 export type OpenState = {
@@ -6,11 +6,13 @@ export type OpenState = {
   setOpen: (next: boolean, reason?: string) => void;
 };
 
+/** What a root's `onOpenChange` gets. */
 export type OpenChangeEvent<Reason extends string = string> = {
   open: boolean;
   reason: Reason;
 };
 
+/** The open flag of a composition root: the app's `open` when it gives one, else its own. */
 export function createOpenState<Reason extends string = string>(options: {
   open?: boolean | null;
   defaultOpen?: boolean;
@@ -26,7 +28,7 @@ export function createOpenState<Reason extends string = string>(options: {
   };
 }
 
-/** Mutable slot filled by a Trigger part before Content reads it. */
+/** Mutable slot filled by a Trigger part before Content reads it (menus, selects). */
 export type Slot = {
   get: () => (() => unknown) | undefined;
   set: (accessor: () => unknown) => void;
@@ -38,31 +40,6 @@ export function createSlot(): Slot {
     get: () => accessor,
     set: (next) => {
       accessor = next;
-    },
-  };
-}
-
-export type ItemRegistry<T extends { value: string }> = {
-  items: Signal<T[]>;
-  register: (item: T) => void;
-  unregister: (value: string) => void;
-};
-
-export function createItemRegistry<T extends { value: string }>(
-  initial: T[] = [],
-): ItemRegistry<T> {
-  const items = signal<T[]>(initial, { equals: false });
-  return {
-    items,
-    register: (item) => {
-      items.update((list) => {
-        const next = list.filter((i) => i.value !== item.value);
-        next.push(item);
-        return next;
-      });
-    },
-    unregister: (value) => {
-      items.update((list) => list.filter((i) => i.value !== value));
     },
   };
 }

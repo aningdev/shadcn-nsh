@@ -1,7 +1,9 @@
-// Source: examples/nsh-gallery-ui/look/disclosure.tsx @ 64ab8a1d (baseline), see NOTICE.
-import { colors, disabledOpacity, focusRing } from "@shadcn-nsh/theme";
-import type { JSX, StyleProp, ViewStyle } from "nsh";
-import { computed, split, Text, View } from "nsh";
+// An accordion: disclosure look (`disclosureTriggerLook`, `DisclosureChevron`, `disclosurePanel`) and base parts.
+// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
+// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+import { colors } from "@shadcn-nsh/theme";
+import type { JSX, ViewStyle } from "nsh";
+import { split, View } from "nsh";
 import {
   Accordion as BaseAccordion,
   AccordionHeader as BaseAccordionHeader,
@@ -15,164 +17,176 @@ import {
   type AccordionTriggerProps as BaseAccordionTriggerProps,
 } from "nsh/base";
 
-import { isPointer } from "./lib/density";
-import { pressSink } from "./lib/press";
+import { Icon } from "./lib/icons";
+import { controlSize, listRow, RowDivider, RowLabel, type ListRowOptions } from "./lib/surface";
 
-/** Theme layer on `nsh/base` Accordion. Every base prop passes through. */
-export type AccordionProps = BaseAccordionProps;
-
-/** One section. A hairline separates it from the next. */
-export type AccordionItemProps = BaseAccordionItemProps;
-
-/** The heading around {@link AccordionTrigger}. Base props pass through. */
-export type AccordionHeaderProps = BaseAccordionHeaderProps;
+// @port look/disclosure.tsx
+/** Options of `disclosureTriggerLook`: a row's (`listRow`). */
+export type DisclosureTriggerOptions = ListRowOptions;
 
 /**
- * What expands the item. String children are the title; a trailing chevron is
- * always drawn (it turns with `group-aria-expanded` on this trigger).
+ * A trigger's props (spread them on an `AccordionTrigger`, or on the row
+ * that flips a `Collapsible`): the list's row (`listRow`: its height, the
+ * `accent` hover fill reaching past the content, pressed, focus and disabled
+ * states; a `RowDivider` among its children above all but the first), with
+ * the `group` class, so an accordion's `DisclosureChevron` turns with
+ * `group-aria-expanded:`.
  */
-export type AccordionTriggerProps = Omit<BaseAccordionTriggerProps, "children"> & {
-  children?: string | JSX.Element;
-};
-
-/**
- * The item's content. `reveal` defaults on (base defaults off). Padding sits
- * on an inner view: a revealed panel is zero-high while closed.
- */
-export type AccordionPanelProps = BaseAccordionPanelProps;
-
-/** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
-function mergeStyle(
-  base?: StyleProp<ViewStyle> | null,
-  consumer?: StyleProp<ViewStyle> | null,
-): StyleProp<ViewStyle> | undefined {
-  if (base == null && consumer == null) return undefined;
-  if (base == null) return consumer ?? undefined;
-  if (consumer == null) return base ?? undefined;
-  return [base, consumer];
-}
-
-/** Concatenate wrapper + consumer `class` when both are set. */
-function mergeClass(base: string, consumer?: string | null): string {
-  return consumer ? `${base} ${consumer}` : base;
-}
-
-/** Row metrics from gallery `listRow`. Hover is `colors.accent` (shadcn accent and the gallery list fill). */
-function rowChrome() {
-  const pointer = isPointer();
-  const minHeight = pointer ? 40 : 44;
-  const sink = pressSink(0.97, "background-color");
+export function disclosureTriggerLook(o?: DisclosureTriggerOptions) {
+  const row = listRow(o);
   return {
-    icon: pointer ? 12 : 16,
-    row: {
-      minHeight,
-      alignSelf: "stretch",
-      flexDirection: "row",
-      alignItems: "center",
-      gap: pointer ? 10 : 12,
-      paddingVertical: pointer ? 6 : 8,
-      paddingHorizontal: 8,
-      borderRadius: 8,
-      ...sink.transition,
-    } satisfies ViewStyle,
-    hover: { backgroundColor: colors.accent } satisfies ViewStyle,
-    active: sink.activeStyle,
-    focus: focusRing(),
-    disabled: { opacity: disabledOpacity() } satisfies ViewStyle,
-    label: {
-      flexGrow: 1,
-      flexShrink: 1,
-      fontSize: 14,
-      fontWeight: "500" as const,
-      color: colors.foreground,
+    class: "group",
+    get style(): ViewStyle {
+      return row.style;
+    },
+    get hoverStyle(): ViewStyle | undefined {
+      return row.hoverStyle;
+    },
+    get activeStyle(): ViewStyle {
+      return row.activeStyle;
+    },
+    get focusVisibleStyle(): ViewStyle {
+      return row.focusVisibleStyle;
+    },
+    get disabledStyle(): ViewStyle {
+      return row.disabledStyle;
     },
   };
 }
 
-/** Content under a trigger. Padding is the content's, so it collapses with the panel. */
-function panelChrome(): ViewStyle {
-  return { paddingBottom: isPointer() ? 12 : 14, gap: 6 };
-}
-
-/** Chevron turn. `motion-reduce` drops the rotation. */
-export const accordionChevronClass =
-  "transition-transform duration-200 group-aria-expanded:rotate-180 motion-reduce:transition-none";
-
-/** Points down; `group-aria-expanded` on the trigger turns it up. */
-function AccordionChevron(props: { size: number }) {
-  const mark = props.size * 0.42;
-  return (
+/**
+ * The chevron at a trigger's trailing edge, muted, the size of a row's
+ * icons (`controlSize.check`). A collapsible's (default) points along the
+ * row and turns down as it opens (`open`), in a lane as wide as its stroke
+ * (half its box), so it ends where the values below it end. An accordion's
+ * (`accordion`) points down and turns up with its trigger's `aria-expanded`
+ * (the trigger's `group` class), in its whole box. Both turn on a short
+ * transition, at once with reduced motion.
+ */
+export function DisclosureChevron(props: { open?: boolean; accordion?: boolean }) {
+  const icon = controlSize.check;
+  return props.accordion ? (
     <View
-      class={accordionChevronClass}
-      style={{
-        width: props.size,
-        height: props.size,
-        alignItems: "center",
-        justifyContent: "center",
-      }}
+      class="transition-transform duration-200 group-aria-expanded:rotate-180 motion-reduce:transition-none"
+      style={{ width: icon, height: icon, alignItems: "center", justifyContent: "center" }}
     >
-      <View
-        style={{
-          width: mark,
-          height: mark,
-          marginTop: -mark * 0.3,
-          borderRightWidth: 1.5,
-          borderBottomWidth: 1.5,
-          borderColor: colors.mutedForeground,
-          transform: [{ rotate: "45deg" }],
-        }}
-      />
+      <Icon name="chevron-down" size={icon} tint={colors.muted} />
+    </View>
+  ) : (
+    <View
+      class="transition-transform duration-150 motion-reduce:transition-none"
+      style={{ width: icon / 2, alignItems: "center", rotate: props.open ? "90deg" : "0deg" }}
+    >
+      <Icon name="chevron" size={icon} tint={colors.muted} />
     </View>
   );
 }
 
-/** The stack. Look lives on the items and triggers. */
+/** Options of `disclosurePanel`. */
+export interface DisclosurePanelOptions {
+  /** Room before the content: to line it up with the title, past a leading icon. */
+  start?: number;
+  /** The gap between its lines, default 6. */
+  gap?: number;
+}
+
+/**
+ * A panel's content under its trigger (a view inside an `AccordionPanel`, or
+ * a `Collapsible`'s `content`): padded at the bottom, 12 points with a
+ * pointer, 14 on a touch screen. The padding is the content's, not the
+ * panel's: a revealed panel is zero high while closed.
+ */
+export function disclosurePanel(o?: DisclosurePanelOptions): ViewStyle {
+  return { paddingStart: o?.start ?? 0, paddingBottom: controlSize.padding + 6, gap: o?.gap ?? 6 };
+}
+// @port end
+
+function mergeClass(base: string, extra?: string | null): string {
+  return extra ? `${base} ${extra}` : base;
+}
+
+/** `nsh/base`'s Accordion. Every base prop passes through. */
+export type AccordionProps = BaseAccordionProps;
+
+/** One section. */
+export type AccordionItemProps = BaseAccordionItemProps;
+
+/** The heading around {@link AccordionTrigger}. */
+export type AccordionHeaderProps = BaseAccordionHeaderProps;
+
+/**
+ * Expands the item. String children are the title; a trailing chevron is always drawn.
+ * Row options (`first`, `start`) feed `disclosureTriggerLook`.
+ */
+export type AccordionTriggerProps = Omit<BaseAccordionTriggerProps, "children"> & {
+  children?: string | JSX.Element;
+  first?: boolean;
+  start?: number;
+};
+
+/**
+ * The open section. `reveal` defaults on; panel padding is on an inner view.
+ */
+export type AccordionPanelProps = BaseAccordionPanelProps & {
+  /** Lines up with content past a leading icon in the trigger. */
+  start?: number;
+  gap?: number;
+};
+
+/** Hairline between items (among an item's children, not on the first). */
+export type AccordionDividerProps = {
+  show: boolean;
+};
+
+/** The stack of items. */
 export function Accordion(props: AccordionProps) {
   return <BaseAccordion {...props} />;
 }
 
-/** One section, with a bottom hairline. */
+/** One section. */
 export function AccordionItem(props: AccordionItemProps) {
-  const [, rest] = split(props, ["style"]);
+  const [, rest] = split(props, ["style", "children"]);
   return (
-    <BaseAccordionItem
-      {...rest}
-      style={mergeStyle(
-        { alignSelf: "stretch", borderBottomWidth: 1, borderBottomColor: colors.border },
-        props.style,
-      )}
-    />
+    <BaseAccordionItem {...rest} style={[{ alignSelf: "stretch" }, props.style ?? null]}>
+      {props.children}
+    </BaseAccordionItem>
   );
 }
 
-/** The heading. Level and the rest pass through. */
+/** Heading slot. */
 export function AccordionHeader(props: AccordionHeaderProps) {
   return <BaseAccordionHeader {...props} />;
 }
 
-/** Title and a chevron that turns as the item opens. */
+/** Title row with a chevron that turns as the item opens. */
 export function AccordionTrigger(props: AccordionTriggerProps) {
   const [, rest] = split(props, [
     "children",
+    "first",
+    "start",
     "class",
     "style",
     "hoverStyle",
     "activeStyle",
-    "focusStyle",
+    "focusVisibleStyle",
     "disabledStyle",
     "accessibilityLabel",
   ]);
-  const chrome = computed(() => rowChrome());
-  const title = () => {
-    const children = props.children;
-    if (typeof children === "string") return <Text style={chrome().label}>{children}</Text>;
-    return <View style={{ flexGrow: 1, flexShrink: 1 }}>{children}</View>;
-  };
+  const look = disclosureTriggerLook({
+    first: props.first,
+    start: props.start,
+  });
+  const body =
+    typeof props.children === "string" ? (
+      <RowLabel label={props.children} strong />
+    ) : (
+      <View style={{ flexGrow: 1, flexShrink: 1 }}>{props.children}</View>
+    );
 
   return (
     <BaseAccordionTrigger
       {...rest}
-      class={mergeClass("group", props.class)}
+      class={mergeClass(look.class, props.class)}
       accessibilityLabel={
         props.accessibilityLabel !== undefined
           ? props.accessibilityLabel
@@ -180,28 +194,33 @@ export function AccordionTrigger(props: AccordionTriggerProps) {
             ? props.children
             : undefined
       }
-      style={mergeStyle(chrome().row, props.style)}
-      hoverStyle={mergeStyle(chrome().hover, props.hoverStyle)}
-      activeStyle={mergeStyle(chrome().active, props.activeStyle)}
-      focusStyle={mergeStyle(chrome().focus, props.focusStyle)}
-      disabledStyle={mergeStyle(chrome().disabled, props.disabledStyle)}
+      style={[look.style, props.style ?? null]}
+      hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
+      activeStyle={[look.activeStyle, props.activeStyle ?? null]}
+      focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
+      disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     >
       <View
-        style={{ flexDirection: "row", alignItems: "center", flexGrow: 1, gap: chrome().row.gap }}
+        style={{ flexDirection: "row", alignItems: "center", flexGrow: 1, gap: controlSize.gap }}
       >
-        {title()}
-        <AccordionChevron size={chrome().icon} />
+        {body}
+        <DisclosureChevron accordion />
       </View>
     </BaseAccordionTrigger>
   );
 }
 
-/** The open section. `reveal` defaults on; padding is inside the revealed view. */
+/** Revealed content with `disclosurePanel` padding inside. */
 export function AccordionPanel(props: AccordionPanelProps) {
-  const [, rest] = split(props, ["style", "children", "reveal"]);
+  const [, rest] = split(props, ["style", "children", "reveal", "start", "gap"]);
   return (
     <BaseAccordionPanel {...rest} reveal={props.reveal ?? true} style={props.style}>
-      <View style={panelChrome()}>{props.children}</View>
+      <View style={disclosurePanel({ start: props.start, gap: props.gap })}>{props.children}</View>
     </BaseAccordionPanel>
   );
+}
+
+/** Hairline above an item when it is not the first. */
+export function AccordionDivider(props: AccordionDividerProps) {
+  return <RowDivider show={props.show} />;
 }

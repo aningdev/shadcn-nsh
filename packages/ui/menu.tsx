@@ -1,33 +1,245 @@
-// Source: examples/nsh-gallery-ui/look/menu.tsx, popup.tsx (MenuMark) @ 64ab8a1d (baseline), see NOTICE.
-import {
-  alpha,
-  colors,
-  disabledOpacity,
-  focusRing,
-  popupBackdrop,
-  popupSurface,
-} from "@shadcn-nsh/theme";
+// A menu: the look (`menuItemLook`, `menuPopup`, …) and the parts that wear it.
+// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
+// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+import { alpha, colors, finish, terminal } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
-import { context, split, Text, View } from "nsh";
+import { context, platform, split, Text, token, View } from "nsh";
 import {
   Menu as BaseMenu,
   MenuItem as BaseMenuItem,
   MenuSeparator as BaseMenuSeparator,
-  Submenu as BaseSubmenu,
   type MenuItemProps as BaseMenuItemProps,
   type MenuProps as BaseMenuProps,
   type MenuSeparatorProps as BaseMenuSeparatorProps,
   type OpenChangeReason,
+  Submenu as BaseSubmenu,
   type SubmenuProps as BaseSubmenuProps,
 } from "nsh/base";
 
-import { Button } from "./button";
-import { isPointer } from "./lib/density";
-import { follow } from "./lib/follow";
+import { Button, type ButtonKind } from "./button";
+import { Icon } from "./lib/icons";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
-import { motionDuration } from "./lib/press";
+import { backdrop } from "./lib/overlay";
+import { MenuMark, menuIndicator, popInStyles, type PopupSide, popupSurface } from "./lib/popup";
 
-/** Composition root for `nsh/base` Menu: open state + trigger slot for Trigger / Content. */
+// @port look/menu.tsx
+const pointer = platform.desktop;
+
+/** A menu row's height, corners and type: compact with a pointer, a
+ * finger's row on a touch screen. */
+export interface MenuItemDimensions {
+  height: number;
+  radius: number;
+  font: number;
+  /** A note's size (a shortcut, a value). */
+  note: number;
+  /** A leading icon's or a check's size. */
+  icon: number;
+}
+
+/** A menu row's height, corners and type: 26 points tall with a pointer, 46 on a touch screen. */
+export const menuItemSize: MenuItemDimensions = pointer
+  ? { height: 26, radius: 6, font: 13, note: 11.5, icon: 14 }
+  : { height: 46, radius: 10, font: 16, note: 14, icon: 18 };
+
+/** A row's inset from the popup's sides: in a terminal the popup's own padding is its Cell from the frame. */
+const inset = terminal ? 0 : 8;
+
+/** A row under the pointer or the keyboard (`hoverStyle`, `focusStyle`): a
+ * flat neutral fill, the theme's `accent`. */
+export const menuHighlight = (): ViewStyle => ({ backgroundColor: token("accent") });
+
+/** A row pressed (`activeStyle`): a shade deeper than the highlight. */
+export const menuPressed = (): ViewStyle => ({ backgroundColor: alpha(colors.text, 0.1) });
+
+/** Options of `menuItemLook`. */
+export interface MenuItemLookOptions {
+  /** A row of two lines (a label and a note under it): as tall as they are,
+   * 6 points above and below with a pointer, 10 on a touch screen, its mark
+   * at the top. */
+  tall?: boolean;
+  /** More style (a justification, a padding), over the look's. */
+  style?: ViewStyle;
+}
+
+/**
+ * A menu row's props (spread them on `nsh/base`'s `MenuItem`, or on a
+ * `Submenu`'s trigger): a row 8 points apart, 26 points tall with a
+ * pointer and 46 on a touch screen (`menuItemSize`), 8 points in from the
+ * popup's sides. Under the pointer and under the keyboard alike it takes
+ * the neutral `accent` fill (`menuHighlight`), so arrow keys show where
+ * they are; pressed, a shade deeper; disabled, 50%. Its label takes
+ * `menuItemLabel`, a note `menuItemNote`, an icon `menuItemGlyph`.
+ */
+export function menuItemLook(o?: MenuItemLookOptions) {
+  return {
+    get style(): ViewStyle {
+      return {
+        flexDirection: "row",
+        alignItems: o?.tall ? "flex-start" : "center",
+        gap: 8,
+        ...(o?.tall ? { paddingVertical: pointer ? 6 : 10 } : { height: menuItemSize.height }),
+        paddingHorizontal: inset,
+        borderRadius: menuItemSize.radius,
+        borderCurve: "continuous",
+        ...o?.style,
+      };
+    },
+    get hoverStyle(): ViewStyle {
+      return menuHighlight();
+    },
+    get focusStyle(): ViewStyle {
+      return menuHighlight();
+    },
+    get activeStyle(): ViewStyle {
+      return menuPressed();
+    },
+    disabledStyle: { opacity: 0.5 } as ViewStyle,
+  };
+}
+
+/** Options of `menuItemLabel` and `menuItemGlyph`. */
+export interface MenuItemTextOptions {
+  /** A destructive item: the danger tone. */
+  danger?: boolean;
+}
+
+/** A menu row's label: 13 points with a pointer, 16 on a touch screen, on one line, taking the row's free width. */
+export function menuItemLabel(o?: MenuItemTextOptions): TextStyle {
+  return {
+    numberOfLines: 1,
+    flexGrow: 1,
+    flexShrink: 0,
+    fontSize: menuItemSize.font,
+    color: o?.danger ? colors.danger : colors.text,
+  };
+}
+
+/** A menu row's note at its trailing edge (a shortcut, a value): 11.5 points with a pointer, 14 on a touch screen, faint. */
+export function menuItemNote(): TextStyle {
+  return { fontSize: menuItemSize.note, color: colors.faint };
+}
+
+/** A menu row's leading icon (`<Icon {...menuItemGlyph()} />`): 14 points with a pointer, 18 on a touch screen, muted (the danger tone for a destructive item). */
+export function menuItemGlyph(o?: MenuItemTextOptions) {
+  return {
+    size: menuItemSize.icon,
+    get tint() {
+      return o?.danger ? colors.danger : colors.muted;
+    },
+  };
+}
+
+/** Options of `menuPopup`. */
+export interface MenuPopupOptions {
+  /** The side of its trigger it opens on (its `placement`), which it comes in from: `"bottom"` unless set. */
+  side?: PopupSide;
+  /** With a pointer, its least width in points: 200 unless set. */
+  minWidth?: number;
+}
+
+/**
+ * What a menu takes besides its items (spread it on a `Menu` or a
+ * `ContextMenu`; its submenus' popups take the same): with a pointer the
+ * popup surface every menu shares (`popupSurface`), at least `minWidth`
+ * across, coming in from the trigger's `side` (`popInStyles`: a fade, 96%
+ * to full size, 4 points of slide, 150 ms); on a touch screen the sheet
+ * that slides up, the card's surface with its top corners 20 points round
+ * and 34 points under its rows for the home indicator; the scrim behind the
+ * sheet. The surface is the popup's own box: `nsh/base` holds it to the
+ * room on its side and scrolls the items inside it, so its edges and
+ * shadow stay put. Its values are getters, so they follow the appearance.
+ */
+export function menuPopup(o?: MenuPopupOptions) {
+  return {
+    get popupStyle(): ViewStyle {
+      return pointer
+        ? { ...popupSurface(), minWidth: o?.minWidth ?? 200, ...popInStyles(o?.side).style }
+        : {
+            backgroundColor: colors.surface,
+            borderTopLeftRadius: 20,
+            borderTopRightRadius: 20,
+            borderCurve: "continuous",
+            paddingHorizontal: 10,
+            paddingTop: 10,
+            paddingBottom: 34,
+          };
+    },
+    get popupStartingStyle(): ViewStyle | undefined {
+      return pointer ? popInStyles(o?.side).starting : undefined;
+    },
+    get backdropStyle(): ViewStyle {
+      return backdrop();
+    },
+  };
+}
+
+/** A group's title in a menu: not an item, nothing to press; 11 points semibold with a pointer, 13 on a touch screen, faint. */
+export function MenuLabel(props: { text: string }) {
+  return (
+    <Text
+      style={{
+        fontSize: pointer ? 11 : 13,
+        fontWeight: "600",
+        color: colors.faint,
+        paddingHorizontal: inset,
+        paddingTop: 6,
+        paddingBottom: 2,
+      }}
+    >
+      {props.text}
+    </Text>
+  );
+}
+
+/** A separator between a menu's groups (`<MenuSeparator style={menuSeparator()} />`): a groove, a hairline with a lip of light under it (`finish.groove`). */
+export function menuSeparator(): ViewStyle {
+  return {
+    height: 1,
+    marginTop: 4,
+    marginBottom: 5,
+    marginHorizontal: 4,
+    backgroundColor: colors.line,
+    boxShadow: finish.groove.boxShadow,
+  };
+}
+
+/**
+ * The row that opens a submenu (a `Submenu`'s `trigger`): `menuItemLook`'s
+ * row, `lead` (an icon) before the label and a faint chevron at its end;
+ * disabled, 50%.
+ */
+export function SubmenuRow(props: { label: string; lead?: JSX.Element; disabled?: boolean }) {
+  const look = menuItemLook();
+  return (
+    <View
+      hoverStyle={props.disabled ? undefined : look.hoverStyle}
+      focusStyle={look.focusStyle}
+      activeStyle={props.disabled ? undefined : look.activeStyle}
+      style={{ ...look.style, opacity: props.disabled ? 0.35 : 1 }}
+    >
+      {props.lead}
+      <Text style={menuItemLabel()}>{props.label}</Text>
+      <Icon name="chevron" size={pointer ? 12 : 14} tint={colors.faint} />
+    </View>
+  );
+}
+
+/** The row a touch screen's sheet shows above a submenu's items to go back (a `Submenu`'s `back`): a back chevron and the submenu's label in the accent. */
+export function SubmenuBack(props: { label: string }) {
+  const look = menuItemLook({ style: { gap: 6 } });
+  return (
+    <View activeStyle={look.activeStyle} style={look.style}>
+      <Icon name="back" size={14} tint={colors.accent} />
+      <Text style={{ fontSize: menuItemSize.font, fontWeight: "600", color: colors.accent }}>
+        {props.label}
+      </Text>
+    </View>
+  );
+}
+// @port end
+
+/** The root: it owns whether the menu is open, and the trigger slot. */
 export type MenuProps = {
   open?: boolean | null;
   defaultOpen?: boolean;
@@ -39,21 +251,13 @@ export type MenuProps = {
 };
 
 /**
- * Theme layer on `nsh/base` Menu as `MenuContent`. All base props + style hooks
- * pass through; consumer styles shallow-merge over defaults. Open / trigger /
- * lifecycle events are owned by the {@link Menu} context. Defaults: placement
- * bottom, align start, offset 4.
+ * The popup. Every prop of `nsh/base`'s Menu passes through but the ones the root owns;
+ * `popupStyle` / `backdropStyle` / starting styles go over `menuPopup`. Defaults: placement
+ * `bottom`, align `start`, offset `4`.
  */
 export type MenuContentProps = Omit<
   BaseMenuProps,
-  | "trigger"
-  | "open"
-  | "defaultOpen"
-  | "onOpenChange"
-  | "onOpen"
-  | "onClose"
-  | "onCancel"
-  | "children"
+  "trigger" | "open" | "defaultOpen" | "onOpenChange" | "onOpen" | "onClose" | "onCancel"
 > & {
   children?: JSX.Element;
 };
@@ -61,38 +265,32 @@ export type MenuContentProps = Omit<
 /** Opens the menu. String children render as a Button; otherwise a pressable View. */
 export type MenuTriggerProps = {
   children?: string | JSX.Element;
+  variant?: ButtonKind;
   disabled?: boolean;
-  class?: string | null;
   style?: StyleProp<ViewStyle>;
 };
 
-/** Theme layer on `nsh/base` MenuItem — forwards `checked` / `indicator` to base. */
-export type MenuItemProps = BaseMenuItemProps;
+/** Theme layer on `nsh/base` MenuItem. A string child takes `menuItemLabel`. */
+export type MenuItemProps = Omit<BaseMenuItemProps, "children"> & {
+  /** A destructive item: danger tone on the label. */
+  danger?: boolean;
+  children?: string | JSX.Element;
+};
 
-/** Checkbox-shaped item — sets `checked` on {@link MenuItem} and shows a check. */
+/** Checkbox-shaped item — sets `checked` and shows a check. */
 export type MenuCheckboxItemProps = Omit<MenuItemProps, "checked"> & {
-  /** Checked or not. Omitted means unchecked, and the check's space stays. */
   checked?: boolean | null;
 };
 
-/** One choice of a group — `menuitemradio`, with a dot instead of a check. */
+/** One choice of a group — `menuitemradio`, with a dot. */
 export type MenuRadioItemProps = Omit<MenuItemProps, "checked"> & {
-  /** Selected or not. Omitted means not selected, and the dot's space stays. */
   checked?: boolean | null;
 };
 
 /** App group wrapper (not an `nsh/base` part). */
 export type MenuGroupProps = {
   children?: JSX.Element;
-  class?: string | null;
   style?: StyleProp<ViewStyle>;
-};
-
-/** App label text (not an `nsh/base` part). */
-export type MenuLabelProps = {
-  children?: string | JSX.Element;
-  class?: string | null;
-  style?: StyleProp<TextStyle | ViewStyle>;
 };
 
 /** Theme layer on `nsh/base` MenuSeparator. */
@@ -101,25 +299,20 @@ export type MenuSeparatorProps = BaseMenuSeparatorProps;
 /** App trailing shortcut hint (not an `nsh/base` part). */
 export type MenuShortcutProps = {
   children?: string | JSX.Element;
-  class?: string | null;
   style?: StyleProp<TextStyle | ViewStyle>;
 };
 
-/** Composition root for a nested `nsh/base` Submenu: trigger slot only. */
+/** Composition root for a nested Submenu: trigger slot only. */
 export type MenuSubProps = {
   children?: JSX.Element;
   disabled?: boolean;
 };
 
-/** Item that opens a submenu. String children get a chevron row. */
+/** Item that opens a submenu. String children get `SubmenuRow`. */
 export type MenuSubTriggerProps = {
   children?: string | JSX.Element;
   disabled?: boolean;
-  class?: string | null;
   style?: StyleProp<ViewStyle>;
-  hoverStyle?: StyleProp<ViewStyle>;
-  activeStyle?: StyleProp<ViewStyle>;
-  focusStyle?: StyleProp<ViewStyle>;
 };
 
 /** Nested menu body — mounts `nsh/base` Submenu with the SubTrigger slot. */
@@ -144,228 +337,15 @@ function useMenu() {
 
 type SubContextValue = {
   trigger: Slot;
-  /** Filled when the trigger slot runs, if its child is a string (the touch sheet's back row). */
   label: { value?: string };
   disabled?: boolean;
 };
 const SubContext = context<SubContextValue | null>(null);
 
-/** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
-function mergeStyle<T extends ViewStyle | TextStyle>(
-  base?: StyleProp<T> | null,
-  consumer?: StyleProp<T> | null,
-): StyleProp<T> | undefined {
-  if (base == null && consumer == null) return undefined;
-  if (base == null) return consumer ?? undefined;
-  if (consumer == null) return base ?? undefined;
-  return [base, consumer];
-}
-
-/**
- * Row metrics and every menu chrome literal. Pointer: 26-point rows; touch: a 46-point finger
- * row. Heights are minimums so a label can grow with the user's text. Colours are read here, at
- * render, so they follow the appearance.
- */
-function look() {
-  const pointer = isPointer();
-  // Geometry from look/menu.tsx (`menuItemSize`, inset 8). `terminal` is dropped.
-  const row = pointer
-    ? { minHeight: 26, radius: 6, font: 13, note: 11.5, icon: 14, chevron: 12, section: 11, dot: 6 }
-    : { minHeight: 46, radius: 10, font: 16, note: 14, icon: 18, chevron: 14, section: 13, dot: 6 };
-  const inset = 8;
-  return {
-    row,
-    item(): TextStyle {
-      return {
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 8,
-        minHeight: row.minHeight,
-        paddingHorizontal: inset,
-        borderRadius: row.radius,
-        borderCurve: "continuous",
-        fontSize: row.font,
-        // One line, inherited by the label. A row does not wrap.
-        numberOfLines: 1,
-        // A getter, not a snapshot: a submenu trigger is built once, and a captured
-        // light foreground stays near-black (or near-white) after the appearance changes.
-        get color() {
-          return colors.foreground;
-        },
-        transitionProperty: "background-color, opacity",
-        transitionDuration: motionDuration(150),
-        transitionTimingFunction: "ease-out",
-      };
-    },
-    /** Hover and keyboard share one neutral fill, so arrow keys show where they are. */
-    highlight(): ViewStyle {
-      return { backgroundColor: colors.accent };
-    },
-    /** A shade deeper than the highlight. No sink: a menu row does not scale. */
-    pressed(): ViewStyle {
-      return { backgroundColor: alpha(colors.foreground, 0.1) };
-    },
-    dim(): ViewStyle {
-      return { opacity: disabledOpacity() };
-    },
-    section(): TextStyle {
-      return {
-        fontSize: row.section,
-        fontWeight: "600",
-        color: colors.mutedForeground,
-        paddingHorizontal: inset,
-        paddingTop: 6,
-        paddingBottom: 2,
-      };
-    },
-    shortcut(): TextStyle {
-      // Same ink as the label. A fainter note under `disabledOpacity` disappears.
-      return {
-        marginLeft: "auto",
-        flexShrink: 0,
-        fontSize: row.note,
-        get color() {
-          return colors.foreground;
-        },
-      };
-    },
-    separator(): ViewStyle {
-      // The hairline's thickness, not a control height. No lip of light: the theme has no groove.
-      return {
-        height: 1,
-        marginTop: 4,
-        marginBottom: 5,
-        marginHorizontal: 4,
-        backgroundColor: colors.border,
-      };
-    },
-    chevron(): TextStyle {
-      // Foreground, not a faint tint: the row's opacity is the only disabled dimming.
-      return {
-        fontSize: row.chevron,
-        get color() {
-          return colors.foreground;
-        },
-      };
-    },
-    popup(): ViewStyle {
-      if (pointer) return { ...popupSurface(), minWidth: 200 };
-      // The sheet is not the floating popup: no border, no shadow, top corners only.
-      return {
-        backgroundColor: colors.card,
-        borderTopLeftRadius: 20,
-        borderTopRightRadius: 20,
-        borderCurve: "continuous",
-        paddingHorizontal: 10,
-        paddingTop: 10,
-        paddingBottom: 34,
-      };
-    },
-  };
-}
-
-/** A menu row's pointer and touch metrics: minimum height, type size, mark and chevron. */
-export function menuRow() {
-  return look().row;
-}
-
-/** The menu popup on a pointer (at least 200 wide), or the touch sheet. Shared with context menus. */
-export function menuPopupChrome(): ViewStyle {
-  return look().popup();
-}
-
-/**
- * Menu and context-menu entrance: opacity and a 4-point rise over 100 ms.
- * Duration is 0 when the user asked for less motion.
- */
-export function menuPopupMotion(): ViewStyle {
-  return {
-    transitionProperty: "opacity, transform",
-    transitionDuration: motionDuration(100),
-    transitionTimingFunction: "ease-out",
-  };
-}
-
-/**
- * Row ink. `foreground` is read here, in this component's render, so the text follows the
- * appearance even when a submenu trigger is kept from the first time it was built.
- */
-function Ink(props: { children?: string; size?: number }) {
-  return <Text style={{ fontSize: props.size, color: colors.foreground }}>{props.children}</Text>;
-}
-
-/** Passed through when the row is disabled, so the highlight does not cover the dim. */
-function stateStyle(
-  disabled: boolean | undefined,
-  base: ViewStyle,
-  consumer?: StyleProp<ViewStyle> | null,
-) {
-  if (disabled) return consumer ?? undefined;
-  return mergeStyle(base, consumer);
-}
-
-/**
- * The check or dot in front of a checkable row. It springs in from 75% (and lands at once with
- * reduced motion). The reference tints it with its brand accent; here that is `primary`.
- */
-function MenuMark(props: { kind: "check" | "dot"; on: () => boolean }) {
-  const row = look().row;
-  const shown = follow(() => (props.on() ? 1 : 0));
-  return (
-    <View
-      style={{
-        width: row.icon,
-        height: row.icon,
-        alignItems: "center",
-        justifyContent: "center",
-        opacity: shown,
-        transform: [{ scale: shown.interpolate({ inputRange: [0, 1], outputRange: [0.75, 1] }) }],
-      }}
-    >
-      {props.kind === "dot" ? (
-        <View
-          style={{
-            width: row.dot,
-            height: row.dot,
-            borderRadius: row.dot / 2,
-            backgroundColor: colors.primary,
-          }}
-        />
-      ) : (
-        <Text
-          style={{
-            fontSize: row.icon - 2,
-            fontWeight: "700",
-            lineHeight: row.icon,
-            color: colors.primary,
-          }}
-        >
-          ✓
-        </Text>
-      )}
-    </View>
-  );
-}
-
-/** The touch sheet's way back to the menu that opened this one. */
-function submenuBack(label: string) {
-  const chrome = look();
-  return (
-    <View activeStyle={chrome.pressed()} style={{ ...chrome.item(), gap: 6 }}>
-      <Text style={{ fontSize: 14, color: colors.primary }}>‹</Text>
-      <Text style={{ fontSize: chrome.row.font, fontWeight: "600", color: colors.primary }}>
-        {label}
-      </Text>
-    </View>
-  );
-}
-
 /** Composition root: owns the open state the parts below read. */
 export function Menu(props: MenuProps) {
-  // `props` itself is the options bag: `open` / `onOpenChange` are read when used.
   const state = createOpenState<OpenChangeReason>(props);
   const triggerSlot = createSlot();
-
   return (
     <MenuContext.Provider
       value={{
@@ -387,17 +367,18 @@ export function Menu(props: MenuProps) {
   );
 }
 
-/** Opens the menu; a string child renders a `Button`. */
+/** Opens the menu; a string child renders a `Button`. Base toggles on press. */
 export function MenuTrigger(props: MenuTriggerProps) {
   const ctx = useMenu();
-
-  // Base toggles the menu on a press of the trigger; no onPress of our own.
   ctx.trigger.set(() => {
-    const children = props.children;
-    if (typeof children === "string") {
+    if (typeof props.children === "string") {
       return (
-        <Button disabled={props.disabled} class={props.class ?? undefined} style={props.style}>
-          {children}
+        <Button
+          disabled={props.disabled}
+          variant={props.variant ?? "secondary"}
+          style={props.style}
+        >
+          {props.children}
         </Button>
       );
     }
@@ -406,45 +387,31 @@ export function MenuTrigger(props: MenuTriggerProps) {
         accessible
         role="button"
         accessibilityState={{ disabled: props.disabled }}
-        class={props.class ?? undefined}
-        focusStyle={focusRing()}
-        style={mergeStyle(props.disabled ? { opacity: disabledOpacity() } : undefined, props.style)}
+        style={props.style}
       >
-        {children}
+        {props.children}
       </View>
     );
   });
-  return <View style={{ width: 0, height: 0 }} />;
+  // No layout node: a zero-size view would still take a flex `gap` in the demo row.
+  return null;
 }
 
-/** The popup surface of the menu, with its entrance motion as the default. */
+/** The popup surface of the menu. */
 export function MenuContent(props: MenuContentProps) {
   const ctx = useMenu();
   const triggerAccessor = ctx.trigger.get();
-  // Only what this part defaults or owns is split off; the rest (class, style, hover…) passes through.
   const [, rest] = split(props, [
     "children",
     "popupStyle",
     "backdropStyle",
     "popupStartingStyle",
-    "popupEndingStyle",
     "placement",
     "align",
     "offset",
   ]);
-
-  // menu.md: 100 ms, from 4 points above. Either hook of a phase set by the consumer
-  // owns that phase (`null` turns it off); the classes left in `rest` pass through.
-  const motion = {
-    style: menuPopupMotion(),
-    startingStyle: { opacity: 0, transform: [{ translateY: -4 }] },
-    endingStyle: { opacity: 0 },
-  } satisfies Record<"style" | "startingStyle" | "endingStyle", ViewStyle>;
-  const defaultStarting = () =>
-    props.popupStartingClass === undefined && props.popupStartingStyle === undefined;
-  const defaultEnding = () =>
-    props.popupEndingClass === undefined && props.popupEndingStyle === undefined;
-
+  const side = (props.placement ?? "bottom") as PopupSide;
+  const chrome = menuPopup({ side });
   return (
     <BaseMenu
       {...rest}
@@ -457,22 +424,24 @@ export function MenuContent(props: MenuContentProps) {
       onOpen={ctx.onOpen}
       onClose={ctx.onClose}
       onCancel={ctx.onCancel}
-      popupStyle={mergeStyle({ ...menuPopupChrome(), ...motion.style }, props.popupStyle)}
-      backdropStyle={mergeStyle(popupBackdrop(), props.backdropStyle)}
-      popupStartingStyle={defaultStarting() ? motion.startingStyle : props.popupStartingStyle}
-      popupEndingStyle={defaultEnding() ? motion.endingStyle : props.popupEndingStyle}
+      popupStyle={[chrome.popupStyle, props.popupStyle ?? null]}
+      backdropStyle={[chrome.backdropStyle, props.backdropStyle ?? null]}
+      popupStartingStyle={
+        props.popupStartingStyle !== undefined
+          ? props.popupStartingStyle
+          : chrome.popupStartingStyle
+      }
     >
       {props.children}
     </BaseMenu>
   );
 }
 
-/** One row: accent while hovered or highlighted, a deeper fill while pressed, dimmed when disabled. */
+/** One row: highlight while hovered or focused, pressed fill, dimmed when disabled. */
 export function MenuItem(props: MenuItemProps) {
-  const chrome = look();
-  // Defaulted: indicator, style, and the row's states. Everything else passes through.
   const [, rest] = split(props, [
     "children",
+    "danger",
     "indicator",
     "style",
     "hoverStyle",
@@ -480,27 +449,35 @@ export function MenuItem(props: MenuItemProps) {
     "activeStyle",
     "disabledStyle",
   ]);
+  const look = menuItemLook();
   const checkable = props.checked != null;
-
   return (
     <BaseMenuItem
       {...rest}
+      indicatorClass={props.indicatorClass ?? (checkable ? menuIndicator : undefined)}
       indicator={
         props.indicator ??
         (checkable ? (
           <MenuMark
             kind={props.role === "menuitemradio" ? "dot" : "check"}
-            on={() => props.checked === true}
+            size={menuItemSize.icon}
+            tint={token("accent")}
           />
         ) : undefined)
       }
-      style={mergeStyle(chrome.item(), props.style)}
-      hoverStyle={stateStyle(props.disabled, chrome.highlight(), props.hoverStyle)}
-      focusStyle={stateStyle(props.disabled, chrome.highlight(), props.focusStyle)}
-      activeStyle={stateStyle(props.disabled, chrome.pressed(), props.activeStyle)}
-      disabledStyle={mergeStyle(chrome.dim(), props.disabledStyle)}
+      style={[look.style, props.style ?? null]}
+      hoverStyle={props.disabled ? props.hoverStyle : [look.hoverStyle, props.hoverStyle ?? null]}
+      focusStyle={props.disabled ? props.focusStyle : [look.focusStyle, props.focusStyle ?? null]}
+      activeStyle={
+        props.disabled ? props.activeStyle : [look.activeStyle, props.activeStyle ?? null]
+      }
+      disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     >
-      {props.children}
+      {typeof props.children === "string" ? (
+        <Text style={menuItemLabel({ danger: props.danger })}>{props.children}</Text>
+      ) : (
+        props.children
+      )}
     </BaseMenuItem>
   );
 }
@@ -511,7 +488,7 @@ export function MenuCheckboxItem(props: MenuCheckboxItemProps) {
   return <MenuItem {...rest} checked={props.checked ?? false} />;
 }
 
-/** A menu row that is one choice of a group. The app checks one at a time; there is no radio group part. */
+/** A menu row that is one choice of a group. */
 export function MenuRadioItem(props: MenuRadioItemProps) {
   const [, rest] = split(props, ["checked"]);
   return <MenuItem {...rest} role="menuitemradio" checked={props.checked ?? false} />;
@@ -519,55 +496,26 @@ export function MenuRadioItem(props: MenuRadioItemProps) {
 
 /** Groups related rows. */
 export function MenuGroup(props: MenuGroupProps) {
-  return (
-    <View class={props.class ?? undefined} style={props.style}>
-      {props.children}
-    </View>
-  );
-}
-
-/** A group's title: not a row, nothing to press. */
-export function MenuLabel(props: MenuLabelProps) {
-  if (typeof props.children !== "string" && props.children != null) {
-    return (
-      <View class={props.class ?? undefined} style={props.style as StyleProp<ViewStyle> | null}>
-        {props.children}
-      </View>
-    );
-  }
-  return (
-    <Text
-      class={props.class ?? undefined}
-      style={mergeStyle(look().section(), props.style as StyleProp<TextStyle> | null)}
-    >
-      {props.children}
-    </Text>
-  );
+  return <View style={props.style}>{props.children}</View>;
 }
 
 /** A hairline between groups. */
 export function MenuSeparator(props: MenuSeparatorProps = {}) {
   const [, rest] = split(props, ["style"]);
-  return <BaseMenuSeparator {...rest} style={mergeStyle(look().separator(), props.style)} />;
+  return <BaseMenuSeparator {...rest} style={[menuSeparator(), props.style ?? null]} />;
 }
 
 /** The shortcut shown at a row's trailing edge. */
 export function MenuShortcut(props: MenuShortcutProps) {
   if (typeof props.children !== "string" && props.children != null) {
     return (
-      <View
-        class={props.class ?? undefined}
-        style={mergeStyle({ marginLeft: "auto" }, props.style as StyleProp<ViewStyle> | null)}
-      >
+      <View style={[{ marginLeft: "auto" }, props.style as StyleProp<ViewStyle>]}>
         {props.children}
       </View>
     );
   }
   return (
-    <Text
-      class={props.class ?? undefined}
-      style={mergeStyle(look().shortcut(), props.style as StyleProp<TextStyle> | null)}
-    >
+    <Text style={[menuItemNote(), { marginLeft: "auto" }, props.style as StyleProp<TextStyle>]}>
       {props.children}
     </Text>
   );
@@ -596,65 +544,26 @@ export function MenuSub(props: MenuSubProps) {
 export function MenuSubTrigger(props: MenuSubTriggerProps) {
   const ctx = SubContext();
   if (!ctx) throw new Error("MenuSubTrigger must be used within <MenuSub>");
-  const isDisabled = () => props.disabled ?? ctx.disabled;
-
   ctx.trigger.set(() => {
-    const chrome = look();
     const children = props.children;
-    // `disabledOpacity(undefined)` is 0.5: its default argument means "a disabledStyle", not "enabled".
-    const disabled = Boolean(isDisabled());
+    const disabled = Boolean(props.disabled ?? ctx.disabled);
     ctx.label.value = typeof children === "string" ? children : undefined;
-    // Spread copies a getter's current value. Put `color` and `opacity` back as getters
-    // so a trigger base keeps from the first open still follows the appearance, and so
-    // the only dim is `disabledOpacity` on foreground (never a muted ink under it).
-    const row = {
-      ...chrome.item(),
-      justifyContent: "space-between" as const,
-      get color() {
-        return colors.foreground;
-      },
-      get opacity() {
-        return disabled ? disabledOpacity() : 1;
-      },
-    };
     if (typeof children === "string") {
-      return (
-        <View
-          class={props.class ?? undefined}
-          style={mergeStyle(row, props.style)}
-          hoverStyle={stateStyle(disabled, chrome.highlight(), props.hoverStyle)}
-          focusStyle={stateStyle(disabled, chrome.highlight(), props.focusStyle)}
-          activeStyle={stateStyle(disabled, chrome.pressed(), props.activeStyle)}
-        >
-          <Ink>{children}</Ink>
-          <Ink size={chrome.row.chevron}>›</Ink>
-        </View>
-      );
+      return <SubmenuRow label={children} disabled={disabled} />;
     }
+    const look = menuItemLook();
     return (
       <View
-        class={props.class ?? undefined}
-        style={mergeStyle(
-          {
-            ...chrome.item(),
-            get color() {
-              return colors.foreground;
-            },
-            get opacity() {
-              return disabled ? disabledOpacity() : 1;
-            },
-          },
-          props.style,
-        )}
-        hoverStyle={stateStyle(disabled, chrome.highlight(), props.hoverStyle)}
-        focusStyle={stateStyle(disabled, chrome.highlight(), props.focusStyle)}
-        activeStyle={stateStyle(disabled, chrome.pressed(), props.activeStyle)}
+        hoverStyle={disabled ? undefined : look.hoverStyle}
+        focusStyle={look.focusStyle}
+        activeStyle={disabled ? undefined : look.activeStyle}
+        style={[{ ...look.style, opacity: disabled ? 0.35 : 1 }, props.style ?? null]}
       >
         {children ?? <View />}
       </View>
     );
   });
-  return <View style={{ width: 0, height: 0 }} />;
+  return null;
 }
 
 /** The popup of a submenu. On a touch screen a string trigger becomes the back row. */
@@ -663,12 +572,14 @@ export function MenuSubContent(props: MenuSubContentProps) {
   if (!ctx) throw new Error("MenuSubContent must be used within <MenuSub>");
   const triggerAccessor = ctx.trigger.get();
   const [, rest] = split(props, ["children", "disabled", "back"]);
-  // The slot writes the label; read it after the trigger is built.
   const trigger = (triggerAccessor?.() as JSX.Element) ?? <View />;
   const name = ctx.label.value;
   const back =
-    props.back !== undefined ? props.back : !isPointer() && name ? submenuBack(name) : undefined;
-
+    props.back !== undefined ? (
+      props.back
+    ) : !pointer && name ? (
+      <SubmenuBack label={name} />
+    ) : undefined;
   return (
     <BaseSubmenu {...rest} disabled={props.disabled ?? ctx.disabled} trigger={trigger} back={back}>
       {props.children}

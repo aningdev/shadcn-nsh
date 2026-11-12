@@ -1,5 +1,5 @@
-// Source: examples/nsh-gallery-ui/look/menu.tsx @ 64ab8a1d (baseline), see NOTICE.
-import { popupBackdrop } from "@shadcn-nsh/theme";
+// A context menu: `nsh/base`'s ContextMenu with the shared menu look from `menu.tsx`.
+// This file is the shell only; row and popup looks live in `menu.tsx`.
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { context, split, View } from "nsh";
 import {
@@ -9,7 +9,7 @@ import {
 } from "nsh/base";
 
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
-import { menuPopupChrome, menuPopupMotion } from "./menu";
+import { menuPopup } from "./menu";
 
 export {
   MenuCheckboxItem as ContextMenuCheckboxItem,
@@ -25,7 +25,6 @@ export {
   type MenuCheckboxItemProps as ContextMenuCheckboxItemProps,
   type MenuGroupProps as ContextMenuGroupProps,
   type MenuItemProps as ContextMenuItemProps,
-  type MenuLabelProps as ContextMenuLabelProps,
   type MenuRadioItemProps as ContextMenuRadioItemProps,
   type MenuSeparatorProps as ContextMenuSeparatorProps,
   type MenuShortcutProps as ContextMenuShortcutProps,
@@ -37,7 +36,6 @@ export {
 /** Composition root for `nsh/base` ContextMenu: open state + trigger slot. */
 export type ContextMenuProps = {
   open?: boolean | null;
-  /** Open at first, while `open` is not set. */
   defaultOpen?: boolean;
   disabled?: boolean;
   children?: JSX.Element;
@@ -61,7 +59,6 @@ export type ContextMenuContentProps = Omit<
 /** Surface that opens the menu on secondary click / long-press. */
 export type ContextMenuTriggerProps = {
   children?: JSX.Element;
-  class?: string | null;
   style?: StyleProp<ViewStyle>;
 };
 
@@ -81,23 +78,10 @@ function useContextMenu() {
   return ctx;
 }
 
-/** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
-function mergeStyle(
-  base?: StyleProp<ViewStyle> | null,
-  consumer?: StyleProp<ViewStyle> | null,
-): StyleProp<ViewStyle> | undefined {
-  if (base == null && consumer == null) return undefined;
-  if (base == null) return consumer ?? undefined;
-  if (consumer == null) return base ?? undefined;
-  return [base, consumer];
-}
-
 /** Composition root: a menu opened at the pointer. */
 export function ContextMenu(props: ContextMenuProps) {
-  // `props` itself is the options bag: `open` / `onOpenChange` are read when used.
   const state = createOpenState<OpenChangeReason>(props);
   const triggerSlot = createSlot();
-
   return (
     <ContextMenuContext.Provider
       value={{
@@ -125,46 +109,28 @@ export function ContextMenu(props: ContextMenuProps) {
 /** The area that opens the menu. */
 export function ContextMenuTrigger(props: ContextMenuTriggerProps) {
   const ctx = useContextMenu();
-
   ctx.trigger.set(() => {
-    if (props.class != null || props.style != null) {
-      return (
-        <View class={props.class ?? undefined} style={props.style}>
-          {props.children ?? <View />}
-        </View>
-      );
+    if (props.style != null) {
+      return <View style={props.style}>{props.children ?? <View />}</View>;
     }
     return props.children ?? <View />;
   });
-  return <View style={{ width: 0, height: 0 }} />;
+  // No layout node: a zero-size view would still take a flex `gap` in the demo row.
+  return null;
 }
 
-/** The popup surface, reusing the menu's parts. */
+/** The popup surface, reusing the menu look. */
 export function ContextMenuContent(props: ContextMenuContentProps) {
   const ctx = useContextMenu();
   const triggerAccessor = ctx.trigger.get();
-  // Only what this part defaults or owns is split off; the rest (class, style, hover…) passes through.
   const [, rest] = split(props, [
     "children",
     "popupStyle",
     "backdropStyle",
     "popupStartingStyle",
-    "popupEndingStyle",
     "offset",
   ]);
-
-  // menu.md: the menu surface at the pointer; 100 ms, from 4 points above. Either hook
-  // of a phase set by the consumer owns that phase (`null` turns it off).
-  const motion = {
-    style: menuPopupMotion(),
-    startingStyle: { opacity: 0, transform: [{ translateY: -4 }] },
-    endingStyle: { opacity: 0 },
-  } satisfies Record<"style" | "startingStyle" | "endingStyle", ViewStyle>;
-  const defaultStarting = () =>
-    props.popupStartingClass === undefined && props.popupStartingStyle === undefined;
-  const defaultEnding = () =>
-    props.popupEndingClass === undefined && props.popupEndingStyle === undefined;
-
+  const chrome = menuPopup();
   return (
     <BaseContextMenu
       {...rest}
@@ -176,10 +142,13 @@ export function ContextMenuContent(props: ContextMenuContentProps) {
       onOpen={ctx.onOpen}
       onClose={ctx.onClose}
       onCancel={ctx.onCancel}
-      popupStyle={mergeStyle({ ...menuPopupChrome(), ...motion.style }, props.popupStyle)}
-      backdropStyle={mergeStyle(popupBackdrop(), props.backdropStyle)}
-      popupStartingStyle={defaultStarting() ? motion.startingStyle : props.popupStartingStyle}
-      popupEndingStyle={defaultEnding() ? motion.endingStyle : props.popupEndingStyle}
+      popupStyle={[chrome.popupStyle, props.popupStyle ?? null]}
+      backdropStyle={[chrome.backdropStyle, props.backdropStyle ?? null]}
+      popupStartingStyle={
+        props.popupStartingStyle !== undefined
+          ? props.popupStartingStyle
+          : chrome.popupStartingStyle
+      }
     >
       {props.children}
     </BaseContextMenu>

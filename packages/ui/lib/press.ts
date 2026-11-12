@@ -1,41 +1,36 @@
-// Source: examples/nsh-gallery-ui/look/press.ts @ 64ab8a1d (baseline), see NOTICE.
+// A press's feedback, native: a control sinks while pressed and eases back, from its
+// `activeStyle`, so it never waits for JS.
+// Ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE). The region
+// below is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`, not here.
 import type { ViewStyle } from "nsh";
 import { reduceMotion } from "nsh";
 
-/**
- * Duration of a style transition: `ms`, or 0 when the user asked for less motion.
- * Read it while building a style (a render, a `computed`): it is a snapshot.
- */
-export function motionDuration(ms: number): number {
-  return reduceMotion() ? 0 : ms;
+// @port look/press.ts
+/** The easing of a press and of the state changes beside it: 150 ms, ease-out. */
+export const pressEasing = {
+  transitionDuration: 150,
+  transitionTimingFunction: "ease-out",
+} satisfies ViewStyle;
+
+/** A `style`'s transition for a press's sink: `transform`, and `also` (more
+ * of CSS's property names the control's states change, as
+ * `"background-color, opacity"`) alike, over `pressEasing`. */
+export function pressTransition(also?: string): ViewStyle {
+  return { transitionProperty: also ? `${also}, transform` : "transform", ...pressEasing };
 }
 
 /**
- * Press feedback (NSH Design Guides "Motion"): the control sinks to `scale` while active and
- * eases back with the state changes beside it (`also`: CSS property names). Reduced motion
- * removes the sink and sets the duration to 0.
- *
- * Spread `activeStyle` into the control's `activeStyle` (after its own pressed shade) and
- * `transition` into its `style`.
+ * A press that sinks a control to `scale` (default 97%; none with reduced
+ * motion). Spread `activeStyle` into the control's `activeStyle` (after its
+ * own pressed shade) and `transition` into its `style`
+ * (`pressTransition(also)`).
  */
-export function pressSink(scale: number, also: string) {
+export function pressSink(scale = 0.97, also?: string) {
   return {
     get activeStyle(): ViewStyle {
       return reduceMotion() ? {} : { transform: [{ scale }] };
     },
-    get transition(): ViewStyle {
-      return {
-        transitionProperty: `${also}, transform`,
-        transitionDuration: motionDuration(150),
-        transitionTimingFunction: "ease-out",
-      };
-    },
+    transition: pressTransition(also),
   };
 }
-
-/**
- * The press feedback of a box or a ring that sits in a row: it sinks to 90% while the row is
- * pressed (give the row `class="group"`), and eases back; still with reduced motion.
- */
-export const groupSink =
-  "transition-transform duration-150 ease-out group-active:scale-90 motion-reduce:transition-none";
+// @port end

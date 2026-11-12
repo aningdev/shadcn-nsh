@@ -1,45 +1,39 @@
-// Source: examples/nsh-gallery-ui/look/disclosure.tsx @ 64ab8a1d (baseline), see NOTICE.
-import { colors, disabledOpacity, focusRing } from "@shadcn-nsh/theme";
+// A collapsible: `nsh/base` Collapsible with the shared disclosure look from `accordion.tsx`.
+// Composition root owns open state; the trigger registers via a slot on {@link CollapsibleContent}.
 import type { JSX, StyleProp, ViewStyle } from "nsh";
-import { context, split, Text, View } from "nsh";
+import { context, split, View } from "nsh";
 import {
   Collapsible as BaseCollapsible,
   type CollapsibleProps as BaseCollapsibleProps,
 } from "nsh/base";
 
-import { isPointer } from "./lib/density";
+import {
+  disclosurePanel,
+  disclosureTriggerLook,
+  DisclosureChevron,
+  type DisclosurePanelOptions,
+} from "./accordion";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
-import { pressSink } from "./lib/press";
+import { RowLabel } from "./lib/surface";
 
-/**
- * Composition root for `nsh/base` Collapsible: open state + trigger slot.
- * Base has no open events; `defaultOpen` / `onOpenChange` are composition-only.
- */
+/** Composition root: open state and a slot for the trigger row. */
 export type CollapsibleProps = {
   open?: boolean | null;
-  /** Uncontrolled initial open (composition — not on base). */
   defaultOpen?: boolean;
   children?: JSX.Element;
-  /** Open change (composition-only). */
-  onOpenChange?: (event: { open: boolean }) => void;
+  onOpenChange?: (event: { open: boolean; reason?: string }) => void;
 };
 
-/**
- * Theme layer on `nsh/base` Collapsible as shadcn `CollapsibleContent`.
- * `children` become base `content`. `reveal` defaults on.
- */
+/** `nsh/base` Collapsible as content. `children` become the revealed panel. */
 export type CollapsibleContentProps = Omit<
   BaseCollapsibleProps,
   "open" | "content" | "children"
 > & {
   children?: JSX.Element;
+  panel?: DisclosurePanelOptions;
 };
 
-/**
- * Toggles open. A disclosure row (`role="button"`), not a Button — popup
- * buttons are a different recipe. String children are the title; the chevron
- * is always drawn at the trailing edge.
- */
+/** Toggles open: a disclosure row, not a {@link Button}. String children are the title. */
 export type CollapsibleTriggerProps = {
   children?: string | JSX.Element;
   disabled?: boolean;
@@ -47,9 +41,11 @@ export type CollapsibleTriggerProps = {
   style?: StyleProp<ViewStyle>;
   hoverStyle?: StyleProp<ViewStyle>;
   activeStyle?: StyleProp<ViewStyle>;
-  focusStyle?: StyleProp<ViewStyle>;
+  focusVisibleStyle?: StyleProp<ViewStyle>;
   disabledStyle?: StyleProp<ViewStyle>;
   accessibilityLabel?: string | null;
+  first?: boolean;
+  start?: number;
 };
 
 type CollapsibleContextValue = OpenState & {
@@ -64,88 +60,7 @@ function useCollapsible() {
   return ctx;
 }
 
-/** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
-function mergeStyle(
-  base?: StyleProp<ViewStyle> | null,
-  consumer?: StyleProp<ViewStyle> | null,
-): StyleProp<ViewStyle> | undefined {
-  if (base == null && consumer == null) return undefined;
-  if (base == null) return consumer ?? undefined;
-  if (consumer == null) return base ?? undefined;
-  return [base, consumer];
-}
-
-/** Row metrics from gallery `listRow`. */
-function rowChrome() {
-  const pointer = isPointer();
-  const sink = pressSink(0.97, "background-color");
-  return {
-    icon: pointer ? 12 : 16,
-    row: {
-      flexDirection: "row",
-      alignItems: "center",
-      alignSelf: "stretch",
-      minHeight: pointer ? 40 : 44,
-      gap: pointer ? 10 : 12,
-      paddingVertical: pointer ? 6 : 8,
-      paddingHorizontal: 8,
-      borderRadius: 8,
-      ...sink.transition,
-    } satisfies ViewStyle,
-    hover: { backgroundColor: colors.accent } satisfies ViewStyle,
-    active: sink.activeStyle,
-    focus: focusRing(),
-    label: {
-      flexGrow: 1,
-      flexShrink: 1,
-      fontSize: 14,
-      fontWeight: "500" as const,
-      color: colors.foreground,
-    },
-  };
-}
-
-/** Content under the trigger. Padding is the content's, so it collapses while closed. */
-function panelChrome(): ViewStyle {
-  return { paddingBottom: isPointer() ? 12 : 14, gap: 6 };
-}
-
-/**
- * Points along the row, in a lane as wide as its stroke (half the icon), and
- * turns down while open.
- */
-/** Chevron turn. `motion-reduce` drops the rotation. */
-export const collapsibleChevronClass =
-  "transition-transform duration-150 motion-reduce:transition-none";
-
-function CollapsibleChevron(props: { open: boolean; size: number }) {
-  const mark = props.size * 0.42;
-  return (
-    <View
-      class={collapsibleChevronClass}
-      style={{
-        width: props.size / 2,
-        height: props.size,
-        alignItems: "center",
-        justifyContent: "center",
-        rotate: props.open ? "90deg" : "0deg",
-      }}
-    >
-      <View
-        style={{
-          width: mark,
-          height: mark,
-          borderTopWidth: 1.5,
-          borderRightWidth: 1.5,
-          borderColor: colors.mutedForeground,
-          transform: [{ rotate: "45deg" }],
-        }}
-      />
-    </View>
-  );
-}
-
-/** Composition root: owns the open state the parts below read. `props` is the options bag. */
+/** Owns open state for {@link CollapsibleTrigger} and {@link CollapsibleContent}. */
 export function Collapsible(props: CollapsibleProps) {
   const state = createOpenState(props);
   const trigger = createSlot();
@@ -156,13 +71,24 @@ export function Collapsible(props: CollapsibleProps) {
   );
 }
 
-/** Registers the row. Rendered later by {@link CollapsibleContent}, as the base trigger child. */
+/** Registers the disclosure row; {@link CollapsibleContent} renders it as the base child. */
 export function CollapsibleTrigger(props: CollapsibleTriggerProps) {
   const ctx = useCollapsible();
   ctx.trigger.set(() => {
-    const chrome = rowChrome();
+    const look = disclosureTriggerLook({
+      first: props.first,
+      start: props.start,
+      disabled: () => !!props.disabled,
+    });
     const children = props.children;
     const disabled = !!props.disabled;
+    const body =
+      typeof children === "string" ? (
+        <RowLabel label={children} strong />
+      ) : (
+        <View style={{ flexGrow: 1, flexShrink: 1 }}>{children}</View>
+      );
+
     return (
       <View
         role="button"
@@ -174,41 +100,37 @@ export function CollapsibleTrigger(props: CollapsibleTriggerProps) {
               : undefined
         }
         accessibilityState={{ expanded: ctx.open(), disabled }}
-        class={props.class ?? undefined}
+        class={props.class ? `${look.class} ${props.class}` : look.class}
         onPress={disabled ? undefined : () => ctx.setOpen(!ctx.open())}
-        style={mergeStyle(
-          { ...chrome.row, ...(disabled ? { opacity: disabledOpacity() } : null) },
-          props.style,
-        )}
-        hoverStyle={mergeStyle(disabled ? null : chrome.hover, props.hoverStyle)}
-        activeStyle={mergeStyle(chrome.active, props.activeStyle)}
-        focusStyle={mergeStyle(chrome.focus, props.focusStyle)}
-        disabledStyle={mergeStyle({ opacity: disabledOpacity() }, props.disabledStyle)}
+        style={[look.style, props.style ?? null]}
+        hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
+        activeStyle={[look.activeStyle, props.activeStyle ?? null]}
+        focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
+        disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
       >
-        {typeof children === "string" ? (
-          <Text style={chrome.label}>{children}</Text>
-        ) : (
-          <View style={{ flexGrow: 1, flexShrink: 1 }}>{children}</View>
-        )}
-        <CollapsibleChevron open={ctx.open()} size={chrome.icon} />
+        <View style={{ flexDirection: "row", alignItems: "center", flexGrow: 1 }}>
+          {body}
+          <DisclosureChevron open={ctx.open()} />
+        </View>
       </View>
     );
   });
-  return <View style={{ width: 0, height: 0 }} />;
+  return null;
 }
 
-/** The region. `reveal` defaults on; the trigger registered above is the child. */
+/** The collapsible region; the registered trigger is the base child. */
 export function CollapsibleContent(props: CollapsibleContentProps) {
   const ctx = useCollapsible();
   const trigger = ctx.trigger.get();
-  const [, rest] = split(props, ["style", "children", "reveal"]);
+  const [, rest] = split(props, ["style", "children", "reveal", "panel"]);
+  const panel = props.panel;
   return (
     <BaseCollapsible
       {...rest}
       open={ctx.open()}
       reveal={props.reveal ?? true}
-      style={mergeStyle({ alignItems: "stretch" }, props.style)}
-      content={<View style={panelChrome()}>{props.children}</View>}
+      style={[{ alignItems: "stretch" }, props.style ?? null]}
+      content={<View style={disclosurePanel(panel)}>{props.children}</View>}
     >
       {(trigger?.() as JSX.Element) ?? <View />}
     </BaseCollapsible>

@@ -1,74 +1,40 @@
-// Source: examples/nsh-gallery-ui/look/field.tsx (timeFieldClass), look/listbox.tsx (TimeSegment) @ 64ab8a1d (baseline), see NOTICE.
-import type { StyleProp } from "nsh";
-import { computed, split } from "nsh";
+// A time field: the look (`timeFieldClass`) and the `TimeField` that wears it.
+// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
+// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+import { terminal } from "@shadcn-nsh/theme";
+import { platform, split } from "nsh";
 import { TimeField as BaseTimeField, type TimeFieldProps as BaseTimeFieldProps } from "nsh/base";
 
-import { timeFieldChrome, TimeSegment } from "./lib/dates";
+import { edgeClass } from "./input";
+
+// @port look/field.tsx
+const pointer = platform.desktop;
 
 /**
- * Theme layer on `nsh/base` TimeField. One control: segments are drawn by
- * `renderSegment`. Every base prop passes through.
+ * A time field's well (`DatePicker`'s `timeFieldClass`): a number input's, its segments inside. It sits in the
+ * calendar's popup, so in dark it is shadcn's input there (`bg-input/30`, a shade over the popup) rather than the
+ * field color, which is the page's and would read as a hole.
+ */
+export const timeFieldClass = [
+  pointer ? "h-8 rounded-[7px] px-2" : "h-11 rounded-lg px-3",
+  terminal ? "items-center border bg-field" : "items-center border bg-field dark:bg-input/30",
+  edgeClass({ rest: "border-input", hover: "border-faint", hoverVariant: "enabled:hover" }),
+].join(" ");
+// @port end
+
+/**
+ * `nsh/base`'s TimeField in the look of `timeFieldClass`. Every base prop passes through; `class`
+ * goes over the look's. Segment chrome lands with the listbox / date-picker family.
  */
 export type TimeFieldProps = BaseTimeFieldProps;
 
-type TimeLook = ReturnType<typeof timeFieldChrome>;
-
-/** Wrapper default, then consumer: both set, both apply. */
-function mergeClass(base: string, consumer?: string | null): string {
-  return consumer ? `${base} ${consumer}` : base;
-}
-
-/** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
-function mergeStyle<T>(
-  base?: StyleProp<T> | null,
-  consumer?: StyleProp<T> | null,
-): StyleProp<T> | undefined {
-  if (base == null && consumer == null) return undefined;
-  if (base == null) return consumer ?? undefined;
-  if (consumer == null) return base ?? undefined;
-  return [base, consumer];
-}
-
-/**
- * The time well. Minimum height is 32 with a pointer and 44 on touch.
- * Call `timeFieldVariants()` inside `computed` (or JSX) so tokens follow the scheme.
- */
-export function timeFieldVariants(): TimeLook {
-  return timeFieldChrome();
-}
-
-/** A time of day, one segment at a time. The focused segment fills with `primary`. */
+/** A time of day, one segment at a time. */
 export function TimeField(props: TimeFieldProps) {
-  const [, rest] = split(props, [
-    "class",
-    "style",
-    "hoverStyle",
-    "disabledStyle",
-    "segmentClass",
-    "segmentStyle",
-    "separatorStyle",
-    "renderSegment",
-  ]);
-  const chrome = computed(() => timeFieldVariants());
+  const [, rest] = split(props, ["class"]);
   return (
     <BaseTimeField
       {...rest}
-      class={mergeClass(chrome().className, props.class)}
-      style={mergeStyle(chrome().style, props.style)}
-      hoverStyle={
-        chrome().hoverStyle != null
-          ? mergeStyle(chrome().hoverStyle, props.hoverStyle)
-          : props.hoverStyle
-      }
-      disabledStyle={mergeStyle(chrome().disabledStyle, props.disabledStyle)}
-      segmentClass={mergeClass(chrome().segmentClass, props.segmentClass)}
-      segmentStyle={mergeStyle(chrome().segmentStyle, props.segmentStyle)}
-      separatorStyle={mergeStyle(chrome().separatorStyle, props.separatorStyle)}
-      renderSegment={
-        props.renderSegment === undefined
-          ? (entry) => <TimeSegment entry={entry} />
-          : props.renderSegment
-      }
+      class={props.class ? `${timeFieldClass} ${props.class}` : timeFieldClass}
     />
   );
 }

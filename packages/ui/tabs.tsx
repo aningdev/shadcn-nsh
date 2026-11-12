@@ -1,5 +1,16 @@
-// Source: examples/nsh-gallery-ui/look/tabs.tsx @ 64ab8a1d (baseline), see NOTICE.
-import { colors, disabledOpacity, finish, focusRing, hovered, radius } from "@shadcn-nsh/theme";
+// A tabs: the look (`tabsLook`, `underlineTabsLook`, `TabTitle`) and the parts that wear it.
+// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
+// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+import {
+  colors,
+  finish,
+  focusRing,
+  follow,
+  hovered,
+  motion,
+  radius,
+  terminal,
+} from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { computed, context, signal, split, Text, View } from "nsh";
 import {
@@ -9,49 +20,258 @@ import {
   type TabsProps as BaseTabsProps,
 } from "nsh/base";
 
-import { isPointer } from "./lib/density";
-import { pressSink } from "./lib/press";
+import { Icon, type IconName } from "./lib/icons";
+import { controlSize } from "./lib/surface";
+
+// @port look/tabs.tsx
+/** A value, or a function reading it where the look is applied (a signal). */
+type Live<T> = T | (() => T);
+
+const read = <T,>(v: Live<T> | undefined): T | undefined =>
+  typeof v === "function" ? (v as () => T)() : v;
+
+/** The state of one tab or segment, read where the look is applied. */
+export interface TabState {
+  selected: Live<boolean | undefined>;
+  disabled?: Live<boolean | undefined>;
+}
+
+/** The props a tab's or segment's look gives it (a `Tab`, a `Radio`). */
+export interface TabLook {
+  readonly style: ViewStyle;
+  readonly hoverStyle: ViewStyle | undefined;
+  readonly activeStyle?: ViewStyle;
+  readonly focusVisibleStyle: ViewStyle;
+  readonly disabledStyle: ViewStyle;
+}
+
+/** Under the pointer, a tab that is neither selected (its thumb shows) nor disabled. */
+const hoverOf = (state: TabState) =>
+  read(state.selected) || read(state.disabled) ? undefined : hovered();
 
 /**
- * Composition root (shadcn `Tabs`): holds the selected value and orientation.
- * `nsh/base` has no value-holding root — the list is {@link TabsList}.
+ * A tab strip's look, the gallery's section switcher: a capsule track
+ * `controlSize.tabs` high (30 with a pointer, 40 on a touch screen), sunk
+ * into the surface with a hairline edge, the tabs sharing its width; the
+ * selected tab's pill (`indicatorStyle`, `finish.thumb`) springs to the next
+ * one natively. `tab(state)`: a tab's props (hover on the others, the focus
+ * ring, dimmed while disabled). Pair each tab with a `TabTitle`.
+ */
+export function tabsLook() {
+  // The track's padding and border: a tab is a pill inside them.
+  const inset = 3;
+  const inner = controlSize.tabs - 2 * (inset + 1);
+  return {
+    get style(): ViewStyle {
+      return {
+        height: controlSize.tabs,
+        flexDirection: "row",
+        gap: 2,
+        padding: inset,
+        borderRadius: controlSize.tabs / 2,
+        borderWidth: 1,
+        borderColor: colors.border,
+        backgroundColor: colors.inset,
+        boxShadow: finish.track.boxShadow,
+      };
+    },
+    get indicatorStyle(): ViewStyle {
+      return {
+        top: inset,
+        bottom: inset,
+        borderRadius: inner / 2,
+        borderWidth: 1,
+        ...finish.thumb,
+      };
+    },
+    tab(state: TabState): TabLook {
+      return {
+        style: {
+          flex: 1,
+          paddingHorizontal: 6,
+          borderRadius: inner / 2,
+          borderWidth: 1,
+          borderColor: "transparent",
+          alignItems: "center",
+          justifyContent: "center",
+        },
+        get hoverStyle() {
+          return hoverOf(state);
+        },
+        get focusVisibleStyle() {
+          return focusRing();
+        },
+        disabledStyle: { opacity: 0.5 },
+      };
+    },
+  };
+}
+
+/**
+ * An underlined tab strip's look: tabs as wide as their labels
+ * (`controlSize.tabs` high), a 2-point accent line (`indicatorStyle`) at the
+ * strip's bottom that travels and stretches to the selected tab, over a
+ * hairline (`rule`, a view under the strip: outside a scroll view holding
+ * it, so its clipping never cuts the line). `tab(state)`: a tab's props
+ * (hover on the others, a press that dims, the focus ring, dimmed while
+ * disabled).
+ */
+export function underlineTabsLook() {
+  return {
+    get style(): ViewStyle {
+      return { flexDirection: "row", gap: 2, paddingTop: 3 };
+    },
+    get indicatorStyle(): ViewStyle {
+      return { bottom: 0, height: 2, borderRadius: 1, backgroundColor: colors.accent };
+    },
+    get rule(): ViewStyle {
+      return {
+        pointerEvents: "none",
+        position: "absolute",
+        left: 0,
+        right: 0,
+        bottom: 0,
+        height: 1,
+        backgroundColor: colors.line,
+      };
+    },
+    tab(state: TabState): TabLook {
+      return {
+        get style(): ViewStyle {
+          return {
+            height: controlSize.tabs,
+            paddingHorizontal: 8,
+            marginBottom: 4,
+            borderRadius: radius.control,
+            borderWidth: 1,
+            borderColor: "transparent",
+            justifyContent: "center",
+          };
+        },
+        get hoverStyle() {
+          return hoverOf(state);
+        },
+        activeStyle: { opacity: 0.7 },
+        get focusVisibleStyle() {
+          return focusRing();
+        },
+        disabledStyle: { opacity: 0.5 },
+      };
+    },
+  };
+}
+
+/** The room a tab title's icon takes: the icon and the gap after it. */
+export const TAB_ICON_ROOM = 14 + 6;
+
+/**
+ * A tab's label (and icon, and a count in a capsule): the text color while
+ * selected, fading in as the indicator arrives (`motion.move`), the icon's
+ * two tints crossing over. It keeps its natural width (never truncated) and
+ * reports it without the icon (`onWidth`): the same whether the icon shows
+ * or not, so a row deciding on its icons by it never flips back.
+ * `underline`: a terminal marks the selected tab of an underlined strip by
+ * underlining its label, where the strip's indicator, thinner than a Cell,
+ * does not show.
+ */
+export function TabTitle(props: {
+  name: string;
+  selected: boolean;
+  count?: number;
+  icon?: IconName;
+  underline?: boolean;
+  onWidth?: (bare: number) => void;
+}) {
+  const on = follow(() => (props.selected ? 1 : 0), motion.move);
+  const away = on.interpolate({ inputRange: [0, 1], outputRange: [1, 0] });
+  return (
+    <View
+      onLayout={({ bounds }) =>
+        props.onWidth?.(bounds.size.width - (props.icon ? TAB_ICON_ROOM : 0))
+      }
+      style={{ flexDirection: "row", alignItems: "center", gap: 6, flexShrink: 0 }}
+    >
+      <If when={props.icon}>
+        <View style={{ width: 14, height: 14 }}>
+          <View style={{ position: "absolute", opacity: away }}>
+            <Icon name={props.icon!} size={14} tint={colors.muted} />
+          </View>
+          <View style={{ position: "absolute", opacity: on }}>
+            <Icon name={props.icon!} size={14} tint={colors.text} />
+          </View>
+        </View>
+      </If>
+      <Text
+        style={{
+          numberOfLines: 1,
+          fontSize: 13,
+          fontWeight: "500",
+          color: on.interpolate({ inputRange: [0, 1], outputRange: [colors.muted, colors.text] }),
+          textDecorationLine: terminal && props.underline && props.selected ? "underline" : "none",
+        }}
+      >
+        {props.name}
+      </Text>
+      <If when={props.count !== undefined}>
+        <View
+          style={{
+            minWidth: 18,
+            height: 16,
+            paddingHorizontal: 5,
+            borderRadius: 8,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: colors.inset,
+            borderWidth: 1,
+            borderColor: colors.line,
+          }}
+        >
+          <Text
+            style={{
+              fontSize: 10,
+              fontWeight: "600",
+              color: colors.muted,
+              fontVariant: ["tabular-nums"],
+            }}
+          >
+            {props.count}
+          </Text>
+        </View>
+      </If>
+    </View>
+  );
+}
+// @port end
+
+/** Pill track (`default`) or underlined (`line`) tab list. */
+export type TabsListVariant = "default" | "line";
+
+/**
+ * Composition root: the selected tab value, then lists and panels. `nsh/base`
+ * has no value-holding root — the list is {@link TabsList}.
  */
 export type TabsProps = {
   value?: string;
   defaultValue?: string;
   onValueChange?: (value: string) => void;
-  /** shadcn `bases/base` orientation — root axis, and the list's. */
   orientation?: "horizontal" | "vertical";
   children?: JSX.Element;
   class?: string | null;
   style?: StyleProp<ViewStyle>;
 };
 
-/** shadcn `bases/base` TabsList look — `default` pill track; `line` underline. */
-export type TabsListVariant = "default" | "line";
-
-/**
- * Theme layer on `nsh/base` Tabs (the tablist). Base props pass through.
- * `variant` is wrapper-only (`default` | `line`). The traveling indicator is
- * `indicatorStyle` (base draws it behind the tabs).
- */
+/** `nsh/base`'s Tabs (the tablist). Base props pass through. */
 export type TabsListProps = BaseTabsProps & {
   variant?: TabsListVariant;
 };
 
-/**
- * Theme layer on `nsh/base` Tab as a shadcn `TabsTrigger`. `value` selects via
- * the {@link Tabs} context. `selected` is owned by that context.
- */
+/** A tab in the list. String children become the label. */
 export type TabsTriggerProps = Omit<BaseTabProps, "selected" | "children"> & {
   value: string;
   children?: string | JSX.Element;
 };
 
-/**
- * Panel beside the list — app content, not an `nsh/base` part. Shown while
- * its `value` matches the {@link Tabs} context.
- */
+/** Panel for one `value`. Hidden while another value is selected. */
 export type TabsContentProps = {
   value: string;
   children?: JSX.Element;
@@ -59,10 +279,7 @@ export type TabsContentProps = {
   style?: StyleProp<ViewStyle>;
 };
 
-/**
- * Theme layer on the `nsh/base` {@link Tab} symbol for direct use (no composition
- * value). Prefer {@link TabsTrigger} inside {@link TabsList}.
- */
+/** `nsh/base`'s Tab with the same chrome, when the app owns `selected`. */
 export type TabProps = Omit<BaseTabProps, "children"> & {
   children?: string | JSX.Element;
 };
@@ -80,126 +297,7 @@ function useTabs() {
   return TabsContext();
 }
 
-/** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
-function mergeStyle(
-  base?: StyleProp<ViewStyle> | null,
-  consumer?: StyleProp<ViewStyle> | null,
-): StyleProp<ViewStyle> | undefined {
-  if (base == null && consumer == null) return undefined;
-  if (base == null) return consumer ?? undefined;
-  if (consumer == null) return base ?? undefined;
-  return [base, consumer];
-}
-
-type TabsChrome = {
-  track: ViewStyle;
-  indicator: ViewStyle;
-  tab: ViewStyle;
-  hover: ViewStyle;
-  active: ViewStyle;
-  focus: ViewStyle;
-  disabled: ViewStyle;
-  labelSize: number;
-};
-
-/**
- * Pill track or underline row. The thumb stands in for gallery `finish.thumb`
- * (`colors.background` + `finish.control.rest`); the sunk track stands in for
- * `finish.track` (`colors.muted` + `finish.control.pressed`). The underline is
- * `colors.primary` (gallery accent, which this theme does not have).
- */
-function look(variant: TabsListVariant, orientation: "horizontal" | "vertical"): TabsChrome {
-  const pointer = isPointer();
-  // Touch: 52, so a tab inside the 3-point inset and 1-point border is a 44-point target.
-  const trackMin = pointer ? 30 : 52;
-  const inset = 3;
-  const horizontal = orientation !== "vertical";
-  const sink = pressSink(0.97, "background-color, border-color, opacity");
-  const pill = variant !== "line";
-  const thumbRadius = (trackMin - 2 * (inset + 1)) / 2;
-
-  const track: ViewStyle = pill
-    ? {
-        flexDirection: horizontal ? "row" : "column",
-        alignItems: "stretch",
-        alignSelf: "stretch",
-        minHeight: horizontal ? trackMin : undefined,
-        minWidth: horizontal ? undefined : trackMin,
-        padding: inset,
-        gap: 2,
-        borderRadius: trackMin / 2,
-        borderCurve: "continuous",
-        borderWidth: 1,
-        borderColor: colors.border,
-        backgroundColor: colors.muted,
-        boxShadow: finish.control.pressed,
-      }
-    : {
-        flexDirection: horizontal ? "row" : "column",
-        alignItems: "stretch",
-        alignSelf: "stretch",
-        gap: 2,
-        paddingTop: horizontal ? 3 : 0,
-        paddingLeft: horizontal ? 0 : 3,
-        borderBottomWidth: horizontal ? 1 : 0,
-        borderRightWidth: horizontal ? 0 : 1,
-        borderColor: colors.border,
-      };
-
-  const indicator: ViewStyle = pill
-    ? {
-        ...(horizontal ? { top: inset, bottom: inset } : { left: inset, right: inset }),
-        borderRadius: thumbRadius,
-        borderCurve: "continuous",
-        borderWidth: 1,
-        borderColor: colors.border,
-        backgroundColor: colors.background,
-        boxShadow: finish.control.rest,
-      }
-    : horizontal
-      ? { bottom: 0, height: 2, borderRadius: 1, backgroundColor: colors.primary }
-      : { right: 0, width: 2, borderRadius: 1, backgroundColor: colors.primary };
-
-  const tab: ViewStyle = {
-    // Share extra track width, but never shrink below the label. `flexBasis: 0`
-    // collapses the tab when the list's width is its content.
-    flexGrow: pill ? 1 : 0,
-    flexShrink: 0,
-    alignItems: "center",
-    justifyContent: "center",
-    ...(pill
-      ? { paddingHorizontal: 6, borderWidth: 1, borderColor: "transparent" }
-      : {
-          minHeight: horizontal ? trackMin : undefined,
-          minWidth: horizontal ? undefined : trackMin,
-          paddingHorizontal: horizontal ? 8 : 6,
-          paddingVertical: horizontal ? 0 : 8,
-          marginBottom: horizontal ? 4 : 0,
-          marginRight: horizontal ? 0 : 4,
-          borderRadius: radius.control,
-          borderCurve: "continuous" as const,
-        }),
-    ...sink.transition,
-  };
-
-  return {
-    track,
-    indicator,
-    tab,
-    hover: hovered(),
-    active: sink.activeStyle,
-    focus: focusRing(),
-    disabled: { opacity: disabledOpacity() },
-    labelSize: 13,
-  };
-}
-
-/** Pill-track height for the current idiom. Tabs have no `hitSlop`; the track itself grows on touch. */
-export function tabsMetrics() {
-  return { minHeight: look("default", "horizontal").track.minHeight as number };
-}
-
-/** Composition root: the selected value, then the list and panels. */
+/** Composition root: selected value, then list and content. */
 export function Tabs(props: TabsProps) {
   const [, rest] = split(props, [
     "value",
@@ -228,14 +326,14 @@ export function Tabs(props: TabsProps) {
       <View
         {...rest}
         class={props.class ?? undefined}
-        style={mergeStyle(
+        style={[
           {
             flexDirection: orientation() === "vertical" ? "row" : "column",
             alignItems: "stretch",
             gap: 8,
           },
-          props.style,
-        )}
+          props.style ?? null,
+        ]}
       >
         {props.children}
       </View>
@@ -243,44 +341,38 @@ export function Tabs(props: TabsProps) {
   );
 }
 
-/** The tab list: pill track or underline, with the traveling indicator behind the tabs. */
+function listLook(variant: TabsListVariant) {
+  return variant === "line" ? underlineTabsLook() : tabsLook();
+}
+
+/** The tab list: capsule track or underline, with the traveling indicator. */
 export function TabsList(props: TabsListProps) {
-  const ctx = useTabs();
   const [, rest] = split(props, ["variant", "style", "indicatorStyle", "children"]);
   const variant = () => props.variant ?? "default";
-  const chrome = computed(() => look(variant(), ctx?.orientation() ?? "horizontal"));
+  const look = computed(() => listLook(variant()));
 
-  return (
+  const list = (
     <ListVariantContext.Provider value={variant()}>
       <BaseTabs
         {...rest}
-        indicatorStyle={mergeStyle(chrome().indicator, props.indicatorStyle)}
-        style={mergeStyle(chrome().track, props.style)}
+        indicatorStyle={[look().indicatorStyle, props.indicatorStyle ?? null]}
+        style={[look().style, props.style ?? null]}
       >
         {props.children}
       </BaseTabs>
     </ListVariantContext.Provider>
   );
-}
 
-function tabLabel(children: string | JSX.Element | undefined, selected: boolean, size: number) {
-  if (typeof children !== "string") return children;
+  if (variant() !== "line") return list;
   return (
-    <Text
-      style={{
-        numberOfLines: 1,
-        flexShrink: 0,
-        fontSize: size,
-        fontWeight: "500",
-        color: selected ? colors.foreground : colors.mutedForeground,
-      }}
-    >
-      {children}
-    </Text>
+    <View style={{ alignSelf: "stretch" }}>
+      <View style={underlineTabsLook().rule} />
+      {list}
+    </View>
   );
 }
 
-/** A tab in the list. String children become the label; selection follows the root value. */
+/** A tab in the list. Selection follows the root {@link Tabs} value. */
 export function TabsTrigger(props: TabsTriggerProps) {
   const ctx = useTabs();
   const variant = ListVariantContext();
@@ -290,14 +382,20 @@ export function TabsTrigger(props: TabsTriggerProps) {
     "style",
     "hoverStyle",
     "activeStyle",
-    "focusStyle",
+    "focusVisibleStyle",
     "disabledStyle",
     "selectedStyle",
     "onPress",
     "accessibilityLabel",
   ]);
-  const chrome = computed(() => look(variant, ctx?.orientation() ?? "horizontal"));
+  const look = computed(() => listLook(variant));
   const selected = () => (ctx ? ctx.value() === props.value : false);
+  const tab = computed(() =>
+    look().tab({
+      selected: () => selected(),
+      disabled: () => !!props.disabled,
+    }),
+  );
 
   return (
     <BaseTab
@@ -314,24 +412,24 @@ export function TabsTrigger(props: TabsTriggerProps) {
         ctx?.onValueChange(props.value);
         props.onPress?.();
       }}
-      style={mergeStyle(chrome().tab, props.style)}
-      hoverStyle={mergeStyle(
-        selected() || props.disabled ? null : chrome().hover,
-        props.hoverStyle,
-      )}
-      activeStyle={mergeStyle(chrome().active, props.activeStyle)}
-      focusStyle={mergeStyle(chrome().focus, props.focusStyle)}
-      disabledStyle={mergeStyle(chrome().disabled, props.disabledStyle)}
+      style={[tab().style, props.style ?? null]}
+      hoverStyle={[tab().hoverStyle ?? null, props.hoverStyle ?? null]}
+      activeStyle={[tab().activeStyle ?? null, props.activeStyle ?? null]}
+      focusVisibleStyle={[tab().focusVisibleStyle, props.focusVisibleStyle ?? null]}
+      disabledStyle={[tab().disabledStyle, props.disabledStyle ?? null]}
       selectedStyle={props.selectedStyle}
     >
-      {tabLabel(props.children, selected(), chrome().labelSize)}
+      {typeof props.children === "string" ? (
+        <TabTitle name={props.children} selected={selected()} />
+      ) : (
+        props.children
+      )}
     </BaseTab>
   );
 }
 
-/** A `nsh/base` tab with the same chrome, for a list whose value the app owns. */
+/** `nsh/base`'s Tab with list chrome when used inside {@link TabsList}. */
 export function Tab(props: TabProps) {
-  const ctx = useTabs();
   const variant = ListVariantContext();
   const [, rest] = split(props, [
     "children",
@@ -339,12 +437,18 @@ export function Tab(props: TabProps) {
     "style",
     "hoverStyle",
     "activeStyle",
-    "focusStyle",
+    "focusVisibleStyle",
     "disabledStyle",
     "selectedStyle",
     "accessibilityLabel",
   ]);
-  const chrome = computed(() => look(variant, ctx?.orientation() ?? "horizontal"));
+  const look = computed(() => listLook(variant));
+  const tab = computed(() =>
+    look().tab({
+      selected: () => !!props.selected,
+      disabled: () => !!props.disabled,
+    }),
+  );
 
   return (
     <BaseTab
@@ -357,29 +461,30 @@ export function Tab(props: TabProps) {
             ? props.children
             : undefined
       }
-      style={mergeStyle(chrome().tab, props.style)}
-      hoverStyle={mergeStyle(
-        props.selected || props.disabled ? null : chrome().hover,
-        props.hoverStyle,
-      )}
-      activeStyle={mergeStyle(chrome().active, props.activeStyle)}
-      focusStyle={mergeStyle(chrome().focus, props.focusStyle)}
-      disabledStyle={mergeStyle(chrome().disabled, props.disabledStyle)}
+      style={[tab().style, props.style ?? null]}
+      hoverStyle={[tab().hoverStyle ?? null, props.hoverStyle ?? null]}
+      activeStyle={[tab().activeStyle ?? null, props.activeStyle ?? null]}
+      focusVisibleStyle={[tab().focusVisibleStyle, props.focusVisibleStyle ?? null]}
+      disabledStyle={[tab().disabledStyle, props.disabledStyle ?? null]}
       selectedStyle={props.selectedStyle}
     >
-      {tabLabel(props.children, !!props.selected, chrome().labelSize)}
+      {typeof props.children === "string" ? (
+        <TabTitle name={props.children} selected={!!props.selected} />
+      ) : (
+        props.children
+      )}
     </BaseTab>
   );
 }
 
-/** The panel for one value. Hidden, not unmounted, while another value is selected. */
+/** Content for one value. Hidden, not unmounted, while another value is selected. */
 export function TabsContent(props: TabsContentProps) {
   const ctx = useTabs();
   const shown = () => (ctx ? ctx.value() === props.value : false);
   return (
     <View
       class={props.class ?? undefined}
-      style={mergeStyle({ display: shown() ? "flex" : "none" }, props.style)}
+      style={[{ display: shown() ? "flex" : "none" }, props.style ?? null]}
     >
       {props.children}
     </View>

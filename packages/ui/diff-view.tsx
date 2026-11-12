@@ -1,91 +1,180 @@
-// No reference look. Added and deleted lines use primary and destructive, not a second palette.
-import { alpha, colors, radius } from "@shadcn-nsh/theme";
-import type { ViewStyle } from "nsh";
-import { computed, split } from "nsh";
+// Diff view: `diffViewStyles`, `DiffHunkActions`, and the `DiffView` that wears them.
+// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
+// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+import { alpha, colors, solidTint, terminal } from "@shadcn-nsh/theme";
+import { split, Text, View } from "nsh";
 import {
-  DiffView as BaseDiffView,
-  type DiffViewClasses,
+  Button,
   type DiffViewProps as BaseDiffViewProps,
   type DiffViewStyles,
+  DiffView as BaseDiffView,
 } from "nsh/base";
 
-import { mergeClass, mergePartClasses, mergePartStyles, mergeStyle } from "./lib/part-style";
+import { buttonGlyph, buttonLabel, buttonLook, type ButtonKind } from "./button";
+import { Icon, type IconName } from "./lib/icons";
+
+// @port look/workspace.tsx
+/** One action on a diff's change: a chip 20 points high, its label 11
+ * points in the interface's font (the diff's text is monospaced), or only
+ * its icon, 20 points square. */
+function HunkAction(props: {
+  kind: ButtonKind;
+  label: string;
+  icon: IconName;
+  index: number;
+  iconOnly?: boolean;
+  onPress: () => void;
+}) {
+  const look = buttonLook(props.kind, {
+    size: "small",
+    style: () =>
+      terminal
+        ? undefined
+        : { height: 20, minWidth: 20, borderRadius: 5, paddingHorizontal: props.iconOnly ? 0 : 6 },
+  });
+  return (
+    <Button
+      onPress={props.onPress}
+      accessibilityLabel={`${props.label} change ${props.index + 1}`}
+      {...look}
+    >
+      {props.iconOnly && !terminal ? (
+        <Icon {...buttonGlyph(props.kind, { size: "small" })} name={props.icon} size={11} />
+      ) : (
+        <Text
+          class="font-sans"
+          style={{
+            ...buttonLabel(props.kind, { size: "small" }),
+            fontSize: terminal ? undefined : 11,
+          }}
+        >
+          {props.label}
+        </Text>
+      )}
+    </Button>
+  );
+}
+
+/** What a `DiffView` keeps free at the right of its rows, where its actions on a change sit. */
+const DIFF_PAD = 8;
 
 /**
- * Theme layer on `nsh/base` DiffView. Diffing stays in base.
- * This file paints the frame and tints additions and deletions with the theme.
- * Every base prop passes through.
+ * A `DiffView`'s colors of change in the theme's tones (its `styles`): added lines on the up tint, deleted on
+ * the down tint, both opaque on the card so what lies over them (the actions on a change) matches them, and the words
+ * changed within a line a stronger tint of the same tone.
  */
-export type DiffViewProps = BaseDiffViewProps;
-
-/** Part classes and styles, plus the host frame. */
-export type DiffViewLook = {
-  /** Host classes. `font-mono` matches the theme font base measures with. */
-  className: string;
-  /** The frame. A fixed height is the app's: this is only a minimum. */
-  style: ViewStyle;
-  /** Default part classes. */
-  classes: DiffViewClasses;
-  /** Default part styles. */
-  styles: DiffViewStyles;
-};
-
-function look(): DiffViewLook {
-  const added = alpha(colors.primary, 0.14);
-  const deleted = alpha(colors.destructive, 0.14);
+export function diffViewStyles() {
   return {
-    className: "font-mono",
-    style: {
-      minHeight: 80,
-      borderWidth: 1,
-      borderStyle: "solid",
-      borderColor: colors.border,
-      borderRadius: radius.control,
-      borderCurve: "continuous",
-      backgroundColor: colors.background,
-      overflow: "hidden",
+    get lineAdded() {
+      return { backgroundColor: solidTint("up") };
     },
-    classes: {
-      content: "font-mono",
-      gutter: "font-mono",
+    get lineDeleted() {
+      return { backgroundColor: solidTint("down") };
     },
-    styles: {
-      gutter: { backgroundColor: colors.muted, color: colors.mutedForeground },
-      lineNumber: { color: colors.mutedForeground },
-      lineNumberAdded: { color: colors.primary },
-      lineNumberDeleted: { color: colors.destructive },
-      content: { color: colors.foreground },
-      lineAdded: { backgroundColor: added },
-      lineDeleted: { backgroundColor: deleted },
-      wordAdded: { backgroundColor: alpha(colors.primary, 0.32) },
-      wordDeleted: { backgroundColor: alpha(colors.destructive, 0.32) },
-      // `color` covers a `+` / `−`; `backgroundColor` covers a bar.
-      indicatorAdded: { color: colors.primary, backgroundColor: colors.primary },
-      indicatorDeleted: { color: colors.destructive, backgroundColor: colors.destructive },
-      filler: { backgroundColor: alpha(colors.muted, 0.6) },
-      lineSelected: { backgroundColor: alpha(colors.primary, 0.18) },
-      separator: { color: colors.mutedForeground, backgroundColor: colors.muted },
-      fileHeader: { backgroundColor: colors.secondary, color: colors.secondaryForeground },
+    get wordAdded() {
+      return { backgroundColor: alpha(colors.up, 0.28) };
+    },
+    get wordDeleted() {
+      return { backgroundColor: alpha(colors.down, 0.28) };
+    },
+    // The classic `+` and `−` beside the numbers.
+    get indicatorAdded() {
+      return { color: colors.up };
+    },
+    get indicatorDeleted() {
+      return { color: colors.down };
     },
   };
 }
 
-/** The diff's default chrome. Call it where the theme is read. */
-export function diffViewVariants(): DiffViewLook {
-  return look();
+/**
+ * The tone of the row a change's actions sit on (`DiffHunkActions`'s `tone`): split, the change's first row on the new
+ * side, an added line unless the change only deletes (a filler there, on the card); unified, its first line, a deleted
+ * one unless it only adds.
+ */
+export function diffHunkTone(
+  hunk: { oldLines: number; newLines: number },
+  layout: "split" | "unified",
+): "up" | "down" | undefined {
+  if (layout === "unified") return hunk.oldLines > 0 ? "down" : "up";
+  return hunk.newLines > 0 ? "up" : undefined;
 }
 
-/** Two texts, or a patch. Set a height; the frame's minimum is only a floor. */
+/**
+ * A `DiffView`'s actions on a change (what `renderHunkActions` returns):
+ * Revert, secondary, and Keep, the primary citrus, as compact chips over
+ * the end of the change's first row, so they cover as little code as they
+ * can (gpui-component's diff); `iconOnly`, for a narrow view, shows their
+ * icons (undo, check), named for screen readers ("Revert change 2").
+ */
+export function DiffHunkActions(props: {
+  index: number;
+  iconOnly?: boolean;
+  tone?: "up" | "down";
+  onRevert: () => void;
+  onKeep: () => void;
+}) {
+  // On a backing of the row's own color (`tone`: the change's first row, an
+  // added or a deleted line as `diffViewStyles` tints them; the card's
+  // otherwise) that fades in from the left, so the code they cover ends in a
+  // fade instead of a cut glyph, and nothing shows between the chips or
+  // after them: it reaches the row's right edge, past the 8 points the view
+  // keeps free there.
+  const backing = () => (props.tone ? solidTint(props.tone) : colors.surface);
+  return (
+    <View
+      style={
+        terminal
+          ? { flexDirection: "row", gap: 4 }
+          : {
+              flexDirection: "row",
+              gap: 4,
+              paddingLeft: 16,
+              paddingRight: 4 + DIFF_PAD,
+              marginRight: -DIFF_PAD,
+              backgroundImage: `linear-gradient(90deg, ${alpha(backing(), 0)} 0%, ${backing()} 12px)`,
+            }
+      }
+    >
+      <HunkAction
+        kind="secondary"
+        label="Revert"
+        icon="undo"
+        index={props.index}
+        iconOnly={props.iconOnly}
+        onPress={props.onRevert}
+      />
+      <HunkAction
+        kind="primary"
+        label="Keep"
+        icon="check"
+        index={props.index}
+        iconOnly={props.iconOnly}
+        onPress={props.onKeep}
+      />
+    </View>
+  );
+}
+// @port end
+
+/** Theme layer on `nsh/base` DiffView. Diffing stays in base. */
+export type DiffViewProps = BaseDiffViewProps;
+
+function mergeStyles(base: DiffViewStyles, consumer?: DiffViewStyles | null): DiffViewStyles {
+  if (consumer == null) return base;
+  return { ...base, ...consumer };
+}
+
+/** Two texts, or a patch. Pass `styles` to override `diffViewStyles`. */
 export function DiffView(props: DiffViewProps) {
-  const [, rest] = split(props, ["class", "style", "classes", "styles"]);
-  const chrome = computed(look);
+  const defaults = diffViewStyles();
+  const [, rest] = split(props, ["styles", "class", "style"]);
   return (
     <BaseDiffView
       {...rest}
-      class={mergeClass(chrome().className, props.class)}
-      style={mergeStyle(chrome().style, props.style)}
-      classes={mergePartClasses(chrome().classes, props.classes)}
-      styles={mergePartStyles(chrome().styles, props.styles)}
+      class={props.class}
+      style={props.style}
+      styles={mergeStyles(defaults, props.styles)}
     />
   );
 }

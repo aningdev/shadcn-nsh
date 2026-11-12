@@ -1,132 +1,73 @@
-// No reference look. The frame is the field well; the text colors are the theme's.
-import { alpha, colors, popupSurface } from "@shadcn-nsh/theme";
-import type { ViewStyle } from "nsh";
-import { computed, split } from "nsh";
+// Editor: `richEditorClasses` and the code `Editor` from `nsh/base`.
+// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
+// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+import { split } from "nsh";
 import {
   Editor as BaseEditor,
-  type EditorClasses,
   type EditorProps as BaseEditorProps,
-  type EditorStyles,
+  RichEditor as BaseRichEditor,
+  type RichEditorProps as BaseRichEditorProps,
 } from "nsh/base";
 
-import { fieldFocusStyle, fieldTransitionClass, fieldWell } from "./lib/field";
-import { mergeClass, mergePartClasses, mergePartStyles, mergeStyle } from "./lib/part-style";
-
+// @port look/workspace.tsx
 /**
- * Theme layer on `nsh/base` Editor. Behavior, folding and the syntax palette
- * stay in base. This file paints the well, the gutter, selection and menus.
- * Every base prop passes through.
+ * A `RichEditor`'s document (its `classes`): roomy padding inside the
+ * scroll view, so its scroll bar runs along the editor's edge; relaxed
+ * paragraphs, tight large headings, a quiet quote, code on the muted fill,
+ * indented lists, task checkboxes filled with the primary once checked,
+ * brand-colored links. NSH's editor draws nothing of its own.
  */
+export const richEditorClasses = {
+  content: "gap-3 px-6 py-5",
+  placeholder: "text-muted-foreground",
+  listMarker: "text-muted-foreground",
+  taskCheckbox:
+    "size-4 mr-2 mt-1 rounded border border-border checked:bg-primary checked:border-primary",
+  nodes: {
+    paragraph: "leading-relaxed",
+    "heading[level=1]": "text-3xl font-bold tracking-tight",
+    "heading[level=2]": "text-2xl font-semibold tracking-tight",
+    "heading[level=3]": "text-xl font-semibold",
+    blockquote: "border-l-4 border-border pl-4 text-muted-foreground italic",
+    codeBlock: "font-mono text-sm bg-muted rounded-lg px-4 py-3",
+    bulletList: "gap-1.5 pl-6",
+    orderedList: "gap-1.5 pl-6",
+    taskList: "gap-1.5",
+    horizontalRule: "h-px bg-border my-3",
+    tableHeader: "font-semibold",
+  },
+  marks: {
+    bold: "font-bold",
+    italic: "italic",
+    code: "font-mono text-sm bg-muted rounded px-1",
+    link: "text-brand underline",
+    strike: "line-through",
+  },
+};
+// @port end
+
+/** Theme layer on `nsh/base` Editor. The model, highlighting and keys stay in base. */
 export type EditorProps = BaseEditorProps;
 
-/** Part classes and styles, plus the host frame. */
-export type EditorLook = {
-  /** Host classes. `font-mono` is the theme font; measurement stays on base's `fontFamily`. */
-  className: string;
-  /** The field well. Read-only lies flat. */
-  style: ViewStyle;
-  /** Focus on the well. Omitted while read-only. */
-  focusStyle?: ViewStyle;
-  /** Focus while the caret is inside. Omitted while read-only. */
-  focusWithinStyle?: ViewStyle;
-  /** Default part classes. */
-  classes: EditorClasses;
-  /** Default part styles. */
-  styles: EditorStyles;
-};
+/** Theme layer on `nsh/base` RichEditor. Document chrome is `richEditorClasses`. */
+export type RichEditorProps = BaseRichEditorProps;
 
-function look(readOnly: boolean): EditorLook {
-  const ring = readOnly ? undefined : fieldFocusStyle(false);
-  const menu = {
-    ...popupSurface(),
-    color: colors.popoverForeground,
-  };
-  return {
-    className: `${fieldTransitionClass} font-mono`,
-    style: {
-      ...fieldWell({ readonly: readOnly }),
-      minHeight: 64,
-    },
-    focusStyle: ring,
-    focusWithinStyle: ring,
-    classes: {
-      content: "font-mono",
-      gutter: "font-mono",
-      placeholder: "font-mono",
-    },
-    styles: {
-      gutter: { backgroundColor: colors.muted, color: colors.mutedForeground },
-      lineNumber: { color: colors.mutedForeground },
-      activeLineNumber: { color: colors.foreground },
-      content: { color: colors.foreground },
-      // `muted` is nearly the page in light mode, so the caret row is a whisper of ink.
-      activeLine: { backgroundColor: alpha(colors.foreground, 0.04) },
-      selection: { backgroundColor: alpha(colors.primary, 0.24) },
-      caret: { backgroundColor: colors.foreground },
-      placeholder: { color: colors.mutedForeground },
-      matchingBracket: { borderColor: colors.ring },
-      indentGuide: { backgroundColor: colors.border },
-      ruler: { backgroundColor: colors.border },
-      foldMarker: { color: colors.mutedForeground },
-      foldPlaceholder: { color: colors.mutedForeground },
-      whitespace: { color: alpha(colors.mutedForeground, 0.7) },
-      // Base uses amber for search and warnings. This theme has no amber token.
-      searchMatch: { backgroundColor: alpha(colors.primary, 0.2) },
-      currentSearchMatch: { backgroundColor: alpha(colors.primary, 0.35) },
-      diagnosticError: { textDecorationColor: colors.destructive },
-      diagnosticWarning: { textDecorationColor: colors.destructive },
-      diagnosticInfo: { textDecorationColor: colors.primary },
-      diagnosticHint: { textDecorationColor: colors.mutedForeground },
-      unnecessaryText: { color: colors.mutedForeground },
-      deprecatedText: { textDecorationLine: "line-through" },
-      selectionHandle: { backgroundColor: colors.primary },
-      completionMenu: menu,
-      completionItem: { color: colors.popoverForeground },
-      selectedCompletionItem: {
-        backgroundColor: colors.accent,
-        color: colors.accentForeground,
-      },
-      completionMatch: { color: colors.primary },
-      completionDetail: { color: colors.mutedForeground },
-      completionKind: { color: colors.mutedForeground },
-      completionDocumentation: menu,
-      inlineCompletion: { color: colors.mutedForeground },
-      definitionLink: { textDecorationColor: colors.primary },
-    },
-  };
-}
-
-/** The editor's default chrome. `readOnly` flattens the well and drops the focus edge. */
-export function editorVariants(options?: {
-  /** Flat well, no focus edge. */
-  readOnly?: boolean;
-}): EditorLook {
-  return look(!!options?.readOnly);
-}
-
-/** A code editor. Give it a height, or `minRows` / `maxRows`, or it stays a short well. */
+/** A code editor. Pass `classes` / `styles` to paint parts; the host frame is the app's. */
 export function Editor(props: EditorProps) {
-  const [, rest] = split(props, [
-    "class",
-    "style",
-    "classes",
-    "styles",
-    "focusStyle",
-    "focusWithinStyle",
-  ]);
-  const chrome = computed(() => look(!!props.readOnly));
-  const ring = () => chrome().focusStyle;
+  const [, rest] = split(props, ["class", "style", "classes", "styles"]);
   return (
     <BaseEditor
       {...rest}
-      class={mergeClass(chrome().className, props.class)}
-      style={mergeStyle(chrome().style, props.style)}
-      classes={mergePartClasses(chrome().classes, props.classes)}
-      styles={mergePartStyles(chrome().styles, props.styles)}
-      focusStyle={ring() ? mergeStyle(ring(), props.focusStyle) : props.focusStyle}
-      focusWithinStyle={
-        ring() ? mergeStyle(ring(), props.focusWithinStyle) : props.focusWithinStyle
-      }
+      class={props.class}
+      style={props.style}
+      classes={props.classes}
+      styles={props.styles}
     />
   );
+}
+
+/** A rich document editor with `richEditorClasses` by default. */
+export function RichEditor(props: RichEditorProps) {
+  const [, rest] = split(props, ["classes"]);
+  return <BaseRichEditor {...rest} classes={props.classes ?? richEditorClasses} />;
 }

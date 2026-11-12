@@ -1,22 +1,58 @@
-// Source: examples/nsh-gallery-ui/look/overlay.ts @ 64ab8a1d (baseline), see NOTICE.
-import { colors, disabledOpacity, focusRing, modalSurface, popupBackdrop } from "@shadcn-nsh/theme";
+// A card dialog: the look (`dialogCard`, `dialogTitle`, `dialogText`) and the parts that wear it.
+// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
+// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+import { colors, finish, focusRing, terminal } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
-import { context, split, Text, View } from "nsh";
+import { context, platform, split, Text, View } from "nsh";
 import {
   Dialog as BaseDialog,
   type DialogChangeReason,
   type DialogProps as BaseDialogProps,
 } from "nsh/base";
 
-import { Button, type ButtonVariant } from "./button";
-import { isPointer } from "./lib/density";
+import { Button, type ButtonKind } from "./button";
 import { createOpenState, type OpenState } from "./lib/open-state";
+import { backdrop } from "./lib/overlay";
+
+// @port look/overlay.ts
+const pointer = platform.desktop;
 
 /**
- * Composition root for `nsh/base` Dialog. Open state only: the card's
- * `animation`, `presentation` and `closeOn*` flags live on {@link DialogContent}.
+ * A dialog shown as a card in the middle of the window, over `backdrop()`:
+ * the card's surface with the border's edge and the floating shadow of a
+ * menu (`finish.menu`), 16-point corners, 20 points of padding, its rows 12
+ * apart. Given a `width`, it is `nsh/base`'s `Dialog`'s `style` itself:
+ * centered, `width` across and never wider than 90% of the window; without
+ * one, the look alone, for a view inside the dialog (one that springs in).
+ * A terminal draws its edge alone.
  */
+export function dialogCard(width?: number): ViewStyle {
+  return {
+    ...(width === undefined ? {} : { margin: "auto", width, maxWidth: "90%" }),
+    borderRadius: 16,
+    borderCurve: "continuous",
+    borderWidth: 1,
+    borderColor: colors.border,
+    padding: 20,
+    gap: 12,
+    ...(terminal ? {} : { backgroundColor: colors.surface, boxShadow: finish.menu.boxShadow }),
+  };
+}
+
+/** A card dialog's title (`dialogCard`): 17 points semibold with a pointer, 20 on a touch screen. */
+export function dialogTitle(): TextStyle {
+  return { fontSize: pointer ? 17 : 20, fontWeight: "600", color: colors.text };
+}
+
+/** A card dialog's text under its title: 13 points with a pointer, 15 on a touch screen, muted. */
+export function dialogText(): TextStyle {
+  return { fontSize: pointer ? 13 : 15, lineHeight: pointer ? 19 : 21, color: colors.muted };
+}
+// @port end
+
+/** The root: it owns whether the dialog is open, and nothing of how it looks. */
 export type DialogProps = {
+  /** Controlled; leave it out and the root keeps the state (`defaultOpen`). */
   open?: boolean | null;
   defaultOpen?: boolean;
   children?: JSX.Element;
@@ -27,67 +63,44 @@ export type DialogProps = {
 };
 
 /**
- * Theme layer on `nsh/base` Dialog as `DialogContent`. All base props and style
- * hooks pass through. Open and lifecycle events come from the {@link Dialog}
- * context. Default `animation` is `"fade"` (a centered card); base defaults to `"slide"`.
+ * The card. Every prop of `nsh/base`'s Dialog passes through but the ones the root owns;
+ * `style` and `backdropStyle` go over the look's. `animation` defaults to `fade`, a card's.
  */
 export type DialogContentProps = Omit<
   BaseDialogProps,
-  "open" | "onOpenChange" | "onOpen" | "onClose" | "onCancel" | "children"
+  "open" | "onOpenChange" | "onOpen" | "onClose" | "onCancel"
 > & {
-  children?: JSX.Element;
+  /** The card's width, never wider than 90% of the window (default 360 with a pointer, 320 on a touch screen). */
+  width?: number;
 };
 
-/** Opens the dialog. String children render as a Button; otherwise a pressable View. */
+/** What opens the dialog: a string is a `Button`'s label, anything else a pressable of its own. */
 export type DialogTriggerProps = {
   children?: string | JSX.Element;
+  /** The button's variant, for a string child (default `secondary`). */
+  variant?: ButtonKind;
   disabled?: boolean;
-  class?: string | null;
   style?: StyleProp<ViewStyle>;
 };
 
-/** Closes the dialog (shadcn `DialogClose`). */
-export type DialogCloseProps = {
+/** What closes the dialog: as `DialogTrigger`; `onPress` runs before it closes. */
+export type DialogCloseProps = DialogTriggerProps & {
+  onPress?: () => void;
+};
+
+/** A text part of the card (`DialogTitle`, `DialogDescription`). */
+export type DialogTextProps = {
   children?: string | JSX.Element;
-  variant?: ButtonVariant;
-  disabled?: boolean;
-  class?: string | null;
-  style?: StyleProp<ViewStyle>;
+  style?: StyleProp<TextStyle>;
 };
 
-/** App chrome around title and description (not an `nsh/base` part). */
-export type DialogHeaderProps = {
-  children?: JSX.Element;
-  class?: string | null;
-  style?: StyleProp<ViewStyle>;
-};
-
-/** App footer row (shadcn `DialogFooter`; not an `nsh/base` part). */
+/** The row of actions at the card's end. */
 export type DialogFooterProps = {
   children?: JSX.Element;
-  class?: string | null;
   style?: StyleProp<ViewStyle>;
 };
 
-/** App title text (shadcn `DialogTitle`; not an `nsh/base` part). */
-export type DialogTitleProps = {
-  children?: string | JSX.Element;
-  class?: string | null;
-  style?: StyleProp<TextStyle | ViewStyle>;
-};
-
-/** App description text (shadcn `DialogDescription`; not an `nsh/base` part). */
-export type DialogDescriptionProps = {
-  children?: string | JSX.Element;
-  class?: string | null;
-  style?: StyleProp<TextStyle | ViewStyle>;
-};
-
-type DialogContextValue = OpenState & {
-  onOpen?: () => void;
-  onClose?: () => void;
-  onCancel?: () => void;
-};
+type DialogContextValue = OpenState & Pick<DialogProps, "onOpen" | "onClose" | "onCancel">;
 
 const DialogContext = context<DialogContextValue | null>(null);
 
@@ -97,68 +110,7 @@ function useDialog() {
   return ctx;
 }
 
-/** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
-function mergeStyle<T extends ViewStyle | TextStyle>(
-  base?: StyleProp<T> | null,
-  consumer?: StyleProp<T> | null,
-): StyleProp<T> | undefined {
-  if (base == null && consumer == null) return undefined;
-  if (base == null) return consumer ?? undefined;
-  if (consumer == null) return base ?? undefined;
-  return [base, consumer];
-}
-
-/**
- * The card, its type and its chrome. The card is 90% of the window on purpose
- * (a dialog is a card, not a hug of its title). Title 17 / 20 and text 13 / 15
- * follow the pointer.
- */
-function look() {
-  const pointer = isPointer();
-  return {
-    card: {
-      ...modalSurface(),
-      width: "90%",
-      maxWidth: "90%",
-      margin: "auto",
-      gap: 12,
-    } satisfies ViewStyle,
-    header: { gap: 4 } satisfies ViewStyle,
-    footer: {
-      flexDirection: "row",
-      justifyContent: "flex-end",
-      flexWrap: "wrap",
-      gap: 8,
-    } satisfies ViewStyle,
-    title: {
-      fontSize: pointer ? 17 : 20,
-      fontWeight: "600",
-      color: colors.foreground,
-    } satisfies TextStyle,
-    body: {
-      fontSize: pointer ? 13 : 15,
-      lineHeight: pointer ? 19 : 21,
-      color: colors.mutedForeground,
-    } satisfies TextStyle,
-  };
-}
-
-/** The dialog card, the same style {@link DialogContent} puts on the popup. */
-export function dialogCardStyle(): ViewStyle {
-  return look().card;
-}
-
-/** The dialog title's type. */
-export function dialogTitleStyle(): TextStyle {
-  return look().title;
-}
-
-/** The dialog description's type. */
-export function dialogBodyStyle(): TextStyle {
-  return look().body;
-}
-
-/** Composition root: owns the open state the parts below read. */
+/** The root of a dialog's parts. */
 export function Dialog(props: DialogProps) {
   const state = createOpenState<DialogChangeReason>(props);
   return (
@@ -181,19 +133,15 @@ export function Dialog(props: DialogProps) {
   );
 }
 
-/** Opens the dialog; a string child renders a `Button`. */
-export function DialogTrigger(props: DialogTriggerProps) {
-  const ctx = useDialog();
-  const open = () => {
-    if (!props.disabled) ctx.setOpen(true);
-  };
+/** A button of the card, or its trigger: a `Button` for a string, else a pressable view. */
+function Action(props: DialogTriggerProps & { onPress: () => void }) {
   if (typeof props.children === "string") {
     return (
       <Button
+        variant={props.variant ?? "secondary"}
         disabled={props.disabled}
-        class={props.class ?? undefined}
         style={props.style}
-        onPress={open}
+        onPress={props.onPress}
       >
         {props.children}
       </Button>
@@ -204,64 +152,45 @@ export function DialogTrigger(props: DialogTriggerProps) {
       accessible
       role="button"
       accessibilityState={{ disabled: props.disabled }}
-      class={props.class ?? undefined}
-      focusStyle={focusRing()}
-      onPress={props.disabled ? undefined : open}
-      style={props.disabled ? mergeStyle({ opacity: disabledOpacity() }, props.style) : props.style}
+      focusVisibleStyle={focusRing()}
+      onPress={props.disabled ? undefined : props.onPress}
+      style={props.style}
     >
       {props.children}
     </View>
   );
 }
 
-/** Closes the dialog; a string child renders a `Button` (outline unless `variant` is set). */
-export function DialogClose(props: DialogCloseProps) {
+/** Opens the dialog. */
+export function DialogTrigger(props: DialogTriggerProps) {
   const ctx = useDialog();
-  const close = () => {
-    if (!props.disabled) ctx.setOpen(false);
-  };
-  if (typeof props.children !== "string" && props.children != null) {
-    return (
-      <View
-        accessible
-        role="button"
-        accessibilityState={{ disabled: props.disabled }}
-        class={props.class ?? undefined}
-        focusStyle={focusRing()}
-        onPress={props.disabled ? undefined : close}
-        style={
-          props.disabled ? mergeStyle({ opacity: disabledOpacity() }, props.style) : props.style
-        }
-      >
-        {props.children}
-      </View>
-    );
-  }
   return (
-    <Button
-      disabled={props.disabled}
-      variant={props.variant ?? "outline"}
-      class={props.class ?? undefined}
-      style={props.style}
-      onPress={close}
-    >
-      {props.children ?? "Close"}
-    </Button>
+    <Action {...props} onPress={() => ctx.setOpen(true)}>
+      {props.children}
+    </Action>
   );
 }
 
-/** The card, with the backdrop dimmed. Motion stays on base (`animation`). */
+/** Closes the dialog, after its own `onPress`. */
+export function DialogClose(props: DialogCloseProps) {
+  const ctx = useDialog();
+  return (
+    <Action
+      {...props}
+      onPress={() => {
+        props.onPress?.();
+        ctx.setOpen(false, "closePress");
+      }}
+    >
+      {props.children}
+    </Action>
+  );
+}
+
+/** The card, over the theme's scrim. */
 export function DialogContent(props: DialogContentProps) {
   const ctx = useDialog();
-  const chrome = look();
-  const [, rest] = split(props, [
-    "children",
-    "style",
-    "backdropStyle",
-    "animation",
-    "class",
-    "backdropClass",
-  ]);
+  const [, rest] = split(props, ["width", "children", "style", "backdropStyle", "animation"]);
   return (
     <BaseDialog
       {...rest}
@@ -271,69 +200,46 @@ export function DialogContent(props: DialogContentProps) {
       onOpen={ctx.onOpen}
       onClose={ctx.onClose}
       onCancel={ctx.onCancel}
-      class={props.class ?? undefined}
-      style={mergeStyle(chrome.card, props.style)}
-      backdropClass={props.backdropClass ?? undefined}
-      backdropStyle={mergeStyle(popupBackdrop(), props.backdropStyle)}
+      backdropStyle={[backdrop(), props.backdropStyle ?? null]}
+      // The widths of upstream's dialog demo (`el-dialog`).
+      style={[dialogCard(props.width ?? (pointer ? 360 : 320)), props.style ?? null]}
     >
       {props.children}
     </BaseDialog>
   );
 }
 
-/** The header block of the card. */
-export function DialogHeader(props: DialogHeaderProps) {
-  return (
-    <View class={props.class ?? undefined} style={mergeStyle(look().header, props.style)}>
-      {props.children}
-    </View>
-  );
+/** The card's title; a string takes `dialogTitle`'s type. */
+export function DialogTitle(props: DialogTextProps) {
+  if (typeof props.children !== "string") return props.children;
+  return <Text style={[dialogTitle(), props.style ?? null]}>{props.children}</Text>;
 }
 
-/** The footer row of the card. */
+/** The text under the title; a string takes `dialogText`'s type. */
+export function DialogDescription(props: DialogTextProps) {
+  if (typeof props.children !== "string") return props.children;
+  return <Text style={[dialogText(), props.style ?? null]}>{props.children}</Text>;
+}
+
+/**
+ * The row of the card's actions, laid out as upstream's dialog demo (`el-dialog`) lays them:
+ * 8 points apart, at the trailing edge with a pointer. On a touch screen the demo's buttons
+ * share the width: give each `style={{ flex: 1 }}`.
+ */
 export function DialogFooter(props: DialogFooterProps) {
   return (
-    <View class={props.class ?? undefined} style={mergeStyle(look().footer, props.style)}>
+    <View
+      style={[
+        {
+          flexDirection: "row",
+          gap: 8,
+          paddingTop: 4,
+          justifyContent: pointer ? "flex-end" : undefined,
+        },
+        props.style ?? null,
+      ]}
+    >
       {props.children}
     </View>
-  );
-}
-
-/** The card's title; a string child gets the dialog type. */
-export function DialogTitle(props: DialogTitleProps) {
-  if (typeof props.children !== "string" && props.children != null) {
-    return (
-      <View class={props.class ?? undefined} style={props.style as StyleProp<ViewStyle>}>
-        {props.children}
-      </View>
-    );
-  }
-  // Read in the JSX so a scheme change re-runs it. A helper outside the element does not.
-  return (
-    <Text
-      class={props.class ?? undefined}
-      style={mergeStyle(look().title, props.style as StyleProp<TextStyle>)}
-    >
-      {props.children}
-    </Text>
-  );
-}
-
-/** The card's description; a string child gets the dialog type. */
-export function DialogDescription(props: DialogDescriptionProps) {
-  if (typeof props.children !== "string" && props.children != null) {
-    return (
-      <View class={props.class ?? undefined} style={props.style as StyleProp<ViewStyle>}>
-        {props.children}
-      </View>
-    );
-  }
-  return (
-    <Text
-      class={props.class ?? undefined}
-      style={mergeStyle(look().body, props.style as StyleProp<TextStyle>)}
-    >
-      {props.children}
-    </Text>
   );
 }

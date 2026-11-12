@@ -1,7 +1,7 @@
-// Source: examples/nsh-gallery-ui/look/overlay.ts @ 64ab8a1d (baseline), see NOTICE.
-import { colors, disabledOpacity, focusRing, modalSurface, popupBackdrop } from "@shadcn-nsh/theme";
+// An alert dialog: confirmation card on Dialog with `dialogCard` / `dialogTitle` / `dialogText`.
+// The look lives in `dialog.tsx` (from look/overlay.ts); this file is the shell only.
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
-import { context, signal, split, Text, View } from "nsh";
+import { context, platform, signal, split, Text, View } from "nsh";
 import {
   type AlertDialogRole,
   Dialog as BaseDialog,
@@ -9,9 +9,12 @@ import {
   type DialogProps as BaseDialogProps,
 } from "nsh/base";
 
-import { Button, type ButtonVariant } from "./button";
-import { isPointer } from "./lib/density";
+import { Button, type ButtonKind } from "./button";
+import { dialogCard, dialogText, dialogTitle } from "./dialog";
 import { createOpenState, type OpenState } from "./lib/open-state";
+import { backdrop } from "./lib/overlay";
+
+const pointer = platform.desktop;
 
 /**
  * Composition root for a confirmation card. Open state only: the card's
@@ -38,58 +41,55 @@ export type AlertDialogProps = {
  */
 export type AlertDialogContentProps = Omit<
   BaseDialogProps,
-  "open" | "onOpenChange" | "onOpen" | "onClose" | "onCancel" | "children"
+  "open" | "onOpenChange" | "onOpen" | "onClose" | "onCancel"
 > & {
-  children?: JSX.Element;
+  /** The card's width; default 360 with a pointer, 320 on a touch screen. */
+  width?: number;
 };
 
 /** Opens the alert. String children render as a Button; otherwise a pressable View. */
 export type AlertDialogTriggerProps = {
   children?: string | JSX.Element;
+  /** The button's variant, for a string child (default `secondary`). */
+  variant?: ButtonKind;
   disabled?: boolean;
-  class?: string | null;
   style?: StyleProp<ViewStyle>;
 };
 
 /**
  * One action. `id` is what `onAction` reports (the app's name, not the label).
- * `role` picks the button: `destructive`, `cancel` (outline), or `default`.
+ * `role` picks the button: `destructive` → danger, `cancel` → secondary, else primary.
  */
 export type AlertDialogActionProps = {
   id: string;
   role?: AlertDialogRole;
   children?: string | JSX.Element;
   disabled?: boolean;
-  class?: string | null;
   style?: StyleProp<ViewStyle>;
 };
 
 /** App chrome around title and description (not an `nsh/base` part). */
 export type AlertDialogHeaderProps = {
   children?: JSX.Element;
-  class?: string | null;
   style?: StyleProp<ViewStyle>;
 };
 
 /** App footer row (not an `nsh/base` part). Actions stay in the order given. */
 export type AlertDialogFooterProps = {
   children?: JSX.Element;
-  class?: string | null;
   style?: StyleProp<ViewStyle>;
 };
 
 /** App title text (not an `nsh/base` part). */
 export type AlertDialogTitleProps = {
   children?: string | JSX.Element;
-  class?: string | null;
-  style?: StyleProp<TextStyle | ViewStyle>;
+  style?: StyleProp<TextStyle>;
 };
 
 /** App description text (not an `nsh/base` part). */
 export type AlertDialogDescriptionProps = {
   children?: string | JSX.Element;
-  class?: string | null;
-  style?: StyleProp<TextStyle | ViewStyle>;
+  style?: StyleProp<TextStyle>;
 };
 
 type AlertDialogContextValue = OpenState & {
@@ -108,71 +108,10 @@ function useAlertDialog() {
   return ctx;
 }
 
-/** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
-function mergeStyle<T extends ViewStyle | TextStyle>(
-  base?: StyleProp<T> | null,
-  consumer?: StyleProp<T> | null,
-): StyleProp<T> | undefined {
-  if (base == null && consumer == null) return undefined;
-  if (base == null) return consumer ?? undefined;
-  if (consumer == null) return base ?? undefined;
-  return [base, consumer];
-}
-
-/**
- * The confirmation card. Width is 90% of the window and at most 400: a short
- * decision, not a hug of its title, and not a sheet stretched across a wide
- * desktop. Title 17 / 20 and text 13 / 15 follow the pointer.
- */
-function look() {
-  const pointer = isPointer();
-  return {
-    card: {
-      ...modalSurface(),
-      width: "90%",
-      maxWidth: 400,
-      margin: "auto",
-      gap: 12,
-    } satisfies ViewStyle,
-    header: { gap: 4 } satisfies ViewStyle,
-    footer: {
-      flexDirection: "row",
-      justifyContent: "flex-end",
-      flexWrap: "wrap",
-      gap: 8,
-    } satisfies ViewStyle,
-    title: {
-      fontSize: pointer ? 17 : 20,
-      fontWeight: "600",
-      color: colors.foreground,
-    } satisfies TextStyle,
-    body: {
-      fontSize: pointer ? 13 : 15,
-      lineHeight: pointer ? 19 : 21,
-      color: colors.mutedForeground,
-    } satisfies TextStyle,
-  };
-}
-
-function actionVariant(role?: AlertDialogRole | null): ButtonVariant {
-  if (role === "destructive") return "destructive";
-  if (role === "cancel") return "outline";
-  return "default";
-}
-
-/** The alert card, the same style {@link AlertDialogContent} puts on the popup. */
-export function alertDialogCardStyle(): ViewStyle {
-  return look().card;
-}
-
-/** The alert title's type. */
-export function alertDialogTitleStyle(): TextStyle {
-  return look().title;
-}
-
-/** The alert description's type. */
-export function alertDialogBodyStyle(): TextStyle {
-  return look().body;
+function actionVariant(role?: AlertDialogRole | null): ButtonKind {
+  if (role === "destructive") return "danger";
+  if (role === "cancel") return "secondary";
+  return "primary";
 }
 
 /** Composition root: owns the open state and which action was chosen. */
@@ -215,19 +154,15 @@ export function AlertDialog(props: AlertDialogProps) {
   );
 }
 
-/** Opens the alert; a string child renders a `Button`. */
-export function AlertDialogTrigger(props: AlertDialogTriggerProps) {
-  const ctx = useAlertDialog();
-  const open = () => {
-    if (!props.disabled) ctx.setOpen(true);
-  };
+/** A button of the card, or its trigger: a `Button` for a string, else a pressable view. */
+function Action(props: AlertDialogTriggerProps & { onPress: () => void; variant?: ButtonKind }) {
   if (typeof props.children === "string") {
     return (
       <Button
+        variant={props.variant ?? "secondary"}
         disabled={props.disabled}
-        class={props.class ?? undefined}
         style={props.style}
-        onPress={open}
+        onPress={props.onPress}
       >
         {props.children}
       </Button>
@@ -238,27 +173,33 @@ export function AlertDialogTrigger(props: AlertDialogTriggerProps) {
       accessible
       role="button"
       accessibilityState={{ disabled: props.disabled }}
-      class={props.class ?? undefined}
-      focusStyle={focusRing()}
-      onPress={props.disabled ? undefined : open}
-      style={props.disabled ? mergeStyle({ opacity: disabledOpacity() }, props.style) : props.style}
+      onPress={props.disabled ? undefined : props.onPress}
+      style={props.style}
     >
       {props.children}
     </View>
   );
 }
 
-/** The card. Motion stays on base (`animation`). A user dismiss reports `action: null`. */
+/** Opens the alert. */
+export function AlertDialogTrigger(props: AlertDialogTriggerProps) {
+  const ctx = useAlertDialog();
+  return (
+    <Action {...props} onPress={() => ctx.setOpen(true)}>
+      {props.children}
+    </Action>
+  );
+}
+
+/** The card, over the theme's scrim. An alert waits for an action by default. */
 export function AlertDialogContent(props: AlertDialogContentProps) {
   const ctx = useAlertDialog();
-  const chrome = look();
   const [, rest] = split(props, [
+    "width",
     "children",
     "style",
     "backdropStyle",
     "animation",
-    "class",
-    "backdropClass",
     "closeOnEscape",
     "closeOnBackdropPress",
     "closeOnSwipe",
@@ -278,10 +219,8 @@ export function AlertDialogContent(props: AlertDialogContentProps) {
       onOpen={ctx.onOpen}
       onClose={ctx.onClose}
       onCancel={ctx.onCancel}
-      class={props.class ?? undefined}
-      style={mergeStyle(chrome.card, props.style)}
-      backdropClass={props.backdropClass ?? undefined}
-      backdropStyle={mergeStyle(popupBackdrop(), props.backdropStyle)}
+      backdropStyle={[backdrop(), props.backdropStyle ?? null]}
+      style={[dialogCard(props.width ?? (pointer ? 360 : 320)), props.style ?? null]}
     >
       {props.children}
     </BaseDialog>
@@ -300,12 +239,8 @@ export function AlertDialogAction(props: AlertDialogActionProps) {
         accessible
         role="button"
         accessibilityState={{ disabled: props.disabled }}
-        class={props.class ?? undefined}
-        focusStyle={focusRing()}
         onPress={props.disabled ? undefined : choose}
-        style={
-          props.disabled ? mergeStyle({ opacity: disabledOpacity() }, props.style) : props.style
-        }
+        style={props.style}
       >
         {props.children}
       </View>
@@ -315,7 +250,6 @@ export function AlertDialogAction(props: AlertDialogActionProps) {
     <Button
       disabled={props.disabled}
       variant={actionVariant(props.role)}
-      class={props.class ?? undefined}
       style={props.style}
       onPress={choose}
     >
@@ -326,56 +260,40 @@ export function AlertDialogAction(props: AlertDialogActionProps) {
 
 /** The header block of the card. */
 export function AlertDialogHeader(props: AlertDialogHeaderProps) {
-  return (
-    <View class={props.class ?? undefined} style={mergeStyle(look().header, props.style)}>
-      {props.children}
-    </View>
-  );
+  return <View style={[{ gap: 4 }, props.style ?? null]}>{props.children}</View>;
 }
 
-/** The footer row of the card. */
+/**
+ * The row of the card's actions, laid out as upstream's dialog demo lays them: 8 points apart,
+ * at the trailing edge with a pointer.
+ */
 export function AlertDialogFooter(props: AlertDialogFooterProps) {
   return (
-    <View class={props.class ?? undefined} style={mergeStyle(look().footer, props.style)}>
+    <View
+      style={[
+        {
+          flexDirection: "row",
+          gap: 8,
+          paddingTop: 4,
+          justifyContent: pointer ? "flex-end" : undefined,
+          flexWrap: "wrap",
+        },
+        props.style ?? null,
+      ]}
+    >
       {props.children}
     </View>
   );
 }
 
-/** The card's title; a string child gets the alert type. */
+/** The card's title; a string takes `dialogTitle`'s type. */
 export function AlertDialogTitle(props: AlertDialogTitleProps) {
-  if (typeof props.children !== "string" && props.children != null) {
-    return (
-      <View class={props.class ?? undefined} style={props.style as StyleProp<ViewStyle>}>
-        {props.children}
-      </View>
-    );
-  }
-  return (
-    <Text
-      class={props.class ?? undefined}
-      style={mergeStyle(look().title, props.style as StyleProp<TextStyle>)}
-    >
-      {props.children}
-    </Text>
-  );
+  if (typeof props.children !== "string") return props.children;
+  return <Text style={[dialogTitle(), props.style ?? null]}>{props.children}</Text>;
 }
 
-/** The card's description; a string child gets the alert type. */
+/** The card's description; a string takes `dialogText`'s type. */
 export function AlertDialogDescription(props: AlertDialogDescriptionProps) {
-  if (typeof props.children !== "string" && props.children != null) {
-    return (
-      <View class={props.class ?? undefined} style={props.style as StyleProp<ViewStyle>}>
-        {props.children}
-      </View>
-    );
-  }
-  return (
-    <Text
-      class={props.class ?? undefined}
-      style={mergeStyle(look().body, props.style as StyleProp<TextStyle>)}
-    >
-      {props.children}
-    </Text>
-  );
+  if (typeof props.children !== "string") return props.children;
+  return <Text style={[dialogText(), props.style ?? null]}>{props.children}</Text>;
 }

@@ -1,114 +1,80 @@
-// Source: examples/nsh-gallery-ui/look/nav.tsx @ 64ab8a1d (baseline), see NOTICE.
-import { colors, radius } from "@shadcn-nsh/theme";
-import type { StyleProp, TextStyle } from "nsh";
-import { computed, split, Text } from "nsh";
+// A pagination: the look (`paginationLook` and its companions) and the `Pagination` that wears it.
+// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
+// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+import { colors, terminal } from "@shadcn-nsh/theme";
+import type { JSX } from "nsh";
+import { platform, split } from "nsh";
+import { Text, View } from "nsh";
 import {
   Pagination as BasePagination,
   type PaginationItemState,
   type PaginationProps as BasePaginationProps,
 } from "nsh/base";
 
-import { isPointer } from "./lib/density";
+import { Icon } from "./lib/icons";
+
+// @port look/nav.tsx
+const pointer = platform.desktop;
+
+// Pagination -------------------------------------------------------------
+
+/** What every pagination item shares: quiet until hovered, the current page
+ * lit as a primary button is, citrus under its dark text (`selected:`), with
+ * a color fade (still with reduced motion), the ends dimmed (`disabled:`),
+ * the focus ring's outline. */
+const pageItem =
+  "flex-row items-center justify-center gap-1 px-2 rounded-md text-sm text-foreground " +
+  "transition-colors duration-200 motion-reduce:transition-none hover:bg-hover active:opacity-70 " +
+  "selected:bg-primary selected:text-primary-foreground disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-ring";
 
 /**
- * Theme layer on `nsh/base` Pagination. Item states are classes: base has no
- * per-item style hooks. Glyphs stay ‹ › … (this package has no icon set).
+ * A `Pagination`'s `itemClass`, over the component's own numbers and
+ * labels: 32 points with a pointer, 44 on a touch screen; `outlined` (a
+ * compact pager's Previous and Next, or every item on a touch screen) on the
+ * border's edge, padded wider, 40 points tall with a pointer.
  */
-export type PaginationProps = BasePaginationProps;
+export function paginationItemClass(o?: { outlined?: boolean }): string {
+  const box = pointer ? (o?.outlined ? "min-w-8 h-10" : "min-w-8 h-8") : "min-w-11 h-11";
+  return `${box} ${pageItem}${o?.outlined ? " px-3 border border-border" : ""}`;
+}
 
-type PaginationChrome = {
-  root: TextStyle;
-  itemStyle: TextStyle;
-  itemClass: string;
-  fontSize: number;
+/**
+ * A `Pagination`'s items (its `renderItem`), as gpui-component's: Previous
+ * and Next as chevrons (their accessibility labels name them), so a row of
+ * pages fits a phone's width; a page its number, tabular; an ellipsis `…`.
+ * A terminal's chevrons are glyphs.
+ */
+export function paginationArrows(item: PaginationItemState): JSX.Element {
+  if (item.kind === "page")
+    return <Text style={{ fontVariant: ["tabular-nums"] }}>{String(item.page)}</Text>;
+  if (item.kind === "ellipsis") return <Text>…</Text>;
+  if (terminal)
+    return <Text style={{ color: colors.muted }}>{item.kind === "previous" ? "‹" : "›"}</Text>;
+  return (
+    <View style={item.kind === "previous" ? { transform: [{ rotate: "180deg" }] } : undefined}>
+      <Icon name="chevron" size={pointer ? 14 : 16} tint={colors.text} />
+    </View>
+  );
+}
+// @port end
+
+/**
+ * `nsh/base`'s Pagination with `paginationItemClass` and `paginationArrows` by default.
+ * Every base prop passes through.
+ */
+export type PaginationProps = BasePaginationProps & {
+  /** Outlined Previous/Next (or every item on touch). */
+  outlined?: boolean;
 };
 
-/** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
-function mergeStyle(
-  base?: StyleProp<TextStyle> | null,
-  consumer?: StyleProp<TextStyle> | null,
-): StyleProp<TextStyle> | undefined {
-  if (base == null && consumer == null) return undefined;
-  if (base == null) return consumer ?? undefined;
-  if (consumer == null) return base ?? undefined;
-  return [base, consumer];
-}
-
-/** Concatenate wrapper + consumer `class` when both are set. */
-function mergeClass(base: string, consumer?: string | null): string {
-  return consumer ? `${base} ${consumer}` : base;
-}
-
-/**
- * Outlined page buttons. Touch sizes every item to 44; a pointer is 32, or 40
- * when `compact`. Color stays off `itemStyle` so `selected:` / `hover:` classes
- * can paint it (inline style wins over classes).
- */
-function look(compact: boolean): PaginationChrome {
-  const pointer = isPointer();
-  const min = pointer ? (compact ? 40 : 32) : 44;
-  return {
-    fontSize: pointer ? 13 : 15,
-    root: {
-      flexDirection: "row",
-      alignItems: "center",
-      gap: 4,
-    },
-    itemStyle: {
-      minWidth: min,
-      minHeight: min,
-      paddingHorizontal: 8,
-      borderRadius: radius.control,
-      borderWidth: 1,
-      borderColor: colors.border,
-      alignItems: "center",
-      justifyContent: "center",
-    },
-    itemClass:
-      "transition-colors duration-200 motion-reduce:transition-none hover:bg-accent active:bg-muted selected:bg-primary selected:text-primary-foreground disabled:opacity-50",
-  };
-}
-
-/** Item box for the current idiom. Pass `compact` for the pointer's taller outlined control. */
-export function paginationVariants(compact?: boolean): PaginationChrome {
-  return look(!!compact);
-}
-
-function glyph(item: PaginationItemState) {
-  if (item.kind === "previous") return "‹";
-  if (item.kind === "next") return "›";
-  if (item.kind === "ellipsis") return "…";
-  return String(item.page);
-}
-
-/** Previous, pages, and next. The current page is `selected:`; disabled items fade. */
+/** A pager of page numbers and arrows. */
 export function Pagination(props: PaginationProps) {
-  const [, rest] = split(props, ["style", "itemStyle", "itemClass", "renderItem", "compact"]);
-  const chrome = computed(() => paginationVariants(!!props.compact));
-  const render =
-    props.renderItem ??
-    ((item: PaginationItemState) => (
-      <Text
-        style={{
-          fontSize: chrome().fontSize,
-          fontWeight: item.current ? "600" : "400",
-          fontVariant: ["tabular-nums"],
-        }}
-      >
-        {glyph(item)}
-      </Text>
-    ));
-
+  const [, rest] = split(props, ["outlined", "itemClass", "renderItem"]);
   return (
     <BasePagination
       {...rest}
-      compact={props.compact}
-      style={mergeStyle(chrome().root, props.style)}
-      itemStyle={mergeStyle(chrome().itemStyle, props.itemStyle)}
-      itemClass={mergeClass(chrome().itemClass, props.itemClass)}
-      renderItem={render}
-    >
-      {props.children}
-    </BasePagination>
+      itemClass={props.itemClass ?? paginationItemClass({ outlined: props.outlined })}
+      renderItem={props.renderItem ?? paginationArrows}
+    />
   );
 }

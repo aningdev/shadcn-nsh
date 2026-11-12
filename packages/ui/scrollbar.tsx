@@ -1,146 +1,68 @@
-// Source: examples/nsh-gallery-ui/scrollbar-theme.ts @ 64ab8a1d (baseline), see NOTICE.
-import { colors } from "@shadcn-nsh/theme";
-import type { StyleProp, ViewStyle } from "nsh";
-import { computed, split } from "nsh";
+// Scrollbar: `scrollbarTheme` and the `Scrollbar` that wears it.
+// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
+// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+import { platform, split } from "nsh";
 import {
   Scrollbar as BaseScrollbar,
-  type Axis,
-  type ScrollbarMode,
-  type ScrollbarMotion,
   type ScrollbarProps as BaseScrollbarProps,
   type ScrollbarTheme,
 } from "nsh/base";
 
-import { isPointer } from "./lib/density";
+// @port scrollbar-theme.ts
+const touch = !platform.desktop;
 
 /**
- * Theme layer on `nsh/base` Scrollbar. Every base prop passes through.
- * The thumb follows the named scroll view; this file only paints the bar.
+ * The gallery's scroll bars, gpui-component's, which `Scrollbar.setTheme`
+ * gives every scroll view and list in place of the platform's indicator.
+ * They show while the content scrolls and while the pointer is over them
+ * (pointing at a hidden thumb slides it in from the edge), fade in over
+ * 300 ms and out over 500 ms, 2 s after the last scroll, drag or hover.
+ * The track is 16 points thick over the view's edge (the widest thumb and
+ * an inset of 4 on each side, 2 on a touch screen); the thumb is 6 points
+ * at rest (3, the system's indicator, on a touch screen), 8 and darker
+ * under the pointer or while dragged, its width easing over 300 ms. Its
+ * colors are opaque, the muted foreground mixed into the background (as
+ * gpui-component's themes do), so rows never show through it.
  */
+export const scrollbarTheme: ScrollbarTheme = {
+  mode: "hover",
+  motion: {
+    idle: 2000,
+    enter: 300,
+    exit: 500,
+    entrance: "fade",
+    thumbHoverEntrance: "slideAndFade",
+  },
+  vertical: {
+    class: `absolute inset-y-0 right-0 w-4 items-end ${touch ? "p-0.5" : "p-1"}`,
+    thumbClass: `${touch ? "w-[3px]" : "w-1.5"} rounded-full bg-scrollbar-thumb transition-all duration-300 hover:w-2 hover:bg-scrollbar-thumb-hover active:w-2 active:bg-scrollbar-thumb-hover motion-reduce:transition-none`,
+  },
+  horizontal: {
+    class: `absolute inset-x-0 bottom-0 h-4 items-end ${touch ? "p-0.5" : "p-1"}`,
+    thumbClass: `${touch ? "h-[3px]" : "h-1.5"} rounded-full bg-scrollbar-thumb transition-all duration-300 hover:h-2 hover:bg-scrollbar-thumb-hover active:h-2 active:bg-scrollbar-thumb-hover motion-reduce:transition-none`,
+  },
+};
+// @port end
+
+function mergeClass(base: string, extra?: string | null): string {
+  return extra ? `${base} ${extra}` : base;
+}
+
+/** Theme layer on `nsh/base` Scrollbar. Every base prop passes through. */
 export type ScrollbarProps = BaseScrollbarProps;
 
-/** Track, thumb, and the timing a placed bar and `Scrollbar.setTheme` share. */
-export type ScrollbarChrome = {
-  /** Track classes: the band on the viewport's edge. */
-  className: string;
-  /** Track thickness. A fixed overlay band, not a text box; see `look`. */
-  style: ViewStyle;
-  /** Thumb classes. Width stays here so `hover:` can widen it. */
-  thumbClass: string;
-  /** Thumb color from the theme. No width, so the class hover still applies. */
-  thumbStyle: ViewStyle;
-  /** When it shows. This look uses `hover` (base's own default is `scrolling`). */
-  mode: ScrollbarMode;
-  /**
-   * Native fade. `enter` 300 and `exit` 500 are scrollbar.md's timings, not CSS
-   * `duration-*` (an `always` bar, and reduced motion, never animate).
-   */
-  motion: ScrollbarMotion;
-};
-
-/** Wrapper default, then consumer. */
-function mergeClass(base: string, consumer?: string | null): string {
-  return consumer ? `${base} ${consumer}` : base;
-}
-
-/** Wrapper defaults, then consumer — consumer wins per key. */
-function mergeStyle(
-  base?: StyleProp<ViewStyle> | null,
-  consumer?: StyleProp<ViewStyle> | null,
-): StyleProp<ViewStyle> | undefined {
-  if (base == null && consumer == null) return undefined;
-  if (base == null) return consumer ?? undefined;
-  if (consumer == null) return base ?? undefined;
-  return [base, consumer];
-}
-
-/** Thumb fade and widen. `motion-reduce` drops it. `transition-all` is what scrollbar.md writes. */
-export const scrollbarThumbMotion = "transition-all duration-300 motion-reduce:transition-none";
-
-/**
- * The gallery bar without `scrollbar-thumb` (that token is not in this theme).
- * The thumb is `muted-foreground`; its rest thickness is a class so the pointer can widen it.
- * The 16-point track is a fixed overlay band (the press target), not a growing text box.
- */
-function look(axis: Axis): ScrollbarChrome {
-  const pointer = isPointer();
-  // Rest thickness 6 (3 on a touch screen); 8 under the pointer or while dragged.
-  const cross = axis === "horizontal" ? "h" : "w";
-  const rest = pointer ? `${cross}-1.5` : `${cross}-[3px]`;
-  const hover = cross === "h" ? "hover:h-2 active:h-2" : "hover:w-2 active:w-2";
-  const thumbClass = `${rest} rounded-full opacity-60 ${scrollbarThumbMotion} ${hover} hover:opacity-90 active:opacity-100`;
-  const pad = pointer ? "p-1" : "p-0.5";
-  const along =
-    axis === "horizontal"
-      ? `absolute inset-x-0 bottom-0 h-4 items-end ${pad}`
-      : `absolute inset-y-0 right-0 w-4 items-end ${pad}`;
-  return {
-    className: along,
-    style: axis === "horizontal" ? { minHeight: 16 } : { minWidth: 16 },
-    thumbClass,
-    thumbStyle: { backgroundColor: colors.mutedForeground, borderRadius: 999 },
-    mode: "hover",
-    motion: {
-      idle: 2000,
-      enter: 300,
-      exit: 500,
-      entrance: "fade",
-      thumbHoverEntrance: "slideAndFade",
-    },
-  };
-}
-
-/** The bar's chrome for `axis` (default vertical). Call it where the theme is read. */
-export function scrollbarVariants(options?: {
-  /** Which edge. Default vertical. */
-  axis?: Axis;
-}): ScrollbarChrome {
-  return look(options?.axis ?? "vertical");
-}
-
-/** The theme `Scrollbar.setTheme` takes, so every scroll view uses this look. */
-export function scrollbarTheme(): ScrollbarTheme {
-  const vertical = look("vertical");
-  const horizontal = look("horizontal");
-  return {
-    mode: vertical.mode,
-    motion: vertical.motion,
-    vertical: {
-      class: vertical.className,
-      style: vertical.style,
-      thumbClass: vertical.thumbClass,
-      thumbStyle: vertical.thumbStyle,
-    },
-    horizontal: {
-      class: horizontal.className,
-      style: horizontal.style,
-      thumbClass: horizontal.thumbClass,
-      thumbStyle: horizontal.thumbStyle,
-    },
-  };
-}
-
 function Bar(props: ScrollbarProps) {
-  const [, rest] = split(props, [
-    "class",
-    "style",
-    "thumbClass",
-    "thumbStyle",
-    "mode",
-    "motion",
-    "axis",
-  ]);
-  const chrome = computed(() => look(props.axis ?? "vertical"));
+  const axis = props.axis ?? "vertical";
+  const part = axis === "horizontal" ? scrollbarTheme.horizontal! : scrollbarTheme.vertical!;
+  const [, rest] = split(props, ["class", "thumbClass", "mode", "motion", "axis"]);
   return (
     <BaseScrollbar
       {...rest}
-      axis={props.axis}
-      mode={props.mode ?? chrome().mode}
-      motion={props.motion ?? chrome().motion}
-      class={mergeClass(chrome().className, props.class)}
-      style={mergeStyle(chrome().style, props.style)}
-      thumbClass={mergeClass(chrome().thumbClass, props.thumbClass)}
-      thumbStyle={mergeStyle(chrome().thumbStyle, props.thumbStyle)}
+      axis={axis}
+      mode={props.mode ?? scrollbarTheme.mode}
+      motion={props.motion ?? scrollbarTheme.motion}
+      class={mergeClass(part.class ?? "", props.class)}
+      thumbClass={mergeClass(part.thumbClass ?? "", props.thumbClass)}
     />
   );
 }
@@ -158,5 +80,5 @@ export const Scrollbar = Bar as typeof Bar & {
 };
 
 Scrollbar.setTheme = (theme?: ScrollbarTheme | null) => {
-  BaseScrollbar.setTheme(theme === undefined ? scrollbarTheme() : theme);
+  BaseScrollbar.setTheme(theme === undefined ? scrollbarTheme : theme);
 };

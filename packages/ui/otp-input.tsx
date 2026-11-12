@@ -1,129 +1,91 @@
-// Source: examples/nsh-gallery-ui/look/field.tsx @ 64ab8a1d (baseline), see NOTICE.
-import { alpha, colors, finish, radius } from "@shadcn-nsh/theme";
-import type { StyleProp, TextStyle, ViewStyle } from "nsh";
-import { computed, split } from "nsh";
+// An OTP input: the look (`otpCellLook`) and the `OtpInput` that wears it.
+// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
+// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+import { colors, finish, terminal, type Tone, toneColor, toneTint } from "@shadcn-nsh/theme";
+import type { ViewStyle } from "nsh";
+import { platform, split } from "nsh";
 import { OtpInput as BaseOtpInput, type OtpInputProps as BaseOtpInputProps } from "nsh/base";
 
-import { isPointer } from "./lib/density";
-import { fieldDisabledStyle, fieldTransitionClass } from "./lib/field";
+import { edgeClass } from "./input";
 
-/**
- * Theme layer on `nsh/base` OtpInput. No `variant` / `size`. `invalid` paints every
- * cell in the danger tone (the reference's verdict tone). Every base prop passes
- * through; consumer styles win per key.
- */
-export type OtpInputProps = BaseOtpInputProps & {
-  /** Danger edge and tint on every cell, over the empty / filled look. */
-  invalid?: boolean;
-};
+// @port look/field.tsx
+const pointer = platform.desktop;
 
-type OtpLook = {
-  style: ViewStyle;
-  disabledStyle: ViewStyle;
-  groupStyle: ViewStyle;
-  cellClass: string;
-  cellStyle: TextStyle;
-  caretStyle: ViewStyle;
-};
+/** A value, or a function reading it where the look is applied (a signal). */
+type Live<T> = T | (() => T);
 
-/**
- * Empty / filled / focus live on the class: `cellStyle` wins over `cellClass`, so a
- * resting border or fill in the style would hide `data-filled:` and `focus:`.
- * Invalid is the exception — it is a style, so it wins over those classes.
- */
-const CELL_CLASS = [
-  "items-center justify-center border border-border bg-muted font-semibold text-foreground",
-  "data-filled:border-input data-filled:bg-card data-filled:focus:border-ring",
-  "focus:border-ring outline-2 -outline-offset-1 outline-ring/0 focus:outline-ring",
-  fieldTransitionClass,
-].join(" ");
+const read = <T,>(v: Live<T> | undefined): T | undefined =>
+  typeof v === "function" ? (v as () => T)() : v;
 
-/** Wrapper default, then consumer: both set, both apply. */
-function mergeClass(base: string, consumer?: string | null): string {
-  return consumer ? `${base} ${consumer}` : base;
-}
+/** The cells of a code of six: 36 × 44 with a pointer, 44 × 52 on a touch screen. */
+export const otpCells = pointer ? "w-9 h-11 text-lg" : "w-11 h-13 text-xl";
 
-/** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
-function mergeStyle<S>(
-  base?: StyleProp<S> | null,
-  consumer?: StyleProp<S> | null,
-): StyleProp<S> | undefined {
-  if (base == null && consumer == null) return undefined;
-  if (base == null) return consumer ?? undefined;
-  if (consumer == null) return base ?? undefined;
-  return [base, consumer];
+/** Options of `otpCellLook`. */
+export interface OtpCellOptions {
+  /** A cell's size classes (`otpCells` by default; a PIN's are larger). */
+  cells?: string;
+  /** A verdict: every cell edged and tinted in its tone (or a function reading it). */
+  tone?: Live<Tone | undefined>;
 }
 
 /**
- * Cells: 36×44, text 18, with a pointer; 44×52, text 20, on a touch screen
- * (the reference's `w-9 h-11 text-lg` / `w-11 h-13 text-xl`). Widths and heights
- * are minimums (R5).
+ * A one-time code's cells (spread on `OtpInput`): wells that a digit (a
+ * bullet too) lifts out of (`data-filled:`), the cell taking the next digit
+ * edged in the accent while the code has the keys (the fields' focus edge),
+ * a verdict's tone over all of them, every change fading; the caret a
+ * rounded bar in the text color, blinking (the input's own). In a terminal a
+ * cell is a framed box, its line only.
  */
-function look(invalid: boolean): OtpLook {
-  const pointer = isPointer();
-  const cell = pointer
-    ? { minWidth: 36, minHeight: 44, fontSize: 18 }
-    : { minWidth: 44, minHeight: 52, fontSize: 20 };
+export function otpCellLook(o?: OtpCellOptions) {
+  const cells = o?.cells ?? otpCells;
   return {
-    style: { flexDirection: "row", gap: 8 },
-    disabledStyle: fieldDisabledStyle(),
-    groupStyle: { flexDirection: "row", gap: 8 },
-    cellClass: CELL_CLASS,
-    cellStyle: {
-      minWidth: cell.minWidth,
-      minHeight: cell.minHeight,
-      alignItems: "center",
-      justifyContent: "center",
-      borderRadius: radius.control,
-      fontSize: cell.fontSize,
-      fontWeight: "600",
-      textAlign: "center",
-      color: colors.foreground,
-      boxShadow: finish.control.pressed,
-      ...(invalid
-        ? {
-            borderColor: colors.destructive,
-            backgroundColor: alpha(colors.destructive, 0.12),
-          }
-        : {}),
+    cellClass: terminal
+      ? "w-10 h-12 items-center justify-center border border-line font-semibold text-foreground focus:border-brand disabled:opacity-50"
+      : `${cells} items-center justify-center rounded-lg border border-line bg-inset font-semibold text-foreground data-filled:border-input data-filled:bg-card data-filled:focus:border-brand disabled:opacity-50 ${edgeClass({ rest: "", focus: "focus" })}`,
+    get cellStyle(): ViewStyle {
+      const tone = read(o?.tone);
+      if (terminal) return tone ? { borderColor: toneColor(tone) } : {};
+      return tone
+        ? { ...finish.inset, backgroundColor: toneTint(tone), borderColor: toneColor(tone) }
+        : finish.inset;
     },
-    caretStyle: {
-      width: 2,
-      height: 24,
-      borderRadius: 999,
-      backgroundColor: colors.foreground,
+    caretClass: "w-0.5 h-6 rounded-full",
+    get caretStyle(): ViewStyle {
+      return { backgroundColor: colors.text };
     },
   };
 }
+// @port end
 
-/** The cells' chrome. Call it where the props are read. */
-export function otpInputVariants(options?: { invalid?: boolean }): OtpLook {
-  return look(!!options?.invalid);
-}
+/**
+ * `nsh/base`'s OtpInput in the look of `otpCellLook`. Every base prop passes through; the cell
+ * and caret props go over the look's.
+ */
+export type OtpInputProps = BaseOtpInputProps & {
+  /** A cell's size classes (`otpCells` by default). */
+  cells?: string;
+  /** A verdict: every cell edged and tinted in its tone. */
+  tone?: Tone | (() => Tone | undefined);
+};
 
-/** A one-time code: cells on `nsh/base` OtpInput. Every base prop passes through. */
+/** A one-time code's cells. */
 export function OtpInput(props: OtpInputProps) {
   const [, rest] = split(props, [
-    "style",
-    "disabledStyle",
-    "groupStyle",
+    "cells",
+    "tone",
     "cellClass",
     "cellStyle",
+    "caretClass",
     "caretStyle",
-    "invalid",
   ]);
-
-  const current = computed(() => otpInputVariants({ invalid: props.invalid }));
-
+  const look = otpCellLook({ cells: props.cells, tone: props.tone });
   return (
     <BaseOtpInput
       {...rest}
-      style={mergeStyle(current().style, props.style)}
-      disabledStyle={mergeStyle(current().disabledStyle, props.disabledStyle)}
-      groupStyle={mergeStyle(current().groupStyle, props.groupStyle)}
-      cellClass={mergeClass(current().cellClass, props.cellClass)}
-      cellStyle={mergeStyle(current().cellStyle, props.cellStyle)}
-      caretStyle={mergeStyle(current().caretStyle, props.caretStyle)}
+      cellClass={props.cellClass ? `${look.cellClass} ${props.cellClass}` : look.cellClass}
+      cellStyle={[look.cellStyle, props.cellStyle ?? null]}
+      caretClass={props.caretClass ? `${look.caretClass} ${props.caretClass}` : look.caretClass}
+      caretStyle={[look.caretStyle, props.caretStyle ?? null]}
     />
   );
 }

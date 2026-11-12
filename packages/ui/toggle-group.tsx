@@ -1,54 +1,59 @@
-// Source: examples/nsh-gallery-ui/look/tool.ts (`toolbarTrack`) @ 64ab8a1d (baseline), see NOTICE.
-import { colors, disabledOpacity } from "@shadcn-nsh/theme";
-import type { StyleProp, ViewStyle } from "nsh";
+// A toggle group: `nsh/base`'s ToggleGroup in the inset track of `toolbarTrack`.
+// The track look lives in `toolbar.tsx` (from look/tool.ts); this file is the shell only.
+import { colors } from "@shadcn-nsh/theme";
+import type { ViewStyle } from "nsh";
 import { split } from "nsh";
 import {
   ToggleGroup as BaseToggleGroup,
   type ToggleGroupProps as BaseToggleGroupProps,
 } from "nsh/base";
 
-/** Theme layer on `nsh/base` ToggleGroup: the inset track its toggles sit in. */
-export type ToggleGroupProps = BaseToggleGroupProps;
+import { toolbarTrack } from "./toolbar";
 
-/** Wrapper defaults, then consumer — consumer wins per key (StyleProp list L→R). */
-function mergeStyle(
-  base?: StyleProp<ViewStyle> | null,
-  consumer?: StyleProp<ViewStyle> | null,
-): StyleProp<ViewStyle> | undefined {
-  if (base == null && consumer == null) return undefined;
-  if (base == null) return consumer ?? undefined;
-  if (consumer == null) return base ?? undefined;
-  return [base, consumer];
-}
+/**
+ * `nsh/base`'s ToggleGroup. Every base prop passes through; `style` goes over the look's.
+ * Put `Toggle`s inside; they keep their own look. Default `inset` wears `toolbarTrack`; set
+ * `inset={false}` inside a `Toolbar` that already has the track.
+ */
+export type ToggleGroupProps = BaseToggleGroupProps & {
+  /** A column of toggles (default a row). */
+  vertical?: boolean;
+  /** Default true: the inset track. False inside a Toolbar that already has the track. */
+  inset?: boolean;
+};
 
-/** The inset track: its toggles in a row 2 points apart, 3 points inside the edge, on a sunk fill. */
-function trackChrome(): ViewStyle {
+/** Tools in a row (or column), matching `toolbarTrack`'s gap when not inset. */
+function groupChrome(vertical?: boolean): ViewStyle {
   return {
-    flexDirection: "row",
+    flexDirection: vertical ? "column" : "row",
     alignItems: "center",
     gap: 2,
-    padding: 3,
-    borderRadius: 10,
-    borderCurve: "continuous",
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.muted,
   };
 }
 
-/** The inset track holding a row of toggles; every base prop passes through. */
-export function ToggleGroup(props: ToggleGroupProps) {
-  const [, rest] = split(props, ["style"]);
-
-  return (
-    <BaseToggleGroup
-      {...rest}
-      style={mergeStyle(
-        { ...trackChrome(), opacity: disabledOpacity(props.disabled) },
-        props.style,
-      )}
-    />
-  );
+/**
+ * `toolbarTrack` with live color reads. The ported helper snapshots `colors.*` into a plain
+ * object; on ToggleGroup that snapshot stayed light under a dark scheme in port:render, so the
+ * shell re-reads the tokens where the style is applied (as `switchLook`'s getters do).
+ */
+function insetTrack(vertical?: boolean): ViewStyle {
+  const base = toolbarTrack({ vertical });
+  return {
+    ...base,
+    get backgroundColor() {
+      return colors.inset;
+    },
+    get borderColor() {
+      return colors.border;
+    },
+  };
 }
 
-export { Toggle } from "./toggle";
+/** The track holding a row (or column) of toggles. */
+export function ToggleGroup(props: ToggleGroupProps) {
+  const [, rest] = split(props, ["style", "vertical", "inset"]);
+  const look = props.inset === false ? groupChrome(props.vertical) : insetTrack(props.vertical);
+  return <BaseToggleGroup {...rest} style={[look, props.style ?? null]} />;
+}
+
+export { Toggle, type ToggleProps, type ToggleSize } from "./toggle";
