@@ -82,6 +82,8 @@ export async function checkRegistryDependencies(
             (x) => path.resolve(path.dirname(abs), spec) + x,
           ).find((candidate) => owner.has(candidate));
           if (target) used.add(owner.get(target)!);
+          // A relative import no item ships would be missing in the app it is copied into.
+          else problems.push(`${item.name}: imports "${spec}", which no registry item ships`);
         }
       }
     }

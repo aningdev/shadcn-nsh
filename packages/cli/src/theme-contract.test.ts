@@ -10,10 +10,10 @@ const read = (file: string) =>
 /** NSH's own default theme: every key an app that uses `nsh/base` is entitled to. */
 const official = read("../../../references/nsh/crates/nsh-base/src/default-theme.json");
 /**
- * The ported gallery-ui theme (staged under `next/` until the switch). Values may differ from
+ * The ported gallery-ui theme (`packages/theme`). Values may differ from
  * the official defaults; the contract is the key set, not the palette.
  */
-const ours = read("../../../next/theme/theme.json");
+const ours = read("../../../packages/theme/theme.json");
 
 const sections = ["theme", "light", "dark"] as const;
 
