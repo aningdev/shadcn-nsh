@@ -1,15 +1,20 @@
 #!/usr/bin/env bash
-# Puts this checkout on the baseline: the CLI, the submodule, and the types hosts.
+# Puts this checkout on the baseline: checks the installed CLI and generates the
+# types hosts.
 #
 #   bash scripts/nsh-bootstrap.sh      # or: bun run nsh:bootstrap
 #
-# The baseline is one commit, `port-map.json`'s `upstream.commit`. The CLI must be
-# built from it and `references/nsh` checked out at it (scripts/nsh-version.sh says
-# how to fix either), and the generated `.nsh` types hosts come from it. The only
-# thing this writes is `.nsh/` in `apps/gallery` and `apps/docs/demos`.
+# The project installs the NSH CLI with the official installer and never builds
+# it (docs/toolchain.md):
 #
-# Web packing (`bun run docs:demos`, `bun run port:render`) needs a runtime tree;
-# the last step prints what to export as `NSH_RUNTIME` for it (docs/toolchain.md).
+#   curl -fsSL https://nsh.dev/install.sh | sh -s -- --nightly
+#
+# The baseline is `port-map.json`'s `upstream.commit`, which is the commit
+# `nsh --version` prints. When they differ, move the baseline to the installed
+# CLI with `bun run port:bump`. The installed distribution carries its runtimes,
+# so web packing (`docs:demos`) and the render check need no `NSH_RUNTIME`.
+#
+# The only thing this writes is `.nsh/` in `apps/gallery` and `apps/docs/demos`.
 set -euo pipefail
 
 root="$(cd "$(dirname "$0")/.." && pwd)"
@@ -23,92 +28,52 @@ die() {
   exit 1
 }
 
-# Absolute path of a symlink chain (macOS's readlink has no -f).
-resolve() {
-  local target="$1"
-  while [ -L "$target" ]; do
-    local link
-    link="$(readlink "$target")"
-    case "$link" in
-      /*) target="$link" ;;
-      *) target="$(dirname "$target")/$link" ;;
-    esac
-  done
-  printf '%s\n' "$target"
-}
-
 command -v nsh >/dev/null 2>&1 || {
   cat >&2 <<'EOF'
-nsh: no CLI on PATH. This repo develops against upstream's main, not a store release:
+nsh: no CLI on PATH. Install it — the project never builds NSH:
 
-  bun run nsh:build                                   # build the pinned commit (needs Rust)
   curl -fsSL https://nsh.dev/install.sh | sh -s -- --nightly
-  curl -fsSL https://nsh.dev/install.sh | sh -s -- --source
+  export PATH="$HOME/.local/bin:$PATH"     # the installer links it there
 
-The CLI must be built from the baseline commit (docs/toolchain.md); --nightly may
-be behind it.
+The CLI must print the baseline commit (docs/toolchain.md). While the nightly is
+older than the baseline, install a release that is not:
+
+  curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=vX.Y.Z sh
 EOF
   exit 1
 }
 
-# The CLI's commit against the pin, then the submodule against both.
-bash scripts/nsh-version.sh
+# The baseline, from the only source: port-map.json.
+baseline="$(bun -e 'console.log((await Bun.file("port-map.json").json()).upstream.commit)')"
+[[ "$baseline" =~ ^[0-9a-f]{40}$ ]] || die "port-map.json has no 40-digit upstream.commit (found '${baseline}')"
 
-# Where the web runtimes are, relative to the CLI: a distribution next to `bin/nsh`,
-# an installed runtime tree, or a checkout's wasm build. NSH_RUNTIME wins if it is
-# already set.
-runtime=""
-if [[ -n "${NSH_RUNTIME:-}" ]]; then
-  runtime="$NSH_RUNTIME"
-else
-  cli_bin="$(resolve "$(command -v nsh)")"
-  install_root="$(dirname "$(dirname "$cli_bin")")"
-  for candidate in "$HOME/.nsh/runtime" "$install_root/runtime" "$install_root/target/wasm32-unknown-unknown"; do
-    if [[ -f "$candidate/web/nsh-browser.wasm" ]]; then
-      runtime="$candidate"
-      break
-    fi
-  done
+version="$(nsh --version)"
+printf 'nsh: %s (%s)\n' "$version" "$(command -v nsh)" >&2
+cli="$(printf '%s\n' "$version" | sed -n 's/.*(\([0-9a-f][0-9a-f]*\).*/\1/p' | head -n 1)"
+[[ -n "$cli" ]] || die "the printed version has no commit; reinstall with install.sh (docs/toolchain.md)"
+
+case "$baseline" in
+  "$cli"*) ;;
+  *)
+    die "installed nightly $cli differs from the baseline ${baseline:0:7}: move the baseline to it with 'bun run port:bump', or install a CLI at ${baseline:0:7} (docs/toolchain.md)"
+    ;;
+esac
+
+# `bun run port:vendor` and `port:check` read the baseline out of the submodule.
+head="$(git -C references/nsh rev-parse HEAD 2>/dev/null || true)"
+if [[ -z "$head" ]]; then
+  die "references/nsh is missing: git submodule update --init references/nsh"
+fi
+if [[ "$head" != "$baseline" ]]; then
+  die "references/nsh is at ${head:0:7}, the baseline is ${baseline:0:7}: git submodule update --init references/nsh, or move the baseline with 'bun run port:bump'"
 fi
 
-if [[ -n "$runtime" ]]; then
-  [[ -f "$runtime/web/nsh-browser.wasm" ]] \
-    || die "NSH_RUNTIME=$runtime has no web/nsh-browser.wasm: \`nsh package --target web\` (the docs demos) needs it; point NSH_RUNTIME at a runtime tree or run 'bash scripts/nsh-build.sh'"
-  [[ -f "$runtime/web/nsh-dev.wasm" ]] \
-    || die "NSH_RUNTIME=$runtime has no web/nsh-dev.wasm: \`nsh test --target web\` (port:render) needs it; run 'bash scripts/nsh-build.sh'"
-fi
-
-printf 'nsh: regenerating .nsh types hosts (prepare:types)…\n'
+printf 'nsh: generating the .nsh types hosts (prepare:types)…\n'
 bun run prepare:types
 
 [[ -f "$base_dts" ]] || die "missing $base_dts after prepare:types"
 [[ -f "$demos_dts" ]] || die "missing $demos_dts after prepare:types"
 
-# The baseline's declarations the shell depends on: `focusVisibleStyle` is how the
-# components draw focus (docs/toolchain.md), and no release before it has it.
-if ! grep -q 'focusVisibleStyle' "$base_dts"; then
-  die "$base_dts has no focusVisibleStyle — the CLI is not the baseline"
-fi
-for symbol in Button Accordion Popover; do
-  grep -q "$symbol" "$base_dts" || die "$base_dts has no $symbol — unexpected CLI"
-done
-
-printf 'nsh: OK — types hosts at %s and %s\n' "$base_dts" "$demos_dts"
-if [[ -n "$runtime" ]]; then
-  printf 'nsh: web packing uses %s\n' "$runtime"
-  if [[ -z "${NSH_RUNTIME:-}" ]]; then
-    printf 'nsh: export it for `bun run docs:demos` and `bun run port:render`:\n  export NSH_RUNTIME="%s"\n' "$runtime"
-  fi
-else
-  cat <<'EOF'
-nsh: no web runtime tree found. `bun run docs:demos` and `bun run port:render`
-     need one; either build and point at it:
-
-  bash scripts/nsh-build.sh
-  export NSH_RUNTIME="$HOME/.nsh-sync/runtime"
-
-     or let the CLI build the wasm from references/nsh (needs
-     `rustup target add wasm32-unknown-unknown`, a wasm32 clang and llvm-ar).
-EOF
-fi
+printf 'nsh: OK — CLI and upstream at the baseline %s\n' "${baseline:0:7}"
+printf 'nsh: types hosts at %s and %s\n' "$base_dts" "$demos_dts"
 printf 'nsh: next: bun run test:unit, nsh check apps/docs/demos, bun run check\n'

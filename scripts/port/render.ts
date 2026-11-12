@@ -15,13 +15,9 @@ const shots = path.join(demos, "shots");
 fs.rmSync(shots, { recursive: true, force: true });
 fs.mkdirSync(shots, { recursive: true });
 
-// A CLI built with `install.sh --source` looks for runtimes under its checkout. Prefer an
-// installed runtime tree (`~/.nsh/runtime`) when present so `port:render` does not rebuild wasm.
+// An installed CLI finds its runtimes next to `bin/nsh`, so nothing sets `NSH_RUNTIME`
+// here; a caller that sets it still gets it through `process.env`.
 const env = { ...process.env };
-if (!env.NSH_RUNTIME) {
-  const installed = path.join(process.env.HOME ?? "", ".nsh", "runtime");
-  if (fs.existsSync(path.join(installed, "web"))) env.NSH_RUNTIME = installed;
-}
 
 const result = spawnSync(
   "nsh",

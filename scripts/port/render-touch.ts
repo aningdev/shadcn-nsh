@@ -17,11 +17,9 @@ const demos = portPaths(readMap()).demos;
 const shots = path.join(demos, "shots");
 fs.mkdirSync(shots, { recursive: true });
 
+// An installed CLI finds its runtimes next to `bin/nsh`, so nothing sets `NSH_RUNTIME`
+// here; a caller that sets it still gets it through `process.env`.
 const env = { ...process.env };
-if (!env.NSH_RUNTIME) {
-  const installed = path.join(process.env.HOME ?? "", ".nsh", "runtime");
-  if (fs.existsSync(path.join(installed, "web"))) env.NSH_RUNTIME = installed;
-}
 
 const result = spawnSync(
   "nsh",
