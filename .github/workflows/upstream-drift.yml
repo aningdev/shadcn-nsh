@@ -1,0 +1,129 @@
+name: Upstream drift
+
+on:
+  schedule:
+    # Mondays, 06:00 UTC.
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+# Reads upstream and writes one issue. It never pushes.
+permissions:
+  contents: read
+  issues: write
+
+concurrency:
+  group: upstream-drift
+  cancel-in-progress: false
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+        with:
+          submodules: recursive
+          # Nothing here writes to the repository.
+          persist-credentials: false
+
+      # The baseline moves by hand (`bun run port:bump`); this only says what has
+      # happened upstream since, so the bump is planned, not discovered.
+      - name: Compare upstream main with the baseline
+        id: drift
+        run: |
+          set -euo pipefail
+          baseline="$(node -p "require('./port-map.json').upstream.commit")"
+          upstream="$(node -p "require('./port-map.json').upstream.path")"
+          # Paths inside references/nsh, for its git.
+          dir="${upstream#references/nsh/}"
+
+          git -C references/nsh fetch --quiet origin main
+          main="$(git -C references/nsh rev-parse origin/main)"
+          if ! git -C references/nsh cat-file -e "$baseline^{commit}" 2>/dev/null; then
+            git -C references/nsh fetch --quiet origin "$baseline"
+          fi
+
+          echo "baseline=$baseline" >> "$GITHUB_OUTPUT"
+          echo "main=$main" >> "$GITHUB_OUTPUT"
+          echo "dir=$dir" >> "$GITHUB_OUTPUT"
+
+          changed="$(git -C references/nsh diff --no-renames --name-status "$baseline..$main" -- "$dir")"
+          ahead="$(git -C references/nsh rev-list --count "$baseline..$main")"
+          echo "count=$(printf '%s' "$changed" | grep -c . || true)" >> "$GITHUB_OUTPUT"
+          echo "ahead=$ahead" >> "$GITHUB_OUTPUT"
+          printf '%s\n' "$changed" > "$RUNNER_TEMP/changed.txt"
+          if [ -z "$changed" ]; then
+            echo "No drift: upstream main has not touched $dir since ${baseline:0:7}"
+            exit 0
+          fi
+          printf 'Upstream touched %s file(s) in %s since %s\n' \
+            "$(printf '%s' "$changed" | grep -c .)" "$dir" "${baseline:0:7}"
+
+      - name: Write the issue body
+        if: steps.drift.outputs.count != '0'
+        run: |
+          set -euo pipefail
+          baseline="${{ steps.drift.outputs.baseline }}"
+          main="${{ steps.drift.outputs.main }}"
+          dir="${{ steps.drift.outputs.dir }}"
+          body="$RUNNER_TEMP/drift.md"
+
+          {
+            # One issue, updated in place: it stays the same title when the baseline moves.
+            echo '<!-- upstream-drift: written by .github/workflows/upstream-drift.yml -->'
+            echo
+            printf 'The baseline is `%s` (`%s`); upstream `main` is `%s` (`%s`), %s commits ahead.\n\n' \
+              "${baseline:0:7}" "$baseline" "${main:0:7}" "$main" "${{ steps.drift.outputs.ahead }}"
+            printf 'Files changed in `%s` since the baseline (%s):\n\n' "$dir" "${{ steps.drift.outputs.count }}"
+            echo '| Status | File |'
+            echo '| ------ | ---- |'
+            while IFS=$'\t' read -r status file; do
+              [ -n "${file:-}" ] || continue
+              # `--name-status` names files from the repository root, `$dir` included.
+              printf '| `%s` | [`%s`](https://github.com/longbridge/nsh/blob/%s/%s) |\n' \
+                "$status" "$file" "$main" "$file"
+            done < "$RUNNER_TEMP/changed.txt"
+            echo
+            printf '```\n%s\n```\n\n' "$(git -C references/nsh diff --shortstat "$baseline..$main" -- "$dir")"
+            echo 'Next steps ([`docs/toolchain.md`](https://github.com/aningdev/shadcn-nsh/blob/main/docs/toolchain.md)):'
+            echo
+            printf '1. Install a CLI built from `%s`: `curl -fsSL https://nsh.dev/install.sh | sh -s -- --source`, or `bun run nsh:build` from a checkout at that commit.\n' "${main:0:7}"
+            printf '2. `bun run port:bump %s` — checks the submodule out there, reports what changed in `port-map.json`'"'"'s terms, refills the regions and type checks the demos.\n' "$main"
+            echo '3. Review the diff, look at the four screenshots (`bun run port:render`), commit the submodule pointer, `port-map.json` and the regions together.'
+            echo
+            printf '_Checked %s by [upstream-drift](https://github.com/aningdev/shadcn-nsh/actions/workflows/upstream-drift.yml)._\n' "$(date -u +%Y-%m-%d)"
+          } > "$body"
+
+      - name: Open or update the issue
+        if: steps.drift.outputs.count != '0'
+        run: |
+          set -euo pipefail
+          number="$(gh issue list --state open --search 'Upstream drift in:title' --json number --jq '.[0].number // empty')"
+          if [ -n "$number" ]; then
+            gh issue edit "$number" --body-file "$RUNNER_TEMP/drift.md"
+            printf 'Updated issue #%s\n' "$number"
+          else
+            gh issue create \
+              --title "Upstream drift: ${{ steps.drift.outputs.dir }}" \
+              --body-file "$RUNNER_TEMP/drift.md"
+          fi
+
+      # The drift a bump cleared: say so and close the issue, so the open one always
+      # means outstanding work.
+      - name: Close the issue when there is no drift
+        if: steps.drift.outputs.count == '0'
+        run: |
+          set -euo pipefail
+          number="$(gh issue list --state open --search 'Upstream drift in:title' --json number --jq '.[0].number // empty')"
+          if [ -z "$number" ]; then
+            echo "No drift and no open issue: nothing to do"
+            exit 0
+          fi
+          note="$RUNNER_TEMP/no-drift.md"
+          printf 'No drift as of %s: upstream `main` has not touched `%s` since the baseline `%s`.\n' \
+            "$(date -u +%Y-%m-%d)" "${{ steps.drift.outputs.dir }}" "${{ steps.drift.outputs.baseline }}" > "$note"
+          gh issue comment "$number" --body-file "$note"
+          gh issue close "$number"
+          printf 'Closed issue #%s\n' "$number"
