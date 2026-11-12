@@ -1,29 +1,22 @@
 # Gallery
 
-原生验真入口：对照 [`references/nsh/examples/gallery`](../../references/nsh/examples/gallery) 的壳层模式，演示 [`@shadcn-nsh/ui`](../../packages/ui) 的 styled 包装。  
-**不做**：改 `nsh` / `nsh/base`；不把本目录或参考 `nsh-gallery-ui` 的演示样式当成可发布 API。
+Native verification for the ported components: the behavior tests in [`tests/`](./tests) and the smoke page in [`App.tsx`](./App.tsx). It runs the same `packages/ui` components the docs site documents.
 
-## 目标（尚未落地）
+**Not** here: the public docs (`apps/docs`), the page previews (`apps/docs/demos`), or a copy of the upstream gallery's chrome. Behavior and accessibility still belong to `nsh` / `nsh/base`; this app proves the port.
 
-与参考对齐的 **Phone `NavStack` + Desktop 侧栏** 壳（搜索、`DemoPage`/`Card`、`lazy`、持久化上次 demo、根级 Toaster），侧栏只挂 **本库已导出组件** 的 lazy demo。
-
-| 做                                             | 不做                                                |
-| ---------------------------------------------- | --------------------------------------------------- |
-| 壳结构仿参考 `App` / `nav` / `ui` / `TitleBar` | 1:1 搬 Apps、Primitives、Styling、Motion、Platform  |
-| demo 只 import `@shadcn-nsh/ui` + 本目录壳零件 | 依赖参考 `nsh-gallery-ui` 当契约                    |
-| 待办以 `bun run port:check --status` 为准      | 搬参考 `tests` / `Bench` / `tools` / lucide codegen |
-
-当前 [`App.tsx`](./App.tsx) 仍是单页冒烟；完整壳与按组件拆分的 demos **暂缓**（与参考差距大，先跟 `@shadcn-nsh/ui` 一起补）。
-
-## 补全顺序
-
-1. [`packages/ui/README.md`](../../packages/ui/README.md) 里组件 status → done 并 registry 可 `add`。
-2. 在本 app 加对应 `demos/*` + 侧栏 `DemoEntry`。
-3. 从 [GAPS.md](./GAPS.md) 删掉该行。
-
-## 命令
+## Runs
 
 ```sh
-bun run check:gallery
-bun run dev:gallery
+bun run dev:gallery     # the smoke page
+bun run check:gallery   # nsh check apps/gallery
+bun run test:gallery    # nsh test apps/gallery
 ```
+
+## What a family adds
+
+1. A component in `packages/ui` with its registry item (`bun run port:new` scaffolds both).
+2. `tests/<family>.fixture.tsx` — the case, mounted.
+3. `tests/<family>.test.tsx` — presses, keys, values, disabled states and the look the fixture reports.
+4. A section in `App.tsx` when the family should be on the smoke page.
+
+Tests drive native events and read native state; they do not compare screenshots. The pixel comparison is `bun run port:render` in `apps/docs/demos` (pointer, light and dark) and `bun run port:render:touch` (iOS). Coverage status, including what is still `pending`, is `bun run port:check --status`.

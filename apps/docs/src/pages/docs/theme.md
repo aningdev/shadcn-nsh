@@ -1,100 +1,125 @@
 ---
 layout: ../../layouts/Docs.astro
 title: Theme
-description: theme.json is the color/radius truth (NSH's standard keys plus our custom- ones); finish and the focus ring brand surface depth.
+description: theme.json and finishes.json are the look; lib/theme.ts reads them for every component.
 ---
 
-Token truth for **colors and radius** is **`theme.json`** (wired through `nsh.json` `theme`). Surface depth and short press motion live beside it as **this package’s increment** (not default shadcn theming tokens). See the [theme README](https://github.com/aningdev/shadcn-nsh/blob/main/packages/theme/README.md).
+The theme is the upstream gallery's: a graphite page (paper in light appearance), cards and insets, one citrus accent, compact controls with a pointer and roomier ones on a touch screen. It is two JSON files plus the module that reads them, and every component takes its colors, radii and depth from there — no component writes a color of its own.
 
-Styled wrappers read helpers from `@shadcn-nsh/theme` (`colors`, `radius`, `finish`, `focusRing`, …).
+## Files
 
-## Install
+| File            | What it holds                                                               |
+| --------------- | --------------------------------------------------------------------------- |
+| `theme.json`    | Colors and radii in shadcn's `cssVars` shape, for light and dark            |
+| `finishes.json` | Gradients, shadows and edges by role, for light and dark                    |
+| `lib/theme.ts`  | `colors`, `finish`, `radius`, `focusRing` and `alpha`, read from both files |
 
-```npx tabs
+## Installation
+
+```sh
 npx shadcn-nsh@latest add theme
 ```
 
-```bunx tabs
-bunx shadcn-nsh@latest add theme
-```
+`add theme` writes `theme.json`, `lib/finishes.json` and `lib/theme.ts`, and points each `nsh.json` at `theme.json`. Every component depends on it.
 
-```pnx tabs
-pnx shadcn-nsh@latest add theme
-```
+## Colors
 
-```yarn tabs
-yarn dlx shadcn-nsh@latest add theme
-```
+`theme.json` is a shadcn theme: `cssVars.theme` holds the radii and the accent's raw values, `cssVars.light` and `cssVars.dark` hold the same semantic keys for the two appearances. The core keys are shadcn's (`background`, `foreground`, `card`, `popover`, `primary`, `secondary`, `muted`, `accent`, `destructive`, `border`, `input`, `ring`, `chart-1` … `chart-5`, `sidebar*`). Upstream adds the roles the gallery needs:
 
-## Colors — `theme.json`
+| Role                                                                               | Use                                                        |
+| ---------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| `inset` / `raised`                                                                 | A surface inside a card, and a control on the card         |
+| `field` / `input`                                                                  | An input's well and its edge                               |
+| `line` / `border`                                                                  | Hairlines inside insets, and the edge of a card or control |
+| `hover` / `faint`                                                                  | The pointer's wash, and the quietest text                  |
+| `brand` / `brand-fill`                                                             | The accent as ink, and as a fill with `on-brand` on it     |
+| `track` / `knob`                                                                   | A switch's track when off, and its knob                    |
+| `scrollbar-thumb*`                                                                 | The scroll bars, opaque over the view                      |
+| `code`                                                                             | Code inside insets                                         |
+| `info` / `warn` / `up` / `down` / `violet`                                         | The tones beside the accent                                |
+| `brand-tint`, `info-tint`, `warn-tint`, `destructive-tint`, `up-tint`, `down-tint` | The same tones as fills behind text                        |
+| `window-close`, `window-minimize`, `window-zoom`, `window-control-*`               | The macOS traffic lights                                   |
 
-Authoring copy lives at `packages/theme/theme.json`. It is plain shadcn `cssVars`, every color written as oklch:
-
-- `cssVars.theme` — shared tokens (`radius`)
-- `cssVars.light` / `cssVars.dark` — semantic colors (`background`, `foreground`, `primary`, …)
-
-The file starts from NSH's own default theme (shadcn `neutral`): **every official key is here with its official value**. What is ours is only the keys with a `custom-` prefix:
-
-| Ours                | Purpose                                                  |
-| ------------------- | -------------------------------------------------------- |
-| `custom-shadow-ink` | Shadow tone (opaque); `finish` sets the opacity          |
-| `custom-highlight`  | Inset highlight tone (opaque); `finish` sets the opacity |
-| `custom-backdrop`   | The dimming behind modals                                |
-
-NSH resolves `cssVars` into runtime tokens. Prefer editing JSON over hard-coding color in components. Shadows are not tokens in NSH, so they never go in `cssVars`: their colors are the `custom-*` tokens above and their shapes are `finish` in `theme.ts`.
-
-## Finish
-
-Light/dark semantic **surface depth** (`finish.*`). Depth only: pair with `colors.*` for fills.
-
-| Role                                       | Use                                                                                                |
-| ------------------------------------------ | -------------------------------------------------------------------------------------------------- |
-| `control.rest` / `flat` / `pressed` / `on` | Bordered control surfaces (e.g. [Button](/docs/components/button)); a hover keeps `rest`           |
-| `filled`                                   | A control on a solid brand fill                                                                    |
-| `popup`                                    | Popup-family **one** soft shadow — used by `popupSurface` / `modalSurface` / `overlayShadow` below |
-
-A component names a role; it writes no shadow of its own.
+`colors` maps the roles a component names onto those keys:
 
 ```tsx
-import { colors, finish } from "@shadcn-nsh/theme";
+import { colors } from "@shadcn-nsh/theme";
 
-// control
-style={{ backgroundColor: colors.secondary, boxShadow: finish.control.rest }}
-
-// overlay (prefer the shared helpers)
-import { modalSurface, popupBackdrop, popupSurface } from "@shadcn-nsh/theme";
-style={popupSurface()}
-// a dialog or sheet card: style={modalSurface()}
-// backdropStyle={popupBackdrop()}
+colors.background; // the page
+colors.surface; // a card (card)
+colors.inset; // a surface inside a card
+colors.raised; // a control on a card
+colors.field; // an input's well
+colors.text; // foreground
+colors.muted; // muted-foreground
+colors.accent; // brand, as ink
+colors.accentFill; // brand-fill, as a fill
+colors.danger; // destructive
+colors.up; // additions
 ```
 
-## Motion
+Read a role where it is drawn (in JSX, a `draw`, or an effect): the getters read the token then, so they follow the appearance.
 
-Motion is **not** part of the theme. It follows [`nsh` Animation](https://nsh.dev/docs/animation) and its element docs, and each component writes the few lines it needs (the press sink in Button, the entrance in Popover / Menu / Tooltip). The conventions are in the [UI README](https://github.com/aningdev/shadcn-nsh/blob/main/packages/ui/README.md#motion-in-components). Reduced motion removes the scale and keeps the short colour fade. Dialog/Sheet keep `nsh/base`'s own motion, and Select/Combobox have no entrance hooks to set.
+## Finishes
 
-## `token()` and helpers
+A finish is light and depth: a gradient over the color, its shadows, its edge. `finishes.json` keeps one entry per role for each appearance, and `finish.<role>` returns the one the appearance shows.
+
+| Role                           | Use                                                       |
+| ------------------------------ | --------------------------------------------------------- |
+| `card` / `inset` / `field`     | The three surfaces, each with its own shadow              |
+| `raised` / `hover` / `pressed` | A control at rest, under the pointer, pressed             |
+| `light` / `accent`             | A control on the citrus fill                              |
+| `track` / `fill`               | A rail, and the accent that runs in it                    |
+| `knob` / `knobOn`              | A switch's knob off, and on                               |
+| `pill` / `thumb` / `on`        | A segmented control's track, its thumb, what stays chosen |
+| `chip`                         | A small raised label                                      |
+| `glass`                        | A control over a photo                                    |
+| `menu`                         | A floating surface's soft shadow                          |
+| `groove`                       | The lip of light under a separator                        |
+
+Spread one where a control needs that depth:
 
 ```tsx
-import { colors, focusRing, radius } from "@shadcn-nsh/theme";
-import { token } from "nsh";
-
-const pad = radius.control;
-const fg = colors.foreground;
-const ring = focusRing();
-// or: token("primary")
+<View style={{ backgroundColor: colors.raised, ...finish.raised, borderRadius: radius.control }} />
 ```
 
-- `token(name)` — reactive read of a named token from the active theme
-- `colors.*` / `radius.control` — thin getters over `token()` for common names
-- `focusRing()` — shared keyboard focus outline
-- `finish.*` — surface depth; `disabledOpacity()` — the one disabled look
+## Radii
 
-Changing brand colors means editing **`theme.json`**. Changing shadow shapes means editing **`finish` in `theme.ts`**.
+`theme.json`'s `theme` block holds `radius-card` (12), `radius` (10) and `radius-control` (7). `radius` reads them for JSX:
 
-## Gallery vs docs
+```tsx
+import { radius } from "@shadcn-nsh/theme";
 
-Native verification of theme + components: `apps/gallery`. Docs pages may show optional web demos; they are sketches, not the token authority.
+radius.card; // 12
+radius.inset; // 10
+radius.control; // 7
+```
 
-## Behavior & elements
+## Reading the theme
 
-Control behavior and a11y stay on [nsh.dev/elements](https://nsh.dev/elements). Theme here only brands the styled layer.
+```tsx
+import { alpha, colors, finish, focusRing, radius } from "@shadcn-nsh/theme";
+
+const card = {
+  backgroundColor: colors.surface,
+  borderColor: colors.border,
+  borderRadius: radius.card,
+  boxShadow: finish.card.boxShadow,
+};
+
+const ring = focusRing(); // the keyboard focus outline
+const dim = alpha(colors.text, 0.4); // a color at 40%
+```
+
+`focusRing(offset)` is the shared keyboard outline: the muted `ring` edge and a 3-point halo. `alpha(color, a)` is a `color-mix` of that color with transparency. `colors`, `finish` and `radius` are getters, not snapshots: read them where they are used.
+
+## Restyling
+
+Edit the two JSON files; every component follows. Change a brand color in `cssVars.light` and `cssVars.dark`, a radius in `cssVars.theme`, a shadow or gradient in `finishes.json`. Keep the keys: components and finishes refer to them by name, and both appearances need the same set.
+
+- Add the theme to an app with `shadcn-nsh add theme` (or let `init` do it).
+- Replacing both files together rebrands the whole library; a key added upstream should be added here too.
+- To change one component's look instead, edit its look in `packages/ui/<id>.tsx`; do not write colors in the shell.
+- Maintaining this repository: after editing `packages/theme`, run `bun run registry:build` and commit `public/r`.
+
+Theme rules and decisions: [`packages/theme/README.md`](https://github.com/aningdev/shadcn-nsh/blob/main/packages/theme/README.md). Behavior and accessibility are `nsh/base`'s: [nsh.dev/elements](https://nsh.dev/elements).

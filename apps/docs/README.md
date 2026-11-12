@@ -2,12 +2,13 @@
 
 [中文](./README.zh.md)
 
-Astro docs site for the styled / copy-into-app layer. Behavior, a11y, and full `nsh/base` API deep-link to [nsh.dev](https://nsh.dev/elements); native truth remains [`apps/gallery`](../gallery).
+Astro docs site for the copy-into-app components. Each page covers installation, usage, examples and the props the styled layer adds; behavior and the full `nsh/base` API deep-link to [nsh.dev](https://nsh.dev/elements).
 
 ```sh
 bun run dev:docs
 bun run check:docs
-bun run docs:demos   # optional: package NSH web previews into public/demos
+bun run check:pages   # registry ↔ pages ↔ demos, sections, import names
+bun run docs:demos    # package the demos into public/demos for the previews
 ```
 
-Authoring rules: [`AGENTS.md`](./AGENTS.md). Component inventory / Phase-2 gaps: [`packages/ui/README.md`](../../packages/ui/README.md).
+Authoring rules and the page contract: [`AGENTS.md`](./AGENTS.md). The component list is generated from `registry.json` and the pages — `bun run docs:components`; see `src/lib/components.generated.ts`.

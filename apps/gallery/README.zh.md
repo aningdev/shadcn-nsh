@@ -2,11 +2,12 @@
 
 [English](./README.md)
 
-[`@shadcn-nsh/ui`](../../packages/ui) 的原生验真 demo。外观与交互以本 app 为准；文档站的 web iframe 仅作示意。
+[`@shadcn-nsh/ui`](../../packages/ui) 的原生行为测试与冒烟页，组件与文档站相同。截图比对在 `apps/docs/demos`（`port:render`）；本 app 验的是行为。
 
 ```sh
-bun run check:gallery
 bun run dev:gallery
+bun run check:gallery
+bun run test:gallery
 ```
 
-作者约定见 [`AGENTS.md`](./AGENTS.md)。缺口见 [`GAPS.md`](./GAPS.md)。组件清单见 [`packages/ui/README.zh.md`](../../packages/ui/README.zh.md)。
+作者约定见 [`AGENTS.md`](./AGENTS.md)。组件清单与页面见 [`apps/docs`](../docs)。

@@ -1,60 +1,89 @@
 # apps/docs
 
-Astro docs site for shadcn-nsh (public copy-into-app docs + optional web demos).
+Astro site for the copy-into-app components: install, usage, examples and the props the styled layer adds. Behavior, keyboard support and the full unstyled API live on [nsh.dev](https://nsh.dev/elements) and are linked, not copied.
 
-## Shell (NSH website)
+Three surfaces share the same components:
 
-The chrome is a structural copy of `references/nsh/website`: sticky `site-nav` (burger under 860px), `docs-sidebar` (folding toggle under 960px), `docs-main` / `doc-content`, TOC, pager, footer, light/dark theme switch. Styles come from that site’s `global.css` + `ui.css`, with gallery tokens inlined as `styles/gallery-ui.css`.
+| Surface           | Role                                                                           |
+| ----------------- | ------------------------------------------------------------------------------ |
+| `apps/docs`       | This site: the public face                                                     |
+| `apps/docs/demos` | Acceptance demos for the pages, and the reference pages `port:render` compares |
+| `apps/gallery`    | Native behavior tests and smoke pages                                          |
 
-Do **not** invent a parallel layout — extend the NSH shell components under `src/components/` and `src/layouts/`.
+## Shell
 
-## Hybrid IA
+The chrome is a structural copy of `references/nsh/website`: sticky `site-nav` (burger under 860px), `docs-sidebar` (folding under 960px), `docs-main` / `doc-content`, TOC, pager, footer, light/dark switch. Styles come from that site's `global.css` + `ui.css`, with the gallery tokens inlined in `styles/gallery-ui.css`.
 
-This site documents the **styled / copy-into-app** layer only. Behavior, a11y, platform notes, and the full `nsh/base` API deep-link to `https://nsh.dev/elements/<nshElement>` (driven by `src/lib/components.ts`). Do **not** scrape or embed nsh Markdown into pages.
-
-Extensions (shadcn-only pieces with no `nsh/base` export) and Phase-2 components are **out of scope** for this site — see `packages/ui/README.md`.
+Do **not** invent a parallel layout — extend `src/components/` and `src/layouts/`. A component page must name `layout: ../../../layouts/Docs.astro` in its frontmatter; without it Astro renders the Markdown with no chrome.
 
 ## Component pages
 
-- Author as Markdown under `src/pages/docs/components/<slug>.md` (not `.astro`).
-- Frontmatter: `layout`, `title`, `description`, `component: true`; optional `demo: <slug>` to inject `DemoFrame` (needs `bun run docs:demos`); optional `demoHeight` (px, default `300`; use ~360–480 for overlays).
-- Do **not** put `# Title` in the body — `Docs.astro` renders `h1` from frontmatter.
-- Do **not** hand-write nsh.dev links, `## Behavior & a11y`, or `## Source` — the layout injects them from `nshElement` / slug when they differ.
-- Rendered page contract (layout + body), aligned with shadcn section intent:
+One page per `registry:ui` item, `src/pages/docs/components/<slug>.md`. The slug is the registry item's name.
 
-  1. Title (`h1` from frontmatter)
-  2. _(layout)_ nsh chrome — `nsh.dev/elements/<nshElement>` (+ `.md`)
-  3. **Standfirst** (body, no H2) — Frame like `references/nsh/website/modules/nsh-base.md`: `nsh/base` owns behavior/state/focus/a11y; this package is the styled layer (variants/sizes/tokens). One sentence on _this_ component. Links: [nsh/base module](https://nsh.dev/modules/nsh-base) + `https://nsh.dev/elements/<nshElement>`. Layout splits body so standfirst renders **above** Preview when `demo` is set.
-  4. _(layout)_ **Preview** — NSH-style demo panel (`DemoFrame`): Preview | Source, Phone | Desktop, `demos/<slug>.tsx` filename, Shiki-highlighted source; preview iframe from `docs:demos`
-  5. **Install** — consecutive ` ```npx tabs` / `bunx` / `pnx` / optional `yarn` fences (remark CodeTabs + copy). Commands only: `… shadcn-nsh@latest add <slug>`. **No Manual.** **No** Monorepo / `-c` / `components.json` notes in Install.
-  6. **Usage** — consumer imports `@workspace/ui/components/ui/<slug>`; document **this** package’s public API. Use shadcn **composition roles** (Trigger / Content / Item / …) with **nsh/base family export names** (`MenuTrigger`, not `DropdownMenuTrigger`); registry page slugs follow nsh kebab ids (`menu`, `context-menu`, …). Do not paste Radix props that we do not implement
-  7. **Composition** — ASCII tree of exported parts (required for compound components)
-  8. **Examples** — thematic `##` sections (Size, Variants, …); code required; shadcn density, not full ports
-  9. **API** — Props table + Events table (not “Methods”); optional **Variants** / **Sizes** when the wrapper adds look
-  10. **Differences** — vs shadcn `bases/base`: naming, parts, events (`onPress`), composition-only roots, etc.
-  11. **Not forwarded** — vs `nsh/base` intentional gaps only. Styled wrappers must **not** strip or rewrite base methods/API; they add a theme/style layer (`variant` / `size` / tokens) and forward the rest. For style hooks (`style`, `class`, `hoverStyle`, `activeStyle`, `focusStyle`, `selectedStyle`, `disabledStyle`): wrapper defaults from variant/size, then shallow-merge consumer on top (consumer wins per key); concatenate `class` when both are set. Button is the paradigm — its Not forwarded should be empty or nearly empty. No `variant="link"` on Button (Link is separate).
-  12. _(layout)_ **Behavior & a11y** → outbound nsh
-  13. _(layout)_ **Source**
+Frontmatter:
 
-- Capability: prefer full base pass-through (Button paradigm). Document only true intentional gaps under Not forwarded; do not invent props. No Extensions pages, no Phase-2 components.
-- Nav / index list: `src/lib/components.ts` — Phase-1 only (store CLI `nsh/base` exports). Newer base-only pieces stay out until a store release ships them.
-- Sidebar order: `src/lib/nav.ts` (`SIDEBAR_PAGES`, derived from `components`).
+```yaml
+---
+layout: ../../../layouts/Docs.astro
+title: Button
+description: A button, an icon button, a round button, and a split button.
+component: true
+demo: button
+demoHeight: 480 # optional, overlays only
+---
+```
 
-## Site pages
+The body has four sections, in this order, and nothing else at `##`:
 
-- Getting started, Theme (`theme.json` / `token()` as truth), Components index.
-- Components index must note that Extensions / Phase-2 live in `packages/ui/README.md` and are not listed here.
-- `public/llms.txt`: TOC for this site + pointers to `nsh.dev/elements` for behavior; do not fork nsh `llms-full`.
+1. **Installation** — one `sh` fence: `npx shadcn-nsh@latest add <slug>`.
+2. **Usage** — the import from `@/components/ui/<slug>`, then one minimal use.
+3. **Examples** — one `###` per variant, size, state or common use, each with a short `tsx` snippet. The sections show what `apps/docs/demos/<slug>.tsx` shows, and every prop is one the component really has.
+4. **API** — only the props and parts this package adds; one sentence points to [`nsh/base`](https://nsh.dev/elements/<element>) for the rest. Composites list their parts.
+
+Do **not**:
+
+- put `# Title` in the body (the layout renders `h1` from frontmatter);
+- write `## Behavior & a11y` or `## Source` (the layout injects them);
+- use the old `## Install`, `## Composition`, `## Differences` or `## Not forwarded` sections;
+- invent props or paste another library's API. Read `packages/ui/<slug>.tsx` and `apps/docs/demos/<slug>.tsx` first.
+
+Import snippets use the registry import path:
+
+```tsx
+import { Button, IconButton } from "@/components/ui/button";
+```
+
+Every name in such an import must be exported by `packages/ui/<slug>.tsx`; `check:pages` parses the import lines and checks them.
+
+## One component list
+
+`src/lib/components.generated.ts` is generated from `registry.json` (the `registry:ui` items) and each page's frontmatter. The sidebar (`src/lib/nav.ts`) and the index (`src/pages/docs/components/index.astro`) read it, so they list exactly the components that have pages.
+
+```sh
+bun run docs:components   # regenerate after adding a component or a page
+```
+
+Do not edit the generated file. `src/lib/components.ts` keeps the `nshElement` overrides (a page whose base element has another name, such as `radio-group` → `radio`) and the helpers. `bun run check:pages` fails when the file is stale.
 
 ## Demos
 
-One main web demo per component (NSH convention). Docs iframes are **illustrative**; native truth remains `apps/gallery`. Prefer the existing demos system (`demos/<slug>.tsx` → `docs:demos` → `public/demos/<slug>/`); do **not** invent a second preview strategy.
+- `apps/docs/demos/<slug>.tsx` is the acceptance demo: covers every variant, size and state, at least one real scenario. It is also the page's Preview and the source of truth for its Examples. It is not illustrative.
+- `apps/docs/demos/<slug>.ref.tsx` is the same page written the upstream way, the look expanded on `nsh/base` controls. `bun run port:render` requires the two screenshots to match; don't change one without the other.
+- `bun run docs:demos` packages each demo with `nsh package --target web` into `public/demos/<slug>/` (gitignored) for the iframe. The demo `demo:` must name an existing `demos/<slug>.tsx`.
+- The demo page uses `demos/kit.tsx` (`DemoPage` / `DemoCard` / `DemoSection`). Colors are read in JSX so they follow the appearance.
 
-1. **File:** `demos/<slug>.tsx` — `<slug>` matches `src/lib/components.ts` / the page filename.
-2. **Imports:** `@/packages/ui/<module>` (not `@shadcn-nsh/ui` barrel — avoids base version skew); theme via `@shadcn-nsh/theme`. `@` → repo root（`nsh.json` `resolve.alias` `"@"` + demos `tsconfig` `paths` `"@/*"`）。
-3. **Content:** short interaction + this package’s variants; do not teach base Inspector / Playground.
-4. **Page:** set `demo: <slug>` (and `demoHeight` when overlays need more room).
-5. **Build:** `bun run docs:demos` (also run by `build:docs`) packages each source with `nsh package --target web` into `public/demos/<slug>/` (gitignored). Concurrent, limited; validates every `demo:` ↔ `demos/<slug>.tsx`.
-6. **Types / check:** `nsh check apps/docs/demos` (via root `prepare:types` / `check`). Missing artifact → source-only panel + `bun run docs:demos` hint; CI must produce the package when `demo:` is set.
+## Theme
 
-Demo panel chrome (and fenced `tabs` CodeTabs / dual allsum Shiki themes) is ported from `references/nsh/website`. Phone | Desktop resizes the web iframe; there is no shared WASM player / Playground. Do **not** port those.
+`packages/theme` is the only look: `theme.json` (colors and radii), `finishes.json` (gradients and shadows), `theme.ts` (`colors`, `finish`, `radius`, `focusRing`, `alpha`). Pages and demos use those readers; no page hand-writes a palette. See `src/pages/docs/theme.md` and [the theme README](../../packages/theme/README.md).
+
+## Checks
+
+```sh
+bun run check:pages    # pages ↔ registry ↔ demos, sections, import names, generated list
+bun run check:docs     # astro sync + tsc
+bun run check:demos    # nsh check on the demos app
+bun run docs:demos     # package the previews
+vp check               # format, lint, tool types
+```
+
+`public/llms.txt` is this site's table of contents for language models: the docs pages, every component with its base link, and where the base API lives. Update it when a page is added or renamed.

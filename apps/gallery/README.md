@@ -2,11 +2,12 @@
 
 [中文](./README.zh.md)
 
-Native verification demos for [`@shadcn-nsh/ui`](../../packages/ui). This app is the ground truth for look and interaction; the docs site’s web iframes are illustrative only.
+Native behavior tests and smoke pages for [`@shadcn-nsh/ui`](../../packages/ui), on the same components the docs site documents. Screenshot comparison stays in `apps/docs/demos` (`port:render`); this app proves behavior.
 
 ```sh
-bun run check:gallery
 bun run dev:gallery
+bun run check:gallery
+bun run test:gallery
 ```
 
-Authoring rules: [`AGENTS.md`](./AGENTS.md). Coverage gaps: [`GAPS.md`](./GAPS.md). Component inventory: [`packages/ui/README.md`](../../packages/ui/README.md).
+Authoring rules: [`AGENTS.md`](./AGENTS.md). The component list and pages: [`apps/docs`](../docs).

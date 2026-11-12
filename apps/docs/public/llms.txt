@@ -1,57 +1,82 @@
 # shadcn-nsh
 
-Styled NSH component library (copy-into-app), analogous to shadcn/ui on Radix.
+Copy-into-app styled components for [Native Shell (NSH)](https://nsh.dev), built on `nsh/base` and distributed through a shadcn-style registry. The components are copied into the app and belong to it; the theme, the looks and the behavior underneath do not change.
 
 ## Commands
 
-- Init existing app: `shadcn-nsh init`
-- Add component: `shadcn-nsh add <name>` (monorepo: `-c apps/web` writes packages/ui)
-- Registry URL template: `https://raw.githubusercontent.com/aningdev/shadcn-nsh/main/public/r/{name}.json`
-- Consumer monorepo scaffolding (`create`) is deferred
+- Init an existing NSH app: `npx shadcn-nsh@latest init`
+- Add components: `npx shadcn-nsh@latest add <name>` (`--all`, `--dry-run`, `--overwrite`)
+- Inspect: `npx shadcn-nsh@latest list`, `view <name>`, `diff [name]`
+- Monorepo: `-c apps/web` adds into `packages/ui`
+- Default registry: `https://raw.githubusercontent.com/aningdev/shadcn-nsh/main/public/r/{name}.json`
+- Consumer monorepo scaffolding (`create`) is not built.
 
-## Layout
+## Docs
 
-- Authoring: packages/theme, packages/ui, packages/cli
-- Gallery (native): apps/gallery
-- Docs (web): apps/docs
+- /docs/getting-started: init, add, list / view / diff, monorepo, local registry.
+- /docs/theme: `theme.json` and `finishes.json` are the look; `lib/theme.ts` reads them.
+- /docs/components: one page per `registry:ui` item, with Installation, Usage, Examples and API.
 
-## Docs (this site)
+## Components
 
-Hybrid IA: this site covers install, usage, composition/examples, **this package’s** API, Differences (vs shadcn), and Not forwarded (vs `nsh/base`). Behavior, keyboard, a11y, platform notes, and full unstyled props → https://nsh.dev/elements (per-element pages). Do not treat this file as a fork of nsh `llms-full`.
+Every page links its base element on https://nsh.dev/elements; behavior, keyboard support and the full unstyled API live there, not here.
 
-Extensions / Phase-2 / base exports newer than store CLI → `packages/ui/COMPONENTS.md` (not listed as pages here).
+- /docs/components/spinner: A turning ring: work going on. → https://nsh.dev/elements/spinner
+- /docs/components/badge: A small capsule label in neutral, toned, or outline styles. → https://nsh.dev/elements/badge
+- /docs/components/button: A button, an icon button, a round button, and a split button. → https://nsh.dev/elements/button
+- /docs/components/switch: A switch whose knob springs across a sunk track. → https://nsh.dev/elements/switch
+- /docs/components/dialog: A card dialog: Trigger, Content, Title, Description, Footer and Close. → https://nsh.dev/elements/dialog
+- /docs/components/toggle: A two-state button, bare or outlined, with a label or an icon. → https://nsh.dev/elements/toggle
+- /docs/components/checkbox: A sunk box that fills in citrus, with a check or a dash springing in. → https://nsh.dev/elements/checkbox
+- /docs/components/radio-group: A sunk ring that fills in citrus, with a dot growing in — alone or as a choice tile. → https://nsh.dev/elements/radio
+- /docs/components/toggle-group: A row or column of toggles on the inset toolbar track. → https://nsh.dev/elements/toggle
+- /docs/components/toolbar: An inset track of tools, with groups and hairline separators. → https://nsh.dev/elements/toolbar
+- /docs/components/input: A sunk text field — single-line, multiline, masked, or invalid. → https://nsh.dev/elements/input
+- /docs/components/number-input: A sunk number field with − / + or stacked chevron steppers. → https://nsh.dev/elements/number-input
+- /docs/components/otp-input: One-time code cells that lift out of sunk wells as digits fill in. → https://nsh.dev/elements/otp-input
+- /docs/components/time-field: A sunk well for a time of day, one segment at a time. → https://nsh.dev/elements/time-field
+- /docs/components/tooltip: A popover-coloured hint bubble on any element's tooltip prop. → https://nsh.dev/elements/tooltip
+- /docs/components/popover: A popup panel that grows from its trigger, on the shared menu surface. → https://nsh.dev/elements/popover
+- /docs/components/hover-card: A preview card that grows from its trigger, on the shared popover surface. → https://nsh.dev/elements/hover-card
+- /docs/components/sheet: A panel that slides in from an edge of the screen over a scrim. → https://nsh.dev/elements/sheet
+- /docs/components/toast: A raised banner with a title, optional description, action and close. → https://nsh.dev/elements/toast
+- /docs/components/alert-dialog: A confirmation card that waits for an action, on the shared dialog look. → https://nsh.dev/elements/alert-dialog
+- /docs/components/menu: A menu of items, separators and submenus on the shared menu look. → https://nsh.dev/elements/menu
+- /docs/components/context-menu: A menu at the pointer, on the shared menu look. → https://nsh.dev/elements/menu
+- /docs/components/select: A list of choices from a field trigger, on the shared listbox look. → https://nsh.dev/elements/select
+- /docs/components/combobox: A searchable field with a list of choices, on the shared listbox look. → https://nsh.dev/elements/combobox
+- /docs/components/calendar: A month of days to pick a date or a range, on the shared calendar look. → https://nsh.dev/elements/calendar
+- /docs/components/date-picker: A calendar in a popup from a field trigger, on the shared listbox look. → https://nsh.dev/elements/date-picker
+- /docs/components/tabs: A pill track or underlined row with a traveling indicator. → https://nsh.dev/elements/tabs
+- /docs/components/segmented: A sunk track whose raised thumb springs to the selected segment. → https://nsh.dev/elements/toggle
+- /docs/components/accordion: List rows that reveal panels with a turning chevron. → https://nsh.dev/elements/accordion
+- /docs/components/collapsible: A disclosure row that reveals a panel beneath it. → https://nsh.dev/elements/collapsible
+- /docs/components/carousel: Snapping slides with round arrows and a traveling dot pill. → https://nsh.dev/elements/carousel
+- /docs/components/link: A text link with underline motion, on the shared nav look. → https://nsh.dev/elements/link
+- /docs/components/pagination: A pager of page numbers and chevron arrows. → https://nsh.dev/elements/pagination
+- /docs/components/progress: A determinate or indeterminate bar on the shared meter rail. → https://nsh.dev/elements/progress
+- /docs/components/meter: A horizontal meter with optional limit marker. → https://nsh.dev/elements/progress
+- /docs/components/stat: A label above a value for metric grids. → https://nsh.dev/elements/stat
+- /docs/components/status: A dot and label for quiet row or header state. → https://nsh.dev/elements/status
+- /docs/components/slider: A sunk rail with a citrus fill and round thumb. → https://nsh.dev/elements/slider
+- /docs/components/avatar: A round picture or named initials on the identity ring. → https://nsh.dev/elements/avatar
+- /docs/components/data-table: A card-styled spreadsheet with sorting, selection, and resize. → https://nsh.dev/elements/data-table
+- /docs/components/table: A composition table wearing the shared data-table classes. → https://nsh.dev/elements/table
+- /docs/components/tree: A card-framed tree with chevron rows and folder icons. → https://nsh.dev/elements/tree
+- /docs/components/command: A command palette with search, groups, and shortcut keys. → https://nsh.dev/elements/command
+- /docs/components/scrollbar: Hover-reveal scroll bars for scroll views and lists. → https://nsh.dev/elements/scrollbar
+- /docs/components/plot: Chart colors, grid, cross line and tooltip for nsh/base/plot. → https://nsh.dev/elements/plot
+- /docs/components/resizable: Resize handles with a quiet hairline and a growing thumb. → https://nsh.dev/elements/resizable
+- /docs/components/dock-area: Dockable workspace chrome: tabs, splits, and edge docks. → https://nsh.dev/elements/dock
+- /docs/components/diff-view: Up/down tints for additions and deletions, with hunk actions. → https://nsh.dev/elements/diff-view
+- /docs/components/text-view: Brand links and a streaming caret for Markdown documents. → https://nsh.dev/elements/text-view
+- /docs/components/emoji-picker: Gallery look for nsh/base EmojiPicker: tabs, search, tones and preview. → https://nsh.dev/elements/emoji-picker
+- /docs/components/editor: Rich document typography and code editor pass-through. → https://nsh.dev/elements/rich-editor
+- /docs/components/color-picker: Area, sliders, joined fields, swatches, and popover trigger. → https://nsh.dev/elements/color-picker
 
-Component pages may embed a web Preview (`demo:` → `nsh package --target web` iframe). Native behaviour truth remains the gallery (`apps/gallery`), not docs iframes. Demo sources: `apps/docs/demos/<slug>.tsx`.
+## Elsewhere
 
-- /docs/getting-started: Init shadcn-nsh in an existing NSH app and add components.
-- /docs/theme: theme.json is token truth; token() / @shadcn-nsh/theme helpers.
-- /docs/components: Phase-1 styled wrappers on store nsh/base (0.4.0).
-- /docs/components/accordion: Styled accordion wrapping nsh/base Accordion. → https://nsh.dev/elements/accordion
-- /docs/components/avatar: Styled avatar wrapping nsh/base Avatar. → https://nsh.dev/elements/avatar
-- /docs/components/button: Styled button wrapping nsh/base Button. → https://nsh.dev/elements/button
-- /docs/components/checkbox: Styled checkbox wrapping nsh/base Checkbox. → https://nsh.dev/elements/checkbox
-- /docs/components/combobox: Styled combobox wrapping nsh/base Combobox. → https://nsh.dev/elements/combobox
-- /docs/components/collapsible: Styled collapsible wrapping nsh/base Collapsible. → https://nsh.dev/elements/collapsible
-- /docs/components/context-menu: Styled context menu wrapping nsh/base ContextMenu — theme tokens + Trigger / Content / Item; full base prop pass-through. → https://nsh.dev/elements/menu
-- /docs/components/dialog: Styled dialog wrapping nsh/base Dialog — theme tokens + Trigger / Content; full base prop pass-through. → https://nsh.dev/elements/dialog
-- /docs/components/menu: Styled menu wrapping nsh/base Menu — theme tokens + Trigger / Content / Item; composition-only. → https://nsh.dev/elements/menu
-- /docs/components/input: Styled text input wrapping nsh/base Input. → https://nsh.dev/elements/input
-- /docs/components/link: Styled link wrapping nsh/base Link. → https://nsh.dev/elements/link
-- /docs/components/number-input: Styled number input wrapping nsh/base NumberInput. → https://nsh.dev/elements/number-input
-- /docs/components/otp-input: Styled OTP input wrapping nsh/base OtpInput. → https://nsh.dev/elements/otp-input
-- /docs/components/pagination: Styled pagination wrapping nsh/base Pagination. → https://nsh.dev/elements/pagination
-- /docs/components/popover: Styled popover wrapping nsh/base Popover — theme tokens + Trigger / Content; full base prop pass-through. → https://nsh.dev/elements/popover
-- /docs/components/progress: Styled progress wrapping nsh/base Progress. → https://nsh.dev/elements/progress
-- /docs/components/radio-group: Styled radio group wrapping nsh/base RadioGroup / Radio — theme tokens + default circle; full base prop pass-through. → https://nsh.dev/elements/radio
-- /docs/components/select: Styled select wrapping nsh/base Select. → https://nsh.dev/elements/select
-- /docs/components/sheet: Styled sheet wrapping nsh/base Sheet — theme tokens + Trigger / Content; full base prop pass-through. → https://nsh.dev/elements/sheet
-- /docs/components/slider: Styled slider wrapping nsh/base Slider. → https://nsh.dev/elements/slider
-- /docs/components/toast: Styled toast wrapping nsh/base Toast. → https://nsh.dev/elements/toast
-- /docs/components/switch: Styled switch wrapping nsh/base Switch. → https://nsh.dev/elements/switch
-- /docs/components/toggle: Styled toggle wrapping nsh/base Toggle. → https://nsh.dev/elements/toggle
-- /docs/components/toggle-group: Styled toggle group wrapping nsh/base ToggleGroup. → https://nsh.dev/elements/toggle
-- /docs/components/table: Styled table wrapping nsh/base Table. → https://nsh.dev/elements/table
-- /docs/components/tabs: Styled tabs wrapping nsh/base Tabs / Tab — theme tokens + List / Trigger / Content; full base prop pass-through. → https://nsh.dev/elements/tabs
-- /docs/components/tooltip: Styled tooltip wrapping nsh/base Tooltip — theme tokens + Trigger / Content; full base prop pass-through. → https://nsh.dev/elements/tooltip
-
-Theme source of truth is theme.json (nsh.json `theme`), not CSS. Behavior details: https://nsh.dev/elements
+- Base behavior and elements: https://nsh.dev/elements
+- Base module: https://nsh.dev/modules/nsh-base
+- Component sources in this repository: `packages/ui/<name>.tsx`
+- Demos that the pages preview: `apps/docs/demos/<name>.tsx`; reference pages for the render comparison are `apps/docs/demos/<name>.ref.tsx`.
