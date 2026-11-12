@@ -4,24 +4,79 @@
 
 ## NSH CLI 与上游基线
 
-本仓用 **nightly** CLI，以上游 `main` 为准开发。
+本仓用**在基线提交上构建**的 CLI，不跟随 store 发布。
 
-按 [nsh.dev](https://nsh.dev) 的说明安装 nightly。`nsh --version` 会打印构建它的提交，例如 `nsh 0.4.0 (c5214aa nightly)`。
+**基线是一个提交**（`port-map.json` 的 `upstream.commit`）。三处必须等于它，缺一不可：
 
-**规则：`references/nsh` 固定的提交等于 `nsh --version` 显示的提交。** 上游的 look 用的是它自己那个提交的运行时能力；CLI 落后时，搬入的代码可能类型通过而表现不同，或者用到 CLI 还没有的属性。`bun run port:check` 会在 CLI 落后于基线时给出警告。
+| 哪里   | 怎么读                                              |
+| ------ | --------------------------------------------------- |
+| CLI    | `nsh --version` 括号里的哈希：`nsh 0.5.0 (30f87b7)` |
+| 清单   | `port-map.json` 的 `upstream.commit`（40 位）       |
+| 子模块 | `git -C references/nsh rev-parse HEAD`              |
 
-升级步骤：
+`bash scripts/nsh-version.sh` 检查后两处；`nsh:bootstrap` 与 CI 的 `setup-nsh` 直接调用它，`port:bump` 用同一条解析读 CLI 的提交。方向决定修法：CLI 早于基线，就装一个在基线上的 CLI（基线不后退）；CLI 晚于基线，就 `bun run port:bump` 把基线前移到它。`bun run port:check` 在 CLI 落后于基线时报错。
 
-1. 升级 CLI，记下 `nsh --version` 的提交。优先 `nsh update nightly`；若发布的 nightly 落后于 `main`，用 `curl -fsSL https://nsh.dev/install.sh | sh -s -- --source`（需 Rust）。源码安装的 CLI 跑 `port:render` 时，若本机没有 `llvm-ar` 编不出 wasm，可依赖已有的 `~/.nsh/runtime`（`scripts/port/render.ts` 会自动设 `NSH_RUNTIME`）。
-2. `git -C references/nsh fetch && git -C references/nsh checkout <该提交>`。
-3. 把 `port-map.json` 的 `upstream.commit` 改成该提交的完整哈希。
-4. `bun run port:check`：按报错处理"清单里有、上游没有"和"上游有、清单里没有"的条目。
-5. `bun run port:vendor`，再跑 `nsh check apps/docs/demos`、`bun run port:render`。
-6. 提交子模块指针、`port-map.json` 和被改写的区域，三者同一个 commit。
+**为什么不要 release**：上游的 look 用的是它自己那个提交运行时的能力；CLI 早于基线时，搬入的代码可能类型通过而表现不同，或者用到 CLI 还没有的属性（外壳用的 `focusVisibleStyle` 就是这样）。基线与发布标签无关：`30f87b7` 是 `nightly-158-g30f87b7c`，既不是 release，也可能超前最新 nightly。
 
-当前状态（2026-11-11）：CLI 与基线均为 `30f87b7c`（由 `install.sh --source` 装到 main；发布的 nightly 频道当时仍停在 `c5214aa`）。外壳使用 `focusVisibleStyle`；`port:check` 在 CLI 落后于基线时报错。
+### 装一个在基线上的 CLI
 
-发布的 nightly 追上 main 之后，可改回 `nsh update nightly`。`scripts/nsh-bootstrap.sh` 的注释仍写着"用 store release"，待删改；它的行为（生成 types host、检查 `Button` 与 `Accordion` 存在）不受影响。
+| 途径                                                         | 结果                                                                                                                                                                                                                                             |
+| ------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `bun run nsh:build`                                          | 从 `references/nsh` 的固定提交构建 CLI 与两个 web 运行时（`scripts/nsh-build.sh`），装到 `~/.nsh-sync`。需要 Rust、`rustup target add wasm32-unknown-unknown`、能编译 wasm32 的 clang 与 `llvm-ar`（Debian / Ubuntu：`clang llvm libclang-dev`） |
+| `curl -fsSL https://nsh.dev/install.sh \| sh -s -- --source` | 构建 main 的顶端。只有 main 的顶端恰是基线时才对；release 构建较慢（需 Rust）                                                                                                                                                                    |
+| 同上，`--nightly`                                            | 发布的最新 nightly。常落后于 main，落后时 `port:check` 报错                                                                                                                                                                                      |
+
+`install.sh` 装不了任意提交（只有 release、最新 nightly、main 的顶端三条路），所以"精确到基线"要么用 `nsh:build`，要么在任意 NSH checkout 里 `cargo build --release --locked -p nsh-cli`。
+
+### `NSH_RUNTIME`
+
+`nsh package --target web`（`bun run docs:demos`）与 `nsh test --target web`（`bun run port:render`）需要一棵运行时目录：
+
+```text
+<runtime>/web/nsh-browser.wasm   package 从它链接应用
+<runtime>/web/nsh-dev.wasm       test 的开发宿主
+<runtime>/web/nsh.js, browser/   DOM 运行时
+<runtime>/web/nsh-syntaxes.bin   编辑器高亮用的语法表
+```
+
+CLI 先找 `bin/../runtime/web`（发行包布局），再看 `NSH_RUNTIME` 下的 `web/`。源码构建的 CLI 两处都没有时，会就地编译 wasm（慢，且要上面的 C 工具）。`bash scripts/nsh-bootstrap.sh` 检查 CLI 与子模块都在基线、打印该 export 什么，然后生成 `apps/gallery` 与 `apps/docs/demos` 的 `.nsh` types host。
+
+### CI
+
+| 文件                                | 做什么                                                                                                                                                                                                                             |
+| ----------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `.github/actions/setup-nsh`         | 按 `port-map.json` 的提交构建 CLI 与两个 web 运行时（`scripts/nsh-build.sh`），按提交缓存，放进 PATH、设 `NSH_RUNTIME`；`nsh --version` 的提交与基线不同就失败。只在 Linux 上跑（两个工作流都是 `ubuntu-latest`），且 Bun 要先装好 |
+| `.github/workflows/check.yml`       | 每个 PR：`port:check`、两个 `nsh check`、`test:unit`、`check:docs`、`port:render`。渲染比对要 Chrome（runner 自带）；截图留作 artifact                                                                                             |
+| `.github/workflows/deploy-docs.yml` | 同一个 action，然后 `bun run build:docs`（`docs:demos` 逐个打包演示，再 Astro 构建）                                                                                                                                               |
+
+缓存的 key 含提交与 `scripts/nsh-build.sh` 的哈希：新的基线第一次跑要冷构建（CLI 加两个 wasm），之后直接恢复；改了构建脚本也会重来。
+
+## 上游同步
+
+上游一周内就能加完一整个目录（`look/` 就是这样来的），所以基线**不自动跟随**，前移是显式操作。
+
+### `bun run port:bump [<提交>]`
+
+省略提交时用 `nsh --version` 打印的那个：先升 CLI，再把基线移到它（顺序见上一节）。按顺序做：
+
+1. fetch，把 `references/nsh` checkout 到该提交（子模块有本地改动时拒绝）；
+2. 把 `port-map.json` 的 `upstream.commit` 改成它（只替换那一个哈希，不动文件格式）；
+3. 按清单的说法报变化，每条都给出目标文件：
+   - 上游**新增**的声明 —— 没有路由就是清单的缺口；
+   - 上游**删掉**的声明 —— 清单还路由着它，要先清掉；
+   - **文字改动**的声明 —— `port:vendor` 会重填它所在的区域；
+   - 被 `replace` 覆盖的声明在上游也变了 —— 要人看一眼替换是否仍然成立（`port:check` 看不到这一类）；
+   - `copy` 的文件变了 —— `port:vendor` 整份重拷；
+   - 新增 / 删除的上游文件；
+4. `bun run port:check`；清单完整时 `bun run port:vendor`，再 `port:check`，最后 `nsh check apps/docs/demos`。
+
+清单不完整时它在 `port:check` 之后停下，列出要补的路由，不 vendor、不提交。即使全部通过也不提交：子模块指针、`port-map.json` 与重新填充的区域是同一个 commit。早于基线的提交也能跑（回退），但清单通常要多改。
+
+### 漂移报告
+
+`.github/workflows/upstream-drift.yml` 每周一比较上游 `main` 与基线，把 `examples/nsh-gallery-ui` 里变动的文件列成一个 issue（标题固定，就地更新；基线追上后自动评论并关闭）。它只读仓库、不 push，权限只有 issue 的写。
+
+看到漂移后的顺序：装一个在新提交上的 CLI → `bun run port:bump <提交>` → 按它列的变化补清单 → `bun run port:render`，四张截图人眼看 → 子模块指针、清单、区域一个 commit。PR 上的 `check` 工作流会再验一遍。
 
 ## TypeScript 分层
 
