@@ -19,7 +19,7 @@ Copy-into-app styled components for [Native Shell (NSH)](https://nsh.dev), built
 
 ## Components
 
-Every page links its base element on https://nsh.dev/elements; behavior, keyboard support and the full unstyled API live there, not here.
+Every page links its base element where `nsh/base` has one: behavior, keyboard support and the full unstyled API live on https://nsh.dev/elements, not here.
 
 - /docs/components/spinner: A turning ring: work going on. → styled on `nsh` View (no base element)
 - /docs/components/badge: A small capsule label in neutral, toned, or outline styles. → https://nsh.dev/elements/badge

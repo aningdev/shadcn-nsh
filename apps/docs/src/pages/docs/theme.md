@@ -119,7 +119,7 @@ Edit the two JSON files; every component follows. Change a brand color in `cssVa
 
 - Add the theme to an app with `shadcn-nsh add theme` (or let `init` do it).
 - Replacing both files together rebrands the whole library; a key added upstream should be added here too.
-- To change one component's look instead, edit its look in `packages/ui/<id>.tsx`; do not write colors in the shell.
+- To change one component's look instead, change it upstream and run `bun run port:vendor`, or register the replacement in `port-map.json`; the shell carries no colors.
 - Maintaining this repository: after editing `packages/theme`, run `bun run registry:build` and commit `public/r`.
 
 Theme rules and decisions: [`packages/theme/README.md`](https://github.com/aningdev/shadcn-nsh/blob/main/packages/theme/README.md). Behavior and accessibility are `nsh/base`'s: [nsh.dev/elements](https://nsh.dev/elements).
