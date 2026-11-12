@@ -157,24 +157,34 @@ export function DiffHunkActions(props: {
 }
 // @port end
 
+function mergeStyles(base: DiffViewStyles, consumer?: DiffViewStyles | null): DiffViewStyles {
+  if (consumer == null) return base;
+  // Each part is read where the view reads it, never here: spreading the look's getters would
+  // capture the colors of the appearance the page first drew in.
+  const merged: DiffViewStyles = {};
+  for (const part of Object.keys(base) as (keyof DiffViewStyles)[]) {
+    Object.defineProperty(merged, part, {
+      enumerable: true,
+      get: () => consumer[part] ?? base[part],
+    });
+  }
+  return merged;
+}
+
 /** Theme layer on `nsh/base` DiffView. Diffing stays in base. */
 export type DiffViewProps = BaseDiffViewProps;
 
-function mergeStyles(base: DiffViewStyles, consumer?: DiffViewStyles | null): DiffViewStyles {
-  if (consumer == null) return base;
-  return { ...base, ...consumer };
-}
-
 /** Two texts, or a patch. Pass `styles` to override `diffViewStyles`. */
 export function DiffView(props: DiffViewProps) {
-  const defaults = diffViewStyles();
   const [, rest] = split(props, ["styles", "class", "style"]);
+  // The look is made in the JSX, not in the body: its getters then read the theme where the
+  // view reads them, so a page that starts in light and switches to dark draws the dark tints.
   return (
     <BaseDiffView
       {...rest}
       class={props.class}
       style={props.style}
-      styles={mergeStyles(defaults, props.styles)}
+      styles={mergeStyles(diffViewStyles(), props.styles)}
     />
   );
 }

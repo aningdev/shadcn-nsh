@@ -9,15 +9,16 @@ import { DemoCard, DemoPage, DemoSection } from "./kit";
 function App() {
   return (
     <DemoPage title="Diff view">
-      <DemoCard padded={false}>
+      <DemoCard>
         <DemoSection title="Unified">
+          {/* As the demo: in the section's row, the view needs `flex: 1` for a width. */}
           <DiffView
             layout="unified"
             oldValue={'fn main() {\n    println!("alpha");\n}'}
             newValue={'fn main() {\n    println!("gamma");\n}'}
             language="rust"
             styles={diffViewStyles()}
-            style={{ height: 140 }}
+            style={{ flex: 1, height: 140 }}
           />
         </DemoSection>
       </DemoCard>

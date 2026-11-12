@@ -7,14 +7,16 @@ import { DemoCard, DemoPage, DemoSection } from "./kit";
 function App() {
   return (
     <DemoPage title="Diff view">
-      <DemoCard padded={false}>
+      <DemoCard>
         <DemoSection title="Unified">
+          {/* `DemoSection` lays its children out in a row; a `DiffView` is as wide as its measured
+              viewport, so in a row it needs `flex: 1` or it lays out at zero width. */}
           <DiffView
             layout="unified"
             oldValue={'fn main() {\n    println!("alpha");\n}'}
             newValue={'fn main() {\n    println!("gamma");\n}'}
             language="rust"
-            style={{ height: 140 }}
+            style={{ flex: 1, height: 140 }}
           />
         </DemoSection>
       </DemoCard>
