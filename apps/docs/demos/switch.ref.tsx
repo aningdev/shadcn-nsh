@@ -44,8 +44,8 @@ function App() {
           accessibilityLabel="Bluetooth"
           checked={bluetooth()}
           onChange={({ checked }) => bluetooth.set(checked)}
-          hitSlop={switchHitSlop()}
-          {...switchLook(() => bluetooth())}
+          hitSlop={switchHitSlop("regular")}
+          {...switchLook(() => bluetooth(), "regular")}
         />
         <Switch
           accessibilityLabel="Bluetooth, small"

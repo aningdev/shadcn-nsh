@@ -87,13 +87,14 @@ function App() {
       <DemoCard>
         <DemoSection title="Kinds">
           <Plain label="Primary" kind="primary" onPress={press} />
+          <Plain label="Accent" kind="accent" onPress={press} />
           <Plain label="Secondary" onPress={press} />
           <Plain label="Ghost" kind="ghost" onPress={press} />
           <Plain label="Delete" kind="danger" onPress={press} />
         </DemoSection>
         <DemoSection title="Sizes">
           <Plain label="Small" size="small" onPress={press} />
-          <Plain label="Regular" onPress={press} />
+          <Plain label="Regular" size="regular" onPress={press} />
           <Plain label="Large" size="large" onPress={press} />
         </DemoSection>
         <DemoSection title="States">

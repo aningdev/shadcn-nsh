@@ -34,6 +34,9 @@ function App() {
           <Button variant="primary" onPress={press}>
             Primary
           </Button>
+          <Button variant="accent" onPress={press}>
+            Accent
+          </Button>
           <Button variant="secondary" onPress={press}>
             Secondary
           </Button>
@@ -48,7 +51,7 @@ function App() {
           <Button variant="secondary" size="small" onPress={press}>
             Small
           </Button>
-          <Button variant="secondary" onPress={press}>
+          <Button variant="secondary" size="regular" onPress={press}>
             Regular
           </Button>
           <Button variant="secondary" size="large" onPress={press}>

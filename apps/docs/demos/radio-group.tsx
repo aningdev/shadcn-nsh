@@ -65,7 +65,11 @@ function App() {
               <Radio scale={0.8} checked accessibilityLabel="Small">
                 Small
               </Radio>
-              <Radio checked={cycle() === "Monthly"} onChange={() => cycle.set("Monthly")}>
+              <Radio
+                variant="ring"
+                checked={cycle() === "Monthly"}
+                onChange={() => cycle.set("Monthly")}
+              >
                 Regular
               </Radio>
               <Radio

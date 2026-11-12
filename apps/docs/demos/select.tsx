@@ -44,10 +44,23 @@ function App() {
               last.set(`${next ? "opened" : "closed"} · ${reason}`);
             }}
           >
-            <SelectTrigger style={trigger}>
+            <SelectTrigger kind="field" style={trigger}>
               <SelectValue placeholder="Choose a language" />
             </SelectTrigger>
             <SelectContent accessibilityLabel="Language">
+              <SelectItem value="en">English</SelectItem>
+              <SelectItem value="de">Deutsch</SelectItem>
+              <SelectItem value="fr">Français</SelectItem>
+              <SelectItem value="ja">日本語</SelectItem>
+            </SelectContent>
+          </Select>
+        </DemoSection>
+        <DemoSection title="Trigger">
+          <Select defaultValue="de">
+            <SelectTrigger kind="outline" style={trigger}>
+              <SelectValue placeholder="Choose a language" />
+            </SelectTrigger>
+            <SelectContent accessibilityLabel="Language, outline">
               <SelectItem value="en">English</SelectItem>
               <SelectItem value="de">Deutsch</SelectItem>
               <SelectItem value="fr">Français</SelectItem>

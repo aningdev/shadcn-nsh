@@ -1,6 +1,6 @@
 import { mount } from "nsh";
 
-import { DiffView } from "@/packages/ui/diff-view";
+import { DiffHunkActions, DiffView } from "@/packages/ui/diff-view";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 
@@ -16,6 +16,13 @@ function App() {
             language="rust"
             style={{ height: 140 }}
           />
+        </DemoSection>
+      </DemoCard>
+      <DemoCard>
+        <DemoSection title="Hunk actions">
+          <DiffHunkActions index={0} tone="up" onRevert={() => {}} onKeep={() => {}} />
+          <DiffHunkActions index={1} tone="down" onRevert={() => {}} onKeep={() => {}} />
+          <DiffHunkActions index={2} iconOnly onRevert={() => {}} onKeep={() => {}} />
         </DemoSection>
       </DemoCard>
     </DemoPage>

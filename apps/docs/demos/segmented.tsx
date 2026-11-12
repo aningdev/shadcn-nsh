@@ -13,7 +13,7 @@ function App() {
       <DemoCard>
         <DemoSection title="Fill">
           <Segmented value={view()} onValueChange={(v) => view.set(v)} defaultValue="List">
-            <SegmentedList fill>
+            <SegmentedList size="regular" fill>
               <SegmentedItem value="List">List</SegmentedItem>
               <SegmentedItem value="Board">Board</SegmentedItem>
               <SegmentedItem value="Calendar">Calendar</SegmentedItem>

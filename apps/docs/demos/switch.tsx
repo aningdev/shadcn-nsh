@@ -40,6 +40,7 @@ function App() {
       <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
         <Switch
           accessibilityLabel="Bluetooth"
+          size="regular"
           checked={bluetooth()}
           onChange={({ checked }) => bluetooth.set(checked)}
         />

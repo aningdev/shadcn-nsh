@@ -46,7 +46,12 @@ function App() {
     <DemoPage title="Toggle" note={() => `bold ${String(bold())} · starred ${String(starred())}`}>
       <DemoCard>
         <DemoSection title="Variant">
-          <Plain label="Ghost" pressed={bold()} onChange={({ pressed }) => bold.set(pressed)} />
+          <Plain
+            label="Ghost"
+            variant="ghost"
+            pressed={bold()}
+            onChange={({ pressed }) => bold.set(pressed)}
+          />
           <Plain
             label="Outline"
             variant="outline"
@@ -56,7 +61,7 @@ function App() {
         </DemoSection>
         <DemoSection title="Size">
           <Plain label="Small" size="small" pressed />
-          <Plain label="Regular" pressed />
+          <Plain label="Regular" size="regular" pressed />
           <Plain label="Large" size="large" pressed />
         </DemoSection>
         <DemoSection title="States">

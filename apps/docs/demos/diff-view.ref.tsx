@@ -2,7 +2,7 @@
 import { mount } from "nsh";
 import { DiffView } from "nsh/base";
 
-import { diffViewStyles } from "@/packages/ui/diff-view";
+import { DiffHunkActions, diffViewStyles } from "@/packages/ui/diff-view";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 
@@ -19,6 +19,13 @@ function App() {
             styles={diffViewStyles()}
             style={{ height: 140 }}
           />
+        </DemoSection>
+      </DemoCard>
+      <DemoCard>
+        <DemoSection title="Hunk actions">
+          <DiffHunkActions index={0} tone="up" onRevert={() => {}} onKeep={() => {}} />
+          <DiffHunkActions index={1} tone="down" onRevert={() => {}} onKeep={() => {}} />
+          <DiffHunkActions index={2} iconOnly onRevert={() => {}} onKeep={() => {}} />
         </DemoSection>
       </DemoCard>
     </DemoPage>

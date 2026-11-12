@@ -9,7 +9,7 @@ import { DemoCard, DemoPage, DemoSection } from "./kit";
 function App() {
   const view = signal("List");
   const align = signal("Left");
-  const main = segmentedLook({ fill: true });
+  const main = segmentedLook({ size: "regular", fill: true });
   const compact = segmentedLook({ size: "small" });
 
   return (

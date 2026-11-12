@@ -14,7 +14,7 @@ function App() {
       <DemoCard>
         <DemoSection title="Pill">
           <Tabs value={section()} onValueChange={(v) => section.set(v)} defaultValue="overview">
-            <TabsList>
+            <TabsList variant="default">
               <TabsTrigger value="overview">
                 <TabTitle name="Overview" selected={section() === "overview"} />
               </TabsTrigger>

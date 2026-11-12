@@ -47,9 +47,20 @@ function App() {
                 title={titleOf(LANGUAGES, language()) ?? "Choose a language"}
                 placeholder={language() === null}
                 open={open()}
+                kind="field"
                 style={trigger}
               />
             }
+            renderItem={(item) => <OptionRow item={item} />}
+          />
+        </DemoSection>
+        <DemoSection title="Trigger">
+          <Select
+            items={LANGUAGES}
+            defaultValue="de"
+            accessibilityLabel="Language, outline"
+            {...listboxProps()}
+            trigger={<Picker title="Deutsch" open={false} kind="outline" style={trigger} />}
             renderItem={(item) => <OptionRow item={item} />}
           />
         </DemoSection>
