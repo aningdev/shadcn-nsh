@@ -17,9 +17,9 @@ const program = new Command()
 program.addCommand(build);
 program.addCommand(init);
 program.addCommand(add);
-program.addCommand(diff);
 program.addCommand(list);
 program.addCommand(view);
+program.addCommand(diff);
 program.addCommand(serve);
 
 program.parse();

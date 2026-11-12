@@ -2,44 +2,97 @@ import path from "node:path";
 
 import { Command } from "commander";
 
-import { readConfig, writeConfig } from "../utils/config";
+import { DEFAULT_CONFIG } from "../types";
+import { readApp } from "../utils/app";
+import { writeConfig } from "../utils/config";
 import { installItems } from "../utils/install";
-import { resolveTree } from "../utils/registry";
-import { resolveWorkspace } from "../utils/workspace";
+import { fetchIndex, resolveTree } from "../utils/registry";
 import { runInit } from "./init";
+
+export type AddOptions = {
+  cwd: string;
+  overwrite?: boolean;
+  registry?: string;
+  /** Every `registry:ui` item the registry lists. */
+  all?: boolean;
+  /** Print what would be written; write nothing. */
+  dryRun?: boolean;
+};
+
+/**
+ * Copy `components` (and `--all`, every `registry:ui` item) into the app, dependencies first.
+ *
+ * Files the app has changed are kept unless `--overwrite`; a `theme.json` that only lacks keys
+ * is merged. With `--dry-run` nothing is written, not even `nsh-ui.json` or the init theme.
+ */
+export async function runAdd(components: string[], opts: AddOptions): Promise<number> {
+  const cwd = path.resolve(opts.cwd);
+  const dryRun = opts.dryRun === true;
+  if (components.length === 0 && !opts.all) {
+    throw new Error("Name at least one component, or pass --all.");
+  }
+  const { ws, config: stored, hasConfig } = await readApp(cwd, opts.registry);
+
+  let config = stored;
+  if (!hasConfig) {
+    if (dryRun) {
+      console.log("No nsh-ui.json — a dry run uses the default aliases (run init first).");
+      config = DEFAULT_CONFIG();
+      if (opts.registry) config.registry = opts.registry;
+    } else {
+      console.log("No nsh-ui.json — running init first…");
+      config = await runInit({ cwd, overwrite: opts.overwrite, registry: opts.registry });
+    }
+  }
+
+  if (opts.registry) {
+    config.registry = opts.registry;
+    if (hasConfig && !dryRun) await writeConfig(ws.uiRoot, config);
+  }
+
+  const names = [...components];
+  if (opts.all) {
+    const index = await fetchIndex(config, opts.registry);
+    for (const item of index.items) {
+      if (item.type === "registry:ui" && !names.includes(item.name)) names.push(item.name);
+    }
+  }
+  if (names.length === 0) {
+    throw new Error("The registry lists no registry:ui item to add.");
+  }
+
+  const items = await resolveTree(config, names, opts.registry);
+  await installItems(ws.uiRoot, config, items, { overwrite: opts.overwrite, dryRun });
+
+  if (dryRun) {
+    const count = `${names.length} item${names.length === 1 ? "" : "s"}`;
+    console.log(`\nDry run: nothing written. ${count} checked.`);
+    return 0;
+  }
+
+  console.log(
+    opts.all ? `\nAdded: all ${names.length} registry:ui items` : `\nAdded: ${names.join(", ")}`,
+  );
+  if (ws.kind === "monorepo") {
+    console.log(`(installed under ${path.relative(ws.root, ws.uiRoot) || "packages/ui"})`);
+  }
+  return 0;
+}
 
 export const add = new Command()
   .name("add")
-  .description("Add a registry component (monorepo: installs into packages/ui)")
-  .argument("<components...>", "component names (e.g. button)")
+  .description("Add registry components (monorepo: installs into packages/ui)")
+  .argument("[components...]", "component names (e.g. button)")
   .option("-c, --cwd <cwd>", "app or monorepo directory", process.cwd())
-  .option("--overwrite", "overwrite existing files", false)
+  .option("-o, --overwrite", "replace files the app has changed", false)
+  .option("-a, --all", "every registry:ui item the registry lists", false)
+  .option("--dry-run", "print what would be written; write nothing", false)
   .option("--registry <url>", "registry URL template containing {name}")
   .action(
-    async (components: string[], opts: { cwd: string; overwrite: boolean; registry?: string }) => {
-      const cwd = path.resolve(opts.cwd);
-      const ws = await resolveWorkspace(cwd);
-      let config = await readConfig(ws.uiRoot);
-
-      if (!config) {
-        console.log("No nsh-ui.json — running init first…");
-        config = await runInit({
-          cwd,
-          overwrite: opts.overwrite,
-          registry: opts.registry,
-        });
-      }
-
-      if (opts.registry) {
-        config.registry = opts.registry;
-        await writeConfig(ws.uiRoot, config);
-      }
-
-      const items = await resolveTree(config, components, opts.registry);
-      await installItems(ws.uiRoot, config, items, { overwrite: opts.overwrite });
-      console.log(`\nAdded: ${components.join(", ")}`);
-      if (ws.kind === "monorepo") {
-        console.log(`(installed under ${path.relative(ws.root, ws.uiRoot) || "packages/ui"})`);
-      }
+    async (
+      components: string[],
+      opts: { cwd: string; overwrite: boolean; all: boolean; dryRun: boolean; registry?: string },
+    ) => {
+      process.exitCode = await runAdd(components, opts);
     },
   );

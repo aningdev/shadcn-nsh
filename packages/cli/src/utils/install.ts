@@ -2,62 +2,108 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 import type { NshUiConfig, RegistryItem } from "../types";
-import { defaultTarget } from "./paths";
+import { changeSummary } from "./diff";
+import { isThemeFile, planItems, type PlannedFile } from "./plan";
 import { mergeTheme } from "./theme-merge";
-import { transformContent } from "./transform";
 
+export type InstallOptions = {
+  /** Replace files the app has changed. Without it they are kept and reported. */
+  overwrite?: boolean;
+  /** Report what would happen; write nothing. */
+  dryRun?: boolean;
+};
+
+export type InstallResult = {
+  /** Every file the items ship, resolved against the app. */
+  planned: PlannedFile[];
+  /** Paths written (or merged), relative to the app. */
+  written: string[];
+};
+
+/**
+ * Write `items` into the app at `uiRoot`.
+ *
+ * A file the app does not have is written; one identical to the registry's is skipped; a
+ * `theme.json` that only lacks keys is merged; any other file the app has is its own and is
+ * kept, unless `overwrite` replaces it (reporting how much changes). With `dryRun` the same
+ * lines are printed as `would …` and nothing is written.
+ */
 export async function installItems(
-  cwd: string,
+  uiRoot: string,
   config: NshUiConfig,
   items: RegistryItem[],
-  opts: { overwrite?: boolean } = {},
-) {
+  opts: InstallOptions = {},
+): Promise<InstallResult> {
+  const planned = await planItems(uiRoot, config, items);
   const written: string[] = [];
 
-  for (const item of items) {
-    for (const file of item.files) {
-      if (file.content == null) {
-        throw new Error(`Item ${item.name} file ${file.path} has no content (run registry:build)`);
-      }
+  for (const file of planned) {
+    const shown = file.path;
 
-      const targetRel = defaultTarget(file, config.aliases);
-      const absolute = path.isAbsolute(targetRel) ? targetRel : path.resolve(cwd, targetRel);
+    if (file.status === "same") {
+      console.log(`skip ${shown} (identical)`);
+      continue;
+    }
 
-      let exists = true;
-      try {
-        await fs.access(absolute);
-      } catch {
-        exists = false;
+    if (file.status === "create") {
+      if (opts.dryRun) console.log(`would write ${shown}`);
+      else {
+        await write(file, file.content);
+        written.push(shown);
+        console.log(`write ${shown}`);
       }
-      if (exists && !opts.overwrite) {
-        if (
-          path.basename(absolute) === "theme.json" &&
-          (await mergeThemeFile(absolute, file.content))
-        ) {
-          console.log(`merge ${path.relative(cwd, absolute)} (added missing keys)`);
-          written.push(path.relative(cwd, absolute));
-        } else {
-          console.log(`skip ${path.relative(cwd, absolute)} (exists)`);
-        }
-        continue;
-      }
+      continue;
+    }
 
-      const content = transformContent(file.content, absolute, config, cwd);
-      await fs.mkdir(path.dirname(absolute), { recursive: true });
-      await fs.writeFile(absolute, content, "utf8");
-      written.push(path.relative(cwd, absolute));
-      console.log(`write ${path.relative(cwd, absolute)}`);
+    if (file.status === "merge" && !opts.overwrite) {
+      const count = file.missing?.length ?? 0;
+      if (opts.dryRun) {
+        console.log(`would merge ${shown} (${count} keys missing)`);
+      } else {
+        await write(file, (await merged(file)) ?? file.content);
+        written.push(shown);
+        console.log(`merge ${shown} (added ${count} keys)`);
+      }
+      continue;
+    }
+
+    // `differs`, or a `theme.json` the app has changed and `--overwrite` was given.
+    const summary = changeSummary(file.added, file.removed);
+    if (!opts.overwrite) {
+      // A recolored theme is the app's own and `diff` reports no difference for it, so do not
+      // send the reader there.
+      console.log(
+        isThemeFile(file)
+          ? `kept ${shown} (the app's colors stay)`
+          : `kept ${shown}, differs (run diff)`,
+      );
+    } else if (opts.dryRun) {
+      console.log(`would overwrite ${shown} ${summary}`);
+    } else {
+      await write(file, file.content);
+      written.push(shown);
+      console.log(`overwrite ${shown} ${summary}`);
     }
   }
 
-  return written;
+  return { planned, written };
 }
 
-/** Adds the keys an existing `theme.json` lacks from the incoming one. True when it changed the file. */
-async function mergeThemeFile(file: string, incoming: string) {
-  const existing = JSON.parse(await fs.readFile(file, "utf8")) as Record<string, unknown>;
-  const { theme, added } = mergeTheme(existing, JSON.parse(incoming) as Record<string, unknown>);
-  if (added === 0) return false;
-  await fs.writeFile(file, `${JSON.stringify(theme, null, 2)}\n`, "utf8");
-  return true;
+async function write(file: PlannedFile, content: string) {
+  await fs.mkdir(path.dirname(file.absolute), { recursive: true });
+  await fs.writeFile(file.absolute, content, "utf8");
+}
+
+/** The app's `theme.json` with the registry's missing keys added, as text. */
+async function merged(file: PlannedFile) {
+  if (file.existing == null) return null;
+  try {
+    const { theme } = mergeTheme(
+      JSON.parse(file.existing) as Record<string, unknown>,
+      JSON.parse(file.content) as Record<string, unknown>,
+    );
+    return `${JSON.stringify(theme, null, 2)}\n`;
+  } catch {
+    return null;
+  }
 }
