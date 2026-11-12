@@ -138,28 +138,28 @@ export function Link(props: LinkProps) {
     "style",
     "focusVisibleStyle",
   ]);
-  const look = linkLook({ inline: props.inline });
-  const state: LinkState = {
+  // Read where used, so the look follows the props and the appearance (light / dark).
+  const look = () => linkLook({ inline: props.inline });
+  const state = (): LinkState => ({
     disabled: !!props.disabled,
     current: props.current,
     visited: props.visited,
     quiet: props.quiet,
-  };
-  const color = linkColor(state);
+  });
   return (
     <BaseLink
       {...rest}
-      class={props.class ? `${look.class} ${props.class}` : look.class}
+      class={props.class ? `${look().class} ${props.class}` : look().class}
       style={props.style}
-      focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
+      focusVisibleStyle={[look().focusVisibleStyle, props.focusVisibleStyle ?? null]}
     >
       {typeof props.children === "string" ? (
         <LinkText
           label={props.children}
-          color={color}
-          disabled={state.disabled}
-          current={state.current}
-          quiet={state.quiet}
+          color={linkColor(state())}
+          disabled={!!props.disabled}
+          current={props.current}
+          quiet={props.quiet}
           icon={props.icon}
         />
       ) : (

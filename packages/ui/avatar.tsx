@@ -98,7 +98,8 @@ export type AvatarProps = BaseAvatarProps;
 /** An avatar: picture or named initials on the identity ring. */
 export function Avatar(props: AvatarProps) {
   const [, rest] = split(props, ["style", "fallbackStyle", "fallbackClass", "imageClass"]);
-  const id = props.name ? avatarIdentity(props.name) : null;
+  // Read where used, so the identity colors follow the name and the appearance (light / dark).
+  const id = () => (props.name ? avatarIdentity(props.name) : null);
   return (
     <BaseAvatar
       {...rest}
@@ -106,16 +107,16 @@ export function Avatar(props: AvatarProps) {
       imageClass={props.imageClass ?? "rounded-full overflow-hidden"}
       fallbackClass={
         props.fallbackClass ??
-        (id
-          ? `rounded-full overflow-hidden items-center justify-center font-semibold text-[${id.foreground}]`
+        (id()
+          ? `rounded-full overflow-hidden items-center justify-center font-semibold text-[${id()!.foreground}]`
           : undefined)
       }
       fallbackStyle={[
-        id
+        id()
           ? {
-              backgroundColor: id.background,
+              backgroundColor: id()!.background,
               borderWidth: 1,
-              borderColor: id.border,
+              borderColor: id()!.border,
             }
           : null,
         props.fallbackStyle ?? null,

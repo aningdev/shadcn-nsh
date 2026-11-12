@@ -186,13 +186,13 @@ function mergeArrowChild(mark: "previous" | "next", children: JSX.Element | unde
     return <Text>{mark === "previous" ? "‹" : "›"}</Text>;
   }
   const icon = carouselSizes.arrowIcon;
-  const tint = colors.text;
+  // The tint is read in the JSX, so it follows the appearance (light / dark).
   if (mark === "previous") {
-    return <Icon name="back" size={icon} tint={tint} />;
+    return <Icon name="back" size={icon} tint={colors.text} />;
   }
   return (
     <View style={{ transform: [{ scaleX: -1 }] }}>
-      <Icon name="back" size={icon} tint={tint} />
+      <Icon name="back" size={icon} tint={colors.text} />
     </View>
   );
 }
