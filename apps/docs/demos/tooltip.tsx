@@ -1,52 +1,63 @@
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/packages/ui/tooltip";
+import { Button } from "@/packages/ui/button";
+import { Tooltip, tooltipNote, tooltipText } from "@/packages/ui/tooltip";
+
+import { DemoCard, DemoPage, DemoSection } from "./kit";
 
 function App() {
-  const open = signal(false);
+  const last = signal("open");
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        padding: 20,
-        gap: 16,
-        justifyContent: "center",
-        alignItems: "flex-start",
-      }}
-    >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Tooltip</Text>
-      <Tooltip>
-        <TooltipTrigger>Hover me</TooltipTrigger>
-        <TooltipContent>Add item</TooltipContent>
-      </Tooltip>
-      <Tooltip>
-        <TooltipTrigger>Bottom placement</TooltipTrigger>
-        <TooltipContent placement="bottom" align="start">
-          Below the trigger
-        </TooltipContent>
-      </Tooltip>
-      <TooltipProvider delay={0}>
-        <Tooltip>
-          <TooltipTrigger>Instant</TooltipTrigger>
-          <TooltipContent>Shows at once</TooltipContent>
-        </Tooltip>
-      </TooltipProvider>
-      <Tooltip open={open()} onOpenChange={({ open: next }) => open.set(next)}>
-        <TooltipTrigger>Pinned</TooltipTrigger>
-        <TooltipContent style={{ paddingHorizontal: 14 }}>
-          Controlled open — useful on touch
-        </TooltipContent>
-      </Tooltip>
-      <View tooltip={<TooltipContent>Host bubble</TooltipContent>}>
-        <Text style={{ fontSize: 14, color: colors.foreground }}>Rest here (host tooltip=)</Text>
-      </View>
-      <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
-        Open: {() => (open() ? "yes" : "no")}
-      </Text>
-    </View>
+    <DemoPage title="Tooltip" note={() => last()}>
+      <DemoCard>
+        <DemoSection title="Placement">
+          <View style={{ flexDirection: "row", gap: 48, paddingVertical: 40 }}>
+            <Button
+              variant="secondary"
+              tooltip={
+                <Tooltip
+                  open
+                  placement="top"
+                  onOpenChange={({ open, reason }) =>
+                    last.set(`${open ? "shown" : "hidden"} · ${reason}`)
+                  }
+                >
+                  Add to favorites
+                </Tooltip>
+              }
+            >
+              Top
+            </Button>
+            <Button
+              variant="secondary"
+              tooltip={
+                <Tooltip open placement="bottom">
+                  Share with your team
+                </Tooltip>
+              }
+            >
+              Bottom
+            </Button>
+          </View>
+        </DemoSection>
+        <DemoSection title="Rich">
+          <View style={{ paddingVertical: 40 }}>
+            <Button
+              variant="secondary"
+              tooltip={
+                <Tooltip open rich>
+                  <Text class={tooltipText}>Delete forever</Text>
+                  <Text class={tooltipNote}>⌘⌫</Text>
+                </Tooltip>
+              }
+            >
+              Rich
+            </Button>
+          </View>
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

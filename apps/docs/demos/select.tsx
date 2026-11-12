@@ -1,43 +1,56 @@
-import { colors } from "@shadcn-nsh/theme";
-import { mount, signal, Text, View } from "nsh";
+import { mount, platform, signal } from "nsh";
 
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/packages/ui/select";
+import { OptionRow, Picker, Select } from "@/packages/ui/select";
+
+import { DemoCard, DemoPage, DemoSection } from "./kit";
+
+const LANGUAGES = [
+  { value: "en", title: "English" },
+  { value: "de", title: "Deutsch" },
+  { value: "fr", title: "Français" },
+  { value: "ja", title: "日本語" },
+];
+
+const titleOf = (items: { value: string; title: string }[], value: string | null) =>
+  items.find((i) => i.value === value)?.title;
+
+const trigger = platform.desktop ? { width: 260 } : undefined;
 
 function App() {
-  const fruit = signal<string | null>("apple");
+  const language = signal<string | null>("en");
+  const open = signal(true);
+  const last = signal("–");
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        padding: 20,
-        gap: 12,
-        justifyContent: "center",
-        alignItems: "flex-start",
-      }}
-    >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Select</Text>
-      <Select value={fruit()} onChange={({ value }) => fruit.set(value)}>
-        <SelectTrigger>
-          <SelectValue placeholder="Fruit" />
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="apple">Apple</SelectItem>
-          <SelectItem value="banana">Banana</SelectItem>
-          <SelectItem value="orange">Orange</SelectItem>
-        </SelectContent>
-      </Select>
-      <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
-        Value: {() => fruit() ?? "—"}
-      </Text>
-    </View>
+    <DemoPage title="Select" note={() => last()}>
+      <DemoCard>
+        <DemoSection title="Language">
+          <Select
+            items={LANGUAGES}
+            value={language()}
+            open={open()}
+            onChange={({ value: next }) => {
+              language.set(next);
+              last.set(titleOf(LANGUAGES, next) ?? "–");
+            }}
+            onOpenChange={({ open: next, reason }) => {
+              open.set(next);
+              last.set(`${next ? "opened" : "closed"} · ${reason}`);
+            }}
+            accessibilityLabel="Language"
+            trigger={
+              <Picker
+                title={titleOf(LANGUAGES, language()) ?? "Choose a language"}
+                placeholder={language() === null}
+                open={open()}
+                style={trigger}
+              />
+            }
+            renderItem={(item) => <OptionRow item={item} />}
+          />
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

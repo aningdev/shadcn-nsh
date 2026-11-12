@@ -1,19 +1,24 @@
-import { colors } from "@shadcn-nsh/theme";
-import { Text, View, mount } from "nsh";
+import { mount } from "nsh";
 
 import { DiffView } from "@/packages/ui/diff-view";
 
+import { DemoCard, DemoPage, DemoSection } from "./kit";
+
 function App() {
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background, padding: 20, gap: 12 }}>
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Diff</Text>
-      <DiffView
-        layout="unified"
-        oldValue={"alpha\nbeta"}
-        newValue={"alpha\ngamma"}
-        style={{ width: 320, height: 140 }}
-      />
-    </View>
+    <DemoPage title="Diff view">
+      <DemoCard padded={false}>
+        <DemoSection title="Unified">
+          <DiffView
+            layout="unified"
+            oldValue={'fn main() {\n    println!("alpha");\n}'}
+            newValue={'fn main() {\n    println!("gamma");\n}'}
+            language="rust"
+            style={{ height: 140 }}
+          />
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

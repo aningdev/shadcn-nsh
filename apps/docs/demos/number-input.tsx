@@ -1,30 +1,41 @@
-import { colors } from "@shadcn-nsh/theme";
-import { mount, signal, Text, View } from "nsh";
+import { mount, signal } from "nsh";
 
 import { NumberInput } from "@/packages/ui/number-input";
 
+import { DemoCard, DemoPage, DemoSection } from "./kit";
+
 function App() {
-  const n = signal<number | null>(1);
+  const tickets = signal<number | null>(2);
+  const price = signal<number | null>(19.95);
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        padding: 20,
-        gap: 12,
-        justifyContent: "center",
-      }}
-    >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>
-        Number Input
-      </Text>
-      <NumberInput value={n()} min={0} max={99} step={1} onChange={({ value }) => n.set(value)} />
-      <NumberInput value={3} disabled />
-      <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
-        Value: {() => (n() == null ? "—" : String(n()))}
-      </Text>
-    </View>
+    <DemoPage title="Number Input" note={() => `tickets ${tickets()} · price ${price()}`}>
+      <DemoCard>
+        <DemoSection title="Split">
+          <NumberInput
+            steps="split"
+            value={tickets()}
+            onChange={({ value }) => tickets.set(value)}
+            min={1}
+            max={10}
+            accessibilityLabel="Tickets"
+            inputStyle={{ textAlign: "center" }}
+          />
+        </DemoSection>
+        <DemoSection title="Pair">
+          <NumberInput
+            value={price()}
+            onChange={({ value }) => price.set(value)}
+            step={0.05}
+            min={0}
+            accessibilityLabel="Price"
+          />
+        </DemoSection>
+        <DemoSection title="States">
+          <NumberInput value={3} disabled accessibilityLabel="Disabled" />
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

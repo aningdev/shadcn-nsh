@@ -1,32 +1,25 @@
-import { colors } from "@shadcn-nsh/theme";
-import { mount, Text, View } from "nsh";
+import { mount } from "nsh";
 
-import { Avatar, AvatarGroup } from "@/packages/ui/avatar";
+import { AVATAR_BROKEN, Avatar, MAINTAINERS } from "@/packages/ui/avatar";
+
+import { DemoCard, DemoPage, DemoSection } from "./kit";
 
 function App() {
+  const side = 36;
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        padding: 20,
-        gap: 16,
-        justifyContent: "center",
-      }}
-    >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Avatar</Text>
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
-        <Avatar name="Ada Lovelace" />
-        <Avatar name="Grace Hopper" size={32} />
-        <Avatar name="Alan Turing" size={48} />
-      </View>
-      <AvatarGroup limit={3} total={4}>
-        <Avatar name="Ada Lovelace" />
-        <Avatar name="Grace Hopper" />
-        <Avatar name="Alan Turing" />
-        <Avatar name="Katherine Johnson" />
-      </AvatarGroup>
-    </View>
+    <DemoPage title="Avatar">
+      <DemoCard>
+        <DemoSection title="Identity">
+          {MAINTAINERS.map((person) => (
+            <Avatar name={person.name} style={{ width: side, height: side }} />
+          ))}
+          <Avatar name="Alan Turing" style={{ width: side, height: side }} />
+        </DemoSection>
+        <DemoSection title="Fallback">
+          <Avatar name="Broken" src={AVATAR_BROKEN} style={{ width: side, height: side }} />
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

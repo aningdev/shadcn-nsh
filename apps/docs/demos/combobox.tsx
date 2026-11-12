@@ -1,43 +1,46 @@
-import { colors } from "@shadcn-nsh/theme";
-import { mount, signal, Text, View } from "nsh";
+import { mount, signal } from "nsh";
 
-import {
-  Combobox,
-  ComboboxContent,
-  ComboboxItem,
-  ComboboxTrigger,
-  ComboboxValue,
-} from "@/packages/ui/combobox";
+import { Combobox, ComboToggle, OptionRow } from "@/packages/ui/combobox";
+
+import { DemoCard, DemoPage, DemoSection } from "./kit";
+
+const FRAMES = [
+  { value: "react", title: "React" },
+  { value: "vue", title: "Vue" },
+  { value: "svelte", title: "Svelte" },
+  { value: "solid", title: "Solid" },
+];
 
 function App() {
-  const tags = signal<string[]>(["react"]);
+  const value = signal<string[]>(["react"]);
+  const open = signal(true);
+  const last = signal("–");
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        padding: 20,
-        gap: 12,
-        justifyContent: "center",
-        alignItems: "flex-start",
-      }}
-    >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Combobox</Text>
-      <Combobox multiple value={tags()} onChange={({ value }) => tags.set(value)}>
-        <ComboboxTrigger>
-          <ComboboxValue placeholder="Frameworks" />
-        </ComboboxTrigger>
-        <ComboboxContent>
-          <ComboboxItem value="react">React</ComboboxItem>
-          <ComboboxItem value="vue">Vue</ComboboxItem>
-          <ComboboxItem value="svelte">Svelte</ComboboxItem>
-        </ComboboxContent>
-      </Combobox>
-      <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
-        Value: {() => tags().join(", ") || "—"}
-      </Text>
-    </View>
+    <DemoPage title="Combobox" note={() => last()}>
+      <DemoCard>
+        <DemoSection title="Framework">
+          <Combobox
+            items={FRAMES}
+            value={value()}
+            open={open()}
+            listOpen={open()}
+            filled={value().length > 0}
+            placeholder="Pick a framework"
+            onChange={({ value: next }) => {
+              value.set(next);
+              last.set(next.join(", ") || "–");
+            }}
+            onOpenChange={({ open: next, reason }) => {
+              open.set(next);
+              last.set(`${next ? "opened" : "closed"} · ${reason}`);
+            }}
+            triggerButton={<ComboToggle open={open()} />}
+            renderItem={(item) => <OptionRow item={item} />}
+          />
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

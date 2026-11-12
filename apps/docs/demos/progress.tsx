@@ -1,44 +1,22 @@
-import { colors } from "@shadcn-nsh/theme";
-import { mount, signal, Text, View } from "nsh";
+import { mount } from "nsh";
 
-import { Button } from "@/packages/ui/button";
 import { Progress } from "@/packages/ui/progress";
 
-function App() {
-  const value = signal(55);
+import { DemoCard, DemoPage, DemoSection } from "./kit";
 
+function App() {
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        padding: 20,
-        gap: 12,
-        justifyContent: "center",
-      }}
-    >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>
-        Progress · {() => value()}%
-      </Text>
-      <Progress value={value()} accessibilityLabel="Upload" />
-      <Progress indeterminate accessibilityLabel="Connecting" />
-      <Progress
-        value={value()}
-        style={{ gap: 8 }}
-        trackStyle={{ height: 8 }}
-        indicatorStyle={{ backgroundColor: colors.destructive }}
-      >
-        <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Style merge</Text>
-      </Progress>
-      <View style={{ flexDirection: "row", gap: 8 }}>
-        <Button variant="outline" onPress={() => value.set(Math.max(0, value() - 10))}>
-          −10
-        </Button>
-        <Button variant="outline" onPress={() => value.set(Math.min(100, value() + 10))}>
-          +10
-        </Button>
-      </View>
-    </View>
+    <DemoPage title="Progress">
+      <DemoCard>
+        <DemoSection title="Determinate">
+          <Progress value={35} style={{ width: 240 }} />
+          <Progress value={100} tone="up" style={{ width: 240 }} />
+        </DemoSection>
+        <DemoSection title="Thin">
+          <Progress value={60} height={4} style={{ width: 240 }} />
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

@@ -1,121 +1,118 @@
-import { colors } from "@shadcn-nsh/theme";
-import { mount, signal, Text, View } from "nsh";
+import { mount, signal } from "nsh";
 
-// Avoid `@shadcn-nsh/ui` barrel: it pulls wrappers that need a newer `nsh/base`.
-import { Button } from "@/packages/ui/button";
+import {
+  Button,
+  buttonGlyph,
+  IconButton,
+  iconButtonGlyph,
+  RoundButton,
+  roundButtonGlyph,
+  SplitButton,
+  SplitButtonDivider,
+  SplitButtonSegment,
+} from "@/packages/ui/button";
+import { Icon } from "@/packages/ui/lib/icons";
+
+import { DemoCard, DemoPage, DemoSection } from "./kit";
 
 function App() {
-  const count = signal(0);
-  const selected = signal(false);
+  const presses = signal(0);
+  const pinned = signal(true);
+  const starred = signal(false);
+  const menuOpen = signal(false);
   const saving = signal(false);
-  const canPublish = signal(false);
-
-  const bump = () => count.set(count() + 1);
-
+  const press = () => presses.update((n) => n + 1);
   const save = () => {
-    if (saving()) return;
     saving.set(true);
     setTimeout(() => saving.set(false), 1200);
   };
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        padding: 20,
-        gap: 16,
-        justifyContent: "center",
-      }}
-    >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>
-        Button · clicks {() => count()}
-      </Text>
-
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10, alignItems: "center" }}>
-        <Button onPress={bump}>Default</Button>
-        <Button variant="secondary" onPress={bump}>
-          Secondary
-        </Button>
-        <Button variant="outline" onPress={bump}>
-          Outline
-        </Button>
-        <Button variant="ghost" onPress={bump}>
-          Ghost
-        </Button>
-        <Button variant="destructive" onPress={bump}>
-          Destructive
-        </Button>
-      </View>
-
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10, alignItems: "center" }}>
-        <Button size="xs" onPress={bump}>
-          XS
-        </Button>
-        <Button size="sm" onPress={bump}>
-          SM
-        </Button>
-        <Button size="default" onPress={bump}>
-          Default
-        </Button>
-        <Button size="lg" onPress={bump}>
-          LG
-        </Button>
-        <Button size="icon" accessibilityLabel="Add" onPress={bump}>
-          <Text style={{ fontSize: 16, fontWeight: "600", color: colors.primaryForeground }}>
-            +
-          </Text>
-        </Button>
-      </View>
-
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10, alignItems: "center" }}>
-        <Button selected={selected()} onPress={() => selected.set(!selected())} variant="outline">
-          <Text style={{ fontSize: 14, fontWeight: "500", color: colors.foreground }}>
-            {() => (selected() ? "Selected" : "Select")}
-          </Text>
-        </Button>
-
-        <Button onPress={bump}>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
-            <Text style={{ color: colors.primaryForeground, fontWeight: "600" }}>+</Text>
-            <Text style={{ color: colors.primaryForeground, fontWeight: "500", fontSize: 14 }}>
-              With icon
-            </Text>
-          </View>
-        </Button>
-
-        <Button disabled={saving()} onPress={save}>
-          <Text style={{ fontSize: 14, fontWeight: "500", color: colors.primaryForeground }}>
-            {() => (saving() ? "Saving…" : "Save")}
-          </Text>
-        </Button>
-
-        <Button
-          variant="secondary"
-          disabled={!canPublish()}
-          onPress={bump}
-          accessibilityLabel={
-            canPublish() ? "Publish" : "Publish unavailable — turn on Ready first"
-          }
-        >
-          Publish
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          selected={canPublish()}
-          onPress={() => canPublish.set(!canPublish())}
-        >
-          <Text style={{ fontSize: 13, fontWeight: "500", color: colors.foreground }}>
-            {() => (canPublish() ? "Ready" : "Locked")}
-          </Text>
-        </Button>
-      </View>
-
-      <Button onPress={bump} style={{ paddingHorizontal: 24 }} hoverStyle={{ opacity: 0.75 }}>
-        Style merge
-      </Button>
-    </View>
+    <DemoPage title="Button" note={() => `Pressed ${presses()}× · pinned ${String(pinned())}`}>
+      <DemoCard>
+        <DemoSection title="Kinds">
+          <Button variant="primary" onPress={press}>
+            Primary
+          </Button>
+          <Button variant="secondary" onPress={press}>
+            Secondary
+          </Button>
+          <Button variant="ghost" onPress={press}>
+            Ghost
+          </Button>
+          <Button variant="danger" onPress={press}>
+            Delete
+          </Button>
+        </DemoSection>
+        <DemoSection title="Sizes">
+          <Button variant="secondary" size="small" onPress={press}>
+            Small
+          </Button>
+          <Button variant="secondary" onPress={press}>
+            Regular
+          </Button>
+          <Button variant="secondary" size="large" onPress={press}>
+            Large
+          </Button>
+        </DemoSection>
+        <DemoSection title="States">
+          <Button variant="secondary" selected={pinned()} onPress={() => pinned.set(!pinned())}>
+            Pinned
+          </Button>
+          <Button variant="primary" busy={saving()} onPress={save}>
+            Save
+          </Button>
+          <Button variant="primary" disabled>
+            Disabled
+          </Button>
+          <Button variant="secondary" disabled>
+            Disabled
+          </Button>
+        </DemoSection>
+        <DemoSection title="Icon">
+          <IconButton accessibilityLabel="Search" onPress={press} on={starred()}>
+            <Icon name="search" {...iconButtonGlyph({ on: () => starred() })} />
+          </IconButton>
+          <IconButton
+            accessibilityLabel="Star"
+            variant="secondary"
+            on={starred()}
+            onPress={() => starred.set(!starred())}
+          >
+            <Icon name="star" {...iconButtonGlyph({ variant: "secondary", on: () => starred() })} />
+          </IconButton>
+          <IconButton accessibilityLabel="Delete" tone="danger" onPress={press}>
+            <Icon name="trash" {...iconButtonGlyph({ tone: "danger" })} />
+          </IconButton>
+          <RoundButton accessibilityLabel="Play" onPress={press}>
+            <Icon name="play" {...roundButtonGlyph("primary")} />
+          </RoundButton>
+          <RoundButton accessibilityLabel="Plus" variant="secondary" onPress={press}>
+            <Icon name="plus" {...roundButtonGlyph("secondary")} />
+          </RoundButton>
+        </DemoSection>
+        <DemoSection title="Split">
+          <SplitButton variant="primary">
+            <SplitButtonSegment onPress={press}>Save</SplitButtonSegment>
+            <SplitButtonDivider />
+            <SplitButtonSegment
+              accessibilityLabel="More save options"
+              selected={menuOpen()}
+              onPress={() => menuOpen.set(!menuOpen())}
+            >
+              <Icon name="chevron-down" {...buttonGlyph("primary")} />
+            </SplitButtonSegment>
+          </SplitButton>
+          <SplitButton variant="secondary">
+            <SplitButtonSegment onPress={press}>Export</SplitButtonSegment>
+            <SplitButtonDivider />
+            <SplitButtonSegment accessibilityLabel="More export options" onPress={press}>
+              <Icon name="chevron-down" {...buttonGlyph("secondary")} />
+            </SplitButtonSegment>
+          </SplitButton>
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

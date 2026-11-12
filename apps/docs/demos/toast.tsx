@@ -1,40 +1,40 @@
-import { colors } from "@shadcn-nsh/theme";
 import { mount, Text, View } from "nsh";
 
 import { Button } from "@/packages/ui/button";
-import { toast, Toaster } from "@/packages/ui/toast";
+import {
+  Toast,
+  toastActionLabel,
+  toastActionLook,
+  toastCloseLook,
+  toastText,
+  toastTitle,
+} from "@/packages/ui/toast";
+
+import { DemoCard, DemoPage, DemoSection } from "./kit";
 
 function App() {
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        padding: 20,
-        gap: 12,
-        justifyContent: "center",
-        alignItems: "flex-start",
-      }}
-    >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Toast</Text>
-      <Button onPress={() => toast("Copied", { description: "Link on clipboard" })}>
-        Show toast
-      </Button>
-      <Button
-        variant="secondary"
-        onPress={() =>
-          toast("Style merge", {
-            description: "Consumer stackStyle / toast chrome still apply.",
-          })
-        }
-      >
-        Another toast
-      </Button>
-      <Button variant="outline" onPress={() => toast.dismiss()}>
-        Dismiss all
-      </Button>
-      <Toaster placement="topRight" stackStyle={{ maxWidth: 360 }} />
-    </View>
+    <DemoPage title="Toast">
+      <DemoCard>
+        <DemoSection title="Message">
+          <Toast title="Copied" description="The link is on the clipboard." />
+        </DemoSection>
+        <DemoSection title="Action">
+          <Toast>
+            <View style={{ flex: 1, gap: 2, minWidth: 0 }}>
+              <Text style={toastTitle()}>Deleted</Text>
+              <Text style={toastText()}>Move to trash</Text>
+            </View>
+            <Button {...toastActionLook()}>
+              <Text style={toastActionLabel()}>Undo</Text>
+            </Button>
+            <View {...toastCloseLook()} accessibilityLabel="Dismiss">
+              <Text style={{ fontSize: 14 }}>×</Text>
+            </View>
+          </Toast>
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

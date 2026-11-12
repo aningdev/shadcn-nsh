@@ -1,38 +1,34 @@
-import { colors } from "@shadcn-nsh/theme";
-import { Text, View, mount, signal } from "nsh";
+import { mount, signal } from "nsh";
+import type { ColorFormat } from "nsh/base";
+import { ColorPicker } from "nsh/base";
 
-import {
-  ColorArea,
-  ColorEyeDropper,
-  ColorField,
-  ColorPicker,
-  ColorSlider,
-  ColorSwatch,
-} from "@/packages/ui/color-picker";
+import { ColorPanel } from "@/packages/ui/color-picker";
+
+import { DemoCard, DemoPage, DemoSection } from "./kit";
+
+const SWATCHES = ["#ef4444", "#22c55e", "#3b82f6", "#8b5cf6"];
 
 function App() {
-  const color = signal("#2563eb");
+  const fill = signal("#6366f1ff");
+  const format = signal<ColorFormat>("hex");
+
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background, padding: 20, gap: 12 }}>
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Color</Text>
-      <ColorPicker
-        value={color()}
-        onChange={(event) => color.set(event.value)}
-        style={{ width: 280, gap: 10 }}
-      >
-        <ColorArea accessibilityLabel="Saturation" style={{ width: 280, height: 96 }} />
-        <ColorSlider accessibilityLabel="Hue" channel="hue" />
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-          <ColorField accessibilityLabel="Hex" style={{ width: 120 }} />
-          <ColorSwatch accessibilityLabel="Current" />
-          <ColorSwatch color="#b91c1c" accessibilityLabel="Red" />
-          <ColorEyeDropper accessibilityLabel="Pick">
-            <Text style={{ fontSize: 13, color: colors.foreground }}>Pick</Text>
-          </ColorEyeDropper>
-        </View>
-      </ColorPicker>
-      <Text style={{ fontSize: 13, color: colors.mutedForeground }}>{color()}</Text>
-    </View>
+    <DemoPage title="Color picker">
+      <DemoCard>
+        <DemoSection title="Fill">
+          <ColorPicker value={fill()} format={format()} onChange={({ value }) => fill.set(value)}>
+            <ColorPanel
+              name="Fill color"
+              value={fill()}
+              format={format()}
+              onFormatChange={(f) => format.set(f)}
+              alpha
+              swatches={SWATCHES}
+            />
+          </ColorPicker>
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

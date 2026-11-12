@@ -1,27 +1,42 @@
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
-import { Slider } from "@/packages/ui/slider";
+import { Slider, sliderValueClass, sliderValueStyle } from "@/packages/ui/slider";
+
+import { DemoCard, DemoPage, DemoSection } from "./kit";
 
 function App() {
-  const volume = signal(40);
+  const strength = signal(64);
+  const muted = signal(40);
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        padding: 20,
-        gap: 12,
-        justifyContent: "center",
-      }}
-    >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>
-        Slider · {() => Math.round(volume() as number)}
-      </Text>
-      <Slider value={volume()} onChange={({ value }) => volume.set(value as number)} />
-      <Slider value={10} disabled />
-    </View>
+    <DemoPage title="Slider" note={() => `${strength()}% · ${muted()}%`}>
+      <DemoCard>
+        <DemoSection title="Value">
+          <Slider
+            value={strength()}
+            showValue
+            onChange={({ value }) => strength.set(value as number)}
+            accessibilityLabel="Strength"
+          >
+            <Text class={sliderValueClass} style={sliderValueStyle()}>{`${strength()}%`}</Text>
+          </Slider>
+        </DemoSection>
+        <DemoSection title="Default">
+          <View style={{ width: 240 }}>
+            <Slider
+              value={muted()}
+              onChange={({ value }) => muted.set(value as number)}
+              accessibilityLabel="Volume"
+            />
+          </View>
+        </DemoSection>
+        <DemoSection title="States">
+          <View style={{ width: 240, opacity: 0.5 }}>
+            <Slider value={72} disabled accessibilityLabel="Locked" />
+          </View>
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

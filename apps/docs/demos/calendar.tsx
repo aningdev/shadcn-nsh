@@ -1,30 +1,28 @@
-import { colors } from "@shadcn-nsh/theme";
-import { mount, signal, Text, View } from "nsh";
+import { mount, signal } from "nsh";
 
 import { Calendar } from "@/packages/ui/calendar";
 
+import { DemoCard, DemoPage, DemoSection } from "./kit";
+
 function App() {
-  const day = signal<string | null>("2026-03-15");
+  const value = signal("2026-11-11");
+  const last = signal("–");
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        padding: 20,
-        gap: 12,
-        alignItems: "flex-start",
-      }}
-    >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Calendar</Text>
-      <Calendar
-        value={day()}
-        onChange={({ value }) => day.set(typeof value === "string" ? value : null)}
-      />
-      <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
-        Value: {() => day() ?? "—"}
-      </Text>
-    </View>
+    <DemoPage title="Calendar" note={() => last()}>
+      <DemoCard>
+        <DemoSection title="Day">
+          <Calendar
+            value={value()}
+            onChange={({ value: next }) => {
+              const day = typeof next === "string" ? next : (next?.[0] ?? "2026-11-11");
+              value.set(day ?? "2026-11-11");
+              last.set(day ?? "–");
+            }}
+          />
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

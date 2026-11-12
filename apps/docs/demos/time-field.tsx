@@ -1,26 +1,27 @@
-import { colors } from "@shadcn-nsh/theme";
-import { mount, signal, Text, View } from "nsh";
+import { mount, signal } from "nsh";
 
 import { TimeField } from "@/packages/ui/time-field";
+
+import { DemoCard, DemoPage, DemoSection } from "./kit";
 
 function App() {
   const time = signal("09:30");
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        padding: 20,
-        gap: 12,
-        justifyContent: "center",
-        alignItems: "flex-start",
-      }}
-    >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Time field</Text>
-      <TimeField value={time()} onChange={({ value }) => time.set(value)} />
-      <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Value: {time}</Text>
-    </View>
+    <DemoPage title="Time Field" note={() => time()}>
+      <DemoCard>
+        <DemoSection title="Value">
+          <TimeField
+            value={time()}
+            onChange={({ value }) => time.set(value)}
+            accessibilityLabel="Time"
+          />
+        </DemoSection>
+        <DemoSection title="States">
+          <TimeField value="12:00" disabled accessibilityLabel="Disabled" />
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

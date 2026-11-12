@@ -1,43 +1,42 @@
-import { colors } from "@shadcn-nsh/theme";
-import { Text, View, mount } from "nsh";
+import { mount, View } from "nsh";
 import type { DataTableColumn } from "nsh/base";
 
-import { DataTable } from "@/packages/ui/data-table";
+import { DataTable, dataTableFitPadding } from "@/packages/ui/data-table";
 
-const columns: DataTableColumn[] = [
-  { key: "name", title: "Name", width: 120, fixed: true },
-  { key: "city", title: "City", width: 100 },
-  {
-    key: "score",
-    title: "Score",
-    width: 72,
-    align: "end",
-    sortable: true,
-    positiveClass: "text-primary",
-    negativeClass: "text-destructive",
-  },
+import { DemoCard, DemoPage, DemoSection } from "./kit";
+
+type Person = { id: number; name: string; city: string; score: number };
+
+const people: Person[] = [
+  { id: 1, name: "Ada", city: "Oslo", score: 92 },
+  { id: 2, name: "Alan", city: "Lima", score: 81 },
+  { id: 3, name: "Grace", city: "Kyoto", score: 97 },
+  { id: 4, name: "Linus", city: "Cairo", score: 74 },
 ];
 
-const rows = [
-  { name: "Ada", city: "Oslo", score: 12 },
-  { name: "Grace", city: "Kyoto", score: -3 },
-  { name: "Linus", city: "Lima", score: 8 },
+const columns: DataTableColumn[] = [
+  { key: "id", title: "ID", width: 56, align: "end", sortable: true },
+  { key: "name", title: "Name", width: 120, sortable: true },
+  { key: "city", title: "City", width: 100, sortable: true },
+  { key: "score", title: "Score", width: 72, align: "end", sortable: true },
 ];
 
 function App() {
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background, padding: 20, gap: 12 }}>
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>DataTable</Text>
-      <DataTable
-        accessibilityLabel="People"
-        style={{ width: 300, height: 160 }}
-        columns={columns}
-        data={rows}
-        stripe
-        sort={{ key: "score", direction: "descending" }}
-        selection={{ row: 1 }}
-      />
-    </View>
+    <DemoPage title="DataTable">
+      <DemoCard>
+        <DemoSection title="Default">
+          <View style={{ height: 200, alignSelf: "stretch" }}>
+            <DataTable
+              columns={columns.map((c) => ({ ...c, fitPadding: dataTableFitPadding }))}
+              data={people}
+              stripe
+              style={{ flex: 1 }}
+            />
+          </View>
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

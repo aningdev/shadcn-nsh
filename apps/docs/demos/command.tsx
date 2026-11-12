@@ -1,10 +1,11 @@
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 import type { CommandItem } from "nsh/base";
 
 import { Command } from "@/packages/ui/command";
 
-const commands: CommandItem[] = [
+import { DemoCard, DemoPage, DemoSection } from "./kit";
+
+const items: CommandItem[] = [
   { id: "new", label: "New File", group: "File", shortcut: "mod+n" },
   { id: "open", label: "Open File", group: "File", disabled: true },
   { id: "theme", label: "Toggle Theme", group: "View", checked: true },
@@ -14,27 +15,22 @@ const commands: CommandItem[] = [
 function App() {
   const chosen = signal("none");
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        padding: 20,
-        gap: 12,
-        alignItems: "flex-start",
-      }}
-    >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Command</Text>
-      <Command
-        items={commands}
-        accessibilityLabel="Commands"
-        searchAccessibilityLabel="Search commands"
-        onSelect={({ id }) => chosen.set(id)}
-        style={{ width: 320 }}
-      />
-      <Text style={{ fontSize: 13, color: colors.mutedForeground, numberOfLines: 1 }}>
-        Chosen: {chosen()}
-      </Text>
-    </View>
+    <DemoPage title="Command" note={() => `Chosen: ${chosen()}`}>
+      <DemoCard>
+        <DemoSection title="Default">
+          <View style={{ gap: 8 }}>
+            <Command
+              items={items}
+              accessibilityLabel="Commands"
+              searchAccessibilityLabel="Search commands"
+              onSelect={({ id }) => chosen.set(id)}
+              style={{ width: 320, maxHeight: 280 }}
+            />
+            <Text style={{ fontSize: 13 }}>{`Chosen: ${chosen()}`}</Text>
+          </View>
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

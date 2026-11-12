@@ -1,21 +1,25 @@
-import { colors } from "@shadcn-nsh/theme";
-import { Text, View, mount, signal } from "nsh";
+import { mount } from "nsh";
+import { createRichEditor, StarterKit } from "nsh/base";
 
-import { Editor } from "@/packages/ui/editor";
+import { RichEditor } from "@/packages/ui/editor";
+
+import { DemoCard, DemoPage, DemoSection } from "./kit";
+
+const editor = createRichEditor({
+  extensions: [StarterKit],
+  content: "# Notes\n\nEdit **bold** and `code` in place.",
+  format: "markdown",
+});
 
 function App() {
-  const source = signal("const n = 1\n");
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background, padding: 20, gap: 12 }}>
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Editor</Text>
-      <Editor
-        accessibilityLabel="Source"
-        language="ts"
-        value={source()}
-        onChange={(event) => source.set(event.value)}
-        style={{ width: 320, height: 120 }}
-      />
-    </View>
+    <DemoPage title="Editor">
+      <DemoCard padded={false}>
+        <DemoSection title="Rich document">
+          <RichEditor editor={editor} accessibilityLabel="Notes" style={{ height: 180 }} />
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

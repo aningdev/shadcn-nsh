@@ -1,48 +1,97 @@
-import { colors } from "@shadcn-nsh/theme";
-import { mount, signal, Text, View } from "nsh";
+import { mount, signal } from "nsh";
 
 import { Checkbox } from "@/packages/ui/checkbox";
+import { controlSize, listRow, RowDivider, RowLabel } from "@/packages/ui/lib/surface";
+
+import { DemoCard, DemoPage, DemoSection } from "./kit";
+
+const items = [
+  { id: "photos", label: "Photos", detail: "2,418 items · 6.1 GB" },
+  { id: "documents", label: "Documents", detail: "312 files · 840 MB" },
+  { id: "messages", label: "Messages", detail: "Attachments included · 1.2 GB" },
+] as const;
 
 function App() {
-  const checked = signal(true);
-  const mixed = signal(true);
+  const selected = signal<string[]>(["photos"]);
+  const alone = signal(true);
+  const all = () => selected().length === items.length;
+  const some = () => selected().length > 0 && !all();
+  const toggle = (id: string, checked: boolean) =>
+    selected.set(checked ? [...selected(), id] : selected().filter((x) => x !== id));
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        padding: 20,
-        gap: 12,
-        justifyContent: "center",
-      }}
+    <DemoPage
+      title="Checkbox"
+      note={() => `${selected().length} of ${items.length} · alone ${String(alone())}`}
     >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Checkbox</Text>
-      <Checkbox checked={checked()} onChange={({ checked: v }) => checked.set(v)}>
-        <Text style={{ fontSize: 14, color: colors.foreground }}>Accept terms</Text>
-      </Checkbox>
-      <Checkbox
-        indeterminate={mixed()}
-        checked={false}
-        onChange={({ checked: v }) => {
-          mixed.set(false);
-          checked.set(v);
-        }}
-      >
-        <Text style={{ fontSize: 14, color: colors.foreground }}>Indeterminate → checked</Text>
-      </Checkbox>
-      <Checkbox disabled checked>
-        <Text style={{ fontSize: 14, color: colors.foreground }}>Disabled</Text>
-      </Checkbox>
-      <Checkbox
-        checked={checked()}
-        onChange={({ checked: v }) => checked.set(v)}
-        style={{ gap: 12 }}
-        indicatorStyle={{ width: 20, height: 20 }}
-      >
-        <Text style={{ fontSize: 14, color: colors.foreground }}>Style merge</Text>
-      </Checkbox>
-    </View>
+      <DemoCard style={{ gap: 0 }}>
+        <Checkbox
+          checked={all()}
+          indeterminate={some()}
+          onChange={({ checked }) => selected.set(checked ? items.map((i) => i.id) : [])}
+          {...listRow({ first: true })}
+        >
+          <RowLabel
+            label="Back up everything"
+            detail={`${selected().length} of ${items.length} selected`}
+            strong
+          />
+        </Checkbox>
+        <Checkbox
+          checked={selected().includes("photos")}
+          onChange={({ checked }) => toggle("photos", checked)}
+          {...listRow({ start: controlSize.control + controlSize.gap })}
+        >
+          <RowDivider show />
+          <RowLabel label={items[0].label} detail={items[0].detail} />
+        </Checkbox>
+        <Checkbox
+          checked={selected().includes("documents")}
+          onChange={({ checked }) => toggle("documents", checked)}
+          {...listRow({ start: controlSize.control + controlSize.gap })}
+        >
+          <RowDivider show />
+          <RowLabel label={items[1].label} detail={items[1].detail} />
+        </Checkbox>
+        <Checkbox
+          checked={selected().includes("messages")}
+          onChange={({ checked }) => toggle("messages", checked)}
+          {...listRow({ start: controlSize.control + controlSize.gap })}
+        >
+          <RowDivider show />
+          <RowLabel label={items[2].label} detail={items[2].detail} />
+        </Checkbox>
+      </DemoCard>
+
+      <DemoCard>
+        <DemoSection title="Scale">
+          <Checkbox scale={0.8} checked>
+            Small
+          </Checkbox>
+          <Checkbox checked={alone()} onChange={({ checked }) => alone.set(checked)}>
+            Regular
+          </Checkbox>
+          <Checkbox scale={1.25} checked>
+            Large
+          </Checkbox>
+        </DemoSection>
+        <DemoSection title="Round">
+          <Checkbox round checked>
+            Round
+          </Checkbox>
+          <Checkbox round>Off</Checkbox>
+        </DemoSection>
+        <DemoSection title="States">
+          <Checkbox checked>Checked</Checkbox>
+          <Checkbox indeterminate>Indeterminate</Checkbox>
+          <Checkbox>Off</Checkbox>
+          <Checkbox checked disabled>
+            Disabled
+          </Checkbox>
+          <Checkbox disabled>Disabled</Checkbox>
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

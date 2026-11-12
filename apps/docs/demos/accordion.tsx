@@ -1,59 +1,63 @@
 import { colors } from "@shadcn-nsh/theme";
-import { mount, signal, Text, View } from "nsh";
+import { mount, signal, Text } from "nsh";
 
 import {
   Accordion,
-  AccordionPanel,
   AccordionHeader,
   AccordionItem,
+  AccordionPanel,
   AccordionTrigger,
 } from "@/packages/ui/accordion";
 
+import { DemoCard, DemoPage, DemoSection } from "./kit";
+
+const FAQ = [
+  {
+    value: "shipping",
+    question: "How long does shipping take?",
+    answer: "Orders leave within a day and arrive in two to five working days.",
+  },
+  {
+    value: "returns",
+    question: "Can I return an item?",
+    answer: "Within 30 days, unused and in its box, with a prepaid label.",
+  },
+  {
+    value: "gift",
+    question: "Can I send it as a gift?",
+    answer: "Gift wrapping opens with the holiday season.",
+    disabled: true,
+  },
+] as const;
+
 function App() {
-  const open = signal(["shipping"]);
+  const open = signal<string[]>(["shipping"]);
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        padding: 20,
-        gap: 12,
-        justifyContent: "center",
-      }}
-    >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Accordion</Text>
-      <Accordion value={open()} onChange={({ value }) => open.set(value)}>
-        <AccordionItem value="shipping">
-          <AccordionHeader>
-            <AccordionTrigger>
-              <Text style={{ fontSize: 14, fontWeight: "500", color: colors.foreground }}>
-                Shipping
-              </Text>
-            </AccordionTrigger>
-          </AccordionHeader>
-          <AccordionPanel>
-            <Text style={{ fontSize: 13, color: colors.mutedForeground, paddingBottom: 12 }}>
-              Ships in 2–3 days.
-            </Text>
-          </AccordionPanel>
-        </AccordionItem>
-        <AccordionItem value="returns">
-          <AccordionHeader>
-            <AccordionTrigger>
-              <Text style={{ fontSize: 14, fontWeight: "500", color: colors.foreground }}>
-                Returns
-              </Text>
-            </AccordionTrigger>
-          </AccordionHeader>
-          <AccordionPanel>
-            <Text style={{ fontSize: 13, color: colors.mutedForeground, paddingBottom: 12 }}>
-              30-day return window.
-            </Text>
-          </AccordionPanel>
-        </AccordionItem>
-      </Accordion>
-    </View>
+    <DemoPage title="Accordion" note={() => (open().length ? open().join(", ") : "none")}>
+      <DemoCard>
+        <DemoSection title="Single">
+          <Accordion
+            value={open()}
+            onChange={({ value }) => open.set(value)}
+            style={{ alignSelf: "stretch" }}
+          >
+            {FAQ.map((item, i) => (
+              <AccordionItem value={item.value} disabled={"disabled" in item && item.disabled}>
+                <AccordionHeader>
+                  <AccordionTrigger first={i === 0}>{item.question}</AccordionTrigger>
+                </AccordionHeader>
+                <AccordionPanel reveal accessibilityLabel={item.question}>
+                  <Text style={{ fontSize: 14, lineHeight: 20, color: colors.muted }}>
+                    {item.answer}
+                  </Text>
+                </AccordionPanel>
+              </AccordionItem>
+            ))}
+          </Accordion>
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

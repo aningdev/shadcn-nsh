@@ -1,5 +1,4 @@
-import { colors } from "@shadcn-nsh/theme";
-import { mount, signal, Text, View } from "nsh";
+import { mount, signal, View } from "nsh";
 
 import {
   AlertDialog,
@@ -12,43 +11,36 @@ import {
   AlertDialogTrigger,
 } from "@/packages/ui/alert-dialog";
 
+import { DemoPage } from "./kit";
+
 function App() {
-  const action = signal("none");
+  const last = signal("–");
+
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        padding: 20,
-        gap: 16,
-        justifyContent: "center",
-        alignItems: "flex-start",
-      }}
-    >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>
-        Alert dialog
-      </Text>
-      <AlertDialog onAction={(event) => action.set(event.action ?? "dismissed")}>
-        <AlertDialogTrigger>Delete file</AlertDialogTrigger>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete file?</AlertDialogTitle>
-            <AlertDialogDescription>This cannot be undone.</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogAction id="cancel" role="cancel">
-              Cancel
-            </AlertDialogAction>
-            <AlertDialogAction id="delete" role="destructive">
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-      <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
-        {() => `Action: ${action()}`}
-      </Text>
-    </View>
+    <DemoPage title="Alert Dialog" note={() => last()}>
+      <View style={{ flexDirection: "row" }}>
+        <AlertDialog
+          onAction={(event) => last.set(event.action ?? "dismissed")}
+          onOpenChange={({ open, reason }) => last.set(`${open ? "open" : "closed"}: ${reason}`)}
+        >
+          <AlertDialogTrigger variant="danger">Delete file…</AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Delete file?</AlertDialogTitle>
+              <AlertDialogDescription>This cannot be undone.</AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogAction id="cancel" role="cancel">
+                Cancel
+              </AlertDialogAction>
+              <AlertDialogAction id="delete" role="destructive">
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
+      </View>
+    </DemoPage>
   );
 }
 

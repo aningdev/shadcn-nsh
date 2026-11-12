@@ -1,44 +1,59 @@
 import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
+import { listRow, RowDivider, RowLabel } from "@/packages/ui/lib/surface";
 import { Switch } from "@/packages/ui/switch";
 
+import { DemoCard, DemoPage } from "./kit";
+
 function App() {
-  const on = signal(true);
+  const wifi = signal(true);
+  const bluetooth = signal(false);
+  const ask = signal(true);
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        padding: 20,
-        gap: 12,
-        justifyContent: "center",
-      }}
-    >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Switch</Text>
-      <Switch checked={on()} onChange={({ checked: v }) => on.set(v)}>
-        <Text style={{ fontSize: 14, color: colors.foreground }}>Notifications</Text>
-      </Switch>
-      <Switch size="sm" checked={on()} onChange={({ checked: v }) => on.set(v)}>
-        <Text style={{ fontSize: 14, color: colors.foreground }}>Small</Text>
-      </Switch>
-      <Switch disabled checked={false}>
-        <Text style={{ fontSize: 14, color: colors.foreground }}>Disabled off</Text>
-      </Switch>
-      <Switch
-        checked={on()}
-        onChange={({ checked: v }) => on.set(v)}
-        style={{ gap: 12 }}
-        trackStyle={{ width: 44 }}
-        thumbClass="checked:translate-x-5"
-      >
-        <Text style={{ fontSize: 14, color: colors.foreground }}>Style merge</Text>
-      </Switch>
-      <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
-        {() => (on() ? "On" : "Off")}
-      </Text>
-    </View>
+    <DemoPage title="Switch">
+      <DemoCard style={{ gap: 0 }}>
+        {/* A row with its label: the whole row is the switch, and the target. */}
+        <Switch
+          checked={wifi()}
+          onChange={({ checked }) => wifi.set(checked)}
+          {...listRow({ first: true, style: { flexDirection: "row-reverse" } })}
+        >
+          <RowDivider show={false} />
+          <RowLabel label="Wi-Fi" />
+        </Switch>
+        <Switch
+          checked={ask()}
+          disabled={!wifi()}
+          onChange={({ checked }) => ask.set(checked)}
+          {...listRow({
+            disabled: () => !wifi(),
+            style: { flexDirection: "row-reverse" },
+          })}
+        >
+          <RowDivider show />
+          <RowLabel label="Ask to join networks" />
+        </Switch>
+      </DemoCard>
+      {/* Alone: its track is all of it, with a hit slop on a touch screen. */}
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
+        <Switch
+          accessibilityLabel="Bluetooth"
+          checked={bluetooth()}
+          onChange={({ checked }) => bluetooth.set(checked)}
+        />
+        <Switch
+          accessibilityLabel="Bluetooth, small"
+          size="small"
+          checked={bluetooth()}
+          onChange={({ checked }) => bluetooth.set(checked)}
+        />
+        <Text style={{ fontSize: 13, color: colors.muted }}>
+          Bluetooth {bluetooth() ? "on" : "off"}
+        </Text>
+      </View>
+    </DemoPage>
   );
 }
 

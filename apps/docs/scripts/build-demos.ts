@@ -18,10 +18,18 @@ const demosDir = path.join(docsRoot, "demos");
 const outRoot = path.join(docsRoot, "public", "demos");
 const componentsDir = path.join(docsRoot, "src", "pages", "docs", "components");
 
-const entries = fs
-  .readdirSync(demosDir)
-  .filter((f) => f.endsWith(".tsx") && !f.endsWith(".test.tsx"))
-  .sort();
+/**
+ * Files in demos/ that are not a page's demo: the app entry `nsh check` / `nsh test` need, the
+ * shared demo kit, and the render check's reference pages (`<id>.ref.tsx`).
+ */
+const isDemo = (f: string) =>
+  f.endsWith(".tsx") &&
+  !f.endsWith(".test.tsx") &&
+  !f.endsWith(".ref.tsx") &&
+  f !== "App.tsx" &&
+  f !== "kit.tsx";
+
+const entries = fs.readdirSync(demosDir).filter(isDemo).sort();
 
 if (entries.length === 0) {
   console.error("No demos/*.tsx found");

@@ -1,46 +1,73 @@
-import { colors } from "@shadcn-nsh/theme";
-import { mount, signal, Text, View } from "nsh";
+import { mount, signal, View } from "nsh";
 
-import { Toggle, ToggleGroup } from "@/packages/ui/toggle-group";
+import { Toggle } from "@/packages/ui/toggle";
+import { ToggleGroup } from "@/packages/ui/toggle-group";
+
+import { DemoCard, DemoPage, DemoSection } from "./kit";
 
 function App() {
-  const align = signal("left");
+  const bold = signal(true);
+  const italic = signal(false);
+  const align = signal<"left" | "center" | "right">("left");
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        padding: 20,
-        gap: 12,
-        justifyContent: "center",
-      }}
+    <DemoPage
+      title="Toggle Group"
+      note={() => `${bold() ? "B" : ""}${italic() ? "I" : ""} · ${align()}`}
     >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>
-        Toggle Group
-      </Text>
-      <ToggleGroup>
-        <Toggle
-          pressed={align() === "left"}
-          onChange={({ pressed }) => pressed && align.set("left")}
-        >
-          <Text style={{ fontSize: 13, color: colors.foreground }}>Left</Text>
-        </Toggle>
-        <Toggle
-          pressed={align() === "center"}
-          onChange={({ pressed }) => pressed && align.set("center")}
-        >
-          <Text style={{ fontSize: 13, color: colors.foreground }}>Center</Text>
-        </Toggle>
-        <Toggle
-          pressed={align() === "right"}
-          onChange={({ pressed }) => pressed && align.set("right")}
-        >
-          <Text style={{ fontSize: 13, color: colors.foreground }}>Right</Text>
-        </Toggle>
-      </ToggleGroup>
-      <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Align: {() => align()}</Text>
-    </View>
+      <DemoCard>
+        <DemoSection title="Multiple">
+          <ToggleGroup>
+            <Toggle pressed={bold()} onChange={({ pressed }) => bold.set(pressed)}>
+              Bold
+            </Toggle>
+            <Toggle pressed={italic()} onChange={({ pressed }) => italic.set(pressed)}>
+              Italic
+            </Toggle>
+          </ToggleGroup>
+        </DemoSection>
+        <DemoSection title="Single">
+          <ToggleGroup>
+            <Toggle
+              pressed={align() === "left"}
+              onChange={({ pressed }) => pressed && align.set("left")}
+            >
+              Left
+            </Toggle>
+            <Toggle
+              pressed={align() === "center"}
+              onChange={({ pressed }) => pressed && align.set("center")}
+            >
+              Center
+            </Toggle>
+            <Toggle
+              pressed={align() === "right"}
+              onChange={({ pressed }) => pressed && align.set("right")}
+            >
+              Right
+            </Toggle>
+          </ToggleGroup>
+        </DemoSection>
+        <DemoSection title="Vertical">
+          <ToggleGroup vertical>
+            <Toggle pressed={bold()} onChange={({ pressed }) => bold.set(pressed)}>
+              Bold
+            </Toggle>
+            <Toggle pressed={italic()} onChange={({ pressed }) => italic.set(pressed)}>
+              Italic
+            </Toggle>
+          </ToggleGroup>
+        </DemoSection>
+        <DemoSection title="States">
+          <View style={{ flexDirection: "row", gap: 12 }}>
+            <ToggleGroup disabled>
+              <Toggle pressed>On</Toggle>
+              <Toggle>Off</Toggle>
+            </ToggleGroup>
+          </View>
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

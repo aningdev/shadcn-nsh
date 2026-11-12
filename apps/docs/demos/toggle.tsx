@@ -1,35 +1,49 @@
-import { colors } from "@shadcn-nsh/theme";
-import { mount, signal, Text, View } from "nsh";
+import { mount, signal } from "nsh";
 
 import { Toggle } from "@/packages/ui/toggle";
 
+import { DemoCard, DemoPage, DemoSection } from "./kit";
+
 function App() {
-  const bold = signal(false);
-  const italic = signal(true);
+  const bold = signal(true);
+  const starred = signal(false);
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        padding: 20,
-        gap: 12,
-        justifyContent: "center",
-      }}
-    >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Toggle</Text>
-      <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10 }}>
-        <Toggle pressed={bold()} onChange={({ pressed }) => bold.set(pressed)}>
-          <Text style={{ fontSize: 13, color: colors.foreground }}>Bold</Text>
-        </Toggle>
-        <Toggle pressed={italic()} onChange={({ pressed }) => italic.set(pressed)}>
-          <Text style={{ fontSize: 13, color: colors.foreground }}>Italic</Text>
-        </Toggle>
-        <Toggle disabled pressed>
-          <Text style={{ fontSize: 13, color: colors.foreground }}>Disabled</Text>
-        </Toggle>
-      </View>
-    </View>
+    <DemoPage title="Toggle" note={() => `bold ${String(bold())} · starred ${String(starred())}`}>
+      <DemoCard>
+        <DemoSection title="Variant">
+          <Toggle pressed={bold()} onChange={({ pressed }) => bold.set(pressed)}>
+            Ghost
+          </Toggle>
+          <Toggle
+            variant="outline"
+            pressed={starred()}
+            onChange={({ pressed }) => starred.set(pressed)}
+          >
+            Outline
+          </Toggle>
+        </DemoSection>
+        <DemoSection title="Size">
+          <Toggle size="small" pressed>
+            Small
+          </Toggle>
+          <Toggle pressed>Regular</Toggle>
+          <Toggle size="large" pressed>
+            Large
+          </Toggle>
+        </DemoSection>
+        <DemoSection title="States">
+          <Toggle pressed={bold()} onChange={({ pressed }) => bold.set(pressed)}>
+            On
+          </Toggle>
+          <Toggle>Off</Toggle>
+          <Toggle disabled pressed>
+            Disabled
+          </Toggle>
+          <Toggle disabled>Disabled</Toggle>
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

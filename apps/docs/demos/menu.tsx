@@ -1,5 +1,5 @@
 import { colors } from "@shadcn-nsh/theme";
-import { mount, signal, Text, View } from "nsh";
+import { mount, signal, Text } from "nsh";
 
 import {
   Menu,
@@ -7,72 +7,78 @@ import {
   MenuContent,
   MenuItem,
   MenuLabel,
+  MenuRadioItem,
   MenuSeparator,
+  MenuSub,
+  MenuSubContent,
+  MenuSubTrigger,
   MenuTrigger,
 } from "@/packages/ui/menu";
 
+import { DemoCard, DemoPage, DemoSection } from "./kit";
+
 function App() {
-  const open = signal(false);
-  const last = signal("—");
+  const last = signal("–");
   const sidebar = signal(true);
+  const sort = signal("Name");
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        padding: 20,
-        gap: 16,
-        justifyContent: "center",
-        alignItems: "flex-start",
-      }}
-    >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Menu</Text>
-      <Menu open={open()} onOpenChange={({ open: next }) => open.set(next)}>
-        <MenuTrigger>Open menu</MenuTrigger>
-        <MenuContent>
-          <MenuLabel>Account</MenuLabel>
-          <MenuItem onSelect={() => last.set("Profile")}>
-            <Text style={{ fontSize: 14, color: colors.foreground }}>Profile</Text>
-          </MenuItem>
-          <MenuItem onSelect={() => last.set("Settings")}>
-            <Text style={{ fontSize: 14, color: colors.foreground }}>Settings</Text>
-          </MenuItem>
-          <MenuSeparator />
-          <MenuCheckboxItem
-            checked={sidebar()}
-            closeOnSelect={false}
-            onSelect={() => sidebar.set(!sidebar())}
+    <DemoPage title="Menu" note={() => last()}>
+      <DemoCard>
+        <DemoSection title="File">
+          <Menu
+            defaultOpen
+            onOpenChange={({ open, reason }) =>
+              last.set(`${open ? "opened" : "closed"} · ${reason}`)
+            }
           >
-            <Text style={{ fontSize: 14, color: colors.foreground }}>Show sidebar</Text>
-          </MenuCheckboxItem>
-          <MenuSeparator />
-          <MenuItem onSelect={() => last.set("Log out")}>
-            <Text style={{ fontSize: 14, color: colors.foreground }}>Log out</Text>
-          </MenuItem>
-        </MenuContent>
-      </Menu>
-      <Menu>
-        <MenuTrigger>Top placement</MenuTrigger>
-        <MenuContent placement="top" align="end">
-          <MenuItem onSelect={() => last.set("Top")}>
-            <Text style={{ fontSize: 14, color: colors.foreground }}>Above, end-aligned</Text>
-          </MenuItem>
-        </MenuContent>
-      </Menu>
-      <Menu>
-        <MenuTrigger>Style merge</MenuTrigger>
-        <MenuContent popupStyle={{ minWidth: 220, padding: 8 }}>
-          <MenuItem style={{ height: 36 }} onSelect={() => last.set("Merged")}>
-            <Text style={{ fontSize: 14, color: colors.foreground }}>Merged chrome</Text>
-          </MenuItem>
-        </MenuContent>
-      </Menu>
-      <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
-        Open: {() => (open() ? "yes" : "no")} · Last: {() => last()} · Sidebar:{" "}
-        {() => (sidebar() ? "on" : "off")}
-      </Text>
-    </View>
+            <MenuTrigger>File ▾</MenuTrigger>
+            <MenuContent margin={8}>
+              <MenuItem onSelect={() => last.set("New")}>New</MenuItem>
+              <MenuItem onSelect={() => last.set("Open…")}>Open…</MenuItem>
+              <MenuItem disabled>Paste</MenuItem>
+              <MenuSeparator />
+              <MenuSub>
+                <MenuSubTrigger>Share</MenuSubTrigger>
+                <MenuSubContent offset={4}>
+                  <MenuItem onSelect={() => last.set("Share › Mail")}>Mail</MenuItem>
+                  <MenuItem onSelect={() => last.set("Share › Messages")}>Messages</MenuItem>
+                </MenuSubContent>
+              </MenuSub>
+              <MenuSeparator />
+              <MenuItem danger onSelect={() => last.set("Delete")}>
+                Delete
+              </MenuItem>
+            </MenuContent>
+          </Menu>
+        </DemoSection>
+        <DemoSection title="View">
+          <Menu>
+            <MenuTrigger>View ▾</MenuTrigger>
+            <MenuContent margin={8}>
+              <MenuCheckboxItem
+                checked={sidebar()}
+                closeOnSelect={false}
+                onSelect={() => sidebar.set(!sidebar())}
+              >
+                Show sidebar
+              </MenuCheckboxItem>
+              <MenuSeparator />
+              <MenuLabel text="Sort by" />
+              <MenuRadioItem checked={sort() === "Name"} onSelect={() => sort.set("Name")}>
+                Name
+              </MenuRadioItem>
+              <MenuRadioItem checked={sort() === "Date"} onSelect={() => sort.set("Date")}>
+                Date
+              </MenuRadioItem>
+            </MenuContent>
+          </Menu>
+          <Text style={{ fontSize: 12, color: colors.muted }}>
+            {() => `sidebar ${sidebar() ? "on" : "off"} · sort ${sort()}`}
+          </Text>
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

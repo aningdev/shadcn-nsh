@@ -2,62 +2,53 @@ import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { Button } from "@/packages/ui/button";
-import {
-  Popover,
-  PopoverContent,
-  PopoverDescription,
-  PopoverHeader,
-  PopoverTitle,
-  PopoverTrigger,
-} from "@/packages/ui/popover";
+import { Popover } from "@/packages/ui/popover";
+
+import { DemoCard, DemoPage, DemoSection } from "./kit";
 
 function App() {
-  const open = signal(false);
+  const last = signal("open");
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        padding: 20,
-        gap: 16,
-        justifyContent: "center",
-        alignItems: "flex-start",
-      }}
-    >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Popover</Text>
-      <Popover open={open()} onOpenChange={({ open: next }) => open.set(next)}>
-        <PopoverTrigger>Open popover</PopoverTrigger>
-        <PopoverContent>
-          <PopoverHeader>
-            <PopoverTitle>Quick tip</PopoverTitle>
-            <PopoverDescription>
-              Trigger / Content composition with surface chrome. Outside press or Escape closes.
-            </PopoverDescription>
-          </PopoverHeader>
-          <Button variant="outline" onPress={() => open.set(false)}>
-            Close
-          </Button>
-        </PopoverContent>
-      </Popover>
-      <Popover>
-        <PopoverTrigger>Top placement</PopoverTrigger>
-        <PopoverContent placement="top" align="start">
-          <PopoverTitle>Above the trigger</PopoverTitle>
-          <PopoverDescription>placement top, align start</PopoverDescription>
-        </PopoverContent>
-      </Popover>
-      <Popover>
-        <PopoverTrigger>Style merge</PopoverTrigger>
-        <PopoverContent popupStyle={{ padding: 20, minWidth: 320 }}>
-          <PopoverTitle style={{ fontSize: 16 }}>Merged chrome</PopoverTitle>
-          <PopoverDescription>Consumer popupStyle wins per key</PopoverDescription>
-        </PopoverContent>
-      </Popover>
-      <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
-        Open: {() => (open() ? "yes" : "no")}
-      </Text>
-    </View>
+    <DemoPage title="Popover" note={() => last()}>
+      <DemoCard>
+        <DemoSection title="Default">
+          <View style={{ height: 200, alignItems: "center", justifyContent: "center" }}>
+            <Popover
+              open
+              placement="bottom"
+              offset={8}
+              width={260}
+              onOpenChange={({ open, reason }) =>
+                last.set(`${open ? "opened" : "closed"} · ${reason}`)
+              }
+              trigger={<Button variant="primary">Order 1024</Button>}
+            >
+              <View style={{ gap: 2 }}>
+                <Text style={{ fontSize: 14, fontWeight: "600", color: colors.text }}>
+                  Shipped yesterday
+                </Text>
+                <Text style={{ fontSize: 12, color: colors.muted }}>
+                  Arriving Friday. The trigger, a press outside and Escape close this.
+                </Text>
+              </View>
+            </Popover>
+          </View>
+        </DemoSection>
+        <DemoSection title="Compact">
+          <View style={{ height: 120, alignItems: "center", justifyContent: "center" }}>
+            <Popover
+              open
+              compact
+              placement="top"
+              trigger={<Button variant="secondary">Note</Button>}
+            >
+              <Text style={{ fontSize: 12, color: colors.text }}>A small note</Text>
+            </Popover>
+          </View>
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

@@ -1,37 +1,45 @@
-import { colors } from "@shadcn-nsh/theme";
-import { mount, signal, Text, View } from "nsh";
-import type { DatePickerValue } from "nsh/base";
+import { mount, platform, signal } from "nsh";
 
-import {
-  DatePicker,
-  DatePickerTrigger,
-  DatePickerValue as DatePickerLabel,
-} from "@/packages/ui/date-picker";
+import { DatePicker, DateTrigger } from "@/packages/ui/date-picker";
+
+import { DemoCard, DemoPage, DemoSection } from "./kit";
+
+const trigger = platform.desktop ? { width: 260 } : undefined;
 
 function App() {
-  const due = signal<DatePickerValue>("2026-03-15");
+  const value = signal<string | null>("2026-11-11");
+  const open = signal(true);
+  const last = signal("–");
 
   return (
-    <View
-      style={{
-        flex: 1,
-        backgroundColor: colors.background,
-        padding: 20,
-        gap: 12,
-        justifyContent: "center",
-        alignItems: "flex-start",
-      }}
-    >
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Date picker</Text>
-      <DatePicker value={due()} onChange={({ value }) => due.set(value)}>
-        <DatePickerTrigger>
-          <DatePickerLabel placeholder="Pick a date" />
-        </DatePickerTrigger>
-      </DatePicker>
-      <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
-        Value: {() => (typeof due() === "string" ? due() : "—")}
-      </Text>
-    </View>
+    <DemoPage title="Date Picker" note={() => last()}>
+      <DemoCard>
+        <DemoSection title="Due date">
+          <DatePicker
+            value={value()}
+            open={open()}
+            onChange={({ value: next }) => {
+              const day = typeof next === "string" ? next : (next?.[0] ?? null);
+              value.set(day);
+              last.set(day ?? "cleared");
+            }}
+            onOpenChange={({ open: next, reason }) => {
+              open.set(next);
+              last.set(`${next ? "opened" : "closed"} · ${reason}`);
+            }}
+            trigger={
+              <DateTrigger
+                title={value() ?? "Pick a date"}
+                placeholder={value() === null}
+                open={open()}
+                clearable={value() !== null}
+                style={trigger}
+              />
+            }
+          />
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 

@@ -1,46 +1,49 @@
 import { colors } from "@shadcn-nsh/theme";
-import { Scroll, Text, View, mount, type ScrollRef } from "nsh";
+import { mount, Scroll, Text, View, type ScrollRef } from "nsh";
 
 import { Scrollbar } from "@/packages/ui/scrollbar";
 
-const messages = [
-  "Ada · Shipped the build",
-  "Grace · Review when you can",
-  "Linus · Tests are green",
-  "Ken · Moved the meeting",
-  "Nia · Draft is ready",
-  "Ida · Notes attached",
-];
+import { DemoCard, DemoPage, DemoSection } from "./kit";
+
+const LINES = Array.from({ length: 24 }, (_, i) => ({
+  title: ["Ada", "Grace", "Linus", "Ken"][i % 4],
+  body: ["Shipped the build", "Review when you can", "Tests are green", "Draft is ready"][i % 4],
+}));
 
 function App() {
+  const muted = colors.muted;
+  const line = colors.border;
   let inbox: ScrollRef | undefined;
+
   return (
-    <View style={{ flex: 1, backgroundColor: colors.background, padding: 20, gap: 12 }}>
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>Scrollbar</Text>
-      <View style={{ width: 280, height: 180, position: "relative" }}>
-        <Scroll
-          ref={inbox}
-          scrollbar={false}
-          style={{ width: 280, height: 180 }}
-          accessibilityLabel="Inbox"
-        >
-          {messages.map((line) => (
-            <Text
-              style={{
-                width: 260,
-                fontSize: 14,
-                color: colors.foreground,
-                padding: 8,
-                numberOfLines: 1,
-              }}
-            >
-              {line}
-            </Text>
-          ))}
-        </Scroll>
-        <Scrollbar scroll={inbox} mode="always" accessibilityLabel="Messages" />
-      </View>
-    </View>
+    <DemoPage title="Scrollbar">
+      <DemoCard>
+        <DemoSection title="List">
+          <View
+            style={{
+              width: 280,
+              height: 240,
+              borderWidth: 1,
+              borderColor: line,
+              borderRadius: 8,
+              overflow: "hidden",
+            }}
+          >
+            <Scroll ref={inbox} scrollbar={false} style={{ flex: 1 }}>
+              {LINES.map((m) => (
+                <View class="border-border flex-row gap-3 border-b px-3 py-2.5">
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Text style={{ fontSize: 13, fontWeight: "500" }}>{m.title}</Text>
+                    <Text style={{ fontSize: 12, color: muted }}>{m.body}</Text>
+                  </View>
+                </View>
+              ))}
+            </Scroll>
+            <Scrollbar scroll={inbox} accessibilityLabel="Inbox scroll" />
+          </View>
+        </DemoSection>
+      </DemoCard>
+    </DemoPage>
   );
 }
 
