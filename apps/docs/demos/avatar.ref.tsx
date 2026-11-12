@@ -7,18 +7,19 @@ import { AVATAR_BROKEN, avatarIdentity, MAINTAINERS } from "@/packages/ui/avatar
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 
 function Person(props: { name: string; src?: string; side: number }) {
-  const id = avatarIdentity(props.name);
+  // Read in the JSX, so the identity colors follow the appearance.
+  const id = () => avatarIdentity(props.name);
   return (
     <Avatar
       name={props.name}
       src={props.src}
       style={{ width: props.side, height: props.side }}
       imageClass="rounded-full overflow-hidden"
-      fallbackClass={`rounded-full overflow-hidden items-center justify-center font-semibold text-[${id.foreground}]`}
+      fallbackClass={`rounded-full overflow-hidden items-center justify-center font-semibold text-[${id().foreground}]`}
       fallbackStyle={{
-        backgroundColor: id.background,
+        backgroundColor: id().background,
         borderWidth: 1,
-        borderColor: id.border,
+        borderColor: id().border,
       }}
     />
   );

@@ -14,15 +14,12 @@ function Item(props: {
   icon?: boolean;
 }) {
   const look = linkLook();
-  const color = linkColor({
-    quiet: props.quiet,
-    current: props.current,
-  });
+
   return (
     <Link href={props.href} class={look.class} focusVisibleStyle={look.focusVisibleStyle}>
       <LinkText
         label={props.label}
-        color={color}
+        color={linkColor({ quiet: props.quiet, current: props.current })}
         quiet={props.quiet}
         current={props.current}
         icon={props.icon}
