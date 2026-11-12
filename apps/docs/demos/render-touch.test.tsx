@@ -8,18 +8,38 @@
 // Needs Xcode's iPhone simulator. The screenshots stay in `shots/` as `<id>-touch-<scheme>.png`.
 // The simulator runs one development host at a time (a launch ends the one before), so a test
 // takes the first page's picture, lets its host go, and only then opens the reference page.
-import { expect, open, test } from "nsh/test";
+import { expect, open, test, type OpenOptions } from "nsh/test";
 
 import { cases, schemes, settle, same } from "./render-cases";
 
-/** What the simulator needs to end the first host before the second one launches. */
+/** What the simulator needs to end the first host before the next one launches. */
 const handOver = () => new Promise((resolve) => setTimeout(resolve, 300));
+
+/**
+ * Leaves the simulator in `options.colorScheme`, by launching a page and throwing it away.
+ *
+ * The appearance is the simulator's, not the app's: `open` switches it (`simctl ui appearance`)
+ * while the app it launched is already drawing. A page that reads the appearance once, when it is
+ * built (a look's `color` argument, a `const` in the demo), keeps the one it was built with, while
+ * the reads in its JSX follow the switch. `nsh test` puts the appearance back when a test ends, so
+ * the first launch of every test is the cold one: it used to be the demo, while the reference page
+ * (the second launch) started in the wanted appearance, and `link`, `avatar`, `scrollbar`, `plot`
+ * and `dock-area` — the pages that build a color once — drew the light look beside the dark one.
+ * After this launch the simulator is in `options.colorScheme` for the rest of the test, so both
+ * pages start in it and read the same appearance.
+ */
+async function settleAppearance(options: OpenOptions) {
+  const warmUp = await open("./App.tsx", options);
+  warmUp.dispose();
+  await handOver();
+}
 
 for (const { id, steps } of cases) {
   for (const colorScheme of schemes) {
     test(`${id}: touch, ${colorScheme}`, async () => {
       const options = { platform: "ios", colorScheme, reducedMotion: true, clock: {} } as const;
       const name = `shots/${id}-touch-${colorScheme}`;
+      await settleAppearance(options);
       const ours = await open(`./${id}.tsx`, options);
       await steps?.(ours);
       await settle(ours);
