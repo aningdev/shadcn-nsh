@@ -6,6 +6,7 @@ import { build } from "./commands/build";
 import { init } from "./commands/init";
 import { list } from "./commands/list";
 import { serve } from "./commands/serve";
+import { view } from "./commands/view";
 
 const program = new Command()
   .name("shadcn-nsh")
@@ -16,6 +17,7 @@ program.addCommand(build);
 program.addCommand(init);
 program.addCommand(add);
 program.addCommand(list);
+program.addCommand(view);
 program.addCommand(serve);
 
 program.parse();
