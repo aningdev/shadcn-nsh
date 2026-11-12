@@ -31,7 +31,8 @@
     "port:render:touch": "bun scripts/port/render-touch.ts",
     "port:new": "bun scripts/port/new.ts",
     "port:bump": "bun scripts/port/bump.ts",
-    "port:coverage": "bun scripts/port/coverage.ts"
+    "port:coverage": "bun scripts/port/coverage.ts",
+    "port:sheet": "bun scripts/port/sheet.ts"
   },
   "devDependencies": {
     "@types/bun": "^1.4.4",

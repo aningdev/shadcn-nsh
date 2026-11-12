@@ -101,4 +101,5 @@ const result = spawnSync(
 );
 if (software) fs.rmSync(path.dirname(software), { recursive: true, force: true });
 console.log(`screenshots: ${path.relative(repo, shots)}`);
+console.log("one page of them all: bun run port:sheet");
 process.exit(result.status ?? 1);

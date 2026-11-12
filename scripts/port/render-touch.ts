@@ -36,4 +36,5 @@ for (const file of ["render-touch.test.tsx", "appearance-touch.test.tsx"]) {
   if (result.status !== 0) status = result.status ?? 1;
 }
 console.log(`touch screenshots: ${path.relative(repo, shots)}`);
+console.log("one page of them all: bun run port:sheet");
 process.exit(status);
