@@ -66,9 +66,13 @@ fi
 if [[ "$pinned" != "$cli"* ]]; then
   # Which way round tells the fix: an older CLI means install one at the pin, a
   # newer one means the submodule moves to the CLI's commit.
-  if git -C references/nsh cat-file -e "${cli}^{commit}" 2>/dev/null \
-    && [[ "$(git -C references/nsh rev-list --count "${cli}..${pinned}")" != "0" ]]; then
-    die "the nsh CLI is built from ${cli}, the baseline is ${pinned:0:7}: install the CLI at ${pinned:0:7} (curl -fsSL https://nsh.dev/install.sh | sh -s -- --nightly) rather than moving the baseline back"
+  if git -C references/nsh cat-file -e "${cli}^{commit}" 2>/dev/null; then
+    if [[ "$(git -C references/nsh rev-list --count "${pinned}..${cli}")" != "0" ]]; then
+      die "the nsh CLI is built from ${cli}, ahead of the baseline ${pinned:0:7}: move the baseline to it with 'bun run port:bump'"
+    fi
+    if [[ "$(git -C references/nsh rev-list --count "${cli}..${pinned}")" != "0" ]]; then
+      die "the nsh CLI is built from ${cli}, behind the baseline ${pinned:0:7}: install the CLI at ${pinned:0:7} (curl -fsSL https://nsh.dev/install.sh | sh -s -- --nightly, or --source when the nightly is behind main); the baseline does not move back"
+    fi
   fi
   die "the nsh CLI is built from ${cli}, the baseline is ${pinned:0:7}: move the baseline to it with 'bun run port:bump' (it defaults to the CLI's commit), or install the CLI at ${pinned:0:7}"
 fi

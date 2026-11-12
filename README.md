@@ -9,15 +9,22 @@ Agent and contribution rules: [`AGENTS.md`](AGENTS.md). Vocabulary: [`GLOSSARY.m
 ## Prerequisites
 
 - [Bun](https://bun.com)
-- [NSH CLI](https://nsh.dev/docs/installation) (`nsh`) — **store / release tarball** (currently `0.4.0`); do not use `install.sh --source`
-
-Phase-1 only wraps `nsh/base` exports present on the store CLI; inventory and Phase-2 gaps: [`packages/ui/README.md`](packages/ui/README.md).
+- [NSH CLI](https://nsh.dev/docs/installation) (`nsh`) built from the **baseline commit**: the commit [`port-map.json`](port-map.json) pins, which `nsh --version` prints. A store release or an older nightly is the wrong CLI — the ported code uses what that commit's runtime has, and `port:check` fails when the CLI is behind ([`docs/toolchain.md`](docs/toolchain.md)).
+- `NSH_RUNTIME` for the web demos: a runtime tree (`runtime/` of a distribution, or the one `bun run nsh:build` writes). `bun run docs:demos` and `bun run port:render` package and test through it.
 
 ```sh
+# The submodules hold the upstream baseline and the shadcn reference.
 git submodule update --init --recursive
-curl -fsSL https://nsh.dev/install.sh | sh
+
+# A CLI at the baseline, with the web runtimes (Rust, a wasm32 clang and llvm-ar):
+bun run nsh:build                                    # into ~/.nsh-sync
+export PATH="$HOME/.nsh-sync/bin:$PATH" NSH_RUNTIME="$HOME/.nsh-sync/runtime"
+
+# Or main's tip when it is the baseline (the nightly channel may be behind it):
+curl -fsSL https://nsh.dev/install.sh | sh -s -- --source
+
 bun install
-bun run nsh:bootstrap   # prepare:types (generate each .nsh)
+bun run nsh:bootstrap   # checks CLI + references/nsh are at the baseline, writes each .nsh
 ```
 
 ## Use in an existing NSH app
@@ -56,13 +63,15 @@ Port plan, rules and checks: [`docs/port-plan.md`](docs/port-plan.md).
 
 ## Layout
 
-| Path             | Package / role        | Notes                                       |
-| ---------------- | --------------------- | ------------------------------------------- |
-| `packages/theme` | `@shadcn-nsh/theme`   | design tokens (author-side registry source) |
-| `packages/ui`    | `@shadcn-nsh/ui`      | styled component sources                    |
-| `packages/cli`   | `shadcn-nsh` (npm)    | `init` / `add` / `build` / `serve`          |
-| `registry.json`  | —                     | source catalog                              |
-| `public/r`       | —                     | HTTP registry artifacts (committed)         |
-| `apps/gallery`   | `@shadcn-nsh/gallery` | native verification demos                   |
-| `apps/docs`      | `@shadcn-nsh/docs`    | Astro docs (optional web iframe previews)   |
-| `references/`    | —                     | read-only git submodules                    |
+| Path                                  | Package / role        | Notes                                                                   |
+| ------------------------------------- | --------------------- | ----------------------------------------------------------------------- |
+| `packages/theme`                      | `@shadcn-nsh/theme`   | `theme.json`, `finishes.json`, `theme.ts` — the upstream theme          |
+| `packages/ui`                         | `@shadcn-nsh/ui`      | ported components: `// @port` regions + shell                           |
+| `apps/docs/demos`                     | —                     | acceptance demos, reference pages, `port:render`                        |
+| `apps/docs/src/pages/docs/components` | —                     | component pages                                                         |
+| `apps/gallery`                        | `@shadcn-nsh/gallery` | native behavior tests and smoke pages                                   |
+| `packages/cli`                        | `shadcn-nsh` (npm)    | `init` / `add` / `build` / `serve`                                      |
+| `registry.json` → `public/r`          | —                     | registry source → committed HTTP artifacts                              |
+| `scripts/port`                        | —                     | `port:new` / `port:vendor` / `port:check` / `port:render` / `port:bump` |
+| `port-map.json`                       | —                     | where every upstream file and declaration goes                          |
+| `references/`                         | —                     | read-only submodules: the upstream baseline, the shadcn reference       |
