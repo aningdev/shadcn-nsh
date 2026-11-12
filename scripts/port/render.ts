@@ -102,4 +102,16 @@ const result = spawnSync(
 if (software) fs.rmSync(path.dirname(software), { recursive: true, force: true });
 console.log(`screenshots: ${path.relative(repo, shots)}`);
 console.log("one page of them all: bun run port:sheet");
+// A filtered run holds only some of the shots, so it cannot be compared with the whole baseline.
+if (result.status === 0) {
+  if (process.argv.includes("--filter")) {
+    console.log("baseline: skipped for a filtered run");
+  } else {
+    const compare = spawnSync("bun", [path.join(import.meta.dir, "baseline.ts")], {
+      cwd: repo,
+      stdio: "inherit",
+    });
+    if ((compare.status ?? 1) !== 0) process.exit(compare.status ?? 1);
+  }
+}
 process.exit(result.status ?? 1);
