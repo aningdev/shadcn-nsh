@@ -34,7 +34,7 @@ async function settleAppearance(options: OpenOptions) {
   await handOver();
 }
 
-for (const { id, steps } of cases) {
+for (const { id, steps, selfReference } of cases) {
   for (const colorScheme of schemes) {
     test(`${id}: touch, ${colorScheme}`, async () => {
       const options = { platform: "ios", colorScheme, reducedMotion: true, clock: {} } as const;
@@ -45,6 +45,11 @@ for (const { id, steps } of cases) {
       await settle(ours);
       const a = await ours.screenshot(`${name}.png`);
       ours.dispose();
+      // No shell: the reference page draws the same component, so there is nothing to compare.
+      if (selfReference) {
+        console.log(`${id}: self-reference — ${selfReference}`);
+        return;
+      }
       await handOver();
       const reference = await open(`./${id}.ref.tsx`, options);
       await steps?.(reference);

@@ -19,8 +19,8 @@ import path from "node:path";
 import { cases, schemes } from "../../apps/docs/demos/render-cases";
 import { portPaths, readMap, repo } from "./lib";
 
-/** One screenshot pair: the demo and its reference page. */
-type Pair = { pass: string; scheme: string; ours: string; reference: string };
+/** One screenshot pair: the demo and its reference page (the reference is absent for a self-reference). */
+type Pair = { pass: string; scheme: string; ours: string; reference: string; self?: string };
 
 const demos = portPaths(readMap()).demos;
 const shots = path.join(demos, "shots");
@@ -31,7 +31,7 @@ if (!fs.existsSync(shots)) {
   process.exit(1);
 }
 
-const pairsOf = (id: string): Pair[] => {
+const pairsOf = (id: string, self?: string): Pair[] => {
   const pairs: Pair[] = [];
   for (const scheme of schemes) {
     pairs.push({
@@ -39,6 +39,7 @@ const pairsOf = (id: string): Pair[] => {
       scheme,
       ours: `${id}-pointer-${scheme}.png`,
       reference: `${id}-pointer-${scheme}.ref.png`,
+      self,
     });
   }
   for (const scheme of schemes) {
@@ -47,6 +48,7 @@ const pairsOf = (id: string): Pair[] => {
       scheme,
       ours: `${id}-touch-${scheme}.png`,
       reference: `${id}-touch-${scheme}.ref.png`,
+      self,
     });
   }
   return pairs;
@@ -59,9 +61,13 @@ const read = (name: string) => {
 
 const same = (a: Buffer, b: Buffer) => a.length === b.length && a.equals(b);
 
-/** A pair's state: present and identical, different, or incomplete. */
+/**
+ * A pair's state: present and identical, different, or incomplete. A self-reference has no
+ * reference page, so its one shot only has to be there.
+ */
 function state(pair: Pair): "same" | "differs" | "missing" {
   const ours = read(pair.ours);
+  if (pair.self) return ours ? "same" : "missing";
   const reference = read(pair.reference);
   if (!ours || !reference) return "missing";
   return same(ours, reference) ? "same" : "differs";
@@ -76,12 +82,18 @@ const escape = (s: string) =>
 
 const cell = (pair: Pair, label: string) => {
   const ours = read(pair.ours);
-  const reference = read(pair.reference);
+  const reference = pair.self ? null : read(pair.reference);
   const status = state(pair);
   const image = (name: string, file: Buffer | null, side: string) =>
     file
       ? `<a href="${escape(name)}" target="_blank" rel="noreferrer"><img loading="lazy" src="${escape(name)}" alt="${escape(side)}"></a>`
       : `<span class="absent">${escape(side)} missing<br><code>${escape(name)}</code></span>`;
+  if (pair.self) {
+    return `<figure class="cell ${status} self">
+  <figcaption>${escape(label)}<span class="tag">self</span></figcaption>
+  <div class="pair self">${image(pair.ours, ours, "component")}<span class="selfnote">no reference page<br><span>${escape(pair.self)}</span></span></div>
+ </figure>`;
+  }
   return `<figure class="cell ${status}">
   <figcaption>${escape(label)}<span class="tag">${status}</span></figcaption>
   <div class="pair">${image(pair.ours, ours, "component")}${image(pair.reference, reference, "reference")}</div>
@@ -92,8 +104,9 @@ const rows: string[] = [];
 let sameRows = 0;
 let differingRows = 0;
 let missingRows = 0;
-for (const { id } of cases) {
-  const pairs = pairsOf(id);
+let selfRows = 0;
+for (const { id, selfReference } of cases) {
+  const pairs = pairsOf(id, selfReference);
   const states = pairs.map(state);
   const differs = pairs.filter((_, i) => states[i] === "differs");
   const missing = pairs.filter((_, i) => states[i] === "missing");
@@ -101,8 +114,10 @@ for (const { id } of cases) {
   if (status === "same") sameRows += 1;
   else if (status === "differs") differingRows += 1;
   else missingRows += 1;
-  const note =
-    status === "same"
+  if (selfReference) selfRows += 1;
+  const note = selfReference
+    ? `self-reference — ${selfReference}`
+    : status === "same"
       ? "four pairs, byte for byte"
       : [
           ...differs.map((p) => `${p.pass} · ${p.scheme} differs`),
@@ -162,6 +177,10 @@ const html = `<!doctype html>
   .cell.differs .tag { color: var(--bad); }
   .cell.missing .tag { color: var(--warn); }
   .pair { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; align-items: start; }
+  .pair.self { grid-template-columns: 1fr auto; }
+  .selfnote { display: flex; flex-direction: column; justify-content: center; gap: 4px; color: var(--muted); font-size: 11px; }
+  .selfnote span { font-style: italic; }
+  .cell.self .tag { color: var(--muted); }
   .pair img { display: block; width: 100%; height: auto; border: 1px solid var(--line); border-radius: 4px; background: #fff; }
   .absent { display: flex; min-height: 90px; align-items: center; justify-content: center; text-align: center; padding: 6px; color: var(--muted); font-size: 11px; border: 1px dashed var(--line); border-radius: 4px; }
   code { font-size: 10px; overflow-wrap: anywhere; }
@@ -177,6 +196,7 @@ const html = `<!doctype html>
  <li><b>${sameRows}</b> same</li>
  <li><b>${differingRows}</b> differ</li>
  <li><b>${missingRows}</b> incomplete</li>
+ <li><b>${selfRows}</b> self-reference</li>
 </ul>
 ${rows.join("\n")}
 </body>

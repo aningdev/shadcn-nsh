@@ -14,12 +14,18 @@
  *
  * A component whose demo is missing fails when it has values to cover; one with no axis at all
  * (a spinner, a stat) has nothing to check.
+ *
+ * The same run checks the render cases' `selfReference`: a component whose file is upstream's
+ * own (nothing hand-written after its last port region) draws itself on its reference page, so
+ * it must declare why (`badge`, `plot`, `emoji-picker`, …); one with a shell must not, because
+ * its reference page is a real comparison.
  */
 import fs from "node:fs";
 import path from "node:path";
 
 import { parseSync } from "oxc-parser";
 
+import { cases } from "../../apps/docs/demos/render-cases";
 import { portPaths, readMap, repo } from "./lib";
 
 type Node = { type: string; start?: number; end?: number; [key: string]: unknown };
@@ -36,6 +42,8 @@ type Value = { axis: string; value: string };
 
 type Module = {
   file: string;
+  source: string;
+  program: Node;
   /** Exported type aliases and interfaces, by name. */
   types: Map<string, Node>;
   /** Every local type alias and interface, by name (a props type may extend a private one). */
@@ -51,7 +59,8 @@ const parse = (file: string) => {
 };
 
 function moduleAt(file: string): Module {
-  const program = parse(file);
+  const source = fs.readFileSync(file, "utf8");
+  const program = parseSync(file, source).program as unknown as Node;
   const types = new Map<string, Node>();
   const localTypes = new Map<string, Node>();
   const functions: Node[] = [];
@@ -72,7 +81,14 @@ function moduleAt(file: string): Module {
       functions.push(node);
     }
   }
-  return { file, types, localTypes, functions };
+  return { file, source, program, types, localTypes, functions };
+}
+
+/** Whether the component has hand-written code after its last port region (a shell). */
+function hasShell(module: Module): boolean {
+  const marker = module.source.lastIndexOf("// @port end");
+  if (marker === -1) return true;
+  return (module.program.body as Node[]).some((node) => (node.start ?? 0) > marker);
 }
 
 /** The type a type alias declares; an interface is its own (its members are read directly). */
@@ -257,6 +273,22 @@ for (const { name } of components) {
     const covered = unique.filter((v) => shown.has(v.value)).length;
     console.log(
       `${name}: ${covered}/${unique.length} (${unique.map((v) => `${v.axis}=${v.value}`).join(", ")})`,
+    );
+  }
+}
+
+// The render cases: a component with no shell (upstream's own file) must say why its reference
+// page draws itself; one with a shell must not claim that.
+for (const { id, selfReference } of cases) {
+  const file = path.join(repo, `packages/ui/${id}.tsx`);
+  if (!fs.existsSync(file)) continue;
+  const shell = hasShell(moduleAt(file));
+  if (!shell && !selfReference) {
+    problems.push(`${id}: no shell, so declare selfReference in apps/docs/demos/render-cases.ts`);
+  }
+  if (shell && selfReference) {
+    problems.push(
+      `${id}: has a shell, so its reference page is a real comparison; remove selfReference`,
     );
   }
 }

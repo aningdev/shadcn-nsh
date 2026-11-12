@@ -10,6 +10,13 @@ export type Case = {
   id: string;
   /** Steps taken in both pages before the screenshot (opening a dialog). */
   steps?: (app: App) => Promise<void>;
+  /**
+   * The reference page draws the component itself, because the component is upstream's own
+   * (no shell): a comparison would prove nothing. The reason is printed by the render checks,
+   * which then screenshot the demo alone. A component with a shell must not set this, and one
+   * without a shell must: `port:coverage` checks both.
+   */
+  selfReference?: string;
 };
 
 export const cases: Case[] = [
@@ -47,23 +54,33 @@ export const cases: Case[] = [
   { id: "progress" },
   { id: "slider" },
   { id: "avatar" },
-  { id: "badge" },
-  { id: "status" },
-  { id: "stat" },
-  { id: "meter" },
-  { id: "emoji-picker" },
+  { id: "badge", selfReference: "upstream's own Badge, with no shell to compare against" },
+  { id: "status", selfReference: "upstream's own Status, with no shell to compare against" },
+  { id: "stat", selfReference: "upstream's own Stat, with no shell to compare against" },
+  { id: "meter", selfReference: "upstream's own Meter, with no shell to compare against" },
+  {
+    id: "emoji-picker",
+    selfReference: "the static chrome and EmojiPanel are upstream's own components",
+  },
   { id: "data-table" },
   { id: "table" },
   { id: "tree" },
   { id: "command" },
   { id: "scrollbar" },
-  { id: "plot" },
+  {
+    id: "plot",
+    selfReference:
+      "the demo and the reference draw the same nsh/base/plot through upstream's re-export and look helpers",
+  },
   { id: "resizable" },
   { id: "dock-area" },
   { id: "diff-view" },
   { id: "text-view" },
   { id: "editor" },
-  { id: "color-picker" },
+  {
+    id: "color-picker",
+    selfReference: "the panel and the popover are upstream's own composition, with no shell",
+  },
 ];
 
 export const schemes = ["light", "dark"] as const;

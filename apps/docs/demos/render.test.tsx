@@ -16,19 +16,24 @@ import { cases, schemes, settle, same } from "./render-cases";
 // measures itself, and at the test's 390 points it is a phone.
 const platform = { platform: "macos" } as const;
 
-for (const { id, steps } of cases) {
+for (const { id, steps, selfReference } of cases) {
   for (const colorScheme of schemes) {
     test(`${id}: pointer, ${colorScheme}`, async () => {
       // A manual clock: animations land at once and a spinner stands still.
       const options = { ...platform, colorScheme, reducedMotion: true, clock: {} };
       const ours = await open(`./${id}.tsx`, options);
-      const reference = await open(`./${id}.ref.tsx`, options);
+      // No shell: the reference page draws the same component, so there is nothing to compare.
+      const reference = selfReference ? null : await open(`./${id}.ref.tsx`, options);
       await steps?.(ours);
-      await steps?.(reference);
+      if (reference) await steps?.(reference);
       await settle(ours);
-      await settle(reference);
+      if (reference) await settle(reference);
       const name = `shots/${id}-pointer-${colorScheme}`;
       const a = await ours.screenshot(`${name}.png`);
+      if (!reference) {
+        console.log(`${id}: self-reference — ${selfReference}`);
+        return;
+      }
       const b = await reference.screenshot(`${name}.ref.png`);
       expect(same(a, b)).toBe(true);
     });
