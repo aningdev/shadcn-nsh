@@ -9,11 +9,13 @@
  * literal unions written inline on one of those four props — followed through local aliases and
  * interfaces (`ColorPanelProps extends ColorFieldsProps`). A union imported from another module
  * is that module's axis and is covered by that module's demo: a menu trigger's `variant` is the
- * button's `ButtonKind`, and the theme's `Tone` palette is not a component axis. A numeric axis
- * (a round button's `size`) has no values to cover.
+ * button's `ButtonKind`. The theme's `Tone` is the exception, because it is shared rather than a
+ * component's own palette: a props member that names it (`tone?: Tone`, `Tone | (() => Tone)`)
+ * must show every one of its values, read from `packages/theme/theme.ts`, and each of its demos
+ * shows the same seven tones. A numeric axis (a round button's `size`) has no values to cover.
  *
  * A component whose demo is missing fails when it has values to cover; one with no axis at all
- * (a spinner, a stat) has nothing to check.
+ * (a spinner) has nothing to check.
  *
  * The same run checks the render cases' `selfReference`: a component whose file is upstream's
  * own (nothing hand-written after its last port region) draws itself on its reference page, so
@@ -48,6 +50,8 @@ type Module = {
   types: Map<string, Node>;
   /** Every local type alias and interface, by name (a props type may extend a private one). */
   localTypes: Map<string, Node>;
+  /** Imported bindings, by local name, and the module they come from. */
+  imports: Map<string, string>;
   /** Exported functions and exported constants holding functions. */
   functions: Node[];
 };
@@ -63,8 +67,17 @@ function moduleAt(file: string): Module {
   const program = parseSync(file, source).program as unknown as Node;
   const types = new Map<string, Node>();
   const localTypes = new Map<string, Node>();
+  const imports = new Map<string, string>();
   const functions: Node[] = [];
   for (const statement of program.body as Node[]) {
+    if (statement.type === "ImportDeclaration") {
+      const source = (statement.source as Node).value as string;
+      for (const specifier of (statement.specifiers as Node[] | undefined) ?? []) {
+        const local = (specifier.local as Node | undefined)?.name as string | undefined;
+        if (local) imports.set(local, source);
+      }
+      continue;
+    }
     const exported =
       statement.type === "ExportNamedDeclaration" || statement.type === "ExportDefaultDeclaration";
     const node =
@@ -81,7 +94,7 @@ function moduleAt(file: string): Module {
       functions.push(node);
     }
   }
-  return { file, source, program, types, localTypes, functions };
+  return { file, source, program, types, localTypes, imports, functions };
 }
 
 /** Whether the component has hand-written code after its last port region (a shell). */
@@ -194,6 +207,38 @@ function functionsIn(node: Node, out: Node[] = []): Node[] {
   return out;
 }
 
+/** The module the shared `Tone` comes from. */
+const THEME = "@shadcn-nsh/theme";
+
+/** Whether a type names the theme's shared `Tone`, imported into this module (`Tone`, `Tone | (() => Tone)`). */
+function namesTone(node: Node, module: Module): boolean {
+  if (!node || typeof node !== "object") return false;
+  if (node.type === "TSTypeReference") {
+    const name = (node.typeName as Node).name as string | undefined;
+    return !!name && name === "Tone" && module.imports.get(name) === THEME;
+  }
+  for (const [key, value] of Object.entries(node)) {
+    if (key === "start" || key === "end" || key === "type") continue;
+    if (Array.isArray(value)) {
+      if (value.some((item) => namesTone(item as Node, module))) return true;
+    } else if (value && typeof value === "object" && "type" in value) {
+      if (namesTone(value as Node, module)) return true;
+    }
+  }
+  return false;
+}
+
+/** The values of the theme's `Tone`, from `packages/theme/theme.ts`. */
+function toneValues(): string[] {
+  const theme = moduleAt(path.join(repo, "packages/theme/theme.ts"));
+  const tone = theme.types.get("Tone");
+  const values = tone ? literalValues(typeOf(tone), theme) : [];
+  if (values.length === 0) throw new Error("coverage: no Tone union in packages/theme/theme.ts");
+  return values;
+}
+
+const TONES = toneValues();
+
 /** The axis values a module declares: on its exported props types and its exported components. */
 function moduleAxes(module: Module): Value[] {
   const members: { axis: string; type: Node }[] = [];
@@ -214,6 +259,11 @@ function moduleAxes(module: Module): Value[] {
   const values: Value[] = [];
   for (const { axis, type } of members) {
     for (const value of literalValues(type, module)) values.push({ axis, value });
+    // The shared Tone is an imported union: its own module's demo cannot cover it, so every
+    // component that takes a tone shows all seven.
+    if (axis === "tone" && namesTone(type, module)) {
+      for (const value of TONES) values.push({ axis, value });
+    }
   }
   return values;
 }

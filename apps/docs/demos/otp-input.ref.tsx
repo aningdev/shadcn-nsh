@@ -1,10 +1,13 @@
 // The reference of `otp-input.tsx`: the look on `nsh/base`'s OtpInput.
-import { mount, signal } from "nsh";
+import type { Tone } from "@shadcn-nsh/theme";
+import { mount, signal, View } from "nsh";
 import { OtpInput } from "nsh/base";
 
 import { otpCellLook } from "@/packages/ui/otp-input";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
+
+const TONES: Tone[] = ["neutral", "accent", "info", "warn", "danger", "up", "down"];
 
 function App() {
   const code = signal("");
@@ -18,22 +21,22 @@ function App() {
             value={code()}
             onChange={({ value }) => code.set(value)}
             accessibilityLabel="One-time code"
+            class="flex-row items-center gap-2"
+            groupClass="flex-row gap-2"
             {...otpCellLook()}
           />
         </DemoSection>
         <DemoSection title="Tone">
-          <OtpInput
-            length={6}
-            value="123456"
-            accessibilityLabel="Accepted"
-            {...otpCellLook({ tone: "up" })}
-          />
-          <OtpInput
-            length={6}
-            value="000000"
-            accessibilityLabel="Rejected"
-            {...otpCellLook({ tone: "danger" })}
-          />
+          <View style={{ flexDirection: "row", gap: 8 }}>
+            {TONES.map((tone) => (
+              <OtpInput
+                length={1}
+                value="7"
+                accessibilityLabel={`${tone} tone`}
+                {...otpCellLook({ cells: "w-9 h-11 text-lg", tone })}
+              />
+            ))}
+          </View>
         </DemoSection>
         <DemoSection title="States">
           <OtpInput
@@ -41,6 +44,8 @@ function App() {
             value="12"
             disabled
             accessibilityLabel="Disabled"
+            class="flex-row items-center gap-2"
+            groupClass="flex-row gap-2"
             {...otpCellLook()}
           />
         </DemoSection>

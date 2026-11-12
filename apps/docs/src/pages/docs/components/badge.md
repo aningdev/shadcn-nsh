@@ -24,6 +24,18 @@ import { Badge } from "@/components/ui/badge";
 
 ## Examples
 
+### Tone
+
+```tsx
+<Badge label="Neutral" tone="neutral" />
+<Badge label="Accent" tone="accent" />
+<Badge label="Info" tone="info" />
+<Badge label="Warn" tone="warn" />
+<Badge label="Danger" tone="danger" />
+<Badge label="Up" tone="up" />
+<Badge label="Down" tone="down" />
+```
+
 ### Outline
 
 ```tsx

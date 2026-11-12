@@ -27,6 +27,20 @@ import { OtpInput } from "@/components/ui/otp-input";
 ### Tone
 
 ```tsx
+<OtpInput length={1} value="7" tone="neutral" />
+<OtpInput length={1} value="7" tone="accent" />
+<OtpInput length={1} value="7" tone="info" />
+<OtpInput length={1} value="7" tone="warn" />
+<OtpInput length={1} value="7" tone="danger" />
+<OtpInput length={1} value="7" tone="up" />
+<OtpInput length={1} value="7" tone="down" />
+```
+
+### Verdict
+
+A verdict tints every cell of the whole code.
+
+```tsx
 <OtpInput length={6} value="123456" tone="up" />
 <OtpInput length={6} value="000000" tone="danger" />
 ```

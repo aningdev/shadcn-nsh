@@ -24,10 +24,16 @@ import { Status } from "@/components/ui/status";
 
 ## Examples
 
-### Neutral
+### Tone
 
 ```tsx
-<Status label="Idle" />
+<Status label="Idle" tone="neutral" />
+<Status label="Syncing" tone="accent" />
+<Status label="Update available" tone="info" />
+<Status label="Degraded" tone="warn" />
+<Status label="Offline" tone="danger" />
+<Status label="Online" tone="up" />
+<Status label="Down" tone="down" />
 ```
 
 ## API

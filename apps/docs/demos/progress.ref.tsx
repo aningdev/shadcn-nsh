@@ -1,10 +1,13 @@
 // The reference of `progress.tsx`: progressLook on `nsh/base`'s Progress.
-import { mount } from "nsh";
+import type { Tone } from "@shadcn-nsh/theme";
+import { mount, View } from "nsh";
 import { Progress } from "nsh/base";
 
 import { progressLook } from "@/packages/ui/progress";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
+
+const TONES: Tone[] = ["neutral", "accent", "info", "warn", "danger", "up", "down"];
 
 function App() {
   const a = progressLook(35);
@@ -38,6 +41,22 @@ function App() {
             indicatorClass={c.indicatorClass}
             indicatorStyle={c.indicatorStyle}
           />
+        </DemoSection>
+        <DemoSection title="Tone">
+          <View style={{ flex: 1, flexDirection: "row", gap: 6 }}>
+            {TONES.map((tone) => {
+              const look = progressLook(72, { tone });
+              return (
+                <Progress
+                  value={72}
+                  style={{ flex: 1 }}
+                  trackStyle={look.trackStyle}
+                  indicatorClass={look.indicatorClass}
+                  indicatorStyle={look.indicatorStyle}
+                />
+              );
+            })}
+          </View>
         </DemoSection>
       </DemoCard>
     </DemoPage>

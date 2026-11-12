@@ -10,10 +10,13 @@ function App() {
       <DemoCard>
         <DemoSection title="Default">
           <View style={{ gap: 10 }}>
-            <Status label="Idle" />
+            <Status label="Idle" tone="neutral" />
             <Status label="Syncing" tone="accent" />
-            <Status label="Online" tone="up" />
+            <Status label="Update available" tone="info" />
             <Status label="Degraded" tone="warn" />
+            <Status label="Offline" tone="danger" />
+            <Status label="Online" tone="up" />
+            <Status label="Down" tone="down" />
           </View>
         </DemoSection>
       </DemoCard>

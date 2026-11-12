@@ -10,15 +10,18 @@ function App() {
     <DemoPage title="Badge">
       <DemoCard>
         <DemoSection title="Tone">
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
-            <Badge label="Neutral" />
+          <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+            <Badge label="Neutral" tone="neutral" />
             <Badge label="Accent" tone="accent" />
-            <Badge label="Up" tone="up" />
+            <Badge label="Info" tone="info" />
             <Badge label="Warn" tone="warn" />
+            <Badge label="Danger" tone="danger" />
+            <Badge label="Up" tone="up" />
+            <Badge label="Down" tone="down" />
           </View>
         </DemoSection>
         <DemoSection title="Outline">
-          <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+          <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
             <Badge label="Outline" outline />
             <Badge label="Danger" tone="danger" outline />
           </View>

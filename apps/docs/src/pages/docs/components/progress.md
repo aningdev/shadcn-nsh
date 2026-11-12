@@ -27,7 +27,13 @@ import { Progress } from "@/components/ui/progress";
 ### Tone
 
 ```tsx
-<Progress value={100} tone="up" />
+<Progress value={72} tone="neutral" />
+<Progress value={72} tone="accent" />
+<Progress value={72} tone="info" />
+<Progress value={72} tone="warn" />
+<Progress value={72} tone="danger" />
+<Progress value={72} tone="up" />
+<Progress value={72} tone="down" />
 ```
 
 ### Thin rail

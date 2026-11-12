@@ -100,19 +100,19 @@ TypeScript 为 **7.1**（Astro content mapper 所需）。它不提供 JS 解析
 
 ## 检查的组成
 
-| 命令                        | 范围                                                                                                                               |
-| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `bun run port:check`        | 清单完整；`// @port` 区域与上游一致；安装的 CLI 与基线不同时只是 warning                                                           |
-| `bun run port:render`       | `apps/docs/demos/render.test.tsx`：指针，亮 / 暗；截图在 `apps/docs/demos/shots/`；全量跑完与 `baseline/` 逐字节比较（过滤时跳过） |
-| `bun run port:render:touch` | `apps/docs/demos/render-touch.test.tsx`：iOS 模拟器上的触屏，亮 / 暗；同一 `shots/`；之后跑外观切换检查                            |
-| `bun run port:coverage`     | 组件自己声明的 `variant` / `size` / `kind` / `tone` 取值都出现在 demo；`selfReference` 与外壳一致                                  |
-| `bun run port:baseline`     | 指针截图与 `apps/docs/demos/baseline/` 的比较；`--update` 接受最新截图                                                             |
-| `bun run port:sheet`        | 把 `shots/*.png` 拼成 `shots/index.html`，一行一个组件，成对并排并标记差异                                                         |
-| `nsh check apps/docs/demos` | 移植 UI + 演示的类型                                                                                                               |
-| `nsh check apps/gallery`    | Gallery 行为夹具与冒烟页                                                                                                           |
-| `vp check`                  | 全仓格式、lint、工具面类型                                                                                                         |
-| `bun run check`             | `vp check --fix` → `port:check` → `port:coverage` → demos → gallery → docs（见根 `package.json`）                                  |
-| `bun run registry:build`    | 根据 `registry.json` 生成 `public/r`                                                                                               |
+| 命令                        | 范围                                                                                                                                |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
+| `bun run port:check`        | 清单完整；`// @port` 区域与上游一致；安装的 CLI 与基线不同时只是 warning                                                            |
+| `bun run port:render`       | `apps/docs/demos/render.test.tsx`：指针，亮 / 暗；截图在 `apps/docs/demos/shots/`；全量跑完与 `baseline/` 逐字节比较（过滤时跳过）  |
+| `bun run port:render:touch` | `apps/docs/demos/render-touch.test.tsx`：iOS 模拟器上的触屏，亮 / 暗；同一 `shots/`；之后跑外观切换检查                             |
+| `bun run port:coverage`     | 组件自己声明的 `variant` / `size` / `kind` / `tone` 取值、以及导入的共享 `Tone` 的七个取值都出现在 demo；`selfReference` 与外壳一致 |
+| `bun run port:baseline`     | 指针截图与 `apps/docs/demos/baseline/` 的比较；`--update` 接受最新截图                                                              |
+| `bun run port:sheet`        | 把 `shots/*.png` 拼成 `shots/index.html`，一行一个组件，成对并排并标记差异                                                          |
+| `nsh check apps/docs/demos` | 移植 UI + 演示的类型                                                                                                                |
+| `nsh check apps/gallery`    | Gallery 行为夹具与冒烟页                                                                                                            |
+| `vp check`                  | 全仓格式、lint、工具面类型                                                                                                          |
+| `bun run check`             | `vp check --fix` → `port:check` → `port:coverage` → demos → gallery → docs（见根 `package.json`）                                   |
+| `bun run registry:build`    | 根据 `registry.json` 生成 `public/r`                                                                                                |
 
 ### 渲染比对的两半
 
