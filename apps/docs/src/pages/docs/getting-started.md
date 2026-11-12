@@ -17,6 +17,32 @@ Files land next to the app (`theme.json`, `components/ui/…`).
 
 Consumer monorepo scaffolding (`shadcn-nsh create`) is deferred.
 
+## Commands
+
+| Command         | What it does                                              |
+| --------------- | --------------------------------------------------------- |
+| `init`          | Writes `nsh-ui.json`, installs `theme`, points `nsh.json` |
+| `add <items…>`  | Copies items and their dependencies into the app          |
+| `list`          | The registry's items, `✓` on the ones the app has         |
+| `view <items…>` | The files `add` would write: target paths and contents    |
+| `diff [items…]` | The app's files against the registry's; exits 1 on a diff |
+
+`add` never silently replaces your edits: a changed file is kept and reported as
+`kept …, differs (run diff)`. `diff` prints the changed lines (and exits 1, so a CI step can
+gate updates); `add --overwrite` replaces them, printing `(+n -n)` per file. `theme.json` is
+merged by key, so your palette survives an update.
+
+```sh
+shadcn-nsh list
+shadcn-nsh view button
+shadcn-nsh diff
+shadcn-nsh add button --dry-run
+shadcn-nsh add --all
+```
+
+`--dry-run` writes nothing; `--all` adds every `registry:ui` item. See the
+[CLI README](https://github.com/aningdev/shadcn-nsh/tree/main/packages/cli) for the full list.
+
 ## Add components in a monorepo
 
 If your workspace already has `apps/web` + `packages/ui`:
