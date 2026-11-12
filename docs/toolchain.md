@@ -115,6 +115,8 @@ TypeScript 为 **7.1**（Astro content mapper 所需）。它不提供 JS 解析
 
 `port:render` 用无头浏览器（Chrome / Edge / Chromium），它始终只量到精细指针：在 `--target web` 上强制不了触屏，所以这一半只跑指针。触屏那一半 `port:render:touch` 用 `nsh test render-touch.test.tsx --target ios`，在 iOS 模拟器上打开同一批演示与参照页（`open(…, { platform: "ios" })`），亮 / 暗各一组，截图落在同一个 `shots/`。
 
+`port:render` **让浏览器用 CPU 光栅化**：`scripts/port/render.ts` 自己找 Chrome / Edge / Chromium（`NSH_BROWSER`、`CHROME_PATH` 优先），写一个带 `--disable-gpu` 的包装脚本交给 `--browser`。GPU 上 Chrome 偶尔把圆弧的抗锯齿画低一级（1/255）：`status: pointer, dark` 的圆点圆角因此约每六次跑差一次，同一页开两次也会差；换成 CPU 后逐字节相同（Windows 上起不了脚本，照旧用 CLI 自己的浏览器；找不到浏览器时脚本也那样跑并说明）。
+
 两份测试共用的用例表、截图比较和 **200 ms 的定身等待**在 `apps/docs/demos/render-cases.ts`：手动时钟把两页的入场过渡（弹层 150 ms、颜色 160 ms）走完再截图，避免一页停在过渡中途而另一页已经落定。这是确定性的等待，不是失败重试。
 
 iOS 那一半需要 Xcode 的 iPhone 模拟器，以及 iOS 运行时（`~/.nsh/runtime/ios/iphonesimulator/nsh-ios-host`）。运行时用 CLI 装，不编译：

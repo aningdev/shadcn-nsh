@@ -6,6 +6,7 @@
  */
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
+import os from "node:os";
 import path from "node:path";
 
 import { portPaths, readMap, repo } from "./lib";
@@ -19,10 +20,85 @@ fs.mkdirSync(shots, { recursive: true });
 // here; a caller that sets it still gets it through `process.env`.
 const env = { ...process.env };
 
+/** Where Chrome, Edge or Chromium installs, in `nsh`'s own order and paths (cut down). */
+function browser(): string | undefined {
+  const named = process.env.NSH_BROWSER ?? process.env.CHROME_PATH;
+  if (named) return fs.existsSync(named) ? named : undefined;
+  if (process.platform === "darwin") {
+    const apps = [
+      "Google Chrome.app/Contents/MacOS/Google Chrome",
+      "Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+      "Microsoft Edge.app/Contents/MacOS/Microsoft Edge",
+      "Chromium.app/Contents/MacOS/Chromium",
+    ];
+    for (const app of apps) {
+      for (const root of ["/Applications", path.join(os.homedir(), "Applications")]) {
+        const exe = path.join(root, app);
+        if (fs.existsSync(exe)) return exe;
+      }
+    }
+    return undefined;
+  }
+  if (process.platform === "win32") {
+    const apps = [
+      "Google\\Chrome\\Application\\chrome.exe",
+      "Microsoft\\Edge\\Application\\msedge.exe",
+      "Chromium\\Application\\chrome.exe",
+    ];
+    for (const app of apps) {
+      for (const root of ["ProgramFiles", "ProgramFiles(x86)", "LOCALAPPDATA"]) {
+        const exe = path.join(process.env[root] ?? "", app);
+        if (exe && fs.existsSync(exe)) return exe;
+      }
+    }
+    return undefined;
+  }
+  for (const name of ["google-chrome", "google-chrome-stable", "microsoft-edge", "chromium"]) {
+    for (const dir of (process.env.PATH ?? "").split(path.delimiter)) {
+      const exe = path.join(dir, name);
+      if (exe && fs.existsSync(exe)) return exe;
+    }
+  }
+  return undefined;
+}
+
+/**
+ * `exe` with the GPU left alone, as a script `--browser` can name. On the GPU Chrome draws the
+ * antialiased corner of a rounded edge (a `Status` dot's) a level off (1/255) now and then, so a
+ * page differs from itself (`status: pointer, dark`, about one run in six); drawn on the CPU the
+ * two pictures match every time. CI runners reach no GPU either. Windows spawns no script: there
+ * the check runs as it did, with `nsh`'s own browser and flags.
+ */
+function withoutGpu(exe: string): string | undefined {
+  if (process.platform === "win32") return undefined;
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), "nsh-render-"));
+  const script = path.join(dir, "browser");
+  const quoted = `'${exe.replaceAll("'", `'\\''`)}'`;
+  fs.writeFileSync(script, `#!/bin/sh\nexec ${quoted} --disable-gpu "$@"\n`, { mode: 0o755 });
+  return script;
+}
+
+const given = process.argv.includes("--browser");
+const exe = given ? undefined : browser();
+const software = exe ? withoutGpu(exe) : undefined;
+if (!given && !software) {
+  console.log(
+    "render: no browser found to run without the GPU; a rounded corner may differ by 1/255",
+  );
+}
+
 const result = spawnSync(
   "nsh",
-  ["test", "render.test.tsx", "--target", "web", ...process.argv.slice(2)],
+  [
+    "test",
+    "render.test.tsx",
+    "--target",
+    "web",
+    ...(software ? ["--browser", software] : []),
+    ...process.argv.slice(2),
+  ],
   { cwd: demos, stdio: "inherit", env },
 );
+if (software) fs.rmSync(path.dirname(software), { recursive: true, force: true });
 console.log(`screenshots: ${path.relative(repo, shots)}`);
 process.exit(result.status ?? 1);
