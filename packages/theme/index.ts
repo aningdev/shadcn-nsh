@@ -1,16 +1,1 @@
-export {
-  alpha,
-  colors,
-  controlFill,
-  disabledOpacity,
-  finish,
-  focusRing,
-  hovered,
-  mix,
-  modalSurface,
-  overlayShadow,
-  popupBackdrop,
-  popupSurface,
-  radius,
-  type Finish,
-} from "./theme";
+export * from "./theme";
