@@ -9,19 +9,19 @@ Agent and contribution rules: [`AGENTS.md`](AGENTS.md). Vocabulary: [`GLOSSARY.m
 ## Prerequisites
 
 - [Bun](https://bun.com)
-- [NSH CLI](https://nsh.dev/docs/installation) (`nsh`) built from the **baseline commit**: the commit [`port-map.json`](port-map.json) pins, which `nsh --version` prints. A store release or an older nightly is the wrong CLI — the ported code uses what that commit's runtime has, and `port:check` fails when the CLI is behind ([`docs/toolchain.md`](docs/toolchain.md)).
-- `NSH_RUNTIME` for the web demos: a runtime tree (`runtime/` of a distribution, or the one `bun run nsh:build` writes). `bun run docs:demos` and `bun run port:render` package and test through it.
+- [NSH CLI](https://nsh.dev/docs/installation) (`nsh`), **installed, never built**: `curl -fsSL https://nsh.dev/install.sh | sh -s -- --nightly`. The commit it prints is the **baseline**, [`port-map.json`](port-map.json)'s `upstream.commit`; when the nightly moves, `bun run port:bump` moves the baseline with it. `port:check` warns — it does not fail — when the two differ ([`docs/toolchain.md`](docs/toolchain.md)). The ported code uses what the baseline's runtime has, so a CLI older than the baseline is the wrong one.
+- Nothing else: the installed CLI carries the runtimes (and fetches the ones a target needs), so there is no `NSH_RUNTIME` to export.
 
 ```sh
 # The submodules hold the upstream baseline and the shadcn reference.
 git submodule update --init --recursive
 
-# A CLI at the baseline, with the web runtimes (Rust, a wasm32 clang and llvm-ar):
-bun run nsh:build                                    # into ~/.nsh-sync
-export PATH="$HOME/.nsh-sync/bin:$PATH" NSH_RUNTIME="$HOME/.nsh-sync/runtime"
+# The CLI: installed, never built.
+curl -fsSL https://nsh.dev/install.sh | sh -s -- --nightly
+export PATH="$HOME/.local/bin:$PATH"   # where the installer links nsh
 
-# Or main's tip when it is the baseline (the nightly channel may be behind it):
-curl -fsSL https://nsh.dev/install.sh | sh -s -- --source
+# While the nightly lags the baseline, install a release that is not behind it:
+#   curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=v0.5.0 sh
 
 bun install
 bun run nsh:bootstrap   # checks CLI + references/nsh are at the baseline, writes each .nsh

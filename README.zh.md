@@ -9,19 +9,19 @@ Agent 与贡献约定见 [`AGENTS.md`](AGENTS.md)。词汇见 [`GLOSSARY.md`](GL
 ## 前置
 
 - [Bun](https://bun.com)
-- [NSH CLI](https://nsh.dev/docs/installation)（`nsh`）必须构建自**基线提交**：即 [`port-map.json`](port-map.json) 固定的提交，也就是 `nsh --version` 打印的那个。store 发布包或落后的 nightly 都不行——搬入的代码用的是那个提交运行时的能力，CLI 落后时 `port:check` 会报错（[`docs/toolchain.md`](docs/toolchain.md)）。
-- 跑 web 演示需要 `NSH_RUNTIME`：指向一个运行时目录（发行包的 `runtime/`，或 `bun run nsh:build` 写出的那个）。`bun run docs:demos` 与 `bun run port:render` 经由它打包、测试。
+- [NSH CLI](https://nsh.dev/docs/installation)（`nsh`）**安装而来，从不编译**：`curl -fsSL https://nsh.dev/install.sh | sh -s -- --nightly`。它打印的提交就是**基线**，即 [`port-map.json`](port-map.json) 的 `upstream.commit`；nightly 动了，`bun run port:bump` 把基线一起移动。两者不同时 `port:check` 只警告、不失败（[`docs/toolchain.md`](docs/toolchain.md)）。搬入的代码用的是基线运行时的能力，所以早于基线的 CLI 都是错的。
+- 别的都不用：运行时随安装的 CLI 而来（缺哪个 target 的它会自己装），没有 `NSH_RUNTIME` 要导出。
 
 ```sh
 # 子模块：上游基线与 shadcn 参考
 git submodule update --init --recursive
 
-# 在基线提交上构建 CLI 与 web 运行时（需要 Rust、能编译 wasm32 的 clang 和 llvm-ar）：
-bun run nsh:build                                    # 装到 ~/.nsh-sync
-export PATH="$HOME/.nsh-sync/bin:$PATH" NSH_RUNTIME="$HOME/.nsh-sync/runtime"
+# CLI：安装，不编译
+curl -fsSL https://nsh.dev/install.sh | sh -s -- --nightly
+export PATH="$HOME/.local/bin:$PATH"   # 安装脚本把它链在这里
 
-# 或者用 main 的顶端（nightly 频道可能落后于它）：
-curl -fsSL https://nsh.dev/install.sh | sh -s -- --source
+# nightly 落后于基线时，装一个不早于它的 release：
+#   curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=v0.5.0 sh
 
 bun install
 bun run nsh:bootstrap   # 校验 CLI 与 references/nsh 都在基线，生成各 .nsh

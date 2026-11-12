@@ -41,7 +41,7 @@
 
 克隆后若目录为空：`git submodule update --init --recursive`。
 
-**上游基线跟 CLI 走。** `references/nsh` 固定的提交必须等于 `nsh --version` 显示的提交，`port-map.json` 的 `commit` 与它相同。升级步骤见 [`docs/toolchain.md`](docs/toolchain.md)。
+**上游基线跟 CLI 走。** 基线是**安装的** nightly 打印的提交（`nsh --version`）：`references/nsh` 固定在那里，`port-map.json` 的 `commit` 与它相同。nightly 动了就 `bun run port:bump`。**不编译 NSH**，也不设 `NSH_RUNTIME`。装法：`curl -fsSL https://nsh.dev/install.sh | sh -s -- --nightly`。升级步骤见 [`docs/toolchain.md`](docs/toolchain.md)。
 
 ## 何时读参考
 
@@ -77,7 +77,7 @@ registry.json → public/r → shadcn-nsh add
 
 Bun 管理依赖与脚本；格式化 / lint / 工具面类型经 [Vite+](https://viteplus.dev)（`vp fmt` / `vp lint` / `vp check`），配置集中在根 `vite.config.ts`，不用 Prettier。
 
-NSH CLI 用 **nightly**，以上游 `main` 为准开发。TypeScript 分层、types host、CLI 与上游基线的对齐见 [`docs/toolchain.md`](docs/toolchain.md)。
+NSH CLI 用 **nightly**，以上游 `main` 为准开发，**只安装、从不编译**：`curl -fsSL https://nsh.dev/install.sh | sh -s -- --nightly`；nightly 前进后用 `bun run port:bump` 把基线移到它。TypeScript 分层、types host、CLI 与上游基线的对齐见 [`docs/toolchain.md`](docs/toolchain.md)。
 
 ## 常用命令
 
@@ -89,7 +89,7 @@ bun run port:render            # 渲染比对：组件与"look 展开在 nsh/bas
 nsh check apps/docs/demos      # 演示与 UI 的类型检查
 nsh run apps/docs/demos/button.tsx  # 运行一个演示
 
-bun run nsh:bootstrap          # 生成各 .nsh types host
+bun run nsh:bootstrap          # 校验安装的 CLI 在基线，生成各 .nsh types host
 bun run check                  # port:check + demos/gallery 类型 + docs（会改文件）
 bun run test:gallery           # 原生行为测试
 ```

@@ -29,7 +29,7 @@
 过程中确认的三个事实，会影响后续工作：
 
 1. **上游的 look 层很新。** `v0.4.0`（2026-11-04）标签下 `nsh-gallery-ui` 还没有 `look/` 目录，它是之后一周内加的。上游变动快，所以必须固定提交、由脚本搬运、由检查发现漂移。
-2. **CLI 必须不早于上游基线。** 已决定用 nightly、以 `main` 为准开发，所以不再有针对 store 0.4.0 的兼容写法，`port-map.json` 里目前没有任何 `replace`。外壳使用 `focusVisibleStyle`。**规则：升级 CLI 后，把 `references/nsh` 移到 `nsh --version` 显示的提交，改 `port-map.json` 的 `commit`，再 `port:vendor`。** `port:check` 在 CLI 落后于基线时报错。发布的 nightly 若落后于 main，用 `install.sh --source`（见 `docs/toolchain.md`）。
+2. **CLI 必须不早于上游基线。** 已决定用 nightly、以 `main` 为准开发，所以不再有针对 store 0.4.0 的兼容写法，`port-map.json` 里目前没有任何 `replace`。外壳使用 `focusVisibleStyle`。CLI **安装而来，从不编译**（`install.sh --nightly`，见 `docs/toolchain.md`）。**规则：nightly 前进后，`bun run port:bump` 把 `references/nsh` 与 `port-map.json` 的 `commit` 一起移到 `nsh --version` 显示的提交，再 `port:vendor`。** `port:check` 在两者不同时只警告。nightly 落后于基线时装一个 release（`NSH_VERSION=vX.Y.Z`），那仍然是安装，不是编译。
 3. **上游的外观按"行"设计，单独使用时有缺口。** 例如单独一个开关没有焦点环和禁用外观，上游是由它所在的行（`listRow`）提供的。处理方式见第 9 节的待定事项。
 
 ## 3. 目录
@@ -133,7 +133,7 @@ vp check                       # 格式与 lint
 4. **演示套件（已完成）。** `apps/docs/demos/kit.tsx`（`DemoPage` / `DemoCard` / `DemoSection`，不进 registry）；样板与 toggle 的 demo / ref 已改用它，`switch` 的行用 `listRow`。
 5. **待建的检查（部分完成）。** 颜色守门已扫 `packages/ui` 的区域外代码；props 超集断言在 `apps/docs/demos/props.test-d.ts`。仍待建：总览页、截图基线、演示覆盖。
 6. **CLI（已完成）。** `mergeTheme` 对任意缺键补齐（不再特指 `custom-*`）；`theme-contract.test.ts` 对照 `packages/theme/theme.json`：覆盖 NSH 默认主题的全部键，亮暗成对。`init` 的默认行为不变。
-7. **对齐 CLI 与上游基线（已完成，`30f87b7c`）。** 按 `docs/toolchain.md` 的升级步骤；外壳用 `focusVisibleStyle`；`port:check` 在 CLI 落后时报错。
+7. **对齐 CLI 与上游基线（已完成）。** 按 `docs/toolchain.md` 的升级步骤；外壳用 `focusVisibleStyle`；`port:check` 在安装的 CLI 与基线不同时警告，`bun run port:bump` 把基线移到 `nsh --version` 的提交（现为 `f4d68f7`）。
 
 #### 脚手架
 
@@ -203,7 +203,7 @@ bun run port:new <id> --from <上游文件> [--symbols a,b,c] [--base <nsh/base 
 | `GLOSSARY.md`                              | **已完成。** 更新词条：加 **Look**、**Shell（外壳）**、**Port region**、**Port map**；改 **Styled Component** 的定义；删与 neutral、Extensions 相关的词条                                                                                                                                                                                                |
 | `README.md`、`README.zh.md`（根）          | **指向已删文档的链接已改；切换时：** Layout 一节更新目录；一句话定位改为第 1 节的表述                                                                                                                                                                                                                                                                    |
 | `docs/verification.md`                     | **已完成。** 删除。它记录的是旧外观的触屏核对，结论已失效；触屏核对并入 `port:render` 的四组截图                                                                                                                                                                                                                                                         |
-| `docs/toolchain.md`                        | **已完成。** 改为"用 nightly、以 `main` 为准"；写明 CLI 与上游基线必须对齐的规则和升级步骤（见第 2 节第 2 条）；`scripts/nsh-bootstrap.sh` 里"必须是 store CLI"的检查同步改掉                                                                                                                                                                            |
+| `docs/toolchain.md`                        | **已完成。** 改为"用 nightly、以 `main` 为准"；写明 CLI 与上游基线必须对齐的规则和升级步骤（见第 2 节第 2 条）；`scripts/nsh-bootstrap.sh` 里"必须是 store CLI"的检查同步改掉；CLI 只安装、从不编译（2026-11-12）                                                                                                                                        |
 | `apps/gallery/GAPS.md`                     | 删除，内容已过期（仍写着没有 ColorPicker / DatePicker）；待办以 `bun run port:check --status` 为准                                                                                                                                                                                                                                                       |
 | `apps/gallery/AGENTS.md`、`README*`        | 更新"两面分工"：gallery 做原生验真与行为测试，docs 是公开门面，两者用同一套组件                                                                                                                                                                                                                                                                          |
 | `apps/docs/AGENTS.md`                      | 更新页面契约：Differences 一节改为"与上游写法的差异"（外壳做了什么）；variant 与 size 的命名跟上游；Demos 一节加入 `<id>.ref.tsx` 与渲染比对；删去"illustrative"的说法，demo 就是验收对象                                                                                                                                                                |
@@ -218,7 +218,7 @@ bun run port:new <id> --from <上游文件> [--symbols a,b,c] [--base <nsh/base 
 | -------------------------------------------- | --------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
 | 终端分支（**已定**）                         | 原样保留：nightly 有终端形态，`theme.ts` 的 `terminal` 就是上游的判断，搬运零改动 | —                                                                                                                                   |
 | 上游缺口（单独的开关没有焦点环和禁用外观等） | 样板没有补，保持与上游一致                                                        | 允许外壳用主题已有的 `focusRing()` 和 0.5 透明度补上，并在 `port-map.json` 里登记为 `additions`。我倾向这个：无焦点指示是无障碍缺陷 |
-| CLI 版本（**已定**）                         | 用 nightly，以 `main` 为准；上游基线跟 `nsh --version` 的提交走                   | —                                                                                                                                   |
+| CLI 版本（**已定**）                         | 用 nightly，以 `main` 为准；只安装、不编译；上游基线跟 `nsh --version` 的提交走   | —                                                                                                                                   |
 | `Button` 默认 `variant`                      | `primary`（上游 `Button` 组件的默认值，也符合 shadcn 的习惯）                     | `secondary`（`buttonLook` 函数的默认值）                                                                                            |
 | neutral 主题                                 | 不做，默认主题就是上游的                                                          | 全部完成后作为第二套 `theme.json` + `finishes.json` 提供                                                                            |
 
