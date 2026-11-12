@@ -1,7 +1,7 @@
 {
   "upstream": {
     "path": "references/nsh/examples/nsh-gallery-ui",
-    "commit": "30f87b7c53bde6c03eb13a3f2d4f78ff0c53cde8"
+    "commit": "f4d68f7f9f31eb7b3ecc8a4cbc31096d5c6238a1"
   },
   "root": ".",
   "files": {
