@@ -10,11 +10,16 @@ import { timeFieldClass } from "./input";
 export { timeFieldClass } from "./input";
 
 /**
- * `nsh/base`'s TimeField in the look of `timeFieldClass`, its segments and its `:` the ones of
- * the date picker's time row (`calendarLook.segmentClass`, `calendarLook.separator`,
- * `TimeSegment`), so a field on a page and the one in a calendar's popup read alike. Every base
- * prop passes through; `class`, `segmentClass`, `separatorStyle` and `renderSegment` go over the
- * look's.
+ * `nsh/base`'s TimeField in the look of `timeFieldClass`, its segments and its `:` the ones of the
+ * date picker's time row (`calendarLook.segmentClass`, `calendarLook.separator`, `TimeSegment`),
+ * so a field on a page and the one in a calendar's popup read alike. Every base prop passes
+ * through; `class`, `segmentClass`, `separatorStyle` and `renderSegment` go over the look's.
+ *
+ * The module it reads them from is the calendar's: upstream keeps the time row, the calendar and
+ * the date picker's look in one file (`look/listbox.tsx`: `TimeSegment` at :582, `calendarLook` at
+ * :602, `datePickerLook` at :653), so a time field that shares the row shares that module here
+ * too — the calendar's look and its parts arrive with it. Splitting them would mean a look file of
+ * our own, which P1-P3 keep out of this library.
  */
 export type TimeFieldProps = BaseTimeFieldProps;
 

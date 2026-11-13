@@ -130,9 +130,11 @@ export function NumberInput(props: NumberInputProps) {
     "incrementButton",
   ]);
   const kind = props.steps ?? "pair";
-  // Upstream's widths: a pair of chevrons sits in a narrower lane (`w-6` / `w-9`) than
-  // a − and + either side of the field (`w-8` / `w-11`).
-  const w = kind === "pair" ? (pointer ? "w-6" : "w-9") : pointer ? "w-8" : "w-11";
+  // Upstream's widths: a pair of chevrons sits in a narrower lane (`w-6` / `w-9`) than a − and
+  // + either side of the field (`w-8` / `w-11`).
+  const lanes =
+    kind === "pair" ? { desktop: "w-6", touch: "w-9" } : { desktop: "w-8", touch: "w-11" };
+  const w = pointer ? lanes.desktop : lanes.touch;
   const icon = pointer ? 14 : 16;
   const steps = numberInputSteps(kind, w, icon);
   return (

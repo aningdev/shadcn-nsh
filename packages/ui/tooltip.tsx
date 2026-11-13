@@ -64,9 +64,11 @@ export type TooltipProps = {
   /** No tooltip: it neither shows nor asks to. */
   disabled?: boolean;
   /**
-   * The view the hint hangs on, around the trigger: as wide as the trigger itself, so a row of
-   * such hosts stays put. Give it a `flex`, an `alignSelf` or a width to place a trigger that
-   * fills or centers its row instead (`{ flex: 1 }` for a button that spans a phone's page).
+   * The view the hint hangs on, around the trigger. It lays out like the element it holds — as
+   * wide as its column or its content would make it — because upstream hangs the tooltip on the
+   * element itself and adds no host: a button in a column fills it, in a row it takes its label's
+   * width. Give this a `flex`, an `alignSelf` or a width where the trigger should not follow that
+   * (`{ flex: 1 }` for a button that spans a phone's page).
    */
   style?: StyleProp<ViewStyle>;
   children?: JSX.Element;
@@ -210,7 +212,12 @@ export function TooltipContent(props: TooltipContentProps) {
   return null;
 }
 
-/** The host view the base tooltip is on, around the trigger, once the parts have registered. */
+/**
+ * The host view the base tooltip is on, around the trigger, once the parts have registered. It
+ * gives the trigger the room it would have had without a host (no width of its own, no
+ * `alignSelf`): `nsh/base` takes a tooltip as an element's prop, and upstream hangs it on the
+ * element, so the shell must not move or resize what it wraps.
+ */
 function TooltipAnchor() {
   const ctx = TooltipContext();
   if (!ctx) return null;

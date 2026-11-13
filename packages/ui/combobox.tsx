@@ -35,7 +35,6 @@ export {
   clearButtonLook,
   listboxFooter,
   listboxProps,
-  listboxPopup,
   listboxSearch,
   ListboxEmpty,
   ListboxHeader,
