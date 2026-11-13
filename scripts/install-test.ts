@@ -172,7 +172,12 @@ async function uiItems(url: string): Promise<Item[]> {
       `could not read ${url}/index.json: ${res.status} ${res.statusText}`,
     );
   }
-  const index: unknown = await res.json();
+  let index: unknown;
+  try {
+    index = await res.json();
+  } catch (error) {
+    throw new StepFailure("registry index", `${url}/index.json is not JSON`, { cause: error });
+  }
   if (!isRecord(index) || !Array.isArray(index.items)) {
     throw new StepFailure("registry index", `${url}/index.json has no items array`);
   }
