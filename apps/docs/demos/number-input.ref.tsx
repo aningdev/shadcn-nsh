@@ -27,7 +27,7 @@ function Row(props: { label: string; detail: string; first?: boolean; children: 
 
 /** A number field's steppers: − and + before and after the field (`split`), or a pair at its end. */
 const split = () => numberInputSteps("split", desktop ? "w-8" : "w-11", desktop ? 14 : 16);
-const pair = () => numberInputSteps("pair", desktop ? "w-8" : "w-11", desktop ? 14 : 16);
+const pair = () => numberInputSteps("pair", desktop ? "w-6" : "w-9", desktop ? 14 : 16);
 const centered = () => ({ ...numberInputText(), textAlign: "center" as const });
 
 function App() {
