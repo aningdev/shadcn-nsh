@@ -40,6 +40,7 @@ const overrides: Record<string, Override> = {
   "alert-dialog": { steps: (app) => app.press("Delete…") },
   sheet: { steps: (app) => app.press('side="bottom"') },
   popover: { steps: (app) => app.press("Order 1024") },
+  menu: { steps: (app) => app.press("File ▾") },
   spinner: { selfReference: "upstream's own Spinner, with no shell to compare against" },
   badge: { selfReference: "upstream's own Badge, with no shell to compare against" },
   status: { selfReference: "upstream's own Status, with no shell to compare against" },
