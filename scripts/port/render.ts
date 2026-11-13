@@ -2,10 +2,12 @@
  * Runs the render check (`<root>/demos/render.test.tsx`) in a headless browser. The test writes
  * its screenshots to `shots/` beside it, relative to the directory it runs in, so it runs there.
  *
- *   bun scripts/port/render.ts [--filter <name>] [--no-baseline]
+ *   bun scripts/port/render.ts [--only <id,...>] [--filter <name>] [--no-baseline]
  *
- * `--no-baseline` skips the comparison with `baseline/`, which was recorded on macOS: another
- * platform draws text differently, so there only the component ↔ reference pairs are a gate.
+ * `--only` runs the pages of the ids named (a comma-separated list of catalog ids), which is
+ * what a family's change needs: `--only select,combobox`. `--no-baseline` skips the comparison
+ * with `baseline/`, which was recorded on macOS: another platform draws text differently, so
+ * there only the component ↔ reference pairs are a gate.
  */
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
@@ -16,6 +18,33 @@ import { catalog } from "../catalog";
 import { repo } from "./lib";
 
 const demos = catalog().paths.demos;
+
+/** The ids a `--only` names; `nsh test` filters by substring, so each runs on its own. */
+function onlyIds(): string[] | undefined {
+  const at = process.argv.indexOf("--only");
+  if (at < 0) return undefined;
+  const value = process.argv[at + 1];
+  if (!value) {
+    console.error("render: --only takes a comma-separated list of ids (`--only select,combobox`)");
+    process.exit(1);
+  }
+  const ids = value
+    .split(",")
+    .map((id) => id.trim())
+    .filter(Boolean);
+  if (ids.length === 0) {
+    console.error("render: --only names no id");
+    process.exit(1);
+  }
+  const unknown = ids.filter((id) => !catalog().components.some((c) => c.id === id));
+  if (unknown.length > 0) {
+    console.error(`render: no component is called ${unknown.join(", ")}`);
+    process.exit(1);
+  }
+  return ids;
+}
+
+const only = onlyIds();
 const shots = path.join(demos, "shots");
 fs.rmSync(shots, { recursive: true, force: true });
 fs.mkdirSync(shots, { recursive: true });
@@ -101,33 +130,50 @@ if (!given && !software) {
   );
 }
 
-const result = spawnSync(
-  "nsh",
-  [
-    "test",
-    "render.test.tsx",
-    "--target",
-    "web",
-    ...(software ? ["--browser", software] : []),
-    ...process.argv.slice(2).filter((arg) => arg !== "--no-baseline"),
-  ],
-  { cwd: demos, stdio: "inherit", env },
-);
+/** One `nsh test` run: the whole table, or the pages of one id. */
+function run(filter?: string): number {
+  const result = spawnSync(
+    "nsh",
+    [
+      "test",
+      "render.test.tsx",
+      "--target",
+      "web",
+      ...(software ? ["--browser", software] : []),
+      ...(filter ? ["--filter", filter] : []),
+      ...(filter ? [] : process.argv.slice(2).filter((arg) => arg !== "--no-baseline")),
+    ],
+    { cwd: demos, stdio: "inherit", env },
+  );
+  return result.status ?? 1;
+}
+
+let status = 0;
+if (only) {
+  for (const id of only) {
+    if (status !== 0) break;
+    // The test names read `<id>: pointer, <scheme>`; a filter is a substring of them.
+    status = run(`${id}: pointer`);
+  }
+} else {
+  status = run();
+}
 if (software) fs.rmSync(path.dirname(software), { recursive: true, force: true });
 console.log(`screenshots: ${path.relative(repo, shots)}`);
 console.log("one page of them all: bun run port:sheet");
 // A filtered run holds only some of the shots, so it cannot be compared with the whole baseline.
-if (result.status === 0) {
-  if (process.argv.includes("--filter")) {
+if (status === 0) {
+  if (only || process.argv.includes("--filter")) {
     console.log("baseline: skipped for a filtered run");
   } else if (process.argv.includes("--no-baseline")) {
     console.log("baseline: skipped (--no-baseline)");
   } else {
-    const compare = spawnSync("bun", [path.join(import.meta.dir, "baseline.ts")], {
-      cwd: repo,
-      stdio: "inherit",
-    });
+    const compare = spawnSync(
+      "bun",
+      [path.join(import.meta.dir, "baseline.ts"), ...(only ? ["--only", only.join(",")] : [])],
+      { cwd: repo, stdio: "inherit" },
+    );
     if ((compare.status ?? 1) !== 0) process.exit(compare.status ?? 1);
   }
 }
-process.exit(result.status ?? 1);
+process.exit(status);

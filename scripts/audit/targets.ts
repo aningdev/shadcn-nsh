@@ -87,7 +87,11 @@ export type Target = {
 
 export const demosDir = path.join(repo, "apps", "docs", "demos");
 export const officialDir = path.join(repo, "references", "nsh", "website", "demos");
-export const shotsDir = path.join(demosDir, "shots", "audit");
+/**
+ * The audit's own screenshots, beside the render check's `shots/` rather than inside it: the
+ * render check empties its directory on every run, and the audit's pictures outlive it.
+ */
+export const shotsDir = path.join(demosDir, "shots-audit");
 
 /** Every target of `id`: its demo, its reference page and the official example, when there is one. */
 export function targetsFor(id: string): Target[] {

@@ -5,7 +5,7 @@
  * the preview.
  *
  *   bun scripts/audit/audit.ts build   [--only id,id] [--force]  # nsh package into /tmp/nsh-audit
- *   bun scripts/audit/audit.ts shots   [--only id,id]             # PNGs under apps/docs/demos/shots/audit
+ *   bun scripts/audit/audit.ts shots   [--only id,id]             # PNGs under apps/docs/demos/shots-audit
  *   bun scripts/audit/audit.ts canvas                            # the docs preview (needs build:docs)
  *   bun scripts/audit/audit.ts probe                             # the probe at both idioms, standalone
  *

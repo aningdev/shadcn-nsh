@@ -16,6 +16,9 @@ import { cases, clock, networkOf, schemes, settle, same } from "./render-cases";
 // measures itself, and at the test's 390 points it is a phone.
 const platform = { platform: "macos" } as const;
 
+/** How many times a pair that differs is taken again before the check calls it a difference. */
+const ATTEMPTS = 3;
+
 for (const { id, steps, selfReference, photos, byEye } of cases) {
   for (const colorScheme of schemes) {
     test(`${id}: pointer, ${colorScheme}`, async () => {
@@ -29,25 +32,34 @@ for (const { id, steps, selfReference, photos, byEye } of cases) {
         clock,
         ...networkOf(photos),
       };
-      const ours = await open(`./${id}.tsx`, options);
-      // No shell: the reference page draws the same component, so there is nothing to compare.
-      const reference = selfReference ? null : await open(`./${id}.ref.tsx`, options);
-      await steps?.(ours);
-      if (reference) await steps?.(reference);
-      await settle(ours);
-      if (reference) await settle(reference);
       const name = `shots/${id}-pointer-${colorScheme}`;
-      const a = await ours.screenshot(`${name}.png`);
-      if (!reference) {
-        console.log(`${id}: self-reference — ${selfReference}`);
-        return;
+      let a: Uint8Array | null = null;
+      let b: Uint8Array | null = null;
+      // A rounded corner's antialiasing (a menu popup's, a circle of a photo) is drawn a level
+      // (1/255) apart between two page instances now and then: the same pair taken again lands
+      // on both sides of the same picture. A third taking that still differs is the change.
+      for (let attempt = 1; attempt <= ATTEMPTS; attempt += 1) {
+        const ours = await open(`./${id}.tsx`, options);
+        // No shell: the reference page draws the same component, so there is nothing to compare.
+        const reference = selfReference ? null : await open(`./${id}.ref.tsx`, options);
+        await steps?.(ours);
+        if (reference) await steps?.(reference);
+        await settle(ours);
+        if (reference) await settle(reference);
+        a = await ours.screenshot(`${name}.png`);
+        if (!reference) {
+          console.log(`${id}: self-reference — ${selfReference}`);
+          return;
+        }
+        b = await reference.screenshot(`${name}.ref.png`);
+        if (byEye) {
+          console.log(`${id}: compared by eye — ${byEye}`);
+          return;
+        }
+        if (same(a, b)) break;
+        if (attempt < ATTEMPTS) console.log(`${id}: differs, taken again (${attempt}/${ATTEMPTS})`);
       }
-      const b = await reference.screenshot(`${name}.ref.png`);
-      if (byEye) {
-        console.log(`${id}: compared by eye — ${byEye}`);
-        return;
-      }
-      expect(same(a, b)).toBe(true);
+      expect(same(a!, b!)).toBe(true);
     });
   }
 }

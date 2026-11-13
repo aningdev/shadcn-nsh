@@ -114,7 +114,9 @@ export const same = (a: Uint8Array, b: Uint8Array) =>
 /**
  * Lets every entrance transition (a popup's or a dialog's 150 ms, a color's 160 ms) finish on
  * the manual clock before the screenshot, so a page caught mid-transition cannot differ from the
- * other one. Deterministic: the clock moves the same 200 ms on both pages.
+ * other one. Deterministic: the clock moves the same 200 ms on both pages. A rounded corner's
+ * last pixel can still land a level (1/255) apart between two page instances (a menu's popup, a
+ * photo's circle), which no wait settles: the check takes such a pair again (`render.test.tsx`).
  */
 export const settle = (app: App) => app.wait(200);
 

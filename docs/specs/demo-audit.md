@@ -28,13 +28,13 @@
 ```sh
 bun run build:docs                          # 演示打包 + 文档站构建（画布测量需要）
 bun scripts/audit/audit.ts build            # 每个 demo/ref/官方示例 nsh package --target web（/tmp/nsh-audit）
-bun scripts/audit/audit.ts shots            # 390×844 / 1024×640 各一张，落到 apps/docs/demos/shots/audit
+bun scripts/audit/audit.ts shots            # 390×844 / 1024×640 各一张，落到 apps/docs/demos/shots-audit
 bun scripts/audit/audit.ts canvas           # 量文档站两种布局真正给 iframe 的尺寸、平台（探针）
 bun scripts/audit/audit.ts probe            # 探针在两种 idiom 下单独截图
 bun scripts/audit/sheet.ts --out sheet.png --cols 3 a.png b.png c.png   # 拼对照页
 ```
 
-- 截图**不提交**：`apps/docs/demos/shots/audit/` 在 `.gitignore` 的 `**/demos/shots/` 下（524 张、13 MB）。包在 `/tmp/nsh-audit/packages`（1.6 GB），同样不进仓库。
+- 截图**不提交**：`apps/docs/demos/shots-audit/` 在 `.gitignore` 的 `**/demos/shots-audit/` 下（与渲染比对的 `shots/` 分开：`port:render` 每次清空自己的目录）（524 张、13 MB）。包在 `/tmp/nsh-audit/packages`（1.6 GB），同样不进仓库。
 - 三列分别是 `demo`（`<id>.tsx`）、`ref`（`<id>.ref.tsx`）、`official`（`references/nsh/website/demos/el-<name>.tsx`，原地打包，不复制、不改）。
 - 下文表格的证据用短名：`<id>-d-p` = `<id>-demo-phone.png`，`-r-` = `-ref-`，`-o-` = `-official-`，`p` = `-phone`，`k` = `-desktop`，`cp` = `-canvasphone`（390×844、desktop idiom，即文档站 Phone 画布），`ck` = `-canvasdesktop`（726×454，即文档站 Desktop 画布）；额外官方示例带后缀，如 `plot-official-phone-cells.png`。
 - 截图是**初始状态**：dialog、alert-dialog、sheet、popover、tooltip、hover-card、menu、context-menu、date-picker、select、combobox 在演示里由 `open` / `defaultOpen` 钉住或只显示触发器；打开态由 `port:render` 的 `steps` 覆盖，这里不重复。
@@ -48,11 +48,11 @@ bun scripts/audit/sheet.ts --out sheet.png --cols 3 a.png b.png c.png   # 拼对
 
 | 页面视口 | 布局    | iframe / `windowSize()` | `platform.desktop` | `platform.idiom` | 探针截图                                                |
 | -------- | ------- | ----------------------- | ------------------ | ---------------- | ------------------------------------------------------- |
-| 1440×900 | Phone   | 390 × 844               | **true**           | **desktop**      | `apps/docs/demos/shots/audit/canvas-mobile.png`         |
-| 1440×900 | Desktop | **726 × 454**           | **true**           | **desktop**      | `apps/docs/demos/shots/audit/canvas-desktop.png`        |
-| 1280×800 | Desktop | **678 × 424**           | true               | desktop          | `apps/docs/demos/shots/audit/canvas-desktop-laptop.png` |
-| 560×900  | Desktop | **526 × 420**           | true               | desktop          | `apps/docs/demos/shots/audit/canvas-desktop-narrow.png` |
-| 400×900  | Phone   | **350 × 757**           | true               | desktop          | `apps/docs/demos/shots/audit/canvas-mobile-small.png`   |
+| 1440×900 | Phone   | 390 × 844               | **true**           | **desktop**      | `apps/docs/demos/shots-audit/canvas-mobile.png`         |
+| 1440×900 | Desktop | **726 × 454**           | **true**           | **desktop**      | `apps/docs/demos/shots-audit/canvas-desktop.png`        |
+| 1280×800 | Desktop | **678 × 424**           | true               | desktop          | `apps/docs/demos/shots-audit/canvas-desktop-laptop.png` |
+| 560×900  | Desktop | **526 × 420**           | true               | desktop          | `apps/docs/demos/shots-audit/canvas-desktop-narrow.png` |
+| 400×900  | Phone   | **350 × 757**           | true               | desktop          | `apps/docs/demos/shots-audit/canvas-mobile-small.png`   |
 
 探针原文（Phone 画布，1440 视口）：`windowSize() 390 × 844`、`platform.desktop true`、`platform.idiom desktop`、`platform.os web`；Desktop 画布是 `windowSize() 726 × 454`，其余相同。也就是说：
 
@@ -98,7 +98,7 @@ bun scripts/audit/sheet.ts --out sheet.png --cols 3 a.png b.png c.png   # 拼对
 
 ## 二、逐组件
 
-图例：**证据**列是 `apps/docs/demos/shots/audit/` 下的文件名（`d` = demo，`r` = ref，`o` = official；`p` = phone 390×844，`k` = desktop 1024×640；`cp`/`ck` = 文档站实测尺寸 390×844 / 726×454）。`official` 缺失即"无官方示例"。
+图例：**证据**列是 `apps/docs/demos/shots-audit/` 下的文件名（`d` = demo，`r` = ref，`o` = official；`p` = phone 390×844，`k` = desktop 1024×640；`cp`/`ck` = 文档站实测尺寸 390×844 / 726×454）。`official` 缺失即"无官方示例"。
 
 | #   | id           | 官方示例                        | 问题（Phone / Desktop）                                                                                                     | 归类                 | 证据                                                     |
 | --- | ------------ | ------------------------------- | --------------------------------------------------------------------------------------------------------------------------- | -------------------- | -------------------------------------------------------- |
@@ -185,7 +185,7 @@ bun scripts/audit/sheet.ts --out sheet.png --cols 3 a.png b.png c.png   # 拼对
 > | Desktop（文档列宽）                       | 726 × 612  | 726 × 900      | 真                 |
 > | Desktop（demo 卡放宽到 1180，stage 1178） | 1024 × 420 | 1024 × 900     | 真                 |
 >
-> Phone 的 frame 宽 390、idiom `phone`；Desktop 是 desktop idiom，宽取 min(1024, 列宽)。站点切亮 / 暗，探针的 `colorScheme()` 分别为 `light` / `dark`（运行中 `postMessage`）。JSON 在 `/tmp/nsh-audit/canvas.json`，截图 `apps/docs/demos/shots/audit/canvas-*.png`。
+> Phone 的 frame 宽 390、idiom `phone`；Desktop 是 desktop idiom，宽取 min(1024, 列宽)。站点切亮 / 暗，探针的 `colorScheme()` 分别为 `light` / `dark`（运行中 `postMessage`）。JSON 在 `/tmp/nsh-audit/canvas.json`，截图 `apps/docs/demos/shots-audit/canvas-*.png`。
 
 1. **`apps/docs/src/lib/demo.js`**：`phoneHtml` 的 iframe 地址按布局加 `?idiom=phone|desktop` 与 `?theme=<站点当前主题>`；`demoPanelHtml` 的初始 `data-layout` 与 `initDemos` 的默认一致（现在 HTML 写 desktop、脚本默认 mobile，会闪一次）；`LAYOUTS.desktop` 改成 1024×**900**（与 `references/nsh/website/src/lib/demo-client.ts:44-45` 一致）。
 2. **让演示真的认这两个参数**：发布模板（`references/nsh/crates/nsh-cli/src/web/index.html`）没有出口。两条路：
@@ -276,6 +276,6 @@ bun scripts/audit/sheet.ts --out sheet.png --cols 3 a.png b.png c.png   # 拼对
 
 ## 附：证据与工具
 
-- 截图：`apps/docs/demos/shots/audit/`（524 张，gitignored）。命名：`<id>-{demo,ref,official}-{phone,desktop}.png`；`plot` / `editor` / `text-view` 的额外官方示例带后缀（`plot-official-phone-cells.png` 等）；文档站实测尺寸另有 `<id>-{demo,ref}-canvas{phone,desktop}.png` 与 `canvas-*.png`、`probe-*.png`。
+- 截图：`apps/docs/demos/shots-audit/`（524 张，gitignored）。命名：`<id>-{demo,ref,official}-{phone,desktop}.png`；`plot` / `editor` / `text-view` 的额外官方示例带后缀（`plot-official-phone-cells.png` 等）；文档站实测尺寸另有 `<id>-{demo,ref}-canvas{phone,desktop}.png` 与 `canvas-*.png`、`probe-*.png`。
 - 工具：`scripts/audit/chrome.ts`（静态服务 + DevTools 截图）、`audit.ts`（批量打包 / 截图 / 画布 / 探针）、`shoot.ts`（任意 `.tsx` 一张）、`sheet.ts`（对照页）、`targets.ts`（官方对应表）。探针应用在 `scripts/audit/probe/`，三个一次性实验（`dock-flex`、`plot-height`、`data-table-width`）留在同目录，注释里写明用途。
 - 本次测量：154 个包（52 demo + 52 ref + 50 官方/额外），308 张官方尺寸截图 + 208 张文档站尺寸截图 + 8 张画布/探针截图 = 524 张；打包失败 0，截图失败 0。

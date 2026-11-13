@@ -161,5 +161,6 @@ bun.lockb
 .claude/settings.local.json
 .claude/.check-stamp
 
-# Render check screenshots (bun run port:render)
+# Render check screenshots (bun run port:render) and the audit's (scripts/audit)
 **/demos/shots/
+**/demos/shots-audit/

@@ -1,8 +1,8 @@
 /**
  * The pointer screenshots' baseline: the reviewed images a change should show up against.
  *
- *   bun scripts/port/baseline.ts --update   # copy the latest pointer shots into baseline/
- *   bun scripts/port/baseline.ts            # compare the latest shots with baseline/
+ *   bun scripts/port/baseline.ts --update [--only <id,...>]   # copy the latest shots into baseline/
+ *   bun scripts/port/baseline.ts [--only <id,...>]            # compare the latest shots with baseline/
  *
  * `--update` replaces `apps/docs/demos/baseline/` with every `*-pointer-*.png` in `shots/`
  * (demo and reference alike) and prints how many; commit them after looking at the sheet.
@@ -29,8 +29,25 @@ const baseline = path.join(demos, "baseline");
 /** The pointer shots: `<id>-pointer-<scheme>.png` and their `.ref.png`. */
 const pointerShot = (name: string) => /-pointer-[a-z]+(\.ref)?\.png$/.test(name);
 
+/** The ids a `--only` names: a change to one family re-records its pictures, not all of them. */
+const onlyAt = process.argv.indexOf("--only");
+const only =
+  onlyAt >= 0
+    ? (process.argv[onlyAt + 1] ?? "")
+        .split(",")
+        .map((id) => id.trim())
+        .filter(Boolean)
+    : undefined;
+if (onlyAt >= 0 && (!only || only.length === 0)) {
+  console.error("baseline: --only takes a comma-separated list of ids (`--only select,combobox`)");
+  process.exit(1);
+}
+const chosen = (name: string) => !only || only.some((id) => name.startsWith(`${id}-`));
+
 const shotFiles = () =>
-  fs.existsSync(shots) ? fs.readdirSync(shots).filter(pointerShot).sort() : [];
+  fs.existsSync(shots)
+    ? fs.readdirSync(shots).filter(pointerShot).filter(chosen).sort()
+    : [];
 
 if (process.argv.includes("--update")) {
   const files = shotFiles();
@@ -52,7 +69,7 @@ if (!fs.existsSync(baseline)) {
   process.exit(1);
 }
 
-const baselineFiles = fs.readdirSync(baseline).filter(pointerShot).sort();
+const baselineFiles = fs.readdirSync(baseline).filter(pointerShot).filter(chosen).sort();
 const latest = new Set(shotFiles());
 const problems: string[] = [];
 let same = 0;

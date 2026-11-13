@@ -5,7 +5,7 @@
  *   bun scripts/audit/sheet.ts --out /tmp/sheets/accordion.png --cols 3 \
  *     accordion-demo-phone.png accordion-ref-phone.png accordion-official-phone.png
  *
- * Reads `apps/docs/demos/shots/audit/<name>`, writes the PNG it is given. `docs/specs/demo-audit.md`
+ * Reads `apps/docs/demos/shots-audit/<name>`, writes the PNG it is given. `docs/specs/demo-audit.md`
  * was reviewed this way.
  */
 import fs from "node:fs";
