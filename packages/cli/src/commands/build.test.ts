@@ -73,7 +73,19 @@ describe("build", () => {
 
   test("removes an item registry.json no longer lists, and leaves other files alone", async () => {
     current = project();
-    fs.writeFileSync(path.join(current.output, "dates.json"), "{}\n");
+    // What an earlier build left: a registry item, named after its file.
+    fs.writeFileSync(
+      path.join(current.output, "dates.json"),
+      `${JSON.stringify(
+        {
+          name: "dates",
+          type: "registry:ui",
+          files: [{ path: "ui/dates.tsx", type: "registry:ui", target: "components/ui/dates.tsx" }],
+        },
+        null,
+        2,
+      )}\n`,
+    );
     fs.writeFileSync(path.join(current.output, "notes.txt"), "mine\n");
 
     const out = await captured(() =>
@@ -84,6 +96,55 @@ describe("build", () => {
     expect(fs.existsSync(path.join(current.output, "dates.json"))).toBe(false);
     expect(fs.existsSync(path.join(current.output, "notes.txt"))).toBe(true);
     expect(out.text).toContain("removed public/r/dates.json (not in registry.json)");
+  });
+
+  test("removes a file the previous index lists, even when it is no longer item-shaped", async () => {
+    current = project();
+    fs.writeFileSync(
+      path.join(current.output, "index.json"),
+      `${JSON.stringify({ name: "test", homepage: "", items: [{ name: "dates" }] })}\n`,
+    );
+    fs.writeFileSync(path.join(current.output, "dates.json"), "{}\n");
+
+    const out = await captured(() =>
+      runBuild("./registry.json", { cwd: current!.root, output: "./public/r" }),
+    );
+
+    expect(out.result).toBe(0);
+    expect(fs.existsSync(path.join(current.output, "dates.json"))).toBe(false);
+    expect(out.text).toContain("removed public/r/dates.json (not in registry.json)");
+  });
+
+  test("leaves JSON it did not write alone, as with -o at a directory holding a project", async () => {
+    current = project();
+    // The output is the project root (`-o .`) or a directory beside other JSON: nothing here is
+    // a registry item, so nothing is removed, whatever `registry.json` lists.
+    for (const [name, content] of Object.entries({
+      "package.json": '{"name":"app","private":true}\n',
+      "tsconfig.json": '{"compilerOptions":{"strict":true}}\n',
+      "notes.json": '{"name":"notes","private":true}\n',
+      "broken.json": "{not json\n",
+      "button.json.bak": "{}\n",
+    })) {
+      fs.writeFileSync(path.join(current.root, name), content);
+    }
+
+    const out = await captured(() =>
+      runBuild("./registry.json", { cwd: current!.root, output: "." }),
+    );
+
+    expect(out.result).toBe(0);
+    for (const name of [
+      "package.json",
+      "tsconfig.json",
+      "notes.json",
+      "broken.json",
+      "button.json.bak",
+      "registry.json",
+    ]) {
+      expect(fs.existsSync(path.join(current.root, name))).toBe(true);
+    }
+    expect(out.text).not.toContain("removed");
   });
 
   test("writes nothing when an item imports what no item ships", async () => {
