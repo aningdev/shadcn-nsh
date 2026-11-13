@@ -95,19 +95,28 @@ export function makeFixture(opts: {
   return fixture;
 }
 
-/** Run `fn` with `console.log` collected, so a command's output can be asserted. */
+/**
+ * Run `fn` with `console.log` collected, so a command's output can be asserted, and
+ * `console.error` too (`errors`), for the commands that report a problem there.
+ */
 export async function captured<T>(
   fn: () => Promise<T>,
-): Promise<{ result: T; lines: string[]; text: string }> {
+): Promise<{ result: T; lines: string[]; text: string; errors: string[] }> {
   const lines: string[] = [];
-  const original = console.log;
+  const errors: string[] = [];
+  const log = console.log;
+  const error = console.error;
   console.log = (...args: unknown[]) => {
     lines.push(args.map((arg) => String(arg)).join(" "));
   };
+  console.error = (...args: unknown[]) => {
+    errors.push(args.map((arg) => String(arg)).join(" "));
+  };
   try {
     const result = await fn();
-    return { result, lines, text: lines.join("\n") };
+    return { result, lines, text: lines.join("\n"), errors };
   } finally {
-    console.log = original;
+    console.log = log;
+    console.error = error;
   }
 }
