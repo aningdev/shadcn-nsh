@@ -6,7 +6,7 @@ description: Every shadcn-nsh@latest command, with its flags and defaults.
 
 `shadcn-nsh@latest` copies registry items into an existing NSH app. The component pages use `npx shadcn-nsh@latest add <name>`; this page is the command reference.
 
-`-c, --cwd <dir>` is the app or monorepo directory (default: the current directory). `--registry <url>` is a template containing `{name}`; `add`, `list`, `view` and `diff` use the `registry` in `nsh-ui.json` when it is omitted, or the public registry at `https://raw.githubusercontent.com/aningdev/shadcn-nsh@latest/main/public/r/{name}.json`. `init` uses that public registry. Every command takes `-h, --help`; `shadcn-nsh --version` prints the version.
+`-c, --cwd <dir>` is the app or monorepo directory (default: the current directory). `--registry <url>` is a template containing `{name}`; `add`, `list`, `view` and `diff` use the `registry` in `nsh-ui.json` when it is omitted, or the public registry at `https://raw.githubusercontent.com/aningdev/shadcn-nsh/main/public/r/{name}.json`. `init` uses that public registry. Every command takes `-h, --help`; `shadcn-nsh --version` prints the version.
 
 ## init
 
