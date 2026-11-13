@@ -6,6 +6,7 @@ import { mount, signal, Text, View } from "nsh";
 
 import { listRow, RowDivider, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
 import { Radio, RadioGroup } from "@/packages/ui/radio-group";
+import { segmentedLook } from "@/packages/ui/segmented";
 
 import { DemoPage } from "./kit";
 import { desktop, Log, Panel, Split } from "./stage";
@@ -16,6 +17,9 @@ const plans = [
   { id: "team", label: "Team", detail: "Shared workspace · 1 TB", price: "$40", locked: true },
 ];
 const cycles = ["Monthly", "Yearly"];
+
+/** The cycle's look: the group is a segmented track, the checked radio its thumb. */
+const segments = segmentedLook();
 
 function App() {
   const plan = signal("pro");
@@ -47,22 +51,22 @@ function App() {
         }
       >
         <View style={{ gap: 14 }}>
-          {/* The cycle as a pair of choice cards: the whole card is the radio. */}
-          <RadioGroup>
-            <View style={{ flexDirection: "row", gap: 8 }}>
-              {cycles.map((c) => (
-                <Radio
-                  variant="tile"
-                  checked={cycle() === c}
-                  onChange={({ checked }) => {
-                    if (checked) cycle.set(c);
-                    log(`${c} → ${checked}`);
-                  }}
-                >
-                  {c}
-                </Radio>
-              ))}
-            </View>
+          {/* A segmented choice: each radio is a segment, `checkedStyle` raises the checked one. */}
+          <RadioGroup style={segments.style}>
+            {cycles.map((c) => (
+              <Radio
+                indicator={false}
+                checked={cycle() === c}
+                onChange={({ checked }) => {
+                  if (checked) cycle.set(c);
+                  log(`${c} → ${checked}`);
+                }}
+                {...segments.segment({ selected: () => cycle() === c })}
+                checkedStyle={segments.thumbStyle}
+              >
+                <Text style={segments.label(cycle() === c)}>{c}</Text>
+              </Radio>
+            ))}
           </RadioGroup>
 
           {/* The plans, each row the radio: a ring that lights up, its dot growing in. */}

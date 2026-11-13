@@ -157,6 +157,13 @@ export function RadioGroup(props: RadioGroupProps) {
 export type RadioProps = Omit<BaseRadioProps, "children"> & {
   /** Default `ring`: a sunk ring beside the label. `tile`: the whole surface is the control. */
   variant?: "ring" | "tile";
+  /**
+   * Its ring ahead of the label (the default). `false` draws only what the radio's props
+   * and children give it: a segment of a `segmentedLook` track (`segmentedLook().segment`
+   * for the radio, its `thumbStyle` as the checked style, its `label` for the text), where
+   * the track and the thumb are the control.
+   */
+  indicator?: boolean;
   /** Times the page's control size (default 1): 0.8 small, 1.25 large. */
   scale?: number;
   /** A string is the label; anything else is drawn as given. */
@@ -167,6 +174,7 @@ export type RadioProps = Omit<BaseRadioProps, "children"> & {
 export function Radio(props: RadioProps) {
   const [, rest] = split(props, [
     "variant",
+    "indicator",
     "scale",
     "children",
     "class",
@@ -190,7 +198,9 @@ export function Radio(props: RadioProps) {
       focusVisibleStyle={[look?.focusVisibleStyle ?? null, props.focusVisibleStyle ?? null]}
       disabledStyle={[look?.disabledStyle ?? null, props.disabledStyle ?? null]}
     >
-      <RadioRing on={!!props.checked} scale={props.scale} disabled={!!props.disabled} />
+      <If when={props.indicator ?? true}>
+        <RadioRing on={!!props.checked} scale={props.scale} disabled={!!props.disabled} />
+      </If>
       {typeof props.children === "string" ? <Text>{props.children}</Text> : props.children}
     </BaseRadio>
   );
