@@ -4,22 +4,28 @@
  *
  *   bun scripts/port/render.ts [--only <id,...>] [--filter <name>] [--no-baseline]
  *
- * `--only` runs the pages of the ids named (a comma-separated list of catalog ids), which is
- * what a family's change needs: `--only select,combobox`. `--no-baseline` skips the comparison
- * with `baseline/`, which was recorded on macOS: another platform draws text differently, so
- * there only the component ↔ reference pairs are a gate.
+ * `--only` runs the pages of the ids named (a comma-separated list of catalog ids, matched
+ * whole: `--only table` leaves `data-table` alone), which is what a family's change needs. The
+ * test names carry `id=` so `nsh test`'s substring `--filter` can name one alone.
+ * `--no-baseline` skips the comparison with `baseline/`, which was recorded on macOS: another
+ * platform draws text differently, so there only the component ↔ reference pairs are a gate.
+ *
+ * A page with a `tolerance` (the avatar's circular photos) is compared here, after the test,
+ * within that tolerance (`pixels.ts`): the test keeps the pair and says it is the gate's.
  */
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
+import { cases, schemes } from "../../apps/docs/demos/render-cases";
 import { catalog } from "../catalog";
 import { repo } from "./lib";
+import { compareWithinTolerance } from "./pixels";
 
 const demos = catalog().paths.demos;
 
-/** The ids a `--only` names; `nsh test` filters by substring, so each runs on its own. */
+/** The ids `--only` names, validated: the test narrows its table by `RENDER_ONLY`. */
 function onlyIds(): string[] | undefined {
   const at = process.argv.indexOf("--only");
   if (at < 0) return undefined;
@@ -54,6 +60,12 @@ fs.mkdirSync(shots, { recursive: true });
 // An installed CLI finds its runtimes next to `bin/nsh`, so nothing sets `NSH_RUNTIME`
 // here; a caller that sets it still gets it through `process.env`.
 const env = { ...process.env };
+
+/** The arguments `nsh test` takes: everything but our own (`--only <ids>`, `--no-baseline`). */
+const passthrough = process.argv.slice(2).filter((arg, index, all) => {
+  if (arg === "--no-baseline" || arg === "--only") return false;
+  return all[index - 1] !== "--only";
+});
 
 /** Where Chrome, Edge or Chromium installs, in `nsh`'s own order and paths (cut down). */
 function browser(): string | undefined {
@@ -132,7 +144,7 @@ if (!given && !software) {
   );
 }
 
-/** One `nsh test` run: the whole table, or the pages of one id. */
+/** One `nsh test` run: the whole table, or the pages of one id (`id=<id>:`, a substring). */
 function run(filter?: string): number {
   const result = spawnSync(
     "nsh",
@@ -142,8 +154,7 @@ function run(filter?: string): number {
       "--target",
       "web",
       ...(software ? ["--browser", software] : []),
-      ...(filter ? ["--filter", filter] : []),
-      ...(filter ? [] : process.argv.slice(2).filter((arg) => arg !== "--no-baseline")),
+      ...(filter ? ["--filter", filter] : passthrough),
     ],
     { cwd: demos, stdio: "inherit", env },
   );
@@ -154,8 +165,7 @@ let status = 0;
 if (only) {
   for (const id of only) {
     if (status !== 0) break;
-    // The test names read `<id>: pointer, <scheme>`; a filter is a substring of them.
-    status = run(`${id}: pointer`);
+    status = run(`id=${id}:`);
   }
 } else {
   status = run();
@@ -163,6 +173,42 @@ if (only) {
 if (software) fs.rmSync(path.dirname(software), { recursive: true, force: true });
 console.log(`screenshots: ${path.relative(repo, shots)}`);
 console.log("one page of them all: bun run port:sheet");
+
+/**
+ * The pages the test could not compare itself: a photograph inside a circular clip is taken
+ * within its `tolerance` here, where the pictures are decoded (`pixels.ts`). Any other page the
+ * test has already compared byte for byte.
+ */
+function compareTolerant(): number {
+  let failed = 0;
+  for (const { id, tolerance } of cases) {
+    if (!tolerance) continue;
+    for (const scheme of schemes) {
+      const name = `${id}-pointer-${scheme}`;
+      const ours = path.join(shots, `${name}.png`);
+      const theirs = path.join(shots, `${name}.ref.png`);
+      if (!fs.existsSync(ours) || !fs.existsSync(theirs)) {
+        console.error(`render: ${name}: no screenshots to compare`);
+        failed += 1;
+        continue;
+      }
+      const { ok, report } = compareWithinTolerance(
+        fs.readFileSync(ours),
+        fs.readFileSync(theirs),
+        tolerance,
+      );
+      if (ok) console.log(`render: ${name}: within its tolerance — ${report}`);
+      else {
+        console.error(`render: ${name}: outside its tolerance — ${report} (${tolerance.why})`);
+        failed += 1;
+      }
+    }
+  }
+  return failed;
+}
+
+const tolerant = status === 0 ? compareTolerant() : 0;
+if (tolerant > 0) process.exit(1);
 // A filtered run holds only some of the shots, so it cannot be compared with the whole baseline;
 // a `--only` run holds exactly the ids it names, which `baseline.ts` checks on their own.
 if (status === 0) {

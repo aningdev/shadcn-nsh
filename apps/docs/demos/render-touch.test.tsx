@@ -10,7 +10,7 @@
 // takes the first page's picture, lets its host go, and only then opens the reference page.
 import { expect, open, test, type OpenOptions } from "nsh/test";
 
-import { cases, clock, networkOf, schemes, settle, same } from "./render-cases";
+import { cases, clock, networkOf, schemes, settle, same, testName } from "./render-cases";
 
 /** What the simulator needs to end the first host before the next one launches. */
 const handOver = () => new Promise((resolve) => setTimeout(resolve, 300));
@@ -34,9 +34,9 @@ async function settleAppearance(options: OpenOptions) {
   await handOver();
 }
 
-for (const { id, steps, selfReference, photos, byEye } of cases) {
+for (const { id, steps, selfReference, photos, tolerance, extraSettle } of cases) {
   for (const colorScheme of schemes) {
-    test(`${id}: touch, ${colorScheme}`, async () => {
+    test(testName(id, "touch", colorScheme), async () => {
       const options = {
         platform: "ios",
         colorScheme,
@@ -49,6 +49,7 @@ for (const { id, steps, selfReference, photos, byEye } of cases) {
       const ours = await open(`./${id}.tsx`, options);
       await steps?.(ours);
       await settle(ours);
+      if (extraSettle) await ours.wait(extraSettle);
       const a = await ours.screenshot(`${name}.png`);
       ours.dispose();
       // No shell: the reference page draws the same component, so there is nothing to compare.
@@ -60,9 +61,12 @@ for (const { id, steps, selfReference, photos, byEye } of cases) {
       const reference = await open(`./${id}.ref.tsx`, options);
       await steps?.(reference);
       await settle(reference);
+      if (extraSettle) await reference.wait(extraSettle);
       const b = await reference.screenshot(`${name}.ref.png`);
-      if (byEye) {
-        console.log(`${id}: compared by eye — ${byEye}`);
+      if (tolerance) {
+        console.log(
+          `${id}: compared within a tolerance by the gate — ${tolerance.pixels} pixels, ${tolerance.delta}/255: ${tolerance.why}`,
+        );
         return;
       }
       expect(same(a, b)).toBe(true);

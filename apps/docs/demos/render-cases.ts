@@ -29,10 +29,19 @@ export type Case = {
    */
   photos?: boolean;
   /**
-   * Compared by eye: why the two pages of a photograph cannot be compared byte for byte. Both
-   * screenshots are kept; the check prints the reason instead of failing on a differed pixel.
+   * How far the two pages of a photograph may differ and still be the same picture: at most
+   * `pixels` pixels, a channel of each within `delta` levels (0-255). Everything else — a moved
+   * edge, a color, a missing row — fails as it always did; this only forgives a rounded clip's
+   * antialiasing, which the web rasterizer draws a level apart between two page instances. The
+   * pair is compared by `scripts/port/render.ts` (which has a PNG decoder); the test keeps both
+   * pictures and says so.
    */
-  byEye?: string;
+  tolerance?: { pixels: number; delta: number; why: string };
+  /**
+   * More of the manual clock after `settle`, before the screenshot: for a page whose entrance
+   * lands a frame after the rest (a menu's popup and its shadow).
+   */
+  extraSettle?: number;
   /** Steps taken in both pages before the screenshot (opening a dialog). */
   steps?: (app: App) => Promise<void>;
   /**
@@ -61,7 +70,11 @@ const overrides: Record<string, Override> = {
   "alert-dialog": { steps: (app) => app.press("Delete…") },
   sheet: { steps: (app) => app.press('side="bottom"') },
   popover: { steps: (app) => app.press("Order 1024") },
-  menu: { steps: (app) => app.press("File ▾") },
+  menu: {
+    steps: (app) => app.press("File ▾"),
+    // Its popup's shadow lands a frame after the entrance: 16 ms more, on both pages.
+    extraSettle: 16,
+  },
   toast: { steps: (app) => app.press("Copy the link") },
   select: { steps: (app) => app.press("label:Language") },
   "date-picker": { steps: (app) => app.press("No due date") },
@@ -82,8 +95,15 @@ const overrides: Record<string, Override> = {
   avatar: {
     photos: true,
     steps: photosReady,
-    byEye:
-      "a circular photo's edge is antialiased a pixel apart between runs (measured: at most 20 pixels, 29/255, about one run in three); the flat ones do not move",
+    // Measured: before the page prefetched its portraits, one pair in three differed — at most 20
+    // pixels, the worst channel 29/255 (the antialiased edge of a circular photo). After the
+    // prefetch, 12 pairs in a row were identical. The allowance stays for the flake's return; a
+    // layout change moves far more than 30 pixels, so it still fails.
+    tolerance: {
+      pixels: 30,
+      delta: 32,
+      why: "a circular photo's edge is antialiased a pixel apart between two page instances",
+    },
   },
   "color-picker": {
     selfReference: "the panel and the popover are upstream's own composition, with no shell",
@@ -100,6 +120,13 @@ export const cases: Case[] = componentIds.map((id) => ({ id, ...overrides[id] })
 export const schemes = ["light", "dark"] as const;
 
 /**
+ * A test's name: `id=<id>: <pass>, <scheme>`. The marker keeps `nsh test`'s substring `--filter`
+ * exact — `--filter "id=table:"` never picks up `data-table` — which is what `--only` runs by.
+ */
+export const testName = (id: string, pass: "pointer" | "touch", scheme: string) =>
+  `id=${id}: ${pass}, ${scheme}`;
+
+/**
  * The wall time every render check starts its pages on: noon on 2026-11-12, the day the pointer
  * baseline was recorded. The calendar and the date picker mark "today" from the clock, so a run
  * on another day would draw the mark on another day and differ from the baseline every day. It is
@@ -114,9 +141,9 @@ export const same = (a: Uint8Array, b: Uint8Array) =>
 /**
  * Lets every entrance transition (a popup's or a dialog's 150 ms, a color's 160 ms) finish on
  * the manual clock before the screenshot, so a page caught mid-transition cannot differ from the
- * other one. Deterministic: the clock moves the same 200 ms on both pages. A rounded corner's
- * last pixel can still land a level (1/255) apart between two page instances (a menu's popup, a
- * photo's circle), which no wait settles: the check takes such a pair again (`render.test.tsx`).
+ * other one. Deterministic: the clock moves the same 200 ms on both pages. A page whose last
+ * pixel lands a frame later adds its own `extraSettle`; a rounded clip's antialiasing is the
+ * case's `tolerance`, never a re-take.
  */
 export const settle = (app: App) => app.wait(200);
 

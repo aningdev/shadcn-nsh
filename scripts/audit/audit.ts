@@ -42,9 +42,14 @@ const valueOf = (flag: string) => {
 const only = valueOf("--only")?.split(",").filter(Boolean);
 const force = rest.includes("--force");
 
-const ids = catalog()
-  .components.map((component) => component.id)
-  .filter((id) => !only || only.includes(id));
+const all = catalog().components.map((component) => component.id);
+const unknown = (only ?? []).filter((id) => !all.includes(id));
+if (unknown.length > 0) {
+  console.error(`audit: no component is called ${unknown.join(", ")}`);
+  process.exit(1);
+}
+// `--only` names whole ids (`table` never brings `data-table`).
+const ids = all.filter((id) => !only || only.includes(id));
 
 const probeTarget: Target = {
   id: "audit-probe",

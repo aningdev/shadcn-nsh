@@ -56,7 +56,7 @@ bun run port:new <id> --from <上游文件> [--symbols a,b,c] [--base <nsh/base 
 
 `Log` 的 `grow` 默认 `sideBySide()`：并排时它吃掉检查器剩下的高度；页面级的一条日志（toast）在窄窗口不伸、在宽窗口跟着长，与官方的 `Log` 一致。
 
-**照片页**：演示里的图来自上游的 `photos.ts`（搬到 `apps/docs/demos/photos.ts`）与 `avatarPortrait`。页面先 `Image.prefetch` 再交给 `Image`，全部到位后画 `testID="images-ready"` 的标记；`render-cases.ts` 的 `photos: true` 让 `port:render` 用活网络打开它、等这个标记与淡入结束。圆角裁切的边缘在两次运行间会差 1/255 的页面（目前只有 avatar 的圆形头像）在 `render-cases.ts` 记 `byEye` 并写明原因与实测数字。
+**照片页**：演示里的图来自上游的 `photos.ts`（搬到 `apps/docs/demos/photos.ts`，**演示内容，不进 registry**）与 `avatarPortrait`。页面先 `Image.prefetch` 再交给 `Image`，全部到位后画 `testID="images-ready"` 的标记；`render-cases.ts` 的 `photos: true` 让 `port:render` 用活网络打开它、等这个标记与淡入结束。圆角裁切的边缘在两次运行间会差 1/255 的页面（目前只有 avatar 的圆形头像）在 `render-cases.ts` 记 `byEye` 并写明原因与实测数字。
 
 它们都在 `apps/docs/demos/stage.tsx`，从上游 `demo.ts` 搬来（`port-map.json` 的 `symbols` 路由，`// @port` 区域由 `port:vendor` 写入），外观取 `@shadcn-nsh/theme` 与 `packages/ui/lib/surface`，**不进 `packages/ui`、不进 registry**。适配层新增、重命名时：改 `port-map.json` 的 `symbols` 与目标文件的 `// @port demo.ts` 区域，再 `bun run port:vendor`。
 
@@ -76,7 +76,7 @@ bun run port:new <id> --from <上游文件> [--symbols a,b,c] [--base <nsh/base 
 | `nsh check apps/docs/demos` | 组件与演示的类型；`props.test-d.ts` 断言外壳 props 是 base props 的超集（P5）                                                                                                                                                                     | 每次                          |
 | `bun run port:coverage`     | 演示覆盖组件声明的每个轴取值与共享 `Tone`；`selfReference` 只在没有外壳的组件上                                                                                                                                                                   | 每次                          |
 | `bun run catalog --check`   | 组件集合：每个 `registry:ui` 都有演示、参照页、文档页并从 `packages/ui/index.ts` 导出；没有未登记的演示或页；`render-cases.ts` 的覆盖都指向目录里的 id；`catalog.generated.ts` 最新                                                               | 每次                          |
-| `bun run port:render`       | P4 的指针一半：web，亮 / 暗；跑完与 `apps/docs/demos/baseline/` 逐字节比较（仅 macOS；CI 加 `--no-baseline`）；`--only <id,...>` 只跑这几个 id。一对截图不同就整对再拍一次（至多三次）：圆角边缘的 1/255 在两次页面实例之间偶发，重拍即同（见下） | 提交前、CI                    |
+| `bun run port:render`       | P4 的指针一半：web，亮 / 暗；每对逐字节比较；跑完与 `apps/docs/demos/baseline/` 逐字节比较（仅 macOS；CI 加 `--no-baseline`）；`--only <id,...>` 按 id 精确只跑这几个。**唯一的例外**：`render-cases.ts` 里写了 `tolerance` 的页（目前只有 `avatar`，圆形照片的边缘）由 `render.ts` 按"至多 30 个像素、每个通道至多 32/255"比较，布局变化仍必失败，数字与实测写在该 case 的注释里 | 提交前、CI                    |
 | `bun run port:render:touch` | P4 的触屏一半：iOS 模拟器，亮 / 暗；之后跑外观切换检查                                                                                                                                                                                            | 提交前（本地）                |
 | `bun run registry:build`    | P6：依赖等于 import，相对 import 都有条目分发                                                                                                                                                                                                     | 改组件后                      |
 | `bun run test:unit`         | CLI 与主题；`ui-guards.test.ts` 扫 Port Region 之外的颜色字面量（P7）                                                                                                                                                                             | 每次                          |
@@ -87,7 +87,7 @@ bun run port:new <id> --from <上游文件> [--symbols a,b,c] [--base <nsh/base 
 
 两种渲染比对的实现细节（CPU 光栅化、定身等待、基线）见 [`toolchain.md`](toolchain.md#渲染比对的两半)。
 
-`port:baseline --update [--only <id,...>]` 只重录这几个 id 的图；不带 `--only` 时全量替换。审计脚本的截图在 `apps/docs/demos/shots-audit/`，`port:render` 清自己的 `shots/` 时不动它。
+`port:baseline --update [--only <id,...>]` 只重录这几个 id 的图（其余不动）；不带 `--only` 时全量替换。审计脚本的截图在 `apps/docs/demos/shots-audit/`，`port:render` 清自己的 `shots/` 时不动它。
 
 `port:check` 比较的是格式化后的文本，只要 `vp fmt` 的行为不变就稳定；它不看区域之外，那由 P7 负责。
 

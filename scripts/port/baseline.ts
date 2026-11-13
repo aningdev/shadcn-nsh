@@ -19,7 +19,6 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { cases } from "../../apps/docs/demos/render-cases";
 import { catalog } from "../catalog";
 import { repo } from "./lib";
 
@@ -43,17 +42,16 @@ if (onlyAt >= 0 && (!only || only.length === 0)) {
   console.error("baseline: --only takes a comma-separated list of ids (`--only select,combobox`)");
   process.exit(1);
 }
+const unknown = (only ?? []).filter((id) => !catalog().components.some((c) => c.id === id));
+if (unknown.length > 0) {
+  console.error(`baseline: no component is called ${unknown.join(", ")}`);
+  process.exit(1);
+}
 const chosen = (name: string) => !only || only.some((id) => name.startsWith(`${id}-`));
 
-/** The pages a case compares by eye: their pictures are shown, never gated byte for byte. */
-const byEye = cases.filter((c) => c.byEye).map((c) => c.id);
-const gated = (name: string) => !byEye.some((id) => name.startsWith(`${id}-`));
-
-/** The pictures the baseline holds: a pointer shot of a page that can be compared byte for byte. */
+/** The pictures the baseline holds: a pointer shot, of the ids named (`--only`) or of all. */
 const shotFiles = () =>
-  fs.existsSync(shots)
-    ? fs.readdirSync(shots).filter(pointerShot).filter(chosen).filter(gated).sort()
-    : [];
+  fs.existsSync(shots) ? fs.readdirSync(shots).filter(pointerShot).filter(chosen).sort() : [];
 
 if (process.argv.includes("--update")) {
   const files = shotFiles();
@@ -77,12 +75,7 @@ if (!fs.existsSync(baseline)) {
   process.exit(1);
 }
 
-const baselineFiles = fs
-  .readdirSync(baseline)
-  .filter(pointerShot)
-  .filter(chosen)
-  .filter(gated)
-  .sort();
+const baselineFiles = fs.readdirSync(baseline).filter(pointerShot).filter(chosen).sort();
 const latest = new Set(shotFiles());
 const problems: string[] = [];
 let same = 0;
