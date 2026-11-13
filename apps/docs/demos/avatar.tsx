@@ -73,7 +73,8 @@ function App() {
                   variant="secondary"
                   disabled={members() >= MEMBERS.length}
                   onPress={() => (
-                    members.set(Math.min(MEMBERS.length, members() + 1)), log(`members ${members()}`)
+                    members.set(Math.min(MEMBERS.length, members() + 1)),
+                    log(`members ${members()}`)
                   )}
                 >
                   Add
@@ -81,7 +82,10 @@ function App() {
                 <Button
                   variant="ghost"
                   disabled={members() <= 1}
-                  onPress={() => (members.set(Math.max(1, members() - 1)), log(`members ${members()}`))}
+                  onPress={() => (
+                    members.set(Math.max(1, members() - 1)),
+                    log(`members ${members()}`)
+                  )}
                 >
                   Remove
                 </Button>

@@ -103,7 +103,7 @@ function App() {
                   ? "indeterminate (no value for screen readers)"
                   : `value ${sent()} of 100`}
               </Text>
-              <View class={desktop ? "flex-row self-start gap-2" : "flex-row gap-2"}>
+              <View class={desktop ? "flex-row gap-2 self-start" : "flex-row gap-2"}>
                 <Button
                   variant="secondary"
                   disabled={unknown()}
@@ -178,9 +178,7 @@ function App() {
               <View style={{ flex: 1 }}>
                 <Progress value={72} tone={tone} />
               </View>
-              <Text
-                style={{ fontSize: controlSize.detail, color: toneColor(tone), width: 34 }}
-              >
+              <Text style={{ fontSize: controlSize.detail, color: toneColor(tone), width: 34 }}>
                 {"72%"}
               </Text>
             </View>

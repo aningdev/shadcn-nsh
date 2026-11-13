@@ -81,9 +81,7 @@ function App() {
 
       <DemoCard>
         <View selectable style={{ gap: 10 }}>
-          <Text style={{ fontSize: 17, fontWeight: "600", color: colors.text }}>
-            Release notes
-          </Text>
+          <Text style={{ fontSize: 17, fontWeight: "600", color: colors.text }}>Release notes</Text>
           <Text style={{ color: colors.text, lineHeight: 22 }}>
             Version 2.4 moves the app to offline sync.
           </Text>

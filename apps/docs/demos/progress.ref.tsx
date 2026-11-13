@@ -110,7 +110,7 @@ function App() {
                   ? "indeterminate (no value for screen readers)"
                   : `value ${sent()} of 100`}
               </Text>
-              <View class={desktop ? "flex-row self-start gap-2" : "flex-row gap-2"}>
+              <View class={desktop ? "flex-row gap-2 self-start" : "flex-row gap-2"}>
                 <Button
                   variant="secondary"
                   disabled={unknown()}

@@ -120,14 +120,10 @@ function App() {
         inspector={
           <>
             <Panel title="value">
-              <Text
-                style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}
-              >
+              <Text style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}>
                 {`strength ${strength()} · position ${position()} · price [${price()[0]}, ${price()[1]}]`}
               </Text>
-              <Text
-                style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}
-              >
+              <Text style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}>
                 {`bands ${bands.map((band) => band()).join(" / ")}`}
               </Text>
             </Panel>
@@ -176,7 +172,9 @@ function App() {
               accessibilityLabel="Locked intensity"
               onChange={() => {}}
             >
-              <Text class={sliderValueClass} style={sliderValueStyle()}>72%</Text>
+              <Text class={sliderValueClass} style={sliderValueStyle()}>
+                72%
+              </Text>
             </Level>
           </Row>
           <Row label="Equalizer" value="dB">

@@ -5,8 +5,8 @@
 import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
-import { Link, linkSize } from "@/packages/ui/link";
 import { sectionSurface } from "@/packages/ui/lib/surface";
+import { Link, linkSize } from "@/packages/ui/link";
 
 import { DemoPage } from "./kit";
 import { desktop, Log, Panel, Split } from "./stage";
