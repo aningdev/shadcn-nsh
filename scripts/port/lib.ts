@@ -44,7 +44,7 @@ export function readMap(): PortMap {
 export const upstreamDir = (map: PortMap) => path.join(repo, map.upstream.path);
 export const targetPath = (map: PortMap, rel: string) => path.join(repo, map.root, rel);
 
-/** Staging lived under `next/`; after WP-切换, code spans the repo. */
+/** Where demos, docs pages and the registry live: the repo when `root` is `.`, else under `root`. */
 export const portPaths = (map: PortMap) =>
   map.root === "."
     ? {

@@ -1,6 +1,6 @@
 # shadcn-nsh
 
-把 NSH 官方示例共享的 UI 层整理成 shadcn 模式的、copy-into-app 的组件库。规则与流程见 [`docs/port-plan.md`](docs/port-plan.md)。
+把 NSH 官方示例共享的 UI 层整理成 shadcn 模式的、copy-into-app 的组件库。约定见 [`ARCHITECTURE.md`](ARCHITECTURE.md)，流程见 [`port.md`](port.md)。
 
 ## Language
 
@@ -42,6 +42,10 @@ _Avoid_: Radix port, 新的 primitive 层, 根上的 `trigger` prop
 **Copy-into-app**:
 通过 registry + CLI 把组件源码拷进应用，应用可以直接改。改动点有三个：换颜色、圆角、阴影改 `theme.json` / `finishes.json`；改某个控件的外观改它的 look；改结构或 API 改外壳。
 _Avoid_: 黑盒依赖
+
+**Catalog（组件目录）**:
+本库交付的组件集合：registry 里的每个 `registry:ui` 条目。目录里的每个组件都有演示、参照页和文档页。
+_Avoid_: 组件清单、组件表（手写的列表）
 
 **Registry Name**:
 `add` 名、落盘路径和公开导出符号由 `nsh/base` 符号推导（`Menu` → `menu` / `MenuTrigger`）。上游有而 base 没有的零件（`Card`、`Badge`、`Spinner`）用上游的名字。不为旧 id 提供别名。

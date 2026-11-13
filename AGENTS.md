@@ -12,7 +12,7 @@
 
 这是**打包**项目：上游已有的一律由脚本搬运（`bun run port:vendor`），位于 `// @port <上游文件>` 与 `// @port end` 之间，不手改、不换色、不改名。本仓只写组件外壳、registry / CLI 和文档站。上游每个声明的去向记在 [`port-map.json`](port-map.json)。
 
-**写或改任何组件、主题、演示之前，读 [`docs/port-plan.md`](docs/port-plan.md)**：规范（第 4 节）、每个组件的流程（第 5 节）、检查（第 6 节）、工作包与顺序（第 7 节）。词汇见 [`GLOSSARY.md`](GLOSSARY.md)。
+**写或改任何组件、主题、演示之前，读 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)**（目录、分层、规则 P1–P7、归属）**和 [`docs/port.md`](docs/port.md)**（每个组件的流程、外壳写法、检查）。词汇见 [`docs/GLOSSARY.md`](docs/GLOSSARY.md)。
 
 **不做**：改 `nsh` / `nsh/base`；改 `// @port` 区域内的文字；在外壳里写颜色或自定外观；搬上游的声音和 NSH 网站的 demo 适配；为旧 registry id 提供别名。
 
@@ -68,7 +68,7 @@ registry.json → public/r → shadcn-nsh add
 
 ## 工作约定
 
-- 新组件用脚手架起步（建成后；见 `docs/port-plan.md` WP-0），不从空文件或旧组件复制。
+- 新组件用脚手架（`bun run port:new`）起步，不从空文件或旧组件复制。
 - 一个家族一个 commit；提交前 `port:check`、`nsh check apps/docs/demos`、`port:render`、`vp check` 全部通过，四张截图人眼看过。
 - `// @port` 区域只由 `port:vendor` 写入。要偏离上游，在 `port-map.json` 的 `replace` 里登记并写 `why`。
 - 改 `registry.json` 或组件文件后运行 `bun run registry:build` 更新 `public/r`。

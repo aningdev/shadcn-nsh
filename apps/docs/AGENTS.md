@@ -81,7 +81,7 @@ Do not edit the generated file. `src/lib/components.ts` keeps the `nshElement` o
 ```sh
 bun run check:pages    # pages ↔ registry ↔ demos, sections, import names, generated list
 bun run check:docs     # astro sync + tsc
-bun run check:demos    # nsh check on the demos app
+nsh check apps/docs/demos  # the demos app
 bun run docs:demos     # package the previews
 vp check               # format, lint, tool types
 ```

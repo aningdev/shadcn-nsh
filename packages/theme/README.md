@@ -12,7 +12,7 @@ Brand look for the copy-into-app layer. Source of truth is the upstream gallery 
 
 Consumed by [`@shadcn-nsh/ui`](../ui) and shipped as registry item `theme`. After edits: `bun run port:vendor` (if upstream changed), then `bun run registry:build` and commit `public/r`.
 
-Rules: [`docs/port-plan.md`](../../docs/port-plan.md). Toolchain / baseline: [`docs/toolchain.md`](../../docs/toolchain.md).
+Rules: [`docs/ARCHITECTURE.md`](../../docs/ARCHITECTURE.md). Toolchain / baseline: [`docs/toolchain.md`](../../docs/toolchain.md).
 
 ```sh
 bun run test:unit   # theme contract among other unit tests
