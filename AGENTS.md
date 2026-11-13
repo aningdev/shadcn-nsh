@@ -14,7 +14,7 @@
 
 **写或改任何组件、主题、演示之前，读 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)**（目录、分层、规则 P1–P7、归属）**和 [`docs/port.md`](docs/port.md)**（每个组件的流程、外壳写法、检查）。词汇见 [`docs/GLOSSARY.md`](docs/GLOSSARY.md)。
 
-**不做**：改 `nsh` / `nsh/base`；改 `// @port` 区域内的文字；在外壳里写颜色或自定外观；搬上游的声音和 NSH 网站的 demo 适配；为旧 registry id 提供别名。
+**不做**：改 `nsh` / `nsh/base`；改 `// @port` 区域内的文字；在外壳里写颜色或自定外观；搬上游的声音；把上游的 demo 适配层（`Stage` / `Split` / `Inspector` / `Panel` / `Log` / `Segmented`）放进组件库或 registry（它只在 `apps/docs/demos` 里，供演示用）；为旧 registry id 提供别名。
 
 ## 目录
 
@@ -22,7 +22,7 @@
 | ------------------------------------- | ---------------------------------------------------------------- |
 | `packages/theme`                      | `theme.json`、`finishes.json`、`theme.ts`（上游主题 + 角色读取） |
 | `packages/ui`                         | 移植组件（`// @port` 区域 + 外壳）                               |
-| `apps/docs/demos`                     | 验收演示、渲染比对、`port:render`                                |
+| `apps/docs/demos`                     | 验收演示、演示适配层 `stage.tsx`、渲染比对、`port:render`        |
 | `apps/docs/src/pages/docs/components` | 组件文档页                                                       |
 | `registry.json` → `public/r`          | shadcn registry 产物                                             |
 | `apps/gallery`                        | 原生行为测试与冒烟页                                             |

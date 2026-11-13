@@ -38,7 +38,26 @@ bun run port:new <id> --from <上游文件> [--symbols a,b,c] [--base <nsh/base 
 
 ## 演示与文档页
 
-**演示**覆盖组件声明的每个 `variant`、`size`、`kind`、`tone` 和状态（选中、禁用、忙碌等），至少一个真实场景；场景参考 `references/nsh/website/demos/el-<id>.tsx`，不搬它的 Inspector / Stage / Log。用 `kit.tsx` 的 `DemoPage` / `DemoCard` / `DemoSection`。参照页与演示是同一页面，只把组件换成 look 展开在 `nsh/base` 上。
+## 演示
+
+演示是官方的场景（`references/nsh/website/demos/el-<id>.tsx`），不是变体矩阵：主体放进 `Split`，它的 `inspector` 里放状态（`Panel`：当前值、开关）和事件（`Log`：`onChange` 收到什么）。组件声明的每个轴取值（`variant`、`size`、`kind`、`tone`）与共享 `Tone` 仍要出现（`port:coverage` 判定）；场景里放不下时，用检查器的 `Segmented` 或第二个 `DemoCard` 列出。参照页与演示是同一页面，只把组件换成 look 展开在 `nsh/base` 上。
+
+| 用什么                     | 是什么                                                                                                     |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| `Split`                    | 主体与检查器：窗口 ≥ 900 并排，否则上下堆叠；宽度变化只改样式，状态不丢                                    |
+| `Stage`                    | 居中一块的宽窗口外框（上限 440），官方示例的“主体居中”                                                     |
+| `Inspector`                | 检查器一列（300 宽，并排时）                                                                               |
+| `Panel`                    | 检查器里的一组状态：小标题 + `insetSurface` 的框                                                           |
+| `Log`                      | 事件日志，最新在上（`minHeight`、`grow`）                                                                  |
+| `Segmented`                | 检查器里的选项（`multiple`、展示方式、视图种类），选项数组 + 当前值 + `onChange`                           |
+| `desktop` / `wide`         | 指针与键盘（文案用 “Click”，密度用桌面）；窗口够宽（≥ 700）时才能用桌面布局                                |
+| `DemoSection`（`kit.tsx`） | 小控件（按钮、徽标、开关）的换行行（默认 `inline`）；整宽控件（accordion、table、slider）用 `axis="block"` |
+
+它们都在 `apps/docs/demos/stage.tsx`，从上游 `demo.ts` 搬来（`port-map.json` 的 `symbols` 路由，`// @port` 区域由 `port:vendor` 写入），外观取 `@shadcn-nsh/theme` 与 `packages/ui/lib/surface`，**不进 `packages/ui`、不进 registry**。适配层新增、重命名时：改 `port-map.json` 的 `symbols` 与目标文件的 `// @port demo.ts` 区域，再 `bun run port:vendor`。
+
+演示页自己的外壳（标题、卡片、小节）仍用 `kit.tsx` 的 `DemoPage` / `DemoCard` / `DemoSection`。页面内容高于窗口时滚动（手机 844、桌面 900）。
+
+页面看到的窗口与官方一致：Phone 是 390 × 844 的 phone idiom（`platform.desktop` 为假），Desktop 是 1024 宽的 desktop idiom（列宽不够时取列宽，不缩放）；切换布局重载 frame（idiom 启动时定下），主题变化发给运行中的应用（详见 `apps/docs/scripts/player-options.ts`）。
 
 **文档页**照 shadcn 的篇幅，章节固定为 Installation、Usage、Examples、API。Usage 只放 import 和一行最简用法；Examples 一个轴一小节；API 只列外壳自己加的 props，其余一句话指向 `nsh/base`。
 

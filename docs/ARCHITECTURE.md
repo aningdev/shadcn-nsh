@@ -27,7 +27,8 @@ _Avoid_: 发布组件 npm 包、旧 registry id 的别名
 - `packages/theme/`：**Theme Source**（两个 JSON 原样拷贝）与 `theme.ts`（脚本填充）；不放组件
 - `packages/ui/<id>.tsx`：一个**组件** = **Port Region** + **Shell**；一个 registry 条目一个文件
 - `packages/ui/lib/`：没有所属控件的上游部分（以上游文件名命名）与多个外壳共用的接线；作为 `registry:lib` 条目分发
-- `apps/docs/demos/`：每个组件的 `<id>.tsx` 与 **Reference Page** `<id>.ref.tsx`、渲染比对用例与基线截图；`kit.tsx` 是演示外框，不进 registry
+- `apps/docs/demos/`：每个组件的 `<id>.tsx` 与 **Reference Page** `<id>.ref.tsx`、渲染比对用例与基线截图；`kit.tsx` 是演示外框，`stage.tsx` 是演示适配层（`Stage` / `Inspector` / `Split` / `Panel` / `Log` / `Segmented` / `desktop` / `wide`，见 [`port.md`](port.md#演示)），两者都不进 registry
+- `apps/docs/public/demos/`：`docs:demos` 的打包产物（页面、运行时、wasm），不进仓库；`apps/docs/scripts/build-demos.ts` 打包每个演示，`player-options.ts` 让页面认面板的 `?idiom=` / `?theme=`
 - `apps/docs/src/pages/docs/components/<id>.md`：组件文档页，固定四节
 - `apps/gallery/`：原生行为测试与冒烟页，用同一套 `packages/ui`；不做公开文档，不比截图
 - `packages/cli/`：`shadcn-nsh` CLI（`init`、`add`、`list`、`view`、`diff`、`build`、`serve`）
@@ -36,6 +37,7 @@ _Avoid_: 发布组件 npm 包、旧 registry id 的别名
 - `scripts/install-test.ts`：`test:install`，从应用一侧验证 Copy-into-app
 - `scripts/failure.ts`：脚本报错的约定，`StepFailure` 带失败的步骤名与 `cause`
 - `scripts/port/`：搬运与核对工具；唯一读 `references/nsh` 的代码
+- `scripts/audit/`：诊断演示的工具（批量打包 / 截图 / 量画布 / 拼对照页），不属于检查流水线；截图与包都落在仓库外，见 [`specs/demo-audit.md`](specs/demo-audit.md)
 - `references/`：只读子模块
 
 ## Layers
@@ -72,7 +74,7 @@ flowchart TD
 - `packages/ui/lib` 不 import `packages/ui/<id>`；组件之间可以 import（`./button`），依赖写进该条目的 `registryDependencies`
 - `packages/theme` 不 import `packages/ui`
 - `packages/*` 不 import `apps/*`、`scripts/*` 或 `references/*`；运行时代码只认 `@shadcn-nsh/theme`、`nsh`、`nsh/base` 与相对路径
-- 只有 `scripts/port` 读 `references/nsh`；`apps/docs` 的构建不需要子模块
+- 只有 `scripts/port`（搬运与核对）与 `scripts/audit`（对照诊断截图）读 `references/nsh`；`apps/docs` 的构建不需要子模块
 - 组件集合只从 `scripts/catalog.ts`（脚本）或 `catalog.generated.ts`（NSH 运行时）取；不自己读 `registry.json` 过滤，也不 `readdir` 演示或文档目录来推导
 - `scripts/*` 可以把 `packages/cli/src/*` 当库 import（构建、serve、registry 形状校验）：它是工具，不是应用代码；CLI 本身仍只经 Registry 拿组件
 - registry JSON 的形状只在 `packages/cli/src/utils/registry-schema.ts` 校验；读到的 JSON 经它变成类型，不用 `as` 断言
