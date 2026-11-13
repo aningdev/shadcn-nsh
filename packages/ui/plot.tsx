@@ -5,10 +5,28 @@ import { alpha, chart, colors, finish, mono, terminal } from "@shadcn-nsh/theme"
 import { Text, token, View } from "nsh";
 import type { TextStyle, ViewStyle } from "nsh";
 
-// Every mark of `nsh/base/plot`, so a chart asks this module for its parts as it asks for
-// their look: `Arc`, `Area`, `Bar`, `Cell`, `Dot`, `Grid`, `Line`, `Pie`, `Plot`, `PlotAxis`,
-// `PlotLabel`, `RadialGrid`, `RadialLine`, `Rule`, `Sankey`, `Treemap` and their props.
-export * from "nsh/base/plot";
+// Every mark of `nsh/base/plot`, so a chart asks this module for its parts as it asks for their
+// look (upstream's seven examples reach for all of them).
+export {
+  Arc,
+  Area,
+  Bar,
+  Cell,
+  Dot,
+  Grid,
+  Line,
+  Pie,
+  Plot,
+  PlotAppearScope,
+  PlotAxis,
+  PlotLabel,
+  RadialGrid,
+  RadialLine,
+  Rule,
+  Sankey,
+  Treemap,
+  type PlotProps,
+} from "nsh/base/plot";
 
 // @port look/plot.ts
 /** The series' colors, in order (`theme.json`'s `chart-1` to `chart-5`):
