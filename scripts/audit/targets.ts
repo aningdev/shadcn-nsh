@@ -10,6 +10,7 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
+import { addPlayerOptions } from "../../apps/docs/scripts/player-options";
 import { repo } from "../port/lib";
 
 /** The official website example whose scene a component's demo should follow, by catalog id. */
@@ -146,11 +147,9 @@ const idOf = (slug: string) => `dev.audit.nsh.${slug.replace(/[^a-z0-9]/gi, "")}
  * Packages `target` into `work` and returns the directory that holds its `index.html`, flattening
  * the package's nested folder. A packaged page can already be there (`force: false`).
  *
- * The release template (`crates/nsh-cli/src/web/index.html`) takes no `?idiom=` and no `?theme=`:
- * it measures the idiom from the browser's pointer, as a browser page does, and follows
- * `prefers-color-scheme`. The audit patches in what `apps/docs/scripts/build-demos.ts` adds to the
- * docs' own packages (the website player's options, `crates/nsh-platform-web/web/index.html`), so
- * a probe shows the idiom and appearance the docs panel gives a demo.
+ * The page gets the docs panel's `?idiom=` and `?theme=` from the same function that prepares the
+ * docs' own packages (`apps/docs/scripts/player-options.ts`), so a probe shows the idiom and
+ * appearance the panel gives a demo — and the two cannot drift apart.
  */
 export function packageTarget(target: Target, work: string, force = false): string {
   const home = path.join(work, "packages", target.slug);
@@ -191,25 +190,6 @@ export function packageTarget(target: Target, work: string, force = false): stri
   }
   if (!fs.existsSync(index))
     throw new Error(`nsh package ${target.slug}: no index.html under ${home}`);
-  const html = fs.readFileSync(index, "utf8");
-  const marker = 'createPlayer(document.getElementById("app"), {';
-  if (html.includes(marker) && !html.includes("idiom: new URLSearchParams")) {
-    fs.writeFileSync(
-      index,
-      html
-        .replace(
-          marker,
-          `${marker}\n        idiom: new URLSearchParams(location.search).get("idiom") ?? undefined,\n        dark: (() => { const t = new URLSearchParams(location.search).get("theme"); return t === "dark" ? true : t === "light" ? false : undefined; })(),`,
-        )
-        .replace(
-          "    player = loaded;",
-          `    player = loaded;\n    addEventListener("message", (event) => { const theme = event.data?.theme; if (theme === "dark" || theme === "light") player.setDark(theme === "dark"); });`,
-        )
-        .replace(
-          "    player.preloadSides(app.sides);",
-          `    if (new URLSearchParams(location.search).get("theme") === "dark") player.setDark(true);\n    if (new URLSearchParams(location.search).get("theme") === "light") player.setDark(false);\n    player.preloadSides(app.sides);`,
-        ),
-    );
-  }
+  addPlayerOptions(home, target.slug);
   return home;
 }

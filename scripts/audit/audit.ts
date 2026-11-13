@@ -168,25 +168,127 @@ async function until(page: Page, expression: string, tries = 100) {
   throw new Error(`page never satisfied: ${expression}`);
 }
 
+/** What the page hands the preview: the panel's layout, its stage, and the frame's size and URL. */
+type Measured = {
+  layout: string;
+  stage: { clientWidth: number; padding: number };
+  frame: {
+    width: number;
+    height: number;
+    /** The frame's `--phone-w` / `--phone-h`, which `fit()` writes with the attributes. */
+    cssWidth: string;
+    cssHeight: string;
+  };
+  /** The player URL the frame runs: its idiom, and the page's theme. */
+  src: string;
+};
+
 type CanvasLayout = {
   viewport: { width: number; height: number };
   /** The demo's `data-layout` after the switch. */
   layout: string;
   stage: { clientWidth: number; padding: number };
-  frame: { width: number; height: number; cssWidth: string; cssHeight: string };
-  /** The player URL the frame runs: its idiom and theme. */
+  /** The iframe's `width` and `height` attributes, in CSS pixels (the app's own size, 1:1). */
+  frame: { width: number; height: number };
+  /** The frame's player URL. */
   src: string;
   probe: string;
   /** The probe's `colorScheme()` with the site switched to each theme. */
   themes?: Record<string, string>;
-  screenshot: string;
+  /** The measurement's screenshot; absent when it was not photographed. */
+  screenshot?: string;
 };
 
+/** A card wide enough for the Desktop layout's whole width (1024); the docs' column is ~760. */
+const WIDE_COLUMN = 1180;
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null;
+
+/** The measured JSON, checked to hold what the measurements read (no cast of an unknown shape). */
+function measuredFrom(json: string): Measured {
+  const value: unknown = JSON.parse(json);
+  if (
+    !isRecord(value) ||
+    typeof value.layout !== "string" ||
+    typeof value.src !== "string" ||
+    !isRecord(value.stage) ||
+    !isRecord(value.frame)
+  ) {
+    throw new Error(`canvas: the page measured something else: ${json}`);
+  }
+  const num = (member: unknown) => (typeof member === "number" ? member : Number.NaN);
+  const text = (member: unknown) => (typeof member === "string" ? member : "");
+  return {
+    layout: value.layout,
+    src: value.src,
+    stage: {
+      clientWidth: num(value.stage.clientWidth),
+      padding: num(value.stage.padding),
+    },
+    frame: {
+      width: num(value.frame.width),
+      height: num(value.frame.height),
+      cssWidth: text(value.frame.cssWidth),
+      cssHeight: text(value.frame.cssHeight),
+    },
+  };
+}
+
+/** The panel's layout, stage and frame, as the page has them now. */
+const MEASURE = `(() => {
+  const demo = document.querySelector(".demo[data-layout]");
+  const stage = demo.querySelector(".demo__stage");
+  const frame = demo.querySelector(".phone__screen iframe");
+  const phone = demo.querySelector(".phone");
+  return JSON.stringify({
+    layout: demo.dataset.layout,
+    stage: { clientWidth: stage.clientWidth, padding: parseFloat(getComputedStyle(stage).paddingLeft) },
+    frame: {
+      width: Number(frame.getAttribute("width")),
+      height: Number(frame.getAttribute("height")),
+      cssWidth: phone.style.getPropertyValue("--phone-w"),
+      cssHeight: phone.style.getPropertyValue("--phone-h"),
+    },
+    src: frame.src,
+  });
+})()`;
+
 /**
- * Measures what the docs page hands its preview in each layout, at a wide and a narrow page.
- * The preview is then pointed at the probe app (served from the built site, so same-origin) and
- * its text read: that is what the demos themselves see.
+ * Points the panel's frame at the probe — the same package shape as every demo, on the docs' own
+ * origin, with the URL the panel gave the demo — and reads what the app inside believes.
+ *
+ * `nonce` keeps each measurement a fresh document: the app reads its window when it starts, so a
+ * frame that already ran the probe would report the size it had then.
  */
+async function readProbe(page: Page, prefix: string, nonce: string): Promise<string> {
+  const marker = JSON.stringify(nonce);
+  await page.evaluate(
+    `(() => {
+      const frame = document.querySelector(".demo .phone__screen iframe");
+      const url = new URL(frame.src);
+      url.pathname = "/${prefix}/demos/__audit-probe/index.html";
+      url.searchParams.set("audit", ${JSON.stringify(nonce)});
+      frame.src = url.href;
+      return true;
+    })()`,
+  );
+  // The document that answers is this run's: the frame's previous one says "Canvas probe" too.
+  await until(
+    page,
+    `(() => {
+      const doc = document.querySelector(".demo .phone__screen iframe").contentDocument;
+      return Boolean(doc) &&
+        doc.location.search.includes(${marker}) &&
+        doc.getElementById("status")?.hidden === true &&
+        doc.body.innerText.includes("Canvas probe");
+    })()`,
+  );
+  return page.evaluate<string>(
+    `document.querySelector(".demo .phone__screen iframe").contentDocument.body.innerText`,
+  );
+}
+
 async function canvas() {
   if (!fs.existsSync(path.join(dist, "index.html"))) {
     throw new Error("apps/docs/dist is missing: run `bun run build:docs` first");
@@ -228,46 +330,10 @@ async function canvas() {
           `(() => { const button = document.querySelector('[data-demo-layout="${layout}"]'); if (button) button.click(); return Boolean(button); })()`,
         );
         await new Promise((resolve) => setTimeout(resolve, 600));
-        const measured = await page.evaluate<string>(`(() => {
-          const demo = document.querySelector(".demo[data-layout]");
-          const stage = demo.querySelector(".demo__stage");
-          const frame = demo.querySelector(".phone__screen iframe");
-          const phone = demo.querySelector(".phone");
-          return JSON.stringify({
-            layout: demo.dataset.layout,
-            stage: { clientWidth: stage.clientWidth, padding: parseFloat(getComputedStyle(stage).paddingLeft) },
-            frame: {
-              width: Number(frame.getAttribute("width")),
-              height: Number(frame.getAttribute("height")),
-              cssWidth: phone.style.getPropertyValue("--phone-w"),
-              cssHeight: phone.style.getPropertyValue("--phone-h"),
-            },
-            src: frame.src,
-          });
-        })()`);
-        const {
-          layout: shown,
-          stage,
-          frame,
-          src,
-        } = JSON.parse(measured) as {
-          layout: string;
-          stage: CanvasLayout["stage"];
-          frame: CanvasLayout["frame"];
-          src: string;
-        };
-        // The probe: the same package shape as every demo, on the docs' own origin, with the URL the
-        // panel gave the demo (its idiom and the page's theme).
-        await page.evaluate(
-          `(() => { const frame = document.querySelector(".demo .phone__screen iframe"); const url = new URL(frame.src); url.pathname = "/${prefix}/demos/__audit-probe/index.html"; frame.src = url.href; return true; })()`,
-        );
-        await until(
-          page,
-          "document.querySelector('.demo iframe').contentDocument?.body?.innerText.includes('Canvas probe')",
-        );
-        const probeText = await page.evaluate<string>(
-          `document.querySelector(".demo iframe").contentDocument.body.innerText`,
-        );
+        const measured = measuredFrom(await page.evaluate<string>(MEASURE));
+        const { layout: shown, stage, frame, src } = measured;
+        // The probe, at the URL the panel gave the demo (its idiom and the page's theme).
+        const probeText = await readProbe(page, prefix, `${viewport.label}-${layout}`);
         // The site's theme switch, at the wide page only: the probe's appearance follows.
         const themes: Record<string, string> | undefined =
           viewport.label !== "wide" ? undefined : {};
@@ -289,7 +355,7 @@ async function canvas() {
           viewport: { width: viewport.width, height: viewport.height },
           layout: shown,
           stage,
-          frame,
+          frame: { width: frame.width, height: frame.height },
           src,
           probe: probeText,
           themes,
@@ -299,32 +365,32 @@ async function canvas() {
           `${key}: frame ${frame.width}×${frame.height} · ${probeText.split("\n").slice(0, 5).join(" · ")}`,
         );
         // A panel whose column is wide enough for the layout's whole width (`LAYOUTS.desktop` is
-        // 1024): the docs' own column is about 760, so widen the demo card and read the frame again.
+        // 1024): widen the demo card past the docs column and measure again, the probe included.
         if (viewport.label === "wide" && layout === "desktop") {
           await page.evaluate(`(() => {
             const style = document.createElement("style");
-            style.textContent = ".doc-content .demo { width: 1180px; max-width: none; }";
+            style.textContent = ".doc-content .demo { width: ${WIDE_COLUMN}px; max-width: none; }";
             document.head.append(style);
             return true;
           })()`);
           // The panel's `ResizeObserver` on the stage refits the frame.
           await new Promise((resolve) => setTimeout(resolve, 300));
-          const widened = await page.evaluate<string>(`(() => {
-            const frame = document.querySelector(".demo .phone__screen iframe");
-            const stage = document.querySelector(".demo__stage");
-            return JSON.stringify({ room: stage.clientWidth, width: Number(frame.getAttribute("width")) });
-          })()`);
-          const room = JSON.parse(widened) as { room: number; width: number };
+          const wide = measuredFrom(await page.evaluate<string>(MEASURE));
+          const wideProbe = await readProbe(page, prefix, `${viewport.label}-${layout}-wide`);
+          const wideShot = path.join(shotsDir, "canvas-desktop-widecolumn.png");
+          await page.screenshot(wideShot);
           layouts["desktop-widecolumn"] = {
             viewport: { width: viewport.width, height: viewport.height },
-            layout: "desktop",
-            stage: { clientWidth: room.room, padding: 0 },
-            frame: { width: room.width, height: Number(frame.height), cssWidth: "", cssHeight: "" },
-            src,
-            probe: probeText,
-            screenshot: "",
+            layout: wide.layout,
+            stage: wide.stage,
+            frame: { width: wide.frame.width, height: wide.frame.height },
+            src: wide.src,
+            probe: wideProbe,
+            screenshot: path.relative(repo, wideShot),
           };
-          console.log(`desktop-widecolumn: stage ${room.room} → frame ${room.width}`);
+          console.log(
+            `desktop-widecolumn: stage ${wide.stage.clientWidth} → frame ${wide.frame.width}×${wide.frame.height} · ${wideProbe.split("\n").slice(0, 5).join(" · ")}`,
+          );
         }
       }
     }

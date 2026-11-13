@@ -9,11 +9,13 @@
 import fs from "node:fs";
 import path from "node:path";
 
-/** The page's `<head>` gets this before the first paint: `?theme=` applied to the page's own
- * background, and both parameters kept where the player options below read them. */
+/**
+ * Before the first paint: `?theme=` applied to the page's own background, and both parameters
+ * kept where the player options below read them.
+ */
 const HEAD_SCRIPT = `  <script>
-    // The docs panel's layout and theme (see build-demos.ts): the idiom the app believes it runs
-    // on, and the appearance it is drawn in. Nothing here when the page is opened on its own.
+    // The docs panel's layout and theme (see player-options.ts): the idiom the app believes it
+    // runs on, and the appearance it is drawn in. Nothing here when the page is opened on its own.
     (() => {
       const params = new URLSearchParams(location.search);
       const theme = params.get("theme");
@@ -29,6 +31,28 @@ const HEAD_SCRIPT = `  <script>
     })();
   </script>
 `;
+
+/** The runtime's idiom and appearance options: absent, it measures both itself. */
+const OPTIONS = [
+  "        idiom: window.nshDemo.idiom,",
+  '        dark: window.nshDemo.theme === undefined ? undefined : window.nshDemo.theme === "dark",',
+].join("\n");
+
+/**
+ * The panel's theme switch for a running app: a message from this page (its own origin), so the
+ * app changes appearance without a reload.
+ */
+const LISTENER = `    addEventListener("message", (event) => {
+      if (event.origin !== location.origin) return;
+      const theme = event.data?.theme;
+      if (theme !== "dark" && theme !== "light") return;
+      document.documentElement.style.colorScheme = theme;
+      player.setDark(theme === "dark");
+    });`;
+
+/** The theme the page loaded with, once the app runs (its engine's environment is what reads it). */
+const START_THEME =
+  '    if (window.nshDemo.theme) player.setDark(window.nshDemo.theme === "dark");';
 
 /**
  * Make the packaged page take the panel's `?idiom=` and `?theme=`, and a running app's theme from
@@ -48,7 +72,8 @@ const HEAD_SCRIPT = `  <script>
  * (the engine's environment starts light; `nsh_environment` carries no appearance).
  *
  * Markers are the template's exact text: a `nsh` release that changes them fails the build
- * loudly instead of shipping demos that ignore the panel.
+ * loudly instead of shipping demos that ignore the panel (`docs/toolchain.md` says what to do
+ * then).
  */
 export function addPlayerOptions(outDir: string, name: string) {
   const index = path.join(outDir, "index.html");
@@ -61,7 +86,7 @@ export function addPlayerOptions(outDir: string, name: string) {
     if (!html.includes(marker)) {
       throw new Error(
         `${name}: the packaged index.html has no ${JSON.stringify(marker)}: ` +
-          "nsh's web template changed, so `addPlayerOptions` must be updated",
+          "nsh's web template changed, so `apps/docs/scripts/player-options.ts` must be updated",
       );
     }
   }
@@ -69,19 +94,9 @@ export function addPlayerOptions(outDir: string, name: string) {
     index,
     html
       .replace(head, `${HEAD_SCRIPT}${head}`)
-      .replace(
-        options,
-        // The runtime's idiom and appearance options: absent, it measures both itself.
-        `${options}\n        idiom: window.nshDemo.idiom,\n        dark: window.nshDemo.theme === undefined ? undefined : window.nshDemo.theme === "dark",`,
-      )
-      .replace(
-        ready,
-        `${ready}\n    // The panel's theme switch: a running app changes appearance without a reload.\n    addEventListener("message", (event) => {\n      const theme = event.data?.theme;\n      if (theme !== "dark" && theme !== "light") return;\n      document.documentElement.style.colorScheme = theme;\n      player.setDark(theme === "dark");\n    });`,
-      )
-      // Once the app runs (its engine's environment is the one `setDark` writes).
-      .replace(
-        ran,
-        `    if (window.nshDemo.theme) player.setDark(window.nshDemo.theme === "dark");\n${ran}`,
-      ),
+      .replace(options, `${options}\n${OPTIONS}`)
+      .replace(ready, `${ready}\n${LISTENER}`)
+      // Once the app runs: its engine's environment is the one `setDark` writes.
+      .replace(ran, `${START_THEME}\n${ran}`),
   );
 }
