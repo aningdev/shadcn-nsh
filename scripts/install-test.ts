@@ -135,6 +135,12 @@ function failureOf(thrown: unknown): Failure {
 
 const seconds = (ms: number) => `${(ms / 1000).toFixed(1)}s`;
 
+/** An item's file as an import path from the app's root, without the extension. */
+function moduleOf(item: Item) {
+  const target = item.target || `components/ui/${item.name}.tsx`;
+  return target.replace(/\.(tsx?|jsx?)$/, "");
+}
+
 /** The `nsh` to drive: `NSH_BIN`, the one on PATH, or the installer's two usual homes. */
 async function findNsh(): Promise<{ command: string; version: string } | null> {
   const candidates = [
@@ -249,15 +255,15 @@ const SAMPLES: { item: string; import: string; jsx: string }[] = [
   },
 ];
 
-/** A page that imports every installed item. */
-function allPage(items: string[]): string {
+/** A page that imports every installed item, at the path the registry gives it. */
+function allPage(items: Item[]): string {
   const sampled = new Map(SAMPLES.map((sample) => [sample.item, sample]));
   const imports = items
-    .map((name) => sampled.get(name)?.import ?? `import "./components/ui/${name}";`)
+    .map((item) => sampled.get(item.name)?.import ?? `import "./${moduleOf(item)}";`)
     .sort();
   const rendered = items
-    .filter((name) => sampled.has(name))
-    .map((name) => `      ${sampled.get(name)!.jsx}`);
+    .filter((item) => sampled.has(item.name))
+    .map((item) => `      ${sampled.get(item.name)!.jsx}`);
   return `// Written by scripts/install-test.ts; this app is temporary.
 import { mount, Text, View } from "nsh";
 
@@ -300,7 +306,7 @@ async function copyApp(template: string, dir: string) {
 async function installEveryItem(template: string, dir: string, items: Item[], nsh: string) {
   await copyApp(template, dir);
   await step("add --all", "bun", [cli, "add", "--all"], dir);
-  await fs.writeFile(path.join(dir, "All.tsx"), allPage(items.map((item) => item.name)));
+  await fs.writeFile(path.join(dir, "All.tsx"), allPage(items));
   await fs.writeFile(path.join(dir, "All.test.tsx"), ALL_TEST);
   await step("nsh check", nsh, ["check", "."], dir);
   await step("nsh test", nsh, ["test", "."], dir);
