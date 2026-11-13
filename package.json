@@ -23,6 +23,7 @@
     "cli:build": "bun --filter shadcn-nsh build",
     "check": "vp check --fix && bun run catalog --check && bun run port:check && bun run port:coverage && nsh check apps/docs/demos && nsh check apps/gallery && bun run check:pages && bun run check:docs",
     "test:gallery": "nsh test apps/gallery",
+    "test:install": "bun scripts/install-test.ts",
     "test:unit": "bun test ./packages/cli ./packages/theme ./scripts/catalog.test.ts",
     "shots": "bash scripts/shots.sh",
     "port:vendor": "bun scripts/port/vendor.ts",
