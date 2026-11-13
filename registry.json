@@ -325,7 +325,7 @@
       "type": "registry:ui",
       "title": "Time Field",
       "description": "A sunk well for a time of day, one segment at a time.",
-      "registryDependencies": ["calendar", "input", "theme"],
+      "registryDependencies": ["calendar", "input"],
       "files": [
         {
           "path": "packages/ui/time-field.tsx",
@@ -517,12 +517,12 @@
       "description": "A calendar in a popup from a field trigger, on the shared listbox look.",
       "registryDependencies": [
         "calendar",
+        "input",
         "listbox",
         "open-state",
         "overlay",
         "select",
-        "theme",
-        "time-field"
+        "theme"
       ],
       "files": [
         {
@@ -719,7 +719,7 @@
       "type": "registry:ui",
       "title": "DataTable",
       "description": "A card-styled spreadsheet with sorting, selection, and resize.",
-      "registryDependencies": ["surface", "theme"],
+      "registryDependencies": ["theme"],
       "files": [
         {
           "path": "packages/ui/data-table.tsx",
