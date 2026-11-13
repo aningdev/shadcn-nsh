@@ -102,7 +102,7 @@ function App() {
             onPress={signIn}
             {...buttonLook("primary", {
               disabled: () => password().length === 0,
-              style: { marginTop: 4 },
+              style: { marginTop: 4, alignSelf: desktop ? "flex-start" : undefined },
             })}
           >
             <Text style={buttonLabel("primary", { disabled: () => password().length === 0 })}>

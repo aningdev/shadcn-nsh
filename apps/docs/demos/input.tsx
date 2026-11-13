@@ -96,11 +96,13 @@ function App() {
               style={{ height: 80 }}
             />
           </Field>
+          {/* A column stretches its children: with a pointer the button keeps its label's width,
+              as upstream's demo buttons do; a thumb gets the whole row. */}
           <Button
             variant="primary"
             disabled={password().length === 0}
             onPress={signIn}
-            style={{ marginTop: 4 }}
+            style={{ marginTop: 4, alignSelf: desktop ? "flex-start" : undefined }}
           >
             Sign in
           </Button>
