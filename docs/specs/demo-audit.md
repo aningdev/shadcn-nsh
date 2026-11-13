@@ -206,6 +206,24 @@ bun scripts/audit/sheet.ts --out sheet.png --cols 3 a.png b.png c.png   # 拼对
 
 因此任务 3 的清单是：**无组件改动**；任务 2/4 完成后重跑 `port:render`（P4 仍须逐字节相同）、`port:render:touch`、`test:gallery`、`test:install`，把改动锁在演示层。
 
+> **补注（任务 5，2026-11-14）**：这条结论是"任务 3 动手时没有发现"，不是"上游与外壳没有缺口"。任务 4 把 52 个演示改写成官方场景时，在演示层看到下面这些外壳 / 适配层缺口（任务 4 被禁止改共享文件，只能绕路），任务 5 逐项补上并去掉绕路：
+>
+> | 缺口                                                                       | 处理                                                                                          |
+> | -------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------- |
+> | `combobox` 少导出 `ListboxHeader` / `listboxFooter` / `clearButtonLook` 等 | 两个组件的 listbox 再导出取同一组                                                             |
+> | `cleanable` 的清除按钮没有 `clearButtonLook()`，`Picker` 一直藏 chevron    | 三个外壳默认套上；只有选中值时藏 chevron（`el-select` / `el-combobox` / `el-date-picker` 同） |
+> | `number-input` 的 `pair` 用 `w-8` / `w-11`                                 | `w-6` / `w-9`（`el-number-input.tsx:92`）                                                     |
+> | `Toggle` 只按字符串 children 推断文字内边距                                | 加 `text`（`el-toggle.tsx:110`）                                                              |
+> | `Radio` 总画 `RadioRing`，做不了官方"radio 当 segment"                     | 加 `indicator={false}`（`el-radio.tsx:37-49`）                                                |
+> | `time-field` 没有 segment / separator 钩子，与日期选择器的时间行不同源     | 默认取 `calendarLook` / `TimeSegment`                                                         |
+> | `plot` 只再导出 8 个部件                                                   | `export * from "nsh/base/plot"`（Cell、Dot、Rule、Treemap 等）                                |
+> | `TableCell` 带 `flex-1`、`TableHead` 不带，表头与表体错位                  | 宽度交给应用（`el-table.tsx:15` 的 `widths`）                                                 |
+> | `tooltip` 的宿主固定 `alignSelf: "flex-start"`                             | 加 `style`（`el-tooltip.tsx` 的 Pin 用 `flex: 1`）                                            |
+> | `dialog` 的 `presentation="pageSheet"` 没有面板外观                        | 上游也没有（`el-dialog.tsx:120-152` 自带 style），保留演示的应用样式                          |
+> | `data-table` 触屏行高 44，官方是 32                                        | 交给 base 的默认 32（`el-data-table.tsx` 不传 `rowHeight`）                                   |
+>
+> 这些都不改变"六个已知问题的根因在套件与演示写法"：它们在 `docs/specs/demo-parity.md` 的"完成情况"里逐条附了证据。
+
 ### 3.3 任务 4：官方示例移植（按家族）
 
 有官方示例的 42 个组件，`<id>.tsx` 与 `<id>.ref.tsx` 都改写成官方场景（同一场景，ref 把组件换成 look 展开在 `nsh/base` 上）。没有官方示例的 10 个用同一套适配层补 Stage / Inspector / Log。

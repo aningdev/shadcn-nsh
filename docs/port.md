@@ -40,16 +40,23 @@ bun run port:new <id> --from <上游文件> [--symbols a,b,c] [--base <nsh/base 
 
 演示是官方的场景（`references/nsh/website/demos/el-<id>.tsx`），不是变体矩阵：主体放进 `Split`，它的 `inspector` 里放状态（`Panel`：当前值、开关）和事件（`Log`：`onChange` 收到什么）。组件声明的每个轴取值（`variant`、`size`、`kind`、`tone`）与共享 `Tone` 仍要出现（`port:coverage` 判定）；场景里放不下时，用检查器的 `Segmented` 或第二个 `DemoCard` 列出。参照页与演示是同一页面，只把组件换成 look 展开在 `nsh/base` 上。
 
-| 用什么                     | 是什么                                                                                                     |
-| -------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `Split`                    | 主体与检查器：窗口 ≥ 900 并排，否则上下堆叠；宽度变化只改样式，状态不丢                                    |
-| `Stage`                    | 居中一块的宽窗口外框（上限 440），官方示例的“主体居中”                                                     |
-| `Inspector`                | 检查器一列（300 宽，并排时）                                                                               |
-| `Panel`                    | 检查器里的一组状态：小标题 + `insetSurface` 的框                                                           |
-| `Log`                      | 事件日志，最新在上（`minHeight`、`grow`）                                                                  |
-| `Segmented`                | 检查器里的选项（`multiple`、展示方式、视图种类），选项数组 + 当前值 + `onChange`                           |
-| `desktop` / `wide`         | 指针与键盘（文案用 “Click”，密度用桌面）；窗口够宽（≥ 700）时才能用桌面布局                                |
-| `DemoSection`（`kit.tsx`） | 小控件（按钮、徽标、开关）的换行行（默认 `inline`）；整宽控件（accordion、table、slider）用 `axis="block"` |
+| 用什么                     | 是什么                                                                                                                                                                               |
+| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Split`                    | 主体与检查器：窗口 ≥ 900 并排，否则上下堆叠；宽度变化只改样式，状态不丢                                                                                                              |
+| `Stage`                    | 居中一块的宽窗口外框（上限 440），官方示例的“主体居中”                                                                                                                               |
+| `Inspector`                | 检查器一列（300 宽，并排时）                                                                                                                                                         |
+| `Panel`                    | 检查器里的一组状态：小标题 + `insetSurface` 的框                                                                                                                                     |
+| `Log`                      | 事件日志，最新在上（`minHeight`、`grow`）                                                                                                                                            |
+| `Segmented`                | 检查器里的选项（`multiple`、展示方式、视图种类），选项数组 + 当前值 + `onChange`                                                                                                     |
+| `Chips`                    | 同上，但**换行**：选项多到一条轨道放不下时（七个 tone），一个选项一个小块                                                                                                            |
+| `desktop` / `wide`         | 指针与键盘（文案用 “Click”，密度用桌面）；窗口够宽（≥ 700）时才能用桌面布局                                                                                                          |
+| `ui()`                     | 演示自己的调色板（`page`、`text`、`muted`、`faint`、`border`、`line`、`accent`、`up` / `down` / `info` / `warn` / `danger`、`card`、`inset`、`raised`、`primary`），取自本库主题角色 |
+| `DemoSection`（`kit.tsx`） | 小控件（按钮、徽标、开关）的换行行（默认 `inline`）；整宽控件（accordion、table、slider）用 `axis="block"`                                                                           |
+| `DemoPage`（`kit.tsx`）    | 页面外框；`width` 把整页在一个列宽里居中（text-view 的 680）                                                                                                                         |
+
+`Log` 的 `grow` 默认 `sideBySide()`：并排时它吃掉检查器剩下的高度；页面级的一条日志（toast）在窄窗口不伸、在宽窗口跟着长，与官方的 `Log` 一致。
+
+**照片页**：演示里的图来自上游的 `photos.ts`（搬到 `apps/docs/demos/photos.ts`）与 `avatarPortrait`。页面先 `Image.prefetch` 再交给 `Image`，全部到位后画 `testID="images-ready"` 的标记；`render-cases.ts` 的 `photos: true` 让 `port:render` 用活网络打开它、等这个标记与淡入结束。圆角裁切的边缘在两次运行间会差 1/255 的页面（目前只有 avatar 的圆形头像）在 `render-cases.ts` 记 `byEye` 并写明原因与实测数字。
 
 它们都在 `apps/docs/demos/stage.tsx`，从上游 `demo.ts` 搬来（`port-map.json` 的 `symbols` 路由，`// @port` 区域由 `port:vendor` 写入），外观取 `@shadcn-nsh/theme` 与 `packages/ui/lib/surface`，**不进 `packages/ui`、不进 registry**。适配层新增、重命名时：改 `port-map.json` 的 `symbols` 与目标文件的 `// @port demo.ts` 区域，再 `bun run port:vendor`。
 
@@ -63,22 +70,24 @@ bun run port:new <id> --from <上游文件> [--symbols a,b,c] [--base <nsh/base 
 
 ## 检查
 
-| 命令                        | 判定                                                                                                                                                                                | 何时跑                        |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| `bun run port:check`        | P1–P3：清单完整、区域与上游一致（格式化后比较）、安装的 CLI 与基线不同时警告；`--status` 列出待办                                                                                   | 每次                          |
-| `nsh check apps/docs/demos` | 组件与演示的类型；`props.test-d.ts` 断言外壳 props 是 base props 的超集（P5）                                                                                                       | 每次                          |
-| `bun run port:coverage`     | 演示覆盖组件声明的每个轴取值与共享 `Tone`；`selfReference` 只在没有外壳的组件上                                                                                                     | 每次                          |
-| `bun run catalog --check`   | 组件集合：每个 `registry:ui` 都有演示、参照页、文档页并从 `packages/ui/index.ts` 导出；没有未登记的演示或页；`render-cases.ts` 的覆盖都指向目录里的 id；`catalog.generated.ts` 最新 | 每次                          |
-| `bun run port:render`       | P4 的指针一半：web，亮 / 暗；跑完与 `apps/docs/demos/baseline/` 逐字节比较（仅 macOS；CI 加 `--no-baseline`）                                                                       | 提交前、CI                    |
-| `bun run port:render:touch` | P4 的触屏一半：iOS 模拟器，亮 / 暗；之后跑外观切换检查                                                                                                                              | 提交前（本地）                |
-| `bun run registry:build`    | P6：依赖等于 import，相对 import 都有条目分发                                                                                                                                       | 改组件后                      |
-| `bun run test:unit`         | CLI 与主题；`ui-guards.test.ts` 扫 Port Region 之外的颜色字面量（P7）                                                                                                               | 每次                          |
-| `bun run test:gallery`      | 原生行为：按键、取值、禁用                                                                                                                                                          | 改行为后                      |
-| `vp check`                  | 格式、lint、工具面类型                                                                                                                                                              | 每次                          |
-| `bun run check`             | `vp check --fix` → `catalog --check` → `port:check` → `port:coverage` → demos 与 gallery 类型 → 文档页 → docs（会改文件）                                                           | 每次                          |
-| `bun run test:install`      | 复制即用：`public/r` 与重新构建的结果逐字节相同；`init` + `add` 进新的 NSH app，逐个 `registry:ui` 条目 `nsh check`，全量一次再 `nsh test`                                          | 改 CLI、registry 或组件依赖后 |
+| 命令                        | 判定                                                                                                                                                                                                                                              | 何时跑                        |
+| --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
+| `bun run port:check`        | P1–P3：清单完整、区域与上游一致（格式化后比较）、安装的 CLI 与基线不同时警告；`--status` 列出待办                                                                                                                                                 | 每次                          |
+| `nsh check apps/docs/demos` | 组件与演示的类型；`props.test-d.ts` 断言外壳 props 是 base props 的超集（P5）                                                                                                                                                                     | 每次                          |
+| `bun run port:coverage`     | 演示覆盖组件声明的每个轴取值与共享 `Tone`；`selfReference` 只在没有外壳的组件上                                                                                                                                                                   | 每次                          |
+| `bun run catalog --check`   | 组件集合：每个 `registry:ui` 都有演示、参照页、文档页并从 `packages/ui/index.ts` 导出；没有未登记的演示或页；`render-cases.ts` 的覆盖都指向目录里的 id；`catalog.generated.ts` 最新                                                               | 每次                          |
+| `bun run port:render`       | P4 的指针一半：web，亮 / 暗；跑完与 `apps/docs/demos/baseline/` 逐字节比较（仅 macOS；CI 加 `--no-baseline`）；`--only <id,...>` 只跑这几个 id。一对截图不同就整对再拍一次（至多三次）：圆角边缘的 1/255 在两次页面实例之间偶发，重拍即同（见下） | 提交前、CI                    |
+| `bun run port:render:touch` | P4 的触屏一半：iOS 模拟器，亮 / 暗；之后跑外观切换检查                                                                                                                                                                                            | 提交前（本地）                |
+| `bun run registry:build`    | P6：依赖等于 import，相对 import 都有条目分发                                                                                                                                                                                                     | 改组件后                      |
+| `bun run test:unit`         | CLI 与主题；`ui-guards.test.ts` 扫 Port Region 之外的颜色字面量（P7）                                                                                                                                                                             | 每次                          |
+| `bun run test:gallery`      | 原生行为：按键、取值、禁用                                                                                                                                                                                                                        | 改行为后                      |
+| `vp check`                  | 格式、lint、工具面类型                                                                                                                                                                                                                            | 每次                          |
+| `bun run check`             | `vp check --fix` → `catalog --check` → `port:check` → `port:coverage` → demos 与 gallery 类型 → 文档页 → docs（会改文件）                                                                                                                         | 每次                          |
+| `bun run test:install`      | 复制即用：`public/r` 与重新构建的结果逐字节相同；`init` + `add` 进新的 NSH app，逐个 `registry:ui` 条目 `nsh check`，全量一次再 `nsh test`                                                                                                        | 改 CLI、registry 或组件依赖后 |
 
 两种渲染比对的实现细节（CPU 光栅化、定身等待、基线）见 [`toolchain.md`](toolchain.md#渲染比对的两半)。
+
+`port:baseline --update [--only <id,...>]` 只重录这几个 id 的图；不带 `--only` 时全量替换。审计脚本的截图在 `apps/docs/demos/shots-audit/`，`port:render` 清自己的 `shots/` 时不动它。
 
 `port:check` 比较的是格式化后的文本，只要 `vp fmt` 的行为不变就稳定；它不看区域之外，那由 P7 负责。
 

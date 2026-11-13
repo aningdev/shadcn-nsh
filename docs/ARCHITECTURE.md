@@ -28,7 +28,7 @@ _Avoid_: 发布组件 npm 包、旧 registry id 的别名
 - `packages/theme/`：**Theme Source**（两个 JSON 原样拷贝）与 `theme.ts`（脚本填充）；不放组件
 - `packages/ui/<id>.tsx`：一个**组件** = **Port Region** + **Shell**；一个 registry 条目一个文件
 - `packages/ui/lib/`：没有所属控件的上游部分（以上游文件名命名）与多个外壳共用的接线；作为 `registry:lib` 条目分发
-- `apps/docs/demos/`：每个组件的 `<id>.tsx` 与 **Reference Page** `<id>.ref.tsx`、渲染比对用例与基线截图；`kit.tsx` 是演示外框，`stage.tsx` 是演示适配层（`Stage` / `Inspector` / `Split` / `Panel` / `Log` / `Segmented` / `desktop` / `wide`，见 [`port.md`](port.md#演示)），两者都不进 registry
+- `apps/docs/demos/`：每个组件的 `<id>.tsx` 与 **Reference Page** `<id>.ref.tsx`、渲染比对用例与基线截图；`kit.tsx` 是演示外框，`stage.tsx` 是演示适配层（`Stage` / `Inspector` / `Split` / `Panel` / `Log` / `Segmented` / `Chips` / `desktop` / `wide` / `ui()`，见 [`port.md`](port.md#演示)），`photos.ts` 是照片页用的图（上游 `photos.ts`，原样搬运），都不进 registry；`shots/` 是渲染比对的截图，`shots-audit/` 是诊断脚本的，两者都不提交
 - `apps/docs/public/demos/`：`docs:demos` 的打包产物（页面、运行时、wasm），不进仓库；`apps/docs/scripts/build-demos.ts` 打包每个演示，`player-options.ts` 让页面认面板的 `?idiom=` / `?theme=`
 - `apps/docs/src/pages/docs/components/<id>.md`：组件文档页，固定四节
 - `apps/gallery/`：原生行为测试与冒烟页，用同一套 `packages/ui`；不做公开文档，不比截图
@@ -38,7 +38,7 @@ _Avoid_: 发布组件 npm 包、旧 registry id 的别名
 - `scripts/install-test.ts`：`test:install`，从应用一侧验证 Copy-into-app
 - `scripts/failure.ts`：脚本报错的约定，`StepFailure` 带失败的步骤名与 `cause`
 - `scripts/port/`：搬运与核对工具（读 `references/nsh`，见下）
-- `scripts/audit/`：诊断演示的工具（批量打包 / 截图 / 量画布 / 拼对照页），不属于检查流水线；也读 `references/nsh`（官方示例原地打包），截图与包都落在仓库外，见 [`specs/demo-audit.md`](specs/demo-audit.md)
+- `scripts/audit/`：诊断演示的工具（批量打包 / 截图 / 量画布 / 拼对照页），不属于检查流水线；也读 `references/nsh`（官方示例原地打包），截图落在 `apps/docs/demos/shots-audit/`（gitignored，`port:render` 不清它），包落在仓库外，见 [`specs/demo-audit.md`](specs/demo-audit.md)
 - `references/`：只读子模块
 
 ## Layers

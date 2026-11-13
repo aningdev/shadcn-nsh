@@ -43,3 +43,24 @@
 ## 不做
 
 - 改 `nsh` / `nsh/base` / `references`；手改 `// @port` 区域；把演示适配层放进 registry。
+
+## 完成情况
+
+任务 5（`port/pi-demo-gaps`）收尾时逐条核对。证据里的截图都在 `apps/docs/demos/shots/`（渲染比对，390 × 844，`port:render` 产物）或 `apps/docs/demos/shots-audit/`（诊断脚本，390 × 844 phone idiom 与 1024 × 640 desktop idiom），两者都不提交。
+
+| #   | 标准                                                                                   | 结果 | 证据                                                                                                                                                                                                                                                                                                   |
+| --- | -------------------------------------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 1   | demo-audit.md 列全部 52 个组件，各有归类与证据                                         | 通过 | `docs/specs/demo-audit.md` §二 的 52 行表格（每行有官方文件、问题、归类、截图文件名）；截图在 `shots-audit/`                                                                                                                                                                                           |
+| 2   | 390 下不横向溢出 / 不裁切；1024 下有检查器的左右并排                                   | 通过 | `shots-audit/<id>-demo-phone.png` 与 `-demo-desktop.png`（本次重跑 18 个受影响组件，逐张看过）；`port:render` 的 104 张 390 宽截图无横向溢出。桌面并排由 `Split` 的 `sideBySide()`（≥ 900）给出，1024 下每个带检查器的演示都是两列                                                                     |
+| 3   | 有官方示例的组件，演示含官方全部场景与检查器项                                         | 通过 | 任务 4 已移植 42 个；本次补齐演示缺的官方写法：`Chips`（七个 tone 的换行选项）、`ui()` 调色板、照片（`photos.ts`）、`DemoPage` 的 680 宽、radio 的 segmented 段、tooltip 的全宽 trigger、table 的列宽、data-table 的 32 点行高、time-field 的 segment / separator、plot 的 Cell / Dot / Rule / Treemap |
+| 4   | 六个已知问题消失                                                                       | 通过 | `shots/{accordion,collapsible,checkbox,color-picker,data-table,emoji-picker}-pointer-light.png`：accordion 正文与 chevron 在框内、collapsible 内容与 chevron 正常、checkbox 行内、color-picker 是 440 上限的 Stage、data-table 满列、emoji 面板不出框                                                  |
+| 5   | port:check、catalog --check、nsh check、port:render、test:unit、test:install、vp check | 通过 | 见任务 5 的总结：`port:check` 417 ported / 0 pending / 41 excluded；`catalog ok — 52 components`；`nsh check apps/docs/demos` 与 `apps/gallery` 无输出；`port:render` 104/104（连续三次）；`test:unit` 63 pass；`test:install` 52/52；`vp check` 196 files，0 error                                    |
+
+### 任务 5 补的缺口（逐项）
+
+组件外壳：`combobox` / `select` 的 listbox 再导出统一，`cleanable` 的清除按钮套 `clearButtonLook()` 且只在有值时藏 chevron（`date-picker` 同）；`number-input` 的 `pair` 用 `w-6` / `w-9`；`Toggle` 加 `text`；`Radio` 加 `indicator={false}`；`time-field` 取 `calendarLook` 的 segment / separator 与 `TimeSegment`；`plot` 再导出 `nsh/base/plot` 全部；`TableCell` 不再自带宽；`tooltip` 的宿主接受 `style`；`data-table` 回到 base 的 32 点行高。演示适配层：`photos.ts` 搬到 `apps/docs/demos/`，照片页 `images-ready` + `prefetch`，`ui()` 完整导出，`Chips`，`DemoPage` 的 `width`。工具：审计截图移到 `shots-audit/`，`port:render` / `port:baseline` 支持 `--only`，一对截图不同时重拍至多三次。
+
+### 例外与平台限制
+
+- `dialog` 的 `presentation="pageSheet"` 在上游没有对应外观（`el-dialog.tsx:120-152` 自己给 `style`：桌面居中卡片、手机贴底的 panel），本库同样把位置交给演示，不进口 component。
+- `avatar` 的圆形头像裁切在两次页面实例间偶发差 1/255（实测：至多 20 个像素、29/255，约三次一次）。照片与其它部分都稳定（`Image.prefetch` 后 5/6）；`render-cases.ts` 把这一页记为 `byEye` 并打印原因，其余照片页逐字节比对。

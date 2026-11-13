@@ -36,8 +36,12 @@ _Avoid_: 自动跟随上游
 `demos/<id>.ref.tsx`：与 `demos/<id>.tsx` 同一个页面，但按上游的写法把 look 直接展开在 `nsh/base` 控件上。渲染比对要求两者截图相同。
 
 **Demo Adapter（演示适配层）**:
-官方示例写演示时用的那套零件（`Stage`、`Split`、`Inspector`、`Panel`、`Log`、`Segmented`，以及 `desktop` / `wide`）：主体居中、状态与事件放检查器、窄窗口上下堆叠。`apps/docs/demos/stage.tsx`，只供演示，不进组件库，也不进 registry。
+官方示例写演示时用的那套零件（`Stage`、`Split`、`Inspector`、`Panel`、`Log`、`Segmented`、`Chips`，`desktop` / `wide` / `sideBySide`，以及调色板 `ui()`）：主体居中、状态与事件放检查器、窄窗口上下堆叠；`Chips` 是放不下一条 `Segmented` 轨道时的换行版。`apps/docs/demos/stage.tsx`，只供演示，不进组件库，也不进 registry。
 _Avoid_: 组件库的布局 API, 在组件里用 Stage
+
+**Photo Page（照片页）**:
+演示里从网络取图的页面（`apps/docs/demos/photos.ts` 的 `photoUrl`、`avatarPortrait`）。它先 `Image.prefetch` 全部图片再让 `Image` 画，并在全部到位后画出 `images-ready` 标记；`port:render` 用 `network: "live"` 打开它、等这个标记，再截图。少数圆角裁切的边缘在两次运行间会差 1/255，这样的页面在 `render-cases.ts` 写 `byEye` 并说明原因。
+_Avoid_: 截图前 sleep, 让图片页跳过比对
 
 **Composition Facade**:
 把 `nsh/base` 的单根复合控件拆成可组合零件树（`Trigger` / `Content` / `Item` 等角色）。零件家族名跟 `nsh/base`（`MenuTrigger`），不是 shadcn 的 `DropdownMenu*`。Root 只持有开关状态；行为仍在 base。
