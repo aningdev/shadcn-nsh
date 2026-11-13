@@ -23,8 +23,10 @@ Default registry: `https://raw.githubusercontent.com/aningdev/shadcn-nsh/main/pu
 | `build`             | Builds `registry.json` into `public/r` (maintaining this registry)   |
 | `serve`             | Serves `public/r` over HTTP for local testing                        |
 
-Every command takes `-c, --cwd <dir>` (default `.`) and `--registry <url>`, a template with
-`{name}` in it.
+Every command takes `-c, --cwd <dir>` (default: the current directory). `init`, `add`, `list`,
+`view` and `diff` also take `--registry <url>`, a template with `{name}` in it; without it, `add`,
+`list`, `view` and `diff` use the one in `nsh-ui.json`, and `init` uses the public registry.
+`init` also takes `--overwrite` and `-y` (accepted; nothing prompts today).
 
 ## add
 

@@ -23,7 +23,9 @@ bunx shadcn-nsh@latest add button
 | `build`             | 把 `registry.json` 构建到 `public/r`（维护本 registry 用） |
 | `serve`             | 用 HTTP 提供 `public/r`，本地测试用                        |
 
-每个命令都接受 `-c, --cwd <dir>`（默认 `.`）与 `--registry <url>`（含 `{name}` 的模板）。
+每个命令都接受 `-c, --cwd <dir>`（默认：当前目录）。`init`、`add`、`list`、`view`、`diff`
+另接受 `--registry <url>`（含 `{name}` 的模板）；省略时 `add`、`list`、`view`、`diff` 用
+`nsh-ui.json` 里的，`init` 用公共 registry。`init` 还接受 `--overwrite` 与 `-y`（接受，当前不弹确认）。
 
 ## add
 
