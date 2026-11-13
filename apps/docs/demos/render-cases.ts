@@ -65,8 +65,9 @@ export const schemes = ["light", "dark"] as const;
 /**
  * The wall time every render check starts its pages on: noon on 2026-11-12, the day the pointer
  * baseline was recorded. The calendar and the date picker mark "today" from the clock, so a run
- * on another day would draw the mark on another day and differ from the baseline every day; a
- * local noon (not a UTC instant) is the same date in every time zone.
+ * on another day would draw the mark on another day and differ from the baseline every day. It is
+ * a local noon, and the page reads "today" in the same host's zone, so the date holds on any
+ * machine; noon keeps it clear of a DST shift at midnight.
  */
 export const clock = { time: new Date(2026, 10, 12, 12, 0, 0) } as const;
 

@@ -32,6 +32,9 @@ _Avoid_: 发布组件 npm 包、旧 registry id 的别名
 - `apps/gallery/`：原生行为测试与冒烟页，用同一套 `packages/ui`；不做公开文档，不比截图
 - `packages/cli/`：`shadcn-nsh` CLI（`init`、`add`、`list`、`view`、`diff`、`build`、`serve`）
 - `scripts/catalog.ts`：**Catalog** 模块，脚本读写 `registry.json` 与取组件集合的唯一入口（`addComponent` 写入新条目）；生成 `apps/docs/demos/catalog.generated.ts` 供 NSH 运行时使用（不手改）
+- `scripts/registry-build.ts`：`registry:build` 与 `test:install` 共用的构建（CLI `build` 加格式化）
+- `scripts/install-test.ts`：`test:install`，从应用一侧验证 Copy-into-app
+- `scripts/failure.ts`：脚本报错的约定，`StepFailure` 带失败的步骤名与 `cause`
 - `scripts/port/`：搬运与核对工具；唯一读 `references/nsh` 的代码
 - `references/`：只读子模块
 
@@ -62,6 +65,8 @@ flowchart TD
   site -. 嵌入打包产物 .-> demos
   ui & lib & theme -. registry:build .-> registry
   cli -. 读取 .-> registry
+  tools["scripts/catalog、install-test"] -- 当库 import --> cli
+  tools -. 读写 registry.json .-> registry
 ```
 
 - `packages/ui/lib` 不 import `packages/ui/<id>`；组件之间可以 import（`./button`），依赖写进该条目的 `registryDependencies`
@@ -69,7 +74,9 @@ flowchart TD
 - `packages/*` 不 import `apps/*`、`scripts/*` 或 `references/*`；运行时代码只认 `@shadcn-nsh/theme`、`nsh`、`nsh/base` 与相对路径
 - 只有 `scripts/port` 读 `references/nsh`；`apps/docs` 的构建不需要子模块
 - 组件集合只从 `scripts/catalog.ts`（脚本）或 `catalog.generated.ts`（NSH 运行时）取；不自己读 `registry.json` 过滤，也不 `readdir` 演示或文档目录来推导
-- `scripts/*` 可以把 `packages/cli/src/*` 当库 import（构建、serve）：它是工具，不是应用代码；CLI 本身仍只经 Registry 拿组件
+- `scripts/*` 可以把 `packages/cli/src/*` 当库 import（构建、serve、registry 形状校验）：它是工具，不是应用代码；CLI 本身仍只经 Registry 拿组件
+- registry JSON 的形状只在 `packages/cli/src/utils/registry-schema.ts` 校验；读到的 JSON 经它变成类型，不用 `as` 断言
+- `scripts/*` 可以 import `apps/docs/demos/render-cases.ts`（读渲染用例与特例），不 import `apps/docs` 的其他代码
 - 每个组件的特例（渲染前的 steps、`selfReference`）只写在 `render-cases.ts`，按 id 覆盖；`packages/ui/index.ts` 手写，由检查保证它导出每个组件
 
 ## Rules
