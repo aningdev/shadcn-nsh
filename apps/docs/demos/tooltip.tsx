@@ -105,14 +105,10 @@ function App() {
           />
         </View>
         {/* The `tooltip` prop of any element: a `Tooltip` with the app's look. */}
-        <View style={{ flexDirection: "row", justifyContent: "center" }}>
-          <Tooltip>
+        <View style={{ flexDirection: "row", gap: 8 }}>
+          <Tooltip style={wide() ? undefined : { flex: 1 }}>
             <TooltipTrigger>
-              <Button
-                variant="secondary"
-                onPress={() => pinned.set(!pinned())}
-                style={{ justifyContent: "center" }}
-              >
+              <Button variant="secondary" onPress={() => pinned.set(!pinned())}>
                 {wide()
                   ? pinned()
                     ? "Unpin the tooltips"

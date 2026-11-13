@@ -63,6 +63,12 @@ export type TooltipProps = {
   delay?: number;
   /** No tooltip: it neither shows nor asks to. */
   disabled?: boolean;
+  /**
+   * The view the hint hangs on, around the trigger: as wide as the trigger itself, so a row of
+   * such hosts stays put. Give it a `flex`, an `alignSelf` or a width to place a trigger that
+   * fills or centers its row instead (`{ flex: 1 }` for a button that spans a phone's page).
+   */
+  style?: StyleProp<ViewStyle>;
   children?: JSX.Element;
   onOpenChange?: (event: { open: boolean; reason: OpenChangeReason }) => void;
   onOpen?: () => void;
@@ -100,6 +106,7 @@ type TooltipContextValue = OpenState & {
   margin?: number;
   delay?: number;
   disabled?: boolean;
+  style?: StyleProp<ViewStyle>;
   onOpen?: () => void;
   onClose?: () => void;
 };
@@ -156,6 +163,9 @@ export function Tooltip(props: TooltipProps) {
         get disabled() {
           return props.disabled;
         },
+        get style() {
+          return props.style;
+        },
         get onOpen() {
           return props.onOpen;
         },
@@ -164,7 +174,7 @@ export function Tooltip(props: TooltipProps) {
         },
       }}
     >
-      <View style={{ gap: 0 }}>
+      <View style={[{ gap: 0 }, props.style ?? null]}>
         {props.children}
         {() => <TooltipAnchor />}
       </View>
@@ -209,12 +219,7 @@ function TooltipAnchor() {
   const content = ctx.content.get() as (() => TooltipContentProps) | undefined;
   if (!content) return build() as JSX.Element;
   return (
-    <View
-      tooltip={<AnchorBubble content={content()} ctx={ctx} />}
-      style={{ alignSelf: "flex-start" }}
-    >
-      {build() as JSX.Element}
-    </View>
+    <View tooltip={<AnchorBubble content={content()} ctx={ctx} />}>{build() as JSX.Element}</View>
   );
 }
 
