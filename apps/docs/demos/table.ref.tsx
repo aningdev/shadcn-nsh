@@ -32,8 +32,9 @@ const invoices = [
 function Cell(props: { head?: boolean; end?: boolean; children: string }) {
   const className = `${dataTableClasses.cell} ${props.head ? "py-2" : "flex-1 py-2"} flex-1`;
   const Part = props.head ? TableHead : TableCell;
+  // The figures take a little more of the row than the names, as on the component page.
   return (
-    <Part class={className}>
+    <Part class={className} style={{ flexGrow: props.end ? 1.3 : 1 }}>
       <Text
         class={props.head ? "text-muted-foreground font-medium" : "text-foreground"}
         style={{

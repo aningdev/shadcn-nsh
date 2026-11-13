@@ -30,8 +30,9 @@ const invoices = [
 /** A cell's text: the header's quiet label, the body's, and a figure at the trailing edge. */
 function Cell(props: { head?: boolean; end?: boolean; children: string }) {
   const Part = props.head ? TableHead : TableCell;
+  // The figures take a little more of the row than the names: a phone's card still holds them.
   return (
-    <Part class="flex-1">
+    <Part class="flex-1" style={{ flexGrow: props.end ? 1.3 : 1 }}>
       <Text
         class={props.head ? "text-muted-foreground font-medium" : "text-foreground"}
         style={{
