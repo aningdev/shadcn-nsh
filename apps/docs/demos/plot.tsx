@@ -6,18 +6,21 @@
 import { alpha, colors } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
-import { Cell, Dot, Rule, Treemap } from "nsh/base/plot";
 
 import { controlSize, sectionSurface } from "@/packages/ui/lib/surface";
 import {
   Arc,
   Area,
   Bar,
+  Cell,
+  Dot,
   Grid,
   Line,
   Pie,
   Plot,
   PlotAxis,
+  Rule,
+  Treemap,
   categoryColors,
   plotAxisText,
   plotBaseline,
