@@ -1,19 +1,20 @@
 # 工具链与 TypeScript 分层
 
-改 tsconfig、types host、类型检查链路，或升级 NSH CLI 时读这里。
+改 tsconfig、types host、类型检查链路、渲染比对，或升级 NSH CLI 时读这里。每个检查判定什么见 [`port.md`](port.md#检查)。
 
 ## NSH CLI 与上游基线
 
-本仓**安装** NSH CLI，从不编译 NSH。本地和 CI 是同一条命令：
+本仓**安装** NSH CLI，从不编译 NSH。装的版本是 `port-map.json` 的 `upstream.cli`，本地和 CI 是同一条命令（`bun run nsh:bootstrap` 会打印它）：
 
 ```sh
-curl -fsSL https://nsh.dev/install.sh | sh -s -- --nightly
+curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=v0.5.0 sh   # upstream.cli 是 release tag 时
+curl -fsSL https://nsh.dev/install.sh | sh -s -- --nightly       # upstream.cli 是 nightly 时
 export PATH="$HOME/.local/bin:$PATH"
 ```
 
-`--nightly` 把上游 `main` 的最新 nightly 装进 `~/.nsh`（CLI 与运行时同在一棵目录里，`nsh` 自己找得到），并链到 `~/.local/bin/nsh`。
+CLI 与运行时同装进 `~/.nsh`，并链到 `~/.local/bin/nsh`。
 
-**基线是一个提交**：装到的 nightly 打印的那个。三处必须等于它，缺一不可：
+**基线是一个提交**：装到的 CLI 打印的那个。以下几处必须与它一致：
 
 | 哪里       | 怎么读                                                                                       |
 | ---------- | -------------------------------------------------------------------------------------------- |
@@ -22,15 +23,11 @@ export PATH="$HOME/.local/bin:$PATH"
 | 安装的 CLI | `port-map.json` 的 `upstream.cli`：构建出该提交的 release tag（当前 `v0.5.0`），或 `nightly` |
 | 子模块     | `git -C references/nsh rev-parse HEAD`                                                       |
 
-**nightly 动了，项目跟着动**：`bun run port:bump`（不带参数时用它打印的提交）移动清单与子模块，再 `port:vendor`，一个 commit。`bun run port:check` 在两者不同时只发 warning（新旧方向一样），提示的正是它；`bash scripts/nsh-bootstrap.sh` 在同一情况下停下，给出同样的提示。
+**换了 CLI，项目跟着动**：`bun run port:bump`（不带参数时用它打印的提交）移动清单与子模块，再 `port:vendor`，一个 commit。`bun run port:check` 在两者不同时只发 warning（新旧方向一样），提示的正是它；`bash scripts/nsh-bootstrap.sh` 在同一情况下停下，给出同样的提示。
 
 **为什么不装更旧的**：上游的 look 用的是它自己那个提交运行时的能力；CLI 早于基线时，搬入的代码可能类型通过而表现不同，或者用到 CLI 还没有的属性（外壳用的 `focusVisibleStyle` 就是这样）。所以基线与 CLI 都不后退。
 
-`install.sh` 装不了任意提交：`--nightly` 是 nightly 频道，`NSH_VERSION=vX.Y.Z` 是一个 release。nightly 落后于基线时（发布还没跟上 `main`），装一个不早于基线的 release —— 仍是安装，不是编译：
-
-```sh
-curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=v0.5.0 sh
-```
+`install.sh` 装不了任意提交：`--nightly` 是 nightly 频道，`NSH_VERSION=vX.Y.Z` 是一个 release。选一个不早于想要的基线的，装好后 `port:bump`。
 
 ### 运行时
 
@@ -50,17 +47,13 @@ curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=v0.5.0 sh
 
 缓存的 key 是 `nsh-<channel>-<os>-<UTC 日期>`：nightly 每天重建，于是每天第一次下载，当天其余运行直接恢复。
 
-### 决定
-
-- 2026-11-12：项目安装 NSH nightly，从不编译 NSH（用户决定）。
-
 ## 上游同步
 
-上游一周内就能加完一整个目录（`look/` 就是这样来的），所以基线**不自动跟随 `main`**：它跟安装的 nightly 走，移动是显式操作。
+上游一周内就能加完一整个目录（`look/` 就是这样来的），所以基线**不自动跟随 `main`**：它跟安装的 CLI 走，移动是显式操作。
 
 ### `bun run port:bump [<提交>]`
 
-省略提交时用 `nsh --version` 打印的那个：先装 nightly，再把基线移到它（顺序见上一节）。按顺序做：
+省略提交时用 `nsh --version` 打印的那个：先装 CLI，再把基线移到它（顺序见上一节）。按顺序做：
 
 1. fetch，把 `references/nsh` checkout 到该提交（子模块有本地改动时拒绝）；
 2. 把 `port-map.json` 的 `upstream.commit` 改成它（只替换那一个哈希，不动文件格式）； 装的是 release 时，`upstream.cli` 一并改成它的 tag；
@@ -98,23 +91,7 @@ curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=v0.5.0 sh
 
 TypeScript 为 **7.1**（Astro content mapper 所需）。它不提供 JS 解析 API，`scripts/port` 用 `oxc-parser` 解析上游文件。
 
-## 检查的组成
-
-| 命令                        | 范围                                                                                                                                |
-| --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- |
-| `bun run port:check`        | 清单完整；`// @port` 区域与上游一致；安装的 CLI 与基线不同时只是 warning                                                            |
-| `bun run port:render`       | `apps/docs/demos/render.test.tsx`：指针，亮 / 暗；截图在 `apps/docs/demos/shots/`；全量跑完与 `baseline/` 逐字节比较（过滤时跳过）  |
-| `bun run port:render:touch` | `apps/docs/demos/render-touch.test.tsx`：iOS 模拟器上的触屏，亮 / 暗；同一 `shots/`；之后跑外观切换检查                             |
-| `bun run port:coverage`     | 组件自己声明的 `variant` / `size` / `kind` / `tone` 取值、以及导入的共享 `Tone` 的七个取值都出现在 demo；`selfReference` 与外壳一致 |
-| `bun run port:baseline`     | 指针截图与 `apps/docs/demos/baseline/` 的比较；`--update` 接受最新截图                                                              |
-| `bun run port:sheet`        | 把 `shots/*.png` 拼成 `shots/index.html`，一行一个组件，成对并排并标记差异                                                          |
-| `nsh check apps/docs/demos` | 移植 UI + 演示的类型                                                                                                                |
-| `nsh check apps/gallery`    | Gallery 行为夹具与冒烟页                                                                                                            |
-| `vp check`                  | 全仓格式、lint、工具面类型                                                                                                          |
-| `bun run check`             | `vp check --fix` → `port:check` → `port:coverage` → demos → gallery → docs（见根 `package.json`）                                   |
-| `bun run registry:build`    | 根据 `registry.json` 生成 `public/r`                                                                                                |
-
-### 渲染比对的两半
+## 渲染比对的两半
 
 `port:render` 用无头浏览器（Chrome / Edge / Chromium），它始终只量到精细指针：在 `--target web` 上强制不了触屏，所以这一半只跑指针。触屏那一半 `port:render:touch` 用 `nsh test render-touch.test.tsx --target ios`，在 iOS 模拟器上打开同一批演示与参照页（`open(…, { platform: "ios" })`），亮 / 暗各一组，截图落在同一个 `shots/`。
 

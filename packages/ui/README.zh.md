@@ -4,7 +4,7 @@
 
 基于 [`nsh/base`](https://nsh.dev/elements) 的 copy-into-app 组件：行为与无障碍在 base；外观来自上游 gallery UI 的 `// @port` 区域与 [`@shadcn-nsh/theme`](../theme)。
 
-- 规范与移植流程：[`docs/port-plan.md`](../../docs/port-plan.md)、[`AGENTS.md`](../../AGENTS.md)
+- 规范与移植流程：[`docs/ARCHITECTURE.md`](../../docs/ARCHITECTURE.md)、[`docs/port.md`](../../docs/port.md)、[`AGENTS.md`](../../AGENTS.md)
 - 路由：[`port-map.json`](../../port-map.json)
 - 演示 / 渲染比对：[`apps/docs/demos`](../../apps/docs/demos)
 - 文档站：[`apps/docs`](../../apps/docs)

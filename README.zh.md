@@ -4,7 +4,7 @@
 
 为 [Native Shell (NSH)](https://github.com/longbridge/nsh) 构建的 styled UI 体系：在 `nsh/base` 之上提供可复制进应用的组件与分发体验，模式对齐 [shadcn/ui](https://github.com/shadcn-ui/ui)。
 
-Agent 与贡献约定见 [`AGENTS.md`](AGENTS.md)。词汇见 [`GLOSSARY.md`](GLOSSARY.md)，规则与决策见 [`packages/ui/README.zh.md`](packages/ui/README.zh.md)（组件）和 [`packages/theme/README.zh.md`](packages/theme/README.zh.md)（主题、动效）。参考源码以 git submodule 挂在 [`references/`](references/)。
+Agent 与贡献约定见 [`AGENTS.md`](AGENTS.md)。词汇见 [`docs/GLOSSARY.md`](docs/GLOSSARY.md)，架构见 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)，规则与决策见 [`packages/ui/README.zh.md`](packages/ui/README.zh.md)（组件）和 [`packages/theme/README.zh.md`](packages/theme/README.zh.md)（主题、动效）。参考源码以 git submodule 挂在 [`references/`](references/)。
 
 ## 前置
 
@@ -56,7 +56,7 @@ bun run registry:build
 
 改 `packages/ui` 或 `packages/theme` 后务必 `bun run registry:build`，再提交 `public/r`。
 
-移植方案、规范与检查：[`docs/port-plan.md`](docs/port-plan.md)。
+移植流程、规范与检查：[`docs/port.md`](docs/port.md)、[`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)。
 
 ## 布局
 

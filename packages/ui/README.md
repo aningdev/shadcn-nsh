@@ -4,7 +4,7 @@
 
 Styled copy-into-app components on [`nsh/base`](https://nsh.dev/elements): behavior and a11y stay in base; look comes from the upstream gallery UI via `// @port` regions and [`@shadcn-nsh/theme`](../theme).
 
-- Rules and port flow: [`docs/port-plan.md`](../../docs/port-plan.md), [`AGENTS.md`](../../AGENTS.md)
+- Rules and port flow: [`docs/ARCHITECTURE.md`](../../docs/ARCHITECTURE.md), [`docs/port.md`](../../docs/port.md), [`AGENTS.md`](../../AGENTS.md)
 - Routing: [`port-map.json`](../../port-map.json)
 - Demos / render check: [`apps/docs/demos`](../../apps/docs/demos)
 - Docs: [`apps/docs`](../../apps/docs)

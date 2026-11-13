@@ -1,6 +1,6 @@
 # shadcn-nsh
 
-把 NSH 官方示例共享的 UI 层整理成 shadcn 模式的、copy-into-app 的组件库。规则与流程见 [`docs/port-plan.md`](docs/port-plan.md)。
+把 NSH 官方示例共享的 UI 层整理成 shadcn 模式的、copy-into-app 的组件库。约定见 [`ARCHITECTURE.md`](ARCHITECTURE.md)，流程见 [`port.md`](port.md)。
 
 ## Language
 

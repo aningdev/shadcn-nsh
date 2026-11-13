@@ -46,7 +46,7 @@ jobs:
           channel: ${{ vars.NSH_CHANNEL }}
 
       # The port's gate: map complete, `// @port` regions equal to upstream, the
-      # installed CLI against the baseline (docs/port-plan.md P1–P3).
+      # installed CLI against the baseline (docs/ARCHITECTURE.md P1–P3).
       - name: Port check
         run: bun run port:check
 
