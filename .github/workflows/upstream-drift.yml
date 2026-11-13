@@ -28,9 +28,10 @@ jobs:
           # Nothing here writes to the repository.
           persist-credentials: false
 
-      # The baseline moves by hand (`bun run port:bump`); this only says what has
-      # happened upstream since, so the bump is planned, not discovered.
-      - name: Compare upstream main with the baseline
+      # The baseline moves by hand (`bun run port:bump`) and only to a release: this
+      # says what the newest release changed since, so the bump is planned, not
+      # discovered. Commits on `main` that no release carries yet are not drift.
+      - name: Compare the latest upstream release with the baseline
         id: drift
         run: |
           set -euo pipefail
@@ -39,14 +40,17 @@ jobs:
           # Paths inside references/nsh, for its git.
           dir="${upstream#references/nsh/}"
 
-          git -C references/nsh fetch --quiet origin main
-          main="$(git -C references/nsh rev-parse origin/main)"
+          # The latest release: `gh release view` skips drafts and pre-releases (nightly).
+          tag="$(gh release view --repo longbridge/nsh --json tagName --jq .tagName)"
+          git -C references/nsh fetch --quiet origin tag "$tag"
+          main="$(git -C references/nsh rev-parse "$tag^{commit}")"
           if ! git -C references/nsh cat-file -e "$baseline^{commit}" 2>/dev/null; then
             git -C references/nsh fetch --quiet origin "$baseline"
           fi
 
           echo "baseline=$baseline" >> "$GITHUB_OUTPUT"
           echo "main=$main" >> "$GITHUB_OUTPUT"
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
           echo "dir=$dir" >> "$GITHUB_OUTPUT"
 
           changed="$(git -C references/nsh diff --no-renames --name-status "$baseline..$main" -- "$dir")"
@@ -55,7 +59,7 @@ jobs:
           echo "ahead=$ahead" >> "$GITHUB_OUTPUT"
           printf '%s\n' "$changed" > "$RUNNER_TEMP/changed.txt"
           if [ -z "$changed" ]; then
-            echo "No drift: upstream main has not touched $dir since ${baseline:0:7}"
+            echo "No drift: $tag has not touched $dir since ${baseline:0:7}"
             exit 0
           fi
           printf 'Upstream touched %s file(s) in %s since %s\n' \
@@ -67,6 +71,7 @@ jobs:
           set -euo pipefail
           baseline="${{ steps.drift.outputs.baseline }}"
           main="${{ steps.drift.outputs.main }}"
+          tag="${{ steps.drift.outputs.tag }}"
           dir="${{ steps.drift.outputs.dir }}"
           body="$RUNNER_TEMP/drift.md"
 
@@ -74,8 +79,8 @@ jobs:
             # One issue, updated in place: it stays the same title when the baseline moves.
             echo '<!-- upstream-drift: written by .github/workflows/upstream-drift.yml -->'
             echo
-            printf 'The baseline is `%s` (`%s`); upstream `main` is `%s` (`%s`), %s commits ahead.\n\n' \
-              "${baseline:0:7}" "$baseline" "${main:0:7}" "$main" "${{ steps.drift.outputs.ahead }}"
+            printf 'The baseline is `%s` (`%s`); the latest upstream release `%s` is `%s` (`%s`), %s commits ahead.\n\n' \
+              "${baseline:0:7}" "$baseline" "$tag" "${main:0:7}" "$main" "${{ steps.drift.outputs.ahead }}"
             printf 'Files changed in `%s` since the baseline (%s):\n\n' "$dir" "${{ steps.drift.outputs.count }}"
             echo '| Status | File |'
             echo '| ------ | ---- |'
@@ -89,8 +94,8 @@ jobs:
             printf '```\n%s\n```\n\n' "$(git -C references/nsh diff --shortstat "$baseline..$main" -- "$dir")"
             echo 'Next steps ([`docs/toolchain.md`](https://github.com/aningdev/shadcn-nsh/blob/main/docs/toolchain.md)):'
             echo
-            printf '1. Install a CLI that prints a commit at or after `%s`: `curl -fsSL https://nsh.dev/install.sh | sh -s -- --nightly` (never build one; `NSH_VERSION=vX.Y.Z` installs a release).\n' "${main:0:7}"
-            printf '2. `bun run port:bump %s` — checks the submodule out there, reports what changed in `port-map.json`'"'"'s terms, refills the regions and type checks the demos.\n' "$main"
+            printf '1. Install the release: `curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=%s sh` (never build one).\n' "$tag"
+            printf '2. `bun run port:bump %s` — checks the submodule out at the commit `nsh --version` prints, sets `upstream.cli` to the tag, reports what changed in `port-map.json`'"'"'s terms, refills the regions and type checks the demos.\n' "$main"
             echo '3. Review the diff, look at the four screenshots (`bun run port:render`), commit the submodule pointer, `port-map.json` and the regions together.'
             echo
             printf '_Checked %s by [upstream-drift](https://github.com/aningdev/shadcn-nsh/actions/workflows/upstream-drift.yml)._\n' "$(date -u +%Y-%m-%d)"
@@ -122,8 +127,8 @@ jobs:
             exit 0
           fi
           note="$RUNNER_TEMP/no-drift.md"
-          printf 'No drift as of %s: upstream `main` has not touched `%s` since the baseline `%s`.\n' \
-            "$(date -u +%Y-%m-%d)" "${{ steps.drift.outputs.dir }}" "${{ steps.drift.outputs.baseline }}" > "$note"
+          printf 'No drift as of %s: the latest release `%s` has not touched `%s` since the baseline `%s`.\n' \
+            "$(date -u +%Y-%m-%d)" "${{ steps.drift.outputs.tag }}" "${{ steps.drift.outputs.dir }}" "${{ steps.drift.outputs.baseline }}" > "$note"
           gh issue comment "$number" --body-file "$note"
           gh issue close "$number"
           printf 'Closed issue #%s\n' "$number"

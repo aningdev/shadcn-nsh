@@ -70,9 +70,9 @@ CLI 与运行时同装进 `~/.nsh`，并链到 `~/.local/bin/nsh`。
 
 ### 漂移报告
 
-`.github/workflows/upstream-drift.yml` 每周一比较上游 `main` 与基线，把 `examples/nsh-gallery-ui` 里变动的文件列成一个 issue（标题固定，就地更新；基线追上后自动评论并关闭）。它只读仓库、不 push，权限只有 issue 的写。
+`.github/workflows/upstream-drift.yml` 每周一比较上游**最新 release**（不含 nightly 等预发布）与基线；`main` 上还没进 release 的提交不算漂移。它把 `examples/nsh-gallery-ui` 里变动的文件列成一个 issue（标题固定，就地更新；基线追上后自动评论并关闭）。它只读仓库、不 push，权限只有 issue 的写。
 
-看到漂移后的顺序：装一个 `nsh --version` 不早于该提交的 CLI（nightly 到了就用 `--nightly`，否则一个 release）→ `bun run port:bump <提交>` → 按它列的变化补清单 → `bun run port:render`，四张截图人眼看 → 子模块指针、清单、区域一个 commit。PR 上的 `check` 工作流会再验一遍。
+看到漂移后的顺序：用 `NSH_VERSION=<tag>` 装 issue 里的 release → `bun run port:bump`（不带参数，用 `nsh --version` 打印的提交，并把 `upstream.cli` 改成该 tag） → 按它列的变化补清单 → `bun run port:render`，四张截图人眼看 → 子模块指针、清单、区域一个 commit。PR 上的 `check` 工作流会再验一遍。
 
 ## TypeScript 分层
 
