@@ -4,6 +4,25 @@ import path from "node:path";
 
 import { Command } from "commander";
 
+/**
+ * The file `pathname` names under `root`, or null when it leaves the directory. `root` itself is
+ * not a file. A sibling that shares the prefix (`public/r2` for `public/r`) is outside: comparing
+ * strings would let it through, `path.relative` does not.
+ */
+export function fileUnder(root: string, pathname: string): string | null {
+  const file = path.join(root, pathname);
+  const relative = path.relative(root, file);
+  if (
+    relative === "" ||
+    relative === ".." ||
+    relative.startsWith(`..${path.sep}`) ||
+    path.isAbsolute(relative)
+  ) {
+    return null;
+  }
+  return file;
+}
+
 /** A registry being served: the base URL, the bound port, and a way to stop it. */
 export type RegistryServer = {
   /** `http://127.0.0.1:<port>`: an item is at `<url>/<name>.json`, the catalog at `<url>/index.json`. */
@@ -34,8 +53,8 @@ export async function startRegistryServer(opts: {
       if (pathname.startsWith("/r/")) pathname = pathname.slice(2); // "/r/x" → "/x"
       if (!pathname.startsWith("/")) pathname = `/${pathname}`;
 
-      const filePath = path.join(root, pathname);
-      if (!filePath.startsWith(root)) {
+      const filePath = fileUnder(root, pathname);
+      if (filePath === null) {
         res.writeHead(403, { "content-type": "text/plain; charset=utf-8" });
         res.end("Forbidden");
         return;
