@@ -62,48 +62,53 @@ function App() {
           : "Long press a word, then drag the handles across the texts."}
       </Text>
 
-      <DemoCard>
-        <TextView
-          markdown={text()}
-          options={{ streaming: streaming() }}
-          streamingCaret={streaming() ? <View class={textViewCaretClass} /> : undefined}
-          selectable
-        />
-        <View style={{ flexDirection: "row" }}>
-          <Button variant="secondary" disabled={streaming()} onPress={play}>
-            {streaming() ? "Streaming…" : "Stream it again"}
-          </Button>
-        </View>
-      </DemoCard>
-
-      <DemoCard>
-        <View selectable style={{ gap: 10 }}>
-          <Text style={{ fontSize: 17, fontWeight: "600", color: colors.text }}>Release notes</Text>
-          <Text style={{ color: colors.text, lineHeight: 22 }}>
-            Version 2.4 moves the app to offline sync.
-          </Text>
-          <TextView markdown={NOTES} />
-          <View style={{ flexDirection: "row", gap: 8 }}>
-            <Text style={{ userSelect: "none", color: colors.faint }}>
-              Updated (userSelect none)
-            </Text>
-            <Text style={{ color: colors.text }}>October 21</Text>
+      {/* The website centers a document at 680 points: so does this page. */}
+      <View style={{ width: "100%", maxWidth: 680, alignSelf: "center", gap: 14 }}>
+        <DemoCard>
+          <TextView
+            markdown={text()}
+            options={{ streaming: streaming() }}
+            streamingCaret={streaming() ? <View class={textViewCaretClass} /> : undefined}
+            selectable
+          />
+          <View style={{ flexDirection: "row" }}>
+            <Button variant="secondary" disabled={streaming()} onPress={play}>
+              {streaming() ? "Streaming…" : "Stream it again"}
+            </Button>
           </View>
-        </View>
-        <Text style={{ fontSize: 12, color: colors.muted }}>
-          Paste what you copied: the label marked userSelect none stays out of it.
-        </Text>
-        <Input
-          multiline
-          value={pasted()}
-          onChange={({ value }) => pasted.set(value)}
-          placeholder="Paste here"
-          style={{ height: 110 }}
-        />
-        <Text style={{ fontSize: 12, color: colors.muted, fontVariant: ["tabular-nums"] }}>
-          {`${pasted().length} characters, ${pasted() ? pasted().split("\n").length : 0} lines`}
-        </Text>
-      </DemoCard>
+        </DemoCard>
+
+        <DemoCard>
+          <View selectable style={{ gap: 10 }}>
+            <Text style={{ fontSize: 17, fontWeight: "600", color: colors.text }}>
+              Release notes
+            </Text>
+            <Text style={{ color: colors.text, lineHeight: 22 }}>
+              Version 2.4 moves the app to offline sync.
+            </Text>
+            <TextView markdown={NOTES} />
+            <View style={{ flexDirection: "row", gap: 8 }}>
+              <Text style={{ userSelect: "none", color: colors.faint }}>
+                Updated (userSelect none)
+              </Text>
+              <Text style={{ color: colors.text }}>October 21</Text>
+            </View>
+          </View>
+          <Text style={{ fontSize: 12, color: colors.muted }}>
+            Paste what you copied: the label marked userSelect none stays out of it.
+          </Text>
+          <Input
+            multiline
+            value={pasted()}
+            onChange={({ value }) => pasted.set(value)}
+            placeholder="Paste here"
+            style={{ height: 110 }}
+          />
+          <Text style={{ fontSize: 12, color: colors.muted, fontVariant: ["tabular-nums"] }}>
+            {`${pasted().length} characters, ${pasted() ? pasted().split("\n").length : 0} lines`}
+          </Text>
+        </DemoCard>
+      </View>
     </DemoPage>
   );
 }
