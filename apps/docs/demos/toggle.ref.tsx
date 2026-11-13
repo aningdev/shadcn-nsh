@@ -142,7 +142,7 @@ function App() {
             starred.set(pressed);
             log(`Star: ${pressed}`);
           }}
-          {...toggleLook({ style: { alignSelf: "flex-start" } })}
+          {...toggleLook({ text: true, style: { alignSelf: "flex-start" } })}
           pressedStyle={{
             backgroundColor: alpha(colors.accent, 0.12),
             borderColor: alpha(colors.accent, 0.3),

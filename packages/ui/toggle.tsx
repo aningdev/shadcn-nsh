@@ -180,6 +180,12 @@ export type ToggleProps = Omit<BaseToggleProps, "children"> & {
   variant?: "ghost" | "outline";
   /** Default `regular`. */
   size?: ToggleSize;
+  /**
+   * It carries a text label, beside its icon or alone: padded at its sides rather than a
+   * square (`toggleLook`'s `text`). A string child says so; an icon and a label drawn as
+   * children say it here.
+   */
+  text?: boolean;
   /** A string is the label, in `toggleLabel`'s type; anything else is drawn as given. */
   children?: string | JSX.Element;
 };
@@ -189,6 +195,7 @@ export function Toggle(props: ToggleProps) {
   const [, rest] = split(props, [
     "variant",
     "size",
+    "text",
     "children",
     "style",
     "hoverStyle",
@@ -201,7 +208,7 @@ export function Toggle(props: ToggleProps) {
   const options: ToggleLookOptions = {
     size: () => props.size,
     variant: props.variant,
-    text: typeof props.children === "string",
+    text: props.text ?? typeof props.children === "string",
     disabled: () => props.disabled,
   };
   const look = toggleLook(options);

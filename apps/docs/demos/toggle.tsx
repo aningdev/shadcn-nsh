@@ -138,6 +138,7 @@ function App() {
         {/* A toggle on its own, with a label: the toggles' look, a favorite's accent tint in
             place of the on fill (`pressedStyle`). */}
         <Toggle
+          text
           pressed={starred()}
           onChange={({ pressed }) => {
             starred.set(pressed);
