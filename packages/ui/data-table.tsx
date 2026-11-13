@@ -2,14 +2,12 @@
 // The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
 // Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
 import { terminal } from "@shadcn-nsh/theme";
-import { platform, split } from "nsh";
+import { split } from "nsh";
 import {
   DataTable as BaseDataTable,
   type DataTableClasses,
   type DataTableProps as BaseDataTableProps,
 } from "nsh/base";
-
-import { controlSize } from "./lib/surface";
 
 // @port data-table.ts
 /** Extra room for this UI layer's cell padding and title/button gap. */
@@ -74,19 +72,12 @@ function mergeClasses(
  */
 export type DataTableProps<T = unknown> = BaseDataTableProps<T>;
 
-/** A table that scrolls both ways over any number of rows and columns. */
+/**
+ * A table that scrolls both ways over any number of rows and columns. A row is 32 points in both
+ * idioms, as upstream's data table is (its `size.rowSm` does not reach the table): nine rows of a
+ * phone's fit where six finger-sized ones would.
+ */
 export function DataTable<T>(props: DataTableProps<T>) {
-  const [, rest] = split(props, ["classes", "rowHeight", "headerHeight"]);
-  const touch = !platform.desktop;
-  const rowTarget = controlSize.row;
-  return (
-    <BaseDataTable
-      {...rest}
-      rowHeight={props.rowHeight ?? (touch ? rowTarget : undefined)}
-      headerHeight={
-        props.headerHeight !== undefined ? props.headerHeight : touch ? rowTarget : undefined
-      }
-      classes={mergeClasses(dataTableClasses, props.classes)}
-    />
-  );
+  const [, rest] = split(props, ["classes"]);
+  return <BaseDataTable {...rest} classes={mergeClasses(dataTableClasses, props.classes)} />;
 }

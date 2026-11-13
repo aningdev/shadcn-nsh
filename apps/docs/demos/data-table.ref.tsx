@@ -1,16 +1,14 @@
 // The reference of `data-table.tsx`: `dataTableClasses` on `nsh/base`'s DataTable, the way the
 // official example (`references/nsh/website/demos/el-data-table.tsx`) writes it. It differs from
-// the component page only in what it names: the classes, and the row heights the shell adds on a
-// touch screen.
+// the component page only in what it names: the classes.
 import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 import { DataTable, type DataTableColumn, type DataTableSort } from "nsh/base";
 
 import { dataTableClasses, dataTableFitPadding } from "@/packages/ui/data-table";
-import { controlSize } from "@/packages/ui/lib/surface";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Segmented, Split, wide } from "./stage";
+import { Log, Segmented, Split, wide } from "./stage";
 
 const NAMES = ["Ada", "Alan", "Grace", "Linus", "Margaret", "Dennis", "Barbara", "Ken"];
 const CITIES = ["Oslo", "Lima", "Kyoto", "Cairo", "Perth", "Quito", "Turin", "Hanoi"];
@@ -39,8 +37,6 @@ function App() {
   const rows = signal<Person[]>(people);
   const events = signal<string[]>([]);
   const log = (line: string) => events.set([line, ...events()].slice(0, 4));
-  // A finger gets a 44-point row, as the component's shell gives it.
-  const row = () => (desktop ? undefined : controlSize.row);
 
   const sortBy = (next: DataTableSort | undefined) => {
     sort.set(next);
@@ -79,8 +75,6 @@ function App() {
             rowHeader={false}
             stripe
             cellSelectable={mode() === "cell"}
-            rowHeight={row()}
-            headerHeight={row()}
             sort={sort()}
             onSortChange={({ sort: next }) => {
               sortBy(next ?? undefined);
