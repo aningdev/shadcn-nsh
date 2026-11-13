@@ -1,0 +1,17 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "jsx": "preserve",
+    "jsxImportSource": "nsh",
+    "types": ["bun"],
+    "paths": {
+      "nsh": ["../../apps/gallery/.nsh/types/nsh/index.d.ts"],
+      "nsh/*": ["../../apps/gallery/.nsh/types/nsh/*.d.ts"],
+      "@shadcn-nsh/theme": ["../../packages/theme/index.ts"],
+      "@shadcn-nsh/ui": ["../../packages/ui/index.ts"],
+      "@shadcn-nsh/ui/*": ["../../packages/ui/*"],
+      "@/*": ["../../*"]
+    }
+  },
+  "include": ["./**/*.ts", "./**/*.tsx"]
+}
