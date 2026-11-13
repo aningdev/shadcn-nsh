@@ -2,14 +2,13 @@
 // demo adapter the official examples are written against (a `Split` with its inspector, a `Panel`
 // of what the groups hold and a `Log` of every press). A group is a toolbar of toggles: the marks
 // take any number at once, the alignment exactly one.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { sectionSurface } from "@/packages/ui/lib/surface";
 import { Toggle, ToggleGroup } from "@/packages/ui/toggle-group";
 
 import { DemoSection, DemoPage } from "./kit";
-import { desktop, Log, Panel, Split } from "./stage";
+import { desktop, Log, Panel, Split, ui } from "./stage";
 
 type Align = "left" | "center" | "right";
 
@@ -27,7 +26,7 @@ function App() {
 
   return (
     <DemoPage title="Toggle Group">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click a toggle; Tab reaches a group and the arrow keys move inside it"
           : "Tap a toggle: a group is one stop of a screen reader"}
@@ -38,7 +37,7 @@ function App() {
         inspector={
           <>
             <Panel title="pressed">
-              <Text style={{ fontSize: 13, color: colors.text }}>{`${marks()} · ${align()}`}</Text>
+              <Text style={{ fontSize: 13, color: ui().text }}>{`${marks()} · ${align()}`}</Text>
             </Panel>
             <Log title="onChange({ pressed })" lines={events()} minHeight={92} />
           </>

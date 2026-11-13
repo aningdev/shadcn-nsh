@@ -1,14 +1,13 @@
 // The official tabs scene (`references/nsh/website/demos/el-tabs.tsx`) with this library's parts:
 // a capsule strip switching a card of figures, and an underlined strip with counts (one folder
 // disabled), each press added to the inspector's log.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { controlSize, plainRow, sectionSurface } from "@/packages/ui/lib/surface";
 import { TabTitle, Tabs, TabsList, TabsTrigger } from "@/packages/ui/tabs";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Split } from "./stage";
+import { desktop, Log, Split, ui } from "./stage";
 
 // What each section shows: the app switches the content by its own value.
 const sections = [
@@ -55,7 +54,7 @@ function App() {
 
   return (
     <DemoPage title="Tabs">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click a tab, or Tab to a list and move with the arrow keys"
           : "Tap a tab to show its section"}
@@ -82,14 +81,14 @@ function App() {
         <View style={sectionSurface({ padded: true })}>
           {current().rows.map((row, i) => (
             <View style={plainRow({ first: i === 0, dense: true })}>
-              <Text style={{ flex: 1, fontSize: controlSize.label, color: colors.text }}>
+              <Text style={{ flex: 1, fontSize: controlSize.label, color: ui().text }}>
                 {row[0]}
               </Text>
               <Text
                 style={{
                   fontSize: controlSize.label,
                   fontVariant: ["tabular-nums"],
-                  color: colors.muted,
+                  color: ui().muted,
                 }}
               >
                 {row[1]}

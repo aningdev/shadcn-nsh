@@ -1,14 +1,14 @@
 // The stat has no official example, so this page is the library's own: a month's figures in a grid
 // (a tone each), the display whose name runs long and ends in an ellipsis, and the period the
 // inspector sets over them.
-import { colors, type Tone } from "@shadcn-nsh/theme";
+import { type Tone } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { sectionSurface } from "@/packages/ui/lib/surface";
 import { Stat } from "@/packages/ui/stat";
 
 import { DemoPage } from "./kit";
-import { Log, Panel, Segmented, Split } from "./stage";
+import { Log, Panel, Segmented, Split, ui } from "./stage";
 
 const PERIODS = ["today", "7 days", "30 days"] as const;
 
@@ -42,7 +42,7 @@ function App() {
   const log = (line: string) => events.set([line, ...events()].slice(0, 5));
   return (
     <DemoPage title="Stat">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {"A label above a figure, for grids of them; a long value ends in an ellipsis."}
       </Text>
 
@@ -58,7 +58,7 @@ function App() {
               />
             </Panel>
             <Panel title="value">
-              <Text style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}>
+              <Text style={{ fontSize: 13, color: ui().text, fontVariant: ["tabular-nums"] }}>
                 {`Users ${valueOf(FIGURES[0].value, period())} · Growth ${valueOf(FIGURES[5].value, period())}`}
               </Text>
             </Panel>
@@ -68,8 +68,8 @@ function App() {
       >
         <View style={{ ...sectionSurface({ padded: true }), gap: 14 }}>
           <View style={{ flexDirection: "row", alignItems: "baseline", gap: 8 }}>
-            <Text style={{ fontSize: 15, fontWeight: "600", color: colors.text }}>This month</Text>
-            <Text style={{ fontSize: 12, color: colors.muted }}>{period()}</Text>
+            <Text style={{ fontSize: 15, fontWeight: "600", color: ui().text }}>This month</Text>
+            <Text style={{ fontSize: 12, color: ui().muted }}>{period()}</Text>
           </View>
           <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" }}>
             {FIGURES.map((figure) => (
@@ -81,11 +81,9 @@ function App() {
               />
             ))}
           </View>
-          <View style={{ height: 1, backgroundColor: colors.line }} />
+          <View style={{ height: 1, backgroundColor: ui().line }} />
           <View style={{ gap: 4 }}>
-            <Text style={{ fontSize: 12, color: colors.muted }}>
-              The widest display in the fleet
-            </Text>
+            <Text style={{ fontSize: 12, color: ui().muted }}>The widest display in the fleet</Text>
             <View style={{ width: 180 }}>
               <Stat label="Display" value="MacBook Pro 16-inch, 2024" truncate />
             </View>

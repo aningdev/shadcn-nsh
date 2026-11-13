@@ -3,7 +3,6 @@
 // row, and a disabled setting stands on its own; the inspector says what is checked and the log
 // keeps the last three changes. A second card lists the sizes, the round box and the states, every
 // one of them a row with its label beside the box.
-import { colors } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 
@@ -17,7 +16,7 @@ import {
 } from "@/packages/ui/lib/surface";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
-import { desktop, Log, Panel, Split } from "./stage";
+import { desktop, Log, Panel, Split, ui } from "./stage";
 const items = [
   { id: "photos", label: "Photos", detail: "2,418 items · 6.1 GB" },
   { id: "documents", label: "Documents", detail: "312 files · 840 MB" },
@@ -42,7 +41,7 @@ function App() {
     selected.set(checked ? [...selected(), id] : selected().filter((x) => x !== id));
   return (
     <DemoPage title="Checkbox">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click a row, or Tab to a checkbox and press Space"
           : "Tap a row: the label toggles it too"}
@@ -52,7 +51,7 @@ function App() {
         inspector={
           <>
             <Panel title="checked · indeterminate">
-              <Text style={{ fontSize: 13, color: colors.text }}>
+              <Text style={{ fontSize: 13, color: ui().text }}>
                 {`Back up everything: ${all() ? "checked" : some() ? "indeterminate" : "unchecked"} · [${selected().join(", ")}]`}
               </Text>
             </Panel>

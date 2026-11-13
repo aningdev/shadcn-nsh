@@ -1,14 +1,13 @@
 // The official emoji picker scene (`references/nsh/website/demos/el-emoji-picker.tsx`): a chat app's
 // picker in a card (342 points wide in a wide window, the card's width on a phone), the message it
 // appends to, the recent emoji first and what was chosen beside them.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { EmojiPanel } from "@/packages/ui/emoji-picker";
 import { sectionSurface } from "@/packages/ui/lib/surface";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Split, wide } from "./stage";
+import { desktop, Log, Panel, Split, ui, wide } from "./stage";
 
 const message = signal("Lunch at the new ramen place? ");
 
@@ -21,7 +20,7 @@ const log = (line: string) => events.set([line, ...events()].slice(0, 4));
 function App() {
   return (
     <DemoPage title="Emoji picker">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Type to search, the arrows to move, Return to choose; a tab scrolls to its group"
           : "Search, or tap a tab to scroll to its group; tap an emoji to choose it"}
@@ -31,7 +30,7 @@ function App() {
         inspector={
           <>
             <Panel title="message">
-              <Text style={{ fontSize: 14, color: colors.text }}>{message()}</Text>
+              <Text style={{ fontSize: 14, color: ui().text }}>{message()}</Text>
             </Panel>
             <Log title="events" lines={events()} minHeight={92} />
           </>

@@ -2,7 +2,6 @@
 // library's Command: sections with headings, shortcuts as the platform writes them, a disabled
 // command, the appearance in effect checked, keywords that find a command by another word, and an
 // inspector with the highlight, the query and the events.
-import { colors } from "@shadcn-nsh/theme";
 import { keymap, mount, signal, Text, View } from "nsh";
 import type { CommandItem, CommandRef } from "nsh/base";
 
@@ -10,7 +9,7 @@ import { Command, CommandEmpty, CommandHeading, CommandRow } from "@/packages/ui
 import { Icon, type IconName } from "@/packages/ui/lib/icons";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Split, wide } from "./stage";
+import { desktop, Log, Panel, Split, ui, wide } from "./stage";
 
 // A command palette: the command owns the filtering, the highlight, the keys and the semantics;
 // every pixel is the palette's classes and its rows.
@@ -84,7 +83,7 @@ function App() {
   keymap.bind("mod+k", () => palette?.focus());
   return (
     <DemoPage title="Command">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? `Type to filter, the arrows to move, Return to run, Escape to clear; ${keymap.label("mod+k")} focuses it`
           : "Type to filter, tap a command to run it"}
@@ -123,7 +122,7 @@ function App() {
             accessibilityLabel="Commands"
             searchAccessibilityLabel="Search commands"
             style={{ height: desktop ? 360 : 400 }}
-            searchPrefix={<Icon name="search" size={16} tint={colors.muted} />}
+            searchPrefix={<Icon name="search" size={16} tint={ui().muted} />}
             empty={<CommandEmpty label="No commands match" />}
             renderGroup={(group) => <CommandHeading group={group} />}
             renderItem={(entry) => (

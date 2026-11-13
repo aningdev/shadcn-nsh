@@ -9,7 +9,7 @@ import { Button } from "@/packages/ui/button";
 import { Input } from "@/packages/ui/input";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
-import { desktop, Panel, Split, ui } from "./stage";
+import { buttonStyle, desktop, Panel, Split, ui } from "./stage";
 
 /** A label above its field, and what describes it below. */
 function Field(props: { label: string; children: JSX.Element; after?: JSX.Element }) {
@@ -95,13 +95,11 @@ function App() {
               style={{ height: 80 }}
             />
           </Field>
-          {/* A column stretches its children: with a pointer the button keeps its label's width,
-              as upstream's demo buttons do; a thumb gets the whole row. */}
           <Button
             variant="primary"
             disabled={password().length === 0}
             onPress={signIn}
-            style={{ marginTop: 4, alignSelf: desktop ? "flex-start" : undefined }}
+            style={buttonStyle({ marginTop: 4 })}
           >
             Sign in
           </Button>

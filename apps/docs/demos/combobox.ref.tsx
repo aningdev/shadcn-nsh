@@ -6,13 +6,15 @@ import { mount, signal, Text, View } from "nsh";
 import { Combobox } from "nsh/base";
 
 import {
+  clearButtonLook,
   comboboxLook,
   ComboToggle,
   ListboxEmpty,
+  ListboxHeader,
+  listboxFooter,
   listboxProps,
   OptionRow,
 } from "@/packages/ui/combobox";
-import { clearButtonLook, listboxFooter, ListboxHeader } from "@/packages/ui/lib/listbox";
 import { sectionSurface } from "@/packages/ui/lib/surface";
 
 import { DemoPage } from "./kit";

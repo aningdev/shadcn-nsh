@@ -2,14 +2,13 @@
 // the scene below is this library's, on the demo adapter the official examples are written against
 // — a day and a range, the week's start in the inspector, the value in a `Panel` and every pick in
 // the `Log`.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { Calendar } from "@/packages/ui/calendar";
 import { sectionSurface } from "@/packages/ui/lib/surface";
 
 import { DemoSection, DemoPage } from "./kit";
-import { desktop, Log, Panel, Segmented, Split } from "./stage";
+import { desktop, Log, Panel, Segmented, Split, ui } from "./stage";
 
 const WEEKS = ["Sunday", "Monday"] as const;
 
@@ -22,7 +21,7 @@ function App() {
 
   return (
     <DemoPage title="Calendar">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Arrows move between days, Return picks; Page Up and Down change the month"
           : "Tap a day; the arrows change the month"}
@@ -34,9 +33,9 @@ function App() {
           <>
             <Panel title="value">
               <Text
-                style={{ fontSize: 13, color: colors.text }}
+                style={{ fontSize: 13, color: ui().text }}
               >{`day ${JSON.stringify(day())}`}</Text>
-              <Text style={{ fontSize: 13, color: colors.text }}>
+              <Text style={{ fontSize: 13, color: ui().text }}>
                 {`range ${JSON.stringify(range())}`}
               </Text>
             </Panel>

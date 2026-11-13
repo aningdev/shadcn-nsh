@@ -1,7 +1,6 @@
 // The official tree scene (`references/nsh/website/demos/el-tree.tsx`) with this library's Tree:
 // a project's files with their sizes, a folder the app keeps out of reach, a file revealed from
 // the toolbar, and an inspector with the selection, the open folders and the events.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 import type { TreeItem, TreeRef } from "nsh/base";
 
@@ -10,7 +9,7 @@ import { sectionSurface } from "@/packages/ui/lib/surface";
 import { Tree, TreeRow } from "@/packages/ui/tree";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Split, wide } from "./stage";
+import { desktop, Log, Panel, Split, ui, wide } from "./stage";
 
 // A project's files: folders that open with their chevron, files, sizes at the end, a folder the
 // app keeps out of reach (`disabled`). The tree owns the keys and the semantics; every pixel of a
@@ -82,7 +81,7 @@ let tree: TreeRef | undefined;
 function App() {
   return (
     <DemoPage title="Tree">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click a folder, or Tab in and use the arrows: Right opens and enters, Left closes and leaves; double-click a file or press Return to act on it"
           : "Tap a folder to open it, a file to select it; double-tap a file to act on it"}

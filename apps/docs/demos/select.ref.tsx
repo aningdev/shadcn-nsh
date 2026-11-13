@@ -19,7 +19,7 @@ import {
 import { switchLook } from "@/packages/ui/switch";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Split, ui } from "./stage";
+import { buttonStyle, desktop, Log, Panel, Split, ui } from "./stage";
 
 const LANGUAGES = [
   { value: "en", title: "English" },
@@ -115,7 +115,7 @@ function App() {
                 {...buttonLook("secondary", {
                   size: "small",
                   disabled: () => region() === null,
-                  style: { marginTop: 6 },
+                  style: buttonStyle({ marginTop: 6 }),
                 })}
               >
                 <Text

@@ -2,7 +2,6 @@
 // part: five levels in one card (a strength with its value column, a playback position, a price
 // range, a locked one and an equalizer of three vertical bands), each named above its track, and
 // what the app heard from the drags beside them.
-import { colors } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 import type { SliderValue } from "nsh/base";
@@ -11,7 +10,7 @@ import { controlSize, plainRow, RowLabel, sectionSurface } from "@/packages/ui/l
 import { Slider, sliderValueClass, sliderValueStyle } from "@/packages/ui/slider";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Split } from "./stage";
+import { desktop, Log, Panel, Split, ui } from "./stage";
 
 const show = (v: SliderValue) => (typeof v === "number" ? `${v}` : `${v[0]}–${v[1]}`);
 
@@ -36,7 +35,7 @@ function Row(props: { label: string; value?: string; first?: boolean; children: 
         <Text
           style={{
             fontSize: controlSize.label,
-            color: colors.muted,
+            color: ui().muted,
             fontVariant: ["tabular-nums"],
           }}
         >
@@ -60,7 +59,7 @@ function App() {
       events.set([`${name} → ${show(next)}`, ...events()].slice(0, 5));
   return (
     <DemoPage title="Slider">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Drag a thumb or click the track, or Tab to a thumb and use the arrow keys"
           : "Drag a thumb, or tap the track"}
@@ -71,10 +70,10 @@ function App() {
         inspector={
           <>
             <Panel title="value">
-              <Text style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}>
+              <Text style={{ fontSize: 13, color: ui().text, fontVariant: ["tabular-nums"] }}>
                 {`strength ${strength()} · position ${position()} · price [${price()[0]}, ${price()[1]}]`}
               </Text>
-              <Text style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}>
+              <Text style={{ fontSize: 13, color: ui().text, fontVariant: ["tabular-nums"] }}>
                 {`bands ${bands.map((band) => band()).join(" / ")}`}
               </Text>
             </Panel>
@@ -138,7 +137,7 @@ function App() {
                   <Text
                     style={{
                       fontSize: controlSize.detail,
-                      color: colors.muted,
+                      color: ui().muted,
                       fontVariant: ["tabular-nums"],
                     }}
                   >

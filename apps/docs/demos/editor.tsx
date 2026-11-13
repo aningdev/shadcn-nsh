@@ -27,7 +27,7 @@ import { Toggle } from "@/packages/ui/toggle";
 import { Toolbar, ToolbarGroup, ToolbarSeparator } from "@/packages/ui/toolbar";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Segmented, Split, wide } from "./stage";
+import { desktop, Log, Panel, Segmented, Split, ui, wide } from "./stage";
 
 const SAMPLES = {
   rust: `/// The n-th Fibonacci number.
@@ -148,7 +148,7 @@ function App() {
 
   return (
     <DemoPage title="Editor">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click into the code and type; Alt-click adds a caret, Cmd/Ctrl+D the next match"
           : "Tap into the code and type"}
@@ -182,7 +182,7 @@ function App() {
                 autoCapitalize="none"
                 autoCorrect={false}
               />
-              <Text style={{ fontSize: 13, fontVariant: ["tabular-nums"], color: colors.text }}>
+              <Text style={{ fontSize: 13, fontVariant: ["tabular-nums"], color: ui().text }}>
                 {query()
                   ? (found().error ??
                     `${found().current == null ? "–" : found().current! + 1} of ${found().count}`)
@@ -198,7 +198,7 @@ function App() {
               </View>
             </Panel>
             <Panel title="caret">
-              <Text style={{ fontSize: 13, fontVariant: ["tabular-nums"], color: colors.text }}>
+              <Text style={{ fontSize: 13, fontVariant: ["tabular-nums"], color: ui().text }}>
                 {caret()}
               </Text>
             </Panel>
@@ -239,7 +239,7 @@ function App() {
         </View>
       </Split>
 
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click into the document and type; Cmd/Ctrl+B makes bold"
           : "Tap into the document and type"}
@@ -250,9 +250,7 @@ function App() {
         inspector={
           <>
             <Panel title="markdown">
-              <Text style={{ fontSize: 12, fontFamily: mono, color: colors.text }}>
-                {markdown()}
-              </Text>
+              <Text style={{ fontSize: 12, fontFamily: mono, color: ui().text }}>{markdown()}</Text>
             </Panel>
             <Log title="events" lines={richEvents()} minHeight={72} />
           </>

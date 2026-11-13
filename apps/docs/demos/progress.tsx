@@ -2,7 +2,7 @@
 // part: a card of transfers (one counting photos as it goes, one whose size is not known yet, one
 // standing for a library) with Start, Pause and Reset, a switch for the unknown size, and what the
 // app heard beside them. The tones below are the axis the scene itself does not use.
-import { colors, type Tone, toneColor } from "@shadcn-nsh/theme";
+import { type Tone, toneColor } from "@shadcn-nsh/theme";
 import { cleanup, mount, signal, Text, View } from "nsh";
 
 import { Button } from "@/packages/ui/button";
@@ -17,7 +17,7 @@ import { Progress, progressSweep, type ProgressSweep } from "@/packages/ui/progr
 import { Switch } from "@/packages/ui/switch";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
-import { desktop, Log, Panel, Split } from "./stage";
+import { desktop, Log, Panel, Split, ui } from "./stage";
 
 const TONES: Tone[] = ["neutral", "accent", "info", "warn", "danger", "up", "down"];
 
@@ -48,7 +48,7 @@ function Transfer(props: {
         <Text
           style={{
             fontSize: controlSize.label,
-            color: colors.muted,
+            color: ui().muted,
             fontVariant: ["tabular-nums"],
             textAlign: "right",
           }}
@@ -89,7 +89,7 @@ function App() {
   };
   return (
     <DemoPage title="Progress">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop ? "Click Start, or Tab to it and press Space" : "Tap Start to send the photos"}
       </Text>
 
@@ -98,7 +98,7 @@ function App() {
         inspector={
           <>
             <Panel title="value · indeterminate">
-              <Text style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}>
+              <Text style={{ fontSize: 13, color: ui().text, fontVariant: ["tabular-nums"] }}>
                 {unknown()
                   ? "indeterminate (no value for screen readers)"
                   : `value ${sent()} of 100`}
@@ -172,7 +172,7 @@ function App() {
         <DemoSection title="Tone" axis="block">
           {TONES.map((tone, i) => (
             <View style={plainRow({ first: i === 0 })}>
-              <Text style={{ width: 64, fontSize: controlSize.label, color: colors.muted }}>
+              <Text style={{ width: 64, fontSize: controlSize.label, color: ui().muted }}>
                 {tone}
               </Text>
               <View style={{ flex: 1 }}>

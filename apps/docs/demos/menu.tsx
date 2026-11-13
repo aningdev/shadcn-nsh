@@ -2,7 +2,6 @@
 // a File menu with a submenu, a View menu with settings and a choice of one, a dashed area that
 // opens the same rows as a context menu, and an inspector holding the last choice, the settings
 // and the last eight open or close lines.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import {
@@ -27,7 +26,7 @@ import {
 } from "@/packages/ui/menu";
 
 import { DemoPage } from "./kit";
-import { desktop, Panel, Split, wide } from "./stage";
+import { desktop, Panel, Split, ui, wide } from "./stage";
 
 const SORTS = ["Name", "Date modified", "Size"];
 
@@ -47,7 +46,7 @@ function App() {
 
   return (
     <DemoPage title="Menu">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click File; hover Share to open its submenu. View has settings and a choice of one. Right click the box below"
           : "Tap File: a sheet; Share shows its items in place. View has settings and a choice of one"}
@@ -58,15 +57,15 @@ function App() {
         inspector={
           <>
             <Panel title="onSelect · checked">
-              <Text style={{ fontSize: 13, color: colors.text }}>{last()}</Text>
-              <Text style={{ fontSize: 13, color: colors.muted }}>
+              <Text style={{ fontSize: 13, color: ui().text }}>{last()}</Text>
+              <Text style={{ fontSize: 13, color: ui().muted }}>
                 {`sidebar ${sidebar() ? "on" : "off"} · minimap ${minimap() ? "on" : "off"} · hidden files ${hidden() ? "shown" : "hidden"} · by ${sort()} · ${pinned() ? "pinned" : "not pinned"}`}
               </Text>
             </Panel>
             <Panel title="onOpenChange({ open, reason })" grow>
               <View style={{ gap: 2 }}>
                 {reasons().map((line, i) => (
-                  <Text style={{ fontSize: 12, color: i === 0 ? colors.text : colors.faint }}>
+                  <Text style={{ fontSize: 12, color: i === 0 ? ui().text : ui().faint }}>
                     {line}
                   </Text>
                 ))}
@@ -143,16 +142,16 @@ function App() {
                 borderRadius: 14,
                 borderWidth: 2,
                 borderStyle: "dashed",
-                borderColor: colors.faint,
+                borderColor: ui().faint,
                 alignItems: "center",
                 justifyContent: "center",
                 gap: 4,
               }}
             >
-              <Text style={{ fontSize: 15, fontWeight: "600", color: colors.text }}>
+              <Text style={{ fontSize: 15, fontWeight: "600", color: ui().text }}>
                 {pinned() ? "ContextMenu · pinned" : "ContextMenu"}
               </Text>
-              <Text style={{ fontSize: 13, color: colors.muted }}>
+              <Text style={{ fontSize: 13, color: ui().muted }}>
                 {desktop ? "Right click here" : "Hold a finger here"}
               </Text>
             </View>

@@ -2,14 +2,13 @@
 // breadcrumbs whose current page is the route last opened, a paragraph with two links in it, a
 // site outside the app with its arrow, and an archived page that takes no press; the route and
 // what the app heard beside them.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { sectionSurface } from "@/packages/ui/lib/surface";
 import { Link, linkSize } from "@/packages/ui/link";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Split } from "./stage";
+import { desktop, Log, Panel, Split, ui } from "./stage";
 
 const visited = signal(new Set<string>());
 const events = signal<string[]>([]);
@@ -52,10 +51,10 @@ function App() {
   const crumb = (href: string, label: string) => (
     <DocLink href={href} label={label} current={route() === href} />
   );
-  const slash = () => <Text style={{ color: colors.faint, fontSize: linkSize }}>/</Text>;
+  const slash = () => <Text style={{ color: ui().faint, fontSize: linkSize }}>/</Text>;
   return (
     <DemoPage title="Link">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop ? "Click a link, or Tab to one and press Return" : "Tap a link"}
       </Text>
 
@@ -64,7 +63,7 @@ function App() {
         inspector={
           <>
             <Panel title="route · visited">
-              <Text style={{ fontSize: 13, color: colors.text }}>
+              <Text style={{ fontSize: 13, color: ui().text }}>
                 {route()} · {visited().size} visited
               </Text>
             </Panel>
@@ -87,14 +86,14 @@ function App() {
             {slash()}
             {crumb("/docs/link", "Link")}
           </View>
-          <Text style={{ fontSize: 15, lineHeight: 22, color: colors.text }}>
+          <Text style={{ fontSize: 15, lineHeight: 22, color: ui().text }}>
             {"Read the "}
             <DocLink href="/docs/release-notes" label="release notes" inline />
             {" and the "}
             <DocLink href="/docs/migration" label="migration guide" inline />
             {" before you update."}
           </Text>
-          <View style={{ height: 1, backgroundColor: colors.line }} />
+          <View style={{ height: 1, backgroundColor: ui().line }} />
           <View style={{ gap: 10 }}>
             <DocLink href="https://example.com/" label="example.com" openWith="system" icon />
             <DocLink href="/docs/archive" label="Archived docs" disabled />

@@ -8,8 +8,8 @@ import type { DatePickerValue, DateRangePreset, HourCycle } from "nsh/base";
 import { DatePicker } from "nsh/base";
 
 import { DateTrigger, datePickerLook } from "@/packages/ui/date-picker";
-import { clearButtonLook } from "@/packages/ui/lib/listbox";
 import { sectionSurface } from "@/packages/ui/lib/surface";
+import { clearButtonLook } from "@/packages/ui/select";
 
 import { DemoPage } from "./kit";
 import { desktop, Log, Panel, Segmented, Split, wide } from "./stage";

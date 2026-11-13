@@ -1,7 +1,6 @@
 // The official accordion scene (`references/nsh/website/demos/el-accordion.tsx`) with this
 // library's parts: an FAQ, one item open at a time or several (`multiple`), the app owning which
 // are open and logging what `onChange` reports beside it.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import {
@@ -14,7 +13,7 @@ import {
 import { controlSize, sectionSurface } from "@/packages/ui/lib/surface";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Segmented, Split } from "./stage";
+import { desktop, Log, Panel, Segmented, Split, ui } from "./stage";
 
 const FAQ: { value: string; question: string; answer: string; disabled?: boolean }[] = [
   {
@@ -49,7 +48,7 @@ function App() {
   const events = signal<string[]>([]);
   return (
     <DemoPage title="Accordion">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click a question, or Tab to it and press Space"
           : "Tap a question to read its answer"}
@@ -71,7 +70,7 @@ function App() {
               />
             </Panel>
             <Panel title="value">
-              <Text style={{ fontSize: 13, color: colors.text }}>
+              <Text style={{ fontSize: 13, color: ui().text }}>
                 {open().length ? open().join(", ") : "none open"}
               </Text>
             </Panel>
@@ -90,7 +89,7 @@ function App() {
         >
           {FAQ.map((item, i) => (
             <AccordionItem value={item.value} disabled={item.disabled}>
-              <View style={{ height: i === 0 ? 0 : 1, backgroundColor: colors.line }} />
+              <View style={{ height: i === 0 ? 0 : 1, backgroundColor: ui().line }} />
               <AccordionHeader>
                 <AccordionTrigger first>{item.question}</AccordionTrigger>
               </AccordionHeader>
@@ -99,7 +98,7 @@ function App() {
                   style={{
                     fontSize: controlSize.label,
                     lineHeight: Math.round(controlSize.label * 1.45),
-                    color: colors.muted,
+                    color: ui().muted,
                   }}
                 >
                   {item.answer}

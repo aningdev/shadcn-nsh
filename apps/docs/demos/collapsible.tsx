@@ -1,7 +1,6 @@
 // The official collapsible scene (`references/nsh/website/demos/el-collapsible.tsx`) with this
 // library's parts: a storage summary that opens onto its breakdown, an advanced section that
 // opens onto a switch, and an inspector holding which are open and the last four trigger lines.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/packages/ui/collapsible";
@@ -15,7 +14,7 @@ import {
 import { Switch } from "@/packages/ui/switch";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Split } from "./stage";
+import { desktop, Log, Panel, Split, ui } from "./stage";
 
 const USAGE: [string, string][] = [
   ["Photos", "120 GB"],
@@ -32,7 +31,7 @@ function App() {
 
   return (
     <DemoPage title="Collapsible">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click a summary, or Tab to it and press Space"
           : "Tap a summary to show its details"}
@@ -43,10 +42,10 @@ function App() {
         inspector={
           <>
             <Panel title="open">
-              <Text style={{ fontSize: 13, color: colors.text }}>
+              <Text style={{ fontSize: 13, color: ui().text }}>
                 Storage {storage() ? "open" : "closed"} · Advanced {advanced() ? "open" : "closed"}
               </Text>
-              <Text style={{ fontSize: 12, color: colors.muted }}>
+              <Text style={{ fontSize: 12, color: ui().muted }}>
                 Keep originals {originals() ? "on" : "off"}: kept while collapsed
               </Text>
             </Panel>
@@ -74,13 +73,13 @@ function App() {
                     minHeight: controlSize.line,
                   }}
                 >
-                  <Text style={{ flex: 1, fontSize: controlSize.label, color: colors.muted }}>
+                  <Text style={{ flex: 1, fontSize: controlSize.label, color: ui().muted }}>
                     {name}
                   </Text>
                   <Text
                     style={{
                       fontSize: controlSize.label,
-                      color: colors.muted,
+                      color: ui().muted,
                       fontVariant: ["tabular-nums"],
                     }}
                   >
@@ -91,7 +90,7 @@ function App() {
             </CollapsibleContent>
           </Collapsible>
 
-          <View style={{ height: 1, backgroundColor: colors.line }} />
+          <View style={{ height: 1, backgroundColor: ui().line }} />
 
           <Collapsible
             open={advanced()}

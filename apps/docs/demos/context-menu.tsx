@@ -2,7 +2,6 @@
 // (`references/nsh/website/demos/el-menu.tsx`): a surface that opens the rows at the pointer (a
 // right click, a long press), one setting that keeps it open, and an inspector holding the last
 // choice, the setting and the last six open or close lines.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import {
@@ -14,7 +13,7 @@ import {
 } from "@/packages/ui/context-menu";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Split, wide } from "./stage";
+import { desktop, Log, Panel, Split, ui, wide } from "./stage";
 
 function App() {
   const last = signal("–");
@@ -24,7 +23,7 @@ function App() {
 
   return (
     <DemoPage title="Context Menu">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop ? "Right click the box below" : "Hold a finger on the box below"}
       </Text>
 
@@ -33,8 +32,8 @@ function App() {
         inspector={
           <>
             <Panel title="onSelect · checked">
-              <Text style={{ fontSize: 13, color: colors.text }}>{last()}</Text>
-              <Text style={{ fontSize: 13, color: colors.muted }}>
+              <Text style={{ fontSize: 13, color: ui().text }}>{last()}</Text>
+              <Text style={{ fontSize: 13, color: ui().muted }}>
                 {pinned() ? "pinned" : "not pinned"}
               </Text>
             </Panel>
@@ -54,16 +53,16 @@ function App() {
                 borderRadius: 14,
                 borderWidth: 2,
                 borderStyle: "dashed",
-                borderColor: colors.faint,
+                borderColor: ui().faint,
                 alignItems: "center",
                 justifyContent: "center",
                 gap: 4,
               }}
             >
-              <Text style={{ fontSize: 15, fontWeight: "600", color: colors.text }}>
+              <Text style={{ fontSize: 15, fontWeight: "600", color: ui().text }}>
                 {pinned() ? "ContextMenu · pinned" : "ContextMenu"}
               </Text>
-              <Text style={{ fontSize: 13, color: colors.muted }}>
+              <Text style={{ fontSize: 13, color: ui().muted }}>
                 {desktop ? "Right click here" : "Hold a finger here"}
               </Text>
             </View>

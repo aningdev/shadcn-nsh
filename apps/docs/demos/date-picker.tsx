@@ -2,7 +2,6 @@
 // library's parts: a due date (weekends disabled, presets beside the calendar, a clear button), a
 // stay picked as a range over two months in a wide window, and a meeting's date and time on the
 // clock the inspector picks; the values and every `onChange` beside them.
-import { colors } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 import type { DatePickerValue, DateRangePreset, HourCycle } from "nsh/base";
@@ -11,7 +10,7 @@ import { DatePicker, DatePickerContent, DatePickerTrigger } from "@/packages/ui/
 import { sectionSurface } from "@/packages/ui/lib/surface";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Segmented, Split, wide } from "./stage";
+import { desktop, Log, Panel, Segmented, Split, ui, wide } from "./stage";
 
 const MONTHS = [
   "January",
@@ -52,8 +51,8 @@ function Field(props: { label: string; detail: string; children: JSX.Element }) 
   return (
     <View style={{ gap: 8 }}>
       <View style={{ gap: 2 }}>
-        <Text style={{ fontSize: 13, fontWeight: "500", color: colors.text }}>{props.label}</Text>
-        <Text style={{ fontSize: 12, color: colors.muted }}>{props.detail}</Text>
+        <Text style={{ fontSize: 13, fontWeight: "500", color: ui().text }}>{props.label}</Text>
+        <Text style={{ fontSize: 12, color: ui().muted }}>{props.detail}</Text>
       </View>
       {props.children}
     </View>
@@ -92,7 +91,7 @@ function App() {
 
   return (
     <DemoPage title="Date Picker">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Arrows move between days, Return picks; the trigger takes Delete to clear"
           : "Tap a day; the meeting's time takes digits"}
@@ -104,13 +103,13 @@ function App() {
           <>
             <Panel title="value">
               <Text
-                style={{ fontSize: 13, color: colors.text }}
+                style={{ fontSize: 13, color: ui().text }}
               >{`due ${JSON.stringify(due())}`}</Text>
               <Text
-                style={{ fontSize: 13, color: colors.text }}
+                style={{ fontSize: 13, color: ui().text }}
               >{`stay ${JSON.stringify(stay())}`}</Text>
               <Text
-                style={{ fontSize: 13, color: colors.text }}
+                style={{ fontSize: 13, color: ui().text }}
               >{`meeting ${JSON.stringify(meeting())}`}</Text>
             </Panel>
             <Segmented
@@ -188,7 +187,7 @@ function App() {
                 timePrecision="minute"
                 hourCycle={cycle()}
                 defaultTime="09:00"
-                timeLabel={<Text style={{ fontSize: 13, color: colors.muted }}>Time</Text>}
+                timeLabel={<Text style={{ fontSize: 13, color: ui().muted }}>Time</Text>}
                 timeAccessibilityLabel="Meeting time"
               />
             </DatePicker>

@@ -2,14 +2,13 @@
 // parts: one sheet opened from the four edges (a cross of buttons in a wide window, a column of
 // them on a phone), and an inspector holding which edge and side it opened at, and the last six
 // lifecycle lines.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { Button } from "@/packages/ui/button";
 import { Sheet, SheetClose, SheetContent, type SheetSide } from "@/packages/ui/sheet";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Split, wide } from "./stage";
+import { desktop, Log, Panel, Split, ui, wide } from "./stage";
 
 const SIDES: SheetSide[] = ["top", "left", "right", "bottom"];
 
@@ -37,7 +36,7 @@ function App() {
 
   return (
     <DemoPage title="Sheet">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Open a side; click the backdrop or press Escape to close it"
           : "Open a side; tap the backdrop or Android's back to close it"}
@@ -48,7 +47,7 @@ function App() {
         inspector={
           <>
             <Panel title="open · side">
-              <Text style={{ fontSize: 13, color: colors.text }}>
+              <Text style={{ fontSize: 13, color: ui().text }}>
                 {open() ? "open" : "closed"} · {side()}
               </Text>
             </Panel>
@@ -91,14 +90,14 @@ function App() {
         onCancel={() => log("onCancel")}
       >
         <SheetContent side={side()} closeOnSwipe>
-          <Text style={{ fontSize: desktop ? 16 : 18, fontWeight: "600", color: colors.text }}>
+          <Text style={{ fontSize: desktop ? 16 : 18, fontWeight: "600", color: ui().text }}>
             Filters
           </Text>
           <Text
             style={{
               fontSize: desktop ? 13 : 15,
               lineHeight: desktop ? 19 : 21,
-              color: colors.muted,
+              color: ui().muted,
             }}
           >
             {`A panel at the ${side()} edge. `}

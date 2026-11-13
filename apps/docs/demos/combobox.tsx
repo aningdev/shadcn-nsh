@@ -13,9 +13,10 @@ import {
   ComboboxLabel,
   ComboboxTrigger,
   ListboxEmpty,
+  ListboxHeader,
+  listboxFooter,
   OptionRow,
 } from "@/packages/ui/combobox";
-import { listboxFooter, ListboxHeader } from "@/packages/ui/lib/listbox";
 import { sectionSurface } from "@/packages/ui/lib/surface";
 
 import { DemoPage } from "./kit";

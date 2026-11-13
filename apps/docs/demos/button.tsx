@@ -2,7 +2,6 @@
 // parts: a counter that reports each press (down, up, press), a switch that disables it, two
 // formatting toggles, and an inspector with what the page heard; a second card lists the kinds,
 // the sizes and the icon buttons.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import {
@@ -22,11 +21,11 @@ import { toggleLabel } from "@/packages/ui/toggle";
 import { Toggle } from "@/packages/ui/toggle";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
-import { desktop, Log, Panel, Split } from "./stage";
+import { desktop, Log, Panel, Split, ui } from "./stage";
 
 /** A caption over a cluster of controls. */
 function Caption(props: { children: string }) {
-  return <Text style={{ fontSize: 12, color: colors.muted }}>{props.children}</Text>;
+  return <Text style={{ fontSize: 12, color: ui().muted }}>{props.children}</Text>;
 }
 
 function App() {
@@ -46,7 +45,7 @@ function App() {
     log(what);
   };
   const label = () => ({
-    color: colors.text,
+    color: ui().text,
     fontSize: desktop ? 13 : 15,
     fontWeight: "600" as const,
   });
@@ -55,7 +54,7 @@ function App() {
 
   return (
     <DemoPage title="Button">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click, hover, or Tab to a button and press Space"
           : "Tap; move your finger away to cancel"}
@@ -66,15 +65,15 @@ function App() {
         inspector={
           <>
             <Panel title="press · disabled">
-              <Text style={{ fontSize: 13, color: colors.text }}>{pressState()}</Text>
+              <Text style={{ fontSize: 13, color: ui().text }}>{pressState()}</Text>
             </Panel>
             <Panel title="Toggle pressed">
-              <Text style={{ fontSize: 13, color: colors.text }}>
+              <Text style={{ fontSize: 13, color: ui().text }}>
                 bold {String(bold())} · italic {String(italic())}
               </Text>
             </Panel>
             <Panel title="last onPress">
-              <Text style={{ fontSize: 13, color: colors.accent }}>{last()}</Text>
+              <Text style={{ fontSize: 13, color: ui().accent }}>{last()}</Text>
             </Panel>
             <Log title="onChange({ pressed })" lines={events()} minHeight={62} />
           </>

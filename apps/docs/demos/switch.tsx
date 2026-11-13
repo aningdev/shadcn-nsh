@@ -2,14 +2,13 @@
 // parts: three settings, each row the switch itself, the second disabled while the first is off;
 // an inspector says what is checked and logs every change. A second card shows the two sizes, a
 // switch standing alone with its track all of it.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { listRow, RowDivider, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
 import { Switch } from "@/packages/ui/switch";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
-import { desktop, Log, Panel, Split } from "./stage";
+import { desktop, Log, Panel, Split, ui } from "./stage";
 
 function App() {
   const wifi = signal(true);
@@ -25,7 +24,7 @@ function App() {
 
   return (
     <DemoPage title="Switch">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click a row, or Tab to a switch and press Space"
           : "Tap a row: the label toggles it too"}
@@ -36,7 +35,7 @@ function App() {
         inspector={
           <>
             <Panel title="checked · disabled">
-              <Text style={{ fontSize: 13, color: colors.text }}>
+              <Text style={{ fontSize: 13, color: ui().text }}>
                 {`Wi-Fi ${wifi() ? "on" : "off"} · ask ${ask() ? "on" : "off"}`}
                 {wifi() ? "" : " (disabled)"}
                 {` · Bluetooth ${bluetooth() ? "on" : "off"}`}
@@ -94,7 +93,7 @@ function App() {
             checked={bluetooth()}
             onChange={change("Bluetooth", (next) => bluetooth.set(next))}
           />
-          <Text style={{ fontSize: 13, color: colors.muted }}>
+          <Text style={{ fontSize: 13, color: ui().muted }}>
             Bluetooth {bluetooth() ? "on" : "off"}
           </Text>
         </DemoSection>

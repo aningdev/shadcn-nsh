@@ -6,7 +6,7 @@
 // Demos only: it is not a component, has no registry entry, and never goes into `packages/ui`.
 // Its appearance is this library's theme (`@shadcn-nsh/theme`, `packages/ui/lib/surface`).
 import { alpha as tint, colors, finish, radius } from "@shadcn-nsh/theme";
-import type { JSX as __JSX } from "nsh";
+import type { JSX as __JSX, ViewStyle } from "nsh";
 import { Text as __Text, View as __View } from "nsh";
 import { platform as __platform, token, windowSize as __windowSize } from "nsh";
 
@@ -197,6 +197,18 @@ export function Log(props: { title: string; lines: string[]; minHeight?: number;
   });
 }
 
+/**
+ * A `Button`'s style in a demo, as upstream's demo `button()` gives it (`demo.ts:76-91`): with a
+ * pointer it is as wide as its label and sits at the start of its column
+ * (`alignSelf: "flex-start"`), which a column would otherwise stretch; a touch screen's column
+ * stretches it whole, which a finger wants. More style goes on top.
+ */
+export const buttonStyle = (style?: ViewStyle): ViewStyle => ({
+  ...(desktop ? { alignSelf: "flex-start" as const } : {}),
+  ...style,
+});
+
+/** A color at an opacity: the palette's `tint` (the theme's `alpha`). */
 /** A labelled demo option row using the shared segmented control. */
 export function Segmented<T extends string | number>(props: {
   label?: string;
@@ -228,6 +240,11 @@ export function Segmented<T extends string | number>(props: {
 }
 // @port end
 
+// `Log` (in the region above, `demo.ts:242`) takes `grow` from `sideBySide()`: beside a stage it
+// fills the inspector's free height. A page-level log uses it as it is (the toast demo's): narrow,
+// it stops at its lines; wide, it grows with the page. `grow={false}` keeps it at its lines
+// everywhere.
+
 /**
  * The gallery's palette under the names its demos read (`ui()` in
  * `references/nsh/examples/nsh-gallery-ui/palette.ts`), in this library's theme roles, read
@@ -251,9 +268,19 @@ export const ui = () => ({
   warn: colors.warn,
   danger: colors.danger,
   violet: token("violet"),
+  // The ink of content drawn over a photograph (the carousel's caption): the theme has no text
+  // role that reads over any picture, and the knob's white (a near-white in dark) does.
+  caption: colors.knob,
   card: { ...sectionSurface(), backgroundColor: colors.surface },
   row: { ...sectionSurface(), backgroundColor: colors.surface },
-  inset: insetSurface(),
+  // Upstream's `ui().inset` is a well's colors, not a well: no corners, so a demo that has its
+  // own (a row, a picture frame) keeps them (`insetSurface()` is a well with its corners).
+  inset: {
+    backgroundColor: colors.inset,
+    borderWidth: 1,
+    borderColor: colors.line,
+    ...finish.inset,
+  },
   raised: {
     backgroundColor: colors.raised,
     borderWidth: 1,

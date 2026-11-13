@@ -1,14 +1,13 @@
 // The official pagination scene (`references/nsh/website/demos/el-pagination.tsx`) with this
 // library's Pagination: search results paged with a count and a compact pager beside them, and an
 // inspector with the page of the total and the events.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { sectionSurface } from "@/packages/ui/lib/surface";
 import { Pagination } from "@/packages/ui/pagination";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Segmented, Split, wide } from "./stage";
+import { desktop, Log, Panel, Segmented, Split, ui, wide } from "./stage";
 
 // Five pages show in a narrow frame, seven in a wide one.
 const total = 238;
@@ -29,7 +28,7 @@ const changed = (next: number) => {
 function App() {
   return (
     <DemoPage title="Pagination">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop ? "Click a page, or Tab to one and press Return" : "Tap a page"}
       </Text>
 
@@ -79,7 +78,7 @@ function App() {
             class="flex-wrap gap-1"
             onChange={({ page: next }) => changed(next)}
           />
-          <View style={{ height: 1, backgroundColor: colors.line }} />
+          <View style={{ height: 1, backgroundColor: ui().line }} />
           <Pagination
             compact
             outlined

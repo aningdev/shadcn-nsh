@@ -2,7 +2,6 @@
 // library's parts: six cells in two groups, a masked switch, a disabled switch, a verdict that
 // arrives a moment after the code is complete, Copy the code and Clear; the inspector says what
 // the field holds and logs every event. A second card shows the seven verdict tones.
-import { colors } from "@shadcn-nsh/theme";
 import { Clipboard, cleanup, mount, signal, Text, View } from "nsh";
 
 import { Button } from "@/packages/ui/button";
@@ -11,7 +10,7 @@ import { OtpInput, otpCells } from "@/packages/ui/otp-input";
 import { Switch } from "@/packages/ui/switch";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
-import { desktop, Log, Panel, Split } from "./stage";
+import { desktop, Log, Panel, Split, ui } from "./stage";
 
 const CODE = "246810";
 
@@ -59,15 +58,15 @@ function App() {
   };
   const message = () =>
     ({
-      typing: { text: `${code().length} of 6 digits`, color: colors.muted },
-      checking: { text: "Checking…", color: colors.muted },
-      right: { text: "Verified", color: colors.up },
-      wrong: { text: "That code is not right", color: colors.down },
+      typing: { text: `${code().length} of 6 digits`, color: ui().muted },
+      checking: { text: "Checking…", color: ui().muted },
+      right: { text: "Verified", color: ui().up },
+      wrong: { text: "That code is not right", color: ui().down },
     })[status()];
 
   return (
     <DemoPage title="OTP Input">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click the code and type it, or paste it; Tab reaches it too"
           : "Tap the code to type it, or paste it"}
@@ -78,7 +77,7 @@ function App() {
         inspector={
           <>
             <Panel title="value · masked · disabled">
-              <Text style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}>
+              <Text style={{ fontSize: 13, color: ui().text, fontVariant: ["tabular-nums"] }}>
                 {code()
                   ? `value “${masked() ? "•".repeat(code().length) : code()}”`
                   : "value “” (empty)"}
@@ -117,10 +116,10 @@ function App() {
           }}
         >
           <View style={{ gap: 4, alignItems: "center" }}>
-            <Text style={{ fontSize: 13, fontWeight: "600", color: colors.text }}>
+            <Text style={{ fontSize: 13, fontWeight: "600", color: ui().text }}>
               Enter the code
             </Text>
-            <Text style={{ fontSize: 12, color: colors.muted }}>
+            <Text style={{ fontSize: 12, color: ui().muted }}>
               {`We sent it to •••• 4821 (it is ${CODE})`}
             </Text>
           </View>

@@ -1,7 +1,6 @@
 // The official alert dialog scene (`references/nsh/website/demos/el-alert-dialog.tsx`) with this
 // library's parts: three alerts, each listed with what it is about and a button that shows it
 // (a card per alert on a phone), and an inspector holding what the last one resolved with.
-import { colors } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 
@@ -18,7 +17,7 @@ import { Button } from "@/packages/ui/button";
 import { controlSize, listRow, RowDivider, sectionSurface } from "@/packages/ui/lib/surface";
 
 import { DemoPage } from "./kit";
-import { desktop, Panel, Split, wide } from "./stage";
+import { desktop, Panel, Split, ui, wide } from "./stage";
 
 type Role = "cancel" | "destructive" | undefined;
 
@@ -96,7 +95,7 @@ function App() {
 
   return (
     <DemoPage title="Alert Dialog">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         The platform's own alert; every label comes from the app.
       </Text>
 
@@ -106,11 +105,11 @@ function App() {
         inspector={
           <>
             <Panel title={`AlertDialog.show resolved with (${shown()} shown)`}>
-              <Text style={{ color: colors.accent, fontSize: 14, fontWeight: "600" }}>
+              <Text style={{ color: ui().accent, fontSize: 14, fontWeight: "600" }}>
                 {answer()}
               </Text>
             </Panel>
-            <Text style={{ color: colors.faint, fontSize: 12 }}>{hint}</Text>
+            <Text style={{ color: ui().faint, fontSize: 12 }}>{hint}</Text>
           </>
         }
       >
@@ -119,7 +118,7 @@ function App() {
             {alerts.map((alert, i) => (
               <>
                 {i > 0 ? (
-                  <View style={{ height: 1, marginLeft: 12, backgroundColor: colors.line }} />
+                  <View style={{ height: 1, marginLeft: 12, backgroundColor: ui().line }} />
                 ) : null}
                 <View
                   style={{
@@ -130,7 +129,7 @@ function App() {
                     paddingHorizontal: 12,
                   }}
                 >
-                  <Text style={{ flex: 1, fontSize: 13, color: colors.muted }}>{alert.detail}</Text>
+                  <Text style={{ flex: 1, fontSize: 13, color: ui().muted }}>{alert.detail}</Text>
                   <Button
                     variant={alert.danger ? "danger" : "secondary"}
                     onPress={() => show(alert.id)}
@@ -155,12 +154,12 @@ function App() {
                     style={{
                       fontSize: controlSize.label,
                       fontWeight: "600",
-                      color: alert.danger ? colors.danger : colors.text,
+                      color: alert.danger ? ui().danger : ui().text,
                     }}
                   >
                     {alert.label}
                   </Text>
-                  <Text style={{ fontSize: controlSize.detail, color: colors.muted }}>
+                  <Text style={{ fontSize: controlSize.detail, color: ui().muted }}>
                     {alert.detail}
                   </Text>
                 </View>

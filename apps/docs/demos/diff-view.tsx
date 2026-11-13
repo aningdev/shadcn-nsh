@@ -2,7 +2,6 @@
 // library's DiffView: a Rust file changed in two places, reverted or kept a change at a time, with
 // the layout, the inline style and the stats in the inspector. The chips over a change are the
 // shared look's, in the tone of the row they sit on.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 import type { DiffViewRef } from "nsh/base";
 
@@ -11,7 +10,7 @@ import { DiffHunkActions, DiffView, diffHunkTone } from "@/packages/ui/diff-view
 import { sectionSurface } from "@/packages/ui/lib/surface";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
-import { desktop, Log, Panel, Segmented, Split, wide } from "./stage";
+import { desktop, Log, Panel, Segmented, Split, ui, wide } from "./stage";
 
 const OLD = `fn greet(name: &str) -> String {
     format!("Hello, {}", name)
@@ -55,7 +54,7 @@ function App() {
 
   return (
     <DemoPage title="Diff view">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click Revert or Keep on a change, or a line number"
           : "Tap Revert or Keep on a change, or a line number"}

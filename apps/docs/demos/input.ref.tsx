@@ -8,7 +8,7 @@ import { buttonLabel, buttonLook } from "@/packages/ui/button";
 import { inputLook } from "@/packages/ui/input";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
-import { desktop, Panel, Split, ui } from "./stage";
+import { buttonStyle, desktop, Panel, Split, ui } from "./stage";
 
 /** A label above its field, and what describes it below. */
 function Field(props: { label: string; children: JSX.Element; after?: JSX.Element }) {
@@ -101,7 +101,7 @@ function App() {
             onPress={signIn}
             {...buttonLook("primary", {
               disabled: () => password().length === 0,
-              style: { marginTop: 4, alignSelf: desktop ? "flex-start" : undefined },
+              style: buttonStyle({ marginTop: 4 }),
             })}
           >
             <Text style={buttonLabel("primary", { disabled: () => password().length === 0 })}>

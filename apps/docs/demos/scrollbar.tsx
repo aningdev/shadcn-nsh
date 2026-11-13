@@ -1,7 +1,6 @@
 // The official scrollbar scene (`references/nsh/website/demos/el-scrollbar.tsx`) with this
 // library's Scrollbar: a list of messages in a card whose own indicator is off, the app's bar over
 // its edge, and an inspector that switches when the bar shows and follows the list's offset.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, Scroll, signal, Text, View, type ScrollRef } from "nsh";
 import type { ScrollbarMode } from "nsh/base";
 
@@ -9,7 +8,7 @@ import { controlSize, sectionSurface } from "@/packages/ui/lib/surface";
 import { Scrollbar } from "@/packages/ui/scrollbar";
 
 import { DemoPage } from "./kit";
-import { desktop, Panel, Segmented, Split } from "./stage";
+import { desktop, Panel, Segmented, Split, ui } from "./stage";
 
 // The bar shows while the content scrolls and while the pointer is over it, fades in over 300 ms
 // and out over 500 ms, 2 s after the last scroll; pointing at its hidden thumb in the `hover` mode
@@ -32,7 +31,7 @@ function App() {
   let inbox: ScrollRef | undefined;
   return (
     <DemoPage title="Scrollbar">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Scroll the list, drag the thumb or click the track"
           : "Scroll the list, or drag the thumb"}
@@ -65,7 +64,7 @@ function App() {
             {MESSAGES.map((m) => (
               <View
                 class={`flex-row gap-3 ${desktop ? "px-3 py-2.5" : "px-4 py-3"}`}
-                style={{ borderBottomWidth: 1, borderColor: colors.line }}
+                style={{ borderBottomWidth: 1, borderColor: ui().line }}
               >
                 <View style={{ flex: 1, gap: 2 }}>
                   <Text

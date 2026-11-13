@@ -2,14 +2,13 @@
 // library's panels: a sidebar beside an editor with a console under it, the sizes the app's (the
 // group reports them when a drag ends and the app passes them back), and an inspector with the
 // sizes, the console's visibility and the resize events.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { sectionSurface } from "@/packages/ui/lib/surface";
 import { ResizablePanel, ResizablePanelGroup } from "@/packages/ui/resizable";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Segmented, Split, wide } from "./stage";
+import { desktop, Log, Panel, Segmented, Split, ui, wide } from "./stage";
 
 // The handles take the shared look: a hairline that stays as it is, and a thumb on it, a pill that
 // grows in under the pointer and further while dragged.
@@ -34,7 +33,7 @@ function App() {
 
   return (
     <DemoPage title="Resizable">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Drag a line between two panels"
           : "Drag a line between two panels with your finger"}
@@ -72,7 +71,14 @@ function App() {
               maxSize={320}
               onResize={({ size }) => sidebar.set(size)}
             >
-              <View style={{ flex: 1, padding: 14, gap: 10, backgroundColor: colors.inset }}>
+              <View
+                style={{
+                  flex: 1,
+                  padding: 14,
+                  gap: 10,
+                  backgroundColor: ui().inset.backgroundColor,
+                }}
+              >
                 {label("Files", `${Math.round(sidebar())} pt, 100 to 320`)}
               </View>
             </ResizablePanel>

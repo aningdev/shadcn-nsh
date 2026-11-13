@@ -2,7 +2,6 @@
 // parts: a card opened from a button and a page sheet opened from another, a switch for whether
 // the backdrop closes the card, and an inspector holding both open flags, the cancel count and
 // the last lifecycle line.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View, type ViewStyle } from "nsh";
 
 import {
@@ -18,7 +17,7 @@ import { listRow, RowLabel } from "@/packages/ui/lib/surface";
 import { Switch } from "@/packages/ui/switch";
 
 import { DemoPage } from "./kit";
-import { desktop, Panel, Split, wide } from "./stage";
+import { desktop, Panel, Split, ui, wide } from "./stage";
 
 /** The page sheet's own panel: a card in the middle with a pointer, a sheet along the bottom edge
  * on a touch screen (the dialog's look is a card, so the app gives this one its place). */
@@ -56,17 +55,17 @@ function App() {
 
   return (
     <DemoPage title="Dialog">
-      <Text style={{ color: colors.muted }}>{hint}</Text>
+      <Text style={{ color: ui().muted }}>{hint}</Text>
 
       <Split
         gap={14}
         inspector={
           <>
             <Panel title="open · onCancel">
-              <Text style={{ fontSize: 13, color: colors.text }}>{state()}</Text>
+              <Text style={{ fontSize: 13, color: ui().text }}>{state()}</Text>
             </Panel>
             <Panel title="onOpenChange({ open, reason }) · onOpen" grow>
-              <Text style={{ fontSize: 13, fontWeight: "600", color: colors.accent }}>{log()}</Text>
+              <Text style={{ fontSize: 13, fontWeight: "600", color: ui().accent }}>{log()}</Text>
             </Panel>
           </>
         }

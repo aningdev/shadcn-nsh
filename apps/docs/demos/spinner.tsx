@@ -1,7 +1,6 @@
 // The spinner has no official example, so this page is the library's own: a hero ring whose size
 // the inspector sets, the sizes and surfaces it takes, and the busy buttons that use it, with a
 // save the page runs for a moment to show one.
-import { colors } from "@shadcn-nsh/theme";
 import type { JSX, ViewStyle } from "nsh";
 import { cleanup, mount, signal, Text, View } from "nsh";
 
@@ -10,7 +9,7 @@ import { insetSurface, sectionSurface } from "@/packages/ui/lib/surface";
 import { Spinner } from "@/packages/ui/spinner";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
-import { Log, Panel, Segmented, Split } from "./stage";
+import { Log, Panel, Segmented, Split, ui } from "./stage";
 
 const SIZES = [12, 16, 24] as const;
 
@@ -51,7 +50,7 @@ function App() {
   };
   return (
     <DemoPage title="Spinner">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {
           "A ring that turns while work goes on; it stands still when the user asks for less motion."
         }
@@ -69,7 +68,7 @@ function App() {
               />
             </Panel>
             <Panel title="busy">
-              <Text style={{ fontSize: 13, color: colors.text }}>
+              <Text style={{ fontSize: 13, color: ui().text }}>
                 {busy() ? "Saving: the ring is up" : "Idle"}
               </Text>
               <View style={{ flexDirection: "row" }}>
@@ -84,29 +83,27 @@ function App() {
       >
         <View style={{ ...sectionSurface({ padded: true }), gap: 14 }}>
           <View style={{ alignItems: "center", gap: 10, paddingVertical: 18 }}>
-            <Spinner size={size()} tint={colors.accent} />
-            <Text style={{ fontSize: 13, color: colors.muted }}>
-              {busy() ? "Saving…" : "Ready"}
-            </Text>
+            <Spinner size={size()} tint={ui().accent} />
+            <Text style={{ fontSize: 13, color: ui().muted }}>{busy() ? "Saving…" : "Ready"}</Text>
           </View>
-          <View style={{ height: 1, backgroundColor: colors.line }} />
+          <View style={{ height: 1, backgroundColor: ui().line }} />
           <DemoSection title="Size">
             <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
-              <Spinner size={12} tint={colors.muted} />
-              <Spinner size={16} tint={colors.accent} />
-              <Spinner size={24} tint={colors.accent} />
+              <Spinner size={12} tint={ui().muted} />
+              <Spinner size={16} tint={ui().accent} />
+              <Spinner size={24} tint={ui().accent} />
             </View>
           </DemoSection>
           <DemoSection title="Surface">
             <View style={{ flexDirection: "row", gap: 12 }}>
-              <Surface style={{ backgroundColor: colors.raised }}>
-                <Spinner size={16} tint={colors.text} />
+              <Surface style={{ backgroundColor: ui().raised.backgroundColor }}>
+                <Spinner size={16} tint={ui().text} />
               </Surface>
               <Surface style={insetSurface()}>
-                <Spinner size={16} tint={colors.accent} />
+                <Spinner size={16} tint={ui().accent} />
               </Surface>
-              <Surface style={{ backgroundColor: colors.accentFill }}>
-                <Spinner size={16} tint={colors.onAccent} />
+              <Surface style={{ backgroundColor: ui().accentFill.backgroundColor }}>
+                <Spinner size={16} tint={ui().onAccent} />
               </Surface>
             </View>
           </DemoSection>

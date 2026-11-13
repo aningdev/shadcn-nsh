@@ -2,7 +2,6 @@
 // parts: a formatting bar (undo, the marks, the alignment) over the text it formats, a vertical
 // palette of tools beside it, and an inspector logging every edit. One stop of Tab per toolbar;
 // its arrows move between the tools.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { Button } from "@/packages/ui/button";
@@ -14,7 +13,7 @@ import { Toolbar, ToolbarGroup, ToolbarSeparator } from "@/packages/ui/toolbar";
 import { toolbarRule, toolbarTrack } from "@/packages/ui/toolbar";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Split } from "./stage";
+import { desktop, Log, Split, ui } from "./stage";
 
 type Mark = "bold" | "italic" | "underline";
 type Align = "left" | "center" | "right";
@@ -58,7 +57,7 @@ function App() {
 
   return (
     <DemoPage title="Toolbar">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Tab into a toolbar, then move with the arrow keys; Home and End jump to its ends"
           : "Tap the tools; a screen reader hears each bar as a toolbar"}
@@ -160,7 +159,7 @@ function App() {
               style={{
                 fontSize: 15,
                 lineHeight: 22,
-                color: colors.text,
+                color: ui().text,
                 fontWeight: has("bold") ? "700" : "400",
                 fontStyle: has("italic") ? "italic" : "normal",
                 textDecorationLine: has("underline") ? "underline" : "none",
@@ -169,7 +168,7 @@ function App() {
             >
               One stop of Tab per toolbar; its arrows move between the tools.
             </Text>
-            <Text style={{ fontSize: 13, color: colors.muted }}>
+            <Text style={{ fontSize: 13, color: ui().muted }}>
               {`Tool: ${tools.find((t) => t.id === tool())!.label}`}
             </Text>
           </View>

@@ -1,7 +1,6 @@
 // The official popover scene (`references/nsh/website/demos/el-popover.tsx`) with this library's
 // parts: one panel over a trigger, its side and offset chosen in the inspector, a button below
 // that counts the presses a press outside costs it, and the last four lifecycle lines.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { Button } from "@/packages/ui/button";
@@ -15,7 +14,7 @@ import {
 } from "@/packages/ui/popover";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Segmented, Split, wide } from "./stage";
+import { desktop, Log, Segmented, Split, ui, wide } from "./stage";
 
 type Placement = "top" | "bottom" | "left" | "right";
 
@@ -27,7 +26,7 @@ function App() {
 
   return (
     <DemoPage title="Popover">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Open it, then click “Count” below: one click closes it and presses the button"
           : "Open it, then tap “Count” below: the tap only closes it"}
@@ -72,20 +71,18 @@ function App() {
                   style={{
                     fontSize: desktop ? 14 : 16,
                     fontWeight: "600",
-                    color: colors.text,
+                    color: ui().text,
                   }}
                 >
                   Shipped yesterday
                 </PopoverTitle>
-                <PopoverDescription style={{ fontSize: desktop ? 12 : 13, color: colors.muted }}>
+                <PopoverDescription style={{ fontSize: desktop ? 12 : 13, color: ui().muted }}>
                   Arriving Friday. The trigger, a press outside and Escape close this.
                 </PopoverDescription>
               </PopoverHeader>
               <View style={{ flexDirection: "row", gap: 6, alignItems: "center" }}>
-                <View
-                  style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.up }}
-                />
-                <Text style={{ fontSize: 12, color: colors.up }}>In transit</Text>
+                <View style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: ui().up }} />
+                <Text style={{ fontSize: 12, color: ui().up }}>In transit</Text>
               </View>
             </PopoverContent>
           </Popover>
