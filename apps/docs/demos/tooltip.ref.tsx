@@ -2,6 +2,7 @@
 // `tooltipText`) on `nsh/base`'s Tooltip, hung on the host view's `tooltip` prop, the way the
 // official example (`references/nsh/website/demos/el-tooltip.tsx`) writes it. It differs from the
 // component page only in the parts it names.
+import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 import { Tooltip } from "nsh/base";
 
@@ -27,7 +28,6 @@ function Tool(props: {
     <View style={{ alignItems: "center", gap: 6 }}>
       <View style={{ gap: 0 }}>
         <View
-          style={{ alignSelf: "flex-start" }}
           tooltip={
             <Tooltip
               open={props.pinned || hovered()}
@@ -65,6 +65,77 @@ function App() {
       [`${name} ${event.open ? "shown" : "hidden"} · ${event.reason}`, ...events()].slice(0, 6),
     );
 
+  const tools = (gap: number): JSX.Element => (
+    <View style={{ flexDirection: "row", justifyContent: "center", gap }}>
+      <Tool
+        icon="star"
+        label="Star"
+        hint="Add to favorites"
+        placement="top"
+        pinned={pinned()}
+        onPress={() => pressed.set("Star")}
+        onOpenChange={log("Star")}
+      />
+      <Tool
+        icon="share"
+        label="Share"
+        hint="Share with your team"
+        placement="bottom"
+        pinned={pinned()}
+        onPress={() => pressed.set("Share")}
+        onOpenChange={log("Share")}
+      />
+      <Tool
+        icon="trash"
+        label="Delete"
+        hint="Move to the trash"
+        placement="top"
+        pinned={pinned()}
+        onPress={() => pressed.set("Delete")}
+        onOpenChange={log("Delete")}
+      />
+    </View>
+  );
+
+  /** The `tooltip` prop of any element: a `Tooltip` with the app's look. */
+  const pin = (): JSX.Element => (
+    <View style={{ gap: 0, flex: wide() ? undefined : 1 }}>
+      <View
+        tooltip={
+          <Tooltip>
+            <View class={tooltipLook().class}>
+              <Text class={tooltipText}>Shows every tooltip without a pointer</Text>
+            </View>
+          </Tooltip>
+        }
+      >
+        <Button
+          variant="secondary"
+          onPress={() => pinned.set(!pinned())}
+          style={wide() ? undefined : { flex: 1 }}
+        >
+          {wide()
+            ? pinned()
+              ? "Unpin the tooltips"
+              : "Pin the tooltips"
+            : pinned()
+              ? "Unpin"
+              : "Pin"}
+        </Button>
+      </View>
+    </View>
+  );
+
+  const onPress = (): JSX.Element => (
+    <Panel title="onPress">
+      <Text style={{ fontSize: 13, color: ui().text }}>{pressed()}</Text>
+    </Panel>
+  );
+
+  const changes = (): JSX.Element => (
+    <Log title="onOpenChange({ open, reason })" lines={events()} minHeight={130} />
+  );
+
   return (
     <DemoPage title="Tooltip">
       <Text style={{ color: ui().muted }}>
@@ -73,75 +144,41 @@ function App() {
           : "Tooltips follow a pointer: pin them to see them here"}
       </Text>
 
-      <Split
-        gap={14}
-        inspector={
+      {() =>
+        wide() ? (
+          <Split
+            gap={14}
+            inspector={
+              <>
+                {onPress()}
+                {changes()}
+              </>
+            }
+          >
+            {tools(64)}
+            <View style={{ flexDirection: "row", gap: 8 }}>{pin()}</View>
+          </Split>
+        ) : (
           <>
-            <Panel title="onPress">
-              <Text style={{ fontSize: 13, color: ui().text }}>{pressed()}</Text>
-            </Panel>
-            <Log title="onOpenChange({ open, reason })" lines={events()} minHeight={130} />
-          </>
-        }
-      >
-        <View style={{ flexDirection: "row", justifyContent: "center", gap: 64 }}>
-          <Tool
-            icon="star"
-            label="Star"
-            hint="Add to favorites"
-            placement="top"
-            pinned={pinned()}
-            onPress={() => pressed.set("Star")}
-            onOpenChange={log("Star")}
-          />
-          <Tool
-            icon="share"
-            label="Share"
-            hint="Share with your team"
-            placement="bottom"
-            pinned={pinned()}
-            onPress={() => pressed.set("Share")}
-            onOpenChange={log("Share")}
-          />
-          <Tool
-            icon="trash"
-            label="Delete"
-            hint="Move to the trash"
-            placement="top"
-            pinned={pinned()}
-            onPress={() => pressed.set("Delete")}
-            onOpenChange={log("Delete")}
-          />
-        </View>
-        {/* The `tooltip` prop of any element: a `Tooltip` with the app's look. */}
-        <View style={{ flexDirection: "row", gap: 8 }}>
-          <View style={{ gap: 0, flex: wide() ? undefined : 1 }}>
+            {/* The official's phone frame: the tools take the room the page leaves, centered. */}
             <View
-              tooltip={
-                <Tooltip>
-                  <View class={tooltipLook().class}>
-                    <Text class={tooltipText}>Shows every tooltip without a pointer</Text>
-                  </View>
-                </Tooltip>
-              }
+              style={{
+                flex: 1,
+                minHeight: 200,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 28,
+              }}
             >
-              <Button
-                variant="secondary"
-                onPress={() => pinned.set(!pinned())}
-                style={wide() ? undefined : { flex: 1 }}
-              >
-                {wide()
-                  ? pinned()
-                    ? "Unpin the tooltips"
-                    : "Pin the tooltips"
-                  : pinned()
-                    ? "Unpin"
-                    : "Pin"}
-              </Button>
+              {tools(28)}
             </View>
-          </View>
-        </View>
-      </Split>
+            <View style={{ flexDirection: "row", gap: 8 }}>{pin()}</View>
+            {onPress()}
+            {changes()}
+          </>
+        )
+      }
     </DemoPage>
   );
 }

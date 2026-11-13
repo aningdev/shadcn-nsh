@@ -29,11 +29,14 @@ export function DemoPage(props: {
       style={{ flex: 1, backgroundColor: colors.background }}
       contentStyle={{ flexGrow: 1, padding: 20, gap: density.gap + 2 }}
     >
+      {/* `flex: 1`: a page at least as tall as the window, so a section that takes the room left
+          (`flex: 1`, the tooltip's tools on a phone) has room to take. */}
       <View
         style={
           props.width === undefined
-            ? { gap: density.gap + 2 }
+            ? { flex: 1, gap: density.gap + 2 }
             : {
+                flex: 1,
                 width: "100%",
                 maxWidth: props.width,
                 alignSelf: "center",

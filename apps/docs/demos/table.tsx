@@ -28,18 +28,22 @@ const invoices = [
 ];
 
 /**
- * Each column's width: the official scene's in a wide window (the status takes the room the
- * three fixed columns leave); on a phone four equal columns, which wrap the status rather than
- * breaking its words.
+ * Each column's width: the official scene's in a wide window (the status takes the room the three
+ * fixed columns leave). On a phone the amount keeps the official's 96 points — `$1200.00` is not
+ * cut — and the three others share what is left, so no word breaks either: upstream's own phone
+ * frame wraps the status one letter a line.
  */
 const widths = () =>
-  wide() ? ["w-24", "flex-1", "w-24", "w-24"] : ["flex-1", "flex-1", "flex-1", "flex-1"];
+  wide() ? ["w-24", "flex-1", "w-24", "w-24"] : ["flex-1", "flex-1", "flex-1", "w-20"];
+
+/** A cell's sides: the shared `px-2` in a wide window, tighter on a phone so the four fit. */
+const sides = () => (wide() ? "" : "px-1.5");
 
 /** A cell's text: the header's quiet label, the body's, and a figure at the trailing edge. */
 function Cell(props: { i: number; head?: boolean; end?: boolean; children: string }) {
   const Part = props.head ? TableHead : TableCell;
   return (
-    <Part class={widths()[props.i]}>
+    <Part class={`${widths()[props.i]} ${sides()}`}>
       <Text
         class={props.head ? "text-muted-foreground font-medium" : "text-foreground"}
         style={{

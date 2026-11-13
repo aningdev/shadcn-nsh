@@ -1,6 +1,9 @@
 // The official tooltip scene (`references/nsh/website/demos/el-tooltip.tsx`) with this library's
 // parts: three icon buttons with hints above and below them, a pin that shows them all without a
-// pointer, and an inspector holding the last press and the last six hint lines.
+// pointer, and an inspector holding the last press and the last six hint lines. A phone keeps the
+// official's frame: the tools fill what the page leaves, centered, with the pin under them and
+// the state below that; a wide window puts the state beside them.
+import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 
 import { Button, IconButton, iconButtonGlyph } from "@/packages/ui/button";
@@ -55,6 +58,66 @@ function App() {
       [`${name} ${event.open ? "shown" : "hidden"} · ${event.reason}`, ...events()].slice(0, 6),
     );
 
+  const tools = (gap: number) => (
+    <View style={{ flexDirection: "row", justifyContent: "center", gap }}>
+      <Tool
+        icon="star"
+        label="Star"
+        hint="Add to favorites"
+        placement="top"
+        pinned={pinned()}
+        onPress={() => pressed.set("Star")}
+        onOpenChange={log("Star")}
+      />
+      <Tool
+        icon="share"
+        label="Share"
+        hint="Share with your team"
+        placement="bottom"
+        pinned={pinned()}
+        onPress={() => pressed.set("Share")}
+        onOpenChange={log("Share")}
+      />
+      <Tool
+        icon="trash"
+        label="Delete"
+        hint="Move to the trash"
+        placement="top"
+        pinned={pinned()}
+        onPress={() => pressed.set("Delete")}
+        onOpenChange={log("Delete")}
+      />
+    </View>
+  );
+
+  /** The `tooltip` prop of any element: a `Tooltip` with the app's look. */
+  const pin = (): JSX.Element => (
+    <Tooltip style={wide() ? undefined : { flex: 1 }}>
+      <TooltipTrigger>
+        <Button variant="secondary" onPress={() => pinned.set(!pinned())}>
+          {wide()
+            ? pinned()
+              ? "Unpin the tooltips"
+              : "Pin the tooltips"
+            : pinned()
+              ? "Unpin"
+              : "Pin"}
+        </Button>
+      </TooltipTrigger>
+      <TooltipContent>Shows every tooltip without a pointer</TooltipContent>
+    </Tooltip>
+  );
+
+  const onPress = (): JSX.Element => (
+    <Panel title="onPress">
+      <Text style={{ fontSize: 13, color: ui().text }}>{pressed()}</Text>
+    </Panel>
+  );
+
+  const changes = (): JSX.Element => (
+    <Log title="onOpenChange({ open, reason })" lines={events()} minHeight={130} />
+  );
+
   return (
     <DemoPage title="Tooltip">
       <Text style={{ color: ui().muted }}>
@@ -63,64 +126,41 @@ function App() {
           : "Tooltips follow a pointer: pin them to see them here"}
       </Text>
 
-      <Split
-        gap={14}
-        inspector={
+      {() =>
+        wide() ? (
+          <Split
+            gap={14}
+            inspector={
+              <>
+                {onPress()}
+                {changes()}
+              </>
+            }
+          >
+            {tools(64)}
+            <View style={{ flexDirection: "row", gap: 8 }}>{pin()}</View>
+          </Split>
+        ) : (
           <>
-            <Panel title="onPress">
-              <Text style={{ fontSize: 13, color: ui().text }}>{pressed()}</Text>
-            </Panel>
-            <Log title="onOpenChange({ open, reason })" lines={events()} minHeight={130} />
+            {/* The official's phone frame: the tools take the room the page leaves, centered. */}
+            <View
+              style={{
+                flex: 1,
+                minHeight: 200,
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 28,
+              }}
+            >
+              {tools(28)}
+            </View>
+            <View style={{ flexDirection: "row", gap: 8 }}>{pin()}</View>
+            {onPress()}
+            {changes()}
           </>
-        }
-      >
-        <View style={{ flexDirection: "row", justifyContent: "center", gap: 64 }}>
-          <Tool
-            icon="star"
-            label="Star"
-            hint="Add to favorites"
-            placement="top"
-            pinned={pinned()}
-            onPress={() => pressed.set("Star")}
-            onOpenChange={log("Star")}
-          />
-          <Tool
-            icon="share"
-            label="Share"
-            hint="Share with your team"
-            placement="bottom"
-            pinned={pinned()}
-            onPress={() => pressed.set("Share")}
-            onOpenChange={log("Share")}
-          />
-          <Tool
-            icon="trash"
-            label="Delete"
-            hint="Move to the trash"
-            placement="top"
-            pinned={pinned()}
-            onPress={() => pressed.set("Delete")}
-            onOpenChange={log("Delete")}
-          />
-        </View>
-        {/* The `tooltip` prop of any element: a `Tooltip` with the app's look. */}
-        <View style={{ flexDirection: "row", gap: 8 }}>
-          <Tooltip style={wide() ? undefined : { flex: 1 }}>
-            <TooltipTrigger>
-              <Button variant="secondary" onPress={() => pinned.set(!pinned())}>
-                {wide()
-                  ? pinned()
-                    ? "Unpin the tooltips"
-                    : "Pin the tooltips"
-                  : pinned()
-                    ? "Unpin"
-                    : "Pin"}
-              </Button>
-            </TooltipTrigger>
-            <TooltipContent>Shows every tooltip without a pointer</TooltipContent>
-          </Tooltip>
-        </View>
-      </Split>
+        )
+      }
     </DemoPage>
   );
 }

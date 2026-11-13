@@ -29,16 +29,20 @@ const invoices = [
   { id: "INV004", status: "Paid", method: "Cash", amount: 450 },
 ];
 /**
- * Each column's width: the official scene's in a wide window (the status takes the room the
- * three fixed columns leave); on a phone four equal columns, which wrap the status rather than
- * breaking its words.
+ * Each column's width: the official scene's in a wide window (the status takes the room the three
+ * fixed columns leave). On a phone the amount keeps the official's 96 points — `$1200.00` is not
+ * cut — and the three others share what is left, so no word breaks either: upstream's own phone
+ * frame wraps the status one letter a line.
  */
 const widths = () =>
-  wide() ? ["w-24", "flex-1", "w-24", "w-24"] : ["flex-1", "flex-1", "flex-1", "flex-1"];
+  wide() ? ["w-24", "flex-1", "w-24", "w-24"] : ["flex-1", "flex-1", "flex-1", "w-20"];
+
+/** A cell's sides: the shared `px-2` in a wide window, tighter on a phone so the four fit. */
+const sides = () => (wide() ? "" : "px-1.5");
 
 /** The component's cell chrome (the shared cell class, the header's or the body's) and its text. */
 function Cell(props: { i: number; head?: boolean; end?: boolean; children: string }) {
-  const className = `${dataTableClasses.cell} py-2 ${widths()[props.i]}`;
+  const className = `${dataTableClasses.cell} py-2 ${widths()[props.i]} ${sides()}`;
   const Part = props.head ? TableHead : TableCell;
   return (
     <Part class={className}>
