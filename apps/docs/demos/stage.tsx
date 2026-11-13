@@ -197,18 +197,6 @@ export function Log(props: { title: string; lines: string[]; minHeight?: number;
   });
 }
 
-/**
- * A `Button`'s style in a demo, as upstream's demo `button()` gives it (`demo.ts:76-91`): with a
- * pointer it is as wide as its label and sits at the start of its column
- * (`alignSelf: "flex-start"`), which a column would otherwise stretch; a touch screen's column
- * stretches it whole, which a finger wants. More style goes on top.
- */
-export const buttonStyle = (style?: ViewStyle): ViewStyle => ({
-  ...(desktop ? { alignSelf: "flex-start" as const } : {}),
-  ...style,
-});
-
-/** A color at an opacity: the palette's `tint` (the theme's `alpha`). */
 /** A labelled demo option row using the shared segmented control. */
 export function Segmented<T extends string | number>(props: {
   label?: string;
@@ -239,6 +227,17 @@ export function Segmented<T extends string | number>(props: {
   });
 }
 // @port end
+
+/**
+ * A `Button`'s style in a demo, as upstream's demo `button()` gives it (`demo.ts:76-91`): with a
+ * pointer it is as wide as its label and sits at the start of its column
+ * (`alignSelf: "flex-start"`), which a column would otherwise stretch; a touch screen's column
+ * stretches it whole, which a finger wants. More style goes on top.
+ */
+export const buttonStyle = (style?: ViewStyle): ViewStyle => ({
+  ...(desktop ? { alignSelf: "flex-start" as const } : {}),
+  ...style,
+});
 
 // `Log` (in the region above, `demo.ts:242`) takes `grow` from `sideBySide()`: beside a stage it
 // fills the inspector's free height. A page-level log uses it as it is (the toast demo's): narrow,
