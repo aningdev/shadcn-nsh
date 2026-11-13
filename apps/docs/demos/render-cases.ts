@@ -38,6 +38,8 @@ type Override = Omit<Case, "id">;
 const overrides: Record<string, Override> = {
   dialog: { steps: (app) => app.press("Delete item…") },
   "alert-dialog": { steps: (app) => app.press("Delete file…") },
+  select: { steps: (app) => app.press("label:Language") },
+  "date-picker": { steps: (app) => app.press("No due date") },
   spinner: { selfReference: "upstream's own Spinner, with no shell to compare against" },
   badge: { selfReference: "upstream's own Badge, with no shell to compare against" },
   status: { selfReference: "upstream's own Status, with no shell to compare against" },
