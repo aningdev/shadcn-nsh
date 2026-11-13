@@ -10,7 +10,9 @@ bun run port:new <id> --from <上游文件> [--symbols a,b,c] [--base <nsh/base 
 # 例：bun run port:new popover --from look/overlay.ts --symbols popoverLook,PopoverLookOptions --base Popover --family
 ```
 
-脚手架依次：在 `port-map.json` 加路由（已有路由时报错）→ 建 `packages/ui/<id>.tsx`（文件头、空区域、外壳骨架；`--family` 生成 Root / Trigger / Content / Close 与 `use<Id>()`）→ `port:vendor` 填区域并列出缺的 import → 建 `demos/<id>.tsx` 与 `<id>.ref.tsx` → 在渲染用例表与 `App.tsx` 各加一行 → 建文档页骨架 → 加 registry 条目。
+脚手架依次：在 `port-map.json` 加路由（已有路由时报错）→ 建 `packages/ui/<id>.tsx`（文件头、空区域、外壳骨架；`--family` 生成 Root / Trigger / Content / Close 与 `use<Id>()`）→ `port:vendor` 填区域并列出缺的 import → 建 `demos/<id>.tsx` 与 `<id>.ref.tsx` → 建文档页骨架 → 加 registry 条目 → 在 `packages/ui/index.ts` 导出它 → 重新生成 `demos/catalog.generated.ts`。
+
+组件 id 不手写：脚本从 `registry.json` 经 `scripts/catalog.ts` 取集合，NSH 运行时从 `demos/catalog.generated.ts` 取。`render-cases.ts` 只写这个组件需要时的 `steps` / `selfReference` 覆盖；`App.tsx` 不再列 id。
 
 然后：
 
@@ -42,18 +44,19 @@ bun run port:new <id> --from <上游文件> [--symbols a,b,c] [--base <nsh/base 
 
 ## 检查
 
-| 命令                        | 判定                                                                                                          | 何时跑         |
-| --------------------------- | ------------------------------------------------------------------------------------------------------------- | -------------- |
-| `bun run port:check`        | P1–P3：清单完整、区域与上游一致（格式化后比较）、安装的 CLI 与基线不同时警告；`--status` 列出待办             | 每次           |
-| `nsh check apps/docs/demos` | 组件与演示的类型；`props.test-d.ts` 断言外壳 props 是 base props 的超集（P5）                                 | 每次           |
-| `bun run port:coverage`     | 演示覆盖组件声明的每个轴取值与共享 `Tone`；`selfReference` 只在没有外壳的组件上                               | 每次           |
-| `bun run port:render`       | P4 的指针一半：web，亮 / 暗；跑完与 `apps/docs/demos/baseline/` 逐字节比较（仅 macOS；CI 加 `--no-baseline`） | 提交前、CI     |
-| `bun run port:render:touch` | P4 的触屏一半：iOS 模拟器，亮 / 暗；之后跑外观切换检查                                                        | 提交前（本地） |
-| `bun run registry:build`    | P6：依赖等于 import，相对 import 都有条目分发                                                                 | 改组件后       |
-| `bun run test:unit`         | CLI 与主题；`ui-guards.test.ts` 扫 Port Region 之外的颜色字面量（P7）                                         | 每次           |
-| `bun run test:gallery`      | 原生行为：按键、取值、禁用                                                                                    | 改行为后       |
-| `vp check`                  | 格式、lint、工具面类型                                                                                        | 每次           |
-| `bun run check`             | `vp check --fix` → `port:check` → `port:coverage` → demos 与 gallery 类型 → 文档页 → docs（会改文件）         | 每次           |
+| 命令                        | 判定                                                                                                                                     | 何时跑         |
+| --------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | -------------- |
+| `bun run port:check`        | P1–P3：清单完整、区域与上游一致（格式化后比较）、安装的 CLI 与基线不同时警告；`--status` 列出待办                                        | 每次           |
+| `nsh check apps/docs/demos` | 组件与演示的类型；`props.test-d.ts` 断言外壳 props 是 base props 的超集（P5）                                                            | 每次           |
+| `bun run port:coverage`     | 演示覆盖组件声明的每个轴取值与共享 `Tone`；`selfReference` 只在没有外壳的组件上                                                          | 每次           |
+| `bun run catalog --check`   | 组件集合：每个 `registry:ui` 都有演示、参照页、文档页并从 `packages/ui/index.ts` 导出；没有未登记的演示或页；`catalog.generated.ts` 最新 | 每次           |
+| `bun run port:render`       | P4 的指针一半：web，亮 / 暗；跑完与 `apps/docs/demos/baseline/` 逐字节比较（仅 macOS；CI 加 `--no-baseline`）                            | 提交前、CI     |
+| `bun run port:render:touch` | P4 的触屏一半：iOS 模拟器，亮 / 暗；之后跑外观切换检查                                                                                   | 提交前（本地） |
+| `bun run registry:build`    | P6：依赖等于 import，相对 import 都有条目分发                                                                                            | 改组件后       |
+| `bun run test:unit`         | CLI 与主题；`ui-guards.test.ts` 扫 Port Region 之外的颜色字面量（P7）                                                                    | 每次           |
+| `bun run test:gallery`      | 原生行为：按键、取值、禁用                                                                                                               | 改行为后       |
+| `vp check`                  | 格式、lint、工具面类型                                                                                                                   | 每次           |
+| `bun run check`             | `vp check --fix` → `catalog --check` → `port:check` → `port:coverage` → demos 与 gallery 类型 → 文档页 → docs（会改文件）                | 每次           |
 
 两种渲染比对的实现细节（CPU 光栅化、定身等待、基线）见 [`toolchain.md`](toolchain.md#渲染比对的两半)。
 

@@ -85,6 +85,7 @@ NSH CLI **只安装、从不编译**：装 `port-map.json` 的 `upstream.cli`（
 bun run port:new <id> --from <上游> …  # 脚手架：路由、外壳、演示、文档、registry
 bun run port:vendor            # 按 port-map.json 从上游填充区域与复制文件
 bun run port:check             # 清单完整、区域与上游一致、CLI 不落后于基线（--status 列出待办）
+bun run catalog --check        # 组件集合一致（演示、参照页、文档页、导出），catalog.generated.ts 最新
 bun run port:render            # 渲染比对：组件与"look 展开在 nsh/base 上"截图相同
 nsh check apps/docs/demos      # 演示与 UI 的类型检查
 nsh run apps/docs/demos/button.tsx  # 运行一个演示
