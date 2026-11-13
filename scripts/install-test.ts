@@ -172,8 +172,8 @@ async function uiItems(url: string): Promise<Item[]> {
 
 /**
  * Compare the committed `public/r` with a fresh build of `registry.json`: an item that is out of
- * date, one the registry no longer lists (left behind by a build that did not clean up), or one
- * the build adds. `vp fmt` writes both sides the same way, so a matching registry is byte-equal.
+ * date, one the build adds, or one the registry no longer lists. `vp fmt` writes both sides the
+ * same way, so a matching registry is byte-equal.
  */
 async function registryDrift(fresh: string): Promise<string[]> {
   const [built, committed] = await Promise.all([list(fresh), list(published)]);
@@ -382,11 +382,9 @@ async function main(): Promise<number> {
 
   const tmp = await fs.mkdtemp(path.join(os.tmpdir(), "shadcn-nsh-install-"));
   let server: RegistryServer | null = null;
-  let kept = false;
   const clean = () => {
     server?.close().catch(() => {});
     if (!opts.keep) rmSync(tmp, { recursive: true, force: true });
-    else kept = true;
   };
   const onSignal = () => {
     clean();
@@ -477,9 +475,10 @@ async function main(): Promise<number> {
       return 1;
     }
 
+    const runs = opts.filter == null ? ", one app with all of them runs" : "";
     console.log(
-      `\ninstall test: ${items.length} of ${items.length} items install and type check, ` +
-        `one app with all of them runs (${seconds(performance.now() - eachStart)}, ` +
+      `\ninstall test: ${items.length} of ${items.length} items install and type check${runs} ` +
+        `(${seconds(performance.now() - eachStart)} for the items, ` +
         `${seconds(performance.now() - started)} in all)`,
     );
     return 0;
@@ -492,7 +491,7 @@ async function main(): Promise<number> {
     clean();
     process.off("SIGINT", onSignal);
     process.off("SIGTERM", onSignal);
-    if (kept) console.log(`install test: kept ${tmp}`);
+    if (opts.keep) console.log(`install test: kept ${tmp}`);
   }
 }
 
