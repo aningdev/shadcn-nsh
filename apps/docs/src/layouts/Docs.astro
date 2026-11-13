@@ -53,26 +53,9 @@ const nshUrl =
 const nshMdUrl = nshUrl ? `${nshUrl}.md` : undefined;
 const authoringFile = componentDoc ? `packages/ui/${componentDoc.slug}.tsx` : undefined;
 
-const editPath = navPage
-  ? navPage.componentSlug
-    ? `apps/docs/src/pages/docs/components/${navPage.componentSlug}.md`
-    : navPage.route === "/docs/components"
-      ? "apps/docs/src/pages/docs/components/index.astro"
-      : navPage.route === "/docs/theme"
-        ? "apps/docs/src/pages/docs/theme.md"
-        : navPage.route === "/docs/getting-started"
-          ? "apps/docs/src/pages/docs/getting-started.md"
-          : undefined
-  : undefined;
+const editPath = navPage?.source;
 
-const kicker =
-  navPage?.section === "components"
-    ? "Components"
-    : navPage?.section === "theme"
-      ? "Theme"
-      : navPage?.section === "getting-started"
-        ? "Getting started"
-        : "Docs";
+const kicker = navPage?.section === "components" ? "Components" : (navPage?.title ?? "Docs");
 
 const showDocHeader = true;
 

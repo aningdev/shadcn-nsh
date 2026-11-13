@@ -1,7 +1,7 @@
 import { components } from "./components";
 import { url } from "./site";
 
-export type NavSectionId = "getting-started" | "theme" | "components";
+export type NavSectionId = "getting-started" | "cli" | "theme" | "components";
 
 export type SidebarGroupId = "start" | "components";
 
@@ -13,12 +13,13 @@ export type SidebarPage = {
   group: SidebarGroupId;
   /** Primary nav section this page belongs to. */
   section: NavSectionId;
-  /** Optional component slug for chrome. */
-  componentSlug?: string;
+  /** Repo path of the page, for "Edit this page". */
+  source?: string;
 };
 
 export const PRIMARY_NAV: { id: NavSectionId; label: string; href: string }[] = [
   { id: "getting-started", label: "Getting started", href: url("docs/getting-started") },
+  { id: "cli", label: "CLI", href: url("docs/cli") },
   { id: "theme", label: "Theme", href: url("docs/theme") },
   { id: "components", label: "Components", href: url("docs/components") },
 ];
@@ -36,6 +37,15 @@ export const SIDEBAR_PAGES: SidebarPage[] = [
     title: "Getting started",
     group: "start",
     section: "getting-started",
+    source: "apps/docs/src/pages/docs/getting-started.md",
+  },
+  {
+    route: "/docs/cli",
+    href: url("docs/cli"),
+    title: "CLI",
+    group: "start",
+    section: "cli",
+    source: "apps/docs/src/pages/docs/cli.md",
   },
   {
     route: "/docs/theme",
@@ -43,6 +53,15 @@ export const SIDEBAR_PAGES: SidebarPage[] = [
     title: "Theme",
     group: "start",
     section: "theme",
+    source: "apps/docs/src/pages/docs/theme.md",
+  },
+  {
+    route: "/docs/customizing",
+    href: url("docs/customizing"),
+    title: "Customizing",
+    group: "start",
+    section: "theme",
+    source: "apps/docs/src/pages/docs/customizing.md",
   },
   {
     route: "/docs/components",
@@ -50,6 +69,7 @@ export const SIDEBAR_PAGES: SidebarPage[] = [
     title: "All components",
     group: "components",
     section: "components",
+    source: "apps/docs/src/pages/docs/components/index.astro",
   },
   ...components.map((c): SidebarPage => ({
     route: `/docs/components/${c.slug}`,
@@ -57,7 +77,7 @@ export const SIDEBAR_PAGES: SidebarPage[] = [
     title: c.title,
     group: "components",
     section: "components",
-    componentSlug: c.slug,
+    source: `apps/docs/src/pages/docs/components/${c.slug}.md`,
   })),
 ];
 
@@ -78,7 +98,8 @@ export function activeSection(pathname: string): NavSectionId | undefined {
   if (page) return page.section;
   const current = normalizePath(pathname);
   if (current.startsWith("/docs/components")) return "components";
-  if (current.startsWith("/docs/theme")) return "theme";
+  if (current.startsWith("/docs/cli")) return "cli";
+  if (current.startsWith("/docs/theme") || current.startsWith("/docs/customizing")) return "theme";
   if (current.startsWith("/docs/getting-started")) return "getting-started";
   return undefined;
 }
