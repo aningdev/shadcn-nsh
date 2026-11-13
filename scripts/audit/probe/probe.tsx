@@ -1,9 +1,9 @@
 // The demo audit's probe: what an app inside the docs preview believes about itself. Package it
-// with `bun scripts/audit/audit.ts probe` and it prints the same `windowSize()` and
-// `platform.desktop` the docs demos get, at whatever size and idiom the frame runs it.
+// with `bun scripts/audit/audit.ts probe` and it prints the same `windowSize()`, `platform.desktop`
+// and appearance the docs demos get, at whatever size, idiom and theme the frame runs it.
 // Not a demo (not in the catalog): it exists for `docs/specs/demo-audit.md` only.
 import { colors } from "@shadcn-nsh/theme";
-import { mount, platform, Text, View, windowSize } from "nsh";
+import { colorScheme, mount, platform, Text, View, windowSize } from "nsh";
 
 function Row(props: { name: string; value: string }) {
   return (
@@ -25,6 +25,7 @@ function App() {
       <Row name="platform.desktop" value={String(platform.desktop)} />
       <Row name="platform.idiom" value={String(platform.idiom)} />
       <Row name="platform.os" value={String(platform.os)} />
+      <Row name="colorScheme()" value={String(colorScheme())} />
     </View>
   );
 }

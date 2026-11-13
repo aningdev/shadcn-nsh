@@ -174,7 +174,11 @@ type CanvasLayout = {
   layout: string;
   stage: { clientWidth: number; padding: number };
   frame: { width: number; height: number; cssWidth: string; cssHeight: string };
+  /** The player URL the frame runs: its idiom and theme. */
+  src: string;
   probe: string;
+  /** The probe's `colorScheme()` with the site switched to each theme. */
+  themes?: Record<string, string>;
   screenshot: string;
 };
 
@@ -238,20 +242,24 @@ async function canvas() {
               cssWidth: phone.style.getPropertyValue("--phone-w"),
               cssHeight: phone.style.getPropertyValue("--phone-h"),
             },
+            src: frame.src,
           });
         })()`);
         const {
           layout: shown,
           stage,
           frame,
+          src,
         } = JSON.parse(measured) as {
           layout: string;
           stage: CanvasLayout["stage"];
           frame: CanvasLayout["frame"];
+          src: string;
         };
-        // The probe: the same package shape as every demo, on the docs' own origin.
+        // The probe: the same package shape as every demo, on the docs' own origin, with the URL the
+        // panel gave the demo (its idiom and the page's theme).
         await page.evaluate(
-          `(() => { const frame = document.querySelector(".demo .phone__screen iframe"); frame.src = "/${prefix}/demos/__audit-probe/index.html"; return true; })()`,
+          `(() => { const frame = document.querySelector(".demo .phone__screen iframe"); const url = new URL(frame.src); url.pathname = "/${prefix}/demos/__audit-probe/index.html"; frame.src = url.href; return true; })()`,
         );
         await until(
           page,
@@ -260,6 +268,20 @@ async function canvas() {
         const probeText = await page.evaluate<string>(
           `document.querySelector(".demo iframe").contentDocument.body.innerText`,
         );
+        // The site's theme switch, at the wide page only: the probe's appearance follows.
+        const themes: Record<string, string> | undefined =
+          viewport.label !== "wide" ? undefined : {};
+        if (themes) {
+          for (const pref of ["light", "dark"] as const) {
+            await page.evaluate(
+              `(() => { document.querySelector('.theme-switch [data-pref="${pref}"]')?.click(); return true; })()`,
+            );
+            await new Promise((resolve) => setTimeout(resolve, 500));
+            themes[pref] = await page.evaluate<string>(
+              `document.querySelector(".demo iframe").contentDocument.body.innerText`,
+            );
+          }
+        }
         const key = viewport.label === "wide" ? layout : `${layout}-${viewport.label}`;
         const screenshot = path.join(shotsDir, `canvas-${key}.png`);
         await page.screenshot(screenshot);
@@ -268,11 +290,13 @@ async function canvas() {
           layout: shown,
           stage,
           frame,
+          src,
           probe: probeText,
+          themes,
           screenshot: path.relative(repo, screenshot),
         };
         console.log(
-          `${key}: frame ${frame.width}×${frame.height} · ${probeText.split("\n").slice(0, 4).join(" · ")}`,
+          `${key}: frame ${frame.width}×${frame.height} · ${probeText.split("\n").slice(0, 5).join(" · ")}`,
         );
       }
     }

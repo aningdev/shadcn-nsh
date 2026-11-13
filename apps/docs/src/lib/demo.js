@@ -14,9 +14,19 @@ import { themes } from "./markdown.js";
 const ROOT = process.cwd();
 const DEMOS = join(ROOT, "demos");
 
+/**
+ * The two layouts a panel switches between, as the website's player has them
+ * (`references/nsh/website/src/lib/demo.js`): a phone (390 × 844 points, the
+ * phone idiom: a finger, touch density) and a desktop window (1024 points, the
+ * desktop idiom: a pointer), as tall as its content up to 900.
+ *
+ * The height is the most the frame takes: `demo-client.ts` measures the app's
+ * content and ends the frame below it (`MIN_HEIGHT` 420). The idiom is fixed
+ * when the app starts, so a layout switch reloads the frame.
+ */
 export const LAYOUTS = {
-  mobile: { width: 390, height: 844 },
-  desktop: { width: 1024, height: 640 },
+  mobile: { width: 390, height: 844, idiom: "phone" },
+  desktop: { width: 1024, height: 900, idiom: "desktop" },
 };
 
 export function demoFile(name) {
@@ -38,6 +48,16 @@ export function demoReady(name) {
 export function demoHref(name, base = "/") {
   const root = base.endsWith("/") ? base : `${base}/`;
   return `${root}demos/${name}/index.html`;
+}
+
+/**
+ * The demo's URL in a layout: its idiom in `?idiom=`, which `build-demos.ts`
+ * makes the packaged page pass to the runtime. The site's theme rides in
+ * `?theme=` and is added in `demo-client.ts` (it is the visitor's, not the
+ * build's).
+ */
+export function playerHref(name, { base = "/", layout = "mobile" } = {}) {
+  return `${demoHref(name, base)}?idiom=${LAYOUTS[layout].idiom}`;
 }
 
 let highlighter;
@@ -85,8 +105,11 @@ export function phoneHtml(name, { base = "/", layout = "mobile" } = {}) {
   const t = COPY;
   const size = LAYOUTS[layout];
   const ready = demoReady(name);
+  // The player URL goes in `data-player-src`, not `src`: `demo-client.ts` sets
+  // it with the layout's idiom and the page's theme before the first load, so a
+  // frame never loads twice (the website's `phoneHtml` does the same).
   const screen = ready
-    ? `<iframe allow="clipboard-write" src="${escape(demoHref(name, base))}" title="${escape(t.frame(name))}" loading="lazy" width="${size.width}" height="${size.height}"></iframe>`
+    ? `<iframe allow="clipboard-write" data-player-src="${escape(playerHref(name, { base, layout }))}" title="${escape(t.frame(name))}" loading="lazy" width="${size.width}" height="${size.height}"></iframe>`
     : `<div class="phone__placeholder">
         <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="6" y="2.5" width="12" height="19" rx="2.5"/><path d="M10.5 18.5h3"/></svg>
         <p class="phone__placeholder-title">${escape(t.pending)}</p>
@@ -120,23 +143,26 @@ export async function demoPanelHtml(name, { base = "/" } = {}) {
     </figure>`;
   }
 
-  return `<figure class="demo" data-demo="${escape(name)}" data-view="preview" data-layout="desktop" data-pagefind-ignore>
+  // `mobile` matches `demo-client.ts`'s default, so the frame never shows one
+  // layout and then jumps to the other; the visitor's saved layout applies at
+  // once, before the frame loads.
+  return `<figure class="demo" data-demo="${escape(name)}" data-view="preview" data-layout="mobile" data-pagefind-ignore>
     <figcaption class="demo__bar">
       <div class="demo__views" data-slot="tabs-list" data-size="xs" role="tablist" aria-label="${escape(t.label)}">
         <button type="button" data-slot="tabs-trigger" role="tab" id="${id}-tab-preview" aria-controls="${id}-preview" aria-selected="true" data-demo-view="preview">${escape(t.preview)}</button>
         <button type="button" data-slot="tabs-trigger" role="tab" id="${id}-tab-source" aria-controls="${id}-source" aria-selected="false" tabindex="-1" data-demo-view="source">${escape(t.source)}</button>
       </div>
       <div class="demo__layouts" data-slot="toggle-group" data-variant="segmented" data-size="xs" role="radiogroup" aria-label="${escape(t.layout)}">
-        <button type="button" data-slot="toggle-group-item" role="radio" aria-checked="false" tabindex="-1" data-demo-layout="mobile">${escape(t.mobile)}</button>
-        <button type="button" data-slot="toggle-group-item" role="radio" aria-checked="true" data-demo-layout="desktop">${escape(t.desktop)}</button>
+        <button type="button" data-slot="toggle-group-item" role="radio" aria-checked="true" data-demo-layout="mobile">${escape(t.mobile)}</button>
+        <button type="button" data-slot="toggle-group-item" role="radio" aria-checked="false" tabindex="-1" data-demo-layout="desktop">${escape(t.desktop)}</button>
       </div>
       <span class="demo__file">${escape(file)}</span>
       <div class="demo__actions" data-slot="button-group" role="group">
-        <a data-slot="button" data-variant="outline" data-size="icon-xs" href="${escape(demoHref(name, base))}" target="_blank" rel="noopener" title="${escape(t.open)}" aria-label="${escape(t.open)}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
+        <a data-slot="button" data-variant="outline" data-size="icon-xs" href="${escape(playerHref(name, { base }))}" target="_blank" rel="noopener" title="${escape(t.open)}" aria-label="${escape(t.open)}"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></svg></a>
       </div>
     </figcaption>
     <div class="demo__body">
-    <div class="demo__stage" id="${id}-preview" role="tabpanel" aria-labelledby="${id}-tab-preview" data-active>${phoneHtml(name, { base, layout: "desktop" })}</div>
+    <div class="demo__stage" id="${id}-preview" role="tabpanel" aria-labelledby="${id}-tab-preview" data-active>${phoneHtml(name, { base })}</div>
     <div class="demo__code" id="${id}-source" role="tabpanel" aria-labelledby="${id}-tab-source">${code}</div>
     </div>
   </figure>`;

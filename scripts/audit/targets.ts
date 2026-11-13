@@ -146,9 +146,11 @@ const idOf = (slug: string) => `dev.audit.nsh.${slug.replace(/[^a-z0-9]/gi, "")}
  * Packages `target` into `work` and returns the directory that holds its `index.html`, flattening
  * the package's nested folder. A packaged page can already be there (`force: false`).
  *
- * The release template (`crates/nsh-cli/src/web/index.html`) takes no `?idiom=`: it measures the
- * idiom from the browser's pointer, as a browser page does. The audit adds the option the website
- * player passes (`crates/nsh-platform-web/web/index.html`), so a phone-idiom frame is possible.
+ * The release template (`crates/nsh-cli/src/web/index.html`) takes no `?idiom=` and no `?theme=`:
+ * it measures the idiom from the browser's pointer, as a browser page does, and follows
+ * `prefers-color-scheme`. The audit patches in what `apps/docs/scripts/build-demos.ts` adds to the
+ * docs' own packages (the website player's options, `crates/nsh-platform-web/web/index.html`), so
+ * a probe shows the idiom and appearance the docs panel gives a demo.
  */
 export function packageTarget(target: Target, work: string, force = false): string {
   const home = path.join(work, "packages", target.slug);
@@ -194,10 +196,19 @@ export function packageTarget(target: Target, work: string, force = false): stri
   if (html.includes(marker) && !html.includes("idiom: new URLSearchParams")) {
     fs.writeFileSync(
       index,
-      html.replace(
-        marker,
-        `${marker}\n        idiom: new URLSearchParams(location.search).get("idiom") ?? undefined,`,
-      ),
+      html
+        .replace(
+          marker,
+          `${marker}\n        idiom: new URLSearchParams(location.search).get("idiom") ?? undefined,\n        dark: (() => { const t = new URLSearchParams(location.search).get("theme"); return t === "dark" ? true : t === "light" ? false : undefined; })(),`,
+        )
+        .replace(
+          "    player = loaded;",
+          `    player = loaded;\n    addEventListener("message", (event) => { const theme = event.data?.theme; if (theme === "dark" || theme === "light") player.setDark(theme === "dark"); });`,
+        )
+        .replace(
+          "    player.preloadSides(app.sides);",
+          `    if (new URLSearchParams(location.search).get("theme") === "dark") player.setDark(true);\n    if (new URLSearchParams(location.search).get("theme") === "light") player.setDark(false);\n    player.preloadSides(app.sides);`,
+        ),
     );
   }
   return home;

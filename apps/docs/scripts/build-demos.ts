@@ -4,6 +4,10 @@
  *
  * The catalog's `--check` already guarantees every component has its demo and that no demo is
  * orphaned; this script only packages the set, sorted by file name so the log is stable.
+ *
+ * Each packaged page then gets the panel's `?idiom=` and `?theme=` (`player-options.ts`).
+ *
+ *   bun apps/docs/scripts/build-demos.ts [--only <id>,<id>]   # one or a few, while iterating
  */
 import { spawn } from "node:child_process";
 import fs from "node:fs";
@@ -11,6 +15,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { catalog } from "../../../scripts/catalog";
+import { addPlayerOptions } from "./player-options";
 
 /** Keep low: concurrent `nsh package --target web` races on the shared web runtime wasm. */
 const CONCURRENCY = 1;
@@ -19,8 +24,15 @@ const docsRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), ".."
 const cat = catalog();
 const demosDir = cat.paths.demos;
 const outRoot = path.join(docsRoot, "public", "demos");
+const args = process.argv.slice(2);
+const onlyAt = args.indexOf("--only");
+const only =
+  onlyAt >= 0 && args[onlyAt + 1]
+    ? new Set(args[onlyAt + 1]!.split(",").filter(Boolean))
+    : undefined;
 const entries = cat.components
   .map((component) => component.demo)
+  .filter((entry) => !only || only.has(path.basename(entry, ".tsx")))
   .sort((a, b) => a.localeCompare(b));
 
 if (entries.length === 0) {
@@ -65,6 +77,7 @@ function packageOne(entry: string): Promise<void> {
       }
       try {
         flattenPackageDir(outDir);
+        addPlayerOptions(outDir, name);
         resolve();
       } catch (err) {
         reject(err instanceof Error ? err : new Error(String(err)));
