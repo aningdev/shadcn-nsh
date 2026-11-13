@@ -1,4 +1,7 @@
-import { mount, Text, View } from "nsh";
+// The reference of `table.tsx`: `nsh/base`'s table parts wearing `dataTableClasses`, the way the
+// official example (`references/nsh/website/demos/el-table.tsx`) writes them. It differs from the
+// component page only in what it names: the classes of each part.
+import { mount, Text } from "nsh";
 import {
   Table,
   TableBody,
@@ -11,70 +14,82 @@ import {
 } from "nsh/base";
 
 import { dataTableClasses } from "@/packages/ui/data-table";
+import { controlSize } from "@/packages/ui/lib/surface";
 import { tableRowClass } from "@/packages/ui/table";
 
-import { DemoCard, DemoPage, DemoSection } from "./kit";
+import { DemoPage } from "./kit";
+import { Stage } from "./stage";
 
+// A few rows the app writes out: the parts give screen readers a table, the classes give it its
+// card and its hairlines.
 const invoices = [
-  { id: "INV001", status: "Paid", amount: 250 },
-  { id: "INV002", status: "Pending", amount: 150 },
-  { id: "INV003", status: "Unpaid", amount: 350 },
+  { id: "INV001", status: "Paid", method: "Card", amount: 250 },
+  { id: "INV002", status: "Pending", method: "Transfer", amount: 150 },
+  { id: "INV003", status: "Unpaid", method: "Card", amount: 350 },
+  { id: "INV004", status: "Paid", method: "Cash", amount: 450 },
 ];
-
-function Cell(props: { head?: boolean; children: string }) {
+/** The component's cell chrome (the shared cell class, the header's or the body's) and its text. */
+function Cell(props: { head?: boolean; end?: boolean; children: string }) {
+  const className = `${dataTableClasses.cell} ${props.head ? "py-2" : "flex-1 py-2"} flex-1`;
   const Part = props.head ? TableHead : TableCell;
-  const className = props.head
-    ? `${dataTableClasses.cell} py-2 text-sm font-medium text-muted-foreground`
-    : `${dataTableClasses.cell} py-2 flex-1 text-sm text-foreground`;
+  // The figures take a little more of the row than the names, as on the component page.
   return (
-    <Part class={className}>
-      <Text class={props.head ? undefined : "text-foreground text-sm"}>{props.children}</Text>
+    <Part class={className} style={{ flexGrow: props.end ? 1.3 : 1 }}>
+      <Text
+        class={props.head ? "text-muted-foreground font-medium" : "text-foreground"}
+        style={{
+          fontSize: controlSize.label - 1,
+          textAlign: props.end ? "right" : "left",
+          numberOfLines: 1,
+        }}
+      >
+        {props.children}
+      </Text>
     </Part>
   );
 }
 
 function App() {
-  const total = invoices.reduce((sum, row) => sum + row.amount, 0);
+  const total = invoices.reduce((sum, i) => sum + i.amount, 0);
   return (
     <DemoPage title="Table">
-      <DemoCard>
-        <DemoSection title="Invoices">
-          <Table
-            accessibilityLabel="Recent invoices"
-            class={dataTableClasses.root ?? undefined}
-            style={{ width: 320 }}
-          >
-            <TableHeader class={dataTableClasses.header ?? undefined}>
-              <TableRow class={dataTableClasses.row ?? undefined}>
-                <Cell head>Invoice</Cell>
-                <Cell head>Status</Cell>
-                <Cell head>Amount</Cell>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {invoices.map((row) => (
-                <TableRow
-                  class={`${tableRowClass} ${dataTableClasses.row} ${row.status === "Paid" ? dataTableClasses.rowSelected : ""}`}
-                >
-                  <Cell>{row.id}</Cell>
-                  <Cell>{row.status}</Cell>
-                  <Cell>{`$${row.amount.toFixed(2)}`}</Cell>
-                </TableRow>
+      <Stage width={520}>
+        <Table
+          accessibilityLabel="Recent invoices"
+          class={`${dataTableClasses.root} overflow-hidden`}
+        >
+          <TableHeader class={dataTableClasses.header ?? undefined}>
+            <TableRow class={`${tableRowClass} ${dataTableClasses.row}`}>
+              {["Invoice", "Status", "Method", "Amount"].map((title, i) => (
+                <Cell head end={i === 3}>
+                  {title}
+                </Cell>
               ))}
-            </TableBody>
-            <TableFooter class={`${dataTableClasses.header ?? ""} border-border border-t`}>
-              <TableRow class={dataTableClasses.row ?? undefined}>
-                <Cell head>Total</Cell>
-                <Cell>{""}</Cell>
-                <Cell>{`$${total.toFixed(2)}`}</Cell>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {invoices.map((inv) => (
+              <TableRow class={`${tableRowClass} ${dataTableClasses.row}`}>
+                <Cell>{inv.id}</Cell>
+                <Cell>{inv.status}</Cell>
+                <Cell>{inv.method}</Cell>
+                <Cell end>{`$${inv.amount.toFixed(2)}`}</Cell>
               </TableRow>
-            </TableFooter>
-            <TableCaption class="px-2 py-2">
-              <Text class="text-muted-foreground text-xs">A list of your recent invoices.</Text>
-            </TableCaption>
-          </Table>
-        </DemoSection>
-      </DemoCard>
+            ))}
+          </TableBody>
+          <TableFooter class={`${dataTableClasses.header} border-border border-t`}>
+            <TableRow class={`${tableRowClass} ${dataTableClasses.row}`}>
+              <Cell head>Total</Cell>
+              <Cell>{""}</Cell>
+              <Cell>{""}</Cell>
+              <Cell end>{`$${total.toFixed(2)}`}</Cell>
+            </TableRow>
+          </TableFooter>
+          <TableCaption class="px-2 py-2">
+            <Text class="text-muted-foreground text-xs">A list of your recent invoices.</Text>
+          </TableCaption>
+        </Table>
+      </Stage>
     </DemoPage>
   );
 }

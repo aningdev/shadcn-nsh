@@ -1,46 +1,95 @@
+// The official scrollbar scene (`references/nsh/website/demos/el-scrollbar.tsx`) with this
+// library's Scrollbar: a list of messages in a card whose own indicator is off, the app's bar over
+// its edge, and an inspector that switches when the bar shows and follows the list's offset.
 import { colors } from "@shadcn-nsh/theme";
-import { mount, Scroll, Text, View, type ScrollRef } from "nsh";
+import { mount, Scroll, signal, Text, View, type ScrollRef } from "nsh";
+import type { ScrollbarMode } from "nsh/base";
 
+import { controlSize, sectionSurface } from "@/packages/ui/lib/surface";
 import { Scrollbar } from "@/packages/ui/scrollbar";
 
-import { DemoCard, DemoPage, DemoSection } from "./kit";
+import { DemoPage } from "./kit";
+import { desktop, Panel, Segmented, Split } from "./stage";
 
-const LINES = Array.from({ length: 24 }, (_, i) => ({
-  title: ["Ada", "Grace", "Linus", "Ken"][i % 4],
-  body: ["Shipped the build", "Review when you can", "Tests are green", "Draft is ready"][i % 4],
+// The bar shows while the content scrolls and while the pointer is over it, fades in over 300 ms
+// and out over 500 ms, 2 s after the last scroll; pointing at its hidden thumb in the `hover` mode
+// slides it in.
+const MESSAGES = Array.from({ length: 60 }, (_, i) => ({
+  from: ["Ada", "Grace", "Linus", "Ken", "Barbara"][i % 5],
+  text: [
+    "Shipped the build",
+    "Review when you can",
+    "Tests are green",
+    "Moved the meeting",
+    "Draft is ready",
+  ][i % 5],
+  at: `${9 + Math.floor(i / 6)}:${String((i * 7) % 60).padStart(2, "0")}`,
 }));
 
 function App() {
+  const mode = signal<ScrollbarMode>("scrolling");
+  const offset = signal(0);
   let inbox: ScrollRef | undefined;
-
   return (
     <DemoPage title="Scrollbar">
-      <DemoCard>
-        <DemoSection title="List">
-          <View
-            style={{
-              width: 280,
-              height: 240,
-              borderWidth: 1,
-              borderColor: colors.border,
-              borderRadius: 8,
-              overflow: "hidden",
-            }}
+      <Text style={{ color: colors.muted }}>
+        {desktop
+          ? "Scroll the list, drag the thumb or click the track"
+          : "Scroll the list, or drag the thumb"}
+      </Text>
+
+      <Split
+        gap={14}
+        grow
+        inspector={
+          <Panel title="scrollbar">
+            <Segmented
+              label="mode"
+              options={["scrolling", "hover", "always"] as const}
+              value={mode()}
+              onChange={(value) => mode.set(value)}
+            />
+            <Text class="text-foreground" style={{ fontSize: 13, fontVariant: ["tabular-nums"] }}>
+              {`offset ${Math.round(offset())}`}
+            </Text>
+          </Panel>
+        }
+      >
+        <View style={{ ...sectionSurface(), flex: 1, minHeight: 320, overflow: "hidden" }}>
+          <Scroll
+            ref={inbox}
+            scrollbar={false}
+            style={{ flex: 1 }}
+            onScroll={(e) => offset.set(e.offset.y)}
           >
-            <Scroll ref={inbox} scrollbar={false} style={{ flex: 1 }}>
-              {LINES.map((m) => (
-                <View class="border-border flex-row gap-3 border-b px-3 py-2.5">
-                  <View style={{ flex: 1, gap: 2 }}>
-                    <Text style={{ fontSize: 13, fontWeight: "500" }}>{m.title}</Text>
-                    <Text style={{ fontSize: 12, color: colors.muted }}>{m.body}</Text>
-                  </View>
+            {MESSAGES.map((m) => (
+              <View
+                class={`flex-row gap-3 ${desktop ? "px-3 py-2.5" : "px-4 py-3"}`}
+                style={{ borderBottomWidth: 1, borderColor: colors.line }}
+              >
+                <View style={{ flex: 1, gap: 2 }}>
+                  <Text
+                    class="text-foreground"
+                    style={{ fontSize: controlSize.label, fontWeight: "500" }}
+                  >
+                    {m.from}
+                  </Text>
+                  <Text class="text-muted-foreground" style={{ fontSize: controlSize.detail }}>
+                    {m.text}
+                  </Text>
                 </View>
-              ))}
-            </Scroll>
-            <Scrollbar scroll={inbox} accessibilityLabel="Inbox scroll" />
-          </View>
-        </DemoSection>
-      </DemoCard>
+                <Text
+                  class="text-muted-foreground"
+                  style={{ fontSize: controlSize.detail, fontVariant: ["tabular-nums"] }}
+                >
+                  {m.at}
+                </Text>
+              </View>
+            ))}
+          </Scroll>
+          <Scrollbar scroll={inbox} mode={mode()} accessibilityLabel="Messages" />
+        </View>
+      </Split>
     </DemoPage>
   );
 }

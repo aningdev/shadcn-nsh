@@ -42,6 +42,8 @@ const overrides: Record<string, Override> = {
   popover: { steps: (app) => app.press("Order 1024") },
   menu: { steps: (app) => app.press("File ▾") },
   toast: { steps: (app) => app.press("Copy the link") },
+  select: { steps: (app) => app.press("label:Language") },
+  "date-picker": { steps: (app) => app.press("No due date") },
   spinner: { selfReference: "upstream's own Spinner, with no shell to compare against" },
   badge: { selfReference: "upstream's own Badge, with no shell to compare against" },
   status: { selfReference: "upstream's own Status, with no shell to compare against" },
