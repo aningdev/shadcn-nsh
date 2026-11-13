@@ -1,6 +1,6 @@
 {
   "name": "shadcn-nsh",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Add styled NSH components (copy-into-app) from the shadcn-nsh registry",
   "keywords": [
     "cli",
