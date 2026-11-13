@@ -1,119 +1,99 @@
+// The official radio scene (`references/nsh/website/demos/el-radio.tsx`) with this library's parts:
+// the billing cycle as two choice cards, the plans as a list of rows with their prices (Team
+// locked), and the inspector holding both values beside the log of every change.
 import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { listRow, RowDivider, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
 import { Radio, RadioGroup } from "@/packages/ui/radio-group";
 
-import { DemoCard, DemoPage, DemoSection } from "./kit";
+import { DemoPage } from "./kit";
+import { desktop, Log, Panel, Split } from "./stage";
 
 const plans = [
   { id: "starter", label: "Starter", detail: "1 project · 5 GB", price: "Free" },
   { id: "pro", label: "Pro", detail: "Unlimited projects · 100 GB", price: "$12" },
   { id: "team", label: "Team", detail: "Shared workspace · 1 TB", price: "$40", locked: true },
-] as const;
+];
+const cycles = ["Monthly", "Yearly"];
 
 function App() {
   const plan = signal("pro");
-  const cycle = signal<"Monthly" | "Yearly">("Monthly");
-  const tile = signal("a");
+  const cycle = signal("Monthly");
+  const events = signal<string[]>([]);
+  const log = (line: string) => events.set([line, ...events()].slice(0, 3));
 
   return (
-    <DemoPage title="Radio" note={() => `${plan()} · ${cycle()} · tile ${tile()}`}>
-      <DemoCard style={{ gap: 0, ...sectionSurface({ padded: true }) }}>
-        <RadioGroup>
-          <Radio
-            checked={plan() === "starter"}
-            onChange={({ checked }) => checked && plan.set("starter")}
-            {...listRow({ first: true })}
-          >
-            <RowDivider show={false} />
-            <RowLabel label={plans[0].label} detail={plans[0].detail} />
-            <Text
-              style={{ fontSize: 14, color: plan() === "starter" ? colors.text : colors.muted }}
-            >
-              {plans[0].price}
-            </Text>
-          </Radio>
-          <Radio
-            checked={plan() === "pro"}
-            onChange={({ checked }) => checked && plan.set("pro")}
-            {...listRow()}
-          >
-            <RowDivider show />
-            <RowLabel label={plans[1].label} detail={plans[1].detail} />
-            <Text style={{ fontSize: 14, color: plan() === "pro" ? colors.text : colors.muted }}>
-              {plans[1].price}
-            </Text>
-          </Radio>
-          <Radio
-            checked={plan() === "team"}
-            disabled
-            onChange={({ checked }) => checked && plan.set("team")}
-            {...listRow({ disabled: true })}
-          >
-            <RowDivider show />
-            <RowLabel label={plans[2].label} detail={plans[2].detail} />
-            <Text style={{ fontSize: 14, color: colors.muted }}>{plans[2].price}</Text>
-          </Radio>
-        </RadioGroup>
-      </DemoCard>
+    <DemoPage title="Radio Group">
+      <Text style={{ color: colors.muted }}>
+        {desktop
+          ? "Click an option, or Tab to a group and move with the arrow keys"
+          : "Tap an option: its label checks it too"}
+      </Text>
 
-      <DemoCard>
-        <DemoSection title="Scale">
-          <RadioGroup>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
-              <Radio scale={0.8} checked accessibilityLabel="Small">
-                Small
-              </Radio>
-              <Radio
-                variant="ring"
-                checked={cycle() === "Monthly"}
-                onChange={() => cycle.set("Monthly")}
-              >
-                Regular
-              </Radio>
-              <Radio
-                scale={1.25}
-                checked={cycle() === "Yearly"}
-                onChange={() => cycle.set("Yearly")}
-              >
-                Large
-              </Radio>
-            </View>
-          </RadioGroup>
-        </DemoSection>
-        <DemoSection title="Tile">
+      <Split
+        gap={14}
+        inspector={
+          <>
+            <Panel title="value">
+              <Text style={{ fontSize: 13, color: colors.text }}>{`${plan()} · ${cycle()}`}</Text>
+            </Panel>
+            <Log
+              title={`onChange({ checked }) · ${plan()}, ${cycle()}`}
+              lines={events()}
+              minHeight={76}
+            />
+          </>
+        }
+      >
+        <View style={{ gap: 14 }}>
+          {/* The cycle as a pair of choice cards: the whole card is the radio. */}
           <RadioGroup>
             <View style={{ flexDirection: "row", gap: 8 }}>
-              <Radio
-                variant="tile"
-                checked={tile() === "a"}
-                onChange={({ checked }) => checked && tile.set("a")}
-              >
-                Option A
-              </Radio>
-              <Radio
-                variant="tile"
-                checked={tile() === "b"}
-                onChange={({ checked }) => checked && tile.set("b")}
-              >
-                Option B
-              </Radio>
+              {cycles.map((c) => (
+                <Radio
+                  variant="tile"
+                  checked={cycle() === c}
+                  onChange={({ checked }) => {
+                    if (checked) cycle.set(c);
+                    log(`${c} → ${checked}`);
+                  }}
+                >
+                  {c}
+                </Radio>
+              ))}
             </View>
           </RadioGroup>
-        </DemoSection>
-        <DemoSection title="States">
-          <RadioGroup>
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
-              <Radio checked>On</Radio>
-              <Radio>Off</Radio>
-              <Radio checked disabled>
-                Disabled
+
+          {/* The plans, each row the radio: a ring that lights up, its dot growing in. */}
+          <RadioGroup style={sectionSurface({ padded: true })}>
+            {plans.map((item, i) => (
+              <Radio
+                variant="ring"
+                checked={plan() === item.id}
+                disabled={item.locked}
+                onChange={({ checked }) => {
+                  plan.set(item.id);
+                  log(`${item.label} → ${checked}`);
+                }}
+                {...listRow({ first: i === 0, disabled: () => item.locked })}
+              >
+                <RowDivider show={i > 0} />
+                <RowLabel label={item.label} detail={item.detail} />
+                <Text
+                  style={{
+                    fontSize: 13,
+                    fontVariant: ["tabular-nums"],
+                    color: plan() === item.id ? colors.text : colors.muted,
+                  }}
+                >
+                  {item.price}
+                </Text>
               </Radio>
-            </View>
+            ))}
           </RadioGroup>
-        </DemoSection>
-      </DemoCard>
+        </View>
+      </Split>
     </DemoPage>
   );
 }
