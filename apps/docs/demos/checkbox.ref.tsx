@@ -1,164 +1,183 @@
-// The reference of `checkbox.tsx`: the look spread on `nsh/base`'s Checkbox, as upstream writes it.
-import { mount, signal, Text } from "nsh";
+// The reference of `checkbox.tsx`: the same scene as upstream writes it, `checkboxLook` and
+// `CheckboxMark` spread on `nsh/base`'s Checkbox. The render check requires the two to draw the
+// same pixels.
+import { colors } from "@shadcn-nsh/theme";
+import type { JSX } from "nsh";
+import { mount, signal, Text, View } from "nsh";
 import { Checkbox } from "nsh/base";
 
-import { CheckboxMark, checkboxLook } from "@/packages/ui/checkbox";
-import { controlSize, listRow, RowDivider, RowLabel } from "@/packages/ui/lib/surface";
+import { type CheckboxMarkKind, CheckboxMark, checkboxLook } from "@/packages/ui/checkbox";
+import {
+  controlSize,
+  listRow,
+  RowDivider,
+  RowLabel,
+  sectionSurface,
+} from "@/packages/ui/lib/surface";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
+import { desktop, Log, Panel, Split } from "./stage";
 
 const items = [
   { id: "photos", label: "Photos", detail: "2,418 items · 6.1 GB" },
   { id: "documents", label: "Documents", detail: "312 files · 840 MB" },
   { id: "messages", label: "Messages", detail: "Attachments included · 1.2 GB" },
-] as const;
+];
+
+/** A checkbox in the shared box look, its mark drawn from the value. */
+function Box(props: {
+  mark: CheckboxMarkKind;
+  scale?: number;
+  round?: boolean;
+  disabled?: boolean;
+  children?: JSX.Element;
+}) {
+  return (
+    <Checkbox
+      class="group"
+      checked={props.mark === "check"}
+      indeterminate={props.mark === "dash"}
+      disabled={props.disabled}
+      {...checkboxLook({
+        scale: props.scale,
+        round: props.round,
+        disabled: () => !!props.disabled,
+      })}
+      indicator={<CheckboxMark mark={props.mark} scale={props.scale} round={props.round} />}
+    >
+      {props.children}
+    </Checkbox>
+  );
+}
+
+/** A checkbox on a row of its own, its label beside the box. */
+function Row(props: { label: string; detail?: string; first?: boolean; children: JSX.Element }) {
+  return (
+    <View style={listRow({ first: props.first }).style}>
+      {props.children}
+      <RowLabel label={props.label} detail={props.detail} />
+    </View>
+  );
+}
 
 function App() {
   const selected = signal<string[]>(["photos"]);
-  const alone = signal(true);
+  const events = signal<string[]>([]);
+  const log = (e: string) => events.set([e, ...events()].slice(0, 3));
   const all = () => selected().length === items.length;
   const some = () => selected().length > 0 && !all();
   const toggle = (id: string, checked: boolean) =>
     selected.set(checked ? [...selected(), id] : selected().filter((x) => x !== id));
 
   return (
-    <DemoPage
-      title="Checkbox"
-      note={() => `${selected().length} of ${items.length} · alone ${String(alone())}`}
-    >
-      <DemoCard style={{ gap: 0 }}>
-        <Checkbox
-          checked={all()}
-          indeterminate={some()}
-          onChange={({ checked }) => selected.set(checked ? items.map((i) => i.id) : [])}
-          class="group"
-          {...listRow({ first: true })}
-          {...checkboxLook()}
-          indicator={<CheckboxMark mark={all() ? "check" : some() ? "dash" : null} />}
-        >
-          <RowLabel
-            label="Back up everything"
-            detail={`${selected().length} of ${items.length} selected`}
-            strong
-          />
-        </Checkbox>
-        <Checkbox
-          checked={selected().includes("photos")}
-          onChange={({ checked }) => toggle("photos", checked)}
-          class="group"
-          {...listRow({ start: controlSize.control + controlSize.gap })}
-          {...checkboxLook()}
-          indicator={<CheckboxMark mark={selected().includes("photos") ? "check" : null} />}
-        >
-          <RowDivider show />
-          <RowLabel label={items[0].label} detail={items[0].detail} />
-        </Checkbox>
-        <Checkbox
-          checked={selected().includes("documents")}
-          onChange={({ checked }) => toggle("documents", checked)}
-          class="group"
-          {...listRow({ start: controlSize.control + controlSize.gap })}
-          {...checkboxLook()}
-          indicator={<CheckboxMark mark={selected().includes("documents") ? "check" : null} />}
-        >
-          <RowDivider show />
-          <RowLabel label={items[1].label} detail={items[1].detail} />
-        </Checkbox>
-        <Checkbox
-          checked={selected().includes("messages")}
-          onChange={({ checked }) => toggle("messages", checked)}
-          class="group"
-          {...listRow({ start: controlSize.control + controlSize.gap })}
-          {...checkboxLook()}
-          indicator={<CheckboxMark mark={selected().includes("messages") ? "check" : null} />}
-        >
-          <RowDivider show />
-          <RowLabel label={items[2].label} detail={items[2].detail} />
-        </Checkbox>
-      </DemoCard>
+    <DemoPage title="Checkbox">
+      <Text style={{ color: colors.muted }}>
+        {desktop
+          ? "Click a row, or Tab to a checkbox and press Space"
+          : "Tap a row: the label toggles it too"}
+      </Text>
+
+      <Split
+        gap={14}
+        inspector={
+          <>
+            <Panel title="checked · indeterminate">
+              <Text style={{ fontSize: 13, color: colors.text }}>
+                {`Back up everything: ${all() ? "checked" : some() ? "indeterminate" : "unchecked"} · [${selected().join(", ")}]`}
+              </Text>
+            </Panel>
+            <Log title="onChange({ checked })" lines={events()} minHeight={92} />
+          </>
+        }
+      >
+        <View style={sectionSurface({ padded: true })}>
+          <Checkbox
+            checked={all()}
+            indeterminate={some()}
+            onChange={({ checked }) => {
+              selected.set(checked ? items.map((i) => i.id) : []);
+              log(`Back up everything → ${checked}`);
+            }}
+            class="group"
+            {...listRow({ first: true })}
+            {...checkboxLook()}
+            indicator={<CheckboxMark mark={all() ? "check" : some() ? "dash" : null} />}
+          >
+            <RowLabel
+              label="Back up everything"
+              detail={`${selected().length} of ${items.length} selected`}
+              strong
+            />
+          </Checkbox>
+          {items.map((item) => (
+            <Checkbox
+              checked={selected().includes(item.id)}
+              onChange={({ checked }) => {
+                toggle(item.id, checked);
+                log(`${item.label} → ${checked}`);
+              }}
+              class="group"
+              // One level under "Back up everything": the boxes line up with its label.
+              {...listRow({ start: controlSize.control + controlSize.gap })}
+              {...checkboxLook()}
+              indicator={<CheckboxMark mark={selected().includes(item.id) ? "check" : null} />}
+            >
+              <RowDivider show />
+              <RowLabel label={item.label} detail={item.detail} />
+            </Checkbox>
+          ))}
+        </View>
+
+        <View style={sectionSurface({ padded: true })}>
+          <Checkbox
+            checked
+            disabled
+            class="group"
+            {...listRow({ first: true, disabled: true })}
+            {...checkboxLook({ disabled: true })}
+            indicator={<CheckboxMark mark="check" />}
+          >
+            <RowLabel label="System settings" detail="Always backed up" />
+          </Checkbox>
+        </View>
+      </Split>
 
       <DemoCard>
         <DemoSection title="Scale">
-          <Checkbox
-            class="group"
-            checked
-            {...checkboxLook({ scale: 0.8 })}
-            indicator={<CheckboxMark mark="check" scale={0.8} />}
-          >
-            <Text>Small</Text>
-          </Checkbox>
-          <Checkbox
-            class="group"
-            checked={alone()}
-            onChange={({ checked }) => alone.set(checked)}
-            {...checkboxLook()}
-            indicator={<CheckboxMark mark={alone() ? "check" : null} />}
-          >
-            <Text>Regular</Text>
-          </Checkbox>
-          <Checkbox
-            class="group"
-            checked
-            {...checkboxLook({ scale: 1.25 })}
-            indicator={<CheckboxMark mark="check" scale={1.25} />}
-          >
-            <Text>Large</Text>
-          </Checkbox>
+          <Row label="Small">
+            <Box mark="check" scale={0.8} />
+          </Row>
+          <Row label="Regular">
+            <Box mark="check" />
+          </Row>
+          <Row label="Large">
+            <Box mark="check" scale={1.25} />
+          </Row>
         </DemoSection>
         <DemoSection title="Round">
-          <Checkbox
-            class="group"
-            checked
-            {...checkboxLook({ round: true })}
-            indicator={<CheckboxMark mark="check" round />}
-          >
-            <Text>Round</Text>
-          </Checkbox>
-          <Checkbox
-            class="group"
-            {...checkboxLook({ round: true })}
-            indicator={<CheckboxMark mark={null} round />}
-          >
-            <Text>Off</Text>
-          </Checkbox>
+          <Row label="Round">
+            <Box mark="check" round />
+          </Row>
+          <Row label="Off">
+            <Box mark={null} round />
+          </Row>
         </DemoSection>
         <DemoSection title="States">
-          <Checkbox
-            class="group"
-            checked
-            {...checkboxLook()}
-            indicator={<CheckboxMark mark="check" />}
-          >
-            <Text>Checked</Text>
-          </Checkbox>
-          <Checkbox
-            class="group"
-            indeterminate
-            {...checkboxLook()}
-            indicator={<CheckboxMark mark="dash" />}
-          >
-            <Text>Indeterminate</Text>
-          </Checkbox>
-          <Checkbox class="group" {...checkboxLook()} indicator={<CheckboxMark mark={null} />}>
-            <Text>Off</Text>
-          </Checkbox>
-          <Checkbox
-            class="group"
-            checked
-            disabled
-            {...checkboxLook({ disabled: true })}
-            indicator={<CheckboxMark mark="check" />}
-          >
-            <Text>Disabled</Text>
-          </Checkbox>
-          <Checkbox
-            class="group"
-            disabled
-            {...checkboxLook({ disabled: true })}
-            indicator={<CheckboxMark mark={null} />}
-          >
-            <Text>Disabled</Text>
-          </Checkbox>
+          <Row label="Checked">
+            <Box mark="check" />
+          </Row>
+          <Row label="Indeterminate">
+            <Box mark="dash" />
+          </Row>
+          <Row label="Off">
+            <Box mark={null} />
+          </Row>
+          <Row label="Disabled">
+            <Box mark="check" disabled />
+          </Row>
+          <Row label="Disabled">
+            <Box mark={null} disabled />
+          </Row>
         </DemoSection>
       </DemoCard>
     </DemoPage>
