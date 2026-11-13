@@ -197,6 +197,17 @@ export function inputLook(o?: FieldLookOptions) {
     disabledStyle: look.disabledStyle,
   };
 }
+
+/**
+ * A time field's well (`DatePicker`'s `timeFieldClass`): a number input's, its segments inside. It sits in the
+ * calendar's popup, so in dark it is shadcn's input there (`bg-input/30`, a shade over the popup) rather than the
+ * field color, which is the page's and would read as a hole.
+ */
+export const timeFieldClass = [
+  pointer ? "h-8 rounded-[7px] px-2" : "h-11 rounded-lg px-3",
+  terminal ? "items-center border bg-field" : "items-center border bg-field dark:bg-input/30",
+  edgeClass({ rest: "border-input", hover: "border-faint", hoverVariant: "enabled:hover" }),
+].join(" ");
 // @port end
 
 /**

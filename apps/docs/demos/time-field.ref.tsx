@@ -4,6 +4,7 @@ import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 import { TimeField } from "nsh/base";
 
+import { calendarLook, TimeSegment } from "@/packages/ui/calendar";
 import { sectionSurface } from "@/packages/ui/lib/surface";
 import { timeFieldClass } from "@/packages/ui/time-field";
 
@@ -73,6 +74,9 @@ function App() {
                 log(`start → ${value}`);
               }}
               class={timeFieldClass}
+              segmentClass={calendarLook.segmentClass}
+              separatorStyle={calendarLook.separator}
+              renderSegment={(segment) => <TimeSegment label={segment.label} />}
             />
           </DemoSection>
           <DemoSection title="Ends">
@@ -86,6 +90,9 @@ function App() {
                 log(`end → ${value}`);
               }}
               class={timeFieldClass}
+              segmentClass={calendarLook.segmentClass}
+              separatorStyle={calendarLook.separator}
+              renderSegment={(segment) => <TimeSegment label={segment.label} />}
             />
           </DemoSection>
           <DemoSection title="Disabled">
@@ -94,6 +101,9 @@ function App() {
               disabled
               accessibilityLabel="Disabled time"
               class={timeFieldClass}
+              segmentClass={calendarLook.segmentClass}
+              separatorStyle={calendarLook.separator}
+              renderSegment={(segment) => <TimeSegment label={segment.label} />}
             />
           </DemoSection>
         </View>

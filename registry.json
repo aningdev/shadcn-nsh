@@ -325,7 +325,7 @@
       "type": "registry:ui",
       "title": "Time Field",
       "description": "A sunk well for a time of day, one segment at a time.",
-      "registryDependencies": ["input", "theme"],
+      "registryDependencies": ["calendar", "input", "theme"],
       "files": [
         {
           "path": "packages/ui/time-field.tsx",
@@ -501,7 +501,7 @@
       "type": "registry:ui",
       "title": "Calendar",
       "description": "A month of days to pick a date or a range, on the shared calendar look.",
-      "registryDependencies": ["icons", "surface", "theme", "time-field"],
+      "registryDependencies": ["icons", "input", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/calendar.tsx",

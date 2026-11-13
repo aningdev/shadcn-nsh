@@ -250,8 +250,7 @@
         "pointer": [
           "packages/ui/input.tsx",
           "packages/ui/number-input.tsx",
-          "packages/ui/otp-input.tsx",
-          "packages/ui/time-field.tsx"
+          "packages/ui/otp-input.tsx"
         ],
         "Live": ["packages/ui/input.tsx", "packages/ui/otp-input.tsx"],
         "read": ["packages/ui/input.tsx", "packages/ui/otp-input.tsx"],
@@ -274,7 +273,7 @@
         "otpCells": "packages/ui/otp-input.tsx",
         "OtpCellOptions": "packages/ui/otp-input.tsx",
         "otpCellLook": "packages/ui/otp-input.tsx",
-        "timeFieldClass": "packages/ui/time-field.tsx"
+        "timeFieldClass": "packages/ui/input.tsx"
       }
     },
     "look/listbox.tsx": {

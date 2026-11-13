@@ -10,9 +10,9 @@ import {
   type CalendarProps as BaseCalendarProps,
 } from "nsh/base";
 
+import { timeFieldClass } from "./input";
 import { Icon } from "./lib/icons";
 import { controlSize } from "./lib/surface";
-import { timeFieldClass } from "./time-field";
 
 // @port look/listbox.tsx
 const pointer = platform.desktop;

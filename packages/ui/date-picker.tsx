@@ -13,11 +13,11 @@ import {
 } from "nsh/base";
 
 import { CalendarItem, calendarLook, TimeSegment } from "./calendar";
+import { timeFieldClass } from "./input";
 import { clearButtonLook, listboxPopup } from "./lib/listbox";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import { backdrop } from "./lib/overlay";
 import { Picker, type PickerProps } from "./select";
-import { timeFieldClass } from "./time-field";
 
 // @port look/listbox.tsx
 /** A value, or a function reading it where the look is applied (a signal). */
