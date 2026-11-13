@@ -4,7 +4,6 @@
 // overlay over artwork, its opacity included. The artwork is drawn from the theme rather than
 // fetched, so the page draws the same before and after the network; the headline's ink is the one
 // that reads over the overlay the user picks.
-import { colors } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { Image, mount, signal, Text, View } from "nsh";
 import { type ColorFormat, ColorPicker } from "nsh/base";
@@ -15,7 +14,7 @@ import { insetSurface, sectionSurface } from "@/packages/ui/lib/surface";
 
 import { DemoPage } from "./kit";
 import { photoUrl } from "./photos";
-import { desktop, Log, Panel, Split } from "./stage";
+import { desktop, Log, Panel, Split, ui } from "./stage";
 
 // The preset swatches and the overlay's color are the user's content, not the interface's look.
 const SWATCHES = [
@@ -34,8 +33,8 @@ function Field(props: { label: string; detail: string; children: JSX.Element }) 
   return (
     <View style={{ gap: 8 }}>
       <View style={{ gap: 2 }}>
-        <Text style={{ fontSize: 14, fontWeight: "500", color: colors.text }}>{props.label}</Text>
-        <Text style={{ fontSize: 12, color: colors.muted }}>{props.detail}</Text>
+        <Text style={{ fontSize: 14, fontWeight: "500", color: ui().text }}>{props.label}</Text>
+        <Text style={{ fontSize: 12, color: ui().muted }}>{props.detail}</Text>
       </View>
       {props.children}
     </View>
@@ -63,7 +62,7 @@ function App() {
   const log = (line: string) => events.set([line, ...events()].slice(0, 6));
   return (
     <DemoPage title="Color picker">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Drag the area or a slider, type a color, or pick a swatch"
           : "Drag the area or a slider, or tap a swatch"}
@@ -73,13 +72,13 @@ function App() {
         inspector={
           <>
             <Panel title="value">
-              <Text style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}>
+              <Text style={{ fontSize: 13, color: ui().text, fontVariant: ["tabular-nums"] }}>
                 {`fill ${fill()}`}
               </Text>
-              <Text style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}>
+              <Text style={{ fontSize: 13, color: ui().text, fontVariant: ["tabular-nums"] }}>
                 {`accent ${accent()}`}
               </Text>
-              <Text style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}>
+              <Text style={{ fontSize: 13, color: ui().text, fontVariant: ["tabular-nums"] }}>
                 {`overlay ${overlay()}`}
               </Text>
             </Panel>

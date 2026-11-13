@@ -5,7 +5,7 @@
 // The photos are the gallery's URLs (`photos.ts`); the page marks itself `images-ready` once all
 // five have loaded or failed, and the render check waits for that before the screenshot, so a
 // demo, its reference page and the baseline draw the same slide at every run.
-import { alpha, colors } from "@shadcn-nsh/theme";
+import { alpha } from "@shadcn-nsh/theme";
 import { Image, mount, signal, Text, View } from "nsh";
 
 import {
@@ -21,7 +21,7 @@ import {
 
 import { DemoPage } from "./kit";
 import { photoUrl, type PhotoName } from "./photos";
-import { desktop, Log, Split } from "./stage";
+import { desktop, Log, Split, ui } from "./stage";
 
 // Photos of the launch pad (the gallery's `photos.ts`), each with a caption at its foot.
 const shots: { photo: PhotoName; name: string; detail: string }[] = [
@@ -49,7 +49,7 @@ function App() {
 
   return (
     <DemoPage title="Carousel">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Scroll with the touchpad, click the arrows or a dot, or focus it and press ← →; after the last photo comes the first"
           : "Swipe the photos, or tap the arrows or a dot; after the last photo comes the first"}
@@ -86,9 +86,9 @@ function App() {
                   borderRadius: 14,
                   borderCurve: "continuous",
                   borderWidth: 1,
-                  borderColor: colors.line,
+                  borderColor: ui().line,
                   overflow: "hidden",
-                  backgroundColor: colors.raised,
+                  backgroundColor: ui().raised.backgroundColor,
                 }}
               >
                 <Image

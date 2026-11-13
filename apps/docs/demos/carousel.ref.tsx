@@ -3,7 +3,7 @@
 // `CarouselDot`) spread on `nsh/base`'s carousel parts, the way the official example
 // (`references/nsh/website/demos/el-carousel.tsx`) writes it. It differs from the component page
 // only in the parts it names.
-import { alpha, colors } from "@shadcn-nsh/theme";
+import { alpha } from "@shadcn-nsh/theme";
 import { Image, mount, signal, Text, View } from "nsh";
 import {
   Carousel,
@@ -26,7 +26,7 @@ import { Icon } from "@/packages/ui/lib/icons";
 
 import { DemoPage } from "./kit";
 import { photoUrl, type PhotoName } from "./photos";
-import { desktop, Log, Split } from "./stage";
+import { desktop, Log, Split, ui } from "./stage";
 
 // Photos of the launch pad (the gallery's `photos.ts`), each with a caption at its foot.
 const shots: { photo: PhotoName; name: string; detail: string }[] = [
@@ -57,7 +57,7 @@ function App() {
 
   return (
     <DemoPage title="Carousel">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Scroll with the touchpad, click the arrows or a dot, or focus it and press ← →; after the last photo comes the first"
           : "Swipe the photos, or tap the arrows or a dot; after the last photo comes the first"}
@@ -105,9 +105,9 @@ function App() {
                     borderRadius: 14,
                     borderCurve: "continuous",
                     borderWidth: 1,
-                    borderColor: colors.line,
+                    borderColor: ui().line,
                     overflow: "hidden",
-                    backgroundColor: colors.raised,
+                    backgroundColor: ui().raised.backgroundColor,
                   },
                 ]}
               >
@@ -154,7 +154,7 @@ function App() {
               focusVisibleStyle={arrow.focusVisibleStyle}
               disabledStyle={arrow.disabledStyle}
             >
-              <Icon name="back" size={carouselSizes.arrowIcon} tint={colors.text} />
+              <Icon name="back" size={carouselSizes.arrowIcon} tint={ui().text} />
             </CarouselPrevious>
             {/* The dots: a pill springs to the one of the photo shown. */}
             <CarouselPagination
@@ -183,7 +183,7 @@ function App() {
               disabledStyle={arrow.disabledStyle}
             >
               <View style={{ transform: [{ scaleX: -1 }] }}>
-                <Icon name="back" size={carouselSizes.arrowIcon} tint={colors.text} />
+                <Icon name="back" size={carouselSizes.arrowIcon} tint={ui().text} />
               </View>
             </CarouselNext>
           </View>

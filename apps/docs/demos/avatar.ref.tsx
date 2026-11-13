@@ -1,7 +1,6 @@
 // The reference of `avatar.tsx`: the same scene with the identity look spread on `nsh/base`'s
 // Avatar, the way the official example (`references/nsh/website/demos/el-avatar.tsx`) writes it.
 // It differs from the component page only in the parts it names.
-import { colors, toneColor } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { Image, mount, signal, Text, View } from "nsh";
 import { Avatar, AvatarGroup } from "nsh/base";
@@ -11,14 +10,14 @@ import { Button } from "@/packages/ui/button";
 import { listRow, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Segmented, Split } from "./stage";
+import { desktop, Log, Panel, Segmented, Split, ui } from "./stage";
 
 type Presence = "online" | "away" | "busy";
 
 const PRESENCE: Presence[] = ["online", "away", "busy"];
 
 const dotColor = (p: Presence) =>
-  p === "online" ? toneColor("up") : p === "away" ? toneColor("warn") : toneColor("danger");
+  p === "online" ? ui().up : p === "away" ? ui().warn : ui().danger;
 
 const TEAM = ["Jason Lee", "Sunli", "Floyd Wang"];
 
@@ -48,7 +47,7 @@ function Person(props: {
 }) {
   // Read in the JSX, so the identity colors follow the appearance.
   const id = () => avatarIdentity(props.name);
-  const surface = () => colors.surface;
+  const surface = () => ui().card.backgroundColor;
   return (
     <Avatar
       name={props.name}
@@ -115,7 +114,7 @@ function App() {
   const log = (line: string) => events.set([line, ...events()].slice(0, 5));
   const side = desktop ? 36 : 44;
   const more = () => Math.max(0, members() - limit());
-  const surface = () => colors.surface;
+  const surface = () => ui().card.backgroundColor;
   const next = (i: number) => {
     const value = PRESENCE[(PRESENCE.indexOf(presence()[i]) + 1) % PRESENCE.length];
     presence.set(presence().map((p, j) => (j === i ? value : p)));
@@ -123,7 +122,7 @@ function App() {
   };
   return (
     <DemoPage title="Avatar">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click a member to change their presence"
           : "Tap a member to change their presence"}
@@ -200,7 +199,7 @@ function App() {
               </View>
             ))}
           </View>
-          <View style={{ height: 1, backgroundColor: colors.line }} />
+          <View style={{ height: 1, backgroundColor: ui().line }} />
           <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
             <AvatarGroup
               limit={limit()}
@@ -208,7 +207,7 @@ function App() {
               class="flex-row items-center"
               overflowClass="items-center justify-center rounded-full"
               overflowStyle={{
-                backgroundColor: colors.raised,
+                backgroundColor: ui().raised.backgroundColor,
                 width: side,
                 height: side,
                 marginLeft: -side / 4,
@@ -221,7 +220,7 @@ function App() {
                   style={{
                     fontSize: side / 3.2,
                     fontWeight: "600",
-                    color: colors.muted,
+                    color: ui().muted,
                     fontVariant: ["tabular-nums"],
                   }}
                 >
@@ -241,9 +240,9 @@ function App() {
                 </View>
               ))}
             </AvatarGroup>
-            <Text style={{ fontSize: 12, color: colors.muted }}>{`${members()} members`}</Text>
+            <Text style={{ fontSize: 12, color: ui().muted }}>{`${members()} members`}</Text>
           </View>
-          <View style={{ height: 1, backgroundColor: colors.line }} />
+          <View style={{ height: 1, backgroundColor: ui().line }} />
           <View style={{ flexDirection: "row", alignItems: "flex-start", gap: 12 }}>
             <Person
               name="Barbara Liskov"
@@ -257,11 +256,11 @@ function App() {
               }}
             />
             <View style={{ flex: 1, gap: 2 }}>
-              <Text style={{ fontSize: 12, color: colors.muted }}>
-                <Text style={{ fontWeight: "600", color: colors.text }}>Barbara Liskov</Text>
+              <Text style={{ fontSize: 12, color: ui().muted }}>
+                <Text style={{ fontWeight: "600", color: ui().text }}>Barbara Liskov</Text>
                 {"  40m · her picture failed to load"}
               </Text>
-              <Text style={{ fontSize: desktop ? 13 : 15, color: colors.text }}>
+              <Text style={{ fontSize: desktop ? 13 : 15, color: ui().text }}>
                 Same as before within a millisecond.
               </Text>
             </View>
