@@ -65,7 +65,15 @@ function App() {
       </DemoCard>
       <DemoCard>
         <DemoSection title="Picker" axis="block">
-          <EmojiPanel recent={["😀", "🎉", "👍"]} onSelect={({ emoji }) => picked.set(emoji)} />
+          {/* The panel is 342 points wide by default (a desktop window's width); a phone's card is
+              narrower, so it fills the box instead and keeps its own height. */}
+          <View style={{ width: "100%", maxWidth: 342, height: 392, alignSelf: "center" }}>
+            <EmojiPanel
+              class="flex-1"
+              recent={["😀", "🎉", "👍"]}
+              onSelect={({ emoji }) => picked.set(emoji)}
+            />
+          </View>
         </DemoSection>
       </DemoCard>
     </DemoPage>
