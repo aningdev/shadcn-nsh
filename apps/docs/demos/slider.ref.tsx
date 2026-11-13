@@ -15,7 +15,7 @@ function App() {
   return (
     <DemoPage title="Slider" note={() => `${strength()}% · ${muted()}%`}>
       <DemoCard>
-        <DemoSection title="Value">
+        <DemoSection title="Value" axis="block">
           <Slider
             value={strength()}
             onChange={({ value }) => strength.set(value as number)}

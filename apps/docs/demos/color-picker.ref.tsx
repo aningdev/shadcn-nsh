@@ -16,7 +16,7 @@ function App() {
   return (
     <DemoPage title="Color picker">
       <DemoCard>
-        <DemoSection title="Fill">
+        <DemoSection title="Fill" axis="block">
           <ColorPicker value={fill()} format={format()} onChange={({ value }) => fill.set(value)}>
             <ColorPanel
               name="Fill color"

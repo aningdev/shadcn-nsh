@@ -20,10 +20,12 @@ function App() {
       note={() => (picked() ? `Picked ${picked()}` : "Pick an emoji…")}
     >
       <DemoCard>
-        <DemoSection title="Chrome">
+        <DemoSection title="Chrome" axis="block">
           <View
             style={{
-              width: 342,
+              width: "100%",
+              maxWidth: 342,
+              alignSelf: "center",
               borderWidth: 1,
               borderColor: colors.border,
               borderRadius: 12,
@@ -60,7 +62,7 @@ function App() {
         </DemoSection>
       </DemoCard>
       <DemoCard>
-        <DemoSection title="Picker">
+        <DemoSection title="Picker" axis="block">
           <EmojiPanel recent={["😀", "🎉", "👍"]} onSelect={({ emoji }) => picked.set(emoji)} />
         </DemoSection>
       </DemoCard>

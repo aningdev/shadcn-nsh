@@ -9,7 +9,7 @@ function App() {
   return (
     <DemoPage title="Collapsible">
       <DemoCard>
-        <DemoSection title="Default">
+        <DemoSection title="Default" axis="block">
           <Collapsible defaultOpen>
             <CollapsibleTrigger first>Shipping details</CollapsibleTrigger>
             <CollapsibleContent>
@@ -19,7 +19,7 @@ function App() {
             </CollapsibleContent>
           </Collapsible>
         </DemoSection>
-        <DemoSection title="Closed">
+        <DemoSection title="Closed" axis="block">
           <Collapsible>
             <CollapsibleTrigger>Returns</CollapsibleTrigger>
             <CollapsibleContent>

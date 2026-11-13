@@ -26,8 +26,8 @@ function App() {
   return (
     <DemoPage title="DataTable">
       <DemoCard>
-        <DemoSection title="Default">
-          <View style={{ height: 200, alignSelf: "stretch" }}>
+        <DemoSection title="Default" axis="block">
+          <View style={{ height: 200 }}>
             <DataTable
               columns={columns.map((c) => ({ ...c, fitPadding: dataTableFitPadding }))}
               classes={dataTableClasses}

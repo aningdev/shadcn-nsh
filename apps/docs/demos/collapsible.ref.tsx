@@ -54,7 +54,7 @@ function App() {
   return (
     <DemoPage title="Collapsible">
       <DemoCard>
-        <DemoSection title="Default">
+        <DemoSection title="Default" axis="block">
           <Plain
             first
             open={a()}
@@ -63,7 +63,7 @@ function App() {
             onToggle={() => a.set(!a())}
           />
         </DemoSection>
-        <DemoSection title="Closed">
+        <DemoSection title="Closed" axis="block">
           <Plain
             open={b()}
             title="Returns"

@@ -3,11 +3,16 @@
 // `<id>.ref.tsx` on the same kit so `port:render` compares equal pixels.
 import { colors } from "@shadcn-nsh/theme";
 import type { JSX, ViewStyle } from "nsh";
-import { Text, View } from "nsh";
+import { Scroll, Text, View } from "nsh";
 
 import { density, sectionSurface } from "@/packages/ui/lib/surface";
 
-/** The page: background, padding, a title, then the demo's body. */
+/**
+ * The page: background, padding, a title, then the demo's body. It scrolls when the body is
+ * taller than the window (a phone's 844 points, a desktop window's 900): the demo ends at its
+ * content, the way the packaged page's frame does (`demo-client.ts` measures it), rather than
+ * being cut off.
+ */
 export function DemoPage(props: {
   title: string;
   children: JSX.Element;
@@ -15,8 +20,9 @@ export function DemoPage(props: {
   note?: string | (() => string);
 }) {
   return (
-    <View
-      style={{ flex: 1, backgroundColor: colors.background, padding: 20, gap: density.gap + 2 }}
+    <Scroll
+      style={{ flex: 1, backgroundColor: colors.background }}
+      contentStyle={{ flexGrow: 1, padding: 20, gap: density.gap + 2 }}
     >
       <Text style={{ fontSize: 22, fontWeight: "700", color: colors.text }}>{props.title}</Text>
       {props.children}
@@ -25,7 +31,7 @@ export function DemoPage(props: {
           {typeof props.note === "function" ? props.note() : props.note}
         </Text>
       </If>
-    </View>
+    </Scroll>
   );
 }
 
@@ -49,12 +55,27 @@ export function DemoCard(props: {
   );
 }
 
-/** A titled cluster of controls in a wrapping row (variants, sizes, states). */
-export function DemoSection(props: { title: string; children: JSX.Element }) {
+/**
+ * A titled cluster of controls. `axis="inline"` (the default) is a wrapping row, for controls
+ * that take their own width (buttons, badges, switches). `axis="block"` is a column whose items
+ * stretch to the card's content width: for controls that fill the line (an accordion, a
+ * collapsible, a table, a slider on its own row), which a row would shrink to their content width.
+ */
+export function DemoSection(props: {
+  title: string;
+  axis?: "inline" | "block";
+  children: JSX.Element;
+}) {
   return (
     <View style={{ gap: 8 }}>
       <Text style={{ fontSize: density.note, color: colors.muted }}>{props.title}</Text>
-      <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 8 }}>
+      <View
+        style={
+          props.axis === "block"
+            ? { flexDirection: "column", alignItems: "stretch", gap: 8 }
+            : { flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 8 }
+        }
+      >
         {props.children}
       </View>
     </View>

@@ -39,7 +39,7 @@ function App() {
   return (
     <DemoPage title="Accordion" note={() => (open().length ? open().join(", ") : "none")}>
       <DemoCard>
-        <DemoSection title="Single">
+        <DemoSection title="Single" axis="block">
           <Accordion
             value={open()}
             onChange={({ value }) => open.set(value)}
