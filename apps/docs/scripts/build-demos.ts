@@ -26,10 +26,16 @@ const demosDir = cat.paths.demos;
 const outRoot = path.join(docsRoot, "public", "demos");
 const args = process.argv.slice(2);
 const onlyAt = args.indexOf("--only");
-const only =
-  onlyAt >= 0 && args[onlyAt + 1]
-    ? new Set(args[onlyAt + 1]!.split(",").filter(Boolean))
-    : undefined;
+/** `--only <id>,<id>`: just those demos (the whole set otherwise). */
+const onlyArg = onlyAt >= 0 ? args[onlyAt + 1] : undefined;
+const only = onlyArg
+  ? new Set(
+      onlyArg
+        .split(",")
+        .map((id) => id.trim())
+        .filter(Boolean),
+    )
+  : undefined;
 const entries = cat.components
   .map((component) => component.demo)
   .filter((entry) => !only || only.has(path.basename(entry, ".tsx")))
