@@ -61,7 +61,9 @@ if (process.argv.includes("--update")) {
     console.error("baseline: no pointer shots in shots/; run `bun run port:render` first");
     process.exit(1);
   }
-  fs.rmSync(baseline, { recursive: true, force: true });
+  // A full update replaces the baseline; `--only` rewrites the pictures of those ids and leaves
+  // the rest of the folder as it is.
+  if (!only) fs.rmSync(baseline, { recursive: true, force: true });
   fs.mkdirSync(baseline, { recursive: true });
   for (const name of files) fs.copyFileSync(path.join(shots, name), path.join(baseline, name));
   console.log(`baseline: wrote ${files.length} pointer shots to ${path.relative(repo, baseline)}`);

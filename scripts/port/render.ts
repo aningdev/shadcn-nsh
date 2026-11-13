@@ -163,9 +163,10 @@ if (only) {
 if (software) fs.rmSync(path.dirname(software), { recursive: true, force: true });
 console.log(`screenshots: ${path.relative(repo, shots)}`);
 console.log("one page of them all: bun run port:sheet");
-// A filtered run holds only some of the shots, so it cannot be compared with the whole baseline.
+// A filtered run holds only some of the shots, so it cannot be compared with the whole baseline;
+// a `--only` run holds exactly the ids it names, which `baseline.ts` checks on their own.
 if (status === 0) {
-  if (only || process.argv.includes("--filter")) {
+  if (process.argv.includes("--filter")) {
     console.log("baseline: skipped for a filtered run");
   } else if (process.argv.includes("--no-baseline")) {
     console.log("baseline: skipped (--no-baseline)");

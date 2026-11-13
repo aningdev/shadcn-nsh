@@ -7,7 +7,7 @@ import { listRow, RowDivider, RowLabel, sectionSurface } from "@/packages/ui/lib
 import { Radio, RadioGroup } from "@/packages/ui/radio-group";
 import { segmentedLook } from "@/packages/ui/segmented";
 
-import { DemoPage } from "./kit";
+import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { desktop, Log, Panel, Split, ui } from "./stage";
 
 const plans = [
@@ -97,6 +97,26 @@ function App() {
           </RadioGroup>
         </View>
       </Split>
+
+      {/* The other shape of a radio: a choice card, its whole surface the control (`variant="tile"`). */}
+      <DemoCard>
+        <DemoSection title="Tile">
+          <View style={{ flex: 1, flexDirection: "row", gap: 8 }}>
+            {cycles.map((c) => (
+              <Radio
+                variant="tile"
+                checked={cycle() === c}
+                onChange={({ checked }) => {
+                  if (checked) cycle.set(c);
+                  log(`${c} → ${checked}`);
+                }}
+              >
+                {c}
+              </Radio>
+            ))}
+          </View>
+        </DemoSection>
+      </DemoCard>
     </DemoPage>
   );
 }
