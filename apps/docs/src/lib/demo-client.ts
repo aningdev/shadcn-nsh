@@ -38,45 +38,55 @@ function savedLayout(): Layout {
   }
 }
 
+/** A player URL with `name=value` set: its value replaced, or the parameter added. */
+function withParam(url: string, name: string, value: string) {
+  const parsed = new URL(url, document.baseURI);
+  parsed.searchParams.set(name, value);
+  return parsed.href;
+}
+
 /** A player URL for `layout`: its idiom in `?idiom=`. */
-const withIdiom = (url: string, layout: Layout) =>
-  /[?&]idiom=/.test(url)
-    ? url.replace(/([?&]idiom=)[a-z]+/, `$1${LAYOUTS[layout].idiom}`)
-    : url.replace(/\?/, `?idiom=${LAYOUTS[layout].idiom}&`);
+const withIdiom = (url: string, layout: Layout) => withParam(url, "idiom", LAYOUTS[layout].idiom);
 
 /** The page's theme in a player URL's `?theme=`: added, or replaced. */
-const withTheme = (url: string, theme: "light" | "dark") =>
-  /[?&]theme=/.test(url)
-    ? url.replace(/([?&]theme=)(dark|light)/, `$1${theme}`)
-    : url.replace(/\?/, `?theme=${theme}&`);
+const withTheme = (url: string, theme: "light" | "dark") => withParam(url, "theme", theme);
 
 /** A demo's URL in `layout`, as the page's theme has it now. */
 const playerSrc = (url: string, layout: Layout) => withTheme(withIdiom(url, layout), siteTheme());
+
+/** The "open in a new tab" links: a demo's own page, whose idiom the panel switches. */
+const DEMO_LINK = 'a[href*="?idiom="]';
+/** A frame that runs the packaged demo, at the player URL the panel gave it. */
+const DEMO_FRAME = ".phone__screen iframe[data-player-src]";
 
 /**
  * Demos follow the page's theme: the page in `?theme=` before they load (and in "Open in a new
  * tab" links), a message when the theme changes, so a running demo switches without reloading.
  */
 function themeDemos(root: ParentNode) {
-  const frames = [
-    ...root.querySelectorAll<HTMLIFrameElement>(".phone__screen iframe[data-player-src]"),
-  ];
-  const links = [...root.querySelectorAll<HTMLAnchorElement>('a[href*="?idiom="]')];
+  const frames = [...root.querySelectorAll<HTMLIFrameElement>(DEMO_FRAME)];
+  const links = [...root.querySelectorAll<HTMLAnchorElement>(DEMO_LINK)];
   const apply = () => {
     const want = siteTheme();
     for (const link of links) link.href = withTheme(link.href, want);
     for (const frame of frames) {
       if (frame.dataset.theme === want) continue;
-      // Running: tell the page; not loaded yet (lazy): change the URL.
-      if (frame.dataset.loaded) frame.contentWindow?.postMessage({ theme: want }, "*");
-      else if (frame.getAttribute("src")) {
-        frame.setAttribute("src", withTheme(frame.getAttribute("src")!, want));
+      if (frame.dataset.loaded === "1") {
+        // Running: tell it. The page is this one's origin, and takes a message only from there.
+        frame.contentWindow?.postMessage({ theme: want }, window.location.origin);
+      } else {
+        // Not loaded yet (or reloading, `layoutDemo` cleared the mark): change the URL.
+        const src = frame.getAttribute("src");
+        if (src) frame.setAttribute("src", withTheme(src, want));
       }
       frame.dataset.theme = want;
     }
   };
   for (const frame of frames) frame.dataset.theme = "";
-  for (const frame of frames) frame.addEventListener("load", () => (frame.dataset.loaded = "1"));
+  for (const frame of frames)
+    frame.addEventListener("load", () => {
+      frame.dataset.loaded = "1";
+    });
   apply();
   onThemeChange(apply);
 }
@@ -97,7 +107,8 @@ function contentHeight(frame: HTMLIFrameElement) {
     const app = doc?.getElementById("app");
     if (!doc || !app) return 0;
     const full = doc.documentElement.clientHeight;
-    const view = doc.defaultView!;
+    const view = doc.defaultView;
+    if (!view) return 0;
     let bottom = 0;
     // `clip`: the bottom of the views around that clip what they hold (a virtual list's rows out
     // of view); views that fill the frame do not.
@@ -141,6 +152,10 @@ function layoutDemo(demo: HTMLElement, all: HTMLElement[]) {
   // The height the app's content takes (`contentHeight`), once measured.
   let content = 0;
 
+  // The frame starts at the layout's whole height (`content` is 0 until the first measurement):
+  // a phone's app is started at 390 × 844 and then resized to what it draws, as the website's
+  // player does (`references/nsh/website/src/lib/demo-client.ts:120-131`, remeasured at 135-147).
+  // Its `windowSize()` is the frame's, so a demo reads the layout's height before the resize.
   const fit = () => {
     const size = LAYOUTS[(demo.dataset.layout as Layout) ?? "mobile"];
     const room = stage.clientWidth - parseFloat(getComputedStyle(stage).paddingLeft) * 2;
@@ -182,13 +197,17 @@ function layoutDemo(demo: HTMLElement, all: HTMLElement[]) {
       b.setAttribute("aria-checked", String(on));
       b.tabIndex = on ? 0 : -1;
     }
-    for (const link of demo.querySelectorAll<HTMLAnchorElement>('a[href*="?idiom="]')) {
+    for (const link of demo.querySelectorAll<HTMLAnchorElement>(DEMO_LINK)) {
       link.href = withIdiom(link.href, layout);
     }
     if (frame?.dataset.playerSrc) {
       frame.dataset.playerSrc = withIdiom(frame.dataset.playerSrc, layout);
       // The frame's first load, or the new idiom in a running one (an idiom is fixed at start).
       if (changed || !frame.getAttribute("src")) {
+        // The document that runs from here on has not loaded yet: a theme change goes to its URL,
+        // not to the window it is replacing.
+        delete frame.dataset.loaded;
+        delete frame.dataset.theme;
         frame.setAttribute("src", playerSrc(frame.dataset.playerSrc, layout));
       }
     }
