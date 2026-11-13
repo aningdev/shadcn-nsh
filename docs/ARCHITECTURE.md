@@ -22,7 +22,8 @@ _Avoid_: 发布组件 npm 包、旧 registry id 的别名
 
 ## Layout
 
-- `port-map.json`：**Port Map**，上游每个声明的唯一去向表；组件清单由它与 `registry.json` 生成，不手写
+- `port-map.json`：**Port Map**，上游每个声明的唯一去向表
+- `registry.json`：**Catalog** 的真源，其 `registry:ui` 条目就是组件集合
 - `packages/theme/`：**Theme Source**（两个 JSON 原样拷贝）与 `theme.ts`（脚本填充）；不放组件
 - `packages/ui/<id>.tsx`：一个**组件** = **Port Region** + **Shell**；一个 registry 条目一个文件
 - `packages/ui/lib/`：没有所属控件的上游部分（以上游文件名命名）与多个外壳共用的接线；作为 `registry:lib` 条目分发
@@ -30,6 +31,7 @@ _Avoid_: 发布组件 npm 包、旧 registry id 的别名
 - `apps/docs/src/pages/docs/components/<id>.md`：组件文档页，固定四节
 - `apps/gallery/`：原生行为测试与冒烟页，用同一套 `packages/ui`；不做公开文档，不比截图
 - `packages/cli/`：`shadcn-nsh` CLI（`init`、`add`、`list`、`view`、`diff`、`build`、`serve`）
+- `scripts/catalog.ts`：**Catalog** 模块，脚本取组件集合的唯一入口；生成 `apps/docs/demos/catalog.generated.ts` 供 NSH 运行时使用（不手改）
 - `scripts/port/`：搬运与核对工具；唯一读 `references/nsh` 的代码
 - `references/`：只读子模块
 
@@ -66,6 +68,8 @@ flowchart TD
 - `packages/theme` 不 import `packages/ui`
 - `packages/*` 不 import `apps/*`、`scripts/*` 或 `references/*`；运行时代码只认 `@shadcn-nsh/theme`、`nsh`、`nsh/base` 与相对路径
 - 只有 `scripts/port` 读 `references/nsh`；`apps/docs` 的构建不需要子模块
+- 组件集合只从 `scripts/catalog.ts`（脚本）或 `catalog.generated.ts`（NSH 运行时）取；不自己读 `registry.json` 过滤，也不 `readdir` 演示或文档目录来推导
+- 每个组件的特例（渲染前的 steps、`selfReference`）只写在 `render-cases.ts`，按 id 覆盖；`packages/ui/index.ts` 手写，由检查保证它导出每个组件
 
 ## Rules
 
