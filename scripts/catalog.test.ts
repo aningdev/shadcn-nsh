@@ -3,9 +3,11 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
+import { parseRegistry } from "../packages/cli/src/utils/registry-schema";
 import {
   addComponent,
   catalog,
+  CatalogError,
   checkCatalog,
   checkOverrides,
   components,
@@ -43,7 +45,10 @@ type Fixture = {
 function fixture({ items, files = {}, index }: Fixture): string {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "nsh-catalog-"));
   roots.push(root);
-  fs.writeFileSync(path.join(root, "registry.json"), `${JSON.stringify({ items }, null, 2)}\n`);
+  fs.writeFileSync(
+    path.join(root, "registry.json"),
+    `${JSON.stringify({ name: "fixture", homepage: "", items }, null, 2)}\n`,
+  );
 
   const defaults: Record<string, string> = {};
   for (const item of items) {
@@ -179,9 +184,10 @@ describe("addComponent", () => {
     const cat = catalog(root);
     expect(cat.components.map((component) => component.id)).toEqual(["alpha", "beta"]);
     expect(fs.readFileSync(cat.paths.generated, "utf8")).toContain('"beta"');
-    const written = JSON.parse(fs.readFileSync(cat.paths.registry, "utf8")) as {
-      items: RegistryItem[];
-    };
+    const written = parseRegistry(
+      JSON.parse(fs.readFileSync(cat.paths.registry, "utf8")),
+      cat.paths.registry,
+    );
     expect(written.items.map((item) => item.name)).toEqual(["alpha", "beta"]);
   });
 
@@ -193,7 +199,7 @@ describe("addComponent", () => {
   test("refuses an item that is not a component or lacks the item shape", () => {
     const root = fixture({ items: [ui("alpha")] });
     expect(() => addComponent(catalog(root), lib("press"))).toThrow("registry:ui");
-    expect(() => addComponent(catalog(root), { ...ui("beta"), files: [] })).toThrow("no files");
+    expect(() => addComponent(catalog(root), { ...ui("beta"), files: [] })).toThrow(CatalogError);
   });
 });
 
@@ -232,9 +238,7 @@ describe("catalog.generated.ts", () => {
     expect(isGeneratedCurrent(catalog(root))).toBe(true);
 
     const registryFile = path.join(root, "registry.json");
-    const registry = JSON.parse(fs.readFileSync(registryFile, "utf8")) as {
-      items: RegistryItem[];
-    };
+    const registry = parseRegistry(JSON.parse(fs.readFileSync(registryFile, "utf8")), registryFile);
     registry.items.push(ui("gamma"));
     fs.writeFileSync(registryFile, `${JSON.stringify(registry, null, 2)}\n`);
 

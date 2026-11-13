@@ -14,20 +14,19 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-/** A `registry.json` item, as much of it as the catalog uses. Extra fields are kept as written. */
-export type RegistryItem = {
-  name: string;
-  type: string;
-  title?: string;
-  description?: string;
-  files: { path: string; type: string; target?: string }[];
-  registryDependencies?: string[];
-} & Record<string, unknown>;
+import type { Registry, RegistryItem } from "../packages/cli/src/types";
+import {
+  parseRegistry,
+  parseRegistryItem,
+  RegistryShapeError,
+} from "../packages/cli/src/utils/registry-schema";
 
-/** `registry.json`: its items in order, and every other field as written (`name`, `homepage`, …). */
-export type Registry = Record<string, unknown> & {
-  items: RegistryItem[];
-};
+export type { Registry, RegistryItem };
+
+/** `addComponent` refused the item: a bad shape, not a component, or an id the registry has. */
+export class CatalogError extends Error {
+  override name = "CatalogError";
+}
 
 /** One component: a `registry:ui` item and the files the set requires for it. */
 export type Component = {
@@ -67,77 +66,15 @@ export type Catalog = {
 /** The repo this file is checked into, unless a caller reads a fixture. */
 const DEFAULT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
-/** A JSON file as an object; the error names the file. */
-function readObject(file: string): Record<string, unknown> {
+/** The registry as written, every item checked. */
+function readRegistry(file: string): Registry {
   let value: unknown;
   try {
     value = JSON.parse(fs.readFileSync(file, "utf8"));
   } catch (error) {
     throw new Error(`${file}: not JSON`, { cause: error });
   }
-  if (!isRecord(value)) throw new Error(`${file}: not a JSON object`);
-  return value;
-}
-
-const stringAt = (value: unknown, where: string): string => {
-  if (typeof value !== "string") throw new Error(`${where}: expected a string`);
-  return value;
-};
-
-const stringsAt = (value: unknown, where: string): string[] => {
-  if (!Array.isArray(value) || value.some((entry) => typeof entry !== "string")) {
-    throw new Error(`${where}: expected a list of strings`);
-  }
-  return value;
-};
-
-/** One registry item, checked: a name, a type, files with a path and a type. */
-function itemAt(value: unknown, where: string): RegistryItem {
-  if (!isRecord(value)) throw new Error(`${where}: not an object`);
-  const name = stringAt(value.name, `${where}: name`);
-  const type = stringAt(value.type, `${where}: type`);
-  if (!Array.isArray(value.files) || value.files.length === 0) {
-    throw new Error(`${where}: no files`);
-  }
-  const files = value.files.map((file, at) => {
-    if (!isRecord(file)) throw new Error(`${where}: files[${at}] is not an object`);
-    return {
-      ...file,
-      path: stringAt(file.path, `${where}: files[${at}].path`),
-      type: stringAt(file.type, `${where}: files[${at}].type`),
-      ...(file.target === undefined
-        ? {}
-        : { target: stringAt(file.target, `${where}: files[${at}].target`) }),
-    };
-  });
-  return {
-    ...value,
-    name,
-    type,
-    files,
-    title: value.title === undefined ? undefined : stringAt(value.title, `${where}: title`),
-    description:
-      value.description === undefined
-        ? undefined
-        : stringAt(value.description, `${where}: description`),
-    registryDependencies:
-      value.registryDependencies === undefined
-        ? undefined
-        : stringsAt(value.registryDependencies, `${where}: registryDependencies`),
-  };
-}
-
-/** The registry as written: every item checked, every other field kept. */
-function readRegistry(file: string): Registry {
-  const value = readObject(file);
-  if (!Array.isArray(value.items)) throw new Error(`${file}: no items list`);
-  return {
-    ...value,
-    items: value.items.map((item, at) => itemAt(item, `${file}: items[${at}]`)),
-  };
+  return parseRegistry(value, file);
 }
 
 /** The component set and its paths. Reads only `registry.json`; checks live in `checkCatalog`. */
@@ -280,18 +217,25 @@ export function checkOverrides(cat: Catalog, ids: readonly string[]): string[] {
  * written as JSON (the caller formats it like the files it writes, `vp fmt`).
  */
 export function addComponent(cat: Catalog, item: RegistryItem): void {
-  const checked = itemAt(item, `registry item "${item.name}"`);
+  let checked: RegistryItem;
+  try {
+    checked = parseRegistryItem(item, `registry item "${item.name}"`);
+  } catch (error) {
+    if (error instanceof RegistryShapeError)
+      throw new CatalogError(error.message, { cause: error });
+    throw error;
+  }
   if (checked.type !== "registry:ui") {
-    throw new Error(
+    throw new CatalogError(
       `${cat.paths.registry}: a component is a registry:ui item, not "${checked.type}"`,
     );
   }
   if (!/^[a-z][a-z0-9-]*$/.test(checked.name)) {
-    throw new Error(`${cat.paths.registry}: "${checked.name}" is not a kebab-case id`);
+    throw new CatalogError(`${cat.paths.registry}: "${checked.name}" is not a kebab-case id`);
   }
   const registry = readRegistry(cat.paths.registry);
   if (registry.items.some((existing) => existing.name === checked.name)) {
-    throw new Error(`${cat.paths.registry} already lists "${checked.name}"`);
+    throw new CatalogError(`${cat.paths.registry} already lists "${checked.name}"`);
   }
   registry.items.push(checked);
   fs.writeFileSync(cat.paths.registry, `${JSON.stringify(registry, null, 2)}\n`);

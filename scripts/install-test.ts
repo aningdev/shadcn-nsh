@@ -29,6 +29,13 @@ import os from "node:os";
 import path from "node:path";
 
 import { startRegistryServer, type RegistryServer } from "../packages/cli/src/commands/serve";
+import type { RegistryIndexItem } from "../packages/cli/src/types";
+import {
+  isNotFound,
+  isRecord,
+  parseRegistryItem,
+  RegistryShapeError,
+} from "../packages/cli/src/utils/registry-schema";
 import { components } from "./catalog";
 import { StepFailure } from "./failure";
 import { buildRegistry } from "./registry-build";
@@ -188,30 +195,19 @@ async function uiItems(url: string): Promise<Item[]> {
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
-const isRecord = (value: unknown): value is Record<string, unknown> =>
-  typeof value === "object" && value !== null && !Array.isArray(value);
-
 /** One index entry: the name `add` takes and the file the item lands at, checked from JSON. */
 function itemAt(value: unknown, where: string): Item {
-  if (
-    !isRecord(value) ||
-    typeof value.name !== "string" ||
-    typeof value.type !== "string" ||
-    !Array.isArray(value.files)
-  ) {
-    throw new StepFailure("registry index", `${where} is not a registry item (name, type, files)`);
+  let item: RegistryIndexItem;
+  try {
+    item = parseRegistryItem(value, where);
+  } catch (error) {
+    if (error instanceof RegistryShapeError) {
+      throw new StepFailure("registry index", error.message, { cause: error });
+    }
+    throw error;
   }
-  const files = value.files.filter(isRecord);
-  const own = files.find((file) => file.type === "registry:ui");
-  return {
-    name: value.name,
-    target: typeof own?.target === "string" ? own.target : "",
-  };
-}
-
-/** True for a missing file only; any other failure to read a directory is the caller's. */
-function isMissing(error: unknown): boolean {
-  return typeof error === "object" && error !== null && "code" in error && error.code === "ENOENT";
+  const own = item.files.find((file) => file.type === "registry:ui");
+  return { name: item.name, target: own?.target ?? "" };
 }
 
 /**
@@ -239,7 +235,7 @@ async function list(dir: string): Promise<string[]> {
   try {
     entries = await fs.readdir(dir);
   } catch (error) {
-    if (isMissing(error)) return [];
+    if (isNotFound(error)) return [];
     throw error;
   }
   return entries.filter((name) => name.endsWith(".json")).sort();

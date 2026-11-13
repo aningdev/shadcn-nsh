@@ -8,7 +8,7 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
-import { addComponent, catalog, type Catalog } from "../catalog";
+import { addComponent, catalog, CatalogError, type Catalog } from "../catalog";
 import {
   declarations,
   defaultUiRel,
@@ -244,7 +244,9 @@ function register(map: PortMap, args: Args, Id: string, uiRel: string, cat: Cata
       ],
     });
   } catch (error) {
-    usage(error instanceof Error ? error.message : String(error));
+    // A refused item is the caller's mistake; anything else (a write that failed) is not.
+    if (error instanceof CatalogError) usage(error.message);
+    throw error;
   }
   console.log(`reg    ${args.id}`);
 }

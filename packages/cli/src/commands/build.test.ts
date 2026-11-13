@@ -98,7 +98,7 @@ describe("build", () => {
     expect(out.text).toContain("removed public/r/dates.json (not in registry.json)");
   });
 
-  test("removes a file the previous index lists, even when it is no longer item-shaped", async () => {
+  test("keeps a file the previous index lists once it is no longer item-shaped", async () => {
     current = project();
     fs.writeFileSync(
       path.join(current.output, "index.json"),
@@ -111,8 +111,8 @@ describe("build", () => {
     );
 
     expect(out.result).toBe(0);
-    expect(fs.existsSync(path.join(current.output, "dates.json"))).toBe(false);
-    expect(out.text).toContain("removed public/r/dates.json (not in registry.json)");
+    expect(fs.existsSync(path.join(current.output, "dates.json"))).toBe(true);
+    expect(out.text).not.toContain("removed public/r/dates.json");
   });
 
   test("leaves JSON it did not write alone, as with -o at a directory holding a project", async () => {
