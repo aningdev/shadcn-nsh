@@ -1,8 +1,8 @@
 /**
  * The component set: `registry.json`'s `registry:ui` items, and where each one's file, demo,
- * reference page and docs page live. This is the only module that reads the registry for the
- * set, and the only one that knows the demos / docs layout; scripts ask it instead of filtering
- * the registry or walking the directories themselves.
+ * reference page and docs page live. This is the only module under `scripts/` that reads or
+ * writes the registry, and the only one that knows the demos / docs layout; scripts ask it
+ * instead of filtering the registry or walking the directories themselves.
  *
  * The NSH runtime cannot import this module (`node:fs`), so the runtime's list is generated:
  * `apps/docs/demos/catalog.generated.ts`, read by `App.tsx` and `render-cases.ts`.
@@ -14,7 +14,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
-/** A `registry.json` item, as much of it as the catalog uses. */
+/** A `registry.json` item, as much of it as the catalog uses. Extra fields are kept as written. */
 export type RegistryItem = {
   name: string;
   type: string;
@@ -22,6 +22,11 @@ export type RegistryItem = {
   description?: string;
   files: { path: string; type: string; target?: string }[];
   registryDependencies?: string[];
+} & Record<string, unknown>;
+
+/** `registry.json`: its items in order, and every other field as written (`name`, `homepage`, …). */
+export type Registry = Record<string, unknown> & {
+  items: RegistryItem[];
 };
 
 /** One component: a `registry:ui` item and the files the set requires for it. */
@@ -39,14 +44,17 @@ export type Component = {
   page: string;
 };
 
-/** The directories the component set lives in, resolved under a repo root. */
+/** The directories the scripts share, resolved under a repo root. */
 export type CatalogPaths = {
   registry: string;
   ui: string;
+  theme: string;
   demos: string;
   pages: string;
   index: string;
   generated: string;
+  /** Where a `TODO(port)` may hide: the component, theme, demo and docs directories. */
+  todoRoots: string[];
 };
 
 export type Catalog = {
@@ -59,21 +67,97 @@ export type Catalog = {
 /** The repo this file is checked into, unless a caller reads a fixture. */
 const DEFAULT_ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+/** A JSON file as an object; the error names the file. */
+function readObject(file: string): Record<string, unknown> {
+  let value: unknown;
+  try {
+    value = JSON.parse(fs.readFileSync(file, "utf8"));
+  } catch (error) {
+    throw new Error(`${file}: not JSON`, { cause: error });
+  }
+  if (!isRecord(value)) throw new Error(`${file}: not a JSON object`);
+  return value;
+}
+
+const stringAt = (value: unknown, where: string): string => {
+  if (typeof value !== "string") throw new Error(`${where}: expected a string`);
+  return value;
+};
+
+const stringsAt = (value: unknown, where: string): string[] => {
+  if (!Array.isArray(value) || value.some((entry) => typeof entry !== "string")) {
+    throw new Error(`${where}: expected a list of strings`);
+  }
+  return value;
+};
+
+/** One registry item, checked: a name, a type, files with a path and a type. */
+function itemAt(value: unknown, where: string): RegistryItem {
+  if (!isRecord(value)) throw new Error(`${where}: not an object`);
+  const name = stringAt(value.name, `${where}: name`);
+  const type = stringAt(value.type, `${where}: type`);
+  if (!Array.isArray(value.files) || value.files.length === 0) {
+    throw new Error(`${where}: no files`);
+  }
+  const files = value.files.map((file, at) => {
+    if (!isRecord(file)) throw new Error(`${where}: files[${at}] is not an object`);
+    return {
+      ...file,
+      path: stringAt(file.path, `${where}: files[${at}].path`),
+      type: stringAt(file.type, `${where}: files[${at}].type`),
+      ...(file.target === undefined
+        ? {}
+        : { target: stringAt(file.target, `${where}: files[${at}].target`) }),
+    };
+  });
+  return {
+    ...value,
+    name,
+    type,
+    files,
+    title: value.title === undefined ? undefined : stringAt(value.title, `${where}: title`),
+    description:
+      value.description === undefined
+        ? undefined
+        : stringAt(value.description, `${where}: description`),
+    registryDependencies:
+      value.registryDependencies === undefined
+        ? undefined
+        : stringsAt(value.registryDependencies, `${where}: registryDependencies`),
+  };
+}
+
+/** The registry as written: every item checked, every other field kept. */
+function readRegistry(file: string): Registry {
+  const value = readObject(file);
+  if (!Array.isArray(value.items)) throw new Error(`${file}: no items list`);
+  return {
+    ...value,
+    items: value.items.map((item, at) => itemAt(item, `${file}: items[${at}]`)),
+  };
+}
+
 /** The component set and its paths. Reads only `registry.json`; checks live in `checkCatalog`. */
 export function catalog(root = DEFAULT_ROOT): Catalog {
-  const paths: CatalogPaths = {
+  const shared = {
     registry: path.join(root, "registry.json"),
     ui: path.join(root, "packages/ui"),
+    theme: path.join(root, "packages/theme"),
     demos: path.join(root, "apps/docs/demos"),
     pages: path.join(root, "apps/docs/src/pages/docs/components"),
     index: path.join(root, "packages/ui/index.ts"),
     generated: path.join(root, "apps/docs/demos/catalog.generated.ts"),
   };
-  const registry = JSON.parse(fs.readFileSync(paths.registry, "utf8")) as {
-    items?: RegistryItem[];
+  const paths: CatalogPaths = {
+    ...shared,
+    todoRoots: [shared.ui, shared.theme, shared.demos, shared.pages],
   };
+  const registry = readRegistry(paths.registry);
   const components: Component[] = [];
-  for (const item of registry.items ?? []) {
+  for (const item of registry.items) {
     if (item.type !== "registry:ui") continue;
     const declared = item.files.find((file) => file.type === "registry:ui");
     components.push({
@@ -110,15 +194,19 @@ function filesIn(dir: string): string[] {
     .sort();
 }
 
-/** True when `packages/ui/index.ts` re-exports `./<id>`, as `export *` or with names. */
+/** True when `packages/ui/index.ts` re-exports `./<id>`, as `export *`, `export * as ns` or with names. */
 function exportsModule(index: string, id: string): boolean {
   const module = id.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
   const star = new RegExp(`^export\\s*\\*\\s*from\\s*["']\\./${module}["']`, "m");
+  const namespace = new RegExp(
+    `^export\\s*\\*\\s*as\\s+[A-Za-z_$][\\w$]*\\s*from\\s*["']\\./${module}["']`,
+    "m",
+  );
   const named = new RegExp(
     `^export\\s+(?:type\\s+)?\\{[^}]*\\}\\s*from\\s*["']\\./${module}["']`,
     "m",
   );
-  return star.test(index) || named.test(index);
+  return star.test(index) || namespace.test(index) || named.test(index);
 }
 
 /**
@@ -173,6 +261,43 @@ export function checkCatalog(cat: Catalog): string[] {
   return problems;
 }
 
+/**
+ * Render-case overrides that name no component: `render-cases.ts` would ignore them without a
+ * word, so the catalog check reports them (`bun run catalog --check`).
+ */
+export function checkOverrides(cat: Catalog, ids: readonly string[]): string[] {
+  const known = new Set(cat.components.map((component) => component.id));
+  const where = path.relative(cat.root, path.join(cat.paths.demos, "render-cases.ts"));
+  return ids
+    .filter((id) => !known.has(id))
+    .map((id) => `${where}: override for no component "${id}"`);
+}
+
+/**
+ * Add a component to the registry and keep the generated module current: the catalog is the only
+ * writer of `registry.json` under `scripts/`, so a caller (`port:new`) cannot add an item another
+ * way. Refuses an id the registry has and an item that does not have the item shape. The file is
+ * written as JSON (the caller formats it like the files it writes, `vp fmt`).
+ */
+export function addComponent(cat: Catalog, item: RegistryItem): void {
+  const checked = itemAt(item, `registry item "${item.name}"`);
+  if (checked.type !== "registry:ui") {
+    throw new Error(
+      `${cat.paths.registry}: a component is a registry:ui item, not "${checked.type}"`,
+    );
+  }
+  if (!/^[a-z][a-z0-9-]*$/.test(checked.name)) {
+    throw new Error(`${cat.paths.registry}: "${checked.name}" is not a kebab-case id`);
+  }
+  const registry = readRegistry(cat.paths.registry);
+  if (registry.items.some((existing) => existing.name === checked.name)) {
+    throw new Error(`${cat.paths.registry} already lists "${checked.name}"`);
+  }
+  registry.items.push(checked);
+  fs.writeFileSync(cat.paths.registry, `${JSON.stringify(registry, null, 2)}\n`);
+  writeGenerated(catalog(cat.root));
+}
+
 /** `vp fmt`'s print width: a list that fits on one line stays there. */
 const PRINT_WIDTH = 100;
 
@@ -208,6 +333,9 @@ export function writeGenerated(cat: Catalog): void {
 if (import.meta.main) {
   const cat = catalog();
   const problems = checkCatalog(cat);
+  // The runtime's table is plain TypeScript (no `node:fs`), so the check can import its keys.
+  const { overrideIds } = await import("../apps/docs/demos/render-cases");
+  problems.push(...checkOverrides(cat, overrideIds));
   if (problems.length > 0) {
     for (const problem of problems) console.error(`catalog: ${problem}`);
     console.error(`catalog: ${problems.length} problem(s)`);

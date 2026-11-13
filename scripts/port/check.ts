@@ -16,6 +16,7 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
+import { catalog } from "../catalog";
 import {
   declarations,
   normalize,
@@ -23,7 +24,6 @@ import {
   readRegion,
   regions,
   renderRegion,
-  portPaths,
   repo,
   route,
   targetPath,
@@ -176,7 +176,7 @@ function walkTodos(dir: string) {
     }
   }
 }
-for (const root of portPaths(map).todoRoots) walkTodos(root);
+for (const root of catalog().paths.todoRoots) walkTodos(root);
 
 const total = counts.ported + counts.pending + counts.excluded;
 console.log(

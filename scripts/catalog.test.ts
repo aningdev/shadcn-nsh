@@ -4,8 +4,10 @@ import os from "node:os";
 import path from "node:path";
 
 import {
+  addComponent,
   catalog,
   checkCatalog,
+  checkOverrides,
   components,
   isGeneratedCurrent,
   renderGenerated,
@@ -146,6 +148,11 @@ describe("checkCatalog", () => {
     expect(checkCatalog(catalog(root))).toEqual([]);
   });
 
+  test("accepts a namespace re-export", () => {
+    const root = fixture({ items: [ui("alpha")], index: 'export * as alpha from "./alpha";\n' });
+    expect(checkCatalog(catalog(root))).toEqual([]);
+  });
+
   test("reports demos, reference pages and docs pages for no component", () => {
     const root = fixture({
       items: [ui("alpha")],
@@ -160,6 +167,44 @@ describe("checkCatalog", () => {
       "apps/docs/demos/orphan.ref.tsx: reference page for no component",
       "apps/docs/demos/orphan.tsx: demo for no component",
       "apps/docs/src/pages/docs/components/orphan.md: docs page for no component",
+    ]);
+  });
+});
+
+describe("addComponent", () => {
+  test("appends the item and regenerates the list", () => {
+    const root = fixture({ items: [ui("alpha")] });
+    addComponent(catalog(root), ui("beta"));
+
+    const cat = catalog(root);
+    expect(cat.components.map((component) => component.id)).toEqual(["alpha", "beta"]);
+    expect(fs.readFileSync(cat.paths.generated, "utf8")).toContain('"beta"');
+    const written = JSON.parse(fs.readFileSync(cat.paths.registry, "utf8")) as {
+      items: RegistryItem[];
+    };
+    expect(written.items.map((item) => item.name)).toEqual(["alpha", "beta"]);
+  });
+
+  test("refuses a duplicate id", () => {
+    const root = fixture({ items: [ui("alpha")] });
+    expect(() => addComponent(catalog(root), ui("alpha"))).toThrow('already lists "alpha"');
+  });
+
+  test("refuses an item that is not a component or lacks the item shape", () => {
+    const root = fixture({ items: [ui("alpha")] });
+    expect(() => addComponent(catalog(root), lib("press"))).toThrow("registry:ui");
+    expect(() => addComponent(catalog(root), { ...ui("beta"), files: [] })).toThrow("no files");
+  });
+});
+
+describe("checkOverrides", () => {
+  test("reports an override for an id the catalog does not list", () => {
+    const root = fixture({ items: [ui("alpha")] });
+    const where = path.join("apps/docs/demos", "render-cases.ts");
+
+    expect(checkOverrides(catalog(root), ["alpha"])).toEqual([]);
+    expect(checkOverrides(catalog(root), ["ghost"])).toEqual([
+      `${where}: override for no component "ghost"`,
     ]);
   });
 });

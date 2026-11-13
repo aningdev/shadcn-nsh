@@ -17,12 +17,13 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { cases, schemes } from "../../apps/docs/demos/render-cases";
-import { portPaths, readMap, repo } from "./lib";
+import { catalog } from "../catalog";
+import { repo } from "./lib";
 
 /** One screenshot pair: the demo and its reference page (the reference is absent for a self-reference). */
 type Pair = { pass: string; scheme: string; ours: string; reference: string; self?: string };
 
-const demos = portPaths(readMap()).demos;
+const demos = catalog().paths.demos;
 const shots = path.join(demos, "shots");
 if (!fs.existsSync(shots)) {
   console.error(

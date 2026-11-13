@@ -11,9 +11,10 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
-import { portPaths, readMap, repo } from "./lib";
+import { catalog } from "../catalog";
+import { repo } from "./lib";
 
-const demos = portPaths(readMap()).demos;
+const demos = catalog().paths.demos;
 const shots = path.join(demos, "shots");
 fs.mkdirSync(shots, { recursive: true });
 

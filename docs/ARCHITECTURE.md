@@ -31,7 +31,7 @@ _Avoid_: 发布组件 npm 包、旧 registry id 的别名
 - `apps/docs/src/pages/docs/components/<id>.md`：组件文档页，固定四节
 - `apps/gallery/`：原生行为测试与冒烟页，用同一套 `packages/ui`；不做公开文档，不比截图
 - `packages/cli/`：`shadcn-nsh` CLI（`init`、`add`、`list`、`view`、`diff`、`build`、`serve`）
-- `scripts/catalog.ts`：**Catalog** 模块，脚本取组件集合的唯一入口；生成 `apps/docs/demos/catalog.generated.ts` 供 NSH 运行时使用（不手改）
+- `scripts/catalog.ts`：**Catalog** 模块，脚本读写 `registry.json` 与取组件集合的唯一入口（`addComponent` 写入新条目）；生成 `apps/docs/demos/catalog.generated.ts` 供 NSH 运行时使用（不手改）
 - `scripts/port/`：搬运与核对工具；唯一读 `references/nsh` 的代码
 - `references/`：只读子模块
 

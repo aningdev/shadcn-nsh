@@ -18,7 +18,7 @@ import path from "node:path";
 
 import { catalog } from "../../../scripts/catalog";
 import { components } from "../src/lib/components.generated";
-import { componentPlan, readPageMeta } from "./build-components";
+import { componentPlan, isCurrent, readPageMeta } from "./build-components";
 
 const cat = catalog();
 const repo = cat.root;
@@ -104,7 +104,7 @@ function exportsOf(file: string): Set<string> {
 
 // Generated list.
 const plan = componentPlan();
-if (JSON.stringify(plan) !== JSON.stringify(components)) {
+if (!isCurrent(plan, components)) {
   fail("components.generated.ts is stale; run `bun run docs:components`");
 }
 

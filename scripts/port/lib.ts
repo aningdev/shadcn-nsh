@@ -44,30 +44,9 @@ export function readMap(): PortMap {
 export const upstreamDir = (map: PortMap) => path.join(repo, map.upstream.path);
 export const targetPath = (map: PortMap, rel: string) => path.join(repo, map.root, rel);
 
-/** Where demos, docs pages and the registry live: the repo when `root` is `.`, else under `root`. */
-export const portPaths = (map: PortMap) =>
-  map.root === "."
-    ? {
-        demos: path.join(repo, "apps/docs/demos"),
-        docs: path.join(repo, "apps/docs/src/pages/docs/components"),
-        registry: path.join(repo, "registry.json"),
-        todoRoots: [
-          path.join(repo, "packages/ui"),
-          path.join(repo, "packages/theme"),
-          path.join(repo, "apps/docs/demos"),
-          path.join(repo, "apps/docs/src/pages/docs/components"),
-        ],
-      }
-    : {
-        demos: path.join(repo, map.root, "demos"),
-        docs: path.join(repo, map.root, "docs"),
-        registry: path.join(repo, map.root, "registry.json"),
-        todoRoots: [path.join(repo, map.root)],
-      };
-
 /** Default path for a new component file in the registry / port map. */
 export const defaultUiRel = (map: PortMap, id: string) =>
-  map.root === "." ? `packages/ui/${id}.tsx` : `ui/${id}.tsx`;
+  path.posix.join(map.root, "packages/ui", `${id}.tsx`);
 
 /** Every file under the upstream directory, relative, sorted. */
 export function upstreamFiles(map: PortMap): string[] {

@@ -47,6 +47,9 @@ const overrides: Record<string, Override> = {
   },
 };
 
+/** The ids the exceptions name: `bun run catalog --check` fails on one the catalog does not list. */
+export const overrideIds = Object.keys(overrides).sort();
+
 export const cases: Case[] = componentIds.map((id) => ({ id, ...overrides[id] }));
 
 export const schemes = ["light", "dark"] as const;

@@ -8,7 +8,7 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
-import { catalog, writeGenerated } from "../catalog";
+import { addComponent, catalog, type Catalog } from "../catalog";
 import {
   declarations,
   defaultUiRel,
@@ -225,36 +225,27 @@ function registryDeps(source: string, id: string): string[] {
   return [...deps];
 }
 
-function updateRegistry(map: PortMap, args: Args, Id: string, uiRel: string, registryPath: string) {
-  const registry = JSON.parse(fs.readFileSync(registryPath, "utf8")) as {
-    items: {
-      name: string;
-      type: string;
-      title: string;
-      description: string;
-      registryDependencies?: string[];
-      files: { path: string; type: string; target: string }[];
-    }[];
-  };
-  if (registry.items.some((item) => item.name === args.id)) {
-    usage(`registry already has ${args.id}`);
-  }
+/** Register the component: the catalog checks and writes `registry.json`, then its generated list. */
+function register(map: PortMap, args: Args, Id: string, uiRel: string, cat: Catalog) {
   const source = fs.readFileSync(targetPath(map, uiRel), "utf8");
-  registry.items.push({
-    name: args.id,
-    type: "registry:ui",
-    title: Id,
-    description: `TODO(port): one sentence.`,
-    registryDependencies: registryDeps(source, args.id),
-    files: [
-      {
-        path: uiRel,
-        type: "registry:ui",
-        target: `components/ui/${args.id}.tsx`,
-      },
-    ],
-  });
-  fs.writeFileSync(registryPath, `${JSON.stringify(registry, null, 2)}\n`);
+  try {
+    addComponent(cat, {
+      name: args.id,
+      type: "registry:ui",
+      title: Id,
+      description: `TODO(port): one sentence.`,
+      registryDependencies: registryDeps(source, args.id),
+      files: [
+        {
+          path: uiRel,
+          type: "registry:ui",
+          target: `components/ui/${args.id}.tsx`,
+        },
+      ],
+    });
+  } catch (error) {
+    usage(error instanceof Error ? error.message : String(error));
+  }
   console.log(`reg    ${args.id}`);
 }
 
@@ -280,7 +271,8 @@ function main() {
   const Id = toPascal(args.id);
   const camel = toCamel(args.id);
   const uiRel = defaultUiRel(map, args.id);
-  const paths = catalog().paths;
+  const cat = catalog();
+  const paths = cat.paths;
   const vars = {
     id: args.id,
     Id,
@@ -315,9 +307,8 @@ function main() {
   writeNew(path.join(paths.demos, `${args.id}.ref.tsx`), render(readTemplate(refTemplate), vars));
   writeNew(path.join(paths.pages, `${args.id}.md`), render(readTemplate("docs.md.tmpl"), vars));
 
-  updateRegistry(map, args, Id, uiRel, paths.registry);
+  register(map, args, Id, uiRel, cat);
   addIndexExport(paths.index, args.id);
-  writeGenerated(catalog());
   console.log(`catalog ./${args.id}`);
 
   const fmt = [
