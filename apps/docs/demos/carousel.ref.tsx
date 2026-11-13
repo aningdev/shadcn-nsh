@@ -4,7 +4,7 @@
 // (`references/nsh/website/demos/el-carousel.tsx`) writes it. It differs from the component page
 // only in the parts it names.
 import { alpha } from "@shadcn-nsh/theme";
-import { Image, mount, signal, Text, View } from "nsh";
+import { Image, mount, signal, Text, token, View } from "nsh";
 import {
   Carousel,
   CarouselContent,
@@ -39,10 +39,14 @@ const shots: { photo: PhotoName; name: string; detail: string }[] = [
 
 /**
  * The photos, fetched once at load: an image already in the cache paints in the frame that places
- * it, and two runs draw the same corner pixels of the card that clips it.
+ * it, and two runs draw the same corner pixels of the card that clips it. A download that fails
+ * is not a page that never draws: the image shows its empty frame, and the page still marks
+ * itself ready.
  */
 const warmed = signal(false);
-Promise.all(shots.map((shot) => Image.prefetch(photoUrl(shot.photo)))).then(() => warmed.set(true));
+Promise.allSettled(shots.map((shot) => Image.prefetch(photoUrl(shot.photo)))).then(() =>
+  warmed.set(true),
+);
 
 function App() {
   const shown = signal(0);
@@ -125,7 +129,6 @@ function App() {
                   }}
                   onLoadEnd={() => loaded.update((n) => n + 1)}
                 />
-                {/* A shade at the foot, so the caption reads on any photo. */}
                 <View
                   style={{
                     position: "absolute",
@@ -133,14 +136,16 @@ function App() {
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    backgroundImage:
-                      "linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.62) 100%)",
+                    // The theme's scrim at the foot, so the caption reads on any photo.
+                    backgroundImage: `linear-gradient(180deg, transparent 40%, ${token("scrim")} 100%)`,
                   }}
                 />
-                <Text style={{ fontSize: 20, fontWeight: "700", color: "#ffffff" }}>
+                <Text style={{ fontSize: 20, fontWeight: "700", color: ui().caption }}>
                   {shot.name}
                 </Text>
-                <Text style={{ fontSize: 13, color: alpha("#ffffff", 0.82) }}>{shot.detail}</Text>
+                <Text style={{ fontSize: 13, color: alpha(ui().caption, 0.82) }}>
+                  {shot.detail}
+                </Text>
               </CarouselItem>
             ))}
           </CarouselContent>

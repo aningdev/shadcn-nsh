@@ -41,9 +41,13 @@ function Field(props: { label: string; detail: string; children: JSX.Element }) 
 /** A trigger's width: set with a pointer, the field's on a touch screen. */
 const trigger = desktop ? { width: 260 } : undefined;
 
-/** The artwork, fetched once at load: in the cache, it paints in the frame that places it. */
+/**
+ * The artwork, fetched once at load: in the cache, it paints in the frame that places it. A
+ * download that fails is not a page that never draws: the artwork is blank, and the page still
+ * marks itself ready.
+ */
 const warmed = signal(false);
-Promise.all([Image.prefetch(photoUrl("sunrise"))]).then(() => warmed.set(true));
+Promise.allSettled([Image.prefetch(photoUrl("sunrise"))]).then(() => warmed.set(true));
 
 function App() {
   // The render check waits for `images-ready`: the artwork has loaded (or failed).

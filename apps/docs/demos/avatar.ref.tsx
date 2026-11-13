@@ -93,9 +93,13 @@ const PORTRAITS = [
   ),
 ];
 
-/** Whether the portraits are in the cache (they are fetched once, when the page loads). */
+/**
+ * Whether the portraits are in the cache (they are fetched once, when the page loads). A portrait
+ * that fails is not a page that never draws: the avatar keeps its initials, and the page still
+ * marks itself ready.
+ */
 const warmed = signal(false);
-Promise.all(PORTRAITS.map((src) => Image.prefetch(src))).then(() => warmed.set(true));
+Promise.allSettled(PORTRAITS.map((src) => Image.prefetch(src))).then(() => warmed.set(true));
 
 function App() {
   // The render check waits for `images-ready`: every portrait it can show loaded (or failed).
