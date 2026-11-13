@@ -36,7 +36,7 @@ export type Case = {
 type Override = Omit<Case, "id">;
 
 const overrides: Record<string, Override> = {
-  dialog: { steps: (app) => app.press("Delete item…") },
+  dialog: { steps: (app) => app.press("Open a card") },
   "alert-dialog": { steps: (app) => app.press("Delete file…") },
   spinner: { selfReference: "upstream's own Spinner, with no shell to compare against" },
   badge: { selfReference: "upstream's own Badge, with no shell to compare against" },
