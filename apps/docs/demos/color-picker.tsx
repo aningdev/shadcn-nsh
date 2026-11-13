@@ -4,9 +4,9 @@
 // overlay over artwork, its opacity included. The artwork is drawn from the theme rather than
 // fetched, so the page draws the same before and after the network; the headline's ink is the one
 // that reads over the overlay the user picks.
-import { alpha, colors, toneColor } from "@shadcn-nsh/theme";
+import { colors } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
-import { mount, signal, Text, token, View } from "nsh";
+import { Image, mount, signal, Text, View } from "nsh";
 import { type ColorFormat, ColorPicker } from "nsh/base";
 
 import { ColorPanel, ColorPopover } from "@/packages/ui/color-picker";
@@ -14,6 +14,7 @@ import { inkOn } from "@/packages/ui/lib/color-format";
 import { insetSurface, sectionSurface } from "@/packages/ui/lib/surface";
 
 import { DemoPage } from "./kit";
+import { photoUrl } from "./photos";
 import { desktop, Log, Panel, Split } from "./stage";
 
 // The preset swatches and the overlay's color are the user's content, not the interface's look.
@@ -44,46 +45,13 @@ function Field(props: { label: string; detail: string; children: JSX.Element }) 
 /** A trigger's width: set with a pointer, the field's on a touch screen. */
 const trigger = desktop ? { width: 260 } : undefined;
 
-/** The artwork under the overlay: a dusk of the theme's violet into its warm tone, the sun low. */
-function Artwork() {
-  return (
-    <View
-      style={{
-        position: "absolute",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        overflow: "hidden",
-        backgroundImage: `linear-gradient(170deg, ${token("violet")} 0%, ${toneColor("warn")} 70%)`,
-      }}
-    >
-      <View
-        style={{
-          position: "absolute",
-          right: 34,
-          bottom: 22,
-          width: 72,
-          height: 72,
-          borderRadius: 36,
-          backgroundColor: alpha(colors.knob, 0.9),
-        }}
-      />
-      <View
-        style={{
-          position: "absolute",
-          top: 0,
-          left: 0,
-          right: 0,
-          bottom: 0,
-          backgroundImage: `linear-gradient(180deg, ${alpha(token("scrim"), 0.15)} 0%, ${alpha(token("scrim"), 0.7)} 100%)`,
-        }}
-      />
-    </View>
-  );
-}
+/** The artwork, fetched once at load: in the cache, it paints in the frame that places it. */
+const warmed = signal(false);
+Promise.all([Image.prefetch(photoUrl("sunrise"))]).then(() => warmed.set(true));
 
 function App() {
+  // The render check waits for `images-ready`: the artwork has loaded (or failed).
+  const loaded = signal(false);
   const fill = signal("#6366f1ff");
   const fillFormat = signal<ColorFormat>("hex");
   const accent = signal("#0ea5e9ff");
@@ -160,7 +128,20 @@ function App() {
                 overflow: "hidden",
               }}
             >
-              <Artwork />
+              <Image
+                src={warmed() ? photoUrl("sunrise") : undefined}
+                // Drawn at once: a fade caught halfway would differ between two runs.
+                fadeDuration={0}
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  objectFit: "cover",
+                }}
+                onLoadEnd={() => loaded.set(true)}
+              />
               <View
                 style={{
                   position: "absolute",
@@ -199,6 +180,12 @@ function App() {
           </Field>
         </View>
       </Split>
+      {/* The render check's cue: the artwork has loaded (or failed), so a run draws the same. */}
+      {() =>
+        loaded() ? (
+          <View testID="images-ready" style={{ position: "absolute", width: 1, height: 1 }} />
+        ) : null
+      }
     </DemoPage>
   );
 }

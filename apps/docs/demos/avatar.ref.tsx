@@ -3,10 +3,10 @@
 // It differs from the component page only in the parts it names.
 import { colors, toneColor } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
-import { mount, signal, Text, View } from "nsh";
+import { Image, mount, signal, Text, View } from "nsh";
 import { Avatar, AvatarGroup } from "nsh/base";
 
-import { AVATAR_BROKEN, avatarIdentity } from "@/packages/ui/avatar";
+import { AVATAR_BROKEN, avatarIdentity, avatarPortrait } from "@/packages/ui/avatar";
 import { Button } from "@/packages/ui/button";
 import { listRow, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
 
@@ -81,7 +81,33 @@ function Person(props: {
   );
 }
 
+/**
+ * The portraits, fetched once at load: an avatar that draws an image already in the cache paints
+ * it in the frame that places it, and two runs draw the same edge pixels (an image that arrives
+ * later leaves its rounded clip drawn a hair differently).
+ */
+const PORTRAITS = [
+  ...new Set(
+    [...TEAM, ...MEMBERS]
+      .map((name) => avatarPortrait(name))
+      .filter((src): src is string => src !== undefined),
+  ),
+];
+
+/** Whether the portraits are in the cache (they are fetched once, when the page loads). */
+const warmed = signal(false);
+Promise.all(PORTRAITS.map((src) => Image.prefetch(src))).then(() => warmed.set(true));
+
 function App() {
+  // The render check waits for `images-ready`: every portrait it can show loaded (or failed).
+  const settled = signal(0);
+  const portraits = (names: string[]) => names.filter((name) => avatarPortrait(name) !== undefined);
+  const images = () => portraits(TEAM).length + portraits(MEMBERS.slice(0, members())).length + 1;
+  const ready = () => settled() >= images();
+  // A load or a failure settles a picture; "loading" does not.
+  const settledBy = (status: string) => {
+    if (status === "loaded" || status === "error") settled.update((n) => n + 1);
+  };
   const presence = signal<Presence[]>(["online", "busy", "away"]);
   const members = signal(8);
   const limit = signal(3);
@@ -149,7 +175,12 @@ function App() {
                 onPress={() => next(i)}
                 {...listRow({ first: i === 0 })}
               >
-                <Person name={name} side={side}>
+                <Person
+                  name={name}
+                  side={side}
+                  src={warmed() ? avatarPortrait(name) : undefined}
+                  onStatus={settledBy}
+                >
                   <View
                     class="transition-colors duration-200 motion-reduce:transition-none"
                     style={{
@@ -200,7 +231,13 @@ function App() {
             >
               {MEMBERS.slice(0, members()).map((name, i) => (
                 <View style={{ marginLeft: i === 0 ? 0 : -side / 4 }}>
-                  <Person name={name} side={side} ring />
+                  <Person
+                    name={name}
+                    side={side}
+                    ring
+                    src={warmed() ? avatarPortrait(name) : undefined}
+                    onStatus={settledBy}
+                  />
                 </View>
               ))}
             </AvatarGroup>
@@ -214,7 +251,10 @@ function App() {
               label=""
               delay={300}
               side={desktop ? 28 : 32}
-              onStatus={(status) => log(`Barbara Liskov: ${status}`)}
+              onStatus={(status) => {
+                settledBy(status);
+                log(`Barbara Liskov: ${status}`);
+              }}
             />
             <View style={{ flex: 1, gap: 2 }}>
               <Text style={{ fontSize: 12, color: colors.muted }}>
@@ -228,6 +268,12 @@ function App() {
           </View>
         </View>
       </Split>
+      {/* The render check's cue: every portrait has loaded (or failed), so two runs draw the same. */}
+      {() =>
+        ready() ? (
+          <View testID="images-ready" style={{ position: "absolute", width: 1, height: 1 }} />
+        ) : null
+      }
     </DemoPage>
   );
 }

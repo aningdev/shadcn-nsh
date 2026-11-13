@@ -10,19 +10,25 @@
 // The screenshots stay in `shots/` (ignored by git) for a look by eye.
 import { expect, open, test } from "nsh/test";
 
-import { cases, clock, schemes, settle, same } from "./render-cases";
+import { cases, clock, networkOf, schemes, settle, same } from "./render-cases";
 
 // A desktop platform starts the page in the desktop idiom at any width; without one the page
 // measures itself, and at the test's 390 points it is a phone.
 const platform = { platform: "macos" } as const;
 
-for (const { id, steps, selfReference } of cases) {
+for (const { id, steps, selfReference, photos, byEye } of cases) {
   for (const colorScheme of schemes) {
     test(`${id}: pointer, ${colorScheme}`, async () => {
       // A manual clock and reduced motion: animations land at once, endless ones (a spinner)
       // do not run, and the calendar's "today" is the baseline's day. `render.ts` passes the
       // browser the media flag the web target does not apply.
-      const options = { ...platform, colorScheme, reducedMotion: true, clock };
+      const options = {
+        ...platform,
+        colorScheme,
+        reducedMotion: true,
+        clock,
+        ...networkOf(photos),
+      };
       const ours = await open(`./${id}.tsx`, options);
       // No shell: the reference page draws the same component, so there is nothing to compare.
       const reference = selfReference ? null : await open(`./${id}.ref.tsx`, options);
@@ -37,6 +43,10 @@ for (const { id, steps, selfReference } of cases) {
         return;
       }
       const b = await reference.screenshot(`${name}.ref.png`);
+      if (byEye) {
+        console.log(`${id}: compared by eye — ${byEye}`);
+        return;
+      }
       expect(same(a, b)).toBe(true);
     });
   }

@@ -2,11 +2,11 @@
 // library's parts: five cards, each with its caption at the foot, looping; arrows and dots move
 // between them, and the inspector logs the index each move lands on.
 //
-// The gallery's photographs are URLs (its `photos.ts`), which a render check compares only once
-// they have loaded: each card draws them as a wash of the theme's chart hues instead, so a demo,
-// its reference page and the baseline draw the same slide at every run.
-import { alpha, chart, colors } from "@shadcn-nsh/theme";
-import { mount, signal, Text, View } from "nsh";
+// The photos are the gallery's URLs (`photos.ts`); the page marks itself `images-ready` once all
+// five have loaded or failed, and the render check waits for that before the screenshot, so a
+// demo, its reference page and the baseline draw the same slide at every run.
+import { alpha, colors } from "@shadcn-nsh/theme";
+import { Image, mount, signal, Text, View } from "nsh";
 
 import {
   Carousel,
@@ -20,22 +20,30 @@ import {
 } from "@/packages/ui/carousel";
 
 import { DemoPage } from "./kit";
+import { photoUrl, type PhotoName } from "./photos";
 import { desktop, Log, Split } from "./stage";
 
-// Photos of the launch pad, each with a caption at its foot.
-const shots: { name: string; detail: string }[] = [
-  { name: "On the pad", detail: "Dusk at the launch site" },
-  { name: "The fairing", detail: "Close up, before stacking" },
-  { name: "At the tower", detail: "The stack by daylight" },
-  { name: "Rollout", detail: "Moved to the pad at night" },
-  { name: "Liftoff", detail: "Clear of the tower" },
+// Photos of the launch pad (the gallery's `photos.ts`), each with a caption at its foot.
+const shots: { photo: PhotoName; name: string; detail: string }[] = [
+  { photo: "rays", name: "On the pad", detail: "Dusk at the launch site" },
+  { photo: "fairing", name: "The fairing", detail: "Close up, before stacking" },
+  { photo: "day", name: "At the tower", detail: "The stack by daylight" },
+  { photo: "rollout", name: "Rollout", detail: "Moved to the pad at night" },
+  { photo: "liftoff", name: "Liftoff", detail: "Clear of the tower" },
 ];
 
-/** The wash of a card: the theme's chart hues, the first leading. */
-const wash = (i: number) => [chart.s1, chart.s2, chart.s3, chart.s4, chart.s5][i % 5];
+/**
+ * The photos, fetched once at load: an image already in the cache paints in the frame that places
+ * it, and two runs draw the same corner pixels of the card that clips it.
+ */
+const warmed = signal(false);
+Promise.all(shots.map((shot) => Image.prefetch(photoUrl(shot.photo)))).then(() => warmed.set(true));
 
 function App() {
   const shown = signal(0);
+  // The render check waits for `images-ready`: five photos loaded (or failed), not one more.
+  const loaded = signal(0);
+  const ready = () => loaded() >= shots.length;
   const events = signal<string[]>([]);
   const log = (line: string) => events.set([line, ...events()].slice(0, 3));
 
@@ -83,6 +91,21 @@ function App() {
                   backgroundColor: colors.raised,
                 }}
               >
+                <Image
+                  src={warmed() ? photoUrl(shot.photo) : undefined}
+                  // Drawn at once: a fade caught halfway would differ between two runs.
+                  fadeDuration={0}
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    objectFit: "cover",
+                  }}
+                  onLoadEnd={() => loaded.update((n) => n + 1)}
+                />
+                {/* A shade at the foot, so the caption reads on any photo. */}
                 <View
                   style={{
                     position: "absolute",
@@ -90,13 +113,14 @@ function App() {
                     left: 0,
                     right: 0,
                     bottom: 0,
-                    backgroundImage: `linear-gradient(160deg, ${alpha(wash(i), 0.42)} 0%, ${alpha(wash(i), 0.12)} 55%, ${colors.inset} 100%)`,
+                    backgroundImage:
+                      "linear-gradient(180deg, rgba(0,0,0,0) 40%, rgba(0,0,0,0.62) 100%)",
                   }}
                 />
-                <Text style={{ fontSize: 20, fontWeight: "700", color: colors.text }}>
+                <Text style={{ fontSize: 20, fontWeight: "700", color: "#ffffff" }}>
                   {shot.name}
                 </Text>
-                <Text style={{ fontSize: 13, color: colors.muted }}>{shot.detail}</Text>
+                <Text style={{ fontSize: 13, color: alpha("#ffffff", 0.82) }}>{shot.detail}</Text>
               </CarouselItem>
             ))}
           </CarouselContent>
@@ -117,6 +141,12 @@ function App() {
             <CarouselNext accessibilityLabel="Next photo" />
           </View>
         </Carousel>
+        {/* The render check's cue: every photo has loaded (or failed), so two pages draw the same. */}
+        {() =>
+          ready() ? (
+            <View testID="images-ready" style={{ position: "absolute", width: 1, height: 1 }} />
+          ) : null
+        }
       </Split>
     </DemoPage>
   );

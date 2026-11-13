@@ -15,12 +15,24 @@ import { componentIds } from "./catalog.generated";
  */
 type App = {
   press(selector: string): Promise<void>;
+  /** Resolves once a view matching `selector` is on screen (its timeout bounds the wait). */
+  waitFor(selector: string, options?: { timeout?: number } | null): Promise<void>;
   wait(ms: number): Promise<void>;
 };
 
 export type Case = {
   /** The demo's file name, without `.tsx`. */
   id: string;
+  /**
+   * The page draws photographs over the network: the check opens it with the live network
+   * (`open`'s `network`) and waits for its `images-ready` cue before comparing.
+   */
+  photos?: boolean;
+  /**
+   * Compared by eye: why the two pages of a photograph cannot be compared byte for byte. Both
+   * screenshots are kept; the check prints the reason instead of failing on a differed pixel.
+   */
+  byEye?: string;
   /** Steps taken in both pages before the screenshot (opening a dialog). */
   steps?: (app: App) => Promise<void>;
   /**
@@ -30,6 +42,15 @@ export type Case = {
    * without a shell must: `port:coverage` checks both.
    */
   selfReference?: string;
+};
+
+/**
+ * Waits for a photograph page's `images-ready` cue, then for the pictures' fade in (an image
+ * draws at once behind a 300 ms opacity, and a page caught mid-fade would differ from its pair).
+ */
+export const photosReady = async (app: App) => {
+  await app.waitFor("id:images-ready", { timeout: 20000 });
+  await app.wait(500);
 };
 
 /** What a component does that the others do not. Keys must be catalog ids. */
@@ -44,6 +65,8 @@ const overrides: Record<string, Override> = {
   toast: { steps: (app) => app.press("Copy the link") },
   select: { steps: (app) => app.press("label:Language") },
   "date-picker": { steps: (app) => app.press("No due date") },
+  // The pages whose photos come over the network mark themselves once every image is there.
+  carousel: { photos: true, steps: photosReady },
   spinner: { selfReference: "upstream's own Spinner, with no shell to compare against" },
   badge: { selfReference: "upstream's own Badge, with no shell to compare against" },
   status: { selfReference: "upstream's own Status, with no shell to compare against" },
@@ -56,8 +79,16 @@ const overrides: Record<string, Override> = {
     selfReference:
       "the demo and the reference draw the same nsh/base/plot through upstream's re-export and look helpers",
   },
+  avatar: {
+    photos: true,
+    steps: photosReady,
+    byEye:
+      "a circular photo's edge is antialiased a pixel apart between runs (measured: at most 20 pixels, 29/255, about one run in three); the flat ones do not move",
+  },
   "color-picker": {
     selfReference: "the panel and the popover are upstream's own composition, with no shell",
+    photos: true,
+    steps: photosReady,
   },
 };
 
@@ -86,3 +117,7 @@ export const same = (a: Uint8Array, b: Uint8Array) =>
  * other one. Deterministic: the clock moves the same 200 ms on both pages.
  */
 export const settle = (app: App) => app.wait(200);
+
+/** What `open` takes for a page: a live network when it draws photographs. */
+export const networkOf = (photos: boolean | undefined) =>
+  photos ? ({ network: "live" } as const) : {};

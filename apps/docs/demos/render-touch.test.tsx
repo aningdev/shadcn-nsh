@@ -10,7 +10,7 @@
 // takes the first page's picture, lets its host go, and only then opens the reference page.
 import { expect, open, test, type OpenOptions } from "nsh/test";
 
-import { cases, clock, schemes, settle, same } from "./render-cases";
+import { cases, clock, networkOf, schemes, settle, same } from "./render-cases";
 
 /** What the simulator needs to end the first host before the next one launches. */
 const handOver = () => new Promise((resolve) => setTimeout(resolve, 300));
@@ -34,10 +34,16 @@ async function settleAppearance(options: OpenOptions) {
   await handOver();
 }
 
-for (const { id, steps, selfReference } of cases) {
+for (const { id, steps, selfReference, photos, byEye } of cases) {
   for (const colorScheme of schemes) {
     test(`${id}: touch, ${colorScheme}`, async () => {
-      const options = { platform: "ios", colorScheme, reducedMotion: true, clock } as const;
+      const options = {
+        platform: "ios",
+        colorScheme,
+        reducedMotion: true,
+        clock,
+        ...networkOf(photos),
+      } as const;
       const name = `shots/${id}-touch-${colorScheme}`;
       await settleAppearance(options);
       const ours = await open(`./${id}.tsx`, options);
@@ -55,6 +61,10 @@ for (const { id, steps, selfReference } of cases) {
       await steps?.(reference);
       await settle(reference);
       const b = await reference.screenshot(`${name}.ref.png`);
+      if (byEye) {
+        console.log(`${id}: compared by eye — ${byEye}`);
+        return;
+      }
       expect(same(a, b)).toBe(true);
     });
   }

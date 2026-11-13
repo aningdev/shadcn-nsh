@@ -1,13 +1,13 @@
 // The official avatar scene (`references/nsh/website/demos/el-avatar.tsx`) with this library's
 // parts: a team whose presence a press cycles, the members in a row under a limit, a picture that
-// failed to load, and what the app heard beside them. The gallery's portraits are remote files, so
-// the page draws the identity look (initials on the person's hue) and a picture that always fails:
-// the same pixels before and after the network, and none of them waiting on a download.
+// failed to load, and what the app heard beside them. The portraits are GitHub's (`avatarPortrait`),
+// so the page marks itself `images-ready` once all of them have loaded or failed, and the render
+// check waits for that before the screenshot: a run draws the same faces every time.
 import { colors, toneColor } from "@shadcn-nsh/theme";
-import { mount, signal, Text, View } from "nsh";
+import { Image, mount, signal, Text, View } from "nsh";
 import { AvatarGroup } from "nsh/base";
 
-import { AVATAR_BROKEN, Avatar } from "@/packages/ui/avatar";
+import { AVATAR_BROKEN, Avatar, avatarPortrait } from "@/packages/ui/avatar";
 import { Button } from "@/packages/ui/button";
 import { listRow, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
 
@@ -36,7 +36,33 @@ const MEMBERS = [
   "Ken Thompson",
 ];
 
+/**
+ * The portraits, fetched once at load: an avatar that draws an image already in the cache paints
+ * it in the frame that places it, and two runs draw the same edge pixels (an image that arrives
+ * later leaves its rounded clip drawn a hair differently).
+ */
+const PORTRAITS = [
+  ...new Set(
+    [...TEAM, ...MEMBERS]
+      .map((name) => avatarPortrait(name))
+      .filter((src): src is string => src !== undefined),
+  ),
+];
+
+/** Whether the portraits are in the cache (they are fetched once, when the page loads). */
+const warmed = signal(false);
+Promise.all(PORTRAITS.map((src) => Image.prefetch(src))).then(() => warmed.set(true));
+
 function App() {
+  // The render check waits for `images-ready`: every portrait it can show loaded (or failed).
+  const settled = signal(0);
+  const portraits = (names: string[]) => names.filter((name) => avatarPortrait(name) !== undefined);
+  const images = () => portraits(TEAM).length + portraits(MEMBERS.slice(0, members())).length + 1;
+  const ready = () => settled() >= images();
+  // A load or a failure settles a picture; "loading" does not.
+  const settledBy = (status: string) => {
+    if (status === "loaded" || status === "error") settled.update((n) => n + 1);
+  };
   const presence = signal<Presence[]>(["online", "busy", "away"]);
   const members = signal(8);
   const limit = signal(3);
@@ -104,7 +130,13 @@ function App() {
                 onPress={() => next(i)}
                 {...listRow({ first: i === 0 })}
               >
-                <Avatar name={name} style={{ width: side, height: side }}>
+                <Avatar
+                  name={name}
+                  src={warmed() ? avatarPortrait(name) : undefined}
+                  fallbackDelay={300}
+                  onStatusChange={({ status }) => settledBy(status)}
+                  style={{ width: side, height: side }}
+                >
                   <View
                     class="transition-colors duration-200 motion-reduce:transition-none"
                     style={{
@@ -157,6 +189,9 @@ function App() {
                 <View style={{ marginLeft: i === 0 ? 0 : -side / 4 }}>
                   <Avatar
                     name={name}
+                    src={warmed() ? avatarPortrait(name) : undefined}
+                    fallbackDelay={300}
+                    onStatusChange={({ status }) => settledBy(status)}
                     style={{
                       width: side,
                       height: side,
@@ -178,7 +213,10 @@ function App() {
               src={AVATAR_BROKEN}
               accessibilityLabel=""
               fallbackDelay={300}
-              onStatusChange={({ status }) => log(`Barbara Liskov: ${status}`)}
+              onStatusChange={({ status }) => {
+                settledBy(status);
+                log(`Barbara Liskov: ${status}`);
+              }}
               style={{ width: desktop ? 28 : 32, height: desktop ? 28 : 32 }}
             />
             <View style={{ flex: 1, gap: 2 }}>
@@ -193,6 +231,12 @@ function App() {
           </View>
         </View>
       </Split>
+      {/* The render check's cue: every portrait has loaded (or failed), so two runs draw the same. */}
+      {() =>
+        ready() ? (
+          <View testID="images-ready" style={{ position: "absolute", width: 1, height: 1 }} />
+        ) : null
+      }
     </DemoPage>
   );
 }

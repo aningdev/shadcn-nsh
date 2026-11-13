@@ -43,7 +43,7 @@
       "exclude": "the NSH website's demo adapter"
     },
     "photos.ts": {
-      "exclude": "demo content, not a look"
+      "to": "apps/docs/demos/photos.ts"
     },
     "sound.ts": {
       "exclude": "sounds are out of scope"
