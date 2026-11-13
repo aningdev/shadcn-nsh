@@ -35,6 +35,10 @@ _Avoid_: 自动跟随上游
 **Reference Page（参照页）**:
 `demos/<id>.ref.tsx`：与 `demos/<id>.tsx` 同一个页面，但按上游的写法把 look 直接展开在 `nsh/base` 控件上。渲染比对要求两者截图相同。
 
+**Demo Adapter（演示适配层）**:
+官方示例写演示时用的那套零件（`Stage`、`Split`、`Inspector`、`Panel`、`Log`、`Segmented`，以及 `desktop` / `wide`）：主体居中、状态与事件放检查器、窄窗口上下堆叠。`apps/docs/demos/stage.tsx`，只供演示，不进组件库，也不进 registry。
+_Avoid_: 组件库的布局 API, 在组件里用 Stage
+
 **Composition Facade**:
 把 `nsh/base` 的单根复合控件拆成可组合零件树（`Trigger` / `Content` / `Item` 等角色）。零件家族名跟 `nsh/base`（`MenuTrigger`），不是 shadcn 的 `DropdownMenu*`。Root 只持有开关状态；行为仍在 base。
 _Avoid_: Radix port, 新的 primitive 层, 根上的 `trigger` prop

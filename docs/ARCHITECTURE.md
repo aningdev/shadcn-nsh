@@ -24,6 +24,7 @@ _Avoid_: 发布组件 npm 包、旧 registry id 的别名
 
 - `port-map.json`：**Port Map**，上游每个声明的唯一去向表
 - `registry.json`：**Catalog** 的真源，其 `registry:ui` 条目就是组件集合
+- `port-map.json`：**Port Map**，上游每个声明的唯一去向表；目标不一定是组件——`demo.ts` 的 `Stage` / `Split` / `Inspector` / `Panel` / `Log` / `Segmented` 等路由到 `apps/docs/demos/stage.tsx`（演示适配层，同样由 `port:vendor` 写区域，不进 registry）
 - `packages/theme/`：**Theme Source**（两个 JSON 原样拷贝）与 `theme.ts`（脚本填充）；不放组件
 - `packages/ui/<id>.tsx`：一个**组件** = **Port Region** + **Shell**；一个 registry 条目一个文件
 - `packages/ui/lib/`：没有所属控件的上游部分（以上游文件名命名）与多个外壳共用的接线；作为 `registry:lib` 条目分发
@@ -32,12 +33,12 @@ _Avoid_: 发布组件 npm 包、旧 registry id 的别名
 - `apps/docs/src/pages/docs/components/<id>.md`：组件文档页，固定四节
 - `apps/gallery/`：原生行为测试与冒烟页，用同一套 `packages/ui`；不做公开文档，不比截图
 - `packages/cli/`：`shadcn-nsh` CLI（`init`、`add`、`list`、`view`、`diff`、`build`、`serve`）
-- `scripts/catalog.ts`：**Catalog** 模块，脚本读写 `registry.json` 与取组件集合的唯一入口（`addComponent` 写入新条目）；生成 `apps/docs/demos/catalog.generated.ts` 供 NSH 运行时使用（不手改）
+- `scripts/catalog.ts`：**Catalog** 模块，脚本读写 `registry.json` 与取组件集合的唯一入口（`addComponent` 写入新条目）；生成 `apps/docs/demos/catalog.generated.ts` 供 NSH 运行时使用（不手改）；`demos/` 下不是组件演示的文件（`App.tsx`、`kit.tsx`、`stage.tsx`）在 `NON_COMPONENT_DEMOS` 登记，新增这样的文件要加进去，否则 `catalog --check` 把它当成没有组件的演示
 - `scripts/registry-build.ts`：`registry:build` 与 `test:install` 共用的构建（CLI `build` 加格式化）
 - `scripts/install-test.ts`：`test:install`，从应用一侧验证 Copy-into-app
 - `scripts/failure.ts`：脚本报错的约定，`StepFailure` 带失败的步骤名与 `cause`
-- `scripts/port/`：搬运与核对工具；唯一读 `references/nsh` 的代码
-- `scripts/audit/`：诊断演示的工具（批量打包 / 截图 / 量画布 / 拼对照页），不属于检查流水线；截图与包都落在仓库外，见 [`specs/demo-audit.md`](specs/demo-audit.md)
+- `scripts/port/`：搬运与核对工具（读 `references/nsh`，见下）
+- `scripts/audit/`：诊断演示的工具（批量打包 / 截图 / 量画布 / 拼对照页），不属于检查流水线；也读 `references/nsh`（官方示例原地打包），截图与包都落在仓库外，见 [`specs/demo-audit.md`](specs/demo-audit.md)
 - `references/`：只读子模块
 
 ## Layers
@@ -78,7 +79,7 @@ flowchart TD
 - 组件集合只从 `scripts/catalog.ts`（脚本）或 `catalog.generated.ts`（NSH 运行时）取；不自己读 `registry.json` 过滤，也不 `readdir` 演示或文档目录来推导
 - `scripts/*` 可以把 `packages/cli/src/*` 当库 import（构建、serve、registry 形状校验）：它是工具，不是应用代码；CLI 本身仍只经 Registry 拿组件
 - registry JSON 的形状只在 `packages/cli/src/utils/registry-schema.ts` 校验；读到的 JSON 经它变成类型，不用 `as` 断言
-- `scripts/*` 可以 import `apps/docs/demos/render-cases.ts`（读渲染用例与特例），不 import `apps/docs` 的其他代码
+- `scripts/*` 可以 import `apps/docs/demos/render-cases.ts`（渲染用例与特例）与 `apps/docs/scripts/player-options.ts`（演示包的 `?idiom=` / `?theme=`：文档站与审计用同一份），不 import `apps/docs` 的其他代码
 - 每个组件的特例（渲染前的 steps、`selfReference`）只写在 `render-cases.ts`，按 id 覆盖；`packages/ui/index.ts` 手写，由检查保证它导出每个组件
 
 ## Rules

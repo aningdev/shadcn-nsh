@@ -175,12 +175,22 @@ bun scripts/audit/sheet.ts --out sheet.png --cols 3 a.png b.png c.png   # 拼对
 
 ### 3.1 任务 2：画布与套件（先做）
 
-> **已完成**（`5a7a050`、`965b67d`、`39b568f`、`376c954`、`b96adb9`、`05798f7`、`3817175`）。发布模板没有播放器入口，因此走的是下面第 2 条的注入（`apps/docs/scripts/player-options.ts`，注释里写了为什么不走播放器）。`bun scripts/audit/audit.ts canvas` 现在给出：Phone `390×844`、`platform.desktop` 为假；Desktop `726×900`（列宽 1178 时 1024×900）、`platform.desktop` 为真；站点切亮 / 暗，演示的 `colorScheme()` 跟着变。
+> **已完成**（`5a7a050`、`965b67d`、`39b568f`、`376c954`、`b96adb9`、`05798f7`、`3817175`、以及返工 `REVIEW-1` 的提交）。发布模板没有播放器入口，因此走的是下面第 2 条的注入（`apps/docs/scripts/player-options.ts`，注释里写了为什么不走播放器；模板文字变了怎么办见 [`toolchain.md`](../toolchain.md) 的换 CLI 一节）。
+>
+> `bun scripts/audit/audit.ts canvas` 的实测（页视口 1440×900，探针应用原地打包，`windowSize()` 是**应用启动时**看到的窗口——面板先按布局的高启动，量到内容后再把 frame 压到内容高，与官网一致，见 `references/nsh/website/src/lib/demo-client.ts:120-131` 与 `:135-147`）：
+>
+> | 布局                                      | iframe     | 应用看到的窗口 | `platform.desktop` |
+> | ----------------------------------------- | ---------- | -------------- | ------------------ |
+> | Phone                                     | 390 × 670  | 390 × 844      | 假                 |
+> | Desktop（文档列宽）                       | 726 × 612  | 726 × 900      | 真                 |
+> | Desktop（demo 卡放宽到 1180，stage 1178） | 1024 × 420 | 1024 × 900     | 真                 |
+>
+> Phone 的 frame 宽 390、idiom `phone`；Desktop 是 desktop idiom，宽取 min(1024, 列宽)。站点切亮 / 暗，探针的 `colorScheme()` 分别为 `light` / `dark`（运行中 `postMessage`）。JSON 在 `/tmp/nsh-audit/canvas.json`，截图 `apps/docs/demos/shots/audit/canvas-*.png`。
 
 1. **`apps/docs/src/lib/demo.js`**：`phoneHtml` 的 iframe 地址按布局加 `?idiom=phone|desktop` 与 `?theme=<站点当前主题>`；`demoPanelHtml` 的初始 `data-layout` 与 `initDemos` 的默认一致（现在 HTML 写 desktop、脚本默认 mobile，会闪一次）；`LAYOUTS.desktop` 改成 1024×**900**（与 `references/nsh/website/src/lib/demo-client.ts:44-45` 一致）。
 2. **让演示真的认这两个参数**：发布模板（`references/nsh/crates/nsh-cli/src/web/index.html`）没有出口。两条路：
    - 用 NSH 播放器：`public/play/index.html`（`references/nsh/crates/nsh-platform-web/web/index.html:48-52`）+ `nsh build` 出的 `demos/<name>.js`，和官网一致；文档站构建脚本改成 `nsh build`。
-   - 或留在 `nsh package`，在 `apps/docs/scripts/build-demos.ts` 里对生成的 `index.html` 注入一行 `idiom: new URLSearchParams(location.search).get("idiom") ?? undefined`（本次审计的临时做法，见 `scripts/audit/targets.ts:packageTarget`）。第二种是补丁，长期应走第一种。
+   - 或留在 `nsh package`，在 `apps/docs/scripts/player-options.ts` 里对生成的 `index.html` 注入运行时自己的 `idiom` / `dark` 选项（文档站与审计共用一份，`scripts/audit/targets.ts` 直接 import 它）。实际走的是这条；第二种是补丁，长期应走第一种。
 3. **`apps/docs/src/lib/demo-client.ts`**：`fit()` 不再按比例缩高度；高度取 `min(布局高, max(420, 内容高 + 32))`，需要 `contentHeight()` 与加载后重测（照 `references/nsh/website/src/lib/demo-client.ts:75-108,150-158`）；切换布局时**重载** iframe 让新 idiom 生效（`demo-client.ts:157-166`）；主题变化 `postMessage`。
 4. **`apps/docs/demos/kit.tsx`**：`DemoSection` 增加轴向（`inline` 行 / `block` 列）；`block` 用列 + `alignItems: "stretch"`，整宽控件不再靠 `flexGrow`。`DemoPage` 加 `Scroll`（或由第 3 条的内容高度兜住），保证内容不被裁。
 5. **`apps/docs/demos/`**：新增官方的演示适配层（`Stage`、`Split`、`Inspector`、`Panel`、`Log`、`Segmented`、`desktop`、`wide`、`sideBySide`），从 `references/nsh/examples/nsh-gallery-ui/demo.ts` 搬（`demo.ts:45,49,53,122-286`），只供演示，不进 registry；同步改 `AGENTS.md` 的"不搬 demo 适配"一条（demo-parity 已决定）。

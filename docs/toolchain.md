@@ -29,6 +29,15 @@ CLI 与运行时同装进 `~/.nsh`，并链到 `~/.local/bin/nsh`。
 
 `install.sh` 装不了任意提交：`--nightly` 是 nightly 频道，`NSH_VERSION=vX.Y.Z` 是一个 release。选一个不早于想要的基线的，装好后 `port:bump`。
 
+### 升级后 `build:docs` 报“the packaged index.html has no …”
+
+演示页的 `?idiom=` / `?theme=` 是 `apps/docs/scripts/player-options.ts` 在 `nsh package --target web` 的产物上按**发布模板的原文**改出来的（发布模板自己没有这两个入口，而官网的播放器页要编译 NSH）。升级 nsh 后模板文字一变，`bun run docs:demos` 会停在那条报错上，不会发出反不了的演示包。这时：
+
+1. 看新模板（`references/nsh/crates/nsh-cli/src/web/index.html`）里这四个标记还在不在：`createPlayer(document.getElementById("app"), {`（选项对象）、`player = loaded;`（播放器就绪）、`player.preloadSides(app.sides);`（应用已跑）、`</head>`。按新写法改 `player-options.ts` 的常量与插入点。
+2. 若新模板自己就认 `?idiom=`（`createPlayer` 的选项里有 `idiom`）与 `?theme=`（`dark`），删掉对应的注入，只留它还缺的那一半。
+3. `bun run docs:demos`，再 `bun scripts/audit/audit.ts canvas --force`：Phone 应是 390 宽、`platform.desktop` 为假，Desktop 是 desktop idiom，站点切亮 / 暗时探针的 `colorScheme()` 跟着变。
+4. 模板变了什么写进这一节。
+
 ### 运行时
 
 发行包只带本机平台的运行时。`nsh package --target web`（`bun run docs:demos`）与 `nsh test --target web`（`bun run port:render`）需要的 web 运行时由 CLI 自己装（等价于 `nsh component add web`），触屏那一半要 `nsh component add ios`；`nsh component list` 列出装了什么。
