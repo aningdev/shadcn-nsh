@@ -1,61 +1,123 @@
-import { colors } from "@shadcn-nsh/theme";
+// The official carousel scene (`references/nsh/website/demos/el-carousel.tsx`) with this
+// library's parts: five cards, each with its caption at the foot, looping; arrows and dots move
+// between them, and the inspector logs the index each move lands on.
+//
+// The gallery's photographs are URLs (its `photos.ts`), which a render check compares only once
+// they have loaded: each card draws them as a wash of the theme's chart hues instead, so a demo,
+// its reference page and the baseline draw the same slide at every run.
+import { alpha, chart, colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import {
   Carousel,
   CarouselContent,
   CarouselDot,
-  carouselSizes,
   CarouselItem,
   CarouselNext,
   CarouselPagination,
   CarouselPaginationItem,
   CarouselPrevious,
 } from "@/packages/ui/carousel";
-import { Icon } from "@/packages/ui/lib/icons";
 
-import { DemoCard, DemoPage } from "./kit";
+import { DemoPage } from "./kit";
+import { desktop, Log, Split } from "./stage";
 
-const SLIDES = ["Harbor", "Dunes", "Glacier"] as const;
+// Photos of the launch pad, each with a caption at its foot.
+const shots: { name: string; detail: string }[] = [
+  { name: "On the pad", detail: "Dusk at the launch site" },
+  { name: "The fairing", detail: "Close up, before stacking" },
+  { name: "At the tower", detail: "The stack by daylight" },
+  { name: "Rollout", detail: "Moved to the pad at night" },
+  { name: "Liftoff", detail: "Clear of the tower" },
+];
+
+/** The wash of a card: the theme's chart hues, the first leading. */
+const wash = (i: number) => [chart.s1, chart.s2, chart.s3, chart.s4, chart.s5][i % 5];
 
 function App() {
-  const index = signal(0);
-  const icon = carouselSizes.arrowIcon;
+  const shown = signal(0);
+  const events = signal<string[]>([]);
+  const log = (line: string) => events.set([line, ...events()].slice(0, 3));
 
   return (
-    <DemoPage title="Carousel" note={() => `${index() + 1} / ${SLIDES.length}`}>
-      <DemoCard style={{ alignSelf: "stretch", gap: 12 }}>
+    <DemoPage title="Carousel">
+      <Text style={{ color: colors.muted }}>
+        {desktop
+          ? "Scroll with the touchpad, click the arrows or a dot, or focus it and press ← →; after the last photo comes the first"
+          : "Swipe the photos, or tap the arrows or a dot; after the last photo comes the first"}
+      </Text>
+
+      <Split
+        gap={14}
+        inspector={
+          <Log title={`onChange · ${shots[shown()].name}`} lines={events()} minHeight={76} />
+        }
+      >
+        {/* Five cards at 85% span more than the view and a card: the loop is seamless. */}
         <Carousel
-          index={index()}
-          onChange={({ index: next }) => index.set(next)}
-          accessibilityLabel="Photo slides"
+          looping
+          accessibilityLabel="Photos of the launch pad"
+          onChange={({ index }) => {
+            shown.set(index);
+            log(`index: ${index} (${shots[index].name})`);
+          }}
+          style={{ gap: 12, borderRadius: 14 }}
         >
-          <CarouselContent style={{ height: 120, borderRadius: 12, backgroundColor: colors.inset }}>
-            {SLIDES.map((name, i) => (
-              <CarouselItem accessibilityLabel={`${i + 1} of ${SLIDES.length}: ${name}`}>
-                <Text style={{ fontSize: 16, fontWeight: "600", color: colors.text }}>{name}</Text>
+          {/* Each card is 85% of the view: the next one peeks in. */}
+          <CarouselContent style={{ height: desktop ? 150 : 170, gap: 10 }}>
+            {shots.map((shot, i) => (
+              <CarouselItem
+                accessibilityLabel={`${i + 1} of ${shots.length}: ${shot.name}`}
+                style={{
+                  width: "85%",
+                  height: "100%",
+                  padding: 16,
+                  alignItems: "stretch",
+                  justifyContent: "flex-end",
+                  gap: 2,
+                  borderRadius: 14,
+                  borderCurve: "continuous",
+                  borderWidth: 1,
+                  borderColor: colors.line,
+                  overflow: "hidden",
+                  backgroundColor: colors.raised,
+                }}
+              >
+                <View
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    backgroundImage: `linear-gradient(160deg, ${alpha(wash(i), 0.42)} 0%, ${alpha(wash(i), 0.12)} 55%, ${colors.inset} 100%)`,
+                  }}
+                />
+                <Text style={{ fontSize: 20, fontWeight: "700", color: colors.text }}>
+                  {shot.name}
+                </Text>
+                <Text style={{ fontSize: 13, color: colors.muted }}>{shot.detail}</Text>
               </CarouselItem>
             ))}
           </CarouselContent>
+
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <CarouselPrevious accessibilityLabel="Previous slide">
-              <Icon name="back" size={icon} tint={colors.text} />
-            </CarouselPrevious>
-            <CarouselPagination accessibilityLabel="Choose a slide">
-              {SLIDES.map((_, i) => (
-                <CarouselPaginationItem index={i} accessibilityLabel={`Slide ${i + 1}`}>
-                  <CarouselDot selected={index() === i} />
+            <CarouselPrevious accessibilityLabel="Previous photo" />
+            {/* The dots: a pill springs to the one of the photo shown. */}
+            <CarouselPagination
+              accessibilityLabel="Choose a photo"
+              style={{ flex: 1, justifyContent: "center" }}
+            >
+              {shots.map((shot, i) => (
+                <CarouselPaginationItem index={i} accessibilityLabel={shot.name}>
+                  <CarouselDot selected={i === shown()} />
                 </CarouselPaginationItem>
               ))}
             </CarouselPagination>
-            <CarouselNext accessibilityLabel="Next slide">
-              <View style={{ transform: [{ scaleX: -1 }] }}>
-                <Icon name="back" size={icon} tint={colors.text} />
-              </View>
-            </CarouselNext>
+            <CarouselNext accessibilityLabel="Next photo" />
           </View>
         </Carousel>
-      </DemoCard>
+      </Split>
     </DemoPage>
   );
 }
