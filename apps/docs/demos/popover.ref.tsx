@@ -1,70 +1,105 @@
-// The reference of `popover.tsx`: the look on `nsh/base`'s Popover via PopIn.
+// The reference of `popover.tsx`: the same scene with the panel's look (`popoverLook`) on a
+// `PopIn` inside `nsh/base`'s Popover, the way the official example
+// (`references/nsh/website/demos/el-popover.tsx`) writes it. It differs from the component page
+// only in the parts it names.
 import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
-import { Button, Popover } from "nsh/base";
+import { Popover } from "nsh/base";
 
-import { buttonLabel, buttonLook } from "@/packages/ui/button";
+import { Button } from "@/packages/ui/button";
 import { PopIn } from "@/packages/ui/lib/popup";
 import { popoverLook } from "@/packages/ui/popover";
 
-import { DemoCard, DemoPage, DemoSection } from "./kit";
+import { DemoPage } from "./kit";
+import { desktop, Log, Segmented, Split, wide } from "./stage";
+
+type Placement = "top" | "bottom" | "left" | "right";
 
 function App() {
-  const last = signal("open");
+  const placement = signal<Placement>("bottom");
+  const offset = signal(8);
+  const presses = signal(0);
+  const events = signal<string[]>([]);
 
   return (
-    <DemoPage title="Popover" note={() => last()}>
-      <DemoCard>
-        <DemoSection title="Default">
-          <View
-            style={{ width: "100%", height: 200, alignItems: "center", justifyContent: "center" }}
+    <DemoPage title="Popover">
+      <Text style={{ color: colors.muted }}>
+        {desktop
+          ? "Open it, then click “Count” below: one click closes it and presses the button"
+          : "Open it, then tap “Count” below: the tap only closes it"}
+      </Text>
+
+      <Split
+        gap={14}
+        inspector={
+          <>
+            <Segmented
+              label="placement"
+              options={["top", "bottom", "left", "right"] as Placement[]}
+              value={placement()}
+              onChange={(value) => placement.set(value)}
+            />
+            <Segmented
+              label="offset"
+              options={[0, 8, 16] as number[]}
+              value={offset()}
+              onChange={(value) => offset.set(value)}
+            />
+            <Log title="onOpenChange({ open, reason })" lines={events()} minHeight={92} />
+          </>
+        }
+      >
+        <View
+          style={{
+            height: wide() ? 280 : 200,
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Popover
+            placement={placement()}
+            offset={offset()}
+            margin={12}
+            trigger={<Button variant="accent">Order 1024</Button>}
+            onOpenChange={({ open, reason }) =>
+              events.set([`${open ? "opened" : "closed"} · ${reason}`, ...events()].slice(0, 4))
+            }
           >
-            <Popover
-              open
-              placement="bottom"
-              offset={8}
-              onOpenChange={({ open, reason }) =>
-                last.set(`${open ? "opened" : "closed"} · ${reason}`)
-              }
-              trigger={
-                <Button {...buttonLook("primary")}>
-                  <Text style={buttonLabel("primary")}>Order 1024</Text>
-                </Button>
-              }
-            >
-              <PopIn side="bottom" style={popoverLook({ width: 260 })}>
+            {() => (
+              // The panel grows out of the trigger's side each time it opens.
+              <PopIn side={placement()} style={popoverLook({ width: 260 })}>
                 <View style={{ gap: 2 }}>
-                  <Text style={{ fontSize: 14, fontWeight: "600", color: colors.text }}>
+                  <Text
+                    style={{
+                      fontSize: desktop ? 14 : 16,
+                      fontWeight: "600",
+                      color: colors.text,
+                    }}
+                  >
                     Shipped yesterday
                   </Text>
-                  <Text style={{ fontSize: 12, color: colors.muted }}>
+                  <Text style={{ fontSize: desktop ? 12 : 13, color: colors.muted }}>
                     Arriving Friday. The trigger, a press outside and Escape close this.
                   </Text>
                 </View>
+                <View style={{ flexDirection: "row", gap: 6, alignItems: "center" }}>
+                  <View
+                    style={{ width: 8, height: 8, borderRadius: 4, backgroundColor: colors.up }}
+                  />
+                  <Text style={{ fontSize: 12, color: colors.up }}>In transit</Text>
+                </View>
               </PopIn>
-            </Popover>
-          </View>
-        </DemoSection>
-        <DemoSection title="Compact">
-          <View
-            style={{ width: "100%", height: 120, alignItems: "center", justifyContent: "center" }}
-          >
-            <Popover
-              open
-              placement="top"
-              trigger={
-                <Button {...buttonLook("secondary")}>
-                  <Text style={buttonLabel("secondary")}>Note</Text>
-                </Button>
-              }
-            >
-              <PopIn side="top" style={popoverLook({ compact: true })}>
-                <Text style={{ fontSize: 12, color: colors.text }}>A small note</Text>
-              </PopIn>
-            </Popover>
-          </View>
-        </DemoSection>
-      </DemoCard>
+            )}
+          </Popover>
+        </View>
+        <Button
+          variant="secondary"
+          onPress={() => presses.update((n) => n + 1)}
+          style={{ justifyContent: "center" }}
+        >
+          {`Count · pressed ${presses()}×`}
+        </Button>
+      </Split>
     </DemoPage>
   );
 }
