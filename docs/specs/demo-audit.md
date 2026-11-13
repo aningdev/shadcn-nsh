@@ -175,6 +175,8 @@ bun scripts/audit/sheet.ts --out sheet.png --cols 3 a.png b.png c.png   # 拼对
 
 ### 3.1 任务 2：画布与套件（先做）
 
+> **已完成**（`5a7a050`、`965b67d`、`39b568f`、`376c954`、`b96adb9`、`05798f7`、`3817175`）。发布模板没有播放器入口，因此走的是下面第 2 条的注入（`apps/docs/scripts/player-options.ts`，注释里写了为什么不走播放器）。`bun scripts/audit/audit.ts canvas` 现在给出：Phone `390×844`、`platform.desktop` 为假；Desktop `726×900`（列宽 1178 时 1024×900）、`platform.desktop` 为真；站点切亮 / 暗，演示的 `colorScheme()` 跟着变。
+
 1. **`apps/docs/src/lib/demo.js`**：`phoneHtml` 的 iframe 地址按布局加 `?idiom=phone|desktop` 与 `?theme=<站点当前主题>`；`demoPanelHtml` 的初始 `data-layout` 与 `initDemos` 的默认一致（现在 HTML 写 desktop、脚本默认 mobile，会闪一次）；`LAYOUTS.desktop` 改成 1024×**900**（与 `references/nsh/website/src/lib/demo-client.ts:44-45` 一致）。
 2. **让演示真的认这两个参数**：发布模板（`references/nsh/crates/nsh-cli/src/web/index.html`）没有出口。两条路：
    - 用 NSH 播放器：`public/play/index.html`（`references/nsh/crates/nsh-platform-web/web/index.html:48-52`）+ `nsh build` 出的 `demos/<name>.js`，和官网一致；文档站构建脚本改成 `nsh build`。
