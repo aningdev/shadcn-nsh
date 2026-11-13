@@ -16,7 +16,7 @@ import {
   ListboxEmpty,
   OptionRow,
 } from "@/packages/ui/combobox";
-import { clearButtonLook, listboxFooter, ListboxHeader } from "@/packages/ui/lib/listbox";
+import { listboxFooter, ListboxHeader } from "@/packages/ui/lib/listbox";
 import { sectionSurface } from "@/packages/ui/lib/surface";
 
 import { DemoPage } from "./kit";
@@ -117,7 +117,6 @@ function App() {
                 accessibilityLabel="Labels"
                 empty={<ListboxEmpty label="No label matches" />}
                 clearButtonAccessibilityLabel="Clear the labels"
-                {...clearButtonLook()}
                 footerStyle={listboxFooter.style}
                 footer={<Text style={listboxFooter.text}>{`${labels().length} selected`}</Text>}
                 onConfirm={({ value }) => log(`Confirmed ${value.length} labels`)}

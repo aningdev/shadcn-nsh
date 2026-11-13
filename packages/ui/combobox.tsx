@@ -14,7 +14,13 @@ import {
 import { Button, type ButtonKind } from "./button";
 import { edgeClass } from "./input";
 import { Icon } from "./lib/icons";
-import { listboxProps, ListboxEmpty, ListboxHeader, OptionRow } from "./lib/listbox";
+import {
+  clearButtonLook,
+  listboxProps,
+  ListboxEmpty,
+  ListboxHeader,
+  OptionRow,
+} from "./lib/listbox";
 import {
   createItemRegistry,
   createOpenState,
@@ -25,7 +31,18 @@ import {
 } from "./lib/open-state";
 import { controlSize, narrowWindow } from "./lib/surface";
 
-export { listboxProps, ListboxEmpty, OptionRow } from "./lib/listbox";
+export {
+  clearButtonLook,
+  listboxFooter,
+  listboxProps,
+  listboxPopup,
+  listboxSearch,
+  ListboxEmpty,
+  ListboxHeader,
+  OptionRow,
+  type ClearButtonOptions,
+  type ListboxPopupOptions,
+} from "./lib/listbox";
 
 // @port look/listbox.tsx
 const pointer = platform.desktop;
@@ -342,6 +359,9 @@ export function ComboboxContent(props: ComboboxContentProps) {
     "renderItem",
     "renderGroup",
     "empty",
+    "clearButtonClass",
+    "clearButtonStyle",
+    "clearButton",
   ]);
   return (
     <View>
@@ -349,6 +369,8 @@ export function ComboboxContent(props: ComboboxContentProps) {
       {() => {
         const look = comboboxLook(ctx.open, { filled: ctx.filled });
         const chrome = listboxProps({ minWidth: props.minWidth });
+        // The clear button of a cleanable field: in the row, after the input.
+        const clear = clearButtonLook();
         const empty = ctx.empty.get();
         return (
           <BaseCombobox
@@ -360,6 +382,9 @@ export function ComboboxContent(props: ComboboxContentProps) {
             placeholder={ctx.prompt()}
             disabled={ctx.root.disabled}
             cleanable={ctx.root.cleanable}
+            clearButtonClass={props.clearButtonClass ?? clear.clearButtonClass}
+            clearButtonStyle={props.clearButtonStyle ?? clear.clearButtonStyle}
+            clearButton={props.clearButton ?? clear.clearButton}
             class={props.class ? `${look.class} ${props.class}` : look.class}
             style={[look.style, props.style ?? null]}
             inputClass={

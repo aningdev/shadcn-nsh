@@ -205,7 +205,7 @@ function App() {
                   placeholder={region() === null}
                   open={regionOpen()}
                   disabled={locked()}
-                  clearable
+                  clearable={region() !== null}
                   kind="field"
                   style={trigger}
                 />

@@ -13,7 +13,7 @@ import {
 } from "nsh/base";
 
 import { CalendarItem, calendarLook, TimeSegment } from "./calendar";
-import { listboxPopup } from "./lib/listbox";
+import { clearButtonLook, listboxPopup } from "./lib/listbox";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import { backdrop } from "./lib/overlay";
 import { Picker, type PickerProps } from "./select";
@@ -195,7 +195,8 @@ function triggerOf(ctx: DatePickerContextValue): JSX.Element {
       placeholder={ctx.value() == null}
       open={ctx.open()}
       disabled={ctx.root.disabled}
-      clearable={ctx.root.cleanable}
+      // The clear button shows only while a value is chosen.
+      clearable={ctx.root.cleanable && ctx.value() != null}
     />
   );
 }
@@ -238,7 +239,7 @@ export function DatePickerTrigger(props: DatePickerTriggerProps) {
       open={ctx.open()}
       disabled={ctx.root.disabled}
       invalid={props.invalid}
-      clearable={props.clearable ?? ctx.root.cleanable}
+      clearable={props.clearable ?? (ctx.root.cleanable && ctx.value() != null)}
       style={props.style}
     />
   ));
@@ -270,6 +271,9 @@ export function DatePickerContent(props: DatePickerContentProps) {
     "segmentClass",
     "separatorStyle",
     "renderSegment",
+    "clearButtonClass",
+    "clearButtonStyle",
+    "clearButton",
   ]);
   return (
     <View>
@@ -279,6 +283,8 @@ export function DatePickerContent(props: DatePickerContentProps) {
           months: () => props.numberOfMonths ?? 1,
           firstDayOfWeek: () => props.firstDayOfWeek ?? 0,
         });
+        // The clear button of a cleanable trigger: over its end, where the chevron would be.
+        const clear = clearButtonLook({ over: true });
         return (
           <BaseDatePicker
             {...rest}
@@ -286,6 +292,9 @@ export function DatePickerContent(props: DatePickerContentProps) {
             open={ctx.open()}
             disabled={ctx.root.disabled}
             cleanable={ctx.root.cleanable}
+            clearButtonClass={props.clearButtonClass ?? clear.clearButtonClass}
+            clearButtonStyle={props.clearButtonStyle ?? clear.clearButtonStyle}
+            clearButton={props.clearButton ?? clear.clearButton}
             trigger={triggerOf(ctx)}
             numberOfMonths={props.numberOfMonths}
             firstDayOfWeek={props.firstDayOfWeek}

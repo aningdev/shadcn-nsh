@@ -8,7 +8,6 @@ import { mount, signal, Text, View } from "nsh";
 import type { DatePickerValue, DateRangePreset, HourCycle } from "nsh/base";
 
 import { DatePicker, DatePickerContent, DatePickerTrigger } from "@/packages/ui/date-picker";
-import { clearButtonLook } from "@/packages/ui/lib/listbox";
 import { sectionSurface } from "@/packages/ui/lib/surface";
 
 import { DemoPage } from "./kit";
@@ -142,7 +141,6 @@ function App() {
                 disabledMatcher={[0, 6]}
                 presets={dues}
                 clearButtonAccessibilityLabel="Clear the due date"
-                {...clearButtonLook({ over: true })}
               />
             </DatePicker>
           </Field>

@@ -9,7 +9,6 @@ import { mount, signal, Text, View } from "nsh";
 import { Button } from "@/packages/ui/button";
 import { listRow, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
 import {
-  clearButtonLook,
   ListboxEmpty,
   ListboxHeader,
   listboxSearch,
@@ -188,7 +187,6 @@ function App() {
                 )}
                 renderGroup={(group) => <ListboxHeader group={group} />}
                 {...listboxSearch()}
-                {...clearButtonLook({ over: true })}
               >
                 <SelectGroup>
                   <SelectLabel>Americas</SelectLabel>

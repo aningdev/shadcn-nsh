@@ -14,7 +14,13 @@ import {
 
 import { fieldSize } from "./input";
 import { Icon, type IconName } from "./lib/icons";
-import { listboxProps, ListboxEmpty, ListboxHeader, OptionRow } from "./lib/listbox";
+import {
+  clearButtonLook,
+  listboxProps,
+  ListboxEmpty,
+  ListboxHeader,
+  OptionRow,
+} from "./lib/listbox";
 import {
   createItemRegistry,
   createOpenState,
@@ -27,12 +33,14 @@ import { controlSize } from "./lib/surface";
 
 export {
   clearButtonLook,
+  listboxFooter,
   listboxProps,
   listboxPopup,
   listboxSearch,
   ListboxEmpty,
   ListboxHeader,
   OptionRow,
+  type ClearButtonOptions,
   type ListboxPopupOptions,
 } from "./lib/listbox";
 
@@ -357,7 +365,8 @@ function triggerOf(ctx: SelectContextValue): JSX.Element {
       placeholder={ctx.value() == null}
       open={ctx.open()}
       disabled={ctx.root.disabled}
-      clearable={ctx.root.cleanable}
+      // The clear button shows only while an item is chosen; until then the chevron stays.
+      clearable={ctx.root.cleanable && ctx.value() != null}
     />
   );
 }
@@ -415,7 +424,7 @@ export function SelectTrigger(props: SelectTriggerProps) {
       open={ctx.open()}
       disabled={ctx.root.disabled}
       invalid={props.invalid}
-      clearable={props.clearable ?? ctx.root.cleanable}
+      clearable={props.clearable ?? (ctx.root.cleanable && ctx.value() != null)}
       icon={props.icon}
       lead={props.lead}
       kind={props.kind}
@@ -455,12 +464,17 @@ export function SelectContent(props: SelectContentProps) {
     "renderItem",
     "renderGroup",
     "empty",
+    "clearButtonClass",
+    "clearButtonStyle",
+    "clearButton",
   ]);
   return (
     <View>
       {props.children}
       {() => {
         const chrome = listboxProps({ minWidth: props.minWidth });
+        // The clear button of a cleanable trigger: over its end, in place of the chevron.
+        const clear = clearButtonLook({ over: true });
         return (
           <BaseSelect
             {...rest}
@@ -469,6 +483,9 @@ export function SelectContent(props: SelectContentProps) {
             open={ctx.open()}
             disabled={ctx.root.disabled}
             cleanable={ctx.root.cleanable}
+            clearButtonClass={props.clearButtonClass ?? clear.clearButtonClass}
+            clearButtonStyle={props.clearButtonStyle ?? clear.clearButtonStyle}
+            clearButton={props.clearButton ?? clear.clearButton}
             placeholder={ctx.prompt()}
             trigger={triggerOf(ctx)}
             offset={props.offset ?? chrome.offset}
