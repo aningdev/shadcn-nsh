@@ -78,6 +78,23 @@ describe("ported shells (packages/ui)", () => {
     expect(offenders, `colour-literals in ${offenders.join(", ")}`).toEqual([]);
   });
 
+  test("a demo draws no color of its own either", () => {
+    // The demos are our pages too: their chrome is the theme's (through `ui()`), and a `ref.tsx`
+    // is a page as well — only the *conversion* from `colors` to `ui()` is limited to the demos
+    // (a reference page mirrors upstream's code). A color-picker demo is exempt for the reason its
+    // component is: the swatches and the chosen colors are the user's content, not a look.
+    const demos = readdirSync(new URL("apps/docs/demos/", root))
+      .filter((file) => file.endsWith(".tsx") && !file.endsWith(".test.tsx"))
+      .map((file) => `apps/docs/demos/${file}`)
+      .filter(
+        (path) => !path.endsWith("/color-picker.tsx") && !path.endsWith("/color-picker.ref.tsx"),
+      );
+    const offenders = demos.filter((path) =>
+      rules["colour-literals"].some((p) => p.test(shellCode(path))),
+    );
+    expect(offenders, `colour-literals in ${offenders.join(", ")}`).toEqual([]);
+  });
+
   test("the demo adapter draws no color of its own either", () => {
     // `stage.tsx` and `kit.tsx` are the demos' own chrome (not a component): a demo reads the
     // theme through them, so a color written out there would sit outside the theme as well.
