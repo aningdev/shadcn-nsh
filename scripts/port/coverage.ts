@@ -28,7 +28,8 @@ import path from "node:path";
 import { parseSync } from "oxc-parser";
 
 import { cases } from "../../apps/docs/demos/render-cases";
-import { portPaths, readMap, repo } from "./lib";
+import { catalog } from "../catalog";
+import { repo } from "./lib";
 
 type Node = { type: string; start?: number; end?: number; [key: string]: unknown };
 
@@ -291,38 +292,34 @@ function demoLiterals(file: string): Set<string> {
 // The check.
 // ---------------------------------------------------------------------------------------------
 
-const map = readMap();
-const demos = portPaths(map).demos;
-const registry = JSON.parse(fs.readFileSync(path.join(repo, "registry.json"), "utf8")) as {
-  items: { name: string; type: string; files: { path: string }[] }[];
-};
-const components = registry.items
-  .filter((item) => item.type === "registry:ui")
-  .filter((item) => item.files.some((file) => file.path === `packages/ui/${item.name}.tsx`));
+const set = catalog().components;
+const byId = new Map(set.map((component) => [component.id, component]));
 
 const problems: string[] = [];
 let checked = 0;
-for (const { name } of components) {
-  const file = path.join(repo, `packages/ui/${name}.tsx`);
+for (const component of set) {
+  const file = component.uiFile;
   const values = moduleAxes(moduleAt(file));
   const unique = [...new Map(values.map((v) => [`${v.axis}\0${v.value}`, v])).values()];
   if (unique.length === 0) continue;
-  const demo = path.join(demos, `${name}.tsx`);
+  const demo = component.demo;
   if (!fs.existsSync(demo)) {
-    problems.push(`${name}: no demo, but ${unique.length} axis values to show`);
+    problems.push(`${component.id}: no demo, but ${unique.length} axis values to show`);
     continue;
   }
   const shown = demoLiterals(demo);
   checked += 1;
   for (const { axis, value } of unique) {
     if (!shown.has(value)) {
-      problems.push(`${name}: ${axis} "${value}" never appears in ${path.relative(repo, demo)}`);
+      problems.push(
+        `${component.id}: ${axis} "${value}" never appears in ${path.relative(repo, demo)}`,
+      );
     }
   }
   if (process.argv.includes("--verbose")) {
     const covered = unique.filter((v) => shown.has(v.value)).length;
     console.log(
-      `${name}: ${covered}/${unique.length} (${unique.map((v) => `${v.axis}=${v.value}`).join(", ")})`,
+      `${component.id}: ${covered}/${unique.length} (${unique.map((v) => `${v.axis}=${v.value}`).join(", ")})`,
     );
   }
 }
@@ -330,9 +327,9 @@ for (const { name } of components) {
 // The render cases: a component with no shell (upstream's own file) must say why its reference
 // page draws itself; one with a shell must not claim that.
 for (const { id, selfReference } of cases) {
-  const file = path.join(repo, `packages/ui/${id}.tsx`);
-  if (!fs.existsSync(file)) continue;
-  const shell = hasShell(moduleAt(file));
+  const component = byId.get(id);
+  if (!component) continue;
+  const shell = hasShell(moduleAt(component.uiFile));
   if (!shell && !selfReference) {
     problems.push(`${id}: no shell, so declare selfReference in apps/docs/demos/render-cases.ts`);
   }

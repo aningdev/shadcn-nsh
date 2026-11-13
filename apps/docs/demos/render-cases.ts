@@ -2,8 +2,13 @@
  * What both render checks draw: the demos and their reference pages, and the appearances. The
  * pointer pass runs them in a headless browser (`render.test.tsx`); the touch pass on the iOS
  * simulator (`render-touch.test.tsx`), where the touch idiom can be measured.
+ *
+ * The ids come from the catalog (`catalog.generated.ts`); only a component's exceptions live
+ * here, keyed by id.
  */
 import type { App } from "nsh/test";
+
+import { componentIds } from "./catalog.generated";
 
 export type Case = {
   /** The demo's file name, without `.tsx`. */
@@ -19,70 +24,30 @@ export type Case = {
   selfReference?: string;
 };
 
-export const cases: Case[] = [
-  { id: "button" },
-  { id: "switch" },
-  { id: "dialog", steps: (app) => app.press("Delete item…") },
-  { id: "toggle" },
-  { id: "checkbox" },
-  { id: "radio-group" },
-  { id: "toggle-group" },
-  { id: "toolbar" },
-  { id: "input" },
-  { id: "number-input" },
-  { id: "otp-input" },
-  { id: "time-field" },
-  { id: "tooltip" },
-  { id: "popover" },
-  { id: "hover-card" },
-  { id: "sheet" },
-  { id: "toast" },
-  { id: "alert-dialog", steps: (app) => app.press("Delete file…") },
-  { id: "menu" },
-  { id: "context-menu" },
-  { id: "select" },
-  { id: "combobox" },
-  { id: "calendar" },
-  { id: "date-picker" },
-  { id: "tabs" },
-  { id: "segmented" },
-  { id: "accordion" },
-  { id: "collapsible" },
-  { id: "carousel" },
-  { id: "link" },
-  { id: "pagination" },
-  { id: "progress" },
-  { id: "slider" },
-  { id: "avatar" },
-  { id: "spinner", selfReference: "upstream's own Spinner, with no shell to compare against" },
-  { id: "badge", selfReference: "upstream's own Badge, with no shell to compare against" },
-  { id: "status", selfReference: "upstream's own Status, with no shell to compare against" },
-  { id: "stat", selfReference: "upstream's own Stat, with no shell to compare against" },
-  { id: "meter", selfReference: "upstream's own Meter, with no shell to compare against" },
-  {
-    id: "emoji-picker",
+/** What a component does that the others do not. Keys must be catalog ids. */
+type Override = Omit<Case, "id">;
+
+const overrides: Record<string, Override> = {
+  dialog: { steps: (app) => app.press("Delete item…") },
+  "alert-dialog": { steps: (app) => app.press("Delete file…") },
+  spinner: { selfReference: "upstream's own Spinner, with no shell to compare against" },
+  badge: { selfReference: "upstream's own Badge, with no shell to compare against" },
+  status: { selfReference: "upstream's own Status, with no shell to compare against" },
+  stat: { selfReference: "upstream's own Stat, with no shell to compare against" },
+  meter: { selfReference: "upstream's own Meter, with no shell to compare against" },
+  "emoji-picker": {
     selfReference: "the static chrome and EmojiPanel are upstream's own components",
   },
-  { id: "data-table" },
-  { id: "table" },
-  { id: "tree" },
-  { id: "command" },
-  { id: "scrollbar" },
-  {
-    id: "plot",
+  plot: {
     selfReference:
       "the demo and the reference draw the same nsh/base/plot through upstream's re-export and look helpers",
   },
-  { id: "resizable" },
-  { id: "dock-area" },
-  { id: "diff-view" },
-  { id: "text-view" },
-  { id: "editor" },
-  {
-    id: "color-picker",
+  "color-picker": {
     selfReference: "the panel and the popover are upstream's own composition, with no shell",
   },
-];
+};
+
+export const cases: Case[] = componentIds.map((id) => ({ id, ...overrides[id] }));
 
 export const schemes = ["light", "dark"] as const;
 

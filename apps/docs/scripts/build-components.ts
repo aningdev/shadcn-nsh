@@ -1,32 +1,24 @@
 /**
- * Builds the docs' component list from the registry and the pages, and writes
+ * Builds the docs' component list from the catalog and the pages, and writes
  * `src/lib/components.generated.ts`.
  *
  *   bun run docs:components
  *
- * Every `registry:ui` item with a page in `src/pages/docs/components` is one
- * entry: the page's frontmatter title and description when it has them, the
- * registry's otherwise. The order is by slug. `check:pages` fails when the
- * checked-in file no longer matches this plan.
+ * Every component is one entry: the page's frontmatter title and description when it has them,
+ * the registry's otherwise. The order is by slug. `check:pages` fails when the checked-in file
+ * no longer matches this plan.
  */
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
+import { catalog } from "../../../scripts/catalog";
 import type { ComponentDoc } from "../src/lib/components.types";
 import { NSH_ELEMENTS } from "../src/lib/nsh-elements";
 
 const docs = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const repo = path.resolve(docs, "../..");
-const pagesDir = path.join(docs, "src/pages/docs/components");
 const outFile = path.join(docs, "src/lib/components.generated.ts");
-
-type RegistryItem = {
-  name: string;
-  type: string;
-  title?: string;
-  description?: string;
-};
 
 type PageMeta = {
   title?: string;
@@ -55,26 +47,15 @@ export function readPageMeta(source: string): PageMeta {
   return meta;
 }
 
-/** Every registry:ui item that has a page, as the site should list it. */
+/** Every component, as the site should list it. */
 export function componentPlan(): ComponentDoc[] {
-  const registry = JSON.parse(fs.readFileSync(path.join(repo, "registry.json"), "utf8")) as {
-    items: RegistryItem[];
-  };
-  const pages = new Set(
-    fs
-      .readdirSync(pagesDir)
-      .filter((file) => file.endsWith(".md"))
-      .map((file) => file.slice(0, -3)),
-  );
-
   const plan: ComponentDoc[] = [];
-  for (const item of registry.items) {
-    if (item.type !== "registry:ui" || !pages.has(item.name)) continue;
-    const meta = readPageMeta(fs.readFileSync(path.join(pagesDir, `${item.name}.md`), "utf8"));
+  for (const { id, item, page } of catalog().components) {
+    const meta = readPageMeta(fs.readFileSync(page, "utf8"));
     plan.push({
-      slug: item.name,
-      title: meta.title ?? item.title ?? item.name,
-      nshElement: item.name in NSH_ELEMENTS ? (NSH_ELEMENTS[item.name] ?? null) : item.name,
+      slug: id,
+      title: meta.title ?? item.title ?? id,
+      nshElement: id in NSH_ELEMENTS ? (NSH_ELEMENTS[id] ?? null) : id,
       description: meta.description ?? item.description ?? "",
     });
   }

@@ -8,10 +8,10 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
+import { catalog, writeGenerated } from "../catalog";
 import {
   declarations,
   defaultUiRel,
-  portPaths,
   readMap,
   repo,
   route,
@@ -225,8 +225,7 @@ function registryDeps(source: string, id: string): string[] {
   return [...deps];
 }
 
-function updateRegistry(map: PortMap, args: Args, Id: string, uiRel: string) {
-  const registryPath = portPaths(map).registry;
+function updateRegistry(map: PortMap, args: Args, Id: string, uiRel: string, registryPath: string) {
   const registry = JSON.parse(fs.readFileSync(registryPath, "utf8")) as {
     items: {
       name: string;
@@ -259,33 +258,20 @@ function updateRegistry(map: PortMap, args: Args, Id: string, uiRel: string) {
   console.log(`reg    ${args.id}`);
 }
 
-function patchList(file: string, marker: RegExp, entry: string, how: "array" | "cases") {
-  const text = fs.readFileSync(file, "utf8");
-  if (text.includes(entry)) {
-    console.log(`skip   ${path.relative(repo, file)} (already lists ${entry})`);
+/** Add `export * from "./<id>"` beside the other component exports in `packages/ui/index.ts`. */
+function addIndexExport(indexFile: string, id: string) {
+  const line = `export * from "./${id}";`;
+  const text = fs.readFileSync(indexFile, "utf8");
+  if (text.split(/\r?\n/).includes(line)) {
+    console.log(`skip   ${path.relative(repo, indexFile)} (already exports ./${id})`);
     return;
   }
-  let next: string;
-  if (how === "array") {
-    // const demos = ["button", "switch"];
-    next = text.replace(marker, (match) => {
-      const trimmed = match.replace(/\s*\]\s*$/, "");
-      const needsComma = /"[^"]*"\s*$/.test(trimmed);
-      return `${trimmed}${needsComma ? "," : ""} "${entry}"]`;
-    });
-  } else {
-    // const cases: Case[] = [ { id: "button" }, ];
-    next = text.replace(marker, (match) => {
-      const insert = `  { id: "${entry}" },\n`;
-      return match.replace(/\n\];\s*$/, `\n${insert}];`);
-    });
-  }
-  if (next === text) {
-    console.error(`port:new: could not patch ${path.relative(repo, file)}`);
-    process.exit(1);
-  }
-  fs.writeFileSync(file, next);
-  console.log(`patch  ${path.relative(repo, file)}`);
+  const lines = text.split("\n");
+  const libAt = lines.findIndex((line) => /^export\b.*from "\.\/lib\//.test(line));
+  const at = libAt >= 0 ? libAt : lines.length - (lines.at(-1) === "" ? 1 : 0);
+  lines.splice(at, 0, line);
+  fs.writeFileSync(indexFile, lines.join("\n"));
+  console.log(`index  ./${id}`);
 }
 
 function main() {
@@ -294,7 +280,7 @@ function main() {
   const Id = toPascal(args.id);
   const camel = toCamel(args.id);
   const uiRel = defaultUiRel(map, args.id);
-  const paths = portPaths(map);
+  const paths = catalog().paths;
   const vars = {
     id: args.id,
     Id,
@@ -327,32 +313,27 @@ function main() {
   const refTemplate = args.family ? "demo.family.ref.tsx.tmpl" : "demo.ref.tsx.tmpl";
   writeNew(path.join(paths.demos, `${args.id}.tsx`), render(readTemplate(demoTemplate), vars));
   writeNew(path.join(paths.demos, `${args.id}.ref.tsx`), render(readTemplate(refTemplate), vars));
-  writeNew(path.join(paths.docs, `${args.id}.md`), render(readTemplate("docs.md.tmpl"), vars));
+  writeNew(path.join(paths.pages, `${args.id}.md`), render(readTemplate("docs.md.tmpl"), vars));
 
-  patchList(path.join(paths.demos, "App.tsx"), /const demos = \[[^\]]*\]/, args.id, "array");
-  patchList(
-    path.join(paths.demos, "render.test.tsx"),
-    /const cases: Case\[] = \[[\s\S]*?\];/,
-    args.id,
-    "cases",
-  );
-
-  updateRegistry(map, args, Id, uiRel);
+  updateRegistry(map, args, Id, uiRel, paths.registry);
+  addIndexExport(paths.index, args.id);
+  writeGenerated(catalog());
+  console.log(`catalog ./${args.id}`);
 
   const fmt = [
     targetPath(map, uiRel),
     path.join(paths.demos, `${args.id}.tsx`),
     path.join(paths.demos, `${args.id}.ref.tsx`),
-    path.join(paths.demos, "App.tsx"),
-    path.join(paths.demos, "render.test.tsx"),
-    path.join(paths.docs, `${args.id}.md`),
+    path.join(paths.pages, `${args.id}.md`),
+    paths.index,
     paths.registry,
+    paths.generated,
     path.join(repo, "port-map.json"),
   ];
   spawnSync("vp", ["fmt", ...fmt], { cwd: repo, stdio: "inherit" });
 
   console.log(
-    `port:new: ${args.id} scaffolded. Fill every TODO(port), then port:check / nsh check / port:render.`,
+    `port:new: ${args.id} scaffolded. Fill TODO(port), then port:check / bun run catalog --check / nsh check / port:render.`,
   );
 }
 

@@ -1,80 +1,30 @@
 /**
- * Package each apps/docs/demos/*.tsx with `nsh package --target web`
- * into apps/docs/public/demos/<name>/ (flattened index.html).
+ * Package each catalog demo (`apps/docs/demos/<id>.tsx`, from `scripts/catalog.ts`) with
+ * `nsh package --target web` into apps/docs/public/demos/<name>/ (flattened index.html).
  *
- * Also validates every `demo:` frontmatter on component md pages has a
- * matching demos/<slug>.tsx, and every demo source is referenced by a page.
+ * The catalog's `--check` already guarantees every component has its demo and that no demo is
+ * orphaned; this script only packages the set, sorted by file name so the log is stable.
  */
 import { spawn } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { catalog } from "../../../scripts/catalog";
+
 /** Keep low: concurrent `nsh package --target web` races on the shared web runtime wasm. */
 const CONCURRENCY = 1;
 
 const docsRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const demosDir = path.join(docsRoot, "demos");
+const cat = catalog();
+const demosDir = cat.paths.demos;
 const outRoot = path.join(docsRoot, "public", "demos");
-const componentsDir = path.join(docsRoot, "src", "pages", "docs", "components");
-
-/**
- * Files in demos/ that are not a page's demo: the app entry `nsh check` / `nsh test` need, the
- * shared demo kit, and the render check's reference pages (`<id>.ref.tsx`).
- */
-const isDemo = (f: string) =>
-  f.endsWith(".tsx") &&
-  !f.endsWith(".test.tsx") &&
-  !f.endsWith(".ref.tsx") &&
-  f !== "App.tsx" &&
-  f !== "kit.tsx";
-
-const entries = fs.readdirSync(demosDir).filter(isDemo).sort();
+const entries = cat.components
+  .map((component) => component.demo)
+  .sort((a, b) => a.localeCompare(b));
 
 if (entries.length === 0) {
-  console.error("No demos/*.tsx found");
-  process.exit(1);
-}
-
-const demoSlugs = new Set(entries.map((f) => path.basename(f, ".tsx")));
-
-function frontmatterBlock(src: string): string | null {
-  if (!src.startsWith("---\n") && !src.startsWith("---\r\n")) return null;
-  const end = src.indexOf("\n---", 3);
-  if (end === -1) return null;
-  return src.slice(3, end);
-}
-
-function demoFromFrontmatter(block: string): string | null {
-  const match = block.match(/^[ \t]*demo:[ \t]*([^\s#]+)/m);
-  return match?.[1] ?? null;
-}
-
-const frontmatterDemos = new Map<string, string>();
-for (const file of fs.readdirSync(componentsDir).filter((f) => f.endsWith(".md"))) {
-  const src = fs.readFileSync(path.join(componentsDir, file), "utf8");
-  const block = frontmatterBlock(src);
-  if (!block) continue;
-  const demo = demoFromFrontmatter(block);
-  if (!demo) continue;
-  frontmatterDemos.set(file, demo);
-}
-
-let validationFailed = false;
-for (const [file, demo] of frontmatterDemos) {
-  if (!demoSlugs.has(demo)) {
-    console.error(`Missing demos/${demo}.tsx for frontmatter demo: in ${file}`);
-    validationFailed = true;
-  }
-}
-for (const slug of demoSlugs) {
-  const referenced = [...frontmatterDemos.values()].includes(slug);
-  if (!referenced) {
-    console.error(`Orphan demos/${slug}.tsx — no component page sets demo: ${slug}`);
-    validationFailed = true;
-  }
-}
-if (validationFailed) {
+  console.error("The catalog has no component demos");
   process.exit(1);
 }
 
@@ -94,9 +44,8 @@ function flattenPackageDir(outDir: string) {
   fs.rmSync(nestedDir, { recursive: true, force: true });
 }
 
-function packageOne(file: string): Promise<void> {
-  const name = path.basename(file, ".tsx");
-  const entry = path.join(demosDir, file);
+function packageOne(entry: string): Promise<void> {
+  const name = path.basename(entry, ".tsx");
   const outDir = path.join(outRoot, name);
   fs.rmSync(outDir, { recursive: true, force: true });
   fs.mkdirSync(outDir, { recursive: true });
@@ -129,10 +78,9 @@ async function runPool(files: string[], limit: number) {
   let failed = 0;
   const workers = Array.from({ length: Math.min(limit, files.length) }, async () => {
     while (next < files.length) {
-      const i = next++;
-      const file = files[i]!;
+      const entry = files[next++]!;
       try {
-        await packageOne(file);
+        await packageOne(entry);
       } catch (err) {
         console.error(err instanceof Error ? err.message : err);
         failed += 1;

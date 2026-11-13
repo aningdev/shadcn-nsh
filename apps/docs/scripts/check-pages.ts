@@ -1,37 +1,32 @@
 /**
  * The docs' page contract, checked:
  *
- * - every `registry:ui` item has a page, and every page has an item;
  * - a page has Installation, Usage, Examples and API, and none of the old
  *   Install / Composition / Differences / Not forwarded sections;
- * - a `demo:` names an existing `apps/docs/demos/<slug>.tsx`;
+ * - a `demo:` names the page's own demo;
  * - every name a fenced snippet imports from `@/components/ui/<id>` is
- *   exported by `packages/ui/<id>.tsx`;
+ *   exported by that component's file;
  * - `components.generated.ts` is what `bun run docs:components` would write.
+ *
+ * The component set itself (page, demo and reference page exist, no orphans) is
+ * `bun run catalog --check`.
  *
  *   bun run check:pages
  */
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 
+import { catalog } from "../../../scripts/catalog";
 import { components } from "../src/lib/components.generated";
 import { componentPlan, readPageMeta } from "./build-components";
 
-const docs = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
-const repo = path.resolve(docs, "../..");
-const pagesDir = path.join(docs, "src/pages/docs/components");
-const demosDir = path.join(docs, "demos");
+const cat = catalog();
+const repo = cat.root;
 
-type RegistryItem = { name: string; type: string };
 type Fence = { lang: string; body: string; line: number };
 
 const problems: string[] = [];
 const fail = (message: string) => problems.push(message);
-
-function isFile(file: string): boolean {
-  return fs.existsSync(file) && fs.statSync(file).isFile();
-}
 
 /** The fences of a Markdown page, with the line their content starts on. */
 function fences(source: string): Fence[] {
@@ -107,39 +102,19 @@ function exportsOf(file: string): Set<string> {
   return names;
 }
 
-const registry = JSON.parse(fs.readFileSync(path.join(repo, "registry.json"), "utf8")) as {
-  items: RegistryItem[];
-};
-const uiItems = registry.items.filter((item) => item.type === "registry:ui");
-const pages = fs
-  .readdirSync(pagesDir)
-  .filter((file) => file.endsWith(".md"))
-  .map((file) => file.slice(0, -3))
-  .sort();
-
-// Registry ↔ pages.
-for (const item of uiItems) {
-  if (!pages.includes(item.name))
-    fail(`registry:ui "${item.name}" has no page in ${path.relative(repo, pagesDir)}`);
-}
-for (const page of pages) {
-  if (!uiItems.some((item) => item.name === page)) {
-    fail(`page ${path.relative(repo, path.join(pagesDir, `${page}.md`))} has no registry:ui item`);
-  }
-}
-
 // Generated list.
 const plan = componentPlan();
 if (JSON.stringify(plan) !== JSON.stringify(components)) {
   fail("components.generated.ts is stale; run `bun run docs:components`");
 }
 
+const byId = new Map(cat.components.map((component) => [component.id, component]));
 let importCount = 0;
 const required = ["Installation", "Usage", "Examples", "API"];
 const old = new Set(["Install", "Composition", "Differences", "Not forwarded"]);
 
-for (const page of pages) {
-  const file = path.join(pagesDir, `${page}.md`);
+for (const component of cat.components) {
+  const file = component.page;
   const source = fs.readFileSync(file, "utf8");
   const where = path.relative(repo, file);
   const meta = readPageMeta(source);
@@ -152,9 +127,8 @@ for (const page of pages) {
     if (old.has(section)) fail(`${where}: old section "## ${section}"`);
   }
 
-  if (meta.demo) {
-    const demo = path.join(demosDir, `${meta.demo}.tsx`);
-    if (!isFile(demo)) fail(`${where}: demo "${meta.demo}" has no ${path.relative(repo, demo)}`);
+  if (meta.demo && meta.demo !== component.id) {
+    fail(`${where}: demo "${meta.demo}" is not "${component.id}"`);
   }
 
   const modules = new Map<string, Set<string>>();
@@ -165,15 +139,13 @@ for (const page of pages) {
       const spec = match[2]!;
       if (!spec.startsWith("@/components/ui/")) continue;
       const id = spec.slice("@/components/ui/".length);
-      const target = path.join(repo, "packages/ui", `${id}.tsx`);
-      if (!modules.has(id)) {
-        if (!isFile(target)) {
-          fail(`${where}:${fence.line}: no ${path.relative(repo, target)} to import from`);
-          modules.set(id, new Set());
-          continue;
-        }
-        modules.set(id, exportsOf(target));
+      const owner = byId.get(id);
+      if (!owner) {
+        fail(`${where}:${fence.line}: no component "${id}" to import from`);
+        modules.set(id, new Set());
+        continue;
       }
+      if (!modules.has(id)) modules.set(id, exportsOf(owner.uiFile));
       const exported = modules.get(id)!;
       const names = match[1]!
         .replace(/\/\*[\s\S]*?\*\//g, "")
@@ -200,6 +172,4 @@ if (problems.length > 0) {
   process.exit(1);
 }
 
-console.log(
-  `check:pages ok — ${uiItems.length} components, ${pages.length} pages, ${importCount} imported names`,
-);
+console.log(`check:pages ok — ${cat.components.length} components, ${importCount} imported names`);
