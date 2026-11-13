@@ -45,6 +45,8 @@ function onlyIds(): string[] | undefined {
 }
 
 const only = onlyIds();
+/** The same list for `baseline.ts`: it re-records (or checks) those pictures alone. */
+const onlyArg = only ? ["--only", only.join(",")] : [];
 const shots = path.join(demos, "shots");
 fs.rmSync(shots, { recursive: true, force: true });
 fs.mkdirSync(shots, { recursive: true });
@@ -168,11 +170,10 @@ if (status === 0) {
   } else if (process.argv.includes("--no-baseline")) {
     console.log("baseline: skipped (--no-baseline)");
   } else {
-    const compare = spawnSync(
-      "bun",
-      [path.join(import.meta.dir, "baseline.ts"), ...(only ? ["--only", only.join(",")] : [])],
-      { cwd: repo, stdio: "inherit" },
-    );
+    const compare = spawnSync("bun", [path.join(import.meta.dir, "baseline.ts"), ...onlyArg], {
+      cwd: repo,
+      stdio: "inherit",
+    });
     if ((compare.status ?? 1) !== 0) process.exit(compare.status ?? 1);
   }
 }

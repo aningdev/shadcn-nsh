@@ -19,6 +19,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import { cases } from "../../apps/docs/demos/render-cases";
 import { catalog } from "../catalog";
 import { repo } from "./lib";
 
@@ -44,9 +45,14 @@ if (onlyAt >= 0 && (!only || only.length === 0)) {
 }
 const chosen = (name: string) => !only || only.some((id) => name.startsWith(`${id}-`));
 
+/** The pages a case compares by eye: their pictures are shown, never gated byte for byte. */
+const byEye = cases.filter((c) => c.byEye).map((c) => c.id);
+const gated = (name: string) => !byEye.some((id) => name.startsWith(`${id}-`));
+
+/** The pictures the baseline holds: a pointer shot of a page that can be compared byte for byte. */
 const shotFiles = () =>
   fs.existsSync(shots)
-    ? fs.readdirSync(shots).filter(pointerShot).filter(chosen).sort()
+    ? fs.readdirSync(shots).filter(pointerShot).filter(chosen).filter(gated).sort()
     : [];
 
 if (process.argv.includes("--update")) {
@@ -69,7 +75,12 @@ if (!fs.existsSync(baseline)) {
   process.exit(1);
 }
 
-const baselineFiles = fs.readdirSync(baseline).filter(pointerShot).filter(chosen).sort();
+const baselineFiles = fs
+  .readdirSync(baseline)
+  .filter(pointerShot)
+  .filter(chosen)
+  .filter(gated)
+  .sort();
 const latest = new Set(shotFiles());
 const problems: string[] = [];
 let same = 0;
