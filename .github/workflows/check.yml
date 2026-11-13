@@ -89,3 +89,9 @@ jobs:
           path: apps/docs/demos/shots
           if-no-files-found: ignore
           retention-days: 7
+
+      # The registry as an app receives it (docs/port.md): a fresh build of `registry.json` must
+      # equal the committed `public/r`, then `init` + `add` copy every item into a real NSH app
+      # and `nsh check` it — the whole registry, and once per `registry:ui` item alone.
+      - name: Install test
+        run: bun run test:install

@@ -93,6 +93,7 @@ nsh run apps/docs/demos/button.tsx  # 运行一个演示
 bun run nsh:bootstrap          # 校验安装的 CLI 在基线，生成各 .nsh types host
 bun run check                  # port:check + demos/gallery 类型 + docs（会改文件）
 bun run test:gallery           # 原生行为测试
+bun run test:install           # 复制即用：真实 NSH app 里 init / add / nsh check（逐条目）
 ```
 
 其余脚本见根 `package.json`；`init` / `add` 用法见 [`README.md`](README.md)。
