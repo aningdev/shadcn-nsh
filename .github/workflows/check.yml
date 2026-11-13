@@ -76,8 +76,10 @@ jobs:
           echo "::error::no Chrome, Edge or Chromium on PATH: bun run port:render runs nsh test --target web in a headless browser"
           exit 1
 
+      # The committed baseline was recorded on macOS; Linux draws text differently, so here
+      # only the component ↔ reference pairs gate.
       - name: Render check
-        run: bun run port:render
+        run: bun run port:render --no-baseline
 
       - name: Upload render screenshots
         if: always()

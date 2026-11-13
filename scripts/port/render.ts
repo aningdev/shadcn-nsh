@@ -2,7 +2,10 @@
  * Runs the render check (`<root>/demos/render.test.tsx`) in a headless browser. The test writes
  * its screenshots to `shots/` beside it, relative to the directory it runs in, so it runs there.
  *
- *   bun scripts/port/render.ts [--filter <name>]
+ *   bun scripts/port/render.ts [--filter <name>] [--no-baseline]
+ *
+ * `--no-baseline` skips the comparison with `baseline/`, which was recorded on macOS: another
+ * platform draws text differently, so there only the component ↔ reference pairs are a gate.
  */
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
@@ -105,7 +108,7 @@ const result = spawnSync(
     "--target",
     "web",
     ...(software ? ["--browser", software] : []),
-    ...process.argv.slice(2),
+    ...process.argv.slice(2).filter((arg) => arg !== "--no-baseline"),
   ],
   { cwd: demos, stdio: "inherit", env },
 );
@@ -116,6 +119,8 @@ console.log("one page of them all: bun run port:sheet");
 if (result.status === 0) {
   if (process.argv.includes("--filter")) {
     console.log("baseline: skipped for a filtered run");
+  } else if (process.argv.includes("--no-baseline")) {
+    console.log("baseline: skipped (--no-baseline)");
   } else {
     const compare = spawnSync("bun", [path.join(import.meta.dir, "baseline.ts")], {
       cwd: repo,

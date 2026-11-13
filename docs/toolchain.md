@@ -101,7 +101,7 @@ TypeScript 为 **7.1**（Astro content mapper 所需）。它不提供 JS 解析
 
 没有外壳的组件（`badge`、`spinner`、`stat`、`status`、`meter`、`plot`、`emoji-picker`、`color-picker`）在参照页上画的就是组件本身，比较证明不了什么：它们在那张表里带 `selfReference`（理由），渲染测试打印理由、只截组件，外观检查照旧跑；`port:coverage` 要求无外壳的都有声明、有外壳的都没有。
 
-**指针截图有一份提交的基线。** 在 CPU 光栅化下两次全量 `port:render` 的 192 张 PNG 逐字节相同（2026-11-12，macOS），所以 `apps/docs/demos/baseline/` 收了完整的一份：`port:render` 跑完逐字节比较，改动、缺失、新增都会列出并以非零退出；看过 `port:sheet` 后确认是想要的改动，就 `bun run port:baseline --update` 并提交。换一台机器可能因字体或抗锯齿不同而全部"改动"，那时这份基线是评审辅助而不是门禁（改容差或按平台分基线）。
+**指针截图有一份提交的基线。** 在 CPU 光栅化下两次全量 `port:render` 的 192 张 PNG 逐字节相同（2026-11-12，macOS），所以 `apps/docs/demos/baseline/` 收了完整的一份：`port:render` 跑完逐字节比较，改动、缺失、新增都会列出并以非零退出；看过 `port:sheet` 后确认是想要的改动，就 `bun run port:baseline --update` 并提交。基线只在 macOS 上是门禁：别的平台字体与抗锯齿不同，会全部"改动"，所以 CI（Linux）跑 `port:render --no-baseline`，只以组件与参照页成对相同为门禁。
 
 iOS 那一半需要 Xcode 的 iPhone 模拟器，以及 iOS 运行时（`~/.nsh/runtime/ios/iphonesimulator/nsh-ios-host`）。运行时用 CLI 装，不编译：
 
