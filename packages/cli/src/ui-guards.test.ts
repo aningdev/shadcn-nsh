@@ -78,6 +78,16 @@ describe("ported shells (packages/ui)", () => {
     expect(offenders, `colour-literals in ${offenders.join(", ")}`).toEqual([]);
   });
 
+  test("the demo adapter draws no color of its own either", () => {
+    // `stage.tsx` and `kit.tsx` are the demos' own chrome (not a component): a demo reads the
+    // theme through them, so a color written out there would sit outside the theme as well.
+    const adapter = ["apps/docs/demos/stage.tsx", "apps/docs/demos/kit.tsx"];
+    const offenders = adapter.filter((path) =>
+      rules["colour-literals"].some((p) => p.test(shellCode(path))),
+    );
+    expect(offenders, `colour-literals in ${offenders.join(", ")}`).toEqual([]);
+  });
+
   test("the region strip leaves shell code for the guard to see", () => {
     const sample = `// @port look/x.ts\nconst a = "#fff";\n// @port end\nconst b = "#000";`;
     const stripped = sample.replace(/\/\/ @port [^\n]*\n[\s\S]*?\/\/ @port end/g, "");
