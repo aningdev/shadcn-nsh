@@ -16,6 +16,11 @@ import { density, sectionSurface } from "@/packages/ui/lib/surface";
 export function DemoPage(props: {
   title: string;
   children: JSX.Element;
+  /**
+   * The widest the page gets, centered: a document's 680 points, as the website centers the
+   * text view. Unset, the page takes the whole window.
+   */
+  width?: number;
   /** Quieter line under the body (press counts, last open reason). */
   note?: string | (() => string);
 }) {
@@ -24,13 +29,26 @@ export function DemoPage(props: {
       style={{ flex: 1, backgroundColor: colors.background }}
       contentStyle={{ flexGrow: 1, padding: 20, gap: density.gap + 2 }}
     >
-      <Text style={{ fontSize: 22, fontWeight: "700", color: colors.text }}>{props.title}</Text>
-      {props.children}
-      <If when={props.note}>
-        <Text style={{ fontSize: 13, color: colors.muted }}>
-          {typeof props.note === "function" ? props.note() : props.note}
-        </Text>
-      </If>
+      <View
+        style={
+          props.width === undefined
+            ? { gap: density.gap + 2 }
+            : {
+                width: "100%",
+                maxWidth: props.width,
+                alignSelf: "center",
+                gap: density.gap + 2,
+              }
+        }
+      >
+        <Text style={{ fontSize: 22, fontWeight: "700", color: colors.text }}>{props.title}</Text>
+        {props.children}
+        <If when={props.note}>
+          <Text style={{ fontSize: 13, color: colors.muted }}>
+            {typeof props.note === "function" ? props.note() : props.note}
+          </Text>
+        </If>
+      </View>
     </Scroll>
   );
 }

@@ -2,7 +2,6 @@
 // library's parts: tickets (− and + beside the field), a price (steppers at the end, its currency
 // beside the field) and a temperature that allows halves and nothing at first; a switch disables
 // all three, and the inspector says what each holds and logs every change.
-import { colors } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 
@@ -11,7 +10,7 @@ import { NumberInput } from "@/packages/ui/number-input";
 import { Switch } from "@/packages/ui/switch";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Split } from "./stage";
+import { desktop, Log, Panel, Split, ui } from "./stage";
 
 const show = (v: number | null) => (v === null ? "null" : `${v}`);
 
@@ -40,7 +39,7 @@ function App() {
 
   return (
     <DemoPage title="Number Input">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Type a number, click − and +, or press ↑ ↓ (Page Up / Down: ten steps) in the field"
           : "Type a number, or tap − and +"}
@@ -51,7 +50,7 @@ function App() {
         inspector={
           <>
             <Panel title="value · disabled">
-              <Text style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}>
+              <Text style={{ fontSize: 13, color: ui().text, fontVariant: ["tabular-nums"] }}>
                 {`tickets ${show(tickets())} · price ${show(price())} · °C ${show(temperature())}`}
                 {disabled() ? " (disabled)" : ""}
               </Text>
@@ -94,7 +93,7 @@ function App() {
                     alignSelf: "center",
                     paddingRight: 8,
                     fontSize: 12,
-                    color: colors.muted,
+                    color: ui().muted,
                   }}
                 >
                   USD

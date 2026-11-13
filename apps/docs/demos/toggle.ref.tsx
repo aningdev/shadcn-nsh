@@ -1,7 +1,7 @@
 // The reference of `toggle.tsx`: the same scene as upstream writes it, `toggleLook` spread on
 // `nsh/base`'s Toggle inside a `ToggleGroup`. The render check requires the two to draw the same
 // pixels.
-import { alpha, colors } from "@shadcn-nsh/theme";
+import { alpha } from "@shadcn-nsh/theme";
 import { Canvas, mount, signal, Text, View } from "nsh";
 import { Toggle, ToggleGroup } from "nsh/base";
 
@@ -10,7 +10,7 @@ import { toggleGlyph, toggleLabel, toggleLook } from "@/packages/ui/toggle";
 import { toolbarRule, toolbarTrack } from "@/packages/ui/toolbar";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
-import { desktop, Log, Split } from "./stage";
+import { desktop, Log, Split, ui } from "./stage";
 
 type Mark = "bold" | "italic" | "underline";
 type Align = "left" | "center" | "right";
@@ -60,7 +60,7 @@ function App() {
 
   return (
     <DemoPage title="Toggle">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click a toggle, or Tab to the toolbar and move with the arrow keys"
           : "Tap a toggle to turn it on or off"}
@@ -123,7 +123,7 @@ function App() {
             style={{
               fontSize: 15,
               lineHeight: 22,
-              color: colors.text,
+              color: ui().text,
               fontWeight: has("bold") ? "700" : "400",
               fontStyle: has("italic") ? "italic" : "normal",
               textDecorationLine: has("underline") ? "underline" : "none",
@@ -144,13 +144,11 @@ function App() {
           }}
           {...toggleLook({ text: true, style: { alignSelf: "flex-start" } })}
           pressedStyle={{
-            backgroundColor: alpha(colors.accent, 0.12),
-            borderColor: alpha(colors.accent, 0.3),
+            backgroundColor: alpha(ui().accent, 0.12),
+            borderColor: alpha(ui().accent, 0.3),
           }}
         >
-          <Text
-            style={{ ...toggleLabel(starred), color: starred() ? colors.accent : colors.muted }}
-          >
+          <Text style={{ ...toggleLabel(starred), color: starred() ? ui().accent : ui().muted }}>
             {starred() ? "★" : "☆"}
           </Text>
           <Text style={toggleLabel(starred)}>{starred() ? "Starred" : "Star"}</Text>

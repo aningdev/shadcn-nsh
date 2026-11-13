@@ -1,7 +1,6 @@
 // The reference of `number-input.tsx`: the same scene as upstream writes it, the well and the
 // steppers spread on `nsh/base`'s NumberInput. The render check requires the two to draw the same
 // pixels.
-import { colors } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 import { NumberInput, Switch } from "nsh/base";
@@ -11,7 +10,7 @@ import { numberInputClasses, numberInputSteps, numberInputText } from "@/package
 import { switchLook } from "@/packages/ui/switch";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Split } from "./stage";
+import { desktop, Log, Panel, Split, ui } from "./stage";
 
 const show = (v: number | null) => (v === null ? "null" : `${v}`);
 
@@ -45,7 +44,7 @@ function App() {
 
   return (
     <DemoPage title="Number Input">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Type a number, click − and +, or press ↑ ↓ (Page Up / Down: ten steps) in the field"
           : "Type a number, or tap − and +"}
@@ -56,7 +55,7 @@ function App() {
         inspector={
           <>
             <Panel title="value · disabled">
-              <Text style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}>
+              <Text style={{ fontSize: 13, color: ui().text, fontVariant: ["tabular-nums"] }}>
                 {`tickets ${show(tickets())} · price ${show(price())} · °C ${show(temperature())}`}
                 {disabled() ? " (disabled)" : ""}
               </Text>
@@ -104,7 +103,7 @@ function App() {
                     alignSelf: "center",
                     paddingRight: 8,
                     fontSize: 12,
-                    color: colors.muted,
+                    color: ui().muted,
                   }}
                 >
                   USD

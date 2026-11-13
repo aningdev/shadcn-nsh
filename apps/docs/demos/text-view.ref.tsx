@@ -2,7 +2,6 @@
 // TextView, the way the official examples (`references/nsh/website/demos/text-view.tsx`,
 // `el-text-selection.tsx`) write it. It differs from the component page only in the parts it
 // names.
-import { colors } from "@shadcn-nsh/theme";
 import { cleanup, mount, signal, Text, View } from "nsh";
 import { TextView } from "nsh/base";
 
@@ -12,7 +11,7 @@ import { sectionSurface } from "@/packages/ui/lib/surface";
 import { textViewCaretClass, textViewLinkClasses } from "@/packages/ui/text-view";
 
 import { DemoCard, DemoPage } from "./kit";
-import { desktop } from "./stage";
+import { desktop, ui } from "./stage";
 
 const REPLY = `## Moving to offline sync
 
@@ -58,7 +57,7 @@ function App() {
   };
   return (
     <DemoPage title="Text view">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Select across the paragraphs: one selection runs over them, Ctrl / Cmd+C copies."
           : "Long press a word, then drag the handles across the texts."}
@@ -83,21 +82,19 @@ function App() {
 
         <DemoCard>
           <View selectable style={{ gap: 10 }}>
-            <Text style={{ fontSize: 17, fontWeight: "600", color: colors.text }}>
-              Release notes
-            </Text>
-            <Text style={{ color: colors.text, lineHeight: 22 }}>
+            <Text style={{ fontSize: 17, fontWeight: "600", color: ui().text }}>Release notes</Text>
+            <Text style={{ color: ui().text, lineHeight: 22 }}>
               Version 2.4 moves the app to offline sync.
             </Text>
             <TextView markdown={NOTES} classes={textViewLinkClasses} />
             <View style={{ flexDirection: "row", gap: 8 }}>
-              <Text style={{ userSelect: "none", color: colors.faint }}>
+              <Text style={{ userSelect: "none", color: ui().faint }}>
                 Updated (userSelect none)
               </Text>
-              <Text style={{ color: colors.text }}>October 21</Text>
+              <Text style={{ color: ui().text }}>October 21</Text>
             </View>
           </View>
-          <Text style={{ fontSize: 12, color: colors.muted }}>
+          <Text style={{ fontSize: 12, color: ui().muted }}>
             Paste what you copied: the label marked userSelect none stays out of it.
           </Text>
           <Input
@@ -107,7 +104,7 @@ function App() {
             placeholder="Paste here"
             style={{ height: 110 }}
           />
-          <Text style={{ fontSize: 12, color: colors.muted, fontVariant: ["tabular-nums"] }}>
+          <Text style={{ fontSize: 12, color: ui().muted, fontVariant: ["tabular-nums"] }}>
             {`${pasted().length} characters, ${pasted() ? pasted().split("\n").length : 0} lines`}
           </Text>
         </DemoCard>

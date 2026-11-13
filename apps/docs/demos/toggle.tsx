@@ -2,7 +2,7 @@
 // parts: one toolbar of marks (any number at once) and an alignment (exactly one), the text they
 // format, and a toggle on its own whose accent tint stands in for the on fill; an inspector logs
 // what each reported, and a second card lists the variants and the sizes.
-import { alpha, colors } from "@shadcn-nsh/theme";
+import { alpha } from "@shadcn-nsh/theme";
 import { Canvas, mount, signal, Text, View } from "nsh";
 
 import { sectionSurface } from "@/packages/ui/lib/surface";
@@ -11,7 +11,7 @@ import { ToggleGroup } from "@/packages/ui/toggle-group";
 import { toolbarRule, toolbarTrack } from "@/packages/ui/toolbar";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
-import { desktop, Log, Split } from "./stage";
+import { desktop, Log, Split, ui } from "./stage";
 
 type Mark = "bold" | "italic" | "underline";
 type Align = "left" | "center" | "right";
@@ -63,7 +63,7 @@ function App() {
   // pressed, its label or icon muted until it is on.
   return (
     <DemoPage title="Toggle">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click a toggle, or Tab to the toolbar and move with the arrow keys"
           : "Tap a toggle to turn it on or off"}
@@ -124,7 +124,7 @@ function App() {
             style={{
               fontSize: 15,
               lineHeight: 22,
-              color: colors.text,
+              color: ui().text,
               fontWeight: has("bold") ? "700" : "400",
               fontStyle: has("italic") ? "italic" : "normal",
               textDecorationLine: has("underline") ? "underline" : "none",
@@ -146,13 +146,11 @@ function App() {
           }}
           style={{ alignSelf: "flex-start" }}
           pressedStyle={{
-            backgroundColor: alpha(colors.accent, 0.12),
-            borderColor: alpha(colors.accent, 0.3),
+            backgroundColor: alpha(ui().accent, 0.12),
+            borderColor: alpha(ui().accent, 0.3),
           }}
         >
-          <Text
-            style={{ ...toggleLabel(starred), color: starred() ? colors.accent : colors.muted }}
-          >
+          <Text style={{ ...toggleLabel(starred), color: starred() ? ui().accent : ui().muted }}>
             {starred() ? "★" : "☆"}
           </Text>
           <Text style={toggleLabel(starred)}>{starred() ? "Starred" : "Star"}</Text>

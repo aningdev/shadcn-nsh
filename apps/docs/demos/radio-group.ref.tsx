@@ -1,7 +1,6 @@
 // The reference of `radio-group.tsx`: the same scene as upstream writes it, `RadioRing` and
 // `choiceTileLook` spread on `nsh/base`'s Radio. The render check requires the two to draw the
 // same pixels.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 import { Radio, RadioGroup } from "nsh/base";
 
@@ -10,7 +9,7 @@ import { RadioRing } from "@/packages/ui/radio-group";
 import { segmentedLook } from "@/packages/ui/segmented";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Split } from "./stage";
+import { desktop, Log, Panel, Split, ui } from "./stage";
 
 const plans = [
   { id: "starter", label: "Starter", detail: "1 project · 5 GB", price: "Free" },
@@ -30,7 +29,7 @@ function App() {
 
   return (
     <DemoPage title="Radio Group">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click an option, or Tab to a group and move with the arrow keys"
           : "Tap an option: its label checks it too"}
@@ -41,7 +40,7 @@ function App() {
         inspector={
           <>
             <Panel title="value">
-              <Text style={{ fontSize: 13, color: colors.text }}>{`${plan()} · ${cycle()}`}</Text>
+              <Text style={{ fontSize: 13, color: ui().text }}>{`${plan()} · ${cycle()}`}</Text>
             </Panel>
             <Log
               title={`onChange({ checked }) · ${plan()}, ${cycle()}`}
@@ -90,7 +89,7 @@ function App() {
                   style={{
                     fontSize: 13,
                     fontVariant: ["tabular-nums"],
-                    color: plan() === item.id ? colors.text : colors.muted,
+                    color: plan() === item.id ? ui().text : ui().muted,
                   }}
                 >
                   {item.price}

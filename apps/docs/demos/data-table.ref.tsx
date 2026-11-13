@@ -1,14 +1,13 @@
 // The reference of `data-table.tsx`: `dataTableClasses` on `nsh/base`'s DataTable, the way the
 // official example (`references/nsh/website/demos/el-data-table.tsx`) writes it. It differs from
 // the component page only in what it names: the classes.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 import { DataTable, type DataTableColumn, type DataTableSort } from "nsh/base";
 
 import { dataTableClasses, dataTableFitPadding } from "@/packages/ui/data-table";
 
 import { DemoPage } from "./kit";
-import { Log, Segmented, Split, wide } from "./stage";
+import { Log, Segmented, Split, ui, wide } from "./stage";
 
 const NAMES = ["Ada", "Alan", "Grace", "Linus", "Margaret", "Dennis", "Barbara", "Ken"];
 const CITIES = ["Oslo", "Lima", "Kyoto", "Cairo", "Perth", "Quito", "Turin", "Hanoi"];
@@ -48,7 +47,7 @@ function App() {
 
   return (
     <DemoPage title="Data table">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         Press a title to sort, drag its edge to resize or the title to move it
       </Text>
 

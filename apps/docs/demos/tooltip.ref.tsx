@@ -2,7 +2,6 @@
 // `tooltipText`) on `nsh/base`'s Tooltip, hung on the host view's `tooltip` prop, the way the
 // official example (`references/nsh/website/demos/el-tooltip.tsx`) writes it. It differs from the
 // component page only in the parts it names.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 import { Tooltip } from "nsh/base";
 
@@ -11,7 +10,7 @@ import { Icon, type IconName } from "@/packages/ui/lib/icons";
 import { tooltipLook, tooltipText } from "@/packages/ui/tooltip";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Split, wide } from "./stage";
+import { desktop, Log, Panel, Split, ui, wide } from "./stage";
 
 /** An icon button with a hint under or above it. */
 function Tool(props: {
@@ -52,7 +51,7 @@ function Tool(props: {
           </IconButton>
         </View>
       </View>
-      <Text style={{ fontSize: 11, color: colors.faint }}>{props.placement}</Text>
+      <Text style={{ fontSize: 11, color: ui().faint }}>{props.placement}</Text>
     </View>
   );
 }
@@ -68,7 +67,7 @@ function App() {
 
   return (
     <DemoPage title="Tooltip">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Rest the pointer on a button; a click still presses it"
           : "Tooltips follow a pointer: pin them to see them here"}
@@ -79,7 +78,7 @@ function App() {
         inspector={
           <>
             <Panel title="onPress">
-              <Text style={{ fontSize: 13, color: colors.text }}>{pressed()}</Text>
+              <Text style={{ fontSize: 13, color: ui().text }}>{pressed()}</Text>
             </Panel>
             <Log title="onOpenChange({ open, reason })" lines={events()} minHeight={130} />
           </>

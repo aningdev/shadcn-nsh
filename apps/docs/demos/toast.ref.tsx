@@ -2,7 +2,6 @@
 // `toastText`, `toastActionLook`, `toastActionLabel`) spread on `nsh/base`'s Toast, in the
 // manager's stack, the way the official example (`references/nsh/website/demos/el-toast.tsx`)
 // writes it. It differs from the component page only in the parts it names.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, Overlay, safeArea, signal, Text, View } from "nsh";
 import { Toast as BaseToast, ToastManager, ToastStack, type ToastEntry } from "nsh/base";
 
@@ -16,7 +15,7 @@ import {
 } from "@/packages/ui/toast";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, wide } from "./stage";
+import { desktop, Log, ui, wide } from "./stage";
 
 /** What the demo's toasts show. */
 type Content = { title: string; description?: string; undo?: boolean };
@@ -50,7 +49,7 @@ function App() {
 
   return (
     <DemoPage title="Toast">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Show a few; rest the pointer on the stack to expand it and stop their time"
           : "Show a few; touch the stack to expand it, swipe one right to dismiss it"}

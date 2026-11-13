@@ -1,14 +1,13 @@
 // The time field has no official example of its own: the scene below is this library's, on the demo
 // adapter the official examples are written against — a start and an end with the clock and the
 // precision the inspector picks, a disabled one, and the values and changes beside them.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { sectionSurface } from "@/packages/ui/lib/surface";
 import { TimeField } from "@/packages/ui/time-field";
 
 import { DemoSection, DemoPage } from "./kit";
-import { desktop, Log, Panel, Segmented, Split } from "./stage";
+import { desktop, Log, Panel, Segmented, Split, ui } from "./stage";
 
 const PRECISIONS = ["minute", "second"] as const;
 const CYCLES = ["h12", "h23"] as const;
@@ -23,7 +22,7 @@ function App() {
 
   return (
     <DemoPage title="Time Field">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click a segment and type its digits; ↑ ↓ step it, ← → move between segments"
           : "Tap a segment and type its digits; the arrows step it"}
@@ -34,8 +33,8 @@ function App() {
         inspector={
           <>
             <Panel title="value">
-              <Text style={{ fontSize: 13, color: colors.text }}>{`start ${start()}`}</Text>
-              <Text style={{ fontSize: 13, color: colors.text }}>{`end ${end()}`}</Text>
+              <Text style={{ fontSize: 13, color: ui().text }}>{`start ${start()}`}</Text>
+              <Text style={{ fontSize: 13, color: ui().text }}>{`end ${end()}`}</Text>
             </Panel>
             <Panel title="precision">
               <Segmented

@@ -2,7 +2,6 @@
 // parts: labels for an issue (several picked in one go, searchable, sections, a clear button, a
 // footer counting them) and an assignee (one person replacing the last); the inspector holds what
 // each field has and logs every change.
-import { colors } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 
@@ -20,7 +19,7 @@ import { listboxFooter, ListboxHeader } from "@/packages/ui/lib/listbox";
 import { sectionSurface } from "@/packages/ui/lib/surface";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Split } from "./stage";
+import { desktop, Log, Panel, Split, ui } from "./stage";
 
 const LABELS = [
   { value: "bug", title: "Bug", group: "Type" },
@@ -53,8 +52,8 @@ function Field(props: { label: string; detail: string; children: JSX.Element }) 
   return (
     <View style={{ gap: 8 }}>
       <View style={{ gap: 2 }}>
-        <Text style={{ fontSize: 13, fontWeight: "500", color: colors.text }}>{props.label}</Text>
-        <Text style={{ fontSize: 12, color: colors.muted }}>{props.detail}</Text>
+        <Text style={{ fontSize: 13, fontWeight: "500", color: ui().text }}>{props.label}</Text>
+        <Text style={{ fontSize: 12, color: ui().muted }}>{props.detail}</Text>
       </View>
       {props.children}
     </View>
@@ -77,7 +76,7 @@ function App() {
 
   return (
     <DemoPage title="Combobox">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Pick several labels without the list closing; Cmd+Return confirms"
           : "Tap labels to toggle them; tap outside to finish"}
@@ -89,9 +88,9 @@ function App() {
           <>
             <Panel title="value">
               <Text
-                style={{ fontSize: 13, color: colors.text }}
+                style={{ fontSize: 13, color: ui().text }}
               >{`labels [${labels().join(", ")}]`}</Text>
-              <Text style={{ fontSize: 13, color: colors.text }}>
+              <Text style={{ fontSize: 13, color: ui().text }}>
                 {`assignee [${assignee().join(", ")}]`}
               </Text>
             </Panel>

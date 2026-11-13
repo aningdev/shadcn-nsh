@@ -1,14 +1,13 @@
 // The official data table scene (`references/nsh/website/demos/el-data-table.tsx`) with this
 // library's `DataTable`: two thousand rows, a sort the app applies and reports, selection by row
 // or by cell, and an inspector beside it that follows both.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 import type { DataTableColumn, DataTableSort } from "nsh/base";
 
 import { DataTable, dataTableFitPadding } from "@/packages/ui/data-table";
 
 import { DemoPage } from "./kit";
-import { Log, Segmented, Split, wide } from "./stage";
+import { Log, Segmented, Split, ui, wide } from "./stage";
 
 const NAMES = ["Ada", "Alan", "Grace", "Linus", "Margaret", "Dennis", "Barbara", "Ken"];
 const CITIES = ["Oslo", "Lima", "Kyoto", "Cairo", "Perth", "Quito", "Turin", "Hanoi"];
@@ -48,7 +47,7 @@ function App() {
 
   return (
     <DemoPage title="Data table">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         Press a title to sort, drag its edge to resize or the title to move it
       </Text>
 

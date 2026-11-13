@@ -1,6 +1,5 @@
 // The reference of `time-field.tsx`: the same page with `timeFieldClass` on `nsh/base`'s TimeField.
 // The render check requires the two to draw the same pixels.
-import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 import { TimeField } from "nsh/base";
 
@@ -9,7 +8,7 @@ import { sectionSurface } from "@/packages/ui/lib/surface";
 import { timeFieldClass } from "@/packages/ui/time-field";
 
 import { DemoSection, DemoPage } from "./kit";
-import { desktop, Log, Panel, Segmented, Split } from "./stage";
+import { desktop, Log, Panel, Segmented, Split, ui } from "./stage";
 
 const PRECISIONS = ["minute", "second"] as const;
 const CYCLES = ["h12", "h23"] as const;
@@ -24,7 +23,7 @@ function App() {
 
   return (
     <DemoPage title="Time Field">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click a segment and type its digits; ↑ ↓ step it, ← → move between segments"
           : "Tap a segment and type its digits; the arrows step it"}
@@ -35,8 +34,8 @@ function App() {
         inspector={
           <>
             <Panel title="value">
-              <Text style={{ fontSize: 13, color: colors.text }}>{`start ${start()}`}</Text>
-              <Text style={{ fontSize: 13, color: colors.text }}>{`end ${end()}`}</Text>
+              <Text style={{ fontSize: 13, color: ui().text }}>{`start ${start()}`}</Text>
+              <Text style={{ fontSize: 13, color: ui().text }}>{`end ${end()}`}</Text>
             </Panel>
             <Panel title="precision">
               <Segmented

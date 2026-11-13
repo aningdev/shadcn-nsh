@@ -2,7 +2,6 @@
 // parts: a language (typeahead jumps by letter) and a region (searchable, sections, one item at
 // capacity, a clear button, an empty answer), a switch that disables the region, and the
 // inspector's value, Clear region and event log.
-import { colors } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 
@@ -23,7 +22,7 @@ import {
 import { Switch } from "@/packages/ui/switch";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Split } from "./stage";
+import { desktop, Log, Panel, Split, ui } from "./stage";
 
 const LANGUAGES = [
   { value: "en", title: "English" },
@@ -67,8 +66,8 @@ function Field(props: { label: string; detail: string; children: JSX.Element }) 
   return (
     <View style={{ gap: 8 }}>
       <View style={{ gap: 2 }}>
-        <Text style={{ fontSize: 13, fontWeight: "500", color: colors.text }}>{props.label}</Text>
-        <Text style={{ fontSize: 12, color: colors.muted }}>{props.detail}</Text>
+        <Text style={{ fontSize: 13, fontWeight: "500", color: ui().text }}>{props.label}</Text>
+        <Text style={{ fontSize: 12, color: ui().muted }}>{props.detail}</Text>
       </View>
       {props.children}
     </View>
@@ -93,7 +92,7 @@ function App() {
 
   return (
     <DemoPage title="Select">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click a select, or Tab to it and press Down; type a letter to jump"
           : "Tap a select to choose from a sheet"}
@@ -104,10 +103,10 @@ function App() {
         inspector={
           <>
             <Panel title="value">
-              <Text style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}>
+              <Text style={{ fontSize: 13, color: ui().text, fontVariant: ["tabular-nums"] }}>
                 {`language ${language() ?? "null"}`}
               </Text>
-              <Text style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}>
+              <Text style={{ fontSize: 13, color: ui().text, fontVariant: ["tabular-nums"] }}>
                 {`region ${region() ?? "null"}`}
               </Text>
               <Button

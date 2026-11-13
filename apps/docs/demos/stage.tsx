@@ -5,13 +5,14 @@
 //
 // Demos only: it is not a component, has no registry entry, and never goes into `packages/ui`.
 // Its appearance is this library's theme (`@shadcn-nsh/theme`, `packages/ui/lib/surface`).
-import { alpha as tint, colors, radius } from "@shadcn-nsh/theme";
+import { alpha as tint, colors, finish, radius } from "@shadcn-nsh/theme";
 import type { JSX as __JSX } from "nsh";
 import { Text as __Text, View as __View } from "nsh";
-import { platform as __platform, windowSize as __windowSize } from "nsh";
+import { platform as __platform, token, windowSize as __windowSize } from "nsh";
 
-import { insetSurface } from "@/packages/ui/lib/surface";
+import { insetSurface, sectionSurface } from "@/packages/ui/lib/surface";
 import { Segmented as SegmentedRoot, SegmentedItem, SegmentedList } from "@/packages/ui/segmented";
+import { Toggle } from "@/packages/ui/toggle";
 
 // @port demo.ts
 /** A pointer and a keyboard: desktop density and copy ("Click", "Tab to it
@@ -229,16 +230,81 @@ export function Segmented<T extends string | number>(props: {
 
 /**
  * The gallery's palette under the names its demos read (`ui()` in
- * `references/nsh/examples/nsh-gallery-ui/palette.ts`), as far as the adapter uses them: this
- * library's theme roles, read where they are drawn.
+ * `references/nsh/examples/nsh-gallery-ui/palette.ts`), in this library's theme roles, read
+ * where they are drawn: `card` is a section's flat surface (`sectionSurface`), `inset` a well,
+ * `raised` the raised finish, `primary` the main action's. A demo's own chrome reads them; the
+ * library's look never does.
  */
-const ui = () => ({
+export const ui = () => ({
   page: colors.background,
   text: colors.text,
   muted: colors.muted,
   faint: colors.faint,
+  border: colors.border,
   line: colors.line,
+  accent: colors.accent,
+  onAccent: colors.onAccent,
+  onPrimary: colors.onLight,
+  up: colors.up,
+  down: colors.down,
+  info: colors.info,
+  warn: colors.warn,
+  danger: colors.danger,
+  violet: token("violet"),
+  card: { ...sectionSurface(), backgroundColor: colors.surface },
+  row: { ...sectionSurface(), backgroundColor: colors.surface },
+  inset: insetSurface(),
+  raised: {
+    backgroundColor: colors.raised,
+    borderWidth: 1,
+    borderColor: colors.border,
+    ...finish.raised,
+  },
+  primary: { backgroundColor: colors.light, borderWidth: 1, ...finish.light },
+  accentFill: {
+    backgroundColor: colors.accentFill,
+    borderWidth: 1,
+    borderColor: colors.accent,
+    ...finish.accent,
+  },
 });
+
+/**
+ * A `Segmented` that wraps: for an option set too long for one track (the seven tones), a chip
+ * per option in a wrapped row, the chosen one in the toggle's on fill. Same props as `Segmented`.
+ */
+export function Chips<T extends string | number>(props: {
+  label?: string;
+  options: readonly T[];
+  value: T;
+  onChange: (value: T) => void;
+}) {
+  return __View({
+    style: { gap: 6 },
+    get children() {
+      return [
+        props.label
+          ? __Text({ style: { fontSize: 12, color: ui().muted }, children: props.label })
+          : null,
+        __View({
+          style: { flexDirection: "row" as const, flexWrap: "wrap" as const, gap: 6 },
+          get children() {
+            return props.options.map((option) => (
+              <Toggle
+                size="small"
+                text
+                pressed={props.value === option}
+                onChange={() => props.onChange(option)}
+              >
+                {String(option)}
+              </Toggle>
+            ));
+          },
+        }),
+      ];
+    },
+  });
+}
 
 /**
  * The gallery's `Segmented` (one object of options and a value) over this library's parts:

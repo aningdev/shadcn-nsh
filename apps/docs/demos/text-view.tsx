@@ -1,7 +1,6 @@
 // The official text-view scenes: the website's reply, streamed again a few characters at a time
 // (`references/nsh/website/demos/text-view.tsx`), and a card that is one selection across its
 // texts with what was pasted back (`el-text-selection.tsx`), with this library's `TextView`.
-import { colors } from "@shadcn-nsh/theme";
 import { cleanup, mount, signal, Text, View } from "nsh";
 
 import { Button } from "@/packages/ui/button";
@@ -10,7 +9,7 @@ import { sectionSurface } from "@/packages/ui/lib/surface";
 import { TextView, textViewCaretClass } from "@/packages/ui/text-view";
 
 import { DemoCard, DemoPage } from "./kit";
-import { desktop } from "./stage";
+import { desktop, ui } from "./stage";
 
 const REPLY = `## Moving to offline sync
 
@@ -55,15 +54,14 @@ function App() {
     timer = setInterval(() => (i < tokens.length ? text.set(text() + tokens[i++]) : stop()), 40);
   };
   return (
-    <DemoPage title="Text view">
-      <Text style={{ color: colors.muted }}>
+    <DemoPage title="Text view" width={680}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Select across the paragraphs: one selection runs over them, Ctrl / Cmd+C copies."
           : "Long press a word, then drag the handles across the texts."}
       </Text>
 
-      {/* The website centers a document at 680 points: so does this page. */}
-      <View style={{ width: "100%", maxWidth: 680, alignSelf: "center", gap: 14 }}>
+      <>
         <DemoCard>
           <TextView
             markdown={text()}
@@ -80,21 +78,19 @@ function App() {
 
         <DemoCard>
           <View selectable style={{ gap: 10 }}>
-            <Text style={{ fontSize: 17, fontWeight: "600", color: colors.text }}>
-              Release notes
-            </Text>
-            <Text style={{ color: colors.text, lineHeight: 22 }}>
+            <Text style={{ fontSize: 17, fontWeight: "600", color: ui().text }}>Release notes</Text>
+            <Text style={{ color: ui().text, lineHeight: 22 }}>
               Version 2.4 moves the app to offline sync.
             </Text>
             <TextView markdown={NOTES} />
             <View style={{ flexDirection: "row", gap: 8 }}>
-              <Text style={{ userSelect: "none", color: colors.faint }}>
+              <Text style={{ userSelect: "none", color: ui().faint }}>
                 Updated (userSelect none)
               </Text>
-              <Text style={{ color: colors.text }}>October 21</Text>
+              <Text style={{ color: ui().text }}>October 21</Text>
             </View>
           </View>
-          <Text style={{ fontSize: 12, color: colors.muted }}>
+          <Text style={{ fontSize: 12, color: ui().muted }}>
             Paste what you copied: the label marked userSelect none stays out of it.
           </Text>
           <Input
@@ -104,11 +100,11 @@ function App() {
             placeholder="Paste here"
             style={{ height: 110 }}
           />
-          <Text style={{ fontSize: 12, color: colors.muted, fontVariant: ["tabular-nums"] }}>
+          <Text style={{ fontSize: 12, color: ui().muted, fontVariant: ["tabular-nums"] }}>
             {`${pasted().length} characters, ${pasted() ? pasted().split("\n").length : 0} lines`}
           </Text>
         </DemoCard>
-      </View>
+      </>
     </DemoPage>
   );
 }

@@ -2,7 +2,6 @@
 // parts: a name (controlled, 20 characters at most), a password (masked) the name's Return goes
 // to, notes, and a sign-in button whose result the inspector shows. A second card lists the read
 // only, the invalid and the disabled field.
-import { colors } from "@shadcn-nsh/theme";
 import type { InputRef, JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 
@@ -10,13 +9,13 @@ import { Button } from "@/packages/ui/button";
 import { Input } from "@/packages/ui/input";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
-import { desktop, Panel, Split } from "./stage";
+import { desktop, Panel, Split, ui } from "./stage";
 
 /** A label above its field, and what describes it below. */
 function Field(props: { label: string; children: JSX.Element; after?: JSX.Element }) {
   return (
     <View style={{ gap: 6 }}>
-      <Text style={{ fontSize: 13, color: colors.muted }}>{props.label}</Text>
+      <Text style={{ fontSize: 13, color: ui().muted }}>{props.label}</Text>
       {props.children}
       {props.after}
     </View>
@@ -33,7 +32,7 @@ function App() {
 
   return (
     <DemoPage title="Input">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {desktop
           ? "Tab moves between the fields; Return in the name goes to the password"
           : "Tap a field to type; Return in the name goes to the password"}
@@ -45,18 +44,18 @@ function App() {
         inspector={
           <>
             <Panel title="value">
-              <Text style={{ fontSize: 13, color: colors.text }}>
+              <Text style={{ fontSize: 13, color: ui().text }}>
                 {`name ${name() ? `“${name()}”` : "—"}`}
               </Text>
-              <Text style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}>
+              <Text style={{ fontSize: 13, color: ui().text, fontVariant: ["tabular-nums"] }}>
                 {`password ${password().length} characters`}
               </Text>
-              <Text style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}>
+              <Text style={{ fontSize: 13, color: ui().text, fontVariant: ["tabular-nums"] }}>
                 {`notes ${notes().length} characters`}
               </Text>
             </Panel>
             <Panel title="onSubmit" grow>
-              <Text style={{ fontSize: 13, color: colors.accent }}>{submitted()}</Text>
+              <Text style={{ fontSize: 13, color: ui().accent }}>{submitted()}</Text>
             </Panel>
           </>
         }
@@ -65,7 +64,7 @@ function App() {
           <Field
             label="Name (controlled, maxLength 20)"
             after={
-              <Text style={{ fontSize: 12, color: colors.muted }}>{`${name().length} / 20`}</Text>
+              <Text style={{ fontSize: 12, color: ui().muted }}>{`${name().length} / 20`}</Text>
             }
           >
             <Input

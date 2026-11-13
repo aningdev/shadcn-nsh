@@ -1,7 +1,7 @@
 // The reference of `plot.tsx`: the same seven scenes with their marks named from `nsh/base/plot`
 // and the plot look from this library, the way the official examples
 // (`references/nsh/website/demos/el-plot*.tsx`) write them. Only the imports differ.
-import { alpha, colors } from "@shadcn-nsh/theme";
+import { alpha } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 import {
@@ -34,7 +34,7 @@ import {
 } from "@/packages/ui/plot";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Panel, Segmented, Split, wide } from "./stage";
+import { desktop, Log, Panel, Segmented, Split, ui, wide } from "./stage";
 
 /** The label and detail sizes the demos read under `size`. */
 const size = {
@@ -171,7 +171,7 @@ function SalesCard(props: { mode: Mode; onHover: (index: number | null) => void 
   const labelStyle = () => ({
     fontSize: 11,
     paddingBottom: 3,
-    color: colors.muted,
+    color: ui().muted,
     fontVariant: ["tabular-nums" as const],
   });
   return (
@@ -286,7 +286,7 @@ function PriceScene() {
   };
   const open = () => rows()[0].price;
   const change = () => shown().price - open();
-  const color = () => (change() >= 0 ? colors.up : colors.down);
+  const color = () => (change() >= 0 ? ui().up : ui().down);
   // Signed figures: an explicit plus and a true minus.
   const signed = (v: number, digits: number) =>
     `${v >= 0 ? "+" : "−"}${Math.abs(v).toFixed(digits)}`;
@@ -415,9 +415,9 @@ function PriceScene() {
               tooltipContent={
                 <View
                   style={{
-                    backgroundColor: colors.raised,
+                    backgroundColor: ui().raised.backgroundColor,
                     borderWidth: 1,
-                    borderColor: colors.border,
+                    borderColor: ui().border,
                     height: 20,
                     paddingHorizontal: 6,
                     borderRadius: 6,
@@ -543,9 +543,9 @@ function CellsScene() {
   const hour = () =>
     hovered() == null || chart() !== "activity" ? undefined : ACTIVITY[hovered()!];
   // A ring around the cell under the pointer, in the text's color, a little out from its edge.
-  const ring = () => ({ outlineWidth: 1.5, outlineOffset: 1.5, outlineColor: colors.text });
-  const returnsRamp = () => [colors.down, colors.line, colors.up];
-  const activityRamp = () => [colors.line, seriesColor(0)];
+  const ring = () => ({ outlineWidth: 1.5, outlineOffset: 1.5, outlineColor: ui().text });
+  const returnsRamp = () => [ui().down, ui().line, ui().up];
+  const activityRamp = () => [ui().line, seriesColor(0)];
   const key = (ramp: string[], labels: string[]) => (
     <View style={{ gap: 4 }}>
       <View
@@ -672,7 +672,7 @@ function CellsScene() {
               style={{
                 fontSize: 20,
                 fontWeight: 600,
-                color: month() ? (month()!.ret < 0 ? colors.down : colors.up) : colors.text,
+                color: month() ? (month()!.ret < 0 ? ui().down : ui().up) : ui().text,
                 ...num,
               }}
             >
@@ -794,7 +794,7 @@ function DotsScene() {
   const country = () =>
     hovered() == null || chart() !== "bubbles" ? undefined : COUNTRIES[hovered()!];
   // A ring around the dot under the pointer, in the text's color, a little out from its edge.
-  const ring = () => ({ outlineWidth: 1.5, outlineOffset: 1.5, outlineColor: colors.text });
+  const ring = () => ({ outlineWidth: 1.5, outlineOffset: 1.5, outlineColor: ui().text });
   const key = (color: string, label: string) => (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
       <View style={{ width: 9, height: 9, borderRadius: 4.5, backgroundColor: color }} />
@@ -896,7 +896,7 @@ function DotsScene() {
                   color="region"
                   stagger={0.5}
                   inactiveOpacity={0.25}
-                  style={{ stroke: colors.surface, strokeWidth: 1 }}
+                  style={{ stroke: ui().card.backgroundColor, strokeWidth: 1 }}
                   hoverDotClass="rounded-full"
                   hoverDotStyle={ring()}
                 />
@@ -966,7 +966,7 @@ function DotsScene() {
               color="platform"
               stagger={0.6}
               inactiveOpacity={0.3}
-              style={{ stroke: colors.surface, strokeWidth: 1.5 }}
+              style={{ stroke: ui().card.backgroundColor, strokeWidth: 1.5 }}
               hoverDotClass="rounded-full"
               hoverDotStyle={ring()}
             />
@@ -1031,7 +1031,7 @@ function DualScene() {
   const height = desktop ? 200 : 180;
   const rows = () => SYMBOLS[symbol()];
   const day = () => rows()[hovered() ?? rows().length - 1];
-  const tone = (dir: string) => (dir === "down" ? colors.down : colors.up);
+  const tone = (dir: string) => (dir === "down" ? ui().down : ui().up);
   return (
     <Scene
       title="Two y scales (el-plot-dual)"
@@ -1092,7 +1092,7 @@ function DualScene() {
           colorScale={{
             type: "ordinal",
             domain: ["up", "down"],
-            range: [alpha(colors.up, 0.5), alpha(colors.down, 0.5)],
+            range: [alpha(ui().up, 0.5), alpha(ui().down, 0.5)],
           }}
           accessibilityLabel={`${symbol()}, ${rows().length} days: volume and close`}
           accessibilityValue={{
@@ -1115,7 +1115,7 @@ function DualScene() {
             borderRadius: 4.5,
             borderWidth: 2,
             borderColor: seriesColor(0),
-            backgroundColor: colors.surface,
+            backgroundColor: ui().card.backgroundColor,
           }}
           onHoverChange={({ index }) => {
             hovered.set(index);
@@ -1302,7 +1302,7 @@ function PieScene() {
               <Arc
                 innerRadius={donut() ? "62%" : 0}
                 outerRadius={ring / 2 - 8}
-                style={{ fill: alpha(colors.text, 0.06) }}
+                style={{ fill: alpha(ui().text, 0.06) }}
               />
             </If>
             <Pie
@@ -1377,7 +1377,7 @@ function PieScene() {
                   height: size.rowSm,
                   paddingHorizontal: 8,
                   borderRadius: 6,
-                  backgroundColor: hovered() === i ? alpha(colors.text, 0.05) : undefined,
+                  backgroundColor: hovered() === i ? alpha(ui().text, 0.05) : undefined,
                   opacity: hovered() == null || hovered() === i ? 1 : 0.45,
                 }}
               >
@@ -1489,9 +1489,8 @@ function RangesScene() {
         ? Math.min(hovered()!, STEPS.length - 1)
         : STEPS.length - 1
     ];
-  const tone = (dir: string) =>
-    dir === "down" ? colors.down : dir === "up" ? colors.up : colors.text;
-  const labelStyle = () => ({ fontSize: 11, paddingVertical: 3, color: colors.muted, ...num });
+  const tone = (dir: string) => (dir === "down" ? ui().down : dir === "up" ? ui().up : ui().text);
+  const labelStyle = () => ({ fontSize: 11, paddingVertical: 3, color: ui().muted, ...num });
   return (
     <Scene
       title="Ranges (el-plot-ranges)"
@@ -1550,7 +1549,7 @@ function RangesScene() {
                 colorScale={{
                   type: "ordinal",
                   domain: ["total", "up", "down"],
-                  range: [seriesColor(1), colors.up, colors.down],
+                  range: [seriesColor(1), ui().up, ui().down],
                 }}
                 accessibilityLabel={`Profit bridge: $142.7M revenue to $${STEPS[STEPS.length - 1].end.toFixed(1)}M net profit`}
                 accessibilityValue={{
@@ -1622,7 +1621,7 @@ function RangesScene() {
             colorScale={{
               type: "ordinal",
               domain: ["up", "down"],
-              range: [colors.up, colors.down],
+              range: [ui().up, ui().down],
             }}
             accessibilityLabel={`NSH Labs, ${CANDLES.length} days: from ${CANDLES[0].open.toFixed(2)} to ${CANDLES[CANDLES.length - 1].close.toFixed(2)}`}
             accessibilityValue={{
@@ -1763,7 +1762,7 @@ function TreemapScene() {
     exit: { duration: 160 },
     pointer: { stiffness: 380, damping: 36 },
   } as const;
-  const outline = () => ({ borderRadius: 3, outlineWidth: 2, outlineColor: colors.text });
+  const outline = () => ({ borderRadius: 3, outlineWidth: 2, outlineColor: ui().text });
   return (
     <Scene
       title="A treemap (el-plot-treemap)"
@@ -1826,7 +1825,7 @@ function TreemapScene() {
               ? {
                   type: "diverging" as const,
                   domain: [-3, 3],
-                  range: [colors.down, alpha(colors.text, 0.1), colors.up],
+                  range: [ui().down, alpha(ui().text, 0.1), ui().up],
                 }
               : {
                   type: "ordinal" as const,

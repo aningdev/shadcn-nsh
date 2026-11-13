@@ -1,15 +1,14 @@
 // The badge has no official example, so this page is the library's own: a deploy list whose state
 // is a badge, a row of tags, the seven tones beside them in the inspector, and where a badge's
 // outline and tone can be watched change.
-import { colors, type Tone } from "@shadcn-nsh/theme";
+import { type Tone } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { Badge } from "@/packages/ui/badge";
 import { plainRow, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
-import { Toggle } from "@/packages/ui/toggle";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
-import { Log, Panel, Segmented, Split } from "./stage";
+import { Chips, Log, Panel, Segmented, Split, ui } from "./stage";
 
 const TONES: Tone[] = ["neutral", "accent", "info", "warn", "danger", "up", "down"];
 
@@ -28,7 +27,7 @@ function App() {
   const log = (line: string) => events.set([line, ...events()].slice(0, 5));
   return (
     <DemoPage title="Badge">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {"A state or a tag in a capsule, quiet enough to sit in a row of its own."}
       </Text>
 
@@ -37,18 +36,12 @@ function App() {
         inspector={
           <>
             <Panel title="tone">
-              {/* Seven tones do not fit one segmented track: a chip each, wrapped. */}
-              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
-                {TONES.map((value) => (
-                  <Toggle
-                    size="small"
-                    pressed={tone() === value}
-                    onChange={() => (tone.set(value), log(`tone → ${value}`))}
-                  >
-                    {value}
-                  </Toggle>
-                ))}
-              </View>
+              {/* Seven tones do not fit one segmented track: `Chips` wraps them. */}
+              <Chips
+                options={TONES}
+                value={tone()}
+                onChange={(value) => (tone.set(value), log(`tone → ${value}`))}
+              />
               <View style={{ flexDirection: "row", gap: 8 }}>
                 <Badge label={tone()} tone={tone()} outline={outline() === "outline"} />
                 <Badge label="12" tone={tone()} outline={outline() === "outline"} />

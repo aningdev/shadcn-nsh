@@ -1,16 +1,15 @@
 // The status has no official example, so this page is the library's own: the services a product
 // runs on, each with its state and detail, the seven states in the inspector (a chip each), and a
 // check that reports what it found.
-import { colors, type Tone } from "@shadcn-nsh/theme";
+import { type Tone } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { Button } from "@/packages/ui/button";
 import { plainRow, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
 import { Status } from "@/packages/ui/status";
-import { Toggle } from "@/packages/ui/toggle";
 
 import { DemoPage } from "./kit";
-import { Log, Panel, Split } from "./stage";
+import { Chips, Log, Panel, Split, ui } from "./stage";
 
 const TONES: Tone[] = ["neutral", "accent", "info", "warn", "danger", "up", "down"];
 
@@ -32,7 +31,7 @@ function App() {
     SERVICES.filter((service) => service.tone === "up" || service.tone === "accent").length;
   return (
     <DemoPage title="Status">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: ui().muted }}>
         {"A quiet state mark: a dot and a word, tinted only for the states that matter."}
       </Text>
 
@@ -41,25 +40,19 @@ function App() {
         inspector={
           <>
             <Panel title="tone">
-              {/* Seven states do not fit one segmented track: a chip each, wrapped. */}
-              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
-                {TONES.map((value) => (
-                  <Toggle
-                    size="small"
-                    pressed={tone() === value}
-                    onChange={() => (tone.set(value), log(`tone → ${value}`))}
-                  >
-                    {value}
-                  </Toggle>
-                ))}
-              </View>
+              {/* Seven tones do not fit one segmented track: `Chips` wraps them. */}
+              <Chips
+                options={TONES}
+                value={tone()}
+                onChange={(value) => (tone.set(value), log(`tone → ${value}`))}
+              />
               <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
                 <Status label={tone()} tone={tone()} />
                 <Status label="No tone" />
               </View>
             </Panel>
             <Panel title="services">
-              <Text style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}>
+              <Text style={{ fontSize: 13, color: ui().text, fontVariant: ["tabular-nums"] }}>
                 {`${SERVICES.length} services · ${healthy()} healthy`}
               </Text>
               <View style={{ flexDirection: "row" }}>
