@@ -6,9 +6,17 @@
  * The ids come from the catalog (`catalog.generated.ts`); only a component's exceptions live
  * here, keyed by id.
  */
-import type { App } from "nsh/test";
-
 import { componentIds } from "./catalog.generated";
+
+/**
+ * What a step does to the page: the slice of `nsh/test`'s `App` the overrides use, structurally,
+ * so this table stays plain TypeScript (the docs project and the catalog check import it, and
+ * neither has NSH's types).
+ */
+type App = {
+  press(selector: string): Promise<void>;
+  wait(ms: number): Promise<void>;
+};
 
 export type Case = {
   /** The demo's file name, without `.tsx`. */
