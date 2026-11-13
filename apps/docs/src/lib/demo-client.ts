@@ -229,8 +229,8 @@ function layoutDemo(demo: HTMLElement, all: HTMLElement[]) {
       if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
       event.preventDefault();
       const at = buttons.indexOf(b);
-      const next =
-        buttons[(at + (event.key === "ArrowRight" ? 1 : buttons.length - 1)) % buttons.length]!;
+      const nextId = (at + (event.key === "ArrowRight" ? 1 : buttons.length - 1)) % buttons.length;
+      const next = buttons[nextId] ?? b;
       apply(next.dataset.demoLayout as Layout, true);
       next.focus();
     });
@@ -266,7 +266,8 @@ export function initDemos(root: ParentNode = document) {
         if (event.key !== "ArrowLeft" && event.key !== "ArrowRight") return;
         event.preventDefault();
         const at = tabs.indexOf(tab);
-        const next = tabs[(at + (event.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length]!;
+        const nextId = (at + (event.key === "ArrowRight" ? 1 : tabs.length - 1)) % tabs.length;
+        const next = tabs[nextId] ?? tab;
         show(next.dataset.demoView!, true);
       });
     }

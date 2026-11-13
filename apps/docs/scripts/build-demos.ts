@@ -97,7 +97,8 @@ async function runPool(files: string[], limit: number) {
   let failed = 0;
   const workers = Array.from({ length: Math.min(limit, files.length) }, async () => {
     while (next < files.length) {
-      const entry = files[next++]!;
+      const entry = files[next++];
+      if (entry === undefined) break;
       try {
         await packageOne(entry);
       } catch (err) {
