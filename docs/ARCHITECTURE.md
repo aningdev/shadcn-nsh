@@ -69,6 +69,7 @@ flowchart TD
 - `packages/*` 不 import `apps/*`、`scripts/*` 或 `references/*`；运行时代码只认 `@shadcn-nsh/theme`、`nsh`、`nsh/base` 与相对路径
 - 只有 `scripts/port` 读 `references/nsh`；`apps/docs` 的构建不需要子模块
 - 组件集合只从 `scripts/catalog.ts`（脚本）或 `catalog.generated.ts`（NSH 运行时）取；不自己读 `registry.json` 过滤，也不 `readdir` 演示或文档目录来推导
+- `scripts/*` 可以把 `packages/cli/src/*` 当库 import（构建、serve）：它是工具，不是应用代码；CLI 本身仍只经 Registry 拿组件
 - 每个组件的特例（渲染前的 steps、`selfReference`）只写在 `render-cases.ts`，按 id 覆盖；`packages/ui/index.ts` 手写，由检查保证它导出每个组件
 
 ## Rules

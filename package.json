@@ -17,7 +17,7 @@
     "docs:components": "bun apps/docs/scripts/build-components.ts && vp fmt apps/docs/src/lib/components.generated.ts",
     "check:pages": "bun apps/docs/scripts/check-pages.ts",
     "catalog": "bun scripts/catalog.ts",
-    "registry:build": "bun packages/cli/src/index.ts build && vp fmt public/r",
+    "registry:build": "bun scripts/registry-build.ts",
     "registry:serve": "bun packages/cli/src/index.ts serve",
     "shadcn-nsh": "bun packages/cli/src/index.ts",
     "cli:build": "bun --filter shadcn-nsh build",

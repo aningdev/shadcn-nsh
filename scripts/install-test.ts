@@ -11,7 +11,12 @@
  *   transform points at the wrong place, shows up only when the item is installed alone.
  *
  * Before either, a fresh build of `registry.json` is compared with the committed `public/r`: the
- * artifact an app installs from must be the one the sources make today.
+ * artifact an app installs from must be the one the sources make today. The build is the one
+ * `bun run registry:build` makes (`scripts/registry-build.ts`), not a copy of its steps.
+ *
+ * The set of items is the catalog's (`scripts/catalog.ts`); the built `index.json` says where each
+ * lands, and the two must name the same `registry:ui` items. A sample naming no catalog component
+ * fails the run instead of dropping out of the page it renders.
  *
  *   bun run test:install [--filter <name>] [--jobs <n>] [--keep]
  *
@@ -24,7 +29,9 @@ import os from "node:os";
 import path from "node:path";
 
 import { startRegistryServer, type RegistryServer } from "../packages/cli/src/commands/serve";
-import type { RegistryIndex } from "../packages/cli/src/types";
+import { components } from "./catalog";
+import { StepFailure } from "./failure";
+import { buildRegistry } from "./registry-build";
 
 const repo = path.resolve(import.meta.dir, "..");
 const cli = path.join(repo, "packages/cli/src/index.ts");
@@ -68,8 +75,10 @@ function parseArgs(argv: string[]): Options {
     else if (arg === "--filter" || arg === "--jobs") {
       const value = argv[++i];
       if (value == null) throw new Error(`${arg} needs a value\n\n${HELP}`);
-      if (arg === "--filter") opts.filter = value;
-      else {
+      if (arg === "--filter") {
+        if (value.trim() === "") throw new Error(`--filter needs a name\n\n${HELP}`);
+        opts.filter = value;
+      } else {
         opts.jobs = Number(value);
         if (!Number.isInteger(opts.jobs) || opts.jobs < 1) {
           throw new Error(`--jobs takes a positive whole number, not "${value}"`);
@@ -123,14 +132,12 @@ function reason(output: string, limit = 4): string {
 /** A step of the run: `run` it, and turn a non-zero exit into a failure that names the step. */
 async function step(label: string, command: string, args: string[], cwd: string): Promise<void> {
   const result = await run(command, args, cwd);
-  if (result.code !== 0) {
-    throw Object.assign(new Error(reason(result.output)), { step: label });
-  }
+  if (result.code !== 0) throw new StepFailure(label, reason(result.output));
 }
 
 function failureOf(thrown: unknown): Failure {
-  const text = thrown instanceof Error ? thrown.message : String(thrown);
-  return { step: (thrown as { step?: string } | null)?.step ?? "run", detail: text };
+  const detail = thrown instanceof Error ? thrown.message : String(thrown);
+  return { step: thrown instanceof StepFailure ? thrown.step : "run", detail };
 }
 
 const seconds = (ms: number) => `${(ms / 1000).toFixed(1)}s`;
@@ -156,18 +163,50 @@ async function findNsh(): Promise<{ command: string; version: string } | null> {
   return null;
 }
 
-/** The registry's `registry:ui` items, as the CLI's catalog lists them. */
+/** The registry's `registry:ui` items, as the CLI's catalog lists them, read from the index. */
 async function uiItems(url: string): Promise<Item[]> {
   const res = await fetch(`${url}/index.json`);
-  if (!res.ok) throw new Error(`could not read ${url}/index.json: ${res.status} ${res.statusText}`);
-  const index = (await res.json()) as RegistryIndex;
+  if (!res.ok) {
+    throw new StepFailure(
+      "registry index",
+      `could not read ${url}/index.json: ${res.status} ${res.statusText}`,
+    );
+  }
+  const index: unknown = await res.json();
+  if (!isRecord(index) || !Array.isArray(index.items)) {
+    throw new StepFailure("registry index", `${url}/index.json has no items array`);
+  }
   return index.items
-    .filter((item) => item.type === "registry:ui")
-    .map((item) => ({
-      name: item.name,
-      target: item.files.find((file) => file.type === "registry:ui")?.target ?? "",
-    }))
+    .map((item, at) => ({ item, where: `${url}/index.json items[${at}]` }))
+    .filter(({ item }) => isRecord(item) && item.type === "registry:ui")
+    .map(({ item, where }) => itemAt(item, where))
     .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+const isRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === "object" && value !== null && !Array.isArray(value);
+
+/** One index entry: the name `add` takes and the file the item lands at, checked from JSON. */
+function itemAt(value: unknown, where: string): Item {
+  if (
+    !isRecord(value) ||
+    typeof value.name !== "string" ||
+    typeof value.type !== "string" ||
+    !Array.isArray(value.files)
+  ) {
+    throw new StepFailure("registry index", `${where} is not a registry item (name, type, files)`);
+  }
+  const files = value.files.filter(isRecord);
+  const own = files.find((file) => file.type === "registry:ui");
+  return {
+    name: value.name,
+    target: typeof own?.target === "string" ? own.target : "",
+  };
+}
+
+/** True for a missing file only; any other failure to read a directory is the caller's. */
+function isMissing(error: unknown): boolean {
+  return typeof error === "object" && error !== null && "code" in error && error.code === "ENOENT";
 }
 
 /**
@@ -191,7 +230,13 @@ async function registryDrift(fresh: string): Promise<string[]> {
 }
 
 async function list(dir: string): Promise<string[]> {
-  const entries = await fs.readdir(dir).catch(() => []);
+  let entries: string[];
+  try {
+    entries = await fs.readdir(dir);
+  } catch (error) {
+    if (isMissing(error)) return [];
+    throw error;
+  }
   return entries.filter((name) => name.endsWith(".json")).sort();
 }
 
@@ -320,7 +365,7 @@ async function installOneItem(template: string, dir: string, item: Item, nsh: st
     try {
       await fs.access(path.join(dir, item.target));
     } catch {
-      throw Object.assign(new Error(`      add wrote no ${item.target}`), { step: "add" });
+      throw new StepFailure("add", `      add wrote no ${item.target}`);
     }
   }
   await step("nsh check", nsh, ["check", "."], dir);
@@ -356,16 +401,49 @@ async function pool<T>(
 }
 
 /** A fresh build of `registry.json`, in `dir`, written the way `registry:build` writes it. */
-async function buildRegistry(dir: string) {
-  await step("registry build", "bun", [cli, "build", "-o", dir], repo);
-  await step("registry format", "vp", ["fmt", dir], repo);
+async function buildFresh(dir: string) {
+  try {
+    await buildRegistry(dir);
+  } catch (error) {
+    if (error instanceof StepFailure) throw error;
+    throw new StepFailure(
+      "registry build",
+      error instanceof Error ? error.message : String(error),
+      { cause: error },
+    );
+  }
+}
+
+/** The catalog's component ids: the only source of the set the test installs one at a time. */
+function catalogIds(): string[] {
+  return components(repo)
+    .map((component) => component.id)
+    .sort();
 }
 
 async function main(): Promise<number> {
-  const opts = parseArgs(process.argv.slice(2));
+  let opts: Options;
+  try {
+    opts = parseArgs(process.argv.slice(2));
+  } catch (error) {
+    console.error(`install test: ${error instanceof Error ? error.message : String(error)}`);
+    return 2;
+  }
   if (opts.help) {
     console.log(HELP);
     return 0;
+  }
+
+  // The samples render a component each; one that names no catalog component would silently drop
+  // out of the all-at-once page, so it fails instead.
+  const ids = catalogIds();
+  const unknown = SAMPLES.filter((sample) => !ids.includes(sample.item));
+  if (unknown.length > 0) {
+    console.error(
+      `install test: SAMPLES names no catalog component: ${unknown.map((s) => s.item).join(", ")}`,
+    );
+    console.error("      add the item to registry.json, or drop the sample");
+    return 1;
   }
 
   const started = performance.now();
@@ -383,7 +461,10 @@ async function main(): Promise<number> {
   const tmp = await fs.mkdtemp(path.join(os.tmpdir(), "shadcn-nsh-install-"));
   let server: RegistryServer | null = null;
   const clean = () => {
-    server?.close().catch(() => {});
+    server?.close().catch((error: unknown) => {
+      const detail = error instanceof Error ? error.message : String(error);
+      console.error(`install test: could not stop the registry server: ${detail}`);
+    });
     if (!opts.keep) rmSync(tmp, { recursive: true, force: true });
   };
   const onSignal = () => {
@@ -395,7 +476,7 @@ async function main(): Promise<number> {
 
   try {
     const fresh = path.join(tmp, "registry");
-    await buildRegistry(fresh);
+    await buildFresh(fresh);
     const drift = await registryDrift(fresh);
     if (drift.length > 0) {
       console.error("install test: public/r is not what registry.json builds today");
@@ -410,7 +491,25 @@ async function main(): Promise<number> {
     const registry = `${server.url}/{name}.json`;
     console.log(`install test: serving it at ${server.url}`);
 
-    const all = await uiItems(server.url);
+    const indexed = await uiItems(server.url);
+    // The set is the catalog's; the index is the seam an app reads. Disagreement is a failure:
+    // the catalog drives every other script, and an item only one of them knows installs alone.
+    const built = new Set(indexed.map((item) => item.name));
+    const catalog = new Set(ids);
+    const absent = ids.filter((id) => !built.has(id));
+    const extra = [...built].filter((name) => !catalog.has(name)).sort();
+    if (absent.length > 0 || extra.length > 0) {
+      console.error("install test: registry.json and the built index.json disagree");
+      if (absent.length > 0) {
+        console.error(`      in registry.json but not in index.json: ${absent.join(", ")}`);
+      }
+      if (extra.length > 0) {
+        console.error(`      in index.json but not in registry.json: ${extra.join(", ")}`);
+      }
+      return 1;
+    }
+    const targets = new Map(indexed.map((item) => [item.name, item.target]));
+    const all = ids.map((name) => ({ name, target: targets.get(name) ?? "" }));
     const items = opts.filter ? all.filter((item) => item.name.includes(opts.filter!)) : all;
     if (items.length === 0) {
       console.error(`install test: no registry:ui item matches "${opts.filter ?? ""}"`);
