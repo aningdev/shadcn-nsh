@@ -298,6 +298,34 @@ async function canvas() {
         console.log(
           `${key}: frame ${frame.width}×${frame.height} · ${probeText.split("\n").slice(0, 5).join(" · ")}`,
         );
+        // A panel whose column is wide enough for the layout's whole width (`LAYOUTS.desktop` is
+        // 1024): the docs' own column is about 760, so widen the demo card and read the frame again.
+        if (viewport.label === "wide" && layout === "desktop") {
+          await page.evaluate(`(() => {
+            const style = document.createElement("style");
+            style.textContent = ".doc-content .demo { width: 1180px; max-width: none; }";
+            document.head.append(style);
+            return true;
+          })()`);
+          // The panel's `ResizeObserver` on the stage refits the frame.
+          await new Promise((resolve) => setTimeout(resolve, 300));
+          const widened = await page.evaluate<string>(`(() => {
+            const frame = document.querySelector(".demo .phone__screen iframe");
+            const stage = document.querySelector(".demo__stage");
+            return JSON.stringify({ room: stage.clientWidth, width: Number(frame.getAttribute("width")) });
+          })()`);
+          const room = JSON.parse(widened) as { room: number; width: number };
+          layouts["desktop-widecolumn"] = {
+            viewport: { width: viewport.width, height: viewport.height },
+            layout: "desktop",
+            stage: { clientWidth: room.room, padding: 0 },
+            frame: { width: room.width, height: Number(frame.height), cssWidth: "", cssHeight: "" },
+            src,
+            probe: probeText,
+            screenshot: "",
+          };
+          console.log(`desktop-widecolumn: stage ${room.room} → frame ${room.width}`);
+        }
       }
     }
   } finally {

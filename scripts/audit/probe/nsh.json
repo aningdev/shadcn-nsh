@@ -3,7 +3,7 @@
   "id": "dev.shadcn-nsh.audit-probe",
   "version": "0.0.0",
   "build": 1,
-  "appearance": "light",
+  "appearance": "system",
   "theme": "../../../packages/theme/theme.json",
   "resolve": {
     "alias": {
