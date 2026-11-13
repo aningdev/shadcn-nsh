@@ -403,9 +403,8 @@ async function main(): Promise<number> {
       for (const problem of drift) console.error(`      ${problem}`);
       return 1;
     }
-    console.log(
-      `install test: public/r matches a fresh build (${(await list(fresh)).length} items)`,
-    );
+    const files = await list(fresh);
+    console.log(`install test: public/r matches a fresh build (${files.length - 1} items)`);
 
     server = await startRegistryServer({ dir: fresh });
     const registry = `${server.url}/{name}.json`;
