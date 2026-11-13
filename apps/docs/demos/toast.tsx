@@ -75,12 +75,7 @@ function App() {
           Dismiss all
         </Button>
       </View>
-      <Log
-        title="ToastManager.advance · onExpandedChange"
-        lines={events()}
-        minHeight={130}
-        grow={false}
-      />
+      <Log title="ToastManager.advance · onExpandedChange" lines={events()} minHeight={130} />
 
       <Overlay
         style={{
