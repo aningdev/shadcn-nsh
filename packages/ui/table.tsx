@@ -135,10 +135,9 @@ export function TableHead(props: TableHeadProps) {
 export function TableCell(props: TableCellProps) {
   const [, rest] = split(props, ["class", "children"]);
   return (
-    <BaseTableCell
-      {...rest}
-      class={mergeClass(`${dataTableClasses.cell} flex-1 py-2`, props.class)}
-    >
+    // No width of its own: a column's width is the app's, set on its head and its cells
+    // alike (`w-24`, `flex-1`), so the two rows line up.
+    <BaseTableCell {...rest} class={mergeClass(`${dataTableClasses.cell} py-2`, props.class)}>
       {textOf(props.children, "cell")}
     </BaseTableCell>
   );
