@@ -1,133 +1,180 @@
+// The official toolbar scene (`references/nsh/website/demos/el-toolbar.tsx`) with this library's
+// parts: a formatting bar (undo, the marks, the alignment) over the text it formats, a vertical
+// palette of tools beside it, and an inspector logging every edit. One stop of Tab per toolbar;
+// its arrows move between the tools.
 import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { Button } from "@/packages/ui/button";
-import { Toggle } from "@/packages/ui/toggle";
+import { Icon } from "@/packages/ui/lib/icons";
+import { sectionSurface } from "@/packages/ui/lib/surface";
+import { Toggle, toggleGlyph, toggleLabel } from "@/packages/ui/toggle";
 import { ToggleGroup } from "@/packages/ui/toggle-group";
 import { Toolbar, ToolbarGroup, ToolbarSeparator } from "@/packages/ui/toolbar";
+import { toolbarRule, toolbarTrack } from "@/packages/ui/toolbar";
 
-import { DemoCard, DemoPage, DemoSection } from "./kit";
+import { DemoPage } from "./kit";
+import { desktop, Log, Split } from "./stage";
 
 type Mark = "bold" | "italic" | "underline";
 type Align = "left" | "center" | "right";
 type Tool = "select" | "pen" | "shape" | "text";
+
+const marks: { id: Mark; label: string; glyph: string }[] = [
+  { id: "bold", label: "Bold", glyph: "B" },
+  { id: "italic", label: "Italic", glyph: "I" },
+  { id: "underline", label: "Underline", glyph: "U" },
+];
+const aligns: { id: Align; label: string; glyph: string }[] = [
+  { id: "left", label: "Align left", glyph: "⇤" },
+  { id: "center", label: "Align center", glyph: "↔" },
+  { id: "right", label: "Align right", glyph: "⇥" },
+];
+const tools: { id: Tool; label: string; glyph: string }[] = [
+  { id: "select", label: "Select", glyph: "↖" },
+  { id: "pen", label: "Pen", glyph: "✎" },
+  { id: "shape", label: "Rectangle", glyph: "▢" },
+  { id: "text", label: "Text", glyph: "T" },
+];
 
 function App() {
   const on = signal<Mark[]>(["bold"]);
   const align = signal<Align>("left");
   const tool = signal<Tool>("select");
   const history = signal<string[]>([]);
+  const events = signal<string[]>([]);
+  const log = (line: string) => events.set([line, ...events()].slice(0, 3));
+  const edit = (what: string) => {
+    history.set([...history(), what]);
+    log(what);
+  };
   const has = (m: Mark) => on().includes(m);
+  // A tool in the toggles' look: bare while off, the on fill while pressed, a hover fill, the
+  // focus ring; its glyph muted until it is on. A command (undo, clear) is a `Button` in the
+  // same look.
+  const glyph = (text: string, active: () => boolean) => (
+    <Text style={{ ...toggleLabel(active), fontWeight: "600" }}>{text}</Text>
+  );
 
   return (
-    <DemoPage title="Toolbar" note={() => `${on().join(",") || "none"} · ${align()} · ${tool()}`}>
-      <DemoCard>
-        <DemoSection title="Formatting">
-          <Toolbar accessibilityLabel="Formatting" style={{ alignSelf: "flex-start" }}>
-            <ToolbarGroup accessibilityLabel="History">
-              <Button
-                variant="ghost"
-                accessibilityLabel="Undo"
-                disabled={history().length === 0}
-                onPress={() => history.set(history().slice(0, -1))}
-              >
-                Undo
-              </Button>
-            </ToolbarGroup>
-            <ToolbarSeparator />
-            <ToggleGroup inset={false}>
+    <DemoPage title="Toolbar">
+      <Text style={{ color: colors.muted }}>
+        {desktop
+          ? "Tab into a toolbar, then move with the arrow keys; Home and End jump to its ends"
+          : "Tap the tools; a screen reader hears each bar as a toolbar"}
+      </Text>
+
+      <Split
+        gap={14}
+        inspector={
+          <Log
+            title={`${history().length} edits · ${on().join(", ") || "no marks"}, ${align()} · ${tool()}`}
+            lines={events()}
+            minHeight={76}
+          />
+        }
+      >
+        {/* A formatting bar: history, a toggle group of marks (a group of the toolbar), the
+            alignment. */}
+        <Toolbar
+          accessibilityLabel="Formatting"
+          style={{ ...toolbarTrack(), alignSelf: "flex-start" }}
+        >
+          <ToolbarGroup accessibilityLabel="History">
+            <Button
+              variant="ghost"
+              accessibilityLabel="Undo"
+              disabled={history().length === 0}
+              onPress={() => {
+                history.set(history().slice(0, -1));
+                log("Undo");
+              }}
+            >
+              <Icon name="undo" {...toggleGlyph(() => true)} />
+            </Button>
+          </ToolbarGroup>
+          <ToolbarSeparator style={toolbarRule()} />
+          <ToggleGroup inset={false}>
+            {marks.map((m) => (
               <Toggle
-                pressed={has("bold")}
-                accessibilityLabel="Bold"
-                onChange={({ pressed }) =>
-                  on.set(pressed ? [...on(), "bold"] : on().filter((x) => x !== "bold"))
-                }
+                pressed={has(m.id)}
+                accessibilityLabel={m.label}
+                onChange={({ pressed }) => {
+                  on.set(pressed ? [...on(), m.id] : on().filter((x) => x !== m.id));
+                  edit(`${m.label}: ${pressed}`);
+                }}
               >
-                B
+                {glyph(m.glyph, () => has(m.id))}
               </Toggle>
+            ))}
+          </ToggleGroup>
+          <ToolbarSeparator style={toolbarRule()} />
+          <ToolbarGroup accessibilityLabel="Alignment" style={{ gap: 2 }}>
+            {aligns.map((a) => (
               <Toggle
-                pressed={has("italic")}
-                accessibilityLabel="Italic"
-                onChange={({ pressed }) =>
-                  on.set(pressed ? [...on(), "italic"] : on().filter((x) => x !== "italic"))
-                }
+                pressed={align() === a.id}
+                accessibilityLabel={a.label}
+                onChange={({ pressed }) => {
+                  // Exactly one: the pressed alignment stays pressed.
+                  if (pressed) align.set(a.id);
+                  edit(`${a.label}`);
+                }}
               >
-                I
+                {glyph(a.glyph, () => align() === a.id)}
               </Toggle>
+            ))}
+          </ToolbarGroup>
+        </Toolbar>
+
+        <View style={{ flexDirection: "row", gap: 14, alignItems: "stretch" }}>
+          {/* A vertical palette: Up and Down move along it. */}
+          <Toolbar
+            axis="vertical"
+            accessibilityLabel="Tools"
+            style={{ ...toolbarTrack({ vertical: true }), alignSelf: "flex-start" }}
+          >
+            {tools.map((t) => (
               <Toggle
-                pressed={has("underline")}
-                accessibilityLabel="Underline"
-                onChange={({ pressed }) =>
-                  on.set(pressed ? [...on(), "underline"] : on().filter((x) => x !== "underline"))
-                }
+                pressed={tool() === t.id}
+                accessibilityLabel={t.label}
+                onChange={({ pressed }) => {
+                  if (!pressed) return;
+                  tool.set(t.id);
+                  log(`Tool: ${t.label}`);
+                }}
               >
-                U
+                {glyph(t.glyph, () => tool() === t.id)}
               </Toggle>
-            </ToggleGroup>
-            <ToolbarSeparator />
-            <ToolbarGroup accessibilityLabel="Alignment">
-              <Toggle
-                pressed={align() === "left"}
-                accessibilityLabel="Align left"
-                onChange={({ pressed }) => pressed && align.set("left")}
-              >
-                L
-              </Toggle>
-              <Toggle
-                pressed={align() === "center"}
-                accessibilityLabel="Align center"
-                onChange={({ pressed }) => pressed && align.set("center")}
-              >
-                C
-              </Toggle>
-              <Toggle
-                pressed={align() === "right"}
-                accessibilityLabel="Align right"
-                onChange={({ pressed }) => pressed && align.set("right")}
-              >
-                R
-              </Toggle>
-            </ToolbarGroup>
+            ))}
+            <ToolbarSeparator style={toolbarRule(true)} />
+            <Button
+              variant="ghost"
+              accessibilityLabel="Clear canvas"
+              onPress={() => log("Clear canvas")}
+            >
+              {glyph("⌫", () => false)}
+            </Button>
           </Toolbar>
-        </DemoSection>
-        <DemoSection title="Vertical">
-          <View style={{ flexDirection: "row", gap: 14 }}>
-            <Toolbar axis="vertical" accessibilityLabel="Tools" style={{ alignSelf: "flex-start" }}>
-              <Toggle
-                pressed={tool() === "select"}
-                accessibilityLabel="Select"
-                onChange={({ pressed }) => pressed && tool.set("select")}
-              >
-                ↖
-              </Toggle>
-              <Toggle
-                pressed={tool() === "pen"}
-                accessibilityLabel="Pen"
-                onChange={({ pressed }) => pressed && tool.set("pen")}
-              >
-                ✎
-              </Toggle>
-              <Toggle
-                pressed={tool() === "shape"}
-                accessibilityLabel="Rectangle"
-                onChange={({ pressed }) => pressed && tool.set("shape")}
-              >
-                ▢
-              </Toggle>
-              <Toggle
-                pressed={tool() === "text"}
-                accessibilityLabel="Text"
-                onChange={({ pressed }) => pressed && tool.set("text")}
-              >
-                T
-              </Toggle>
-            </Toolbar>
-            <Text style={{ fontSize: 13, color: colors.muted, alignSelf: "center" }}>
-              tool: {tool()}
+          <View style={{ flex: 1, ...sectionSurface({ padded: true }), gap: 6 }}>
+            <Text
+              style={{
+                fontSize: 15,
+                lineHeight: 22,
+                color: colors.text,
+                fontWeight: has("bold") ? "700" : "400",
+                fontStyle: has("italic") ? "italic" : "normal",
+                textDecorationLine: has("underline") ? "underline" : "none",
+                textAlign: align(),
+              }}
+            >
+              One stop of Tab per toolbar; its arrows move between the tools.
+            </Text>
+            <Text style={{ fontSize: 13, color: colors.muted }}>
+              {`Tool: ${tools.find((t) => t.id === tool())!.label}`}
             </Text>
           </View>
-        </DemoSection>
-      </DemoCard>
+        </View>
+      </Split>
     </DemoPage>
   );
 }
