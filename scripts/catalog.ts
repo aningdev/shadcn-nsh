@@ -114,8 +114,12 @@ export function components(root = DEFAULT_ROOT): Component[] {
   return catalog(root).components;
 }
 
-/** Demo files that are not a component's demo: the app entry `nsh check` / `nsh test` need and the kit. */
-const NON_COMPONENT_DEMOS = new Set(["App.tsx", "kit.tsx"]);
+/**
+ * Demo files that are not a component's demo: the app entry `nsh check` / `nsh test` need, the kit, and
+ * the demo adapter the official examples are written against (`stage.tsx`, demos only, never a
+ * registry entry).
+ */
+const NON_COMPONENT_DEMOS = new Set(["App.tsx", "kit.tsx", "stage.tsx"]);
 
 function isFile(file: string): boolean {
   return fs.existsSync(file) && fs.statSync(file).isFile();

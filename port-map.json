@@ -16,7 +16,28 @@
       "exclude": "CSS variables for the NSH website"
     },
     "demo.ts": {
-      "exclude": "the NSH website's demo adapter (stage, inspector, log)"
+      "symbols": {
+        "desktop": "apps/docs/demos/stage.tsx",
+        "wide": "apps/docs/demos/stage.tsx",
+        "sideBySide": "apps/docs/demos/stage.tsx",
+        "Stage": "apps/docs/demos/stage.tsx",
+        "Inspector": "apps/docs/demos/stage.tsx",
+        "Split": "apps/docs/demos/stage.tsx",
+        "Panel": "apps/docs/demos/stage.tsx",
+        "Log": "apps/docs/demos/stage.tsx",
+        "Segmented": "apps/docs/demos/stage.tsx"
+      },
+      "exclude": {
+        "hoverFill": "the gallery's press fill; a demo takes the theme's `hovered()`",
+        "size": "row sizes; a demo takes them from `packages/ui/lib/surface`",
+        "ButtonOptions": "the gallery's demo buttons; a demo uses this library's Button",
+        "__read": "private to the gallery's demo `button` and `field`",
+        "__look": "private to the gallery's demo `button` and `field`",
+        "button": "the gallery's demo button look; a demo uses this library's Button",
+        "buttonText": "the gallery's demo button label; a demo uses this library's Button",
+        "FieldOptions": "the gallery's demo field; a demo uses this library's Input",
+        "field": "the gallery's demo field look; a demo uses this library's Input"
+      }
     },
     "palette.ts": {
       "exclude": "the NSH website's demo adapter"
