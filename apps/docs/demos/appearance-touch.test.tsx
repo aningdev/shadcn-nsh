@@ -10,9 +10,9 @@
 // The screenshots stay in `shots/` as `<id>-switched.png` and `<id>-switched.ref.png`.
 import { expect, open, test } from "nsh/test";
 
-import { cases, same, settle } from "./render-cases";
+import { cases, clock, same, settle } from "./render-cases";
 
-const touch = { platform: "ios", reducedMotion: true, clock: {} } as const;
+const touch = { platform: "ios", reducedMotion: true, clock } as const;
 
 /** What the simulator needs to end one development host before the next one launches. */
 const handOver = () => new Promise((resolve) => setTimeout(resolve, 300));

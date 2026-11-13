@@ -51,6 +51,14 @@ export const cases: Case[] = componentIds.map((id) => ({ id, ...overrides[id] })
 
 export const schemes = ["light", "dark"] as const;
 
+/**
+ * The wall time every render check starts its pages on: noon on 2026-11-12, the day the pointer
+ * baseline was recorded. The calendar and the date picker mark "today" from the clock, so a run
+ * on another day would draw the mark on another day and differ from the baseline every day; a
+ * local noon (not a UTC instant) is the same date in every time zone.
+ */
+export const clock = { time: new Date(2026, 10, 12, 12, 0, 0) } as const;
+
 export const same = (a: Uint8Array, b: Uint8Array) =>
   a.length === b.length && a.every((v, i) => v === b[i]);
 
