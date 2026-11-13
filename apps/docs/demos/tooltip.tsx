@@ -105,24 +105,26 @@ function App() {
           />
         </View>
         {/* The `tooltip` prop of any element: a `Tooltip` with the app's look. */}
-        <Tooltip>
-          <TooltipTrigger>
-            <Button
-              variant="secondary"
-              onPress={() => pinned.set(!pinned())}
-              style={{ justifyContent: "center" }}
-            >
-              {wide()
-                ? pinned()
-                  ? "Unpin the tooltips"
-                  : "Pin the tooltips"
-                : pinned()
-                  ? "Unpin"
-                  : "Pin"}
-            </Button>
-          </TooltipTrigger>
-          <TooltipContent>Shows every tooltip without a pointer</TooltipContent>
-        </Tooltip>
+        <View style={{ flexDirection: "row", justifyContent: "center" }}>
+          <Tooltip>
+            <TooltipTrigger>
+              <Button
+                variant="secondary"
+                onPress={() => pinned.set(!pinned())}
+                style={{ justifyContent: "center" }}
+              >
+                {wide()
+                  ? pinned()
+                    ? "Unpin the tooltips"
+                    : "Pin the tooltips"
+                  : pinned()
+                    ? "Unpin"
+                    : "Pin"}
+              </Button>
+            </TooltipTrigger>
+            <TooltipContent>Shows every tooltip without a pointer</TooltipContent>
+          </Tooltip>
+        </View>
       </Split>
     </DemoPage>
   );

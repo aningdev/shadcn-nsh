@@ -115,30 +115,32 @@ function App() {
           />
         </View>
         {/* The `tooltip` prop of any element: a `Tooltip` with the app's look. */}
-        <View style={{ gap: 0 }}>
-          <View
-            style={{ alignSelf: "flex-start" }}
-            tooltip={
-              <Tooltip>
-                <View class={tooltipLook().class}>
-                  <Text class={tooltipText}>Shows every tooltip without a pointer</Text>
-                </View>
-              </Tooltip>
-            }
-          >
-            <Button
-              variant="secondary"
-              onPress={() => pinned.set(!pinned())}
-              style={{ justifyContent: "center" }}
+        <View style={{ flexDirection: "row", justifyContent: "center" }}>
+          <View style={{ gap: 0 }}>
+            <View
+              style={{ alignSelf: "flex-start" }}
+              tooltip={
+                <Tooltip>
+                  <View class={tooltipLook().class}>
+                    <Text class={tooltipText}>Shows every tooltip without a pointer</Text>
+                  </View>
+                </Tooltip>
+              }
             >
-              {wide()
-                ? pinned()
-                  ? "Unpin the tooltips"
-                  : "Pin the tooltips"
-                : pinned()
-                  ? "Unpin"
-                  : "Pin"}
-            </Button>
+              <Button
+                variant="secondary"
+                onPress={() => pinned.set(!pinned())}
+                style={{ justifyContent: "center" }}
+              >
+                {wide()
+                  ? pinned()
+                    ? "Unpin the tooltips"
+                    : "Pin the tooltips"
+                  : pinned()
+                    ? "Unpin"
+                    : "Pin"}
+              </Button>
+            </View>
           </View>
         </View>
       </Split>
