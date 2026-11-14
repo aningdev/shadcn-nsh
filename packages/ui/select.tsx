@@ -75,6 +75,9 @@ export function Chevron(props: { open: boolean; hidden?: boolean }) {
  * select's view, outside the trigger, so its inset counts the trigger's 1-point border too. */
 const clearInset = 1 + 10 + controlSize.check / 4 - controlSize.clear / 2;
 
+/** A trigger's variants: `default` shadcn's field, `outline` an outline button of shadcn's, on the raised finish. */
+export type PickerVariant = "default" | "outline";
+
 /** Options of `pickerLook`. */
 export interface PickerLookOptions {
   /** The list is open: the edge stays lit. */
@@ -88,19 +91,19 @@ export interface PickerLookOptions {
   /** Layout over the look (a width), or a function reading it. */
   style?: Live<ViewStyle>;
   /**
-   * `field` (the default): a select's trigger as shadcn's, the input's well
+   * `default`: a select's trigger as shadcn's, the input's well
    * (the field fill, the input's edge), so it lines up with the text fields
    * of its form (a date picker's and a color picker's too: in dark
    * shadcn's outline button is the input's fill and edge as well); `outline`:
    * an outline button on the raised finish, for a trigger that is not a
    * form's field.
    */
-  kind?: "field" | "outline";
+  variant?: PickerVariant;
 }
 
 /**
  * A select's or date picker's trigger (spread it on the trigger's view): a
- * row as high as a text field, on the field's well (`kind: "field"`) or the
+ * row as high as a text field, on the field's well (`default`) or the
  * raised finish (`outline`), its edge stronger under the pointer and while
  * the list is open, the danger tone while invalid (each after the finish,
  * which has an edge of its own), the fields' focus edge while it has the
@@ -130,14 +133,14 @@ export function pickerLook(o?: PickerLookOptions) {
             : 10,
         borderRadius: radius.control,
         borderWidth: 1,
-        ...(o?.kind === "outline"
+        ...(o?.variant === "outline"
           ? { backgroundColor: colors.raised, ...finish.raised }
           : { backgroundColor: colors.field, ...finish.field }),
         borderColor: invalid()
           ? colors.danger
           : read(o?.open)
             ? colors.faint
-            : o?.kind === "outline"
+            : o?.variant === "outline"
               ? colors.border
               : colors.fieldBorder,
         ...(terminal
@@ -183,8 +186,8 @@ export interface PickerProps {
   lead?: JSX.Element;
   /** The chevron at the end (the default); a date picker's trigger has none, its calendar says what opens. */
   chevron?: boolean;
-  /** `pickerLook`'s `kind`: the field's well (a select's, a date picker's: the default) or an outline button. */
-  kind?: "field" | "outline";
+  /** `pickerLook`'s `variant`: the field's well (a select's, a date picker's: the default) or an outline button. */
+  variant?: PickerVariant;
   style?: ViewStyle;
 }
 
@@ -205,7 +208,7 @@ export function Picker(props: PickerProps) {
         disabled: () => !!props.disabled,
         invalid: () => !!props.invalid,
         clearable: () => !!props.clearable,
-        kind: props.kind,
+        variant: props.variant,
         style: () => props.style ?? {},
       })}
     >
@@ -295,8 +298,8 @@ export type SelectTriggerProps = {
   invalid?: boolean;
   /** The app's own clear button lies over the end: room for it. */
   clearable?: boolean;
-  /** `pickerLook`'s `kind`: the field's well (the default) or an outline button. */
-  kind?: "field" | "outline";
+  /** `pickerLook`'s `variant`: the field's well (the default) or an outline button. */
+  variant?: PickerVariant;
   /** The chevron at the end (the default). */
   chevron?: boolean;
   style?: ViewStyle;
@@ -425,7 +428,7 @@ export function SelectTrigger(props: SelectTriggerProps) {
       clearable={props.clearable ?? (ctx.root.cleanable && ctx.value() != null)}
       icon={props.icon}
       lead={props.lead}
-      kind={props.kind}
+      variant={props.variant}
       chevron={props.chevron}
       style={props.style}
     />

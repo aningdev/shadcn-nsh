@@ -165,7 +165,7 @@ function App() {
                   title={titleOf(LANGUAGES, language()) ?? "Choose a language"}
                   placeholder={language() === null}
                   open={languageOpen()}
-                  kind="field"
+                  variant="default"
                   style={trigger}
                 />
               }
@@ -205,7 +205,7 @@ function App() {
                   open={regionOpen()}
                   disabled={locked()}
                   clearable={region() !== null}
-                  kind="field"
+                  variant="default"
                   style={trigger}
                 />
               }
@@ -227,7 +227,7 @@ function App() {
                   title={titleOf(LANGUAGES, outline()) ?? "Choose a language"}
                   placeholder={outline() === null}
                   open={false}
-                  kind="outline"
+                  variant="outline"
                   style={trigger}
                 />
               }

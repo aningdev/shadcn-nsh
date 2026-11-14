@@ -151,7 +151,7 @@ function App() {
               onOpenChange={opened("Language", (next) => languageOpen.set(next))}
               placeholder="Choose a language"
             >
-              <SelectTrigger kind="field" style={trigger} />
+              <SelectTrigger variant="default" style={trigger} />
               <SelectContent accessibilityLabel="Language">
                 {LANGUAGES.map((item) => (
                   <SelectItem value={item.value}>{item.title}</SelectItem>
@@ -171,7 +171,7 @@ function App() {
               onOpenChange={opened("Region", (next) => regionOpen.set(next))}
               placeholder="Choose a region"
             >
-              <SelectTrigger kind="field" style={trigger} />
+              <SelectTrigger variant="default" style={trigger} />
               <SelectContent
                 accessibilityLabel="Region"
                 searchable
@@ -219,7 +219,7 @@ function App() {
               }}
               placeholder="Choose a language"
             >
-              <SelectTrigger kind="outline" style={trigger} />
+              <SelectTrigger variant="outline" style={trigger} />
               <SelectContent accessibilityLabel="Language, outline">
                 {LANGUAGES.map((item) => (
                   <SelectItem value={item.value}>{item.title}</SelectItem>

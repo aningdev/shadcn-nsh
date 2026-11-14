@@ -77,11 +77,11 @@ The trigger's edge takes the danger tone.
 
 ### Outline trigger, and a width
 
-`kind="outline"` is a trigger that is not a form's field: the raised finish instead of the
+`variant="outline"` is a trigger that is not a form's field: the raised finish instead of the
 field's well.
 
 ```tsx
-<SelectTrigger kind="outline" style={{ width: 260 }}>
+<SelectTrigger variant="outline" style={{ width: 260 }}>
   <SelectValue placeholder="Filter" />
 </SelectTrigger>
 ```
@@ -101,7 +101,7 @@ The root owns the open flag and the value; `SelectContent` mounts [`nsh/base` Se
 | Part                          | Notes                                                                                                                                                 |
 | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `Select`                      | `value` / `defaultValue`, `open` / `defaultOpen`, `disabled`, `cleanable`, `placeholder`, `onChange`, `onOpenChange`, `onOpen`, `onClose`, `onCancel` |
-| `SelectTrigger`               | A `Picker`: `icon`, `lead`, `invalid`, `kind`, `chevron`, `style`                                                                                     |
+| `SelectTrigger`               | A `Picker`: `icon`, `lead`, `invalid`, `variant`, `chevron`, `style`                                                                                  |
 | `SelectValue`                 | The placeholder while nothing is chosen (`placeholder`)                                                                                               |
 | `SelectContent`               | The list: `items` instead of `SelectItem` children, `minWidth`                                                                                        |
 | `SelectItem`                  | `value`, `disabled`, `group`; a string child is its title                                                                                             |

@@ -40,6 +40,7 @@ export function DateTrigger(props: Omit<PickerProps, "icon" | "chevron" | "lead"
       placeholder={props.placeholder}
       clearable={props.clearable}
       invalid={props.invalid}
+      variant={props.variant}
       icon="calendar"
       chevron={false}
       style={props.style}
