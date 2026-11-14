@@ -19,10 +19,10 @@ import { desktop, Log, Segmented, Split, wide } from "./stage";
 type Placement = "top" | "bottom" | "left" | "right";
 
 /** A mention's or a link's trigger: a run of text the pointer rests on. */
-const linkText = {
+const linkText = () => ({
   fontSize: 15,
   color: colors.accent,
-};
+});
 
 function App() {
   const openDelay = signal(600);
@@ -121,7 +121,7 @@ function App() {
           focusVisibleStyle={focusRing(1)}
           style={{ borderBottomWidth: 1, borderBottomColor: alpha(colors.accent, 0.4) }}
         >
-          <Text style={linkText}>Taffy</Text>
+          <Text style={linkText()}>Taffy</Text>
         </View>
       }
     >
