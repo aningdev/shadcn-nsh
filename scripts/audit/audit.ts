@@ -5,7 +5,7 @@
  * the preview.
  *
  *   bun scripts/audit/audit.ts build   [--only id,id] [--force]  # nsh package into /tmp/nsh-audit
- *   bun scripts/audit/audit.ts shots   [--only id,id]             # PNGs under apps/docs/demos/shots-audit
+ *   bun scripts/audit/audit.ts shots   [--only id,id] [--theme light|dark]  # PNGs under apps/docs/demos/shots-audit
  *   bun scripts/audit/audit.ts canvas                            # the docs preview (needs build:docs)
  *   bun scripts/audit/audit.ts probe                             # the probe at both idioms, standalone
  *
@@ -41,6 +41,13 @@ const valueOf = (flag: string) => {
 };
 const only = valueOf("--only")?.split(",").filter(Boolean);
 const force = rest.includes("--force");
+/** `shots --theme dark`: photograph the dark appearance too (the default is the light one). */
+const theme = (() => {
+  const value = valueOf("--theme");
+  if (value === undefined || value === "light" || value === "dark") return value;
+  console.error(`--theme takes light or dark: ${value}`);
+  process.exit(1);
+})();
 
 const all = catalog().components.map((component) => component.id);
 const unknown = (only ?? []).filter((id) => !all.includes(id));
@@ -130,8 +137,9 @@ async function shots() {
       const url = `${server.url}/${target.slug}/index.html`;
       for (const layout of ["phone", "desktop"] as const) {
         const file = path.join(shotsDir, shotName(target, layout));
+        const query = `?idiom=${LAYOUTS[layout].idiom}${theme ? `&theme=${theme}` : ""}`;
         try {
-          await page.load(`${url}?idiom=${LAYOUTS[layout].idiom}`, LAYOUTS[layout]);
+          await page.load(`${url}${query}`, LAYOUTS[layout], theme ? { theme } : undefined);
           await page.screenshot(file);
           written += 1;
         } catch (error) {

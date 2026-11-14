@@ -57,8 +57,15 @@ export function serve(root: string): { url: string; stop: () => void } {
 
 /** A page of headless Chrome: one viewport, one app at a time. */
 export interface Page {
-  /** Loads `url` at `width` × `height` and resolves once the app hid its loading screen. */
-  load(url: string, size: { width: number; height: number }): Promise<void>;
+  /**
+   * Loads `url` at `width` × `height` and resolves once the app hid its loading screen. `theme`
+   * asks for the appearance as well (`prefers-color-scheme`), light when left out.
+   */
+  load(
+    url: string,
+    size: { width: number; height: number },
+    o?: { theme?: "light" | "dark" },
+  ): Promise<void>;
   /** Runs `expression` in the page and returns its value (promises awaited). */
   evaluate<T>(expression: string): Promise<T>;
   /** Writes the viewport as a PNG. */
@@ -192,7 +199,10 @@ export async function launch(exe = chromePath()): Promise<Browser> {
   };
 
   const page: Page = {
-    async load(url, size) {
+    async load(url, size, o) {
+      await call("Emulation.setEmulatedMedia", {
+        features: [{ name: "prefers-color-scheme", value: o?.theme ?? "light" }],
+      });
       await call("Emulation.setDeviceMetricsOverride", {
         width: size.width,
         height: size.height,
