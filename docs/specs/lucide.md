@@ -52,6 +52,11 @@ NSH 的打包器（rolldown）会解析 `node_modules`；`Path2D` 直接接受 S
 | `bulb`                                                                                                                                                               | `Lightbulb`                 | `food`                 | `Utensils`             |
 | `person`                                                                                                                                                             | `User`                      | `ball`                 | `Volleyball`           |
 | `smile`                                                                                                                                                              | `Smile`                     | `trash`                | `Trash`                |
+| `document`                                                                                                                                                           | `FileText`                  | `chat`                 | `MessageSquare`        |
+| `copy`                                                                                                                                                               | `Copy`                      | `download`             | `Download`             |
+| `replace`                                                                                                                                                            | `Replace`                   | `terminal`             | `Terminal`             |
+| `sidebar`                                                                                                                                                            | `PanelLeft`                 | `moon`                 | `Moon`                 |
+| `sun`                                                                                                                                                                | `Sun`                       |                        |                        |
 | `check`、`plus`、`minus`、`search`、`star`、`play`、`code`、`pipette`、`folder`、`folder-open`、`file`、`clock`、`calendar`、`car`、`flag`、`heart`、`leaf`、`share` | 对应的 PascalCase 导出      | 类型检查报出的其他名字 | 选意思最近的，补进本表 |
 
 `badge` 演示里的 `name: "migrate"` 是行数据，不是图标。全集以 `nsh check apps/docs/demos` 和 `nsh check apps/gallery` 报出的错误为准。

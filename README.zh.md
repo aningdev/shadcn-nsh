@@ -28,6 +28,8 @@ bun run nsh:bootstrap   # 校验 CLI 与 references/nsh 都在基线，生成各
 
 目录需已有 `nsh.json`（`nsh init`）。消费方 monorepo 脚手架（`create`）暂缓。
 
+组件从 [`lucide`](https://lucide.dev) 引入图标；`init` / `add` 用应用自己的包管理器（按锁文件取 `bun`、`pnpm`、`yarn`，否则 npm）装着条目声明的包。没有 `package.json` 的应用会得到一个最小的；`--dry-run` 只打印命令。
+
 ```sh
 # 本地 registry（开发本仓时）
 bun run registry:build
