@@ -102,13 +102,13 @@ function App() {
         <DemoSection title="Size">
           <Alone
             label="Bluetooth, small"
-            size="small"
+            size="sm"
             checked={bluetooth()}
             onChange={change("Bluetooth", (next) => bluetooth.set(next))}
           />
           <Alone
             label="Bluetooth"
-            size="regular"
+            size="default"
             checked={bluetooth()}
             onChange={change("Bluetooth", (next) => bluetooth.set(next))}
           />

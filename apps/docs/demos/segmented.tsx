@@ -44,7 +44,7 @@ function App() {
                 log(`value: ${next}`);
               }}
             >
-              <SegmentedList size="regular" fill>
+              <SegmentedList size="default" fill>
                 <SegmentedItem value="List" count={12}>
                   List
                 </SegmentedItem>
@@ -62,7 +62,7 @@ function App() {
                 log(`value: ${next}`);
               }}
             >
-              <SegmentedList size="small">
+              <SegmentedList size="sm">
                 <SegmentedItem value="Left">Left</SegmentedItem>
                 <SegmentedItem value="Center">Center</SegmentedItem>
                 <SegmentedItem value="Right">Right</SegmentedItem>
@@ -72,7 +72,7 @@ function App() {
 
           <DemoSection title="Disabled" axis="block">
             <Segmented defaultValue="Week">
-              <SegmentedList size="small">
+              <SegmentedList size="sm">
                 <SegmentedItem value="Day" disabled>
                   Day
                 </SegmentedItem>

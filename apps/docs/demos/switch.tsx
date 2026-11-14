@@ -83,13 +83,13 @@ function App() {
         <DemoSection title="Size">
           <Switch
             accessibilityLabel="Bluetooth, small"
-            size="small"
+            size="sm"
             checked={bluetooth()}
             onChange={change("Bluetooth", (next) => bluetooth.set(next))}
           />
           <Switch
             accessibilityLabel="Bluetooth"
-            size="regular"
+            size="default"
             checked={bluetooth()}
             onChange={change("Bluetooth", (next) => bluetooth.set(next))}
           />

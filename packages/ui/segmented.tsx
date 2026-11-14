@@ -33,12 +33,12 @@ type Live<T> = T | (() => T);
 const read = <T,>(v: Live<T> | undefined): T | undefined =>
   typeof v === "function" ? (v as () => T)() : v;
 
-/** A segmented control's size: 24 / 30 points with a pointer, 32 / 36 on a touch screen. */
-export type SegmentedSize = "small" | "regular";
+/** A segmented control's size: `default` 24 / 30 points with a pointer, 32 / 36 on a touch screen. */
+export type SegmentedSize = "sm" | "default";
 
 /** Options of `segmentedLook`. */
 export interface SegmentedLookOptions {
-  /** Default `regular`. */
+  /** Default `default`: 30 points high with a pointer (`sm`: 24). */
   size?: SegmentedSize;
   /** Span the row, the segments sharing it equally (always on a touch screen). */
   fill?: boolean;
@@ -56,7 +56,7 @@ export interface SegmentedLookOptions {
  * label's (`label(selected)`, `count`).
  */
 export function segmentedLook(o?: SegmentedLookOptions) {
-  const small = o?.size === "small";
+  const small = o?.size === "sm";
   const spread = !pointer || !!o?.fill;
   // The track's padding: the thumb sits inside it.
   const inset = 2;

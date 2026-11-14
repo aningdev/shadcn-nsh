@@ -74,10 +74,10 @@ mount(() => (
           <Switch checked disabled />
         </Flow>
       </Row>
-      <Row label="small">
+      <Row label="sm">
         <Flow>
-          <Switch size="small" checked={false} />
-          <Switch size="small" checked />
+          <Switch size="sm" checked={false} />
+          <Switch size="sm" checked />
         </Flow>
       </Row>
     </Panel>

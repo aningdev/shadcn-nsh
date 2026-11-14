@@ -15,8 +15,8 @@ import {
 function App() {
   const button = buttonLook("secondary");
   const toggle = toggleLook();
-  const small = switchGeometries.small;
-  const regular = switchGeometries.regular;
+  const small = switchGeometries.sm;
+  const regular = switchGeometries.default;
   const pointer = switchGeometries.pointer;
   const pop = popoverLook();
   const title = dialogTitle();

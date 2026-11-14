@@ -219,7 +219,7 @@ export function Segmented<T extends string | number>(props: {
           },
           onChange: (value) =>
             props.onChange(props.options.find((option) => String(option) === value)!),
-          size: desktop ? "small" : "regular",
+          size: desktop ? "sm" : "default",
         }),
       ];
     },
@@ -339,7 +339,7 @@ function GallerySegmented(props: {
   options: readonly { value: string; label: string; count?: number }[];
   value: string;
   onChange: (value: string) => void;
-  size?: "small" | "regular";
+  size?: "sm" | "default";
   fill?: boolean;
 }) {
   return (

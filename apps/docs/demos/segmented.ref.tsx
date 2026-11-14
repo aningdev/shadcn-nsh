@@ -15,8 +15,8 @@ function App() {
   const align = signal("Left");
   const events = signal<string[]>([]);
   const log = (line: string) => events.set([line, ...events()].slice(0, 4));
-  const main = segmentedLook({ size: "regular", fill: true });
-  const compact = segmentedLook({ size: "small" });
+  const main = segmentedLook({ size: "default", fill: true });
+  const compact = segmentedLook({ size: "sm" });
 
   return (
     <DemoPage title="Segmented">

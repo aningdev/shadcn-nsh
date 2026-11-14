@@ -58,8 +58,8 @@ With no children the track is all of it; a touch screen gets a 44-point target f
 `size` is read on a touch screen; with a pointer both sizes are 28 × 16.
 
 ```tsx
-<Switch size="small" checked={on()} onChange={({ checked }) => on.set(checked)} />
-<Switch size="regular" checked={on()} onChange={({ checked }) => on.set(checked)} />
+<Switch size="sm" checked={on()} onChange={({ checked }) => on.set(checked)} />
+<Switch size="default" checked={on()} onChange={({ checked }) => on.set(checked)} />
 ```
 
 ### Disabled
@@ -76,7 +76,7 @@ With no children the track is all of it; a touch screen gets a 44-point target f
 
 ```tsx
 <BaseSwitch
-  {...switchLook(() => on(), "regular")}
+  {...switchLook(() => on(), "default")}
   checked={on()}
   onChange={({ checked }) => on.set(checked)}
 />
@@ -90,7 +90,7 @@ Every prop of [`nsh/base` Switch](https://nsh.dev/elements/switch) passes throug
 | -------------------- | ----------------------- | ----------- |
 | `checked`            | `boolean`               |             |
 | `onChange`           | `({ checked }) => void` |             |
-| `size`               | `"small" \| "regular"`  | `"regular"` |
+| `size`               | `SwitchSize`            | `"default"` |
 | `disabled`           | `boolean`               | `false`     |
 | `children`           | `JSX.Element`           |             |
 | `accessibilityLabel` | `string`                |             |
@@ -100,7 +100,9 @@ Every prop of [`nsh/base` Switch](https://nsh.dev/elements/switch) passes throug
 
 | Size      | Pointer | Touch screen |
 | --------- | ------- | ------------ |
-| `regular` | 28 × 16 | 42 × 24      |
-| `small`   | 28 × 16 | 34 × 20      |
+| `default` | 28 × 16 | 42 × 24      |
+| `sm`      | 28 × 16 | 34 × 20      |
+
+`SwitchSize` is `"sm" | "default"`.
 
 The knob keeps its size on and off; on, it is white with an olive edge (`finish.knobOn`).

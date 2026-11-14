@@ -20,14 +20,14 @@ export interface SwitchGeometry {
 
 /**
  * The switch's sizes: 28 × 16 with a pointer, 42 × 24 on a touch screen
- * (`small`: 34 × 20). The track is exactly the knob plus its border and
+ * (`sm`: 34 × 20). The track is exactly the knob plus its border and
  * inset on each side, so the knob sits as far from the top and the bottom
  * as from the near end.
  */
 export const switchGeometries = {
   pointer: { width: 28, height: 16, border: 1, inset: 1, knob: 12 },
-  regular: { width: 42, height: 24, border: 1, inset: 1, knob: 20 },
-  small: { width: 34, height: 20, border: 1, inset: 1, knob: 16 },
+  default: { width: 42, height: 24, border: 1, inset: 1, knob: 20 },
+  sm: { width: 34, height: 20, border: 1, inset: 1, knob: 16 },
 } satisfies Record<string, SwitchGeometry>;
 
 /**

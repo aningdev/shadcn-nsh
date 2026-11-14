@@ -21,8 +21,8 @@ import {
 } from "./lib/switch-geometry";
 
 // @port look/switch.ts
-/** A switch's size on a touch screen; with a pointer both are 28 × 16. */
-export type SwitchSize = "small" | "regular";
+/** A switch's size on a touch screen (`sm` 34 × 20); with a pointer both are 28 × 16. */
+export type SwitchSize = "sm" | "default";
 
 /** The props `switchLook` gives a `Switch`. */
 export interface SwitchLook {
@@ -54,13 +54,13 @@ function geometry(size: SwitchSize): SwitchGeometry {
  * knob keeps its size on and off; on, it is white with an olive edge
  * (`finish.knobOn`). `on` is the value the app owns: the knob follows it,
  * from a press or from elsewhere. 28 × 16 with a pointer; on a touch screen
- * 42 × 24 (`small`: 34 × 20); the terminal's is one row, as wide as its
+ * 42 × 24 (`sm`: 34 × 20); the terminal's is one row, as wide as its
  * glyph (`[off]`). The knob is as far from the track's edge on as off
  * (`knobTravel`). Read the styles in JSX, so the appearance is followed.
  * A switch that stands alone takes `switchHitSlop` too; one that is a row
  * with its label is its own target.
  */
-export function switchLook(on: () => boolean, size: SwitchSize = "regular"): SwitchLook {
+export function switchLook(on: () => boolean, size: SwitchSize = "default"): SwitchLook {
   const g = geometry(size);
   // The knob travels as gpui-kit's does (`spring_move`), the track's color
   // with it; with reduced motion both change in place.
@@ -112,7 +112,7 @@ export function switchLook(on: () => boolean, size: SwitchSize = "regular"): Swi
  * to it, which take presses before it where they overlap.
  */
 export function switchHitSlop(
-  size: SwitchSize = "regular",
+  size: SwitchSize = "default",
 ): { top: number; bottom: number; left: number; right: number } | undefined {
   return pointer || terminal ? undefined : switchSlop(geometry(size));
 }
@@ -123,7 +123,7 @@ export function switchHitSlop(
  * `trackStyle` and `thumbStyle` go over the look's.
  */
 export type SwitchProps = BaseSwitchProps & {
-  /** Its size on a touch screen (default `regular`); read once, as `switchLook` does. */
+  /** Its size on a touch screen (default `default`); read once, as `switchLook` does. */
   size?: SwitchSize;
 };
 
@@ -133,7 +133,7 @@ export type SwitchProps = BaseSwitchProps & {
  */
 export function Switch(props: SwitchProps) {
   const [, rest] = split(props, ["size", "trackClass", "trackStyle", "thumbStyle", "hitSlop"]);
-  const size = props.size ?? "regular";
+  const size = props.size ?? "default";
   const look = switchLook(() => props.checked ?? false, size);
   return (
     <BaseSwitch
