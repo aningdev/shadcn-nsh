@@ -5,6 +5,7 @@ import { Command } from "commander";
 
 import { DEFAULT_CONFIG, type NshUiConfig } from "../types";
 import { findNshJson, readJson, writeConfig, writeJson } from "../utils/config";
+import { installDependencies } from "../utils/deps";
 import { installItems } from "../utils/install";
 import { resolveTree } from "../utils/registry";
 import { resolveWorkspace, themePathForApp } from "../utils/workspace";
@@ -38,6 +39,7 @@ export async function runInit(opts: {
 
   const items = await resolveTree(config, ["theme"], opts.registry);
   await installItems(ws.uiRoot, config, items, { overwrite: opts.overwrite });
+  await installDependencies(ws.uiRoot, items);
 
   for (const appDir of ws.apps) {
     const nshJsonPath = await findNshJson(appDir);

@@ -83,6 +83,18 @@ describe("add", () => {
     expect(current.exists("nsh-ui.json")).toBe(false);
   });
 
+  test("--dry-run names the package the item imports, and writes no package.json", async () => {
+    current = makeFixture({ items: ["theme", "icons"] });
+    const out = await captured(() =>
+      runAdd(["icons"], { cwd: current!.app, registry: current!.url, dryRun: true }),
+    );
+
+    expect(out.result).toBe(0);
+    // The app has no lock file, so npm is the manager it would use (`utils/deps.ts`).
+    expect(out.lines).toContain("would install lucide@^1.66.0 (npm add lucide@^1.66.0)");
+    expect(current.exists("package.json")).toBe(false);
+  });
+
   test("--dry-run --overwrite reports the diff it would apply", async () => {
     current = fixture();
     await captured(() => runAdd(["button"], { cwd: current!.app, registry: current!.url }));
