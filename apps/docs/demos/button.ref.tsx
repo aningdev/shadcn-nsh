@@ -62,18 +62,18 @@ function IconPlain(props: {
   name: "search" | "star" | "trash";
   label: string;
   variant?: "ghost" | "secondary" | "destructive";
-  on?: boolean;
+  selected?: boolean;
   onPress?: () => void;
 }) {
   const options: IconButtonLookOptions = {
-    on: () => props.on,
+    selected: () => props.selected,
     variant: props.variant,
   };
   return (
     <Button
       accessibilityLabel={props.label}
       onPress={props.onPress}
-      selected={props.on}
+      selected={props.selected}
       {...iconButtonLook(options)}
     >
       <Icon name={props.name} {...iconButtonGlyph(options)} />
@@ -223,7 +223,7 @@ function App() {
             name="star"
             label="Star"
             variant="secondary"
-            on={starred()}
+            selected={starred()}
             onPress={() => {
               starred.set(!starred());
               press("star");

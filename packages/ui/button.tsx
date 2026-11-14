@@ -240,7 +240,7 @@ export type IconButtonVariant = "ghost" | "secondary" | "destructive";
 /** Options of `iconButtonLook` and `iconButtonGlyph`. */
 export interface IconButtonLookOptions {
   /** Chosen (a favorite, a shown sidebar): the accent's tint, the icon in the accent, no hover. */
-  on?: Live<boolean | undefined>;
+  selected?: Live<boolean | undefined>;
   /** `ghost` (default): bare until the pointer is over it; `secondary`: raised; `destructive`: its icon in the danger tone, the tone's tint under the pointer. */
   variant?: IconButtonVariant;
   /** Default `default`: a square as high as a button of that size. */
@@ -263,7 +263,7 @@ const iconButtonGlyphSizes: Record<ButtonSize, number> = pointer
  * `onPress`): a square of 28 points with a pointer, 40 on a touch screen
  * (a hit slop making 44), `radius.control`; `size` takes the heights of
  * `buttonSizes` (24 / 34 with a pointer). A ghost by default, raised as
- * `secondary`, the danger tone's under the pointer as `destructive`; `on`
+ * `secondary`, the danger tone's under the pointer as `destructive`; `selected`
  * takes the accent's tint. Pressed it sinks to 90% (none with reduced
  * motion). The terminal sizes it to its label.
  */
@@ -272,7 +272,7 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
   const destructive = o.variant === "destructive";
   return {
     get style(): ViewStyle {
-      const on = !!read(o.on);
+      const selected = !!read(o.selected);
       const side = iconButtonSide(o);
       return {
         width: terminal ? undefined : side,
@@ -283,13 +283,13 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
         borderCurve: "continuous",
         borderWidth: 1,
         borderColor: "transparent",
-        backgroundColor: on ? tints.accent : ghostFill(),
-        ...(raised && !on ? finish.raised : {}),
+        backgroundColor: selected ? tints.accent : ghostFill(),
+        ...(raised && !selected ? finish.raised : {}),
         ...transition,
       };
     },
     get hoverStyle(): ViewStyle | undefined {
-      if (read(o.on) || read(o.disabled)) return undefined;
+      if (read(o.selected) || read(o.disabled)) return undefined;
       return destructive ? { backgroundColor: tints.danger } : raised ? finish.hover : hovered();
     },
     get activeStyle(): ViewStyle | undefined {
@@ -309,14 +309,14 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
   };
 }
 
-/** The icon of an `iconButtonLook` of the same options: 15 points with a pointer, 18 on a touch screen (`sm` and `lg` a step either side); the accent when `on`, else the variant's (the danger tone's, the text's raised, muted bare). */
+/** The icon of an `iconButtonLook` of the same options: 15 points with a pointer, 18 on a touch screen (`sm` and `lg` a step either side); the accent when `selected`, else the variant's (the danger tone's, the text's raised, muted bare). */
 export function iconButtonGlyph(o: IconButtonLookOptions = {}) {
   return {
     get size() {
       return iconButtonGlyphSizes[read(o.size) ?? "default"];
     },
     get tint() {
-      return read(o.on)
+      return read(o.selected)
         ? colors.accent
         : o.variant === "destructive"
           ? colors.danger
@@ -567,7 +567,7 @@ export function IconButton(props: IconButtonProps) {
     "hitSlop",
   ]);
   const options: IconButtonLookOptions = {
-    on: () => props.selected,
+    selected: () => props.selected,
     variant: props.variant,
     size: () => props.size,
     disabled: () => props.disabled,

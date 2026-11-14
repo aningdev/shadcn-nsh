@@ -49,13 +49,14 @@ if (unknown.length > 0) {
   console.error(`baseline: no component is called ${unknown.join(", ")}`);
   process.exit(1);
 }
-const chosen = (name: string) => !only || only.some((id) => name.startsWith(`${id}-`));
+/** The id a pointer shot belongs to: `<id>-pointer-<scheme>.png` and its `.ref.png`. */
+const idOf = (name: string) => name.replace(/-pointer-[a-z]+(\.ref)?\.png$/, "");
+
+/** Whether a shot is one of the ids `--only` names, whole: `--only toggle` leaves `toggle-group` alone. */
+const chosen = (name: string) => !only || only.includes(idOf(name));
 
 /** What a page may differ by: its own tolerance, or the antialiasing budget all pages share. */
-const allowed = (name: string) => {
-  const id = name.replace(/-pointer-[a-z]+(\.ref)?\.png$/, "");
-  return cases.find((c) => c.id === id)?.tolerance ?? antialiasing;
-};
+const allowed = (name: string) => cases.find((c) => c.id === idOf(name))?.tolerance ?? antialiasing;
 
 /** The pictures the baseline holds: a pointer shot, of the ids named (`--only`) or of all. */
 const shotFiles = () =>

@@ -194,7 +194,10 @@ function App() {
               press("star");
             }}
           >
-            <Icon name="star" {...iconButtonGlyph({ variant: "secondary", on: () => starred() })} />
+            <Icon
+              name="star"
+              {...iconButtonGlyph({ variant: "secondary", selected: () => starred() })}
+            />
           </IconButton>
           <IconButton
             accessibilityLabel="Delete"
