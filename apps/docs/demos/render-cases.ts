@@ -15,6 +15,10 @@ import { componentIds } from "./catalog.generated";
  */
 type App = {
   press(selector: string): Promise<void>;
+  /** The mouse's secondary button: a context menu's trigger. Rejects on a phone. */
+  rightClick(selector: string): Promise<void>;
+  /** A held finger: the same trigger on a touch screen. */
+  longPress(selector: string): Promise<void>;
   /** Resolves once a view matching `selector` is on screen (its timeout bounds the wait). */
   waitFor(selector: string, options?: { timeout?: number } | null): Promise<void>;
   wait(ms: number): Promise<void>;
@@ -80,6 +84,15 @@ const overrides: Record<string, Override> = {
   checkbox: {
     steps: async (app) => {
       await app.press("text:Documents");
+      await app.wait(300);
+    },
+  },
+  // A checked context-menu row: its mark's color is the accent's, as the reference draws it.
+  "context-menu": {
+    steps: async (app) => {
+      // The pointer pass has a mouse, the touch pass a finger (a phone has no secondary button).
+      await app.rightClick("text:ContextMenu").catch(() => app.longPress("text:ContextMenu"));
+      await app.press("text:Pin");
       await app.wait(300);
     },
   },

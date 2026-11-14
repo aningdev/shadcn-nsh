@@ -81,6 +81,8 @@ function App() {
       >
         <ContextMenu
           {...menuPopup()}
+          // The shell's default gap from the pointer (base's own is 0).
+          offset={4}
           margin={8}
           onOpenChange={({ open, reason }) =>
             log(`Context ${open ? "opened" : "closed"} · ${reason}`)

@@ -450,18 +450,18 @@ export function MenuItem(props: MenuItemProps) {
     "disabledStyle",
   ]);
   const look = menuItemLook();
-  const checkable = props.checked != null;
   return (
     <BaseMenuItem
       {...rest}
-      indicatorClass={props.indicatorClass ?? (checkable ? menuIndicator : undefined)}
+      // Read where the item is made: an item can become checkable, and its mark follows the value.
+      indicatorClass={props.indicatorClass ?? (props.checked != null ? menuIndicator : undefined)}
       indicator={
         props.indicator ??
-        (checkable ? (
+        (props.checked != null ? (
           <MenuMark
             kind={props.role === "menuitemradio" ? "dot" : "check"}
             size={menuItemSize.icon}
-            tint={token("accent")}
+            tint={colors.accent}
           />
         ) : undefined)
       }
