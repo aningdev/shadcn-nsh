@@ -134,16 +134,13 @@ function App() {
   const action = (label: string, cmd: () => RichCommand, mirrored?: boolean) => (
     <Button
       variant="ghost"
-      size="small"
+      size="sm"
       accessibilityLabel={label}
       disabled={!can(cmd())}
       onPress={() => run(cmd())}
     >
       <View style={mirrored ? { transform: [{ scaleX: -1 }] } : undefined}>
-        <Icon
-          name="undo"
-          {...buttonGlyph("ghost", { size: "small", disabled: () => !can(cmd()) })}
-        />
+        <Icon name="undo" {...buttonGlyph("ghost", { size: "sm", disabled: () => !can(cmd()) })} />
       </View>
     </Button>
   );
@@ -191,10 +188,10 @@ function App() {
                   : "–"}
               </Text>
               <View style={{ flexDirection: "row", gap: 8 }}>
-                <Button variant="secondary" size="small" onPress={() => code?.run("findNext")}>
+                <Button variant="secondary" size="sm" onPress={() => code?.run("findNext")}>
                   Next
                 </Button>
-                <Button variant="secondary" size="small" onPress={() => code?.run("undo")}>
+                <Button variant="secondary" size="sm" onPress={() => code?.run("undo")}>
                   Undo
                 </Button>
               </View>

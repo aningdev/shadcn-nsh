@@ -22,24 +22,24 @@ import { Spinner } from "./spinner";
 
 // @port look/button.ts
 /**
- * `primary` and `accent`: the citrus fill (the one main action of a
- * decision area; a lit fill such as a counter's increment). `secondary`: a
- * raised neutral, the ordinary visible action. `ghost`: bare until the
- * pointer is over it, a quiet toolbar or inline action. `danger`: a
- * destructive action, the danger tone's tint, edge and text, as quiet as
- * `secondary`.
+ * `default`: the citrus fill, the one main action of a decision area.
+ * `secondary`: a raised neutral, the ordinary visible action. `ghost`: bare
+ * until the pointer is over it, a quiet toolbar or inline action.
+ * `destructive`: a destructive action, the danger tone's tint, edge and
+ * text, as quiet as `secondary`. shadcn's `outline` and `link` are not
+ * looks of this library yet, so they are not values here.
  */
-export type ButtonKind = "primary" | "accent" | "secondary" | "ghost" | "danger";
+export type ButtonVariant = "default" | "secondary" | "ghost" | "destructive";
 
 /** A button's size: 24 / 28 / 34 points with a pointer, 36 / 40 / 48 on a touch screen. */
-export type ButtonSize = "small" | "regular" | "large";
+export type ButtonSize = "sm" | "default" | "lg";
 
 /** A value, or a function reading it where the look is applied (a signal). */
 type Live<T> = T | (() => T);
 
 /** Options of `buttonLook`, `buttonLabel` and `buttonGlyph` (the same object for all three). */
 export interface ButtonLookOptions {
-  /** Default `regular`. */
+  /** Default `default`. */
   size?: Live<ButtonSize | undefined>;
   /** Shown as chosen: what it opens is open (a menu's or a popover's
    * trigger), or it is the current one of a few. A raised button takes the
@@ -67,14 +67,14 @@ const pointer = platform.desktop;
 /** A button's heights, label and icon sizes and paddings, by size: compact with a pointer, roomier on a touch screen. */
 export const buttonSizes: Record<ButtonSize, ButtonDimensions> = pointer
   ? {
-      small: { height: 24, font: 12, icon: 12, pad: 8 },
-      regular: { height: 28, font: 13, icon: 14, pad: 12 },
-      large: { height: 34, font: 14, icon: 15, pad: 16 },
+      sm: { height: 24, font: 12, icon: 12, pad: 8 },
+      default: { height: 28, font: 13, icon: 14, pad: 12 },
+      lg: { height: 34, font: 14, icon: 15, pad: 16 },
     }
   : {
-      small: { height: 36, font: 14, icon: 14, pad: 12 },
-      regular: { height: 40, font: 15, icon: 16, pad: 16 },
-      large: { height: 48, font: 17, icon: 18, pad: 20 },
+      sm: { height: 36, font: 14, icon: 14, pad: 12 },
+      default: { height: 40, font: 15, icon: 16, pad: 16 },
+      lg: { height: 48, font: 17, icon: 18, pad: 20 },
     };
 
 /**
@@ -84,7 +84,7 @@ export const buttonSizes: Record<ButtonSize, ButtonDimensions> = pointer
  * past, as a list row's does. None in the terminal, whose buttons are
  * bracketed words.
  */
-export function ghostOutdent(side: "left" | "right", size: ButtonSize = "regular"): ViewStyle {
+export function ghostOutdent(side: "left" | "right", size: ButtonSize = "default"): ViewStyle {
   if (terminal) return {};
   const pad = -buttonSizes[size].pad;
   return side === "left" ? { marginLeft: pad } : { marginRight: pad };
@@ -108,16 +108,16 @@ const transition = pressTransition("background-color, border-color, box-shadow, 
 const read = <T,>(v: Live<T> | undefined): T | undefined =>
   typeof v === "function" ? (v as () => T)() : v;
 
-const dimensions = (o?: ButtonLookOptions) => buttonSizes[read(o?.size) ?? "regular"];
+const dimensions = (o?: ButtonLookOptions) => buttonSizes[read(o?.size) ?? "default"];
 
-const filled = (kind: ButtonKind) => kind === "primary" || kind === "accent";
+const filled = (variant: ButtonVariant) => variant === "default";
 
-/** The fill, edge and shadow of a kind at rest (or selected). A disabled filled button gives up the citrus for the
+/** The fill, edge and shadow of a variant at rest (or selected). A disabled filled button gives up the citrus for the
  * neutral raised fill: half a lime fill reads as a muddy olive in dark, louder than the enabled buttons beside it. */
-function rest(kind: ButtonKind, selected: boolean, disabled = false): ViewStyle {
-  if (filled(kind) && disabled) return finish.raised;
-  if (filled(kind)) return { ...finish.accent, opacity: selected ? 0.88 : 1 };
-  if (kind === "danger") {
+function rest(variant: ButtonVariant, selected: boolean, disabled = false): ViewStyle {
+  if (filled(variant) && disabled) return finish.raised;
+  if (filled(variant)) return { ...finish.accent, opacity: selected ? 0.88 : 1 };
+  if (variant === "destructive") {
     return {
       boxShadow: finish.raised.boxShadow,
       backgroundColor: selected ? alpha(colors.danger, 0.2) : tints.danger,
@@ -125,7 +125,7 @@ function rest(kind: ButtonKind, selected: boolean, disabled = false): ViewStyle 
       borderColor: alpha(colors.danger, 0.32),
     };
   }
-  if (kind === "ghost")
+  if (variant === "ghost")
     return {
       backgroundColor: selected ? token("accent") : ghostFill(),
       borderColor: "transparent",
@@ -136,10 +136,10 @@ function rest(kind: ButtonKind, selected: boolean, disabled = false): ViewStyle 
 }
 
 /**
- * A button's props (spread them: `<Button {...buttonLook("primary")}>`, or
+ * A button's props (spread them: `<Button {...buttonLook("default")}>`, or
  * on a `View` with `onPress`): its style and its states. One row, its label
  * centered, `radius.control` with continuous corners; 28 points tall with a
- * pointer, 40 on a touch screen (`small` 24 / 36, `large` 34 / 48), a hit
+ * pointer, 40 on a touch screen (`sm` 24 / 36, `lg` 34 / 48), a hit
  * slop making a touch target 44 points. Under the pointer a raised button
  * lightens, a ghost gets a whisper of the text color, a filled one a touch
  * of transparency; pressed it sinks to 97% (none with reduced motion) and
@@ -147,8 +147,8 @@ function rest(kind: ButtonKind, selected: boolean, disabled = false): ViewStyle 
  * focus: `focusRing()`. Disabled: half opacity, no hover or press (a filled one on the raised fill, its label muted). Pair it with
  * `buttonLabel` for the label and `buttonGlyph` for an icon.
  */
-export function buttonLook(kind: Live<ButtonKind> = "secondary", o?: ButtonLookOptions) {
-  const k = () => read(kind) ?? "secondary";
+export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: ButtonLookOptions) {
+  const v = () => read(variant) ?? "secondary";
   const idle = () => !!read(o?.disabled) || !!read(o?.busy);
   return {
     get style(): ViewStyle {
@@ -163,24 +163,24 @@ export function buttonLook(kind: Live<ButtonKind> = "secondary", o?: ButtonLookO
         alignItems: "center",
         justifyContent: "center",
         gap: pointer ? 6 : 8,
-        ...rest(k(), !!read(o?.selected), !!read(o?.disabled)),
+        ...rest(v(), !!read(o?.selected), !!read(o?.disabled)),
         ...transition,
         ...read(o?.style),
       };
     },
     get hoverStyle(): ViewStyle | undefined {
       if (idle() || read(o?.selected)) return undefined;
-      const kind = k();
-      if (filled(kind)) return { opacity: 0.94 };
-      if (kind === "danger") return { backgroundColor: alpha(colors.danger, 0.16) };
-      return kind === "ghost" ? hovered() : finish.hover;
+      const variant = v();
+      if (filled(variant)) return { opacity: 0.94 };
+      if (variant === "destructive") return { backgroundColor: alpha(colors.danger, 0.16) };
+      return variant === "ghost" ? hovered() : finish.hover;
     },
     get activeStyle(): ViewStyle | undefined {
       if (idle()) return undefined;
-      const kind = k();
-      const shade: ViewStyle = filled(kind)
+      const variant = v();
+      const shade: ViewStyle = filled(variant)
         ? { opacity: 0.88 }
-        : kind === "danger"
+        : variant === "destructive"
           ? { backgroundColor: alpha(colors.danger, 0.22), boxShadow: "none" }
           : finish.pressed;
       return { ...shade, ...sink(0.97) };
@@ -195,21 +195,25 @@ export function buttonLook(kind: Live<ButtonKind> = "secondary", o?: ButtonLookO
   };
 }
 
-/** The color of a kind's label and icon; a disabled filled button's, on the neutral fill, is muted. */
-function ink(live: Live<ButtonKind>, disabled = false) {
-  const kind = read(live) ?? "secondary";
-  if (filled(kind) && disabled) return colors.muted;
-  return filled(kind) ? colors.onAccent : kind === "danger" ? colors.danger : colors.text;
+/** The color of a variant's label and icon; a disabled filled button's, on the neutral fill, is muted. */
+function ink(live: Live<ButtonVariant>, disabled = false) {
+  const variant = read(live) ?? "secondary";
+  if (filled(variant) && disabled) return colors.muted;
+  return filled(variant)
+    ? colors.onAccent
+    : variant === "destructive"
+      ? colors.danger
+      : colors.text;
 }
 
-/** The label of a `buttonLook` of the same kind and options: 13 points with a pointer, 15 on a touch screen (`small` 12 / 14, `large` 14 / 17), medium weight. */
+/** The label of a `buttonLook` of the same variant and options: 13 points with a pointer, 15 on a touch screen (`sm` 12 / 14, `lg` 14 / 17), medium weight. */
 export function buttonLabel(
-  kind: Live<ButtonKind> = "secondary",
+  variant: Live<ButtonVariant> = "secondary",
   o?: ButtonLookOptions,
 ): TextStyle {
   return {
     get color() {
-      return ink(kind, !!read(o?.disabled));
+      return ink(variant, !!read(o?.disabled));
     },
     get fontSize() {
       return dimensions(o).font;
@@ -219,42 +223,57 @@ export function buttonLabel(
 }
 
 /** An icon beside the label of a `buttonLook` (`<Icon {...buttonGlyph(..)} />`): its size and color. */
-export function buttonGlyph(kind: Live<ButtonKind> = "secondary", o?: ButtonLookOptions) {
+export function buttonGlyph(variant: Live<ButtonVariant> = "secondary", o?: ButtonLookOptions) {
   return {
     get size() {
       return dimensions(o).icon;
     },
     get tint() {
-      return ink(kind, !!read(o?.disabled));
+      return ink(variant, !!read(o?.disabled));
     },
   };
 }
+
+/** An icon-only button's variants: `ghost` bare until the pointer is over it, `secondary` raised, `destructive` a dangerous action's. */
+export type IconButtonVariant = "ghost" | "secondary" | "destructive";
 
 /** Options of `iconButtonLook` and `iconButtonGlyph`. */
 export interface IconButtonLookOptions {
   /** Chosen (a favorite, a shown sidebar): the accent's tint, the icon in the accent, no hover. */
   on?: Live<boolean | undefined>;
-  /** `danger`: its icon in the danger tone, the tone's tint under the pointer. */
-  tone?: "danger";
-  /** `ghost` (default): bare until the pointer is over it; `secondary`: raised. */
-  variant?: "ghost" | "secondary";
+  /** `ghost` (default): bare until the pointer is over it; `secondary`: raised; `destructive`: its icon in the danger tone, the tone's tint under the pointer. */
+  variant?: IconButtonVariant;
+  /** Default `default`: a square as high as a button of that size. */
+  size?: Live<ButtonSize | undefined>;
   /** No hover and no press feedback; dimmed to half. */
   disabled?: Live<boolean | undefined>;
 }
 
+/** The side of an icon-only button: the height of a button of its size (28 with a pointer, 40 on a touch screen, at `default`). */
+const iconButtonSide = (o?: IconButtonLookOptions) =>
+  buttonSizes[read(o?.size) ?? "default"].height;
+
+/** The icon of an icon-only button: 15 points on the `default` 28 with a pointer, 18 on a touch screen's 40, a step either side. */
+const iconButtonGlyphSizes: Record<ButtonSize, number> = pointer
+  ? { sm: 13, default: 15, lg: 17 }
+  : { sm: 16, default: 18, lg: 20 };
+
 /**
  * An icon-only button's props (spread them on a `Button` or a `View` with
  * `onPress`): a square of 28 points with a pointer, 40 on a touch screen
- * (a hit slop making 44), `radius.control`. A ghost by default, raised as
- * `secondary`; `on` takes the accent's tint. Pressed it sinks to 90% (none
- * with reduced motion). The terminal sizes it to its label.
+ * (a hit slop making 44), `radius.control`; `size` takes the heights of
+ * `buttonSizes` (24 / 34 with a pointer). A ghost by default, raised as
+ * `secondary`, the danger tone's under the pointer as `destructive`; `on`
+ * takes the accent's tint. Pressed it sinks to 90% (none with reduced
+ * motion). The terminal sizes it to its label.
  */
 export function iconButtonLook(o: IconButtonLookOptions = {}) {
-  const side = pointer ? 28 : 40;
   const raised = o.variant === "secondary";
+  const destructive = o.variant === "destructive";
   return {
     get style(): ViewStyle {
       const on = !!read(o.on);
+      const side = iconButtonSide(o);
       return {
         width: terminal ? undefined : side,
         height: terminal ? undefined : side,
@@ -271,11 +290,7 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
     },
     get hoverStyle(): ViewStyle | undefined {
       if (read(o.on) || read(o.disabled)) return undefined;
-      return o.tone === "danger"
-        ? { backgroundColor: tints.danger }
-        : raised
-          ? finish.hover
-          : hovered();
+      return destructive ? { backgroundColor: tints.danger } : raised ? finish.hover : hovered();
     },
     get activeStyle(): ViewStyle | undefined {
       if (read(o.disabled)) return undefined;
@@ -288,18 +303,22 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
       return focusRing();
     },
     disabledStyle: { opacity: 0.5 } as ViewStyle,
-    hitSlop: slop(side),
+    get hitSlop(): number | undefined {
+      return slop(iconButtonSide(o));
+    },
   };
 }
 
-/** The icon of an `iconButtonLook` of the same options: 15 points with a pointer, 18 on a touch screen; the accent when `on`, else the tone's, the text's (raised) or muted. */
+/** The icon of an `iconButtonLook` of the same options: 15 points with a pointer, 18 on a touch screen (`sm` and `lg` a step either side); the accent when `on`, else the variant's (the danger tone's, the text's raised, muted bare). */
 export function iconButtonGlyph(o: IconButtonLookOptions = {}) {
   return {
-    size: pointer ? 15 : 18,
+    get size() {
+      return iconButtonGlyphSizes[read(o.size) ?? "default"];
+    },
     get tint() {
       return read(o.on)
         ? colors.accent
-        : o.tone === "danger"
+        : o.variant === "destructive"
           ? colors.danger
           : o.variant === "secondary"
             ? colors.text
@@ -308,20 +327,38 @@ export function iconButtonGlyph(o: IconButtonLookOptions = {}) {
   };
 }
 
+/** A round icon button's variants: `default` the citrus fill, `secondary` raised. */
+export type RoundButtonVariant = "default" | "secondary";
+
+/** Options of `roundButtonLook` and `roundButtonGlyph`. */
+export interface RoundButtonLookOptions {
+  /** Default `default`: the diameter is a button's height at that size (28 with a pointer, 40 on a touch screen). */
+  size?: ButtonSize;
+  /** The diameter in points, over the scale: geometry, where a scale would be off. */
+  side?: number;
+  /** No hover and no press feedback; dimmed to half. */
+  disabled?: Live<boolean | undefined>;
+}
+
+/** The diameter of a round button: `side` if given, else a button's height at `size`. */
+const roundSide = (o?: RoundButtonLookOptions) =>
+  o?.side ?? buttonSizes[o?.size ?? "default"].height;
+
 /**
  * A round icon button's props (a composer's send, a player's play):
- * `primary` the citrus fill, `secondary` raised; `size` across (28 with a
- * pointer, 40 on a touch screen, a hit slop making 44). Under the pointer
- * it lightens; pressed it sinks to 92% (none with reduced motion).
+ * `default` the citrus fill, `secondary` raised; `size` across (28 with a
+ * pointer, 40 on a touch screen, a hit slop making 44), or `side` points
+ * across exactly. Under the pointer it lightens; pressed it sinks to 92%
+ * (none with reduced motion).
  */
 export function roundButtonLook(
-  variant: "primary" | "secondary" = "primary",
-  o: { size?: number; disabled?: Live<boolean | undefined> } = {},
+  variant: RoundButtonVariant = "default",
+  o: RoundButtonLookOptions = {},
 ) {
-  const side = o.size ?? (pointer ? 28 : 40);
-  const primary = variant === "primary";
+  const primary = variant === "default";
   return {
     get style(): ViewStyle {
+      const side = roundSide(o);
       return {
         width: side,
         height: side,
@@ -344,16 +381,21 @@ export function roundButtonLook(
       return focusRing();
     },
     disabledStyle: { opacity: 0.5 } as ViewStyle,
-    hitSlop: slop(side),
+    get hitSlop(): number | undefined {
+      return slop(roundSide(o));
+    },
   };
 }
 
-/** The icon of a `roundButtonLook`: 42% of its size, on the fill's color. */
-export function roundButtonGlyph(variant: "primary" | "secondary" = "primary", size?: number) {
+/** The icon of a `roundButtonLook` of the same options: 42% of its diameter, on the fill's color. */
+export function roundButtonGlyph(
+  variant: RoundButtonVariant = "default",
+  o?: RoundButtonLookOptions,
+) {
   return {
-    size: (size ?? (pointer ? 28 : 40)) * 0.42,
+    size: roundSide(o) * 0.42,
     get tint() {
-      return variant === "primary" ? colors.onLight : colors.text;
+      return variant === "default" ? colors.onLight : colors.text;
     },
   };
 }
@@ -370,16 +412,16 @@ export interface SplitSegmentOptions {
 
 /**
  * A split button: a main action and the menu of its variants in one
- * silhouette of a kind's finish (`frame`, a row clipping its halves), the
+ * silhouette of a variant's finish (`frame`, a row clipping its halves), the
  * two halves (`segment()`, each a pressable with its own hover, press and
  * focus) and the hairline between them (`divider`). A half carries no fill
  * of its own: under the pointer it takes a whisper of the label's color, a
  * deeper one pressed or while its menu is open, so the pair keeps one
- * fill. The frame and the halves are a `buttonLook` of the same kind and
+ * fill. The frame and the halves are a `buttonLook` of the same variant and
  * size; the label and icons take `buttonLabel` / `buttonGlyph`.
  */
-export function splitButtonLook(kind: Live<ButtonKind> = "primary", o?: ButtonLookOptions) {
-  const shade = (a: number) => alpha(ink(kind), a);
+export function splitButtonLook(variant: Live<ButtonVariant> = "default", o?: ButtonLookOptions) {
+  const shade = (a: number) => alpha(ink(variant), a);
   return {
     frame: {
       get style(): ViewStyle {
@@ -390,7 +432,7 @@ export function splitButtonLook(kind: Live<ButtonKind> = "primary", o?: ButtonLo
           borderCurve: "continuous",
           borderWidth: 1,
           overflow: "hidden",
-          ...rest(read(kind) ?? "primary", false),
+          ...rest(read(variant) ?? "default", false),
           ...transition,
           ...read(o?.style),
         };
@@ -442,9 +484,9 @@ export function splitButtonLook(kind: Live<ButtonKind> = "primary", o?: ButtonLo
  * props (`style`, `hoverStyle`, `activeStyle`, `focusVisibleStyle`, `disabledStyle`) go over the look's.
  */
 export type ButtonProps = Omit<BaseButtonProps, "children"> & {
-  /** Default `primary`, the main action, as upstream's own `Button`. */
-  variant?: ButtonKind;
-  /** Default `regular`. */
+  /** Default `default`, the citrus fill: the main action. */
+  variant?: ButtonVariant;
+  /** Default `default`. */
   size?: ButtonSize;
   /** Work started by it is going on: a spinner before the label, no presses, not dimmed. */
   busy?: boolean;
@@ -467,14 +509,14 @@ export function Button(props: ButtonProps) {
     "disabledStyle",
     "hitSlop",
   ]);
-  const kind = () => props.variant ?? "primary";
+  const variant = () => props.variant ?? "default";
   const options: ButtonLookOptions = {
     size: () => props.size,
     selected: () => props.selected,
     disabled: () => props.disabled,
     busy: () => props.busy,
   };
-  const look = buttonLook(kind, options);
+  const look = buttonLook(variant, options);
   return (
     <BaseButton
       {...rest}
@@ -488,10 +530,10 @@ export function Button(props: ButtonProps) {
       disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     >
       <If when={props.busy}>
-        <Spinner {...buttonGlyph(kind, options)} />
+        <Spinner {...buttonGlyph(variant, options)} />
       </If>
       {typeof props.children === "string" ? (
-        <Text style={buttonLabel(kind, options)}>{props.children}</Text>
+        <Text style={buttonLabel(variant, options)}>{props.children}</Text>
       ) : (
         props.children
       )}
@@ -504,21 +546,18 @@ export function Button(props: ButtonProps) {
  * props go over the look's. Pass an icon (or any content) as `children`; `iconButtonGlyph` sizes it.
  */
 export type IconButtonProps = Omit<BaseButtonProps, "children"> & {
-  /** Default `ghost`: bare until the pointer is over it; `secondary`: raised. */
-  variant?: "ghost" | "secondary";
-  /** `danger`: its icon in the danger tone, the tone's tint under the pointer. */
-  tone?: "danger";
-  /** Chosen (a favorite, a shown sidebar): the accent's tint; overrides hover. */
-  on?: boolean;
+  /** Default `ghost`: bare until the pointer is over it; `secondary`: raised; `destructive`: a dangerous action's. */
+  variant?: IconButtonVariant;
+  /** Default `default`: a square as high as a button of that size. */
+  size?: ButtonSize;
   children?: JSX.Element;
 };
 
-/** A square icon button. `on` (or base `selected`) shows it as chosen. */
+/** A square icon button. `selected` (a base prop) shows it as chosen. */
 export function IconButton(props: IconButtonProps) {
   const [, rest] = split(props, [
     "variant",
-    "tone",
-    "on",
+    "size",
     "children",
     "style",
     "hoverStyle",
@@ -528,16 +567,15 @@ export function IconButton(props: IconButtonProps) {
     "hitSlop",
   ]);
   const options: IconButtonLookOptions = {
-    on: () => props.on ?? props.selected,
-    tone: props.tone,
+    on: () => props.selected,
     variant: props.variant,
+    size: () => props.size,
     disabled: () => props.disabled,
   };
   const look = iconButtonLook(options);
   return (
     <BaseButton
       {...rest}
-      selected={props.selected ?? props.on}
       hitSlop={props.hitSlop ?? look.hitSlop}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
@@ -555,18 +593,21 @@ export function IconButton(props: IconButtonProps) {
  * props go over the look's. Pass an icon as `children`; `roundButtonGlyph` sizes and tints it.
  */
 export type RoundButtonProps = Omit<BaseButtonProps, "children"> & {
-  /** Default `primary`, the citrus fill; `secondary` raised. */
-  variant?: "primary" | "secondary";
-  /** Side length in points (default 28 with a pointer, 40 on a touch screen). */
-  size?: number;
+  /** Default `default`, the citrus fill; `secondary` raised. */
+  variant?: RoundButtonVariant;
+  /** Default `default`: the diameter is a button's height at that size (28 with a pointer, 40 on a touch screen). */
+  size?: ButtonSize;
+  /** The diameter in points, over the scale. */
+  side?: number;
   children?: JSX.Element;
 };
 
-/** A round icon button of a `variant` and a `size`. */
+/** A round icon button of a `variant`, a `size` or a `side`. */
 export function RoundButton(props: RoundButtonProps) {
   const [, rest] = split(props, [
     "variant",
     "size",
+    "side",
     "children",
     "style",
     "hoverStyle",
@@ -575,11 +616,13 @@ export function RoundButton(props: RoundButtonProps) {
     "disabledStyle",
     "hitSlop",
   ]);
-  const variant = props.variant ?? "primary";
-  const look = roundButtonLook(variant, {
+  const variant = props.variant ?? "default";
+  const options: RoundButtonLookOptions = {
     size: props.size,
+    side: props.side,
     disabled: () => props.disabled,
-  });
+  };
+  const look = roundButtonLook(variant, options);
   return (
     <BaseButton
       {...rest}
@@ -597,7 +640,7 @@ export function RoundButton(props: RoundButtonProps) {
 
 type SplitContextValue = {
   look: ReturnType<typeof splitButtonLook>;
-  kind: () => ButtonKind;
+  variant: () => ButtonVariant;
   options: ButtonLookOptions;
 };
 
@@ -611,9 +654,9 @@ function useSplit() {
 
 /** The frame of a split button: a main action and a menu half in one silhouette. */
 export type SplitButtonProps = {
-  /** Default `primary`. */
-  variant?: ButtonKind;
-  /** Default `regular`. */
+  /** Default `default`. */
+  variant?: ButtonVariant;
+  /** Default `default`. */
   size?: ButtonSize;
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
@@ -635,14 +678,14 @@ export type SplitButtonDividerProps = {
 
 /** The frame that clips the two halves of a split button. */
 export function SplitButton(props: SplitButtonProps) {
-  const kind = () => props.variant ?? "primary";
+  const variant = () => props.variant ?? "default";
   const options: ButtonLookOptions = {
     size: () => props.size,
     disabled: () => props.disabled,
   };
-  const look = splitButtonLook(kind, options);
+  const look = splitButtonLook(variant, options);
   return (
-    <SplitContext.Provider value={{ look, kind, options }}>
+    <SplitContext.Provider value={{ look, variant, options }}>
       <View style={[look.frame.style, props.style ?? null]}>{props.children}</View>
     </SplitContext.Provider>
   );
@@ -675,7 +718,7 @@ export function SplitButtonSegment(props: SplitButtonSegmentProps) {
       disabledStyle={[props.disabledStyle ?? null]}
     >
       {typeof props.children === "string" ? (
-        <Text style={buttonLabel(ctx.kind, ctx.options)}>{props.children}</Text>
+        <Text style={buttonLabel(ctx.variant, ctx.options)}>{props.children}</Text>
       ) : (
         props.children
       )}

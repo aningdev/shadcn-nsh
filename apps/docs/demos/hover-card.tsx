@@ -88,7 +88,7 @@ function App() {
           Writes the first programs for the Analytical Engine.
         </Text>
         <Button
-          variant={following() ? "secondary" : "accent"}
+          variant={following() ? "secondary" : "default"}
           onPress={() => following.set(!following())}
         >
           {following() ? "Following" : "Follow"}

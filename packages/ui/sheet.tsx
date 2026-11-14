@@ -9,7 +9,7 @@ import {
   type SheetProps as BaseSheetProps,
 } from "nsh/base";
 
-import { Button, type ButtonKind } from "./button";
+import { Button, type ButtonVariant } from "./button";
 import { createOpenState, type OpenState } from "./lib/open-state";
 import { backdrop } from "./lib/overlay";
 
@@ -113,7 +113,7 @@ export type SheetContentProps = Omit<
 
 export type SheetTriggerProps = {
   children?: string | JSX.Element;
-  variant?: ButtonKind;
+  variant?: ButtonVariant;
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
 };

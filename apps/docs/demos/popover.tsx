@@ -64,7 +64,7 @@ function App() {
               events.set([`${open ? "opened" : "closed"} · ${reason}`, ...events()].slice(0, 4))
             }
           >
-            <PopoverTrigger variant="accent">Order 1024</PopoverTrigger>
+            <PopoverTrigger variant="default">Order 1024</PopoverTrigger>
             <PopoverContent placement={placement()} offset={offset()} margin={12} width={260}>
               <PopoverHeader style={{ gap: 2 }}>
                 <PopoverTitle

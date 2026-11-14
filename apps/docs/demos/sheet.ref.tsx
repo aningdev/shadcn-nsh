@@ -124,7 +124,7 @@ function App() {
         </Text>
         <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
           <Button
-            variant="primary"
+            variant="default"
             onPress={() => {
               open.set(false);
               log("Done pressed");

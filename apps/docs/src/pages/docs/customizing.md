@@ -38,11 +38,11 @@ Edit the values and keep the keys: components and finishes refer to them by name
 
 ## One control's look
 
-The look is the function that turns a variant, a size and a state into the props `nsh/base` draws with. It sits at the top of a copied component, above the component itself.
+The look is the function that turns a `variant` (shadcn's word: `default`, `secondary`, `ghost`, `destructive`), a `size` (`sm`, `default`, `lg`) and a state into the props `nsh/base` draws with. It sits at the top of a copied component, above the component itself.
 
 ```tsx
 // components/ui/button.tsx
-export function buttonLook(kind: Live<ButtonKind> = "secondary", o?: ButtonLookOptions) {
+export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: ButtonLookOptions) {
   return {
     get style(): ViewStyle {
       const dims = dimensions(o);

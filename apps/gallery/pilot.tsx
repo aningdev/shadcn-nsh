@@ -5,8 +5,8 @@ import { mount } from "nsh";
 import { Button, IconButton, Switch } from "../../packages/ui";
 import { Flow, Page, Panel, Row } from "./demo-kit";
 
-const kinds = ["primary", "accent", "secondary", "ghost", "danger"] as const;
-const sizes = ["small", "regular", "large"] as const;
+const kinds = ["default", "secondary", "ghost", "destructive"] as const;
+const sizes = ["sm", "default", "lg"] as const;
 
 mount(() => (
   <Page>

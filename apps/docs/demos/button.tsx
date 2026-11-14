@@ -84,7 +84,7 @@ function App() {
             <Caption>onPress, onPressDown, onPressUp</Caption>
             <View style={{ flexDirection: "row", flexWrap: "wrap", alignItems: "center", gap: 12 }}>
               <Button
-                variant="accent"
+                variant="default"
                 disabled={disabled()}
                 onPress={() => press(`counter ${presses() + 1}`)}
                 onPressDown={() => pressing.set(true)}
@@ -136,10 +136,10 @@ function App() {
 
       <DemoCard>
         <DemoSection title="Kinds">
-          <Button variant="primary" onPress={() => press("primary")}>
+          <Button variant="default" onPress={() => press("primary")}>
             Primary
           </Button>
-          <Button variant="accent" onPress={() => press("accent")}>
+          <Button variant="default" onPress={() => press("accent")}>
             Accent
           </Button>
           <Button variant="secondary" onPress={() => press("secondary")}>
@@ -148,18 +148,18 @@ function App() {
           <Button variant="ghost" onPress={() => press("ghost")}>
             Ghost
           </Button>
-          <Button variant="danger" onPress={() => press("danger")}>
+          <Button variant="destructive" onPress={() => press("delete")}>
             Delete
           </Button>
         </DemoSection>
         <DemoSection title="Sizes">
-          <Button variant="secondary" size="small" onPress={() => press("small")}>
+          <Button variant="secondary" size="sm" onPress={() => press("small")}>
             Small
           </Button>
-          <Button variant="secondary" size="regular" onPress={() => press("regular")}>
+          <Button variant="secondary" size="default" onPress={() => press("regular")}>
             Regular
           </Button>
-          <Button variant="secondary" size="large" onPress={() => press("large")}>
+          <Button variant="secondary" size="lg" onPress={() => press("large")}>
             Large
           </Button>
         </DemoSection>
@@ -174,7 +174,7 @@ function App() {
           >
             Pinned
           </Button>
-          <Button variant="primary" disabled>
+          <Button variant="default" disabled>
             Disabled
           </Button>
           <Button variant="secondary" disabled>
@@ -188,7 +188,7 @@ function App() {
           <IconButton
             accessibilityLabel="Star"
             variant="secondary"
-            on={starred()}
+            selected={starred()}
             onPress={() => {
               starred.set(!starred());
               press("star");
@@ -196,18 +196,22 @@ function App() {
           >
             <Icon name="star" {...iconButtonGlyph({ variant: "secondary", on: () => starred() })} />
           </IconButton>
-          <IconButton accessibilityLabel="Delete" tone="danger" onPress={() => press("delete")}>
-            <Icon name="trash" {...iconButtonGlyph({ tone: "danger" })} />
+          <IconButton
+            accessibilityLabel="Delete"
+            variant="destructive"
+            onPress={() => press("delete")}
+          >
+            <Icon name="trash" {...iconButtonGlyph({ variant: "destructive" })} />
           </IconButton>
           <RoundButton accessibilityLabel="Play" onPress={() => press("play")}>
-            <Icon name="play" {...roundButtonGlyph("primary")} />
+            <Icon name="play" {...roundButtonGlyph("default")} />
           </RoundButton>
           <RoundButton accessibilityLabel="Plus" variant="secondary" onPress={() => press("plus")}>
             <Icon name="plus" {...roundButtonGlyph("secondary")} />
           </RoundButton>
         </DemoSection>
         <DemoSection title="Split">
-          <SplitButton variant="primary">
+          <SplitButton variant="default">
             <SplitButtonSegment onPress={() => press("save")}>Save</SplitButtonSegment>
             <SplitButtonDivider />
             <SplitButtonSegment
@@ -218,7 +222,7 @@ function App() {
                 press("save options");
               }}
             >
-              <Icon name="chevron-down" {...buttonGlyph("primary")} />
+              <Icon name="chevron-down" {...buttonGlyph("default")} />
             </SplitButtonSegment>
           </SplitButton>
           <SplitButton variant="secondary">

@@ -88,7 +88,7 @@ function App() {
             onCancel={() => cancels.update((n) => n + 1)}
           >
             <DialogTrigger
-              variant="primary"
+              variant="default"
               style={wide() ? undefined : { flex: 1, alignSelf: "stretch" }}
             >
               Open a card
@@ -108,7 +108,7 @@ function App() {
                   Keep
                 </DialogClose>
                 <DialogClose
-                  variant="danger"
+                  variant="destructive"
                   onPress={closedByApp("Delete")}
                   style={desktop ? undefined : { flex: 1 }}
                 >
@@ -138,7 +138,7 @@ function App() {
                 own style.
               </DialogDescription>
               <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-                <DialogClose variant="primary">Close</DialogClose>
+                <DialogClose variant="default">Close</DialogClose>
               </View>
             </DialogContent>
           </Dialog>

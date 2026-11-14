@@ -31,10 +31,10 @@ mount(() => (
             <AlertDialogDescription>This cannot be undone.</AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
-            <Button size="small" variant="secondary">
+            <Button size="sm" variant="secondary">
               Cancel
             </Button>
-            <Button size="small" variant="danger">
+            <Button size="sm" variant="destructive">
               Delete
             </Button>
           </AlertDialogFooter>
@@ -49,7 +49,7 @@ mount(() => (
       <Row label="tools">
         <Toolbar accessibilityLabel="Formatting" style={{ alignSelf: "flex-start", flexShrink: 0 }}>
           <ToolbarGroup accessibilityLabel="Marks">
-            <Button variant="ghost" size="small" accessibilityLabel="Bold">
+            <Button variant="ghost" size="sm" accessibilityLabel="Bold">
               Bold
             </Button>
             <Toggle pressed accessibilityLabel="Italic">
@@ -60,7 +60,7 @@ mount(() => (
           <Link href="https://nsh.dev" openWith="app">
             Site
           </Link>
-          <Button variant="ghost" size="small" disabled accessibilityLabel="Off">
+          <Button variant="ghost" size="sm" disabled accessibilityLabel="Off">
             Off
           </Button>
         </Toolbar>

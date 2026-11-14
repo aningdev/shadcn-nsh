@@ -91,7 +91,7 @@ function App() {
         <Section title="Button">
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 10, alignItems: "center" }}>
             <Button onPress={() => count.set(count() + 1)}>Primary</Button>
-            <Button variant="accent" onPress={() => count.set(count() + 1)}>
+            <Button variant="default" onPress={() => count.set(count() + 1)}>
               Accent
             </Button>
             <Button variant="secondary" onPress={() => count.set(count() + 1)}>
@@ -100,13 +100,13 @@ function App() {
             <Button variant="ghost" onPress={() => count.set(count() + 1)}>
               Ghost
             </Button>
-            <Button variant="danger" onPress={() => count.set(count() + 1)}>
+            <Button variant="destructive" onPress={() => count.set(count() + 1)}>
               Danger
             </Button>
-            <Button size="small" onPress={() => count.set(count() + 1)}>
+            <Button size="sm" onPress={() => count.set(count() + 1)}>
               Small
             </Button>
-            <Button size="large" onPress={() => count.set(count() + 1)}>
+            <Button size="lg" onPress={() => count.set(count() + 1)}>
               Large
             </Button>
             <Button selected={bold()} variant="secondary" onPress={() => bold.set(!bold())}>
@@ -268,7 +268,7 @@ function App() {
                 <DialogDescription>This uses the ported dialog parts.</DialogDescription>
                 <DialogFooter>
                   <DialogClose variant="secondary">Cancel</DialogClose>
-                  <DialogClose variant="primary">OK</DialogClose>
+                  <DialogClose variant="default">OK</DialogClose>
                 </DialogFooter>
               </DialogContent>
             </Dialog>

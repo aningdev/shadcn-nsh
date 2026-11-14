@@ -9,7 +9,7 @@ import {
   type PopoverProps as BasePopoverProps,
 } from "nsh/base";
 
-import { Button, type ButtonKind } from "./button";
+import { Button, type ButtonVariant } from "./button";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import { PopIn, popupSurface } from "./lib/popup";
 
@@ -76,7 +76,7 @@ export type PopoverContentProps = Omit<
 export type PopoverTriggerProps = {
   children?: string | JSX.Element;
   /** The button's variant, for a string child (default `secondary`). */
-  variant?: ButtonKind;
+  variant?: ButtonVariant;
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
 };

@@ -48,18 +48,18 @@ export function toastText(): TextStyle {
  * making 44), so the toast stays a compact row. */
 const toastAction: ButtonLookOptions = pointer
   ? { style: { paddingHorizontal: 10 } }
-  : { size: "small" };
+  : { size: "sm" };
 
 /** A toast's action (an Undo, a Retry), spread on a `Button` or a pressable
- * view: the main action's citrus button (`buttonLook("primary")`). Its
+ * view: the main action's citrus button (`buttonLook("default")`). Its
  * label takes `toastActionLabel`. */
 export function toastActionLook() {
-  return buttonLook("primary", toastAction);
+  return buttonLook("default", toastAction);
 }
 
-/** The label of a `toastActionLook` (`buttonLabel("primary")`). */
+/** The label of a `toastActionLook` (`buttonLabel("default")`). */
 export function toastActionLabel(): TextStyle {
-  return buttonLabel("primary", toastAction);
+  return buttonLabel("default", toastAction);
 }
 
 /** A toast's close button (its cross): a circle 24 points across, bare

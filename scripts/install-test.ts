@@ -267,7 +267,7 @@ const SAMPLES: { item: string; import: string; jsx: string }[] = [
   {
     item: "button",
     import: 'import { Button } from "./components/ui/button";',
-    jsx: '<Button variant="primary">Primary</Button>',
+    jsx: '<Button variant="default">Primary</Button>',
   },
   {
     item: "checkbox",

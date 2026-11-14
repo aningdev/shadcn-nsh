@@ -74,10 +74,10 @@ mount(() => (
           <Text style={dialogTitle()}>Delete file?</Text>
           <Text style={dialogText()}>This cannot be undone.</Text>
           <View style={{ flexDirection: "row", gap: 8, justifyContent: "flex-end" }}>
-            <Button size="small" variant="secondary" disabled>
+            <Button size="sm" variant="secondary" disabled>
               Cancel
             </Button>
-            <Button size="small" variant="danger">
+            <Button size="sm" variant="destructive">
               Delete
             </Button>
           </View>

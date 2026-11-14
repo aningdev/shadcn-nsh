@@ -111,7 +111,7 @@ function App() {
               </Text>
               <Button
                 variant="secondary"
-                size="small"
+                size="sm"
                 disabled={region() === null}
                 onPress={() => {
                   region.set(null);

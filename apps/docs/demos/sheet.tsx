@@ -106,7 +106,7 @@ function App() {
               : "The backdrop and Android's back close it."}
           </Text>
           <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-            <SheetClose variant="primary" onPress={() => log("Done pressed")}>
+            <SheetClose variant="default" onPress={() => log("Done pressed")}>
               Done
             </SheetClose>
           </View>

@@ -84,7 +84,7 @@ function App() {
               <View style={{ flexDirection: "row", gap: 8, marginTop: 6 }}>
                 <Button
                   variant="secondary"
-                  size="small"
+                  size="sm"
                   onPress={() => {
                     oldValue.set(OLD);
                     newValue.set(NEW);

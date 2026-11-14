@@ -115,14 +115,14 @@ function App() {
           <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
             <Button
               variant="secondary"
-              size="small"
+              size="sm"
               onPress={() => tree?.revealItem("src/ui/icons/file.svg")}
             >
               Reveal file.svg
             </Button>
             <Button
               variant="ghost"
-              size="small"
+              size="sm"
               disabled={expanded().length === 0}
               onPress={() => {
                 expanded.set([]);

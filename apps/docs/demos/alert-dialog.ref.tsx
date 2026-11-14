@@ -7,7 +7,7 @@ import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 import { Dialog } from "nsh/base";
 
-import { Button, type ButtonKind } from "@/packages/ui/button";
+import { Button, type ButtonVariant } from "@/packages/ui/button";
 import { dialogCard, dialogText, dialogTitle } from "@/packages/ui/dialog";
 import { backdrop } from "@/packages/ui/lib/overlay";
 import { controlSize, listRow, RowDivider, sectionSurface } from "@/packages/ui/lib/surface";
@@ -72,8 +72,8 @@ const alerts: Alert[] = [
 ];
 
 /** The button an action's role takes (`AlertDialogAction`). */
-const actionVariant = (role?: Role): ButtonKind =>
-  role === "destructive" ? "danger" : role === "cancel" ? "secondary" : "primary";
+const actionVariant = (role?: Role): ButtonVariant =>
+  role === "destructive" ? "destructive" : role === "cancel" ? "secondary" : "default";
 
 /** The row of a card's actions, as `AlertDialogFooter` lays it. */
 const footer = {
@@ -140,7 +140,7 @@ function App() {
                 >
                   <Text style={{ flex: 1, fontSize: 13, color: colors.muted }}>{alert.detail}</Text>
                   <Button
-                    variant={alert.danger ? "danger" : "secondary"}
+                    variant={alert.danger ? "destructive" : "secondary"}
                     onPress={() => show(alert.id)}
                   >
                     {alert.label}

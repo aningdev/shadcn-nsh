@@ -74,10 +74,10 @@ import {
 
 ### Trigger
 
-A string child is a `Button`; `variant` picks its kind.
+A string child is a `Button`; `variant` picks its look (`secondary` by default).
 
 ```tsx
-<AlertDialogTrigger variant="danger">Delete file…</AlertDialogTrigger>
+<AlertDialogTrigger variant="destructive">Delete file…</AlertDialogTrigger>
 ```
 
 ### Dismissal
@@ -92,13 +92,13 @@ Escape, backdrop and swipe close are off by default; `onOpenChange` still report
 
 The look is `dialogCard` / `dialogTitle` / `dialogText` from Dialog. Escape, backdrop and swipe close default to off; choosing an action reports its `id` via `onAction`, dismissing reports `null`.
 
-| Part                     | Notes                                         |
-| ------------------------ | --------------------------------------------- |
-| `AlertDialog`            | Open state; `onAction`                        |
-| `AlertDialogTrigger`     | Opens; string child → Button                  |
-| `AlertDialogContent`     | Card on `nsh/base` Dialog                     |
-| `AlertDialogAction`      | Closes and reports `id`; `role` → button kind |
-| `AlertDialogHeader`      | Title + description chrome                    |
-| `AlertDialogFooter`      | Action row                                    |
-| `AlertDialogTitle`       | String takes `dialogTitle`                    |
-| `AlertDialogDescription` | String takes `dialogText`                     |
+| Part                     | Notes                                                                                      |
+| ------------------------ | ------------------------------------------------------------------------------------------ |
+| `AlertDialog`            | Open state; `onAction`                                                                     |
+| `AlertDialogTrigger`     | Opens; string child → Button                                                               |
+| `AlertDialogContent`     | Card on `nsh/base` Dialog                                                                  |
+| `AlertDialogAction`      | Closes and reports `id`; `role` → button variant (`destructive` / `secondary` / `default`) |
+| `AlertDialogHeader`      | Title + description chrome                                                                 |
+| `AlertDialogFooter`      | Action row                                                                                 |
+| `AlertDialogTitle`       | String takes `dialogTitle`                                                                 |
+| `AlertDialogDescription` | String takes `dialogText`                                                                  |

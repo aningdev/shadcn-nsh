@@ -10,7 +10,7 @@ import {
   type SelectItem as SelectItemData,
 } from "nsh/base";
 
-import { Button, type ButtonKind } from "./button";
+import { Button, type ButtonVariant } from "./button";
 import { edgeClass } from "./input";
 import { Icon } from "./lib/icons";
 import {
@@ -209,7 +209,7 @@ export type ComboboxTriggerProps = {
   /** A string is a `Button`'s label; anything else is drawn as given (the default is a `ComboToggle`). */
   children?: string | JSX.Element;
   /** The button's variant, for a string child (default `secondary`). */
-  variant?: ButtonKind;
+  variant?: ButtonVariant;
   disabled?: boolean;
   /** The id UI tests find the toggle by. */
   testID?: string;

@@ -72,7 +72,7 @@ function App() {
                 {busy() ? "Saving: the ring is up" : "Idle"}
               </Text>
               <View style={{ flexDirection: "row" }}>
-                <Button variant="primary" busy={busy()} onPress={save}>
+                <Button variant="default" busy={busy()} onPress={save}>
                   Save
                 </Button>
               </View>
@@ -112,13 +112,13 @@ function App() {
 
       <DemoCard>
         <DemoSection title="Busy button">
-          <Button variant="primary" busy>
+          <Button variant="default" busy>
             Saving
           </Button>
           <Button variant="secondary" busy>
             Syncing
           </Button>
-          <Button variant="danger" busy>
+          <Button variant="destructive" busy>
             Deleting
           </Button>
         </DemoSection>

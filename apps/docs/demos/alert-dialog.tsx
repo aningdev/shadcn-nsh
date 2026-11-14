@@ -131,7 +131,7 @@ function App() {
                 >
                   <Text style={{ flex: 1, fontSize: 13, color: ui().muted }}>{alert.detail}</Text>
                   <Button
-                    variant={alert.danger ? "danger" : "secondary"}
+                    variant={alert.danger ? "destructive" : "secondary"}
                     onPress={() => show(alert.id)}
                   >
                     {alert.label}

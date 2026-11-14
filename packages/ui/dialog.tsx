@@ -9,7 +9,7 @@ import {
   type DialogProps as BaseDialogProps,
 } from "nsh/base";
 
-import { Button, type ButtonKind } from "./button";
+import { Button, type ButtonVariant } from "./button";
 import { createOpenState, type OpenState } from "./lib/open-state";
 import { backdrop } from "./lib/overlay";
 
@@ -77,7 +77,7 @@ export type DialogContentProps = Omit<
 export type DialogTriggerProps = {
   children?: string | JSX.Element;
   /** The button's variant, for a string child (default `secondary`). */
-  variant?: ButtonKind;
+  variant?: ButtonVariant;
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
 };

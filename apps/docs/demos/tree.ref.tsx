@@ -80,9 +80,9 @@ const log = (line: string) => events.set([line, ...events()].slice(0, 4));
 let tree: TreeRef | undefined;
 
 /** A button's chrome and its label, as the component's `variant` / `size` give them. */
-const secondary = () => buttonLook("secondary", { size: "small" });
-const ghost = (disabled: boolean) => buttonLook("ghost", { size: "small", disabled });
-const label = (kind: "secondary" | "ghost") => buttonLabel(kind, { size: "small" });
+const secondary = () => buttonLook("secondary", { size: "sm" });
+const ghost = (disabled: boolean) => buttonLook("ghost", { size: "sm", disabled });
+const label = (kind: "secondary" | "ghost") => buttonLabel(kind, { size: "sm" });
 
 function App() {
   return (

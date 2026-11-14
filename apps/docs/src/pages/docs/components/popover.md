@@ -66,7 +66,7 @@ A line or two: 12 points of padding and 4 between rows.
 A string child is a `Button`; anything else is a pressable view.
 
 ```tsx
-<PopoverTrigger variant="primary">Filters</PopoverTrigger>
+<PopoverTrigger variant="default">Filters</PopoverTrigger>
 <PopoverTrigger>
   <Badge>New</Badge>
 </PopoverTrigger>

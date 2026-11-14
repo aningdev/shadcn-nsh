@@ -29,13 +29,13 @@ import {
 
 ```tsx
 <Dialog>
-  <DialogTrigger variant="primary">Delete item…</DialogTrigger>
+  <DialogTrigger variant="default">Delete item…</DialogTrigger>
   <DialogContent>
     <DialogTitle>Delete this item?</DialogTitle>
     <DialogDescription>A press on the dimmed backdrop closes it.</DialogDescription>
     <DialogFooter>
       <DialogClose>Keep</DialogClose>
-      <DialogClose variant="danger" onPress={remove}>
+      <DialogClose variant="destructive" onPress={remove}>
         Delete
       </DialogClose>
     </DialogFooter>
@@ -116,4 +116,4 @@ Escape, a backdrop press and a downward swipe close the dialog; turn any of them
 | `DialogFooter`      | `children`, `style`                                                                              |
 | `DialogClose`       | As `DialogTrigger`, plus `onPress` before it closes                                              |
 
-A string child of `DialogTrigger` or `DialogClose` is a `Button`; `variant` picks its kind (`secondary` by default). Anything else is drawn as given.
+A string child of `DialogTrigger` or `DialogClose` is a `Button`; `variant` picks its look (`secondary` by default). Anything else is drawn as given.

@@ -8,7 +8,7 @@ import {
   type TooltipProps as BaseTooltipProps,
 } from "nsh/base";
 
-import { Button, type ButtonKind } from "./button";
+import { Button, type ButtonVariant } from "./button";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 
 // @port look/overlay.ts
@@ -80,7 +80,7 @@ export type TooltipProps = {
 export type TooltipTriggerProps = {
   children?: string | JSX.Element;
   /** The button's variant, for a string child (default `secondary`). */
-  variant?: ButtonKind;
+  variant?: ButtonVariant;
   /** The button takes no press (a string child). */
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;

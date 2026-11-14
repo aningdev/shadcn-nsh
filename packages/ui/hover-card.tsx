@@ -9,7 +9,7 @@ import {
   type OpenChangeReason,
 } from "nsh/base";
 
-import { Button, type ButtonKind } from "./button";
+import { Button, type ButtonVariant } from "./button";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import { PopIn } from "./lib/popup";
 import { popoverLook } from "./popover";
@@ -44,7 +44,7 @@ export type HoverCardContentProps = Omit<
 export type HoverCardTriggerProps = {
   children?: string | JSX.Element;
   /** The button's variant, for a string child (default `secondary`). */
-  variant?: ButtonKind;
+  variant?: ButtonVariant;
   /** A disabled trigger does not open the card. */
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;

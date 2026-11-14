@@ -67,8 +67,8 @@ function App() {
     </Toggle>
   );
   const toolbarButton = (label: string, onPress: () => void) => (
-    <Button {...buttonLook("secondary", { size: "small" })} onPress={onPress}>
-      <Text style={buttonLabel("secondary", { size: "small" })}>{label}</Text>
+    <Button {...buttonLook("secondary", { size: "sm" })} onPress={onPress}>
+      <Text style={buttonLabel("secondary", { size: "sm" })}>{label}</Text>
     </Button>
   );
 

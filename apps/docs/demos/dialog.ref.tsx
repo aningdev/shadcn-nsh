@@ -85,7 +85,7 @@ function App() {
           }}
         >
           <Button
-            variant="primary"
+            variant="default"
             onPress={() => card.set(true)}
             style={wide() ? undefined : { flex: 1, alignSelf: "stretch" }}
           >
@@ -141,7 +141,7 @@ function App() {
               Keep
             </Button>
             <Button
-              variant="danger"
+              variant="destructive"
               onPress={() => {
                 card.set(false);
                 closedByApp("Delete")();
@@ -173,7 +173,7 @@ function App() {
             style.
           </Text>
           <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
-            <Button variant="primary" onPress={() => sheet.set(false)}>
+            <Button variant="default" onPress={() => sheet.set(false)}>
               Close
             </Button>
           </View>

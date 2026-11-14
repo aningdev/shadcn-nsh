@@ -99,12 +99,12 @@ function App() {
           <Button
             disabled={password().length === 0}
             onPress={signIn}
-            {...buttonLook("primary", {
+            {...buttonLook("default", {
               disabled: () => password().length === 0,
               style: buttonStyle({ marginTop: 4 }),
             })}
           >
-            <Text style={buttonLabel("primary", { disabled: () => password().length === 0 })}>
+            <Text style={buttonLabel("default", { disabled: () => password().length === 0 })}>
               Sign in
             </Text>
           </Button>

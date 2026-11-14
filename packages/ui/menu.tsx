@@ -15,7 +15,7 @@ import {
   type SubmenuProps as BaseSubmenuProps,
 } from "nsh/base";
 
-import { Button, type ButtonKind } from "./button";
+import { Button, type ButtonVariant } from "./button";
 import { Icon } from "./lib/icons";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import { backdrop } from "./lib/overlay";
@@ -264,7 +264,7 @@ export type MenuContentProps = Omit<
 /** Opens the menu. String children render as a Button; otherwise a pressable View. */
 export type MenuTriggerProps = {
   children?: string | JSX.Element;
-  variant?: ButtonKind;
+  variant?: ButtonVariant;
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
 };

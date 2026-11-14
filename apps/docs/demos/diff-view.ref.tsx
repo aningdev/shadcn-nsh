@@ -83,14 +83,14 @@ function App() {
               </Text>
               <View style={{ flexDirection: "row", gap: 8, marginTop: 6 }}>
                 <Button
-                  {...buttonLook("secondary", { size: "small" })}
+                  {...buttonLook("secondary", { size: "sm" })}
                   onPress={() => {
                     oldValue.set(OLD);
                     newValue.set(NEW);
                     setTimeout(count, 0);
                   }}
                 >
-                  <Text style={buttonLabel("secondary", { size: "small" })}>Reset</Text>
+                  <Text style={buttonLabel("secondary", { size: "sm" })}>Reset</Text>
                 </Button>
               </View>
             </Panel>

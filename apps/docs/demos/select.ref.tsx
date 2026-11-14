@@ -113,14 +113,14 @@ function App() {
                   log("Region cleared");
                 }}
                 {...buttonLook("secondary", {
-                  size: "small",
+                  size: "sm",
                   disabled: () => region() === null,
                   style: buttonStyle({ marginTop: 6 }),
                 })}
               >
                 <Text
                   style={buttonLabel("secondary", {
-                    size: "small",
+                    size: "sm",
                     disabled: () => region() === null,
                   })}
                 >

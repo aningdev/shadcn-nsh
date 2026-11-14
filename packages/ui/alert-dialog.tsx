@@ -9,7 +9,7 @@ import {
   type DialogProps as BaseDialogProps,
 } from "nsh/base";
 
-import { Button, type ButtonKind } from "./button";
+import { Button, type ButtonVariant } from "./button";
 import { dialogCard, dialogText, dialogTitle } from "./dialog";
 import { createOpenState, type OpenState } from "./lib/open-state";
 import { backdrop } from "./lib/overlay";
@@ -51,7 +51,7 @@ export type AlertDialogContentProps = Omit<
 export type AlertDialogTriggerProps = {
   children?: string | JSX.Element;
   /** The button's variant, for a string child (default `secondary`). */
-  variant?: ButtonKind;
+  variant?: ButtonVariant;
   disabled?: boolean;
   style?: StyleProp<ViewStyle>;
 };
@@ -108,10 +108,10 @@ function useAlertDialog() {
   return ctx;
 }
 
-function actionVariant(role?: AlertDialogRole | null): ButtonKind {
-  if (role === "destructive") return "danger";
+function actionVariant(role?: AlertDialogRole | null): ButtonVariant {
+  if (role === "destructive") return "destructive";
   if (role === "cancel") return "secondary";
-  return "primary";
+  return "default";
 }
 
 /** Composition root: owns the open state and which action was chosen. */
@@ -155,7 +155,7 @@ export function AlertDialog(props: AlertDialogProps) {
 }
 
 /** A button of the card, or its trigger: a `Button` for a string, else a pressable view. */
-function Action(props: AlertDialogTriggerProps & { onPress: () => void; variant?: ButtonKind }) {
+function Action(props: AlertDialogTriggerProps & { onPress: () => void; variant?: ButtonVariant }) {
   if (typeof props.children === "string") {
     return (
       <Button

@@ -9,7 +9,7 @@ import {
   DiffView as BaseDiffView,
 } from "nsh/base";
 
-import { buttonGlyph, buttonLabel, buttonLook, type ButtonKind } from "./button";
+import { buttonGlyph, buttonLabel, buttonLook, type ButtonVariant } from "./button";
 import { Icon, type IconName } from "./lib/icons";
 
 // @port look/workspace.tsx
@@ -17,15 +17,15 @@ import { Icon, type IconName } from "./lib/icons";
  * points in the interface's font (the diff's text is monospaced), or only
  * its icon, 20 points square. */
 function HunkAction(props: {
-  kind: ButtonKind;
+  variant: ButtonVariant;
   label: string;
   icon: IconName;
   index: number;
   iconOnly?: boolean;
   onPress: () => void;
 }) {
-  const look = buttonLook(props.kind, {
-    size: "small",
+  const look = buttonLook(props.variant, {
+    size: "sm",
     style: () =>
       terminal
         ? undefined
@@ -38,12 +38,12 @@ function HunkAction(props: {
       {...look}
     >
       {props.iconOnly && !terminal ? (
-        <Icon {...buttonGlyph(props.kind, { size: "small" })} name={props.icon} size={11} />
+        <Icon {...buttonGlyph(props.variant, { size: "sm" })} name={props.icon} size={11} />
       ) : (
         <Text
           class="font-sans"
           style={{
-            ...buttonLabel(props.kind, { size: "small" }),
+            ...buttonLabel(props.variant, { size: "sm" }),
             fontSize: terminal ? undefined : 11,
           }}
         >
@@ -136,7 +136,7 @@ export function DiffHunkActions(props: {
       }
     >
       <HunkAction
-        kind="secondary"
+        variant="secondary"
         label="Revert"
         icon="undo"
         index={props.index}
@@ -144,7 +144,7 @@ export function DiffHunkActions(props: {
         onPress={props.onRevert}
       />
       <HunkAction
-        kind="primary"
+        variant="default"
         label="Keep"
         icon="check"
         index={props.index}

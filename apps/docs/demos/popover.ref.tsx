@@ -60,7 +60,7 @@ function App() {
             placement={placement()}
             offset={offset()}
             margin={12}
-            trigger={<Button variant="accent">Order 1024</Button>}
+            trigger={<Button variant="default">Order 1024</Button>}
             onOpenChange={({ open, reason }) =>
               events.set([`${open ? "opened" : "closed"} · ${reason}`, ...events()].slice(0, 4))
             }

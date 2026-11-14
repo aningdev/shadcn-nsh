@@ -6,7 +6,7 @@ import { mount, signal, Text, View } from "nsh";
 import { Button, Switch, Toggle } from "nsh/base";
 
 import {
-  type ButtonKind,
+  type ButtonVariant,
   type ButtonLookOptions,
   buttonGlyph,
   buttonLabel,
@@ -30,16 +30,16 @@ function Caption(props: { children: string }) {
   return <Text style={{ fontSize: 12, color: colors.muted }}>{props.children}</Text>;
 }
 
-/** A button of a kind and a size, its label in `buttonLabel`. */
+/** A button of a variant and a size, its label in `buttonLabel`. */
 function Plain(props: {
   label: string;
-  kind?: ButtonKind;
-  size?: "small" | "regular" | "large";
+  variant?: ButtonVariant;
+  size?: "sm" | "default" | "lg";
   selected?: boolean;
   disabled?: boolean;
   onPress?: () => void;
 }) {
-  const kind = () => props.kind ?? "secondary";
+  const variant = () => props.variant ?? "secondary";
   const options: ButtonLookOptions = {
     size: () => props.size,
     selected: () => props.selected,
@@ -50,9 +50,9 @@ function Plain(props: {
       onPress={props.onPress}
       selected={props.selected}
       disabled={props.disabled}
-      {...buttonLook(kind, options)}
+      {...buttonLook(variant, options)}
     >
-      <Text style={buttonLabel(kind, options)}>{props.label}</Text>
+      <Text style={buttonLabel(variant, options)}>{props.label}</Text>
     </Button>
   );
 }
@@ -61,14 +61,12 @@ function Plain(props: {
 function IconPlain(props: {
   name: "search" | "star" | "trash";
   label: string;
-  variant?: "ghost" | "secondary";
-  tone?: "danger";
+  variant?: "ghost" | "secondary" | "destructive";
   on?: boolean;
   onPress?: () => void;
 }) {
   const options: IconButtonLookOptions = {
     on: () => props.on,
-    tone: props.tone,
     variant: props.variant,
   };
   return (
@@ -128,7 +126,7 @@ function App() {
     </Toggle>
   );
 
-  const primarySplit = splitButtonLook("primary");
+  const primarySplit = splitButtonLook("default");
   const secondarySplit = splitButtonLook("secondary");
 
   return (
@@ -167,9 +165,9 @@ function App() {
                 onPressDown={() => pressing.set(true)}
                 onPressUp={() => pressing.set(false)}
                 disabled={disabled()}
-                {...buttonLook("accent", { disabled: () => disabled() })}
+                {...buttonLook("default", { disabled: () => disabled() })}
               >
-                <Text style={buttonLabel("accent", { disabled: () => disabled() })}>
+                <Text style={buttonLabel("default", { disabled: () => disabled() })}>
                   {`Pressed ${presses()}×`}
                 </Text>
               </Button>
@@ -196,16 +194,16 @@ function App() {
 
       <DemoCard>
         <DemoSection title="Kinds">
-          <Plain label="Primary" kind="primary" onPress={() => press("primary")} />
-          <Plain label="Accent" kind="accent" onPress={() => press("accent")} />
+          <Plain label="Primary" variant="default" onPress={() => press("primary")} />
+          <Plain label="Accent" variant="default" onPress={() => press("accent")} />
           <Plain label="Secondary" onPress={() => press("secondary")} />
-          <Plain label="Ghost" kind="ghost" onPress={() => press("ghost")} />
-          <Plain label="Delete" kind="danger" onPress={() => press("danger")} />
+          <Plain label="Ghost" variant="ghost" onPress={() => press("ghost")} />
+          <Plain label="Delete" variant="destructive" onPress={() => press("delete")} />
         </DemoSection>
         <DemoSection title="Sizes">
-          <Plain label="Small" size="small" onPress={() => press("small")} />
-          <Plain label="Regular" size="regular" onPress={() => press("regular")} />
-          <Plain label="Large" size="large" onPress={() => press("large")} />
+          <Plain label="Small" size="sm" onPress={() => press("small")} />
+          <Plain label="Regular" size="default" onPress={() => press("regular")} />
+          <Plain label="Large" size="lg" onPress={() => press("large")} />
         </DemoSection>
         <DemoSection title="States">
           <Plain
@@ -216,7 +214,7 @@ function App() {
               press("pinned");
             }}
           />
-          <Plain label="Disabled" kind="primary" disabled />
+          <Plain label="Disabled" variant="default" disabled />
           <Plain label="Disabled" disabled />
         </DemoSection>
         <DemoSection title="Icon">
@@ -231,13 +229,18 @@ function App() {
               press("star");
             }}
           />
-          <IconPlain name="trash" label="Delete" tone="danger" onPress={() => press("delete")} />
+          <IconPlain
+            name="trash"
+            label="Delete"
+            variant="destructive"
+            onPress={() => press("delete")}
+          />
           <Button
             accessibilityLabel="Play"
             onPress={() => press("play")}
-            {...roundButtonLook("primary")}
+            {...roundButtonLook("default")}
           >
-            <Icon name="play" {...roundButtonGlyph("primary")} />
+            <Icon name="play" {...roundButtonGlyph("default")} />
           </Button>
           <Button
             accessibilityLabel="Plus"
@@ -250,7 +253,7 @@ function App() {
         <DemoSection title="Split">
           <View style={primarySplit.frame.style}>
             <Button onPress={() => press("save")} {...primarySplit.segment()}>
-              <Text style={buttonLabel("primary")}>Save</Text>
+              <Text style={buttonLabel("default")}>Save</Text>
             </Button>
             <View style={primarySplit.divider} />
             <Button
@@ -262,7 +265,7 @@ function App() {
               }}
               {...primarySplit.segment({ selected: () => starred() })}
             >
-              <Icon name="chevron-down" {...buttonGlyph("primary")} />
+              <Icon name="chevron-down" {...buttonGlyph("default")} />
             </Button>
           </View>
           <View style={secondarySplit.frame.style}>

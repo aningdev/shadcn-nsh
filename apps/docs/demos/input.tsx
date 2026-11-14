@@ -96,7 +96,7 @@ function App() {
             />
           </Field>
           <Button
-            variant="primary"
+            variant="default"
             disabled={password().length === 0}
             onPress={signIn}
             style={buttonStyle({ marginTop: 4 })}

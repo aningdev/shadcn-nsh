@@ -63,7 +63,7 @@ function App() {
     </Toggle>
   );
   const toolbarButton = (label: string, onPress: () => void) => (
-    <Button variant="secondary" size="small" onPress={onPress}>
+    <Button variant="secondary" size="sm" onPress={onPress}>
       {label}
     </Button>
   );
