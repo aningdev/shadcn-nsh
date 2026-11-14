@@ -262,7 +262,7 @@ const SAMPLES: { item: string; import: string; jsx: string }[] = [
   {
     item: "badge",
     import: 'import { Badge } from "./components/ui/badge";',
-    jsx: '<Badge label="Badge" />',
+    jsx: "<Badge>Badge</Badge>",
   },
   {
     item: "button",

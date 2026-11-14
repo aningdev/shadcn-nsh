@@ -43,8 +43,12 @@ function App() {
                 onChange={(value) => (tone.set(value), log(`tone → ${value}`))}
               />
               <View style={{ flexDirection: "row", gap: 8 }}>
-                <Badge label={tone()} tone={tone()} outline={outline() === "outline"} />
-                <Badge label="12" tone={tone()} outline={outline() === "outline"} />
+                <Badge tone={tone()} variant={outline() === "outline" ? "outline" : "default"}>
+                  {tone()}
+                </Badge>
+                <Badge tone={tone()} variant={outline() === "outline" ? "outline" : "default"}>
+                  12
+                </Badge>
               </View>
             </Panel>
             <Panel title="outline">
@@ -62,7 +66,7 @@ function App() {
           {DEPLOYS.map((deploy, i) => (
             <View style={plainRow({ first: i === 0 })}>
               <RowLabel label={deploy.name} detail={deploy.detail} />
-              <Badge label={deploy.label} tone={deploy.tone} />
+              <Badge tone={deploy.tone}>{deploy.label}</Badge>
             </View>
           ))}
         </View>
@@ -72,14 +76,16 @@ function App() {
         <DemoSection title="Tone">
           <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
             {TONES.map((value) => (
-              <Badge label={value} tone={value} />
+              <Badge tone={value}>{value}</Badge>
             ))}
           </View>
         </DemoSection>
         <DemoSection title="Outline">
           <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
             {TONES.map((value) => (
-              <Badge label={value} tone={value} outline />
+              <Badge tone={value} variant="outline">
+                {value}
+              </Badge>
             ))}
           </View>
         </DemoSection>

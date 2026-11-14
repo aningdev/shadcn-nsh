@@ -117,9 +117,11 @@ function App() {
 
         <Section title="Badge · Avatar">
           <View style={{ flexDirection: "row", gap: 12, alignItems: "center", flexWrap: "wrap" }}>
-            <Badge label="Neutral" />
-            <Badge label="Info" tone="info" />
-            <Badge label="Outline" tone="warn" outline />
+            <Badge>Neutral</Badge>
+            <Badge tone="info">Info</Badge>
+            <Badge tone="warn" variant="outline">
+              Outline
+            </Badge>
             <Avatar name="Ada Lovelace" style={{ width: 36, height: 36 }} />
             <Avatar name="Grace Hopper" style={{ width: 36, height: 36 }} />
           </View>

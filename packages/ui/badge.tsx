@@ -3,14 +3,36 @@ import { colors, terminal, TERMINAL_ROW, toneColor, toneTint, type Tone } from "
 import { token, View, Text } from "nsh";
 
 // @port index.tsx
+/** A badge's variants: `default`, the tone's fill; `outline`, an edge in the tone's color. */
+export type BadgeVariant = "default" | "outline";
+
+/** A value, or a function reading it where the badge is drawn (a signal). */
+type Live<T> = T | (() => T);
+
+const read = <T,>(v: Live<T> | undefined): T | undefined =>
+  typeof v === "function" ? (v as () => T)() : v;
+
+/** The props of `Badge`. */
+export type BadgeProps = {
+  /** The label: a word, a state, a count. */
+  children: string;
+  /** The tone of the word and its fill, `neutral` unless set; a function is read where the badge is drawn. */
+  tone?: Tone | (() => Tone);
+  /** `default`: the tone's fill; `outline`: an edge in the tone's color under the word. */
+  variant?: BadgeVariant;
+};
+
 /**
  * A small label in a capsule (a word on its row in the terminal), after
  * shadcn/ui's secondary badge: 20 points tall, flat, no shadow; a neutral
  * badge on the theme's `muted` fill in the text color, a toned one on its
- * tone's tint in the tone's color, `outline` an edge in the tone's color.
+ * tone's tint in the tone's color, and as `variant="outline"` an edge in
+ * the tone's color. The children are the label; `tone` is read where it is
+ * drawn, so a function follows a value the app changes.
  */
-export function Badge(props: { label: string; tone?: Tone; outline?: boolean }) {
-  const tone = () => props.tone ?? "neutral";
+export function Badge(props: BadgeProps) {
+  const tone = () => read(props.tone) ?? "neutral";
+  const outline = props.variant === "outline";
   return (
     <View
       style={{
@@ -18,13 +40,13 @@ export function Badge(props: { label: string; tone?: Tone; outline?: boolean }) 
         height: terminal ? TERMINAL_ROW : 20,
         borderRadius: 10,
         justifyContent: "center",
-        backgroundColor: props.outline
+        backgroundColor: outline
           ? "transparent"
           : tone() === "neutral"
             ? token("muted")
             : toneTint(tone()),
-        borderWidth: props.outline ? 1 : 0,
-        borderColor: props.outline ? toneColor(tone()) : undefined,
+        borderWidth: outline ? 1 : 0,
+        borderColor: outline ? toneColor(tone()) : undefined,
         // A change of tone (a window turning active) crosses over.
         transitionProperty: "colors",
         transitionDuration: 160,
@@ -39,7 +61,7 @@ export function Badge(props: { label: string; tone?: Tone; outline?: boolean }) 
           fontVariant: ["tabular-nums"],
         }}
       >
-        {props.label}
+        {props.children}
       </Text>
     </View>
   );
