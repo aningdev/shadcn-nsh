@@ -64,22 +64,26 @@ function App() {
               <Field>
                 <FieldLabel>Expiry</FieldLabel>
                 <View style={{ flexDirection: "row", gap: 8 }}>
-                  <Select placeholder="MM">
-                    <SelectTrigger style={{ flexGrow: 1 }} />
-                    <SelectContent accessibilityLabel="Month">
-                      {MONTHS.map((month) => (
-                        <SelectItem value={month}>{month}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select placeholder="YYYY">
-                    <SelectTrigger style={{ flexGrow: 1 }} />
-                    <SelectContent accessibilityLabel="Year">
-                      {YEARS.map((year) => (
-                        <SelectItem value={year}>{year}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <View style={{ flex: 1 }}>
+                    <Select placeholder="MM">
+                      <SelectTrigger style={{ minWidth: 0 }} />
+                      <SelectContent accessibilityLabel="Month">
+                        {MONTHS.map((month) => (
+                          <SelectItem value={month}>{month}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Select placeholder="YYYY">
+                      <SelectTrigger style={{ minWidth: 0 }} />
+                      <SelectContent accessibilityLabel="Year">
+                        {YEARS.map((year) => (
+                          <SelectItem value={year}>{year}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </View>
                 </View>
               </Field>
             </FieldGroup>

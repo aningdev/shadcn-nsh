@@ -55,22 +55,26 @@ function App() {
               <View role="group" style={fieldFamilyLook().field(false)}>
                 <Text style={fieldFamilyLook().title}>Expiry</Text>
                 <View style={{ flexDirection: "row", gap: 8 }}>
-                  <Select placeholder="MM">
-                    <SelectTrigger style={{ flexGrow: 1 }} />
-                    <SelectContent accessibilityLabel="Month">
-                      {MONTHS.map((month) => (
-                        <SelectItem value={month}>{month}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Select placeholder="YYYY">
-                    <SelectTrigger style={{ flexGrow: 1 }} />
-                    <SelectContent accessibilityLabel="Year">
-                      {YEARS.map((year) => (
-                        <SelectItem value={year}>{year}</SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
+                  <View style={{ flex: 1 }}>
+                    <Select placeholder="MM">
+                      <SelectTrigger style={{ minWidth: 0 }} />
+                      <SelectContent accessibilityLabel="Month">
+                        {MONTHS.map((month) => (
+                          <SelectItem value={month}>{month}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Select placeholder="YYYY">
+                      <SelectTrigger style={{ minWidth: 0 }} />
+                      <SelectContent accessibilityLabel="Year">
+                        {YEARS.map((year) => (
+                          <SelectItem value={year}>{year}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </View>
                 </View>
               </View>
             </View>
