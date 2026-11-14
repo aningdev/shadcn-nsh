@@ -96,6 +96,7 @@ import type {
   AccordionTriggerProps,
   AlertDialogContentProps,
   AvatarProps,
+  BadgeProps,
   ButtonProps,
   CalendarProps,
   CarouselContentProps,
@@ -450,8 +451,34 @@ const _droppedSize: ButtonSize = "small";
 const _iconButtonOn: IconButtonProps = { on: true };
 // @ts-expect-error — a trigger's field or outline is a `variant`, not a `kind`.
 const _selectTriggerKind: SelectTriggerProps = { kind: "outline" };
+// @ts-expect-error — a box's size is `sm` / `default` / `lg`, not a scale.
+const _checkboxScale: CheckboxProps = { scale: 0.8 };
+// @ts-expect-error — a ring's size is `sm` / `default` / `lg`, not a scale.
+const _radioScale: RadioProps = { scale: 1.25 };
+// @ts-expect-error — a ring is the radio's `default` variant, which needs no name.
+const _radioRing: RadioProps = { variant: "ring" };
+// @ts-expect-error — a badge's edge is `variant="outline"`, not an `outline` prop.
+const _badgeOutline: BadgeProps = { children: "Draft", outline: true };
+// @ts-expect-error — a badge's word is its child, not `label`.
+const _badgeLabel: BadgeProps = { children: "12", label: "12" };
+// @ts-expect-error — a pager's edge is `variant="outline"`, not `outlined`.
+const _paginationOutlined: PaginationProps = { page: 1, totalPages: 2, outlined: true };
+// @ts-expect-error — a menu row's danger is `variant="destructive"`, not `danger`.
+const _menuItemDanger: MenuItemProps = { danger: true };
 
-export { _droppedSize, _droppedVariant, _iconButtonOn, _selectTriggerKind };
+export {
+  _badgeLabel,
+  _badgeOutline,
+  _checkboxScale,
+  _droppedSize,
+  _droppedVariant,
+  _iconButtonOn,
+  _menuItemDanger,
+  _paginationOutlined,
+  _radioRing,
+  _radioScale,
+  _selectTriggerKind,
+};
 
 export type {
   _accordion,
