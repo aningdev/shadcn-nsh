@@ -60,15 +60,15 @@ Porting a component, rules and checks: [`docs/port.md`](docs/port.md), [`docs/AR
 
 ## Layout
 
-| Path                                  | Package / role        | Notes                                                                   |
-| ------------------------------------- | --------------------- | ----------------------------------------------------------------------- |
-| `packages/theme`                      | `@shadcn-nsh/theme`   | `theme.json`, `finishes.json`, `theme.ts` — the theme (ours; `oklch()`) |
-| `packages/ui`                         | `@shadcn-nsh/ui`      | ported components: `// @port` regions + shell                           |
-| `apps/docs/demos`                     | —                     | acceptance demos, reference pages, `port:render`                        |
-| `apps/docs/src/pages/docs/components` | —                     | component pages                                                         |
-| `apps/gallery`                        | `@shadcn-nsh/gallery` | native behavior tests and smoke pages                                   |
-| `packages/cli`                        | `shadcn-nsh` (npm)    | `init` / `add` / `build` / `serve`                                      |
-| `registry.json` → `public/r`          | —                     | registry source → committed HTTP artifacts                              |
-| `scripts/port`                        | —                     | `port:new` / `port:vendor` / `port:check` / `port:render` / `port:bump` |
-| `port-map.json`                       | —                     | where every upstream file and declaration goes                          |
-| `references/`                         | —                     | read-only submodules: the upstream baseline, the shadcn reference       |
+| Path                                  | Package / role        | Notes                                                                                   |
+| ------------------------------------- | --------------------- | --------------------------------------------------------------------------------------- |
+| `packages/theme`                      | `@shadcn-nsh/theme`   | `theme.json`, `finishes.json`, `theme.ts` — the theme (ours; `oklch()`)                 |
+| `packages/ui`                         | `@shadcn-nsh/ui`      | one file per component: a look (`// @port` region) + shell                              |
+| `apps/docs/demos`                     | —                     | acceptance demos, reference pages, `port:render`                                        |
+| `apps/docs/src/pages/docs/components` | —                     | component pages                                                                         |
+| `apps/gallery`                        | `@shadcn-nsh/gallery` | native behavior tests and smoke pages                                                   |
+| `packages/cli`                        | `shadcn-nsh` (npm)    | `init` / `add` / `build` / `serve`                                                      |
+| `registry.json` → `public/r`          | —                     | registry source → committed HTTP artifacts                                              |
+| `scripts/port`                        | —                     | `port:new` / `port:vendor` / `port:check` / `port:review` / `port:render` / `port:bump` |
+| `port-map.json`                       | —                     | where every upstream file and declaration goes                                          |
+| `references/`                         | —                     | read-only submodules: the upstream baseline, the shadcn reference                       |

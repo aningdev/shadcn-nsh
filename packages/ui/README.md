@@ -2,7 +2,7 @@
 
 [中文](./README.zh.md)
 
-Styled copy-into-app components on [`nsh/base`](https://nsh.dev/elements): behavior and a11y stay in base; look comes from the upstream gallery UI via `// @port` regions and [`@shadcn-nsh/theme`](../theme).
+Styled copy-into-app components on [`nsh/base`](https://nsh.dev/elements): behavior and a11y stay in base; the look started from the upstream gallery UI (`// @port` regions, ours to change) and comes from [`@shadcn-nsh/theme`](../theme).
 
 - Rules and port flow: [`docs/ARCHITECTURE.md`](../../docs/ARCHITECTURE.md), [`docs/port.md`](../../docs/port.md), [`AGENTS.md`](../../AGENTS.md)
 - Routing: [`port-map.json`](../../port-map.json)
@@ -19,7 +19,7 @@ Styled copy-into-app components on [`nsh/base`](https://nsh.dev/elements): behav
 | Theme        | `@shadcn-nsh/theme` | Colors, finishes, radii from upstream      |
 | This package | `@shadcn-nsh/ui`    | One file per component; registry for `add` |
 
-Each file is upstream look (`// @port … // @port end`, filled by `bun run port:vendor`) plus a thin shell. Do not edit inside `@port` regions; register intentional diffs in `port-map.json` `replace`.
+Each file is a look (`// @port … // @port end`) plus a thin shell. A region is this library's code and may be edited; `port:check` lists upstream's changes to the declarations we route, and `bun run port:review` marks them read.
 
 ## Toolchain
 

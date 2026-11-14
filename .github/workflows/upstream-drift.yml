@@ -95,8 +95,9 @@ jobs:
             echo 'Next steps ([`docs/toolchain.md`](https://github.com/aningdev/shadcn-nsh/blob/main/docs/toolchain.md)):'
             echo
             printf '1. Install the release: `curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=%s sh` (never build one).\n' "$tag"
-            printf '2. `bun run port:bump %s` — checks the submodule out at the commit `nsh --version` prints, sets `upstream.cli` to the tag, reports what changed in `port-map.json`'"'"'s terms, refills the regions and type checks the demos.\n' "$main"
-            echo '3. Review the diff, look at the four screenshots (`bun run port:render`), commit the submodule pointer, `port-map.json` and the regions together.'
+            printf '2. `bun run port:bump %s` — checks the submodule out at that commit, sets `upstream.cli` to the tag, and lists what upstream added, changed or removed among the declarations we route since `upstream.reviewed`. It refills no region.\n' "$main"
+            echo '3. Adopt the changes we want by editing the code (`// @port` regions are ours), then `bun run port:review` marks them read.'
+            echo '4. `bun run port:check`, `bun run port:render` (four screenshots by eye), commit the submodule pointer, `port-map.json` and the code together.'
             echo
             printf '_Checked %s by [upstream-drift](https://github.com/aningdev/shadcn-nsh/actions/workflows/upstream-drift.yml)._\n' "$(date -u +%Y-%m-%d)"
           } > "$body"

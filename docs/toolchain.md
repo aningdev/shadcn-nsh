@@ -23,7 +23,7 @@ CLI 与运行时同装进 `~/.nsh`，并链到 `~/.local/bin/nsh`。
 | 安装的 CLI | `port-map.json` 的 `upstream.cli`：构建出该提交的 release tag（当前 `v0.5.1`），或 `nightly` |
 | 子模块     | `git -C references/nsh rev-parse HEAD`                                                       |
 
-**换了 CLI，项目跟着动**：`bun run port:bump`（不带参数时用它打印的提交）移动清单与子模块，再 `port:vendor`，一个 commit。`bun run port:check` 在两者不同时只发 warning（新旧方向一样），提示的正是它；`bash scripts/nsh-bootstrap.sh` 在同一情况下停下，给出同样的提示。
+**换了 CLI，项目跟着动**：`bun run port:bump`（不带参数时用它打印的提交）移动清单与子模块，再按它列出的变化审阅、`port:review`，一个 commit。`bun run port:check` 在两者不同时只发 warning（新旧方向一样），提示的正是它；`bash scripts/nsh-bootstrap.sh` 在同一情况下停下，给出同样的提示。
 
 **为什么不装更旧的**：上游的 look 用的是它自己那个提交运行时的能力；CLI 早于基线时，搬入的代码可能类型通过而表现不同，或者用到 CLI 还没有的属性（外壳用的 `focusVisibleStyle` 就是这样）。所以基线与 CLI 都不后退。
 
@@ -66,23 +66,16 @@ CLI 与运行时同装进 `~/.nsh`，并链到 `~/.local/bin/nsh`。
 
 1. fetch，把 `references/nsh` checkout 到该提交（子模块有本地改动时拒绝）；
 2. 把 `port-map.json` 的 `upstream.commit` 改成它（只替换那一个哈希，不动文件格式）； 装的是 release 时，`upstream.cli` 一并改成它的 tag；
-3. 按清单的说法报变化，每条都给出目标文件：
-   - 上游**新增**的声明 —— 没有路由就是清单的缺口；
-   - 上游**删掉**的声明 —— 清单还路由着它，要先清掉；
-   - **文字改动**的声明 —— `port:vendor` 会重填它所在的区域；
-   - 被 `replace` 覆盖的声明在上游也变了 —— 要人看一眼替换是否仍然成立（`port:check` 看不到这一类）；
-   - `copy` 的文件变了 —— `port:vendor` 整份重拷；
-   - 标着 `owned` 的文件（主题的两个 JSON）不比对：它们已归本库，见 [`port.md`](port.md#主题文件)；
-   - 新增 / 删除的上游文件；
-4. `bun run port:check`；清单完整时 `bun run port:vendor`，再 `port:check`，最后 `nsh check apps/docs/demos`。
+3. 按清单的说法报变化：自 `upstream.reviewed` 以来，**有去向的**声明哪些新增、改动、删除，每条给出目标文件；再加上新增 / 删除的上游文件。`exclude`、`pending` 的声明不报（它们不落到我们的代码），`owned` 的文件整份不报（已归本库，见 [`port.md`](port.md#主题文件)）；
+4. 清单不完整时停下，列出要补的路由；清单完整也**不重填区域、不提交**：采纳一处上游变化是改我们的代码（`port:vendor` 只给新组件抽初稿），子模块指针、`port-map.json` 与代码是同一个 commit。
 
-清单不完整时它在 `port:check` 之后停下，列出要补的路由，不 vendor、不提交。即使全部通过也不提交：子模块指针、`port-map.json` 与重新填充的区域是同一个 commit。早于基线的提交也能跑（回退），但清单通常要多改。
+它打印的下一步就是：`bun run port:check`（列出未审阅的改动）→ 改代码 → `bun run port:review` → `port:check` / `port:render`。早于基线的提交也能跑（回退），但清单通常要多改。
 
 ### 漂移报告
 
 `.github/workflows/upstream-drift.yml` 每周一比较上游**最新 release**（不含 nightly 等预发布）与基线；`main` 上还没进 release 的提交不算漂移。它把 `examples/nsh-gallery-ui` 里变动的文件列成一个 issue（标题固定，就地更新；基线追上后自动评论并关闭）。它只读仓库、不 push，权限只有 issue 的写。
 
-看到漂移后的顺序：用 `NSH_VERSION=<tag>` 装 issue 里的 release → `bun run port:bump`（不带参数，用 `nsh --version` 打印的提交，并把 `upstream.cli` 改成该 tag） → 按它列的变化补清单 → `bun run port:render`，四张截图人眼看 → 子模块指针、清单、区域一个 commit。PR 上的 `check` 工作流会再验一遍。
+看到漂移后的顺序：用 `NSH_VERSION=<tag>` 装 issue 里的 release → `bun run port:bump`（不带参数，用 `nsh --version` 打印的提交，并把 `upstream.cli` 改成该 tag） → 按它列的变化补清单 / 改代码 → `bun run port:review` → `bun run port:render`，四张截图人眼看 → 子模块指针、清单、代码一个 commit。PR 上的 `check` 工作流会再验一遍。
 
 ## TypeScript 分层
 

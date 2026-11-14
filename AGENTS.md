@@ -13,7 +13,7 @@
 
 抽取自上游的代码位于 `// @port <上游文件>` 与 `// @port end` 之间：这是**来源标注**，说明这段起源于上游哪个文件，**可以直接修改**。上游每个声明的去向记在 [`port-map.json`](port-map.json)；`port:vendor` 只在新增组件时抽取初稿，不覆盖已有代码。颜色只来自主题（`packages/theme`），组件代码里不写颜色字面量。
 
-**写或改任何组件、主题、演示之前，读 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)**（目录、分层、规则 P1–P7、归属）**和 [`docs/port.md`](docs/port.md)**（每个组件的流程、外壳写法、检查）。词汇见 [`docs/GLOSSARY.md`](docs/GLOSSARY.md)。
+**写或改任何组件、主题、演示之前，读 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)**（目录、分层、规则 P1–P6、归属）**和 [`docs/port.md`](docs/port.md)**（每个组件的流程、外壳写法、检查）。词汇见 [`docs/GLOSSARY.md`](docs/GLOSSARY.md)。
 
 **不做**：改 `nsh` / `nsh/base`；在组件代码里写颜色字面量（颜色一律经主题角色）；搬上游的声音；把上游的 demo 适配层（`Stage` / `Split` / `Inspector` / `Panel` / `Log` / `Segmented`）放进组件库或 registry（它只在 `apps/docs/demos` 里，供演示用）；为旧 registry id 提供别名。
 
@@ -71,7 +71,7 @@ registry.json → public/r → shadcn-nsh add
 
 - 新组件用脚手架（`bun run port:new`）起步，不从空文件或旧组件复制。
 - 一个家族一个 commit；提交前 `port:check`、`nsh check apps/docs/demos`、`port:render`、`vp check` 全部通过，四张截图人眼看过。
-- `// @port` 区域可以直接改；有意的外观决定写进对应文档。上游有变化时 `port:check` 会列出待审阅项，审阅后采纳或忽略，并把审阅到的上游提交记进 `port-map.json`。
+- `// @port` 区域可以直接改；有意的外观决定写进对应文档。上游有变化时 `port:check` 会列出待审阅项，审阅后采纳或忽略；`bun run port:review` 把审阅到的上游提交记进 `port-map.json`。
 - 改 `registry.json` 或组件文件后运行 `bun run registry:build` 更新 `public/r`。
 
 ## 工具链
@@ -86,6 +86,7 @@ NSH CLI **只安装、从不编译**：装 `port-map.json` 的 `upstream.cli`（
 bun run port:new <id> --from <上游> …  # 脚手架：路由、外壳、演示、文档、registry
 bun run port:vendor <id>       # 新增组件时从上游抽取初稿（不覆盖已有代码）
 bun run port:check             # 上游变化提醒（自上次审阅以来）、清单完整、CLI 不落后于基线
+bun run port:review            # 记下审阅：把 upstream.reviewed 推到基线
 bun run catalog --check        # 组件集合一致（演示、参照页、文档页、导出），catalog.generated.ts 最新
 bun run port:render            # 渲染比对：组件与"look 展开在 nsh/base 上"截图相同
 nsh check apps/docs/demos      # 演示与 UI 的类型检查
