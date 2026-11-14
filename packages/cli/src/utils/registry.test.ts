@@ -10,6 +10,12 @@ const dir = fs.mkdtempSync(path.join(os.tmpdir(), "registry-deps-"));
 fs.mkdirSync(path.join(dir, "lib"));
 fs.writeFileSync(path.join(dir, "lib/format.ts"), "export const format = 1;\n");
 fs.writeFileSync(path.join(dir, "picker.tsx"), 'import { format } from "./lib/format";\n');
+// A package the app installs, and the runtime the baseline supplies.
+fs.writeFileSync(path.join(dir, "clock.tsx"), 'import { Clock } from "lucide";\n');
+fs.writeFileSync(
+  path.join(dir, "label.tsx"),
+  'import { Text } from "nsh";\nimport { Button } from "nsh/base";\n',
+);
 
 afterAll(() => fs.rmSync(dir, { recursive: true, force: true }));
 
@@ -38,6 +44,64 @@ describe("checkRegistryDependencies", () => {
           files: [{ path: "lib/format.ts", type: "registry:lib" }],
         },
         { ...picker, registryDependencies: ["format"] },
+      ],
+    };
+    expect(await checkRegistryDependencies(registry, dir)).toEqual([]);
+  });
+
+  test("reports a package import the item does not install", async () => {
+    const registry: Registry = {
+      name: "t",
+      homepage: "",
+      items: [
+        { name: "clock", type: "registry:ui", files: [{ path: "clock.tsx", type: "registry:ui" }] },
+      ],
+    };
+    expect(await checkRegistryDependencies(registry, dir)).toEqual([
+      'clock: imports "lucide" but does not declare it in dependencies',
+    ]);
+  });
+
+  test("passes once the item declares the package it imports", async () => {
+    const registry: Registry = {
+      name: "t",
+      homepage: "",
+      items: [
+        {
+          name: "clock",
+          type: "registry:ui",
+          dependencies: ["lucide@^1.66.0"],
+          files: [{ path: "clock.tsx", type: "registry:ui" }],
+        },
+      ],
+    };
+    expect(await checkRegistryDependencies(registry, dir)).toEqual([]);
+  });
+
+  test("reports a package it declares but nothing imports", async () => {
+    const registry: Registry = {
+      name: "t",
+      homepage: "",
+      items: [
+        {
+          name: "label",
+          type: "registry:ui",
+          dependencies: ["lucide@^1.66.0"],
+          files: [{ path: "label.tsx", type: "registry:ui" }],
+        },
+      ],
+    };
+    expect(await checkRegistryDependencies(registry, dir)).toEqual([
+      'label: declares "lucide@^1.66.0" but never imports it',
+    ]);
+  });
+
+  test("nsh, which the runtime supplies, needs no dependencies entry", async () => {
+    const registry: Registry = {
+      name: "t",
+      homepage: "",
+      items: [
+        { name: "label", type: "registry:ui", files: [{ path: "label.tsx", type: "registry:ui" }] },
       ],
     };
     expect(await checkRegistryDependencies(registry, dir)).toEqual([]);

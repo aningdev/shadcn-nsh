@@ -82,8 +82,27 @@ const THEME_PACKAGE = "@shadcn-nsh/theme";
 const RESOLVE_SUFFIXES = ["", ".ts", ".tsx", ".json", "/index.ts", "/index.tsx"];
 
 /**
- * Compare each item's `registryDependencies` with what its files actually import.
- * Returns one message per mismatch (declared but unused, or imported but undeclared).
+ * What the baseline's runtime supplies (`nsh`, `nsh/base`, …): an app is not to install it, so an
+ * import of it needs no `dependencies` entry. Every other bare import is a package the app must
+ * have, and the item installs it (`lucide` today).
+ */
+const fromRuntime = (spec: string) => spec === "nsh" || spec.startsWith("nsh/");
+
+/** The package an import names: `@scope/name/sub` → `@scope/name`, `name/sub` → `name`. */
+export function packageOf(spec: string): string {
+  const parts = spec.split("/");
+  return spec.startsWith("@") ? parts.slice(0, 2).join("/") : (parts[0] ?? spec);
+}
+
+/** The package a `dependencies` entry names: `@scope/name@^1` → `@scope/name`, `name@^1` → `name`. */
+export function declaredPackage(entry: string): string {
+  const at = entry.indexOf("@", 1);
+  return at === -1 ? entry : entry.slice(0, at);
+}
+
+/**
+ * Compare each item's `registryDependencies` and `dependencies` with what its files actually
+ * import. Returns one message per mismatch (declared but unused, or imported but undeclared).
  */
 export async function checkRegistryDependencies(
   registry: Registry,
@@ -98,6 +117,8 @@ export async function checkRegistryDependencies(
   const problems: string[] = [];
   for (const item of registry.items) {
     const used = new Set<string>();
+    /** The packages its files import that the runtime does not supply. */
+    const packages = new Set<string>();
     for (const file of item.files) {
       const abs = path.resolve(baseDir, file.path);
       if (!/\.(ts|tsx)$/.test(abs)) continue;
@@ -113,6 +134,8 @@ export async function checkRegistryDependencies(
           // A relative import no item ships would be missing in the app it is copied into.
           else problems.push(`${item.name}: imports "${spec}", which no registry item ships`);
         }
+        // A package the app installs: the item says which, and `add` runs the install.
+        else if (spec !== THEME_PACKAGE && !fromRuntime(spec)) packages.add(packageOf(spec));
       }
     }
     used.delete(item.name);
@@ -123,6 +146,18 @@ export async function checkRegistryDependencies(
     }
     for (const dep of declared) {
       if (!used.has(dep)) problems.push(`${item.name}: declares "${dep}" but never imports it`);
+    }
+
+    const installed = new Map(
+      (item.dependencies ?? []).map((entry) => [declaredPackage(entry), entry]),
+    );
+    for (const name of packages) {
+      if (!installed.has(name))
+        problems.push(`${item.name}: imports "${name}" but does not declare it in dependencies`);
+    }
+    for (const [name, entry] of installed) {
+      if (!packages.has(name))
+        problems.push(`${item.name}: declares "${entry}" but never imports it`);
     }
   }
   return problems;

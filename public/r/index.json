@@ -68,12 +68,17 @@
       "name": "icons",
       "type": "registry:lib",
       "title": "Icons",
-      "description": "Line glyphs and the check mark drawn for the looks.",
+      "description": "The icon renderer: lucide's nodes on a canvas, and the check mark as an SVG.",
       "files": [
         {
           "path": "packages/ui/lib/icons.tsx",
           "type": "registry:lib",
           "target": "lib/icons.tsx"
+        },
+        {
+          "path": "packages/ui/lib/icon-canvas.ts",
+          "type": "registry:lib",
+          "target": "lib/icon-canvas.ts"
         }
       ]
     },
