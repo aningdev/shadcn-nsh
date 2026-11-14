@@ -179,6 +179,8 @@ console.log("one page of them all: bun run port:sheet");
 function comparePixels(): number {
   let failed = 0;
   for (const { id, tolerance, selfReference } of cases) {
+    // `--only` ran these ids alone: the other pages' shots are not there to compare.
+    if (only && !only.includes(id)) continue;
     // A self-reference has no second page: its picture is the only one.
     if (selfReference) continue;
     const allowed = tolerance ?? antialiasing;
