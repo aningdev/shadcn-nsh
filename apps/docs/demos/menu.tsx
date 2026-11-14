@@ -78,7 +78,9 @@ function App() {
           <Menu onOpenChange={({ open, reason }) => changed("File")({ open, reason })}>
             <MenuTrigger>File ▾</MenuTrigger>
             <MenuContent margin={8}>
-              <MenuItem onSelect={() => choose("New")}>New</MenuItem>
+              <MenuItem variant="default" onSelect={() => choose("New")}>
+                New
+              </MenuItem>
               <MenuItem onSelect={() => choose("Open…")}>Open…</MenuItem>
               <MenuItem disabled>Paste</MenuItem>
               <MenuSeparator />
@@ -91,7 +93,7 @@ function App() {
                 </MenuSubContent>
               </MenuSub>
               <MenuSeparator />
-              <MenuItem danger onSelect={() => choose("Delete")}>
+              <MenuItem variant="destructive" onSelect={() => choose("Delete")}>
                 Delete
               </MenuItem>
             </MenuContent>
@@ -167,7 +169,7 @@ function App() {
             <ContextMenuItem onSelect={() => choose("Copy")}>Copy</ContextMenuItem>
             <ContextMenuItem onSelect={() => choose("Rename")}>Rename</ContextMenuItem>
             <ContextMenuSeparator />
-            <ContextMenuItem danger onSelect={() => choose("Delete")}>
+            <ContextMenuItem variant="destructive" onSelect={() => choose("Delete")}>
               Delete
             </ContextMenuItem>
           </ContextMenuContent>

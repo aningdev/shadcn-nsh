@@ -29,7 +29,7 @@ import { Pagination } from "@/components/ui/pagination";
 A `compact` pager keeps Previous, a child label, and Next on one row.
 
 ```tsx
-<Pagination compact outlined page={chapter()} totalPages={12}>
+<Pagination compact variant="outline" page={chapter()} totalPages={12}>
   <Text>Chapter {chapter()} of 12</Text>
 </Pagination>
 ```
@@ -39,15 +39,20 @@ A `compact` pager keeps Previous, a child label, and Next on one row.
 ```tsx
 import { paginationArrows, paginationItemClass } from "@/components/ui/pagination";
 
-<Pagination itemClass={paginationItemClass({ outlined: true })} renderItem={paginationArrows} />;
+<Pagination
+  itemClass={paginationItemClass({ variant: "outline" })}
+  renderItem={paginationArrows}
+/>;
 ```
 
 ## API
 
 Uses `paginationItemClass` and `paginationArrows` by default. Every prop of [`nsh/base` Pagination](https://nsh.dev/elements/pagination) passes through.
 
-| Prop       | Type      | Notes                    |
-| ---------- | --------- | ------------------------ |
-| `outlined` | `boolean` | Outlined Previous / Next |
-| `compact`  | `boolean` | Label slot between ends  |
-| `page`     | `number`  | Current page (1-based)   |
+| Prop      | Type                | Notes                               |
+| --------- | ------------------- | ----------------------------------- |
+| `variant` | `PaginationVariant` | `default`, or `outline` on the ends |
+| `compact` | `boolean`           | Label slot between ends             |
+| `page`    | `number`            | Current page (1-based)              |
+
+`PaginationVariant` is `"default" | "outline"`; `paginationItemClass` takes the same word (`{ variant }`).

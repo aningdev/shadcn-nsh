@@ -19,14 +19,14 @@ import {
 import { DemoPage } from "./kit";
 import { desktop, Log, Panel, Split, wide } from "./stage";
 
-/** One row: the look's row, its mark when it can be checked, its label (danger for a destructive one). */
+/** One row: the look's row, its mark when it can be checked, its label (the danger tone for a destructive one). */
 function Item(props: {
   label: string;
   onSelect?: () => void;
   checked?: boolean;
   disabled?: boolean;
   closeOnSelect?: boolean;
-  danger?: boolean;
+  variant?: "default" | "destructive";
 }) {
   const look = menuItemLook();
   const checkable = props.checked !== undefined;
@@ -48,7 +48,7 @@ function Item(props: {
       activeStyle={props.disabled ? undefined : look.activeStyle}
       disabledStyle={look.disabledStyle}
     >
-      <Text style={menuItemLabel({ danger: props.danger })}>{props.label}</Text>
+      <Text style={menuItemLabel({ variant: props.variant })}>{props.label}</Text>
     </MenuItem>
   );
 }
@@ -122,7 +122,7 @@ function App() {
           <Item label="Copy" onSelect={() => last.set("Copy")} />
           <Item label="Paste" disabled />
           <MenuSeparator style={menuSeparator()} />
-          <Item label="Delete" danger onSelect={() => last.set("Delete")} />
+          <Item label="Delete" variant="destructive" onSelect={() => last.set("Delete")} />
         </ContextMenu>
       </Split>
     </DemoPage>

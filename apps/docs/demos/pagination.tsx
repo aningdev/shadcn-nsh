@@ -69,6 +69,7 @@ function App() {
             />
           </View>
           <Pagination
+            variant="default"
             page={page()}
             totalPages={pages()}
             visiblePages={wide() ? 7 : 5}
@@ -81,7 +82,7 @@ function App() {
           <View style={{ height: 1, backgroundColor: ui().line }} />
           <Pagination
             compact
-            outlined
+            variant="outline"
             page={chapter()}
             totalPages={12}
             accessibilityLabel="Chapters"

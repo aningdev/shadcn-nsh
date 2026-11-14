@@ -52,12 +52,14 @@ Any view can be the trigger; the menu opens at the pointer on a secondary click 
 </ContextMenu>
 ```
 
-### Separator and danger
+### Separator and a destructive item
 
 ```tsx
 <ContextMenuItem onSelect={() => cut()}>Cut</ContextMenuItem>
 <ContextMenuSeparator />
-<ContextMenuItem danger onSelect={() => remove()}>Delete</ContextMenuItem>
+<ContextMenuItem variant="destructive" onSelect={() => remove()}>
+  Delete
+</ContextMenuItem>
 ```
 
 ### Keep it open

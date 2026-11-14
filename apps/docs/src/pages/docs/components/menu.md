@@ -41,6 +41,17 @@ import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/ui/menu";
 </MenuRadioItem>
 ```
 
+### A destructive item
+
+`variant="destructive"` puts the danger tone on the row's label, its note and its icon; `default` is the row as it is.
+
+```tsx
+<MenuItem variant="default" onSelect={() => {}}>New</MenuItem>
+<MenuItem variant="destructive" onSelect={() => remove()}>Delete</MenuItem>
+```
+
+`MenuItemVariant` is `"default" | "destructive"`, and `menuItemLabel`, `menuItemNote` and `menuItemGlyph` take the same word.
+
 ### Submenu
 
 ```tsx
@@ -61,7 +72,7 @@ Looks are `menuItemLook`, `menuPopup`, `menuSeparator`, `MenuLabel`, `SubmenuRow
 | `Menu`                        | Open state + trigger slot                  |
 | `MenuTrigger`                 | Registers the trigger; string → Button     |
 | `MenuContent`                 | Popup / sheet; defaults bottom / start / 4 |
-| `MenuItem`                    | String → `menuItemLabel`; `danger`         |
+| `MenuItem`                    | String → `menuItemLabel`; `variant`        |
 | `MenuCheckboxItem`            | Checkable row                              |
 | `MenuRadioItem`               | One of a group                             |
 | `MenuLabel`                   | Group title (`text`)                       |

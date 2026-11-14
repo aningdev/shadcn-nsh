@@ -82,7 +82,7 @@ function App() {
             <ContextMenuItem onSelect={() => last.set("Copy")}>Copy</ContextMenuItem>
             <ContextMenuItem disabled>Paste</ContextMenuItem>
             <ContextMenuSeparator />
-            <ContextMenuItem danger onSelect={() => last.set("Delete")}>
+            <ContextMenuItem variant="destructive" onSelect={() => last.set("Delete")}>
               Delete
             </ContextMenuItem>
           </ContextMenuContent>

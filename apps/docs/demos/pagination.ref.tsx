@@ -76,7 +76,7 @@ function App() {
             totalPages={pages()}
             visiblePages={wide() ? 7 : 5}
             accessibilityLabel="Search results pages"
-            itemClass={paginationItemClass()}
+            itemClass={paginationItemClass({ variant: "default" })}
             renderItem={paginationArrows}
             previousAccessibilityLabel="Previous"
             nextAccessibilityLabel="Next"
@@ -92,7 +92,7 @@ function App() {
             previousAccessibilityLabel="Previous chapter"
             nextAccessibilityLabel="Next chapter"
             class="items-center justify-between"
-            itemClass={paginationItemClass({ outlined: true })}
+            itemClass={paginationItemClass({ variant: "outline" })}
             renderItem={paginationArrows}
             onChange={({ page: next }) => chapter.set(next)}
           >

@@ -17,6 +17,9 @@ const pointer = platform.desktop;
 
 // Pagination -------------------------------------------------------------
 
+/** A pagination's variants: `default`, quiet items; `outline`, an edge on each. */
+export type PaginationVariant = "default" | "outline";
+
 /** What every pagination item shares: quiet until hovered, the current page
  * lit as a primary button is, citrus under its dark text (`selected:`), with
  * a color fade (still with reduced motion), the ends dimmed (`disabled:`),
@@ -28,13 +31,14 @@ const pageItem =
 
 /**
  * A `Pagination`'s `itemClass`, over the component's own numbers and
- * labels: 32 points with a pointer, 44 on a touch screen; `outlined` (a
+ * labels: 32 points with a pointer, 44 on a touch screen; `outline` (a
  * compact pager's Previous and Next, or every item on a touch screen) on the
  * border's edge, padded wider, 40 points tall with a pointer.
  */
-export function paginationItemClass(o?: { outlined?: boolean }): string {
-  const box = pointer ? (o?.outlined ? "min-w-8 h-10" : "min-w-8 h-8") : "min-w-11 h-11";
-  return `${box} ${pageItem}${o?.outlined ? " px-3 border border-border" : ""}`;
+export function paginationItemClass(o?: { variant?: PaginationVariant }): string {
+  const bordered = o?.variant === "outline";
+  const box = pointer ? (bordered ? "min-w-8 h-10" : "min-w-8 h-8") : "min-w-11 h-11";
+  return `${box} ${pageItem}${bordered ? " px-3 border border-border" : ""}`;
 }
 
 /**
@@ -62,17 +66,17 @@ export function paginationArrows(item: PaginationItemState): JSX.Element {
  * Every base prop passes through.
  */
 export type PaginationProps = BasePaginationProps & {
-  /** Outlined Previous/Next (or every item on touch). */
-  outlined?: boolean;
+  /** `default`: quiet items; `outline`: an edge on Previous and Next (or every item on touch). */
+  variant?: PaginationVariant;
 };
 
 /** A pager of page numbers and arrows. */
 export function Pagination(props: PaginationProps) {
-  const [, rest] = split(props, ["outlined", "itemClass", "renderItem"]);
+  const [, rest] = split(props, ["variant", "itemClass", "renderItem"]);
   return (
     <BasePagination
       {...rest}
-      itemClass={props.itemClass ?? paginationItemClass({ outlined: props.outlined })}
+      itemClass={props.itemClass ?? paginationItemClass({ variant: props.variant })}
       renderItem={props.renderItem ?? paginationArrows}
     />
   );

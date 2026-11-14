@@ -25,7 +25,7 @@ import { desktop, Panel, Split, wide } from "./stage";
 
 const SORTS = ["Name", "Date modified", "Size"];
 
-/** One row: the look's row, its mark when it can be checked, its label (danger for a destructive one). */
+/** One row: the look's row, its mark when it can be checked, its label (the danger tone for a destructive one). */
 function Item(props: {
   label: string;
   onSelect?: () => void;
@@ -33,7 +33,7 @@ function Item(props: {
   radio?: boolean;
   disabled?: boolean;
   closeOnSelect?: boolean;
-  danger?: boolean;
+  variant?: "default" | "destructive";
 }) {
   const look = menuItemLook();
   const checkable = props.checked !== undefined;
@@ -60,7 +60,7 @@ function Item(props: {
       activeStyle={props.disabled ? undefined : look.activeStyle}
       disabledStyle={look.disabledStyle}
     >
-      <Text style={menuItemLabel({ danger: props.danger })}>{props.label}</Text>
+      <Text style={menuItemLabel({ variant: props.variant })}>{props.label}</Text>
     </MenuItem>
   );
 }
@@ -134,7 +134,7 @@ function App() {
             <MenuSeparator style={menuSeparator()} />
             <Share onSelect={(what) => choose(`Share › ${what}`)} />
             <MenuSeparator style={menuSeparator()} />
-            <Item label="Delete" danger onSelect={() => choose("Delete")} />
+            <Item label="Delete" variant="destructive" onSelect={() => choose("Delete")} />
           </Menu>
 
           <Menu
@@ -207,7 +207,7 @@ function App() {
           <Item label="Copy" onSelect={() => choose("Copy")} />
           <Item label="Rename" onSelect={() => choose("Rename")} />
           <MenuSeparator style={menuSeparator()} />
-          <Item label="Delete" danger onSelect={() => choose("Delete")} />
+          <Item label="Delete" variant="destructive" onSelect={() => choose("Delete")} />
         </ContextMenu>
       </Split>
     </DemoPage>

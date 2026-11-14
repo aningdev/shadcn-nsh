@@ -97,10 +97,13 @@ export function menuItemLook(o?: MenuItemLookOptions) {
   };
 }
 
-/** Options of `menuItemLabel` and `menuItemGlyph`. */
+/** A menu row's variants: `default`, the text's color; `destructive`, the danger tone. */
+export type MenuItemVariant = "default" | "destructive";
+
+/** Options of `menuItemLabel`, `menuItemNote` and `menuItemGlyph`. */
 export interface MenuItemTextOptions {
-  /** A destructive item: the danger tone. */
-  danger?: boolean;
+  /** `destructive`: the danger tone on the row's label, note and icon. */
+  variant?: MenuItemVariant;
 }
 
 /** A menu row's label: 13 points with a pointer, 16 on a touch screen, on one line, taking the row's free width. */
@@ -110,13 +113,16 @@ export function menuItemLabel(o?: MenuItemTextOptions): TextStyle {
     flexGrow: 1,
     flexShrink: 0,
     fontSize: menuItemSize.font,
-    color: o?.danger ? colors.danger : colors.text,
+    color: o?.variant === "destructive" ? colors.danger : colors.text,
   };
 }
 
-/** A menu row's note at its trailing edge (a shortcut, a value): 11.5 points with a pointer, 14 on a touch screen, faint. */
-export function menuItemNote(): TextStyle {
-  return { fontSize: menuItemSize.note, color: colors.faint };
+/** A menu row's note at its trailing edge (a shortcut, a value): 11.5 points with a pointer, 14 on a touch screen, faint (the danger tone on a destructive row). */
+export function menuItemNote(o?: MenuItemTextOptions): TextStyle {
+  return {
+    fontSize: menuItemSize.note,
+    color: o?.variant === "destructive" ? colors.danger : colors.faint,
+  };
 }
 
 /** A menu row's leading icon (`<Icon {...menuItemGlyph()} />`): 14 points with a pointer, 18 on a touch screen, muted (the danger tone for a destructive item). */
@@ -124,7 +130,7 @@ export function menuItemGlyph(o?: MenuItemTextOptions) {
   return {
     size: menuItemSize.icon,
     get tint() {
-      return o?.danger ? colors.danger : colors.muted;
+      return o?.variant === "destructive" ? colors.danger : colors.muted;
     },
   };
 }
@@ -271,8 +277,8 @@ export type MenuTriggerProps = {
 
 /** Theme layer on `nsh/base` MenuItem. A string child takes `menuItemLabel`. */
 export type MenuItemProps = Omit<BaseMenuItemProps, "children"> & {
-  /** A destructive item: danger tone on the label. */
-  danger?: boolean;
+  /** `default`, the row as it is; `destructive`, its label in the danger tone. */
+  variant?: MenuItemVariant;
   children?: string | JSX.Element;
 };
 
@@ -440,7 +446,7 @@ export function MenuContent(props: MenuContentProps) {
 export function MenuItem(props: MenuItemProps) {
   const [, rest] = split(props, [
     "children",
-    "danger",
+    "variant",
     "indicator",
     "style",
     "hoverStyle",
@@ -473,7 +479,7 @@ export function MenuItem(props: MenuItemProps) {
       disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     >
       {typeof props.children === "string" ? (
-        <Text style={menuItemLabel({ danger: props.danger })}>{props.children}</Text>
+        <Text style={menuItemLabel({ variant: props.variant })}>{props.children}</Text>
       ) : (
         props.children
       )}
