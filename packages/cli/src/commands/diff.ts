@@ -1,5 +1,6 @@
 import { Command } from "commander";
 
+import type { RegistryIndexItem } from "../types";
 import { readApp } from "../utils/app";
 import { changeSummary, diffLines, formatDiff } from "../utils/diff";
 import { hasChange, isInstalled, planItems, type PlannedFile } from "../utils/plan";
@@ -15,7 +16,8 @@ export type DiffOptions = {
  *
  * Without an item, list the installed items that differ; with items, print the changed files
  * line by line. `theme.json` compares keys, not values: its palette belongs to the app (only
- * `add --overwrite` replaces it), so a theme that is only recolored is not a difference.
+ * `add --overwrite` replaces it), so a theme that is only recolored is not a difference. Of the
+ * themes, only the app's own counts as installed: they all land at `theme.json`.
  *
  * Returns 1 when anything differs, so it can gate updates.
  */
@@ -26,10 +28,13 @@ export async function runDiff(names: string[], opts: DiffOptions): Promise<numbe
     return 1;
   }
 
+  /** The app owns one theme; the other one's files are at the same paths. */
+  const installedHere = (item: RegistryIndexItem) =>
+    isInstalled(ws.uiRoot, config, item) &&
+    (item.type !== "registry:theme" || item.name === config.theme);
+
   const index = await fetchIndex(config, opts.registry);
-  const targets = names.length
-    ? names
-    : index.items.filter((item) => isInstalled(ws.uiRoot, config, item)).map((item) => item.name);
+  const targets = names.length ? names : index.items.filter(installedHere).map((item) => item.name);
 
   if (targets.length === 0) {
     console.log("Nothing installed.");

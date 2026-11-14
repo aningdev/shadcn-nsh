@@ -1,5 +1,6 @@
 import { Command } from "commander";
 
+import type { RegistryIndexItem } from "../types";
 import { readApp } from "../utils/app";
 import { isInstalled } from "../utils/plan";
 import { fetchIndex } from "../utils/registry";
@@ -18,12 +19,16 @@ export type ListOptions = {
 export async function runList(opts: ListOptions): Promise<number> {
   const { ws, config } = await readApp(opts.cwd, opts.registry);
   const index = await fetchIndex(config, opts.registry);
+  /** The app owns one theme: the other's files are at the same paths. */
+  const installedHere = (item: RegistryIndexItem) =>
+    isInstalled(ws.uiRoot, config, item) &&
+    (item.type !== "registry:theme" || item.name === config.theme);
   const rows = index.items.map((item) => ({
     name: item.name,
     type: item.type,
     title: item.title,
     description: item.description,
-    installed: isInstalled(ws.uiRoot, config, item),
+    installed: installedHere(item),
   }));
 
   if (opts.json) {

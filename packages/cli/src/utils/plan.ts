@@ -43,6 +43,14 @@ export function isThemeFile(file: PlannedFile) {
   return path.basename(file.absolute) === "theme.json";
 }
 
+/**
+ * How to plan: `adopt` names items whose files the app takes as they are — a theme switch writes
+ * the new theme's `theme.json` and finishes where a plain `add` would keep the app's own.
+ */
+export type PlanOptions = {
+  adopt?: string[];
+};
+
 /** True when the file `add` would write differs from what the app has, by the rule above. */
 export function hasChange(file: PlannedFile) {
   if (file.status === "merge") return true;
@@ -78,8 +86,10 @@ export async function planItems(
   uiRoot: string,
   config: NshUiConfig,
   items: RegistryItem[],
+  opts: PlanOptions = {},
 ): Promise<PlannedFile[]> {
   const planned: PlannedFile[] = [];
+  const adopted = new Set(opts.adopt ?? []);
 
   for (const item of items) {
     for (const file of item.files) {
@@ -90,7 +100,7 @@ export async function planItems(
       const target = defaultTarget(file, config.aliases);
       const absolute = path.isAbsolute(target) ? target : path.resolve(uiRoot, target);
       const content = transformContent(file.content, absolute, config, uiRoot);
-      const existing = await readOrNull(absolute);
+      const existing = adopted.has(item.name) ? null : await readOrNull(absolute);
       const relative = path.relative(uiRoot, absolute) || path.basename(absolute);
 
       const entry: PlannedFile = {

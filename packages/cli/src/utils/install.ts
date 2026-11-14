@@ -3,10 +3,10 @@ import path from "node:path";
 
 import type { NshUiConfig, RegistryItem } from "../types";
 import { changeSummary } from "./diff";
-import { isThemeFile, planItems, type PlannedFile } from "./plan";
+import { isThemeFile, planItems, type PlannedFile, type PlanOptions } from "./plan";
 import { mergeTheme } from "./theme-merge";
 
-export type InstallOptions = {
+export type InstallOptions = PlanOptions & {
   /** Replace files the app has changed. Without it they are kept and reported. */
   overwrite?: boolean;
   /** Report what would happen; write nothing. */
@@ -26,7 +26,8 @@ export type InstallResult = {
  * A file the app does not have is written; one identical to the registry's is skipped; a
  * `theme.json` that only lacks keys is merged; any other file the app has is its own and is
  * kept, unless `overwrite` replaces it (reporting how much changes). With `dryRun` the same
- * lines are printed as `would …` and nothing is written.
+ * lines are printed as `would …` and nothing is written. `adopt` items are written as if the app
+ * had none of their files: that is how a theme switch lands.
  */
 export async function installItems(
   uiRoot: string,
@@ -34,7 +35,7 @@ export async function installItems(
   items: RegistryItem[],
   opts: InstallOptions = {},
 ): Promise<InstallResult> {
-  const planned = await planItems(uiRoot, config, items);
+  const planned = await planItems(uiRoot, config, items, opts);
   const written: string[] = [];
 
   for (const file of planned) {
