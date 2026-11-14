@@ -15,7 +15,7 @@ bunx shadcn-nsh@latest add button
 
 | 命令                | 作用                                                       |
 | ------------------- | ---------------------------------------------------------- |
-| `init`              | 写 `nsh-ui.json`、装 `theme`、把每个 `nsh.json` 指向它     |
+| `init`              | 写 `nsh-ui.json`、装一个主题、把每个 `nsh.json` 指向它     |
 | `add [components…]` | 复制条目及其 `registryDependencies`                        |
 | `list`              | registry 的全部条目，应用已有的标 `✓`                      |
 | `view <items…>`     | `add` 会写的文件：目标路径与内容                           |
@@ -25,7 +25,8 @@ bunx shadcn-nsh@latest add button
 
 每个命令都接受 `-c, --cwd <dir>`（默认：当前目录）。`init`、`add`、`list`、`view`、`diff`
 另接受 `--registry <url>`（含 `{name}` 的模板）；省略时 `add`、`list`、`view`、`diff` 用
-`nsh-ui.json` 里的，`init` 用公共 registry。`init` 还接受 `--overwrite` 与 `-y`（接受，当前不弹确认）。
+`nsh-ui.json` 里的，`init` 用公共 registry。`init` 还接受 `--overwrite`、`-y`（接受，当前不弹确认）与 `--theme <name>`：
+`default`（本库自己的主题）或 `shadcn`（shadcn 的 neutral 配色与平面 finish）。
 
 ## add
 
@@ -42,6 +43,11 @@ shadcn-nsh add button --overwrite
 - `theme.json` 按 key 合并：应用保留自己的颜色，补上缺的 token；改过颜色的主题原样保留
   （`kept theme.json (the app's colors stay)`）。
 - `--all`（`-a`）加全部 `registry:ui` 条目（含依赖）。
+- 点名一个主题（`add theme-shadcn`，`add theme` 是换回默认）就是换主题：文件写到应用里，
+  `nsh-ui.json` 的 `theme` 记下新的那个。点名应用已有的主题只是普通的 `add`：不加 `--overwrite`
+  就保留应用的配色。
+- 此后 `theme` 这个依赖按应用的主题解析，所以 `add button`、`add button --overwrite`、
+  `add --all --overwrite` 都不会把默认主题写回来。
 - `--dry-run` 用 `would write …` / `would overwrite …` 打印同样的行，一个字节都不写——
   包括 `init` 会先写的 `nsh-ui.json` 与主题。
 
@@ -77,6 +83,7 @@ shadcn-nsh diff || echo "run shadcn-nsh add <item> --overwrite"
 ```json
 {
   "registry": "https://raw.githubusercontent.com/aningdev/shadcn-nsh/main/public/r/{name}.json",
+  "theme": "theme",
   "aliases": {
     "components": "./components",
     "ui": "./components/ui",
@@ -85,6 +92,9 @@ shadcn-nsh diff || echo "run shadcn-nsh add <item> --overwrite"
   }
 }
 ```
+
+`theme` 是应用装的 `registry:theme` 条目（`theme`，或 `theme-shadcn`）；文件里没有它就是
+`theme`。
 
 monorepo（`apps/*` + `packages/ui`）里它位于 `packages/ui`，`add -c apps/web` 装到那里。
 

@@ -1,17 +1,12 @@
 import { describe, expect, test } from "bun:test";
 import path from "node:path";
 
-import type { NshUiConfig } from "../types";
+import { DEFAULT_CONFIG, type NshUiConfig } from "../types";
 import { transformContent } from "./transform";
 
 const config: NshUiConfig = {
+  ...DEFAULT_CONFIG(),
   registry: "https://example.test/{name}.json",
-  aliases: {
-    components: "./components",
-    ui: "./components/ui",
-    lib: "./lib",
-    theme: "./lib/theme",
-  },
 };
 
 const cwd = path.resolve("/app");

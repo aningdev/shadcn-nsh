@@ -21,13 +21,14 @@ shadcn-nsh@latest init [options]
 | `-c, --cwd <cwd>`  | App or monorepo directory.                   | The current directory |
 | `-y, --yes`        | Accepted for scripts; nothing prompts today. | `false`               |
 | `--overwrite`      | Overwrite files that already exist.          | `false`               |
+| `--theme <name>`   | Theme to install: `default` or `shadcn`.     | `default`             |
 | `--registry <url>` | Registry URL template containing `{name}`.   | The public registry   |
 
 ```sh
 npx shadcn-nsh@latest init -c apps/web
 ```
 
-It writes `theme.json`, `lib/finishes.json` and `lib/theme.ts` into the app (under `packages/ui` in a monorepo), and a `tsconfig.json` when the app has none.
+It writes `theme.json`, `lib/finishes.json` and `lib/theme.ts` into the app (under `packages/ui` in a monorepo), and a `tsconfig.json` when the app has none. Which theme those files hold is recorded in `nsh-ui.json` (`"theme": "theme"`, or `"theme-shadcn"` for `--theme shadcn`); `add` resolves a component's `theme` dependency to it, so taking a component later — `--overwrite` included — never writes the default theme back. `add theme` / `add theme-shadcn` switch it.
 
 ## add
 

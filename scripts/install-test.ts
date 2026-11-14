@@ -2,19 +2,22 @@
  * The copy-into-app gate, run from the app's side: build the registry, serve it, install it into
  * real NSH apps with this repository's CLI, and type check — and run — what landed there.
  *
- * Two passes, because they catch different things (docs/port.md#检查):
+ * Three passes, because they catch different things (docs/port.md#检查):
  *
  * - **all at once**: one app, `init`, `add --all`, `nsh check`, then `nsh test` on a page that
  *   imports every item: a component that cannot resolve, or throws while it loads, fails here;
+ * - **the neutral theme**: `init --theme shadcn`, `add --all`, `nsh check`, then `add …
+ *   --overwrite`: the theme the app installed must still be the theme it has, and must be the
+ *   one in `packages/theme/themes/shadcn/theme.json`;
  * - **one at a time**: a fresh app per `registry:ui` item, `add <item>` and `nsh check`: an
  *   import no item delivers (a missing `registryDependencies` entry or lib file), or a file the
  *   transform points at the wrong place, shows up only when the item is installed alone.
  *
- * Both passes install what the items import (`lucide` today): the apps start without a
+ * Every pass installs what the items import (`lucide` today): the apps start without a
  * `package.json`, and `add` writes one and runs the app's package manager. A missing
  * `dependencies` entry therefore fails `nsh check` here, the way it would in a user's app.
  *
- * Before either, a fresh build of `registry.json` is compared with the committed `public/r`: the
+ * Before the passes, a fresh build of `registry.json` is compared with the committed `public/r`: the
  * artifact an app installs from must be the one the sources make today. The build is the one
  * `bun run registry:build` makes (`scripts/registry-build.ts`), not a copy of its steps.
  *
@@ -367,10 +370,12 @@ async function assertPackages(dir: string, packages: string[]) {
 }
 
 /** An NSH app with `nsh-ui.json` and the theme in it: what `init` leaves behind. */
-async function scaffold(template: string, registry: string, nsh: string) {
+async function scaffold(template: string, registry: string, nsh: string, theme?: string) {
   await fs.mkdir(template, { recursive: true });
   await step("nsh init", nsh, ["init", template, "--template", "ts"], path.dirname(template));
-  await step("shadcn-nsh init", "bun", [cli, "init", "--registry", registry], template);
+  const init = [cli, "init", "--registry", registry];
+  if (theme) init.push("--theme", theme);
+  await step("shadcn-nsh init", "bun", init, template);
 }
 
 /** Copy the scaffolded app to `dir`: each run starts from the state `init` left. */
@@ -387,6 +392,29 @@ async function installEveryItem(template: string, dir: string, items: Item[], ns
   await step("nsh test", nsh, ["test", "."], dir);
   // The items import `lucide`, which is what the app's own package manager had to install.
   await assertPackages(dir, ["lucide"]);
+}
+
+/**
+ * The neutral theme, from the app's side: `init --theme shadcn`, every item, and the theme the app
+ * ends up with — `add`, even with `--overwrite`, must keep it rather than write the default back.
+ */
+async function installNeutralTheme(template: string, dir: string, items: Item[], nsh: string) {
+  await copyApp(template, dir);
+  await step("add --all", "bun", [cli, "add", "--all"], dir);
+  await fs.writeFile(path.join(dir, "All.tsx"), allPage(items));
+  await step("nsh check", nsh, ["check", "."], dir);
+  await step("add --overwrite", "bun", [cli, "add", "button", "--overwrite"], dir);
+  const installed = await fs.readFile(path.join(dir, "theme.json"), "utf8");
+  const source = await fs.readFile(
+    path.join(repo, "packages/theme/themes/shadcn/theme.json"),
+    "utf8",
+  );
+  if (installed !== source) {
+    throw new StepFailure(
+      "theme",
+      "      theme.json is not packages/theme/themes/shadcn/theme.json after init --theme shadcn",
+    );
+  }
 }
 
 async function installOneItem(template: string, dir: string, item: Item, nsh: string) {
@@ -576,6 +604,26 @@ async function main(): Promise<number> {
       }
       const label = `add --all (${all.length} items), nsh check, nsh test`;
       console.log(`  ✓ ${label} ${seconds(performance.now() - startedAll)}\n`);
+    }
+
+    if (opts.filter == null) {
+      console.log("the neutral theme, in one app");
+      const startedNeutral = performance.now();
+      const neutralTemplate = path.join(tmp, "template-shadcn");
+      try {
+        await scaffold(neutralTemplate, registry, nsh, "shadcn");
+        await installNeutralTheme(neutralTemplate, path.join(tmp, "shadcn"), all, nsh);
+      } catch (thrown) {
+        const failure = failureOf(thrown);
+        console.error(`  ✗ ${failure.step} ${seconds(performance.now() - startedNeutral)}`);
+        console.error(failure.detail);
+        console.error(
+          "\ninstall test: an app on the neutral theme does not keep it, or does not type check",
+        );
+        return 1;
+      }
+      const label = "init --theme shadcn, add --all, nsh check, add --overwrite keeps it";
+      console.log(`  ✓ ${label} ${seconds(performance.now() - startedNeutral)}\n`);
     }
 
     const each = `each item in its own app (${items.length} item${items.length === 1 ? "" : "s"}`;

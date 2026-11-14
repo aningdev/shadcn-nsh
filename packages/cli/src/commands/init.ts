@@ -3,7 +3,7 @@ import path from "node:path";
 
 import { Command } from "commander";
 
-import { DEFAULT_CONFIG, type NshUiConfig } from "../types";
+import { DEFAULT_CONFIG, themeItem, type NshUiConfig } from "../types";
 import { findNshJson, readJson, writeConfig, writeJson } from "../utils/config";
 import { installDependencies } from "../utils/deps";
 import { installItems } from "../utils/install";
@@ -14,6 +14,8 @@ export async function runInit(opts: {
   cwd: string;
   overwrite?: boolean;
   registry?: string;
+  /** The theme to install: `default` (the library's own) or `shadcn`; an unknown name throws. */
+  theme?: string;
 }): Promise<NshUiConfig> {
   const cwd = path.resolve(opts.cwd);
   const ws = await resolveWorkspace(cwd);
@@ -33,11 +35,13 @@ export async function runInit(opts: {
 
   const config: NshUiConfig = DEFAULT_CONFIG();
   if (opts.registry) config.registry = opts.registry;
+  // Before anything is written: an unknown theme is the command's error, not a half-made app.
+  config.theme = themeItem(opts.theme ?? "default");
 
   await writeConfig(ws.uiRoot, config);
   console.log(`write ${path.relative(cwd, path.join(ws.uiRoot, "nsh-ui.json")) || "nsh-ui.json"}`);
 
-  const items = await resolveTree(config, ["theme"], opts.registry);
+  const items = await resolveTree(config, [config.theme], opts.registry);
   await installItems(ws.uiRoot, config, items, { overwrite: opts.overwrite });
   await installDependencies(ws.uiRoot, items);
 
@@ -74,8 +78,17 @@ export const init = new Command()
   .option("-c, --cwd <cwd>", "app or monorepo directory", process.cwd())
   .option("-y, --yes", "skip confirmation", false)
   .option("--overwrite", "overwrite existing files", false)
+  .option("--theme <name>", "theme to install: default (the library's own) or shadcn", "default")
   .option("--registry <url>", "registry URL template containing {name}")
-  .action(async (opts: { cwd: string; yes: boolean; overwrite: boolean; registry?: string }) => {
-    await runInit(opts);
-    console.log("\nDone. Next: shadcn-nsh add button");
-  });
+  .action(
+    async (opts: {
+      cwd: string;
+      yes: boolean;
+      overwrite: boolean;
+      theme: string;
+      registry?: string;
+    }) => {
+      await runInit(opts);
+      console.log("\nDone. Next: shadcn-nsh add button");
+    },
+  );

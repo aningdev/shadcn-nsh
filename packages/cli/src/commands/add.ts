@@ -24,9 +24,12 @@ export type AddOptions = {
  * Copy `components` (and `--all`, every `registry:ui` item) into the app, dependencies first.
  *
  * Files the app has changed are kept unless `--overwrite`; a `theme.json` that only lacks keys
- * is merged. The packages the items declare are installed with the app's own package manager
- * (`utils/deps.ts`). With `--dry-run` nothing is written, not even `nsh-ui.json` or the init
- * theme, and the install is printed instead of run.
+ * is merged. Naming a theme item (`add theme-shadcn`, `add theme`) switches the app's theme: its
+ * files are written and `nsh-ui.json`'s `theme` records it, so every later `add` resolves the
+ * `theme` dependency to it instead of writing the default theme back. The packages the items
+ * declare are installed with the app's own package manager (`utils/deps.ts`). With `--dry-run`
+ * nothing is written, not even `nsh-ui.json` or the theme, and the install is printed instead of
+ * run.
  */
 export async function runAdd(components: string[], opts: AddOptions): Promise<number> {
   const cwd = path.resolve(opts.cwd);
@@ -65,7 +68,26 @@ export async function runAdd(components: string[], opts: AddOptions): Promise<nu
   }
 
   const items = await resolveTree(config, names, opts.registry);
-  await installItems(ws.uiRoot, config, items, { overwrite: opts.overwrite, dryRun });
+
+  // A theme item other than the app's is its new theme: its files land where a plain `add` would
+  // keep the app's own, and `nsh-ui.json` records it, so later `add`s resolve `theme` to it. Naming
+  // the theme the app already has is a plain `add`: its colors stay unless `--overwrite`.
+  const themes = items.filter((item) => item.type === "registry:theme").map((item) => item.name);
+  const named = names.filter((name) => themes.includes(name));
+  if (named.length > 1) {
+    throw new Error(`Name one theme, not ${named.join(", ")}: an app installs one.`);
+  }
+  const theme = named[0] === config.theme ? undefined : named[0];
+  if (theme != null) {
+    config.theme = theme;
+    if (!dryRun) await writeConfig(ws.uiRoot, config);
+  }
+
+  await installItems(ws.uiRoot, config, items, {
+    overwrite: opts.overwrite,
+    dryRun,
+    adopt: theme == null ? [] : [theme],
+  });
   const installed = await installDependencies(ws.uiRoot, items, { dryRun });
 
   if (dryRun) {

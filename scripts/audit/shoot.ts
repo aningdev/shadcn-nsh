@@ -7,7 +7,8 @@
  *
  * The entry's `nsh.json` (its theme and aliases) is the one in `--cwd` or beside the entry.
  * `--idiom` asks the app to run as a phone or a desktop window (`desktop` when left out: the
- * page measures the browser's pointer, as a release package does).
+ * page measures the browser's pointer, as a release package does). `--theme` asks for the dark
+ * appearance (`prefers-color-scheme`); light is the default, as in the audit's own shots.
  */
 import path from "node:path";
 
@@ -21,7 +22,7 @@ const valueOf = (flag: string) => {
 };
 if (!entry) {
   console.error(
-    "usage: bun scripts/audit/shoot.ts <entry.tsx> --size 390x844 [--idiom phone|desktop] --out shot.png [--cwd dir]",
+    "usage: bun scripts/audit/shoot.ts <entry.tsx> --size 390x844 [--idiom phone|desktop] [--theme light|dark] --out shot.png [--cwd dir]",
   );
   process.exit(1);
 }
@@ -38,6 +39,11 @@ if (idiom && idiom !== "phone" && idiom !== "desktop") {
   console.error("--idiom takes phone or desktop");
   process.exit(1);
 }
+const theme = valueOf("--theme");
+if (theme !== undefined && theme !== "light" && theme !== "dark") {
+  console.error("--theme takes light or dark");
+  process.exit(1);
+}
 const cwd = path.resolve(valueOf("--cwd") ?? path.dirname(entry));
 const out = path.resolve(valueOf("--out") ?? path.join("/tmp", `nsh-audit-${Date.now()}.png`));
 const work = process.env.NSH_AUDIT_WORK ?? path.join("/tmp", "nsh-audit");
@@ -51,9 +57,12 @@ const browser = await launch();
 try {
   const page = await browser.page();
   const url = `${server.url}/${path.basename(home)}/index.html${idiom ? `?idiom=${idiom}` : ""}`;
-  await page.load(url, { width, height });
+  await page.load(url, { width, height }, { theme });
   await page.screenshot(out);
-  console.log(`${out} (${width}×${height}${idiom ? `, ${idiom} idiom` : ", measured idiom"})`);
+  console.log(
+    `${out} (${width}×${height}${idiom ? `, ${idiom} idiom` : ", measured idiom"}` +
+      `${theme ? `, ${theme}` : ""})`,
+  );
 } finally {
   await browser.close();
   server.stop();

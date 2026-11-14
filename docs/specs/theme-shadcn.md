@@ -1,5 +1,10 @@
 # shadcn 默认主题实验
 
+> **现在可以安装了。** neutral 已作为 registry 条目 `theme-shadcn` 发布：`shadcn-nsh init --theme shadcn`
+> （或 `add theme-shadcn`）写入主题的三个文件，并把选择记进 `nsh-ui.json` 的 `theme`；此后的 `add`
+> 都按应用的主题解析 `theme` 依赖，`--overwrite` 也不会把默认主题写回来。本文余下部分是当初那次
+> 实验的记录——预览脚本、对照图、限制清单——仍然有效。
+
 ## 结论
 
 把主题数据换掉，**16 个组件全部照常渲染，颜色、圆角、层次都跟着走了**：组件只经 `finish.*` 与 `theme.json` 的 token 取色，这一点成立。剩下的差异集中在**主题数据够不到的地方**：按下缩放（`pressSink`）、写死的焦点光环 rgba、组件里固定的 alpha、不在 token 里的圆角，以及 `finish.fill` 必须给渐变这一结构约束。逐条见[限制清单](#5-限制清单换数据换不掉的)。
@@ -17,7 +22,7 @@
 
 ## 1 目的与做法
 
-用户要看本库组件换成 **shadcn 默认主题**（new-york-v4、`neutral`、平面、轻阴影）是什么样子。这是一次**实验**：只出新主题数据与对比图，不改默认主题、不改组件、不做运行时切换、不进 registry。
+用户要看本库组件换成 **shadcn 默认主题**（new-york-v4、`neutral`、平面、轻阴影）是什么样子。这是一次**实验**：只出新主题数据与对比图，不改默认主题、不改组件、不做运行时切换。产物后来作为 `theme-shadcn` 条目进了 registry（见开头），其余边界不变。
 
 做法分四件：主题数据 → 预览脚本 → 对照页 → 本文。验收口径：
 
@@ -220,7 +225,7 @@ bun scripts/theme-sheets.ts   [id,id]        # 对照页
 ## 6 建议的下一步（若要正式支持多主题）
 
 1. **先把"外观"从两处搬到一处。** 现在配色在 `theme.json`，阴影/渐变在 `finishes.json`，而 `finishes.json` 是 `theme.ts` 的 import，`setTheme()` 换不掉。建议把 19 个 finish 表达为 token（`--shadow-raised`、`--raised-fill`、`--raised-gradient`…），`theme.ts` 只做角色到 token 的映射——这样一套主题就真的只是"一份 JSON"，也才可能有运行时切换。
-2. **registry 形态**：`theme` 条目现在给的是 `theme.json` + `lib/finishes.json` + `lib/theme.ts`（一个主题）。多主题的最小改法是多出 `registry:theme` 条目（`shadcn-nsh add theme-shadcn` 写 `themes/shadcn/*.json`，并把 `nsh.json` 的 `theme` 指过去），组件条目不动；**不要**给旧 id 起别名（AGENTS.md 的边界）。
+2. **registry 形态** —— **已做**：`theme` 条目给的是 `theme.json` + `lib/finishes.json` + `lib/theme.ts`（一个主题），第二个 `registry:theme` 条目 `theme-shadcn` 用 `themes/shadcn/*.json` 落在同样三个路径上，组件条目不动。应用装哪个记在 `nsh-ui.json` 的 `theme` 里（缺省即 `theme`），`add` 解析 `theme` 依赖时换成它；`nsh.json` 的 `theme` 仍指向 `./theme.json`，不必改。没有为旧 id 起别名（AGENTS.md 的边界）。
 3. **文档站**：`apps/docs` 的播放器已经有 `?theme=light|dark`（`player-options.ts`），多主题只需再加一个 `?skin=`/`?palette=`，由构建时生成多份 demo 包（当前 `docs:demos` 只按一个 `nsh.json` 主题打包）。演示页加一个主题切换，和 `Port Map` 无关。
 4. **`port:render` 的基线**：现在的基线是"一个主题 + 亮暗两套"（`apps/docs/demos/baseline/`）。多主题要么按主题出基线（目录变 `<theme>/<page>.png`，比较表按主题分），要么只对**默认主题**保持字节基线、其它主题只做"能渲染 + 与 ref 一致"的门（P4 的一半）。倾向前者做门、后者做慢检查，代价是基线体积翻倍。
 5. **限制清单 1–8 是一个 PR 的量**：都是 `// @port` 区域里的小改（判空、token 化、去掉固定 alpha），但每一处都要在 `port-map.json` 的 `replace` 里登记 `why`，并同步上游或接受下次 `port:vendor` 会覆盖的风险。建议按家族分批：先 5/6（结构性 bug），再 2/3/4（交互与焦点），最后 7/8（alpha 清单）。

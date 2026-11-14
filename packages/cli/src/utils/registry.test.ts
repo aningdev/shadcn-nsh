@@ -19,10 +19,45 @@ fs.writeFileSync(
 
 afterAll(() => fs.rmSync(dir, { recursive: true, force: true }));
 
+// Two themes: the same `lib/theme.ts` beside a `lib/finishes.json` each, as the registry ships them.
+fs.mkdirSync(path.join(dir, "theme"));
+fs.mkdirSync(path.join(dir, "themes", "shadcn"), { recursive: true });
+fs.writeFileSync(path.join(dir, "theme/theme.ts"), 'import finishes from "./finishes.json";\n');
+fs.writeFileSync(path.join(dir, "theme/finishes.json"), "{}\n");
+fs.writeFileSync(path.join(dir, "themes/shadcn/theme.json"), "{}\n");
+fs.writeFileSync(path.join(dir, "themes/shadcn/finishes.json"), "{}\n");
+// A component, whose theme comes from the package the theme items ship.
+fs.writeFileSync(path.join(dir, "themed.tsx"), 'import { colors } from "@shadcn-nsh/theme";\n');
+
 const picker = {
   name: "picker",
   type: "registry:ui",
   files: [{ path: "picker.tsx", type: "registry:ui" }],
+};
+
+const defaultTheme = {
+  name: "theme",
+  type: "registry:theme",
+  files: [
+    { path: "theme/theme.ts", type: "registry:lib", target: "lib/theme.ts" },
+    { path: "theme/finishes.json", type: "registry:lib", target: "lib/finishes.json" },
+  ],
+};
+
+const neutralTheme = {
+  name: "theme-shadcn",
+  type: "registry:theme",
+  files: [
+    { path: "themes/shadcn/theme.json", type: "registry:file", target: "theme.json" },
+    { path: "themes/shadcn/finishes.json", type: "registry:lib", target: "lib/finishes.json" },
+    { path: "theme/theme.ts", type: "registry:lib", target: "lib/theme.ts" },
+  ],
+};
+
+const themed = {
+  name: "themed",
+  type: "registry:ui",
+  files: [{ path: "themed.tsx", type: "registry:ui" }],
 };
 
 describe("checkRegistryDependencies", () => {
@@ -105,5 +140,31 @@ describe("checkRegistryDependencies", () => {
       ],
     };
     expect(await checkRegistryDependencies(registry, dir)).toEqual([]);
+  });
+
+  test("a second theme ships lib/theme.ts beside its own finishes, and needs no dependency", async () => {
+    const registry: Registry = {
+      name: "t",
+      homepage: "",
+      items: [defaultTheme, neutralTheme],
+    };
+    expect(await checkRegistryDependencies(registry, dir)).toEqual([]);
+  });
+
+  test("a component's theme package import is the default theme's", async () => {
+    const registry: Registry = {
+      name: "t",
+      homepage: "",
+      items: [defaultTheme, neutralTheme, themed],
+    };
+    expect(await checkRegistryDependencies(registry, dir)).toEqual([
+      'themed: imports "theme" but does not declare it',
+    ]);
+
+    const declared: Registry = {
+      ...registry,
+      items: [defaultTheme, neutralTheme, { ...themed, registryDependencies: ["theme"] }],
+    };
+    expect(await checkRegistryDependencies(declared, dir)).toEqual([]);
   });
 });

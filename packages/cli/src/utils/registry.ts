@@ -2,6 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 import type { NshUiConfig, Registry, RegistryIndex, RegistryItem } from "../types";
+import { DEFAULT_THEME } from "../types";
 
 export function itemUrl(config: NshUiConfig, name: string, registryOverride?: string) {
   const template = registryOverride ?? config.registry;
@@ -52,6 +53,15 @@ export async function fetchIndex(
   return (await res.json()) as RegistryIndex;
 }
 
+/**
+ * The item a dependency names, once the app's own theme is taken into account: every component
+ * depends on `theme`, and an app that installed another theme (`nsh-ui.json`'s `theme`) gets that
+ * one instead, so `add` / `add --overwrite` never write the default theme back.
+ */
+export function resolveDependency(config: NshUiConfig, name: string): string {
+  return name === DEFAULT_THEME && config.theme !== DEFAULT_THEME ? config.theme : name;
+}
+
 /** Fetch item and recursive registryDependencies (depth-first, deduped). */
 export async function resolveTree(
   config: NshUiConfig,
@@ -66,7 +76,7 @@ export async function resolveTree(
     seen.add(name);
     const item = await fetchItem(config, name, registryOverride);
     for (const dep of item.registryDependencies ?? []) {
-      await walk(dep);
+      await walk(resolveDependency(config, dep));
     }
     out.push(item);
   }
@@ -109,14 +119,26 @@ export async function checkRegistryDependencies(
   baseDir: string,
 ): Promise<string[]> {
   const owner = new Map<string, string>();
+  /** The targets each item ships: two theme items land at the same paths, as alternatives. */
+  const targets = new Map<string, Set<string>>();
   for (const item of registry.items) {
-    for (const file of item.files) owner.set(path.resolve(baseDir, file.path), item.name);
+    const own = new Set<string>();
+    for (const file of item.files) {
+      owner.set(path.resolve(baseDir, file.path), item.name);
+      if (file.target) own.add(file.target);
+    }
+    targets.set(item.name, own);
   }
-  const hasTheme = registry.items.some((item) => item.name === "theme");
+  /** Every item that ships `theme.ts`: a component depends on `theme`, an app installs one of them. */
+  const themeItems = new Set(
+    registry.items.filter((item) => item.type === "registry:theme").map((item) => item.name),
+  );
+  const hasTheme = themeItems.has(DEFAULT_THEME);
 
   const problems: string[] = [];
   for (const item of registry.items) {
     const used = new Set<string>();
+    const own = targets.get(item.name) ?? new Set<string>();
     /** The packages its files import that the runtime does not supply. */
     const packages = new Set<string>();
     for (const file of item.files) {
@@ -125,8 +147,21 @@ export async function checkRegistryDependencies(
       const source = await fs.readFile(abs, "utf8");
       for (const match of source.matchAll(IMPORT_RE)) {
         const spec = match[1] ?? match[2];
-        if (spec === THEME_PACKAGE && hasTheme) used.add("theme");
-        else if (spec.startsWith(".")) {
+        if (spec === THEME_PACKAGE && (hasTheme || themeItems.has(item.name))) {
+          // A theme item ships the theme it is; a component wants the app's theme item, which
+          // `add` picks from `nsh-ui.json` (`resolveDependency`).
+          used.add(themeItems.has(item.name) ? item.name : DEFAULT_THEME);
+        } else if (spec.startsWith(".")) {
+          // Settled at the target first: a theme item ships `lib/theme.ts` beside its own
+          // `lib/finishes.json`, two themes sharing those paths.
+          const beside = file.target
+            ? RESOLVE_SUFFIXES.map(
+                (suffix) =>
+                  `${path.posix.normalize(path.posix.join(path.posix.dirname(file.target!), spec))}${suffix}`,
+              )
+            : [];
+          if (beside.some((candidate) => own.has(candidate))) continue;
+
           const target = RESOLVE_SUFFIXES.map(
             (x) => path.resolve(path.dirname(abs), spec) + x,
           ).find((candidate) => owner.has(candidate));
