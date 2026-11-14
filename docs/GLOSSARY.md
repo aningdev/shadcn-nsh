@@ -17,15 +17,15 @@ _Avoid_: variants helper, `xVariants`, theme layer
 _Avoid_: wrapper, styled layer
 
 **Component（组件）**:
-一个文件：上游的 look（Port Region）加外壳。以 Copy-into-app 交付。
+一个文件：look（源自上游的部分以 Port Region 标注）加外壳，归本库所有。以 Copy-into-app 交付。
 _Avoid_: Styled Component, npm component
 
 **Port Region（移植区域）**:
-组件或 lib 文件里 `// @port <上游文件>` 与 `// @port end` 之间的部分，只由 `bun run port:vendor` 写入。
-_Avoid_: 手抄上游代码, 在区域内修改
+组件或 lib 文件里 `// @port <上游文件>` 与 `// @port end` 之间的部分：来源标注，说明这段起源于上游哪个文件。可以直接修改；新组件的初稿由 `bun run port:vendor` 抽取。
+_Avoid_: 只读区, 逐字照搬
 
 **Port Map（清单）**:
-`port-map.json`：上游每个文件、每个顶层声明的去向（目标文件、`pending`、带理由的 `exclude`），以及登记在案的偏离（`replace`）。唯一清单，组件表由它生成。
+`port-map.json`：上游每个文件、每个顶层声明的去向（目标文件、`pending`、带理由的 `exclude`），以及已审阅到的上游提交。唯一清单，组件表由它生成；`port:check` 据它提醒上游的变化。
 _Avoid_: 手写的状态表
 
 **Baseline（基线）**:
@@ -68,5 +68,5 @@ _Avoid_: `kind`, `default` / `outline` / `destructive`, `sm` / `lg`
 _Avoid_: 重写行为, 缩减 props
 
 **Theme Source**:
-`theme.json`（shadcn 的 `cssVars` 格式，含上游的扩展键）与 `finishes.json`（渐变与阴影），都原样取自上游；`theme.ts` 读取它们。
+`theme.json`（shadcn 的 `cssVars` 格式，含上游的扩展键）与 `finishes.json`（渐变与阴影），颜色以 oklch 存储、归本库所有（起点取自上游）；`theme.ts` 读取它们。
 _Avoid_: neutral 映射, `custom-*` 键

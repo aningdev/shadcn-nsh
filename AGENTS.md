@@ -1,32 +1,33 @@
 # AGENTS.md
 
-本仓库把 NSH 官方示例共享的 UI 层 `references/nsh/examples/nsh-gallery-ui`（下称**上游**）整理成 shadcn 模式的组件库：一个组件一个文件，经 registry 和 CLI 复制进应用（Copy-into-app），复制后归应用所有。
+本仓库是 NSH 的 shadcn 模式组件库：一个组件一个文件，经 registry 和 CLI 复制进应用（Copy-into-app），复制后归应用所有。组件**由本库自己抽取并拥有**：NSH 官方示例共享的 UI 层 `references/nsh/examples/nsh-gallery-ui`（下称**上游**）与官方推荐的样子是参考规范，不是必须逐字照搬的源头。定位与路线见 [`docs/specs/positioning.md`](docs/specs/positioning.md)。
 
-三方各管一件事，互不交叉：
+各方的角色：
 
-| 权威                  | 管什么                                                              |
-| --------------------- | ------------------------------------------------------------------- |
-| 上游 `nsh-gallery-ui` | 主题、外观、状态、几何、variant 的集合与取值                        |
-| shadcn                | 分发方式、目录、一组件一文件、组合角色（`Trigger` / `Content` / …） |
-| `nsh/base`            | 行为与无障碍                                                        |
+| 来源                  | 角色                                                                                |
+| --------------------- | ----------------------------------------------------------------------------------- |
+| 本库                  | 主题、外观、状态、几何、对外 API 的**决定者**                                       |
+| 上游 `nsh-gallery-ui` | 外观的**参考规范**与抽取起点；它的变化由 `port:check` 提醒，我们审阅后决定是否采纳  |
+| shadcn                | 分发方式、目录、一组件一文件、组合角色（`Trigger` / `Content` / …）、API 命名的参照 |
+| `nsh/base`            | 行为与无障碍（不改）                                                                |
 
-这是**打包**项目：上游已有的一律由脚本搬运（`bun run port:vendor`），位于 `// @port <上游文件>` 与 `// @port end` 之间，不手改、不换色、不改名。本仓只写组件外壳、registry / CLI 和文档站。上游每个声明的去向记在 [`port-map.json`](port-map.json)。
+抽取自上游的代码位于 `// @port <上游文件>` 与 `// @port end` 之间：这是**来源标注**，说明这段起源于上游哪个文件，**可以直接修改**。上游每个声明的去向记在 [`port-map.json`](port-map.json)；`port:vendor` 只在新增组件时抽取初稿，不覆盖已有代码。颜色只来自主题（`packages/theme`），组件代码里不写颜色字面量。
 
 **写或改任何组件、主题、演示之前，读 [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)**（目录、分层、规则 P1–P7、归属）**和 [`docs/port.md`](docs/port.md)**（每个组件的流程、外壳写法、检查）。词汇见 [`docs/GLOSSARY.md`](docs/GLOSSARY.md)。
 
-**不做**：改 `nsh` / `nsh/base`；改 `// @port` 区域内的文字；在外壳里写颜色或自定外观；搬上游的声音；把上游的 demo 适配层（`Stage` / `Split` / `Inspector` / `Panel` / `Log` / `Segmented`）放进组件库或 registry（它只在 `apps/docs/demos` 里，供演示用）；为旧 registry id 提供别名。
+**不做**：改 `nsh` / `nsh/base`；在组件代码里写颜色字面量（颜色一律经主题角色）；搬上游的声音；把上游的 demo 适配层（`Stage` / `Split` / `Inspector` / `Panel` / `Log` / `Segmented`）放进组件库或 registry（它只在 `apps/docs/demos` 里，供演示用）；为旧 registry id 提供别名。
 
 ## 目录
 
-| 路径                                  | 内容                                                             |
-| ------------------------------------- | ---------------------------------------------------------------- |
-| `packages/theme`                      | `theme.json`、`finishes.json`、`theme.ts`（上游主题 + 角色读取） |
-| `packages/ui`                         | 移植组件（`// @port` 区域 + 外壳）                               |
-| `apps/docs/demos`                     | 验收演示、演示适配层 `stage.tsx`、渲染比对、`port:render`        |
-| `apps/docs/src/pages/docs/components` | 组件文档页                                                       |
-| `registry.json` → `public/r`          | shadcn registry 产物                                             |
-| `apps/gallery`                        | 原生行为测试与冒烟页                                             |
-| `packages/cli`                        | `shadcn-nsh` CLI                                                 |
+| 路径                                  | 内容                                                           |
+| ------------------------------------- | -------------------------------------------------------------- |
+| `packages/theme`                      | `theme.json`、`finishes.json`（oklch）、`theme.ts`（角色读取） |
+| `packages/ui`                         | 组件（来源于上游的部分以 `// @port` 标注 + 外壳）              |
+| `apps/docs/demos`                     | 验收演示、演示适配层 `stage.tsx`、渲染比对、`port:render`      |
+| `apps/docs/src/pages/docs/components` | 组件文档页                                                     |
+| `registry.json` → `public/r`          | shadcn registry 产物                                           |
+| `apps/gallery`                        | 原生行为测试与冒烟页                                           |
+| `packages/cli`                        | `shadcn-nsh` CLI                                               |
 
 `port-map.json` 的 `root` 为仓库根；目标路径写全（如 `packages/ui/button.tsx`）。
 
@@ -36,7 +37,7 @@
 
 | 路径                                           | 用途                                                                  |
 | ---------------------------------------------- | --------------------------------------------------------------------- |
-| [`references/nsh`](references/nsh)             | 上游：`examples/nsh-gallery-ui`（搬运来源）；`nsh` / `nsh/base`；文档 |
+| [`references/nsh`](references/nsh)             | 上游：`examples/nsh-gallery-ui`（参考规范）；`nsh` / `nsh/base`；文档 |
 | [`references/shadcn-ui`](references/shadcn-ui) | 体系模式：registry、文档站、CLI、copy-into-app                        |
 
 克隆后若目录为空：`git submodule update --init --recursive`。
@@ -52,25 +53,25 @@
 ## 分层
 
 ```
-上游 nsh-gallery-ui（固定提交）
-   │  port:vendor
+上游 nsh-gallery-ui（参考规范；port:check 提醒变化）
+   │  新增组件时 port:vendor 抽取初稿
    ▼
 packages/theme   theme.json + finishes.json + theme.ts
 packages/ui/lib  没有所属控件的共享部分（press、overlay、surface…）
-packages/ui/<id>.tsx  一个组件 = 上游 look（// @port 区域）+ 外壳（手写）
+packages/ui/<id>.tsx  一个组件 = look（来源标注 // @port）+ 外壳，都归本库
 apps/docs/demos、docs  演示与文档页
    │
    ▼
 registry.json → public/r → shadcn-nsh add
 ```
 
-依赖向下：本库 → `nsh/base` → `nsh`。主题真源是 `theme.json` 与 `finishes.json`，都原样取自上游。
+依赖向下：本库 → `nsh/base` → `nsh`。主题真源是 `theme.json` 与 `finishes.json`，以 oklch 存储、归本库所有（起点取自上游）。
 
 ## 工作约定
 
 - 新组件用脚手架（`bun run port:new`）起步，不从空文件或旧组件复制。
 - 一个家族一个 commit；提交前 `port:check`、`nsh check apps/docs/demos`、`port:render`、`vp check` 全部通过，四张截图人眼看过。
-- `// @port` 区域只由 `port:vendor` 写入。要偏离上游，在 `port-map.json` 的 `replace` 里登记并写 `why`。
+- `// @port` 区域可以直接改；有意的外观决定写进对应文档。上游有变化时 `port:check` 会列出待审阅项，审阅后采纳或忽略，并把审阅到的上游提交记进 `port-map.json`。
 - 改 `registry.json` 或组件文件后运行 `bun run registry:build` 更新 `public/r`。
 
 ## 工具链
@@ -83,8 +84,8 @@ NSH CLI **只安装、从不编译**：装 `port-map.json` 的 `upstream.cli`（
 
 ```sh
 bun run port:new <id> --from <上游> …  # 脚手架：路由、外壳、演示、文档、registry
-bun run port:vendor            # 按 port-map.json 从上游填充区域与复制文件
-bun run port:check             # 清单完整、区域与上游一致、CLI 不落后于基线（--status 列出待办）
+bun run port:vendor <id>       # 新增组件时从上游抽取初稿（不覆盖已有代码）
+bun run port:check             # 上游变化提醒（自上次审阅以来）、清单完整、CLI 不落后于基线
 bun run catalog --check        # 组件集合一致（演示、参照页、文档页、导出），catalog.generated.ts 最新
 bun run port:render            # 渲染比对：组件与"look 展开在 nsh/base 上"截图相同
 nsh check apps/docs/demos      # 演示与 UI 的类型检查

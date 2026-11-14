@@ -1,6 +1,6 @@
 # shadcn-nsh Architecture
 
-把**上游**（`references/nsh/examples/nsh-gallery-ui`）的外观搬进一个文件一个**组件**，经 registry 与 CLI 以 **Copy-into-app** 交付。外观来自上游，行为来自 `nsh/base`，分发与组合角色来自 shadcn。词汇见 [`GLOSSARY.md`](GLOSSARY.md)。
+一个文件一个**组件**，经 registry 与 CLI 以 **Copy-into-app** 交付。组件归本库所有：外观以**上游**（`references/nsh/examples/nsh-gallery-ui`）与官方推荐为参考规范自行抽取，行为来自 `nsh/base`，分发、组合角色与 API 命名参照 shadcn。词汇见 [`GLOSSARY.md`](GLOSSARY.md)。
 
 ## Stack
 
@@ -18,15 +18,14 @@ _Avoid_: TypeScript 编译器 API、正则切声明
 **分发**：shadcn registry 格式（`registry.json` → `public/r`）+ 本仓 CLI `shadcn-nsh`
 _Avoid_: 发布组件 npm 包、旧 registry id 的别名
 
-**许可**：移植内容保持上游的 Apache-2.0，文件头与 `NOTICE` 注明来源
+**许可**：源自上游的内容保持 Apache-2.0，文件头与 `NOTICE` 注明来源
 
 ## Layout
 
-- `port-map.json`：**Port Map**，上游每个声明的唯一去向表
 - `registry.json`：**Catalog** 的真源，其 `registry:ui` 条目就是组件集合
-- `port-map.json`：**Port Map**，上游每个声明的唯一去向表；目标不一定是组件——`demo.ts` 的 `Stage` / `Split` / `Inspector` / `Panel` / `Log` / `Segmented` 等路由到 `apps/docs/demos/stage.tsx`（演示适配层，同样由 `port:vendor` 写区域，不进 registry）
-- `packages/theme/`：**Theme Source**（两个 JSON 原样拷贝）与 `theme.ts`（脚本填充）；不放组件
-- `packages/ui/<id>.tsx`：一个**组件** = **Port Region** + **Shell**；一个 registry 条目一个文件
+- `port-map.json`：**Port Map**，上游每个声明的来源去向表与已审阅的上游提交；目标不一定是组件——`demo.ts` 的 `Stage` / `Split` / `Inspector` / `Panel` / `Log` / `Segmented` 等去向 `apps/docs/demos/stage.tsx`（演示适配层，不进 registry）
+- `packages/theme/`：**Theme Source**（两个 JSON，oklch，归本库）与 `theme.ts`（角色读取）；`themes/<name>/` 是其他主题的数据；不放组件
+- `packages/ui/<id>.tsx`：一个**组件** = look（源自上游的部分以 **Port Region** 标注来源）+ **Shell**；一个 registry 条目一个文件
 - `packages/ui/lib/`：没有所属控件的上游部分（以上游文件名命名）与多个外壳共用的接线；作为 `registry:lib` 条目分发
 - `apps/docs/demos/`：每个组件的 `<id>.tsx` 与 **Reference Page** `<id>.ref.tsx`、渲染比对用例与基线截图；`kit.tsx` 是演示外框，`stage.tsx` 是演示适配层（`Stage` / `Inspector` / `Split` / `Panel` / `Log` / `Segmented` / `Chips` / `desktop` / `wide` / `ui()`，见 [`port.md`](port.md#演示)），`photos.ts` 是照片页用的图（上游 `photos.ts`，原样搬运），都不进 registry；`shots/` 是渲染比对的截图，`shots-audit/` 是诊断脚本的，两者都不提交
 - `apps/docs/public/demos/`：`docs:demos` 的打包产物（页面、运行时、wasm），不进仓库；`apps/docs/scripts/build-demos.ts` 打包每个演示，`player-options.ts` 让页面认面板的 `?idiom=` / `?theme=`
@@ -37,7 +36,7 @@ _Avoid_: 发布组件 npm 包、旧 registry id 的别名
 - `scripts/registry-build.ts`：`registry:build` 与 `test:install` 共用的构建（CLI `build` 加格式化）
 - `scripts/install-test.ts`：`test:install`，从应用一侧验证 Copy-into-app
 - `scripts/failure.ts`：脚本报错的约定，`StepFailure` 带失败的步骤名与 `cause`
-- `scripts/port/`：搬运与核对工具（读 `references/nsh`，见下）
+- `scripts/port/`：抽取与上游变化提醒工具（读 `references/nsh`，见下）
 - `scripts/audit/`：诊断演示的工具（批量打包 / 截图 / 量画布 / 拼对照页），不属于检查流水线；也读 `references/nsh`（官方示例原地打包），截图落在 `apps/docs/demos/shots-audit/`（gitignored，`port:render` 不清它），包落在仓库外，见 [`specs/demo-audit.md`](specs/demo-audit.md)
 - `references/`：只读子模块
 
@@ -45,7 +44,7 @@ _Avoid_: 发布组件 npm 包、旧 registry id 的别名
 
 ```mermaid
 flowchart TD
-  upstream["上游 nsh-gallery-ui<br/>(references/nsh, 固定在 Baseline)"]
+  upstream["上游 nsh-gallery-ui（参考规范）<br/>(references/nsh, 固定在 Baseline)"]
   port["scripts/port"]
   theme["packages/theme"]
   lib["packages/ui/lib"]
@@ -58,8 +57,8 @@ flowchart TD
   registry["registry.json → public/r"]
   cli["packages/cli"]
 
-  upstream -. port:vendor 写入区域 .-> port
-  port -. 填充 .-> theme & lib & ui
+  upstream -. port:check 提醒变化 .-> port
+  port -. 新组件时抽取初稿 .-> lib & ui
   ui --> lib --> theme
   ui --> theme
   ui & lib --> base --> nsh
@@ -75,7 +74,7 @@ flowchart TD
 - `packages/ui/lib` 不 import `packages/ui/<id>`；组件之间可以 import（`./button`），依赖写进该条目的 `registryDependencies`
 - `packages/theme` 不 import `packages/ui`
 - `packages/*` 不 import `apps/*`、`scripts/*` 或 `references/*`；运行时代码只认 `@shadcn-nsh/theme`、`nsh`、`nsh/base` 与相对路径
-- 只有 `scripts/port`（搬运与核对）与 `scripts/audit`（对照诊断截图）读 `references/nsh`；`apps/docs` 的构建不需要子模块
+- 只有 `scripts/port`（抽取与变化提醒）与 `scripts/audit`（对照诊断截图）读 `references/nsh`；`apps/docs` 的构建不需要子模块
 - 组件集合只从 `scripts/catalog.ts`（脚本）或 `catalog.generated.ts`（NSH 运行时）取；不自己读 `registry.json` 过滤，也不 `readdir` 演示或文档目录来推导
 - `scripts/*` 可以把 `packages/cli/src/*` 当库 import（构建、serve、registry 形状校验）：它是工具，不是应用代码；CLI 本身仍只经 Registry 拿组件
 - registry JSON 的形状只在 `packages/cli/src/utils/registry-schema.ts` 校验；读到的 JSON 经它变成类型，不用 `as` 断言
@@ -86,17 +85,18 @@ flowchart TD
 
 每条规则都有脚本判定；没有判定的不写进来。判定与命令见 [`port.md`](port.md#检查)。
 
-| #   | 规则                                                                                                                |
-| --- | ------------------------------------------------------------------------------------------------------------------- |
-| P1  | **清单唯一。** 上游每个文件、每个顶层声明在 Port Map 里有去向，或是带理由的 `exclude`                               |
-| P2  | **上游代码只由脚本写入。** 它只出现在 Port Region 里；要改，改 Baseline 或 Port Map                                 |
-| P3  | **偏离上游必须登记。** 文字与上游不同的声明写进 `replace`，带 `why`                                                 |
-| P4  | **外壳不改变渲染。** 组件页与它的 Reference Page 截图相同（指针与触屏，亮与暗）；没有外壳的组件声明 `selfReference` |
-| P5  | **外壳不缩减能力。** 组件 props 是对应 `nsh/base` props 加自己的轴；样式类 props 叠在 look 之上，使用者优先         |
-| P6  | **依赖如实。** registry 条目的依赖等于实际 import，相对 import 的文件必须有条目分发                                 |
-| P7  | **外壳里没有外观。** Port Region 之外不出现颜色字面量                                                               |
+| #   | 规则                                                                                                                         |
+| --- | ---------------------------------------------------------------------------------------------------------------------------- |
+| P1  | **清单唯一。** 上游每个文件、每个顶层声明在 Port Map 里有去向，或是带理由的 `exclude`                                        |
+| P2  | **上游变化必经审阅。** 自 Port Map 记录的已审阅提交以来，上游改动了我们有去向的声明，`port:check` 列为待审阅；审阅后更新记录 |
+| P3  | **颜色只来自主题。** 组件、lib 与演示适配层的代码里不出现颜色字面量（含 Port Region）；主题文件以 oklch 存储                 |
+| P4  | **外壳不改变渲染。** 组件页与它的 Reference Page 截图相同（指针与触屏，亮与暗）；没有外壳的组件声明 `selfReference`          |
+| P5  | **外壳不缩减能力。** 组件 props 是对应 `nsh/base` props 加自己的轴；样式类 props 叠在 look 之上，使用者优先                  |
+| P6  | **依赖如实。** registry 条目的依赖等于实际 import，相对 import 的文件必须有条目分发                                          |
 
-**归属**（一个上游声明去哪个文件）：
+Port Region 是**来源标注**，不是只读区：可以直接修改；`port:vendor` 只为新组件抽取初稿，不覆盖已有代码。
+
+**归属**（抽取时，一个上游声明去哪个文件）：
 
 1. 描述某个控件的 look，进该控件的组件文件；别的组件需要时 import 那个组件
 2. 上游一个文件服务多个控件时，按声明拆到各自的组件；文件私有的常量可以路由到多个目标

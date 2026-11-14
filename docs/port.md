@@ -1,6 +1,6 @@
 # 移植一个组件
 
-新增或修改组件、演示、文档页时照这里做。分层与规则（P1–P7、归属）见 [`ARCHITECTURE.md`](ARCHITECTURE.md)，词汇见 [`GLOSSARY.md`](GLOSSARY.md)，CLI 与基线见 [`toolchain.md`](toolchain.md)。
+新增或修改组件、演示、文档页时照这里做。分层与规则（P1–P6、归属）见 [`ARCHITECTURE.md`](ARCHITECTURE.md)，词汇见 [`GLOSSARY.md`](GLOSSARY.md)，CLI 与基线见 [`toolchain.md`](toolchain.md)。
 
 ## 流程
 
@@ -79,7 +79,7 @@ bun run port:new <id> --from <上游文件> [--symbols a,b,c] [--base <nsh/base 
 | `bun run port:render`       | P4 的指针一半：web，亮 / 暗；每对逐字节比较；跑完与 `apps/docs/demos/baseline/` 逐字节比较（仅 macOS；CI 加 `--no-baseline`）；`--only <id,...>` 按 id 精确只跑这几个。**唯一的例外**：`render-cases.ts` 里写了 `tolerance` 的页（目前只有 `avatar`，圆形照片的边缘）由 `render.ts` 按"至多 30 个像素、每个通道至多 32/255"比较，布局变化仍必失败，数字与实测写在该 case 的注释里 | 提交前、CI                    |
 | `bun run port:render:touch` | P4 的触屏一半：iOS 模拟器，亮 / 暗（同样由 `render-touch.ts` 按字节或抗锯齿预算比较）；之后跑外观切换检查                                                                                                                                                                                                                                                                         | 提交前（本地）                |
 | `bun run registry:build`    | P6：依赖等于 import，相对 import 都有条目分发                                                                                                                                                                                                                                                                                                                                     | 改组件后                      |
-| `bun run test:unit`         | CLI 与主题；`ui-guards.test.ts` 扫 Port Region 之外的颜色字面量（P7）                                                                                                                                                                                                                                                                                                             | 每次                          |
+| `bun run test:unit`         | CLI 与主题；`ui-guards.test.ts` 扫颜色字面量（P3；改造完成前只扫 Port Region 之外，见 [`specs/ownership.md`](specs/ownership.md)）                                                                                                                                                                                                                                                | 每次                          |
 | `bun run test:gallery`      | 原生行为：按键、取值、禁用                                                                                                                                                                                                                                                                                                                                                        | 改行为后                      |
 | `vp check`                  | 格式、lint、工具面类型                                                                                                                                                                                                                                                                                                                                                            | 每次                          |
 | `bun run check`             | `vp check --fix` → `catalog --check` → `port:check` → `port:coverage` → demos 与 gallery 类型 → 文档页 → docs（会改文件）                                                                                                                                                                                                                                                         | 每次                          |
@@ -89,7 +89,7 @@ bun run port:new <id> --from <上游文件> [--symbols a,b,c] [--base <nsh/base 
 
 `port:baseline --update [--only <id,...>]` 只重录这几个 id 的图（其余不动）；不带 `--only` 时全量替换。审计脚本的截图在 `apps/docs/demos/shots-audit/`，`port:render` 清自己的 `shots/` 时不动它。
 
-`port:check` 比较的是格式化后的文本，只要 `vp fmt` 的行为不变就稳定；它不看区域之外，那由 P7 负责。
+`port:check` 正在从"区域与上游逐字一致"改为"上游变化提醒"（P2），见 [`specs/ownership.md`](specs/ownership.md)。
 
 ## 待定
 
