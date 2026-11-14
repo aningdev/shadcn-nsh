@@ -8,7 +8,7 @@
 // Needs Xcode's iPhone simulator. The screenshots stay in `shots/` as `<id>-touch-<scheme>.png`.
 // The simulator runs one development host at a time (a launch ends the one before), so a test
 // takes the first page's picture, lets its host go, and only then opens the reference page.
-import { expect, open, test, type OpenOptions } from "nsh/test";
+import { open, test, type OpenOptions } from "nsh/test";
 
 import { cases, clock, networkOf, schemes, settle, same, testName } from "./render-cases";
 
@@ -63,13 +63,11 @@ for (const { id, steps, selfReference, photos, tolerance, extraSettle } of cases
       await settle(reference);
       if (extraSettle) await reference.wait(extraSettle);
       const b = await reference.screenshot(`${name}.ref.png`);
-      if (tolerance) {
+      if (!same(a, b)) {
         console.log(
-          `${id}: compared within a tolerance by the gate — ${tolerance.pixels} pixels, ${tolerance.delta}/255: ${tolerance.why}`,
+          `${name}: not byte for byte — the gate compares it${tolerance ? ` within ${tolerance.pixels} pixels, ${tolerance.delta}/255 (${tolerance.why})` : " within the antialiasing budget"}`,
         );
-        return;
       }
-      expect(same(a, b)).toBe(true);
     });
   }
 }

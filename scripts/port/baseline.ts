@@ -19,8 +19,10 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import { antialiasing, cases } from "../../apps/docs/demos/render-cases";
 import { catalog } from "../catalog";
 import { repo } from "./lib";
+import { compareWithinTolerance } from "./pixels";
 
 const demos = catalog().paths.demos;
 const shots = path.join(demos, "shots");
@@ -48,6 +50,12 @@ if (unknown.length > 0) {
   process.exit(1);
 }
 const chosen = (name: string) => !only || only.some((id) => name.startsWith(`${id}-`));
+
+/** What a page may differ by: its own tolerance, or the antialiasing budget all pages share. */
+const allowed = (name: string) => {
+  const id = name.replace(/-pointer-[a-z]+(\.ref)?\.png$/, "");
+  return cases.find((c) => c.id === id)?.tolerance ?? antialiasing;
+};
 
 /** The pictures the baseline holds: a pointer shot, of the ids named (`--only`) or of all. */
 const shotFiles = () =>
@@ -86,8 +94,17 @@ for (const name of baselineFiles) {
   }
   const a = fs.readFileSync(path.join(baseline, name));
   const b = fs.readFileSync(path.join(shots, name));
-  if (a.equals(b)) same += 1;
-  else problems.push(`changed  ${name}`);
+  if (a.equals(b)) {
+    same += 1;
+    continue;
+  }
+  // A rounded edge's antialiasing lands a level apart between two renders of the same page: the
+  // pair is the same picture within the case's budget, and the baseline keeps the older one.
+  const { ok, report } = compareWithinTolerance(a, b, allowed(name));
+  if (ok) {
+    same += 1;
+    console.log(`baseline: ${name}: within the antialiasing budget — ${report}`);
+  } else problems.push(`changed  ${name}`);
 }
 for (const name of [...latest].sort()) {
   if (!baselineFiles.includes(name)) problems.push(`new      ${name}`);

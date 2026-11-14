@@ -10,15 +10,16 @@
  * `--no-baseline` skips the comparison with `baseline/`, which was recorded on macOS: another
  * platform draws text differently, so there only the component ↔ reference pairs are a gate.
  *
- * A page with a `tolerance` (the avatar's circular photos) is compared here, after the test,
- * within that tolerance (`pixels.ts`): the test keeps the pair and says it is the gate's.
+ * The pictures are compared here, after the test, which only takes them: byte for byte, or
+ * within a page's `tolerance` (the avatar's circular photos) or the antialiasing budget every
+ * page shares (`render-cases.ts`). A difference beyond that fails the gate.
  */
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
-import { cases, schemes } from "../../apps/docs/demos/render-cases";
+import { antialiasing, cases, schemes } from "../../apps/docs/demos/render-cases";
 import { catalog } from "../catalog";
 import { repo } from "./lib";
 import { compareWithinTolerance } from "./pixels";
@@ -174,15 +175,11 @@ if (software) fs.rmSync(path.dirname(software), { recursive: true, force: true }
 console.log(`screenshots: ${path.relative(repo, shots)}`);
 console.log("one page of them all: bun run port:sheet");
 
-/**
- * The pages the test could not compare itself: a photograph inside a circular clip is taken
- * within its `tolerance` here, where the pictures are decoded (`pixels.ts`). Any other page the
- * test has already compared byte for byte.
- */
-function compareTolerant(): number {
+/** Every pair, compared: byte for byte, or within the page's tolerance (`pixels.ts`). */
+function comparePixels(): number {
   let failed = 0;
   for (const { id, tolerance } of cases) {
-    if (!tolerance) continue;
+    const allowed = tolerance ?? antialiasing;
     for (const scheme of schemes) {
       const name = `${id}-pointer-${scheme}`;
       const ours = path.join(shots, `${name}.png`);
@@ -192,14 +189,14 @@ function compareTolerant(): number {
         failed += 1;
         continue;
       }
-      const { ok, report } = compareWithinTolerance(
-        fs.readFileSync(ours),
-        fs.readFileSync(theirs),
-        tolerance,
-      );
-      if (ok) console.log(`render: ${name}: within its tolerance — ${report}`);
+      const a = fs.readFileSync(ours);
+      const b = fs.readFileSync(theirs);
+      if (a.equals(b)) continue;
+      const { ok, report } = compareWithinTolerance(a, b, allowed);
+      if (ok) console.log(`render: ${name}: within the antialiasing budget — ${report}`);
       else {
-        console.error(`render: ${name}: outside its tolerance — ${report} (${tolerance.why})`);
+        const why = tolerance ? ` (${tolerance.why})` : "";
+        console.error(`render: ${name}: outside the budget — ${report}${why}`);
         failed += 1;
       }
     }
@@ -207,8 +204,8 @@ function compareTolerant(): number {
   return failed;
 }
 
-const tolerant = status === 0 ? compareTolerant() : 0;
-if (tolerant > 0) process.exit(1);
+const differs = status === 0 ? comparePixels() : 0;
+if (differs > 0) process.exit(1);
 // A filtered run holds only some of the shots, so it cannot be compared with the whole baseline;
 // a `--only` run holds exactly the ids it names, which `baseline.ts` checks on their own.
 if (status === 0) {

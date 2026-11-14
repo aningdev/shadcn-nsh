@@ -16,9 +16,10 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { cases, schemes } from "../../apps/docs/demos/render-cases";
+import { antialiasing, cases, schemes } from "../../apps/docs/demos/render-cases";
 import { catalog } from "../catalog";
 import { repo } from "./lib";
+import { compareWithinTolerance } from "./pixels";
 
 /** One screenshot pair: the demo and its reference page (the reference is absent for a self-reference). */
 type Pair = { pass: string; scheme: string; ours: string; reference: string; self?: string };
@@ -60,7 +61,13 @@ const read = (name: string) => {
   return fs.existsSync(file) ? fs.readFileSync(file) : null;
 };
 
-const same = (a: Buffer, b: Buffer) => a.length === b.length && a.equals(b);
+/** Identical, or the same picture within the antialiasing budget (`pixels.ts`). */
+const same = (a: Buffer, b: Buffer, name: string) => {
+  if (a.length === b.length && a.equals(b)) return true;
+  const id = name.replace(/-touch-[a-z]+(\.ref)?\.png$/, "");
+  const tolerance = cases.find((c) => c.id === id)?.tolerance ?? antialiasing;
+  return compareWithinTolerance(a, b, tolerance).ok;
+};
 
 /**
  * A pair's state: present and identical, different, or incomplete. A self-reference has no
@@ -71,7 +78,7 @@ function state(pair: Pair): "same" | "differs" | "missing" {
   if (pair.self) return ours ? "same" : "missing";
   const reference = read(pair.reference);
   if (!ours || !reference) return "missing";
-  return same(ours, reference) ? "same" : "differs";
+  return same(ours, reference, pair.ours) ? "same" : "differs";
 }
 
 const escape = (s: string) =>

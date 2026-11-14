@@ -7,13 +7,13 @@
 // A headless browser always measures a fine pointer, so this pass cannot render the touch idiom:
 // that half runs on the iOS simulator, `bun run port:render:touch`.
 //
-// A page with a `tolerance` (a photo inside a circular clip: its edge's antialiasing lands a level
-// apart between two page instances) is not compared here: the pair is kept and
-// `scripts/port/render.ts`, which has a PNG decoder, compares it within that tolerance. Every
-// other page is byte for byte, and nothing is ever taken twice.
+// The pictures are compared by `scripts/port/render.ts`, which has a PNG decoder: byte for byte,
+// or within a page's `tolerance` (a rounded edge's antialiasing lands a level apart between two
+// page instances; the avatar's circular photos need a wider one). This test takes and keeps them,
+// and says when a pair is not byte-identical; nothing is ever taken twice.
 //
 // The screenshots stay in `shots/` (ignored by git) for a look by eye.
-import { expect, open, test } from "nsh/test";
+import { open, test } from "nsh/test";
 
 import { cases, clock, networkOf, schemes, settle, same, testName } from "./render-cases";
 
@@ -52,13 +52,11 @@ for (const { id, steps, selfReference, photos, tolerance, extraSettle } of cases
         return;
       }
       const b = await reference.screenshot(`${name}.ref.png`);
-      if (tolerance) {
+      if (!same(a, b)) {
         console.log(
-          `${id}: compared within a tolerance by the gate — ${tolerance.pixels} pixels, ${tolerance.delta}/255: ${tolerance.why}`,
+          `${name}: not byte for byte — the gate compares it${tolerance ? ` within ${tolerance.pixels} pixels, ${tolerance.delta}/255 (${tolerance.why})` : " within the antialiasing budget"}`,
         );
-        return;
       }
-      expect(same(a, b)).toBe(true);
     });
   }
 }

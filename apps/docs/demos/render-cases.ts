@@ -29,12 +29,11 @@ export type Case = {
    */
   photos?: boolean;
   /**
-   * How far the two pages of a photograph may differ and still be the same picture: at most
-   * `pixels` pixels, a channel of each within `delta` levels (0-255). Everything else — a moved
-   * edge, a color, a missing row — fails as it always did; this only forgives a rounded clip's
-   * antialiasing, which the web rasterizer draws a level apart between two page instances. The
-   * pair is compared by `scripts/port/render.ts` (which has a PNG decoder); the test keeps both
-   * pictures and says so.
+   * A wider budget than `antialiasing`, for a page that needs one: at most `pixels` pixels, a
+   * channel of each within `delta` levels (0-255). Everything else — a moved edge, a color, a
+   * missing row — fails as it always did; this only forgives a rounded clip's antialiasing, which
+   * the web rasterizer draws a level apart between two page instances (the avatar's circular
+   * photos). `scripts/port/render.ts` compares every pair; the test only takes the pictures.
    */
   tolerance?: { pixels: number; delta: number; why: string };
   /**
@@ -61,6 +60,16 @@ export const photosReady = async (app: App) => {
   await app.waitFor("id:images-ready", { timeout: 20000 });
   await app.wait(500);
 };
+
+/**
+ * What every pair may differ by and still be the same picture: a rounded edge's antialiasing is
+ * drawn from a float, and two page instances land it a level (1/255) apart now and then. Measured
+ * on this host: the menu's popup corner flipped one pixel by 1/255 in about one pair in thirty;
+ * over eight full runs a page flaked about every third run, always a handful of pixels at a
+ * handful of levels. The budget below (6 pixels, each channel within 6/255) covers that with room;
+ * a changed color, a moved edge or a missing row moves hundreds of pixels and still fails.
+ */
+export const antialiasing = { pixels: 6, delta: 6 } as const;
 
 /** What a component does that the others do not. Keys must be catalog ids. */
 type Override = Omit<Case, "id">;

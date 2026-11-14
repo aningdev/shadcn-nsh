@@ -14,8 +14,10 @@ import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
+import { antialiasing, cases, schemes } from "../../apps/docs/demos/render-cases";
 import { catalog } from "../catalog";
 import { repo } from "./lib";
+import { compareWithinTolerance } from "./pixels";
 
 const demos = catalog().paths.demos;
 const shots = path.join(demos, "shots");
@@ -69,6 +71,39 @@ for (const { file, filter } of files) {
   }
   if (result.status !== 0) status = result.status ?? 1;
 }
+/**
+ * Every pair, compared: byte for byte, or within the page's tolerance (`pixels.ts`) — the test
+ * only takes the pictures.
+ */
+function comparePixels(): number {
+  let failed = 0;
+  for (const { id, tolerance, selfReference } of cases) {
+    if (selfReference) continue;
+    const allowed = tolerance ?? antialiasing;
+    for (const scheme of schemes) {
+      const name = `${id}-touch-${scheme}`;
+      const ours = path.join(shots, `${name}.png`);
+      const theirs = path.join(shots, `${name}.ref.png`);
+      if (!fs.existsSync(ours) || !fs.existsSync(theirs)) {
+        console.error(`render-touch: ${name}: no screenshots to compare`);
+        failed += 1;
+        continue;
+      }
+      const a = fs.readFileSync(ours);
+      const b = fs.readFileSync(theirs);
+      if (a.equals(b)) continue;
+      const { ok, report } = compareWithinTolerance(a, b, allowed);
+      if (ok) console.log(`render-touch: ${name}: within the antialiasing budget — ${report}`);
+      else {
+        console.error(`render-touch: ${name}: outside the budget — ${report}`);
+        failed += 1;
+      }
+    }
+  }
+  return failed;
+}
+
+const differs = status === 0 ? comparePixels() : 0;
 console.log(`touch screenshots: ${path.relative(repo, shots)}`);
 console.log("one page of them all: bun run port:sheet");
-process.exit(status);
+process.exit(differs > 0 ? 1 : status);
