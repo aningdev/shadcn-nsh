@@ -1,6 +1,5 @@
 // A menu: the look (`menuItemLook`, `menuPopup`, …) and the parts that wear it.
-// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
-// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { alpha, colors, finish, terminal } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, platform, split, Text, token, View } from "nsh";

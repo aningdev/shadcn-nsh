@@ -9,8 +9,7 @@ import {
   TERMINAL_ROW,
 } from "@shadcn-nsh/theme";
 // What sections, wells and rows look like: density, surfaces, and rows whose hover fill bleeds.
-// Ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE). The region
-// below is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`, not here.
+// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import type { ViewStyle } from "nsh";
 import { platform, Text, token, View, windowSize } from "nsh";
 

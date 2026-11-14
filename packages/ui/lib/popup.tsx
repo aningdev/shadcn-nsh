@@ -1,7 +1,6 @@
 import { finish, terminal } from "@shadcn-nsh/theme";
 // The popup families' one surface and the motion they come in with.
-// Ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE). The region
-// below is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`, not here.
+// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import type { JSX, MotionSpec, ViewStyle } from "nsh";
 import { createMotion, Easing, reduceMotion, View } from "nsh";
 

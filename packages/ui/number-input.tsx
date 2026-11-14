@@ -1,6 +1,5 @@
 // A number input: the look (`numberInputClasses`, `numberInputSteps`) and the `NumberInput` that wears it.
-// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
-// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { colors, terminal } from "@shadcn-nsh/theme";
 import type { InputStyle } from "nsh";
 import { platform, split, Text } from "nsh";

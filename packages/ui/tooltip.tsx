@@ -1,6 +1,5 @@
 // A tooltip: the look (`tooltipLook`, `tooltipText`, `tooltipNote`) and the `Tooltip` that wears it.
-// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
-// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { context, split, Text, View } from "nsh";
 import {

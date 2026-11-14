@@ -1,6 +1,5 @@
 // An input: the look (`inputLook` and its companions) and the `Input` that wears it.
-// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
-// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { colors, finish, radius, terminal, TERMINAL_COLUMN, TERMINAL_ROW } from "@shadcn-nsh/theme";
 import type { InputStyle, ViewStyle } from "nsh";
 import { platform, split } from "nsh";

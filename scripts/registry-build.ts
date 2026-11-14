@@ -4,6 +4,10 @@
  * fresh copy in a temporary directory, so the committed artifact and what the test compares it
  * with cannot be built two ways.
  *
+ * A copied file keeps the credit line its header carries, and loses the `// @port` marks: they
+ * say which upstream file a block came from, which is this repository's business, not an app's
+ * (`docs/port.md`).
+ *
  *   bun run registry:build
  */
 import { spawnSync } from "node:child_process";
@@ -14,9 +18,12 @@ import { StepFailure } from "./failure";
 
 const repo = path.resolve(import.meta.dir, "..");
 
+/** The source annotation, not the code: `// @port <upstream file>` and `// @port end`. */
+const stripPortMarks = (content: string) => content.replace(/^\/\/ @port (?:end|[^\n]*)\n/gm, "");
+
 /** Build `registry.json` into `output` (created if missing) and format it with `vp fmt`. */
 export async function buildRegistry(output: string): Promise<void> {
-  const code = await runBuild("./registry.json", { cwd: repo, output });
+  const code = await runBuild("./registry.json", { cwd: repo, output, publish: stripPortMarks });
   if (code !== 0) throw new StepFailure("registry build", `building ${output} exited ${code}`);
   const format = spawnSync("vp", ["fmt", output], { cwd: repo, stdio: "inherit" });
   if (format.error) {

@@ -7,8 +7,7 @@ import {
   TERMINAL_ROW,
 } from "@shadcn-nsh/theme";
 // Color picker: gallery look for `nsh/base` color parts and `ColorPopover`.
-// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
-// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import type { InputStyle, JSX, ViewStyle } from "nsh";
 import { Clipboard, platform, signal, Text, token, View } from "nsh";
 import {

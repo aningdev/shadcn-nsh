@@ -1,5 +1,4 @@
-// An emoji picker panel. Ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
-// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+// An emoji picker panel. From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { colors } from "@shadcn-nsh/theme";
 import { platform, signal, Text, View } from "nsh";
 import {

@@ -1,6 +1,5 @@
 // A combobox: the look (`comboboxLook`, `ComboToggle`) and `Combobox` that wears the listbox look.
-// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
-// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { colors, finish, radius } from "@shadcn-nsh/theme";
 import type { InputStyle, JSX, StyleProp, ViewStyle } from "nsh";
 import { cleanup, context, platform, signal, split, View } from "nsh";

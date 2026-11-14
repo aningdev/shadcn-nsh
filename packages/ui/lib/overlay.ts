@@ -1,6 +1,5 @@
 // What every modal overlay shares.
-// Ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE). The region
-// below is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`, not here.
+// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import type { ViewStyle } from "nsh";
 import { token } from "nsh";
 

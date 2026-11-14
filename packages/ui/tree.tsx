@@ -1,6 +1,5 @@
 // Tree: row look (`treeItemClass`, `TreeRow`) and the `Tree` that wears them.
-// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
-// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { colors, terminal, TERMINAL_COLUMN, TERMINAL_GAP } from "@shadcn-nsh/theme";
 import { platform, split, Text, View } from "nsh";
 import { Tree as BaseTree, type TreeEntry, type TreeProps as BaseTreeProps } from "nsh/base";

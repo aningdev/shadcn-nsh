@@ -9,7 +9,7 @@
       "path": "packages/ui/lib/overlay.ts",
       "type": "registry:lib",
       "target": "lib/overlay.ts",
-      "content": "// What every modal overlay shares.\n// Ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE). The region\n// below is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`, not here.\nimport type { ViewStyle } from \"nsh\";\nimport { token } from \"nsh\";\n\n// @port look/overlay.ts\n/**\n * The scrim behind what is modal (a sheet, a dialog, a menu's sheet on a\n * touch screen): the theme's `scrim`, one dimming for every overlay. Pass\n * it as the overlay's `backdropStyle`.\n */\nexport function backdrop(): ViewStyle {\n  return { backgroundColor: token(\"scrim\") };\n}\n// @port end\n"
+      "content": "// What every modal overlay shares.\n// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.\nimport type { ViewStyle } from \"nsh\";\nimport { token } from \"nsh\";\n\n/**\n * The scrim behind what is modal (a sheet, a dialog, a menu's sheet on a\n * touch screen): the theme's `scrim`, one dimming for every overlay. Pass\n * it as the overlay's `backdropStyle`.\n */\nexport function backdrop(): ViewStyle {\n  return { backgroundColor: token(\"scrim\") };\n}\n"
     }
   ]
 }

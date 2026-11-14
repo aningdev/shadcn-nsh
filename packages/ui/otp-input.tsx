@@ -1,6 +1,5 @@
 // An OTP input: the look (`otpCellLook`) and the `OtpInput` that wears it.
-// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
-// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { colors, finish, terminal, type Tone, toneColor, toneTint } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
 import { platform, split } from "nsh";

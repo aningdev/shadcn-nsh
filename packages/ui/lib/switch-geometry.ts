@@ -1,5 +1,4 @@
-// Ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE). The region
-// below is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`, not here.
+// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 
 // @port look/switch-geometry.ts
 // A switch's sizes and the arithmetic of its knob, apart from `switch.ts`

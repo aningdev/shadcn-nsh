@@ -1,5 +1,4 @@
-// A thin horizontal meter with an optional marker. Ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
-// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+// A thin horizontal meter with an optional marker. From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { colors, terminal, TERMINAL_ROW, toneColor, type Tone } from "@shadcn-nsh/theme";
 import { View } from "nsh";
 

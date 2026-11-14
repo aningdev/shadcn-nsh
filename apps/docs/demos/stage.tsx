@@ -1,7 +1,6 @@
 // The demo adapter the official examples are written against (stage, inspector, split, panel,
-// log, segmented, desktop, wide): ported from NSH's examples/nsh-gallery-ui (Apache-2.0,
-// © Longbridge; see NOTICE). The region below is filled by `bun run port:vendor`: change it
-// upstream, or in `port-map.json`, not here.
+// log, segmented, desktop, wide).
+// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 //
 // Demos only: it is not a component, has no registry entry, and never goes into `packages/ui`.
 // Its appearance is this library's theme (`@shadcn-nsh/theme`, `packages/ui/lib/surface`).

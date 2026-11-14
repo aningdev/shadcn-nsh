@@ -1,6 +1,5 @@
 // Text view: link classes and the `TextView` that wears them.
-// The look is ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE).
-// Its region is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`.
+// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { split } from "nsh";
 import {
   TextView as BaseTextView,

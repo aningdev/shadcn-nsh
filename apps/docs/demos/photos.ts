@@ -2,8 +2,7 @@
 // few images. Demo content only (it is not a look): a demo that shows a photo reads `photoUrl`
 // here; the module never goes into the registry.
 //
-// Ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE). The region is
-// filled by `bun run port:vendor`: change it upstream, or in `port-map.json`, not here.
+// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 
 // @port photos.ts
 // The gallery's photographs: SpaceX's launches, one set for every demo, so a

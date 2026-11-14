@@ -1,7 +1,6 @@
 import { terminal } from "@shadcn-nsh/theme";
 // Line glyphs and the check mark, drawn for the gallery's demos and the looks that need them.
-// Ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE). The region
-// below is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`, not here.
+// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { Canvas, Image, Text, type CanvasRenderingContext2D } from "nsh";
 
 // @port icons.tsx

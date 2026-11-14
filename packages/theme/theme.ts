@@ -1,6 +1,5 @@
 // The theme's roles, finishes, radii, focus and motion, read from `theme.json` and `finishes.json`.
-// Ported from NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE). The region
-// below is filled by `bun run port:vendor`: change it upstream, or in `port-map.json`, not here.
+// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import type { AnimatedValue, Tokens, ViewStyle } from "nsh";
 import {
   colorScheme,
