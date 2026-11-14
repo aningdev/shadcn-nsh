@@ -2,6 +2,7 @@
 // parts: a formatting bar (undo, the marks, the alignment) over the text it formats, a vertical
 // palette of tools beside it, and an inspector logging every edit. One stop of Tab per toolbar;
 // its arrows move between the tools.
+import { Undo2 } from "lucide";
 import { mount, signal, Text, View } from "nsh";
 
 import { Button } from "@/packages/ui/button";
@@ -89,7 +90,7 @@ function App() {
                 log("Undo");
               }}
             >
-              <Icon name="undo" {...toggleGlyph(() => true)} />
+              <Icon icon={Undo2} {...toggleGlyph(() => true)} />
             </Button>
           </ToolbarGroup>
           <ToolbarSeparator style={toolbarRule()} />

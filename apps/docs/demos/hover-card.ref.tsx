@@ -3,6 +3,7 @@
 // (`references/nsh/website/demos/el-hover-card.tsx`) writes it. It differs from the component
 // page only in the parts it names.
 import { alpha, colors, focusRing } from "@shadcn-nsh/theme";
+import { Code } from "lucide";
 import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 import { HoverCard, type OpenChangeReason } from "nsh/base";
@@ -138,7 +139,7 @@ function App() {
                 justifyContent: "center",
               }}
             >
-              <Icon name="code" size={16} tint={colors.text} />
+              <Icon icon={Code} size={16} tint={colors.text} />
             </View>
             <View style={{ flex: 1, gap: 1 }}>
               <Text style={{ fontSize: 12, fontWeight: "500", color: colors.text }}>

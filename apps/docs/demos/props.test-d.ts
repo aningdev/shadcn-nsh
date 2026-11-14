@@ -118,6 +118,7 @@ import type {
   EditorProps,
   HoverCardContentProps,
   IconButtonProps,
+  IconProps,
   InputProps,
   LinkProps,
   MenuContentProps,
@@ -465,6 +466,8 @@ const _badgeLabel: BadgeProps = { children: "12", label: "12" };
 const _paginationOutlined: PaginationProps = { page: 1, totalPages: 2, outlined: true };
 // @ts-expect-error — a menu row's danger is `variant="destructive"`, not `danger`.
 const _menuItemDanger: MenuItemProps = { danger: true };
+// @ts-expect-error — an icon is a lucide node (`icon={ChevronRight}`), not a name.
+const _iconName: IconProps = { name: "chevron" };
 
 export {
   _badgeLabel,
@@ -473,6 +476,7 @@ export {
   _droppedSize,
   _droppedVariant,
   _iconButtonOn,
+  _iconName,
   _menuItemDanger,
   _paginationOutlined,
   _radioRing,

@@ -3,11 +3,12 @@
 // pointer, and an inspector holding the last press and the last six hint lines. A phone keeps the
 // official's frame: the tools fill what the page leaves, centered, with the pin under them and
 // the state below that; a wide window puts the state beside them.
+import { Share, Star, Trash, type IconNode } from "lucide";
 import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 
 import { Button, IconButton, iconButtonGlyph } from "@/packages/ui/button";
-import { Icon, type IconName } from "@/packages/ui/lib/icons";
+import { Icon } from "@/packages/ui/lib/icons";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/packages/ui/tooltip";
 
 import { DemoPage } from "./kit";
@@ -15,7 +16,7 @@ import { desktop, Log, Panel, Split, ui, wide } from "./stage";
 
 /** An icon button with a hint under or above it. */
 function Tool(props: {
-  icon: IconName;
+  icon: IconNode;
   label: string;
   hint: string;
   placement: "top" | "bottom";
@@ -39,7 +40,7 @@ function Tool(props: {
       >
         <TooltipTrigger>
           <IconButton variant="secondary" accessibilityLabel={props.label} onPress={props.onPress}>
-            <Icon name={props.icon} {...iconButtonGlyph({ variant: "secondary" })} />
+            <Icon icon={props.icon} {...iconButtonGlyph({ variant: "secondary" })} />
           </IconButton>
         </TooltipTrigger>
         <TooltipContent>{props.hint}</TooltipContent>
@@ -61,7 +62,7 @@ function App() {
   const tools = (gap: number) => (
     <View style={{ flexDirection: "row", justifyContent: "center", gap }}>
       <Tool
-        icon="star"
+        icon={Star}
         label="Star"
         hint="Add to favorites"
         placement="top"
@@ -70,7 +71,7 @@ function App() {
         onOpenChange={log("Star")}
       />
       <Tool
-        icon="share"
+        icon={Share}
         label="Share"
         hint="Share with your team"
         placement="bottom"
@@ -79,7 +80,7 @@ function App() {
         onOpenChange={log("Share")}
       />
       <Tool
-        icon="trash"
+        icon={Trash}
         label="Delete"
         hint="Move to the trash"
         placement="top"

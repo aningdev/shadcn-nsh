@@ -2,6 +2,7 @@
 // `toolbarRule` on `nsh/base`'s Toolbar parts and the looks on its Buttons and Toggles. The
 // render check requires the two to draw the same pixels.
 import { colors } from "@shadcn-nsh/theme";
+import { Undo2 } from "lucide";
 import { mount, signal, Text, View } from "nsh";
 import { Button, Toggle, ToggleGroup, Toolbar, ToolbarGroup, ToolbarSeparator } from "nsh/base";
 
@@ -86,7 +87,7 @@ function App() {
               }}
               {...buttonLook("ghost", { disabled: () => history().length === 0 })}
             >
-              <Icon name="undo" {...toggleGlyph(() => true)} />
+              <Icon icon={Undo2} {...toggleGlyph(() => true)} />
             </Button>
           </ToolbarGroup>
           <ToolbarSeparator style={toolbarRule()} />

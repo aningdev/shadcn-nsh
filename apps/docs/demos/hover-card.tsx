@@ -2,6 +2,7 @@
 // library's parts: a mention, a link preview and a ticker in running text, each with a card on
 // its side whose delays and side the inspector sets, and the last six lifecycle lines.
 import { alpha, focusRing } from "@shadcn-nsh/theme";
+import { Code } from "lucide";
 import { mount, signal, Text, View } from "nsh";
 
 import { avatarIdentity } from "@/packages/ui/avatar";
@@ -122,7 +123,7 @@ function App() {
               justifyContent: "center",
             }}
           >
-            <Icon name="code" size={16} tint={ui().text} />
+            <Icon icon={Code} size={16} tint={ui().text} />
           </View>
           <View style={{ flex: 1, gap: 1 }}>
             <Text style={{ fontSize: 12, fontWeight: "500", color: ui().text }}>github.com</Text>

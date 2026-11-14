@@ -73,7 +73,7 @@ A string is the label. Anything else is drawn as given; `buttonLabel` and `butto
 
 ```tsx
 <Button variant="secondary">
-  <Icon name="plus" {...buttonGlyph("secondary")} />
+  <Icon icon={Plus} {...buttonGlyph("secondary")} />
   <Text style={buttonLabel("secondary")}>New file</Text>
 </Button>
 ```
@@ -84,14 +84,14 @@ A square icon-only button, 28 points across with a pointer (40 on a touch screen
 
 ```tsx
 <IconButton accessibilityLabel="Star" selected={starred()} onPress={toggle}>
-  <Icon name="star" {...iconButtonGlyph({ on: starred })} />
+  <Icon icon={Star} {...iconButtonGlyph({ on: starred })} />
 </IconButton>
 <IconButton
   accessibilityLabel="Delete"
   variant="destructive"
   onPress={remove}
 >
-  <Icon name="trash" {...iconButtonGlyph({ variant: "destructive" })} />
+  <Icon icon={Trash} {...iconButtonGlyph({ variant: "destructive" })} />
 </IconButton>
 ```
 
@@ -101,7 +101,7 @@ A square icon-only button, 28 points across with a pointer (40 on a touch screen
 
 ```tsx
 <RoundButton accessibilityLabel="Play" onPress={play}>
-  <Icon name="play" {...roundButtonGlyph("default")} />
+  <Icon icon={Play} fill {...roundButtonGlyph("default")} />
 </RoundButton>
 ```
 
@@ -114,7 +114,7 @@ A main action and a menu half in one silhouette.
   <SplitButtonSegment onPress={save}>Save</SplitButtonSegment>
   <SplitButtonDivider />
   <SplitButtonSegment accessibilityLabel="More" onPress={openMenu}>
-    <Icon name="chevron-down" {...buttonGlyph("default")} />
+    <Icon icon={ChevronDown} {...buttonGlyph("default")} />
   </SplitButtonSegment>
 </SplitButton>
 ```

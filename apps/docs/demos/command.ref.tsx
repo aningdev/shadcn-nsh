@@ -2,30 +2,45 @@
 // way the official example (`references/nsh/website/demos/el-command.tsx`) writes it. It differs
 // from the component page only in what it names: the classes of each part.
 import { colors } from "@shadcn-nsh/theme";
+import {
+  Download,
+  FileText,
+  Folder,
+  MessageSquare,
+  Moon,
+  PanelLeft,
+  Plus,
+  Replace,
+  Search,
+  Share,
+  Sun,
+  Terminal,
+  type IconNode,
+} from "lucide";
 import { keymap, mount, signal, Text, View } from "nsh";
 import { Command, type CommandItem, type CommandRef } from "nsh/base";
 
 import { CommandEmpty, CommandHeading, CommandRow, commandClasses } from "@/packages/ui/command";
-import { Icon, type IconName } from "@/packages/ui/lib/icons";
+import { Icon } from "@/packages/ui/lib/icons";
 
 import { DemoPage } from "./kit";
 import { desktop, Log, Panel, Split, wide } from "./stage";
 
 // A command palette: the command owns the filtering, the highlight, the keys and the semantics;
 // every pixel is the palette's classes and its rows.
-const icons: Record<string, IconName> = {
-  new: "plus",
-  open: "folder",
-  save: "download",
-  share: "share",
-  find: "search",
-  replace: "replace",
-  terminal: "terminal",
-  sidebar: "sidebar",
-  dark: "moon",
-  light: "sun",
-  docs: "document",
-  feedback: "chat",
+const icons: Record<string, IconNode> = {
+  new: Plus,
+  open: Folder,
+  save: Download,
+  share: Share,
+  find: Search,
+  replace: Replace,
+  terminal: Terminal,
+  sidebar: PanelLeft,
+  dark: Moon,
+  light: Sun,
+  docs: FileText,
+  feedback: MessageSquare,
 };
 
 const appearance = signal<"dark" | "light">("dark");
@@ -130,7 +145,7 @@ function App() {
             separatorClass={commandClasses.separator}
             placeholder="Type a command or search…"
             style={{ height: desktop ? 360 : 400 }}
-            searchPrefix={<Icon name="search" size={16} tint={colors.muted} />}
+            searchPrefix={<Icon icon={Search} size={16} tint={colors.muted} />}
             empty={<CommandEmpty label="No commands match" />}
             renderGroup={(group) => <CommandHeading group={group} />}
             renderItem={(entry) => (
