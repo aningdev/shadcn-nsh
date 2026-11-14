@@ -30,3 +30,10 @@ test("an item that becomes checkable while the menu is open says so in its role"
   expect(app.shows("role:menuitemcheckbox[Pin]")).toBe(true);
   expect(app.shows("text:Copy")).toBe(true);
 });
+
+test("a long press opens the menu on a phone, and the release leaves it open", async () => {
+  const app = await open("./context-menu.fixture.tsx", { platform: "ios" });
+  await app.longPress("text:Area");
+  await app.wait(300);
+  expect(app.shows("text:Copy")).toBe(true);
+});
