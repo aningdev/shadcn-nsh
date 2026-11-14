@@ -2,11 +2,13 @@
  * Writes `packages/theme/themes/shadcn/theme.json` and `finishes.json` from the shadcn default
  * theme: the two files the experiment in `docs/specs/theme-shadcn.md` runs on.
  *
- *   bun scripts/theme/generate-shadcn.ts          # writes them, prints the oklch → hex table
+ *   bun scripts/theme/generate-shadcn.ts          # writes them, prints the palette's sRGB
  *
- * The values are quoted from `references/shadcn-ui` in `shadcn.ts` and converted with
- * `oklch.ts`; the keys and their order come from the default `packages/theme/theme.json` and
- * `finishes.json`, so the two sets stay comparable (`themes.test.ts` checks it).
+ * The values are quoted from `references/shadcn-ui` in `shadcn.ts` and written as canonical
+ * `oklch()`, the form every theme file here holds (`scripts/theme/oklch.ts`); the report below
+ * prints what each one lands on in sRGB, which is how the spec's table reads. The keys and their
+ * order come from the default `packages/theme/theme.json` and `finishes.json`, so the two sets
+ * stay comparable (`themes.test.ts` checks it).
  *
  * Not part of the check pipeline: it reads `references/` (read-only) and writes a theme, so it
  * runs when the shadcn baseline is re-read, not on every check.
@@ -50,5 +52,5 @@ write("finishes.json", files.finishes);
 console.log(`wrote ${path.relative(repo, outDir)}/{theme,finishes}.json`);
 
 const table = conversionTable();
-console.log(`\noklch → sRGB (${table.length} distinct values):`);
+console.log(`\nwhat the palette's oklch() lands on in sRGB (${table.length} distinct values):`);
 for (const row of table) console.log(`  ${row.oklch.padEnd(28)} ${row.hex}`);

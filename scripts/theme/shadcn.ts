@@ -1,9 +1,9 @@
 /**
  * The shadcn default theme (new-york-v4, `neutral`) as this library's two theme files.
  *
- * shadcn's palette is `oklch()`; a theme file here takes hex and rgba (`packages/theme/theme.json`
- * is the upstream gallery theme). So every value below is quoted from shadcn's registry and
- * converted with `oklch.ts`, never picked by eye:
+ * shadcn's palette is `oklch()`, and so is every theme file here (`packages/theme/theme.json` is
+ * the upstream gallery theme in the same form). Every value below is quoted from shadcn's
+ * registry, never picked by eye:
  *
  *   - colors: `references/shadcn-ui/apps/v4/registry/themes.ts` (theme `neutral`: the one
  *     `shadcn init` writes; `apps/v4/app/globals.css` serves the same palette except `primary` at
@@ -13,10 +13,13 @@
  *   - finishes: the classes of `apps/v4/registry/new-york-v4/ui/*` (which shadow and fill each
  *     surface wears), flattened: no gradient, no inner highlight, no inner shade.
  *
+ * A color derived here (an `--input` laid on a card, two tones' midpoint) is mixed in 8-bit sRGB
+ * and written back as `oklch()`: `oklch.ts` round-trips every channel exactly.
+ *
  * Read by `generate-shadcn.ts`, which writes the two JSON files; `docs/specs/theme-shadcn.md`
  * holds the mapping tables this file implements.
  */
-import { css, mixHex, oklch, over, parseColor, rgba, type Rgb } from "./oklch";
+import { mix, oklch, oklchColor, over, parseColor, toOklchText, withAlpha } from "./oklch";
 
 /** shadcn's neutrals, quoted from `registry/themes.ts` (theme `neutral`). */
 const NEUTRAL = {
@@ -77,36 +80,36 @@ const RADIUS = 0.625 * 16;
 /** `--radius-md` (0.8) / `--radius-xl` (1.4), as the theme's lengths. */
 const radius = (times: number) => `${Math.round(RADIUS * times)}px`;
 
-/** shadcn's Tailwind v4 shadows, verbatim. */
+/** shadcn's Tailwind v4 shadows, its `rgb(0 0 0 / …)` written as the theme's `oklch()`. */
 const SHADOW = {
-  xs: "0 1px 2px 0 rgb(0 0 0 / 0.05)",
-  sm: "0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1)",
-  md: "0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1)",
+  xs: `0 1px 2px 0 ${oklchColor(0, 0, 0, 0.05)}`,
+  sm: `0 1px 3px 0 ${oklchColor(0, 0, 0, 0.1)}, 0 1px 2px -1px ${oklchColor(0, 0, 0, 0.1)}`,
+  md: `0 4px 6px -1px ${oklchColor(0, 0, 0, 0.1)}, 0 2px 4px -2px ${oklchColor(0, 0, 0, 0.1)}`,
 } as const;
 
-/** One appearance's neutrals, converted; `inputOnCard` and `borderOnCard` are translucent ones laid on the card. */
+/** One appearance's neutrals, canonical `oklch()`; `inputOnCard` is `--input` laid on the card. */
 function palette(appearance: Appearance) {
   const n = NEUTRAL[appearance];
-  const hex = (value: string) => oklch(value);
-  const card = hex(n.card);
-  const input = hex(n.input);
-  const border = hex(n.border);
+  const tone = (value: string) => toOklchText(value);
+  const card = tone(n.card);
+  const input = tone(n.input);
+  const border = tone(n.border);
   return {
-    background: hex(n.background),
-    foreground: hex(n.foreground),
+    background: tone(n.background),
+    foreground: tone(n.foreground),
     card,
-    primary: hex(n.primary),
-    primaryForeground: hex(n.primaryForeground),
-    control: hex(n.control),
-    muted: hex(n.muted),
-    mutedForeground: hex(n.mutedForeground),
-    accent: hex(n.accent),
-    destructive: hex(n.destructive),
+    primary: tone(n.primary),
+    primaryForeground: tone(n.primaryForeground),
+    control: tone(n.control),
+    muted: tone(n.muted),
+    mutedForeground: tone(n.mutedForeground),
+    accent: tone(n.accent),
+    destructive: tone(n.destructive),
     border,
     input,
-    ring: hex(n.ring),
-    chart: n.chart.map(hex) as [string, string, string, string, string],
-    sidebar: hex(n.sidebar),
+    ring: tone(n.ring),
+    chart: n.chart.map(tone) as [string, string, string, string, string],
+    sidebar: tone(n.sidebar),
     /** `--input` over the card: a pressed control's fill, a dark segment's. */
     inputOnCard: over(input, card),
   };
@@ -115,7 +118,7 @@ function palette(appearance: Appearance) {
 /** `--input` at 30% of its own alpha, as `dark:bg-input/30` composites it (`oklch(1 0 0 / 15%)` → 4.5%). */
 const inputThin = (input: string) => {
   const { a } = parseColor(input);
-  return css({ ...parseColor("#ffffff"), a: (a ?? 1) * 0.3 });
+  return withAlpha("white", (a ?? 1) * 0.3);
 };
 
 /** A tone's translucent tint, as the theme's `*-tint` tokens write it. */
@@ -128,7 +131,7 @@ function own(appearance: Appearance) {
     // A control's raised fill, hover and press: shadcn's `CONTROL` at rest, `--input` pressed,
     // half way between them under the pointer.
     raised: p.control,
-    hover: mixHex(p.control, p.inputOnCard, 0.5),
+    hover: mix(p.control, p.inputOnCard, 0.5),
     pressed: p.inputOnCard,
     // On (a toggle, a chosen tool, a selected button): a step further off than a press, as the
     // default theme's `on` is. shadcn has no hue to give it, so it takes the neutral ramp's step.
@@ -163,14 +166,14 @@ const themeLevel = (light: ReturnType<typeof palette>): Record<string, string> =
   // The main action: shadcn's `primary`, which differs by appearance, so the token names it.
   "brand-fill": "var(--primary)",
   "on-brand": "var(--primary-foreground)",
-  scrim: "rgba(0,0,0,0.5)",
+  scrim: oklchColor(0, 0, 0, 0.5),
   // The window buttons are the system's on macOS; shadcn has no such token, so close takes its red
   // and the other two the grey ramp.
   "window-close": light.destructive,
   "window-minimize": light.ring,
   "window-zoom": light.chart[3],
-  "window-control-ink": "color-mix(in srgb, #000000 50%, transparent)",
-  "window-control-edge": "color-mix(in srgb, #000000 12%, transparent)",
+  "window-control-ink": `color-mix(in srgb, ${oklchColor(0, 0, 0)} 50%, transparent)`,
+  "window-control-edge": `color-mix(in srgb, ${oklchColor(0, 0, 0)} 12%, transparent)`,
 });
 
 /** One appearance's colour tokens. */
@@ -272,7 +275,7 @@ function finishes(p: ReturnType<typeof palette>, o: ReturnType<typeof own>) {
     on: { backgroundColor: o.on, boxShadow: "none", borderColor: "transparent" },
     chip: { boxShadow: "none" },
     glass: {
-      backgroundColor: rgba(p.card, 0.8),
+      backgroundColor: withAlpha(p.card, 0.8),
       boxShadow: "none",
       borderColor: p.border,
       backdropFilter: "blur(20px)",
@@ -324,7 +327,7 @@ export function themeFiles(defaults: {
   };
 }
 
-/** The palette, for the report's table (`generate-shadcn.ts` prints it). */
+/** The palette, for the report's table (`generate-shadcn.ts` prints it): each source `oklch()` and the sRGB it lands on. */
 export function conversionTable(): { oklch: string; hex: string }[] {
   const seen = new Map<string, string>();
   for (const appearance of ["light", "dark"] as const) {
@@ -334,6 +337,3 @@ export function conversionTable(): { oklch: string; hex: string }[] {
   }
   return [...seen].map(([value, hex]) => ({ oklch: value, hex }));
 }
-
-/** A color as an `Rgb`, for a caller that wants the channels (`generate-shadcn.ts` does not). */
-export type { Rgb };
