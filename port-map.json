@@ -105,7 +105,8 @@
         "Status": "packages/ui/status.tsx",
         "Stat": "packages/ui/stat.tsx",
         "Meter": "packages/ui/meter.tsx",
-        "Legend": "packages/ui/plot.tsx"
+        "Legend": "packages/ui/plot.tsx",
+        "Card": "packages/ui/card.tsx"
       },
       "exclude": {
         "hint": "demo kit helper",
@@ -117,7 +118,6 @@
         "pointer": "private density flag for gallery demos",
         "SectionHead": "demo kit; demos use DemoSection",
         "focusedSection": "gallery screenshot filter",
-        "Card": "demo kit section card; demos use DemoCard",
         "Inset": "demo kit padding",
         "Caption": "demo kit helper",
         "Figure": "demo kit helper",

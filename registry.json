@@ -247,7 +247,7 @@
       "name": "radio-group",
       "type": "registry:ui",
       "title": "Radio Group",
-      "description": "A sunk ring that fills in citrus, with a dot growing in \u2014 alone or as a choice tile.",
+      "description": "A sunk ring that fills in citrus, with a dot growing in — alone or as a choice tile.",
       "registryDependencies": ["checkbox", "press", "surface", "theme"],
       "files": [
         {
@@ -289,7 +289,7 @@
       "name": "input",
       "type": "registry:ui",
       "title": "Input",
-      "description": "A sunk text field \u2014 single-line, multiline, masked, or invalid.",
+      "description": "A sunk text field — single-line, multiline, masked, or invalid.",
       "registryDependencies": ["theme"],
       "files": [
         {
@@ -303,7 +303,7 @@
       "name": "number-input",
       "type": "registry:ui",
       "title": "Number Input",
-      "description": "A sunk number field with \u2212 / + or stacked chevron steppers.",
+      "description": "A sunk number field with − / + or stacked chevron steppers.",
       "registryDependencies": ["icons", "input", "theme"],
       "files": [
         {
@@ -929,6 +929,48 @@
         }
       ],
       "dependencies": ["lucide@^1.66.0"]
+    },
+    {
+      "name": "card",
+      "type": "registry:ui",
+      "title": "Card",
+      "description": "A flat surface that groups related content: a header with its action, a body and a footer.",
+      "registryDependencies": ["surface", "theme"],
+      "files": [
+        {
+          "path": "packages/ui/card.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/card.tsx"
+        }
+      ]
+    },
+    {
+      "name": "field",
+      "type": "registry:ui",
+      "title": "Field",
+      "description": "A set of fields under a legend: labels, descriptions, separators, and errors read out.",
+      "registryDependencies": ["surface", "theme"],
+      "files": [
+        {
+          "path": "packages/ui/field.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/field.tsx"
+        }
+      ]
+    },
+    {
+      "name": "item",
+      "type": "registry:ui",
+      "title": "Item",
+      "description": "A row of a list: media before its content, a title with a note, and controls after it.",
+      "registryDependencies": ["surface", "theme"],
+      "files": [
+        {
+          "path": "packages/ui/item.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/item.tsx"
+        }
+      ]
     }
   ]
 }

@@ -40,6 +40,13 @@ export const components: ComponentDoc[] = [
     description: "A month of days to pick a date or a range, on the shared calendar look.",
   },
   {
+    slug: "card",
+    title: "Card",
+    nshElement: "card",
+    description:
+      "A flat surface that groups related content: a header with its action, a body and a footer.",
+  },
+  {
     slug: "carousel",
     title: "Carousel",
     nshElement: "carousel",
@@ -124,6 +131,13 @@ export const components: ComponentDoc[] = [
     description: "Tabs, search, skin tones and grid styled for nsh/base EmojiPicker.",
   },
   {
+    slug: "field",
+    title: "Field",
+    nshElement: "field",
+    description:
+      "A set of fields under a legend: a label, its control, a description and errors that are read out.",
+  },
+  {
     slug: "hover-card",
     title: "Hover Card",
     nshElement: "hover-card",
@@ -134,6 +148,13 @@ export const components: ComponentDoc[] = [
     title: "Input",
     nshElement: "input",
     description: "A sunk text field — single-line, multiline, masked, or invalid.",
+  },
+  {
+    slug: "item",
+    title: "Item",
+    nshElement: "item",
+    description:
+      "A row of a list: what sits before its content, a title with a note, and controls after it.",
   },
   {
     slug: "link",

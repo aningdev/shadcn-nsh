@@ -11,6 +11,8 @@
  *   - `badge`, `stat`, `status`, `meter`, `spinner`, `plot`: pure upstream components (and
  *     plot's look helpers) with no `nsh/base` control underneath, so there is no base props
  *     type to keep.
+ *   - `card`, `field`, `item`: composed of plain views and texts (`ViewProps`, `TextProps`),
+ *     which carry no behaviour of their own; their axes are asserted below.
  *   - `color-picker`, `emoji-picker`: fixed compositions that wire `nsh/base` parts with
  *     their own props (a color panel's value and format, an emoji panel's selection); they do
  *     not claim a base props pass-through.
@@ -87,6 +89,13 @@ import type {
   TreeProps as BaseTreeProps,
 } from "nsh/base";
 
+import type {
+  FieldLegendVariant,
+  FieldOrientation,
+  ItemMediaVariant,
+  ItemSize,
+  ItemVariant,
+} from "@/packages/ui/index";
 import type { ButtonSize, ButtonVariant } from "@/packages/ui/index";
 import type {
   AccordionHeaderProps,
@@ -439,6 +448,26 @@ type _tree = Assert<KeepsBase<BaseTreeProps, TreeProps, never>>;
 type Row = { id: number; name: string };
 
 /**
+ * The three families' axes (`#19`, `docs/specs/card-field-item.md`): each takes the words shadcn
+ * has and no others, so a value from another design system is a type error at the call site.
+ */
+const _fieldOrientation: FieldOrientation = "responsive";
+const _fieldLegendVariant: FieldLegendVariant = "label";
+const _itemVariant: ItemVariant = "muted";
+const _itemSize: ItemSize = "sm";
+const _itemMediaVariant: ItemMediaVariant = "image";
+// @ts-expect-error — a field is `vertical`, `horizontal` or `responsive`, not stacked.
+const _fieldStacked: FieldOrientation = "stacked";
+// @ts-expect-error — a legend is `legend` or `label`, not `title`.
+const _legendTitle: FieldLegendVariant = "title";
+// @ts-expect-error — an item is `default`, `outline` or `muted`, not `bordered`.
+const _itemBordered: ItemVariant = "bordered";
+// @ts-expect-error — an item is `default` or `sm`, not `lg`.
+const _itemLg: ItemSize = "lg";
+// @ts-expect-error — media is `default`, `icon` or `image`, not `avatar`.
+const _mediaAvatar: ItemMediaVariant = "avatar";
+
+/**
  * The values and props 0.3 dropped are not accepted: there are no aliases
  * (`docs/specs/api-unify.md` §6.2), so the compiler points at the call site and the call site
  * names the new word. Every line below fails without its `@ts-expect-error`, which is the
@@ -470,6 +499,16 @@ const _menuItemDanger: MenuItemProps = { danger: true };
 const _iconName: IconProps = { name: "chevron" };
 
 export {
+  _fieldLegendVariant,
+  _fieldOrientation,
+  _itemMediaVariant,
+  _itemSize,
+  _itemVariant,
+  _fieldStacked,
+  _legendTitle,
+  _itemBordered,
+  _itemLg,
+  _mediaAvatar,
   _badgeLabel,
   _badgeOutline,
   _checkboxScale,

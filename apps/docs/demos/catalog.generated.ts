@@ -55,4 +55,7 @@ export const componentIds = [
   "emoji-picker",
   "editor",
   "color-picker",
+  "card",
+  "field",
+  "item",
 ] as const;
