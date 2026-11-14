@@ -7,7 +7,7 @@
 本仓**安装** NSH CLI，从不编译 NSH。装的版本是 `port-map.json` 的 `upstream.cli`，本地和 CI 是同一条命令（`bun run nsh:bootstrap` 会打印它）：
 
 ```sh
-curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=v0.5.0 sh   # upstream.cli 是 release tag 时
+curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=v0.5.1 sh   # upstream.cli 是 release tag 时
 curl -fsSL https://nsh.dev/install.sh | sh -s -- --nightly       # upstream.cli 是 nightly 时
 export PATH="$HOME/.local/bin:$PATH"
 ```
@@ -20,7 +20,7 @@ CLI 与运行时同装进 `~/.nsh`，并链到 `~/.local/bin/nsh`。
 | ---------- | -------------------------------------------------------------------------------------------- |
 | CLI        | `nsh --version` 括号里的哈希：`nsh 0.5.0 (f4d68f7)`                                          |
 | 清单       | `port-map.json` 的 `upstream.commit`（40 位）                                                |
-| 安装的 CLI | `port-map.json` 的 `upstream.cli`：构建出该提交的 release tag（当前 `v0.5.0`），或 `nightly` |
+| 安装的 CLI | `port-map.json` 的 `upstream.cli`：构建出该提交的 release tag（当前 `v0.5.1`），或 `nightly` |
 | 子模块     | `git -C references/nsh rev-parse HEAD`                                                       |
 
 **换了 CLI，项目跟着动**：`bun run port:bump`（不带参数时用它打印的提交）移动清单与子模块，再 `port:vendor`，一个 commit。`bun run port:check` 在两者不同时只发 warning（新旧方向一样），提示的正是它；`bash scripts/nsh-bootstrap.sh` 在同一情况下停下，给出同样的提示。

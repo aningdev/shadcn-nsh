@@ -9,7 +9,7 @@ Agent 与贡献约定见 [`AGENTS.md`](AGENTS.md)。词汇见 [`docs/GLOSSARY.md
 ## 前置
 
 - [Bun](https://bun.com)
-- [NSH CLI](https://nsh.dev/docs/installation)（`nsh`）**安装而来，从不编译**：装 [`port-map.json`](port-map.json) 的 `upstream.cli` 指定的版本（当前 `v0.5.0`），`curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=v0.5.0 sh`。它打印的提交就是**基线**，即 [`port-map.json`](port-map.json) 的 `upstream.commit`；nightly 动了，`bun run port:bump` 把基线一起移动。两者不同时 `port:check` 只警告、不失败（[`docs/toolchain.md`](docs/toolchain.md)）。搬入的代码用的是基线运行时的能力，所以早于基线的 CLI 都是错的。
+- [NSH CLI](https://nsh.dev/docs/installation)（`nsh`）**安装而来，从不编译**：装 [`port-map.json`](port-map.json) 的 `upstream.cli` 指定的版本（当前 `v0.5.1`），`curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=v0.5.1 sh`。它打印的提交就是**基线**，即 [`port-map.json`](port-map.json) 的 `upstream.commit`；nightly 动了，`bun run port:bump` 把基线一起移动。两者不同时 `port:check` 只警告、不失败（[`docs/toolchain.md`](docs/toolchain.md)）。搬入的代码用的是基线运行时的能力，所以早于基线的 CLI 都是错的。
 - 别的都不用：运行时随安装的 CLI 而来（缺哪个 target 的它会自己装），没有 `NSH_RUNTIME` 要导出。
 
 ```sh
@@ -17,7 +17,7 @@ Agent 与贡献约定见 [`AGENTS.md`](AGENTS.md)。词汇见 [`docs/GLOSSARY.md
 git submodule update --init --recursive
 
 # CLI：安装，不编译
-curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=v0.5.0 sh   # port-map.json 的 upstream.cli
+curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=v0.5.1 sh   # port-map.json 的 upstream.cli
 export PATH="$HOME/.local/bin:$PATH"   # 安装器把 nsh 链到这里
 
 bun install

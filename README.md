@@ -9,7 +9,7 @@ Agent and contribution rules: [`AGENTS.md`](AGENTS.md). Vocabulary: [`docs/GLOSS
 ## Prerequisites
 
 - [Bun](https://bun.com)
-- [NSH CLI](https://nsh.dev/docs/installation) (`nsh`), **installed, never built**: the version in [`port-map.json`](port-map.json)'s `upstream.cli` (today `v0.5.0`), `curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=v0.5.0 sh`. The commit it prints is the **baseline**, [`port-map.json`](port-map.json)'s `upstream.commit`; when you install a newer CLI, `bun run port:bump` moves the baseline (and `upstream.cli`) with it. `port:check` warns — it does not fail — when the two differ ([`docs/toolchain.md`](docs/toolchain.md)). The ported code uses what the baseline's runtime has, so a CLI older than the baseline is the wrong one.
+- [NSH CLI](https://nsh.dev/docs/installation) (`nsh`), **installed, never built**: the version in [`port-map.json`](port-map.json)'s `upstream.cli` (today `v0.5.1`), `curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=v0.5.1 sh`. The commit it prints is the **baseline**, [`port-map.json`](port-map.json)'s `upstream.commit`; when you install a newer CLI, `bun run port:bump` moves the baseline (and `upstream.cli`) with it. `port:check` warns — it does not fail — when the two differ ([`docs/toolchain.md`](docs/toolchain.md)). The ported code uses what the baseline's runtime has, so a CLI older than the baseline is the wrong one.
 - Nothing else: the installed CLI carries the runtimes (and fetches the ones a target needs), so there is no `NSH_RUNTIME` to export.
 
 ```sh
@@ -17,7 +17,7 @@ Agent and contribution rules: [`AGENTS.md`](AGENTS.md). Vocabulary: [`docs/GLOSS
 git submodule update --init --recursive
 
 # The CLI: installed, never built.
-curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=v0.5.0 sh   # port-map.json upstream.cli
+curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=v0.5.1 sh   # port-map.json upstream.cli
 export PATH="$HOME/.local/bin:$PATH"   # where the installer links nsh
 
 bun install
