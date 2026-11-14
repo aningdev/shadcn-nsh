@@ -46,6 +46,22 @@ After push to GitHub you can omit `--registry`. Default:
 
 `https://raw.githubusercontent.com/aningdev/shadcn-nsh/main/public/r/{name}.json`
 
+### Themes
+
+`init` installs the library's own theme. `init --theme shadcn` installs [shadcn's neutral
+theme](docs/specs/theme-shadcn.md) instead — the same three files (`theme.json`,
+`lib/finishes.json`, `lib/theme.ts`), different data:
+
+```sh
+bun run shadcn-nsh -- init -c /path/to/app --theme shadcn
+```
+
+`nsh-ui.json` records which theme the app has (`"theme": "theme-shadcn"`; a file without the
+field is on `theme`, so an older app needs nothing), and `add` resolves a component's `theme`
+dependency to the one recorded. An app on the neutral theme therefore stays on it: `add button
+--overwrite` and `add --all --overwrite` write components, not the default theme back. `add
+theme-shadcn` and `add theme` switch themes, files and record alike.
+
 ## Develop in this repo
 
 Toolchain: Bun + [Vite+](https://viteplus.dev) (`vp fmt` / `vp lint` / `vp check`).
@@ -65,15 +81,15 @@ Porting a component, rules and checks: [`docs/port.md`](docs/port.md), [`docs/AR
 
 ## Layout
 
-| Path                                  | Package / role        | Notes                                                                                   |
-| ------------------------------------- | --------------------- | --------------------------------------------------------------------------------------- |
-| `packages/theme`                      | `@shadcn-nsh/theme`   | `theme.json`, `finishes.json`, `theme.ts` — the theme (ours; `oklch()`)                 |
-| `packages/ui`                         | `@shadcn-nsh/ui`      | one file per component: a look (`// @port` region) + shell                              |
-| `apps/docs/demos`                     | —                     | acceptance demos, reference pages, `port:render`                                        |
-| `apps/docs/src/pages/docs/components` | —                     | component pages                                                                         |
-| `apps/gallery`                        | `@shadcn-nsh/gallery` | native behavior tests and smoke pages                                                   |
-| `packages/cli`                        | `shadcn-nsh` (npm)    | `init` / `add` / `build` / `serve`                                                      |
-| `registry.json` → `public/r`          | —                     | registry source → committed HTTP artifacts                                              |
-| `scripts/port`                        | —                     | `port:new` / `port:vendor` / `port:check` / `port:review` / `port:render` / `port:bump` |
-| `port-map.json`                       | —                     | where every upstream file and declaration goes                                          |
-| `references/`                         | —                     | read-only submodules: the upstream baseline, the shadcn reference                       |
+| Path                                  | Package / role        | Notes                                                                                                                                                 |
+| ------------------------------------- | --------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/theme`                      | `@shadcn-nsh/theme`   | `theme.json`, `finishes.json`, `theme.ts` — the theme (ours; `oklch()`); `themes/<name>/` is another theme's data, shipped as its `theme-<name>` item |
+| `packages/ui`                         | `@shadcn-nsh/ui`      | one file per component: a look (`// @port` region) + shell                                                                                            |
+| `apps/docs/demos`                     | —                     | acceptance demos, reference pages, `port:render`                                                                                                      |
+| `apps/docs/src/pages/docs/components` | —                     | component pages                                                                                                                                       |
+| `apps/gallery`                        | `@shadcn-nsh/gallery` | native behavior tests and smoke pages                                                                                                                 |
+| `packages/cli`                        | `shadcn-nsh` (npm)    | `init` / `add` / `build` / `serve`                                                                                                                    |
+| `registry.json` → `public/r`          | —                     | registry source → committed HTTP artifacts                                                                                                            |
+| `scripts/port`                        | —                     | `port:new` / `port:vendor` / `port:check` / `port:review` / `port:render` / `port:bump`                                                               |
+| `port-map.json`                       | —                     | where every upstream file and declaration goes                                                                                                        |
+| `references/`                         | —                     | read-only submodules: the upstream baseline, the shadcn reference                                                                                     |

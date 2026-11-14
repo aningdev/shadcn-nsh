@@ -43,6 +43,21 @@ push 到 GitHub 后可省略 `--registry`，默认：
 
 `https://raw.githubusercontent.com/aningdev/shadcn-nsh/main/public/r/{name}.json`
 
+### 主题
+
+`init` 装本库自己的主题。`init --theme shadcn` 改装 [shadcn 的 neutral
+主题](docs/specs/theme-shadcn.md)：同样三个文件（`theme.json`、`lib/finishes.json`、
+`lib/theme.ts`），数据不同。
+
+```sh
+bun run shadcn-nsh -- init -c /path/to/app --theme shadcn
+```
+
+`nsh-ui.json` 记下应用装的是哪个主题（`"theme": "theme-shadcn"`；文件里没有这个字段就是
+`theme`，老应用不用动），`add` 把组件的 `theme` 依赖解析成它。所以装了 neutral 的应用不会因为
+`add` 退回默认主题：`add button --overwrite`、`add --all --overwrite` 都只写组件，不写默认主题。
+`add theme-shadcn` / `add theme` 换主题，文件与记录一起换。
+
 ## 本仓开发
 
 工具链：Bun + [Vite+](https://viteplus.dev)（`vp fmt` / `vp lint` / `vp check`）。
@@ -62,15 +77,15 @@ bun run registry:build
 
 ## 布局
 
-| 路径                                  | 包名 / 角色           | 说明                                                                      |
-| ------------------------------------- | --------------------- | ------------------------------------------------------------------------- |
-| `packages/theme`                      | `@shadcn-nsh/theme`   | `theme.json`、`finishes.json`、`theme.ts`（本库主题，颜色一律 `oklch()`） |
-| `packages/ui`                         | `@shadcn-nsh/ui`      | 移植组件：`// @port` 区域 + 外壳                                          |
-| `apps/docs/demos`                     | —                     | 验收演示、参照页、`port:render`                                           |
-| `apps/docs/src/pages/docs/components` | —                     | 组件文档页                                                                |
-| `apps/gallery`                        | `@shadcn-nsh/gallery` | 原生行为测试与冒烟页                                                      |
-| `packages/cli`                        | `shadcn-nsh`（npm）   | `init` / `add` / `build` / `serve`                                        |
-| `registry.json` → `public/r`          | —                     | registry 源 → 提交进 git 的 HTTP 产物                                     |
-| `scripts/port`                        | —                     | `port:new` / `port:vendor` / `port:check` / `port:render` / `port:bump`   |
-| `port-map.json`                       | —                     | 上游每个文件、每个声明的去向                                              |
-| `references/`                         | —                     | 只读子模块：上游基线、shadcn 参考                                         |
+| 路径                                  | 包名 / 角色           | 说明                                                                                                                                     |
+| ------------------------------------- | --------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/theme`                      | `@shadcn-nsh/theme`   | `theme.json`、`finishes.json`、`theme.ts`（本库主题，颜色一律 `oklch()`）；`themes/<name>/` 是其他主题的数据，经 `theme-<name>` 条目分发 |
+| `packages/ui`                         | `@shadcn-nsh/ui`      | 移植组件：`// @port` 区域 + 外壳                                                                                                         |
+| `apps/docs/demos`                     | —                     | 验收演示、参照页、`port:render`                                                                                                          |
+| `apps/docs/src/pages/docs/components` | —                     | 组件文档页                                                                                                                               |
+| `apps/gallery`                        | `@shadcn-nsh/gallery` | 原生行为测试与冒烟页                                                                                                                     |
+| `packages/cli`                        | `shadcn-nsh`（npm）   | `init` / `add` / `build` / `serve`                                                                                                       |
+| `registry.json` → `public/r`          | —                     | registry 源 → 提交进 git 的 HTTP 产物                                                                                                    |
+| `scripts/port`                        | —                     | `port:new` / `port:vendor` / `port:check` / `port:render` / `port:bump`                                                                  |
+| `port-map.json`                       | —                     | 上游每个文件、每个声明的去向                                                                                                             |
+| `references/`                         | —                     | 只读子模块：上游基线、shadcn 参考                                                                                                        |

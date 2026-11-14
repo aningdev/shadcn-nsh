@@ -15,7 +15,7 @@ Default registry: `https://raw.githubusercontent.com/aningdev/shadcn-nsh/main/pu
 
 | Command             | What it does                                                         |
 | ------------------- | -------------------------------------------------------------------- |
-| `init`              | Writes `nsh-ui.json`, installs `theme`, points each `nsh.json` at it |
+| `init`              | Writes `nsh-ui.json`, installs a theme, points each `nsh.json` at it |
 | `add [components…]` | Copies items and their `registryDependencies` into the app           |
 | `list`              | The registry's items, `✓` on the ones the app has                    |
 | `view <items…>`     | The files `add` would write: target paths and contents               |
@@ -26,7 +26,8 @@ Default registry: `https://raw.githubusercontent.com/aningdev/shadcn-nsh/main/pu
 Every command takes `-c, --cwd <dir>` (default: the current directory). `init`, `add`, `list`,
 `view` and `diff` also take `--registry <url>`, a template with `{name}` in it; without it, `add`,
 `list`, `view` and `diff` use the one in `nsh-ui.json`, and `init` uses the public registry.
-`init` also takes `--overwrite` and `-y` (accepted; nothing prompts today).
+`init` also takes `--overwrite`, `-y` (accepted; nothing prompts today) and `--theme <name>`,
+`default` (the library's own) or `shadcn` (shadcn's neutral palette and flat finishes).
 
 ## add
 
@@ -43,6 +44,10 @@ shadcn-nsh add button --overwrite
 - `theme.json` is merged by key: the app keeps its colors and gains the tokens it lacks. A
   recolored theme is kept as it is (`kept theme.json (the app's colors stay)`).
 - `--all` (`-a`) adds every `registry:ui` item the catalog lists, dependencies included.
+- Naming a theme (`add theme-shadcn`, or `add theme` to go back) switches the app's theme: its
+  files are written where they differ and `nsh-ui.json`'s `theme` records the new one.
+- After that, `theme` as a dependency resolves to the theme the app has, so `add button`,
+  `add button --overwrite` and `add --all --overwrite` never write the default theme back.
 - `--dry-run` prints the same lines as `would write …` / `would overwrite …` and writes nothing —
   not even `nsh-ui.json` or the theme `init` would install first.
 
@@ -80,6 +85,7 @@ recolored theme is the app's own, and only `add --overwrite` replaces it.
 ```json
 {
   "registry": "https://raw.githubusercontent.com/aningdev/shadcn-nsh/main/public/r/{name}.json",
+  "theme": "theme",
   "aliases": {
     "components": "./components",
     "ui": "./components/ui",
@@ -88,6 +94,9 @@ recolored theme is the app's own, and only `add --overwrite` replaces it.
   }
 }
 ```
+
+`theme` is the `registry:theme` item the app installed (`theme`, or `theme-shadcn`); a file
+without it is on `theme`.
 
 In a monorepo (`apps/*` + `packages/ui`) it lives in `packages/ui` and `add -c apps/web`
 installs there.

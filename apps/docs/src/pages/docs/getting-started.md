@@ -21,7 +21,7 @@ Consumer monorepo scaffolding (`shadcn-nsh create`) is not built. `init` and `ad
 
 | Command           | What it does                                                         |
 | ----------------- | -------------------------------------------------------------------- |
-| `init`            | Writes `nsh-ui.json`, installs `theme`, points each `nsh.json` at it |
+| `init`            | Writes `nsh-ui.json`, installs a theme, points each `nsh.json` at it |
 | `add [items…]`    | Copies items and their `registryDependencies` into the app           |
 | `list`            | The registry's items, `✓` on the ones the app has                    |
 | `view <items…>`   | The files `add` would write: target paths and contents               |

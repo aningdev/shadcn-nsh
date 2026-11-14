@@ -46,6 +46,10 @@ New, and only added:
   draws (`Badge`, `Meter`, `Stat`, `Status`, `Progress`, `DiffHunkActions`).
 - Each control exports its own axis union (`ButtonVariant`, `BadgeVariant`, `ChoiceSize`, …), and a
   test holds them all to the vocabulary.
+- `shadcn-nsh init --theme shadcn` installs shadcn's neutral palette and its flat finishes, the
+  registry item `theme-shadcn`. `nsh-ui.json` records which theme an app has (`"theme"`; a file
+  without it is on the default one) and `add` resolves a component's `theme` dependency to it, so
+  `--overwrite` never writes the default theme back. No component API changes.
 
 Behaviour, appearance and the `nsh/base` props underneath are unchanged: every component still draws
 the same pixels as its look spread on the base control, which the render check compares.
