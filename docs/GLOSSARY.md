@@ -40,7 +40,7 @@ _Avoid_: 自动跟随上游
 _Avoid_: 组件库的布局 API, 在组件里用 Stage
 
 **Photo Page（照片页）**:
-演示里从网络取图的页面（`apps/docs/demos/photos.ts` 的 `photoUrl`、`avatarPortrait`）。它先 `Image.prefetch` 全部图片再让 `Image` 画，并在全部到位后画出 `images-ready` 标记；`port:render` 用 `network: "live"` 打开它、等这个标记，再截图。少数圆角裁切的边缘在两次运行间会差 1/255，这样的页面在 `render-cases.ts` 写 `byEye` 并说明原因。
+演示里从网络取图的页面（`apps/docs/demos/photos.ts` 的 `photoUrl`、`avatarPortrait`）。它先 `Image.prefetch` 全部图片再让 `Image` 画，并在全部到位后画出 `images-ready` 标记；`port:render` 用 `network: "live"` 打开它、等这个标记，再截图。圆角裁切的边缘在两次运行间偶尔差 1/255：比较按"逐字节，或落在抗锯齿预算内"（`render-cases.ts` 的 `antialiasing`），圆形头像另有更宽的 `tolerance`。
 _Avoid_: 截图前 sleep, 让图片页跳过比对
 
 **Composition Facade**:

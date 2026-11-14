@@ -63,4 +63,5 @@
 ### 例外与平台限制
 
 - `dialog` 的 `presentation="pageSheet"` 在上游没有对应外观（`el-dialog.tsx:120-152` 自己给 `style`：桌面居中卡片、手机贴底的 panel），本库同样把位置交给演示，不进口 component。
-- `avatar` 的圆形头像裁切在两次页面实例间偶发差 1/255（实测：至多 20 个像素、29/255，约三次一次）。照片与其它部分都稳定（`Image.prefetch` 后 5/6）；`render-cases.ts` 把这一页记为 `byEye` 并打印原因，其余照片页逐字节比对。
+- 两次页面实例的同一页不是每次都逐字节相同：圆角的抗锯齿偶尔差一个像素、1/255（实测：menu 的弹层圆角约三十次一次；八次全量跑里约每三次有一个页面抖一次，都是几个像素、几级）。因此比较是"逐字节，或落在抗锯齿预算内"（`antialiasing`：至多 6 个像素、每通道 6/255），`port:render` / `port:render:touch` / `port:baseline` / `port:sheet` 用同一规则；没有整对重拍，也没有整页免检。
+- `avatar` 的圆形照片裁切更宽一些（实测：至多 20 个像素、最差通道 29/255；`Image.prefetch` 之后连续 12 对相同），`render-cases.ts` 给它 `tolerance: 30 / 32`；布局或颜色变化移动的像素远多于此。
