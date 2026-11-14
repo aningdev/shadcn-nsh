@@ -177,6 +177,8 @@ bun scripts/audit/sheet.ts --out sheet.png --cols 3 a.png b.png c.png   # 拼对
 
 > **已完成**（`5a7a050`、`965b67d`、`39b568f`、`376c954`、`b96adb9`、`05798f7`、`3817175`、以及返工 `REVIEW-1` 的提交）。发布模板没有播放器入口，因此走的是下面第 2 条的注入（`apps/docs/scripts/player-options.ts`，注释里写了为什么不走播放器；模板文字变了怎么办见 [`toolchain.md`](../toolchain.md) 的换 CLI 一节）。
 >
+> **后来改了**：预览框高度不再随内容伸缩（会来回跳），固定为手机 390 × 844、桌面 1024 × 640，见 `apps/docs/src/lib/demo-client.ts` 的 `fit()`。下面是改之前的实测。
+>
 > `bun scripts/audit/audit.ts canvas` 的实测（页视口 1440×900，探针应用原地打包，`windowSize()` 是**应用启动时**看到的窗口——面板先按布局的高启动，量到内容后再把 frame 压到内容高，与官网一致，见 `references/nsh/website/src/lib/demo-client.ts:120-131` 与 `:135-147`）：
 >
 > | 布局                                      | iframe     | 应用看到的窗口 | `platform.desktop` |

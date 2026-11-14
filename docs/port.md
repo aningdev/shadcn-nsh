@@ -60,7 +60,7 @@ bun run port:new <id> --from <上游文件> [--symbols a,b,c] [--base <nsh/base 
 
 它们都在 `apps/docs/demos/stage.tsx`，从上游 `demo.ts` 搬来（`port-map.json` 的 `symbols` 路由，`// @port` 区域由 `port:vendor` 写入），外观取 `@shadcn-nsh/theme` 与 `packages/ui/lib/surface`，**不进 `packages/ui`、不进 registry**。适配层新增、重命名时：改 `port-map.json` 的 `symbols` 与目标文件的 `// @port demo.ts` 区域，再 `bun run port:vendor`。
 
-演示页自己的外壳（标题、卡片、小节）仍用 `kit.tsx` 的 `DemoPage` / `DemoCard` / `DemoSection`。页面内容高于窗口时滚动（手机 844、桌面 900）。
+演示页自己的外壳（标题、卡片、小节）仍用 `kit.tsx` 的 `DemoPage` / `DemoCard` / `DemoSection`。页面内容高于窗口时滚动：预览框固定为手机 390 × 844、桌面 1024 × 640（列宽不够时只收窄宽度），不随内容伸缩。
 
 页面看到的窗口与官方一致：Phone 是 390 × 844 的 phone idiom（`platform.desktop` 为假），Desktop 是 1024 宽的 desktop idiom（列宽不够时取列宽，不缩放）；切换布局重载 frame（idiom 启动时定下），主题变化发给运行中的应用（详见 `apps/docs/scripts/player-options.ts`）。
 

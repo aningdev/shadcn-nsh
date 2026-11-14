@@ -17,16 +17,17 @@ const DEMOS = join(ROOT, "demos");
 /**
  * The two layouts a panel switches between, as the website's player has them
  * (`references/nsh/website/src/lib/demo.js`): a phone (390 × 844 points, the
- * phone idiom: a finger, touch density) and a desktop window (1024 points, the
- * desktop idiom: a pointer), as tall as its content up to 900.
+ * phone idiom: a finger, touch density) and a desktop window (1024 × 640
+ * points, the desktop idiom: a pointer).
  *
- * The height is the most the frame takes: `demo-client.ts` measures the app's
- * content and ends the frame below it (`MIN_HEIGHT` 420). The idiom is fixed
- * when the app starts, so a layout switch reloads the frame.
+ * The frame keeps the layout's height whatever the demo draws (a demo page
+ * scrolls what does not fit), so switching demos or layouts never makes the
+ * page jump. The idiom is fixed when the app starts, so a layout switch
+ * reloads the frame.
  */
 export const LAYOUTS = {
   mobile: { width: 390, height: 844, idiom: "phone" },
-  desktop: { width: 1024, height: 900, idiom: "desktop" },
+  desktop: { width: 1024, height: 640, idiom: "desktop" },
 };
 
 export function demoFile(name) {
