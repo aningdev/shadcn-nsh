@@ -1,6 +1,6 @@
 // Diff view: `diffViewStyles`, `DiffHunkActions`, and the `DiffView` that wears them.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { alpha, colors, solidTint, terminal } from "@shadcn-nsh/theme";
+import { alpha, colors, solidTint, terminal, type Tone } from "@shadcn-nsh/theme";
 import { split, Text, View } from "nsh";
 import {
   Button,
@@ -13,6 +13,12 @@ import { buttonGlyph, buttonLabel, buttonLook, type ButtonVariant } from "./butt
 import { Icon, type IconName } from "./lib/icons";
 
 // @port look/workspace.tsx
+/** A value, or a function reading it where the actions are drawn (a signal). */
+type Live<T> = T | (() => T);
+
+const read = <T,>(v: Live<T> | undefined): T | undefined =>
+  typeof v === "function" ? (v as () => T)() : v;
+
 /** One action on a diff's change: a chip 20 points high, its label 11
  * points in the interface's font (the diff's text is monospaced), or only
  * its icon, 20 points square. */
@@ -109,7 +115,8 @@ export function diffHunkTone(
 export function DiffHunkActions(props: {
   index: number;
   iconOnly?: boolean;
-  tone?: "up" | "down";
+  /** The tone of the row it sits on (`diffHunkTone` says which), usual `up` / `down`; a function is read where the backing is drawn. */
+  tone?: Tone | (() => Tone);
   onRevert: () => void;
   onKeep: () => void;
 }) {
@@ -119,7 +126,10 @@ export function DiffHunkActions(props: {
   // fade instead of a cut glyph, and nothing shows between the chips or
   // after them: it reaches the row's right edge, past the 8 points the view
   // keeps free there.
-  const backing = () => (props.tone ? solidTint(props.tone) : colors.surface);
+  const backing = () => {
+    const tone = read(props.tone);
+    return tone ? solidTint(tone) : colors.surface;
+  };
   return (
     <View
       style={

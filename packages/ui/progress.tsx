@@ -132,8 +132,8 @@ export function progressLook(value: Live<number>, o?: ProgressLookOptions) {
 export type ProgressProps = BaseProgressProps & {
   /** Rail and fill height (default 6). */
   height?: number;
-  /** Fill tone; default citrus run. */
-  tone?: Tone;
+  /** Fill tone; default citrus run. A function is read where the fill is drawn. */
+  tone?: Tone | (() => Tone);
   /** Shared sweep for indeterminate bars. */
   sweep?: ProgressSweep;
 };
@@ -153,7 +153,7 @@ export function Progress(props: ProgressProps) {
   ]);
   const look = progressLook(() => props.value ?? 0, {
     height: props.height,
-    tone: () => props.tone,
+    tone: () => read(props.tone),
     indeterminate: () => props.indeterminate,
     sweep: props.sweep,
   });

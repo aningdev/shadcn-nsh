@@ -155,6 +155,16 @@ function App() {
               </Text>
               <DiffHunkActions index={2} iconOnly onRevert={() => {}} onKeep={() => {}} />
             </View>
+            {/* Any of the theme's tones can back the chips (an app tinting its rows by severity):
+                a change is `up` or `down`, and the rest are open to it. */}
+            {(["neutral", "accent", "info", "warn", "danger"] as const).map((tone) => (
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+                <Text class="text-muted-foreground" style={{ fontSize: 12, width: 132 }}>
+                  {`on a ${tone} row`}
+                </Text>
+                <DiffHunkActions index={0} tone={tone} onRevert={() => {}} onKeep={() => {}} />
+              </View>
+            ))}
           </View>
         </DemoSection>
       </DemoCard>

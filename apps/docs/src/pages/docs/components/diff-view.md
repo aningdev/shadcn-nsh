@@ -84,6 +84,15 @@ import { DiffView, diffViewStyles, DiffHunkActions, diffHunkTone } from "@/compo
 <DiffView oldValue={before} newValue={after} styles={diffViewStyles()} />
 ```
 
+### Tone
+
+`DiffHunkActions` takes a `tone` for the backing it fades in over: `diffHunkTone` answers the change's own row (`up` for an added line, `down` for a deleted one), and any of the theme's tones works, read where the backing is drawn.
+
+```tsx
+<DiffHunkActions index={0} tone="up" onRevert={() => {}} onKeep={() => {}} />
+<DiffHunkActions index={1} tone={() => (verdict() === "bad" ? "danger" : "warn")} onRevert={() => {}} onKeep={() => {}} />
+```
+
 ## API
 
 Every prop of [`nsh/base` DiffView](https://nsh.dev/elements/diff-view) passes through.

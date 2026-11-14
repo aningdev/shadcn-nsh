@@ -46,8 +46,8 @@ import { Meter } from "@/components/ui/meter";
 
 Uses `progressRail` / `progressFill` from `progress`. No `nsh/base` wrapper.
 
-| Prop     | Type     | Default    |
-| -------- | -------- | ---------- |
-| `value`  | `number` | (required) |
-| `tone`   | `Tone`   |            |
-| `marker` | `number` |            |
+| Prop     | Type                   | Default    |
+| -------- | ---------------------- | ---------- |
+| `value`  | `number`               | (required) |
+| `tone`   | `Tone \| (() => Tone)` |            |
+| `marker` | `number`               |            |

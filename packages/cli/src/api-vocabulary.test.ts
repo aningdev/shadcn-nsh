@@ -20,24 +20,12 @@ const VARIANTS = ["default", "secondary", "outline", "ghost", "destructive", "li
 
 /**
  * The variant values shadcn does not have, each with the component page that names it:
- * `tile` is a radio drawn as a card (`Radio`; its union is batch 2's), `line` an underlined tab
- * track.
+ * `tile` is a radio drawn as a card (`Radio`), `line` an underlined tab track.
  */
 const OWN_VARIANTS: Record<string, string> = { tile: "radio-group", line: "tabs" };
 
 /** Every `size` value: the three of a scale, and the icon-only ones a shadcn button takes. */
 const SIZES = ["sm", "default", "lg", "xs", "icon", "icon-xs", "icon-sm", "icon-lg"];
-
-/**
- * Batch 2: the unions the first batch of the unification does not reach yet. A switch and a
- * segmented control are two-step in shadcn as well, so `sm` / `default` is what they will take.
- * They leave this list with that batch; an entry here that no longer exists is a failure, so the
- * next stray value cannot hide under a stale name.
- */
-const BATCH_TWO: Record<string, string> = {
-  SegmentedSize: "batch 2: `small` / `regular` → `sm` / `default`",
-  SwitchSize: "batch 2: `small` / `regular` → `sm` / `default`",
-};
 
 /** The exported type aliases of one module, by name, with their declared text. */
 function unionsOf(source: string): Map<string, string> {
@@ -73,9 +61,30 @@ const stray = (name: string, allowed: string[]) => {
 
 const glossary = () => readFileSync(new URL("docs/GLOSSARY.md", root), "utf8");
 
+/**
+ * The components that take the theme's `Tone` (`docs/specs/api-unify.md` §4.3 R9): one type, one
+ * writing on a prop, a value or a function read where the control draws (`Tone | (() => Tone)`).
+ * A look's option keeps `Live<Tone | undefined>` (§4.4), and `otp-input` reads a verdict that may
+ * be absent, so its function form may return `undefined` too.
+ */
+const TONE_WRITERS = ["badge", "meter", "stat", "status", "progress", "diff-view"];
+
+/** The three ways a `tone` is written: a props', a look option's, and `otp-input`'s. */
+const TONE_WRITINGS = [
+  "tone?: Tone | (() => Tone);",
+  "tone?: Live<Tone | undefined>;",
+  "tone?: Tone | (() => Tone | undefined);",
+];
+
+/** The `tone` members a module declares, trimmed. */
+const tonePropsOf = (file: string) =>
+  readFileSync(new URL(file, root), "utf8")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter((line) => line.startsWith("tone?:"));
+
 describe("the API's vocabulary", () => {
-  const checked = (suffix: string) =>
-    [...unions.keys()].filter((name) => name.endsWith(suffix) && !BATCH_TWO[name]);
+  const checked = (suffix: string) => [...unions.keys()].filter((name) => name.endsWith(suffix));
 
   test("a component declares the axis it takes", () => {
     expect(unions.size).toBeGreaterThan(0);
@@ -108,7 +117,20 @@ describe("the API's vocabulary", () => {
     }
   });
 
-  test("the batch 2 unions are still there, so the list cannot hide a stray value", () => {
-    for (const name of Object.keys(BATCH_TWO)) expect(unions.has(name), name).toBe(true);
+  test("every component's `tone` is `Tone | (() => Tone)`, read where the control draws", () => {
+    for (const id of TONE_WRITERS) {
+      expect(tonePropsOf(`packages/ui/${id}.tsx`), id).toContain("tone?: Tone | (() => Tone);");
+    }
+  });
+
+  test("no `tone` is written any other way", () => {
+    const lines = files.flatMap((file) => tonePropsOf(file).map((line) => `${file}: ${line}`));
+    expect(lines.length).toBeGreaterThan(0);
+    for (const line of lines) {
+      expect(
+        TONE_WRITINGS.some((writing) => line.endsWith(writing)),
+        line,
+      ).toBe(true);
+    }
   });
 });

@@ -40,7 +40,7 @@ import { Status } from "@/components/ui/status";
 
 Gallery atom: no `nsh/base` counterpart.
 
-| Prop    | Type     | Default    |
-| ------- | -------- | ---------- |
-| `label` | `string` | (required) |
-| `tone`  | `Tone`   |            |
+| Prop    | Type                   | Default    |
+| ------- | ---------------------- | ---------- |
+| `label` | `string`               | (required) |
+| `tone`  | `Tone \| (() => Tone)` |            |

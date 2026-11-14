@@ -38,7 +38,7 @@ Edit the values and keep the keys: components and finishes refer to them by name
 
 ## One control's look
 
-The look is the function that turns a `variant` (shadcn's word: `default`, `secondary`, `ghost`, `destructive`), a `size` (`sm`, `default`, `lg`) and a state into the props `nsh/base` draws with. It sits at the top of a copied component, above the component itself.
+The look is the function that turns a `variant` (shadcn's word: `default`, `secondary`, `ghost`, `destructive`), a `size` (`sm`, `default`, `lg`), a `tone` (the theme's `Tone`: `neutral`, `accent`, `info`, `warn`, `danger`, `up`, `down`) and a state into the props `nsh/base` draws with. It sits at the top of a copied component, above the component itself.
 
 ```tsx
 // components/ui/button.tsx

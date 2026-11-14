@@ -50,6 +50,6 @@ Gallery atom: no `nsh/base` counterpart.
 | ---------- | ----------------------- | ---------- |
 | `label`    | `string`                | (required) |
 | `value`    | `string`                | (required) |
-| `tone`     | `Tone`                  |            |
+| `tone`     | `Tone \| (() => Tone)`  |            |
 | `width`    | percentage width string |            |
 | `truncate` | `boolean`               |            |
