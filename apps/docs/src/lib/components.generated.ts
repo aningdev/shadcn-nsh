@@ -150,6 +150,13 @@ export const components: ComponentDoc[] = [
     description: "A sunk text field — single-line, multiline, masked, or invalid.",
   },
   {
+    slug: "item",
+    title: "Item",
+    nshElement: "item",
+    description:
+      "A row of a list: what sits before its content, a title with a note, and controls after it.",
+  },
+  {
     slug: "link",
     title: "Link",
     nshElement: "link",

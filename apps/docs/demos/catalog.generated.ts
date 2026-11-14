@@ -57,4 +57,5 @@ export const componentIds = [
   "color-picker",
   "card",
   "field",
+  "item",
 ] as const;

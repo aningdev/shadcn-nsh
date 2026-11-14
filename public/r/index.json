@@ -848,6 +848,19 @@
           "target": "components/ui/field.tsx"
         }
       ]
+    },
+    {
+      "name": "item",
+      "type": "registry:ui",
+      "title": "Item",
+      "description": "A row of a list: media before its content, a title with a note, and controls after it.",
+      "files": [
+        {
+          "path": "packages/ui/item.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/item.tsx"
+        }
+      ]
     }
   ]
 }
