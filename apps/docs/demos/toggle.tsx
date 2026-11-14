@@ -53,8 +53,8 @@ function App() {
   const on = signal<Mark[]>(["bold"]);
   const align = signal<Align>("left");
   const starred = signal(false);
-  const variant = signal<"ghost" | "outline">("ghost");
-  const size = signal<"small" | "regular" | "large">("regular");
+  const variant = signal<"default" | "outline">("default");
+  const size = signal<"sm" | "default" | "lg">("default");
   const events = signal<string[]>([]);
   const log = (line: string) => events.set([line, ...events()].slice(0, 3));
   const has = (m: Mark) => on().includes(m);
@@ -160,11 +160,11 @@ function App() {
       <DemoCard>
         <DemoSection title="Variant">
           <Toggle
-            variant="ghost"
-            pressed={variant() === "ghost"}
+            variant="default"
+            pressed={variant() === "default"}
             onChange={() => {
-              variant.set("ghost");
-              log("Variant: ghost");
+              variant.set("default");
+              log("Variant: default");
             }}
           >
             Ghost
@@ -182,31 +182,31 @@ function App() {
         </DemoSection>
         <DemoSection title="Size">
           <Toggle
-            size="small"
-            pressed={size() === "small"}
+            size="sm"
+            pressed={size() === "sm"}
             onChange={() => {
-              size.set("small");
-              log("Size: small");
+              size.set("sm");
+              log("Size: sm");
             }}
           >
             Small
           </Toggle>
           <Toggle
-            size="regular"
-            pressed={size() === "regular"}
+            size="default"
+            pressed={size() === "default"}
             onChange={() => {
-              size.set("regular");
-              log("Size: regular");
+              size.set("default");
+              log("Size: default");
             }}
           >
             Regular
           </Toggle>
           <Toggle
-            size="large"
-            pressed={size() === "large"}
+            size="lg"
+            pressed={size() === "lg"}
             onChange={() => {
-              size.set("large");
-              log("Size: large");
+              size.set("lg");
+              log("Size: lg");
             }}
           >
             Large

@@ -9,18 +9,21 @@ import { pressSink, pressTransition } from "./lib/press";
 
 // @port look/tool.ts
 /** A toggle's size: 24 / 28 / 34 points with a pointer, 32 / 38 / 44 on a touch screen. */
-export type ToggleSize = "small" | "regular" | "large";
+export type ToggleSize = "sm" | "default" | "lg";
+
+/** A toggle's variants: `default` bare while off, `outline` on a field's edge while off. */
+export type ToggleVariant = "default" | "outline";
 
 /** A value, or a function reading it where the look is applied (a signal). */
 type Live<T> = T | (() => T);
 
 /** Options of `toggleLook`, `toggleLabel` and `toggleGlyph` (the same object for all three). */
 export interface ToggleLookOptions {
-  /** Default `regular`. */
+  /** Default `default`. */
   size?: Live<ToggleSize | undefined>;
-  /** `ghost` (default): bare while off, a toolbar's tool. `outline`: on a
-   * field's edge while off, a toggle standing on its own among buttons. */
-  variant?: "ghost" | "outline";
+  /** `default`: bare while off, a toolbar's tool. `outline`: on a field's
+   * edge while off, a toggle standing on its own among buttons. */
+  variant?: ToggleVariant;
   /** It carries a text label (beside its icon or alone): padded at its
    * sides rather than a square. */
   text?: boolean;
@@ -48,14 +51,14 @@ const pointer = platform.desktop;
 /** A toggle's sides, icon and label sizes and paddings, by size: compact with a pointer, roomier on a touch screen. */
 export const toggleSizes: Record<ToggleSize, ToggleDimensions> = pointer
   ? {
-      small: { side: 24, icon: 14, text: 12, pad: 8 },
-      regular: { side: 28, icon: 16, text: 13, pad: 10 },
-      large: { side: 34, icon: 18, text: 14, pad: 12 },
+      sm: { side: 24, icon: 14, text: 12, pad: 8 },
+      default: { side: 28, icon: 16, text: 13, pad: 10 },
+      lg: { side: 34, icon: 18, text: 14, pad: 12 },
     }
   : {
-      small: { side: 32, icon: 16, text: 13, pad: 10 },
-      regular: { side: 38, icon: 18, text: 15, pad: 12 },
-      large: { side: 44, icon: 20, text: 16, pad: 14 },
+      sm: { side: 32, icon: 16, text: 13, pad: 10 },
+      default: { side: 38, icon: 18, text: 15, pad: 12 },
+      lg: { side: 44, icon: 20, text: 16, pad: 14 },
     };
 
 /** The smallest target a finger gets (Accessibility, "Touch targets"). */
@@ -79,16 +82,16 @@ const transition: ViewStyle = pressTransition(
 const read = <T,>(v: Live<T> | undefined): T | undefined =>
   typeof v === "function" ? (v as () => T)() : v;
 
-const dimensions = (o?: ToggleLookOptions) => toggleSizes[read(o?.size) ?? "regular"];
+const dimensions = (o?: ToggleLookOptions) => toggleSizes[read(o?.size) ?? "default"];
 
 /**
  * A toggle's props (spread them: `<Toggle pressed={..} {...toggleLook()}>`,
  * or on a toolbar's `Button` or trigger with `on`): its style and its
  * states. A square 28 points across with a pointer, 38 on a touch screen
- * (`small` 24 / 32, `large` 34 / 44), padded at its sides when it carries
+ * (`sm` 24 / 32, `lg` 34 / 44), padded at its sides when it carries
  * text, its corners a quarter of its side; a hit slop makes a touch target
- * 44 points. Off, a `ghost` is bare and an `outline` sits on a field's
- * edge; on (`pressedStyle`), it takes `finish.on`, a fill that stands off
+ * 44 points. Off, a default toggle is bare and an `outline` sits on a
+ * field's edge; on (`pressedStyle`), it takes `finish.on`, a fill that stands off
  * its surface in both appearances, further than the hover's whisper of the
  * text color. Pressed it sinks to 92% (none with reduced motion). Keyboard
  * focus: `focusRing(1)`. Disabled: 50%, no hover or press. Pair it with
@@ -144,7 +147,7 @@ export function toggleLook(o?: ToggleLookOptions) {
 /** The ink of a toggle's content: the text's color while on, muted while off. */
 const ink = (pressed: Live<boolean | undefined>) => (read(pressed) ? colors.text : colors.muted);
 
-/** The label of a `toggleLook` of the same options: 13 points with a pointer, 15 on a touch screen (`small` 12 / 13, `large` 14 / 16), medium weight, muted while off. */
+/** The label of a `toggleLook` of the same options: 13 points with a pointer, 15 on a touch screen (`sm` 12 / 13, `lg` 14 / 16), medium weight, muted while off. */
 export function toggleLabel(pressed: Live<boolean | undefined>, o?: ToggleLookOptions): TextStyle {
   return {
     get color() {
@@ -157,7 +160,7 @@ export function toggleLabel(pressed: Live<boolean | undefined>, o?: ToggleLookOp
   };
 }
 
-/** An icon in a `toggleLook` (`<Icon {...toggleGlyph(pressed)} />`): 16 points with a pointer, 18 on a touch screen (`small` 14 / 16, `large` 18 / 20), muted while off. */
+/** An icon in a `toggleLook` (`<Icon {...toggleGlyph(pressed)} />`): 16 points with a pointer, 18 on a touch screen (`sm` 14 / 16, `lg` 18 / 20), muted while off. */
 export function toggleGlyph(pressed: Live<boolean | undefined>, o?: ToggleLookOptions) {
   return {
     get size() {
@@ -175,9 +178,9 @@ export function toggleGlyph(pressed: Live<boolean | undefined>, o?: ToggleLookOp
  * props go over the look's. A string child is the label; anything else is drawn as given.
  */
 export type ToggleProps = Omit<BaseToggleProps, "children"> & {
-  /** Default `ghost`: bare while off. `outline`: on a field's edge while off. */
-  variant?: "ghost" | "outline";
-  /** Default `regular`. */
+  /** Default `default`: bare while off. `outline`: on a field's edge while off. */
+  variant?: ToggleVariant;
+  /** Default `default`. */
   size?: ToggleSize;
   /**
    * It carries a text label, beside its icon or alone: padded at its sides rather than a

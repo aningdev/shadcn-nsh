@@ -44,7 +44,7 @@ function App() {
               <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 6 }}>
                 {TONES.map((value) => (
                   <Toggle
-                    size="small"
+                    size="sm"
                     pressed={tone() === value}
                     onChange={() => (tone.set(value), log(`tone → ${value}`))}
                   >

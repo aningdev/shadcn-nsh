@@ -48,7 +48,7 @@ const initial: DockAreaLayout = {
 };
 
 /** The toolbar's toggles and button: the look's options, and its labels. */
-const toggleOptions = { size: "small", variant: "outline", text: true } as const;
+const toggleOptions = { size: "sm", variant: "outline", text: true } as const;
 
 function App() {
   const layout = signal<DockAreaLayout>(initial);

@@ -29,16 +29,16 @@ import { Toggle } from "@/components/ui/toggle";
 ### Variant
 
 ```tsx
-<Toggle>Ghost</Toggle>
-<Toggle variant="outline">Outline</Toggle>
+<Toggle>Bold</Toggle>
+<Toggle variant="outline">Bold</Toggle>
 ```
 
 ### Size
 
 ```tsx
-<Toggle size="small">Small</Toggle>
-<Toggle size="regular">Regular</Toggle>
-<Toggle size="large">Large</Toggle>
+<Toggle size="sm">Small</Toggle>
+<Toggle size="default">Default</Toggle>
+<Toggle size="lg">Large</Toggle>
 ```
 
 A size is compact with a pointer (24 / 28 / 34 points) and roomier on a touch screen (32 / 38 / 44), where a hit slop makes the target 44 points.
@@ -71,8 +71,8 @@ The look is a function, for a pressable of your own.
 
 Every prop of [`nsh/base` Toggle](https://nsh.dev/elements/toggle) passes through. `style`, `hoverStyle`, `activeStyle`, `focusVisibleStyle`, `pressedStyle` and `disabledStyle` go over the look's.
 
-| Prop       | Type                              | Default     |
-| ---------- | --------------------------------- | ----------- |
-| `variant`  | `"ghost" \| "outline"`            | `"ghost"`   |
-| `size`     | `"small" \| "regular" \| "large"` | `"regular"` |
-| `children` | `string \| JSX.Element`           |             |
+| Prop       | Type                        | Default     |
+| ---------- | --------------------------- | ----------- |
+| `variant`  | `"default" \| "outline"`    | `"default"` |
+| `size`     | `"sm" \| "default" \| "lg"` | `"default"` |
+| `children` | `string \| JSX.Element`     |             |

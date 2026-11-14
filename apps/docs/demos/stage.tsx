@@ -316,7 +316,7 @@ export function Chips<T extends string | number>(props: {
           get children() {
             return props.options.map((option) => (
               <Toggle
-                size="small"
+                size="sm"
                 text
                 pressed={props.value === option}
                 onChange={() => props.onChange(option)}

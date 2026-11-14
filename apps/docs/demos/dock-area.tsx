@@ -58,7 +58,7 @@ function App() {
 
   // A dock shown or the layout locked is on or off: a toggle. Reset is an action: a button.
   const toolbarToggle = (label: string, on: () => boolean, set: (on: boolean) => void) => (
-    <Toggle pressed={on()} variant="outline" size="small" onChange={({ pressed }) => set(pressed)}>
+    <Toggle pressed={on()} variant="outline" size="sm" onChange={({ pressed }) => set(pressed)}>
       {label}
     </Toggle>
   );

@@ -126,7 +126,7 @@ function App() {
 
   /** A format that is on or off at the selection: a `Toggle`. */
   const format = (label: string, on: () => boolean, cmd: RichCommand) => (
-    <Toggle size="small" pressed={on()} onChange={() => run(cmd)}>
+    <Toggle size="sm" pressed={on()} onChange={() => run(cmd)}>
       {label}
     </Toggle>
   );

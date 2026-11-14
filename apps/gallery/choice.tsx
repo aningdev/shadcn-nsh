@@ -6,7 +6,7 @@ import { colors } from "../../packages/theme";
 import { Checkbox, RadioGroup, RadioGroupItem, Toggle, ToggleGroup } from "../../packages/ui";
 import { Flow, Page, Panel, Row } from "./demo-kit";
 
-const sizes = ["small", "regular", "large"] as const;
+const sizes = ["sm", "default", "lg"] as const;
 
 function Label(props: { children: string }) {
   return <Text style={{ fontSize: 14, color: colors.text }}>{props.children}</Text>;

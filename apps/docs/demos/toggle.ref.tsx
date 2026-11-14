@@ -52,8 +52,8 @@ function App() {
   const on = signal<Mark[]>(["bold"]);
   const align = signal<Align>("left");
   const starred = signal(false);
-  const variant = signal<"ghost" | "outline">("ghost");
-  const size = signal<"small" | "regular" | "large">("regular");
+  const variant = signal<"default" | "outline">("default");
+  const size = signal<"sm" | "default" | "lg">("default");
   const events = signal<string[]>([]);
   const log = (line: string) => events.set([line, ...events()].slice(0, 3));
   const has = (m: Mark) => on().includes(m);
@@ -158,15 +158,15 @@ function App() {
       <DemoCard>
         <DemoSection title="Variant">
           <Toggle
-            pressed={variant() === "ghost"}
+            pressed={variant() === "default"}
             onChange={() => {
-              variant.set("ghost");
-              log("Variant: ghost");
+              variant.set("default");
+              log("Variant: default");
             }}
-            {...toggleLook({ variant: "ghost", text: true })}
+            {...toggleLook({ variant: "default", text: true })}
           >
             <Text
-              style={toggleLabel(() => variant() === "ghost", { variant: "ghost", text: true })}
+              style={toggleLabel(() => variant() === "default", { variant: "default", text: true })}
             >
               Ghost
             </Text>
@@ -188,38 +188,38 @@ function App() {
         </DemoSection>
         <DemoSection title="Size">
           <Toggle
-            pressed={size() === "small"}
+            pressed={size() === "sm"}
             onChange={() => {
-              size.set("small");
-              log("Size: small");
+              size.set("sm");
+              log("Size: sm");
             }}
-            {...toggleLook({ size: "small", text: true })}
+            {...toggleLook({ size: "sm", text: true })}
           >
-            <Text style={toggleLabel(() => size() === "small", { size: "small", text: true })}>
+            <Text style={toggleLabel(() => size() === "sm", { size: "sm", text: true })}>
               Small
             </Text>
           </Toggle>
           <Toggle
-            pressed={size() === "regular"}
+            pressed={size() === "default"}
             onChange={() => {
-              size.set("regular");
-              log("Size: regular");
+              size.set("default");
+              log("Size: default");
             }}
-            {...toggleLook({ size: "regular", text: true })}
+            {...toggleLook({ size: "default", text: true })}
           >
-            <Text style={toggleLabel(() => size() === "regular", { size: "regular", text: true })}>
+            <Text style={toggleLabel(() => size() === "default", { size: "default", text: true })}>
               Regular
             </Text>
           </Toggle>
           <Toggle
-            pressed={size() === "large"}
+            pressed={size() === "lg"}
             onChange={() => {
-              size.set("large");
-              log("Size: large");
+              size.set("lg");
+              log("Size: lg");
             }}
-            {...toggleLook({ size: "large", text: true })}
+            {...toggleLook({ size: "lg", text: true })}
           >
-            <Text style={toggleLabel(() => size() === "large", { size: "large", text: true })}>
+            <Text style={toggleLabel(() => size() === "lg", { size: "lg", text: true })}>
               Large
             </Text>
           </Toggle>
