@@ -19,10 +19,20 @@ const root = new URL("../../../", import.meta.url);
 const VARIANTS = ["default", "secondary", "outline", "ghost", "destructive", "link"];
 
 /**
- * The variant values shadcn does not have, each with the component page that names it:
- * `tile` is a radio drawn as a card (`Radio`), `line` an underlined tab track.
+ * The variant values outside shadcn's button set, each with the component page that names it:
+ * `tile` is a radio drawn as a card (`Radio`), `line` an underlined tab track; `legend` and
+ * `label` are a field's legend (`FieldLegend`), and `muted`, `icon` and `image` an item's surface
+ * and its media (`Item`, `ItemMedia`), as shadcn names them.
  */
-const OWN_VARIANTS: Record<string, string> = { tile: "radio-group", line: "tabs" };
+const OWN_VARIANTS: Record<string, string> = {
+  tile: "radio-group",
+  line: "tabs",
+  legend: "field",
+  label: "field",
+  muted: "item",
+  icon: "item",
+  image: "item",
+};
 
 /** Every `size` value: the three of a scale, and the icon-only ones a shadcn button takes. */
 const SIZES = ["sm", "default", "lg", "xs", "icon", "icon-xs", "icon-sm", "icon-lg"];

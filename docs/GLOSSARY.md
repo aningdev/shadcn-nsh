@@ -60,7 +60,7 @@ _Avoid_: 组件清单、组件表（手写的列表）
 _Avoid_: shadcn registry id（`dropdown-menu`）
 
 **Variant / Size**:
-轴名与取值都用 shadcn 的（[`specs/api-unify.md`](specs/api-unify.md) §4）。`variant` 取 `default` / `secondary` / `outline` / `ghost` / `destructive`；每个组件只收其中一个**子集**，子集写在自己的文档页 API 一节（`Button` 暂无 `outline` / `link` 的 look）。`size` 只表示**刻度**：`sm` / `default` / `lg`，图标按钮另有 `icon*`；精确像素叫 `side` / `width` / `height`，不叫 `size`。本库特有的变体值只有两个，各自写在组件页上：`line`（`TabsList` 的下划线轨道）与 `tile`（`Radio` 的卡片式）。`kind` 不再出现。每个导出的 `*Variant` / `*Size` 联合由 `packages/cli/src/api-vocabulary.test.ts` 固定，加一个值要同时改它。
+轴名与取值都用 shadcn 的（[`specs/api-unify.md`](specs/api-unify.md) §4）。`variant` 取 `default` / `secondary` / `outline` / `ghost` / `destructive`；每个组件只收其中一个**子集**，子集写在自己的文档页 API 一节（`Button` 暂无 `outline` / `link` 的 look）。`size` 只表示**刻度**：`sm` / `default` / `lg`，图标按钮另有 `icon*`；精确像素叫 `side` / `width` / `height`，不叫 `size`。按钮之外的取值也照 shadcn：`legend` / `label`（`FieldLegend`）与 `muted` / `icon` / `image`（`Item`、`ItemMedia`）。本库特有的变体值只有两个，各自写在组件页上：`line`（`TabsList` 的下划线轨道）与 `tile`（`Radio` 的卡片式）。`kind` 不再出现。每个导出的 `*Variant` / `*Size` 联合由 `packages/cli/src/api-vocabulary.test.ts` 固定，加一个值要同时改它。
 _Avoid_: `kind`, `primary` / `accent` / `danger`, `small` / `regular` / `large`, 把像素尺寸叫 `size`
 
 **Behavior Authority**:
