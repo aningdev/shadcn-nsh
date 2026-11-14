@@ -28,11 +28,10 @@ export default defineConfig({
     options: { typeAware: true, typeCheck: true },
     plugins: ["eslint", "typescript", "react", "import", "promise", "node", "vitest"],
     ignorePatterns: ignoreLint,
-    // Upstream text inside `// @port` regions is written by `bun run port:vendor`
-    // and must stay byte-identical to its source, so a finding there cannot be
-    // fixed in place: it would come back on the next vendor run and `port:check`
-    // would fail. Each entry names the upstream file that holds the text. Fix it
-    // upstream, or in the shell around it.
+    // A `// @port` region is this library's code that began as upstream text, and it may be
+    // edited (`docs/ARCHITECTURE.md`). These findings are upstream's own patterns, kept as they
+    // are: each entry names the upstream file the text came from, so a change is made against
+    // that look, not around a lint rule.
     overrides: [
       // theme.ts: `v.spring(next, spring)` returns the animation's promise, dropped on purpose.
       {

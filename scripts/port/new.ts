@@ -290,7 +290,7 @@ function main() {
   const uiTemplate = args.family ? "family.tsx.tmpl" : "leaf.tsx.tmpl";
   writeNew(targetPath(map, uiRel), render(readTemplate(uiTemplate), vars));
 
-  const vendor = spawnSync("bun", ["scripts/port/vendor.ts"], {
+  const vendor = spawnSync("bun", ["scripts/port/vendor.ts", args.id], {
     cwd: repo,
     encoding: "utf8",
     stdio: ["ignore", "pipe", "pipe"],

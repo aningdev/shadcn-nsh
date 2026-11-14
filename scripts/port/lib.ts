@@ -9,22 +9,18 @@ import { parseSync } from "oxc-parser";
 
 export const repo = path.resolve(import.meta.dir, "../..");
 
-/** Where one upstream file goes. Exactly one of `copy`, `owned`, `exclude` (a string) or a routing. */
+/** Where one upstream file goes. Exactly one of `owned`, `exclude` (a string) or a routing. */
 export type FileEntry = {
-  /** Copied byte for byte to this path under `root` (JSON, modules taken whole). */
-  copy?: string;
   /**
    * This library's own now, at this path under `root`: the file upstream started it from, kept for
-   * the record. Not copied by `vendor.ts` and not compared by `check.ts`, so editing it is not a
-   * deviation to register (the theme files: `docs/port.md`).
+   * the record. Not written by `vendor.ts` and not compared by `check.ts`, so editing it is not a
+   * change to register (the theme files: `docs/port.md`).
    */
   owned?: string;
   /** Every declaration goes to the region of this file under `root`, unless `symbols` says otherwise. */
   to?: string;
   /** Per-declaration targets: one file, or several (a private constant two components need). */
   symbols?: Record<string, string | string[]>;
-  /** Declarations whose text differs from upstream on purpose: the replacement, and why. */
-  replace?: Record<string, { with: string; why: string }>;
   /** Not ported yet: the whole file (`true`) or these declarations. */
   pending?: true | string[];
   /** Never ported: the whole file (a reason) or these declarations (name → reason). */
@@ -34,7 +30,10 @@ export type FileEntry = {
 export type PortMap = {
   upstream: {
     path: string;
+    /** The baseline: what `references/nsh` is checked out at, and what the installed CLI prints. */
     commit: string;
+    /** The baseline as last reviewed: upstream's changes since here are `port:check`'s to-review list. */
+    reviewed: string;
     /** What to install: a release tag (`v0.5.0`) whose build is `commit`, or `nightly`. */
     cli?: string;
   };
@@ -49,6 +48,9 @@ export function readMap(): PortMap {
 
 export const upstreamDir = (map: PortMap) => path.join(repo, map.upstream.path);
 export const targetPath = (map: PortMap, rel: string) => path.join(repo, map.root, rel);
+/** The upstream directory as `references/nsh` names it (`git show <commit>:<path>`). */
+export const upstreamRel = (map: PortMap) =>
+  path.relative(path.join(repo, "references/nsh"), upstreamDir(map)).replaceAll(path.sep, "/");
 
 /** Default path for a new component file in the registry / port map. */
 export const defaultUiRel = (map: PortMap, id: string) =>
@@ -169,7 +171,7 @@ export function writeRegion(target: string, upstream: string, body: string): str
   return `${target.slice(0, from)}${body}\n${target.slice(end)}`;
 }
 
-/** What the region of `upstream` in `targetRel` must hold: its declarations routed there, in order. */
+/** What the region of `upstream` in `targetRel` holds: its declarations routed there, in order. */
 export function renderRegion(
   map: PortMap,
   upstream: string,
@@ -183,8 +185,7 @@ export function renderRegion(
     const name = declaration.names[0];
     const to = route(entry, name);
     if (to.kind !== "ported" || !to.targets.includes(targetRel)) continue;
-    const replacement = entry.replace?.[name];
-    parts.push(replacement ? replacement.with : declaration.text);
+    parts.push(declaration.text);
     names.push(name);
   }
   return { body: parts.join("\n\n"), names };
@@ -194,7 +195,7 @@ export function renderRegion(
 export function regions(map: PortMap): { upstream: string; target: string }[] {
   const out: { upstream: string; target: string }[] = [];
   for (const [upstream, entry] of Object.entries(map.files)) {
-    if (entry.copy || entry.owned || typeof entry.exclude === "string") continue;
+    if (entry.owned || typeof entry.exclude === "string") continue;
     const targets = new Set<string>();
     if (entry.to) targets.add(entry.to);
     for (const value of Object.values(entry.symbols ?? {})) {

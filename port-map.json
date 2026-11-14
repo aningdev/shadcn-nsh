@@ -2,6 +2,7 @@
   "upstream": {
     "path": "references/nsh/examples/nsh-gallery-ui",
     "commit": "224d9a795c7ac9d10d75750de9351adac5549675",
+    "reviewed": "224d9a795c7ac9d10d75750de9351adac5549675",
     "cli": "v0.5.1"
   },
   "root": ".",
@@ -49,29 +50,7 @@
       "exclude": "sounds are out of scope"
     },
     "emoji.tsx": {
-      "to": "packages/ui/emoji-picker.tsx",
-      "replace": {
-        "emojiPickerClasses": {
-          "with": "/** The classes of the picker's parts. */\nexport const emojiPickerClasses = {\n  searchBar: `flex-row items-center gap-2 rounded-lg bg-raised ${platform.desktop ? \"mx-2.5 mt-2 h-8 pl-2.5 pr-1\" : \"mx-3 mt-1 h-10 pl-3 pr-1.5\"}`,\n  search: `flex-1 ${platform.desktop ? \"text-[13px]\" : \"text-base\"} text-foreground placeholder:text-muted-foreground`,\n  list: \"mt-1 flex-1\",\n  /** Eight points each side: some glyphs (🫡) reach past their cell. */\n  row: \"px-2\",\n  group: platform.desktop ? \"px-3 pt-2.5 pb-1\" : \"px-3.5 pt-3 pb-1.5\",\n  /** A cell: quiet until the pointer or the keys are on it (one gray for both, as Slack's), sunk while pressed. */\n  item: platform.desktop\n    ? \"size-9 items-center justify-center rounded-md text-[22px] transition-colors duration-100 motion-reduce:transition-none hover:bg-raised focus:bg-raised active:scale-90\"\n    : \"h-12 flex-1 items-center justify-center rounded-lg text-[28px] active:bg-raised\",\n};",
-          "why": "demo.ts is excluded; use platform.desktop instead of demo's desktop"
-        },
-        "EmojiHeading": {
-          "with": "/** A group's heading: quiet semibold, as Slack's. */\nexport function EmojiHeading(props: { group: EmojiGroup }) {\n  return <Text style={{ fontSize: platform.desktop ? 11.5 : 13, fontWeight: \"600\", color: colors.muted }}>{props.group.label}</Text>;\n}",
-          "why": "demo.ts is excluded; use platform.desktop instead of demo's desktop"
-        },
-        "EmojiTabs": {
-          "with": "/** The groups' tabs: the group at the top selected, a press scrolls there. */\nexport function EmojiTabs(props: { group: string; groups: typeof emojiGroups; onPress: (id: EmojiGroupId) => void }) {\n  return (\n    <Tabs\n      class={`flex-row justify-between ${platform.desktop ? \"mx-2 mt-1.5 h-9 items-start\" : \"mx-1 h-12 items-end border-t border-border\"}`}\n      indicatorClass={platform.desktop ? \"bottom-0 mx-2 h-0.5 rounded-full bg-foreground\" : \"top-0 mx-3 h-0.5 rounded-full bg-foreground\"}\n    >\n      {props.groups.map((g) => (\n        <Tab\n          selected={props.group === g.id}\n          onPress={() => props.onPress(g.id)}\n          accessibilityLabel={g.label}\n          tooltip={platform.desktop ? g.label : undefined}\n          class={`items-center justify-center rounded-md hover:bg-raised focus-visible:outline-2 focus-visible:outline-ring ${platform.desktop ? \"h-8 w-8\" : \"h-11 flex-1\"}`}\n        >\n          <Icon name={g.icon} size={platform.desktop ? 17 : 21} tint={props.group === g.id ? colors.text : colors.faint} />\n        </Tab>\n      ))}\n    </Tabs>\n  );\n}",
-          "why": "demo.ts is excluded; use platform.desktop instead of demo's desktop"
-        },
-        "EmojiTones": {
-          "with": "/**\n * The skin tone hand beside the search field: a press lays the six tones\n * out beside it, a press on one takes it (Slack's).\n */\nexport function EmojiTones(props: { tone: EmojiSkinTone; onChange: (tone: EmojiSkinTone) => void }) {\n  const open = signal(false);\n  const current = () => TONES.find((t) => t.tone === props.tone) ?? TONES[0];\n  const hand = (t: (typeof TONES)[number], onPress: () => void, selected = false) => (\n    <View\n      role=\"button\"\n      accessibilityLabel={t.label}\n      accessibilityState={{ selected }}\n      onPress={onPress}\n      class={`items-center justify-center rounded-md hover:bg-hover active:scale-90 ${platform.desktop ? \"size-6\" : \"size-8\"}`}\n      style={selected ? { backgroundColor: colors.background } : undefined}\n    >\n      <Text style={{ fontSize: platform.desktop ? 15 : 19 }}>{t.hand}</Text>\n    </View>\n  );\n  return (\n    <If when={open()} else={hand(current(), () => open.set(true))}>\n      <View style={{ flexDirection: \"row\", gap: 1 }}>\n        {TONES.map((t) =>\n          hand(\n            t,\n            () => {\n              props.onChange(t.tone);\n              open.set(false);\n            },\n            t.tone === props.tone,\n          ),\n        )}\n      </View>\n    </If>\n  );\n}",
-          "why": "demo.ts is excluded; use platform.desktop instead of demo's desktop"
-        },
-        "EmojiPanel": {
-          "with": "/**\n * The whole picker: tabs, search with the skin tone hand, the grid, the\n * preview on a desktop (the tabs at the bottom on a phone, `fill`ing the\n * sheet). `recent` leads; the skin tone is kept here for the demo's life.\n */\nexport function EmojiPanel(props: {\n  onSelect: (e: { emoji: string; base: string }) => void;\n  onCancel?: () => void;\n  recent?: string[];\n  fill?: boolean;\n  class?: string;\n}) {\n  const tone = signal<EmojiSkinTone>(\"none\");\n  const group = signal<string>(\"\");\n  const active = signal<EmojiEntry | null>(null);\n  let picker: EmojiPickerRef | undefined;\n  const groups = () => emojiGroups.filter((g) => g.id !== \"recent\" || (props.recent?.length ?? 0) > 0);\n  const tabs = () => <EmojiTabs group={group() || groups()[0].id} groups={groups()} onPress={(id) => picker?.scrollToGroup(id)} />;\n  return (\n    <EmojiPicker\n      ref={(r) => (picker = r)}\n      class={props.class ?? (props.fill ? \"flex-1\" : \"h-[392px] w-[342px]\")}\n      recent={props.recent ?? []}\n      skinTone={tone()}\n      groupLabels={emojiGroupLabels}\n      columns={platform.desktop ? 9 : 8}\n      emojiVersion=\"15.1\"\n      autoFocus={platform.desktop}\n      placeholder=\"Search emoji\"\n      accessibilityLabel=\"Emoji\"\n      searchAccessibilityLabel=\"Search emoji\"\n      onSelect={({ emoji, base }) => props.onSelect({ emoji, base })}\n      onCancel={props.onCancel}\n      onGroupChange={({ group: next }) => group.set(next)}\n      onHighlightChange={({ highlighted }) => active.set(highlighted)}\n      searchBarClass={emojiPickerClasses.searchBar}\n      searchClass={emojiPickerClasses.search}\n      listClass={emojiPickerClasses.list}\n      rowClass={emojiPickerClasses.row}\n      groupClass={emojiPickerClasses.group}\n      itemClass={emojiPickerClasses.item}\n      searchPrefix={<Icon name=\"search\" size={platform.desktop ? 14 : 16} tint={colors.faint} />}\n      searchSuffix={<EmojiTones tone={tone()} onChange={(next) => tone.set(next)} />}\n      header={props.fill ? undefined : tabs()}\n      footer={props.fill ? tabs() : <EmojiPreview entry={active()} hint=\"Pick an emoji…\" />}\n      empty={\n        <View style={{ flex: 1, alignItems: \"center\", justifyContent: \"center\", gap: 6, paddingBottom: 24 }}>\n          <Text style={{ fontSize: 28 }}>🔍</Text>\n          <Text style={{ fontSize: 13, color: colors.muted }}>No emoji found</Text>\n        </View>\n      }\n      loading={\n        <View style={{ flex: 1, alignItems: \"center\", justifyContent: \"center\" }}>\n          <Text style={{ fontSize: 13, color: colors.faint }}>Loading emoji…</Text>\n        </View>\n      }\n      renderGroup={(g) => <EmojiHeading group={g} />}\n    />\n  );\n}",
-          "why": "demo.ts is excluded; use platform.desktop instead of demo's desktop"
-        }
-      }
+      "to": "packages/ui/emoji-picker.tsx"
     },
     "theme.json": {
       "owned": "packages/theme/theme.json"
@@ -127,12 +106,6 @@
         "Stat": "packages/ui/stat.tsx",
         "Meter": "packages/ui/meter.tsx",
         "Legend": "packages/ui/plot.tsx"
-      },
-      "replace": {
-        "Spinner": {
-          "with": "/** A ring turning with its top arc in `tint`: work going on. It stands still\n * when the user asks for less motion. */\nexport function Spinner(props: { size: number; tint: string }) {\n  return (\n    <View\n      style={{\n        width: props.size,\n        height: props.size,\n        borderRadius: props.size / 2,\n        borderWidth: Math.max(1.5, props.size / 8),\n        borderColor: alpha(props.tint, 0.25),\n        borderTopColor: props.tint,\n        animationName: reduceMotion() ? undefined : \"spin\",\n        animationDuration: 800,\n        animationTimingFunction: \"linear\",\n        animationIterationCount: \"infinite\",\n      }}\n    />\n  );\n}",
-          "why": "the web runtime stops keyframes when the user asks for less motion, the iOS one runs them: an endless ring would turn for a user who asked not to, and the appearance check cannot compare two phases"
-        }
       },
       "exclude": {
         "hint": "demo kit helper",
