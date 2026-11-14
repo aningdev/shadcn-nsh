@@ -19,7 +19,7 @@ import {
   type RadioProps as BaseRadioProps,
 } from "nsh/base";
 
-import { ChoiceLight, choiceSink, choiceWell } from "./checkbox";
+import { ChoiceLight, choiceScales, choiceSink, choiceWell, type ChoiceSize } from "./checkbox";
 import { pressSink } from "./lib/press";
 import { controlSize } from "./lib/surface";
 
@@ -149,13 +149,16 @@ export function RadioGroup(props: RadioGroupProps) {
   return <BaseRadioGroup {...props} />;
 }
 
+/** A radio's variants: `default` a sunk ring, `tile` the whole surface the control. */
+export type RadioVariant = "default" | "tile";
+
 /**
  * `nsh/base`'s Radio in the look of `RadioRing` (or `choiceTileLook` when `variant` is `tile`).
  * Every base prop passes through; the style props go over the look's. A string child is the label.
  */
 export type RadioProps = Omit<BaseRadioProps, "children"> & {
-  /** Default `ring`: a sunk ring beside the label. `tile`: the whole surface is the control. */
-  variant?: "ring" | "tile";
+  /** Default `default`: a sunk ring beside the label. `tile`: the whole surface is the control. */
+  variant?: RadioVariant;
   /**
    * Its ring ahead of the label (the default). `false` draws only what the radio's props
    * and children give it: a segment of a `segmentedLook` track (`segmentedLook().segment`
@@ -163,8 +166,8 @@ export type RadioProps = Omit<BaseRadioProps, "children"> & {
    * the track and the thumb are the control.
    */
   indicator?: boolean;
-  /** Times the page's control size (default 1): 0.8 small, 1.25 large. */
-  scale?: number;
+  /** `sm` (0.8), `default` (1) or `lg` (1.25) times the page's control size. */
+  size?: ChoiceSize;
   /** A string is the label; anything else is drawn as given. */
   children?: string | JSX.Element;
 };
@@ -174,7 +177,7 @@ export function Radio(props: RadioProps) {
   const [, rest] = split(props, [
     "variant",
     "indicator",
-    "scale",
+    "size",
     "children",
     "class",
     "style",
@@ -184,6 +187,7 @@ export function Radio(props: RadioProps) {
     "disabledStyle",
   ]);
   const tile = props.variant === "tile";
+  const scale = choiceScales[props.size ?? "default"];
   const look = tile
     ? choiceTileLook(() => !!props.checked, { disabled: () => !!props.disabled })
     : undefined;
@@ -198,7 +202,7 @@ export function Radio(props: RadioProps) {
       disabledStyle={[look?.disabledStyle ?? null, props.disabledStyle ?? null]}
     >
       <If when={props.indicator ?? true}>
-        <RadioRing on={!!props.checked} scale={props.scale} disabled={!!props.disabled} />
+        <RadioRing on={!!props.checked} scale={scale} disabled={!!props.disabled} />
       </If>
       {typeof props.children === "string" ? <Text>{props.children}</Text> : props.children}
     </BaseRadio>

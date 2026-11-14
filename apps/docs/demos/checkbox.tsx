@@ -99,13 +99,13 @@ function App() {
       <DemoCard>
         <DemoSection title="Scale">
           <Row label="Small">
-            <Checkbox scale={0.8} checked />
+            <Checkbox size="sm" checked />
           </Row>
           <Row label="Regular">
-            <Checkbox checked />
+            <Checkbox size="default" checked />
           </Row>
           <Row label="Large">
-            <Checkbox scale={1.25} checked />
+            <Checkbox size="lg" checked />
           </Row>
         </DemoSection>
         <DemoSection title="Round">

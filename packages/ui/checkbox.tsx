@@ -14,7 +14,8 @@ export type CheckboxMarkKind = "check" | "dash" | null;
 
 /** Options of `checkboxLook`, `CheckboxMark` and `RadioRing`. */
 export interface ChoiceOptions {
-  /** Times the page's size (`controlSize.control`): 0.8 small, 1.25 large. */
+  /** Times the page's size (`controlSize.control`): 0.8, 1 or 1.25 (`ChoiceSize`'s `sm`,
+   * `default`, `lg`). */
   scale?: number;
   /** A round box (a task's, as reminders draw it). */
   round?: boolean;
@@ -180,12 +181,22 @@ const read = <T,>(v: Live<T> | undefined): T | undefined =>
 // @port end
 
 /**
+ * A choice control's size: what a checkbox's box or a radio's ring is drawn at, `sm` 0.8,
+ * `default` 1, `lg` 1.25 times the page's control size. The look takes the number
+ * (`ChoiceOptions.scale`); this is the shell's word for it.
+ */
+export type ChoiceSize = "sm" | "default" | "lg";
+
+/** What a `ChoiceSize` multiplies the page's control size by: 0.8, 1, 1.25. */
+export const choiceScales: Record<ChoiceSize, number> = { sm: 0.8, default: 1, lg: 1.25 };
+
+/**
  * `nsh/base`'s Checkbox in the look of `checkboxLook`. Every base prop passes through; the
  * indicator props go over the look's. A string child is the label; anything else is drawn as given.
  */
 export type CheckboxProps = Omit<BaseCheckboxProps, "children"> & {
-  /** Times the page's control size (default 1): 0.8 small, 1.25 large. */
-  scale?: number;
+  /** `sm` (0.8), `default` (1) or `lg` (1.25) times the page's control size. */
+  size?: ChoiceSize;
   /** A round box (a task's, as reminders draw it). */
   round?: boolean;
   /** A string is the label; anything else is drawn as given. */
@@ -195,7 +206,7 @@ export type CheckboxProps = Omit<BaseCheckboxProps, "children"> & {
 /** A checkbox. The row is the `group` the box sinks with while pressed. */
 export function Checkbox(props: CheckboxProps) {
   const [, rest] = split(props, [
-    "scale",
+    "size",
     "round",
     "children",
     "class",
@@ -203,8 +214,9 @@ export function Checkbox(props: CheckboxProps) {
     "indicatorStyle",
     "indicator",
   ]);
+  const scale = choiceScales[props.size ?? "default"];
   const options: ChoiceOptions = {
-    scale: props.scale,
+    scale,
     round: props.round,
     disabled: () => !!props.disabled,
   };
@@ -224,7 +236,7 @@ export function Checkbox(props: CheckboxProps) {
           <CheckboxMark
             // Read here, where the mark is made, so it follows a value the app changes.
             mark={props.indeterminate ? "dash" : props.checked ? "check" : null}
-            scale={props.scale}
+            scale={scale}
             round={props.round}
           />
         )

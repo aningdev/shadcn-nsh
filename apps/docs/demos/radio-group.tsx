@@ -72,7 +72,7 @@ function App() {
           <RadioGroup style={sectionSurface({ padded: true })}>
             {plans.map((item, i) => (
               <Radio
-                variant="ring"
+                variant="default"
                 checked={plan() === item.id}
                 disabled={item.locked}
                 onChange={({ checked }) => {

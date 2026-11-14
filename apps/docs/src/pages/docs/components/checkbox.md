@@ -26,15 +26,15 @@ import { Checkbox } from "@/components/ui/checkbox";
 
 ## Examples
 
-### Scale
+### Size
 
 ```tsx
-<Checkbox scale={0.8}>Small</Checkbox>
-<Checkbox>Regular</Checkbox>
-<Checkbox scale={1.25}>Large</Checkbox>
+<Checkbox size="sm">Small</Checkbox>
+<Checkbox size="default">Regular</Checkbox>
+<Checkbox size="lg">Large</Checkbox>
 ```
 
-`scale` times the page's control size (default 1): 0.8 small, 1.25 large.
+`size` multiplies the page's control size: `sm` 0.8, `default` 1, `lg` 1.25 (`ChoiceSize`).
 
 ### Round
 
@@ -79,8 +79,10 @@ The look is a function, for a checkbox of your own.
 
 Every prop of [`nsh/base` Checkbox](https://nsh.dev/elements/checkbox) passes through. `indicatorClass` and `indicatorStyle` go over the look's. The row is the `group` the box sinks with while pressed.
 
-| Prop       | Type                    | Default |
-| ---------- | ----------------------- | ------- |
-| `scale`    | `number`                | `1`     |
-| `round`    | `boolean`               |         |
-| `children` | `string \| JSX.Element` |         |
+| Prop       | Type                    | Default     |
+| ---------- | ----------------------- | ----------- |
+| `size`     | `ChoiceSize`            | `"default"` |
+| `round`    | `boolean`               | `false`     |
+| `children` | `string \| JSX.Element` |             |
+
+`ChoiceSize` is `"sm" | "default" | "lg"`: 0.8, 1 or 1.25 times the page's control size, shared with `Radio` (`choiceScales` is the table).

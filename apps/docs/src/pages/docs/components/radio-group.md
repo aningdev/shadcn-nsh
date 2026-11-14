@@ -28,13 +28,15 @@ import { Radio, RadioGroup } from "@/components/ui/radio-group";
 
 ## Examples
 
-### Scale
+### Size
 
 ```tsx
-<Radio scale={0.8}>Small</Radio>
-<Radio>Regular</Radio>
-<Radio scale={1.25}>Large</Radio>
+<Radio size="sm">Small</Radio>
+<Radio size="default">Regular</Radio>
+<Radio size="lg">Large</Radio>
 ```
+
+`size` is `ChoiceSize` (`"sm" | "default" | "lg"`: 0.8, 1 or 1.25 times the page's control size), shared with `Checkbox`.
 
 ### Tile
 
@@ -65,8 +67,11 @@ import { Radio, RadioGroup } from "@/components/ui/radio-group";
 
 Every prop of [`nsh/base` Radio](https://nsh.dev/elements/radio) and [`RadioGroup`](https://nsh.dev/elements/radio-group) passes through. Style props go over the look's. The row is the `group` the ring sinks with while pressed. `RadioGroupItem` is an alias of `Radio`.
 
-| Prop       | Type                    | Default  |
-| ---------- | ----------------------- | -------- |
-| `variant`  | `"ring" \| "tile"`      | `"ring"` |
-| `scale`    | `number`                | `1`      |
-| `children` | `string \| JSX.Element` |          |
+| Prop        | Type                    | Default     |
+| ----------- | ----------------------- | ----------- |
+| `variant`   | `RadioVariant`          | `"default"` |
+| `indicator` | `boolean`               | `true`      |
+| `size`      | `ChoiceSize`            | `"default"` |
+| `children`  | `string \| JSX.Element` |             |
+
+`RadioVariant` is `"default"` (the sunk ring) or `"tile"` (the whole surface is the control, this library's own value).

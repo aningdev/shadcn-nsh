@@ -6,7 +6,13 @@ import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 import { Checkbox } from "nsh/base";
 
-import { type CheckboxMarkKind, CheckboxMark, checkboxLook } from "@/packages/ui/checkbox";
+import {
+  type CheckboxMarkKind,
+  CheckboxMark,
+  checkboxLook,
+  type ChoiceSize,
+  choiceScales,
+} from "@/packages/ui/checkbox";
 import {
   controlSize,
   listRow,
@@ -27,11 +33,13 @@ const items = [
 /** A checkbox in the shared box look, its mark drawn from the value. */
 function Box(props: {
   mark: CheckboxMarkKind;
-  scale?: number;
+  size?: ChoiceSize;
   round?: boolean;
   disabled?: boolean;
   children?: JSX.Element;
 }) {
+  // The shell's table, so the reference draws the box at the same scale it does.
+  const scale = choiceScales[props.size ?? "default"];
   return (
     <Checkbox
       class="group"
@@ -39,11 +47,11 @@ function Box(props: {
       indeterminate={props.mark === "dash"}
       disabled={props.disabled}
       {...checkboxLook({
-        scale: props.scale,
+        scale,
         round: props.round,
         disabled: () => !!props.disabled,
       })}
-      indicator={<CheckboxMark mark={props.mark} scale={props.scale} round={props.round} />}
+      indicator={<CheckboxMark mark={props.mark} scale={scale} round={props.round} />}
     >
       {props.children}
     </Checkbox>
@@ -145,13 +153,13 @@ function App() {
       <DemoCard>
         <DemoSection title="Scale">
           <Row label="Small">
-            <Box mark="check" scale={0.8} />
+            <Box mark="check" size="sm" />
           </Row>
           <Row label="Regular">
-            <Box mark="check" />
+            <Box mark="check" size="default" />
           </Row>
           <Row label="Large">
-            <Box mark="check" scale={1.25} />
+            <Box mark="check" size="lg" />
           </Row>
         </DemoSection>
         <DemoSection title="Round">
@@ -164,7 +172,7 @@ function App() {
         </DemoSection>
         <DemoSection title="States">
           <Row label="Checked">
-            <Box mark="check" />
+            <Box mark="check" size="default" />
           </Row>
           <Row label="Indeterminate">
             <Box mark="dash" />
