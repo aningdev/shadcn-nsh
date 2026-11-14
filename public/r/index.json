@@ -26,6 +26,29 @@
       ]
     },
     {
+      "name": "theme-shadcn",
+      "type": "registry:theme",
+      "title": "Theme: shadcn neutral",
+      "description": "shadcn's neutral palette and flat finishes, in the same three files as the default theme (theme.json, lib/finishes.json, lib/theme.ts).",
+      "files": [
+        {
+          "path": "packages/theme/themes/shadcn/theme.json",
+          "type": "registry:file",
+          "target": "theme.json"
+        },
+        {
+          "path": "packages/theme/themes/shadcn/finishes.json",
+          "type": "registry:lib",
+          "target": "lib/finishes.json"
+        },
+        {
+          "path": "packages/theme/theme.ts",
+          "type": "registry:lib",
+          "target": "lib/theme.ts"
+        }
+      ]
+    },
+    {
       "name": "press",
       "type": "registry:lib",
       "title": "Press",
