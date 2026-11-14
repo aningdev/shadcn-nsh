@@ -822,6 +822,19 @@
           "target": "components/ui/color-picker.tsx"
         }
       ]
+    },
+    {
+      "name": "card",
+      "type": "registry:ui",
+      "title": "Card",
+      "description": "A flat surface that groups related content: a header with its action, a body and a footer.",
+      "files": [
+        {
+          "path": "packages/ui/card.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/card.tsx"
+        }
+      ]
     }
   ]
 }

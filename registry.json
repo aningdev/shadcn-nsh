@@ -929,6 +929,20 @@
         }
       ],
       "dependencies": ["lucide@^1.66.0"]
+    },
+    {
+      "name": "card",
+      "type": "registry:ui",
+      "title": "Card",
+      "description": "A flat surface that groups related content: a header with its action, a body and a footer.",
+      "registryDependencies": ["surface", "theme"],
+      "files": [
+        {
+          "path": "packages/ui/card.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/card.tsx"
+        }
+      ]
     }
   ]
 }

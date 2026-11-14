@@ -40,6 +40,13 @@ export const components: ComponentDoc[] = [
     description: "A month of days to pick a date or a range, on the shared calendar look.",
   },
   {
+    slug: "card",
+    title: "Card",
+    nshElement: "card",
+    description:
+      "A flat surface that groups related content: a header with its action, a body and a footer.",
+  },
+  {
     slug: "carousel",
     title: "Carousel",
     nshElement: "carousel",
