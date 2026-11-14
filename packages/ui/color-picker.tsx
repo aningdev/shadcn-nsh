@@ -8,6 +8,7 @@ import {
 } from "@shadcn-nsh/theme";
 // Color picker: gallery look for `nsh/base` color parts and `ColorPopover`.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+import { Check, ChevronDown, Copy, Pipette } from "lucide";
 import type { InputStyle, JSX, ViewStyle } from "nsh";
 import { Clipboard, platform, signal, Text, token, View } from "nsh";
 import {
@@ -217,7 +218,7 @@ function FormatButton(props: { label: string }) {
       <Text style={{ fontSize: 12, fontWeight: "500", color: colors.text }}>
         {terminal ? `${props.label} ▾` : props.label}
       </Text>
-      <Icon name="chevron-down" size={12} tint={colors.muted} />
+      <Icon icon={ChevronDown} size={12} tint={colors.muted} />
     </View>
   );
 }
@@ -356,7 +357,7 @@ export function ColorCopy(props: { name: string; text: () => string }) {
         <Text style={{ color: colors.muted }}>{copied() ? "✓" : "Copy"}</Text>
       ) : (
         <Icon
-          name={copied() ? "check" : "copy"}
+          icon={copied() ? Check : Copy}
           size={16}
           tint={copied() ? colors.accent : colors.muted}
         />
@@ -376,7 +377,7 @@ export function ColorDropper(props: { name: string }) {
       {terminal ? (
         <Text style={{ color: colors.muted }}>Pick</Text>
       ) : (
-        <Icon name="pipette" size={16} tint={colors.muted} />
+        <Icon icon={Pipette} size={16} tint={colors.muted} />
       )}
     </ColorEyeDropper>
   );
@@ -417,7 +418,7 @@ export function ColorSwatches(props: { colors: readonly string[] }) {
         >
           {terminal ? null : (
             <View class="group-selected:flex hidden">
-              <Icon name="check" size={14} tint={inkOn(c)} />
+              <Icon icon={Check} size={14} tint={inkOn(c)} />
             </View>
           )}
         </ColorSwatch>

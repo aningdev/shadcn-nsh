@@ -1,10 +1,11 @@
 // Tree: row look (`treeItemClass`, `TreeRow`) and the `Tree` that wears them.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { colors, terminal, TERMINAL_COLUMN, TERMINAL_GAP } from "@shadcn-nsh/theme";
+import { ChevronRight, File, Folder, FolderOpen, type IconNode } from "lucide";
 import { platform, split, Text, View } from "nsh";
 import { Tree as BaseTree, type TreeEntry, type TreeProps as BaseTreeProps } from "nsh/base";
 
-import { Icon, type IconName } from "./lib/icons";
+import { Icon } from "./lib/icons";
 import { controlSize } from "./lib/surface";
 
 const desktop = platform.desktop;
@@ -41,7 +42,7 @@ export const treeRowHeight = desktop ? size.rowSm - 4 : size.rowSm;
  */
 export function TreeRow(props: {
   entry: TreeEntry;
-  icon?: IconName;
+  icon?: IconNode;
   tint?: string;
   detail?: string;
 }) {
@@ -61,21 +62,21 @@ export function TreeRow(props: {
         class="transition-transform duration-200 ease-out group-aria-expanded:rotate-90 motion-reduce:transition-none rtl:group-aria-expanded:-rotate-90"
         style={{ width: 14, height: 14, opacity: props.entry.folder ? 1 : 0 }}
       >
-        <Icon name="chevron" size={14} tint={colors.muted} />
+        <Icon icon={ChevronRight} size={14} tint={colors.muted} />
       </View>
       {props.icon ? (
-        <Icon name={props.icon} size={16} tint={props.tint ?? colors.muted} />
+        <Icon icon={props.icon} size={16} tint={props.tint ?? colors.muted} />
       ) : props.entry.folder ? (
         <View style={{ width: 16, height: 16 }}>
           <View class="group-aria-expanded:hidden">
-            <Icon name="folder" size={16} tint={colors.muted} />
+            <Icon icon={Folder} size={16} tint={colors.muted} />
           </View>
           <View class="hidden group-aria-expanded:flex">
-            <Icon name="folder-open" size={16} tint={colors.muted} />
+            <Icon icon={FolderOpen} size={16} tint={colors.muted} />
           </View>
         </View>
       ) : (
-        <Icon name="file" size={16} tint={colors.muted} />
+        <Icon icon={File} size={16} tint={colors.muted} />
       )}
       <Text
         class="text-muted-foreground group-selected:text-foreground flex-1"

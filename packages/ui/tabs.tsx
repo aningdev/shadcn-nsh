@@ -10,6 +10,7 @@ import {
   radius,
   terminal,
 } from "@shadcn-nsh/theme";
+import type { IconNode } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { computed, context, signal, split, Text, View } from "nsh";
 import {
@@ -19,7 +20,7 @@ import {
   type TabsProps as BaseTabsProps,
 } from "nsh/base";
 
-import { Icon, type IconName } from "./lib/icons";
+import { Icon } from "./lib/icons";
 import { controlSize } from "./lib/surface";
 
 // @port look/tabs.tsx
@@ -177,7 +178,7 @@ export function TabTitle(props: {
   name: string;
   selected: boolean;
   count?: number;
-  icon?: IconName;
+  icon?: IconNode;
   underline?: boolean;
   onWidth?: (bare: number) => void;
 }) {
@@ -193,10 +194,10 @@ export function TabTitle(props: {
       <If when={props.icon}>
         <View style={{ width: 14, height: 14 }}>
           <View style={{ position: "absolute", opacity: away }}>
-            <Icon name={props.icon!} size={14} tint={colors.muted} />
+            <Icon icon={props.icon!} size={14} tint={colors.muted} />
           </View>
           <View style={{ position: "absolute", opacity: on }}>
-            <Icon name={props.icon!} size={14} tint={colors.text} />
+            <Icon icon={props.icon!} size={14} tint={colors.text} />
           </View>
         </View>
       </If>

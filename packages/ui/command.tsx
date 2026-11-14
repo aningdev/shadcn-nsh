@@ -1,6 +1,7 @@
 // Command: palette parts (`commandClasses`, `CommandRow`) and the `Command` that wears them.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { colors, terminal } from "@shadcn-nsh/theme";
+import { Check, Search, type IconNode } from "lucide";
 import type { ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
 import {
@@ -10,7 +11,7 @@ import {
   type CommandProps as BaseCommandProps,
 } from "nsh/base";
 
-import { Icon, type IconName } from "./lib/icons";
+import { Icon } from "./lib/icons";
 import { controlSize } from "./lib/surface";
 
 const desktop = platform.desktop;
@@ -102,7 +103,7 @@ export function CommandHeading(props: { group: CommandGroup }) {
  */
 export function CommandRow(props: {
   entry: CommandEntry;
-  icon?: IconName;
+  icon?: IconNode;
   detail?: string;
   note?: string;
 }) {
@@ -111,7 +112,7 @@ export function CommandRow(props: {
     <View
       style={{ height, flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 8 }}
     >
-      {props.icon ? <Icon name={props.icon} size={16} tint={colors.muted} /> : null}
+      {props.icon ? <Icon icon={props.icon} size={16} tint={colors.muted} /> : null}
       <View style={{ flex: 1, minWidth: 0, gap: 1 }}>
         <Text style={{ fontSize: desktop ? 13 : size.label, color: colors.text, numberOfLines: 1 }}>
           {props.entry.label}
@@ -130,7 +131,7 @@ export function CommandRow(props: {
       {desktop && props.entry.shortcutLabel ? (
         <CommandKeys label={props.entry.shortcutLabel} />
       ) : null}
-      {props.entry.checked ? <Icon name="check" size={14} tint={colors.text} /> : null}
+      {props.entry.checked ? <Icon icon={Check} size={14} tint={colors.text} /> : null}
     </View>
   );
 }
@@ -184,7 +185,7 @@ export function Command(props: CommandProps) {
       placeholder={props.placeholder ?? "Type a command or search…"}
       searchPrefix={
         props.searchPrefix === undefined ? (
-          <Icon name="search" size={16} tint={colors.muted} />
+          <Icon icon={Search} size={16} tint={colors.muted} />
         ) : (
           props.searchPrefix
         )

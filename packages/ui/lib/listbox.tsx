@@ -1,6 +1,7 @@
 // Shared list looks: popup, rows, search, chevron, clear — used by select, combobox, calendar, date-picker.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { colors, finish, radius, terminal } from "@shadcn-nsh/theme";
+import { Check, ChevronRight, X } from "lucide";
 import type { JSX, ViewStyle } from "nsh";
 import { platform, Text, View } from "nsh";
 import type { SelectEntry, SelectGroup } from "nsh/base";
@@ -90,7 +91,7 @@ export function Chevron(props: { open: boolean; hidden?: boolean }) {
         transform: [{ rotate: props.open ? "-90deg" : "90deg" }],
       }}
     >
-      <Icon name="chevron" size={controlSize.check} tint={colors.muted} />
+      <Icon icon={ChevronRight} size={controlSize.check} tint={colors.muted} />
     </View>
   );
 }
@@ -129,7 +130,7 @@ export function clearButtonLook(o?: ClearButtonOptions) {
       return terminal ? (
         <Text style={{ color: colors.muted }}>×</Text>
       ) : (
-        <Icon name="close" size={controlSize.clear - 6} tint={colors.muted} />
+        <Icon icon={X} size={controlSize.clear - 6} tint={colors.muted} />
       );
     },
   };
@@ -181,7 +182,7 @@ export function OptionRow(props: {
         class="group-selected:opacity-100 opacity-0"
         style={{ width: 16, alignItems: "center" }}
       >
-        <Icon name="check" size={14} tint={colors.accent} />
+        <Icon icon={Check} size={14} tint={colors.accent} />
       </View>
     </View>
   );

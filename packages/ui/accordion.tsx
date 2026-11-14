@@ -1,6 +1,7 @@
 // An accordion: disclosure look (`disclosureTriggerLook`, `DisclosureChevron`, `disclosurePanel`) and base parts.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { colors } from "@shadcn-nsh/theme";
+import { ChevronDown, ChevronRight } from "lucide";
 import type { JSX, ViewStyle } from "nsh";
 import { split, View } from "nsh";
 import {
@@ -69,14 +70,14 @@ export function DisclosureChevron(props: { open?: boolean; accordion?: boolean }
       class="transition-transform duration-200 group-aria-expanded:rotate-180 motion-reduce:transition-none"
       style={{ width: icon, height: icon, alignItems: "center", justifyContent: "center" }}
     >
-      <Icon name="chevron-down" size={icon} tint={colors.muted} />
+      <Icon icon={ChevronDown} size={icon} tint={colors.muted} />
     </View>
   ) : (
     <View
       class="transition-transform duration-150 motion-reduce:transition-none"
       style={{ width: icon / 2, alignItems: "center", rotate: props.open ? "90deg" : "0deg" }}
     >
-      <Icon name="chevron" size={icon} tint={colors.muted} />
+      <Icon icon={ChevronRight} size={icon} tint={colors.muted} />
     </View>
   );
 }

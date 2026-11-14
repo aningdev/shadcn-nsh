@@ -1,6 +1,7 @@
 // A select: the look (`pickerLook`, `Picker`) and `Select` that wears the shared listbox look.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { alpha, colors, finish, radius, terminal, TERMINAL_COLUMN } from "@shadcn-nsh/theme";
+import { ChevronRight, type IconNode } from "lucide";
 import type { JSX, ViewStyle } from "nsh";
 import { cleanup, context, platform, reduceMotion, signal, split, Text, View } from "nsh";
 import {
@@ -12,7 +13,7 @@ import {
 } from "nsh/base";
 
 import { fieldSize } from "./input";
-import { Icon, type IconName } from "./lib/icons";
+import { Icon } from "./lib/icons";
 import {
   clearButtonLook,
   listboxProps,
@@ -66,7 +67,7 @@ export function Chevron(props: { open: boolean; hidden?: boolean }) {
         transform: [{ rotate: props.open ? "-90deg" : "90deg" }],
       }}
     >
-      <Icon name="chevron" size={controlSize.check} tint={colors.muted} />
+      <Icon icon={ChevronRight} size={controlSize.check} tint={colors.muted} />
     </View>
   );
 }
@@ -182,7 +183,7 @@ export interface PickerProps {
   clearable?: boolean;
   invalid?: boolean;
   /** An icon before the title, in the muted color (none in the terminal). */
-  icon?: IconName;
+  icon?: IconNode;
   lead?: JSX.Element;
   /** The chevron at the end (the default); a date picker's trigger has none, its calendar says what opens. */
   chevron?: boolean;
@@ -213,7 +214,7 @@ export function Picker(props: PickerProps) {
       })}
     >
       <If when={props.icon && !terminal}>
-        <Icon name={props.icon!} size={triggerIcon} tint={colors.muted} />
+        <Icon icon={props.icon!} size={triggerIcon} tint={colors.muted} />
       </If>
       {props.lead}
       <Text
@@ -291,7 +292,7 @@ export type SelectTriggerProps = {
   /** A `SelectValue` (its placeholder); a string is the placeholder itself. */
   children?: string | JSX.Element;
   /** An icon before the title, in the muted color (none in the terminal). */
-  icon?: IconName;
+  icon?: IconNode;
   /** Content before the title (a flag, a status's dot). */
   lead?: JSX.Element;
   /** Edged in the danger tone. */

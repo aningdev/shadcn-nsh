@@ -1,6 +1,7 @@
 // A calendar: the look (`CalendarItem`, `calendarLook`, `TimeSegment`) and `Calendar` that wears it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { alpha, colors, radius, terminal } from "@shadcn-nsh/theme";
+import { ChevronRight } from "lucide";
 import type { ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
 import {
@@ -133,7 +134,7 @@ export function CalendarItem(props: CalendarItemProps) {
         }}
       >
         <View style={{ transform: [{ rotate: kind === "previous" ? "180deg" : "0deg" }] }}>
-          <Icon name="chevron" size={triggerIcon} tint={colors.text} />
+          <Icon icon={ChevronRight} size={triggerIcon} tint={colors.text} />
         </View>
       </View>
     );

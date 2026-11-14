@@ -1,5 +1,19 @@
 // An emoji picker panel. From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { colors } from "@shadcn-nsh/theme";
+import {
+  Car,
+  Clock,
+  Flag,
+  Heart,
+  Leaf,
+  Lightbulb,
+  Search,
+  Smile,
+  type IconNode,
+  User,
+  Utensils,
+  Volleyball,
+} from "lucide";
 import { platform, signal, Text, View } from "nsh";
 import {
   EmojiPicker,
@@ -13,21 +27,21 @@ import {
   type EmojiSkinTone,
 } from "nsh/base";
 
-import { Icon, type IconName } from "./lib/icons";
+import { Icon } from "./lib/icons";
 
 // @port emoji.tsx
 /** The groups, their names and their tabs' icons. */
-export const emojiGroups: { id: EmojiGroupId; label: string; icon: IconName }[] = [
-  { id: "recent", label: "Frequently used", icon: "clock" },
-  { id: "smileysEmotion", label: "Smileys & emotion", icon: "smile" },
-  { id: "peopleBody", label: "People & body", icon: "person" },
-  { id: "animalsNature", label: "Animals & nature", icon: "leaf" },
-  { id: "foodDrink", label: "Food & drink", icon: "food" },
-  { id: "travelPlaces", label: "Travel & places", icon: "car" },
-  { id: "activities", label: "Activities", icon: "ball" },
-  { id: "objects", label: "Objects", icon: "bulb" },
-  { id: "symbols", label: "Symbols", icon: "heart" },
-  { id: "flags", label: "Flags", icon: "flag" },
+export const emojiGroups: { id: EmojiGroupId; label: string; icon: IconNode }[] = [
+  { id: "recent", label: "Frequently used", icon: Clock },
+  { id: "smileysEmotion", label: "Smileys & emotion", icon: Smile },
+  { id: "peopleBody", label: "People & body", icon: User },
+  { id: "animalsNature", label: "Animals & nature", icon: Leaf },
+  { id: "foodDrink", label: "Food & drink", icon: Utensils },
+  { id: "travelPlaces", label: "Travel & places", icon: Car },
+  { id: "activities", label: "Activities", icon: Volleyball },
+  { id: "objects", label: "Objects", icon: Lightbulb },
+  { id: "symbols", label: "Symbols", icon: Heart },
+  { id: "flags", label: "Flags", icon: Flag },
 ];
 
 /** The groups' headings. */
@@ -94,7 +108,7 @@ export function EmojiTabs(props: {
           class={`hover:bg-raised focus-visible:outline-ring items-center justify-center rounded-md focus-visible:outline-2 ${platform.desktop ? "h-8 w-8" : "h-11 flex-1"}`}
         >
           <Icon
-            name={g.icon}
+            icon={g.icon}
             size={platform.desktop ? 17 : 21}
             tint={props.group === g.id ? colors.text : colors.faint}
           />
@@ -222,7 +236,7 @@ export function EmojiPanel(props: {
       rowClass={emojiPickerClasses.row}
       groupClass={emojiPickerClasses.group}
       itemClass={emojiPickerClasses.item}
-      searchPrefix={<Icon name="search" size={platform.desktop ? 14 : 16} tint={colors.faint} />}
+      searchPrefix={<Icon icon={Search} size={platform.desktop ? 14 : 16} tint={colors.faint} />}
       searchSuffix={<EmojiTones tone={tone()} onChange={(next) => tone.set(next)} />}
       header={props.fill ? undefined : tabs()}
       footer={props.fill ? tabs() : <EmojiPreview entry={active()} hint="Pick an emoji…" />}
