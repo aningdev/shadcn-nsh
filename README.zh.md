@@ -60,15 +60,15 @@ bun run registry:build
 
 ## 布局
 
-| 路径                                  | 包名 / 角色           | 说明                                                                    |
-| ------------------------------------- | --------------------- | ----------------------------------------------------------------------- |
-| `packages/theme`                      | `@shadcn-nsh/theme`   | `theme.json`、`finishes.json`、`theme.ts`（上游主题）                   |
-| `packages/ui`                         | `@shadcn-nsh/ui`      | 移植组件：`// @port` 区域 + 外壳                                        |
-| `apps/docs/demos`                     | —                     | 验收演示、参照页、`port:render`                                         |
-| `apps/docs/src/pages/docs/components` | —                     | 组件文档页                                                              |
-| `apps/gallery`                        | `@shadcn-nsh/gallery` | 原生行为测试与冒烟页                                                    |
-| `packages/cli`                        | `shadcn-nsh`（npm）   | `init` / `add` / `build` / `serve`                                      |
-| `registry.json` → `public/r`          | —                     | registry 源 → 提交进 git 的 HTTP 产物                                   |
-| `scripts/port`                        | —                     | `port:new` / `port:vendor` / `port:check` / `port:render` / `port:bump` |
-| `port-map.json`                       | —                     | 上游每个文件、每个声明的去向                                            |
-| `references/`                         | —                     | 只读子模块：上游基线、shadcn 参考                                       |
+| 路径                                  | 包名 / 角色           | 说明                                                                      |
+| ------------------------------------- | --------------------- | ------------------------------------------------------------------------- |
+| `packages/theme`                      | `@shadcn-nsh/theme`   | `theme.json`、`finishes.json`、`theme.ts`（本库主题，颜色一律 `oklch()`） |
+| `packages/ui`                         | `@shadcn-nsh/ui`      | 移植组件：`// @port` 区域 + 外壳                                          |
+| `apps/docs/demos`                     | —                     | 验收演示、参照页、`port:render`                                           |
+| `apps/docs/src/pages/docs/components` | —                     | 组件文档页                                                                |
+| `apps/gallery`                        | `@shadcn-nsh/gallery` | 原生行为测试与冒烟页                                                      |
+| `packages/cli`                        | `shadcn-nsh`（npm）   | `init` / `add` / `build` / `serve`                                        |
+| `registry.json` → `public/r`          | —                     | registry 源 → 提交进 git 的 HTTP 产物                                     |
+| `scripts/port`                        | —                     | `port:new` / `port:vendor` / `port:check` / `port:render` / `port:bump`   |
+| `port-map.json`                       | —                     | 上游每个文件、每个声明的去向                                              |
+| `references/`                         | —                     | 只读子模块：上游基线、shadcn 参考                                         |

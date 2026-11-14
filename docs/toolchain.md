@@ -72,6 +72,7 @@ CLI 与运行时同装进 `~/.nsh`，并链到 `~/.local/bin/nsh`。
    - **文字改动**的声明 —— `port:vendor` 会重填它所在的区域；
    - 被 `replace` 覆盖的声明在上游也变了 —— 要人看一眼替换是否仍然成立（`port:check` 看不到这一类）；
    - `copy` 的文件变了 —— `port:vendor` 整份重拷；
+   - 标着 `owned` 的文件（主题的两个 JSON）不比对：它们已归本库，见 [`port.md`](port.md#主题文件)；
    - 新增 / 删除的上游文件；
 4. `bun run port:check`；清单完整时 `bun run port:vendor`，再 `port:check`，最后 `nsh check apps/docs/demos`。
 

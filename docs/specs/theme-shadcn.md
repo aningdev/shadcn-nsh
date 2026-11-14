@@ -42,10 +42,10 @@
 生成链（可复跑，产出就是仓库里那两个文件）：
 
 ```sh
-bun scripts/theme/generate-shadcn.ts   # oklch → hex/rgba，按默认文件的键序写出 themes/shadcn/*
+bun scripts/theme/generate-shadcn.ts   # shadcn 的 oklch() 规范化后，按默认文件的键序写出 themes/shadcn/*
 ```
 
-- `scripts/theme/oklch.ts`：OKLCH → sRGB（Ottosson 的 oklab 矩阵 + CSS Color 4 传递函数），另有 `parseColor` / `over`（半透明合成）/ `mixHex`（两色中点）/ `rgba`。
+- `scripts/theme/oklch.ts`：OKLCH ⇄ sRGB（Ottosson 的 oklab 矩阵 + CSS Color 4 传递函数），hex / `rgb()` / `oklch()` 的解析与规范文本，以及 `over`（半透明合成）/ `mix`（两色中点）/ `withAlpha`。数值格式固定（L、C 五位小数，H 三位，alpha 三位），往返落在同一 8-bit 通道，所以文件里存的就是上面这一列 `oklch()`，下面的 sRGB 只是它读起来的样子。
 - `scripts/theme/shadcn.ts`：引用上面的 oklch 值、把它们换算成本库要的 hex/rgba，再按**默认文件的键序**填值；缺一个键就抛错，所以键集合不会漂。
 - `scripts/theme/oklch.test.ts`：换算落在 Tailwind 的灰阶上（`#0a0a0a` … `#fafafa`）、红 `#e7000b`、半透明 `rgba(255,255,255,0.1)`，以及三个辅助函数的边界。
 
@@ -53,7 +53,7 @@ bun scripts/theme/generate-shadcn.ts   # oklch → hex/rgba，按默认文件的
 
 ### 2.2 oklch → sRGB 换算表
 
-16 个互异值，全部由上面脚本算出：
+16 个互异值，全部由上面脚本算出（左列是文件里存的形式，右列是它落到的 sRGB）：
 
 | oklch                       | sRGB                     | 用途（shadcn token）                        |
 | --------------------------- | ------------------------ | ------------------------------------------- |
@@ -78,7 +78,7 @@ bun scripts/theme/generate-shadcn.ts   # oklch → hex/rgba，按默认文件的
 
 - 暗色按下/滑块：`--input` 合成到 `--card` 上 → `#3a3a3a`（`over("rgba(255,255,255,0.15)", "#171717")`）。
 - 亮色按下、`on`、暗色段：`--input` / `chart-1` / `chart-3` 直接取用。
-- 悬停：raised 与 pressed 的中点（`mixHex(..., 0.5)`）。
+- 悬停：raised 与 pressed 的中点（`mix(..., 0.5)`）。
 - 暗色输入井：`--input/30` → `rgba(255,255,255,0.045)`（`15% × 30%`）。
 
 ### 2.3 token 映射表

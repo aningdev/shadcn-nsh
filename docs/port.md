@@ -68,11 +68,21 @@ bun run port:new <id> --from <上游文件> [--symbols a,b,c] [--base <nsh/base 
 
 照 shadcn 的篇幅，章节固定为 Installation、Usage、Examples、API。Usage 只放 import 和一行最简用法；Examples 一个轴一小节；API 只列外壳自己加的 props，其余一句话指向 `nsh/base`。
 
+## 主题文件
+
+`packages/theme/theme.json` 与 `finishes.json` 已归本库所有：`port-map.json` 写的是 `"owned": "<路径>"`，起点是上游那两个文件，此后在这里改，不再从上游拷。
+
+- `port:vendor` 跳过它们（只打印一行 `own  …`）；`port:check` 不比对，也不要求它们是模块。
+- 颜色一律 `oklch()`：token、渐变的每一站、阴影、`color-mix()` 里的颜色，透明度写成 `oklch(… / a)`；`transparent` 与 `var(--x)` 原样保留。换成 `oklch()` 的换算器是 `bun scripts/theme/to-oklch.ts`，它同时是幂等的规范化器。
+- 数值格式固定（L、C 五位小数，H 三位，alpha 三位）：`oklch()` 与 sRGB 互为逆运算，8-bit 通道完全落回，所以换存储不动一个像素。`scripts/theme/oklch.test.ts` 扫 8-bit 立方体验证这点；`scripts/theme/themes.test.ts` 断言每个主题文件里没有 hex、`rgb()`、`hsl()`。
+- `themes/<name>/` 是生成的：`bun scripts/theme/generate-shadcn.ts` 从 shadcn 的 `oklch()` 调色板写出 `themes/shadcn/`，不手改。
+- 要重新对齐上游时，比对 `references/nsh/examples/nsh-gallery-ui/{theme,finishes}.json` 的差异，按需改这两个文件；`owned` 标记不动。
+
 ## 检查
 
 | 命令                        | 判定                                                                                                                                                                                                                                                                                                                                                                              | 何时跑                        |
 | --------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------- |
-| `bun run port:check`        | P1–P3：清单完整、区域与上游一致（格式化后比较）、安装的 CLI 与基线不同时警告；`--status` 列出待办                                                                                                                                                                                                                                                                                 | 每次                          |
+| `bun run port:check`        | P1–P3：清单完整、区域与上游一致（格式化后比较）、`owned` 的文件（主题的两个 JSON）不在比对范围、安装的 CLI 与基线不同时警告；`--status` 列出待办                                                                                                                                                                                                                                  | 每次                          |
 | `nsh check apps/docs/demos` | 组件与演示的类型；`props.test-d.ts` 断言外壳 props 是 base props 的超集（P5）                                                                                                                                                                                                                                                                                                     | 每次                          |
 | `bun run port:coverage`     | 演示覆盖组件声明的每个轴取值与共享 `Tone`；`selfReference` 只在没有外壳的组件上                                                                                                                                                                                                                                                                                                   | 每次                          |
 | `bun run catalog --check`   | 组件集合：每个 `registry:ui` 都有演示、参照页、文档页并从 `packages/ui/index.ts` 导出；没有未登记的演示或页；`render-cases.ts` 的覆盖都指向目录里的 id；`catalog.generated.ts` 最新                                                                                                                                                                                               | 每次                          |

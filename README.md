@@ -62,7 +62,7 @@ Porting a component, rules and checks: [`docs/port.md`](docs/port.md), [`docs/AR
 
 | Path                                  | Package / role        | Notes                                                                   |
 | ------------------------------------- | --------------------- | ----------------------------------------------------------------------- |
-| `packages/theme`                      | `@shadcn-nsh/theme`   | `theme.json`, `finishes.json`, `theme.ts` — the upstream theme          |
+| `packages/theme`                      | `@shadcn-nsh/theme`   | `theme.json`, `finishes.json`, `theme.ts` — the theme (ours; `oklch()`) |
 | `packages/ui`                         | `@shadcn-nsh/ui`      | ported components: `// @port` regions + shell                           |
 | `apps/docs/demos`                     | —                     | acceptance demos, reference pages, `port:render`                        |
 | `apps/docs/src/pages/docs/components` | —                     | component pages                                                         |
