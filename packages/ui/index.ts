@@ -19,6 +19,7 @@ export * from "./diff-view";
 export * from "./dock-area";
 export * from "./editor";
 export * from "./emoji-picker";
+export * from "./field";
 export * from "./hover-card";
 export * from "./input";
 export * from "./link";

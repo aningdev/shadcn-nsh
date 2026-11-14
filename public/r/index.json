@@ -835,6 +835,19 @@
           "target": "components/ui/card.tsx"
         }
       ]
+    },
+    {
+      "name": "field",
+      "type": "registry:ui",
+      "title": "Field",
+      "description": "A set of fields under a legend: labels, descriptions, separators, and errors read out.",
+      "files": [
+        {
+          "path": "packages/ui/field.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/field.tsx"
+        }
+      ]
     }
   ]
 }

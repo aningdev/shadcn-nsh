@@ -131,6 +131,13 @@ export const components: ComponentDoc[] = [
     description: "Tabs, search, skin tones and grid styled for nsh/base EmojiPicker.",
   },
   {
+    slug: "field",
+    title: "Field",
+    nshElement: "field",
+    description:
+      "A set of fields under a legend: a label, its control, a description and errors that are read out.",
+  },
+  {
     slug: "hover-card",
     title: "Hover Card",
     nshElement: "hover-card",
