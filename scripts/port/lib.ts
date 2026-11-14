@@ -1,6 +1,6 @@
 /**
- * Shared by `vendor.ts` and `check.ts`: reads `port-map.json`, splits an upstream module into
- * its top-level declarations, and renders the region of a target file that holds them.
+ * Shared by `vendor.ts`, `check.ts` and `changes.ts`: reads `port-map.json`, splits an upstream
+ * module into its top-level declarations, and renders the region of a target file that holds them.
  */
 import fs from "node:fs";
 import path from "node:path";
