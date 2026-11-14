@@ -210,7 +210,6 @@ export function Checkbox(props: CheckboxProps) {
     disabled: () => !!props.disabled,
   };
   const look = checkboxLook(options);
-  const mark: CheckboxMarkKind = props.indeterminate ? "dash" : props.checked ? "check" : null;
   return (
     <BaseCheckbox
       {...rest}
@@ -222,7 +221,14 @@ export function Checkbox(props: CheckboxProps) {
       }
       indicatorStyle={[look.indicatorStyle, props.indicatorStyle ?? null]}
       indicator={
-        props.indicator ?? <CheckboxMark mark={mark} scale={props.scale} round={props.round} />
+        props.indicator ?? (
+          <CheckboxMark
+            // Read here, where the mark is made, so it follows a value the app changes.
+            mark={props.indeterminate ? "dash" : props.checked ? "check" : null}
+            scale={props.scale}
+            round={props.round}
+          />
+        )
       }
     >
       {typeof props.children === "string" ? <Text>{props.children}</Text> : props.children}

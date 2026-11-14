@@ -44,6 +44,9 @@ function App() {
       <BaseButton onPress={() => pressed.set(true)}>
         <Text>Press it</Text>
       </BaseButton>
+      <BaseButton onPress={() => checked.set(true)}>
+        <Text>Check it</Text>
+      </BaseButton>
       <Text>{`pressed=${pressed()}`}</Text>
       <Text>{`checked=${checked()}`}</Text>
       <Text>{`option=${option()}`}</Text>

@@ -30,3 +30,13 @@ test("a toggle follows a value changed after mount (its label turns from muted t
   await app.wait(50);
   expect(app.spanStyle("text:Bold").color).not.toBe(before);
 });
+
+test("a checkbox checked after mount reports checked", async () => {
+  const app = await open("./choice.fixture.tsx");
+  expect(has(app.texts(), "checked=false")).toBe(true);
+  await app.press("text:Check it");
+  await app.wait(50);
+  expect(has(app.texts(), "checked=true")).toBe(true);
+  // The box's mark and fill are compared against the reference page by `port:render`
+  // (its checkbox case presses a row after the page opened).
+});

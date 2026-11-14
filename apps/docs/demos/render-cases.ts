@@ -75,6 +75,14 @@ export const antialiasing = { pixels: 6, delta: 6 } as const;
 type Override = Omit<Case, "id">;
 
 const overrides: Record<string, Override> = {
+  // A row checked after the page opened: the box's mark and fill must follow the value (the
+  // reference page computes them from it), which a first-frame screenshot never shows.
+  checkbox: {
+    steps: async (app) => {
+      await app.press("text:Documents");
+      await app.wait(300);
+    },
+  },
   dialog: { steps: (app) => app.press("Open a card") },
   "alert-dialog": { steps: (app) => app.press("Delete…") },
   sheet: { steps: (app) => app.press('side="bottom"') },
