@@ -44,7 +44,8 @@ shadcn-nsh add button --overwrite
   （`kept theme.json (the app's colors stay)`）。
 - `--all`（`-a`）加全部 `registry:ui` 条目（含依赖）。
 - 点名一个主题（`add theme-shadcn`，`add theme` 是换回默认）就是换主题：文件写到应用里，
-  `nsh-ui.json` 的 `theme` 记下新的那个。
+  `nsh-ui.json` 的 `theme` 记下新的那个。点名应用已有的主题只是普通的 `add`：不加 `--overwrite`
+  就保留应用的配色。
 - 此后 `theme` 这个依赖按应用的主题解析，所以 `add button`、`add button --overwrite`、
   `add --all --overwrite` 都不会把默认主题写回来。
 - `--dry-run` 用 `would write …` / `would overwrite …` 打印同样的行，一个字节都不写——

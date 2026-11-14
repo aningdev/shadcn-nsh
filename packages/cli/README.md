@@ -45,7 +45,8 @@ shadcn-nsh add button --overwrite
   recolored theme is kept as it is (`kept theme.json (the app's colors stay)`).
 - `--all` (`-a`) adds every `registry:ui` item the catalog lists, dependencies included.
 - Naming a theme (`add theme-shadcn`, or `add theme` to go back) switches the app's theme: its
-  files are written where they differ and `nsh-ui.json`'s `theme` records the new one.
+  files are written where they differ and `nsh-ui.json`'s `theme` records the new one. Naming the
+  theme the app already has is a plain `add`: its colors stay unless `--overwrite`.
 - After that, `theme` as a dependency resolves to the theme the app has, so `add button`,
   `add button --overwrite` and `add --all --overwrite` never write the default theme back.
 - `--dry-run` prints the same lines as `would write …` / `would overwrite …` and writes nothing —

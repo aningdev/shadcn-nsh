@@ -126,6 +126,18 @@ describe("the app's theme", () => {
     expect(recordedTheme(current)).toBe("theme");
   });
 
+  test("add theme in a default app keeps the app's own colors", async () => {
+    current = fixture();
+    await captured(() => runInit({ cwd: current!.app, registry: current!.url }));
+    const own = defaultTheme.replace(/oklch\([^)]*\)/, "oklch(0.5 0.2 30)");
+    current.write("theme.json", own);
+
+    await captured(() => runAdd(["theme"], { cwd: current!.app, registry: current!.url }));
+
+    expect(current.read("theme.json")).toBe(own);
+    expect(recordedTheme(current)).toBe("theme");
+  });
+
   test("add theme-shadcn switches a default app to the neutral theme", async () => {
     current = fixture();
     await captured(() => runInit({ cwd: current!.app, registry: current!.url }));

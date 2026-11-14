@@ -69,14 +69,15 @@ export async function runAdd(components: string[], opts: AddOptions): Promise<nu
 
   const items = await resolveTree(config, names, opts.registry);
 
-  // A theme item named here is the app's new theme: its files land where a plain `add` would keep
-  // the app's own, and `nsh-ui.json` records it, so later `add`s resolve `theme` to it.
+  // A theme item other than the app's is its new theme: its files land where a plain `add` would
+  // keep the app's own, and `nsh-ui.json` records it, so later `add`s resolve `theme` to it. Naming
+  // the theme the app already has is a plain `add`: its colors stay unless `--overwrite`.
   const themes = items.filter((item) => item.type === "registry:theme").map((item) => item.name);
   const named = names.filter((name) => themes.includes(name));
   if (named.length > 1) {
     throw new Error(`Name one theme, not ${named.join(", ")}: an app installs one.`);
   }
-  const theme = named[0];
+  const theme = named[0] === config.theme ? undefined : named[0];
   if (theme != null) {
     config.theme = theme;
     if (!dryRun) await writeConfig(ws.uiRoot, config);
