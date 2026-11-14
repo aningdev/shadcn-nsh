@@ -9,10 +9,16 @@ import { parseSync } from "oxc-parser";
 
 export const repo = path.resolve(import.meta.dir, "../..");
 
-/** Where one upstream file goes. Exactly one of `copy`, `exclude` (a string) or a routing. */
+/** Where one upstream file goes. Exactly one of `copy`, `owned`, `exclude` (a string) or a routing. */
 export type FileEntry = {
   /** Copied byte for byte to this path under `root` (JSON, modules taken whole). */
   copy?: string;
+  /**
+   * This library's own now, at this path under `root`: the file upstream started it from, kept for
+   * the record. Not copied by `vendor.ts` and not compared by `check.ts`, so editing it is not a
+   * deviation to register (the theme files: `docs/port.md`).
+   */
+  owned?: string;
   /** Every declaration goes to the region of this file under `root`, unless `symbols` says otherwise. */
   to?: string;
   /** Per-declaration targets: one file, or several (a private constant two components need). */
@@ -188,7 +194,7 @@ export function renderRegion(
 export function regions(map: PortMap): { upstream: string; target: string }[] {
   const out: { upstream: string; target: string }[] = [];
   for (const [upstream, entry] of Object.entries(map.files)) {
-    if (entry.copy || typeof entry.exclude === "string") continue;
+    if (entry.copy || entry.owned || typeof entry.exclude === "string") continue;
     const targets = new Set<string>();
     if (entry.to) targets.add(entry.to);
     for (const value of Object.values(entry.symbols ?? {})) {

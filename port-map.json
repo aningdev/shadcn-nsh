@@ -74,10 +74,10 @@
       }
     },
     "theme.json": {
-      "copy": "packages/theme/theme.json"
+      "owned": "packages/theme/theme.json"
     },
     "finishes.json": {
-      "copy": "packages/theme/finishes.json"
+      "owned": "packages/theme/finishes.json"
     },
     "theme.ts": {
       "to": "packages/theme/theme.ts"

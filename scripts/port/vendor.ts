@@ -14,6 +14,10 @@ const map = readMap();
 const written = new Set<string>();
 
 for (const [upstream, entry] of Object.entries(map.files)) {
+  if (entry.owned) {
+    console.log(`own    ${upstream} → ${path.relative(repo, targetPath(map, entry.owned))}`);
+    continue;
+  }
   if (!entry.copy) continue;
   const to = targetPath(map, entry.copy);
   fs.mkdirSync(path.dirname(to), { recursive: true });

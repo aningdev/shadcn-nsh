@@ -35,7 +35,7 @@ import {
 const map = readMap();
 const problems: string[] = [];
 const warnings: string[] = [];
-const counts = { ported: 0, pending: 0, excluded: 0 };
+const counts = { ported: 0, owned: 0, pending: 0, excluded: 0 };
 const pendingByFile = new Map<string, string[]>();
 
 // 1. The pinned commit.
@@ -80,6 +80,10 @@ for (const file of files) {
   }
   if (entry.copy) {
     counts.ported += 1;
+    continue;
+  }
+  if (entry.owned) {
+    counts.owned += 1;
     continue;
   }
   if (!/\.tsx?$/.test(file)) {
@@ -178,9 +182,9 @@ function walkTodos(dir: string) {
 }
 for (const root of catalog().paths.todoRoots) walkTodos(root);
 
-const total = counts.ported + counts.pending + counts.excluded;
+const total = counts.ported + counts.owned + counts.pending + counts.excluded;
 console.log(
-  `port: ${counts.ported} ported, ${counts.pending} pending, ${counts.excluded} excluded (${total} upstream items at ${map.upstream.commit.slice(0, 8)})`,
+  `port: ${counts.ported} ported, ${counts.owned} owned, ${counts.pending} pending, ${counts.excluded} excluded (${total} upstream items at ${map.upstream.commit.slice(0, 8)})`,
 );
 if (process.argv.includes("--status")) {
   for (const [file, entry] of Object.entries(map.files)) {
