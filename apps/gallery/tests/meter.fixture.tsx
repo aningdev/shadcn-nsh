@@ -59,6 +59,17 @@ function App() {
         onChange={(e) => level.set(typeof e.value === "number" ? e.value : e.value[0])}
         accessibilityLabel="Level"
       />
+      <Slider
+        testID="shown"
+        style={{ width: 200 }}
+        value={level()}
+        onChange={(e) => level.set(typeof e.value === "number" ? e.value : e.value[0])}
+        accessibilityLabel="Shown level"
+        showValue
+      />
+      <BaseButton onPress={() => level.set(35)}>
+        <Text>Bump</Text>
+      </BaseButton>
       <Text>{`level=${level()}`}</Text>
       <Slider testID="locked" value={20} disabled={locked()} accessibilityLabel="Locked" />
       <BaseButton onPress={() => locked.set(true)}>

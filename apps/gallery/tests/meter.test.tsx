@@ -31,6 +31,15 @@ test("a Slider reports a drag of its thumb, and disabled follows a signal", asyn
   expect(app.enabled("label:Locked")).toBe(false);
 });
 
+test("a Slider's shown value follows a value set after mount", async () => {
+  const app = await open("./meter.fixture.tsx");
+  expect(has(app.texts(), "10")).toBe(true);
+  await app.press("text:Bump");
+  await app.wait(50);
+  expect(has(app.texts(), "35")).toBe(true);
+  expect(has(app.texts(), "10")).toBe(false);
+});
+
 test("an Avatar follows a name set after mount, and a group counts the rest", async () => {
   const app = await open("./meter.fixture.tsx");
   expect(has(app.texts(), "AL")).toBe(true);

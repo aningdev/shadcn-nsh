@@ -121,9 +121,10 @@ export function Slider(props: SliderProps) {
         : 0;
   const label =
     props.children ??
-    (props.showValue && typeof value === "number" ? (
+    (props.showValue ? (
       <Text class={sliderValueClass} style={sliderValueStyle()}>
-        {String(value)}
+        {/* Read in the binding, so the label follows a value the app changes. */}
+        {() => (typeof props.value === "number" ? String(props.value) : "")}
       </Text>
     ) : undefined);
   return (
