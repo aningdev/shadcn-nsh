@@ -58,7 +58,7 @@
 
 ### 任务 5 补的缺口（逐项）
 
-组件外壳：`combobox` / `select` 的 listbox 再导出统一，`cleanable` 的清除按钮套 `clearButtonLook()` 且只在有值时藏 chevron（`date-picker` 同）；`number-input` 的 `pair` 用 `w-6` / `w-9`；`Toggle` 加 `text`；`Radio` 加 `indicator={false}`；`time-field` 取 `calendarLook` 的 segment / separator 与 `TimeSegment`；`plot` 再导出 `nsh/base/plot` 全部；`TableCell` 不再自带宽；`tooltip` 的宿主接受 `style`；`data-table` 回到 base 的 32 点行高。演示适配层：`photos.ts` 搬到 `apps/docs/demos/`，照片页 `images-ready` + `prefetch`，`ui()` 完整导出，`Chips`，`DemoPage` 的 `width`。工具：审计截图移到 `shots-audit/`，`port:render` / `port:baseline` 支持 `--only`，一对截图不同时重拍至多三次。
+组件外壳：`combobox` / `select` 的 listbox 再导出统一，`cleanable` 的清除按钮套 `clearButtonLook()` 且只在有值时藏 chevron（`date-picker` 同）；`number-input` 的 `pair` 用 `w-6` / `w-9`；`Toggle` 加 `text`；`Radio` 加 `indicator={false}`；`time-field` 取 `calendarLook` 的 segment / separator 与 `TimeSegment`；`plot` 再导出 `nsh/base/plot` 全部；`TableCell` 不再自带宽；`tooltip` 的宿主接受 `style`；`data-table` 回到 base 的 32 点行高。演示适配层：`photos.ts` 搬到 `apps/docs/demos/`，照片页 `images-ready` + `prefetch`，`ui()` 完整导出，`Chips`，`DemoPage` 的 `width`。工具：审计截图移到 `shots-audit/`，`port:render` / `port:baseline` 支持 `--only`（按 id 精确匹配），比较在抗锯齿预算内（见下）。
 
 ### 例外与平台限制
 
