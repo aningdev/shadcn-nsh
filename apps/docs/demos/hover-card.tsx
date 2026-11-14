@@ -1,7 +1,7 @@
 // The official hover card scene (`references/nsh/website/demos/el-hover-card.tsx`) with this
 // library's parts: a mention, a link preview and a ticker in running text, each with a card on
 // its side whose delays and side the inspector sets, and the last six lifecycle lines.
-import { alpha, focusRing } from "@shadcn-nsh/theme";
+import { alpha, colors, focusRing } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { avatarIdentity } from "@/packages/ui/avatar";
@@ -10,14 +10,14 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/packages/ui/hov
 import { Icon } from "@/packages/ui/lib/icons";
 
 import { DemoPage } from "./kit";
-import { desktop, Log, Segmented, Split, ui, wide } from "./stage";
+import { desktop, Log, Segmented, Split, wide } from "./stage";
 
 type Placement = "top" | "bottom" | "left" | "right";
 
 /** A mention's or a link's trigger: a run of text the pointer rests on. */
 const linkText = {
   fontSize: 15,
-  color: ui().accent,
+  color: colors.accent,
 };
 
 function App() {
@@ -42,7 +42,7 @@ function App() {
   });
   /** Running text in a wrapping row: one piece per word, so a line breaks between words. */
   const words = (s: string) =>
-    s.split(" ").map((word) => <Text style={{ fontSize: 15, color: ui().text }}>{word}</Text>);
+    s.split(" ").map((word) => <Text style={{ fontSize: 15, color: colors.text }}>{word}</Text>);
 
   // A mention: the person's card, with a button that works because the pointer can move into it.
   const mention = () => (
@@ -58,9 +58,9 @@ function App() {
             paddingHorizontal: 2,
             marginHorizontal: -3,
           }}
-          hoverStyle={{ backgroundColor: alpha(ui().accent, 0.14) }}
+          hoverStyle={{ backgroundColor: alpha(colors.accent, 0.14) }}
         >
-          <Text style={{ fontSize: 15, fontWeight: "600", color: ui().accent }}>@ada</Text>
+          <Text style={{ fontSize: 15, fontWeight: "600", color: colors.accent }}>@ada</Text>
         </View>
       </HoverCardTrigger>
       <HoverCardContent width={260}>
@@ -80,11 +80,13 @@ function App() {
             <Text style={{ fontSize: 15, fontWeight: "600", color: ada.foreground }}>AL</Text>
           </View>
           <View style={{ flex: 1, gap: 2 }}>
-            <Text style={{ fontSize: 15, fontWeight: "600", color: ui().text }}>Ada Lovelace</Text>
-            <Text style={{ fontSize: 12, color: ui().muted }}>Analyst · Engines</Text>
+            <Text style={{ fontSize: 15, fontWeight: "600", color: colors.text }}>
+              Ada Lovelace
+            </Text>
+            <Text style={{ fontSize: 12, color: colors.muted }}>Analyst · Engines</Text>
           </View>
         </View>
-        <Text style={{ fontSize: 13, lineHeight: 18, color: ui().text }}>
+        <Text style={{ fontSize: 13, lineHeight: 18, color: colors.text }}>
           Writes the first programs for the Analytical Engine.
         </Text>
         <Button
@@ -104,7 +106,7 @@ function App() {
         <View
           role="link"
           focusVisibleStyle={focusRing(1)}
-          style={{ borderBottomWidth: 1, borderBottomColor: alpha(ui().accent, 0.4) }}
+          style={{ borderBottomWidth: 1, borderBottomColor: alpha(colors.accent, 0.4) }}
         >
           <Text style={linkText}>Taffy</Text>
         </View>
@@ -117,23 +119,23 @@ function App() {
               width: 32,
               height: 32,
               borderRadius: 8,
-              backgroundColor: ui().raised.backgroundColor,
+              backgroundColor: colors.raised,
               alignItems: "center",
               justifyContent: "center",
             }}
           >
-            <Icon name="code" size={16} tint={ui().text} />
+            <Icon name="code" size={16} tint={colors.text} />
           </View>
           <View style={{ flex: 1, gap: 1 }}>
-            <Text style={{ fontSize: 12, fontWeight: "500", color: ui().text }}>github.com</Text>
-            <Text style={{ fontSize: 11.5, color: ui().faint }}>DioxusLabs/taffy</Text>
+            <Text style={{ fontSize: 12, fontWeight: "500", color: colors.text }}>github.com</Text>
+            <Text style={{ fontSize: 11.5, color: colors.faint }}>DioxusLabs/taffy</Text>
           </View>
         </View>
         <View style={{ gap: 4 }}>
-          <Text style={{ fontSize: 14, fontWeight: "600", color: ui().text }}>
+          <Text style={{ fontSize: 14, fontWeight: "600", color: colors.text }}>
             taffy: flexbox, grid and block layout
           </Text>
-          <Text style={{ fontSize: 12, color: ui().muted }}>
+          <Text style={{ fontSize: 12, color: colors.muted }}>
             A high-performance UI layout library written in Rust.
           </Text>
         </View>
@@ -164,20 +166,20 @@ function App() {
             borderRadius: 13,
             justifyContent: "center",
             borderWidth: 1,
-            borderColor: alpha(ui().up, 0.3),
-            backgroundColor: alpha(ui().up, 0.1),
+            borderColor: alpha(colors.up, 0.3),
+            backgroundColor: alpha(colors.up, 0.1),
           }}
         >
-          <Text style={{ fontSize: 13, fontWeight: "600", color: ui().up }}>$AAPL ▲</Text>
+          <Text style={{ fontSize: 13, fontWeight: "600", color: colors.up }}>$AAPL ▲</Text>
         </View>
       </HoverCardTrigger>
       <HoverCardContent width={220}>
-        <Text style={{ fontSize: 12, color: ui().muted }}>Apple Inc. · live</Text>
+        <Text style={{ fontSize: 12, color: colors.muted }}>Apple Inc. · live</Text>
         <Text
           style={{
             fontSize: 26,
             fontWeight: "600",
-            color: ui().text,
+            color: colors.text,
             fontVariant: ["tabular-nums"],
           }}
         >
@@ -186,7 +188,7 @@ function App() {
         <Text
           style={{
             fontSize: 13,
-            color: price() >= 224.1 ? ui().up : ui().down,
+            color: price() >= 224.1 ? colors.up : colors.down,
             fontVariant: ["tabular-nums"],
           }}
         >
@@ -199,7 +201,7 @@ function App() {
 
   return (
     <DemoPage title="Hover Card">
-      <Text style={{ color: ui().muted }}>
+      <Text style={{ color: colors.muted }}>
         {desktop
           ? "Rest the pointer on a mention, a link or a ticker, then move into the card"
           : "Tap a mention, a link or a ticker; tap outside to close"}

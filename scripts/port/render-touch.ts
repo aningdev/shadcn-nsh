@@ -52,12 +52,14 @@ const env = { ...process.env };
 
 // The touch render check, then the appearance check (a page switched to dark at run time).
 let status = 0;
+// The render pairs, then the appearance check (a page switched to dark at run time): `--only`
+// runs both files for the ids it names.
 const files: { file: string; filter?: string }[] = only
-  ? only.map((id) => ({ file: "render-touch.test.tsx", filter: `id=${id}:` }))
-  : [{ file: "render-touch.test.tsx" }];
-// The appearance check is the same page in two appearances, not a pair of pages: `--only` runs
-// it whole (it is one test per page the table names).
-files.push({ file: "appearance-touch.test.tsx" });
+  ? only.flatMap((id) => [
+      { file: "render-touch.test.tsx", filter: `id=${id}:` },
+      { file: "appearance-touch.test.tsx", filter: `id=${id}:` },
+    ])
+  : [{ file: "render-touch.test.tsx" }, { file: "appearance-touch.test.tsx" }];
 for (const { file, filter } of files) {
   if (status !== 0) break;
   const result = spawnSync(
@@ -78,7 +80,8 @@ for (const { file, filter } of files) {
 function comparePixels(): number {
   let failed = 0;
   for (const { id, tolerance, selfReference } of cases) {
-    if (selfReference) continue;
+    // A self-reference has no second page; `--only` compares the pictures it names.
+    if (selfReference || (only && !only.includes(id))) continue;
     const allowed = tolerance ?? antialiasing;
     for (const scheme of schemes) {
       const name = `${id}-touch-${scheme}`;

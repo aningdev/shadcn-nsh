@@ -13,7 +13,11 @@
 
 import { inflateSync } from "node:zlib";
 
-/** A decoded 8-bit picture: `channels` bytes per pixel (3 RGB or 4 RGBA), rows top to bottom. */
+/**
+ * A decoded picture: `channels` samples per pixel (3 RGB or 4 RGBA), rows top to bottom, each
+ * sample 0-255. A 16-bit PNG (the iOS simulator's screenshots) is read and scaled down to that
+ * range: the budget is 1/255-class noise, which is below what a 16-bit sample's low byte says.
+ */
 export type Picture = { width: number; height: number; channels: number; data: Uint8Array };
 
 const u32 = (bytes: Uint8Array, at: number) =>
@@ -54,23 +58,26 @@ export function decodePng(bytes: Uint8Array): Picture {
     }
   }
   const channels = colorType === 6 ? 4 : colorType === 2 ? 3 : 0;
-  if (bitDepth !== 8 || interlace !== 0 || channels === 0 || width === 0 || height === 0) {
+  if ((bitDepth !== 8 && bitDepth !== 16) || interlace !== 0 || channels === 0) {
     throw new Error(
       `unsupported PNG: ${bitDepth}-bit, color type ${colorType}, interlace ${interlace}`,
     );
   }
+  if (width === 0 || height === 0) throw new Error("empty PNG");
   const raw = inflateSync(Buffer.concat(idat.map((chunk) => Buffer.from(chunk))));
-  const stride = width * channels;
+  const sample = bitDepth === 16 ? 2 : 1;
+  const stride = width * channels * sample;
   const data = new Uint8Array(height * stride);
   let pos = 0;
   for (let y = 0; y < height; y += 1) {
     const filter = raw[pos++]!;
     const row = data.subarray(y * stride, (y + 1) * stride);
     const prior = y > 0 ? data.subarray((y - 1) * stride, y * stride) : null;
+    const bytesPerPixel = channels * sample;
     for (let x = 0; x < stride; x += 1) {
-      const left = x >= channels ? row[x - channels]! : 0;
+      const left = x >= bytesPerPixel ? row[x - bytesPerPixel]! : 0;
       const up = prior ? prior[x]! : 0;
-      const upLeft = prior && x >= channels ? prior[x - channels]! : 0;
+      const upLeft = prior && x >= bytesPerPixel ? prior[x - bytesPerPixel]! : 0;
       let value = raw[pos + x]!;
       if (filter === 1) value += left;
       else if (filter === 2) value += up;
@@ -88,7 +95,16 @@ export function decodePng(bytes: Uint8Array): Picture {
     }
     pos += stride;
   }
-  return { width, height, channels, data };
+  if (sample === 1) return { width, height, channels, data };
+  // 16 bits a sample: keep the high byte of each, which is the 8-bit value it rounds to.
+  const down = new Uint8Array(width * height * channels);
+  for (let pixel = 0; pixel < width * height; pixel += 1) {
+    for (let c = 0; c < channels; c += 1) {
+      const at = (pixel * channels + c) * 2;
+      down[pixel * channels + c] = data[at]!;
+    }
+  }
+  return { width, height, channels, data: down };
 }
 
 /** How two pictures differ: the pixels outside `delta` and the worst channel difference. */

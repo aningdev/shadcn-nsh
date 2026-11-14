@@ -25,7 +25,8 @@ async function startIn(scheme: "light" | "dark") {
 }
 
 for (const { id, steps } of cases) {
-  test(`${id}: light, then dark at run time`, async () => {
+  // `id=`, as in `render-touch.test.tsx`: `nsh test`'s substring `--filter` can name one page.
+  test(`id=${id}: light, then dark at run time`, async () => {
     await startIn("light");
     const switched = await open(`./${id}.tsx`, { ...touch, colorScheme: "light" });
     await steps?.(switched);
