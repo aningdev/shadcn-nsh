@@ -315,9 +315,10 @@ import { mount, Text, View } from "nsh";
 
 ${imports.join("\n")}
 
+// From the top: the page is taller than the screen, and \`texts()\` reports only what is on it.
 function All() {
   return (
-    <View class="items-center justify-center gap-4">
+    <View class="items-center gap-4">
       <Text>all items mounted</Text>
 ${rendered.join("\n")}
     </View>
