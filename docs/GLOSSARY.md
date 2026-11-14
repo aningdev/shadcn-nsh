@@ -5,11 +5,11 @@
 ## Language
 
 **Upstream（上游）**:
-`references/nsh/examples/nsh-gallery-ui`：NSH 的 gallery 与网站 demo 共用的 UI 层。本库的主题、外观、状态、几何和 variant 取值都以它为准。
+`references/nsh/examples/nsh-gallery-ui`：NSH 的 gallery 与网站 demo 共用的 UI 层。本库的主题、外观（每种 look 的像素）、状态与几何都以它为准；轴的名字与取值见 Variant / Size。
 _Avoid_: reference look, 参考实现（它是来源，不是参考）
 
 **Look**:
-上游的外观函数：把"哪种、多大、什么状态"算成一组可以展开到 `nsh/base` 控件上的 props（`style`、`hoverStyle`、`activeStyle`、`focusVisibleStyle`、`disabledStyle`、`hitSlop`）。例：`buttonLook("primary", { size })`。相当于 shadcn 的 `cva`。
+上游的外观函数：把"哪种、多大、什么状态"算成一组可以展开到 `nsh/base` 控件上的 props（`style`、`hoverStyle`、`activeStyle`、`focusVisibleStyle`、`disabledStyle`、`hitSlop`）。例：`buttonLook("default", { size })`。相当于 shadcn 的 `cva`。
 _Avoid_: variants helper, `xVariants`, theme layer
 
 **Shell（外壳）**:
@@ -60,8 +60,8 @@ _Avoid_: 组件清单、组件表（手写的列表）
 _Avoid_: shadcn registry id（`dropdown-menu`）
 
 **Variant / Size**:
-prop 名用 shadcn 的（`variant`、`size`），取值用上游的（`primary` / `secondary` / `accent` / `ghost` / `danger`；`small` / `regular` / `large`）。
-_Avoid_: `kind`, `default` / `outline` / `destructive`, `sm` / `lg`
+轴名与取值都用 shadcn 的（[`specs/api-unify.md`](specs/api-unify.md) §4）。`variant` 取 `default` / `secondary` / `outline` / `ghost` / `destructive`；每个组件只收其中一个**子集**，子集写在自己的文档页 API 一节（`Button` 暂无 `outline` / `link` 的 look）。`size` 只表示**刻度**：`sm` / `default` / `lg`，图标按钮另有 `icon*`；精确像素叫 `side` / `width` / `height`，不叫 `size`。本库特有的变体值只有两个，各自写在组件页上：`line`（`TabsList` 的下划线轨道）与 `tile`（`Radio` 的卡片式）。`kind` 不再出现。每个导出的 `*Variant` / `*Size` 联合由 `packages/cli/src/api-vocabulary.test.ts` 固定，加一个值要同时改它。
+_Avoid_: `kind`, `primary` / `accent` / `danger`, `small` / `regular` / `large`, 把像素尺寸叫 `size`
 
 **Behavior Authority**:
 控件行为、a11y 与可转发能力以 `nsh/base` 为准；外壳透传 base 的全部 props。

@@ -87,6 +87,7 @@ import type {
   TreeProps as BaseTreeProps,
 } from "nsh/base";
 
+import type { ButtonSize, ButtonVariant } from "@/packages/ui/index";
 import type {
   AccordionHeaderProps,
   AccordionItemProps,
@@ -137,6 +138,7 @@ import type {
   SegmentedItemProps,
   SegmentedListProps,
   SelectContentProps,
+  SelectTriggerProps,
   SheetContentProps,
   SliderProps,
   SplitButtonSegmentProps,
@@ -433,6 +435,23 @@ type _tooltipContent = Assert<KeepsBase<BaseTooltipProps, TooltipContentProps, n
 type _tree = Assert<KeepsBase<BaseTreeProps, TreeProps, never>>;
 
 type Row = { id: number; name: string };
+
+/**
+ * The values and props 0.3 dropped are not accepted: there are no aliases
+ * (`docs/specs/api-unify.md` §6.2), so the compiler points at the call site and the call site
+ * names the new word. Every line below fails without its `@ts-expect-error`, which is the
+ * assertion.
+ */
+// @ts-expect-error — `primary` and `accent` are `default`.
+const _droppedVariant: ButtonVariant = "primary";
+// @ts-expect-error — `small` / `regular` / `large` are `sm` / `default` / `lg`.
+const _droppedSize: ButtonSize = "small";
+// @ts-expect-error — an icon button shows as chosen through the base's `selected`, not `on`.
+const _iconButtonOn: IconButtonProps = { on: true };
+// @ts-expect-error — a trigger's field or outline is a `variant`, not a `kind`.
+const _selectTriggerKind: SelectTriggerProps = { kind: "outline" };
+
+export { _droppedSize, _droppedVariant, _iconButtonOn, _selectTriggerKind };
 
 export type {
   _accordion,

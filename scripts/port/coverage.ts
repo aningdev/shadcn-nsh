@@ -1,15 +1,15 @@
 /**
- * The demos' coverage of each component's axes: every value of a `variant`, `size`, `kind` or
- * `tone` union that a component declares must appear in `apps/docs/demos/<id>.tsx`.
+ * The demos' coverage of each component's axes: every value of a `variant`, `size` or `tone`
+ * union that a component declares must appear in `apps/docs/demos/<id>.tsx`.
  *
  *   bun scripts/port/coverage.ts [--verbose]
  *
  * Unions are read from the TypeScript, not from regular expressions. A component's own unions
- * are the ones declared in its module — exported union aliases (`ButtonKind`, `ButtonSize`) and
- * literal unions written inline on one of those four props — followed through local aliases and
+ * are the ones declared in its module — exported union aliases (`ButtonVariant`, `ButtonSize`) and
+ * literal unions written inline on one of those three props — followed through local aliases and
  * interfaces (`ColorPanelProps extends ColorFieldsProps`). A union imported from another module
  * is that module's axis and is covered by that module's demo: a menu trigger's `variant` is the
- * button's `ButtonKind`. The theme's `Tone` is the exception, because it is shared rather than a
+ * button's `ButtonVariant`. The theme's `Tone` is the exception, because it is shared rather than a
  * component's own palette: a props member that names it (`tone?: Tone`, `Tone | (() => Tone)`)
  * must show every one of its values, read from `packages/theme/theme.ts`, and each of its demos
  * shows the same seven tones. A numeric axis (a round button's `size`) has no values to cover.
@@ -33,8 +33,11 @@ import { repo } from "./lib";
 
 type Node = { type: string; start?: number; end?: number; [key: string]: unknown };
 
-/** The prop names that are axes of a component's look. */
-const AXES = new Set(["variant", "size", "kind", "tone"]);
+/**
+ * The prop names that are axes of a component's look. `variant` carries what a `kind` used to
+ * (`docs/specs/api-unify.md`): a trigger's field-or-outline is a variant too.
+ */
+const AXES = new Set(["variant", "size", "tone"]);
 
 /** A union value, and the axis it was found on (for the report). */
 type Value = { axis: string; value: string };
