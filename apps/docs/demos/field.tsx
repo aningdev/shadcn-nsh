@@ -89,7 +89,12 @@ function App() {
             <FieldLabel>Email</FieldLabel>
             <FieldContent>
               <Input value="evil@rabbit" invalid />
-              <FieldError errors={[{ message: "Enter an email address like name@example.com." }]} />
+              <FieldError
+                errors={[
+                  { message: "Enter an email address like name@example.com." },
+                  { message: "It must be one address, without spaces." },
+                ]}
+              />
             </FieldContent>
           </Field>
         </Column>

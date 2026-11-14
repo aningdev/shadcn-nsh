@@ -85,9 +85,18 @@ function App() {
             <View style={fieldFamilyLook().content}>
               <Input value="evil@rabbit" invalid />
               <View role="alert" style={fieldFamilyLook().error}>
-                <Text style={fieldFamilyLook().errorText}>
-                  Enter an email address like name@example.com.
-                </Text>
+                <View style={fieldFamilyLook().errorRow}>
+                  <Text style={fieldFamilyLook().errorText}>•</Text>
+                  <Text style={fieldFamilyLook().errorText}>
+                    Enter an email address like name@example.com.
+                  </Text>
+                </View>
+                <View style={fieldFamilyLook().errorRow}>
+                  <Text style={fieldFamilyLook().errorText}>•</Text>
+                  <Text style={fieldFamilyLook().errorText}>
+                    It must be one address, without spaces.
+                  </Text>
+                </View>
               </View>
             </View>
           </View>

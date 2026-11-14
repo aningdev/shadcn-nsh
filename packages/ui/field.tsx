@@ -322,12 +322,16 @@ export function FieldError(props: FieldErrorProps) {
     if (props.children != null) return props.children;
     const list = messages();
     if (list.length === 1) return <Text style={fieldFamilyLook().errorText}>{list[0]}</Text>;
-    return list.map((message) => (
-      <View style={fieldFamilyLook().errorRow}>
-        <Text style={fieldFamilyLook().errorText}>•</Text>
-        <Text style={fieldFamilyLook().errorText}>{message}</Text>
-      </View>
-    ));
+    return (
+      <Each of={list} key={(message: string) => message}>
+        {(message) => (
+          <View style={fieldFamilyLook().errorRow}>
+            <Text style={fieldFamilyLook().errorText}>•</Text>
+            <Text style={fieldFamilyLook().errorText}>{message()}</Text>
+          </View>
+        )}
+      </Each>
+    );
   };
   if (props.children == null && messages().length === 0) return null;
   return (
