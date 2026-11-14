@@ -28,6 +28,11 @@ bun run nsh:bootstrap   # checks CLI + references/nsh are at the baseline, write
 
 The directory must already have `nsh.json` (`nsh init`). Consumer monorepo scaffolding (`create`) is deferred.
 
+Components import their icons from [`lucide`](https://lucide.dev), and `init` / `add` install the
+packages an item declares with the app's own package manager (`bun`, `pnpm`, `yarn` by its lock file,
+else npm). An app without a `package.json` gets a minimal one; `--dry-run` prints the command instead
+of running it.
+
 ```sh
 # Local registry (when developing this repo)
 bun run registry:build

@@ -1,6 +1,7 @@
 // A menu: the look (`menuItemLook`, `menuPopup`, …) and the parts that wear it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { alpha, colors, finish, terminal } from "@shadcn-nsh/theme";
+import { ChevronLeft, ChevronRight } from "lucide";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, platform, split, Text, token, View } from "nsh";
 import {
@@ -225,7 +226,7 @@ export function SubmenuRow(props: { label: string; lead?: JSX.Element; disabled?
     >
       {props.lead}
       <Text style={menuItemLabel()}>{props.label}</Text>
-      <Icon name="chevron" size={pointer ? 12 : 14} tint={colors.faint} />
+      <Icon icon={ChevronRight} size={pointer ? 12 : 14} tint={colors.faint} />
     </View>
   );
 }
@@ -235,7 +236,7 @@ export function SubmenuBack(props: { label: string }) {
   const look = menuItemLook({ style: { gap: 6 } });
   return (
     <View activeStyle={look.activeStyle} style={look.style}>
-      <Icon name="back" size={14} tint={colors.accent} />
+      <Icon icon={ChevronLeft} size={14} tint={colors.accent} />
       <Text style={{ fontSize: menuItemSize.font, fontWeight: "600", color: colors.accent }}>
         {props.label}
       </Text>

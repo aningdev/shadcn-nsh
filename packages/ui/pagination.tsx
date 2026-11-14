@@ -1,6 +1,7 @@
 // A pagination: the look (`paginationLook` and its companions) and the `Pagination` that wears it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { colors, terminal } from "@shadcn-nsh/theme";
+import { ChevronRight } from "lucide";
 import type { JSX } from "nsh";
 import { platform, split } from "nsh";
 import { Text, View } from "nsh";
@@ -55,7 +56,7 @@ export function paginationArrows(item: PaginationItemState): JSX.Element {
     return <Text style={{ color: colors.muted }}>{item.kind === "previous" ? "‹" : "›"}</Text>;
   return (
     <View style={item.kind === "previous" ? { transform: [{ rotate: "180deg" }] } : undefined}>
-      <Icon name="chevron" size={pointer ? 14 : 16} tint={colors.text} />
+      <Icon icon={ChevronRight} size={pointer ? 14 : 16} tint={colors.text} />
     </View>
   );
 }

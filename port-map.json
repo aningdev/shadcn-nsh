@@ -159,7 +159,7 @@
       }
     },
     "icons.tsx": {
-      "to": "packages/ui/lib/icons.tsx"
+      "exclude": "由 lucide 取代（docs/specs/lucide.md）"
     },
     "popup.tsx": {
       "to": "packages/ui/lib/popup.tsx"

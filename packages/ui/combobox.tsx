@@ -1,6 +1,7 @@
 // A combobox: the look (`comboboxLook`, `ComboToggle`) and `Combobox` that wears the listbox look.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { colors, finish, radius } from "@shadcn-nsh/theme";
+import { ChevronRight } from "lucide";
 import type { InputStyle, JSX, StyleProp, ViewStyle } from "nsh";
 import { cleanup, context, platform, signal, split, View } from "nsh";
 import {
@@ -66,7 +67,7 @@ export function Chevron(props: { open: boolean; hidden?: boolean }) {
         transform: [{ rotate: props.open ? "-90deg" : "90deg" }],
       }}
     >
-      <Icon name="chevron" size={controlSize.check} tint={colors.muted} />
+      <Icon icon={ChevronRight} size={controlSize.check} tint={colors.muted} />
     </View>
   );
 }

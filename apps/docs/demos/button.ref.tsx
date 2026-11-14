@@ -2,6 +2,7 @@
 // `nsh/base`'s Button, Switch and Toggle. The render check requires the two to draw the same
 // pixels.
 import { colors } from "@shadcn-nsh/theme";
+import { ChevronDown, Play, Plus, Search, Star, Trash, type IconNode } from "lucide";
 import { mount, signal, Text, View } from "nsh";
 import { Button, Switch, Toggle } from "nsh/base";
 
@@ -59,7 +60,7 @@ function Plain(props: {
 
 /** An icon button of the library's icon button look. */
 function IconPlain(props: {
-  name: "search" | "star" | "trash";
+  icon: IconNode;
   label: string;
   variant?: "ghost" | "secondary" | "destructive";
   selected?: boolean;
@@ -76,7 +77,7 @@ function IconPlain(props: {
       selected={props.selected}
       {...iconButtonLook(options)}
     >
-      <Icon name={props.name} {...iconButtonGlyph(options)} />
+      <Icon icon={props.icon} {...iconButtonGlyph(options)} />
     </Button>
   );
 }
@@ -218,9 +219,9 @@ function App() {
           <Plain label="Disabled" disabled />
         </DemoSection>
         <DemoSection title="Icon">
-          <IconPlain name="search" label="Search" onPress={() => press("search")} />
+          <IconPlain icon={Search} label="Search" onPress={() => press("search")} />
           <IconPlain
-            name="star"
+            icon={Star}
             label="Star"
             variant="secondary"
             selected={starred()}
@@ -230,7 +231,7 @@ function App() {
             }}
           />
           <IconPlain
-            name="trash"
+            icon={Trash}
             label="Delete"
             variant="destructive"
             onPress={() => press("delete")}
@@ -240,14 +241,14 @@ function App() {
             onPress={() => press("play")}
             {...roundButtonLook("default")}
           >
-            <Icon name="play" {...roundButtonGlyph("default")} />
+            <Icon icon={Play} fill {...roundButtonGlyph("default")} />
           </Button>
           <Button
             accessibilityLabel="Plus"
             onPress={() => press("plus")}
             {...roundButtonLook("secondary")}
           >
-            <Icon name="plus" {...roundButtonGlyph("secondary")} />
+            <Icon icon={Plus} {...roundButtonGlyph("secondary")} />
           </Button>
         </DemoSection>
         <DemoSection title="Split">
@@ -265,7 +266,7 @@ function App() {
               }}
               {...primarySplit.segment({ selected: () => starred() })}
             >
-              <Icon name="chevron-down" {...buttonGlyph("default")} />
+              <Icon icon={ChevronDown} {...buttonGlyph("default")} />
             </Button>
           </View>
           <View style={secondarySplit.frame.style}>
@@ -278,7 +279,7 @@ function App() {
               onPress={() => press("export options")}
               {...secondarySplit.segment()}
             >
-              <Icon name="chevron-down" {...buttonGlyph("secondary")} />
+              <Icon icon={ChevronDown} {...buttonGlyph("secondary")} />
             </Button>
           </View>
         </DemoSection>

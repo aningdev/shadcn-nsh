@@ -72,15 +72,21 @@
       "name": "icons",
       "type": "registry:lib",
       "title": "Icons",
-      "description": "Line glyphs and the check mark drawn for the looks.",
+      "description": "The icon renderer: lucide's nodes on a canvas, and the check mark as an SVG.",
       "registryDependencies": ["theme"],
       "files": [
         {
           "path": "packages/ui/lib/icons.tsx",
           "type": "registry:lib",
           "target": "lib/icons.tsx"
+        },
+        {
+          "path": "packages/ui/lib/icon-canvas.ts",
+          "type": "registry:lib",
+          "target": "lib/icon-canvas.ts"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     },
     {
       "name": "color-format",
@@ -234,7 +240,8 @@
           "type": "registry:ui",
           "target": "components/ui/checkbox.tsx"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     },
     {
       "name": "radio-group",
@@ -304,7 +311,8 @@
           "type": "registry:ui",
           "target": "components/ui/number-input.tsx"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     },
     {
       "name": "otp-input",
@@ -430,7 +438,8 @@
           "type": "registry:ui",
           "target": "components/ui/menu.tsx"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     },
     {
       "name": "context-menu",
@@ -458,7 +467,8 @@
           "type": "registry:lib",
           "target": "lib/listbox.tsx"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     },
     {
       "name": "select",
@@ -472,7 +482,8 @@
           "type": "registry:ui",
           "target": "components/ui/select.tsx"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     },
     {
       "name": "combobox",
@@ -494,7 +505,8 @@
           "type": "registry:ui",
           "target": "components/ui/combobox.tsx"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     },
     {
       "name": "calendar",
@@ -508,7 +520,8 @@
           "type": "registry:ui",
           "target": "components/ui/calendar.tsx"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     },
     {
       "name": "date-picker",
@@ -530,7 +543,8 @@
           "type": "registry:ui",
           "target": "components/ui/date-picker.tsx"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     },
     {
       "name": "tabs",
@@ -544,7 +558,8 @@
           "type": "registry:ui",
           "target": "components/ui/tabs.tsx"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     },
     {
       "name": "segmented",
@@ -572,7 +587,8 @@
           "type": "registry:ui",
           "target": "components/ui/accordion.tsx"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     },
     {
       "name": "collapsible",
@@ -600,7 +616,8 @@
           "type": "registry:ui",
           "target": "components/ui/carousel.tsx"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     },
     {
       "name": "link",
@@ -614,7 +631,8 @@
           "type": "registry:ui",
           "target": "components/ui/link.tsx"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     },
     {
       "name": "pagination",
@@ -628,7 +646,8 @@
           "type": "registry:ui",
           "target": "components/ui/pagination.tsx"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     },
     {
       "name": "progress",
@@ -754,7 +773,8 @@
           "type": "registry:ui",
           "target": "components/ui/tree.tsx"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     },
     {
       "name": "command",
@@ -768,7 +788,8 @@
           "type": "registry:ui",
           "target": "components/ui/command.tsx"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     },
     {
       "name": "scrollbar",
@@ -838,7 +859,8 @@
           "type": "registry:ui",
           "target": "components/ui/diff-view.tsx"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     },
     {
       "name": "text-view",
@@ -866,7 +888,8 @@
           "type": "registry:ui",
           "target": "components/ui/emoji-picker.tsx"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     },
     {
       "name": "editor",
@@ -904,7 +927,8 @@
           "type": "registry:ui",
           "target": "components/ui/color-picker.tsx"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     }
   ]
 }

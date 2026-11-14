@@ -1,6 +1,7 @@
 // A link: the look (`linkLook` and its companions) and the `Link` that wears it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { alpha, colors, focusRing } from "@shadcn-nsh/theme";
+import { ExternalLink } from "lucide";
 import type { JSX, ViewStyle } from "nsh";
 import { platform, split, Text, token, View } from "nsh";
 import { Link as BaseLink, type LinkProps as BaseLinkProps } from "nsh/base";
@@ -97,7 +98,7 @@ export function LinkText(
       </View>
       <If when={props.icon}>
         <View class={`${slide} group-hover:translate-x-0.5 group-hover:-translate-y-0.5`}>
-          <Icon name="external" size={Math.round(size() * 0.85)} tint={props.color} />
+          <Icon icon={ExternalLink} size={Math.round(size() * 0.85)} tint={props.color} />
         </View>
       </If>
     </>

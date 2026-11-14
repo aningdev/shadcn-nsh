@@ -24,6 +24,13 @@ every call site. There are no aliases — a migration is a type error, not a war
 | `<Radio variant="ring" />`                         | `<Radio />` (`default` is the ring)                       |
 | `<Switch size="small" />`                          | `<Switch size="sm" />`                                    |
 | `<SegmentedList size="regular" />`                 | `<SegmentedList size="default" />`                        |
+| `<Icon name="chevron" />`                          | `<Icon icon={ChevronRight} />`, an import from `lucide`   |
+
+Icons come from [`lucide`](https://lucide.dev): a component imports the icon it draws
+(`import { ChevronDown } from "lucide"`) and hands it over as `icon={ChevronDown}`, so the app bundles
+only the icons it uses. `IconName` and the glyphs in `lib/icons.tsx` are gone; a public prop that took
+`IconName` takes lucide's `IconNode` (`tabs`, `tree`, `select`, `command`, `diff-view`,
+`emojiGroups`). `shadcn-nsh init` and `add` install the packages an item declares, `lucide` among them.
 
 The looks follow their components: `menuItemLabel`, `menuItemNote` and `menuItemGlyph` take
 `{ variant: "default" | "destructive" }`, `paginationItemClass` takes `{ variant: "default" |

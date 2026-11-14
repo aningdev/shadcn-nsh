@@ -1,6 +1,7 @@
 // A date picker: the look (`DateTrigger`, `datePickerLook`) and `DatePicker` that wears it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { terminal } from "@shadcn-nsh/theme";
+import { Calendar } from "lucide";
 import type { JSX, ViewStyle } from "nsh";
 import { context, signal, split, View } from "nsh";
 import {
@@ -41,7 +42,7 @@ export function DateTrigger(props: Omit<PickerProps, "icon" | "chevron" | "lead"
       clearable={props.clearable}
       invalid={props.invalid}
       variant={props.variant}
-      icon="calendar"
+      icon={Calendar}
       chevron={false}
       style={props.style}
     />

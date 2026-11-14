@@ -1,6 +1,7 @@
 // A checkbox: the look (`checkboxLook` and its companions) and the `Checkbox` that wears it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { alpha, colors, finish, follow, isDark, terminal, TERMINAL_ROW } from "@shadcn-nsh/theme";
+import { Check, Minus, type IconNode } from "lucide";
 import type { AnimatedValue, JSX, ViewStyle } from "nsh";
 import { split, Text, View } from "nsh";
 import { Checkbox as BaseCheckbox, type CheckboxProps as BaseCheckboxProps } from "nsh/base";
@@ -132,7 +133,7 @@ export function ChoiceLight(props: { on: AnimatedValue; radius: number }) {
 
 /** The stroke of a checkbox's check and dash (about 2 points at the desktop
  * size): the bold pen of every check that marks something done. */
-export const MARK_WEIGHT = 3.2;
+export const MARK_WEIGHT = 3.84;
 
 /**
  * What a checkbox's box shows (its `indicator`): citrus with a check or a
@@ -149,7 +150,7 @@ export function CheckboxMark(props: { mark: CheckboxMarkKind } & ChoiceOptions) 
   const check = follow(() => (props.mark === "check" ? 1 : 0));
   const dash = follow(() => (props.mark === "dash" ? 1 : 0));
   /** A mark: centered in the box, growing a little as it fades in. */
-  const glyph = (t: AnimatedValue, name: "check" | "minus") => (
+  const glyph = (t: AnimatedValue, icon: IconNode) => (
     <View
       style={{
         ...centered,
@@ -158,7 +159,7 @@ export function CheckboxMark(props: { mark: CheckboxMarkKind } & ChoiceOptions) 
         transform: [{ scale: t.interpolate({ inputRange: [0, 1], outputRange: [0.75, 1] }) }],
       }}
     >
-      <Icon name={name} size={d.check} tint={colors.onAccent} weight={MARK_WEIGHT} />
+      <Icon icon={icon} size={d.check} tint={colors.onAccent} weight={MARK_WEIGHT} />
     </View>
   );
   // One view as large as the box inside its border holds the layers: the
@@ -167,8 +168,8 @@ export function CheckboxMark(props: { mark: CheckboxMarkKind } & ChoiceOptions) 
   return (
     <View style={{ width: d.control - 2, height: d.height - 2 }}>
       <ChoiceLight on={on} radius={props.round ? d.control / 2 : d.corner} />
-      {glyph(check, "check")}
-      {glyph(dash, "minus")}
+      {glyph(check, Check)}
+      {glyph(dash, Minus)}
     </View>
   );
 }

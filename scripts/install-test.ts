@@ -10,6 +10,10 @@
  *   import no item delivers (a missing `registryDependencies` entry or lib file), or a file the
  *   transform points at the wrong place, shows up only when the item is installed alone.
  *
+ * Both passes install what the items import (`lucide` today): the apps start without a
+ * `package.json`, and `add` writes one and runs the app's package manager. A missing
+ * `dependencies` entry therefore fails `nsh check` here, the way it would in a user's app.
+ *
  * Before either, a fresh build of `registry.json` is compared with the committed `public/r`: the
  * artifact an app installs from must be the one the sources make today. The build is the one
  * `bun run registry:build` makes (`scripts/registry-build.ts`), not a copy of its steps.
@@ -338,6 +342,30 @@ test("every item loads and the page mounts", async () => {
 });
 `;
 
+/**
+ * The packages the app's `package.json` lists: `add` wrote the file itself (an NSH app starts
+ * without one) and installed what the items import (`lucide` today) through the app's manager.
+ */
+async function assertPackages(dir: string, packages: string[]) {
+  const file = path.join(dir, "package.json");
+  const manifest = await fs
+    .readFile(file, "utf8")
+    .then((text) => JSON.parse(text) as { dependencies?: Record<string, string> })
+    .catch(() => null);
+  if (manifest == null) {
+    throw new StepFailure("add", `      add left no package.json, so no ${packages.join(", ")}`);
+  }
+  const listed = Object.keys(manifest.dependencies ?? {});
+  for (const name of packages) {
+    if (!listed.includes(name)) {
+      throw new StepFailure(
+        "add",
+        `      add installed no ${name} (package.json lists ${listed.join(", ") || "nothing"})`,
+      );
+    }
+  }
+}
+
 /** An NSH app with `nsh-ui.json` and the theme in it: what `init` leaves behind. */
 async function scaffold(template: string, registry: string, nsh: string) {
   await fs.mkdir(template, { recursive: true });
@@ -357,10 +385,13 @@ async function installEveryItem(template: string, dir: string, items: Item[], ns
   await fs.writeFile(path.join(dir, "All.test.tsx"), ALL_TEST);
   await step("nsh check", nsh, ["check", "."], dir);
   await step("nsh test", nsh, ["test", "."], dir);
+  // The items import `lucide`, which is what the app's own package manager had to install.
+  await assertPackages(dir, ["lucide"]);
 }
 
 async function installOneItem(template: string, dir: string, item: Item, nsh: string) {
   await copyApp(template, dir);
+  // `nsh check` below fails when the item imports a package `add` did not install (`lucide`).
   await step("add", "bun", [cli, "add", item.name], dir);
   // `nsh check` only notices a file that did not land when something imports it: assert it is there.
   if (item.target) {

@@ -1,6 +1,7 @@
 // A number input: the look (`numberInputClasses`, `numberInputSteps`) and the `NumberInput` that wears it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { colors, terminal } from "@shadcn-nsh/theme";
+import { ChevronDown, ChevronUp, Minus, Plus, type IconNode } from "lucide";
 import type { InputStyle } from "nsh";
 import { platform, split, Text } from "nsh";
 import {
@@ -58,16 +59,16 @@ export function numberInputText(): InputStyle {
 }
 
 /** A step button's text glyph in a terminal, which draws no icons. */
-const STEP_GLYPHS = { plus: "+", minus: "−" } as const;
+const STEP_GLYPHS = new Map<IconNode, string>([
+  [Plus, "+"],
+  [Minus, "−"],
+]);
 
 /** A step button's glyph: the icon in the muted text color; a terminal's text glyph. */
-export function NumberStep(props: {
-  name: "plus" | "minus" | "chevron-up" | "chevron-down";
-  size: number;
-}) {
-  if (terminal && (props.name === "plus" || props.name === "minus"))
-    return <Text style={{ color: colors.muted }}>{STEP_GLYPHS[props.name]}</Text>;
-  return <Icon name={props.name} size={props.size} tint={colors.muted} />;
+export function NumberStep(props: { icon: IconNode; size: number }) {
+  const glyph = terminal ? STEP_GLYPHS.get(props.icon) : undefined;
+  if (glyph) return <Text style={{ color: colors.muted }}>{glyph}</Text>;
+  return <Icon icon={props.icon} size={props.size} tint={colors.muted} />;
 }
 
 /**
@@ -83,16 +84,16 @@ export function numberInputSteps(kind: "split" | "pair", w: string, icon: number
       controlsClass: "flex-row",
       decrementButtonClass: `w-6 shrink-0 flex-row items-center ${press}`,
       incrementButtonClass: `w-6 shrink-0 flex-row items-center ${press}`,
-      decrementButton: <NumberStep name="minus" size={icon} />,
-      incrementButton: <NumberStep name="plus" size={icon} />,
+      decrementButton: <NumberStep icon={Minus} size={icon} />,
+      incrementButton: <NumberStep icon={Plus} size={icon} />,
     };
   }
   if (kind === "split") {
     return {
       decrementButtonClass: numberInputClasses.stepBefore(w),
       incrementButtonClass: numberInputClasses.stepAfter(w),
-      decrementButton: <NumberStep name="minus" size={icon} />,
-      incrementButton: <NumberStep name="plus" size={icon} />,
+      decrementButton: <NumberStep icon={Minus} size={icon} />,
+      incrementButton: <NumberStep icon={Plus} size={icon} />,
     };
   }
   return {
@@ -100,8 +101,8 @@ export function numberInputSteps(kind: "split" | "pair", w: string, icon: number
     controlsClass: numberInputClasses.pair(w),
     incrementButtonClass: numberInputClasses.pairButton(true),
     decrementButtonClass: numberInputClasses.pairButton(false),
-    incrementButton: <NumberStep name="chevron-up" size={icon - 2} />,
-    decrementButton: <NumberStep name="chevron-down" size={icon - 2} />,
+    incrementButton: <NumberStep icon={ChevronUp} size={icon - 2} />,
+    decrementButton: <NumberStep icon={ChevronDown} size={icon - 2} />,
   };
 }
 // @port end

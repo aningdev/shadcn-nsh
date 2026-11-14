@@ -1,6 +1,7 @@
 // Diff view: `diffViewStyles`, `DiffHunkActions`, and the `DiffView` that wears them.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { alpha, colors, solidTint, terminal, type Tone } from "@shadcn-nsh/theme";
+import { Check, Undo2, type IconNode } from "lucide";
 import { split, Text, View } from "nsh";
 import {
   Button,
@@ -10,7 +11,7 @@ import {
 } from "nsh/base";
 
 import { buttonGlyph, buttonLabel, buttonLook, type ButtonVariant } from "./button";
-import { Icon, type IconName } from "./lib/icons";
+import { Icon } from "./lib/icons";
 
 // @port look/workspace.tsx
 /** A value, or a function reading it where the actions are drawn (a signal). */
@@ -25,7 +26,7 @@ const read = <T,>(v: Live<T> | undefined): T | undefined =>
 function HunkAction(props: {
   variant: ButtonVariant;
   label: string;
-  icon: IconName;
+  icon: IconNode;
   index: number;
   iconOnly?: boolean;
   onPress: () => void;
@@ -44,7 +45,7 @@ function HunkAction(props: {
       {...look}
     >
       {props.iconOnly && !terminal ? (
-        <Icon {...buttonGlyph(props.variant, { size: "sm" })} name={props.icon} size={11} />
+        <Icon {...buttonGlyph(props.variant, { size: "sm" })} icon={props.icon} size={11} />
       ) : (
         <Text
           class="font-sans"
@@ -148,7 +149,7 @@ export function DiffHunkActions(props: {
       <HunkAction
         variant="secondary"
         label="Revert"
-        icon="undo"
+        icon={Undo2}
         index={props.index}
         iconOnly={props.iconOnly}
         onPress={props.onRevert}
@@ -156,7 +157,7 @@ export function DiffHunkActions(props: {
       <HunkAction
         variant="default"
         label="Keep"
-        icon="check"
+        icon={Check}
         index={props.index}
         iconOnly={props.iconOnly}
         onPress={props.onKeep}

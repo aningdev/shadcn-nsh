@@ -5,6 +5,7 @@ import { Command } from "commander";
 import { DEFAULT_CONFIG } from "../types";
 import { readApp } from "../utils/app";
 import { writeConfig } from "../utils/config";
+import { installDependencies } from "../utils/deps";
 import { installItems } from "../utils/install";
 import { fetchIndex, resolveTree } from "../utils/registry";
 import { runInit } from "./init";
@@ -23,7 +24,9 @@ export type AddOptions = {
  * Copy `components` (and `--all`, every `registry:ui` item) into the app, dependencies first.
  *
  * Files the app has changed are kept unless `--overwrite`; a `theme.json` that only lacks keys
- * is merged. With `--dry-run` nothing is written, not even `nsh-ui.json` or the init theme.
+ * is merged. The packages the items declare are installed with the app's own package manager
+ * (`utils/deps.ts`). With `--dry-run` nothing is written, not even `nsh-ui.json` or the init
+ * theme, and the install is printed instead of run.
  */
 export async function runAdd(components: string[], opts: AddOptions): Promise<number> {
   const cwd = path.resolve(opts.cwd);
@@ -63,6 +66,7 @@ export async function runAdd(components: string[], opts: AddOptions): Promise<nu
 
   const items = await resolveTree(config, names, opts.registry);
   await installItems(ws.uiRoot, config, items, { overwrite: opts.overwrite, dryRun });
+  const installed = await installDependencies(ws.uiRoot, items, { dryRun });
 
   if (dryRun) {
     const count = `${names.length} item${names.length === 1 ? "" : "s"}`;
@@ -76,7 +80,8 @@ export async function runAdd(components: string[], opts: AddOptions): Promise<nu
   if (ws.kind === "monorepo") {
     console.log(`(installed under ${path.relative(ws.root, ws.uiRoot) || "packages/ui"})`);
   }
-  return 0;
+  // The files are in; the packages they import are not, so the app does not type check yet.
+  return installed?.ok === false ? 1 : 0;
 }
 
 export const add = new Command()

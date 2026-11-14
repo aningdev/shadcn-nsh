@@ -1,6 +1,7 @@
 // A carousel: the look (`carouselArrowLook`, pagination) on `nsh/base` carousel parts.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { alpha, colors, finish, focusRing, terminal } from "@shadcn-nsh/theme";
+import { ChevronLeft } from "lucide";
 import type { JSX, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
 import {
@@ -187,11 +188,11 @@ function mergeArrowChild(mark: "previous" | "next", children: JSX.Element | unde
   const icon = carouselSizes.arrowIcon;
   // The tint is read in the JSX, so it follows the appearance (light / dark).
   if (mark === "previous") {
-    return <Icon name="back" size={icon} tint={colors.text} />;
+    return <Icon icon={ChevronLeft} size={icon} tint={colors.text} />;
   }
   return (
     <View style={{ transform: [{ scaleX: -1 }] }}>
-      <Icon name="back" size={icon} tint={colors.text} />
+      <Icon icon={ChevronLeft} size={icon} tint={colors.text} />
     </View>
   );
 }

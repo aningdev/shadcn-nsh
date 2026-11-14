@@ -21,6 +21,7 @@
         "@astrojs/ts-content-mapper": "^0.2.0",
         "@tailwindcss/vite": "^4.3.3",
         "astro": "^7.4.4",
+        "lucide": "1.66.0",
         "shiki": "^4.4.3",
         "tailwindcss": "^4.3.3",
       },
@@ -55,6 +56,7 @@
       "version": "0.0.0",
       "dependencies": {
         "@shadcn-nsh/theme": "workspace:*",
+        "lucide": "1.66.0",
       },
     },
   },
@@ -936,6 +938,8 @@
     "longest-streak": ["longest-streak@3.1.0", "", {}, "sha512-9Ri+o0JYgehTaVBBDoMqIl8GXtbWg711O3srftcHhZ0dqnETqLaoIK0x17fUw9rFSlK/0NlsKe0Ahhyl5pXE2g=="],
 
     "lru-cache": ["lru-cache@11.5.3", "", {}, "sha512-U4N8FgzmWxc8k1VH8Kr6lQg18U7Fjvby6wXHVRX/ZZ7IwWbRMgrRbP0Wrb5q5NVinryp4SQampHKdvtecItxUg=="],
+
+    "lucide": ["lucide@1.66.0", "", {}, "sha512-Ngq8coV3XJ9S/DLTNnIWk9lmdJusoSnuuoO1rK7C0H9/VaV93LoWkv/u5GyUAJhL+rFesAd4gL3YG544bnH6gQ=="],
 
     "lz-string": ["lz-string@1.5.0", "", { "bin": { "lz-string": "bin/bin.js" } }, "sha512-h5bgJWpxJNswbU7qCrV0tIKQCaS3blPDrqKWx+QxzuzL1zGUzij9XCWLrSLsJPu5t+eWA/ycetzYAO5IOMcWAQ=="],
 

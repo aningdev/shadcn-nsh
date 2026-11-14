@@ -4,6 +4,7 @@
 // differs from the component page only in the parts it names.
 import { mono } from "@shadcn-nsh/theme";
 import { colors } from "@shadcn-nsh/theme";
+import { Undo2 } from "lucide";
 import { mount, signal, Text, View } from "nsh";
 import {
   command,
@@ -140,7 +141,7 @@ function App() {
       onPress={() => run(cmd())}
     >
       <View style={mirrored ? { transform: [{ scaleX: -1 }] } : undefined}>
-        <Icon name="undo" {...buttonGlyph("ghost", { size: "sm", disabled: () => !can(cmd()) })} />
+        <Icon icon={Undo2} {...buttonGlyph("ghost", { size: "sm", disabled: () => !can(cmd()) })} />
       </View>
     </Button>
   );

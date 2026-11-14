@@ -4,6 +4,7 @@
 // (`references/nsh/website/demos/el-carousel.tsx`) writes it. It differs from the component page
 // only in the parts it names.
 import { alpha } from "@shadcn-nsh/theme";
+import { ChevronLeft } from "lucide";
 import { Image, mount, signal, Text, token, View } from "nsh";
 import {
   Carousel,
@@ -159,7 +160,7 @@ function App() {
               focusVisibleStyle={arrow.focusVisibleStyle}
               disabledStyle={arrow.disabledStyle}
             >
-              <Icon name="back" size={carouselSizes.arrowIcon} tint={ui().text} />
+              <Icon icon={ChevronLeft} size={carouselSizes.arrowIcon} tint={ui().text} />
             </CarouselPrevious>
             {/* The dots: a pill springs to the one of the photo shown. */}
             <CarouselPagination
@@ -188,7 +189,7 @@ function App() {
               disabledStyle={arrow.disabledStyle}
             >
               <View style={{ transform: [{ scaleX: -1 }] }}>
-                <Icon name="back" size={carouselSizes.arrowIcon} tint={ui().text} />
+                <Icon icon={ChevronLeft} size={carouselSizes.arrowIcon} tint={ui().text} />
               </View>
             </CarouselNext>
           </View>

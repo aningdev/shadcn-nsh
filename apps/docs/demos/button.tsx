@@ -2,6 +2,7 @@
 // parts: a counter that reports each press (down, up, press), a switch that disables it, two
 // formatting toggles, and an inspector with what the page heard; a second card lists the kinds,
 // the sizes and the icon buttons.
+import { ChevronDown, Play, Plus, Search, Star, Trash } from "lucide";
 import { mount, signal, Text, View } from "nsh";
 
 import {
@@ -183,7 +184,7 @@ function App() {
         </DemoSection>
         <DemoSection title="Icon">
           <IconButton accessibilityLabel="Search" onPress={() => press("search")}>
-            <Icon name="search" {...iconButtonGlyph({})} />
+            <Icon icon={Search} {...iconButtonGlyph({})} />
           </IconButton>
           <IconButton
             accessibilityLabel="Star"
@@ -195,7 +196,7 @@ function App() {
             }}
           >
             <Icon
-              name="star"
+              icon={Star}
               {...iconButtonGlyph({ variant: "secondary", selected: () => starred() })}
             />
           </IconButton>
@@ -204,13 +205,13 @@ function App() {
             variant="destructive"
             onPress={() => press("delete")}
           >
-            <Icon name="trash" {...iconButtonGlyph({ variant: "destructive" })} />
+            <Icon icon={Trash} {...iconButtonGlyph({ variant: "destructive" })} />
           </IconButton>
           <RoundButton accessibilityLabel="Play" onPress={() => press("play")}>
-            <Icon name="play" {...roundButtonGlyph("default")} />
+            <Icon icon={Play} fill {...roundButtonGlyph("default")} />
           </RoundButton>
           <RoundButton accessibilityLabel="Plus" variant="secondary" onPress={() => press("plus")}>
-            <Icon name="plus" {...roundButtonGlyph("secondary")} />
+            <Icon icon={Plus} {...roundButtonGlyph("secondary")} />
           </RoundButton>
         </DemoSection>
         <DemoSection title="Split">
@@ -225,7 +226,7 @@ function App() {
                 press("save options");
               }}
             >
-              <Icon name="chevron-down" {...buttonGlyph("default")} />
+              <Icon icon={ChevronDown} {...buttonGlyph("default")} />
             </SplitButtonSegment>
           </SplitButton>
           <SplitButton variant="secondary">
@@ -235,7 +236,7 @@ function App() {
               accessibilityLabel="More export options"
               onPress={() => press("export options")}
             >
-              <Icon name="chevron-down" {...buttonGlyph("secondary")} />
+              <Icon icon={ChevronDown} {...buttonGlyph("secondary")} />
             </SplitButtonSegment>
           </SplitButton>
         </DemoSection>
