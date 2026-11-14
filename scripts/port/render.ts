@@ -178,7 +178,9 @@ console.log("one page of them all: bun run port:sheet");
 /** Every pair, compared: byte for byte, or within the page's tolerance (`pixels.ts`). */
 function comparePixels(): number {
   let failed = 0;
-  for (const { id, tolerance } of cases) {
+  for (const { id, tolerance, selfReference } of cases) {
+    // A self-reference has no second page: its picture is the only one.
+    if (selfReference) continue;
     const allowed = tolerance ?? antialiasing;
     for (const scheme of schemes) {
       const name = `${id}-pointer-${scheme}`;
