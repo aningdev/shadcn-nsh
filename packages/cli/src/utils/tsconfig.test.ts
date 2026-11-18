@@ -201,9 +201,17 @@ describe("ensureAtPaths", () => {
     });
     expect(await ensureAtPaths(app)).toEqual({ status: "merged", detail: "base" });
     const text = await read("tsconfig.json");
-    expect(pathsOf(text)).toEqual({ ...REWRITTEN, "@/*": ["./*"] });
-    // One `paths` key, in its original place.
-    expect(text.split('"paths"').length - 1).toBe(1);
+    expect(text).toBe(`{
+  "compilerOptions": {
+    "paths": {
+      "nsh": ["./.nsh/types/nsh/index.d.ts"],
+      "nsh/*": ["./.nsh/types/nsh/*.d.ts"],
+      "*": ["./.nsh/types/*.d.ts"],
+      "extra": ["./.nsh/types/extra.d.ts"],
+      "@/*": ["./*"]
+    }
+  }
+}`);
   });
 
   test("adds only @/* to paths the app already has", async () => {

@@ -5,19 +5,11 @@
  *
  * jsonc-parser's `modify` alone does not do that: given `formattingOptions` it formats the whole
  * object it inserts into (every `["…"]` in it spread over three lines), and without them it
- * inserts minified JSON. So a value that is already there is replaced in place (`modify` with no
- * formatting touches only that value), and a key that is not is written here, as the file
- * writes its own: on the next line at its siblings' indent, or inline in an object that is on
- * one line; arrays of plain values on one line, objects one key a line.
+ * writes minified JSON. So the value is written here, as the file writes its own — a value that
+ * is there in its place, a key that is not on the next line at its siblings' indent (or inline
+ * in an object that is on one line) — arrays of plain values on one line, objects a key a line.
  */
-import {
-  applyEdits,
-  findNodeAtLocation,
-  modify,
-  parseTree,
-  type JSONPath,
-  type Node,
-} from "jsonc-parser";
+import { findNodeAtLocation, parseTree, type JSONPath, type Node } from "jsonc-parser";
 
 /** The parse options the edits read with: JSONC, as tsconfig allows. */
 const READ = { allowTrailingComma: true } as const;
@@ -34,7 +26,12 @@ export function setJsonValue(text: string, jsonPath: JSONPath, value: unknown): 
   const existing = findNodeAtLocation(root, jsonPath);
   if (existing) {
     if (JSON.stringify(nodeValue(existing)) === JSON.stringify(value)) return text;
-    return applyEdits(text, modify(text, jsonPath, value, {}));
+    // At the indent of the line its key is on: an object value opens there, one level in.
+    const indent = lineIndent(text, existing.parent?.offset ?? existing.offset);
+    const end = existing.offset + existing.length;
+    return (
+      text.slice(0, existing.offset) + serialize(value, indent, indentUnit(text)) + text.slice(end)
+    );
   }
 
   // The deepest object on the path that is there; the rest of the path becomes nested objects.

@@ -10,6 +10,12 @@ describe("setJsonValue", () => {
     );
   });
 
+  test("writes a replacing object the way the file writes, not minified", () => {
+    expect(setJsonValue(`{\n  "paths": {}\n}`, ["paths"], { a: ["x"], b: ["y"] })).toBe(
+      `{\n  "paths": {\n    "a": ["x"],\n    "b": ["y"]\n  }\n}`,
+    );
+  });
+
   test("returns the text itself when the value is already there", () => {
     const text = `{ "theme": "./theme.json" }`;
     expect(setJsonValue(text, ["theme"], "./theme.json")).toBe(text);
