@@ -5,22 +5,15 @@
  * sets both. A child tsconfig's `paths` replace the base's, so ours carry the NSH mappings the
  * base declares too.
  *
- * Existing files are edited through `jsonc-parser`'s `modify` + `applyEdits`: comments and
- * untouched keys survive, and the inserted entries are indented the way the file itself is.
+ * Existing files are edited through `setJsonValue`: comments, untouched keys and their
+ * formatting survive, and the inserted entries are written the way the file itself is.
  */
 import fs from "node:fs/promises";
 import path from "node:path";
 
-import {
-  applyEdits,
-  modify,
-  parse,
-  printParseErrorCode,
-  type FormattingOptions,
-  type JSONPath,
-  type ParseError,
-} from "jsonc-parser";
+import { parse, printParseErrorCode, type JSONPath, type ParseError } from "jsonc-parser";
 
+import { setJsonValue } from "./jsonc-edit";
 import { isNotFound, isRecord } from "./registry-schema";
 
 /** NSH's own type mappings, restated for the app root, for when there is no
@@ -122,8 +115,7 @@ export async function ensureAtPaths(appDir: string): Promise<AtPaths> {
   if (!isRecord(root)) return { status: "warn", detail: "not a JSON object at the top" };
 
   const set = async (jsonPath: JSONPath, value: unknown): Promise<void> => {
-    const edits = modify(text, jsonPath, value, { formattingOptions: formattingOf(text) });
-    await fs.writeFile(file, applyEdits(text, edits));
+    await fs.writeFile(file, setJsonValue(text, jsonPath, value));
   };
 
   const compilerOptions = root.compilerOptions;
@@ -183,16 +175,4 @@ ${note}${entries.join(",\n")}
   "include": ["**/*.ts", "**/*.tsx"]
 }
 `;
-}
-
-/** The file's own indentation, so `modify`'s inserted entries land the way the file is
- *  written: tabs when it indents with tabs, that many spaces when it indents with spaces. */
-function formattingOf(text: string): FormattingOptions {
-  for (const line of text.split("\n")) {
-    const indent = line.match(/^[ \t]+/);
-    if (indent == null || line.trim().length === 0) continue;
-    if (indent[0].includes("\t")) return { tabSize: 1, insertSpaces: false, keepLines: true };
-    return { tabSize: indent[0].length, insertSpaces: true, keepLines: true };
-  }
-  return { tabSize: 2, insertSpaces: true, keepLines: true };
 }

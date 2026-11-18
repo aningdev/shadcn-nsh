@@ -4,6 +4,11 @@
 
 ### Fixed
 
+- **`init` keeps `nsh.json` and `tsconfig.json` the way the app wrote them.** It used to rewrite
+  both when it merged its keys, spreading every short array (`"conditions": ["node"]`, each
+  `paths` value) over three lines. It now edits only the keys it sets: the rest of the file —
+  formatting, comments, key order — stays byte for byte, and what it adds follows the file's
+  indentation, short arrays on one line.
 - **The home page's Docs, Components and Themes links open their pages.** They went to
   `/shadcn-nsh/shadcn-nsh/docs/…` and 404'd.
 

@@ -1,11 +1,14 @@
+import fs from "node:fs/promises";
 import path from "node:path";
 
 import { Command } from "commander";
+import { parse } from "jsonc-parser";
 
 import { DEFAULT_CONFIG, DEFAULT_THEME, themeItem, type NshUiConfig } from "../types";
-import { findNshJson, readJson, writeConfig, writeJson } from "../utils/config";
+import { findNshJson, writeConfig } from "../utils/config";
 import { installDependencies } from "../utils/deps";
 import { installItems } from "../utils/install";
+import { setJsonValue } from "../utils/jsonc-edit";
 import { resolveTree } from "../utils/registry";
 import { isRecord } from "../utils/registry-schema";
 import { ensureAtPaths } from "../utils/tsconfig";
@@ -50,19 +53,19 @@ export async function runInit(opts: {
   for (const appDir of ws.apps) {
     const nshJsonPath = await findNshJson(appDir);
     if (!nshJsonPath) continue;
-    const nsh = await readJson<Record<string, unknown>>(nshJsonPath);
-    nsh.theme = ws.kind === "monorepo" ? themePathForApp(appDir, ws.uiRoot) : "./theme.json";
+    // Edited in place, not re-serialized: the app's formatting and comments stay as they were.
+    const before = await fs.readFile(nshJsonPath, "utf8");
+    const nsh: unknown = parse(before, [], { allowTrailingComma: true });
+    if (!isRecord(nsh)) throw new Error(`${nshJsonPath} is not a JSON object`);
+    const theme = ws.kind === "monorepo" ? themePathForApp(appDir, ws.uiRoot) : "./theme.json";
+    let text = setJsonValue(before, ["theme"], theme);
     if (ws.kind === "app") {
       // The bundler's half of the alias: `nsh run`/`build`/`test` read `nsh.json`, never
       // tsconfig. A monorepo imports from `@workspace/ui` instead, so it is left alone.
       const existing =
         isRecord(nsh.resolve) && isRecord(nsh.resolve.alias) ? nsh.resolve.alias["@"] : undefined;
       if (existing === undefined) {
-        const resolve = isRecord(nsh.resolve) ? nsh.resolve : {};
-        const alias = isRecord(resolve.alias) ? resolve.alias : {};
-        alias["@"] = "./";
-        resolve.alias = alias;
-        nsh.resolve = resolve;
+        text = setJsonValue(text, ["resolve", "alias", "@"], "./");
         console.log(`update ${path.relative(cwd, nshJsonPath) || "nsh.json"} alias @ → ./`);
       } else if (existing !== "./") {
         console.error(
@@ -71,10 +74,8 @@ export async function runInit(opts: {
         );
       }
     }
-    await writeJson(nshJsonPath, nsh);
-    console.log(
-      `update ${path.relative(cwd, nshJsonPath) || "nsh.json"} theme → ${String(nsh.theme)}`,
-    );
+    if (text !== before) await fs.writeFile(nshJsonPath, text);
+    console.log(`update ${path.relative(cwd, nshJsonPath) || "nsh.json"} theme → ${theme}`);
   }
 
   if (ws.kind === "app") {

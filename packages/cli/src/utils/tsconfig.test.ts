@@ -125,27 +125,14 @@ describe("ensureAtPaths", () => {
     expect(await ensureAtPaths(app)).toEqual({ status: "merged", detail: "base" });
     expect(await read("tsconfig.json")).toBe(`{
   "extends": "./.nsh/tsconfig.json",
-  "include": [
-    "**/*.ts",
-    "**/*.tsx"
-  ],
+  "include": ["**/*.ts", "**/*.tsx"],
   "compilerOptions": {
     "paths": {
-      "nsh": [
-        "./.nsh/types/nsh/index.d.ts"
-      ],
-      "nsh/*": [
-        "./.nsh/types/nsh/*.d.ts"
-      ],
-      "*": [
-        "./.nsh/types/*.d.ts"
-      ],
-      "extra": [
-        "./.nsh/types/extra.d.ts"
-      ],
-      "@/*": [
-        "./*"
-      ]
+      "nsh": ["./.nsh/types/nsh/index.d.ts"],
+      "nsh/*": ["./.nsh/types/nsh/*.d.ts"],
+      "*": ["./.nsh/types/*.d.ts"],
+      "extra": ["./.nsh/types/extra.d.ts"],
+      "@/*": ["./*"]
     }
   }
 }`);
@@ -169,21 +156,11 @@ describe("ensureAtPaths", () => {
   "compilerOptions": {
     "strict": true,
     "paths": {
-      "nsh": [
-        "./.nsh/types/nsh/index.d.ts"
-      ],
-      "nsh/*": [
-        "./.nsh/types/nsh/*.d.ts"
-      ],
-      "*": [
-        "./.nsh/types/*.d.ts"
-      ],
-      "extra": [
-        "./.nsh/types/extra.d.ts"
-      ],
-      "@/*": [
-        "./*"
-      ]
+      "nsh": ["./.nsh/types/nsh/index.d.ts"],
+      "nsh/*": ["./.nsh/types/nsh/*.d.ts"],
+      "*": ["./.nsh/types/*.d.ts"],
+      "extra": ["./.nsh/types/extra.d.ts"],
+      "@/*": ["./*"]
     }
   }
 }`);
@@ -200,27 +177,14 @@ describe("ensureAtPaths", () => {
     expect(await ensureAtPaths(app)).toEqual({ status: "merged", detail: "base" });
     expect(await read("tsconfig.json")).toBe(`{
 \t"extends": "./.nsh/tsconfig.json",
-\t"include": [
-\t\t"**/*.ts",
-\t\t"**/*.tsx"
-\t],
+\t"include": ["**/*.ts", "**/*.tsx"],
 \t"compilerOptions": {
 \t\t"paths": {
-\t\t\t"nsh": [
-\t\t\t\t"./.nsh/types/nsh/index.d.ts"
-\t\t\t],
-\t\t\t"nsh/*": [
-\t\t\t\t"./.nsh/types/nsh/*.d.ts"
-\t\t\t],
-\t\t\t"*": [
-\t\t\t\t"./.nsh/types/*.d.ts"
-\t\t\t],
-\t\t\t"extra": [
-\t\t\t\t"./.nsh/types/extra.d.ts"
-\t\t\t],
-\t\t\t"@/*": [
-\t\t\t\t"./*"
-\t\t\t]
+\t\t\t"nsh": ["./.nsh/types/nsh/index.d.ts"],
+\t\t\t"nsh/*": ["./.nsh/types/nsh/*.d.ts"],
+\t\t\t"*": ["./.nsh/types/*.d.ts"],
+\t\t\t"extra": ["./.nsh/types/extra.d.ts"],
+\t\t\t"@/*": ["./*"]
 \t\t}
 \t}
 }`);

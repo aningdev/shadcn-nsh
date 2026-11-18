@@ -29,12 +29,3 @@ export async function findNshJson(cwd: string) {
     return null;
   }
 }
-
-export async function readJson<T>(file: string): Promise<T> {
-  return JSON.parse(await fs.readFile(file, "utf8")) as T;
-}
-
-export async function writeJson(file: string, data: unknown) {
-  await fs.mkdir(path.dirname(file), { recursive: true });
-  await fs.writeFile(file, `${JSON.stringify(data, null, 2)}\n`, "utf8");
-}

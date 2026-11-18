@@ -324,6 +324,40 @@ describe("the @/ alias", () => {
     });
   });
 
+  test("edits nsh.json in place: only the new keys are added, its short arrays stay on one line", async () => {
+    current = fixture();
+    current.write(
+      "nsh.json",
+      `{
+  "name": "T",
+  "id": "dev.t",
+  "version": "0.0.0",
+  "build": 1,
+  "resolve": {
+    "conditions": ["node"]
+  }
+}
+`,
+    );
+
+    await captured(() => runInit({ cwd: current!.app, registry: current!.url }));
+
+    expect(current.read("nsh.json")).toBe(`{
+  "name": "T",
+  "id": "dev.t",
+  "version": "0.0.0",
+  "build": 1,
+  "resolve": {
+    "conditions": ["node"],
+    "alias": {
+      "@": "./"
+    }
+  },
+  "theme": "./theme.json"
+}
+`);
+  });
+
   test("a fresh app with no .nsh to read falls back to the mappings this CLI knows", async () => {
     current = fixture();
 
@@ -356,27 +390,14 @@ describe("the @/ alias", () => {
     expect(current.read("tsconfig.json")).toBe(`{
   "extends": "./.nsh/tsconfig.json",
   // my include list
-  "include": [
-    "**/*.ts",
-    "**/*.tsx"
-  ],
+  "include": ["**/*.ts", "**/*.tsx"],
   "compilerOptions": {
     "paths": {
-      "nsh": [
-        "./.nsh/types/nsh/index.d.ts"
-      ],
-      "nsh/*": [
-        "./.nsh/types/nsh/*.d.ts"
-      ],
-      "*": [
-        "./.nsh/types/*.d.ts"
-      ],
-      "extra": [
-        "./.nsh/types/extra.d.ts"
-      ],
-      "@/*": [
-        "./*"
-      ]
+      "nsh": ["./.nsh/types/nsh/index.d.ts"],
+      "nsh/*": ["./.nsh/types/nsh/*.d.ts"],
+      "*": ["./.nsh/types/*.d.ts"],
+      "extra": ["./.nsh/types/extra.d.ts"],
+      "@/*": ["./*"]
     }
   }
 }`);
