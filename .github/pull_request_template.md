@@ -4,7 +4,9 @@
 
 ## 为什么
 
-<!-- 改之前是什么样、哪里不对。有 issue 就链上。 -->
+<!-- 改之前是什么样、哪里不对。 -->
+
+Closes #
 
 ## 怎么确认
 
@@ -12,6 +14,8 @@
 
 ## 检查清单
 
+- [ ] PR 标题是约定式提交信息（`fix(menu): …`），它就是合并后的提交
+- [ ] 用的人能感知到的改动：`CHANGELOG.md` 的 `Unreleased` 已加一条
 - [ ] `bun run check` 通过
 - [ ] 改过组件或演示：`bun run port:render`，四张截图人眼看过
 - [ ] 改过行为：`bun run test:gallery`

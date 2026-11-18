@@ -6,9 +6,9 @@
 
 ## 1 发版之前
 
-- `main` 是绿的：`check.yml` 跑 `bun run check`、演示与 gallery 的类型检查、`port:render`、`test:install`。
+- 这一版要带的 PR 都已合并，`main` 是绿的：`check.yml` 跑 `bun run check`、演示与 gallery 的类型检查、`port:render`、`test:install`。
 - 本地再跑一遍 `bun run test:install`：在真实 NSH 应用里 `init` / `add`，逐条目。
-- 改动都写下了：`CHANGELOG.md` 的 `Unreleased`、文档站、README 的兼容矩阵。
+- 改动都写下了：每个 PR 已在 `CHANGELOG.md` 的 `Unreleased` 写了自己的条目；文档站、README 的兼容矩阵跟上了。
 - 上游那侧是干净的：`bun run port:check` 没有未审阅的变化（审阅过的已经 `bun run port:review` 记下）。
 
 ## 2 定版本号
@@ -45,20 +45,28 @@ CLI 与组件库共用一个版本号。
 - `README.md` 与 `README.zh.md` 的兼容矩阵加一行（本库版本 ↔ NSH CLI 版本）。
 - 如果这次跟着换了 NSH 基线：`port-map.json` 的 `upstream.cli` 与 `upstream.commit` 一起更新（`bun run port:bump`，见 [`toolchain.md`](toolchain.md)）。
 
-## 5 重建 registry 并提交
+## 5 发版 PR
+
+`main` 受保护，发版也走 PR：
 
 ```sh
+git switch -c chore/release-vX.Y.Z
 bun run registry:build          # registry.json → public/r
 git add -A
 git commit -m "chore(release): vX.Y.Z"
-git push origin main
+git push -u origin chore/release-vX.Y.Z
+gh pr create --title "chore(release): vX.Y.Z" --body-file <这一版的 CHANGELOG 节>
 ```
 
-`public/r` 必须在同一个提交里：标签读的就是它。
+`public/r` 必须在这个 PR 里：标签读的就是它。CI 绿了 squash 合并。
 
 ## 6 打标签
 
+在合并后的 `main` 上打，标签指向发版 PR 的那个 squash 提交：
+
 ```sh
+git switch main && git pull --ff-only
+git log -1 --oneline            # 应是 chore(release): vX.Y.Z
 git tag vX.Y.Z
 git push origin vX.Y.Z
 ```

@@ -71,7 +71,8 @@ registry.json → public/r → shadcn-nsh add
 ## 工作约定
 
 - 新组件用脚手架（`bun run port:new`）起步，不从空文件或旧组件复制。
-- 一个家族一个 commit；提交前 `port:check`、`nsh check apps/website/demos`、`port:render`、`vp check` 全部通过，四张截图人眼看过。
+- `main` 受保护：每个改动一个分支（`<type>/<短描述>`）、一个 PR（标题是约定式提交信息，squash 合并），bug 与新组件先有 issue，PR 写 `Closes #N`；用的人能感知到的改动在同一 PR 里写进 `CHANGELOG.md` 的 `Unreleased`。流程见 [`CONTRIBUTING.md`](CONTRIBUTING.md#分支与-pr)。
+- 一个家族一个 PR；开 PR 前 `port:check`、`nsh check apps/website/demos`、`port:render`、`vp check` 全部通过，四张截图人眼看过。
 - `// @port` 区域可以直接改；有意的外观决定写进对应文档。上游有变化时 `port:check` 会列出待审阅项，审阅后采纳或忽略；`bun run port:review` 把审阅到的上游提交记进 `port-map.json`。
 - 改 `registry.json` 或组件文件后运行 `bun run registry:build` 更新 `public/r`；`bun run check` 里的 `registry:build --check` 会拦下没重建的提交。
 - 发版按 [`docs/release.md`](docs/release.md) 走：改版号、切 CHANGELOG、重建 registry、打 `v*` 标签。
