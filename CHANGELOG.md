@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+### Fixed
+
+- **The home page's Docs, Components and Themes links open their pages.** They went to
+  `/shadcn-nsh/shadcn-nsh/docs/…` and 404'd.
+
 ## 0.8.0 — NSH 0.6, the `@/` alias and quieter list highlights
 
 ### Added

@@ -83,10 +83,12 @@ function Home() {
   return (
     <HomeLayout
       {...baseOptions()}
+      // Router paths, not `url()`: the layout renders these through the router's `Link`, which
+      // adds the basepath itself — as the sidebar's `/docs/…` from `source.ts`.
       links={[
-        { text: "Docs", url: url("docs/getting-started") },
-        { text: "Components", url: url("docs/components") },
-        { text: "Themes", url: url("docs/themes") },
+        { text: "Docs", url: "/docs/getting-started" },
+        { text: "Components", url: "/docs/components" },
+        { text: "Themes", url: "/docs/themes" },
       ]}
     >
       <main className="mx-auto flex w-full max-w-(--fd-layout-width) min-w-0 flex-col gap-20 px-4 py-16 md:px-8 md:py-24">
