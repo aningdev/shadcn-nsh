@@ -101,7 +101,7 @@ npx shadcn-nsh@latest view button
 
 ## diff
 
-Compares the app's installed files with the registry's. Exits `1` when they differ.
+Compares the app's installed files with the registry's. Exits `1` when they differ, `2` when it could not compare.
 
 ```sh
 shadcn-nsh@latest diff [options] [items...]
@@ -119,8 +119,18 @@ npx shadcn-nsh@latest diff button
 
 Without an item it lists the installed items that differ; with one it prints the changed lines. `-` is a line of the app's file that overwriting would drop, `+` one it would add. A recolored `theme.json` is not a difference; a missing key is.
 
-```npm
-npx shadcn-nsh@latest diff || echo "run shadcn-nsh@latest add <item> --overwrite"
+| Exit | Meaning                                                                 |
+| ---- | ----------------------------------------------------------------------- |
+| `0`  | No differences.                                                         |
+| `1`  | Something differs (or there is no `nsh-ui.json`).                       |
+| `2`  | The registry cannot be reached and nothing is cached: compared nothing. |
+
+Every registry file the CLI fetches over HTTP is kept in `~/.cache/shadcn-nsh` (`$XDG_CACHE_HOME`, or `SHADCN_NSH_CACHE_DIR` when set). Offline, `diff` compares with those copies and says when they were fetched; the public registry's URL is pinned to the CLI's release, so they are that registry exactly. With no copy, it prints `diff skipped` and exits `2`, so a check can tell "could not check" from "differs":
+
+```sh
+npx shadcn-nsh@latest diff; code=$?
+[ $code -eq 1 ] && echo "run shadcn-nsh@latest add <item> --overwrite"
+[ $code -eq 2 ] && echo "offline — diff skipped"
 ```
 
 ## Hosting a registry

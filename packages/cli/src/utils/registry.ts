@@ -3,6 +3,7 @@ import path from "node:path";
 
 import type { NshUiConfig, Registry, RegistryIndex, RegistryItem } from "../types";
 import { DEFAULT_THEME } from "../types";
+import { fetchJson } from "./fetch-cached";
 
 export function itemUrl(config: NshUiConfig, name: string, registryOverride?: string) {
   const template = registryOverride ?? config.registry;
@@ -30,11 +31,10 @@ export async function fetchItem(
   registryOverride?: string,
 ): Promise<RegistryItem> {
   const url = itemUrl(config, name, registryOverride);
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`);
-  }
-  return (await res.json()) as RegistryItem;
+  return (await fetchJson(
+    url,
+    (res) => new Error(`Failed to fetch ${url}: ${res.status} ${res.statusText}`),
+  )) as RegistryItem;
 }
 
 /** Fetch the catalog (`index.json`). */
@@ -43,14 +43,14 @@ export async function fetchIndex(
   registryOverride?: string,
 ): Promise<RegistryIndex> {
   const url = indexUrl(config, registryOverride);
-  const res = await fetch(url);
-  if (!res.ok) {
-    throw new Error(
-      `Failed to fetch ${url}: ${res.status} ${res.statusText}. ` +
-        "A registry needs an index.json (bun run registry:build writes one).",
-    );
-  }
-  return (await res.json()) as RegistryIndex;
+  return (await fetchJson(
+    url,
+    (res) =>
+      new Error(
+        `Failed to fetch ${url}: ${res.status} ${res.statusText}. ` +
+          "A registry needs an index.json (bun run registry:build writes one).",
+      ),
+  )) as RegistryIndex;
 }
 
 /** `theme.json` and `finishes.json`: the two data files a theme is. */

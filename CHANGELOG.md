@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Added
+
+- **`diff` works offline.** The CLI keeps each registry file it fetches in
+  `~/.cache/shadcn-nsh` (`SHADCN_NSH_CACHE_DIR` to move it); when the registry cannot be reached,
+  `diff` compares with those copies and says when they were fetched. With nothing cached it
+  prints `diff skipped` and exits `2` — `1` still means "differs" — so a check can treat
+  "could not check" its own way.
+
 ### Fixed
 
 - **`init` keeps `nsh.json` and `tsconfig.json` the way the app wrote them.** It used to rewrite

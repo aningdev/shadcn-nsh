@@ -1,8 +1,11 @@
 import { afterEach, describe, expect, test } from "bun:test";
+import fs from "node:fs";
+import os from "node:os";
+import path from "node:path";
 
 import { captured, makeFixture, type Fixture } from "../testing/fixture";
 import { runAdd } from "./add";
-import { runDiff } from "./diff";
+import { DIFF_SKIPPED, runDiff } from "./diff";
 
 const fixture = (): Fixture =>
   makeFixture({ items: ["theme", "switch-geometry", "press", "spinner", "button", "utils"] });
@@ -86,5 +89,67 @@ describe("diff", () => {
 
     expect(out.result).toBe(1);
     expect(out.text).toBe("No nsh-ui.json — run init first.");
+  });
+});
+
+describe("diff offline", () => {
+  let cacheDir: string;
+  let previous: string | undefined;
+
+  /** The fixture's registry over HTTP — only those URLs are cached — and the way to take it down. */
+  function serve(app: Fixture) {
+    const server = Bun.serve({
+      port: 0,
+      fetch: (req) => new Response(Bun.file(path.join(app.registry, new URL(req.url).pathname))),
+    });
+    return { url: `http://localhost:${server.port}/{name}.json`, stop: () => server.stop(true) };
+  }
+
+  const useCache = () => {
+    previous = process.env.SHADCN_NSH_CACHE_DIR;
+    cacheDir = fs.mkdtempSync(path.join(os.tmpdir(), "shadcn-nsh-cache-"));
+    process.env.SHADCN_NSH_CACHE_DIR = cacheDir;
+  };
+
+  afterEach(() => {
+    if (previous === undefined) delete process.env.SHADCN_NSH_CACHE_DIR;
+    else process.env.SHADCN_NSH_CACHE_DIR = previous;
+    fs.rmSync(cacheDir, { recursive: true, force: true });
+  });
+
+  test("compares with the registry the last online run cached, and says so", async () => {
+    useCache();
+    current = await installed();
+    const registry = serve(current);
+    const online = await captured(() => runDiff([], { cwd: current!.app, registry: registry.url }));
+    expect(online.result).toBe(0);
+    await registry.stop();
+
+    current.write(
+      "components/ui/button.tsx",
+      `${current.read("components/ui/button.tsx")}// mine\n`,
+    );
+    const offline = await captured(() =>
+      runDiff([], { cwd: current!.app, registry: registry.url }),
+    );
+
+    expect(offline.result).toBe(1);
+    expect(offline.text).toContain("button (+0 -1)");
+    expect(offline.errors.join("\n")).toMatch(
+      /cannot reach localhost:\d+ — using the registry cached /,
+    );
+  });
+
+  test("with nothing cached, skips and exits with its own code", async () => {
+    useCache();
+    current = await installed();
+    const registry = serve(current);
+    await registry.stop();
+
+    const out = await captured(() => runDiff([], { cwd: current!.app, registry: registry.url }));
+
+    expect(out.result).toBe(DIFF_SKIPPED);
+    expect(out.text).toBe("");
+    expect(out.errors.join("\n")).toContain("no cached copy of it. diff skipped.");
   });
 });

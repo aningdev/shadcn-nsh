@@ -3,6 +3,7 @@ import { Command } from "commander";
 import type { RegistryIndexItem } from "../types";
 import { readApp } from "../utils/app";
 import { changeSummary, diffLines, formatDiff } from "../utils/diff";
+import { RegistryUnreachable } from "../utils/fetch-cached";
 import { hasChange, isInstalled, planItems, type PlannedFile } from "../utils/plan";
 import { fetchIndex, resolveTree } from "../utils/registry";
 
@@ -19,9 +20,24 @@ export type DiffOptions = {
  * `add --overwrite` replaces it), so a theme that is only recolored is not a difference. Of the
  * themes, only the app's own counts as installed: they all land at `theme.json`.
  *
- * Returns 1 when anything differs, so it can gate updates.
+ * Returns 1 when anything differs, so it can gate updates. Offline it compares with the
+ * registry cached by the last run that reached it; with nothing cached it compares nothing and
+ * returns `DIFF_SKIPPED`, for a caller to tell "could not check" from "differs".
  */
 export async function runDiff(names: string[], opts: DiffOptions): Promise<number> {
+  try {
+    return await compare(names, opts);
+  } catch (error) {
+    if (!(error instanceof RegistryUnreachable)) throw error;
+    console.error(`shadcn-nsh: ${error.message} diff skipped.`);
+    return DIFF_SKIPPED;
+  }
+}
+
+/** The exit code when the registry could not be reached and nothing was compared. */
+export const DIFF_SKIPPED = 2;
+
+async function compare(names: string[], opts: DiffOptions): Promise<number> {
   const { ws, config, hasConfig } = await readApp(opts.cwd, opts.registry);
   if (!hasConfig) {
     console.log("No nsh-ui.json — run init first.");
@@ -77,7 +93,9 @@ const summary = (files: PlannedFile[]) =>
 
 export const diff = new Command()
   .name("diff")
-  .description("Compare the app's installed files with the registry's; exit 1 when they differ")
+  .description(
+    "Compare the app's installed files with the registry's; exit 1 when they differ, 2 when offline with nothing cached",
+  )
   .argument("[items...]", "item names (default: every installed item)")
   .option("-c, --cwd <cwd>", "app or monorepo directory", process.cwd())
   .option("--registry <url>", "registry URL template containing {name}")

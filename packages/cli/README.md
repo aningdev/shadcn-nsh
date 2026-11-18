@@ -13,15 +13,15 @@ Default registry: `https://raw.githubusercontent.com/aningdev/shadcn-nsh/main/pu
 
 ## Commands
 
-| Command             | What it does                                                                                 |
-| ------------------- | -------------------------------------------------------------------------------------------- |
-| `init`              | Writes `nsh-ui.json`, installs a theme, points each `nsh.json` at it, sets up `@/` in an app |
-| `add [components…]` | Copies items and their `registryDependencies` into the app                                   |
-| `list`              | The registry's items, `✓` on the ones the app has                                            |
-| `view <items…>`     | The files `add` would write: target paths and contents                                       |
-| `diff [items…]`     | The app's files against the registry's; exit code 1 when they differ                         |
-| `build`             | Builds `registry.json` into `public/r` (maintaining this registry)                           |
-| `serve`             | Serves `public/r` over HTTP for local testing                                                |
+| Command             | What it does                                                                                  |
+| ------------------- | --------------------------------------------------------------------------------------------- |
+| `init`              | Writes `nsh-ui.json`, installs a theme, points each `nsh.json` at it, sets up `@/` in an app  |
+| `add [components…]` | Copies items and their `registryDependencies` into the app                                    |
+| `list`              | The registry's items, `✓` on the ones the app has                                             |
+| `view <items…>`     | The files `add` would write: target paths and contents                                        |
+| `diff [items…]`     | The app's files against the registry's; exit 1 when they differ, 2 when offline with no cache |
+| `build`             | Builds `registry.json` into `public/r` (maintaining this registry)                            |
+| `serve`             | Serves `public/r` over HTTP for local testing                                                 |
 
 Every command takes `-c, --cwd <dir>` (default: the current directory). `init`, `add`, `list`,
 `view` and `diff` also take `--registry <url>`, a template with `{name}` in it; without it, `add`,
