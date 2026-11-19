@@ -233,17 +233,19 @@ function App() {
                 </Text>
               }
             >
-              {MEMBERS.slice(0, members()).map((name, i) => (
-                <View style={{ marginLeft: i === 0 ? 0 : -side / 4 }}>
-                  <Person
-                    name={name}
-                    side={side}
-                    ring
-                    src={warmed() ? avatarPortrait(name) : undefined}
-                    onStatus={settledBy}
-                  />
-                </View>
-              ))}
+              <Each of={MEMBERS.slice(0, members())} key={(name) => name}>
+                {(name, i) => (
+                  <View style={{ marginLeft: i() === 0 ? 0 : -side / 4 }}>
+                    <Person
+                      name={name()}
+                      side={side}
+                      ring
+                      src={warmed() ? avatarPortrait(name()) : undefined}
+                      onStatus={settledBy}
+                    />
+                  </View>
+                )}
+              </Each>
             </AvatarGroup>
             <Text style={{ fontSize: 12, color: ui().muted }}>{`${members()} members`}</Text>
           </View>

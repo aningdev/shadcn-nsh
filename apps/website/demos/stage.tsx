@@ -185,13 +185,19 @@ export function Log(props: { title: string; lines: string[]; minHeight?: number;
       return props.grow ?? sideBySide();
     },
     get children() {
-      return props.lines.map((line, i) =>
-        __Text({
-          get style() {
-            return { fontSize: 12, color: i === 0 ? ui().text : ui().faint };
-          },
-          children: line,
-        }),
+      return (
+        <Each of={props.lines} key="index">
+          {(line, i) =>
+            __Text({
+              get style() {
+                return { fontSize: 12, color: i() === 0 ? ui().text : ui().faint };
+              },
+              get children() {
+                return line();
+              },
+            })
+          }
+        </Each>
       );
     },
   });

@@ -1367,41 +1367,43 @@ function PieScene() {
                 Share
               </Text>
             </View>
-            {parts().map((p, i) => (
-              <View
-                class="transition-opacity duration-150 motion-reduce:transition-none"
-                style={{
-                  flexDirection: "row",
-                  alignItems: "center",
-                  gap: 12,
-                  height: size.rowSm,
-                  paddingHorizontal: 8,
-                  borderRadius: 6,
-                  backgroundColor: hovered() === i ? alpha(ui().text, 0.05) : undefined,
-                  opacity: hovered() == null || hovered() === i ? 1 : 0.45,
-                }}
-              >
+            <Each of={parts()} key={(p) => p.name}>
+              {(p, i) => (
                 <View
-                  class={KEYS[i % KEYS.length]}
-                  style={{ width: 8, height: 8, borderRadius: 2 }}
-                />
-                <Text
-                  class="text-foreground"
-                  style={{ fontSize: size.label - 1, flex: 1, numberOfLines: 1 }}
+                  class="transition-opacity duration-150 motion-reduce:transition-none"
+                  style={{
+                    flexDirection: "row",
+                    alignItems: "center",
+                    gap: 12,
+                    height: size.rowSm,
+                    paddingHorizontal: 8,
+                    borderRadius: 6,
+                    backgroundColor: hovered() === i() ? alpha(ui().text, 0.05) : undefined,
+                    opacity: hovered() == null || hovered() === i() ? 1 : 0.45,
+                  }}
                 >
-                  {p.name}
-                </Text>
-                <Text class="text-foreground" style={{ fontSize: size.label - 1, ...num }}>
-                  {money(p.revenue)}
-                </Text>
-                <Text
-                  class="text-muted-foreground"
-                  style={{ width: 52, fontSize: size.label - 1, ...num }}
-                >
-                  {percent(share(p))}
-                </Text>
-              </View>
-            ))}
+                  <View
+                    class={KEYS[i() % KEYS.length]}
+                    style={{ width: 8, height: 8, borderRadius: 2 }}
+                  />
+                  <Text
+                    class="text-foreground"
+                    style={{ fontSize: size.label - 1, flex: 1, numberOfLines: 1 }}
+                  >
+                    {p().name}
+                  </Text>
+                  <Text class="text-foreground" style={{ fontSize: size.label - 1, ...num }}>
+                    {money(p().revenue)}
+                  </Text>
+                  <Text
+                    class="text-muted-foreground"
+                    style={{ width: 52, fontSize: size.label - 1, ...num }}
+                  >
+                    {percent(share(p()))}
+                  </Text>
+                </View>
+              )}
+            </Each>
           </View>
         </View>
       </View>

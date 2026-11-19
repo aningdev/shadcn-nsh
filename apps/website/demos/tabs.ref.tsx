@@ -91,22 +91,24 @@ function App() {
 
         {/* The selected section's content, which the app shows by its value. */}
         <View style={sectionSurface({ padded: true })}>
-          {current().rows.map((row, i) => (
-            <View style={plainRow({ first: i === 0, dense: true })}>
-              <Text style={{ flex: 1, fontSize: controlSize.label, color: colors.text }}>
-                {row[0]}
-              </Text>
-              <Text
-                style={{
-                  fontSize: controlSize.label,
-                  fontVariant: ["tabular-nums"],
-                  color: colors.muted,
-                }}
-              >
-                {row[1]}
-              </Text>
-            </View>
-          ))}
+          <Each of={current().rows} key="index">
+            {(row, i) => (
+              <View style={plainRow({ first: i() === 0, dense: true })}>
+                <Text style={{ flex: 1, fontSize: controlSize.label, color: colors.text }}>
+                  {row()[0]}
+                </Text>
+                <Text
+                  style={{
+                    fontSize: controlSize.label,
+                    fontVariant: ["tabular-nums"],
+                    color: colors.muted,
+                  }}
+                >
+                  {row()[1]}
+                </Text>
+              </View>
+            )}
+          </Each>
         </View>
 
         {/* Underlined tabs with counts: the line travels and stretches to the selected one; a disabled one dims. */}

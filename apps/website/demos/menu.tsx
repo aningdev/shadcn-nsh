@@ -64,11 +64,13 @@ function App() {
             </Panel>
             <Panel title="onOpenChange({ open, reason })" grow>
               <View style={{ gap: 2 }}>
-                {reasons().map((line, i) => (
-                  <Text style={{ fontSize: 12, color: i === 0 ? ui().text : ui().faint }}>
-                    {line}
-                  </Text>
-                ))}
+                <Each of={reasons()} key="index">
+                  {(line, i) => (
+                    <Text style={{ fontSize: 12, color: i() === 0 ? ui().text : ui().faint }}>
+                      {line()}
+                    </Text>
+                  )}
+                </Each>
               </View>
             </Panel>
           </>

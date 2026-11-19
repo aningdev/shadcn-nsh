@@ -248,17 +248,21 @@ function App() {
                   width={wide() ? 560 : 320}
                 >
                   <View style={{ flexDirection: wide() ? "row" : "column", gap: 4 }}>
-                    {columns().map((column) => (
-                      <View style={{ flex: 1, gap: 4 }}>
-                        {column.map((item) => (
-                          <PanelLink
-                            title={item.title}
-                            hint={item.hint}
-                            onPress={() => press(item.title)}
-                          />
-                        ))}
-                      </View>
-                    ))}
+                    <Each of={columns()} key="index">
+                      {(column) => (
+                        <View style={{ flex: 1, gap: 4 }}>
+                          <Each of={column()} key={(item) => item.title}>
+                            {(item) => (
+                              <PanelLink
+                                title={item().title}
+                                hint={item().hint}
+                                onPress={() => press(item().title)}
+                              />
+                            )}
+                          </Each>
+                        </View>
+                      )}
+                    </Each>
                   </View>
                 </Item>
 

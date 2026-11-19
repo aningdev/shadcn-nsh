@@ -191,15 +191,17 @@ function App() {
               accessibilityLabel="Tags"
               prefix={
                 <View style={chipsLook()}>
-                  {tags().map((value) => (
-                    <Chip
-                      title={titlesOf(LABELS, [value])[0]}
-                      onRemove={() => {
-                        tags.set(tags().filter((tag) => tag !== value));
-                        log(`Tags → ${titlesOf(LABELS, tags()).join(", ") || "none"}`);
-                      }}
-                    />
-                  ))}
+                  <Each of={tags()} key={(value) => value}>
+                    {(value) => (
+                      <Chip
+                        title={titlesOf(LABELS, [value()])[0]}
+                        onRemove={() => {
+                          tags.set(tags().filter((tag) => tag !== value()));
+                          log(`Tags → ${titlesOf(LABELS, tags()).join(", ") || "none"}`);
+                        }}
+                      />
+                    )}
+                  </Each>
                 </View>
               }
               onChange={({ value }) => {
@@ -223,21 +225,23 @@ function App() {
               accessibilityLabel="Reviewers"
               prefix={
                 <View style={chipsLook()}>
-                  {reviewers().map((value) => (
-                    <Chip
-                      title={titlesOf(PEOPLE, [value])[0]}
-                      lead={
-                        <Avatar
-                          name={titlesOf(PEOPLE, [value])[0]}
-                          style={{ width: 18, height: 18 }}
-                        />
-                      }
-                      showRemove={value !== "ada"}
-                      onRemove={() =>
-                        reviewers.set(reviewers().filter((person) => person !== value))
-                      }
-                    />
-                  ))}
+                  <Each of={reviewers()} key={(value) => value}>
+                    {(value) => (
+                      <Chip
+                        title={titlesOf(PEOPLE, [value()])[0]}
+                        lead={
+                          <Avatar
+                            name={titlesOf(PEOPLE, [value()])[0]}
+                            style={{ width: 18, height: 18 }}
+                          />
+                        }
+                        showRemove={value() !== "ada"}
+                        onRemove={() =>
+                          reviewers.set(reviewers().filter((person) => person !== value()))
+                        }
+                      />
+                    )}
+                  </Each>
                 </View>
               }
               onChange={({ value }) => {
@@ -261,9 +265,11 @@ function App() {
               accessibilityLabel="Archived"
               prefix={
                 <View style={chipsLook()}>
-                  {archived().map((value) => (
-                    <Chip title={titlesOf(LABELS, [value])[0]} disabled onRemove={() => {}} />
-                  ))}
+                  <Each of={archived()} key={(value) => value}>
+                    {(value) => (
+                      <Chip title={titlesOf(LABELS, [value()])[0]} disabled onRemove={() => {}} />
+                    )}
+                  </Each>
                 </View>
               }
               {...comboboxLook(() => false, { filled: () => archived().length > 0 })}

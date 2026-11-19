@@ -1,7 +1,8 @@
 // The official scrollbar scene (`references/nsh/website/demos/el-scrollbar.tsx`) with this
 // library's Scrollbar: a list of messages in a card whose own indicator is off, the app's bar over
 // its edge, and an inspector that switches when the bar shows and follows the list's offset.
-import { mount, Scroll, signal, Text, View, type ScrollRef } from "nsh";
+// The messages are a `List`: only the rows on screen mount, not all 60.
+import { List, mount, signal, Text, View, type ListRef } from "nsh";
 import type { ScrollbarMode } from "nsh/base";
 
 import { controlSize, sectionSurface } from "@/packages/ui/lib/surface";
@@ -24,11 +25,13 @@ const MESSAGES = Array.from({ length: 60 }, (_, i) => ({
   ][i % 5],
   at: `${9 + Math.floor(i / 6)}:${String((i * 7) % 60).padStart(2, "0")}`,
 }));
+/** About a message row's height: its padding and two lines (54 with a pointer, 61 on touch). */
+const ROW_HEIGHT = desktop ? 54 : 61;
 
 function App() {
   const mode = signal<ScrollbarMode>("scrolling");
   const offset = signal(0);
-  let inbox: ScrollRef | undefined;
+  let inbox: ListRef | undefined;
   return (
     <DemoPage title="Scrollbar">
       <Text style={{ color: ui().muted }}>
@@ -55,13 +58,20 @@ function App() {
         }
       >
         <View style={{ ...sectionSurface(), flex: 1, minHeight: 320, overflow: "hidden" }}>
-          <Scroll
+          <List
             ref={inbox}
+            each={MESSAGES}
+            keyExtractor={(m) => m.at}
+            estimatedItemSize={ROW_HEIGHT}
             scrollbar={false}
             style={{ flex: 1 }}
-            onScroll={(e) => offset.set(e.offset.y)}
+            onScroll={(e) => {
+              // The readout is a whole point; a finer move of the list changes nothing in it.
+              const next = Math.round(e.offset.y);
+              if (next !== offset()) offset.set(next);
+            }}
           >
-            {MESSAGES.map((m) => (
+            {(m) => (
               <View
                 class={`flex-row gap-3 ${desktop ? "px-3 py-2.5" : "px-4 py-3"}`}
                 style={{ borderBottomWidth: 1, borderColor: ui().line }}
@@ -71,21 +81,21 @@ function App() {
                     class="text-foreground"
                     style={{ fontSize: controlSize.label, fontWeight: "500" }}
                   >
-                    {m.from}
+                    {m().from}
                   </Text>
                   <Text class="text-muted-foreground" style={{ fontSize: controlSize.detail }}>
-                    {m.text}
+                    {m().text}
                   </Text>
                 </View>
                 <Text
                   class="text-muted-foreground"
                   style={{ fontSize: controlSize.detail, fontVariant: ["tabular-nums"] }}
                 >
-                  {m.at}
+                  {m().at}
                 </Text>
               </View>
-            ))}
-          </Scroll>
+            )}
+          </List>
           <Scrollbar scroll={inbox} mode={mode()} accessibilityLabel="Messages" />
         </View>
       </Split>

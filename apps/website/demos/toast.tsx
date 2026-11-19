@@ -101,36 +101,38 @@ function App() {
             if (newest) dismiss(newest.id);
           }}
         >
-          {shown().map((entry) => {
-            const content = entry.value as Content;
-            return (
-              <Toast
-                transitionStatus={entry.status}
-                accessibilityLabel={content.title}
-                onDismissRequest={() => dismiss(entry.id)}
-                class="transition-all duration-200 ease-out"
-                startingClass="opacity-0 translate-y-4"
-                endingClass="opacity-0 scale-95"
-                swipingClass="transition-none"
-              >
-                <View style={{ flex: 1, gap: 2 }}>
-                  <Text style={toastTitle()}>{content.title}</Text>
-                  <If when={content.description}>
-                    <Text style={toastText()}>{content.description}</Text>
+          <Each of={shown()} key={(entry) => entry.id}>
+            {(entry) => {
+              const content = (): Content => entry().value as Content;
+              return (
+                <Toast
+                  transitionStatus={entry().status}
+                  accessibilityLabel={content().title}
+                  onDismissRequest={() => dismiss(entry().id)}
+                  class="transition-all duration-200 ease-out"
+                  startingClass="opacity-0 translate-y-4"
+                  endingClass="opacity-0 scale-95"
+                  swipingClass="transition-none"
+                >
+                  <View style={{ flex: 1, gap: 2 }}>
+                    <Text style={toastTitle()}>{content().title}</Text>
+                    <If when={content().description}>
+                      <Text style={toastText()}>{content().description}</Text>
+                    </If>
+                  </View>
+                  <If when={content().undo}>
+                    <Button
+                      {...toastActionLook()}
+                      onPress={() => dismiss(entry().id)}
+                      accessibilityLabel="Undo"
+                    >
+                      <Text style={toastActionLabel()}>Undo</Text>
+                    </Button>
                   </If>
-                </View>
-                <If when={content.undo}>
-                  <Button
-                    {...toastActionLook()}
-                    onPress={() => dismiss(entry.id)}
-                    accessibilityLabel="Undo"
-                  >
-                    <Text style={toastActionLabel()}>Undo</Text>
-                  </Button>
-                </If>
-              </Toast>
-            );
-          })}
+                </Toast>
+              );
+            }}
+          </Each>
         </ToastStack>
       </Overlay>
     </DemoPage>
