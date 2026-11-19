@@ -81,14 +81,14 @@ export function DisclosureChevron(props: DisclosureChevronProps) {
       class="transition-transform duration-200 group-aria-expanded:rotate-180 motion-reduce:transition-none"
       style={{ width: icon, height: icon, alignItems: "center", justifyContent: "center" }}
     >
-      <Icon icon={ChevronDown} size={icon} tint={colors.muted} />
+      <Icon icon={ChevronDown} size={icon} tint={colors.mutedForeground} />
     </View>
   ) : (
     <View
       class="transition-transform duration-150 motion-reduce:transition-none"
       style={{ width: icon / 2, alignItems: "center", rotate: props.open ? "90deg" : "0deg" }}
     >
-      <Icon icon={ChevronRight} size={icon} tint={colors.muted} />
+      <Icon icon={ChevronRight} size={icon} tint={colors.mutedForeground} />
     </View>
   );
 }

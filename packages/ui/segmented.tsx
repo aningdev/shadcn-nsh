@@ -119,7 +119,7 @@ export function segmentedLook(o?: SegmentedLookOptions) {
         numberOfLines: 1,
         fontSize: pointer ? 12 : small ? 13 : 14,
         fontWeight: "500",
-        color: read(selected) ? colors.text : colors.muted,
+        color: read(selected) ? colors.foreground : colors.mutedForeground,
       };
     },
     get count(): TextStyle {

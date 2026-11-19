@@ -33,7 +33,11 @@ The examples draw icons with `Icon` from `lib/icons`; see [Icons](../icons) for 
 ```tsx
 <Attachment state="done">
   <AttachmentMedia>
-    <Icon icon={FileText} size={attachmentGlyph("default", "horizontal")} tint={colors.muted} />
+    <Icon
+      icon={FileText}
+      size={attachmentGlyph("default", "horizontal")}
+      tint={colors.mutedForeground}
+    />
   </AttachmentMedia>
   <AttachmentContent>
     <AttachmentTitle>build.log</AttachmentTitle>
@@ -52,7 +56,11 @@ note's, in a chip's corners).
 ```tsx
 <Attachment size="sm">
   <AttachmentMedia>
-    <Icon icon={FileText} size={attachmentGlyph("sm", "horizontal")} tint={colors.muted} />
+    <Icon
+      icon={FileText}
+      size={attachmentGlyph("sm", "horizontal")}
+      tint={colors.mutedForeground}
+    />
   </AttachmentMedia>
   <AttachmentContent>
     <AttachmentTitle>changelog.md</AttachmentTitle>
@@ -70,7 +78,7 @@ description). Put a `Spinner` in the media while it travels.
 ```tsx
 <Attachment state="uploading">
   <AttachmentMedia>
-    <Spinner size={16} tint={colors.muted} />
+    <Spinner size={16} tint={colors.mutedForeground} />
   </AttachmentMedia>
   <AttachmentContent>
     <AttachmentTitle>registry.zip</AttachmentTitle>

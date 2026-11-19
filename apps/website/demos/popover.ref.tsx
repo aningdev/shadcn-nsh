@@ -23,7 +23,7 @@ function App() {
 
   return (
     <DemoPage title="Popover">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Open it, then click “Count” below: one click closes it and presses the button"
           : "Open it, then tap “Count” below: the tap only closes it"}
@@ -73,12 +73,12 @@ function App() {
                     style={{
                       fontSize: desktop ? 14 : 16,
                       fontWeight: "600",
-                      color: colors.text,
+                      color: colors.foreground,
                     }}
                   >
                     Shipped yesterday
                   </Text>
-                  <Text style={{ fontSize: desktop ? 12 : 13, color: colors.muted }}>
+                  <Text style={{ fontSize: desktop ? 12 : 13, color: colors.mutedForeground }}>
                     Arriving Friday. The trigger, a press outside and Escape close this.
                   </Text>
                 </View>

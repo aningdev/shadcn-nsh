@@ -61,7 +61,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | `violet`                        | 第三个数据色：图的一条线、链接                                   | `link`、`plot`                                                               |
 | `window-control-off`            | 窗口按钮不可用时的底                                             | `theme.ts`                                                                   |
 
-`destructive` 本身是 A 层（shadcn 的），本库的 `colors.danger` 指向它；`down` 是另一个色，红得更亮一点，用在数据里表示下降（见[为什么不合并](#6-why-identical-values-are-not-merged)）。
+`destructive` 本身是 A 层（shadcn 的），本库的 `colors.destructive` 指向它；`down` 是另一个色，红得更亮一点，用在数据里表示下降（见[为什么不合并](#6-why-identical-values-are-not-merged)）。
 
 ### C 层：两种外观一样的值
 

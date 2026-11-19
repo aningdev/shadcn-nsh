@@ -21,7 +21,7 @@ function App() {
 
   return (
     <DemoPage title="Segmented">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Click a segment, or Tab to the control and move with the arrow keys"
           : "Tap a segment: the control is one stop of a screen reader"}
@@ -32,7 +32,9 @@ function App() {
         inspector={
           <>
             <Panel title="value">
-              <Text style={{ fontSize: 13, color: colors.text }}>{`${view()} · ${align()}`}</Text>
+              <Text
+                style={{ fontSize: 13, color: colors.foreground }}
+              >{`${view()} · ${align()}`}</Text>
             </Panel>
             <Log title="onValueChange" lines={events()} minHeight={92} />
           </>

@@ -3,7 +3,7 @@
 // slot when given children), so there is no port region. Yours to change.
 import { colors } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
-import { context, platform, split, Text, View } from "nsh";
+import { context, platform, split, Text, token, View } from "nsh";
 
 import { Avatar, type AvatarProps } from "./avatar";
 import { density } from "./lib/surface";
@@ -21,7 +21,7 @@ function avatarBox(): ViewStyle {
     width: avatarSide,
     height: avatarSide,
     borderRadius: avatarSide / 2,
-    backgroundColor: colors.mutedFill,
+    backgroundColor: token("muted"),
     alignSelf: "flex-end",
     flexShrink: 0,
   };
@@ -49,7 +49,7 @@ const noteRow = (align: MessageAlign): ViewStyle => ({
 const noteType = (): TextStyle => ({
   fontSize: density.note,
   fontWeight: "500",
-  color: colors.muted,
+  color: colors.mutedForeground,
 });
 
 /** What a `MessageContent` and a `MessageFooter` under a `Message` wear: the side. */

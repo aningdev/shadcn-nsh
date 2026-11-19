@@ -217,10 +217,10 @@ function FormatButton(props: { label: string }) {
         ...rounded(Math.max(radius.control - 3, 2)),
       }}
     >
-      <Text style={{ fontSize: 12, fontWeight: "500", color: colors.text }}>
+      <Text style={{ fontSize: 12, fontWeight: "500", color: colors.foreground }}>
         {terminal ? `${props.label} ▾` : props.label}
       </Text>
-      {terminal ? null : <Icon icon={ChevronDown} size={12} tint={colors.muted} />}
+      {terminal ? null : <Icon icon={ChevronDown} size={12} tint={colors.mutedForeground} />}
     </View>
   );
 }
@@ -277,7 +277,7 @@ export function ColorFields(props: ColorFieldsProps) {
             role="menuitemradio"
             onSelect={() => props.onFormatChange(f.value)}
             indicatorClass={menuIndicator}
-            indicator={<MenuMark kind="dot" size={menuItemSize.icon} tint={colors.accent} />}
+            indicator={<MenuMark kind="dot" size={menuItemSize.icon} tint={colors.brand} />}
             {...menuItemLook()}
           >
             <Text style={{ ...menuItemLabel(), flexGrow: 0, width: 52 }}>{f.label}</Text>
@@ -331,7 +331,7 @@ export function ColorFields(props: ColorFieldsProps) {
               paddingStart: terminal ? 0 : 2,
               paddingEnd: terminal ? 0 : 8,
               fontSize: fieldSize.font,
-              color: colors.muted,
+              color: colors.mutedForeground,
             }}
           >
             %
@@ -361,12 +361,12 @@ export function ColorCopy(props: { name: string; text: () => string }) {
       {...iconButtonLook()}
     >
       {terminal ? (
-        <Text style={{ color: colors.muted }}>{copied() ? "✓" : "Copy"}</Text>
+        <Text style={{ color: colors.mutedForeground }}>{copied() ? "✓" : "Copy"}</Text>
       ) : (
         <Icon
           icon={copied() ? Check : Copy}
           size={16}
-          tint={copied() ? colors.accent : colors.muted}
+          tint={copied() ? colors.brand : colors.mutedForeground}
         />
       )}
     </BaseButton>
@@ -382,9 +382,9 @@ export function ColorDropper(props: { name: string }) {
       class="disabled:hidden"
     >
       {terminal ? (
-        <Text style={{ color: colors.muted }}>Pick</Text>
+        <Text style={{ color: colors.mutedForeground }}>Pick</Text>
       ) : (
-        <Icon icon={Pipette} size={16} tint={colors.muted} />
+        <Icon icon={Pipette} size={16} tint={colors.mutedForeground} />
       )}
     </ColorEyeDropper>
   );

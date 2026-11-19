@@ -34,7 +34,7 @@ function App() {
 
   return (
     <DemoPage title="Resizable">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Drag a line between two panels"
           : "Drag a line between two panels with your finger"}

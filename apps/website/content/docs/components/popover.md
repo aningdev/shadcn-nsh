@@ -34,10 +34,10 @@ popover's content inline, so give them the app's type with `style`.
 ```tsx
 <PopoverContent width={260}>
   <PopoverHeader style={{ gap: 2 }}>
-    <PopoverTitle style={{ fontSize: 14, fontWeight: "600", color: colors.text }}>
+    <PopoverTitle style={{ fontSize: 14, fontWeight: "600", color: colors.foreground }}>
       Shipped yesterday
     </PopoverTitle>
-    <PopoverDescription style={{ fontSize: 12, color: colors.muted }}>
+    <PopoverDescription style={{ fontSize: 12, color: colors.mutedForeground }}>
       Arriving Friday.
     </PopoverDescription>
   </PopoverHeader>

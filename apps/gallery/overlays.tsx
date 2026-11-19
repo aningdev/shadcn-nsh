@@ -32,7 +32,7 @@ function SheetFrame(props: { side: "bottom" | "right"; children: unknown }) {
       style={{
         width: 220,
         height: bottom ? 132 : 116,
-        backgroundColor: colors.muted,
+        backgroundColor: colors.mutedForeground,
         borderRadius: 10,
         overflow: "hidden",
         justifyContent: bottom ? "flex-end" : "center",

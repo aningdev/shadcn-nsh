@@ -24,7 +24,7 @@ export function Stat(props: {
   // The color is read where the value is drawn, so a function follows a value the app changes.
   const valueColor = () => {
     const tone = read(props.tone);
-    return tone ? toneColor(tone) : colors.text;
+    return tone ? toneColor(tone) : colors.foreground;
   };
   // The label above its value in the terminal too: two rows, so stats set
   // side by side keep apart and each value stays under its label.
@@ -32,7 +32,7 @@ export function Stat(props: {
     <View
       style={terminal ? { width: props.width } : { width: props.width, gap: 3, paddingVertical: 4 }}
     >
-      <Text style={{ fontSize: type.label, color: colors.muted }}>{props.label}</Text>
+      <Text style={{ fontSize: type.label, color: colors.mutedForeground }}>{props.label}</Text>
       <Text
         style={{
           fontSize: type.value,

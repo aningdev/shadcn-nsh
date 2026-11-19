@@ -22,7 +22,7 @@ function row(line: string) {
       style={{
         width: 260,
         fontSize: 13,
-        color: colors.text,
+        color: colors.foreground,
         padding: 8,
         numberOfLines: 1,
       }}
@@ -39,7 +39,9 @@ mount(() => {
   return (
     <Page>
       <Panel title="Scrollbar">
-        <Text style={{ fontSize: 12, color: colors.muted, numberOfLines: 1 }}>Always on</Text>
+        <Text style={{ fontSize: 12, color: colors.mutedForeground, numberOfLines: 1 }}>
+          Always on
+        </Text>
         <View style={{ width: 280, height: 180, position: "relative" }}>
           <Scroll
             ref={inbox}

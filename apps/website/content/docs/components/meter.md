@@ -30,7 +30,7 @@ import { Meter } from "@/components/ui/meter";
 <Meter value={0.62} tone="accent" />
 <Meter value={0.62} tone="info" />
 <Meter value={0.62} tone="warn" />
-<Meter value={0.62} tone="danger" />
+<Meter value={0.62} tone="destructive" />
 <Meter value={0.62} tone="up" />
 <Meter value={0.62} tone="down" />
 ```

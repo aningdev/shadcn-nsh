@@ -35,7 +35,7 @@ The examples draw icons with `Icon` from `lib/icons`; see [Icons](../icons) for 
 <Empty>
   <EmptyHeader>
     <EmptyMedia variant="icon">
-      <Icon icon={Inbox} size={EMPTY_ICON} tint={colors.text} />
+      <Icon icon={Inbox} size={EMPTY_ICON} tint={colors.foreground} />
     </EmptyMedia>
     <EmptyTitle>No messages yet</EmptyTitle>
     <EmptyDescription>Messages you receive will show up here.</EmptyDescription>
@@ -54,7 +54,7 @@ room its parent leaves it (`flexGrow: 1`), so a list that ends in an empty state
 <Empty>
   <EmptyHeader>
     <EmptyMedia variant="icon">
-      <Icon icon={Inbox} size={EMPTY_ICON} tint={colors.text} />
+      <Icon icon={Inbox} size={EMPTY_ICON} tint={colors.foreground} />
     </EmptyMedia>
     <EmptyTitle>No messages yet</EmptyTitle>
     <EmptyDescription>Start a conversation to see one.</EmptyDescription>

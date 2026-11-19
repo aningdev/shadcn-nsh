@@ -22,7 +22,7 @@ type Placement = "top" | "bottom" | "left" | "right";
 /** A mention's or a link's trigger: a run of text the pointer rests on. */
 const linkText = () => ({
   fontSize: 15,
-  color: colors.accent,
+  color: colors.brand,
 });
 
 function App() {
@@ -47,7 +47,9 @@ function App() {
   });
   /** Running text in a wrapping row: one piece per word, so a line breaks between words. */
   const words = (s: string) =>
-    s.split(" ").map((word) => <Text style={{ fontSize: 15, color: colors.text }}>{word}</Text>);
+    s
+      .split(" ")
+      .map((word) => <Text style={{ fontSize: 15, color: colors.foreground }}>{word}</Text>);
   /** A card's popup: the surface `popoverLook` gives it, coming in from the trigger's side. */
   const surface = (width: number) => popoverLook({ width });
 
@@ -67,9 +69,9 @@ function App() {
             paddingHorizontal: 2,
             marginHorizontal: -3,
           }}
-          hoverStyle={{ backgroundColor: alpha(colors.accent, 0.14) }}
+          hoverStyle={{ backgroundColor: alpha(colors.brand, 0.14) }}
         >
-          <Text style={{ fontSize: 15, fontWeight: "600", color: colors.accent }}>@ada</Text>
+          <Text style={{ fontSize: 15, fontWeight: "600", color: colors.brand }}>@ada</Text>
         </View>
       }
     >
@@ -91,13 +93,13 @@ function App() {
               <Text style={{ fontSize: 15, fontWeight: "600", color: ada.foreground }}>AL</Text>
             </View>
             <View style={{ flex: 1, gap: 2 }}>
-              <Text style={{ fontSize: 15, fontWeight: "600", color: colors.text }}>
+              <Text style={{ fontSize: 15, fontWeight: "600", color: colors.foreground }}>
                 Ada Lovelace
               </Text>
-              <Text style={{ fontSize: 12, color: colors.muted }}>Analyst · Engines</Text>
+              <Text style={{ fontSize: 12, color: colors.mutedForeground }}>Analyst · Engines</Text>
             </View>
           </View>
-          <Text style={{ fontSize: 13, lineHeight: 18, color: colors.text }}>
+          <Text style={{ fontSize: 13, lineHeight: 18, color: colors.foreground }}>
             Writes the first programs for the Analytical Engine.
           </Text>
           <Button
@@ -120,7 +122,7 @@ function App() {
         <View
           role="link"
           focusVisibleStyle={focusRing(1)}
-          style={{ borderBottomWidth: 1, borderBottomColor: alpha(colors.accent, 0.4) }}
+          style={{ borderBottomWidth: 1, borderBottomColor: alpha(colors.brand, 0.4) }}
         >
           <Text style={linkText()}>Taffy</Text>
         </View>
@@ -139,20 +141,20 @@ function App() {
                 justifyContent: "center",
               }}
             >
-              <Icon icon={Code} size={16} tint={colors.text} />
+              <Icon icon={Code} size={16} tint={colors.foreground} />
             </View>
             <View style={{ flex: 1, gap: 1 }}>
-              <Text style={{ fontSize: 12, fontWeight: "500", color: colors.text }}>
+              <Text style={{ fontSize: 12, fontWeight: "500", color: colors.foreground }}>
                 github.com
               </Text>
               <Text style={{ fontSize: 11.5, color: colors.faint }}>DioxusLabs/taffy</Text>
             </View>
           </View>
           <View style={{ gap: 4 }}>
-            <Text style={{ fontSize: 14, fontWeight: "600", color: colors.text }}>
+            <Text style={{ fontSize: 14, fontWeight: "600", color: colors.foreground }}>
               taffy: flexbox, grid and block layout
             </Text>
-            <Text style={{ fontSize: 12, color: colors.muted }}>
+            <Text style={{ fontSize: 12, color: colors.mutedForeground }}>
               A high-performance UI layout library written in Rust.
             </Text>
           </View>
@@ -193,12 +195,12 @@ function App() {
     >
       {() => (
         <PopIn side={placement()} style={surface(220)}>
-          <Text style={{ fontSize: 12, color: colors.muted }}>Apple Inc. · live</Text>
+          <Text style={{ fontSize: 12, color: colors.mutedForeground }}>Apple Inc. · live</Text>
           <Text
             style={{
               fontSize: 26,
               fontWeight: "600",
-              color: colors.text,
+              color: colors.foreground,
               fontVariant: ["tabular-nums"],
             }}
           >
@@ -221,7 +223,7 @@ function App() {
 
   return (
     <DemoPage title="Hover Card">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Rest the pointer on a mention, a link or a ticker, then move into the card"
           : "Tap a mention, a link or a ticker; tap outside to close"}

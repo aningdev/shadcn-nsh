@@ -3,7 +3,7 @@
 // the look is written from the theme's roles. Yours to change.
 import { colors, radius, rounded, TERMINAL_COLUMN, terminal } from "@shadcn-nsh/theme";
 import type { TextStyle, TextProps, ViewProps, ViewStyle } from "nsh";
-import { split, Text, View } from "nsh";
+import { split, Text, token, View } from "nsh";
 
 import { controlSize, density } from "./lib/surface";
 
@@ -63,7 +63,7 @@ const rowBox = (size: ItemSize) =>
  * the title in the text colour at the labels' size and medium weight, the
  * description a step quieter and muted, wrapping to two lines. `default`
  * draws no surface, `outline` the hairline edge of a surface, and `muted` the
- * muted fill (`colors.mutedFill`, shadcn's `bg-muted`): a well that reads on a
+ * muted fill (`token("muted")`, shadcn's `bg-muted`): a well that reads on a
  * card and on the page, in either appearance. An icon's tile is a control's box
  * plus 12, on the well with a hairline edge; an image's frame is a square that
  * clips. The terminal draws rows one row high, with no surface and no tile.
@@ -101,7 +101,7 @@ export function itemLook(): ItemLook {
             ...rounded(radius.inset),
             borderWidth: 1,
             borderColor: variant === "outline" ? colors.border : "transparent",
-            backgroundColor: variant === "muted" ? colors.mutedFill : "transparent",
+            backgroundColor: variant === "muted" ? token("muted") : "transparent",
           },
     media: (variant: ItemMediaVariant): ViewStyle =>
       terminal || variant === "default"
@@ -145,13 +145,13 @@ export function itemLook(): ItemLook {
         alignSelf: "flex-start",
         fontSize: controlSize.label,
         fontWeight: "500",
-        color: colors.text,
+        color: colors.foreground,
       };
     },
     get description(): TextStyle {
       return {
         fontSize: controlSize.detail,
-        color: colors.muted,
+        color: colors.mutedForeground,
         // Two lines, as shadcn's `line-clamp-2`: a third is cut with an ellipsis.
         numberOfLines: 2,
       };

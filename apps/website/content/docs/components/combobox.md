@@ -98,7 +98,7 @@ A string child is a `Button`; anything else is drawn as given.
 
 ```tsx
 <ComboboxTrigger>
-  <Icon icon={ChevronRight} size={14} tint={colors.muted} />
+  <Icon icon={ChevronRight} size={14} tint={colors.mutedForeground} />
 </ComboboxTrigger>
 ```
 

@@ -61,14 +61,14 @@ export function alertLook(): AlertLook {
       borderWidth: 1,
       borderColor: colors.border,
       ...rounded(radius.inset),
-      backgroundColor: colors.surface,
+      backgroundColor: colors.card,
     }),
     title: (variant: AlertVariant): TextStyle => ({
       gridColumnStart: 2,
       gridRowStart: 1,
       fontSize: density.body,
       fontWeight: "500",
-      color: variant === "destructive" ? colors.danger : colors.text,
+      color: variant === "destructive" ? colors.destructive : colors.foreground,
       numberOfLines: 1,
     }),
     descriptionFrame: (): ViewStyle => ({
@@ -81,7 +81,7 @@ export function alertLook(): AlertLook {
     }),
     descriptionText: (variant: AlertVariant): TextStyle => ({
       fontSize: density.body,
-      color: variant === "destructive" ? alpha(colors.danger, 0.9) : colors.muted,
+      color: variant === "destructive" ? alpha(colors.destructive, 0.9) : colors.mutedForeground,
     }),
   };
 }

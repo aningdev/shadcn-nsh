@@ -80,7 +80,7 @@ function App() {
 
   return (
     <DemoPage title="Rich editor">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Click into the document and type; Cmd/Ctrl+B makes bold"
           : "Tap into the document and type"}
@@ -91,7 +91,7 @@ function App() {
         inspector={
           <>
             <Panel title="markdown">
-              <Text style={{ fontSize: 12, fontFamily: mono, color: colors.text }}>
+              <Text style={{ fontSize: 12, fontFamily: mono, color: colors.foreground }}>
                 {markdown()}
               </Text>
             </Panel>

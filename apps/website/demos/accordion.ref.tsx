@@ -50,7 +50,7 @@ function App() {
   const events = signal<string[]>([]);
   return (
     <DemoPage title="Accordion">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Click a question, or Tab to it and press Space"
           : "Tap a question to read its answer"}
@@ -72,7 +72,7 @@ function App() {
               />
             </Panel>
             <Panel title="value">
-              <Text style={{ fontSize: 13, color: colors.text }}>
+              <Text style={{ fontSize: 13, color: colors.foreground }}>
                 {open().length ? open().join(", ") : "none open"}
               </Text>
             </Panel>
@@ -116,7 +116,7 @@ function App() {
                     style={{
                       fontSize: controlSize.label,
                       lineHeight: Math.round(controlSize.label * 1.45),
-                      color: colors.muted,
+                      color: colors.mutedForeground,
                     }}
                   >
                     {item.answer}

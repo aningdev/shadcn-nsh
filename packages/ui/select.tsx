@@ -121,19 +121,19 @@ export function pickerLook(o?: PickerLookOptions) {
           ? { backgroundColor: colors.raised, ...finish.raised }
           : { backgroundColor: colors.field, ...finish.field }),
         borderColor: invalid()
-          ? colors.danger
+          ? colors.destructive
           : read(o?.open)
             ? colors.faint
             : outline
               ? colors.border
-              : colors.fieldBorder,
+              : colors.input,
         ...(terminal
           ? {}
           : {
               outlineStyle: "solid",
               outlineWidth: 2,
               outlineOffset: -1,
-              outlineColor: alpha(invalid() ? colors.danger : colors.accent, 0),
+              outlineColor: alpha(invalid() ? colors.destructive : colors.brand, 0),
             }),
         // Dimmed while the select is: the app knows, as it passes `disabled`.
         opacity: read(o?.disabled) ? 0.5 : 1,
@@ -151,7 +151,7 @@ export function pickerLook(o?: PickerLookOptions) {
     // The border with the outline, which not every platform draws over it; `focus-visible` is above `hover` in the
     // states' order. Only for the keyboard: a click's focus, and the focus a closing list gives back, draw nothing.
     get focusVisibleStyle(): ViewStyle {
-      const tone = invalid() ? colors.danger : colors.accent;
+      const tone = invalid() ? colors.destructive : colors.brand;
       return terminal ? { borderColor: tone } : { borderColor: tone, outlineColor: tone };
     },
     disabledStyle: { opacity: 0.5 },
@@ -200,7 +200,7 @@ export function Picker(props: PickerProps) {
       })}
     >
       <If when={props.icon && !terminal}>
-        <Icon icon={props.icon!} size={triggerIcon} tint={colors.muted} />
+        <Icon icon={props.icon!} size={triggerIcon} tint={colors.mutedForeground} />
       </If>
       {props.lead}
       <Text
@@ -208,7 +208,7 @@ export function Picker(props: PickerProps) {
           flex: 1,
           numberOfLines: 1,
           fontSize: fieldSize.font,
-          color: props.placeholder ? colors.muted : colors.text,
+          color: props.placeholder ? colors.mutedForeground : colors.foreground,
         }}
       >
         {props.title}

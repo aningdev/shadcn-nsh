@@ -3,9 +3,8 @@
 // (`sheetPanel`), the title and text are `dialog.tsx`'s (`dialogTitle`, `dialogText`); this file adds
 // the grabber and the shell. This library's own: nothing here comes from upstream, so there is no
 // port region. Yours to change.
-import { colors } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
-import { context, split, Text, View } from "nsh";
+import { context, split, Text, token, View } from "nsh";
 import {
   Sheet as BaseSheet,
   type OpenChangeReason,
@@ -29,7 +28,7 @@ export function drawerGrabber(): ViewStyle {
     height: 8,
     borderRadius: 4,
     alignSelf: "center",
-    backgroundColor: colors.mutedFill,
+    backgroundColor: token("muted"),
   };
 }
 

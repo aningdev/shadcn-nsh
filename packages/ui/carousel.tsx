@@ -109,7 +109,7 @@ export function carouselPaginationLook() {
         bottom: inset,
         marginHorizontal: 1,
         borderRadius: carouselSizes.dot / 2,
-        backgroundColor: colors.accentFill,
+        backgroundColor: colors.brandFill,
       };
     },
   };
@@ -140,7 +140,7 @@ export function carouselDotItemLook() {
  * the slide shown, in a terminal. */
 export function CarouselDot(props: { selected: boolean }) {
   return terminal ? (
-    <Text style={{ color: props.selected ? colors.accent : colors.muted }}>
+    <Text style={{ color: props.selected ? colors.brand : colors.mutedForeground }}>
       {props.selected ? "●" : "○"}
     </Text>
   ) : (
@@ -150,7 +150,7 @@ export function CarouselDot(props: { selected: boolean }) {
         width: carouselSizes.dot,
         height: carouselSizes.dot,
         borderRadius: carouselSizes.dot / 2,
-        backgroundColor: alpha(colors.text, 0.24),
+        backgroundColor: alpha(colors.foreground, 0.24),
         ...fade,
       }}
     />
@@ -196,11 +196,11 @@ function mergeArrowChild(mark: "previous" | "next", children: JSX.Element | unde
   const icon = carouselSizes.arrowIcon;
   // The tint is read in the JSX, so it follows the appearance (light / dark).
   if (mark === "previous") {
-    return <Icon icon={ChevronLeft} size={icon} tint={colors.text} />;
+    return <Icon icon={ChevronLeft} size={icon} tint={colors.foreground} />;
   }
   return (
     <View style={{ transform: [{ scaleX: -1 }] }}>
-      <Icon icon={ChevronLeft} size={icon} tint={colors.text} />
+      <Icon icon={ChevronLeft} size={icon} tint={colors.foreground} />
     </View>
   );
 }

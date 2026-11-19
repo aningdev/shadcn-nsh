@@ -30,7 +30,7 @@ const cardStyle = { flexGrow: 1, flexBasis: 300, maxWidth: 440 } as const;
 function Labeled(props: { label: string; children: JSX.Element }) {
   return (
     <View style={{ gap: 6 }}>
-      <Text style={{ fontSize: 13, color: colors.muted }}>{props.label}</Text>
+      <Text style={{ fontSize: 13, color: colors.mutedForeground }}>{props.label}</Text>
       {props.children}
     </View>
   );
@@ -42,7 +42,7 @@ function App() {
 
   return (
     <DemoPage title="Themes">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         The library's controls in the palette this page was loaded with: the docs site's Demo theme
         switch chooses it, and a demo reads it before it mounts.
       </Text>
@@ -59,7 +59,7 @@ function App() {
           <Badge tone="accent">accent</Badge>
           <Badge tone="info">info</Badge>
           <Badge tone="warn">warn</Badge>
-          <Badge tone="danger">danger</Badge>
+          <Badge tone="destructive">danger</Badge>
           <Badge tone="up">up</Badge>
         </DemoSection>
       </DemoCard>
@@ -99,8 +99,8 @@ function App() {
             <View style={{ gap: 14 }}>
               <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
                 <View style={{ flex: 1, gap: 2 }}>
-                  <Text style={{ fontSize: 14, color: colors.text }}>Automatic updates</Text>
-                  <Text style={{ fontSize: 13, color: colors.muted }}>
+                  <Text style={{ fontSize: 14, color: colors.foreground }}>Automatic updates</Text>
+                  <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
                     Install in the background.
                   </Text>
                 </View>
@@ -111,11 +111,11 @@ function App() {
                 />
               </View>
               <View style={{ gap: 6 }}>
-                <Text style={{ fontSize: 13, color: colors.muted }}>Storage used</Text>
+                <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Storage used</Text>
                 <Progress value={used()} />
               </View>
               <View style={{ gap: 8 }}>
-                <Text style={{ fontSize: 13, color: colors.muted }}>Volume</Text>
+                <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Volume</Text>
                 <Slider value={used()} onChange={({ value }) => used.set(value as number)} />
               </View>
             </View>

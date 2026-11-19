@@ -129,7 +129,7 @@ export function inputGroupTextLook(): InputGroupTextLook {
       };
     },
     get label(): TextStyle {
-      return { fontSize: fieldSize.font, color: colors.muted };
+      return { fontSize: fieldSize.font, color: colors.mutedForeground };
     },
   };
 }

@@ -33,7 +33,9 @@ const dockLayout: DockAreaLayout = {
 
 function Quiet(props: { children: string }) {
   return (
-    <Text style={{ fontSize: 13, color: colors.text, numberOfLines: 1 }}>{props.children}</Text>
+    <Text style={{ fontSize: 13, color: colors.foreground, numberOfLines: 1 }}>
+      {props.children}
+    </Text>
   );
 }
 

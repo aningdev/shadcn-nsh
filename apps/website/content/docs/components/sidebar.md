@@ -122,7 +122,7 @@ const sidebar = useSidebar(); // in a view inside the provider
 
 `SidebarMenuButton` is a row of `SidebarMenu`, inside a `SidebarGroupContent` of a `SidebarGroup`
 that a `SidebarGroupLabel` names: 32 points high with a pointer (44 on a touch screen), its label 13
-points, the pointer's fill under it, the `sidebarSelected` fill when `isActive` (the page the app is
+points, the pointer's fill under it, the `sidebarAccent` fill when `isActive` (the page the app is
 on), the keyboard's ring, and 50% while `disabled`. It takes a press (`onPress`), or it is a row of
 its own; no `href`, as a navigation menu's link has none.
 
@@ -227,7 +227,7 @@ per mount is a picture that changes between runs, so this one is told.
 - No `SidebarTrigger` in a rail's form, and no `asChild`: the parts take children and draw them, so an icon and a name are an `Icon` and a `Text` in the row, not a rewritten link.
 - A menu action is always there; shadcn's shows on hover only, which a touch screen has no way to do.
 - `SidebarMenuSkeleton`'s `width` is told: shadcn makes a length up between 50% and 90% per row so a loading group looks uneven.
-- The `sidebar-*` roles are not a set of their own: the column is `colors.sidebar`, its ink `colors.text`, its hover and chosen row `colors.sidebarSelected` (shadcn's `sidebar-accent`), its edge `colors.sidebarBorder`, and the keyboard's ring `focusRing()`. shadcn's `sidebar-primary` draws nothing in shadcn either, so nothing reads it.
+- The `sidebar-*` roles are not a set of their own: the column is `colors.sidebar`, its ink `colors.foreground`, its hover and chosen row `colors.sidebarAccent` (shadcn's `sidebar-accent`), its edge `colors.sidebarBorder`, and the keyboard's ring `focusRing()`. shadcn's `sidebar-primary` draws nothing in shadcn either, so nothing reads it.
 
 ## API
 

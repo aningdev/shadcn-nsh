@@ -49,7 +49,7 @@ The group draws the field: its fill, its edge and, while the input inside has th
 <InputGroup>
   <InputGroupAddon align="inline-start">
     <InputGroupText>
-      <Icon icon={Search} size={16} tint={colors.muted} />
+      <Icon icon={Search} size={16} tint={colors.mutedForeground} />
     </InputGroupText>
   </InputGroupAddon>
   <InputGroupInput

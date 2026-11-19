@@ -8,7 +8,7 @@ import { colors, radius } from "../../packages/theme";
 export function Row(props: { label: string; children: unknown }) {
   return (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-      <Text style={{ fontSize: 12, color: colors.muted, width: 84 }}>{props.label}</Text>
+      <Text style={{ fontSize: 12, color: colors.mutedForeground, width: 84 }}>{props.label}</Text>
       {props.children as never}
     </View>
   );
@@ -33,10 +33,12 @@ export function Panel(props: { title: string; children: unknown }) {
         borderRadius: radius.control,
         borderWidth: 1,
         borderColor: colors.border,
-        backgroundColor: colors.surface,
+        backgroundColor: colors.card,
       }}
     >
-      <Text style={{ fontSize: 14, fontWeight: "600", color: colors.text }}>{props.title}</Text>
+      <Text style={{ fontSize: 14, fontWeight: "600", color: colors.foreground }}>
+        {props.title}
+      </Text>
       {props.children as never}
     </View>
   );

@@ -44,7 +44,9 @@ mount(() => (
     <Panel title="Slider">
       <Row label="level">
         <Slider style={track} value={64} accessibilityLabel="Level">
-          <Text style={{ width: 36, fontSize: 12, color: colors.muted, textAlign: "right" }}>
+          <Text
+            style={{ width: 36, fontSize: 12, color: colors.mutedForeground, textAlign: "right" }}
+          >
             64%
           </Text>
         </Slider>

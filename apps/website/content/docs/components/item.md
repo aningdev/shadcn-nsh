@@ -38,7 +38,7 @@ The examples draw icons with `Icon` from `lib/icons`; see [Icons](../icons) for 
 <ItemGroup>
   <Item>
     <ItemMedia variant="icon">
-      <Icon icon={Bell} tint={colors.muted} />
+      <Icon icon={Bell} tint={colors.mutedForeground} />
     </ItemMedia>
     <ItemContent>
       <ItemTitle>New comment</ItemTitle>
@@ -63,7 +63,7 @@ row — a header above the content, a footer under it.
 ### Variant
 
 `default` draws no surface, for rows split by a separator. `outline` edges the row, for one that
-stands alone. `muted` puts it on a muted fill (`colors.mutedFill`, shadcn's `bg-muted`): a well
+stands alone. `muted` puts it on a muted fill (`token("muted")`, shadcn's `bg-muted`): a well
 that reads on a card and on the page, in either appearance, and is still lighter than an edge.
 
 ```tsx
@@ -113,7 +113,7 @@ say what the icon means.
   <Avatar name="Mira Lund" style={{ width: 36, height: 36 }} />
 </ItemMedia>
 <ItemMedia variant="icon">
-  <Icon icon={Bell} tint={colors.muted} />
+  <Icon icon={Bell} tint={colors.mutedForeground} />
 </ItemMedia>
 <ItemMedia variant="image">
   <Image source={cover} style={{ width: "100%", height: "100%" }} />
@@ -133,7 +133,7 @@ which does).
 ```tsx
 <View role="button" onPress={() => open(item)} {...listRow()}>
   <ItemMedia variant="icon">
-    <Icon icon={Bell} tint={colors.muted} />
+    <Icon icon={Bell} tint={colors.mutedForeground} />
   </ItemMedia>
   <ItemContent>
     <ItemTitle>{item.title}</ItemTitle>
@@ -163,4 +163,4 @@ texts. `style` goes over the look's.
 An icon's tile is `controlSize.control + 12` square and an image's frame `controlSize.row - 8`,
 both of the theme's control corners, so both grow on a touch screen. `itemLook()` is exported for a
 row the app draws itself: the same look without the parts. `muted`'s fill is the theme's `muted`
-token (`colors.mutedFill`); `default` and `outline` draw what they always did.
+token (`token("muted")`); `default` and `outline` draw what they always did.

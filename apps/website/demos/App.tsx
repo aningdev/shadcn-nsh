@@ -8,9 +8,9 @@ import { componentIds } from "./catalog.generated";
 function App() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.background, padding: 20, gap: 8 }}>
-      <Text style={{ fontSize: 22, fontWeight: "700", color: colors.text }}>Demos</Text>
+      <Text style={{ fontSize: 22, fontWeight: "700", color: colors.foreground }}>Demos</Text>
       {componentIds.map((name) => (
-        <Text style={{ fontSize: 15, color: colors.muted }}>{name}.tsx</Text>
+        <Text style={{ fontSize: 15, color: colors.mutedForeground }}>{name}.tsx</Text>
       ))}
     </View>
   );

@@ -20,14 +20,14 @@ function App() {
     const value = toolbarTrack().backgroundColor;
     return typeof value === "string" ? value : "gone";
   });
-  const ink = computed(() => colors.text);
+  const ink = computed(() => colors.foreground);
   return (
     <View style={{ gap: 12, padding: 16 }}>
       <Text>{() => `bold ${bold()}`}</Text>
       <Text>{() => `docs ${docs()}`}</Text>
       <Text>{() => `italic ${italic() ? "on" : "off"}`}</Text>
       <Text>{() => `locked ${locked() ? "yes" : "no"}`}</Text>
-      <Text style={{ backgroundColor: colors.muted, color: ink() }}>
+      <Text style={{ backgroundColor: colors.mutedForeground, color: ink() }}>
         {() => `track ${track()}`}
       </Text>
       <Toolbar accessibilityLabel="Formatting">

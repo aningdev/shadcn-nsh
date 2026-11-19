@@ -28,7 +28,7 @@ export function Meter(props: MeterProps) {
   /** The terminal's solid fill: a tone's color, or the citrus run's (`accent` and no tone alike). */
   const toneFill = () => {
     const color = tone();
-    return color && color !== "accent" ? toneColor(color) : colors.accentFill;
+    return color && color !== "accent" ? toneColor(color) : colors.brandFill;
   };
   // 6 points on screen; in the terminal half a row, so the fill reads as a solid bar.
   const height = terminal ? TERMINAL_ROW / 2 : 6;
@@ -69,7 +69,7 @@ export function Meter(props: MeterProps) {
             width: 2,
             height: 12,
             borderRadius: 1,
-            backgroundColor: colors.text,
+            backgroundColor: colors.foreground,
           }}
         />
       </If>

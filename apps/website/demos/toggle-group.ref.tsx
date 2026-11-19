@@ -39,7 +39,7 @@ function App() {
 
   return (
     <DemoPage title="Toggle Group">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Click a toggle; Tab reaches a group and the arrow keys move inside it"
           : "Tap a toggle: a group is one stop of a screen reader"}
@@ -50,7 +50,9 @@ function App() {
         inspector={
           <>
             <Panel title="pressed">
-              <Text style={{ fontSize: 13, color: colors.text }}>{`${marks()} · ${align()}`}</Text>
+              <Text
+                style={{ fontSize: 13, color: colors.foreground }}
+              >{`${marks()} · ${align()}`}</Text>
             </Panel>
             <Log title="onChange({ pressed })" lines={events()} minHeight={92} />
           </>

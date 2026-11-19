@@ -62,7 +62,7 @@ function App() {
                       <Icon
                         icon={FileText}
                         size={attachmentGlyph("default", "horizontal")}
-                        tint={colors.muted}
+                        tint={colors.mutedForeground}
                       />
                     </View>
                     <View style={look.content("horizontal")}>
@@ -75,7 +75,7 @@ function App() {
                       <Icon
                         icon={FileImage}
                         size={attachmentGlyph("default", "horizontal")}
-                        tint={colors.muted}
+                        tint={colors.mutedForeground}
                       />
                     </View>
                     <View style={look.content("horizontal")}>
@@ -94,7 +94,7 @@ function App() {
                 <Icon
                   icon={FileText}
                   size={attachmentGlyph("default", "horizontal")}
-                  tint={colors.muted}
+                  tint={colors.mutedForeground}
                 />
               </View>
               <View style={look.content("horizontal")}>
@@ -104,7 +104,10 @@ function App() {
             </View>
             <View style={frame("uploading", "default", "horizontal")}>
               <View style={media("uploading", "default", "horizontal")}>
-                <Spinner size={attachmentGlyph("default", "horizontal")} tint={colors.muted} />
+                <Spinner
+                  size={attachmentGlyph("default", "horizontal")}
+                  tint={colors.mutedForeground}
+                />
               </View>
               <View style={look.content("horizontal")}>
                 <Text style={look.title("default")}>registry.zip</Text>
@@ -116,7 +119,7 @@ function App() {
                 <Icon
                   icon={FileArchive}
                   size={attachmentGlyph("default", "horizontal")}
-                  tint={colors.muted}
+                  tint={colors.mutedForeground}
                 />
               </View>
               <View style={look.content("horizontal")}>
@@ -129,7 +132,7 @@ function App() {
                 <Icon
                   icon={FileText}
                   size={attachmentGlyph("default", "horizontal")}
-                  tint={colors.danger}
+                  tint={colors.destructive}
                 />
               </View>
               <View style={look.content("horizontal")}>
@@ -152,7 +155,7 @@ function App() {
                 <Icon
                   icon={FileText}
                   size={attachmentGlyph("default", "horizontal")}
-                  tint={colors.muted}
+                  tint={colors.mutedForeground}
                 />
               </View>
               <View style={look.content("horizontal")}>
@@ -178,7 +181,7 @@ function App() {
                 <Icon
                   icon={FileText}
                   size={attachmentGlyph("default", "horizontal")}
-                  tint={colors.muted}
+                  tint={colors.mutedForeground}
                 />
               </View>
               <View style={look.content("horizontal")}>
@@ -191,7 +194,7 @@ function App() {
                 <Icon
                   icon={FileText}
                   size={attachmentGlyph("sm", "horizontal")}
-                  tint={colors.muted}
+                  tint={colors.mutedForeground}
                 />
               </View>
               <View style={look.content("horizontal")}>
@@ -204,7 +207,7 @@ function App() {
                 <Icon
                   icon={FileText}
                   size={attachmentGlyph("xs", "horizontal")}
-                  tint={colors.muted}
+                  tint={colors.mutedForeground}
                 />
               </View>
               <View style={look.content("horizontal")}>
@@ -227,7 +230,7 @@ function App() {
                   <Icon
                     icon={FileImage}
                     size={attachmentGlyph("default", "vertical")}
-                    tint={colors.muted}
+                    tint={colors.mutedForeground}
                   />
                 </View>
                 <View style={look.content("vertical")}>
@@ -250,7 +253,7 @@ function App() {
                   <Icon
                     icon={FileImage}
                     size={attachmentGlyph("default", "vertical")}
-                    tint={colors.muted}
+                    tint={colors.mutedForeground}
                   />
                 </View>
                 <View style={look.content("vertical")}>
@@ -267,7 +270,7 @@ function App() {
                 <Icon
                   icon={FileText}
                   size={attachmentGlyph("default", "horizontal")}
-                  tint={colors.muted}
+                  tint={colors.mutedForeground}
                 />
               </View>
               <View style={look.content("horizontal")}>
@@ -289,7 +292,7 @@ function App() {
                 accessibilityLabel="Open README.md"
                 onPress={() => log("Open README.md")}
                 style={look.trigger}
-                hoverStyle={{ backgroundColor: alpha(colors.text, 0.04) }}
+                hoverStyle={{ backgroundColor: alpha(colors.foreground, 0.04) }}
                 focusVisibleStyle={focusRing()}
               />
             </View>

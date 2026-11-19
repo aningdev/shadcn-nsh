@@ -97,7 +97,7 @@ function App() {
 
           {/* A stretch of text: a string child is the region's name for screen readers too. */}
           <Button onPress={() => press("The paragraph")} {...pressableLook()}>
-            <Text style={{ color: colors.text }}>
+            <Text style={{ color: colors.foreground }}>
               A region can be a paragraph of its own: the text keeps the page's type, and the
               pressable adds only what a press looks like.
             </Text>

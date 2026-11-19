@@ -81,7 +81,7 @@ export function Pressable(props: PressableProps) {
       focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
     >
       {typeof props.children === "string" ? (
-        <Text style={{ color: colors.text }}>{props.children}</Text>
+        <Text style={{ color: colors.foreground }}>{props.children}</Text>
       ) : (
         props.children
       )}

@@ -21,7 +21,7 @@ const log = (line: string) => events.set([line, ...events()].slice(0, 4));
 function App() {
   return (
     <DemoPage title="Emoji picker">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Type to search, the arrows to move, Return to choose; a tab scrolls to its group"
           : "Search, or tap a tab to scroll to its group; tap an emoji to choose it"}
@@ -31,7 +31,7 @@ function App() {
         inspector={
           <>
             <Panel title="message">
-              <Text style={{ fontSize: 14, color: colors.text }}>{message()}</Text>
+              <Text style={{ fontSize: 14, color: colors.foreground }}>{message()}</Text>
             </Panel>
             <Log title="events" lines={events()} minHeight={92} />
           </>

@@ -47,15 +47,15 @@ const dims = (scale = 1) => ({
 export const choiceWell = (o?: { disabled?: boolean }): ViewStyle =>
   isDark()
     ? {
-        backgroundColor: alpha(colors.fieldBorder, 0.3),
+        backgroundColor: alpha(colors.input, 0.3),
         backgroundImage: "none",
-        borderColor: alpha(colors.text, o?.disabled ? 0.4 : 0.2),
+        borderColor: alpha(colors.foreground, o?.disabled ? 0.4 : 0.2),
         boxShadow: finish.field.boxShadow,
       }
     : {
         backgroundColor: colors.field,
         backgroundImage: "none",
-        borderColor: colors.fieldBorder,
+        borderColor: colors.input,
         boxShadow: finish.field.boxShadow,
       };
 
@@ -162,7 +162,7 @@ export function CheckboxMark(props: { mark: CheckboxMarkKind } & ChoiceOptions) 
         transform: [{ scale: amount.interpolate({ inputRange: [0, 1], outputRange: [0.75, 1] }) }],
       }}
     >
-      <Icon icon={icon} size={checkSize} tint={colors.onAccent} weight={MARK_WEIGHT} />
+      <Icon icon={icon} size={checkSize} tint={colors.onBrand} weight={MARK_WEIGHT} />
     </View>
   );
   // One view as large as the box inside its border holds the layers: the
@@ -248,7 +248,7 @@ export function Checkbox(props: CheckboxProps) {
     >
       {typeof props.children === "string" ? (
         // The page's ink, read here so it follows the appearance: a bare Text is nsh's black.
-        <Text style={{ color: colors.text }}>{props.children}</Text>
+        <Text style={{ color: colors.foreground }}>{props.children}</Text>
       ) : (
         props.children
       )}

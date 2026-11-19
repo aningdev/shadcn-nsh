@@ -64,7 +64,7 @@ function Row(props: {
   const row = (
     <Item size="sm">
       <ItemMedia variant="icon">
-        <Icon icon={props.icon} size={16} tint={colors.muted} />
+        <Icon icon={props.icon} size={16} tint={colors.mutedForeground} />
       </ItemMedia>
       <ItemContent>
         <ItemTitle>{props.title}</ItemTitle>
@@ -111,7 +111,7 @@ function Body(props: { children: JSX.Element }) {
         {props.children}
       </Scroll>
       <View style={{ paddingHorizontal: density.pad, paddingBottom: 10 }}>
-        <Text style={{ fontSize: density.note, color: colors.muted }}>
+        <Text style={{ fontSize: density.note, color: colors.mutedForeground }}>
           {() => {
             const routes = nav.routes();
             return `Stack depth ${routes.length} · ${routes.map((route) => route.id).join(" / ")}`;
@@ -183,7 +183,7 @@ function SettingsPage() {
             }
           />
         </List>
-        <Text style={{ fontSize: density.note, color: colors.muted }}>
+        <Text style={{ fontSize: density.note, color: colors.mutedForeground }}>
           The first page has no back button: there is nothing under it.
         </Text>
       </Body>

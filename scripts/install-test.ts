@@ -333,7 +333,7 @@ ${imports.join("\n")}
 function All() {
   return (
     <View class="items-center gap-4">
-      <Text style={{ color: colors.text }}>all items mounted</Text>
+      <Text style={{ color: colors.foreground }}>all items mounted</Text>
 ${rendered.join("\n")}
     </View>
   );

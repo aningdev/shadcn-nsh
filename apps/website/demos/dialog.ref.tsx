@@ -61,17 +61,17 @@ function App() {
 
   return (
     <DemoPage title="Dialog">
-      <Text style={{ color: colors.muted }}>{hint}</Text>
+      <Text style={{ color: colors.mutedForeground }}>{hint}</Text>
 
       <Split
         gap={14}
         inspector={
           <>
             <Panel title="open · onCancel">
-              <Text style={{ fontSize: 13, color: colors.text }}>{state()}</Text>
+              <Text style={{ fontSize: 13, color: colors.foreground }}>{state()}</Text>
             </Panel>
             <Panel title="onOpenChange({ open, reason }) · onOpen" grow>
-              <Text style={{ fontSize: 13, fontWeight: "600", color: colors.accent }}>{log()}</Text>
+              <Text style={{ fontSize: 13, fontWeight: "600", color: colors.brand }}>{log()}</Text>
             </Panel>
           </>
         }

@@ -65,7 +65,7 @@ function App() {
       <Text testID="theme">{`theme:${currentTheme() ?? "build-time"}`}</Text>
       <Text testID="failure">{`failure:${failure()}`}</Text>
       <Text testID="appearance">{`appearance:${colorScheme()}`}</Text>
-      <Text testID="ink" style={{ color: colors.text }}>
+      <Text testID="ink" style={{ color: colors.foreground }}>
         Ink
       </Text>
       <Button onPress={() => switched(shadcn)}>Shadcn</Button>

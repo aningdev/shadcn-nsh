@@ -81,7 +81,7 @@ export function buttonGroupLook(): ButtonGroupLook {
     text: (): TextStyle => ({
       fontSize: density.body,
       fontWeight: "500",
-      color: colors.text,
+      color: colors.foreground,
       numberOfLines: 1,
     }),
   };

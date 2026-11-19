@@ -53,7 +53,7 @@ export function codeEditorFrame(): ViewStyle {
   return {
     backgroundColor: colors.field,
     borderWidth: 1,
-    borderColor: colors.fieldBorder,
+    borderColor: colors.input,
     ...rounded(radius.control),
     ...finish.field,
   };

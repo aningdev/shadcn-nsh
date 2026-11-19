@@ -65,7 +65,7 @@ export function terminalLook(o?: TerminalLookOptions) {
         backgroundColor: colors.field,
         ...finish.field,
         borderWidth: 1,
-        borderColor: colors.fieldBorder,
+        borderColor: colors.input,
         ...rounded(radius.inset),
         paddingHorizontal: wellPad.x,
         paddingVertical: wellPad.y,
@@ -73,7 +73,7 @@ export function terminalLook(o?: TerminalLookOptions) {
       };
     },
     get cursorStyle(): ViewStyle {
-      return { backgroundColor: alpha(colors.text, 0.5), borderRadius: 1 };
+      return { backgroundColor: alpha(colors.foreground, 0.5), borderRadius: 1 };
     },
   };
 }

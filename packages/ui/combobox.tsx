@@ -166,7 +166,7 @@ export function chipLook(o?: ChipLookOptions) {
       };
     },
     get textStyle(): TextStyle {
-      return { fontSize: pointer ? 12 : 14, color: colors.text };
+      return { fontSize: pointer ? 12 : 14, color: colors.foreground };
     },
     get removeClass(): string {
       return terminal
@@ -181,9 +181,9 @@ export function chipLook(o?: ChipLookOptions) {
     },
     get removeGlyph(): JSX.Element {
       return terminal ? (
-        <Text style={{ color: colors.muted }}>×</Text>
+        <Text style={{ color: colors.mutedForeground }}>×</Text>
       ) : (
-        <Icon icon={X} size={pointer ? 10 : 12} tint={colors.muted} />
+        <Icon icon={X} size={pointer ? 10 : 12} tint={colors.mutedForeground} />
       );
     },
   };

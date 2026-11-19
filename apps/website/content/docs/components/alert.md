@@ -25,7 +25,7 @@ The examples draw icons with `Icon` from `lib/icons`; see [Icons](../icons) for 
 
 ```tsx
 <Alert>
-  <Icon icon={AlertCircle} size={ALERT_ICON} tint={colors.text} />
+  <Icon icon={AlertCircle} size={ALERT_ICON} tint={colors.foreground} />
   <AlertTitle>Heads up</AlertTitle>
   <AlertDescription>You can add components to your app with the CLI.</AlertDescription>
 </Alert>
@@ -41,7 +41,7 @@ it, the note a step quieter than the title.
 
 ```tsx
 <Alert>
-  <Icon icon={CheckCircle2} size={ALERT_ICON} tint={colors.text} />
+  <Icon icon={CheckCircle2} size={ALERT_ICON} tint={colors.foreground} />
   <AlertTitle>Changes saved</AlertTitle>
   <AlertDescription>Your changes have been saved.</AlertDescription>
 </Alert>
@@ -53,7 +53,7 @@ An icon and a title are a notice of one line.
 
 ```tsx
 <Alert>
-  <Icon icon={CheckCircle2} size={ALERT_ICON} tint={colors.text} />
+  <Icon icon={CheckCircle2} size={ALERT_ICON} tint={colors.foreground} />
   <AlertTitle>A title and an icon, and no note at all.</AlertTitle>
 </Alert>
 ```
@@ -66,7 +66,7 @@ variant down.
 
 ```tsx
 <Alert variant="destructive">
-  <Icon icon={AlertCircle} size={ALERT_ICON} tint={colors.danger} />
+  <Icon icon={AlertCircle} size={ALERT_ICON} tint={colors.destructive} />
   <AlertTitle>Unable to process your payment.</AlertTitle>
   <AlertDescription>Please verify your billing information and try again.</AlertDescription>
 </Alert>
@@ -80,7 +80,7 @@ the title, which keeps to one line.
 
 ```tsx
 <Alert variant="destructive">
-  <Icon icon={AlertCircle} size={ALERT_ICON} tint={colors.danger} />
+  <Icon icon={AlertCircle} size={ALERT_ICON} tint={colors.destructive} />
   <AlertDescription>
     The connection was lost before the reply finished. Check the network and try again.
   </AlertDescription>
@@ -95,12 +95,12 @@ there carries its own ink.
 
 ```tsx
 <Alert>
-  <Icon icon={AlertCircle} size={ALERT_ICON} tint={colors.text} />
+  <Icon icon={AlertCircle} size={ALERT_ICON} tint={colors.foreground} />
   <AlertTitle>Three checks failed</AlertTitle>
   <AlertDescription>
     <View style={{ gap: 4 }}>
-      <Text style={{ color: colors.muted }}>· The card's number is not valid</Text>
-      <Text style={{ color: colors.muted }}>· The card has expired</Text>
+      <Text style={{ color: colors.mutedForeground }}>· The card's number is not valid</Text>
+      <Text style={{ color: colors.mutedForeground }}>· The card has expired</Text>
     </View>
   </AlertDescription>
 </Alert>

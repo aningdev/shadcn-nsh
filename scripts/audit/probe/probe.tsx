@@ -8,8 +8,8 @@ import { colorScheme, mount, platform, Text, View, windowSize } from "nsh";
 function Row(props: { name: string; value: string }) {
   return (
     <View style={{ flexDirection: "row", alignItems: "baseline", gap: 10 }}>
-      <Text style={{ width: 190, fontSize: 14, color: colors.muted }}>{props.name}</Text>
-      <Text style={{ flex: 1, fontSize: 16, fontWeight: "600", color: colors.text }}>
+      <Text style={{ width: 190, fontSize: 14, color: colors.mutedForeground }}>{props.name}</Text>
+      <Text style={{ flex: 1, fontSize: 16, fontWeight: "600", color: colors.foreground }}>
         {props.value}
       </Text>
     </View>
@@ -20,7 +20,9 @@ function App() {
   const size = windowSize();
   return (
     <View style={{ flex: 1, backgroundColor: colors.background, padding: 20, gap: 10 }}>
-      <Text style={{ fontSize: 20, fontWeight: "700", color: colors.text }}>Canvas probe</Text>
+      <Text style={{ fontSize: 20, fontWeight: "700", color: colors.foreground }}>
+        Canvas probe
+      </Text>
       <Row name="windowSize()" value={`${size.width} × ${size.height}`} />
       <Row name="platform.desktop" value={String(platform.desktop)} />
       <Row name="platform.idiom" value={String(platform.idiom)} />

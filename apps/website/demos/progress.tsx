@@ -19,7 +19,7 @@ import { Switch } from "@/packages/ui/switch";
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { desktop, Log, Panel, Split, ui } from "./stage";
 
-const TONES: Tone[] = ["neutral", "accent", "info", "warn", "danger", "up", "down"];
+const TONES: Tone[] = ["neutral", "accent", "info", "warn", "destructive", "up", "down"];
 
 function Transfer(props: {
   label: string;
@@ -172,7 +172,7 @@ function App() {
         <DemoSection title="Tone" axis="block">
           {TONES.map((tone, i) => (
             <View style={plainRow({ first: i === 0 })}>
-              <Text style={{ width: 64, fontSize: controlSize.label, color: ui().muted }}>
+              <Text style={{ width: 96, fontSize: controlSize.label, color: ui().muted }}>
                 {tone}
               </Text>
               <View style={{ flex: 1 }}>

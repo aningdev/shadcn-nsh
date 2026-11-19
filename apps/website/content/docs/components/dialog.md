@@ -85,7 +85,7 @@ Escape, a backdrop press and a downward swipe close the dialog; turn any of them
 ```tsx
 <DialogContent
   style={{ padding: 32, maxWidth: 480 }}
-  backdropStyle={{ backgroundColor: alpha(colors.text, 0.4) }}
+  backdropStyle={{ backgroundColor: alpha(colors.foreground, 0.4) }}
 >
   …
 </DialogContent>

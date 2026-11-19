@@ -9,7 +9,7 @@ import { Flow, Page, Panel, Row } from "./demo-kit";
 const sizes = ["sm", "default", "lg"] as const;
 
 function Label(props: { children: string }) {
-  return <Text style={{ fontSize: 14, color: colors.text }}>{props.children}</Text>;
+  return <Text style={{ fontSize: 14, color: colors.foreground }}>{props.children}</Text>;
 }
 
 mount(() => (
@@ -56,10 +56,10 @@ mount(() => (
       <Row label="icon">
         <Flow>
           <Toggle pressed={false}>
-            <Text style={{ fontWeight: "700", color: colors.muted }}>B</Text>
+            <Text style={{ fontWeight: "700", color: colors.mutedForeground }}>B</Text>
           </Toggle>
           <Toggle pressed>
-            <Text style={{ fontWeight: "700", color: colors.text }}>B</Text>
+            <Text style={{ fontWeight: "700", color: colors.foreground }}>B</Text>
           </Toggle>
         </Flow>
       </Row>

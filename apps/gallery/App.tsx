@@ -86,7 +86,9 @@ import {
 function Section(props: { title: string; children: unknown }) {
   return (
     <View style={{ gap: 10 }}>
-      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.text }}>{props.title}</Text>
+      <Text style={{ fontSize: 16, fontWeight: "600", color: colors.foreground }}>
+        {props.title}
+      </Text>
       {props.children as never}
     </View>
   );
@@ -97,7 +99,7 @@ function Section(props: { title: string; children: unknown }) {
 function SidebarReadout() {
   const sidebar = useSidebar();
   return (
-    <Text style={{ fontSize: 12, color: colors.muted }}>
+    <Text style={{ fontSize: 12, color: colors.mutedForeground }}>
       {() => `${sidebar.state} · sheet ${sidebar.openMobile}`}
     </Text>
   );
@@ -122,8 +124,10 @@ function App() {
   return (
     <Scroll style={{ flex: 1, backgroundColor: colors.background }}>
       <View style={{ padding: 24, gap: 22, paddingBottom: 48 }}>
-        <Text style={{ fontSize: 22, fontWeight: "600", color: colors.text }}>shadcn-nsh</Text>
-        <Text style={{ fontSize: 14, color: colors.muted }}>
+        <Text style={{ fontSize: 22, fontWeight: "600", color: colors.foreground }}>
+          shadcn-nsh
+        </Text>
+        <Text style={{ fontSize: 14, color: colors.mutedForeground }}>
           Styled wrappers smoke · presses {() => count()}
         </Text>
 
@@ -175,7 +179,7 @@ function App() {
             />
             <View style={{ flexDirection: "row", gap: 16, alignItems: "center", flexWrap: "wrap" }}>
               <Checkbox checked={checked()} onChange={({ checked: c }) => checked.set(c)} />
-              <Text style={{ fontSize: 13, color: colors.text }}>Remember me</Text>
+              <Text style={{ fontSize: 13, color: colors.foreground }}>Remember me</Text>
               <Switch checked={on()} onChange={({ checked: c }) => on.set(c)} />
             </View>
             <RadioGroup>
@@ -232,10 +236,10 @@ function App() {
                 <TabsTrigger value="two">Two</TabsTrigger>
               </TabsList>
               <TabsContent value="one">
-                <Text style={{ fontSize: 13, color: colors.muted }}>Panel one</Text>
+                <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Panel one</Text>
               </TabsContent>
               <TabsContent value="two">
-                <Text style={{ fontSize: 13, color: colors.muted }}>Panel two</Text>
+                <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Panel two</Text>
               </TabsContent>
             </Tabs>
             <Toggle pressed={bold()} onChange={({ pressed }) => bold.set(pressed)}>
@@ -267,7 +271,7 @@ function App() {
               <NavigationMenuItem value="more">
                 <NavigationMenuTrigger>More</NavigationMenuTrigger>
                 <NavigationMenuContent width={200}>
-                  <Text style={{ fontSize: 13, color: colors.text }}>
+                  <Text style={{ fontSize: 13, color: colors.foreground }}>
                     Rest on a trigger, or press it.
                   </Text>
                 </NavigationMenuContent>
@@ -278,7 +282,9 @@ function App() {
               <NavigationMenuItem value="off">
                 <NavigationMenuTrigger disabled>Changelog</NavigationMenuTrigger>
                 <NavigationMenuContent width={200}>
-                  <Text style={{ fontSize: 13, color: colors.muted }}>Not written yet.</Text>
+                  <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+                    Not written yet.
+                  </Text>
                 </NavigationMenuContent>
               </NavigationMenuItem>
             </NavigationMenuList>
@@ -341,7 +347,9 @@ function App() {
               <Popover>
                 <PopoverTrigger>Popover</PopoverTrigger>
                 <PopoverContent placement="bottom" width={220}>
-                  <Text style={{ fontSize: 13, color: colors.text }}>Floating panel content.</Text>
+                  <Text style={{ fontSize: 13, color: colors.foreground }}>
+                    Floating panel content.
+                  </Text>
                 </PopoverContent>
               </Popover>
               <Tooltip placement="top">
@@ -351,7 +359,7 @@ function App() {
               <HoverCard>
                 <HoverCardTrigger variant="ghost">Hover card</HoverCardTrigger>
                 <HoverCardContent placement="bottom" width={200}>
-                  <Text style={{ fontSize: 13, color: colors.muted }}>
+                  <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
                     Opens on hover or focus.
                   </Text>
                 </HoverCardContent>
@@ -428,8 +436,10 @@ function App() {
             <Sheet>
               <SheetTrigger>Open sheet</SheetTrigger>
               <SheetContent side="bottom">
-                <Text style={{ fontSize: 15, fontWeight: "600", color: colors.text }}>Sheet</Text>
-                <Text style={{ fontSize: 13, color: colors.muted }}>
+                <Text style={{ fontSize: 15, fontWeight: "600", color: colors.foreground }}>
+                  Sheet
+                </Text>
+                <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
                   Slides from the bottom edge.
                 </Text>
                 <SheetClose>Done</SheetClose>

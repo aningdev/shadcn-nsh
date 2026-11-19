@@ -32,7 +32,7 @@ import { Badge } from "@/components/ui/badge";
 <Badge tone="accent">Accent</Badge>
 <Badge tone="info">Info</Badge>
 <Badge tone="warn">Warn</Badge>
-<Badge tone="danger">Danger</Badge>
+<Badge tone="destructive">Danger</Badge>
 <Badge tone="up">Up</Badge>
 <Badge tone="down">Down</Badge>
 ```
@@ -43,7 +43,7 @@ import { Badge } from "@/components/ui/badge";
 
 ```tsx
 <Badge variant="outline">Draft</Badge>
-<Badge tone="danger" variant="outline">
+<Badge tone="destructive" variant="outline">
   Failed
 </Badge>
 ```

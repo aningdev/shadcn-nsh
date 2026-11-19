@@ -47,10 +47,10 @@ mount(() => (
               New window
               <MenuShortcut>⌘N</MenuShortcut>
             </MenuItem>
-            <MenuItem style={{ backgroundColor: colors.accent }}>
+            <MenuItem style={{ backgroundColor: colors.brand }}>
               <Text>Highlighted</Text>
             </MenuItem>
-            <MenuItem style={{ backgroundColor: alpha(colors.text, 0.1) }}>
+            <MenuItem style={{ backgroundColor: alpha(colors.foreground, 0.1) }}>
               <Text>Pressed</Text>
             </MenuItem>
             <MenuItem disabled>
@@ -97,7 +97,7 @@ mount(() => (
               borderRadius: 8,
             }}
           >
-            <Text style={{ fontSize: 13, color: colors.text, numberOfLines: 1 }}>
+            <Text style={{ fontSize: 13, color: colors.foreground, numberOfLines: 1 }}>
               Right-click or hold
             </Text>
           </View>

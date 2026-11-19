@@ -80,7 +80,11 @@ export const emojiPickerClasses = {
 export function EmojiHeading(props: { group: EmojiGroup }) {
   return (
     <Text
-      style={{ fontSize: platform.desktop ? 11.5 : 13, fontWeight: "600", color: colors.muted }}
+      style={{
+        fontSize: platform.desktop ? 11.5 : 13,
+        fontWeight: "600",
+        color: colors.mutedForeground,
+      }}
     >
       {props.group.label}
     </Text>
@@ -113,7 +117,7 @@ export function EmojiTabs(props: {
           <Icon
             icon={g.icon}
             size={platform.desktop ? 17 : 21}
-            tint={props.group === g.id ? colors.text : colors.faint}
+            tint={props.group === g.id ? colors.foreground : colors.faint}
           />
         </Tab>
       ))}
@@ -177,7 +181,12 @@ export function EmojiPreview(props: { entry: EmojiEntry | null; hint: string }) 
             <Text style={{ fontSize: 26 }}>{entry().emoji}</Text>
             <View style={{ flex: 1, minWidth: 0 }}>
               <Text
-                style={{ numberOfLines: 1, fontSize: 13, fontWeight: "500", color: colors.text }}
+                style={{
+                  numberOfLines: 1,
+                  fontSize: 13,
+                  fontWeight: "500",
+                  color: colors.foreground,
+                }}
               >
                 {capitalized(entry().label)}
               </Text>
@@ -255,7 +264,7 @@ export function EmojiPanel(props: {
           }}
         >
           <Text style={{ fontSize: 28 }}>🔍</Text>
-          <Text style={{ fontSize: 13, color: colors.muted }}>No emoji found</Text>
+          <Text style={{ fontSize: 13, color: colors.mutedForeground }}>No emoji found</Text>
         </View>
       }
       loading={

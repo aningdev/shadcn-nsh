@@ -1242,7 +1242,7 @@
       "type": "registry:ui",
       "title": "Drawer",
       "description": "A panel from the bottom edge, with a grabber, that a swipe closes.",
-      "registryDependencies": ["button", "dialog", "open-state", "popup", "sheet", "theme"],
+      "registryDependencies": ["button", "dialog", "open-state", "popup", "sheet"],
       "files": [
         {
           "path": "packages/ui/drawer.tsx",

@@ -128,8 +128,8 @@ export function attachmentLook(): AttachmentLook {
       ...rounded(corners(size)),
       borderWidth: 1,
       borderStyle: state === "idle" ? "dashed" : "solid",
-      borderColor: state === "error" ? alpha(colors.danger, 0.3) : colors.border,
-      backgroundColor: colors.surface,
+      borderColor: state === "error" ? alpha(colors.destructive, 0.3) : colors.border,
+      backgroundColor: colors.card,
       ...(orientation === "horizontal"
         ? { paddingHorizontal: sizes[size].padX, paddingVertical: sizes[size].padY }
         : { padding: sizes[size].gap }),
@@ -148,7 +148,7 @@ export function attachmentLook(): AttachmentLook {
       justifyContent: "center",
       overflow: "hidden",
       ...rounded(size === "xs" ? radius.control : radius.inset),
-      backgroundColor: state === "error" ? tints.danger : token("muted"),
+      backgroundColor: state === "error" ? tints.destructive : token("muted"),
       ...(variant === "image" && state !== "done" && state !== "idle" ? { opacity: 0.6 } : {}),
     }),
     content: (orientation: AttachmentOrientation): ViewStyle => ({
@@ -162,13 +162,13 @@ export function attachmentLook(): AttachmentLook {
     title: (size: AttachmentSize): TextStyle => ({
       fontSize: sizes[size].title,
       fontWeight: "500",
-      color: colors.text,
+      color: colors.foreground,
       numberOfLines: 1,
     }),
     description: (state: AttachmentState): TextStyle => ({
       marginTop: 2,
       fontSize: density.note,
-      color: state === "error" ? colors.danger : colors.muted,
+      color: state === "error" ? colors.destructive : colors.mutedForeground,
       numberOfLines: 1,
     }),
     actions: (orientation: AttachmentOrientation): ViewStyle => ({
@@ -373,7 +373,7 @@ export function AttachmentTrigger(props: AttachmentTriggerProps) {
       {...rest}
       role="button"
       style={[attachmentLook().trigger, props.style ?? null]}
-      hoverStyle={{ backgroundColor: alpha(colors.text, 0.04) }}
+      hoverStyle={{ backgroundColor: alpha(colors.foreground, 0.04) }}
       focusVisibleStyle={focusRing()}
     />
   );

@@ -87,7 +87,7 @@ const label = (kind: "secondary" | "ghost") => buttonLabel(kind, { size: "sm" })
 function App() {
   return (
     <DemoPage title="Tree">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Click a folder, or Tab in and use the arrows: Right opens and enters, Left closes and leaves; double-click a file or press Return to act on it"
           : "Tap a folder to open it, a file to select it; double-tap a file to act on it"}

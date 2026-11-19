@@ -65,21 +65,21 @@ export function TreeRow(props: {
         class="transition-transform duration-200 ease-out group-aria-expanded:rotate-90 motion-reduce:transition-none rtl:group-aria-expanded:-rotate-90"
         style={{ width: 14, height: 14, opacity: props.entry.folder ? 1 : 0 }}
       >
-        <Icon icon={ChevronRight} size={14} tint={colors.muted} />
+        <Icon icon={ChevronRight} size={14} tint={colors.mutedForeground} />
       </View>
       {props.icon ? (
-        <Icon icon={props.icon} size={16} tint={props.tint ?? colors.muted} />
+        <Icon icon={props.icon} size={16} tint={props.tint ?? colors.mutedForeground} />
       ) : props.entry.folder ? (
         <View style={{ width: 16, height: 16 }}>
           <View class="group-aria-expanded:hidden">
-            <Icon icon={Folder} size={16} tint={colors.muted} />
+            <Icon icon={Folder} size={16} tint={colors.mutedForeground} />
           </View>
           <View class="hidden group-aria-expanded:flex">
-            <Icon icon={FolderOpen} size={16} tint={colors.muted} />
+            <Icon icon={FolderOpen} size={16} tint={colors.mutedForeground} />
           </View>
         </View>
       ) : (
-        <Icon icon={File} size={16} tint={colors.muted} />
+        <Icon icon={File} size={16} tint={colors.mutedForeground} />
       )}
       <Text
         class="text-muted-foreground group-selected:text-foreground flex-1"

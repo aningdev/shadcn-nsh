@@ -50,7 +50,7 @@ function Item(props: {
           <MenuMark
             kind={props.radio ? "dot" : "check"}
             size={menuItemSize.icon}
-            tint={colors.accent}
+            tint={colors.brand}
           />
         ) : undefined
       }

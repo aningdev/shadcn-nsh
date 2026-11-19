@@ -23,7 +23,7 @@ const FIGURES: { label: string; tone: Tone; value: string | Record<Period, strin
   { label: "Latency", tone: "accent", value: "42 ms" },
   { label: "Queue", tone: "info", value: "3" },
   { label: "Errors", tone: "warn", value: "0.2%" },
-  { label: "Failures", tone: "danger", value: "2" },
+  { label: "Failures", tone: "destructive", value: "2" },
   {
     label: "Growth",
     tone: "up",
@@ -41,7 +41,7 @@ function App() {
   const log = (line: string) => events.set([line, ...events()].slice(0, 5));
   return (
     <DemoPage title="Stat">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {"A label above a figure, for grids of them; a long value ends in an ellipsis."}
       </Text>
 
@@ -57,7 +57,9 @@ function App() {
               />
             </Panel>
             <Panel title="value">
-              <Text style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}>
+              <Text
+                style={{ fontSize: 13, color: colors.foreground, fontVariant: ["tabular-nums"] }}
+              >
                 {`Users ${valueOf(FIGURES[0].value, period())} · Growth ${valueOf(FIGURES[5].value, period())}`}
               </Text>
             </Panel>
@@ -67,8 +69,10 @@ function App() {
       >
         <View style={{ ...sectionSurface({ padded: true }), gap: 14 }}>
           <View style={{ flexDirection: "row", alignItems: "baseline", gap: 8 }}>
-            <Text style={{ fontSize: 15, fontWeight: "600", color: colors.text }}>This month</Text>
-            <Text style={{ fontSize: 12, color: colors.muted }}>{period()}</Text>
+            <Text style={{ fontSize: 15, fontWeight: "600", color: colors.foreground }}>
+              This month
+            </Text>
+            <Text style={{ fontSize: 12, color: colors.mutedForeground }}>{period()}</Text>
           </View>
           <View style={{ flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" }}>
             {FIGURES.map((figure) => (
@@ -82,7 +86,7 @@ function App() {
           </View>
           <View style={{ height: 1, backgroundColor: colors.line }} />
           <View style={{ gap: 4 }}>
-            <Text style={{ fontSize: 12, color: colors.muted }}>
+            <Text style={{ fontSize: 12, color: colors.mutedForeground }}>
               The widest display in the fleet
             </Text>
             <View style={{ width: 180 }}>

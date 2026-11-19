@@ -7,8 +7,8 @@ function App() {
     <View>
       <Text>{`raised=${finish.raised.backgroundColor}`}</Text>
       <Text>{`menu=${finish.menu.borderColor}`}</Text>
-      <Text>{`text=${colors.text}`}</Text>
-      <Text>{`muted=${colors.muted}`}</Text>
+      <Text>{`text=${colors.foreground}`}</Text>
+      <Text>{`muted=${colors.mutedForeground}`}</Text>
     </View>
   );
 }

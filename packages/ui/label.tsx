@@ -41,7 +41,7 @@ export function labelLook(o?: LabelLookOptions): LabelLook {
       return {
         fontSize: controlSize.label,
         fontWeight: "500",
-        color: colors.text,
+        color: colors.foreground,
       };
     },
   };

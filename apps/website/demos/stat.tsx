@@ -24,7 +24,7 @@ const FIGURES: { label: string; tone: Tone; value: string | Record<Period, strin
   { label: "Latency", tone: "accent", value: "42 ms" },
   { label: "Queue", tone: "info", value: "3" },
   { label: "Errors", tone: "warn", value: "0.2%" },
-  { label: "Failures", tone: "danger", value: "2" },
+  { label: "Failures", tone: "destructive", value: "2" },
   {
     label: "Growth",
     tone: "up",

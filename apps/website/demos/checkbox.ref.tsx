@@ -79,7 +79,7 @@ function App() {
 
   return (
     <DemoPage title="Checkbox">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Click a row, or Tab to a checkbox and press Space"
           : "Tap a row: the label toggles it too"}
@@ -90,7 +90,7 @@ function App() {
         inspector={
           <>
             <Panel title="checked · indeterminate">
-              <Text style={{ fontSize: 13, color: colors.text }}>
+              <Text style={{ fontSize: 13, color: colors.foreground }}>
                 {`Back up everything: ${all() ? "checked" : some() ? "indeterminate" : "unchecked"} · [${selected().join(", ")}]`}
               </Text>
             </Panel>

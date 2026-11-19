@@ -45,7 +45,7 @@ export function Status(props: {
         style={{
           fontSize: 12,
           fontWeight: tint() ? "500" : "400",
-          color: tint() ?? colors.muted,
+          color: tint() ?? colors.mutedForeground,
           numberOfLines: 1,
         }}
       >

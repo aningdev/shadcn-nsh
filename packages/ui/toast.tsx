@@ -32,12 +32,12 @@ export function toastLook(): ViewStyle {
 
 /** A toast's title: 14 points semibold. */
 export function toastTitle(): TextStyle {
-  return { fontSize: 14, fontWeight: "600", color: colors.text };
+  return { fontSize: 14, fontWeight: "600", color: colors.foreground };
 }
 
 /** A toast's description: 13 points, muted, its figures tabular. */
 export function toastText(): TextStyle {
-  return { fontSize: 13, color: colors.muted, fontVariant: ["tabular-nums"] };
+  return { fontSize: 13, color: colors.mutedForeground, fontVariant: ["tabular-nums"] };
 }
 
 /**
@@ -79,7 +79,7 @@ export function toastCloseLook() {
       return hovered();
     },
     get activeStyle(): ViewStyle {
-      return { backgroundColor: alpha(colors.text, 0.1), ...pressSink(0.9).activeStyle };
+      return { backgroundColor: alpha(colors.foreground, 0.1), ...pressSink(0.9).activeStyle };
     },
     get focusVisibleStyle(): ViewStyle {
       return focusRing();

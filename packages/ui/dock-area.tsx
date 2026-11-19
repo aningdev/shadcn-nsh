@@ -154,7 +154,7 @@ function defaultPreview(tab: DockTabData) {
 function defaultEmpty(): JSX.Element {
   return (
     <View class="flex-1 items-center justify-center p-2">
-      <Text class="text-muted text-[13px]">No panels</Text>
+      <Text class="text-muted-foreground text-[13px]">No panels</Text>
     </View>
   );
 }

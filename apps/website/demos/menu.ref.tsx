@@ -51,7 +51,7 @@ function Item(props: {
           <MenuMark
             kind={props.radio ? "dot" : "check"}
             size={menuItemSize.icon}
-            tint={colors.accent}
+            tint={colors.brand}
           />
         ) : undefined
       }
@@ -93,7 +93,7 @@ function App() {
 
   return (
     <DemoPage title="Menu">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Click File; hover Share to open its submenu. View has settings and a choice of one. Right click the box below"
           : "Tap File: a sheet; Share shows its items in place. View has settings and a choice of one"}
@@ -104,8 +104,8 @@ function App() {
         inspector={
           <>
             <Panel title="onSelect · checked">
-              <Text style={{ fontSize: 13, color: colors.text }}>{last()}</Text>
-              <Text style={{ fontSize: 13, color: colors.muted }}>
+              <Text style={{ fontSize: 13, color: colors.foreground }}>{last()}</Text>
+              <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
                 {`sidebar ${sidebar() ? "on" : "off"} · minimap ${minimap() ? "on" : "off"} · hidden files ${hidden() ? "shown" : "hidden"} · by ${sort()} · ${pinned() ? "pinned" : "not pinned"}`}
               </Text>
             </Panel>
@@ -113,7 +113,7 @@ function App() {
               <View style={{ gap: 2 }}>
                 <Each of={reasons()} key="index">
                   {(line, i) => (
-                    <Text style={{ fontSize: 12, color: i() === 0 ? colors.text : colors.faint }}>
+                    <Text style={{ fontSize: 12, color: i() === 0 ? colors.foreground : colors.faint }}>
                       {line()}
                     </Text>
                   )}
@@ -191,10 +191,10 @@ function App() {
                 gap: 4,
               }}
             >
-              <Text style={{ fontSize: 15, fontWeight: "600", color: colors.text }}>
+              <Text style={{ fontSize: 15, fontWeight: "600", color: colors.foreground }}>
                 {pinned() ? "ContextMenu · pinned" : "ContextMenu"}
               </Text>
-              <Text style={{ fontSize: 13, color: colors.muted }}>
+              <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
                 {desktop ? "Right click here" : "Hold a finger here"}
               </Text>
             </View>

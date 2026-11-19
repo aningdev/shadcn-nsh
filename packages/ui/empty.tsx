@@ -84,13 +84,13 @@ export function emptyLook(): EmptyLook {
     title: (): TextStyle => ({
       fontSize: density.body + 2,
       fontWeight: "500",
-      color: colors.text,
+      color: colors.foreground,
       textAlign: "center",
     }),
     description: (): TextStyle => ({
       fontSize: density.body,
       lineHeight: Math.round(density.body * 1.5),
-      color: colors.muted,
+      color: colors.mutedForeground,
       textAlign: "center",
     }),
     content: (): ViewStyle => centered(gap),

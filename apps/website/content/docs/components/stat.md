@@ -30,7 +30,7 @@ import { Stat } from "@/components/ui/stat";
 <Stat label="Latency" value="42 ms" tone="accent" />
 <Stat label="Queue" value="3" tone="info" />
 <Stat label="Errors" value="0.2%" tone="warn" />
-<Stat label="Failures" value="2" tone="danger" />
+<Stat label="Failures" value="2" tone="destructive" />
 <Stat label="Growth" value="+8.1%" tone="up" />
 <Stat label="Churn" value="−1.2%" tone="down" />
 ```

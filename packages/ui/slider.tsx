@@ -21,7 +21,7 @@ export const sliderValueClass = "w-[42px] text-right font-mono text-[11px] leadi
 
 /** The value column label's color: the soft text color (60% of the
  * text's). */
-export const sliderValueStyle = (): TextStyle => ({ color: alpha(colors.text, 0.6) });
+export const sliderValueStyle = (): TextStyle => ({ color: alpha(colors.foreground, 0.6) });
 
 /**
  * A `Slider`'s parts (spread them: `<Slider {...sliderLook()}>`): a rail

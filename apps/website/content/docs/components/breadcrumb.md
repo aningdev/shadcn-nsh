@@ -82,7 +82,7 @@ A separator is a chevron; its children replace it (a slash, a dot, a small icon)
 
 ```tsx
 <BreadcrumbSeparator>
-  <Text style={{ color: colors.muted }}>/</Text>
+  <Text style={{ color: colors.mutedForeground }}>/</Text>
 </BreadcrumbSeparator>
 ```
 

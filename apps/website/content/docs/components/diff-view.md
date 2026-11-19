@@ -43,7 +43,7 @@ import { DiffView, diffViewStyles, DiffHunkActions, diffHunkTone } from "@/compo
 
 ```tsx
 <DiffHunkActions index={0} tone="up" onRevert={() => {}} onKeep={() => {}} />
-<DiffHunkActions index={1} tone={() => (verdict() === "bad" ? "danger" : "warn")} onRevert={() => {}} onKeep={() => {}} />
+<DiffHunkActions index={1} tone={() => (verdict() === "bad" ? "destructive" : "warn")} onRevert={() => {}} onKeep={() => {}} />
 ```
 
 ### Unified

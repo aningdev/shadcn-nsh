@@ -32,7 +32,13 @@ export {
  * the brand's citrus first, then graphite from dark to light, so one series
  * leads and the rest stay as quiet as the interface. Rises and falls take
  * `colors.up` / `colors.down`. */
-export const seriesColors = (): string[] => [chart.s1, chart.s2, chart.s3, chart.s4, chart.s5];
+export const seriesColors = (): string[] => [
+  chart.chart1,
+  chart.chart2,
+  chart.chart3,
+  chart.chart4,
+  chart.chart5,
+];
 
 /** The `i`th series' color, cycling through the five. */
 export const seriesColor = (i: number): string => {
@@ -44,11 +50,11 @@ export const seriesColor = (i: number): string => {
  * regions, platforms), in order: the citrus lead, then the theme's info,
  * warn and violet, and a graphite. */
 export const categoryColors = (): string[] => [
-  chart.s1,
+  chart.chart1,
   colors.info,
   colors.warn,
   token("violet"),
-  chart.s3,
+  chart.chart3,
 ];
 
 /** A grid's hairlines (`<Grid style={plotGrid()}>`): the theme's line. */
@@ -60,7 +66,7 @@ export const plotBaseline = () => ({ stroke: colors.border });
 /** A reference (an open, a target): a dashed line of `color` (default the
  * text's) at 28%, quieter than the marks. */
 export const plotReference = (color?: string) => ({
-  stroke: alpha(color ?? colors.text, 0.28),
+  stroke: alpha(color ?? colors.foreground, 0.28),
   strokeDasharray: "2 4",
 });
 
@@ -73,7 +79,7 @@ export function plotCrossLine(o?: { band?: boolean }) {
   return {
     crossLineClass: o?.band ? "w-full h-full" : "w-px h-full",
     get crossLineStyle(): ViewStyle {
-      return { backgroundColor: alpha(colors.text, o?.band ? 0.05 : 0.22) };
+      return { backgroundColor: alpha(colors.foreground, o?.band ? 0.05 : 0.22) };
     },
   };
 }
@@ -118,7 +124,7 @@ export const plotTooltipTitle = (): TextStyle => ({
   fontSize: 10,
   fontFamily: mono,
   letterSpacing: 0.8,
-  color: colors.muted,
+  color: colors.mutedForeground,
 });
 // @port end
 
@@ -131,10 +137,13 @@ export function Legend(props: { color: string; label: string; value?: string }) 
       <If when={!terminal}>
         <View style={{ width: 9, height: 9, borderRadius: 2.5, backgroundColor: props.color }} />
       </If>
-      <Text style={{ fontSize: 13, color: colors.muted }}>
+      <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
         {props.label}
         <If when={props.value}>
-          <Text style={{ color: colors.text, fontVariant: ["tabular-nums"] }}> {props.value}</Text>
+          <Text style={{ color: colors.foreground, fontVariant: ["tabular-nums"] }}>
+            {" "}
+            {props.value}
+          </Text>
         </If>
       </Text>
     </View>

@@ -67,7 +67,7 @@ function App() {
   const slash = () => <Text style={{ color: colors.faint, fontSize: linkSize }}>/</Text>;
   return (
     <DemoPage title="Link">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop ? "Click a link, or Tab to one and press Return" : "Tap a link"}
       </Text>
 
@@ -76,7 +76,7 @@ function App() {
         inspector={
           <>
             <Panel title="route · visited">
-              <Text style={{ fontSize: 13, color: colors.text }}>
+              <Text style={{ fontSize: 13, color: colors.foreground }}>
                 {route()} · {visited().size} visited
               </Text>
             </Panel>
@@ -99,7 +99,7 @@ function App() {
             {slash()}
             {crumb("/docs/link", "Link")}
           </View>
-          <Text style={{ fontSize: 15, lineHeight: 22, color: colors.text }}>
+          <Text style={{ fontSize: 15, lineHeight: 22, color: colors.foreground }}>
             {"Read the "}
             <DocLink href="/docs/release-notes" label="release notes" inline />
             {" and the "}

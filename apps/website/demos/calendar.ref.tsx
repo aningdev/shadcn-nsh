@@ -46,7 +46,7 @@ function App() {
 
   return (
     <DemoPage title="Calendar">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Arrows move between days, Return picks; Page Up and Down change the month"
           : "Tap a day; the arrows change the month"}
@@ -58,9 +58,9 @@ function App() {
           <>
             <Panel title="value">
               <Text
-                style={{ fontSize: 13, color: colors.text }}
+                style={{ fontSize: 13, color: colors.foreground }}
               >{`day ${JSON.stringify(day())}`}</Text>
-              <Text style={{ fontSize: 13, color: colors.text }}>
+              <Text style={{ fontSize: 13, color: colors.foreground }}>
                 {`range ${JSON.stringify(range())}`}
               </Text>
             </Panel>

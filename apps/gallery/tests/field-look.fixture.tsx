@@ -11,7 +11,7 @@ function App() {
     <View>
       <Text style={look.title}>Title</Text>
       <Text style={look.labelInRow}>In a row</Text>
-      <Text testID="ink">{`ink:${colors.text}`}</Text>
+      <Text testID="ink">{`ink:${colors.foreground}`}</Text>
     </View>
   );
 }

@@ -62,7 +62,7 @@ A string child is a `Button`; anything else is the element itself.
 ```tsx
 <TooltipTrigger variant="ghost">Star</TooltipTrigger>
 <TooltipTrigger>
-  <Icon icon={Star} size={16} tint={colors.muted} />
+  <Icon icon={Star} size={16} tint={colors.mutedForeground} />
 </TooltipTrigger>
 ```
 

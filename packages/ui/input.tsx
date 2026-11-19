@@ -191,10 +191,10 @@ export function fieldText(o?: FieldTextOptions): InputStyle {
     flex: 1,
     paddingHorizontal: fieldSize.pad,
     fontSize: fieldSize.font,
-    color: colors.text,
-    placeholderColor: colors.muted,
-    caretColor: colors.accent,
-    selectionColor: colors.accent,
+    color: colors.foreground,
+    placeholderColor: colors.mutedForeground,
+    caretColor: colors.brand,
+    selectionColor: colors.brand,
     ...box,
   };
 }

@@ -10,7 +10,7 @@ import { Meter } from "@/packages/ui/meter";
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { Log, Panel, Segmented, Split, ui } from "./stage";
 
-const TONES: Tone[] = ["neutral", "accent", "info", "warn", "danger", "up", "down"];
+const TONES: Tone[] = ["neutral", "accent", "info", "warn", "destructive", "up", "down"];
 
 const READINGS = [
   { label: "Library", detail: "212 GB of 256 GB", value: 0.83 },
@@ -85,7 +85,7 @@ function App() {
         <DemoSection title="Tone" axis="block">
           {TONES.map((tone, i) => (
             <View style={plainRow({ first: i === 0, dense: true })}>
-              <Text style={{ width: 64, fontSize: 13, color: ui().muted }}>{tone}</Text>
+              <Text style={{ width: 96, fontSize: 13, color: ui().muted }}>{tone}</Text>
               <View style={{ flex: 1 }}>
                 <Meter value={0.62} tone={tone} />
               </View>

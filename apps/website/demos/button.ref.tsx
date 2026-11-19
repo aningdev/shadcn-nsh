@@ -28,7 +28,7 @@ import { desktop, Log, Panel, Split } from "./stage";
 
 /** A caption over a cluster of controls. */
 function Caption(props: { children: string }) {
-  return <Text style={{ fontSize: 12, color: colors.muted }}>{props.children}</Text>;
+  return <Text style={{ fontSize: 12, color: colors.mutedForeground }}>{props.children}</Text>;
 }
 
 /** A button of a variant and a size, its label in `buttonLabel`. */
@@ -99,7 +99,7 @@ function App() {
     log(what);
   };
   const label = () => ({
-    color: colors.text,
+    color: colors.foreground,
     fontSize: desktop ? 13 : 15,
     fontWeight: "600" as const,
   });
@@ -132,7 +132,7 @@ function App() {
 
   return (
     <DemoPage title="Button">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Click, hover, or Tab to a button and press Space"
           : "Tap; move your finger away to cancel"}
@@ -143,15 +143,15 @@ function App() {
         inspector={
           <>
             <Panel title="press · disabled">
-              <Text style={{ fontSize: 13, color: colors.text }}>{pressState()}</Text>
+              <Text style={{ fontSize: 13, color: colors.foreground }}>{pressState()}</Text>
             </Panel>
             <Panel title="Toggle pressed">
-              <Text style={{ fontSize: 13, color: colors.text }}>
+              <Text style={{ fontSize: 13, color: colors.foreground }}>
                 bold {String(bold())} · italic {String(italic())}
               </Text>
             </Panel>
             <Panel title="last onPress">
-              <Text style={{ fontSize: 13, color: colors.accent }}>{last()}</Text>
+              <Text style={{ fontSize: 13, color: colors.brand }}>{last()}</Text>
             </Panel>
             <Log title="onChange({ pressed })" lines={events()} minHeight={62} />
           </>

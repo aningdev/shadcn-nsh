@@ -134,7 +134,7 @@ export function sectionSurface(o?: SectionSurfaceOptions): ViewStyle {
     };
   }
   return {
-    backgroundColor: colors.surface,
+    backgroundColor: colors.card,
     ...rounded(density.surface),
     borderWidth: 1,
     borderColor: colors.border,
@@ -339,7 +339,7 @@ export function RowLabel(props: {
           flexShrink: 0,
           fontSize: controlSize.label,
           fontWeight: props.strong ? "600" : "400",
-          color: colors.text,
+          color: colors.foreground,
         }}
       >
         {props.label}
@@ -352,7 +352,7 @@ export function RowLabel(props: {
             flexShrink: 1,
             ...(terminal ? { flexGrow: 1, flexBasis: DETAIL_WIDTH } : {}),
             fontSize: controlSize.detail,
-            color: colors.muted,
+            color: colors.mutedForeground,
           }}
         >
           {props.detail}

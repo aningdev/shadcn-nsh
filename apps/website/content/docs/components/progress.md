@@ -30,7 +30,7 @@ import { Progress } from "@/components/ui/progress";
 <Progress value={72} tone="accent" />
 <Progress value={72} tone="info" />
 <Progress value={72} tone="warn" />
-<Progress value={72} tone="danger" />
+<Progress value={72} tone="destructive" />
 <Progress value={72} tone="up" />
 <Progress value={72} tone="down" />
 ```

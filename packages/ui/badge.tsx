@@ -62,7 +62,7 @@ export function Badge(props: BadgeProps) {
         style={{
           fontSize: 12,
           fontWeight: "500",
-          color: tone() === "neutral" ? colors.text : toneColor(tone()),
+          color: tone() === "neutral" ? colors.foreground : toneColor(tone()),
           numberOfLines: 1,
           fontVariant: ["tabular-nums"],
         }}

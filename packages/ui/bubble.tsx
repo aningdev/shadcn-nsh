@@ -73,15 +73,15 @@ export interface BubbleLook {
 function ink(variant: BubbleVariant): string {
   switch (variant) {
     case "default":
-      return colors.onLight;
+      return colors.primaryForeground;
     case "destructive":
-      return colors.danger;
+      return colors.destructive;
     case "secondary":
     case "muted":
     case "tinted":
     case "outline":
     case "ghost":
-      return colors.text;
+      return colors.foreground;
   }
 }
 
@@ -95,13 +95,13 @@ function fill(variant: BubbleVariant): string {
     case "muted":
       return token("muted");
     case "tinted":
-      return tints.accent;
+      return tints.brand;
     case "outline":
       return token("background");
     case "ghost":
       return "transparent";
     case "destructive":
-      return tints.danger;
+      return tints.destructive;
   }
 }
 
@@ -164,13 +164,13 @@ export function bubbleLook(): BubbleLook {
       paddingVertical: 3,
       borderRadius: PILL_RADIUS,
       backgroundColor: token("muted"),
-      boxShadow: `0 0 0 3px ${colors.surface}`,
+      boxShadow: `0 0 0 3px ${colors.card}`,
       ...(side === "bottom" ? { bottom: 0 } : { top: 0 }),
       translate: [0, side === "bottom" ? reactionsOverlap : `-${reactionsOverlap}`],
       ...(align === "end" ? { end: reactionsInset } : { start: reactionsInset }),
     }),
     get reactionText(): TextStyle {
-      return { fontSize: density.body, color: colors.text };
+      return { fontSize: density.body, color: colors.foreground };
     },
   };
 }

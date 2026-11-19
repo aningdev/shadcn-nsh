@@ -259,25 +259,25 @@ export const buttonStyle = (style?: ViewStyle): ViewStyle => ({
  */
 export const ui = () => ({
   page: colors.background,
-  text: colors.text,
-  muted: colors.muted,
+  text: colors.foreground,
+  muted: colors.mutedForeground,
   faint: colors.faint,
   border: colors.border,
   line: colors.line,
-  accent: colors.accent,
-  onAccent: colors.onAccent,
-  onPrimary: colors.onLight,
+  accent: colors.brand,
+  onAccent: colors.onBrand,
+  onPrimary: colors.primaryForeground,
   up: colors.up,
   down: colors.down,
   info: colors.info,
   warn: colors.warn,
-  danger: colors.danger,
+  danger: colors.destructive,
   violet: token("violet"),
   // The ink of content drawn over a photograph (the carousel's caption): the theme has no text
   // role that reads over any picture, and the knob's white (a near-white in dark) does.
   caption: colors.knob,
-  card: { ...sectionSurface(), backgroundColor: colors.surface },
-  row: { ...sectionSurface(), backgroundColor: colors.surface },
+  card: { ...sectionSurface(), backgroundColor: colors.card },
+  row: { ...sectionSurface(), backgroundColor: colors.card },
   // Upstream's `ui().inset` is a well's colors, not a well: no corners, so a demo that has its
   // own (a row, a picture frame) keeps them (`insetSurface()` is a well with its corners).
   inset: {
@@ -292,11 +292,11 @@ export const ui = () => ({
     borderColor: colors.border,
     ...finish.raised,
   },
-  primary: { backgroundColor: colors.light, borderWidth: 1, ...finish.light },
+  primary: { backgroundColor: colors.primary, borderWidth: 1, ...finish.light },
   accentFill: {
-    backgroundColor: colors.accentFill,
+    backgroundColor: colors.brandFill,
     borderWidth: 1,
-    borderColor: colors.accent,
+    borderColor: colors.brand,
     ...finish.accent,
   },
 });

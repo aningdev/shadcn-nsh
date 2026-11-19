@@ -46,15 +46,15 @@ npx shadcn-nsh@latest add theme
 import { colors } from "@shadcn-nsh/theme";
 
 colors.background; // the page
-colors.surface; // a card (card)
+colors.card; // a card
 colors.inset; // a surface inside a card
 colors.raised; // a control on a card
 colors.field; // an input's well
-colors.text; // foreground
-colors.muted; // muted-foreground
-colors.accent; // brand, as ink
-colors.accentFill; // brand-fill, as a fill
-colors.danger; // destructive
+colors.foreground; // body text
+colors.mutedForeground; // secondary text
+colors.brand; // the accent as ink
+colors.brandFill; // the accent as a fill
+colors.destructive; // a failure
 colors.up; // additions
 ```
 
@@ -112,14 +112,14 @@ const card = { ...rounded(radius.card) };
 import { alpha, colors, finish, focusRing, radius, rounded } from "@shadcn-nsh/theme";
 
 const card = {
-  backgroundColor: colors.surface,
+  backgroundColor: colors.card,
   borderColor: colors.border,
   ...rounded(radius.card),
   boxShadow: finish.card.boxShadow,
 };
 
 const ring = focusRing(); // the keyboard focus outline
-const dim = alpha(colors.text, 0.4); // a color at 40%
+const dim = alpha(colors.foreground, 0.4); // a color at 40%
 ```
 
 `focusRing(offset)` is the shared keyboard outline: the muted `ring` edge and a 3-point halo of `ring-halo`. `hovered()` is the pointer's fill, the `hover` token. `alpha(color, a)` is a `color-mix` of that color with transparency. `colors`, `finish` and `radius` are getters, not snapshots: read them where they are used.

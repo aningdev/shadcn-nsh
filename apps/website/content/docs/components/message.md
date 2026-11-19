@@ -78,7 +78,7 @@ is 16 points, in the muted ink.
 ```tsx
 <Message>
   <MessageAvatar accessibilityLabel="Assistant">
-    <Icon icon={Bot} size={16} tint={colors.muted} />
+    <Icon icon={Bot} size={16} tint={colors.mutedForeground} />
   </MessageAvatar>
   <MessageContent>
     <Bubble variant="muted">

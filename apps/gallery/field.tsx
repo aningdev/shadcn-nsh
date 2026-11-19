@@ -11,7 +11,7 @@ const fill = { flex: 1 };
 function Stack(props: { label: string; children: unknown }) {
   return (
     <View style={{ gap: 6 }}>
-      <Text style={{ fontSize: 12, color: colors.muted }}>{props.label}</Text>
+      <Text style={{ fontSize: 12, color: colors.mutedForeground }}>{props.label}</Text>
       {props.children as never}
     </View>
   );

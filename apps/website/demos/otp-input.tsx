@@ -143,7 +143,9 @@ function App() {
             accessibilityLabel="Verification code, 6 digits"
             class="flex-row items-center gap-3"
             groupClass="flex-row gap-1.5"
-            tone={() => (status() === "wrong" ? "danger" : status() === "right" ? "up" : undefined)}
+            tone={() =>
+              status() === "wrong" ? "destructive" : status() === "right" ? "up" : undefined
+            }
           />
           <Text style={{ fontSize: 12, color: message().color }}>{message().text}</Text>
           <View class={desktop ? "flex-row gap-2" : "flex-row gap-2 self-stretch"}>
@@ -169,17 +171,19 @@ function App() {
 
       <DemoCard>
         <DemoSection title="Tone">
-          {(["neutral", "accent", "info", "warn", "danger", "up", "down"] as const).map((tone) => (
-            <OtpInput
-              length={1}
-              value="7"
-              tone={tone}
-              accessibilityLabel={`${tone} tone`}
-              cells={otpCells}
-              class="flex-row"
-              groupClass="flex-row"
-            />
-          ))}
+          {(["neutral", "accent", "info", "warn", "destructive", "up", "down"] as const).map(
+            (tone) => (
+              <OtpInput
+                length={1}
+                value="7"
+                tone={tone}
+                accessibilityLabel={`${tone} tone`}
+                cells={otpCells}
+                class="flex-row"
+                groupClass="flex-row"
+              />
+            ),
+          )}
         </DemoSection>
       </DemoCard>
     </DemoPage>

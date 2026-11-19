@@ -53,8 +53,10 @@ function Field(props: { label: string; detail: string; children: JSX.Element }) 
   return (
     <View style={{ gap: 8 }}>
       <View style={{ gap: 2 }}>
-        <Text style={{ fontSize: 13, fontWeight: "500", color: colors.text }}>{props.label}</Text>
-        <Text style={{ fontSize: 12, color: colors.muted }}>{props.detail}</Text>
+        <Text style={{ fontSize: 13, fontWeight: "500", color: colors.foreground }}>
+          {props.label}
+        </Text>
+        <Text style={{ fontSize: 12, color: colors.mutedForeground }}>{props.detail}</Text>
       </View>
       {props.children}
     </View>
@@ -93,7 +95,7 @@ function App() {
 
   return (
     <DemoPage title="Date Picker">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Arrows move between days, Return picks; the trigger takes Delete to clear"
           : "Tap a day; the meeting's time takes digits"}
@@ -105,13 +107,13 @@ function App() {
           <>
             <Panel title="value">
               <Text
-                style={{ fontSize: 13, color: colors.text }}
+                style={{ fontSize: 13, color: colors.foreground }}
               >{`due ${JSON.stringify(due())}`}</Text>
               <Text
-                style={{ fontSize: 13, color: colors.text }}
+                style={{ fontSize: 13, color: colors.foreground }}
               >{`stay ${JSON.stringify(stay())}`}</Text>
               <Text
-                style={{ fontSize: 13, color: colors.text }}
+                style={{ fontSize: 13, color: colors.foreground }}
               >{`meeting ${JSON.stringify(meeting())}`}</Text>
             </Panel>
             <Segmented
@@ -195,7 +197,7 @@ function App() {
               timePrecision="minute"
               hourCycle={cycle()}
               defaultTime="09:00"
-              timeLabel={<Text style={{ fontSize: 13, color: colors.muted }}>Time</Text>}
+              timeLabel={<Text style={{ fontSize: 13, color: colors.mutedForeground }}>Time</Text>}
               timeAccessibilityLabel="Meeting time"
               trigger={
                 <DateTrigger

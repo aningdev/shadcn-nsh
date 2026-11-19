@@ -36,7 +36,7 @@ function Row(props: { label: string; value?: string; first?: boolean; children: 
         <Text
           style={{
             fontSize: controlSize.label,
-            color: colors.muted,
+            color: colors.mutedForeground,
             fontVariant: ["tabular-nums"],
           }}
         >
@@ -109,7 +109,7 @@ function App() {
       events.set([`${name} → ${show(next)}`, ...events()].slice(0, 5));
   return (
     <DemoPage title="Slider">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Drag a thumb or click the track, or Tab to a thumb and use the arrow keys"
           : "Drag a thumb, or tap the track"}
@@ -120,10 +120,14 @@ function App() {
         inspector={
           <>
             <Panel title="value">
-              <Text style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}>
+              <Text
+                style={{ fontSize: 13, color: colors.foreground, fontVariant: ["tabular-nums"] }}
+              >
                 {`strength ${strength()} · position ${position()} · price [${price()[0]}, ${price()[1]}]`}
               </Text>
-              <Text style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}>
+              <Text
+                style={{ fontSize: 13, color: colors.foreground, fontVariant: ["tabular-nums"] }}
+              >
                 {`bands ${bands.map((band) => band()).join(" / ")}`}
               </Text>
             </Panel>
@@ -193,7 +197,7 @@ function App() {
                   <Text
                     style={{
                       fontSize: controlSize.detail,
-                      color: colors.muted,
+                      color: colors.mutedForeground,
                       fontVariant: ["tabular-nums"],
                     }}
                   >

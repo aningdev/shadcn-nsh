@@ -10,14 +10,14 @@ import { Toggle } from "@/packages/ui/toggle";
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { Log, Panel, Segmented, Split } from "./stage";
 
-const TONES: Tone[] = ["neutral", "accent", "info", "warn", "danger", "up", "down"];
+const TONES: Tone[] = ["neutral", "accent", "info", "warn", "destructive", "up", "down"];
 
 const DEPLOYS: { name: string; detail: string; label: string; tone: Tone }[] = [
   { name: "web · production", detail: "Deployed 4 minutes ago", label: "Active", tone: "up" },
   { name: "api · production", detail: "Deploys are paused", label: "Paused", tone: "neutral" },
   { name: "worker · staging", detail: "Third in the queue", label: "Queued", tone: "info" },
   { name: "cron · nightly", detail: "One run is slow", label: "Warning", tone: "warn" },
-  { name: "migrate", detail: "Stopped at step 3 of 7", label: "Failed", tone: "danger" },
+  { name: "migrate", detail: "Stopped at step 3 of 7", label: "Failed", tone: "destructive" },
 ];
 
 function App() {
@@ -27,7 +27,7 @@ function App() {
   const log = (line: string) => events.set([line, ...events()].slice(0, 5));
   return (
     <DemoPage title="Badge">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {"A state or a tag in a capsule, quiet enough to sit in a row of its own."}
       </Text>
 

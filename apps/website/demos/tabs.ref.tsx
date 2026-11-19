@@ -61,7 +61,7 @@ function App() {
 
   return (
     <DemoPage title="Tabs">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Click a tab, or Tab to a list and move with the arrow keys"
           : "Tap a tab to show its section"}
@@ -94,14 +94,14 @@ function App() {
           <Each of={current().rows} key="index">
             {(row, i) => (
               <View style={plainRow({ first: i() === 0, dense: true })}>
-                <Text style={{ flex: 1, fontSize: controlSize.label, color: colors.text }}>
+                <Text style={{ flex: 1, fontSize: controlSize.label, color: colors.foreground }}>
                   {row()[0]}
                 </Text>
                 <Text
                   style={{
                     fontSize: controlSize.label,
                     fontVariant: ["tabular-nums"],
-                    color: colors.muted,
+                    color: colors.mutedForeground,
                   }}
                 >
                   {row()[1]}

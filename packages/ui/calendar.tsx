@@ -92,7 +92,7 @@ function Weekday(props: { day: number }) {
         minWidth: cell,
         textAlign: "center",
         fontSize: pointer ? 12.8 : 13,
-        color: colors.muted,
+        color: colors.mutedForeground,
       }}
     >
       {WEEKDAYS[props.day]}
@@ -120,7 +120,7 @@ function Arrow(props: { at: "start" | "end" }) {
       }}
     >
       <View style={{ transform: [{ rotate: props.at === "start" ? "180deg" : "0deg" }] }}>
-        <Icon icon={ChevronRight} size={arrowIcon} tint={colors.text} />
+        <Icon icon={ChevronRight} size={arrowIcon} tint={colors.foreground} />
       </View>
     </View>
   );
@@ -361,7 +361,7 @@ export const calendarLook = {
           paddingTop: 8,
           paddingEnd: 8,
           borderEndWidth: 1,
-          borderColor: alpha(colors.text, 0.1),
+          borderColor: alpha(colors.foreground, 0.1),
         }
       : { flexDirection: "row", flexWrap: "wrap", gap: 6 };
   },
@@ -375,7 +375,7 @@ export const calendarLook = {
         ...rounded(radius.control),
         justifyContent: "center" as const,
         fontSize: 13,
-        color: colors.text,
+        color: colors.foreground,
       };
     return {
       height: 34,
@@ -385,7 +385,7 @@ export const calendarLook = {
       borderColor: colors.border,
       justifyContent: "center" as const,
       fontSize: 14,
-      color: colors.text,
+      color: colors.foreground,
     };
   },
   presetClass: terminal
@@ -409,7 +409,7 @@ export const calendarLook = {
       marginTop: pointer ? 6 : 12,
       paddingTop: 12,
       borderTopWidth: 1,
-      borderColor: alpha(colors.text, 0.1),
+      borderColor: alpha(colors.foreground, 0.1),
       ...(pointer ? { paddingHorizontal: 6, paddingBottom: 6 } : {}),
     };
   },
@@ -417,7 +417,7 @@ export const calendarLook = {
     // Tight to the digits, as a time input's: the segments' padding is the room on each side.
     return terminal
       ? { color: colors.faint, fontSize: controlSize.label }
-      : { color: colors.muted, fontSize: controlSize.label, marginHorizontal: -1 };
+      : { color: colors.mutedForeground, fontSize: controlSize.label, marginHorizontal: -1 };
   },
 };
 // @port end

@@ -41,12 +41,12 @@ export function linkColor(o?: LinkState): string {
   return o?.disabled
     ? colors.faint
     : o?.current
-      ? colors.text
+      ? colors.foreground
       : o?.visited
         ? token("violet")
         : o?.quiet
-          ? colors.muted
-          : colors.accent;
+          ? colors.mutedForeground
+          : colors.brand;
 }
 
 /** A `Link`'s own look (spread it): a row of its text and icon, the

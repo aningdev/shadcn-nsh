@@ -54,7 +54,7 @@ function App() {
 
   return (
     <DemoPage title="Diff view">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Click Revert or Keep on a change, or a line number"
           : "Tap Revert or Keep on a change, or a line number"}
@@ -157,7 +157,7 @@ function App() {
             </View>
             {/* Any of the theme's tones can back the chips (an app tinting its rows by severity):
                 a change is `up` or `down`, and the rest are open to it. */}
-            {(["neutral", "accent", "info", "warn", "danger"] as const).map((tone) => (
+            {(["neutral", "accent", "info", "warn", "destructive"] as const).map((tone) => (
               <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
                 <Text class="text-muted-foreground" style={{ fontSize: 12, width: 132 }}>
                   {`on a ${tone} row`}

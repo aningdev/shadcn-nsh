@@ -9,8 +9,8 @@
 // `keymap` for ⌘B / Ctrl+B.
 //
 // The colors are shadcn's sidebar roles, mapped onto ours (there is no `sidebar-*` role set, and
-// this file does not add one): the column is `colors.sidebar`, its ink `colors.text`, its hover and
-// chosen row `colors.sidebarSelected` (shadcn's `sidebar-accent`), its edge `colors.sidebarBorder`,
+// this file does not add one): the column is `colors.sidebar`, its ink `colors.foreground`, its hover and
+// chosen row `colors.sidebarAccent` (shadcn's `sidebar-accent`), its edge `colors.sidebarBorder`,
 // and the keyboard's ring `focusRing()`. shadcn's `sidebar-primary` draws nothing there either, so
 // nothing here reads it.
 import {
@@ -409,7 +409,7 @@ export function sidebarGroupLook(o?: SidebarFoldOptions) {
       return {
         fontSize: pointer ? 12 : 13,
         fontWeight: "500",
-        color: alpha(colors.text, 0.7),
+        color: alpha(colors.foreground, 0.7),
         numberOfLines: 1,
         flexShrink: 1,
       };
@@ -428,7 +428,7 @@ export function sidebarGroupLook(o?: SidebarFoldOptions) {
       };
     },
     get actionHover(): ViewStyle {
-      return { backgroundColor: colors.sidebarSelected };
+      return { backgroundColor: colors.sidebarAccent };
     },
     get content(): ViewStyle {
       return { width: "100%", flexDirection: "column" };
@@ -453,7 +453,7 @@ export interface SidebarMenuButtonLookOptions extends SidebarFoldOptions {
 /**
  * A menu row's look, after shadcn/ui's: a row as wide as the group, 8 points in, its icon 16 and
  * its name small, the theme's control corners; under the pointer the theme's hover, on the page the
- * app is on the `sidebarSelected` fill with the name medium, the keyboard's ring while it is there,
+ * app is on the `sidebarAccent` fill with the name medium, the keyboard's ring while it is there,
  * the press's sink, 50% while disabled. Folded to icons (a closed `icon` column on a window that
  * shows it) the row is a 32-point square with its icon alone: its name is still there for a screen
  * reader, clipped to nothing.
@@ -489,7 +489,7 @@ export function sidebarMenuButtonLook(o?: SidebarMenuButtonLookOptions) {
               borderColor: colors.sidebarBorder,
             }
           : {}),
-        ...(active() ? { backgroundColor: colors.sidebarSelected } : {}),
+        ...(active() ? { backgroundColor: colors.sidebarAccent } : {}),
         ...pressTransition("background-color"),
       };
     },
@@ -512,7 +512,7 @@ export function sidebarMenuButtonLook(o?: SidebarMenuButtonLookOptions) {
       return {
         fontSize: rowLabel[size()],
         fontWeight: active() ? "500" : "400",
-        color: colors.text,
+        color: colors.foreground,
         numberOfLines: 1,
         flexShrink: 1,
         ...(folded(o) ? { display: "none" } : {}),
@@ -521,7 +521,7 @@ export function sidebarMenuButtonLook(o?: SidebarMenuButtonLookOptions) {
     /** A row's leading icon: 16 points (18 on a touch screen), the muted ink — the text's on the
      * page the app is on. */
     get glyph(): { size: number; tint: string } {
-      return { size: rowIcon, tint: active() ? colors.text : colors.muted };
+      return { size: rowIcon, tint: active() ? colors.foreground : colors.mutedForeground };
     },
   };
 }
@@ -555,14 +555,14 @@ export function sidebarMenuActionLook(o?: SidebarMenuActionLookOptions) {
       };
     },
     get hoverStyle(): ViewStyle {
-      return { backgroundColor: colors.sidebarSelected };
+      return { backgroundColor: colors.sidebarAccent };
     },
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
     },
     /** Its glyph: 16 points in the muted ink. */
     get glyph(): { size: number; tint: string } {
-      return { size: rowIcon, tint: colors.muted };
+      return { size: rowIcon, tint: colors.mutedForeground };
     },
   };
 }
@@ -593,7 +593,7 @@ export function sidebarMenuBadgeLook(o?: SidebarFoldOptions) {
       return {
         fontSize: pointer ? 12 : 13,
         fontWeight: "500",
-        color: colors.text,
+        color: colors.foreground,
         fontVariant: "tabular-nums",
         numberOfLines: 1,
       };
@@ -659,7 +659,7 @@ export function sidebarMenuSubButtonLook(o?: SidebarMenuSubButtonLookOptions) {
         paddingHorizontal: sidebarSize.padding,
         overflow: "hidden",
         ...rounded(radius.control),
-        ...(active() ? { backgroundColor: colors.sidebarSelected } : {}),
+        ...(active() ? { backgroundColor: colors.sidebarAccent } : {}),
         ...pressTransition("background-color"),
       };
     },
@@ -681,7 +681,7 @@ export function sidebarMenuSubButtonLook(o?: SidebarMenuSubButtonLookOptions) {
       return {
         fontSize: subRowLabel[size()],
         fontWeight: active() ? "500" : "400",
-        color: colors.text,
+        color: colors.foreground,
         numberOfLines: 1,
         flexShrink: 1,
       };
@@ -1392,7 +1392,7 @@ export function SidebarMenuAction(props: SidebarMenuActionProps) {
         disabledStyle={[{ opacity: 0.5 }, props.disabledStyle ?? null]}
       >
         {typeof props.children === "string" ? (
-          <Text style={{ fontSize: 12, color: colors.muted }}>{props.children}</Text>
+          <Text style={{ fontSize: 12, color: colors.mutedForeground }}>{props.children}</Text>
         ) : (
           props.children
         )}

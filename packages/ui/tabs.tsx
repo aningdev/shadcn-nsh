@@ -119,7 +119,7 @@ export function underlineTabsLook() {
       return { flexDirection: "row", gap: 2, paddingTop: 3 };
     },
     get indicatorStyle(): ViewStyle {
-      return { bottom: 0, height: 2, borderRadius: 1, backgroundColor: colors.accent };
+      return { bottom: 0, height: 2, borderRadius: 1, backgroundColor: colors.brand };
     },
     get rule(): ViewStyle {
       return {
@@ -194,10 +194,10 @@ export function TabTitle(props: {
       <If when={props.icon}>
         <View style={{ width: TAB_ICON, height: TAB_ICON }}>
           <View style={{ position: "absolute", opacity: away }}>
-            <Icon icon={props.icon!} size={TAB_ICON} tint={colors.muted} />
+            <Icon icon={props.icon!} size={TAB_ICON} tint={colors.mutedForeground} />
           </View>
           <View style={{ position: "absolute", opacity: on }}>
-            <Icon icon={props.icon!} size={TAB_ICON} tint={colors.text} />
+            <Icon icon={props.icon!} size={TAB_ICON} tint={colors.foreground} />
           </View>
         </View>
       </If>
@@ -206,7 +206,10 @@ export function TabTitle(props: {
           numberOfLines: 1,
           fontSize: 13,
           fontWeight: "500",
-          color: on.interpolate({ inputRange: [0, 1], outputRange: [colors.muted, colors.text] }),
+          color: on.interpolate({
+            inputRange: [0, 1],
+            outputRange: [colors.mutedForeground, colors.foreground],
+          }),
           textDecorationLine: terminal && props.underline && props.selected ? "underline" : "none",
         }}
       >
@@ -232,7 +235,7 @@ export function TabTitle(props: {
             style={{
               fontSize: 10,
               fontWeight: "600",
-              color: colors.muted,
+              color: colors.mutedForeground,
               fontVariant: ["tabular-nums"],
             }}
           >

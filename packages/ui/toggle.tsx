@@ -102,7 +102,7 @@ export function toggleLook(o?: ToggleLookOptions) {
         ...rounded(dims.side / 4 + 1),
         borderWidth: 1,
         ...(outline
-          ? { borderColor: colors.fieldBorder, backgroundColor: colors.field }
+          ? { borderColor: colors.input, backgroundColor: colors.field }
           : { borderColor: "transparent" }),
         ...(read(o?.on) ? finish.on : {}),
         ...transition,
@@ -129,7 +129,8 @@ export function toggleLook(o?: ToggleLookOptions) {
 }
 
 /** The ink of a toggle's content: the text's color while on, muted while off. */
-const ink = (pressed: Live<boolean | undefined>) => (read(pressed) ? colors.text : colors.muted);
+const ink = (pressed: Live<boolean | undefined>) =>
+  read(pressed) ? colors.foreground : colors.mutedForeground;
 
 /** The label of a `toggleLook` of the same options: 13 points with a pointer, 15 on a touch screen (`sm` 12 / 13, `lg` 14 / 16), medium weight, muted while off. */
 export function toggleLabel(pressed: Live<boolean | undefined>, o?: ToggleLookOptions): TextStyle {

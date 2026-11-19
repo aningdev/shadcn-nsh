@@ -117,7 +117,7 @@ export function navigationMenuLook(): NavigationMenuLook {
       return {
         fontSize: labelSize,
         fontWeight: "500",
-        color: colors.text,
+        color: colors.foreground,
         numberOfLines: 1,
       };
     },
@@ -125,7 +125,7 @@ export function navigationMenuLook(): NavigationMenuLook {
       return {
         fontSize: labelSize,
         fontWeight: "400",
-        color: colors.muted,
+        color: colors.mutedForeground,
         numberOfLines: 2,
       };
     },
@@ -181,7 +181,7 @@ export function navigationMenuTriggerLook(o?: NavigationMenuTriggerLookOptions) 
       return {
         fontSize: labelSize,
         fontWeight: "500",
-        color: colors.text,
+        color: colors.foreground,
         numberOfLines: 1,
       };
     },
@@ -197,7 +197,7 @@ export function navigationMenuTriggerLook(o?: NavigationMenuTriggerLookOptions) 
     },
     /** The chevron itself: `navigationMenuSize.chevron` across, in the muted ink. */
     get chevronIcon(): { size: number; tint: string } {
-      return { size: navigationMenuSize.chevron, tint: colors.muted };
+      return { size: navigationMenuSize.chevron, tint: colors.mutedForeground };
     },
   };
 }

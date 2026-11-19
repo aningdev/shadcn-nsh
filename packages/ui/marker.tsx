@@ -92,7 +92,7 @@ export function markerLook(): MarkerLook {
     },
     content: (variant: MarkerVariant): TextStyle => ({
       fontSize: density.body,
-      color: colors.muted,
+      color: colors.mutedForeground,
       flexShrink: variant === "separator" ? 0 : 1,
       minWidth: 0,
       ...(variant === "separator" ? { textAlign: "center" } : {}),
@@ -101,7 +101,7 @@ export function markerLook(): MarkerLook {
       return { cursor: platform.desktop ? "pointer" : undefined };
     },
     get glyph() {
-      return { size: iconSide, tint: colors.muted };
+      return { size: iconSide, tint: colors.mutedForeground };
     },
   };
 }

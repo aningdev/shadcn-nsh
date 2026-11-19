@@ -104,7 +104,7 @@ function App() {
 
   return (
     <DemoPage title="Alert Dialog">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         The platform's own alert; every label comes from the app.
       </Text>
 
@@ -114,7 +114,7 @@ function App() {
         inspector={
           <>
             <Panel title={`AlertDialog.show resolved with (${shown()} shown)`}>
-              <Text style={{ color: colors.accent, fontSize: 14, fontWeight: "600" }}>
+              <Text style={{ color: colors.brand, fontSize: 14, fontWeight: "600" }}>
                 {answer()}
               </Text>
             </Panel>
@@ -138,7 +138,9 @@ function App() {
                     paddingHorizontal: 12,
                   }}
                 >
-                  <Text style={{ flex: 1, fontSize: 13, color: colors.muted }}>{alert.detail}</Text>
+                  <Text style={{ flex: 1, fontSize: 13, color: colors.mutedForeground }}>
+                    {alert.detail}
+                  </Text>
                   <Button
                     variant={alert.danger ? "destructive" : "secondary"}
                     onPress={() => show(alert)}
@@ -163,12 +165,12 @@ function App() {
                     style={{
                       fontSize: controlSize.label,
                       fontWeight: "600",
-                      color: alert.danger ? colors.danger : colors.text,
+                      color: alert.danger ? colors.destructive : colors.foreground,
                     }}
                   >
                     {alert.label}
                   </Text>
-                  <Text style={{ fontSize: controlSize.detail, color: colors.muted }}>
+                  <Text style={{ fontSize: controlSize.detail, color: colors.mutedForeground }}>
                     {alert.detail}
                   </Text>
                 </View>

@@ -47,10 +47,12 @@ export function DemoPage(props: {
               }
         }
       >
-        <Text style={{ fontSize: 22, fontWeight: "700", color: colors.text }}>{props.title}</Text>
+        <Text style={{ fontSize: 22, fontWeight: "700", color: colors.foreground }}>
+          {props.title}
+        </Text>
         {props.children}
         <If when={props.note}>
-          <Text style={{ fontSize: 13, color: colors.muted }}>
+          <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
             {typeof props.note === "function" ? props.note() : props.note}
           </Text>
         </If>
@@ -92,7 +94,7 @@ export function DemoSection(props: {
 }) {
   return (
     <View style={{ gap: 8 }}>
-      <Text style={{ fontSize: density.note, color: colors.muted }}>{props.title}</Text>
+      <Text style={{ fontSize: density.note, color: colors.mutedForeground }}>{props.title}</Text>
       <View
         style={
           props.axis === "block"

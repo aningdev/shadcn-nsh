@@ -79,7 +79,7 @@ export function fieldFamilyLook(): FieldFamilyLook {
   const label = (): TextStyle => ({
     fontSize: controlSize.label,
     fontWeight: "500",
-    color: colors.text,
+    color: colors.foreground,
   });
   return {
     get set(): ViewStyle {
@@ -125,7 +125,7 @@ export function fieldFamilyLook(): FieldFamilyLook {
       return { ...label(), flexShrink: 0 };
     },
     get description(): TextStyle {
-      return { fontSize: density.note, color: colors.muted };
+      return { fontSize: density.note, color: colors.mutedForeground };
     },
     get separator(): ViewStyle {
       return {
@@ -139,7 +139,7 @@ export function fieldFamilyLook(): FieldFamilyLook {
       return { flexGrow: 1, height: 1, backgroundColor: colors.line };
     },
     get separatorText(): TextStyle {
-      return { fontSize: density.note, color: colors.muted };
+      return { fontSize: density.note, color: colors.mutedForeground };
     },
     get error(): ViewStyle {
       return { flexDirection: "column", gap: 2 };
@@ -148,10 +148,10 @@ export function fieldFamilyLook(): FieldFamilyLook {
       return { flexDirection: "row", alignItems: "flex-start", gap: 6 };
     },
     get errorText(): TextStyle {
-      return { fontSize: density.note, color: colors.danger };
+      return { fontSize: density.note, color: colors.destructive };
     },
     get errorMessage(): TextStyle {
-      return { fontSize: density.note, color: colors.danger, flexShrink: 1, minWidth: 0 };
+      return { fontSize: density.note, color: colors.destructive, flexShrink: 1, minWidth: 0 };
     },
   };
 }

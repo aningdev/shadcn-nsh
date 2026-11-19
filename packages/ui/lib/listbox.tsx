@@ -43,7 +43,7 @@ export function listboxPopup(o?: ListboxPopupOptions): ViewStyle {
         ...popInStyles().style,
       }
     : {
-        backgroundColor: colors.surface,
+        backgroundColor: colors.card,
         borderTopLeftRadius: radius.card,
         borderTopRightRadius: radius.card,
         ...cornerCurve,
@@ -108,7 +108,7 @@ export function Chevron(props: { open: boolean; hidden?: boolean }) {
         transform: [{ rotate: props.open ? "-90deg" : "90deg" }],
       }}
     >
-      <Icon icon={ChevronRight} size={controlSize.check} tint={colors.muted} />
+      <Icon icon={ChevronRight} size={controlSize.check} tint={colors.mutedForeground} />
     </View>
   );
 }
@@ -151,9 +151,9 @@ export function clearButtonLook(o?: ClearButtonOptions) {
         : { width: controlSize.clear, height: controlSize.clear },
     get clearButton() {
       return terminal ? (
-        <Text style={{ color: colors.muted }}>×</Text>
+        <Text style={{ color: colors.mutedForeground }}>×</Text>
       ) : (
-        <Icon icon={X} size={controlSize.clear - 6} tint={colors.muted} />
+        <Icon icon={X} size={controlSize.clear - 6} tint={colors.mutedForeground} />
       );
     },
   };
@@ -195,12 +195,12 @@ export function OptionRow(props: {
       <View style={{ flex: 1, minWidth: 0 }}>
         <Text
           class="group-selected:font-semibold font-normal"
-          style={{ numberOfLines: 1, fontSize: 14, color: colors.text }}
+          style={{ numberOfLines: 1, fontSize: 14, color: colors.foreground }}
         >
           {props.item.title}
         </Text>
         <If when={props.detail}>
-          <Text style={{ numberOfLines: 1, fontSize: 12, color: colors.muted }}>
+          <Text style={{ numberOfLines: 1, fontSize: 12, color: colors.mutedForeground }}>
             {props.detail}
           </Text>
         </If>
@@ -214,7 +214,7 @@ export function OptionRow(props: {
         class="group-selected:opacity-100 opacity-0"
         style={{ width: 16, alignItems: "center" }}
       >
-        <Icon icon={Check} size={14} tint={colors.accent} />
+        <Icon icon={Check} size={14} tint={colors.brand} />
       </View>
     </View>
   );
@@ -227,7 +227,7 @@ export function ListboxHeader(props: { group: SelectGroup }) {
       style={{
         fontSize: 12,
         fontWeight: "600",
-        color: colors.muted,
+        color: colors.mutedForeground,
         paddingHorizontal: 9,
         paddingTop: 8,
         paddingBottom: 4,
@@ -241,7 +241,14 @@ export function ListboxHeader(props: { group: SelectGroup }) {
 /** What a list shows while its search matches nothing (`empty`). */
 export function ListboxEmpty(props: { label: string }) {
   return (
-    <Text style={{ paddingVertical: 20, textAlign: "center", fontSize: 14, color: colors.muted }}>
+    <Text
+      style={{
+        paddingVertical: 20,
+        textAlign: "center",
+        fontSize: 14,
+        color: colors.mutedForeground,
+      }}
+    >
       {props.label}
     </Text>
   );
@@ -259,7 +266,7 @@ export const listboxFooter = {
     };
   },
   get text() {
-    return { fontSize: 12, color: colors.muted };
+    return { fontSize: 12, color: colors.mutedForeground };
   },
 };
 
@@ -281,7 +288,7 @@ export function listboxSearch() {
         borderWidth: 1,
         backgroundColor: colors.field,
         ...finish.field,
-        borderColor: colors.fieldBorder,
+        borderColor: colors.input,
       };
     },
   };

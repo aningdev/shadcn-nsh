@@ -25,7 +25,7 @@ import { Flow, Page, Panel, Row } from "./demo-kit";
 const fill = { flex: 1, alignSelf: "stretch" as const };
 
 function Label(props: { children: string }) {
-  return <Text style={{ fontSize: 13, color: colors.muted }}>{props.children}</Text>;
+  return <Text style={{ fontSize: 13, color: colors.mutedForeground }}>{props.children}</Text>;
 }
 
 function NavPage() {

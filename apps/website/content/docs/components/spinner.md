@@ -18,7 +18,7 @@ import { Spinner } from "@/components/ui/spinner";
 ```
 
 ```tsx
-<Spinner size={16} tint={colors.accent} />
+<Spinner size={16} tint={colors.brand} />
 ```
 
 ## Examples
@@ -26,9 +26,9 @@ import { Spinner } from "@/components/ui/spinner";
 ### Size
 
 ```tsx
-<Spinner size={12} tint={colors.muted} />
-<Spinner size={16} tint={colors.accent} />
-<Spinner size={24} tint={colors.accent} />
+<Spinner size={12} tint={colors.mutedForeground} />
+<Spinner size={16} tint={colors.brand} />
+<Spinner size={24} tint={colors.brand} />
 ```
 
 ### In a button

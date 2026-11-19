@@ -98,7 +98,7 @@ function App() {
   keymap.bind("mod+k", () => palette?.focus());
   return (
     <DemoPage title="Command">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? `Type to filter, the arrows to move, Return to run, Escape to clear; ${keymap.label("mod+k")} focuses it`
           : "Type to filter, tap a command to run it"}
@@ -145,7 +145,7 @@ function App() {
             separatorClass={commandClasses.separator}
             placeholder="Type a command or search…"
             style={{ height: desktop ? 360 : 400 }}
-            searchPrefix={<Icon icon={Search} size={16} tint={colors.muted} />}
+            searchPrefix={<Icon icon={Search} size={16} tint={colors.mutedForeground} />}
             empty={<CommandEmpty label="No commands match" />}
             renderGroup={(group) => <CommandHeading group={group} />}
             renderItem={(entry) => (

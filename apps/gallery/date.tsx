@@ -37,7 +37,7 @@ function DatesPage() {
   return (
     <Page>
       <Panel title="Calendar">
-        <Text style={{ fontSize: 12, color: colors.muted }}>
+        <Text style={{ fontSize: 12, color: colors.mutedForeground }}>
           Range, today, other months, disabled
         </Text>
         <Calendar

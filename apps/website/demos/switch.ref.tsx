@@ -80,7 +80,7 @@ function App() {
 
   return (
     <DemoPage title="Switch">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Click a row, or Tab to a switch and press Space"
           : "Tap a row: the label toggles it too"}
@@ -91,12 +91,12 @@ function App() {
         inspector={
           <>
             <Panel title="checked · disabled">
-              <Text style={{ fontSize: 13, color: colors.text }}>
+              <Text style={{ fontSize: 13, color: colors.foreground }}>
                 {`Wi-Fi ${wifi() ? "on" : "off"} · ask ${ask() ? "on" : "off"}`}
                 {wifi() ? "" : " (disabled)"}
                 {` · Bluetooth ${bluetooth() ? "on" : "off"}`}
               </Text>
-              <Text style={{ fontSize: 13, color: colors.text }}>
+              <Text style={{ fontSize: 13, color: colors.foreground }}>
                 {`extract ${extract() ? "on" : "off"} · usage ${usage() ? "on" : "off"}`}
               </Text>
             </Panel>
@@ -153,7 +153,7 @@ function App() {
             checked={bluetooth()}
             onChange={change("Bluetooth", (next) => bluetooth.set(next))}
           />
-          <Text style={{ fontSize: 13, color: colors.muted }}>
+          <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
             Bluetooth {bluetooth() ? "on" : "off"}
           </Text>
         </DemoSection>

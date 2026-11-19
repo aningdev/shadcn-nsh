@@ -31,7 +31,7 @@ const changed = (next: number) => {
 function App() {
   return (
     <DemoPage title="Pagination">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop ? "Click a page, or Tab to one and press Return" : "Tap a page"}
       </Text>
 

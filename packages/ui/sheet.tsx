@@ -29,7 +29,7 @@ export type SheetSide = "bottom" | "top" | "left" | "right";
  * points of padding inside the safe area.
  */
 export function sheetPanel(side: SheetSide): ViewStyle {
-  const surface: ViewStyle = { backgroundColor: colors.surface, borderColor: colors.border };
+  const surface: ViewStyle = { backgroundColor: colors.card, borderColor: colors.border };
   if (side === "bottom" || side === "top") {
     const bottom = side === "bottom";
     return {

@@ -53,7 +53,7 @@ export function otpCellLook(o?: OtpCellOptions) {
     },
     caretClass: "w-0.5 h-6 rounded-full",
     get caretStyle(): ViewStyle {
-      return { backgroundColor: colors.text };
+      return { backgroundColor: colors.foreground };
     },
   };
 }

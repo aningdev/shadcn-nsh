@@ -13,7 +13,7 @@ import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { desktop, Log, Panel, Split } from "./stage";
 
 const CODE = "246810";
-const TONES = ["neutral", "accent", "info", "warn", "danger", "up", "down"] as const;
+const TONES = ["neutral", "accent", "info", "warn", "destructive", "up", "down"] as const;
 type Tone = (typeof TONES)[number];
 
 /** A switch with its label, the row reversed so the track trails. */
@@ -65,17 +65,17 @@ function App() {
   };
   const message = () =>
     ({
-      typing: { text: `${code().length} of 6 digits`, color: colors.muted },
-      checking: { text: "Checking…", color: colors.muted },
+      typing: { text: `${code().length} of 6 digits`, color: colors.mutedForeground },
+      checking: { text: "Checking…", color: colors.mutedForeground },
       right: { text: "Verified", color: colors.up },
       wrong: { text: "That code is not right", color: colors.down },
     })[status()];
   const verdict = (): Tone | undefined =>
-    status() === "wrong" ? "danger" : status() === "right" ? "up" : undefined;
+    status() === "wrong" ? "destructive" : status() === "right" ? "up" : undefined;
 
   return (
     <DemoPage title="OTP Input">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Click the code and type it, or paste it; Tab reaches it too"
           : "Tap the code to type it, or paste it"}
@@ -86,7 +86,9 @@ function App() {
         inspector={
           <>
             <Panel title="value · masked · disabled">
-              <Text style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}>
+              <Text
+                style={{ fontSize: 13, color: colors.foreground, fontVariant: ["tabular-nums"] }}
+              >
                 {code()
                   ? `value “${masked() ? "•".repeat(code().length) : code()}”`
                   : "value “” (empty)"}
@@ -125,10 +127,10 @@ function App() {
           }}
         >
           <View style={{ gap: 4, alignItems: "center" }}>
-            <Text style={{ fontSize: 13, fontWeight: "600", color: colors.text }}>
+            <Text style={{ fontSize: 13, fontWeight: "600", color: colors.foreground }}>
               Enter the code
             </Text>
-            <Text style={{ fontSize: 12, color: colors.muted }}>
+            <Text style={{ fontSize: 12, color: colors.mutedForeground }}>
               {`We sent it to •••• 4821 (it is ${CODE})`}
             </Text>
           </View>

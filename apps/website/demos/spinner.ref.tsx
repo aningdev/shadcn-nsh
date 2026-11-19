@@ -51,7 +51,7 @@ function App() {
   };
   return (
     <DemoPage title="Spinner">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {
           "A ring that turns while work goes on; it stands still when the user asks for less motion."
         }
@@ -69,7 +69,7 @@ function App() {
               />
             </Panel>
             <Panel title="busy">
-              <Text style={{ fontSize: 13, color: colors.text }}>
+              <Text style={{ fontSize: 13, color: colors.foreground }}>
                 {busy() ? "Saving: the ring is up" : "Idle"}
               </Text>
               <View style={{ flexDirection: "row" }}>
@@ -84,30 +84,30 @@ function App() {
       >
         <View style={{ ...sectionSurface({ padded: true }), gap: 14 }}>
           <View style={{ alignItems: "center", gap: 10, paddingVertical: 18 }}>
-            <Spinner size={size()} tint={colors.accent} />
-            <Text style={{ fontSize: 13, color: colors.muted }}>
+            <Spinner size={size()} tint={colors.brand} />
+            <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
               {busy() ? "Saving…" : "Ready"}
             </Text>
           </View>
           <View style={{ height: 1, backgroundColor: colors.line }} />
           <DemoSection title="Size">
             <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
-              <Spinner size={12} tint={colors.muted} />
-              <Spinner size={16} tint={colors.accent} />
-              <Spinner size={24} tint={colors.accent} />
+              <Spinner size={12} tint={colors.mutedForeground} />
+              <Spinner size={16} tint={colors.brand} />
+              <Spinner size={24} tint={colors.brand} />
             </View>
           </DemoSection>
           <DemoSection title="Surface">
             {/* Three fixed 88-point surfaces: they wrap in a card narrower than the row. */}
             <View style={{ flexDirection: "row", flexWrap: "wrap", maxWidth: "100%", gap: 12 }}>
               <Surface style={{ backgroundColor: colors.raised }}>
-                <Spinner size={16} tint={colors.text} />
+                <Spinner size={16} tint={colors.foreground} />
               </Surface>
               <Surface style={insetSurface()}>
-                <Spinner size={16} tint={colors.accent} />
+                <Spinner size={16} tint={colors.brand} />
               </Surface>
-              <Surface style={{ backgroundColor: colors.accentFill }}>
-                <Spinner size={16} tint={colors.onAccent} />
+              <Surface style={{ backgroundColor: colors.brandFill }}>
+                <Spinner size={16} tint={colors.onBrand} />
               </Surface>
             </View>
           </DemoSection>

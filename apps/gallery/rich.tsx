@@ -10,7 +10,9 @@ const box = { width: 300 };
 
 function Caption(props: { children: string }) {
   return (
-    <Text style={{ fontSize: 12, color: colors.muted, numberOfLines: 1 }}>{props.children}</Text>
+    <Text style={{ fontSize: 12, color: colors.mutedForeground, numberOfLines: 1 }}>
+      {props.children}
+    </Text>
   );
 }
 
@@ -40,7 +42,9 @@ function RichPage() {
             swatches={["#1d4ed8", "#b91c1c", "#a16207", "#2563eb80"]}
           />
         </ColorPicker>
-        <Text style={{ fontSize: 12, color: colors.muted, numberOfLines: 1 }}>{() => fill()}</Text>
+        <Text style={{ fontSize: 12, color: colors.mutedForeground, numberOfLines: 1 }}>
+          {() => fill()}
+        </Text>
       </Panel>
       <Panel title="Text">
         <TextView

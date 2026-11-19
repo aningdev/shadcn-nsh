@@ -112,9 +112,9 @@ function restLook(variant: ButtonVariant, selected: boolean, disabled = false): 
   if (variant === "destructive") {
     return {
       boxShadow: finish.raised.boxShadow,
-      backgroundColor: selected ? alpha(colors.danger, 0.2) : tints.danger,
+      backgroundColor: selected ? alpha(colors.destructive, 0.2) : tints.destructive,
       backgroundImage: "none",
-      borderColor: alpha(colors.danger, 0.32),
+      borderColor: alpha(colors.destructive, 0.32),
     };
   }
   if (variant === "ghost")
@@ -163,7 +163,7 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
       if (idle() || read(o?.selected)) return undefined;
       const variant = v();
       if (filled(variant)) return { opacity: 0.94 };
-      if (variant === "destructive") return { backgroundColor: alpha(colors.danger, 0.16) };
+      if (variant === "destructive") return { backgroundColor: alpha(colors.destructive, 0.16) };
       return variant === "ghost" ? hovered() : { ...finish.hover };
     },
     get activeStyle(): ViewStyle | undefined {
@@ -172,7 +172,7 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
       const shade: ViewStyle = filled(variant)
         ? { opacity: 0.88 }
         : variant === "destructive"
-          ? { backgroundColor: alpha(colors.danger, 0.22), boxShadow: "none" }
+          ? { backgroundColor: alpha(colors.destructive, 0.22), boxShadow: "none" }
           : { ...finish.pressed };
       return { ...shade, ...sink(0.97) };
     },
@@ -189,12 +189,12 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
 /** The color of a variant's label and icon; a disabled filled button's, on the neutral fill, is muted. */
 function ink(live: Live<ButtonVariant>, disabled = false) {
   const variant = read(live) ?? "secondary";
-  if (filled(variant) && disabled) return colors.muted;
+  if (filled(variant) && disabled) return colors.mutedForeground;
   return filled(variant)
-    ? colors.onAccent
+    ? colors.onBrand
     : variant === "destructive"
-      ? colors.danger
-      : colors.text;
+      ? colors.destructive
+      : colors.foreground;
 }
 
 /** The label of a `buttonLook` of the same variant and options: 13 points with a pointer, 15 on a touch screen (`sm` 12 / 14, `lg` 14 / 17), medium weight. */
@@ -273,7 +273,7 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
         ...rounded(radius.control),
         borderWidth: 1,
         borderColor: "transparent",
-        backgroundColor: selected ? tints.accent : ghostFill(),
+        backgroundColor: selected ? tints.brand : ghostFill(),
         ...(raised && !selected ? finish.raised : {}),
         ...transition,
       };
@@ -281,7 +281,7 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
     get hoverStyle(): ViewStyle | undefined {
       if (read(o.selected) || read(o.disabled)) return undefined;
       return destructive
-        ? { backgroundColor: tints.danger }
+        ? { backgroundColor: tints.destructive }
         : raised
           ? { ...finish.hover }
           : hovered();
@@ -289,7 +289,7 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
     get activeStyle(): ViewStyle | undefined {
       if (read(o.disabled)) return undefined;
       return {
-        ...(raised ? finish.pressed : { backgroundColor: alpha(colors.text, 0.1) }),
+        ...(raised ? finish.pressed : { backgroundColor: alpha(colors.foreground, 0.1) }),
         ...sink(0.9),
       };
     },
@@ -311,12 +311,12 @@ export function iconButtonGlyph(o: IconButtonLookOptions = {}) {
     },
     get tint() {
       return read(o.selected)
-        ? colors.accent
+        ? colors.brand
         : o.variant === "destructive"
-          ? colors.danger
+          ? colors.destructive
           : o.variant === "secondary"
-            ? colors.text
-            : colors.muted;
+            ? colors.foreground
+            : colors.mutedForeground;
     },
   };
 }
@@ -392,7 +392,7 @@ export function roundButtonGlyph(
   return {
     size: roundSide(o) * ROUND_GLYPH_RATIO,
     get tint() {
-      return variant === "default" ? colors.onLight : colors.text;
+      return variant === "default" ? colors.primaryForeground : colors.foreground;
     },
   };
 }

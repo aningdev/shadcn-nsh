@@ -13,7 +13,7 @@ const layout: DockAreaLayout = {
 function App() {
   return (
     <View style={{ flex: 1, backgroundColor: colors.background, padding: 20, gap: 8 }}>
-      <Text style={{ fontSize: 22, fontWeight: "700", color: colors.text }}>Dock area</Text>
+      <Text style={{ fontSize: 22, fontWeight: "700", color: colors.foreground }}>Dock area</Text>
       <View
         style={{
           height: 220,

@@ -30,7 +30,7 @@ import { Status } from "@/components/ui/status";
 <Status label="Syncing" tone="accent" />
 <Status label="Update available" tone="info" />
 <Status label="Degraded" tone="warn" />
-<Status label="Offline" tone="danger" />
+<Status label="Offline" tone="destructive" />
 <Status label="Online" tone="up" />
 <Status label="Down" tone="down" />
 ```

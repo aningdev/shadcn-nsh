@@ -61,10 +61,12 @@ export function paginationArrows(item: PaginationItemState): JSX.Element {
     return <Text style={{ fontVariant: ["tabular-nums"] }}>{String(item.page)}</Text>;
   if (item.kind === "ellipsis") return <Text>…</Text>;
   if (terminal)
-    return <Text style={{ color: colors.muted }}>{item.kind === "previous" ? "‹" : "›"}</Text>;
+    return (
+      <Text style={{ color: colors.mutedForeground }}>{item.kind === "previous" ? "‹" : "›"}</Text>
+    );
   return (
     <View style={item.kind === "previous" ? { transform: [{ rotate: "180deg" }] } : undefined}>
-      <Icon icon={ChevronRight} size={arrowSize} tint={colors.text} />
+      <Icon icon={ChevronRight} size={arrowSize} tint={colors.foreground} />
     </View>
   );
 }

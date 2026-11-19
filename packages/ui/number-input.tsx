@@ -52,8 +52,8 @@ export function numberInputText(): InputStyle {
     minWidth: 0,
     paddingHorizontal: 8,
     fontSize: fieldSize.font,
-    color: colors.text,
-    placeholderColor: colors.muted,
+    color: colors.foreground,
+    placeholderColor: colors.mutedForeground,
     fontVariant: ["tabular-nums"],
     ...(terminal ? { textAlign: "right" as const } : {}),
   };
@@ -68,8 +68,8 @@ const stepGlyphs = new Map<IconNode, string>([
 /** A step button's glyph: the icon in the muted text color; a terminal's text glyph. */
 export function NumberStep(props: { icon: IconNode; size: number }) {
   const glyph = terminal ? stepGlyphs.get(props.icon) : undefined;
-  if (glyph) return <Text style={{ color: colors.muted }}>{glyph}</Text>;
-  return <Icon icon={props.icon} size={props.size} tint={colors.muted} />;
+  if (glyph) return <Text style={{ color: colors.mutedForeground }}>{glyph}</Text>;
+  return <Icon icon={props.icon} size={props.size} tint={colors.mutedForeground} />;
 }
 
 /**

@@ -22,7 +22,7 @@ const SOLID_TINT = { light: 10, dark: 16 } as const;
  * opaque: for what overlaps, such as stacked avatars or the actions over a
  * changed line, where a translucent tint would let what is under it show
  * through. */
-const solidTint = (tone: Tone, base: string = colors.surface) =>
+const solidTint = (tone: Tone, base: string = colors.card) =>
   tone === "neutral"
     ? colors.raised
     : `color-mix(in srgb, ${toneColor(tone)} ${isDark() ? SOLID_TINT.dark : SOLID_TINT.light}%, ${base})`;
@@ -138,7 +138,7 @@ export function DiffHunkActions(props: {
   // keeps free there.
   const backing = () => {
     const tone = read(props.tone);
-    return tone ? solidTint(tone) : colors.surface;
+    return tone ? solidTint(tone) : colors.card;
   };
   return (
     <View

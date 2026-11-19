@@ -93,13 +93,13 @@ export function CommandRow(props: {
     <View
       style={{ height, flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 8 }}
     >
-      {props.icon ? <Icon icon={props.icon} size={16} tint={colors.muted} /> : null}
+      {props.icon ? <Icon icon={props.icon} size={16} tint={colors.mutedForeground} /> : null}
       <View style={{ flex: 1, minWidth: 0, gap: 1 }}>
-        <Text style={{ fontSize: labelFont, color: colors.text, numberOfLines: 1 }}>
+        <Text style={{ fontSize: labelFont, color: colors.foreground, numberOfLines: 1 }}>
           {props.entry.label}
         </Text>
         {props.detail ? (
-          <Text style={{ fontSize: size.detail, color: colors.muted, numberOfLines: 1 }}>
+          <Text style={{ fontSize: size.detail, color: colors.mutedForeground, numberOfLines: 1 }}>
             {props.detail}
           </Text>
         ) : null}
@@ -112,7 +112,7 @@ export function CommandRow(props: {
       {desktop && props.entry.shortcutLabel ? (
         <CommandKeys label={props.entry.shortcutLabel} />
       ) : null}
-      {props.entry.checked ? <Icon icon={Check} size={14} tint={colors.text} /> : null}
+      {props.entry.checked ? <Icon icon={Check} size={14} tint={colors.foreground} /> : null}
     </View>
   );
 }
@@ -120,7 +120,14 @@ export function CommandRow(props: {
 /** What a palette shows while nothing matches. */
 export function CommandEmpty(props: { label: string }) {
   return (
-    <Text style={{ paddingVertical: 24, textAlign: "center", fontSize: 13, color: colors.muted }}>
+    <Text
+      style={{
+        paddingVertical: 24,
+        textAlign: "center",
+        fontSize: 13,
+        color: colors.mutedForeground,
+      }}
+    >
       {props.label}
     </Text>
   );
@@ -173,7 +180,7 @@ export function Command(props: CommandProps) {
       placeholder={props.placeholder ?? "Type a command or search…"}
       searchPrefix={
         props.searchPrefix === undefined ? (
-          <Icon icon={Search} size={16} tint={colors.muted} />
+          <Icon icon={Search} size={16} tint={colors.mutedForeground} />
         ) : (
           props.searchPrefix
         )

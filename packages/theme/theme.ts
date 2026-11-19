@@ -172,19 +172,15 @@ export interface Palette {
   /** The page behind the cards. */
   background: string;
   /** A card. */
-  surface: string;
+  card: string;
   /** A surface inside a card. */
   inset: string;
-  /** A muted fill: a quiet block, the well a section's content sits in, on a page or on a card
-   * (shadcn's `bg-muted`; `inset` is the surface's own shade, which in a dark appearance is all but
-   * the card's). */
-  mutedFill: string;
   /** A control on a card (buttons, fields, tracks). */
   raised: string;
   /** An input's well: below the card and the insets it sits on. */
   field: string;
   /** An input's edge. */
-  fieldBorder: string;
+  input: string;
   /** The hairline round what needs an edge (a card, a well, a divider). */
   border: string;
   /** Hairlines inside insets. */
@@ -196,25 +192,25 @@ export interface Palette {
    * line, `border` in a flat theme. */
   glassEdge: string;
   /** Body text. */
-  text: string;
+  foreground: string;
   /** Secondary text: a detail, a caption. */
-  muted: string;
+  mutedForeground: string;
   /** What recedes the furthest: a placeholder, an icon at rest. */
   faint: string;
   /** The accent as a foreground: text, icons, lines, small marks. */
-  accent: string;
-  /** The accent as a fill (buttons, bubbles), with `onAccent` on it. */
-  accentFill: string;
+  brand: string;
+  /** The accent as a fill (buttons, bubbles), with `onBrand` on it. */
+  brandFill: string;
   /** Text on the accent fill. */
-  onAccent: string;
+  onBrand: string;
   /** The main action's fill (the theme's `primary`): the citrus, in both appearances. */
-  light: string;
-  /** Text on `light`. */
-  onLight: string;
+  primary: string;
+  /** Text on `primary`. */
+  primaryForeground: string;
   /** The app's sidebar, beside the page. */
   sidebar: string;
   /** The selected row of the sidebar. */
-  sidebarSelected: string;
+  sidebarAccent: string;
   /** The sidebar's edge and the toolbar's hairline. */
   sidebarBorder: string;
   /** A switch's track when off. */
@@ -226,7 +222,7 @@ export interface Palette {
   /** The tone colors: information, a warning, a failure, a gain, a loss. */
   info: string;
   warn: string;
-  danger: string;
+  destructive: string;
   up: string;
   down: string;
 }
@@ -248,33 +244,32 @@ function tokens<K extends string>(names: Record<K, keyof Tokens>): Record<K, str
  */
 export const colors: Palette = tokens<keyof Palette>({
   background: "background",
-  surface: "card",
+  card: "card",
   inset: "inset",
-  mutedFill: "muted",
   raised: "raised",
   field: "field",
-  fieldBorder: "input",
+  input: "input",
   border: "border",
   line: "line",
   brandEdge: "brand-edge",
   glassEdge: "glass-edge",
-  text: "foreground",
-  muted: "muted-foreground",
+  foreground: "foreground",
+  mutedForeground: "muted-foreground",
   faint: "faint",
-  accent: "brand",
-  accentFill: "brand-fill",
-  onAccent: "on-brand",
-  light: "primary",
-  onLight: "primary-foreground",
+  brand: "brand",
+  brandFill: "brand-fill",
+  onBrand: "on-brand",
+  primary: "primary",
+  primaryForeground: "primary-foreground",
   sidebar: "sidebar",
-  sidebarSelected: "sidebar-accent",
+  sidebarAccent: "sidebar-accent",
   sidebarBorder: "sidebar-border",
   track: "track",
   knob: "knob",
   code: "code",
   info: "info",
   warn: "warn",
-  danger: "destructive",
+  destructive: "destructive",
   up: "up",
   down: "down",
 });
@@ -306,19 +301,19 @@ export function alpha(color: string, a: number): string {
  * `chart-5`): the brand's citrus first, then graphite from dark to light,
  * so one series leads and the rest stay as quiet as the interface. */
 export const chart = tokens({
-  s1: "chart-1",
-  s2: "chart-2",
-  s3: "chart-3",
-  s4: "chart-4",
-  s5: "chart-5",
+  chart1: "chart-1",
+  chart2: "chart-2",
+  chart3: "chart-3",
+  chart4: "chart-4",
+  chart5: "chart-5",
 });
 
 /** Translucent tints of the tones, for fills behind text. */
 export const tints = tokens({
-  accent: "brand-tint",
+  brand: "brand-tint",
   info: "info-tint",
   warn: "warn-tint",
-  danger: "destructive-tint",
+  destructive: "destructive-tint",
   up: "up-tint",
   down: "down-tint",
 });
@@ -403,13 +398,21 @@ export function currentTheme(): string | null {
   return theme === null ? null : theme.id;
 }
 
-export type Tone = "neutral" | "accent" | "info" | "warn" | "danger" | "up" | "down";
+export type Tone = "neutral" | "accent" | "info" | "warn" | "destructive" | "up" | "down";
 
-/** The color of a tone. */
-export const toneColor = (tone: Tone) => (tone === "neutral" ? colors.muted : colors[tone]);
+/**
+ * The color of a tone. `accent` is the brand ink: the tone keeps its name, and the palette key is
+ * the token (`brand`).
+ */
+export const toneColor = (tone: Tone) =>
+  tone === "neutral" ? colors.mutedForeground : tone === "accent" ? colors.brand : colors[tone];
 
-/** The tint of a tone. */
-export const toneTint = (tone: Tone) => (tone === "neutral" ? colors.raised : tints[tone]);
+/**
+ * The tint of a tone. `accent` reads `tints.brand` (the `brand-tint` token); the other tones share
+ * a key with `colors`.
+ */
+export const toneTint = (tone: Tone) =>
+  tone === "neutral" ? colors.raised : tone === "accent" ? tints.brand : tints[tone];
 
 /** The monospaced family, for code (API names, identifiers). Figures use
  * the system font with tabular numbers instead. */
@@ -441,7 +444,11 @@ export function rounded(radius: number): ViewStyle {
 /** The system header's colors on every page (iOS, Android). */
 export const header = {
   get headerStyle() {
-    return { backgroundColor: colors.background, color: colors.text, tintColor: colors.accent };
+    return {
+      backgroundColor: colors.background,
+      color: colors.foreground,
+      tintColor: colors.brand,
+    };
   },
 };
 

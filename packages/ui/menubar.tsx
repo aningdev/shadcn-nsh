@@ -57,7 +57,7 @@ export function menubarLook(): MenubarLook {
         ...rounded(radius.control),
         borderWidth: 1,
         borderColor: colors.border,
-        backgroundColor: colors.surface,
+        backgroundColor: colors.card,
       };
     },
     get trigger(): ViewStyle {
@@ -75,7 +75,7 @@ export function menubarLook(): MenubarLook {
       return {
         fontSize: menuItemSize.font,
         fontWeight: "500",
-        color: colors.text,
+        color: colors.foreground,
         numberOfLines: 1,
       };
     },

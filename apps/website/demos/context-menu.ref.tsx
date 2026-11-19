@@ -40,7 +40,7 @@ function Item(props: {
       indicatorClass={checkable ? menuIndicator : undefined}
       indicator={
         checkable ? (
-          <MenuMark kind="check" size={menuItemSize.icon} tint={colors.accent} />
+          <MenuMark kind="check" size={menuItemSize.icon} tint={colors.brand} />
         ) : undefined
       }
       style={look.style}
@@ -62,7 +62,7 @@ function App() {
 
   return (
     <DemoPage title="Context Menu">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop ? "Right click the box below" : "Hold a finger on the box below"}
       </Text>
 
@@ -71,8 +71,8 @@ function App() {
         inspector={
           <>
             <Panel title="onSelect · checked">
-              <Text style={{ fontSize: 13, color: colors.text }}>{last()}</Text>
-              <Text style={{ fontSize: 13, color: colors.muted }}>
+              <Text style={{ fontSize: 13, color: colors.foreground }}>{last()}</Text>
+              <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
                 {pinned() ? "pinned" : "not pinned"}
               </Text>
             </Panel>
@@ -101,10 +101,10 @@ function App() {
                 gap: 4,
               }}
             >
-              <Text style={{ fontSize: 15, fontWeight: "600", color: colors.text }}>
+              <Text style={{ fontSize: 15, fontWeight: "600", color: colors.foreground }}>
                 {pinned() ? "ContextMenu · pinned" : "ContextMenu"}
               </Text>
-              <Text style={{ fontSize: 13, color: colors.muted }}>
+              <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
                 {desktop ? "Right click here" : "Hold a finger here"}
               </Text>
             </View>

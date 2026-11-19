@@ -42,7 +42,9 @@ const frame = { width: 318, height: 196 };
 
 function Caption(props: { children: string }) {
   return (
-    <Text style={{ fontSize: 12, color: colors.muted, numberOfLines: 1 }}>{props.children}</Text>
+    <Text style={{ fontSize: 12, color: colors.mutedForeground, numberOfLines: 1 }}>
+      {props.children}
+    </Text>
   );
 }
 

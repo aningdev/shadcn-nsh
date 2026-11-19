@@ -71,14 +71,14 @@ export function cardLook(): CardLook {
         gridColumnStart: 1,
         fontSize: density.body + 2,
         fontWeight: "600",
-        color: colors.text,
+        color: colors.foreground,
       };
     },
     get description(): TextStyle {
       return {
         gridColumnStart: 1,
         fontSize: density.body,
-        color: colors.muted,
+        color: colors.mutedForeground,
       };
     },
     get action(): ViewStyle {

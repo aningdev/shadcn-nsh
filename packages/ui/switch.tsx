@@ -79,7 +79,7 @@ export function switchLook(on: () => boolean, size: SwitchSize = "default"): Swi
         padding: g.inset,
         backgroundColor: t.interpolate({
           inputRange: [0, 1],
-          outputRange: [colors.track, colors.accentFill],
+          outputRange: [colors.track, colors.brandFill],
         }),
         borderWidth: g.border,
         borderColor: on() ? finish.fill.borderColor : finish.track.borderColor,

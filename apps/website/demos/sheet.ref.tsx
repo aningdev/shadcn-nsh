@@ -39,7 +39,7 @@ function App() {
 
   return (
     <DemoPage title="Sheet">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Open a side; click the backdrop or press Escape to close it"
           : "Open a side; tap the backdrop or Android's back to close it"}
@@ -50,7 +50,7 @@ function App() {
         inspector={
           <>
             <Panel title="open · side">
-              <Text style={{ fontSize: 13, color: colors.text }}>
+              <Text style={{ fontSize: 13, color: colors.foreground }}>
                 {open() ? "open" : "closed"} · {side()}
               </Text>
             </Panel>
@@ -107,14 +107,14 @@ function App() {
             }}
           />
         </If>
-        <Text style={{ fontSize: desktop ? 16 : 18, fontWeight: "600", color: colors.text }}>
+        <Text style={{ fontSize: desktop ? 16 : 18, fontWeight: "600", color: colors.foreground }}>
           Filters
         </Text>
         <Text
           style={{
             fontSize: desktop ? 13 : 15,
             lineHeight: desktop ? 19 : 21,
-            color: colors.muted,
+            color: colors.mutedForeground,
           }}
         >
           {`A panel at the ${side()} edge. `}

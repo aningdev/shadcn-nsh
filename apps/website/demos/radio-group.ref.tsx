@@ -116,7 +116,7 @@ function App() {
                 {...choiceTileLook(() => cycle() === c)}
               >
                 <RadioRing on={cycle() === c} />
-                <Text style={{ color: colors.text }}>{c}</Text>
+                <Text style={{ color: colors.foreground }}>{c}</Text>
               </Radio>
             ))}
           </View>

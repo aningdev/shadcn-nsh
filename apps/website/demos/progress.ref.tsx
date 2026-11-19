@@ -19,7 +19,7 @@ import { Switch } from "@/packages/ui/switch";
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { desktop, Log, Panel, Split } from "./stage";
 
-const TONES: Tone[] = ["neutral", "accent", "info", "warn", "danger", "up", "down"];
+const TONES: Tone[] = ["neutral", "accent", "info", "warn", "destructive", "up", "down"];
 
 function Transfer(props: {
   label: string;
@@ -55,7 +55,7 @@ function Transfer(props: {
         <Text
           style={{
             fontSize: controlSize.label,
-            color: colors.muted,
+            color: colors.mutedForeground,
             fontVariant: ["tabular-nums"],
             textAlign: "right",
           }}
@@ -96,7 +96,7 @@ function App() {
   };
   return (
     <DemoPage title="Progress">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop ? "Click Start, or Tab to it and press Space" : "Tap Start to send the photos"}
       </Text>
 
@@ -105,7 +105,9 @@ function App() {
         inspector={
           <>
             <Panel title="value · indeterminate">
-              <Text style={{ fontSize: 13, color: colors.text, fontVariant: ["tabular-nums"] }}>
+              <Text
+                style={{ fontSize: 13, color: colors.foreground, fontVariant: ["tabular-nums"] }}
+              >
                 {unknown()
                   ? "indeterminate (no value for screen readers)"
                   : `value ${sent()} of 100`}
@@ -181,7 +183,9 @@ function App() {
             const look = progressLook(72, { tone });
             return (
               <View style={plainRow({ first: i === 0 })}>
-                <Text style={{ width: 64, fontSize: controlSize.label, color: colors.muted }}>
+                <Text
+                  style={{ width: 96, fontSize: controlSize.label, color: colors.mutedForeground }}
+                >
                   {tone}
                 </Text>
                 <View style={{ flex: 1 }}>

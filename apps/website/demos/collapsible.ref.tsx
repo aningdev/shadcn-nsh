@@ -34,7 +34,7 @@ function App() {
   const log = (line: string) => events.set([line, ...events()].slice(0, 4));
   return (
     <DemoPage title="Collapsible">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Click a summary, or Tab to it and press Space"
           : "Tap a summary to show its details"}
@@ -45,10 +45,10 @@ function App() {
         inspector={
           <>
             <Panel title="open">
-              <Text style={{ fontSize: 13, color: colors.text }}>
+              <Text style={{ fontSize: 13, color: colors.foreground }}>
                 Storage {storage() ? "open" : "closed"} · Advanced {advanced() ? "open" : "closed"}
               </Text>
-              <Text style={{ fontSize: 12, color: colors.muted }}>
+              <Text style={{ fontSize: 12, color: colors.mutedForeground }}>
                 Keep originals {originals() ? "on" : "off"}: kept while collapsed
               </Text>
             </Panel>
@@ -70,13 +70,19 @@ function App() {
                       minHeight: controlSize.line,
                     }}
                   >
-                    <Text style={{ flex: 1, fontSize: controlSize.label, color: colors.muted }}>
+                    <Text
+                      style={{
+                        flex: 1,
+                        fontSize: controlSize.label,
+                        color: colors.mutedForeground,
+                      }}
+                    >
                       {name}
                     </Text>
                     <Text
                       style={{
                         fontSize: controlSize.label,
-                        color: colors.muted,
+                        color: colors.mutedForeground,
                         fontVariant: ["tabular-nums"],
                       }}
                     >

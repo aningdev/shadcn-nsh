@@ -93,7 +93,7 @@ const markRoom = menuItemSize.icon + 8;
 export const menuHighlight = (): ViewStyle => ({ backgroundColor: token("accent") });
 
 /** A row pressed (`activeStyle`): a shade deeper than the highlight. */
-const menuPressed = (): ViewStyle => ({ backgroundColor: alpha(colors.text, 0.1) });
+const menuPressed = (): ViewStyle => ({ backgroundColor: alpha(colors.foreground, 0.1) });
 
 /** Options of `menuItemLook`. */
 export interface MenuItemLookOptions {
@@ -155,7 +155,7 @@ export function menuItemLabel(o?: MenuItemTextOptions): TextStyle {
     flexGrow: 1,
     flexShrink: 0,
     fontSize: menuItemSize.font,
-    color: o?.variant === "destructive" ? colors.danger : colors.text,
+    color: o?.variant === "destructive" ? colors.destructive : colors.foreground,
   };
 }
 
@@ -163,7 +163,7 @@ export function menuItemLabel(o?: MenuItemTextOptions): TextStyle {
 export function menuItemNote(o?: MenuItemTextOptions): TextStyle {
   return {
     fontSize: menuItemSize.note,
-    color: o?.variant === "destructive" ? colors.danger : colors.faint,
+    color: o?.variant === "destructive" ? colors.destructive : colors.faint,
   };
 }
 
@@ -172,7 +172,7 @@ export function menuItemGlyph(o?: MenuItemTextOptions) {
   return {
     size: menuItemSize.icon,
     get tint() {
-      return o?.variant === "destructive" ? colors.danger : colors.muted;
+      return o?.variant === "destructive" ? colors.destructive : colors.mutedForeground;
     },
   };
 }
@@ -204,7 +204,7 @@ export function menuPopup(o?: MenuPopupOptions) {
       return menuIsPopup()
         ? { ...popupSurface(), minWidth: o?.minWidth ?? 200, ...popInStyles(o?.side).style }
         : {
-            backgroundColor: colors.surface,
+            backgroundColor: colors.card,
             borderTopLeftRadius: radius.card,
             borderTopRightRadius: radius.card,
             ...cornerCurve,
@@ -316,8 +316,8 @@ export function SubmenuBack(props: { label: string }) {
   const look = menuItemLook({ style: { gap: 6 } });
   return (
     <View activeStyle={look.activeStyle} style={look.style}>
-      <Icon icon={ChevronLeft} size={14} tint={colors.accent} />
-      <Text style={{ fontSize: menuItemSize.font, fontWeight: "600", color: colors.accent }}>
+      <Icon icon={ChevronLeft} size={14} tint={colors.brand} />
+      <Text style={{ fontSize: menuItemSize.font, fontWeight: "600", color: colors.brand }}>
         {props.label}
       </Text>
     </View>
@@ -564,7 +564,7 @@ export function MenuItem(props: MenuItemProps) {
           <MenuMark
             kind={props.role === "menuitemradio" ? "dot" : "check"}
             size={menuItemSize.icon}
-            tint={colors.accent}
+            tint={colors.brand}
           />
         ) : undefined)
       }

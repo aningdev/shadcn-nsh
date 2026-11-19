@@ -23,6 +23,27 @@
 
 ### Changed
 
+- **Breaking:** **theme accessors are named after the tokens they read (#52).** A key is the camelCase of its token, with no alias left behind. `colors.mutedFill` is gone: the `muted` surface is `token("muted")`, so old code that still reads `colors.muted` fails to type-check instead of painting the surface. `Tone` `"danger"` is `"destructive"`. **To migrate:** run `shadcn-nsh diff`, `add --overwrite` `lib/theme.ts`, then rename in the app's own code (`colors.muted` → `colors.mutedForeground` first). The reader is the `theme` item: `shadcn-nsh add theme --overwrite` replaces `lib/theme.ts` and also `theme.json` and `lib/finishes.json`, so put a recolored palette back afterwards.
+
+  | Old                      | New                             |
+  | ------------------------ | ------------------------------- |
+  | `colors.surface`         | `colors.card`                   |
+  | `colors.fieldBorder`     | `colors.input`                  |
+  | `colors.text`            | `colors.foreground`             |
+  | `colors.muted`           | `colors.mutedForeground`        |
+  | `colors.accent`          | `colors.brand`                  |
+  | `colors.accentFill`      | `colors.brandFill`              |
+  | `colors.onAccent`        | `colors.onBrand`                |
+  | `colors.light`           | `colors.primary`                |
+  | `colors.onLight`         | `colors.primaryForeground`      |
+  | `colors.sidebarSelected` | `colors.sidebarAccent`          |
+  | `colors.danger`          | `colors.destructive`            |
+  | `colors.mutedFill`       | `token("muted")`                |
+  | `tints.accent`           | `tints.brand`                   |
+  | `tints.danger`           | `tints.destructive`             |
+  | `chart.s1` … `chart.s5`  | `chart.chart1` … `chart.chart5` |
+  | `Tone` `"danger"`        | `Tone` `"destructive"`          |
+
 - **Each theme has its own docs page (#44).** `/docs/themes` keeps the overview and links to one page per palette, and each of those pages has the same sections.
 - **One radius, three tiers (#38).** A theme now states one base, `radius`: `radius-control` is
   0.8× it and `radius-card` is 1.4×, each rounded to whole points, and `check:theme` rejects a tier

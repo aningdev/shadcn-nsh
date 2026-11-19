@@ -11,14 +11,14 @@ import { Status } from "@/packages/ui/status";
 import { DemoPage } from "./kit";
 import { Chips, Log, Panel, Split, ui } from "./stage";
 
-const TONES: Tone[] = ["neutral", "accent", "info", "warn", "danger", "up", "down"];
+const TONES: Tone[] = ["neutral", "accent", "info", "warn", "destructive", "up", "down"];
 
 const SERVICES: { name: string; detail: string; label: string; tone: Tone }[] = [
   { name: "API", detail: "42 ms at the 95th percentile", label: "Online", tone: "up" },
   { name: "Database", detail: "3 connections left", label: "Busy", tone: "accent" },
   { name: "Cache", detail: "Hit rate 98%", label: "Idle", tone: "neutral" },
   { name: "Search", detail: "Reindexing 4 of 9 shards", label: "Degraded", tone: "warn" },
-  { name: "Jobs", detail: "The worker stopped at 03:12", label: "Offline", tone: "danger" },
+  { name: "Jobs", detail: "The worker stopped at 03:12", label: "Offline", tone: "destructive" },
   { name: "Webhooks", detail: "Version 2 is out", label: "Update available", tone: "info" },
   { name: "Exports", detail: "Back at 06:00", label: "Down", tone: "down" },
 ];

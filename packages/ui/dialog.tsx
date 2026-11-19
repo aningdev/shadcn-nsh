@@ -38,18 +38,22 @@ export function dialogCard(width?: number): ViewStyle {
     borderColor: colors.border,
     padding: 20,
     gap: 12,
-    ...(terminal ? {} : { backgroundColor: colors.surface, boxShadow: finish.menu.boxShadow }),
+    ...(terminal ? {} : { backgroundColor: colors.card, boxShadow: finish.menu.boxShadow }),
   };
 }
 
 /** A card dialog's title (`dialogCard`): 17 points semibold with a pointer, 20 on a touch screen. */
 export function dialogTitle(): TextStyle {
-  return { fontSize: pointer ? 17 : 20, fontWeight: "600", color: colors.text };
+  return { fontSize: pointer ? 17 : 20, fontWeight: "600", color: colors.foreground };
 }
 
 /** A card dialog's text under its title: 13 points with a pointer, 15 on a touch screen, muted. */
 export function dialogText(): TextStyle {
-  return { fontSize: pointer ? 13 : 15, lineHeight: pointer ? 19 : 21, color: colors.muted };
+  return {
+    fontSize: pointer ? 13 : 15,
+    lineHeight: pointer ? 19 : 21,
+    color: colors.mutedForeground,
+  };
 }
 // @port end
 

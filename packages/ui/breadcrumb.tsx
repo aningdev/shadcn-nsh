@@ -115,7 +115,7 @@ export function breadcrumbLook(): BreadcrumbLook {
       return {
         fontSize: labelSize,
         fontWeight: "400",
-        color: colors.text,
+        color: colors.foreground,
         numberOfLines: 1,
       };
     },
@@ -129,10 +129,10 @@ export function breadcrumbLook(): BreadcrumbLook {
       };
     },
     get separatorIcon() {
-      return { size: chevronSide, tint: colors.muted };
+      return { size: chevronSide, tint: colors.mutedForeground };
     },
     get separatorGlyph(): TextStyle {
-      return { fontSize: labelSize, color: colors.muted };
+      return { fontSize: labelSize, color: colors.mutedForeground };
     },
     get ellipsis(): ViewStyle {
       return {
@@ -144,10 +144,10 @@ export function breadcrumbLook(): BreadcrumbLook {
       };
     },
     get ellipsisIcon() {
-      return { size: ellipsisMark, tint: colors.muted };
+      return { size: ellipsisMark, tint: colors.mutedForeground };
     },
     get ellipsisGlyph(): TextStyle {
-      return { fontSize: labelSize, color: colors.muted };
+      return { fontSize: labelSize, color: colors.mutedForeground };
     },
   };
 }

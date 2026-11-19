@@ -23,7 +23,7 @@ import { colors } from "@/lib/theme";
 ```
 
 ```tsx
-<Icon icon={Plus} size={16} tint={colors.text} />
+<Icon icon={Plus} size={16} tint={colors.foreground} />
 ```
 
 Import each icon by name from `lucide`, as a front end does: the [icon list](https://lucide.dev/icons) gives the names (`ChevronDown`, `Trash`, `CircleX`). The color is one of the theme's roles, never a literal.
@@ -47,14 +47,14 @@ import { Icon } from "@/lib/icons";
 </IconButton>
 ```
 
-| Component    | Helper                                                            |
-| ------------ | ----------------------------------------------------------------- |
-| `button`     | `buttonGlyph`, `iconButtonGlyph`, `roundButtonGlyph`              |
-| `toggle`     | `toggleGlyph`                                                     |
-| `menu`       | `menuItemGlyph`                                                   |
-| `attachment` | `attachmentGlyph`                                                 |
-| `alert`      | `ALERT_ICON` (the size; the color is `colors.text` or the tone's) |
-| `empty`      | `EMPTY_ICON`                                                      |
+| Component    | Helper                                                                  |
+| ------------ | ----------------------------------------------------------------------- |
+| `button`     | `buttonGlyph`, `iconButtonGlyph`, `roundButtonGlyph`                    |
+| `toggle`     | `toggleGlyph`                                                           |
+| `menu`       | `menuItemGlyph`                                                         |
+| `attachment` | `attachmentGlyph`                                                       |
+| `alert`      | `ALERT_ICON` (the size; the color is `colors.foreground` or the tone's) |
+| `empty`      | `EMPTY_ICON`                                                            |
 
 A part that takes an icon as a prop, such as `SelectTrigger`'s `icon` or `MarkerIcon`'s, takes the lucide node itself (`icon={Calendar}`) and draws it in its own size and color.
 

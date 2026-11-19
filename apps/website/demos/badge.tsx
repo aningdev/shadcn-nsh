@@ -10,14 +10,14 @@ import { plainRow, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { Chips, Log, Panel, Segmented, Split, ui } from "./stage";
 
-const TONES: Tone[] = ["neutral", "accent", "info", "warn", "danger", "up", "down"];
+const TONES: Tone[] = ["neutral", "accent", "info", "warn", "destructive", "up", "down"];
 
 const DEPLOYS: { name: string; detail: string; label: string; tone: Tone }[] = [
   { name: "web · production", detail: "Deployed 4 minutes ago", label: "Active", tone: "up" },
   { name: "api · production", detail: "Deploys are paused", label: "Paused", tone: "neutral" },
   { name: "worker · staging", detail: "Third in the queue", label: "Queued", tone: "info" },
   { name: "cron · nightly", detail: "One run is slow", label: "Warning", tone: "warn" },
-  { name: "migrate", detail: "Stopped at step 3 of 7", label: "Failed", tone: "danger" },
+  { name: "migrate", detail: "Stopped at step 3 of 7", label: "Failed", tone: "destructive" },
 ];
 
 function App() {

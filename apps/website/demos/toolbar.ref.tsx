@@ -57,7 +57,7 @@ function App() {
 
   return (
     <DemoPage title="Toolbar">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Tab into a toolbar, then move with the arrow keys; Home and End jump to its ends"
           : "Tap the tools; a screen reader hears each bar as a toolbar"}
@@ -159,7 +159,7 @@ function App() {
               style={{
                 fontSize: 15,
                 lineHeight: 22,
-                color: colors.text,
+                color: colors.foreground,
                 fontWeight: has("bold") ? "700" : "400",
                 fontStyle: has("italic") ? "italic" : "normal",
                 textDecorationLine: has("underline") ? "underline" : "none",
@@ -168,7 +168,7 @@ function App() {
             >
               One stop of Tab per toolbar; its arrows move between the tools.
             </Text>
-            <Text style={{ fontSize: 13, color: colors.muted }}>
+            <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
               {`Tool: ${tools.find((t) => t.id === tool())!.label}`}
             </Text>
           </View>

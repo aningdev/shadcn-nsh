@@ -34,7 +34,7 @@ function App() {
   let inbox: ListRef | undefined;
   return (
     <DemoPage title="Scrollbar">
-      <Text style={{ color: colors.muted }}>
+      <Text style={{ color: colors.mutedForeground }}>
         {desktop
           ? "Scroll the list, drag the thumb or click the track"
           : "Scroll the list, or drag the thumb"}

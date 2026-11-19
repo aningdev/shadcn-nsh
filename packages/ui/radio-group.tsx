@@ -64,7 +64,7 @@ export function RadioRing(props: { on: boolean; scale?: number; disabled?: boole
           width: dot,
           height: dot,
           borderRadius: dot / 2,
-          backgroundColor: colors.onAccent,
+          backgroundColor: colors.onBrand,
           opacity: on,
           transform: [{ scale: on.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] }) }],
         }}
@@ -111,8 +111,8 @@ export function choiceTileLook(on: Live<boolean>, o?: ChoiceTileOptions): Choice
         paddingTop: 14,
         ...rounded(radius.inset),
         borderWidth: 1,
-        borderColor: on ? colors.accent : colors.border,
-        backgroundColor: on ? tints.accent : colors.raised,
+        borderColor: on ? colors.brand : colors.border,
+        backgroundColor: on ? tints.brand : colors.raised,
         boxShadow: on ? "none" : finish.raised.boxShadow,
         transitionProperty: "transform, border-color, background-color, box-shadow",
         transitionDuration: reduceMotion() ? 0 : 150,
@@ -203,7 +203,7 @@ export function Radio(props: RadioProps) {
       </If>
       {typeof props.children === "string" ? (
         // The page's ink, read here so it follows the appearance: a bare Text is nsh's black.
-        <Text style={{ color: colors.text }}>{props.children}</Text>
+        <Text style={{ color: colors.foreground }}>{props.children}</Text>
       ) : (
         props.children
       )}
