@@ -51,17 +51,26 @@ export async function fetchJson(
   onHttpError: (res: Response) => Error,
 ): Promise<unknown> {
   const cacheable = /^https?:/.test(url);
-  let res: Response;
-  let text: string;
-  try {
-    res = await fetch(url);
-    // The body too: a connection that drops after the headers is no answer either.
-    text = await res.text();
-  } catch (error) {
+  /** No answer: the copy, for a URL that has one. */
+  const unanswered = (error: unknown) => {
     if (!cacheable) throw error;
     return fromCache(url, error);
+  };
+  let res: Response;
+  try {
+    res = await fetch(url);
+  } catch (error) {
+    return unanswered(error);
   }
+  // An error status is the registry's answer, even if its body never arrives.
   if (!res.ok) throw onHttpError(res);
+  let text: string;
+  try {
+    // A connection that drops after the headers is no answer either.
+    text = await res.text();
+  } catch (error) {
+    return unanswered(error);
+  }
   const body: unknown = JSON.parse(text);
   if (cacheable) await save(url, body);
   return body;
