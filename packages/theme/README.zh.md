@@ -13,7 +13,7 @@ copy-into-app 层的品牌外观：本库所有，起点是上游 gallery UI 主
 
 ## 规范
 
-主题由三样东西组成：**token**（有名字的颜色或数，`theme.json` 写）、**finish**（组件自己画的表面 —— 底、渐变、边、影、模糊，`finishes.json` 写）、**alias**（写成另一个 token 的 token，`var(--x)`）。有哪些 token、每个 finish 画什么、谁读它，以 [`docs/specs/theme-roles.md`](../../docs/specs/theme-roles.md) 为准；`bun scripts/theme-lint.ts` 拿这两个文件对着它检查。
+主题由三样东西组成：**token**（有名字的颜色、数或字体家族，`theme.json` 写）、**finish**（组件自己画的表面 —— 底、渐变、边、影、模糊，`finishes.json` 写）、**alias**（写成另一个 token 的 token，`var(--x)`）。有哪些 token、每个 finish 画什么、谁读它，以 [`docs/specs/theme-roles.md`](../../docs/specs/theme-roles.md) 为准；`bun scripts/theme-lint.ts` 拿这两个文件对着它检查。
 
 由 [`@shadcn-nsh/ui`](../ui) 使用，并以 registry 的 `theme` 项（应用的**构建时主题**）与 `theme-<name>` 项（其它主题）分发。改完后：`bun scripts/theme/to-oklch.ts`（把这两个文件的颜色写成规范形式），再 `bun run registry:build` 并提交 `public/r`。
 
@@ -22,6 +22,10 @@ copy-into-app 层的品牌外观：本库所有，起点是上游 gallery UI 主
 `themes/shadcn/{theme,finishes}.json` 是生成物 —— `bun scripts/theme/generate-shadcn.ts` —— 取自 shadcn 自己的 `oklch()` 调色板；`themes/solid-glass/` 同样是生成物 —— `bun scripts/theme/generate-solid-glass.ts`，取自 deeplethe/solid-glass 的样式表（[`NOTICE`](../../NOTICE)）—— 都不手改；旁边的 `index.ts` 是手写的一次性声明，给这套主题一个名字。`themes/default/` 是例外：它的两个 JSON 是上面那两个文件的副本（逐字节相同，`scripts/theme/themes.test.ts` 会查），因为构建时主题本身也能当"多装的一套"，而 registry 条目分发的是文件，不是本包里的一个路径。默认的两个文件由 `bun scripts/theme/to-oklch.ts` 同样转换与规范化：它们都是幂等的，文件的颜色形式就是它自己的形式。
 
 数值按固定精度写（L、C 五位小数，H 三位，alpha 三位），这是换算无损的原因：每个 sRGB 颜色都能落回自己的 8-bit 通道，所以主题改存 `oklch()` 不动一个像素。
+
+## 覆盖
+
+应用经 `nsh.json` 的 `"theme"` 定外观 —— 就是上面这些 token，用在哪读到哪，所以 `setTheme` 与应用带着的每一套主题都落在同一处 —— 而不是 `"tailwind"`：后者在构建时只决定应用自己的 class 字符串，那里写了同名颜色就会盖过同名的 token 类，且不随主题变。字体也是 token（`font-sans`、`font-mono`），它写的家族随应用分发，不随本包。见[从 nsh.json 覆盖](https://shadcn-nsh.aning.dev/docs/theme#override-from-nshjson)与[字体](https://shadcn-nsh.aning.dev/docs/theme#fonts)。
 
 ## 一套以上主题
 

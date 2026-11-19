@@ -395,6 +395,9 @@ function themeLevel(): Record<string, string> {
     radius: "14px",
     "radius-card": "20px",
     "radius-control": "11px",
+    // The monospaced family: NSH's generic `monospace`, the system's own — neither theme ships a
+    // font face. A theme that names one states its family here (the app imports the file).
+    "font-mono": "monospace",
     // The main action is the ink's solid pane; `on-brand` is what reads on it.
     "brand-fill": "var(--primary)",
     "on-brand": "var(--primary-foreground)",

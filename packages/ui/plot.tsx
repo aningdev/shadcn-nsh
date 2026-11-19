@@ -104,7 +104,7 @@ export const plotWash = (color: string, top = 0.18): ViewStyle => ({
  * tabular and faint, so the marks lead. */
 export const plotAxisText = (): TextStyle => ({
   fontSize: 10.5,
-  fontFamily: mono,
+  fontFamily: mono(),
   color: colors.faint,
   fontVariant: ["tabular-nums"],
 });
@@ -122,7 +122,7 @@ export const plotTooltip = (): ViewStyle => ({
 /** A tooltip's title over its values: a small, monospaced, muted label. */
 export const plotTooltipTitle = (): TextStyle => ({
   fontSize: 10,
-  fontFamily: mono,
+  fontFamily: mono(),
   letterSpacing: 0.8,
   color: colors.mutedForeground,
 });

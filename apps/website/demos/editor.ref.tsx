@@ -91,7 +91,7 @@ function App() {
         inspector={
           <>
             <Panel title="markdown">
-              <Text style={{ fontSize: 12, fontFamily: mono, color: colors.foreground }}>
+              <Text style={{ fontSize: 12, fontFamily: mono(), color: colors.foreground }}>
                 {markdown()}
               </Text>
             </Panel>

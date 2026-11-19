@@ -65,22 +65,25 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 ### C 层：两种外观一样的值
 
-`cssVars.theme` 里的键在 light 和 dark 下不各写一份——写两份就是两份要同步的答案。圆角是数，颜色是值：
+`cssVars.theme` 里的键在 light 和 dark 下不各写一份——写两份就是两份要同步的答案。圆角是数，字体是一个家族名，颜色是值：
 
 <!-- theme-lint: tokens-c -->
 
-| 键                                                 | 值                      | 用途                      |
-| -------------------------------------------------- | ----------------------- | ------------------------- |
-| `radius` / `radius-card` / `radius-control`        | `10px` / `14px` / `8px` | 基础圆角与由它推导的两档  |
-| `brand-fill`                                       | 强调色的填充            | `calendar` 的选中日       |
-| `on-brand`                                         | `brand-fill` 上的字     | 同上                      |
-| `scrim`                                            | 遮罩                    | `lib/popup`、`dock-area`  |
-| `window-close` / `window-minimize` / `window-zoom` | 三颗窗口按钮各自的色    | `theme.ts` 的窗口按钮映射 |
-| `window-control-ink` / `window-control-edge`       | 窗口按钮的字与边        | 同上                      |
+| 键                                                 | 值                      | 用途                                                            |
+| -------------------------------------------------- | ----------------------- | --------------------------------------------------------------- |
+| `radius` / `radius-card` / `radius-control`        | `10px` / `14px` / `8px` | 基础圆角与由它推导的两档                                        |
+| `font-mono`                                        | `monospace`             | 等宽字：`font-mono` 类、`Text` 里的代码、`theme.ts` 的 `mono()` |
+| `brand-fill`                                       | 强调色的填充            | `calendar` 的选中日                                             |
+| `on-brand`                                         | `brand-fill` 上的字     | 同上                                                            |
+| `scrim`                                            | 遮罩                    | `lib/popup`、`dock-area`                                        |
+| `window-close` / `window-minimize` / `window-zoom` | 三颗窗口按钮各自的色    | `theme.ts` 的窗口按钮映射                                       |
+| `window-control-ink` / `window-control-edge`       | 窗口按钮的字与边        | 同上                                                            |
 
 <!-- /theme-lint: tokens-c -->
 
 `radius` 是唯一的基础值：`radius-control` = round(0.8 × `radius`)，`radius-card` = round(1.4 × `radius`)，`check:theme` 拒绝不合的档位；对话框用 `radius-card`。读主题圆角的角一律用 `rounded()`，continuous 曲线只在 `packages/theme/theme.ts` 给。
+
+`font-mono` 是字体不是颜色：NSH 取列表里第一个不是通用名的家族（`theme.rs` 的 `font_family`），写 `monospace` 就是系统的等宽字，不是一套叫这个名字的字体——本库三套主题都写它，所以这份 token 不动一个像素；应用在自己的主题里写 `"JetBrains Mono, monospace"` 并引入字体文件，见[字体](https://shadcn-nsh.aning.dev/docs/theme#fonts)。`font-sans` 故意不写：不写就是系统字，写了就要求应用自带那个家族。
 
 ## 2 finishes.json 的两条线
 

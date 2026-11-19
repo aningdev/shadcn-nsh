@@ -7,11 +7,11 @@ The theme is the upstream gallery's: a graphite page (paper in light appearance)
 
 ## Files
 
-| File            | What it holds                                                               |
-| --------------- | --------------------------------------------------------------------------- |
-| `theme.json`    | Colors and radii in shadcn's `cssVars` shape, for light and dark            |
-| `finishes.json` | Gradients, shadows and edges by role, for light and dark                    |
-| `lib/theme.ts`  | `colors`, `finish`, `radius`, `focusRing` and `alpha`, read from both files |
+| File            | What it holds                                                                           |
+| --------------- | --------------------------------------------------------------------------------------- |
+| `theme.json`    | Colors, radii and the monospaced family in shadcn's `cssVars` shape, for light and dark |
+| `finishes.json` | Gradients, shadows and edges by role, for light and dark                                |
+| `lib/theme.ts`  | `colors`, `finish`, `radius`, `mono`, `focusRing` and `alpha`, read from both files     |
 
 ## Installation
 
@@ -123,6 +123,59 @@ const dim = alpha(colors.foreground, 0.4); // a color at 40%
 ```
 
 `focusRing(offset)` is the shared keyboard outline: the muted `ring` edge and a 3-point halo of `ring-halo`. `hovered()` is the pointer's fill, the `hover` token. `alpha(color, a)` is a `color-mix` of that color with transparency. `colors`, `finish` and `radius` are getters, not snapshots: read them where they are used.
+
+## Override from nsh.json
+
+An app's `nsh.json` sets the look in two places, and the two do not merge:
+
+| Key in `nsh.json` | What it sets                                                                                      | When it is read                                                                  |
+| ----------------- | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
+| `"theme"`         | the path to `theme.json`: every token this library reads — colours, `radius` and its tiers, fonts | on each read, at runtime — so `setTheme` and every theme an app carries reach it |
+| `"tailwind"`      | the app's own class strings: `colors`, `fontFamily`, `spacing`, `radius`, …                       | when the app is built, into the class strings — no component here reads it       |
+
+Components take their look from `"theme"`: `colors`, `finish` and `radius` read the tokens where they are used. `"tailwind"` shapes class names — which this library writes too (`bg-muted`, `text-sm`, `h-8`) — but it is fixed at build time, so nothing in it can follow `setTheme`. NSH's [theme tokens](https://nsh.dev/docs/tailwind#theme-tokens) has the rule in full.
+
+**A colour named in `"tailwind"` wins over the token of the same name.** With `"colors": { "primary": "#3366ff" }`, every `bg-primary` in the app draws blue — pagination's selected page, a data table's move indicator — while `colors.primary` in JSX stays the theme's citrus. One name, two colours, and the panels drawn by class are the ones that differ. Set the role in `"theme"` instead.
+
+The theme file stays complete: copy it, then edit. A shadcn slot it leaves out falls back to shadcn's neutral (see [Colors](#colors)), and `finishes.json` names tokens by key, so both appearances need the same set.
+
+Add a colour the app's own classes use (both appearances — a token in one alone is not a token):
+
+```json
+{
+  "cssVars": {
+    "light": { "brand-alt": "oklch(0.65 0.14 300)" },
+    "dark": { "brand-alt": "oklch(0.72 0.12 300)" }
+  }
+}
+```
+
+Change a role: `primary` in `cssVars.light` and `cssVars.dark`. Change the radius: `radius` in `cssVars.theme`, and with it `radius-control` (0.8× it, rounded) and `radius-card` (1.4×) — the three are one scale, and the class radii an app writes follow the tokens. Set the fonts in the same block: see [Fonts](#fonts).
+
+## Fonts
+
+Two tokens are fonts. `font-sans` is the app's font — every text that names no family of its own — and `font-mono` is the monospaced family: the `font-mono` class, code in a `Text`, and this library's `mono()`. Both live in `cssVars.theme`. This library sets `font-mono` and leaves `font-sans` out, so both are the system's:
+
+```json
+{
+  "cssVars": {
+    "theme": { "font-sans": "Inter, sans-serif", "font-mono": "JetBrains Mono, monospace" }
+  }
+}
+```
+
+NSH takes the first family of the list that is not a generic one (`system-ui`, `sans-serif`, `monospace` …), and a list of generics alone is the system's own font. That is why this library states `"font-mono": "monospace"`: the system's monospaced font, not a font called "monospace".
+
+A font file is the app's. Import it in TSX — the import registers it before the first frame, and its value is the family name the file declares, not the file name — and name that family in the theme:
+
+```tsx
+// app.tsx: the import bundles and registers the family; `theme.json` names it.
+import "./fonts/JetBrainsMono-Regular.ttf";
+```
+
+The side-effect import is deliberate: TypeScript drops an import whose value is unused, and the font with it, when the theme names the family as a string. A weight or an italic is a file of its own, `registerFont(bytes)` reads one the app did not ship, and the fallback after the app's family is what NSH draws for a family it cannot find — see NSH's [fonts](https://nsh.dev/docs/fonts#shipping-a-font).
+
+This library distributes no font files: `add theme` writes JSON and TypeScript, and the families it names are the ones every platform has.
 
 ## Restyling
 

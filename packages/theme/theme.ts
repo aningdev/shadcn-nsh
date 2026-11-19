@@ -414,9 +414,12 @@ export const toneColor = (tone: Tone) =>
 export const toneTint = (tone: Tone) =>
   tone === "neutral" ? colors.raised : tone === "accent" ? tints.brand : tints[tone];
 
-/** The monospaced family, for code (API names, identifiers). Figures use
- * the system font with tabular numbers instead. */
-export const mono = "monospace";
+/** The monospaced family, for code (API names, identifiers): the theme's
+ * `font-mono`, which is also what the `font-mono` class and code in a `TextView`
+ * draw in. Called where the style is built, so it follows `selectTheme`; a
+ * theme that names no family gets NSH's `monospace`, the system's own. Figures
+ * use the system font with tabular numbers instead. */
+export const mono = () => token("font-mono");
 
 /** Corner radii (`theme.json`'s `radius`, `radius-card`, `radius-control`):
  * a base and the two tiers derived from it. */

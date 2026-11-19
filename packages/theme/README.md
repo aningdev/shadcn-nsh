@@ -8,12 +8,12 @@ Brand look for the copy-into-app layer: this library's own, started from the ups
 | ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `theme.json`     | Colors, radii, cssVars                                                                                                                           |
 | `finishes.json`  | Surface finishes: gradients, shadows, and how far a press sinks                                                                                  |
-| `theme.ts`       | Readers: `colors`, `finish`, `focusRing`, `selectTheme`, `fillStyle`, …                                                                          |
+| `theme.ts`       | Readers: `colors`, `finish`, `mono`, `focusRing`, `selectTheme`, `fillStyle`, …                                                                  |
 | `themes/<name>/` | Other themes, one `AppTheme` each: `shadcn/` (shadcn's `neutral`), `solid-glass/` (Solid Glass), and `default/` (this one, to install beside it) |
 
 ## Spec
 
-A theme is three things: a **token** (a colour or a number under a name, as `theme.json` states it), a **finish** (a surface a component draws itself in — background, gradient, edge, shadow, blur — as `finishes.json` states it), and an **alias** (a token written as another, `var(--x)`). Which tokens there are, what each finish draws and who reads it, is [`docs/specs/theme-roles.md`](../../docs/specs/theme-roles.md); `bun scripts/theme-lint.ts` holds these two files to it.
+A theme is three things: a **token** (a colour, a number or a font family under a name, as `theme.json` states it), a **finish** (a surface a component draws itself in — background, gradient, edge, shadow, blur — as `finishes.json` states it), and an **alias** (a token written as another, `var(--x)`). Which tokens there are, what each finish draws and who reads it, is [`docs/specs/theme-roles.md`](../../docs/specs/theme-roles.md); `bun scripts/theme-lint.ts` holds these two files to it.
 
 Consumed by [`@shadcn-nsh/ui`](../ui) and shipped as registry item `theme` (the app's build-time theme), and as `theme-<name>` for the others. After edits: `bun scripts/theme/to-oklch.ts` (keeps every color of the two files canonical), then `bun run registry:build` and commit `public/r`.
 
@@ -22,6 +22,10 @@ The two files are this library's own (`"owned"` in [`port-map.json`](../../port-
 `themes/shadcn/{theme,finishes}.json` are generated — `bun scripts/theme/generate-shadcn.ts` — from shadcn's own `oklch()` palette, and `themes/solid-glass/`'s likewise — `bun scripts/theme/generate-solid-glass.ts`, from deeplethe/solid-glass's stylesheet ([`NOTICE`](../../NOTICE)) — never edited by hand; the `index.ts` beside them is written once, by hand, and names the theme. `themes/default/` is the exception: its two JSON files are copies of the two at the top (byte for byte, held by `scripts/theme/themes.test.ts`), because the build-time theme is installable as one more theme and a registry item ships files, not a path into this package. `bun scripts/theme/to-oklch.ts` converts and normalizes the default files the same way, and all of them are idempotent: the form is the file's own.
 
 Values are written at a fixed precision (L and C five decimals, H three, alpha three), which is what makes the conversion lossless: every sRGB color lands back on its own 8-bit channels, so storing the theme as `oklch()` moves no pixel.
+
+## Overriding
+
+An app sets the look through `nsh.json`'s `"theme"` — the tokens above, read where they are used, so `setTheme` and every theme an app carries land in one place — and not through `"tailwind"`, which shapes the app's own class strings when it is built: a colour named there wins over the token class of the same name, and nothing in it follows a theme. Fonts are tokens too (`font-sans`, `font-mono`), and the family they name ships with the app, never with this package. [Override from nsh.json](https://shadcn-nsh.aning.dev/docs/theme#override-from-nshjson) and [Fonts](https://shadcn-nsh.aning.dev/docs/theme#fonts) are the docs.
 
 ## More than one theme
 

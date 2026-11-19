@@ -91,7 +91,9 @@ function App() {
         inspector={
           <>
             <Panel title="markdown">
-              <Text style={{ fontSize: 12, fontFamily: mono, color: ui().text }}>{markdown()}</Text>
+              <Text style={{ fontSize: 12, fontFamily: mono(), color: ui().text }}>
+                {markdown()}
+              </Text>
             </Panel>
             <Log title="events" lines={richEvents()} minHeight={72} />
           </>

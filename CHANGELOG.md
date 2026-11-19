@@ -44,6 +44,15 @@
   | `chart.s1` … `chart.s5`  | `chart.chart1` … `chart.chart5` |
   | `Tone` `"danger"`        | `Tone` `"destructive"`          |
 
+- **Breaking:** **`mono` is a function that follows the theme's `font-mono` (#53).** Write
+  `fontFamily: mono()` where you wrote `fontFamily: mono`. The monospaced family was the literal
+  `"monospace"`, beside a `font-mono` token no theme set, so code drawn through `mono` could not
+  follow a theme while the `font-mono` class and code in a `Text` could. Every theme now states
+  `cssVars.theme.font-mono` as `monospace` — NSH's generic family, the system's own, so no pixel
+  moves — and `mono()` reads it: a theme, or an app, that names `font-mono` moves the class, code
+  in a `Text` and `mono()` together. The theme docs gained
+  [Override from nsh.json](https://shadcn-nsh.aning.dev/docs/theme#override-from-nshjson) and
+  [Fonts](https://shadcn-nsh.aning.dev/docs/theme#fonts).
 - **Each theme has its own docs page (#44).** `/docs/themes` keeps the overview and links to one page per palette, and each of those pages has the same sections.
 - **One radius, three tiers (#38).** A theme now states one base, `radius`: `radius-control` is
   0.8× it and `radius-card` is 1.4×, each rounded to whole points, and `check:theme` rejects a tier

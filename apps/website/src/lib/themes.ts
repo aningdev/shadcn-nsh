@@ -218,7 +218,7 @@ export function themePages(): ThemePage[] {
         {
           id: "shared",
           title: "The shared values",
-          note: "The same in both appearances: a number, or a colour that does not turn.",
+          note: "The same in both appearances: a number, a font family, or a colour that does not turn.",
           rows: tokenRows(file, Object.keys(file.cssVars.theme), true),
         },
       ],

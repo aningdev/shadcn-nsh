@@ -332,16 +332,25 @@ for (const role of defaultRoles)
       `packages/theme/finishes.json: finish \`${role}\` is read nowhere and not left to the app`,
     );
 
-// The colours both appearances share are tokens too, read the same way.
+// The values both appearances share are tokens too, read the same way: a radius through `radius`, a
+// font family through `mono()`. A `font-` token is a family, not a colour — NSH reads the first
+// family of the list (`theme.rs`'s `font_family`), so `monospace` alone is its generic one.
 const themeBlock = tokensOf.get(first)?.cssVars.theme ?? {};
-for (const [name, value] of Object.entries(themeBlock)) {
+const isColour = (value: string) => {
   try {
     parseColor(value);
+    return true;
   } catch {
-    continue;
+    return false;
   }
+};
+for (const [name, value] of Object.entries(themeBlock)) {
   if (!readsToken(name) && !unread.has(name))
     fail(`packages/theme/theme.json: token \`${name}\` is read nowhere and not left to the app`);
+  if (name.startsWith("font-") && isColour(value))
+    fail(
+      `packages/theme/theme.json: \`${name}\` is ${value}, a colour; a font token names a family`,
+    );
 }
 
 // 6. The spec's pending table holds only colours its themes still write: a row left behind would be

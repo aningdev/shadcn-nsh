@@ -5,6 +5,7 @@
       "radius": "10px",
       "radius-card": "14px",
       "radius-control": "8px",
+      "font-mono": "monospace",
       "brand-fill": "var(--primary)",
       "on-brand": "var(--primary-foreground)",
       "scrim": "oklch(0 0 0 / 0.5)",
