@@ -5,6 +5,7 @@ import { colors, radius, rounded, TERMINAL_COLUMN, terminal } from "@shadcn-nsh/
 import type { TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, split, Text, token, View } from "nsh";
 
+import { childrenOf } from "./lib/children";
 import { density } from "./lib/surface";
 import { Separator } from "./separator";
 
@@ -130,13 +131,10 @@ export function ButtonGroup(props: ButtonGroupProps) {
  */
 export function ButtonGroupText(props: ButtonGroupTextProps) {
   const [, rest] = split(props, ["style", "children"]);
+  const { text, content } = childrenOf(props);
   return (
     <View {...rest} style={[buttonGroupLook().textFrame(), props.style ?? null]}>
-      {typeof props.children === "string" ? (
-        <Text style={buttonGroupLook().text()}>{props.children}</Text>
-      ) : (
-        props.children
-      )}
+      {text !== undefined ? <Text style={buttonGroupLook().text()}>{text}</Text> : content}
     </View>
   );
 }

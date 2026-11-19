@@ -27,6 +27,7 @@ const fixture = (): Fixture =>
       "switch-geometry",
       "press",
       "spinner",
+      "children",
       "button",
       "utils",
     ],

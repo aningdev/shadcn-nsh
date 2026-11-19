@@ -6,8 +6,9 @@ import type { JSX, ViewStyle } from "nsh";
 import { split, Text } from "nsh";
 import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/base";
 
+import { childrenOf } from "./lib/children";
 import { pressSink, pressTransition } from "./lib/press";
-import { labelOf, type Live, read } from "./lib/utils";
+import { type Live, read } from "./lib/utils";
 
 /** Options of `pressableLook`. */
 export interface PressableLookOptions {
@@ -71,20 +72,17 @@ export function Pressable(props: PressableProps) {
     "focusVisibleStyle",
   ]);
   const look = pressableLook({ disabled: () => props.disabled });
+  const { text, content, label } = childrenOf(props);
   return (
     <BaseButton
       {...rest}
-      accessibilityLabel={labelOf(props.accessibilityLabel, props.children)}
+      accessibilityLabel={label}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}
       focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
     >
-      {typeof props.children === "string" ? (
-        <Text style={{ color: colors.foreground }}>{props.children}</Text>
-      ) : (
-        props.children
-      )}
+      {text !== undefined ? <Text style={{ color: colors.foreground }}>{text}</Text> : content}
     </BaseButton>
   );
 }

@@ -6,6 +6,7 @@ import type { IconNode } from "lucide";
 import type { JSX, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, platform, split, Text, View } from "nsh";
 
+import { childrenOf } from "./lib/children";
 import { Icon } from "./lib/icons";
 import { density } from "./lib/surface";
 
@@ -155,11 +156,16 @@ export function Marker(props: MarkerProps) {
         <If when={variant() === "separator"}>
           <View style={markerLook().rule} />
         </If>
-        {typeof props.children === "string" ? (
-          <Text style={markerLook().content(variant())}>{props.children}</Text>
-        ) : (
-          props.children
-        )}
+        {(() => {
+          // Read where the children go: each read builds them again, and what they build sees the
+          // marker's variant only inside its provider.
+          const { text, content } = childrenOf(props);
+          return text !== undefined ? (
+            <Text style={markerLook().content(variant())}>{text}</Text>
+          ) : (
+            content
+          );
+        })()}
         <If when={variant() === "separator"}>
           <View style={markerLook().rule} />
         </If>

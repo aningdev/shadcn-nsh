@@ -5,6 +5,7 @@ import { colors } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { split, Text, View } from "nsh";
 
+import { childrenOf } from "./lib/children";
 import { controlSize } from "./lib/surface";
 
 /** A label's look: the row it is (a control can sit before its text) and the type of its text. */
@@ -71,13 +72,10 @@ export type LabelProps = Omit<ViewProps, "children"> & {
 export function Label(props: LabelProps) {
   const [, rest] = split(props, ["children", "disabled", "style"]);
   const look = labelLook({ disabled: props.disabled });
+  const { text, content } = childrenOf(props);
   return (
     <View {...rest} style={[look.root, props.style ?? null]}>
-      {typeof props.children === "string" ? (
-        <Text style={look.text}>{props.children}</Text>
-      ) : (
-        props.children
-      )}
+      {text !== undefined ? <Text style={look.text}>{text}</Text> : content}
     </View>
   );
 }

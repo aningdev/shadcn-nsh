@@ -5,6 +5,7 @@ import { colors, TERMINAL_ROW, terminal } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, TextProps, ViewProps, ViewStyle } from "nsh";
 import { context, split, Text, View } from "nsh";
 
+import { childrenOf } from "./lib/children";
 import { controlSize, density, narrowWindow } from "./lib/surface";
 
 /**
@@ -311,11 +312,12 @@ export function FieldDescription(props: FieldDescriptionProps) {
 /** A hairline between fields; with children, a hairline broken by its word. */
 export function FieldSeparator(props: FieldSeparatorProps) {
   const [, rest] = split(props, ["style", "children"]);
+  const { content } = childrenOf(props);
   return (
     <View {...rest} style={[fieldFamilyLook().separator, props.style ?? null]}>
-      <If when={props.children != null} else={<View style={fieldFamilyLook().separatorLine} />}>
+      <If when={content != null} else={<View style={fieldFamilyLook().separatorLine} />}>
         <View style={fieldFamilyLook().separatorLine} />
-        <Text style={fieldFamilyLook().separatorText}>{props.children}</Text>
+        <Text style={fieldFamilyLook().separatorText}>{content}</Text>
         <View style={fieldFamilyLook().separatorLine} />
       </If>
     </View>
@@ -331,8 +333,9 @@ export function FieldError(props: FieldErrorProps) {
     for (const error of props.errors ?? []) if (error?.message) seen.add(error.message);
     return [...seen];
   };
+  const { content: given } = childrenOf(props);
   const content = (): JSX.Element => {
-    if (props.children != null) return props.children;
+    if (given != null) return given;
     const list = messages();
     if (list.length === 1) return <Text style={fieldFamilyLook().errorText}>{list[0]}</Text>;
     return (
@@ -346,7 +349,7 @@ export function FieldError(props: FieldErrorProps) {
       </Each>
     );
   };
-  if (props.children == null && messages().length === 0) return null;
+  if (given == null && messages().length === 0) return null;
   return (
     <View
       {...rest}

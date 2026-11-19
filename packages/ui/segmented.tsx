@@ -10,7 +10,8 @@ import {
   type TabsProps as BaseTabsProps,
 } from "nsh/base";
 
-import { labelOf, type Live, read } from "./lib/utils";
+import { childrenOf } from "./lib/children";
+import { type Live, read } from "./lib/utils";
 import type { TabLook, TabState } from "./tabs";
 
 /**
@@ -243,12 +244,13 @@ export function SegmentedItem(props: SegmentedItemProps) {
       disabled: () => !!props.disabled,
     }),
   );
+  const { text, content, label } = childrenOf(props);
 
   return (
     <BaseTab
       {...rest}
       selected={selected()}
-      accessibilityLabel={labelOf(props.accessibilityLabel, props.children)}
+      accessibilityLabel={label}
       onPress={() => {
         ctx.onValueChange(props.value);
         props.onPress?.();
@@ -259,15 +261,15 @@ export function SegmentedItem(props: SegmentedItemProps) {
       focusVisibleStyle={[segment().focusVisibleStyle, props.focusVisibleStyle ?? null]}
       disabledStyle={[segment().disabledStyle, props.disabledStyle ?? null]}
     >
-      {typeof props.children === "string" ? (
+      {text !== undefined ? (
         <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-          <Text style={look().label(selected())}>{props.children}</Text>
+          <Text style={look().label(selected())}>{text}</Text>
           <If when={props.count !== undefined}>
             <Text style={look().count}>{props.count}</Text>
           </If>
         </View>
       ) : (
-        props.children
+        content
       )}
     </BaseTab>
   );

@@ -5,6 +5,7 @@ import { colors, mono, TERMINAL_ROW, terminal } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { split, Text, token, View } from "nsh";
 
+import { childrenOf } from "./lib/children";
 import { controlSize } from "./lib/surface";
 
 /** A key's look: the cap itself, the type on it, and a row of them. Spread each one. */
@@ -80,13 +81,10 @@ export type KbdGroupProps = ViewProps;
  */
 export function Kbd(props: KbdProps) {
   const [, rest] = split(props, ["children", "style"]);
+  const { text, content } = childrenOf(props);
   return (
     <View {...rest} style={[kbdLook().kbd, props.style ?? null]}>
-      {typeof props.children === "string" ? (
-        <Text style={kbdLook().text}>{props.children}</Text>
-      ) : (
-        props.children
-      )}
+      {text !== undefined ? <Text style={kbdLook().text}>{text}</Text> : content}
     </View>
   );
 }

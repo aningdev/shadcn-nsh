@@ -21,9 +21,10 @@ import {
   type TabsProps as BaseTabsProps,
 } from "nsh/base";
 
+import { childrenOf } from "./lib/children";
 import { Icon } from "./lib/icons";
 import { controlSize } from "./lib/surface";
-import { labelOf, type Live, read } from "./lib/utils";
+import { type Live, read } from "./lib/utils";
 
 // @port look/tabs.tsx
 
@@ -402,12 +403,13 @@ export function TabsTrigger(props: TabsTriggerProps) {
       disabled: () => !!props.disabled,
     }),
   );
+  const { text, content, label } = childrenOf(props);
 
   return (
     <BaseTab
       {...rest}
       selected={selected()}
-      accessibilityLabel={labelOf(props.accessibilityLabel, props.children)}
+      accessibilityLabel={label}
       onPress={() => {
         ctx?.onValueChange(props.value);
         props.onPress?.();
@@ -419,11 +421,7 @@ export function TabsTrigger(props: TabsTriggerProps) {
       disabledStyle={[tab().disabledStyle, props.disabledStyle ?? null]}
       selectedStyle={props.selectedStyle}
     >
-      {typeof props.children === "string" ? (
-        <TabTitle name={props.children} selected={selected()} />
-      ) : (
-        props.children
-      )}
+      {text !== undefined ? <TabTitle name={text} selected={selected()} /> : content}
     </BaseTab>
   );
 }
@@ -449,12 +447,13 @@ export function Tab(props: TabProps) {
       disabled: () => !!props.disabled,
     }),
   );
+  const { text, content, label } = childrenOf(props);
 
   return (
     <BaseTab
       {...rest}
       selected={props.selected}
-      accessibilityLabel={labelOf(props.accessibilityLabel, props.children)}
+      accessibilityLabel={label}
       style={[tab().style, props.style ?? null]}
       hoverStyle={[tab().hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[tab().activeStyle ?? null, props.activeStyle ?? null]}
@@ -462,11 +461,7 @@ export function Tab(props: TabProps) {
       disabledStyle={[tab().disabledStyle, props.disabledStyle ?? null]}
       selectedStyle={props.selectedStyle}
     >
-      {typeof props.children === "string" ? (
-        <TabTitle name={props.children} selected={!!props.selected} />
-      ) : (
-        props.children
-      )}
+      {text !== undefined ? <TabTitle name={text} selected={!!props.selected} /> : content}
     </BaseTab>
   );
 }

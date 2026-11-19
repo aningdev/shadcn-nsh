@@ -121,6 +121,19 @@
       ]
     },
     {
+      "name": "children",
+      "type": "registry:lib",
+      "title": "Children",
+      "description": "One read of a control's children, shared by everything that draws them: the string that is also its name for screen readers, and the content a shell draws.",
+      "files": [
+        {
+          "path": "packages/ui/lib/children.ts",
+          "type": "registry:lib",
+          "target": "lib/children.ts"
+        }
+      ]
+    },
+    {
       "name": "switch-geometry",
       "type": "registry:lib",
       "title": "Switch geometry",

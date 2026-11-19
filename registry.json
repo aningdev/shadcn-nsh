@@ -127,6 +127,20 @@
       ]
     },
     {
+      "name": "children",
+      "type": "registry:lib",
+      "title": "Children",
+      "description": "One read of a control's children, shared by everything that draws them: the string that is also its name for screen readers, and the content a shell draws.",
+      "registryDependencies": ["utils"],
+      "files": [
+        {
+          "path": "packages/ui/lib/children.ts",
+          "type": "registry:lib",
+          "target": "lib/children.ts"
+        }
+      ]
+    },
+    {
       "name": "switch-geometry",
       "type": "registry:lib",
       "title": "Switch geometry",
@@ -249,7 +263,7 @@
       "type": "registry:ui",
       "title": "Button",
       "description": "A button, an icon button, a round button, and a split button.",
-      "registryDependencies": ["press", "spinner", "theme", "utils"],
+      "registryDependencies": ["children", "press", "spinner", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/button.tsx",
@@ -291,7 +305,7 @@
       "type": "registry:ui",
       "title": "Toggle",
       "description": "A two-state button, bare or outlined, with a label or an icon.",
-      "registryDependencies": ["press", "theme", "utils"],
+      "registryDependencies": ["children", "press", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/toggle.tsx",
@@ -305,7 +319,7 @@
       "type": "registry:ui",
       "title": "Checkbox",
       "description": "A sunk box that fills in citrus, with a check or a dash springing in.",
-      "registryDependencies": ["icons", "surface", "theme", "utils"],
+      "registryDependencies": ["children", "icons", "surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/checkbox.tsx",
@@ -320,7 +334,7 @@
       "type": "registry:ui",
       "title": "Radio Group",
       "description": "A sunk ring that fills in citrus, with a dot growing in — alone or as a choice tile.",
-      "registryDependencies": ["checkbox", "press", "surface", "theme", "utils"],
+      "registryDependencies": ["checkbox", "children", "press", "surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/radio-group.tsx",
@@ -633,7 +647,7 @@
       "type": "registry:ui",
       "title": "Tabs",
       "description": "A pill track or underlined row with a traveling indicator.",
-      "registryDependencies": ["icons", "surface", "theme", "utils"],
+      "registryDependencies": ["children", "icons", "surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/tabs.tsx",
@@ -648,7 +662,7 @@
       "type": "registry:ui",
       "title": "Segmented",
       "description": "A sunk track whose raised thumb springs to the selected segment.",
-      "registryDependencies": ["tabs", "theme", "utils"],
+      "registryDependencies": ["children", "tabs", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/segmented.tsx",
@@ -706,7 +720,7 @@
       "type": "registry:ui",
       "title": "Link",
       "description": "A text link with underline motion, on the shared nav look.",
-      "registryDependencies": ["icons", "theme", "utils"],
+      "registryDependencies": ["children", "icons", "theme"],
       "files": [
         {
           "path": "packages/ui/link.tsx",
@@ -1045,7 +1059,7 @@
       "type": "registry:ui",
       "title": "Field",
       "description": "A set of fields under a legend: labels, descriptions, separators, and errors read out.",
-      "registryDependencies": ["surface", "theme"],
+      "registryDependencies": ["children", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/field.tsx",
@@ -1073,7 +1087,7 @@
       "type": "registry:ui",
       "title": "Pressable",
       "description": "A region that takes presses and adds only the feedback: hover, the press's sink, the focus ring.",
-      "registryDependencies": ["press", "theme", "utils"],
+      "registryDependencies": ["children", "press", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/pressable.tsx",
@@ -1115,7 +1129,7 @@
       "type": "registry:ui",
       "title": "Kbd",
       "description": "A key of a shortcut: a small cap in the muted fill, alone or in a group.",
-      "registryDependencies": ["surface", "theme"],
+      "registryDependencies": ["children", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/kbd.tsx",
@@ -1129,7 +1143,7 @@
       "type": "registry:ui",
       "title": "Label",
       "description": "The visible name of a control: a row whose text is the control labels’ own type.",
-      "registryDependencies": ["surface", "theme"],
+      "registryDependencies": ["children", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/label.tsx",
@@ -1143,7 +1157,7 @@
       "type": "registry:ui",
       "title": "Alert",
       "description": "A notice of the whole page or form, read out when it appears.",
-      "registryDependencies": ["surface", "theme"],
+      "registryDependencies": ["children", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/alert.tsx",
@@ -1171,7 +1185,7 @@
       "type": "registry:ui",
       "title": "ButtonGroup",
       "description": "Buttons joined into one control, in a row or a column.",
-      "registryDependencies": ["separator", "surface", "theme"],
+      "registryDependencies": ["children", "separator", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/button-group.tsx",
@@ -1185,7 +1199,7 @@
       "type": "registry:ui",
       "title": "InputGroup",
       "description": "A field's frame around an input and what sits beside it — an icon, a unit, a button.",
-      "registryDependencies": ["button", "input", "theme", "utils"],
+      "registryDependencies": ["button", "children", "input", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/input-group.tsx",
@@ -1199,7 +1213,7 @@
       "type": "registry:ui",
       "title": "Breadcrumb",
       "description": "The trail from the app's root to the page it shows: links a chevron parts, the page itself last.",
-      "registryDependencies": ["icons", "theme", "utils"],
+      "registryDependencies": ["children", "icons", "theme"],
       "dependencies": ["lucide@^1.66.0"],
       "files": [
         {
@@ -1270,7 +1284,7 @@
       "type": "registry:ui",
       "title": "Marker",
       "description": "A line in a conversation that is not a message: a status, a note, or a labeled separator.",
-      "registryDependencies": ["icons", "surface", "theme"],
+      "registryDependencies": ["children", "icons", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/marker.tsx",
@@ -1285,7 +1299,7 @@
       "type": "registry:ui",
       "title": "Bubble",
       "description": "The framed surface of one turn of a conversation, and the reactions that hang off it.",
-      "registryDependencies": ["surface", "theme"],
+      "registryDependencies": ["children", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/bubble.tsx",
@@ -1299,7 +1313,7 @@
       "type": "registry:ui",
       "title": "Message",
       "description": "One row of a conversation: the sender's avatar, who they are, the turn, and what is under it.",
-      "registryDependencies": ["avatar", "surface", "theme"],
+      "registryDependencies": ["avatar", "children", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/message.tsx",

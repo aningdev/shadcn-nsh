@@ -5,6 +5,7 @@ import { colors, radius, rounded, tints } from "@shadcn-nsh/theme";
 import type { JSX, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, platform, split, Text, token, View } from "nsh";
 
+import { childrenOf } from "./lib/children";
 import { density, PILL_RADIUS } from "./lib/surface";
 
 /**
@@ -245,6 +246,7 @@ export function BubbleGroup(props: BubbleGroupProps) {
 export function BubbleContent(props: BubbleContentProps) {
   const variant = (): BubbleVariant => BubbleContext()?.() ?? "default";
   const [, rest] = split(props, ["children", "style"]);
+  const { text, content } = childrenOf(props);
   return (
     <View
       {...rest}
@@ -254,11 +256,7 @@ export function BubbleContent(props: BubbleContentProps) {
         props.style ?? null,
       ]}
     >
-      {typeof props.children === "string" ? (
-        <BubbleText>{props.children}</BubbleText>
-      ) : (
-        props.children
-      )}
+      {text !== undefined ? <BubbleText>{text}</BubbleText> : content}
     </View>
   );
 }
@@ -288,13 +286,10 @@ export function BubbleReactions(props: BubbleReactionsProps) {
   const side = () => props.side ?? "bottom";
   const align = () => props.align ?? "end";
   const [, rest] = split(props, ["side", "align", "children", "style"]);
+  const { text, content } = childrenOf(props);
   return (
     <View {...rest} style={[bubbleLook().reactions(side(), align()), props.style ?? null]}>
-      {typeof props.children === "string" ? (
-        <Text style={bubbleLook().reactionText}>{props.children}</Text>
-      ) : (
-        props.children
-      )}
+      {text !== undefined ? <Text style={bubbleLook().reactionText}>{text}</Text> : content}
     </View>
   );
 }

@@ -77,6 +77,12 @@
 - **The docs site is at https://shadcn-nsh.aning.dev.** It was at
   `https://aningdev.github.io/shadcn-nsh/`; the README and every docs link point at the new
   address.
+- **Leaf controls build their children once (#55).** Each read of `props.children` builds the
+  children again, and a control that both named itself after its text and drew it read them two to
+  five times, building native views nobody showed. Button, link, label, tabs, kbd, toggle, checkbox,
+  field, marker, message, bubble and the other leaf controls now read them once through
+  `lib/children.ts` (`childrenOf`), which `add` installs alongside them: a labelled button with an
+  icon commits 21 ops instead of 37. Names, looks and props are unchanged.
 
 ### Fixed
 

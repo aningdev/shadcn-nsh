@@ -6,8 +6,8 @@ import type { JSX, ViewStyle } from "nsh";
 import { platform, split, Text, token, View } from "nsh";
 import { Link as BaseLink, type LinkProps as BaseLinkProps } from "nsh/base";
 
+import { childrenOf } from "./lib/children";
 import { Icon } from "./lib/icons";
-import { labelOf } from "./lib/utils";
 
 // @port look/nav.tsx
 const pointer = platform.desktop;
@@ -150,16 +150,17 @@ export function Link(props: LinkProps) {
     visited: props.visited,
     quiet: props.quiet,
   });
+  const { text, content, label } = childrenOf(props);
   return (
     <BaseLink
       {...rest}
-      accessibilityLabel={labelOf(props.accessibilityLabel, props.children)}
+      accessibilityLabel={label}
       class={props.class ? `${look().class} ${props.class}` : look().class}
       focusVisibleStyle={[look().focusVisibleStyle, props.focusVisibleStyle ?? null]}
     >
-      {typeof props.children === "string" ? (
+      {text !== undefined ? (
         <LinkText
-          label={props.children}
+          label={text}
           color={linkColor(state())}
           disabled={!!props.disabled}
           current={props.current}
@@ -167,7 +168,7 @@ export function Link(props: LinkProps) {
           icon={props.icon}
         />
       ) : (
-        props.children
+        content
       )}
     </BaseLink>
   );

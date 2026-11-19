@@ -17,8 +17,9 @@ import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, platform, split, Text, token, View } from "nsh";
 import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/base";
 
+import { childrenOf } from "./lib/children";
 import { pressSink, pressTransition, touchSlop } from "./lib/press";
-import { labelOf, type Live, read } from "./lib/utils";
+import { type Live, read } from "./lib/utils";
 import { Spinner } from "./spinner";
 
 /**
@@ -506,10 +507,11 @@ export function Button(props: ButtonProps) {
     busy: () => props.busy,
   };
   const look = buttonLook(variant, options);
+  const { text, content, label } = childrenOf(props);
   return (
     <BaseButton
       {...rest}
-      accessibilityLabel={labelOf(props.accessibilityLabel, props.children)}
+      accessibilityLabel={label}
       // Busy, it keeps its focus and its look and takes no second press.
       onPress={() => !props.busy && props.onPress?.()}
       hitSlop={props.hitSlop ?? look.hitSlop}
@@ -522,11 +524,7 @@ export function Button(props: ButtonProps) {
       <If when={props.busy}>
         <Spinner {...buttonGlyph(variant, options)} />
       </If>
-      {typeof props.children === "string" ? (
-        <Text style={buttonLabel(variant, options)}>{props.children}</Text>
-      ) : (
-        props.children
-      )}
+      {text !== undefined ? <Text style={buttonLabel(variant, options)}>{text}</Text> : content}
     </BaseButton>
   );
 }
@@ -678,10 +676,11 @@ export function SplitButtonSegment(props: SplitButtonSegmentProps) {
     selected: () => props.selected,
     disabled: () => props.disabled,
   });
+  const { text, content, label } = childrenOf(props);
   return (
     <BaseButton
       {...rest}
-      accessibilityLabel={labelOf(props.accessibilityLabel, props.children)}
+      accessibilityLabel={label}
       hitSlop={props.hitSlop ?? segment.hitSlop}
       style={[segment.style, props.style ?? null]}
       hoverStyle={[segment.hoverStyle ?? null, props.hoverStyle ?? null]}
@@ -689,10 +688,10 @@ export function SplitButtonSegment(props: SplitButtonSegmentProps) {
       focusVisibleStyle={[segment.focusVisibleStyle, props.focusVisibleStyle ?? null]}
       disabledStyle={[segment.disabledStyle, props.disabledStyle ?? null]}
     >
-      {typeof props.children === "string" ? (
-        <Text style={buttonLabel(ctx.variant, ctx.options)}>{props.children}</Text>
+      {text !== undefined ? (
+        <Text style={buttonLabel(ctx.variant, ctx.options)}>{text}</Text>
       ) : (
-        props.children
+        content
       )}
     </BaseButton>
   );
@@ -721,7 +720,8 @@ export interface ActionProps {
  * keyboard still rings.
  */
 export function Action(props: ActionProps) {
-  if (typeof props.children === "string") {
+  const { text, content } = childrenOf(props);
+  if (text !== undefined) {
     return (
       <Button
         variant={props.variant ?? "secondary"}
@@ -729,7 +729,7 @@ export function Action(props: ActionProps) {
         style={props.style}
         onPress={props.onPress}
       >
-        {props.children}
+        {text}
       </Button>
     );
   }
@@ -742,7 +742,7 @@ export function Action(props: ActionProps) {
       onPress={props.disabled ? undefined : props.onPress}
       style={props.style}
     >
-      {props.children}
+      {content}
     </View>
   );
 }

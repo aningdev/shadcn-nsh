@@ -21,9 +21,10 @@ import {
 } from "nsh/base";
 
 import { ChoiceLight, choiceScales, choiceSink, choiceWell, type ChoiceSize } from "./checkbox";
+import { childrenOf } from "./lib/children";
 import { pressSink } from "./lib/press";
 import { controlSize } from "./lib/surface";
-import { labelOf, type Live, read } from "./lib/utils";
+import { type Live, read } from "./lib/utils";
 
 // @port look/choice.tsx
 /** A box's or ring's size: `scale` times the page's; one row high in the
@@ -187,10 +188,11 @@ export function Radio(props: RadioProps) {
   const look = tile
     ? choiceTileLook(() => !!props.checked, { disabled: () => !!props.disabled })
     : undefined;
+  const { text, content, label } = childrenOf(props);
   return (
     <BaseRadio
       {...rest}
-      accessibilityLabel={labelOf(props.accessibilityLabel, props.children)}
+      accessibilityLabel={label}
       class={props.class ? `group ${props.class}` : "group"}
       style={[look?.style ?? null, props.style ?? null]}
       hoverStyle={[look?.hoverStyle ?? null, props.hoverStyle ?? null]}
@@ -201,11 +203,11 @@ export function Radio(props: RadioProps) {
       <If when={props.indicator ?? true}>
         <RadioRing on={!!props.checked} scale={scale} disabled={!!props.disabled} />
       </If>
-      {typeof props.children === "string" ? (
+      {text !== undefined ? (
         // The page's ink, read here so it follows the appearance: a bare Text is nsh's black.
-        <Text style={{ color: colors.foreground }}>{props.children}</Text>
+        <Text style={{ color: colors.foreground }}>{text}</Text>
       ) : (
-        props.children
+        content
       )}
     </BaseRadio>
   );

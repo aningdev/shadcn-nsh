@@ -5,8 +5,9 @@ import type { JSX, TextStyle, ViewStyle } from "nsh";
 import { platform, split, Text } from "nsh";
 import { Toggle as BaseToggle, type ToggleProps as BaseToggleProps } from "nsh/base";
 
+import { childrenOf } from "./lib/children";
 import { pressSink, pressTransition, touchSlop } from "./lib/press";
-import { labelOf, type Live, read } from "./lib/utils";
+import { type Live, read } from "./lib/utils";
 
 // @port look/tool.ts
 /** A toggle's size: 24 / 28 / 34 points with a pointer, 32 / 38 / 44 on a touch screen. */
@@ -193,17 +194,18 @@ export function Toggle(props: ToggleProps) {
     "disabledStyle",
     "hitSlop",
   ]);
+  const { text, content, label } = childrenOf(props);
   const options: ToggleLookOptions = {
     size: () => props.size,
     variant: props.variant,
-    text: props.text ?? typeof props.children === "string",
+    text: props.text ?? text !== undefined,
     disabled: () => props.disabled,
   };
   const look = toggleLook(options);
   return (
     <BaseToggle
       {...rest}
-      accessibilityLabel={labelOf(props.accessibilityLabel, props.children)}
+      accessibilityLabel={label}
       hitSlop={props.hitSlop ?? look.hitSlop}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
@@ -212,10 +214,10 @@ export function Toggle(props: ToggleProps) {
       pressedStyle={[look.pressedStyle, props.pressedStyle ?? null]}
       disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     >
-      {typeof props.children === "string" ? (
-        <Text style={toggleLabel(() => props.pressed, options)}>{props.children}</Text>
+      {text !== undefined ? (
+        <Text style={toggleLabel(() => props.pressed, options)}>{text}</Text>
       ) : (
-        props.children
+        content
       )}
     </BaseToggle>
   );

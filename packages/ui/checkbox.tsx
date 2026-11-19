@@ -6,9 +6,10 @@ import type { AnimatedValue, JSX, ViewStyle } from "nsh";
 import { split, Text, View } from "nsh";
 import { Checkbox as BaseCheckbox, type CheckboxProps as BaseCheckboxProps } from "nsh/base";
 
+import { childrenOf } from "./lib/children";
 import { Icon } from "./lib/icons";
 import { controlSize } from "./lib/surface";
-import { labelOf, type Live, read } from "./lib/utils";
+import { type Live, read } from "./lib/utils";
 
 // @port look/choice.tsx
 
@@ -224,10 +225,11 @@ export function Checkbox(props: CheckboxProps) {
     disabled: () => !!props.disabled,
   };
   const look = checkboxLook(options);
+  const { text, content, label } = childrenOf(props);
   return (
     <BaseCheckbox
       {...rest}
-      accessibilityLabel={labelOf(props.accessibilityLabel, props.children)}
+      accessibilityLabel={label}
       class={props.class ? `group ${props.class}` : "group"}
       indicatorClass={
         props.indicatorClass
@@ -246,11 +248,11 @@ export function Checkbox(props: CheckboxProps) {
         )
       }
     >
-      {typeof props.children === "string" ? (
+      {text !== undefined ? (
         // The page's ink, read here so it follows the appearance: a bare Text is nsh's black.
-        <Text style={{ color: colors.foreground }}>{props.children}</Text>
+        <Text style={{ color: colors.foreground }}>{text}</Text>
       ) : (
-        props.children
+        content
       )}
     </BaseCheckbox>
   );

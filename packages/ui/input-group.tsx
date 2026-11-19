@@ -8,6 +8,7 @@ import { Input as BaseInput, type InputProps as BaseInputProps } from "nsh/base"
 
 import { Button, buttonSizes, type ButtonProps, type ButtonSize } from "./button";
 import { fieldLook, fieldSize, fieldText } from "./input";
+import { childrenOf } from "./lib/children";
 import { type Live, read } from "./lib/utils";
 
 /** Options of `inputGroupLook`. */
@@ -293,13 +294,10 @@ export type InputGroupTextProps = Omit<ViewProps, "children"> & {
 export function InputGroupText(props: InputGroupTextProps) {
   const look = inputGroupTextLook();
   const [, rest] = split(props, ["style", "ref", "children"]);
+  const { text, content } = childrenOf(props);
   return (
     <View {...rest} style={[look.style, props.style ?? null]}>
-      {typeof props.children === "string" ? (
-        <Text style={look.label}>{props.children}</Text>
-      ) : (
-        props.children
-      )}
+      {text !== undefined ? <Text style={look.label}>{text}</Text> : content}
     </View>
   );
 }

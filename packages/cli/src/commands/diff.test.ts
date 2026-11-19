@@ -8,7 +8,9 @@ import { runAdd } from "./add";
 import { DIFF_SKIPPED, runDiff } from "./diff";
 
 const fixture = (): Fixture =>
-  makeFixture({ items: ["theme", "switch-geometry", "press", "spinner", "button", "utils"] });
+  makeFixture({
+    items: ["theme", "switch-geometry", "press", "spinner", "children", "button", "utils"],
+  });
 
 /** An app with `button` installed. */
 async function installed(): Promise<Fixture> {

@@ -6,6 +6,7 @@ import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, platform, split, Text, token, View } from "nsh";
 
 import { Avatar, type AvatarProps } from "./avatar";
+import { childrenOf } from "./lib/children";
 import { density } from "./lib/surface";
 
 /** Which side of the conversation a message sits on: `start` (what came in), `end` (what you send). */
@@ -202,9 +203,10 @@ export function MessageGroup(props: MessageGroupProps) {
 
 /** The sender's avatar, at the bottom of the row. Compose the conversation itself in `Bubble`. */
 export function MessageAvatar(props: MessageAvatarProps) {
+  const { content } = childrenOf(props);
   // The slot is a view. The avatar's own props do not belong on it, and with children they are
   // not used — so a mark never also draws initials.
-  if (props.children != null) {
+  if (content != null) {
     const [, rest] = split(props, [
       "accessibilityLabel",
       "children",
@@ -226,7 +228,7 @@ export function MessageAvatar(props: MessageAvatarProps) {
         accessibilityLabel={props.accessibilityLabel ?? undefined}
         style={[messageLook().avatarSlot, props.style ?? null]}
       >
-        {props.children}
+        {content}
       </View>
     );
   }
@@ -248,13 +250,10 @@ export function MessageContent(props: MessageContentProps) {
 /** Who sent the message, above the turn, at the start of the row. */
 export function MessageHeader(props: MessageHeaderProps) {
   const [, rest] = split(props, ["children", "style"]);
+  const { text, content } = childrenOf(props);
   return (
     <View {...rest} style={[messageLook().header, props.style ?? null]}>
-      {typeof props.children === "string" ? (
-        <Text style={messageLook().headerText}>{props.children}</Text>
-      ) : (
-        props.children
-      )}
+      {text !== undefined ? <Text style={messageLook().headerText}>{text}</Text> : content}
     </View>
   );
 }
@@ -264,13 +263,10 @@ export function MessageHeader(props: MessageHeaderProps) {
 export function MessageFooter(props: MessageFooterProps) {
   const align = (): MessageAlign => MessageContext()?.() ?? "start";
   const [, rest] = split(props, ["children", "style"]);
+  const { text, content } = childrenOf(props);
   return (
     <View {...rest} style={[messageLook().footer(align()), props.style ?? null]}>
-      {typeof props.children === "string" ? (
-        <Text style={messageLook().footerText}>{props.children}</Text>
-      ) : (
-        props.children
-      )}
+      {text !== undefined ? <Text style={messageLook().footerText}>{text}</Text> : content}
     </View>
   );
 }
