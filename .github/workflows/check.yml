@@ -75,9 +75,9 @@ jobs:
         with:
           nsh-channel: ${{ vars.NSH_CHANNEL }}
 
-      # The `.nsh` types hosts (gitignored) that the type check behind `vp check` resolves `nsh`
-      # and `nsh/base` from, as `bun run nsh:bootstrap` makes them locally.
-      - name: Generate the types hosts
+      # Type checks the demos and the gallery, and leaves the `.nsh` types hosts (gitignored) that
+      # `vp check` resolves `nsh` and `nsh/base` from — as `bun run nsh:bootstrap` does locally.
+      - name: Type check the demos and the gallery
         run: bun run prepare:types
 
       # Format and lint, without `--fix`: CI reports what `bun run check` would change.
@@ -101,12 +101,6 @@ jobs:
       # What apps install: public/r must be what registry.json builds.
       - name: Registry check
         run: bun run registry:build --check
-
-      - name: Type check the demos
-        run: nsh check apps/website/demos
-
-      - name: Type check the gallery
-        run: nsh check apps/gallery
 
       - name: Unit tests
         run: bun run test:unit
