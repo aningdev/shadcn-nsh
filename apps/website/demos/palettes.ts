@@ -26,7 +26,7 @@ export const PALETTES = [
     id: "shadcn",
     label: "shadcn/ui",
     description:
-      "shadcn's neutral palette: near-black and near-white fills, flat finishes, 8-point controls and 14-point cards.",
+      "shadcn/ui's neutral palette: near-black and near-white fills, flat finishes, 8-point controls and 14-point cards.",
   },
   {
     id: "solid-glass",
