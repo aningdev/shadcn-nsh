@@ -12,4 +12,4 @@ bun run docs:demos    # 把演示打包到 public/demos 供预览
 bun run build:docs    # nsh:bootstrap + docs:demos + 构建 → .output/public
 ```
 
-页面在 `content/docs/`，由 `src/routes/docs/$.tsx` 渲染；站点挂在 `/shadcn-nsh/` 路径下，站内链接一律走 `src/lib/site.ts` 的 `url()`。作者约定与页面契约见 [`AGENTS.md`](./AGENTS.md)。组件清单由 `registry.json` 和页面生成 —— `bun run docs:components`，见 `src/lib/components.generated.ts`。
+页面在 `content/docs/`，由 `src/routes/docs/$.tsx` 渲染；站点在自有域名的根路径上，站内链接写普通绝对路径。作者约定与页面契约见 [`AGENTS.md`](./AGENTS.md)。组件清单由 `registry.json` 和页面生成 —— `bun run docs:components`，见 `src/lib/components.generated.ts`。

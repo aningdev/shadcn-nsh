@@ -1,5 +1,3 @@
-// First: server-function reads get the site's base path (`src/lib/base-path-fetch.ts`).
-import "./lib/base-path-fetch";
 import { createRouter as createTanStackRouter } from "@tanstack/react-router";
 
 import { NotFound } from "@/components/fd/not-found";

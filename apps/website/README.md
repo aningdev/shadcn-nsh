@@ -12,4 +12,4 @@ bun run docs:demos    # package the demos into public/demos for the previews
 bun run build:docs    # nsh:bootstrap + docs:demos + build → .output/public
 ```
 
-Pages live in `content/docs/` and are served by `src/routes/docs/$.tsx`; the site is served from the `/shadcn-nsh/` path, so internal links go through `url()` in `src/lib/site.ts`. Authoring rules and the page contract: [`AGENTS.md`](./AGENTS.md). The component list is generated from `registry.json` and the pages — `bun run docs:components`; see `src/lib/components.generated.ts`.
+Pages live in `content/docs/` and are served by `src/routes/docs/$.tsx`; the site is served at the root of its domain, so internal links are plain absolute paths. Authoring rules and the page contract: [`AGENTS.md`](./AGENTS.md). The component list is generated from `registry.json` and the pages — `bun run docs:components`; see `src/lib/components.generated.ts`.

@@ -3,13 +3,48 @@ import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import react from "@vitejs/plugin-react";
 import { fumadocsMdx } from "fumadocs-mdx/vite";
 import { nitro } from "nitro/vite";
-import { defineConfig } from "vite";
+import { defineConfig, runnerImport } from "vite";
 
 import { PALETTES } from "./demos/palettes";
 import { PACKAGE_MANAGER_GROUP, PACKAGE_MANAGERS } from "./src/lib/package-managers";
 
-/** The path the site is served under; `src/lib/site.ts` reads it back from Vite. */
+/** The path the site is served under; both Vite and the router read it. */
 const BASE = "/";
+
+/**
+ * The one MDX setup: Fumadocs' plugin with the site's npm-tab options. A factory, because it is
+ * used twice — once to read the page list before the config is built, once by the build itself —
+ * and each Vite instance needs its own plugin.
+ */
+function docsMdx() {
+  // A command fenced as `npm` becomes a Fumadocs `CodeBlockTabs` group whose tabs are this site's
+  // three package managers; the shared `groupId` + `persist` keeps the choice across blocks and
+  // pages. `remarkNpmOptions` is the only MDX option the site sets, so the default preset stays.
+  return fumadocsMdx({
+    globalOptions: {
+      mdxOptions: {
+        remarkNpmOptions: {
+          persist: { id: PACKAGE_MANAGER_GROUP },
+          packageManagers: PACKAGE_MANAGERS,
+        },
+      },
+    },
+  });
+}
+
+/**
+ * The files `docsLlms` answers — `/llms.txt`, `/llms-full.txt` and a `.md` per page — read before
+ * the config is built, because Nitro has to be told which routes to prerender. TanStack's own
+ * prerender cannot fetch them: it requests every page with a trailing slash, which a route for a
+ * file does not match. `runnerImport` loads `source.ts` through the same MDX plugin the build uses,
+ * since Vite loads the config without the plugins it declares.
+ */
+const { docsLlms } = (
+  await runnerImport<typeof import("./src/lib/source")>("./src/lib/source.ts", {
+    plugins: [docsMdx()],
+    resolve: { tsconfigPaths: true },
+  })
+).module;
 
 /**
  * The site is served at the root of its own domain, `https://shadcn-nsh.aning.dev/` (GitHub Pages'
@@ -23,19 +58,7 @@ export default defineConfig({
     port: 4321,
   },
   plugins: [
-    // A command fenced as `npm` becomes a Fumadocs `CodeBlockTabs` group whose tabs are this site's
-    // three package managers; the shared `groupId` + `persist` keeps the choice across blocks and
-    // pages. `remarkNpmOptions` is the only MDX option the site sets, so the default preset stays.
-    fumadocsMdx({
-      globalOptions: {
-        mdxOptions: {
-          remarkNpmOptions: {
-            persist: { id: PACKAGE_MANAGER_GROUP },
-            packageManagers: PACKAGE_MANAGERS,
-          },
-        },
-      },
-    }),
+    docsMdx(),
     tailwindcss(),
     tanstackStart({
       router: { basepath: BASE.replace(/\/+$/, "") },
@@ -63,7 +86,9 @@ export default defineConfig({
       ],
     }),
     react(),
-    nitro(),
+    // The Markdown files for agents are static output too; Nitro prerenders exactly the paths
+    // `docsLlms` serves, read above.
+    nitro({ prerender: { routes: await docsLlms.files() } }),
   ],
   resolve: {
     tsconfigPaths: true,

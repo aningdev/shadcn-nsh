@@ -11,8 +11,7 @@ import { components } from "@/lib/components";
  * the table of contents and carry the anchor button every other docs page's headings do; the kind
  * decides which rows this renders.
  */
-import type { ComponentDoc } from "@/lib/components.types";
-import { url } from "@/lib/site";
+import type { ComponentDoc } from "@/lib/components";
 
 export function ComponentsIndex({ kind }: { kind: ComponentDoc["kind"] }) {
   const items = components.filter((component) => component.kind === kind);
@@ -21,7 +20,7 @@ export function ComponentsIndex({ kind }: { kind: ComponentDoc["kind"] }) {
     <ul>
       {items.map((component) => (
         <li key={component.slug}>
-          <a href={url(`docs/components/${component.slug}`)}>{component.title}</a>
+          <a href={`/docs/components/${component.slug}`}>{component.title}</a>
           <span className="text-fd-muted-foreground"> — {component.description}</span>
         </li>
       ))}

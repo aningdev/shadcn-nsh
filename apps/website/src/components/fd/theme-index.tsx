@@ -1,4 +1,3 @@
-import { url } from "@/lib/site";
 import { themePages } from "@/lib/themes";
 
 /**
@@ -13,7 +12,7 @@ export function ThemeIndex() {
       {themes.map((theme) => (
         <li key={theme.palette.id} id={`theme-${theme.palette.id}`}>
           <a
-            href={url(`docs/themes/${theme.palette.id}`)}
+            href={`/docs/themes/${theme.palette.id}`}
             className="border-fd-border bg-fd-card hover:bg-fd-accent flex flex-col gap-1 rounded-xl border p-5 no-underline"
           >
             <span className="text-fd-foreground font-medium">{theme.palette.label}</span>

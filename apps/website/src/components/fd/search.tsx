@@ -13,12 +13,10 @@ import {
 } from "fumadocs-ui/components/dialog/search";
 import { useI18n } from "fumadocs-ui/contexts/i18n";
 
-import { url } from "@/lib/site";
-
 export default function DefaultSearchDialog(props: SharedProps) {
   const { locale } = useI18n(); // (optional) for i18n
-  // The index is the prerendered `/api/search`, under the site's base path.
-  const search = useStaticSearch({ locale, from: url("api/search") });
+  // The index is the prerendered `/api/search`.
+  const search = useStaticSearch({ locale, from: "/api/search" });
 
   return (
     <SearchDialog {...search} {...props}>

@@ -17,9 +17,8 @@ import { DemoPanel } from "@/components/fd/demo-panel";
 import { useMDXComponents } from "@/components/fd/mdx";
 import { getComponentBySlug } from "@/lib/components";
 import { CONTENT_PATHS } from "@/lib/content-paths";
-import { baseOptions } from "@/lib/layout.shared";
+import { baseOptions, EDIT_BASE, SITE_TITLE } from "@/lib/layout.shared";
 import { nshElementUrl, shadcnUrl } from "@/lib/official";
-import { EDIT_BASE, SITE_TITLE } from "@/lib/site";
 import { docs, pageTree, source } from "@/lib/source";
 
 /** What the page loader returns; `useLoaderData` does not carry it through `head` as an argument. */

@@ -5,7 +5,6 @@ description: Copy-into-app components for Native Shell, built on nsh/base.
 
 import { ComponentsIndex } from "../../src/components/fd/components-index";
 import { components } from "../../src/lib/components";
-import { url } from "../../src/lib/site";
 
 {components.length} components, one page each: Installation, Usage, Examples and API. They are
 grouped in two: <strong>Base</strong>, aligned with an NSH element, and <strong>Enhanced</strong>,
@@ -16,7 +15,7 @@ base element and the shadcn/ui component it stands in for.
 The list is generated from `registry.json` and these pages, so every `registry:ui` item has a page
 and every page has an item. The group comes from{" "}
 
-<a href={url("docs/components/coverage")}>Coverage</a>: a page registered in one of its NSH rows is
+<a href="/docs/components/coverage">Coverage</a>: a page registered in one of its NSH rows is
 Base, one in none is Enhanced. Add one with `npx shadcn-nsh@latest add <name>`.
 
 ## Base

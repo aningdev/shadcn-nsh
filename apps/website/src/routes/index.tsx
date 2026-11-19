@@ -5,8 +5,13 @@ import type { ReactNode } from "react";
 import { DemoPanel } from "@/components/fd/demo-panel";
 import { InstallTabs } from "@/components/fd/install-tabs";
 import { components } from "@/lib/components";
-import { baseOptions } from "@/lib/layout.shared";
-import { NSH_SITE_URL, REPO_URL, SITE_DESCRIPTION, SITE_TITLE, url } from "@/lib/site";
+import {
+  baseOptions,
+  NSH_SITE_URL,
+  REPO_URL,
+  SITE_DESCRIPTION,
+  SITE_TITLE,
+} from "@/lib/layout.shared";
 
 import { PALETTES } from "../../demos/palettes";
 
@@ -83,8 +88,8 @@ function Home() {
   return (
     <HomeLayout
       {...baseOptions()}
-      // Router paths, not `url()`: the layout renders these through the router's `Link`, which
-      // adds the basepath itself — as the sidebar's `/docs/…` from `source.ts`.
+      // Router paths: the layout renders these through the router's `Link`, which adds the
+      // basepath itself — as the sidebar's `/docs/…` from `source.ts`.
       links={[
         { text: "Docs", url: "/docs/getting-started" },
         { text: "Components", url: "/docs/components" },
@@ -108,13 +113,13 @@ function Home() {
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <a
-              href={url("docs/getting-started")}
+              href="/docs/getting-started"
               className="bg-fd-primary text-fd-primary-foreground rounded-lg px-5 py-2.5 text-sm font-medium transition-opacity hover:opacity-90"
             >
               Get started
             </a>
             <a
-              href={url("docs/components")}
+              href="/docs/components"
               className="border-fd-border bg-fd-card hover:bg-fd-accent rounded-lg border px-5 py-2.5 text-sm font-medium transition-colors"
             >
               Browse components
@@ -162,10 +167,10 @@ function Home() {
             <InstallTabs command={"npx shadcn-nsh@latest init\nnpx shadcn-nsh@latest add button"} />
           </div>
           <div className="flex flex-wrap justify-center gap-4 text-sm">
-            <a href={url("docs/getting-started")} className="font-medium underline">
+            <a href="/docs/getting-started" className="font-medium underline">
               Getting started
             </a>
-            <a href={url("docs/cli")} className="font-medium underline">
+            <a href="/docs/cli" className="font-medium underline">
               CLI
             </a>
             <a href={REPO_URL} className="font-medium underline">

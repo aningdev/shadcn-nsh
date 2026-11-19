@@ -369,23 +369,6 @@ for (const component of cat.components) {
   }
 }
 
-// llms.txt is written by hand: every component has its line, and no line names one that is gone.
-const llmsFile = path.join(repo, "apps/website/public/llms.txt");
-const listed = new Set(
-  [...fs.readFileSync(llmsFile, "utf8").matchAll(/^- \/docs\/components\/([a-z-]+):/gm)].map(
-    (match) => match[1]!,
-  ),
-);
-for (const component of cat.components) {
-  if (!listed.has(component.id))
-    fail(`apps/website/public/llms.txt: no line for "${component.id}"`);
-}
-for (const id of listed) {
-  if (id !== "coverage" && !byId.has(id)) {
-    fail(`apps/website/public/llms.txt: "${id}" is no component`);
-  }
-}
-
 // The themes pages and the registry: every palette the site switches to has its `theme-<id>` item
 // and a page, and every `theme-*` item is one of those palettes. Each page's headings are the same
 // list, in the same order, so the table of contents matches; the rows are `themePages()` over

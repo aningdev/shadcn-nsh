@@ -22,7 +22,6 @@ import {
   type OfficialEntry,
   type OfficialState,
 } from "@/lib/official";
-import { url } from "@/lib/site";
 
 const pages = new Set(components.map((component) => component.slug));
 const titleOf = new Map(components.map((component) => [component.slug, component.title]));
@@ -80,7 +79,7 @@ function Served({ slugs }: { slugs: string[] }) {
       {slugs.map((slug, index) => (
         <span key={slug}>
           {index > 0 ? ", " : null}
-          <a href={url(`docs/components/${slug}`)}>{titleOf.get(slug)}</a>
+          <a href={`/docs/components/${slug}`}>{titleOf.get(slug)}</a>
         </span>
       ))}
     </>

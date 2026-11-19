@@ -26,7 +26,6 @@ import { type ComponentProps, type ComponentType, useEffect, useRef, useState } 
 import { PaletteSwitch } from "@/components/fd/palette-switch";
 import { CONTROL_FOCUS, CONTROL_WIDTH } from "@/components/fd/toolbar";
 import { onPaletteChange } from "@/lib/palette";
-import { url } from "@/lib/site";
 
 const LAYOUTS = {
   mobile: { width: 390, height: 640, idiom: "phone" },
@@ -46,7 +45,7 @@ const withParam = (href: string, name: string, value: string) => {
   return parsed.href;
 };
 
-const demoHref = (name: string) => url(`demos/${name}/index.html`);
+const demoHref = (name: string) => `/demos/${name}/index.html`;
 
 function savedLayout(): Layout {
   try {

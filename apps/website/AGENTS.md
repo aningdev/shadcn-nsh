@@ -14,17 +14,17 @@ Three surfaces share the same components:
 
 TanStack Start + [Fumadocs](https://fumadocs.dev) on React 19 and Tailwind v4, built to a static site: `vite build` prerenders every page under `apps/website/.output/public`, which is what `.github/workflows/deploy-docs.yml` uploads. There is no dev server in production and no server at runtime — server functions are prerendered away by `staticFunctionMiddleware`.
 
-| Path                 | What it holds                                                                                                     |
-| -------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `src/routes/`        | Routes: `__root.tsx` (chrome, theme, search), `index.tsx` (home), `docs/$.tsx` (every docs page), `api/search.ts` |
-| `src/components/fd/` | The site's own pieces: demo panel, palette switch, search, the generated page bodies                              |
-| `src/lib/`           | Content, navigation, generated tables, site constants                                                             |
-| `content/docs/`      | The pages themselves (`.md` / `.mdx`); the sidebar order comes from `src/lib/nav.ts`                              |
-| `src/styles/fd.css`  | The only stylesheet: Tailwind, Fumadocs' neutral preset, nothing hand-written                                     |
-| `demos/`             | The acceptance demos (an NSH app; see below)                                                                      |
-| `public/`            | `llms.txt`, `favicon.svg`, packaged demos (gitignored)                                                            |
+| Path                 | What it holds                                                                                                                                         |
+| -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/routes/`        | Routes: `__root.tsx` (chrome, theme, search), `index.tsx` (home), `docs/$.tsx` (every docs page), `api/search.ts`, the `llms*.txt` and `.md` handlers |
+| `src/components/fd/` | The site's own pieces: demo panel, palette switch, search, the generated page bodies                                                                  |
+| `src/lib/`           | Content, navigation, generated tables, site constants                                                                                                 |
+| `content/docs/`      | The pages themselves (`.md` / `.mdx`); the sidebar order comes from `src/lib/nav.ts`                                                                  |
+| `src/styles/fd.css`  | The only stylesheet: Tailwind, Fumadocs' neutral preset, nothing hand-written                                                                         |
+| `demos/`             | The acceptance demos (an NSH app; see below)                                                                                                          |
+| `public/`            | `favicon.svg`, packaged demos (gitignored)                                                                                                            |
 
-`vite.config.ts` sets the base to `/shadcn-nsh/` for both Vite and the router (`tanstackStart.router.basepath`) because the site is served from a GitHub Pages project path. Use `url()` from `src/lib/site.ts` for every internal link and asset: it prepends the base. Fetching a static server function needs `withBase()` from `src/lib/base-path-fetch.ts`.
+`vite.config.ts` sets the base for both Vite and the router (`tanstackStart.router.basepath`). The site is served at the root of its own domain, so internal links are plain absolute paths (`/docs/components`); a move under a path is the one `BASE` constant there, and links written as router paths (the sidebar, the layout's `links`) follow it themselves.
 
 Do **not** invent a parallel layout — the chrome is `DocsLayout` / `DocsPage` from `fumadocs-ui`, configured once in `src/routes/__root.tsx` and `src/lib/layout.shared.tsx`. A docs page gets its chrome from the route; nothing in a page writes a sidebar, a TOC or a footer.
 
@@ -84,7 +84,7 @@ The prose and the `##` headings stay in the page (headings belong in markdown �
 
 `content/docs/components/coverage.mdx` must not grow rows by hand: every row is a line of `src/lib/official.ts`. `themes.mdx` must not list palettes by hand: `ThemeIndex` reads `themePages()`. Each palette has `content/docs/themes/<id>.mdx` with the same headings (Installation, Tokens and its three groups, Finishes); those headings are markdown, because that is what the table of contents lists. `check:pages` fails when a palette has no page, a page has no palette, the headings differ, or a page's title and description drift from `demos/palettes.ts`.
 
-Imports in MDX resolve through Vite, not through `@/`: use relative paths (`../../src/lib/site`) inside a page.
+Imports in MDX resolve through Vite, not through `@/`: use relative paths (`../../src/lib/components`) inside a page.
 
 ## One component list
 
@@ -100,7 +100,6 @@ Do not edit the generated file. `src/lib/components.ts` keeps the helpers. `bun 
 - an official table names a page that does not exist, or serves nothing without a status and a note;
 - `references/` has a shadcn/ui `ui/*.tsx` or an NSH `elements/*.md` with no row — an upstream addition is one row here;
 - a page links `nsh.dev/elements/<x>` that has no `elements/<x>.md` in `references/nsh`;
-- `public/llms.txt` (written by hand) has no line for a component, or a line for one that is gone;
 - a theme page is missing, extra, or its headings, title or description drift from the palette list.
 
 ## Kinds and coverage
@@ -109,7 +108,7 @@ There are two kinds, and neither is filed by hand. `Base` is a page that an `NSH
 
 `src/lib/official.ts` answers for both official sets: `SHADCN_UI` is one row per `references/shadcn-ui/apps/v4/registry/new-york-v4/ui/*.tsx`, `NSH_ELEMENTS` one row per `references/nsh/website/elements/*.md`. A row lists the pages here that serve it (`ours`, closest first) and, when nothing does, a `status` (`planned`, `missing`, `not-doing`, `primitive`) and a one-line `note`. Reversed, the same rows give each page its header badges (`NSH ↗`, `shadcn/ui ↗`) and its base element, so a page never writes them itself. A `planned` row becomes a link by itself once its page exists.
 
-Adding a component: add or extend the official row if one of theirs answers it (a component no NSH row names is Enhanced), add its line to `public/llms.txt`, then `bun run docs:components`. The coverage page is generated from these tables; do not write it by hand.
+Adding a component: add or extend the official row if one of theirs answers it (a component no NSH row names is Enhanced), then `bun run docs:components`. The coverage page is generated from these tables; do not write it by hand.
 
 ## Search
 
@@ -141,4 +140,4 @@ bun run build:docs     # nsh check (demos types host) + docs:demos + vite build 
 vp check               # format, lint, tool types
 ```
 
-`public/llms.txt` is this site's table of contents for language models: the docs pages, every component with its base link, and where the base API lives. It is written by hand — update it when a page, a base link or a rename changes.
+`/llms.txt` and `/llms-full.txt` are this site's table of contents and full text for language models, and every page is also served as its own Markdown (`/docs/components/button.md`, the URL the page's Copy page button uses). All of them come from `docsLlms` in `src/lib/source.ts` (Fumadocs' `llms()` over the same loader as the pages), so a page, a title or a rename reaches them without a list to update. The build prerenders `docsLlms.files()` with Nitro (`vite.config.ts`), since TanStack's own prerender requests a trailing slash that a file route does not match.
