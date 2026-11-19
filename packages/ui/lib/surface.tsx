@@ -12,7 +12,7 @@ import {
   rounded,
 } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
-import { platform, Text, token, View, windowSize } from "nsh";
+import { computed, platform, Text, token, View, windowSize } from "nsh";
 
 import { type Live, read } from "./utils";
 
@@ -173,12 +173,23 @@ const STACKED_GAP = 8;
 const NARROW = 600;
 
 /**
+ * Whether the window is narrow, as a `computed`: one value and one subscription to the window for
+ * every reader, instead of one read of `windowSize` per reader.
+ *
+ * Made here, at import, rather than on first read: a `computed` made inside a component belongs to
+ * it and is disposed with it, and the first reader is always a component, so one made on first read
+ * would go dead when that component unmounted and leave every later reader on the width it stopped
+ * at.
+ */
+const narrow = computed(() => !terminal && windowSize().width < NARROW);
+
+/**
  * Whether the window is narrow enough for the phone's layout, on every
  * tier: a row's wide control (`plainRow`'s `wide`, a combobox) goes under
  * its label. Never in a terminal, which wraps its rows instead. Reactive:
- * it reads the window's size.
+ * it follows the window's size.
  */
-export const narrowWindow = () => !terminal && windowSize().width < NARROW;
+export const narrowWindow = () => narrow();
 
 /** Options of `plainRow`. */
 export interface PlainRowOptions {

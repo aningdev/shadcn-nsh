@@ -103,7 +103,9 @@ const open = signal(stored("sidebar") ?? true);
 ⌘B on Apple platforms, Ctrl+B elsewhere, folds the column and opens it — `keymap.bind("mod+b")`,
 made where the provider draws and gone with it. The rail at the column's inner edge takes a press
 too: it is 8 points wide (16 wide to a press, past its bounds with `hitSlop`) and shows a hairline in
-the sidebar's edge color while the pointer is over it. `SidebarTrigger` is the button that usually
+the sidebar's edge color while the pointer is over it. That hairline follows the pointer through the
+class language (`group-hover:`), not a signal, so passing the cursor over the rail commits no frame;
+the pointer has to be on the 8-point strip itself, not only in its `hitSlop` margin. `SidebarTrigger` is the button that usually
 sits in the page's header.
 
 ### On a phone

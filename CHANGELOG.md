@@ -83,6 +83,7 @@
   field, marker, message, bubble and the other leaf controls now read them once through
   `lib/children.ts` (`childrenOf`), which `add` installs alongside them: a labelled button with an
   icon commits 21 ops instead of 37. Names, looks and props are unchanged.
+- **Theme finishes, the narrow-window test, avatars, the calendar and the sidebar rail do less work per read (#56).** A finish string is resolved once per theme and appearance instead of on every read (about 5× cheaper), `narrowWindow` is one shared `computed`, an avatar hashes its name once, and a calendar day converts its date once instead of four times. The sidebar rail's hairline follows the pointer through `group-hover:` instead of a signal, so hovering it commits no frame; it now lights only while the pointer is on the 8-point strip, not in its `hitSlop` margin.
 
 ### Fixed
 

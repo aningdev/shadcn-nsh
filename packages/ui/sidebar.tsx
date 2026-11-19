@@ -1625,7 +1625,6 @@ export type SidebarRailProps = {
  */
 export function SidebarRail(props: SidebarRailProps) {
   const ctx = useSidebarContext();
-  const over = signal(false);
   const look = sidebarLook(useLookOptions());
   return (
     <If when={!ctx.isMobile() && ctx.axes().collapsible !== "none"}>
@@ -1636,11 +1635,12 @@ export function SidebarRail(props: SidebarRailProps) {
         focusable={false}
         hitSlop={{ left: sidebarSize.rail, right: sidebarSize.rail }}
         onPress={() => ctx.toggle("railPress")}
-        onMouseEnter={() => over.set(true)}
-        onMouseLeave={() => over.set(false)}
+        class="group"
         style={look.rail}
       >
-        <View style={[look.railLine, { opacity: over() ? 1 : 0 }]} />
+        {/* The hairline's hover is the pointer's, which the class language tracks on the platform's
+            own compositor: a signal here would commit a frame on every pass of the cursor. */}
+        <View class="opacity-0 group-hover:opacity-100" style={look.railLine} />
       </View>
     </If>
   );

@@ -146,6 +146,22 @@ const alias = (value: string): string =>
       return typeof color === "string" ? color : whole;
     });
 
+/** What one finish role has resolved: the theme it resolved from, and the strings per appearance. */
+type Resolved = { source: AppTheme | null; light: Finish; dark: Finish };
+
+/**
+ * What `alias` has resolved, per role. A finished string is one shadow, gradient or color of
+ * `finishes.json` with the theme's tokens put in, so it is the same string on every read until the
+ * theme or the appearance changes: a surface that reads its finishes once per binding should pay for
+ * the regular expressions once, not once per read.
+ *
+ * Keyed by the theme the strings came from, not emptied by `selectTheme`: that sets the theme and
+ * then the finishes, and a reader may run between the two, so an entry is only ever used for the
+ * theme it was resolved from. The appearance picks which half a read takes, and it is the other
+ * half of the same theme.
+ */
+const resolved = new Map<FinishRole, Resolved>();
+
 /**
  * An object whose getters read one finish role of the finishes in use, in
  * the appearance shown: shadows and gradients are no design tokens, so they
@@ -153,14 +169,29 @@ const alias = (value: string): string =>
  * subscribes to the appearance and to the theme `selectTheme` put in.
  */
 function themed(role: FinishRole): Finish {
+  const kept: Resolved = { source: null, light: {} as Finish, dark: {} as Finish };
+  resolved.set(role, kept);
   const out = {} as Finish;
   for (const key of Object.keys(builtIn.dark[role]) as (keyof Finish)[]) {
     Object.defineProperty(out, key, {
       enumerable: true,
       get: () => {
-        const finishes = finishesOf();
-        const value = (isDark() ? finishes.dark : finishes.light)[role][key];
-        return value === undefined ? value : alias(value);
+        const source = selected();
+        if (kept.source !== source) {
+          kept.source = source;
+          kept.light = {} as Finish;
+          kept.dark = {} as Finish;
+        }
+        const finishes = source?.finishes ?? builtIn;
+        const dark = isDark();
+        const value = (dark ? finishes.dark : finishes.light)[role][key];
+        if (value === undefined) return value;
+        const cache = dark ? kept.dark : kept.light;
+        const done = cache[key];
+        if (done !== undefined) return done;
+        const finished = alias(value);
+        cache[key] = finished;
+        return finished;
       },
     });
   }

@@ -3,7 +3,7 @@
 import { alpha, colors, cornerCurve, radius, rounded, terminal } from "@shadcn-nsh/theme";
 import { ChevronRight } from "lucide";
 import type { ViewStyle } from "nsh";
-import { platform, split, Text, View } from "nsh";
+import { computed, platform, split, Text, View } from "nsh";
 import {
   Calendar as BaseCalendar,
   type CalendarEntry,
@@ -202,8 +202,11 @@ function Toggle(props: CalendarItemProps & { kind: "monthToggle" | "yearToggle" 
  */
 function Day(props: { item: CalendarEntry; firstDayOfWeek?: number }) {
   const own = () => (props.item.outside ? "text-muted-foreground" : "text-foreground");
-  const column = () =>
-    props.item.date ? columnOf(props.item.date, props.firstDayOfWeek ?? 0) : -1;
+  // Read four times by the band's corners below, on every cell of a month: one conversion each.
+  // Owned by this cell, so it goes when the cell does, and it follows the first day of the week.
+  const column = computed(() =>
+    props.item.date ? columnOf(props.item.date, props.firstDayOfWeek ?? 0) : -1,
+  );
   return (
     <View style={{ minWidth: 0, paddingTop: weekGap }}>
       <View style={{ height: cell, alignItems: "center", justifyContent: "center" }}>

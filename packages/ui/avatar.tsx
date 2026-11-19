@@ -1,7 +1,7 @@
 // An avatar: the identity ring (`avatarIdentity`, `avatarHue`) and the `Avatar` that wears it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { isDark } from "@shadcn-nsh/theme";
-import { split } from "nsh";
+import { computed, split } from "nsh";
 import type { ViewStyle } from "nsh";
 import { Avatar as BaseAvatar, type AvatarProps as BaseAvatarProps } from "nsh/base";
 
@@ -78,8 +78,11 @@ export type AvatarProps = BaseAvatarProps;
 /** An avatar: picture or named initials on the identity ring. */
 export function Avatar(props: AvatarProps) {
   const [, rest] = split(props, ["style", "fallbackStyle", "fallbackClass", "imageClass"]);
-  // Read where used, so the identity colors follow the name and the appearance (light / dark).
-  const identity = () => (props.name ? avatarIdentity(props.name) : null);
+  // One identity per name and appearance, for the class and the style below: `avatarIdentity` runs a
+  // hash and three OkLCH conversions, and the two bindings that ask for it ask at the same time.
+  // Owned by this avatar, so it goes when the avatar does, and it follows the name and the
+  // appearance (light / dark).
+  const identity = computed(() => (props.name ? avatarIdentity(props.name) : null));
   const ringClass = () => {
     const ring = identity();
     return ring
