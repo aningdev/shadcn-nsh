@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.8.1 — `init` keeps your JSON, `diff` works offline
+
 ### Added
 
 - **`diff` works offline.** The CLI keeps each registry file it fetches in
