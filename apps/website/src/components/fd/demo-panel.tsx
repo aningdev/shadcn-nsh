@@ -12,7 +12,8 @@
  * - the site's theme rides in `?theme=` before the first load, and a running frame is told with a
  *   message afterwards (the demo page listens for it), so a theme switch does not reload it.
  *
- * The toolbar's controls are drawn here, one height (`h-8`) for all three; the Source tab is
+ * The toolbar's controls are drawn here, one height (`h-8`) and one width (`CONTROL_WIDTH`) for all
+ * three, so they stack in one column when a narrow screen wraps the row; the Source tab is
  * Fumadocs' code block, highlighted in the browser when the tab first opens. It is imported only
  * there (`import.meta.env.SSR` drops the import from the server builds): shiki's oniguruma wasm
  * does not resolve in the server bundle.
@@ -23,6 +24,7 @@
 import { type ComponentProps, type ComponentType, useEffect, useRef, useState } from "react";
 
 import { PaletteSwitch } from "@/components/fd/palette-switch";
+import { CONTROL_FOCUS, CONTROL_WIDTH } from "@/components/fd/toolbar";
 import { onPaletteChange } from "@/lib/palette";
 import { url } from "@/lib/site";
 
@@ -78,7 +80,7 @@ function ToggleGroup<T extends string>({
     <div
       role={role}
       aria-label={label}
-      className="bg-fd-muted inline-flex h-8 items-center gap-0.5 rounded-lg border p-0.5"
+      className={`bg-fd-muted inline-flex h-8 ${CONTROL_WIDTH} items-center gap-0.5 rounded-lg border p-0.5`}
     >
       {options.map((option) => {
         const on = value === option.value;
@@ -92,7 +94,7 @@ function ToggleGroup<T extends string>({
             aria-selected={role === "tablist" ? on : undefined}
             aria-checked={role === "radiogroup" ? on : undefined}
             onClick={() => onChange(option.value)}
-            className={`h-full rounded-md px-2.5 text-sm transition-colors ${
+            className={`h-full flex-1 rounded-md px-2.5 text-sm transition-colors ${CONTROL_FOCUS} ${
               on
                 ? "bg-fd-background text-fd-foreground shadow-sm"
                 : "text-fd-muted-foreground hover:text-fd-foreground"
