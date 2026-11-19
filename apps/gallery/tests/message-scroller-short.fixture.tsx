@@ -9,11 +9,6 @@ import {
   useMessageScroller,
 } from "../../../packages/ui";
 
-interface Turn {
-  id: number;
-  text: string;
-}
-
 /** The edges as the hook reads them, for the test to watch. */
 function Edges() {
   const api = useMessageScroller();

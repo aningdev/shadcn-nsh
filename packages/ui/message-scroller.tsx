@@ -42,8 +42,8 @@ const buttonInset = 16;
 /** A row's key the way the list names it: its `key`, its `id`, or its index. */
 function defaultKey(item: unknown, index: number): string {
   if (typeof item === "object" && item !== null) {
-    if ("key" in item && item.key != null) return String(item.key);
-    if ("id" in item && item.id != null) return String(item.id);
+    const key = "key" in item ? item.key : "id" in item ? item.id : undefined;
+    if (typeof key === "string" || typeof key === "number") return String(key);
   }
   return String(index);
 }
@@ -84,11 +84,11 @@ interface Scroller {
    * matter. */
   setIndexer(indexOf: (messageId: string) => number): void;
   /** Scrolls to the start of the list's content. */
-  scrollToStart(options?: MessageScrollerScrollOptions): void;
+  scrollToStart: (options?: MessageScrollerScrollOptions) => void;
   /** Scrolls to the end of the list's content. */
-  scrollToEnd(options?: MessageScrollerScrollOptions): void;
+  scrollToEnd: (options?: MessageScrollerScrollOptions) => void;
   /** Scrolls a row into the viewport. */
-  scrollToMessage(messageId: string, options?: MessageScrollerScrollOptions): void;
+  scrollToMessage: (messageId: string, options?: MessageScrollerScrollOptions) => void;
 }
 
 /** What the parts of a message scroller wear between them. */
@@ -147,11 +147,11 @@ function createScroller(initialScroll: MessageScrollerInitialScroll | undefined)
 /** The commands and edge state of a message scroller (`useMessageScroller()`). */
 export interface MessageScrollerApi {
   /** Scrolls the row with `messageId` into the viewport; a row that is not there does nothing. */
-  scrollToMessage(messageId: string, options?: MessageScrollerScrollOptions): void;
+  scrollToMessage: (messageId: string, options?: MessageScrollerScrollOptions) => void;
   /** Scrolls to the oldest content. */
-  scrollToStart(options?: MessageScrollerScrollOptions): void;
+  scrollToStart: (options?: MessageScrollerScrollOptions) => void;
   /** Scrolls to the newest content (and, once there, follows what comes next). */
-  scrollToEnd(options?: MessageScrollerScrollOptions): void;
+  scrollToEnd: (options?: MessageScrollerScrollOptions) => void;
   /** The viewport is at the start (live when read in a binding). */
   readonly atStart: boolean;
   /** The viewport is at the end (live when read in a binding). */
