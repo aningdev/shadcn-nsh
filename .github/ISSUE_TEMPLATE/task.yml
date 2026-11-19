@@ -1,0 +1,35 @@
+name: Task
+description: A planned change, written by a maintainer or an agent before the work starts
+body:
+  - type: markdown
+    attributes:
+      value: |
+        For work that is decided or being proposed: a refactor, a follow-up, a batch from an audit. A bug or a request from a user goes in the other templates.
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problem
+      description: What is wrong or missing today, with evidence (`file:line`, a measurement, a quote from NSH's or shadcn's docs).
+    validations:
+      required: true
+  - type: textarea
+    id: change
+    attributes:
+      label: Change
+      description: What will be done. A list is fine.
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      description: Checks a reviewer can tick, written from where a user stands.
+      value: |
+        - [ ]
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Out of scope, breaking changes, related
+      description: Optional. What this leaves for later; what users must change; linked issues and PRs.

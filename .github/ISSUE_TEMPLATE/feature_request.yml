@@ -1,0 +1,27 @@
+name: Feature request
+description: A component, a look, or something you want to do
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Search [open and closed issues](https://github.com/aningdev/shadcn-nsh/issues?q=is%3Aissue) first.
+  - type: textarea
+    id: want
+    attributes:
+      label: What you want
+      description: What the library should do, in a sentence or two.
+    validations:
+      required: true
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: What you are building and where it gets stuck. How you work around it today, if you do.
+    validations:
+      required: true
+  - type: textarea
+    id: reference
+    attributes:
+      label: Reference
+      description: Optional. The same thing in shadcn/ui, the NSH gallery or another library; a screenshot or a link.

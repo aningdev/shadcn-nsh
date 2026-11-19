@@ -1,0 +1,47 @@
+name: Bug report
+description: A component, a theme or the CLI does not do what it should
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Search [open and closed issues](https://github.com/aningdev/shadcn-nsh/issues?q=is%3Aissue) first. Security issues go to [a private advisory](https://github.com/aningdev/shadcn-nsh/security/advisories/new), not here.
+  - type: input
+    id: affected
+    attributes:
+      label: Affected
+      description: The component, theme or CLI command.
+      placeholder: e.g. Button, theme-shadcn, shadcn-nsh add
+    validations:
+      required: true
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: What happened
+      description: What you saw, and what you expected instead. Screenshots welcome.
+    validations:
+      required: true
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: How to reproduce
+      description: The smallest code that shows it (a few lines of TSX), or the CLI command and its output.
+      render: tsx
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      value: |
+        - `shadcn-nsh --version`:
+        - `nsh --version`:
+        - Platform: <!-- iOS / Android / macOS / Windows / Linux / web / terminal -->
+        - Light or dark, theme:
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Anything else
+      description: What you tried, a workaround, a guess at the cause.

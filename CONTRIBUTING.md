@@ -42,7 +42,7 @@ bun run nsh:bootstrap                     # 校验 CLI 与 references/nsh 在基
 
 `main` 受保护：不直接推，每个改动都是一个 PR，`check` 通过后 **squash 合并**，`main` 上一个 PR 一个提交，分支合并后自动删除。
 
-- **先有 issue**：bug 与新组件先开 issue（模板会问复现步骤或用途），PR 正文写 `Closes #N`。错字、文档小修可以直接开 PR。
+- **先有 issue**：bug 与新组件先开 issue，PR 正文写 `Closes #N`。错字、文档小修可以直接开 PR。三个模板：**Bug report**（受影响的组件、现象、最小复现、版本）、**Feature request**（想要什么、为什么、参照）、**Task**（维护者或代理在动手前写的计划：问题与证据、改什么、完成标准、不做什么与破坏性变更）。
 - **分支名** `<type>/<短描述>`，type 与提交信息的相同：`fix/field-label-wrap`、`feat/combobox-chips`、`docs/install-tabs`。
 - **一个 PR 一件事**：一个组件家族、一个 bug。不相关的改动分开提，review 和回滚都按 PR 来。
 - **PR 标题就是合并后的提交信息**，照下面「提交信息」的格式写；分支里的提交怎么写都行，合并时会压成一个。
@@ -83,7 +83,7 @@ feat(terminal): draw the program's output on the theme's well
 docs(readme): point the registry URL at the released tag
 ```
 
-PR 标题用这个格式，它就是 squash 之后 `main` 上的提交信息；正文说**为什么**改、改之前是什么样。PR 里的模板会问你三件事：改了什么、为什么、上面哪些检查跑过。
+PR 标题用这个格式，它就是 squash 之后 `main` 上的提交信息；正文说**为什么**改、改之前是什么样。PR 模板分四段：改了什么与为什么、破坏性变更（旧 → 新的 diff，没有就删）、截图（亮 / 暗，前 / 后，看不见的改动就删）、怎么确认的（跑过的命令与结果，上面哪些检查没跑及原因）。
 
 ## 加一个组件
 
