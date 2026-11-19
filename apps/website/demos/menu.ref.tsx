@@ -113,7 +113,9 @@ function App() {
               <View style={{ gap: 2 }}>
                 <Each of={reasons()} key="index">
                   {(line, i) => (
-                    <Text style={{ fontSize: 12, color: i() === 0 ? colors.foreground : colors.faint }}>
+                    <Text
+                      style={{ fontSize: 12, color: i() === 0 ? colors.foreground : colors.faint }}
+                    >
                       {line()}
                     </Text>
                   )}
