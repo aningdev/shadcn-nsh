@@ -17,9 +17,12 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  # The same gate as a pull request: what the tag points at must pass it.
+  # The same gate as a pull request, without the render check: branch protection (strict, linear)
+  # means the tagged commit is the tree the release pull request already rendered.
   check:
     uses: ./.github/workflows/check.yml
+    with:
+      render: false
 
   publish:
     needs: check

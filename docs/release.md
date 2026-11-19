@@ -6,7 +6,7 @@
 
 ## 1 发版之前
 
-- 这一版要带的 PR 都已合并，`main` 是绿的：`check.yml` 跑 `bun run check`、演示与 gallery 的类型检查、`port:render`、`test:install`。
+- 这一版要带的 PR 都已合并，`main` 是绿的：`check.yml` 的 `check` 通过（`port:render` 只在改到组件、主题、演示的 PR 上跑，`v*` tag 上不再跑）。
 - 本地再跑一遍 `bun run test:install`：在真实 NSH 应用里 `init` / `add`，逐条目。
 - 改动都写下了：每个 PR 已在 `CHANGELOG.md` 的 `Unreleased` 写了自己的条目；文档站、README 的兼容矩阵跟上了。
 - 上游那侧是干净的：`bun run port:check` 没有未审阅的变化（审阅过的已经 `bun run port:review` 记下）。
