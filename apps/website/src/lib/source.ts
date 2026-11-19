@@ -1,5 +1,5 @@
 import type { Folder, Item, Node, Root } from "fumadocs-core/page-tree";
-import { loader } from "fumadocs-core/source";
+import { loader, llms } from "fumadocs-core/source";
 import { pageSchema } from "fumadocs-core/source/schema";
 import { defineDocs } from "fumadocs-mdx/macro";
 import { z } from "zod";
@@ -93,3 +93,9 @@ export function pageTree(): Root {
 
   return { name: "Docs", children };
 }
+
+export const docsLlms = llms(source, {
+  renderPage: async (page) => `# ${page.data.title} (${page.url})
+
+${await page.data.getText("processed")}`,
+});
