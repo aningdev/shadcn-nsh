@@ -5,6 +5,7 @@ import {
   colors,
   hovered,
   radius,
+  rounded,
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
@@ -64,7 +65,7 @@ function AreaEdge() {
   return terminal ? null : (
     <View
       class="border-foreground/10 absolute inset-0 border"
-      style={{ pointerEvents: "none", borderRadius: radius.control }}
+      style={{ pointerEvents: "none", ...rounded(radius.control) }}
     />
   );
 }
@@ -88,7 +89,7 @@ export function colorAreaLook() {
   return {
     style: { height: pointer ? 160 : 192 },
     get panelStyle(): ViewStyle {
-      return { borderRadius: radius.control };
+      return { ...rounded(radius.control) };
     },
     thumbClass,
     thumbStyle,
@@ -213,7 +214,7 @@ function FormatButton(props: { label: string }) {
         marginLeft: terminal ? 0 : 4,
         marginRight: terminal ? TERMINAL_COLUMN : 4,
         paddingHorizontal: terminal ? 0 : 6,
-        borderRadius: Math.max(radius.control - 3, 2),
+        ...rounded(Math.max(radius.control - 3, 2)),
       }}
     >
       <Text style={{ fontSize: 12, fontWeight: "500", color: colors.text }}>
@@ -417,7 +418,7 @@ export function ColorSwatches(props: { colors: readonly string[] }) {
           style={
             terminal
               ? { width: 2 * TERMINAL_COLUMN, height: TERMINAL_ROW }
-              : { width: 24, height: 24, borderRadius: Math.max(radius.control - 1, 2) }
+              : { width: 24, height: 24, ...rounded(Math.max(radius.control - 1, 2)) }
           }
           checkerboardColor={checker.checkerboardColor}
           checkerboardSize={checker.checkerboardSize}

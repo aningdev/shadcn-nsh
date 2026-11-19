@@ -15,8 +15,9 @@ function App() {
   const align = signal("Left");
   const events = signal<string[]>([]);
   const log = (line: string) => events.set([line, ...events()].slice(0, 4));
-  const main = segmentedLook({ size: "default", fill: true });
-  const compact = segmentedLook({ size: "sm" });
+  // Built where it is drawn: the radii are numbers, so they are read per draw, not kept.
+  const main = () => segmentedLook({ size: "default", fill: true });
+  const compact = () => segmentedLook({ size: "sm" });
 
   return (
     <DemoPage title="Segmented">
@@ -39,7 +40,7 @@ function App() {
       >
         <View style={sectionSurface({ padded: true })}>
           <DemoSection title="Fill: the segments share the row" axis="block">
-            <Tabs style={main.style} indicatorStyle={main.indicatorStyle}>
+            <Tabs style={main().style} indicatorStyle={main().indicatorStyle}>
               {[{ value: "List", count: 12 }, { value: "Board" }, { value: "Calendar" }].map(
                 (option) => (
                   <Tab
@@ -49,12 +50,12 @@ function App() {
                       view.set(option.value);
                       log(`value: ${option.value}`);
                     }}
-                    {...main.segment({ selected: () => view() === option.value })}
+                    {...main().segment({ selected: () => view() === option.value })}
                   >
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-                      <Text style={main.label(view() === option.value)}>{option.value}</Text>
+                      <Text style={main().label(view() === option.value)}>{option.value}</Text>
                       <If when={option.count !== undefined}>
-                        <Text style={main.count}>{option.count}</Text>
+                        <Text style={main().count}>{option.count}</Text>
                       </If>
                     </View>
                   </Tab>
@@ -64,7 +65,7 @@ function App() {
           </DemoSection>
 
           <DemoSection title="Small" axis="block">
-            <Tabs style={compact.style} indicatorStyle={compact.indicatorStyle}>
+            <Tabs style={compact().style} indicatorStyle={compact().indicatorStyle}>
               {["Left", "Center", "Right"].map((label) => (
                 <Tab
                   selected={align() === label}
@@ -73,10 +74,10 @@ function App() {
                     align.set(label);
                     log(`value: ${label}`);
                   }}
-                  {...compact.segment({ selected: () => align() === label })}
+                  {...compact().segment({ selected: () => align() === label })}
                 >
                   <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-                    <Text style={compact.label(align() === label)}>{label}</Text>
+                    <Text style={compact().label(align() === label)}>{label}</Text>
                   </View>
                 </Tab>
               ))}
@@ -84,24 +85,24 @@ function App() {
           </DemoSection>
 
           <DemoSection title="Disabled" axis="block">
-            <Tabs style={compact.style} indicatorStyle={compact.indicatorStyle}>
+            <Tabs style={compact().style} indicatorStyle={compact().indicatorStyle}>
               <Tab
                 selected={false}
                 disabled
-                {...compact.segment({ selected: () => false, disabled: () => true })}
+                {...compact().segment({ selected: () => false, disabled: () => true })}
               >
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-                  <Text style={compact.label(false)}>Day</Text>
+                  <Text style={compact().label(false)}>Day</Text>
                 </View>
               </Tab>
-              <Tab selected {...compact.segment({ selected: () => true })}>
+              <Tab selected {...compact().segment({ selected: () => true })}>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-                  <Text style={compact.label(true)}>Week</Text>
+                  <Text style={compact().label(true)}>Week</Text>
                 </View>
               </Tab>
-              <Tab selected={false} {...compact.segment({ selected: () => false })}>
+              <Tab selected={false} {...compact().segment({ selected: () => false })}>
                 <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-                  <Text style={compact.label(false)}>Month</Text>
+                  <Text style={compact().label(false)}>Month</Text>
                 </View>
               </Tab>
             </Tabs>

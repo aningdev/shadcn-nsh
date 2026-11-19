@@ -1,6 +1,6 @@
 // Shared list looks: popup, rows, search, chevron, clear — used by select, combobox, calendar, date-picker.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, finish, radius, terminal } from "@shadcn-nsh/theme";
+import { colors, cornerCurve, finish, radius, rounded, terminal } from "@shadcn-nsh/theme";
 import { Check, ChevronRight, X } from "lucide";
 import type { JSX, ViewStyle } from "nsh";
 import { platform, Text, View } from "nsh";
@@ -19,9 +19,7 @@ export interface ListboxPopupOptions {
   minWidth?: number;
 }
 
-/** A list's sheet, on a touch screen: the corners of its top edge, and the room under its last
- * row (the window's bottom edge). */
-const SHEET_CORNER = 20;
+/** The room under a sheet's last row, on a touch screen (the window's bottom edge). */
 const SHEET_FOOT = 34;
 
 /**
@@ -37,7 +35,7 @@ const SHEET_FOOT = 34;
 export function listboxPopup(o?: ListboxPopupOptions): ViewStyle {
   return pointer
     ? {
-        borderRadius: radius.inset,
+        ...rounded(radius.inset),
         borderWidth: 1,
         padding: 6,
         ...finish.menu,
@@ -46,8 +44,9 @@ export function listboxPopup(o?: ListboxPopupOptions): ViewStyle {
       }
     : {
         backgroundColor: colors.surface,
-        borderTopLeftRadius: SHEET_CORNER,
-        borderTopRightRadius: SHEET_CORNER,
+        borderTopLeftRadius: radius.card,
+        borderTopRightRadius: radius.card,
+        ...cornerCurve,
         paddingHorizontal: 10,
         paddingTop: 10,
         paddingBottom: SHEET_FOOT,
@@ -278,7 +277,7 @@ export function listboxSearch() {
         height: pointer ? 32 : 40,
         paddingHorizontal: 9,
         marginBottom: 6,
-        borderRadius: radius.control,
+        ...rounded(radius.control),
         borderWidth: 1,
         backgroundColor: colors.field,
         ...finish.field,

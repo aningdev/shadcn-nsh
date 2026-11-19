@@ -395,8 +395,6 @@ function themeLevel(): Record<string, string> {
     radius: "14px",
     "radius-card": "20px",
     "radius-control": "11px",
-    // A pane's thickest tier floats: shadcn's `rounded-xl` at this radius (`--radius-xl`, 1.4 ×).
-    "radius-popover": "20px",
     // The main action is the ink's solid pane; `on-brand` is what reads on it.
     "brand-fill": "var(--primary)",
     "on-brand": "var(--primary-foreground)",

@@ -1,6 +1,6 @@
 // A segmented control: the look (`segmentedLook`) and the parts that wear it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, finish, focusRing, hovered } from "@shadcn-nsh/theme";
+import { colors, finish, focusRing, hovered, radius, rounded } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { computed, context, platform, signal, split, Text, View } from "nsh";
 import {
@@ -45,7 +45,7 @@ export interface SegmentedLookOptions {
 /**
  * A segmented control's look: a sunk track (`style`, on `Tabs` or a
  * `RadioGroup`) as wide as its labels with a pointer (30 points high,
- * 12-point labels, the thumb's corners 6 and the track's 9), spanning the
+ * 12-point labels, the thumb's corners a step inside the track's), spanning the
  * row on a touch screen or with `fill`; the selected segment's thumb,
  * standing off the track in both appearances (`finish.thumb`: white with a
  * soft drop on a light track), as `Tabs`' traveling `indicatorStyle` or as
@@ -60,11 +60,11 @@ export function segmentedLook(o?: SegmentedLookOptions) {
   const inset = 2;
   // Small is as tall as a small button with a pointer (24), so the two sit level in a row.
   const height = pointer ? (small ? 24 : 30) : small ? 32 : 36;
-  // The thumb's corners, two points inside the track's.
-  const thumbCorner = pointer ? 6 : 7;
+  // The track takes the base radius; the thumb sits a step inside it.
+  const trackCorner = pointer ? radius.inset - 1 : radius.inset;
+  const thumbCorner = pointer ? radius.control - 2 : radius.control - 1;
   const thumb = (): ViewStyle => ({
-    borderRadius: thumbCorner,
-    borderCurve: "continuous",
+    ...rounded(thumbCorner),
     borderWidth: 1,
     ...finish.thumb,
   });
@@ -75,8 +75,7 @@ export function segmentedLook(o?: SegmentedLookOptions) {
         flexDirection: "row",
         alignSelf: spread ? "stretch" : "flex-start",
         padding: inset,
-        borderRadius: pointer ? 9 : 10,
-        borderCurve: "continuous",
+        ...rounded(trackCorner),
         // Sunk like the pill bar's, not the switch's track: in dark the track is
         // raised as the thumb is, which would hide the thumb.
         backgroundColor: colors.inset,
@@ -98,8 +97,7 @@ export function segmentedLook(o?: SegmentedLookOptions) {
         // A clear edge the thumb's takes over, so a checked segment keeps its size.
         style: {
           ...(spread ? { flex: 1, paddingHorizontal: 7 } : { paddingHorizontal: 9 }),
-          borderRadius: thumbCorner,
-          borderCurve: "continuous",
+          ...rounded(thumbCorner),
           borderWidth: 1,
           borderColor: "transparent",
           flexDirection: "row",

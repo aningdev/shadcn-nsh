@@ -2,10 +2,9 @@
   "name": "shadcn neutral",
   "cssVars": {
     "theme": {
-      "radius": "8px",
+      "radius": "10px",
       "radius-card": "14px",
       "radius-control": "8px",
-      "radius-popover": "14px",
       "brand-fill": "var(--primary)",
       "on-brand": "var(--primary-foreground)",
       "scrim": "oklch(0 0 0 / 0.5)",

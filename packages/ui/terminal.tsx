@@ -8,6 +8,7 @@ import {
   TERMINAL_COLUMN,
   TERMINAL_ROW,
   terminal as terminalIdiom,
+  rounded,
 } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
 import { platform, split } from "nsh";
@@ -65,8 +66,7 @@ export function terminalLook(o?: TerminalLookOptions) {
         ...finish.field,
         borderWidth: 1,
         borderColor: colors.fieldBorder,
-        borderRadius: radius.inset,
-        borderCurve: "continuous",
+        ...rounded(radius.inset),
         paddingHorizontal: wellPad.x,
         paddingVertical: wellPad.y,
         ...read(o?.style),

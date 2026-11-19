@@ -19,4 +19,11 @@ brings. The list is `apps/website/demos/palettes.ts`; this page is generated fro
 theme's own `theme.json` and `finishes.json`, and the layers it groups tokens by and the duties it
 reports for a finish are the [theme spec](https://github.com/aningdev/shadcn-nsh/blob/main/docs/specs/theme-roles.md)'s.
 
+## One radius, three tiers
+
+A theme states one base length, `radius`; `radius-control` is 0.8× it and `radius-card` is 1.4×,
+each rounded to whole points. The default theme's base is 10, so controls are 8 and cards are 14; a
+dialog takes the card tier. Every corner that reads a theme radius uses the continuous curve, which
+`rounded()` applies in one place.
+
 <ThemesPage />

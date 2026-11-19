@@ -85,25 +85,36 @@ Spread one where a control needs that depth:
 
 ## Radii
 
-`theme.json`'s `theme` block holds `radius-card` (12), `radius` (10) and `radius-control` (7). `radius` reads them for JSX:
+`theme.json`'s `theme` block holds one base length, `radius` (10), and the two tiers derived from
+it: `radius-control` (8, 0.8× the base) and `radius-card` (14, 1.4× the base), each rounded to whole
+points. `radius` reads them for JSX:
 
 ```tsx
 import { radius } from "@shadcn-nsh/theme";
 
-radius.card; // 12
-radius.inset; // 10
-radius.control; // 7
+radius.inset; // 10, the base
+radius.control; // 8
+radius.card; // 14
+```
+
+A dialog takes the card tier. `rounded()` puts a corner on one of these with the continuous curve
+every theme corner shares:
+
+```tsx
+import { radius, rounded } from "@shadcn-nsh/theme";
+
+const card = { ...rounded(radius.card) };
 ```
 
 ## Reading the theme
 
 ```tsx
-import { alpha, colors, finish, focusRing, radius } from "@shadcn-nsh/theme";
+import { alpha, colors, finish, focusRing, radius, rounded } from "@shadcn-nsh/theme";
 
 const card = {
   backgroundColor: colors.surface,
   borderColor: colors.border,
-  borderRadius: radius.card,
+  ...rounded(radius.card),
   boxShadow: finish.card.boxShadow,
 };
 

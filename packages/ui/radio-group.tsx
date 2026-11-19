@@ -9,6 +9,7 @@ import {
   terminal,
   TERMINAL_ROW,
   tints,
+  rounded,
 } from "@shadcn-nsh/theme";
 import type { JSX, ViewStyle } from "nsh";
 import { reduceMotion, split, Text, View } from "nsh";
@@ -108,8 +109,7 @@ export function choiceTileLook(on: Live<boolean>, o?: ChoiceTileOptions): Choice
         minWidth: 0,
         padding: 12,
         paddingTop: 14,
-        borderRadius: radius.inset,
-        borderCurve: "continuous",
+        ...rounded(radius.inset),
         borderWidth: 1,
         borderColor: on ? colors.accent : colors.border,
         backgroundColor: on ? tints.accent : colors.raised,

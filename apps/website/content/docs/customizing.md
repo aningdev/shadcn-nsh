@@ -28,7 +28,7 @@ Edit the values and keep the keys: components and finishes refer to them by name
 ```json
 {
   "cssVars": {
-    "theme": { "radius": "10px", "radius-card": "12px", "radius-control": "7px" },
+    "theme": { "radius": "10px", "radius-card": "14px", "radius-control": "8px" },
     "light": { "background": "#f6f6f9", "primary": "#c6ef6a" },
     "dark": { "background": "#16191f", "primary": "#c4ec6a" }
   }

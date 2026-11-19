@@ -1,7 +1,15 @@
 // A text field: the size, edge and text every field shares (`fieldSize`, `edgeClass`, `fieldLook`,
 // `fieldText`) and the `Input` that wears them as `inputLook`.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, finish, radius, terminal, TERMINAL_COLUMN, TERMINAL_ROW } from "@shadcn-nsh/theme";
+import {
+  colors,
+  finish,
+  radius,
+  terminal,
+  TERMINAL_COLUMN,
+  TERMINAL_ROW,
+  rounded,
+} from "@shadcn-nsh/theme";
 import type { InputStyle, ViewStyle } from "nsh";
 import { platform, split } from "nsh";
 import { Input as BaseInput, type InputProps as BaseInputProps } from "nsh/base";
@@ -105,8 +113,7 @@ function frame(o: FieldLookOptions | undefined): ViewStyle {
   const ghost = (read(o?.variant) ?? "default") === "ghost";
   const flat = !!read(o?.readonly) || !!read(o?.disabled);
   return {
-    borderRadius: radius.control,
-    borderCurve: "continuous",
+    ...rounded(radius.control),
     borderWidth: 1,
     backgroundColor: ghost ? "transparent" : colors.field,
     // Recessed while editable; a read-only, disabled or ghost field lies flat. Its edge is

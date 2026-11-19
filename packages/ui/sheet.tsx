@@ -1,6 +1,6 @@
 // A sheet: the look (`sheetPanel`, `sheetGrabber`) and the parts that wear it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors } from "@shadcn-nsh/theme";
+import { colors, cornerCurve, radius } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { context, keyboardFrame, safeArea, split, View, windowSize } from "nsh";
 import {
@@ -20,13 +20,13 @@ export type SheetSide = "bottom" | "top" | "left" | "right";
 /**
  * A sheet's panel (`nsh/base`'s `Sheet`'s `popupStyle`): the card's
  * surface with the border's edge. At the bottom (or the top) it spans the
- * width, its two inner corners 20 points round, 16 points of padding at its
- * sides and its rows 14 apart, kept above the home indicator (the sheet
+ * width, its two inner corners on the card's radius, 16 points of padding at
+ * its sides and its rows 14 apart, kept above the home indicator (the sheet
  * itself stands above the keyboard), and never taller than the screen
  * below the status bar; put `sheetGrabber` first in a bottom one. At the
  * left or the right it is the full height, at most 360 points wide (48
- * short of a narrow window), its inner corners 16 round, 20 points of
- * padding inside the safe area.
+ * short of a narrow window), its inner corners on the card's radius, 20
+ * points of padding inside the safe area.
  */
 export function sheetPanel(side: SheetSide): ViewStyle {
   const surface: ViewStyle = { backgroundColor: colors.surface, borderColor: colors.border };
@@ -36,15 +36,20 @@ export function sheetPanel(side: SheetSide): ViewStyle {
       ...surface,
       borderWidth: 1,
       ...(bottom
-        ? { borderBottomWidth: 0, borderTopLeftRadius: 20, borderTopRightRadius: 20, paddingTop: 8 }
+        ? {
+            borderBottomWidth: 0,
+            borderTopLeftRadius: radius.card,
+            borderTopRightRadius: radius.card,
+            paddingTop: 8,
+          }
         : {
             borderTopWidth: 0,
-            borderBottomLeftRadius: 20,
-            borderBottomRightRadius: 20,
+            borderBottomLeftRadius: radius.card,
+            borderBottomRightRadius: radius.card,
             paddingTop: safeArea().top + 16,
             paddingBottom: 20,
           }),
-      borderCurve: "continuous",
+      ...cornerCurve,
       // A bottom sheet stands above the keyboard while a field has it (`Sheet` lifts it by the keyboard past the home
       // indicator): its room is what the keyboard leaves.
       maxHeight:
@@ -59,7 +64,6 @@ export function sheetPanel(side: SheetSide): ViewStyle {
       gap: 14,
     };
   }
-  const corner = 16;
   return {
     ...surface,
     width: Math.min(360, windowSize().width - 48),
@@ -67,10 +71,18 @@ export function sheetPanel(side: SheetSide): ViewStyle {
     paddingTop: safeArea().top + 16,
     paddingBottom: safeArea().bottom + 16,
     gap: 16,
-    borderCurve: "continuous",
+    ...cornerCurve,
     ...(side === "right"
-      ? { borderLeftWidth: 1, borderTopLeftRadius: corner, borderBottomLeftRadius: corner }
-      : { borderRightWidth: 1, borderTopRightRadius: corner, borderBottomRightRadius: corner }),
+      ? {
+          borderLeftWidth: 1,
+          borderTopLeftRadius: radius.card,
+          borderBottomLeftRadius: radius.card,
+        }
+      : {
+          borderRightWidth: 1,
+          borderTopRightRadius: radius.card,
+          borderBottomRightRadius: radius.card,
+        }),
   };
 }
 

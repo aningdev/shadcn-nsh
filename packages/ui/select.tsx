@@ -1,7 +1,15 @@
 // A select: the trigger's look (`pickerLook`, `Picker`) and the parts of the list (`Select`,
 // `SelectTrigger`, `SelectContent`), which wear the shared listbox look.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { alpha, colors, finish, radius, terminal, TERMINAL_COLUMN } from "@shadcn-nsh/theme";
+import {
+  alpha,
+  colors,
+  finish,
+  radius,
+  terminal,
+  TERMINAL_COLUMN,
+  rounded,
+} from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { cleanup, context, platform, reduceMotion, signal, split, Text, View } from "nsh";
@@ -107,7 +115,7 @@ export function pickerLook(o?: PickerLookOptions) {
           : clearable
             ? clearInset + controlSize.clear + 8
             : triggerPadding,
-        borderRadius: radius.control,
+        ...rounded(radius.control),
         borderWidth: 1,
         ...(outline
           ? { backgroundColor: colors.raised, ...finish.raised }

@@ -1,6 +1,6 @@
 // A toast: the look (`toastLook` and its companions) at the top, and the `Toast` that wears it below.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { alpha, colors, finish, focusRing, hovered, radius } from "@shadcn-nsh/theme";
+import { alpha, colors, finish, focusRing, hovered, radius, rounded } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
 import { Toast as BaseToast, type ToastProps as BaseToastProps } from "nsh/base";
@@ -24,8 +24,7 @@ export function toastLook(): ViewStyle {
     gap: 12,
     paddingVertical: 12,
     paddingHorizontal: 14,
-    borderRadius: radius.inset,
-    borderCurve: "continuous",
+    ...rounded(radius.inset),
     borderWidth: 1,
     ...finish.menu,
   };
@@ -73,7 +72,7 @@ export function toastCloseLook() {
       height: 24,
       alignItems: "center",
       justifyContent: "center",
-      borderRadius: radius.card,
+      ...rounded(radius.card),
       ...pressTransition("background-color"),
     } as ViewStyle,
     get hoverStyle(): ViewStyle {

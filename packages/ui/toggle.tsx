@@ -1,6 +1,6 @@
 // A toggle: the look (`toggleLook` and its companions) and the `Toggle` that wears it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, finish, focusRing, hovered, terminal } from "@shadcn-nsh/theme";
+import { colors, finish, focusRing, hovered, rounded, terminal } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewStyle } from "nsh";
 import { platform, split, Text } from "nsh";
 import { Toggle as BaseToggle, type ToggleProps as BaseToggleProps } from "nsh/base";
@@ -99,8 +99,7 @@ export function toggleLook(o?: ToggleLookOptions) {
         alignItems: "center",
         justifyContent: "center",
         gap: 6,
-        borderRadius: dims.side / 4 + 1,
-        borderCurve: "continuous",
+        ...rounded(dims.side / 4 + 1),
         borderWidth: 1,
         ...(outline
           ? { borderColor: colors.fieldBorder, backgroundColor: colors.field }

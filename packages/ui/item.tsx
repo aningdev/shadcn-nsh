@@ -1,7 +1,7 @@
 // An item: the look (`itemLook`) and the ten parts that wear it.
 // This library's own (upstream has no item family): the parts and their axes follow shadcn/ui and
 // the look is written from the theme's roles. Yours to change.
-import { colors, radius, TERMINAL_COLUMN, terminal } from "@shadcn-nsh/theme";
+import { colors, radius, rounded, TERMINAL_COLUMN, terminal } from "@shadcn-nsh/theme";
 import type { TextStyle, TextProps, ViewProps, ViewStyle } from "nsh";
 import { split, Text, View } from "nsh";
 
@@ -98,7 +98,7 @@ export function itemLook(): ItemLook {
             flexWrap: "wrap",
             alignItems: "center",
             minHeight: controlSize.row,
-            borderRadius: radius.inset,
+            ...rounded(radius.inset),
             borderWidth: 1,
             borderColor: variant === "outline" ? colors.border : "transparent",
             backgroundColor: variant === "muted" ? colors.mutedFill : "transparent",
@@ -113,7 +113,7 @@ export function itemLook(): ItemLook {
               height: iconTile,
               alignItems: "center",
               justifyContent: "center",
-              borderRadius: radius.control,
+              ...rounded(radius.control),
               borderWidth: 1,
               borderColor: colors.border,
               backgroundColor: colors.inset,
@@ -125,7 +125,7 @@ export function itemLook(): ItemLook {
               alignItems: "center",
               justifyContent: "center",
               overflow: "hidden",
-              borderRadius: radius.control,
+              ...rounded(radius.control),
               backgroundColor: colors.inset,
             },
     get content(): ViewStyle {

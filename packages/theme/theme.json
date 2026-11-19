@@ -3,9 +3,8 @@
   "cssVars": {
     "theme": {
       "radius": "10px",
-      "radius-card": "12px",
-      "radius-control": "7px",
-      "radius-popover": "16px",
+      "radius-card": "14px",
+      "radius-control": "8px",
       "brand-fill": "oklch(0.89637 0.16627 124.031)",
       "on-brand": "oklch(0.19339 0.0197 121.819)",
       "scrim": "oklch(0 0 0 / 0.45)",

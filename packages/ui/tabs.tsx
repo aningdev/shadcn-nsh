@@ -9,6 +9,7 @@ import {
   motion,
   radius,
   terminal,
+  rounded,
 } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
@@ -138,7 +139,7 @@ export function underlineTabsLook() {
             height: controlSize.tabs,
             paddingHorizontal: 8,
             marginBottom: 4,
-            borderRadius: radius.control,
+            ...rounded(radius.control),
             borderWidth: 1,
             borderColor: "transparent",
             justifyContent: "center",
@@ -219,7 +220,7 @@ export function TabTitle(props: {
             paddingHorizontal: 5,
             // A pill: two points inside the inset's corners, which is half this box in the
             // default theme (`radius` 10).
-            borderRadius: radius.inset - 2,
+            ...rounded(radius.inset - 2),
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: colors.inset,

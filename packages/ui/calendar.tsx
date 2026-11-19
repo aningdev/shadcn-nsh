@@ -1,6 +1,6 @@
 // A calendar: the look (`CalendarItem`, `calendarLook`, `TimeSegment`) and `Calendar` that wears it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { alpha, colors, radius, terminal } from "@shadcn-nsh/theme";
+import { alpha, colors, cornerCurve, radius, rounded, terminal } from "@shadcn-nsh/theme";
 import { ChevronRight } from "lucide";
 import type { ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
@@ -116,7 +116,7 @@ function Arrow(props: { at: "start" | "end" }) {
         alignSelf: props.at === "start" ? "flex-start" : "flex-end",
         alignItems: "center",
         justifyContent: "center",
-        borderRadius: cellRadius(),
+        ...rounded(cellRadius()),
       }}
     >
       <View style={{ transform: [{ rotate: props.at === "start" ? "180deg" : "0deg" }] }}>
@@ -147,7 +147,7 @@ function MonthOrYear(props: { kind: "month" | "year"; value: number }) {
           height: cell,
           alignItems: "center",
           justifyContent: "center",
-          borderRadius: cellRadius(),
+          ...rounded(cellRadius()),
         }}
       >
         <Text
@@ -217,6 +217,7 @@ function Day(props: { item: CalendarEntry; firstDayOfWeek?: number }) {
             borderBottomLeftRadius: column() === 0 ? cellRadius() : 0,
             borderTopRightRadius: column() === 6 ? cellRadius() : 0,
             borderBottomRightRadius: column() === 6 ? cellRadius() : 0,
+            ...cornerCurve,
           }}
         />
         <View
@@ -228,7 +229,7 @@ function Day(props: { item: CalendarEntry; firstDayOfWeek?: number }) {
             width: cell,
             maxWidth: "100%",
             height: cell,
-            borderRadius: cellRadius(),
+            ...rounded(cellRadius()),
             alignItems: "center",
             justifyContent: "center",
           }}
@@ -371,7 +372,7 @@ export const calendarLook = {
       return {
         height: 28,
         paddingHorizontal: terminal ? 8 : 10,
-        borderRadius: radius.control,
+        ...rounded(radius.control),
         justifyContent: "center" as const,
         fontSize: 13,
         color: colors.text,

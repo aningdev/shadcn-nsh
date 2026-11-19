@@ -69,16 +69,18 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 <!-- theme-lint: tokens-c -->
 
-| 键                                                             | 值                               | 用途                      |
-| -------------------------------------------------------------- | -------------------------------- | ------------------------- |
-| `radius` / `radius-card` / `radius-control` / `radius-popover` | `10px` / `12px` / `7px` / `16px` | 四档圆角                  |
-| `brand-fill`                                                   | 强调色的填充                     | `calendar` 的选中日       |
-| `on-brand`                                                     | `brand-fill` 上的字              | 同上                      |
-| `scrim`                                                        | 遮罩                             | `lib/popup`、`dock-area`  |
-| `window-close` / `window-minimize` / `window-zoom`             | 三颗窗口按钮各自的色             | `theme.ts` 的窗口按钮映射 |
-| `window-control-ink` / `window-control-edge`                   | 窗口按钮的字与边                 | 同上                      |
+| 键                                                 | 值                      | 用途                      |
+| -------------------------------------------------- | ----------------------- | ------------------------- |
+| `radius` / `radius-card` / `radius-control`        | `10px` / `14px` / `8px` | 基础圆角与由它推导的两档  |
+| `brand-fill`                                       | 强调色的填充            | `calendar` 的选中日       |
+| `on-brand`                                         | `brand-fill` 上的字     | 同上                      |
+| `scrim`                                            | 遮罩                    | `lib/popup`、`dock-area`  |
+| `window-close` / `window-minimize` / `window-zoom` | 三颗窗口按钮各自的色    | `theme.ts` 的窗口按钮映射 |
+| `window-control-ink` / `window-control-edge`       | 窗口按钮的字与边        | 同上                      |
 
 <!-- /theme-lint: tokens-c -->
+
+`radius` 是唯一的基础值：`radius-control` = round(0.8 × `radius`)，`radius-card` = round(1.4 × `radius`)，`check:theme` 拒绝不合的档位；对话框用 `radius-card`。读主题圆角的角一律用 `rounded()`，continuous 曲线只在 `packages/theme/theme.ts` 给。
 
 ## 2 finishes.json 的两条线
 

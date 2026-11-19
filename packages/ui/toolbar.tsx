@@ -1,6 +1,6 @@
 // A toolbar: the look (`toolbarTrack`, `toolbarRule`) and the parts that wear it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, radius, terminal, TERMINAL_GAP } from "@shadcn-nsh/theme";
+import { colors, radius, rounded, terminal, TERMINAL_GAP } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
 import { context, split } from "nsh";
 import {
@@ -32,8 +32,7 @@ export function toolbarTrack(o?: ToolbarTrackOptions): ViewStyle {
     gap: terminal ? TERMINAL_GAP : 2,
     flexWrap: terminal && !o?.vertical ? "wrap" : undefined,
     padding: 3,
-    borderRadius: radius.inset,
-    borderCurve: "continuous",
+    ...rounded(radius.inset),
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.inset,

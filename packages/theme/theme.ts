@@ -415,7 +415,8 @@ export const toneTint = (tone: Tone) => (tone === "neutral" ? colors.raised : ti
  * the system font with tabular numbers instead. */
 export const mono = "monospace";
 
-/** Corner radii (`theme.json`'s `radius-card`, `radius`, `radius-control`, `radius-popover`). */
+/** Corner radii (`theme.json`'s `radius`, `radius-card`, `radius-control`):
+ * a base and the two tiers derived from it. */
 export const radius = {
   get card() {
     return token("radius-card");
@@ -426,11 +427,16 @@ export const radius = {
   get control() {
     return token("radius-control");
   },
-  /** A dialog's corners: the floating tier's own, bigger than a card's. */
-  get popover() {
-    return token("radius-popover");
-  },
 };
+
+/** Every corner that reads a theme radius is continuous: the curve macOS
+ * draws, not a circular arc. */
+export const cornerCurve: ViewStyle = { borderCurve: "continuous" };
+
+/** A corner on one of the theme's radii, with the curve they all share. */
+export function rounded(radius: number): ViewStyle {
+  return { borderRadius: radius, ...cornerCurve };
+}
 
 /** The system header's colors on every page (iOS, Android). */
 export const header = {

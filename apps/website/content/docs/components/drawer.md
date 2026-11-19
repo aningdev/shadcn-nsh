@@ -65,7 +65,7 @@ the grabber is drawn by the component, not by the app.
 ### Another edge
 
 `side` takes any edge of the panel (`"bottom"` unless set). A drawer from the left or the right keeps
-the panel's full height and its 16-point inner corners.
+the panel's full height and its inner corners on the card's radius.
 
 ```tsx
 <DrawerContent side="right">…</DrawerContent>

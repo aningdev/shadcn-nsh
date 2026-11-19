@@ -223,6 +223,35 @@ for (const name of specPartsOf.shared)
   if (!sharedKeys.includes(name))
     fail(`docs/specs/theme-roles.md: the C layer states \`${name}\`, which cssVars.theme has not`);
 
+// The three radii are one: `radius-control` and `radius-card` are the base at 0.8× and 1.4×,
+// rounded to whole points, so a theme cannot state a tier out of step with the radius it derives
+// from.
+const pxOf = (value: string | undefined, path: string, name: string): number | undefined => {
+  const match = value?.match(/^(\d+(?:\.\d+)?)px$/);
+  if (!match) {
+    fail(`${path}: \`${name}\` is \`${value ?? "missing"}\`, not a px length`);
+    return undefined;
+  }
+  return Number(match[1]);
+};
+for (const theme of themes) {
+  const path = `packages/theme/themes/${theme}/theme.json`;
+  const shared = tokensOf.get(theme)?.cssVars.theme ?? {};
+  const base = pxOf(shared.radius, path, "radius");
+  if (base === undefined) continue;
+  for (const [name, factor] of [
+    ["radius-control", 0.8],
+    ["radius-card", 1.4],
+  ] as const) {
+    const value = pxOf(shared[name], path, name);
+    const expected = Math.round(base * factor);
+    if (value !== undefined && value !== expected)
+      fail(
+        `${path}: \`${name}\` is ${value}px, not round(${factor} × \`radius\` ${base}px) = ${expected}px`,
+      );
+  }
+}
+
 const shapeOf = new Map<string, string[]>();
 for (const appearance of appearances)
   for (const [role, finish] of Object.entries(defaultFinishes[appearance]))

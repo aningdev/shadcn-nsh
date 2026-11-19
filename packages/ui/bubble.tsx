@@ -1,7 +1,7 @@
 // A bubble: the framed surface of one turn of a conversation, and the row of reactions that
 // hangs off its edge. This library's own (drawn on `nsh`'s View and Text), so there is no port
 // region. Yours to change.
-import { colors, radius, tints } from "@shadcn-nsh/theme";
+import { colors, radius, rounded, tints } from "@shadcn-nsh/theme";
 import type { JSX, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, platform, split, Text, token, View } from "nsh";
 
@@ -142,8 +142,7 @@ export function bubbleLook(): BubbleLook {
     content: (variant: BubbleVariant): ViewStyle => ({
       minWidth: 0,
       maxWidth: "100%",
-      borderRadius: variant === "ghost" ? 0 : radius.card,
-      borderCurve: "continuous",
+      ...rounded(variant === "ghost" ? 0 : radius.card),
       borderWidth: 1,
       borderColor: variant === "outline" ? colors.border : "transparent",
       backgroundColor: fill(variant),

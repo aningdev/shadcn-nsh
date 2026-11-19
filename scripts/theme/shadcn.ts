@@ -162,11 +162,9 @@ function own(appearance: Appearance) {
 
 /** The theme's own tokens, shared by the appearances (a colour may name one: `var(--primary)`). */
 const themeLevel = (light: ReturnType<typeof palette>): Record<string, string> => ({
-  radius: radius(0.8),
+  radius: radius(1),
   "radius-card": radius(1.4),
   "radius-control": radius(0.8),
-  // A dialog's corners: shadcn's `rounded-xl`, the same step as a card's (`--radius-xl`).
-  "radius-popover": radius(1.4),
   // The main action: shadcn's `primary`, which differs by appearance, so the token names it.
   "brand-fill": "var(--primary)",
   "on-brand": "var(--primary-foreground)",

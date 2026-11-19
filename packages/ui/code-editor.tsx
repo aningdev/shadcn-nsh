@@ -1,7 +1,7 @@
 // Code editor: `codeEditorClasses`, `codeEditorFrame` and the `CodeEditor` that wears them.
 // This library's own: NSH's gallery has a look for the rich editor and none for the code editor,
 // so nothing here is ported and there is no port region. Yours to change.
-import { colors, finish, radius } from "@shadcn-nsh/theme";
+import { colors, finish, radius, rounded } from "@shadcn-nsh/theme";
 import { split, type ViewStyle } from "nsh";
 import {
   Editor as BaseEditor,
@@ -54,8 +54,7 @@ export function codeEditorFrame(): ViewStyle {
     backgroundColor: colors.field,
     borderWidth: 1,
     borderColor: colors.fieldBorder,
-    borderRadius: radius.control,
-    borderCurve: "continuous",
+    ...rounded(radius.control),
     ...finish.field,
   };
 }

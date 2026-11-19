@@ -1,6 +1,6 @@
 // A menu: the look (`menuItemLook`, `menuPopup`, …) and the parts that wear it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { alpha, colors, finish, terminal } from "@shadcn-nsh/theme";
+import { alpha, colors, cornerCurve, finish, radius, rounded, terminal } from "@shadcn-nsh/theme";
 import { ChevronLeft, ChevronRight } from "lucide";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, horizontalSizeClass, platform, split, Text, token, View } from "nsh";
@@ -62,8 +62,24 @@ export interface MenuItemDimensions {
 
 /** A menu row's height, corners and type: 26 points tall with a pointer, 46 on a touch screen. */
 export const menuItemSize: MenuItemDimensions = pointer
-  ? { height: 26, radius: 6, font: 13, note: 11.5, icon: 14 }
-  : { height: 46, radius: 10, font: 16, note: 14, icon: 18 };
+  ? {
+      height: 26,
+      get radius() {
+        return radius.control;
+      },
+      font: 13,
+      note: 11.5,
+      icon: 14,
+    }
+  : {
+      height: 46,
+      get radius() {
+        return radius.inset;
+      },
+      font: 16,
+      note: 14,
+      icon: 18,
+    };
 
 /** A row's inset from the popup's sides: in a terminal the popup's own padding is its Cell from the frame. */
 const rowInset = terminal ? 0 : 8;
@@ -106,8 +122,7 @@ export function menuItemLook(o?: MenuItemLookOptions) {
         height: menuItemSize.height,
         paddingHorizontal: rowInset,
         ...(o?.inset ? { paddingStart: rowInset + markRoom } : {}),
-        borderRadius: menuItemSize.radius,
-        borderCurve: "continuous",
+        ...rounded(menuItemSize.radius),
         ...o?.style,
       };
     },
@@ -177,7 +192,7 @@ export interface MenuPopupOptions {
  * least `minWidth` across, coming in from the trigger's `side`
  * (`popInStyles`: a fade, 96% to full size, 4 points of slide, 150 ms); as
  * a sheet the one that slides up, the card's surface with its top corners
- * 20 points round and 34 points under its rows for the home indicator; the
+ * on the card's radius and 34 points under its rows for the home indicator; the
  * scrim behind the sheet. The surface is the popup's own box: `nsh/base`
  * holds it to the room on its side and scrolls the items inside it, so its
  * edges and shadow stay put. Its values are getters, so they follow the
@@ -190,9 +205,9 @@ export function menuPopup(o?: MenuPopupOptions) {
         ? { ...popupSurface(), minWidth: o?.minWidth ?? 200, ...popInStyles(o?.side).style }
         : {
             backgroundColor: colors.surface,
-            borderTopLeftRadius: 20,
-            borderTopRightRadius: 20,
-            borderCurve: "continuous",
+            borderTopLeftRadius: radius.card,
+            borderTopRightRadius: radius.card,
+            ...cornerCurve,
             paddingHorizontal: 10,
             paddingTop: 10,
             paddingBottom: 34,

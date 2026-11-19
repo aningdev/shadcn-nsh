@@ -8,6 +8,7 @@ import {
   toneColor,
   toneTint,
   type Tone,
+  rounded,
 } from "@shadcn-nsh/theme";
 import { token, View, Text } from "nsh";
 
@@ -43,7 +44,7 @@ export function Badge(props: BadgeProps) {
       style={{
         paddingHorizontal: terminal ? 0 : 8,
         height: terminal ? TERMINAL_ROW : 20,
-        borderRadius: radius.inset,
+        ...rounded(radius.inset),
         justifyContent: "center",
         backgroundColor: outline
           ? "transparent"

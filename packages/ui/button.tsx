@@ -11,6 +11,7 @@ import {
   TERMINAL_COLUMN,
   TERMINAL_ROW,
   tints,
+  rounded,
 } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, platform, split, Text, token, View } from "nsh";
@@ -147,8 +148,7 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
       return {
         height: terminal ? TERMINAL_ROW : dims.height,
         paddingHorizontal: terminal ? TERMINAL_COLUMN : dims.pad,
-        borderRadius: radius.control,
-        borderCurve: "continuous",
+        ...rounded(radius.control),
         borderWidth: 1,
         flexDirection: "row",
         alignItems: "center",
@@ -270,8 +270,7 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
         height: terminal ? undefined : side,
         alignItems: "center",
         justifyContent: "center",
-        borderRadius: radius.control,
-        borderCurve: "continuous",
+        ...rounded(radius.control),
         borderWidth: 1,
         borderColor: "transparent",
         backgroundColor: selected ? tints.accent : ghostFill(),
@@ -426,8 +425,7 @@ export function splitButtonLook(variant: Live<ButtonVariant> = "default", o?: Bu
         return {
           flexDirection: "row",
           alignItems: "stretch",
-          borderRadius: radius.control,
-          borderCurve: "continuous",
+          ...rounded(radius.control),
           borderWidth: 1,
           overflow: "hidden",
           ...restLook(read(variant) ?? "default", false),

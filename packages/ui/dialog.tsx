@@ -1,7 +1,7 @@
 // A card dialog: the look (`dialogCard`, `dialogTitle`, `dialogText`) at the top, and the parts that
 // wear it below. `nsh/base`'s `Dialog` is the box; what this file adds is its card.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, finish, radius, terminal } from "@shadcn-nsh/theme";
+import { colors, finish, radius, rounded, terminal } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, platform, split, Text, View } from "nsh";
 import {
@@ -24,7 +24,7 @@ const cardWidth = pointer ? 360 : 320;
 /**
  * A dialog shown as a card in the middle of the window, over `backdrop()`:
  * the card's surface with the border's edge and the floating shadow of a
- * menu (`finish.menu`), the theme's `radius-popover` corners, 20 points of
+ * menu (`finish.menu`), the theme's card radius, 20 points of
  * padding, its rows 12 apart. Given a `width`, it is `nsh/base`'s `Dialog`'s `style` itself:
  * centered, `width` across and never wider than 90% of the window; without
  * one, the look alone, for a view inside the dialog (one that springs in).
@@ -33,8 +33,7 @@ const cardWidth = pointer ? 360 : 320;
 export function dialogCard(width?: number): ViewStyle {
   return {
     ...(width === undefined ? {} : { margin: "auto", width, maxWidth: "90%" }),
-    borderRadius: radius.popover,
-    borderCurve: "continuous",
+    ...rounded(radius.card),
     borderWidth: 1,
     borderColor: colors.border,
     padding: 20,

@@ -18,6 +18,13 @@
 
 ### Changed
 
+- **One radius, three tiers (#38).** A theme now states one base, `radius`: `radius-control` is
+  0.8× it and `radius-card` is 1.4×, each rounded to whole points, and `check:theme` rejects a tier
+  that is not. In the default theme controls go from 7 to 8 points and cards from 12 to 14, and a
+  dialog takes the card tier (16 → 14); the shadcn theme's base goes from 8 to 10, its controls and
+  cards staying 8 and 14. `radius-popover` is gone — a dialog uses `radius-card`, with no alias.
+  Phone sheets and menu rows take their corners from the theme too, and every corner that reads a
+  theme radius now has the continuous curve, applied in one place by `rounded()`.
 - **The docs site is at https://shadcn-nsh.aning.dev.** It was at
   `https://aningdev.github.io/shadcn-nsh/`; the README and every docs link point at the new
   address.

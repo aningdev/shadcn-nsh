@@ -13,7 +13,16 @@
 // chosen row `colors.sidebarSelected` (shadcn's `sidebar-accent`), its edge `colors.sidebarBorder`,
 // and the keyboard's ring `focusRing()`. shadcn's `sidebar-primary` draws nothing there either, so
 // nothing here reads it.
-import { alpha, colors, finish, focusRing, hovered, radius, terminal } from "@shadcn-nsh/theme";
+import {
+  alpha,
+  colors,
+  finish,
+  focusRing,
+  hovered,
+  radius,
+  terminal,
+  rounded,
+} from "@shadcn-nsh/theme";
 import { PanelLeft } from "lucide";
 import type { JSX, StyleProp, TextStyle, ViewProps, ViewStyle } from "nsh";
 import {
@@ -284,8 +293,7 @@ export function sidebarLook(o?: SidebarLookOptions): SidebarLook {
             : { borderLeftWidth: 1 }
           : {
               borderWidth: 1,
-              borderRadius: radius.card,
-              borderCurve: "continuous",
+              ...rounded(radius.card),
               boxShadow: finish.card.boxShadow,
             }),
       };
@@ -303,8 +311,7 @@ export function sidebarLook(o?: SidebarLookOptions): SidebarLook {
               ...(side() === "left" ? { marginLeft: 0 } : { marginRight: 0 }),
               borderWidth: 1,
               borderColor: colors.line,
-              borderRadius: radius.card,
-              borderCurve: "continuous",
+              ...rounded(radius.card),
               boxShadow: finish.card.boxShadow,
               overflow: "hidden",
             }
@@ -390,7 +397,7 @@ export function sidebarGroupLook(o?: SidebarFoldOptions) {
         flexShrink: 0,
         paddingHorizontal: sidebarSize.padding,
         gap: 8,
-        borderRadius: radius.control,
+        ...rounded(radius.control),
         opacity: folded(o) ? 0 : 1,
         overflow: "hidden",
       };
@@ -413,7 +420,7 @@ export function sidebarGroupLook(o?: SidebarFoldOptions) {
         height: sidebarSize.action,
         alignItems: "center",
         justifyContent: "center",
-        borderRadius: radius.control,
+        ...rounded(radius.control),
         display: folded(o) ? "none" : "flex",
       };
     },
@@ -465,8 +472,7 @@ export function sidebarMenuButtonLook(o?: SidebarMenuButtonLookOptions) {
           ? { width: sidebarSize.folded, height: sidebarSize.folded }
           : { width: "100%", height: rowHeight[size()] }),
         overflow: "hidden",
-        borderRadius: radius.control,
-        borderCurve: "continuous",
+        ...rounded(radius.control),
         ...(isFolded
           ? { paddingHorizontal: size() === "lg" ? 0 : sidebarSize.padding }
           : {
@@ -540,7 +546,7 @@ export function sidebarMenuActionLook(o?: SidebarMenuActionLookOptions) {
         height: sidebarSize.action,
         alignItems: "center",
         justifyContent: "center",
-        borderRadius: radius.control,
+        ...rounded(radius.control),
         ...(read(o?.side) === "right"
           ? { left: hasBadge(read(o?.trailing)) ? actionPastBadge : trailingInset }
           : { right: hasBadge(read(o?.trailing)) ? actionPastBadge : trailingInset }),
@@ -576,7 +582,7 @@ export function sidebarMenuBadgeLook(o?: SidebarFoldOptions) {
         alignItems: "center",
         justifyContent: "center",
         paddingHorizontal: 4,
-        borderRadius: radius.control,
+        ...rounded(radius.control),
         ...(read(o?.side) === "right" ? { left: trailingInset } : { right: trailingInset }),
         display: folded(o) ? "none" : "flex",
       };
@@ -651,8 +657,7 @@ export function sidebarMenuSubButtonLook(o?: SidebarMenuSubButtonLookOptions) {
         height: subRowHeight[size()],
         paddingHorizontal: sidebarSize.padding,
         overflow: "hidden",
-        borderRadius: radius.control,
-        borderCurve: "continuous",
+        ...rounded(radius.control),
         ...(active() ? { backgroundColor: colors.sidebarSelected } : {}),
         ...pressTransition("background-color"),
       };

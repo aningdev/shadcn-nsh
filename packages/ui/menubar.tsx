@@ -1,7 +1,7 @@
 // A menubar: a row of menus whose triggers stand in one bar, as a desktop app's menu bar. The
 // rows, submenus and popups are `menu.tsx`'s; this file is the bar, its triggers and the shell.
 // This library's own: nothing comes from upstream, so there is no port region. Yours to change.
-import { colors, focusRing, radius } from "@shadcn-nsh/theme";
+import { colors, focusRing, radius, rounded } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, platform, split, Text, View } from "nsh";
 import { Menu as BaseMenu, type MenuProps as BaseMenuProps, type OpenChangeReason } from "nsh/base";
@@ -54,8 +54,7 @@ export function menubarLook(): MenubarLook {
         gap: menubarSize.gap,
         height: menubarSize.height,
         paddingHorizontal: menubarSize.padding,
-        borderRadius: radius.control,
-        borderCurve: "continuous",
+        ...rounded(radius.control),
         borderWidth: 1,
         borderColor: colors.border,
         backgroundColor: colors.surface,
@@ -69,8 +68,7 @@ export function menubarLook(): MenubarLook {
         gap: triggerGap,
         height: menubarSize.trigger,
         paddingHorizontal: triggerPad,
-        borderRadius: menuItemSize.radius,
-        borderCurve: "continuous",
+        ...rounded(menuItemSize.radius),
       };
     },
     get triggerText(): TextStyle {

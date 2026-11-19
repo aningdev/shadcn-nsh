@@ -9,6 +9,7 @@ import {
   TERMINAL_COLUMN,
   TERMINAL_GAP,
   TERMINAL_ROW,
+  rounded,
 } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
 import { platform, Text, token, View, windowSize } from "nsh";
@@ -134,8 +135,7 @@ export function sectionSurface(o?: SectionSurfaceOptions): ViewStyle {
   }
   return {
     backgroundColor: colors.surface,
-    borderRadius: density.surface,
-    borderCurve: "continuous",
+    ...rounded(density.surface),
     borderWidth: 1,
     borderColor: colors.border,
     ...(o?.padded ? { padding: density.pad } : {}),
@@ -152,8 +152,7 @@ export function insetSurface(): ViewStyle {
     backgroundColor: colors.inset,
     borderWidth: 1,
     borderColor: colors.line,
-    borderRadius: radius.inset,
-    borderCurve: "continuous",
+    ...rounded(radius.inset),
     ...finish.inset,
   };
 }

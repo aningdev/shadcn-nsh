@@ -1,7 +1,7 @@
 // A breadcrumb: the path from where the app starts to the page it shows, as a row of links a
 // separator parts, the page itself last. This library's own (drawn on `nsh`'s View and Text; a
 // step's link is `nsh/base`'s Link), so there is no port region. Yours to change.
-import { colors, focusRing, radius, terminal } from "@shadcn-nsh/theme";
+import { colors, focusRing, radius, rounded, terminal } from "@shadcn-nsh/theme";
 import { ChevronRight, Ellipsis } from "lucide";
 import type { JSX, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
@@ -100,7 +100,7 @@ export function breadcrumbLook(): BreadcrumbLook {
       return `group ${fade}`;
     },
     get link(): ViewStyle {
-      return { borderRadius: radius.control, borderCurve: "continuous" };
+      return { ...rounded(radius.control) };
     },
     get focusVisible(): ViewStyle {
       return focusRing(2);
