@@ -1,30 +1,15 @@
 ---
-name: 功能建议
-about: 想要一个组件、一种外观，或某个用法
+name: Feature request
+about: A component, a look, or something you want to do
 title: ""
 labels: enhancement
 assignees: ""
 ---
 
-## 想要什么
+**What you want**
 
-<!-- 一句话说清你希望库能做什么。 -->
+<!-- What you'd like the library to do, and what for. -->
 
-## 为什么
+**Example**
 
-<!-- 你在做什么东西、卡在哪：这决定了它该长什么样、属不属于这个库。 -->
-
-## 现在怎么绕
-
-<!-- 你现在怎么解决？用了哪个组件、自己改了什么、或者借了别的写法。
-     已经能绕过去的，说明这事不紧急；绕不过去的，说说绕不过去的那一下。 -->
-
-## 如果是组件
-
-- 上游 `nsh-gallery-ui` 里有没有同样的东西（`references/nsh/examples/nsh-gallery-ui/look/`）：
-- shadcn 里对应的是哪个：
-- 它要在哪几种画布上对：<!-- 手机 / 桌面 / 终端 -->
-
-## 其它
-
-<!-- 参考、截图、别的库里长得像的东西，都可以贴。 -->
+<!-- Optional: a screenshot, a link, or the same thing in shadcn/ui or another library. -->

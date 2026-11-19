@@ -1,8 +1,8 @@
 blank_issues_enabled: false
 contact_links:
-  - name: 组件与用法
+  - name: Docs
     url: https://shadcn-nsh.aning.dev/
-    about: 每个组件的属性、可运行演示、主题与 CLI 的说明都在文档站上。
-  - name: 安全问题
+    about: Every component's props and live demos, the themes and the CLI.
+  - name: Security issue
     url: https://github.com/aningdev/shadcn-nsh/security/advisories/new
-    about: 不要用公开 issue 报安全问题，用私密上报，见 SECURITY.md。
+    about: Report privately, not in a public issue. See SECURITY.md.
