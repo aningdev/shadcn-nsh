@@ -23,20 +23,21 @@ bun run nsh:bootstrap                     # 校验 CLI 与 references/nsh 在基
 
 ## 常用命令
 
-| 命令                                      | 做什么                                                |
-| ----------------------------------------- | ----------------------------------------------------- |
-| `bun run dev:docs`                        | 文档站（含组件演示）                                  |
-| `bun run dev:gallery`                     | gallery：原生行为测试的页面                           |
-| `nsh run apps/website/demos/button.tsx`   | 跑单个演示                                            |
-| `bun run port:new <id> --from <上游文件>` | 新组件脚手架（路由、外壳、演示、文档、registry）      |
-| `bun run port:new <id> --base <符号>`     | 不来自上游的自有组件（不写路由、不 vendor）           |
-| `bun run port:new <id> --view`            | 只排版上色的自有组件（画在 `View` / `Text` 上）       |
-| `bun run port:vendor <id>`                | 从上游抽取初稿（只在新增时用，不覆盖已有代码）        |
-| `bun run port:check`                      | 上游变化提醒、清单完整、CLI 不落后于基线              |
-| `bun run port:review`                     | 审阅完上游的变化后记下来                              |
-| `bun run port:render`                     | 渲染比对：组件与"look 展开在 `nsh/base` 上"的截图相同 |
-| `bun run registry:build`                  | 由 `registry.json` 重建 `public/r`                    |
-| `bun run registry:serve`                  | 本地起一个 registry，试装用                           |
+| 命令                                      | 做什么                                                 |
+| ----------------------------------------- | ------------------------------------------------------ |
+| `bun run dev:docs`                        | 文档站（含组件演示）                                   |
+| `bun run dev:gallery`                     | gallery：原生行为测试的页面                            |
+| `nsh run apps/website/demos/button.tsx`   | 跑单个演示                                             |
+| `bun run port:new <id> --from <上游文件>` | 新组件脚手架（路由、外壳、演示、文档、registry）       |
+| `bun run port:new <id> --base <符号>`     | 不来自上游的自有组件（不写路由、不 vendor）            |
+| `bun run port:new <id> --view`            | 只排版上色的自有组件（画在 `View` / `Text` 上）        |
+| `bun run port:vendor <id>`                | 从上游抽取初稿（只在新增时用，不覆盖已有代码）         |
+| `bun run port:check`                      | 上游变化提醒、清单完整、CLI 不落后于基线               |
+| `bun run port:review`                     | 审阅完上游的变化后记下来                               |
+| `bun run port:render`                     | 渲染比对：组件与"look 展开在 `nsh/base` 上"的截图相同  |
+| `bun run port:render --changed`           | 同上，但只跑这次 diff 能走到的页（默认 `origin/main`） |
+| `bun run registry:build`                  | 由 `registry.json` 重建 `public/r`                     |
+| `bun run registry:serve`                  | 本地起一个 registry，试装用                            |
 
 ## 分支与 PR
 
@@ -68,7 +69,7 @@ bun run check:docs                文档站自身
 
 按改动涉及的东西再补：
 
-- **改组件或演示** → `bun run port:render`，四张截图人眼看过。
+- **改组件或演示** → `bun run port:render`，四张截图人眼看过。迭代时加 `--changed`（不知道哪个 id 会动）或 `--only <id,...>`（知道）只跑受影响的页，一次几十秒；开 PR 前跑一次全量。`--jobs <n>` 控制同时开几个 `nsh test` 进程，默认 CPU 核数的一半、至多 6，`--jobs 1` 是逐页串行——只用来对照。
 - **改行为** → `bun run test:gallery`（原生行为测试）。
 - **改 registry 条目或 CLI** → `bun run test:install`（在真实 NSH 应用里 `init` / `add`，逐条目）。
 - **改过 `registry.json` 或组件文件** → `bun run registry:build`，把 `public/r` 的改动一起提交；`check` 里的 `registry:build --check` 会拦下没重建的提交。

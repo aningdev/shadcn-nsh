@@ -96,7 +96,9 @@ TypeScript 为 **7.1**。它不提供 JS 解析 API，`scripts/port` 用 `oxc-pa
 
 ## 渲染比对的两半
 
-`port:render:theme` 是第三趟：同一批页在 **shadcn 主题**下画一遍，组件对参照页成对比较，不进基线（`scripts/port/render-theme.ts` 把演示复制到 `apps/website/demos-themed/`，每页在 `mount` 前 `selectTheme(shadcn)`；跑完整份复制删掉，截图留 `apps/website/demos/shots-theme/`）。页面仍是自己的入口，所以它和构建时那一趟画的是同一个应用，差别只有主题。
+`port:render:theme` 是第三趟：同一批页在**两套主题**（shadcn 与 solid-glass）下各画一遍，组件对参照页成对比较（284 对），不进基线。主题从页面自己读到的地方来：`render-theme.test.tsx` 把 palette 放进 storage，演示在 `mount` 之前由 `apply-palette.ts` 读它换主题——与站上的切换器同一路，不是第二份 `nsh.json`，也不复制演示。页面仍是自己的入口，所以它和构建时那一趟画的是同一个应用，差别只有主题；截图留 `apps/website/demos/shots-theme/`。
+
+两趟都由 `scripts/port/render-shared.ts` 的**进程池**画：一个 id 一个 `nsh test --filter id=<id>:` 进程（`nsh` 把一个文件里的测试一个一个跑，所以并发只能跨进程），`--jobs <n>` 个同时开（默认 CPU 核数的一半、至多 6，`--jobs 1` 是逐页串行）；每个进程的输出缓冲到它结束再整块打印，失败的那个先打，后面的 id 不再开，整趟以非零退出。`--changed [<ref>]`（默认 `origin/main`）只画 diff 能走到的那几页（`scripts/port/affected.ts` 用 `Bun.Transpiler` 扫 import 连成的反向图），与 `--only` 取交集。
 
 `port:render` 用无头浏览器（Chrome / Edge / Chromium），它始终只量到精细指针：在 `--target web` 上强制不了触屏，所以这一半只跑指针。触屏那一半 `port:render:touch` 用 `nsh test render-touch.test.tsx --target ios`，在 iOS 模拟器上打开同一批演示与参照页（`open(…, { platform: "ios" })`），亮 / 暗各一组，截图落在同一个 `shots/`。
 
@@ -106,7 +108,7 @@ TypeScript 为 **7.1**。它不提供 JS 解析 API，`scripts/port` 用 `oxc-pa
 
 没有外壳的组件（`badge`、`spinner`、`stat`、`status`、`meter`、`plot`、`emoji-picker`、`color-picker`）在参照页上画的就是组件本身，比较证明不了什么：它们在那张表里带 `selfReference`（理由），渲染测试打印理由、只截组件，外观检查照旧跑；`port:coverage` 要求无外壳的都有声明、有外壳的都没有。
 
-**指针截图有一份提交的基线。** 两次渲染的同一页通常逐字节相同（2026-11-12，macOS），但圆角的抗锯齿偶尔在两次页面实例之间差一个像素、1/255：比较因此按"逐字节，或落在抗锯齿预算内"（`render-cases.ts` 的 `antialiasing`：至多 6 个像素、每个通道至多 6/255；`avatar` 的圆形照片另有更宽的 `tolerance`）。`apps/website/demos/baseline/` 收完整的一份（192 张）：`port:render` 跑完按同一规则比较，改动、缺失、新增都会列出并以非零退出。看过 `port:sheet` 后确认是想要的改动，就 `bun run port:baseline --update`（`--only <id,...>` 只重录这几个）并提交。基线只在 macOS 上是门禁：别的平台字体与抗锯齿不同，会全部"改动"，所以 CI（Linux）跑 `port:render --no-baseline`，只以组件与参照页成对相同为门禁。
+**指针截图有一份提交的基线。** 两次渲染的同一页通常逐字节相同（2026-11-12，macOS），但圆角的抗锯齿偶尔在两次页面实例之间差一个像素、1/255：比较因此按"逐字节，或落在抗锯齿预算内"（`render-cases.ts` 的 `antialiasing`：至多 6 个像素、每个通道至多 6/255；`avatar` 的圆形照片另有更宽的 `tolerance`）。`apps/website/demos/baseline/` 收完整的一份（300 张）：`port:render` 跑完按同一规则比较，改动、缺失、新增都会列出并以非零退出。看过 `port:sheet` 后确认是想要的改动，就 `bun run port:baseline --update`（`--only <id,...>` 只重录这几个）并提交。基线只在 macOS 上是门禁：别的平台字体与抗锯齿不同，会全部"改动"，所以 CI（Linux）跑 `port:render --no-baseline`，只以组件与参照页成对相同为门禁。
 
 iOS 那一半需要 Xcode 的 iPhone 模拟器，以及 iOS 运行时（`~/.nsh/runtime/ios/iphonesimulator/nsh-ios-host`）。运行时用 CLI 装，不编译：
 

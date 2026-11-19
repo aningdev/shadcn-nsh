@@ -1,11 +1,12 @@
 /**
  * What the two picture checks share (`render.ts`, `render-theme.ts`): which ids `--only` names,
- * the browser the pages are drawn in, and the comparison of every component with its reference
- * page.
+ * the browser the pages are drawn in, the pool of `nsh test` processes that draws the pages, and
+ * the comparison of every component with its reference page.
  *
  * Both are scripts, not a library: `scripts/port` is the tooling around the components, and only
  * it reads `apps/website/demos`.
  */
+import { spawn } from "node:child_process";
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
@@ -14,7 +15,49 @@ import { antialiasing, cases, schemes } from "../../apps/website/demos/render-ca
 import { catalog } from "../catalog";
 import { compareWithinTolerance } from "./pixels";
 
-/** The ids `--only` names, validated: the test narrows its table by `RENDER_ONLY`. */
+/**
+ * The arguments `nsh test` takes: everything but this script's own (`--only`, `--changed`,
+ * `--jobs`, `--no-baseline`), each with its value. A caller's `--filter` and `--browser` stay.
+ */
+export function testArgs(): string[] {
+  const argv = process.argv.slice(2);
+  const rest: string[] = [];
+  for (let i = 0; i < argv.length; i += 1) {
+    const arg = argv[i]!;
+    if (arg === "--only" || arg === "--jobs") {
+      i += 1;
+      continue;
+    }
+    if (arg === "--no-baseline") continue;
+    if (arg === "--changed") {
+      // The ref is optional, so only a non-flag after it comes with the flag.
+      if (argv[i + 1] && !argv[i + 1]!.startsWith("-")) i += 1;
+      continue;
+    }
+    rest.push(arg);
+  }
+  return rest;
+}
+
+/**
+ * How many `nsh test` processes run at once: `--jobs N`, or half the cores at most six. One
+ * process at a time is the run there was before the pool, and the wall time everything else is
+ * compared with.
+ */
+export function jobCount(): number {
+  const at = process.argv.indexOf("--jobs");
+  if (at < 0) return Math.max(1, Math.min(6, Math.floor(os.cpus().length / 2)));
+  const value = Number(process.argv[at + 1]);
+  if (!Number.isInteger(value) || value < 1) {
+    console.error(
+      "render: --jobs takes a count of processes (`--jobs 4`; `--jobs 1` is one at a time)",
+    );
+    process.exit(1);
+  }
+  return value;
+}
+
+/** The ids `--only` names, validated: the pool draws those pages and no others. */
 export function onlyIds(): string[] | undefined {
   const at = process.argv.indexOf("--only");
   if (at < 0) return undefined;
@@ -126,6 +169,135 @@ export function softwareBrowser(): { script?: string; done: () => void } {
       if (script) fs.rmSync(path.dirname(script), { recursive: true, force: true });
     },
   };
+}
+
+/** What one picture check runs, and where: the pool passes it to every `nsh test` process. */
+export type PageRun = {
+  /** The check's name in a message: `render`, `theme`. */
+  pass: string;
+  /** The test file beside the demos (`render.test.tsx`, `render-theme.test.tsx`). */
+  testFile: string;
+  /** The directory the test runs in: `apps/website/demos`, where its `shots/` go. */
+  cwd: string;
+  env: Record<string, string | undefined>;
+  /** The ids to draw, or nothing for the whole table. */
+  ids?: string[];
+  /** `nsh test`'s own arguments (`testArgs()`), and the wrapper `--browser` script. */
+  args: string[];
+  browser?: string;
+  /** How many processes run at once (`jobCount()`). */
+  jobs: number;
+};
+
+/** One `nsh test` process: an id's pages (`id=<id>:`), or the whole table when `id` is absent. */
+type Task = { id?: string; label: string; args: string[] };
+
+/** A process that ended: its status, and everything it wrote, buffered until it is printed. */
+type Done = { task: Task; status: number; output: string; ms: number };
+
+/** `nsh test` in its own process, its output kept until it ends, so two runs never interleave. */
+function one(run: PageRun, task: Task): Promise<Done> {
+  const started = performance.now();
+  return new Promise((resolve) => {
+    const child = spawn("nsh", task.args, {
+      cwd: run.cwd,
+      env: run.env,
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+    let output = "";
+    child.stdout.setEncoding("utf8");
+    child.stderr.setEncoding("utf8");
+    child.stdout.on("data", (chunk: string) => {
+      output += chunk;
+    });
+    child.stderr.on("data", (chunk: string) => {
+      output += chunk;
+    });
+    child.on("error", (error) => {
+      output += `${error.message}\n`;
+    });
+    child.on("close", (code, signal) => {
+      const status = signal ? 1 : (code ?? 1);
+      resolve({ task, status, output, ms: performance.now() - started });
+    });
+  });
+}
+
+/** A process's whole output, with what it was and whether it passed above it. */
+function report(pass: string, done: Done) {
+  const took = `${(done.ms / 1000).toFixed(1)}s`;
+  const header = `${pass}: ${done.task.label}: ${done.status === 0 ? "passed" : `failed (exit ${done.status})`} in ${took}`;
+  const body = done.output.trimEnd();
+  if (done.status === 0) {
+    console.log(header);
+    if (body) console.log(body);
+  } else {
+    // A failure's own lines say why; they go to stderr with it so a CI log shows them at once.
+    console.error(header);
+    if (body) console.error(body);
+  }
+}
+
+/**
+ * The pool: one `nsh test --filter id=<id>:` process per id, `jobs` of them at a time. `nsh`
+ * runs one file's tests one after the other, so a page's wall time is mostly the engine's: four
+ * ids serially took 18 s, as four processes 10 s, with no clash between their screenshots.
+ *
+ * Every process's output is buffered and printed whole when it ends, so a failure reads in one
+ * piece. After the first failure no new id is started (the in-flight ones finish and print); the
+ * run fails with that status. `--filter` and `--jobs 1` with no list run the table in one process,
+ * which is the check as it was before the pool.
+ */
+export async function runPages(run: PageRun): Promise<number> {
+  const base = [
+    "test",
+    run.testFile,
+    "--target",
+    "web",
+    ...(run.browser ? ["--browser", run.browser] : []),
+  ];
+  // Our own `--filter` picks pages `nsh` names itself, so the pool cannot shard them further.
+  const filtered = run.ids === undefined && run.args.includes("--filter");
+  const wholeTable = run.ids === undefined;
+  const tasks: Task[] =
+    wholeTable && (run.jobs === 1 || filtered)
+      ? [
+          {
+            label: filtered ? "the pages `--filter` names" : "the whole table",
+            args: base.concat(run.args),
+          },
+        ]
+      : (run.ids ?? cases.map(({ id }) => id)).map((id) => ({
+          id,
+          label: `id=${id}`,
+          args: base.concat(["--filter", `id=${id}:`]),
+        }));
+  const jobs = Math.min(run.jobs, tasks.length);
+  if (jobs > 1) console.log(`${run.pass}: ${tasks.length} pages, ${jobs} processes at a time`);
+
+  let next = 0;
+  let started = 0;
+  let failure = 0;
+  const worker = async () => {
+    for (;;) {
+      if (failure !== 0) return;
+      const index = next++;
+      if (index >= tasks.length) return;
+      started += 1;
+      const done = await one(run, tasks[index]!);
+      report(run.pass, done);
+      if (done.status !== 0 && failure === 0) failure = done.status;
+    }
+  };
+  await Promise.all(Array.from({ length: jobs }, worker));
+
+  const unrun = tasks.length - started;
+  if (failure !== 0 && unrun > 0) {
+    console.error(
+      `${run.pass}: stopped after a failure; ${unrun} of ${tasks.length} pages were not run`,
+    );
+  }
+  return failure;
 }
 
 /** What one picture check compares, and where its pictures are. */

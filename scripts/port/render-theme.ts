@@ -4,12 +4,16 @@
  * the theme the registry installs — and the two compared, so a component drawn by hand still draws
  * what its theme says.
  *
- *   bun scripts/port/render-theme.ts [--only <id,...>] [--filter <name>]
+ *   bun scripts/port/render-theme.ts [--only <id,...>] [--changed [<ref>]] [--jobs <n>]
+ *                                   [--filter <name>]
  *
  * The test opens each page with the palette in its storage, as the site's switch leaves it, and the
  * page reads it before it mounts (`apply-palette.ts`): the theme arrives the way an app gets it,
  * not from a second `nsh.json` or a copy of the demos with a `selectTheme` added. `default` is the
  * build-time theme, whose check is `render.ts`.
+ *
+ * `--only` and `--changed` narrow the ids exactly as they do there, and the pages run in the same
+ * pool (`--jobs`, `scripts/port/render-shared.ts`).
  *
  * Nothing is kept as a baseline — the build-time theme's pictures are (`render.ts`) — so this
  * pass is reviewed by eye (`port:sheet`) and by what it reports: a component and its reference
@@ -17,65 +21,57 @@
  *
  * The pictures stay in `demos/shots-theme/`.
  */
-import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
 import { PALETTES } from "../../apps/website/demos/palettes";
 import { cases } from "../../apps/website/demos/render-cases";
 import { catalog } from "../catalog";
+import { changedIds, narrowed } from "./affected";
 import { repo } from "./lib";
-import { comparePairs, onlyIds, softwareBrowser } from "./render-shared";
+import {
+  comparePairs,
+  jobCount,
+  onlyIds,
+  runPages,
+  softwareBrowser,
+  testArgs,
+} from "./render-shared";
 
 const demos = catalog().paths.demos;
 const shots = path.join(demos, "shots-theme");
 const only = onlyIds();
+const changed = changedIds("theme");
+/** The ids to draw: `--only` and `--changed` both narrow, and together they intersect. */
+const ids = narrowed(only, changed);
+if (ids?.length === 0) {
+  console.log("theme: nothing to draw");
+  process.exit(0);
+}
 /** The themes to check: the build-time one is `render.ts`'s. */
 const palettes = PALETTES.filter((palette) => palette.id !== "default");
-const chosen = cases.filter(({ id }) => !only || only.includes(id));
+const chosen = cases.filter(({ id }) => !ids || ids.includes(id));
 
 // The runtime `nsh test` runs with is the installed CLI's (`docs/toolchain.md`); it finds its
 // runtimes next to `bin/nsh`, so nothing sets `NSH_RUNTIME` here; a caller that sets it still gets
 // it through `process.env`.
 const env = { ...process.env };
 
-/** The arguments `nsh test` takes: everything but our own (`--only <ids>`). */
-const passthrough = process.argv.slice(2).filter((arg, index, all) => {
-  if (arg === "--only") return false;
-  return all[index - 1] !== "--only";
-});
-
-const browserScript = softwareBrowser();
-
-/** One `nsh test` run: the whole table, or the pages of one id (`id=<id>:`, a substring). */
-function run(filter?: string): number {
-  const result = spawnSync(
-    "nsh",
-    [
-      "test",
-      "render-theme.test.tsx",
-      "--target",
-      "web",
-      ...(browserScript.script ? ["--browser", browserScript.script] : []),
-      ...(filter ? ["--filter", filter] : passthrough),
-    ],
-    { cwd: demos, stdio: "inherit", env },
-  );
-  return result.status ?? 1;
-}
-
 fs.rmSync(shots, { recursive: true, force: true });
 fs.mkdirSync(shots, { recursive: true });
-let status = 0;
+const browserScript = softwareBrowser();
+let status: number;
 try {
-  if (only) {
-    for (const id of only) {
-      if (status !== 0) break;
-      status = run(`id=${id}:`);
-    }
-  } else {
-    status = run();
-  }
+  status = await runPages({
+    pass: "theme",
+    testFile: "render-theme.test.tsx",
+    cwd: demos,
+    env,
+    ids,
+    args: testArgs(),
+    browser: browserScript.script,
+    jobs: jobCount(),
+  });
 } finally {
   browserScript.done();
 }
@@ -87,7 +83,7 @@ if (status === 0) {
       pass: "theme",
       shots,
       name: (id, scheme) => `${id}-${palette.id}-${scheme}`,
-      only,
+      only: ids,
     });
   }
 }
