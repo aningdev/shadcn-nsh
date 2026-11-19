@@ -10,6 +10,7 @@ import {
 } from "nsh/base";
 
 import { Button, type ButtonVariant } from "./button";
+import { childrenOf } from "./lib/children";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import { PopIn, popupSurface } from "./lib/popup";
 
@@ -144,15 +145,18 @@ export function Popover(props: PopoverProps) {
 /** Opens the popover: a `Button` for a string, else a pressable view. */
 export function PopoverTrigger(props: PopoverTriggerProps) {
   const ctx = usePopover();
+  // Read here, not in the thunk below: the content draws the trigger through it each time it lays
+  // out, and a read there would build the children again on every draw.
+  const kids = childrenOf(props);
   ctx.trigger.set(() => {
-    if (typeof props.children === "string") {
+    if (kids.text() !== undefined) {
       return (
         <Button
           variant={props.variant ?? "secondary"}
           disabled={props.disabled}
           style={props.style}
         >
-          {props.children}
+          {kids.text()}
         </Button>
       );
     }
@@ -164,7 +168,7 @@ export function PopoverTrigger(props: PopoverTriggerProps) {
         focusVisibleStyle={focusRing()}
         style={props.style}
       >
-        {props.children}
+        {kids.content()}
       </View>
     );
   });
@@ -204,6 +208,7 @@ export function PopoverContent(props: PopoverContentProps) {
           side={placement()}
           style={popoverLook({ compact: props.compact, width: props.width })}
         >
+          {/* children-lint: the panel's contents, built when it opens, not before. */}
           {props.children}
         </PopIn>
       )}
@@ -221,10 +226,11 @@ export function PopoverHeader(props: PopoverHeaderProps) {
 }
 
 function PanelText(props: PopoverTitleProps) {
-  if (typeof props.children !== "string") return props.children ?? null;
+  const kids = childrenOf(props);
+  if (kids.text() === undefined) return kids.content() ?? null;
   return (
     <Text class={props.class ?? undefined} style={props.style}>
-      {props.children}
+      {kids.text()}
     </Text>
   );
 }

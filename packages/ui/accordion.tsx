@@ -18,9 +18,10 @@ import {
   type AccordionTriggerProps as BaseAccordionTriggerProps,
 } from "nsh/base";
 
+import { childrenOf } from "./lib/children";
 import { Icon } from "./lib/icons";
 import { controlSize, listRow, RowLabel, type ListRowOptions } from "./lib/surface";
-import { joinClass, labelOf } from "./lib/utils";
+import { joinClass } from "./lib/utils";
 
 // @port look/disclosure.tsx
 /** Options of `disclosureTriggerLook`: a row's (`listRow`). */
@@ -178,18 +179,19 @@ export function AccordionTrigger(props: AccordionTriggerProps) {
     first: props.first,
     start: props.start,
   });
+  const kids = childrenOf(props);
   const body =
-    typeof props.children === "string" ? (
-      <RowLabel label={props.children} strong />
+    kids.text() !== undefined ? (
+      <RowLabel label={kids.text} strong />
     ) : (
-      <View style={{ flexGrow: 1, flexShrink: 1 }}>{props.children}</View>
+      <View style={{ flexGrow: 1, flexShrink: 1 }}>{kids.content()}</View>
     );
 
   return (
     <BaseAccordionTrigger
       {...rest}
       class={joinClass(look.class, props.class)}
-      accessibilityLabel={labelOf(props.accessibilityLabel, props.children)}
+      accessibilityLabel={kids.label()}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[look.activeStyle, props.activeStyle ?? null]}

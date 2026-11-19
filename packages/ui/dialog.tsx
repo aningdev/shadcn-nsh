@@ -11,6 +11,7 @@ import {
 } from "nsh/base";
 
 import { Action, type ButtonVariant } from "./button";
+import { childrenOf } from "./lib/children";
 import { createOpenState, type OpenState } from "./lib/open-state";
 import { backdrop } from "./lib/popup";
 
@@ -183,14 +184,16 @@ export function DialogContent(props: DialogContentProps) {
 
 /** The card's title; a string child takes `dialogTitle`'s type, anything else is drawn as given. */
 export function DialogTitle(props: DialogTextProps) {
-  if (typeof props.children !== "string") return props.children;
-  return <Text style={[dialogTitle(), props.style ?? null]}>{props.children}</Text>;
+  const kids = childrenOf(props);
+  if (kids.text() === undefined) return kids.content();
+  return <Text style={[dialogTitle(), props.style ?? null]}>{kids.text()}</Text>;
 }
 
 /** The text under the title; a string child takes `dialogText`'s type, anything else as given. */
 export function DialogDescription(props: DialogTextProps) {
-  if (typeof props.children !== "string") return props.children;
-  return <Text style={[dialogText(), props.style ?? null]}>{props.children}</Text>;
+  const kids = childrenOf(props);
+  if (kids.text() === undefined) return kids.content();
+  return <Text style={[dialogText(), props.style ?? null]}>{kids.text()}</Text>;
 }
 
 /**

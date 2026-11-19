@@ -17,6 +17,7 @@ import {
 } from "nsh/base";
 
 import { Button, type ButtonVariant } from "./button";
+import { childrenOf } from "./lib/children";
 import { Icon } from "./lib/icons";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import {
@@ -27,7 +28,7 @@ import {
   type PopupSide,
   popupSurface,
 } from "./lib/popup";
-import { labelOf } from "./lib/utils";
+import { type Live } from "./lib/utils";
 
 // @port look/menu.tsx
 const pointer = platform.desktop;
@@ -296,7 +297,7 @@ function SubmenuRowFrame(props: {
  * disabled, 35%. `style` goes over the row's own.
  */
 export function SubmenuRow(props: {
-  label: string;
+  label: Live<string | undefined>;
   lead?: JSX.Element;
   disabled?: boolean;
   inset?: boolean;
@@ -468,15 +469,18 @@ export function Menu(props: MenuProps) {
 /** Opens the menu; a string child renders a `Button`. Base toggles on press. */
 export function MenuTrigger(props: MenuTriggerProps) {
   const ctx = useMenu();
+  // Read here, not in the thunk below: the content draws the trigger through it each time it lays
+  // out, and a read there would build the children again on every draw.
+  const kids = childrenOf(props);
   ctx.trigger.set(() => {
-    if (typeof props.children === "string") {
+    if (kids.text() !== undefined) {
       return (
         <Button
           disabled={props.disabled}
           variant={props.variant ?? "secondary"}
           style={props.style}
         >
-          {props.children}
+          {kids.text()}
         </Button>
       );
     }
@@ -487,7 +491,7 @@ export function MenuTrigger(props: MenuTriggerProps) {
         accessibilityState={{ disabled: props.disabled }}
         style={props.style}
       >
-        {props.children}
+        {kids.content()}
       </View>
     );
   });
@@ -552,10 +556,11 @@ export function MenuItem(props: MenuItemProps) {
     "disabledStyle",
   ]);
   const look = menuItemLook({ inset: props.inset });
+  const kids = childrenOf(props);
   return (
     <BaseMenuItem
       {...rest}
-      accessibilityLabel={labelOf(props.accessibilityLabel, props.children)}
+      accessibilityLabel={kids.label()}
       // Read where the item is made: an item can become checkable, and its mark follows the value.
       indicatorClass={props.indicatorClass ?? (props.checked != null ? menuIndicator : undefined)}
       indicator={
@@ -576,10 +581,10 @@ export function MenuItem(props: MenuItemProps) {
       }
       disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     >
-      {typeof props.children === "string" ? (
-        <Text style={menuItemLabel({ variant: props.variant })}>{props.children}</Text>
+      {kids.text() !== undefined ? (
+        <Text style={menuItemLabel({ variant: props.variant })}>{kids.text()}</Text>
       ) : (
-        props.children
+        kids.content()
       )}
     </BaseMenuItem>
   );
@@ -614,12 +619,13 @@ export function MenuSeparator(props: MenuSeparatorProps = {}) {
 
 /** The shortcut shown at a row's trailing edge. */
 export function MenuShortcut(props: MenuShortcutProps) {
-  if (typeof props.children !== "string" && props.children != null) {
-    return <View style={[{ marginStart: "auto" }, props.style ?? null]}>{props.children}</View>;
+  const kids = childrenOf(props);
+  if (kids.text() === undefined && kids.content() != null) {
+    return <View style={[{ marginStart: "auto" }, props.style ?? null]}>{kids.content()}</View>;
   }
   return (
     <Text style={[menuItemNote(), { marginStart: "auto" }, props.style ?? null]}>
-      {props.children}
+      {kids.text()}
     </Text>
   );
 }
@@ -647,18 +653,20 @@ export function MenuSub(props: MenuSubProps) {
 export function MenuSubTrigger(props: MenuSubTriggerProps) {
   const ctx = SubContext();
   if (!ctx) throw new Error("MenuSubTrigger must be used within <MenuSub>");
+  // Read here, not in the thunk below: the submenu draws the trigger through it each time it lays
+  // out, and a read there would build the children again on every draw.
+  const kids = childrenOf(props);
   ctx.trigger.set(() => {
-    const children = props.children;
     const disabled = Boolean(props.disabled ?? ctx.disabled);
-    ctx.label.value = typeof children === "string" ? children : undefined;
-    if (typeof children === "string") {
+    ctx.label.value = kids.text();
+    if (kids.text() !== undefined) {
       return (
-        <SubmenuRow label={children} disabled={disabled} inset={props.inset} style={props.style} />
+        <SubmenuRow label={kids.text} disabled={disabled} inset={props.inset} style={props.style} />
       );
     }
     return (
       <SubmenuRowFrame disabled={disabled} inset={props.inset} style={props.style}>
-        {children ?? <View />}
+        {kids.content() ?? <View />}
       </SubmenuRowFrame>
     );
   });

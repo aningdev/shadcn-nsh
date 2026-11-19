@@ -188,11 +188,11 @@ export function Radio(props: RadioProps) {
   const look = tile
     ? choiceTileLook(() => !!props.checked, { disabled: () => !!props.disabled })
     : undefined;
-  const { text, content, label } = childrenOf(props);
+  const kids = childrenOf(props);
   return (
     <BaseRadio
       {...rest}
-      accessibilityLabel={label}
+      accessibilityLabel={kids.label()}
       class={props.class ? `group ${props.class}` : "group"}
       style={[look?.style ?? null, props.style ?? null]}
       hoverStyle={[look?.hoverStyle ?? null, props.hoverStyle ?? null]}
@@ -203,11 +203,11 @@ export function Radio(props: RadioProps) {
       <If when={props.indicator ?? true}>
         <RadioRing on={!!props.checked} scale={scale} disabled={!!props.disabled} />
       </If>
-      {text !== undefined ? (
+      {kids.text() !== undefined ? (
         // The page's ink, read here so it follows the appearance: a bare Text is nsh's black.
-        <Text style={{ color: colors.foreground }}>{text}</Text>
+        <Text style={{ color: colors.foreground }}>{kids.text()}</Text>
       ) : (
-        content
+        kids.content()
       )}
     </BaseRadio>
   );

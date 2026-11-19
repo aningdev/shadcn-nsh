@@ -131,10 +131,14 @@ export function ButtonGroup(props: ButtonGroupProps) {
  */
 export function ButtonGroupText(props: ButtonGroupTextProps) {
   const [, rest] = split(props, ["style", "children"]);
-  const { text, content } = childrenOf(props);
+  const kids = childrenOf(props);
   return (
     <View {...rest} style={[buttonGroupLook().textFrame(), props.style ?? null]}>
-      {text !== undefined ? <Text style={buttonGroupLook().text()}>{text}</Text> : content}
+      {kids.text() !== undefined ? (
+        <Text style={buttonGroupLook().text()}>{kids.text()}</Text>
+      ) : (
+        kids.content()
+      )}
     </View>
   );
 }

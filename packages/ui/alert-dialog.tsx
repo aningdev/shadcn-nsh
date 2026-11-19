@@ -12,6 +12,7 @@ import {
 } from "nsh/base";
 
 import { Button, type ButtonVariant } from "./button";
+import { childrenOf } from "./lib/children";
 import { createOpenState, type OpenState } from "./lib/open-state";
 
 /**
@@ -198,7 +199,8 @@ export function AlertDialog(props: AlertDialogProps) {
 export function AlertDialogTrigger(props: AlertDialogTriggerProps) {
   const ctx = useAlertDialog();
   const open = () => ctx.setOpen(true, "triggerPress");
-  if (typeof props.children === "string") {
+  const kids = childrenOf(props);
+  if (kids.text() !== undefined) {
     return (
       <Button
         variant={props.variant ?? "secondary"}
@@ -206,7 +208,7 @@ export function AlertDialogTrigger(props: AlertDialogTriggerProps) {
         style={props.style}
         onPress={open}
       >
-        {props.children}
+        {kids.text()}
       </Button>
     );
   }
@@ -218,7 +220,7 @@ export function AlertDialogTrigger(props: AlertDialogTriggerProps) {
       onPress={props.disabled ? undefined : open}
       style={props.style}
     >
-      {props.children}
+      {kids.content()}
     </View>
   );
 }

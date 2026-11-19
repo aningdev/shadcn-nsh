@@ -8,6 +8,7 @@ import {
   type OpenChangeReason,
 } from "nsh/base";
 
+import { childrenOf } from "./lib/children";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import { menuPopup } from "./menu";
 
@@ -87,11 +88,14 @@ export function ContextMenu(props: ContextMenuProps) {
 /** The area that opens the menu: its children in a `View` when it has a `style`, as given otherwise. */
 export function ContextMenuTrigger(props: ContextMenuTriggerProps) {
   const ctx = useContextMenu();
+  // Read here, not in the thunk below: the content draws the trigger through it each time it lays
+  // out, and a read there would build the children again on every draw.
+  const kids = childrenOf(props);
   ctx.trigger.set(() => {
     if (props.style != null) {
-      return <View style={props.style}>{props.children ?? <View />}</View>;
+      return <View style={props.style}>{kids.content() ?? <View />}</View>;
     }
-    return props.children ?? <View />;
+    return kids.content() ?? <View />;
   });
   // No layout node: a zero-size view would still take a flex `gap` in a row of triggers.
   return null;

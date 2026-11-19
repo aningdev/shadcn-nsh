@@ -22,6 +22,7 @@ import {
 } from "nsh/base";
 
 import { fieldSize } from "./input";
+import { childrenOf } from "./lib/children";
 import { Icon } from "./lib/icons";
 import {
   Chevron,
@@ -495,11 +496,12 @@ export function SelectTrigger(props: SelectTriggerProps) {
       style={splitTriggerStyle(props.style).look}
     />
   ));
-  if (typeof props.children === "string") {
-    ctx.setPrompt(props.children);
+  const kids = childrenOf(props);
+  if (kids.text() !== undefined) {
+    ctx.setPrompt(kids.text());
     return null;
   }
-  return props.children;
+  return kids.content();
 }
 
 /** Sets the trigger's placeholder. It draws nothing of its own. */

@@ -194,18 +194,18 @@ export function Toggle(props: ToggleProps) {
     "disabledStyle",
     "hitSlop",
   ]);
-  const { text, content, label } = childrenOf(props);
+  const kids = childrenOf(props);
   const options: ToggleLookOptions = {
     size: () => props.size,
     variant: props.variant,
-    text: props.text ?? text !== undefined,
+    text: props.text ?? kids.text() !== undefined,
     disabled: () => props.disabled,
   };
   const look = toggleLook(options);
   return (
     <BaseToggle
       {...rest}
-      accessibilityLabel={label}
+      accessibilityLabel={kids.label()}
       hitSlop={props.hitSlop ?? look.hitSlop}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
@@ -214,10 +214,10 @@ export function Toggle(props: ToggleProps) {
       pressedStyle={[look.pressedStyle, props.pressedStyle ?? null]}
       disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     >
-      {text !== undefined ? (
-        <Text style={toggleLabel(() => props.pressed, options)}>{text}</Text>
+      {kids.text() !== undefined ? (
+        <Text style={toggleLabel(() => props.pressed, options)}>{kids.text()}</Text>
       ) : (
-        content
+        kids.content()
       )}
     </BaseToggle>
   );

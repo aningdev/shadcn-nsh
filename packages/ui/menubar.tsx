@@ -6,6 +6,7 @@ import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, platform, split, Text, View } from "nsh";
 import { Menu as BaseMenu, type MenuProps as BaseMenuProps, type OpenChangeReason } from "nsh/base";
 
+import { childrenOf } from "./lib/children";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import type { PopupSide } from "./lib/popup";
 import { menuHighlight, menuItemSize, menuPopup } from "./menu";
@@ -220,6 +221,9 @@ export function MenubarMenu(props: MenubarMenuProps) {
  */
 export function MenubarTrigger(props: MenubarTriggerProps) {
   const ctx = useMenubarMenu();
+  // Read here, not in the thunk below: the content draws the trigger through it each time it lays
+  // out, and a read there would build the children again on every draw.
+  const kids = childrenOf(props);
   ctx.trigger.set(() => {
     const look = menubarTriggerLook({ open: ctx.open, disabled: () => !!props.disabled });
     return (
@@ -234,10 +238,10 @@ export function MenubarTrigger(props: MenubarTriggerProps) {
         focusVisibleStyle={look.focusVisibleStyle}
         disabledStyle={look.disabledStyle}
       >
-        {typeof props.children === "string" ? (
-          <Text style={menubarLook().triggerText}>{props.children}</Text>
+        {kids.text() !== undefined ? (
+          <Text style={menubarLook().triggerText}>{kids.text()}</Text>
         ) : (
-          props.children
+          kids.content()
         )}
       </View>
     );

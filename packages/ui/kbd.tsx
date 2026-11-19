@@ -81,10 +81,14 @@ export type KbdGroupProps = ViewProps;
  */
 export function Kbd(props: KbdProps) {
   const [, rest] = split(props, ["children", "style"]);
-  const { text, content } = childrenOf(props);
+  const kids = childrenOf(props);
   return (
     <View {...rest} style={[kbdLook().kbd, props.style ?? null]}>
-      {text !== undefined ? <Text style={kbdLook().text}>{text}</Text> : content}
+      {kids.text() !== undefined ? (
+        <Text style={kbdLook().text}>{kids.text()}</Text>
+      ) : (
+        kids.content()
+      )}
     </View>
   );
 }

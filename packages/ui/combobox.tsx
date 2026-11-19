@@ -25,6 +25,7 @@ import {
 
 import { Button, type ButtonVariant } from "./button";
 import { edgeClass } from "./input";
+import { childrenOf } from "./lib/children";
 import { Icon } from "./lib/icons";
 import {
   Chevron,
@@ -413,9 +414,12 @@ export function Combobox(props: ComboboxProps) {
  */
 export function ComboboxTrigger(props: ComboboxTriggerProps) {
   const ctx = useCombobox();
+  // Read here, not in the thunk below: the content draws the trigger through it each time it lays
+  // out, and a read there would build the children again on every draw.
+  const kids = childrenOf(props);
   ctx.trigger.set(() => {
     const disabled = props.disabled ?? ctx.root.disabled;
-    if (typeof props.children === "string") {
+    if (kids.text() !== undefined) {
       return (
         <Button
           variant={props.variant ?? "secondary"}
@@ -423,11 +427,11 @@ export function ComboboxTrigger(props: ComboboxTriggerProps) {
           testID={props.testID}
           style={props.style}
         >
-          {props.children}
+          {kids.text()}
         </Button>
       );
     }
-    return props.children ?? <ComboToggle open={ctx.open()} id={props.testID} />;
+    return kids.content() ?? <ComboToggle open={ctx.open()} id={props.testID} />;
   });
   return null;
 }
@@ -440,12 +444,14 @@ export function ComboboxTrigger(props: ComboboxTriggerProps) {
  */
 export function ComboboxChips(props: ComboboxChipsProps) {
   const ctx = useCombobox();
+  // The render prop itself, read once: the chips draw it per value when the field lays them out.
+  const render = props.children;
   ctx.chips.set(() => {
     // A loop rather than `.map`, which the linter reads as a keyed list: NSH rebuilds these by
     // position, so no chip needs a key.
     const chips: JSX.Element[] = [];
     for (const value of ctx.value()) {
-      chips.push(props.children ? props.children(value) : <ComboboxChip value={value} />);
+      chips.push(render ? render(value) : <ComboboxChip value={value} />);
     }
     return <View style={chipsLook()}>{chips}</View>;
   });
@@ -568,7 +574,8 @@ export function ComboboxContent(props: ComboboxContentProps) {
 /** What the list shows while the query matches nothing. */
 export function ComboboxEmpty(props: ComboboxEmptyProps) {
   const ctx = useCombobox();
-  ctx.empty.set(() => <ListboxEmpty label={props.children ?? "No results"} />);
+  const label = props.children ?? "No results";
+  ctx.empty.set(() => <ListboxEmpty label={label} />);
   return null;
 }
 

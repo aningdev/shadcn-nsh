@@ -507,11 +507,11 @@ export function Button(props: ButtonProps) {
     busy: () => props.busy,
   };
   const look = buttonLook(variant, options);
-  const { text, content, label } = childrenOf(props);
+  const kids = childrenOf(props);
   return (
     <BaseButton
       {...rest}
-      accessibilityLabel={label}
+      accessibilityLabel={kids.label()}
       // Busy, it keeps its focus and its look and takes no second press.
       onPress={() => !props.busy && props.onPress?.()}
       hitSlop={props.hitSlop ?? look.hitSlop}
@@ -524,7 +524,11 @@ export function Button(props: ButtonProps) {
       <If when={props.busy}>
         <Spinner {...buttonGlyph(variant, options)} />
       </If>
-      {text !== undefined ? <Text style={buttonLabel(variant, options)}>{text}</Text> : content}
+      {kids.text() !== undefined ? (
+        <Text style={buttonLabel(variant, options)}>{kids.text()}</Text>
+      ) : (
+        kids.content()
+      )}
     </BaseButton>
   );
 }
@@ -676,11 +680,11 @@ export function SplitButtonSegment(props: SplitButtonSegmentProps) {
     selected: () => props.selected,
     disabled: () => props.disabled,
   });
-  const { text, content, label } = childrenOf(props);
+  const kids = childrenOf(props);
   return (
     <BaseButton
       {...rest}
-      accessibilityLabel={label}
+      accessibilityLabel={kids.label()}
       hitSlop={props.hitSlop ?? segment.hitSlop}
       style={[segment.style, props.style ?? null]}
       hoverStyle={[segment.hoverStyle ?? null, props.hoverStyle ?? null]}
@@ -688,10 +692,10 @@ export function SplitButtonSegment(props: SplitButtonSegmentProps) {
       focusVisibleStyle={[segment.focusVisibleStyle, props.focusVisibleStyle ?? null]}
       disabledStyle={[segment.disabledStyle, props.disabledStyle ?? null]}
     >
-      {text !== undefined ? (
-        <Text style={buttonLabel(ctx.variant, ctx.options)}>{text}</Text>
+      {kids.text() !== undefined ? (
+        <Text style={buttonLabel(ctx.variant, ctx.options)}>{kids.text()}</Text>
       ) : (
-        content
+        kids.content()
       )}
     </BaseButton>
   );
@@ -720,8 +724,8 @@ export interface ActionProps {
  * keyboard still rings.
  */
 export function Action(props: ActionProps) {
-  const { text, content } = childrenOf(props);
-  if (text !== undefined) {
+  const kids = childrenOf(props);
+  if (kids.text() !== undefined) {
     return (
       <Button
         variant={props.variant ?? "secondary"}
@@ -729,7 +733,7 @@ export function Action(props: ActionProps) {
         style={props.style}
         onPress={props.onPress}
       >
-        {text}
+        {kids.text()}
       </Button>
     );
   }
@@ -742,7 +746,7 @@ export function Action(props: ActionProps) {
       onPress={props.disabled ? undefined : props.onPress}
       style={props.style}
     >
-      {content}
+      {kids.content()}
     </View>
   );
 }

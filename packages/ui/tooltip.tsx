@@ -9,6 +9,7 @@ import {
 } from "nsh/base";
 
 import { Button, type ButtonVariant } from "./button";
+import { childrenOf } from "./lib/children";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 
 // @port look/overlay.ts
@@ -128,13 +129,10 @@ function useTooltip() {
 function Bubble(props: TooltipContentProps) {
   const [, rest] = split(props, ["children", "rich", "class"]);
   const look = tooltipLook({ rich: props.rich });
+  const kids = childrenOf(props);
   return (
     <BaseTooltip {...rest} class={props.class ? `${look.class} ${props.class}` : look.class}>
-      {typeof props.children === "string" ? (
-        <Text class={tooltipText}>{props.children}</Text>
-      ) : (
-        props.children
-      )}
+      {kids.text() !== undefined ? <Text class={tooltipText}>{kids.text()}</Text> : kids.content()}
     </BaseTooltip>
   );
 }
@@ -191,19 +189,22 @@ export function Tooltip(props: TooltipProps) {
 /** What the pointer rests on: a `Button` for a string, else the element as it is. */
 export function TooltipTrigger(props: TooltipTriggerProps) {
   const ctx = useTooltip();
+  // Read here, not in the thunk below: the host draws the trigger through it each time it lays
+  // out, and a read there would build the children again on every draw.
+  const kids = childrenOf(props);
   ctx.trigger.set(() => {
-    if (typeof props.children === "string") {
+    if (kids.text() !== undefined) {
       return (
         <Button
           variant={props.variant ?? "secondary"}
           disabled={props.disabled}
           style={props.style}
         >
-          {props.children}
+          {kids.text()}
         </Button>
       );
     }
-    return props.children ?? <View />;
+    return kids.content() ?? <View />;
   });
   return null;
 }

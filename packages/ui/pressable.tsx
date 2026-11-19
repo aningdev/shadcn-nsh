@@ -72,17 +72,21 @@ export function Pressable(props: PressableProps) {
     "focusVisibleStyle",
   ]);
   const look = pressableLook({ disabled: () => props.disabled });
-  const { text, content, label } = childrenOf(props);
+  const kids = childrenOf(props);
   return (
     <BaseButton
       {...rest}
-      accessibilityLabel={label}
+      accessibilityLabel={kids.label()}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}
       focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
     >
-      {text !== undefined ? <Text style={{ color: colors.foreground }}>{text}</Text> : content}
+      {kids.text() !== undefined ? (
+        <Text style={{ color: colors.foreground }}>{kids.text()}</Text>
+      ) : (
+        kids.content()
+      )}
     </BaseButton>
   );
 }

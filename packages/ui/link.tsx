@@ -8,6 +8,7 @@ import { Link as BaseLink, type LinkProps as BaseLinkProps } from "nsh/base";
 
 import { childrenOf } from "./lib/children";
 import { Icon } from "./lib/icons";
+import { type Live } from "./lib/utils";
 
 // @port look/nav.tsx
 const pointer = platform.desktop;
@@ -70,7 +71,12 @@ export function linkLook(o?: { inline?: boolean }) {
  * which nudges out of its box under the pointer.
  */
 export function LinkText(
-  props: LinkState & { label: string; color: string; size?: number; icon?: boolean },
+  props: LinkState & {
+    label: Live<string | undefined>;
+    color: string;
+    size?: number;
+    icon?: boolean;
+  },
 ) {
   const size = () => props.size ?? linkSize;
   return (
@@ -150,17 +156,17 @@ export function Link(props: LinkProps) {
     visited: props.visited,
     quiet: props.quiet,
   });
-  const { text, content, label } = childrenOf(props);
+  const kids = childrenOf(props);
   return (
     <BaseLink
       {...rest}
-      accessibilityLabel={label}
+      accessibilityLabel={kids.label()}
       class={props.class ? `${look().class} ${props.class}` : look().class}
       focusVisibleStyle={[look().focusVisibleStyle, props.focusVisibleStyle ?? null]}
     >
-      {text !== undefined ? (
+      {kids.text() !== undefined ? (
         <LinkText
-          label={text}
+          label={kids.text}
           color={linkColor(state())}
           disabled={!!props.disabled}
           current={props.current}
@@ -168,7 +174,7 @@ export function Link(props: LinkProps) {
           icon={props.icon}
         />
       ) : (
-        content
+        kids.content()
       )}
     </BaseLink>
   );

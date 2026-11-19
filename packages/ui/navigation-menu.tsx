@@ -13,11 +13,12 @@ import {
   type OpenChangeReason,
 } from "nsh/base";
 
+import { childrenOf } from "./lib/children";
 import { Icon } from "./lib/icons";
 import { createSlot, type Slot } from "./lib/open-state";
 import { PopIn, popupSurface, type PopupSide } from "./lib/popup";
 import { pressSink, pressTransition } from "./lib/press";
-import { labelOf, type Live, read } from "./lib/utils";
+import { type Live, read } from "./lib/utils";
 
 /** A pointer's compact bar; a touch screen's roomier one, a finger's target in every trigger. */
 const pointer = platform.desktop;
@@ -528,6 +529,9 @@ export function NavigationMenuItem(props: NavigationMenuItemProps) {
  */
 export function NavigationMenuTrigger(props: NavigationMenuTriggerProps) {
   const item = useNavigationMenuItem();
+  // Read here, not in the thunk below: the content draws the trigger through it each time it lays
+  // out, and a read there would build the children again on every draw.
+  const kids = childrenOf(props);
   item.trigger.set(() => {
     const look = navigationMenuTriggerLook({
       open: item.open,
@@ -549,11 +553,7 @@ export function NavigationMenuTrigger(props: NavigationMenuTriggerProps) {
         focusVisibleStyle={look.focusVisibleStyle}
         disabledStyle={look.disabledStyle}
       >
-        {typeof props.children === "string" ? (
-          <Text style={look.text}>{props.children}</Text>
-        ) : (
-          props.children
-        )}
+        {kids.text() !== undefined ? <Text style={look.text}>{kids.text()}</Text> : kids.content()}
         <View
           style={look.chevron}
           accessibilityElementsHidden
@@ -604,6 +604,7 @@ export function NavigationMenuContent(props: NavigationMenuContentProps) {
             onMouseEnter={pointer ? () => item.pointerOver("panel", true) : undefined}
             onMouseLeave={pointer ? () => item.pointerOver("panel", false) : undefined}
           >
+            {/* children-lint: the panel's contents, built when it opens, not before. */}
             {props.children}
           </View>
         </PopIn>
@@ -645,23 +646,20 @@ export function NavigationMenuLink(props: NavigationMenuLinkProps) {
       active: () => !!props.active,
       disabled: () => !!props.disabled,
     });
+  const kids = childrenOf(props);
   return (
     <BaseLink
       {...rest}
       disabled={props.disabled}
       current={props.active}
-      accessibilityLabel={labelOf(props.accessibilityLabel, props.children)}
+      accessibilityLabel={kids.label()}
       style={[look().style, props.style ?? null]}
       hoverStyle={styleOver(look().hoverStyle, props.hoverStyle)}
       activeStyle={styleOver(look().activeStyle, props.activeStyle)}
       focusVisibleStyle={[look().focusVisibleStyle, props.focusVisibleStyle ?? null]}
       disabledStyle={[look().disabledStyle, props.disabledStyle ?? null]}
     >
-      {typeof props.children === "string" ? (
-        <Text style={look().text}>{props.children}</Text>
-      ) : (
-        props.children
-      )}
+      {kids.text() !== undefined ? <Text style={look().text}>{kids.text()}</Text> : kids.content()}
     </BaseLink>
   );
 }

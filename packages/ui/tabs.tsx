@@ -176,7 +176,7 @@ export const TAB_ICON_ROOM = TAB_ICON + 6;
  * does not show.
  */
 export function TabTitle(props: {
-  name: string;
+  name: Live<string | undefined>;
   selected: boolean;
   count?: number;
   icon?: IconNode;
@@ -403,13 +403,13 @@ export function TabsTrigger(props: TabsTriggerProps) {
       disabled: () => !!props.disabled,
     }),
   );
-  const { text, content, label } = childrenOf(props);
+  const kids = childrenOf(props);
 
   return (
     <BaseTab
       {...rest}
       selected={selected()}
-      accessibilityLabel={label}
+      accessibilityLabel={kids.label()}
       onPress={() => {
         ctx?.onValueChange(props.value);
         props.onPress?.();
@@ -421,7 +421,11 @@ export function TabsTrigger(props: TabsTriggerProps) {
       disabledStyle={[tab().disabledStyle, props.disabledStyle ?? null]}
       selectedStyle={props.selectedStyle}
     >
-      {text !== undefined ? <TabTitle name={text} selected={selected()} /> : content}
+      {kids.text() !== undefined ? (
+        <TabTitle name={kids.text} selected={selected()} />
+      ) : (
+        kids.content()
+      )}
     </BaseTab>
   );
 }
@@ -447,13 +451,13 @@ export function Tab(props: TabProps) {
       disabled: () => !!props.disabled,
     }),
   );
-  const { text, content, label } = childrenOf(props);
+  const kids = childrenOf(props);
 
   return (
     <BaseTab
       {...rest}
       selected={props.selected}
-      accessibilityLabel={label}
+      accessibilityLabel={kids.label()}
       style={[tab().style, props.style ?? null]}
       hoverStyle={[tab().hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[tab().activeStyle ?? null, props.activeStyle ?? null]}
@@ -461,7 +465,11 @@ export function Tab(props: TabProps) {
       disabledStyle={[tab().disabledStyle, props.disabledStyle ?? null]}
       selectedStyle={props.selectedStyle}
     >
-      {text !== undefined ? <TabTitle name={text} selected={!!props.selected} /> : content}
+      {kids.text() !== undefined ? (
+        <TabTitle name={kids.text} selected={!!props.selected} />
+      ) : (
+        kids.content()
+      )}
     </BaseTab>
   );
 }

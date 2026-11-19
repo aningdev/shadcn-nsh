@@ -1,7 +1,8 @@
 /**
  * Children read once: each read of `props.children` builds the children again (new native views),
- * so a leaf control reads them once — through `childrenOf` when it needs them for more than one
- * thing. The rule and the files it covers live in `scripts/children/rules.ts`.
+ * so a control reads them once — through `childrenOf` when it needs them for more than one thing.
+ * Every component under `packages/ui` and `packages/ui/lib` is checked; the rule lives in
+ * `scripts/children/rules.ts`.
  *
  *   bun scripts/children-lint.ts
  *
@@ -10,8 +11,10 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { FILES, violations } from "./children/rules";
+import { files, violations } from "./children/rules";
 import { repo } from "./port/lib";
+
+const FILES = files(repo);
 
 const problems = FILES.flatMap((file) => {
   const full = path.join(repo, file);
@@ -40,4 +43,4 @@ if (problems.length > 0) {
   );
   process.exit(1);
 }
-console.log(`children: OK — ${FILES.length} leaf controls read their children once`);
+console.log(`children: OK — ${FILES.length} controls read their children once`);

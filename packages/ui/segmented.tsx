@@ -244,13 +244,13 @@ export function SegmentedItem(props: SegmentedItemProps) {
       disabled: () => !!props.disabled,
     }),
   );
-  const { text, content, label } = childrenOf(props);
+  const kids = childrenOf(props);
 
   return (
     <BaseTab
       {...rest}
       selected={selected()}
-      accessibilityLabel={label}
+      accessibilityLabel={kids.label()}
       onPress={() => {
         ctx.onValueChange(props.value);
         props.onPress?.();
@@ -261,15 +261,15 @@ export function SegmentedItem(props: SegmentedItemProps) {
       focusVisibleStyle={[segment().focusVisibleStyle, props.focusVisibleStyle ?? null]}
       disabledStyle={[segment().disabledStyle, props.disabledStyle ?? null]}
     >
-      {text !== undefined ? (
+      {kids.text() !== undefined ? (
         <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-          <Text style={look().label(selected())}>{text}</Text>
+          <Text style={look().label(selected())}>{kids.text()}</Text>
           <If when={props.count !== undefined}>
             <Text style={look().count}>{props.count}</Text>
           </If>
         </View>
       ) : (
-        content
+        kids.content()
       )}
     </BaseTab>
   );

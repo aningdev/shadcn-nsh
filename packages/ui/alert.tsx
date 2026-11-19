@@ -138,13 +138,13 @@ export function AlertTitle(props: AlertTitleProps) {
  */
 export function AlertDescription(props: AlertDescriptionProps) {
   const [, rest] = split(props, ["style", "children"]);
-  const { text, content } = childrenOf(props);
+  const kids = childrenOf(props);
   return (
     <View {...rest} style={[alertLook().descriptionFrame(), props.style ?? null]}>
-      {text !== undefined ? (
-        <Text style={alertLook().descriptionText(AlertVariantContext())}>{text}</Text>
+      {kids.text() !== undefined ? (
+        <Text style={alertLook().descriptionText(AlertVariantContext())}>{kids.text()}</Text>
       ) : (
-        content
+        kids.content()
       )}
     </View>
   );

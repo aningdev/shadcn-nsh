@@ -13,6 +13,7 @@ import {
 
 import { Action, type ButtonVariant } from "./button";
 import { dialogText, dialogTitle } from "./dialog";
+import { childrenOf } from "./lib/children";
 import { createOpenState, type OpenState } from "./lib/open-state";
 import { backdrop } from "./lib/popup";
 import { sheetPanel, type SheetSide } from "./sheet";
@@ -209,12 +210,14 @@ export function DrawerFooter(props: DrawerFooterProps) {
 
 /** The drawer's title; a string child takes `dialogTitle`'s type, anything else is drawn as given. */
 export function DrawerTitle(props: DrawerTitleProps) {
-  if (typeof props.children !== "string") return props.children;
-  return <Text style={[dialogTitle(), props.style ?? null]}>{props.children}</Text>;
+  const kids = childrenOf(props);
+  if (kids.text() === undefined) return kids.content();
+  return <Text style={[dialogTitle(), props.style ?? null]}>{kids.text()}</Text>;
 }
 
 /** The drawer's description; a string child takes `dialogText`'s type, the muted line under the title. */
 export function DrawerDescription(props: DrawerDescriptionProps) {
-  if (typeof props.children !== "string") return props.children;
-  return <Text style={[dialogText(), props.style ?? null]}>{props.children}</Text>;
+  const kids = childrenOf(props);
+  if (kids.text() === undefined) return kids.content();
+  return <Text style={[dialogText(), props.style ?? null]}>{kids.text()}</Text>;
 }

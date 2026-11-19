@@ -261,23 +261,23 @@ export function BreadcrumbLink(props: BreadcrumbLinkProps) {
     "focusVisibleStyle",
     "accessibilityLabel",
   ]);
-  const { text, content, label } = childrenOf(props);
+  const kids = childrenOf(props);
   return (
     <BaseLink
       {...rest}
-      accessibilityLabel={label}
+      accessibilityLabel={kids.label()}
       class={
         props.class ? `${breadcrumbLook().linkClass} ${props.class}` : breadcrumbLook().linkClass
       }
       style={[breadcrumbLook().link, props.style ?? null]}
       focusVisibleStyle={[breadcrumbLook().focusVisible, props.focusVisibleStyle ?? null]}
     >
-      {text !== undefined ? (
+      {kids.text() !== undefined ? (
         <Text class={breadcrumbLook().linkTextClass} style={breadcrumbLook().linkText}>
-          {text}
+          {kids.text()}
         </Text>
       ) : (
-        content
+        kids.content()
       )}
     </BaseLink>
   );

@@ -15,9 +15,9 @@ import {
   DisclosureChevron,
   type DisclosurePanelOptions,
 } from "./accordion";
+import { childrenOf } from "./lib/children";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import { RowLabel } from "./lib/surface";
-import { labelOf } from "./lib/utils";
 
 /** Why a collapsible opened or closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */
 export type CollapsibleOpenChangeReason = OpenChangeReason;
@@ -82,26 +82,28 @@ export function Collapsible(props: CollapsibleProps) {
 /** Registers the disclosure row; `CollapsibleContent` renders it as the base child. */
 export function CollapsibleTrigger(props: CollapsibleTriggerProps) {
   const ctx = useCollapsible();
+  // Read here, not in the thunk below: the content draws the trigger through it each time it lays
+  // out, and a read there would build the children again on every draw.
+  const kids = childrenOf(props);
   ctx.trigger.set(() => {
     const look = disclosureTriggerLook({
       first: props.first,
       start: props.start,
       disabled: () => Boolean(props.disabled),
     });
-    const children = props.children;
     const disabled = Boolean(props.disabled);
     const body =
-      typeof children === "string" ? (
-        <RowLabel label={children} strong />
+      kids.text() !== undefined ? (
+        <RowLabel label={kids.text} strong />
       ) : (
-        <View style={{ flexGrow: 1, flexShrink: 1 }}>{children}</View>
+        <View style={{ flexGrow: 1, flexShrink: 1 }}>{kids.content()}</View>
       );
 
     return (
       <View
         accessible
         role="button"
-        accessibilityLabel={labelOf(props.accessibilityLabel, children) ?? undefined}
+        accessibilityLabel={kids.label() ?? undefined}
         accessibilityState={{ expanded: ctx.open(), disabled }}
         class={props.class ? `${look.class} ${props.class}` : look.class}
         onPress={disabled ? undefined : () => ctx.setOpen(!ctx.open())}

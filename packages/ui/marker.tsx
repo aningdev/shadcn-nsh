@@ -159,11 +159,11 @@ export function Marker(props: MarkerProps) {
         {(() => {
           // Read where the children go: each read builds them again, and what they build sees the
           // marker's variant only inside its provider.
-          const { text, content } = childrenOf(props);
-          return text !== undefined ? (
-            <Text style={markerLook().content(variant())}>{text}</Text>
+          const kids = childrenOf(props);
+          return kids.text() !== undefined ? (
+            <Text style={markerLook().content(variant())}>{kids.text()}</Text>
           ) : (
-            content
+            kids.content()
           );
         })()}
         <If when={variant() === "separator"}>

@@ -1,47 +1,47 @@
 /**
- * Children read once, for the leaf controls: every read of `props.children` builds the children
- * again (new native views — `references/nsh/website/docs/jsx-and-components.md`, "each read of
+ * Children read once, for every control: each read of `props.children` builds the children again
+ * (new native views — `references/nsh/website/docs/jsx-and-components.md`, "each read of
  * `props.children` builds the children again"), so a control reads them once, and when it uses
  * them for more than one thing (its name, whether it holds a string, what it draws) it asks
  * `childrenOf` (`packages/ui/lib/children.ts`), whose one read they all share.
  *
- * `FILES` is part 1 of #55, the leaf controls; part 2 adds the overlays and containers to it. In a
- * listed file:
+ * The rule covers every `.tsx` under `packages/ui` and `packages/ui/lib` (#55). In one:
  *   - a component reads `props.children` at most once, or calls `childrenOf` at most once — one
  *     read in all;
  *   - the read sits in the component's own body, or in a function that runs where it is written
  *     (`(() => …)()`): a read inside a function kept for later (a thunk, a getter, a callback)
  *     reads the children again on every call, which is two reads.
  * A control that draws `{props.children}` once and asks nothing else of them is fine as it is;
- * so is `const { text, content, label } = childrenOf(props)`.
+ * so is `const kids = childrenOf(props)`, whose `kids.content()`, `kids.text()` and `kids.label()`
+ * read that one value where they stand and never `props.children` again — calling them is not a
+ * read, so they may be called as often as a control draws. What the helper holds is a `computed`,
+ * built on first draw and again when what the children read changes, so the children stay live.
+ *
+ * One read may sit in a function kept for later when the place it runs is the only place the
+ * children may be built: a portal's content builder, which `nsh/base` makes on each opening
+ * (`Popover`'s `#[prop(lazy)] children`), so building them while it is closed would build views
+ * nobody shows. That read — and only that one — carries a `children-lint: <why>` comment on its
+ * line or the line before; it still counts as the component's one read, so a second read stays a
+ * violation. The comment is required: it is how the next reader learns why the read is there.
  */
+import fs from "node:fs";
+import path from "node:path";
+
 import { parseSync } from "oxc-parser";
 
-/** The leaf controls part 1 covers (part 2 extends this list). */
-export const FILES = [
-  "packages/ui/alert.tsx",
-  "packages/ui/attachment.tsx",
-  "packages/ui/breadcrumb.tsx",
-  "packages/ui/bubble.tsx",
-  "packages/ui/button-group.tsx",
-  "packages/ui/button.tsx",
-  "packages/ui/card.tsx",
-  "packages/ui/checkbox.tsx",
-  "packages/ui/empty.tsx",
-  "packages/ui/field.tsx",
-  "packages/ui/input-group.tsx",
-  "packages/ui/item.tsx",
-  "packages/ui/kbd.tsx",
-  "packages/ui/label.tsx",
-  "packages/ui/link.tsx",
-  "packages/ui/marker.tsx",
-  "packages/ui/message.tsx",
-  "packages/ui/pressable.tsx",
-  "packages/ui/radio-group.tsx",
-  "packages/ui/segmented.tsx",
-  "packages/ui/tabs.tsx",
-  "packages/ui/toggle.tsx",
-];
+/** The directories whose every component is checked: the controls, and the parts they share. */
+export const DIRS = ["packages/ui", "packages/ui/lib"] as const;
+
+/** Every `.tsx` under `dirs` (`root` prefixes the paths), sorted: a new component is checked
+ * without anyone listing it. */
+export function files(root: string): string[] {
+  return DIRS.flatMap((dir) =>
+    fs
+      .readdirSync(path.join(root, dir), { withFileTypes: true })
+      .filter((entry) => entry.isFile() && entry.name.endsWith(".tsx"))
+      .map((entry) => `${dir}/${entry.name}`),
+  ).sort();
+}
 
 type Node = {
   type: string;
@@ -108,6 +108,15 @@ function unwrapParens(node: Node | undefined): Node | undefined {
   return current;
 }
 
+const SANCTIONED = "children-lint:";
+
+/** Whether a comment on `line`, or the line before, sanctions a read kept for later (`line` is 1-based). */
+function sanctioned(lines: string[], line: number): boolean {
+  return (
+    (lines[line - 1] ?? "").includes(SANCTIONED) || (lines[line - 2] ?? "").includes(SANCTIONED)
+  );
+}
+
 /** The local names `childrenOf` is imported under (an alias counts as the same helper). */
 function helperNames(program: { body?: unknown }): Set<string> {
   const names = new Set<string>();
@@ -130,6 +139,7 @@ export function violations(source: string, file: string): Violation[] {
   const error = parsed.errors[0];
   if (error) throw new Error(`${file}: ${error.message}`);
   const helpers = helperNames(parsed.program);
+  const lines = source.split("\n");
   const found: Violation[] = [];
   // The reads of each component, and where its first one is (the position reported).
   const reads = new Map<Node, { where: string; count: number; first: Node }>();
@@ -188,8 +198,10 @@ export function violations(source: string, file: string): Violation[] {
         const index = owner(object.name as string);
         if (index >= 0) {
           // A function kept between the read and the component it reads for runs on every call.
-          if (!runsHere(index)) report(current, index, "nested");
-          else count(current, index);
+          if (!runsHere(index)) {
+            if (sanctioned(lines, lineAt(source, current.start))) count(current, index);
+            else report(current, index, "nested");
+          } else count(current, index);
         }
       }
     }
@@ -200,10 +212,17 @@ export function violations(source: string, file: string): Violation[] {
     }
 
     if (isHelperCall(current) && stack.length > 0) {
-      // The component is the file's outermost function; a call inside one of its own functions
-      // reads the children again each time that function runs.
-      if (!runsHere(0)) report(current, 0, "nested");
-      else count(current, 0);
+      // The component that reads them: the one whose `props` the helper is given, so a file with
+      // several components counts each one's reads apart.
+      const argument = (current.arguments as Node[] | undefined)?.[0];
+      const index =
+        argument?.type === "Identifier" ? owner(argument.name as string) : stack.length - 1;
+      if (index >= 0) {
+        // A call inside one of that component's own functions reads the children again each time
+        // that function runs.
+        if (!runsHere(index)) report(current, index, "nested");
+        else count(current, index);
+      }
     }
 
     for (const [key, value] of Object.entries(current)) {

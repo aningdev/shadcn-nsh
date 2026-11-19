@@ -72,10 +72,10 @@ export type LabelProps = Omit<ViewProps, "children"> & {
 export function Label(props: LabelProps) {
   const [, rest] = split(props, ["children", "disabled", "style"]);
   const look = labelLook({ disabled: props.disabled });
-  const { text, content } = childrenOf(props);
+  const kids = childrenOf(props);
   return (
     <View {...rest} style={[look.root, props.style ?? null]}>
-      {text !== undefined ? <Text style={look.text}>{text}</Text> : content}
+      {kids.text() !== undefined ? <Text style={look.text}>{kids.text()}</Text> : kids.content()}
     </View>
   );
 }

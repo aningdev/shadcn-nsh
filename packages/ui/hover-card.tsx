@@ -10,6 +10,7 @@ import {
 } from "nsh/base";
 
 import { Button, type ButtonVariant } from "./button";
+import { childrenOf } from "./lib/children";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import { PopIn } from "./lib/popup";
 import { popoverLook } from "./popover";
@@ -102,15 +103,18 @@ export function HoverCard(props: HoverCardProps) {
 export function HoverCardTrigger(props: HoverCardTriggerProps) {
   const ctx = useHoverCard();
   ctx.setDisabled(() => Boolean(props.disabled));
+  // Read here, not in the thunk below: the content draws the trigger through it each time it lays
+  // out, and a read there would build the children again on every draw.
+  const kids = childrenOf(props);
   ctx.trigger.set(() => {
-    if (typeof props.children === "string") {
+    if (kids.text() !== undefined) {
       return (
         <Button
           variant={props.variant ?? "secondary"}
           disabled={props.disabled}
           style={props.style}
         >
-          {props.children}
+          {kids.text()}
         </Button>
       );
     }
@@ -122,7 +126,7 @@ export function HoverCardTrigger(props: HoverCardTriggerProps) {
         focusVisibleStyle={focusRing()}
         style={props.style}
       >
-        {props.children}
+        {kids.content()}
       </View>
     );
   });
@@ -164,6 +168,7 @@ export function HoverCardContent(props: HoverCardContentProps) {
           side={placement()}
           style={popoverLook({ compact: props.compact, width: props.width })}
         >
+          {/* children-lint: the card's contents, built when it opens, not before. */}
           {props.children}
         </PopIn>
       )}

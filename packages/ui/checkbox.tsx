@@ -225,11 +225,11 @@ export function Checkbox(props: CheckboxProps) {
     disabled: () => !!props.disabled,
   };
   const look = checkboxLook(options);
-  const { text, content, label } = childrenOf(props);
+  const kids = childrenOf(props);
   return (
     <BaseCheckbox
       {...rest}
-      accessibilityLabel={label}
+      accessibilityLabel={kids.label()}
       class={props.class ? `group ${props.class}` : "group"}
       indicatorClass={
         props.indicatorClass
@@ -248,11 +248,11 @@ export function Checkbox(props: CheckboxProps) {
         )
       }
     >
-      {text !== undefined ? (
+      {kids.text() !== undefined ? (
         // The page's ink, read here so it follows the appearance: a bare Text is nsh's black.
-        <Text style={{ color: colors.foreground }}>{text}</Text>
+        <Text style={{ color: colors.foreground }}>{kids.text()}</Text>
       ) : (
-        content
+        kids.content()
       )}
     </BaseCheckbox>
   );

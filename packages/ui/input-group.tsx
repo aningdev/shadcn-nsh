@@ -294,10 +294,10 @@ export type InputGroupTextProps = Omit<ViewProps, "children"> & {
 export function InputGroupText(props: InputGroupTextProps) {
   const look = inputGroupTextLook();
   const [, rest] = split(props, ["style", "ref", "children"]);
-  const { text, content } = childrenOf(props);
+  const kids = childrenOf(props);
   return (
     <View {...rest} style={[look.style, props.style ?? null]}>
-      {text !== undefined ? <Text style={look.label}>{text}</Text> : content}
+      {kids.text() !== undefined ? <Text style={look.label}>{kids.text()}</Text> : kids.content()}
     </View>
   );
 }

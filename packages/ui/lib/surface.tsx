@@ -329,7 +329,7 @@ const DETAIL_WIDTH = 24 * TERMINAL_COLUMN;
  * beside a control. `width`: the terminal's label column.
  */
 export function RowLabel(props: {
-  label: string;
+  label: Live<string | undefined>;
   detail?: string;
   strong?: boolean;
   width?: number;

@@ -291,7 +291,7 @@
       "type": "registry:ui",
       "title": "Dialog",
       "description": "A card dialog: Trigger, Content, Title, Description, Footer and Close.",
-      "registryDependencies": ["button", "open-state", "popup", "theme"],
+      "registryDependencies": ["button", "children", "open-state", "popup", "theme"],
       "files": [
         {
           "path": "packages/ui/dialog.tsx",
@@ -433,7 +433,7 @@
       "type": "registry:ui",
       "title": "Tooltip",
       "description": "A popover-coloured hint bubble on any element's tooltip prop.",
-      "registryDependencies": ["button", "open-state"],
+      "registryDependencies": ["button", "children", "open-state"],
       "files": [
         {
           "path": "packages/ui/tooltip.tsx",
@@ -447,7 +447,7 @@
       "type": "registry:ui",
       "title": "Popover",
       "description": "A popup panel that grows from its trigger, on the shared menu surface.",
-      "registryDependencies": ["button", "open-state", "popup", "theme"],
+      "registryDependencies": ["button", "children", "open-state", "popup", "theme"],
       "files": [
         {
           "path": "packages/ui/popover.tsx",
@@ -461,7 +461,7 @@
       "type": "registry:ui",
       "title": "Hover Card",
       "description": "A preview card that grows from its trigger, on the shared popover surface.",
-      "registryDependencies": ["button", "open-state", "popover", "popup", "theme"],
+      "registryDependencies": ["button", "children", "open-state", "popover", "popup", "theme"],
       "files": [
         {
           "path": "packages/ui/hover-card.tsx",
@@ -503,7 +503,7 @@
       "type": "registry:ui",
       "title": "Alert Dialog",
       "description": "A confirmation of the platform's own: shadcn's parts over the system's alert (AlertDialog.show).",
-      "registryDependencies": ["button", "open-state"],
+      "registryDependencies": ["button", "children", "open-state"],
       "files": [
         {
           "path": "packages/ui/alert-dialog.tsx",
@@ -517,7 +517,15 @@
       "type": "registry:ui",
       "title": "Menu",
       "description": "A menu of items, separators and submenus on the shared menu look.",
-      "registryDependencies": ["button", "icons", "open-state", "popup", "theme", "utils"],
+      "registryDependencies": [
+        "button",
+        "children",
+        "icons",
+        "open-state",
+        "popup",
+        "theme",
+        "utils"
+      ],
       "files": [
         {
           "path": "packages/ui/menu.tsx",
@@ -532,7 +540,7 @@
       "type": "registry:ui",
       "title": "Context Menu",
       "description": "A menu at the pointer, on the shared menu look.",
-      "registryDependencies": ["menu", "open-state"],
+      "registryDependencies": ["children", "menu", "open-state"],
       "files": [
         {
           "path": "packages/ui/context-menu.tsx",
@@ -562,6 +570,7 @@
       "title": "Select",
       "description": "A list of choices from a field trigger, on the shared listbox look.",
       "registryDependencies": [
+        "children",
         "icons",
         "input",
         "listbox",
@@ -586,6 +595,7 @@
       "description": "A searchable field with a list of choices and chips for the values chosen, on the shared listbox look.",
       "registryDependencies": [
         "button",
+        "children",
         "icons",
         "input",
         "listbox",
@@ -676,7 +686,7 @@
       "type": "registry:ui",
       "title": "Accordion",
       "description": "List rows that reveal panels with a turning chevron.",
-      "registryDependencies": ["icons", "surface", "theme", "utils"],
+      "registryDependencies": ["children", "icons", "surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/accordion.tsx",
@@ -691,7 +701,7 @@
       "type": "registry:ui",
       "title": "Collapsible",
       "description": "A disclosure row that reveals a panel beneath it.",
-      "registryDependencies": ["accordion", "open-state", "surface", "utils"],
+      "registryDependencies": ["accordion", "children", "open-state", "surface"],
       "files": [
         {
           "path": "packages/ui/collapsible.tsx",
@@ -720,7 +730,7 @@
       "type": "registry:ui",
       "title": "Link",
       "description": "A text link with underline motion, on the shared nav look.",
-      "registryDependencies": ["children", "icons", "theme"],
+      "registryDependencies": ["children", "icons", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/link.tsx",
@@ -1256,7 +1266,7 @@
       "type": "registry:ui",
       "title": "Drawer",
       "description": "A panel from the bottom edge, with a grabber, that a swipe closes.",
-      "registryDependencies": ["button", "dialog", "open-state", "popup", "sheet"],
+      "registryDependencies": ["button", "children", "dialog", "open-state", "popup", "sheet"],
       "files": [
         {
           "path": "packages/ui/drawer.tsx",
@@ -1270,7 +1280,7 @@
       "type": "registry:ui",
       "title": "Menubar",
       "description": "A row of menus whose triggers stand in one bar.",
-      "registryDependencies": ["menu", "open-state", "popup", "theme", "utils"],
+      "registryDependencies": ["children", "menu", "open-state", "popup", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/menubar.tsx",
@@ -1356,7 +1366,15 @@
       "type": "registry:ui",
       "title": "NavigationMenu",
       "description": "A row of triggers, each opening a panel of anything under the bar — one at a time.",
-      "registryDependencies": ["icons", "open-state", "popup", "press", "theme", "utils"],
+      "registryDependencies": [
+        "children",
+        "icons",
+        "open-state",
+        "popup",
+        "press",
+        "theme",
+        "utils"
+      ],
       "dependencies": ["lucide@^1.66.0"],
       "files": [
         {
@@ -1373,6 +1391,7 @@
       "description": "An app's navigation column: groups of rows, folded to a strip of icons or sliding in as a sheet on a phone.",
       "registryDependencies": [
         "button",
+        "children",
         "icons",
         "input",
         "press",
