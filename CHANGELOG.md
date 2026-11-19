@@ -16,10 +16,10 @@
   `Bubble` around it, and a string child of `BubbleContent` now draws through it (#33).
 - **`MessageAvatar` takes children.** An icon or an `Avatar` draws in the round muted slot at the
   bottom of the row; without children, `name` and `src` work as before. (#32)
-- **The message scroller takes commands.** `MessageScrollerItem` takes `messageId`;
-  `useMessageScroller()` returns `scrollToMessage(id, { align, animated })`, `scrollToStart` and
-  `scrollToEnd` (with `atStart` / `atEnd`); `MessageScrollerProvider` shares them with controls
-  outside the frame; and `MessageScrollerViewport` forwards its `ScrollRef` (#31).
+- **The message scroller takes commands.** `useMessageScroller()` returns
+  `scrollToMessage(key, { align, animated })` — a turn's key, from the viewport's `keyExtractor` —
+  `scrollToStart` and `scrollToEnd` (with `atStart` / `atEnd`); `MessageScrollerProvider` shares
+  them with controls outside the frame; and `MessageScrollerViewport` forwards its `ListRef` (#31).
 
 ### Changed
 
@@ -53,6 +53,19 @@
   in a `Text` and `mono()` together. The theme docs gained
   [Override from nsh.json](https://shadcn-nsh.aning.dev/docs/theme#override-from-nshjson) and
   [Fonts](https://shadcn-nsh.aning.dev/docs/theme#fonts).
+- **Breaking:** **the message scroller's viewport is a virtualized list.** The viewport was a
+  `Scroll` over one `View`: every turn stayed mounted, however long the conversation, and the frame
+  re-measured all of it on every layout. `MessageScrollerViewport` is now `nsh`'s `List`: it takes
+  the turns as data (`each`), a child that renders one row, and a `keyExtractor`; only the rows near
+  the screen exist, and the list keeps the end in view while the reader is there. Two parts go:
+  `MessageScrollerContent` (the list is the content) and `MessageScrollerItem`'s `messageId` (a
+  row's `keyExtractor` key is what `scrollToMessage` names). The viewport's `ref` hands you its
+  `ListRef`. **To migrate:**
+  `<MessageScrollerViewport><MessageScrollerContent>{turns().map((turn) => <MessageScrollerItem
+  messageId={String(turn.id)}>…</MessageScrollerItem>)}</MessageScrollerContent></MessageScrollerViewport>`
+  becomes `<MessageScrollerViewport each={turns()} keyExtractor={(turn) => String(turn.id)}>{(item)
+  => <MessageScrollerItem>…{item().text}…</MessageScrollerItem>}</MessageScrollerViewport>` — read
+  `item()` where the turn is used, since the row is recycled (#57).
 - **Each theme has its own docs page (#44).** `/docs/themes` keeps the overview and links to one page per palette, and each of those pages has the same sections.
 - **One radius, three tiers (#38).** A theme now states one base, `radius`: `radius-control` is
   0.8× it and `radius-card` is 1.4×, each rounded to whole points, and `check:theme` rejects a tier

@@ -1,10 +1,10 @@
-// The reference of `message-scroller.tsx`: the same page, the look spread on `nsh`'s own Scroll,
-// View and Text instead of worn by the components. The render check requires the two to draw the
-// same pixels, so the scroller that opens at the end reveals it here too.
+// The reference of `message-scroller.tsx`: the same page, the look spread on `nsh`'s own List, View
+// and Text instead of worn by the components. The render check requires the two to draw the same
+// pixels, so the scroller that opens at the end reveals it here too.
 import { colors } from "@shadcn-nsh/theme";
 import { ArrowDown, ArrowUp, FileText } from "lucide";
-import type { JSX, ScrollRef } from "nsh";
-import { mount, Scroll, signal, Text, View } from "nsh";
+import type { JSX } from "nsh";
+import { List, mount, signal, Text, View } from "nsh";
 
 import {
   Attachment,
@@ -17,7 +17,6 @@ import {
 import { Bubble, BubbleContent } from "@/packages/ui/bubble";
 import { Button, buttonGlyph } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
-import { Marker, MarkerContent } from "@/packages/ui/marker";
 import { Message, MessageAvatar, MessageContent } from "@/packages/ui/message";
 import { type MessageScrollerDirection, messageScrollerLook } from "@/packages/ui/message-scroller";
 
@@ -31,26 +30,59 @@ interface Turn {
   from: string;
   text: string;
   mine: boolean;
+  file?: string;
 }
 
-const conversation: Turn[] = [
-  { id: 1, from: "Mia Chen", text: "Morning. The registry build is red again.", mine: false },
+const names = ["Mia Chen", "Oliver Reed"] as const;
+
+const opening: Turn[] = [
+  { id: 1, from: names[0], text: "Morning. The registry build is red again.", mine: false },
   {
     id: 2,
-    from: "Oliver Reed",
+    from: names[1],
     text: "It's the marker entry: it imports lucide and never said so.",
     mine: true,
   },
-  { id: 3, from: "Mia Chen", text: "Honest dependencies. What a concept.", mine: false },
-  { id: 4, from: "Oliver Reed", text: "I declared it. Rebuilding now.", mine: true },
-  { id: 5, from: "Mia Chen", text: "And the screenshots?", mine: false },
+  { id: 3, from: names[0], text: "Honest dependencies. What a concept.", mine: false },
+  { id: 4, from: names[1], text: "I declared it. Rebuilding now.", mine: true },
+  { id: 5, from: names[0], text: "And the screenshots?", mine: false },
   {
     id: 6,
-    from: "Oliver Reed",
+    from: names[1],
     text: "Four per component, light and dark, looked at with my own eyes.",
     mine: true,
   },
 ];
+
+const lines = [
+  "The list only mounts what is near the screen, so this costs almost nothing.",
+  "Scroll up and it holds your place while new turns arrive below.",
+  "Four hundred turns, and the frame does not know the difference.",
+  "The attachment rides along in a row, keyed by the turn it belongs to.",
+  "Send again; the view stays at the newest turn.",
+  "Opening at the oldest is the same list with the other end first.",
+  "A row is recycled: the turn it holds changes, the cell does not.",
+  "That is the whole trick. The rest is spacing.",
+  "Do the screenshots still line up?",
+  "Down to the pixel, both themes.",
+  "And the registry entry says what it imports now.",
+  "Then it is done.",
+];
+
+/** A conversation that no viewport could hold: the opening turns, then a generated run of them. */
+function conversation(count: number): Turn[] {
+  return Array.from({ length: count }, (_, i) => {
+    const first = opening[i];
+    if (first) return first;
+    return {
+      id: i + 1,
+      from: names[i % 2]!,
+      text: lines[i % lines.length]!,
+      mine: i % 2 === 1,
+      file: i === count - 3 ? "build.log" : undefined,
+    };
+  });
+}
 
 const replies = [
   "Still red on CI. Different error this time.",
@@ -58,15 +90,16 @@ const replies = [
   "Ship it.",
 ];
 
-/** A scroller's frame and viewport, its content revealed to the end when it opens there. */
+/** A scroller's frame and viewport: a list that opens where the component's would, revealing its
+ * end from the first frame. Its follow threshold is the component's 16 points. */
 function Frame(props: {
   height: number;
   initial: "start" | "end";
   page?: boolean;
+  each: readonly Turn[];
   overlay?: JSX.Element;
-  children: JSX.Element;
+  children: (item: () => Turn) => JSX.Element;
 }) {
-  let scroller: ScrollRef | undefined;
   return (
     <View
       style={[
@@ -75,19 +108,51 @@ function Frame(props: {
         props.page ? { borderRadius: 10, backgroundColor: colors.background } : null,
       ]}
     >
-      <Scroll ref={(node) => (scroller = node)} style={look.viewport}>
-        <View
-          onLayout={() => {
-            if (props.initial === "end") {
-              scroller?.scrollToEnd({ animated: false });
-            }
-          }}
-          style={look.content}
-        >
-          {props.children}
-        </View>
-      </Scroll>
+      <List
+        each={props.each}
+        keyExtractor={(turn) => String(turn.id)}
+        estimatedItemSize={68}
+        initialScrollAtEnd={props.initial === "end"}
+        maintainVisibleContentPosition={{ autoscrollToBottomThreshold: 16 }}
+        style={look.viewport}
+        contentStyle={look.content}
+      >
+        {props.children}
+      </List>
       {props.overlay}
+    </View>
+  );
+}
+
+/** One turn as the list draws it: read `item()` where the turn is used, since a cell is reused. */
+function turnRow(item: () => Turn) {
+  return (
+    <View style={look.item}>
+      <View style={{ gap: 8 }}>
+        <Message align={item().mine ? "end" : "start"}>
+          <MessageAvatar name={item().from} />
+          <MessageContent>
+            <Bubble variant={item().mine ? "default" : "muted"}>
+              <BubbleContent>{item().text}</BubbleContent>
+            </Bubble>
+          </MessageContent>
+        </Message>
+        {item().file ? (
+          <Attachment>
+            <AttachmentMedia>
+              <Icon
+                icon={FileText}
+                size={attachmentGlyph("default", "horizontal")}
+                tint={ui().muted}
+              />
+            </AttachmentMedia>
+            <AttachmentContent>
+              <AttachmentTitle>{item().file}</AttachmentTitle>
+              <AttachmentDescription>124 KB · 2 min ago</AttachmentDescription>
+            </AttachmentContent>
+          </Attachment>
+        ) : null}
+      </View>
     </View>
   );
 }
@@ -114,27 +179,14 @@ function Float(props: { direction: MessageScrollerDirection; label: string }) {
 function App() {
   const events = signal<string[]>([]);
   const log = (line: string) => events.set([line, ...events()].slice(0, 4));
-  const turns = signal<Turn[]>(conversation);
+  const turns = signal<Turn[]>(conversation(400));
   const sent = signal(0);
   const send = () => {
     const text = replies[sent() % replies.length]!;
     sent.set(sent() + 1);
-    turns.set([...turns(), { id: 100 + sent(), from: "Oliver Reed", text, mine: true }]);
+    turns.set([...turns(), { id: 1000 + sent(), from: names[1], text, mine: true }]);
     log("Sent");
   };
-
-  const turn = (t: Turn) => (
-    <View style={look.item}>
-      <Message align={t.mine ? "end" : "start"}>
-        <MessageAvatar name={t.from} />
-        <MessageContent>
-          <Bubble variant={t.mine ? "default" : "muted"}>
-            <BubbleContent>{t.text}</BubbleContent>
-          </Bubble>
-        </MessageContent>
-      </Message>
-    </View>
-  );
 
   return (
     <DemoPage title="Message scroller">
@@ -151,24 +203,10 @@ function App() {
               height={300}
               initial="end"
               page
+              each={turns()}
               overlay={<Float direction="start" label="Scroll to start" />}
             >
-              {turns().map((t) => turn(t))}
-              <View style={look.item}>
-                <Attachment>
-                  <AttachmentMedia>
-                    <Icon
-                      icon={FileText}
-                      size={attachmentGlyph("default", "horizontal")}
-                      tint={ui().muted}
-                    />
-                  </AttachmentMedia>
-                  <AttachmentContent>
-                    <AttachmentTitle>build.log</AttachmentTitle>
-                    <AttachmentDescription>124 KB · 2 min ago</AttachmentDescription>
-                  </AttachmentContent>
-                </Attachment>
-              </View>
+              {turnRow}
             </Frame>
             <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
               <Button variant="secondary" onPress={send}>
@@ -180,18 +218,12 @@ function App() {
 
           <DemoSection title="Opened at the oldest" axis="block">
             <Frame
-              height={220}
+              height={184}
               initial="start"
+              each={turns()}
               overlay={<Float direction="end" label="Scroll to end" />}
             >
-              <View style={look.item}>
-                <Marker variant="separator">
-                  <MarkerContent>Earlier this morning</MarkerContent>
-                </Marker>
-              </View>
-              {turns()
-                .slice(0, 4)
-                .map((t) => turn(t))}
+              {turnRow}
             </Frame>
           </DemoSection>
         </DemoCard>

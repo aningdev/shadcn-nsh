@@ -17,7 +17,6 @@ npx shadcn-nsh@latest add message-scroller
 import {
   MessageScroller,
   MessageScrollerButton,
-  MessageScrollerContent,
   MessageScrollerItem,
   MessageScrollerViewport,
 } from "@/components/ui/message-scroller";
@@ -28,37 +27,40 @@ The examples draw icons with `Icon` from `lib/icons`; see [Icons](../icons) for 
 
 ```tsx
 <MessageScroller style={{ height: 320 }}>
-  <MessageScrollerViewport>
-    <MessageScrollerContent>
-      {turns().map((turn) => (
-        <MessageScrollerItem messageId={String(turn.id)}>
-          <Message align={turn.mine ? "end" : "start"}>
-            <MessageAvatar name={turn.from} />
-            <MessageContent>
-              <Bubble variant={turn.mine ? "default" : "muted"}>
-                <BubbleContent>{turn.text}</BubbleContent>
-              </Bubble>
-            </MessageContent>
-          </Message>
-        </MessageScrollerItem>
-      ))}
-    </MessageScrollerContent>
+  <MessageScrollerViewport each={turns()} keyExtractor={(turn) => String(turn.id)}>
+    {(item) => (
+      <MessageScrollerItem>
+        <Message align={item().mine ? "end" : "start"}>
+          <MessageAvatar name={item().from} />
+          <MessageContent>
+            <Bubble variant={item().mine ? "default" : "muted"}>
+              <BubbleContent>{item().text}</BubbleContent>
+            </Bubble>
+          </MessageContent>
+        </Message>
+      </MessageScrollerItem>
+    )}
   </MessageScrollerViewport>
   <MessageScrollerButton />
 </MessageScroller>
 ```
+
+The viewport is `nsh`'s [`List`](https://nsh.dev/elements/list): `each` is the conversation in reading
+order, oldest first, and the child renders one row. It is called once per cell, not once per turn —
+read `item()` where the turn is used (`item().text`), because the cell is reused for another turn as
+the reader scrolls.
 
 ## Examples
 
 ### Following
 
 The scroller opens at the end, on the newest turn, and keeps itself there: when the content grows
-— a turn is sent, a stream answers — it scrolls to the new end. Scroll up and it stops following;
-the view stays where the reader put it while new turns arrive below. Scroll back to the end and it
-follows again.
+— a turn is sent, a stream answers — the list keeps the end in view. Scroll up and it stops
+following; the view stays where the reader put it while new turns arrive below. Scroll back to the
+end and it follows again.
 
 Give the frame a height (`style={{ height: 320 }}`): it fills what it is in, and its viewport takes
-the room left.
+the room left. Four hundred turns cost what four do: the list mounts only the rows near the screen.
 
 ### Opening elsewhere
 
@@ -67,12 +69,20 @@ top. Anything else (the default, `end`) opens on the newest.
 
 ```tsx
 <MessageScroller initialScroll="start" style={{ height: 220 }}>
-  <MessageScrollerViewport>
-    <MessageScrollerContent>{turns().map(turn)}</MessageScrollerContent>
+  <MessageScrollerViewport each={turns()} keyExtractor={(turn) => String(turn.id)}>
+    {(item) => <MessageScrollerItem>{item().content}</MessageScrollerItem>}
   </MessageScrollerViewport>
   <MessageScrollerButton direction="end" />
 </MessageScroller>
 ```
+
+### Keys
+
+`keyExtractor` names a turn's row. The default reads the turn's `key`, then its `id`, then its
+index; give it one when the data has nothing to name a turn by. A key does two things: it keeps a
+row's cell and its size as rows come and go, and it is the name `scrollToMessage` takes — a turn
+with the same id on screen and in the command find each other. Keys must be unique and stable: with
+an index, every append that shifts a row makes the list rebuild it.
 
 ### Buttons
 
@@ -92,35 +102,35 @@ of the viewport, and shows only while there is somewhere to go that way. It says
 
 `MessageScrollerProvider` shares the scroller with controls outside the frame, such as a list of
 message titles: under it, `useMessageScroller()` returns `scrollToMessage`, `scrollToStart` and
-`scrollToEnd`, plus `atStart` and `atEnd` (read those in a binding, like any signal). The row
-targeted by `scrollToMessage` names its `messageId`; without a matching row the call does nothing.
-`MessageScroller` works without the provider, with the hook reading the scroller it is inside.
+`scrollToEnd`, plus `atStart` and `atEnd` (read those in a binding, like any signal). The turn
+targeted by `scrollToMessage` is the one whose key is that name; without a matching row the call
+does nothing. `MessageScroller` works without the provider, with the hook reading the scroller it is
+inside.
 
 ```tsx
-import type { ScrollRef } from "nsh";
+import type { ListRef } from "nsh";
 import { View } from "nsh";
 
 import { Button } from "@/components/ui/button";
 import {
   MessageScroller,
-  MessageScrollerContent,
   MessageScrollerItem,
   MessageScrollerProvider,
   MessageScrollerViewport,
   useMessageScroller,
 } from "@/components/ui/message-scroller";
 
-let scroller: ScrollRef | undefined;
+let scroller: ListRef | undefined;
 
 <MessageScrollerProvider>
   <View style={{ gap: 8 }}>
     <MessageScroller style={{ height: 320 }}>
-      <MessageScrollerViewport ref={scroller}>
-        <MessageScrollerContent>
-          {turns().map((turn) => (
-            <MessageScrollerItem messageId={String(turn.id)}>{turn.content}</MessageScrollerItem>
-          ))}
-        </MessageScrollerContent>
+      <MessageScrollerViewport
+        ref={(node) => (scroller = node)}
+        each={turns()}
+        keyExtractor={(turn) => String(turn.id)}
+      >
+        {(item) => <MessageScrollerItem>{item().content}</MessageScrollerItem>}
       </MessageScrollerViewport>
     </MessageScroller>
     <CommandBar />
@@ -148,19 +158,20 @@ function CommandBar() {
 }
 ```
 
-`MessageScrollerViewport` forwards its `ref` (a `ScrollRef`) beside the scroller's own, so the app
-can reach the scroll view directly — `scroller?.scrollTo({ y: 0 })`, for example.
+`MessageScrollerViewport` calls its `ref` with the [`ListRef`](https://nsh.dev/elements/list) beside
+the one the scroller keeps, so the app can reach the list directly — `scroller?.scrollToIndex({ index: 0 })`,
+for example.
 
 ### Turns
 
-`MessageScrollerContent` is the column the turns are in, 32 points apart and at least as tall as
-the viewport; `MessageScrollerItem` wraps one turn. What a turn is, is `Message`'s business.
+`MessageScrollerItem` is the box one turn sits in, sized by what is in it; `MessageScrollerViewport`
+is the list the turns are in, 32 points apart. What a turn is, is `Message`'s business.
 
 ## Differences from shadcn/ui
 
 shadcn/ui's message scroller is a wrapper over `@shadcn/react/message-scroller`, a React library of
-state and hooks. This one is the frame and the behaviour on `nsh`'s `Scroll`, and differs in five
-places:
+state and hooks. This one draws the frame and keeps the behaviour on `nsh`'s `List`, and differs
+in five places:
 
 - **A smaller provider.** `MessageScrollerProvider` only shares one scroller with controls outside
   it. shadcn/ui's provider also owns opening position, anchoring and visibility, with
@@ -168,11 +179,12 @@ places:
   `scrollEdgeThreshold`; there are no counterparts, and `useMessageScrollerScrollable` and
   `useMessageScrollerVisibility` have none either (the hook's `atStart` / `atEnd` are the edge
   state).
-- **No scroll anchoring.** An item's `scrollAnchor` holds the reader's place while older turns load
-  above it; NSH has no anchoring. Read the position with `ViewRef.measure()` before the load and
-  scroll back with `Scroll`'s ref after it.
-- **No `content-visibility`.** shadcn/ui lets the browser skip the layout of turns off screen
-  (`content-visibility: auto`, `contain-intrinsic-size`); NSH lays out what it draws.
+- **Anchoring is the list's.** shadcn/ui anchors per item (`scrollAnchor`) so a row holds its place
+  while older turns load above it. Here the list keeps the visible rows still as content changes
+  above and below them, and `onLoadMoreAtStart` loads older turns; there is no per-row anchor.
+- **Virtualized, not `content-visibility`.** shadcn/ui lets the browser skip the layout of turns off
+  screen (`content-visibility: auto`, `contain-intrinsic-size`); here the viewport is a `List`,
+  which mounts only the rows near the screen and recycles their cells.
 - **The button animates its opacity only.** shadcn/ui slides and scales it away as well; NSH's
   springs animate the opacity (`follow`).
 - **No scrollbar gutter or faded edge.** shadcn/ui reserves the scrollbar's room and fades the
@@ -180,25 +192,27 @@ places:
 
 ## API
 
-Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `MessageScroller`,
-`MessageScrollerContent` and `MessageScrollerItem`; `MessageScrollerViewport` takes a
-[`Scroll`](https://nsh.dev/elements/scroll)'s (`scrollbar`, `contentInset`, `onScroll`, …) less the
-direction it keeps (a conversation scrolls up and down), and `MessageScrollerButton` takes this
-library's [`Button`](https://nsh.dev/elements/button) props.
+Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `MessageScroller` and
+`MessageScrollerItem`; `MessageScrollerViewport` takes a [`List`](https://nsh.dev/elements/list)'s
+(`keyExtractor`, `estimatedItemSize`, `onViewableItemsChange`, `scrollbar`, …) less the state the
+scroller keeps (`alignment`, `inverted`, `initialScrollIndex`, `initialScrollAtEnd`,
+`maintainVisibleContentPosition`, …), plus `each` and the child that renders a row; and
+`MessageScrollerButton` takes this library's [`Button`](https://nsh.dev/elements/button) props.
 
-| Part                      | Props           | Description                                                                 |
-| ------------------------- | --------------- | --------------------------------------------------------------------------- |
-| `MessageScroller`         | `initialScroll` | Renders `View` (`messageScrollerLook().root`)                               |
-| `MessageScrollerViewport` | `ref`           | Renders `Scroll` (`messageScrollerLook().viewport`); `ref` is a `ScrollRef` |
-| `MessageScrollerContent`  |                 | Renders `View` (`messageScrollerLook().content`)                            |
-| `MessageScrollerItem`     | `messageId`     | Renders `View` (`messageScrollerLook().item`)                               |
-| `MessageScrollerButton`   | `direction`     | Renders `Button` (`messageScrollerLook().slot(direction)`)                  |
+| Part                      | Props                                     | Description                                                             |
+| ------------------------- | ----------------------------------------- | ----------------------------------------------------------------------- |
+| `MessageScroller`         | `initialScroll`                           | Renders `View` (`messageScrollerLook().root`)                           |
+| `MessageScrollerViewport` | `each`, `children`, `keyExtractor`, `ref` | Renders `List` (`messageScrollerLook().viewport`); `ref` is a `ListRef` |
+| `MessageScrollerItem`     |                                           | Renders `View` (`messageScrollerLook().item`)                           |
+| `MessageScrollerButton`   | `direction`                               | Renders `Button` (`messageScrollerLook().slot(direction)`)              |
 
-| Prop            | On                      | Type               | Default |
-| --------------- | ----------------------- | ------------------ | ------- |
-| `initialScroll` | `MessageScroller`       | `"start" \| "end"` | `end`   |
-| `messageId`     | `MessageScrollerItem`   | `string`           |         |
-| `direction`     | `MessageScrollerButton` | `"start" \| "end"` | `end`   |
+| Prop            | On                        | Type                                                  | Default       |
+| --------------- | ------------------------- | ----------------------------------------------------- | ------------- |
+| `initialScroll` | `MessageScroller`         | `"start" \| "end"`                                    | `end`         |
+| `each`          | `MessageScrollerViewport` | `readonly T[]`                                        |               |
+| `children`      | `MessageScrollerViewport` | `(item: () => T, index: () => number) => JSX.Element` |               |
+| `keyExtractor`  | `MessageScrollerViewport` | `(item: T, index: number) => string`                  | the item's id |
+| `direction`     | `MessageScrollerButton`   | `"start" \| "end"`                                    | `end`         |
 
 | Export                    | Props / returns                                          | Description                                                       |
 | ------------------------- | -------------------------------------------------------- | ----------------------------------------------------------------- |
@@ -210,6 +224,6 @@ library's [`Button`](https://nsh.dev/elements/button) props.
 | `align`        | `"start" \| "center" \| "end"` | `start` |
 | `animated`     | `boolean`                      | `true`  |
 
-The frame fills its parent, clips what is in it, and holds its viewport and its buttons; the
-content column is 32 points apart; a button floats 16 points from its edge. `messageScrollerLook()`
-is exported for a frame an app draws itself.
+The frame fills its parent, clips what is in it, and holds its viewport and its buttons; the list's
+content is 32 points apart; a button floats 16 points from its edge. `messageScrollerLook()` is
+exported for a frame an app draws itself.

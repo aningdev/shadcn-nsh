@@ -1,21 +1,22 @@
 // A conversation that scrolls, and keeps up with it: new turns follow the newest message while the
-// reader is at the end, and stay where they are when the reader has scrolled up. This library's own
-// (drawn on `nsh`'s Scroll, View and Text, the button on `Button`), so there is no port region.
-// Yours to change.
+// reader is at the end, and stay where they are when the reader has scrolled up. The viewport is
+// `nsh`'s virtualized `List`, so only the turns near the screen exist however long the conversation
+// grows; the frame, the row and the button are drawn on `View`, the button on `Button`. This
+// library's own, so there is no port region. Yours to change.
 import { follow, motion } from "@shadcn-nsh/theme";
 import { ArrowDown, ArrowUp } from "lucide";
 import type {
-  Bounds,
+  JSX,
+  ListContentStyle,
+  ListProps,
+  ListRef,
   ScrollEvent,
-  ScrollProps,
-  ScrollRef,
   Signal,
   StyleProp,
   ViewProps,
-  ViewRef,
   ViewStyle,
 } from "nsh";
-import { cleanup, context, Scroll, signal, split, View } from "nsh";
+import { cleanup, context, List, signal, split, View } from "nsh";
 
 import { Button, buttonGlyph, type ButtonProps } from "./button";
 import { Icon } from "./lib/icons";
@@ -38,8 +39,14 @@ const itemGap = 32;
 /** How far a scroller's button sits from the edge it points past: 16 points. */
 const buttonInset = 16;
 
-/** A point of slack in the overflow test, so a height rounded under a viewport's is not an overflow. */
-const slack = 1;
+/** A row's key the way the list names it: its `key`, its `id`, or its index. */
+function defaultKey(item: unknown, index: number): string {
+  if (typeof item === "object" && item !== null) {
+    if ("key" in item && item.key != null) return String(item.key);
+    if ("id" in item && item.id != null) return String(item.id);
+  }
+  return String(index);
+}
 
 /** Where a message sits in the viewport after `scrollToMessage`: its top at the top (`start`), its
  * middle in the middle (`center`), or its bottom at the bottom (`end`). */
@@ -53,35 +60,35 @@ export interface MessageScrollerScrollOptions {
   animated?: boolean;
 }
 
-/** What a scroller keeps: where the viewport is, how tall it and its content are, and the view
- * it sends to the ends, plus the message rows it can jump to. */
+/** What a scroller keeps: where the viewport is, the list it sends to the ends, and the rows it can
+ * jump to by their key. */
 interface Scroller {
   /** The viewport is at the end of the content (and follows what comes next). */
   atEnd: () => boolean;
   /** The viewport is at the start of the content. */
   atStart: () => boolean;
-  /** The content is taller than the viewport. */
-  overflows: () => boolean;
+  /** Where the scroller opens. */
+  initialScroll: () => MessageScrollerInitialScroll;
   /** Reads a scroll event: where the viewport is now. */
   settle(e: ScrollEvent): void;
-  /** Says the content's height, and whether it overflows. */
-  measureContent(height: number): void;
-  /** Says the viewport's height. */
-  measureViewport(height: number): void;
-  /** Keeps the scroll view's ref, for the commands that move it. */
-  attachViewport(view: ScrollRef): void;
-  /** Forgets the scroll view's ref if it is still the one given. */
-  detachViewport(view: ScrollRef): void;
-  /** Scrolls to the start of the scroll view's content. */
+  /** Reads which rows the list has on screen: one where every row is visible holds no scroll, so it
+   * lies at both edges, and its buttons stay away. A list at rest reports no scroll at all, so this
+   * is the only word on a conversation that fits before the reader moves it. */
+  seeViewable(visible: number, total: number): void;
+  /** Keeps the list's ref, for the commands that move it. */
+  attachViewport(view: ListRef): void;
+  /** Forgets the list's ref if it is still the one given. */
+  detachViewport(view: ListRef): void;
+  /** Tells the scroller where a row is, by the key `scrollToMessage` names (`-1` when it is not
+   * in the list). The viewport sets it from its items, so the rows that are mounted do not
+   * matter. */
+  setIndexer(indexOf: (messageId: string) => number): void;
+  /** Scrolls to the start of the list's content. */
   scrollToStart(options?: MessageScrollerScrollOptions): void;
-  /** Scrolls to the end of the scroll view's content. */
+  /** Scrolls to the end of the list's content. */
   scrollToEnd(options?: MessageScrollerScrollOptions): void;
   /** Scrolls a row into the viewport. */
   scrollToMessage(messageId: string, options?: MessageScrollerScrollOptions): void;
-  /** Keeps a row's view under its `messageId`, for `scrollToMessage`. */
-  registerMessage(messageId: string, view: ViewRef): void;
-  /** Forgets a row's view if it is still the one under its `messageId`. */
-  unregisterMessage(messageId: string, view: ViewRef): void;
 }
 
 /** What the parts of a message scroller wear between them. */
@@ -97,40 +104,42 @@ const MessageScrollerHostContext = context<MessageScrollerHost | null>(null);
 
 /** A scroller's state: one per `MessageScroller`, or one shared through `MessageScrollerProvider`. */
 function createScroller(initialScroll: MessageScrollerInitialScroll | undefined): Scroller {
-  const atEnd = signal(initialScroll !== "start");
-  const atStart = signal(initialScroll !== "end");
-  const viewportHeight = signal(0);
-  const contentHeight = signal(0);
-  const viewport = signal<ScrollRef | undefined>(undefined);
-  const messages = new Map<string, ViewRef>();
+  const initial = initialScroll ?? "end";
+  // Before the list has said anything, nothing is known to scroll: both edges, and no button.
+  const fits = signal(true);
+  const atEndEdge = signal(initial !== "start");
+  const atStartEdge = signal(initial !== "end");
+  const viewport = signal<ListRef | undefined>(undefined);
+  let indexOf = (_messageId: string) => -1;
   return {
-    atEnd,
-    atStart,
-    overflows: () => contentHeight() > viewportHeight() + slack,
+    atEnd: () => fits() || atEndEdge(),
+    atStart: () => fits() || atStartEdge(),
+    initialScroll: () => initial,
     settle: (e: ScrollEvent) => {
       const bottom = e.contentSize.height - e.offset.y - e.size.height;
-      atEnd.set(bottom <= edge);
-      atStart.set(e.offset.y <= edge);
+      atEndEdge.set(bottom <= edge);
+      atStartEdge.set(e.offset.y <= edge);
     },
-    measureContent: (height: number) => contentHeight.set(height),
-    measureViewport: (height: number) => viewportHeight.set(height),
-    attachViewport: (view: ScrollRef) => viewport.set(view),
-    detachViewport: (view: ScrollRef) => {
+    seeViewable: (visible: number, total: number) => fits.set(visible >= total),
+    attachViewport: (view: ListRef) => viewport.set(view),
+    detachViewport: (view: ListRef) => {
       if (viewport() === view) viewport.set(undefined);
     },
+    setIndexer: (next: (messageId: string) => number) => {
+      indexOf = next;
+    },
     scrollToStart: ({ animated = true }: MessageScrollerScrollOptions = {}) =>
-      viewport()?.scrollTo({ y: 0, animated }),
+      viewport()?.scrollToOffset({ offset: 0, animated }),
     scrollToEnd: ({ animated = true }: MessageScrollerScrollOptions = {}) =>
       viewport()?.scrollToEnd({ animated }),
     scrollToMessage: (
       messageId: string,
       { align = "start", animated = true }: MessageScrollerScrollOptions = {},
-    ) => messages.get(messageId)?.reveal({ vertical: align, animated }),
-    registerMessage: (messageId: string, view: ViewRef) => {
-      messages.set(messageId, view);
-    },
-    unregisterMessage: (messageId: string, view: ViewRef) => {
-      if (messages.get(messageId) === view) messages.delete(messageId);
+    ) => {
+      const index = indexOf(messageId);
+      if (index < 0) return;
+      const viewPosition = align === "start" ? 0 : align === "center" ? 0.5 : 1;
+      viewport()?.scrollToIndex({ index, viewPosition, animated });
     },
   };
 }
@@ -187,11 +196,10 @@ export function useMessageScroller(): MessageScrollerApi {
 export interface MessageScrollerLook {
   /** The frame (`MessageScroller`): a column that fills its parent and clips what is in it. */
   readonly root: ViewStyle;
-  /** The viewport (`MessageScrollerViewport`): the room left by the frame, a scroll view's own. */
+  /** The viewport (`MessageScrollerViewport`): the room left by the frame, the list's own. */
   readonly viewport: ViewStyle;
-  /** The content (`MessageScrollerContent`): a column 32 points apart, at least as tall as the
-   * viewport. */
-  readonly content: ViewStyle;
+  /** The content (`MessageScrollerViewport`): rows 32 points apart. */
+  readonly content: ListContentStyle;
   /** A turn (`MessageScrollerItem`): never narrower nor shorter than what is in it. */
   readonly item: ViewStyle;
   /** The room a button floats in (`MessageScrollerButton`): the width of the viewport, 16 points
@@ -203,9 +211,8 @@ export interface MessageScrollerLook {
 
 /**
  * A conversation's look, after shadcn/ui's message scroller: a frame that fills its parent and
- * clips, a viewport that takes the room left, a content column 32 points apart at least as tall as
- * the viewport, and a raised button floating 16 points above the newest message (or below the
- * oldest), in the middle of the viewport.
+ * clips, a viewport that takes the room left, rows 32 points apart, and a raised button floating
+ * 16 points above the newest message (or below the oldest), in the middle of the viewport.
  */
 export function messageScrollerLook(): MessageScrollerLook {
   return {
@@ -223,8 +230,8 @@ export function messageScrollerLook(): MessageScrollerLook {
     get viewport(): ViewStyle {
       return { flexGrow: 1, flexShrink: 1, minHeight: 0, width: "100%" };
     },
-    get content(): ViewStyle {
-      return { flexDirection: "column", gap: itemGap, minHeight: "100%" };
+    get content(): ListContentStyle {
+      return { gap: itemGap };
     },
     get item(): ViewStyle {
       return { minWidth: 0, flexShrink: 0 };
@@ -272,31 +279,43 @@ export function MessageScrollerProvider(props: MessageScrollerProviderProps) {
   );
 }
 
-/** The viewport's props: a scroll view's, less the direction and the state it keeps itself. */
-export type MessageScrollerViewportProps = Omit<
-  ScrollProps,
-  "horizontal" | "onScroll" | "children"
+/**
+ * The viewport's props: a list's, less the direction and the state the scroller keeps itself.
+ * `each` and `children` are the turns and the row that renders one; `keyExtractor` names each
+ * turn, so a row keeps its cell as others come and go and `scrollToMessage` can find it.
+ */
+export type MessageScrollerViewportProps<T> = Omit<
+  ListProps<T>,
+  | "each"
+  | "children"
+  | "ref"
+  | "inverted"
+  | "horizontal"
+  | "numColumns"
+  | "alignment"
+  | "viewport"
+  | "stickyHeaderIndices"
+  | "initialScrollIndex"
+  | "initialScrollAtEnd"
+  | "maintainVisibleContentPosition"
+  | "onScroll"
+  | "style"
 > & {
-  /** What is in the viewport: a `MessageScrollerContent`. */
-  children?: ViewProps["children"];
+  /** The turns, in reading order (the oldest first). */
+  each: readonly T[];
+  /** Renders one row. Called once per recycled cell; `item` and `index` change when the cell is
+   * reused for another turn. */
+  children: (item: () => T, index: () => number) => JSX.Element;
   /** Called on every scroll, after the scroller has read it. */
   onScroll?: (e: ScrollEvent) => void;
-  /** Called on every layout, after the scroller has read it. */
-  onLayout?: (e: { bounds: Bounds }) => void;
-  /** The style of the scroll view. */
+  /** The style of the list. */
   style?: StyleProp<ViewStyle>;
-  /** The scroll view's ref (`ScrollRef`), composed with the one the scroller keeps. */
-  ref?: ScrollProps["ref"];
+  /** The list's ref: called with the `ListRef` once the list exists. */
+  ref?: (node: ListRef) => void;
 };
-
-/** The content's props: a view's. */
-export type MessageScrollerContentProps = ViewProps;
 
 /** A turn's props: a view's. */
-export type MessageScrollerItemProps = ViewProps & {
-  /** The row's id, for `scrollToMessage` from a control beside the transcript. */
-  messageId?: string;
-};
+export type MessageScrollerItemProps = ViewProps;
 
 /** The button's props: a button's, with the direction it points and what it says. */
 export type MessageScrollerButtonProps = Omit<ButtonProps, "children"> & {
@@ -332,95 +351,73 @@ export function MessageScroller(props: MessageScrollerProps) {
 }
 
 /**
- * The room the turns scroll in. It keeps the scroller's word on where it is: at the end, at the
- * start, or in between — what lets a new message follow the reader without stealing their place.
+ * The room the turns scroll in: a virtualized list that opens where the scroller says and follows
+ * its end while the reader is there — what lets a new message arrive without stealing a reader's
+ * place once they have scrolled up. Only the rows near the screen exist, so a conversation of a
+ * thousand turns costs what one of twenty does.
  */
-export function MessageScrollerViewport(props: MessageScrollerViewportProps) {
+export function MessageScrollerViewport<T>(props: MessageScrollerViewportProps<T>) {
   const scroller = MessageScrollerContext();
-  const node = signal<ScrollRef | undefined>(undefined);
+  const node = signal<ListRef | undefined>(undefined);
   cleanup(() => {
     const view = node();
     if (view) scroller?.detachViewport(view);
   });
+  const keyOf = (item: T, index: number) =>
+    props.keyExtractor?.(item, index) ?? defaultKey(item, index);
+  scroller?.setIndexer((messageId) => {
+    const items = props.each;
+    for (let i = 0; i < items.length; i++) {
+      if (keyOf(items[i]!, i) === messageId) return i;
+    }
+    return -1;
+  });
   const [, rest] = split(props, [
     "onScroll",
-    "onLayout",
+    "onViewableItemsChange",
     "children",
     "style",
     "contentStyle",
     "ref",
   ]);
   return (
-    <Scroll
+    <List
       {...rest}
+      each={props.each}
+      keyExtractor={props.keyExtractor}
       ref={(view) => {
         node.set(view);
         scroller?.attachViewport(view);
         if (typeof props.ref === "function") props.ref(view);
       }}
       role="group"
+      initialScrollAtEnd={scroller?.initialScroll() !== "start"}
+      maintainVisibleContentPosition={{ autoscrollToBottomThreshold: edge }}
       onScroll={(e: ScrollEvent) => {
         scroller?.settle(e);
         props.onScroll?.(e);
       }}
-      onLayout={(e) => {
-        scroller?.measureViewport(e.bounds.size.height);
-        props.onLayout?.(e);
+      onViewableItemsChange={(info) => {
+        scroller?.seeViewable(info.viewableItems.length, props.each.length);
+        props.onViewableItemsChange?.(info);
       }}
       style={[messageScrollerLook().viewport, props.style ?? null]}
-      contentStyle={props.contentStyle}
+      contentStyle={{ ...messageScrollerLook().content, ...props.contentStyle }}
     >
       {props.children}
-    </Scroll>
+    </List>
   );
 }
 
 /**
- * What the turns are in: a column 32 points apart, at least as tall as the viewport. When it grows
- * while the reader is at the end, it follows the growth; when the reader has scrolled up, it leaves
- * them where they are.
- */
-export function MessageScrollerContent(props: MessageScrollerContentProps) {
-  const scroller = MessageScrollerContext();
-  const [, rest] = split(props, ["children", "style", "onLayout"]);
-  return (
-    <View
-      {...rest}
-      onLayout={(e) => {
-        scroller?.measureContent(e.bounds.size.height);
-        props.onLayout?.(e);
-        if (scroller?.atEnd()) scroller.scrollToEnd({ animated: false });
-      }}
-      style={[messageScrollerLook().content, props.style ?? null]}
-    >
-      {props.children}
-    </View>
-  );
-}
-
-/**
- * One turn of the conversation. shadcn/ui anchors one item so that the reader's place holds while
- * older turns load above; NSH has no scroll anchoring, so this is a plain view and the place is
- * the app's to keep.
+ * One turn of the conversation: the box a row's content sits in, sized by what is in it. Its key
+ * (`keyExtractor`) is what `scrollToMessage` names, so an id on the data is enough — no id on the
+ * row.
  */
 export function MessageScrollerItem(props: MessageScrollerItemProps) {
-  const scroller = MessageScrollerContext();
-  const node = signal<ViewRef | undefined>(undefined);
-  cleanup(() => {
-    const view = node();
-    if (props.messageId && view) scroller?.unregisterMessage(props.messageId, view);
-  });
-  const [, rest] = split(props, ["children", "style", "messageId", "ref"]);
+  const [, rest] = split(props, ["children", "style"]);
   return (
-    <View
-      {...rest}
-      ref={(view) => {
-        node.set(view);
-        if (props.messageId) scroller?.registerMessage(props.messageId, view);
-        if (typeof props.ref === "function") props.ref(view);
-      }}
-      style={[messageScrollerLook().item, props.style ?? null]}
-    >
+    <View {...rest} style={[messageScrollerLook().item, props.style ?? null]}>
       {props.children}
     </View>
   );
@@ -436,15 +433,14 @@ export function MessageScrollerButton(props: MessageScrollerButtonProps) {
   const direction = (): MessageScrollerDirection => props.direction ?? "end";
   const away = () =>
     direction() === "end" ? !(scroller?.atEnd() ?? true) : !(scroller?.atStart() ?? true);
-  const shown = () => (scroller?.overflows() ?? false) && away();
-  const slide = follow(() => (shown() ? 1 : 0), motion.move);
+  const slide = follow(() => (away() ? 1 : 0), motion.move);
   const [, rest] = split(props, ["direction", "children", "style", "onPress"]);
   const label =
     props.accessibilityLabel ?? (direction() === "end" ? "Scroll to end" : "Scroll to start");
   return (
     <View
-      accessibilityElementsHidden={!shown()}
-      importantForAccessibility={shown() ? "auto" : "no-hide-descendants"}
+      accessibilityElementsHidden={!away()}
+      importantForAccessibility={away() ? "auto" : "no-hide-descendants"}
       style={messageScrollerLook().slot(direction())}
     >
       <Button
@@ -459,7 +455,7 @@ export function MessageScrollerButton(props: MessageScrollerButtonProps) {
         }}
         style={[
           messageScrollerLook().button,
-          { opacity: slide, pointerEvents: shown() ? "auto" : "none" },
+          { opacity: slide, pointerEvents: away() ? "auto" : "none" },
           props.style ?? null,
         ]}
       >

@@ -1,7 +1,8 @@
 // shadcn/ui's message scroller page has no example in this repo, so this page is the library's own:
-// a conversation that opens on its newest message and follows new ones while you are there, and a
-// second one that opens at the oldest so its button has somewhere to go. Send appends a turn;
-// scroll up first and watch the new turn arrive without the view moving.
+// a conversation long enough that no viewport could hold it, opening on its newest message and
+// following new ones while you are there — only the turns near the screen exist, so four hundred of
+// them cost what four do — and a second copy that opens at the oldest so its button has somewhere to
+// go. Send appends a turn; scroll up first and watch the new turn arrive without the view moving.
 import { FileText } from "lucide";
 import { mount, signal, Text, View } from "nsh";
 
@@ -16,12 +17,10 @@ import {
 import { Bubble, BubbleContent } from "@/packages/ui/bubble";
 import { Button } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
-import { Marker, MarkerContent } from "@/packages/ui/marker";
 import { Message, MessageAvatar, MessageContent } from "@/packages/ui/message";
 import {
   MessageScroller,
   MessageScrollerButton,
-  MessageScrollerContent,
   MessageScrollerItem,
   MessageScrollerProvider,
   MessageScrollerViewport,
@@ -36,26 +35,60 @@ interface Turn {
   from: string;
   text: string;
   mine: boolean;
+  file?: string;
 }
 
-const conversation: Turn[] = [
-  { id: 1, from: "Mia Chen", text: "Morning. The registry build is red again.", mine: false },
+const names = ["Mia Chen", "Oliver Reed"] as const;
+
+const opening: Turn[] = [
+  { id: 1, from: names[0], text: "Morning. The registry build is red again.", mine: false },
   {
     id: 2,
-    from: "Oliver Reed",
+    from: names[1],
     text: "It's the marker entry: it imports lucide and never said so.",
     mine: true,
   },
-  { id: 3, from: "Mia Chen", text: "Honest dependencies. What a concept.", mine: false },
-  { id: 4, from: "Oliver Reed", text: "I declared it. Rebuilding now.", mine: true },
-  { id: 5, from: "Mia Chen", text: "And the screenshots?", mine: false },
+  { id: 3, from: names[0], text: "Honest dependencies. What a concept.", mine: false },
+  { id: 4, from: names[1], text: "I declared it. Rebuilding now.", mine: true },
+  { id: 5, from: names[0], text: "And the screenshots?", mine: false },
   {
     id: 6,
-    from: "Oliver Reed",
+    from: names[1],
     text: "Four per component, light and dark, looked at with my own eyes.",
     mine: true,
   },
 ];
+
+const lines = [
+  "The list only mounts what is near the screen, so this costs almost nothing.",
+  "Scroll up and it holds your place while new turns arrive below.",
+  "Four hundred turns, and the frame does not know the difference.",
+  "The attachment rides along in a row, keyed by the turn it belongs to.",
+  "Send again; the view stays at the newest turn.",
+  "Opening at the oldest is the same list with the other end first.",
+  "A row is recycled: the turn it holds changes, the cell does not.",
+  "That is the whole trick. The rest is spacing.",
+  "Do the screenshots still line up?",
+  "Down to the pixel, both themes.",
+  "And the registry entry says what it imports now.",
+  "Then it is done.",
+];
+
+/** A conversation that no viewport could hold: the opening turns, then a generated run of them. */
+function conversation(count: number): Turn[] {
+  return Array.from({ length: count }, (_, i) => {
+    const first = opening[i];
+    if (first) return first;
+    return {
+      id: i + 1,
+      from: names[i % 2]!,
+      text: lines[i % lines.length]!,
+      mine: i % 2 === 1,
+      // Near the newest turn, so it is on screen when the conversation opens at its end.
+      file: i === count - 3 ? "build.log" : undefined,
+    };
+  });
+}
 
 const replies = [
   "Still red on CI. Different error this time.",
@@ -84,30 +117,50 @@ function Controls(props: { onSend: () => void; onJump: () => void }) {
   );
 }
 
+/** One turn as the list draws it: read `item()` where the turn is used, since a cell is reused. */
+function turnRow(item: () => Turn) {
+  return (
+    <MessageScrollerItem>
+      <View style={{ gap: 8 }}>
+        <Message align={item().mine ? "end" : "start"}>
+          <MessageAvatar name={item().from} />
+          <MessageContent>
+            <Bubble variant={item().mine ? "default" : "muted"}>
+              <BubbleContent>{item().text}</BubbleContent>
+            </Bubble>
+          </MessageContent>
+        </Message>
+        {item().file ? (
+          <Attachment>
+            <AttachmentMedia>
+              <Icon
+                icon={FileText}
+                size={attachmentGlyph("default", "horizontal")}
+                tint={ui().muted}
+              />
+            </AttachmentMedia>
+            <AttachmentContent>
+              <AttachmentTitle>{item().file}</AttachmentTitle>
+              <AttachmentDescription>124 KB · 2 min ago</AttachmentDescription>
+            </AttachmentContent>
+          </Attachment>
+        ) : null}
+      </View>
+    </MessageScrollerItem>
+  );
+}
+
 function App() {
   const events = signal<string[]>([]);
   const log = (line: string) => events.set([line, ...events()].slice(0, 4));
-  const turns = signal<Turn[]>(conversation);
+  const turns = signal<Turn[]>(conversation(400));
   const sent = signal(0);
   const send = () => {
     const text = replies[sent() % replies.length]!;
     sent.set(sent() + 1);
-    turns.set([...turns(), { id: 100 + sent(), from: "Oliver Reed", text, mine: true }]);
+    turns.set([...turns(), { id: 1000 + sent(), from: names[1], text, mine: true }]);
     log("Sent");
   };
-
-  const turn = (t: Turn) => (
-    <MessageScrollerItem messageId={String(t.id)}>
-      <Message align={t.mine ? "end" : "start"}>
-        <MessageAvatar name={t.from} />
-        <MessageContent>
-          <Bubble variant={t.mine ? "default" : "muted"}>
-            <BubbleContent>{t.text}</BubbleContent>
-          </Bubble>
-        </MessageContent>
-      </Message>
-    </MessageScrollerItem>
-  );
 
   return (
     <DemoPage title="Message scroller">
@@ -126,25 +179,12 @@ function App() {
                   initialScroll="end"
                   style={{ height: 300, borderRadius: 10, backgroundColor: ui().page }}
                 >
-                  <MessageScrollerViewport>
-                    <MessageScrollerContent>
-                      {turns().map((t) => turn(t))}
-                      <MessageScrollerItem messageId="build-log">
-                        <Attachment>
-                          <AttachmentMedia>
-                            <Icon
-                              icon={FileText}
-                              size={attachmentGlyph("default", "horizontal")}
-                              tint={ui().muted}
-                            />
-                          </AttachmentMedia>
-                          <AttachmentContent>
-                            <AttachmentTitle>build.log</AttachmentTitle>
-                            <AttachmentDescription>124 KB · 2 min ago</AttachmentDescription>
-                          </AttachmentContent>
-                        </Attachment>
-                      </MessageScrollerItem>
-                    </MessageScrollerContent>
+                  <MessageScrollerViewport
+                    each={turns()}
+                    keyExtractor={(turn) => String(turn.id)}
+                    estimatedItemSize={68}
+                  >
+                    {turnRow}
                   </MessageScrollerViewport>
                   <MessageScrollerButton
                     direction="start"
@@ -157,18 +197,13 @@ function App() {
           </DemoSection>
 
           <DemoSection title="Opened at the oldest" axis="block">
-            <MessageScroller initialScroll="start" style={{ height: 220 }}>
-              <MessageScrollerViewport>
-                <MessageScrollerContent>
-                  <MessageScrollerItem>
-                    <Marker variant="separator">
-                      <MarkerContent>Earlier this morning</MarkerContent>
-                    </Marker>
-                  </MessageScrollerItem>
-                  {turns()
-                    .slice(0, 4)
-                    .map((t) => turn(t))}
-                </MessageScrollerContent>
+            <MessageScroller initialScroll="start" style={{ height: 184 }}>
+              <MessageScrollerViewport
+                each={turns()}
+                keyExtractor={(turn) => String(turn.id)}
+                estimatedItemSize={68}
+              >
+                {turnRow}
               </MessageScrollerViewport>
               <MessageScrollerButton direction="end" />
             </MessageScroller>
