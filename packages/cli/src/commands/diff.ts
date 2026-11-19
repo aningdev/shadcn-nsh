@@ -49,8 +49,12 @@ async function compare(names: string[], opts: DiffOptions): Promise<number> {
     isInstalled(ws.uiRoot, config, item) &&
     (item.type !== "registry:theme" || item.name === config.theme);
 
-  const index = await fetchIndex(config, opts.registry);
-  const targets = names.length ? names : index.items.filter(installedHere).map((item) => item.name);
+  // Named items need no catalog — offline, only their own copies.
+  const targets = names.length
+    ? names
+    : (await fetchIndex(config, opts.registry)).items
+        .filter(installedHere)
+        .map((item) => item.name);
 
   if (targets.length === 0) {
     console.log("Nothing installed.");

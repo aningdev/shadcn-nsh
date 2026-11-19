@@ -81,13 +81,20 @@ async function fromCache(url: string, cause: unknown): Promise<unknown> {
   return cached.body;
 }
 
-/** Keep a copy; a cache that cannot be written only means no fallback later, not a failure now. */
+/**
+ * Keep a copy; a cache that cannot be written only means no fallback later, not a failure now.
+ * Written beside and renamed over, so a write that fails halfway leaves the last good copy.
+ */
 async function save(url: string, body: unknown): Promise<void> {
   const record: Cached = { url, fetchedAt: new Date().toISOString(), body };
+  const file = cacheFile(url);
+  const partial = `${file}.${process.pid}.tmp`;
   try {
     await fs.mkdir(cacheDir(), { recursive: true });
-    await fs.writeFile(cacheFile(url), JSON.stringify(record));
+    await fs.writeFile(partial, JSON.stringify(record));
+    await fs.rename(partial, file);
   } catch {
     // Read-only home, full disk: the command still has its answer.
+    await fs.rm(partial, { force: true }).catch(() => {});
   }
 }

@@ -117,12 +117,11 @@ describe("diff offline", () => {
     fs.rmSync(cacheDir, { recursive: true, force: true });
   });
 
-  test("compares with the registry the last online run cached, and says so", async () => {
+  test("compares with what the last add cached, and says so", async () => {
     useCache();
-    current = await installed();
+    current = fixture();
     const registry = serve(current);
-    const online = await captured(() => runDiff([], { cwd: current!.app, registry: registry.url }));
-    expect(online.result).toBe(0);
+    await captured(() => runAdd(["button"], { cwd: current!.app, registry: registry.url }));
     await registry.stop();
 
     current.write(
@@ -138,6 +137,27 @@ describe("diff offline", () => {
     expect(offline.errors.join("\n")).toMatch(
       /cannot reach localhost:\d+ — using the registry cached /,
     );
+  });
+
+  test("a named item needs only its own copies, not the catalog", async () => {
+    useCache();
+    current = fixture();
+    const registry = serve(current);
+    await captured(() => runAdd(["button"], { cwd: current!.app, registry: registry.url }));
+    await registry.stop();
+    for (const file of fs.readdirSync(cacheDir)) {
+      const { url } = JSON.parse(fs.readFileSync(path.join(cacheDir, file), "utf8")) as {
+        url: string;
+      };
+      if (url.endsWith("/index.json")) fs.rmSync(path.join(cacheDir, file));
+    }
+
+    const out = await captured(() =>
+      runDiff(["button"], { cwd: current!.app, registry: registry.url }),
+    );
+
+    expect(out.result).toBe(0);
+    expect(out.text).toBe("No differences.");
   });
 
   test("with nothing cached, skips and exits with its own code", async () => {

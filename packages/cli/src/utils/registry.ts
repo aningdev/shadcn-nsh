@@ -53,6 +53,19 @@ export async function fetchIndex(
   )) as RegistryIndex;
 }
 
+/**
+ * Fetch the catalog only to have it cached: `diff` with no item reads it to find what is
+ * installed, and offline it has only the copy an earlier command left. A command that installs
+ * fetches it for that alone, so a registry without one, or a network gone by now, is no failure.
+ */
+export async function cacheIndex(config: NshUiConfig, registryOverride?: string): Promise<void> {
+  try {
+    await fetchIndex(config, registryOverride);
+  } catch {
+    // Nothing to keep: `diff` will say it could not check, if it ever has to.
+  }
+}
+
 /** `theme.json` and `finishes.json`: the two data files a theme is. */
 const THEME_DATA = new Set(["theme.json", "finishes.json"]);
 

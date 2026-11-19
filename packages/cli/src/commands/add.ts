@@ -7,7 +7,7 @@ import { readApp } from "../utils/app";
 import { writeConfig } from "../utils/config";
 import { installDependencies } from "../utils/deps";
 import { installItems } from "../utils/install";
-import { fetchIndex, resolveTree } from "../utils/registry";
+import { cacheIndex, fetchIndex, resolveTree } from "../utils/registry";
 import { runInit } from "./init";
 
 export type AddOptions = {
@@ -59,6 +59,7 @@ export async function runAdd(components: string[], opts: AddOptions): Promise<nu
   }
 
   const names = [...components];
+  if (!opts.all && !dryRun) await cacheIndex(config, opts.registry);
   if (opts.all) {
     const index = await fetchIndex(config, opts.registry);
     for (const item of index.items) {

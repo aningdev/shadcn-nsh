@@ -9,7 +9,7 @@ import { findNshJson, writeConfig } from "../utils/config";
 import { installDependencies } from "../utils/deps";
 import { installItems } from "../utils/install";
 import { setJsonValue } from "../utils/jsonc-edit";
-import { resolveTree } from "../utils/registry";
+import { cacheIndex, resolveTree } from "../utils/registry";
 import { isRecord } from "../utils/registry-schema";
 import { ensureAtPaths } from "../utils/tsconfig";
 import { resolveWorkspace, themePathForApp } from "../utils/workspace";
@@ -47,6 +47,7 @@ export async function runInit(opts: {
 
   // The theme: the default item, or another theme's roles, run-time copy and build-time data.
   const items = await resolveTree(config, [DEFAULT_THEME], opts.registry);
+  await cacheIndex(config, opts.registry);
   await installItems(ws.uiRoot, config, items, { overwrite: opts.overwrite });
   await installDependencies(ws.uiRoot, items);
 
