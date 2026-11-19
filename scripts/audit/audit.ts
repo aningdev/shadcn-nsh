@@ -274,13 +274,13 @@ const MEASURE = `(() => {
  * `nonce` keeps each measurement a fresh document: the app reads its window when it starts, so a
  * frame that already ran the probe would report the size it had then.
  */
-async function readProbe(page: Page, prefix: string, nonce: string): Promise<string> {
+async function readProbe(page: Page, nonce: string): Promise<string> {
   const marker = JSON.stringify(nonce);
   await page.evaluate(
     `(() => {
       const frame = document.querySelector(".demo .phone__screen iframe");
       const url = new URL(frame.src);
-      url.pathname = "/${prefix}/demos/__audit-probe/index.html";
+      url.pathname = "/demos/__audit-probe/index.html";
       url.searchParams.set("audit", ${JSON.stringify(nonce)});
       frame.src = url.href;
       return true;
@@ -310,14 +310,8 @@ async function canvas() {
   fs.rmSync(path.join(dist, "demos", "__audit-probe"), { recursive: true, force: true });
   fs.cpSync(probe, path.join(dist, "demos", "__audit-probe"), { recursive: true });
 
-  // The site is built for GitHub Pages' project path (`astro.config.mjs`'s `base`): the demo
-  // iframes ask for `/shadcn-nsh/demos/<id>/`, so the server has to answer under that prefix.
-  const site = path.join(work, "site");
-  const prefix = "shadcn-nsh";
-  fs.rmSync(site, { recursive: true, force: true });
-  fs.mkdirSync(site, { recursive: true });
-  fs.symlinkSync(dist, path.join(site, prefix));
-  const server = serve(site);
+  // The site is built for the root of its domain: the server answers from the build itself.
+  const server = serve(dist);
   const browser = await launch();
   const page = await browser.page();
   const layouts: Record<string, CanvasLayout> = {};
@@ -330,7 +324,7 @@ async function canvas() {
   try {
     for (const viewport of viewports) {
       for (const layout of ["mobile", "desktop"] as const) {
-        await page.load(`${server.url}/${prefix}/docs/components/accordion/`, viewport);
+        await page.load(`${server.url}/docs/components/accordion/`, viewport);
         await until(page, "document.querySelector('.demo .phone__screen iframe')");
         // The frame is `loading="lazy"` and the panel sits far down the page: it loads once shown.
         await page.evaluate(`document.querySelector(".demo").scrollIntoView({ block: "start" })`);
@@ -346,7 +340,7 @@ async function canvas() {
         const measured = measuredFrom(await page.evaluate<string>(MEASURE));
         const { layout: shown, stage, frame, src } = measured;
         // The probe, at the URL the panel gave the demo (its idiom and the page's theme).
-        const probeText = await readProbe(page, prefix, `${viewport.label}-${layout}`);
+        const probeText = await readProbe(page, `${viewport.label}-${layout}`);
         // The site's theme switch, at the wide page only: the probe's appearance follows.
         const themes: Record<string, string> | undefined =
           viewport.label !== "wide" ? undefined : {};
@@ -389,7 +383,7 @@ async function canvas() {
           // The panel's `ResizeObserver` on the stage refits the frame.
           await new Promise((resolve) => setTimeout(resolve, 300));
           const wide = measuredFrom(await page.evaluate<string>(MEASURE));
-          const wideProbe = await readProbe(page, prefix, `${viewport.label}-${layout}-wide`);
+          const wideProbe = await readProbe(page, `${viewport.label}-${layout}-wide`);
           const wideShot = path.join(shotsDir, "canvas-desktop-widecolumn.png");
           await page.screenshot(wideShot);
           layouts["desktop-widecolumn"] = {

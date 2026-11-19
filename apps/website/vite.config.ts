@@ -7,15 +7,14 @@ import { defineConfig } from "vite";
 
 import { PACKAGE_MANAGER_GROUP, PACKAGE_MANAGERS } from "./src/lib/package-managers";
 
-/** The prefix GitHub Pages serves the site under; `src/lib/site.ts` reads it back from Vite. */
-const BASE = "/shadcn-nsh/";
+/** The path the site is served under; `src/lib/site.ts` reads it back from Vite. */
+const BASE = "/";
 
 /**
- * The site is served from `https://aningdev.github.io/shadcn-nsh/`, so both the assets and the
- * router live under that prefix: Vite's `base` prefixes the URLs it emits, TanStack Router's
- * `basepath` prefixes the ones it matches. The static build writes the *site* into `.output/public`
- * as its root — the prefix is not a directory of the artifact, GitHub Pages serves the same
- * directory at `/shadcn-nsh/`.
+ * The site is served at the root of its own domain, `https://shadcn-nsh.aning.dev/` (GitHub Pages'
+ * custom domain). `base` and `basepath` stay wired, so moving it under a path again is this one
+ * constant: Vite's `base` prefixes the URLs it emits, TanStack Router's `basepath` the ones it
+ * matches.
  */
 export default defineConfig({
   base: BASE,
@@ -39,7 +38,10 @@ export default defineConfig({
     tailwindcss(),
     tanstackStart({
       router: { basepath: BASE.replace(/\/+$/, "") },
-      spa: { enabled: true },
+      // The shell is prerendered as a page whose path is `maskPath`, and pages are deduplicated by
+      // path: at the default `/` it takes the front page's place, and `/` is written as
+      // `_shell.html` with no `index.html`. The query keeps the paths apart; it still renders `/`.
+      spa: { enabled: true, maskPath: "/?shell" },
       prerender: {
         enabled: true,
         crawlLinks: true,

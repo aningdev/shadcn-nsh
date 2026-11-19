@@ -4,7 +4,7 @@
 
 给 [Native Shell (NSH)](https://github.com/longbridge/nsh) 的带样式组件：画在 `nsh/base` 上，以**你自己的文件**交给应用 —— 组件、主题，以及一个把它们复制下来的 registry。形状与 [shadcn/ui](https://github.com/shadcn-ui/ui) 给 React 的一样。
 
-文档站，每个组件的属性与可运行演示：**https://aningdev.github.io/shadcn-nsh/**
+文档站，每个组件的属性与可运行演示：**https://shadcn-nsh.aning.dev/**
 
 - **复制即拥有。** `add` 把组件、它的主题和它用到的共享外观写进你的应用，然后放手：没有我们的运行时包，也没有需要跟着升级的东西。
 - **外观是数据。** 组件只从 `theme.json` 与 `finishes.json` 读颜色与表面，从不写死，所以换一套主题数据就换整套外观。
@@ -22,7 +22,7 @@ npx shadcn-nsh add --all            # 全部组件
 
 `init` 的选择记在 `nsh-ui.json`，主题写在 `theme.json` + `lib/finishes.json`，每个 `nsh.json` 指过去；应用里还会配好 `@/` 导入别名（`tsconfig.json` 的 paths 加 `"@/*": ["./*"]`，`nsh.json` 加 `"resolve": { "alias": { "@": "./" } }`），文档示例里的 `@/components/ui/<name>`、`@/lib/theme` 因此可解析。`add` 复制文件，并用你的包管理器装上条目声明的包（含 `lucide`）。从此这些文件归你改。
 
-`list`、`view`、`diff` 只读不写：`npx shadcn-nsh list`、`view button`、`diff`（应用的副本与 registry 不同时退出码 1）。每个命令都接受 `-c <dir>`，`add` 另有 `--dry-run` 与 `--overwrite`。参数与默认值见 [CLI 参考](https://aningdev.github.io/shadcn-nsh/docs/cli)。
+`list`、`view`、`diff` 只读不写：`npx shadcn-nsh list`、`view button`、`diff`（应用的副本与 registry 不同时退出码 1）。每个命令都接受 `-c <dir>`，`add` 另有 `--dry-run` 与 `--overwrite`。参数与默认值见 [CLI 参考](https://shadcn-nsh.aning.dev/docs/cli)。
 
 ## 主题
 
@@ -33,7 +33,7 @@ npx shadcn-nsh init --theme shadcn                      # 用 shadcn 的中性�
 npx shadcn-nsh add theme-solid-glass                    # 多带一套，运行时切换
 ```
 
-`init --theme <default|shadcn|solid-glass>` 决定应用**构建时**用的主题；`add theme-<name>` 则**多装一套**到 `themes/<name>/`，供应用运行时用 `selectTheme` 切换（`selectTheme(null)` 回到构建时那套）。`nsh-ui.json` 记着构建时用的是哪一套，所以 `add` 不会把别的主题写回去。token、finish 与切换示例见[主题](https://aningdev.github.io/shadcn-nsh/docs/themes)。
+`init --theme <default|shadcn|solid-glass>` 决定应用**构建时**用的主题；`add theme-<name>` 则**多装一套**到 `themes/<name>/`，供应用运行时用 `selectTheme` 切换（`selectTheme(null)` 回到构建时那套）。`nsh-ui.json` 记着构建时用的是哪一套，所以 `add` 不会把别的主题写回去。token、finish 与切换示例见[主题](https://shadcn-nsh.aning.dev/docs/themes)。
 
 ## Registry
 

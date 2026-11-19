@@ -2,7 +2,7 @@
 
 > **已完成，留作记录（最后编辑 2026-11-18）：`AppTheme`、`selectTheme` 与 `themes/<name>/` 随 `0.5.0` 发布。**
 > 现行说明见 [`packages/theme/README.md`](../../packages/theme/README.md) 与
-> [themes](https://aningdev.github.io/shadcn-nsh/docs/themes)。
+> [themes](https://shadcn-nsh.aning.dev/docs/themes)。
 
 ## 目标
 

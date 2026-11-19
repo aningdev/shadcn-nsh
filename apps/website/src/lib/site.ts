@@ -1,6 +1,6 @@
 /** Site constants for the shadcn-nsh docs (NSH website shell, local content). */
 
-export const SITE_URL = "https://aningdev.github.io/shadcn-nsh";
+export const SITE_URL = "https://shadcn-nsh.aning.dev";
 
 export const SITE_TITLE = "shadcn-nsh";
 

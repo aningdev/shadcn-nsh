@@ -7,7 +7,7 @@
 > `--overwrite` 也不会把默认主题写回来。
 >
 > 本文余下部分是当初那次实验的记录——主题数据、换算表、预览工具、对照图、限制清单——数值仍然有效。
-> 现在的做法与对外说明见 [themes](https://aningdev.github.io/shadcn-nsh/docs/themes) 与
+> 现在的做法与对外说明见 [themes](https://shadcn-nsh.aning.dev/docs/themes) 与
 > [`packages/theme/README.md`](../../packages/theme/README.md)；规范见 [`theme-roles.md`](../specs/theme-roles.md)。
 > 文中「第 N 批」是当时的分批实现：**第 2 批 = `0.6.0` 的内容**（`press.scale`、单色 `fill`、
 > `insetEdge`、圆角 token、`theme-default`），**第 3 批 = 未发布段的「悬停、焦点光环与滑块手柄来自主题」**

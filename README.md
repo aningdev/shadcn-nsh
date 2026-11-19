@@ -4,7 +4,7 @@
 
 Styled UI for [Native Shell (NSH)](https://github.com/longbridge/nsh), built on `nsh/base` and handed to your app as files you own: components, a theme, and a registry to copy them from — the shape [shadcn/ui](https://github.com/shadcn-ui/ui) gives React.
 
-Docs, every component with its props and a live demo: **https://aningdev.github.io/shadcn-nsh/**
+Docs, every component with its props and a live demo: **https://shadcn-nsh.aning.dev/**
 
 - **Copy-into-app.** `add` writes the component, its theme and the shared looks it imports into your app, then forgets them: no runtime package of ours, nothing to keep in sync.
 - **The appearance is data.** Components read colours and surfaces from `theme.json` and `finishes.json` — never from literals — so a theme swaps the whole look.
@@ -22,7 +22,7 @@ npx shadcn-nsh add --all            # every component
 
 `init` records the choice in `nsh-ui.json`, installs the theme at `theme.json` + `lib/finishes.json`, points each `nsh.json` at it, and sets up the `@/` import alias in an app (`"@/*": ["./*"]` in `tsconfig.json`'s paths, `"resolve": { "alias": { "@": "./" } }` in `nsh.json`) so the docs' snippets — `@/components/ui/<name>`, `@/lib/theme` — resolve; `add` copies files and installs the packages an item declares (`lucide` among them) with your package manager. From then on the files are yours to change.
 
-`list`, `view` and `diff` inspect the registry without writing: `npx shadcn-nsh list`, `view button`, `diff` (exits 1 when the app's copies differ). Every command takes `-c <dir>`, `add` also `--dry-run` and `--overwrite`. The [CLI reference](https://aningdev.github.io/shadcn-nsh/docs/cli) has the flags and defaults.
+`list`, `view` and `diff` inspect the registry without writing: `npx shadcn-nsh list`, `view button`, `diff` (exits 1 when the app's copies differ). Every command takes `-c <dir>`, `add` also `--dry-run` and `--overwrite`. The [CLI reference](https://shadcn-nsh.aning.dev/docs/cli) has the flags and defaults.
 
 ## Themes
 
@@ -33,7 +33,7 @@ npx shadcn-nsh init --theme shadcn                      # built with shadcn's ne
 npx shadcn-nsh add theme-solid-glass                    # one more theme to switch to at run time
 ```
 
-`init --theme <default|shadcn|solid-glass>` decides the theme the app is **built** with; `add theme-<name>` installs **one more** into `themes/<name>/`, for `selectTheme` to switch to while the app runs (`selectTheme(null)` goes back to the built-in one). `nsh-ui.json` records which theme the app was built with, so `add` never writes another one over it. Tokens, finishes and the switching example: [themes](https://aningdev.github.io/shadcn-nsh/docs/themes).
+`init --theme <default|shadcn|solid-glass>` decides the theme the app is **built** with; `add theme-<name>` installs **one more** into `themes/<name>/`, for `selectTheme` to switch to while the app runs (`selectTheme(null)` goes back to the built-in one). `nsh-ui.json` records which theme the app was built with, so `add` never writes another one over it. Tokens, finishes and the switching example: [themes](https://shadcn-nsh.aning.dev/docs/themes).
 
 ## Registry
 

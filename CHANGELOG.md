@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Changed
+
+- **The docs site is at https://shadcn-nsh.aning.dev.** It was at
+  `https://aningdev.github.io/shadcn-nsh/`; the README and every docs link point at the new
+  address.
+
 ## 0.8.1 — `init` keeps your JSON, `diff` works offline
 
 ### Added

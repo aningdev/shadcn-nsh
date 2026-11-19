@@ -7,7 +7,7 @@ assignees: ""
 ---
 
 <!--
-先看一眼文档站 https://aningdev.github.io/shadcn-nsh/ ：每个组件都有属性和可运行演示。
+先看一眼文档站 https://shadcn-nsh.aning.dev/ ：每个组件都有属性和可运行演示。
 安全问题不要贴在这里，见 SECURITY.md。
 -->
 

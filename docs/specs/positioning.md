@@ -1,6 +1,6 @@
 # 定位与路线
 
-文档站：<https://aningdev.github.io/shadcn-nsh/>
+文档站：<https://shadcn-nsh.aning.dev/>
 
 ## 定位
 
