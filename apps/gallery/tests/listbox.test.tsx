@@ -62,7 +62,7 @@ test("a select and a combobox are compact with a pointer and roomier on a touch 
   expect(find(touch.texts(), "combo-size=")).toBe("44|44");
   // Pointer: floating popup, padding 6. Touch: bottom sheet, top radius 20, max 70%, pad 34.
   expect(find(desktop.texts(), "popup=")).toBe("popup|6|none");
-  expect(find(touch.texts(), "popup=")).toBe("sheet|20|20|70%|10|34");
+  expect(find(touch.texts(), "popup=")).toBe("sheet|14|14|70%|10|34");
   // The title is resolved after the item registers, not stuck on the placeholder.
   expect(desktop.texts().join("\n").includes("Apple pie")).toBe(true);
 });

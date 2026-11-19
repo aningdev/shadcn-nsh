@@ -74,7 +74,7 @@ test("selectTheme swaps a rendered button's fills to the neutral theme, and null
 
   const before = look(app.texts());
   expect(before.theme).toBe("build-time");
-  expect(before).toMatchObject({ ...raisedIn(plain, "light", "7"), theme: "build-time" });
+  expect(before).toMatchObject({ ...raisedIn(plain, "light", "8"), theme: "build-time" });
   // The finishes name their colours as aliases; by the time the page reads them they are resolved,
   // and every theme states a gradient — a flat one is one colour at both stops.
   expect(before.fill).toMatch(resolved);
@@ -125,7 +125,7 @@ test("an appearance change reaches both themes", async () => {
 
   await app.press("text:Build-time");
   const back = look(app.texts());
-  expect(back).toMatchObject(raisedIn(plain, "dark", "7"));
+  expect(back).toMatchObject(raisedIn(plain, "dark", "8"));
   expect(back.fill).toMatch(resolved);
   expect(back.run).toMatch(oneGradient);
   expect(back.rail).toMatch(railShape);

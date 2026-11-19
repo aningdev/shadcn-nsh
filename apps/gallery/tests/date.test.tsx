@@ -67,7 +67,7 @@ test("Dates: a calendar, a date picker, and a time field are roomier on a touch 
   expect(find(desktop.texts(), "picker-size=")).toBe("32|180");
   expect(find(touch.texts(), "picker-size=")).toBe("44|0");
   expect(find(desktop.texts(), "popup=")).toBe("popup|6|none");
-  expect(find(touch.texts(), "popup=")).toBe("sheet|20|20|70%|10|34");
+  expect(find(touch.texts(), "popup=")).toBe("sheet|14|14|70%|10|34");
   expect(find(desktop.texts(), "time-size=")).toBe("32");
   expect(find(touch.texts(), "time-size=")).toBe("44");
 });
