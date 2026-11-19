@@ -30,7 +30,7 @@ const labelFont = desktop ? 13 : size.label;
  * scroll view clips what reaches past its sides.
  */
 export const treeItemClass =
-  "group rounded-md transition-colors duration-150 motion-reduce:transition-none hover:bg-hover active:opacity-70 " +
+  "group rounded-(--radius-control) transition-colors duration-150 motion-reduce:transition-none hover:bg-hover active:opacity-70 " +
   "selected:bg-brand-tint focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring disabled:opacity-50";
 
 /** How far each level is indented, in points. */
@@ -128,7 +128,7 @@ function TerminalTreeRow(props: { entry: TreeEntry; detail?: string }) {
 }
 // @port end
 
-const treeFrameClass = "overflow-hidden rounded-lg border border-border bg-card";
+const treeFrameClass = "overflow-hidden rounded-(--radius-card) border border-border bg-card";
 
 /** `nsh/base` Tree with row chrome and `TreeRow` by default. */
 export type TreeProps = BaseTreeProps;

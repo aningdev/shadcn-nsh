@@ -34,7 +34,7 @@ export const numberInputClasses = {
   frame: terminal
     ? "h-4 flex-row items-stretch bg-field pl-2 disabled:opacity-50"
     : [
-        pointer ? "h-8 rounded-[7px]" : "h-11 rounded-lg",
+        pointer ? "h-8 rounded-(--radius-control)" : "h-11 rounded-(--radius-control)",
         "flex-row items-stretch overflow-hidden border bg-field",
         edgeClass({ rest: "border-input", hover: "border-faint", hoverVariant: "enabled:hover" }),
       ].join(" "),

@@ -34,6 +34,12 @@ const rules: Record<string, RegExp> = {
   // A class names a theme token (`bg-raised`), not a palette entry (`border-white`, `text-red-500`).
   "tailwind palette color":
     /\b(?:bg|text|border|ring|from|via|to|fill|stroke|outline|shadow|divide|placeholder|accent|caret|decoration)-(?:white|black|(?:slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose)-\d{2,3})\b/,
+  // A class radius names one of the theme's tiers (`rounded-(--radius-control)`): Tailwind's fixed
+  // steps (`rounded-md`) ignore `radius*`, so a control that wore one kept its corners through a
+  // theme change (#53). A deliberate fixed geometry stays `rounded-full` or `rounded-[Npx]`, with a
+  // comment saying why.
+  "fixed-scale radius class":
+    /\brounded-(?:t-|b-|l-|r-|s-|e-|tl-|tr-|bl-|br-)?(?:sm|md|lg|xl|2xl|3xl)\b/,
 };
 
 const components = readdirSync(new URL("packages/ui/", root))
@@ -110,6 +116,7 @@ describe("component sources (P3: colors come from the theme)", () => {
       'const className = "border-white text-red-500";',
       'const ink = "black";',
       'const mix = "color-mix(in srgb, black 10%, red)";',
+      'const corner = "rounded-lg";',
     ].join("\n");
     for (const pattern of Object.values(rules)) {
       expect(pattern.test(sample), pattern.source).toBe(true);
@@ -119,6 +126,22 @@ describe("component sources (P3: colors come from the theme)", () => {
     expect(rules["tailwind palette color"].test('class="bg-raised text-muted-foreground"')).toBe(
       false,
     );
+  });
+
+  test("the guard catches a fixed-scale radius class", () => {
+    const sample = [
+      'const row = "group rounded-md hover:bg-hover";',
+      'const panel = "rounded-xl border border-border bg-card";',
+      'const sheet = "rounded-t-2xl bg-card";',
+    ].join("\n");
+    const rule = rules["fixed-scale radius class"];
+    for (const line of sample.split("\n")) {
+      expect(rule.test(line), line).toBe(true);
+    }
+    // The theme's tiers, a pill and a written-out corner are all the radius a class may name.
+    expect(rule.test('class="rounded-(--radius-control) rounded-(--radius-card)"')).toBe(false);
+    expect(rule.test('class="rounded-t-(--radius-card)"')).toBe(false);
+    expect(rule.test('class="rounded-full rounded-[4px]"')).toBe(false);
   });
 });
 

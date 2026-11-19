@@ -64,7 +64,7 @@ const tones: { tone: EmojiSkinTone; hand: string; label: string }[] = [
 
 /** The classes of the picker's parts. */
 export const emojiPickerClasses = {
-  searchBar: `flex-row items-center gap-2 rounded-lg bg-raised ${platform.desktop ? "mx-2.5 mt-2 h-8 pl-2.5 pr-1" : "mx-3 mt-1 h-10 pl-3 pr-1.5"}`,
+  searchBar: `flex-row items-center gap-2 rounded-(--radius-control) bg-raised ${platform.desktop ? "mx-2.5 mt-2 h-8 pl-2.5 pr-1" : "mx-3 mt-1 h-10 pl-3 pr-1.5"}`,
   search: `flex-1 ${platform.desktop ? "text-[13px]" : "text-base"} text-foreground placeholder:text-muted-foreground`,
   list: "mt-1 flex-1",
   /** Eight points each side: some glyphs (🫡) reach past their cell. */
@@ -72,8 +72,8 @@ export const emojiPickerClasses = {
   group: platform.desktop ? "px-3 pt-2.5 pb-1" : "px-3.5 pt-3 pb-1.5",
   /** A cell: quiet until the pointer or the keys are on it (one gray for both, as Slack's), sunk while pressed. */
   item: platform.desktop
-    ? "size-9 items-center justify-center rounded-md text-[22px] transition-colors duration-100 motion-reduce:transition-none hover:bg-raised focus:bg-raised active:scale-90"
-    : "h-12 flex-1 items-center justify-center rounded-lg text-[28px] active:bg-raised",
+    ? "size-9 items-center justify-center rounded-(--radius-control) text-[22px] transition-colors duration-100 motion-reduce:transition-none hover:bg-raised focus:bg-raised active:scale-90"
+    : "h-12 flex-1 items-center justify-center rounded-(--radius-control) text-[28px] active:bg-raised",
 };
 
 /** A group's heading: quiet semibold, as Slack's. */
@@ -112,7 +112,7 @@ export function EmojiTabs(props: {
           onPress={() => props.onPress(g.id)}
           accessibilityLabel={g.label}
           tooltip={platform.desktop ? g.label : undefined}
-          class={`hover:bg-raised focus-visible:outline-ring items-center justify-center rounded-md focus-visible:outline-2 ${platform.desktop ? "h-8 w-8" : "h-11 flex-1"}`}
+          class={`hover:bg-raised focus-visible:outline-ring items-center justify-center rounded-(--radius-control) focus-visible:outline-2 ${platform.desktop ? "h-8 w-8" : "h-11 flex-1"}`}
         >
           <Icon
             icon={g.icon}
@@ -141,7 +141,7 @@ export function EmojiTones(props: {
       accessibilityLabel={t.label}
       accessibilityState={{ selected }}
       onPress={onPress}
-      class={`hover:bg-hover items-center justify-center rounded-md active:scale-90 ${platform.desktop ? "size-6" : "size-8"}`}
+      class={`hover:bg-hover items-center justify-center rounded-(--radius-control) active:scale-90 ${platform.desktop ? "size-6" : "size-8"}`}
       style={selected ? { backgroundColor: colors.background } : undefined}
     >
       <Text style={{ fontSize: platform.desktop ? 15 : 19 }}>{t.hand}</Text>

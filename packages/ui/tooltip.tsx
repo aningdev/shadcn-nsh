@@ -23,14 +23,15 @@ export interface TooltipLookOptions {
  * the theme's `popover` surface with the border's edge, not the text's
  * color inverted, so it reads as the menus and popovers do in both
  * appearances. One line: a row 8 points apart, 8 by 4 points of padding,
- * 6-point corners; `rich`: a column, 10 points of padding, 8-point corners.
+ * the theme's control corners (`radius-control`); `rich`: a column, 10 points of
+ * padding, the theme's base corners (`radius`).
  * Its text takes `tooltipText`, a shortcut or a note `tooltipNote`.
  */
 export function tooltipLook(o?: TooltipLookOptions) {
   return {
     class: o?.rich
-      ? "gap-2 rounded-lg border border-border bg-popover p-2.5"
-      : "flex-row items-center gap-2 rounded-md border border-border bg-popover px-2 py-1",
+      ? "gap-2 rounded-(--radius) border border-border bg-popover p-2.5"
+      : "flex-row items-center gap-2 rounded-(--radius-control) border border-border bg-popover px-2 py-1",
   };
 }
 

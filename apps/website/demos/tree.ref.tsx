@@ -140,7 +140,7 @@ function App() {
             selected={selected()}
             reveal
             accessibilityLabel="Project files"
-            class="border-border bg-card overflow-hidden rounded-lg border"
+            class="border-border bg-card overflow-hidden rounded-(--radius-card) border"
             listClass="p-1.5"
             itemClass={treeItemClass}
             style={{ ...sectionSurface(), height: desktop ? 320 : 360 }}

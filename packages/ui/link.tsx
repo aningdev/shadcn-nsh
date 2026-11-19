@@ -54,7 +54,7 @@ export function linkColor(o?: LinkState): string {
  * around it; `inline` on a paragraph's baseline, else as wide as its text. */
 export function linkLook(o?: { inline?: boolean }) {
   return {
-    class: `group flex-row items-center gap-1 rounded-sm active:opacity-60 ${colorTransition} ${o?.inline ? "align-text-bottom" : "self-start"}`,
+    class: `group flex-row items-center gap-1 rounded-(--radius-control) active:opacity-60 ${colorTransition} ${o?.inline ? "align-text-bottom" : "self-start"}`,
     get focusVisibleStyle(): ViewStyle {
       return focusRing(2);
     },

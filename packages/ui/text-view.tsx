@@ -19,7 +19,8 @@ export const textViewLinkClasses = { link: "text-brand decoration-brand/40" };
 
 /** A streaming `TextView`'s caret (a view of this class, its
  * `streamingCaret`): a brand-colored block a line high that pulses. */
-export const textViewCaretClass = "ml-0.5 h-4 w-2 animate-pulse rounded-sm bg-brand";
+// The caret's corner is its own small fixed geometry (an 8-point-wide block), not a theme tier.
+export const textViewCaretClass = "ml-0.5 h-4 w-2 animate-pulse rounded-[4px] bg-brand";
 // @port end
 
 /** Every prop of `nsh/base` TextView; parsing stays in base. */

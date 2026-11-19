@@ -34,7 +34,7 @@ export interface PaginationItemClassOptions {
  * a color fade (still with reduced motion), the ends dimmed (`disabled:`),
  * the focus ring's outline. */
 const pageItem =
-  "flex-row items-center justify-center gap-1 px-2 rounded-md text-sm text-foreground " +
+  "flex-row items-center justify-center gap-1 px-2 rounded-(--radius-control) text-sm text-foreground " +
   "transition-colors duration-200 motion-reduce:transition-none hover:bg-hover active:opacity-70 " +
   "selected:bg-primary selected:text-primary-foreground disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-ring";
 

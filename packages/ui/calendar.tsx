@@ -53,8 +53,8 @@ const monthGap = 16;
 /** The gap over each week: rows of 36 with a pointer, as shadcn's Base UI calendar's (28-point cells, `mt-2`). */
 const weekGap = 4;
 
-/** The corners of the days, the arrows and the month view's items: the controls' (shadcn's
- * `rounded-md`), read where an item is drawn. */
+/** The corners of the days, the arrows and the month view's items: the
+ * controls' radius, read where an item is drawn. */
 const cellRadius = () => radius.control;
 
 /**
@@ -340,6 +340,8 @@ export const calendarLook = {
   // `grow`: the header's arrows and toggles share out what their content leaves alike (the days' columns share the
   // width already), which keeps the title centered between the arrows at their ends.
   itemClass: terminal ? "group active:opacity-70" : "group grow active:opacity-70",
+  // A time segment's corner is its own small fixed geometry (a digit's mark inside the field's
+  // well), not a theme tier.
   segmentClass: "group rounded-[4px] active:opacity-70 focus:bg-brand-fill",
   timeFieldClass,
   content: terminal

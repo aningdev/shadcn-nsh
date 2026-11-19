@@ -74,6 +74,17 @@
   cards staying 8 and 14. `radius-popover` is gone — a dialog uses `radius-card`, with no alias.
   Phone sheets and menu rows take their corners from the theme too, and every corner that reads a
   theme radius now has the continuous curve, applied in one place by `rounded()`.
+- **Class radii follow the theme's `radius`, `radius-card` and `radius-control` (#53).** The
+  `rounded-*` classes in the library's components name the theme's tiers
+  (`rounded-(--radius-control)`, `rounded-(--radius)`, `rounded-(--radius-card)`) instead of
+  Tailwind's fixed steps, so an app that changes a `radius*` token in its theme moves every corner,
+  the class-rounded ones with the style-rounded ones. By default, the components that look
+  different: a data table's and a tree's frame and a command palette's frame are rounder (8 or 12 →
+  14), tree and command rows, pagination items and a tooltip's one-line bubble rounder by 2 (6 →
+  8), a rich tooltip and the editor's code blocks 8 → 10, a dock's drop indicator 8 → 10 and its
+  sheet's top corners 16 → 14, the desktop's emoji cells 6 → 8, and the desktop's number inputs and
+  time fields and the option rows of select, combobox and date picker take the controls' 8 (7 → 8). `ui-guards` now fails the build on a fixed-scale
+  `rounded-sm` … `rounded-3xl` in `packages/ui`.
 - **The docs site is at https://shadcn-nsh.aning.dev.** It was at
   `https://aningdev.github.io/shadcn-nsh/`; the README and every docs link point at the new
   address.

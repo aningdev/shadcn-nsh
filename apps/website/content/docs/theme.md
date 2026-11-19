@@ -150,7 +150,7 @@ Add a colour the app's own classes use (both appearances — a token in one alon
 }
 ```
 
-Change a role: `primary` in `cssVars.light` and `cssVars.dark`. Change the radius: `radius` in `cssVars.theme`, and with it `radius-control` (0.8× it, rounded) and `radius-card` (1.4×) — the three are one scale, and the class radii an app writes follow the tokens. Set the fonts in the same block: see [Fonts](#fonts).
+Change a role: `primary` in `cssVars.light` and `cssVars.dark`. Change the radius: `radius` in `cssVars.theme`, and with it `radius-control` (0.8× it, rounded) and `radius-card` (1.4×) — the three are one scale, and every corner follows them: `rounded()` in the styles and `rounded-(--radius…)` in the classes, this library's and the app's own alike. Set the fonts in the same block: see [Fonts](#fonts).
 
 ## Fonts
 

@@ -36,7 +36,7 @@ const labelFont = desktop ? 13 : size.label;
  */
 export const commandClasses = {
   /** The palette's frame. */
-  root: "overflow-hidden rounded-xl border border-border bg-card",
+  root: "overflow-hidden rounded-(--radius-card) border border-border bg-card",
   /**
    * The row of the search icon, the field and the spinner. A terminal's
    * field is a raised band: the band spans the row, as the rows' do, and
@@ -56,7 +56,7 @@ export const commandClasses = {
   separator: "-mx-1.5 my-1 h-px bg-border",
   /** A row: quiet until hovered, on `accent` while highlighted (as a list's row), dimmed while disabled. */
   item:
-    "group rounded-md border border-transparent transition-colors duration-100 motion-reduce:transition-none " +
+    "group rounded-(--radius-control) border border-transparent transition-colors duration-100 motion-reduce:transition-none " +
     "hover:bg-hover focus:bg-accent active:opacity-70 disabled:opacity-50",
 };
 

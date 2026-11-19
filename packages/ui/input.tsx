@@ -225,7 +225,7 @@ export function inputLook(o?: FieldLookOptions) {
  * shade over the popup) rather than the field color, which is the page's and would read as a hole.
  */
 export const timeFieldClass = [
-  pointer ? "h-8 rounded-[7px] px-2" : "h-11 rounded-lg px-3",
+  pointer ? "h-8 rounded-(--radius-control) px-2" : "h-11 rounded-(--radius-control) px-3",
   terminal ? "items-center border bg-field" : "items-center border bg-field dark:bg-input/30",
   edgeClass({ rest: "border-input", hover: "border-faint", hoverVariant: "enabled:hover" }),
 ].join(" ");

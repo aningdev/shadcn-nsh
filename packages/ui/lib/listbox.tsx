@@ -69,7 +69,7 @@ export function listboxPopupStarting(): ViewStyle | undefined {
  * row's content once per item and the highlight moves without drawing.
  */
 export const optionClass =
-  "group rounded-[7px] border border-transparent transition-colors duration-100 motion-reduce:transition-none focus:bg-accent active:opacity-70 disabled:opacity-50";
+  "group rounded-(--radius-control) border border-transparent transition-colors duration-100 motion-reduce:transition-none focus:bg-accent active:opacity-70 disabled:opacity-50";
 
 /**
  * What a select's or combobox's list takes besides its items (spread it):
