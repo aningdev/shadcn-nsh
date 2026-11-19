@@ -1,7 +1,7 @@
 // The reference of `message.tsx`: the same page, the look spread on `nsh`'s own View and Text
 // (and the avatar it composes) instead of worn by the components. The render check requires the
 // two to draw the same pixels.
-import { Copy, RefreshCcw, ThumbsUp } from "lucide";
+import { Bot, Copy, RefreshCcw, ThumbsUp } from "lucide";
 import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 
@@ -20,8 +20,15 @@ function Row(props: { align?: MessageAlign; children: JSX.Element }) {
   return <View style={messageLook().row(align())}>{props.children}</View>;
 }
 
-/** The sender's avatar, as the look places it. */
-function MsgAvatar(props: { name?: string }) {
+/** The sender's avatar, as the look places it: the identity, or the slot when it holds a mark. */
+function MsgAvatar(props: { name?: string; children?: JSX.Element; accessibilityLabel?: string }) {
+  if (props.children != null) {
+    return (
+      <View accessibilityLabel={props.accessibilityLabel} style={messageLook().avatarSlot}>
+        {props.children}
+      </View>
+    );
+  }
   return <Avatar name={props.name} style={messageLook().avatar} />;
 }
 
@@ -171,6 +178,19 @@ function App() {
                     />
                   </IconButton>
                 </Foot>
+              </Column>
+            </Row>
+          </DemoSection>
+
+          <DemoSection title="A mark" axis="block">
+            <Row>
+              <MsgAvatar accessibilityLabel="Assistant">
+                <Icon icon={Bot} size={16} tint={ui().muted} />
+              </MsgAvatar>
+              <Column>
+                <Bubble variant="muted">
+                  <BubbleContent>The build failed during dependency installation.</BubbleContent>
+                </Bubble>
               </Column>
             </Row>
           </DemoSection>

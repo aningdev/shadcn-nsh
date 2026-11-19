@@ -14,9 +14,12 @@ npx shadcn-nsh@latest add message
 ## Usage
 
 ```tsx
+import { Bot } from "lucide";
+
 import { Bubble, BubbleContent } from "@/components/ui/bubble";
 import { Message, MessageAvatar, MessageContent } from "@/components/ui/message";
 import { Icon } from "@/lib/icons";
+import { colors } from "@/lib/theme";
 ```
 
 The examples draw icons with `Icon` from `lib/icons`; see [Icons](../icons) for adding it and picking a size and color.
@@ -53,13 +56,30 @@ you give it an `align` of its own.
 
 ### Avatar
 
-`MessageAvatar` is this library's `Avatar`, 32 points round (36 on a touch screen): `name` gives it
-initials on an identity hue, `src` a picture. An avatar with neither keeps the muted circle that
-holds the row's alignment.
+`MessageAvatar` is 32 points round (36 on a touch screen), at the bottom of the row. With no
+`children` it is this library's `Avatar`: `name` gives it initials on an identity hue, `src` a
+picture. An avatar with neither keeps the muted circle that holds the row's alignment.
 
 ```tsx
 <Message>
   <MessageAvatar name="Jason Lee" />
+  <MessageContent>
+    <Bubble variant="muted">
+      <BubbleContent>The build failed during dependency installation.</BubbleContent>
+    </Bubble>
+  </MessageContent>
+</Message>
+```
+
+Give it `children` and it is that same circle as a muted slot — a bot's glyph, or an `Avatar` of
+your own — centered and clipped to the round. `name` and `src` are not used then. The glyph here
+is 16 points, in the muted ink.
+
+```tsx
+<Message>
+  <MessageAvatar accessibilityLabel="Assistant">
+    <Icon icon={Bot} size={16} tint={colors.muted} />
+  </MessageAvatar>
   <MessageContent>
     <Bubble variant="muted">
       <BubbleContent>The build failed during dependency installation.</BubbleContent>
@@ -130,8 +150,11 @@ Anything else in `MessageFooter` is drawn as given: a row of `IconButton`s, a re
 
 ## Differences from shadcn/ui
 
-shadcn/ui's message differs here in two places:
+shadcn/ui's message differs here in three places:
 
+- **`name` and `src` stay.** shadcn/ui's `MessageAvatar` is only the slot; the app puts an `Avatar`
+  inside it. Here `name` and `src` still draw this library's `Avatar`, and `children` is the slot
+  when a mark should sit there instead.
 - **The avatar does not step up for a footer.** shadcn/ui lifts it by the footer's height when a
   message has one (`group-has-data-[slot=message-footer]`); NSH has no `:has()`, so the avatar
   sits at the bottom of the whole row, beside the footer rather than the turn.
@@ -141,25 +164,28 @@ shadcn/ui's message differs here in two places:
 ## API
 
 Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `MessageGroup`,
-`Message` and `MessageContent` (`role`, `accessibilityLabel`, `style`, …), and every prop of
-this library's [`Avatar`](https://nsh.dev/elements/avatar) on `MessageAvatar` (`name`, `src`,
-`fallback`, `onStatusChange`, …). A string child of `MessageFooter` and of `MessageHeader` is drawn
-as [`nsh` Text](https://nsh.dev/elements/text).
+`Message` and `MessageContent` (`role`, `accessibilityLabel`, `style`, …). With no `children`,
+`MessageAvatar` is this library's [`Avatar`](https://nsh.dev/elements/avatar): `name`, `src`,
+`fallback`, `onStatusChange` and the rest of its props pass through. With `children` it renders a
+`View` (`style`, `accessibilityLabel` and the other host props still pass through; `name`, `src`
+and the image props are not used). A string child of `MessageFooter` and of `MessageHeader` is
+drawn as [`nsh` Text](https://nsh.dev/elements/text).
 
-| Part             | Props         | Description                                     |
-| ---------------- | ------------- | ----------------------------------------------- |
-| `MessageGroup`   |               | Renders `View` (`messageLook().group`)          |
-| `Message`        | `align`       | Renders `View` (`messageLook().row(align)`)     |
-| `MessageAvatar`  | `name`, `src` | Renders `Avatar` (`messageLook().avatar`)       |
-| `MessageContent` |               | Renders `View` (`messageLook().content(align)`) |
-| `MessageHeader`  | `children`    | Renders `View` (`messageLook().header`)         |
-| `MessageFooter`  | `children`    | Renders `View` (`messageLook().footer(align)`)  |
+| Part             | Props                     | Description                                                                                         |
+| ---------------- | ------------------------- | --------------------------------------------------------------------------------------------------- |
+| `MessageGroup`   |                           | Renders `View` (`messageLook().group`)                                                              |
+| `Message`        | `align`                   | Renders `View` (`messageLook().row(align)`)                                                         |
+| `MessageAvatar`  | `name`, `src`, `children` | Renders `Avatar` (`messageLook().avatar`), or a `View` (`messageLook().avatarSlot`) with `children` |
+| `MessageContent` |                           | Renders `View` (`messageLook().content(align)`)                                                     |
+| `MessageHeader`  | `children`                | Renders `View` (`messageLook().header`)                                                             |
+| `MessageFooter`  | `children`                | Renders `View` (`messageLook().footer(align)`)                                                      |
 
 | Prop       | On              | Type                    | Default |
 | ---------- | --------------- | ----------------------- | ------- |
 | `align`    | `Message`       | `"start" \| "end"`      | `start` |
 | `name`     | `MessageAvatar` | `string`                |         |
 | `src`      | `MessageAvatar` | `string`                |         |
+| `children` | `MessageAvatar` | `JSX.Element`           |         |
 | `children` | `MessageHeader` | `string \| JSX.Element` |         |
 | `children` | `MessageFooter` | `string \| JSX.Element` |         |
 

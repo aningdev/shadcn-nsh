@@ -1,6 +1,6 @@
 // A message: one row of a conversation — its avatar, who sent it, the turn itself, and what is
-// under it. This library's own (drawn on `nsh`'s View and Text, the avatar on `Avatar`), so there
-// is no port region. Yours to change.
+// under it. This library's own (drawn on `nsh`'s View and Text; the avatar is `Avatar`, or a round
+// slot when given children), so there is no port region. Yours to change.
 import { colors } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, platform, split, Text, View } from "nsh";
@@ -13,6 +13,19 @@ export type MessageAlign = "start" | "end";
 
 /** The side of a message's avatar: 32 points, shadcn/ui's `size-8`. */
 const avatarSide = platform.desktop ? 32 : 36;
+
+/** The round place an avatar takes: muted, at the bottom of the row. Read where it is drawn, so
+ * the fill follows the theme. */
+function avatarBox(): ViewStyle {
+  return {
+    width: avatarSide,
+    height: avatarSide,
+    borderRadius: avatarSide / 2,
+    backgroundColor: colors.mutedFill,
+    alignSelf: "flex-end",
+    flexShrink: 0,
+  };
+}
 
 /** The gap between a message's avatar and its content: 8 points. */
 const gap = 8;
@@ -49,9 +62,12 @@ export interface MessageLook {
   /** The row (`Message`): its avatar and its content 8 points apart, on `align`'s side of the
    * column. */
   row(align: MessageAlign): ViewStyle;
-  /** The avatar's box (`MessageAvatar`): a round 32-point identity (36 on a touch screen), at the
-   * bottom of the row, beside the turn rather than its header. */
+  /** The avatar's box (`MessageAvatar` without children): a round 32-point identity (36 on a
+   * touch screen), at the bottom of the row, beside the turn rather than its header. */
   readonly avatar: ViewStyle;
+  /** The same box when `MessageAvatar` holds children: its content centered and clipped to the
+   * circle. */
+  readonly avatarSlot: ViewStyle;
   /** The content's column (`MessageContent`): what the message holds, 10 points apart, on the
    * message's side. */
   content(align: MessageAlign): ViewStyle;
@@ -71,8 +87,8 @@ export interface MessageLook {
  * A message's look, after shadcn/ui's: a full-width row, its avatar 32 points round at the bottom
  * and its content a column 10 points apart, mirrored when the message is at the end. The header is
  * small and medium in the muted ink at the start of the row; the footer the same, at the message's
- * side, and it holds actions or a status. In a terminal the row is its lines, and the avatar draws
- * its initials in a Cell.
+ * side, and it holds actions or a status. With children the avatar is that same circle, its content
+ * centered. In a terminal the row is its lines, and the avatar draws its initials in a Cell.
  */
 export function messageLook(): MessageLook {
   return {
@@ -87,13 +103,14 @@ export function messageLook(): MessageLook {
       minWidth: 0,
     }),
     get avatar(): ViewStyle {
+      return avatarBox();
+    },
+    get avatarSlot(): ViewStyle {
       return {
-        width: avatarSide,
-        height: avatarSide,
-        borderRadius: avatarSide / 2,
-        backgroundColor: colors.mutedFill,
-        alignSelf: "flex-end",
-        flexShrink: 0,
+        ...avatarBox(),
+        alignItems: "center",
+        justifyContent: "center",
+        overflow: "hidden",
       };
     },
     content: (align: MessageAlign): ViewStyle => ({
@@ -130,10 +147,14 @@ export type MessageProps = ViewProps & {
 };
 
 /**
- * A message's avatar: this library's `Avatar`, so `name` gives it initials and a hue of their own
- * and `src` a picture. It is 32 points (36 on a touch screen) and round.
+ * A message's avatar, 32 points round (36 on a touch screen). With no `children` it is this
+ * library's `Avatar`: `name` gives initials and a hue, `src` a picture. With `children` it is the
+ * round muted slot, and `name` / `src` are not used.
  */
-export type MessageAvatarProps = Omit<AvatarProps, "children">;
+export type MessageAvatarProps = Omit<AvatarProps, "children"> & {
+  /** What the slot holds: an icon, an `Avatar`. When set, `name` and `src` are not used. */
+  children?: JSX.Element;
+};
 
 /** What a message holds: a header, the turn (`Bubble`), and a footer. */
 export type MessageContentProps = ViewProps;
@@ -181,7 +202,35 @@ export function MessageGroup(props: MessageGroupProps) {
 
 /** The sender's avatar, at the bottom of the row. Compose the conversation itself in `Bubble`. */
 export function MessageAvatar(props: MessageAvatarProps) {
-  const [, rest] = split(props, ["style"]);
+  // The slot is a view. The avatar's own props do not belong on it, and with children they are
+  // not used — so a mark never also draws initials.
+  if (props.children != null) {
+    const [, rest] = split(props, [
+      "accessibilityLabel",
+      "children",
+      "fallback",
+      "fallbackClass",
+      "fallbackDelay",
+      "fallbackStyle",
+      "imageClass",
+      "imageStyle",
+      "name",
+      "onStatusChange",
+      "src",
+      "style",
+    ]);
+    return (
+      <View
+        {...rest}
+        // Avatar takes `null` to clear the label; a view takes a string or nothing.
+        accessibilityLabel={props.accessibilityLabel ?? undefined}
+        style={[messageLook().avatarSlot, props.style ?? null]}
+      >
+        {props.children}
+      </View>
+    );
+  }
+  const [, rest] = split(props, ["children", "style"]);
   return <Avatar {...rest} style={[messageLook().avatar, props.style ?? null]} />;
 }
 

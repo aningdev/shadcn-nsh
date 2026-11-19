@@ -1,7 +1,7 @@
 // shadcn/ui's message page has no example in this repo, so this page is the library's own: a
 // conversation with avatars, a group from one sender under a name, and the actions a turn carries
 // under it. Pressing an action writes to the log beside it.
-import { Copy, RefreshCcw, ThumbsUp } from "lucide";
+import { Bot, Copy, RefreshCcw, ThumbsUp } from "lucide";
 import { mount, signal, Text } from "nsh";
 
 import { Bubble, BubbleContent, BubbleReactions } from "@/packages/ui/bubble";
@@ -136,6 +136,19 @@ function App() {
                     />
                   </IconButton>
                 </MessageFooter>
+              </MessageContent>
+            </Message>
+          </DemoSection>
+
+          <DemoSection title="A mark" axis="block">
+            <Message>
+              <MessageAvatar accessibilityLabel="Assistant">
+                <Icon icon={Bot} size={16} tint={ui().muted} />
+              </MessageAvatar>
+              <MessageContent>
+                <Bubble variant="muted">
+                  <BubbleContent>The build failed during dependency installation.</BubbleContent>
+                </Bubble>
               </MessageContent>
             </Message>
           </DemoSection>

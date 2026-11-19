@@ -9,6 +9,8 @@
   text — had no way to read the variant: on the web the ink is inherited, NSH has none and the
   variant lives in a context a caller cannot read. `BubbleText` is a `Text` that reads it from the
   `Bubble` around it, and a string child of `BubbleContent` now draws through it (#33).
+- **`MessageAvatar` takes children.** An icon or an `Avatar` draws in the round muted slot at the
+  bottom of the row; without children, `name` and `src` work as before. (#32)
 
 ### Changed
 
