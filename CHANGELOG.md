@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Added
+
+- **`BubbleText` puts a paragraph on a bubble in its ink.** `BubbleContent` drew a string child in
+  the bubble's type and ink, but anything else — a list of paragraphs, markdown rendered into
+  text — had no way to read the variant: on the web the ink is inherited, NSH has none and the
+  variant lives in a context a caller cannot read. `BubbleText` is a `Text` that reads it from the
+  `Bubble` around it, and a string child of `BubbleContent` now draws through it (#33).
+
 ### Changed
 
 - **The docs site is at https://shadcn-nsh.aning.dev.** It was at

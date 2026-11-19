@@ -3,7 +3,13 @@
 // that acts. Pressing the quick reply writes to the log beside it.
 import { mount, signal, Text, View } from "nsh";
 
-import { Bubble, BubbleContent, BubbleGroup, BubbleReactions } from "@/packages/ui/bubble";
+import {
+  Bubble,
+  BubbleContent,
+  BubbleGroup,
+  BubbleReactions,
+  BubbleText,
+} from "@/packages/ui/bubble";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { Log, Split, ui } from "./stage";
@@ -69,6 +75,29 @@ function App() {
             </Bubble>
             <Bubble variant="destructive" align="end">
               <BubbleContent>Failed to send. Check the connection and try again.</BubbleContent>
+            </Bubble>
+          </DemoSection>
+
+          <DemoSection title="Rich content" axis="block">
+            <Bubble variant="default" align="end">
+              <BubbleContent>
+                <View style={{ gap: 6 }}>
+                  <BubbleText>Here is a reply in more than one paragraph.</BubbleText>
+                  <BubbleText>
+                    A string child would do for one line, but a list like this needs BubbleText: it
+                    wears the variant's ink without being told which variant it is under.
+                  </BubbleText>
+                  <BubbleText>A last, shorter line.</BubbleText>
+                </View>
+              </BubbleContent>
+            </Bubble>
+            <Bubble variant="ghost">
+              <BubbleContent>
+                <View style={{ gap: 6 }}>
+                  <BubbleText>Assistant text can do the same with no frame at all.</BubbleText>
+                  <BubbleText>Each paragraph sits in the thread's own ink.</BubbleText>
+                </View>
+              </BubbleContent>
             </Bubble>
           </DemoSection>
 

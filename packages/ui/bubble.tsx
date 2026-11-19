@@ -2,7 +2,7 @@
 // hangs off its edge. This library's own (drawn on `nsh`'s View and Text), so there is no port
 // region. Yours to change.
 import { colors, radius, tints } from "@shadcn-nsh/theme";
-import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
+import type { JSX, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, platform, split, Text, token, View } from "nsh";
 
 import { density, PILL_RADIUS } from "./lib/surface";
@@ -191,12 +191,15 @@ export type BubbleProps = ViewProps & {
   align?: BubbleAlign;
 };
 
-/** A bubble's content. A string is drawn in the look's type and the variant's ink; anything else
- * is drawn as given. */
+/** A bubble's content. A string is drawn as a `BubbleText`, in the look's type and the variant's
+ * ink; anything else is drawn as given. */
 export type BubbleContentProps = Omit<ViewProps, "children"> & {
   /** The turn: a sentence, a paragraph, a quoted reply, or a rich block of your own. */
   children?: string | JSX.Element;
 };
+
+/** A paragraph on a bubble, in the turn's type and the bubble variant's ink. */
+export type BubbleTextProps = TextProps;
 
 /** A bubble's reactions. */
 export type BubbleReactionsProps = ViewProps & {
@@ -235,9 +238,10 @@ export function BubbleGroup(props: BubbleGroupProps) {
 }
 
 /**
- * The frame of a bubble. Give it `onPress` to make it act (a quick reply, a command): the hand is
- * over it. shadcn/ui's `asChild`, which renders the content as a link or a button, has no
- * equivalent here; the frame itself takes the press.
+ * The frame of a bubble. A string child is drawn as a `BubbleText`; anything else as given. Give it
+ * `onPress` to make it act (a quick reply, a command): the hand is over it. shadcn/ui's `asChild`,
+ * which renders the content as a link or a button, has no equivalent here; the frame itself takes
+ * the press.
  */
 export function BubbleContent(props: BubbleContentProps) {
   const variant = (): BubbleVariant => BubbleContext()?.() ?? "default";
@@ -252,11 +256,27 @@ export function BubbleContent(props: BubbleContentProps) {
       ]}
     >
       {typeof props.children === "string" ? (
-        <Text style={bubbleLook().text(variant())}>{props.children}</Text>
+        <BubbleText>{props.children}</BubbleText>
       ) : (
         props.children
       )}
     </View>
+  );
+}
+
+/**
+ * A paragraph on a bubble: a `Text` in the turn's type and the variant's ink. NSH has no text
+ * inheritance, so content that is not a single string — a list of paragraphs, markdown rendered
+ * into `Text`s — would otherwise have to know the variant itself; this reads it from the `Bubble`
+ * around it. Every `nsh` text prop passes through; `style` goes over the look's.
+ */
+export function BubbleText(props: BubbleTextProps) {
+  const variant = (): BubbleVariant => BubbleContext()?.() ?? "default";
+  const [, rest] = split(props, ["style"]);
+  return (
+    <Text {...rest} style={[bubbleLook().text(variant()), props.style ?? null]}>
+      {props.children}
+    </Text>
   );
 }
 

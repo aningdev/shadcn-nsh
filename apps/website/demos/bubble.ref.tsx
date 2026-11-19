@@ -20,10 +20,11 @@ function Bubbles(props: { variant?: BubbleVariant; align?: BubbleAlign; children
   return <View style={bubbleLook().root(variant(), align())}>{props.children}</View>;
 }
 
-/** The frame of a bubble, and the turn in it. */
+/** The frame of a bubble, and the turn in it: a string wears the look's type, anything else is
+ * drawn as given (a paragraph list wears it on each `Text`). */
 function Turn(props: {
   variant?: BubbleVariant;
-  children: string;
+  children: unknown;
   /** A turn that acts: the hand over it. */
   action?: () => void;
 }) {
@@ -33,7 +34,11 @@ function Turn(props: {
       onPress={props.action}
       style={[bubbleLook().content(variant()), props.action ? bubbleLook().pressable : null]}
     >
-      <Text style={bubbleLook().text(variant())}>{props.children}</Text>
+      {typeof props.children === "string" ? (
+        <Text style={bubbleLook().text(variant())}>{props.children}</Text>
+      ) : (
+        (props.children as never)
+      )}
     </View>
   );
 }
@@ -115,6 +120,35 @@ function App() {
             </Bubbles>
             <Bubbles variant="destructive" align="end">
               <Turn variant="destructive">Failed to send. Check the connection and try again.</Turn>
+            </Bubbles>
+          </DemoSection>
+
+          <DemoSection title="Rich content" axis="block">
+            <Bubbles variant="default" align="end">
+              <Turn variant="default">
+                <View style={{ gap: 6 }}>
+                  <Text style={bubbleLook().text("default")}>
+                    Here is a reply in more than one paragraph.
+                  </Text>
+                  <Text style={bubbleLook().text("default")}>
+                    A string child would do for one line, but a list like this needs BubbleText: it
+                    wears the variant's ink without being told which variant it is under.
+                  </Text>
+                  <Text style={bubbleLook().text("default")}>A last, shorter line.</Text>
+                </View>
+              </Turn>
+            </Bubbles>
+            <Bubbles variant="ghost">
+              <Turn variant="ghost">
+                <View style={{ gap: 6 }}>
+                  <Text style={bubbleLook().text("ghost")}>
+                    Assistant text can do the same with no frame at all.
+                  </Text>
+                  <Text style={bubbleLook().text("ghost")}>
+                    Each paragraph sits in the thread's own ink.
+                  </Text>
+                </View>
+              </Turn>
             </Bubbles>
           </DemoSection>
 
