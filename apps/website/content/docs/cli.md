@@ -31,6 +31,8 @@ It writes `theme.json`, `lib/finishes.json` and `lib/theme.ts` into the app (und
 
 In an app, `init` also sets up the `@/` import alias the docs' snippets use (`@/components/ui/<name>`, `@/lib/theme`): `tsconfig.json` gains `"@/*": ["./*"]` under `compilerOptions.paths` — restating the NSH mappings `.nsh/tsconfig.json` declares, because a child's `paths` replace the base's — and `nsh.json` gains `"resolve": { "alias": { "@": "./" } }` for `nsh run`/`build`/`test`, which read `nsh.json`, not tsconfig. Values it finds already there are left alone with a warning. A monorepo imports from `@workspace/ui` instead, so it is not touched.
 
+If `nsh.json` names `tailwind.colors`, `init` ends with one line naming the theme tokens those colors shadow — a class takes the Tailwind color while `token()` and the theme take the theme's ([Override from `nsh.json`](https://shadcn-nsh.aning.dev/docs/theme#override-from-nshjson)). It is a warning: the command never fails over it, and `add` prints the same line.
+
 ## add
 
 Copies items and their `registryDependencies` into the app, dependencies first.

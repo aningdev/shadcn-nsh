@@ -11,6 +11,7 @@ import { installItems } from "../utils/install";
 import { setJsonValue } from "../utils/jsonc-edit";
 import { cacheIndex, resolveTree } from "../utils/registry";
 import { isRecord } from "../utils/registry-schema";
+import { warnShadowedTokens } from "../utils/tailwind-shadow";
 import { ensureAtPaths } from "../utils/tsconfig";
 import { resolveWorkspace, themePathForApp } from "../utils/workspace";
 
@@ -101,6 +102,10 @@ export async function runInit(opts: {
           `the base's, so keep the mappings .nsh/tsconfig.json declares too.`,
       );
   }
+
+  // A color in nsh.json's `tailwind.colors` wins over the theme token of the same name for
+  // classes, so a control can draw two colors for one name: say so, and only warn.
+  await warnShadowedTokens(cwd);
 
   return config;
 }

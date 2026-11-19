@@ -8,6 +8,7 @@ import { writeConfig } from "../utils/config";
 import { installDependencies } from "../utils/deps";
 import { installItems } from "../utils/install";
 import { cacheIndex, fetchIndex, resolveTree } from "../utils/registry";
+import { warnShadowedTokens } from "../utils/tailwind-shadow";
 import { runInit } from "./init";
 
 export type AddOptions = {
@@ -90,6 +91,10 @@ export async function runAdd(components: string[], opts: AddOptions): Promise<nu
   if (ws.kind === "monorepo") {
     console.log(`(installed under ${path.relative(ws.root, ws.uiRoot) || "packages/ui"})`);
   }
+  // A color in nsh.json's `tailwind.colors` wins over the theme token of the same name for
+  // classes, so a control can draw two colors for one name: say so. `init` printed the line
+  // when it ran above; a dry run writes nothing and is no place for it.
+  if (hasConfig) await warnShadowedTokens(cwd);
   // The files are in; the packages they import are not, so the app does not type check yet.
   return installed?.ok === false ? 1 : 0;
 }

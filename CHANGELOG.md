@@ -4,6 +4,11 @@
 
 ### Added
 
+- **`init` and `add` warn when `nsh.json`'s Tailwind colors shadow theme tokens (#54).** A color in
+  `tailwind.colors` wins over the theme token of the same name for classes: with `"primary"` there,
+  `bg-primary` is that color while `token("primary")` and a component drawing with the theme keep
+  the theme's, so one control can show two colors for one name. The CLI now ends with one line
+  naming the tokens it found and linking the docs section — a warning, never a failure.
 - **`BubbleText` puts a paragraph on a bubble in its ink.** `BubbleContent` drew a string child in
   the bubble's type and ink, but anything else — a list of paragraphs, markdown rendered into
   text — had no way to read the variant: on the web the ink is inherited, NSH has none and the
