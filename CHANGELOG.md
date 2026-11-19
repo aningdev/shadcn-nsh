@@ -11,12 +11,24 @@
   `Bubble` around it, and a string child of `BubbleContent` now draws through it (#33).
 - **`MessageAvatar` takes children.** An icon or an `Avatar` draws in the round muted slot at the
   bottom of the row; without children, `name` and `src` work as before. (#32)
+- **The message scroller takes commands.** `MessageScrollerItem` takes `messageId`;
+  `useMessageScroller()` returns `scrollToMessage(id, { align, animated })`, `scrollToStart` and
+  `scrollToEnd` (with `atStart` / `atEnd`); `MessageScrollerProvider` shares them with controls
+  outside the frame; and `MessageScrollerViewport` forwards its `ScrollRef` (#31).
 
 ### Changed
 
 - **The docs site is at https://shadcn-nsh.aning.dev.** It was at
   `https://aningdev.github.io/shadcn-nsh/`; the README and every docs link point at the new
   address.
+
+### Fixed
+
+- **The message scroller's start button goes to the top, and the ends are exact (#31).** The
+  button revealed the content's end in both directions, so `direction="start"` went to the newest
+  message, and a padded `contentStyle` left the end short; the ends now move the scroll view, and
+  new content still follows while the reader is at the end. A hidden button is out of the
+  accessibility tree.
 
 ## 0.8.1 — `init` keeps your JSON, `diff` works offline
 

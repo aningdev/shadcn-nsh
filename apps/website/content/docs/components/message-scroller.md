@@ -31,7 +31,7 @@ The examples draw icons with `Icon` from `lib/icons`; see [Icons](../icons) for 
   <MessageScrollerViewport>
     <MessageScrollerContent>
       {turns().map((turn) => (
-        <MessageScrollerItem>
+        <MessageScrollerItem messageId={String(turn.id)}>
           <Message align={turn.mine ? "end" : "start"}>
             <MessageAvatar name={turn.from} />
             <MessageContent>
@@ -53,7 +53,7 @@ The examples draw icons with `Icon` from `lib/icons`; see [Icons](../icons) for 
 ### Following
 
 The scroller opens at the end, on the newest turn, and keeps itself there: when the content grows
-— a turn is sent, a stream answers — it reveals the new end. Scroll up and it stops following;
+— a turn is sent, a stream answers — it scrolls to the new end. Scroll up and it stops following;
 the view stays where the reader put it while new turns arrive below. Scroll back to the end and it
 follows again.
 
@@ -88,6 +88,69 @@ of the viewport, and shows only while there is somewhere to go that way. It says
 </MessageScrollerButton>
 ```
 
+### Commands
+
+`MessageScrollerProvider` shares the scroller with controls outside the frame, such as a list of
+message titles: under it, `useMessageScroller()` returns `scrollToMessage`, `scrollToStart` and
+`scrollToEnd`, plus `atStart` and `atEnd` (read those in a binding, like any signal). The row
+targeted by `scrollToMessage` names its `messageId`; without a matching row the call does nothing.
+`MessageScroller` works without the provider, with the hook reading the scroller it is inside.
+
+```tsx
+import type { ScrollRef } from "nsh";
+import { View } from "nsh";
+
+import { Button } from "@/components/ui/button";
+import {
+  MessageScroller,
+  MessageScrollerContent,
+  MessageScrollerItem,
+  MessageScrollerProvider,
+  MessageScrollerViewport,
+  useMessageScroller,
+} from "@/components/ui/message-scroller";
+
+let scroller: ScrollRef | undefined;
+
+<MessageScrollerProvider>
+  <View style={{ gap: 8 }}>
+    <MessageScroller style={{ height: 320 }}>
+      <MessageScrollerViewport ref={scroller}>
+        <MessageScrollerContent>
+          {turns().map((turn) => (
+            <MessageScrollerItem messageId={String(turn.id)}>{turn.content}</MessageScrollerItem>
+          ))}
+        </MessageScrollerContent>
+      </MessageScrollerViewport>
+    </MessageScroller>
+    <CommandBar />
+  </View>
+</MessageScrollerProvider>;
+
+function CommandBar() {
+  const { scrollToMessage, scrollToStart, scrollToEnd } = useMessageScroller();
+  return (
+    <View style={{ flexDirection: "row", gap: 8 }}>
+      <Button variant="secondary" onPress={() => scrollToStart()}>
+        Oldest
+      </Button>
+      <Button
+        variant="secondary"
+        onPress={() => scrollToMessage("3", { align: "center", animated: true })}
+      >
+        Turn 3
+      </Button>
+      <Button variant="secondary" onPress={() => scrollToEnd()}>
+        Newest
+      </Button>
+    </View>
+  );
+}
+```
+
+`MessageScrollerViewport` forwards its `ref` (a `ScrollRef`) beside the scroller's own, so the app
+can reach the scroll view directly — `scroller?.scrollTo({ y: 0 })`, for example.
+
 ### Turns
 
 `MessageScrollerContent` is the column the turns are in, 32 points apart and at least as tall as
@@ -99,10 +162,12 @@ shadcn/ui's message scroller is a wrapper over `@shadcn/react/message-scroller`,
 state and hooks. This one is the frame and the behaviour on `nsh`'s `Scroll`, and differs in five
 places:
 
-- **No provider and no hooks.** State lives inside `MessageScroller`, so `MessageScrollerProvider`,
-  `useMessageScroller`, `useMessageScrollerScrollable` and `useMessageScrollerVisibility` are not
-  exported: a part that needs the state reads it from where it is, and the scroller's signals
-  (at the end, at the start, overflowing) are not the app's to read.
+- **A smaller provider.** `MessageScrollerProvider` only shares one scroller with controls outside
+  it. shadcn/ui's provider also owns opening position, anchoring and visibility, with
+  `autoScroll`, `defaultScrollPosition`, `scrollPreviousItemPeek`, `scrollMargin` and
+  `scrollEdgeThreshold`; there are no counterparts, and `useMessageScrollerScrollable` and
+  `useMessageScrollerVisibility` have none either (the hook's `atStart` / `atEnd` are the edge
+  state).
 - **No scroll anchoring.** An item's `scrollAnchor` holds the reader's place while older turns load
   above it; NSH has no anchoring. Read the position with `ViewRef.measure()` before the load and
   scroll back with `Scroll`'s ref after it.
@@ -121,18 +186,29 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `Mes
 direction it keeps (a conversation scrolls up and down), and `MessageScrollerButton` takes this
 library's [`Button`](https://nsh.dev/elements/button) props.
 
-| Part                      | Props           | Description                                                |
-| ------------------------- | --------------- | ---------------------------------------------------------- |
-| `MessageScroller`         | `initialScroll` | Renders `View` (`messageScrollerLook().root`)              |
-| `MessageScrollerViewport` |                 | Renders `Scroll` (`messageScrollerLook().viewport`)        |
-| `MessageScrollerContent`  |                 | Renders `View` (`messageScrollerLook().content`)           |
-| `MessageScrollerItem`     |                 | Renders `View` (`messageScrollerLook().item`)              |
-| `MessageScrollerButton`   | `direction`     | Renders `Button` (`messageScrollerLook().slot(direction)`) |
+| Part                      | Props           | Description                                                                 |
+| ------------------------- | --------------- | --------------------------------------------------------------------------- |
+| `MessageScroller`         | `initialScroll` | Renders `View` (`messageScrollerLook().root`)                               |
+| `MessageScrollerViewport` | `ref`           | Renders `Scroll` (`messageScrollerLook().viewport`); `ref` is a `ScrollRef` |
+| `MessageScrollerContent`  |                 | Renders `View` (`messageScrollerLook().content`)                            |
+| `MessageScrollerItem`     | `messageId`     | Renders `View` (`messageScrollerLook().item`)                               |
+| `MessageScrollerButton`   | `direction`     | Renders `Button` (`messageScrollerLook().slot(direction)`)                  |
 
 | Prop            | On                      | Type               | Default |
 | --------------- | ----------------------- | ------------------ | ------- |
 | `initialScroll` | `MessageScroller`       | `"start" \| "end"` | `end`   |
+| `messageId`     | `MessageScrollerItem`   | `string`           |         |
 | `direction`     | `MessageScrollerButton` | `"start" \| "end"` | `end`   |
+
+| Export                    | Props / returns                                          | Description                                                       |
+| ------------------------- | -------------------------------------------------------- | ----------------------------------------------------------------- |
+| `MessageScrollerProvider` | `children`                                               | Shares the `MessageScroller` inside it; one provider per scroller |
+| `useMessageScroller()`    | `scrollToMessage`, `scrollToStart`, `scrollToEnd`, edges | The commands and edge state (`atStart`, `atEnd`) of that scroller |
+
+| Command option | Type                           | Default |
+| -------------- | ------------------------------ | ------- |
+| `align`        | `"start" \| "center" \| "end"` | `start` |
+| `animated`     | `boolean`                      | `true`  |
 
 The frame fills its parent, clips what is in it, and holds its viewport and its buttons; the
 content column is 32 points apart; a button floats 16 points from its edge. `messageScrollerLook()`

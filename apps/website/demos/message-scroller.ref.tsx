@@ -3,7 +3,7 @@
 // same pixels, so the scroller that opens at the end reveals it here too.
 import { colors } from "@shadcn-nsh/theme";
 import { ArrowDown, ArrowUp, FileText } from "lucide";
-import type { JSX, ViewRef } from "nsh";
+import type { JSX, ScrollRef } from "nsh";
 import { mount, Scroll, signal, Text, View } from "nsh";
 
 import {
@@ -66,7 +66,7 @@ function Frame(props: {
   overlay?: JSX.Element;
   children: JSX.Element;
 }) {
-  let content: ViewRef | undefined;
+  let scroller: ScrollRef | undefined;
   return (
     <View
       style={[
@@ -75,12 +75,11 @@ function Frame(props: {
         props.page ? { borderRadius: 10, backgroundColor: colors.background } : null,
       ]}
     >
-      <Scroll style={look.viewport}>
+      <Scroll ref={(node) => (scroller = node)} style={look.viewport}>
         <View
-          ref={(node) => (content = node)}
           onLayout={() => {
             if (props.initial === "end") {
-              content?.reveal({ vertical: "end", animated: false });
+              scroller?.scrollToEnd({ animated: false });
             }
           }}
           style={look.content}
@@ -171,9 +170,12 @@ function App() {
                 </Attachment>
               </View>
             </Frame>
-            <Button variant="secondary" style={{ alignSelf: "flex-start" }} onPress={send}>
-              Send
-            </Button>
+            <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+              <Button variant="secondary" onPress={send}>
+                Send
+              </Button>
+              <Button variant="secondary">Jump to message 3</Button>
+            </View>
           </DemoSection>
 
           <DemoSection title="Opened at the oldest" axis="block">

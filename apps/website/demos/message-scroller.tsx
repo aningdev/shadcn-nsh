@@ -3,7 +3,7 @@
 // second one that opens at the oldest so its button has somewhere to go. Send appends a turn;
 // scroll up first and watch the new turn arrive without the view moving.
 import { FileText } from "lucide";
-import { mount, signal, Text } from "nsh";
+import { mount, signal, Text, View } from "nsh";
 
 import {
   Attachment,
@@ -23,7 +23,9 @@ import {
   MessageScrollerButton,
   MessageScrollerContent,
   MessageScrollerItem,
+  MessageScrollerProvider,
   MessageScrollerViewport,
+  useMessageScroller,
 } from "@/packages/ui/message-scroller";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
@@ -61,6 +63,27 @@ const replies = [
   "Ship it.",
 ];
 
+/** A control beside the transcript: the same commands `useMessageScroller` gives its parts. */
+function Controls(props: { onSend: () => void; onJump: () => void }) {
+  const { scrollToMessage } = useMessageScroller();
+  return (
+    <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
+      <Button variant="secondary" onPress={props.onSend}>
+        Send
+      </Button>
+      <Button
+        variant="secondary"
+        onPress={() => {
+          scrollToMessage("3", { align: "center" });
+          props.onJump();
+        }}
+      >
+        Jump to message 3
+      </Button>
+    </View>
+  );
+}
+
 function App() {
   const events = signal<string[]>([]);
   const log = (line: string) => events.set([line, ...events()].slice(0, 4));
@@ -74,7 +97,7 @@ function App() {
   };
 
   const turn = (t: Turn) => (
-    <MessageScrollerItem>
+    <MessageScrollerItem messageId={String(t.id)}>
       <Message align={t.mine ? "end" : "start"}>
         <MessageAvatar name={t.from} />
         <MessageContent>
@@ -97,35 +120,40 @@ function App() {
       <Split gap={14} inspector={<Log title="onPress" lines={events()} minHeight={92} />}>
         <DemoCard>
           <DemoSection title="A conversation" axis="block">
-            <MessageScroller
-              initialScroll="end"
-              style={{ height: 300, borderRadius: 10, backgroundColor: ui().page }}
-            >
-              <MessageScrollerViewport>
-                <MessageScrollerContent>
-                  {turns().map((t) => turn(t))}
-                  <MessageScrollerItem>
-                    <Attachment>
-                      <AttachmentMedia>
-                        <Icon
-                          icon={FileText}
-                          size={attachmentGlyph("default", "horizontal")}
-                          tint={ui().muted}
-                        />
-                      </AttachmentMedia>
-                      <AttachmentContent>
-                        <AttachmentTitle>build.log</AttachmentTitle>
-                        <AttachmentDescription>124 KB · 2 min ago</AttachmentDescription>
-                      </AttachmentContent>
-                    </Attachment>
-                  </MessageScrollerItem>
-                </MessageScrollerContent>
-              </MessageScrollerViewport>
-              <MessageScrollerButton direction="start" />
-            </MessageScroller>
-            <Button variant="secondary" style={{ alignSelf: "flex-start" }} onPress={send}>
-              Send
-            </Button>
+            <MessageScrollerProvider>
+              <View style={{ gap: 8 }}>
+                <MessageScroller
+                  initialScroll="end"
+                  style={{ height: 300, borderRadius: 10, backgroundColor: ui().page }}
+                >
+                  <MessageScrollerViewport>
+                    <MessageScrollerContent>
+                      {turns().map((t) => turn(t))}
+                      <MessageScrollerItem messageId="build-log">
+                        <Attachment>
+                          <AttachmentMedia>
+                            <Icon
+                              icon={FileText}
+                              size={attachmentGlyph("default", "horizontal")}
+                              tint={ui().muted}
+                            />
+                          </AttachmentMedia>
+                          <AttachmentContent>
+                            <AttachmentTitle>build.log</AttachmentTitle>
+                            <AttachmentDescription>124 KB · 2 min ago</AttachmentDescription>
+                          </AttachmentContent>
+                        </Attachment>
+                      </MessageScrollerItem>
+                    </MessageScrollerContent>
+                  </MessageScrollerViewport>
+                  <MessageScrollerButton
+                    direction="start"
+                    onPress={() => log("Scrolled to start")}
+                  />
+                </MessageScroller>
+                <Controls onSend={send} onJump={() => log("Jumped to message 3")} />
+              </View>
+            </MessageScrollerProvider>
           </DemoSection>
 
           <DemoSection title="Opened at the oldest" axis="block">
