@@ -386,14 +386,124 @@ for (const id of listed) {
   }
 }
 
-// The themes page and the registry: every palette the site switches to has its `theme-<id>` item
-// and a section on the page, and every `theme-*` item is one of those palettes. The page renders
-// them from the same list (`src/lib/themes.ts`), so a theme is never written twice: the sections
-// are `themes.map` over that list in the page's component, and the `.mdx` only asks for it.
-const themesPage = path.join(repo, "apps/website/content/docs/themes.mdx");
-const themesSections = path.join(repo, "apps/website/src/components/fd/themes-page.tsx");
-const themesSource = fs.readFileSync(themesPage, "utf8");
-const themesSectionsSource = fs.readFileSync(themesSections, "utf8");
+// The themes pages and the registry: every palette the site switches to has its `theme-<id>` item
+// and a page, and every `theme-*` item is one of those palettes. Each page's headings are the same
+// list, in the same order, so the table of contents matches; the rows are `themePages()` over
+// `demos/palettes.ts`. A palette without a page, or a page without a palette, fails.
+const THEME_OUTLINE = [
+  "## Installation",
+  "## Tokens",
+  "### The slots NSH resolves",
+  "### The library's own tokens",
+  "### The shared values",
+  "## Finishes",
+];
+
+/** Headings in a markdown body, frontmatter stripped. The table of contents is this list. */
+function themeOutline(source: string): string[] {
+  const body = source.replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
+  return body
+    .split(/\r?\n/)
+    .map((line) => line.trim())
+    .filter((line) => /^#{1,6} /.test(line));
+}
+
+/** A frontmatter value, with one pair of double quotes removed. */
+function frontValue(source: string, key: string): string {
+  const raw = new RegExp(`^${key}:\\s*(.+)$`, "m").exec(source)?.[1]?.trim() ?? "";
+  if (raw.startsWith('"') && raw.endsWith('"')) return raw.slice(1, -1);
+  return raw;
+}
+
+const themesDir = path.join(repo, "apps/website/content/docs/themes");
+const themeFiles = fs.existsSync(themesDir)
+  ? fs.readdirSync(themesDir).filter((name) => name.endsWith(".mdx"))
+  : [];
+const outlines: string[][] = [];
+for (const palette of PALETTES) {
+  const file = `${palette.id}.mdx`;
+  const where = `apps/website/content/docs/themes/${file}`;
+  if (!themeFiles.includes(file)) {
+    fail(`${where}: no page for the "${palette.id}" palette`);
+    continue;
+  }
+  const source = fs.readFileSync(path.join(themesDir, file), "utf8");
+  const title = frontValue(source, "title");
+  const description = frontValue(source, "description");
+  if (title !== palette.label) {
+    fail(
+      `${where}: title is ${JSON.stringify(title)}, not the palette label ${JSON.stringify(palette.label)}`,
+    );
+  }
+  if (description !== palette.description) {
+    fail(`${where}: description does not match demos/palettes.ts`);
+  }
+  const outline = themeOutline(source);
+  outlines.push(outline);
+  if (outline.join("\n") !== THEME_OUTLINE.join("\n")) {
+    fail(`${where}: headings are not the shared outline (${outline.join(" | ")})`);
+  }
+  for (const part of [
+    `<ThemeIntro id="${palette.id}" />`,
+    `<ThemeInstall id="${palette.id}" />`,
+    `<ThemeTokenLead />`,
+    `<ThemeTokens id="${palette.id}" group="slots" />`,
+    `<ThemeTokens id="${palette.id}" group="extension" />`,
+    `<ThemeTokens id="${palette.id}" group="shared" />`,
+    `<ThemeFinishes id="${palette.id}" />`,
+  ]) {
+    if (!source.includes(part)) fail(`${where}: missing ${part}`);
+  }
+}
+for (const file of themeFiles) {
+  const id = file.replace(/\.mdx$/, "");
+  if (!PALETTES.some((palette) => palette.id === id)) {
+    fail(`apps/website/content/docs/themes/${file}: no palette with id "${id}"`);
+  }
+}
+if (outlines.length > 1) {
+  const first = outlines[0]!.join("\n");
+  for (const outline of outlines.slice(1)) {
+    if (outline.join("\n") !== first) fail("theme pages: heading lists differ");
+  }
+}
+
+const themesSource = fs.readFileSync(
+  path.join(repo, "apps/website/content/docs/themes.mdx"),
+  "utf8",
+);
+if (!/<ThemeIndex \/>/.test(themesSource)) {
+  fail("apps/website/content/docs/themes.mdx: does not list the theme pages");
+}
+if (/<ThemesPage/.test(themesSource)) {
+  fail("apps/website/content/docs/themes.mdx: still draws every theme on one page");
+}
+const indexSource = fs.readFileSync(
+  path.join(repo, "apps/website/src/components/fd/theme-index.tsx"),
+  "utf8",
+);
+if (!/themePages\(\)/.test(indexSource)) {
+  fail("apps/website/src/components/fd/theme-index.tsx: not drawn from the palette list");
+}
+
+const navSource = fs.readFileSync(path.join(repo, "apps/website/src/lib/nav.ts"), "utf8");
+const navRoutes = [...navSource.matchAll(/route:\s*"([^"]+)"/g)].map((match) => match[1]!);
+const themesAt = navRoutes.indexOf("/docs/themes");
+const themeRoutes = PALETTES.map((palette) => `/docs/themes/${palette.id}`);
+const following = navRoutes.slice(themesAt + 1, themesAt + 1 + themeRoutes.length);
+if (themesAt < 0 || following.join("\n") !== themeRoutes.join("\n")) {
+  fail(
+    `apps/website/src/lib/nav.ts: theme pages must follow /docs/themes in palette order (${themeRoutes.join(", ")})`,
+  );
+}
+if (!/parent:\s*"\/docs\/themes"/.test(navSource)) {
+  fail("apps/website/src/lib/nav.ts: theme pages are not nested under /docs/themes");
+}
+const treeSource = fs.readFileSync(path.join(repo, "apps/website/src/lib/source.ts"), "utf8");
+if (!/type:\s*"folder"/.test(treeSource) || !/\.parent/.test(treeSource)) {
+  fail("apps/website/src/lib/source.ts: the sidebar does not nest a page under its parent");
+}
+
 const registryItems = (
   JSON.parse(fs.readFileSync(path.join(repo, "registry.json"), "utf8")) as {
     items: { name: string; type: string }[];
@@ -415,12 +525,6 @@ for (const item of themeItems.keys()) {
   if (!PALETTES.some((palette) => palette.id === id)) {
     fail(`registry.json: "${item}" is no palette in apps/website/demos/palettes.ts`);
   }
-}
-if (!/<ThemesPage \/>/.test(themesSource)) {
-  fail("apps/website/content/docs/themes.mdx: does not render the palette sections");
-}
-if (!/\{themes\.map\(/.test(themesSectionsSource)) {
-  fail("apps/website/src/components/fd/themes-page.tsx: not generated from the palette list");
 }
 
 if (problems.length > 0) {

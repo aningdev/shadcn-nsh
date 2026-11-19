@@ -1,11 +1,11 @@
-import type { Item, Node, Root } from "fumadocs-core/page-tree";
+import type { Folder, Item, Node, Root } from "fumadocs-core/page-tree";
 import { loader } from "fumadocs-core/source";
 import { pageSchema } from "fumadocs-core/source/schema";
 import { defineDocs } from "fumadocs-mdx/macro";
 import { z } from "zod";
 
 import { KIND_LABELS, KINDS } from "./kinds";
-import { SIDEBAR_GROUPS, SIDEBAR_PAGES } from "./nav";
+import { SIDEBAR_GROUPS, SIDEBAR_PAGES, type SidebarPage } from "./nav";
 
 /**
  * A component page's frontmatter, declared once: Fumadocs' own fields plus the three the old
@@ -33,6 +33,30 @@ export const source = loader({
   source: docs.toFumadocsSource(),
 });
 
+/** One sidebar row. A page whose `parent` is also listed becomes a child of that page's folder,
+ * so the theme pages sit under Themes and the pager walks the folder after its index. */
+function nodes(pages: SidebarPage[]): Node[] {
+  const routes = new Set(pages.map((page) => page.route));
+  const item = (page: SidebarPage): Item => ({
+    type: "page",
+    name: page.title,
+    url: page.route,
+  });
+  return pages.flatMap((page): Node[] => {
+    if (page.parent !== undefined && routes.has(page.parent)) return [];
+    const nested = pages.filter((child) => child.parent === page.route);
+    if (nested.length === 0) return [item(page)];
+    const folder: Folder = {
+      type: "folder",
+      name: page.title,
+      index: item(page),
+      defaultOpen: true,
+      children: nested.map(item),
+    };
+    return [folder];
+  });
+}
+
 /**
  * The sidebar, in the order `src/lib/nav.ts` keeps: "Start here", then the component pages one run
  * per kind ("Base", then "Enhanced"), each run labelled with a separator, as the Astro
@@ -41,11 +65,6 @@ export const source = loader({
  */
 export function pageTree(): Root {
   const existing = new Set(source.getPages().map((page) => page.url));
-  const item = (page: (typeof SIDEBAR_PAGES)[number]): Item => ({
-    type: "page",
-    name: page.title,
-    url: page.route,
-  });
   const listed = SIDEBAR_PAGES.filter((page) => existing.has(page.route));
 
   const start = listed.filter((page) => page.group === "start");
@@ -54,14 +73,14 @@ export function pageTree(): Root {
   const children: Node[] = [];
   if (start.length > 0) {
     children.push({ type: "separator", name: SIDEBAR_GROUPS.start });
-    children.push(...start.map(item));
+    children.push(...nodes(start));
   }
   // "All components" and "Coverage" are the group's own pages, above the two runs (they carry no
   // kind: they list the set rather than belong to one).
   const group = components.filter((page) => page.kind === undefined);
   if (components.length > 0) {
     children.push({ type: "separator", name: SIDEBAR_GROUPS.components });
-    children.push(...group.map(item));
+    children.push(...nodes(group));
   }
   const runs = KINDS.map((kind) => ({
     kind,
@@ -69,7 +88,7 @@ export function pageTree(): Root {
   })).filter((run) => run.pages.length > 0);
   for (const run of runs) {
     children.push({ type: "separator", name: KIND_LABELS[run.kind] });
-    children.push(...run.pages.map(item));
+    children.push(...nodes(run.pages));
   }
 
   return { name: "Docs", children };

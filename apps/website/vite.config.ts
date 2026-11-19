@@ -5,6 +5,7 @@ import { fumadocsMdx } from "fumadocs-mdx/vite";
 import { nitro } from "nitro/vite";
 import { defineConfig } from "vite";
 
+import { PALETTES } from "./demos/palettes";
 import { PACKAGE_MANAGER_GROUP, PACKAGE_MANAGERS } from "./src/lib/package-managers";
 
 /** The path the site is served under; `src/lib/site.ts` reads it back from Vite. */
@@ -52,7 +53,14 @@ export default defineConfig({
       },
       // The search index is a prerendered response (`/api/search`), the only server route the
       // static site keeps: `src/routes/api/search.ts` answers it with `staticGET`.
-      pages: [{ path: "/docs/getting-started" }, { path: "/api/search" }],
+      // Theme pages are listed from the same palettes as the docs, so a new palette is prerendered
+      // once its page exists. The crawl still walks every other link.
+      pages: [
+        { path: "/docs/getting-started" },
+        { path: "/api/search" },
+        { path: "/docs/themes" },
+        ...PALETTES.map((palette) => ({ path: `/docs/themes/${palette.id}` })),
+      ],
     }),
     react(),
     nitro(),

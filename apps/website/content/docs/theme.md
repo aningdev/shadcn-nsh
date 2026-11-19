@@ -130,7 +130,7 @@ Edit the two JSON files; every component follows. Change a brand color in `cssVa
 
 - Add the theme to an app with `shadcn-nsh add theme` (or let `init` do it).
 - Replacing both files together rebrands the whole library; a key added upstream should be added here too.
-- The demos on this site can draw in an installed theme: the **Demo theme** switch in the nav (Default, shadcn or Solid Glass) writes the demo app's palette and loads the panels again. The list is `apps/website/demos/palettes.ts`; a demo reads the palette before it mounts, so its first frame is already the chosen theme. Every palette, with its install command and every role it sets: [Themes](./themes).
+- The demos on this site can draw in an installed theme: the **Demo theme** switch in the nav (Default, shadcn or Solid Glass) writes the demo app's palette and loads the panels again. The list is `apps/website/demos/palettes.ts`; a demo reads the palette before it mounts, so its first frame is already the chosen theme. Every palette — its install command and every role it sets — has a page linked from [Themes](./themes).
 - To change one component's look instead, edit its look function in the copied component; to change structure or API, edit the shell. See [Customizing](./customizing).
 - Maintaining this repository: edit the look in `packages/ui` (a `// @port` region is ours); `port:check` lists upstream's changes and `bun run port:review` marks them read. After editing `packages/theme`, run `bun run registry:build` and commit `public/r`.
 

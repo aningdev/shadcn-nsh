@@ -16,7 +16,10 @@ Copy-into-app styled components for [Native Shell (NSH)](https://nsh.dev), built
 - /docs/getting-started: init, add, list / view / diff, monorepo, local registry.
 - /docs/cli: every command, flag and default.
 - /docs/theme: `theme.json` and `finishes.json` are the look; `lib/theme.ts` reads them.
-- /docs/themes: every palette the demos can draw in, its install command, and every role it sets.
+- /docs/themes: what a theme is, the radius tiers, and a link to each palette's page.
+- /docs/themes/default: NSH Gallery — install, tokens and finishes.
+- /docs/themes/shadcn: shadcn — install, tokens and finishes.
+- /docs/themes/solid-glass: Solid Glass — install, tokens and finishes.
 - /docs/customizing: after copying, change the theme, one control's look, or its shell.
 - /docs/components: one page per `registry:ui` item, with Installation, Usage, Examples and API.
 - /docs/components/coverage: every shadcn/ui component and every NSH element, and what this library has for it.

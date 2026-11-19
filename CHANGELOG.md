@@ -18,6 +18,7 @@
 
 ### Changed
 
+- **Each theme has its own docs page (#44).** `/docs/themes` keeps the overview and links to one page per palette, and each of those pages has the same sections.
 - **One radius, three tiers (#38).** A theme now states one base, `radius`: `radius-control` is
   0.8× it and `radius-card` is 1.4×, each rounded to whole points, and `check:theme` rejects a tier
   that is not. In the default theme controls go from 7 to 8 points and cards from 12 to 14, and a

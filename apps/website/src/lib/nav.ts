@@ -14,6 +14,8 @@ export type SidebarPage = {
   kind?: ComponentKindId;
   /** Repo path of the page, for "Edit this page". */
   source?: string;
+  /** Route of the page this one is listed under. The sidebar folds those pages beneath it. */
+  parent?: string;
 };
 
 export const SIDEBAR_GROUPS: Record<SidebarGroupId, string> = {
@@ -47,14 +49,38 @@ export const SIDEBAR_PAGES: SidebarPage[] = [
     group: "start",
     source: "apps/website/content/docs/theme.md",
   },
-  // `themes`, the index and `coverage` are `.mdx`: their body is one component drawn from the
-  // generated tables.
+  // The overview and each theme page are `.mdx`. A theme page's headings are markdown, so they
+  // land in the table of contents; the rows are still drawn from the palette list.
   {
     route: "/docs/themes",
     href: url("docs/themes"),
     title: "Themes",
     group: "start",
     source: "apps/website/content/docs/themes.mdx",
+  },
+  {
+    route: "/docs/themes/default",
+    href: url("docs/themes/default"),
+    title: "NSH Gallery",
+    group: "start",
+    parent: "/docs/themes",
+    source: "apps/website/content/docs/themes/default.mdx",
+  },
+  {
+    route: "/docs/themes/shadcn",
+    href: url("docs/themes/shadcn"),
+    title: "shadcn",
+    group: "start",
+    parent: "/docs/themes",
+    source: "apps/website/content/docs/themes/shadcn.mdx",
+  },
+  {
+    route: "/docs/themes/solid-glass",
+    href: url("docs/themes/solid-glass"),
+    title: "Solid Glass",
+    group: "start",
+    parent: "/docs/themes",
+    source: "apps/website/content/docs/themes/solid-glass.mdx",
   },
   {
     route: "/docs/customizing",

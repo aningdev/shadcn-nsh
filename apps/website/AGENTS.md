@@ -71,17 +71,18 @@ Every name in such an import must be exported by `packages/ui/<slug>.tsx`; `chec
 
 ### Generated pages
 
-Three pages are written once and drawn by a component, because their rows come from generated tables and there is nothing to hand-write:
+These pages are drawn by a component, because their rows come from generated tables:
 
 | Page           | File                                   | Body                                                           |
 | -------------- | -------------------------------------- | -------------------------------------------------------------- |
 | All components | `content/docs/components.mdx`          | `ComponentsIndex` (`kind="official"` / `"own"`)                |
 | Coverage       | `content/docs/components/coverage.mdx` | `CoverageTable` (`group="shadcn"` / `"base"` / `"primitives"`) |
-| Themes         | `content/docs/themes.mdx`              | `ThemesPage`                                                   |
+| Themes         | `content/docs/themes.mdx`              | `ThemeIndex` (one card per palette)                            |
+| One theme      | `content/docs/themes/<id>.mdx`         | `ThemeIntro`, `ThemeInstall`, `ThemeTokens`, `ThemeFinishes`   |
 
 The prose and the `##` headings stay in the page (headings belong in markdown — that is where the table of contents and the anchor buttons come from); the component only renders the rows. An `.mdx` page is registered for its `.md` URL too (`src/lib/content-paths.ts`), because the route looks pages up by that path.
 
-`content/docs/components/coverage.mdx` must not grow rows by hand: every row is a line of `src/lib/official.ts`. `themes.mdx` must not list palettes by hand: `src/lib/themes.ts` reads `packages/theme/themes/*/theme.json` for exactly the palettes in `demos/palettes.ts`, and `check:pages` fails when the page stops being generated from that list.
+`content/docs/components/coverage.mdx` must not grow rows by hand: every row is a line of `src/lib/official.ts`. `themes.mdx` must not list palettes by hand: `ThemeIndex` reads `themePages()`. Each palette has `content/docs/themes/<id>.mdx` with the same headings (Installation, Tokens and its three groups, Finishes); those headings are markdown, because that is what the table of contents lists. `check:pages` fails when a palette has no page, a page has no palette, the headings differ, or a page's title and description drift from `demos/palettes.ts`.
 
 Imports in MDX resolve through Vite, not through `@/`: use relative paths (`../../src/lib/site`) inside a page.
 
@@ -100,7 +101,7 @@ Do not edit the generated file. `src/lib/components.ts` keeps the helpers. `bun 
 - `references/` has a shadcn/ui `ui/*.tsx` or an NSH `elements/*.md` with no row — an upstream addition is one row here;
 - a page links `nsh.dev/elements/<x>` that has no `elements/<x>.md` in `references/nsh`;
 - `public/llms.txt` (written by hand) has no line for a component, or a line for one that is gone;
-- the themes page stops being generated from the palette list.
+- a theme page is missing, extra, or its headings, title or description drift from the palette list.
 
 ## Kinds and coverage
 
