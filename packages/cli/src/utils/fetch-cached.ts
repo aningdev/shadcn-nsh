@@ -52,14 +52,17 @@ export async function fetchJson(
 ): Promise<unknown> {
   const cacheable = /^https?:/.test(url);
   let res: Response;
+  let text: string;
   try {
     res = await fetch(url);
+    // The body too: a connection that drops after the headers is no answer either.
+    text = await res.text();
   } catch (error) {
     if (!cacheable) throw error;
     return fromCache(url, error);
   }
   if (!res.ok) throw onHttpError(res);
-  const body: unknown = await res.json();
+  const body: unknown = JSON.parse(text);
   if (cacheable) await save(url, body);
   return body;
 }
