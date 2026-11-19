@@ -55,7 +55,7 @@ import { Pressable } from "@/components/ui/pressable";
 
 ### A stretch of text
 
-A string child is plain text, and its text is the region's name for screen readers unless `accessibilityLabel` says otherwise. Children drawn as given derive no name: give those an `accessibilityLabel` (the icon-only case is an `IconButton`, where it is required).
+A string child is plain text, and its text is the region's name for screen readers unless `accessibilityLabel` says otherwise. Children drawn as given are named by the texts inside them; one that draws no text needs an `accessibilityLabel` (the icon-only case is an `IconButton`, where it is required).
 
 ```tsx
 <Pressable onPress={read}>A whole paragraph can be the region.</Pressable>

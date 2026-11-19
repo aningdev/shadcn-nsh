@@ -5,7 +5,6 @@ import type { JSX, TextStyle, ViewStyle } from "nsh";
 import { platform, split, Text } from "nsh";
 import { Toggle as BaseToggle, type ToggleProps as BaseToggleProps } from "nsh/base";
 
-import { childrenOf } from "./lib/children";
 import { pressSink, pressTransition, touchSlop } from "./lib/press";
 import { type Live, read } from "./lib/utils";
 
@@ -194,18 +193,20 @@ export function Toggle(props: ToggleProps) {
     "disabledStyle",
     "hitSlop",
   ]);
-  const kids = childrenOf(props);
+  // Read once, here where the toggle is made: a string child is the label, which makes the look a
+  // text one (`options.text`), and the kind of the children never changes (a child that changes
+  // arrives as a function, drawn as given below).
+  const kids = props.children;
   const options: ToggleLookOptions = {
     size: () => props.size,
     variant: props.variant,
-    text: props.text ?? kids.text() !== undefined,
+    text: props.text ?? typeof kids === "string",
     disabled: () => props.disabled,
   };
   const look = toggleLook(options);
   return (
     <BaseToggle
       {...rest}
-      accessibilityLabel={kids.label()}
       hitSlop={props.hitSlop ?? look.hitSlop}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
@@ -214,10 +215,10 @@ export function Toggle(props: ToggleProps) {
       pressedStyle={[look.pressedStyle, props.pressedStyle ?? null]}
       disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     >
-      {kids.text() !== undefined ? (
-        <Text style={toggleLabel(() => props.pressed, options)}>{kids.text()}</Text>
+      {typeof kids === "string" ? (
+        <Text style={toggleLabel(() => props.pressed, options)}>{kids}</Text>
       ) : (
-        kids.content()
+        kids
       )}
     </BaseToggle>
   );

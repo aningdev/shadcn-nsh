@@ -71,9 +71,9 @@ words, said twice:
 <Label>Accept terms and conditions</Label>
 ```
 
-`lib/utils.ts` compiles into the app beside it and is a different thing: `labelOf(caller, children)`
-is the rule the shells share for the name a control already derives from a string child
-(`Pressable`, `Button`). A `Label` draws type; `labelOf` decides what screen readers say.
+`lib/utils.ts` compiles into the app beside it and is a different thing: the parts the shells share.
+A `Label` draws type; a control's name for screen readers is its own `accessibilityLabel`, or the
+text it draws — the strings the shells' children are.
 
 ## Differences from shadcn/ui
 

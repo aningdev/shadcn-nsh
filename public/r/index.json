@@ -121,15 +121,15 @@
       ]
     },
     {
-      "name": "children",
+      "name": "as-text",
       "type": "registry:lib",
-      "title": "Children",
-      "description": "One read of a control's children, shared by everything that draws them: the string that is also its name for screen readers, and the content a shell draws.",
+      "title": "As text",
+      "description": "A control's children drawn as its text: a string or number child in a Text, anything else as it is, where the control draws them.",
       "files": [
         {
-          "path": "packages/ui/lib/children.ts",
+          "path": "packages/ui/lib/as-text.tsx",
           "type": "registry:lib",
-          "target": "lib/children.ts"
+          "target": "lib/as-text.tsx"
         }
       ]
     },

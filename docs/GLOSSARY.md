@@ -65,11 +65,11 @@ _Avoid_: `kind`, `primary` / `accent` / `danger`, `small` / `regular` / `large`,
 
 **Label**:
 `Label`（`packages/ui/label.tsx`）：控件旁**可见**的名字，一段文字，不参与无障碍。nsh 没有 `htmlFor` / `labelledBy`，所以它不给旁边的控件命名——控件的名字是它自己的 `accessibilityLabel`。
-_Avoid_: 用它给控件命名、把它当成 `labelOf`
+_Avoid_: 用它给控件命名
 
 **Accessible Name（无障碍名）**:
-屏幕阅读器念出的控件名字。`lib/utils.ts` 的 `labelOf(调用方的 accessibilityLabel, children)` 是外壳共享的一条规则：调用方给了就用它，否则用字符串 child；与可见的 `Label` 是两件事，只是词碰巧同形。
-_Avoid_: 把 `Label` 组件当作无障碍名、在每个外壳里重写一遍这条规则
+屏幕阅读器念出的控件名字：控件的 `accessibilityLabel`，否则它画的文字（字符串 child 就是其一）。与可见的 `Label` 是两件事，只是词碰巧同形。
+_Avoid_: 把 `Label` 组件当作无障碍名、把控件的文字抄进 `accessibilityLabel`
 
 **Behavior Authority**:
 控件行为、a11y 与可转发能力以 `nsh/base` 为准；外壳透传 base 的全部 props。

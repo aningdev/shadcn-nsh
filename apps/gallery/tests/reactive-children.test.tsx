@@ -25,3 +25,11 @@ test("a menu item and a popover trigger follow a signal too", async () => {
   expect(app.shows("text:Item pressed")).toBe(true);
   expect(app.shows("text:Tip pressed")).toBe(true);
 });
+
+test("a submenu's string label follows a signal too", async () => {
+  const app = await open("./reactive-children.fixture.tsx");
+  await app.waitFor("text:Sub idle");
+  await app.press("text:Bump");
+  await app.wait(100);
+  expect(app.shows("text:Sub pressed")).toBe(true);
+});

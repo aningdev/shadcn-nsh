@@ -4,7 +4,7 @@
 import { alpha, colors, focusRing, radius, rounded } from "@shadcn-nsh/theme";
 import { ChevronDown } from "lucide";
 import type { JSX, StyleProp, TextStyle, ViewProps, ViewStyle } from "nsh";
-import { context, platform, reduceMotion, signal, split, Text, token, View } from "nsh";
+import { context, platform, reduceMotion, signal, split, token, View } from "nsh";
 import {
   Link as BaseLink,
   type LinkProps as BaseLinkProps,
@@ -13,7 +13,7 @@ import {
   type OpenChangeReason,
 } from "nsh/base";
 
-import { childrenOf } from "./lib/children";
+import { AsText } from "./lib/as-text";
 import { Icon } from "./lib/icons";
 import { createSlot, type Slot } from "./lib/open-state";
 import { PopIn, popupSurface, type PopupSide } from "./lib/popup";
@@ -529,41 +529,40 @@ export function NavigationMenuItem(props: NavigationMenuItemProps) {
  */
 export function NavigationMenuTrigger(props: NavigationMenuTriggerProps) {
   const item = useNavigationMenuItem();
-  // Read here, not in the thunk below: the content draws the trigger through it each time it lays
-  // out, and a read there would build the children again on every draw.
-  const kids = childrenOf(props);
-  item.trigger.set(() => {
-    const look = navigationMenuTriggerLook({
-      open: item.open,
-      disabled: () => !!props.disabled,
-    });
-    return (
-      <View
-        accessible
-        role="button"
-        disabled={props.disabled}
-        accessibilityState={{ disabled: props.disabled }}
-        onMouseEnter={
-          pointer && !props.disabled ? () => item.pointerOver("trigger", true) : undefined
-        }
-        onMouseLeave={pointer ? () => item.pointerOver("trigger", false) : undefined}
-        style={[look.style, props.style ?? null]}
-        hoverStyle={look.hoverStyle ?? null}
-        activeStyle={look.activeStyle ?? null}
-        focusVisibleStyle={look.focusVisibleStyle}
-        disabledStyle={look.disabledStyle}
-      >
-        {kids.text() !== undefined ? <Text style={look.text}>{kids.text()}</Text> : kids.content()}
-        <View
-          style={look.chevron}
-          accessibilityElementsHidden
-          importantForAccessibility="no-hide-descendants"
-        >
-          <Icon icon={ChevronDown} size={look.chevronIcon.size} tint={look.chevronIcon.tint} />
-        </View>
-      </View>
-    );
+  // The trigger is an element, as an app hands one to `nsh/base` (`trigger={<View …>}`, the shape
+  // upstream's demos use): built once, here, and placed by the panel without building it again
+  // on every layout. Its children are read where they are drawn, below, so a child that reads a
+  // signal stays live.
+  const look = navigationMenuTriggerLook({
+    open: item.open,
+    disabled: () => !!props.disabled,
   });
+  item.trigger.set(
+    <View
+      accessible
+      role="button"
+      disabled={props.disabled}
+      accessibilityState={{ disabled: props.disabled }}
+      onMouseEnter={
+        pointer && !props.disabled ? () => item.pointerOver("trigger", true) : undefined
+      }
+      onMouseLeave={pointer ? () => item.pointerOver("trigger", false) : undefined}
+      style={[look.style, props.style ?? null]}
+      hoverStyle={look.hoverStyle ?? null}
+      activeStyle={look.activeStyle ?? null}
+      focusVisibleStyle={look.focusVisibleStyle}
+      disabledStyle={look.disabledStyle}
+    >
+      <AsText style={look.text}>{props.children}</AsText>
+      <View
+        style={look.chevron}
+        accessibilityElementsHidden
+        importantForAccessibility="no-hide-descendants"
+      >
+        <Icon icon={ChevronDown} size={look.chevronIcon.size} tint={look.chevronIcon.tint} />
+      </View>
+    </View>,
+  );
   // No layout node of its own: the popup draws the trigger, once, between the bar's items.
   return null;
 }
@@ -575,14 +574,13 @@ export function NavigationMenuTrigger(props: NavigationMenuTriggerProps) {
  */
 export function NavigationMenuContent(props: NavigationMenuContentProps) {
   const item = useNavigationMenuItem();
-  const triggerAccessor = item.trigger.get();
   const [, rest] = split(props, ["children", "width", "placement", "align", "offset"]);
   const placement = () => (props.placement ?? "bottom") as PopupSide;
   return (
     <BasePopover
       {...rest}
       open={item.open()}
-      trigger={triggerAccessor?.() ?? <View />}
+      trigger={item.trigger.get() ?? <View />}
       placement={placement()}
       align={props.align ?? "start"}
       offset={props.offset ?? 6}
@@ -639,27 +637,24 @@ export function NavigationMenuLink(props: NavigationMenuLinkProps) {
     "activeStyle",
     "focusVisibleStyle",
     "disabledStyle",
-    "accessibilityLabel",
   ]);
   const look = () =>
     navigationMenuLinkLook({
       active: () => !!props.active,
       disabled: () => !!props.disabled,
     });
-  const kids = childrenOf(props);
   return (
     <BaseLink
       {...rest}
       disabled={props.disabled}
       current={props.active}
-      accessibilityLabel={kids.label()}
       style={[look().style, props.style ?? null]}
       hoverStyle={styleOver(look().hoverStyle, props.hoverStyle)}
       activeStyle={styleOver(look().activeStyle, props.activeStyle)}
       focusVisibleStyle={[look().focusVisibleStyle, props.focusVisibleStyle ?? null]}
       disabledStyle={[look().disabledStyle, props.disabledStyle ?? null]}
     >
-      {kids.text() !== undefined ? <Text style={look().text}>{kids.text()}</Text> : kids.content()}
+      <AsText style={look().text}>{props.children}</AsText>
     </BaseLink>
   );
 }

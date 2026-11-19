@@ -3,7 +3,7 @@
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { colors, finish, radius, rounded, terminal } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
-import { context, platform, split, Text, View } from "nsh";
+import { context, platform, split, View } from "nsh";
 import {
   Dialog as BaseDialog,
   type DialogChangeReason,
@@ -11,7 +11,7 @@ import {
 } from "nsh/base";
 
 import { Action, type ButtonVariant } from "./button";
-import { childrenOf } from "./lib/children";
+import { AsText } from "./lib/as-text";
 import { createOpenState, type OpenState } from "./lib/open-state";
 import { backdrop } from "./lib/popup";
 
@@ -184,16 +184,12 @@ export function DialogContent(props: DialogContentProps) {
 
 /** The card's title; a string child takes `dialogTitle`'s type, anything else is drawn as given. */
 export function DialogTitle(props: DialogTextProps) {
-  const kids = childrenOf(props);
-  if (kids.text() === undefined) return kids.content();
-  return <Text style={[dialogTitle(), props.style ?? null]}>{kids.text()}</Text>;
+  return <AsText style={[dialogTitle(), props.style ?? null]}>{props.children}</AsText>;
 }
 
 /** The text under the title; a string child takes `dialogText`'s type, anything else as given. */
 export function DialogDescription(props: DialogTextProps) {
-  const kids = childrenOf(props);
-  if (kids.text() === undefined) return kids.content();
-  return <Text style={[dialogText(), props.style ?? null]}>{kids.text()}</Text>;
+  return <AsText style={[dialogText(), props.style ?? null]}>{props.children}</AsText>;
 }
 
 /**

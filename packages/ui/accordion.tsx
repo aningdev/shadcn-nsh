@@ -18,7 +18,6 @@ import {
   type AccordionTriggerProps as BaseAccordionTriggerProps,
 } from "nsh/base";
 
-import { childrenOf } from "./lib/children";
 import { Icon } from "./lib/icons";
 import { controlSize, listRow, RowLabel, type ListRowOptions } from "./lib/surface";
 import { joinClass } from "./lib/utils";
@@ -173,25 +172,16 @@ export function AccordionTrigger(props: AccordionTriggerProps) {
     "activeStyle",
     "focusVisibleStyle",
     "disabledStyle",
-    "accessibilityLabel",
   ]);
   const look = disclosureTriggerLook({
     first: props.first,
     start: props.start,
   });
-  const kids = childrenOf(props);
-  const body =
-    kids.text() !== undefined ? (
-      <RowLabel label={kids.text} strong />
-    ) : (
-      <View style={{ flexGrow: 1, flexShrink: 1 }}>{kids.content()}</View>
-    );
 
   return (
     <BaseAccordionTrigger
       {...rest}
       class={joinClass(look.class, props.class)}
-      accessibilityLabel={kids.label()}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[look.activeStyle, props.activeStyle ?? null]}
@@ -201,7 +191,16 @@ export function AccordionTrigger(props: AccordionTriggerProps) {
       <View
         style={{ flexDirection: "row", alignItems: "center", flexGrow: 1, gap: controlSize.gap }}
       >
-        {body}
+        {(() => {
+          // Read once, here where the title is drawn (`marker.tsx` reads in the same shape): a
+          // string is a `RowLabel`, anything else keeps its own width.
+          const kids = props.children;
+          return typeof kids === "string" ? (
+            <RowLabel label={kids} strong />
+          ) : (
+            <View style={{ flexGrow: 1, flexShrink: 1 }}>{kids}</View>
+          );
+        })()}
         <DisclosureChevron accordion />
       </View>
     </BaseAccordionTrigger>

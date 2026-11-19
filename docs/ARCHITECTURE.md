@@ -124,6 +124,8 @@ Port Region 是**来源标注**，不是只读区：可以直接修改；`port:v
 
 **Provider 的 children 在 Provider 里求值。** 组合控件的子元素要看见 Provider 的值，所以只在它内部求值：那里的读写成就地执行的 `(() => …)()`（见 `marker.tsx`），既在孩子们真正建出来的位置读，又只读一次。
 
+**children 只读一次，读在画它的地方。** 每读一次 `props.children` 都会把子元素重新建一遍（新的原生视图），所以控件只读一次：读在画它们的 JSX 里，或交给宿主画的元素里；字符串 child 就地交给 `AsText`（`packages/ui/lib/as-text.tsx`，一个组件，props 即 getter、在应用处求值）画成 `Text`，函数 child 直接画（renderer 跟着它读的 signal 更新）。读写在组件自己的主体或就地执行的 `(() => …)()` 里；唯一的例外是门户的内容构建函数（`nsh/base` 每次打开才建它），那一个读带 `children-lint: <原因>` 注释。`bun run check:children` 检查每一条。
+
 **外观随外观模式变化**：颜色与依赖 props 的 look 在 JSX 里读，不在组件体里读一次存下（web 上是 CSS 变量看不出来，原生上会冻结）。这一条同样管主题：`finish` 的 getter 读的是当前主题（`selectTheme`）与当前外观，组件若把 finish 的值存进模块级常量、或读进变量后不再读，运行时切换就不会跟着变。
 
 ## Seams

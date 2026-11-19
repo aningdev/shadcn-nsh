@@ -5,7 +5,7 @@ import { colors, radius, rounded, tints } from "@shadcn-nsh/theme";
 import type { JSX, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, platform, split, Text, token, View } from "nsh";
 
-import { childrenOf } from "./lib/children";
+import { AsText } from "./lib/as-text";
 import { density, PILL_RADIUS } from "./lib/surface";
 
 /**
@@ -246,7 +246,6 @@ export function BubbleGroup(props: BubbleGroupProps) {
 export function BubbleContent(props: BubbleContentProps) {
   const variant = (): BubbleVariant => BubbleContext()?.() ?? "default";
   const [, rest] = split(props, ["children", "style"]);
-  const kids = childrenOf(props);
   return (
     <View
       {...rest}
@@ -256,7 +255,13 @@ export function BubbleContent(props: BubbleContentProps) {
         props.style ?? null,
       ]}
     >
-      {kids.text() !== undefined ? <BubbleText>{kids.text()}</BubbleText> : kids.content()}
+      {(() => {
+        // Read once, here where the bubble's words are drawn (`marker.tsx` reads in the same
+        // shape): a string is a `BubbleText`, which takes the variant from the `Bubble` around
+        // it, and anything else is drawn as given.
+        const kids = props.children;
+        return typeof kids === "string" ? <BubbleText>{kids}</BubbleText> : kids;
+      })()}
     </View>
   );
 }
@@ -286,14 +291,9 @@ export function BubbleReactions(props: BubbleReactionsProps) {
   const side = () => props.side ?? "bottom";
   const align = () => props.align ?? "end";
   const [, rest] = split(props, ["side", "align", "children", "style"]);
-  const kids = childrenOf(props);
   return (
     <View {...rest} style={[bubbleLook().reactions(side(), align()), props.style ?? null]}>
-      {kids.text() !== undefined ? (
-        <Text style={bubbleLook().reactionText}>{kids.text()}</Text>
-      ) : (
-        kids.content()
-      )}
+      <AsText style={bubbleLook().reactionText}>{props.children}</AsText>
     </View>
   );
 }

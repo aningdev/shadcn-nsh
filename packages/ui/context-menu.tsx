@@ -8,7 +8,6 @@ import {
   type OpenChangeReason,
 } from "nsh/base";
 
-import { childrenOf } from "./lib/children";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import { menuPopup } from "./menu";
 
@@ -88,15 +87,14 @@ export function ContextMenu(props: ContextMenuProps) {
 /** The area that opens the menu: its children in a `View` when it has a `style`, as given otherwise. */
 export function ContextMenuTrigger(props: ContextMenuTriggerProps) {
   const ctx = useContextMenu();
-  // Read here, not in the thunk below: the content draws the trigger through it each time it lays
-  // out, and a read there would build the children again on every draw.
-  const kids = childrenOf(props);
-  ctx.trigger.set(() => {
-    if (props.style != null) {
-      return <View style={props.style}>{kids.content() ?? <View />}</View>;
-    }
-    return kids.content() ?? <View />;
-  });
+  // The trigger is an element, as an app hands one to `nsh/base` (`trigger={<View …>}`, the shape
+  // upstream's demos use): read once, here, and handed as it is — with a `style`, in a view that
+  // wears it — and placed by the menu without building it again on every layout. A region's own
+  // children stay live through their getters; the region itself is one element.
+  const kids = props.children;
+  ctx.trigger.set(
+    props.style != null ? <View style={props.style}>{kids ?? <View />}</View> : (kids ?? <View />),
+  );
   // No layout node: a zero-size view would still take a flex `gap` in a row of triggers.
   return null;
 }
@@ -104,7 +102,6 @@ export function ContextMenuTrigger(props: ContextMenuTriggerProps) {
 /** The popup surface, reusing the menu look. */
 export function ContextMenuContent(props: ContextMenuContentProps) {
   const ctx = useContextMenu();
-  const triggerAccessor = ctx.trigger.get();
   const [, rest] = split(props, [
     "children",
     "popupStyle",
@@ -118,7 +115,7 @@ export function ContextMenuContent(props: ContextMenuContentProps) {
       {...rest}
       open={ctx.open()}
       disabled={ctx.disabled}
-      trigger={triggerAccessor?.() ?? <View />}
+      trigger={ctx.trigger.get() ?? <View />}
       offset={props.offset ?? 4}
       onOpenChange={({ open, reason }) => ctx.setOpen(open, reason)}
       onOpen={ctx.onOpen}

@@ -1,21 +1,19 @@
 /**
  * Children read once, for every control: each read of `props.children` builds the children again
  * (new native views — `references/nsh/website/docs/jsx-and-components.md`, "each read of
- * `props.children` builds the children again"), so a control reads them once, and when it uses
- * them for more than one thing (its name, whether it holds a string, what it draws) it asks
- * `childrenOf` (`packages/ui/lib/children.ts`), whose one read they all share.
+ * `props.children` builds the children again"), so a control reads them once, in the place where
+ * the children go: the JSX that draws them, or the element it hands to the host that draws them.
+ * What the control wants of them besides drawing — a string is its text, drawn in a `Text` — is
+ * asked of that one read, through `AsText` (`packages/ui/lib/as-text.tsx`) where a `Text` is the
+ * difference — a forward in the child position, `<AsText …>{props.children}</AsText>`, whose own
+ * read is where it draws them — or a plain branch on the kind, which never changes (a child that
+ * changes arrives as a function, drawn as given).
  *
  * The rule covers every `.tsx` under `packages/ui` and `packages/ui/lib` (#55). In one:
- *   - a component reads `props.children` at most once, or calls `childrenOf` at most once — one
- *     read in all;
+ *   - a component reads `props.children` at most once;
  *   - the read sits in the component's own body, or in a function that runs where it is written
  *     (`(() => …)()`): a read inside a function kept for later (a thunk, a getter, a callback)
  *     reads the children again on every call, which is two reads.
- * A control that draws `{props.children}` once and asks nothing else of them is fine as it is;
- * so is `const kids = childrenOf(props)`, whose `kids.content()`, `kids.text()` and `kids.label()`
- * read that one value where they stand and never `props.children` again — calling them is not a
- * read, so they may be called as often as a control draws. What the helper holds is a `computed`,
- * built on first draw and again when what the children read changes, so the children stay live.
  *
  * One read may sit in a function kept for later when the place it runs is the only place the
  * children may be built: a portal's content builder, which `nsh/base` makes on each opening
@@ -117,28 +115,12 @@ function sanctioned(lines: string[], line: number): boolean {
   );
 }
 
-/** The local names `childrenOf` is imported under (an alias counts as the same helper). */
-function helperNames(program: { body?: unknown }): Set<string> {
-  const names = new Set<string>();
-  for (const statement of (program.body as Node[] | undefined) ?? []) {
-    if (statement.type !== "ImportDeclaration") continue;
-    for (const specifier of (statement.specifiers as Node[] | undefined) ?? []) {
-      if (specifier.type !== "ImportSpecifier") continue;
-      const imported = specifier.imported as Node | undefined;
-      const local = specifier.local as Node | undefined;
-      if (imported?.type !== "Identifier" || imported.name !== "childrenOf") continue;
-      if (local?.type === "Identifier") names.add(local.name as string);
-    }
-  }
-  return names;
-}
-
-/** Every read of `props.children` (or a `childrenOf` call) in `source` that is more than one. */
+/** Every read of `props.children` in `source` that is more than one, or that sits in a function
+ * kept for later. */
 export function violations(source: string, file: string): Violation[] {
   const parsed = parseSync(file, source);
   const error = parsed.errors[0];
   if (error) throw new Error(`${file}: ${error.message}`);
-  const helpers = helperNames(parsed.program);
   const lines = source.split("\n");
   const found: Violation[] = [];
   // The reads of each component, and where its first one is (the position reported).
@@ -146,12 +128,6 @@ export function violations(source: string, file: string): Violation[] {
   const stack: Node[] = [];
   // The functions that run where they are written (`(() => …)()`): a read inside one is a read now.
   const inline = new Set<Node>();
-
-  const isHelperCall = (node: Node | undefined) => {
-    if (node?.type !== "CallExpression") return false;
-    const callee = node.callee as Node | undefined;
-    return callee?.type === "Identifier" && helpers.has(callee.name as string);
-  };
 
   const report = (node: Node, index: number, kind: Violation["kind"]) => {
     found.push({
@@ -209,20 +185,6 @@ export function violations(source: string, file: string): Violation[] {
     if (current.type === "CallExpression") {
       const callee = unwrapParens(current.callee as Node | undefined);
       if (callee && FUNCTIONS.has(callee.type)) inline.add(callee);
-    }
-
-    if (isHelperCall(current) && stack.length > 0) {
-      // The component that reads them: the one whose `props` the helper is given, so a file with
-      // several components counts each one's reads apart.
-      const argument = (current.arguments as Node[] | undefined)?.[0];
-      const index =
-        argument?.type === "Identifier" ? owner(argument.name as string) : stack.length - 1;
-      if (index >= 0) {
-        // A call inside one of that component's own functions reads the children again each time
-        // that function runs.
-        if (!runsHere(index)) report(current, index, "nested");
-        else count(current, index);
-      }
     }
 
     for (const [key, value] of Object.entries(current)) {

@@ -4,7 +4,7 @@ import { captured, makeFixture, type Fixture } from "../testing/fixture";
 import { runList } from "./list";
 
 const fixture = (files?: Record<string, string>): Fixture =>
-  makeFixture({ items: ["theme", "press", "spinner", "children", "button", "utils"], files });
+  makeFixture({ items: ["theme", "press", "spinner", "as-text", "button", "utils"], files });
 
 let current: Fixture | null = null;
 
@@ -49,7 +49,7 @@ describe("list", () => {
       "theme",
       "press",
       "spinner",
-      "children",
+      "as-text",
       "button",
       "utils",
     ]);

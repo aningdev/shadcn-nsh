@@ -1,7 +1,7 @@
 // A tooltip: the look (`tooltipLook`, `tooltipText`, `tooltipNote`) at the top, and the parts below.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import type { JSX, StyleProp, ViewStyle } from "nsh";
-import { context, split, Text, View } from "nsh";
+import { context, split, View } from "nsh";
 import {
   Tooltip as BaseTooltip,
   type OpenChangeReason,
@@ -9,7 +9,7 @@ import {
 } from "nsh/base";
 
 import { Button, type ButtonVariant } from "./button";
-import { childrenOf } from "./lib/children";
+import { AsText } from "./lib/as-text";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 
 // @port look/overlay.ts
@@ -129,10 +129,9 @@ function useTooltip() {
 function Bubble(props: TooltipContentProps) {
   const [, rest] = split(props, ["children", "rich", "class"]);
   const look = tooltipLook({ rich: props.rich });
-  const kids = childrenOf(props);
   return (
     <BaseTooltip {...rest} class={props.class ? `${look.class} ${props.class}` : look.class}>
-      {kids.text() !== undefined ? <Text class={tooltipText}>{kids.text()}</Text> : kids.content()}
+      <AsText class={tooltipText}>{props.children}</AsText>
     </BaseTooltip>
   );
 }
@@ -189,23 +188,19 @@ export function Tooltip(props: TooltipProps) {
 /** What the pointer rests on: a `Button` for a string, else the element as it is. */
 export function TooltipTrigger(props: TooltipTriggerProps) {
   const ctx = useTooltip();
-  // Read here, not in the thunk below: the host draws the trigger through it each time it lays
-  // out, and a read there would build the children again on every draw.
-  const kids = childrenOf(props);
-  ctx.trigger.set(() => {
-    if (kids.text() !== undefined) {
-      return (
-        <Button
-          variant={props.variant ?? "secondary"}
-          disabled={props.disabled}
-          style={props.style}
-        >
-          {kids.text()}
-        </Button>
-      );
-    }
-    return kids.content() ?? <View />;
-  });
+  // The trigger is an element, as an app hands one to `nsh/base` (a `tooltip` on the view, the
+  // shape upstream's demos use): built once, here, and placed by the anchor without building it
+  // again on every layout. The kind is read once, here — it picks the host, and never changes; a
+  // string child is read where it is drawn (the `Button`'s own read, through the spread's getter,
+  // so a child that reads a signal stays live), and an element is handed as it is.
+  const kids = props.children;
+  ctx.trigger.set(
+    typeof kids === "string" ? (
+      <Button {...props} variant={props.variant ?? "secondary"} disabled={props.disabled} />
+    ) : (
+      (kids ?? <View />)
+    ),
+  );
   return null;
 }
 
@@ -213,7 +208,7 @@ export function TooltipTrigger(props: TooltipTriggerProps) {
 export function TooltipContent(props: TooltipContentProps) {
   const ctx = TooltipContext();
   if (!ctx) return <Bubble {...props} />;
-  ctx.content.set(() => props);
+  ctx.content.set(props);
   return null;
 }
 
@@ -226,13 +221,11 @@ export function TooltipContent(props: TooltipContentProps) {
 function TooltipAnchor() {
   const ctx = TooltipContext();
   if (!ctx) return null;
-  const build = ctx.trigger.get();
-  if (!build) return null;
+  const trigger = ctx.trigger.get();
+  if (!trigger) return null;
   const content = ctx.content.get();
-  if (!content) return build() as JSX.Element;
-  return (
-    <View tooltip={<AnchorBubble content={content()} ctx={ctx} />}>{build() as JSX.Element}</View>
-  );
+  if (!content) return trigger;
+  return <View tooltip={<AnchorBubble content={content} ctx={ctx} />}>{trigger}</View>;
 }
 
 function AnchorBubble(props: { content: TooltipContentProps; ctx: TooltipContextValue }) {

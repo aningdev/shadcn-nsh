@@ -64,7 +64,7 @@ import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/ui/menu";
 
 ### Names for screen readers
 
-A string child is the row's label and its name for screen readers; `accessibilityLabel` wins when it should differ. Children drawn as given derive no name.
+A string child is the row's label and its name for screen readers; `accessibilityLabel` wins when it should differ. Children drawn as given are named by the texts inside them.
 
 ## Differences from shadcn/ui
 

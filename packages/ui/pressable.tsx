@@ -3,10 +3,10 @@
 // so there is no port region. Yours to change.
 import { colors, focusRing, hovered, radius, rounded } from "@shadcn-nsh/theme";
 import type { JSX, ViewStyle } from "nsh";
-import { split, Text } from "nsh";
+import { split } from "nsh";
 import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/base";
 
-import { childrenOf } from "./lib/children";
+import { AsText } from "./lib/as-text";
 import { pressSink, pressTransition } from "./lib/press";
 import { type Live, read } from "./lib/utils";
 
@@ -72,21 +72,16 @@ export function Pressable(props: PressableProps) {
     "focusVisibleStyle",
   ]);
   const look = pressableLook({ disabled: () => props.disabled });
-  const kids = childrenOf(props);
   return (
     <BaseButton
       {...rest}
-      accessibilityLabel={kids.label()}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}
       focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
     >
-      {kids.text() !== undefined ? (
-        <Text style={{ color: colors.foreground }}>{kids.text()}</Text>
-      ) : (
-        kids.content()
-      )}
+      {/* The page's ink, read where it is drawn: a bare Text is nsh's black. */}
+      <AsText style={{ color: colors.foreground }}>{props.children}</AsText>
     </BaseButton>
   );
 }

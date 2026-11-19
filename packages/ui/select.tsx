@@ -22,7 +22,6 @@ import {
 } from "nsh/base";
 
 import { fieldSize } from "./input";
-import { childrenOf } from "./lib/children";
 import { Icon } from "./lib/icons";
 import {
   Chevron,
@@ -386,8 +385,9 @@ function splitTriggerStyle(style: StyleProp<ViewStyle>): { layout: ViewStyle; lo
 type SelectContextValue = OpenState & {
   items: ItemRegistry<SelectItemData>;
   trigger: Slot<JSX.Element>;
-  /** Where the trigger sits: `SelectTrigger`'s layout, for `SelectContent`'s view to wear. */
-  triggerLayout: Slot<ViewStyle>;
+  /** Where the trigger sits: `SelectTrigger`'s layout, for `SelectContent`'s view to wear. Read as
+   * a function, so a style that reads the appearance follows it (P5). */
+  triggerLayout: Slot<() => ViewStyle>;
   value: () => string | null;
   change: (event: { value: string | null }) => void;
   /** The placeholder: `SelectValue`'s, else the root's, else "Select…". */
@@ -418,8 +418,8 @@ function titleOf(ctx: SelectContextValue): string {
 
 /** The trigger the base root renders: the app's `SelectTrigger`, or a `Picker` of the value. */
 function triggerOf(ctx: SelectContextValue): JSX.Element {
-  const build = ctx.trigger.get();
-  if (build) return build() as JSX.Element;
+  const trigger = ctx.trigger.get();
+  if (trigger) return trigger;
   return (
     <Picker
       title={titleOf(ctx)}
@@ -437,7 +437,7 @@ export function Select(props: SelectProps) {
   const state = createOpenState<OpenChangeReason>(props);
   const items = createItemRegistry<SelectItemData>([]);
   const trigger = createSlot<JSX.Element>();
-  const triggerLayout = createSlot<ViewStyle>();
+  const triggerLayout = createSlot<() => ViewStyle>();
   const prompt = signal<string | undefined>(undefined);
   const picked = signal(false);
   const chosen = signal<string | null>(null);
@@ -478,10 +478,12 @@ export function Select(props: SelectProps) {
  */
 export function SelectTrigger(props: SelectTriggerProps) {
   const ctx = useSelect();
-  // Split where it is read, in the two thunks below, so a style that reads the appearance follows
-  // it (P5): each of them runs in a reactive scope, a component's body does not.
+  // The trigger is an element, as an app hands one to `nsh/base` (`trigger={<View …>}`, the shape
+  // upstream's demos use): built once, here, and placed by the field without building it again —
+  // not a thunk the field would call on every layout. What reads the props and the state stays
+  // live as the getters the JSX makes of its expressions, which the field reads as it lays out.
   ctx.triggerLayout.set(() => splitTriggerStyle(props.style).layout);
-  ctx.trigger.set(() => (
+  ctx.trigger.set(
     <Picker
       title={titleOf(ctx)}
       placeholder={ctx.value() == null}
@@ -494,14 +496,16 @@ export function SelectTrigger(props: SelectTriggerProps) {
       variant={props.variant}
       chevron={props.chevron}
       style={splitTriggerStyle(props.style).look}
-    />
-  ));
-  const kids = childrenOf(props);
-  if (kids.text() !== undefined) {
-    ctx.setPrompt(kids.text());
+    />,
+  );
+  // A string child is the placeholder, as `SelectValue` sets it; anything else is drawn where the
+  // part sits, its one read here.
+  const kids = props.children;
+  if (typeof kids === "string") {
+    ctx.setPrompt(kids);
     return null;
   }
-  return kids.content();
+  return kids;
 }
 
 /** Sets the trigger's placeholder. It draws nothing of its own. */

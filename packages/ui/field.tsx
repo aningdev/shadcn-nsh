@@ -5,7 +5,6 @@ import { colors, TERMINAL_ROW, terminal } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, TextProps, ViewProps, ViewStyle } from "nsh";
 import { context, split, Text, View } from "nsh";
 
-import { childrenOf } from "./lib/children";
 import { controlSize, density, narrowWindow } from "./lib/surface";
 
 /**
@@ -312,12 +311,14 @@ export function FieldDescription(props: FieldDescriptionProps) {
 /** A hairline between fields; with children, a hairline broken by its word. */
 export function FieldSeparator(props: FieldSeparatorProps) {
   const [, rest] = split(props, ["style", "children"]);
-  const kids = childrenOf(props);
+  // Read once, where the word is drawn: with children the hairline breaks around them, without
+  // it, it runs through.
+  const kids = props.children;
   return (
     <View {...rest} style={[fieldFamilyLook().separator, props.style ?? null]}>
-      <If when={kids.content() != null} else={<View style={fieldFamilyLook().separatorLine} />}>
+      <If when={kids != null} else={<View style={fieldFamilyLook().separatorLine} />}>
         <View style={fieldFamilyLook().separatorLine} />
-        <Text style={fieldFamilyLook().separatorText}>{kids.content()}</Text>
+        <Text style={fieldFamilyLook().separatorText}>{kids}</Text>
         <View style={fieldFamilyLook().separatorLine} />
       </If>
     </View>
@@ -333,9 +334,10 @@ export function FieldError(props: FieldErrorProps) {
     for (const error of props.errors ?? []) if (error?.message) seen.add(error.message);
     return [...seen];
   };
-  const kids = childrenOf(props);
+  // Read once, where the error is drawn: `children` when the app gives them, else `errors`' messages.
+  const kids = props.children;
   const content = (): JSX.Element => {
-    if (kids.content() != null) return kids.content();
+    if (kids != null) return kids;
     const list = messages();
     if (list.length === 1) return <Text style={fieldFamilyLook().errorText}>{list[0]}</Text>;
     return (
@@ -349,7 +351,7 @@ export function FieldError(props: FieldErrorProps) {
       </Each>
     );
   };
-  if (kids.content() == null && messages().length === 0) return null;
+  if (kids == null && messages().length === 0) return null;
   return (
     <View
       {...rest}

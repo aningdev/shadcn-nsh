@@ -10,7 +10,6 @@ import {
   type TabsProps as BaseTabsProps,
 } from "nsh/base";
 
-import { childrenOf } from "./lib/children";
 import { type Live, read } from "./lib/utils";
 import type { TabLook, TabState } from "./tabs";
 
@@ -244,13 +243,11 @@ export function SegmentedItem(props: SegmentedItemProps) {
       disabled: () => !!props.disabled,
     }),
   );
-  const kids = childrenOf(props);
 
   return (
     <BaseTab
       {...rest}
       selected={selected()}
-      accessibilityLabel={kids.label()}
       onPress={() => {
         ctx.onValueChange(props.value);
         props.onPress?.();
@@ -261,16 +258,21 @@ export function SegmentedItem(props: SegmentedItemProps) {
       focusVisibleStyle={[segment().focusVisibleStyle, props.focusVisibleStyle ?? null]}
       disabledStyle={[segment().disabledStyle, props.disabledStyle ?? null]}
     >
-      {kids.text() !== undefined ? (
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
-          <Text style={look().label(selected())}>{kids.text()}</Text>
-          <If when={props.count !== undefined}>
-            <Text style={look().count}>{props.count}</Text>
-          </If>
-        </View>
-      ) : (
-        kids.content()
-      )}
+      {(() => {
+        // Read once, here where the segment is drawn (`marker.tsx` reads in the same shape): a
+        // string is the label (with its count), anything else as it is.
+        const kids = props.children;
+        return typeof kids === "string" ? (
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+            <Text style={look().label(selected())}>{kids}</Text>
+            <If when={props.count !== undefined}>
+              <Text style={look().count}>{props.count}</Text>
+            </If>
+          </View>
+        ) : (
+          kids
+        );
+      })()}
     </BaseTab>
   );
 }

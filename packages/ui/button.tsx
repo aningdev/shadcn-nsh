@@ -14,10 +14,10 @@ import {
   rounded,
 } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
-import { context, platform, split, Text, token, View } from "nsh";
+import { context, platform, split, token, View } from "nsh";
 import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/base";
 
-import { childrenOf } from "./lib/children";
+import { AsText } from "./lib/as-text";
 import { pressSink, pressTransition, touchSlop } from "./lib/press";
 import { type Live, read } from "./lib/utils";
 import { Spinner } from "./spinner";
@@ -489,9 +489,9 @@ export type ButtonProps = Omit<BaseButtonProps, "children"> & {
   /** Work started by it is going on: a spinner before the label, no presses, not dimmed. */
   busy?: boolean;
   /**
-   * A string is the label, in `buttonLabel`'s type; anything else is drawn as given. A string
-   * label is also the button's name for screen readers, unless `accessibilityLabel` says
-   * otherwise; children drawn as given derive nothing.
+   * A string is the label, in `buttonLabel`'s type; anything else is drawn as given. What the
+   * button draws is its name for screen readers, which `accessibilityLabel` says when the app
+   * gives one.
    */
   children?: string | JSX.Element;
 };
@@ -507,11 +507,9 @@ export function Button(props: ButtonProps) {
     busy: () => props.busy,
   };
   const look = buttonLook(variant, options);
-  const kids = childrenOf(props);
   return (
     <BaseButton
       {...rest}
-      accessibilityLabel={kids.label()}
       // Busy, it keeps its focus and its look and takes no second press.
       onPress={() => !props.busy && props.onPress?.()}
       hitSlop={props.hitSlop ?? look.hitSlop}
@@ -524,11 +522,7 @@ export function Button(props: ButtonProps) {
       <If when={props.busy}>
         <Spinner {...buttonGlyph(variant, options)} />
       </If>
-      {kids.text() !== undefined ? (
-        <Text style={buttonLabel(variant, options)}>{kids.text()}</Text>
-      ) : (
-        kids.content()
-      )}
+      <AsText style={buttonLabel(variant, options)}>{props.children}</AsText>
     </BaseButton>
   );
 }
@@ -680,11 +674,9 @@ export function SplitButtonSegment(props: SplitButtonSegmentProps) {
     selected: () => props.selected,
     disabled: () => props.disabled,
   });
-  const kids = childrenOf(props);
   return (
     <BaseButton
       {...rest}
-      accessibilityLabel={kids.label()}
       hitSlop={props.hitSlop ?? segment.hitSlop}
       style={[segment.style, props.style ?? null]}
       hoverStyle={[segment.hoverStyle ?? null, props.hoverStyle ?? null]}
@@ -692,11 +684,7 @@ export function SplitButtonSegment(props: SplitButtonSegmentProps) {
       focusVisibleStyle={[segment.focusVisibleStyle, props.focusVisibleStyle ?? null]}
       disabledStyle={[segment.disabledStyle, props.disabledStyle ?? null]}
     >
-      {kids.text() !== undefined ? (
-        <Text style={buttonLabel(ctx.variant, ctx.options)}>{kids.text()}</Text>
-      ) : (
-        kids.content()
-      )}
+      <AsText style={buttonLabel(ctx.variant, ctx.options)}>{props.children}</AsText>
     </BaseButton>
   );
 }
@@ -724,29 +712,37 @@ export interface ActionProps {
  * keyboard still rings.
  */
 export function Action(props: ActionProps) {
-  const kids = childrenOf(props);
-  if (kids.text() !== undefined) {
-    return (
-      <Button
-        variant={props.variant ?? "secondary"}
-        disabled={props.disabled}
-        style={props.style}
-        onPress={props.onPress}
-      >
-        {kids.text()}
-      </Button>
-    );
-  }
   return (
-    <View
-      accessible
-      role="button"
-      accessibilityState={{ disabled: props.disabled }}
-      focusVisibleStyle={focusRing()}
-      onPress={props.disabled ? undefined : props.onPress}
-      style={props.style}
-    >
-      {kids.content()}
-    </View>
+    <>
+      {(() => {
+        // Read once, here where the action is drawn (`marker.tsx` reads in the same shape): a
+        // string wears a `Button`, anything else presses where it lies.
+        const kids = props.children;
+        if (typeof kids === "string") {
+          return (
+            <Button
+              variant={props.variant ?? "secondary"}
+              disabled={props.disabled}
+              style={props.style}
+              onPress={props.onPress}
+            >
+              {kids}
+            </Button>
+          );
+        }
+        return (
+          <View
+            accessible
+            role="button"
+            accessibilityState={{ disabled: props.disabled }}
+            focusVisibleStyle={focusRing()}
+            onPress={props.disabled ? undefined : props.onPress}
+            style={props.style}
+          >
+            {kids}
+          </View>
+        );
+      })()}
+    </>
   );
 }

@@ -6,6 +6,9 @@ import {
   Menu,
   MenuContent,
   MenuItem,
+  MenuSub,
+  MenuSubContent,
+  MenuSubTrigger,
   MenuTrigger,
   Popover,
   PopoverContent,
@@ -13,7 +16,7 @@ import {
 } from "../../../packages/ui";
 
 // What a control draws can read a signal: its text, and which elements it holds. A control reads
-// its children once (`childrenOf`), and that one read is kept live.
+// its children once, where it draws them, and a child that changes stays live.
 function App() {
   const presses = signal(0);
   const on = signal(false);
@@ -44,6 +47,20 @@ function App() {
           <Text>Body</Text>
         </PopoverContent>
       </Popover>
+
+      {/* Held open by the app, so the submenu's row is on screen while the signal moves. */}
+      <Menu open>
+        <MenuContent>
+          <MenuSub>
+            <MenuSubTrigger>{presses() ? "Sub pressed" : "Sub idle"}</MenuSubTrigger>
+            <MenuSubContent>
+              <MenuItem closeOnSelect={false} onSelect={() => presses.set(presses() + 1)}>
+                Item
+              </MenuItem>
+            </MenuSubContent>
+          </MenuSub>
+        </MenuContent>
+      </Menu>
     </View>
   );
 }

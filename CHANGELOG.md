@@ -88,20 +88,20 @@
 - **The docs site is at https://shadcn-nsh.aning.dev.** It was at
   `https://aningdev.github.io/shadcn-nsh/`; the README and every docs link point at the new
   address.
-- **Every control builds its children once (#55).** Each read of `props.children` builds the
-  children again, and a control that both named itself after its text and drew it read them two to
-  five times, building native views nobody showed. Every control — the leaf controls, and the
-  overlays and containers too (dialog, drawer, menu, menubar, context menu, select, combobox,
-  popover, hover card, tooltip, navigation menu, sidebar) — now reads them once through
-  `lib/children.ts` (`childrenOf`), which `add` installs alongside them: a labelled button with an
-  icon commits 21 ops instead of 37. A trigger whose content draws it through a slot reads in its
-  own body, not in the slot's thunk, so the children are not built again on every draw; a portal's
-  content builder, which `nsh/base` makes only on opening, keeps its one read with a
-  `children-lint:` comment saying why (`docs/ARCHITECTURE.md`). What the one read holds is a
-  `computed` (`childrenOf`'s `content()`, `text()` and `label()`), so a child that reads a signal —
-  its text, or which elements it holds — still updates where it is drawn (#67). `bun run check:children` scans every
-  `.tsx` under `packages/ui` and `packages/ui/lib` instead of a hand-written list, so a new control
-  is checked without anyone adding it. Names, looks and props are unchanged.
+- **Every control reads its children once, where it draws them (#55).** Each read of
+  `props.children` builds the children again, so a control reads them once, in the JSX that draws
+  them: a string child is wrapped in a `Text` right there, through `AsText` (`lib/as-text.tsx`),
+  which `add` installs alongside the control. A string child is no longer copied into
+  `accessibilityLabel` — screen readers read the text the control draws, and `accessibilityLabel`
+  passes through untouched for the app that gives one. A trigger whose content draws it through a
+  slot builds its element once in its own body and hands it to the host, so the children are not
+  built again on every draw; a portal's content builder, which `nsh/base` makes only on opening,
+  keeps its one read with a `children-lint:` comment saying why (`docs/ARCHITECTURE.md`). A child
+  that reads a signal — its text, or which elements it holds — still updates where it is drawn
+  (#67). A labelled button with an icon mounts in the same 26 ops as before (`nsh test --trace`).
+  `bun run check:children` holds the one rule — at most one read of `props.children` per
+  component — over every `.tsx` under `packages/ui` and `packages/ui/lib`, so a new control is
+  checked without anyone adding it. Names, looks and props are unchanged.
 - **Theme finishes, the narrow-window test, avatars, the calendar and the sidebar rail do less work per read (#56).** A finish string is resolved once per theme and appearance instead of on every read (about 5× cheaper), `narrowWindow` is one shared `computed`, an avatar hashes its name once, and a calendar day converts its date once instead of four times. The sidebar rail's hairline follows the pointer through `group-hover:` instead of a signal, so hovering it commits no frame; it now lights only while the pointer is on the 8-point strip, not in its `hitSlop` margin.
 
 ### Fixed

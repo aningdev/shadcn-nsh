@@ -138,7 +138,7 @@ function App() {
             <Item label="New document" keys="⌘N" onSelect={() => choose("New document")} />
             <Item label="Open…" keys="⌘O" onSelect={() => choose("Open…")} />
             <Submenu
-              trigger={<SubmenuRow label="Open recent" />}
+              trigger={<SubmenuRow>Open recent</SubmenuRow>}
               back={desktop ? undefined : <SubmenuBack label="Open recent" />}
             >
               {RECENT.map((name) => (

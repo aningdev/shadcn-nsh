@@ -58,7 +58,7 @@ A size is compact with a pointer (24 / 28 / 34 points) and roomier on a touch sc
 
 ### Names for screen readers
 
-A string child is the toggle's name for screen readers, and `accessibilityLabel` wins when it should differ from the visible label. Children drawn as given (an icon and a label of your own) derive no name.
+A string child is the toggle's name for screen readers, and `accessibilityLabel` wins when it should differ from the visible label. Children drawn as given (an icon and a label of your own) are named by the texts inside them.
 
 ### The look alone
 

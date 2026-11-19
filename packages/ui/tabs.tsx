@@ -21,7 +21,6 @@ import {
   type TabsProps as BaseTabsProps,
 } from "nsh/base";
 
-import { childrenOf } from "./lib/children";
 import { Icon } from "./lib/icons";
 import { controlSize } from "./lib/surface";
 import { type Live, read } from "./lib/utils";
@@ -176,7 +175,7 @@ export const TAB_ICON_ROOM = TAB_ICON + 6;
  * does not show.
  */
 export function TabTitle(props: {
-  name: Live<string | undefined>;
+  name: string;
   selected: boolean;
   count?: number;
   icon?: IconNode;
@@ -393,7 +392,6 @@ export function TabsTrigger(props: TabsTriggerProps) {
     "disabledStyle",
     "selectedStyle",
     "onPress",
-    "accessibilityLabel",
   ]);
   const look = computed(() => listLook(variant));
   const selected = () => (ctx ? ctx.value() === props.value : false);
@@ -403,13 +401,11 @@ export function TabsTrigger(props: TabsTriggerProps) {
       disabled: () => !!props.disabled,
     }),
   );
-  const kids = childrenOf(props);
 
   return (
     <BaseTab
       {...rest}
       selected={selected()}
-      accessibilityLabel={kids.label()}
       onPress={() => {
         ctx?.onValueChange(props.value);
         props.onPress?.();
@@ -421,11 +417,12 @@ export function TabsTrigger(props: TabsTriggerProps) {
       disabledStyle={[tab().disabledStyle, props.disabledStyle ?? null]}
       selectedStyle={props.selectedStyle}
     >
-      {kids.text() !== undefined ? (
-        <TabTitle name={kids.text} selected={selected()} />
-      ) : (
-        kids.content()
-      )}
+      {(() => {
+        // Read once, here where the tab is drawn (`marker.tsx` reads in the same shape): a
+        // string is `TabTitle`, anything else as it is.
+        const kids = props.children;
+        return typeof kids === "string" ? <TabTitle name={kids} selected={selected()} /> : kids;
+      })()}
     </BaseTab>
   );
 }
@@ -442,7 +439,6 @@ export function Tab(props: TabProps) {
     "focusVisibleStyle",
     "disabledStyle",
     "selectedStyle",
-    "accessibilityLabel",
   ]);
   const look = computed(() => listLook(variant));
   const tab = computed(() =>
@@ -451,13 +447,11 @@ export function Tab(props: TabProps) {
       disabled: () => !!props.disabled,
     }),
   );
-  const kids = childrenOf(props);
 
   return (
     <BaseTab
       {...rest}
       selected={props.selected}
-      accessibilityLabel={kids.label()}
       style={[tab().style, props.style ?? null]}
       hoverStyle={[tab().hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[tab().activeStyle ?? null, props.activeStyle ?? null]}
@@ -465,11 +459,16 @@ export function Tab(props: TabProps) {
       disabledStyle={[tab().disabledStyle, props.disabledStyle ?? null]}
       selectedStyle={props.selectedStyle}
     >
-      {kids.text() !== undefined ? (
-        <TabTitle name={kids.text} selected={!!props.selected} />
-      ) : (
-        kids.content()
-      )}
+      {(() => {
+        // Read once, here where the tab is drawn (`marker.tsx` reads in the same shape): a
+        // string is `TabTitle`, anything else as it is.
+        const kids = props.children;
+        return typeof kids === "string" ? (
+          <TabTitle name={kids} selected={!!props.selected} />
+        ) : (
+          kids
+        );
+      })()}
     </BaseTab>
   );
 }

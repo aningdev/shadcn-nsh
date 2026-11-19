@@ -48,14 +48,14 @@ test("a folded row shows its name in a tooltip", async () => {
   const app = await open("./sidebar.fixture.tsx", wide);
   await app.press("label:Toggle Sidebar");
   await app.wait(300);
-  await app.hover("label:Row A");
+  await app.hover("role:button[Row A]");
   await app.waitFor("text:Tip A");
   expect(app.shows("Tip A")).toBe(true);
 });
 
 test("a row takes a press", async () => {
   const app = await open("./sidebar.fixture.tsx", wide);
-  await app.press("label:Row A");
+  await app.press("role:button[Row A]");
   await app.wait(200);
   expect(app.texts()).toContain("presses 1");
 });

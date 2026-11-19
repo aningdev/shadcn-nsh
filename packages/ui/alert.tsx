@@ -5,7 +5,7 @@ import { alpha, colors, radius, rounded } from "@shadcn-nsh/theme";
 import type { TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, split, Text, View } from "nsh";
 
-import { childrenOf } from "./lib/children";
+import { AsText } from "./lib/as-text";
 import { density } from "./lib/surface";
 
 /** An alert's variants: `default`, the card's surface in the text color; `destructive`, the danger tone's ink. */
@@ -138,14 +138,9 @@ export function AlertTitle(props: AlertTitleProps) {
  */
 export function AlertDescription(props: AlertDescriptionProps) {
   const [, rest] = split(props, ["style", "children"]);
-  const kids = childrenOf(props);
   return (
     <View {...rest} style={[alertLook().descriptionFrame(), props.style ?? null]}>
-      {kids.text() !== undefined ? (
-        <Text style={alertLook().descriptionText(AlertVariantContext())}>{kids.text()}</Text>
-      ) : (
-        kids.content()
-      )}
+      <AsText style={alertLook().descriptionText(AlertVariantContext())}>{props.children}</AsText>
     </View>
   );
 }

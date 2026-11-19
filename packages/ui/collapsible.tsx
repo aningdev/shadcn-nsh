@@ -15,7 +15,6 @@ import {
   DisclosureChevron,
   type DisclosurePanelOptions,
 } from "./accordion";
-import { childrenOf } from "./lib/children";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import { RowLabel } from "./lib/surface";
 
@@ -82,44 +81,45 @@ export function Collapsible(props: CollapsibleProps) {
 /** Registers the disclosure row; `CollapsibleContent` renders it as the base child. */
 export function CollapsibleTrigger(props: CollapsibleTriggerProps) {
   const ctx = useCollapsible();
-  // Read here, not in the thunk below: the content draws the trigger through it each time it lays
-  // out, and a read there would build the children again on every draw.
-  const kids = childrenOf(props);
-  ctx.trigger.set(() => {
-    const look = disclosureTriggerLook({
-      first: props.first,
-      start: props.start,
-      disabled: () => Boolean(props.disabled),
-    });
-    const disabled = Boolean(props.disabled);
-    const body =
-      kids.text() !== undefined ? (
-        <RowLabel label={kids.text} strong />
-      ) : (
-        <View style={{ flexGrow: 1, flexShrink: 1 }}>{kids.content()}</View>
-      );
-
-    return (
-      <View
-        accessible
-        role="button"
-        accessibilityLabel={kids.label() ?? undefined}
-        accessibilityState={{ expanded: ctx.open(), disabled }}
-        class={props.class ? `${look.class} ${props.class}` : look.class}
-        onPress={disabled ? undefined : () => ctx.setOpen(!ctx.open())}
-        style={[look.style, props.style ?? null]}
-        hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
-        activeStyle={[look.activeStyle, props.activeStyle ?? null]}
-        focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
-        disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
-      >
-        <View style={{ flexDirection: "row", alignItems: "center", flexGrow: 1 }}>
-          {body}
-          <DisclosureChevron open={ctx.open()} />
-        </View>
-      </View>
-    );
+  // The trigger is an element, as an app hands one to `nsh/base` (`trigger={<View …>}`, the shape
+  // upstream's demos use): built once, here, and placed by the content without building it again
+  // on every layout. Its children are read where they are drawn, below, so a child that reads a
+  // signal stays live.
+  const look = disclosureTriggerLook({
+    first: props.first,
+    start: props.start,
+    disabled: () => Boolean(props.disabled),
   });
+  const disabled = Boolean(props.disabled);
+  ctx.trigger.set(
+    <View
+      accessible
+      role="button"
+      accessibilityLabel={props.accessibilityLabel ?? undefined}
+      accessibilityState={{ expanded: ctx.open(), disabled }}
+      class={props.class ? `${look.class} ${props.class}` : look.class}
+      onPress={disabled ? undefined : () => ctx.setOpen(!ctx.open())}
+      style={[look.style, props.style ?? null]}
+      hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
+      activeStyle={[look.activeStyle, props.activeStyle ?? null]}
+      focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
+      disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
+    >
+      <View style={{ flexDirection: "row", alignItems: "center", flexGrow: 1 }}>
+        {(() => {
+          // Read once, here where the row is drawn (`marker.tsx` reads in the same shape): a
+          // string is the row's label, anything else presses where it lies.
+          const kids = props.children;
+          return typeof kids === "string" ? (
+            <RowLabel label={kids} strong />
+          ) : (
+            <View style={{ flexGrow: 1, flexShrink: 1 }}>{kids}</View>
+          );
+        })()}
+        <DisclosureChevron open={ctx.open()} />
+      </View>
+    </View>,
+  );
   return null;
 }
 
@@ -137,7 +137,7 @@ export function CollapsibleContent(props: CollapsibleContentProps) {
       style={[{ alignItems: "stretch" }, props.style ?? null]}
       content={<View style={disclosurePanel(panel)}>{props.children}</View>}
     >
-      {trigger?.() ?? <View />}
+      {trigger ?? <View />}
     </BaseCollapsible>
   );
 }

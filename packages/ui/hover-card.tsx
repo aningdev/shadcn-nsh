@@ -10,7 +10,6 @@ import {
 } from "nsh/base";
 
 import { Button, type ButtonVariant } from "./button";
-import { childrenOf } from "./lib/children";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import { PopIn } from "./lib/popup";
 import { popoverLook } from "./popover";
@@ -103,22 +102,16 @@ export function HoverCard(props: HoverCardProps) {
 export function HoverCardTrigger(props: HoverCardTriggerProps) {
   const ctx = useHoverCard();
   ctx.setDisabled(() => Boolean(props.disabled));
-  // Read here, not in the thunk below: the content draws the trigger through it each time it lays
-  // out, and a read there would build the children again on every draw.
-  const kids = childrenOf(props);
-  ctx.trigger.set(() => {
-    if (kids.text() !== undefined) {
-      return (
-        <Button
-          variant={props.variant ?? "secondary"}
-          disabled={props.disabled}
-          style={props.style}
-        >
-          {kids.text()}
-        </Button>
-      );
-    }
-    return (
+  // The trigger is an element, as an app hands one to `nsh/base` (`trigger={<View …>}`, the shape
+  // upstream's demos use): built once, here, and placed by the card without building it again
+  // on every layout. The kind is read once, here — it picks the host, and never changes; a
+  // string child is read where it is drawn (the `Button`'s own read, through the spread's getter,
+  // so a child that reads a signal stays live), and an element is handed as it is.
+  const kids = props.children;
+  ctx.trigger.set(
+    typeof kids === "string" ? (
+      <Button {...props} variant={props.variant ?? "secondary"} disabled={props.disabled} />
+    ) : (
       <View
         accessible
         role="button"
@@ -126,17 +119,16 @@ export function HoverCardTrigger(props: HoverCardTriggerProps) {
         focusVisibleStyle={focusRing()}
         style={props.style}
       >
-        {kids.content()}
+        {kids}
       </View>
-    );
-  });
+    ),
+  );
   return null;
 }
 
 /** The card, over the popup surface of `popoverLook`. */
 export function HoverCardContent(props: HoverCardContentProps) {
   const ctx = useHoverCard();
-  const triggerAccessor = ctx.trigger.get();
   const [, rest] = split(props, [
     "children",
     "compact",
@@ -151,7 +143,7 @@ export function HoverCardContent(props: HoverCardContentProps) {
     <BaseHoverCard
       {...rest}
       open={ctx.disabled() ? false : ctx.open()}
-      trigger={triggerAccessor?.() ?? <View />}
+      trigger={ctx.trigger.get() ?? <View />}
       placement={placement()}
       align={props.align}
       offset={props.offset}

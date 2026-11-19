@@ -82,7 +82,7 @@ A string is the label. Anything else is drawn as given; `buttonLabel` and `butto
 
 ### Names for screen readers
 
-A string child is also the button's name for screen readers, so `<Button onPress={retry}>Retry</Button>` needs nothing else: a test finds it as `label:Retry`. `accessibilityLabel` still wins when the name should differ from the visible label. Children drawn as given derive no name — give those the `accessibilityLabel` yourself, and an `IconButton` or `RoundButton` (an icon and no text) will not compile without one.
+A string child is also the button's name for screen readers — they read the text it draws — so `<Button onPress={retry}>Retry</Button>` needs nothing else: a test finds it as `role:button[Retry]`. `accessibilityLabel` still wins when the name should differ from the visible text. Children drawn as given are named by the texts inside them; a button that draws no text needs the `accessibilityLabel` yourself, and an `IconButton` or `RoundButton` (an icon and no text) will not compile without one.
 
 ```tsx
 <Button onPress={retry}>Retry</Button>
@@ -167,7 +167,7 @@ Every prop of [`nsh/base` Button](https://nsh.dev/elements/button) passes throug
 | `variant`            | `"default" \| "secondary" \| "ghost" \| "destructive"` | `"default"` |
 | `size`               | `"sm" \| "default" \| "lg"`                            | `"default"` |
 | `busy`               | `boolean`                                              | `false`     |
-| `accessibilityLabel` | `string` (the string child's text, or the caller's)    | the child   |
+| `accessibilityLabel` | `string`                                               |             |
 | `children`           | `string \| JSX.Element`                                |             |
 
 ### IconButton

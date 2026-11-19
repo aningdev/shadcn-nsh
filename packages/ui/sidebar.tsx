@@ -35,7 +35,6 @@ import {
   Scroll,
   signal,
   split,
-  Text,
   View,
   windowSize,
 } from "nsh";
@@ -43,7 +42,7 @@ import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/b
 
 import { IconButton, iconButtonGlyph, type IconButtonProps } from "./button";
 import { Input, type InputProps } from "./input";
-import { childrenOf } from "./lib/children";
+import { AsText } from "./lib/as-text";
 import { IconLabel } from "./lib/icons";
 import { pressSink, pressTransition } from "./lib/press";
 import { narrowWindow } from "./lib/surface";
@@ -981,14 +980,14 @@ export function Sidebar(props: SidebarProps) {
   );
   const look = sidebarLook(useLookOptions());
   const fixed = () => props.collapsible === "none";
-  // Read once, for the three branches below: each draws the column in one of them, and reading in
-  // `column` would build the children again on every draw.
-  const kids = childrenOf(props);
+  // Read once, for the three branches below: each draws the column in one of them, and only one of
+  // them is ever on the tree at a time.
+  const kids = props.children;
   /** The column's frame and box, which the branches below draw the same way. */
   const column = () => (
     <View style={look.frame}>
       <View {...rest} style={[look.column, props.style ?? null]}>
-        {kids.content()}
+        {kids}
       </View>
     </View>
   );
@@ -1018,7 +1017,7 @@ export function Sidebar(props: SidebarProps) {
             ]}
           >
             <View {...rest} style={[look.column, { flex: 1 }, props.style ?? null]}>
-              {kids.content()}
+              {kids}
             </View>
           </SheetContent>
         </Sheet>
@@ -1106,8 +1105,6 @@ export function SidebarGroup(props: SidebarGroupProps) {
  * prop passes through; `style` goes over the look's. */
 export type SidebarGroupLabelProps = Omit<ViewProps, "children"> & {
   children?: string | JSX.Element;
-  /** What screen readers say, when a string child does not say it. */
-  accessibilityLabel?: string | null;
 };
 
 /**
@@ -1115,19 +1112,11 @@ export type SidebarGroupLabelProps = Omit<ViewProps, "children"> & {
  * and draws nothing — and stays in the tree, so a screen reader still reads it.
  */
 export function SidebarGroupLabel(props: SidebarGroupLabelProps) {
-  const [, rest] = split(props, ["children", "style", "accessibilityLabel"]);
+  const [, rest] = split(props, ["children", "style"]);
   const look = sidebarGroupLook(useFoldOptions());
-  const kids = childrenOf(props);
   return (
-    <View
-      {...rest}
-      accessibilityLabel={kids.label() ?? undefined}
-      style={[look.labelBox, props.style ?? null]}
-    >
-      <If when={kids.text() !== undefined}>
-        <Text style={look.label}>{kids.text()}</Text>
-      </If>
-      <If when={kids.text() === undefined}>{kids.content()}</If>
+    <View {...rest} style={[look.labelBox, props.style ?? null]}>
+      <AsText style={look.label}>{props.children}</AsText>
     </View>
   );
 }
@@ -1148,7 +1137,6 @@ export function SidebarGroupAction(props: SidebarGroupActionProps) {
   const [, rest] = split(props, [
     "children",
     "disabled",
-    "accessibilityLabel",
     "style",
     "hoverStyle",
     "activeStyle",
@@ -1157,20 +1145,18 @@ export function SidebarGroupAction(props: SidebarGroupActionProps) {
   ]);
   const look = sidebarGroupLook(useFoldOptions());
   const shown = useShown();
-  const kids = childrenOf(props);
   return (
     <If when={shown()}>
       <BaseButton
         {...rest}
         disabled={props.disabled}
-        accessibilityLabel={kids.label()}
         style={[look.action, props.style ?? null]}
         hoverStyle={[look.actionHover, props.hoverStyle ?? null]}
         activeStyle={props.activeStyle ?? null}
         focusVisibleStyle={[focusRing(), props.focusVisibleStyle ?? null]}
         disabledStyle={[{ opacity: 0.5 }, props.disabledStyle ?? null]}
       >
-        {kids.text() !== undefined ? <Text style={look.label}>{kids.text()}</Text> : kids.content()}
+        <AsText style={look.label}>{props.children}</AsText>
       </BaseButton>
     </If>
   );
@@ -1256,8 +1242,8 @@ export type SidebarMenuButtonTooltip =
 
 /**
  * A menu row's props: an `nsh/base` button's (presses, `disabled`, `tooltip`'s own placement,
- * `onPress`) plus its axes. A string child is its name; anything else (an icon and a `Text`) is
- * drawn as given.
+ * `onPress`) plus its axes. Its name is what it draws: a string child is a text of it, and
+ * anything else (an icon and a `Text`) is drawn as given.
  */
 export type SidebarMenuButtonProps = Omit<
   BaseButtonProps,
@@ -1276,14 +1262,14 @@ export type SidebarMenuButtonProps = Omit<
    * case: an icon and a `Text` name nothing).
    */
   tooltip?: SidebarMenuButtonTooltip;
-  /** A string is its name; an icon and a `Text` are drawn as given. */
+  /** A string child is a text of the row; an icon and a `Text` are drawn as given. */
   children?: string | JSX.Element;
+  /** What screen readers say; a row that draws no text takes its tooltip's words. */
   accessibilityLabel?: string | null;
 };
 
-/** A row's name for screen readers: its own, its string child's, else its tooltip's. */
-function rowName(props: SidebarMenuButtonProps, own: string | null | undefined) {
-  if (own !== undefined) return own;
+/** A row's name when it draws no text: its tooltip's words, a row folded to icons taking none. */
+function tooltipName(props: SidebarMenuButtonProps): string | undefined {
   const tooltip = props.tooltip;
   if (typeof tooltip === "string") return tooltip;
   return typeof tooltip?.children === "string" ? tooltip.children : undefined;
@@ -1320,19 +1306,28 @@ export function SidebarMenuButton(props: SidebarMenuButtonProps) {
     disabled: () => !!props.disabled,
     trailing: item ? item.trailing : () => null,
   });
-  const kids = childrenOf(props);
+  // Read once, where the row is made: a string child is its label, and the row's name is its
+  // `accessibilityLabel`, else the texts it draws (a string child is one), else — a row folded to
+  // icons draws no text — its tooltip's words.
+  const kids = props.children;
   const row = (
     <BaseButton
       {...rest}
       disabled={props.disabled}
-      accessibilityLabel={rowName(props, kids.label())}
+      accessibilityLabel={
+        props.accessibilityLabel !== undefined
+          ? props.accessibilityLabel
+          : typeof kids === "string"
+            ? undefined
+            : tooltipName(props)
+      }
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}
       focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
       disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     >
-      {kids.text() !== undefined ? <Text style={look.label}>{kids.text()}</Text> : kids.content()}
+      <AsText style={look.label}>{kids}</AsText>
     </BaseButton>
   );
   const tip = props.tooltip;
@@ -1365,7 +1360,6 @@ export function SidebarMenuAction(props: SidebarMenuActionProps) {
   const [, rest] = split(props, [
     "children",
     "disabled",
-    "accessibilityLabel",
     "style",
     "hoverStyle",
     "activeStyle",
@@ -1377,24 +1371,18 @@ export function SidebarMenuAction(props: SidebarMenuActionProps) {
     trailing: item ? item.trailing : () => null,
   });
   const shown = useShown();
-  const kids = childrenOf(props);
   return (
     <If when={shown()}>
       <BaseButton
         {...rest}
         disabled={props.disabled}
-        accessibilityLabel={kids.label()}
         style={[look.style, props.style ?? null]}
         hoverStyle={[look.hoverStyle, props.hoverStyle ?? null]}
         activeStyle={props.activeStyle ?? null}
         focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
         disabledStyle={[{ opacity: 0.5 }, props.disabledStyle ?? null]}
       >
-        {kids.text() !== undefined ? (
-          <Text style={{ fontSize: 12, color: colors.mutedForeground }}>{kids.text()}</Text>
-        ) : (
-          kids.content()
-        )}
+        <AsText style={{ fontSize: 12, color: colors.mutedForeground }}>{props.children}</AsText>
       </BaseButton>
     </If>
   );
@@ -1417,7 +1405,6 @@ export function SidebarMenuBadge(props: SidebarMenuBadgeProps) {
   const shown = useShown();
   const [, rest] = split(props, ["children", "style"]);
   const look = sidebarMenuBadgeLook(useFoldOptions());
-  const kids = childrenOf(props);
   return (
     <If when={shown()}>
       <View
@@ -1426,7 +1413,7 @@ export function SidebarMenuBadge(props: SidebarMenuBadgeProps) {
         importantForAccessibility="no-hide-descendants"
         style={[look.style, props.style ?? null]}
       >
-        {kids.text() !== undefined ? <Text style={look.text}>{kids.text()}</Text> : kids.content()}
+        <AsText style={look.text}>{props.children}</AsText>
       </View>
     </If>
   );
@@ -1515,7 +1502,6 @@ export function SidebarMenuSubButton(props: SidebarMenuSubButtonProps) {
     "size",
     "children",
     "disabled",
-    "accessibilityLabel",
     "style",
     "hoverStyle",
     "activeStyle",
@@ -1528,19 +1514,17 @@ export function SidebarMenuSubButton(props: SidebarMenuSubButtonProps) {
     active: () => !!props.isActive,
     disabled: () => !!props.disabled,
   });
-  const kids = childrenOf(props);
   return (
     <BaseButton
       {...rest}
       disabled={props.disabled}
-      accessibilityLabel={kids.label()}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}
       focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
       disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     >
-      {kids.text() !== undefined ? <Text style={look.label}>{kids.text()}</Text> : kids.content()}
+      <AsText style={look.label}>{props.children}</AsText>
     </BaseButton>
   );
 }

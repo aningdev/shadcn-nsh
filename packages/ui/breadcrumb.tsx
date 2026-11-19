@@ -7,7 +7,7 @@ import type { JSX, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
 import { Link as BaseLink, type LinkProps as BaseLinkProps } from "nsh/base";
 
-import { childrenOf } from "./lib/children";
+import { AsText } from "./lib/as-text";
 import { Icon } from "./lib/icons";
 
 /** A pointer's compact trail; a touch screen's roomier one, a finger's target in each step. */
@@ -254,31 +254,19 @@ export function BreadcrumbItem(props: BreadcrumbItemProps) {
 
 /** A step that goes somewhere: quiet in the muted ink, the text color under the pointer. */
 export function BreadcrumbLink(props: BreadcrumbLinkProps) {
-  const [, rest] = split(props, [
-    "children",
-    "class",
-    "style",
-    "focusVisibleStyle",
-    "accessibilityLabel",
-  ]);
-  const kids = childrenOf(props);
+  const [, rest] = split(props, ["children", "class", "style", "focusVisibleStyle"]);
   return (
     <BaseLink
       {...rest}
-      accessibilityLabel={kids.label()}
       class={
         props.class ? `${breadcrumbLook().linkClass} ${props.class}` : breadcrumbLook().linkClass
       }
       style={[breadcrumbLook().link, props.style ?? null]}
       focusVisibleStyle={[breadcrumbLook().focusVisible, props.focusVisibleStyle ?? null]}
     >
-      {kids.text() !== undefined ? (
-        <Text class={breadcrumbLook().linkTextClass} style={breadcrumbLook().linkText}>
-          {kids.text()}
-        </Text>
-      ) : (
-        kids.content()
-      )}
+      <AsText class={breadcrumbLook().linkTextClass} style={breadcrumbLook().linkText}>
+        {props.children}
+      </AsText>
     </BaseLink>
   );
 }

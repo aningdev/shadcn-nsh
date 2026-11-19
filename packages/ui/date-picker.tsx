@@ -173,8 +173,8 @@ function titleOf(ctx: DatePickerContextValue): string {
 
 /** The trigger the base root draws: the app's `DatePickerTrigger`, or a `DateTrigger` of the value. */
 function triggerOf(ctx: DatePickerContextValue): JSX.Element {
-  const build = ctx.trigger.get();
-  if (build) return build() as JSX.Element;
+  const trigger = ctx.trigger.get();
+  if (trigger) return trigger;
   return (
     <DateTrigger
       title={titleOf(ctx)}
@@ -218,7 +218,10 @@ export function DatePicker(props: DatePickerProps) {
 /** The pressed field: a `DateTrigger` that follows the root's open state, value and `disabled`. */
 export function DatePickerTrigger(props: DatePickerTriggerProps) {
   const ctx = useDatePicker();
-  ctx.trigger.set(() => (
+  // The trigger is an element, as an app hands one to `nsh/base` (`trigger={<View …>}`, the shape
+  // upstream's demos use): built once, here, and placed by the field without building it again —
+  // not a thunk the field would call on every layout.
+  ctx.trigger.set(
     <DateTrigger
       title={props.title ?? titleOf(ctx)}
       placeholder={props.placeholder ?? ctx.value() == null}
@@ -227,8 +230,8 @@ export function DatePickerTrigger(props: DatePickerTriggerProps) {
       invalid={props.invalid}
       clearable={props.clearable ?? (ctx.root.cleanable && ctx.value() != null)}
       style={props.style}
-    />
-  ));
+    />,
+  );
   return null;
 }
 

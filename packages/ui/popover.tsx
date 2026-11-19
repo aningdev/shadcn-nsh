@@ -2,7 +2,7 @@
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { focusRing } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
-import { context, platform, split, Text, View } from "nsh";
+import { context, platform, split, View } from "nsh";
 import {
   Popover as BasePopover,
   type OpenChangeReason,
@@ -10,7 +10,7 @@ import {
 } from "nsh/base";
 
 import { Button, type ButtonVariant } from "./button";
-import { childrenOf } from "./lib/children";
+import { AsText } from "./lib/as-text";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import { PopIn, popupSurface } from "./lib/popup";
 
@@ -145,22 +145,16 @@ export function Popover(props: PopoverProps) {
 /** Opens the popover: a `Button` for a string, else a pressable view. */
 export function PopoverTrigger(props: PopoverTriggerProps) {
   const ctx = usePopover();
-  // Read here, not in the thunk below: the content draws the trigger through it each time it lays
-  // out, and a read there would build the children again on every draw.
-  const kids = childrenOf(props);
-  ctx.trigger.set(() => {
-    if (kids.text() !== undefined) {
-      return (
-        <Button
-          variant={props.variant ?? "secondary"}
-          disabled={props.disabled}
-          style={props.style}
-        >
-          {kids.text()}
-        </Button>
-      );
-    }
-    return (
+  // The trigger is an element, as an app hands one to `nsh/base` (`trigger={<View …>}`, the shape
+  // upstream's demos use): built once, here, and placed by the popover without building it again
+  // on every layout. The kind is read once, here — it picks the host, and never changes; a
+  // string child is read where it is drawn (the `Button`'s own read, through the spread's getter,
+  // so a child that reads a signal stays live), and an element is handed as it is.
+  const kids = props.children;
+  ctx.trigger.set(
+    typeof kids === "string" ? (
+      <Button {...props} variant={props.variant ?? "secondary"} />
+    ) : (
       <View
         accessible
         role="button"
@@ -168,17 +162,16 @@ export function PopoverTrigger(props: PopoverTriggerProps) {
         focusVisibleStyle={focusRing()}
         style={props.style}
       >
-        {kids.content()}
+        {kids}
       </View>
-    );
-  });
+    ),
+  );
   return null;
 }
 
 /** The panel, over the popup surface of `popoverLook`. */
 export function PopoverContent(props: PopoverContentProps) {
   const ctx = usePopover();
-  const triggerAccessor = ctx.trigger.get();
   const [, rest] = split(props, [
     "children",
     "compact",
@@ -193,7 +186,7 @@ export function PopoverContent(props: PopoverContentProps) {
     <BasePopover
       {...rest}
       open={ctx.open()}
-      trigger={triggerAccessor?.() ?? <View />}
+      trigger={ctx.trigger.get() ?? <View />}
       placement={placement()}
       align={props.align}
       offset={props.offset}
@@ -225,22 +218,20 @@ export function PopoverHeader(props: PopoverHeaderProps) {
   );
 }
 
-function PanelText(props: PopoverTitleProps) {
-  const kids = childrenOf(props);
-  if (kids.text() === undefined) return kids.content() ?? null;
-  return (
-    <Text class={props.class ?? undefined} style={props.style}>
-      {kids.text()}
-    </Text>
-  );
-}
-
 /** A panel's title; a string child is `Text` (give it the app's type with `style`). */
 export function PopoverTitle(props: PopoverTitleProps) {
-  return <PanelText {...props} />;
+  return (
+    <AsText class={props.class ?? undefined} style={props.style}>
+      {props.children}
+    </AsText>
+  );
 }
 
 /** A panel's text under the title; as `PopoverTitle`. */
 export function PopoverDescription(props: PopoverDescriptionProps) {
-  return <PanelText {...props} />;
+  return (
+    <AsText class={props.class ?? undefined} style={props.style}>
+      {props.children}
+    </AsText>
+  );
 }

@@ -15,7 +15,7 @@ test("a message scroller opens at its newest message", async () => {
 test("a new message follows the end while the reader is there", async () => {
   const app = await open("./message-scroller.fixture.tsx");
   await app.wait(50);
-  await app.press("label:Send");
+  await app.press("role:button[Send]");
   await app.waitFor("text:turns=9");
   await app.wait(80);
   expect(app.texts()).toContain("Turn 9");
@@ -28,7 +28,7 @@ test("a new message leaves a reader who scrolled up where they were", async () =
   await app.wait(50);
   const before = offset(app);
   expect(before).toBeLessThan(240);
-  await app.press("label:Send");
+  await app.press("role:button[Send]");
   await app.waitFor("text:turns=9");
   await app.wait(80);
   expect(offset(app)).toBe(before);
@@ -51,7 +51,7 @@ test("a command scrolls to a message by its key", async () => {
   const app = await open("./message-scroller.fixture.tsx");
   await app.wait(50);
   expect(offset(app)).toBeGreaterThan(240);
-  await app.press("label:Jump to 2");
+  await app.press("role:button[Jump to 2]");
   await app.wait(150);
   expect(offset(app)).toBeLessThan(240);
   expect(app.texts()).toContain("Turn 1");

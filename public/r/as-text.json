@@ -1,0 +1,14 @@
+{
+  "name": "as-text",
+  "type": "registry:lib",
+  "title": "As text",
+  "description": "A control's children drawn as its text: a string or number child in a Text, anything else as it is, where the control draws them.",
+  "files": [
+    {
+      "path": "packages/ui/lib/as-text.tsx",
+      "type": "registry:lib",
+      "target": "lib/as-text.tsx",
+      "content": "// A control's children drawn as its text, where the control draws them. This library's own: no\n// upstream file holds it, so there is no port region. Yours to change.\nimport type { JSX, StyleProp, TextStyle } from \"nsh\";\nimport { Text } from \"nsh\";\n\n/** What `AsText` takes: the `Text` a string child draws in, its class and its style. */\nexport type AsTextProps = {\n  class?: string;\n  style?: StyleProp<TextStyle>;\n  children?: string | number | JSX.Element;\n};\n\n/**\n * A control's children, drawn as its text: a string or number child is a `Text`, and anything\n * else is drawn as it is — an element the control lays out itself, or a child that changes, which\n * arrives as a getter the renderer follows. A component, so its props are getters, read where\n * they are applied: place it where the children are drawn, `<AsText style={look()}>{props.children}</AsText>`,\n * and the one read of `props.children` is the child position — a look in `style` is re-read on\n * every style the `Text` applies, and a child that reads a signal updates where it is drawn\n * (`references/nsh/website/docs/jsx-and-components.md`, \"read it once, in the place where the\n * children go\"). A control hands screen readers its name through `accessibilityLabel`; a view\n * with none is read as the texts inside it, which is what the children drawn here say.\n */\nexport function AsText(props: AsTextProps) {\n  return (\n    <>\n      {(() => {\n        // Read once, here where the children are drawn: a string is the text, anything else as\n        // it is.\n        const kids = props.children;\n        return typeof kids === \"string\" || typeof kids === \"number\" ? (\n          <Text class={props.class} style={props.style}>\n            {kids}\n          </Text>\n        ) : (\n          kids\n        );\n      })()}\n    </>\n  );\n}\n"
+    }
+  ]
+}

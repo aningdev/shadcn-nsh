@@ -3,12 +3,12 @@
 // names follow shadcn/ui, the frame is the field's own look. Yours to change.
 import { colors, terminal, TERMINAL_COLUMN } from "@shadcn-nsh/theme";
 import type { InputRef, InputStyle, JSX, Signal, TextStyle, ViewProps, ViewStyle } from "nsh";
-import { context, signal, split, Text, View } from "nsh";
+import { context, signal, split, View } from "nsh";
 import { Input as BaseInput, type InputProps as BaseInputProps } from "nsh/base";
 
 import { Button, buttonSizes, type ButtonProps, type ButtonSize } from "./button";
 import { fieldLook, fieldSize, fieldText } from "./input";
-import { childrenOf } from "./lib/children";
+import { AsText } from "./lib/as-text";
 import { type Live, read } from "./lib/utils";
 
 /** Options of `inputGroupLook`. */
@@ -294,10 +294,9 @@ export type InputGroupTextProps = Omit<ViewProps, "children"> & {
 export function InputGroupText(props: InputGroupTextProps) {
   const look = inputGroupTextLook();
   const [, rest] = split(props, ["style", "ref", "children"]);
-  const kids = childrenOf(props);
   return (
     <View {...rest} style={[look.style, props.style ?? null]}>
-      {kids.text() !== undefined ? <Text style={look.label}>{kids.text()}</Text> : kids.content()}
+      <AsText style={look.label}>{props.children}</AsText>
     </View>
   );
 }

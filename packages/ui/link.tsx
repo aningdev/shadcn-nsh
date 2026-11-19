@@ -6,9 +6,7 @@ import type { JSX, ViewStyle } from "nsh";
 import { platform, split, Text, token, View } from "nsh";
 import { Link as BaseLink, type LinkProps as BaseLinkProps } from "nsh/base";
 
-import { childrenOf } from "./lib/children";
 import { Icon } from "./lib/icons";
-import { type Live } from "./lib/utils";
 
 // @port look/nav.tsx
 const pointer = platform.desktop;
@@ -71,12 +69,7 @@ export function linkLook(o?: { inline?: boolean }) {
  * which nudges out of its box under the pointer.
  */
 export function LinkText(
-  props: LinkState & {
-    label: Live<string | undefined>;
-    color: string;
-    size?: number;
-    icon?: boolean;
-  },
+  props: LinkState & { label: string; color: string; size?: number; icon?: boolean },
 ) {
   const size = () => props.size ?? linkSize;
   return (
@@ -130,8 +123,8 @@ export type LinkProps = Omit<BaseLinkProps, "children"> & {
   inline?: boolean;
   /** External arrow after the label. */
   icon?: boolean;
-  /** A string is the label; anything else is drawn as given. A string label is also the link's
-   * name for screen readers, unless `accessibilityLabel` says otherwise. */
+  /** A string is the label; anything else is drawn as given. What the link draws is its name for
+   * screen readers, which `accessibilityLabel` says when the app gives one. */
   children?: string | JSX.Element;
 };
 
@@ -156,26 +149,29 @@ export function Link(props: LinkProps) {
     visited: props.visited,
     quiet: props.quiet,
   });
-  const kids = childrenOf(props);
   return (
     <BaseLink
       {...rest}
-      accessibilityLabel={kids.label()}
       class={props.class ? `${look().class} ${props.class}` : look().class}
       focusVisibleStyle={[look().focusVisibleStyle, props.focusVisibleStyle ?? null]}
     >
-      {kids.text() !== undefined ? (
-        <LinkText
-          label={kids.text}
-          color={linkColor(state())}
-          disabled={!!props.disabled}
-          current={props.current}
-          quiet={props.quiet}
-          icon={props.icon}
-        />
-      ) : (
-        kids.content()
-      )}
+      {(() => {
+        // Read once, here where the link is drawn (`marker.tsx` reads in the same shape): a
+        // string is `LinkText`, anything else as it is.
+        const kids = props.children;
+        return typeof kids === "string" ? (
+          <LinkText
+            label={kids}
+            color={linkColor(state())}
+            disabled={!!props.disabled}
+            current={props.current}
+            quiet={props.quiet}
+            icon={props.icon}
+          />
+        ) : (
+          kids
+        );
+      })()}
     </BaseLink>
   );
 }

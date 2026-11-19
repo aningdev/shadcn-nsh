@@ -3,9 +3,9 @@
 // region. Yours to change.
 import { colors } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
-import { split, Text, View } from "nsh";
+import { split, View } from "nsh";
 
-import { childrenOf } from "./lib/children";
+import { AsText } from "./lib/as-text";
 import { controlSize } from "./lib/surface";
 
 /** A label's look: the row it is (a control can sit before its text) and the type of its text. */
@@ -66,16 +66,15 @@ export type LabelProps = Omit<ViewProps, "children"> & {
  * it. Every `nsh` view prop passes through; `style` goes over the look's.
  *
  * It names nothing for screen readers: nsh has no `htmlFor` and no `labelledBy`, so give the
- * control beside it an `accessibilityLabel` — a `Checkbox` or a `TextField` reads it as its name,
- * and `lib/utils.ts`'s `labelOf` derives one from a string child where a component has one.
+ * control beside it an `accessibilityLabel`, which it reads as its name — a `Checkbox` or a
+ * `TextField` is also named by the texts it draws.
  */
 export function Label(props: LabelProps) {
   const [, rest] = split(props, ["children", "disabled", "style"]);
   const look = labelLook({ disabled: props.disabled });
-  const kids = childrenOf(props);
   return (
     <View {...rest} style={[look.root, props.style ?? null]}>
-      {kids.text() !== undefined ? <Text style={look.text}>{kids.text()}</Text> : kids.content()}
+      <AsText style={look.text}>{props.children}</AsText>
     </View>
   );
 }

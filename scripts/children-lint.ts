@@ -1,8 +1,9 @@
 /**
  * Children read once: each read of `props.children` builds the children again (new native views),
- * so a control reads them once — through `childrenOf` when it needs them for more than one thing.
- * Every component under `packages/ui` and `packages/ui/lib` is checked; the rule lives in
- * `scripts/children/rules.ts`.
+ * so a control reads them once, in the place where the children go — through `AsText`
+ * (`packages/ui/lib/as-text.tsx`), a component whose props are getters, where a string child is
+ * drawn as a `Text`. Every component under `packages/ui` and `packages/ui/lib` is checked; the
+ * rule lives in `scripts/children/rules.ts`.
  *
  *   bun scripts/children-lint.ts
  *
@@ -26,12 +27,13 @@ const problems = FILES.flatMap((file) => {
     if (problem.kind === "nested") {
       return (
         `${place}: \`${problem.where}\` reads its children inside a function, so each call reads ` +
-        `them again; read them once in the component's own body`
+        `them again; read them once in the component's own body (a \`children-lint:\` comment ` +
+        `sanctions the one place a read must sit there)`
       );
     }
     return (
       `${place}: \`${problem.where}\` reads its children ${problem.reads} times; read them once ` +
-      `and share it with \`childrenOf\` (packages/ui/lib/children.ts)`
+      `where they are drawn (docs/ARCHITECTURE.md)`
     );
   });
 });

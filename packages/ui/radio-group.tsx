@@ -12,7 +12,7 @@ import {
   rounded,
 } from "@shadcn-nsh/theme";
 import type { JSX, ViewStyle } from "nsh";
-import { reduceMotion, split, Text, View } from "nsh";
+import { reduceMotion, split, View } from "nsh";
 import {
   Radio as BaseRadio,
   RadioGroup as BaseRadioGroup,
@@ -21,7 +21,7 @@ import {
 } from "nsh/base";
 
 import { ChoiceLight, choiceScales, choiceSink, choiceWell, type ChoiceSize } from "./checkbox";
-import { childrenOf } from "./lib/children";
+import { AsText } from "./lib/as-text";
 import { pressSink } from "./lib/press";
 import { controlSize } from "./lib/surface";
 import { type Live, read } from "./lib/utils";
@@ -188,11 +188,9 @@ export function Radio(props: RadioProps) {
   const look = tile
     ? choiceTileLook(() => !!props.checked, { disabled: () => !!props.disabled })
     : undefined;
-  const kids = childrenOf(props);
   return (
     <BaseRadio
       {...rest}
-      accessibilityLabel={kids.label()}
       class={props.class ? `group ${props.class}` : "group"}
       style={[look?.style ?? null, props.style ?? null]}
       hoverStyle={[look?.hoverStyle ?? null, props.hoverStyle ?? null]}
@@ -203,12 +201,8 @@ export function Radio(props: RadioProps) {
       <If when={props.indicator ?? true}>
         <RadioRing on={!!props.checked} scale={scale} disabled={!!props.disabled} />
       </If>
-      {kids.text() !== undefined ? (
-        // The page's ink, read here so it follows the appearance: a bare Text is nsh's black.
-        <Text style={{ color: colors.foreground }}>{kids.text()}</Text>
-      ) : (
-        kids.content()
-      )}
+      {/* The page's ink, read here so it follows the appearance: a bare Text is nsh's black. */}
+      <AsText style={{ color: colors.foreground }}>{props.children}</AsText>
     </BaseRadio>
   );
 }

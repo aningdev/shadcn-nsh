@@ -69,7 +69,11 @@ function Item(props: {
 /** The rows behind "Share": a submenu, opened by its row. */
 function Share(props: { onSelect: (what: string) => void }) {
   return (
-    <Submenu offset={4} trigger={<SubmenuRow label="Share" />} back={<SubmenuBack label="Share" />}>
+    <Submenu
+      offset={4}
+      trigger={<SubmenuRow>Share</SubmenuRow>}
+      back={<SubmenuBack label="Share" />}
+    >
       <Item label="Mail" onSelect={() => props.onSelect("Mail")} />
       <Item label="Messages" onSelect={() => props.onSelect("Messages")} />
       <Item label="Copy link" onSelect={() => props.onSelect("Copy link")} />

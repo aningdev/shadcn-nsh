@@ -55,7 +55,7 @@ The page a link names is the one shown.
 
 ### Names for screen readers
 
-A string child is the link's name for screen readers too, so `<Link href="/docs">Documentation</Link>` needs nothing else; `accessibilityLabel` wins when the name should differ from the text. Children drawn as given derive no name.
+A string child is the link's name for screen readers too, so `<Link href="/docs">Documentation</Link>` needs nothing else; `accessibilityLabel` wins when the name should differ from the text. Children drawn as given are named by the texts inside them.
 
 ## API
 

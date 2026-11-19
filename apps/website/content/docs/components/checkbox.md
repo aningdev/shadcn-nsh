@@ -76,7 +76,7 @@ The look is a function, for a checkbox of your own.
 
 ### Names for screen readers
 
-A string child is the row's label and its name for screen readers, so the box and its text are one control to a reader; `accessibilityLabel` wins when it should differ. Children drawn as given derive no name.
+A string child is the row's label and its name for screen readers, so the box and its text are one control to a reader; `accessibilityLabel` wins when it should differ. Children drawn as given are named by the texts inside them.
 
 ## API
 

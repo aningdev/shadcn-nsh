@@ -12,7 +12,6 @@ import {
 } from "nsh/base";
 
 import { Button, type ButtonVariant } from "./button";
-import { childrenOf } from "./lib/children";
 import { createOpenState, type OpenState } from "./lib/open-state";
 
 /**
@@ -199,29 +198,37 @@ export function AlertDialog(props: AlertDialogProps) {
 export function AlertDialogTrigger(props: AlertDialogTriggerProps) {
   const ctx = useAlertDialog();
   const open = () => ctx.setOpen(true, "triggerPress");
-  const kids = childrenOf(props);
-  if (kids.text() !== undefined) {
-    return (
-      <Button
-        variant={props.variant ?? "secondary"}
-        disabled={props.disabled}
-        style={props.style}
-        onPress={open}
-      >
-        {kids.text()}
-      </Button>
-    );
-  }
   return (
-    <View
-      accessible
-      role="button"
-      accessibilityState={{ disabled: props.disabled }}
-      onPress={props.disabled ? undefined : open}
-      style={props.style}
-    >
-      {kids.content()}
-    </View>
+    <>
+      {(() => {
+        // Read once, here where the trigger is drawn (`marker.tsx` reads in the same shape): a
+        // string wears a `Button`, anything else presses where it lies.
+        const kids = props.children;
+        if (typeof kids === "string") {
+          return (
+            <Button
+              variant={props.variant ?? "secondary"}
+              disabled={props.disabled}
+              style={props.style}
+              onPress={open}
+            >
+              {kids}
+            </Button>
+          );
+        }
+        return (
+          <View
+            accessible
+            role="button"
+            accessibilityState={{ disabled: props.disabled }}
+            onPress={props.disabled ? undefined : open}
+            style={props.style}
+          >
+            {kids}
+          </View>
+        );
+      })()}
+    </>
   );
 }
 

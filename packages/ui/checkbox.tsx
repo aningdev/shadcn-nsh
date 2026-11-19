@@ -3,10 +3,10 @@
 import { alpha, colors, finish, follow, isDark, terminal, TERMINAL_ROW } from "@shadcn-nsh/theme";
 import { Check, Minus, type IconNode } from "lucide";
 import type { AnimatedValue, JSX, ViewStyle } from "nsh";
-import { split, Text, View } from "nsh";
+import { split, View } from "nsh";
 import { Checkbox as BaseCheckbox, type CheckboxProps as BaseCheckboxProps } from "nsh/base";
 
-import { childrenOf } from "./lib/children";
+import { AsText } from "./lib/as-text";
 import { Icon } from "./lib/icons";
 import { controlSize } from "./lib/surface";
 import { type Live, read } from "./lib/utils";
@@ -225,11 +225,9 @@ export function Checkbox(props: CheckboxProps) {
     disabled: () => !!props.disabled,
   };
   const look = checkboxLook(options);
-  const kids = childrenOf(props);
   return (
     <BaseCheckbox
       {...rest}
-      accessibilityLabel={kids.label()}
       class={props.class ? `group ${props.class}` : "group"}
       indicatorClass={
         props.indicatorClass
@@ -248,12 +246,8 @@ export function Checkbox(props: CheckboxProps) {
         )
       }
     >
-      {kids.text() !== undefined ? (
-        // The page's ink, read here so it follows the appearance: a bare Text is nsh's black.
-        <Text style={{ color: colors.foreground }}>{kids.text()}</Text>
-      ) : (
-        kids.content()
-      )}
+      {/* The page's ink, read here so it follows the appearance: a bare Text is nsh's black. */}
+      <AsText style={{ color: colors.foreground }}>{props.children}</AsText>
     </BaseCheckbox>
   );
 }

@@ -2,22 +2,15 @@ import { describe, expect, test } from "bun:test";
 
 import { violations } from "./rules";
 
-/** A component file: the helper is imported as the controls import it. */
-const file = (body: string) => `import { childrenOf } from "./lib/children";\n${body}`;
-
-const scan = (source: string) => violations(file(source), "probe.tsx");
+const scan = (source: string) => violations(source, "probe.tsx");
 const kinds = (source: string) => scan(source).map((v) => [v.kind, v.where, v.reads]);
 
 describe("children rules", () => {
   test("one read is enough", () => {
     expect(
       scan(`export function Button(props: P) {
-        const kids = childrenOf(props);
-        return (
-          <View a={kids.label()}>
-            {kids.text() !== undefined ? <Text>{kids.text()}</Text> : kids.content()}
-          </View>
-        );
+        const kids = props.children;
+        return <View a={typeof kids === "string" ? kids : undefined}><AsText>{kids}</AsText></View>;
       }`),
     ).toEqual([]);
   });
@@ -31,7 +24,7 @@ describe("children rules", () => {
   test("three reads are reported once, with the count", () => {
     expect(
       kinds(`export function Button(props: P) {
-        return <View a={labelOf(props.accessibilityLabel, props.children)}>
+        return <View a={props.accessibilityLabel ?? props.children}>
           {typeof props.children === "string" ? <Text>{props.children}</Text> : props.children}
         </View>;
       }`),
@@ -52,50 +45,47 @@ describe("children rules", () => {
       scan(`export function Marker(props: P) {
         return <MarkerContext.Provider value={variant()}>
           {(() => {
-            const kids = childrenOf(props);
-            return kids.text() !== undefined ? <Text>{kids.text()}</Text> : kids.content();
+            const kids = props.children;
+            return typeof kids === "string" ? <Text style={look.label}>{kids}</Text> : kids;
           })()}
         </MarkerContext.Provider>;
       }`),
     ).toEqual([]);
   });
 
-  test("the helper called twice is reported", () => {
-    expect(
-      kinds(`export function Button(props: P) {
-        const kids = childrenOf(props);
-        const other = childrenOf(props);
-        return <View a={kids.label()}>{kids.content()}{other.content()}</View>;
-      }`),
-    ).toEqual([["count", "Button", 2]]);
-  });
-
-  test("one use of the helper's result passes, bound or not", () => {
+  test("a forward to AsText in the child position is the component's one read", () => {
     expect(
       scan(`export function Button(props: P) {
-        const label = childrenOf(props).label;
-        return <View a={label()} />;
+        return (
+          <BaseButton>
+            <AsText style={buttonLabel()}>{props.children}</AsText>
+          </BaseButton>
+        );
       }`),
     ).toEqual([]);
   });
 
-  test("the helper called inside a callback reads again on each call", () => {
+  test("AsText itself reads once, in its own child position", () => {
     expect(
-      kinds(`export function Button(props: P) {
-        return <View onPress={() => childrenOf(props).label()} />;
+      scan(`export function AsText(props: P) {
+        return (
+          <>
+            {(() => {
+              const kids = props.children;
+              return typeof kids === "string" ? <Text>{kids}</Text> : kids;
+            })()}
+          </>
+        );
       }`),
-    ).toEqual([["nested", "Button", 1]]);
+    ).toEqual([]);
   });
 
-  test("an aliased helper is the same helper", () => {
+  test("a read in a callback kept for later is reported", () => {
     expect(
-      kinds(`import { childrenOf as kids } from "./lib/children";
-      export function Button(props: P) {
-        const one = childrenOf(props);
-        const two = kids(props);
-        return <View a={one.label()}>{one.content()}{two.content()}</View>;
+      kinds(`export function Button(props: P) {
+        return <View onPress={() => draw(props.children)} />;
       }`),
-    ).toEqual([["count", "Button", 2]]);
+    ).toEqual([["nested", "Button", 1]]);
   });
 
   test("a sanctioned read in a portal's content builder is one read", () => {
@@ -110,25 +100,6 @@ describe("children rules", () => {
           )}
         </BasePopover>;
       }`),
-    ).toEqual([]);
-  });
-
-  test("a sanctioned read is still the one read", () => {
-    expect(
-      kinds(
-        `export function PopoverContent(props: P) {
-        return <BasePopover>
-          {() => (
-            <PopIn>
-              {/* children-lint: the panel's contents, built when it opens, not before. */}
-              {props.children}
-            </PopIn>
-          )}
-        </BasePopover>;
-      }` +
-          `
-export function Other(props: P) { return <View>{props.children}</View>; }`,
-      ),
     ).toEqual([]);
   });
 
@@ -157,28 +128,6 @@ export function Other(props: P) { return <View>{props.children}</View>; }`,
         return <View>{props.children}</View>;
       }`),
     ).toEqual([]);
-  });
-
-  test("the helper's accessors are not reads, however often they are called", () => {
-    expect(
-      scan(`export function Item(props: P) {
-        const kids = childrenOf(props);
-        return <View a={kids.label()}>
-          {kids.text() !== undefined ? <Text>{kids.text()}</Text> : kids.content()}
-          {kids.content()}
-          {kids.label()}
-        </View>;
-      }`),
-    ).toEqual([]);
-  });
-
-  test("a second read beside the helper is still a violation", () => {
-    expect(
-      kinds(`export function Item(props: P) {
-        const kids = childrenOf(props);
-        return <View a={kids.label()}>{props.children}</View>;
-      }`),
-    ).toEqual([["count", "Item", 2]]);
   });
 
   test("children of something else are not the component's children", () => {

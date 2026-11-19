@@ -25,7 +25,6 @@ import {
 
 import { Button, type ButtonVariant } from "./button";
 import { edgeClass } from "./input";
-import { childrenOf } from "./lib/children";
 import { Icon } from "./lib/icons";
 import {
   Chevron,
@@ -329,8 +328,8 @@ export type ComboboxLabelProps = {
 type ComboboxContextValue = OpenState & {
   items: ItemRegistry<SelectItemData>;
   trigger: Slot<JSX.Element>;
-  chips: Slot<JSX.Element>;
-  empty: Slot<JSX.Element>;
+  chips: Slot<() => JSX.Element>;
+  empty: Slot<() => JSX.Element>;
   value: () => string[];
   change: (event: { value: string[] }) => void;
   /** The input's text: the chosen titles, or the root's placeholder. */
@@ -366,8 +365,8 @@ function promptOf(ctx: ComboboxContextValue): string {
 
 /** The toggle the base root draws: the app's `ComboboxTrigger`, or a `ComboToggle`. */
 function triggerOf(ctx: ComboboxContextValue): JSX.Element {
-  const build = ctx.trigger.get();
-  if (build) return build() as JSX.Element;
+  const trigger = ctx.trigger.get();
+  if (trigger) return trigger;
   return <ComboToggle open={ctx.open()} />;
 }
 
@@ -376,8 +375,8 @@ export function Combobox(props: ComboboxProps) {
   const state = createOpenState<OpenChangeReason>(props);
   const items = createItemRegistry<SelectItemData>([]);
   const trigger = createSlot<JSX.Element>();
-  const chips = createSlot<JSX.Element>();
-  const empty = createSlot<JSX.Element>();
+  const chips = createSlot<() => JSX.Element>();
+  const empty = createSlot<() => JSX.Element>();
   const picked = signal(false);
   const chosen = signal<string[]>([]);
   const value = () => {
@@ -414,25 +413,25 @@ export function Combobox(props: ComboboxProps) {
  */
 export function ComboboxTrigger(props: ComboboxTriggerProps) {
   const ctx = useCombobox();
-  // Read here, not in the thunk below: the content draws the trigger through it each time it lays
-  // out, and a read there would build the children again on every draw.
-  const kids = childrenOf(props);
-  ctx.trigger.set(() => {
-    const disabled = props.disabled ?? ctx.root.disabled;
-    if (kids.text() !== undefined) {
-      return (
-        <Button
-          variant={props.variant ?? "secondary"}
-          disabled={disabled}
-          testID={props.testID}
-          style={props.style}
-        >
-          {kids.text()}
-        </Button>
-      );
-    }
-    return kids.content() ?? <ComboToggle open={ctx.open()} id={props.testID} />;
-  });
+  // The trigger is an element, as an app hands one to `nsh/base` (`trigger={<View …>}`, the shape
+  // upstream's demos use): built once, here, and placed by the field without building it again
+  // on every layout. The kind is read once, here — it picks the host, and never changes; a
+  // string child is read where it is drawn (the `Button`'s own read, through the spread's getter,
+  // so a child that reads a signal stays live), and an element is handed as it is.
+  const kids = props.children;
+  const disabled = props.disabled ?? ctx.root.disabled;
+  ctx.trigger.set(
+    typeof kids === "string" ? (
+      <Button
+        {...props}
+        variant={props.variant ?? "secondary"}
+        disabled={disabled}
+        testID={props.testID}
+      />
+    ) : (
+      (kids ?? <ComboToggle open={ctx.open()} id={props.testID} />)
+    ),
+  );
   return null;
 }
 
