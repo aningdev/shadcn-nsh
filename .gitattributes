@@ -1,0 +1,2 @@
+# Parallel PRs each add an entry under ## Unreleased: keep both sides on merge or rebase.
+CHANGELOG.md merge=union
