@@ -75,6 +75,11 @@ jobs:
         with:
           nsh-channel: ${{ vars.NSH_CHANNEL }}
 
+      # The `.nsh` types hosts (gitignored) that the type check behind `vp check` resolves `nsh`
+      # and `nsh/base` from, as `bun run nsh:bootstrap` makes them locally.
+      - name: Generate the types hosts
+        run: bun run prepare:types
+
       # Format and lint, without `--fix`: CI reports what `bun run check` would change.
       - name: Format and lint
         run: bunx vp check
