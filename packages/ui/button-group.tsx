@@ -57,12 +57,12 @@ export function buttonGroupLook(): ButtonGroupLook {
       return {
         ...(before
           ? horizontal
-            ? { borderTopLeftRadius: 0, borderBottomLeftRadius: 0, borderLeftWidth: 0 }
+            ? { borderTopStartRadius: 0, borderBottomStartRadius: 0, borderStartWidth: 0 }
             : { borderTopLeftRadius: 0, borderTopRightRadius: 0, borderTopWidth: 0 }
           : {}),
         ...(after
           ? horizontal
-            ? { borderTopRightRadius: 0, borderBottomRightRadius: 0, borderRightWidth: 0 }
+            ? { borderTopEndRadius: 0, borderBottomEndRadius: 0, borderEndWidth: 0 }
             : { borderBottomLeftRadius: 0, borderBottomRightRadius: 0, borderBottomWidth: 0 }
           : {}),
       };

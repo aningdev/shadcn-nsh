@@ -181,6 +181,24 @@ function App() {
               </Turn>
             </Bubbles>
           </DemoSection>
+
+          <DemoSection title="Right to left" axis="block">
+            {/* In an RTL column the start is the right and the end the left: the turns and their reactions swap sides. */}
+            <View style={{ direction: "rtl", width: "100%", gap: 8 }}>
+              <View style={bubbleLook().group}>
+                <Bubbles variant="muted">
+                  <Turn variant="muted">Incoming: the start, on the right.</Turn>
+                </Bubbles>
+                <Bubbles variant="muted">
+                  <Turn variant="muted">A second incoming turn.</Turn>
+                  <Reactions label="Reaction: thumbs up">👍</Reactions>
+                </Bubbles>
+              </View>
+              <Bubbles variant="default" align="end">
+                <Turn variant="default">Outgoing: the end, on the left.</Turn>
+              </Bubbles>
+            </View>
+          </DemoSection>
         </DemoCard>
       </Split>
     </DemoPage>

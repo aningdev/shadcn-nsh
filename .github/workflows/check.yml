@@ -90,6 +90,9 @@ jobs:
       - name: Theme roles
         run: bun run check:theme
 
+      - name: Right-to-left sides
+        run: bun run check:rtl
+
       # The port's gate: map complete, `// @port` regions equal to upstream, the
       # installed CLI against the baseline (docs/ARCHITECTURE.md P1–P3).
       - name: Port check

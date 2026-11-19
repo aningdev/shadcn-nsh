@@ -61,6 +61,8 @@ export function Meter(props: MeterProps) {
         <View
           style={{
             position: "absolute",
+            // physical: the fill is a full-width bar slid by a translate, which keeps the physical left; the
+            // marker reads against that fill rather than the reading direction.
             left: `${(props.marker ?? 0) * 100}%`,
             // A 2 × 12 hairline, standing past the rail on both sides.
             top: -4,

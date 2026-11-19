@@ -177,7 +177,7 @@ export function attachmentLook(): AttachmentLook {
       gap: 4,
       flexShrink: 0,
       zIndex: 20,
-      ...(orientation === "vertical" ? { position: "absolute", top: 12, right: 12 } : {}),
+      ...(orientation === "vertical" ? { position: "absolute", top: 12, end: 12 } : {}),
     }),
     get trigger(): ViewStyle {
       return {

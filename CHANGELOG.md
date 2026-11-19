@@ -31,6 +31,11 @@
 
 ### Fixed
 
+- **Components mirror under right-to-left layout (#39).** A side that is not the same on both
+  sides — padding, margin, border, corner radius, an offset — now uses NSH's start/end form, so
+  `direction: "rtl"` moves it to the reading side. A symmetric pair (`left: 0, right: 0`) and an
+  object marked `// physical: <why>` (a switch's knob, a screen-anchored popup) keep their side,
+  and `bun run check` flags any new left/right side without a marker.
 - **The message scroller's start button goes to the top, and the ends are exact (#31).** The
   button revealed the content's end in both directions, so `direction="start"` went to the newest
   message, and a padded `contentStyle` left the end short; the ends now move the scroll view, and

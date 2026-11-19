@@ -54,7 +54,12 @@ export function popupSurface(): ViewStyle {
   );
 }
 
-/** Where a popup grows from: the edge that faces its trigger. */
+/**
+ * Where a popup grows from: the edge that faces its trigger. The keys are `PopupSide`s (the
+ * measured side of the trigger on screen), so the sides stay physical.
+ *
+ * physical: the side is measured from the screen, not the reading direction.
+ */
 const origins: Record<PopupSide, string> = {
   bottom: "top",
   top: "bottom",

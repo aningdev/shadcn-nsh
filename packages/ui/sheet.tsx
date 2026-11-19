@@ -72,6 +72,7 @@ export function sheetPanel(side: SheetSide): ViewStyle {
     paddingBottom: safeArea().bottom + 16,
     gap: 16,
     ...cornerCurve,
+    // physical: `side` is the window edge the sheet stands on, so its inner edge (the border and the corners) is physical too.
     ...(side === "right"
       ? {
           borderLeftWidth: 1,

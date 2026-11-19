@@ -209,14 +209,14 @@ function Day(props: { item: CalendarEntry; firstDayOfWeek?: number }) {
       <View style={{ height: cell, alignItems: "center", justifyContent: "center" }}>
         <View
           class={
-            `absolute inset-y-0 right-0 left-0 hidden ${quietFill} group-data-range-middle:flex group-data-range-start:left-1/2 group-data-range-start:flex ` +
-            "group-data-range-end:right-1/2 group-data-range-end:flex group-data-range-start:group-data-range-end:hidden"
+            `absolute inset-y-0 start-0 end-0 hidden ${quietFill} group-data-range-middle:flex group-data-range-start:start-1/2 group-data-range-start:flex ` +
+            "group-data-range-end:end-1/2 group-data-range-end:flex group-data-range-start:group-data-range-end:hidden"
           }
           style={{
-            borderTopLeftRadius: column() === 0 ? cellRadius() : 0,
-            borderBottomLeftRadius: column() === 0 ? cellRadius() : 0,
-            borderTopRightRadius: column() === 6 ? cellRadius() : 0,
-            borderBottomRightRadius: column() === 6 ? cellRadius() : 0,
+            borderTopStartRadius: column() === 0 ? cellRadius() : 0,
+            borderBottomStartRadius: column() === 0 ? cellRadius() : 0,
+            borderTopEndRadius: column() === 6 ? cellRadius() : 0,
+            borderBottomEndRadius: column() === 6 ? cellRadius() : 0,
             ...cornerCurve,
           }}
         />
@@ -349,8 +349,8 @@ export const calendarLook = {
       return {
         gap: 2,
         minWidth: 110,
-        paddingRight: 10,
-        borderRightWidth: 1,
+        paddingEnd: 10,
+        borderEndWidth: 1,
         borderColor: colors.border,
       };
     // With a pointer a column of small ghost buttons beside the calendar, its first level with the header, parted
@@ -359,8 +359,8 @@ export const calendarLook = {
       ? {
           gap: 2,
           paddingTop: 8,
-          paddingRight: 8,
-          borderRightWidth: 1,
+          paddingEnd: 8,
+          borderEndWidth: 1,
           borderColor: alpha(colors.text, 0.1),
         }
       : { flexDirection: "row", flexWrap: "wrap", gap: 6 };

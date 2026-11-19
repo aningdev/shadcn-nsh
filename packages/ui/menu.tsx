@@ -615,10 +615,10 @@ export function MenuSeparator(props: MenuSeparatorProps = {}) {
 /** The shortcut shown at a row's trailing edge. */
 export function MenuShortcut(props: MenuShortcutProps) {
   if (typeof props.children !== "string" && props.children != null) {
-    return <View style={[{ marginLeft: "auto" }, props.style ?? null]}>{props.children}</View>;
+    return <View style={[{ marginStart: "auto" }, props.style ?? null]}>{props.children}</View>;
   }
   return (
-    <Text style={[menuItemNote(), { marginLeft: "auto" }, props.style ?? null]}>
+    <Text style={[menuItemNote(), { marginStart: "auto" }, props.style ?? null]}>
       {props.children}
     </Text>
   );

@@ -194,8 +194,8 @@ function joinedText(o?: { width?: number }): InputStyle {
     ...(o?.width ? { width: o.width } : { flex: 1 }),
     minWidth: 0,
     alignSelf: "stretch",
-    paddingLeft: terminal ? 0 : 8,
-    paddingRight: terminal ? 0 : 4,
+    paddingStart: terminal ? 0 : 8,
+    paddingEnd: terminal ? 0 : 4,
     fontVariant: ["tabular-nums"],
   } as InputStyle;
 }
@@ -211,8 +211,8 @@ function FormatButton(props: { label: string }) {
         alignSelf: "center",
         gap: 2,
         height: terminal ? TERMINAL_ROW : fieldSize.height - 10,
-        marginLeft: terminal ? 0 : 4,
-        marginRight: terminal ? TERMINAL_COLUMN : 4,
+        marginStart: terminal ? 0 : 4,
+        marginEnd: terminal ? TERMINAL_COLUMN : 4,
         paddingHorizontal: terminal ? 0 : 6,
         ...rounded(Math.max(radius.control - 3, 2)),
       }}
@@ -317,19 +317,19 @@ export function ColorFields(props: ColorFieldsProps) {
           <ColorField
             channel="alpha"
             accessibilityLabel={`${props.name} opacity value`}
-            // Right-aligned against its suffix, as a number before its unit (a class: the field's style is a view's).
-            class="text-right"
+            // Aligned against its suffix, as a number before its unit (a class: the field's style is a view's).
+            class="text-end"
             style={{
               ...joinedText({ width: terminal ? 3 * TERMINAL_COLUMN : 40 }),
-              paddingRight: 0,
+              paddingEnd: 0,
             }}
           />
           {/* Percent, as a field's suffix: quiet text inside the well after the number. */}
           <Text
             style={{
               alignSelf: "center",
-              paddingLeft: terminal ? 0 : 2,
-              paddingRight: terminal ? 0 : 8,
+              paddingStart: terminal ? 0 : 2,
+              paddingEnd: terminal ? 0 : 8,
               fontSize: fieldSize.font,
               color: colors.muted,
             }}

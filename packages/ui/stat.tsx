@@ -39,7 +39,7 @@ export function Stat(props: {
           color: valueColor(),
           fontVariant: ["tabular-nums"],
           numberOfLines: props.truncate ? 1 : undefined,
-          paddingRight: props.truncate && !terminal ? 8 : undefined,
+          paddingEnd: props.truncate && !terminal ? 8 : undefined,
         }}
       >
         {props.value}

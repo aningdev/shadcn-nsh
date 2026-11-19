@@ -91,6 +91,7 @@ export function switchLook(on: () => boolean, size: SwitchSize = "default"): Swi
     get thumbStyle(): ViewStyle {
       return {
         position: "absolute",
+        // physical: the knob's travel is a translateX from the track's left edge, and transforms do not mirror.
         left: g.inset,
         top: g.inset,
         width: g.knob,

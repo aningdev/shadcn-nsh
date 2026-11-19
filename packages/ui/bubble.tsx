@@ -167,7 +167,7 @@ export function bubbleLook(): BubbleLook {
       boxShadow: `0 0 0 3px ${colors.surface}`,
       ...(side === "bottom" ? { bottom: 0 } : { top: 0 }),
       translate: [0, side === "bottom" ? reactionsOverlap : `-${reactionsOverlap}`],
-      ...(align === "end" ? { right: reactionsInset } : { left: reactionsInset }),
+      ...(align === "end" ? { end: reactionsInset } : { start: reactionsInset }),
     }),
     get reactionText(): TextStyle {
       return { fontSize: density.body, color: colors.text };

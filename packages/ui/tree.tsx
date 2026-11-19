@@ -121,7 +121,7 @@ function TerminalTreeRow(props: { entry: TreeEntry; detail?: string }) {
         {props.entry.label}
       </Text>
       {props.detail ? (
-        <Text style={{ marginLeft: TERMINAL_GAP, color: colors.faint }}>{props.detail}</Text>
+        <Text style={{ marginStart: TERMINAL_GAP, color: colors.faint }}>{props.detail}</Text>
       ) : null}
     </View>
   );

@@ -144,7 +144,7 @@ export function clearButtonLook(o?: ClearButtonOptions) {
         ? {
             position: "absolute" as const,
             top: (controlSize.line - controlSize.clear) / 2,
-            right: clearInset,
+            end: clearInset,
             width: controlSize.clear,
             height: controlSize.clear,
           }

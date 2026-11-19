@@ -82,8 +82,8 @@ export function comboboxLook(open: Live<boolean>, o?: ComboboxLookOptions) {
           : { alignSelf: "stretch" }),
         minHeight: controlSize.line,
         // The query starts where a select's title does, and stops 4 points short of the toggle.
-        paddingLeft: 10,
-        paddingRight: 4,
+        paddingStart: 10,
+        paddingEnd: 4,
         ...rounded(radius.control),
         borderWidth: 1,
         backgroundColor: colors.field,
@@ -202,7 +202,7 @@ export function chipsLook(): ViewStyle {
     flexShrink: 1,
     minWidth: 0,
     paddingVertical: 3,
-    paddingRight: 6,
+    paddingEnd: 6,
   };
 }
 // @port end

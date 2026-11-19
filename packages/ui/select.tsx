@@ -107,10 +107,10 @@ export function pickerLook(o?: PickerLookOptions) {
         minWidth: pointer ? minTriggerWidth : undefined,
         // With a pointer its title truncates before a row's label is squeezed.
         flexShrink: pointer ? 1 : undefined,
-        paddingLeft: triggerPadding,
+        paddingStart: triggerPadding,
         // Room for the clear button, which goes over the trigger's end in place of the chevron. In the terminal the
         // select's own marks go over the end, each in a slot of three Cells: ` ▾ `, or ` ×  ▾ `.
-        paddingRight: terminal
+        paddingEnd: terminal
           ? (clearable ? 6 : 3) * TERMINAL_COLUMN
           : clearable
             ? clearInset + controlSize.clear + 8

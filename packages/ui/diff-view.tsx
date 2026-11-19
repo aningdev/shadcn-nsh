@@ -148,6 +148,8 @@ export function DiffHunkActions(props: {
           : {
               flexDirection: "row",
               gap: 4,
+              // physical: `nsh/base`'s DiffView anchors the actions at the row's right and keeps its free room
+              // there, and the fade below is a 90deg gradient; both would need the base to mirror first.
               paddingLeft: 16,
               paddingRight: 4 + diffPad,
               marginRight: -diffPad,

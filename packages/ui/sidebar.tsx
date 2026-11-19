@@ -288,7 +288,8 @@ export function sidebarLook(o?: SidebarLookOptions): SidebarLook {
         backgroundColor: colors.sidebar,
         borderColor: colors.sidebarBorder,
         ...(flat
-          ? side() === "left"
+          ? // physical: the column's side is the window edge it stands on; the edge that faces the page keeps the hairline in either direction.
+            side() === "left"
             ? { borderRightWidth: 1 }
             : { borderLeftWidth: 1 }
           : {
@@ -308,6 +309,7 @@ export function sidebarLook(o?: SidebarLookOptions): SidebarLook {
         ...(card()
           ? {
               margin: sidebarSize.frame,
+              // physical: the frame's air goes on the page-facing side, whichever window edge the column stands on.
               ...(side() === "left" ? { marginLeft: 0 } : { marginRight: 0 }),
               borderWidth: 1,
               borderColor: colors.line,
@@ -327,6 +329,7 @@ export function sidebarLook(o?: SidebarLookOptions): SidebarLook {
         zIndex: 20,
         alignItems: "center",
         cursor: side() === "left" ? "e-resize" : "w-resize",
+        // physical: the rail is the drag edge between the column and the page, on the column's inner side.
         ...(side() === "left" ? { right: 0 } : { left: 0 }),
       };
     },
@@ -415,7 +418,7 @@ export function sidebarGroupLook(o?: SidebarFoldOptions) {
       return {
         position: "absolute",
         top: sidebarSize.padding + 6,
-        right: sidebarSize.padding + 4,
+        end: sidebarSize.padding + 4,
         width: sidebarSize.action,
         height: sidebarSize.action,
         alignItems: "center",
@@ -477,7 +480,7 @@ export function sidebarMenuButtonLook(o?: SidebarMenuButtonLookOptions) {
           ? { paddingHorizontal: size() === "lg" ? 0 : sidebarSize.padding }
           : {
               paddingHorizontal: sidebarSize.padding,
-              paddingRight: trailingRoom(read(o?.trailing)),
+              paddingEnd: trailingRoom(read(o?.trailing)),
             }),
         ...(read(o?.variant) === "outline"
           ? {
@@ -547,9 +550,7 @@ export function sidebarMenuActionLook(o?: SidebarMenuActionLookOptions) {
         alignItems: "center",
         justifyContent: "center",
         ...rounded(radius.control),
-        ...(read(o?.side) === "right"
-          ? { left: hasBadge(read(o?.trailing)) ? actionPastBadge : trailingInset }
-          : { right: hasBadge(read(o?.trailing)) ? actionPastBadge : trailingInset }),
+        end: hasBadge(read(o?.trailing)) ? actionPastBadge : trailingInset,
         display: folded(o) ? "none" : "flex",
       };
     },
@@ -583,7 +584,7 @@ export function sidebarMenuBadgeLook(o?: SidebarFoldOptions) {
         justifyContent: "center",
         paddingHorizontal: 4,
         ...rounded(radius.control),
-        ...(read(o?.side) === "right" ? { left: trailingInset } : { right: trailingInset }),
+        end: trailingInset,
         display: folded(o) ? "none" : "flex",
       };
     },
