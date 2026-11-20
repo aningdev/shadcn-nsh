@@ -383,6 +383,11 @@ function splitTriggerStyle(style: StyleProp<ViewStyle>): { layout: ViewStyle; lo
   if (flat.minWidth !== undefined) {
     layout.minWidth = flat.minWidth;
     look.minWidth = flat.minWidth;
+  } else if (flat.width !== undefined) {
+    // A width with no minWidth is the trigger's size. The look floors a trigger at 180, and that
+    // floor lives on the trigger, so a narrower width on the box alone lets the trigger spill
+    // past it. The same number (or 0, when the width is a percentage) overrides the floor.
+    look.minWidth = typeof flat.width === "number" ? flat.width : 0;
   }
   return { layout: layout as ViewStyle, look: look as ViewStyle };
 }

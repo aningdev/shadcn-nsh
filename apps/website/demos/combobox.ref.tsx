@@ -122,7 +122,7 @@ function App() {
                 style={{ fontSize: 13, color: ui().text }}
               >{`labels [${labels().join(", ")}]`}</Text>
               <Text style={{ fontSize: 13, color: ui().text }}>
-                {`assignee [${assignee().join(", ")}]`}
+                {`assignee ${assignee()[0] ?? "null"}`}
               </Text>
               <Text style={{ fontSize: 13, color: ui().text }}>
                 {`tags [${tags().join(", ")}]`}

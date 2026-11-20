@@ -20,7 +20,14 @@ import {
 import { keymap, mount, signal, Text, View } from "nsh";
 import { Command, type CommandItem, type CommandRef } from "nsh/base";
 
-import { CommandEmpty, CommandHeading, CommandRow, commandClasses } from "@/packages/ui/command";
+import {
+  CommandEmpty,
+  CommandHeading,
+  CommandRow,
+  commandClasses,
+  commandSearchBarStyle,
+  commandSearchStyle,
+} from "@/packages/ui/command";
 import { Icon } from "@/packages/ui/lib/icons";
 
 import { DemoPage } from "./kit";
@@ -138,7 +145,9 @@ function App() {
             searchAccessibilityLabel="Search commands"
             class={commandClasses.root}
             searchBarClass={commandClasses.searchBar}
+            searchBarStyle={commandSearchBarStyle()}
             searchClass={commandClasses.search}
+            searchStyle={commandSearchStyle()}
             listClass={commandClasses.list}
             itemClass={commandClasses.item}
             groupClass={commandClasses.group}

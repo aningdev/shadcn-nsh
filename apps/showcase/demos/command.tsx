@@ -1,9 +1,8 @@
 // Command: the official gallery's scene (`references/nsh/examples/gallery/demos/CommandDemo.tsx`)
-// with this library's parts. `nsh/base`'s Command owns the filtering (natively, by label and
+// with this library's `Command`. `nsh/base` still owns the filtering (natively, by label and
 // keywords), the sections, the highlight, the keyboard and what screen readers hear; its rows are
-// virtualized, so 5 000 files filter at every keystroke. Every part here is the library's:
-// `commandClasses` for the frame, the search bar and the rows' states, `CommandRow` for an icon,
-// the label and the shortcut's keys.
+// virtualized, so 5 000 files filter at every keystroke. The shell sets the search bar's row and
+// the placeholder color, and `CommandRow` draws an icon, the label and the shortcut's keys.
 import { colors, radius, terminal, TERMINAL_GAP } from "@shadcn-nsh/theme";
 import {
   Archive,
@@ -26,9 +25,15 @@ import {
 } from "lucide";
 import { keymap, platform, signal, Text, View } from "nsh";
 import { Button } from "nsh/base";
-import { Command, type CommandItem, type CommandRef } from "nsh/base";
 
-import { CommandEmpty, CommandHeading, CommandRow } from "@/packages/ui/command";
+import {
+  Command,
+  CommandEmpty,
+  CommandHeading,
+  CommandRow,
+  type CommandItem,
+  type CommandRef,
+} from "@/packages/ui/command";
 import { Dialog, DialogContent } from "@/packages/ui/dialog";
 import { fieldLook, fieldSize } from "@/packages/ui/input";
 import { Kbd } from "@/packages/ui/kbd";

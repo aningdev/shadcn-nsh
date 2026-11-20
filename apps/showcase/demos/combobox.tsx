@@ -182,7 +182,7 @@ function Row(props: { label: string; detail: string; first?: boolean; children: 
 export function ComboboxDemo() {
   const last = signal("—");
   const topics = signal<string[]>(["layout", "ios"]);
-  const reviewer = signal<string[]>([]);
+  const reviewer = signal<string | null>(null);
   const people = signal<string[]>([]);
   const labels = signal<string[]>(["bug"]);
   const made = signal<{ value: string; title: string; tone: Tone }[]>([]);
@@ -241,7 +241,7 @@ export function ComboboxDemo() {
                 last.set(`Topics: ${names(TOPICS, value).join(", ") || "none"}`);
               }}
             >
-              <ComboboxTrigger testID="topics" />
+              <ComboboxTrigger />
               <ComboboxContent items={TOPICS} accessibilityLabel="Topics" minWidth={220}>
                 <Each of={["Core", "Platforms"]}>
                   {(group) => (
@@ -266,10 +266,10 @@ export function ComboboxDemo() {
               placeholder="Nobody"
               onChange={({ value }) => {
                 reviewer.set(value);
-                last.set(`Reviewer: ${names(REVIEWERS, value)[0] ?? "none"}`);
+                last.set(`Reviewer: ${value ? (names(REVIEWERS, [value])[0] ?? "none") : "none"}`);
               }}
             >
-              <ComboboxTrigger testID="reviewer" />
+              <ComboboxTrigger />
               <ComboboxContent
                 accessibilityLabel="Reviewer"
                 minWidth={180}
@@ -300,7 +300,7 @@ export function ComboboxDemo() {
             }
             onChange={({ value }) => setPeople(value)}
           >
-            <ComboboxTrigger testID="assignees" />
+            <ComboboxTrigger />
             <ComboboxChips>
               {(value) => (
                 <ComboboxChip
@@ -378,7 +378,7 @@ export function ComboboxDemo() {
               if (!open) query.set("");
             }}
           >
-            <ComboboxTrigger testID="labels" />
+            <ComboboxTrigger />
             <ComboboxChips>
               {(value) => (
                 <ComboboxChip
@@ -428,15 +428,15 @@ export function ComboboxDemo() {
 
       <DemoCard title="Command list" subtitle="Grouped actions with icons and shortcuts">
         <Combobox
-          value={[]}
+          value={null}
           placeholder="Search commands…"
           onChange={({ value }) => {
-            if (!value.length) return;
-            ran.set(value[0]);
-            last.set(`Command: ${titleOf(COMMANDS, value[0])}`);
+            if (value == null) return;
+            ran.set(value);
+            last.set(`Command: ${titleOf(COMMANDS, value)}`);
           }}
         >
-          <ComboboxTrigger testID="commands" />
+          <ComboboxTrigger />
           <ComboboxContent
             accessibilityLabel="Command"
             minWidth={240}

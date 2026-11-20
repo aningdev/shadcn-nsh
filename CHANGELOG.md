@@ -34,6 +34,12 @@
 
 ### Changed
 
+- **Breaking:** **a combobox without `multiple` holds one value (#87).** As shadcn's combobox,
+  leaving `multiple` out makes `value` / `defaultValue` the chosen item or `null`
+  (`string | null`), and `onChange` receives `{ value: string | null }`; `multiple` keeps
+  `string[]`. An empty string is not a value. **To migrate:** a single-choice combobox drops its
+  array of one (`value={[id]}` → `value={id}`, `value[0]` → `value`); a several-choice one adds
+  `multiple`.
 - **Breaking:** **the rich editor is `rich-editor`, and its session comes from it (#105).** The
   component, demo and registry item were `editor`, next to `code-editor` — and the docs mixed the
   two up, the install line naming one and the page describing the other. `shadcn-nsh add
@@ -167,6 +173,18 @@
 
 ### Fixed
 
+- **A select trigger's `width` wins over the 180-point floor (#88).** A `width` on `SelectTrigger`'s
+  `style` used to size only the box around the trigger, so the look's `minWidth: 180` spilled a
+  narrower trigger past its parent. That width now sets the trigger's own minimum too (a percentage
+  width uses `minWidth: 0`).
+- **`sliderFill` places a run that starts past the rail, and a vertical slider can show its value (#89).**
+  `sliderFill(from, to)` sets the fill's edges when `from` is past the rail's start, in either
+  orientation, so a band can light from the middle to its value. A `from` at or below 0 still
+  leaves placement to nsh, and the ordinary slider's render is unchanged. `showValue` lays the
+  readout above a vertical rail.
+- **A command's search icon sits beside the field, and the placeholder stays readable (#98).**
+  The search bar's row and the field's text and placeholder color are set inline, so they hold
+  when `searchable` builds the bar after mount and on a dark card.
 - **A button group's joins show one hairline (#135).** `buttonGroupLook().item` used to drop the
   edge on both sides of a join, so a column of raised buttons showed a white seam (the lit top edge
   of the button below) instead of a line. Each join now keeps one edge, as shadcn's does, and in a

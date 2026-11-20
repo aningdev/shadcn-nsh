@@ -15,7 +15,14 @@ import {
   comboboxLook,
   listboxPopup,
   pickerLook,
+  sliderFill,
+  sliderLook,
 } from "../../../packages/ui";
+
+/** A style edge as the fixture prints it: the percentage, or `native` when the fill leaves it unset. */
+function edge(value: unknown): string {
+  return typeof value === "string" ? value : "native";
+}
 
 function popupChrome() {
   const p = listboxPopup();
@@ -27,7 +34,7 @@ function popupChrome() {
 
 function App() {
   const fruit = signal<string | null>(null);
-  const one = signal<string[]>([]);
+  const one = signal<string | null>(null);
   const tags = signal<string[]>([]);
   const tagged = signal<string[]>(["red"]);
   const locked = signal<string[]>(["blue"]);
@@ -62,7 +69,7 @@ function App() {
           <ComboboxItem value="vue">Vue</ComboboxItem>
         </ComboboxContent>
       </Combobox>
-      <Text>combo={one().join(",")}</Text>
+      <Text>combo={one() ?? ""}</Text>
       <Combobox
         multiple
         value={tags()}
@@ -109,6 +116,23 @@ function App() {
       <Text>
         combo-size={comboLook.style.height ?? comboLook.style.minHeight}|{rowH}
       </Text>
+      <View style={{ width: 96 }}>
+        <Select value="apple">
+          <SelectTrigger style={{ width: 96 }}>
+            <SelectValue placeholder="Fruit" />
+          </SelectTrigger>
+          <SelectContent accessibilityLabel="Narrow fruit">
+            <SelectItem value="apple">Narrow apple</SelectItem>
+          </SelectContent>
+        </Select>
+      </View>
+      <Combobox multiple value={["side"]}>
+        <ComboboxChip value="side">Side</ComboboxChip>
+        <ComboboxContent accessibilityLabel="Sibling">
+          <ComboboxItem value="side">Side</ComboboxItem>
+        </ComboboxContent>
+      </Combobox>
+      <Text>{`slider-fill=${edge(sliderFill(0.5, 0, true).bottom)}|${edge(sliderFill(0.5, 0, true).top)}|${edge(sliderFill(0, 0.4).left)}|${sliderLook({ vertical: true, value: true }).class ?? ""}`}</Text>
       <Text>popup={popupChrome()}</Text>
       <Select value="apple">
         <SelectTrigger>

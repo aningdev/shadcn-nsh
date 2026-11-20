@@ -110,8 +110,10 @@ padding) stays on the trigger itself.
 </View>
 ```
 
-With a pointer the trigger asks for 180 points at least (room for the list's rows); `minWidth: 0`
-lets a narrow row squeeze it, and its title ends in an ellipsis instead of overflowing.
+With a pointer the trigger asks for 180 points at least (room for the list's rows). A `width` on
+`style` is the trigger's size and wins over that floor, so `style={{ width: 120 }}` stays 120
+points inside its parent. `minWidth: 0` still lets a narrow row squeeze a trigger that has no
+width of its own, and its title ends in an ellipsis instead of overflowing.
 
 ### Uncontrolled
 
@@ -125,13 +127,13 @@ lets a narrow row squeeze it, and its title ends in an ellipsis instead of overf
 
 The root owns the open flag and the value; `SelectContent` mounts [`nsh/base` Select](https://nsh.dev/elements/select) and every base prop passes through except those. `listboxProps` and `OptionRow` fill the popup, the scrim and the rows by default.
 
-| Part              | Props                                                                                                                                               | Description                                                           |
-| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------- |
-| `Select`          | `value`, `defaultValue`, `open`, `defaultOpen`, `disabled`, `cleanable`, `placeholder`, `onChange`, `onOpenChange`, `onOpen`, `onClose`, `onCancel` | The root owns the open flag and the value                             |
-| `SelectTrigger`   | `icon`, `lead`, `invalid`, `variant`, `chevron`, `style`                                                                                            | A `Picker`; the layout keys on `style` place it where the app puts it |
-| `SelectValue`     | `placeholder`                                                                                                                                       | The placeholder while nothing is chosen                               |
-| `SelectContent`   | `items`, `minWidth`                                                                                                                                 | The list; `items` instead of `SelectItem` children                    |
-| `SelectItem`      | `value`, `disabled`, `group`                                                                                                                        | A string child is its title                                           |
-| `SelectGroup`     |                                                                                                                                                     | A section                                                             |
-| `SelectLabel`     |                                                                                                                                                     | The section's name                                                    |
-| `SelectSeparator` |                                                                                                                                                     | Nothing: base's list separates sections by their headers              |
+| Part              | Props                                                                                                                                               | Description                                                                                                               |
+| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `Select`          | `value`, `defaultValue`, `open`, `defaultOpen`, `disabled`, `cleanable`, `placeholder`, `onChange`, `onOpenChange`, `onOpen`, `onClose`, `onCancel` | The root owns the open flag and the value                                                                                 |
+| `SelectTrigger`   | `icon`, `lead`, `invalid`, `variant`, `chevron`, `style`                                                                                            | A `Picker`. The layout keys on `style` place it where the app puts it; a `width` there also overrides the 180-point floor |
+| `SelectValue`     | `placeholder`                                                                                                                                       | The placeholder while nothing is chosen                                                                                   |
+| `SelectContent`   | `items`, `minWidth`                                                                                                                                 | The list; `items` instead of `SelectItem` children                                                                        |
+| `SelectItem`      | `value`, `disabled`, `group`                                                                                                                        | A string child is its title                                                                                               |
+| `SelectGroup`     |                                                                                                                                                     | A section                                                                                                                 |
+| `SelectLabel`     |                                                                                                                                                     | The section's name                                                                                                        |
+| `SelectSeparator` |                                                                                                                                                     | Nothing: base's list separates sections by their headers                                                                  |

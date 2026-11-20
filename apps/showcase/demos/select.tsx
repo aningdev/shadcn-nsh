@@ -220,12 +220,6 @@ const titleOf = (items: { value: string; title: string }[], value: string | null
 
 /** The list widths: a fixed one with a pointer, the field's room on a phone. */
 const controlWidth = () => (narrowWindow() ? 168 : 200);
-/**
- * The width a trigger's box wears. The look asks for a `minWidth` of 180 (room for the list's rows), and a width
- * under it only squeezes the box, not the trigger: the trigger spills past the card's edge. So the least width goes
- * with the width, which is what the look's own floor reaches the trigger as.
- */
-const selectBox = (width: number) => ({ width, minWidth: width });
 
 /** A label and its control on one line, a hairline between the rows. */
 function Row(props: { label: string; detail: string; first?: boolean; children: JSX.Element }) {
@@ -345,7 +339,7 @@ export function SelectDemo() {
               }}
               onOpenChange={({ open }) => fontOpen.set(open)}
             >
-              <SelectTrigger style={selectBox(controlWidth())} />
+              <SelectTrigger style={{ width: controlWidth() }} />
               <SelectContent
                 accessibilityLabel="Font"
                 searchable
@@ -379,7 +373,7 @@ export function SelectDemo() {
           </Row>
           <Row label="Language" detail="Set by your organization">
             <Select value="en" disabled>
-              <SelectTrigger style={selectBox(controlWidth())} />
+              <SelectTrigger style={{ width: controlWidth() }} />
               <SelectContent accessibilityLabel="Language">
                 <Each of={LANGUAGES}>
                   {(item) => <SelectItem value={item().value}>{item().title}</SelectItem>}
@@ -436,7 +430,7 @@ export function SelectDemo() {
               }}
               onOpenChange={({ open }) => sortDownloadsOpen.set(open)}
             >
-              <SelectTrigger variant="outline" style={selectBox(180)} />
+              <SelectTrigger variant="outline" style={{ width: 180 }} />
               <SelectContent accessibilityLabel="Sort downloads" minWidth={180}>
                 <Each of={DOWNLOAD_SORTS}>
                   {(item) => <SelectItem value={item().value}>{item().title}</SelectItem>}

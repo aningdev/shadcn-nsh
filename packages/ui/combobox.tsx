@@ -213,13 +213,8 @@ export type ComboboxOpenChangeReason = OpenChangeReason;
 /** An option of the list (`items`): `nsh/base`'s `SelectItem`, under this part's name. */
 export type ComboboxSelectItem = SelectItemData;
 
-/** The root: it owns the open flag, the chosen values and the items its parts register. */
-export type ComboboxProps = {
-  /** The chosen items' values (controlled); leave it out and the root keeps them (`defaultValue`). */
-  value?: string[] | null;
-  defaultValue?: string[];
-  /** Several values: a choice toggles the item and the list stays open. */
-  multiple?: boolean;
+/** What every combobox root takes, apart from the value `multiple` decides. */
+type ComboboxSharedProps = {
   /** Controlled; leave it out and the root keeps the state (`defaultOpen`). */
   open?: boolean | null;
   defaultOpen?: boolean;
@@ -230,13 +225,41 @@ export type ComboboxProps = {
   /** The input's prompt while nothing is chosen. */
   placeholder?: string;
   children?: JSX.Element;
-  /** The user chose or toggled items: their values. */
-  onChange?: (event: { value: string[] }) => void;
   onOpenChange?: (event: { open: boolean; reason: ComboboxOpenChangeReason }) => void;
   onOpen?: () => void;
   onClose?: () => void;
   onCancel?: () => void;
 };
+
+/**
+ * One value, shadcn's combobox without `multiple`: `value` is the chosen item or `null`.
+ * An empty string is not a value.
+ */
+export type ComboboxSingleProps = ComboboxSharedProps & {
+  /** Leave it out (or `false`): one value, and a choice replaces it and closes the list. */
+  multiple?: false;
+  /** The chosen item (controlled); leave it out and the root keeps it (`defaultValue`). */
+  value?: string | null;
+  defaultValue?: string | null;
+  /** The user chose an item, or cleared it: the value, or `null`. */
+  onChange?: (event: { value: string | null }) => void;
+};
+
+/**
+ * Several values, shadcn's combobox with `multiple`: `value` is the chosen items.
+ * A choice toggles an item and the list stays open.
+ */
+export type ComboboxMultipleProps = ComboboxSharedProps & {
+  multiple: true;
+  /** The chosen items (controlled); leave it out and the root keeps them (`defaultValue`). */
+  value?: string[] | null;
+  defaultValue?: string[];
+  /** The user chose or toggled items: their values. */
+  onChange?: (event: { value: string[] }) => void;
+};
+
+/** The root: it owns the open flag, the chosen values and the items its parts register. */
+export type ComboboxProps = ComboboxSingleProps | ComboboxMultipleProps;
 
 /**
  * The field. Every prop of `nsh/base`'s Combobox passes through but the ones the root owns;
@@ -351,6 +374,12 @@ function useCombobox() {
   return ctx;
 }
 
+/** One controlled value as the list `nsh/base` keeps: a string is one item, and null or "" is none. */
+function listed(value: string | readonly string[] | null | undefined): string[] {
+  if (typeof value === "string") return value === "" ? [] : [value];
+  return value == null ? [] : [...value];
+}
+
 /** The title an item gives its value: a chip's text when the app gives none. */
 function titleOf(ctx: ComboboxContextValue, value: string): string {
   return ctx.items.items().find((item) => item.value === value)?.title ?? value;
@@ -379,17 +408,33 @@ export function Combobox(props: ComboboxProps) {
   const empty = createSlot<() => JSX.Element>();
   const picked = signal(false);
   const chosen = signal<string[]>([]);
-  const value = () => {
-    if (props.value !== undefined) return props.value ?? [];
+  // `nsh/base` always stores a list. Without `multiple` the root's value is one string or null,
+  // and the list holds that one item.
+  const value = (): string[] => {
+    if (props.multiple === true) {
+      if (props.value !== undefined) return props.value ?? [];
+      if (picked()) return chosen();
+      return props.defaultValue ?? [];
+    }
+    if (props.value !== undefined) return listed(props.value);
     if (picked()) return chosen();
-    return props.defaultValue ?? [];
+    return listed(props.defaultValue);
   };
   const change = (event: { value: string[] }) => {
+    if (props.multiple === true) {
+      if (props.value === undefined) {
+        picked.set(true);
+        chosen.set(event.value);
+      }
+      props.onChange?.(event);
+      return;
+    }
+    const next = event.value.find((item) => item !== "") ?? null;
     if (props.value === undefined) {
       picked.set(true);
-      chosen.set(event.value);
+      chosen.set(next == null ? [] : [next]);
     }
-    props.onChange?.(event);
+    props.onChange?.({ value: next });
   };
   const filled = () => value().length > 0;
   const ctx: ComboboxContextValue = {
@@ -531,7 +576,7 @@ export function ComboboxContent(props: ComboboxContentProps) {
           <BaseCombobox
             {...rest}
             items={props.items ?? ctx.items.items()}
-            multiple={ctx.root.multiple}
+            multiple={ctx.root.multiple === true}
             value={ctx.value()}
             open={ctx.open()}
             // Chips hold the chosen values: the input keeps the query, and its prompt is

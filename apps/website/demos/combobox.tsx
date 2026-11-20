@@ -65,7 +65,7 @@ function Field(props: { label: string; detail: string; children: JSX.Element }) 
 
 function App() {
   const labels = signal<string[]>(["bug", "ios"]);
-  const assignee = signal<string[]>([]);
+  const assignee = signal<string | null>(null);
   const tags = signal<string[]>(["bug", "docs", "ios", "macos", "web"]);
   const reviewers = signal<string[]>(["ada", "grace"]);
   const archived = signal<string[]>(["wontfix"]);
@@ -98,7 +98,7 @@ function App() {
                 style={{ fontSize: 13, color: ui().text }}
               >{`labels [${labels().join(", ")}]`}</Text>
               <Text style={{ fontSize: 13, color: ui().text }}>
-                {`assignee [${assignee().join(", ")}]`}
+                {`assignee ${assignee() ?? "null"}`}
               </Text>
               <Text style={{ fontSize: 13, color: ui().text }}>
                 {`tags [${tags().join(", ")}]`}
@@ -157,7 +157,7 @@ function App() {
               placeholder="Assign someone"
               onChange={({ value }) => {
                 assignee.set(value);
-                log(`Assignee → ${titlesOf(PEOPLE, value)[0] ?? "none"}`);
+                log(`Assignee → ${value ? titlesOf(PEOPLE, [value])[0] : "none"}`);
               }}
               onOpenChange={opened("Assignee", (next) => assigneeOpen.set(next))}
             >

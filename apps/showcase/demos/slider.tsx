@@ -1,7 +1,8 @@
 import { alpha, colors, toneColor } from "@shadcn-nsh/theme";
 // Slider: the official gallery's two scenes (`references/nsh/examples/gallery/demos/Controls.tsx`,
 // `Levels`, `Equalizer`) with this library's parts — a volume that can be muted, a price range over
-// a histogram of what each price holds, and five vertical bands lit from 0 dB with presets.
+// a histogram of what each price holds, and five vertical bands lit from 0 dB (`sliderFill`) with
+// the value above each rail (`showValue`).
 import { Volume1, Volume2 } from "lucide";
 import { signal, Text, View } from "nsh";
 
@@ -9,7 +10,7 @@ import { Button } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
 import { controlSize, RowLabel } from "@/packages/ui/lib/surface";
 import { Segmented, SegmentedItem, SegmentedList } from "@/packages/ui/segmented";
-import { Slider, sliderFill, sliderLook } from "@/packages/ui/slider";
+import { Slider, sliderFill, sliderValueStyle } from "@/packages/ui/slider";
 
 import { Caption, DemoCard, DemoPage } from "../kit";
 
@@ -35,19 +36,8 @@ const PRESET_OPTIONS: { value: Preset; label: string }[] = [
 
 const db = (n: number) => `${n > 0 ? "+" : ""}${n}`;
 
-/** A band's well lit from 0 dB, its middle, to its value: flat shows no gain, a cut runs down. */
-function bandWell(value: number) {
-  const at = ((value + 12) / 24) * 100;
-  const lo = Math.min(50, at);
-  const hi = Math.max(50, at);
-  return {
-    ...sliderLook({ vertical: true }).indicatorStyle,
-    backgroundImage:
-      value === 0
-        ? "none"
-        : `linear-gradient(0deg, ${colors.track} ${lo}%, ${colors.brandFill} ${lo}%, ${colors.brandFill} ${hi}%, ${colors.track} ${hi}%)`,
-  };
-}
+/** Where a band sits on its rail: 0 at −12 dB, 0.5 at 0 dB, 1 at +12 dB. */
+const bandAt = (value: number) => (value + 12) / 24;
 
 export function SliderDemo() {
   const last = signal("—");
@@ -165,7 +155,6 @@ export function SliderDemo() {
               onChangeEnd={({ value }) =>
                 last.set(`Price: ${(value as [number, number]).join(" to ")}`)
               }
-              rangeStyle={sliderFill(0, 0)}
             />
             <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
               <Text style={{ fontSize: controlSize.detail, color: colors.faint }}>
@@ -204,34 +193,31 @@ export function SliderDemo() {
           <Each of={BANDS} key="index">
             {(name, i) => (
               <View style={{ alignItems: "center", gap: 6 }}>
-                <Text
-                  style={{
-                    fontSize: controlSize.detail,
-                    color: bands[i()]() === 0 ? colors.faint : colors.foreground,
-                    fontVariant: ["tabular-nums"],
-                  }}
-                >
-                  {db(bands[i()]())}
-                </Text>
                 <Slider
                   value={bands[i()]()}
                   min={-12}
                   max={12}
                   axis="vertical"
+                  showValue
                   accessibilityLabel={`${name()} band`}
                   onChange={({ value }) => {
                     bands[i()].set(value as number);
                     preset.set("Flat");
                   }}
                   onChangeEnd={({ value }) => last.set(`${name()}: ${String(value)} dB`)}
-                  {...sliderLook({ vertical: true })}
-                  indicatorStyle={bandWell(bands[i()]())}
-                  rangeStyle={{
-                    backgroundColor: "transparent",
-                    backgroundImage: "none",
-                    borderWidth: 0,
-                  }}
-                />
+                  rangeStyle={sliderFill(
+                    Math.max(0.5, bandAt(bands[i()]())),
+                    Math.min(0.5, bandAt(bands[i()]())),
+                    true,
+                  )}
+                >
+                  <Text
+                    class="text-center font-mono text-[11px] leading-none"
+                    style={sliderValueStyle()}
+                  >
+                    {db(bands[i()]())}
+                  </Text>
+                </Slider>
                 <Text style={{ fontSize: controlSize.detail, color: colors.mutedForeground }}>
                   {name()}
                 </Text>

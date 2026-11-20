@@ -2,6 +2,7 @@
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { colors, terminal } from "@shadcn-nsh/theme";
 import { Check, Search, type IconNode } from "lucide";
+import type { InputStyle, StyleProp, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
 import {
   Command as BaseCommand,
@@ -42,9 +43,9 @@ export const commandClasses = {
    * field is a raised band: the band spans the row, as the rows' do, and
    * its own padding sets its text where theirs starts.
    */
-  searchBar: `flex-row items-center gap-2 border-b border-border ${terminal ? "" : "px-3"}`,
+  searchBar: `flex-row flex-nowrap items-center gap-2 border-b border-border ${terminal ? "" : "px-3"}`,
   /** The search field. */
-  search: `flex-1 ${terminal ? "px-2 " : ""}${desktop ? "h-11 text-sm" : "h-12 text-base"} text-foreground placeholder:text-muted-foreground`,
+  search: `min-w-0 flex-1 ${terminal ? "px-2 " : ""}${desktop ? "h-11 text-sm" : "h-12 text-base"} text-foreground placeholder:text-muted-foreground`,
   /**
    * The scroll view of the rows. A terminal's rows set their text off
    * the edge with their own padding, as the field does.
@@ -149,12 +150,51 @@ export type { CommandGroup };
 /** The palette's ref (`focus`, `highlight`, `matchedCount`), from `nsh/base`. */
 export type { CommandRef };
 
+/**
+ * The search bar's row, inline. `commandClasses.searchBar` already says `flex-row`, but the bar
+ * is built only while `searchable` is on (`nsh/base` wraps it in `when`), and a bar created
+ * after mount can miss that class and stack the icon over the field. The inline row does not.
+ */
+export function commandSearchBarStyle(): ViewStyle {
+  return {
+    flexDirection: "row",
+    alignItems: "center",
+    flexWrap: "nowrap",
+    gap: 8,
+  };
+}
+
+/**
+ * The search field beside the icon: it takes the room left in the row, and its text and
+ * placeholder read in the theme's foreground and muted foreground. A class's
+ * `placeholder:` does not set `placeholderColor`, so without this the macOS field draws the
+ * placeholder at half the text color — near black on a dark card when the text color has not
+ * landed either.
+ */
+export function commandSearchStyle(): InputStyle {
+  return {
+    flexGrow: 1,
+    flexShrink: 1,
+    flexBasis: 0,
+    minWidth: 0,
+    color: colors.foreground,
+    placeholderColor: colors.mutedForeground,
+  };
+}
+
+/** The caller's style over the shell's, or the shell's alone when the caller passes nothing. */
+function over<T>(under: T, top: StyleProp<T> | undefined): StyleProp<T> {
+  return top == null ? under : [under, top];
+}
+
 /** A command palette: search field over virtualized, natively filtered rows. */
 export function Command(props: CommandProps) {
   const [, rest] = split(props, [
     "class",
     "searchBarClass",
+    "searchBarStyle",
     "searchClass",
+    "searchStyle",
     "listClass",
     "listStyle",
     "itemClass",
@@ -172,7 +212,9 @@ export function Command(props: CommandProps) {
       {...rest}
       class={joinClass(commandClasses.root, props.class)}
       searchBarClass={joinClass(commandClasses.searchBar, props.searchBarClass)}
+      searchBarStyle={over(commandSearchBarStyle(), props.searchBarStyle)}
       searchClass={joinClass(commandClasses.search, props.searchClass)}
+      searchStyle={over(commandSearchStyle(), props.searchStyle)}
       listClass={joinClass(commandClasses.list, props.listClass)}
       itemClass={joinClass(commandClasses.item, props.itemClass)}
       groupClass={joinClass(commandClasses.group, props.groupClass)}

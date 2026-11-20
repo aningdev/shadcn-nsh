@@ -30,6 +30,8 @@ The examples draw icons with `Icon` from `lib/icons`; see [Icons](../icons) for 
 </Combobox>
 ```
 
+Without `multiple`, `value` is the chosen item or `null` (`string | null`). With `multiple`, it is the chosen items (`string[]`).
+
 ## Examples
 
 ### Disabled and clearable
@@ -38,6 +40,24 @@ The examples draw icons with `Icon` from `lib/icons`; see [Icons](../icons) for 
 <Combobox disabled>…</Combobox>
 <Combobox cleanable>…</Combobox>
 ```
+
+### One value
+
+Leave `multiple` out. A choice replaces the last one and closes the list. `onChange` receives `{ value: string | null }`.
+
+```tsx
+const assignee = signal<string | null>(null);
+
+<Combobox value={assignee()} onChange={({ value }) => assignee.set(value)}>
+  <ComboboxTrigger />
+  <ComboboxContent>
+    <ComboboxItem value="ada">Ada Lovelace</ComboboxItem>
+    <ComboboxItem value="grace">Grace Hopper</ComboboxItem>
+  </ComboboxContent>
+</Combobox>;
+```
+
+The trigger opens and closes the list. So does a press on the field's input, when the platform delivers it: `nsh/base` toggles on the input's press (`references/nsh/crates/nsh-base/src/combobox.rs`, the input's `on_press`). On macOS the field editor takes that click for the caret (`references/nsh/crates/nsh-platform-macos/src/text_input.rs`, `mouseDown`) and the press is never delivered, so a click focuses the field and does not open the list. Tabbing into the field does not open it either. Typing does.
 
 ### Several values
 
@@ -80,6 +100,12 @@ A chip can take a mark at its start (`lead`) or keep its value against a stray p
 The chips are that `prefix`, not a field of their own: typing beside them still filters through the
 combobox's input, and a text field of its own beside the chips is a second control.
 
+`ComboboxChip` and `ComboboxChips` render only inside `<Combobox>` — as `ComboboxChips` (the field's
+prefix) or anywhere else under that root, including as a sibling of `ComboboxContent`. Outside the
+root they throw. A chip drawn somewhere else, a summary beside the field, is the app's own: read
+`value` and update it from the chip's press. shadcn composes `ComboboxChip` the same way, inside
+`ComboboxChips` under the root, and has no part for a chip outside it.
+
 ### Groups and an empty list
 
 ```tsx
@@ -110,14 +136,14 @@ A string child is a `Button`; anything else is drawn as given.
 
 The root owns the open flag and the chosen values; `ComboboxContent` mounts [`nsh/base` Combobox](https://nsh.dev/elements/combobox) and every base prop passes through except those. `comboboxLook`, `listboxProps` and `OptionRow` fill the field, the popup and the rows by default.
 
-| Part              | Props                                                                                                                                                             | Description                                                       |
-| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `Combobox`        | `value` / `defaultValue`, `multiple`, `open` / `defaultOpen`, `disabled`, `cleanable`, `placeholder`, `onChange`, `onOpenChange`, `onOpen`, `onClose`, `onCancel` | The root: it owns the open flag and the chosen values.            |
-| `ComboboxTrigger` | `children`, `variant`, `disabled`, `testID`, `style`                                                                                                              | The disclosure at the field's end (a `ComboToggle` by default).   |
-| `ComboboxContent` | `items` (instead of `ComboboxItem` children), `minWidth`, `children`                                                                                              | The field and its list; it mounts `nsh/base` Combobox.            |
-| `ComboboxItem`    | `value`, `disabled`, `group`, `children` (a string is its title)                                                                                                  | One choice in the list.                                           |
-| `ComboboxChips`   | `children`: a `(value) => JSX.Element` that draws each one, a `ComboboxChip` by default                                                                           | The chosen values as chips at the field's start (NSH's `prefix`). |
-| `ComboboxChip`    | `value`, `children` (its text, the item's title by default), `lead`, `showRemove` (default `true`), `style`                                                       | One value's chip.                                                 |
-| `ComboboxGroup`   | `children`                                                                                                                                                        | A section of the list.                                            |
-| `ComboboxLabel`   | `children` (a string)                                                                                                                                             | A section's name.                                                 |
-| `ComboboxEmpty`   | `children` (the message)                                                                                                                                          | What the list shows while the query matches nothing.              |
+| Part              | Props                                                                                                                                                                                                               | Description                                                                                                                            |
+| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `Combobox`        | `value` / `defaultValue` (`string \| null`, or `string[]` with `multiple`), `multiple`, `open` / `defaultOpen`, `disabled`, `cleanable`, `placeholder`, `onChange`, `onOpenChange`, `onOpen`, `onClose`, `onCancel` | The root: one value, or several when `multiple` is set. `onChange` follows that: `{ value: string \| null }` or `{ value: string[] }`. |
+| `ComboboxTrigger` | `children`, `variant`, `disabled`, `testID`, `style`                                                                                                                                                                | The disclosure at the field's end (a `ComboToggle` by default).                                                                        |
+| `ComboboxContent` | `items` (instead of `ComboboxItem` children), `minWidth`, `children`                                                                                                                                                | The field and its list; it mounts `nsh/base` Combobox.                                                                                 |
+| `ComboboxItem`    | `value`, `disabled`, `group`, `children` (a string is its title)                                                                                                                                                    | One choice in the list.                                                                                                                |
+| `ComboboxChips`   | `children`: a `(value) => JSX.Element` that draws each one, a `ComboboxChip` by default                                                                                                                             | The chosen values as chips at the field's start (NSH's `prefix`).                                                                      |
+| `ComboboxChip`    | `value`, `children` (its text, the item's title by default), `lead`, `showRemove` (default `true`), `style`                                                                                                         | One value's chip. It has to sit inside `<Combobox>`.                                                                                   |
+| `ComboboxGroup`   | `children`                                                                                                                                                                                                          | A section of the list.                                                                                                                 |
+| `ComboboxLabel`   | `children` (a string)                                                                                                                                                                                               | A section's name.                                                                                                                      |
+| `ComboboxEmpty`   | `children` (the message)                                                                                                                                                                                            | What the list shows while the query matches nothing.                                                                                   |

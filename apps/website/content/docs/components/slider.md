@@ -38,10 +38,13 @@ Opacity on the track comes from the look's `disabled:opacity-50` class on `track
 
 ### Value column
 
+`showValue` lays the value beside a horizontal rail (a 42-point column) or above a vertical one.
+A string of your own replaces the formatted number and keeps that place.
+
 ```tsx
 import { sliderValueClass, sliderValueStyle } from "@/components/ui/slider";
 
-<Slider {...sliderLook({ value: true })}>
+<Slider showValue value={volume()} onChange={({ value }) => volume.set(value as number)}>
   <Text class={sliderValueClass} style={sliderValueStyle()}>
     64%
   </Text>
@@ -50,18 +53,35 @@ import { sliderValueClass, sliderValueStyle } from "@/components/ui/slider";
 
 ### Vertical
 
+A fill that starts at the rail's start (`from` at or below 0) stays nsh's own run, from the
+minimum to the thumb. A fill that starts later sets its own edges. Name the farther end first
+when the span reaches back to the start, so a band lit from the middle still places itself at
+the minimum:
+
 ```tsx
-sliderLook({ vertical: true });
-sliderFill(0, level / 100, true);
+const at = (db + 12) / 24;
+
+<Slider
+  axis="vertical"
+  showValue
+  min={-12}
+  max={12}
+  value={db}
+  rangeStyle={sliderFill(Math.max(0.5, at), Math.min(0.5, at), true)}
+>
+  <Text class="text-center font-mono text-[11px] leading-none" style={sliderValueStyle()}>
+    {db}
+  </Text>
+</Slider>;
 ```
 
 ## API
 
 `Slider` is [`nsh/base` Slider](https://nsh.dev/elements/slider) wearing `sliderLook` and `sliderFill`: every base prop passes through, and the look's classes and styles are defaults the caller can override.
 
-| Part                                     | Props                                                                                                                                         | Description                                                                                                                                        |
-| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `Slider`                                 | `axis`, `showValue`, and every `nsh/base` Slider prop (`value`, `min`, `max`, `step`, `onChange`, `onChangeEnd`, `disabled`, `rangeStyle`, …) | The rail, the thumb and the fill; `showValue` lays a 42-point value column after the track                                                         |
-| `sliderLook()`                           | `vertical`, `value`                                                                                                                           | The parts to spread on a slider of your own: `class`, `trackClass`, `indicatorClass` / `indicatorStyle`, `rangeClass`, `thumbClass` / `thumbStyle` |
-| `sliderFill()`                           | `from`, `to`, `vertical`                                                                                                                      | The accent's run along the rail, as `rangeStyle`                                                                                                   |
-| `sliderValueClass`, `sliderValueStyle()` | —                                                                                                                                             | The value column's label: 42 points, right aligned, monospaced                                                                                     |
+| Part                                     | Props                                                                                                                                         | Description                                                                                                                                         |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Slider`                                 | `axis`, `showValue`, and every `nsh/base` Slider prop (`value`, `min`, `max`, `step`, `onChange`, `onChangeEnd`, `disabled`, `rangeStyle`, …) | The rail, the thumb and the fill. `showValue` lays the value beside a horizontal rail, or above a vertical one                                      |
+| `sliderLook()`                           | `vertical`, `value`                                                                                                                           | The parts to spread on a slider of your own: `class`, `trackClass`, `indicatorClass` / `indicatorStyle`, `rangeClass`, `thumbClass` / `thumbStyle`  |
+| `sliderFill()`                           | `from`, `to`, `vertical`                                                                                                                      | The accent between `from` and `to` when `from` is past the rail's start. A `from` of 0 or less leaves placement to nsh, so a thumb can drag the run |
+| `sliderValueClass`, `sliderValueStyle()` | —                                                                                                                                             | The horizontal value column's label: 42 points, right aligned, monospaced. A vertical readout uses a centered line instead                          |

@@ -118,7 +118,7 @@ function App() {
   const language = signal<string | null>("en");
   const query = signal("");
   const langOpen = signal(false);
-  const frames = signal<string[]>(["react"]);
+  const frames = signal<string | null>("react");
   const comboOpen = signal(false);
 
   return (

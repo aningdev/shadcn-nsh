@@ -50,7 +50,11 @@ const items: CommandItem[] = [
 
 ### Search
 
-The field filters the rows as you type; the search bar and the rows are `commandClasses`.
+The field filters the rows as you type. The shell sets the search bar's row and the field's text
+and placeholder color inline (`commandSearchBarStyle`, `commandSearchStyle`), over
+`commandClasses`, so an icon in `searchPrefix` stays beside the field and the placeholder stays
+the muted foreground — including when `searchable` turns the bar on after the palette has mounted.
+A caller's `searchBarStyle` and `searchStyle` win over those.
 
 ```tsx
 <Command
@@ -65,9 +69,9 @@ The field filters the rows as you type; the search bar and the rows are `command
 
 Uses `commandClasses`, `CommandRow`, `CommandHeading`, and `CommandEmpty` by default. Every prop of [`nsh/base` Command](https://nsh.dev/elements/command) passes through.
 
-| Part             | Props                             | Description                                                                                                        |
-| ---------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `Command`        | —                                 | A command palette: a search field over virtualized, natively filtered rows.                                        |
-| `CommandRow`     | `entry`, `icon`, `detail`, `note` | A row's content: the icon, the label, a `note` at the end, the shortcut's keys and a check for the item in effect. |
-| `CommandHeading` | `group`                           | A section's heading: small capitals in the faint color.                                                            |
-| `CommandEmpty`   | `label`                           | What the palette shows while nothing matches.                                                                      |
+| Part             | Props                             | Description                                                                                                                                                                    |
+| ---------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Command`        | —                                 | A command palette: a search field over virtualized, natively filtered rows. `searchBarStyle` and `searchStyle` still pass through, over the shell's row and placeholder color. |
+| `CommandRow`     | `entry`, `icon`, `detail`, `note` | A row's content: the icon, the label, a `note` at the end, the shortcut's keys and a check for the item in effect.                                                             |
+| `CommandHeading` | `group`                           | A section's heading: small capitals in the faint color.                                                                                                                        |
+| `CommandEmpty`   | `label`                           | What the palette shows while nothing matches.                                                                                                                                  |
