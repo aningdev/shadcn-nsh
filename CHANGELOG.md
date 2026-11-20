@@ -2,6 +2,14 @@
 
 ## Unreleased
 
+### Changed
+
+- **The baseline moves to NSH v0.6.1.** Components are checked against that CLI's `nsh/base`; the
+  patch brings its fixes (a resizable drag stops at the next panel's minimum, the data table's
+  horizontal scroll bar stays between the fixed columns, lists, carousels and video) and changes
+  nothing in the official Gallery's UI layer. Install it with
+  `curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=v0.6.1 sh`.
+
 ### Added
 
 - **The site gains a showcase page (#78).** `/showcase` runs the new `apps/showcase` app — NSH's
