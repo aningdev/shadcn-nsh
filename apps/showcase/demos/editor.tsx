@@ -3,17 +3,8 @@ import { colors, mono } from "@shadcn-nsh/theme";
 // with this library's code editor and dock. The session around it — find bar, problems, hover,
 // code actions, the simulated language server — is the app's, as upstream's is. The shell gives
 // the screen a flex view, so the editor fills it as upstream's does.
-import {
-  ArrowDown,
-  ArrowUp,
-  Code,
-  Replace,
-  ReplaceAll,
-  Search,
-  SlidersHorizontal,
-  X,
-} from "lucide";
-import type { Bounds, InputRef, Point, ViewRef } from "nsh";
+import { Code, Search, SlidersHorizontal } from "lucide";
+import type { Bounds, Point, ViewRef } from "nsh";
 import {
   cleanup,
   computed,
@@ -37,6 +28,7 @@ import {
 import { IconButton, iconButtonGlyph } from "@/packages/ui/button";
 import {
   CodeEditor,
+  CodeEditorFindBar,
   type EditorDecoration,
   type EditorDiagnostic,
   type EditorPosition,
@@ -46,7 +38,6 @@ import {
   type EditorSelection,
 } from "@/packages/ui/code-editor";
 import { DockArea, type DockAreaRef, type DockTabValue } from "@/packages/ui/dock-area";
-import { Input } from "@/packages/ui/input";
 import { Icon } from "@/packages/ui/lib/icons";
 import { popupSurface } from "@/packages/ui/lib/popup";
 import {
@@ -66,7 +57,7 @@ import {
 } from "@/packages/ui/menu";
 import { Pressable } from "@/packages/ui/pressable";
 import { TextView } from "@/packages/ui/text-view";
-import { Toggle, toggleGlyph, toggleLabel, toggleLook } from "@/packages/ui/toggle";
+import { toggleGlyph, toggleLabel, toggleLook } from "@/packages/ui/toggle";
 
 import { SAMPLE } from "./editor-sample";
 import { LanguageServer, type CodeAction, type DocumentColor, type Problem } from "./editor-server";
@@ -219,8 +210,6 @@ interface EditorModel {
   setFinding: (next: boolean) => void;
   query: () => string;
   setQuery: (next: string) => void;
-  replacement: () => string;
-  setReplacement: (next: string) => void;
   caseSensitive: () => boolean;
   setCaseSensitive: (next: boolean) => void;
   wholeWord: () => boolean;
@@ -256,7 +245,6 @@ interface EditorModel {
   changed: (value: string) => void;
   typescript: () => boolean;
   caret: () => string;
-  matches: () => string;
   count: (severity: EditorDiagnostic["severity"]) => number;
   apply: (action: CodeAction) => void;
   openFind: () => void;
@@ -298,21 +286,8 @@ function Dot(props: { severity: EditorDiagnostic["severity"] }) {
   );
 }
 
-function FindTool(props: { label: string; name: string; on: boolean; onPress: () => void }) {
-  return (
-    <Toggle
-      pressed={props.on}
-      text
-      size="sm"
-      accessibilityLabel={props.label}
-      onChange={props.onPress}
-      style={{ paddingHorizontal: 6 }}
-    >
-      {props.name}
-    </Toggle>
-  );
-}
-
+// The library's find bar over the editor: the search the app hands the editor is the object it
+// edits, and its buttons run the editor's own commands.
 function FindBar() {
   const m = useEditor();
   return (
@@ -324,92 +299,24 @@ function FindBar() {
       margin={8}
       onCancel={m.closeFind}
     >
-      <View style={{ ...popupSurface(), gap: 4, width: Math.min(440, windowSize().width - 16) }}>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
-          <Input
-            ref={(node: InputRef) => node.focus()}
-            value={m.query()}
-            onChange={({ value }) => m.setQuery(value)}
-            onSubmit={() => m.editor()?.run("findNext")}
-            submitBehavior="submit"
-            placeholder="Find"
-            accessibilityLabel="Find"
-            autoCapitalize="none"
-            autoCorrect={false}
-            style={{ flex: 1, minWidth: 100 }}
-          />
-          <Text
-            style={{
-              numberOfLines: 1,
-              paddingHorizontal: 4,
-              fontFamily: mono(),
-              fontSize: 11,
-              color: colors.mutedForeground,
-              fontVariant: ["tabular-nums"],
-            }}
-          >
-            {m.matches()}
-          </Text>
-          <FindTool
-            label="Match case"
-            name="Aa"
-            on={m.caseSensitive()}
-            onPress={() => m.setCaseSensitive(!m.caseSensitive())}
-          />
-          <FindTool
-            label="Whole word"
-            name="W"
-            on={m.wholeWord()}
-            onPress={() => m.setWholeWord(!m.wholeWord())}
-          />
-          <FindTool
-            label="Regular expression"
-            name=".*"
-            on={m.regex()}
-            onPress={() => m.setRegex(!m.regex())}
-          />
-          <IconButton
-            accessibilityLabel="Previous match"
-            onPress={() => m.editor()?.run("findPrevious")}
-          >
-            <Icon icon={ArrowUp} {...iconButtonGlyph()} />
-          </IconButton>
-          <IconButton accessibilityLabel="Next match" onPress={() => m.editor()?.run("findNext")}>
-            <Icon icon={ArrowDown} {...iconButtonGlyph()} />
-          </IconButton>
-          <IconButton accessibilityLabel="Close the find bar" onPress={m.closeFind}>
-            <Icon icon={X} {...iconButtonGlyph()} />
-          </IconButton>
-        </View>
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 2 }}>
-          <Input
-            value={m.replacement()}
-            onChange={({ value }) => m.setReplacement(value)}
-            onSubmit={() => m.editor()?.replace(m.replacement())}
-            submitBehavior="submit"
-            placeholder="Replace"
-            accessibilityLabel="Replace"
-            autoCapitalize="none"
-            autoCorrect={false}
-            style={{ flex: 1, minWidth: 100 }}
-          />
-          <IconButton
-            accessibilityLabel="Replace"
-            onPress={() => m.editor()?.replace(m.replacement())}
-          >
-            <Icon icon={Replace} {...iconButtonGlyph()} />
-          </IconButton>
-          <IconButton
-            accessibilityLabel="Replace all"
-            onPress={async () => {
-              const replaced = (await m.editor()?.replaceAll(m.replacement()))?.count ?? 0;
-              m.setLast(`Replaced ${replaced}`);
-            }}
-          >
-            <Icon icon={ReplaceAll} {...iconButtonGlyph()} />
-          </IconButton>
-        </View>
-      </View>
+      <CodeEditorFindBar
+        editor={m.editor()}
+        search={{
+          query: m.query(),
+          caseSensitive: m.caseSensitive(),
+          wholeWord: m.wholeWord(),
+          regex: m.regex(),
+        }}
+        onSearchChange={(next) => {
+          m.setQuery(next.query);
+          m.setCaseSensitive(!!next.caseSensitive);
+          m.setWholeWord(!!next.wholeWord);
+          m.setRegex(!!next.regex);
+        }}
+        result={m.result()}
+        onClose={m.closeFind}
+        style={{ width: Math.min(440, windowSize().width - 16) }}
+      />
     </Overlay>
   );
 }
@@ -935,7 +842,6 @@ export function EditorDemo() {
   const lineNumbers = signal(true);
   const finding = signal(false);
   const query = signal("");
-  const replacement = signal("");
   const caseSensitive = signal(false);
   const wholeWord = signal(false);
   const regex = signal(false);
@@ -1060,15 +966,6 @@ export function EditorDemo() {
     if (!primary) return "Ln 1, Col 1";
     const more = selections().length > 1 ? ` · ${selections().length} carets` : "";
     return `Ln ${primary.head.line + 1}, Col ${primary.head.column + 1}${more}`;
-  };
-  const matches = () => {
-    const current = result();
-    if (current.error) return "Invalid pattern";
-    if (!query()) return "";
-    if (current.count === 0) return "No results";
-    return current.current === undefined || current.current === null
-      ? `${current.count} matches`
-      : `${current.current + 1} of ${current.count}`;
   };
   const apply = (action: CodeAction) => {
     const current = editor();
@@ -1196,8 +1093,6 @@ export function EditorDemo() {
     setFinding: (next) => finding.set(next),
     query,
     setQuery: (next) => query.set(next),
-    replacement,
-    setReplacement: (next) => replacement.set(next),
     caseSensitive,
     setCaseSensitive: (next) => caseSensitive.set(next),
     wholeWord,
@@ -1235,7 +1130,6 @@ export function EditorDemo() {
     changed,
     typescript,
     caret,
-    matches,
     count: (severity) =>
       diagnostics().filter((item) => (item.severity ?? "error") === severity).length,
     apply,

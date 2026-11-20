@@ -1,12 +1,40 @@
 // The reference of `code-editor.tsx`: the same page with `codeEditorClasses` and
 // `codeEditorFrame()` on `nsh/base`'s Editor, the way a code editor is written without a shell.
 // It differs from the component page only in what it names.
-import { type Bounds, cleanup, mount, Overlay, signal, Text, View } from "nsh";
-import { Editor, type EditorDiagnostic, type EditorRange } from "nsh/base";
+import { colors, mono } from "@shadcn-nsh/theme";
+import { ArrowDown, ArrowUp, Replace, ReplaceAll, X } from "lucide";
+import {
+  type Bounds,
+  cleanup,
+  mount,
+  Overlay,
+  signal,
+  Text,
+  View,
+  type InputRef,
+  type ViewStyle,
+} from "nsh";
+import {
+  Editor,
+  type EditorDiagnostic,
+  type EditorRange,
+  type EditorRef,
+  type EditorSearch,
+  type EditorSearchResult,
+} from "nsh/base";
 
-import { Button } from "@/packages/ui/button";
+import { Button, buttonGlyph } from "@/packages/ui/button";
 import { codeEditorClasses, codeEditorFrame } from "@/packages/ui/code-editor";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "@/packages/ui/input-group";
+import { Icon } from "@/packages/ui/lib/icons";
+import { popupSurface } from "@/packages/ui/lib/popup";
 import { popoverLook } from "@/packages/ui/popover";
+import { Toggle } from "@/packages/ui/toggle";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { desktop, Log, Panel, Segmented, Split, ui, wide } from "./stage";
@@ -97,6 +125,164 @@ const LINT: { range: EditorRange; severity: "error" | "warning"; message: string
     },
   ];
 
+/**
+ * What the bar says about the search, from the result the editor handed the app.
+ */
+function countLabel(search: EditorSearch, result: EditorSearchResult | null): string {
+  if (!search.query) return "";
+  if (result?.error) return "Invalid pattern";
+  const count = result?.count ?? 0;
+  if (count === 0) return "No results";
+  const current = result?.current;
+  return current === undefined || current === null
+    ? `${count} matches`
+    : `${current + 1} of ${count}`;
+}
+
+/**
+ * The find bar, drawn by hand: the query with its count, the three modes and the two steps, and
+ * the line that replaces — the app's search edited back through `onSearchChange`, and the
+ * editor's own commands behind the buttons.
+ */
+function FindBar(props: {
+  editor: EditorRef | null;
+  search: EditorSearch;
+  onSearchChange: (search: EditorSearch) => void;
+  result: EditorSearchResult | null;
+  onClose: () => void;
+  style: ViewStyle;
+}) {
+  const replacement = signal("");
+  const replaced = signal<number | null>(null);
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  cleanup(() => clearTimeout(timer));
+  const set = (change: Partial<EditorSearch>) =>
+    props.onSearchChange({ ...props.search, ...change });
+  const replace = () => props.editor?.replace(replacement());
+  const replaceAll = () => {
+    void props.editor?.replaceAll(replacement()).then(({ count }) => {
+      replaced.set(count);
+      clearTimeout(timer);
+      timer = setTimeout(() => replaced.set(null), 2000);
+    });
+  };
+  const count = () => {
+    const replaces = replaced();
+    return replaces === null ? countLabel(props.search, props.result) : `Replaced ${replaces}`;
+  };
+  const glyph = buttonGlyph("ghost", { size: "sm" });
+  return (
+    <View style={[{ ...popupSurface(), gap: 4 }, props.style]}>
+      <InputGroup invalid={!!props.result?.error}>
+        <InputGroupInput
+          ref={(node: InputRef) => {
+            node.focus();
+            if (props.search.query) node.setSelection(0, props.search.query.length);
+          }}
+          value={props.search.query}
+          onChange={({ value }) => set({ query: value })}
+          onSubmit={() => props.editor?.run("findNext")}
+          submitBehavior="submit"
+          placeholder="Find"
+          accessibilityLabel="Find"
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+        <InputGroupAddon align="inline-end">
+          <Text
+            style={{
+              numberOfLines: 1,
+              paddingHorizontal: 4,
+              fontFamily: mono(),
+              fontSize: 11,
+              color: colors.mutedForeground,
+              fontVariant: ["tabular-nums"],
+            }}
+          >
+            {count()}
+          </Text>
+          <Toggle
+            pressed={!!props.search.caseSensitive}
+            onChange={() => set({ caseSensitive: !props.search.caseSensitive })}
+            text
+            size="sm"
+            accessibilityLabel="Match case"
+          >
+            Aa
+          </Toggle>
+          <Toggle
+            pressed={!!props.search.wholeWord}
+            onChange={() => set({ wholeWord: !props.search.wholeWord })}
+            text
+            size="sm"
+            accessibilityLabel="Whole word"
+          >
+            W
+          </Toggle>
+          <Toggle
+            pressed={!!props.search.regex}
+            onChange={() => set({ regex: !props.search.regex })}
+            text
+            size="sm"
+            accessibilityLabel="Regular expression"
+          >
+            .*
+          </Toggle>
+          <InputGroupButton
+            size="icon-xs"
+            accessibilityLabel="Previous match"
+            onPress={() => props.editor?.run("findPrevious")}
+          >
+            <Icon icon={ArrowUp} {...glyph} />
+          </InputGroupButton>
+          <InputGroupButton
+            size="icon-xs"
+            accessibilityLabel="Next match"
+            onPress={() => props.editor?.run("findNext")}
+          >
+            <Icon icon={ArrowDown} {...glyph} />
+          </InputGroupButton>
+          <InputGroupButton
+            size="icon-xs"
+            accessibilityLabel="Close the find bar"
+            onPress={() => props.onClose()}
+          >
+            <Icon icon={X} {...glyph} />
+          </InputGroupButton>
+        </InputGroupAddon>
+      </InputGroup>
+      <InputGroup>
+        <InputGroupInput
+          value={replacement()}
+          onChange={({ value }) => replacement.set(value)}
+          onSubmit={replace}
+          submitBehavior="submit"
+          placeholder="Replace"
+          accessibilityLabel="Replace"
+          autoCapitalize="none"
+          autoCorrect={false}
+        />
+        <InputGroupAddon align="inline-end">
+          <InputGroupButton
+            size="icon-xs"
+            accessibilityLabel="Replace this match"
+            onPress={replace}
+          >
+            <Icon icon={Replace} {...glyph} />
+          </InputGroupButton>
+          <InputGroupButton
+            size="icon-xs"
+            accessibilityLabel="Replace all matches"
+            onPress={replaceAll}
+          >
+            <Icon icon={ReplaceAll} {...glyph} />
+          </InputGroupButton>
+        </InputGroupAddon>
+      </InputGroup>
+    </View>
+  );
+}
+
 function App() {
   const language = signal<Language>("typescript");
   const sources = signal<Record<Language, string>>({ ...SAMPLES });
@@ -118,6 +304,12 @@ function App() {
   const caret = signal("1:1");
   const events = signal<string[]>([]);
   const log = (line: string) => events.set([line, ...events()].slice(0, 4));
+
+  const findEditor = signal<EditorRef | null>(null);
+  const finding = signal(true);
+  const search = signal<EditorSearch>({ query: "circle" });
+  const found = signal<EditorSearchResult | null>(null);
+  const searched = signal<string>(SAMPLES.typescript);
 
   return (
     <DemoPage title="Code editor">
@@ -184,6 +376,40 @@ function App() {
       </Split>
 
       <DemoCard>
+        <DemoSection title="Find and replace" axis="block">
+          <Text style={{ color: ui().muted }}>
+            `search` names what the editor finds and highlights; the bar edits that same object
+            through `onSearchChange`, steps the matches with `editor.run("findNext")`, and reads how
+            many a Replace all rewrote. Return in the query finds the next match.
+          </Text>
+          <View style={{ height: wide() ? 220 : 250, overflow: "hidden" }}>
+            <Editor
+              ref={(editor) => findEditor.set(editor)}
+              value={searched()}
+              onChange={({ value }) => searched.set(value)}
+              language="typescript"
+              accessibilityLabel="Searched code"
+              search={finding() ? search() : null}
+              onSearchChange={({ result }) => found.set(result)}
+              classes={codeEditorClasses}
+              style={[codeEditorFrame(), { flex: 1 }]}
+            />
+            {() => {
+              const editor = findEditor();
+              return editor ? (
+                <FindBar
+                  editor={editor}
+                  search={search()}
+                  onSearchChange={(next) => search.set(next)}
+                  result={found()}
+                  onClose={() => finding.set(false)}
+                  style={{ position: "absolute", top: 8, end: 8, width: wide() ? 400 : 300 }}
+                />
+              ) : null;
+            }}
+          </View>
+        </DemoSection>
+
         <DemoSection title="Hover and quick fixes" axis="block">
           <Text style={{ color: ui().muted }}>
             The pointer rests over a marked word: `onHover` hands the app the word's box on the page

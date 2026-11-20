@@ -65,7 +65,8 @@ export const components: ComponentDoc[] = [
     kind: "official",
     shadcn: null,
     nshElement: "editor",
-    description: "A code editor on the field's well, with line numbers and diagnostics.",
+    description:
+      "A code editor on the field's well, with line numbers, diagnostics and a find bar.",
   },
   {
     slug: "collapsible",

@@ -1,11 +1,17 @@
 // The official code editor scene (`references/nsh/website/demos/el-editor.tsx`) with this
 // library's `CodeEditor`: a file per language, a linter's marks, the caret moved, the text
 // reported, and an inspector beside it that follows both.
-import { type Bounds, cleanup, mount, Overlay, signal, Text, View } from "nsh";
+import { type Bounds, cleanup, keymap, mount, Overlay, signal, Text, View } from "nsh";
 import type { EditorDiagnostic, EditorRange } from "nsh/base";
 
 import { Button } from "@/packages/ui/button";
-import { CodeEditor } from "@/packages/ui/code-editor";
+import {
+  CodeEditor,
+  CodeEditorFindBar,
+  type EditorRef,
+  type EditorSearch,
+  type EditorSearchResult,
+} from "@/packages/ui/code-editor";
 import { popoverLook } from "@/packages/ui/popover";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
@@ -119,6 +125,14 @@ function App() {
   const events = signal<string[]>([]);
   const log = (line: string) => events.set([line, ...events()].slice(0, 4));
 
+  // The find bar's editor, which the app holds a ref to: the bar steps through the matches with it.
+  const findEditor = signal<EditorRef | null>(null);
+  const finding = signal(true);
+  const search = signal<EditorSearch>({ query: "circle" });
+  const found = signal<EditorSearchResult | null>(null);
+  const searched = signal<string>(SAMPLES.typescript);
+  keymap.bind("mod+f", () => finding.set(true));
+
   return (
     <DemoPage title="Code editor">
       <Text style={{ color: ui().muted }}>
@@ -183,6 +197,39 @@ function App() {
       </Split>
 
       <DemoCard>
+        <DemoSection title="Find and replace" axis="block">
+          <Text style={{ color: ui().muted }}>
+            `search` names what the editor finds and highlights; the bar edits that same object
+            through `onSearchChange`, steps the matches with `editor.run("findNext")`, and reads how
+            many a Replace all rewrote. Return in the query finds the next match.
+          </Text>
+          <View style={{ height: wide() ? 220 : 250, overflow: "hidden" }}>
+            <CodeEditor
+              value={searched()}
+              onChange={({ value }) => searched.set(value)}
+              language="typescript"
+              accessibilityLabel="Searched code"
+              search={finding() ? search() : null}
+              onSearchChange={({ result }) => found.set(result)}
+              ref={(editor) => findEditor.set(editor)}
+              style={{ flex: 1 }}
+            />
+            {() => {
+              const editor = findEditor();
+              return editor ? (
+                <CodeEditorFindBar
+                  editor={editor}
+                  search={search()}
+                  onSearchChange={(next) => search.set(next)}
+                  result={found()}
+                  onClose={() => finding.set(false)}
+                  style={{ position: "absolute", top: 8, end: 8, width: wide() ? 400 : 300 }}
+                />
+              ) : null;
+            }}
+          </View>
+        </DemoSection>
+
         <DemoSection title="Hover and quick fixes" axis="block">
           <Text style={{ color: ui().muted }}>
             The pointer rests over a marked word: `onHover` hands the app the word's box on the page

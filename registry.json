@@ -1005,8 +1005,17 @@
       "name": "code-editor",
       "type": "registry:ui",
       "title": "Code Editor",
-      "description": "A code editor on the field's well, with line numbers and diagnostics.",
-      "registryDependencies": ["theme", "utils"],
+      "description": "A code editor on the field's well, with line numbers, diagnostics and a find bar.",
+      "registryDependencies": [
+        "button",
+        "icons",
+        "input-group",
+        "popup",
+        "theme",
+        "toggle",
+        "utils"
+      ],
+      "dependencies": ["lucide@^1.66.0"],
       "files": [
         {
           "path": "packages/ui/code-editor.tsx",

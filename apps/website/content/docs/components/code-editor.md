@@ -1,6 +1,6 @@
 ---
 title: Code Editor
-description: A code editor on the field's well, with line numbers and diagnostics.
+description: A code editor on the field's well, with line numbers, diagnostics and a find bar.
 component: true
 demo: code-editor
 ---
@@ -22,6 +22,15 @@ import { CodeEditor } from "@/components/ui/code-editor";
 ```
 
 Every prop of [`nsh/base` Editor](https://nsh.dev/elements/editor) passes through: the text (`value` / `defaultValue`, `onChange`), the language and its highlighting, folding, soft wrap, search, the editing keys and the diagnostics. The shell adds the look (`codeEditorClasses`) and the surface (`codeEditorFrame()`).
+
+## Composition
+
+Use the following composition to build a `CodeEditor`:
+
+```text
+CodeEditor
+└── CodeEditorFindBar
+```
 
 ## Examples
 
@@ -50,6 +59,63 @@ Ranges the app marks, carried through edits until it sets new ones: an error is 
     },
   ]}
 />
+```
+
+### Find and replace
+
+`search` is what the editor finds and highlights; `onSearchChange` says what it found — how many
+matches, which of them the selection is on, or why a pattern is not a regular expression. The editor
+never sets the search itself (`EditorRef` replaces a match, it does not find one), so the bar that
+edits it is a part: `CodeEditorFindBar` takes the editor's `ref`, **the same object the app hands the
+editor's `search`**, and the `result` the editor reported. What is typed into the bar goes back
+through `onSearchChange`; its buttons run the editor's own `findNext`, `findPrevious`, `replace` and
+`replaceAll` (and the bar says how many a Replace all rewrote for a moment).
+
+Where the bar is and whether it is open are the app's: it sits beside the editor in the same `View`
+rather than inside it, since a part cannot leave the tree. The keys are the app's too — Escape and
+`mod+f` belong to its `keymap`, as a part that captured them would take them from the editor while
+the bar is closed. Because the search is one object, a query the app sets — from
+`onFindWithSelection`, or from a keybinding — reads in the bar, and the bar's edits move the
+editor's matches as it types.
+
+```tsx
+import { keymap, signal, View } from "nsh";
+
+import {
+  CodeEditor,
+  CodeEditorFindBar,
+  type EditorRef,
+  type EditorSearch,
+  type EditorSearchResult,
+} from "@/components/ui/code-editor";
+
+const search = signal<EditorSearch>({ query: "" });
+const found = signal<EditorSearchResult | null>(null);
+// The editor's ref, in a signal: the bar takes it as a prop, so it arrives with the editor.
+const editor = signal<EditorRef | null>(null);
+const finding = signal(false);
+keymap.bind("mod+f", () => finding.set(true));
+
+<View style={{ height: 280 }}>
+  <CodeEditor
+    ref={(node) => editor.set(node)}
+    defaultValue={source}
+    language="typescript"
+    search={finding() ? search() : null}
+    onSearchChange={({ result }) => found.set(result)}
+    style={{ flex: 1 }}
+  />
+  {finding() && editor() ? (
+    <CodeEditorFindBar
+      editor={editor()}
+      search={search()}
+      onSearchChange={(next) => search.set(next)}
+      result={found()}
+      onClose={() => finding.set(false)}
+      style={{ position: "absolute", top: 8, end: 8, width: 400 }}
+    />
+  ) : null}
+</View>;
 ```
 
 ### Parts
@@ -161,11 +227,13 @@ const source = signal(SAMPLE);
 
 ## API
 
-| Part                | Props                                                           | Description                                                      |
-| ------------------- | --------------------------------------------------------------- | ---------------------------------------------------------------- |
-| `CodeEditor`        | every [`nsh/base` Editor](https://nsh.dev/elements/editor) prop | Themed `nsh/base` Editor on the field's well.                    |
-| `CodeEditorProps`   | —                                                               | `nsh/base`'s `EditorProps`, unchanged.                           |
-| `codeEditorClasses` | —                                                               | The look of the editor's parts (classes, by part).               |
-| `codeEditorFrame`   | —                                                               | The surface's style: the field's fill, edge and control corners. |
+| Part                     | Props                                                           | Description                                                                  |
+| ------------------------ | --------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `CodeEditor`             | every [`nsh/base` Editor](https://nsh.dev/elements/editor) prop | Themed `nsh/base` Editor on the field's well.                                |
+| `CodeEditorProps`        | —                                                               | `nsh/base`'s `EditorProps`, unchanged.                                       |
+| `CodeEditorFindBar`      | `CodeEditorFindBarProps`                                        | The find bar: the query with its count, its modes, and replace.              |
+| `CodeEditorFindBarProps` | —                                                               | `editor`, `search`, `onSearchChange`, `result`, `onClose`, `class`, `style`. |
+| `codeEditorClasses`      | —                                                               | The look of the editor's parts (classes, by part).                           |
+| `codeEditorFrame`        | —                                                               | The surface's style: the field's fill, edge and control corners.             |
 
 The session types the props name are re-exported from this file, so an app does not import them from `nsh/base`: `EditorRef`, `EditorDecoration`, `EditorDiagnostic`, `EditorPosition`, `EditorRange`, `EditorSelection`, `EditorSearchResult`, `EditorCommand`, `EditorCompletionItem`, and the rest of the editor's value types.

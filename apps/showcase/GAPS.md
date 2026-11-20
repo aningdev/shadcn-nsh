@@ -18,17 +18,18 @@ and its row leaves this file.
 Not gaps: the iOS segmented control is a platform look;
 `Segmented` / `Button` / `Badge` take children where upstream takes `options` / `label` (shadcn's
 composition). Upstream's funnel animates drawn `Canvas` geometry with `createAnimatedValue`, which
-`nsh/base` doesn't drive; the necks redraw without an entrance. Editor gutters use the `warn` / `up` /
-`destructive` roles, and a terminal's ANSI colors are the program's output, not theme roles. Find
-bars, quick-fix menus and the editor zoom are `nsh` `Overlay`s, the code-action menu is the native
-`nsh/desktop` `Menu`, and the Gallery's `IconTile` is its own kit, as upstream. Animations' ink on a
-saturated tone is `onBrand` / `knob`, and System's
+`nsh/base` doesn't drive; the necks redraw without an entrance. Editor gutters use the `warn` / `up`
+/ `destructive` roles, and a terminal's ANSI colors are the program's output, not theme roles. The
+find bar is the library's `CodeEditorFindBar`; quick-fix menus and the editor zoom are `nsh`
+`Overlay`s, the code-action menu is the native `nsh/desktop` `Menu`, and the Gallery's `IconTile` is
+its own kit, as upstream. Animations' ink on a saturated tone is `onBrand` / `knob`, and System's
 status-bar preview inks with the foreground and background, all theme roles. The Gallery's `Meter`,
-`Toggle` (a switch) and `Field` are this library's `Progress`, `Switch` and a labelled `Input`. The block
-editor imports its editor commands (`setNode`, `wrapIn`, `suggestion`, …) from `nsh/base`, where they
-live, and its link menu is local, as upstream's `RichEditorLink` is a Gallery demo file. Canvas draws
-its gauges, ridgeline, dot matrix and sketch with `nsh`'s `Canvas`, as upstream (`Plot` is for series
-marks), a WGSL tint stays a shader constant, and Photos' ⌘R binding is the app's keymap beside a `Kbd`.
+`Toggle` (a switch) and `Field` are this library's `Progress`, `Switch` and a labelled `Input`. The
+block editor imports its editor commands (`setNode`, `wrapIn`, `suggestion`, …) from `nsh/base`,
+where they live, and its link menu is local, as upstream's `RichEditorLink` is a Gallery demo file.
+Canvas draws its gauges, ridgeline, dot matrix and sketch with `nsh`'s `Canvas`, as upstream (`Plot`
+is for series marks), a WGSL tint stays a shader constant, and Photos' ⌘R binding is the app's
+keymap beside a `Kbd`.
 
 ## Showcase shell
 

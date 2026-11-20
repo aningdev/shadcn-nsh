@@ -28,6 +28,25 @@ test("Editor: the language menu opens the Rust sample and its warning", async ()
   expect(app.shows("1 warning")).toBe(true);
 });
 
+test("Editor: the find bar counts the matches, and Replace all rewrites them", async () => {
+  const app = await open("../App.tsx", wide);
+  await app.setColorScheme("light");
+  await app.press("label:Editor");
+  await app.waitFor("label:Language");
+  await app.press("label:Find and replace");
+  await app.waitFor("label:Find");
+  await app.type("label:Find", "const ");
+  // The editor finds the query and hands the bar its count; the bar steps and replaces through it.
+  const counted = () =>
+    app.texts().some((line) => /^\d+ (matches|of \d+)$/.test(line) || line === "No results");
+  await app.wait(300);
+  expect(counted()).toBe(true);
+  await app.type("label:Replace", "let ");
+  await app.press("label:Replace all matches");
+  await app.wait(300);
+  expect(app.texts().some((line) => line.startsWith("Replaced "))).toBe(true);
+});
+
 test("RichEditor: Markdown shows the document's source", async () => {
   const app = await open("../App.tsx", wide);
   await app.setColorScheme("light");

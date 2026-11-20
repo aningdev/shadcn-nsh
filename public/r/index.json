@@ -896,7 +896,7 @@
       "name": "code-editor",
       "type": "registry:ui",
       "title": "Code Editor",
-      "description": "A code editor on the field's well, with line numbers and diagnostics.",
+      "description": "A code editor on the field's well, with line numbers, diagnostics and a find bar.",
       "files": [
         {
           "path": "packages/ui/code-editor.tsx",
