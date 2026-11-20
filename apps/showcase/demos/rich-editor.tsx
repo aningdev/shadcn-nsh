@@ -1,9 +1,9 @@
 import { alpha, colors, mono, radius, rounded } from "@shadcn-nsh/theme";
 // RichEditor: the official gallery's scene
 // (`references/nsh/examples/gallery/demos/RichEditorDemo.tsx`, with its link menu, toolbar and
-// node views). The document is `nsh/base`'s session — this library wraps the view, not the
-// session — and the view is this library's `RichEditor`. The shell gives the screen a flex view,
-// so the document and the node views split it as upstream's do.
+// node views). The document is this library's session API (`nsh/base`'s, re-exported beside the
+// view), and the view is this library's `RichEditor`. The shell gives the screen a flex view, so
+// the document and the node views split it as upstream's do.
 import {
   BetweenHorizontalEnd,
   BetweenHorizontalStart,
@@ -48,6 +48,11 @@ import {
   type IconNode,
 } from "lucide";
 import { openUrl, Overlay, signal, Text, View } from "nsh";
+
+import { IconButton, iconButtonGlyph } from "@/packages/ui/button";
+import { Input } from "@/packages/ui/input";
+import { Icon } from "@/packages/ui/lib/icons";
+import { popupSurface } from "@/packages/ui/lib/popup";
 import {
   chain,
   command,
@@ -56,7 +61,9 @@ import {
   extendMarkRange,
   insertContent,
   redo,
+  RichEditor,
   RichEditorPlugin,
+  richEditorClasses,
   type RichCommand,
   type RichEditorSession,
   type RichNodeJSON,
@@ -64,13 +71,7 @@ import {
   StarterKit,
   TableKit,
   undo,
-} from "nsh/base";
-
-import { IconButton, iconButtonGlyph } from "@/packages/ui/button";
-import { RichEditor, richEditorClasses } from "@/packages/ui/editor";
-import { Input } from "@/packages/ui/input";
-import { Icon } from "@/packages/ui/lib/icons";
-import { popupSurface } from "@/packages/ui/lib/popup";
+} from "@/packages/ui/rich-editor";
 import { Segmented, SegmentedItem, SegmentedList } from "@/packages/ui/segmented";
 import { Separator } from "@/packages/ui/separator";
 import { Toggle, ToggleGroup } from "@/packages/ui/toggle-group";

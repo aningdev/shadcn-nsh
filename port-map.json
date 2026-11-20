@@ -425,7 +425,7 @@
         "DiffHunkActions": "packages/ui/diff-view.tsx",
         "textViewLinkClasses": "packages/ui/text-view.tsx",
         "textViewCaretClass": "packages/ui/text-view.tsx",
-        "richEditorClasses": "packages/ui/editor.tsx"
+        "richEditorClasses": "packages/ui/rich-editor.tsx"
       }
     },
     "tests/App.tsx": {

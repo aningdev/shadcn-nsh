@@ -149,14 +149,6 @@ export const components: ComponentDoc[] = [
     description: "Dockable workspace chrome for tabs, splits, and edge docks.",
   },
   {
-    slug: "editor",
-    title: "Editor",
-    kind: "official",
-    shadcn: null,
-    nshElement: "rich-editor",
-    description: "Rich document typography for nsh/base's RichEditor.",
-  },
-  {
     slug: "emoji-picker",
     title: "Emoji picker",
     kind: "official",
@@ -277,6 +269,14 @@ export const components: ComponentDoc[] = [
     shadcn: "resizable",
     nshElement: "resizable",
     description: "Resize handles with a quiet hairline and a growing thumb.",
+  },
+  {
+    slug: "rich-editor",
+    title: "Rich Editor",
+    kind: "official",
+    shadcn: null,
+    nshElement: "rich-editor",
+    description: "Rich document typography and its session API, on nsh/base's RichEditor.",
   },
   {
     slug: "scrollbar",

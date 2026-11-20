@@ -152,7 +152,7 @@ export const NSH_ELEMENTS: readonly NshEntry[] = [
   { id: "progress", group: "base", ours: ["progress"] },
   { id: "radio", group: "base", ours: ["radio-group"] },
   { id: "resizable", group: "base", ours: ["resizable"] },
-  { id: "rich-editor", group: "base", ours: ["editor"] },
+  { id: "rich-editor", group: "base", ours: ["rich-editor"] },
   { id: "scrollbar", group: "base", ours: ["scrollbar"] },
   { id: "select", group: "base", ours: ["select"] },
   { id: "sheet", group: "base", ours: ["sheet"] },

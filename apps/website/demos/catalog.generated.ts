@@ -53,7 +53,7 @@ export const componentIds = [
   "diff-view",
   "text-view",
   "emoji-picker",
-  "editor",
+  "rich-editor",
   "code-editor",
   "color-picker",
   "card",

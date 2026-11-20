@@ -22,6 +22,7 @@ export const OFFICIAL: Record<string, string> = {
   carousel: "carousel",
   checkbox: "checkbox",
   collapsible: "collapsible",
+  "code-editor": "editor",
   "color-picker": "color-picker",
   combobox: "combobox",
   command: "command",
@@ -30,7 +31,6 @@ export const OFFICIAL: Record<string, string> = {
   dialog: "dialog",
   "diff-view": "diff-view",
   "dock-area": "dock",
-  editor: "editor",
   "emoji-picker": "emoji-picker",
   "hover-card": "hover-card",
   input: "input",
@@ -44,6 +44,7 @@ export const OFFICIAL: Record<string, string> = {
   progress: "progress",
   "radio-group": "radio",
   resizable: "resizable",
+  "rich-editor": "rich-editor",
   scrollbar: "scrollbar",
   select: "select",
   sheet: "sheet",
@@ -60,10 +61,9 @@ export const OFFICIAL: Record<string, string> = {
   "text-view": "../text-view",
 };
 
-/** Official examples that are not one file per component: several plot kinds, two editors. */
+/** Official examples that are not one file per component: several plot kinds. */
 export const OFFICIAL_EXTRA: Record<string, string[]> = {
   plot: ["plot-cells", "plot-dots", "plot-dual", "plot-pie", "plot-ranges", "plot-treemap"],
-  editor: ["rich-editor"],
   "text-view": ["text-selection"],
 };
 

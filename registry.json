@@ -987,16 +987,16 @@
       "dependencies": ["lucide@^1.66.0"]
     },
     {
-      "name": "editor",
+      "name": "rich-editor",
       "type": "registry:ui",
-      "title": "Editor",
-      "description": "Rich document typography for nsh/base's RichEditor.",
-      "registryDependencies": [],
+      "title": "Rich Editor",
+      "description": "Rich document typography and its session API, on nsh/base's RichEditor.",
+      "registryDependencies": ["utils"],
       "files": [
         {
-          "path": "packages/ui/editor.tsx",
+          "path": "packages/ui/rich-editor.tsx",
           "type": "registry:ui",
-          "target": "components/ui/editor.tsx"
+          "target": "components/ui/rich-editor.tsx"
         }
       ]
     },

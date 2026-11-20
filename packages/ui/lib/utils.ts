@@ -12,11 +12,19 @@ export type Live<T> = T | (() => T);
 export const read = <T>(v: Live<T> | undefined): T | undefined =>
   typeof v === "function" ? (v as () => T)() : v;
 
+/** A part's classes by name (`RichEditorClasses`'s `nodes`, `marks`): a node type's, a mark's. */
+export type PartMap = { [name: string]: string | null | undefined };
+
+/** A part's classes: the classes themselves, or a map of them by name, as a rich document has. */
+type PartClasses = string | PartMap | null | undefined;
+
 /**
  * `consumer` over `base`, part by part: a string goes after ours, `null` drops ours, and a part it
- * leaves out (or `undefined`) keeps ours.
+ * leaves out (or `undefined`) keeps ours. A part that is a map (`RichEditorClasses`'s `nodes`,
+ * `marks`) merges name by name the same way, so the app overrides one node or mark and keeps the
+ * look's others.
  */
-export function mergeClasses<C extends { [K in keyof C]?: string | null }>(
+export function mergeClasses<C extends { [K in keyof C]?: PartClasses }>(
   base: C,
   consumer?: C | null,
 ): C {
@@ -30,7 +38,27 @@ export function mergeClasses<C extends { [K in keyof C]?: string | null }>(
       continue;
     }
     const prior = merged[key];
-    merged[key] = (prior ? `${prior} ${next}` : next) as C[keyof C]; // `next` is the string the type allows
+    const ours = typeof prior === "string" && prior ? `${prior} ` : "";
+    merged[key] = (
+      typeof next === "string"
+        ? `${ours}${next}`
+        : mergePartMap(typeof prior === "object" && prior !== null ? prior : undefined, next)
+    ) as C[keyof C];
+  }
+  return merged;
+}
+
+/** `consumer`'s classes over `base`'s, name by name, as `mergeClasses` merges the parts themselves. */
+function mergePartMap(base: PartMap | undefined, consumer: PartMap): PartMap {
+  const merged: PartMap = { ...base };
+  for (const [name, classes] of Object.entries(consumer)) {
+    if (classes === undefined) continue;
+    if (classes === null) {
+      delete merged[name];
+      continue;
+    }
+    const prior = merged[name];
+    merged[name] = prior ? `${prior} ${classes}` : classes;
   }
   return merged;
 }

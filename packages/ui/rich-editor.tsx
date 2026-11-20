@@ -1,5 +1,6 @@
-// Editor: `richEditorClasses` and the `RichEditor` that wears them. The code editor is
-// `code-editor.tsx` (`CodeEditor`).
+// Rich editor: `richEditorClasses`, the `RichEditor` that wears them, and the session API an app
+// runs it with (`createRichEditor`, the kits, the commands and their types), so the editor is one
+// import. The code editor is `code-editor.tsx` (`CodeEditor`).
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { split } from "nsh";
 import {
@@ -7,6 +8,8 @@ import {
   type RichEditorClasses,
   type RichEditorProps as BaseRichEditorProps,
 } from "nsh/base";
+
+import { mergeClasses } from "./lib/utils";
 
 // @port look/workspace.tsx
 /**
@@ -51,11 +54,53 @@ export type RichEditorProps = BaseRichEditorProps;
 /** A rich document editor with `richEditorClasses` by default. */
 export function RichEditor(props: RichEditorProps) {
   const [, rest] = split(props, ["classes"]);
-  // The look's parts, then the app's: a part the app leaves out keeps the look's, and `null`
-  // drops it (base's own reading of the prop).
-  const classes = props.classes ? { ...richEditorClasses, ...props.classes } : richEditorClasses;
-  return <BaseRichEditor {...rest} classes={classes} />;
+  // The look's parts, then the app's: a part the app leaves out keeps the look's, `null` drops it,
+  // and a part that is a map of node or mark classes (`nodes`, `marks`) merges name by name.
+  return <BaseRichEditor {...rest} classes={mergeClasses(richEditorClasses, props.classes)} />;
 }
 
-/** The classes of a document's parts (`richEditorClasses`), from `nsh/base`. */
-export type { RichEditorClasses };
+// The session's API, re-exported from `nsh/base`: an app makes the session with `createRichEditor`
+// and runs Tiptap's commands on it here, without importing the element a second time. `command`
+// takes any Tiptap command by name, so the named builders below are the common ones, not the whole
+// set; a node view or an extension brings its own types with it.
+export {
+  chain,
+  command,
+  createRichEditor,
+  defineExtension,
+  defineSchema,
+  extendMarkRange,
+  first,
+  insertContent,
+  redo,
+  richExtension,
+  RichEditorPlugin,
+  StarterKit,
+  TableKit,
+  undo,
+} from "nsh/base";
+export type {
+  RichCommand,
+  RichCommandName,
+  RichDecoration,
+  RichDecorationKind,
+  RichEditorChange,
+  RichEditorClasses,
+  RichEditorFile,
+  RichEditorOptions,
+  RichEditorPastedFiles,
+  RichEditorRef,
+  RichEditorSelection,
+  RichEditorSession,
+  RichEditorStateJSON,
+  RichExtension,
+  RichExtensionConfig,
+  RichFormat,
+  RichMarkJSON,
+  RichNodeJSON,
+  RichNodeViewProps,
+  RichPluginSpec,
+  RichSchema,
+  RichSchemaSpec,
+  RichSelectionJSON,
+} from "nsh/base";

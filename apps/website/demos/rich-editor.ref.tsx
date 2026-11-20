@@ -1,24 +1,23 @@
-// The reference of `editor.tsx`: the same scene on `nsh/base`'s RichEditor, the way the official
+// The reference of `rich-editor.tsx`: the same scene on `nsh/base`'s RichEditor, the way the official
 // example (`references/nsh/website/demos/el-rich-editor.tsx`) writes it, with
 // `richEditorClasses` spread on it. It differs from the component page only in the parts it names.
 import { colors, mono } from "@shadcn-nsh/theme";
 import { Undo2 } from "lucide";
 import { mount, signal, Text, View } from "nsh";
+import { RichEditor } from "nsh/base";
+
+import { Button, buttonGlyph } from "@/packages/ui/button";
+import { Icon } from "@/packages/ui/lib/icons";
+import { sectionSurface } from "@/packages/ui/lib/surface";
 import {
   command,
   createRichEditor,
-  type RichCommand,
   redo,
-  RichEditor,
+  richEditorClasses,
+  type RichCommand,
   StarterKit,
-  ToggleGroup,
   undo,
-} from "nsh/base";
-
-import { Button, buttonGlyph } from "@/packages/ui/button";
-import { richEditorClasses } from "@/packages/ui/editor";
-import { Icon } from "@/packages/ui/lib/icons";
-import { sectionSurface } from "@/packages/ui/lib/surface";
+} from "@/packages/ui/rich-editor";
 import { Toggle } from "@/packages/ui/toggle";
 import { Toolbar, ToolbarGroup, ToolbarSeparator } from "@/packages/ui/toolbar";
 

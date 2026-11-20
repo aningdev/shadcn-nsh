@@ -4,6 +4,22 @@
 
 ### Changed
 
+- **Breaking:** **the rich editor is `rich-editor`, and its session comes from it (#105).** The
+  component, demo and registry item were `editor`, next to `code-editor` — and the docs mixed the
+  two up, the install line naming one and the page describing the other. `shadcn-nsh add
+  rich-editor` installs it at `components/ui/rich-editor.tsx`, the page is
+  `/docs/components/rich-editor`; `add editor` is unknown now, so run
+  `shadcn-nsh add rich-editor` and point the import at the new file. The file also re-exports the
+  session an app edits with — `createRichEditor`, `defineSchema`, `StarterKit`, `TableKit`,
+  `defineExtension`, `richExtension`, `RichEditorPlugin`, `chain`, `first`, `command`, `undo`,
+  `redo`, `extendMarkRange`, `insertContent` and its types — so `createRichEditor` and
+  `StarterKit` no longer need a second import from `nsh/base`; an app that still takes them from
+  `nsh/base` keeps working, it is the same functions.
+- **`classes` merges part by part over the default (#105).** A `classes` object used to replace
+  `richEditorClasses` whole, so naming one part dropped every other. `RichEditor` now merges it in:
+  a part you leave out keeps the default's, `null` still drops it, and `nodes` / `marks` merge name
+  by name, so `classes={{ nodes: { heading: "text-xl" } }}` overrides that node and keeps the
+  default's others.
 - **Command, Select and Combobox highlight in the brand tint again.** The highlighted row is lit in
   `brand-tint` with a `brand/30` edge, as NSH's official Gallery draws it, instead of the grey
   `accent` fill; the chosen row keeps its check.

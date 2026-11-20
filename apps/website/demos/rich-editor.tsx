@@ -4,21 +4,19 @@
 import { mono } from "@shadcn-nsh/theme";
 import { Undo2 } from "lucide";
 import { mount, signal, Text, View } from "nsh";
+
+import { Button, buttonGlyph } from "@/packages/ui/button";
+import { Icon } from "@/packages/ui/lib/icons";
+import { sectionSurface } from "@/packages/ui/lib/surface";
 import {
   command,
   createRichEditor,
-  type RichCommand,
   redo,
   RichEditor,
+  type RichCommand,
   StarterKit,
-  ToggleGroup,
   undo,
-} from "nsh/base";
-
-import { Button, buttonGlyph } from "@/packages/ui/button";
-import { RichEditor as RichEditorView } from "@/packages/ui/editor";
-import { Icon } from "@/packages/ui/lib/icons";
-import { sectionSurface } from "@/packages/ui/lib/surface";
+} from "@/packages/ui/rich-editor";
 import { Toggle } from "@/packages/ui/toggle";
 import { Toolbar, ToolbarGroup, ToolbarSeparator } from "@/packages/ui/toolbar";
 
@@ -122,7 +120,7 @@ function App() {
           {action("Redo", redo, true)}
         </Toolbar>
         <View style={{ height: wide() ? 360 : 300, ...sectionSurface(), overflow: "hidden" }}>
-          <RichEditorView
+          <RichEditor
             editor={doc}
             accessibilityLabel="Document"
             placeholder="Write something"
