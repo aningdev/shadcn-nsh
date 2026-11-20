@@ -4,7 +4,7 @@
  * the theme the registry installs — and the two compared, so a component drawn by hand still draws
  * what its theme says.
  *
- *   bun scripts/port/render-theme.ts [--only <id,...>] [--changed [<ref>]] [--jobs <n>]
+ *   bun scripts/port/render-theme.ts [--only <id,...>] [--changed [<ref>]] [--shard <i>/<n>] [--jobs <n>]
  *                                   [--filter <name>]
  *
  * The test opens each page with the palette in its storage, as the site's switch leaves it, and the
@@ -12,7 +12,7 @@
  * not from a second `nsh.json` or a copy of the demos with a `selectTheme` added. `default` is the
  * build-time theme, whose check is `render.ts`.
  *
- * `--only` and `--changed` narrow the ids exactly as they do there, and the pages run in the same
+ * `--only`, `--changed` and `--shard` narrow the ids exactly as they do there, and the pages run in the same
  * pool (`--jobs`, `scripts/port/render-shared.ts`).
  *
  * Nothing is kept as a baseline — the build-time theme's pictures are (`render.ts`) — so this
@@ -33,6 +33,7 @@ import {
   comparePairs,
   jobCount,
   onlyIds,
+  shardIds,
   runPages,
   softwareBrowser,
   testArgs,
@@ -43,7 +44,7 @@ const shots = path.join(demos, "shots-theme");
 const only = onlyIds();
 const changed = changedIds("theme");
 /** The ids to draw: `--only` and `--changed` both narrow, and together they intersect. */
-const ids = narrowed(only, changed);
+const ids = shardIds(narrowed(only, changed));
 if (ids?.length === 0) {
   console.log("theme: nothing to draw");
   process.exit(0);

@@ -115,11 +115,17 @@ jobs:
         run: bun run check:docs
 
   # Each component's screenshot must equal the same page written against nsh/base
-  # directly (P4).
+  # directly (P4). Four runners split the pages between them (`--shard`): the drawing is
+  # nearly all of the time, the setup about twenty seconds.
   render:
     needs: changes
     if: needs.changes.outputs.render == 'true'
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    name: render (${{ matrix.shard }}/4)
     steps:
       - name: Checkout
         uses: actions/checkout@v7
@@ -147,13 +153,13 @@ jobs:
       # The committed baseline was recorded on macOS; Linux draws text differently, so here
       # only the component ↔ reference pairs gate.
       - name: Render check
-        run: bun run port:render --no-baseline
+        run: bun run port:render --no-baseline --shard ${{ matrix.shard }}/4
 
       - name: Upload render screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: render-shots
+          name: render-shots-${{ matrix.shard }}
           path: apps/website/demos/shots
           if-no-files-found: ignore
           retention-days: 7

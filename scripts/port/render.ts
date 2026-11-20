@@ -2,15 +2,16 @@
  * Runs the render check (`<root>/demos/render.test.tsx`) in a headless browser. The test writes
  * its screenshots to `shots/` beside it, relative to the directory it runs in, so it runs there.
  *
- *   bun scripts/port/render.ts [--only <id,...>] [--changed [<ref>]] [--jobs <n>] [--filter <name>]
- *                              [--no-baseline]
+ *   bun scripts/port/render.ts [--only <id,...>] [--changed [<ref>]] [--shard <i>/<n>] [--jobs <n>]
+ *                              [--filter <name>] [--no-baseline]
  *
  * `--only` runs the pages of the ids named (a comma-separated list of catalog ids, matched
  * whole: `--only table` leaves `data-table` alone), which is what a family's change needs. The
  * test names carry `id=` so `nsh test`'s substring `--filter` can name one alone.
  * `--changed` narrows the same list to the pages the diff since `<ref>` (default `origin/main`)
  * reaches (`scripts/port/affected.ts`); with `--only` it keeps the pages both name. Neither flag
- * runs the whole table.
+ * runs the whole table. `--shard i/n` then keeps every n-th of those pages (CI's runners split the
+ * table this way, `.github/workflows/check.yml`).
  *
  * The pages are drawn by a pool of `nsh test` processes, one id each, `--jobs` at a time (default:
  * half the cores, at most six; `--jobs 1` is one process for the whole table, the run as it was).
@@ -33,6 +34,7 @@ import {
   comparePairs,
   jobCount,
   onlyIds,
+  shardIds,
   runPages,
   softwareBrowser,
   testArgs,
@@ -43,7 +45,7 @@ const demos = catalog().paths.demos;
 const only = onlyIds();
 const changed = changedIds("render");
 /** The pages to draw: `--only` and `--changed` both narrow, and together they intersect. */
-const ids = narrowed(only, changed);
+const ids = shardIds(narrowed(only, changed));
 if (ids?.length === 0) {
   console.log("render: nothing to draw");
   process.exit(0);
@@ -90,7 +92,7 @@ const differs =
 
 if (differs > 0) process.exit(1);
 // A filtered run holds only some of the shots, so it cannot be compared with the whole baseline;
-// a narrowed run (`--only`, `--changed`) holds exactly the ids it names, which `baseline.ts`
+// a narrowed run (`--only`, `--changed`, `--shard`) holds exactly the ids it names, which `baseline.ts`
 // checks on their own.
 if (status === 0) {
   if (args.includes("--filter")) {

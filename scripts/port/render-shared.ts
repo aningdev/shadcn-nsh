@@ -17,14 +17,14 @@ import { compareWithinTolerance } from "./pixels";
 
 /**
  * The arguments `nsh test` takes: everything but this script's own (`--only`, `--changed`,
- * `--jobs`, `--no-baseline`), each with its value. A caller's `--filter` and `--browser` stay.
+ * `--jobs`, `--shard`, `--no-baseline`), each with its value. A caller's `--filter` and `--browser` stay.
  */
 export function testArgs(): string[] {
   const argv = process.argv.slice(2);
   const rest: string[] = [];
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i]!;
-    if (arg === "--only" || arg === "--jobs") {
+    if (arg === "--only" || arg === "--jobs" || arg === "--shard") {
       i += 1;
       continue;
     }
@@ -55,6 +55,24 @@ export function jobCount(): number {
     process.exit(1);
   }
   return value;
+}
+
+/**
+ * One CI runner's share of the pages: `--shard <i>/<n>` keeps every n-th id of `ids` (the whole
+ * table when none narrowed it), starting at the i-th, so n runners draw the table between them
+ * and each compares its own pairs. Without the flag, `ids` as given.
+ */
+export function shardIds(ids: string[] | undefined): string[] | undefined {
+  const at = process.argv.indexOf("--shard");
+  if (at < 0) return ids;
+  const match = /^(\d+)\/(\d+)$/.exec(process.argv[at + 1] ?? "");
+  const index = Number(match?.[1]);
+  const count = Number(match?.[2]);
+  if (!match || count < 1 || index < 1 || index > count) {
+    console.error("render: --shard takes <i>/<n>, 1 ≤ i ≤ n (`--shard 2/4`)");
+    process.exit(1);
+  }
+  return (ids ?? cases.map(({ id }) => id)).filter((_, i) => i % count === index - 1);
 }
 
 /** The ids `--only` names, validated: the pool draws those pages and no others. */
