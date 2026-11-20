@@ -4,6 +4,10 @@
 
 ### Fixed
 
+- **A button group's joins show one hairline (#135).** `buttonGroupLook().item` used to drop the
+  edge on both sides of a join, so a column of raised buttons showed a white seam (the lit top edge
+  of the button below) instead of a line. Each join now keeps one edge, as shadcn's does, and in a
+  column a button below another drops the raised face's lit top edge.
 - **A bubble keeps room for its reactions (#128).** `BubbleReactions` hangs off the bubble's edge,
   and the next bubble in a group used to cover it. A `Bubble` holding a reaction row now keeps the
   room the row hangs out on that side.

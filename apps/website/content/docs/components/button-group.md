@@ -30,8 +30,8 @@ import { ButtonGroup, buttonGroupLook } from "@/components/ui/button-group";
 ### The join
 
 A view styles itself and not its children, so each button wears its own place in the group:
-`item(orientation, position)` squares the sides that touch and drops their edge, the outer sides
-keeping the corners and the edge the button came with. `first` at the leading edge, `last` at the
+`item(orientation, position)` squares the sides that touch and keeps one edge per join (the one
+before it), the outer sides keeping the corners and the edge the button came with. `first` at the leading edge, `last` at the
 trailing one, `middle` between two others.
 
 ```tsx
@@ -50,7 +50,8 @@ The group is `role="group"`, so a reader hears the buttons as one set.
 ### A column
 
 `orientation="vertical"` stacks them: the corners at the top and the bottom of the column keep the
-corners, the sides between them are squared, and the edge between them is dropped.
+corners, the sides between them are squared, and one hairline is left between two buttons. A button
+below another also drops the raised face's lit top edge, which would read as a white seam.
 
 ```tsx
 <ButtonGroup orientation="vertical">
@@ -79,7 +80,7 @@ no join, and is hidden from a reader (it is the group's own hairline).
 
 ## Differences from shadcn/ui
 
-- shadcn squares the corners that touch and drops the edge between them with a child selector
+- shadcn squares the corners that touch and drops the doubled edge between them with a child selector
   (`[&>*:not(:first-child)]:rounded-l-none`); here each button wears its own place in the group
   (`first` / `middle` / `last`), because a view styles itself and not its children.
 

@@ -20,8 +20,10 @@ export interface ButtonGroupLook {
   /** The group: its children touching, in a row or a column, as narrow as they are. */
   root(orientation: ButtonGroupOrientation): ViewStyle;
   /**
-   * The corners and the edge a button gives up to be joined to the one beside it: its own outer
-   * side keeps the corners, the sides that touch are squared and lose their edge.
+   * The corners and the edge a button gives up to be joined to the one beside it: its outer sides
+   * keep their corners, the sides that touch are squared, and each join keeps one edge (the one
+   * before it), as shadcn's does. In a column a button below another also drops the raised face's
+   * lit top edge, which would otherwise draw a white seam.
    */
   item(orientation: ButtonGroupOrientation, position: ButtonGroupPosition): ViewStyle;
   /** A word inside the group: the muted fill behind the control's corners. */
@@ -40,7 +42,7 @@ const OrientationContext = context<ButtonGroupOrientation>("horizontal");
  * A button group's look, after shadcn/ui's `ButtonGroup`: the children touching (`gap: 0`) in a
  * row or a column, as narrow as its children and as tall as the tallest, so a row of buttons
  * reads as one control. `item` is the join: the corners on the sides that touch are squared and
- * their edge dropped, the outer sides keeping the corners and the edge they came with.
+ * one edge kept per join, the outer sides keeping the corners and the edge they came with.
  */
 export function buttonGroupLook(): ButtonGroupLook {
   return {
@@ -54,18 +56,26 @@ export function buttonGroupLook(): ButtonGroupLook {
     item: (orientation: ButtonGroupOrientation, position: ButtonGroupPosition): ViewStyle => {
       const before = position !== "first";
       const after = position !== "last";
-      const horizontal = orientation === "horizontal";
+      if (orientation === "horizontal") {
+        return {
+          ...(before
+            ? { borderTopStartRadius: 0, borderBottomStartRadius: 0, borderStartWidth: 0 }
+            : {}),
+          ...(after ? { borderTopEndRadius: 0, borderBottomEndRadius: 0 } : {}),
+        };
+      }
+      // A raised face lights its top edge from inside; under the button above, that light would
+      // read as a white seam, so a button below another drops its shadows with its top edge.
       return {
         ...(before
-          ? horizontal
-            ? { borderTopStartRadius: 0, borderBottomStartRadius: 0, borderStartWidth: 0 }
-            : { borderTopLeftRadius: 0, borderTopRightRadius: 0, borderTopWidth: 0 }
+          ? {
+              borderTopLeftRadius: 0,
+              borderTopRightRadius: 0,
+              borderTopWidth: 0,
+              boxShadow: "none",
+            }
           : {}),
-        ...(after
-          ? horizontal
-            ? { borderTopEndRadius: 0, borderBottomEndRadius: 0, borderEndWidth: 0 }
-            : { borderBottomLeftRadius: 0, borderBottomRightRadius: 0, borderBottomWidth: 0 }
-          : {}),
+        ...(after ? { borderBottomLeftRadius: 0, borderBottomRightRadius: 0 } : {}),
       };
     },
     textFrame: (): ViewStyle => ({
