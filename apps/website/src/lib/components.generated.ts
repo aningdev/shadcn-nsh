@@ -652,4 +652,13 @@ export const components: ComponentDoc[] = [
     nshElement: null,
     description: "A dot and label for quiet state in rows or headers.",
   },
+  {
+    slug: "trace",
+    title: "Trace",
+    kind: "own",
+    shadcn: null,
+    nshElement: null,
+    description:
+      "An agent's steps, one line each — reasoning, a tool call, a source, a failed step — where a line can open onto what it did.",
+  },
 ];

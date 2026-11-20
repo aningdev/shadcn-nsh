@@ -1,13 +1,12 @@
 // The chat's parts: a spinner, the streaming caret, the row under a reply, a day's separator, a
 // file, a photo, a tool call with its result, a source, an error and the assistant's avatar.
 // Ported from the gallery's `demos/chat/parts.tsx`, in the theme's roles and this library's parts
-// (a file is an `Attachment`, a state a `Badge`, a press a `Pressable`).
+// (a file is an `Attachment`, a tool call a `Trace` line, a press a `Pressable`).
 import {
   alpha,
   colors,
   finish,
   hovered,
-  isDark,
   mono,
   rounded,
   type Tone,
@@ -15,8 +14,8 @@ import {
   toneTint,
   shape,
 } from "@shadcn-nsh/theme";
-import { Sparkles, X } from "lucide";
-import { type JSX, Image, Text, View } from "nsh";
+import { Globe, Sparkles, Sun, Terminal, X, type IconNode } from "lucide";
+import { type JSX, Image, signal, Text, View, type ViewStyle } from "nsh";
 
 import {
   Attachment,
@@ -26,11 +25,20 @@ import {
   AttachmentMedia,
   AttachmentTitle,
 } from "@/packages/ui/attachment";
-import { Badge } from "@/packages/ui/badge";
 import { IconButton, iconButtonGlyph } from "@/packages/ui/button";
 import { CodeBlock, CodeBlockContent, CodeBlockFooter } from "@/packages/ui/code-block";
 import { Icon } from "@/packages/ui/lib/icons";
 import { Pressable } from "@/packages/ui/pressable";
+import {
+  Trace,
+  TraceCollapsible,
+  TraceCollapsibleContent,
+  TraceCollapsibleTrigger,
+  TraceDescription,
+  TraceIcon,
+  TraceLine,
+  TraceTitle,
+} from "@/packages/ui/trace";
 
 import { Glyph, type GlyphName } from "./glyphs";
 import type { FileRef, Source, Tool, ToolState } from "./scripts";
@@ -194,89 +202,62 @@ export function Photo(props: {
   );
 }
 
-const stateLabel: Record<ToolState, string> = {
+const stateNote: Record<ToolState, string> = {
   pending: "Queued",
   running: "Running",
-  done: "Done",
+  done: "",
   cancelled: "Stopped",
-};
-const stateTone: Record<ToolState, Tone> = {
-  pending: "neutral",
-  running: "info",
-  done: "up",
-  cancelled: "warn",
 };
 
 /**
- * A tool call: a header with its state, then its result once done. (The library has no card for a
- * pending call with a body — `Item` is a row — so the demo draws it, on `finish.card`.)
+ * A tool call: a `Trace` line with its state, opening onto its result once done (a `CodeBlock`
+ * for code, a card of rows for a search or a weather lookup). It opens by itself when the call is
+ * done, until it is pressed.
  */
 export function ToolCard(props: { tool: Tool }) {
   const t = () => props.tool;
-  const head = (): { glyph: GlyphName; title: string; detail: string } => {
+  const head = (): { icon: IconNode; title: string; detail: string } => {
     const tool = t();
-    if (tool.kind === "search") return { glyph: "globe", title: "Web search", detail: tool.query };
-    if (tool.kind === "weather") return { glyph: "sun", title: "Weather", detail: tool.city };
-    return { glyph: "terminal", title: "Run code", detail: `${tool.lang}, sandboxed` };
+    if (tool.kind === "search") return { icon: Globe, title: "Web search", detail: tool.query };
+    if (tool.kind === "weather") return { icon: Sun, title: "Weather", detail: tool.city };
+    return { icon: Terminal, title: "Run code", detail: `${tool.lang}, sandboxed` };
   };
+  const status = () =>
+    t().state === "pending" ? "pending" : t().state === "running" ? "running" : undefined;
+  // The result is there once the call is done; the user's press overrides it from then on.
+  const pressed = signal<boolean | null>(null);
+  const ready = () => t().state === "done";
   return (
-    <View
-      style={{
-        backgroundColor: colors.card,
-        ...finish.card,
-        ...rounded(shape.inset),
-        borderWidth: 1,
-        borderColor:
-          t().state === "running" ? alpha(colors.info, isDark() ? 0.55 : 0.4) : colors.border,
-        transitionProperty: "colors",
-        transitionDuration: 250,
-        overflow: "hidden",
-      }}
-    >
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 12, padding: 12 }}>
-        <View
-          style={{
-            width: 32,
-            height: 32,
-            ...rounded(9),
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: colors.raised,
-            ...finish.raised,
-            borderWidth: 1,
-            borderColor: colors.border,
-          }}
-        >
-          <Glyph name={head().glyph} size={16} tint={colors.foreground} />
-        </View>
-        <View style={{ flex: 1, gap: 1 }}>
-          <Text style={{ fontSize: 14, fontWeight: "600", color: colors.foreground }}>
-            {head().title}
-          </Text>
-          <Text style={{ numberOfLines: 1, fontSize: 13, color: colors.mutedForeground }}>
-            {head().detail}
-          </Text>
-        </View>
-        <If
-          when={t().state === "running" || t().state === "pending"}
-          else={
-            <Badge size="sm" tone={stateTone[t().state]}>
-              {stateLabel[t().state]}
-            </Badge>
-          }
-        >
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <Spinner tint={t().state === "pending" ? colors.faint : colors.info} />
-            <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
-              {stateLabel[t().state]}
-            </Text>
-          </View>
-        </If>
-      </View>
-      <ToolBody tool={t()} />
-    </View>
+    <Trace>
+      <TraceCollapsible
+        open={ready() && (pressed() ?? true)}
+        onOpenChange={(event) => pressed.set(event.open)}
+      >
+        <TraceCollapsibleTrigger disabled={!ready()}>
+          <TraceLine status={status()}>
+            <TraceIcon>
+              <Icon icon={head().icon} size={16} tint={colors.mutedForeground} />
+            </TraceIcon>
+            <TraceTitle>{head().title}</TraceTitle>
+            <TraceDescription>{stateNote[t().state] || head().detail}</TraceDescription>
+          </TraceLine>
+        </TraceCollapsibleTrigger>
+        <TraceCollapsibleContent>
+          <ToolBody tool={t()} />
+        </TraceCollapsibleContent>
+      </TraceCollapsible>
+    </Trace>
   );
 }
+
+/** The card a search or a weather result sits in, under its trace line. */
+const resultCard: ViewStyle = {
+  backgroundColor: colors.card,
+  ...rounded(shape.inset),
+  borderWidth: 1,
+  borderColor: colors.border,
+  overflow: "hidden",
+};
 
 function ToolBody(props: { tool: Tool }) {
   // The kind never changes for a card; its state and data do.
@@ -287,7 +268,7 @@ function ToolBody(props: { tool: Tool }) {
   if (kind === "search")
     return (
       <If when={search().state === "done"}>
-        <View style={{ borderTopWidth: 1, borderTopColor: colors.line, paddingVertical: 4 }}>
+        <View style={[resultCard, { paddingVertical: 4 }]}>
           <Each of={search().sources}>
             {(source, i) => <SourceRow source={source()} index={i()} />}
           </Each>
@@ -297,7 +278,7 @@ function ToolBody(props: { tool: Tool }) {
   if (kind === "weather")
     return (
       <If when={weather().state === "done"}>
-        <View style={{ borderTopWidth: 1, borderTopColor: colors.line, padding: 12, gap: 12 }}>
+        <View style={[resultCard, { padding: 12, gap: 12 }]}>
           <View style={{ flexDirection: "row", alignItems: "flex-end", gap: 12 }}>
             <Text
               style={{
@@ -351,11 +332,8 @@ function ToolBody(props: { tool: Tool }) {
         </View>
       </If>
     );
-  // The result sits flush in the card: the block's own edge and corners go, a hairline stays above.
   return (
-    <CodeBlock
-      style={{ borderWidth: 0, borderTopWidth: 1, borderTopColor: colors.line, borderRadius: 0 }}
-    >
+    <CodeBlock size="sm">
       <CodeBlockContent wrap>{code().code}</CodeBlockContent>
       <If when={code().state === "done"}>
         <CodeBlockFooter style={{ minHeight: 44, columnGap: 10 }}>

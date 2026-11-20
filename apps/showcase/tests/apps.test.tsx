@@ -75,10 +75,29 @@ test("AI Chat: a scripted scene streams a tool card and its sources", async () =
     timeout: 8000,
   });
   await app.waitFor("text:Web search", { timeout: 12000 });
-  await app.waitFor("text:Done", { timeout: 20000 });
   // Its sources come with it, and the reply is written under them.
   await app.waitFor("text:Harbor 4.2 release notes", { timeout: 20000 });
   await app.waitFor("text:harbor.dev", { timeout: 20000 });
+});
+
+test("AI Chat: a reasoning line counts, then reads what it took and opens onto its text", async () => {
+  const app = await open("../App.tsx", wide);
+  await app.setColorScheme("light");
+  await show(app, "AI Chat", "How can I help?");
+  await app.press("label:Think it through");
+  // The line counts while the model thinks.
+  await app.waitFor("text:Thinking… 0 s", { timeout: 12000 });
+  const reads = () => app.texts().some((text) => text.includes("Call the ball"));
+  // Once the reply is done the line reads what it took, closed; a press opens it and a press closes it.
+  await app.waitFor("label:Regenerate", { timeout: 40000 });
+  expect(app.texts().some((text) => text.startsWith("Thought for"))).toBe(true);
+  const wasOpen = reads();
+  await app.press("label:Reasoning");
+  await app.wait(400);
+  expect(reads()).toBe(!wasOpen);
+  await app.press("label:Reasoning");
+  await app.wait(400);
+  expect(reads()).toBe(wasOpen);
 });
 
 test("AI Chat: a code tool shows its code and, once done, the output in a footer", async () => {

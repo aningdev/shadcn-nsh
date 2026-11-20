@@ -1281,6 +1281,19 @@
           "target": "components/ui/image-viewer.tsx"
         }
       ]
+    },
+    {
+      "name": "trace",
+      "type": "registry:ui",
+      "title": "Trace",
+      "description": "An agent's steps, one line each: reasoning, a tool call, a source, a failed step. A line can open onto what it did.",
+      "files": [
+        {
+          "path": "packages/ui/trace.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/trace.tsx"
+        }
+      ]
     }
   ]
 }

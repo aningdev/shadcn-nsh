@@ -22,6 +22,7 @@ import {
   shape,
 } from "@shadcn-nsh/theme";
 import {
+  Brain,
   FileText,
   Image as ImageIcon,
   Plus,
@@ -60,6 +61,15 @@ import {
 } from "@/packages/ui/message-scroller";
 import { Pressable } from "@/packages/ui/pressable";
 import { Segmented, SegmentedItem, SegmentedList } from "@/packages/ui/segmented";
+import {
+  Trace,
+  TraceCollapsible,
+  TraceCollapsibleContent,
+  TraceCollapsibleTrigger,
+  TraceIcon,
+  TraceLine,
+  TraceTitle,
+} from "@/packages/ui/trace";
 
 import { Appear, IconTile, desktop, paneWidth } from "./apps-shared";
 import { Glyph, type GlyphName } from "./chat/glyphs";
@@ -629,66 +639,30 @@ export function ChatDemo() {
           </If>
         </View>
         <If when={reasoning()}>
-          <View style={{ gap: 8 }}>
-            <Pressable
-              onPress={() => {
+          <Trace>
+            <TraceCollapsible
+              open={Boolean(reasoning()?.open)}
+              onOpenChange={() => {
                 if (live()) return;
-                LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
                 update(m().id, (x) => ({
                   ...x,
                   reasoning: x.reasoning && { ...x.reasoning, open: !x.reasoning.open },
                 }));
               }}
-              accessibilityLabel="Reasoning"
-              selected={!!reasoning()?.open}
-              hoverStyle={hovered()}
-              style={{ alignSelf: "flex-start" }}
             >
-              <View style={{ flexDirection: "row", alignItems: "center", gap: 8, height: 32 }}>
-                <If
-                  when={live() && liveThinking()?.seconds === null}
-                  else={<Glyph name="brain" size={16} tint={colors.mutedForeground} />}
+              <TraceCollapsibleTrigger accessibilityLabel="Reasoning">
+                <TraceLine
+                  status={live() && liveThinking()?.seconds === null ? "running" : undefined}
                 >
-                  <Spinner size={14} tint={colors.mutedForeground} />
-                </If>
-                <Text
-                  style={{
-                    fontSize: 14,
-                    color: colors.mutedForeground,
-                    fontVariant: ["tabular-nums"],
-                  }}
-                >
-                  {thinkingLabel()}
-                </Text>
-                <View
-                  style={{
-                    transform: reasoning()?.open ? "rotate(0deg)" : "rotate(-90deg)",
-                    transitionProperty: "transform",
-                    transitionDuration: 220,
-                    transitionTimingFunction: "ease-out",
-                  }}
-                >
-                  <Glyph name="caret-down" size={14} tint={colors.faint} />
-                </View>
-              </View>
-            </Pressable>
-            <If when={reasoning()?.open}>
-              <View style={{ flexDirection: "row", gap: 12, paddingLeft: 7 }}>
-                <View style={{ width: 2, borderRadius: 1, backgroundColor: colors.border }} />
-                <Text
-                  style={{
-                    userSelect: "text",
-                    flex: 1,
-                    fontSize: 14,
-                    lineHeight: 20,
-                    color: colors.mutedForeground,
-                  }}
-                >
-                  {reasoning()?.text}
-                </Text>
-              </View>
-            </If>
-          </View>
+                  <TraceIcon>
+                    <Icon icon={Brain} size={16} tint={colors.mutedForeground} />
+                  </TraceIcon>
+                  <TraceTitle>{thinkingLabel()}</TraceTitle>
+                </TraceLine>
+              </TraceCollapsibleTrigger>
+              <TraceCollapsibleContent>{reasoning()?.text ?? ""}</TraceCollapsibleContent>
+            </TraceCollapsible>
+          </Trace>
         </If>
         <Each of={tools()} key={(t) => t.id}>
           {(tool) => <ToolCard tool={tool()} />}

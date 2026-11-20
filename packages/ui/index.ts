@@ -77,6 +77,7 @@ export * from "./nav-stack";
 export * from "./split-view";
 export * from "./code-block";
 export * from "./image-viewer";
+export * from "./trace";
 export * from "./lib/color-format";
 export * from "./lib/icons";
 export {

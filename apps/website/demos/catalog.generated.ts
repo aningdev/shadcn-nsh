@@ -82,4 +82,5 @@ export const componentIds = [
   "split-view",
   "code-block",
   "image-viewer",
+  "trace",
 ] as const;
