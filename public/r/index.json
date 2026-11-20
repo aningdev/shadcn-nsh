@@ -1307,6 +1307,19 @@
           "target": "components/ui/refresh-indicator.tsx"
         }
       ]
+    },
+    {
+      "name": "title-bar",
+      "type": "registry:ui",
+      "title": "TitleBar",
+      "description": "The bar that drags a desktop window, the window buttons a frameless one draws for itself, and the edges that resize it.",
+      "files": [
+        {
+          "path": "packages/ui/title-bar.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/title-bar.tsx"
+        }
+      ]
     }
   ]
 }

@@ -26,7 +26,8 @@ const VARIANTS = ["default", "secondary", "outline", "ghost", "destructive", "li
  * accent (`Bubble`), and `border` and `separator` a marker's hairline, under it or either side of
  * it (`Marker`); `sidebar`, `floating` and `inset` are how a column meets the window (`Sidebar`),
  * as shadcn names them too; `highlighted`, `added` and `removed` are a code line's state
- * (`CodeBlockLine`), as shadcn's code block names them.
+ * (`CodeBlockLine`), as shadcn's code block names them; `traffic-lights` and `caption` are the
+ * window's own buttons, at the leading end or the trailing one (`WindowControls`).
  */
 const OWN_VARIANTS: Record<string, string> = {
   tile: "radio-group",
@@ -45,6 +46,8 @@ const OWN_VARIANTS: Record<string, string> = {
   highlighted: "code-block",
   added: "code-block",
   removed: "code-block",
+  "traffic-lights": "title-bar",
+  caption: "title-bar",
 };
 
 /** Every `size` value: the three of a scale, and the icon-only ones a shadcn button takes. */

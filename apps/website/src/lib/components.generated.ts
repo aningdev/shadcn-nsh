@@ -662,6 +662,15 @@ export const components: ComponentDoc[] = [
     description: "A dot and label for quiet state in rows or headers.",
   },
   {
+    slug: "title-bar",
+    title: "TitleBar",
+    kind: "own",
+    shadcn: null,
+    nshElement: null,
+    description:
+      "The bar that drags a desktop window, the window buttons a frameless one draws for itself, and the edges that resize it.",
+  },
+  {
     slug: "trace",
     title: "Trace",
     kind: "own",

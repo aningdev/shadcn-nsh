@@ -1,0 +1,139 @@
+---
+title: TitleBar
+description: The bar that drags a desktop window, the window buttons a frameless one draws for itself, and the edges that resize it.
+component: true
+demo: title-bar
+---
+
+## Installation
+
+```npm
+npx shadcn-nsh@latest add title-bar
+```
+
+## Usage
+
+```tsx
+import { Text } from "nsh";
+
+import {
+  TITLE_BAR_HEIGHT,
+  TitleBar,
+  WindowControls,
+  WindowResizeEdges,
+} from "@/components/ui/title-bar";
+```
+
+A desktop window with `titleBar: { style: "hidden" }` keeps the system's window buttons and leaves
+the rest of the bar to the app: `TitleBar` draws it, drags the window, and pads its children clear
+of the buttons (`titleBar()`'s `left` and `right`).
+
+```tsx
+<TitleBar>
+  {/* the app's own: a logo, the document's name, a search field, a button */}
+  <Text style={{ flex: 1 }}>Notes.nsh</Text>
+</TitleBar>
+```
+
+`TitleBar` draws nothing where the app has no window of its own — a browser page, a phone — and
+`WindowControls` are inert there: the bar is a window's, and there is none.
+
+## Composition
+
+Use the following composition to build a `TitleBar`:
+
+```text
+TitleBar
+├── WindowControls
+└── WindowResizeEdges
+```
+
+## Examples
+
+### Traffic lights
+
+A window with `frame: "none"` has no title bar and no border: the app draws the bar, the lights
+and the edges itself. `WindowControls` puts the platform's three buttons at the leading end, the
+app's own content after them.
+
+```tsx
+<View style={{ flex: 1 }}>
+  <TitleBar>
+    <WindowControls />
+    <Text style={{ flex: 1 }}>Time sheet.nsh</Text>
+  </TitleBar>
+  <View style={{ flex: 1 }}>{document}</View>
+  <WindowResizeEdges />
+</View>
+```
+
+The glyphs are drawn while the pointer is over the lights, as the system draws them, and the
+lights turn grey while the window is in the background.
+
+### Caption buttons
+
+Windows' and Linux's buttons are cells at the trailing end of the bar, filling its height.
+They sit flush against the window's corner, so the bar's trailing padding goes to zero:
+
+```tsx
+<TitleBar style={{ paddingEnd: 0 }}>
+  <Text style={{ flex: 1 }}>Notes.nsh</Text>
+  <WindowControls variant="caption" />
+</TitleBar>
+```
+
+### Your own window controls
+
+The three parts are the shapes the platforms draw; an app that wants its own draws the same
+`desktop` views itself, and the platform still carries out the press. A round close button
+(`Icon` from `lib/icons`, `windowControls` from `lib/theme`, `X` from `lucide`):
+
+```tsx
+<View
+  desktop={{ windowControl: "close" }}
+  role="button"
+  accessibilityLabel="Close"
+  style={{
+    width: 28,
+    height: 28,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  }}
+  hoverStyle={{ backgroundColor: windowControls.close }}
+>
+  <Icon icon={X} size={12} tint={windowControls.ink} />
+</View>
+```
+
+A bar of the app's own takes `desktop={{ windowDrag: true }}` to drag the window, and pads by
+`titleBar().left` and `titleBar().right` so its content clears the system's buttons.
+
+## Differences from shadcn/ui
+
+shadcn/ui has no title bar: a web page is drawn inside the browser's window, which the browser
+draws. A desktop window's bar is the app's, and `TitleBar` is the shape of it here — the drag
+region, the padding the system's buttons take, and the platform's window-buttons, spelled with
+`nsh/desktop`'s `windowControl` and `windowResize` rather than a web click.
+
+## API
+
+| Part                | Props                                                               | Description                                 |
+| ------------------- | ------------------------------------------------------------------- | ------------------------------------------- |
+| `TitleBar`          | every `nsh` View prop; look `titleBarLook().root()`                 | The bar that drags the window               |
+| `WindowControls`    | `variant`; every `nsh` View prop; look `titleBarLook().controls(…)` | The window's own buttons                    |
+| `WindowResizeEdges` | look `titleBarLook().resize(edge)`                                  | The edges and corners of a frameless window |
+
+Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on all three, and `style`
+goes over the look's on `TitleBar` and `WindowControls`.
+
+| Prop      | Type                            | Default          |
+| --------- | ------------------------------- | ---------------- |
+| `variant` | `"traffic-lights" \| "caption"` | `traffic-lights` |
+
+`TitleBar` is `TITLE_BAR_HEIGHT` (40 points) tall, or the height the system's title bar has, on
+the inset fill with a hairline under it; its children start `12` points after the system's buttons.
+A traffic light is `TRAFFIC_LIGHT` (12 points) wide, in the theme's close, minimize and zoom window-control roles, and `CAPTION_BUTTON` (46) is a caption cell's width; the close cell
+washes the destructive tint while the pointer is on it. `WindowResizeEdges` draws eight strips —
+`5` points along the edges, `12` at the corners — as the last child of the window's root.
+`titleBarLook()` is exported for a bar the app lays out itself.

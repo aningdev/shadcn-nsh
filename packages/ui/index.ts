@@ -79,6 +79,7 @@ export * from "./code-block";
 export * from "./image-viewer";
 export * from "./trace";
 export * from "./refresh-indicator";
+export * from "./title-bar";
 export * from "./lib/color-format";
 export * from "./lib/icons";
 export {

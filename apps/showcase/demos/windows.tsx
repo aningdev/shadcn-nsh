@@ -5,7 +5,7 @@
 // pops up over everything. Every window reads the same signals, so the inspector's edits show in the
 // document at once. The windows, their state and the palette's search are `nsh/desktop` and
 // `nsh/base`'s; the cards, buttons, badges, stats and command rows are this library's.
-import { colors, alpha, mono, tints, windowControls, shape } from "@shadcn-nsh/theme";
+import { colors, alpha, mono, tints, shape } from "@shadcn-nsh/theme";
 import {
   AppWindow,
   Check,
@@ -14,7 +14,6 @@ import {
   Layers,
   Monitor,
   PanelLeft,
-  Plus,
   Search,
   SlidersHorizontal,
   X,
@@ -59,6 +58,7 @@ import { Segmented, SegmentedItem, SegmentedList } from "@/packages/ui/segmented
 import { Stat } from "@/packages/ui/stat";
 import { Status } from "@/packages/ui/status";
 import { Switch } from "@/packages/ui/switch";
+import { TitleBar, WindowControls, WindowResizeEdges } from "@/packages/ui/title-bar";
 import { toast, Toaster } from "@/packages/ui/toast";
 
 import { DemoPage } from "../kit";
@@ -846,164 +846,6 @@ function PaletteWindow() {
 
 // --- The document window -------------------------------------------------------------------------
 
-type Control = "close" | "minimize" | "maximize";
-
-/** macOS's three window buttons, drawn by the app at the leading edge: each acts as the system's
- * (`windowControl`), their glyphs show while the pointer is over the group, and they turn grey
- * while the window is in the background. */
-function TrafficLights(props: { active: boolean }) {
-  const over = signal(false);
-  const light = (control: Control, label: string, tone: string, glyph: JSX.Element) => (
-    <View
-      desktop={{ windowControl: control }}
-      role="button"
-      accessibilityLabel={label}
-      style={{
-        width: 12,
-        height: 12,
-        borderRadius: 6,
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: props.active || over() ? tone : windowControls.off,
-        borderWidth: 0.5,
-        borderColor: windowControls.edge,
-        transitionProperty: "colors",
-        transitionDuration: 120,
-      }}
-    >
-      <View
-        style={{
-          opacity: over() ? 1 : 0,
-          transitionProperty: "opacity",
-          transitionDuration: 120,
-        }}
-      >
-        {glyph}
-      </View>
-    </View>
-  );
-  const ink = windowControls.ink;
-  return (
-    <View
-      onMouseEnter={() => over.set(true)}
-      onMouseLeave={() => over.set(false)}
-      style={{ flexDirection: "row", alignItems: "center", gap: 8 }}
-    >
-      {light(
-        "close",
-        "Close",
-        windowControls.close,
-        <Icon icon={X} size={8} tint={ink} weight={2} />,
-      )}
-      {light(
-        "minimize",
-        "Minimize",
-        windowControls.minimize,
-        <View style={{ width: 6, height: 1.5, borderRadius: 1, backgroundColor: ink }} />,
-      )}
-      {light(
-        "maximize",
-        "Zoom",
-        windowControls.zoom,
-        <Icon icon={Plus} size={8} tint={ink} weight={2} />,
-      )}
-    </View>
-  );
-}
-
-/** The window buttons of Windows and Linux, drawn by the app at the trailing edge, as tall as the
- * title bar: each acts as the system's (`windowControl`), the close button tinted in the danger
- * tone under the pointer. */
-function CaptionButtons() {
-  const button = (control: Control, label: string, glyph: JSX.Element) => (
-    <View
-      desktop={{ windowControl: control }}
-      role="button"
-      accessibilityLabel={label}
-      style={{
-        width: 46,
-        alignSelf: "stretch",
-        alignItems: "center",
-        justifyContent: "center",
-        transitionProperty: "background-color",
-        transitionDuration: 120,
-      }}
-      hoverStyle={{
-        backgroundColor: control === "close" ? tints.destructive : alpha(colors.foreground, 0.06),
-      }}
-    >
-      {glyph}
-    </View>
-  );
-  return (
-    <View style={{ flexDirection: "row", alignSelf: "stretch" }}>
-      {button(
-        "minimize",
-        "Minimize",
-        <View style={{ width: 10, height: 1, backgroundColor: colors.foreground }} />,
-      )}
-      {button(
-        "maximize",
-        "Maximize",
-        <View
-          style={{
-            width: 10,
-            height: 10,
-            borderRadius: 1.5,
-            borderWidth: 1,
-            borderColor: colors.foreground,
-          }}
-        />,
-      )}
-      {button("close", "Close", <Icon icon={X} size={12} tint={colors.foreground} weight={1.25} />)}
-    </View>
-  );
-}
-
-/** A frameless window's edges and corners, which resize it (`windowResize`): thin strips over the
- * content's border. */
-function ResizeEdges() {
-  const edge = 5;
-  const corner = 12;
-  const at = (style: Record<string, number>) => ({ position: "absolute" as const, ...style });
-  return (
-    <>
-      <View
-        desktop={{ windowResize: "top" }}
-        style={at({ top: 0, left: corner, right: corner, height: edge })}
-      />
-      <View
-        desktop={{ windowResize: "bottom" }}
-        style={at({ bottom: 0, left: corner, right: corner, height: edge })}
-      />
-      <View
-        desktop={{ windowResize: "left" }}
-        style={at({ left: 0, top: corner, bottom: corner, width: edge })}
-      />
-      <View
-        desktop={{ windowResize: "right" }}
-        style={at({ right: 0, top: corner, bottom: corner, width: edge })}
-      />
-      <View
-        desktop={{ windowResize: "topLeft" }}
-        style={at({ top: 0, left: 0, width: corner, height: corner })}
-      />
-      <View
-        desktop={{ windowResize: "topRight" }}
-        style={at({ top: 0, right: 0, width: corner, height: corner })}
-      />
-      <View
-        desktop={{ windowResize: "bottomLeft" }}
-        style={at({ bottom: 0, left: 0, width: corner, height: corner })}
-      />
-      <View
-        desktop={{ windowResize: "bottomRight" }}
-        style={at({ bottom: 0, right: 0, width: corner, height: corner })}
-      />
-    </>
-  );
-}
-
 /** One block of the document, set as a writing app sets it: paragraphs in the reading size with
  * room between them, headings larger and heavier with more room above than below, items after a
  * bullet. Paragraphs and items grow with their text. */
@@ -1104,25 +946,11 @@ function DocumentWindow() {
       style={{ flex: 1, backgroundColor: colors.card, borderWidth: 1, borderColor: colors.border }}
     >
       {/* The title bar: dragging it moves the window, a double click zooms or maximizes it; its
-          buttons stay buttons. */}
-      <View
-        desktop={{ windowDrag: true }}
-        style={{
-          height: 40,
-          flexDirection: "row",
-          alignItems: "center",
-          gap: 8,
-          paddingStart: 14,
-          paddingEnd: mac ? 10 : 0,
-          backgroundColor: colors.inset,
-          borderBottomWidth: 1,
-          borderBottomColor: colors.line,
-        }}
-      >
+          buttons stay buttons. Its padding is the writing app's own: 14 points before the document's
+          name, and the caption buttons flush against the window's corner. */}
+      <TitleBar style={{ paddingStart: 14, paddingEnd: mac ? 10 : 0 }}>
         <If when={mac}>
-          <View style={{ marginEnd: 8 }}>
-            <TrafficLights active={active()} />
-          </View>
+          <WindowControls />
         </If>
         <View
           style={{
@@ -1184,9 +1012,9 @@ function DocumentWindow() {
         </BaseButton>
         <If when={!mac}>
           <View style={{ width: 4 }} />
-          <CaptionButtons />
+          <WindowControls variant="caption" />
         </If>
-      </View>
+      </TitleBar>
       {/* The page: a reading column, its title over the blocks. */}
       <Scroll style={{ flex: 1 }}>
         <View
@@ -1262,7 +1090,7 @@ function DocumentWindow() {
           </Text>
         </If>
       </View>
-      <ResizeEdges />
+      <WindowResizeEdges />
     </View>
   );
 }

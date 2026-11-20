@@ -24,6 +24,9 @@ test("Windows: the draft opens its document in a window of its own", async () =>
   await app.press("text:Open document");
   await app.waitUntil(() => app.window("document").state() !== null);
   expect(app.window("document").state()?.focused).not.toBe(false);
+  // Its bar is the library's: the window's own buttons sit at its leading end, named as the
+  // system names them.
+  expect(app.count("label:Zoom")).toBe(1);
   // Nothing is left open: the driver plays the platform, so the window closes as its button does.
   await app.window("document").pressClose();
   await app.waitUntil(() => app.window("document").state() === null);
