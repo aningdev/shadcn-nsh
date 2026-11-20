@@ -5,12 +5,15 @@ import { colors } from "@shadcn-nsh/theme";
 // requires the two to draw the same pixels.
 import {
   Bell,
+  BookOpen,
+  Check,
   ChevronLeft,
   ChevronRight,
   Contrast,
   Eye,
   Languages,
   Palette,
+  Pencil,
   RefreshCw,
   SlidersHorizontal,
   Waves,
@@ -20,7 +23,17 @@ import type { JSX } from "nsh";
 import { mount, Scroll, signal, Text, View } from "nsh";
 import { NavPage as BaseNavPage, NavStack as BaseNavStack, createNavStack } from "nsh/base";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/packages/ui/alert-dialog";
 import { Button, IconButton } from "@/packages/ui/button";
+import { Input } from "@/packages/ui/input";
 import {
   Item,
   ItemActions,
@@ -39,7 +52,12 @@ import { Pressable } from "@/packages/ui/pressable";
 import { Switch } from "@/packages/ui/switch";
 
 /** The pages: the settings' list, one group of it, and the appearance it opens. */
-type Route = { id: "settings" } | { id: "general" } | { id: "appearance" };
+type Route =
+  | { id: "settings" }
+  | { id: "general" }
+  | { id: "appearance" }
+  | { id: "large" }
+  | { id: "draft" };
 
 const nav = createNavStack<Route>([{ id: "settings" }]);
 
@@ -50,6 +68,10 @@ const reduceTransparency = signal(false);
 const increaseContrast = signal(false);
 const languages = ["English", "Français", "日本語"];
 const language = signal(languages[0]);
+
+const draft = signal("Add a keyboard shortcut for quick settings.");
+const ask = signal(false);
+const published = signal(false);
 
 /** A row of a settings list: an icon, a name, a line under it, and a control or a chevron. */
 function Row(props: {
@@ -130,6 +152,8 @@ function PageHeader(props: {
   back?: () => void;
   /** Whether it has one: a page below the one shown. */
   above: () => boolean;
+  /** Whether the small title is in the bar: off with the large title in view, on once it has scrolled away. */
+  reveal?: () => boolean;
 }) {
   const look = navPageLook();
   return (
@@ -139,7 +163,7 @@ function PageHeader(props: {
           <Icon icon={ChevronLeft} size={look.backGlyph().size} tint={look.backGlyph().tint} />
         </IconButton>
       </If>
-      <Text style={look.title()}>{props.title}</Text>
+      <Text style={look.title()}>{() => (props.reveal && !props.reveal() ? "" : props.title)}</Text>
       <If when={props.right}>{props.right}</If>
     </View>
   );
@@ -160,6 +184,20 @@ function SettingsPage() {
             title="General"
             detail="Language, appearance, motion"
             onPress={() => nav.push({ id: "general" })}
+          />
+          <Divider />
+          <Row
+            icon={BookOpen}
+            title="Library"
+            detail="A large title that folds into the bar"
+            onPress={() => nav.push({ id: "large" })}
+          />
+          <Divider />
+          <Row
+            icon={Pencil}
+            title="A draft"
+            detail="Back asks before discarding it"
+            onPress={() => nav.push({ id: "draft" })}
           />
           <Divider />
           <Row
@@ -253,6 +291,161 @@ function GeneralPage() {
   );
 }
 
+const BOOKS = [
+  { title: "The Long Way", author: "Ada Ferrer" },
+  { title: "Notes on Light", author: "Ines Okafor" },
+  { title: "A Quiet Signal", author: "Tomas Lind" },
+  { title: "Paper Machines", author: "Ruth Calloway" },
+  { title: "The Glass Coast", author: "Mina Sato" },
+  { title: "Every Other Tuesday", author: "Jonas Weaver" },
+  { title: "Field Notes", author: "Priya Raman" },
+  { title: "A Room of Maps", author: "Elliot Vance" },
+  { title: "The Slow Web", author: "Nadia Brandt" },
+  { title: "Small Hours", author: "Owen Pike" },
+  { title: "Tidal", author: "Sofia Marchetti" },
+  { title: "The Cartographer's Dog", author: "Lena Fischer" },
+  { title: "After the Rain", author: "Marcus Bell" },
+  { title: "A Wider View", author: "Hana Ito" },
+  { title: "The Memory Orchard", author: "Caleb Stone" },
+  { title: "Open Ledger", author: "Imani Cole" },
+  { title: "The Last Tram", author: "Viktor Salo" },
+  { title: "Borrowed Weather", author: "June Ellery" },
+  { title: "North of Here", author: "Peter Nakamura" },
+  { title: "A Kind of Archive", author: "Leila Haddad" },
+  { title: "The Understory", author: "Rosa Delgado" },
+  { title: "Pages from a Blue Year", author: "Simon Achterberg" },
+  { title: "The Quiet Engine", author: "Maeve Sullivan" },
+  { title: "A Little Further", author: "Theo Marsh" },
+];
+
+/** The library page: the large title in the scroll, the small one shown in the bar once it passes. */
+function LargePage() {
+  const offset = signal(0);
+  const selected = signal(BOOKS[0].title);
+  return (
+    <BaseNavPage
+      title="Library"
+      style={navPageLook().page()}
+      header={
+        <PageHeader
+          title="Library"
+          back={() => nav.pop()}
+          above={() => nav.routes().length > 1}
+          reveal={() => offset() > 40}
+        />
+      }
+    >
+      <View style={{ flex: 1 }}>
+        <Scroll
+          style={{ flex: 1 }}
+          contentStyle={{ padding: density.pad, gap: density.gap }}
+          onScroll={(event) => {
+            const next = Math.round(event.offset.y);
+            if (next !== offset()) offset.set(next);
+          }}
+        >
+          <View style={{ gap: 2, paddingTop: 2, paddingBottom: 4 }}>
+            <Text style={{ fontSize: 34, fontWeight: "700", color: colors.foreground }}>
+              Library
+            </Text>
+            <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
+              24 titles · synced today
+            </Text>
+          </View>
+          <List>
+            {BOOKS.map((book, index) => (
+              <>
+                {index > 0 ? <Divider /> : null}
+                <Row
+                  icon={BookOpen}
+                  title={book.title}
+                  detail={book.author}
+                  trailing={
+                    selected() === book.title ? (
+                      <Icon icon={Check} size={16} tint={colors.brand} />
+                    ) : undefined
+                  }
+                  onPress={() => selected.set(book.title)}
+                />
+              </>
+            ))}
+          </List>
+          <Text style={{ fontSize: density.note, color: colors.mutedForeground }}>
+            Scroll the list and the large title folds into the bar: the bar's title appears once the
+            large one has passed 40 points.
+          </Text>
+        </Scroll>
+        <View style={{ paddingHorizontal: density.pad, paddingBottom: 10 }}>
+          <Text style={{ fontSize: density.note, color: colors.mutedForeground }}>
+            {() => `Scrolled ${offset()} pt · selected ${selected()}`}
+          </Text>
+        </View>
+      </View>
+    </BaseNavPage>
+  );
+}
+
+/** The draft page: `popOnBack` takes its guard from the text, `onBackPress` asks. */
+function DraftPage() {
+  return (
+    <BaseNavPage
+      title="A draft"
+      style={navPageLook().page()}
+      header={
+        <PageHeader
+          title="A draft"
+          back={() => (draft().length > 0 ? ask.set(true) : nav.pop())}
+          above={() => nav.routes().length > 1}
+        />
+      }
+      popOnBack={draft().length === 0}
+      onBackPress={() => {
+        if (draft().length > 0) ask.set(true);
+      }}
+    >
+      <Body>
+        <List>
+          <View style={{ padding: 12, gap: 10 }}>
+            <Text style={{ fontSize: 13, fontWeight: "600", color: colors.foreground }}>
+              Release notes
+            </Text>
+            <Input
+              multiline
+              grow
+              value={draft()}
+              onChange={({ value }) => {
+                draft.set(value);
+                published.set(false);
+              }}
+              placeholder="What changed?"
+              accessibilityLabel="Release notes"
+            />
+            <Text style={{ fontSize: density.note, color: colors.mutedForeground }}>
+              {() =>
+                published()
+                  ? "Published — back leaves without asking."
+                  : `${draft().length} characters would be lost: back asks first.`
+              }
+            </Text>
+          </View>
+        </List>
+        <Button
+          variant="default"
+          disabled={draft().length === 0 || published()}
+          onPress={() => published.set(true)}
+          style={{ alignSelf: "flex-start" }}
+        >
+          Publish
+        </Button>
+        <Text style={{ fontSize: density.note, color: colors.mutedForeground }}>
+          Press Back, Escape, Alt+Left or the mouse's back button while the draft has text: the page
+          asks first, from `popOnBack` and `onBackPress`.
+        </Text>
+      </Body>
+    </BaseNavPage>
+  );
+}
+
 /** The third page: switches, and a way back to the bottom of the stack in one step. */
 function AppearancePage() {
   return (
@@ -307,17 +500,51 @@ function AppearancePage() {
 
 function App() {
   return (
-    <BaseNavStack state={nav} style={navStackLook().root()}>
-      {(route) =>
-        route.id === "settings" ? (
-          <SettingsPage />
-        ) : route.id === "general" ? (
-          <GeneralPage />
-        ) : (
-          <AppearancePage />
-        )
-      }
-    </BaseNavStack>
+    <View style={{ flex: 1 }}>
+      <BaseNavStack state={nav} style={navStackLook().root()}>
+        {(route) =>
+          route.id === "settings" ? (
+            <SettingsPage />
+          ) : route.id === "general" ? (
+            <GeneralPage />
+          ) : route.id === "appearance" ? (
+            <AppearancePage />
+          ) : route.id === "large" ? (
+            <LargePage />
+          ) : (
+            <DraftPage />
+          )
+        }
+      </BaseNavStack>
+      <AlertDialog
+        open={ask()}
+        onOpenChange={({ open }) => ask.set(open)}
+        onAction={({ action }) => {
+          ask.set(false);
+          if (action === "discard") {
+            draft.set("");
+            nav.pop();
+          }
+        }}
+      >
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Discard your changes?</AlertDialogTitle>
+            <AlertDialogDescription>
+              The release notes are not published. Leaving now discards them.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogAction id="keep" role="cancel">
+              Keep editing
+            </AlertDialogAction>
+            <AlertDialogAction id="discard" role="destructive">
+              Discard
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </View>
   );
 }
 

@@ -1,8 +1,9 @@
 // The official plot scenes with this library's plot look. `el-plot` is the price chart and the
-// sales bars; the other six are its parts drawn on their own: a heatmap of cells, dots and
-// bubbles, two y scales, a donut, candlesticks and a bridge, and a treemap. Each keeps the
-// example's data, its header read out from the row or the mark under the pointer, its options and
-// its log.
+// sales bars, and the Gallery's watchlist, revenue, sales and candle charts are here too; the rest
+// are the parts drawn on their own: a sparkline, a donut beside bars, candles over volume, a
+// heatmap of cells, dots and bubbles, two y scales, a donut, candlesticks and a bridge, and a
+// treemap. Each keeps the example's data, its header read out from the row or the mark under the
+// pointer, its options and its log.
 import { alpha } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
@@ -32,6 +33,7 @@ import {
   plotWash,
   seriesColor,
 } from "@/packages/ui/plot";
+import { Pressable } from "@/packages/ui/pressable";
 
 import { DemoPage } from "./kit";
 import { desktop, Log, Panel, Segmented, Split, ui, wide } from "./stage";
@@ -471,6 +473,196 @@ function PriceScene() {
           </View>
         </View>
       </If>
+    </Scene>
+  );
+}
+
+// --- A sparkline (Stocks) -------------------------------------------------------------------
+
+type Ticker = { code: string; name: string; prev: number; rows: Row[] };
+
+/** A watchlist: a day's minutes each, its previous close beside them. */
+const TICKERS: Ticker[] = [
+  { code: "ORBX", name: "Orbit Exchange", prev: 128.4, rows: walk(24, 7, 129.1, 0.9) },
+  { code: "QBIT", name: "Qubit Labs", prev: 64.2, rows: walk(24, 23, 63.4, 0.7) },
+  { code: "ZNCD", name: "Zenith Cloud", prev: 212.8, rows: walk(24, 41, 213.5, 1.4) },
+];
+
+/** Today in 104 × 38: the minutes' closes as one smooth line, a wash under it, the previous close
+ * dotted and the newest point ringed. A sparkline is read, not picked: the plot takes no pointer. */
+function Sparkline(props: { rows: Row[]; prev: number; label: string }) {
+  const last = () => props.rows[props.rows.length - 1];
+  const tone = () => (last().price >= props.prev ? ui().up : ui().down);
+  // The ring reaches past the line; the domain leaves it room on every side.
+  const domain = (): [number, number] => {
+    const values = [props.prev, ...props.rows.map((row) => row.price)];
+    const lo = Math.min(...values);
+    const hi = Math.max(...values);
+    const air = Math.max(0.2, (hi - lo) * 0.16);
+    return [lo - air, hi + air];
+  };
+  const xScale = {
+    type: "linear" as const,
+    domain: [-1.5, props.rows.length + 1.5] as [number, number],
+  };
+  const yScale = { type: "linear" as const, domain: domain() };
+  return (
+    <View style={{ width: 104, height: 38 }} accessibilityLabel={props.label}>
+      <Plot
+        data={props.rows}
+        y="price"
+        xScale={xScale}
+        yScale={yScale}
+        interactive={false}
+        style={{ flex: 1 }}
+      >
+        <Area curve="natural" backgroundStyle={plotWash(tone(), 0.2)} />
+        <Grid y={[props.prev]} style={plotReference(ui().muted)} />
+        <Line curve="natural" style={{ stroke: tone(), strokeWidth: 1.75 }} />
+      </Plot>
+      {/* The newest point, drawn over the same scales: a soft ring and the dot. */}
+      <View
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          right: 0,
+          bottom: 0,
+          pointerEvents: "none",
+        }}
+      >
+        <Plot
+          data={[last()]}
+          y="price"
+          xScale={xScale}
+          yScale={yScale}
+          interactive={false}
+          style={{ flex: 1 }}
+        >
+          <Dot
+            value="price"
+            r={5.5}
+            style={{ fill: "transparent", stroke: alpha(tone(), 0.4), strokeWidth: 1.5 }}
+          />
+          <Dot value="price" r={2.5} style={{ fill: tone() }} />
+        </Plot>
+      </View>
+    </View>
+  );
+}
+
+/** A watchlist row: the code and name, its sparkline, the price and the change since yesterday. */
+function TickerRow(props: { ticker: Ticker; selected: boolean; onPress: () => void }) {
+  const last = () => props.ticker.rows[props.ticker.rows.length - 1].price;
+  const change = () => last() - props.ticker.prev;
+  const color = () => (change() >= 0 ? ui().up : ui().down);
+  const pct = () =>
+    (change() >= 0 ? "+" : "−") + Math.abs((change() / props.ticker.prev) * 100).toFixed(2) + "%";
+  return (
+    <Pressable
+      onPress={props.onPress}
+      accessibilityLabel={`${props.ticker.code}, ${props.ticker.name}, ${last().toFixed(2)}`}
+    >
+      <View
+        style={{
+          flexDirection: "row",
+          alignItems: "center",
+          gap: 10,
+          paddingVertical: 7,
+          paddingHorizontal: 6,
+          borderRadius: 8,
+          backgroundColor: props.selected ? alpha(ui().text, 0.05) : undefined,
+        }}
+      >
+        <View style={{ flex: 1, minWidth: 0, gap: 1 }}>
+          <Text class="text-foreground" style={{ fontSize: 12.5, fontWeight: 600 }}>
+            {props.ticker.code}
+          </Text>
+          <Text class="text-muted-foreground" style={{ fontSize: 11, numberOfLines: 1 }}>
+            {props.ticker.name}
+          </Text>
+        </View>
+        <Sparkline
+          rows={props.ticker.rows}
+          prev={props.ticker.prev}
+          label={`${props.ticker.name} today, previous close ${props.ticker.prev.toFixed(2)}`}
+        />
+        <View style={{ width: 72, alignItems: "flex-end", gap: 1 }}>
+          <Text class="text-foreground" style={{ fontSize: 12.5, ...num }}>
+            {last().toFixed(2)}
+          </Text>
+          <Text style={{ fontSize: 11, color: color(), ...num }}>{pct()}</Text>
+        </View>
+      </View>
+    </Pressable>
+  );
+}
+
+function SparklineScene() {
+  const selected = signal(0);
+  const events = signal<string[]>([]);
+  const ticker = () => TICKERS[selected()];
+  const last = () => ticker().rows[ticker().rows.length - 1].price;
+  return (
+    <Scene
+      title="A sparkline (Stocks)"
+      width={480}
+      hint={() =>
+        desktop
+          ? "Press a row to read it"
+          : "Each row is today; the dotted line is yesterday's close"
+      }
+      inspector={
+        <>
+          <Panel title="selected">
+            <Text class="text-foreground" style={{ fontSize: 13, fontWeight: 600 }}>
+              {`${ticker().code} · ${ticker().name}`}
+            </Text>
+            <Text class="text-muted-foreground" style={{ fontSize: 12, ...num }}>
+              {`${last().toFixed(2)} against ${ticker().prev.toFixed(2)} yesterday`}
+            </Text>
+          </Panel>
+          <Log title="onPress" lines={events()} minHeight={92} />
+        </>
+      }
+    >
+      <View style={{ ...sectionSurface({ padded: true }), gap: 6 }}>
+        <View class="flex-row items-baseline gap-3">
+          <Text class="text-foreground" style={{ flex: 1, fontSize: size.label, fontWeight: 600 }}>
+            Watchlist
+          </Text>
+          <Text class="text-muted-foreground" style={{ fontSize: size.detail }}>
+            Today
+          </Text>
+        </View>
+        <View>
+          {TICKERS.map((row, index) => (
+            <View
+              style={{
+                borderTopWidth: index === 0 ? 0 : 1,
+                borderColor: ui().line,
+              }}
+            >
+              <TickerRow
+                ticker={row}
+                selected={selected() === index}
+                onPress={() => {
+                  selected.set(index);
+                  events.set(
+                    [
+                      `${row.code}: ${row.rows[row.rows.length - 1].price.toFixed(2)}`,
+                      ...events(),
+                    ].slice(0, 5),
+                  );
+                }}
+              />
+            </View>
+          ))}
+        </View>
+        <Text class="text-faint" style={{ fontSize: 11 }}>
+          A wash under the line · yesterday's close dotted · the newest point ringed
+        </Text>
+      </View>
     </Scene>
   );
 }
@@ -1411,6 +1603,169 @@ function PieScene() {
   );
 }
 
+// --- Bars and a donut (Charts) -------------------------------------------------------------
+
+/** Revenue in a ring of 132: the slices with the theme's series colors, the total in the hole, and
+ * a legend that shares each part. The part under the pointer takes the hole. */
+function DonutCard(props: { breakdown: Breakdown; onHover: (index: number | null) => void }) {
+  const hovered = signal<number | null>(null);
+  const parts = () => BREAKDOWNS[props.breakdown];
+  const totalRevenue = () => parts().reduce((sum, p) => sum + p.revenue, 0);
+  const shown = () => (hovered() == null ? undefined : parts()[hovered()!]);
+  const share = (part: Part) => (totalRevenue() === 0 ? 0 : part.revenue / totalRevenue());
+  const ring = 132;
+  const outer = ring / 2 - 8;
+  return (
+    <View style={{ ...sectionSurface({ padded: true }), gap: 12 }}>
+      <View class="flex-row items-baseline gap-3">
+        <View style={{ flex: 1, gap: 2 }}>
+          <Text class="text-foreground" style={{ fontSize: size.label, fontWeight: 600 }}>
+            Revenue
+          </Text>
+          <Text class="text-muted-foreground" style={{ fontSize: size.detail }}>
+            {`Q3 2026 by ${props.breakdown.toLowerCase()}`}
+          </Text>
+        </View>
+        <Text class="text-foreground" style={{ fontSize: 20, fontWeight: 600, ...num }}>
+          {money(totalRevenue())}
+        </Text>
+      </View>
+      <View class="flex-row flex-wrap items-center gap-4">
+        <View style={{ width: ring, height: ring }}>
+          <Plot
+            data={parts()}
+            appearGeneration={props.breakdown}
+            motion={CHART_MOTION}
+            accessibilityLabel={`Revenue by ${props.breakdown.toLowerCase()}, ${money(totalRevenue())} in all`}
+            accessibilityValue={{
+              text: shown() && `${shown()!.name}: ${money(shown()!.revenue)}`,
+            }}
+            onHoverChange={({ index }) => {
+              hovered.set(index);
+              props.onHover(index);
+            }}
+            style={{ width: ring, height: ring }}
+          >
+            <Pie
+              value="revenue"
+              innerRadius="62%"
+              outerRadius={outer}
+              padAngle={2 / outer}
+              cornerRadius={3}
+              sliceClass={(_, i) => FILLS[i % FILLS.length]}
+              hoverLift={4}
+              hoverDim={0.64}
+            />
+          </Plot>
+          <View
+            style={{
+              position: "absolute",
+              top: 0,
+              left: 0,
+              right: 0,
+              bottom: 0,
+              alignItems: "center",
+              justifyContent: "center",
+              gap: 2,
+              pointerEvents: "none",
+            }}
+          >
+            <Text class="text-muted-foreground" style={{ fontSize: 10.5, numberOfLines: 1 }}>
+              {shown()?.name ?? "Total"}
+            </Text>
+            <Text class="text-foreground" style={{ fontSize: 16, fontWeight: 600, ...num }}>
+              {money(shown()?.revenue ?? totalRevenue())}
+            </Text>
+            <Text class="text-muted-foreground" style={{ fontSize: 10.5, ...num }}>
+              {shown() ? percent(share(shown()!)) : `${parts().length} parts`}
+            </Text>
+          </View>
+        </View>
+        <View style={{ flex: 1, minWidth: 132, gap: 5 }}>
+          {parts().map((part, index) => (
+            <View
+              style={{
+                flexDirection: "row",
+                alignItems: "center",
+                gap: 6,
+                opacity: hovered() == null || hovered() === index ? 1 : 0.45,
+              }}
+            >
+              <View
+                class={KEYS[index % KEYS.length]}
+                style={{ width: 8, height: 8, borderRadius: 2 }}
+              />
+              <Text
+                class="text-foreground"
+                style={{ flex: 1, fontSize: size.label - 1, numberOfLines: 1 }}
+              >
+                {part.name}
+              </Text>
+              <Text class="text-muted-foreground" style={{ fontSize: size.label - 1, ...num }}>
+                {percent(share(part))}
+              </Text>
+            </View>
+          ))}
+        </View>
+      </View>
+    </View>
+  );
+}
+
+function BarsDonutScene() {
+  const mode = signal<Mode>("grouped");
+  const breakdown = signal<Breakdown>("Region");
+  const events = signal<string[]>([]);
+  const log = (line: string) => events.set([line, ...events()].slice(0, 5));
+  return (
+    <Scene
+      title="Bars and a donut (Charts)"
+      width={520}
+      hint={() =>
+        desktop ? "Hover a bar or a slice to read it" : "Group the bars, or break the revenue down"
+      }
+      inspector={
+        <>
+          <Panel title="bars">
+            <Segmented
+              options={["grouped", "stacked"] as const}
+              value={mode()}
+              onChange={(value) => mode.set(value)}
+            />
+          </Panel>
+          <Panel title="donut">
+            <Segmented
+              options={["Region", "Channel"] as const}
+              value={breakdown()}
+              onChange={(value) => breakdown.set(value)}
+            />
+          </Panel>
+          <Log title="onHoverChange" lines={events()} minHeight={92} />
+        </>
+      }
+    >
+      <View style={{ gap: 14 }}>
+        <SalesCard
+          mode={mode()}
+          onHover={(index) =>
+            log(index == null ? "bar: left the chart" : `bar ${index}: ${SALES[index].month}`)
+          }
+        />
+        <DonutCard
+          breakdown={breakdown()}
+          onHover={(index) =>
+            log(
+              index == null
+                ? "slice: left the chart"
+                : `slice ${index}: ${BREAKDOWNS[breakdown()][index].name}`,
+            )
+          }
+        />
+      </View>
+    </Scene>
+  );
+}
+
 // --- Ranges (el-plot-ranges) ---------------------------------------------------------------
 
 type Candle = {
@@ -1687,6 +2042,181 @@ function RangesScene() {
   );
 }
 
+// --- Candles with volume (Charts) ----------------------------------------------------------
+
+type Traded = Candle & { volume: number };
+
+/** The same 24 days with their volume in millions of shares, heavier on the wide ones. */
+const TRADED: Traded[] = CANDLES.map((candle, index) => ({
+  ...candle,
+  volume:
+    Math.round((2.1 + Math.abs(candle.close - candle.open) * 1.9 + (index % 4) * 0.35) * 10) / 10,
+}));
+const VOLUME_TOP = Math.ceil(Math.max(...TRADED.map((day) => day.volume)));
+
+/** A price row of candles over a shorter row of volume bars: one band scale over both, the
+ * volume on a scale of its own. The pointer on either chart reads the same day. */
+function CandlesVolumeScene() {
+  const hovered = signal<number | null>(null);
+  const events = signal<string[]>([]);
+  const day = () => TRADED[Math.min(hovered() ?? TRADED.length - 1, TRADED.length - 1)];
+  const height = desktop ? 150 : 132;
+  const volumeHeight = desktop ? 46 : 40;
+  const bands = {
+    type: "band" as const,
+    paddingInner: 0.3,
+    paddingOuter: 0.15,
+  };
+  const colors = {
+    type: "ordinal" as const,
+    domain: ["up", "down"],
+    range: [ui().up, ui().down],
+  };
+  const read = (index: number | null) => {
+    hovered.set(index);
+    const at = index ?? TRADED.length - 1;
+    events.set(
+      [
+        index == null
+          ? "null: left the chart"
+          : `${index}: ${TRADED[at].close.toFixed(2)}, ${TRADED[at].volume}M`,
+        ...events(),
+      ].slice(0, 5),
+    );
+  };
+  return (
+    <Scene
+      title="Candles with volume (Charts)"
+      width={560}
+      hint={() =>
+        desktop
+          ? "Move over either chart to read a day"
+          : "Each bar under the candles is its day's volume"
+      }
+      inspector={
+        <>
+          <Panel title="day">
+            <Text class="text-foreground" style={{ fontSize: 13, fontWeight: 600, ...num }}>
+              {`Day ${day().day + 1} · ${day().close.toFixed(2)}`}
+            </Text>
+            <Text class="text-muted-foreground" style={{ fontSize: 12, ...num }}>
+              {`O ${day().open.toFixed(2)} H ${day().high.toFixed(2)} L ${day().low.toFixed(2)}`}
+            </Text>
+            <Text class="text-muted-foreground" style={{ fontSize: 12, ...num }}>
+              {`${day().volume.toFixed(1)}M shares`}
+            </Text>
+          </Panel>
+          <Log title="onHoverChange" lines={events()} minHeight={92} />
+        </>
+      }
+    >
+      <View style={{ ...sectionSurface({ padded: true }), gap: 12 }}>
+        <View class="flex-row items-baseline gap-3">
+          <View style={{ flex: 1, gap: 2 }}>
+            <Text class="text-foreground" style={{ fontSize: size.label, fontWeight: 600 }}>
+              NSH Labs
+            </Text>
+            <Text class="text-muted-foreground" style={{ fontSize: size.detail, numberOfLines: 1 }}>
+              {`Day ${day().day + 1} · O ${day().open.toFixed(2)} H ${day().high.toFixed(2)} L ${day().low.toFixed(2)}`}
+            </Text>
+          </View>
+          <View style={{ alignItems: "flex-end", gap: 2 }}>
+            <Text class="text-foreground" style={{ fontSize: 20, fontWeight: 600, ...num }}>
+              {day().close.toFixed(2)}
+            </Text>
+            <Text
+              style={{
+                fontSize: size.detail,
+                color: day().dir === "up" ? ui().up : ui().down,
+                ...num,
+              }}
+            >
+              {`${day().volume.toFixed(1)}M shares`}
+            </Text>
+          </View>
+        </View>
+
+        <Plot
+          data={TRADED}
+          xScale={bands}
+          yScale={{ type: "linear", domain: [LOW, HIGH] }}
+          colorScale={colors}
+          accessibilityLabel={`NSH Labs over 24 days, from ${LOW} to ${HIGH}`}
+          accessibilityValue={{
+            text:
+              hovered() == null
+                ? undefined
+                : `Day ${TRADED[hovered()!].day + 1}: ${TRADED[hovered()!].close.toFixed(2)}`,
+          }}
+          appearGeneration="traded"
+          motion={CHART_MOTION}
+          {...plotCrossLine({ band: true })}
+          onHoverChange={({ index }) => read(index)}
+          style={{ height, marginRight: 40 }}
+        >
+          <Grid y={[LOW + (HIGH - LOW) / 3, LOW + ((HIGH - LOW) * 2) / 3]} style={plotGrid()} />
+          <Grid y={[LOW]} style={plotBaseline()} />
+          <Rule
+            value="high"
+            base="low"
+            color="dir"
+            stagger={0.5}
+            inactiveOpacity={0.3}
+            style={{ strokeWidth: 1 }}
+          />
+          <Bar
+            value="close"
+            base="open"
+            color="dir"
+            cornerRadii={1}
+            stagger={0.5}
+            inactiveOpacity={0.3}
+          />
+          <PlotAxis
+            placement="right"
+            tickValues={[LOW, (LOW + HIGH) / 2, HIGH]}
+            format={(v) => v.toFixed(0)}
+            labelStyle={{ ...plotAxisText(), paddingLeft: 8 }}
+          />
+        </Plot>
+
+        <Plot
+          data={TRADED}
+          xScale={bands}
+          yScale={{ type: "linear", domain: [0, VOLUME_TOP] }}
+          colorScale={colors}
+          accessibilityLabel={`Volume over the same 24 days, up to ${VOLUME_TOP} million shares`}
+          accessibilityValue={{
+            text:
+              hovered() == null
+                ? undefined
+                : `${TRADED[hovered()!].volume.toFixed(1)} million shares`,
+          }}
+          appearGeneration="volume"
+          motion={CHART_MOTION}
+          {...plotCrossLine({ band: true })}
+          onHoverChange={({ index }) => read(index)}
+          style={{ height: volumeHeight, marginRight: 40, marginBottom: AXIS_BELOW }}
+        >
+          <Grid y={[0]} style={plotBaseline()} />
+          <Bar value="volume" color="dir" cornerRadii={1} stagger={0.4} inactiveOpacity={0.3} />
+          <PlotAxis
+            placement="right"
+            tickValues={[0, VOLUME_TOP / 2, VOLUME_TOP]}
+            format={(v) => `${v}M`}
+            labelStyle={{ ...plotAxisText(), width: 40, paddingLeft: 6 }}
+          />
+          <PlotAxis
+            tickValues={[0, 7, 15, 23]}
+            format={(i) => `Day ${i + 1}`}
+            labelStyle={{ ...plotAxisText(), lineHeight: 14, paddingTop: 12 }}
+          />
+        </Plot>
+      </View>
+    </Scene>
+  );
+}
+
 // --- A treemap (el-plot-treemap) -----------------------------------------------------------
 
 type Node = { id: string; parent?: string; name: string; value?: number; chg?: number };
@@ -1892,11 +2422,14 @@ function App() {
   return (
     <DemoPage title="Plot">
       <PriceScene />
+      <SparklineScene />
       <CellsScene />
       <DotsScene />
       <DualScene />
       <PieScene />
+      <BarsDonutScene />
       <RangesScene />
+      <CandlesVolumeScene />
       <TreemapScene />
     </DemoPage>
   );

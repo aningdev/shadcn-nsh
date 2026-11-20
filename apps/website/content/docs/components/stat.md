@@ -69,6 +69,52 @@ StatGroup
 </StatGroup>
 ```
 
+### A trend beside a figure
+
+A figure whose value moves with a series reads better with the series beside it: the `Stat` gives
+the name, the value and the change in the same tone as the line, and a `Plot` at 104 × 38 draws the
+trend without axes or a pointer — `interactive={false}`.
+
+```tsx
+<View style={{ flexDirection: "row", alignItems: "center", gap: 16 }}>
+  <Stat label="Composite" value="4,182.60" note="+11.80 today" tone="up" />
+  <View style={{ width: 104, height: 38 }}>
+    <Plot
+      data={minutes}
+      y="price"
+      yScale={{ type: "linear", domain: [lo, hi] }}
+      interactive={false}
+      style={{ width: 104, height: 38 }}
+    >
+      <Area curve="natural" backgroundStyle={plotWash(colors.up, 0.2)} />
+      <Grid y={[previousClose]} style={plotReference(colors.mutedForeground)} />
+      <Line curve="natural" style={{ stroke: colors.up, strokeWidth: 1.75 }} />
+    </Plot>
+    <View
+      style={{ position: "absolute", top: 0, right: 0, bottom: 0, left: 0, pointerEvents: "none" }}
+    >
+      <Plot
+        data={[minutes[minutes.length - 1]]}
+        y="price"
+        yScale={{ type: "linear", domain: [lo, hi] }}
+        interactive={false}
+        style={{ width: 104, height: 38 }}
+      >
+        <Dot
+          value="price"
+          r={5.5}
+          style={{ fill: "transparent", stroke: alpha(colors.up, 0.4), strokeWidth: 1.5 }}
+        />
+        <Dot value="price" r={2.5} style={{ fill: colors.up }} />
+      </Plot>
+    </View>
+  </View>
+</View>
+```
+
+`note` carries the signed move and `tone` the role it and the line share; the previous close is a
+dashed `Grid` behind the wash, so the day's direction is read at a glance.
+
 ## API
 
 Gallery atom: no `nsh/base` counterpart. shadcn/ui has no stat either.

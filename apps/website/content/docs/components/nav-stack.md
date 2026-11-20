@@ -159,6 +159,88 @@ the swipe back and predictive back; this component draws nothing of the header t
 `headerStyle={header.headerStyle}` from `@shadcn-nsh/theme` for the page's fill, the text color and
 the accent, which is what the desktop header wears already.
 
+### A large title
+
+On iOS `headerLargeTitle` is the platform's: a large title in the content that shrinks into the bar
+as the page scrolls. The desktops and the web have no such header, so the page draws one: the large
+title is the first thing in the `Scroll`, and a header of the app's own keeps the small title in the
+bar once the large one has scrolled past.
+
+```tsx
+const offset = signal(0);
+
+<NavPage
+  title="Library"
+  header={() => (
+    <View style={navPageLook().header()}>
+      <IconButton accessibilityLabel="Back" onPress={() => nav.pop()}>
+        <Icon icon={ChevronLeft} {...navPageLook().backGlyph()} />
+      </IconButton>
+      <Text style={navPageLook().title()}>{() => (offset() > 40 ? "Library" : "")}</Text>
+    </View>
+  )}
+>
+  <Scroll onScroll={(event) => offset.set(Math.round(event.offset.y))}>
+    <Text style={{ fontSize: 34, fontWeight: "700" }}>Library</Text>
+    <Text style={{ color: colors.mutedForeground }}>24 titles · synced today</Text>
+    {/* the list */}
+  </Scroll>
+</NavPage>;
+```
+
+The header keeps its height and only its title changes, so the content starts under the bar at every
+offset — which is what the platform's large title does there too. The header is a function so the
+page closes its own offset over it, and the title's child is an accessor, so the title re-reads the
+offset as the page moves.
+
+### Asking before leaving
+
+`popOnBack` says whether the back button pops; `onBackPress` hears every back — the header's button
+and the platform's (Escape, Alt+Left, the mouse's back button, the swipe). A page with unsaved text
+turns the first off, asks in an alert, and pops only when the answer discards:
+
+```tsx
+const draft = signal("");
+const ask = signal(false);
+
+<NavPage
+  title="A draft"
+  popOnBack={draft().length === 0}
+  onBackPress={() => {
+    if (draft().length > 0) ask.set(true);
+  }}
+>
+  <Input value={draft()} onChange={({ value }) => draft.set(value)} />
+</NavPage>;
+
+<AlertDialog
+  open={ask()}
+  onOpenChange={({ open }) => ask.set(open)}
+  onAction={({ action }) => {
+    ask.set(false);
+    if (action === "discard") nav.pop();
+  }}
+>
+  <AlertDialogContent>
+    <AlertDialogHeader>
+      <AlertDialogTitle>Discard your changes?</AlertDialogTitle>
+      <AlertDialogDescription>The draft is not saved.</AlertDialogDescription>
+    </AlertDialogHeader>
+    <AlertDialogFooter>
+      <AlertDialogAction id="keep" role="cancel">
+        Keep editing
+      </AlertDialogAction>
+      <AlertDialogAction id="discard" role="destructive">
+        Discard
+      </AlertDialogAction>
+    </AlertDialogFooter>
+  </AlertDialogContent>
+</AlertDialog>;
+```
+
+With nothing to lose (`popOnBack` true) the same back press pops without the alert, so the guard
+disappears the moment the text does.
+
 ## API
 
 `NavStack` and `NavPage` take every prop of
