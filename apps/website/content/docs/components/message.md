@@ -149,6 +149,179 @@ type.
 </Message>
 ```
 
+### A reply that is still arriving
+
+A reply arrives a few characters at a time. While it does, `TextView` takes
+`options={{ streaming: true }}` and a `streamingCaret` — a `View` with `textViewCaretClass`, the
+theme's brand-colored block that pulses — where the next word will land. Before the first word
+there is no text to hang the caret on, so draw the caret alone in a line as tall as the reply's
+text and leave the view out.
+
+Stopping is the app's: it keeps the words already received, replaces the `Assistant` name in the
+header with `Stopped` (a warn `Badge`) and adds a faint row saying what happened. `Resume` streams
+the rest through the same signals.
+
+```tsx
+<Message>
+  <MessageAvatar accessibilityLabel="Assistant">
+    <Icon icon={Bot} size={16} tint={colors.mutedForeground} />
+  </MessageAvatar>
+  <MessageContent>
+    <If when={phase() === "stopped"} else={<MessageHeader>Assistant</MessageHeader>}>
+      <MessageHeader>
+        <Badge tone="warn" size="sm">
+          Stopped
+        </Badge>
+      </MessageHeader>
+    </If>
+    <If
+      when={phase() === "waiting"}
+      else={
+        <TextView
+          markdown={reply()}
+          options={{ streaming: phase() === "streaming" }}
+          streamingCaret={phase() === "streaming" ? <View class={textViewCaretClass} /> : undefined}
+          styles={{ root: { fontSize: 15, lineHeight: 22 } }}
+        />
+      }
+    >
+      <View style={{ flexDirection: "row", alignItems: "center", height: 22 }}>
+        <View class={textViewCaretClass} />
+      </View>
+    </If>
+    <If when={phase() === "stopped"}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+        <Icon icon={Square} size={12} tint={colors.faint} />
+        <Text style={{ fontSize: 13, color: colors.faint }}>You stopped this reply</Text>
+      </View>
+    </If>
+    <MessageFooter>
+      <If when={phase() === "waiting" || phase() === "streaming"}>
+        <Button variant="secondary" size="sm" onPress={stop}>
+          Stop
+        </Button>
+      </If>
+      <If when={phase() === "done" || phase() === "stopped"}>
+        <Button variant="secondary" size="sm" onPress={phase() === "done" ? restart : resume}>
+          {phase() === "done" ? "Stream it again" : "Resume"}
+        </Button>
+      </If>
+    </MessageFooter>
+  </MessageContent>
+</Message>
+```
+
+### A failed turn
+
+A turn that fails leaves two marks. The sent turn keeps its place, with a `Spinner` and
+`Waiting for a connection` in its footer while the app retries. The assistant's turn holds a
+destructive `Alert`: an `AlertCircle`, `AlertTitle` naming the failure, and an `AlertDescription`
+whose `Retry` button asks for the turn again.
+
+```tsx
+<Message align="end">
+  <MessageAvatar name="Mia Chen" />
+  <MessageContent>
+    <Bubble variant="default">
+      <BubbleContent>Run the migration on staging.</BubbleContent>
+    </Bubble>
+    <If when={turn() === "waiting"}>
+      <MessageFooter>
+        <Spinner size={12} tint={colors.warn} />
+        <Text style={{ fontSize: 12, color: colors.mutedForeground }}>
+          Waiting for a connection
+        </Text>
+      </MessageFooter>
+    </If>
+  </MessageContent>
+</Message>
+
+<Message>
+  <MessageAvatar accessibilityLabel="Assistant">
+    <Icon icon={Bot} size={16} tint={colors.mutedForeground} />
+  </MessageAvatar>
+  <MessageContent>
+    <MessageHeader>Assistant</MessageHeader>
+    <If when={turn() === "failed"}>
+      <Alert variant="destructive">
+        <Icon icon={AlertCircle} size={ALERT_ICON} tint={colors.destructive} />
+        <AlertTitle>The reply failed</AlertTitle>
+        <AlertDescription>
+          <View style={{ alignItems: "flex-start", gap: 10 }}>
+            <Text style={{ fontSize: 14, color: colors.destructive }}>
+              The connection dropped before the first word. Your turn is safe.
+            </Text>
+            <Button variant="secondary" size="sm" onPress={retry}>
+              Retry
+            </Button>
+          </View>
+        </AlertDescription>
+      </Alert>
+    </If>
+    <If when={turn() === "answered"}>
+      <TextView markdown={answer()} />
+    </If>
+  </MessageContent>
+</Message>
+```
+
+### Rating a reply
+
+What a reply carries under it is the app's: a copy that flips to a check for a moment, and two
+thumbs. `IconButton` takes `selected`, so a pressed thumb shows the brand ink and reports
+`accessibilityState={{ selected: true }}`; the rating itself is only the app's state until the app
+sends it.
+
+```tsx
+const copied = signal(false);
+const rating = signal<"up" | "down" | null>(null);
+
+const copy = () => {
+  void Clipboard.writeText(reply);
+  copied.set(true);
+  setTimeout(() => copied.set(false), 1600);
+};
+
+<MessageFooter>
+  <IconButton
+    variant="ghost"
+    size="sm"
+    selected={copied()}
+    accessibilityLabel={copied() ? "Copied" : "Copy reply"}
+    onPress={copy}
+  >
+    <Icon
+      icon={copied() ? Check : Copy}
+      {...iconButtonGlyph({ variant: "ghost", size: "sm", selected: copied() })}
+    />
+  </IconButton>
+  <IconButton
+    variant="ghost"
+    size="sm"
+    selected={rating() === "up"}
+    accessibilityLabel="Good reply"
+    onPress={() => rating.set(rating() === "up" ? null : "up")}
+  >
+    <Icon
+      icon={ThumbsUp}
+      {...iconButtonGlyph({ variant: "ghost", size: "sm", selected: rating() === "up" })}
+    />
+  </IconButton>
+  <IconButton
+    variant="ghost"
+    size="sm"
+    selected={rating() === "down"}
+    accessibilityLabel="Bad reply"
+    onPress={() => rating.set(rating() === "down" ? null : "down")}
+  >
+    <Icon
+      icon={ThumbsDown}
+      {...iconButtonGlyph({ variant: "ghost", size: "sm", selected: rating() === "down" })}
+    />
+  </IconButton>
+</MessageFooter>;
+```
+
 ### Actions
 
 Anything else in `MessageFooter` is drawn as given: a row of `IconButton`s, a retry, an error.

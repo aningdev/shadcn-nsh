@@ -44,6 +44,117 @@ import { TextView, textViewCaretClass, textViewLinkClasses } from "@/components/
 <TextView markdown={streamingDoc} streamingCaret={<View class={textViewCaretClass} />} />
 ```
 
+### Copy on code blocks
+
+`codeBlockActions` puts buttons over each code block's top-right corner: ghost buttons that show
+while a pointer hovers the block on a desktop and always on a touch screen. The `copy` action is
+built in — it copies the block's code and shows a check for a moment — so a reply with a command
+needs nothing more. Other ids are the app's: they are drawn with `renderCodeBlockAction`'s icon and
+their press arrives at `onCodeBlockAction`.
+
+````tsx
+const GIT = "```sh\nnsh export --out backup.json\n```";
+
+<TextView markdown={GIT} codeBlockActions={[{ id: "copy", label: "Copy code" }]} />;
+````
+
+The built-in copy's accessibility label is the action's `label`; give an app action its own
+`renderCodeBlockAction` and handle `id` in `onCodeBlockAction`.
+
+### A block of your own
+
+An extension claims a Markdown shape for the app. A `language` claims a fence; `renderCustom`
+receives the node, with `node.text` the fence's source, and returns the view to draw in its place.
+Here a `chart` fence lists `label value` lines and becomes bars in the theme's brand color.
+
+````tsx
+const CHART_EXTENSIONS = [{ name: "chart", language: "chart" }];
+
+function Chart(props: { source: string }) {
+  const bars = props.source
+    .trim()
+    .split("\n")
+    .map((line) => {
+      const [label, raw] = line.trim().split(/\s+/);
+      return { label, value: Number(raw) || 0 };
+    });
+  const max = Math.max(1, ...bars.map((bar) => bar.value));
+  return (
+    <View
+      style={{
+        height: 132,
+        flexDirection: "row",
+        alignItems: "flex-end",
+        gap: 8,
+        padding: 12,
+        borderWidth: 1,
+        borderColor: colors.line,
+        borderRadius: 12,
+        backgroundColor: colors.inset,
+      }}
+    >
+      <Each of={bars} key={(bar) => bar.label}>
+        {(bar) => (
+          <View style={{ flex: 1, alignItems: "center", gap: 4 }}>
+            <Text style={{ fontSize: 11, color: colors.faint }}>{bar().value}</Text>
+            <View
+              style={{
+                width: "100%",
+                height: Math.max(4, Math.round((bar().value / max) * 64)),
+                borderRadius: 6,
+                backgroundColor: colors.brand,
+              }}
+            />
+            <Text style={{ fontSize: 11, color: colors.mutedForeground }}>{bar().label}</Text>
+          </View>
+        )}
+      </Each>
+    </View>
+  );
+}
+
+<TextView
+  markdown={"```chart\nInstall 12\nBuild 34\nTest 21\nShip 8\n```"}
+  extensions={CHART_EXTENSIONS}
+  renderCustom={(node) => <Chart source={node.text ?? ""} />}
+/>;
+````
+
+A `pattern` claims inline text instead (the next example), and `tag` and `container` claim a tag
+or a wrapping block. `renderCustom` is called for every custom node in the document, so branch on
+`node.name` when the app claims more than one shape.
+
+### Inline chips
+
+An inline extension replaces each match of its `pattern` with the node the app draws. Keep the
+chip's `verticalAlign` at `middle` and its height under the line height, so the paragraph's lines
+keep their spacing; `styles.root.lineHeight` gives the chip the room it needs.
+
+```tsx
+const CHIPS =
+  "The install broke on T-0089 after nsh#810 and both were fixed in nsh#812 before T-0091 followed.";
+const CHIP_EXTENSIONS = [
+  { name: "task", pattern: "\\bT-\\d{4}\\b" },
+  { name: "pr", pattern: "\\b[a-z-]+#\\d+\\b" },
+];
+
+<TextView
+  markdown={CHIPS}
+  extensions={CHIP_EXTENSIONS}
+  styles={{ root: { fontSize: 17, lineHeight: 26 } }}
+  renderCustom={(node) => (
+    <View class="border-border bg-inset h-5 flex-row items-center gap-1.5 rounded-full border px-2 align-middle">
+      <View
+        class={
+          node.name === "task" ? "bg-info size-1.5 rounded-full" : "bg-up size-1.5 rounded-full"
+        }
+      />
+      <Text class="font-mono text-[13px] leading-4">{node.text}</Text>
+    </View>
+  )}
+/>;
+```
+
 ## API
 
 `TextView.parse`, `parseHtml`, and `plainText` are re-exported from base. Every prop of [`nsh/base` TextView](https://nsh.dev/elements/text-view) passes through.

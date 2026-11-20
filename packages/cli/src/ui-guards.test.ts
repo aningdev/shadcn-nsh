@@ -26,7 +26,8 @@ const code = (path: string) =>
     .replace(/(^|\s)\/\/[^\n]*/g, "$1");
 
 const rules: Record<string, RegExp> = {
-  "hex color": /#[0-9a-fA-F]{3,8}\b/,
+  // Not after a word character: `nsh#810` is an issue reference, not a color.
+  "hex color": /(?<!\w)#[0-9a-fA-F]{3,8}\b/,
   // A notation built from a computed color (`` `rgb(${…})` ``) names a format, not a color.
   "color function": /\b(?:rgba?|hsla?|oklch|oklab|lab|lch)\((?!\s*\$\{)/,
   "named color": /["'](?:white|black|red|green|blue|gray|grey|yellow|orange|purple|pink)["']/,
