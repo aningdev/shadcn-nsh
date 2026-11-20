@@ -17,7 +17,7 @@ export function DemoPage(props: {
   note?: string | (() => string);
 }) {
   return (
-    <Scroll style={{ flex: 1, backgroundColor: colors.background }}>
+    <Scroll testID="page" style={{ flex: 1, backgroundColor: colors.background }}>
       <View
         style={{
           flexGrow: 1,
