@@ -155,7 +155,7 @@ export const NSH_ELEMENTS: readonly NshEntry[] = [
   { id: "rich-editor", group: "base", ours: ["editor"] },
   { id: "scrollbar", group: "base", ours: ["scrollbar"] },
   { id: "select", group: "base", ours: ["select"] },
-  { id: "sheet", group: "base", ours: ["sheet", "drawer"] },
+  { id: "sheet", group: "base", ours: ["sheet"] },
   { id: "slider", group: "base", ours: ["slider"] },
   {
     id: "split-view",

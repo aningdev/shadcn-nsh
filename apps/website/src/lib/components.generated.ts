@@ -149,14 +149,6 @@ export const components: ComponentDoc[] = [
     description: "Dockable workspace chrome for tabs, splits, and edge docks.",
   },
   {
-    slug: "drawer",
-    title: "Drawer",
-    kind: "official",
-    shadcn: "drawer",
-    nshElement: "sheet",
-    description: "A panel from the bottom edge, with a grabber, that a swipe closes.",
-  },
-  {
     slug: "editor",
     title: "Editor",
     kind: "official",
@@ -496,6 +488,14 @@ export const components: ComponentDoc[] = [
     nshElement: null,
     description:
       "A flat surface that groups related content: a header with its action, a body and a footer.",
+  },
+  {
+    slug: "drawer",
+    title: "Drawer",
+    kind: "own",
+    shadcn: "drawer",
+    nshElement: null,
+    description: "A panel from the bottom edge, with a grabber, that a swipe closes.",
   },
   {
     slug: "empty",
