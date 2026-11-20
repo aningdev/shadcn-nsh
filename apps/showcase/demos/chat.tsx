@@ -16,10 +16,10 @@ import {
   follow,
   hovered,
   motion,
-  radius,
   rounded,
   terminal,
   tints,
+  shape,
 } from "@shadcn-nsh/theme";
 import {
   FileText,
@@ -844,7 +844,7 @@ export function ChatDemo() {
                         minHeight: 104,
                         padding: 12,
                         gap: 8,
-                        ...rounded(radius.inset),
+                        ...rounded(shape.inset),
                         backgroundColor: colors.card,
                         ...finish.card,
                         borderWidth: 1,
@@ -971,7 +971,7 @@ export function ChatDemo() {
                 gap: 12,
                 minHeight: 48,
                 paddingHorizontal: 14,
-                ...rounded(radius.inset),
+                ...rounded(shape.inset),
                 ...finish.menu,
                 borderWidth: 1,
                 borderColor: alpha(bannerKind() === "offline" ? colors.warn : colors.up, 0.35),
@@ -1037,7 +1037,7 @@ export function ChatDemo() {
             >
               <View
                 style={{
-                  ...rounded(radius.card),
+                  ...rounded(shape.card),
                   ...finish.menu,
                   borderWidth: 1,
                   paddingVertical: 6,
@@ -1288,7 +1288,7 @@ export function ChatDemo() {
           <View
             style={{
               height: 40,
-              ...rounded(radius.control),
+              ...rounded(shape.control),
               flexDirection: "row",
               alignItems: "center",
               justifyContent: "center",
@@ -1329,7 +1329,7 @@ export function ChatDemo() {
                 style={{
                   paddingHorizontal: 12,
                   paddingVertical: 9,
-                  ...rounded(radius.control),
+                  ...rounded(shape.control),
                   gap: 2,
                   backgroundColor: chosen() ? colors.brand : "transparent",
                 }}

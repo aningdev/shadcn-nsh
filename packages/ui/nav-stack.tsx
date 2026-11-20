@@ -2,7 +2,7 @@
 // draw — a back button, the title, a trailing slot — which iOS and Android take from the system
 // instead. The looks are `navStackLook` and `navPageLook` below; the parts only wear them. This
 // library's own: nothing here comes from upstream, so there is no port region. Yours to change.
-import { colors, header, font } from "@shadcn-nsh/theme";
+import { colors, header, font, stroke } from "@shadcn-nsh/theme";
 import { ChevronLeft } from "lucide";
 import type { JSX, TextStyle, ViewStyle } from "nsh";
 import { context, platform, split, Text, View } from "nsh";
@@ -85,7 +85,7 @@ export function navPageLook(): NavPageLook {
       gap: navPageSize.gap,
       paddingHorizontal: navPageSize.padding,
       backgroundColor: header.headerStyle.backgroundColor,
-      borderBottomWidth: 1,
+      borderBottomWidth: stroke.hairline,
       borderBottomColor: colors.border,
     }),
     title: (): TextStyle => ({

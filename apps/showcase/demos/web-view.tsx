@@ -1,4 +1,4 @@
-import { colors, finish, isDark, radius } from "@shadcn-nsh/theme";
+import { colors, finish, isDark, shape } from "@shadcn-nsh/theme";
 import { ChevronLeft, ChevronRight } from "lucide";
 // Web view: the official gallery's Media scene
 // (`references/nsh/examples/gallery/demos/Media.tsx`) — inline HTML that messages the app both
@@ -34,7 +34,7 @@ const page =
 
 const frame = () =>
   ({
-    borderRadius: radius.control,
+    borderRadius: shape.control,
     overflow: "hidden",
     borderWidth: 1,
     borderColor: colors.border,

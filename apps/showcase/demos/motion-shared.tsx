@@ -8,9 +8,9 @@ import {
   isDark,
   mono,
   motion,
-  radius,
   terminal,
   TERMINAL_GAP,
+  shape,
 } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
 import type { JSX, ViewStyle } from "nsh";
@@ -59,7 +59,7 @@ export function toneFill(color: string): ViewStyle {
 /** The darker surface a gesture plays on. Call it where the style is applied. */
 export function stage(): ViewStyle {
   return {
-    borderRadius: radius.control,
+    borderRadius: shape.control,
     borderCurve: "continuous",
     overflow: "hidden",
     backgroundColor: colors.background,

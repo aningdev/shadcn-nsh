@@ -1,6 +1,6 @@
 // An avatar: the identity ring (`avatarIdentity`, `avatarHue`) and the `Avatar` that wears it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, isDark, font } from "@shadcn-nsh/theme";
+import { colors, isDark, font, stroke } from "@shadcn-nsh/theme";
 import { computed, split, Text, token, View } from "nsh";
 import type { TextProps, ViewProps, ViewStyle } from "nsh";
 import {
@@ -99,7 +99,7 @@ export function Avatar(props: AvatarProps) {
   const ringStyle = (): ViewStyle | null => {
     const ring = identity();
     return ring
-      ? { backgroundColor: ring.background, borderWidth: 1, borderColor: ring.border }
+      ? { backgroundColor: ring.background, borderWidth: stroke.hairline, borderColor: ring.border }
       : null;
   };
   return (

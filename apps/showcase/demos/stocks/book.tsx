@@ -1,11 +1,11 @@
 import {
   alpha,
   colors,
-  radius,
   TERMINAL_COLUMN,
   TERMINAL_GAP,
   TERMINAL_ROW,
   terminal,
+  shape,
 } from "@shadcn-nsh/theme";
 // The book: cumulative depth either side of the mid, and the ladder of asks over bids with the
 // bid / ask balance springing natively on top. Ported from `stocks/Book.tsx`.
@@ -307,7 +307,7 @@ export function OrderBook(props: { market: Market; stock: Stock }) {
               paddingHorizontal: terminal ? TERMINAL_COLUMN : 12,
               justifyContent: "center",
               backgroundColor: colors.raised,
-              borderRadius: radius.control,
+              borderRadius: shape.control,
             }}
           >
             <Text

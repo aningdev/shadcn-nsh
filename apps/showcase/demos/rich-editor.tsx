@@ -1,4 +1,4 @@
-import { alpha, colors, mono, radius, rounded } from "@shadcn-nsh/theme";
+import { alpha, colors, mono, rounded, shape } from "@shadcn-nsh/theme";
 // RichEditor: the official gallery's scene
 // (`references/nsh/examples/gallery/demos/RichEditorDemo.tsx`, with its link menu, toolbar and
 // node views). The document is this library's session API (`nsh/base`'s, re-exported beside the
@@ -488,7 +488,7 @@ function DocumentPanel(props: {
         minHeight: 0,
         overflow: "hidden",
         backgroundColor: colors.card,
-        borderRadius: props.zoomed() ? 0 : radius.card,
+        borderRadius: props.zoomed() ? 0 : shape.card,
         borderWidth: props.zoomed() ? 0 : 1,
         borderColor: colors.border,
       }}
@@ -625,7 +625,7 @@ function StockCard(props: RichNodeViewProps) {
         alignItems: "center",
         gap: 16,
         padding: 16,
-        ...rounded(radius.card),
+        ...rounded(shape.card),
         borderWidth: 1,
         borderColor: props.selected ? colors.brand : colors.border,
       }}
@@ -736,7 +736,7 @@ function NodeViews() {
           overflow: "hidden",
           borderWidth: 1,
           borderColor: colors.border,
-          ...rounded(radius.card),
+          ...rounded(shape.card),
           backgroundColor: colors.card,
         }}
       >

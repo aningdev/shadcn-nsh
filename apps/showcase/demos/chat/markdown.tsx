@@ -7,7 +7,7 @@
 //
 // A press on an image opens it in a dialog. (Upstream opens it in the gallery shell's
 // `ImageViewer`, which has no counterpart in the library; the dialog is the demo's stand-in.)
-import { colors, radius, rounded } from "@shadcn-nsh/theme";
+import { colors, rounded, shape } from "@shadcn-nsh/theme";
 import { type JSX, Image, signal } from "nsh";
 import { TextView, type TextViewImage } from "nsh/base";
 
@@ -52,13 +52,13 @@ export function Markdown(props: {
             if (!event.open) viewing.set(null);
           }}
         >
-          <DialogContent style={{ width: "auto", padding: 8, ...rounded(radius.card) }}>
+          <DialogContent style={{ width: "auto", padding: 8, ...rounded(shape.card) }}>
             <DialogTitle style={{ position: "absolute", width: 1, height: 1, opacity: 0 }}>
               Image
             </DialogTitle>
             <Image
               src={viewing()?.src ?? ""}
-              style={{ maxWidth: 560, maxHeight: 460, borderRadius: radius.card }}
+              style={{ maxWidth: 560, maxHeight: 460, borderRadius: shape.card }}
             />
           </DialogContent>
         </Dialog>

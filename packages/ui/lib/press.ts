@@ -1,18 +1,13 @@
 // A press's feedback, native: a control sinks while pressed and eases back, from its
 // `activeStyle`, so it never waits for JS.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { press, terminal } from "@shadcn-nsh/theme";
+import { hitTarget, press, terminal } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
-import { platform, reduceMotion } from "nsh";
+import { reduceMotion } from "nsh";
 
-import { TOUCH_TARGET } from "./switch-geometry";
 import { type Live, read } from "./utils";
 
-export { TOUCH_TARGET };
-
 // @port look/press.ts
-const pointer = platform.desktop;
-
 /** How long a press's sink, and the state changes beside it, take to settle. */
 const PRESS_MS = 150;
 
@@ -54,12 +49,13 @@ export function pressSink(
 }
 /**
  * How far presses count past a control `side` points tall (a button's height,
- * a toggle's side), so a finger gets `TOUCH_TARGET` points without the control
- * looking bigger: none with a pointer or a terminal, and none once `side` is
+ * a toggle's side), so a finger gets the theme's `size.hit` points without the control
+ * looking bigger: none in a terminal or where the theme's hit target is 0 (a pointer's), and none once `side` is
  * that big already.
  */
 export function touchSlop(side: number): number | undefined {
-  if (pointer || terminal || side >= TOUCH_TARGET) return undefined;
-  return (TOUCH_TARGET - side) / 2;
+  const hit = hitTarget();
+  if (terminal || side >= hit) return undefined;
+  return (hit - side) / 2;
 }
 // @port end

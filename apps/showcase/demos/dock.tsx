@@ -1,4 +1,4 @@
-import { colors, mono, radius, rounded } from "@shadcn-nsh/theme";
+import { colors, mono, rounded, shape } from "@shadcn-nsh/theme";
 // Dock: the official gallery's scene (`references/nsh/examples/gallery/demos/Dock.tsx`) with this
 // library's dock — editor tabs dragged between groups, files in a left dock, a terminal under
 // them, closed, zoomed and resized. The shell gives the screen a flex view, so the workspace
@@ -359,7 +359,7 @@ function Workspace(props: {
           borderWidth: 1,
           borderColor: colors.border,
           backgroundColor: colors.card,
-          ...rounded(radius.card),
+          ...rounded(shape.card),
         }}
       >
         <View style={{ flex: 1, backgroundColor: colors.inset }}>

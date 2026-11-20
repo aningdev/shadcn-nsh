@@ -92,6 +92,7 @@
 ### Changed
 
 - **Components read the theme's type roles (#154).** Font weight, and the font size wherever a role has the same size in both tiers, now come from `finishes.json`'s `type` through `font.size`, `font.weight`, `font.line` and `font.tracking` (exported from `@shadcn-nsh/theme`), so `selectTheme` restyles text on the next frame. `type.family` is written into `font-sans` when a theme is selected. Nothing changes on screen: the default `type.*.line` values are the line heights the components drew, and sizes with no matching role stay in code with a comment.
+- **Components read the theme's shape, state, stroke, focus and size roles (#154).** Corners come from `shape` by what the component is (`control`, `field`, `chip`, `card`, `overlay`, `dialog`, `sheet`, `inset`), line widths from `stroke` (`hairline`, `control`, `indicator`), the pressed and disabled fades from `state`, a button's height and icon from `size.height` and `icon.size`, and the touch target from `size.hit`; `@shadcn-nsh/theme` exports `shape`, `stroke`, `dimmed`, `stateLayer`, `controlHeight`, `iconSize` and `hitTarget` for them, so `selectTheme` restyles them on the next frame. `rounded(radius, inset)` takes an `inset` for concentric corners (the outer radius less the inset, never below 0). A theme whose `state.overlay` is above 0 gets its hover as a wash of the text color (`hovered()`). Nothing changes on screen: the default values are the numbers the components drew.
 - **A `Button`'s label beside an icon is drawn (#83).** `AsText` draws every string or number
   among a control's children in the control's label type, leaving elements where they are, so
   `<Button><Icon icon={Upload} />Upload 3 photos</Button>` (and `SplitButtonSegment`, `Radio`, a
@@ -231,6 +232,7 @@
 
 ### Removed
 
+- **`radius`, `TOUCH_TARGET` and `stroke.focus` (#154).** `radius.control`, `radius.card` and `radius.inset` are `shape.control`, `shape.card` and `shape.inset`; the touch target is `hitTarget()` (`size.hit`); the focus ring's width is `focus.width` alone, so the duplicate `stroke.focus` key is gone from every theme's `finishes.json`.
 - **Breaking:** **`toggle-group` is removed (#127).** `ToggleGroup` now ships in `toggle`. Import
   it from `@/components/ui/toggle`. `shadcn-nsh add toggle-group` is unknown; `add toggle` installs
   the button and the group.

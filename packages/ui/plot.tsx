@@ -1,7 +1,17 @@
 // A plot: every mark of `nsh/base/plot` re-exported with the look this library gives them (series
 // and category colors, grid, baseline, cross line, hover dot, wash, axis text, tooltip), plus `Legend`.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { alpha, chart, colors, finish, mono, radius, rounded, terminal } from "@shadcn-nsh/theme";
+import {
+  alpha,
+  chart,
+  colors,
+  finish,
+  mono,
+  rounded,
+  terminal,
+  shape,
+  stroke,
+} from "@shadcn-nsh/theme";
 import { Text, token, View } from "nsh";
 import type { TextStyle, ViewStyle } from "nsh";
 
@@ -113,8 +123,8 @@ export const plotAxisText = (): TextStyle => ({
 /** A floating tooltip's card: the menu's surface, the theme's `radius` corners. */
 export const plotTooltip = (): ViewStyle => ({
   ...finish.menu,
-  borderWidth: 1,
-  ...rounded(radius.inset),
+  borderWidth: stroke.hairline,
+  ...rounded(shape.inset),
   paddingHorizontal: 10,
   paddingVertical: 8,
   gap: 6,

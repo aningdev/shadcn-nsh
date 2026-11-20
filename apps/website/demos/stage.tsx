@@ -4,7 +4,7 @@
 //
 // Demos only: it is not a component, has no registry entry, and never goes into `packages/ui`.
 // Its appearance is this library's theme (`@shadcn-nsh/theme`, `packages/ui/lib/surface`).
-import { alpha as tint, colors, finish, radius } from "@shadcn-nsh/theme";
+import { alpha as tint, colors, finish, shape } from "@shadcn-nsh/theme";
 import type { JSX as __JSX, ViewStyle } from "nsh";
 import { Text as __Text, View as __View } from "nsh";
 import { platform as __platform, token, windowSize as __windowSize } from "nsh";
@@ -51,7 +51,7 @@ export function Stage(props: { children?: __JSX.Element; width?: number; gap?: n
       return {
         flex: 1,
         minWidth: 0,
-        borderRadius: radius.card,
+        borderRadius: shape.card,
         borderWidth: 1,
         borderColor: ui().line,
         backgroundColor: tint(ui().text, 0.02),
@@ -107,7 +107,7 @@ export function Split(props: {
         ? {
             flex: 1,
             minWidth: 0,
-            borderRadius: radius.card,
+            borderRadius: shape.card,
             borderWidth: 1,
             borderColor: ui().line,
             backgroundColor: tint(ui().text, 0.02),

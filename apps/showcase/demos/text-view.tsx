@@ -1,4 +1,4 @@
-import { colors, mono, motion, radius, rounded, tints } from "@shadcn-nsh/theme";
+import { colors, mono, motion, rounded, tints, shape } from "@shadcn-nsh/theme";
 // TextView: the official gallery's scene (`references/nsh/examples/gallery/demos/TextViewDemo.tsx`)
 // with this library's text view — Markdown, HTML, extensions, a streaming reply, and a selection
 // that crosses views. The image viewer is this library's dialog as a page (`dialogPage`), its body
@@ -502,7 +502,7 @@ function Chart(props: { source: string }) {
         flexDirection: "row",
         alignItems: "flex-end",
         gap: 8,
-        ...rounded(radius.inset),
+        ...rounded(shape.inset),
         borderWidth: 1,
         borderColor: colors.border,
         backgroundColor: colors.inset,
@@ -574,7 +574,7 @@ function renderExtension(node: TextViewCustomNode) {
           style={{
             flexDirection: "row",
             gap: 12,
-            ...rounded(radius.inset),
+            ...rounded(shape.inset),
             backgroundColor: tints.up,
             padding: 12,
           }}
@@ -588,7 +588,7 @@ function renderExtension(node: TextViewCustomNode) {
         <View
           style={{
             gap: 4,
-            ...rounded(radius.inset),
+            ...rounded(shape.inset),
             borderWidth: 1,
             borderColor: colors.info,
             padding: 12,
@@ -840,7 +840,7 @@ function SelectionRead() {
             </Each>
           </SegmentedList>
         </Segmented>
-        <View style={{ ...rounded(radius.control), backgroundColor: colors.inset, padding: 12 }}>
+        <View style={{ ...rounded(shape.control), backgroundColor: colors.inset, padding: 12 }}>
           <Text
             style={{
               fontFamily: mono(),

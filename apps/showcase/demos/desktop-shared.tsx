@@ -2,7 +2,7 @@
 // icon in its header, and its caption row (a line of text with a monospaced note at the end).
 // Neither is a component of the library: the card's header is the scene's layout, drawn over the
 // theme's roles and the library's `sectionSurface`.
-import { colors, mono, radius } from "@shadcn-nsh/theme";
+import { colors, mono, shape } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { Text, View, windowSize } from "nsh";
@@ -29,7 +29,7 @@ export function DeskCard(props: {
           style={{
             width: 30,
             height: 30,
-            borderRadius: radius.control - 1,
+            borderRadius: shape.control - 1,
             borderCurve: "continuous",
             borderWidth: 1,
             borderColor: colors.line,

@@ -1,7 +1,7 @@
 // A separator: a hairline between two groups of content, the look (`separatorLook`) and the
 // `Separator` that wears it. This library's own (drawn on `nsh`'s View, no `nsh/base` control is
 // its behavior), so there is no port region. Yours to change.
-import { colors } from "@shadcn-nsh/theme";
+import { colors, stroke } from "@shadcn-nsh/theme";
 import type { ViewProps, ViewStyle } from "nsh";
 import { split, View } from "nsh";
 
@@ -10,9 +10,6 @@ import { split, View } from "nsh";
  * or `vertical` (down it, between two words of a row).
  */
 export type SeparatorOrientation = "horizontal" | "vertical";
-
-/** How thick a hairline is, in points. */
-const HAIRLINE = 1;
 
 /**
  * A separator's look: a hairline one point thick in the theme's edge color (`colors.border`),
@@ -24,8 +21,8 @@ export function separatorLook(orientation: SeparatorOrientation = "horizontal"):
     flexShrink: 0,
     backgroundColor: colors.border,
     ...(orientation === "vertical"
-      ? { width: HAIRLINE, alignSelf: "stretch" }
-      : { height: HAIRLINE, alignSelf: "stretch", width: "100%" }),
+      ? { width: stroke.hairline, alignSelf: "stretch" }
+      : { height: stroke.hairline, alignSelf: "stretch", width: "100%" }),
   };
 }
 

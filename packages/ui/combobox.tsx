@@ -1,7 +1,16 @@
 // A combobox: the field's and a chip's look (`comboboxLook`, `ComboToggle`, `chipLook`, `chipsLook`)
 // and the parts that wear them (`Combobox`, `ComboboxTrigger`, `ComboboxContent`, `ComboboxChip`).
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, finish, focusRing, radius, rounded, terminal } from "@shadcn-nsh/theme";
+import {
+  colors,
+  finish,
+  focusRing,
+  rounded,
+  terminal,
+  shape,
+  stroke,
+  dimmed,
+} from "@shadcn-nsh/theme";
 import { X } from "lucide";
 import type { InputStyle, JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import {
@@ -84,8 +93,8 @@ export function comboboxLook(open: Live<boolean>, o?: ComboboxLookOptions) {
         // The query starts where a select's title does, and stops 4 points short of the toggle.
         paddingStart: 10,
         paddingEnd: 4,
-        ...rounded(radius.control),
-        borderWidth: 1,
+        ...rounded(shape.control),
+        borderWidth: stroke.control,
         backgroundColor: colors.field,
         ...finish.field,
         ...read(o?.style),
@@ -123,7 +132,7 @@ export function ComboToggle(props: { open: boolean; id?: string; label?: string 
         alignItems: "center",
         justifyContent: "center",
         // A step inside a control's corners (`radius-control`).
-        ...rounded(radius.control - 1),
+        ...rounded(shape.control, 1),
       }}
       hoverStyle={{ backgroundColor: colors.track }}
     >
@@ -161,9 +170,9 @@ export function chipLook(o?: ChipLookOptions) {
         paddingLeft: 3,
         paddingRight: 3,
         borderRadius: terminal ? 0 : height / 2,
-        borderWidth: 1,
+        borderWidth: stroke.control,
         ...finish.chip,
-        opacity: read(o?.disabled) ? 0.5 : 1,
+        opacity: read(o?.disabled) ? dimmed.disabled : 1,
       };
     },
     get textStyle(): TextStyle {

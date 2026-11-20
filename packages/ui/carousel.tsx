@@ -1,7 +1,7 @@
 // A carousel: the look (arrows, the pagination's pill and its dots) and the parts on `nsh/base`'s
 // carousel.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { alpha, colors, finish, focusRing, terminal } from "@shadcn-nsh/theme";
+import { alpha, colors, finish, focusRing, terminal, stroke, dimmed } from "@shadcn-nsh/theme";
 import { ChevronLeft } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
@@ -70,7 +70,7 @@ export function carouselArrowLook(o?: CarouselArrowOptions) {
         borderRadius: side / 2,
         alignItems: "center",
         justifyContent: "center",
-        borderWidth: 1,
+        borderWidth: stroke.control,
         ...(o?.glass ? finish.glass : finish.raised),
         ...fade,
       };
@@ -84,7 +84,9 @@ export function carouselArrowLook(o?: CarouselArrowOptions) {
     get focusVisibleStyle(): ViewStyle {
       return focusRing(2);
     },
-    disabledStyle: { opacity: 0.5 } satisfies ViewStyle,
+    get disabledStyle(): ViewStyle {
+      return { opacity: dimmed.disabled };
+    },
   };
 }
 

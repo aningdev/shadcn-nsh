@@ -1,6 +1,6 @@
 // A sheet: the look (`sheetPanel`, `sheetGrabber`) and the parts that wear it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, cornerCurve, radius } from "@shadcn-nsh/theme";
+import { colors, cornerCurve, shape, stroke } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { context, keyboardFrame, safeArea, split, windowSize } from "nsh";
 import {
@@ -34,18 +34,18 @@ export function sheetPanel(side: SheetSide): ViewStyle {
     const bottom = side === "bottom";
     return {
       ...surface,
-      borderWidth: 1,
+      borderWidth: stroke.hairline,
       ...(bottom
         ? {
             borderBottomWidth: 0,
-            borderTopLeftRadius: radius.card,
-            borderTopRightRadius: radius.card,
+            borderTopLeftRadius: shape.sheet,
+            borderTopRightRadius: shape.sheet,
             paddingTop: 8,
           }
         : {
             borderTopWidth: 0,
-            borderBottomLeftRadius: radius.card,
-            borderBottomRightRadius: radius.card,
+            borderBottomLeftRadius: shape.sheet,
+            borderBottomRightRadius: shape.sheet,
             paddingTop: safeArea().top + 16,
             paddingBottom: 20,
           }),
@@ -75,14 +75,14 @@ export function sheetPanel(side: SheetSide): ViewStyle {
     // physical: `side` is the window edge the sheet stands on, so its inner edge (the border and the corners) is physical too.
     ...(side === "right"
       ? {
-          borderLeftWidth: 1,
-          borderTopLeftRadius: radius.card,
-          borderBottomLeftRadius: radius.card,
+          borderLeftWidth: stroke.hairline,
+          borderTopLeftRadius: shape.sheet,
+          borderBottomLeftRadius: shape.sheet,
         }
       : {
-          borderRightWidth: 1,
-          borderTopRightRadius: radius.card,
-          borderBottomRightRadius: radius.card,
+          borderRightWidth: stroke.hairline,
+          borderTopRightRadius: shape.sheet,
+          borderBottomRightRadius: shape.sheet,
         }),
   };
 }

@@ -4,7 +4,6 @@ import {
   colors,
   finish,
   focusRing,
-  radius,
   reactive,
   style,
   tier,
@@ -15,6 +14,9 @@ import {
   rounded,
   type ControlSizes,
   font,
+  shape,
+  stroke,
+  dimmed,
 } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
 import { computed, platform, Text, token, View, windowSize } from "nsh";
@@ -132,7 +134,7 @@ export interface SectionSurfaceOptions {
 export function sectionSurface(o?: SectionSurfaceOptions): ViewStyle {
   if (terminal) {
     return {
-      borderWidth: 1,
+      borderWidth: stroke.hairline,
       borderColor: colors.border,
       paddingVertical: TERMINAL_ROW - 1,
       paddingHorizontal: 2 * TERMINAL_COLUMN - 1,
@@ -141,7 +143,7 @@ export function sectionSurface(o?: SectionSurfaceOptions): ViewStyle {
   return {
     backgroundColor: colors.card,
     ...rounded(density.surface),
-    borderWidth: 1,
+    borderWidth: stroke.hairline,
     borderColor: colors.border,
     ...(o?.padded ? { padding: density.pad } : {}),
   };
@@ -155,9 +157,9 @@ export function sectionSurface(o?: SectionSurfaceOptions): ViewStyle {
 export function insetSurface(): ViewStyle {
   return {
     backgroundColor: colors.inset,
-    borderWidth: 1,
+    borderWidth: stroke.hairline,
     borderColor: colors.line,
-    ...rounded(radius.inset),
+    ...rounded(shape.inset),
     ...finish.inset,
   };
 }
@@ -282,11 +284,15 @@ export function listRow(o?: ListRowOptions): ListRowLook {
     get hoverStyle(): ViewStyle | undefined {
       return read(o?.disabled) ? undefined : { backgroundColor: token("accent") };
     },
-    activeStyle: { opacity: 0.7 },
+    get activeStyle(): ViewStyle {
+      return { opacity: dimmed.pressed };
+    },
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
     },
-    disabledStyle: { opacity: 0.5 },
+    get disabledStyle(): ViewStyle {
+      return { opacity: dimmed.disabled };
+    },
   };
 }
 
@@ -305,7 +311,7 @@ export function RowDivider(props: { show: boolean }) {
           top: 0,
           left: ROW_BLEED,
           right: ROW_BLEED,
-          height: 1,
+          height: stroke.hairline,
           backgroundColor: colors.line,
         }}
       />

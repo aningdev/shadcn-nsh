@@ -1,4 +1,4 @@
-import { alpha, colors, mono, radius, rounded, toneColor, type Tone } from "@shadcn-nsh/theme";
+import { alpha, colors, mono, rounded, toneColor, type Tone, shape } from "@shadcn-nsh/theme";
 // Image: the official gallery's Images scene (`references/nsh/examples/gallery/demos/Images.tsx`):
 // resize modes, corners, assets and tint, SVG, animated GIF/WebP, placeholders and fade, blur,
 // size and prefetch, and load events. `Image` is `nsh`'s primitive, kept as one; the cards,
@@ -25,7 +25,7 @@ const remoteSvg = "https://cdn.jsdelivr.net/gh/twitter/twemoji@14.0.2/assets/svg
 /** Every photo's frame: rounded, a hairline border, a raised fill while it loads. */
 const frame = () =>
   ({
-    ...rounded(radius.control),
+    ...rounded(shape.control),
     borderWidth: 1,
     borderColor: colors.border,
     backgroundColor: colors.raised,
@@ -56,7 +56,7 @@ function Tile(props: { note: string; code?: boolean; height?: number; children: 
       <View
         style={{
           height: props.height ?? 76,
-          ...rounded(radius.control),
+          ...rounded(shape.control),
           backgroundColor: colors.inset,
           borderWidth: 1,
           borderColor: colors.line,

@@ -1,7 +1,7 @@
 // The popup families' one surface and the motion they come in with: menus, popovers, a select's
 // list, and the mark of a checkable menu item and the scrim behind what is modal.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { finish, radius, rounded, terminal } from "@shadcn-nsh/theme";
+import { finish, rounded, terminal, shape, stroke } from "@shadcn-nsh/theme";
 import type { JSX, MotionSpec, StyleProp, ViewStyle } from "nsh";
 import { createMotion, Easing, reduceMotion, token, View } from "nsh";
 
@@ -45,12 +45,12 @@ export function popupSurface(): ViewStyle {
     // A terminal draws a popup as its line alone, over no fill of its own.
     terminal
       ? {
-          ...rounded(radius.inset),
-          borderWidth: 1,
+          ...rounded(shape.overlay),
+          borderWidth: stroke.hairline,
           padding: 4,
           borderColor: finish.menu.borderColor,
         }
-      : { ...rounded(radius.inset), borderWidth: 1, padding: 4, ...finish.menu }
+      : { ...rounded(shape.overlay), borderWidth: stroke.hairline, padding: 4, ...finish.menu }
   );
 }
 

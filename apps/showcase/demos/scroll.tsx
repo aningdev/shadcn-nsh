@@ -1,4 +1,4 @@
-import { alpha, colors, finish, radius, type Tone, toneColor } from "@shadcn-nsh/theme";
+import { alpha, colors, finish, type Tone, toneColor, shape } from "@shadcn-nsh/theme";
 // Scroll: the official gallery's Scrolling scene
 // (`references/nsh/examples/gallery/demos/Scrolling.tsx`): paging with parallax, snapping cards,
 // pinch zoom, the events and switches around a scroll view, NEW posts arriving on top, and taps
@@ -103,7 +103,7 @@ function Pager() {
         onLayout={({ bounds }) => width.set(bounds.size.width)}
         style={{
           height: 160,
-          ...circle(radius.control),
+          ...circle(shape.control),
           backgroundColor: colors.card,
           ...finish.card,
           borderWidth: 1,
@@ -237,7 +237,7 @@ function Cards() {
                 style={{
                   width: card,
                   height,
-                  ...circle(radius.control + 4),
+                  ...circle(shape.control + 4),
                   backgroundColor: colors.raised,
                   backgroundImage: `linear-gradient(145deg, ${alpha(toneColor(tone()), 0.2)} 0%, ${alpha(toneColor(tone()), 0)} 62%)`,
                   ...finish.raised,
@@ -342,7 +342,7 @@ function Events() {
       <Scroll
         style={{
           height: 180,
-          ...circle(radius.control),
+          ...circle(shape.control),
           backgroundColor: colors.card,
           ...finish.card,
           borderWidth: 1,
@@ -506,7 +506,7 @@ function Zoom() {
         ref={(node) => scroll.set(node)}
         style={{
           height: 240,
-          ...circle(radius.control),
+          ...circle(shape.control),
           backgroundColor: colors.card,
           ...finish.card,
           borderWidth: 1,
@@ -612,7 +612,7 @@ function Feed() {
         estimatedItemSize={48}
         style={{
           height: 240,
-          ...circle(radius.control),
+          ...circle(shape.control),
           backgroundColor: colors.card,
           ...finish.card,
           borderWidth: 1,

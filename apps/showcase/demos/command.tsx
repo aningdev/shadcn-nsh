@@ -3,7 +3,7 @@
 // keywords), the sections, the highlight, the keyboard and what screen readers hear; its rows are
 // virtualized, so 5 000 files filter at every keystroke. The shell sets the search bar's row and
 // the placeholder color, and `CommandRow` draws an icon, the label and the shortcut's keys.
-import { colors, radius, terminal, TERMINAL_GAP } from "@shadcn-nsh/theme";
+import { colors, terminal, TERMINAL_GAP, shape } from "@shadcn-nsh/theme";
 import {
   Archive,
   ArrowLeft,
@@ -246,7 +246,7 @@ function Palette() {
           height: desktop ? fieldSize.height : 44,
           paddingLeft: fieldSize.pad,
           paddingRight: 6,
-          borderRadius: radius.control,
+          borderRadius: shape.control,
           flexDirection: "row",
           alignItems: "center",
           gap: 8,

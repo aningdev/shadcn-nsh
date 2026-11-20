@@ -5,10 +5,12 @@ import {
   alpha,
   colors,
   finish,
-  radius,
   terminal,
   TERMINAL_COLUMN,
   rounded,
+  shape,
+  stroke,
+  dimmed,
 } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
@@ -57,7 +59,6 @@ const triggerGap = 8;
 const edgeFade = 120;
 
 /** How far a pressed trigger sinks to, as a button's does. */
-const pressedOpacity = 0.7;
 
 /** A trigger's variants: `default` shadcn's field, `outline` an outline button of shadcn's, on the raised finish. */
 export type PickerVariant = "default" | "outline";
@@ -118,8 +119,8 @@ export function pickerLook(o?: PickerLookOptions) {
           : clearable
             ? clearInset + controlSize.clear + 8
             : triggerPadding,
-        ...rounded(radius.control),
-        borderWidth: 1,
+        ...rounded(shape.control),
+        borderWidth: stroke.control,
         ...(outline
           ? { backgroundColor: colors.raised, ...finish.raised }
           : { backgroundColor: colors.field, ...finish.field }),
@@ -148,14 +149,18 @@ export function pickerLook(o?: PickerLookOptions) {
     get hoverStyle(): ViewStyle | undefined {
       return invalid() ? undefined : { borderColor: colors.faint };
     },
-    activeStyle: { opacity: pressedOpacity },
+    get activeStyle(): ViewStyle {
+      return { opacity: dimmed.pressed };
+    },
     // The border with the outline, which not every platform draws over it; `focus-visible` is above `hover` in the
     // states' order. Only for the keyboard: a click's focus, and the focus a closing list gives back, draw nothing.
     get focusVisibleStyle(): ViewStyle {
       const tone = invalid() ? colors.destructive : colors.brand;
       return terminal ? { borderColor: tone } : { borderColor: tone, outlineColor: tone };
     },
-    disabledStyle: { opacity: 0.5 },
+    get disabledStyle(): ViewStyle {
+      return { opacity: dimmed.disabled };
+    },
   };
 }
 

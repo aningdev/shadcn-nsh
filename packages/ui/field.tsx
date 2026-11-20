@@ -1,7 +1,7 @@
 // A field: the look (`fieldFamilyLook`) and the ten parts that wear it.
 // This library's own: upstream has no field family, so the parts and their axes follow shadcn/ui and
 // the look is written from the theme's roles. Yours to change.
-import { colors, TERMINAL_ROW, terminal, font } from "@shadcn-nsh/theme";
+import { colors, TERMINAL_ROW, terminal, font, stroke } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, TextProps, ViewProps, ViewStyle } from "nsh";
 import { context, split, Text, View } from "nsh";
 
@@ -136,7 +136,7 @@ export function fieldFamilyLook(): FieldFamilyLook {
       };
     },
     get separatorLine(): ViewStyle {
-      return { flexGrow: 1, height: 1, backgroundColor: colors.line };
+      return { flexGrow: 1, height: stroke.hairline, backgroundColor: colors.line };
     },
     get separatorText(): TextStyle {
       return { fontSize: density.note, color: colors.mutedForeground };

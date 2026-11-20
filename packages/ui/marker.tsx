@@ -1,7 +1,7 @@
 // A marker: one line in a conversation that is not a message — a status, a note, a row with a
 // rule under it, or a label between two rules. This library's own (drawn on `nsh`'s View and
 // Text), so there is no port region. Yours to change.
-import { colors, TERMINAL_COLUMN, TERMINAL_ROW, terminal } from "@shadcn-nsh/theme";
+import { colors, TERMINAL_COLUMN, TERMINAL_ROW, terminal, stroke } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
 import type { JSX, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, platform, split, Text, View } from "nsh";
@@ -67,7 +67,7 @@ export function markerLook(): MarkerLook {
       ...(variant === "border"
         ? {
             paddingBottom: borderPad,
-            borderBottomWidth: 1,
+            borderBottomWidth: stroke.hairline,
             borderBottomColor: colors.border,
           }
         : {}),
@@ -78,7 +78,7 @@ export function markerLook(): MarkerLook {
         flexShrink: 1,
         flexBasis: 0,
         minWidth: 0,
-        height: 1,
+        height: stroke.hairline,
         backgroundColor: colors.border,
       };
     },

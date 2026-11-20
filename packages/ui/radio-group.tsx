@@ -1,6 +1,6 @@
 // A radio group: the look (`RadioRing`) and the `Radio` / `RadioGroup` that wear it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, follow, terminal, TERMINAL_ROW } from "@shadcn-nsh/theme";
+import { colors, follow, terminal, TERMINAL_ROW, stroke } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { split, View } from "nsh";
 import {
@@ -50,7 +50,7 @@ export function RadioRing(props: { on: boolean; scale?: number; disabled?: boole
         borderRadius: control / 2,
         alignItems: "center",
         justifyContent: "center",
-        borderWidth: 1,
+        borderWidth: stroke.control,
         ...choiceWell({ disabled: props.disabled }),
       }}
     >

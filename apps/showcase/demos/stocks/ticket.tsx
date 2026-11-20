@@ -2,12 +2,12 @@ import {
   alpha,
   colors,
   finish,
-  radius,
   TERMINAL_COLUMN,
   TERMINAL_GAP,
   TERMINAL_ROW,
   terminal,
   tints,
+  shape,
 } from "@shadcn-nsh/theme";
 import { Check, Minus, Plus } from "lucide";
 // The order ticket: side, a limit price stepper, quantity chips, the estimated cost, then the
@@ -67,7 +67,7 @@ export function createBanner() {
         gap: 12,
         paddingVertical: terminal ? 0 : 14,
         paddingHorizontal: terminal ? TERMINAL_COLUMN : 14,
-        borderRadius: radius.inset + 3,
+        borderRadius: shape.inset + 3,
         backgroundColor: colors.primary,
         opacity: t.interpolate({ inputRange: [0, 0.3, 1], outputRange: [0, 1, 1] }),
         translate: [0, t.interpolate({ inputRange: [0, 1], outputRange: [-90, 0] })],
@@ -124,7 +124,7 @@ function Step(props: { plus: boolean; label: string; onPress: () => void }) {
           height: 44,
           alignItems: "center",
           justifyContent: "center",
-          borderRadius: radius.control,
+          borderRadius: shape.control,
           ...finish.pill,
           borderWidth: 1,
         }}
@@ -236,7 +236,7 @@ export function Ticket(props: {
               height: terminal ? TERMINAL_ROW : 44,
               alignItems: "center",
               justifyContent: "center",
-              borderRadius: radius.control,
+              borderRadius: shape.control,
               backgroundColor: colors.inset,
               borderWidth: 1,
               borderColor: colors.border,
@@ -277,7 +277,7 @@ export function Ticket(props: {
                       height: terminal ? TERMINAL_ROW : 44,
                       alignItems: "center",
                       justifyContent: "center",
-                      borderRadius: radius.control,
+                      borderRadius: shape.control,
                       backgroundColor: quantity() === q() ? tints.brand : colors.raised,
                       borderWidth: 1,
                       borderColor: quantity() === q() ? colors.brand : colors.border,
@@ -349,7 +349,7 @@ export function Ticket(props: {
             // The terminal's border takes a row and a column on each side: the rest of them is padding.
             paddingVertical: terminal ? TERMINAL_ROW - 1 : 14,
             paddingHorizontal: terminal ? 2 * TERMINAL_COLUMN - 1 : 14,
-            borderRadius: radius.inset,
+            borderRadius: shape.inset,
             borderWidth: 1,
             borderColor: tone(),
             backgroundColor: props.side() === "buy" ? tints.up : tints.down,

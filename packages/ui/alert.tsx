@@ -1,7 +1,7 @@
 // An alert: a notice in a bordered surface, its icon beside its title and its note. This library's
 // own (drawn on `nsh`'s View and Text; the behavior is the `alert` role's), so there is no port
 // region. Yours to change.
-import { alpha, colors, radius, rounded, font } from "@shadcn-nsh/theme";
+import { alpha, colors, rounded, font, shape, stroke } from "@shadcn-nsh/theme";
 import type { TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, split, Text, View } from "nsh";
 
@@ -59,9 +59,9 @@ export function alertLook(): AlertLook {
       alignItems: "start",
       paddingHorizontal: pad,
       paddingVertical: 12,
-      borderWidth: 1,
+      borderWidth: stroke.hairline,
       borderColor: colors.border,
-      ...rounded(radius.inset),
+      ...rounded(shape.inset),
       backgroundColor: colors.card,
     }),
     title: (variant: AlertVariant): TextStyle => ({

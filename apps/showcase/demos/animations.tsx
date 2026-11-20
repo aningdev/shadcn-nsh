@@ -3,7 +3,7 @@
 // animation and a hiding header. The library has no motion API for a scene, so the motion runs
 // on `nsh` (`Animated`, `createMotion`, `LayoutAnimation`); the cards, buttons, badges and
 // segmented choices are this library's.
-import { alpha, colors, finish, isDark, mono, radius, tints } from "@shadcn-nsh/theme";
+import { alpha, colors, finish, isDark, mono, tints, shape } from "@shadcn-nsh/theme";
 import { Activity, Search, Star } from "lucide";
 import type {
   AnimatedNode,
@@ -1498,7 +1498,7 @@ function HidingHeader() {
       <View
         style={{
           height: 300,
-          borderRadius: radius.control,
+          borderRadius: shape.control,
           overflow: "hidden",
           backgroundColor: colors.background,
           ...finish.track,
@@ -1610,7 +1610,7 @@ function BoundedDrag() {
           height: 72,
           justifyContent: "center",
           paddingHorizontal: 14,
-          borderRadius: radius.control,
+          borderRadius: shape.control,
           backgroundColor: colors.background,
           ...finish.track,
         }}

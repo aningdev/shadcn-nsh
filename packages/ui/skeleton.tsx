@@ -1,7 +1,7 @@
 // A skeleton: the shape of content that is still coming, drawn on `nsh`'s View. This library's
 // own (no `nsh/base` control is its behavior, and upstream has none): there is no port region.
 // Yours to change.
-import { radius, rounded, terminal } from "@shadcn-nsh/theme";
+import { rounded, terminal, shape } from "@shadcn-nsh/theme";
 import type { ViewProps, ViewStyle } from "nsh";
 import { createMotion, reduceMotion, split, token, View } from "nsh";
 
@@ -12,7 +12,7 @@ import { createMotion, reduceMotion, split, token, View } from "nsh";
  */
 export function skeletonLook(): ViewStyle {
   return {
-    ...rounded(radius.inset),
+    ...rounded(shape.inset),
     backgroundColor: token("accent"),
   };
 }

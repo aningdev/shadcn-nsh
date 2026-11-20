@@ -1,6 +1,6 @@
 // The inset track a toolbar and a toggle group share.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, radius, rounded, terminal, TERMINAL_GAP } from "@shadcn-nsh/theme";
+import { colors, rounded, terminal, TERMINAL_GAP, shape, stroke } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
 
 // @port look/tool.ts
@@ -23,8 +23,8 @@ export function toolbarTrack(o?: ToolbarTrackOptions): ViewStyle {
     gap: terminal ? TERMINAL_GAP : 2,
     flexWrap: terminal && !o?.vertical ? "wrap" : undefined,
     padding: 3,
-    ...rounded(radius.inset),
-    borderWidth: 1,
+    ...rounded(shape.inset),
+    borderWidth: stroke.control,
     borderColor: colors.border,
     backgroundColor: colors.inset,
   };

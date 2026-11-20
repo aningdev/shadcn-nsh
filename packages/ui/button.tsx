@@ -6,13 +6,17 @@ import {
   finish,
   focusRing,
   hovered,
-  radius,
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
   tints,
   rounded,
   font,
+  shape,
+  stroke,
+  dimmed,
+  controlHeight,
+  iconSize,
 } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, platform, split, token, View } from "nsh";
@@ -71,18 +75,44 @@ export interface ButtonDimensions {
 
 const pointer = platform.desktop;
 
-/** A button's heights, label and icon sizes and paddings, by size: compact with a pointer, roomier on a touch screen. */
-export const buttonSizes: Record<ButtonSize, ButtonDimensions> = pointer
-  ? {
-      sm: { height: 24, font: 12, icon: 12, pad: 8 },
-      default: { height: 28, font: 13, icon: 14, pad: 12 },
-      lg: { height: 34, font: 14, icon: 15, pad: 16 },
-    }
-  : {
-      sm: { height: 36, font: 14, icon: 14, pad: 12 },
-      default: { height: 40, font: 15, icon: 16, pad: 16 },
-      lg: { height: 48, font: 17, icon: 18, pad: 20 },
-    };
+/**
+ * A button's heights, label and icon sizes and paddings, by size: compact with a pointer, roomier
+ * on a touch screen. The height is the theme's `size.height` and the icon its `icon.size` (read
+ * where they are used, so they follow `selectTheme`); the label size and the padding are the
+ * button's own (no type role has the 12 / 13 / 14 of a button's steps).
+ */
+export const buttonSizes: Record<ButtonSize, ButtonDimensions> = {
+  sm: {
+    get height() {
+      return controlHeight.sm;
+    },
+    font: pointer ? 12 : 14,
+    get icon() {
+      return iconSize.sm;
+    },
+    pad: pointer ? 8 : 12,
+  },
+  default: {
+    get height() {
+      return controlHeight.md;
+    },
+    font: pointer ? 13 : 15,
+    get icon() {
+      return iconSize.md;
+    },
+    pad: pointer ? 12 : 16,
+  },
+  lg: {
+    get height() {
+      return controlHeight.lg;
+    },
+    font: pointer ? 14 : 17,
+    get icon() {
+      return iconSize.lg;
+    },
+    pad: pointer ? 16 : 20,
+  },
+};
 
 /** How far a press sinks a button (`activeStyle`): none with reduced motion. */
 const sink = (scale: number): ViewStyle => pressSink(scale).activeStyle;
@@ -132,7 +162,7 @@ function restLook(variant: ButtonVariant, selected: boolean, disabled = false): 
 /**
  * A button's props (spread them: `<Button {...buttonLook("default")}>`, or
  * on a `View` with `onPress`): its style and its states. One row, its label
- * centered, `radius.control` with continuous corners; 28 points tall with a
+ * centered, `shape.control` with continuous corners; 28 points tall with a
  * pointer, 40 on a touch screen (`sm` 24 / 36, `lg` 34 / 48), a hit
  * slop making a touch target 44 points. Under the pointer a raised button
  * lightens, a ghost gets a whisper of the text color, a filled one a touch
@@ -150,8 +180,8 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
       return {
         height: terminal ? TERMINAL_ROW : dims.height,
         paddingHorizontal: terminal ? TERMINAL_COLUMN : dims.pad,
-        ...rounded(radius.control),
-        borderWidth: 1,
+        ...rounded(shape.control),
+        borderWidth: stroke.control,
         flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
@@ -181,7 +211,9 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
     },
-    disabledStyle: { opacity: 0.5 },
+    get disabledStyle(): ViewStyle {
+      return { opacity: dimmed.disabled };
+    },
     get hitSlop(): number | undefined {
       return touchSlop(dimensions(o).height);
     },
@@ -273,7 +305,7 @@ const iconButtonDimensions = (o?: IconButtonLookOptions) =>
 /**
  * An icon-only button's props (spread them on a `Button` or a `View` with
  * `onPress`): a square of 28 points with a pointer, 40 on a touch screen
- * (a hit slop making 44), `radius.control`; `size` takes `iconButtonSizes`
+ * (a hit slop making 44), `shape.control`; `size` takes `iconButtonSizes`
  * (20 / 24 / 32 with a pointer). A ghost by default, raised as
  * `secondary`, the danger tone's under the pointer as `destructive`; `selected`
  * takes the accent's tint. Pressed it sinks to 90% (none with reduced
@@ -291,8 +323,8 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
         height: terminal ? undefined : side,
         alignItems: "center",
         justifyContent: "center",
-        ...rounded(radius.control),
-        borderWidth: 1,
+        ...rounded(shape.control),
+        borderWidth: stroke.control,
         borderColor: "transparent",
         backgroundColor: selected ? tints.brand : ghostFill(),
         ...(raised && !selected ? finish.raised : {}),
@@ -317,7 +349,9 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
     },
-    disabledStyle: { opacity: 0.5 },
+    get disabledStyle(): ViewStyle {
+      return { opacity: dimmed.disabled };
+    },
     get hitSlop(): number | undefined {
       return touchSlop(iconButtonDimensions(o).side);
     },
@@ -380,7 +414,7 @@ export function roundButtonLook(
         borderRadius: side / 2,
         alignItems: "center",
         justifyContent: "center",
-        borderWidth: 1,
+        borderWidth: stroke.control,
         ...(primary ? finish.accent : finish.raised),
         ...transition,
       };
@@ -395,7 +429,9 @@ export function roundButtonLook(
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
     },
-    disabledStyle: { opacity: 0.5 },
+    get disabledStyle(): ViewStyle {
+      return { opacity: dimmed.disabled };
+    },
     get hitSlop(): number | undefined {
       return touchSlop(roundSide(o));
     },
@@ -446,8 +482,8 @@ export function splitButtonLook(variant: Live<ButtonVariant> = "default", o?: Bu
         return {
           flexDirection: "row",
           alignItems: "stretch",
-          ...rounded(radius.control),
-          borderWidth: 1,
+          ...rounded(shape.control),
+          borderWidth: stroke.control,
           overflow: "hidden",
           ...restLook(read(variant) ?? "default", false),
           ...transition,
@@ -482,7 +518,9 @@ export function splitButtonLook(variant: Live<ButtonVariant> = "default", o?: Bu
         get focusVisibleStyle(): ViewStyle {
           return focusRing(-2);
         },
-        disabledStyle: { opacity: 0.5 },
+        get disabledStyle(): ViewStyle {
+          return { opacity: dimmed.disabled };
+        },
         // Taller only: the halves touch, so a finger's slop stays off their shared edge.
         get hitSlop() {
           const v = touchSlop(dimensions(o).height);
@@ -491,7 +529,7 @@ export function splitButtonLook(variant: Live<ButtonVariant> = "default", o?: Bu
       };
     },
     get divider(): ViewStyle {
-      return { width: 1, backgroundColor: shade(0.22) };
+      return { width: stroke.hairline, backgroundColor: shade(0.22) };
     },
   };
 }

@@ -2,7 +2,7 @@
 // A card dragged on the UI thread and released into a spring, a decay or the nearest corner,
 // with a canvas tether drawn from the same animated values. The segmented choices, the badge
 // and the figures are this library's; the spring, the decay and the pan are `nsh`'s.
-import { colors, finish, mono, radius, tints } from "@shadcn-nsh/theme";
+import { colors, finish, mono, tints, shape } from "@shadcn-nsh/theme";
 import { Hand, Orbit } from "lucide";
 import type { AnimatedValue, PanEvent } from "nsh";
 import { Canvas, computed, createAnimatedValue, Scroll, signal, Text, View, windowSize } from "nsh";
@@ -125,7 +125,7 @@ export function PhysicsDemo() {
           flex: compact ? undefined : 1,
           height: compact ? SHORT_STAGE : undefined,
           overflow: "hidden",
-          borderRadius: radius.card,
+          borderRadius: shape.card,
           borderCurve: "continuous",
           borderWidth: 1,
           borderColor: colors.border,
@@ -240,7 +240,7 @@ export function PhysicsDemo() {
         style={{
           backgroundColor: colors.card,
           ...finish.card,
-          borderRadius: radius.card,
+          borderRadius: shape.card,
           borderCurve: "continuous",
           borderWidth: 1,
           borderColor: colors.border,

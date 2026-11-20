@@ -8,6 +8,8 @@ import {
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
+  stroke,
+  hitTarget,
 } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
 import { platform, split } from "nsh";
@@ -97,7 +99,7 @@ export function switchLook(on: () => boolean, size: SwitchSize = "default"): Swi
         width: g.knob,
         height: g.knob,
         borderRadius: g.knob / 2,
-        borderWidth: 1,
+        borderWidth: stroke.control,
         ...(on() ? finish.knobOn : finish.knob),
         transform: [{ translateX: x }],
       };
@@ -115,7 +117,8 @@ export function switchLook(on: () => boolean, size: SwitchSize = "default"): Swi
 export function switchHitSlop(
   size: SwitchSize = "default",
 ): { top: number; bottom: number; left: number; right: number } | undefined {
-  return pointer || terminal ? undefined : switchSlop(geometry(size));
+  const hit = hitTarget();
+  return terminal || hit <= 0 ? undefined : switchSlop(geometry(size), hit);
 }
 // @port end
 

@@ -1,7 +1,7 @@
 // A menubar: a row of menus whose triggers stand in one bar, as a desktop app's menu bar. The
 // rows, submenus and popups are `menu.tsx`'s; this file is the bar, its triggers and the shell.
 // This library's own: nothing comes from upstream, so there is no port region. Yours to change.
-import { colors, focusRing, radius, rounded, font } from "@shadcn-nsh/theme";
+import { colors, focusRing, rounded, font, shape, stroke, dimmed } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, platform, split, View } from "nsh";
 import { Menu as BaseMenu, type MenuProps as BaseMenuProps, type OpenChangeReason } from "nsh/base";
@@ -25,10 +25,6 @@ const triggerPad = 8;
 
 /** The gap inside a trigger, between a lead icon and its name (shadcn's `gap-1.5`). */
 const triggerGap = 6;
-
-/** How far a press dims a trigger: a menu row's press shows a deeper fill, a bar's trigger
- * (which floats on the bar's fill) a shade of its own. */
-const pressDim = 0.7;
 
 /** A menubar's parts as the styles they wear: spread each one on the part it names. */
 export interface MenubarLook {
@@ -55,8 +51,8 @@ export function menubarLook(): MenubarLook {
         gap: menubarSize.gap,
         height: menubarSize.height,
         paddingHorizontal: menubarSize.padding,
-        ...rounded(radius.control),
-        borderWidth: 1,
+        ...rounded(shape.control),
+        borderWidth: stroke.control,
         borderColor: colors.border,
         backgroundColor: colors.card,
       };
@@ -97,14 +93,18 @@ export function menubarTriggerLook() {
     get hoverStyle(): ViewStyle {
       return menuHighlight();
     },
-    activeStyle: { opacity: pressDim },
+    get activeStyle(): ViewStyle {
+      return { opacity: dimmed.pressed };
+    },
     get expandedStyle(): ViewStyle {
       return menuHighlight();
     },
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
     },
-    disabledStyle: { opacity: 0.5 },
+    get disabledStyle(): ViewStyle {
+      return { opacity: dimmed.disabled };
+    },
   };
 }
 

@@ -4,11 +4,12 @@ import {
   alpha,
   colors,
   finish,
-  radius,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
   terminal as terminalIdiom,
   rounded,
+  shape,
+  stroke,
 } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
 import { platform, split } from "nsh";
@@ -54,7 +55,7 @@ export function terminalLook(o?: TerminalLookOptions) {
       if (terminalIdiom) {
         return {
           backgroundColor: colors.field,
-          borderWidth: 1,
+          borderWidth: stroke.hairline,
           borderColor: colors.border,
           paddingVertical: TERMINAL_ROW - 1,
           paddingHorizontal: 2 * TERMINAL_COLUMN - 1,
@@ -64,9 +65,9 @@ export function terminalLook(o?: TerminalLookOptions) {
       return {
         backgroundColor: colors.field,
         ...finish.field,
-        borderWidth: 1,
+        borderWidth: stroke.hairline,
         borderColor: colors.input,
-        ...rounded(radius.inset),
+        ...rounded(shape.inset),
         paddingHorizontal: wellPad.x,
         paddingVertical: wellPad.y,
         ...read(o?.style),

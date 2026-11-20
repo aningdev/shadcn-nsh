@@ -1,4 +1,4 @@
-import { colors, radius } from "@shadcn-nsh/theme";
+import { colors, shape } from "@shadcn-nsh/theme";
 import { Pause, Play } from "lucide";
 // Video: the official gallery's player scene
 // (`references/nsh/examples/gallery/demos/Media.tsx`) — a paused, muted, looping clip with the
@@ -47,7 +47,7 @@ export function VideoDemo() {
             width: "100%",
             aspectRatio: 16 / 9,
             backgroundColor: colors.background,
-            borderRadius: radius.control,
+            borderRadius: shape.control,
             overflow: "hidden",
             borderWidth: 1,
             borderColor: colors.border,

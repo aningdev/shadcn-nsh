@@ -132,6 +132,8 @@ function readsToken(name: string): boolean {
     [
       new RegExp(`token\\(\\s*["'\`]${literal}["'\`]`),
       new RegExp(`var\\(--${literal}\\)`),
+      // A class naming the token as a custom property: `rounded-(--radius-control)`.
+      new RegExp(`\\(--${literal}\\)`),
       new RegExp(
         `\\b(?:bg|text|border|ring|fill|stroke|outline|decoration|caret|accent|shadow|from|via|to|divide|placeholder)-${literal}(?![a-z0-9-])`,
       ),
@@ -348,7 +350,7 @@ for (const role of defaultRoles)
       `packages/theme/finishes.json: finish \`${role}\` is read nowhere and not left to the app`,
     );
 
-// The values both appearances share are tokens too, read the same way: a radius through `radius`, a
+// The values both appearances share are tokens too, read the same way: a radius through a `rounded-(--radius-…)` class, a
 // font family through `mono()`. A `font-` token is a family, not a colour — NSH reads the first
 // family of the list (`theme.rs`'s `font_family`), so `monospace` alone is its generic one.
 const themeBlock = tokensOf.get(first)?.cssVars.theme ?? {};

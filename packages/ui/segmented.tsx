@@ -1,6 +1,16 @@
 // A segmented control: the look (`segmentedLook`) and the parts that wear it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, finish, focusRing, hovered, radius, rounded, font } from "@shadcn-nsh/theme";
+import {
+  colors,
+  finish,
+  focusRing,
+  hovered,
+  rounded,
+  font,
+  shape,
+  stroke,
+  dimmed,
+} from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { computed, context, platform, signal, split, Text, View } from "nsh";
 import {
@@ -61,11 +71,11 @@ export function segmentedLook(o?: SegmentedLookOptions) {
   // Small is as tall as a small button with a pointer (24), so the two sit level in a row.
   const height = pointer ? (small ? 24 : 30) : small ? 32 : 36;
   // The track takes the base radius; the thumb sits a step inside it.
-  const trackCorner = pointer ? radius.inset - 1 : radius.inset;
-  const thumbCorner = pointer ? radius.control - 2 : radius.control - 1;
+  const trackInset = pointer ? 1 : 0;
+  const thumbInset = pointer ? 2 : 1;
   const thumb = (): ViewStyle => ({
-    ...rounded(thumbCorner),
-    borderWidth: 1,
+    ...rounded(shape.control, thumbInset),
+    borderWidth: stroke.control,
     ...finish.thumb,
   });
   return {
@@ -75,12 +85,12 @@ export function segmentedLook(o?: SegmentedLookOptions) {
         flexDirection: "row",
         alignSelf: spread ? "stretch" : "flex-start",
         padding: inset,
-        ...rounded(trackCorner),
+        ...rounded(shape.inset, trackInset),
         // Sunk like the pill bar's, not the switch's track: in dark the track is
         // raised as the thumb is, which would hide the thumb.
         backgroundColor: colors.inset,
         boxShadow: finish.track.boxShadow,
-        borderWidth: 1,
+        borderWidth: stroke.control,
         borderColor: colors.border,
       };
     },
@@ -97,8 +107,8 @@ export function segmentedLook(o?: SegmentedLookOptions) {
         // A clear edge the thumb's takes over, so a checked segment keeps its size.
         style: {
           ...(spread ? { flex: 1, paddingHorizontal: 7 } : { paddingHorizontal: 9 }),
-          ...rounded(thumbCorner),
-          borderWidth: 1,
+          ...rounded(shape.control, thumbInset),
+          borderWidth: stroke.control,
           borderColor: "transparent",
           flexDirection: "row",
           alignItems: "center",
@@ -111,7 +121,9 @@ export function segmentedLook(o?: SegmentedLookOptions) {
         get focusVisibleStyle() {
           return focusRing();
         },
-        disabledStyle: { opacity: 0.5 },
+        get disabledStyle(): ViewStyle {
+          return { opacity: dimmed.disabled };
+        },
       };
     },
     label(selected: Live<boolean | undefined>): TextStyle {

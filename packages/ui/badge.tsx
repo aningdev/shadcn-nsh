@@ -2,7 +2,6 @@
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import {
   colors,
-  radius,
   terminal,
   TERMINAL_ROW,
   toneColor,
@@ -10,6 +9,8 @@ import {
   type Tone,
   rounded,
   font,
+  shape,
+  stroke,
 } from "@shadcn-nsh/theme";
 import { token, View, Text } from "nsh";
 
@@ -58,14 +59,14 @@ export function Badge(props: BadgeProps) {
       style={{
         paddingHorizontal: terminal ? 0 : size.pad,
         height: terminal ? TERMINAL_ROW : size.height,
-        ...rounded(radius.inset),
+        ...rounded(shape.chip),
         justifyContent: "center",
         backgroundColor: outline
           ? "transparent"
           : tone() === "neutral"
             ? token("muted")
             : toneTint(tone()),
-        borderWidth: outline ? 1 : 0,
+        borderWidth: outline ? stroke.control : 0,
         borderColor: outline ? toneColor(tone()) : undefined,
         // A change of tone (a window turning active) crosses over.
         transitionProperty: "colors",

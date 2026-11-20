@@ -1,4 +1,4 @@
-import { colors, radius, rounded } from "@shadcn-nsh/theme";
+import { colors, rounded, shape } from "@shadcn-nsh/theme";
 // The showcase's shell, after the official NSH Gallery (`references/nsh/examples/gallery/App.tsx`):
 // a desktop gets a sidebar of the demos grouped by what each is for, beside the chosen demo under
 // a page header (its group, its name, one line of what it shows); a phone gets the index as one
@@ -219,7 +219,7 @@ function SidebarColumn() {
                   height: 30,
                   alignItems: "center",
                   justifyContent: "center",
-                  ...rounded(radius.control),
+                  ...rounded(shape.control),
                   backgroundColor: colors.inset,
                 }}
               >
@@ -368,7 +368,7 @@ function IndexRow(props: { demo: DemoEntry; first: boolean }) {
             height: 30,
             alignItems: "center",
             justifyContent: "center",
-            ...rounded(radius.control),
+            ...rounded(shape.control),
             backgroundColor: colors.inset,
           }}
         >
@@ -424,7 +424,7 @@ function Index() {
                     borderWidth: 1,
                     borderColor: colors.border,
                     overflow: "hidden",
-                    ...rounded(radius.card),
+                    ...rounded(shape.card),
                   }}
                 >
                   <Each of={group().demos}>

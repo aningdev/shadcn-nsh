@@ -1,4 +1,4 @@
-import { alpha, colors, focusRing, hovered, radius, rounded } from "@shadcn-nsh/theme";
+import { alpha, colors, focusRing, hovered, rounded, shape } from "@shadcn-nsh/theme";
 // SplitView: the official gallery's mail scene
 // (`references/nsh/examples/gallery/demos/SplitViewDemo.tsx`) in three columns — the mailboxes, a
 // mailbox's messages, the message, which pushes a reply — each a stack of its own. The columns,
@@ -139,7 +139,7 @@ function HeaderButton(props: {
         gap: 2,
         paddingStart: 4,
         paddingEnd: props.title ? 8 : 4,
-        ...rounded(radius.control),
+        ...rounded(shape.control),
       }}
     >
       <Icon icon={props.icon} size={18} tint={colors.foreground} />
@@ -169,7 +169,7 @@ function MailboxRow(props: { mailbox: Mailbox; selected: boolean; onPress: () =>
         alignItems: "center",
         gap: 10,
         paddingHorizontal: 10,
-        ...rounded(radius.control),
+        ...rounded(shape.control),
         backgroundColor: props.selected ? colors.sidebarAccent : "transparent",
       }}
     >

@@ -1,6 +1,6 @@
 // The reference of `split-view.tsx`: the same page, the look spread on `nsh/base`'s SplitView and
 // NavPage. The render check requires the two to draw the same pixels.
-import { alpha, colors, focusRing, header, hovered, radius, rounded } from "@shadcn-nsh/theme";
+import { alpha, colors, focusRing, header, hovered, rounded, shape } from "@shadcn-nsh/theme";
 import { ChevronLeft, PanelLeft } from "lucide";
 import type { JSX } from "nsh";
 import { horizontalSizeClass, mount, platform, Scroll, signal, Text, View, windowSize } from "nsh";
@@ -71,7 +71,7 @@ function BackButton(props: { title: string; onPress: () => void }) {
         gap: 2,
         paddingStart: 4,
         paddingEnd: 8,
-        ...rounded(radius.control),
+        ...rounded(shape.control),
       }}
     >
       <Icon icon={ChevronLeft} size={18} tint={colors.foreground} />
@@ -95,7 +95,7 @@ function Row(props: { title: string; selected: boolean; onPress: () => void }) {
       style={{
         paddingHorizontal: 12,
         paddingVertical: 8,
-        ...rounded(radius.control),
+        ...rounded(shape.control),
         backgroundColor: props.selected ? alpha(colors.brand, 0.12) : "transparent",
       }}
     >

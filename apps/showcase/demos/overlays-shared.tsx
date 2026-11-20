@@ -1,4 +1,4 @@
-import { alpha, colors, finish, mono, radius, rounded, toneColor } from "@shadcn-nsh/theme";
+import { alpha, colors, finish, mono, rounded, toneColor, shape } from "@shadcn-nsh/theme";
 // Helpers the overlay demos share: a trigger, a field, the event log, and a toast host that
 // delegates to the library's `toast` / `Toaster`. Menu, popover and sheet still call
 // `createToaster` and resolve with the action label. Sounds stay out.
@@ -137,7 +137,7 @@ export function Field(props: InputProps & { prefix?: string }) {
         flexDirection: "row",
         alignItems: props.multiline ? "flex-start" : "center",
         flex: 1,
-        ...rounded(radius.control),
+        ...rounded(shape.control),
         backgroundColor: colors.field,
         ...finish.field,
       }}

@@ -73,7 +73,7 @@ flowchart TD
 ```
 
 - `packages/ui/lib` 不 import `packages/ui/<id>`；组件之间可以 import（`./button`），依赖写进该条目的 `registryDependencies`
-- `packages/theme` 不 import `packages/ui`；反过来，组件只经 `@shadcn-nsh/theme` 的 token 与 finish 取外观（`colors`、`finish`、`radius`），不直接读两个 JSON，也不读 `themes/<name>/`
+- `packages/theme` 不 import `packages/ui`；反过来，组件只经 `@shadcn-nsh/theme` 的 token 与 finish 取外观（`colors`、`finish`、`shape`、`stroke`），不直接读两个 JSON，也不读 `themes/<name>/`
 - `packages/*` 不 import `apps/*`、`scripts/*` 或 `references/*`；运行时代码只认 `@shadcn-nsh/theme`、`nsh`、`nsh/base`、`lucide`（图标库，应用经 registry 的 `dependencies` 安装）与相对路径
 - 只有 `scripts/port`（抽取与变化提醒）与 `scripts/audit`（对照诊断截图）读 `references/nsh`；`apps/website` 的构建不需要子模块
 - 组件集合只从 `scripts/catalog.ts`（脚本）或 `catalog.generated.ts`（NSH 运行时）取；不自己读 `registry.json` 过滤，也不 `readdir` 演示或文档目录来推导
@@ -92,7 +92,7 @@ flowchart TD
 | **AppTheme**   | 应用装进 `themes/<name>/` 的一套 `{ id, label, theme, finishes }`，一个 `index.ts` 导出 | registry 的 `theme-<name>` 条目，`add theme-<name>` 多装一套                                               |
 
 - 颜色、圆角、焦点环、悬停经 `token()` 读，`setTheme` 一换就跟；finish（渐变、阴影，以及按下缩到几成 —— `finishes.json` 顶层的 `press.scale`）**不是 token**，所以留在 `finishes.json`，由 `theme.ts` 的一个信号按当前主题取（同一主题的同一个 finish 串只解一次：按主题与角色缓存，主题或外观一换就重解，所以按需读不因此变慢）。两者拼成 `selectTheme(theme)`；`selectTheme(null)` 回到构建时主题。平面主题（shadcn）把 `press.scale` 写成 `1`：按下不缩放。
-- 圆角一律经 `radius.*`：`inset` 是基础（卡内的面、菜单），`control` 与 `card` 由它推导（0.8× / 1.4×，四舍五入；控件与卡，对话框用 `card`），没有写死的数值；读主题圆角的角一律用 `rounded()`，continuous 曲线只在那里给。
+- 圆角一律经 `shape.*`（`finishes.json` 的 `shape`，按用途角色：`control`、`field`、`chip`、`card`、`overlay`、`dialog`、`sheet`、`inset`）：组件是什么就读哪个角色，没有写死的数值；读主题圆角的角一律用 `rounded(radius, inset?)`，continuous 曲线只在那里给；嵌在另一个面里的面用 `inset` 参数取同心圆角。线宽读 `stroke`（`hairline`、`control`、`indicator`），按下与禁用的透明度读 `dimmed`，按钮高、图标、触控目标读 `controlHeight`、`iconSize`、`hitTarget()`。
 - `theme` 条目仍是构建时那套的三个文件（`theme.json`、`lib/finishes.json`、`lib/theme.ts`）；`theme-<name>` 只装 `themes/<name>/`，不碰它们。组件条目的 `theme` 依赖按 `nsh-ui.json` 解析，所以装主题不会把默认主题写回来。
 - **构建时主题也能当"多装的一套"**：`theme-default` 装 `themes/default/`，里面是构建时那两个 JSON 的副本（`scripts/theme/themes.test.ts` 保证逐字节相同）加一个导出 `defaultTheme` 的 `index.ts`。构建时用 shadcn 的应用这样就能两边切。
 - 应用的清单与持久化都是应用的：库只给 `selectTheme` / `currentTheme`，不写清单、不存 `id`（示例见 [`packages/theme/README.md`](../packages/theme/README.md)）。

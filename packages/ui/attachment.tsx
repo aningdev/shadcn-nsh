@@ -1,7 +1,7 @@
 // An attachment: a file, an image or a link that a message or a composer carries, with what it is
 // called, how it is doing, and what can be done to it. This library's own (drawn on `nsh`'s View
 // and Text, the buttons on `Button`), so there is no port region. Yours to change.
-import { alpha, colors, focusRing, radius, rounded, tints, font } from "@shadcn-nsh/theme";
+import { alpha, colors, focusRing, rounded, tints, font, shape, stroke } from "@shadcn-nsh/theme";
 import type { TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, Scroll, split, Text, token, View } from "nsh";
 
@@ -34,7 +34,7 @@ const sizes = {
 
 /** The frame's corners at a size: a card's, and the inset's at `xs`. Read where the frame is
  * drawn — `radius` is the theme's. */
-const corners = (size: AttachmentSize): number => (size === "xs" ? radius.inset : radius.card);
+const corners = (size: AttachmentSize): number => (size === "xs" ? shape.inset : shape.card);
 
 /** The width of a vertical attachment, and of the row that groups attachments. */
 const verticalWidth = 120;
@@ -126,7 +126,7 @@ export function attachmentLook(): AttachmentLook {
       maxWidth: "100%",
       minHeight: 0,
       ...rounded(corners(size)),
-      borderWidth: 1,
+      borderWidth: stroke.hairline,
       borderStyle: state === "idle" ? "dashed" : "solid",
       borderColor: state === "error" ? alpha(colors.destructive, 0.3) : colors.border,
       backgroundColor: colors.card,
@@ -147,7 +147,7 @@ export function attachmentLook(): AttachmentLook {
       alignItems: "center",
       justifyContent: "center",
       overflow: "hidden",
-      ...rounded(size === "xs" ? radius.control : radius.inset),
+      ...rounded(size === "xs" ? shape.control : shape.inset),
       backgroundColor: state === "error" ? tints.destructive : token("muted"),
       ...(variant === "image" && state !== "done" && state !== "idle" ? { opacity: 0.6 } : {}),
     }),
@@ -187,7 +187,7 @@ export function attachmentLook(): AttachmentLook {
         bottom: 0,
         left: 0,
         zIndex: 10,
-        ...rounded(radius.card),
+        ...rounded(shape.card),
         borderWidth: 0,
         backgroundColor: "transparent",
       };

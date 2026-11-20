@@ -1,4 +1,4 @@
-import { colors, focusRing, motion, radius, rounded } from "@shadcn-nsh/theme";
+import { colors, focusRing, motion, rounded, shape } from "@shadcn-nsh/theme";
 // The Navigation batch's shared bits (its files alone): the platform's line of a hint, the caption
 // row, the labeled switch a card's trailing edge shows, the settle an entrance animates with, and
 // the header bar the pages of a stack draw where the app draws headers (the desktops, the web) —
@@ -142,7 +142,7 @@ export function PageBar(props: {
             gap: 2,
             paddingLeft: 4,
             paddingRight: 8,
-            ...rounded(radius.control),
+            ...rounded(shape.control),
           }}
         >
           <Icon {...glyph(tint())} />

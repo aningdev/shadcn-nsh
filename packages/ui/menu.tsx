@@ -5,10 +5,12 @@ import {
   colors,
   cornerCurve,
   finish,
-  radius,
   rounded,
   terminal,
   font,
+  shape,
+  dimmed,
+  stroke,
 } from "@shadcn-nsh/theme";
 import { ChevronLeft, ChevronRight } from "lucide";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
@@ -76,7 +78,7 @@ export const menuItemSize: MenuItemDimensions = pointer
   ? {
       height: 26,
       get radius() {
-        return radius.control;
+        return shape.control;
       },
       font: 13,
       note: 11.5,
@@ -85,7 +87,7 @@ export const menuItemSize: MenuItemDimensions = pointer
   : {
       height: 46,
       get radius() {
-        return radius.inset;
+        return shape.inset;
       },
       font: 16,
       note: 14,
@@ -146,7 +148,9 @@ export function menuItemLook(o?: MenuItemLookOptions) {
     get activeStyle(): ViewStyle {
       return menuPressed();
     },
-    disabledStyle: { opacity: 0.5 },
+    get disabledStyle(): ViewStyle {
+      return { opacity: dimmed.disabled };
+    },
   };
 }
 
@@ -216,8 +220,8 @@ export function menuPopup(o?: MenuPopupOptions) {
         ? { ...popupSurface(), minWidth: o?.minWidth ?? 200, ...popInStyles(o?.side).style }
         : {
             backgroundColor: colors.card,
-            borderTopLeftRadius: radius.card,
-            borderTopRightRadius: radius.card,
+            borderTopLeftRadius: shape.sheet,
+            borderTopRightRadius: shape.sheet,
             ...cornerCurve,
             paddingHorizontal: 10,
             paddingTop: 10,
@@ -265,7 +269,7 @@ export function MenuLabel(props: MenuLabelProps) {
 /** A separator between a menu's groups (`<MenuSeparator style={menuSeparator()} />`): a groove, a hairline with a lip of light under it (`finish.groove`). */
 export function menuSeparator(): ViewStyle {
   return {
-    height: 1,
+    height: stroke.hairline,
     marginTop: 4,
     marginBottom: 5,
     marginHorizontal: 4,

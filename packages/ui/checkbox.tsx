@@ -7,11 +7,13 @@ import {
   focusRing,
   follow,
   isDark,
-  radius,
   rounded,
   terminal,
   TERMINAL_ROW,
   tints,
+  shape,
+  stroke,
+  dimmed,
 } from "@shadcn-nsh/theme";
 import { Check, Minus, type IconNode } from "lucide";
 import type { AnimatedValue, JSX, ViewStyle } from "nsh";
@@ -116,7 +118,7 @@ export function checkboxLook(o?: ChoiceOptions): CheckboxLook {
         borderRadius: o?.round ? control / 2 : corner,
         alignItems: "center",
         justifyContent: "center",
-        borderWidth: 1,
+        borderWidth: stroke.control,
         ...choiceWell({ disabled: !!read(o?.disabled) }),
       };
     },
@@ -140,7 +142,7 @@ export function ChoiceLight(props: { on: AnimatedValue; radius: number }) {
         right: -1,
         bottom: -1,
         borderRadius: props.radius,
-        borderWidth: 1,
+        borderWidth: stroke.control,
         ...finish.light,
         opacity: props.on,
       }}
@@ -239,8 +241,8 @@ export function choiceTileLook(on: Live<boolean>, o?: ChoiceTileOptions): Choice
         minWidth: 0,
         padding: 12,
         paddingTop: 14,
-        ...rounded(radius.inset),
-        borderWidth: 1,
+        ...rounded(shape.inset),
+        borderWidth: stroke.control,
         borderColor: on ? colors.brand : colors.border,
         backgroundColor: on ? tints.brand : colors.raised,
         boxShadow: on ? "none" : finish.raised.boxShadow,
@@ -259,7 +261,9 @@ export function choiceTileLook(on: Live<boolean>, o?: ChoiceTileOptions): Choice
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
     },
-    disabledStyle: { opacity: 0.5 },
+    get disabledStyle(): ViewStyle {
+      return { opacity: dimmed.disabled };
+    },
   };
 }
 

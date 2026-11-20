@@ -7,11 +7,11 @@ import {
   colors,
   finish,
   mono,
-  radius,
   tints,
   toneColor,
   toneTint,
   type Tone,
+  shape,
 } from "@shadcn-nsh/theme";
 import {
   announce,
@@ -95,7 +95,7 @@ function Tile(props: { title: string; note: string; children?: JSX.Element }) {
 
 /** The frame of a tile that can be pressed: the raised surface without its gradient. */
 const tile = () => ({
-  borderRadius: radius.control,
+  borderRadius: shape.control,
   borderCurve: "continuous" as const,
   borderWidth: 1,
   borderColor: colors.border,
@@ -370,7 +370,7 @@ function Avoiding() {
       <View
         style={{
           height: 200,
-          borderRadius: radius.control,
+          borderRadius: shape.control,
           borderCurve: "continuous",
           overflow: "hidden",
           backgroundColor: tints.info,

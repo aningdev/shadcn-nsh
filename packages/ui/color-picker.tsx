@@ -4,12 +4,13 @@
 import {
   colors,
   hovered,
-  radius,
   rounded,
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
   font,
+  shape,
+  stroke,
 } from "@shadcn-nsh/theme";
 import { Check, ChevronDown, Copy, Pipette } from "lucide";
 import type { InputStyle, JSX, StyleProp, ViewStyle } from "nsh";
@@ -66,7 +67,7 @@ function AreaEdge() {
   return terminal ? null : (
     <View
       class="border-foreground/10 absolute inset-0 border"
-      style={{ pointerEvents: "none", ...rounded(radius.control) }}
+      style={{ pointerEvents: "none", ...rounded(shape.control) }}
     />
   );
 }
@@ -90,7 +91,7 @@ export function colorAreaLook() {
   return {
     style: { height: pointer ? 160 : 192 },
     get panelStyle(): ViewStyle {
-      return { ...rounded(radius.control) };
+      return { ...rounded(shape.control) };
     },
     thumbClass,
     thumbStyle,
@@ -182,7 +183,11 @@ const FORMAT_FIELDS: Record<
 function Divider() {
   return (
     <View
-      style={terminal ? { width: TERMINAL_COLUMN } : { width: 1, backgroundColor: colors.line }}
+      style={
+        terminal
+          ? { width: TERMINAL_COLUMN }
+          : { width: stroke.hairline, backgroundColor: colors.line }
+      }
     />
   );
 }
@@ -215,7 +220,7 @@ function FormatButton(props: { label: string }) {
         marginStart: terminal ? 0 : 4,
         marginEnd: terminal ? TERMINAL_COLUMN : 4,
         paddingHorizontal: terminal ? 0 : 6,
-        ...rounded(Math.max(radius.control - 3, 2)),
+        ...rounded(shape.field, 3),
       }}
     >
       <Text style={{ fontSize: 12, fontWeight: font.weight("label"), color: colors.foreground }}>
@@ -419,7 +424,7 @@ export function ColorSwatches(props: { colors: readonly string[] }) {
           style={
             terminal
               ? { width: 2 * TERMINAL_COLUMN, height: TERMINAL_ROW }
-              : { width: 24, height: 24, ...rounded(Math.max(radius.control - 1, 2)) }
+              : { width: 24, height: 24, ...rounded(shape.control, 1) }
           }
           checkerboardColor={checker.checkerboardColor}
           checkerboardSize={checker.checkerboardSize}

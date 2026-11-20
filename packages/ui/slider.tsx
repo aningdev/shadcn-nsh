@@ -1,6 +1,6 @@
 // A slider: the look (`sliderLook` and its companions) and the `Slider` that wears it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { alpha, colors, fillStyle, finish, insetEdge } from "@shadcn-nsh/theme";
+import { alpha, colors, fillStyle, finish, insetEdge, stroke } from "@shadcn-nsh/theme";
 import type { TextStyle, ViewStyle } from "nsh";
 import { platform, split, Text } from "nsh";
 import { Slider as BaseSlider, type SliderProps as BaseSliderProps } from "nsh/base";
@@ -75,7 +75,7 @@ export function sliderLook(o: SliderLookOptions = {}) {
     // `thumbStyle` leaves alone.
     thumbClass: `rounded-full ${fade} hover:brightness-105 active:brightness-95 focus-visible:outline-3 focus-visible:outline-ring/50 disabled:brightness-100`,
     get thumbStyle(): ViewStyle {
-      return { width: thumb, height: thumb, borderWidth: 1, ...finish.handle };
+      return { width: thumb, height: thumb, borderWidth: stroke.control, ...finish.handle };
     },
   };
 }
@@ -87,7 +87,7 @@ function accentFill(vertical: boolean): ViewStyle {
     ...(vertical && fill.backgroundImage
       ? { ...fill, backgroundImage: fill.backgroundImage.replace("180deg", "90deg") }
       : fill),
-    borderWidth: 1,
+    borderWidth: stroke.control,
     borderColor: finish.fill.borderColor,
   };
 }

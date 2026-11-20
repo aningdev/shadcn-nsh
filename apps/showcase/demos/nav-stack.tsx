@@ -3,11 +3,11 @@ import {
   finish,
   header,
   motion,
-  radius,
   rounded,
   tints,
   toneColor,
   type Tone,
+  shape,
 } from "@shadcn-nsh/theme";
 // NavStack: the official gallery's scene (`references/nsh/examples/gallery/demos/Navigation.tsx`)
 // with this library's parts — the safe area it renders in, a page pushed for every header
@@ -328,7 +328,7 @@ function LargeTitle(_props: { pop: () => void }) {
       <Page intro={largeTitleIntro(refresh)} refresh={refresh}>
         <View
           style={{
-            ...rounded(radius.card),
+            ...rounded(shape.card),
             backgroundColor: colors.card,
             borderWidth: 1,
             borderColor: colors.border,
@@ -800,7 +800,7 @@ function Unsaved(props: { pop: () => void }) {
               backgroundColor: colors.field,
               borderWidth: 1,
               borderColor: focused() ? colors.brand : colors.input,
-              ...rounded(radius.control),
+              ...rounded(shape.control),
               ...finish.field,
             }}
           />
@@ -1084,7 +1084,7 @@ function StackedSheet(props: { open: boolean; onClose: () => void }) {
                     ) : null}
                     <View
                       style={{
-                        ...rounded(radius.card),
+                        ...rounded(shape.card),
                         backgroundColor: colors.card,
                         borderWidth: 1,
                         borderColor: colors.border,
@@ -1124,7 +1124,7 @@ function StackedSheet(props: { open: boolean; onClose: () => void }) {
                   <View style={{ padding: 16, gap: 16 }}>
                     <View
                       style={{
-                        ...rounded(radius.card),
+                        ...rounded(shape.card),
                         backgroundColor: colors.card,
                         borderWidth: 1,
                         borderColor: colors.border,
@@ -1192,7 +1192,7 @@ function Addressed() {
       <View
         style={{
           height: 200,
-          ...rounded(radius.inset),
+          ...rounded(shape.inset),
           overflow: "hidden",
           borderWidth: 1,
           borderColor: colors.line,

@@ -1,4 +1,4 @@
-import { alpha, colors, mono, radius, rounded, tints } from "@shadcn-nsh/theme";
+import { alpha, colors, mono, rounded, tints, shape } from "@shadcn-nsh/theme";
 // Text: the official gallery's Text scene (`references/nsh/examples/gallery/demos/TextDemo.tsx`):
 // spans and links, inline views, fonts and decorations, truncation, CJK, right-to-left and
 // alignment. `Text` is `nsh`'s primitive, kept as one; the cards, the like pill and the photo
@@ -226,7 +226,7 @@ function ShadowPhoto(props: { photo: PhotoName; label: string; color: string; sh
       style={{
         flex: 1,
         height: 96,
-        ...rounded(radius.control),
+        ...rounded(shape.control),
         overflow: "hidden",
         backgroundColor: colors.raised,
       }}

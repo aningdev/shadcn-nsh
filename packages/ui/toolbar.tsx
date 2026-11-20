@@ -1,7 +1,7 @@
 // A toolbar: the hairline (`toolbarRule`) and the parts that wear the inset track.
 // The track (`toolbarTrack`) is shared with `ToggleGroup` and lives in `lib/tool.ts`.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, terminal, TERMINAL_GAP } from "@shadcn-nsh/theme";
+import { colors, terminal, TERMINAL_GAP, stroke } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
 import { context, split } from "nsh";
 import {
@@ -20,13 +20,13 @@ import { toolbarTrack } from "./lib/tool";
 export function toolbarRule(vertical = false): ViewStyle {
   return vertical
     ? {
-        height: 1,
+        height: stroke.hairline,
         alignSelf: "stretch",
         marginVertical: 4,
         marginHorizontal: 6,
         backgroundColor: colors.line,
       }
-    : { width: 1, height: 18, marginHorizontal: 4, backgroundColor: colors.line };
+    : { width: stroke.hairline, height: 18, marginHorizontal: 4, backgroundColor: colors.line };
 }
 // @port end
 

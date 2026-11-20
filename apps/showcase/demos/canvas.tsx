@@ -5,10 +5,10 @@ import {
   finish,
   isDark,
   mono,
-  radius,
   terminal,
   type Tone,
   toneColor,
+  shape,
 } from "@shadcn-nsh/theme";
 import {
   Animated,
@@ -1068,7 +1068,7 @@ function SvgImage() {
         draw={(cx, { width, height }) => {
           cx.fillStyle = colors.raised;
           cx.beginPath();
-          cx.roundRect(12, 12, width - 24, height - 24, radius.card);
+          cx.roundRect(12, 12, width - 24, height - 24, shape.card);
           cx.fill();
           const scale = Math.min((width - 48) / 120, (height - 48) / 60);
           const imageWidth = 120 * scale;

@@ -1,4 +1,4 @@
-import { colors, finish, mono, radius, type Tone, toneColor, toneTint } from "@shadcn-nsh/theme";
+import { colors, finish, mono, type Tone, toneColor, toneTint, shape } from "@shadcn-nsh/theme";
 import { ArrowDown, ArrowUp, Plus } from "lucide";
 // Lists: the official gallery's Lists scene (`references/nsh/examples/gallery/demos/Lists.tsx`)
 // in five tabs — a grid of columns with viewability, sticky contact sections, a chat, two lists
@@ -81,7 +81,7 @@ function Grid(props: { width: () => number }) {
           style={{
             backgroundColor: colors.card,
             ...finish.card,
-            borderRadius: radius.card,
+            borderRadius: shape.card,
             borderCurve: "continuous",
             borderWidth: 1,
             borderColor: colors.border,
@@ -135,7 +135,7 @@ function Grid(props: { width: () => number }) {
         <View
           style={{
             height: item().height,
-            borderRadius: radius.inset,
+            borderRadius: shape.inset,
             borderCurve: "continuous",
             borderWidth: 1,
             borderColor: item().id === 60 ? toneColor("accent") : colors.border,
@@ -467,7 +467,7 @@ function EntryRow(props: { entry: Entry; label: string }) {
         alignItems: "center",
         gap: 12,
         paddingHorizontal: 14,
-        borderRadius: radius.inset,
+        borderRadius: shape.inset,
         borderCurve: "continuous",
         backgroundColor: colors.raised,
         borderWidth: 1,
@@ -806,7 +806,7 @@ function More() {
                     style={{
                       width: 120,
                       height: 124,
-                      borderRadius: radius.inset,
+                      borderRadius: shape.inset,
                       borderCurve: "continuous",
                       backgroundColor: colors.raised,
                       ...finish.raised,
@@ -887,7 +887,7 @@ function More() {
               each={items()}
               estimatedItemSize={48}
               style={{
-                borderRadius: radius.control,
+                borderRadius: shape.control,
                 backgroundColor: colors.card,
                 ...finish.card,
                 borderWidth: 1,
@@ -1052,7 +1052,7 @@ export function ListDemo() {
           onLayout={({ bounds }) => width.set(bounds.size.width)}
           style={{
             height: desk ? 560 : 520,
-            borderRadius: radius.card,
+            borderRadius: shape.card,
             borderCurve: "continuous",
             borderWidth: 1,
             borderColor: colors.border,

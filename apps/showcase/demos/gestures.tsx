@@ -2,7 +2,7 @@
 // Pan, pinch and rotation on one photo, a PanResponder ball, hover, wheel, raw touches, press
 // events, hit slop, pointer events and accessibility. Recognizers and the responder system are
 // `nsh`'s; buttons, badges, stats and press targets are this library's.
-import { alpha, colors, finish, mono, radius, tints } from "@shadcn-nsh/theme";
+import { alpha, colors, finish, mono, tints, shape } from "@shadcn-nsh/theme";
 import { Bell, Play, Star, type IconNode } from "lucide";
 import type { GestureResponderEvent, JSX, MouseButton } from "nsh";
 import {
@@ -426,7 +426,7 @@ function PressEvents() {
         role="button"
         style={{
           height: pointer ? 44 : 56,
-          borderRadius: radius.control,
+          borderRadius: shape.control,
           borderCurve: "continuous",
           borderWidth: 1,
           backgroundColor: colors.primary,
@@ -494,7 +494,7 @@ function PressEvents() {
           style={{
             flex: 1,
             height: pointer ? 44 : 56,
-            borderRadius: radius.control,
+            borderRadius: shape.control,
             borderCurve: "continuous",
             borderWidth: 1,
             backgroundColor: colors.raised,
@@ -526,7 +526,7 @@ function PressEvents() {
           style={{
             width: pointer ? 44 : 56,
             height: pointer ? 44 : 56,
-            borderRadius: radius.control,
+            borderRadius: shape.control,
             borderCurve: "continuous",
             borderWidth: 1,
             backgroundColor: colors.raised,
@@ -636,7 +636,7 @@ function PointerEvents() {
           <View
             style={{
               flex: 1,
-              borderRadius: radius.control,
+              borderRadius: shape.control,
               borderCurve: "continuous",
               backgroundColor: tints.up,
               borderWidth: 1,

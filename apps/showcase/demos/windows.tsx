@@ -5,7 +5,7 @@
 // pops up over everything. Every window reads the same signals, so the inspector's edits show in the
 // document at once. The windows, their state and the palette's search are `nsh/desktop` and
 // `nsh/base`'s; the cards, buttons, badges, stats and command rows are this library's.
-import { colors, alpha, mono, radius, tints, windowControls } from "@shadcn-nsh/theme";
+import { colors, alpha, mono, tints, windowControls, shape } from "@shadcn-nsh/theme";
 import {
   AppWindow,
   Check,
@@ -214,7 +214,7 @@ function Tool(props: {
         height: 26,
         alignItems: "center",
         justifyContent: "center",
-        borderRadius: radius.control - 1,
+        borderRadius: shape.control - 1,
         backgroundColor: props.on ? tints.brand : "transparent",
         transitionProperty: "background-color",
         transitionDuration: 120,
@@ -1172,7 +1172,7 @@ function DocumentWindow() {
             height: 26,
             alignItems: "center",
             justifyContent: "center",
-            borderRadius: radius.control - 1,
+            borderRadius: shape.control - 1,
             backgroundColor: inspectorOpen() ? tints.brand : "transparent",
           }}
         >

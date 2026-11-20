@@ -1,6 +1,6 @@
 // An empty state: a centered block that says there is nothing here yet, and what to do about it.
 // This library's own (drawn on `nsh`'s View and Text), so there is no port region. Yours to change.
-import { colors, radius, rounded, TERMINAL_ROW, terminal, font } from "@shadcn-nsh/theme";
+import { colors, rounded, TERMINAL_ROW, terminal, font, shape } from "@shadcn-nsh/theme";
 import type { TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { split, Text, token, View } from "nsh";
 
@@ -76,7 +76,7 @@ export function emptyLook(): EmptyLook {
         ? {
             width: mediaSide,
             height: mediaSide,
-            ...rounded(radius.inset),
+            ...rounded(shape.inset),
             backgroundColor: token("muted"),
           }
         : {}),

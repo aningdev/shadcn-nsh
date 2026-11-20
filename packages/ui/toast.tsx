@@ -6,10 +6,11 @@ import {
   finish,
   focusRing,
   hovered,
-  radius,
   rounded,
   terminal,
   font,
+  shape,
+  stroke,
 } from "@shadcn-nsh/theme";
 import { CircleCheck, CircleX, Info, TriangleAlert, X, type IconNode } from "lucide";
 import type { JSX, TextStyle, ViewStyle } from "nsh";
@@ -33,7 +34,7 @@ const pointer = platform.desktop;
 /**
  * A toast (`nsh/base`'s `Toast`'s `style`): a row 12 points apart on the floating finish every
  * popup wears (not the raised one, a control's, which a theme may make a tint over the page),
- * 10-point corners (`radius.inset`), 12 by 14 points of padding. Its title takes `toastTitle`,
+ * 10-point corners (`shape.inset`), 12 by 14 points of padding. Its title takes `toastTitle`,
  * its description `toastText`.
  */
 export function toastLook(): ViewStyle {
@@ -43,8 +44,8 @@ export function toastLook(): ViewStyle {
     gap: 12,
     paddingVertical: 12,
     paddingHorizontal: 14,
-    ...rounded(radius.inset),
-    borderWidth: 1,
+    ...rounded(shape.overlay),
+    borderWidth: stroke.hairline,
     ...finish.menu,
   };
 }
@@ -93,7 +94,7 @@ export function toastCloseLook() {
       height: 24,
       alignItems: "center",
       justifyContent: "center",
-      ...rounded(radius.card),
+      ...rounded(shape.card),
       ...pressTransition("background-color"),
     } as ViewStyle,
     get hoverStyle(): ViewStyle {

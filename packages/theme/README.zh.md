@@ -13,7 +13,7 @@ copy-into-app 层的品牌外观：本库所有，起点是上游 gallery UI 主
 
 ## 规范
 
-`finishes.json` 除了 finish，还写主题的**风格**：九组（`type`、`shape`、`size`、`stroke`、`focus`、`state`、`motion`、`icon`、`indicator`），每套主题的键相同。`density`、`controlSize`、`motion`、`cornerCurve`、`focusRing` 读当前主题的这些数据，`selectTheme` 之后读它们的地方下一帧重画；`style()` 给出整套。`theme.json` 保留 `radius`、`radius-card`、`radius-control`，`check:theme` 保证它们等于 `shape.inset`、`shape.card`、`shape.control`。
+`finishes.json` 除了 finish，还写主题的**风格**：九组（`type`、`shape`、`size`、`stroke`、`focus`、`state`、`motion`、`icon`、`indicator`），每套主题的键相同。`density`、`controlSize`、`motion`、`cornerCurve`、`focusRing` 读当前主题的这些数据，`selectTheme` 之后读它们的地方下一帧重画；`style()` 给出整套。组件经 `shape`（圆角）、`stroke`（线宽）、`dimmed`（按下与禁用的透明度）、`controlHeight`、`iconSize`、`hitTarget()`（尺寸）读这些角色，`rounded(radius, inset)` 取同心圆角。`theme.json` 保留 `radius`、`radius-card`、`radius-control`，`check:theme` 保证它们等于 `shape.inset`、`shape.card`、`shape.control`。
 
 主题由三样东西组成：**token**（有名字的颜色、数或字体家族，`theme.json` 写）、**finish**（组件自己画的表面 —— 底、渐变、边、影、模糊，`finishes.json` 写）、**alias**（写成另一个 token 的 token，`var(--x)`）。有哪些 token、每个 finish 画什么、谁读它，以 [`docs/specs/theme-roles.md`](../../docs/specs/theme-roles.md) 为准；`bun scripts/theme-lint.ts` 拿这两个文件对着它检查。
 

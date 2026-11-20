@@ -28,7 +28,7 @@ function App() {
       <Text>{`button=${button.style.height}|${button.hitSlop ?? "undefined"}`}</Text>
       <Text>{`toggle=${toggle.style.height}|${toggle.hitSlop ?? "undefined"}`}</Text>
       <Text>{`travel=${knobTravel(pointer)}|${knobTravel(regular)}|${knobTravel(small)}`}</Text>
-      <Text>{`slop=${JSON.stringify(switchSlop(regular))}`}</Text>
+      <Text>{`slop=${JSON.stringify(switchSlop(regular, 44))}`}</Text>
       <Text>{`overlay=${pop.padding}|${title.fontSize}|${body.fontSize}|${body.lineHeight}`}</Text>
       <Text>{`menu=${row.height}|${row.font}|${row.note}|${row.icon}`}</Text>
     </View>

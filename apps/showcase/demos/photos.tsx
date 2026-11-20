@@ -4,12 +4,12 @@
 import {
   colors,
   finish,
-  radius,
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
   toneColor,
   type Tone,
+  shape,
 } from "@shadcn-nsh/theme";
 import { ArrowDown } from "lucide";
 import {
@@ -99,7 +99,7 @@ function PhotoRow(props: { photo: Photo }) {
         style={{
           width: 56,
           height: 56,
-          borderRadius: radius.inset,
+          borderRadius: shape.inset,
           borderCurve: "continuous",
           borderWidth: 1,
           borderColor: colors.border,
@@ -159,7 +159,7 @@ function PhotoTile(props: { photo: Photo }) {
       style={{
         padding: 6,
         gap: 8,
-        borderRadius: radius.card,
+        borderRadius: shape.card,
         borderCurve: "continuous",
       }}
     >
@@ -168,7 +168,7 @@ function PhotoTile(props: { photo: Photo }) {
         style={{
           width: "100%",
           aspectRatio: 4 / 3,
-          borderRadius: radius.inset,
+          borderRadius: shape.inset,
           borderCurve: "continuous",
           borderWidth: 1,
           borderColor: colors.border,
@@ -243,7 +243,7 @@ function Hero(props: {
               }
             : {
                 backgroundColor: colors.card,
-                borderRadius: radius.card,
+                borderRadius: shape.card,
                 borderCurve: "continuous",
                 borderWidth: 1,
                 borderColor: colors.border,

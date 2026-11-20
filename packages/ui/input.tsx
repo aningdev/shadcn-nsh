@@ -4,12 +4,14 @@
 import {
   colors,
   finish,
-  radius,
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
   rounded,
   font,
+  shape,
+  stroke,
+  dimmed,
 } from "@shadcn-nsh/theme";
 import type { InputStyle, ViewStyle } from "nsh";
 import { platform, signal, split } from "nsh";
@@ -121,8 +123,8 @@ function frame(o: FieldLookOptions | undefined): ViewStyle {
   const ghost = (read(o?.variant) ?? "default") === "ghost";
   const flat = !!read(o?.readonly) || !!read(o?.disabled);
   return {
-    ...rounded(radius.control),
-    borderWidth: 1,
+    ...rounded(shape.field),
+    borderWidth: stroke.control,
     backgroundColor: ghost ? "transparent" : colors.field,
     // Recessed while editable; a read-only, disabled or ghost field lies flat. Its edge is
     // `fieldEdge`'s classes.
@@ -149,7 +151,9 @@ export function fieldLook(o?: FieldLookOptions) {
         ...read(o?.style),
       };
     },
-    disabledStyle: { opacity: 0.5 } as ViewStyle,
+    get disabledStyle(): ViewStyle {
+      return { opacity: dimmed.disabled };
+    },
   };
 }
 

@@ -1,6 +1,15 @@
 // A calendar: the look (`CalendarItem`, `calendarLook`, `TimeSegment`) and `Calendar` that wears it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { alpha, colors, cornerCurve, radius, rounded, terminal, font } from "@shadcn-nsh/theme";
+import {
+  alpha,
+  colors,
+  cornerCurve,
+  rounded,
+  terminal,
+  font,
+  shape,
+  stroke,
+} from "@shadcn-nsh/theme";
 import { ChevronRight } from "lucide";
 import type { ViewStyle } from "nsh";
 import { computed, platform, split, Text, View } from "nsh";
@@ -55,7 +64,7 @@ const weekGap = 4;
 
 /** The corners of the days, the arrows and the month view's items: the
  * controls' radius, read where an item is drawn. */
-const cellRadius = () => radius.control;
+const cellRadius = () => shape.control;
 
 /**
  * The quiet fill of today, the hover, a range's band and the arrows' and
@@ -356,7 +365,7 @@ export const calendarLook = {
         gap: 2,
         minWidth: 110,
         paddingEnd: 10,
-        borderEndWidth: 1,
+        borderEndWidth: stroke.hairline,
         borderColor: colors.border,
       };
     // With a pointer a column of small ghost buttons beside the calendar, its first level with the header, parted
@@ -366,7 +375,7 @@ export const calendarLook = {
           gap: 2,
           paddingTop: 8,
           paddingEnd: 8,
-          borderEndWidth: 1,
+          borderEndWidth: stroke.hairline,
           borderColor: alpha(colors.foreground, 0.1),
         }
       : { flexDirection: "row", flexWrap: "wrap", gap: 6 };
@@ -378,7 +387,7 @@ export const calendarLook = {
       return {
         height: 28,
         paddingHorizontal: terminal ? 8 : 10,
-        ...rounded(radius.control),
+        ...rounded(shape.control),
         justifyContent: "center" as const,
         // No type role has this size: a preset's 13 in both tiers.
         fontSize: 13,
@@ -388,7 +397,7 @@ export const calendarLook = {
       height: 34,
       paddingHorizontal: 12,
       borderRadius: 17,
-      borderWidth: 1,
+      borderWidth: stroke.hairline,
       borderColor: colors.border,
       justifyContent: "center" as const,
       // No type role has this size: a preset's 14 on a touch screen.
@@ -407,7 +416,7 @@ export const calendarLook = {
         gap: 10,
         marginTop: 8,
         paddingTop: 8,
-        borderTopWidth: 1,
+        borderTopWidth: stroke.hairline,
         borderColor: colors.border,
         paddingHorizontal: 4,
       };
@@ -416,7 +425,7 @@ export const calendarLook = {
       gap: 10,
       marginTop: pointer ? 6 : 12,
       paddingTop: 12,
-      borderTopWidth: 1,
+      borderTopWidth: stroke.hairline,
       borderColor: alpha(colors.foreground, 0.1),
       ...(pointer ? { paddingHorizontal: 6, paddingBottom: 6 } : {}),
     };

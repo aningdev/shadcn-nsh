@@ -1,4 +1,4 @@
-import { alpha, colors, isDark, radius } from "@shadcn-nsh/theme";
+import { alpha, colors, isDark, shape } from "@shadcn-nsh/theme";
 import {
   Animated,
   cleanup,
@@ -622,7 +622,7 @@ function Pages() {
           state={pages}
           style={{
             height: 260,
-            borderRadius: radius.card,
+            borderRadius: shape.card,
             borderWidth: 1,
             borderColor: colors.line,
             overflow: "hidden",

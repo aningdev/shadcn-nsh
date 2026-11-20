@@ -1,7 +1,7 @@
 // A button group: buttons joined into one control, in a row or a column. This library's own
 // (drawn on `nsh`'s View and Text, with the `group` role), so there is no port region. Yours to
 // change.
-import { colors, radius, rounded, TERMINAL_COLUMN, terminal, font } from "@shadcn-nsh/theme";
+import { colors, rounded, TERMINAL_COLUMN, terminal, font, shape, stroke } from "@shadcn-nsh/theme";
 import type { TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, split, token, View } from "nsh";
 
@@ -85,9 +85,9 @@ export function buttonGroupLook(): ButtonGroupLook {
       gap: 8,
       paddingHorizontal: terminal ? TERMINAL_COLUMN : 12,
       backgroundColor: token("muted"),
-      borderWidth: terminal ? 0 : 1,
+      borderWidth: terminal ? 0 : stroke.control,
       borderColor: colors.border,
-      ...rounded(terminal ? 0 : radius.control),
+      ...rounded(terminal ? 0 : shape.control),
     }),
     text: (): TextStyle => ({
       fontSize: density.body,

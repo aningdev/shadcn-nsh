@@ -167,7 +167,7 @@ export interface Style {
     control: Tiered<ControlSizes>;
     height: Tiered<Steps>;
   };
-  stroke: { hairline: number; control: number; focus: number; indicator: number };
+  stroke: { hairline: number; control: number; indicator: number };
   focus: { style: string; width: number; offset: number };
   state: {
     overlay: { hover: number; focus: number; pressed: number; dragged: number };
@@ -624,17 +624,108 @@ export const font = {
   tracking: (role: TypeName) => style().type[role].tracking,
 };
 
-/** Corner radii (`theme.json`'s `radius`, `radius-card`, `radius-control`):
- * a base and the two tiers derived from it. */
-export const radius = {
+/**
+ * The corner radii by role (`finishes.json`'s `shape`), read from the style in use: what the
+ * component is picks the role (`control` a button, `field` an input, `chip` a badge, `card` a card,
+ * `overlay` a menu or a popup, `dialog`, `sheet`, `inset` a well inside a card). Reactive: reading
+ * one in JSX, a `draw` or an effect follows `selectTheme`.
+ */
+export const shape = {
+  get control() {
+    return style().shape.control;
+  },
+  get field() {
+    return style().shape.field;
+  },
+  get chip() {
+    return style().shape.chip;
+  },
   get card() {
-    return token("radius-card");
+    return style().shape.card;
+  },
+  get overlay() {
+    return style().shape.overlay;
+  },
+  get dialog() {
+    return style().shape.dialog;
+  },
+  get sheet() {
+    return style().shape.sheet;
   },
   get inset() {
-    return token("radius");
+    return style().shape.inset;
+  },
+};
+
+/** Line widths in points (`finishes.json`'s `stroke`): `hairline` a surface's edge and a divider, `control` a control's edge, `indicator` a selection's bar. The focus ring's width is `focus.width`. */
+export const stroke = {
+  get hairline() {
+    return style().stroke.hairline;
   },
   get control() {
-    return token("radius-control");
+    return style().stroke.control;
+  },
+  get indicator() {
+    return style().stroke.indicator;
+  },
+};
+
+/**
+ * How far a control fades (`finishes.json`'s `state`): `pressed` is the opacity of a pressed
+ * control (`pressedOpacity`), `disabled` and `disabledContainer` those of a disabled control's
+ * content (the whole control, when it is drawn as one) and of its container.
+ */
+export const dimmed = {
+  get pressed() {
+    return style().state.pressedOpacity;
+  },
+  get disabled() {
+    return style().state.disabled.content;
+  },
+  get disabledContainer() {
+    return style().state.disabled.container;
+  },
+};
+
+/**
+ * The state layer of a theme that draws its hover, focus, press and drag as a wash of the text
+ * color over the surface (`state.overlay`, an opacity; Material's): a gradient of that one color,
+ * to spread over a control's style. A theme whose overlay is 0 (the default: its states swap
+ * the surface's finish) draws none, so this is an empty style.
+ */
+export function stateLayer(kind: keyof Style["state"]["overlay"]): ViewStyle {
+  const opacity = style().state.overlay[kind];
+  if (opacity <= 0) return {};
+  const wash = atAlpha(token("foreground") as string, opacity);
+  return { backgroundImage: `linear-gradient(180deg, ${wash} 0%, ${wash} 100%)` };
+}
+
+/** The smallest target a finger or a pointer gets (`size.hit` of the tier): 0 adds none. */
+export const hitTarget = (): number => style().size.hit[tier];
+
+/** A button's height by size (`size.height` of the tier). */
+export const controlHeight = {
+  get sm() {
+    return style().size.height[tier].sm;
+  },
+  get md() {
+    return style().size.height[tier].md;
+  },
+  get lg() {
+    return style().size.height[tier].lg;
+  },
+};
+
+/** An icon's side by size (`icon.size` of the tier). */
+export const iconSize = {
+  get sm() {
+    return style().icon.size[tier].sm;
+  },
+  get md() {
+    return style().icon.size[tier].md;
+  },
+  get lg() {
+    return style().icon.size[tier].lg;
   },
 };
 
@@ -646,9 +737,12 @@ export const cornerCurve: ViewStyle = {
   },
 };
 
-/** A corner on one of the theme's radii, with the curve they all share. */
-export function rounded(radius: number): ViewStyle {
-  return { borderRadius: radius, ...cornerCurve };
+/**
+ * A corner on one of the theme's radii, with the curve they all share. `inset` makes it concentric:
+ * a surface drawn `inset` points inside another takes the outer radius less `inset`, never below 0.
+ */
+export function rounded(radius: number, inset = 0): ViewStyle {
+  return { borderRadius: Math.max(radius - inset, 0), ...cornerCurve };
 }
 
 /** The system header's colors on every page (iOS, Android). */
@@ -726,7 +820,10 @@ export function follow(
  * selected; shadcn's `accent`). Leave it off a disabled control and off a
  * selected one, whose own fill shows.
  */
-export const hovered = (): ViewStyle => ({ backgroundColor: token("hover") });
+export const hovered = (): ViewStyle => ({
+  backgroundColor: token("hover"),
+  ...stateLayer("hover"),
+});
 
 /**
  * The keyboard focus (`focusVisibleStyle`: not after a click or a tap): the

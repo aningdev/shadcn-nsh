@@ -1,7 +1,7 @@
 // A navigation menu: a row of triggers, each opening a panel of anything (a grid of links, a card
 // with a description) under itself, one panel open at a time. This library's own: nothing here
 // comes from upstream, so there is no port region. Yours to change.
-import { alpha, colors, focusRing, radius, rounded, font } from "@shadcn-nsh/theme";
+import { alpha, colors, focusRing, rounded, font, shape, dimmed } from "@shadcn-nsh/theme";
 import { ChevronDown } from "lucide";
 import type { JSX, StyleProp, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, platform, reduceMotion, signal, split, token, View } from "nsh";
@@ -108,7 +108,7 @@ export function navigationMenuLook(): NavigationMenuLook {
         flexDirection: "column",
         gap: 4,
         padding: 8,
-        ...rounded(radius.control),
+        ...rounded(shape.control),
       };
     },
     get linkText(): TextStyle {
@@ -157,7 +157,7 @@ export function navigationMenuTriggerLook(o?: NavigationMenuTriggerLookOptions) 
         gap: chevronGap,
         height: navigationMenuSize.trigger,
         paddingHorizontal: navigationMenuSize.padding,
-        ...rounded(radius.control),
+        ...rounded(shape.control),
         ...(open() ? chosen() : { backgroundColor: "transparent" }),
         ...pressTransition("background-color"),
       };
@@ -172,7 +172,7 @@ export function navigationMenuTriggerLook(o?: NavigationMenuTriggerLookOptions) 
       return focusRing();
     },
     get disabledStyle(): ViewStyle {
-      return { opacity: 0.5 };
+      return { opacity: dimmed.disabled };
     },
     /** Its name's type: the `body` type, medium, one line. */
     get text(): TextStyle {
@@ -235,7 +235,7 @@ export function navigationMenuLinkLook(o?: NavigationMenuLinkLookOptions) {
       return focusRing();
     },
     get disabledStyle(): ViewStyle {
-      return { opacity: 0.5 };
+      return { opacity: dimmed.disabled };
     },
     /** Its name's type: `navigationMenuLook().linkText`. */
     get text(): TextStyle {

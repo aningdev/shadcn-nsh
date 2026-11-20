@@ -5,7 +5,7 @@
 // inside all of it. `captureKeys` is the mounted policy the platform reads before native defaults
 // run; `defaultPrevented` reports that decision on each transition. It is not a callback that could
 // veto natively from JS: both listeners hear every transition, the capture decision included.
-import { alpha, colors, mono, radius, TERMINAL_ROW, terminal } from "@shadcn-nsh/theme";
+import { alpha, colors, mono, TERMINAL_ROW, terminal, shape } from "@shadcn-nsh/theme";
 import { Check, GitBranch, Keyboard, Move, Terminal, TextCursorInput } from "lucide";
 import {
   Canvas,
@@ -72,7 +72,7 @@ function Keycap(props: { label: string; name?: string; down?: boolean; wide?: bo
         paddingHorizontal: terminal ? 0 : 8,
         alignItems: "center",
         justifyContent: "center",
-        borderRadius: terminal ? 0 : radius.control,
+        borderRadius: terminal ? 0 : shape.control,
         borderWidth: terminal ? 0 : 1,
         borderColor: props.down ? colors.brand : colors.border,
         backgroundColor: props.down ? alpha(colors.brand, 0.16) : colors.raised,
@@ -277,7 +277,7 @@ function HeldArrows() {
         focusVisibleStyle={{ outlineColor: colors.brand, outlineWidth: 2, outlineOffset: 1 }}
         style={{
           height: 208,
-          borderRadius: radius.inset,
+          borderRadius: shape.inset,
           borderCurve: "continuous",
           borderWidth: 1,
           borderColor: focused() ? colors.brand : colors.border,
@@ -626,7 +626,7 @@ function ModifierChords() {
                 height: terminal ? TERMINAL_ROW : 22,
                 justifyContent: "center",
                 paddingHorizontal: terminal ? 0 : 7,
-                borderRadius: terminal ? 0 : radius.control,
+                borderRadius: terminal ? 0 : shape.control,
                 borderWidth: terminal ? 0 : 1,
                 borderColor: colors.border,
                 backgroundColor: colors.raised,

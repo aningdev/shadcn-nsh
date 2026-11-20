@@ -1,4 +1,4 @@
-import { colors, finish, mono, radius, rounded } from "@shadcn-nsh/theme";
+import { colors, finish, mono, rounded, shape } from "@shadcn-nsh/theme";
 // Button: the official gallery's scene (`references/nsh/examples/gallery/demos/ButtonDemo.tsx`)
 // with this library's parts — the kinds a decision area uses and their sizes, icon buttons, work
 // that takes a while shown on the button, a copy row, and a disabled button with its reason.
@@ -171,7 +171,7 @@ export function ButtonDemo() {
                 height: 36,
                 paddingLeft: 12,
                 paddingRight: 4,
-                ...rounded(radius.control),
+                ...rounded(shape.control),
                 borderWidth: 1,
                 backgroundColor: colors.field,
                 ...finish.field,

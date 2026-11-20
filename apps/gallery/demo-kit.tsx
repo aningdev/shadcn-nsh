@@ -2,7 +2,7 @@ import { Scroll, Text, View } from "nsh";
 
 // Page furniture shared by the gallery's family pages: a scrolling page on the theme's
 // background, titled panels on a card, labelled rows. Part of the gallery, not of the registry.
-import { colors, radius } from "../../packages/theme";
+import { colors, shape } from "../../packages/theme";
 
 /** A labelled row: the label on the left, the controls wrapping beside it. */
 export function Row(props: { label: string; children: unknown }) {
@@ -30,7 +30,7 @@ export function Panel(props: { title: string; children: unknown }) {
       style={{
         gap: 12,
         padding: 16,
-        borderRadius: radius.control,
+        borderRadius: shape.control,
         borderWidth: 1,
         borderColor: colors.border,
         backgroundColor: colors.card,

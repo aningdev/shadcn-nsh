@@ -1,7 +1,7 @@
 // A pressable: a region that owns its look and gets only the feedback of a press — the sink, the
 // pointer's hover and the keyboard's ring. This library's own: nothing here comes from upstream,
 // so there is no port region. Yours to change.
-import { colors, focusRing, hovered, radius, rounded } from "@shadcn-nsh/theme";
+import { colors, focusRing, hovered, rounded, shape } from "@shadcn-nsh/theme";
 import type { JSX, ViewStyle } from "nsh";
 import { split } from "nsh";
 import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/base";
@@ -25,7 +25,7 @@ const SINK = 0.98;
 
 /**
  * A pressable's feedback, and nothing else: no fill, no padding, no height. At rest it is what
- * its content draws, on the page's surface; `radius.control` shapes the keyboard's ring to the
+ * its content draws, on the page's surface; `shape.control` shapes the keyboard's ring to the
  * region's corners (a `style` with its own radius moves the ring with it). Under the pointer it
  * takes the lightest hover fill the theme has (a whisper of the text color); pressed it sinks to
  * `scale` (98% by default, none with reduced motion); with the keyboard on it, `focusRing()`.
@@ -34,7 +34,7 @@ export function pressableLook(o?: PressableLookOptions) {
   return {
     get style(): ViewStyle {
       return {
-        ...rounded(radius.control),
+        ...rounded(shape.control),
         ...pressTransition("background-color"),
         ...read(o?.style),
       };

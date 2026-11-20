@@ -1,7 +1,17 @@
 // A toggle: the look (`toggleLook` and its companions), the `Toggle` that wears it, and
 // `ToggleGroup`, a row or column of them on the inset track (`toolbarTrack` in `lib/tool.ts`).
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, finish, focusRing, hovered, rounded, terminal, font } from "@shadcn-nsh/theme";
+import {
+  colors,
+  finish,
+  focusRing,
+  hovered,
+  rounded,
+  terminal,
+  font,
+  stroke,
+  dimmed,
+} from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewStyle } from "nsh";
 import { platform, split, Text } from "nsh";
 import {
@@ -107,7 +117,7 @@ export function toggleLook(o?: ToggleLookOptions) {
         justifyContent: "center",
         gap: 6,
         ...rounded(dims.side / 4 + 1),
-        borderWidth: 1,
+        borderWidth: stroke.control,
         ...(outline
           ? { borderColor: colors.input, backgroundColor: colors.field }
           : { borderColor: "transparent" }),
@@ -128,7 +138,9 @@ export function toggleLook(o?: ToggleLookOptions) {
     get focusVisibleStyle(): ViewStyle {
       return focusRing(1);
     },
-    disabledStyle: { opacity: 0.5 },
+    get disabledStyle(): ViewStyle {
+      return { opacity: dimmed.disabled };
+    },
     get hitSlop(): number | undefined {
       return touchSlop(dimensions(o).side);
     },

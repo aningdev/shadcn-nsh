@@ -19,10 +19,12 @@ import {
   finish,
   focusRing,
   hovered,
-  radius,
   terminal,
   rounded,
   font,
+  shape,
+  stroke,
+  dimmed,
 } from "@shadcn-nsh/theme";
 import { PanelLeft } from "lucide";
 import type { JSX, StyleProp, TextStyle, ViewProps, ViewStyle } from "nsh";
@@ -291,11 +293,11 @@ export function sidebarLook(o?: SidebarLookOptions): SidebarLook {
         ...(flat
           ? // physical: the column's side is the window edge it stands on; the edge that faces the page keeps the hairline in either direction.
             side() === "left"
-            ? { borderRightWidth: 1 }
-            : { borderLeftWidth: 1 }
+            ? { borderRightWidth: stroke.hairline }
+            : { borderLeftWidth: stroke.hairline }
           : {
-              borderWidth: 1,
-              ...rounded(radius.card),
+              borderWidth: stroke.hairline,
+              ...rounded(shape.card),
               boxShadow: finish.card.boxShadow,
             }),
       };
@@ -312,9 +314,9 @@ export function sidebarLook(o?: SidebarLookOptions): SidebarLook {
               margin: sidebarSize.frame,
               // physical: the frame's air goes on the page-facing side, whichever window edge the column stands on.
               ...(side() === "left" ? { marginLeft: 0 } : { marginRight: 0 }),
-              borderWidth: 1,
+              borderWidth: stroke.hairline,
               borderColor: colors.line,
-              ...rounded(radius.card),
+              ...rounded(shape.card),
               boxShadow: finish.card.boxShadow,
               overflow: "hidden",
             }
@@ -336,7 +338,7 @@ export function sidebarLook(o?: SidebarLookOptions): SidebarLook {
     },
     get railLine(): ViewStyle {
       return {
-        width: 2,
+        width: stroke.indicator,
         height: "100%",
         borderRadius: 1,
         backgroundColor: colors.sidebarBorder,
@@ -401,7 +403,7 @@ export function sidebarGroupLook(o?: SidebarFoldOptions) {
         flexShrink: 0,
         paddingHorizontal: sidebarSize.padding,
         gap: 8,
-        ...rounded(radius.control),
+        ...rounded(shape.control),
         opacity: folded(o) ? 0 : 1,
         overflow: "hidden",
       };
@@ -424,7 +426,7 @@ export function sidebarGroupLook(o?: SidebarFoldOptions) {
         height: sidebarSize.action,
         alignItems: "center",
         justifyContent: "center",
-        ...rounded(radius.control),
+        ...rounded(shape.control),
         display: folded(o) ? "none" : "flex",
       };
     },
@@ -476,7 +478,7 @@ export function sidebarMenuButtonLook(o?: SidebarMenuButtonLookOptions) {
           ? { width: sidebarSize.folded, height: sidebarSize.folded }
           : { width: "100%", height: rowHeight[size()] }),
         overflow: "hidden",
-        ...rounded(radius.control),
+        ...rounded(shape.control),
         ...(isFolded
           ? { paddingHorizontal: size() === "lg" ? 0 : sidebarSize.padding }
           : {
@@ -486,7 +488,7 @@ export function sidebarMenuButtonLook(o?: SidebarMenuButtonLookOptions) {
         ...(read(o?.variant) === "outline"
           ? {
               backgroundColor: colors.background,
-              borderWidth: 1,
+              borderWidth: stroke.hairline,
               borderColor: colors.sidebarBorder,
             }
           : {}),
@@ -505,7 +507,7 @@ export function sidebarMenuButtonLook(o?: SidebarMenuButtonLookOptions) {
       return focusRing();
     },
     get disabledStyle(): ViewStyle {
-      return { opacity: 0.5 };
+      return { opacity: dimmed.disabled };
     },
     /** Its name: `rowLabel`'s size, medium on the page the app is on, one line, the text clipped
      * when the column is folded. */
@@ -550,7 +552,7 @@ export function sidebarMenuActionLook(o?: SidebarMenuActionLookOptions) {
         height: sidebarSize.action,
         alignItems: "center",
         justifyContent: "center",
-        ...rounded(radius.control),
+        ...rounded(shape.control),
         end: hasBadge(read(o?.trailing)) ? actionPastBadge : trailingInset,
         display: folded(o) ? "none" : "flex",
       };
@@ -584,7 +586,7 @@ export function sidebarMenuBadgeLook(o?: SidebarFoldOptions) {
         alignItems: "center",
         justifyContent: "center",
         paddingHorizontal: 4,
-        ...rounded(radius.control),
+        ...rounded(shape.control),
         end: trailingInset,
         display: folded(o) ? "none" : "flex",
       };
@@ -612,7 +614,7 @@ export function sidebarMenuSubLook(o?: SidebarFoldOptions) {
     get sub(): ViewStyle {
       return {
         marginStart: sidebarSize.sub,
-        borderStartWidth: 1,
+        borderStartWidth: stroke.hairline,
         borderColor: colors.sidebarBorder,
         paddingStart: sidebarSize.subPadding,
         paddingVertical: 2,
@@ -659,7 +661,7 @@ export function sidebarMenuSubButtonLook(o?: SidebarMenuSubButtonLookOptions) {
         height: subRowHeight[size()],
         paddingHorizontal: sidebarSize.padding,
         overflow: "hidden",
-        ...rounded(radius.control),
+        ...rounded(shape.control),
         ...(active() ? { backgroundColor: colors.sidebarAccent } : {}),
         ...pressTransition("background-color"),
       };
@@ -675,7 +677,7 @@ export function sidebarMenuSubButtonLook(o?: SidebarMenuSubButtonLookOptions) {
       return focusRing();
     },
     get disabledStyle(): ViewStyle {
-      return { opacity: 0.5 };
+      return { opacity: dimmed.disabled };
     },
     /** Its name: `subRowLabel`'s size, one line, the text clipped by a tight row. */
     get label(): TextStyle {
@@ -1155,7 +1157,7 @@ export function SidebarGroupAction(props: SidebarGroupActionProps) {
         hoverStyle={[look.actionHover, props.hoverStyle ?? null]}
         activeStyle={props.activeStyle ?? null}
         focusVisibleStyle={[focusRing(), props.focusVisibleStyle ?? null]}
-        disabledStyle={[{ opacity: 0.5 }, props.disabledStyle ?? null]}
+        disabledStyle={[{ opacity: dimmed.disabled }, props.disabledStyle ?? null]}
       >
         <AsText style={look.label}>{props.children}</AsText>
       </BaseButton>
@@ -1381,7 +1383,7 @@ export function SidebarMenuAction(props: SidebarMenuActionProps) {
         hoverStyle={[look.hoverStyle, props.hoverStyle ?? null]}
         activeStyle={props.activeStyle ?? null}
         focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
-        disabledStyle={[{ opacity: 0.5 }, props.disabledStyle ?? null]}
+        disabledStyle={[{ opacity: dimmed.disabled }, props.disabledStyle ?? null]}
       >
         <AsText style={{ fontSize: 12, color: colors.mutedForeground }}>{props.children}</AsText>
       </BaseButton>

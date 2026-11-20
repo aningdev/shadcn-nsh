@@ -1,7 +1,7 @@
 // A label: the visible name of a field or a choice, drawn on `nsh`'s own View and Text. This
 // library's own (upstream has none, and no `nsh/base` control is its behavior): there is no port
 // region. Yours to change.
-import { colors, font } from "@shadcn-nsh/theme";
+import { colors, font, dimmed } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { split, View } from "nsh";
 
@@ -35,7 +35,7 @@ export function labelLook(o?: LabelLookOptions): LabelLook {
         flexDirection: "row",
         alignItems: "center",
         gap: 8,
-        opacity: o?.disabled ? 0.5 : 1,
+        opacity: o?.disabled ? dimmed.disabled : 1,
       };
     },
     get text(): TextStyle {

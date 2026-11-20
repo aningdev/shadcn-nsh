@@ -1,7 +1,7 @@
 // An item: the look (`itemLook`) and the ten parts that wear it.
 // This library's own (upstream has no item family): the parts and their axes follow shadcn/ui and
 // the look is written from the theme's roles. Yours to change.
-import { colors, radius, rounded, TERMINAL_COLUMN, terminal, font } from "@shadcn-nsh/theme";
+import { colors, rounded, TERMINAL_COLUMN, terminal, font, shape, stroke } from "@shadcn-nsh/theme";
 import type { TextStyle, TextProps, ViewProps, ViewStyle } from "nsh";
 import { split, Text, token, View } from "nsh";
 
@@ -59,7 +59,7 @@ const rowBox = (size: ItemSize) =>
 /**
  * An item family's look, after shadcn/ui's secondary `Item`, written from the
  * theme's roles: a row with the page's density in its padding and its gaps
- * (`density.pad`, 14 or 16), corners of the theme's inset (`radius.inset`),
+ * (`density.pad`, 14 or 16), corners of the theme's inset (`shape.inset`),
  * the title in the text colour at the labels' size and medium weight, the
  * description a step quieter and muted, wrapping to two lines. `default`
  * draws no surface, `outline` the hairline edge of a surface, and `muted` the
@@ -79,7 +79,7 @@ export function itemLook(): ItemLook {
     },
     get separator(): ViewStyle {
       return {
-        height: 1,
+        height: stroke.hairline,
         backgroundColor: colors.line,
         marginVertical: terminal ? 0 : 4,
       };
@@ -98,8 +98,8 @@ export function itemLook(): ItemLook {
             flexWrap: "wrap",
             alignItems: "center",
             minHeight: controlSize.row,
-            ...rounded(radius.inset),
-            borderWidth: 1,
+            ...rounded(shape.inset),
+            borderWidth: stroke.hairline,
             borderColor: variant === "outline" ? colors.border : "transparent",
             backgroundColor: variant === "muted" ? token("muted") : "transparent",
           },
@@ -113,8 +113,8 @@ export function itemLook(): ItemLook {
               height: iconTile,
               alignItems: "center",
               justifyContent: "center",
-              ...rounded(radius.control),
-              borderWidth: 1,
+              ...rounded(shape.control),
+              borderWidth: stroke.hairline,
               borderColor: colors.border,
               backgroundColor: colors.inset,
             }
@@ -125,7 +125,7 @@ export function itemLook(): ItemLook {
               alignItems: "center",
               justifyContent: "center",
               overflow: "hidden",
-              ...rounded(radius.control),
+              ...rounded(shape.control),
               backgroundColor: colors.inset,
             },
     get content(): ViewStyle {

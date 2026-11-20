@@ -3,7 +3,7 @@
 // (circular and continuous, per corner), a progressive blur that layers `backdropFilter` under
 // masks, borders per side in each style, shadows that glow rather than darken, clipping and
 // stacking order, 3D transforms with two faces, numerals, and a right-to-left layout.
-import { alpha, colors, finish, isDark, mono, radius, tints } from "@shadcn-nsh/theme";
+import { alpha, colors, finish, isDark, mono, tints, shape } from "@shadcn-nsh/theme";
 import {
   Animated,
   cleanup,
@@ -34,7 +34,7 @@ const stage = (): ViewStyle => ({
   height: 104,
   alignItems: "center",
   justifyContent: "center",
-  borderRadius: radius.control,
+  borderRadius: shape.control,
   borderCurve: "continuous",
   backgroundColor: colors.inset,
   borderWidth: 1,
@@ -215,7 +215,7 @@ function ProgressiveBlur() {
       <View
         style={{
           height: 160,
-          borderRadius: radius.control,
+          borderRadius: shape.control,
           borderCurve: "continuous",
           overflow: "hidden",
           backgroundColor: colors.inset,
@@ -585,7 +585,7 @@ function FlipCard() {
     top: 0,
     right: 0,
     bottom: 0,
-    borderRadius: radius.card,
+    borderRadius: shape.card,
     borderCurve: "continuous",
     borderWidth: 1,
     padding: 16,

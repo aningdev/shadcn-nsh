@@ -7,10 +7,12 @@ import {
   follow,
   hovered,
   motion,
-  radius,
   terminal,
   rounded,
   font,
+  shape,
+  stroke,
+  dimmed,
 } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
@@ -67,7 +69,7 @@ export function tabsLook() {
         gap: 2,
         padding: inset,
         borderRadius: controlSize.tabs / 2,
-        borderWidth: 1,
+        borderWidth: stroke.control,
         borderColor: colors.border,
         backgroundColor: colors.inset,
         boxShadow: finish.track.boxShadow,
@@ -78,7 +80,7 @@ export function tabsLook() {
         top: inset,
         bottom: inset,
         borderRadius: inner / 2,
-        borderWidth: 1,
+        borderWidth: stroke.control,
         ...finish.thumb,
       };
     },
@@ -88,7 +90,7 @@ export function tabsLook() {
           flex: 1,
           paddingHorizontal: 6,
           borderRadius: inner / 2,
-          borderWidth: 1,
+          borderWidth: stroke.control,
           borderColor: "transparent",
           alignItems: "center",
           justifyContent: "center",
@@ -99,7 +101,9 @@ export function tabsLook() {
         get focusVisibleStyle() {
           return focusRing();
         },
-        disabledStyle: { opacity: 0.5 },
+        get disabledStyle(): ViewStyle {
+          return { opacity: dimmed.disabled };
+        },
       };
     },
   };
@@ -120,7 +124,12 @@ export function underlineTabsLook() {
       return { flexDirection: "row", gap: 2, paddingTop: 3 };
     },
     get indicatorStyle(): ViewStyle {
-      return { bottom: 0, height: 2, borderRadius: 1, backgroundColor: colors.brand };
+      return {
+        bottom: 0,
+        height: stroke.indicator,
+        borderRadius: 1,
+        backgroundColor: colors.brand,
+      };
     },
     get rule(): ViewStyle {
       return {
@@ -129,7 +138,7 @@ export function underlineTabsLook() {
         left: 0,
         right: 0,
         bottom: 0,
-        height: 1,
+        height: stroke.hairline,
         backgroundColor: colors.line,
       };
     },
@@ -140,8 +149,8 @@ export function underlineTabsLook() {
             height: controlSize.tabs,
             paddingHorizontal: 8,
             marginBottom: 4,
-            ...rounded(radius.control),
-            borderWidth: 1,
+            ...rounded(shape.control),
+            borderWidth: stroke.control,
             borderColor: "transparent",
             justifyContent: "center",
           };
@@ -149,11 +158,15 @@ export function underlineTabsLook() {
         get hoverStyle() {
           return hoverOf(state);
         },
-        activeStyle: { opacity: 0.7 },
+        get activeStyle(): ViewStyle {
+          return { opacity: dimmed.pressed };
+        },
         get focusVisibleStyle() {
           return focusRing();
         },
-        disabledStyle: { opacity: 0.5 },
+        get disabledStyle(): ViewStyle {
+          return { opacity: dimmed.disabled };
+        },
       };
     },
   };
@@ -225,11 +238,11 @@ export function TabTitle(props: {
             paddingHorizontal: 5,
             // A pill: two points inside the inset's corners, which is half this box in the
             // default theme (`radius` 10).
-            ...rounded(radius.inset - 2),
+            ...rounded(shape.inset, 2),
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: colors.inset,
-            borderWidth: 1,
+            borderWidth: stroke.control,
             borderColor: colors.line,
           }}
         >

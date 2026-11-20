@@ -37,22 +37,22 @@ export const switchGeometries = {
 export const knobTravel = (g: SwitchGeometry): number =>
   g.width - 2 * (g.border + g.inset) - g.knob;
 
-/** The smallest target a finger gets (Design Guides, "Touch targets"). */
-export const TOUCH_TARGET = 44;
-
 /**
  * How far presses count past a switch whose track makes up its height, so a
- * finger gets `TOUCH_TARGET` points on each axis without the track looking
+ * finger gets `size.hit` points on each axis without the track looking
  * bigger.
  */
-export function switchSlop(g: SwitchGeometry): {
+export function switchSlop(
+  g: SwitchGeometry,
+  hit: number,
+): {
   top: number;
   bottom: number;
   left: number;
   right: number;
 } {
-  const v = Math.max(0, (TOUCH_TARGET - g.height) / 2);
-  const h = Math.max(0, (TOUCH_TARGET - g.width) / 2);
+  const v = Math.max(0, (hit - g.height) / 2);
+  const h = Math.max(0, (hit - g.width) / 2);
   return { top: v, bottom: v, left: h, right: h };
 }
 // @port end

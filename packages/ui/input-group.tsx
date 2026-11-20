@@ -27,7 +27,7 @@ export interface InputGroupLookOptions {
  * 2-point edge in the accent with its ring; the danger tone while invalid; flat on the quieter
  * edge and dimmed while disabled — as wide as the room it is given. Its parts sit in one row,
  * wrapping so that a `block-start` or `block-end` addon takes a line of its own. Its corners are
- * `radius.control`, or the radius `style` gives it (`style={{ borderRadius: 22 }}`), which the
+ * `shape.control`, or the radius `style` gives it (`style={{ borderRadius: 22 }}`), which the
  * focus ring follows: the ring is drawn on the frame, not on the control.
  */
 export function inputGroupLook(o?: InputGroupLookOptions) {

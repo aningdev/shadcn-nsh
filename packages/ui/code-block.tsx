@@ -1,7 +1,7 @@
 // A code block: a titled block of code or output, a copy button that flips to a check, line numbers
 // and a footer. This library's own (drawn on `nsh`'s View, Text and Scroll; the clipboard is
 // `nsh`'s), so there is no port region. Yours to change.
-import { alpha, colors, font, mono, radius, rounded, type TypeName } from "@shadcn-nsh/theme";
+import { alpha, colors, font, mono, rounded, shape, type TypeName } from "@shadcn-nsh/theme";
 import { Check, Copy } from "lucide";
 import type { JSX, ScrollProps, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { Clipboard, context, Scroll, signal, split, Text, View } from "nsh";
@@ -70,7 +70,7 @@ export function codeBlockLook(): CodeBlockLook {
       overflow: "hidden",
       borderWidth: 1,
       borderColor: variant === "destructive" ? alpha(colors.destructive, 0.4) : colors.border,
-      ...rounded(radius.inset),
+      ...rounded(shape.inset),
       backgroundColor: variant === "destructive" ? alpha(colors.destructive, 0.06) : colors.inset,
     }),
     header: (variant, size) => ({

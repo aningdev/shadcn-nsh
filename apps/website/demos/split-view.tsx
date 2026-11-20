@@ -2,7 +2,7 @@
 // each a NavStack — the folders, a folder's notes, the note. The columns, their headers and the
 // sidebar button are this library's. Where the window is compact one column shows, and choosing a
 // row brings the next column in front. A window too narrow for three columns starts on two.
-import { alpha, colors, focusRing, hovered, radius, rounded } from "@shadcn-nsh/theme";
+import { alpha, colors, focusRing, hovered, rounded, shape } from "@shadcn-nsh/theme";
 import { ChevronLeft } from "lucide";
 import { horizontalSizeClass, mount, Scroll, signal, Text, View, windowSize } from "nsh";
 
@@ -65,7 +65,7 @@ function BackButton(props: { title: string; onPress: () => void }) {
         gap: 2,
         paddingStart: 4,
         paddingEnd: 8,
-        ...rounded(radius.control),
+        ...rounded(shape.control),
       }}
     >
       <Icon icon={ChevronLeft} size={18} tint={colors.foreground} />
@@ -89,7 +89,7 @@ function Row(props: { title: string; selected: boolean; onPress: () => void }) {
       style={{
         paddingHorizontal: 12,
         paddingVertical: 8,
-        ...rounded(radius.control),
+        ...rounded(shape.control),
         backgroundColor: props.selected ? alpha(colors.brand, 0.12) : "transparent",
       }}
     >

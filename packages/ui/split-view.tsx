@@ -13,9 +13,10 @@ import {
   focusRing,
   header,
   hovered,
-  radius,
   rounded,
   font,
+  shape,
+  stroke,
 } from "@shadcn-nsh/theme";
 import { PanelLeft } from "lucide";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
@@ -68,7 +69,7 @@ export function splitViewColumnLook(column: SplitViewColumn) {
       ...(platform.os === "ios" || column === "detail"
         ? {}
         : {
-            borderEndWidth: 1,
+            borderEndWidth: stroke.hairline,
             borderEndColor: sidebar ? colors.sidebarBorder : colors.line,
           }),
     }),
@@ -120,7 +121,7 @@ export function splitViewTriggerLook() {
       height: 28,
       alignItems: "center",
       justifyContent: "center",
-      ...rounded(radius.control),
+      ...rounded(shape.control),
     }),
     hoverStyle: hovered,
     activeStyle: (): ViewStyle => ({ backgroundColor: alpha(colors.foreground, 0.09) }),

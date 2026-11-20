@@ -1,4 +1,4 @@
-import { alpha, chart, colors, focusRing, radius, rounded } from "@shadcn-nsh/theme";
+import { alpha, chart, colors, focusRing, rounded, shape } from "@shadcn-nsh/theme";
 // Carousel: the official gallery's scene (`references/nsh/examples/gallery/demos/CarouselDemo.tsx`)
 // with this library's parts — an onboarding the app steps through with its own buttons, a
 // product's photos with thumbnails and glass arrows over them, banners that roll on by
@@ -443,7 +443,7 @@ function Product(props: { log: (text: string) => void }) {
           <CarouselContent
             style={{
               aspectRatio: 4 / 3,
-              ...rounded(radius.inset),
+              ...rounded(shape.inset),
               borderCurve: "continuous",
               backgroundColor: colors.raised,
             }}
@@ -586,7 +586,7 @@ function Banners(props: { log: (text: string) => void }) {
           <CarouselContent
             style={{
               height: pointer ? 132 : 156,
-              ...rounded(radius.inset),
+              ...rounded(shape.inset),
               borderCurve: "continuous",
             }}
           >
@@ -793,7 +793,7 @@ function Collections(props: { log: (text: string) => void }) {
                     flex: 1,
                     padding: 12,
                     justifyContent: "space-between",
-                    ...rounded(radius.inset),
+                    ...rounded(shape.inset),
                     borderCurve: "continuous",
                     borderWidth: 1,
                     borderColor: colors.line,

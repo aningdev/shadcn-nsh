@@ -1,6 +1,15 @@
 // Shared list looks: popup, rows, search, chevron, clear — used by select, combobox, calendar, date-picker.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, cornerCurve, finish, radius, rounded, terminal, font } from "@shadcn-nsh/theme";
+import {
+  colors,
+  cornerCurve,
+  finish,
+  rounded,
+  terminal,
+  font,
+  shape,
+  stroke,
+} from "@shadcn-nsh/theme";
 import { Check, ChevronRight, X } from "lucide";
 import type { JSX, ViewStyle } from "nsh";
 import { platform, Text, View } from "nsh";
@@ -35,8 +44,8 @@ const SHEET_FOOT = 34;
 export function listboxPopup(o?: ListboxPopupOptions): ViewStyle {
   return pointer
     ? {
-        ...rounded(radius.inset),
-        borderWidth: 1,
+        ...rounded(shape.overlay),
+        borderWidth: stroke.hairline,
         padding: 6,
         ...finish.menu,
         ...(o?.minWidth ? { minWidth: o.minWidth } : {}),
@@ -44,8 +53,8 @@ export function listboxPopup(o?: ListboxPopupOptions): ViewStyle {
       }
     : {
         backgroundColor: colors.card,
-        borderTopLeftRadius: radius.card,
-        borderTopRightRadius: radius.card,
+        borderTopLeftRadius: shape.sheet,
+        borderTopRightRadius: shape.sheet,
         ...cornerCurve,
         paddingHorizontal: 10,
         paddingTop: 10,
@@ -261,7 +270,7 @@ export const listboxFooter = {
       marginTop: 6,
       paddingTop: 6,
       paddingHorizontal: terminal ? 0 : 9,
-      borderTopWidth: 1,
+      borderTopWidth: stroke.hairline,
       borderColor: colors.border,
     };
   },
@@ -285,8 +294,8 @@ export function listboxSearch() {
         height: pointer ? 32 : 40,
         paddingHorizontal: 9,
         marginBottom: 6,
-        ...rounded(radius.control),
-        borderWidth: 1,
+        ...rounded(shape.control),
+        borderWidth: stroke.hairline,
         backgroundColor: colors.field,
         ...finish.field,
         borderColor: colors.input,

@@ -9,11 +9,11 @@ import {
   hovered,
   isDark,
   mono,
-  radius,
   rounded,
   type Tone,
   toneColor,
   toneTint,
+  shape,
 } from "@shadcn-nsh/theme";
 import { Sparkles, X } from "lucide";
 import { type JSX, Image, Text, View } from "nsh";
@@ -181,7 +181,7 @@ export function Photo(props: {
       style={{
         width: props.width,
         height: props.height,
-        ...rounded(radius.inset),
+        ...rounded(shape.inset),
         overflow: "hidden",
         backgroundColor: colors.raised,
         borderWidth: 1,
@@ -224,7 +224,7 @@ export function ToolCard(props: { tool: Tool }) {
       style={{
         backgroundColor: colors.card,
         ...finish.card,
-        ...rounded(radius.inset),
+        ...rounded(shape.inset),
         borderWidth: 1,
         borderColor:
           t().state === "running" ? alpha(colors.info, isDark() ? 0.55 : 0.4) : colors.border,
@@ -427,7 +427,7 @@ export function ErrorRow(props: { message: string; onRetry: () => void }) {
         alignItems: "center",
         gap: 12,
         padding: 12,
-        ...rounded(radius.inset),
+        ...rounded(shape.inset),
         backgroundColor: toneTint("destructive"),
         borderWidth: 1,
         borderColor: alpha(colors.destructive, 0.32),
