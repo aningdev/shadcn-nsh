@@ -108,6 +108,19 @@
       ]
     },
     {
+      "name": "motion",
+      "type": "registry:lib",
+      "title": "Motion",
+      "description": "A rejected field's shake, and a figure that rolls to its next value.",
+      "files": [
+        {
+          "path": "packages/ui/lib/motion.tsx",
+          "type": "registry:lib",
+          "target": "lib/motion.tsx"
+        }
+      ]
+    },
+    {
       "name": "utils",
       "type": "registry:lib",
       "title": "Utils",
@@ -454,7 +467,7 @@
       "name": "toast",
       "type": "registry:ui",
       "title": "Toast",
-      "description": "A raised banner with a title, optional description, action and close.",
+      "description": "A raised banner, and a toaster: toast(), update and dismiss on nsh/base's queue.",
       "files": [
         {
           "path": "packages/ui/toast.tsx",

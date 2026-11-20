@@ -101,7 +101,7 @@ A least height of your own is how the box starts taller than one line, since `st
 ## Differences from shadcn/ui
 
 - Adds `variant` (`default` | `ghost`) and `invalid`; shadcn styles those with classes and `aria-invalid`.
-- `multiline` turns the same component into a text area; shadcn's is a separate `Textarea`, whose box grows with its content (`field-sizing-content`) and starts at `min-h-16` (64 points). Ours starts at one line and grows as the app sizes it.
+- `multiline` turns the same component into a text area; shadcn's is a separate `Textarea`, whose box grows with its content (`field-sizing-content`) and starts at `min-h-16` (64 points). Ours starts at one line. `grow` makes it as tall as its text, up to five lines; a `style` `height` still wins.
 
 ## API
 
@@ -111,8 +111,10 @@ A least height of your own is how the box starts taller than one line, since `st
 
 Every prop of [`nsh/base` Input](https://nsh.dev/elements/input) passes through. `class`, `style` and `disabledStyle` go over the look's. Focus and hover edges are classes on the look.
 
-| Prop        | Type           | Default     | What it does                                                                                                     |
-| ----------- | -------------- | ----------- | ---------------------------------------------------------------------------------------------------------------- |
-| `variant`   | `InputVariant` | `"default"` | `ghost` draws no fill and no edge until the keys are in it; the text, the placeholder and the focus ring stay.   |
-| `invalid`   | `boolean`      |             | Edged in the danger tone, its focus edge too.                                                                    |
-| `multiline` | `boolean`      | `false`     | Several lines: the content starts at the top, the box is at least one line tall, and Return writes a line break. |
+| Prop        | Type                | Default     | What it does                                                                                                               |
+| ----------- | ------------------- | ----------- | -------------------------------------------------------------------------------------------------------------------------- |
+| `variant`   | `InputVariant`      | `"default"` | `ghost` draws no fill and no edge until the keys are in it; the text, the placeholder and the focus ring stay.             |
+| `invalid`   | `boolean`           |             | Edged in the danger tone, its focus edge too.                                                                              |
+| `multiline` | `boolean`           | `false`     | Several lines: the content starts at the top, the box is at least one line tall, and Return writes a line break.           |
+| `grow`      | `boolean \| number` |             | Multiline only. `true` grows with the text up to five lines; a number is that cap. No transition. A `style` `height` wins. |
+| `reject`    | `number`            |             | Shakes the field each time this becomes a new number. `invalid` only recolours the edge. Less motion plays nothing.        |

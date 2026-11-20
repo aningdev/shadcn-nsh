@@ -113,6 +113,20 @@
       ]
     },
     {
+      "name": "motion",
+      "type": "registry:lib",
+      "title": "Motion",
+      "description": "A rejected field's shake, and a figure that rolls to its next value.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/lib/motion.tsx",
+          "type": "registry:lib",
+          "target": "lib/motion.tsx"
+        }
+      ]
+    },
+    {
       "name": "utils",
       "type": "registry:lib",
       "title": "Utils",
@@ -375,7 +389,7 @@
       "type": "registry:ui",
       "title": "Input",
       "description": "A text field — sunk, ghost, multiline, masked, or invalid.",
-      "registryDependencies": ["theme", "utils"],
+      "registryDependencies": ["motion", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/input.tsx",
@@ -404,7 +418,7 @@
       "type": "registry:ui",
       "title": "OTP Input",
       "description": "One-time code cells that lift out of sunk wells as digits fill in.",
-      "registryDependencies": ["input", "theme", "utils"],
+      "registryDependencies": ["input", "motion", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/otp-input.tsx",
@@ -487,8 +501,9 @@
       "name": "toast",
       "type": "registry:ui",
       "title": "Toast",
-      "description": "A raised banner with a title, optional description, action and close.",
-      "registryDependencies": ["button", "press", "theme"],
+      "description": "A raised banner, and a toaster: toast(), update and dismiss on nsh/base's queue.",
+      "registryDependencies": ["button", "icons", "press", "spinner", "theme"],
+      "dependencies": ["lucide@^1.66.0"],
       "files": [
         {
           "path": "packages/ui/toast.tsx",

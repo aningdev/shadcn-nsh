@@ -7,16 +7,12 @@ and its row leaves this file.
 
 ## Library
 
-| Issue                                                     | Gap                                                                             | Scenes that work around it                                                                                                            |
-| --------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| [#85](https://github.com/aningdev/shadcn-nsh/issues/85)   | No `toast()` API (raise, update, dismiss, stack)                                | Toast, System (alert toasts), Windows (attention toast)                                                                               |
-| [#87](https://github.com/aningdev/shadcn-nsh/issues/87)   | On macOS a click on the combobox field focuses it and does not open the list    | Combobox                                                                                                                              |
-| [#94](https://github.com/aningdev/shadcn-nsh/issues/94)   | No theme role for ink over photos                                               | Carousel (`#ffffff`), TextView (image viewer), Animations (ink on a tone), Text (shadowed ink on photos), System (status-bar preview) |
-| [#95](https://github.com/aningdev/shadcn-nsh/issues/95)   | Input motion: shake, autogrow, rolling digits                                   | Input, OTP input, Number input                                                                                                        |
-| [#101](https://github.com/aningdev/shadcn-nsh/issues/101) | Chart colors and their label ink run opposite ways                              | Plot (Allocation tints its tiles)                                                                                                     |
-| [#117](https://github.com/aningdev/shadcn-nsh/issues/117) | `Plot` has no overlay hook (hatch with the plot's geometry)                     | Stocks (washes instead of hatching)                                                                                                   |
-| [#122](https://github.com/aningdev/shadcn-nsh/issues/122) | `nsh/base`'s Button takes no `accessibilityHint`, so no pressable can carry one | Gestures (accessibility rows draw a `View` with `role="button"`)                                                                      |
-| [#149](https://github.com/aningdev/shadcn-nsh/issues/149) | No public helper turns a lucide icon into an image for a native menu            | System (context menu rebuilds the Gallery's `lucideSvg`)                                                                              |
+| Issue                                                     | Gap                                                                             | Scenes that work around it                                       |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
+| [#87](https://github.com/aningdev/shadcn-nsh/issues/87)   | On macOS a click on the combobox field focuses it and does not open the list    | Combobox                                                         |
+| [#117](https://github.com/aningdev/shadcn-nsh/issues/117) | `Plot` has no overlay hook (hatch with the plot's geometry)                     | Stocks (washes instead of hatching)                              |
+| [#122](https://github.com/aningdev/shadcn-nsh/issues/122) | `nsh/base`'s Button takes no `accessibilityHint`, so no pressable can carry one | Gestures (accessibility rows draw a `View` with `role="button"`) |
+| [#149](https://github.com/aningdev/shadcn-nsh/issues/149) | No public helper turns a lucide icon into an image for a native menu            | System (context menu rebuilds the Gallery's `lucideSvg`)         |
 
 Not gaps: the iOS segmented control is a platform look; a Progress with step dots is app layout;
 `Segmented` / `Button` / `Badge` take children where upstream takes `options` / `label` (shadcn's
@@ -24,7 +20,9 @@ composition). Upstream's funnel animates drawn `Canvas` geometry with `createAni
 `nsh/base` doesn't drive; the necks redraw without an entrance. Editor gutters use the `warn` / `up` /
 `destructive` roles, and a terminal's ANSI colors are the program's output, not theme roles. Find
 bars, quick-fix menus and the editor zoom are `nsh` `Overlay`s, the code-action menu is the native
-`nsh/desktop` `Menu`, and the Gallery's `IconTile` is its own kit, as upstream. The Gallery's `Meter`,
+`nsh/desktop` `Menu`, and the Gallery's `IconTile` is its own kit, as upstream. Animations' ink on a
+saturated tone is `onBrand` / `knob`, the TextView lightbox sits on the page's background, and System's
+status-bar preview inks with the foreground and background, all theme roles. The Gallery's `Meter`,
 `Toggle` (a switch) and `Field` are this library's `Progress`, `Switch` and a labelled `Input`. The block
 editor imports its editor commands (`setNode`, `wrapIn`, `suggestion`, …) from `nsh/base`, where they
 live, and its link menu is local, as upstream's `RichEditorLink` is a Gallery demo file.

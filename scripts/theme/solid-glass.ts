@@ -403,6 +403,8 @@ function themeLevel(): Record<string, string> {
     "on-brand": "var(--primary-foreground)",
     // The stylesheet has no scrim of its own; shadcn's dialog overlay is `bg-black/50`.
     scrim: "oklch(0 0 0 / 0.5)",
+    "on-media": "oklch(1 0 0)",
+    "chart-foreground": s("foreground"),
     "window-close": s("destructive"),
     "window-minimize": s("ring"),
     "window-zoom": s("chart-3"),

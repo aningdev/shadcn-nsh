@@ -1,21 +1,10 @@
-import {
-  alpha,
-  colors,
-  finish,
-  mono,
-  radius,
-  rounded,
-  toneColor,
-  type Tone,
-} from "@shadcn-nsh/theme";
-// Helpers the overlay demos share: a trigger, a field, the event log, and the toast host.
-// The library's `Toast` is one banner; the gallery's `toast()` / `updateToast` / `dismissToast`
-// (a manager, a stack, a promise per toast) is not a part here, so this host is `nsh/base`'s
-// `ToastManager` and `ToastStack` wearing the library's toast look. Sounds stay out.
-import { CircleCheck, CircleX, Info, Loader, TriangleAlert, type IconNode, X } from "lucide";
-import type { JSX, ViewStyle } from "nsh";
-import { Overlay, platform, safeArea, signal, Text, token, View, windowSize } from "nsh";
-import { ToastManager, ToastStack, type ToastEntry } from "nsh/base";
+import { alpha, colors, finish, mono, radius, rounded, toneColor } from "@shadcn-nsh/theme";
+// Helpers the overlay demos share: a trigger, a field, the event log, and a toast host that
+// delegates to the library's `toast` / `Toaster`. Menu, popover and sheet still call
+// `createToaster` and resolve with the action label. Sounds stay out.
+import { type IconNode } from "lucide";
+import type { JSX } from "nsh";
+import { platform, signal, Text, token, View, windowSize } from "nsh";
 
 import {
   Button,
@@ -27,18 +16,9 @@ import {
 import { Input, type InputProps } from "@/packages/ui/input";
 import { Icon } from "@/packages/ui/lib/icons";
 import { density, sectionSurface } from "@/packages/ui/lib/surface";
-import { Progress } from "@/packages/ui/progress";
 import { Segmented, SegmentedItem, SegmentedList } from "@/packages/ui/segmented";
 import { Separator } from "@/packages/ui/separator";
-import { Spinner } from "@/packages/ui/spinner";
-import {
-  Toast,
-  toastActionLabel,
-  toastActionLook,
-  toastCloseLook,
-  toastText,
-  toastTitle,
-} from "@/packages/ui/toast";
+import { toast as raiseToast, Toaster as ToastHost } from "@/packages/ui/toast";
 
 import { Caption, DemoCard } from "../kit";
 
@@ -260,200 +240,46 @@ export interface ToastContent {
   duration?: number;
 }
 
-const kinds: Record<ToastKind, { icon: IconNode; tint: () => string }> = {
-  success: { icon: CircleCheck, tint: () => colors.up },
-  error: { icon: CircleX, tint: () => colors.destructive },
-  warning: { icon: TriangleAlert, tint: () => colors.warn },
-  info: { icon: Info, tint: () => colors.info },
-  loading: { icon: Loader, tint: () => colors.mutedForeground },
-};
-
-const progressTone = (kind: ToastKind | undefined): Tone => (kind === "success" ? "up" : "accent");
-
 /**
- * The gallery's toast host for one demo: `toast` shows one and resolves with the action that
- * closed it, `updateToast` changes it in place, `dismissToast` closes one or all, `Toaster` is
- * the stack at the bottom of the window.
+ * The gallery's promise-shaped host, on the library's one queue. `toast` resolves with the action
+ * that closed it, `updateToast` changes it in place, `dismissToast` closes one or all, `Toaster`
+ * is the library's stack. Menu, popover and sheet keep this shape; the toast scene calls the
+ * library itself.
  */
 export function createToaster() {
-  const manager = new ToastManager();
-  const shown = signal<ToastEntry[]>([]);
-  const expanded = signal(false);
-  const contents = signal<Record<string, ToastContent>>({});
-  const answers = new Map<string, (answer: string | null) => void>();
-  const chosen = new Map<string, string>();
-  const lingering = new Map<string, number>();
-  let ticking: ReturnType<typeof setInterval> | undefined;
-  let count = 0;
-  const limit = 3;
-  const tickMs = 50;
-
-  function sync() {
-    shown.set(manager.visible(limit));
-  }
-
-  function tick() {
-    if (!expanded()) {
-      for (const [id, left] of lingering) {
-        if (left - tickMs > 0) lingering.set(id, left - tickMs);
-        else {
-          lingering.delete(id);
-          manager.dismiss(id);
-        }
-      }
-    }
-    const advanced = manager.advance(expanded());
-    for (const gone of advanced.removed) {
-      answers.get(gone.id)?.(chosen.get(gone.id) ?? null);
-      answers.delete(gone.id);
-      chosen.delete(gone.id);
-      lingering.delete(gone.id);
-      const { [gone.id]: _dropped, ...rest } = contents();
-      contents.set(rest);
-    }
-    if (advanced.changed) sync();
-    if (manager.isEmpty() && ticking !== undefined) {
-      clearInterval(ticking);
-      ticking = undefined;
-    }
-  }
-
-  function run() {
-    sync();
-    ticking ??= setInterval(tick, tickMs);
-  }
-
   function toast(content: ToastContent): Promise<string | null> {
-    const id = content.id ?? `toast-${++count}`;
-    answers.get(id)?.(null);
-    lingering.delete(id);
-    contents.set({ ...contents(), [id]: { ...content, id } });
-    manager.push(id, id, { timeout: content.duration ?? 5000 });
-    run();
-    return new Promise((resolve) => answers.set(id, resolve));
+    return new Promise((resolve) => {
+      raiseToast(content.title, {
+        id: content.id,
+        description: content.description,
+        type: content.kind,
+        duration: content.duration ?? 5000,
+        progress: content.progress,
+        closeButton: content.close,
+        action: content.action ? { label: content.action } : undefined,
+        onDismiss: resolve,
+      });
+    });
   }
 
   function updateToast(id: string, change: Partial<ToastContent>): boolean {
-    const content = contents()[id];
-    if (!content) return false;
-    contents.set({ ...contents(), [id]: { ...content, ...change } });
-    if (change.duration !== undefined) {
-      if (Number.isFinite(change.duration)) lingering.set(id, change.duration);
-      else lingering.delete(id);
-    }
-    return true;
+    return raiseToast.update(id, {
+      ...(change.title !== undefined ? { title: change.title } : {}),
+      ...("description" in change ? { description: change.description ?? null } : {}),
+      ...(change.kind !== undefined ? { type: change.kind } : {}),
+      ...("action" in change ? { action: change.action ? { label: change.action } : null } : {}),
+      ...(change.close !== undefined ? { closeButton: change.close } : {}),
+      ...("progress" in change ? { progress: change.progress ?? null } : {}),
+      ...(change.duration !== undefined ? { duration: change.duration } : {}),
+    });
   }
 
   function dismissToast(id?: string) {
-    if (id === undefined) manager.dismissAll();
-    else manager.dismiss(id);
-    run();
-  }
-
-  function choose(id: string, action: string) {
-    chosen.set(id, action);
-    dismissToast(id);
-  }
-
-  function KindIcon(props: { kind: ToastKind }) {
-    const spec = () => kinds[props.kind];
-    return (
-      <If
-        when={props.kind === "loading"}
-        else={<Icon icon={spec().icon} size={18} tint={spec().tint()} />}
-      >
-        <Spinner size={18} tint={colors.mutedForeground} />
-      </If>
-    );
-  }
-
-  function Item(props: { entry: ToastEntry }) {
-    const content = () => contents()[props.entry.id] ?? { title: "" };
-    const kind = () => content().kind;
-    return (
-      <Toast
-        transitionStatus={props.entry.status}
-        accessibilityLabel={[content().title, content().description].filter(Boolean).join(". ")}
-        onDismissRequest={() => dismissToast(props.entry.id)}
-        class="transition-all duration-200 ease-out"
-        startingClass="opacity-0 translate-y-4"
-        endingClass="opacity-0 scale-95"
-        swipingClass="transition-none"
-      >
-        <If when={kind()}>
-          <KindIcon kind={kind()!} />
-        </If>
-        <View style={{ flex: 1, gap: 2, minWidth: 0 }}>
-          <Text style={toastTitle()}>{content().title}</Text>
-          <If when={content().description}>
-            <Text style={toastText()}>{content().description}</Text>
-          </If>
-          <If when={content().progress !== undefined}>
-            <Progress
-              value={(content().progress ?? 0) * 100}
-              height={4}
-              tone={progressTone(kind())}
-              accessibilityLabel="Progress"
-            />
-          </If>
-        </View>
-        <If when={content().action}>
-          <View
-            role="button"
-            accessibilityLabel={content().action}
-            onPress={() => choose(props.entry.id, content().action!)}
-            {...toastActionLook()}
-          >
-            <Text style={toastActionLabel()}>{content().action}</Text>
-          </View>
-        </If>
-        <If when={content().close}>
-          <View
-            role="button"
-            accessibilityLabel={content().close}
-            onPress={() => dismissToast(props.entry.id)}
-            {...toastCloseLook()}
-          >
-            <Icon icon={X} size={14} tint={colors.mutedForeground} />
-          </View>
-        </If>
-      </Toast>
-    );
+    raiseToast.dismiss(id);
   }
 
   function Toaster() {
-    const place = (): ViewStyle =>
-      wideWindow() ? { alignItems: "flex-end" } : { alignItems: "center" };
-    return (
-      <Overlay
-        style={{
-          pointerEvents: "box-none",
-          left: 0,
-          right: 0,
-          bottom: 0,
-          paddingHorizontal: 16,
-          paddingTop: 16,
-          paddingBottom: safeArea().bottom + 16,
-          ...place(),
-        }}
-      >
-        <ToastStack
-          placement={wideWindow() ? "bottomRight" : "bottomCenter"}
-          style={{ width: 340, maxWidth: "100%" }}
-          onExpandedChange={({ expanded: open }) => expanded.set(open)}
-          onCancel={() => {
-            const newest = shown()
-              .filter((entry) => entry.status !== "ending")
-              .at(-1);
-            if (newest) dismissToast(newest.id);
-          }}
-        >
-          <Each of={shown()} key={(entry) => entry.id}>
-            {(entry) => <Item entry={entry()} />}
-          </Each>
-        </ToastStack>
-      </Overlay>
-    );
+    return <ToastHost />;
   }
 
   return { toast, updateToast, dismissToast, Toaster };

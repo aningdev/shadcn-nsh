@@ -5,7 +5,7 @@ import { alpha, colors, toneColor, type Tone } from "@shadcn-nsh/theme";
 // the text a field carries (uppercased, read-only, disabled, a growing message).
 import { Check, CircleX, Eye, EyeOff, Lock, Mail, Search } from "lucide";
 import type { InputRef, JSX } from "nsh";
-import { cleanup, computed, createMotion, platform, signal, Text, View } from "nsh";
+import { cleanup, computed, platform, signal, Text, View } from "nsh";
 
 import { Button } from "@/packages/ui/button";
 import { Input } from "@/packages/ui/input";
@@ -17,6 +17,7 @@ import {
   InputGroupText,
 } from "@/packages/ui/input-group";
 import { Icon } from "@/packages/ui/lib/icons";
+import { createRejectShake } from "@/packages/ui/lib/motion";
 import { controlSize, narrowWindow } from "@/packages/ui/lib/surface";
 import { Progress } from "@/packages/ui/progress";
 
@@ -209,8 +210,11 @@ export function InputDemo() {
   );
   const creating = signal(false);
   const created = signal<string | null>(null);
-  // A submit the fields refuse shakes them, as upstream's form does.
-  const shake = createMotion();
+  // A submit the fields refuse shakes each one that failed. The name is an `Input`; the e-mail and
+  // the password sit in groups, which draw `nsh/base`'s field, so they shake through the same helper.
+  const refused = signal(0);
+  const emailShake = createRejectShake(() => (emailError() ? refused() : undefined));
+  const passwordShake = createRejectShake(() => (passwordError() ? refused() : undefined));
   // The timers live in signals: they are written after render, which a `let` would not allow.
   const pending = signal<ReturnType<typeof setTimeout> | undefined>(undefined);
   cleanup(() => clearTimeout(pending()));
@@ -220,7 +224,7 @@ export function InputDemo() {
     if (issues) {
       created.set(`${issues} ${issues === 1 ? "field needs" : "fields need"} attention`);
       last.set(`${issues} fields need attention`);
-      void shake.play("shake");
+      refused.update((n) => n + 1);
       return;
     }
     created.set(null);
@@ -297,13 +301,12 @@ export function InputDemo() {
 
   const shout = signal("");
   const notes = signal("");
-  const minHeight = signal(0);
   const grown = signal("–");
 
   return (
     <DemoPage title="Input" note={() => last()}>
       <DemoCard title="Account" subtitle="Each field checks itself as it is typed">
-        <View style={{ gap: 12, ...shake.style }}>
+        <View style={{ gap: 12 }}>
           <Field
             label="Name"
             error={nameError()}
@@ -317,6 +320,8 @@ export function InputDemo() {
               placeholder="Ada Lovelace"
               onChange={({ value }) => name.set(value)}
               onBlur={touch("name")}
+              invalid={!!nameError()}
+              reject={nameError() ? refused() : undefined}
             />
           </Field>
           <Field
@@ -325,53 +330,61 @@ export function InputDemo() {
             valid={emailPattern.test(email())}
             hint="ada@example.com"
           >
-            <InputGroup>
-              <InputGroupAddon align="inline-start">
-                <InputGroupText>
-                  <Icon icon={Mail} size={14} tint={colors.faint} />
-                </InputGroupText>
-              </InputGroupAddon>
-              <InputGroupInput
-                value={email()}
-                keyboardType="email-address"
-                autoCapitalize="none"
-                placeholder="ada@example.com"
-                accessibilityLabel="E-mail"
-                onChange={({ value }) => {
-                  email.set(value);
-                  touched.update((t) => ({ ...t, email: true }));
-                }}
-              />
-            </InputGroup>
-          </Field>
-          <View style={{ gap: 8 }}>
-            <Field label="Password" error={passwordError()} hint="8 characters or more">
+            <View style={emailShake.style()}>
               <InputGroup>
                 <InputGroupAddon align="inline-start">
                   <InputGroupText>
-                    <Icon icon={Lock} size={14} tint={colors.faint} />
+                    <Icon icon={Mail} size={14} tint={colors.faint} />
                   </InputGroupText>
                 </InputGroupAddon>
                 <InputGroupInput
-                  value={password()}
-                  masked={!reveal()}
-                  accessibilityLabel="Password"
-                  placeholder="At least 8 characters"
+                  value={email()}
+                  keyboardType="email-address"
+                  autoCapitalize="none"
+                  placeholder="ada@example.com"
+                  accessibilityLabel="E-mail"
                   onChange={({ value }) => {
-                    password.set(value);
-                    touched.update((t) => ({ ...t, password: true }));
+                    email.set(value);
+                    touched.update((t) => ({ ...t, email: true }));
                   }}
                 />
-                <InputGroupAddon align="inline-end">
-                  <InputGroupButton
-                    size="icon-xs"
-                    accessibilityLabel={reveal() ? "Hide the password" : "Show the password"}
-                    onPress={() => reveal.set(!reveal())}
-                  >
-                    <Icon icon={reveal() ? EyeOff : Eye} size={14} tint={colors.mutedForeground} />
-                  </InputGroupButton>
-                </InputGroupAddon>
               </InputGroup>
+            </View>
+          </Field>
+          <View style={{ gap: 8 }}>
+            <Field label="Password" error={passwordError()} hint="8 characters or more">
+              <View style={passwordShake.style()}>
+                <InputGroup>
+                  <InputGroupAddon align="inline-start">
+                    <InputGroupText>
+                      <Icon icon={Lock} size={14} tint={colors.faint} />
+                    </InputGroupText>
+                  </InputGroupAddon>
+                  <InputGroupInput
+                    value={password()}
+                    masked={!reveal()}
+                    accessibilityLabel="Password"
+                    placeholder="At least 8 characters"
+                    onChange={({ value }) => {
+                      password.set(value);
+                      touched.update((t) => ({ ...t, password: true }));
+                    }}
+                  />
+                  <InputGroupAddon align="inline-end">
+                    <InputGroupButton
+                      size="icon-xs"
+                      accessibilityLabel={reveal() ? "Hide the password" : "Show the password"}
+                      onPress={() => reveal.set(!reveal())}
+                    >
+                      <Icon
+                        icon={reveal() ? EyeOff : Eye}
+                        size={14}
+                        tint={colors.mutedForeground}
+                      />
+                    </InputGroupButton>
+                  </InputGroupAddon>
+                </InputGroup>
+              </View>
             </Field>
             <Strength password={password()} />
           </View>
@@ -736,11 +749,10 @@ export function InputDemo() {
           <Field label="Grows with its text" hint={grown()}>
             <Input
               multiline
+              grow
               placeholder="Type several lines"
-              style={{ minHeight: Math.max(minHeight(), 20) + 24 }}
               onContentSizeChange={(e) => {
                 grown.set(`${Math.round(e.size.width)}×${Math.round(e.size.height)}`);
-                minHeight.set(Math.min(e.size.height, 110));
               }}
             />
           </Field>

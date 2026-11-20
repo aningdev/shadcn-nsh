@@ -54,6 +54,25 @@ import {
 </Carousel>
 ```
 
+### Caption over a photo
+
+A slide that holds a photograph draws its caption itself: the theme has no text role that reads
+over an arbitrary picture, so the ink is `on-media` (white in every theme, both appearances) and
+the veil behind it is `scrim`. A text role such as `foreground` flips with the appearance and
+leaves the caption unreadable in one of them.
+
+```tsx
+<View style={{ backgroundImage: `url(${photo})`, justifyContent: "flex-end" }}>
+  <View
+    style={{
+      backgroundImage: `linear-gradient(to top, ${alpha(token("scrim"), 0.9)}, transparent)`,
+    }}
+  >
+    <Text style={{ color: colors.onMedia, fontWeight: "700" }}>{title}</Text>
+  </View>
+</View>
+```
+
 ### Arrows
 
 `CarouselPrevious` and `CarouselNext` draw their own icon and size; `side` and `glass` change the chrome.

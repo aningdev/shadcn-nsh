@@ -76,7 +76,7 @@
 | 字体     | `finishes.json` 的 `type`；`density` 与 `controlSize` 的字号已读它，其余 `fontSize`、`fontWeight` 还散在各组件里             | ⚠️ 数据 ✅，组件读取待第 1b 期                    |
 | 页面密度 | `finishes.json` 的 `size.density`，`surface.tsx` 的 `density` 读它，按 pointer / touch 两档                                  | ✅                                                |
 | 控件尺寸 | `finishes.json` 的 `size.control`，`surface.tsx` 的 `controlSize` 读它；terminal 档留在代码里                                | ✅                                                |
-| 动效     | `finishes.json` 的 `motion`，`theme.ts` 的 `motion` 读它：press、settle、control、move、enter                                | ✅                                                |
+| 动效     | `finishes.json` 的 `motion`，`theme.ts` 的 `motion` 读它：press、settle、control、move、enter、shake                         | ✅                                                |
 | 平台材质 | 组件没有用到 `glassEffect`、`glassTintColor`、`ios.backdropMaterial`、`macos.backdrop`、`windows.backdrop`、`android.ripple` | ❌                                                |
 | 主题选择 | `selectTheme(AppTheme)` 只能手动选；`AppTheme` 是 `{ id, label, theme, finishes }`                                           | ❌ 不会按平台自动选                               |
 
@@ -234,6 +234,7 @@ default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继
 | `move`           | 拇指、指示条的移动（弹簧）                      | 504，38                   | 同 default | 待核对                               | 约 200 ms（第 3 期）           |
 | `enter.duration` | 浮层出现的时长                                  | 420 ms                    | 约         | 约 400（待核对）                     | 约 200（待核对）               |
 | `enter.easing`   | 曲线名：`out-cubic`、`in-cubic`、`in-out-cubic` | out-cubic                 | —          | 待核对（emphasized）                 | 待核对（decelerate）           |
+| `shake.duration` | 拒绝值的横向抖动，对齐 `play("shake")`          | 500 ms                    | 同 default | 同 default                           | 同 default                     |
 
 `press`、`settle`、`control`、`move` 现在只能写弹簧（`{ stiffness, damping }`），`follow()` 与 `motion.move` 的调用形状不变，弹簧在每次起跳时读当前主题，所以先建的控件也跟着换。Fluent 基本只用时长加曲线（50–500 ms 八档）：第 3 期把角色扩成"弹簧或时长曲线"二选一（`{ spring }` / `{ timing }`），并把曲线名的白名单加到 decelerate、accelerate 等。`exit`、`enter` 的起点（从哪变来）同属第 3 期。
 
@@ -362,7 +363,7 @@ default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继
 - finish 增加 `material` 字段，`themed()` 负责翻译。
 - 用到 `glass`、`menu`、`card`、`raised` 的组件铺开平台 props。
 - 新增 `themes/native` 和 `apple` 主题。
-- 新增颜色 token：`on-brand-tint`（强调淡底上的字）、`inverse`、`inverse-foreground`，以及可能的 `inverse-brand`（snackbar 的操作按钮）。新增 finish：`dialog`、`tooltip`、`inverse`；先查清现在 dialog、tooltip、toast 借用的是哪个 finish，三个平台在这里本来就不同的才拆开。
+- 新增颜色 token：`on-brand-tint`（强调淡底上的字）、`inverse`、`inverse-foreground`，以及可能的 `inverse-brand`（snackbar 的操作按钮）。`on-media`（照片上的白字）和 `chart-foreground`（浅色图块上的深字）已经在 C 层，名字以 `theme-roles.md` 为准，这里不再另起。新增 finish：`dialog`、`tooltip`、`inverse`；先查清现在 dialog、tooltip、toast 借用的是哪个 finish，三个平台在这里本来就不同的才拆开。
 
 验收：
 

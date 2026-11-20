@@ -65,6 +65,20 @@ import { Plot, seriesColor, plotGrid } from "@/components/ui/plot";
 <PlotAxis placement="right" tickValues={[40, 48, 55]} labelStyle={plotAxisText()} />
 ```
 
+### A label on a tile
+
+A `Treemap` or `Bar` tile filled with a chart role takes two inks: a light tile reads a dark
+label, a dark one a light label. `nsh/base/plot` sets `data-dark` on a label whose cell's colour
+is dark, so `labelClass` names both:
+
+```tsx
+<Treemap labelClass="text-chart-foreground data-dark:text-on-media" … />
+```
+
+`chart-foreground` stays out of the appearance (dark in light and dark alike); `on-media` is the
+white the theme keeps for a dark ground. Keep the scale's midpoint opaque: a fill mixed with the
+background reads as a dark cell, and every label then wears the light ink, pale tiles included.
+
 ## API
 
 Uses `plotCrossLine` and `plotDotClass` by default. Every prop of [`nsh/base/plot` Plot](https://nsh.dev/elements/plot) passes through.

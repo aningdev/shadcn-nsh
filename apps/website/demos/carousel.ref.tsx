@@ -3,7 +3,7 @@
 // `CarouselDot`) spread on `nsh/base`'s carousel parts, the way the official example
 // (`references/nsh/website/demos/el-carousel.tsx`) writes it. It differs from the component page
 // only in the parts it names.
-import { alpha } from "@shadcn-nsh/theme";
+import { alpha, colors } from "@shadcn-nsh/theme";
 import { ChevronLeft } from "lucide";
 import { Image, mount, signal, Text, token, View } from "nsh";
 import {
@@ -141,10 +141,10 @@ function App() {
                     backgroundImage: `linear-gradient(180deg, transparent 40%, ${token("scrim")} 100%)`,
                   }}
                 />
-                <Text style={{ fontSize: 20, fontWeight: "700", color: ui().caption }}>
+                <Text style={{ fontSize: 20, fontWeight: "700", color: colors.onMedia }}>
                   {shot.name}
                 </Text>
-                <Text style={{ fontSize: 13, color: alpha(ui().caption, 0.82) }}>
+                <Text style={{ fontSize: 13, color: alpha(colors.onMedia, 0.82) }}>
                   {shot.detail}
                 </Text>
               </CarouselItem>

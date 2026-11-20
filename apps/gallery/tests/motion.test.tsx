@@ -34,6 +34,7 @@ test("press, hover, chevrons, springs and the progress loop use the documented m
   expect(classes).toContain("duration-200");
   expect(classes).toContain("duration-150");
   expect(classes).toContain("duration-100");
+  expect(find(app.texts(), "shake=")).toBe("500");
   expect(find(app.texts(), "sweep=")).toBe("800|infinite|alternate|true");
 });
 
@@ -55,5 +56,6 @@ test("reduced motion zeroes durations and keeps motion-reduce classes", async ()
   expect(
     classes.split(" || ").every((part) => part.includes("motion-reduce:transition-none")),
   ).toBe(true);
+  expect(find(app.texts(), "shake=")).toBe("500");
   expect(find(app.texts(), "sweep=")).toBe("800|infinite|alternate|true");
 });

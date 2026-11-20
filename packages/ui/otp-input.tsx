@@ -1,11 +1,12 @@
 // An OTP input: the cells (`otpCells`, `otpCellLook`) and the `OtpInput` that wears them.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { colors, finish, terminal, type Tone, toneColor, toneTint } from "@shadcn-nsh/theme";
-import type { ViewStyle } from "nsh";
+import type { StyleProp, ViewStyle } from "nsh";
 import { platform, split } from "nsh";
 import { OtpInput as BaseOtpInput, type OtpInputProps as BaseOtpInputProps } from "nsh/base";
 
 import { edgeClass } from "./input";
+import { createRejectShake } from "./lib/motion";
 import { type Live, read } from "./lib/utils";
 
 // @port look/field.tsx
@@ -68,6 +69,11 @@ export type OtpInputProps = BaseOtpInputProps & {
   cells?: string;
   /** A verdict: every cell edged and tinted in its tone. */
   tone?: Live<Tone | undefined>;
+  /**
+   * Shakes the cells each time this becomes a new number (a code the check refused). The tone
+   * only recolours them. Less motion plays nothing.
+   */
+  reject?: number;
 };
 
 /**
@@ -83,15 +89,25 @@ export function OtpInput(props: OtpInputProps) {
     "groupClass",
     "cells",
     "tone",
+    "reject",
+    "style",
     "cellClass",
     "cellStyle",
     "caretClass",
     "caretStyle",
   ]);
   const look = otpCellLook({ cells: props.cells, tone: props.tone });
+  const shake = createRejectShake(() => props.reject);
+  // An idle field passes no style of its own: an empty transform would be a different box to the
+  // look spread on `nsh/base` in the reference page.
+  const fieldStyle = (): StyleProp<ViewStyle> | undefined => {
+    const moved = shake.style();
+    return props.style || moved ? [props.style ?? null, moved] : undefined;
+  };
   return (
     <BaseOtpInput
       {...rest}
+      style={fieldStyle()}
       class={props.class ? `${fit} ${props.class}` : fit}
       groupClass={props.groupClass ? `${fit} ${props.groupClass}` : fit}
       cellClass={props.cellClass ? `${look.cellClass} ${props.cellClass}` : look.cellClass}

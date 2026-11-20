@@ -172,6 +172,9 @@ const themeLevel = (light: ReturnType<typeof palette>): Record<string, string> =
   "brand-fill": "var(--primary)",
   "on-brand": "var(--primary-foreground)",
   scrim: oklchColor(0, 0, 0, 0.5),
+  // White ink on a photograph, and the dark ink a light chart tile keeps. Neither flips.
+  "on-media": oklchColor(1, 0, 0),
+  "chart-foreground": light.foreground,
   // The window buttons are the system's on macOS; shadcn has no such token, so close takes its red
   // and the other two the grey ramp.
   "window-close": light.destructive,

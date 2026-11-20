@@ -20,3 +20,12 @@ test("text and muted are stable color tokens", async () => {
   expect(find(app.texts(), "text=")).toMatch(/^#[0-9a-f]{6,8}$/i);
   expect(find(app.texts(), "muted=")).toMatch(/^#[0-9a-f]{6,8}$/i);
 });
+
+test("ink on media is white in both appearances, and a chart's ink does not move", async () => {
+  const light = await open("./theme.fixture.tsx", { colorScheme: "light" });
+  const dark = await open("./theme.fixture.tsx", { colorScheme: "dark" });
+  expect(find(light.texts(), "on-media=")).toBe("#ffffffff");
+  expect(find(dark.texts(), "on-media=")).toBe("#ffffffff");
+  expect(find(light.texts(), "chart-ink=")).toMatch(/^#[0-9a-f]{6,8}$/i);
+  expect(find(light.texts(), "chart-ink=")).toBe(find(dark.texts(), "chart-ink="));
+});

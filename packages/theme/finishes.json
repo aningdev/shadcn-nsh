@@ -208,6 +208,9 @@
     "enter": {
       "duration": 420,
       "easing": "out-cubic"
+    },
+    "shake": {
+      "duration": 500
     }
   },
   "icon": {

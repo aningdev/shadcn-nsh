@@ -9,6 +9,8 @@
       "brand-fill": "var(--primary)",
       "on-brand": "var(--primary-foreground)",
       "scrim": "oklch(0 0 0 / 0.5)",
+      "on-media": "oklch(1 0 0)",
+      "chart-foreground": "oklch(0.145 0 0)",
       "window-close": "oklch(0.577 0.245 27.325)",
       "window-minimize": "oklch(0.708 0 0)",
       "window-zoom": "oklch(0.371 0 0)",

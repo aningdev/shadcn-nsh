@@ -280,8 +280,7 @@ const clamp = (value: number, bound: number) => Math.max(-bound, Math.min(bound,
 
 /**
  * A full-screen viewer for an image a `TextView` reports: the library's dialog as a page
- * (`dialogPage`), with the near-black lightbox on the page's own colors (no theme role for ink
- * over a photo).
+ * (`dialogPage`), the lightbox on the page's own background.
  */
 function ImageViewer(props: { image: TextViewImage | null; onClose: () => void }) {
   const shown = signal<TextViewImage | null>(null);

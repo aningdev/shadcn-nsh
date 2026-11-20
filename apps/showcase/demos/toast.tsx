@@ -1,7 +1,8 @@
 import { colors } from "@shadcn-nsh/theme";
 // Toast: the official gallery's scene (`references/nsh/examples/gallery/demos/Toasts.tsx`).
-// Kinds, a loading toast that becomes its result, an undo, and a stack. The host is
-// `overlays-shared`'s, on `nsh/base`'s manager: the library's `Toast` is the banner, not the queue.
+// Kinds, a loading toast that becomes its result, an undo, and a stack. `createToaster` is a
+// thin promise over the library's `toast` / `Toaster` (sonner returns an id; this scene resolves
+// with the action label). Sounds stay out.
 import { Archive, ArrowUp } from "lucide";
 import { LayoutAnimation, signal, Text, View } from "nsh";
 

@@ -4,11 +4,12 @@ import { colors, toneColor } from "@shadcn-nsh/theme";
 // held to its stock with totals that follow, and the awkward units a number carries.
 import { Check } from "lucide";
 import type { JSX } from "nsh";
-import { computed, createMotion, effect, platform, signal, Text, View } from "nsh";
+import { computed, platform, signal, Text, View } from "nsh";
 
 import { Badge } from "@/packages/ui/badge";
 import { Button } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
+import { Roll } from "@/packages/ui/lib/motion";
 import { controlSize, narrowWindow, RowLabel } from "@/packages/ui/lib/surface";
 import { NumberInput } from "@/packages/ui/number-input";
 import { Progress } from "@/packages/ui/progress";
@@ -51,44 +52,7 @@ const fieldWidth = () => (narrowWindow() ? 116 : 104);
 /** The transfer's field: a currency sign before the field and a unit after it leave the number its own room. */
 const transferWidth = () => (narrowWindow() ? 150 : 148);
 
-/**
- * An amount that rolls to its new value, as upstream's `Ticker` does
- * (`references/nsh/examples/gallery/demos/Controls.tsx:102`): up when it
- * grows, down when it shrinks, easing into place. A motion of its own per
- * amount, its channels landing at rest (no offset, opaque) whatever ran before.
- */
-function Roll(props: { amount: number; total?: boolean }) {
-  const motion = createMotion({ initial: { translateY: 0, opacity: 1 } });
-  const shown = signal(props.amount);
-  effect(() => {
-    const next = props.amount;
-    const at = shown();
-    if (next === at) return;
-    shown.set(next);
-    const away = next > at ? 10 : -10;
-    motion.translateY.set(away);
-    motion.opacity.set(0);
-    void motion.play({
-      keyframes: { translateY: [away, 0], opacity: [0, 1] },
-      spring: { stiffness: 260, damping: 26 },
-    });
-  });
-  return (
-    <Text
-      style={{
-        ...motion.style,
-        fontSize: controlSize.label,
-        fontWeight: props.total ? "600" : "400",
-        color: colors.foreground,
-        fontVariant: ["tabular-nums"],
-      }}
-    >
-      {props.amount === 0 ? "Free" : money(props.amount)}
-    </Text>
-  );
-}
-
-/** A bill's line: what it is on the left, what it costs on the right. */
+/** A bill's line: what it is on the left, what it costs on the right. The amount rolls (`Roll`). */
 function BillLine(props: { label: string; amount: number; total?: boolean }) {
   return (
     <View style={{ flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
@@ -101,7 +65,17 @@ function BillLine(props: { label: string; amount: number; total?: boolean }) {
       >
         {props.label}
       </Text>
-      <Roll amount={props.amount} total={props.total} />
+      <Roll
+        value={props.amount}
+        style={{
+          fontSize: controlSize.label,
+          fontWeight: props.total ? "600" : "400",
+          color: colors.foreground,
+          fontVariant: ["tabular-nums"],
+        }}
+      >
+        {props.amount === 0 ? "Free" : money(props.amount)}
+      </Roll>
     </View>
   );
 }
@@ -251,7 +225,9 @@ export function NumberInputDemo() {
                     />
                   </View>
                   <View style={{ width: platform.desktop ? 64 : 70, alignItems: "flex-end" }}>
-                    <Roll amount={item().price * (n() ?? 0)} />
+                    <Roll value={item().price * (n() ?? 0)}>
+                      {money(item().price * (n() ?? 0))}
+                    </Roll>
                   </View>
                 </View>
               );

@@ -5,7 +5,7 @@ import { mount, signal, Text, View } from "nsh";
 import { Button, Input } from "nsh/base";
 
 import { buttonLabel, buttonLook } from "@/packages/ui/button";
-import { fieldText, inputLook } from "@/packages/ui/input";
+import { inputLook, multilineFieldPad } from "@/packages/ui/input";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { buttonStyle, desktop, Panel, Split, ui } from "./stage";
@@ -13,15 +13,6 @@ import { buttonStyle, desktop, Panel, Split, ui } from "./stage";
 /** What the notes start with: long enough that their box is taller than the field's least. */
 const NOTE =
   "Bring the signed copy on Friday, and the notebook from the drawer beside it so the two can be compared.";
-
-/** A padding the look writes in points (it writes numbers). */
-const room = (value: string | number | undefined) => (typeof value === "number" ? value : 0);
-
-/** The room the look keeps inside the box: its two edges and the padding above and below. */
-function fieldPad(): number {
-  const text = fieldText({ multiline: true });
-  return room(text.paddingTop) + room(text.paddingBottom) + 2;
-}
 
 /** A label above its field, and what describes it below. */
 function Field(props: { label: string; children: JSX.Element; after?: JSX.Element }) {
@@ -113,7 +104,7 @@ function App() {
                 // The height rides in the look's own `style`: a second one over the spread is
                 // lost when the theme switches and the box clips its text.
                 style: () => ({
-                  height: notesContent() === 0 ? undefined : notesContent() + fieldPad(),
+                  height: notesContent() === 0 ? undefined : notesContent() + multilineFieldPad(),
                 }),
               })}
             />

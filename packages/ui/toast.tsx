@@ -1,12 +1,30 @@
 // A toast: the look (`toastLook` and its companions) at the top, and the `Toast` that wears it below.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { alpha, colors, finish, focusRing, hovered, radius, rounded } from "@shadcn-nsh/theme";
+import {
+  alpha,
+  colors,
+  finish,
+  focusRing,
+  hovered,
+  radius,
+  rounded,
+  terminal,
+} from "@shadcn-nsh/theme";
+import { CircleCheck, CircleX, Info, TriangleAlert, X, type IconNode } from "lucide";
 import type { JSX, TextStyle, ViewStyle } from "nsh";
-import { platform, split, Text, View } from "nsh";
-import { Toast as BaseToast, type ToastProps as BaseToastProps } from "nsh/base";
+import { Overlay, platform, safeArea, signal, split, Text, View, windowSize } from "nsh";
+import {
+  Toast as BaseToast,
+  ToastManager,
+  ToastStack,
+  type ToastEntry,
+  type ToastProps as BaseToastProps,
+} from "nsh/base";
 
-import { buttonLabel, buttonLook, type ButtonLookOptions } from "./button";
+import { Button, buttonLabel, buttonLook, type ButtonLookOptions } from "./button";
+import { Icon } from "./lib/icons";
 import { pressSink, pressTransition } from "./lib/press";
+import { Spinner } from "./spinner";
 
 // @port look/overlay.ts
 const pointer = platform.desktop;
@@ -116,5 +134,367 @@ export function Toast(props: ToastProps) {
         </View>
       )}
     </BaseToast>
+  );
+}
+
+/** What a toast is about. Sonner's names: `success`, `error`, `warning`, `info`, `loading`. */
+export type ToastType = "success" | "error" | "warning" | "info" | "loading";
+
+/** A button on a toast. `label` is what `onDismiss` hears when this button closes it. */
+export interface ToastAction {
+  label: string;
+  onClick?: () => void;
+}
+
+/**
+ * What `toast` takes, after sonner: an id to replace, a description, how long it stays
+ * (`Infinity` until dismissed), a type, an action, a close button. `progress` is the bar under
+ * the text (0 to 1); sonner has no progress, and the upload scene needs one.
+ */
+export interface ToastOptions {
+  id?: string;
+  description?: string;
+  /** Milliseconds it stays. Omitted is 4000, sonner's default. `Infinity` stays until dismissed. */
+  duration?: number;
+  type?: ToastType;
+  action?: ToastAction;
+  /** `true` is a close button labelled "Close"; a string is that button's accessible label. */
+  closeButton?: boolean | string;
+  /** A bar under the text, 0 to 1. `null` clears it. */
+  progress?: number | null;
+  /** Called once the toast is gone. The action's label when that closed it, otherwise `null`. */
+  onDismiss?: (reason: string | null) => void;
+}
+
+/** A change `toast.update` applies in place. `null` clears `description`, `action` or `progress`. */
+export type ToastUpdate = {
+  title?: string;
+  description?: string | null;
+  type?: ToastType;
+  action?: ToastAction | null;
+  closeButton?: boolean | string;
+  progress?: number | null;
+  duration?: number;
+};
+
+/** One moment of the queue, for a log. `expanded` is the stack opening or closing. */
+export interface ToastEvent {
+  phase: "push" | "presented" | "ending" | "removed" | "expanded";
+  id?: string;
+  expanded?: boolean;
+}
+
+/** What one toast shows. The manager holds the id; this holds the words. */
+interface ToastRecord {
+  title: string;
+  description?: string;
+  type?: ToastType;
+  action?: ToastAction;
+  closeButton?: boolean | string;
+  progress?: number;
+  onDismiss?: (reason: string | null) => void;
+}
+
+const kinds: Record<Exclude<ToastType, "loading">, { icon: IconNode; tint: () => string }> = {
+  success: { icon: CircleCheck, tint: () => colors.up },
+  error: { icon: CircleX, tint: () => colors.destructive },
+  warning: { icon: TriangleAlert, tint: () => colors.warn },
+  info: { icon: Info, tint: () => colors.info },
+};
+
+/** How many show at once, and how often the lifecycle advances. */
+const LIMIT = 3;
+const TICK = 50;
+/** Sonner's default: four seconds, then it leaves. */
+const DEFAULT_DURATION = 4000;
+
+const manager = new ToastManager(terminal ? { exitDuration: 0 } : undefined);
+const shown = signal<ToastEntry[]>([]);
+const expanded = signal(false);
+const records = signal<Record<string, ToastRecord>>({});
+const reasons = new Map<string, string>();
+/** Time left for a toast whose duration changed after it was pushed. The manager keeps the
+ * timeout from the push, so a new finite duration counts here. A finite timeout from the push
+ * itself is not cleared. */
+const lingering = new Map<string, number>();
+const listeners = new Set<(event: ToastEvent) => void>();
+let ticking: ReturnType<typeof setInterval> | undefined;
+let count = 0;
+
+function emit(event: ToastEvent) {
+  for (const listener of listeners) listener(event);
+}
+
+function sync() {
+  shown.set(manager.visible(LIMIT));
+}
+
+function tick() {
+  if (!expanded()) {
+    for (const [id, left] of lingering) {
+      if (left - TICK > 0) lingering.set(id, left - TICK);
+      else {
+        lingering.delete(id);
+        manager.dismiss(id);
+      }
+    }
+  }
+  const advanced = manager.advance(expanded());
+  for (const id of advanced.presented) emit({ phase: "presented", id });
+  for (const id of advanced.ending) emit({ phase: "ending", id });
+  for (const gone of advanced.removed) {
+    const reason = reasons.get(gone.id) ?? null;
+    const record = records()[gone.id];
+    reasons.delete(gone.id);
+    lingering.delete(gone.id);
+    const { [gone.id]: _dropped, ...rest } = records();
+    records.set(rest);
+    record?.onDismiss?.(reason);
+    emit({ phase: "removed", id: gone.id });
+  }
+  if (advanced.changed) sync();
+  if (manager.isEmpty() && ticking !== undefined) {
+    clearInterval(ticking);
+    ticking = undefined;
+  }
+}
+
+function run() {
+  sync();
+  ticking ??= setInterval(tick, TICK);
+}
+
+function timeoutOf(duration: number | undefined): number | undefined {
+  const value = duration ?? DEFAULT_DURATION;
+  return Number.isFinite(value) ? value : undefined;
+}
+
+function remember(id: string, record: ToastRecord) {
+  records.set({ ...records(), [id]: record });
+}
+
+/** Hears every push, present, end, removal and expand. Returns the unsubscribe. */
+export function onToastEvent(listener: (event: ToastEvent) => void): () => void {
+  listeners.add(listener);
+  return () => listeners.delete(listener);
+}
+
+function raise(title: string, options?: ToastOptions): string {
+  const id = options?.id ?? `toast-${++count}`;
+  const previous = records()[id];
+  if (previous) {
+    reasons.delete(id);
+    lingering.delete(id);
+    previous.onDismiss?.(null);
+  }
+  if (terminal) for (const entry of shown()) if (entry.id !== id) manager.dismiss(entry.id);
+  const record: ToastRecord = { title, onDismiss: options?.onDismiss };
+  if (options?.description) record.description = options.description;
+  if (options?.type) record.type = options.type;
+  if (options?.action) record.action = options.action;
+  if (options?.closeButton) record.closeButton = options.closeButton;
+  if (typeof options?.progress === "number") record.progress = options.progress;
+  remember(id, record);
+  manager.push(id, id, { timeout: timeoutOf(options?.duration) });
+  emit({ phase: "push", id });
+  run();
+  return id;
+}
+
+/**
+ * Shows a toast and returns its id (`toast-1`, `toast-2`, …, or `options.id`). The same id
+ * replaces the toast that held it. `toast.success` and the other types set `type`.
+ */
+export function toast(title: string, options?: ToastOptions): string {
+  return raise(title, options);
+}
+
+toast.success = (title: string, options?: ToastOptions) =>
+  raise(title, { ...options, type: "success" });
+toast.error = (title: string, options?: ToastOptions) =>
+  raise(title, { ...options, type: "error" });
+toast.warning = (title: string, options?: ToastOptions) =>
+  raise(title, { ...options, type: "warning" });
+toast.info = (title: string, options?: ToastOptions) => raise(title, { ...options, type: "info" });
+toast.loading = (title: string, options?: ToastOptions) =>
+  raise(title, { ...options, type: "loading" });
+
+/**
+ * Changes the toast `id` where it is, without showing it again (a loading note becoming its
+ * result, a bar moving). A finite `duration` starts a new wait beside the one the push set.
+ * False when no such toast is showing.
+ */
+toast.update = (id: string, change: ToastUpdate): boolean => {
+  const record = records()[id];
+  if (!record) return false;
+  const next: ToastRecord = { ...record };
+  if (change.title !== undefined) next.title = change.title;
+  if ("description" in change) {
+    if (change.description) next.description = change.description;
+    else delete next.description;
+  }
+  if ("type" in change) next.type = change.type;
+  if ("action" in change) {
+    if (change.action) next.action = change.action;
+    else delete next.action;
+  }
+  if ("closeButton" in change) next.closeButton = change.closeButton;
+  if ("progress" in change) {
+    if (change.progress === null || change.progress === undefined) delete next.progress;
+    else next.progress = change.progress;
+  }
+  remember(id, next);
+  if (change.duration !== undefined) {
+    if (Number.isFinite(change.duration)) lingering.set(id, change.duration);
+    else lingering.delete(id);
+  }
+  return true;
+};
+
+/** Closes the toast `id`, or every toast when `id` is omitted. */
+toast.dismiss = (id?: string) => {
+  if (id === undefined) manager.dismissAll();
+  else manager.dismiss(id);
+  run();
+};
+
+function choose(id: string, label: string) {
+  records()[id]?.action?.onClick?.();
+  reasons.set(id, label);
+  toast.dismiss(id);
+}
+
+function closeLabel(value: boolean | string | undefined): string | undefined {
+  if (!value) return undefined;
+  return typeof value === "string" ? value : "Close";
+}
+
+/** The mark of a type: a spinner while loading, a lucide glyph otherwise. */
+function KindMark(props: { type: ToastType }) {
+  if (props.type === "loading") return <Spinner size={18} tint={colors.mutedForeground} />;
+  const spec = kinds[props.type];
+  return <Icon icon={spec.icon} size={18} tint={spec.tint()} />;
+}
+
+/** One toast in the stack. */
+function ToastItem(props: { entry: ToastEntry }) {
+  const record = (): ToastRecord => records()[props.entry.id] ?? { title: "" };
+  const type = () => record().type;
+  const progress = () => record().progress;
+  const action = () => record().action;
+  const close = () => closeLabel(record().closeButton);
+  return (
+    <Toast
+      transitionStatus={props.entry.status}
+      accessibilityLabel={[record().title, record().description].filter(Boolean).join(". ")}
+      onDismissRequest={() => toast.dismiss(props.entry.id)}
+      class="transition-all duration-200 ease-out"
+      startingClass="opacity-0 translate-y-4"
+      endingClass="opacity-0 scale-95"
+      swipingClass="transition-none"
+    >
+      <If when={type()}>
+        <KindMark type={type()!} />
+      </If>
+      <View style={toastTextColumn}>
+        <Text style={toastTitle()}>{record().title}</Text>
+        <If when={record().description}>
+          <Text style={toastText()}>{record().description}</Text>
+        </If>
+        <If when={progress() !== undefined}>
+          <View
+            style={{
+              height: 4,
+              marginTop: 6,
+              borderRadius: 2,
+              overflow: "hidden",
+              backgroundColor: colors.track,
+            }}
+          >
+            <View
+              style={{
+                height: 4,
+                borderRadius: 2,
+                backgroundColor: type() === "success" ? colors.up : colors.brandFill,
+                transformOrigin: "left",
+                transform: [{ scaleX: Math.max(0, Math.min(1, progress() ?? 0)) }],
+              }}
+            />
+          </View>
+        </If>
+      </View>
+      <If when={action()}>
+        <Button
+          {...toastActionLook()}
+          onPress={() => choose(props.entry.id, action()!.label)}
+          accessibilityLabel={action()!.label}
+        >
+          <Text style={toastActionLabel()}>{action()!.label}</Text>
+        </Button>
+      </If>
+      <If when={close()}>
+        <View
+          role="button"
+          accessibilityLabel={close()}
+          onPress={() => toast.dismiss(props.entry.id)}
+          {...toastCloseLook()}
+        >
+          <Icon icon={X} size={14} tint={colors.mutedForeground} />
+        </View>
+      </If>
+    </Toast>
+  );
+}
+
+/** Where the toasts show: the foot of the window, bottom-right when it is at least 700 points wide. */
+export function Toaster() {
+  const wide = () => windowSize().width >= 700;
+  const newest = () =>
+    shown()
+      .filter((entry) => entry.status !== "ending")
+      .at(-1);
+  if (terminal) {
+    return (
+      <ToastStack
+        onCancel={() => {
+          const id = newest()?.id;
+          if (id) toast.dismiss(id);
+        }}
+      >
+        <Each of={shown()} key={(entry) => entry.id}>
+          {(entry) => <ToastItem entry={entry()} />}
+        </Each>
+      </ToastStack>
+    );
+  }
+  return (
+    <Overlay
+      style={{
+        pointerEvents: "box-none",
+        left: 0,
+        right: 0,
+        bottom: 0,
+        padding: 16,
+        paddingBottom: safeArea().bottom + 16,
+        alignItems: wide() ? "flex-end" : "center",
+      }}
+    >
+      <ToastStack
+        placement={wide() ? "bottomRight" : "bottomCenter"}
+        style={{ width: 340, maxWidth: "100%" }}
+        onExpandedChange={({ expanded: open }) => {
+          expanded.set(open);
+          emit({ phase: "expanded", expanded: open });
+        }}
+        onCancel={() => {
+          const id = newest()?.id;
+          if (id) toast.dismiss(id);
+        }}
+      >
+        <Each of={shown()} key={(entry) => entry.id}>
+          {(entry) => <ToastItem entry={entry()} />}
+        </Each>
+      </ToastStack>
+    </Overlay>
   );
 }

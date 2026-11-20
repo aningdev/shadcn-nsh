@@ -209,7 +209,7 @@ function Fonts() {
           <ShadowPhoto
             photo="day"
             label="Drop shadow"
-            color="#ffffff"
+            color={colors.onMedia}
             shadow="0 1px 8px rgba(5,25,45,0.75)"
           />
         </View>
@@ -218,9 +218,8 @@ function Fonts() {
   );
 }
 
-/** A line of text over a photo, where a text shadow does its work. The ink is the upstream
- * scene's own (the photos are dark, the glow is the photo's light): a color the theme has no
- * role for. */
+/** A line of text over a photo, where a text shadow does its work. The drop shadow's ink is the
+ * theme's `onMedia`; the glow's warm ink and both shadows are the photos' own light. */
 function ShadowPhoto(props: { photo: PhotoName; label: string; color: string; shadow: string }) {
   return (
     <View

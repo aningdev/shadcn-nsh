@@ -273,9 +273,9 @@ export const ui = () => ({
   warn: colors.warn,
   danger: colors.destructive,
   violet: token("violet"),
-  // The ink of content drawn over a photograph (the carousel's caption): the theme has no text
-  // role that reads over any picture, and the knob's white (a near-white in dark) does.
-  caption: colors.knob,
+  // The ink of content drawn over a photograph, a caption or a chart's tile: `on-media`, the one
+  // text role the theme keeps out of the appearance (a carousel's caption, a chart's label).
+  onMedia: colors.onMedia,
   card: { ...sectionSurface(), backgroundColor: colors.card },
   row: { ...sectionSurface(), backgroundColor: colors.card },
   // Upstream's `ui().inset` is a well's colors, not a well: no corners, so a demo that has its

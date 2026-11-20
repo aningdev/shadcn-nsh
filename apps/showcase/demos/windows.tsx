@@ -59,12 +59,12 @@ import { Segmented, SegmentedItem, SegmentedList } from "@/packages/ui/segmented
 import { Stat } from "@/packages/ui/stat";
 import { Status } from "@/packages/ui/status";
 import { Switch } from "@/packages/ui/switch";
+import { toast, Toaster } from "@/packages/ui/toast";
 
 import { DemoPage } from "../kit";
 import { Tip } from "./actions-shared";
 import { Appear, IconTile } from "./apps-shared";
 import { CaptionLine, DeskCard } from "./desktop-shared";
-import { createToaster } from "./overlays-shared";
 
 /** Windows of the app's own: macOS, Windows and Linux. */
 const supported = isAvailable && platform.desktop;
@@ -74,8 +74,6 @@ const pointer = platform.desktop;
 const size = pointer
   ? { body: 13, note: 12, row: 48, tile: 30 }
   : { body: 15, note: 13, row: 60, tile: 36 };
-
-const { toast, Toaster } = createToaster();
 
 // --- The document every window shares --------------------------------------------------------
 
@@ -149,11 +147,7 @@ function exportDocument() {
     }
     clearInterval(timer);
     doc.exporting.set(null);
-    void toast({
-      title: "Exported",
-      description: `${doc.title() || "Untitled"}.pdf`,
-      kind: "success",
-    });
+    toast("Exported", { description: `${doc.title() || "Untitled"}.pdf`, type: "success" });
   }, 60);
 }
 
@@ -532,12 +526,11 @@ function ThisWindow() {
             style={{ flex: 1 }}
             onPress={() => {
               // It shows only while another app is in front.
-              void toast({
-                title: "Switch to another app",
+              toast("Switch to another app", {
                 description: mac
                   ? "The Dock icon bounces in 3 seconds"
                   : "The taskbar button flashes in 3 seconds",
-                kind: "info",
+                type: "info",
               });
               later(3000, () => win.requestAttention());
             }}

@@ -710,7 +710,7 @@ function CellsScene() {
               stagger={0.6}
               inactiveOpacity={0.4}
               label={(d: Month) => (d.ret < 0 ? `−${(-d.ret).toFixed(1)}` : d.ret.toFixed(1))}
-              labelClass="text-black/70 data-dark:text-white/90"
+              labelClass="text-chart-foreground/70 data-dark:text-on-media/90"
               labelStyle={{ fontSize: 10, ...num }}
               hoverCellClass="rounded-[4px]"
               hoverCellStyle={ring()}
@@ -1827,7 +1827,10 @@ function TreemapScene() {
               ? {
                   type: "diverging" as const,
                   domain: [-3, 3],
-                  range: [ui().down, alpha(ui().text, 0.1), ui().up],
+                  // An opaque midpoint (`line`), as the heatmap's ramp: a tile mixed with the
+                  // background reads as a dark tile to `nsh/base`, which would ink its label
+                  // `data-dark:` (light) even where the tile is pale.
+                  range: [ui().down, ui().line, ui().up],
                 }
               : {
                   type: "ordinal" as const,
@@ -1871,7 +1874,7 @@ function TreemapScene() {
             label={(d: Node) => d.name}
             valueLabel={(d: Node, value: number) => (d.chg != null ? pct(d.chg) : `$${value}k`)}
             labelPlacement={chart() === "market" ? "center" : "start"}
-            labelClass="text-foreground data-dark:text-white p-1.5"
+            labelClass="text-chart-foreground data-dark:text-on-media p-1.5"
             labelStyle={{ fontSize: 11, fontWeight: 600 }}
             valueLabelStyle={{ fontSize: 10, fontWeight: 400, opacity: 0.85, ...num }}
             groupLabel="name"

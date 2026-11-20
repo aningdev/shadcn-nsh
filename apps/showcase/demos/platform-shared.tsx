@@ -1,16 +1,14 @@
 // The Platform batch's shared bits (its files alone): the gallery's card with a trailing slot, a
-// figure, a caption, a row, a legend, an icon tile, the action row its scenes are made of, and one
-// toast host (#85: the library has no `toast()` API yet).
+// figure, a caption, a row, a legend, an icon tile and the action row its scenes are made of.
 // They are rebuilt here rather than reused from another batch's shared file, so this batch owns
 // what it draws. Colors come from the theme only, never a literal.
 import { alpha, colors, mono, toneColor, type Tone } from "@shadcn-nsh/theme";
 import { ChevronRight, type IconNode } from "lucide";
 import type { JSX, TextStyle } from "nsh";
-import { cleanup, Overlay, signal, Text, View } from "nsh";
+import { Text, View } from "nsh";
 
 import { Icon } from "@/packages/ui/lib/icons";
 import { density, sectionSurface } from "@/packages/ui/lib/surface";
-import { Toast } from "@/packages/ui/toast";
 
 /** A card of the gallery's shape: a title and a quieter subtitle, a slot on the trailing edge of
  * the head (a badge, a control), then the scene. `kit`'s `DemoCard` has no trailing slot. */
@@ -210,52 +208,6 @@ export function monoText(size = 12, color: string = colors.foreground): TextStyl
 /** `1 char` / `N chars`, as the gallery counts. */
 export function count(n: number, word: string): string {
   return `${n} ${word}${n === 1 ? "" : "s"}`;
-}
-
-/**
- * A toast host for one demo, until the library has `toast()` (#85): `toast(title, description)`
- * shows one at the bottom for four seconds, `Toaster` is the stack. The library's `Toast` is the
- * banner; nothing in it raises, updates or stacks them.
- */
-export function createToaster() {
-  const content = signal<{ title: string; description: string } | null>(null);
-  let timer: ReturnType<typeof setTimeout> | undefined;
-  const dismiss = () => {
-    if (timer !== undefined) clearTimeout(timer);
-    timer = undefined;
-    content.set(null);
-  };
-  const toast = (title: string, description: string) => {
-    dismiss();
-    content.set({ title, description });
-    timer = setTimeout(dismiss, 4000);
-  };
-  cleanup(dismiss);
-  function Toaster() {
-    return (
-      <Overlay
-        style={{
-          pointerEvents: "box-none",
-          alignItems: "center",
-          justifyContent: "flex-end",
-          padding: 20,
-        }}
-      >
-        <If when={content()}>
-          <Toast
-            title={content()?.title}
-            description={content()?.description}
-            accessibilityLabel={`${content()?.title}. ${content()?.description}`}
-            onDismissRequest={dismiss}
-            class="transition-all duration-200 ease-out"
-            startingClass="opacity-0 translate-y-4"
-            endingClass="opacity-0 scale-95"
-          />
-        </If>
-      </Overlay>
-    );
-  }
-  return { toast, Toaster };
 }
 
 /** A lucide icon as an SVG `data:` URL, for what takes an image rather than a view: a native menu

@@ -3920,8 +3920,8 @@ const kinship = (p: Pair) =>
           : p.r > -0.15
             ? "Barely related"
             : "Move apart: a hedge";
-/** The cells' labels: dark on light cells, white on dark ones (`data-dark`). */
-const CELL_LABEL = "text-black/70 data-dark:text-white/90";
+/** The cells' labels: the chart's ink on light cells, `on-media` on dark ones (`data-dark`). */
+const CELL_LABEL = "text-chart-foreground/70 data-dark:text-on-media/90";
 /** The hover cell: a ring in the text's color around the cell, a little out from its edge. */
 const cellRing = () => ({ outlineWidth: 1.5, outlineOffset: 1.5, outlineColor: colors.foreground });
 
@@ -4929,7 +4929,7 @@ function MarketMap() {
           label={(d: MapRow) => d.id}
           valueLabel={(d: MapRow) => pct(d.chg ?? 0, 2)}
           labelPlacement="center"
-          labelClass="p-1 text-foreground data-dark:text-white"
+          labelClass="p-1 text-chart-foreground data-dark:text-on-media"
           labelStyle={{ fontSize: 11.5, fontWeight: "600", letterSpacing: 0.2 }}
           valueLabelStyle={{
             fontSize: 10,
@@ -4997,12 +4997,12 @@ const classColor = (cls: string): string =>
         ? chart.chart4
         : chart.chart3;
 /**
- * The fill of a position's tile: its class's color, tinted into the surface.
- * The palette runs dark in the light theme and light in the dark one, so a
- * solid tile would swallow its own label; a tint keeps the label's theme ink
- * readable either way, as the market map's cells do.
+ * A position's tile is its class's colour, solid. The label is `chart-foreground` on a light
+ * tile and `on-media` on a dark one: `data-dark` follows the cell's OKLab lightness (under 0.65),
+ * not the appearance, so one ink pair covers every theme. Five `chart-N-foreground` tokens could
+ * not, because a treemap takes a single `labelClass`.
  */
-const classFill = (cls: string): string => alpha(classColor(cls), 0.4);
+const classFill = (cls: string): string => classColor(cls);
 const CLASS_GROUP = ["fill-chart-1/15", "fill-chart-2/15", "fill-chart-4/15", "fill-chart-3/15"];
 /** A position: its ticker, name and class, and its value in thousands today and a year ago (none if it was not held). */
 type Position = [
@@ -5121,7 +5121,7 @@ function Allocation() {
           groupClass={(d: AllocationRow) => CLASS_GROUP[ASSET_CLASSES.indexOf(d.cls)]}
           label={(d: AllocationRow) => d.id}
           valueLabel={(_: AllocationRow, value: number) => weight(value)}
-          labelClass="px-2 py-1.5 text-foreground"
+          labelClass="px-2 py-1.5 text-chart-foreground data-dark:text-on-media"
           labelStyle={{ fontSize: 12, fontWeight: "600" }}
           valueLabelStyle={{
             fontSize: 11,

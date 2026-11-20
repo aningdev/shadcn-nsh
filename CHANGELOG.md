@@ -67,6 +67,9 @@
   takes it too.
 - **`toggleSizes` is exported (#99).** The table a `Toggle`'s `size` reads — `side`, `icon`, `text`
   and `pad` — so a bar drawn by the app matches a tool's geometry instead of measuring its own.
+- **`on-media` and `chart-foreground` (#94, #101).** White ink for text on a photograph, and dark ink for a light chart tile. A dark tile uses `on-media` through `data-dark` (the cell's own lightness, not the appearance). Both sit in the C layer, the same value in light and dark, in every theme.
+- **`toast()`, `toast.update`, `toast.dismiss` and `<Toaster />` (#85).** The names follow sonner: `toast` returns an id, `toast.success` and the other types set `type`, the same id replaces a toast, and `dismiss()` with no id closes every one. `update` changes a toast where it is (a loading note becoming its result). `progress` is the bar sonner does not have. The queue is `nsh/base`'s `ToastManager`. No sounds.
+- **A field shakes, a multiline field grows, and a figure rolls (#95).** `Input` and `OtpInput` take `reject`: a new number plays the theme's `shake` (500 ms, `play("shake")`). `Input`'s `grow` sizes a multiline field from its text, up to five lines, and a `style` height still wins. `Roll` (from `lib/motion`) rolls a figure on `motion.control`; the number field's own glyphs stay put, because the caret lives in them. Less motion plays none of the shake or the roll.
 
 ### Changed
 
@@ -295,6 +298,8 @@
   message, and a padded `contentStyle` left the end short; the ends now move the scroll view, and
   new content still follows while the reader is at the end. A hidden button is out of the
   accessibility tree.
+- **Chart tiles keep a readable label (#101).** Allocation draws solid `chart-N` tiles. The label is `chart-foreground` on a light tile and `on-media` on a dark one, in every theme. The series colours stay as they are: flipping them would hide a line on a card.
+- **Text on a photograph uses `on-media` (#94).** The scrim was already the veil. The caption ink is no longer a white literal.
 
 ## 0.8.1 — `init` keeps your JSON, `diff` works offline
 

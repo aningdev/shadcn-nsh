@@ -181,6 +181,8 @@ export interface Style {
     control: Spring;
     move: Spring;
     enter: { duration: number; easing: string };
+    /** A rejected value's shake, the length of `nsh`'s `play("shake")` preset. */
+    shake: { duration: number };
   };
   icon: { size: Tiered<Steps> };
   indicator: { tabs: string; nav: string; field: string };
@@ -386,6 +388,13 @@ export interface Palette {
   destructive: string;
   up: string;
   down: string;
+  /** White ink on a photograph or any other surface that is not the theme's. It does not flip. */
+  onMedia: string;
+  /**
+   * Dark ink on a light chart tile. A dark tile uses `on-media` instead (`data-dark:`), because
+   * `nsh/base` marks a plot cell dark from its own OKLab lightness, not from the appearance.
+   */
+  chartForeground: string;
 }
 
 /** An object whose getters read the theme's tokens: reads in a reactive
@@ -433,6 +442,8 @@ export const colors: Palette = tokens<keyof Palette>({
   destructive: "destructive",
   up: "up",
   down: "down",
+  onMedia: "on-media",
+  chartForeground: "chart-foreground",
 });
 
 /**
@@ -648,6 +659,9 @@ export const motion = {
   get enter() {
     const { duration, easing } = style().motion.enter;
     return { duration, easing: easings[easing as keyof typeof easings] };
+  },
+  get shake() {
+    return { duration: style().motion.shake.duration };
   },
 };
 

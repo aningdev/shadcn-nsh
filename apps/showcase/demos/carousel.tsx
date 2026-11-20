@@ -233,13 +233,10 @@ const glass = carouselArrowLook({ glass: true });
 /** The ticker's smaller arrows. */
 const small = carouselArrowLook({ side: size.arrow - 6 });
 
-/** Ink over a photo. The veil is the theme's scrim — the one dimming every overlay uses
- * (`token("scrim")`) — keeping upstream's falloff beside its own strength (its 0.28 and 0.55
- * as shares of its 0.66). The white ink stays a literal: the theme keeps no role for text on
- * an arbitrary photograph (a gap the Summary records). */
+/** Ink over a photo. The veil is the theme's scrim. The ink is `on-media`, white in every
+ * appearance, read where it is drawn so a theme switch follows. */
 const veil = (share: number) => alpha(token("scrim"), share);
-const INK = "#ffffff";
-const whiteInk = (a: number) => alpha(INK, a);
+const whiteInk = (a: number) => alpha(colors.onMedia, a);
 
 /** An onboarding the app steps through with its own buttons: one step per view, a pagination of
  * dots, and a finished state. */
@@ -652,12 +649,23 @@ function Banners(props: { log: (text: string) => void }) {
                     }}
                   >
                     <Text
-                      style={{ fontSize: 11, fontWeight: "600", color: INK, letterSpacing: 0.4 }}
+                      style={{
+                        fontSize: 11,
+                        fontWeight: "600",
+                        color: colors.onMedia,
+                        letterSpacing: 0.4,
+                      }}
                     >
                       {b().tag.toUpperCase()}
                     </Text>
                   </View>
-                  <Text style={{ fontSize: pointer ? 20 : 22, fontWeight: "700", color: INK }}>
+                  <Text
+                    style={{
+                      fontSize: pointer ? 20 : 22,
+                      fontWeight: "700",
+                      color: colors.onMedia,
+                    }}
+                  >
                     {b().title}
                   </Text>
                   <Text style={{ fontSize: size.body, color: whiteInk(0.82) }}>{b().body}</Text>

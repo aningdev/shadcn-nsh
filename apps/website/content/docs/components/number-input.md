@@ -47,6 +47,18 @@ Default `pair`: chevrons stacked at the end. `split`: − before the field and +
 />
 ```
 
+### A rolling figure
+
+The field draws its own glyphs, and the caret lives in them, so the digits inside the field do not roll. `Roll` (`@/lib/motion`, the `motion` registry item, which `input` installs) is the figure beside it — upstream's ticker. It rolls on the theme's `control` spring. The first value is already there. Less motion replaces it in place.
+
+```tsx
+import { Roll } from "@/lib/motion";
+
+<Roll value={total()} style={{ fontVariant: ["tabular-nums"] }}>
+  {money(total())}
+</Roll>;
+```
+
 ## API
 
 Every prop of [`nsh/base` NumberInput](https://nsh.dev/elements/number-input) passes through. `class`, `inputStyle` and the step props go over the look's.

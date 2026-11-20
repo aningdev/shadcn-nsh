@@ -5,7 +5,7 @@
 // The photos are the gallery's URLs (`photos.ts`); the page marks itself `images-ready` once all
 // five have loaded or failed, and the render check waits for that before the screenshot, so a
 // demo, its reference page and the baseline draw the same slide at every run.
-import { alpha } from "@shadcn-nsh/theme";
+import { alpha, colors } from "@shadcn-nsh/theme";
 import { Image, mount, signal, Text, token, View } from "nsh";
 
 import {
@@ -120,10 +120,10 @@ function App() {
                     backgroundImage: `linear-gradient(180deg, transparent 40%, ${token("scrim")} 100%)`,
                   }}
                 />
-                <Text style={{ fontSize: 20, fontWeight: "700", color: ui().caption }}>
+                <Text style={{ fontSize: 20, fontWeight: "700", color: colors.onMedia }}>
                   {shot.name}
                 </Text>
-                <Text style={{ fontSize: 13, color: alpha(ui().caption, 0.82) }}>
+                <Text style={{ fontSize: 13, color: alpha(colors.onMedia, 0.82) }}>
                   {shot.detail}
                 </Text>
               </CarouselItem>

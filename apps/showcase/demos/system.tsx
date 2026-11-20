@@ -50,6 +50,7 @@ import { Progress } from "@/packages/ui/progress";
 import { Segmented, SegmentedItem, SegmentedList } from "@/packages/ui/segmented";
 import { Stat } from "@/packages/ui/stat";
 import { Switch } from "@/packages/ui/switch";
+import { toast, Toaster } from "@/packages/ui/toast";
 
 import { DemoPage } from "../kit";
 import {
@@ -60,7 +61,6 @@ import {
   Legend,
   Note,
   Row,
-  createToaster,
   lucideSvg,
   monoText,
 } from "./platform-shared";
@@ -248,7 +248,7 @@ function labelOf(actions: AlertDialogAction[], id?: string | null): string {
   return actions.find((action) => action.id === id)?.label ?? "dismissed";
 }
 
-function Dialogs(props: { toast: (title: string, description: string) => void }) {
+function Dialogs() {
   const answer = signal<{ text: string; tone: Tone } | null>(null);
   // The answer pops in each time it changes.
   const pop = createAnimatedValue(1);
@@ -364,7 +364,9 @@ function Dialogs(props: { toast: (title: string, description: string) => void })
         title="Toast"
         detail="nsh/base's Toast, every platform"
         onPress={() =>
-          props.toast("Hello from a toast", "nsh/base's ToastManager, styled by the library")
+          toast("Hello from a toast", {
+            description: "nsh/base's ToastManager, styled by the library",
+          })
         }
       />
       {answerRow}
@@ -799,12 +801,11 @@ function Network() {
 /** `nsh`'s environment, the status bar, alerts, the share sheet, frames, shortcuts, a context
  * menu and the network. */
 export function SystemDemo() {
-  const { toast, Toaster } = createToaster();
   return (
     <DemoPage title="System">
       <Environment />
       <StatusBarCard />
-      <Dialogs toast={toast} />
+      <Dialogs />
       <ShareSheet />
       <FramesAndTimers />
       <Shortcuts />

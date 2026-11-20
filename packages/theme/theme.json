@@ -9,6 +9,8 @@
       "brand-fill": "oklch(0.89637 0.16627 124.031)",
       "on-brand": "oklch(0.19339 0.0197 121.819)",
       "scrim": "oklch(0 0 0 / 0.45)",
+      "on-media": "oklch(1 0 0)",
+      "chart-foreground": "oklch(0.18636 0.01318 264.182)",
       "window-close": "oklch(0.6936 0.19638 26.364)",
       "window-minimize": "oklch(0.83478 0.1612 80.911)",
       "window-zoom": "oklch(0.72803 0.21734 144.712)",

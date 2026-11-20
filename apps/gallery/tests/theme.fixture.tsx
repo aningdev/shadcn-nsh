@@ -9,6 +9,8 @@ function App() {
       <Text>{`menu=${finish.menu.borderColor}`}</Text>
       <Text>{`text=${colors.foreground}`}</Text>
       <Text>{`muted=${colors.mutedForeground}`}</Text>
+      <Text>{`on-media=${colors.onMedia}`}</Text>
+      <Text>{`chart-ink=${colors.chartForeground}`}</Text>
     </View>
   );
 }

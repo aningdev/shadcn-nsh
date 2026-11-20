@@ -7,7 +7,7 @@ import type { InputRef, JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 
 import { Button } from "@/packages/ui/button";
-import { fieldText, Input } from "@/packages/ui/input";
+import { Input } from "@/packages/ui/input";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { buttonStyle, desktop, Panel, Split, ui } from "./stage";
@@ -15,15 +15,6 @@ import { buttonStyle, desktop, Panel, Split, ui } from "./stage";
 /** What the notes start with: long enough that their box is taller than the field's least. */
 const NOTE =
   "Bring the signed copy on Friday, and the notebook from the drawer beside it so the two can be compared.";
-
-/** A padding the look writes in points (it writes numbers). */
-const room = (value: string | number | undefined) => (typeof value === "number" ? value : 0);
-
-/** The room the look keeps inside the box: its two edges and the padding above and below. */
-function fieldPad(): number {
-  const text = fieldText({ multiline: true });
-  return room(text.paddingTop) + room(text.paddingBottom) + 2;
-}
 
 /** A label above its field, and what describes it below. */
 function Field(props: { label: string; children: JSX.Element; after?: JSX.Element }) {
@@ -40,7 +31,6 @@ function App() {
   const name = signal("");
   const password = signal("");
   const notes = signal(NOTE);
-  const notesContent = signal(0);
   const submitted = signal("");
   let passwordInput!: InputRef;
   const signIn = () => submitted.set(`Signed in as ${name() || "nobody"}`);
@@ -104,13 +94,10 @@ function App() {
           <Field label="Notes (multiline, as tall as its text)">
             <Input
               multiline
+              grow
               value={notes()}
               onChange={({ value }) => notes.set(value)}
               placeholder="Anything else?"
-              onContentSizeChange={({ size }) => notesContent.set(size.height)}
-              style={{
-                height: notesContent() === 0 ? undefined : notesContent() + fieldPad(),
-              }}
             />
           </Field>
           <Button

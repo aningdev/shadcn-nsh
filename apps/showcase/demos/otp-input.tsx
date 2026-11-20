@@ -3,7 +3,7 @@ import { colors, toneColor, type Tone } from "@shadcn-nsh/theme";
 // `Verify`, `SignIn`, `Pin`) with this library's parts — six cells in two groups with a verdict, a code sent
 // on request with a countdown and three tries, and a PIN chosen then confirmed.
 import { Check, Clock } from "lucide";
-import { cleanup, computed, createMotion, platform, signal, Text, View } from "nsh";
+import { cleanup, computed, platform, signal, Text, View } from "nsh";
 
 import { Badge } from "@/packages/ui/badge";
 import { Button } from "@/packages/ui/button";
@@ -54,8 +54,8 @@ export function OtpInputDemo() {
   const check = signal<ReturnType<typeof setTimeout> | undefined>(undefined);
   cleanup(() => clearTimeout(check()));
   // A code the check refuses shakes the cells, as upstream's does.
-  const shake = createMotion();
-  const pinShake = createMotion();
+  const verifyReject = signal(0);
+  const pinReject = signal(0);
   const verify = (value: string) => {
     verdict.set("checking");
     clearTimeout(check());
@@ -64,7 +64,7 @@ export function OtpInputDemo() {
         const right = value === CODE;
         verdict.set(right ? "right" : "wrong");
         last.set(right ? "Verified" : "That code is not right");
-        if (!right) void shake.play("shake");
+        if (!right) verifyReject.update((n) => n + 1);
       }, 500),
     );
   };
@@ -152,23 +152,22 @@ export function OtpInputDemo() {
               {`We sent it to •••• 4821 (it is ${CODE})`}
             </Text>
           </View>
-          <View style={{ ...shake.style }}>
-            <OtpInput
-              length={6}
-              groups={2}
-              value={code()}
-              onChange={({ value }) => {
-                code.set(value);
-                verdict.set("typing");
-              }}
-              onComplete={({ value }) => verify(value)}
-              accessibilityLabel="Verification code, 6 digits"
-              class="flex-row items-center gap-3"
-              groupClass="flex-row gap-1.5"
-              cells={otpCells}
-              tone={verifyTone}
-            />
-          </View>
+          <OtpInput
+            length={6}
+            groups={2}
+            value={code()}
+            onChange={({ value }) => {
+              code.set(value);
+              verdict.set("typing");
+            }}
+            onComplete={({ value }) => verify(value)}
+            accessibilityLabel="Verification code, 6 digits"
+            class="flex-row items-center gap-3"
+            groupClass="flex-row gap-1.5"
+            cells={otpCells}
+            tone={verifyTone}
+            reject={verifyReject()}
+          />
           <Message text={verifyMessage()} tone={verifyTone()} />
           <View
             style={{
@@ -295,40 +294,39 @@ export function OtpInputDemo() {
               </Each>
             </View>
           </View>
-          <View style={{ ...pinShake.style }}>
-            <OtpInput
-              length={4}
-              value={pin()}
-              masked={!shown()}
-              onChange={({ value }) => {
-                pin.set(value);
-                mismatch.set(false);
-              }}
-              onComplete={({ value }) => {
-                if (chosen() === null) {
-                  chosen.set(value);
-                  pin.set("");
-                  last.set("PIN chosen: confirm it");
-                  return;
-                }
-                if (value === chosen()) {
-                  setPin.set(value);
-                  last.set("PIN set");
-                  return;
-                }
-                mismatch.set(true);
-                chosen.set(null);
+          <OtpInput
+            reject={pinReject()}
+            length={4}
+            value={pin()}
+            masked={!shown()}
+            onChange={({ value }) => {
+              pin.set(value);
+              mismatch.set(false);
+            }}
+            onComplete={({ value }) => {
+              if (chosen() === null) {
+                chosen.set(value);
                 pin.set("");
-                void pinShake.play("shake");
-                last.set("The two did not match: start again");
-              }}
-              accessibilityLabel="PIN, 4 digits"
-              class="flex-row items-center gap-3"
-              groupClass="flex-row gap-1.5"
-              cells={otpCells}
-              tone={() => (mismatch() ? "destructive" : setPin() !== null ? "up" : undefined)}
-            />
-          </View>
+                last.set("PIN chosen: confirm it");
+                return;
+              }
+              if (value === chosen()) {
+                setPin.set(value);
+                last.set("PIN set");
+                return;
+              }
+              mismatch.set(true);
+              chosen.set(null);
+              pin.set("");
+              pinReject.update((n) => n + 1);
+              last.set("The two did not match: start again");
+            }}
+            accessibilityLabel="PIN, 4 digits"
+            class="flex-row items-center gap-3"
+            groupClass="flex-row gap-1.5"
+            cells={otpCells}
+            tone={() => (mismatch() ? "destructive" : setPin() !== null ? "up" : undefined)}
+          />
           <Message
             text={
               mismatch()

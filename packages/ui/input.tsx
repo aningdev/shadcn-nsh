@@ -11,9 +11,10 @@ import {
   rounded,
 } from "@shadcn-nsh/theme";
 import type { InputStyle, ViewStyle } from "nsh";
-import { platform, split } from "nsh";
+import { platform, signal, split } from "nsh";
 import { Input as BaseInput, type InputProps as BaseInputProps } from "nsh/base";
 
+import { createRejectShake } from "./lib/motion";
 import { type Live, read } from "./lib/utils";
 
 // @port look/field.tsx
@@ -199,6 +200,22 @@ export function fieldText(o?: FieldTextOptions): InputStyle {
   };
 }
 
+/** The room a multiline field keeps around the text it reports: padding above and below, and the
+ * well's own edge (the terminal's edge is a cell, already inside the row). */
+export function multilineFieldPad(): number {
+  const text = fieldText({ multiline: true });
+  const room = (value: string | number | undefined) => (typeof value === "number" ? value : 0);
+  return room(text.paddingTop) + room(text.paddingBottom) + (terminal ? 0 : 2);
+}
+
+/**
+ * How tall a multiline field is for a reported content height: the text plus `multilineFieldPad`,
+ * and no taller than `maxLines` field-heights (five, about the notes a form keeps on screen).
+ */
+export function grownFieldHeight(contentHeight: number, maxLines = 5): number {
+  return Math.min(contentHeight + multilineFieldPad(), maxLines * fieldSize.height);
+}
+
 /**
  * A lone `<Input>`'s props (`<Input {...inputLook()} />`): the well and its
  * states (`fieldLook`) and the text in it (`fieldText`) on the input itself.
@@ -236,19 +253,39 @@ export const timeFieldClass = [
  * and `disabledStyle` go over the look's. Focus and hover edges are classes on the look.
  *
  * One field, one line or several: with `multiline` the content starts at the top of a box at least
- * one line tall, and Return writes a line break. Give it the height it needs (`onContentSizeChange`
- * reports the text's) — `fieldText` keeps only a least height.
+ * one line tall, and Return writes a line break. `grow` sizes that box from `onContentSizeChange`
+ * (`grownFieldHeight`); without it, `fieldText` keeps only a least height and the app sets the rest.
  */
 export type InputProps = BaseInputProps & {
   /** Default `default`: the field's fill and edge. `ghost`: nothing at rest, the focus ring kept. */
   variant?: InputVariant;
   /** Edged in the danger tone, its focus edge too. */
   invalid?: boolean;
+  /**
+   * Multiline only. `true` grows with the text up to five lines; a number is that cap. The height
+   * is set as the text reports it, with no transition, so reduced motion has nothing to turn off.
+   * A `style` `height` still wins.
+   */
+  grow?: boolean | number;
+  /**
+   * Shakes the field each time this becomes a new number (a submit the value failed). `invalid`
+   * only recolours the edge, so a second rejection has to change this. Less motion plays nothing.
+   */
+  reject?: number;
 };
 
 /** A text field. The well and the text are `inputLook`. */
 export function Input(props: InputProps) {
-  const [, rest] = split(props, ["variant", "invalid", "class", "style", "disabledStyle"]);
+  const [, rest] = split(props, [
+    "variant",
+    "invalid",
+    "class",
+    "style",
+    "disabledStyle",
+    "grow",
+    "reject",
+    "onContentSizeChange",
+  ]);
   const look = inputLook({
     variant: () => props.variant,
     invalid: () => !!props.invalid,
@@ -256,11 +293,23 @@ export function Input(props: InputProps) {
     disabled: () => !!props.disabled,
     multiline: () => !!props.multiline,
   });
+  const contentHeight = signal(0);
+  const shake = createRejectShake(() => props.reject);
+  const grown = (): InputStyle | null => {
+    const lines = props.grow === true ? 5 : props.grow;
+    if (!props.multiline || lines === undefined || lines === false || contentHeight() === 0)
+      return null;
+    return { height: grownFieldHeight(contentHeight(), lines) };
+  };
   return (
     <BaseInput
       {...rest}
+      onContentSizeChange={(event) => {
+        if (props.grow && props.multiline) contentHeight.set(event.size.height);
+        props.onContentSizeChange?.(event);
+      }}
       class={props.class ? `${look.class} ${props.class}` : look.class}
-      style={[look.style, props.style ?? null]}
+      style={[look.style, grown(), shake.style(), props.style ?? null]}
       disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     />
   );

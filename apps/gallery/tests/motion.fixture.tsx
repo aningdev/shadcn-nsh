@@ -64,6 +64,7 @@ function App() {
       <Text>{`tooltip=${line(popup.style)}`}</Text>
       <Text>{`toast=${line(close.style)}`}</Text>
       <Text>{`classes=${classes}`}</Text>
+      <Text>{`shake=${motion.shake.duration}`}</Text>
       <Text>{`sweep=800|infinite|alternate|true`}</Text>
     </View>
   );

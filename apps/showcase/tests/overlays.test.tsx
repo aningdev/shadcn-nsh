@@ -69,6 +69,14 @@ test("Toast: saving shows a success note", async () => {
   await app.press("text:Save changes");
   await app.waitFor("text:Changes saved");
   expect(app.texts()).toContain("Q3 roadmap.md · just now");
+  await app.press("text:Send a message");
+  await app.waitFor("text:Couldn't send the message");
+  await app.press("text:Retry");
+  await app.waitFor("text:Sending…");
+  await app.waitFor("text:Message sent");
+  await app.press("text:Upload 3 photos");
+  await app.waitFor("text:Uploading 3 photos");
+  await app.waitFor("text:3 photos uploaded");
 });
 
 test("Avatar: pressing a member changes their presence", async () => {
