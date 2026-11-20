@@ -49,7 +49,7 @@ import {
 
 ### Revealed panel
 
-`reveal` defaults on; `start` lines the panel up past a leading icon in the trigger.
+`reveal` defaults on; `start` lines the panel up past a leading icon in the trigger, and `end` keeps the same room after the content.
 
 ```tsx
 <AccordionPanel reveal start={24} gap={8}>
@@ -78,10 +78,10 @@ import {
 
 Uses `disclosureTriggerLook`, `DisclosureChevron`, and `disclosurePanel`. Every prop of [`nsh/base` Accordion](https://nsh.dev/elements/accordion) parts passes through.
 
-| Part               | Props                                    | Description                                                 |
-| ------------------ | ---------------------------------------- | ----------------------------------------------------------- |
-| `Accordion`        | —                                        | The stack of items.                                         |
-| `AccordionHeader`  | —                                        | The heading around the trigger.                             |
-| `AccordionItem`    | —                                        | One section.                                                |
-| `AccordionPanel`   | `reveal` (on by default), `start`, `gap` | Revealed content, in `disclosurePanel` padding.             |
-| `AccordionTrigger` | `first`, `start`                         | The title row, with a chevron that turns as the item opens. |
+| Part               | Props                                           | Description                                                 |
+| ------------------ | ----------------------------------------------- | ----------------------------------------------------------- |
+| `Accordion`        | —                                               | The stack of items.                                         |
+| `AccordionHeader`  | —                                               | The heading around the trigger.                             |
+| `AccordionItem`    | —                                               | One section.                                                |
+| `AccordionPanel`   | `reveal` (on by default), `start`, `end`, `gap` | Revealed content, in `disclosurePanel` padding.             |
+| `AccordionTrigger` | `first`, `start`                                | The title row, with a chevron that turns as the item opens. |

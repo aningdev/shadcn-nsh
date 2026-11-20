@@ -42,7 +42,6 @@ function Summary(props: { label: string; detail?: string; first?: boolean }) {
   return (
     <CollapsibleTrigger first={props.first} accessibilityLabel={props.label}>
       <View style={{ flexDirection: "row", alignItems: "center", flexGrow: 1 }}>
-        <RowDivider show={!props.first} />
         <RowLabel label={props.label} detail={props.detail} />
       </View>
     </CollapsibleTrigger>
@@ -100,7 +99,7 @@ function Disclosure(props: { log: (text: string) => void }) {
         }}
       >
         <Summary label="Advanced" detail="Options most people leave alone" />
-        <CollapsibleContent>
+        <CollapsibleContent panel={{ start: size.gap, end: size.gap }}>
           <View style={settle(advancedIn)}>
             <Switch
               checked={originals()}
@@ -109,7 +108,7 @@ function Disclosure(props: { log: (text: string) => void }) {
                 props.log(`Keep originals: ${on ? "on" : "off"}`);
               }}
               accessibilityLabel="Keep originals"
-              {...listRow({ start: size.gap, style: { flexDirection: "row-reverse" } })}
+              {...listRow({ style: { flexDirection: "row-reverse" } })}
             >
               <RowDivider show />
               <RowLabel
