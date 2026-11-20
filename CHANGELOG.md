@@ -37,6 +37,8 @@
 
 ### Added
 
+- **`split-view`.** Columns of navigation stacks — a sidebar, a content column and the detail — with the column header and the sidebar button in the theme's look, over `nsh/base`'s `SplitView`.
+
 - **The site gains a showcase page (#78).** `/showcase` runs the new `apps/showcase` app — NSH's
   official Gallery shell and its scenes rebuilt with this library's components, with the palette
   and appearance chosen live inside the app — full width, outside the docs menu; `bun run check`

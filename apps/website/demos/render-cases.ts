@@ -163,6 +163,11 @@ const overrides: Record<string, Override> = {
   // chevron up.
   "navigation-menu": { steps: (app) => app.press("Getting started") },
   // One page pushed: the shot is the second page, with the header's back button beside its title.
+  // Three columns need the stage wider than the inspector leaves at the test's 390 points.
+  // Below about 1360 the scene itself opens on two columns; this window shows all three.
+  "split-view": {
+    viewport: { width: 1400, height: 780 },
+  },
   "nav-stack": {
     steps: async (app) => {
       await app.press("label:General");

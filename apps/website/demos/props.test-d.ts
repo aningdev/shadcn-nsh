@@ -66,6 +66,8 @@ import type {
   SelectProps as BaseSelectProps,
   SheetProps as BaseSheetProps,
   SliderProps as BaseSliderProps,
+  SplitViewProps as BaseSplitViewProps,
+  NavPageProps as BaseNavPageProps,
   SubmenuProps as BaseSubmenuProps,
   SwitchProps as BaseSwitchProps,
   TabProps as BaseTabProps,
@@ -170,6 +172,8 @@ import type {
   SelectTriggerProps,
   SheetContentProps,
   SliderProps,
+  SplitViewProps,
+  SplitViewColumnProps,
   SplitButtonSegmentProps,
   SwitchProps,
   TabProps,
@@ -439,6 +443,10 @@ type _sheetContent = Assert<
 >;
 /** `SliderProps`. */
 type _slider = Assert<KeepsBase<BaseSliderProps, SliderProps, never>>;
+/** `SplitViewProps`. */
+type _splitView = Assert<KeepsBase<BaseSplitViewProps, SplitViewProps, never>>;
+/** `SplitViewColumnProps` — the column page keeps `nsh/base`'s NavPage. */
+type _splitViewColumn = Assert<KeepsBase<BaseNavPageProps, SplitViewColumnProps, never>>;
 /** `SwitchProps`. */
 type _switch = Assert<KeepsBase<BaseSwitchProps, SwitchProps, never>>;
 /** `TableProps`. */

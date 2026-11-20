@@ -319,6 +319,15 @@ export const components: ComponentDoc[] = [
     description: "A sunk rail, citrus fill, and round thumb with a focus ring.",
   },
   {
+    slug: "split-view",
+    title: "SplitView",
+    kind: "official",
+    shadcn: null,
+    nshElement: "split-view",
+    description:
+      "Two or three columns of navigation stacks, with the column header and the sidebar button in the theme's look.",
+  },
+  {
     slug: "switch",
     title: "Switch",
     kind: "official",

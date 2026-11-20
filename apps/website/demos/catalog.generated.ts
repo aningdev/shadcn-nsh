@@ -82,4 +82,5 @@ export const componentIds = [
   "sidebar",
   "terminal",
   "nav-stack",
+  "split-view",
 ] as const;

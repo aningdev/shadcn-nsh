@@ -1429,6 +1429,21 @@
         }
       ],
       "dependencies": ["lucide@^1.66.0"]
+    },
+    {
+      "name": "split-view",
+      "type": "registry:ui",
+      "title": "SplitView",
+      "description": "Columns of navigation stacks, with the column header and the sidebar button in the theme's look.",
+      "registryDependencies": ["icons", "theme"],
+      "dependencies": ["lucide@^1.66.0"],
+      "files": [
+        {
+          "path": "packages/ui/split-view.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/split-view.tsx"
+        }
+      ]
     }
   ]
 }

@@ -1255,6 +1255,19 @@
           "target": "components/ui/nav-stack.tsx"
         }
       ]
+    },
+    {
+      "name": "split-view",
+      "type": "registry:ui",
+      "title": "SplitView",
+      "description": "Columns of navigation stacks, with the column header and the sidebar button in the theme's look.",
+      "files": [
+        {
+          "path": "packages/ui/split-view.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/split-view.tsx"
+        }
+      ]
     }
   ]
 }
