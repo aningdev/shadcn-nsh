@@ -60,16 +60,14 @@ export function listboxPopupStarting(): ViewStyle | undefined {
 }
 
 /**
- * A row of the list, its look on the row (`itemClass`): on shadcn's quiet
- * `accent` while highlighted (`focus:`, the keys or the pointer on it), the
- * fill fading between rows as the highlight moves, dimmed while disabled. The
- * highlight is only where Return lands — a combobox highlights its first match
- * as soon as one types — so it takes no edge or brand color that would read as
- * chosen; the chosen rows carry the check. Every state is the row's class (`group`), so the list draws a
+ * A row of the list, its look on the row (`itemClass`): lit in the brand
+ * tint while highlighted (`focus:`, the keys or the pointer on it), the fill
+ * and edge fading between rows as the highlight moves, dimmed while
+ * disabled. Every state is the row's class (`group`), so the list draws a
  * row's content once per item and the highlight moves without drawing.
  */
 export const optionClass =
-  "group rounded-(--radius-control) border border-transparent transition-colors duration-100 motion-reduce:transition-none focus:bg-accent active:opacity-70 disabled:opacity-50";
+  "group rounded-(--radius-control) border border-transparent transition-colors duration-100 motion-reduce:transition-none focus:border-brand/30 focus:bg-brand-tint active:opacity-70 disabled:opacity-50";
 
 /**
  * What a select's or combobox's list takes besides its items (spread it):
