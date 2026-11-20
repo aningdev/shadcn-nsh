@@ -271,6 +271,7 @@
 
 ### Fixed
 
+- **The docs link `code-block`, `toast` and `trace` to their shadcn/ui pages (#176).** The table of shadcn/ui's components now reads `registry/bases/base/ui`, shadcn's current set, so these pages show `shadcn/ui ↗` and the coverage page lists `questionnaire` as missing. `form`, which that set no longer has, is gone from it.
 - **A select trigger's `width` wins over the 180-point floor (#88).** A `width` on `SelectTrigger`'s
   `style` used to size only the box around the trigger, so the look's `minWidth: 180` spilled a
   narrower trigger past its parent. That width now sets the trigger's own minimum too (a percentage

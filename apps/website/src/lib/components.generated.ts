@@ -379,7 +379,7 @@ export const components: ComponentDoc[] = [
     slug: "toast",
     title: "Toast",
     kind: "official",
-    shadcn: "sonner",
+    shadcn: "toast",
     nshElement: "toast",
     description: "A raised banner with a title, optional description, action and close.",
   },
@@ -486,7 +486,7 @@ export const components: ComponentDoc[] = [
     slug: "code-block",
     title: "CodeBlock",
     kind: "own",
-    shadcn: null,
+    shadcn: "code-block",
     nshElement: null,
     description:
       "Code, a command's output or a log in a block, with a title, a copy button, line numbers and a footer.",
@@ -656,7 +656,7 @@ export const components: ComponentDoc[] = [
     slug: "trace",
     title: "Trace",
     kind: "own",
-    shadcn: null,
+    shadcn: "trace",
     nshElement: null,
     description:
       "An agent's steps, one line each — reasoning, a tool call, a source, a failed step — where a line can open onto what it did.",

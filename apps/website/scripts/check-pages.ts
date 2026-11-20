@@ -235,7 +235,7 @@ const names = (dir: string, extension: string): string[] | undefined => {
     .sort();
 };
 
-const shadcnDir = path.join(references, "shadcn-ui/apps/v4/registry/new-york-v4/ui");
+const shadcnDir = path.join(references, "shadcn-ui/apps/v4/registry/bases/base/ui");
 const shadcnFiles = names(shadcnDir, ".tsx");
 if (shadcnFiles) {
   const rows = new Set(SHADCN_UI.map((entry) => entry.id));

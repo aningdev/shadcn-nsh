@@ -1,6 +1,6 @@
 /**
  * Where a component can come from, and where each official one went here: shadcn/ui's
- * `registry/new-york-v4/ui/<id>.tsx` and NSH's `website/elements/<id>.md`.
+ * `registry/bases/base/ui/<id>.tsx` and NSH's `website/elements/<id>.md`.
  *
  * One row per official component, named by the page's file name. `ours` lists the pages here that
  * serve it (first closest, a renamed one shows the rename), and a row with nothing serving it
@@ -33,7 +33,7 @@ export const shadcnUrl = (id: string): string => `https://ui.shadcn.com/docs/com
 export const nshElementUrl = (id: string): string => `https://nsh.dev/elements/${id}`;
 
 /**
- * shadcn/ui's components. Every file of `references/shadcn-ui/apps/v4/registry/new-york-v4/ui` is
+ * shadcn/ui's components. Every file of `references/shadcn-ui/apps/v4/registry/bases/base/ui` is
  * one row, in file order.
  */
 export const SHADCN_UI: readonly OfficialEntry[] = [
@@ -53,6 +53,7 @@ export const SHADCN_UI: readonly OfficialEntry[] = [
   { id: "carousel", ours: ["carousel"] },
   { id: "chart", ours: ["plot"] },
   { id: "checkbox", ours: ["checkbox"] },
+  { id: "code-block", ours: ["code-block"] },
   { id: "collapsible", ours: ["collapsible"] },
   { id: "combobox", ours: ["combobox"] },
   { id: "command", ours: ["command"] },
@@ -68,12 +69,6 @@ export const SHADCN_UI: readonly OfficialEntry[] = [
   { id: "dropdown-menu", ours: ["menu"] },
   { id: "empty", ours: ["empty"] },
   { id: "field", ours: ["field"] },
-  {
-    id: "form",
-    ours: [],
-    status: "not-doing",
-    note: "React Hook Form is the app's; field already lays the form out.",
-  },
   { id: "hover-card", ours: ["hover-card"] },
   { id: "input-group", ours: ["input-group"] },
   { id: "input-otp", ours: ["otp-input"] },
@@ -95,6 +90,12 @@ export const SHADCN_UI: readonly OfficialEntry[] = [
   { id: "pagination", ours: ["pagination"] },
   { id: "popover", ours: ["popover"] },
   { id: "progress", ours: ["progress"] },
+  {
+    id: "questionnaire",
+    ours: [],
+    status: "missing",
+    note: "A multi-step questionnaire for an agent's questions; not built yet.",
+  },
   { id: "radio-group", ours: ["radio-group"] },
   { id: "resizable", ours: ["resizable"] },
   { id: "scroll-area", ours: ["scrollbar"] },
@@ -110,9 +111,11 @@ export const SHADCN_UI: readonly OfficialEntry[] = [
   { id: "table", ours: ["table"] },
   { id: "tabs", ours: ["tabs"] },
   { id: "textarea", ours: ["input"] },
+  { id: "toast", ours: ["toast"] },
   { id: "toggle-group", ours: ["toggle"] },
   { id: "toggle", ours: ["toggle"] },
   { id: "tooltip", ours: ["tooltip"] },
+  { id: "trace", ours: ["trace"] },
 ];
 
 /**
