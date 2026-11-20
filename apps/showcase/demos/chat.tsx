@@ -51,7 +51,7 @@ import {
 } from "nsh";
 
 import { Badge } from "@/packages/ui/badge";
-import { roundButtonGlyph, RoundButton } from "@/packages/ui/button";
+import { Button, roundButtonGlyph, RoundButton } from "@/packages/ui/button";
 import { Input } from "@/packages/ui/input";
 import { Icon } from "@/packages/ui/lib/icons";
 import {
@@ -1078,24 +1078,15 @@ export function ChatDemo() {
             >
               <Each of={chips}>
                 {(chip) => (
-                  <Pressable
+                  <Button
+                    variant="secondary"
+                    size="lg"
                     onPress={() => play(chip().id)}
-                    hitSlop={4}
                     accessibilityLabel={`Suggest ${chip().label}`}
-                    style={{
-                      height: 36,
-                      paddingHorizontal: 14,
-                      borderRadius: 18,
-                      justifyContent: "center",
-                      ...finish.pill,
-                      borderWidth: 1,
-                    }}
-                    hoverStyle={hovered()}
+                    style={{ borderRadius: 999 }}
                   >
-                    <Text style={{ fontSize: 13, fontWeight: "500", color: colors.foreground }}>
-                      {chip().label}
-                    </Text>
-                  </Pressable>
+                    {chip().label}
+                  </Button>
                 )}
               </Each>
             </View>

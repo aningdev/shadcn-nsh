@@ -13,13 +13,27 @@ import {
   RowLabel,
   sectionSurface,
 } from "@/packages/ui/lib/surface";
-import { Progress, progressSweep, type ProgressSweep } from "@/packages/ui/progress";
+import {
+  Progress,
+  ProgressStep,
+  ProgressSteps,
+  progressStepSize,
+  progressSweep,
+  type ProgressStepState,
+  type ProgressSweep,
+} from "@/packages/ui/progress";
 import { Switch } from "@/packages/ui/switch";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { desktop, Log, Panel, Split, ui } from "./stage";
 
 const TONES: Tone[] = ["neutral", "accent", "info", "warn", "destructive", "up", "down"];
+
+const SETUP = ["Account", "Profile", "Team", "Review"];
+
+/** Where step `i` stands when `current` is the one shown (past the last, all are done). */
+const stateOf = (i: number, current: number): ProgressStepState =>
+  i < current ? "done" : i === current ? "current" : "upcoming";
 
 /** A bar with a limit on it: where the limit stands, and what the bar reads beside it. */
 const LIMITS: { label: string; value: number; limit: number; tone?: Tone }[] = [
@@ -78,6 +92,9 @@ function App() {
   const unknown = signal(false);
   const events = signal<string[]>([]);
   const log = (line: string) => events.set([line, ...events()].slice(0, 5));
+  // The step shown: 0 to 3, and 4 once all are done.
+  const step = signal(1);
+  const stepValue = () => (Math.min(step(), SETUP.length - 1) / (SETUP.length - 1)) * 100;
   // The sweep of the indeterminate bars, one for all of them.
   const sweep = progressSweep();
   let timer: ReturnType<typeof setInterval> | undefined;
@@ -195,6 +212,46 @@ function App() {
               </Text>
             </View>
           ))}
+        </DemoSection>
+
+        {/* Steps on a bar: the bar runs from the first mark's middle to the last's, so the
+            Progress keeps half a mark at either side. */}
+        <DemoSection title="Steps" axis="block">
+          <View style={{ paddingHorizontal: progressStepSize() / 2 }}>
+            <Progress value={stepValue()} height={4} accessibilityLabel="Setup">
+              <ProgressSteps>
+                {SETUP.map((name, i) => (
+                  <ProgressStep state={stateOf(i, step())}>{name}</ProgressStep>
+                ))}
+              </ProgressSteps>
+            </Progress>
+          </View>
+          <View class={desktop ? "flex-row gap-2 self-start" : "flex-row gap-2"}>
+            <Button
+              variant="secondary"
+              disabled={step() === 0}
+              style={desktop ? undefined : { flex: 1 }}
+              onPress={() => {
+                step.set(Math.min(step(), SETUP.length) - 1);
+                log(`Back to ${SETUP[step()]}`);
+              }}
+            >
+              Back
+            </Button>
+            <Button
+              style={desktop ? undefined : { flex: 1 }}
+              onPress={() => {
+                step.set(step() >= SETUP.length ? 0 : step() + 1);
+                log(step() >= SETUP.length ? "All steps done" : `Next: ${SETUP[step()]}`);
+              }}
+            >
+              {step() < SETUP.length - 1
+                ? "Next"
+                : step() === SETUP.length - 1
+                  ? "Finish"
+                  : "Start over"}
+            </Button>
+          </View>
         </DemoSection>
 
         {/* A bar can stand a limit on it: a hairline where the limit is. */}

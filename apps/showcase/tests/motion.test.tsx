@@ -16,7 +16,7 @@ test("Animations: presets play, an exit returns, and the bounded drag stays in r
   await app.waitFor("text:Motion presets");
   expect(app.shows("text:shake")).toBe(true);
   await app.press("role:button[shake]");
-  await app.press("role:tab[Exit]");
+  await app.press("text:Exit");
   await app.waitFor("text:fadeOut");
   expect(app.shows("text:shake")).toBe(false);
   // An exit comes back after it plays.
@@ -83,7 +83,7 @@ test("Animations and Collapsing header open on a phone too, in the dark", async 
   await app.setColorScheme("dark");
   await app.press("label:Animations");
   await app.waitFor("text:Native motion");
-  await app.press("role:tab[Exit]");
+  await app.press("text:Exit");
   await app.waitFor("text:fadeOut");
   await app.back();
   await app.press("label:Collapsing header");

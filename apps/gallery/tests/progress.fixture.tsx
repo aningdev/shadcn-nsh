@@ -12,6 +12,8 @@ import {
   progressLook,
   progressMarker,
   progressRail,
+  ProgressStep,
+  ProgressSteps,
   progressSweep,
 } from "../../../packages/ui";
 
@@ -22,6 +24,8 @@ function App() {
   const locked = signal(false);
   const who = signal("Ada Lovelace");
   const picked = signal("");
+  const step = signal(0);
+  const stateOf = (i: number) => (i < step() ? "done" : i === step() ? "current" : "upcoming");
   const sweep = progressSweep();
   const bar = () => progressLook(() => sent(), { indeterminate: () => busy(), sweep });
   /** A limit's hairline as text: where it stands and how tall it is (`85%|12`). */
@@ -53,6 +57,16 @@ function App() {
       <Text>{`at=${place()}`}</Text>
       <Progress testID="limit" style={{ width: 200 }} value={sent()} marker={85} />
       <Text>{`limit=${hairline(85)}|${hairline(140)}|${hairline(-5)}`}</Text>
+      <Progress style={{ width: 200 }} value={step() * 50} height={4} accessibilityLabel="Setup">
+        <ProgressSteps>
+          <ProgressStep state={stateOf(0)}>One</ProgressStep>
+          <ProgressStep state={stateOf(1)}>Two</ProgressStep>
+          <ProgressStep state={stateOf(2)}>Three</ProgressStep>
+        </ProgressSteps>
+      </Progress>
+      <BaseButton onPress={() => step.set(step() + 1)}>
+        <Text>Next</Text>
+      </BaseButton>
       <BaseButton onPress={() => sent.set(35)}>
         <Text>Add</Text>
       </BaseButton>

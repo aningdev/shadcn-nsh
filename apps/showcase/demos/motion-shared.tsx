@@ -15,7 +15,6 @@ import {
 import type { IconNode } from "lucide";
 import type { JSX, ViewStyle } from "nsh";
 import { createAnimatedValue, platform, Scroll, Text, View } from "nsh";
-import { Tab, Tabs } from "nsh/base";
 
 import { Badge } from "@/packages/ui/badge";
 import {
@@ -29,6 +28,7 @@ import {
 import { Icon } from "@/packages/ui/lib/icons";
 import { pressSink } from "@/packages/ui/lib/press";
 import { density } from "@/packages/ui/lib/surface";
+import { Toggle, ToggleGroup } from "@/packages/ui/toggle";
 
 /** The device's input: `touch` on phones and tablets, `pointer` on desktops. */
 export const hint = (touch: string, pointerText: string) =>
@@ -214,41 +214,20 @@ export function StatusBadge(props: {
 }
 
 /**
- * One capsule of a single-select row. `Segmented` is a sunk track whose segments share the row;
- * a dozen named curves need a scroll of capsules, which the library does not have (`nsh/base`
- * `Tabs`, the gallery's chips).
+ * One capsule of a single-select row: the library's `Toggle` with the capsule recipe (`toggle`'s
+ * page, "Chips"). A press on the chosen chip keeps it chosen.
  */
 export function Chip(props: { label: string; active?: boolean; onPress: () => void }) {
-  const sink = pressSink();
   return (
-    <Tab
-      selected={props.active}
-      onPress={props.onPress}
-      style={{
-        height: 36,
-        paddingHorizontal: 14,
-        borderRadius: 18,
-        borderCurve: "continuous",
-        justifyContent: "center",
-        backgroundColor: props.active ? colors.primary : colors.raised,
-        ...(props.active ? finish.light : finish.raised),
-        borderWidth: props.active ? 0 : 1,
-        borderColor: colors.border,
-        ...sink.transition,
-      }}
-      hoverStyle={props.active ? undefined : { ...finish.hover }}
-      activeStyle={sink.activeStyle}
+    <Toggle
+      variant="outline"
+      size="lg"
+      pressed={props.active}
+      style={{ borderRadius: 999 }}
+      onChange={props.onPress}
     >
-      <Text
-        style={{
-          fontSize: 13,
-          fontWeight: "500",
-          color: props.active ? colors.primaryForeground : colors.foreground,
-        }}
-      >
-        {props.label}
-      </Text>
-    </Tab>
+      {props.label}
+    </Toggle>
   );
 }
 
@@ -256,14 +235,16 @@ export function Chip(props: { label: string; active?: boolean; onPress: () => vo
 export function ChipRow(props: { children: JSX.Element }) {
   if (terminal) {
     return (
-      <Tabs style={{ flexDirection: "row", flexWrap: "wrap", columnGap: TERMINAL_GAP }}>
+      <ToggleGroup inset={false} style={{ flexWrap: "wrap", columnGap: TERMINAL_GAP }}>
         {props.children}
-      </Tabs>
+      </ToggleGroup>
     );
   }
   return (
     <Scroll horizontal scrollbar={false} style={{ height: 40, flexGrow: 0 }}>
-      <Tabs style={{ flexDirection: "row", gap: 8 }}>{props.children}</Tabs>
+      <ToggleGroup inset={false} style={{ gap: 8 }}>
+        {props.children}
+      </ToggleGroup>
     </Scroll>
   );
 }

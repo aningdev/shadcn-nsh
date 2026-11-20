@@ -1,6 +1,7 @@
 // The reference of `bubble.tsx`: the same page, the look spread on `nsh`'s own View and Text
 // instead of worn by the components. The render check requires the two to draw the same pixels.
-import type { JSX } from "nsh";
+import { shape } from "@shadcn-nsh/theme";
+import type { JSX, ViewStyle } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 
 import {
@@ -42,12 +43,18 @@ function Turn(props: {
   children: unknown;
   /** A turn that acts: the hand over it. */
   action?: () => void;
+  /** More style over the look's (a tail). */
+  style?: ViewStyle;
 }) {
   const variant = () => props.variant ?? "default";
   return (
     <View
       onPress={props.action}
-      style={[bubbleLook().content(variant()), props.action ? bubbleLook().pressable : null]}
+      style={[
+        bubbleLook().content(variant()),
+        props.action ? bubbleLook().pressable : null,
+        props.style ?? null,
+      ]}
     >
       {typeof props.children === "string" ? (
         <Text style={bubbleLook().text(variant())}>{props.children}</Text>
@@ -193,6 +200,20 @@ function App() {
             <Bubbles variant="muted" align="end">
               <Turn variant="muted" action={() => log("Replied: I forgot my password")}>
                 I forgot my password
+              </Turn>
+            </Bubbles>
+          </DemoSection>
+
+          <DemoSection title="A tail" axis="block">
+            {/* The sender's bottom corner is squarer than the rest: the end for what you send, the start for what came in. */}
+            <Bubbles variant="muted">
+              <Turn variant="muted" style={{ borderBottomStartRadius: shape.control / 2 }}>
+                Where does the tail go?
+              </Turn>
+            </Bubbles>
+            <Bubbles variant="default" align="end">
+              <Turn variant="default" style={{ borderBottomEndRadius: shape.control / 2 }}>
+                On the sender's side, the corner that points at them.
               </Turn>
             </Bubbles>
           </DemoSection>

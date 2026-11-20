@@ -99,6 +99,8 @@ test("Progress: Send starts the upload, and the next step advances", async () =>
   await app.waitFor("text:Pause");
   await app.press("text:Next step");
   await app.waitFor("text:Step 3 of 4");
+  await app.waitFor("label:Profile, done");
+  await app.waitFor("label:Team, current");
 });
 
 test("the shadcn palette redraws an overlay demo's themed color", async () => {

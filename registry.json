@@ -764,7 +764,7 @@
       "type": "registry:ui",
       "title": "Progress",
       "description": "A determinate or indeterminate progress bar.",
-      "registryDependencies": ["theme", "utils"],
+      "registryDependencies": ["checkbox", "surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/progress.tsx",

@@ -1,10 +1,33 @@
 // A progress: the look (`progressLook` and its companions) and the `Progress` that wears it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, fillStyle, finish, insetEdge, type Tone, toneColor } from "@shadcn-nsh/theme";
-import type { AnimatedValue, ViewStyle } from "nsh";
-import { cleanup, createAnimatedValue, Easing, effect, reduceMotion, split, View } from "nsh";
+import {
+  colors,
+  fillStyle,
+  finish,
+  follow,
+  insetEdge,
+  motion,
+  stroke,
+  type Tone,
+  toneColor,
+} from "@shadcn-nsh/theme";
+import type { AnimatedValue, JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
+import {
+  cleanup,
+  context,
+  createAnimatedValue,
+  Easing,
+  effect,
+  reduceMotion,
+  signal,
+  split,
+  Text,
+  View,
+} from "nsh";
 import { Progress as BaseProgress, type ProgressProps as BaseProgressProps } from "nsh/base";
 
+import { CheckboxMark, choiceWell } from "./checkbox";
+import { controlSize } from "./lib/surface";
 import { type Live, read } from "./lib/utils";
 
 // @port look/meter.ts
@@ -179,19 +202,226 @@ export function Progress(props: ProgressProps) {
     sweep: props.sweep,
   });
   return (
-    <BaseProgress
-      {...rest}
-      value={props.value}
-      indeterminate={props.indeterminate}
-      onLayout={props.onLayout ?? props.sweep?.onLayout}
-      trackStyle={[look.trackStyle, props.trackStyle ?? null]}
-      indicatorClass={props.indicatorClass ?? look.indicatorClass}
-      indicatorStyle={[look.indicatorStyle, props.indicatorStyle ?? null]}
+    <ProgressContext.Provider value={{ height: () => props.height ?? 6 }}>
+      <BaseProgress
+        {...rest}
+        value={props.value}
+        indeterminate={props.indeterminate}
+        onLayout={props.onLayout ?? props.sweep?.onLayout}
+        trackStyle={[look.trackStyle, props.trackStyle ?? null]}
+        indicatorClass={props.indicatorClass ?? look.indicatorClass}
+        indicatorStyle={[look.indicatorStyle, props.indicatorStyle ?? null]}
+      >
+        <If when={props.marker !== undefined}>
+          <View style={progressMarker(props.marker ?? 0, props.height)} />
+        </If>
+        {props.children}
+      </BaseProgress>
+    </ProgressContext.Provider>
+  );
+}
+
+/** What the steps under a `Progress` read: the bar's height, to centre the marks on it. */
+const ProgressStepsContext = context<{ join: () => number; count: () => number } | null>(null);
+const ProgressContext = context<{ height: () => number } | null>(null);
+
+/** Where a step stands: `done` (a check), `current` (a ring with a dot), `upcoming` (empty). */
+export type ProgressStepState = "done" | "current" | "upcoming";
+
+/** The room a step's label takes under its mark: one line of the label's size and the gap above. */
+const stepLabelRoom = 22;
+
+/** The widest a step's label gets. A middle label is centred under its mark; the first starts at its mark's outer edge, the last ends at its. */
+const stepLabelWidth = 64;
+
+/** A step's mark size: the page's control size (16 points with a pointer, 22 on a touch screen), the size of a radio's ring. */
+export const progressStepSize = (): number => controlSize.control;
+
+/** Where a step sits in its row: the ends keep their labels inside the bar's ends. */
+export type ProgressStepPlace = "first" | "middle" | "last";
+
+/** A `ProgressSteps`' and `ProgressStep`'s parts as the styles they wear (spread each one onto the part
+ * that matches its name). `height` is the bar's. */
+export interface ProgressStepsLook {
+  /** The row of marks (`ProgressSteps`): over the bar's length, the first mark's middle at the bar's start and
+   * the last's at its end, so it hangs half a mark past each end; centred on the bar; room under it for the
+   * labels. Laid out left to right whatever the reading direction, as the bar fills. */
+  steps(height: number): ViewStyle;
+  /** One step (`ProgressStep`): a mark wide, its label hanging under it. */
+  readonly step: ViewStyle;
+  /** A step's mark (`ProgressStepMark`): a ring, sunk like a field; the current one's edge is the accent. */
+  mark(state: ProgressStepState): ViewStyle;
+  /** The dot inside the current step's ring. */
+  readonly dot: ViewStyle;
+  /** A step's label (`ProgressStep`'s text), a box centred under the mark. */
+  /** `place`: `first`, `last`, or a step between. */
+  labelBox(place: ProgressStepPlace): ViewStyle;
+  /** The label's type: the current step's in medium weight and the page's ink, the done ones in the ink,
+   * the ones to come muted. */
+  label(state: ProgressStepState): TextStyle;
+}
+
+/** The look of the steps on a bar. */
+export function progressStepsLook(): ProgressStepsLook {
+  return {
+    steps: (height: number): ViewStyle => ({
+      alignSelf: "stretch",
+      direction: "ltr",
+      flexDirection: "row",
+      justifyContent: "space-between",
+      marginHorizontal: -progressStepSize() / 2,
+      marginTop: -(progressStepSize() + height) / 2,
+      paddingBottom: stepLabelRoom,
+    }),
+    get step(): ViewStyle {
+      return { width: progressStepSize(), height: progressStepSize() };
+    },
+    mark: (state: ProgressStepState): ViewStyle => ({
+      width: progressStepSize(),
+      height: progressStepSize(),
+      borderRadius: progressStepSize() / 2,
+      alignItems: "center",
+      justifyContent: "center",
+      borderWidth: stroke.control,
+      ...choiceWell(),
+      ...(state === "current" ? { borderColor: colors.brand } : {}),
+    }),
+    get dot(): ViewStyle {
+      return {
+        position: "absolute",
+        width: controlSize.dot,
+        height: controlSize.dot,
+        borderRadius: controlSize.dot / 2,
+        backgroundColor: colors.brand,
+      };
+    },
+    labelBox: (place: ProgressStepPlace): ViewStyle => ({
+      position: "absolute",
+      top: progressStepSize() + 6,
+      start:
+        place === "first"
+          ? 0
+          : place === "last"
+            ? progressStepSize() - stepLabelWidth
+            : (progressStepSize() - stepLabelWidth) / 2,
+      width: stepLabelWidth,
+      alignItems: place === "first" ? "flex-start" : place === "last" ? "flex-end" : "center",
+    }),
+    label: (state: ProgressStepState): TextStyle => ({
+      fontSize: controlSize.detail,
+      fontWeight: state === "current" ? "600" : "400",
+      color: state === "upcoming" ? colors.mutedForeground : colors.foreground,
+    }),
+  };
+}
+
+/**
+ * A step's mark: a ring sunk like a field, citrus with a check once `done` (the check grows in on a
+ * spring, as a checkbox's does), an accent edge and dot while `current`. Becoming current or done
+ * pops the ring a little past its size and back; with reduced motion nothing moves.
+ */
+export function ProgressStepMark(props: { state: Live<ProgressStepState> }) {
+  const state = () => read(props.state) ?? "upcoming";
+  const current = follow(() => (state() === "current" ? 1 : 0));
+  const pop = createAnimatedValue(1);
+  let shown = state();
+  effect(() => {
+    const next = state();
+    if (next === shown) return;
+    shown = next;
+    if (!reduceMotion()) pop.spring(1, { ...motion.move, velocity: 4 });
+  });
+  const look = progressStepsLook();
+  return (
+    <View
+      class="transition-colors duration-150 motion-reduce:transition-none"
+      style={[look.mark(state()), { transform: [{ scale: pop }] }]}
     >
-      <If when={props.marker !== undefined}>
-        <View style={progressMarker(props.marker ?? 0, props.height)} />
-      </If>
-      {props.children}
-    </BaseProgress>
+      <CheckboxMark mark={state() === "done" ? "check" : null} round />
+      <View style={[look.dot, { opacity: current }]} />
+    </View>
+  );
+}
+
+/** The steps of a `Progress`, drawn over its bar. */
+export type ProgressStepsProps = ViewProps;
+
+/**
+ * The step marks on a bar, a `ProgressStep` each, in the bar's frame (a child of `Progress`). The bar
+ * runs from the first mark's middle to the last's, so the row hangs half a mark past each end
+ * (`progressStepSize()`): give the `Progress` that room at its sides. The bar's `value` is the app's:
+ * 0 at the first step, 100 at the last.
+ */
+export function ProgressSteps(props: ProgressStepsProps) {
+  const [, rest] = split(props, ["children", "style"]);
+  const height = () => ProgressContext()?.height() ?? 6;
+  // Each step takes its place in the row as it is made; the count tells which is last.
+  const count = signal(0);
+  const made = { count: 0 };
+  const steps = {
+    join: (): number => {
+      const index = made.count++;
+      count.set(made.count);
+      return index;
+    },
+    count: (): number => count(),
+  };
+  return (
+    <ProgressStepsContext.Provider value={steps}>
+      <View
+        role="list"
+        {...rest}
+        style={[progressStepsLook().steps(height()), props.style ?? null]}
+      >
+        {props.children}
+      </View>
+    </ProgressStepsContext.Provider>
+  );
+}
+
+/** One step on a bar. */
+export type ProgressStepProps = Omit<ViewProps, "children"> & {
+  /** Where the step stands. Default `upcoming`. */
+  state?: ProgressStepState;
+  /** The step's label, under its mark. Its name for screen readers too, with its state. */
+  children?: string | JSX.Element;
+};
+
+/**
+ * A step: its mark, and a label under it when the child is a string. The label names it for screen
+ * readers, followed by where it stands.
+ */
+export function ProgressStep(props: ProgressStepProps) {
+  const [, rest] = split(props, ["state", "children", "style", "accessibilityLabel"]);
+  const state = (): ProgressStepState => props.state ?? "upcoming";
+  const look = progressStepsLook();
+  const row = ProgressStepsContext();
+  const index = row?.join() ?? 0;
+  const place = (): ProgressStepPlace => {
+    const n = row?.count() ?? 1;
+    return index === 0 ? "first" : index === n - 1 ? "last" : "middle";
+  };
+  // Read once, here where the step is made (`Toggle` reads its children the same way): a string is
+  // the label, and the kind of the children never changes.
+  const kids = props.children;
+  const label = typeof kids === "string" ? kids : undefined;
+  return (
+    <View
+      role="group"
+      accessibilityLabel={
+        props.accessibilityLabel ?? (label === undefined ? undefined : `${label}, ${state()}`)
+      }
+      {...rest}
+      style={[look.step, props.style ?? null]}
+    >
+      <ProgressStepMark state={state} />
+      {label !== undefined ? (
+        <View style={look.labelBox(place())}>
+          <Text style={look.label(state())}>{label}</Text>
+        </View>
+      ) : (
+        kids
+      )}
+    </View>
   );
 }

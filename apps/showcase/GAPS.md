@@ -15,7 +15,7 @@ and its row leaves this file.
 | [#149](https://github.com/aningdev/shadcn-nsh/issues/149) | No public helper turns a lucide icon into an image for a native menu            | System (context menu rebuilds the Gallery's `lucideSvg`)         |
 | [#156](https://github.com/aningdev/shadcn-nsh/issues/156) | No ground that stays dark in every appearance (`on-media`'s pair)               | Shader (panels flip with the appearance)                         |
 
-Not gaps: the iOS segmented control is a platform look; a Progress with step dots is app layout;
+Not gaps: the iOS segmented control is a platform look;
 `Segmented` / `Button` / `Badge` take children where upstream takes `options` / `label` (shadcn's
 composition). Upstream's funnel animates drawn `Canvas` geometry with `createAnimatedValue`, which
 `nsh/base` doesn't drive; the necks redraw without an entrance. Editor gutters use the `warn` / `up` /

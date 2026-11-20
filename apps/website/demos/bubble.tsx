@@ -1,6 +1,7 @@
 // shadcn/ui's bubble page has no example in this repo, so this page is the library's own: a short
 // conversation, every fill a bubble can wear, reactions hanging off either edge, and a quick reply
 // that acts. Pressing the quick reply writes to the log beside it.
+import { shape } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import {
@@ -141,6 +142,20 @@ function App() {
             <Bubble variant="muted" align="end">
               <BubbleContent onPress={() => log("Replied: I forgot my password")}>
                 I forgot my password
+              </BubbleContent>
+            </Bubble>
+          </DemoSection>
+
+          <DemoSection title="A tail" axis="block">
+            {/* The sender's bottom corner is squarer than the rest: the end for what you send, the start for what came in. */}
+            <Bubble variant="muted">
+              <BubbleContent style={{ borderBottomStartRadius: shape.control / 2 }}>
+                Where does the tail go?
+              </BubbleContent>
+            </Bubble>
+            <Bubble variant="default" align="end">
+              <BubbleContent style={{ borderBottomEndRadius: shape.control / 2 }}>
+                On the sender's side, the corner that points at them.
               </BubbleContent>
             </Bubble>
           </DemoSection>

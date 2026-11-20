@@ -128,6 +128,18 @@ row for screen readers: NSH reads each glyph without context otherwise.
 </Bubble>
 ```
 
+### A tail
+
+The sender's bottom corner is squarer than the rest. shadcn/ui does this with a class on the content (`rounded-br-sm`), so it is a recipe here too, not a prop: a `style` on `BubbleContent` that reads the theme's `shape`. Use the logical corner (`borderBottomEndRadius` for what you send, `borderBottomStartRadius` for what came in) so it follows the reading direction.
+
+```tsx
+import { shape } from "@shadcn-nsh/theme";
+
+<Bubble variant="default" align="end">
+  <BubbleContent style={{ borderBottomEndRadius: shape.control / 2 }}>On my way.</BubbleContent>
+</Bubble>;
+```
+
 ### A turn that acts
 
 Give `BubbleContent` `onPress` for a quick reply or a suggestion: the pointer over it is a hand.

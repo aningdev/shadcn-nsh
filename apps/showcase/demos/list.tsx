@@ -21,6 +21,7 @@ import { Button, RoundButton } from "@/packages/ui/button";
 import { Input } from "@/packages/ui/input";
 import { Icon } from "@/packages/ui/lib/icons";
 import { REFRESH_INDICATOR_HEIGHT, RefreshIndicator } from "@/packages/ui/refresh-indicator";
+import { Toggle } from "@/packages/ui/toggle";
 
 import { Caption, DemoCard, DemoPage } from "../kit";
 import { Api, Choice, Meter } from "./primitives-shared";
@@ -769,14 +770,15 @@ function More() {
               <View style={{ flexDirection: "row", gap: 8, paddingHorizontal: 16 }}>
                 <Each of={ranges}>
                   {(label) => (
-                    <Button
-                      variant={range() === label() ? "default" : "secondary"}
-                      size="sm"
-                      onPress={() => range.set(label())}
-                      style={{ borderRadius: 18 }}
+                    <Toggle
+                      variant="outline"
+                      size="lg"
+                      pressed={range() === label()}
+                      style={{ borderRadius: 999 }}
+                      onChange={() => range.set(label())}
                     >
                       {label()}
-                    </Button>
+                    </Toggle>
                   )}
                 </Each>
               </View>

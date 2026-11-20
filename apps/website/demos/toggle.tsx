@@ -49,12 +49,16 @@ function Lines(props: { align: Align; tint: string; size: number }) {
   );
 }
 
+/** A row of single-select chips: capsules, one chosen. */
+const CHIPS = ["Orbit", "Bounce", "Spring", "Settle", "Ease out"];
+
 function App() {
   const on = signal<Mark[]>(["bold"]);
   const align = signal<Align>("left");
   const starred = signal(false);
   const variant = signal<"default" | "outline">("default");
   const size = signal<"sm" | "default" | "lg">("default");
+  const chip = signal("Orbit");
   const events = signal<string[]>([]);
   const log = (line: string) => events.set([line, ...events()].slice(0, 3));
   const has = (m: Mark) => on().includes(m);
@@ -211,6 +215,25 @@ function App() {
           >
             Large
           </Toggle>
+        </DemoSection>
+        <DemoSection title="Chips">
+          <ToggleGroup inset={false} style={{ gap: 8, flexWrap: "wrap", maxWidth: "100%" }}>
+            {CHIPS.map((name) => (
+              <Toggle
+                variant="outline"
+                size="lg"
+                pressed={chip() === name}
+                style={{ borderRadius: 999 }}
+                onChange={({ pressed }) => {
+                  // Exactly one: the chosen chip stays chosen.
+                  if (pressed) chip.set(name);
+                  log(`Chip: ${name}`);
+                }}
+              >
+                {name}
+              </Toggle>
+            ))}
+          </ToggleGroup>
         </DemoSection>
       </DemoCard>
     </DemoPage>

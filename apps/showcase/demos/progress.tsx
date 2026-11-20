@@ -1,14 +1,20 @@
 import { colors, follow, motion, toneColor, type Tone } from "@shadcn-nsh/theme";
 // Progress: the official gallery's Progress scene (`Controls` `show="Progress"`: transfers, several
 // files, steps, and meters). The bar is this library's `Progress`. The step dots and the check
-// that pops in are drawn here: the library has no step mark.
+// that pops in are the library's `ProgressSteps`.
 import { Check, FileText, Film, Image as ImageIcon, type IconNode } from "lucide";
 import { cleanup, signal, Text, View } from "nsh";
 
 import { Badge } from "@/packages/ui/badge";
 import { Button } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
-import { Progress, progressSweep } from "@/packages/ui/progress";
+import {
+  Progress,
+  ProgressStep,
+  ProgressSteps,
+  progressStepSize,
+  progressSweep,
+} from "@/packages/ui/progress";
 
 import { DemoCard, DemoPage } from "../kit";
 import { pointer, SceneCard } from "./overlays-shared";
@@ -20,7 +26,6 @@ const FILES: { name: string; size: string; icon: IconNode; pace: number }[] = [
 ];
 
 const STEPS = ["Account", "Profile", "Team", "Review"];
-const dot = 18;
 
 const METERS: { name: string; height: number; note: (value: number) => string; limit?: number }[] =
   [
@@ -315,32 +320,20 @@ function Steps(props: { report: (line: string) => void }) {
         </Badge>
       }
     >
-      <View style={{ height: dot + 28, marginHorizontal: 16, marginTop: 8 }}>
-        <View style={{ position: "absolute", left: dot / 2, right: dot / 2, top: (dot - 4) / 2 }}>
-          <Progress value={value()} height={4} accessibilityLabel="Setup" />
-        </View>
-        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
-          <Each of={STEPS}>
-            {(name, index) => (
-              <View style={{ width: dot, alignItems: "center" }}>
-                <StepDot done={index() < step()} current={index() === step()} />
-                <Text
-                  style={{
-                    position: "absolute",
-                    top: dot + 6,
-                    width: 64,
-                    textAlign: "center",
-                    fontSize: 12,
-                    fontWeight: index() === step() ? "600" : "400",
-                    color: index() <= step() ? colors.foreground : colors.faint,
-                  }}
+      <View style={{ paddingHorizontal: progressStepSize() / 2, marginTop: 8 }}>
+        <Progress value={value()} height={4} accessibilityLabel="Setup">
+          <ProgressSteps>
+            <Each of={STEPS}>
+              {(name, index) => (
+                <ProgressStep
+                  state={index() < step() ? "done" : index() === step() ? "current" : "upcoming"}
                 >
                   {name()}
-                </Text>
-              </View>
-            )}
-          </Each>
-        </View>
+                </ProgressStep>
+              )}
+            </Each>
+          </ProgressSteps>
+        </Progress>
       </View>
       <View style={{ flexDirection: "row", gap: 8, alignSelf: pointer ? "flex-start" : "stretch" }}>
         <Button
@@ -372,43 +365,6 @@ function Steps(props: { report: (line: string) => void }) {
         </Button>
       </View>
     </SceneCard>
-  );
-}
-
-function StepDot(props: { done: boolean; current: boolean }) {
-  const shown = follow(() => (props.done ? 1 : 0), motion.control);
-  return (
-    <View
-      style={{
-        width: dot,
-        height: dot,
-        borderRadius: dot / 2,
-        alignItems: "center",
-        justifyContent: "center",
-        borderWidth: 1,
-        borderColor: props.current || props.done ? colors.brand : colors.input,
-        backgroundColor: props.done ? colors.brand : colors.field,
-      }}
-    >
-      <If
-        when={props.done}
-        else={
-          <View
-            style={{
-              width: 6,
-              height: 6,
-              borderRadius: 3,
-              backgroundColor: colors.brand,
-              opacity: props.current ? 1 : 0,
-            }}
-          />
-        }
-      >
-        <View style={{ opacity: shown }}>
-          <Icon icon={Check} size={10} tint={colors.onBrand} />
-        </View>
-      </If>
-    </View>
   );
 }
 

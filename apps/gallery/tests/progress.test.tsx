@@ -96,3 +96,14 @@ test("reduced motion drops the determinate glide and keeps the indeterminate swe
   expect(has(app.texts(), "glide=w-1/3")).toBe(true);
   expect(has(app.texts(), "at=sweep")).toBe(true);
 });
+
+test("a step is named with where it stands, and follows a signal", async () => {
+  const app = await open("./progress.fixture.tsx", tall);
+  expect(app.count("label:One, current")).toBe(1);
+  expect(app.count("label:Two, upcoming")).toBe(1);
+  await app.press("text:Next");
+  await app.wait(50);
+  expect(app.count("label:One, done")).toBe(1);
+  expect(app.count("label:Two, current")).toBe(1);
+  expect(app.count("label:Three, upcoming")).toBe(1);
+});
