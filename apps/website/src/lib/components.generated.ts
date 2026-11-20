@@ -493,6 +493,15 @@ export const components: ComponentDoc[] = [
       "Code, a command's output or a log in a block, with a title, a copy button, line numbers and a footer.",
   },
   {
+    slug: "collapsing-header",
+    title: "CollapsingHeader",
+    kind: "own",
+    shadcn: null,
+    nshElement: null,
+    description:
+      "A page's header that shrinks into a bar as the page scrolls, its picture sliding under the title.",
+  },
+  {
     slug: "drawer",
     title: "Drawer",
     kind: "own",

@@ -80,6 +80,7 @@ export * from "./image-viewer";
 export * from "./trace";
 export * from "./refresh-indicator";
 export * from "./title-bar";
+export * from "./collapsing-header";
 export * from "./lib/color-format";
 export * from "./lib/icons";
 export {

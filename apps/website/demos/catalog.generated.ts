@@ -85,4 +85,5 @@ export const componentIds = [
   "trace",
   "refresh-indicator",
   "title-bar",
+  "collapsing-header",
 ] as const;

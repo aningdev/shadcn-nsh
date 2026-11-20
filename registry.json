@@ -1515,6 +1515,20 @@
           "target": "components/ui/title-bar.tsx"
         }
       ]
+    },
+    {
+      "name": "collapsing-header",
+      "type": "registry:ui",
+      "title": "CollapsingHeader",
+      "description": "A page's header that shrinks into a bar as the page scrolls, its picture sliding under the title.",
+      "registryDependencies": ["as-text", "surface", "theme"],
+      "files": [
+        {
+          "path": "packages/ui/collapsing-header.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/collapsing-header.tsx"
+        }
+      ]
     }
   ]
 }
