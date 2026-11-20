@@ -76,7 +76,10 @@ Without a value the trigger shows `placeholder` (default "Pick a date") muted.
 | Part                | Props                                                                                                                                                 | Description                                                |
 | ------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
 | `DatePicker`        | `value` / `defaultValue`, `open` / `defaultOpen`, `disabled`, `cleanable`, `placeholder`, `onChange`, `onOpenChange`, `onOpen`, `onClose`, `onCancel` | Open state and the value                                   |
-| `DatePickerTrigger` | `title` (default the value), `placeholder`, `invalid`, `clearable`, `style`                                                                           | A `DateTrigger`, the pressed field that opens the calendar |
+| `DatePickerTrigger` | `title` (default the value), `placeholder`, `invalid`, `clearable`, `style`, `testID`, `accessibilityLabel`                                           | A `DateTrigger`, the pressed field that opens the calendar |
 | `DatePickerContent` | `range`, `timePrecision`, `presets`, `numberOfMonths`, `firstDayOfWeek`, …                                                                            | The calendar in the popup                                  |
 
-The root owns the open flag and the value; `DatePickerContent` mounts [`nsh/base` DatePicker](https://nsh.dev/elements/date-picker) and every base prop passes through except those. `datePickerLook` fills the popup, the scrim, the calendar and the time's row by default.
+`testID` finds the trigger in UI tests, and `accessibilityLabel` names it when the
+content does not name the field. The root owns the open flag and the value;
+`DatePickerContent` mounts [`nsh/base` DatePicker](https://nsh.dev/elements/date-picker)
+and every base prop passes through except those. `datePickerLook` fills the popup, the scrim, the calendar and the time's row by default.

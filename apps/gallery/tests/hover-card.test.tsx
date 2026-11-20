@@ -14,7 +14,8 @@ test("HoverCard opens after the pointer rests and closes on Escape", async () =>
 
 test("HoverCard custom trigger is a button that opens", async () => {
   const app = await open("./hover-card.fixture.tsx", desktop);
-  expect(app.count("role:button[Open B]")).toBeGreaterThan(0);
+  // No view in between: one button carries the label the element gave.
+  expect(app.count("role:button[Open B]")).toBe(1);
   await app.hover("text:Open B");
   await app.waitFor("text:Body B");
 });

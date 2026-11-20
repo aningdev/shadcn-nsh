@@ -10,6 +10,7 @@ import { computed, signal, Text, View } from "nsh";
 import { Badge } from "@/packages/ui/badge";
 import { Button } from "@/packages/ui/button";
 import { Checkbox } from "@/packages/ui/checkbox";
+import { choiceTileLook as tileLook } from "@/packages/ui/checkbox";
 import { Icon } from "@/packages/ui/lib/icons";
 import {
   controlSize,
@@ -19,7 +20,6 @@ import {
   RowLabel,
 } from "@/packages/ui/lib/surface";
 import { Progress } from "@/packages/ui/progress";
-import { choiceTileLook as tileLook } from "@/packages/ui/radio-group";
 
 import { Caption, DemoCard, DemoPage } from "../kit";
 

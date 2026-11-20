@@ -1,13 +1,26 @@
 // A checkbox: the look (`checkboxLook` and its companions) and the `Checkbox` that wears it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { alpha, colors, finish, follow, isDark, terminal, TERMINAL_ROW } from "@shadcn-nsh/theme";
+import {
+  alpha,
+  colors,
+  finish,
+  focusRing,
+  follow,
+  isDark,
+  radius,
+  rounded,
+  terminal,
+  TERMINAL_ROW,
+  tints,
+} from "@shadcn-nsh/theme";
 import { Check, Minus, type IconNode } from "lucide";
 import type { AnimatedValue, JSX, ViewStyle } from "nsh";
-import { split, View } from "nsh";
+import { reduceMotion, split, View } from "nsh";
 import { Checkbox as BaseCheckbox, type CheckboxProps as BaseCheckboxProps } from "nsh/base";
 
 import { AsText } from "./lib/as-text";
 import { Icon } from "./lib/icons";
+import { pressSink } from "./lib/press";
 import { controlSize } from "./lib/surface";
 import { type Live, read } from "./lib/utils";
 
@@ -188,6 +201,67 @@ export type ChoiceSize = "sm" | "default" | "lg";
 
 /** What a `ChoiceSize` multiplies the page's control size by: 0.8, 1, 1.25. */
 export const choiceScales: Record<ChoiceSize, number> = { sm: 0.8, default: 1, lg: 1.25 };
+
+/** Options of `choiceTileLook`. */
+export interface ChoiceTileOptions {
+  /** No hover and no press; dimmed to half. Pass the same value to the control's `disabled`. */
+  disabled?: Live<boolean | undefined>;
+  /** More style (a width, a gap), over the card's. */
+  style?: Live<ViewStyle | undefined>;
+}
+
+/** The props `choiceTileLook` gives a choice card. */
+export interface ChoiceTileLook {
+  readonly style: ViewStyle;
+  readonly hoverStyle: ViewStyle | undefined;
+  readonly activeStyle: ViewStyle;
+  readonly focusVisibleStyle: ViewStyle;
+  readonly disabledStyle: ViewStyle;
+}
+
+/**
+ * A choice card, whose whole surface is the checkbox or radio (spread it:
+ * `<Checkbox {...choiceTileLook(() => on())} indicator={<CheckboxMark … />}>`, or
+ * `<Radio {...choiceTileLook(() => on())}>`, the ring or box in its corner;
+ * `on` is read where the look is applied, so a spread follows it): raised
+ * while off, its edge the faint text color under the pointer; edged in the
+ * accent over its tint while on, the change faded. It sinks to 97% while
+ * pressed, natively (`pressSink`). Cards share a row (`flex: 1`).
+ */
+export function choiceTileLook(on: Live<boolean>, o?: ChoiceTileOptions): ChoiceTileLook {
+  const sink = pressSink(0.97);
+  const lit = () => !!read(on);
+  return {
+    get style(): ViewStyle {
+      const on = lit();
+      return {
+        flex: 1,
+        minWidth: 0,
+        padding: 12,
+        paddingTop: 14,
+        ...rounded(radius.inset),
+        borderWidth: 1,
+        borderColor: on ? colors.brand : colors.border,
+        backgroundColor: on ? tints.brand : colors.raised,
+        boxShadow: on ? "none" : finish.raised.boxShadow,
+        transitionProperty: "transform, border-color, background-color, box-shadow",
+        transitionDuration: reduceMotion() ? 0 : 150,
+        transitionTimingFunction: "ease-out",
+        ...(read(o?.style) ?? {}),
+      };
+    },
+    get hoverStyle(): ViewStyle | undefined {
+      return read(o?.disabled) || lit() ? undefined : { borderColor: colors.faint };
+    },
+    get activeStyle(): ViewStyle {
+      return sink.activeStyle;
+    },
+    get focusVisibleStyle(): ViewStyle {
+      return focusRing();
+    },
+    disabledStyle: { opacity: 0.5 },
+  };
+}
 
 /** The mark a checkbox's props show: a dash while it is indeterminate, a check when it is checked. */
 const markOf = (props: Pick<BaseCheckboxProps, "checked" | "indeterminate">): CheckboxMarkKind =>

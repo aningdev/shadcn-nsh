@@ -443,7 +443,9 @@ export interface ColorPanelProps extends ColorFieldsProps {
 /**
  * The whole picker in place (inside a `ColorPicker`, or a popover in one): the area; the eyedropper, the hue slider
  * (and the opacity's, `alpha`) and the copy button on one row; the joined fields; the swatches. Its parts are named
- * after `name` for screen readers.
+ * after `name` for screen readers. It has to sit inside `nsh/base`'s `ColorPicker`: outside one, its parts log that
+ * they are outside a `ColorPicker` and take no input (`nsh-base`'s `color_picker/mod.rs`), so this shell has no root
+ * of its own to fall back on.
  */
 export function ColorPanel(props: ColorPanelProps) {
   return (

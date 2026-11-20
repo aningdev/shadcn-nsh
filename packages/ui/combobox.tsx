@@ -112,10 +112,11 @@ export function comboboxLook(open: Live<boolean>, o?: ComboboxLookOptions) {
 const toggleSide = 24;
 
 /** A combobox's toggle (`triggerButton`): the chevron in a square that lights under the pointer. */
-export function ComboToggle(props: { open: boolean; id?: string }) {
+export function ComboToggle(props: { open: boolean; id?: string; label?: string }) {
   return (
     <View
       testID={props.id}
+      accessibilityLabel={props.label}
       style={{
         width: toggleSide,
         height: toggleSide,
@@ -302,6 +303,9 @@ export type ComboboxTriggerProps = {
   disabled?: boolean;
   /** The id UI tests find the toggle by. */
   testID?: string;
+  /** What screen readers call the toggle (none by default: it draws a chevron only). */
+  accessibilityLabel?: string;
+  /** The string child's button style. */
   style?: StyleProp<ViewStyle>;
 };
 
@@ -472,9 +476,10 @@ export function ComboboxTrigger(props: ComboboxTriggerProps) {
         variant={props.variant ?? "secondary"}
         disabled={disabled}
         testID={props.testID}
+        accessibilityLabel={props.accessibilityLabel}
       />
     ) : (
-      (kids ?? <ComboToggle open={ctx.open()} id={props.testID} />)
+      (kids ?? <ComboToggle open={ctx.open()} id={props.testID} label={props.accessibilityLabel} />)
     ),
   );
   return null;

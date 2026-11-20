@@ -179,6 +179,10 @@ export interface PickerProps {
   variant?: PickerVariant;
   /** Its own style, over its look: where the app places it. */
   style?: StyleProp<ViewStyle>;
+  /** The id UI tests find the trigger by. */
+  testID?: string;
+  /** What screen readers call the trigger (a select says its title by itself). */
+  accessibilityLabel?: string;
 }
 
 /** The icon of a trigger: 16 points with a pointer (shadcn's `size-4`), 18 on a touch screen. */
@@ -196,6 +200,8 @@ export function Picker(props: PickerProps) {
       // Off is the trigger's own state (`disabledStyle`, no presses and no hover); `nsh/base`'s
       // Select and DatePicker set the same `disabled` on the trigger they are given.
       disabled={props.disabled}
+      testID={props.testID}
+      accessibilityLabel={props.accessibilityLabel}
       {...pickerLook({
         open: () => props.open,
         invalid: () => !!props.invalid,
@@ -302,6 +308,10 @@ export type SelectTriggerProps = {
    * fill, the edge, the padding) stays on the trigger.
    */
   style?: StyleProp<ViewStyle>;
+  /** The id UI tests find the trigger by. */
+  testID?: string;
+  /** What screen readers call the trigger, when it should say more than the value. */
+  accessibilityLabel?: string;
 };
 
 /** The chosen title, or the placeholder: set by `SelectValue`, else the root's `placeholder`. */
@@ -506,6 +516,8 @@ export function SelectTrigger(props: SelectTriggerProps) {
       variant={props.variant}
       chevron={props.chevron}
       style={splitTriggerStyle(props.style).look}
+      testID={props.testID}
+      accessibilityLabel={props.accessibilityLabel}
     />,
   );
   // A string child is the placeholder, as `SelectValue` sets it; anything else is drawn where the

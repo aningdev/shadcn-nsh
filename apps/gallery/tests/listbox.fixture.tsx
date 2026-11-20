@@ -46,7 +46,7 @@ function App() {
   return (
     <View style={{ gap: 8, padding: 12 }}>
       <Select value={fruit()} onChange={({ value }) => fruit.set(value)}>
-        <SelectTrigger>
+        <SelectTrigger testID="fruit" accessibilityLabel="Fruit">
           <SelectValue placeholder="Fruit" />
         </SelectTrigger>
         <SelectContent accessibilityLabel="Fruit">
@@ -63,7 +63,7 @@ function App() {
         onChange={({ value }) => one.set(value)}
         onOpenChange={({ open }) => frameworkOpen.set(open)}
       >
-        <ComboboxTrigger testID="framework" />
+        <ComboboxTrigger testID="framework" accessibilityLabel="Show frameworks" />
         <ComboboxContent accessibilityLabel="Framework">
           <ComboboxItem value="react">React</ComboboxItem>
           <ComboboxItem value="vue">Vue</ComboboxItem>

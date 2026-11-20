@@ -95,8 +95,9 @@ the app's own drawing, so `Menu` and its parts are.
 
 A string child is drawn as the button's label in the theme's look (`variant`, `ghost` by default;
 `size` as `Button`'s). It is not a `Button` inside: `nsh/base` makes the button's own view the
-pressable on the desktops, and a nested one would take the press. Anything else is the app's content,
-drawn as given.
+pressable on the desktops, and a nested one would take the press. A single element child is the
+trigger itself, with no wrapper: its look, `testID`, name, own press and hover styles stay, and
+`nsh/base` adds the open state to it (`expandedStyle`, `expanded:` classes).
 
 ### Names for screen readers
 
@@ -106,25 +107,25 @@ A string child is the row's label and its name for screen readers; `accessibilit
 
 - No portal part (`DropdownMenuPortal` in shadcn): `nsh/base` draws the popup.
 - No radio group part (`DropdownMenuRadioGroup` in shadcn): `MenuGroup` holds the rows, and each `MenuRadioItem` carries its own `checked`.
-- No `asChild`: a string child of `MenuTrigger` is a `Button` (`variant`, `secondary` by default), anything else a pressable view.
+- No `asChild` or `render`: a string child of `MenuTrigger` is a `Button` (`variant`, `secondary` by default); a single element child is the trigger itself, since NSH merges the trigger's behavior into it.
 - `onOpenChange` reports `{ open, reason }`.
 
 ## API
 
 Looks are `menuItemLook`, `menuItemLabel`, `menuItemNote`, `menuItemGlyph`, `menuPopup`, `menuSeparator` and `menuHighlight`; `SubmenuRow` and `SubmenuBack` draw a submenu's row and its touch back row. Every prop of [`nsh/base` Menu](https://nsh.dev/elements/menu) on `MenuContent` passes through except open state and `trigger`.
 
-| Part               | Props                                                                                                                        | Description                                                |
-| ------------------ | ---------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| `Menu`             | `open`, `defaultOpen`, `onOpenChange({ open, reason })`, `onOpen`, `onClose`, `onCancel`                                     | Open state and the trigger slot                            |
-| `MenuTrigger`      | `children`, `variant`, `disabled`, `style`                                                                                   | Registers the trigger; a string child is a `Button`        |
-| `MenuContent`      | every `nsh/base` Menu prop but open state and `trigger`; defaults bottom / start / 4                                         | The popup or sheet                                         |
-| `MenuItem`         | every `nsh/base` MenuItem prop; `variant`, `inset`; a string child is the label                                              | A row                                                      |
-| `MenuCheckboxItem` | as `MenuItem`, plus `checked`                                                                                                | A checkable row                                            |
-| `MenuRadioItem`    | as `MenuItem`, plus `checked`                                                                                                | One of a group                                             |
-| `MenuLabel`        | `children`, `inset`                                                                                                          | A group's title                                            |
-| `MenuSeparator`    | every `nsh/base` MenuSeparator prop                                                                                          | A hairline                                                 |
-| `MenuShortcut`     | `children`, `style`                                                                                                          | A trailing note                                            |
-| `MenuSub`          | `children`, `disabled`                                                                                                       | A nested menu's root                                       |
-| `MenuSubTrigger`   | `children`, `lead`, `inset`, `disabled`, `style`                                                                             | The row that opens a submenu                               |
-| `MenuSubContent`   | every `nsh/base` Submenu prop but `trigger`; `back` on a touch screen                                                        | The nested menu's popup                                    |
-| `MenuButton`       | `items`, `title`, `disabled`, `accessibilityLabel`, `onSelect({ id })`, `variant`, `size`; the rest of `nsh/base` MenuButton | The platform's pull-down menu; a string child is its label |
+| Part               | Props                                                                                                                        | Description                                                                    |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |
+| `Menu`             | `open`, `defaultOpen`, `onOpenChange({ open, reason })`, `onOpen`, `onClose`, `onCancel`                                     | Open state and the trigger slot                                                |
+| `MenuTrigger`      | `children`, `variant`, `disabled`, `style`                                                                                   | Registers the trigger; a string child is a `Button`, an element is the trigger |
+| `MenuContent`      | every `nsh/base` Menu prop but open state and `trigger`; defaults bottom / start / 4                                         | The popup or sheet                                                             |
+| `MenuItem`         | every `nsh/base` MenuItem prop; `variant`, `inset`; a string child is the label                                              | A row                                                                          |
+| `MenuCheckboxItem` | as `MenuItem`, plus `checked`                                                                                                | A checkable row                                                                |
+| `MenuRadioItem`    | as `MenuItem`, plus `checked`                                                                                                | One of a group                                                                 |
+| `MenuLabel`        | `children`, `inset`                                                                                                          | A group's title                                                                |
+| `MenuSeparator`    | every `nsh/base` MenuSeparator prop                                                                                          | A hairline                                                                     |
+| `MenuShortcut`     | `children`, `style`                                                                                                          | A trailing note                                                                |
+| `MenuSub`          | `children`, `disabled`                                                                                                       | A nested menu's root                                                           |
+| `MenuSubTrigger`   | `children`, `lead`, `inset`, `disabled`, `style`                                                                             | The row that opens a submenu                                                   |
+| `MenuSubContent`   | every `nsh/base` Submenu prop but `trigger`; `back` on a touch screen                                                        | The nested menu's popup                                                        |
+| `MenuButton`       | `items`, `title`, `disabled`, `accessibilityLabel`, `onSelect({ id })`, `variant`, `size`; the rest of `nsh/base` MenuButton | The platform's pull-down menu; a string child is its label                     |

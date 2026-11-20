@@ -12,12 +12,6 @@ const phone = { platform: "ios", width: 320, height: 640 } as const;
 
 type App = Awaited<ReturnType<typeof open>>;
 
-/** The day a demo's deadline starts on: two days from today, as its trigger writes it (`Nov 22`). */
-const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const today = new Date();
-const due = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 2);
-const dueTitle = `${MONTHS[due.getMonth()]} ${due.getDate()}`;
-
 /** Every demo of the group with a text only it draws: the sidebar name and the page's first mark. */
 const TOURS: [name: string, marker: string][] = [
   ["Input", "Account"],
@@ -120,8 +114,7 @@ test("DatePicker: a preset fills the deadline", async () => {
   const app = await open("../App.tsx", wide);
   await app.setColorScheme("light");
   await show(app, "DatePicker", "Deadline");
-  // The trigger's own title: a date picker's trigger takes no test id (a gap), so its text opens it.
-  await app.press(`text:${dueTitle}`);
+  await app.press("id:deadline");
   await app.press("text:Tomorrow");
   await app.waitFor("text:Due tomorrow");
   // The same demo's time slots: a free time becomes the booking.

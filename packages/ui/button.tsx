@@ -506,9 +506,9 @@ export type ButtonProps = Omit<BaseButtonProps, "children"> & {
   /** Work started by it is going on: a spinner before the label, no presses, not dimmed. */
   busy?: boolean;
   /**
-   * A string is the label, in `buttonLabel`'s type; anything else is drawn as given. What the
-   * button draws is its name for screen readers, which `accessibilityLabel` says when the app
-   * gives one.
+   * Each string among the children is the label, in `buttonLabel`'s type (an icon before it
+   * stays an icon); anything else is drawn as given. What the button draws is its name for
+   * screen readers, which `accessibilityLabel` says when the app gives one.
    */
   children?: string | JSX.Element;
 };
@@ -656,8 +656,8 @@ export type SplitButtonProps = {
 };
 
 /**
- * One half of a split button. A string child is the label in `buttonLabel`; anything else is
- * drawn as given. Spread `buttonGlyph` on an icon for the menu half.
+ * One half of a split button. Each string among the children is the label in `buttonLabel`;
+ * anything else is drawn as given. Spread `buttonGlyph` on an icon for the menu half.
  */
 export type SplitButtonSegmentProps = Omit<BaseButtonProps, "children"> & {
   children?: string | JSX.Element;

@@ -62,14 +62,31 @@ A line or two: 12 points of padding and 4 between rows.
 
 ### A trigger of your own
 
-A string child is a `Button`; anything else is a pressable view.
+A string child is a `Button` (`variant`, `secondary` by default). A single element child is
+the trigger itself, with no wrapper: its look, `testID`, name, own press, hover, active and
+focus styles all stay, and `nsh/base` adds the open state to it, so `expandedStyle` and
+`expanded:` classes answer the popup. `variant`, `disabled` and `style` shape a string
+child; an element brings its own (its `disabled` is the one that counts).
 
 ```tsx
 <PopoverTrigger variant="default">Filters</PopoverTrigger>
 <PopoverTrigger>
   <Badge>New</Badge>
 </PopoverTrigger>
+<PopoverTrigger>
+  <View accessibilityLabel="Filters" expandedStyle={{ backgroundColor: colors.accent }}>
+    <Icon icon={SlidersHorizontal} size={14} />
+    <Text>Filters</Text>
+  </View>
+</PopoverTrigger>
 ```
+
+## Differences from shadcn/ui
+
+- No `asChild` or `render`: NSH merges the trigger's behavior into the element a slot holds
+  (`references/nsh/crates/nsh-core/src/core/slots.rs`), so a single element child is the
+  trigger already. `shadcn`'s `render` would have nothing left to merge.
+- `onOpenChange` reports `{ open, reason }`.
 
 ## API
 
@@ -78,7 +95,7 @@ The root owns the open flag; `PopoverContent` mounts [`nsh/base` Popover](https:
 | Part                 | Props                                                                                                | Description                                                     |
 | -------------------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
 | `Popover`            | `open`, `defaultOpen`, `onOpenChange`, `onOpen`, `onClose`, `onCancel`                               | The root owns the open flag                                     |
-| `PopoverTrigger`     | `variant`, `disabled`, `style`                                                                       | `variant` is a string child's `Button`                          |
+| `PopoverTrigger`     | `variant`, `disabled`, `style`                                                                       | A string child's `Button`; an element child is the trigger      |
 | `PopoverContent`     | `compact`, `width`, `placement`, `align`, `offset`, `margin`, `closeOnEscape`, `closeOnPressOutside` | The panel; `placement` through `closeOnPressOutside` are base's |
 | `PopoverHeader`      | `style`, `class`                                                                                     | A `View` around a title and its description                     |
 | `PopoverTitle`       | `style`, `class`                                                                                     | A string is `Text`                                              |

@@ -20,7 +20,9 @@ function App() {
       </HoverCard>
       <HoverCard>
         <HoverCardTrigger>
-          <Text>Open B</Text>
+          <View role="button" accessibilityLabel="Open B">
+            <Text>Open B</Text>
+          </View>
         </HoverCardTrigger>
         <HoverCardContent>
           <Text>Body B</Text>

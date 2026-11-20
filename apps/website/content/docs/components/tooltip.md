@@ -57,13 +57,35 @@ A title and a note in a column, 10 points of padding.
 
 ### A trigger of your own
 
-A string child is a `Button`; anything else is the element itself.
+A string child is a `Button`; anything else is the element itself, and its own press, hover
+and name stay.
 
 ```tsx
 <TooltipTrigger variant="ghost">Star</TooltipTrigger>
 <TooltipTrigger>
   <Icon icon={Star} size={16} tint={colors.mutedForeground} />
 </TooltipTrigger>
+```
+
+### On a menu's trigger
+
+A tooltip hangs on the element the trigger is. Give that element the `tooltip` prop and
+hand it to the trigger that wants the press; do not nest `TooltipTrigger` around a trigger
+part, which draws nothing for the hint's host to wrap.
+
+```tsx
+<Menu>
+  <MenuTrigger>
+    <View
+      accessibilityLabel="More actions"
+      tooltip={<TooltipContent>More actions</TooltipContent>}
+      style={{ width: 28, height: 28, alignItems: "center", justifyContent: "center" }}
+    >
+      <Icon icon={Ellipsis} size={16} tint={colors.mutedForeground} />
+    </View>
+  </MenuTrigger>
+  <MenuContent>…</MenuContent>
+</Menu>
 ```
 
 ## API

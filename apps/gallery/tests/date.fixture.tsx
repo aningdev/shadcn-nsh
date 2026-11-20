@@ -74,7 +74,7 @@ function App() {
         onChange={({ value }) => due.set(typeof value === "string" ? value : "none")}
         onOpenChange={({ open: next }) => open.set(next)}
       >
-        <DatePickerTrigger />
+        <DatePickerTrigger testID="due-date" accessibilityLabel="Due date" />
         <DatePickerContent accessibilityLabel="Due" />
       </DatePicker>
       <Text>due={due()}</Text>

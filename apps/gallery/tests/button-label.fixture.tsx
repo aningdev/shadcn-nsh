@@ -12,6 +12,11 @@ function App() {
       <Button onPress={() => presses.set(presses() + 1)}>
         <Text>Drawn as given</Text>
       </Button>
+      {/* A label beside an icon: the string is text in the label's style, the icon an icon. */}
+      <Button onPress={() => presses.set(presses() + 1)}>
+        <Text>★</Text>
+        Upload 3 photos
+      </Button>
       <Text>{`pressed ${presses()}`}</Text>
     </>
   );

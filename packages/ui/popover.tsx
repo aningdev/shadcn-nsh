@@ -1,6 +1,5 @@
 // A popover: the look (`popoverLook`) at the top, and the parts that wear it below.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { focusRing } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, platform, split, View } from "nsh";
 import {
@@ -76,12 +75,17 @@ export type PopoverContentProps = Omit<
   children?: JSX.Element;
 };
 
-/** What opens the popover: a string is a `Button`'s label, anything else a pressable of its own. */
+/**
+ * What opens the popover: a string is a `Button`'s label; any other single element is the
+ * trigger itself (its press, focus, hover and open state land on it, no view in between).
+ */
 export type PopoverTriggerProps = {
   children?: string | JSX.Element;
   /** The button's variant, for a string child (default `secondary`). */
   variant?: ButtonVariant;
+  /** No press, for a string child; an element carries its own `disabled`. */
   disabled?: boolean;
+  /** The string child's button style. */
   style?: StyleProp<ViewStyle>;
 };
 
@@ -142,28 +146,21 @@ export function Popover(props: PopoverProps) {
   );
 }
 
-/** Opens the popover: a `Button` for a string, else a pressable view. */
+/** Opens the popover: a `Button` for a string, the element itself for anything else. */
 export function PopoverTrigger(props: PopoverTriggerProps) {
   const ctx = usePopover();
   // The trigger is an element, as an app hands one to `nsh/base` (`trigger={<View …>}`, the shape
   // upstream's demos use): built once, here, and placed by the popover without building it again
-  // on every layout. The kind is read once, here — it picks the host, and never changes; a
-  // string child is read where it is drawn (the `Button`'s own read, through the spread's getter,
-  // so a child that reads a signal stays live), and an element is handed as it is.
+  // on every layout. A single element is the trigger itself — `nsh/base` hands its press, focus
+  // and open state to that element, and its own look, test id and name stay — so no view goes
+  // between them. The kind is read once, here: a string child is read where it is drawn (the
+  // `Button`'s own read, through the spread's getter, so a child that reads a signal stays live).
   const kids = props.children;
   ctx.trigger.set(
     typeof kids === "string" ? (
       <Button {...props} variant={props.variant ?? "secondary"} />
     ) : (
-      <View
-        accessible
-        role="button"
-        accessibilityState={{ disabled: props.disabled }}
-        focusVisibleStyle={focusRing()}
-        style={props.style}
-      >
-        {kids}
-      </View>
+      (kids ?? <View />)
     ),
   );
   return null;

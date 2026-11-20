@@ -109,7 +109,9 @@ function App() {
       </Menu>
       <Menu>
         <MenuTrigger>
-          <Text>Open N</Text>
+          <View role="button" accessibilityLabel="Open N">
+            <Text>Open N</Text>
+          </View>
         </MenuTrigger>
         <MenuContent>
           <MenuItem>

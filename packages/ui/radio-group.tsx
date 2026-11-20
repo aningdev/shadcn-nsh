@@ -1,18 +1,8 @@
-// A radio group: the look (`RadioRing`, `choiceTileLook`) and the `Radio` / `RadioGroup` that wear it.
+// A radio group: the look (`RadioRing`) and the `Radio` / `RadioGroup` that wear it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import {
-  colors,
-  finish,
-  focusRing,
-  follow,
-  radius,
-  terminal,
-  TERMINAL_ROW,
-  tints,
-  rounded,
-} from "@shadcn-nsh/theme";
-import type { JSX, ViewStyle } from "nsh";
-import { reduceMotion, split, View } from "nsh";
+import { colors, follow, terminal, TERMINAL_ROW } from "@shadcn-nsh/theme";
+import type { JSX } from "nsh";
+import { split, View } from "nsh";
 import {
   Radio as BaseRadio,
   RadioGroup as BaseRadioGroup,
@@ -20,11 +10,16 @@ import {
   type RadioProps as BaseRadioProps,
 } from "nsh/base";
 
-import { ChoiceLight, choiceScales, choiceSink, choiceWell, type ChoiceSize } from "./checkbox";
+import {
+  ChoiceLight,
+  choiceScales,
+  choiceSink,
+  choiceTileLook,
+  choiceWell,
+  type ChoiceSize,
+} from "./checkbox";
 import { AsText } from "./lib/as-text";
-import { pressSink } from "./lib/press";
 import { controlSize } from "./lib/surface";
-import { type Live, read } from "./lib/utils";
 
 // @port look/choice.tsx
 /** A box's or ring's size: `scale` times the page's; one row high in the
@@ -74,65 +69,6 @@ export function RadioRing(props: { on: boolean; scale?: number; disabled?: boole
   );
 }
 
-/** Options of `choiceTileLook`. */
-export interface ChoiceTileOptions {
-  /** No hover and no press; dimmed to half. Pass the same value to the control's `disabled`. */
-  disabled?: Live<boolean | undefined>;
-  /** More style (a width, a gap), over the card's. */
-  style?: Live<ViewStyle | undefined>;
-}
-
-/** The props `choiceTileLook` gives a choice card. */
-export interface ChoiceTileLook {
-  readonly style: ViewStyle;
-  readonly hoverStyle: ViewStyle | undefined;
-  readonly activeStyle: ViewStyle;
-  readonly focusVisibleStyle: ViewStyle;
-  readonly disabledStyle: ViewStyle;
-}
-
-/**
- * A choice card, whose whole surface is the checkbox or radio (spread it:
- * `<Radio {...choiceTileLook(() => on())}>`, the ring or box in its corner;
- * `on` is read where the look is applied, so a spread follows it): raised
- * while off, its edge the faint text color under the pointer; edged in the
- * accent over its tint while on, the change faded. It sinks to 97% while
- * pressed, natively (`pressSink`). Cards share a row (`flex: 1`).
- */
-export function choiceTileLook(on: Live<boolean>, o?: ChoiceTileOptions): ChoiceTileLook {
-  const sink = pressSink(0.97);
-  const lit = () => !!read(on);
-  return {
-    get style(): ViewStyle {
-      const on = lit();
-      return {
-        flex: 1,
-        minWidth: 0,
-        padding: 12,
-        paddingTop: 14,
-        ...rounded(radius.inset),
-        borderWidth: 1,
-        borderColor: on ? colors.brand : colors.border,
-        backgroundColor: on ? tints.brand : colors.raised,
-        boxShadow: on ? "none" : finish.raised.boxShadow,
-        transitionProperty: "transform, border-color, background-color, box-shadow",
-        transitionDuration: reduceMotion() ? 0 : 150,
-        transitionTimingFunction: "ease-out",
-        ...(read(o?.style) ?? {}),
-      };
-    },
-    get hoverStyle(): ViewStyle | undefined {
-      return read(o?.disabled) || lit() ? undefined : { borderColor: colors.faint };
-    },
-    get activeStyle(): ViewStyle {
-      return sink.activeStyle;
-    },
-    get focusVisibleStyle(): ViewStyle {
-      return focusRing();
-    },
-    disabledStyle: { opacity: 0.5 },
-  };
-}
 // @port end
 
 /**

@@ -18,7 +18,8 @@ test("selecting an item runs onSelect and closes the menu", async () => {
 
 test("custom trigger is a button that opens", async () => {
   const app = await open("./menu.fixture.tsx");
-  expect(app.count("role:button[Open N]")).toBeGreaterThan(0);
+  // No view in between: one button carries the label the element gave.
+  expect(app.count("role:button[Open N]")).toBe(1);
   await app.press("text:Open N");
   await app.waitFor("text:Item N");
 });

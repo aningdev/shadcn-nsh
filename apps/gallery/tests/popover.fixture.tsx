@@ -6,9 +6,11 @@ import { Popover, PopoverContent, PopoverTrigger } from "../../../packages/ui";
 function App() {
   const changes = signal(0);
   const off = signal(false);
+  const openB = signal(0);
   return (
     <View>
       <Text>{() => `changes ${changes()}`}</Text>
+      <Text>{() => `custom pressed ${openB()}`}</Text>
       <BaseButton onPress={() => off.set(true)}>
         <Text>Flip</Text>
       </BaseButton>
@@ -20,7 +22,9 @@ function App() {
       </Popover>
       <Popover>
         <PopoverTrigger>
-          <Text>Open B</Text>
+          <View role="button" accessibilityLabel="Open B" onPress={() => openB.set(openB() + 1)}>
+            <Text>Open B</Text>
+          </View>
         </PopoverTrigger>
         <PopoverContent>
           <Text>Body B</Text>
@@ -33,8 +37,10 @@ function App() {
         </PopoverContent>
       </Popover>
       <Popover>
-        <PopoverTrigger disabled={off()}>
-          <Text>Open D</Text>
+        <PopoverTrigger>
+          <View role="button" accessibilityLabel="Open D" accessibilityState={{ disabled: off() }}>
+            <Text>Open D</Text>
+          </View>
         </PopoverTrigger>
         <PopoverContent>
           <Text>Body D</Text>

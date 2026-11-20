@@ -70,6 +70,23 @@
 
 ### Changed
 
+- **A `Button`'s label beside an icon is drawn (#83).** `AsText` draws every string or number
+  among a control's children in the control's label type, leaving elements where they are, so
+  `<Button><Icon icon={Upload} />Upload 3 photos</Button>` (and `SplitButtonSegment`, `Radio`, a
+  trigger with a glyph) shows its label instead of swallowing it. One read of `children`, as before.
+- **A trigger's element child is the trigger (#84).** `PopoverTrigger`, `HoverCardTrigger` and
+  `MenuTrigger` hand a single element child to `nsh/base` as the trigger itself: no wrapper view,
+  so its look, `testID`, accessible name, own press, hover and focus styles stay, and the open
+  state lands on it (`expandedStyle`, `expanded:` classes). `variant`, `disabled` and `style` shape
+  a string child; an element carries its own. There is no `render` / `asChild` prop because NSH
+  merges the trigger into the element a slot holds. A tooltip on a trigger goes on that element
+  (`tooltip={<TooltipContent>…</TooltipContent>}`), not on a `TooltipTrigger` around a trigger part.
+- **Picker parts take the name and id a test or screen reader uses (#93).** `DatePickerTrigger`,
+  `ComboboxTrigger`, `SelectTrigger` and `EmojiPanel` pass `testID` and `accessibilityLabel`
+  through; `choiceTileLook` moves to `checkbox` (both the `Checkbox` and the `Radio` spread it);
+  `ColorPanel` has to sit inside `nsh/base`'s `ColorPicker` — outside one its parts log that and
+  take no input, so every example wraps it.
+
 - **`IconButton`'s `lg` is 32 points with a pointer (44 on a touch screen), not 34 (#107).** It is
   the tool square upstream's rich text toolbar draws; `sm` and `default` are unchanged.
 - **The code editor and the dock export the session an app drives them with (#106).** `@/components/ui/code-editor` re-exports the editor's ref, decoration, diagnostic, search and value types; `@/components/ui/dock-area` already re-exports the dock's. `DockArea`'s `groupClass` follows `flex-1 bg-inset`, so `groupClass="bg-card"` replaces the group fill without `groupStyle`.

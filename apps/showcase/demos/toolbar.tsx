@@ -62,11 +62,9 @@ import {
 } from "nsh";
 import {
   Button as BaseButton,
-  Menu as BaseMenu,
   MenuItem as BaseMenuItem,
   Link as BaseLink,
   MenuSeparator as BaseMenuSeparator,
-  Popover as BasePopover,
   Slider,
   Toggle,
   ToggleGroup,
@@ -76,10 +74,11 @@ import { Badge } from "@/packages/ui/badge";
 import { RoundButton } from "@/packages/ui/button";
 import { Input } from "@/packages/ui/input";
 import { Icon } from "@/packages/ui/lib/icons";
-import { MenuMark, menuIndicator, PopIn } from "@/packages/ui/lib/popup";
+import { MenuMark, menuIndicator } from "@/packages/ui/lib/popup";
 import { toolbarTrack } from "@/packages/ui/lib/tool";
+import { Menu, MenuContent, MenuTrigger } from "@/packages/ui/menu";
 import { menuItemLook, menuPopup, menuSeparator } from "@/packages/ui/menu";
-import { popoverLook } from "@/packages/ui/popover";
+import { Popover, PopoverContent, PopoverTrigger } from "@/packages/ui/popover";
 import { sliderFill, sliderLook } from "@/packages/ui/slider";
 import {
   toggleGlyph,
@@ -268,11 +267,10 @@ function Command(
 }
 
 /**
- * A popup's trigger in a toolbar: a view the `Menu` or `Popover` gives its presses, focus and
- * `expanded` state, and so one of the toolbar's items (the arrows reach it, Space and Return open
- * it). The library's `MenuTrigger` and `PopoverTrigger` wrap an element child in their own
- * unlabeled accessible view, which would leave this item nameless, so the root is `nsh/base`'s
- * and the popup wears the library's surface.
+ * A popup's trigger in a toolbar: the view the `Menu` or `Popover` gives its presses, focus and
+ * `expanded` state (the arrows reach it, Space and Return open it), so one of the toolbar's
+ * items. It keeps its own name and tooltip: the library's trigger parts take an element and let
+ * `nsh/base` merge its behavior into it, with no wrapper.
  */
 function Trigger(props: {
   label: string;
@@ -595,12 +593,8 @@ function Formatting() {
           </ToolbarGroup>
           <Rule />
         </If>
-        <BaseMenu
-          offset={6}
-          margin={8}
-          popupStyle={menuPopup({ minWidth: 190 }).popupStyle}
-          onOpenChange={({ open }) => blockOpen.set(open)}
-          trigger={
+        <Menu onOpenChange={({ open }) => blockOpen.set(open)}>
+          <MenuTrigger>
             <Trigger
               label={`Block: ${block()}`}
               tip={<Tip label="Turn into" />}
@@ -624,19 +618,20 @@ function Formatting() {
                 <Text style={{ fontSize: 9, color: colors.faint }}>▾</Text>
               </View>
             </Trigger>
-          }
-        >
-          <Each of={BLOCKS}>
-            {(b) => (
-              <Item
-                label={b().value}
-                icon={b().icon}
-                checked={block() === b().value}
-                onSelect={() => commit({ block: b().value }, `Block: ${b().value}`)}
-              />
-            )}
-          </Each>
-        </BaseMenu>
+          </MenuTrigger>
+          <MenuContent offset={6} margin={8} popupStyle={menuPopup({ minWidth: 190 }).popupStyle}>
+            <Each of={BLOCKS}>
+              {(b) => (
+                <Item
+                  label={b().value}
+                  icon={b().icon}
+                  checked={block() === b().value}
+                  onSelect={() => commit({ block: b().value }, `Block: ${b().value}`)}
+                />
+              )}
+            </Each>
+          </MenuContent>
+        </Menu>
         <Rule />
         {/* A toggle group inside the toolbar is one of its groups: its toggles are the toolbar's items. */}
         <ToggleGroup style={{ flexDirection: "row", gap: GAP }}>
@@ -694,17 +689,14 @@ function Formatting() {
           </ToolbarGroup>
         </If>
         <Rule />
-        <BasePopover
+        <Popover
           open={linkOpen()}
           onOpenChange={({ open }) => {
             if (open) draft.set(state().link);
             linkOpen.set(open);
           }}
-          placement="bottom"
-          align="start"
-          offset={6}
-          margin={8}
-          trigger={
+        >
+          <PopoverTrigger>
             <Trigger
               label="Link"
               tip={<Tip label="Link" shortcut={keymap.label("mod+k")} />}
@@ -712,10 +704,15 @@ function Formatting() {
             >
               <ToolIcon icon={LinkIcon} label="Link" tint={linkTint()} />
             </Trigger>
-          }
-        >
+          </PopoverTrigger>
           {/* The popover's field and buttons are stops of their own, not the toolbar's items. */}
-          <PopIn style={popoverLook({ width: pointer ? 280 : 320 })}>
+          <PopoverContent
+            placement="bottom"
+            align="start"
+            offset={6}
+            margin={8}
+            width={pointer ? 280 : 320}
+          >
             <Text
               style={{ fontSize: pointer ? 12 : 14, fontWeight: "600", color: colors.foreground }}
             >
@@ -743,16 +740,11 @@ function Formatting() {
               />
               <Command label="Apply link" text="Apply" on onPress={applyLink} />
             </View>
-          </PopIn>
-        </BasePopover>
+          </PopoverContent>
+        </Popover>
         <View style={{ flex: 1 }} />
-        <BaseMenu
-          align="end"
-          offset={6}
-          margin={8}
-          popupStyle={menuPopup({ minWidth: 190 }).popupStyle}
-          onOpenChange={({ open }) => moreOpen.set(open)}
-          trigger={
+        <Menu onOpenChange={({ open }) => moreOpen.set(open)}>
+          <MenuTrigger>
             <Trigger label="More formatting" tip={<Tip label="More" />} open={moreOpen()}>
               <If
                 when={terminal}
@@ -761,54 +753,60 @@ function Formatting() {
                 <Text style={{ fontSize: TOOL.text, color: colors.mutedForeground }}>⋯</Text>
               </If>
             </Trigger>
-          }
-        >
-          {/* What the bar folded: the history, the marks, then the alignment. */}
-          <If when={folded("redo")}>
-            <If when={folded("undo")}>
-              <Item label="Undo" icon={Undo2} disabled={past().length === 0} onSelect={undo} />
+          </MenuTrigger>
+          <MenuContent
+            align="end"
+            offset={6}
+            margin={8}
+            popupStyle={menuPopup({ minWidth: 190 }).popupStyle}
+          >
+            {/* What the bar folded: the history, the marks, then the alignment. */}
+            <If when={folded("redo")}>
+              <If when={folded("undo")}>
+                <Item label="Undo" icon={Undo2} disabled={past().length === 0} onSelect={undo} />
+              </If>
+              <Item label="Redo" icon={Redo2} disabled={future().length === 0} onSelect={redo} />
+              <Separator />
             </If>
-            <Item label="Redo" icon={Redo2} disabled={future().length === 0} onSelect={redo} />
-            <Separator />
-          </If>
-          <If when={folded("strike")}>
-            <Each of={MARKS.filter((m) => folded(m.value))}>
-              {(m) => (
-                <Item
-                  label={m().label}
-                  icon={m().icon}
-                  check
-                  checked={has(m().value)}
-                  onSelect={() => toggleMark(m(), !has(m().value))}
-                />
-              )}
-            </Each>
-            <Separator />
-          </If>
-          <If when={compact()}>
-            <Each of={ALIGNS}>
-              {(a) => (
-                <Item
-                  label={a().label}
-                  checked={state().align === a().value}
-                  onSelect={() => commit({ align: a().value }, `Align: ${a().value}`)}
-                />
-              )}
-            </Each>
-            <Separator />
-          </If>
-          <Item
-            label="Clear formatting"
-            icon={X}
-            disabled={state().marks.length === 0 && state().block === "Paragraph"}
-            onSelect={() => commit({ marks: [], block: "Paragraph" }, "Clear formatting")}
-          />
-          <Item
-            label="Copy as Markdown"
-            icon={Copy}
-            onSelect={() => last.set("Copied as Markdown")}
-          />
-        </BaseMenu>
+            <If when={folded("strike")}>
+              <Each of={MARKS.filter((m) => folded(m.value))}>
+                {(m) => (
+                  <Item
+                    label={m().label}
+                    icon={m().icon}
+                    check
+                    checked={has(m().value)}
+                    onSelect={() => toggleMark(m(), !has(m().value))}
+                  />
+                )}
+              </Each>
+              <Separator />
+            </If>
+            <If when={compact()}>
+              <Each of={ALIGNS}>
+                {(a) => (
+                  <Item
+                    label={a().label}
+                    checked={state().align === a().value}
+                    onSelect={() => commit({ align: a().value }, `Align: ${a().value}`)}
+                  />
+                )}
+              </Each>
+              <Separator />
+            </If>
+            <Item
+              label="Clear formatting"
+              icon={X}
+              disabled={state().marks.length === 0 && state().block === "Paragraph"}
+              onSelect={() => commit({ marks: [], block: "Paragraph" }, "Clear formatting")}
+            />
+            <Item
+              label="Copy as Markdown"
+              icon={Copy}
+              onSelect={() => last.set("Copied as Markdown")}
+            />
+          </MenuContent>
+        </Menu>
       </Toolbar>
       <View
         style={{

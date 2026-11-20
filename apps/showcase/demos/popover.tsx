@@ -1,8 +1,8 @@
 import { alpha, colors, hovered } from "@shadcn-nsh/theme";
 // Popover: the official gallery's scene (`references/nsh/examples/gallery/demos/Popovers.tsx`)
-// with this library's parts. The panel is `popoverLook` on a `PopIn`. The trigger is the view
-// `nsh/base`'s Popover anchors to: `PopoverTrigger` wraps a custom child in a button that does
-// not take the open, hover or icon look, so the host is the base popover.
+// with this library's parts. The trigger is one of the scene's own views, handed to
+// `PopoverTrigger` as its element: `nsh/base` puts the press, focus and open state on it, so its
+// look, name and hover stay as the scene draws them.
 import {
   AlarmClock,
   BellRing,
@@ -20,14 +20,14 @@ import {
   type IconNode,
 } from "lucide";
 import { signal, Text, View } from "nsh";
-import { Popover, type OpenChangeReason } from "nsh/base";
+import type { OpenChangeReason } from "nsh/base";
 
 import { Avatar } from "@/packages/ui/avatar";
 import { Badge } from "@/packages/ui/badge";
-import { Button, buttonLabel } from "@/packages/ui/button";
+import { Button } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
-import { PopIn, type PopupSide } from "@/packages/ui/lib/popup";
-import { popoverLook } from "@/packages/ui/popover";
+import type { PopupSide } from "@/packages/ui/lib/popup";
+import { Popover, PopoverContent, PopoverTrigger } from "@/packages/ui/popover";
 import { Stat } from "@/packages/ui/stat";
 import { Switch } from "@/packages/ui/switch";
 
@@ -159,13 +159,17 @@ function Share(props: {
             open.set(event.open);
             changed("share")(event);
           }}
-          placement="bottom"
-          align="end"
-          offset={6}
-          margin={8}
-          trigger={<Trigger label="Share" icon={Share2} open={open()} variant="default" />}
         >
-          <PopIn style={popoverLook({ width: pointer ? 320 : 330 })}>
+          <PopoverTrigger>
+            <Trigger label="Share" icon={Share2} open={open()} variant="default" />
+          </PopoverTrigger>
+          <PopoverContent
+            placement="bottom"
+            align="end"
+            offset={6}
+            margin={8}
+            width={pointer ? 320 : 330}
+          >
             <Head title="Share “Q3 roadmap”" note={`${people().length} people have access`} />
             <View style={{ flexDirection: "row", gap: 8, alignItems: "center" }}>
               <Field
@@ -266,10 +270,10 @@ function Share(props: {
                 <If when={copied()}>
                   <Icon icon={Check} size={pointer ? 14 : 16} tint={colors.foreground} />
                 </If>
-                <Text style={buttonLabel("secondary")}>{copied() ? "Copied" : "Copy link"}</Text>
+                <Text>{copied() ? "Copied" : "Copy link"}</Text>
               </>
             </Button>
-          </PopIn>
+          </PopoverContent>
         </Popover>
       </View>
     </DemoCard>
@@ -298,15 +302,17 @@ function Profile(props: {
             open.set(event.open);
             changed("profile")(event);
           }}
-          placement="top"
-          align="start"
-          offset={6}
-          margin={8}
-          trigger={
-            <Trigger label="@Mira Chen" open={open()} variant="ghost" inline ink={colors.brand} />
-          }
         >
-          <PopIn side="top" style={popoverLook({ width: pointer ? 280 : 300 })}>
+          <PopoverTrigger>
+            <Trigger label="@Mira Chen" open={open()} variant="ghost" inline ink={colors.brand} />
+          </PopoverTrigger>
+          <PopoverContent
+            placement="top"
+            align="start"
+            offset={6}
+            margin={8}
+            width={pointer ? 280 : 300}
+          >
             <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
               <Avatar name="Mira Chen" style={{ width: 44, height: 44 }} />
               <View style={{ flex: 1, gap: 2 }}>
@@ -368,9 +374,7 @@ function Profile(props: {
                     size={pointer ? 14 : 16}
                     tint={following() ? colors.foreground : colors.primaryForeground}
                   />
-                  <Text style={buttonLabel(() => (following() ? "secondary" : "default"))}>
-                    {following() ? "Following" : "Follow"}
-                  </Text>
+                  <Text>{following() ? "Following" : "Follow"}</Text>
                 </>
               </Button>
               <Button
@@ -384,7 +388,7 @@ function Profile(props: {
                 Message
               </Button>
             </View>
-          </PopIn>
+          </PopoverContent>
         </Popover>
         <Text
           style={{
@@ -437,18 +441,15 @@ function Reminder(props: {
             open.set(event.open);
             changed("reminder")(event);
           }}
-          align="start"
-          offset={6}
-          margin={8}
-          trigger={
+        >
+          <PopoverTrigger>
             <Trigger
               label={current() ? `${current()!.label} · ${current()!.when}` : "Remind me"}
               icon={current() ? BellRing : AlarmClock}
               open={open()}
             />
-          }
-        >
-          <PopIn style={{ ...popoverLook({ compact: true }), width: pointer ? 240 : 280 }}>
+          </PopoverTrigger>
+          <PopoverContent align="start" offset={6} margin={8} compact width={pointer ? 240 : 280}>
             <Text
               style={{
                 fontSize: pointer ? 11 : 13,
@@ -524,7 +525,7 @@ function Reminder(props: {
                 </Text>
               </View>
             </If>
-          </PopIn>
+          </PopoverContent>
         </Popover>
       </View>
     </DemoCard>
@@ -561,22 +562,25 @@ function Placement(props: {
         ]}
       />
       <View style={{ alignItems: "center", paddingVertical: pointer ? 40 : 28 }}>
-        <Popover
-          placement={side()}
-          align={align()}
-          offset={8}
-          margin={8}
-          onOpenChange={changed("placed")}
-          trigger={<Trigger label={placementWords(side(), align())} icon={MapPin} />}
-        >
-          <PopIn side={side()} style={{ ...popoverLook({ compact: true }), maxWidth: 220 }}>
+        <Popover onOpenChange={changed("placed")}>
+          <PopoverTrigger>
+            <Trigger label={placementWords(side(), align())} icon={MapPin} />
+          </PopoverTrigger>
+          <PopoverContent
+            placement={side()}
+            align={align()}
+            offset={8}
+            margin={8}
+            compact
+            width={220}
+          >
             <Text style={{ fontSize: 13, fontWeight: "600", color: colors.foreground }}>
               {placementWords(side(), align())}
             </Text>
             <Text style={{ fontSize: 12, color: colors.mutedForeground }}>
               It grows out of the edge that faces its trigger.
             </Text>
-          </PopIn>
+          </PopoverContent>
         </Popover>
       </View>
       <Caption>

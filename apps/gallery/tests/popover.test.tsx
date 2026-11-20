@@ -7,11 +7,13 @@ test("string trigger opens the popover and reports one change", async () => {
   expect(app.texts()).toContain("changes 1");
 });
 
-test("non-string trigger is a keyboard-reachable button that opens", async () => {
+test("an element trigger is the button itself and keeps its own press", async () => {
   const app = await open("./popover.fixture.tsx");
-  expect(app.count("role:button[Open B]")).toBeGreaterThan(0);
+  // No view in between: one button carries the label the element gave.
+  expect(app.count("role:button[Open B]")).toBe(1);
   await app.press("text:Open B");
   await app.waitFor("text:Body B");
+  await app.waitFor("text:custom pressed 1");
 });
 
 test("trigger follows a disabled that changes after mount", async () => {

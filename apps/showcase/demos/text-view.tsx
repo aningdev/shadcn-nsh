@@ -18,7 +18,7 @@ import {
 } from "nsh";
 import type { TextViewCustomNode, TextViewImage } from "nsh/base";
 
-import { Button, buttonGlyph, buttonLabel, IconButton } from "@/packages/ui/button";
+import { Button, buttonGlyph, IconButton } from "@/packages/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/packages/ui/card";
 import { Dialog, DialogContent, dialogPage } from "@/packages/ui/dialog";
 import { Icon } from "@/packages/ui/lib/icons";
@@ -741,9 +741,7 @@ function StreamingDoc() {
         >
           <>
             <Icon icon={Play} {...buttonGlyph("secondary", { disabled: () => streaming() })} />
-            <Text style={buttonLabel("secondary", { disabled: () => streaming() })}>
-              {streaming() ? "Streaming…" : "Stream it"}
-            </Text>
+            {streaming() ? "Streaming…" : "Stream it"}
           </>
         </Button>
       </CardContent>

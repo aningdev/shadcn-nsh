@@ -87,3 +87,15 @@ test("a select and a combobox are compact with a pointer and roomier on a touch 
   // The title is resolved after the item registers, not stuck on the placeholder.
   expect(desktop.texts().join("\n").includes("Apple pie")).toBe(true);
 });
+
+test("a SelectTrigger takes the test id and the name it is given", async () => {
+  const app = await open("./listbox.fixture.tsx");
+  expect(app.count("id:fruit")).toBe(1);
+  expect(app.count("label:Fruit")).toBe(1);
+});
+
+test("a ComboboxTrigger takes the test id and the name it is given", async () => {
+  const app = await open("./listbox.fixture.tsx");
+  expect(app.count("id:framework")).toBe(1);
+  expect(app.count("label:Show frameworks")).toBe(1);
+});

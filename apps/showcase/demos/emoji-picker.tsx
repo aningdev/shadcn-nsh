@@ -20,7 +20,6 @@ function Picker(props: {
 }) {
   return (
     <View
-      testID="emoji-panel"
       style={{
         width: 342,
         alignSelf: "center",
@@ -33,6 +32,7 @@ function Picker(props: {
       }}
     >
       <EmojiPanel
+        testID="emoji-panel"
         class="flex-1"
         recent={props.recent}
         onSelect={props.onSelect}

@@ -6,7 +6,7 @@ import { colors, mono, radius, rounded } from "@shadcn-nsh/theme";
 import { Plus, Sparkles } from "lucide";
 import { platform, signal, Text, untracked, View, windowSize } from "nsh";
 
-import { Button, buttonGlyph, buttonLabel, IconButton } from "@/packages/ui/button";
+import { Button, buttonGlyph, IconButton } from "@/packages/ui/button";
 import type { DockAreaLayout, DockAreaRef } from "@/packages/ui/dock-area";
 import {
   DockArea,
@@ -97,7 +97,7 @@ function EditorPane(props: { panel: string }) {
         >
           <>
             <Icon icon={Plus} {...buttonGlyph("secondary", { size: "sm" })} />
-            <Text style={buttonLabel("secondary", { size: "sm" })}>Edit</Text>
+            Edit
           </>
         </Button>
         <Text

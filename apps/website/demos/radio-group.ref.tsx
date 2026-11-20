@@ -5,8 +5,9 @@ import { colors } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 import { Radio, RadioGroup } from "nsh/base";
 
+import { choiceTileLook } from "@/packages/ui/checkbox";
 import { listRow, RowDivider, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
-import { choiceTileLook, RadioRing } from "@/packages/ui/radio-group";
+import { RadioRing } from "@/packages/ui/radio-group";
 import { segmentedLook } from "@/packages/ui/segmented";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";

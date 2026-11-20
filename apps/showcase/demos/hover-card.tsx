@@ -1,8 +1,9 @@
 import { alpha, colors, finish, focusRing, mono, rounded, toneColor } from "@shadcn-nsh/theme";
 // Hover card: the official gallery's scene (`references/nsh/examples/gallery/demos/HoverCardDemo.tsx`).
 // Mentions, link previews, live quotes, delays, and a card the app pins open. The card's surface is
-// `popoverLook` on a `PopIn`. The trigger is `nsh/base`'s: `HoverCardTrigger` forces `role="button"`
-// and drops `onPress`, `hoverStyle` and `testID`, which a mention (a link) and a ticker need.
+// `popoverLook` on a `PopIn`. The trigger is one of the scene's own views, handed to
+// `HoverCardTrigger` as its element: `nsh/base` puts the hover, focus and open state on it, so a
+// mention stays a link with its own `onPress`, `hoverStyle` and `testID`.
 import {
   Check,
   CircleCheck,
@@ -18,14 +19,14 @@ import {
 } from "lucide";
 import type { JSX } from "nsh";
 import { signal, Text, View } from "nsh";
-import { HoverCard, type OpenChangeReason } from "nsh/base";
+import type { OpenChangeReason } from "nsh/base";
 
 import { Avatar } from "@/packages/ui/avatar";
 import { Badge } from "@/packages/ui/badge";
-import { Button, buttonLabel } from "@/packages/ui/button";
+import { Button } from "@/packages/ui/button";
+import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/packages/ui/hover-card";
 import { Icon } from "@/packages/ui/lib/icons";
-import { PopIn, type PopupSide } from "@/packages/ui/lib/popup";
-import { popoverLook } from "@/packages/ui/popover";
+import type { PopupSide } from "@/packages/ui/lib/popup";
 import { Stat } from "@/packages/ui/stat";
 import { Switch } from "@/packages/ui/switch";
 
@@ -221,14 +222,8 @@ function Mention(props: {
   const side = () => props.side ?? "bottom";
   const person = props.person;
   return (
-    <HoverCard
-      {...exit}
-      placement={side()}
-      align="start"
-      offset={6}
-      margin={8}
-      onOpenChange={changed(`@${person.handle}`)}
-      trigger={
+    <HoverCard onOpenChange={changed(`@${person.handle}`)}>
+      <HoverCardTrigger>
         <View
           testID={`mention-${person.handle}`}
           role="link"
@@ -248,9 +243,15 @@ function Mention(props: {
             @{person.name}
           </Text>
         </View>
-      }
-    >
-      <PopIn side={side()} style={popoverLook({ width: pointer ? 280 : 300 })}>
+      </HoverCardTrigger>
+      <HoverCardContent
+        {...exit}
+        placement={side()}
+        align="start"
+        offset={6}
+        margin={8}
+        width={pointer ? 280 : 300}
+      >
         <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
           <View>
             <Avatar name={person.name} style={{ width: 44, height: 44 }} />
@@ -319,9 +320,7 @@ function Mention(props: {
                 size={14}
                 tint={following() ? colors.foreground : colors.primaryForeground}
               />
-              <Text style={buttonLabel(() => (following() ? "secondary" : "default"))}>
-                {following() ? "Following" : "Follow"}
-              </Text>
+              <Text>{following() ? "Following" : "Follow"}</Text>
             </>
           </Button>
           <Button
@@ -332,7 +331,7 @@ function Mention(props: {
             Message
           </Button>
         </View>
-      </PopIn>
+      </HoverCardContent>
     </HoverCard>
   );
 }
@@ -415,14 +414,8 @@ function Preview(props: {
   const { log, changed } = props;
   const site = props.site;
   return (
-    <HoverCard
-      {...exit}
-      placement="top"
-      offset={8}
-      margin={8}
-      openDelay={400}
-      onOpenChange={changed(site.domain)}
-      trigger={
+    <HoverCard onOpenChange={changed(site.domain)}>
+      <HoverCardTrigger>
         <View
           role="link"
           accessibilityLabel={props.label}
@@ -433,9 +426,15 @@ function Preview(props: {
         >
           <Text style={{ fontSize: body, color: colors.brand }}>{props.label}</Text>
         </View>
-      }
-    >
-      <PopIn side="top" style={popoverLook({ width: pointer ? 300 : 310 })}>
+      </HoverCardTrigger>
+      <HoverCardContent
+        {...exit}
+        placement="top"
+        offset={8}
+        margin={8}
+        openDelay={400}
+        width={pointer ? 300 : 310}
+      >
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
           <View
             style={{
@@ -473,7 +472,7 @@ function Preview(props: {
             {site.summary}
           </Text>
         </View>
-      </PopIn>
+      </HoverCardContent>
     </HoverCard>
   );
 }
@@ -537,9 +536,6 @@ function Ticker(props: {
   const hi = () => Math.max(...closes());
   return (
     <HoverCard
-      {...exit}
-      offset={6}
-      margin={8}
       onOpenChange={changed(`$${quote.symbol}`)}
       onOpen={() => {
         timer.set(setInterval(tick, 900));
@@ -549,7 +545,8 @@ function Ticker(props: {
         if (id !== undefined) clearInterval(id);
         flash.set(null);
       }}
-      trigger={
+    >
+      <HoverCardTrigger>
         <View
           testID={`ticker-${quote.symbol}`}
           focusable
@@ -584,9 +581,8 @@ function Ticker(props: {
             {`${change() >= 0 ? "▲" : "▼"} ${Math.abs((change() / quote.open) * 100).toFixed(2)}%`}
           </Text>
         </View>
-      }
-    >
-      <PopIn style={popoverLook({ width: pointer ? 260 : 290 })}>
+      </HoverCardTrigger>
+      <HoverCardContent {...exit} offset={6} margin={8} width={pointer ? 260 : 290}>
         <View style={{ flexDirection: "row", alignItems: "flex-start" }}>
           <View style={{ flex: 1, gap: 2 }}>
             <Text
@@ -645,7 +641,7 @@ function Ticker(props: {
           <Stat label="Volume" value={quote.volume} width="33%" />
           <Stat label="Mkt cap" value={quote.cap} width="33%" />
         </View>
-      </PopIn>
+      </HoverCardContent>
     </HoverCard>
   );
 }
@@ -718,15 +714,8 @@ function Delays(props: {
         </View>
       </View>
       <View style={{ alignItems: "center", paddingVertical: pointer ? 36 : 24 }}>
-        <HoverCard
-          {...exit}
-          openDelay={Number(open())}
-          closeDelay={Number(close())}
-          placement={side()}
-          offset={8}
-          margin={8}
-          onOpenChange={changed("delays")}
-          trigger={
+        <HoverCard onOpenChange={changed("delays")}>
+          <HoverCardTrigger>
             <View
               focusable
               accessibilityLabel={pointer ? "Rest here" : "Tap here"}
@@ -749,16 +738,24 @@ function Delays(props: {
                 {pointer ? "Rest here" : "Tap here"}
               </Text>
             </View>
-          }
-        >
-          <PopIn side={side()} style={{ ...popoverLook({ compact: true }), maxWidth: 220 }}>
+          </HoverCardTrigger>
+          <HoverCardContent
+            {...exit}
+            openDelay={Number(open())}
+            closeDelay={Number(close())}
+            placement={side()}
+            offset={8}
+            margin={8}
+            compact
+            width={220}
+          >
             <Text style={{ fontSize: 13, fontWeight: "600", color: colors.foreground }}>
               {`${open()} ms in · ${close()} ms out`}
             </Text>
             <Text style={{ fontSize: 12, color: colors.mutedForeground }}>
               {`Placed ${side()}; it flips where there is no room.`}
             </Text>
-          </PopIn>
+          </HoverCardContent>
         </HoverCard>
       </View>
     </DemoCard>
@@ -775,16 +772,13 @@ function Pinned(props: {
     <DemoCard title="Controlled" subtitle="The app owns open: pinned, it stays">
       <View style={{ flexDirection: "row", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
         <HoverCard
-          {...exit}
           open={open() || pinned()}
           onOpenChange={(event) => {
             changed("pinned")(event);
             if (!pinned()) open.set(event.open);
           }}
-          placement="right"
-          offset={8}
-          margin={8}
-          trigger={
+        >
+          <HoverCardTrigger>
             <View
               focusable
               accessibilityLabel="Build #4182"
@@ -797,9 +791,14 @@ function Pinned(props: {
               />
               <Text style={{ fontSize: body, color: colors.foreground }}>Build #4182</Text>
             </View>
-          }
-        >
-          <PopIn side="right" style={popoverLook({ width: pointer ? 220 : 240 })}>
+          </HoverCardTrigger>
+          <HoverCardContent
+            {...exit}
+            placement="right"
+            offset={8}
+            margin={8}
+            width={pointer ? 220 : 240}
+          >
             <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
               <Icon icon={CircleCheck} size={16} tint={colors.up} />
               <Text style={{ fontSize: body, fontWeight: "600", color: colors.foreground }}>
@@ -812,7 +811,7 @@ function Pinned(props: {
             <If when={pinned()}>
               <Badge tone="accent">Pinned</Badge>
             </If>
-          </PopIn>
+          </HoverCardContent>
         </HoverCard>
         <View style={{ flex: 1 }} />
         <Text style={{ fontSize: small, color: colors.foreground }}>Pin open</Text>

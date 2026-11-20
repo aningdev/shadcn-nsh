@@ -197,6 +197,8 @@ export function DatePickerDemo() {
               >
                 <DatePickerTrigger
                   title={due() ? monthDay(due()!) : "No deadline"}
+                  testID="deadline"
+                  accessibilityLabel="Deadline"
                   style={{ width: narrowWindow() ? "100%" : 200 }}
                 />
                 <DatePickerContent

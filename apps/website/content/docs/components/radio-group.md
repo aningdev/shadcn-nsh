@@ -55,11 +55,16 @@ import { Radio, RadioGroup } from "@/components/ui/radio-group";
 
 ### The look alone
 
+`choiceTileLook` is the checkbox module's, shared by the tile radio: import it from
+`@/components/ui/checkbox`.
+
 ```tsx
+import { choiceTileLook } from "@/components/ui/checkbox";
+
 <Radio class="group" checked={on()} {...choiceTileLook(() => on())}>
   <RadioRing on={on()} />
   Option A
-</Radio>
+</Radio>;
 ```
 
 ### Names for screen readers

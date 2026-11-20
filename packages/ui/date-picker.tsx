@@ -146,6 +146,10 @@ export type DatePickerTriggerProps = {
   clearable?: boolean;
   /** The trigger's own style, over the look's. */
   style?: StyleProp<ViewStyle>;
+  /** The id UI tests find the trigger by. */
+  testID?: string;
+  /** What screen readers call it (the value or the placeholder by default). */
+  accessibilityLabel?: string;
 };
 
 type DatePickerContextValue = OpenState & {
@@ -230,6 +234,8 @@ export function DatePickerTrigger(props: DatePickerTriggerProps) {
       invalid={props.invalid}
       clearable={props.clearable ?? (ctx.root.cleanable && ctx.value() != null)}
       style={props.style}
+      testID={props.testID}
+      accessibilityLabel={props.accessibilityLabel}
     />,
   );
   return null;

@@ -214,6 +214,10 @@ export function EmojiPanel(props: {
   recent?: string[];
   fill?: boolean;
   class?: string;
+  /** The id UI tests find the picker by. */
+  testID?: string;
+  /** What screen readers call the grid and its search field (default "Emoji"). */
+  accessibilityLabel?: string;
 }) {
   const tone = signal<EmojiSkinTone>("none");
   const group = signal<string>("");
@@ -239,7 +243,8 @@ export function EmojiPanel(props: {
       emojiVersion="15.1"
       autoFocus={platform.desktop}
       placeholder="Search emoji"
-      accessibilityLabel="Emoji"
+      testID={props.testID}
+      accessibilityLabel={props.accessibilityLabel ?? "Emoji"}
       searchAccessibilityLabel="Search emoji"
       onSelect={({ emoji, base }) => props.onSelect({ emoji, base })}
       onCancel={props.onCancel}

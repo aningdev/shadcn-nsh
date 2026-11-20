@@ -18,7 +18,7 @@ import {
   avatarIdentity,
 } from "@/packages/ui/avatar";
 import { Badge } from "@/packages/ui/badge";
-import { Button as UiButton, buttonGlyph, buttonLabel } from "@/packages/ui/button";
+import { Button as UiButton, buttonGlyph } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
 
 import { DemoPage } from "../kit";
@@ -484,9 +484,7 @@ function Profile(props: { last: { (): string; set: (value: string) => void } }) 
               icon={Trash2}
               {...buttonGlyph("ghost", { size: "sm", disabled: () => picture() === null })}
             />
-            <Text style={buttonLabel("ghost", { size: "sm", disabled: () => picture() === null })}>
-              Remove picture
-            </Text>
+            Remove picture
           </>
         </UiButton>
       </View>

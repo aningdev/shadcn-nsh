@@ -332,7 +332,7 @@
       "type": "registry:ui",
       "title": "Checkbox",
       "description": "A sunk box that fills in citrus, with a check or a dash springing in.",
-      "registryDependencies": ["as-text", "icons", "surface", "theme", "utils"],
+      "registryDependencies": ["as-text", "icons", "press", "surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/checkbox.tsx",
@@ -347,7 +347,7 @@
       "type": "registry:ui",
       "title": "Radio Group",
       "description": "A sunk ring that fills in citrus, with a dot growing in — alone or as a choice tile.",
-      "registryDependencies": ["as-text", "checkbox", "press", "surface", "theme", "utils"],
+      "registryDependencies": ["as-text", "checkbox", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/radio-group.tsx",
@@ -446,7 +446,7 @@
       "type": "registry:ui",
       "title": "Popover",
       "description": "A popup panel that grows from its trigger, on the shared menu surface.",
-      "registryDependencies": ["as-text", "button", "open-state", "popup", "theme"],
+      "registryDependencies": ["as-text", "button", "open-state", "popup"],
       "files": [
         {
           "path": "packages/ui/popover.tsx",
@@ -460,7 +460,7 @@
       "type": "registry:ui",
       "title": "Hover Card",
       "description": "A preview card that grows from its trigger, on the shared popover surface.",
-      "registryDependencies": ["button", "open-state", "popover", "popup", "theme"],
+      "registryDependencies": ["button", "open-state", "popover", "popup"],
       "files": [
         {
           "path": "packages/ui/hover-card.tsx",

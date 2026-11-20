@@ -364,11 +364,17 @@ export type MenuContentProps = Omit<
   children?: JSX.Element;
 };
 
-/** Opens the menu. A string child renders as a `Button` (`variant` picks it, `secondary` unless set); anything else as a pressable view. */
+/**
+ * What opens the menu: a string is a `Button`'s label; any other single element is the trigger
+ * itself (its press, focus, hover and open state land on it, no view in between).
+ */
 export type MenuTriggerProps = {
   children?: string | JSX.Element;
+  /** The button's variant, for a string child (default `secondary`). */
   variant?: ButtonVariant;
+  /** No press, for a string child; an element carries its own `disabled`. */
   disabled?: boolean;
+  /** The string child's button style. */
   style?: StyleProp<ViewStyle>;
 };
 
@@ -484,22 +490,21 @@ export function Menu(props: MenuProps) {
   );
 }
 
-/** Opens the menu; a string child renders a `Button`. Base toggles on press. */
+/** Opens the menu: a `Button` for a string, the element itself for anything else. Base toggles on press. */
 export function MenuTrigger(props: MenuTriggerProps) {
   const ctx = useMenu();
   // The trigger is an element, as an app hands one to `nsh/base` (`trigger={<View …>}`, the shape
   // upstream's demos use): built once, here, and placed by the menu without building it again
-  // on every layout. The kind is read once, here — it picks the host, and never changes; a
-  // string child is read where it is drawn (the `Button`'s own read, through the spread's getter,
-  // so a child that reads a signal stays live), and an element is handed as it is.
+  // on every layout. A single element is the trigger itself — `nsh/base` hands its press, focus
+  // and open state to that element, and its own look, test id and name stay — so no view goes
+  // between them. The kind is read once, here: a string child is read where it is drawn (the
+  // `Button`'s own read, through the spread's getter, so a child that reads a signal stays live).
   const kids = props.children;
   ctx.trigger.set(
     typeof kids === "string" ? (
       <Button {...props} disabled={props.disabled} variant={props.variant ?? "secondary"} />
     ) : (
-      <View accessible role="button" accessibilityState={{ disabled: props.disabled }}>
-        {kids}
-      </View>
+      (kids ?? <View />)
     ),
   );
   // No layout node: a zero-size view would still take a flex `gap` in a row of triggers.

@@ -120,7 +120,9 @@ root they throw. A chip drawn somewhere else, a summary beside the field, is the
 
 ### A trigger of your own
 
-A string child is a `Button`; anything else is drawn as given.
+A string child is a `Button`; anything else is drawn as given. `testID` reaches the
+button or the default toggle, and `accessibilityLabel` names it (the default toggle is a
+chevron with no text of its own).
 
 ```tsx
 <ComboboxTrigger>
@@ -139,7 +141,7 @@ The root owns the open flag and the chosen values; `ComboboxContent` mounts [`ns
 | Part              | Props                                                                                                                                                                                                               | Description                                                                                                                            |
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | `Combobox`        | `value` / `defaultValue` (`string \| null`, or `string[]` with `multiple`), `multiple`, `open` / `defaultOpen`, `disabled`, `cleanable`, `placeholder`, `onChange`, `onOpenChange`, `onOpen`, `onClose`, `onCancel` | The root: one value, or several when `multiple` is set. `onChange` follows that: `{ value: string \| null }` or `{ value: string[] }`. |
-| `ComboboxTrigger` | `children`, `variant`, `disabled`, `testID`, `style`                                                                                                                                                                | The disclosure at the field's end (a `ComboToggle` by default).                                                                        |
+| `ComboboxTrigger` | `children`, `variant`, `disabled`, `testID`, `accessibilityLabel`, `style`                                                                                                                                          | The disclosure at the field's end (a `ComboToggle` by default).                                                                        |
 | `ComboboxContent` | `items` (instead of `ComboboxItem` children), `minWidth`, `children`                                                                                                                                                | The field and its list; it mounts `nsh/base` Combobox.                                                                                 |
 | `ComboboxItem`    | `value`, `disabled`, `group`, `children` (a string is its title)                                                                                                                                                    | One choice in the list.                                                                                                                |
 | `ComboboxChips`   | `children`: a `(value) => JSX.Element` that draws each one, a `ComboboxChip` by default                                                                                                                             | The chosen values as chips at the field's start (NSH's `prefix`).                                                                      |

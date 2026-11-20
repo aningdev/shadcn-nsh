@@ -201,9 +201,9 @@
         "Live": "packages/ui/lib/utils.ts",
         "read": "packages/ui/lib/utils.ts",
         "RadioRing": "packages/ui/radio-group.tsx",
-        "ChoiceTileOptions": "packages/ui/radio-group.tsx",
-        "ChoiceTileLook": "packages/ui/radio-group.tsx",
-        "choiceTileLook": "packages/ui/radio-group.tsx"
+        "ChoiceTileOptions": "packages/ui/checkbox.tsx",
+        "ChoiceTileLook": "packages/ui/checkbox.tsx",
+        "choiceTileLook": "packages/ui/checkbox.tsx"
       }
     },
     "look/color.tsx": {
