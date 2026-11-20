@@ -1,6 +1,6 @@
 // An empty state: a centered block that says there is nothing here yet, and what to do about it.
 // This library's own (drawn on `nsh`'s View and Text), so there is no port region. Yours to change.
-import { colors, radius, rounded, TERMINAL_ROW, terminal } from "@shadcn-nsh/theme";
+import { colors, radius, rounded, TERMINAL_ROW, terminal, font } from "@shadcn-nsh/theme";
 import type { TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { split, Text, token, View } from "nsh";
 
@@ -82,13 +82,15 @@ export function emptyLook(): EmptyLook {
         : {}),
     }),
     title: (): TextStyle => ({
+      // No type role has this size: the body size plus 2.
       fontSize: density.body + 2,
-      fontWeight: "500",
+      fontWeight: font.weight("label"),
       color: colors.foreground,
       textAlign: "center",
     }),
     description: (): TextStyle => ({
       fontSize: density.body,
+      // A description reads as prose: 1.5 times its size, which `body.line` (19 / 21, a dialog's) is not.
       lineHeight: Math.round(density.body * 1.5),
       color: colors.mutedForeground,
       textAlign: "center",

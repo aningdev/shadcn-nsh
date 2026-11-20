@@ -1,6 +1,6 @@
 // A calendar: the look (`CalendarItem`, `calendarLook`, `TimeSegment`) and `Calendar` that wears it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { alpha, colors, cornerCurve, radius, rounded, terminal } from "@shadcn-nsh/theme";
+import { alpha, colors, cornerCurve, radius, rounded, terminal, font } from "@shadcn-nsh/theme";
 import { ChevronRight } from "lucide";
 import type { ViewStyle } from "nsh";
 import { computed, platform, split, Text, View } from "nsh";
@@ -91,6 +91,7 @@ function Weekday(props: { day: number }) {
       style={{
         minWidth: cell,
         textAlign: "center",
+        // No type role has this size: a weekday's 12.8 with a pointer.
         fontSize: pointer ? 12.8 : 13,
         color: colors.mutedForeground,
       }}
@@ -180,7 +181,7 @@ function Toggle(props: CalendarItemProps & { kind: "monthToggle" | "yearToggle" 
         paddingHorizontal: title ? 0 : 2,
         textAlign: title ? "center" : props.kind === "monthToggle" ? "right" : "left",
         fontSize: controlSize.label,
-        fontWeight: "500",
+        fontWeight: font.weight("label"),
       }}
     >
       {words}
@@ -291,7 +292,7 @@ export function CalendarItem(props: CalendarItemProps) {
     if (kind === "weekday")
       return <Text style={{ color: colors.faint }}>{WEEKDAY_INITIALS[props.item.value]}</Text>;
     if (kind === "month") return <Text>{MONTHS[props.item.value - 1].slice(0, 3)}</Text>;
-    return <Text style={{ fontWeight: "600" }}>{heading(props)}</Text>;
+    return <Text style={{ fontWeight: font.weight("title") }}>{heading(props)}</Text>;
   }
   if (kind === "previous" || kind === "next")
     return <Arrow at={kind === "previous" ? "start" : "end"} />;
@@ -379,6 +380,7 @@ export const calendarLook = {
         paddingHorizontal: terminal ? 8 : 10,
         ...rounded(radius.control),
         justifyContent: "center" as const,
+        // No type role has this size: a preset's 13 in both tiers.
         fontSize: 13,
         color: colors.foreground,
       };
@@ -389,6 +391,7 @@ export const calendarLook = {
       borderWidth: 1,
       borderColor: colors.border,
       justifyContent: "center" as const,
+      // No type role has this size: a preset's 14 on a touch screen.
       fontSize: 14,
       color: colors.foreground,
     };

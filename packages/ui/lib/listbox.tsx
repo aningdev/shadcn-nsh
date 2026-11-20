@@ -1,6 +1,6 @@
 // Shared list looks: popup, rows, search, chevron, clear — used by select, combobox, calendar, date-picker.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, cornerCurve, finish, radius, rounded, terminal } from "@shadcn-nsh/theme";
+import { colors, cornerCurve, finish, radius, rounded, terminal, font } from "@shadcn-nsh/theme";
 import { Check, ChevronRight, X } from "lucide";
 import type { JSX, ViewStyle } from "nsh";
 import { platform, Text, View } from "nsh";
@@ -223,8 +223,9 @@ export function ListboxHeader(props: { group: SelectGroup }) {
   return (
     <Text
       style={{
+        // No type role has this size: a group's heading is 12 in both tiers.
         fontSize: 12,
-        fontWeight: "600",
+        fontWeight: font.weight("title"),
         color: colors.mutedForeground,
         paddingHorizontal: 9,
         paddingTop: 8,
@@ -243,6 +244,7 @@ export function ListboxEmpty(props: { label: string }) {
       style={{
         paddingVertical: 20,
         textAlign: "center",
+        // No type role has this size: a list's empty note is 14 in both tiers.
         fontSize: 14,
         color: colors.mutedForeground,
       }}
@@ -264,6 +266,7 @@ export const listboxFooter = {
     };
   },
   get text() {
+    // No type role has this size: a list's note is 12 in both tiers.
     return { fontSize: 12, color: colors.mutedForeground };
   },
 };

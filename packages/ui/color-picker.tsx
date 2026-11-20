@@ -9,6 +9,7 @@ import {
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
+  font,
 } from "@shadcn-nsh/theme";
 import { Check, ChevronDown, Copy, Pipette } from "lucide";
 import type { InputStyle, JSX, StyleProp, ViewStyle } from "nsh";
@@ -217,7 +218,7 @@ function FormatButton(props: { label: string }) {
         ...rounded(Math.max(radius.control - 3, 2)),
       }}
     >
-      <Text style={{ fontSize: 12, fontWeight: "500", color: colors.foreground }}>
+      <Text style={{ fontSize: 12, fontWeight: font.weight("label"), color: colors.foreground }}>
         {terminal ? `${props.label} ▾` : props.label}
       </Text>
       {terminal ? null : <Icon icon={ChevronDown} size={12} tint={colors.mutedForeground} />}

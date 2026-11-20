@@ -1,7 +1,7 @@
 // A breadcrumb: the path from where the app starts to the page it shows, as a row of links a
 // separator parts, the page itself last. This library's own (drawn on `nsh`'s View and Text; a
 // step's link is `nsh/base`'s Link), so there is no port region. Yours to change.
-import { colors, focusRing, radius, rounded, terminal } from "@shadcn-nsh/theme";
+import { colors, focusRing, radius, rounded, terminal, font } from "@shadcn-nsh/theme";
 import { ChevronRight, Ellipsis } from "lucide";
 import type { JSX, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
@@ -19,9 +19,6 @@ const stepGap = pointer ? 6 : 10;
 
 /** The gap inside a step, between its link and the separator after it (shadcn's `gap-1.5`). */
 const partGap = 6;
-
-/** A step's type: small (13 points with a pointer, 15 on a touch screen). */
-const labelSize = pointer ? 13 : 15;
 
 /** The side of a separator's chevron: 14 points, shadcn's `size-3.5`. */
 const chevronSide = 14;
@@ -109,12 +106,12 @@ export function breadcrumbLook(): BreadcrumbLook {
       return `text-muted-foreground group-hover:text-foreground ${fade}`;
     },
     get linkText(): TextStyle {
-      return { fontSize: labelSize, fontWeight: "500", numberOfLines: 1 };
+      return { fontSize: font.size("body"), fontWeight: font.weight("label"), numberOfLines: 1 };
     },
     get page(): TextStyle {
       return {
-        fontSize: labelSize,
-        fontWeight: "400",
+        fontSize: font.size("body"),
+        fontWeight: font.weight("body"),
         color: colors.foreground,
         numberOfLines: 1,
       };
@@ -132,7 +129,7 @@ export function breadcrumbLook(): BreadcrumbLook {
       return { size: chevronSide, tint: colors.mutedForeground };
     },
     get separatorGlyph(): TextStyle {
-      return { fontSize: labelSize, color: colors.mutedForeground };
+      return { fontSize: font.size("body"), color: colors.mutedForeground };
     },
     get ellipsis(): ViewStyle {
       return {
@@ -147,7 +144,7 @@ export function breadcrumbLook(): BreadcrumbLook {
       return { size: ellipsisMark, tint: colors.mutedForeground };
     },
     get ellipsisGlyph(): TextStyle {
-      return { fontSize: labelSize, color: colors.mutedForeground };
+      return { fontSize: font.size("body"), color: colors.mutedForeground };
     },
   };
 }

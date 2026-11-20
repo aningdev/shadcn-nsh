@@ -1,7 +1,7 @@
 // A keyboard key, alone or in a group of them, on `nsh`'s own View and Text. This library's own
 // (upstream has no keycap, and no `nsh/base` control is its behavior): there is no port region.
 // Yours to change.
-import { colors, mono, TERMINAL_ROW, terminal } from "@shadcn-nsh/theme";
+import { colors, mono, TERMINAL_ROW, terminal, font } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { split, token, View } from "nsh";
 
@@ -47,8 +47,9 @@ export function kbdLook(): KbdLook {
     },
     get text(): TextStyle {
       return {
+        // No type role has this size: a key cap's 12, and the terminal's 14 is a character grid's.
         fontSize: terminal ? 14 : 12,
-        fontWeight: "500",
+        fontWeight: font.weight("label"),
         color: colors.mutedForeground,
         ...(terminal ? { fontFamily: mono() } : {}),
         numberOfLines: 1,

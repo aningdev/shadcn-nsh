@@ -1,7 +1,7 @@
 // A toggle: the look (`toggleLook` and its companions), the `Toggle` that wears it, and
 // `ToggleGroup`, a row or column of them on the inset track (`toolbarTrack` in `lib/tool.ts`).
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, finish, focusRing, hovered, rounded, terminal } from "@shadcn-nsh/theme";
+import { colors, finish, focusRing, hovered, rounded, terminal, font } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewStyle } from "nsh";
 import { platform, split, Text } from "nsh";
 import {
@@ -148,7 +148,9 @@ export function toggleLabel(pressed: Live<boolean | undefined>, o?: ToggleLookOp
     get fontSize() {
       return dimensions(o).text;
     },
-    fontWeight: "500",
+    get fontWeight() {
+      return font.weight("label");
+    },
   };
 }
 

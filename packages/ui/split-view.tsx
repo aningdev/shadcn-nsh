@@ -7,7 +7,16 @@
 // and the platform finds that stack in the slot, so a part must not wrap it. The look lives on the
 // page inside the stack — the column's surface and the hairline after it — and on the header and
 // the button the page puts in it.
-import { alpha, colors, focusRing, header, hovered, radius, rounded } from "@shadcn-nsh/theme";
+import {
+  alpha,
+  colors,
+  focusRing,
+  header,
+  hovered,
+  radius,
+  rounded,
+  font,
+} from "@shadcn-nsh/theme";
 import { PanelLeft } from "lucide";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
@@ -91,8 +100,9 @@ export function splitViewHeaderLook(column: SplitViewColumn = "content") {
       flexBasis: 0,
       minWidth: 0,
       numberOfLines: 1,
+      // No type role has this size: a pane title's 15 in both tiers.
       fontSize: 15,
-      fontWeight: "600",
+      fontWeight: font.weight("title"),
       color: colors.foreground,
     }),
   };

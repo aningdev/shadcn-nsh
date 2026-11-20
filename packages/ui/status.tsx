@@ -1,5 +1,5 @@
 // A quiet state mark (dot + word). From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, terminal, toneColor, type Tone } from "@shadcn-nsh/theme";
+import { colors, terminal, toneColor, type Tone, font } from "@shadcn-nsh/theme";
 import { Text, View } from "nsh";
 
 import { type Live, read } from "./lib/utils";
@@ -43,8 +43,9 @@ export function Status(props: {
       </If>
       <Text
         style={{
+          // No type role has this size: a status's 12 in both tiers.
           fontSize: 12,
-          fontWeight: tint() ? "500" : "400",
+          fontWeight: tint() ? font.weight("label") : font.weight("body"),
           color: tint() ?? colors.mutedForeground,
           numberOfLines: 1,
         }}

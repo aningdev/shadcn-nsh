@@ -1,7 +1,7 @@
 // A card dialog: the look (`dialogCard`, `dialogTitle`, `dialogText`) at the top, and the parts that
 // wear it below. `nsh/base`'s `Dialog` is the box; what this file adds is its card.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, finish, radius, rounded, terminal } from "@shadcn-nsh/theme";
+import { colors, finish, radius, rounded, terminal, font } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, platform, safeArea, Scroll, signal, split, View, windowSize } from "nsh";
 import type { Signal } from "nsh";
@@ -75,14 +75,19 @@ export function dialogPage(): ViewStyle {
 
 /** A card dialog's title (`dialogCard`): 17 points semibold with a pointer, 20 on a touch screen. */
 export function dialogTitle(): TextStyle {
-  return { fontSize: pointer ? 17 : 20, fontWeight: "600", color: colors.foreground };
+  return {
+    // No type role has this size: a card dialog's title is 17 / 20.
+    fontSize: pointer ? 17 : 20,
+    fontWeight: font.weight("title"),
+    color: colors.foreground,
+  };
 }
 
 /** A card dialog's text under its title: 13 points with a pointer, 15 on a touch screen, muted. */
 export function dialogText(): TextStyle {
   return {
-    fontSize: pointer ? 13 : 15,
-    lineHeight: pointer ? 19 : 21,
+    fontSize: font.size("body"),
+    lineHeight: font.line("body"),
     color: colors.mutedForeground,
   };
 }

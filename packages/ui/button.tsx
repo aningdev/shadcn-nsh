@@ -12,6 +12,7 @@ import {
   TERMINAL_ROW,
   tints,
   rounded,
+  font,
 } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, platform, split, token, View } from "nsh";
@@ -210,7 +211,9 @@ export function buttonLabel(
     get fontSize() {
       return dimensions(o).font;
     },
-    fontWeight: "500",
+    get fontWeight() {
+      return font.weight("label");
+    },
   };
 }
 

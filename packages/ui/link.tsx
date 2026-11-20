@@ -1,6 +1,6 @@
 // A link: the look (`linkLook` and its companions) and the `Link` that wears it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { alpha, colors, focusRing } from "@shadcn-nsh/theme";
+import { alpha, colors, focusRing, font } from "@shadcn-nsh/theme";
 import { ExternalLink } from "lucide";
 import type { JSX, ViewStyle } from "nsh";
 import { platform, split, Text, token, View } from "nsh";
@@ -79,7 +79,7 @@ export function LinkText(
           class={colorTransition}
           style={{
             fontSize: size(),
-            fontWeight: props.current ? "600" : "500",
+            fontWeight: props.current ? font.weight("title") : font.weight("label"),
             color: props.color,
           }}
         >

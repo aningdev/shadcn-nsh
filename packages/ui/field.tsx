@@ -1,7 +1,7 @@
 // A field: the look (`fieldFamilyLook`) and the ten parts that wear it.
 // This library's own: upstream has no field family, so the parts and their axes follow shadcn/ui and
 // the look is written from the theme's roles. Yours to change.
-import { colors, TERMINAL_ROW, terminal } from "@shadcn-nsh/theme";
+import { colors, TERMINAL_ROW, terminal, font } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, TextProps, ViewProps, ViewStyle } from "nsh";
 import { context, split, Text, View } from "nsh";
 
@@ -78,7 +78,7 @@ export function fieldFamilyLook(): FieldFamilyLook {
   // Read where it is drawn, as every part below: a look kept in a `const` follows the scheme.
   const label = (): TextStyle => ({
     fontSize: controlSize.label,
-    fontWeight: "500",
+    fontWeight: font.weight("label"),
     color: colors.foreground,
   });
   return {

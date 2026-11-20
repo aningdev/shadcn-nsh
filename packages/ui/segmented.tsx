@@ -1,6 +1,6 @@
 // A segmented control: the look (`segmentedLook`) and the parts that wear it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, finish, focusRing, hovered, radius, rounded } from "@shadcn-nsh/theme";
+import { colors, finish, focusRing, hovered, radius, rounded, font } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { computed, context, platform, signal, split, Text, View } from "nsh";
 import {
@@ -117,13 +117,14 @@ export function segmentedLook(o?: SegmentedLookOptions) {
     label(selected: Live<boolean | undefined>): TextStyle {
       return {
         numberOfLines: 1,
+        // No type role has this size: a segment's 12, 13 or 14 follow the control's size.
         fontSize: pointer ? 12 : small ? 13 : 14,
-        fontWeight: "500",
+        fontWeight: font.weight("label"),
         color: read(selected) ? colors.foreground : colors.mutedForeground,
       };
     },
     get count(): TextStyle {
-      return { fontSize: pointer ? 11 : 12, color: colors.faint, fontVariant: ["tabular-nums"] };
+      return { fontSize: font.size("caption"), color: colors.faint, fontVariant: ["tabular-nums"] };
     },
   };
 }

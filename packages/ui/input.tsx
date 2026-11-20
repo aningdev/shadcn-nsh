@@ -9,6 +9,7 @@ import {
   TERMINAL_COLUMN,
   TERMINAL_ROW,
   rounded,
+  font,
 } from "@shadcn-nsh/theme";
 import type { InputStyle, ViewStyle } from "nsh";
 import { platform, signal, split } from "nsh";
@@ -29,10 +30,16 @@ const pointer = platform.desktop;
  * Cell inside the border's own column.
  */
 export const fieldSize = terminal
-  ? { height: 3 * TERMINAL_ROW, font: 13, pad: 2 * TERMINAL_COLUMN - 1 }
-  : pointer
-    ? { height: 32, font: 14, pad: 10 }
-    : { height: 46, font: 15, pad: 14 };
+  ? // The terminal's text is the character grid's size, not a type role's.
+    { height: 3 * TERMINAL_ROW, font: 13, pad: 2 * TERMINAL_COLUMN - 1 }
+  : {
+      height: pointer ? 32 : 46,
+      /** The `label` role: 14 with a pointer, 15 on a touch screen. */
+      get font() {
+        return font.size("label");
+      },
+      pad: pointer ? 10 : 14,
+    };
 
 /** A field's variants: `default` the field's fill and edge, `ghost` neither until the keys are in it. */
 export type InputVariant = "default" | "ghost";

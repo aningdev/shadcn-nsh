@@ -74,6 +74,7 @@
 
 ### Changed
 
+- **Components read the theme's type roles (#154).** Font weight, and the font size wherever a role has the same size in both tiers, now come from `finishes.json`'s `type` through `font.size`, `font.weight`, `font.line` and `font.tracking` (exported from `@shadcn-nsh/theme`), so `selectTheme` restyles text on the next frame. `type.family` is written into `font-sans` when a theme is selected. Nothing changes on screen: the default `type.*.line` values are the line heights the components drew, and sizes with no matching role stay in code with a comment.
 - **A `Button`'s label beside an icon is drawn (#83).** `AsText` draws every string or number
   among a control's children in the control's label type, leaving elements where they are, so
   `<Button><Icon icon={Upload} />Upload 3 photos</Button>` (and `SplitButtonSegment`, `Radio`, a

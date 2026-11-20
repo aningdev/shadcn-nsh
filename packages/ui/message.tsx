@@ -1,7 +1,7 @@
 // A message: one row of a conversation — its avatar, who sent it, the turn itself, and what is
 // under it. This library's own (drawn on `nsh`'s View and Text; the avatar is `Avatar`, or a round
 // slot when given children), so there is no port region. Yours to change.
-import { colors } from "@shadcn-nsh/theme";
+import { colors, font } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, platform, split, token, View } from "nsh";
 
@@ -49,7 +49,7 @@ const noteRow = (align: MessageAlign): ViewStyle => ({
 /** The small, medium, muted type of a header or a footer. */
 const noteType = (): TextStyle => ({
   fontSize: density.note,
-  fontWeight: "500",
+  fontWeight: font.weight("label"),
   color: colors.mutedForeground,
 });
 

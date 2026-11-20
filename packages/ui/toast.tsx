@@ -9,6 +9,7 @@ import {
   radius,
   rounded,
   terminal,
+  font,
 } from "@shadcn-nsh/theme";
 import { CircleCheck, CircleX, Info, TriangleAlert, X, type IconNode } from "lucide";
 import type { JSX, TextStyle, ViewStyle } from "nsh";
@@ -50,11 +51,13 @@ export function toastLook(): ViewStyle {
 
 /** A toast's title: 14 points semibold. */
 export function toastTitle(): TextStyle {
-  return { fontSize: 14, fontWeight: "600", color: colors.foreground };
+  // No type role has this size: a toast's title is 14 in both tiers.
+  return { fontSize: 14, fontWeight: font.weight("title"), color: colors.foreground };
 }
 
 /** A toast's description: 13 points, muted, its figures tabular. */
 export function toastText(): TextStyle {
+  // No type role has this size: a toast's description is 13 in both tiers.
   return { fontSize: 13, color: colors.mutedForeground, fontVariant: ["tabular-nums"] };
 }
 

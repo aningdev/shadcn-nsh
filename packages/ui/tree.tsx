@@ -1,6 +1,6 @@
 // Tree: row look (`treeItemClass`, `TreeRow`) and the `Tree` that wears them.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, terminal, TERMINAL_COLUMN, TERMINAL_GAP } from "@shadcn-nsh/theme";
+import { colors, terminal, TERMINAL_COLUMN, TERMINAL_GAP, font } from "@shadcn-nsh/theme";
 import { ChevronRight, File, Folder, FolderOpen, type IconNode } from "lucide";
 import { platform, split, Text, View } from "nsh";
 import { Tree as BaseTree, type TreeEntry, type TreeProps as BaseTreeProps } from "nsh/base";
@@ -12,12 +12,8 @@ import { joinClass } from "./lib/utils";
 const desktop = platform.desktop;
 const size = {
   rowSm: desktop ? 32 : controlSize.row,
-  label: controlSize.label,
   detail: controlSize.detail,
 };
-
-/** A row's label: 13 points under a pointer, a touch screen's control label. */
-const labelFont = desktop ? 13 : size.label;
 
 // @port tree.tsx
 /**
@@ -87,7 +83,7 @@ export function TreeRow(props: {
       )}
       <Text
         class="text-muted-foreground group-selected:text-foreground flex-1"
-        style={{ fontSize: labelFont, numberOfLines: 1 }}
+        style={{ fontSize: font.size("body"), numberOfLines: 1 }}
       >
         {props.entry.label}
       </Text>

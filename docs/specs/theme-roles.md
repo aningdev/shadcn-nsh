@@ -113,6 +113,10 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 组件经 `style()`（响应式）和保持原形状的 `density`、`controlSize`、`motion`、`cornerCurve`、`focusRing` 读风格数据，换主题后下一帧重画。terminal 档的尺寸由字符格决定，留在代码里，不进主题。
 
+**组件怎么读 `type`。** 组件取字号、字重、行高、字距用 `font.size(role)`、`font.weight(role)`、`font.line(role)`、`font.tracking(role)`（`theme.ts`，响应式，`size` 与 `line` 按 `tier` 取 pointer / touch 档）：只取组件原来写了的那几项，所以没写字重的文字仍继承周围的字重。对应关系：控件上的字（按钮、标签、表单、菜单、标签页）取 `label` 的字重（500）、卡片与区块标题取 `title` 的字重（600）、正文类取 `body`；`body` 的字号（13 / 15）给面包屑、导航菜单、树、命令面板的行与对话框正文，`detail`（12 / 13）给侧栏的分组与计数，`caption`（11 / 12）给分段控件的数量，`label`（14 / 15）给输入框（`fieldSize.font`）。`line` 的初值与组件今天画的一致：`body` 的 19 / 21 是对话框正文的行高。**没有角色对得上的字号留在代码里**，各处有一行注释：按钮、徽标、侧栏档位的 12 / 13 / 14，对话框与卡片标题的 17 / 20、`body + 2`，日历格的 12.8 / 14 / 16，图表轴的 10 / 10.5，命令面板分组名的 11 加 0.6 字距，气泡与空状态说明的 1.5 倍行高（取整后 20 / 23，与 `body.line` 的 19 / 21 不同），以及写在 Tailwind 类里的 `text-sm` / `text-base` / `text-xs`、`font-semibold`（类名读不了 getter）。
+
+`type.family` 经 `selectTheme` 写进 `font-sans`（NSH 里每个没写家族的文字取它）：`null` 留给 `theme.json`（默认是系统字），`"sans"` 取 `theme.json` 的 `font-sans`，`"rounded"` 是圆体（`ui-rounded`），`"mono"` 取 `font-mono`。构建时的主题没有 `selectTheme` 这一步，它的家族照 `theme.json` 写。
+
 ## 3 固定形状
 
 **每种主题、每种外观里，同一个 finish 的字段集合完全一样，且等于默认主题的那一份。** 一个主题觉得“我没有渐变”，答案不是删掉 `backgroundImage`，而是把它写成一种颜色：

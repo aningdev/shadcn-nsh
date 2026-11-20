@@ -1,6 +1,6 @@
 // The theme's roles, finishes, radii, focus and motion, read from `theme.json` and `finishes.json`.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import type { AnimatedValue, Theme, Tokens, ViewStyle } from "nsh";
+import type { AnimatedValue, TextStyle, Theme, Tokens, ViewStyle } from "nsh";
 import {
   colorScheme,
   computed,
@@ -556,8 +556,22 @@ export const press = {
  * only once they are in.
  */
 export function selectTheme(theme: AppTheme | null): void {
-  setTheme(theme?.theme ?? null);
+  setTheme(theme ? withFamily(theme) : null);
   selected.set(theme);
+}
+
+/**
+ * The theme's tokens with `font-sans` (the font of every text that names no family) set from the
+ * style's `type.family`: `null` leaves it to `theme.json` (the system font unless it names one),
+ * `"sans"` is that token as it stands, `"rounded"` the rounded system font, `"mono"` the theme's
+ * `font-mono`.
+ */
+function withFamily({ theme, finishes }: AppTheme): Theme {
+  const { family } = finishes.type;
+  if (family === null || family === "sans") return theme;
+  const cssVars = theme.cssVars ?? {};
+  const sans = family === "rounded" ? "ui-rounded" : (cssVars.theme?.["font-mono"] ?? "monospace");
+  return { ...theme, cssVars: { ...cssVars, theme: { ...cssVars.theme, "font-sans": sans } } };
 }
 
 /**
@@ -592,6 +606,23 @@ export const toneTint = (tone: Tone) =>
  * theme that names no family gets NSH's `monospace`, the system's own. Figures
  * use the system font with tabular numbers instead. */
 export const mono = () => token("font-mono");
+
+/** A type role of `finishes.json`'s `type`: every one but the family. */
+export type TypeName = Exclude<keyof Style["type"], "family">;
+
+/**
+ * One facet of a type role, read from the style in use (reactive: reading it in JSX, a `draw` or
+ * an effect follows `selectTheme`). A component reads only the facets it set before, so text that
+ * leaves its weight or line height to the text around it still does:
+ * `style={{ fontSize: font.size("label"), fontWeight: font.weight("label") }}`.
+ * `size` and `line` take the tier of the screen (`tier`).
+ */
+export const font = {
+  size: (role: TypeName) => style().type[role].size[tier],
+  line: (role: TypeName) => style().type[role].line[tier],
+  weight: (role: TypeName) => style().type[role].weight as NonNullable<TextStyle["fontWeight"]>,
+  tracking: (role: TypeName) => style().type[role].tracking,
+};
 
 /** Corner radii (`theme.json`'s `radius`, `radius-card`, `radius-control`):
  * a base and the two tiers derived from it. */

@@ -14,6 +14,7 @@ import {
   TERMINAL_ROW,
   rounded,
   type ControlSizes,
+  font,
 } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
 import { computed, platform, Text, token, View, windowSize } from "nsh";
@@ -353,7 +354,7 @@ export function RowLabel(props: {
           minWidth: terminal ? (props.width ?? LABEL_WIDTH) + TERMINAL_GAP : undefined,
           flexShrink: 0,
           fontSize: controlSize.label,
-          fontWeight: props.strong ? "600" : "400",
+          fontWeight: props.strong ? font.weight("title") : font.weight("body"),
           color: colors.foreground,
         }}
       >

@@ -2,7 +2,7 @@
 // panel that composes them. All of it is look — the picker itself is `nsh/base`'s, so there is
 // no shell below.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors } from "@shadcn-nsh/theme";
+import { colors, font } from "@shadcn-nsh/theme";
 import {
   Car,
   Clock,
@@ -82,7 +82,7 @@ export function EmojiHeading(props: { group: EmojiGroup }) {
     <Text
       style={{
         fontSize: platform.desktop ? 11.5 : 13,
-        fontWeight: "600",
+        fontWeight: font.weight("title"),
         color: colors.mutedForeground,
       }}
     >
@@ -186,7 +186,7 @@ export function EmojiPreview(props: { entry: EmojiEntry | null; hint: string }) 
                 style={{
                   numberOfLines: 1,
                   fontSize: 13,
-                  fontWeight: "500",
+                  fontWeight: font.weight("label"),
                   color: colors.foreground,
                 }}
               >

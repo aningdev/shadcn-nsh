@@ -1,6 +1,6 @@
 // An avatar: the identity ring (`avatarIdentity`, `avatarHue`) and the `Avatar` that wears it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, isDark } from "@shadcn-nsh/theme";
+import { colors, isDark, font } from "@shadcn-nsh/theme";
 import { computed, split, Text, token, View } from "nsh";
 import type { TextProps, ViewProps, ViewStyle } from "nsh";
 import {
@@ -157,8 +157,9 @@ export function AvatarGroupCount(props: AvatarGroupCountProps) {
       {...rest}
       style={[
         {
+          // No type role has this size: an avatar's count is 12 in both tiers.
           fontSize: 12,
-          fontWeight: "600",
+          fontWeight: font.weight("title"),
           color: colors.mutedForeground,
           fontVariant: ["tabular-nums"],
         },

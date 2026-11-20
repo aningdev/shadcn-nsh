@@ -172,6 +172,7 @@ export function bubbleLook(): BubbleLook {
     }),
     text: (variant: BubbleVariant): TextStyle => ({
       fontSize: density.body,
+      // A message reads as prose: 1.5 times its size, which `body.line` (19 / 21, a dialog's) is not.
       lineHeight: Math.round(density.body * 1.5),
       color: ink(variant),
     }),

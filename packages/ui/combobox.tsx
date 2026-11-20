@@ -167,6 +167,7 @@ export function chipLook(o?: ChipLookOptions) {
       };
     },
     get textStyle(): TextStyle {
+      // No type role has this size: a chip's 12 with a pointer, 14 on a touch screen.
       return { fontSize: pointer ? 12 : 14, color: colors.foreground };
     },
     get removeClass(): string {

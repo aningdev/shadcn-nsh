@@ -60,6 +60,7 @@ function HunkAction(props: {
           class="font-sans"
           style={{
             ...buttonLabel(props.variant, { size: "sm" }),
+            // No type role has this size: a diff header's compact label is 11.
             fontSize: terminal ? undefined : 11,
           }}
         >

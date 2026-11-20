@@ -9,6 +9,7 @@ import {
   toneTint,
   type Tone,
   rounded,
+  font,
 } from "@shadcn-nsh/theme";
 import { token, View, Text } from "nsh";
 
@@ -74,7 +75,7 @@ export function Badge(props: BadgeProps) {
       <Text
         style={{
           fontSize: size.font,
-          fontWeight: "500",
+          fontWeight: font.weight("label"),
           color: tone() === "neutral" ? colors.foreground : toneColor(tone()),
           numberOfLines: 1,
           fontVariant: ["tabular-nums"],

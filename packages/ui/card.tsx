@@ -1,6 +1,6 @@
 // A card: the look (`cardLook`) and the seven parts that wear it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, TERMINAL_GAP, terminal } from "@shadcn-nsh/theme";
+import { colors, TERMINAL_GAP, terminal, font } from "@shadcn-nsh/theme";
 import type { TextStyle, TextProps, ViewProps, ViewStyle } from "nsh";
 import { split, Text, View } from "nsh";
 
@@ -69,8 +69,9 @@ export function cardLook(): CardLook {
     get title(): TextStyle {
       return {
         gridColumnStart: 1,
+        // No type role has this size: the body size plus 2.
         fontSize: density.body + 2,
-        fontWeight: "600",
+        fontWeight: font.weight("title"),
         color: colors.foreground,
       };
     },

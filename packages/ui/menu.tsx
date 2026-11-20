@@ -1,6 +1,15 @@
 // A menu: the look (`menuItemLook`, `menuPopup`, …) and the parts that wear it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { alpha, colors, cornerCurve, finish, radius, rounded, terminal } from "@shadcn-nsh/theme";
+import {
+  alpha,
+  colors,
+  cornerCurve,
+  finish,
+  radius,
+  rounded,
+  terminal,
+  font,
+} from "@shadcn-nsh/theme";
 import { ChevronLeft, ChevronRight } from "lucide";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, horizontalSizeClass, platform, split, Text, token, View } from "nsh";
@@ -237,8 +246,9 @@ export function MenuLabel(props: MenuLabelProps) {
   return (
     <Text
       style={{
+        // No type role has this size: a group's heading is 11 / 13.
         fontSize: pointer ? 11 : 13,
-        fontWeight: "600",
+        fontWeight: font.weight("title"),
         color: colors.faint,
         paddingHorizontal: rowInset,
         ...(props.inset ? { paddingStart: rowInset + markRoom } : {}),
@@ -330,7 +340,13 @@ export function SubmenuBack(props: { label: string }) {
   return (
     <View activeStyle={look.activeStyle} style={look.style}>
       <Icon icon={ChevronLeft} size={14} tint={colors.brand} />
-      <Text style={{ fontSize: menuItemSize.font, fontWeight: "600", color: colors.brand }}>
+      <Text
+        style={{
+          fontSize: menuItemSize.font,
+          fontWeight: font.weight("title"),
+          color: colors.brand,
+        }}
+      >
         {props.label}
       </Text>
     </View>

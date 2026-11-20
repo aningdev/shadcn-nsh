@@ -1,6 +1,6 @@
 // Command: palette parts (`commandClasses`, `CommandRow`) and the `Command` that wears them.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, terminal } from "@shadcn-nsh/theme";
+import { colors, terminal, font } from "@shadcn-nsh/theme";
 import { Check, Search, type IconNode } from "lucide";
 import type { InputStyle, StyleProp, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
@@ -22,12 +22,8 @@ const desktop = platform.desktop;
 const size = {
   row: controlSize.row,
   rowSm: desktop ? 32 : controlSize.row,
-  label: controlSize.label,
   detail: controlSize.detail,
 };
-
-/** A row's label: 13 points under a pointer, a touch screen's control label. */
-const labelFont = desktop ? 13 : size.label;
 
 // @port command.tsx
 /**
@@ -70,7 +66,15 @@ export function CommandKeys(props: { label: string }) {
 export function CommandHeading(props: { group: CommandGroup }) {
   return (
     // Small capitals: an 11-point header, tracked out a little to read as a label.
-    <Text style={{ fontSize: 11, fontWeight: "600", letterSpacing: 0.6, color: colors.faint }}>
+    <Text
+      style={{
+        // No type role has this size: a group's heading is 11 on every screen, tracked out.
+        fontSize: 11,
+        fontWeight: font.weight("title"),
+        letterSpacing: 0.6,
+        color: colors.faint,
+      }}
+    >
       {props.group.heading.toLocaleUpperCase()}
     </Text>
   );
@@ -96,7 +100,7 @@ export function CommandRow(props: {
     >
       {props.icon ? <Icon icon={props.icon} size={16} tint={colors.mutedForeground} /> : null}
       <View style={{ flex: 1, minWidth: 0, gap: 1 }}>
-        <Text style={{ fontSize: labelFont, color: colors.foreground, numberOfLines: 1 }}>
+        <Text style={{ fontSize: font.size("body"), color: colors.foreground, numberOfLines: 1 }}>
           {props.entry.label}
         </Text>
         {props.detail ? (
@@ -125,6 +129,7 @@ export function CommandEmpty(props: { label: string }) {
       style={{
         paddingVertical: 24,
         textAlign: "center",
+        // No type role has this size: an empty note's 13 in both tiers.
         fontSize: 13,
         color: colors.mutedForeground,
       }}

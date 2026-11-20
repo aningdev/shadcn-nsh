@@ -10,6 +10,7 @@ import {
   radius,
   terminal,
   rounded,
+  font,
 } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
@@ -204,8 +205,9 @@ export function TabTitle(props: {
       <Text
         style={{
           numberOfLines: 1,
+          // No type role has this size: a tab's label is 13 in both tiers (`label` is 14 / 15).
           fontSize: 13,
-          fontWeight: "500",
+          fontWeight: font.weight("label"),
           color: on.interpolate({
             inputRange: [0, 1],
             outputRange: [colors.mutedForeground, colors.foreground],
@@ -233,8 +235,9 @@ export function TabTitle(props: {
         >
           <Text
             style={{
+              // No type role has this size: a tab's count is 10.
               fontSize: 10,
-              fontWeight: "600",
+              fontWeight: font.weight("title"),
               color: colors.mutedForeground,
               fontVariant: ["tabular-nums"],
             }}

@@ -22,6 +22,7 @@ import {
   radius,
   terminal,
   rounded,
+  font,
 } from "@shadcn-nsh/theme";
 import { PanelLeft } from "lucide";
 import type { JSX, StyleProp, TextStyle, ViewProps, ViewStyle } from "nsh";
@@ -407,8 +408,8 @@ export function sidebarGroupLook(o?: SidebarFoldOptions) {
     },
     get label(): TextStyle {
       return {
-        fontSize: pointer ? 12 : 13,
-        fontWeight: "500",
+        fontSize: font.size("detail"),
+        fontWeight: font.weight("label"),
         color: alpha(colors.foreground, 0.7),
         numberOfLines: 1,
         flexShrink: 1,
@@ -511,7 +512,7 @@ export function sidebarMenuButtonLook(o?: SidebarMenuButtonLookOptions) {
     get label(): TextStyle {
       return {
         fontSize: rowLabel[size()],
-        fontWeight: active() ? "500" : "400",
+        fontWeight: active() ? font.weight("label") : font.weight("body"),
         color: colors.foreground,
         numberOfLines: 1,
         flexShrink: 1,
@@ -591,8 +592,8 @@ export function sidebarMenuBadgeLook(o?: SidebarFoldOptions) {
     /** Its type: 12 points medium (13 on a touch screen), the text's ink, the numbers tabular. */
     get text(): TextStyle {
       return {
-        fontSize: pointer ? 12 : 13,
-        fontWeight: "500",
+        fontSize: font.size("detail"),
+        fontWeight: font.weight("label"),
         color: colors.foreground,
         fontVariant: "tabular-nums",
         numberOfLines: 1,
@@ -680,7 +681,7 @@ export function sidebarMenuSubButtonLook(o?: SidebarMenuSubButtonLookOptions) {
     get label(): TextStyle {
       return {
         fontSize: subRowLabel[size()],
-        fontWeight: active() ? "500" : "400",
+        fontWeight: active() ? font.weight("label") : font.weight("body"),
         color: colors.foreground,
         numberOfLines: 1,
         flexShrink: 1,

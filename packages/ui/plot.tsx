@@ -103,6 +103,7 @@ export const plotWash = (color: string, top = 0.18): ViewStyle => ({
 /** The values on the axes (a `PlotAxis`'s `labelStyle`): small, monospaced,
  * tabular and faint, so the marks lead. */
 export const plotAxisText = (): TextStyle => ({
+  // No type role has this size: an axis value's 10.5.
   fontSize: 10.5,
   fontFamily: mono(),
   color: colors.faint,
@@ -121,6 +122,7 @@ export const plotTooltip = (): ViewStyle => ({
 
 /** A tooltip's title over its values: a small, monospaced, muted label. */
 export const plotTooltipTitle = (): TextStyle => ({
+  // No type role has this size: a tooltip title's 10, tracked out.
   fontSize: 10,
   fontFamily: mono(),
   letterSpacing: 0.8,

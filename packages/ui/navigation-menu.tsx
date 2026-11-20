@@ -1,7 +1,7 @@
 // A navigation menu: a row of triggers, each opening a panel of anything (a grid of links, a card
 // with a description) under itself, one panel open at a time. This library's own: nothing here
 // comes from upstream, so there is no port region. Yours to change.
-import { alpha, colors, focusRing, radius, rounded } from "@shadcn-nsh/theme";
+import { alpha, colors, focusRing, radius, rounded, font } from "@shadcn-nsh/theme";
 import { ChevronDown } from "lucide";
 import type { JSX, StyleProp, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, platform, reduceMotion, signal, split, token, View } from "nsh";
@@ -32,9 +32,6 @@ const pointer = platform.desktop;
 export const navigationMenuSize = pointer
   ? { trigger: 36, padding: 16, gap: 4, panel: 10, chevron: 14 }
   : { trigger: 44, padding: 16, gap: 6, panel: 12, chevron: 16 };
-
-/** A label's type in the bar: small (13 points with a pointer, 15 on a touch screen). */
-const labelSize = pointer ? 13 : 15;
 
 /** The gap inside a trigger, between its name and its chevron (shadcn's `ml-1`). */
 const chevronGap = 4;
@@ -73,9 +70,9 @@ export interface NavigationMenuLook {
   readonly panel: ViewStyle;
   /** A link (`NavigationMenuLink`): a column, so a description can sit under its name. */
   readonly link: ViewStyle;
-  /** A link's name: `labelSize`, in the text color, on one line. */
+  /** A link's name: the `body` type, in the text color, on one line. */
   readonly linkText: TextStyle;
-  /** A link's description (`NavigationMenuLink`'s nested text): the muted ink, `labelSize` under
+  /** A link's description (`NavigationMenuLink`'s nested text): the muted ink, the `body` type under
    * the name's. */
   readonly linkHint: TextStyle;
 }
@@ -116,16 +113,16 @@ export function navigationMenuLook(): NavigationMenuLook {
     },
     get linkText(): TextStyle {
       return {
-        fontSize: labelSize,
-        fontWeight: "500",
+        fontSize: font.size("body"),
+        fontWeight: font.weight("label"),
         color: colors.foreground,
         numberOfLines: 1,
       };
     },
     get linkHint(): TextStyle {
       return {
-        fontSize: labelSize,
-        fontWeight: "400",
+        fontSize: font.size("body"),
+        fontWeight: font.weight("body"),
         color: colors.mutedForeground,
         numberOfLines: 2,
       };
@@ -141,7 +138,7 @@ export interface NavigationMenuTriggerLookOptions {
 
 /**
  * A trigger's look: 36 points tall with a pointer (44 on a touch screen), `navigationMenuSize`'s
- * inset either side, its name `labelSize` medium and a chevron after it which turns 180° while its
+ * inset either side, its name the `body` type medium and a chevron after it which turns 180° while its
  * panel is open (at once with reduced motion, in 200 ms otherwise). At rest it is bare; the chosen
  * `accent` fill sits under it while its panel is open, and the full `accent` under the pointer, the
  * theme's focus ring with the keyboard on it, a press's dimming, 50% while disabled.
@@ -177,11 +174,11 @@ export function navigationMenuTriggerLook(o?: NavigationMenuTriggerLookOptions) 
     get disabledStyle(): ViewStyle {
       return { opacity: 0.5 };
     },
-    /** Its name's type: `labelSize`, medium, one line. */
+    /** Its name's type: the `body` type, medium, one line. */
     get text(): TextStyle {
       return {
-        fontSize: labelSize,
-        fontWeight: "500",
+        fontSize: font.size("body"),
+        fontWeight: font.weight("label"),
         color: colors.foreground,
         numberOfLines: 1,
       };
@@ -213,7 +210,7 @@ export interface NavigationMenuLinkLookOptions {
 
 /**
  * A link's look, after shadcn/ui's: a 4-point column 8 points in, at the theme's control corners,
- * its name `labelSize` medium and its description under it in the muted ink; the full `accent`
+ * its name the `body` type medium and its description under it in the muted ink; the full `accent`
  * under the pointer, the chosen `accent` under the page the app is on, the theme's focus ring with
  * the keyboard on it, a press's dimming, 50% while disabled.
  */
