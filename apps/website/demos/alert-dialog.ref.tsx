@@ -3,12 +3,13 @@
 // (`references/nsh/website/demos/el-alert-dialog.tsx`) writes it: the box is the system's, so there
 // is no look to expand — its options are the page's own. It differs from the component page only in
 // the parts it names.
-import { colors } from "@shadcn-nsh/theme";
-import { mount, signal, Text, View } from "nsh";
+import { colors, focusRing } from "@shadcn-nsh/theme";
+import { mount, signal, Text, token, View } from "nsh";
 import { AlertDialog as BaseAlertDialog, type AlertDialogOptions } from "nsh/base";
 
 import { Button } from "@/packages/ui/button";
-import { controlSize, listRow, RowDivider, sectionSurface } from "@/packages/ui/lib/surface";
+import { pressSink } from "@/packages/ui/lib/press";
+import { controlSize, sectionSurface } from "@/packages/ui/lib/surface";
 
 import { DemoPage } from "./kit";
 import { desktop, Panel, Split, ui, wide } from "./stage";
@@ -97,6 +98,8 @@ function App() {
         ? "{ action: null } (closed without an action)"
         : `{ action: ${JSON.stringify(action)} }`,
     );
+  // A card sinks while pressed, natively, as every button does.
+  const sink = pressSink();
   const show = (alert: Alert) => {
     shown.update((n) => n + 1);
     BaseAlertDialog.show(options(alert)).then(({ action }) => chose(action ?? null));
@@ -152,15 +155,19 @@ function App() {
             ))}
           </View>
         </If>
-        {/* A phone: a row of the list per alert, its name and what it is about. */}
+        {/* A phone: a card per alert, its name and what it is about, the whole card pressable. */}
         <If when={!wide()}>
-          <View style={sectionSurface({ padded: true })}>
-            {alerts.map((alert, i) => (
-              <View role="button" onPress={() => show(alert)} {...listRow({ first: i === 0 })}>
-                <If when={i > 0}>
-                  <RowDivider show />
-                </If>
-                <View style={{ flex: 1, gap: 2 }}>
+          <View style={{ gap: 10 }}>
+            {alerts.map((alert) => (
+              <View
+                role="button"
+                onPress={() => show(alert)}
+                style={{ ...sectionSurface({ padded: true }), ...sink.transition }}
+                hoverStyle={{ backgroundColor: token("accent") }}
+                activeStyle={sink.activeStyle}
+                focusVisibleStyle={focusRing()}
+              >
+                <View style={{ gap: 2 }}>
                   <Text
                     style={{
                       fontSize: controlSize.label,

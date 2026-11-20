@@ -1,8 +1,10 @@
 // The official alert dialog scene (`references/nsh/website/demos/el-alert-dialog.tsx`) with this
 // library's parts: three alerts — a warning, one with Escape, one as an action sheet — each listed
-// with what it is about and opened by its own row or button, and an inspector holding what the last
-// one resolved with. The parts register the text; `AlertDialogContent` shows the system's alert.
-import { mount, signal, Text, View } from "nsh";
+// with what it is about and opened by its own card (a phone) or button, and an inspector holding
+// what the last one resolved with. The parts register the text; `AlertDialogContent` shows the
+// system's alert.
+import { focusRing } from "@shadcn-nsh/theme";
+import { mount, signal, Text, token, View } from "nsh";
 
 import {
   AlertDialog,
@@ -15,7 +17,8 @@ import {
   AlertDialogTrigger,
 } from "@/packages/ui/alert-dialog";
 import { Button } from "@/packages/ui/button";
-import { controlSize, listRow, RowDivider, sectionSurface } from "@/packages/ui/lib/surface";
+import { pressSink } from "@/packages/ui/lib/press";
+import { controlSize, sectionSurface } from "@/packages/ui/lib/surface";
 
 import { DemoPage } from "./kit";
 import { desktop, Panel, Split, ui, wide } from "./stage";
@@ -83,6 +86,8 @@ function App() {
   const shown = signal(0);
   // The app's own copy of the open state: the component reports every change, the app follows.
   const open = signal<string | null>(null);
+  // A card sinks while pressed, natively, as every button does.
+  const sink = pressSink();
   const opened = (id: string) => {
     shown.update((n) => n + 1);
     open.set(id);
@@ -152,16 +157,21 @@ function App() {
             ))}
           </View>
         </If>
-        {/* A phone: a row of the list per alert, its name and what it is about. The app opens the
-            alert itself here, so a controlled `open` is what shows it. */}
+        {/* A phone: a card per alert, its name and what it is about, the whole card pressable and
+            sinking while pressed. The app opens the alert itself here, so a controlled `open` is
+            what shows it. */}
         <If when={!wide()}>
-          <View style={sectionSurface({ padded: true })}>
-            {alerts.map((alert, i) => (
-              <View role="button" onPress={() => opened(alert.id)} {...listRow({ first: i === 0 })}>
-                <If when={i > 0}>
-                  <RowDivider show />
-                </If>
-                <View style={{ flex: 1, gap: 2 }}>
+          <View style={{ gap: 10 }}>
+            {alerts.map((alert) => (
+              <View
+                role="button"
+                onPress={() => opened(alert.id)}
+                style={{ ...sectionSurface({ padded: true }), ...sink.transition }}
+                hoverStyle={{ backgroundColor: token("accent") }}
+                activeStyle={sink.activeStyle}
+                focusVisibleStyle={focusRing()}
+              >
+                <View style={{ gap: 2 }}>
                   <Text
                     style={{
                       fontSize: controlSize.label,
