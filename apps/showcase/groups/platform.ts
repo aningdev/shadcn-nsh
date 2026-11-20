@@ -52,11 +52,7 @@ export const platform: DemoEntry[] = [
     detail:
       "A writing app's windows: a floating inspector, preferences, a command palette, the document on its own",
     icon: AppWindow,
-    screen: notBuilt({
-      name: "Windows",
-      detail:
-        "A writing app's windows: a floating inspector, preferences, a command palette, the document on its own",
-    }),
+    screen: lazy(() => import("../demos/windows").then((m) => m.WindowsDemo)),
   },
   {
     name: "Tray",
@@ -74,10 +70,7 @@ export const platform: DemoEntry[] = [
     name: "Keyboard",
     detail: "Held arrows, modifier chords, capture bubbling and native Input ownership",
     icon: Keyboard,
-    screen: notBuilt({
-      name: "Keyboard",
-      detail: "Held arrows, modifier chords, capture bubbling and native Input ownership",
-    }),
+    screen: lazy(() => import("../demos/keyboard").then((m) => m.KeyboardDemo)),
   },
   {
     name: "Standard APIs",

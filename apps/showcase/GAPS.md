@@ -9,7 +9,7 @@ and its row leaves this file.
 
 | Issue                                                     | Gap                                                                             | Scenes that work around it                                                                                                            |
 | --------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
-| [#85](https://github.com/aningdev/shadcn-nsh/issues/85)   | No `toast()` API (raise, update, dismiss, stack)                                | Toast, System (alert toasts)                                                                                                          |
+| [#85](https://github.com/aningdev/shadcn-nsh/issues/85)   | No `toast()` API (raise, update, dismiss, stack)                                | Toast, System (alert toasts), Windows (attention toast)                                                                               |
 | [#87](https://github.com/aningdev/shadcn-nsh/issues/87)   | On macOS a click on the combobox field focuses it and does not open the list    | Combobox                                                                                                                              |
 | [#94](https://github.com/aningdev/shadcn-nsh/issues/94)   | No theme role for ink over photos                                               | Carousel (`#ffffff`), TextView (image viewer), Animations (ink on a tone), Text (shadowed ink on photos), System (status-bar preview) |
 | [#95](https://github.com/aningdev/shadcn-nsh/issues/95)   | Input motion: shake, autogrow, rolling digits                                   | Input, OTP input, Number input                                                                                                        |
@@ -24,17 +24,21 @@ composition). Upstream's funnel animates drawn `Canvas` geometry with `createAni
 `nsh/base` doesn't drive; the necks redraw without an entrance. Editor gutters use the `warn` / `up` /
 `destructive` roles, and a terminal's ANSI colors are the program's output, not theme roles. Find
 bars, quick-fix menus and the editor zoom are `nsh` `Overlay`s, the code-action menu is the native
-`nsh/desktop` `Menu`, and the Gallery's `IconTile` is its own kit, as upstream.
+`nsh/desktop` `Menu`, and the Gallery's `IconTile` is its own kit, as upstream. The Gallery's `Meter`,
+`Toggle` (a switch) and `Field` are this library's `Progress`, `Switch` and a labelled `Input`. The block
+editor imports its editor commands (`setNode`, `wrapIn`, `suggestion`, …) from `nsh/base`, where they
+live, and its link menu is local, as upstream's `RichEditorLink` is a Gallery demo file.
 
 ## Showcase shell
 
 Owned by `App.tsx` / `kit.tsx`, not the library:
 
 - The shell hosts each demo in a `flex: 1` view, as upstream; DataTable, DiffView, Editor,
-  RichEditor, Terminal, Dock and Resizable skip `DemoPage` to fill it. Only split view is
+  RichEditor, Block editor, Terminal, Dock and Resizable skip `DemoPage` to fill it. Only split view is
   `fill: true` upstream, which hides the phone's header; the shell does not do that yet.
 - A page section (heading above a padded surface, with a right slot) is redrawn per batch
-  (`actions-shared` `Card`, `data-shared` `ChartCard`); `DemoCard` lacks that slot; `Caption` lacks a label + note form.
+  (`actions-shared` `Card`, `data-shared` `ChartCard`, `desktop-shared` `DeskCard`); `DemoCard` lacks that
+  slot; `Caption` lacks a label + note form (`desktop-shared` `CaptionLine`).
 - `DemoPage` takes no scroll props, so Scroll's "taps with the keyboard up" scene sets
   `keyboardShouldPersistTaps` on an inner `Scroll`.
 - The Gallery's "Last event" card and its kit parts (page header, section, icon tile, appear,

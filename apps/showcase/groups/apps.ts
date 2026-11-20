@@ -31,10 +31,6 @@ export const apps: DemoEntry[] = [
     detail:
       "A Notion-style document: a / menu of blocks, a handle on each block to add, drag and turn it into another, a toolbar over the selection",
     icon: PenLine,
-    screen: notBuilt({
-      name: "Block editor",
-      detail:
-        "A Notion-style document: a / menu of blocks, a handle on each block to add, drag and turn it into another, a toolbar over the selection",
-    }),
+    screen: lazy(() => import("../demos/block-editor").then((m) => m.BlockEditorDemo)),
   },
 ];
