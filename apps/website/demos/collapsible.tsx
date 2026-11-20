@@ -1,6 +1,7 @@
 // The official collapsible scene (`references/nsh/website/demos/el-collapsible.tsx`) with this
 // library's parts: a storage summary that opens onto its breakdown, an advanced section that
-// opens onto a switch, and an inspector holding which are open and the last four trigger lines.
+// opens onto a switch, a trash section whose chevron points down and turns over (`chevron="down"`),
+// and an inspector holding which are open and the last four trigger lines.
 import { mount, signal, Text, View } from "nsh";
 
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/packages/ui/collapsible";
@@ -25,6 +26,7 @@ const USAGE: [string, string][] = [
 function App() {
   const storage = signal(true);
   const advanced = signal(false);
+  const trash = signal(false);
   const originals = signal(false);
   const events = signal<string[]>([]);
   const log = (line: string) => events.set([line, ...events()].slice(0, 4));
@@ -47,6 +49,9 @@ function App() {
               </Text>
               <Text style={{ fontSize: 12, color: ui().muted }}>
                 Keep originals {originals() ? "on" : "off"}: kept while collapsed
+              </Text>
+              <Text style={{ fontSize: 12, color: ui().muted }}>
+                Trash {trash() ? "open" : "closed"}: a chevron that points down
               </Text>
             </Panel>
             <Log title="onPress (trigger) → open" lines={events()} minHeight={92} />
@@ -112,6 +117,21 @@ function App() {
                   detail={originals() ? "Edits are saved as copies" : "Edits replace the photo"}
                 />
               </Switch>
+            </CollapsibleContent>
+          </Collapsible>
+
+          <Collapsible
+            open={trash()}
+            onOpenChange={({ open }) => {
+              trash.set(open);
+              log(`Trash → ${open ? "open" : "closed"}`);
+            }}
+          >
+            <CollapsibleTrigger chevron="down">
+              <RowLabel label="Trash" detail="Emptied automatically after 30 days" />
+            </CollapsibleTrigger>
+            <CollapsibleContent panel={{ start: controlSize.gap }}>
+              <Text style={{ fontSize: controlSize.label, color: ui().muted }}>Nothing in it.</Text>
             </CollapsibleContent>
           </Collapsible>
         </View>

@@ -53,17 +53,9 @@ import {
   UrlScheme,
   View,
 } from "nsh";
-import type { SheetDetent } from "nsh/base";
+import { AlertDialog as NshAlertDialog, type SheetDetent } from "nsh/base";
 import { BackHandler } from "nsh/mobile";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogTitle,
-} from "@/packages/ui/alert-dialog";
 import { Badge } from "@/packages/ui/badge";
 import { Button } from "@/packages/ui/button";
 import { Dialog, DialogContent } from "@/packages/ui/dialog";
@@ -297,17 +289,6 @@ const safeAreaPadding = {
   paddingLeft: "env(safe-area-inset-left)",
 } as const;
 
-/** A full-height dialog's style: the card look the shell's `DialogContent` wears, undone, so the
- * modal owns its whole surface (`presentation="fullScreen"` and the sheets that hold a stack). */
-const fullScreen = {
-  flex: 1,
-  borderWidth: 0,
-  borderRadius: 0,
-  padding: 0,
-  maxWidth: "100%",
-  backgroundColor: colors.background,
-} satisfies ViewStyle;
-
 const largeTitleIntro = (refresh: Refresh) =>
   `iOS: the title shrinks into the bar as the content scrolls. Pull down to refresh${
     refresh.count() ? ` (refreshed ${refresh.count()}×)` : ""
@@ -334,7 +315,7 @@ function OffsetRow(props: { n: number; inset?: number }) {
   );
 }
 
-function LargeTitle(props: { pop: () => void }) {
+function LargeTitle(_props: { pop: () => void }) {
   const refresh = createRefresh();
   return (
     <NavPage
@@ -342,7 +323,7 @@ function LargeTitle(props: { pop: () => void }) {
       headerStyle={header.headerStyle}
       headerLargeTitle
       headerTransparent
-      header={<PageBar title="Large title" onBack={props.pop} />}
+      header={(page) => <PageBar page={page} title="Large title" />}
     >
       <Page intro={largeTitleIntro(refresh)} refresh={refresh}>
         <View
@@ -364,7 +345,7 @@ function LargeTitle(props: { pop: () => void }) {
 }
 
 /** A large title over a virtualized list, refreshed by a pull. */
-function LargeTitleList(props: { pop: () => void }) {
+function LargeTitleList(_props: { pop: () => void }) {
   const refresh = createRefresh();
   const rows = Array.from({ length: 200 }, (_, i) => i + 1);
   return (
@@ -373,7 +354,7 @@ function LargeTitleList(props: { pop: () => void }) {
       headerStyle={header.headerStyle}
       headerLargeTitle
       headerTransparent
-      header={<PageBar title="Large title list" onBack={props.pop} />}
+      header={(page) => <PageBar page={page} title="Large title list" />}
     >
       <RowList
         each={rows}
@@ -403,15 +384,15 @@ function LargeTitleList(props: { pop: () => void }) {
   );
 }
 
-function Transparent(props: { pop: () => void }) {
+function Transparent(_props: { pop: () => void }) {
   return (
     <NavPage
       title="Transparent"
       headerTransparent
       headerStyle={{ tintColor: colors.foreground, color: colors.foreground }}
-      header={
-        <PageBar title="Transparent" transparent tint={colors.foreground} onBack={props.pop} />
-      }
+      header={(page) => (
+        <PageBar page={page} title="Transparent" transparent tint={colors.foreground} />
+      )}
     >
       <View
         style={{
@@ -527,8 +508,9 @@ function CustomHeader(props: { pop: () => void }) {
       headerLeft={left()}
       headerTitle={center()}
       headerRight={right()}
-      header={
+      header={(page) => (
         <PageBar
+          page={page}
           title="Custom"
           background={colors.brandFill}
           tint={colors.onBrand}
@@ -536,7 +518,7 @@ function CustomHeader(props: { pop: () => void }) {
           center={center()}
           right={right()}
         />
-      }
+      )}
     >
       <Page intro="The header's items are views: the star on the right counts presses and re-renders the header.">
         <SectionCard title="Header" note="headerRight">
@@ -549,7 +531,7 @@ function CustomHeader(props: { pop: () => void }) {
 
 /** A custom title longer than the bar: it shrinks and clamps between the back button and the
  * trailing item, which stay on the bar. */
-function LongTitle(props: { pop: () => void }) {
+function LongTitle(_props: { pop: () => void }) {
   const title = "A session title long enough to need more than one phone's width";
   const center = () => (
     <View style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 8 }}>
@@ -578,7 +560,9 @@ function LongTitle(props: { pop: () => void }) {
       title="Long title"
       headerTitle={center()}
       headerRight={right()}
-      header={<PageBar title="Long title" center={center()} right={right()} onBack={props.pop} />}
+      header={(page) => (
+        <PageBar page={page} title="Long title" center={center()} right={right()} />
+      )}
     >
       <Page intro="The title view takes the room between the bar's items: a long title clamps to one line, and the chevron and Edit stay visible.">
         <SectionCard title="Header" note="headerTitle">
@@ -590,7 +574,7 @@ function LongTitle(props: { pop: () => void }) {
 }
 
 /** Trailing iOS bar buttons with a native menu; other platforms keep the `headerRight` views. */
-function NativeBarButtons(props: { pop: () => void }) {
+function NativeBarButtons(_props: { pop: () => void }) {
   const filter = signal<"all" | "open" | "done">("all");
   const log = signal("Tap Edit, Filter or +");
   const editing = signal(false);
@@ -627,7 +611,7 @@ function NativeBarButtons(props: { pop: () => void }) {
       title="Bar buttons"
       headerStyle={header.headerStyle}
       headerRight={right()}
-      header={<PageBar title="Bar buttons" right={right()} onBack={props.pop} />}
+      header={(page) => <PageBar page={page} title="Bar buttons" right={right()} />}
       ios={{
         headerRightItems: [
           {
@@ -728,13 +712,13 @@ function NativeBarButtons(props: { pop: () => void }) {
   );
 }
 
-function Locked(props: { pop: () => void }) {
+function Locked(_props: { pop: () => void }) {
   return (
     <NavPage
       title="No swipe back"
       headerStyle={header.headerStyle}
       popOnSwipe={false}
-      header={<PageBar title="No swipe back" onBack={props.pop} />}
+      header={(page) => <PageBar page={page} title="No swipe back" />}
     >
       <Page
         intro={hint(
@@ -757,23 +741,34 @@ function Locked(props: { pop: () => void }) {
 function Unsaved(props: { pop: () => void }) {
   const text = signal("");
   const focused = signal(false);
-  const confirming = signal(false);
-  // The platform's box the shell's `AlertDialog` parts show; Discard is the only way out with
-  // the guard up (the gallery's own way of asking is `AlertDialog.show`, which these parts
-  // drive under a root the page owns).
-  const confirm = () => confirming.set(true);
+  // The platform's box, awaited: `show` resolves with the chosen action's id, so the page acts on
+  // the answer in one place. `AlertDialog`'s parts declare the same box under a root of the page's
+  // own, for an alert that is part of what the page draws.
+  const confirm = () => {
+    void NshAlertDialog.show({
+      title: "Discard your changes?",
+      description: "Your draft will be lost. This cannot be undone.",
+      actions: [
+        { id: "keep", label: "Keep editing", role: "cancel" },
+        { id: "discard", label: "Discard", role: "destructive" },
+      ],
+    }).then(({ action }) => {
+      if (action === "discard") props.pop();
+    });
+  };
   return (
     <NavPage
       title="Unsaved changes"
       headerStyle={header.headerStyle}
       popOnBack={text().length === 0}
       onBackPress={confirm}
-      header={
+      header={(page) => (
         <PageBar
+          page={page}
           title="Unsaved changes"
           onBack={() => (text().length > 0 ? confirm() : props.pop())}
         />
-      }
+      )}
     >
       <Page
         intro={hint(
@@ -816,48 +811,30 @@ function Unsaved(props: { pop: () => void }) {
           </Text>
         </SectionCard>
       </Page>
-      <AlertDialog
-        open={confirming()}
-        onAction={({ action }) => {
-          confirming.set(false);
-          if (action === "discard") props.pop();
-        }}
-      >
-        <AlertDialogContent>
-          <AlertDialogTitle>Discard your changes?</AlertDialogTitle>
-          <AlertDialogDescription>
-            Your draft will be lost. This cannot be undone.
-          </AlertDialogDescription>
-          <AlertDialogCancel id="keep">Keep editing</AlertDialogCancel>
-          <AlertDialogAction id="discard" role="destructive">
-            Discard
-          </AlertDialogAction>
-        </AlertDialogContent>
-      </AlertDialog>
     </NavPage>
   );
 }
 
-function Faded(props: { pop: () => void }) {
+function Faded(_props: { pop: () => void }) {
   return (
     <NavPage
       title="Fade"
       headerStyle={header.headerStyle}
       animation="fade"
-      header={<PageBar title="Fade" onBack={props.pop} />}
+      header={(page) => <PageBar page={page} title="Fade" />}
     >
       <Page intro="This screen faded in, and fades out." />
     </NavPage>
   );
 }
 
-function Instant(props: { pop: () => void }) {
+function Instant(_props: { pop: () => void }) {
   return (
     <NavPage
       title="No animation"
       headerStyle={header.headerStyle}
       animation="none"
-      header={<PageBar title="No animation" onBack={props.pop} />}
+      header={(page) => <PageBar page={page} title="No animation" />}
     >
       <Page intro="Shown without a transition, and removed without one." />
     </NavPage>
@@ -913,7 +890,7 @@ function Deep(props: {
     <NavPage
       title={`Level ${props.depth}`}
       headerStyle={header.headerStyle}
-      header={<PageBar title={`Level ${props.depth}`} onBack={props.pop} />}
+      header={(page) => <PageBar page={page} title={`Level ${props.depth}`} />}
     >
       <Page intro="Every push is a native screen; popToRoot() unwinds them all at once.">
         <SectionCard title={`Level ${props.depth}`} subtitle={`${props.depth} deep in the stack`}>
@@ -1085,7 +1062,6 @@ function StackedSheet(props: { open: boolean; onClose: () => void }) {
         onDetentChange={({ detent: next }) => detent.set(next)}
         grabber
         accessibilityLabel="Settings"
-        style={fullScreen}
       >
         <NavStack state={pages} style={{ flex: 1 }}>
           {(route) => (
@@ -1093,12 +1069,7 @@ function StackedSheet(props: { open: boolean; onClose: () => void }) {
               title={route}
               headerStyle={header.headerStyle}
               style={{ backgroundColor: colors.background }}
-              header={
-                <PageBar
-                  title={route}
-                  onBack={route === "Settings" ? undefined : () => pages.pop()}
-                />
-              }
+              header={(page) => <PageBar page={page} title={route} />}
             >
               {route === "Settings" ? (
                 <Scroll style={{ flex: 1 }}>
@@ -1512,7 +1483,6 @@ export function NavStackDemo() {
           }
           animation={sheet() === "fade" ? "fade" : "slide"}
           accessibilityLabel={current()?.title ?? ""}
-          style={fullScreen}
         >
           <ModalBody
             title={current()?.title ?? ""}
@@ -1539,7 +1509,6 @@ export function NavStackDemo() {
           closeOnEscape={false}
           closeOnBackdropPress={false}
           closeOnSwipe={false}
-          style={fullScreen}
         >
           <ModalBody
             title="Kept open"

@@ -109,10 +109,37 @@ tall as it lays out, with the content below it. `navPageLook()` has the words to
 matches — `header()`, `title()`, `backGlyph()` and `page()`.
 
 ```tsx
-<NavPage title="General" header={<MyTitleBar title="General" />}>
+<NavPage title="General" header={(page) => <MyTitleBar page={page} title="General" />}>
   {/* the page */}
 </NavPage>
 ```
+
+A header of the app's own still answers Back, and knows where in the stack it is: `header` takes a
+function of the page, which is handed the slot the drawn header reads. `back()` is what that header's
+back button does — `onBackPress`, then `pop()` unless `popOnBack` is `false`; `pages()` is how many
+routes the stack holds, so a header can show a back button only when there is one to go to.
+
+```tsx
+import type { NavPageSlot } from "@/components/ui/nav-stack";
+
+function MyTitleBar(props: { page: NavPageSlot; title: string }) {
+  const page = props.page;
+  return (
+    <View style={navPageLook().header()}>
+      <If when={page.pages() > 1}>
+        <IconButton accessibilityLabel="Back" onPress={() => page.back()}>
+          <Icon icon={ChevronLeft} {...navPageLook().backGlyph()} />
+        </IconButton>
+      </If>
+      <Text style={navPageLook().title()}>{props.title}</Text>
+    </View>
+  );
+}
+```
+
+It is a function, not a bare element, because `nsh/base` mounts the header in the page's own header
+host: what the page provides around its content does not reach there, so an element passed as
+`header` could not read the page it heads.
 
 ### On a phone
 
@@ -129,11 +156,11 @@ the accent, which is what the desktop header wears already.
 [`nsh/base`'s NavStack and NavPage](https://nsh.dev/elements/nav-stack); `style` goes over the look's. `createNavStack`,
 `NavStackState` and `NavStackChangeEvent` are `nsh/base`'s, re-exported.
 
-| Part             | Props                                                                  | Description                                                                     |
-| ---------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------- |
-| `NavStack`       | `state`, `children`, `onChange`                                        | `state` from `createNavStack`; `children(route, index)`; `onChange({ routes })` |
-| `NavPage`        | `title`, `headerRight`, `header`                                       | The page's header on the desktops and the web                                   |
-| `createNavStack` | `routes`, `push`, `pop`, `popToRoot`, `replace`, `setRoutes`, `remove` | `nsh/base`'s, re-exported                                                       |
+| Part             | Props                                                                  | Description                                                                          |
+| ---------------- | ---------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `NavStack`       | `state`, `children`, `onChange`                                        | `state` from `createNavStack`; `children(route, index)`; `onChange({ routes })`      |
+| `NavPage`        | `title`, `headerRight`, `header`, `onBackPress`, `popOnBack`           | The page's header on the desktops and the web; `header` takes a function of the page |
+| `createNavStack` | `routes`, `push`, `pop`, `popToRoot`, `replace`, `setRoutes`, `remove` | `nsh/base`'s, re-exported                                                            |
 
 The looks — spread them on the views they name, or read their words for content of your own:
 `navStackLook()` (`root`) and `navPageLook()` (`page`, `header`, `title`, `backGlyph`).

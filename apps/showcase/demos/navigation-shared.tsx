@@ -2,14 +2,15 @@ import { colors, focusRing, motion, radius, rounded } from "@shadcn-nsh/theme";
 // The Navigation batch's shared bits (its files alone): the platform's line of a hint, the caption
 // row, the labeled switch a card's trailing edge shows, the settle an entrance animates with, and
 // the header bar the pages of a stack draw where the app draws headers (the desktops, the web) —
-// the shell's `NavPage` header owns its own drawing, and these scenes need slots it has no prop
-// for. Colors come from the theme only, never a literal.
+// slots of its own around the back button the page hands it (`NavPageSlot`), which is what an app's
+// header answers a press with. Colors come from the theme only, never a literal.
 import { ChevronLeft, type IconNode } from "lucide";
 import type { JSX, ViewStyle } from "nsh";
 import { createAnimatedValue, effect, platform, reduceMotion, Text, View } from "nsh";
 import type { AnimatedValue } from "nsh";
 
 import { Icon } from "@/packages/ui/lib/icons";
+import type { NavPageSlot } from "@/packages/ui/nav-stack";
 import { Switch } from "@/packages/ui/switch";
 
 /** The device's input: `touch` on phones and tablets, `pointer` on desktops. */
@@ -81,10 +82,17 @@ const glyph = (tint: string) => ({ icon: ChevronLeft as IconNode, size: 18, tint
  * title — or whatever `center` replaces it with — and a trailing slot, on one row 44 points tall.
  * `background` replaces the bar's fill (a tinted header); `transparent` floats it over the
  * content with neither fill nor hairline.
+ *
+ * It is given the page it heads (`NavPage`'s `header` takes a function of it): Back shows while the
+ * stack is above the first page and leaves the page the way the shell's own header does —
+ * `onBackPress` first, then the pop `popOnBack` allows. `onBack` replaces that press where the
+ * scene has its own.
  */
 export function PageBar(props: {
+  /** The page it heads: `NavPage` hands its `header` this. */
+  page?: NavPageSlot;
   title?: string;
-  /** What back does; leave it out and no back button draws. */
+  /** What back does, over the page's own; leave it out and the page's runs. */
   onBack?: () => void;
   /** Replaces the back button. */
   left?: JSX.Element;
@@ -98,6 +106,10 @@ export function PageBar(props: {
   /** Over the content: no fill, no hairline. */
   transparent?: boolean;
 }) {
+  const page = props.page;
+  const onBack = () => props.onBack ?? page?.back;
+  /** Whether the bar offers Back: a press to answer, and a page to leave (or a press of its own). */
+  const canGoBack = () => onBack() != null && (props.onBack != null || (page?.pages() ?? 1) > 1);
   const tint = () => props.tint ?? colors.foreground;
   const fill = () => (props.transparent ? "transparent" : (props.background ?? colors.background));
   return (
@@ -115,9 +127,9 @@ export function PageBar(props: {
       }}
     >
       {props.left}
-      <If when={!props.left && props.onBack}>
+      <If when={!props.left && canGoBack()}>
         <View
-          onPress={props.onBack}
+          onPress={() => onBack()?.()}
           role="button"
           accessibilityLabel="Back"
           hitSlop={6}
@@ -143,7 +155,7 @@ export function PageBar(props: {
           minWidth: 0,
           flexDirection: "row",
           alignItems: "center",
-          paddingHorizontal: props.left || props.onBack ? 0 : 4,
+          paddingHorizontal: props.left || canGoBack() ? 0 : 4,
         }}
       >
         {props.center ?? (

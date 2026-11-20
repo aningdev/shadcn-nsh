@@ -1,8 +1,8 @@
 import { alpha, colors, hovered } from "@shadcn-nsh/theme";
 // Sheet: the official gallery's scene (`references/nsh/examples/gallery/demos/Sheets.tsx`).
 // Filters, a profile form, comments at two heights, and a mailbox drawer. Edge panels on a wide
-// window, bottom panels on a narrow one. Comments use `nsh/base`'s Sheet so the one grabber is the
-// interactive one: `SheetContent` always adds its own pill on a bottom sheet.
+// window, bottom panels on a narrow one. The Comments sheet rests at detents: it drags by the
+// grabber the shell's `SheetContent` gives the bottom sheet (`nsh/base`'s own handle, styled).
 import {
   Archive,
   ArrowUp,
@@ -18,14 +18,13 @@ import {
 } from "lucide";
 import type { JSX } from "nsh";
 import { safeArea, Scroll, signal, Text, token, View, windowSize } from "nsh";
-import { Sheet as BaseSheet, type OpenChangeReason, type SheetDetent } from "nsh/base";
+import type { OpenChangeReason, SheetDetent } from "nsh/base";
 
 import { Avatar } from "@/packages/ui/avatar";
 import { Badge } from "@/packages/ui/badge";
 import { Button, iconButtonGlyph } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
-import { backdrop } from "@/packages/ui/lib/popup";
-import { sheetGrabber, sheetPanel, Sheet, SheetContent, type SheetSide } from "@/packages/ui/sheet";
+import { Sheet, SheetContent, type SheetSide } from "@/packages/ui/sheet";
 import { Switch } from "@/packages/ui/switch";
 
 import { DemoCard, DemoPage } from "../kit";
@@ -525,121 +524,120 @@ function CommentsSheet(props: {
             {`${thread().length} comments${open() ? (named(detent()) === "large" ? " · Full height" : " · Half height") : ""}`}
           </Text>
         </View>
-        <BaseSheet
-          open={open()}
-          accessibilityLabel="Comments"
-          closeOnSwipe
-          detents={["medium", "large"]}
-          detent={detent()}
-          onDetentChange={({ detent: next }) => {
-            detent.set(next);
-            log(`comments at ${named(next)}`);
-          }}
-          grabber
-          grabberStyle={sheetGrabber()}
-          grabberAccessibilityLabel="Resize comments"
-          onOpenChange={changed("comments", (value) => open.set(value))}
-          popupStyle={sheetPanel("bottom")}
-          backdropStyle={backdrop()}
-          footer={
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-              <Avatar name="You" style={{ width: pointer ? 28 : 34, height: pointer ? 28 : 34 }} />
-              <Field
-                value={draft()}
-                onChange={({ value }) => draft.set(value)}
-                placeholder="Add a comment"
-                accessibilityLabel="Comment"
-                returnKeyType="send"
-                onSubmit={send}
-              />
+        <Sheet open={open()} onOpenChange={changed("comments", (value) => open.set(value))}>
+          <SheetContent
+            accessibilityLabel="Comments"
+            closeOnSwipe
+            detents={["medium", "large"]}
+            detent={detent()}
+            onDetentChange={({ detent: next }) => {
+              detent.set(next);
+              log(`comments at ${named(next)}`);
+            }}
+            grabberAccessibilityLabel="Resize comments"
+            footer={
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
+                <Avatar
+                  name="You"
+                  style={{ width: pointer ? 28 : 34, height: pointer ? 28 : 34 }}
+                />
+                <Field
+                  value={draft()}
+                  onChange={({ value }) => draft.set(value)}
+                  placeholder="Add a comment"
+                  accessibilityLabel="Comment"
+                  returnKeyType="send"
+                  onSubmit={send}
+                />
+                <Trigger
+                  icon={ArrowUp}
+                  variant="default"
+                  accessibilityLabel="Send"
+                  disabled={!draft().trim()}
+                  onPress={send}
+                />
+              </View>
+            }
+            footerStyle={{
+              marginHorizontal: -16,
+              marginBottom: -(safeArea().bottom + 16),
+              paddingHorizontal: 16,
+              paddingTop: 10,
+              paddingBottom: safeArea().bottom + 10,
+              borderTopWidth: 1,
+              borderColor: colors.border,
+              backgroundColor: colors.card,
+            }}
+          >
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+              <Text
+                style={{
+                  flex: 1,
+                  fontSize: pointer ? 16 : 18,
+                  fontWeight: "600",
+                  color: colors.foreground,
+                }}
+              >
+                Comments
+              </Text>
               <Trigger
-                icon={ArrowUp}
-                variant="default"
-                accessibilityLabel="Send"
-                disabled={!draft().trim()}
-                onPress={send}
+                icon={X}
+                variant="ghost"
+                accessibilityLabel="Close"
+                onPress={() => open.set(false)}
               />
             </View>
-          }
-          footerStyle={{
-            marginHorizontal: -16,
-            marginBottom: -(safeArea().bottom + 16),
-            paddingHorizontal: 16,
-            paddingTop: 10,
-            paddingBottom: safeArea().bottom + 10,
-            borderTopWidth: 1,
-            borderColor: colors.border,
-            backgroundColor: colors.card,
-          }}
-        >
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <Text
-              style={{
-                flex: 1,
-                fontSize: pointer ? 16 : 18,
-                fontWeight: "600",
-                color: colors.foreground,
-              }}
+            <Scroll
+              style={{ flex: 1, marginHorizontal: -16 }}
+              contentStyle={{ paddingHorizontal: 16, gap: 16, paddingBottom: 8 }}
             >
-              Comments
-            </Text>
-            <Trigger
-              icon={X}
-              variant="ghost"
-              accessibilityLabel="Close"
-              onPress={() => open.set(false)}
-            />
-          </View>
-          <Scroll
-            style={{ flex: 1, marginHorizontal: -16 }}
-            contentStyle={{ paddingHorizontal: 16, gap: 16, paddingBottom: 8 }}
-          >
-            <Each of={thread()}>
-              {(comment) => (
-                <View style={{ flexDirection: "row", gap: 12 }}>
-                  <Avatar
-                    name={comment().name}
-                    style={{ width: pointer ? 32 : 38, height: pointer ? 32 : 38 }}
-                  />
-                  <View style={{ flex: 1, gap: 3 }}>
-                    <View style={{ flexDirection: "row", alignItems: "baseline", gap: 6 }}>
+              <Each of={thread()}>
+                {(comment) => (
+                  <View style={{ flexDirection: "row", gap: 12 }}>
+                    <Avatar
+                      name={comment().name}
+                      style={{ width: pointer ? 32 : 38, height: pointer ? 32 : 38 }}
+                    />
+                    <View style={{ flex: 1, gap: 3 }}>
+                      <View style={{ flexDirection: "row", alignItems: "baseline", gap: 6 }}>
+                        <Text
+                          style={{
+                            fontSize: pointer ? 13 : 15,
+                            fontWeight: "600",
+                            color: colors.foreground,
+                          }}
+                        >
+                          {comment().name}
+                        </Text>
+                        <Text style={{ fontSize: pointer ? 12 : 13, color: colors.faint }}>
+                          {comment().time}
+                        </Text>
+                      </View>
                       <Text
                         style={{
                           fontSize: pointer ? 13 : 15,
-                          fontWeight: "600",
-                          color: colors.foreground,
+                          lineHeight: pointer ? 19 : 21,
+                          color: colors.mutedForeground,
                         }}
                       >
-                        {comment().name}
+                        {comment().text}
                       </Text>
-                      <Text style={{ fontSize: pointer ? 12 : 13, color: colors.faint }}>
-                        {comment().time}
+                      <Text
+                        style={{
+                          fontSize: pointer ? 12 : 13,
+                          color: colors.faint,
+                          fontVariant: ["tabular-nums"],
+                        }}
+                      >
+                        {`${comment().likes} likes`}
                       </Text>
                     </View>
-                    <Text
-                      style={{
-                        fontSize: pointer ? 13 : 15,
-                        lineHeight: pointer ? 19 : 21,
-                        color: colors.mutedForeground,
-                      }}
-                    >
-                      {comment().text}
-                    </Text>
-                    <Text
-                      style={{
-                        fontSize: pointer ? 12 : 13,
-                        color: colors.faint,
-                        fontVariant: ["tabular-nums"],
-                      }}
-                    >
-                      {`${comment().likes} likes`}
-                    </Text>
                   </View>
-                </View>
-              )}
-            </Each>
-          </Scroll>
-        </BaseSheet>
+                )}
+              </Each>
+            </Scroll>
+          </SheetContent>
+        </Sheet>
       </View>
     </DemoCard>
   );

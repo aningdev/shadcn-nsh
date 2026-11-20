@@ -4,6 +4,23 @@
 
 ### Added
 
+- **A dialog fills the window as a page (`dialogPage`), and `NavPage`'s `header` takes a function of
+  the page (#91).** `dialogPage()` is the look a dialog wears when the app owns the whole surface —
+  a lightbox, an editor, a page a phone's system presents: no card, no edge, the theme's background,
+  all of it spreadable as `DialogContent`'s `style`. `header={(page) => <MyBar page={page} />}` is
+  handed the slot the drawn header reads — `back()`, which is `onBackPress` then the pop `popOnBack`
+  allows, and `pages()` — so a header of the app's own answers Back the way the drawn one does,
+  without `onBack` and the stack being threaded through the scene. It is a function because
+  `nsh/base` mounts the header in the page's own header host, out of reach of what the page provides
+  around its content: a bare element there cannot read the page it heads.
+- **`MenuButton` is the platform's own menu (#92).** The system pull-down: `UIContextMenu` on iOS, a
+  context menu with a pointer — the items as data, `variant` (default `ghost`) and `size` for a
+  string child. shadcn has no counterpart (a web menu is always the app's own drawing). A string
+  child is drawn, not a nested `Button`: on desktop `nsh/base` makes the button's own view the
+  pressable, and a button inside it would swallow the press.
+- **`treeRowHeight` is exported (#92).** A well is as tall as its rows — 28 points with a pointer,
+  44 on a touch screen — so `height: 8 * treeRowHeight` plus the list's padding, instead of a copy
+  of the number in the app.
 - **`split-view`.** Columns of navigation stacks — a sidebar, a content column and the detail — with the column header and the sidebar button in the theme's look, over `nsh/base`'s `SplitView`.
 - **`Progress` stands a limit with `marker` (#125).** `marker` is where a limit is, a percentage
   along the bar on `value`'s scale: a 2-point hairline in the page's ink, crossing the rail and
@@ -185,6 +202,37 @@
 - **A command's search icon sits beside the field, and the placeholder stays readable (#98).**
   The search bar's row and the field's text and placeholder color are set inline, so they hold
   when `searchable` builds the bar after mount and on a dark card.
+- **A dialog's body scrolls under a height cap, and its footer stays put (#118, #91).**
+  `DialogContent` is never taller than the window holds inside the safe areas, 24 points clear of
+  either edge: the body scrolls (the shell's `Scroll`, `contentStyle` gap 12) and `DialogFooter`
+  registers with `DialogContent`, which draws it under that body, so the actions stay at the card's
+  end while the text above them scrolls. Title and description scroll with the body — they are
+  separate parts, in the app's own block. `scroll={false}` draws the children as given, for a body
+  taking gestures of its own (a lightbox's pinch, an editor's canvas).
+- **A dialog the system presents wears no card (#91).** With `presentation="fullScreen"`,
+  `"pageSheet"` or `"formSheet"` on a phone or a tablet, the system draws the surface and
+  `DialogContent` drops the card's edge, radius, shadow, margin and height cap (`dialogPage`); what
+  the app gives as `style` still applies. Desktops and the web ignore `presentation` and keep the
+  card, as before.
+- **`SheetContent` shows one grabber, and it is the one that drags (#92).** The shell used to draw a
+  pill of its own above the content, beside `nsh/base`'s own adjustable handle — a bottom sheet
+  showed two, and the decorative one took the meaning away from the real one. The shell now turns
+  the base handle on (`grabber`, on for `side="bottom"`), styles it with `sheetGrabber()`, and the
+  content starts under it. `grabber`, `grabberStyle` and `grabberAccessibilityLabel` pass through.
+- **`AccordionTrigger` lays out more than one child, and takes `disabled` (#92).** Its children are
+  drawn in the trigger's row, in order, before the chevron: a leading icon, the title and a badge
+  share the row without wrapping them in a `View` of the app's (a string child is the `RowLabel`
+  that takes the room left). `disabled` takes the trigger's presses without disabling the item, so
+  the panel's own controls keep working; a disabled trigger is drawn as a row of its own, so screen
+  readers hear a disabled button without the item's expanded state.
+- **`CollapsibleTrigger` can point its chevron down (#92).** `chevron="down"` draws the accordion's
+  chevron — pointing down, turning over as the section opens — for a collapsible that reads as a
+  section of an accordion; `along` (the default) keeps the right-pointing one in its half-width
+  lane. Its children lay out like `AccordionTrigger`'s, more than one of them.
+- **A submenu's trigger keeps its chevron, its label and its icon (#92).** `MenuSubTrigger` drew a
+  bare row frame for element children: no chevron, and on a touch screen no title on the row that
+  leads back. Both kinds now go through `SubmenuRow` (lead, label, chevron), and `lead` puts an
+  icon in front; a string child is still the submenu's name on the back row.
 - **A button group's joins show one hairline (#135).** `buttonGroupLook().item` used to drop the
   edge on both sides of a join, so a column of raised buttons showed a white seam (the lit top edge
   of the button below) instead of a line. Each join now keeps one edge, as shadcn's does, and in a

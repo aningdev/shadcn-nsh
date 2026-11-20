@@ -1,9 +1,9 @@
 import { alpha, colors, isDark, mono, terminal } from "@shadcn-nsh/theme";
 // Menu: the official gallery's scene (`references/nsh/examples/gallery/demos/Menus.tsx`).
-// The rows, marks, popup and labels are this library's. The hosts are `nsh/base`: `MenuTrigger`
-// wraps a custom child in a button that drops its label, hover and open fill, and
-// `MenuSubTrigger`'s string form has no leading icon while its element form drops the chevron
-// and the back label. `MenuButton` and iOS `SegmentedControl` are not parts of the library.
+// The rows, marks, popup and labels are this library's, and so are its `MenuTrigger`,
+// `MenuSubTrigger` and `MenuButton`; the rest are `nsh/base`'s hosts. (The system menu's content is
+// the app's own: a string child would be drawn as a button.) iOS `SegmentedControl` is not a part of
+// the library.
 import {
   ClipboardPaste,
   Clock,
@@ -36,14 +36,14 @@ import {
 } from "lucide";
 import type { JSX } from "nsh";
 import { keymap, LayoutAnimation, platform, reduceMotion, signal, Text, token, View } from "nsh";
-import { ContextMenu, Menu, MenuButton, type OpenChangeReason, Submenu, Toolbar } from "nsh/base";
+import { ContextMenu, Menu, type OpenChangeReason, Toolbar } from "nsh/base";
 import { SegmentedControl } from "nsh/mobile";
 
 import { Button } from "@/packages/ui/button";
 import { Kbd } from "@/packages/ui/kbd";
 import { Icon } from "@/packages/ui/lib/icons";
-import { menuHighlight } from "@/packages/ui/menu";
 import {
+  MenuButton,
   MenuCheckboxItem,
   MenuItem,
   MenuLabel,
@@ -53,9 +53,12 @@ import {
   MenuRadioItem,
   MenuSeparator,
   MenuShortcut,
+  menuHighlight,
+  MenuSub,
+  MenuSubContent,
+  MenuSubTrigger,
   menuPopup,
 } from "@/packages/ui/menu";
-import { SubmenuBack, SubmenuRow } from "@/packages/ui/menu";
 import { TooltipContent } from "@/packages/ui/tooltip";
 
 import { Caption, DemoPage } from "../kit";
@@ -184,7 +187,7 @@ function MarkItem(props: {
   );
 }
 
-/** The row that opens a submenu, and the row a sheet shows to come back. */
+/** The row that opens a submenu, and the row a sheet shows to come back (`MenuSub`'s parts). */
 function SubmenuOf(props: {
   label: string;
   icon?: IconNode;
@@ -192,21 +195,14 @@ function SubmenuOf(props: {
   disabled?: boolean;
 }) {
   return (
-    <Submenu
-      offset={4}
-      disabled={props.disabled}
-      trigger={
-        <SubmenuRow
-          disabled={props.disabled}
-          lead={props.icon ? <Icon icon={props.icon} {...menuItemGlyph()} /> : undefined}
-        >
-          {props.label}
-        </SubmenuRow>
-      }
-      back={<SubmenuBack label={props.label} />}
-    >
-      {props.children}
-    </Submenu>
+    <MenuSub disabled={props.disabled}>
+      <MenuSubTrigger
+        lead={props.icon ? <Icon icon={props.icon} {...menuItemGlyph()} /> : undefined}
+      >
+        {props.label}
+      </MenuSubTrigger>
+      <MenuSubContent offset={4}>{props.children}</MenuSubContent>
+    </MenuSub>
   );
 }
 

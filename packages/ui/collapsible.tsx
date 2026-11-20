@@ -42,7 +42,14 @@ export type CollapsibleContentProps = Omit<
 
 /** Toggles open: a disclosure row, not a `Button`. String children are the title. */
 export type CollapsibleTriggerProps = {
-  children?: string | JSX.Element;
+  /** A string is the title's text; anything else is drawn as given, before the chevron. */
+  children?: string | JSX.Element | (string | JSX.Element)[];
+  /**
+   * The chevron at its trailing edge: `along` (default) points along the row and turns down as it
+   * opens, `down` points down and turns up like an accordion's, for a collapsible that reads as a
+   * section of one.
+   */
+  chevron?: "along" | "down";
   disabled?: boolean;
   class?: string | null;
   style?: StyleProp<ViewStyle>;
@@ -119,7 +126,7 @@ export function CollapsibleTrigger(props: CollapsibleTriggerProps) {
             <View style={{ flexGrow: 1, flexShrink: 1 }}>{kids}</View>
           );
         })()}
-        <DisclosureChevron open={ctx.open()} />
+        <DisclosureChevron accordion={props.chevron === "down"} open={ctx.open()} />
       </View>
     </View>,
   );

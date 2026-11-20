@@ -1,16 +1,20 @@
 // The reference of `menu.tsx`: the same scene with the rows' and the popup's look
 // (`menuItemLook`, `menuItemLabel`, `menuIndicator`, `MenuMark`, `menuPopup`, `menuSeparator`,
-// `SubmenuRow`, `SubmenuBack`) spread on `nsh/base`'s Menu and ContextMenu, the way the official
+// `SubmenuRow`, `SubmenuBack`, `buttonLook`, `buttonLabel`) spread on `nsh/base`'s Menu,
+// ContextMenu and MenuButton, the way the official
 // example (`references/nsh/website/demos/el-menu.tsx`) writes it. It differs from the component
 // page only in the parts it names.
 import { colors } from "@shadcn-nsh/theme";
-import { mount, signal, Text, View } from "nsh";
-import { ContextMenu, Menu, MenuItem, MenuSeparator, Submenu } from "nsh/base";
+import { Share2 } from "lucide";
+import { mount, platform, signal, Text, View } from "nsh";
+import { ContextMenu, Menu, MenuButton, MenuItem, MenuSeparator, Submenu } from "nsh/base";
 
-import { Button } from "@/packages/ui/button";
+import { Button, buttonLabel, buttonLook } from "@/packages/ui/button";
+import { Icon } from "@/packages/ui/lib/icons";
 import { MenuMark, menuIndicator } from "@/packages/ui/lib/popup";
 import {
   MenuLabel,
+  menuItemGlyph,
   menuItemLabel,
   menuItemLook,
   menuItemSize,
@@ -71,7 +75,7 @@ function Share(props: { onSelect: (what: string) => void }) {
   return (
     <Submenu
       offset={4}
-      trigger={<SubmenuRow>Share</SubmenuRow>}
+      trigger={<SubmenuRow lead={<Icon icon={Share2} {...menuItemGlyph()} />}>Share</SubmenuRow>}
       back={<SubmenuBack label="Share" />}
     >
       <Item label="Mail" onSelect={() => props.onSelect("Mail")} />
@@ -179,6 +183,21 @@ function App() {
               <Item label={by} radio checked={sort() === by} onSelect={() => sort.set(by)} />
             ))}
           </Menu>
+
+          {/* The platform's own menu; its label is the theme's ghost button. */}
+          <MenuButton
+            title="Sort by"
+            accessibilityLabel="Sort by"
+            disabled={platform.os === "android"}
+            items={SORTS.map((by) => ({ id: by, label: by, checked: sort() === by }))}
+            onSelect={({ id }) => choose(`system menu › ${id}`)}
+          >
+            <View style={buttonLook("ghost", { disabled: () => platform.os === "android" }).style}>
+              <Text style={buttonLabel("ghost", { disabled: () => platform.os === "android" })}>
+                Sort by ▾
+              </Text>
+            </View>
+          </MenuButton>
         </View>
 
         <ContextMenu

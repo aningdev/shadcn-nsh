@@ -1,7 +1,19 @@
 import { mount, signal, Text, View } from "nsh";
 import { Button as BaseButton } from "nsh/base";
 
-import { Dialog, DialogClose, DialogContent, DialogTrigger } from "../../../packages/ui";
+import {
+  Dialog,
+  DialogClose,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
+  DialogTrigger,
+  dialogPage,
+} from "../../../packages/ui/dialog";
+
+/** A body longer than any window shows: the shell's scroll and its height cap are what make it fit. */
+const LINES = Array.from({ length: 60 }, (_, i) => `Line ${i + 1}`);
 
 function App() {
   const changes = signal(0);
@@ -33,6 +45,34 @@ function App() {
           <Text>Body C</Text>
         </DialogContent>
       </Dialog>
+      <Dialog>
+        <DialogTrigger>Open Long</DialogTrigger>
+        <DialogContent animation="none" testID="long-card">
+          <DialogTitle>Release notes</DialogTitle>
+          <DialogDescription>
+            A body taller than the window scrolls under the card's cap.
+          </DialogDescription>
+          <View style={{ gap: 8 }}>
+            <Each of={LINES}>{(line) => <Text>{line()}</Text>}</Each>
+          </View>
+          <DialogFooter>
+            <DialogClose>Pin</DialogClose>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      <Dialog>
+        <DialogTrigger>Open Card</DialogTrigger>
+        <DialogContent animation="none" testID="card-popup">
+          <Text>Card body</Text>
+        </DialogContent>
+      </Dialog>
+      <Dialog>
+        <DialogTrigger>Open Presented</DialogTrigger>
+        <DialogContent animation="none" presentation="fullScreen" testID="presented-popup">
+          <Text>Presented body</Text>
+        </DialogContent>
+      </Dialog>
+      <View testID="page-view" style={[{ height: 20 }, dialogPage()]} />
     </View>
   );
 }

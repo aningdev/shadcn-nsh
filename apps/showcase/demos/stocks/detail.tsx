@@ -636,20 +636,14 @@ export function StockView(props: {
       </View>
       {banner.view}
       {/* The ticket: a bottom sheet on phones, a dialog card in the middle of the window on
-          desktops (Escape or a click outside closes it). */}
+          desktops (Escape or a click outside closes it). The card's body scrolls under its height
+          cap; the sheet scrolls its own, so the whole ticket shows on a short window too. */}
       <If
         when={props.wide}
         else={
           <Sheet open={ticket()} onOpenChange={({ open }) => ticket.set(open)}>
-            <SheetContent
-              side="bottom"
-              popupStyle={{
-                backgroundColor: colors.card,
-                borderTopWidth: 1,
-                borderTopColor: colors.border,
-              }}
-            >
-              {ticketView}
+            <SheetContent side="bottom">
+              <Scroll style={{ flexGrow: 1, flexShrink: 1 }}>{ticketView}</Scroll>
             </SheetContent>
           </Sheet>
         }
@@ -660,7 +654,7 @@ export function StockView(props: {
             style={
               terminal
                 ? { paddingVertical: TERMINAL_ROW - 1, paddingHorizontal: 2 * TERMINAL_COLUMN - 1 }
-                : { padding: 20 }
+                : undefined
             }
           >
             {ticketView}

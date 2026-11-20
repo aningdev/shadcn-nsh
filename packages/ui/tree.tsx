@@ -36,8 +36,12 @@ export const treeItemClass =
 /** How far each level is indented, in points. */
 const treeIndent = 14;
 
-/** A row's height: 4 points under a pointer's 32-point row, or a touch screen's 44-point target whole. */
-const treeRowHeight = desktop ? size.rowSm - 4 : size.rowSm;
+/**
+ * A row's height: 4 points under a pointer's 32-point row (28), or a touch screen's 44-point
+ * target whole. A well is as tall as its rows are: `height: rows * treeRowHeight` (plus the
+ * list's padding) shows `rows` of them, and more scroll.
+ */
+export const treeRowHeight = desktop ? size.rowSm - 4 : size.rowSm;
 
 /**
  * A row's content: its chevron (folders), its icon (`icon`, else a folder

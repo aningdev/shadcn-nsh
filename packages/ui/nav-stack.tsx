@@ -105,10 +105,11 @@ export function navPageLook(): NavPageLook {
 }
 
 /** What a page reads from the stack it stands in: how many pages it holds, and how to leave one. */
-type NavPageSlot = {
+export type NavPageSlot = {
   /** The pages on the stack, the one shown included: more than one means a page to go back to. */
   pages: () => number;
-  /** Pops the page shown, as the header's back button does. */
+  /** Leaves the page, as the header's back button does: the page's `onBackPress` first, then the pop
+   * `popOnBack` allows. */
   back: () => void;
 };
 
@@ -163,13 +164,25 @@ function PageHeader(props: {
 }
 
 /**
- * A page of the stack. Every prop of `nsh/base`'s [`NavPage`](https://nsh.dev/elements/nav-page)
- * passes through; `style` goes over the look's. On the desktops and the web it draws the page's
- * header for you — the back button while there is a page below, `title`, and `headerRight` at its
- * trailing edge — unless `header` says what to draw instead; iOS and Android show their system
- * header, which takes `title` and `headerRight` itself, and this one does not draw.
+ * The page's header: the element drawn there, or a function of the page it heads, which gets the
+ * slot the header `NavPage` draws for you reads — so a header of the app's own answers Back the way
+ * that one does, without the page's `onBackPress` and the stack being threaded through it.
+ *
+ * A function, because `nsh/base` mounts the header in the page's own header host, where what the
+ * page provides around its children does not reach: an element passed here reads the stack's slot,
+ * not the page's.
  */
-export type NavPageProps = BaseNavPageProps;
+export type NavPageHeader = JSX.Element | ((page: NavPageSlot) => JSX.Element);
+
+/**
+ * A page of the stack. Every prop of `nsh/base`'s [`NavPage`](https://nsh.dev/elements/nav-page)
+ * passes through but `header`, which also takes a function of the page; `style` goes over the
+ * look's. On the desktops and the web it draws the page's header for you — the back button while
+ * there is a page below, `title`, and `headerRight` at its trailing edge — unless `header` says what
+ * to draw instead; iOS and Android show their system header, which takes `title` and `headerRight`
+ * itself, and this one does not draw.
+ */
+export type NavPageProps = Omit<BaseNavPageProps, "header"> & { header?: NavPageHeader };
 
 /** A page of the stack: its `header` on the desktops and the web, its content below it. */
 export function NavPage(props: NavPageProps) {
@@ -186,23 +199,28 @@ export function NavPage(props: NavPageProps) {
     props.onBackPress?.();
     if (props.popOnBack !== false) slot?.back();
   };
+  // The page hands a header of the app's own what it reads to draw a back button of its own: the
+  // same depth and the same press the drawn header uses (a custom one replaces it, not what it does).
+  const pageSlot: NavPageSlot = { pages: () => slot?.pages() ?? 1, back };
+  const own = props.header;
+  // Read once, here where the header is drawn.
+  const header =
+    own == null ? (
+      <If when={hasHeader()}>
+        <PageHeader
+          title={props.title}
+          right={props.headerRight}
+          back={slot ? back : undefined}
+          above={above}
+        />
+      </If>
+    ) : typeof own === "function" ? (
+      own(pageSlot)
+    ) : (
+      own
+    );
   return (
-    <BaseNavPage
-      {...rest}
-      header={
-        props.header ?? (
-          <If when={hasHeader()}>
-            <PageHeader
-              title={props.title}
-              right={props.headerRight}
-              back={slot ? back : undefined}
-              above={above}
-            />
-          </If>
-        )
-      }
-      style={[look.page(), props.style ?? null]}
-    >
+    <BaseNavPage {...rest} header={header} style={[look.page(), props.style ?? null]}>
       {props.children}
     </BaseNavPage>
   );

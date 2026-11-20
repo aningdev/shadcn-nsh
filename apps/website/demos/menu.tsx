@@ -1,8 +1,9 @@
 // The official menu scene (`references/nsh/website/demos/el-menu.tsx`) with this library's parts:
-// a File menu with a submenu, a View menu with settings and a choice of one, a dashed area that
-// opens the same rows as a context menu, and an inspector holding the last choice, the settings
-// and the last eight open or close lines.
-import { mount, signal, Text, View } from "nsh";
+// a File menu with a submenu, a View menu with settings and a choice of one, the platform's own
+// menu (`MenuButton`) beside them, a dashed area that opens the same rows as a context menu, and an
+// inspector holding the last choice, the settings and the last eight open or close lines.
+import { Share2 } from "lucide";
+import { mount, platform, signal, Text, View } from "nsh";
 
 import {
   ContextMenu,
@@ -11,8 +12,10 @@ import {
   ContextMenuSeparator,
   ContextMenuTrigger,
 } from "@/packages/ui/context-menu";
+import { Icon } from "@/packages/ui/lib/icons";
 import {
   Menu,
+  MenuButton,
   MenuCheckboxItem,
   MenuContent,
   MenuItem,
@@ -23,6 +26,7 @@ import {
   MenuSubContent,
   MenuSubTrigger,
   MenuTrigger,
+  menuItemGlyph,
 } from "@/packages/ui/menu";
 
 import { DemoPage } from "./kit";
@@ -87,7 +91,9 @@ function App() {
               <MenuItem disabled>Paste</MenuItem>
               <MenuSeparator />
               <MenuSub>
-                <MenuSubTrigger>Share</MenuSubTrigger>
+                <MenuSubTrigger lead={<Icon icon={Share2} {...menuItemGlyph()} />}>
+                  Share
+                </MenuSubTrigger>
                 <MenuSubContent offset={4}>
                   <MenuItem onSelect={() => choose("Share › Mail")}>Mail</MenuItem>
                   <MenuItem onSelect={() => choose("Share › Messages")}>Messages</MenuItem>
@@ -136,6 +142,18 @@ function App() {
               ))}
             </MenuContent>
           </Menu>
+
+          {/* The platform's own menu: UIContextMenu on iOS, the context menu a pointer opens. */}
+          <MenuButton
+            title="Sort by"
+            accessibilityLabel="Sort by"
+            // A phone without the platform's menu (Android) has none: there the app draws `Menu`.
+            disabled={platform.os === "android"}
+            items={SORTS.map((by) => ({ id: by, label: by, checked: sort() === by }))}
+            onSelect={({ id }) => choose(`system menu › ${id}`)}
+          >
+            Sort by ▾
+          </MenuButton>
         </View>
 
         <ContextMenu onOpenChange={({ open, reason }) => changed("Context")({ open, reason })}>

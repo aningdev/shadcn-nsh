@@ -3,6 +3,7 @@ import { Button as BaseButton } from "nsh/base";
 
 import {
   Menu,
+  MenuButton,
   MenuCheckboxItem,
   MenuContent,
   MenuGroup,
@@ -89,6 +90,14 @@ function App() {
             </MenuSubContent>
           </MenuSub>
           <MenuSub>
+            <MenuSubTrigger lead={<Text>★</Text>}>Picked</MenuSubTrigger>
+            <MenuSubContent>
+              <MenuItem>
+                <Text>Picked item</Text>
+              </MenuItem>
+            </MenuSubContent>
+          </MenuSub>
+          <MenuSub>
             <MenuSubTrigger style={{ display: "none" }}>Gone</MenuSubTrigger>
             <MenuSubContent>
               <MenuItem>
@@ -108,6 +117,18 @@ function App() {
           </MenuItem>
         </MenuContent>
       </Menu>
+      <MenuButton
+        items={[
+          { id: "name", label: "By name", checked: sort() === "Name" },
+          { id: "date", label: "By date", checked: sort() === "Date" },
+          { id: "share", label: "Share", items: [{ id: "mail", label: "Mail" }] },
+          { id: "none", label: "None", disabled: true },
+        ]}
+        onSelect={({ id }) => sort.set(id === "date" ? "Date" : id === "name" ? "Name" : id)}
+        title="Arrange"
+      >
+        Arrange
+      </MenuButton>
       <Menu>
         <MenuTrigger disabled={off()}>Open O</MenuTrigger>
         <MenuContent>

@@ -29,6 +29,7 @@ const USAGE: [string, string][] = [
 function App() {
   const storage = signal(true);
   const advanced = signal(false);
+  const trash = signal(false);
   const originals = signal(false);
   const events = signal<string[]>([]);
   const log = (line: string) => events.set([line, ...events()].slice(0, 4));
@@ -50,6 +51,9 @@ function App() {
               </Text>
               <Text style={{ fontSize: 12, color: colors.mutedForeground }}>
                 Keep originals {originals() ? "on" : "off"}: kept while collapsed
+              </Text>
+              <Text style={{ fontSize: 12, color: colors.mutedForeground }}>
+                Trash {trash() ? "open" : "closed"}: a chevron that points down
               </Text>
             </Panel>
             <Log title="onPress (trigger) → open" lines={events()} minHeight={92} />
@@ -142,6 +146,33 @@ function App() {
               <RowDivider show />
               <RowLabel label="Advanced" detail="Options most people leave alone" />
               <DisclosureChevron open={advanced()} />
+            </View>
+          </Collapsible>
+
+          <Collapsible
+            open={trash()}
+            reveal
+            content={
+              <View style={disclosurePanel({ start: controlSize.gap })}>
+                <Text style={{ fontSize: controlSize.label, color: colors.mutedForeground }}>
+                  Nothing in it.
+                </Text>
+              </View>
+            }
+          >
+            <View
+              accessible
+              role="button"
+              accessibilityState={{ expanded: trash() }}
+              onPress={() => {
+                trash.set(!trash());
+                log(`Trash → ${trash() ? "open" : "closed"}`);
+              }}
+              {...disclosureTriggerLook()}
+            >
+              <RowDivider show />
+              <RowLabel label="Trash" detail="Emptied automatically after 30 days" />
+              <DisclosureChevron accordion open={trash()} />
             </View>
           </Collapsible>
         </View>

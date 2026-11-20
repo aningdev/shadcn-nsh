@@ -130,13 +130,25 @@ export type AccordionItemProps = BaseAccordionItemProps;
 export type AccordionHeaderProps = BaseAccordionHeaderProps;
 
 /**
- * Expands the item. String children are the title; a trailing chevron is always drawn.
+ * Expands the item. String children are the title; a trailing chevron is always drawn, and
+ * children of the app's own (an icon, a title and a summary, a badge) sit before it in one row.
  * Row options (`first`, `start`) feed `disclosureTriggerLook`.
  */
 export type AccordionTriggerProps = Omit<BaseAccordionTriggerProps, "children"> & {
-  children?: string | JSX.Element;
+  /**
+   * The row, in order, before the chevron: a string is the title's text (a `RowLabel`, taking the
+   * room left), anything else is drawn as given. More than one child is laid out beside it — a
+   * leading icon, the title and a badge share the row.
+   */
+  children?: string | JSX.Element | (string | JSX.Element)[];
   first?: boolean;
   start?: number;
+  /**
+   * This trigger takes no presses and dims, without disabling its item (its panel's own controls
+   * keep working). A disabled trigger is drawn as a row of its own rather than the item's button,
+   * so screen readers hear a disabled button without the item's expanded state.
+   */
+  disabled?: boolean;
 };
 
 /**
@@ -176,6 +188,7 @@ export function AccordionTrigger(props: AccordionTriggerProps) {
     "children",
     "first",
     "start",
+    "disabled",
     "class",
     "style",
     "hoverStyle",
@@ -186,33 +199,58 @@ export function AccordionTrigger(props: AccordionTriggerProps) {
   const look = disclosureTriggerLook({
     first: props.first,
     start: props.start,
+    disabled: () => Boolean(props.disabled),
   });
+  const row = (
+    <View style={{ flexDirection: "row", alignItems: "center", flexGrow: 1, gap: controlSize.gap }}>
+      {(() => {
+        // Read once, here where the title is drawn (`marker.tsx` reads in the same shape): a
+        // string is a `RowLabel` (it takes the room left), anything else keeps its own width.
+        const kids = props.children;
+        const parts = Array.isArray(kids) ? kids : [kids];
+        return (
+          <Each of={parts} key="index">
+            {(part) => {
+              const child = part();
+              return typeof child === "string" ? (
+                <RowLabel label={child} strong />
+              ) : (
+                <If when={child != null}>{child}</If>
+              );
+            }}
+          </Each>
+        );
+      })()}
+      <DisclosureChevron accordion />
+    </View>
+  );
+  const states = {
+    class: joinClass(look.class, props.class),
+    style: [look.style, props.style ?? null],
+    hoverStyle: [look.hoverStyle ?? null, props.hoverStyle ?? null],
+    activeStyle: [look.activeStyle, props.activeStyle ?? null],
+    focusVisibleStyle: [look.focusVisibleStyle, props.focusVisibleStyle ?? null],
+    disabledStyle: [look.disabledStyle, props.disabledStyle ?? null],
+  };
 
-  return (
-    <BaseAccordionTrigger
-      {...rest}
-      class={joinClass(look.class, props.class)}
-      style={[look.style, props.style ?? null]}
-      hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
-      activeStyle={[look.activeStyle, props.activeStyle ?? null]}
-      focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
-      disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
-    >
+  // A trigger of its own disabled is a row, not the item's button: `nsh/base` stops the presses of
+  // a disabled item, and takes nothing from a trigger that only dims.
+  if (props.disabled) {
+    return (
       <View
-        style={{ flexDirection: "row", alignItems: "center", flexGrow: 1, gap: controlSize.gap }}
+        accessible
+        role="button"
+        accessibilityLabel={props.accessibilityLabel ?? undefined}
+        accessibilityState={{ disabled: true }}
+        {...states}
       >
-        {(() => {
-          // Read once, here where the title is drawn (`marker.tsx` reads in the same shape): a
-          // string is a `RowLabel`, anything else keeps its own width.
-          const kids = props.children;
-          return typeof kids === "string" ? (
-            <RowLabel label={kids} strong />
-          ) : (
-            <View style={{ flexGrow: 1, flexShrink: 1 }}>{kids}</View>
-          );
-        })()}
-        <DisclosureChevron accordion />
+        {row}
       </View>
+    );
+  }
+  return (
+    <BaseAccordionTrigger {...rest} {...states}>
+      {row}
     </BaseAccordionTrigger>
   );
 }

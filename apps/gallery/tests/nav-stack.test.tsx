@@ -48,3 +48,18 @@ test("popOnBack={false} keeps the page while the press is reported, and the app 
   await app.press("text:Pop by hand");
   await app.waitUntil(() => line(app.texts(), "routes") === "first,second");
 });
+
+test("a header of the app's own is handed its page: it reports the depth and pops", async () => {
+  const app = await open("./nav-stack.fixture.tsx", { platform: "macos", reducedMotion: true });
+  await app.press("text:Go to second");
+  await app.waitUntil(() => line(app.texts(), "routes") === "first,second");
+  await app.press("text:Go to custom");
+  await app.waitUntil(() => line(app.texts(), "routes") === "first,second,custom");
+  // The page draws its own header: the slot says how deep it is, and its own Back pops it —
+  // `onBackPress` hears the press first, then the stack pops (`popOnBack` is not set).
+  expect(app.shows("label:Custom back")).toBe(true);
+  expect(line(app.texts(), "depth")).toBe("3");
+  await app.press("label:Custom back");
+  await app.waitUntil(() => line(app.texts(), "routes") === "first,second");
+  expect(line(app.texts(), "backs")).toBe("1");
+});

@@ -47,6 +47,25 @@ import {
 </AccordionItem>
 ```
 
+### A trigger of its own
+
+The trigger takes more than one child: what you draw is laid out in the row before the chevron, in
+one line, and the chevron stays at the end (it is the part that turns as the item opens).
+
+```tsx
+<AccordionTrigger>
+  <Icon icon={Package} {...menuItemGlyph()} />
+  <RowLabel label="Shipping" strong />
+</AccordionTrigger>
+```
+
+`disabled` on the trigger takes the row's presses itself — for a row that is not an item's own (an
+item's `disabled` already does that for the header's trigger).
+
+```tsx
+<AccordionTrigger disabled>Can I change my address?</AccordionTrigger>
+```
+
 ### Revealed panel
 
 `reveal` defaults on; `start` lines the panel up past a leading icon in the trigger, and `end` keeps the same room after the content.
@@ -84,4 +103,4 @@ Uses `disclosureTriggerLook`, `DisclosureChevron`, and `disclosurePanel`. Every 
 | `AccordionHeader`  | —                                               | The heading around the trigger.                             |
 | `AccordionItem`    | —                                               | One section.                                                |
 | `AccordionPanel`   | `reveal` (on by default), `start`, `end`, `gap` | Revealed content, in `disclosurePanel` padding.             |
-| `AccordionTrigger` | `first`, `start`                                | The title row, with a chevron that turns as the item opens. |
+| `AccordionTrigger` | `first`, `start`, `disabled`                    | The title row, with a chevron that turns as the item opens. |

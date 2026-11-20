@@ -2,7 +2,7 @@
 // parts: a card opened from a button and a page sheet opened from another, a switch for whether
 // the backdrop closes the card, and an inspector holding both open flags, the cancel count and
 // the last lifecycle line.
-import { mount, signal, Text, View, type ViewStyle } from "nsh";
+import { mount, Scroll, signal, Text, View } from "nsh";
 
 import {
   Dialog,
@@ -19,30 +19,15 @@ import { Switch } from "@/packages/ui/switch";
 import { DemoPage } from "./kit";
 import { desktop, Panel, Split, ui, wide } from "./stage";
 
-/** The page sheet's own panel: a card in the middle with a pointer, a sheet along the bottom edge
- * on a touch screen (the dialog's look is a card, so the app gives this one its place). */
-const sheetPanel = (): ViewStyle =>
-  desktop
-    ? { margin: "auto", width: 480, maxWidth: "90%", maxHeight: "90%" }
-    : {
-        marginTop: "auto",
-        marginBottom: 0,
-        width: "100%",
-        maxWidth: 560,
-        maxHeight: "90%",
-        borderBottomLeftRadius: 0,
-        borderBottomRightRadius: 0,
-        paddingBottom: 24,
-      };
-
 function App() {
   const card = signal(false);
+  const long = signal(false);
   const sheet = signal(false);
   const backdropCloses = signal(true);
   const cancels = signal(0);
   const log = signal("–");
   const hint = desktop
-    ? "Close with Escape or a click on the backdrop."
+    ? "Close with Escape or a click on the backdrop; a body taller than the window scrolls."
     : "Close with a tap on the backdrop, a swipe down or the back button. On iOS the sheet is a system pageSheet.";
   const state = () =>
     `open: card ${String(card())} · sheet ${String(sheet())} · onCancel ${cancels()}×`;
@@ -118,6 +103,40 @@ function App() {
             </DialogContent>
           </Dialog>
 
+          <Dialog open={long()} onOpenChange={({ open }) => long.set(open)}>
+            <DialogTrigger style={wide() ? undefined : { flex: 1, alignSelf: "stretch" }}>
+              Open a long one
+            </DialogTrigger>
+            <DialogContent width={desktop ? 360 : 320}>
+              <DialogTitle>Release notes</DialogTitle>
+              <DialogDescription>
+                The card is never taller than the window holds, 24 points clear of either edge: the
+                body scrolls and the actions stay at the end.
+              </DialogDescription>
+              <View style={{ gap: 8 }}>
+                {Array.from({ length: 9 }, (_, i) => (
+                  <View
+                    style={{
+                      flexDirection: "row",
+                      gap: 8,
+                      paddingVertical: 8,
+                      borderBottomWidth: 1,
+                      borderBottomColor: ui().line,
+                    }}
+                  >
+                    <Text style={{ flex: 1, fontSize: 13, color: ui().text }}>
+                      {`Line ${i + 1}: a part of a long body`}
+                    </Text>
+                    <Text style={{ fontSize: 12, color: ui().muted }}>{`${i + 1}/9`}</Text>
+                  </View>
+                ))}
+              </View>
+              <DialogFooter>
+                <DialogClose>Close</DialogClose>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+
           <Dialog
             open={sheet()}
             onOpenChange={({ open, reason }) => {
@@ -130,12 +149,12 @@ function App() {
             <DialogTrigger style={wide() ? undefined : { flex: 1, alignSelf: "stretch" }}>
               Open as a page sheet
             </DialogTrigger>
-            <DialogContent presentation="pageSheet" style={sheetPanel()}>
+            <DialogContent presentation="pageSheet">
               <DialogTitle>A sheet</DialogTitle>
               <DialogDescription>
                 presentation="pageSheet": a system sheet on iOS that follows the finger when swiped
-                down. Elsewhere the dialog is a layer over the window, and this panel is the app's
-                own style.
+                down, drawn by the system (no card of the library's). Elsewhere the dialog is a
+                layer over the window, and the card stands.
               </DialogDescription>
               <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
                 <DialogClose variant="default">Close</DialogClose>

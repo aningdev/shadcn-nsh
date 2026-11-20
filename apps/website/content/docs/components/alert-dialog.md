@@ -94,6 +94,30 @@ own, `destructive` in red where the platform has red.
 <AlertDialog onAction={({ action }) => action === "delete" && remove()}>…</AlertDialog>
 ```
 
+### Awaiting the answer
+
+An app that wants the choice before it draws anything else — `await`, then act — shows the same box
+with `nsh/base`'s own `AlertDialog.show`, which resolves with `{ action }`. That is the app's call.
+The parts above declare a box under a root of the page's, for an alert that is part of what the page
+draws; the library has no imperative `show` of its own, because shadcn has none: a web alert is
+always the app's own drawing, and a second way in would be two APIs for one box.
+
+```tsx
+import { AlertDialog } from "nsh/base";
+
+const discard = async () => {
+  const { action } = await AlertDialog.show({
+    title: "Discard your changes?",
+    description: "Your draft will be lost. This cannot be undone.",
+    actions: [
+      { id: "keep", label: "Keep editing", role: "cancel" },
+      { id: "discard", label: "Discard", role: "destructive" },
+    ],
+  });
+  if (action === "discard") pop();
+};
+```
+
 ### Action sheet
 
 `presentation="actionSheet"` slides the box up from the bottom (a list on Android). Escape and a
@@ -129,6 +153,7 @@ const open = signal(false);
 
 ## Differences from shadcn/ui
 
+- No imperative `show`: `nsh/base`'s `AlertDialog.show` is the app's to call (see [Awaiting the answer](#awaiting-the-answer)).
 - The box holds strings — `AlertDialogTitle`, `AlertDialogDescription` and the buttons' labels —
   not any JSX (icons, fields, media).
 - No `AlertDialogMedia`.

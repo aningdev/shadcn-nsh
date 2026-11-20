@@ -1,7 +1,7 @@
 import { mount, signal, Text, View } from "nsh";
 import type { TreeItem } from "nsh/base";
 
-import { Tree } from "../../../packages/ui";
+import { Tree, treeRowHeight } from "../../../packages/ui";
 
 const files: TreeItem[] = [
   {
@@ -39,6 +39,7 @@ function App() {
         disabled
         style={{ width: 240, height: 64 }}
       />
+      <Text testID="row-height">height {treeRowHeight}</Text>
       <Text>expanded={expanded().join(",")}</Text>
       <Text>selected={selected()}</Text>
       <Text>action={action()}</Text>

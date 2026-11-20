@@ -96,3 +96,25 @@ test("disabled follows a signal on trigger and item", async () => {
   await app.waitFor("text:Item B");
   expect(app.enabled("text:Item B")).toBe(false);
 });
+
+test("a submenu trigger with element children keeps its label and its chevron", async () => {
+  const app = await open("./menu.fixture.tsx");
+  await app.press("text:Open M");
+  await app.waitFor("text:Picked");
+  // The row is the submenu's: a lead (`★`), the child's own text, and the chevron the shell draws
+  // beside them — an element child no longer draws a bare frame without a way in.
+  expect(app.texts()).toContain("★");
+  await app.press("text:Picked");
+  await app.waitFor("text:Picked item");
+});
+
+test("MenuButton is the platform's own menu, with the items it is given", async () => {
+  const app = await open("./menu.fixture.tsx", { platform: "macos" });
+  expect(app.shows("text:Arrange")).toBe(true);
+  await app.press("text:Arrange");
+  await app.wait(100);
+  const menu = app.menu();
+  expect(menu?.map((entry) => entry.label)).toEqual(["By name", "By date", "Share > Mail", "None"]);
+  expect(menu?.find((entry) => entry.label === "None")?.disabled).toBe(true);
+  expect(menu?.find((entry) => entry.label === "By name")?.checked).toBe(true);
+});

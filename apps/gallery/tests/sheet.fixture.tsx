@@ -6,6 +6,7 @@ import { Sheet, SheetClose, SheetContent, SheetTrigger } from "../../../packages
 function App() {
   const changes = signal(0);
   const off = signal(false);
+  const detentNow = signal("unset");
   return (
     <View>
       <Text>changes {() => changes()}</Text>
@@ -25,6 +26,19 @@ function App() {
         </SheetTrigger>
         <SheetContent side="right">
           <Text>Body B</Text>
+        </SheetContent>
+      </Sheet>
+      <Sheet>
+        <SheetTrigger>Open Grabber</SheetTrigger>
+        <SheetContent
+          accessibilityLabel="Resize me"
+          detents={["medium", "large"]}
+          grabberAccessibilityLabel="Resize"
+          onDetentChange={({ detent }) =>
+            detentNow.set(typeof detent === "string" ? detent : "custom")
+          }
+        >
+          <Text testID="detent">{() => `detent ${detentNow()}`}</Text>
         </SheetContent>
       </Sheet>
       <Sheet>

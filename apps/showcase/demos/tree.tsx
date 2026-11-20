@@ -22,18 +22,15 @@ import { platform, signal, Text, View } from "nsh";
 import type { TreeItem, TreeRef } from "nsh/base";
 
 import { Button } from "@/packages/ui/button";
-import { Tree, TreeRow } from "@/packages/ui/tree";
+import { Tree, TreeRow, treeRowHeight } from "@/packages/ui/tree";
 
 import { DemoCard, DemoPage } from "../kit";
 import { CaptionRow, LabeledToggle } from "./navigation-shared";
 
 const pointer = platform.desktop;
 
-/** A row of this library's tree: 28 points with a pointer, 44 on a touch screen. */
-const treeRowHeight = pointer ? 28 : 44;
-
 /** A well as tall as its first `rows` rows and the list's padding, so nothing is left blank below
- * the last one; more rows scroll. */
+ * the last one; more rows scroll (`treeRowHeight` is the library's own row height). */
 const tall = (rows: number) => ({ height: rows * treeRowHeight + 12 });
 
 const project: TreeItem[] = [

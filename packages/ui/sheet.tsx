@@ -2,7 +2,7 @@
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { colors, cornerCurve, radius } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
-import { context, keyboardFrame, safeArea, split, View, windowSize } from "nsh";
+import { context, keyboardFrame, safeArea, split, windowSize } from "nsh";
 import {
   Sheet as BaseSheet,
   type OpenChangeReason,
@@ -87,8 +87,9 @@ export function sheetPanel(side: SheetSide): ViewStyle {
   };
 }
 
-/** The grabber at the top of a bottom sheet (a view's `style`): a pill 36 by 5 points in the raised
- * fill, centered. */
+/** The grabber at the top of a bottom sheet (its `grabberStyle`): a pill 36 by 5 points in the raised
+ * fill, centered. It is the sheet's own handle — the one `nsh/base` lets a press and a screen reader
+ * drag between detents — not a picture of one, so a sheet never shows two. */
 export function sheetGrabber(): ViewStyle {
   return {
     width: 36,
@@ -191,7 +192,11 @@ export function SheetClose(props: SheetCloseProps) {
   );
 }
 
-/** The panel that slides in from `side`, over the theme's scrim. */
+/**
+ * The panel that slides in from `side`, over the theme's scrim. A bottom one shows the grabber
+ * `nsh/base` gives it (`grabber`, default on), in `sheetGrabber()`'s look; give `grabber={false}`
+ * for a sheet the app drags by something of its own.
+ */
 export function SheetContent(props: SheetContentProps) {
   const ctx = useSheet();
   const [, rest] = split(props, ["side", "children", "popupStyle", "backdropStyle"]);
@@ -200,6 +205,9 @@ export function SheetContent(props: SheetContentProps) {
     <BaseSheet
       {...rest}
       side={side()}
+      grabber={props.grabber ?? side() === "bottom"}
+      grabberAccessibilityLabel={props.grabberAccessibilityLabel ?? "Sheet"}
+      grabberStyle={[sheetGrabber(), props.grabberStyle ?? null]}
       open={ctx.open()}
       onOpenChange={({ open, reason }) => ctx.setOpen(open, reason)}
       onOpen={ctx.onOpen}
@@ -208,7 +216,6 @@ export function SheetContent(props: SheetContentProps) {
       backdropStyle={[backdrop(), props.backdropStyle ?? null]}
       popupStyle={[sheetPanel(side()), props.popupStyle ?? null]}
     >
-      {side() === "bottom" ? <View style={sheetGrabber()} /> : null}
       {props.children}
     </BaseSheet>
   );

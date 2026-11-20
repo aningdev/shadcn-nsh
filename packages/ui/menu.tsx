@@ -6,6 +6,8 @@ import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, horizontalSizeClass, platform, split, Text, token, View } from "nsh";
 import {
   Menu as BaseMenu,
+  MenuButton as BaseMenuButton,
+  type MenuButtonProps as BaseMenuButtonProps,
   MenuItem as BaseMenuItem,
   MenuSeparator as BaseMenuSeparator,
   type MenuItemProps as BaseMenuItemProps,
@@ -16,7 +18,7 @@ import {
   type SubmenuProps as BaseSubmenuProps,
 } from "nsh/base";
 
-import { Button, type ButtonVariant } from "./button";
+import { Button, type ButtonSize, buttonLabel, buttonLook, type ButtonVariant } from "./button";
 import { AsText } from "./lib/as-text";
 import { Icon } from "./lib/icons";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
@@ -293,7 +295,9 @@ function SubmenuRowFrame(props: {
 /**
  * The row that opens a submenu (a `Submenu`'s `trigger`): `menuItemLook`'s
  * row, `lead` (an icon) before the label and a faint chevron at its end;
- * disabled, 35%. `style` goes over the row's own.
+ * disabled, 35%. `style` goes over the row's own. A string child is the
+ * label; anything else is drawn as given, still before the chevron, so a
+ * row of the app's own (an icon, a title, a value) keeps the chevron too.
  */
 export function SubmenuRow(props: {
   children?: string | JSX.Element;
@@ -305,7 +309,16 @@ export function SubmenuRow(props: {
   return (
     <SubmenuRowFrame disabled={props.disabled} inset={props.inset} style={props.style}>
       {props.lead}
-      <AsText style={menuItemLabel()}>{props.children}</AsText>
+      {(() => {
+        // Read once, here where the label is drawn (`marker.tsx` reads in the same shape).
+        const kids = props.children;
+        if (kids == null) return null;
+        return typeof kids === "string" ? (
+          <AsText style={menuItemLabel()}>{kids}</AsText>
+        ) : (
+          <View style={{ flexGrow: 1, flexShrink: 1 }}>{kids}</View>
+        );
+      })()}
       <Icon icon={ChevronRight} size={submenuChevron} tint={colors.faint} />
     </SubmenuRowFrame>
   );
@@ -404,13 +417,19 @@ export type MenuSubProps = {
   disabled?: boolean;
 };
 
-/** The row that opens a submenu: a string child is the label (`SubmenuRow`), anything else is drawn as given. */
+/**
+ * The row that opens a submenu: a string child is the label, anything else is drawn as given —
+ * both in `SubmenuRow`'s row, with its chevron at the end. A touch screen's sheet opens with a
+ * back row named after a string child (`MenuSubContent`'s `back`).
+ */
 export type MenuSubTriggerProps = {
   children?: string | JSX.Element;
   disabled?: boolean;
   /** The label starts where a checkable row's does (shadcn's `inset`). */
   inset?: boolean;
   style?: StyleProp<ViewStyle>;
+  /** An icon before the label, as a row that opens a submenu has in the menus of the platform. */
+  lead?: JSX.Element;
 };
 
 /** The nested menu's popup: `nsh/base`'s Submenu, with the trigger `MenuSubTrigger` sets; on a touch screen its sheet opens with a back row (`back`). */
@@ -642,21 +661,13 @@ export function MenuSubTrigger(props: MenuSubTriggerProps) {
   if (!ctx) throw new Error("MenuSubTrigger must be used within <MenuSub>");
   // The trigger is an element, as an app hands one to `nsh/base` (`trigger={<View …>}`, the shape
   // upstream's demos use): built once, here, and placed by the submenu without building it again
-  // on every layout. The kind is read once, here — it picks the host, and never changes; the
-  // children themselves are read where they are drawn: the spread hands the getter through, so the
-  // row below reads them itself and a label that reads a signal stays live. The touch back row
-  // keeps the one read's snapshot of the label, a plain string as `SubmenuBack` takes it.
+  // on every layout. Its row is the same whichever children it draws — a string label or the app's
+  // own — so both keep the chevron that says a submenu opens. The label is read once, here: a
+  // plain string is what the touch screen's back row takes.
   const kids = props.children;
   const disabled = Boolean(props.disabled ?? ctx.disabled);
-  const [, rest] = split(props, ["disabled", "inset", "style"]);
   ctx.label.value = typeof kids === "string" ? kids : undefined;
-  ctx.trigger.set(
-    typeof kids === "string" ? (
-      <SubmenuRow {...props} disabled={disabled} />
-    ) : (
-      <SubmenuRowFrame disabled={disabled} inset={props.inset} style={props.style} {...rest} />
-    ),
-  );
+  ctx.trigger.set(<SubmenuRow {...props} disabled={disabled} />);
   return null;
 }
 
@@ -677,5 +688,53 @@ export function MenuSubContent(props: MenuSubContentProps) {
     <BaseSubmenu {...rest} disabled={props.disabled ?? ctx.disabled} trigger={trigger} back={back}>
       {props.children}
     </BaseSubmenu>
+  );
+}
+
+/**
+ * The menu the platform shows itself: on iOS the system's pull-down menu (a `UIMenu`, Liquid Glass
+ * on iOS 26 and later) over the content, on a desktop the pointer's context menu — its placement,
+ * motion, checks, submenus, sections and destructive items are the platform's. The app hands over
+ * the items as data and hears the choice (`onSelect`) — the same data `ContextMenu` takes. Android
+ * and the web have no system menu for a view: there the content shows and opens nothing, so a menu
+ * of this library's (`Menu`) is what those platforms draw.
+ *
+ * shadcn has no counterpart: a web menu is always the app's own drawing (shadcn's
+ * `DropdownMenu`), and this is `nsh/base`'s [`MenuButton`](https://nsh.dev/elements/menu-button).
+ * A string child is a button's label, in `buttonLook`'s look of `variant` and `size`; anything
+ * else is the app's own content, drawn as given (a chip, a row of an icon and a value).
+ */
+export type MenuButtonProps = Omit<BaseMenuButtonProps, "children"> & {
+  /** The look a string child wears; default `ghost`, a bare row that shows its fill under the pointer. */
+  variant?: ButtonVariant;
+  /** Default `default`. */
+  size?: ButtonSize;
+  /** A string is a button's label; anything else is the app's own content. */
+  children?: string | JSX.Element;
+};
+
+/** Content that opens the platform's own menu: `nsh/base`'s `MenuButton`, with a string child drawn as a button. */
+export function MenuButton(props: MenuButtonProps) {
+  const [, rest] = split(props, ["variant", "size", "children"]);
+  // The host is `nsh/base`'s: it takes the presses (the system's button covers the content on
+  // iOS), so a string child is drawn, not a `Button` — one pressable inside another would swallow
+  // the press on a desktop, where the host itself is the pressable.
+  const variant = () => props.variant ?? "ghost";
+  const options = { size: () => props.size, disabled: () => props.disabled };
+  const look = buttonLook(variant, options);
+  return (
+    <BaseMenuButton {...rest}>
+      {(() => {
+        // Read once, here where the content is drawn (`marker.tsx` reads in the same shape).
+        const kids = props.children;
+        return typeof kids === "string" ? (
+          <View style={look.style}>
+            <AsText style={buttonLabel(variant, options)}>{kids}</AsText>
+          </View>
+        ) : (
+          kids
+        );
+      })()}
+    </BaseMenuButton>
   );
 }

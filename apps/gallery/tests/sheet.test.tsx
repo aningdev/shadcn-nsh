@@ -32,3 +32,15 @@ test("a disabled trigger does not open, and follows a later change", async () =>
   await app.wait(100);
   expect(app.shows("Body C")).toBe(false);
 });
+
+test("a bottom sheet's grabber is the one that drags, and it is labelled", async () => {
+  const app = await open("./sheet.fixture.tsx", { platform: "ios", reducedMotion: true });
+  await app.press("text:Open Grabber");
+  await app.waitFor("text:detent unset");
+  // One handle, not two: the shell styles `nsh/base`'s own adjustable grabber instead of drawing a
+  // second, decorative one above it. A press moves it to the next larger detent.
+  expect(app.count("label:Resize")).toBe(1);
+  await app.press("label:Resize");
+  await app.wait(150);
+  expect(app.texts()).toContain("detent large");
+});

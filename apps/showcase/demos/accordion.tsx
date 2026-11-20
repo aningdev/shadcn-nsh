@@ -35,8 +35,8 @@ function Divider(props: { show: boolean }) {
 }
 
 /**
- * An item's heading: its trigger is the row, the title and a summary, then the chevron, which
- * turns as the item opens. A disabled one dims.
+ * An item's heading: its trigger is the row — a leading icon, the title and its summary — then the
+ * chevron, which turns as the item opens. A disabled one takes no presses and dims.
  */
 function Heading(props: {
   title: string;
@@ -47,13 +47,9 @@ function Heading(props: {
 }) {
   return (
     <AccordionHeader level={props.level}>
-      <AccordionTrigger first>
-        <View
-          style={{ flexDirection: "row", alignItems: "center", flexGrow: 1, gap: controlSize.gap }}
-        >
-          {props.leading}
-          <RowLabel label={props.title} detail={props.detail} />
-        </View>
+      <AccordionTrigger first disabled={props.disabled}>
+        {props.leading}
+        <RowLabel label={props.title} detail={props.detail} />
       </AccordionTrigger>
     </AccordionHeader>
   );

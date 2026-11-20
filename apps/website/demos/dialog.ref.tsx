@@ -3,7 +3,7 @@
 // (`references/nsh/website/demos/el-dialog.tsx`) writes it. It differs from the component page
 // only in the parts it names.
 import { colors } from "@shadcn-nsh/theme";
-import { mount, signal, Text, View, type ViewStyle } from "nsh";
+import { mount, Scroll, signal, Text, View } from "nsh";
 import { Dialog } from "nsh/base";
 
 import { Button } from "@/packages/ui/button";
@@ -13,23 +13,7 @@ import { listRow, RowLabel } from "@/packages/ui/lib/surface";
 import { Switch } from "@/packages/ui/switch";
 
 import { DemoPage } from "./kit";
-import { desktop, Panel, Split, wide } from "./stage";
-
-/** The page sheet's own panel: a card in the middle with a pointer, a sheet along the bottom edge
- * on a touch screen (the look is a card, so the app gives this one its place). */
-const sheetPanel = (): ViewStyle =>
-  desktop
-    ? { margin: "auto", width: 480, maxWidth: "90%", maxHeight: "90%" }
-    : {
-        marginTop: "auto",
-        marginBottom: 0,
-        width: "100%",
-        maxWidth: 560,
-        maxHeight: "90%",
-        borderBottomLeftRadius: 0,
-        borderBottomRightRadius: 0,
-        paddingBottom: 24,
-      };
+import { desktop, Panel, Split, ui, wide } from "./stage";
 
 /** The row of a card's actions, as `DialogFooter` lays it. */
 const footer = {
@@ -41,12 +25,13 @@ const footer = {
 
 function App() {
   const card = signal(false);
+  const long = signal(false);
   const sheet = signal(false);
   const backdropCloses = signal(true);
   const cancels = signal(0);
   const log = signal("–");
   const hint = desktop
-    ? "Close with Escape or a click on the backdrop."
+    ? "Close with Escape or a click on the backdrop; a body taller than the window scrolls."
     : "Close with a tap on the backdrop, a swipe down or the back button. On iOS the sheet is a system pageSheet.";
   const state = () =>
     `open: card ${String(card())} · sheet ${String(sheet())} · onCancel ${cancels()}×`;
@@ -90,6 +75,13 @@ function App() {
             style={wide() ? undefined : { flex: 1, alignSelf: "stretch" }}
           >
             Open a card
+          </Button>
+          <Button
+            variant="secondary"
+            onPress={() => long.set(true)}
+            style={wide() ? undefined : { flex: 1, alignSelf: "stretch" }}
+          >
+            Open a long one
           </Button>
           <Button
             variant="secondary"
@@ -154,11 +146,50 @@ function App() {
         </Dialog>
 
         <Dialog
+          open={long()}
+          animation="fade"
+          backdropStyle={backdrop()}
+          style={dialogCard(desktop ? 360 : 320)}
+          onOpenChange={({ open }) => long.set(open)}
+        >
+          <Scroll style={{ flexGrow: 1, flexShrink: 1 }} contentStyle={{ gap: 12 }}>
+            <Text style={dialogTitle()}>Release notes</Text>
+            <Text style={dialogText()}>
+              The card is never taller than the window holds, 24 points clear of either edge: the
+              body scrolls and the actions stay at the end.
+            </Text>
+            <View style={{ gap: 8 }}>
+              {Array.from({ length: 9 }, (_, i) => (
+                <View
+                  style={{
+                    flexDirection: "row",
+                    gap: 8,
+                    paddingVertical: 8,
+                    borderBottomWidth: 1,
+                    borderBottomColor: ui().line,
+                  }}
+                >
+                  <Text style={{ flex: 1, fontSize: 13, color: ui().text }}>
+                    {`Line ${i + 1}: a part of a long body`}
+                  </Text>
+                  <Text style={{ fontSize: 12, color: ui().muted }}>{`${i + 1}/9`}</Text>
+                </View>
+              ))}
+            </View>
+          </Scroll>
+          <View style={footer}>
+            <Button variant="secondary" onPress={() => long.set(false)}>
+              Close
+            </Button>
+          </View>
+        </Dialog>
+
+        <Dialog
           open={sheet()}
           presentation="pageSheet"
           animation="fade"
           backdropStyle={backdrop()}
-          style={{ ...dialogCard(), ...sheetPanel() }}
+          style={dialogCard()}
           onOpenChange={({ open, reason }) => {
             sheet.set(open);
             heard(open, reason);
@@ -169,8 +200,8 @@ function App() {
           <Text style={dialogTitle()}>A sheet</Text>
           <Text style={dialogText()}>
             presentation="pageSheet": a system sheet on iOS that follows the finger when swiped
-            down. Elsewhere the dialog is a layer over the window, and this panel is the app's own
-            style.
+            down, drawn by the system (no card of the library's). Elsewhere the dialog is a layer
+            over the window, and the card stands.
           </Text>
           <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
             <Button variant="default" onPress={() => sheet.set(false)}>

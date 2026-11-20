@@ -1,7 +1,8 @@
 import { colors, mono, motion, radius, rounded, tints } from "@shadcn-nsh/theme";
 // TextView: the official gallery's scene (`references/nsh/examples/gallery/demos/TextViewDemo.tsx`)
 // with this library's text view — Markdown, HTML, extensions, a streaming reply, and a selection
-// that crosses views. The image viewer is `nsh/base`'s dialog: this library's dialog is a card.
+// that crosses views. The image viewer is this library's dialog as a page (`dialogPage`), its body
+// given whole (`scroll={false}`): the lightbox takes the pinch and the swipe itself.
 import { Code, Play, X } from "lucide";
 import {
   cleanup,
@@ -15,10 +16,11 @@ import {
   untracked,
   View,
 } from "nsh";
-import { Dialog, type TextViewCustomNode, type TextViewImage } from "nsh/base";
+import type { TextViewCustomNode, TextViewImage } from "nsh/base";
 
 import { Button, buttonGlyph, buttonLabel, IconButton } from "@/packages/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/packages/ui/card";
+import { Dialog, DialogContent, dialogPage } from "@/packages/ui/dialog";
 import { Icon } from "@/packages/ui/lib/icons";
 import { Segmented, SegmentedItem, SegmentedList } from "@/packages/ui/segmented";
 import { TextView, textViewCaretClass, type TextViewRef } from "@/packages/ui/text-view";
@@ -277,8 +279,9 @@ const SWIPE_CLOSE = 120;
 const clamp = (value: number, bound: number) => Math.max(-bound, Math.min(bound, value));
 
 /**
- * A full-screen viewer for an image a `TextView` reports. The library's dialog is a card, so this
- * one is `nsh/base`'s, and the near-black lightbox has no theme role (the page's own colors).
+ * A full-screen viewer for an image a `TextView` reports: the library's dialog as a page
+ * (`dialogPage`), with the near-black lightbox on the page's own colors (no theme role for ink
+ * over a photo).
  */
 function ImageViewer(props: { image: TextViewImage | null; onClose: () => void }) {
   const shown = signal<TextViewImage | null>(null);
@@ -337,109 +340,107 @@ function ImageViewer(props: { image: TextViewImage | null; onClose: () => void }
   };
 
   return (
-    <Dialog
-      open={!!props.image}
-      animation="fade"
-      style={{ flex: 1 }}
-      onOpenChange={({ open }) => !open && props.onClose()}
-    >
-      <View
-        testID="image-viewer"
-        focusable={false}
-        onPress={props.onClose}
-        onLayout={({ bounds }) =>
-          viewport.set({ width: bounds.size.width, height: bounds.size.height })
-        }
-        pinch={{ scale }}
-        pan={{ x, y }}
-        onPinchEnd={async () => settle({ scale: await scale.getValue(), x: atX(), y: atY() })}
-        onPanEnd={(e) => {
-          const dy = (e.value?.y ?? atY()) - atY();
-          if (atScale() <= 1.01 && (dy > SWIPE_CLOSE || e.velocity.y > 1200))
-            return props.onClose();
-          settle({ scale: atScale(), x: e.value?.x ?? atX(), y: e.value?.y ?? atY() });
-        }}
-        style={{
-          flex: 1,
-          alignItems: "center",
-          justifyContent: "center",
-          backgroundColor: colors.background,
-        }}
-      >
+    <Dialog open={!!props.image} onOpenChange={({ open }) => !open && props.onClose()}>
+      <DialogContent animation="fade" scroll={false} style={dialogPage()}>
         <View
-          accessibilityLabel={shown()?.alt || "Image"}
-          role="image"
-          onTouchStart={(e) => {
-            tapX.set(e.locationX);
-            tapY.set(e.locationY);
-            tapAt.set(e.timestamp);
-          }}
-          onPress={(e) => {
-            const now = tapAt();
-            const previous = lastTap();
-            const doubled = e.clickCount >= 2 || (previous > 0 && now - previous <= DOUBLE_TAP_MS);
-            if (!doubled) {
-              if (now > 0) lastTap.set(now);
-              return;
-            }
-            lastTap.set(0);
-            if (atScale() > 1.01) return settle({ scale: 1, x: 0, y: 0 });
-            const b = box();
-            const dx = tapX() - b.width / 2;
-            const dy = tapY() - b.height / 2;
-            settle({
-              scale: DOUBLE_TAP_ZOOM,
-              x: atX() + (atScale() - DOUBLE_TAP_ZOOM) * dx,
-              y: atY() + (atScale() - DOUBLE_TAP_ZOOM) * dy,
-            });
+          testID="image-viewer"
+          focusable={false}
+          onPress={props.onClose}
+          onLayout={({ bounds }) =>
+            viewport.set({ width: bounds.size.width, height: bounds.size.height })
+          }
+          pinch={{ scale }}
+          pan={{ x, y }}
+          onPinchEnd={async () => settle({ scale: await scale.getValue(), x: atX(), y: atY() })}
+          onPanEnd={(e) => {
+            const dy = (e.value?.y ?? atY()) - atY();
+            if (atScale() <= 1.01 && (dy > SWIPE_CLOSE || e.velocity.y > 1200))
+              return props.onClose();
+            settle({ scale: atScale(), x: e.value?.x ?? atX(), y: e.value?.y ?? atY() });
           }}
           style={{
-            width: box().width,
-            height: box().height,
-            opacity: enter,
-            translate: [x, y],
-            scale: scale.mul(enter.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] })),
+            flex: 1,
+            alignItems: "center",
+            justifyContent: "center",
+            backgroundColor: colors.background,
           }}
         >
-          <Image
-            src={shown()?.src ?? ""}
-            onLoad={({ size }) => natural.set({ width: size.width, height: size.height })}
-            style={{ width: "100%", height: "100%", objectFit: "contain" }}
-          />
-        </View>
-        <If when={shown()?.alt}>
           <View
+            accessibilityLabel={shown()?.alt || "Image"}
+            role="image"
+            onTouchStart={(e) => {
+              tapX.set(e.locationX);
+              tapY.set(e.locationY);
+              tapAt.set(e.timestamp);
+            }}
+            onPress={(e) => {
+              const now = tapAt();
+              const previous = lastTap();
+              const doubled =
+                e.clickCount >= 2 || (previous > 0 && now - previous <= DOUBLE_TAP_MS);
+              if (!doubled) {
+                if (now > 0) lastTap.set(now);
+                return;
+              }
+              lastTap.set(0);
+              if (atScale() > 1.01) return settle({ scale: 1, x: 0, y: 0 });
+              const b = box();
+              const dx = tapX() - b.width / 2;
+              const dy = tapY() - b.height / 2;
+              settle({
+                scale: DOUBLE_TAP_ZOOM,
+                x: atX() + (atScale() - DOUBLE_TAP_ZOOM) * dx,
+                y: atY() + (atScale() - DOUBLE_TAP_ZOOM) * dy,
+              });
+            }}
             style={{
-              pointerEvents: "none",
-              position: "absolute",
-              left: 0,
-              right: 0,
-              bottom: 0,
-              paddingHorizontal: 24,
-              paddingTop: 32,
-              paddingBottom: safeArea().bottom + 20,
+              width: box().width,
+              height: box().height,
+              opacity: enter,
+              translate: [x, y],
+              scale: scale.mul(enter.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] })),
             }}
           >
-            <Text
+            <Image
+              src={shown()?.src ?? ""}
+              onLoad={({ size }) => natural.set({ width: size.width, height: size.height })}
+              style={{ width: "100%", height: "100%", objectFit: "contain" }}
+            />
+          </View>
+          <If when={shown()?.alt}>
+            <View
               style={{
-                fontSize: 14,
-                lineHeight: 20,
-                textAlign: "center",
-                color: colors.foreground,
+                pointerEvents: "none",
+                position: "absolute",
+                left: 0,
+                right: 0,
+                bottom: 0,
+                paddingHorizontal: 24,
+                paddingTop: 32,
+                paddingBottom: safeArea().bottom + 20,
               }}
             >
-              {shown()?.alt}
-            </Text>
+              <Text
+                style={{
+                  fontSize: 14,
+                  lineHeight: 20,
+                  textAlign: "center",
+                  color: colors.foreground,
+                }}
+              >
+                {shown()?.alt}
+              </Text>
+            </View>
+          </If>
+          <View
+            style={{ position: "absolute", top: safeArea().top + 12, right: safeArea().right + 12 }}
+          >
+            <IconButton accessibilityLabel="Close" size="sm" onPress={props.onClose}>
+              <Icon icon={X} size={16} tint={colors.foreground} />
+            </IconButton>
           </View>
-        </If>
-        <View
-          style={{ position: "absolute", top: safeArea().top + 12, right: safeArea().right + 12 }}
-        >
-          <IconButton accessibilityLabel="Close" size="sm" onPress={props.onClose}>
-            <Icon icon={X} size={16} tint={colors.foreground} />
-          </IconButton>
         </View>
-      </View>
+      </DialogContent>
     </Dialog>
   );
 }
