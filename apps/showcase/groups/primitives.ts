@@ -1,7 +1,7 @@
 // The Primitives group: `nsh`'s primitives, under this library's theme.
 import { Brush, Globe, Image, List, ScrollText, Sparkles, Type, Video } from "lucide";
 
-import { notBuilt, type DemoEntry } from "./entry";
+import { lazy, notBuilt, type DemoEntry } from "./entry";
 
 /** The Primitives demos, in the official gallery's order. */
 export const primitives: DemoEntry[] = [
@@ -9,37 +9,25 @@ export const primitives: DemoEntry[] = [
     name: "Text",
     detail: "Fonts, spans, inline views and images, decorations, truncation, languages",
     icon: Type,
-    screen: notBuilt({
-      name: "Text",
-      detail: "Fonts, spans, inline views and images, decorations, truncation, languages",
-    }),
+    screen: lazy(() => import("../demos/text").then((m) => m.TextDemo)),
   },
   {
     name: "Image",
     detail: "Resize modes, tint, GIF / WebP, placeholders, blur, fade",
     icon: Image,
-    screen: notBuilt({
-      name: "Image",
-      detail: "Resize modes, tint, GIF / WebP, placeholders, blur, fade",
-    }),
+    screen: lazy(() => import("../demos/image").then((m) => m.ImageDemo)),
   },
   {
     name: "Scroll",
     detail: "Paging, snapping, zoom, scroll events, prepending, keyboard taps",
     icon: ScrollText,
-    screen: notBuilt({
-      name: "Scroll",
-      detail: "Paging, snapping, zoom, scroll events, prepending, keyboard taps",
-    }),
+    screen: lazy(() => import("../demos/scroll").then((m) => m.ScrollDemo)),
   },
   {
     name: "List",
     detail: "Columns, sticky sections, a chat, horizontal lists",
     icon: List,
-    screen: notBuilt({
-      name: "List",
-      detail: "Columns, sticky sections, a chat, horizontal lists",
-    }),
+    screen: lazy(() => import("../demos/list").then((m) => m.ListDemo)),
   },
   {
     name: "Canvas",
@@ -63,15 +51,12 @@ export const primitives: DemoEntry[] = [
     name: "WebView",
     detail: "Inline HTML with messages both ways, a web site and its navigation",
     icon: Globe,
-    screen: notBuilt({
-      name: "WebView",
-      detail: "Inline HTML with messages both ways, a web site and its navigation",
-    }),
+    screen: lazy(() => import("../demos/web-view").then((m) => m.WebViewDemo)),
   },
   {
     name: "Video",
     detail: "A player: play, seek, volume and what it reports",
     icon: Video,
-    screen: notBuilt({ name: "Video", detail: "A player: play, seek, volume and what it reports" }),
+    screen: lazy(() => import("../demos/video").then((m) => m.VideoDemo)),
   },
 ];

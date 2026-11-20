@@ -7,15 +7,15 @@ and its row leaves this file.
 
 ## Library
 
-| Issue                                                     | Gap                                                                             | Scenes that work around it                                                |
-| --------------------------------------------------------- | ------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| [#85](https://github.com/aningdev/shadcn-nsh/issues/85)   | No `toast()` API (raise, update, dismiss, stack)                                | Toast                                                                     |
-| [#87](https://github.com/aningdev/shadcn-nsh/issues/87)   | On macOS a click on the combobox field focuses it and does not open the list    | Combobox                                                                  |
-| [#94](https://github.com/aningdev/shadcn-nsh/issues/94)   | No theme role for ink over photos                                               | Carousel (`#ffffff`), TextView (image viewer), Animations (ink on a tone) |
-| [#95](https://github.com/aningdev/shadcn-nsh/issues/95)   | Input motion: shake, autogrow, rolling digits                                   | Input, OTP input, Number input                                            |
-| [#101](https://github.com/aningdev/shadcn-nsh/issues/101) | Chart colors and their label ink run opposite ways                              | Plot (Allocation tints its tiles)                                         |
-| [#117](https://github.com/aningdev/shadcn-nsh/issues/117) | `Plot` has no overlay hook (hatch with the plot's geometry)                     | Stocks (washes instead of hatching)                                       |
-| [#122](https://github.com/aningdev/shadcn-nsh/issues/122) | `nsh/base`'s Button takes no `accessibilityHint`, so no pressable can carry one | Gestures (accessibility rows draw a `View` with `role="button"`)          |
+| Issue                                                     | Gap                                                                             | Scenes that work around it                                                                               |
+| --------------------------------------------------------- | ------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------- |
+| [#85](https://github.com/aningdev/shadcn-nsh/issues/85)   | No `toast()` API (raise, update, dismiss, stack)                                | Toast                                                                                                    |
+| [#87](https://github.com/aningdev/shadcn-nsh/issues/87)   | On macOS a click on the combobox field focuses it and does not open the list    | Combobox                                                                                                 |
+| [#94](https://github.com/aningdev/shadcn-nsh/issues/94)   | No theme role for ink over photos                                               | Carousel (`#ffffff`), TextView (image viewer), Animations (ink on a tone), Text (shadowed ink on photos) |
+| [#95](https://github.com/aningdev/shadcn-nsh/issues/95)   | Input motion: shake, autogrow, rolling digits                                   | Input, OTP input, Number input                                                                           |
+| [#101](https://github.com/aningdev/shadcn-nsh/issues/101) | Chart colors and their label ink run opposite ways                              | Plot (Allocation tints its tiles)                                                                        |
+| [#117](https://github.com/aningdev/shadcn-nsh/issues/117) | `Plot` has no overlay hook (hatch with the plot's geometry)                     | Stocks (washes instead of hatching)                                                                      |
+| [#122](https://github.com/aningdev/shadcn-nsh/issues/122) | `nsh/base`'s Button takes no `accessibilityHint`, so no pressable can carry one | Gestures (accessibility rows draw a `View` with `role="button"`)                                         |
 
 Not gaps: the iOS segmented control is a platform look; a Progress with step dots is app layout;
 `Segmented` / `Button` / `Badge` take children where upstream takes `options` / `label` (shadcn's
@@ -34,5 +34,7 @@ Owned by `App.tsx` / `kit.tsx`, not the library:
   `fill: true` upstream, which hides the phone's header; the shell does not do that yet.
 - A page section (heading above a padded surface, with a right slot) is redrawn per batch
   (`actions-shared` `Card`, `data-shared` `ChartCard`); `DemoCard` lacks that slot; `Caption` lacks a label + note form.
+- `DemoPage` takes no scroll props, so Scroll's "taps with the keyboard up" scene sets
+  `keyboardShouldPersistTaps` on an inner `Scroll`.
 - The Gallery's "Last event" card and its kit parts (page header, section, icon tile, appear,
   action) are rebuilt per demo rather than shared.
