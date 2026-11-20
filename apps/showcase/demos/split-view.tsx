@@ -1,24 +1,27 @@
-import { alpha, colors, focusRing, header, hovered, radius, rounded } from "@shadcn-nsh/theme";
+import { alpha, colors, focusRing, hovered, radius, rounded } from "@shadcn-nsh/theme";
 // SplitView: the official gallery's mail scene
 // (`references/nsh/examples/gallery/demos/SplitViewDemo.tsx`) in three columns — the mailboxes, a
-// mailbox's messages, the message, which pushes a reply — each a stack of its own. This library
-// has no SplitView part yet, so the view itself is `nsh/base`'s, drawn plainly (a gap the
-// Summary records); everything inside it is this library's: the stacks and pages, the reply's
-// input, the rows and their states, all in the theme's colors.
-import { Archive, ArrowLeft, FileText, Inbox, PanelLeft, Send, Star, Undo2 } from "lucide";
-import type { JSX, ViewStyle } from "nsh";
+// mailbox's messages, the message, which pushes a reply — each a stack of its own. The columns,
+// their headers and the sidebar button are this library's `SplitView`; the rows, the reply and
+// which column is in front stay this scene's.
+import { Archive, ArrowLeft, FileText, Inbox, Send, Star, Undo2 } from "lucide";
 import { effect, platform, Scroll, signal, Text, untracked, View } from "nsh";
 import { horizontalSizeClass } from "nsh";
-import { SplitView, type ColumnVisibility } from "nsh/base";
 import { BackHandler } from "nsh/mobile";
 
 import { IconButton } from "@/packages/ui/button";
 import { Input } from "@/packages/ui/input";
 import { Icon } from "@/packages/ui/lib/icons";
 import { density } from "@/packages/ui/lib/surface";
-import { createNavStack, NavPage, NavStack } from "@/packages/ui/nav-stack";
-
-import { PageBar } from "./navigation-shared";
+import { createNavStack, NavStack } from "@/packages/ui/nav-stack";
+import {
+  SplitView,
+  SplitViewContent,
+  SplitViewDetail,
+  SplitViewSidebar,
+  SplitViewTrigger,
+  type ColumnVisibility,
+} from "@/packages/ui/split-view";
 
 type Mailbox = { id: string; title: string; icon: typeof Inbox };
 
@@ -114,12 +117,6 @@ const messagesIn = (mailbox: string) => MESSAGES.filter((m) => m.mailbox === mai
 /** iOS shows the system's headers and buttons; elsewhere the app's bar does, with the way back
  * where one column shows. */
 const ios = platform.os === "ios";
-/** Android shows the system's header: the way back between columns goes in its leading slot. */
-const android = platform.os === "android";
-/** A hairline after a column, where the columns stand side by side (iPadOS draws its own). */
-const divider = (color?: string) =>
-  ios || !color ? {} : { borderEndWidth: 1, borderEndColor: color };
-
 /** A header button: an icon, and a label where it says where it goes. */
 function HeaderButton(props: {
   icon: typeof ArrowLeft;
@@ -277,42 +274,6 @@ function MessageRow(props: {
   );
 }
 
-/** A column's page: the system's header on iOS and Android, the app's bar elsewhere, the column's
- * surface under its content and a hairline after it. `left` leads the app's bar, `systemLeft` the
- * system's header (beside its own back and sidebar buttons). */
-function Column(props: {
-  title: string;
-  left?: JSX.Element;
-  systemLeft?: JSX.Element;
-  right?: JSX.Element;
-  surface: string;
-  border?: string;
-  /** The sidebar: its bar on its surface. */
-  sidebar?: boolean;
-  children: JSX.Element;
-}) {
-  return (
-    <NavPage
-      title={props.title}
-      // The hairline runs down the whole column, its header included.
-      style={{ backgroundColor: props.surface, ...divider(props.border) } as ViewStyle}
-      headerStyle={header.headerStyle}
-      headerLeft={ios || android ? props.systemLeft : undefined}
-      headerRight={ios || android ? props.right : undefined}
-      header={
-        <PageBar
-          title={props.title}
-          left={props.left}
-          right={props.right}
-          background={props.sidebar ? props.surface : undefined}
-        />
-      }
-    >
-      <View style={{ flex: 1 }}>{props.children}</View>
-    </NavPage>
-  );
-}
-
 /**
  * The mail in three columns, each a stack of its own: the mailboxes, a mailbox's messages and
  * the message, which pushes a reply. Where the window is compact one column shows: a selection
@@ -382,16 +343,11 @@ export function SplitViewDemo() {
     ) : undefined;
   const sidebarToggle = () =>
     !ios && !compact() ? (
-      <IconButton
+      <SplitViewTrigger
+        columnVisibility={visibility()}
+        onColumnVisibilityChange={({ columnVisibility }) => visibility.set(columnVisibility)}
         accessibilityLabel={sidebarShown() ? "Hide the mailboxes" : "Show the mailboxes"}
-        onPress={() => visibility.set(sidebarShown() ? "doubleColumn" : "all")}
-      >
-        <Icon
-          icon={PanelLeft}
-          size={17}
-          tint={sidebarShown() ? colors.brand : colors.mutedForeground}
-        />
-      </IconButton>
+      />
     ) : undefined;
   return (
     <View style={{ flex: 1 }} onLayout={({ bounds }) => room.set(bounds.size.width)}>
@@ -402,12 +358,7 @@ export function SplitViewDemo() {
         sidebar={
           <NavStack state={sidebarNav}>
             {() => (
-              <Column
-                title="Mailboxes"
-                sidebar
-                surface={colors.sidebar}
-                border={colors.sidebarBorder}
-              >
+              <SplitViewSidebar title="Mailboxes">
                 <Scroll style={{ flex: 1 }}>
                   <View style={{ padding: 8, gap: 2 }}>
                     <Each of={MAILBOXES}>
@@ -421,19 +372,16 @@ export function SplitViewDemo() {
                     </Each>
                   </View>
                 </Scroll>
-              </Column>
+              </SplitViewSidebar>
             )}
           </NavStack>
         }
         content={
           <NavStack state={listNav}>
             {() => (
-              <Column
+              <SplitViewContent
                 title={box().title}
-                surface={colors.background}
-                border={colors.line}
-                left={back("Mailboxes", "all") ?? sidebarToggle()}
-                systemLeft={back("Mailboxes", "all")}
+                leading={back("Mailboxes", "all") ?? sidebarToggle()}
               >
                 <Scroll style={{ flex: 1 }}>
                   <Each of={messagesIn(mailbox())}>
@@ -459,7 +407,7 @@ export function SplitViewDemo() {
                     </Text>
                   </If>
                 </Scroll>
-              </Column>
+              </SplitViewContent>
             )}
           </NavStack>
         }
@@ -467,12 +415,10 @@ export function SplitViewDemo() {
           <NavStack state={messageNav}>
             {(route) =>
               route === "message" ? (
-                <Column
+                <SplitViewDetail
                   title={message()?.subject ?? "Message"}
-                  surface={colors.background}
-                  left={back(box().title, "doubleColumn")}
-                  systemLeft={back(box().title, "doubleColumn")}
-                  right={
+                  leading={back(box().title, "doubleColumn")}
+                  trailing={
                     message() ? (
                       <IconButton
                         accessibilityLabel="Reply"
@@ -575,12 +521,11 @@ export function SplitViewDemo() {
                       </Scroll>
                     )}
                   </If>
-                </Column>
+                </SplitViewDetail>
               ) : (
-                <Column
+                <SplitViewDetail
                   title="Reply"
-                  surface={colors.background}
-                  left={
+                  leading={
                     <HeaderButton
                       icon={ArrowLeft}
                       label="Back to the message"
@@ -603,7 +548,7 @@ export function SplitViewDemo() {
                       style={{ flex: 1, minHeight: 120, padding: 12, fontSize: density.body }}
                     />
                   </View>
-                </Column>
+                </SplitViewDetail>
               )
             }
           </NavStack>

@@ -255,7 +255,7 @@ export const components: ComponentDoc[] = [
   },
   {
     slug: "radio-group",
-    title: "Radio Group",
+    title: "Radio",
     kind: "official",
     shadcn: "radio-group",
     nshElement: "radio",
@@ -317,6 +317,15 @@ export const components: ComponentDoc[] = [
     shadcn: "slider",
     nshElement: "slider",
     description: "A sunk rail, citrus fill, and round thumb with a focus ring.",
+  },
+  {
+    slug: "split-view",
+    title: "SplitView",
+    kind: "official",
+    shadcn: null,
+    nshElement: "split-view",
+    description:
+      "Two or three columns of navigation stacks, with the column header and the sidebar button in the theme's look.",
   },
   {
     slug: "switch",

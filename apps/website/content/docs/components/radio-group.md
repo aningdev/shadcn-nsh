@@ -1,5 +1,5 @@
 ---
-title: Radio Group
+title: Radio
 description: A sunk ring that fills in citrus, with a dot growing in — alone or as a choice tile.
 component: true
 demo: radio-group

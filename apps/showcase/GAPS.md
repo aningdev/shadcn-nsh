@@ -16,7 +16,6 @@ and its row leaves this file.
 | [#87](https://github.com/aningdev/shadcn-nsh/issues/87)   | Combobox: no single-value mode; field press doesn't open; chips outside the root                  | Combobox                                                                  |
 | [#88](https://github.com/aningdev/shadcn-nsh/issues/88)   | Select: a narrow trigger overflows; listbox placement                                             | Select                                                                    |
 | [#89](https://github.com/aningdev/shadcn-nsh/issues/89)   | `sliderFill` ignores from/to; no value on a vertical slider                                       | Slider                                                                    |
-| [#90](https://github.com/aningdev/shadcn-nsh/issues/90)   | No SplitView component                                                                            | Split view                                                                |
 | [#91](https://github.com/aningdev/shadcn-nsh/issues/91)   | NavPage loses Back with a custom header; DialogContent always a card; no `AlertDialog.show()`     | Nav stack, Sheet, TextView (image viewer)                                 |
 | [#92](https://github.com/aningdev/shadcn-nsh/issues/92)   | Menu (MenuButton, sub-trigger icon), Sheet grabber, Accordion chevron / disabled, Tree row height | Menu, Sheet, Accordion, Collapsible, Tree                                 |
 | [#93](https://github.com/aningdev/shadcn-nsh/issues/93)   | Parts without `testID` / label; ColorPanel outside its root; `choiceTileLook` placement           | Date picker, Emoji picker, Combobox, Color picker, Checkbox               |
@@ -51,7 +50,7 @@ Owned by `App.tsx` / `kit.tsx`, not the library:
 
 - The shell hosts each demo in a `flex: 1` view, as upstream; DataTable, DiffView, Editor,
   RichEditor, Terminal, Dock and Resizable skip `DemoPage` to fill it. Only split view is
-  `fill: true` upstream, which hides the phone's header (with #90).
+  `fill: true` upstream, which hides the phone's header; the shell does not do that yet.
 - A page section (heading above a padded surface, with a right slot) is redrawn per batch
   (`actions-shared` `Card`, `data-shared` `ChartCard`); `DemoCard` lacks that slot; `Caption` lacks a label + note form.
 - The Gallery's "Last event" card and its kit parts (page header, section, icon tile, appear,
