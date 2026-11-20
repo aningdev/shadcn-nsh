@@ -35,7 +35,7 @@
   on the bar's own frame, so the rail comes first in the bar's row and a label goes after it.
 
 - **The site gains a showcase page (#78).** `/showcase` runs the new `apps/showcase` app — NSH's
-  official Gallery shell and its scenes rebuilt with this library's components, with the palette
+  official Gallery shell and every one of its scenes rebuilt with this library's components, with the palette
   and appearance chosen live inside the app — full width, outside the docs menu; `bun run check`
   type-checks the app, `docs:demos` packages it.
 

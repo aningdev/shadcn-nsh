@@ -11,9 +11,7 @@ The conventions:
   (`ButtonDemo`) and its group file lists it with `lazy(() => import("./button").then((m) => m.ButtonDemo))`.
 - **Registration**: the entry lives in exactly one `groups/<group>.ts` (the component's purpose
   group: Actions, Inputs, Navigation, Overlays, Data, or Documents and workspaces), with the
-  official gallery's `name` and one-line `detail`, and a lucide `icon`. A demo not built yet points
-  at the shared placeholder instead (`notBuilt({ name, detail })` in `groups/entry.tsx`) — building
-  it is replacing that entry's `screen` with a `lazy` import, nothing else.
+  official gallery's `name` and one-line `detail`, and a lucide `icon`.
 - **Layout**: draw through `../kit` (`DemoPage`, `DemoCard`, `DemoRow`/`DemoSection`, `Caption`),
   so the scenes differ only in what they show. The page scrolls; it fits a 320-point phone.
 - **Colors**: only from the theme — `colors`, `finish`, `radius`, `rounded` of

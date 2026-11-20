@@ -1,12 +1,9 @@
 import { colors } from "@shadcn-nsh/theme";
-// The index's one entry shape, the lazy screens the built demos are, and the placeholder a demo
-// still waiting for its batch shows. Every group file (`groups/<group>.ts`) exports its
-// `DemoEntry[]` in these terms, so later batches edit one group file each and nothing else.
+// The index's one entry shape and the lazy screens the demos are. Every group file
+// (`groups/<group>.ts`) exports its `DemoEntry[]` in these terms.
 import type { IconNode } from "lucide";
 import type { JSX } from "nsh";
 import { signal, Text, View } from "nsh";
-
-import { Placeholder } from "../demos/placeholder";
 
 /** A demo of the index: its name, one line of what it shows, its icon and its screen. */
 export interface DemoEntry {
@@ -65,12 +62,4 @@ function Loading(props: { failed: string }) {
       </Text>
     </View>
   );
-}
-
-/**
- * The screen of a demo not built yet: the one shared placeholder (`demos/placeholder.tsx`),
- * named for the entry that points at it.
- */
-export function notBuilt(entry: { name: string; detail: string }): () => JSX.Element {
-  return () => <Placeholder name={entry.name} detail={entry.detail} />;
 }

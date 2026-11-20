@@ -1,7 +1,7 @@
 // The Primitives group: `nsh`'s primitives, under this library's theme.
 import { Brush, Globe, Image, List, ScrollText, Sparkles, Type, Video } from "lucide";
 
-import { lazy, notBuilt, type DemoEntry } from "./entry";
+import { lazy, type DemoEntry } from "./entry";
 
 /** The Primitives demos, in the official gallery's order. */
 export const primitives: DemoEntry[] = [
@@ -33,19 +33,13 @@ export const primitives: DemoEntry[] = [
     name: "Canvas",
     detail: "2D context: paths, gradients, text, images, native animation",
     icon: Brush,
-    screen: notBuilt({
-      name: "Canvas",
-      detail: "2D context: paths, gradients, text, images, native animation",
-    }),
+    screen: lazy(() => import("../demos/canvas").then((m) => m.CanvasDemo)),
   },
   {
     name: "Shader",
     detail: "WGSL shaders on the GPU: noise, gradients, animated uniforms",
     icon: Sparkles,
-    screen: notBuilt({
-      name: "Shader",
-      detail: "WGSL shaders on the GPU: noise, gradients, animated uniforms",
-    }),
+    screen: lazy(() => import("../demos/shader").then((m) => m.ShaderDemo)),
   },
   {
     name: "WebView",

@@ -13,6 +13,7 @@ and its row leaves this file.
 | [#117](https://github.com/aningdev/shadcn-nsh/issues/117) | `Plot` has no overlay hook (hatch with the plot's geometry)                     | Stocks (washes instead of hatching)                              |
 | [#122](https://github.com/aningdev/shadcn-nsh/issues/122) | `nsh/base`'s Button takes no `accessibilityHint`, so no pressable can carry one | Gestures (accessibility rows draw a `View` with `role="button"`) |
 | [#149](https://github.com/aningdev/shadcn-nsh/issues/149) | No public helper turns a lucide icon into an image for a native menu            | System (context menu rebuilds the Gallery's `lucideSvg`)         |
+| [#156](https://github.com/aningdev/shadcn-nsh/issues/156) | No ground that stays dark in every appearance (`on-media`'s pair)               | Shader (panels flip with the appearance)                         |
 
 Not gaps: the iOS segmented control is a platform look; a Progress with step dots is app layout;
 `Segmented` / `Button` / `Badge` take children where upstream takes `options` / `label` (shadcn's
@@ -25,7 +26,9 @@ saturated tone is `onBrand` / `knob`, the TextView lightbox sits on the page's b
 status-bar preview inks with the foreground and background, all theme roles. The Gallery's `Meter`,
 `Toggle` (a switch) and `Field` are this library's `Progress`, `Switch` and a labelled `Input`. The block
 editor imports its editor commands (`setNode`, `wrapIn`, `suggestion`, …) from `nsh/base`, where they
-live, and its link menu is local, as upstream's `RichEditorLink` is a Gallery demo file.
+live, and its link menu is local, as upstream's `RichEditorLink` is a Gallery demo file. Canvas draws
+its gauges, ridgeline, dot matrix and sketch with `nsh`'s `Canvas`, as upstream (`Plot` is for series
+marks), a WGSL tint stays a shader constant, and Photos' ⌘R binding is the app's keymap beside a `Kbd`.
 
 ## Showcase shell
 
@@ -35,8 +38,10 @@ Owned by `App.tsx` / `kit.tsx`, not the library:
   RichEditor, Block editor, Terminal, Dock and Resizable skip `DemoPage` to fill it. Only split view is
   `fill: true` upstream, which hides the phone's header; the shell does not do that yet.
 - A page section (heading above a padded surface, with a right slot) is redrawn per batch
-  (`actions-shared` `Card`, `data-shared` `ChartCard`, `desktop-shared` `DeskCard`); `DemoCard` lacks that
+  (`actions-shared` `Card`, `data-shared` `ChartCard`, `desktop-shared` `DeskCard`, `graphics-shared` `SceneCard`); `DemoCard` lacks that
   slot; `Caption` lacks a label + note form (`desktop-shared` `CaptionLine`).
+- `DemoPage` has no multi-column layout (`graphics-shared` `ScenePage` + `columnsFor`, after `gallery/ui.tsx:122`).
+- A demo cannot push onto the shell's stack, so Shader's iris pages play in a `NavStack` of their own.
 - `DemoPage` takes no scroll props, so Scroll's "taps with the keyboard up" scene sets
   `keyboardShouldPersistTaps` on an inner `Scroll`.
 - The Gallery's "Last event" card and its kit parts (page header, section, icon tile, appear,

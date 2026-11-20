@@ -122,6 +122,5 @@ test("every App draws in the dark and the shadcn palette", async () => {
   for (const [name, marker] of TOURS) {
     await app.press(`label:${name}`);
     await app.waitFor(`text:${marker}`);
-    expect(app.texts()).not.toContain("Not built yet");
   }
 });

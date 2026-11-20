@@ -1,4 +1,4 @@
-// The shell's behavior: the sidebar opens a demo (and says which are not built yet), switching the
+// The shell's behavior: the sidebar opens a demo, switching the
 // palette redraws a themed color at once, and a phone shows the index and pushes a demo onto its
 // nav stack. The app itself is the fixture (`../App.tsx`).
 import { expect, open, test } from "nsh/test";
@@ -8,15 +8,13 @@ const wide = { platform: "macos", width: 1024, height: 700 } as const;
 /** A phone: the index, demos pushed onto its stack. */
 const phone = { platform: "ios" } as const;
 
-test("the sidebar opens a demo, and one not built yet says so", async () => {
+test("the sidebar opens a demo", async () => {
   const app = await open("../App.tsx", wide);
   await app.setColorScheme("light");
   // The first group's first demo is what the desktop layout shows at first.
   await app.waitFor(
     "text:A live watchlist and a stock: candles, depth, the tape, a tick every 50 ms",
   );
-  await app.press("label:Photos");
-  await app.waitFor("text:Not built yet");
   await app.press("label:Button");
   await app.waitFor("text:Pressed 0×");
   expect(app.texts()).toContain("Kinds");

@@ -1,6 +1,6 @@
 // Every Data demo draws and answers: each is opened from the sidebar, a text only it draws is
-// waited for, and its main interaction is exercised once — so a demo that throws, one left in
-// `notBuilt`, or a control that stopped reporting fails here rather than in a screenshot. The last
+// waited for, and its main interaction is exercised once — so a demo that throws or a control
+// that stopped reporting fails here rather than in a screenshot. The last
 // two tests open the demos as a phone does, and in the other appearance and palette.
 import { expect, open, test } from "nsh/test";
 
@@ -89,6 +89,5 @@ test("every Data demo draws in the dark and the shadcn palette", async () => {
   for (const [name, marker] of TOURS) {
     await app.press(`label:${name}`);
     await app.waitFor(`text:${marker}`);
-    expect(app.texts()).not.toContain("Not built yet");
   }
 });

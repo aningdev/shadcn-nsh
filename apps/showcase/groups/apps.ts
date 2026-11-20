@@ -1,7 +1,7 @@
 // The Apps group: The apps built on NSH, with this library's components.
 import { ChartCandlestick, Images, MessagesSquare, PenLine } from "lucide";
 
-import { lazy, notBuilt, type DemoEntry } from "./entry";
+import { lazy, type DemoEntry } from "./entry";
 
 /** The Apps demos, in the official gallery's order. */
 export const apps: DemoEntry[] = [
@@ -21,10 +21,7 @@ export const apps: DemoEntry[] = [
     name: "Photos",
     detail: "A long recycled list: images, pull to refresh, paging",
     icon: Images,
-    screen: notBuilt({
-      name: "Photos",
-      detail: "A long recycled list: images, pull to refresh, paging",
-    }),
+    screen: lazy(() => import("../demos/photos").then((m) => m.PhotosDemo)),
   },
   {
     name: "Block editor",

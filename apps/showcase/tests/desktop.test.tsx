@@ -81,6 +81,5 @@ test("the three demos draw in the dark and the shadcn palette", async () => {
   ] as const) {
     await app.press(`label:${name}`);
     await app.waitFor(`text:${marker}`);
-    expect(app.texts()).not.toContain("Not built yet");
   }
 });

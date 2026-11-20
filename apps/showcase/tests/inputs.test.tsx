@@ -1,6 +1,6 @@
 // Every Inputs demo draws and answers: each is opened from the sidebar, its first card's title is
-// waited for, and its main interaction is exercised once — so a demo that throws, one left in
-// `notBuilt`, or a control that stopped reporting fails here rather than in a screenshot. The
+// waited for, and its main interaction is exercised once — so a demo that throws or a control
+// that stopped reporting fails here rather than in a screenshot. The
 // last two tests open the same demos as a phone does, and in the other appearance and palette.
 import { expect, open, test } from "nsh/test";
 
@@ -166,6 +166,5 @@ test("every Inputs demo draws in the dark and the shadcn palette", async () => {
   for (const [name, marker] of TOURS) {
     await app.press(`label:${name}`);
     await app.waitFor(`text:${marker}`);
-    expect(app.texts()).not.toContain("Not built yet");
   }
 });

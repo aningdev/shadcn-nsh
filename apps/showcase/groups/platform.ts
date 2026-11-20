@@ -12,7 +12,7 @@ import {
   SquareTerminal,
 } from "lucide";
 
-import { lazy, notBuilt, type DemoEntry } from "./entry";
+import { lazy, type DemoEntry } from "./entry";
 
 /** The Platform demos, in the official gallery's order. */
 export const platform: DemoEntry[] = [
