@@ -1,6 +1,6 @@
 ---
 title: Toggle
-description: A two-state button, in two variants and three sizes.
+description: A two-state button, in two variants and three sizes, and a group of them.
 component: true
 demo: toggle
 ---
@@ -14,7 +14,7 @@ npx shadcn-nsh@latest add toggle
 ## Usage
 
 ```tsx
-import { Toggle } from "@/components/ui/toggle";
+import { Toggle, ToggleGroup } from "@/components/ui/toggle";
 ```
 
 ```tsx
@@ -48,6 +48,40 @@ A size is compact with a pointer (24 / 28 / 34 points) and roomier on a touch sc
 <Toggle disabled>Bold</Toggle>
 ```
 
+### Group
+
+A group is one toolbar for screen readers: one stop of the keyboard focus, arrow keys between its toggles. The default wears the inset track.
+
+```tsx
+<ToggleGroup accessibilityLabel="Style">
+  <Toggle pressed={bold()} onChange={({ pressed }) => bold.set(pressed)}>
+    Bold
+  </Toggle>
+</ToggleGroup>
+```
+
+### Vertical
+
+```tsx
+<ToggleGroup vertical accessibilityLabel="Style">
+  <Toggle pressed={bold()}>Bold</Toggle>
+</ToggleGroup>
+```
+
+### Inside a Toolbar
+
+```tsx
+import { Toolbar } from "@/components/ui/toolbar";
+
+<Toolbar>
+  <ToggleGroup inset={false} accessibilityLabel="Style">
+    <Toggle pressed={bold()}>B</Toggle>
+  </ToggleGroup>
+</Toolbar>;
+```
+
+`inset={false}` skips the track when a parent `Toolbar` already wears it.
+
 ### Pressed
 
 ```tsx
@@ -72,10 +106,11 @@ The look is a function, for a pressable of your own.
 
 ## API
 
-Every prop of [`nsh/base` Toggle](https://nsh.dev/elements/toggle) passes through. `style`, `hoverStyle`, `activeStyle`, `focusVisibleStyle`, `pressedStyle` and `disabledStyle` go over the look's.
+Every prop of [`nsh/base` Toggle](https://nsh.dev/elements/toggle) and ToggleGroup passes through. `style`, `hoverStyle`, `activeStyle`, `focusVisibleStyle`, `pressedStyle` and `disabledStyle` go over the look's.
 
-| Part     | Props                                                                                               | Description                                                       |
-| -------- | --------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- |
-| `Toggle` | `variant`, `size`, `children`, and every `nsh/base` Toggle prop (`pressed`, `onChange`, `disabled`) | A two-state button; a string child is its name for screen readers |
+| Part          | Props                                                                                               | Description                                                              |
+| ------------- | --------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `Toggle`      | `variant`, `size`, `children`, and every `nsh/base` Toggle prop (`pressed`, `onChange`, `disabled`) | A two-state button; a string child is its name for screen readers        |
+| `ToggleGroup` | `vertical`, `inset`, and every `nsh/base` ToggleGroup prop                                          | The inset track of `toolbarTrack` holding a row (or column) of `Toggle`s |
 
 `toggleLook`, `toggleLabel` and `toggleGlyph` are the look's parts, for a pressable of your own.

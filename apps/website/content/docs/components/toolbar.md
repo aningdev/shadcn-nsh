@@ -42,9 +42,12 @@ import { Toolbar, ToolbarGroup, ToolbarSeparator } from "@/components/ui/toolbar
 ### The look alone
 
 ```tsx
+import { Toolbar, ToolbarSeparator, toolbarRule } from "@/components/ui/toolbar";
+import { toolbarTrack } from "@/lib/tool";
+
 <Toolbar style={toolbarTrack()}>
   <ToolbarSeparator style={toolbarRule()} />
-</Toolbar>
+</Toolbar>;
 ```
 
 ## API
@@ -57,4 +60,4 @@ Every prop of [`nsh/base` Toolbar](https://nsh.dev/elements/toolbar), `ToolbarGr
 | `ToolbarGroup`     | every `nsh/base` ToolbarGroup prop        | A named run of items; its direction follows the bar                            |
 | `ToolbarSeparator` | every `nsh/base` ToolbarSeparator prop    | The hairline between runs, never a tab stop                                    |
 
-`toolbarTrack({ vertical })` and `toolbarRule(vertical)` are the look, for a bar of your own.
+`toolbarTrack({ vertical })` (`@/lib/tool`) and `toolbarRule(vertical)` are the look, for a bar of your own.

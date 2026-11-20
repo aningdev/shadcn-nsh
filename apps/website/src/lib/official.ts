@@ -109,7 +109,7 @@ export const SHADCN_UI: readonly OfficialEntry[] = [
   { id: "table", ours: ["table"] },
   { id: "tabs", ours: ["tabs"] },
   { id: "textarea", ours: ["textarea"] },
-  { id: "toggle-group", ours: ["toggle-group"] },
+  { id: "toggle-group", ours: ["toggle"] },
   { id: "toggle", ours: ["toggle"] },
   { id: "tooltip", ours: ["tooltip"] },
 ];
@@ -165,7 +165,7 @@ export const NSH_ELEMENTS: readonly NshEntry[] = [
   { id: "text-view", group: "base", ours: ["text-view"] },
   { id: "time-field", group: "base", ours: ["time-field"] },
   { id: "toast", group: "base", ours: ["toast"] },
-  { id: "toggle", group: "base", ours: ["toggle", "toggle-group"] },
+  { id: "toggle", group: "base", ours: ["toggle"] },
   { id: "toolbar", group: "base", ours: ["toolbar"] },
   { id: "tooltip", group: "base", ours: ["tooltip"] },
   { id: "tree", group: "base", ours: ["tree"] },
@@ -278,9 +278,14 @@ export function stateOf(entry: OfficialEntry, pages: ReadonlySet<string>): Offic
   return entry.status ?? "missing";
 }
 
-/** The shadcn/ui component a page stands in for, when one does. */
+/**
+ * The shadcn/ui component a page stands in for, when one does. Several rows may name one page
+ * (`toggle` stands in for `toggle` and `toggle-group`); the row whose id is the page wins, so
+ * the header links to that component.
+ */
 export function shadcnOf(slug: string): string | undefined {
-  return SHADCN_UI.find((entry) => entry.ours.includes(slug))?.id;
+  const hits = SHADCN_UI.filter((entry) => entry.ours.includes(slug));
+  return (hits.find((entry) => entry.id === slug) ?? hits[0])?.id;
 }
 
 /** The `nsh/base` element a page is built on, when it is built on one. */

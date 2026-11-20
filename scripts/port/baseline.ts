@@ -54,7 +54,7 @@ if (unknown.length > 0) {
 /** The id a pointer shot belongs to: `<id>-pointer-<scheme>.png` and its `.ref.png`. */
 const idOf = (name: string) => name.replace(/-pointer-[a-z]+(\.ref)?\.png$/, "");
 
-/** Whether a shot is one of the ids `--only` names, whole: `--only toggle` leaves `toggle-group` alone. */
+/** Whether a shot is one of the ids `--only` names, whole: an id is not a prefix of another. */
 const chosen = (name: string) => !only || only.includes(idOf(name));
 
 /** What a page may differ by: its own tolerance, or the antialiasing budget all pages share. */

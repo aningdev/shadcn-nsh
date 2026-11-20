@@ -191,8 +191,12 @@ for (const { label, entries } of tables) {
     ids.add(entry.id);
     for (const slug of entry.ours) {
       const owner = servedBy.get(slug);
-      if (owner) fail(`${label}: "${slug}" is served by "${owner}" and by "${entry.id}"`);
-      servedBy.set(slug, entry.id);
+      // One page can answer for more than one shadcn/ui component (`toggle` for `toggle` and
+      // `toggle-group`). An NSH element still names each page once.
+      if (owner && !label.includes("SHADCN_UI")) {
+        fail(`${label}: "${slug}" is served by "${owner}" and by "${entry.id}"`);
+      }
+      if (!owner) servedBy.set(slug, entry.id);
       if (!byId.has(slug) && entry.status !== "planned") {
         fail(`${label} "${entry.id}": no docs page "${slug}"`);
       }

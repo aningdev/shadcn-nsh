@@ -6,8 +6,9 @@ import { Canvas, mount, signal, Text, View } from "nsh";
 import { Toggle, ToggleGroup } from "nsh/base";
 
 import { sectionSurface } from "@/packages/ui/lib/surface";
+import { toolbarTrack } from "@/packages/ui/lib/tool";
 import { toggleGlyph, toggleLabel, toggleLook } from "@/packages/ui/toggle";
-import { toolbarRule, toolbarTrack } from "@/packages/ui/toolbar";
+import { toolbarRule } from "@/packages/ui/toolbar";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { desktop, Log, Split, ui } from "./stage";

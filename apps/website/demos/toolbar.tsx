@@ -8,10 +8,9 @@ import { mount, signal, Text, View } from "nsh";
 import { Button } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
 import { sectionSurface } from "@/packages/ui/lib/surface";
-import { Toggle, toggleGlyph, toggleLabel } from "@/packages/ui/toggle";
-import { ToggleGroup } from "@/packages/ui/toggle-group";
-import { Toolbar, ToolbarGroup, ToolbarSeparator } from "@/packages/ui/toolbar";
-import { toolbarRule, toolbarTrack } from "@/packages/ui/toolbar";
+import { toolbarTrack } from "@/packages/ui/lib/tool";
+import { Toggle, ToggleGroup, toggleGlyph, toggleLabel } from "@/packages/ui/toggle";
+import { Toolbar, ToolbarGroup, ToolbarSeparator, toolbarRule } from "@/packages/ui/toolbar";
 
 import { DemoPage } from "./kit";
 import { desktop, Log, Split, ui } from "./stage";

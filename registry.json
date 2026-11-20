@@ -300,11 +300,25 @@
       ]
     },
     {
+      "name": "tool",
+      "type": "registry:lib",
+      "title": "Tool track",
+      "description": "The inset track a toolbar and a toggle group share.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/lib/tool.ts",
+          "type": "registry:lib",
+          "target": "lib/tool.ts"
+        }
+      ]
+    },
+    {
       "name": "toggle",
       "type": "registry:ui",
       "title": "Toggle",
-      "description": "A two-state button, bare or outlined, with a label or an icon.",
-      "registryDependencies": ["press", "theme", "utils"],
+      "description": "A two-state button, bare or outlined, and a group of them on the inset track.",
+      "registryDependencies": ["press", "theme", "tool", "utils"],
       "files": [
         {
           "path": "packages/ui/toggle.tsx",
@@ -343,25 +357,11 @@
       ]
     },
     {
-      "name": "toggle-group",
-      "type": "registry:ui",
-      "title": "Toggle Group",
-      "description": "A row or column of toggles on the inset toolbar track.",
-      "registryDependencies": ["toggle", "toolbar"],
-      "files": [
-        {
-          "path": "packages/ui/toggle-group.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/toggle-group.tsx"
-        }
-      ]
-    },
-    {
       "name": "toolbar",
       "type": "registry:ui",
       "title": "Toolbar",
       "description": "An inset track of tools, with groups and hairline separators.",
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["theme", "tool"],
       "files": [
         {
           "path": "packages/ui/toolbar.tsx",

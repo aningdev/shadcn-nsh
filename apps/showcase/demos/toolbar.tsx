@@ -77,17 +77,12 @@ import { RoundButton } from "@/packages/ui/button";
 import { Input } from "@/packages/ui/input";
 import { Icon } from "@/packages/ui/lib/icons";
 import { MenuMark, menuIndicator, PopIn } from "@/packages/ui/lib/popup";
+import { toolbarTrack } from "@/packages/ui/lib/tool";
 import { menuItemLook, menuPopup, menuSeparator } from "@/packages/ui/menu";
 import { popoverLook } from "@/packages/ui/popover";
 import { sliderFill, sliderLook } from "@/packages/ui/slider";
 import { toggleGlyph, toggleLabel, toggleLook, type ToggleLookOptions } from "@/packages/ui/toggle";
-import {
-  Toolbar,
-  ToolbarGroup,
-  ToolbarSeparator,
-  toolbarRule,
-  toolbarTrack,
-} from "@/packages/ui/toolbar";
+import { Toolbar, ToolbarGroup, ToolbarSeparator, toolbarRule } from "@/packages/ui/toolbar";
 
 import { DemoPage } from "../kit";
 import { Card, LastEvent, Tip } from "./actions-shared";

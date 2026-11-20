@@ -9,8 +9,9 @@ import { Button, Toggle, ToggleGroup, Toolbar, ToolbarGroup, ToolbarSeparator } 
 import { buttonLook } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
 import { sectionSurface } from "@/packages/ui/lib/surface";
+import { toolbarTrack } from "@/packages/ui/lib/tool";
 import { toggleGlyph, toggleLabel, toggleLook } from "@/packages/ui/toggle";
-import { toolbarRule, toolbarTrack } from "@/packages/ui/toolbar";
+import { toolbarRule } from "@/packages/ui/toolbar";
 
 import { DemoPage } from "./kit";
 import { desktop, Log, Split } from "./stage";

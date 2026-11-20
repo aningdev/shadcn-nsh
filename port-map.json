@@ -404,8 +404,8 @@
         "ink": "packages/ui/toggle.tsx",
         "toggleLabel": "packages/ui/toggle.tsx",
         "toggleGlyph": "packages/ui/toggle.tsx",
-        "ToolbarTrackOptions": "packages/ui/toolbar.tsx",
-        "toolbarTrack": "packages/ui/toolbar.tsx",
+        "ToolbarTrackOptions": "packages/ui/lib/tool.ts",
+        "toolbarTrack": "packages/ui/lib/tool.ts",
         "toolbarRule": "packages/ui/toolbar.tsx"
       }
     },

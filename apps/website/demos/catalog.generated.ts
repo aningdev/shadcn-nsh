@@ -11,7 +11,6 @@ export const componentIds = [
   "toggle",
   "checkbox",
   "radio-group",
-  "toggle-group",
   "toolbar",
   "input",
   "number-input",

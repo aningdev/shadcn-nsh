@@ -397,15 +397,7 @@ export const components: ComponentDoc[] = [
     kind: "official",
     shadcn: "toggle",
     nshElement: "toggle",
-    description: "A two-state button, in two variants and three sizes.",
-  },
-  {
-    slug: "toggle-group",
-    title: "Toggle Group",
-    kind: "official",
-    shadcn: "toggle-group",
-    nshElement: "toggle",
-    description: "A row or column of toggles on the inset toolbar track.",
+    description: "A two-state button, in two variants and three sizes, and a group of them.",
   },
   {
     slug: "toolbar",

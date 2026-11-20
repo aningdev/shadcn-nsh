@@ -2,43 +2,6 @@
 
 ## Unreleased
 
-### Fixed
-
-- **A button group's joins show one hairline (#135).** `buttonGroupLook().item` used to drop the
-  edge on both sides of a join, so a column of raised buttons showed a white seam (the lit top edge
-  of the button below) instead of a line. Each join now keeps one edge, as shadcn's does, and in a
-  column a button below another drops the raised face's lit top edge.
-- **A bubble keeps room for its reactions (#128).** `BubbleReactions` hangs off the bubble's edge,
-  and the next bubble in a group used to cover it. A `Bubble` holding a reaction row now keeps the
-  room the row hangs out on that side.
-
-### Changed
-
-- **Breaking:** **the rich editor is `rich-editor`, and its session comes from it (#105).** The
-  component, demo and registry item were `editor`, next to `code-editor` — and the docs mixed the
-  two up, the install line naming one and the page describing the other. `shadcn-nsh add
-  rich-editor` installs it at `components/ui/rich-editor.tsx`, the page is
-  `/docs/components/rich-editor`; `add editor` is unknown now, so run
-  `shadcn-nsh add rich-editor` and point the import at the new file. The file also re-exports the
-  session an app edits with — `createRichEditor`, `defineSchema`, `StarterKit`, `TableKit`,
-  `defineExtension`, `richExtension`, `RichEditorPlugin`, `chain`, `first`, `command`, `undo`,
-  `redo`, `extendMarkRange`, `insertContent` and its types — so `createRichEditor` and
-  `StarterKit` no longer need a second import from `nsh/base`; an app that still takes them from
-  `nsh/base` keeps working, it is the same functions.
-- **`classes` merges part by part over the default (#105).** A `classes` object used to replace
-  `richEditorClasses` whole, so naming one part dropped every other. `RichEditor` now merges it in:
-  a part you leave out keeps the default's, `null` still drops it, and `nodes` / `marks` merge name
-  by name, so `classes={{ nodes: { heading: "text-xl" } }}` overrides that node and keeps the
-  default's others.
-- **Command, Select and Combobox highlight in the brand tint again.** The highlighted row is lit in
-  `brand-tint` with a `brand/30` edge, as NSH's official Gallery draws it, instead of the grey
-  `accent` fill; the chosen row keeps its check.
-- **The baseline moves to NSH v0.6.1.** Components are checked against that CLI's `nsh/base`; the
-  patch brings its fixes (a resizable drag stops at the next panel's minimum, the data table's
-  horizontal scroll bar stays between the fixed columns, lists, carousels and video) and changes
-  nothing in the official Gallery's UI layer. Install it with
-  `curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=v0.6.1 sh`.
-
 ### Added
 
 - **`split-view`.** Columns of navigation stacks — a sidebar, a content column and the detail — with the column header and the sidebar button in the theme's look, over `nsh/base`'s `SplitView`.
@@ -71,6 +34,30 @@
 
 ### Changed
 
+- **Breaking:** **the rich editor is `rich-editor`, and its session comes from it (#105).** The
+  component, demo and registry item were `editor`, next to `code-editor` — and the docs mixed the
+  two up, the install line naming one and the page describing the other. `shadcn-nsh add
+  rich-editor` installs it at `components/ui/rich-editor.tsx`, the page is
+  `/docs/components/rich-editor`; `add editor` is unknown now, so run
+  `shadcn-nsh add rich-editor` and point the import at the new file. The file also re-exports the
+  session an app edits with — `createRichEditor`, `defineSchema`, `StarterKit`, `TableKit`,
+  `defineExtension`, `richExtension`, `RichEditorPlugin`, `chain`, `first`, `command`, `undo`,
+  `redo`, `extendMarkRange`, `insertContent` and its types — so `createRichEditor` and
+  `StarterKit` no longer need a second import from `nsh/base`; an app that still takes them from
+  `nsh/base` keeps working, it is the same functions.
+- **`classes` merges part by part over the default (#105).** A `classes` object used to replace
+  `richEditorClasses` whole, so naming one part dropped every other. `RichEditor` now merges it in:
+  a part you leave out keeps the default's, `null` still drops it, and `nodes` / `marks` merge name
+  by name, so `classes={{ nodes: { heading: "text-xl" } }}` overrides that node and keeps the
+  default's others.
+- **Command, Select and Combobox highlight in the brand tint again.** The highlighted row is lit in
+  `brand-tint` with a `brand/30` edge, as NSH's official Gallery draws it, instead of the grey
+  `accent` fill; the chosen row keeps its check.
+- **The baseline moves to NSH v0.6.1.** Components are checked against that CLI's `nsh/base`; the
+  patch brings its fixes (a resizable drag stops at the next panel's minimum, the data table's
+  horizontal scroll bar stays between the fixed columns, lists, carousels and video) and changes
+  nothing in the official Gallery's UI layer. Install it with
+  `curl -fsSL https://nsh.dev/install.sh | NSH_VERSION=v0.6.1 sh`.
 - **Breaking:** **theme accessors are named after the tokens they read (#52).** A key is the camelCase of its token, with no alias left behind. `colors.mutedFill` is gone: the `muted` surface is `token("muted")`, so old code that still reads `colors.muted` fails to type-check instead of painting the surface. `Tone` `"danger"` is `"destructive"`. **To migrate:** run `shadcn-nsh diff`, `add --overwrite` `lib/theme.ts`, then rename in the app's own code (`colors.muted` → `colors.mutedForeground` first). The reader is the `theme` item: `shadcn-nsh add theme --overwrite` replaces `lib/theme.ts` and also `theme.json` and `lib/finishes.json`, so put a recolored palette back afterwards.
 
   | Old                      | New                             |
@@ -160,6 +147,9 @@
 
 ### Removed
 
+- **Breaking:** **`toggle-group` is removed (#127).** `ToggleGroup` now ships in `toggle`. Import
+  it from `@/components/ui/toggle`. `shadcn-nsh add toggle-group` is unknown; `add toggle` installs
+  the button and the group.
 - **Breaking: `Meter` is `Progress` with `marker` (#125).** `Meter` had no role and no look of its
   own — Progress's rail and fill plus a limit hairline — so it is gone, with no alias: the registry
   has no `meter` item, `shadcn-nsh add meter` and its `lib/meter.tsx` do not exist, and the docs
@@ -169,6 +159,13 @@
 
 ### Fixed
 
+- **A button group's joins show one hairline (#135).** `buttonGroupLook().item` used to drop the
+  edge on both sides of a join, so a column of raised buttons showed a white seam (the lit top edge
+  of the button below) instead of a line. Each join now keeps one edge, as shadcn's does, and in a
+  column a button below another drops the raised face's lit top edge.
+- **A bubble keeps room for its reactions (#128).** `BubbleReactions` hangs off the bubble's edge,
+  and the next bubble in a group used to cover it. A `Bubble` holding a reaction row now keeps the
+  room the row hangs out on that side.
 - **`CollapsibleTrigger` draws its divider inside its row.** Every trigger but the `first` now
   draws the `RowDivider` its docs promised, so stacked collapsibles need no line between them, the
   line matches the panel's own row dividers, and the hover fill covers it. `CollapsibleContent`'s

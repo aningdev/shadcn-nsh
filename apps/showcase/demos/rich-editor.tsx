@@ -74,7 +74,7 @@ import {
 } from "@/packages/ui/rich-editor";
 import { Segmented, SegmentedItem, SegmentedList } from "@/packages/ui/segmented";
 import { Separator } from "@/packages/ui/separator";
-import { Toggle, ToggleGroup } from "@/packages/ui/toggle-group";
+import { Toggle, ToggleGroup } from "@/packages/ui/toggle";
 
 const DOC = `# Release notes
 

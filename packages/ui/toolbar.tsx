@@ -1,6 +1,7 @@
-// A toolbar: the look (`toolbarTrack`, `toolbarRule`) and the parts that wear it.
+// A toolbar: the hairline (`toolbarRule`) and the parts that wear the inset track.
+// The track (`toolbarTrack`) is shared with `ToggleGroup` and lives in `lib/tool.ts`.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, radius, rounded, terminal, TERMINAL_GAP } from "@shadcn-nsh/theme";
+import { colors, terminal, TERMINAL_GAP } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
 import { context, split } from "nsh";
 import {
@@ -12,33 +13,9 @@ import {
   type ToolbarSeparatorProps as BaseToolbarSeparatorProps,
 } from "nsh/base";
 
+import { toolbarTrack } from "./lib/tool";
+
 // @port look/tool.ts
-/** Options of `toolbarTrack`. */
-export interface ToolbarTrackOptions {
-  /** A column of tools (a `Toolbar`'s `axis="vertical"`). */
-  vertical?: boolean;
-}
-
-/**
- * The inset track a toolbar or a `ToggleGroup` sits in: its tools in a row
- * (a column when `vertical`) 2 points apart, 3 points inside its edge, on
- * the inset with the border's edge. A terminal sets each tool as its label
- * two columns apart and wraps a row too narrow for them.
- */
-export function toolbarTrack(o?: ToolbarTrackOptions): ViewStyle {
-  return {
-    flexDirection: o?.vertical ? "column" : "row",
-    alignItems: o?.vertical && terminal ? "flex-start" : "center",
-    gap: terminal ? TERMINAL_GAP : 2,
-    flexWrap: terminal && !o?.vertical ? "wrap" : undefined,
-    padding: 3,
-    ...rounded(radius.inset),
-    borderWidth: 1,
-    borderColor: colors.border,
-    backgroundColor: colors.inset,
-  };
-}
-
 /** A hairline between runs of a toolbar's tools (a `ToolbarSeparator`'s or a view's `style`): 18 points tall in a row, across a column. */
 export function toolbarRule(vertical = false): ViewStyle {
   return vertical

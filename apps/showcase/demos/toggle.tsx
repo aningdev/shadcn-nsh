@@ -44,12 +44,13 @@ import { Badge } from "@/packages/ui/badge";
 import { Icon } from "@/packages/ui/lib/icons";
 import {
   Toggle,
+  ToggleGroup,
   toggleGlyph,
   toggleLabel,
   toggleLook,
   type ToggleLookOptions,
+  type ToggleSize,
 } from "@/packages/ui/toggle";
-import { ToggleGroup, type ToggleSize } from "@/packages/ui/toggle-group";
 import { toolbarRule } from "@/packages/ui/toolbar";
 
 import { DemoPage } from "../kit";
