@@ -51,23 +51,33 @@ import {
 } from "@/packages/ui/sidebar";
 
 import { actions } from "./groups/actions";
+import { apps } from "./groups/apps";
 import { data } from "./groups/data";
 import { documents } from "./groups/documents";
 import { type DemoEntry } from "./groups/entry";
 import { inputs } from "./groups/inputs";
+import { motion } from "./groups/motion";
 import { navigation } from "./groups/navigation";
 import { overlays } from "./groups/overlays";
+import { platform as platformApis } from "./groups/platform";
+import { primitives } from "./groups/primitives";
+import { styling } from "./groups/styling";
 import { appearance, choosePalette, palette, setAppearance, type Appearance } from "./theme";
 
-/** The demos by what each is for: the official gallery's purposes, minus what this library has no
- * component for (RichEditor, SplitView). */
+/** Every group of the official gallery, in its order: the apps, the primitives, the components by
+ * purpose, styling, motion and the platform's APIs. */
 const groups: { title: string; demos: DemoEntry[] }[] = [
+  { title: "Apps", demos: apps },
+  { title: "Primitives", demos: primitives },
   { title: "Actions", demos: actions },
   { title: "Inputs", demos: inputs },
   { title: "Navigation", demos: navigation },
   { title: "Overlays", demos: overlays },
   { title: "Data", demos: data },
   { title: "Documents and workspaces", demos: documents },
+  { title: "Styling", demos: styling },
+  { title: "Motion", demos: motion },
+  { title: "Platform", demos: platformApis },
 ];
 
 /** A route of the phone's stack: the index, or a demo pushed over it. */

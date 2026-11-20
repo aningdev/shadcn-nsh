@@ -7,11 +7,12 @@ import {
   Layers,
   PanelTop,
   UnfoldVertical,
+  Columns3,
 } from "lucide";
 
 import { notBuilt, type DemoEntry } from "./entry";
 
-/** The Navigation demos, in the index's order (SplitView is out: this library has none). */
+/** The Navigation demos, in the index's order. */
 export const navigation: DemoEntry[] = [
   {
     name: "NavStack",
@@ -20,6 +21,17 @@ export const navigation: DemoEntry[] = [
     screen: notBuilt({
       name: "NavStack",
       detail: "Header options, modals, the back button, safe areas",
+    }),
+  },
+  {
+    name: "SplitView",
+    detail:
+      "Mailboxes, messages and a message in columns: a sidebar that hides, one column at a time on a phone, each column's pages kept",
+    icon: Columns3,
+    screen: notBuilt({
+      name: "SplitView",
+      detail:
+        "Mailboxes, messages and a message in columns: a sidebar that hides, one column at a time on a phone, each column's pages kept",
     }),
   },
   {

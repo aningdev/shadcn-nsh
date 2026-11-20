@@ -1,10 +1,9 @@
 // The Documents and workspaces group: what holds a document or a working surface.
-import { Code, Columns2, FileText, MoveHorizontal, Terminal } from "lucide";
+import { Code, Columns2, FileText, MoveHorizontal, Terminal, PenLine } from "lucide";
 
 import { notBuilt, type DemoEntry } from "./entry";
 
-/** The Documents and workspaces demos, in the index's order (RichEditor is out: this library has
- * none). */
+/** The Documents and workspaces demos, in the index's order. */
 export const documents: DemoEntry[] = [
   {
     name: "TextView",
@@ -24,6 +23,17 @@ export const documents: DemoEntry[] = [
       name: "Editor",
       detail:
         "Code with highlighting, several carets, folding, find and replace, a language server: diagnostics, hover, definitions, completion",
+    }),
+  },
+  {
+    name: "RichEditor",
+    detail:
+      "A document editor on Tiptap's extensions: lists, links, tables, Markdown shortcuts, undo and redo, stock tags and cards as node views",
+    icon: PenLine,
+    screen: notBuilt({
+      name: "RichEditor",
+      detail:
+        "A document editor on Tiptap's extensions: lists, links, tables, Markdown shortcuts, undo and redo, stock tags and cards as node views",
     }),
   },
   {

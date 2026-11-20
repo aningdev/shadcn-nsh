@@ -11,8 +11,10 @@ const phone = { platform: "ios" } as const;
 test("the sidebar opens a demo, and one not built yet says so", async () => {
   const app = await open("../App.tsx", wide);
   await app.setColorScheme("light");
-  // Button is what the desktop layout shows at first.
-  await app.waitFor("text:Pressed 0×");
+  // The first group's first demo is what the desktop layout shows at first.
+  await app.waitFor(
+    "text:A live watchlist and a stock: candles, depth, the tape, a tick every 50 ms",
+  );
   await app.press("label:Toggle");
   await app.waitFor("text:Not built yet");
   await app.press("label:Button");
