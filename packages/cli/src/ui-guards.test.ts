@@ -46,9 +46,10 @@ const rules: Record<string, RegExp> = {
 const components = readdirSync(new URL("packages/ui/", root))
   .filter((file) => file.endsWith(".tsx"))
   .map((file) => `packages/ui/${file}`);
-/** The shared look helpers: no component owns them, so the same rule applies. */
+/** The shared look helpers: no component owns them, so the same rule applies (their tests write an
+ * ink an assertion reads, not a look). */
 const lib = readdirSync(new URL("packages/ui/lib/", root))
-  .filter((file) => /\.tsx?$/.test(file))
+  .filter((file) => /\.tsx?$/.test(file) && !/\.test\.tsx?$/.test(file))
   .map((file) => `packages/ui/lib/${file}`);
 /** The theme's helpers read the roles; they write no color of their own either. */
 const theme = ["packages/theme/theme.ts", "packages/theme/index.ts"];

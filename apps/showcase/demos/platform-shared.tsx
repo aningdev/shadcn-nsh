@@ -209,21 +209,3 @@ export function monoText(size = 12, color: string = colors.foreground): TextStyl
 export function count(n: number, word: string): string {
   return `${n} ${word}${n === 1 ? "" : "s"}`;
 }
-
-/** A lucide icon as an SVG `data:` URL, for what takes an image rather than a view: a native menu
- * item's `icon`, which draws it in the menu's text color (`currentColor`). The library keeps
- * this conversion private (`lib/icons`), so the gallery's `lucideSvg` is rebuilt here. */
-export function lucideSvg(icon: IconNode): string {
-  const body = icon
-    .map(
-      ([tag, attrs]) =>
-        `<${tag} ${Object.entries(attrs)
-          .filter(([, value]) => value != null)
-          .map(([name, value]) => `${name}="${String(value)}"`)
-          .join(" ")}/>`,
-    )
-    .join("");
-  return `data:image/svg+xml,${encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${body}</svg>`,
-  )}`;
-}

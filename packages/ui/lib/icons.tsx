@@ -1,17 +1,17 @@
-// Icons: lucide's nodes drawn on a canvas, and the check mark as one color's SVG. This library's own
-// (upstream's own glyphs are superseded by `lucide`): the icons come from `lucide` as a front end
-// imports them. Yours to change.
+// Icons: lucide's nodes drawn on a canvas, the check mark as one color's SVG, and any icon as an
+// image (`iconImage`) for what takes one (a native menu item). This library's own (upstream's own
+// glyphs are superseded by `lucide`): the icons come from `lucide` as a front end imports them.
+// Yours to change.
 import { terminal } from "@shadcn-nsh/theme";
 import { ArrowLeft, ArrowRight, Check, ChevronLeft, ChevronRight, type IconNode } from "lucide";
 import { Canvas, Image, Path2D, Text } from "nsh";
 
 import { drawIcon, type IconCanvas } from "./icon-canvas";
+import { ICON_BOX, ICON_WEIGHT, iconImage } from "./icon-image";
 
-/** lucide's box: 24 units square, and the unit `weight` is measured in. */
-const BOX = 24;
-
-/** lucide's own stroke: 2 of the box's 24 units, round ends and joins. */
-const WEIGHT = 2;
+// The image form of an icon, which a native menu item takes: apart from NSH, in `icon-image.ts`, so
+// a unit test reads the SVG it writes.
+export { iconImage, type IconImageOptions } from "./icon-image";
 
 /** SVG path data parsed once per `d` (an icon is redrawn whenever it lays out). */
 const parsed = new Map<string, Path2D>();
@@ -63,10 +63,10 @@ export function Icon(props: IconProps) {
       class={directional.has(props.icon) ? "rtl:-scale-x-100" : undefined}
       style={{ pointerEvents: "none", width: size, height: size }}
       draw={(cx, { width }) => {
-        cx.scale(width / BOX, width / BOX);
+        cx.scale(width / ICON_BOX, width / ICON_BOX);
         cx.strokeStyle = props.tint;
         cx.fillStyle = props.tint;
-        cx.lineWidth = props.weight ?? WEIGHT;
+        cx.lineWidth = props.weight ?? ICON_WEIGHT;
         cx.lineCap = "round";
         cx.lineJoin = "round";
         drawIcon(props.icon, cx as IconCanvas<Path2D>, {
@@ -91,29 +91,18 @@ export function IconLabel(props: { label: string } & Omit<IconProps, "fill">) {
   );
 }
 
-/** One element of a lucide node as an SVG element, for the check mark's image. */
-const svgElement = (tag: string, attrs: IconNode[number][1]) =>
-  `<${tag} ${Object.entries(attrs)
-    .filter(([, value]) => value != null)
-    .map(([name, value]) => `${name}="${String(value)}"`)
-    .join(" ")}/>`;
-
 /**
- * lucide's `Check` as an SVG in one color, recolored by `tintColor`: `#000` is the image's
- * template ink, never what is drawn (a template image takes the tint, so this is no color of the
- * interface and not a theme literal).
+ * The image's ink when nothing colors it: a template image takes `CheckMark`'s `tintColor`, so this
+ * is no color of the interface and not a theme literal.
  */
-const checkSvg = (weight: number) =>
-  `data:image/svg+xml,${encodeURIComponent(
-    `<svg xmlns="http://www.w3.org/2000/svg" width="${BOX}" height="${BOX}" viewBox="0 0 ${BOX} ${BOX}" fill="none" stroke="#000" stroke-width="${weight}" stroke-linecap="round" stroke-linejoin="round">${Check.map(([tag, attrs]) => svgElement(tag, attrs)).join("")}</svg>`,
-  )}`;
+const TEMPLATE_INK = "#000";
 
 /** A check mark drawn as SVG, in `tint`; `weight` is the stroke in its 24-unit box (2 by default). */
 export function CheckMark(props: { size?: number; tint: string; weight?: number }) {
   const size = props.size ?? 20;
   return (
     <Image
-      src={checkSvg(props.weight ?? WEIGHT)}
+      src={iconImage(Check, { weight: props.weight ?? ICON_WEIGHT, ink: TEMPLATE_INK })}
       style={{ pointerEvents: "none", width: size, height: size, tintColor: props.tint }}
     />
   );

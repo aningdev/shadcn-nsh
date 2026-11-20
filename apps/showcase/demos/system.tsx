@@ -46,6 +46,7 @@ import { Menu } from "nsh/desktop";
 
 import { Badge } from "@/packages/ui/badge";
 import { Button } from "@/packages/ui/button";
+import { iconImage } from "@/packages/ui/lib/icons";
 import { Progress } from "@/packages/ui/progress";
 import { Segmented, SegmentedItem, SegmentedList } from "@/packages/ui/segmented";
 import { Stat } from "@/packages/ui/stat";
@@ -53,17 +54,7 @@ import { Switch } from "@/packages/ui/switch";
 import { toast, Toaster } from "@/packages/ui/toast";
 
 import { DemoPage } from "../kit";
-import {
-  ActionRow,
-  Caption,
-  Card,
-  Figure,
-  Legend,
-  Note,
-  Row,
-  lucideSvg,
-  monoText,
-} from "./platform-shared";
+import { ActionRow, Caption, Card, Figure, Legend, Note, Row, monoText } from "./platform-shared";
 
 /** The window drawn to scale, with the safe area insets shaded. */
 function SafeAreaDiagram() {
@@ -677,13 +668,13 @@ function ContextMenu() {
   const chosen = signal("");
   const menu = () =>
     Menu.popup([
-      { label: "Copy", icon: lucideSvg(Copy), onSelect: () => chosen.set("Copy") },
-      { label: "Paste", icon: lucideSvg(ClipboardPaste), disabled: true },
+      { label: "Copy", icon: iconImage(Copy), onSelect: () => chosen.set("Copy") },
+      { label: "Paste", icon: iconImage(ClipboardPaste), disabled: true },
       {
         label: "Share",
-        icon: lucideSvg(Share2),
+        icon: iconImage(Share2),
         submenu: [
-          { label: "Mail", icon: lucideSvg(Mail), onSelect: () => chosen.set("Share > Mail") },
+          { label: "Mail", icon: iconImage(Mail), onSelect: () => chosen.set("Share > Mail") },
         ],
       },
     ]);

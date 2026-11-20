@@ -11,7 +11,7 @@ The icons are [lucide](https://lucide.dev/icons)'s, drawn by `Icon` from `lib/ic
 npx shadcn-nsh@latest add icons
 ```
 
-This copies `lib/icons.tsx` and `lib/icon-canvas.ts` and installs `lucide`. A component that draws icons of its own (`select`, `menu`, `tabs`, `sidebar`…) brings them when it is added. `button`, `alert`, `empty` and the other components that take an icon as a child do not: add `icons` once before writing the examples on their pages.
+This copies `lib/icons.tsx`, `lib/icon-canvas.ts` and `lib/icon-image.ts` and installs `lucide`. A component that draws icons of its own (`select`, `menu`, `tabs`, `sidebar`…) brings them when it is added. `button`, `alert`, `empty` and the other components that take an icon as a child do not: add `icons` once before writing the examples on their pages.
 
 ## Usage
 
@@ -57,6 +57,35 @@ import { Icon } from "@/lib/icons";
 | `empty`      | `EMPTY_ICON`                                                            |
 
 A part that takes an icon as a prop, such as `SelectTrigger`'s `icon` or `MarkerIcon`'s, takes the lucide node itself (`icon={Calendar}`) and draws it in its own size and color.
+
+## In a native menu
+
+A native menu draws its own items, so it takes an image rather than a view: an item's `icon` is what `<Image>`'s `src` takes, fitted to the menu's icon size. `iconImage` writes a lucide node as that image, stroked in `currentColor`, so the menu draws it in its own text color:
+
+```tsx
+import { Copy, Mail, Share2 } from "lucide";
+import { Menu } from "nsh/desktop";
+
+import { iconImage } from "@/lib/icons";
+
+const shareMenu = () =>
+  Menu.popup([
+    { label: "Copy", icon: iconImage(Copy), onSelect: copy },
+    {
+      label: "Share",
+      icon: iconImage(Share2),
+      submenu: [{ label: "Mail", icon: iconImage(Mail), onSelect: mail }],
+    },
+  ]);
+```
+
+The application menu's items take it the same way (`Menu.setApplicationMenu`). `iconImage(icon, options?)`:
+
+| Argument         | Type       | Default          | Description                                                                                                                       |
+| ---------------- | ---------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `icon`           | `IconNode` |                  | The icon, as `lucide` exports it.                                                                                                 |
+| `options.weight` | `number`   | `2`              | The stroke in the 24-unit box (lucide's own is 2).                                                                                |
+| `options.ink`    | `string`   | `"currentColor"` | The stroke's color. A fixed ink makes the image a template image, which `tintColor` recolors instead (`CheckMark` passes `#000`). |
 
 ## Props
 
