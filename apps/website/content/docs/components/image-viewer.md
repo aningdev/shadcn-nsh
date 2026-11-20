@@ -65,4 +65,4 @@ const image = signal<ImageViewerImage | null>(null);
 
 There are no `ImageViewerClose` or `ImageViewerCaption` parts. The close button is always there and the caption is always the `alt`, so a part would only be a place to put what the viewer already draws; a viewer with other chrome draws it from `imageViewerLook()`. A gallery of several images in one viewer is the app's: set `image` to the next one.
 
-The ink is `on-media` and the ground is the theme's `scrim` twice over (the dialog's and the viewer's), so it stays dark in either appearance without a color of its own.
+The ink is `on-media` and the ground is the theme's `media`, the pair that stays dark in either appearance and in every theme; the caption strip and the close chip carry a wash of that ink so they read over any photograph.

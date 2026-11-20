@@ -1,4 +1,4 @@
-import { alpha, colors, isDark, shape } from "@shadcn-nsh/theme";
+import { alpha, colors, shape } from "@shadcn-nsh/theme";
 import {
   Animated,
   cleanup,
@@ -54,11 +54,8 @@ fn fbm(p0: vec2f) -> f32 {
 }
 `;
 
-// A shader panel is artwork: upstream keeps its ground near-black and writes on it in
-// white in both appearances, and no theme role is dark in both. So the ground is the
-// appearance's darkest role and the ink its lightest. GAP: no media surface role.
-const panelGround = () => (isDark() ? colors.background : colors.foreground);
-const panelInk = () => (isDark() ? colors.foreground : colors.background);
+// A shader panel is artwork: its ground stays near-black and its ink white in both appearances,
+// which is the media pair — `colors.media` under `colors.onMedia`.
 
 const GLOW = /* wgsl */ `${NOISE}
 struct Uniforms { a: vec4f, b: vec4f, c: vec4f, base: vec4f, pointer: vec2f }
@@ -234,7 +231,7 @@ function Glow() {
             a: colors.destructive,
             b: token("violet"),
             c: colors.info,
-            base: panelGround(),
+            base: colors.media,
             pointer: [x, y],
           }}
           style={{ height: 200, borderRadius: 14 }}
@@ -294,8 +291,8 @@ function Ripple() {
             wave,
             tintA: colors.up,
             tintB: colors.brand,
-            head: panelInk(),
-            ground: panelGround(),
+            head: colors.onMedia,
+            ground: colors.media,
             speed: speed(),
           }}
           style={{ height: 200, borderRadius: 14, padding: 16, justifyContent: "flex-end" }}
@@ -317,7 +314,7 @@ function Ripple() {
               borderRadius: 2,
               borderWidth: 1,
               borderColor: alpha(colors.up, 0.5),
-              backgroundColor: alpha(panelGround(), 0.85),
+              backgroundColor: alpha(colors.media, 0.85),
             }}
             onStartShouldSetResponder={() => true}
             onResponderTerminationRequest={() => false}
@@ -332,7 +329,7 @@ function Ripple() {
                 >
                   <Text
                     style={{
-                      color: speed() === value() ? panelInk() : colors.up,
+                      color: speed() === value() ? colors.onMedia : colors.up,
                       fontFamily: "monospace",
                       fontSize: 12,
                       fontWeight: speed() === value() ? "700" : "400",
@@ -380,7 +377,7 @@ function Holo() {
             a: colors.brand,
             b: colors.up,
             c: colors.info,
-            base: panelGround(),
+            base: colors.media,
             tilt,
           }}
           style={{
@@ -397,7 +394,7 @@ function Holo() {
         >
           <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
             <Image src={logo} style={{ width: 26, height: 26 }} />
-            <Text style={{ flex: 1, color: panelInk(), fontSize: 15, fontWeight: "700" }}>
+            <Text style={{ flex: 1, color: colors.onMedia, fontSize: 15, fontWeight: "700" }}>
               Native Shell
             </Text>
             <View
@@ -436,10 +433,10 @@ function Holo() {
           </View>
           <View style={{ gap: 12 }}>
             <View style={{ gap: 4 }}>
-              <Text style={{ color: panelInk(), fontSize: 20, fontWeight: "700" }}>
+              <Text style={{ color: colors.onMedia, fontSize: 20, fontWeight: "700" }}>
                 Native UI, delivered at run time
               </Text>
-              <Text style={{ color: panelInk(), fontSize: 13, opacity: 0.65 }}>
+              <Text style={{ color: colors.onMedia, fontSize: 13, opacity: 0.65 }}>
                 Light swept by a looping animated uniform
               </Text>
             </View>
@@ -461,7 +458,7 @@ function Holo() {
 
 function Tile(props: { title: string; note: string; photo: string }) {
   return (
-    <View style={{ flex: 1, borderRadius: 14, overflow: "hidden", backgroundColor: panelGround() }}>
+    <View style={{ flex: 1, borderRadius: 14, overflow: "hidden", backgroundColor: colors.media }}>
       <Image
         src={props.photo}
         style={{ position: "absolute", top: 0, start: 0, end: 0, bottom: 0, objectFit: "cover" }}

@@ -29,3 +29,12 @@ test("Escape closes it", async () => {
   expect(app.shows("text:A sunrise over the pad")).toBe(false);
   expect(app.texts()).toContain("closes 1");
 });
+
+test("the ground is the media role: the same near-black in either appearance", async () => {
+  for (const colorScheme of ["light", "dark"] as const) {
+    const app = await open("./image-viewer.fixture.tsx", { ...desktop, colorScheme });
+    await app.press("text:Open photo");
+    await app.waitFor("text:A sunrise over the pad");
+    expect(app.viewStyle("id:image-viewer")?.backgroundColor).toBe("#10131aff");
+  }
+});

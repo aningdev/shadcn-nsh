@@ -388,6 +388,8 @@ export interface Palette {
   destructive: string;
   up: string;
   down: string;
+  /** The ground a photograph or a video sits on. It does not flip: dark in either appearance. */
+  media: string;
   /** White ink on a photograph or any other surface that is not the theme's. It does not flip. */
   onMedia: string;
   /**
@@ -442,6 +444,7 @@ export const colors: Palette = tokens<keyof Palette>({
   destructive: "destructive",
   up: "up",
   down: "down",
+  media: "media",
   onMedia: "on-media",
   chartForeground: "chart-foreground",
 });

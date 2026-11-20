@@ -1,4 +1,4 @@
-// An image viewer: one image full screen over a dimmed ground, fitted, pinched, panned and
+// An image viewer: one image full screen over the media ground, fitted, pinched, panned and
 // swiped away. This library's own (drawn on `nsh`'s View, Text and Image, over `Dialog` as a
 // page), so there is no port region. Yours to change.
 import { alpha, colors, font, motion } from "@shadcn-nsh/theme";
@@ -33,7 +33,7 @@ export type ImageViewerImage = {
 export interface ImageViewerLook {
   /** The dialog itself: a page with no ground of its own (the ground is `ground()`). */
   page(): ViewStyle;
-  /** The ground the image sits on: the theme's scrim over the dialog's own, filling the window. */
+  /** The ground the image sits on: the theme's `media` ground, filling the window. */
   ground(): ViewStyle;
   /** The caption's strip along the bottom, under the safe area, over a scrim of its own. */
   caption(): ViewStyle;
@@ -48,10 +48,9 @@ export interface ImageViewerLook {
 }
 
 /**
- * An image viewer's look: the dialog as a page over the theme's `scrim` twice (the dialog's and
- * the ground's), so a light page still reads as dimmed; the ink is `on-media`, which does not flip
- * with the appearance, and the caption and the close chip carry a wash of it so they read over
- * any photograph.
+ * An image viewer's look: the dialog as a page on the theme's `media` ground, which is dark in
+ * either appearance, with the ink `on-media` on it; the caption and the close chip carry a wash of
+ * that ink so they read over any photograph.
  */
 export function imageViewerLook(): ImageViewerLook {
   return {
@@ -60,7 +59,7 @@ export function imageViewerLook(): ImageViewerLook {
       flex: 1,
       alignItems: "center",
       justifyContent: "center",
-      ...backdrop(),
+      backgroundColor: colors.media,
     }),
     caption: () => ({
       pointerEvents: "none",
@@ -115,7 +114,7 @@ export type ImageViewerProps = Omit<DialogContentProps, "children" | "scroll" | 
 
 /**
  * A full-screen viewer for one image, open while `image` is set (an `onImagePress` of `TextView`
- * reports one): the image fitted over the dimmed ground, fading and growing in. Pinch (two
+ * reports one): the image fitted over the media ground, fading and growing in. Pinch (two
  * fingers, a touchpad, or Ctrl / Cmd + wheel) zooms up to 4×, a double tap or click toggles 2.5×
  * at the point, a drag pans the zoomed image, and at 1× a drag down closes it. The `alt` text is
  * the caption.
