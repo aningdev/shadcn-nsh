@@ -20,6 +20,15 @@
         "@shadcn-nsh/ui": "workspace:*",
       },
     },
+    "apps/showcase": {
+      "name": "@shadcn-nsh/showcase",
+      "version": "0.0.0",
+      "dependencies": {
+        "@shadcn-nsh/theme": "workspace:*",
+        "@shadcn-nsh/ui": "workspace:*",
+        "lucide": "^1.75.0",
+      },
+    },
     "apps/website": {
       "name": "@shadcn-nsh/website",
       "version": "0.0.0",
@@ -422,6 +431,8 @@
     "@rollup/rollup-win32-x64-msvc": ["@rollup/rollup-win32-x64-msvc@4.68.6", "", { "os": "win32", "cpu": "x64" }, "sha512-DkUnrmo6oUZPDK6O6LOXLcEx8BZ85I8qkJLZWoSaOBHPqJfYzTtqweyoSxPpePG7XQvFkFEcSgVvHWRnuiXIcw=="],
 
     "@shadcn-nsh/gallery": ["@shadcn-nsh/gallery@workspace:apps/gallery"],
+
+    "@shadcn-nsh/showcase": ["@shadcn-nsh/showcase@workspace:apps/showcase"],
 
     "@shadcn-nsh/theme": ["@shadcn-nsh/theme@workspace:packages/theme"],
 

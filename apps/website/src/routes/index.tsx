@@ -140,6 +140,13 @@ function Home() {
             body="The theme showcase, live. Switch the theme, or the phone and desktop layouts."
           />
           <DemoPanel name="themes" />
+          <p className="text-fd-muted-foreground -mt-3 text-sm">
+            The whole gallery — its shell and its scenes, the theme chosen inside the app —{" "}
+            <a href="/showcase" className="text-fd-foreground font-medium underline">
+              runs on its own page
+            </a>
+            .
+          </p>
         </section>
 
         <section className="flex flex-col gap-6">

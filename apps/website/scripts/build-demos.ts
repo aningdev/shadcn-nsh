@@ -1,36 +1,36 @@
 /**
- * Package each catalog demo (`apps/website/demos/<id>.tsx`, from `scripts/catalog.ts`) and the site's
- * own page demos (`PAGE_DEMOS`: the themes page's showcase) with `nsh package --target web` into
- * apps/website/public/demos/<name>/ (flattened index.html).
+ * Package each catalog demo (`apps/website/demos/<id>.tsx`, from `scripts/catalog.ts`), the site's
+ * own page demos (`PAGE_DEMOS`: the themes page's showcase) and the showcase app
+ * (`apps/showcase/App.tsx`, served at `/showcase`) with `nsh package --target web` into
+ * apps/website/public/<name>/ (flattened index.html).
  *
  * The catalog's `--check` already guarantees every component has its demo, that the page demos
- * exist and that no other demo is orphaned; this script only packages the set, sorted by file name
- * so the log is stable.
+ * exist and that no other demo is orphaned; this script only packages the set, sorted by name so
+ * the log is stable. The shared steps (the runtime first, the pool, the flattening) live in
+ * `package-web.ts`.
  *
  * Each packaged page then gets the panel's `?idiom=` and `?theme=` (`player-options.ts`).
  *
- *   bun apps/website/scripts/build-demos.ts [--only <id>,<id>]   # one or a few, while iterating
+ *   bun apps/website/scripts/build-demos.ts [--only <id>,<id>]   # one or a few, while iterating;
+ *                                                                # `--only showcase` the app alone
  */
-import { spawn, spawnSync } from "node:child_process";
-import fs from "node:fs";
-import os from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { catalog, PAGE_DEMOS } from "../../../scripts/catalog";
+import {
+  ensureWebRuntime,
+  PACKAGE_CONCURRENCY,
+  packageOne,
+  runPool,
+  type WebPackage,
+} from "./package-web";
 import { addPlayerOptions } from "./player-options";
 
-/**
- * How many `nsh package` run at once: one per core (most of a package is compressing the runtime),
- * at most 8; `DEMO_JOBS` overrides it. Packages made side by side are byte for byte the ones made
- * one at a time (checked on nsh 0.5.1), so the old one-at-a-time limit is gone.
- */
-const CONCURRENCY = Number(process.env.DEMO_JOBS) || Math.min(os.availableParallelism(), 8);
-
 const docsRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
+const repoRoot = path.resolve(docsRoot, "../..");
+
 const cat = catalog();
-const demosDir = cat.paths.demos;
-const outRoot = path.join(docsRoot, "public", "demos");
 const args = process.argv.slice(2);
 const onlyAt = args.indexOf("--only");
 /** `--only <id>,<id>`: just those demos (the whole set otherwise). */
@@ -43,103 +43,52 @@ const only = onlyArg
         .filter(Boolean),
     )
   : undefined;
-const entries = [
+
+/** The apps this script packages: the component demos, the page demos, and the showcase app. */
+const apps: WebPackage[] = [
   ...cat.components.map((component) => component.demo),
-  ...PAGE_DEMOS.map((id) => path.join(demosDir, `${id}.tsx`)),
-]
-  .filter((entry) => !only || only.has(path.basename(entry, ".tsx")))
-  .sort((a, b) => a.localeCompare(b));
+  ...PAGE_DEMOS.map((id) => path.join(cat.paths.demos, `${id}.tsx`)),
+].map((entry) => ({
+  name: path.basename(entry, ".tsx"),
+  entry,
+  cwd: cat.paths.demos,
+  outDir: path.join(docsRoot, "public", "demos", path.basename(entry, ".tsx")),
+  after: addPlayerOptions,
+}));
+
+// The showcase app is an app of its own (`nsh.json`, `theme.ts`, `tests/`), not a demo file: its
+// entry resolves from its own directory. Its package goes to `public/showcase-app/`, served by the
+// site's `/showcase` page — not `public/showcase/`, because the site's prerenderer writes the
+// route's page to `showcase/index.html`, and a route's output and an app's package cannot share
+// one path (GitHub Pages would serve the directory's index to `/showcase`, never the page).
+apps.push({
+  name: "showcase",
+  entry: "App.tsx",
+  cwd: path.join(repoRoot, "apps/showcase"),
+  outDir: path.join(docsRoot, "public", "showcase-app"),
+  after: addPlayerOptions,
+});
+
+const entries = apps
+  .filter((app) => !only || only.has(app.name))
+  .sort((a, b) => a.name.localeCompare(b.name));
 
 if (entries.length === 0) {
   console.error("The catalog has no component demos");
   process.exit(1);
 }
 
-fs.mkdirSync(outRoot, { recursive: true });
-
-function flattenPackageDir(outDir: string) {
-  const kids = fs.readdirSync(outDir, { withFileTypes: true });
-  if (fs.existsSync(path.join(outDir, "index.html"))) return;
-  const nested = kids.find((k) => k.isDirectory());
-  if (!nested) {
-    throw new Error(`No index.html under ${outDir}`);
-  }
-  const nestedDir = path.join(outDir, nested.name);
-  for (const file of fs.readdirSync(nestedDir)) {
-    fs.renameSync(path.join(nestedDir, file), path.join(outDir, file));
-  }
-  fs.rmSync(nestedDir, { recursive: true, force: true });
-}
-
-function packageOne(entry: string): Promise<void> {
-  const name = path.basename(entry, ".tsx");
-  const outDir = path.join(outRoot, name);
-  fs.rmSync(outDir, { recursive: true, force: true });
-  fs.mkdirSync(outDir, { recursive: true });
-
-  console.log(`nsh package ${name} → public/demos/${name}`);
-  return new Promise((resolve, reject) => {
-    const child = spawn(
-      "nsh",
-      ["package", entry, "--target", "web", "--out", outDir, "--name", name],
-      { stdio: "inherit", cwd: demosDir },
-    );
-    child.on("error", reject);
-    child.on("close", (code) => {
-      if (code !== 0) {
-        reject(new Error(`nsh package failed: ${name} (exit ${code})`));
-        return;
-      }
-      try {
-        flattenPackageDir(outDir);
-        addPlayerOptions(outDir, name);
-        resolve();
-      } catch (err) {
-        reject(err instanceof Error ? err : new Error(String(err)));
-      }
-    });
-  });
-}
-
-async function runPool(files: string[], limit: number) {
-  let next = 0;
-  let failed = 0;
-  const workers = Array.from({ length: Math.min(limit, files.length) }, async () => {
-    while (next < files.length) {
-      const entry = files[next++];
-      if (entry === undefined) break;
-      try {
-        await packageOne(entry);
-      } catch (err) {
-        console.error(err instanceof Error ? err.message : err);
-        failed += 1;
-      }
-    }
-  });
-  await Promise.all(workers);
-  return failed;
-}
-
-// The web runtime first, once: `nsh package --target web` adds it itself when it is missing, and
-// several packages starting together on a fresh machine (CI) each add it and remove one another's
-// half-written directory ("remove ~/.nsh/runtime/web: Directory not empty").
-const runtime = spawnSync("nsh", ["component", "add", "web"], { stdio: "inherit" });
-if (runtime.status !== 0) {
-  console.error("nsh component add web failed. Is `nsh` installed?");
-  process.exit(1);
-}
+ensureWebRuntime();
 
 const started = Date.now();
-const failed = await runPool(entries, CONCURRENCY);
+const failed = await runPool(entries, PACKAGE_CONCURRENCY, packageOne);
 const elapsedSec = ((Date.now() - started) / 1000).toFixed(1);
 
 if (failed) {
   console.error(
-    `\n${failed} demo(s) failed in ${elapsedSec}s. Is \`nsh\` installed and web target available?`,
+    `\n${failed} app(s) failed in ${elapsedSec}s. Is \`nsh\` installed and web target available?`,
   );
   process.exit(1);
 }
 
-console.log(
-  `\n${entries.length} demos packaged under apps/website/public/demos/ in ${elapsedSec}s`,
-);
+console.log(`\n${entries.length} apps packaged under apps/website/public/ in ${elapsedSec}s`);

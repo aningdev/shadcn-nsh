@@ -36,10 +36,12 @@ type Layout = keyof typeof LAYOUTS;
 /** The layout the visitor chose last, for every demo (the old panel's key, kept). */
 const LAYOUT_KEY = "nsh-demo-layout";
 
-const siteTheme = (): "light" | "dark" =>
+/** The site's appearance, as the frames are told it. */
+export const siteTheme = (): "light" | "dark" =>
   document.documentElement.classList.contains("light") ? "light" : "dark";
 
-const withParam = (href: string, name: string, value: string) => {
+/** `href` with one query parameter set. */
+export const withParam = (href: string, name: string, value: string) => {
   const parsed = new URL(href, document.baseURI);
   parsed.searchParams.set(name, value);
   return parsed.href;

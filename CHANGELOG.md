@@ -4,6 +4,11 @@
 
 ### Added
 
+- **The site gains a showcase page (#78).** `/showcase` runs the new `apps/showcase` app — NSH's
+  official Gallery shell and its scenes rebuilt with this library's components, with the palette
+  and appearance chosen live inside the app — full width, outside the docs menu; `bun run check`
+  type-checks the app, `docs:demos` packages it.
+
 - **`init` and `add` warn when `nsh.json`'s Tailwind colors shadow theme tokens (#54).** A color in
   `tailwind.colors` wins over the theme token of the same name for classes: with `"primary"` there,
   `bg-primary` is that color while `token("primary")` and a component drawing with the theme keep

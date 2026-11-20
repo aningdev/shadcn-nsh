@@ -1,0 +1,19 @@
+{
+  "extends": "./.nsh/tsconfig.json",
+  "compilerOptions": {
+    "paths": {
+      "nsh": ["./.nsh/types/nsh/index.d.ts"],
+      "nsh/*": ["./.nsh/types/nsh/*.d.ts"],
+      "*": ["./.nsh/types/*.d.ts"],
+      "@shadcn-nsh/theme": ["../../packages/theme/index.ts"],
+      "@shadcn-nsh/theme/*": ["../../packages/theme/*"],
+      "@shadcn-nsh/ui": ["../../packages/ui/index.ts"],
+      "@shadcn-nsh/ui/*": ["../../packages/ui/*"],
+      "@shadcn-nsh/theme-default": ["../../packages/theme/themes/default/index.ts"],
+      "@shadcn-nsh/theme-shadcn": ["../../packages/theme/themes/shadcn/index.ts"],
+      "@shadcn-nsh/theme-solid-glass": ["../../packages/theme/themes/solid-glass/index.ts"],
+      "@/*": ["../../*"]
+    }
+  },
+  "include": ["./**/*.ts", "./**/*.tsx"]
+}

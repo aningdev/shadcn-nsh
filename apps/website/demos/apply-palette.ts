@@ -19,20 +19,11 @@
 // tokens nor its finishes. A running app cannot see a later write (the engine loads its entries
 // once, and `Storage` has no change event), which is why the site loads a panel again instead of
 // switching it in place.
-import { selectTheme, type AppTheme } from "@shadcn-nsh/theme";
+import { selectTheme } from "@shadcn-nsh/theme";
 import { Storage } from "nsh";
 
-import { PALETTES, PALETTE_KEY, type PaletteId } from "./palettes";
-
-/** A palette's theme module: each theme exports its `AppTheme` as `default`. */
-type ThemeModule = { default: AppTheme };
-
-/** The theme of each palette, fetched only when that palette is the one chosen. */
-const themes: Record<PaletteId, () => Promise<ThemeModule>> = {
-  default: () => import("@shadcn-nsh/theme-default"),
-  shadcn: () => import("@shadcn-nsh/theme-shadcn"),
-  "solid-glass": () => import("@shadcn-nsh/theme-solid-glass"),
-};
+import { paletteTheme } from "./palette-themes";
+import { PALETTES, PALETTE_KEY } from "./palettes";
 
 /** The element an app draws into, in the document around it (`#app` of the player page): the one
  * thing this module needs of a page, none of a native target. */
@@ -46,7 +37,7 @@ const stored: string | null = await Storage.getItem(PALETTE_KEY);
 const chosen = PALETTES.find((palette) => palette.id === stored);
 
 if (chosen) {
-  const theme = (await themes[chosen.id]()).default;
+  const theme = await paletteTheme(chosen.id);
   const page = (view.parent?.document ?? view.document) as Page | undefined;
   const app = page?.getElementById("app") ?? null;
   if (app) app.style.visibility = "hidden";

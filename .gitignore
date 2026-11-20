@@ -157,6 +157,8 @@ vite.config.ts.timestamp-*
 
 # Docs web demos (nsh package --target web)
 apps/website/public/demos/
+# The packaged showcase app (same packager, run by the site's /showcase page)
+apps/website/public/showcase-app/
 
 # Bun
 bun.lockb

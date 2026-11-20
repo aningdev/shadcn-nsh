@@ -1,0 +1,11 @@
+{
+  "name": "@shadcn-nsh/showcase",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@shadcn-nsh/theme": "workspace:*",
+    "@shadcn-nsh/ui": "workspace:*",
+    "lucide": "^1.75.0"
+  }
+}
