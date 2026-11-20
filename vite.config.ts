@@ -46,6 +46,12 @@ export default defineConfig({
         files: ["packages/ui/progress.tsx"],
         rules: { "typescript/no-floating-promises": "off" },
       },
+      // showcase animations.tsx and gestures.tsx (the Gallery's Animations and Gestures scenes): a `let`
+      // in the body is reassigned from callbacks. An NSH body runs once, so no later render can disagree.
+      {
+        files: ["apps/showcase/demos/animations.tsx", "apps/showcase/demos/gestures.tsx"],
+        rules: { "react/immutability": "off" },
+      },
       // emoji.tsx: tabs mapped without keys; a ref callback assigns a `let` declared in the body.
       {
         files: ["packages/ui/emoji-picker.tsx"],

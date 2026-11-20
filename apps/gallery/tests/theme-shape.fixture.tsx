@@ -15,7 +15,7 @@ import { mount, Text, View } from "nsh";
 import defaultTheme from "../../../packages/theme/themes/default/index";
 import { Button, buttonLook, dialogCard, inputLook } from "../../../packages/ui";
 
-const { shape: corners, size, stroke: lines, state, icon } = defaultTheme.finishes;
+const { shape: corners, size, stroke: lines, state } = defaultTheme.finishes;
 
 /** A temporary theme with other corner roles, control heights, line widths and fades. */
 const reshaped: AppTheme = {
