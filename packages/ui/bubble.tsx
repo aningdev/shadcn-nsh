@@ -3,7 +3,7 @@
 // region. Yours to change.
 import { colors, radius, rounded, tints } from "@shadcn-nsh/theme";
 import type { JSX, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
-import { context, platform, split, Text, token, View } from "nsh";
+import { context, effect, platform, signal, split, Text, token, View } from "nsh";
 
 import { AsText } from "./lib/as-text";
 import { density, PILL_RADIUS } from "./lib/surface";
@@ -45,8 +45,26 @@ const reactionsOverlap = "75%";
 /** How far a row of reactions sits inside the bubble's edge: 12 points. */
 const reactionsInset = 12;
 
-/** What a `BubbleContent` under a `Bubble` wears: the variant its fill and ink come from. */
-const BubbleContext = context<(() => BubbleVariant) | null>(null);
+/** The ring a row of reactions wears where it crosses the bubble: 3 points in the card's color. */
+const reactionsRing = 3;
+
+/** The reactions' line: the body's size at 1.25, so the pill's height is known. */
+const reactionsLine = (): number => Math.round(density.body * 1.25);
+
+/**
+ * The room a row of reactions takes past its bubble's edge: the three quarters of the pill (its
+ * line and 3 points above and below) that hang out, and its ring.
+ */
+const reactionsHang = (): number => Math.ceil((reactionsLine() + 6) * 0.75) + reactionsRing;
+
+/** What the parts under a `Bubble` read: the variant, and where to say a row of reactions hangs. */
+interface BubbleState {
+  variant: () => BubbleVariant;
+  /** A `BubbleReactions` hangs off `side`; the bubble keeps the room. Returns the undo. */
+  hang: (side: BubbleSide) => () => void;
+}
+
+const BubbleContext = context<BubbleState | null>(null);
 
 /** A bubble's parts as the styles they wear: spread each one onto the part that matches its name. */
 export interface BubbleLook {
@@ -66,6 +84,9 @@ export interface BubbleLook {
   /** The row of reactions (`BubbleReactions`): a small pill in the muted fill, its edge ringing it
    * where it crosses the bubble, hung off the bubble's `side` edge at `align`'s end. */
   reactions(side: BubbleSide, align: BubbleAlign): ViewStyle;
+  /** The room a bubble keeps on `side` for the reactions hung there, so the next bubble does not
+   * cover them. */
+  reactionsRoom(side: BubbleSide): ViewStyle;
   /** What a reaction is drawn in: the body's size, the page's ink. */
   readonly reactionText: TextStyle;
 }
@@ -115,7 +136,7 @@ function fill(variant: BubbleVariant): string {
  * A `ghost` bubble has no frame and no room of its own: the content stands on the page. Reactions
  * are a pill 6 points either side and 3 above and below in the muted fill, 4 points apart, ringed
  * 3 points in the card's color where they cross the bubble, hung three quarters of their height off
- * its `side` edge, 12 points in from its `align` end.
+ * its `side` edge, 12 points in from its `align` end; the bubble keeps that room on that side.
  */
 export function bubbleLook(): BubbleLook {
   return {
@@ -165,13 +186,15 @@ export function bubbleLook(): BubbleLook {
       paddingVertical: 3,
       borderRadius: PILL_RADIUS,
       backgroundColor: token("muted"),
-      boxShadow: `0 0 0 3px ${colors.card}`,
+      boxShadow: `0 0 0 ${reactionsRing}px ${colors.card}`,
       ...(side === "bottom" ? { bottom: 0 } : { top: 0 }),
       translate: [0, side === "bottom" ? reactionsOverlap : `-${reactionsOverlap}`],
       ...(align === "end" ? { end: reactionsInset } : { start: reactionsInset }),
     }),
+    reactionsRoom: (side: BubbleSide): ViewStyle =>
+      side === "bottom" ? { marginBottom: reactionsHang() } : { marginTop: reactionsHang() },
     get reactionText(): TextStyle {
-      return { fontSize: density.body, color: colors.foreground };
+      return { fontSize: density.body, lineHeight: reactionsLine(), color: colors.foreground };
     },
   };
 }
@@ -218,9 +241,23 @@ export function Bubble(props: BubbleProps) {
   const variant = () => props.variant ?? "default";
   const align = () => props.align ?? "start";
   const [, rest] = split(props, ["variant", "align", "children", "style"]);
+  // How many rows of reactions hang off each edge: the bubble keeps the room while any does.
+  const hung = { top: signal(0), bottom: signal(0) };
+  const hang = (side: BubbleSide) => {
+    hung[side].update((n) => n + 1);
+    return () => hung[side].update((n) => n - 1);
+  };
   return (
-    <BubbleContext.Provider value={variant}>
-      <View {...rest} style={[bubbleLook().root(variant(), align()), props.style ?? null]}>
+    <BubbleContext.Provider value={{ variant, hang }}>
+      <View
+        {...rest}
+        style={[
+          bubbleLook().root(variant(), align()),
+          hung.top() > 0 ? bubbleLook().reactionsRoom("top") : null,
+          hung.bottom() > 0 ? bubbleLook().reactionsRoom("bottom") : null,
+          props.style ?? null,
+        ]}
+      >
         {props.children}
       </View>
     </BubbleContext.Provider>
@@ -244,7 +281,7 @@ export function BubbleGroup(props: BubbleGroupProps) {
  * the press.
  */
 export function BubbleContent(props: BubbleContentProps) {
-  const variant = (): BubbleVariant => BubbleContext()?.() ?? "default";
+  const variant = (): BubbleVariant => BubbleContext()?.variant() ?? "default";
   const [, rest] = split(props, ["children", "style"]);
   return (
     <View
@@ -273,7 +310,7 @@ export function BubbleContent(props: BubbleContentProps) {
  * around it. Every `nsh` text prop passes through; `style` goes over the look's.
  */
 export function BubbleText(props: BubbleTextProps) {
-  const variant = (): BubbleVariant => BubbleContext()?.() ?? "default";
+  const variant = (): BubbleVariant => BubbleContext()?.variant() ?? "default";
   const [, rest] = split(props, ["style"]);
   return (
     <Text {...rest} style={[bubbleLook().text(variant()), props.style ?? null]}>
@@ -284,13 +321,16 @@ export function BubbleText(props: BubbleTextProps) {
 
 /**
  * The reactions on a bubble: emoji, a count, or a quick-reply button. They overlap the bubble's
- * edge, so leave room between rows. Name the row for screen readers (`accessibilityLabel`, with
+ * edge, and the bubble keeps the room they hang out, so the next one does not cover them. Name the row for screen readers (`accessibilityLabel`, with
  * `role="image"` or `"group"`): NSH reads each glyph without context otherwise.
  */
 export function BubbleReactions(props: BubbleReactionsProps) {
   const side = () => props.side ?? "bottom";
   const align = () => props.align ?? "end";
   const [, rest] = split(props, ["side", "align", "children", "style"]);
+  // Tell the bubble which edge the row hangs off, again whenever `side` changes.
+  const bubble = BubbleContext();
+  effect(() => bubble?.hang(side()));
   return (
     <View {...rest} style={[bubbleLook().reactions(side(), align()), props.style ?? null]}>
       <AsText style={bubbleLook().reactionText}>{props.children}</AsText>

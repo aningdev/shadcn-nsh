@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+### Fixed
+
+- **A bubble keeps room for its reactions (#128).** `BubbleReactions` hangs off the bubble's edge,
+  and the next bubble in a group used to cover it. A `Bubble` holding a reaction row now keeps the
+  room the row hangs out on that side.
+
 ### Changed
 
 - **Breaking:** **the rich editor is `rich-editor`, and its session comes from it (#105).** The

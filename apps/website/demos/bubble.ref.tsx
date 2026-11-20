@@ -14,10 +14,25 @@ import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { Log, Split, ui } from "./stage";
 
 /** A bubble as the look draws it. */
-function Bubbles(props: { variant?: BubbleVariant; align?: BubbleAlign; children: JSX.Element }) {
+function Bubbles(props: {
+  variant?: BubbleVariant;
+  align?: BubbleAlign;
+  /** The edge a row of reactions hangs off: the bubble keeps the room there. */
+  room?: BubbleSide;
+  children: JSX.Element;
+}) {
   const variant = () => props.variant ?? "default";
   const align = () => props.align ?? "start";
-  return <View style={bubbleLook().root(variant(), align())}>{props.children}</View>;
+  return (
+    <View
+      style={[
+        bubbleLook().root(variant(), align()),
+        props.room ? bubbleLook().reactionsRoom(props.room) : null,
+      ]}
+    >
+      {props.children}
+    </View>
+  );
 }
 
 /** The frame of a bubble, and the turn in it: a string wears the look's type, anything else is
@@ -79,7 +94,7 @@ function App() {
               <Bubbles variant="muted">
                 <Turn variant="muted">Hey! Want to see chat bubbles?</Turn>
               </Bubbles>
-              <Bubbles variant="muted">
+              <Bubbles room="bottom" variant="muted">
                 <Turn variant="muted">
                   I can group messages, switch sides, and keep the whole thread easy to scan.
                 </Turn>
@@ -155,19 +170,19 @@ function App() {
           <DemoSection title="Reactions" axis="block">
             {/* Reactions hang off the edge, so the rows leave room for them (shadcn/ui's gap-12). */}
             <View style={{ gap: 48, paddingBottom: 24 }}>
-              <Bubbles variant="muted" align="end">
+              <Bubbles room="bottom" variant="muted" align="end">
                 <Turn variant="muted">I don't need tests, I know my code works.</Turn>
                 <Reactions align="start" label="Reactions: thumbs up, surprised">
                   👍 😮
                 </Reactions>
               </Bubbles>
-              <Bubbles variant="default" align="end">
+              <Bubbles room="top" variant="default" align="end">
                 <Turn variant="default">Tests passed on the first try. All 142 of them.</Turn>
                 <Reactions side="top" align="start" label="Reactions: party popper, clapping hands">
                   🎉 👏
                 </Reactions>
               </Bubbles>
-              <Bubbles variant="muted">
+              <Bubbles room="bottom" variant="muted">
                 <Turn variant="muted">Bold. Fine, I'll add some tests.</Turn>
                 <Reactions label="Reactions: eyes, rocket, and 2 more">👀 🚀 +2</Reactions>
               </Bubbles>
@@ -189,7 +204,7 @@ function App() {
                 <Bubbles variant="muted">
                   <Turn variant="muted">Incoming: the start, on the right.</Turn>
                 </Bubbles>
-                <Bubbles variant="muted">
+                <Bubbles room="bottom" variant="muted">
                   <Turn variant="muted">A second incoming turn.</Turn>
                   <Reactions label="Reaction: thumbs up">👍</Reactions>
                 </Bubbles>
