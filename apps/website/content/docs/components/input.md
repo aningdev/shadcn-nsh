@@ -91,6 +91,99 @@ A least height of your own is how the box starts taller than one line, since `st
 <Input multiline value={notes()} style={{ minHeight: 64 }} />
 ```
 
+### A password with a strength meter
+
+A password field that says what it asks for and how far the reader has got: four segments, one for
+each rule the password meets, the word for the score, and the rules under the field — a dot until
+it is met, a tick on the tone that says it is. Score the field as it is typed, and score nothing as
+nothing: an empty field asks for a password rather than calling it weak.
+
+```tsx
+const PASSWORD_RULES = [
+  { label: "8 or more characters", test: (value: string) => value.length >= 8 },
+  {
+    label: "Upper and lower case",
+    test: (value: string) => /[a-z]/.test(value) && /[A-Z]/.test(value),
+  },
+  { label: "A number", test: (value: string) => /\d/.test(value) },
+  { label: "A symbol", test: (value: string) => /[^\w\s]/.test(value) },
+];
+const WORDS = ["Empty", "Weak", "Fair", "Good", "Strong"];
+
+const score = (value: string) =>
+  value === "" ? 0 : PASSWORD_RULES.filter((rule) => rule.test(value)).length;
+const tones = [colors.faint, colors.danger, colors.warn, colors.info, colors.up];
+
+const strength = score(password());
+
+<View style={{ gap: 6 }}>
+  <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Password</Text>
+  <Input masked value={password()} onChange={({ value }) => password.set(value)} />
+  <View style={{ gap: 8, paddingTop: 2 }}>
+    <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+      <View style={{ flex: 1, flexDirection: "row", gap: 4 }}>
+        <Each of={[0, 1, 2, 3]}>
+          {(step) => (
+            <View
+              style={{
+                flex: 1,
+                height: 6,
+                borderRadius: 3,
+                backgroundColor:
+                  step() < strength ? tones[strength] : alpha(colors.foreground, 0.1),
+              }}
+            />
+          )}
+        </Each>
+      </View>
+      <Text
+        style={{
+          width: 52,
+          textAlign: "right",
+          fontSize: 13,
+          fontWeight: "500",
+          color: tones[strength],
+        }}
+      >
+        {WORDS[strength]}
+      </Text>
+    </View>
+    <View style={{ flexDirection: "row", flexWrap: "wrap", columnGap: 14, rowGap: 6 }}>
+      <Each of={PASSWORD_RULES}>
+        {(rule) => {
+          const met = rule().test(password());
+          return (
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 5, minWidth: 140 }}>
+              {met ? (
+                <Icon icon={Check} size={12} tint={colors.up} />
+              ) : (
+                <View
+                  style={{
+                    width: 4,
+                    height: 4,
+                    borderRadius: 2,
+                    backgroundColor: colors.faint,
+                  }}
+                />
+              )}
+              <Text
+                style={{ fontSize: 12, color: met ? colors.foreground : colors.mutedForeground }}
+              >
+                {rule().label}
+              </Text>
+            </View>
+          );
+        }}
+      </Each>
+    </View>
+  </View>
+</View>;
+```
+
+The segments keep the field's own width — a bar of four parts, each a share of it — and the word
+keeps a column at the end, so the meter does not reflow as the word changes from `Empty` to
+`Strong`.
+
 ### The look alone
 
 ```tsx

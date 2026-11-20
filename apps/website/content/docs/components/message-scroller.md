@@ -136,6 +136,114 @@ of the viewport, and shows only while there is somewhere to go that way. It says
 />
 ```
 
+### A chat
+
+A conversation starts with an empty frame: keep the greeting and its suggestions inside the
+`MessageScroller` until the first turn arrives, so the frame holds its height and the composer under
+it never jumps. `MessageScrollerProvider` shares the scroller with that composer, and the send
+button is a `RoundButton` beside an `Input`.
+
+```tsx
+const chat = signal<Turn[]>([]);
+const draft = signal("");
+
+const send = (prompt?: string) => {
+  const text = (prompt ?? draft()).trim();
+  if (text === "") return;
+  chat.set([...chat(), { id: next(), text, mine: true }]);
+  draft.set("");
+  reply(text); // the answer arrives a moment later
+};
+
+<MessageScrollerProvider>
+  <View style={{ gap: 8 }}>
+    <MessageScroller initialScroll="end" style={{ height: 380, borderRadius: 10 }}>
+      {chat().length === 0 ? (
+        <EmptyChat onPick={send} />
+      ) : (
+        <>
+          <MessageScrollerViewport
+            each={chat()}
+            keyExtractor={(turn) => String(turn.id)}
+            estimatedItemSize={68}
+          >
+            {turnRow}
+          </MessageScrollerViewport>
+          <MessageScrollerButton direction="start" />
+        </>
+      )}
+    </MessageScroller>
+    <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+      <Input
+        value={draft()}
+        onChange={({ value }) => draft.set(value)}
+        placeholder="Message"
+        submitBehavior={desktop ? "submit" : "newline"}
+        onSubmit={() => send()}
+        style={{ flex: 1, height: 40, borderRadius: 20 }}
+      />
+      <RoundButton
+        side={40}
+        accessibilityLabel="Send"
+        disabled={draft().trim().length === 0}
+        onPress={() => send()}
+      >
+        <Icon icon={ArrowUp} {...roundButtonGlyph("default", { side: 40 })} />
+      </RoundButton>
+    </View>
+  </View>
+</MessageScrollerProvider>;
+```
+
+`EmptyChat` takes the whole viewport (`flex: 1`, centered) and calls `send` with a starter prompt;
+`turnRow` draws a turn with `Message`, `MessageAvatar` and `Bubble`. While the reader is at the end
+the viewport follows a new turn; while they are not, it waits where they are.
+
+### Older turns
+
+`onLoadMoreAtStart` is the list's own, passed through the viewport: while the reader is within
+`loadMoreAtStartThreshold` viewports of the first row, the scroller asks for an older page and
+prepends it. Rows on screen keep their place, so the reading position does not jump. Guard the call
+with a signal — it can fire again while a page is in flight.
+
+```tsx
+const loading = signal(false);
+
+const loadOlder = () => {
+  if (loading()) return;
+  loading.set(true);
+  fetchOlderPage().then((page) => {
+    history.set([...page, ...history()]);
+    loading.set(false);
+  });
+};
+
+<MessageScrollerViewport
+  each={history()}
+  keyExtractor={(turn) => String(turn.id)}
+  estimatedItemSize={68}
+  onLoadMoreAtStart={loadOlder}
+>
+  {(item) => <MessageScrollerItem>{turnRow(item)}</MessageScrollerItem>}
+</MessageScrollerViewport>;
+```
+
+The trigger fires on the frame's start side — the top of a normal list — so the same call also
+works over an inverted list, where older turns sit at the top.
+
+### Selecting across turns
+
+`MessageScroller` is a `View`, so `selectable` passes straight through: a drag over the frame is one
+selection over the rows that are mounted, instead of one per bubble.
+
+```tsx
+<MessageScroller selectable initialScroll="end" style={{ height: 200 }}>
+  <MessageScrollerViewport each={excerpt} keyExtractor={(turn) => String(turn.id)}>
+    {(item) => <MessageScrollerItem>{turnRow(item)}</MessageScrollerItem>}
+  </MessageScrollerViewport>
+</MessageScroller>
+```
+
 ### Commands
 
 `MessageScrollerProvider` shares the scroller with controls outside the frame, such as a list of
@@ -234,18 +342,18 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `Mes
 `MessageScrollerItem`; `MessageScrollerViewport` takes a [`List`](https://nsh.dev/elements/list)'s
 (`keyExtractor`, `estimatedItemSize`, `onViewableItemsChange`, `scrollbar`, …) less the state the
 scroller keeps (`inverted`, `initialScrollIndex`, `initialScrollAtEnd`,
-`maintainVisibleContentPosition`, …), plus `each`, `alignment` (passed to the list) and the child
-that renders a row; and `MessageScrollerButton` takes this library's
+`maintainVisibleContentPosition`, …), plus `each`, `alignment` and `onLoadMoreAtStart` (all passed to
+the list — the last one loads older turns) and the child that renders a row; and `MessageScrollerButton` takes this library's
 [`Button`](https://nsh.dev/elements/button) props (`variant` defaults to `secondary`, `size` to
 `sm`). `alignment="bottom"` pins a short conversation to the bottom of the viewport. `indicator`
 is a mark at the button's top-end corner (an arrival dot); the arrow stays.
 
-| Part                      | Props                                                  | Description                                                             |
-| ------------------------- | ------------------------------------------------------ | ----------------------------------------------------------------------- |
-| `MessageScroller`         | `initialScroll`                                        | Renders `View` (`messageScrollerLook().root`)                           |
-| `MessageScrollerViewport` | `each`, `children`, `keyExtractor`, `alignment`, `ref` | Renders `List` (`messageScrollerLook().viewport`); `ref` is a `ListRef` |
-| `MessageScrollerItem`     |                                                        | Renders `View` (`messageScrollerLook().item`)                           |
-| `MessageScrollerButton`   | `direction`, `variant`, `size`, `indicator`            | Renders `Button` (`messageScrollerLook().slot(direction)`)              |
+| Part                      | Props                                                                       | Description                                                             |
+| ------------------------- | --------------------------------------------------------------------------- | ----------------------------------------------------------------------- |
+| `MessageScroller`         | `initialScroll`                                                             | Renders `View` (`messageScrollerLook().root`)                           |
+| `MessageScrollerViewport` | `each`, `children`, `keyExtractor`, `alignment`, `onLoadMoreAtStart`, `ref` | Renders `List` (`messageScrollerLook().viewport`); `ref` is a `ListRef` |
+| `MessageScrollerItem`     |                                                                             | Renders `View` (`messageScrollerLook().item`)                           |
+| `MessageScrollerButton`   | `direction`, `variant`, `size`, `indicator`                                 | Renders `Button` (`messageScrollerLook().slot(direction)`)              |
 
 | Prop            | On                        | Type                                                  | Default       |
 | --------------- | ------------------------- | ----------------------------------------------------- | ------------- |

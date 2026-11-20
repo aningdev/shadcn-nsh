@@ -4,6 +4,19 @@
 
 ### Added
 
+- **Four docs pages show their parts at work (#158).** The `InputGroup` demo is a real search — typed
+  into, settling 300 ms later with a spinner where the work is, the matches under the field — and a
+  real composer: `Return` sends and `Shift-Return` breaks the line, the add-on turns to open an
+  attach menu, and the send turns into a stop while a scripted reply streams;
+  `### A search field` and `### A message composer` describe both. `Input` gains
+  `### A password with a strength meter`: four segments, a word for the score, and the rules ticking.
+  `MessageScroller` gains `### A chat` (an empty state with suggestion cards inside the frame),
+  `### Older turns` (`onLoadMoreAtStart` from the list, the rows on screen keeping their place) and
+  `### Selecting across turns` (`selectable` over the frame, one selection over the mounted rows).
+  `EmojiPicker` gains `### In a composer` (a picker from an `InputGroup` add-on, the choice appended
+  to the message and leading the recents) and `### Reactions` (chips with counts where yours is
+  tinted, and a quick row that ends in the picker). No component API changes; each demo's reference
+  draws the same scene.
 - **A component page can show its composition (#151).** Pages for a component built from several parts gain an optional `## Composition` between Usage and Examples: one line "Use the following composition to build a `Dialog`:" and one `text` fence with the part tree, as on shadcn/ui's pages. `check:pages` accepts the section only in that slot and fails on a name the component does not export; the page rules in `apps/website/AGENTS.md` and `docs/port.md` describe it. The pages whose parts nest now show their tree; single-part pages have none.
 - **Style data in themes (#144).** `finishes.json` now states nine groups of style beside its finishes — `type`, `shape`, `size`, `stroke`, `focus`, `state`, `motion`, `icon`, `indicator` — named by role, the same keys in every theme. `density`, `controlSize`, `motion`, `cornerCurve` and `focusRing` keep their shapes and read the theme in use, so `selectTheme` redraws what reads them; `style()` and `reactive()` are exported from `@shadcn-nsh/theme`. `check:theme` holds the key sets, the enum whitelists and the `shape` corners equal to `theme.json`'s radii. Nothing changes on screen: the default theme's values are the numbers the code wrote.
 - **A dialog fills the window as a page (`dialogPage`), and `NavPage`'s `header` takes a function of

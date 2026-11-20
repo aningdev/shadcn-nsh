@@ -153,6 +153,133 @@ is a button's, `ghost` unless set.
 </InputGroup>
 ```
 
+### A search field
+
+A magnifier before the control, the work after it: a spinner while the query settles, then a button
+that clears it. Search on what the field settles on, not on every key — 300 ms after the last one
+is enough, and the spinner says the search is under way. Put the matches under the field, with the
+letters that matched in the accent, so the answer reads as the field's.
+
+```tsx
+const query = signal("");
+const settled = signal("");
+const pending = signal(false);
+let wait: ReturnType<typeof setTimeout> | undefined;
+
+const search = (value: string) => {
+  query.set(value);
+  if (wait !== undefined) clearTimeout(wait);
+  if (value.trim() === "") {
+    pending.set(false);
+    settled.set("");
+    return;
+  }
+  pending.set(true);
+  wait = setTimeout(() => {
+    settled.set(value);
+    pending.set(false);
+  }, 300);
+};
+cleanup(() => {
+  if (wait !== undefined) clearTimeout(wait);
+});
+
+<View style={{ gap: 8 }}>
+  <InputGroup>
+    <InputGroupAddon align="inline-start">
+      <InputGroupText>
+        <Icon icon={Search} size={16} tint={colors.mutedForeground} />
+      </InputGroupText>
+    </InputGroupAddon>
+    <InputGroupInput
+      value={query()}
+      onChange={({ value }) => search(value)}
+      placeholder="Search cities"
+      returnKeyType="search"
+      autoCapitalize="none"
+    />
+    <InputGroupAddon align="inline-end">
+      {pending() ? <Spinner size={14} tint={colors.faint} /> : null}
+      {query().length > 0 ? (
+        <InputGroupButton
+          size="icon-xs"
+          accessibilityLabel="Clear the search"
+          onPress={() => search("")}
+        >
+          <Icon icon={CircleX} {...buttonGlyph("ghost", { size: "sm" })} />
+        </InputGroupButton>
+      ) : null}
+    </InputGroupAddon>
+  </InputGroup>
+  {/* The panel of matches is the app's, not the group's: Pressable rows, or a List. */}
+  <View style={{ ...sectionSurface(), overflow: "hidden" }}>
+    <Each of={matches()}>
+      {(city) => <Pressable onPress={() => search(city().name)}>{city().name}</Pressable>}
+    </Each>
+  </View>
+</View>;
+```
+
+### A message composer
+
+The composer of a chat: a `block-end` addon under the textarea holds a round button that opens
+what can be added, the key hint, and the send button. Give the group the composer's radius and
+padding (`borderRadius: 22`, `padding: 6`), and let the textarea grow to five lines with
+`grownFieldHeight` — an `Input` takes the lines' height from `onContentSizeChange`. Return sends
+and Shift-Return breaks the line under a keyboard (`submitBehavior="submit"` on desktop); on a
+touch screen Return breaks the line, and the button sends.
+
+```tsx
+const message = signal("");
+const grown = signal(0);
+const replying = signal(false);
+const attaching = signal(false);
+
+<InputGroup style={{ borderRadius: 22, padding: 6 }}>
+  <InputGroupTextarea
+    value={message()}
+    onChange={({ value }) => message.set(value)}
+    onContentSizeChange={({ size }) => grown.set(size.height)}
+    style={grown() > 0 ? { height: grownFieldHeight(grown(), 5) } : undefined}
+    placeholder="Ask anything"
+    submitBehavior={desktop ? "submit" : "newline"}
+    onSubmit={send}
+  />
+  <InputGroupAddon align="block-end" style={{ paddingHorizontal: 0, paddingBottom: 0, gap: 8 }}>
+    <RoundButton
+      variant="secondary"
+      size="sm"
+      accessibilityLabel="Add an attachment"
+      style={attaching() ? { transform: "rotate(45deg)" } : undefined}
+    >
+      <Icon icon={Plus} {...roundButtonGlyph("secondary", { size: "sm" })} />
+    </RoundButton>
+    <View style={{ flex: 1 }} />
+    <Text style={{ fontSize: 11, color: colors.faint }}>
+      {desktop ? "Return sends · Shift-Return breaks the line" : "Return breaks the line"}
+    </Text>
+    {replying() ? (
+      <RoundButton size="sm" accessibilityLabel="Stop the reply" onPress={stop}>
+        <Icon icon={Square} {...roundButtonGlyph("default", { size: "sm" })} />
+      </RoundButton>
+    ) : (
+      <RoundButton
+        size="sm"
+        accessibilityLabel="Send"
+        disabled={message().trim().length === 0}
+        onPress={send}
+      >
+        <Icon icon={Send} {...roundButtonGlyph("default", { size: "sm" })} />
+      </RoundButton>
+    )}
+  </InputGroupAddon>
+</InputGroup>;
+```
+
+While a reply streams, the send button becomes a stop: the same press that sent the message stops
+the answer. The plus turns a quarter as the menu under it opens, so the same button shows it can be
+closed.
+
 ### When to use a group, and when an `Input`
 
 A frame of your own around an input is a group. Do not wrap a `variant="ghost"` `Input` in a `View` with a border: the ghost input keeps its own focus edge and ring, so the frame ends up with a second edge inside it that does not follow the frame's radius.

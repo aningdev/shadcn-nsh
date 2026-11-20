@@ -1,11 +1,15 @@
 // The reference of `input.tsx`: the same scene as upstream writes it, `inputLook` spread on
-// `nsh/base`'s Input. The render check requires the two to draw the same pixels.
+// `nsh/base`'s Input, and the strength meter drawn out of views and text. The render check
+// requires the two to draw the same pixels.
+import { alpha } from "@shadcn-nsh/theme";
+import { Check } from "lucide";
 import type { InputRef, JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 import { Button, Input } from "nsh/base";
 
 import { buttonLabel, buttonLook } from "@/packages/ui/button";
 import { inputLook, multilineFieldPad } from "@/packages/ui/input";
+import { Icon } from "@/packages/ui/lib/icons";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { buttonStyle, desktop, Panel, Split, ui } from "./stage";
@@ -13,6 +17,88 @@ import { buttonStyle, desktop, Panel, Split, ui } from "./stage";
 /** What the notes start with: long enough that their box is taller than the field's least. */
 const NOTE =
   "Bring the signed copy on Friday, and the notebook from the drawer beside it so the two can be compared.";
+
+/** What a password is asked for, and how it is scored: one point per rule it meets. */
+const PASSWORD_RULES = [
+  { label: "8 or more characters", test: (value: string) => value.length >= 8 },
+  {
+    label: "Upper and lower case",
+    test: (value: string) => /[a-z]/.test(value) && /[A-Z]/.test(value),
+  },
+  { label: "A number", test: (value: string) => /\d/.test(value) },
+  { label: "A symbol", test: (value: string) => /[^\w\s]/.test(value) },
+];
+const STRENGTH_WORDS = ["Empty", "Weak", "Fair", "Good", "Strong"];
+
+/** A password's score: nothing typed is nothing met. */
+function strength(value: string): number {
+  return value === "" ? 0 : PASSWORD_RULES.filter((rule) => rule.test(value)).length;
+}
+
+/** Four segments, the word for the score, and the rules: `View` and `Text`, as the look writes it. */
+function Strength(props: { value: string }) {
+  const score = strength(props.value);
+  const tones = [ui().faint, ui().danger, ui().warn, ui().info, ui().up];
+  const tone = tones[score];
+  return (
+    <View style={{ gap: 8, paddingTop: 2 }}>
+      <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+        <View style={{ flex: 1, flexDirection: "row", gap: 4 }}>
+          <Each of={[0, 1, 2, 3]}>
+            {(step) => (
+              <View
+                style={{
+                  flex: 1,
+                  height: 6,
+                  borderRadius: 3,
+                  backgroundColor: step() < score ? tone : alpha(ui().text, 0.1),
+                }}
+              />
+            )}
+          </Each>
+        </View>
+        <Text
+          style={{
+            width: 52,
+            textAlign: "right",
+            fontSize: 13,
+            fontWeight: "500",
+            color: tone,
+          }}
+        >
+          {STRENGTH_WORDS[score]}
+        </Text>
+      </View>
+      <View style={{ flexDirection: "row", flexWrap: "wrap", columnGap: 14, rowGap: 6 }}>
+        <Each of={PASSWORD_RULES}>
+          {(rule) => {
+            const met = rule().test(props.value);
+            return (
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 5, minWidth: 140 }}>
+                {met ? (
+                  <Icon icon={Check} size={12} tint={ui().up} />
+                ) : (
+                  <View
+                    style={{
+                      width: 4,
+                      height: 4,
+                      borderRadius: 2,
+                      backgroundColor: ui().faint,
+                      marginHorizontal: 4,
+                    }}
+                  />
+                )}
+                <Text style={{ fontSize: 12, color: met ? ui().text : ui().muted }}>
+                  {rule().label}
+                </Text>
+              </View>
+            );
+          }}
+        </Each>
+      </View>
+    </View>
+  );
+}
 
 /** A label above its field, and what describes it below. */
 function Field(props: { label: string; children: JSX.Element; after?: JSX.Element }) {
@@ -81,7 +167,7 @@ function App() {
               {...inputLook()}
             />
           </Field>
-          <Field label="Password">
+          <Field label="Password" after={<Strength value={password()} />}>
             <Input
               ref={passwordInput}
               value={password()}
