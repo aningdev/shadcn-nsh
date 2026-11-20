@@ -4,7 +4,8 @@
  *
  * One row per official component, named by the page's file name. `ours` lists the pages here that
  * serve it (first closest, a renamed one shows the rename), and a row with nothing serving it
- * says why in `status` and `note`. The components index, each page's header links and
+ * says why in `status` and `note`. One page may serve several rows: `input` is shadcn's `input`,
+ * and its `textarea` — one field, multiline. The components index, each page's header links and
  * `/docs/components/coverage` read these tables; nothing there is written by hand.
  *
  * `bun run check:pages` fails when `references/` has an official component with no row, when a row
@@ -108,7 +109,7 @@ export const SHADCN_UI: readonly OfficialEntry[] = [
   { id: "switch", ours: ["switch"] },
   { id: "table", ours: ["table"] },
   { id: "tabs", ours: ["tabs"] },
-  { id: "textarea", ours: ["textarea"] },
+  { id: "textarea", ours: ["input"] },
   { id: "toggle-group", ours: ["toggle"] },
   { id: "toggle", ours: ["toggle"] },
   { id: "tooltip", ours: ["tooltip"] },
@@ -140,7 +141,7 @@ export const NSH_ELEMENTS: readonly NshEntry[] = [
   { id: "editor", group: "base", ours: ["code-editor"] },
   { id: "emoji-picker", group: "base", ours: ["emoji-picker"] },
   { id: "hover-card", group: "base", ours: ["hover-card"] },
-  { id: "input", group: "base", ours: ["input", "textarea"] },
+  { id: "input", group: "base", ours: ["input"] },
   { id: "link", group: "base", ours: ["link"] },
   { id: "menu", group: "base", ours: ["menu", "context-menu"] },
   { id: "nav-stack", group: "base", ours: ["nav-stack"] },

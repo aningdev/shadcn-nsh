@@ -156,6 +156,14 @@
   page, demo, reference page and baselines went with it. **To migrate:** `<Meter value={0.83}
   marker={0.9} />` is `<Progress value={83} marker={90} />` — `value` and `marker` are percentages
   (0 to 100), not fractions.
+- **Breaking:** **`textarea` is `Input` with `multiline` (#134).** One `nsh/base` input is one field:
+  `Input` already took `multiline` and passed it to the same look, so `textarea` was the same field
+  under a second name — and `add input` already brought it. The `textarea` registry item, its file
+  and its page are gone. **To migrate:** `shadcn-nsh add input` (or keep the `Input` you have), then
+  `<Textarea … />` from `@/components/ui/textarea` becomes `<Input multiline … />` from
+  `@/components/ui/input`, and every prop keeps its meaning (`invalid`, `readonly`, `disabled`,
+  `maxLength`, `onContentSizeChange`, `submitBehavior`). Delete `components/ui/textarea.tsx` once
+  nothing imports it.
 
 ### Fixed
 

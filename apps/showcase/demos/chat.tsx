@@ -51,6 +51,7 @@ import {
 
 import { Badge } from "@/packages/ui/badge";
 import { roundButtonGlyph, RoundButton } from "@/packages/ui/button";
+import { Input } from "@/packages/ui/input";
 import { Icon } from "@/packages/ui/lib/icons";
 import {
   MessageScroller,
@@ -59,7 +60,6 @@ import {
 } from "@/packages/ui/message-scroller";
 import { Pressable } from "@/packages/ui/pressable";
 import { Segmented, SegmentedItem, SegmentedList } from "@/packages/ui/segmented";
-import { Textarea } from "@/packages/ui/textarea";
 
 import { Appear, IconTile, desktop, paneWidth } from "./apps-shared";
 import { Glyph, type GlyphName } from "./chat/glyphs";
@@ -1144,7 +1144,8 @@ export function ChatDemo() {
               gap: 4,
             }}
           >
-            <Textarea
+            <Input
+              multiline
               value={draft()}
               onChange={({ value }) => draft.set(value)}
               // Return sends on desktops, as in chat apps there; phones keep it for line breaks.

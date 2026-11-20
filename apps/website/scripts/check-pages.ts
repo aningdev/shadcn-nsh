@@ -177,7 +177,10 @@ const byId = new Map(cat.components.map((component) => [component.id, component]
 // either in a row's `ours` or it is ours. Nothing to keep in step here; the generated list above
 // is checked instead.
 
-// The official tables: every row names pages that exist, and says why when it serves none.
+// The official tables: every row names pages that exist, and says why when it serves none. A page
+// may stand in for more than one shadcn/ui component — `input` is shadcn's `input` and its
+// `textarea`, one field multiline — and its header links to the row whose id is the page
+// (`shadcnOf`).
 const tables: { label: string; entries: readonly OfficialEntry[] }[] = [
   { label: "src/lib/official.ts SHADCN_UI", entries: SHADCN_UI },
   { label: "src/lib/official.ts NSH_ELEMENTS", entries: NSH_ELEMENTS },
@@ -192,7 +195,7 @@ for (const { label, entries } of tables) {
     for (const slug of entry.ours) {
       const owner = servedBy.get(slug);
       // One page can answer for more than one shadcn/ui component (`toggle` for `toggle` and
-      // `toggle-group`). An NSH element still names each page once.
+      // `toggle-group`, `input` for `input` and `textarea`). An NSH element still names each page once.
       if (owner && !label.includes("SHADCN_UI")) {
         fail(`${label}: "${slug}" is served by "${owner}" and by "${entry.id}"`);
       }

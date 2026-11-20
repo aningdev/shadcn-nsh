@@ -50,8 +50,8 @@ export interface FieldLookOptions {
   readonly?: Live<boolean>;
   /** Disabled: flat on the quieter edge, as read-only; `disabledStyle` dims it. */
   disabled?: Live<boolean>;
-  /** Several lines: the content starts at the top. */
-  multiline?: boolean;
+  /** Several lines: the content starts at the top, in a box at least one line tall. */
+  multiline?: Live<boolean>;
   /** Layout over the look (a width, a height, a margin; on an input its text too), or a function reading it. */
   style?: Live<InputStyle>;
 }
@@ -136,7 +136,7 @@ export function fieldLook(o?: FieldLookOptions) {
     get style(): InputStyle {
       return {
         flexDirection: "row",
-        alignItems: o?.multiline ? "flex-start" : "center",
+        alignItems: read(o?.multiline) ? "flex-start" : "center",
         ...frame(o),
         ...read(o?.style),
       };
@@ -210,7 +210,7 @@ export function inputLook(o?: FieldLookOptions) {
       return look.class;
     },
     get style(): InputStyle {
-      const text = fieldText({ readonly: !!read(o?.readonly), multiline: o?.multiline });
+      const text = fieldText({ readonly: !!read(o?.readonly), multiline: !!read(o?.multiline) });
       // A lone input is its own well: the text takes no `flex`, which a field's text has for the
       // parts beside it.
       return { ...frame(o), ...text, flex: undefined, ...read(o?.style) } as InputStyle;
@@ -234,6 +234,10 @@ export const timeFieldClass = [
 /**
  * `nsh/base`'s Input in the look of `inputLook`. Every base prop passes through; `class`, `style`
  * and `disabledStyle` go over the look's. Focus and hover edges are classes on the look.
+ *
+ * One field, one line or several: with `multiline` the content starts at the top of a box at least
+ * one line tall, and Return writes a line break. Give it the height it needs (`onContentSizeChange`
+ * reports the text's) — `fieldText` keeps only a least height.
  */
 export type InputProps = BaseInputProps & {
   /** Default `default`: the field's fill and edge. `ghost`: nothing at rest, the focus ring kept. */
@@ -250,7 +254,7 @@ export function Input(props: InputProps) {
     invalid: () => !!props.invalid,
     readonly: () => !!props.readonly,
     disabled: () => !!props.disabled,
-    multiline: props.multiline,
+    multiline: () => !!props.multiline,
   });
   return (
     <BaseInput

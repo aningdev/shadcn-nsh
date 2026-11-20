@@ -360,14 +360,6 @@ export const components: ComponentDoc[] = [
     description: "A program's output on the theme's field surface, the keys typed back to it.",
   },
   {
-    slug: "textarea",
-    title: "Textarea",
-    kind: "official",
-    shadcn: "textarea",
-    nshElement: "input",
-    description: "A field of several lines, in the look of the input.",
-  },
-  {
     slug: "text-view",
     title: "TextView",
     kind: "official",

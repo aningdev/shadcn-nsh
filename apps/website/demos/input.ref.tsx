@@ -5,10 +5,23 @@ import { mount, signal, Text, View } from "nsh";
 import { Button, Input } from "nsh/base";
 
 import { buttonLabel, buttonLook } from "@/packages/ui/button";
-import { inputLook } from "@/packages/ui/input";
+import { fieldText, inputLook } from "@/packages/ui/input";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { buttonStyle, desktop, Panel, Split, ui } from "./stage";
+
+/** What the notes start with: long enough that their box is taller than the field's least. */
+const NOTE =
+  "Bring the signed copy on Friday, and the notebook from the drawer beside it so the two can be compared.";
+
+/** A padding the look writes in points (it writes numbers). */
+const room = (value: string | number | undefined) => (typeof value === "number" ? value : 0);
+
+/** The room the look keeps inside the box: its two edges and the padding above and below. */
+function fieldPad(): number {
+  const text = fieldText({ multiline: true });
+  return room(text.paddingTop) + room(text.paddingBottom) + 2;
+}
 
 /** A label above its field, and what describes it below. */
 function Field(props: { label: string; children: JSX.Element; after?: JSX.Element }) {
@@ -24,7 +37,8 @@ function Field(props: { label: string; children: JSX.Element; after?: JSX.Elemen
 function App() {
   const name = signal("");
   const password = signal("");
-  const notes = signal("");
+  const notes = signal(NOTE);
+  const notesContent = signal(0);
   const submitted = signal("");
   let passwordInput!: InputRef;
   const signIn = () => submitted.set(`Signed in as ${name() || "nobody"}`);
@@ -87,13 +101,21 @@ function App() {
               {...inputLook()}
             />
           </Field>
-          <Field label="Notes (multiline)">
+          <Field label="Notes (multiline, as tall as its text)">
             <Input
               multiline
               value={notes()}
               onChange={({ value }) => notes.set(value)}
               placeholder="Anything else?"
-              {...inputLook({ multiline: true, style: { height: 80 } })}
+              onContentSizeChange={({ size }) => notesContent.set(size.height)}
+              {...inputLook({
+                multiline: true,
+                // The height rides in the look's own `style`: a second one over the spread is
+                // lost when the theme switches and the box clips its text.
+                style: () => ({
+                  height: notesContent() === 0 ? undefined : notesContent() + fieldPad(),
+                }),
+              })}
             />
           </Field>
           <Button
@@ -145,6 +167,33 @@ function App() {
               disabled
               accessibilityLabel="Disabled"
               {...inputLook({ disabled: true })}
+            />
+          </View>
+        </DemoSection>
+      </DemoCard>
+
+      <DemoCard>
+        <DemoSection title="Multiline states">
+          <View style={{ gap: 10, flex: 1 }}>
+            <Input
+              multiline
+              value="Reviewed by the design team on 12 March."
+              readonly
+              accessibilityLabel="Read only"
+              {...inputLook({ multiline: true, readonly: true, style: { height: 64 } })}
+            />
+            <Input
+              multiline
+              value="This comment is archived."
+              accessibilityLabel="Invalid"
+              {...inputLook({ multiline: true, invalid: true, style: { height: 64 } })}
+            />
+            <Input
+              multiline
+              value="The thread is locked; the note stays for the record."
+              disabled
+              accessibilityLabel="Disabled"
+              {...inputLook({ multiline: true, disabled: true, style: { height: 64 } })}
             />
           </View>
         </DemoSection>

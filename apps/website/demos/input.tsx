@@ -1,15 +1,29 @@
 // The official input scene (`references/nsh/website/demos/el-input.tsx`) with this library's
 // parts: a name (controlled, 20 characters at most), a password (masked) the name's Return goes
-// to, notes, and a sign-in button whose result the inspector shows. A second card lists the read
-// only, the invalid and the disabled field.
+// to, notes (multiline, its box as tall as its text), and a sign-in button whose result the
+// inspector shows. A second card lists the read only, the invalid and the disabled field, and a
+// third the same states on a multiline one.
 import type { InputRef, JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 
 import { Button } from "@/packages/ui/button";
-import { Input } from "@/packages/ui/input";
+import { fieldText, Input } from "@/packages/ui/input";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { buttonStyle, desktop, Panel, Split, ui } from "./stage";
+
+/** What the notes start with: long enough that their box is taller than the field's least. */
+const NOTE =
+  "Bring the signed copy on Friday, and the notebook from the drawer beside it so the two can be compared.";
+
+/** A padding the look writes in points (it writes numbers). */
+const room = (value: string | number | undefined) => (typeof value === "number" ? value : 0);
+
+/** The room the look keeps inside the box: its two edges and the padding above and below. */
+function fieldPad(): number {
+  const text = fieldText({ multiline: true });
+  return room(text.paddingTop) + room(text.paddingBottom) + 2;
+}
 
 /** A label above its field, and what describes it below. */
 function Field(props: { label: string; children: JSX.Element; after?: JSX.Element }) {
@@ -25,7 +39,8 @@ function Field(props: { label: string; children: JSX.Element; after?: JSX.Elemen
 function App() {
   const name = signal("");
   const password = signal("");
-  const notes = signal("");
+  const notes = signal(NOTE);
+  const notesContent = signal(0);
   const submitted = signal("");
   let passwordInput!: InputRef;
   const signIn = () => submitted.set(`Signed in as ${name() || "nobody"}`);
@@ -86,13 +101,16 @@ function App() {
               onSubmit={signIn}
             />
           </Field>
-          <Field label="Notes (multiline)">
+          <Field label="Notes (multiline, as tall as its text)">
             <Input
               multiline
               value={notes()}
               onChange={({ value }) => notes.set(value)}
               placeholder="Anything else?"
-              style={{ height: 80 }}
+              onContentSizeChange={({ size }) => notesContent.set(size.height)}
+              style={{
+                height: notesContent() === 0 ? undefined : notesContent() + fieldPad(),
+              }}
             />
           </Field>
           <Button
@@ -128,6 +146,34 @@ function App() {
             <Input value="Read only" readonly accessibilityLabel="Read only" />
             <Input value="Invalid" invalid accessibilityLabel="Invalid" />
             <Input value="Disabled" disabled accessibilityLabel="Disabled" />
+          </View>
+        </DemoSection>
+      </DemoCard>
+
+      <DemoCard>
+        <DemoSection title="Multiline states">
+          <View style={{ gap: 10, flex: 1 }}>
+            <Input
+              multiline
+              value="Reviewed by the design team on 12 March."
+              readonly
+              accessibilityLabel="Read only"
+              style={{ height: 64 }}
+            />
+            <Input
+              multiline
+              value="This comment is archived."
+              invalid
+              accessibilityLabel="Invalid"
+              style={{ height: 64 }}
+            />
+            <Input
+              multiline
+              value="The thread is locked; the note stays for the record."
+              disabled
+              accessibilityLabel="Disabled"
+              style={{ height: 64 }}
+            />
           </View>
         </DemoSection>
       </DemoCard>
