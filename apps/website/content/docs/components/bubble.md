@@ -95,9 +95,9 @@ rather than knowing the variant itself. `BubbleContent` draws a string child the
 ### Reactions
 
 `BubbleReactions` is a pill in the muted fill that hangs three quarters of its height off the
-bubble's `side` edge (`bottom` by default, or `top`), 12 points in from its `align` end. It
-overlaps the bubble, so leave room between rows. Name the row for screen readers: NSH reads each
-glyph without context otherwise.
+bubble's `side` edge (`bottom` by default, or `top`), 12 points in from its `align` end. The
+bubble keeps the room the row hangs out on that side, so the next bubble never covers it. Name the
+row for screen readers: NSH reads each glyph without context otherwise.
 
 ```tsx
 <Bubble variant="muted" align="end">
@@ -132,6 +132,10 @@ The frame itself takes the press.
   and its siblings). A pressable frame keeps its fill under the pointer; the hand is the cue.
 - **Text inside the content is not inherited.** shadcn gets a bubble's ink to its content through
   CSS inheritance. NSH has none, so a turn made of several paragraphs wears `BubbleText` on each.
+- **The bubble keeps room for its reactions.** shadcn's row hangs off the bubble absolutely and
+  leaves the spacing to the app; here a `Bubble` holding a `BubbleReactions` adds the hanging part
+  as a margin on that side (`bubbleLook().reactionsRoom(side)`), so a group's 8-point gap still
+  shows the row whole.
 - **`has-[button]:p-0` on the reaction row.** NSH has no `:has()`; a row that holds a button keeps
   the pill's padding.
 
@@ -142,13 +146,13 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `Bub
 [`nsh` Text](https://nsh.dev/elements/text), and `BubbleContent` draws a string child as a
 `BubbleText`. Style props go over the look's.
 
-| Part              | Props              | Description                                                                                  |
-| ----------------- | ------------------ | -------------------------------------------------------------------------------------------- |
-| `BubbleGroup`     | —                  | Consecutive bubbles from one sender, 8 points apart: `bubbleLook().group`.                   |
-| `Bubble`          | `variant`, `align` | One turn's frame, as wide as what it holds up to 80% of its column: `.root(variant, align)`. |
-| `BubbleContent`   | `children`         | The frame and the turn, a string drawn as `BubbleText`: `bubbleLook().content(variant)`.     |
-| `BubbleText`      | —                  | A paragraph in the turn's type and the variant's ink: `bubbleLook().text(variant)`.          |
-| `BubbleReactions` | `side`, `align`    | The pill hung three quarters of its height off the bubble's edge: `.reactions(side, align)`. |
+| Part              | Props              | Description                                                                                                                           |
+| ----------------- | ------------------ | ------------------------------------------------------------------------------------------------------------------------------------- |
+| `BubbleGroup`     | —                  | Consecutive bubbles from one sender, 8 points apart: `bubbleLook().group`.                                                            |
+| `Bubble`          | `variant`, `align` | One turn's frame, as wide as what it holds up to 80% of its column: `.root(variant, align)`.                                          |
+| `BubbleContent`   | `children`         | The frame and the turn, a string drawn as `BubbleText`: `bubbleLook().content(variant)`.                                              |
+| `BubbleText`      | —                  | A paragraph in the turn's type and the variant's ink: `bubbleLook().text(variant)`.                                                   |
+| `BubbleReactions` | `side`, `align`    | The pill hung three quarters of its height off the bubble's edge: `.reactions(side, align)`; the bubble keeps `.reactionsRoom(side)`. |
 
 | Prop       | On                | Type                                                                                       | Default   |
 | ---------- | ----------------- | ------------------------------------------------------------------------------------------ | --------- |
