@@ -31,6 +31,26 @@ import { Toolbar, ToolbarGroup, ToolbarSeparator } from "@/components/ui/toolbar
 
 ## Examples
 
+### Disabled
+
+`disabled` on a `Toolbar` locks the whole bar: no item takes a press, the arrows skip it and it is
+one disabled toolbar to screen readers. `disabled` on a `ToolbarGroup` locks that run alone, the
+rest of the bar still reached. Every item the bar knows locks — a `Button`, a `Toggle`, a `Link`,
+a menu's or popover's trigger — because the base bar hands its lock down to each
+(`nsh-base/src/toolbar.rs`, "items"). A control that is not a bar item keeps its own `disabled`
+and its own behavior inside a locked bar: a `Command` palette, a text field.
+
+```tsx
+<Toolbar accessibilityLabel="Formatting" disabled>
+  <ToolbarGroup>
+    <Toggle pressed={bold()}>B</Toggle>
+    <Toggle pressed={italic()}>I</Toggle>
+  </ToolbarGroup>
+  <ToolbarSeparator />
+  <Button variant="ghost">Undo</Button>
+</Toolbar>
+```
+
 ### Vertical
 
 ```tsx

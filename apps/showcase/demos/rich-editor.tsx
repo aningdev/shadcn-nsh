@@ -178,16 +178,25 @@ function blockCommand(block: Block, pressed: boolean): RichCommand {
   return command("toggleHeading", { level: Number(block[1]) });
 }
 
-/** A square tool. The library's icon button; upstream draws the same square on a bare button. */
+/** The side of a toolbar's tool: the library's largest icon button, 32 points, as upstream draws it. */
+const TOOL = "lg" as const;
+
+/** A square tool. The library's icon button; upstream draws the same 32 pt square on a bare button. */
 function ToolIcon(props: {
   icon: IconNode;
   label: string;
   disabled?: boolean;
   onPress: () => void;
 }) {
+  const glyph = iconButtonGlyph({ size: TOOL, disabled: () => props.disabled });
   return (
-    <IconButton accessibilityLabel={props.label} disabled={props.disabled} onPress={props.onPress}>
-      <Icon icon={props.icon} {...iconButtonGlyph({ disabled: () => props.disabled })} />
+    <IconButton
+      accessibilityLabel={props.label}
+      size={TOOL}
+      disabled={props.disabled}
+      onPress={props.onPress}
+    >
+      <Icon icon={props.icon} {...glyph} />
     </IconButton>
   );
 }

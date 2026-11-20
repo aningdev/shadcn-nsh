@@ -5,9 +5,9 @@ import { colors, mono, radius, rounded } from "@shadcn-nsh/theme";
 // fills it as upstream's does.
 import { Plus, Sparkles } from "lucide";
 import { platform, signal, Text, untracked, View, windowSize } from "nsh";
-import { Button as BareButton, type DockAreaLayout, type DockAreaRef } from "nsh/base";
+import type { DockAreaLayout, DockAreaRef } from "nsh/base";
 
-import { Button, buttonGlyph, buttonLabel } from "@/packages/ui/button";
+import { Button, buttonGlyph, buttonLabel, IconButton } from "@/packages/ui/button";
 import {
   DockArea,
   DockDragPreview,
@@ -388,13 +388,14 @@ function Workspace(props: {
               return (
                 <DockTab testID={`tab-${tab.panel}`} title={titleOf(tab.panel)} active={tab.active}>
                   <If when={tab.closable && (pointer || tab.active)}>
-                    <BareButton
-                      onPress={() => props.area()?.closePanel(tab.panel)}
+                    <IconButton
+                      size="xs"
                       accessibilityLabel={`Close ${titleOf(tab.panel)}`}
                       class={dockTabCloseClass}
+                      onPress={() => props.area()?.closePanel(tab.panel)}
                     >
                       <Text style={{ fontSize: 13, color: colors.mutedForeground }}>×</Text>
-                    </BareButton>
+                    </IconButton>
                   </If>
                 </DockTab>
               );
@@ -421,15 +422,14 @@ function Workspace(props: {
                 >
                   {REGIONS[dock.placement] ?? dock.placement}
                 </Text>
-                <BareButton
-                  onPress={() => props.area()?.toggleDock(dock.placement)}
+                <Button
+                  variant="ghost"
+                  size="sm"
                   accessibilityLabel={`Hide ${DOCKS[dock.placement] ?? dock.placement}`}
-                  style={{ borderRadius: 6, paddingHorizontal: 8, paddingVertical: 2 }}
+                  onPress={() => props.area()?.toggleDock(dock.placement)}
                 >
-                  <Text style={{ fontSize: 12, fontWeight: "500", color: colors.mutedForeground }}>
-                    Hide
-                  </Text>
-                </BareButton>
+                  Hide
+                </Button>
               </View>
             )}
             renderDragPreview={(tab) => <DockDragPreview title={titleOf(tab.panel)} />}

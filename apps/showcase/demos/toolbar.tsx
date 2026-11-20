@@ -81,7 +81,13 @@ import { toolbarTrack } from "@/packages/ui/lib/tool";
 import { menuItemLook, menuPopup, menuSeparator } from "@/packages/ui/menu";
 import { popoverLook } from "@/packages/ui/popover";
 import { sliderFill, sliderLook } from "@/packages/ui/slider";
-import { toggleGlyph, toggleLabel, toggleLook, type ToggleLookOptions } from "@/packages/ui/toggle";
+import {
+  toggleGlyph,
+  toggleLabel,
+  toggleLook,
+  toggleSizes,
+  type ToggleLookOptions,
+} from "@/packages/ui/toggle";
 import { Toolbar, ToolbarGroup, ToolbarSeparator, toolbarRule } from "@/packages/ui/toolbar";
 
 import { DemoPage } from "../kit";
@@ -93,14 +99,8 @@ const pointer = platform.idiom === "desktop";
 /** A whole number below `n`: a shuffle is random by nature, and nothing about it is reactive. */
 const below = (n: number) => Math.floor(Math.random() * n);
 
-/**
- * A tool's side, its icon's and its label's size and a wide tool's padding: compact with a
- * pointer, roomier on a touch screen. The library keeps its sizes in `toggleLook`'s own table
- * (`packages/ui/toggle.tsx`), which it does not export, so the bar measures them here.
- */
-const TOOL = pointer
-  ? { side: 28, icon: 16, text: 13, pad: 10 }
-  : { side: 38, icon: 18, text: 15, pad: 12 };
+/** A tool is a toggle: the library's size table is the bar's, so the scenes measure nothing themselves. */
+const TOOL = toggleSizes.default;
 
 /** The gap between a toolbar's tools: two columns in a terminal, where each tool is its label. */
 const GAP = terminal ? TERMINAL_GAP : 2;
@@ -1316,7 +1316,6 @@ function Disabled() {
           icon={Check}
           text="Approve"
           label="Approve"
-          disabled={locked()}
           pressed={approved()}
           onChange={(on) => {
             approved.set(on);
@@ -1327,7 +1326,6 @@ function Disabled() {
           icon={MessageCircle}
           label="Show comments"
           short="Comments"
-          disabled={locked()}
           pressed={comments()}
           onChange={(on) => {
             comments.set(on);
@@ -1340,14 +1338,12 @@ function Disabled() {
             icon={Share2}
             label="Share (needs edit access)"
             short="Share"
-            disabled
             onPress={() => {}}
           />
           <Command
             icon={Download}
             label="Download (needs edit access)"
             short="Download"
-            disabled
             onPress={() => {}}
           />
         </ToolbarGroup>

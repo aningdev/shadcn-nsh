@@ -5,6 +5,7 @@ import {
   Button,
   Link,
   Toggle,
+  ToggleGroup,
   Toolbar,
   ToolbarGroup,
   ToolbarSeparator,
@@ -16,6 +17,8 @@ function App() {
   const docs = signal(0);
   const italic = signal(false);
   const locked = signal(false);
+  const share = signal(0);
+  const marks = signal(false);
   const track = computed(() => {
     const value = toolbarTrack().backgroundColor;
     return typeof value === "string" ? value : "gone";
@@ -27,6 +30,8 @@ function App() {
       <Text>{() => `docs ${docs()}`}</Text>
       <Text>{() => `italic ${italic() ? "on" : "off"}`}</Text>
       <Text>{() => `locked ${locked() ? "yes" : "no"}`}</Text>
+      <Text>{() => `share ${share()}`}</Text>
+      <Text>{() => `marks ${marks() ? "on" : "off"}`}</Text>
       <Text style={{ backgroundColor: colors.mutedForeground, color: ink() }}>
         {() => `track ${track()}`}
       </Text>
@@ -62,6 +67,28 @@ function App() {
           Approve
         </Button>
       </Toolbar>
+      {/* One run of this bar is locked on its own: the group hands its lock down to its items. */}
+      <Toolbar accessibilityLabel="Share">
+        <Button
+          accessibilityLabel="Copy link"
+          variant="ghost"
+          onPress={() => share.set(share() + 1)}
+        >
+          Copy link
+        </Button>
+        <ToolbarGroup accessibilityLabel="Delivery" disabled>
+          <Button accessibilityLabel="Send" variant="ghost" onPress={() => share.set(share() + 1)}>
+            Send
+          </Button>
+        </ToolbarGroup>
+      </Toolbar>
+      {/* A group's own `disabled` reaches its toggles: none of them carries one. */}
+      <ToggleGroup disabled>
+        <Toggle pressed={marks()} onChange={({ pressed }) => marks.set(pressed)}>
+          B
+        </Toggle>
+        <Toggle>I</Toggle>
+      </ToggleGroup>
     </View>
   );
 }

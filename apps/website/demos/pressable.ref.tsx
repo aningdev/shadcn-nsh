@@ -95,6 +95,15 @@ function App() {
             />
           </Button>
 
+          {/* A dot that gives: the press sinks it to 80% instead of the theme's press scale. */}
+          <Button
+            accessibilityLabel="Dismiss the notice"
+            onPress={() => press("The dot")}
+            {...pressableLook({ scale: 0.8, style: { ...ui().card, padding: 10 } })}
+          >
+            <Text style={{ color: colors.foreground }}>Dismiss the notice</Text>
+          </Button>
+
           {/* A stretch of text: a string child is the region's name for screen readers too. */}
           <Button onPress={() => press("The paragraph")} {...pressableLook()}>
             <Text style={{ color: colors.foreground }}>
@@ -108,7 +117,8 @@ function App() {
       <DemoCard>
         <Text style={{ fontSize: 12, color: ui().muted }}>
           Nothing here has a fill, a padding or a height of its own: each region is what its content
-          draws, and the hover, the sink and the ring are the whole of its look.
+          draws, and the hover, the sink and the ring are the whole of its look. `scale` is how far
+          a press sinks it: the theme's press scale unless it says otherwise.
         </Text>
       </DemoCard>
 

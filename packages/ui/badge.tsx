@@ -18,6 +18,15 @@ import { type Live, read } from "./lib/utils";
 /** A badge's variants: `default`, the tone's fill; `outline`, an edge in the tone's color. */
 export type BadgeVariant = "default" | "outline";
 
+/** A badge's size: `sm` 18 points tall, `default` 20. */
+export type BadgeSize = "sm" | "default";
+
+/** A badge's height, label size and horizontal padding, by size. */
+export const badgeSizes: Record<BadgeSize, { height: number; font: number; pad: number }> = {
+  sm: { height: 18, font: 11, pad: 6 },
+  default: { height: 20, font: 12, pad: 8 },
+};
+
 /** The props of `Badge`. */
 export type BadgeProps = {
   /** The label: a word, a state, a count. */
@@ -26,6 +35,8 @@ export type BadgeProps = {
   tone?: Live<Tone>;
   /** `default`: the tone's fill; `outline`: an edge in the tone's color under the word. */
   variant?: BadgeVariant;
+  /** `default`: 20 points tall; `sm`: 18, to sit beside a smaller row (a tool card's 32 pt tile). */
+  size?: BadgeSize;
 };
 
 /**
@@ -33,17 +44,19 @@ export type BadgeProps = {
  * shadcn/ui's secondary badge: 20 points tall, flat, no shadow; a neutral
  * badge on the theme's `muted` fill in the text color, a toned one on its
  * tone's tint in the tone's color, and as `variant="outline"` an edge in
- * the tone's color. The children are the label; `tone` is read where it is
- * drawn, so a function follows a value the app changes.
+ * the tone's color. `size` is the bar's height: 20, or 18 at `sm`. The
+ * children are the label; `tone` is read where it is drawn, so a function
+ * follows a value the app changes.
  */
 export function Badge(props: BadgeProps) {
   const tone = () => read(props.tone) ?? "neutral";
   const outline = props.variant === "outline";
+  const size = badgeSizes[props.size ?? "default"];
   return (
     <View
       style={{
-        paddingHorizontal: terminal ? 0 : 8,
-        height: terminal ? TERMINAL_ROW : 20,
+        paddingHorizontal: terminal ? 0 : size.pad,
+        height: terminal ? TERMINAL_ROW : size.height,
         ...rounded(radius.inset),
         justifyContent: "center",
         backgroundColor: outline
@@ -60,7 +73,7 @@ export function Badge(props: BadgeProps) {
     >
       <Text
         style={{
-          fontSize: 12,
+          fontSize: size.font,
           fontWeight: "500",
           color: tone() === "neutral" ? colors.foreground : toneColor(tone()),
           numberOfLines: 1,

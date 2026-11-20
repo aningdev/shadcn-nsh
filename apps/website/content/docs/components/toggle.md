@@ -44,8 +44,17 @@ A size is compact with a pointer (24 / 28 / 34 points) and roomier on a touch sc
 
 ### Disabled
 
+`disabled` on a `Toggle` locks that one. `disabled` on a `ToggleGroup` locks every toggle in it —
+the base bar hands its lock down, so no child needs its own `disabled`. A disabled toggle takes no
+press, leaves the arrow keys' walk and reads as disabled to screen readers; it dims to 50%
+(`disabledStyle`).
+
 ```tsx
 <Toggle disabled>Bold</Toggle>
+<ToggleGroup disabled>
+  <Toggle pressed={bold()}>B</Toggle>
+  <Toggle pressed={italic()}>I</Toggle>
+</ToggleGroup>
 ```
 
 ### Group
@@ -53,7 +62,7 @@ A size is compact with a pointer (24 / 28 / 34 points) and roomier on a touch sc
 A group is one toolbar for screen readers: one stop of the keyboard focus, arrow keys between its toggles. The default wears the inset track.
 
 ```tsx
-<ToggleGroup accessibilityLabel="Style">
+<ToggleGroup>
   <Toggle pressed={bold()} onChange={({ pressed }) => bold.set(pressed)}>
     Bold
   </Toggle>
@@ -63,7 +72,7 @@ A group is one toolbar for screen readers: one stop of the keyboard focus, arrow
 ### Vertical
 
 ```tsx
-<ToggleGroup vertical accessibilityLabel="Style">
+<ToggleGroup vertical>
   <Toggle pressed={bold()}>Bold</Toggle>
 </ToggleGroup>
 ```
@@ -74,7 +83,7 @@ A group is one toolbar for screen readers: one stop of the keyboard focus, arrow
 import { Toolbar } from "@/components/ui/toolbar";
 
 <Toolbar>
-  <ToggleGroup inset={false} accessibilityLabel="Style">
+  <ToggleGroup inset={false}>
     <Toggle pressed={bold()}>B</Toggle>
   </ToggleGroup>
 </Toolbar>;
@@ -113,4 +122,4 @@ Every prop of [`nsh/base` Toggle](https://nsh.dev/elements/toggle) and ToggleGro
 | `Toggle`      | `variant`, `size`, `children`, and every `nsh/base` Toggle prop (`pressed`, `onChange`, `disabled`) | A two-state button; a string child is its name for screen readers        |
 | `ToggleGroup` | `vertical`, `inset`, and every `nsh/base` ToggleGroup prop                                          | The inset track of `toolbarTrack` holding a row (or column) of `Toggle`s |
 
-`toggleLook`, `toggleLabel` and `toggleGlyph` are the look's parts, for a pressable of your own.
+`toggleLook`, `toggleLabel` and `toggleGlyph` are the look's parts, for a pressable of your own. `toggleSizes` is the table a size reads — `side`, `icon`, `text` and `pad`, compact with a pointer and roomier on a touch screen — so a bar's own geometry can match a tool's (`toggleSizes.default.side`, 28 points with a pointer).

@@ -598,9 +598,9 @@ function HitSlop() {
         />
         <Pressable
           hitSlop={30}
+          scale={0.8}
           accessibilityLabel="Tiny dot"
           onPress={() => taps.set(taps() + 1)}
-          activeStyle={{ transform: [{ scale: 0.8 }] }}
           style={{ borderRadius: 6 }}
         >
           <View
@@ -632,11 +632,7 @@ function PointerEvents() {
       right={<StatusBadge label={`${through()}`} tone="up" />}
     >
       <View style={{ height: 88 }}>
-        <Pressable
-          onPress={() => through.set(through() + 1)}
-          activeStyle={{ transform: [{ scale: 0.98 }] }}
-          style={{ flex: 1 }}
-        >
+        <Pressable onPress={() => through.set(through() + 1)} style={{ flex: 1 }}>
           <View
             style={{
               flex: 1,

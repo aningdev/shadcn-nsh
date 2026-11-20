@@ -698,7 +698,6 @@ function Disabled() {
               <Tool
                 icon={t().icon}
                 label={t().label}
-                disabled={locked()}
                 pressed={on().includes(t().value)}
                 onChange={(next) => {
                   on.set(next ? [...on(), t().value] : on().filter((v) => v !== t().value));

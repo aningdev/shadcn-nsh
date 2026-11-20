@@ -164,6 +164,21 @@ function App() {
             Large
           </Button>
         </DemoSection>
+        {/* The icon button's own scale: 20, 24, 28 and 32 points across. */}
+        <DemoSection title="Icon sizes">
+          <IconButton accessibilityLabel="Search, smallest" size="xs" onPress={() => press("xs")}>
+            <Icon icon={Search} {...iconButtonGlyph({ size: "xs" })} />
+          </IconButton>
+          <IconButton accessibilityLabel="Search, small" size="sm" onPress={() => press("sm")}>
+            <Icon icon={Search} {...iconButtonGlyph({ size: "sm" })} />
+          </IconButton>
+          <IconButton accessibilityLabel="Search" size="default" onPress={() => press("search")}>
+            <Icon icon={Search} {...iconButtonGlyph({})} />
+          </IconButton>
+          <IconButton accessibilityLabel="Search, large" size="lg" onPress={() => press("lg")}>
+            <Icon icon={Search} {...iconButtonGlyph({ size: "lg" })} />
+          </IconButton>
+        </DemoSection>
         <DemoSection title="States">
           <Button
             variant="secondary"

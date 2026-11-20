@@ -229,32 +229,49 @@ export function buttonGlyph(variant: Live<ButtonVariant> = "secondary", o?: Butt
 /** An icon-only button's variants: `ghost` bare until the pointer is over it, `secondary` raised, `destructive` a dangerous action's. */
 export type IconButtonVariant = "ghost" | "secondary" | "destructive";
 
+/**
+ * An icon-only button's size: `xs` 20, `sm` 24, `default` 28, `lg` 32 points with a pointer, a
+ * step of 4 (32 / 36 / 40 / 44 on a touch screen). shadcn's `icon-xs` … `icon-lg`, on this
+ * library's compact scale; `lg` is the 32 pt tool square a toolbar draws.
+ */
+export type IconButtonSize = "xs" | "sm" | "default" | "lg";
+
 /** Options of `iconButtonLook` and `iconButtonGlyph`. */
 export interface IconButtonLookOptions {
   /** Chosen (a favorite, a shown sidebar): the accent's tint, the icon in the accent, no hover. */
   selected?: Live<boolean | undefined>;
   /** `ghost` (default): bare until the pointer is over it; `secondary`: raised; `destructive`: its icon in the danger tone, the tone's tint under the pointer. */
   variant?: IconButtonVariant;
-  /** Default `default`: a square as high as a button of that size. */
-  size?: Live<ButtonSize | undefined>;
+  /** Default `default`: 28 points across with a pointer, 40 on a touch screen (`xs` … `lg` a step either side). */
+  size?: Live<IconButtonSize | undefined>;
   /** No hover and no press feedback; dimmed to half. */
   disabled?: Live<boolean | undefined>;
 }
 
-/** The side of an icon-only button: the height of a button of its size (28 with a pointer, 40 on a touch screen, at `default`). */
-const iconButtonSide = (o?: IconButtonLookOptions) =>
-  buttonSizes[read(o?.size) ?? "default"].height;
+/** An icon-only button's side and glyph size, by size: compact with a pointer, roomier on a touch screen. */
+export const iconButtonSizes: Record<IconButtonSize, { side: number; glyph: number }> = pointer
+  ? {
+      xs: { side: 20, glyph: 12 },
+      sm: { side: 24, glyph: 13 },
+      default: { side: 28, glyph: 15 },
+      lg: { side: 32, glyph: 16 },
+    }
+  : {
+      xs: { side: 32, glyph: 16 },
+      sm: { side: 36, glyph: 16 },
+      default: { side: 40, glyph: 18 },
+      lg: { side: 44, glyph: 18 },
+    };
 
-/** The icon of an icon-only button: 15 points on the `default` 28 with a pointer, 18 on a touch screen's 40, a step either side. */
-const iconButtonGlyphSizes: Record<ButtonSize, number> = pointer
-  ? { sm: 13, default: 15, lg: 17 }
-  : { sm: 16, default: 18, lg: 20 };
+/** The side and the glyph size of an icon-only button (28 points across with a pointer, 40 on a touch screen, at `default`). */
+const iconButtonDimensions = (o?: IconButtonLookOptions) =>
+  iconButtonSizes[read(o?.size) ?? "default"];
 
 /**
  * An icon-only button's props (spread them on a `Button` or a `View` with
  * `onPress`): a square of 28 points with a pointer, 40 on a touch screen
- * (a hit slop making 44), `radius.control`; `size` takes the heights of
- * `buttonSizes` (24 / 34 with a pointer). A ghost by default, raised as
+ * (a hit slop making 44), `radius.control`; `size` takes `iconButtonSizes`
+ * (20 / 24 / 32 with a pointer). A ghost by default, raised as
  * `secondary`, the danger tone's under the pointer as `destructive`; `selected`
  * takes the accent's tint. Pressed it sinks to 90% (none with reduced
  * motion). The terminal sizes it to its label.
@@ -265,7 +282,7 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
   return {
     get style(): ViewStyle {
       const selected = !!read(o.selected);
-      const side = iconButtonSide(o);
+      const side = iconButtonDimensions(o).side;
       return {
         width: terminal ? undefined : side,
         height: terminal ? undefined : side,
@@ -299,16 +316,16 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
     },
     disabledStyle: { opacity: 0.5 },
     get hitSlop(): number | undefined {
-      return touchSlop(iconButtonSide(o));
+      return touchSlop(iconButtonDimensions(o).side);
     },
   };
 }
 
-/** The icon of an `iconButtonLook` of the same options: 15 points with a pointer, 18 on a touch screen (`sm` and `lg` a step either side); the accent when `selected`, else the variant's (the danger tone's, the text's raised, muted bare). */
+/** The icon of an `iconButtonLook` of the same options: 15 points with a pointer, 18 on a touch screen (`xs` and `lg` a step either side); the accent when `selected`, else the variant's (the danger tone's, the text's raised, muted bare). */
 export function iconButtonGlyph(o: IconButtonLookOptions = {}) {
   return {
     get size() {
-      return iconButtonGlyphSizes[read(o.size) ?? "default"];
+      return iconButtonDimensions(o).glyph;
     },
     get tint() {
       return read(o.selected)
@@ -534,8 +551,8 @@ export function Button(props: ButtonProps) {
 export type IconButtonProps = Omit<BaseButtonProps, "children" | "accessibilityLabel"> & {
   /** Default `ghost`: bare until the pointer is over it; `secondary`: raised; `destructive`: a dangerous action's. */
   variant?: IconButtonVariant;
-  /** Default `default`: a square as high as a button of that size. */
-  size?: ButtonSize;
+  /** Default `default`: 28 points across with a pointer, 40 on a touch screen (`xs` 20, `sm` 24, `lg` 32 with a pointer). */
+  size?: IconButtonSize;
   /**
    * What screen readers say. Required: an icon alone has no text to name it, so there is no
    * name to derive.

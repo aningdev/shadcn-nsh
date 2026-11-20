@@ -15,6 +15,7 @@ import {
   iconButtonGlyph,
   iconButtonLook,
   type IconButtonLookOptions,
+  type IconButtonSize,
   roundButtonGlyph,
   roundButtonLook,
   splitButtonLook,
@@ -63,12 +64,14 @@ function IconPlain(props: {
   icon: IconNode;
   label: string;
   variant?: "ghost" | "secondary" | "destructive";
+  size?: IconButtonSize;
   selected?: boolean;
   onPress?: () => void;
 }) {
   const options: IconButtonLookOptions = {
     selected: () => props.selected,
     variant: props.variant,
+    size: () => props.size,
   };
   return (
     <Button
@@ -205,6 +208,13 @@ function App() {
           <Plain label="Small" size="sm" onPress={() => press("small")} />
           <Plain label="Regular" size="default" onPress={() => press("regular")} />
           <Plain label="Large" size="lg" onPress={() => press("large")} />
+        </DemoSection>
+        {/* The icon button's own scale: 20, 24, 28 and 32 points across. */}
+        <DemoSection title="Icon sizes">
+          <IconPlain icon={Search} label="Search, smallest" size="xs" onPress={() => press("xs")} />
+          <IconPlain icon={Search} label="Search, small" size="sm" onPress={() => press("sm")} />
+          <IconPlain icon={Search} label="Search" size="default" onPress={() => press("search")} />
+          <IconPlain icon={Search} label="Search, large" size="lg" onPress={() => press("lg")} />
         </DemoSection>
         <DemoSection title="States">
           <Plain

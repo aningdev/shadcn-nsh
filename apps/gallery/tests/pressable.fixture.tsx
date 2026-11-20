@@ -6,6 +6,9 @@ import { Pressable, pressableLook } from "../../../packages/ui";
 // height, and the three pieces of feedback. `—` is absent.
 const look = pressableLook();
 const said = (value: unknown) => (value === undefined || value === null ? "—" : "yes");
+/** How far a press sinks the look: the scale of its `activeStyle`'s transform. */
+const sink = (of: ReturnType<typeof pressableLook>) =>
+  String((of.activeStyle?.transform as { scale?: number }[] | undefined)?.[0]?.scale);
 const report = [
   `fill=${said(look.style.backgroundColor)}`,
   `padding=${said(look.style.padding)}`,
@@ -14,6 +17,8 @@ const report = [
   `sink=${said(look.activeStyle?.transform)}`,
   `ring=${said(look.focusVisibleStyle.outlineWidth)}`,
 ].join(" ");
+// The theme's own press scale unless `scale` says otherwise.
+const scales = `scale ${sink(look)} ${sink(pressableLook({ scale: 0.8 }))}`;
 
 function App() {
   const presses = signal(0);
@@ -23,6 +28,7 @@ function App() {
       <Pressable onPress={() => presses.set(presses() + 1)}>Retry</Pressable>
       <Text>{`pressed ${presses()}`}</Text>
       <Text>{report}</Text>
+      <Text>{scales}</Text>
     </>
   );
 }

@@ -85,6 +85,17 @@ A pressable is not an on / off control, and it has no `checked`: no prop makes o
 />;
 ```
 
+### Press scale
+
+A press sinks a pressable to 98%. `scale` is that much and nothing else: `0.8` for a dot that gives under a thumb, `1` for a row that should not move. Nothing sinks with reduced motion, or in a theme that draws no press (`press.scale` of 1).
+
+```tsx
+<Pressable scale={0.8} hitSlop={30} accessibilityLabel="Tiny dot" onPress={tap} />
+<Pressable scale={1} onPress={open}>
+  A row that stays put
+</Pressable>
+```
+
 ### The look alone
 
 The look is a function, for a `nsh/base` control of your own. Its `radius.control` corners shape the focus ring; a `style` with its own radius moves the ring with it.
@@ -94,12 +105,37 @@ The look is a function, for a `nsh/base` control of your own. Its `radius.contro
 <Button {...pressableLook({ style: { padding: 12 } })}>Open the note</Button>
 ```
 
+## Differences from shadcn/ui
+
+- shadcn's `Button` has no press motion; `scale` is NSH's (`Press`'s own prop), and the sink is
+  98% unless it says otherwise (`pressSink`).
+- A hint beside the name (shadcn's `aria-describedby`) has no prop here: `nsh/base`'s Button takes
+  no `accessibilityHint` (its `ButtonProps` has `accessibility_label`, `role`, `hit_slop`,
+  `disabled`, `selected` — `nsh-base/src/button.rs`), so `Pressable` cannot pass one on. A row
+  that needs a hint is a `View` with `accessible`, `role="button"`, `accessibilityLabel`,
+  `accessibilityHint` and the look spread on it:
+
+  ```tsx
+  <View
+    accessible
+    role="button"
+    accessibilityLabel={item.label}
+    accessibilityHint={item.hint}
+    onPress={open}
+    {...pressableLook()}
+  >
+    <Row>…</Row>
+  </View>
+  ```
+
+  The hint is the base's gap to close, not the look's.
+
 ## API
 
-Every prop of [`nsh/base` Button](https://nsh.dev/elements/button) passes through (`onPress`, `disabled`, `selected`, `role`, `hitSlop`, …). `style`, `hoverStyle`, `activeStyle` and `focusVisibleStyle` go over the look's.
+Every prop of [`nsh/base` Button](https://nsh.dev/elements/button) passes through (`onPress`, `disabled`, `selected`, `role`, `hitSlop`, …). `style`, `hoverStyle`, `activeStyle` and `focusVisibleStyle` go over the look's. `scale` is the sink of a press.
 
 | Part        | Props                                | Description                                                                       |
 | ----------- | ------------------------------------ | --------------------------------------------------------------------------------- |
 | `Pressable` | `children` (`string \| JSX.Element`) | One look — the hover, the sink and the ring — and its appearance is its content's |
 
-There is no axis: a pressable has one look — the hover, the sink and the ring — and its appearance is its content's. `pressableLook` takes `disabled` (no hover or press feedback) and `style` (geometry over the look's), and is what the reference page spreads on `nsh/base`'s Button.
+There is no axis: a pressable has one look — the hover, the sink and the ring — and its appearance is its content's. `pressableLook` takes `disabled` (no hover or press feedback), `scale` (how far a press sinks it) and `style` (geometry over the look's), and is what the reference page spreads on `nsh/base`'s Button.

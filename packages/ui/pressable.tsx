@@ -14,6 +14,8 @@ import { type Live, read } from "./lib/utils";
 export interface PressableLookOptions {
   /** No hover and no press feedback. */
   disabled?: Live<boolean | undefined>;
+  /** How far a press sinks it, over the look's 98% (a big picture at 80% reads as pressed). */
+  scale?: Live<number | undefined>;
   /** More style (a padding, a background, a radius), over the look's. */
   style?: Live<ViewStyle | undefined>;
 }
@@ -26,7 +28,7 @@ const SINK = 0.98;
  * its content draws, on the page's surface; `radius.control` shapes the keyboard's ring to the
  * region's corners (a `style` with its own radius moves the ring with it). Under the pointer it
  * takes the lightest hover fill the theme has (a whisper of the text color); pressed it sinks to
- * 98% (none with reduced motion); with the keyboard on it, `focusRing()`.
+ * `scale` (98% by default, none with reduced motion); with the keyboard on it, `focusRing()`.
  */
 export function pressableLook(o?: PressableLookOptions) {
   return {
@@ -41,7 +43,7 @@ export function pressableLook(o?: PressableLookOptions) {
       return read(o?.disabled) ? undefined : hovered();
     },
     get activeStyle(): ViewStyle | undefined {
-      return read(o?.disabled) ? undefined : pressSink(SINK).activeStyle;
+      return read(o?.disabled) ? undefined : pressSink(() => read(o?.scale) ?? SINK).activeStyle;
     },
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
@@ -60,18 +62,21 @@ export function pressableLook(o?: PressableLookOptions) {
 export type PressableProps = Omit<BaseButtonProps, "children"> & {
   /** A string is the label; anything else is drawn as given. */
   children?: string | JSX.Element;
+  /** How far a press sinks it: 98% by default, and none at 1. */
+  scale?: number;
 };
 
 /** A region that takes presses and shows only that it did. */
 export function Pressable(props: PressableProps) {
   const [, rest] = split(props, [
     "children",
+    "scale",
     "style",
     "hoverStyle",
     "activeStyle",
     "focusVisibleStyle",
   ]);
-  const look = pressableLook({ disabled: () => props.disabled });
+  const look = pressableLook({ disabled: () => props.disabled, scale: () => props.scale });
   return (
     <BaseButton
       {...rest}

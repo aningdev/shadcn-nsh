@@ -54,7 +54,7 @@ export interface ToggleDimensions {
 const pointer = platform.desktop;
 
 /** A toggle's sides, icon and label sizes and paddings, by size: compact with a pointer, roomier on a touch screen. */
-const toggleSizes: Record<ToggleSize, ToggleDimensions> = pointer
+export const toggleSizes: Record<ToggleSize, ToggleDimensions> = pointer
   ? {
       sm: { side: 24, icon: 14, text: 12, pad: 8 },
       default: { side: 28, icon: 16, text: 13, pad: 10 },

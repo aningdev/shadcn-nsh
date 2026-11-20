@@ -48,9 +48,24 @@
   `scrollToMessage(key, { align, animated })` — a turn's key, from the viewport's `keyExtractor` —
   `scrollToStart` and `scrollToEnd` (with `atStart` / `atEnd`); `MessageScrollerProvider` shares
   them with controls outside the frame; and `MessageScrollerViewport` forwards its `ListRef` (#31).
+- **`IconButton` takes four sizes (#107).** `xs` is 20 points across with a pointer (32 on a touch
+  screen), `sm` 24 (36), `default` 28 (40) and `lg` 32 (44) — shadcn's `icon-xs` … `icon-lg` on the
+  compact scale, with a hit slop that keeps a touch target 44 points and an icon that grows with
+  the square. `lg` is upstream's 32 pt tool square, for a rich text toolbar; `xs` a tab's close ×
+  beside a document's name. `iconButtonSizes` is the table (`side`, `glyph`).
+- **`Badge` takes a `size` (#120).** `sm` is 18 points tall (an 11 pt label, 6 of padding), for a
+  chip beside a smaller row — a chat tool card's 32 pt tile; `default` stays 20. `badgeSizes` is
+  the table.
+- **`Pressable` takes `scale` (#122).** How far a press sinks it: 98% unless it says otherwise
+  (`0.8` a dot that gives under a thumb, `1` a row that stays put), and `pressableLook({ scale })`
+  takes it too.
+- **`toggleSizes` is exported (#99).** The table a `Toggle`'s `size` reads — `side`, `icon`, `text`
+  and `pad` — so a bar drawn by the app matches a tool's geometry instead of measuring its own.
 
 ### Changed
 
+- **`IconButton`'s `lg` is 32 points with a pointer (44 on a touch screen), not 34 (#107).** It is
+  the tool square upstream's rich text toolbar draws; `sm` and `default` are unchanged.
 - **Breaking:** **a combobox without `multiple` holds one value (#87).** As shadcn's combobox,
   leaving `multiple` out makes `value` / `defaultValue` the chosen item or `null`
   (`string | null`), and `onChange` receives `{ value: string | null }`; `multiple` keeps

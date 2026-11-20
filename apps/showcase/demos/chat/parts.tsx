@@ -253,7 +253,11 @@ export function ToolCard(props: { tool: Tool }) {
         </View>
         <If
           when={t().state === "running" || t().state === "pending"}
-          else={<Badge tone={stateTone[t().state]}>{stateLabel[t().state]}</Badge>}
+          else={
+            <Badge size="sm" tone={stateTone[t().state]}>
+              {stateLabel[t().state]}
+            </Badge>
+          }
         >
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
             <Spinner tint={t().state === "pending" ? colors.faint : colors.info} />

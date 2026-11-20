@@ -73,6 +73,14 @@ function App() {
       </Split>
 
       <DemoCard>
+        <DemoSection title="Size">
+          <View style={{ flex: 1, flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <Badge size="sm" tone="info">
+              Running
+            </Badge>
+            <Badge tone="info">Running</Badge>
+          </View>
+        </DemoSection>
         <DemoSection title="Tone">
           <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", gap: 8 }}>
             {TONES.map((value) => (

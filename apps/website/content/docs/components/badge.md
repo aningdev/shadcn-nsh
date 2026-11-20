@@ -48,17 +48,30 @@ import { Badge } from "@/components/ui/badge";
 </Badge>
 ```
 
+### Size
+
+`default` is 20 points tall; `sm` is 18, for a chip beside a smaller row — a tool card's 32 pt tile, a list's second line. The label's size and the padding follow the height.
+
+```tsx
+<Badge size="sm" tone="info">
+  Running
+</Badge>
+<Badge tone="info">Running</Badge>
+```
+
 ## Differences from shadcn/ui
 
 - shadcn's `ghost`, `link` and `secondary` variants have no look here: `BadgeVariant` is
   `"default" | "outline"`.
+- shadcn's badge has one height. `size` (`"sm"` and `"default"`) is this library's: the gallery's
+  chat puts a state chip beside a 32 pt tool tile, and 20 points there is a row too tall.
 
 ## API
 
 Gallery atom: no `nsh/base` counterpart. The children are the label, and the axes take the vocabulary of [`api-unify.md`](https://github.com/aningdev/shadcn-nsh/blob/main/docs/specs/api-unify.md).
 
-| Part    | Props                                                                                                                                  | Description                                                  |
-| ------- | -------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `Badge` | `children` (a string, required); `tone`: `Tone \| (() => Tone)` (default `"neutral"`); `variant`: `BadgeVariant` (default `"default"`) | A small capsule label in a neutral, toned, or outline style. |
+| Part    | Props                                                                                                                                                                             | Description                                                  |
+| ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `Badge` | `children` (a string, required); `tone`: `Tone \| (() => Tone)` (default `"neutral"`); `variant`: `BadgeVariant` (default `"default"`); `size`: `BadgeSize` (default `"default"`) | A small capsule label in a neutral, toned, or outline style. |
 
-`BadgeVariant` is `"default" | "outline"`: the two the capsule's look has.
+`BadgeVariant` is `"default" | "outline"`: the two the capsule's look has. `BadgeSize` is `"sm" | "default"`, and `badgeSizes` is the table: `height`, `font` and `pad`, by size.

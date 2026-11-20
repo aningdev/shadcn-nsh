@@ -6,6 +6,7 @@ import type { ViewStyle } from "nsh";
 import { platform, reduceMotion } from "nsh";
 
 import { TOUCH_TARGET } from "./switch-geometry";
+import { type Live, read } from "./utils";
 
 export { TOUCH_TARGET };
 
@@ -32,12 +33,13 @@ export function pressTransition(also?: string): ViewStyle {
  * A press that sinks a control to `scale` (default: the theme's `press.scale`,
  * 97%; none with reduced motion). A theme that draws no press (`press.scale` of
  * 1, as shadcn's flat surfaces do) sinks nothing, whichever scale a control
- * asks for. Spread `activeStyle` into the control's `activeStyle` (after its
+ * asks for. `scale` may be a function (a signal), read where the press is
+ * drawn. Spread `activeStyle` into the control's `activeStyle` (after its
  * own pressed shade) and `transition` into its `style`
  * (`pressTransition(also)`).
  */
 export function pressSink(
-  scale?: number,
+  scale?: Live<number | undefined>,
   also?: string,
 ): { readonly activeStyle: ViewStyle; transition: ViewStyle } {
   return {
@@ -45,7 +47,7 @@ export function pressSink(
       if (reduceMotion()) return {};
       const sink = press.scale;
       if (sink >= 1) return {};
-      return { transform: [{ scale: scale ?? sink }] };
+      return { transform: [{ scale: read(scale) ?? sink }] };
     },
     transition: pressTransition(also),
   };

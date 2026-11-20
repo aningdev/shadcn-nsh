@@ -93,7 +93,9 @@ A string child is also the button's name for screen readers — they read the te
 
 ### Icon button
 
-A square icon-only button, 28 points across with a pointer (40 on a touch screen); `size` takes the button's three sizes. `selected` (a base prop) shows it as chosen.
+A square icon-only button; `size` takes four: `xs` 20 points across with a pointer (32 on a touch screen), `sm` 24 (36), `default` 28 (40) and `lg` 32 (44), where a hit slop makes the target 44 points and the icon grows with the square. `lg` is upstream's 32 pt tool square, for a rich text toolbar; `xs` is shadcn's `icon-xs`, a tab's close × beside a document's name. `selected` (a base prop) shows it as chosen.
+
+`iconButtonSizes` is the table, for geometry that has to match a square.
 
 ```tsx
 <IconButton accessibilityLabel="Star" selected={starred()} onPress={toggle}>
@@ -105,6 +107,14 @@ A square icon-only button, 28 points across with a pointer (40 on a touch screen
   onPress={remove}
 >
   <Icon icon={Trash} {...iconButtonGlyph({ variant: "destructive" })} />
+</IconButton>
+```
+
+A tool in a rich text toolbar, at upstream's 32 pt:
+
+```tsx
+<IconButton accessibilityLabel="Bold" size="lg" onPress={bold}>
+  <Icon icon={Bold} {...iconButtonGlyph({ size: "lg" })} />
 </IconButton>
 ```
 
@@ -146,6 +156,21 @@ The look is a function, for a pressable of your own.
 
 - shadcn's `outline` and `link` are not looks of this library yet, so they are not values: a button
   is filled, raised, bare or destructive.
+- An icon button's sizes are `xs`, `sm`, `default` and `lg`, which are shadcn's
+  `icon-xs` … `icon-lg` on this library's compact scale (20 / 24 / 28 / 32 points with a pointer),
+  where a `Button`'s are `sm`, `default` and `lg`.
+- shadcn draws a tab's close × or a dock header's Hide as `<Button variant="ghost"
+  size="icon-xs">`: a bare square with no fill and no border until hover. Here a ghost keeps the
+  scale's metrics (28 points and 12 of padding at `default`, 32 and 16 at `lg`), so the bare
+  square is `IconButton size="xs"`, and the bare text button — a Dock header's Hide — is
+  `size="sm"`, the smallest height. There is no separate "bare" variant to add.
+- A ghost button whose label lines up with a card's edge, its padding hanging outside it
+  (upstream's `ghostOutdent`), is the app's one `View` here: the look's padding is
+  `buttonSizes[size].pad`, so
+  `<View style={{ paddingLeft: buttonSizes.default.pad }}><Button variant="ghost">Forget
+  visited</Button></View>` moves the label to the edge and keeps the hover fill the width of the
+  button. The library does not ship the helper: it is geometry around a button, and a class
+  cannot override the look's padding (the inline style wins), so it belongs in the app.
 
 ## API
 
@@ -175,11 +200,12 @@ Every prop of [`nsh/base` Button](https://nsh.dev/elements/button) passes throug
 | Prop                 | Type                                       | Default     |
 | -------------------- | ------------------------------------------ | ----------- |
 | `variant`            | `"ghost" \| "secondary" \| "destructive"`  | `"ghost"`   |
-| `size`               | `"sm" \| "default" \| "lg"`                | `"default"` |
+| `size`               | `"xs" \| "sm" \| "default" \| "lg"`        | `"default"` |
 | `accessibilityLabel` | `string` (required: an icon names nothing) |
 | `children`           | `JSX.Element`                              |             |
 
-`selected` (a base prop) shows it as chosen.
+`selected` (a base prop) shows it as chosen. `iconButtonSizes` is the table: `side`, the square's
+side in points, and `glyph`, the icon's size.
 
 ### RoundButton
 

@@ -33,6 +33,25 @@ test("a disabled Toolbar ignores presses", async () => {
   expect(app.shows("docs 1")).toBe(false);
 });
 
+test("a disabled ToolbarGroup locks its items, and the rest of the bar still presses", async () => {
+  const app = await open("./toolbar.fixture.tsx");
+  expect(app.enabled("label:Send")).toBe(false);
+  await app.press("label:Copy link");
+  await app.waitFor("share 1");
+  await app.press("label:Send").catch(() => {});
+  await app.wait(100);
+  expect(app.shows("share 2")).toBe(false);
+});
+
+test("a disabled ToggleGroup locks every toggle in it", async () => {
+  const app = await open("./toolbar.fixture.tsx");
+  expect(app.enabled("text:B")).toBe(false);
+  expect(app.enabled("text:I")).toBe(false);
+  await app.press("text:B").catch(() => {});
+  await app.wait(100);
+  expect(app.shows("marks on")).toBe(false);
+});
+
 /** Channel 0–255 of a `#rrggbb` / `#rrggbbaa` color. */
 function red(hex: string) {
   return parseInt(hex.slice(1, 3), 16);
@@ -66,4 +85,5 @@ test("Toolbar is one labelled toolbar and the group is named", async () => {
   const app = await open("./toolbar.fixture.tsx");
   expect(app.count("role:toolbar[Formatting]")).toBe(1);
   expect(app.count("role:group[Marks]")).toBe(1);
+  expect(app.count("role:group[Delivery]")).toBe(1);
 });
