@@ -1,7 +1,7 @@
 // The Data group: what shows the app's material — people, progress, tables, charts, diffs.
 import { Activity, ChartLine, CircleUser, FileDiff, Table } from "lucide";
 
-import { notBuilt, type DemoEntry } from "./entry";
+import { lazy, notBuilt, type DemoEntry } from "./entry";
 
 /** The Data demos, in the index's order. */
 export const data: DemoEntry[] = [
@@ -10,20 +10,13 @@ export const data: DemoEntry[] = [
     detail:
       "A team with presence dots, a stacked group and its overflow, a comment thread, a profile, pictures that fail or load slowly",
     icon: CircleUser,
-    screen: notBuilt({
-      name: "Avatar",
-      detail:
-        "A team with presence dots, a stacked group and its overflow, a comment thread, a profile, pictures that fail or load slowly",
-    }),
+    screen: lazy(() => import("../demos/avatar").then((m) => m.AvatarDemo)),
   },
   {
     name: "Progress",
     detail: "A transfer the app drives, and one of unknown size",
     icon: Activity,
-    screen: notBuilt({
-      name: "Progress",
-      detail: "A transfer the app drives, and one of unknown size",
-    }),
+    screen: lazy(() => import("../demos/progress").then((m) => m.ProgressDemo)),
   },
   {
     name: "DataTable",
