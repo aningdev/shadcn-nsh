@@ -1,7 +1,7 @@
 // The Data group: what shows the app's material — people, progress, tables, charts, diffs.
 import { Activity, ChartLine, CircleUser, FileDiff, Table } from "lucide";
 
-import { lazy, notBuilt, type DemoEntry } from "./entry";
+import { lazy, type DemoEntry } from "./entry";
 
 /** The Data demos, in the index's order. */
 export const data: DemoEntry[] = [
@@ -23,30 +23,19 @@ export const data: DemoEntry[] = [
     detail:
       "A million stocks of sixty columns, their quotes ticking every 33 ms, fixed columns, sorting, selection, resized and moved columns",
     icon: Table,
-    screen: notBuilt({
-      name: "DataTable",
-      detail:
-        "A million stocks of sixty columns, their quotes ticking every 33 ms, fixed columns, sorting, selection, resized and moved columns",
-    }),
+    screen: lazy(() => import("../demos/data-table").then((m) => m.DataTableDemo)),
   },
   {
     name: "Plot",
     detail:
       "A live price, an order book's depth, a drawdown, capacity rings, a donut, bars, a profit bridge, a funnel, candles, risk-return bubbles, price targets, dual-axis charts and treemaps",
     icon: ChartLine,
-    screen: notBuilt({
-      name: "Plot",
-      detail:
-        "A live price, an order book's depth, a drawdown, capacity rings, a donut, bars, a profit bridge, a funnel, candles, risk-return bubbles, price targets, dual-axis charts and treemaps",
-    }),
+    screen: lazy(() => import("../demos/plot").then((m) => m.PlotDemo)),
   },
   {
     name: "DiffView",
     detail: "Two texts side by side or unified, changes navigated, reverted and kept, a patch",
     icon: FileDiff,
-    screen: notBuilt({
-      name: "DiffView",
-      detail: "Two texts side by side or unified, changes navigated, reverted and kept, a patch",
-    }),
+    screen: lazy(() => import("../demos/diff-view").then((m) => m.DiffViewDemo)),
   },
 ];
