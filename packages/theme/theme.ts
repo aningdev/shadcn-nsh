@@ -3,6 +3,7 @@
 import type { AnimatedValue, Theme, Tokens, ViewStyle } from "nsh";
 import {
   colorScheme,
+  computed,
   createAnimatedValue,
   Easing,
   effect,
@@ -73,11 +74,116 @@ export type FinishRole =
   | "menu"
   | "groove";
 
-/** What a theme's `finishes.json` holds: its finishes, one set per appearance. */
-export interface Finishes {
+/** What a theme's `finishes.json` holds: its style, then its finishes, one set per appearance. */
+export interface Finishes extends Style {
   press: Press;
   dark: Record<FinishRole, Finish>;
   light: Record<FinishRole, Finish>;
+}
+
+/** A value for each tier: a pointer's (a desktop) and a touch screen's. */
+export interface Tiered<T> {
+  pointer: T;
+  touch: T;
+}
+
+/** One type role: its size and line height per tier, its weight (`"400"`), its tracking in points. */
+export interface TypeRole {
+  size: Tiered<number>;
+  line: Tiered<number>;
+  weight: string;
+  tracking: number;
+}
+
+/** The sizes of a list of controls in one tier: see `controlSize`. */
+export interface ControlSizes {
+  row: number;
+  padding: number;
+  gap: number;
+  control: number;
+  corner: number;
+  check: number;
+  dot: number;
+  tabs: number;
+  line: number;
+  clear: number;
+  switch: string;
+}
+
+/** A page's density in one tier: see `density`. */
+export interface DensitySizes {
+  row: number;
+  pad: number;
+  gap: number;
+  surface: number;
+}
+
+/** Three steps of one size, small to large. */
+export interface Steps {
+  sm: number;
+  md: number;
+  lg: number;
+}
+
+/** A spring of `motion`: a unit mass's stiffness and damping. */
+export interface Spring {
+  stiffness: number;
+  damping: number;
+}
+
+/**
+ * The style of a theme: what `finishes.json` states beside its finishes, the same keys in every
+ * theme (`check:theme`). A string that names one of a list (a weight, a curve, an easing, an
+ * indicator) is typed as a string here, since a JSON import is; `check:theme` holds the list
+ * (`scripts/theme/style.ts`). `docs/specs/native-themes.md` §3.2 says what each key is.
+ */
+export interface Style {
+  type: {
+    /** `null` is the system font. */
+    family: string | null;
+    caption: TypeRole;
+    detail: TypeRole;
+    body: TypeRole;
+    label: TypeRole;
+    title: TypeRole;
+    headline: TypeRole;
+    display: TypeRole;
+  };
+  shape: {
+    control: number;
+    field: number;
+    chip: number;
+    card: number;
+    overlay: number;
+    dialog: number;
+    sheet: number;
+    inset: number;
+    curve: string;
+    corners: { field: string };
+  };
+  size: {
+    hit: Tiered<number>;
+    density: Tiered<DensitySizes>;
+    control: Tiered<ControlSizes>;
+    height: Tiered<Steps>;
+  };
+  stroke: { hairline: number; control: number; focus: number; indicator: number };
+  focus: { style: string; width: number; offset: number };
+  state: {
+    overlay: { hover: number; focus: number; pressed: number; dragged: number };
+    ripple: boolean;
+    pressedOpacity: number;
+    disabled: { content: number; container: number };
+  };
+  motion: {
+    press: Spring;
+    settle: Spring;
+    control: Spring;
+    move: Spring;
+    enter: { duration: number; easing: string };
+  };
+  icon: { size: Tiered<Steps> };
+  indicator: { tabs: string; nav: string; field: string };
 }
 
 /**
@@ -113,6 +219,30 @@ const selected = signal<AppTheme | null>(null);
 
 /** The finishes in use: the selected theme's, else the build-time ones. Reactive: reading it subscribes. */
 const finishesOf = (): Finishes => selected()?.finishes ?? builtIn;
+
+/**
+ * The style in use (type, shape, size, motion…): the selected theme's, else the build-time one's.
+ * Reactive: reading it in JSX, a `draw` or an effect follows `selectTheme`.
+ */
+export const style = (): Style => finishesOf();
+
+/**
+ * An object whose properties are read from the style in use: one getter per key, so `density.row`
+ * follows `selectTheme` as a plain value would not, and the object still spreads. Each key is a
+ * `computed` made here, at import (one made inside a component would be disposed with it), so what
+ * reads a key re-runs only when its value changes, not whenever a theme is selected.
+ */
+export function reactive<T extends object>(keys: readonly (keyof T)[], read: () => T): T {
+  const out = {} as T;
+  for (const key of keys) {
+    const value = computed(() => read()[key]);
+    Object.defineProperty(out, key, { enumerable: true, get: () => value() });
+  }
+  return out;
+}
+
+/** The tier a pointer's screen (a desktop) or a touch screen reads: `platform.desktop`, fixed for the run. */
+export const tier: "pointer" | "touch" = platform.desktop ? "pointer" : "touch";
 
 /** The one relative color a finish writes: a token's color at another alpha. */
 const relative = /oklch\(from var\(--([a-z0-9-]+)\) l c h \/ ([\d.]+)\)/g;
@@ -468,7 +598,11 @@ export const radius = {
 
 /** Every corner that reads a theme radius is continuous: the curve macOS
  * draws, not a circular arc. */
-export const cornerCurve: ViewStyle = { borderCurve: "continuous" };
+export const cornerCurve: ViewStyle = {
+  get borderCurve() {
+    return style().shape.curve === "circular" ? "circular" : "continuous";
+  },
+};
 
 /** A corner on one of the theme's radii, with the curve they all share. */
 export function rounded(radius: number): ViewStyle {
@@ -487,6 +621,19 @@ export const header = {
 };
 
 /**
+ * A spring that reads its stiffness and damping from the style in use whenever a value springs to
+ * its target, so a control made before `selectTheme` still moves as the new theme says.
+ */
+const spring = (read: () => Spring): Spring => reactive<Spring>(["stiffness", "damping"], read);
+
+/** The easings a theme names (`motion.enter.easing`): the curve is code, the name is data. */
+const easings = {
+  "out-cubic": Easing.out(Easing.cubic),
+  "in-cubic": Easing.in(Easing.cubic),
+  "in-out-cubic": Easing.inOut(Easing.cubic),
+};
+
+/**
  * The motion every control shares: quick, slightly springy. `control` and
  * `move` are gpui-kit's `spring_control` (a 180 ms response, no overshoot:
  * a mark or a fill coming and going) and `spring_move` (280 ms, a damping
@@ -494,12 +641,15 @@ export const header = {
  * stiffness (2π / response)² and damping 2 · ratio · 2π / response.
  */
 export const motion = {
-  press: { stiffness: 520, damping: 34 },
-  settle: { stiffness: 320, damping: 30 },
-  control: { stiffness: 1218, damping: 70 },
-  move: { stiffness: 504, damping: 38 },
-  enter: { duration: 420, easing: Easing.out(Easing.cubic) },
-} as const;
+  press: spring(() => style().motion.press),
+  settle: spring(() => style().motion.settle),
+  control: spring(() => style().motion.control),
+  move: spring(() => style().motion.move),
+  get enter() {
+    const { duration, easing } = style().motion.enter;
+    return { duration, easing: easings[easing as keyof typeof easings] };
+  },
+};
 
 /**
  * An animated value that springs to `target` each time it changes (a
@@ -533,22 +683,23 @@ export function follow(
  */
 export const hovered = (): ViewStyle => ({ backgroundColor: token("hover") });
 
-/** How wide the halo round a focused view is: shadcn/ui's `ring-3`. */
-const RING_WIDTH = 3;
-
 /**
  * The keyboard focus (`focusVisibleStyle`: not after a click or a tap): the
- * edge turns the theme's `ring` and a 3-point halo of `ring-halo` lies
- * around the view (a faint wash of the ring; shadcn's `ring/50`), `offset`
- * points out from the edge.
+ * edge turns the theme's `ring` and a halo of `ring-halo` (`focus.width` points, 3 by
+ * default: shadcn/ui's `ring-3`) lies around the view (a faint wash of the ring; shadcn's
+ * `ring/50`), `offset` points out from the edge (`focus.offset` when not given). A theme whose
+ * `focus.style` is `outline` draws the ring itself, not its halo, as the outline.
  */
-export const focusRing = (offset = 0): ViewStyle => ({
-  borderColor: token("ring"),
-  outlineStyle: "solid",
-  outlineWidth: RING_WIDTH,
-  outlineColor: token("ring-halo"),
-  outlineOffset: offset,
-});
+export const focusRing = (offset?: number): ViewStyle => {
+  const { style: look, width, offset: base } = style().focus;
+  return {
+    borderColor: token("ring"),
+    outlineStyle: "solid",
+    outlineWidth: width,
+    outlineColor: token(look === "outline" ? "ring" : "ring-halo"),
+    outlineOffset: offset ?? base,
+  };
+};
 // @port end
 
 /*

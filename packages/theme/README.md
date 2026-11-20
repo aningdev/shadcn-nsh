@@ -4,14 +4,16 @@
 
 Brand look for the copy-into-app layer: this library's own, started from the upstream gallery UI theme. **Every color is `oklch()`** — tokens, the stops of a gradient, the colors of a shadow — with alpha as `oklch(… / a)`. NSH reads `oklch()` wherever a color is a string (`references/nsh/website/docs/styling.md#colors`), so one file holds one form of color and a value reads as the lightness and the hue it is.
 
-| File             | Role                                                                                                                                             |
-| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `theme.json`     | Colors, radii, cssVars                                                                                                                           |
-| `finishes.json`  | Surface finishes: gradients, shadows, and how far a press sinks                                                                                  |
-| `theme.ts`       | Readers: `colors`, `finish`, `mono`, `focusRing`, `selectTheme`, `fillStyle`, …                                                                  |
-| `themes/<name>/` | Other themes, one `AppTheme` each: `shadcn/` (shadcn's `neutral`), `solid-glass/` (Solid Glass), and `default/` (this one, to install beside it) |
+| File             | Role                                                                                                                                                                                      |
+| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `theme.json`     | Colors, radii, cssVars                                                                                                                                                                    |
+| `finishes.json`  | Style (type, shape, size, stroke, focus, state, motion, icon, indicator: the same in both appearances) and the finishes of each appearance: gradients, shadows, and how far a press sinks |
+| `theme.ts`       | Readers: `colors`, `finish`, `mono`, `focusRing`, `selectTheme`, `fillStyle`, …                                                                                                           |
+| `themes/<name>/` | Other themes, one `AppTheme` each: `shadcn/` (shadcn's `neutral`), `solid-glass/` (Solid Glass), and `default/` (this one, to install beside it)                                          |
 
 ## Spec
+
+Besides its finishes, `finishes.json` states a theme's **style**: nine groups (`type`, `shape`, `size`, `stroke`, `focus`, `state`, `motion`, `icon`, `indicator`) every theme writes with the same keys. `density`, `controlSize`, `motion`, `cornerCurve` and `focusRing` read them from the theme in use, so `selectTheme` redraws what reads them; `style()` gives the whole set. `theme.json` keeps `radius`, `radius-card` and `radius-control`, which `check:theme` holds equal to `shape.inset`, `shape.card` and `shape.control`.
 
 A theme is three things: a **token** (a colour, a number or a font family under a name, as `theme.json` states it), a **finish** (a surface a component draws itself in — background, gradient, edge, shadow, blur — as `finishes.json` states it), and an **alias** (a token written as another, `var(--x)`). Which tokens there are, what each finish draws and who reads it, is [`docs/specs/theme-roles.md`](../../docs/specs/theme-roles.md); `bun scripts/theme-lint.ts` holds these two files to it.
 

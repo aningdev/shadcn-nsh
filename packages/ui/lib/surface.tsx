@@ -5,11 +5,15 @@ import {
   finish,
   focusRing,
   radius,
+  reactive,
+  style,
+  tier,
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_GAP,
   TERMINAL_ROW,
   rounded,
+  type ControlSizes,
 } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
 import { computed, platform, Text, token, View, windowSize } from "nsh";
@@ -22,77 +26,50 @@ const pointer = platform.desktop;
 /**
  * The page's density: compact with a pointer (desktops), roomier on a touch
  * screen. Section titles, surfaces, rows and their padding take these, so a
- * demo's sections read the same on every page.
+ * demo's sections read the same on every page. The sizes of the text are the
+ * theme's type roles (`title`, `detail`, `body`), the rest its `size.density`; read
+ * from the theme in use, so a theme switch redraws what reads them.
  */
-export const density = pointer
-  ? { title: 13, note: 12, body: 13, row: 36, pad: 14, gap: 12, surface: 10 }
-  : { title: 13, note: 13, body: 15, row: 48, pad: 16, gap: 12, surface: 16 };
+export const density = reactive<{
+  title: number;
+  note: number;
+  body: number;
+  row: number;
+  pad: number;
+  gap: number;
+  surface: number;
+}>(["title", "note", "body", "row", "pad", "gap", "surface"], () => {
+  const { type, size } = style();
+  return {
+    title: type.title.size[tier],
+    note: type.detail.size[tier],
+    body: type.body.size[tier],
+    ...size.density[tier],
+  };
+});
 
 /** One tier's sizes of a list of controls (see `controlSize` for what each is). */
-interface ControlSizes {
-  row: number;
-  padding: number;
-  gap: number;
+interface ControlSizeSet extends ControlSizes {
   label: number;
   detail: number;
-  control: number;
-  corner: number;
-  check: number;
-  dot: number;
-  tabs: number;
-  line: number;
-  clear: number;
-  switch: "small" | "regular";
 }
 
-/** Each tier's sizes, by the name `controlSize` picks: see it for what each is. */
-const sizesByTier = {
-  terminal: {
-    row: TERMINAL_ROW,
-    padding: 0,
-    gap: TERMINAL_COLUMN,
-    label: 14,
-    detail: 12,
-    control: 3 * TERMINAL_COLUMN,
-    corner: 0,
-    check: 12,
-    dot: 6,
-    tabs: TERMINAL_ROW,
-    line: TERMINAL_ROW,
-    clear: 2 * TERMINAL_COLUMN,
-    switch: "small",
-  },
-  pointer: {
-    row: 40,
-    padding: 6,
-    gap: 10,
-    label: 14,
-    detail: 12,
-    control: 16,
-    corner: 5,
-    check: 12,
-    dot: 6,
-    tabs: 30,
-    line: 32,
-    clear: 16,
-    switch: "small",
-  },
-  touch: {
-    row: 44,
-    padding: 8,
-    gap: 12,
-    label: 15,
-    detail: 13,
-    control: 22,
-    corner: 7,
-    check: 16,
-    dot: 8,
-    tabs: 40,
-    line: 44,
-    clear: 20,
-    switch: "regular",
-  },
-} satisfies Record<string, ControlSizes>;
+/** The terminal's sizes, which stay in code: they are the character grid's, not a theme's. */
+const terminalSizes: ControlSizeSet = {
+  row: TERMINAL_ROW,
+  padding: 0,
+  gap: TERMINAL_COLUMN,
+  label: 14,
+  detail: 12,
+  control: 3 * TERMINAL_COLUMN,
+  corner: 0,
+  check: 12,
+  dot: 6,
+  tabs: TERMINAL_ROW,
+  line: TERMINAL_ROW,
+  clear: 2 * TERMINAL_COLUMN,
+  switch: "small",
+};
 
 /**
  * The sizes of a list of controls (a settings list, a filter, a plan
@@ -104,9 +81,36 @@ const sizesByTier = {
  * a tab strip's, `control` a checkbox's or radio's side, `check` its mark's
  * and an icon's size, `dot` a radio's dot, `corner` a box's corners, `clear`
  * a clear button's side, `switch` the switch size beside a row's label.
+ * `label` and `detail` are the theme's type roles of those names. Read from the
+ * theme in use (the terminal's are the grid's), so a theme switch redraws
+ * what reads them.
  */
-export const controlSize: ControlSizes =
-  sizesByTier[terminal ? "terminal" : pointer ? "pointer" : "touch"];
+export const controlSize = reactive<ControlSizeSet>(
+  [
+    "row",
+    "padding",
+    "gap",
+    "label",
+    "detail",
+    "control",
+    "corner",
+    "check",
+    "dot",
+    "tabs",
+    "line",
+    "clear",
+    "switch",
+  ],
+  () => {
+    if (terminal) return terminalSizes;
+    const { type, size } = style();
+    return {
+      ...size.control[tier],
+      label: type.label.size[tier],
+      detail: type.detail.size[tier],
+    };
+  },
+);
 
 /** Options of `sectionSurface`. */
 export interface SectionSurfaceOptions {

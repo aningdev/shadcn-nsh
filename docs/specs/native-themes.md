@@ -65,18 +65,20 @@
 
 ## 2 现状：哪些已是数据，哪些写死在代码里
 
-| 维度     | 现在在哪                                                                                                                     | 能否随主题切换             |
-| -------- | ---------------------------------------------------------------------------------------------------------------------------- | -------------------------- |
-| 颜色     | `theme.json`：shadcn 的 31 个槽位加本库扩展                                                                                  | ✅                         |
-| 质感     | `finishes.json`：20 个 finish，字段有 bg / image / border / shadow / backdropFilter，还有 `press.scale`                      | ✅                         |
-| 圆角     | `theme.json` 的 `radius`、`radius-card`、`radius-control`，共 3 档                                                           | ✅ 但只有 3 档，没有胶囊形 |
-| 曲率     | `theme.ts` 的 `cornerCurve`，固定为 continuous                                                                               | ❌                         |
-| 字体     | 只有 `font-mono`；字号、字重散在 `density`、`controlSize` 和各组件里                                                         | ❌                         |
-| 页面密度 | `packages/ui/lib/surface.tsx` 的 `density`，按 pointer / touch 两档，模块加载时就定了                                        | ❌                         |
-| 控件尺寸 | `surface.tsx` 的 `controlSize`，分 terminal / pointer / touch 三档                                                           | ❌                         |
-| 动效     | `theme.ts` 的 `motion`：press、settle、control、move、enter                                                                  | ❌                         |
-| 平台材质 | 组件没有用到 `glassEffect`、`glassTintColor`、`ios.backdropMaterial`、`macos.backdrop`、`windows.backdrop`、`android.ripple` | ❌                         |
-| 主题选择 | `selectTheme(AppTheme)` 只能手动选；`AppTheme` 是 `{ id, label, theme, finishes }`                                           | ❌ 不会按平台自动选        |
+下表是第 1a 期做完之后的状态：风格数据已在 `finishes.json`，读取它的 getter 已接上，组件里散落的字号与圆角还没改（第 1b 期）。
+
+| 维度     | 现在在哪                                                                                                                     | 能否随主题切换                                    |
+| -------- | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| 颜色     | `theme.json`：shadcn 的 31 个槽位加本库扩展                                                                                  | ✅                                                |
+| 质感     | `finishes.json`：20 个 finish，字段有 bg / image / border / shadow / backdropFilter，还有 `press.scale`                      | ✅                                                |
+| 圆角     | `theme.json` 的 `radius`、`radius-card`、`radius-control`，共 3 档；`finishes.json` 的 `shape` 按角色再写一遍（第 1a 期）    | ✅ 3 档；`shape` 的其余角色待组件读取（第 1b 期） |
+| 曲率     | `finishes.json` 的 `shape.curve`，`theme.ts` 的 `cornerCurve` 读它                                                           | ✅                                                |
+| 字体     | `finishes.json` 的 `type`；`density` 与 `controlSize` 的字号已读它，其余 `fontSize`、`fontWeight` 还散在各组件里             | ⚠️ 数据 ✅，组件读取待第 1b 期                    |
+| 页面密度 | `finishes.json` 的 `size.density`，`surface.tsx` 的 `density` 读它，按 pointer / touch 两档                                  | ✅                                                |
+| 控件尺寸 | `finishes.json` 的 `size.control`，`surface.tsx` 的 `controlSize` 读它；terminal 档留在代码里                                | ✅                                                |
+| 动效     | `finishes.json` 的 `motion`，`theme.ts` 的 `motion` 读它：press、settle、control、move、enter                                | ✅                                                |
+| 平台材质 | 组件没有用到 `glassEffect`、`glassTintColor`、`ios.backdropMaterial`、`macos.backdrop`、`windows.backdrop`、`android.ripple` | ❌                                                |
+| 主题选择 | `selectTheme(AppTheme)` 只能手动选；`AppTheme` 是 `{ id, label, theme, finishes }`                                           | ❌ 不会按平台自动选                               |
 
 **NSH 已经提供的平台能力**（`references/nsh/website/docs/styling.md` 等）：
 
@@ -98,7 +100,7 @@ packages/theme/themes/<id>/
   index.ts       AppTheme { id, label, theme, finishes }（不变）
 ```
 
-`finishes.json` 现在的顶层是 `press`（外观无关）、`light`、`dark`（每个 finish 的面）。本方案在顶层、与 `press` 并列，加上 `type`、`shape`、`density`、`control`、`motion`、`state` 六块；平台材质放在每个 finish 里（3.3）。
+`finishes.json` 的顶层是 `press` 与九组风格数据（外观无关）、`light`、`dark`（每个 finish 的面）。本方案在顶层、与 `press` 并列，加上 `type`、`shape`、`size`、`stroke`、`focus`、`state`、`motion`、`icon`、`indicator` 九组风格数据（3.2）；平台材质放在每个 finish 里（3.3）。
 
 **为什么放进 `finishes.json`，不新开文件，也不放进 `theme.json`：**
 
@@ -109,86 +111,149 @@ packages/theme/themes/<id>/
 **跟着要改的：**
 
 - [`theme-roles.md`](theme-roles.md) 和 `GLOSSARY.md` 里 `finishes.json` 的定义，从"一个面的样子"改成"风格：外观无关的尺寸、字体、形状、动效，加上每种外观下各个 finish 的面"。finish 这个词仍指一个面，文件名不改。
-- 圆角仍留在 `theme.json`（`radius`、`radius-card`、`radius-control`），因为 NSH 的 `token()` 和 Tailwind 的 `rounded-*` 类都读它。`shape.scale` 只补 NSH 不读的档位（xs–xl）。两处分工写进 `theme-roles.md`。
+- 圆角仍留在 `theme.json`（`radius`、`radius-card`、`radius-control`），因为 NSH 的 `token()` 和 Tailwind 的 `rounded-*` 类都读它。`shape` 按用途角色写圆角，其中 `control`、`card`、`inset` 与这三个 token 是同一个数，`check:theme` 检查两处相等；其余角色（`field`、`chip`、`overlay`、`dialog`、`sheet`）只在 `shape` 里。两处分工写在 `theme-roles.md`。
 
-### 3.2 `finishes.json` 新增的顶层结构
+### 3.2 `finishes.json` 的风格键表
+
+风格分 **9 组数据**（`type`、`shape`、`size`、`stroke`、`focus`、`state`、`motion`、`icon`、`indicator`），加上 3.3 的 finish `material` 字段，共 10 组。9 组写在顶层，与 `press`（已有，按下缩多少）并列，排在 `light` / `dark`（各 finish 的面）之前：
 
 ```jsonc
 {
   "press": { "scale": 0.97 }, // 已有
-  "type": {
-    "family": { "sans": null, "rounded": false }, // null = 系统字体
-    "scale": {
-      // 每个层级分 pointer / touch 两个值
-      "caption": { "pointer": 11, "touch": 12 },
-      "detail": { "pointer": 12, "touch": 13 },
-      "body": { "pointer": 13, "touch": 15 },
-      "label": { "pointer": 14, "touch": 15 },
-      "title": { "pointer": 13, "touch": 13 },
-      "headline": { "pointer": 20, "touch": 22 },
-    },
-    "weight": { "regular": "400", "medium": "500", "strong": "600" },
-  },
-  "shape": {
-    "curve": "continuous", // continuous | circular
-    "control": "rounded", // rounded | capsule
-    "scale": { "xs": 4, "sm": 8, "md": 12, "lg": 16, "xl": 28 },
-  },
-  "density": {
-    // 现在的 density，挪过来
-    "pointer": { "row": 36, "pad": 14, "gap": 12, "surface": 10 },
-    "touch": { "row": 48, "pad": 16, "gap": 12, "surface": 16 },
-  },
-  "control": {
-    // 现在的 controlSize 的 pointer / touch 两档
-    "pointer": {
-      "row": 40,
-      "padding": 6,
-      "gap": 10,
-      "control": 16,
-      "corner": 5,
-      "check": 12,
-      "dot": 6,
-      "tabs": 30,
-      "line": 32,
-      "clear": 16,
-      "switch": "small",
-    },
-    "touch": {
-      "row": 44,
-      "padding": 8,
-      "gap": 12,
-      "control": 22,
-      "corner": 7,
-      "check": 16,
-      "dot": 8,
-      "tabs": 40,
-      "line": 44,
-      "clear": 20,
-      "switch": "regular",
-    },
-  },
-  "motion": {
-    "press": { "stiffness": 520, "damping": 34 },
-    "settle": { "stiffness": 320, "damping": 30 },
-    "control": { "stiffness": 1218, "damping": 70 },
-    "move": { "stiffness": 504, "damping": 38 },
-    "enter": { "duration": 420 },
-  },
-  "state": { "hover": 0, "focus": 0, "pressed": 0, "ripple": false },
-  "dark": { … }, // 已有：各 finish 的面
-  "light": { … },
+  "type": {…}, "shape": {…}, "size": {…}, "stroke": {…}, "focus": {…},
+  "state": {…}, "motion": {…}, "icon": {…}, "indicator": {…},
+  "dark": {…}, "light": {…}
 }
 ```
 
-规则：
+**通用规则**
 
-- **默认值不变画面。** default 主题新增的这几块就是现在写死在代码里的数，第 1 期做完 `port:render` 必须逐像素一致。
-- **形状固定。** 和 finish 的字段一样，三套主题这六块的键集合完全相同（由 `theme-lint` 检查）。
-- **terminal 档不进主题。** 终端的行高和列宽由字符格决定，保留在代码里。
-- **要跟随主题切换。** 现在 `density` 和 `controlSize` 是模块加载时定下的常量。改成和 `radius`、`press` 一样的 getter，读 `selected()`，切换主题后下一帧重画。
-- **easing 不进 JSON。** `enter` 只放 `duration`，曲线由代码按名字映射。
-- **`state` 默认全 0。** 现在的 hover 和 pressed 由 finish 表达，状态层只给 Material 用；`ripple: true` 时，组件把 `android={{ ripple: { color } }}` 接上。
+- **按用途角色命名，不按档位。** 形状和字号写成 `card`、`dialog`、`control`、`body`、`title`…，不写 xs–xl：三个平台的差别是"哪种部件用多大圆角"，不是一把统一的尺子。
+- **tier。** 随设备变的值写成 `{ "pointer": …, "touch": … }`：pointer 是桌面（`platform.desktop`），touch 是触屏；模块加载时定，不随窗口变。terminal 的行高和列宽由字符格决定，留在代码里（`surface.tsx` 的 `terminalSizes`），不进主题。
+- **默认值不变画面。** default 主题的数就是原来写死在代码里的数；shadcn 与 solid-glass 的风格数与 default 相同，只有 `shape` 的圆角跟它们自己的 `theme.json` 走（见下）。
+- **形状固定。** 三套主题 9 组的键集合完全相同、叶子的类型相同、枚举取白名单里的值、`shape` 与 `theme.json` 的圆角一致：`bun run check:theme` 逐项检查，缺一个键就点名（`scripts/theme/style.ts`）。
+- **读取。** `style()` 给出当前主题的风格（响应式：读它的地方在 JSX、`draw`、effect 里随 `selectTheme` 下一帧重画）。`density`、`controlSize`、`motion`、`cornerCurve`、`focusRing` 保持原来的对象形状，每个键是一个 getter，读 `style()`。`density` 的 `title` / `note` / `body` 取 `type.title` / `type.detail` / `type.body` 的 `size`，`controlSize` 的 `label` / `detail` 取 `type.label` / `type.detail`，所以字号只写一处。
+- **easing 不进 JSON。** 只写曲线的名字（`motion.enter.easing`），名字到曲线的映射在 `theme.ts`，白名单在 `style.ts`。
+- **表里的数。** "default" 一列读自现在的代码；apple / material / fluent 三列来自各平台公开规范的概要，标"约"的是近似值，"待核对"的要在第 3 期回官方 token 文件逐项核对后写回本节；"—" 是该平台没有这个概念，取 default 的值。
+
+#### type：7 个角色
+
+每个角色是 `{ size, line, weight, tracking }`：`size` 和 `line`（行高）分 pointer / touch，`weight` 是字符串 `"400"`–`"700"`，`tracking` 是字距（点）。SF 和 Material 都按字号调字距，所以 `tracking` 不能省。`type.family` 取 `null`（系统字体）、`"sans"`、`"rounded"` 或 `"mono"`。字号乘以 NSH 的 `fontScale()`，跟随系统字号设置（第 1b 期）。
+
+| 角色（用在）                   | default（pointer / touch） | Apple（macOS / iOS） | Material          | Fluent       |
+| ------------------------------ | -------------------------- | -------------------- | ----------------- | ------------ |
+| `caption`（徽标、时间戳）      | 11 / 12                    | 10 / 12              | label-small 11    | caption1 12  |
+| `detail`（描述、次要信息）     | 12 / 13                    | 11 / 13              | body-small 12     | caption1 12  |
+| `body`（正文）                 | 13 / 15                    | 13 / 17              | body-medium 14    | body1 14     |
+| `label`（控件上的字，500）     | 14 / 15                    | 13 / 17              | label-large 14    | body1 14     |
+| `title`（卡片、区块标题，600） | 13 / 13                    | 13（700）/ 17（600） | title-medium 16   | subtitle2 16 |
+| `headline`（页面标题）         | 20 / 22                    | 22 / 22              | headline-small 24 | title3 24    |
+| `display`（大数字）            | 26 / 28                    | 26 / 34              | display-small 36  | title1 32    |
+
+`line` 在 default 里是按现有正文行高（13 配 19、15 配 21）推出的初值，第 1b 期把散在组件里的 `lineHeight` 搬上来时逐项对齐；三个平台的 `line` 和 `tracking` 待核对。`weight` 在 default 里：`label` 500，`title`、`headline`、`display` 600，其余 400。`family`：default 与三个平台都是 `null`（SF、Roboto、Segoe UI Variable 就是各自的系统字）。
+
+#### shape：8 个圆角角色加两个枚举
+
+圆角单位是点。`shape.control`、`shape.card`、`shape.inset` **就是** `theme.json` 的 `radius-control`、`radius-card`、`radius`（见决策 1 与 [`theme-roles.md`](theme-roles.md)）。
+
+| 键              | 用在                                 | default                 | Apple                  | Material       | Fluent   |
+| --------------- | ------------------------------------ | ----------------------- | ---------------------- | -------------- | -------- |
+| `control`       | 按钮、选择器触发、标签、菜单项       | 8（= `radius-control`） | 胶囊（取一个够大的数） | full（胶囊）   | 4        |
+| `field`         | 输入框                               | 8                       | 约 6–8                 | xs 4           | 4        |
+| `chip`          | 徽标、标签                           | 10                      | 胶囊                   | sm 8           | 4        |
+| `card`          | 卡片、侧栏浮层                       | 14（= `radius-card`）   | 约 16 以上             | md 12          | 8        |
+| `overlay`       | 菜单、弹出层                         | 10                      | 约 12                  | xs 4（待核对） | 8        |
+| `dialog`        | 对话框                               | 14                      | 约 26                  | xl 28          | 8        |
+| `sheet`         | 抽屉                                 | 14                      | 与屏幕同心             | xl 28          | 8        |
+| `inset`         | 卡片里的井、提示、骨架               | 10（= `radius`）        | 待核对                 | 待核对         | 待核对   |
+| `curve`         | 角的曲线：`continuous` 或 `circular` | continuous              | continuous             | circular       | circular |
+| `corners.field` | 输入框圆哪几个角：`all` 或 `top`     | all                     | all                    | top（filled）  | all      |
+
+`inset` 是本表在方案的七个角色之外加的一个：今天卡片里的井、提示、骨架都读 `radius`（`radius.inset`），它不是 `overlay`，也不是 `card`，不另立一个角色就只能把它们塞进别的角色里。shadcn 与 solid-glass 的 `shape` 圆角由各自 `theme.json` 的三个半径推出：`control` 和 `field` 取 `radius-control`，`card`、`dialog`、`sheet` 取 `radius-card`，`chip`、`overlay`、`inset` 取 `radius`（`withRadii`，`generate-*.ts` 用它）。`corners.sheet` 与同心圆角（`rounded()` 的 `inset` 参数，见 §4）是后续的事。
+
+#### size：触控目标、密度、控件、控件高度
+
+| 键                    | 含义                                 | default（pointer / touch） | Apple                         | Material     | Fluent       |
+| --------------------- | ------------------------------------ | -------------------------- | ----------------------------- | ------------ | ------------ |
+| `hit`                 | 最小触控目标；0 是不补               | 0 / 44                     | 0 / 44                        | 48 / 48      | 40 / 40      |
+| `density.row`         | 页面里一行的最小高                   | 36 / 48                    | 待核对                        | 待核对       | 待核对       |
+| `density.pad`         | 卡片内边距                           | 14 / 16                    | 待核对                        | 待核对       | 待核对       |
+| `density.gap`         | 内容之间的间距                       | 12 / 12                    | 待核对                        | 待核对       | 待核对       |
+| `density.surface`     | 区块面的圆角                         | 10 / 16                    | 待核对                        | 待核对       | 待核对       |
+| `control.row`         | 可按行的最小高                       | 40 / 44                    | 待核对                        | 约 48        | 约 32        |
+| `control.padding`     | 行的上下内边距                       | 6 / 8                      | 待核对                        | 待核对       | 待核对       |
+| `control.gap`         | 行内元素间距                         | 10 / 12                    | 待核对                        | 待核对       | 待核对       |
+| `control.control`     | 复选框、单选框的边长                 | 16 / 22                    | 待核对                        | 18           | 20           |
+| `control.corner`      | 复选框的圆角                         | 5 / 7                      | 待核对                        | 2            | 4            |
+| `control.check`       | 勾和图标的大小                       | 12 / 16                    | 待核对                        | 待核对       | 待核对       |
+| `control.dot`         | 单选框的点                           | 6 / 8                      | 待核对                        | 待核对       | 待核对       |
+| `control.tabs`        | 标签栏高                             | 30 / 40                    | 待核对                        | 约 48        | 约 32        |
+| `control.line`        | 一行值的高                           | 32 / 44                    | 待核对                        | 待核对       | 待核对       |
+| `control.clear`       | 清除按钮的边长                       | 16 / 20                    | 待核对                        | 待核对       | 待核对       |
+| `control.switch`      | 行旁开关的尺寸：`small` 或 `regular` | small / regular            | regular                       | regular      | small        |
+| `height.sm / md / lg` | 按钮高                               | 24 / 28 / 34；36 / 40 / 48 | macOS 约 20 / 24 / 28；iOS 44 | 32 / 40 / 56 | 24 / 32 / 40 |
+
+`density` 和 `control` 的 pointer / touch 两档就是原来的 `density` 与 `controlSize`；它们的 `label`、`detail`、`title`、`note`、`body` 已改读 `type`。三个平台的 `density` 与 `control` 数值方案没有给，第 3 期做主题时核对。
+
+#### stroke 与 focus
+
+| 键                 | 含义                                                    | default | Apple      | Material | Fluent         |
+| ------------------ | ------------------------------------------------------- | ------- | ---------- | -------- | -------------- |
+| `stroke.hairline`  | 发丝线                                                  | 1       | 1 物理像素 | 1        | 1              |
+| `stroke.control`   | 控件描边                                                | 1       | 1          | 1        | 1              |
+| `stroke.focus`     | 焦点环线宽（参考，读 `focus.width`）                    | 3       | 3          | 3        | 2              |
+| `stroke.indicator` | 指示条线宽                                              | 2       | —          | 3        | 3              |
+| `focus.style`      | 焦点环样式：`halo`（强调色光晕）、`outline`（实线外框） | halo    | halo       | outline  | double（见下） |
+| `focus.width`      | 焦点环宽                                                | 3       | 3          | 3        | 2              |
+| `focus.offset`     | 焦点环离边多远（`focusRing(offset)` 不传时用它）        | 0       | 0          | 2        | 0              |
+
+`focus.style` 白名单现在只有 `halo` 与 `outline`，是代码已经画得出的两种；Fluent 的双线（外 2 内 1）要在第 3 期随绘制代码一起加进白名单。`stroke.focus` 和 `focus.width` 的关系待第 1b 期并成一个。
+
+#### state
+
+| 键                   | 含义                                  | default | Apple            | Material        | Fluent           |
+| -------------------- | ------------------------------------- | ------- | ---------------- | --------------- | ---------------- |
+| `overlay.hover`      | 悬停叠色的透明度                      | 0       | 0                | 0.08            | 0                |
+| `overlay.focus`      | 聚焦叠色                              | 0       | 0                | 0.10            | 0                |
+| `overlay.pressed`    | 按下叠色                              | 0       | 0                | 0.10            | 0                |
+| `overlay.dragged`    | 拖动叠色                              | 0       | 0                | 0.16            | 0                |
+| `ripple`             | 按下是否有水波（接 `android.ripple`） | false   | false            | true            | false            |
+| `pressedOpacity`     | 按下时整体变淡到多少                  | 0.7     | 约 0.7           | 1（用叠色表达） | 约 0.8           |
+| `disabled.content`   | 禁用时内容的透明度                    | 0.5     | 约 0.3（待核对） | 0.38            | 约 0.4（待核对） |
+| `disabled.container` | 禁用时容器的透明度                    | 0.5     | 约 0.3（待核对） | 0.12            | 约 0.4（待核对） |
+
+default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继续由 `hover` / `pressed` 两个 finish 表达（"换面"）；原生主题用叠色表达（见决策 3）。禁用与强调色的悬停、按下都不加颜色 token，由透明度推出（见决策 2）。
+
+#### motion
+
+| 键               | 含义                                            | default                   | Apple      | Material                             | Fluent                         |
+| ---------------- | ----------------------------------------------- | ------------------------- | ---------- | ------------------------------------ | ------------------------------ |
+| `press`          | 按下（弹簧）                                    | stiffness 520，damping 34 | 同 default | 待核对（expressive 的 spatial 弹簧） | 时长曲线，约 100 ms（第 3 期） |
+| `settle`         | 落定（弹簧）                                    | 320，30                   | 同 default | 待核对                               | 约 150 ms（第 3 期）           |
+| `control`        | 控件的标记、填充出入（弹簧）                    | 1218，70                  | 同 default | 待核对                               | 约 100 ms（第 3 期）           |
+| `move`           | 拇指、指示条的移动（弹簧）                      | 504，38                   | 同 default | 待核对                               | 约 200 ms（第 3 期）           |
+| `enter.duration` | 浮层出现的时长                                  | 420 ms                    | 约         | 约 400（待核对）                     | 约 200（待核对）               |
+| `enter.easing`   | 曲线名：`out-cubic`、`in-cubic`、`in-out-cubic` | out-cubic                 | —          | 待核对（emphasized）                 | 待核对（decelerate）           |
+
+`press`、`settle`、`control`、`move` 现在只能写弹簧（`{ stiffness, damping }`），`follow()` 与 `motion.move` 的调用形状不变，弹簧在每次起跳时读当前主题，所以先建的控件也跟着换。Fluent 基本只用时长加曲线（50–500 ms 八档）：第 3 期把角色扩成"弹簧或时长曲线"二选一（`{ spring }` / `{ timing }`），并把曲线名的白名单加到 decelerate、accelerate 等。`exit`、`enter` 的起点（从哪变来）同属第 3 期。
+
+#### icon
+
+| 键                  | 含义     | default（pointer / touch） | Apple    | Material          | Fluent       |
+| ------------------- | -------- | -------------------------- | -------- | ----------------- | ------------ |
+| `size.sm / md / lg` | 图标尺寸 | 12 / 14 / 15；14 / 16 / 18 | 跟随字号 | 18 / 24（待核对） | 16 / 20 / 24 |
+
+描边粗细（`weight`）待查 NSH 的图标能否取，查清再加。**换哪套图标不进主题**：SF Symbols、Material Symbols、Fluent Icons 的图标名不同，换图标集属于应用层或另一个 registry 条目。
+
+#### indicator：外观枚举（白名单）
+
+| 键      | 取值                 | default | Apple | Material                                                  | Fluent    |
+| ------- | -------------------- | ------- | ----- | --------------------------------------------------------- | --------- |
+| `tabs`  | `underline` / `pill` | pill    | pill  | underline                                                 | underline |
+| `nav`   | `fill` / `bar`       | fill    | fill  | fill                                                      | bar       |
+| `field` | `box` / `underline`  | box     | box   | box（filled 的底线由 `shape.corners.field` 与 finish 画） | underline |
+
+只收组件已经支持、或者改起来很便宜的外观；每加一项都要过评审（决策 4）。
 
 ### 3.3 平台材质：finish 新增 `material` 字段
 
@@ -261,22 +326,34 @@ packages/theme/themes/<id>/
                     └──────────── C 类上游 issue 并行 ────────────┘
 ```
 
-### 第 1 期：风格数据进 `finishes.json`（一个 PR）
+### 第 1 期：风格数据进 `finishes.json`（拆成两个 PR）
+
+```
+1a 数据、getter、lint、文档（不动组件，画面不变）──► 1b 组件读 type、shape、state、focus
+```
+
+#### 1a：数据、getter、lint、文档（#144）
 
 内容：
 
-- `finishes.json` 顶层新增 `type`、`shape`、`density`、`control`、`motion`、`state`：三套主题加上 `packages/theme/` 的构建时副本；`Finishes` 类型跟着扩展。
-- `density`、`controlSize`、`motion`、`cornerCurve` 改为从主题读取的 getter。
-- 新增 `font-sans` 和字号层级，组件里写死的 `fontSize` 和 `fontWeight` 改读层级。
-- `theme-lint` 增加这六块的形状检查。
+- `finishes.json` 顶层新增 3.2 的九组风格数据：三套主题加上 `packages/theme/` 的构建时副本；`shadcn`、`solid-glass` 的生成脚本从 default 取风格并按各自半径写 `shape`；`Finishes` 类型跟着扩展。
+- `density`、`controlSize`、`motion`、`cornerCurve`、`focusRing` 改为读当前主题的 getter，对外形状不变；新增 `style()` 读取当前风格。
+- `theme-lint` 增加三项检查：每套主题的风格键集合相同、枚举取白名单、`shape` 与 `theme.json` 的圆角一致；单元测试含"删一个键，lint 点名"的反向测试。
 - `theme-roles.md` 和 `GLOSSARY.md` 改 `finishes.json` 的定义，增加风格数据一节。
 
 验收：
 
-- `port:render` 和 `port:render:theme` 逐像素一致。
-- `bun run check`、`nsh check apps/website/demos`、`bunx vp check`、`test:gallery`、`test:install` 全部通过。
+- `port:render` 和 `port:render:theme` 逐像素一致（不更新基线）。
+- `bun run check`、`nsh check`（demos、showcase、gallery）、`bunx vp check`、`test:gallery`、`test:install` 全部通过。
 - 反向测试：在一套主题里删掉一个风格键，`theme-lint` 要点名报错。
-- 运行时切到一套改过风格数据的临时主题，已渲染的控件下一帧跟着变。
+- 运行时切到一套改过风格数据的临时主题，已渲染的页面下一帧跟着变（`apps/gallery/tests/theme-style.test.tsx`）。
+
+#### 1b：组件读取风格数据
+
+- 组件里写死的 `fontSize`、`fontWeight`、`lineHeight` 改读 `type` 的角色，`type.*.line` 的初值同时对齐；`font-sans` 与 `type.family` 接上。
+- 圆角改读 `shape` 的角色（`dialog`、`sheet`、`overlay`、`chip`、`field`），不再只有 `radius.*` 三档；`rounded()` 加 `inset` 参数（同心圆角）。
+- `state`（叠色、`pressedOpacity`、`disabled`）和 `focus`、`stroke` 接到组件，`stroke.focus` 与 `focus.width` 并成一个；`icon.size`、`size.height`、`size.hit` 取代按钮与图标里的同名常量。
+- 验收同 1a，画面仍逐像素一致。
 
 ### 第 2 期：平台材质与 `nativeTheme()`（一个 PR）
 
@@ -285,6 +362,7 @@ packages/theme/themes/<id>/
 - finish 增加 `material` 字段，`themed()` 负责翻译。
 - 用到 `glass`、`menu`、`card`、`raised` 的组件铺开平台 props。
 - 新增 `themes/native` 和 `apple` 主题。
+- 新增颜色 token：`on-brand-tint`（强调淡底上的字）、`inverse`、`inverse-foreground`，以及可能的 `inverse-brand`（snackbar 的操作按钮）。新增 finish：`dialog`、`tooltip`、`inverse`；先查清现在 dialog、tooltip、toast 借用的是哪个 finish，三个平台在这里本来就不同的才拆开。
 
 验收：
 
@@ -311,12 +389,23 @@ C1–C5 各开一个上游 issue，链接记在本节。
 
 ## 6 待决定
 
-| 问题                                                                               | 建议   | 理由                                             |
-| ---------------------------------------------------------------------------------- | ------ | ------------------------------------------------ |
-| 原生主题是否进 registry，作为 `theme-apple`、`theme-material`、`theme-fluent` 发布 | 进     | 和 `theme-shadcn` 一致，复制后归应用所有         |
-| 原生主题的强调色是写死，还是等 C1                                                  | 先写死 | 不阻塞；C1 落地后改成读系统值                    |
-| 第 1 期是否顺带统一组件里散落的 `fontSize`                                         | 是     | 不统一的话字号层级形同虚设；改动面大，但画面不变 |
-| 尺寸能否和面分开选（只换尺寸不换面）                                               | 暂不   | 先按"一个主题是一套整体"处理，以后再拆           |
+### 已决定
+
+| #   | 问题                                                     | 决定                                                                                            | 理由                                                                                                                                                                                                                                                                                           |
+| --- | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | 形状和字号按用途角色命名，还是按通用档位                 | **按用途角色**（`card`、`dialog`、`control`…）                                                  | 三个平台的差别是"哪种部件用多大圆角"，不是一把统一的尺子；按档位命名，每个组件还得各自记一张"我用哪档"的表。`theme.json` 保留 `radius`、`radius-card`、`radius-control`（NSH 的 `token()` 和 `rounded-*` 类读它们），`check:theme` 保证它们等于 `shape.inset`、`shape.card`、`shape.control`。 |
+| 2   | 禁用、强调色的悬停与按下加颜色 token，还是用透明度推出来 | **用透明度**（`state`）                                                                         | 三个平台本质上都是对同一个颜色调透明度；加 token 是每套主题多写约 10 个值，且容易写得不一致。                                                                                                                                                                                                  |
+| 3   | 悬停与按下继续"换 finish"，还是统一改成叠色              | **两种并存，主题自己选**                                                                        | 统一改成叠色会改动 default 的画面。default、shadcn、solid-glass 的叠色全是 0；Material 用叠色。                                                                                                                                                                                                |
+| 4   | 外观枚举（`indicator`）开不开                            | **开，只用白名单**：`tabs`（underline / pill）、`nav`（fill / bar）、`field`（box / underline） | 不开则 Fluent、Material 的输入框和标签页画不像；全放开会让主题变成第二套组件 API。                                                                                                                                                                                                             |
+| 5   | 第 1 期是否顺带统一组件里散落的 `fontSize`               | **是，放在 1b**                                                                                 | 不统一的话字号层级形同虚设；改动面大，所以和数据分开一个 PR。                                                                                                                                                                                                                                  |
+
+### 仍待决定
+
+| 问题                                                                               | 建议   | 理由                                     |
+| ---------------------------------------------------------------------------------- | ------ | ---------------------------------------- |
+| 原生主题是否进 registry，作为 `theme-apple`、`theme-material`、`theme-fluent` 发布 | 进     | 和 `theme-shadcn` 一致，复制后归应用所有 |
+| 原生主题的强调色是写死，还是等 C1                                                  | 先写死 | 不阻塞；C1 落地后改成读系统值            |
+| 尺寸能否和面分开选（只换尺寸不换面）                                               | 暂不   | 先按"一个主题是一套整体"处理，以后再拆   |
 
 ## 来源
 

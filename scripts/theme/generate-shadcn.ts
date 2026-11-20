@@ -18,6 +18,7 @@ import path from "node:path";
 
 import { repo } from "../port/lib";
 import { conversionTable, themeFiles } from "./shadcn";
+import { finishesWithStyle } from "./style";
 
 const theme = path.join(repo, "packages", "theme");
 const outDir = path.join(theme, "themes", "shadcn");
@@ -32,6 +33,7 @@ const defaults = read("theme.json") as {
   };
 };
 const finishes = read("finishes.json") as {
+  press: unknown;
   light: Record<string, string>;
   dark: Record<string, string>;
 };
@@ -48,7 +50,7 @@ fs.mkdirSync(outDir, { recursive: true });
 const write = (name: string, value: unknown) =>
   fs.writeFileSync(path.join(outDir, name), `${JSON.stringify(value, null, 2)}\n`);
 write("theme.json", files.theme);
-write("finishes.json", files.finishes);
+write("finishes.json", finishesWithStyle(files.finishes, finishes, files.theme.cssVars.theme));
 console.log(`wrote ${path.relative(repo, outDir)}/{theme,finishes}.json`);
 
 const table = conversionTable();

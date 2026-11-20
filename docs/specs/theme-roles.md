@@ -2,12 +2,12 @@
 
 本库的颜色只有一个来源，一个面的样子只有一张表，二者之间用 alias 相连：
 
-| 文件                           | 管什么                                              | 不管什么                 |
-| ------------------------------ | --------------------------------------------------- | ------------------------ |
-| `packages/theme/theme.json`    | 颜色：每个 token 在 light / dark 下的值             | 面、边、影、渐变、模糊   |
-| `packages/theme/finishes.json` | 一个面的样子：每个 finish 的底、渐变、边、影、模糊  | 颜色字面量（只写 alias） |
-| `packages/theme/theme.ts`      | 读时把 alias 换成当前主题与外观的颜色（`themed()`） | 具体颜色值               |
-| `packages/ui/*.tsx`            | 只经 `finish.*` 与 `colors.*` 取色                  | 内联颜色                 |
+| 文件                           | 管什么                                                                                                   | 不管什么                 |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------- | ------------------------ |
+| `packages/theme/theme.json`    | 颜色：每个 token 在 light / dark 下的值                                                                  | 面、边、影、渐变、模糊   |
+| `packages/theme/finishes.json` | 风格：与外观无关的字体、形状、尺寸、动效、状态，加上每种外观下各个 finish 的面（底、渐变、边、影、模糊） | 颜色字面量（只写 alias） |
+| `packages/theme/theme.ts`      | 读时把 alias 换成当前主题与外观的颜色（`themed()`）                                                      | 具体颜色值               |
+| `packages/ui/*.tsx`            | 只经 `finish.*` 与 `colors.*` 取色                                                                       | 内联颜色                 |
 
 这样定，是为了两件事：
 
@@ -98,6 +98,18 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | `backdropFilter`  | 只有模糊，不放颜色                           |
 
 颜色字段只有 `backgroundColor`、`backgroundImage`、`borderColor` 三个，规则也管这三个。`boxShadow` 例外：影子是墨色，不为几何、不为对比提供颜色，也就没有对应的 token——它在所有主题里都保留字面（黑或白带 alpha，或强调色的半透明墨）。一条影子里写了一个表面的颜色，是设计问题，不是 lint 能判的。
+
+## 2b 风格数据
+
+`finishes.json` 的顶层，在 `press` 与 `light` / `dark` 之间，还有九组**风格数据**：`type`（字体角色）、`shape`（圆角角色）、`size`（触控目标、密度、控件、控件高度）、`stroke`、`focus`、`state`（叠色与透明度）、`motion`、`icon`、`indicator`（外观枚举）。它们与 finish 无关，也与外观无关：一个主题写一份，light 和 dark 共用；随设备变的值分 `pointer` / `touch` 两档。每个键的含义和各平台的值在 [`native-themes.md`](native-themes.md) §3.2；`check:theme` 执行的规则是：
+
+- **键集合相同。** 三套主题的风格数据有同样的键、同样类型的叶子，缺一个键就点名它。
+- **枚举取白名单。** 字重、曲线、焦点样式、easing 名、`indicator` 的值都在 `scripts/theme/style.ts` 的列表里。
+- **圆角一致。** `theme.json` 的 `radius`、`radius-card`、`radius-control` 与 `shape.inset`、`shape.card`、`shape.control` 是同一个数。
+
+**`theme.json` 的圆角与 `shape` 怎么分工。** NSH 的 `token()` 和 Tailwind 的 `rounded-*` 类读 `theme.json`，所以那三档圆角留在那里；`shape` 按用途角色写圆角，是组件读的地方，三个平台的差别（胶囊、同心、只圆上两个角）只有它能表达。两处写同一个数的三个角色（`inset` ↔ `radius`、`card` ↔ `radius-card`、`control` ↔ `radius-control`）由 lint 保证相等；`field`、`chip`、`overlay`、`dialog`、`sheet` 只在 `shape` 里，生成的主题（shadcn、solid-glass）按半径推出它们，见 `scripts/theme/style.ts` 的 `withRadii`。
+
+组件经 `style()`（响应式）和保持原形状的 `density`、`controlSize`、`motion`、`cornerCurve`、`focusRing` 读风格数据，换主题后下一帧重画。terminal 档的尺寸由字符格决定，留在代码里，不进主题。
 
 ## 3 固定形状
 

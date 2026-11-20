@@ -2,6 +2,233 @@
   "press": {
     "scale": 1
   },
+  "type": {
+    "family": null,
+    "caption": {
+      "size": {
+        "pointer": 11,
+        "touch": 12
+      },
+      "line": {
+        "pointer": 15,
+        "touch": 16
+      },
+      "weight": "400",
+      "tracking": 0
+    },
+    "detail": {
+      "size": {
+        "pointer": 12,
+        "touch": 13
+      },
+      "line": {
+        "pointer": 17,
+        "touch": 18
+      },
+      "weight": "400",
+      "tracking": 0
+    },
+    "body": {
+      "size": {
+        "pointer": 13,
+        "touch": 15
+      },
+      "line": {
+        "pointer": 19,
+        "touch": 21
+      },
+      "weight": "400",
+      "tracking": 0
+    },
+    "label": {
+      "size": {
+        "pointer": 14,
+        "touch": 15
+      },
+      "line": {
+        "pointer": 20,
+        "touch": 21
+      },
+      "weight": "500",
+      "tracking": 0
+    },
+    "title": {
+      "size": {
+        "pointer": 13,
+        "touch": 13
+      },
+      "line": {
+        "pointer": 19,
+        "touch": 19
+      },
+      "weight": "600",
+      "tracking": 0
+    },
+    "headline": {
+      "size": {
+        "pointer": 20,
+        "touch": 22
+      },
+      "line": {
+        "pointer": 26,
+        "touch": 28
+      },
+      "weight": "600",
+      "tracking": 0
+    },
+    "display": {
+      "size": {
+        "pointer": 26,
+        "touch": 28
+      },
+      "line": {
+        "pointer": 32,
+        "touch": 34
+      },
+      "weight": "600",
+      "tracking": 0
+    }
+  },
+  "shape": {
+    "control": 8,
+    "field": 8,
+    "chip": 10,
+    "card": 14,
+    "overlay": 10,
+    "dialog": 14,
+    "sheet": 14,
+    "inset": 10,
+    "curve": "continuous",
+    "corners": {
+      "field": "all"
+    }
+  },
+  "size": {
+    "hit": {
+      "pointer": 0,
+      "touch": 44
+    },
+    "density": {
+      "pointer": {
+        "row": 36,
+        "pad": 14,
+        "gap": 12,
+        "surface": 10
+      },
+      "touch": {
+        "row": 48,
+        "pad": 16,
+        "gap": 12,
+        "surface": 16
+      }
+    },
+    "control": {
+      "pointer": {
+        "row": 40,
+        "padding": 6,
+        "gap": 10,
+        "control": 16,
+        "corner": 5,
+        "check": 12,
+        "dot": 6,
+        "tabs": 30,
+        "line": 32,
+        "clear": 16,
+        "switch": "small"
+      },
+      "touch": {
+        "row": 44,
+        "padding": 8,
+        "gap": 12,
+        "control": 22,
+        "corner": 7,
+        "check": 16,
+        "dot": 8,
+        "tabs": 40,
+        "line": 44,
+        "clear": 20,
+        "switch": "regular"
+      }
+    },
+    "height": {
+      "pointer": {
+        "sm": 24,
+        "md": 28,
+        "lg": 34
+      },
+      "touch": {
+        "sm": 36,
+        "md": 40,
+        "lg": 48
+      }
+    }
+  },
+  "stroke": {
+    "hairline": 1,
+    "control": 1,
+    "focus": 3,
+    "indicator": 2
+  },
+  "focus": {
+    "style": "halo",
+    "width": 3,
+    "offset": 0
+  },
+  "state": {
+    "overlay": {
+      "hover": 0,
+      "focus": 0,
+      "pressed": 0,
+      "dragged": 0
+    },
+    "ripple": false,
+    "pressedOpacity": 0.7,
+    "disabled": {
+      "content": 0.5,
+      "container": 0.5
+    }
+  },
+  "motion": {
+    "press": {
+      "stiffness": 520,
+      "damping": 34
+    },
+    "settle": {
+      "stiffness": 320,
+      "damping": 30
+    },
+    "control": {
+      "stiffness": 1218,
+      "damping": 70
+    },
+    "move": {
+      "stiffness": 504,
+      "damping": 38
+    },
+    "enter": {
+      "duration": 420,
+      "easing": "out-cubic"
+    }
+  },
+  "icon": {
+    "size": {
+      "pointer": {
+        "sm": 12,
+        "md": 14,
+        "lg": 15
+      },
+      "touch": {
+        "sm": 14,
+        "md": 16,
+        "lg": 18
+      }
+    }
+  },
+  "indicator": {
+    "tabs": "pill",
+    "nav": "fill",
+    "field": "box"
+  },
   "dark": {
     "card": {
       "backgroundImage": "linear-gradient(180deg, var(--card) 0%, var(--card) 100%)",

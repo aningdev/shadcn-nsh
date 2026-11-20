@@ -20,6 +20,7 @@ import { join } from "node:path";
 import { colourFields, readColour } from "./theme/finish-colour";
 import { parseColor } from "./theme/oklch";
 import { specBlock, specParts, specRows } from "./theme/spec";
+import { checkStyle } from "./theme/style";
 
 const root = join(import.meta.dir, "..");
 const read = (path: string) => readFileSync(join(root, path), "utf8");
@@ -317,6 +318,21 @@ for (const theme of themes) {
           fail(`${path}: ${role}.boxShadow names token \`${name}\`, which ${theme} does not have`);
     }
   }
+}
+
+// 4b. Every theme states the same style (type, shape, size, stroke, focus, state, motion, icon,
+// indicator): the keys the default theme states, enums from their lists, and the corner roles that
+// are `theme.json`'s radii the same numbers.
+for (const theme of themes) {
+  const path = `packages/theme/themes/${theme}/finishes.json`;
+  const shared = tokensOf.get(theme)?.cssVars.theme ?? {};
+  for (const problem of checkStyle(
+    path,
+    readJson<Record<string, unknown>>(path),
+    defaultFinishes as unknown as Record<string, unknown>,
+    shared,
+  ))
+    fail(problem);
 }
 
 // 5. Nothing in the files is written and never read: a token no component, demo or class reads, a

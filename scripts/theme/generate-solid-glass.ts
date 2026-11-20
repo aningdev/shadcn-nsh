@@ -19,6 +19,7 @@ import path from "node:path";
 import { repo } from "../port/lib";
 import { oklch, toOklchText } from "./oklch";
 import { themeFiles } from "./solid-glass";
+import { finishesWithStyle } from "./style";
 
 const theme = path.join(repo, "packages", "theme");
 const outDir = path.join(theme, "themes", "solid-glass");
@@ -33,6 +34,7 @@ const defaults = read("theme.json") as {
   };
 };
 const finishes = read("finishes.json") as {
+  press: unknown;
   light: Record<string, Record<string, string>>;
   dark: Record<string, Record<string, string>>;
 };
@@ -59,7 +61,7 @@ fs.mkdirSync(outDir, { recursive: true });
 const write = (name: string, value: unknown) =>
   fs.writeFileSync(path.join(outDir, name), `${JSON.stringify(canonical(value), null, 2)}\n`);
 write("theme.json", files.theme);
-write("finishes.json", files.finishes);
+write("finishes.json", finishesWithStyle(files.finishes, finishes, files.theme.cssVars.theme));
 console.log(`wrote ${path.relative(repo, outDir)}/{theme,finishes}.json`);
 
 /** Every distinct `oklch()` a file holds, in the order it first appears. */
