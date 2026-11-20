@@ -2,14 +2,16 @@ import { colors, mono } from "@shadcn-nsh/theme";
 // The official text-view scenes: the website's reply, streamed again a few characters at a time
 // (`references/nsh/website/demos/text-view.tsx`), and a card that is one selection across its
 // texts with what was pasted back (`el-text-selection.tsx`), with this library's `TextView`.
-import { cleanup, mount, signal, Text, View } from "nsh";
+import { cleanup, Image, mount, signal, Text, View } from "nsh";
 
 import { Button } from "@/packages/ui/button";
+import { ImageViewer, type ImageViewerImage } from "@/packages/ui/image-viewer";
 import { Input } from "@/packages/ui/input";
 import { sectionSurface } from "@/packages/ui/lib/surface";
 import { TextView, textViewCaretClass } from "@/packages/ui/text-view";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
+import { photoUrl } from "./photos";
 import { desktop, ui } from "./stage";
 
 const REPLY = `## Moving to offline sync
@@ -90,8 +92,15 @@ const CHIP_EXTENSIONS = [
 
 const GIT = "```sh\nnsh export --out backup.json\n```";
 
+/** A photograph in the text: the page fetches it first, so two pages draw it alike. */
+const IMAGE_ALT = "Sunrise over the launch pad";
+const IMAGE_MD = `![${IMAGE_ALT}](${photoUrl("sunrise")})`;
+const warmed = signal(false);
+Promise.allSettled([Image.prefetch(photoUrl("sunrise"))]).then(() => warmed.set(true));
+
 function App() {
   const text = signal(REPLY);
+  const viewing = signal<ImageViewerImage | null>(null);
   const streaming = signal(false);
   const pasted = signal("");
   let timer: ReturnType<typeof setInterval> | undefined;
@@ -215,8 +224,21 @@ function App() {
               )}
             />
           </DemoSection>
+          <DemoSection title="Images that open" axis="block">
+            <TextView markdown={IMAGE_MD} onImagePress={({ image }) => viewing.set(image)} />
+            <Text style={{ fontSize: 12, color: ui().muted }}>
+              A press on the picture reports it; the app hands it to an `ImageViewer`.
+            </Text>
+            <ImageViewer image={viewing()} onClose={() => viewing.set(null)} />
+          </DemoSection>
         </DemoCard>
       </>
+      {/* The render check's cue: the photograph is there (or failed), so two pages draw the same. */}
+      {() =>
+        warmed() ? (
+          <View testID="images-ready" style={{ position: "absolute", width: 1, height: 1 }} />
+        ) : null
+      }
     </DemoPage>
   );
 }

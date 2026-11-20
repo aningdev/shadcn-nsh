@@ -1,26 +1,14 @@
-import { colors, mono, motion, rounded, tints, shape } from "@shadcn-nsh/theme";
+import { colors, mono, rounded, tints, shape } from "@shadcn-nsh/theme";
 // TextView: the official gallery's scene (`references/nsh/examples/gallery/demos/TextViewDemo.tsx`)
 // with this library's text view — Markdown, HTML, extensions, a streaming reply, and a selection
-// that crosses views. The image viewer is this library's dialog as a page (`dialogPage`), its body
-// given whole (`scroll={false}`): the lightbox takes the pinch and the swipe itself.
-import { Code, Play, X } from "lucide";
-import {
-  cleanup,
-  createAnimatedValue,
-  effect,
-  Image,
-  keymap,
-  safeArea,
-  signal,
-  Text,
-  untracked,
-  View,
-} from "nsh";
+// that crosses views. Images open in this library's `ImageViewer`.
+import { Code, Play } from "lucide";
+import { cleanup, keymap, signal, Text, View } from "nsh";
 import type { TextViewCustomNode, TextViewImage } from "nsh/base";
 
-import { Button, buttonGlyph, IconButton } from "@/packages/ui/button";
+import { Button, buttonGlyph } from "@/packages/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/packages/ui/card";
-import { Dialog, DialogContent, dialogPage } from "@/packages/ui/dialog";
+import { ImageViewer } from "@/packages/ui/image-viewer";
 import { Icon } from "@/packages/ui/lib/icons";
 import { Segmented, SegmentedItem, SegmentedList } from "@/packages/ui/segmented";
 import { TextView, textViewCaretClass, type TextViewRef } from "@/packages/ui/text-view";
@@ -267,182 +255,6 @@ const CHIP_EXTENSIONS = [
   { name: "task", pattern: "\\bT-\\d{4}\\b" },
   { name: "pr", pattern: "\\b[a-z-]+#\\d+\\b" },
 ];
-
-/** The deepest zoom, and where a double tap zooms in to. */
-const MAX_ZOOM = 4;
-const DOUBLE_TAP_ZOOM = 2.5;
-/** Two taps this close in time (ms) are a double tap. */
-const DOUBLE_TAP_MS = 300;
-/** A drag this far down (points) at 1× closes the viewer. */
-const SWIPE_CLOSE = 120;
-
-const clamp = (value: number, bound: number) => Math.max(-bound, Math.min(bound, value));
-
-/**
- * A full-screen viewer for an image a `TextView` reports: the library's dialog as a page
- * (`dialogPage`), the lightbox on the page's own background.
- */
-function ImageViewer(props: { image: TextViewImage | null; onClose: () => void }) {
-  const shown = signal<TextViewImage | null>(null);
-  const natural = signal<{ width: number; height: number } | null>(null);
-  const viewport = signal({ width: 0, height: 0 });
-  const scale = createAnimatedValue(1);
-  const x = createAnimatedValue(0);
-  const y = createAnimatedValue(0);
-  const enter = createAnimatedValue(0);
-  // Where the animated values settle. Signals, so a handler can write them after render.
-  const atScale = signal(1);
-  const atX = signal(0);
-  const atY = signal(0);
-  const lastTap = signal(0);
-  const tapX = signal(0);
-  const tapY = signal(0);
-  const tapAt = signal(0);
-  const src = signal("");
-
-  effect(() => {
-    const image = props.image;
-    if (!image) return;
-    if (image.src !== untracked(src)) natural.set(null);
-    src.set(image.src);
-    shown.set(image);
-    atScale.set(1);
-    atX.set(0);
-    atY.set(0);
-    scale.set(1);
-    x.set(0);
-    y.set(0);
-    enter.set(0);
-    void enter.spring(1, motion.settle);
-  });
-
-  const box = () => {
-    const v = viewport();
-    const n = natural();
-    if (!n || !n.width || !n.height || !v.width) return v;
-    const k = Math.min(v.width / n.width, v.height / n.height);
-    return { width: n.width * k, height: n.height * k };
-  };
-
-  const settle = (next: { scale: number; x: number; y: number }) => {
-    const s = Math.max(1, Math.min(MAX_ZOOM, next.scale));
-    const b = box();
-    const v = viewport();
-    const nextX = clamp(next.x, Math.max(0, (b.width * s - v.width) / 2));
-    const nextY = clamp(next.y, Math.max(0, (b.height * s - v.height) / 2));
-    atScale.set(s);
-    atX.set(nextX);
-    atY.set(nextY);
-    void scale.spring(s, motion.settle);
-    void x.spring(nextX, motion.settle);
-    void y.spring(nextY, motion.settle);
-  };
-
-  return (
-    <Dialog open={!!props.image} onOpenChange={({ open }) => !open && props.onClose()}>
-      <DialogContent animation="fade" scroll={false} style={dialogPage()}>
-        <View
-          testID="image-viewer"
-          focusable={false}
-          onPress={props.onClose}
-          onLayout={({ bounds }) =>
-            viewport.set({ width: bounds.size.width, height: bounds.size.height })
-          }
-          pinch={{ scale }}
-          pan={{ x, y }}
-          onPinchEnd={async () => settle({ scale: await scale.getValue(), x: atX(), y: atY() })}
-          onPanEnd={(e) => {
-            const dy = (e.value?.y ?? atY()) - atY();
-            if (atScale() <= 1.01 && (dy > SWIPE_CLOSE || e.velocity.y > 1200))
-              return props.onClose();
-            settle({ scale: atScale(), x: e.value?.x ?? atX(), y: e.value?.y ?? atY() });
-          }}
-          style={{
-            flex: 1,
-            alignItems: "center",
-            justifyContent: "center",
-            backgroundColor: colors.background,
-          }}
-        >
-          <View
-            accessibilityLabel={shown()?.alt || "Image"}
-            role="image"
-            onTouchStart={(e) => {
-              tapX.set(e.locationX);
-              tapY.set(e.locationY);
-              tapAt.set(e.timestamp);
-            }}
-            onPress={(e) => {
-              const now = tapAt();
-              const previous = lastTap();
-              const doubled =
-                e.clickCount >= 2 || (previous > 0 && now - previous <= DOUBLE_TAP_MS);
-              if (!doubled) {
-                if (now > 0) lastTap.set(now);
-                return;
-              }
-              lastTap.set(0);
-              if (atScale() > 1.01) return settle({ scale: 1, x: 0, y: 0 });
-              const b = box();
-              const dx = tapX() - b.width / 2;
-              const dy = tapY() - b.height / 2;
-              settle({
-                scale: DOUBLE_TAP_ZOOM,
-                x: atX() + (atScale() - DOUBLE_TAP_ZOOM) * dx,
-                y: atY() + (atScale() - DOUBLE_TAP_ZOOM) * dy,
-              });
-            }}
-            style={{
-              width: box().width,
-              height: box().height,
-              opacity: enter,
-              translate: [x, y],
-              scale: scale.mul(enter.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1] })),
-            }}
-          >
-            <Image
-              src={shown()?.src ?? ""}
-              onLoad={({ size }) => natural.set({ width: size.width, height: size.height })}
-              style={{ width: "100%", height: "100%", objectFit: "contain" }}
-            />
-          </View>
-          <If when={shown()?.alt}>
-            <View
-              style={{
-                pointerEvents: "none",
-                position: "absolute",
-                left: 0,
-                right: 0,
-                bottom: 0,
-                paddingHorizontal: 24,
-                paddingTop: 32,
-                paddingBottom: safeArea().bottom + 20,
-              }}
-            >
-              <Text
-                style={{
-                  fontSize: 14,
-                  lineHeight: 20,
-                  textAlign: "center",
-                  color: colors.foreground,
-                }}
-              >
-                {shown()?.alt}
-              </Text>
-            </View>
-          </If>
-          <View
-            style={{ position: "absolute", top: safeArea().top + 12, right: safeArea().right + 12 }}
-          >
-            <IconButton accessibilityLabel="Close" size="sm" onPress={props.onClose}>
-              <Icon icon={X} size={16} tint={colors.foreground} />
-            </IconButton>
-          </View>
-        </View>
-      </DialogContent>
-    </Dialog>
-  );
-}
 
 function MarkdownDoc() {
   const pressed = signal("nothing yet");

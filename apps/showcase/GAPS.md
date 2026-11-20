@@ -22,7 +22,7 @@ composition). Upstream's funnel animates drawn `Canvas` geometry with `createAni
 `destructive` roles, and a terminal's ANSI colors are the program's output, not theme roles. Find
 bars, quick-fix menus and the editor zoom are `nsh` `Overlay`s, the code-action menu is the native
 `nsh/desktop` `Menu`, and the Gallery's `IconTile` is its own kit, as upstream. Animations' ink on a
-saturated tone is `onBrand` / `knob`, the TextView lightbox sits on the page's background, and System's
+saturated tone is `onBrand` / `knob`, and System's
 status-bar preview inks with the foreground and background, all theme roles. The Gallery's `Meter`,
 `Toggle` (a switch) and `Field` are this library's `Progress`, `Switch` and a labelled `Input`. The block
 editor imports its editor commands (`setNode`, `wrapIn`, `suggestion`, …) from `nsh/base`, where they

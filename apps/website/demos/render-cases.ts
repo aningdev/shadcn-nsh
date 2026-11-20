@@ -212,6 +212,8 @@ const overrides: Record<string, Override> = {
   },
   // The picture it holds comes over the network, as the carousel's do.
   pressable: { photos: true, steps: photosReady },
+  "image-viewer": { photos: true, steps: photosReady },
+  "text-view": { photos: true, steps: photosReady },
   spinner: { selfReference: "upstream's own Spinner, with no shell to compare against" },
   badge: { selfReference: "upstream's own Badge, with no shell to compare against" },
   status: { selfReference: "upstream's own Status, with no shell to compare against" },

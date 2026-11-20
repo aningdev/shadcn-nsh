@@ -81,4 +81,5 @@ export const componentIds = [
   "nav-stack",
   "split-view",
   "code-block",
+  "image-viewer",
 ] as const;

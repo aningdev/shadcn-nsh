@@ -1268,6 +1268,19 @@
           "target": "components/ui/code-block.tsx"
         }
       ]
+    },
+    {
+      "name": "image-viewer",
+      "type": "registry:ui",
+      "title": "ImageViewer",
+      "description": "One image full screen over a dimmed ground, fitted, with pinch to zoom, drag to pan and swipe down to close.",
+      "files": [
+        {
+          "path": "packages/ui/image-viewer.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/image-viewer.tsx"
+        }
+      ]
     }
   ]
 }

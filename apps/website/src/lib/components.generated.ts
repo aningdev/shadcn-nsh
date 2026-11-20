@@ -517,6 +517,15 @@ export const components: ComponentDoc[] = [
       "A set of fields under a legend: a label, its control, a description and errors that are read out.",
   },
   {
+    slug: "image-viewer",
+    title: "ImageViewer",
+    kind: "own",
+    shadcn: null,
+    nshElement: null,
+    description:
+      "One image full screen over a dimmed ground, fitted, with pinch to zoom, drag to pan and swipe down to close.",
+  },
+  {
     slug: "input-group",
     title: "InputGroup",
     kind: "own",

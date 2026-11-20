@@ -155,6 +155,17 @@ const CHIP_EXTENSIONS = [
 />;
 ```
 
+### Images that open
+
+`onImagePress` reports the image that was pressed as `{ src, alt }`: the shape [`ImageViewer`](./image-viewer) takes. Hold it in a signal, and the viewer is open while it is set.
+
+```tsx
+const viewing = signal<ImageViewerImage | null>(null);
+
+<TextView markdown={markdown} onImagePress={({ image }) => viewing.set(image)} />
+<ImageViewer image={viewing()} onClose={() => viewing.set(null)} />;
+```
+
 ## API
 
 `TextView.parse`, `parseHtml`, and `plainText` are re-exported from base. Every prop of [`nsh/base` TextView](https://nsh.dev/elements/text-view) passes through.

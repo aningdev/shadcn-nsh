@@ -52,7 +52,7 @@ export function dialogCard(width?: number): ViewStyle {
 /**
  * A dialog that is a page rather than a card in the middle of the window: it fills what the
  * `nsh/base` dialog gives it, over the page's fill, and takes the card's edge, radius, shadow,
- * padding, width and height cap off — the content is laid out as a page.
+ * padding, width and height cap off (it fills the window) — the content is laid out as a page.
  *
  * `DialogContent` wears it for a `presentation` the system presents itself (`fullScreen`,
  * `pageSheet`, `formSheet`), which draws the card there; pass it as `style` for a dialog of the
@@ -62,7 +62,10 @@ export function dialogPage(): ViewStyle {
   return {
     flex: 1,
     margin: 0,
+    // Over a card's width and height cap, when this is passed as `style` to the card's dialog.
+    width: "100%",
     maxWidth: "100%",
+    maxHeight: "100%",
     borderWidth: 0,
     borderColor: "transparent",
     borderRadius: 0,

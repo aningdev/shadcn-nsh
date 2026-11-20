@@ -5,13 +5,12 @@
 // Every block (and each list item and table cell) is one selectable text: a long press highlights
 // it and offers Copy; code blocks carry `TextView`'s built-in copy action.
 //
-// A press on an image opens it in a dialog. (Upstream opens it in the gallery shell's
-// `ImageViewer`, which has no counterpart in the library; the dialog is the demo's stand-in.)
-import { colors, rounded, shape } from "@shadcn-nsh/theme";
-import { type JSX, Image, signal } from "nsh";
+// A press on an image opens it in the library's `ImageViewer`.
+import { colors } from "@shadcn-nsh/theme";
+import { type JSX, signal } from "nsh";
 import { TextView, type TextViewImage } from "nsh/base";
 
-import { Dialog, DialogContent, DialogTitle } from "@/packages/ui/dialog";
+import { ImageViewer } from "@/packages/ui/image-viewer";
 
 export function Markdown(props: {
   md: string;
@@ -45,24 +44,7 @@ export function Markdown(props: {
           viewing.set(image);
         }}
       />
-      {used() ? (
-        <Dialog
-          open={!!viewing()}
-          onOpenChange={(event) => {
-            if (!event.open) viewing.set(null);
-          }}
-        >
-          <DialogContent style={{ width: "auto", padding: 8, ...rounded(shape.card) }}>
-            <DialogTitle style={{ position: "absolute", width: 1, height: 1, opacity: 0 }}>
-              Image
-            </DialogTitle>
-            <Image
-              src={viewing()?.src ?? ""}
-              style={{ maxWidth: 560, maxHeight: 460, borderRadius: shape.card }}
-            />
-          </DialogContent>
-        </Dialog>
-      ) : null}
+      {used() ? <ImageViewer image={viewing()} onClose={() => viewing.set(null)} /> : null}
     </>
   );
 }

@@ -19,6 +19,45 @@
   medium with the grabber and a composer's footer; `### A draft the footer applies` edits filters as
   a draft with `Reset` and `Show N results` in the footer, and closing discards it.
   No component API changes; each demo's reference draws the same scene.
+- **Four docs pages show their parts at work (#158).** The `InputGroup` demo is a real search — typed
+  into, settling 300 ms later with a spinner where the work is, the matches under the field — and a
+  real composer: `Return` sends and `Shift-Return` breaks the line, the add-on turns to open an
+  attach menu, and the send turns into a stop while a scripted reply streams;
+  `### A search field` and `### A message composer` describe both. `Input` gains
+  `### A password with a strength meter`: four segments, a word for the score, and the rules ticking.
+  `MessageScroller` gains `### A chat` (an empty state with suggestion cards inside the frame),
+  `### Older turns` (`onLoadMoreAtStart` from the list, the rows on screen keeping their place) and
+  `### Selecting across turns` (`selectable` over the frame, one selection over the mounted rows).
+  `EmojiPicker` gains `### In a composer` (a picker from an `InputGroup` add-on, the choice appended
+  to the message and leading the recents) and `### Reactions` (chips with counts where yours is
+  tinted, and a quick row that ends in the picker). No component API changes; each demo's reference
+  draws the same scene.
+- **`image-viewer` (#169).** One image full screen, open while `image` (`{ src, alt? }`, the shape `TextView`'s `onImagePress` reports) is set: `ImageViewer` is a `Dialog` as a page (`dialogPage`) over the theme's `scrim`, the image fitted, a pinch to 4×, a double tap or click to 2.5×, a drag to pan and a swipe down to close (`onClose` also on the close button, Escape and a press on the ground); the `alt` text is the caption, in `on-media` ink. `imageViewerLook()` is exported. There are no `ImageViewerClose` or `ImageViewerCaption` parts: both are always drawn. `TextView`'s page gains `### Images that open`, and the showcase's chat and TextView scenes use it in place of their own lightboxes.
+- **`dialogPage()` fills the window when passed as `style` (#169).** It now sets `width` and `maxHeight` too, so the card's width and height cap no longer survive under it: a lightbox that passes it to `DialogContent` covers the window instead of a 360-point column.
+- **`code-block` (#160).** Code, a command's output or a log in a block, after shadcn/ui's `CodeBlock`: `CodeBlock` (`variant` `default | destructive`, `size` `default | sm`), `CodeBlockHeader`, `CodeBlockTitle`, `CodeBlockActions`, `CodeBlockCopyButton` (a ghost `IconButton` that writes `value` to the clipboard and shows a check for two seconds, its `accessibilityLabel` "Copy" then "Copied"), `CodeBlockContent` (a string or lines; `lineNumbers`, `startLine`, `wrap`; sideways scroll without a bar), `CodeBlockLine` (`variant` `default | highlighted | added | removed`) and `CodeBlockFooter`. The code is plain mono: no tokenizer, so no highlighting. The showcase's AI Chat draws a code tool's result with it instead of by hand.
+- **A component page can show its composition (#151).** Pages for a component built from several parts gain an optional `## Composition` between Usage and Examples: one line "Use the following composition to build a `Dialog`:" and one `text` fence with the part tree, as on shadcn/ui's pages. `check:pages` accepts the section only in that slot and fails on a name the component does not export; the page rules in `apps/website/AGENTS.md` and `docs/port.md` describe it. The pages whose parts nest now show their tree; single-part pages have none.
+- **Style data in themes (#144).** `finishes.json` now states nine groups of style beside its finishes — `type`, `shape`, `size`, `stroke`, `focus`, `state`, `motion`, `icon`, `indicator` — named by role, the same keys in every theme. `density`, `controlSize`, `motion`, `cornerCurve` and `focusRing` keep their shapes and read the theme in use, so `selectTheme` redraws what reads them; `style()` and `reactive()` are exported from `@shadcn-nsh/theme`. `check:theme` holds the key sets, the enum whitelists and the `shape` corners equal to `theme.json`'s radii. Nothing changes on screen: the default theme's values are the numbers the code wrote.
+- **A dialog fills the window as a page (`dialogPage`), and `NavPage`'s `header` takes a function of
+  the page (#91).** `dialogPage()` is the look a dialog wears when the app owns the whole surface —
+  a lightbox, an editor, a page a phone's system presents: no card, no edge, the theme's background,
+  all of it spreadable as `DialogContent`'s `style`. `header={(page) => <MyBar page={page} />}` is
+  handed the slot the drawn header reads — `back()`, which is `onBackPress` then the pop `popOnBack`
+  allows, and `pages()` — so a header of the app's own answers Back the way the drawn one does,
+  without `onBack` and the stack being threaded through the scene. It is a function because
+  `nsh/base` mounts the header in the page's own header host, out of reach of what the page provides
+  around its content: a bare element there cannot read the page it heads.
+- **`MenuButton` is the platform's own menu (#92).** The system pull-down: `UIContextMenu` on iOS, a
+  context menu with a pointer — the items as data, `variant` (default `ghost`) and `size` for a
+  string child. shadcn has no counterpart (a web menu is always the app's own drawing). A string
+  child is drawn, not a nested `Button`: on desktop `nsh/base` makes the button's own view the
+  pressable, and a button inside it would swallow the press.
+- **`treeRowHeight` is exported (#92).** A well is as tall as its rows — 28 points with a pointer,
+  44 on a touch screen — so `height: 8 * treeRowHeight` plus the list's padding, instead of a copy
+  of the number in the app.
+- **`AvatarGroup`, `AvatarGroupCount` and `AvatarBadge` (#86).** A stacked row keeps `nsh/base`'s `limit` and overflow, overlapped with `-space-x-2`; the count is the overflow's text; a presence mark sits on the avatar's end-bottom corner. Pass the presence color; the avatar does not clip the mark.
+- **`Stat` takes `unit` and `note`, and `StatGroup` lays several on one row (#102).** `unit` sits beside the value, smaller and muted; `note` is the line under it. A stat inside `StatGroup` shares the row unless it sets `width`. A hairline above a chart's figures is the group's class.
+- **The message scroller pins a short conversation and marks an arrival (#116).** `MessageScrollerViewport` passes `alignment` through to the list (`"bottom"` holds a short thread at the bottom). `MessageScrollerButton` takes `variant` and `size` (still `secondary` and `sm` when omitted) and an `indicator` at its top-end corner; the arrow stays.
+- **`CardContent` takes `flush` (#123).** It drops the side padding and pulls the body through the card's bottom padding, so a picture meets the rim and the card's radius clips it. The header stays padded. Off in the terminal.
 
 - **`split-view`.** Columns of navigation stacks — a sidebar, a content column and the detail — with the column header and the sidebar button in the theme's look, over `nsh/base`'s `SplitView`.
 - **`Progress` stands a limit with `marker` (#125).** `marker` is where a limit is, a percentage
