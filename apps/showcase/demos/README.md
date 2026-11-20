@@ -19,6 +19,9 @@ The conventions:
 - **Colors**: only from the theme — `colors`, `finish`, `radius`, `rounded` of
   `@shadcn-nsh/theme`. A color literal never appears here; the app's palette and appearance
   switching should redraw the whole scene with nothing else changed.
+- **Shared parts**: a group's demos share one `demos/<group>-shared.tsx` (a card with a trailing
+  slot, a result line, a caption with a note) instead of each redrawing it; `actions-shared.tsx`
+  and `platform-shared.tsx` are the precedent.
 - **Components**: from `packages/ui` (`@/packages/ui/…`), as an app installs them; `nsh/base`
   only through those shells. Sounds and the docs demos' adapter layer (`Stage`, `Split`,
   `Inspector`, `Log`) stay out.

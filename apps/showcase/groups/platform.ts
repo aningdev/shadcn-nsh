@@ -12,7 +12,7 @@ import {
   SquareTerminal,
 } from "lucide";
 
-import { notBuilt, type DemoEntry } from "./entry";
+import { lazy, notBuilt, type DemoEntry } from "./entry";
 
 /** The Platform demos, in the official gallery's order. */
 export const platform: DemoEntry[] = [
@@ -20,48 +20,32 @@ export const platform: DemoEntry[] = [
     name: "System",
     detail: "Status bar, alerts, action sheets, environment, timers, fetch",
     icon: Cpu,
-    screen: notBuilt({
-      name: "System",
-      detail: "Status bar, alerts, action sheets, environment, timers, fetch",
-    }),
+    screen: lazy(() => import("../demos/system").then((m) => m.SystemDemo)),
   },
   {
     name: "Storage",
     detail: "nsh/storage: a launch count, a note saved as you type, the stored keys",
     icon: Database,
-    screen: notBuilt({
-      name: "Storage",
-      detail: "nsh/storage: a launch count, a note saved as you type, the stored keys",
-    }),
+    screen: lazy(() => import("../demos/storage").then((m) => m.StorageDemo)),
   },
   {
     name: "Updater",
     detail: "nsh/updater: ask for a newer version, download it, replace the app",
     icon: Download,
-    screen: notBuilt({
-      name: "Updater",
-      detail: "nsh/updater: ask for a newer version, download it, replace the app",
-    }),
+    screen: lazy(() => import("../demos/updater").then((m) => m.UpdaterDemo)),
   },
   {
     name: "Notifications",
     detail:
       "Asking for the permission, a notification shown, replaced and pressed, the badge on the app's icon",
     icon: Bell,
-    screen: notBuilt({
-      name: "Notifications",
-      detail:
-        "Asking for the permission, a notification shown, replaced and pressed, the badge on the app's icon",
-    }),
+    screen: lazy(() => import("../demos/notifications").then((m) => m.NotificationsDemo)),
   },
   {
     name: "URL scheme",
     detail: "UrlScheme: nsh-gallery:// links that open the app",
     icon: Link2,
-    screen: notBuilt({
-      name: "URL scheme",
-      detail: "UrlScheme: nsh-gallery:// links that open the app",
-    }),
+    screen: lazy(() => import("../demos/url-scheme").then((m) => m.UrlSchemeDemo)),
   },
   {
     name: "Windows",
@@ -78,19 +62,13 @@ export const platform: DemoEntry[] = [
     name: "Tray",
     detail: "nsh/desktop: an icon in the system tray with its tooltip, click and menu",
     icon: Inbox,
-    screen: notBuilt({
-      name: "Tray",
-      detail: "nsh/desktop: an icon in the system tray with its tooltip, click and menu",
-    }),
+    screen: lazy(() => import("../demos/tray").then((m) => m.TrayDemo)),
   },
   {
     name: "Global shortcut",
     detail: "nsh/desktop: a keystroke heard whichever app has the keyboard",
     icon: Command,
-    screen: notBuilt({
-      name: "Global shortcut",
-      detail: "nsh/desktop: a keystroke heard whichever app has the keyboard",
-    }),
+    screen: lazy(() => import("../demos/global-shortcut").then((m) => m.GlobalShortcutDemo)),
   },
   {
     name: "Keyboard",
@@ -105,9 +83,6 @@ export const platform: DemoEntry[] = [
     name: "Standard APIs",
     detail: "Files, processes, TCP, WebSockets, buffers, crypto and utilities",
     icon: SquareTerminal,
-    screen: notBuilt({
-      name: "Standard APIs",
-      detail: "Files, processes, TCP, WebSockets, buffers, crypto and utilities",
-    }),
+    screen: lazy(() => import("../demos/standard-apis").then((m) => m.StandardApisDemo)),
   },
 ];

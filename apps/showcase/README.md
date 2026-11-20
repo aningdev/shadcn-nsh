@@ -9,7 +9,9 @@ one batch at a time; what the library lacked is in [`GAPS.md`](GAPS.md). See [#7
   app's storage. `kit.tsx` — the layout every demo draws through.
 - `groups/<group>.ts` — the index, one file per purpose group (Actions, Inputs, Navigation,
   Overlays, Data, Documents and workspaces), so a later batch touches its group file alone.
-- `demos/` — one file per demo, plus `demos/README.md` for the conventions a demo follows.
+- `demos/` — one file per demo, plus `demos/README.md` for the conventions a demo follows; a
+  group's demos share `demos/<group>-shared.tsx` (`actions-shared`, `platform-shared`).
+- `assets/` — the images, fonts and media the demos use, copied from the Gallery under their own names.
 - `tests/` — the shell's behavior tests (`nsh test apps/showcase`).
 
 Run it with `bun run dev:showcase` (or `nsh run apps/showcase`); the website serves the packaged
