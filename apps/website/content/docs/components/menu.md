@@ -26,6 +26,26 @@ import { Menu, MenuContent, MenuItem, MenuTrigger } from "@/components/ui/menu";
 </Menu>
 ```
 
+## Composition
+
+Use the following composition to build a `Menu`:
+
+```text
+Menu
+├── MenuTrigger
+└── MenuContent
+    ├── MenuGroup
+    │   ├── MenuLabel
+    │   ├── MenuItem
+    │   │   └── MenuShortcut
+    │   ├── MenuCheckboxItem
+    │   └── MenuRadioItem
+    ├── MenuSeparator
+    └── MenuSub
+        ├── MenuSubTrigger
+        └── MenuSubContent
+```
+
 ## Examples
 
 ### Checkbox and radio

@@ -37,6 +37,27 @@ import {
 </Menubar>
 ```
 
+## Composition
+
+Use the following composition to build a `Menubar`:
+
+```text
+Menubar
+└── MenubarMenu
+    ├── MenubarTrigger
+    └── MenubarContent
+        ├── MenubarGroup
+        │   ├── MenubarLabel
+        │   ├── MenubarItem
+        │   │   └── MenubarShortcut
+        │   ├── MenubarCheckboxItem
+        │   └── MenubarRadioItem
+        ├── MenubarSeparator
+        └── MenubarSub
+            ├── MenubarSubTrigger
+            └── MenubarSubContent
+```
+
 ## Examples
 
 ### The bar

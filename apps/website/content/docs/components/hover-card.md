@@ -26,6 +26,16 @@ import { HoverCard, HoverCardContent, HoverCardTrigger } from "@/components/ui/h
 </HoverCard>
 ```
 
+## Composition
+
+Use the following composition to build a `HoverCard`:
+
+```text
+HoverCard
+├── HoverCardTrigger
+└── HoverCardContent
+```
+
 ## Examples
 
 ### Compact

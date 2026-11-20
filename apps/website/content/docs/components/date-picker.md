@@ -24,6 +24,16 @@ import { DatePicker, DatePickerContent, DatePickerTrigger } from "@/components/u
 </DatePicker>
 ```
 
+## Composition
+
+Use the following composition to build a `DatePicker`:
+
+```text
+DatePicker
+├── DatePickerTrigger
+└── DatePickerContent
+```
+
 ## Examples
 
 ### A range

@@ -21,6 +21,18 @@ import { Kbd, KbdGroup } from "@/components/ui/kbd";
 <Kbd>⌘</Kbd>
 ```
 
+## Composition
+
+Use the following composition to build a `Kbd`:
+
+```text
+Kbd
+
+KbdGroup
+├── Kbd
+└── Kbd
+```
+
 ## Examples
 
 ### A group of keys

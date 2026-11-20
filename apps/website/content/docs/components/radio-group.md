@@ -25,6 +25,16 @@ import { Radio, RadioGroup } from "@/components/ui/radio-group";
 </RadioGroup>
 ```
 
+## Composition
+
+Use the following composition to build a `RadioGroup`:
+
+```text
+RadioGroup
+└── Radio
+    └── RadioRing
+```
+
 ## Examples
 
 ### Size

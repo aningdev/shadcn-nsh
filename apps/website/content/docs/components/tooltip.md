@@ -27,6 +27,16 @@ The examples draw icons with `Icon` from `lib/icons`; see [Icons](../icons) for 
 </Tooltip>
 ```
 
+## Composition
+
+Use the following composition to build a `Tooltip`:
+
+```text
+Tooltip
+├── TooltipTrigger
+└── TooltipContent
+```
+
 ## Examples
 
 ### Placement

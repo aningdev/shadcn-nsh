@@ -27,6 +27,17 @@ import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/s
 </Sheet>
 ```
 
+## Composition
+
+Use the following composition to build a `Sheet`:
+
+```text
+Sheet
+├── SheetTrigger
+└── SheetContent
+    └── SheetClose
+```
+
 ## Examples
 
 ### Side

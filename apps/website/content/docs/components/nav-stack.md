@@ -29,6 +29,15 @@ const nav = createNavStack<Route>([{ id: "settings" }]);
 </NavStack>;
 ```
 
+## Composition
+
+Use the following composition to build a `NavStack`:
+
+```text
+NavStack
+└── NavPage
+```
+
 ## Examples
 
 shadcn/ui has no navigation stack, and no page of its own; the behavior is NSH's

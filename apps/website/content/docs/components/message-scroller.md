@@ -50,6 +50,20 @@ order, oldest first, and the child renders one row. It is called once per cell, 
 read `item()` where the turn is used (`item().text`), because the cell is reused for another turn as
 the reader scrolls.
 
+## Composition
+
+Use the following composition to build a `MessageScroller`:
+
+```text
+MessageScroller
+├── MessageScrollerViewport
+│   └── MessageScrollerItem
+└── MessageScrollerButton
+
+MessageScrollerProvider
+└── MessageScroller
+```
+
 ## Examples
 
 ### Following

@@ -24,6 +24,19 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 </Popover>
 ```
 
+## Composition
+
+Use the following composition to build a `Popover`:
+
+```text
+Popover
+├── PopoverTrigger
+└── PopoverContent
+    └── PopoverHeader
+        ├── PopoverTitle
+        └── PopoverDescription
+```
+
 ## Examples
 
 ### With a header

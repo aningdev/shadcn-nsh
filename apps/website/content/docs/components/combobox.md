@@ -32,6 +32,23 @@ The examples draw icons with `Icon` from `lib/icons`; see [Icons](../icons) for 
 
 Without `multiple`, `value` is the chosen item or `null` (`string | null`). With `multiple`, it is the chosen items (`string[]`).
 
+## Composition
+
+Use the following composition to build a `Combobox`:
+
+```text
+Combobox
+├── ComboboxTrigger
+├── ComboboxChips
+│   └── ComboboxChip
+└── ComboboxContent
+    ├── ComboboxEmpty
+    ├── ComboboxGroup
+    │   ├── ComboboxLabel
+    │   └── ComboboxItem
+    └── ComboboxItem
+```
+
 ## Examples
 
 ### Disabled and clearable

@@ -50,15 +50,16 @@ A component page's body has these sections, in this order, and nothing else at `
 
 1. **Installation** — one fence tagged `npm`: `npx shadcn-nsh@latest add <slug>`. Fumadocs' `remarkNpm` (configured in `vite.config.ts`) draws it as the npm / pnpm / bun tabs; don't write the three commands by hand.
 2. **Usage** — the import from `@/components/ui/<slug>`, then one minimal use.
-3. **Examples** — one `###` per variant, size, state or common use, each with a short `tsx` snippet, in that order: `Variant` / `Tone`, `Size`, the states (`Disabled`, `Invalid`, `Read-only`, `Loading`), everything else, `Controlled` / `Uncontrolled` last. The sections show what `apps/website/demos/<slug>.tsx` shows, and every prop is one the component really has.
-4. **Differences from shadcn/ui** — optional: what the shadcn/ui component of the same name has that this does not, what this adds, and where behavior differs. Every comparison with shadcn lives here, nowhere else on the page.
-5. **API** — opens with the parts table, header `| Part | Props | Description |`; only the props and parts this package adds; one sentence points to [`nsh/base`](https://nsh.dev/elements/<element>) for the rest.
+3. **Composition** — optional, for a component built from several parts: one line "Use the following composition to build a `Dialog`:", then one fence tagged `text` with the part tree (`├──`, `└──`, `│`). The tree follows how `packages/ui/<slug>.tsx` and `apps/website/demos/<slug>.tsx` nest the parts, and every name in it is exported by the component's file. A single-part page has none.
+4. **Examples** — one `###` per variant, size, state or common use, each with a short `tsx` snippet, in that order: `Variant` / `Tone`, `Size`, the states (`Disabled`, `Invalid`, `Read-only`, `Loading`), everything else, `Controlled` / `Uncontrolled` last. The sections show what `apps/website/demos/<slug>.tsx` shows, and every prop is one the component really has.
+5. **Differences from shadcn/ui** — optional: what the shadcn/ui component of the same name has that this does not, what this adds, and where behavior differs. Every comparison with shadcn lives here, nowhere else on the page.
+6. **API** — opens with the parts table, header `| Part | Props | Description |`; only the props and parts this package adds; one sentence points to [`nsh/base`](https://nsh.dev/elements/<element>) for the rest.
 
 Do **not**:
 
 - put `# Title` in the body (the route renders `h1` from frontmatter);
 - write `## Preview` (the route injects it), `## Behavior & a11y` or `## Source` (behavior is NSH's, one badge away);
-- use the old `## Install`, `## Composition`, `## Differences`, `## Not forwarded` or `## Accessibility` sections (screen-reader names go in the example or the API they belong to);
+- use the old `## Install`, `## Differences`, `## Not forwarded` or `## Accessibility` sections (screen-reader names go in the example or the API they belong to);
 - invent props or paste another library's API. Read `packages/ui/<slug>.tsx` and `apps/website/demos/<slug>.tsx` first.
 
 Import snippets use the registry import path:
@@ -67,7 +68,7 @@ Import snippets use the registry import path:
 import { Button, IconButton } from "@/components/ui/button";
 ```
 
-Every name in such an import must be exported by `packages/ui/<slug>.tsx`; `check:pages` parses the import lines and checks them.
+Every name in such an import must be exported by `packages/ui/<slug>.tsx`; `check:pages` parses the import lines and checks them. A Composition tree's names are checked the same way, and the section is accepted only between Usage and Examples.
 
 ### Generated pages
 

@@ -46,6 +46,21 @@ The examples draw icons with `Icon` from `lib/icons`; see [Icons](../icons) for 
 </Attachment>
 ```
 
+## Composition
+
+Use the following composition to build an `Attachment`:
+
+```text
+Attachment
+├── AttachmentMedia
+├── AttachmentContent
+│   ├── AttachmentTitle
+│   └── AttachmentDescription
+├── AttachmentActions
+│   └── AttachmentAction
+└── AttachmentTrigger
+```
+
 ## Examples
 
 ### Size

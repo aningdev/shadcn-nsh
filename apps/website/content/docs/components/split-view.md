@@ -65,6 +65,18 @@ const note = createNavStack(["note"]);
 
 `sidebar`, `content` and `detail` stay props, and each one is a `NavStack`. The platform finds that stack in the slot, so these parts are the pages inside it, not wrappers around it. Leave `content` out for two columns.
 
+## Composition
+
+Use the following composition to build a `SplitView`:
+
+```text
+SplitView
+├── SplitViewSidebar
+├── SplitViewContent
+│   └── SplitViewTrigger
+└── SplitViewDetail
+```
+
 ## Examples
 
 shadcn/ui has no split view. The behavior — which columns show, the phone collapsing to one, the system's sidebar button on iOS — is NSH's [`SplitView`](https://nsh.dev/elements/split-view). This component is that view, plus the column's surface, the header a desktop draws, and the button that hides the sidebar.

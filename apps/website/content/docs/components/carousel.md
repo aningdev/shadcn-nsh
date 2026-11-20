@@ -34,6 +34,21 @@ import {
 </Carousel>
 ```
 
+## Composition
+
+Use the following composition to build a `Carousel`:
+
+```text
+Carousel
+├── CarouselContent
+│   └── CarouselItem
+├── CarouselPrevious
+├── CarouselPagination
+│   └── CarouselPaginationItem
+│       └── CarouselDot
+└── CarouselNext
+```
+
 ## Examples
 
 ### Slides

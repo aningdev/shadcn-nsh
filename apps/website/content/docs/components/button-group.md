@@ -25,6 +25,16 @@ import { ButtonGroup, buttonGroupLook } from "@/components/ui/button-group";
 </ButtonGroup>
 ```
 
+## Composition
+
+Use the following composition to build a `ButtonGroup`:
+
+```text
+ButtonGroup
+├── ButtonGroupText
+└── ButtonGroupSeparator
+```
+
 ## Examples
 
 ### The join

@@ -3,9 +3,11 @@
 /**
  * The docs' page contract, checked:
  *
- * - a page has Installation, Usage, Examples, an optional Differences from shadcn/ui, and API, in
- *   that order and nothing else; Examples' subsections run variant, size, state, the rest,
- *   controlled; API opens with the | Part | Props | Description | table (docs/port.md, 文档页);
+ * - a page has Installation, Usage, an optional Composition, Examples, an optional Differences
+ *   from shadcn/ui, and API, in that order and nothing else; Composition is a one-line lead and
+ *   one `text` fence whose tree names only parts the component exports; Examples' subsections run
+ *   variant, size, state, the rest, controlled; API opens with the | Part | Props | Description |
+ *   table (docs/port.md, 文档页);
  * - a `demo:` names the page's own demo;
  * - every name a fenced snippet imports from `@/components/ui/<id>` is
  *   exported by that component's file;
@@ -68,30 +70,37 @@ function fences(source: string): Fence[] {
   return out;
 }
 
-/** The `##` headings outside fences, exactly as written. */
-/** A page's `##` sections in order, each with its `###` titles and its first table's header cells,
- * fences skipped. */
-type Section = { title: string; subsections: string[]; firstTable: string[] | null };
+/** A page's `##` sections in order, each with its body, its `###` titles and its first table's
+ * header cells, fences skipped for the headings and tables only. */
+type Section = {
+  title: string;
+  line: number;
+  subsections: string[];
+  firstTable: string[] | null;
+  body: string[];
+};
 
 function outline(source: string): Section[] {
   const out: Section[] = [];
   let marker: string | null = null;
-  for (const line of source.split(/\r?\n/)) {
+  for (const [index, line] of source.split(/\r?\n/).entries()) {
     const fence = /^(`{3,}|~{3,})/.exec(line);
+    const current = out.at(-1);
     if (marker) {
+      current!.body.push(line);
       if (fence && fence[1]!.startsWith(marker)) marker = null;
       continue;
     }
     if (fence) {
+      current?.body.push(line);
       marker = fence[1]!;
       continue;
     }
     const h2 = /^##\s+(.+?)\s*$/.exec(line);
     if (h2) {
-      out.push({ title: h2[1]!, subsections: [], firstTable: null });
+      out.push({ title: h2[1]!, line: index + 1, subsections: [], firstTable: null, body: [] });
       continue;
     }
-    const current = out.at(-1);
     if (!current) continue;
     const h3 = /^###\s+(.+?)\s*$/.exec(line);
     if (h3) current.subsections.push(h3[1]!);
@@ -102,6 +111,7 @@ function outline(source: string): Section[] {
         .split("|")
         .map((cell) => cell.trim());
     }
+    current.body.push(line);
   }
   return out;
 }
@@ -119,6 +129,7 @@ function exampleRank(title: string): number {
   return 4;
 }
 
+/** The `##` headings outside fences, exactly as written. */
 function headings(source: string): string[] {
   const out: string[] = [];
   const lines = source.split(/\r?\n/);
@@ -264,8 +275,13 @@ if (nshFiles) {
 }
 
 let importCount = 0;
+let treeCount = 0;
 const required = ["Installation", "Usage", "Examples", "API"];
-const old = new Set(["Install", "Composition", "Differences", "Not forwarded", "Accessibility"]);
+const old = new Set(["Install", "Differences", "Not forwarded", "Accessibility"]);
+/** The optional part tree, between Usage and Examples. */
+const COMPOSITION = "Composition";
+/** The one-line lead that opens Composition. */
+const COMPOSITION_LEAD = /^Use the following composition to build .+:$/;
 /** The one optional section, between Examples and API. */
 const DIFFERENCES = "Differences from shadcn/ui";
 /** The header of the parts table that opens API. */
@@ -277,6 +293,7 @@ for (const component of cat.components) {
   const where = path.relative(repo, file);
   const meta = readPageMeta(source);
   const found = headings(source);
+  const modules = new Map<string, Set<string>>();
 
   // Astro parses the frontmatter as YAML, and a value it cannot read fails the site's build.
   const frontmatter = /^---\r?\n([\s\S]*?)\r?\n---/.exec(source)?.[1];
@@ -298,13 +315,66 @@ for (const component of cat.components) {
   // The sections, in their order, and nothing else at `##` (docs/port.md, 文档页).
   const sections = outline(source);
   const titles = sections.map((section) => section.title);
-  const expected = titles.includes(DIFFERENCES)
-    ? [...required.slice(0, 3), DIFFERENCES, "API"]
-    : required;
+  const expected = ["Installation", "Usage"];
+  if (titles.includes(COMPOSITION)) expected.push(COMPOSITION);
+  expected.push("Examples");
+  if (titles.includes(DIFFERENCES)) expected.push(DIFFERENCES);
+  expected.push("API");
   if (titles.join("|") !== expected.join("|")) {
     fail(
       `${where}: sections are ${titles.map((t) => `"${t}"`).join(", ")}, not ${expected.map((t) => `"${t}"`).join(", ")}`,
     );
+  }
+  const composition = sections.find((section) => section.title === COMPOSITION);
+  if (composition) {
+    // One lead line, then one `text` fence: the shape of shadcn/ui's Composition.
+    let fenced = false;
+    const outside: string[] = [];
+    for (const line of composition.body) {
+      if (/^(`{3,}|~{3,})/.test(line)) {
+        fenced = !fenced;
+        continue;
+      }
+      if (!fenced && line.trim() !== "") outside.push(line.trim());
+    }
+    const firstLine = composition.body.find((line) => line.trim() !== "");
+    if (outside.length !== 1 || !firstLine || !COMPOSITION_LEAD.test(firstLine.trim())) {
+      fail(
+        `${where}: "## ${COMPOSITION}" is one line "Use the following composition to build a \`X\`:" and its tree, nothing else`,
+      );
+    }
+    const trees = fences(composition.body.join("\n"));
+    if (trees.length !== 1) {
+      fail(`${where}: "## ${COMPOSITION}" wants one fenced tree, not ${trees.length}`);
+    }
+    const tree = trees[0];
+    if (tree && tree.lang !== "text") {
+      fail(`${where}: "## ${COMPOSITION}" is fenced \`text\`, not \`${tree.lang}\``);
+    }
+    if (tree) {
+      if (!modules.has(component.id)) modules.set(component.id, exportsOf(component.uiFile));
+      const exported = modules.get(component.id)!;
+      const parts = tree.body
+        .split(/\r?\n/)
+        .map((raw, index) => ({ raw, index }))
+        .filter(({ raw }) => raw.trim() !== "");
+      for (const { raw, index } of parts) {
+        const name = raw.replace(/^[\s│├└─]+/, "").trim();
+        treeCount += 1;
+        if (!/^[A-Za-z_$][\w$]*$/.test(name)) {
+          fail(
+            `${where}:${composition.line + tree.line + index}: ${JSON.stringify(raw.trim())} is not a part name`,
+          );
+        } else if (!exported.has(name)) {
+          fail(
+            `${where}:${composition.line + tree.line + index}: ${component.id} does not export "${name}" (Composition)`,
+          );
+        }
+      }
+      if (parts.length < 2) {
+        fail(`${where}: "## ${COMPOSITION}" names fewer than two parts`);
+      }
+    }
   }
   const examples = sections.find((section) => section.title === "Examples");
   if (examples) {
@@ -341,7 +411,6 @@ for (const component of cat.components) {
     fail(`${where}: demo "${meta.demo}" is not "${component.id}"`);
   }
 
-  const modules = new Map<string, Set<string>>();
   for (const fence of fences(source)) {
     if (!["tsx", "ts", "jsx", "js"].includes(fence.lang)) continue;
     const importBlock = /import\s+(?:type\s+)?\{([\s\S]*?)\}\s+from\s+["']([^"']+)["']/g;
@@ -528,5 +597,5 @@ const official = [
   nshFiles ? `${NSH_ELEMENTS.length} NSH` : "NSH (references/ empty)",
 ];
 console.log(
-  `check:pages ok — ${cat.components.length} components, ${importCount} imported names; ${official.join(", ")} answered for`,
+  `check:pages ok — ${cat.components.length} components, ${importCount} imported names, ${treeCount} composition parts; ${official.join(", ")} answered for`,
 );

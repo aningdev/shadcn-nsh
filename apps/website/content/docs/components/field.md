@@ -45,6 +45,24 @@ import {
 points apart. `Field` is one label and its control. A control that carries its own label (a
 `Checkbox` with children, a `Switch` with children) needs no `Field`: put it in the group as it is.
 
+## Composition
+
+Use the following composition to build a `FieldSet`:
+
+```text
+FieldSet
+├── FieldLegend
+├── FieldDescription
+└── FieldGroup
+    ├── Field
+    │   ├── FieldLabel
+    │   ├── FieldContent
+    │   │   ├── FieldTitle
+    │   │   └── FieldDescription
+    │   └── FieldError
+    └── FieldSeparator
+```
+
 ## Examples
 
 ### Vertical and horizontal

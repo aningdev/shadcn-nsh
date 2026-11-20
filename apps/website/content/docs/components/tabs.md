@@ -26,6 +26,17 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 </Tabs>
 ```
 
+## Composition
+
+Use the following composition to build a `Tabs`:
+
+```text
+Tabs
+├── TabsList
+│   └── TabsTrigger
+└── TabsContent
+```
+
 ## Examples
 
 ### Underline

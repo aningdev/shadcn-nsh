@@ -21,6 +21,15 @@ import { Stat, StatGroup } from "@/components/ui/stat";
 <Stat label="Users" value="12.4k" />
 ```
 
+## Composition
+
+Use the following composition to build a `StatGroup`:
+
+```text
+StatGroup
+└── Stat
+```
+
 ## Examples
 
 ### Tone

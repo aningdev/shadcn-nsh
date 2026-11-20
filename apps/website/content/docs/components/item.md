@@ -58,6 +58,23 @@ between them. `Item` is the row: `ItemMedia` before its content, `ItemContent` f
 the note, `ItemActions` for its controls. `ItemHeader` and `ItemFooter` are lines across the whole
 row — a header above the content, a footer under it.
 
+## Composition
+
+Use the following composition to build an `Item`:
+
+```text
+ItemGroup
+├── Item
+│   ├── ItemHeader
+│   ├── ItemMedia
+│   ├── ItemContent
+│   │   ├── ItemTitle
+│   │   └── ItemDescription
+│   ├── ItemActions
+│   └── ItemFooter
+└── ItemSeparator
+```
+
 ## Examples
 
 ### Variant

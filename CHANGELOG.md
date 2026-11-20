@@ -4,6 +4,7 @@
 
 ### Added
 
+- **A component page can show its composition (#151).** Pages for a component built from several parts gain an optional `## Composition` between Usage and Examples: one line "Use the following composition to build a `Dialog`:" and one `text` fence with the part tree, as on shadcn/ui's pages. `check:pages` accepts the section only in that slot and fails on a name the component does not export; the page rules in `apps/website/AGENTS.md` and `docs/port.md` describe it. The pages whose parts nest now show their tree; single-part pages have none.
 - **Style data in themes (#144).** `finishes.json` now states nine groups of style beside its finishes — `type`, `shape`, `size`, `stroke`, `focus`, `state`, `motion`, `icon`, `indicator` — named by role, the same keys in every theme. `density`, `controlSize`, `motion`, `cornerCurve` and `focusRing` keep their shapes and read the theme in use, so `selectTheme` redraws what reads them; `style()` and `reactive()` are exported from `@shadcn-nsh/theme`. `check:theme` holds the key sets, the enum whitelists and the `shape` corners equal to `theme.json`'s radii. Nothing changes on screen: the default theme's values are the numbers the code wrote.
 - **A dialog fills the window as a page (`dialogPage`), and `NavPage`'s `header` takes a function of
   the page (#91).** `dialogPage()` is the look a dialog wears when the app owns the whole surface —

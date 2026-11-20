@@ -34,6 +34,18 @@ import {
 </Accordion>
 ```
 
+## Composition
+
+Use the following composition to build an `Accordion`:
+
+```text
+Accordion
+├── AccordionItem
+│   ├── AccordionHeader
+│   │   └── AccordionTrigger
+│   └── AccordionPanel
+```
+
 ## Examples
 
 ### Disabled row

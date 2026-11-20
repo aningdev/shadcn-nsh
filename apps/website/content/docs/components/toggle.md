@@ -23,6 +23,17 @@ import { Toggle, ToggleGroup } from "@/components/ui/toggle";
 </Toggle>
 ```
 
+## Composition
+
+Use the following composition to build a `Toggle`:
+
+```text
+Toggle
+
+ToggleGroup
+└── Toggle
+```
+
 ## Examples
 
 ### Variant

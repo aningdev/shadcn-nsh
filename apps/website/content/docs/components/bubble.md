@@ -30,6 +30,21 @@ import {
 </Bubble>
 ```
 
+## Composition
+
+Use the following composition to build a `Bubble`:
+
+```text
+Bubble
+├── BubbleContent
+│   └── BubbleText
+└── BubbleReactions
+
+BubbleGroup
+├── Bubble
+└── Bubble
+```
+
 ## Examples
 
 ### Fills

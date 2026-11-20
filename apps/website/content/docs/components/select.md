@@ -35,6 +35,22 @@ import {
 </Select>
 ```
 
+## Composition
+
+Use the following composition to build a `Select`:
+
+```text
+Select
+├── SelectTrigger
+│   └── SelectValue
+└── SelectContent
+    ├── SelectGroup
+    │   ├── SelectLabel
+    │   └── SelectItem
+    ├── SelectItem
+    └── SelectSeparator
+```
+
 ## Examples
 
 ### Disabled choice, disabled select

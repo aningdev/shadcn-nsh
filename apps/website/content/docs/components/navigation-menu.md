@@ -43,6 +43,21 @@ import {
 </NavigationMenu>
 ```
 
+## Composition
+
+Use the following composition to build a `NavigationMenu`:
+
+```text
+NavigationMenu
+└── NavigationMenuList
+    ├── NavigationMenuItem
+    │   ├── NavigationMenuTrigger
+    │   └── NavigationMenuContent
+    │       └── NavigationMenuLink
+    └── NavigationMenuItem
+        └── NavigationMenuLink
+```
+
 ## Examples
 
 ### The bar

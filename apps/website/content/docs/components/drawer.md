@@ -41,6 +41,21 @@ import {
 </Drawer>
 ```
 
+## Composition
+
+Use the following composition to build a `Drawer`:
+
+```text
+Drawer
+├── DrawerTrigger
+└── DrawerContent
+    ├── DrawerHeader
+    │   ├── DrawerTitle
+    │   └── DrawerDescription
+    └── DrawerFooter
+        └── DrawerClose
+```
+
 ## Examples
 
 ### A swipe closes it

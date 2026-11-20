@@ -33,6 +33,26 @@ import {
 </ContextMenu>
 ```
 
+## Composition
+
+Use the following composition to build a `ContextMenu`:
+
+```text
+ContextMenu
+├── ContextMenuTrigger
+└── ContextMenuContent
+    ├── ContextMenuGroup
+    │   ├── ContextMenuLabel
+    │   ├── ContextMenuItem
+    │   │   └── ContextMenuShortcut
+    │   ├── ContextMenuCheckboxItem
+    │   └── ContextMenuRadioItem
+    ├── ContextMenuSeparator
+    └── ContextMenuSub
+        ├── ContextMenuSubTrigger
+        └── ContextMenuSubContent
+```
+
 ## Examples
 
 ### A surface

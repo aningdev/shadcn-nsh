@@ -26,6 +26,15 @@ import { ResizablePanel, ResizablePanelGroup } from "@/components/ui/resizable";
 </ResizablePanelGroup>
 ```
 
+## Composition
+
+Use the following composition to build a `ResizablePanelGroup`:
+
+```text
+ResizablePanelGroup
+└── ResizablePanel
+```
+
 ## Examples
 
 ### A sidebar

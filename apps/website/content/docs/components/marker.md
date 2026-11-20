@@ -24,6 +24,16 @@ import { Marker, MarkerContent, MarkerIcon } from "@/components/ui/marker";
 </Marker>
 ```
 
+## Composition
+
+Use the following composition to build a `Marker`:
+
+```text
+Marker
+├── MarkerIcon
+└── MarkerContent
+```
+
 ## Examples
 
 ### Inline

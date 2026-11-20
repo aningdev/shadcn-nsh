@@ -41,6 +41,24 @@ import {
 </Table>
 ```
 
+## Composition
+
+Use the following composition to build a `Table`:
+
+```text
+Table
+├── TableCaption
+├── TableHeader
+│   └── TableRow
+│       └── TableHead
+├── TableBody
+│   └── TableRow
+│       └── TableCell
+└── TableFooter
+    └── TableRow
+        └── TableCell
+```
+
 ## Examples
 
 ### Selected row

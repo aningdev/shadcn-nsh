@@ -29,6 +29,16 @@ import { Toolbar, ToolbarGroup, ToolbarSeparator } from "@/components/ui/toolbar
 </Toolbar>
 ```
 
+## Composition
+
+Use the following composition to build a `Toolbar`:
+
+```text
+Toolbar
+├── ToolbarGroup
+└── ToolbarSeparator
+```
+
 ## Examples
 
 ### Disabled

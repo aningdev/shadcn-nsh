@@ -38,6 +38,20 @@ import {
 </Breadcrumb>
 ```
 
+## Composition
+
+Use the following composition to build a `Breadcrumb`:
+
+```text
+Breadcrumb
+└── BreadcrumbList
+    ├── BreadcrumbItem
+    │   ├── BreadcrumbLink
+    │   └── BreadcrumbPage
+    ├── BreadcrumbSeparator
+    └── BreadcrumbEllipsis
+```
+
 ## Examples
 
 ### A trail

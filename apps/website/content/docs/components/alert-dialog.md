@@ -51,6 +51,22 @@ fill it in — they register a title, a message and buttons, and `AlertDialogCon
 the root is open. So the box **does not follow this library's theme**, what it shows is **text
 only** (no views, icons or fields), and an Android alert takes **at most three buttons**.
 
+## Composition
+
+Use the following composition to build an `AlertDialog`:
+
+```text
+AlertDialog
+├── AlertDialogTrigger
+└── AlertDialogContent
+    ├── AlertDialogHeader
+    │   ├── AlertDialogTitle
+    │   └── AlertDialogDescription
+    └── AlertDialogFooter
+        ├── AlertDialogCancel
+        └── AlertDialogAction
+```
+
 ## Examples
 
 ### Against `Dialog`

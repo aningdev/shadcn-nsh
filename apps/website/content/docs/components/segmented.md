@@ -25,6 +25,16 @@ import { Segmented, SegmentedItem, SegmentedList } from "@/components/ui/segment
 </Segmented>
 ```
 
+## Composition
+
+Use the following composition to build a `Segmented`:
+
+```text
+Segmented
+└── SegmentedList
+    └── SegmentedItem
+```
+
 ## Examples
 
 ### Fill / small

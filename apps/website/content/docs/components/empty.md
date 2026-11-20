@@ -43,6 +43,19 @@ The examples draw icons with `Icon` from `lib/icons`; see [Icons](../icons) for 
 </Empty>
 ```
 
+## Composition
+
+Use the following composition to build an `Empty`:
+
+```text
+Empty
+├── EmptyHeader
+│   ├── EmptyMedia
+│   ├── EmptyTitle
+│   └── EmptyDescription
+└── EmptyContent
+```
+
 ## Examples
 
 ### With what the reader can do

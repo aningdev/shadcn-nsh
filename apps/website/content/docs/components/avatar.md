@@ -21,6 +21,19 @@ import { Avatar, AvatarBadge, AvatarGroup, AvatarGroupCount } from "@/components
 <Avatar name="Ada Lovelace" style={{ width: 36, height: 36 }} />
 ```
 
+## Composition
+
+Use the following composition to build an `Avatar`:
+
+```text
+Avatar
+└── AvatarBadge
+
+AvatarGroup
+├── Avatar
+└── AvatarGroupCount
+```
+
 ## Examples
 
 ### Initials

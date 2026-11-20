@@ -31,6 +31,16 @@ The examples draw icons with `Icon` from `lib/icons`; see [Icons](../icons) for 
 </Alert>
 ```
 
+## Composition
+
+Use the following composition to build an `Alert`:
+
+```text
+Alert
+├── AlertTitle
+└── AlertDescription
+```
+
 ## Examples
 
 ### With an icon and a note

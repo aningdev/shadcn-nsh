@@ -30,6 +30,39 @@ The examples draw icons with `Icon` from `lib/icons`; see [Icons](../icons) for 
 </SidebarProvider>
 ```
 
+## Composition
+
+Use the following composition to build a `Sidebar`:
+
+```text
+SidebarProvider
+├── Sidebar
+│   ├── SidebarHeader
+│   │   ├── SidebarMenu
+│   │   │   └── SidebarMenuItem
+│   │   │       └── SidebarMenuButton
+│   │   └── SidebarInput
+│   ├── SidebarSeparator
+│   ├── SidebarContent
+│   │   └── SidebarGroup
+│   │       ├── SidebarGroupLabel
+│   │       ├── SidebarGroupAction
+│   │       └── SidebarGroupContent
+│   │           └── SidebarMenu
+│   │               └── SidebarMenuItem
+│   │                   ├── SidebarMenuButton
+│   │                   ├── SidebarMenuAction
+│   │                   ├── SidebarMenuBadge
+│   │                   ├── SidebarMenuSkeleton
+│   │                   └── SidebarMenuSub
+│   │                       └── SidebarMenuSubItem
+│   │                           └── SidebarMenuSubButton
+│   ├── SidebarFooter
+│   └── SidebarRail
+└── SidebarInset
+    └── SidebarTrigger
+```
+
 ## Examples
 
 ### The column

@@ -28,6 +28,19 @@ The examples draw icons with `Icon` from `lib/icons`; see [Icons](../icons) for 
 
 The group draws the field: its fill, its edge and, while the input inside has the keys, the focus edge and its ring. The input inside draws none of that, so a group has one frame, not two.
 
+## Composition
+
+Use the following composition to build an `InputGroup`:
+
+```text
+InputGroup
+├── InputGroupInput
+├── InputGroupTextarea
+└── InputGroupAddon
+    ├── InputGroupText
+    └── InputGroupButton
+```
+
 ## Examples
 
 ### Invalid and disabled

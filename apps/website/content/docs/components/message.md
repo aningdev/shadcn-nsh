@@ -35,6 +35,22 @@ The examples draw icons with `Icon` from `lib/icons`; see [Icons](../icons) for 
 </Message>
 ```
 
+## Composition
+
+Use the following composition to build a `Message`:
+
+```text
+Message
+├── MessageAvatar
+└── MessageContent
+    ├── MessageHeader
+    └── MessageFooter
+
+MessageGroup
+├── Message
+└── Message
+```
+
 ## Examples
 
 ### Alignment

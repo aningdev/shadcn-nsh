@@ -24,6 +24,16 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 </Collapsible>
 ```
 
+## Composition
+
+Use the following composition to build a `Collapsible`:
+
+```text
+Collapsible
+├── CollapsibleTrigger
+└── CollapsibleContent
+```
+
 ## Examples
 
 ### Open by default

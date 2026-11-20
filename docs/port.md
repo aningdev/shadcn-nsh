@@ -99,15 +99,16 @@ bun run port:new alert --view --family   # 有零件（Title / Description…）
 
 照 shadcn 的篇幅与顺序。页面外壳由 `apps/website/src/routes/docs/$.tsx` 生成：标题、描述，一排徽章（Copy Markdown、`NSH ↗`、`shadcn/ui ↗`，有对应才出现），然后是 Preview 面板。行为、键盘与无障碍、完整的无样式 API 都在 NSH 页上，本页不重复，也不列源码路径。
 
-`.md` 里的 `##` 章节固定、按此顺序，不加别的：
+`.md` 里的 `##` 章节按此顺序，除标为可选的以外都要有，不加别的：
 
-| 章节                            | 内容                                                                                                               |
-| ------------------------------- | ------------------------------------------------------------------------------------------------------------------ |
-| `## Installation`               | 一个标成 `npm` 的代码块：`npx shadcn-nsh@latest add <id>`（Fumadocs 画成 npm / pnpm / bun 三个标签，不手写三条）   |
-| `## Usage`                      | import 和一段最简用法                                                                                              |
-| `## Examples`                   | 每个轴一个 `###`，只写代码（顶部的 Preview 已是整个演示，示例不各配预览）                                          |
-| `## Differences from shadcn/ui` | 可选：与 shadcn/ui 同名组件相比，少了什么、多了什么、行为哪里不同；没有 shadcn 对应或没有差异时不写                |
-| `## API`                        | 第一张表是零件表，表头固定 `\| Part \| Props \| Description \|`；只列外壳自己加的 props，其余一句话指向 `nsh/base` |
+| 章节                            | 内容                                                                                                                                                                                                                             |
+| ------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `## Installation`               | 一个标成 `npm` 的代码块：`npx shadcn-nsh@latest add <id>`（Fumadocs 画成 npm / pnpm / bun 三个标签，不手写三条）                                                                                                                 |
+| `## Usage`                      | import 和一段最简用法                                                                                                                                                                                                            |
+| `## Composition`                | 可选：多部件的组件一节零件树。一行 "Use the following composition to build a `Dialog`:"，再一个标成 `text` 的代码块，用 `├──` / `└──` / `│` 画出真实的嵌套。树里的每个名字都必须是 `packages/ui/<id>.tsx` 导出的；单部件的页不写 |
+| `## Examples`                   | 每个轴一个 `###`，只写代码（顶部的 Preview 已是整个演示，示例不各配预览）                                                                                                                                                        |
+| `## Differences from shadcn/ui` | 可选：与 shadcn/ui 同名组件相比，少了什么、多了什么、行为哪里不同；没有 shadcn 对应或没有差异时不写                                                                                                                              |
+| `## API`                        | 第一张表是零件表，表头固定 `\| Part \| Props \| Description \|`；只列外壳自己加的 props，其余一句话指向 `nsh/base`                                                                                                               |
 
 `## Examples` 的 `###` 按这个次序排，同一档内自由：
 
@@ -117,7 +118,7 @@ bun run port:new alert --view --family   # 有零件（Title / Description…）
 4. 组合：其余小节（带图标、带表单、自定义触发器……）
 5. 受控：`Controlled`、`Uncontrolled`
 
-与 shadcn 的比较只写在 `## Differences from shadcn/ui`，不散在 Examples 里（不再有 "What … does not have" 一类小节）；与本库另一个组件的比较（"Against `Dialog`"）是组合档的一个小节。无障碍说明（屏幕阅读器读到的名字）写进对应示例或 API，不另起 `##`。`bun run check:pages` 检查章节、次序、`###` 档次与 API 表头。
+与 shadcn 的比较只写在 `## Differences from shadcn/ui`，不散在 Examples 里（不再有 "What … does not have" 一类小节）；与本库另一个组件的比较（"Against `Dialog`"）是组合档的一个小节。无障碍说明（屏幕阅读器读到的名字）写进对应示例或 API，不另起 `##`。`bun run check:pages` 检查章节与次序（Composition 只在 Usage 与 Examples 之间）、Composition 的一行引言、`text` 代码块与树里的导出名、`###` 档次与 API 表头。
 
 ## 主题文件
 
