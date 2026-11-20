@@ -128,6 +128,8 @@ Port Region 是**来源标注**，不是只读区：可以直接修改；`port:v
 
 **外观随外观模式变化**：颜色与依赖 props 的 look 在 JSX 里读，不在组件体里读一次存下（web 上是 CSS 变量看不出来，原生上会冻结）。这一条同样管主题：`finish` 的 getter 读的是当前主题（`selectTheme`）与当前外观，组件若把 finish 的值存进模块级常量、或读进变量后不再读，运行时切换就不会跟着变。
 
+**状态的外观进 state 样式。** 一个状态下的静态外观（底色、边框、透明度、缩放）交给 `hoverStyle` / `focusStyle` / `focusVisibleStyle` / `activeStyle` / `disabledStyle` / `selectedStyle` / `checkedStyle` / `indeterminateStyle` / `expandedStyle` / `pressedStyle`，不在 `style` 里按 `disabled`、`open`、`selected` 用 JS 再算一遍：状态本来就在元素上（它自己的 `disabled`、`accessibilityState`，或 `nsh/base` 投影给部件的状态），平台按 Tailwind 的变体顺序叠，后面的胜：`checked` → `indeterminate` → `selected` → `focus-within` → `hover` → `focus` → `focus-visible` → `active` → `disabled` → `aria-busy` → `aria-checked` → `expanded` → `aria-invalid` → `aria-pressed`（`references/nsh/crates/nsh-core/src/tailwind/mod.rs` 的 `rank`）。注意 `expanded` 与 `pressed` 排在 `hover`、`focus-visible`、`active` 之后：一个打开时的外观若要让 hover 或键盘焦点盖过它（导航菜单打开时指针在上面要显示完整底色；select 打开时触发器仍持有焦点，焦点边框要露出来），它留在 `style` 里，并在注释里写明这个理由。`disabledStyle` 只在元素真的 `disabled` 时生效，`expandedStyle` 只在元素真的 `expanded` 时生效——look 不是那个元素时，要由画它的外壳把状态写上。JS 只留 nsh 没有的状态，或排位不对的状态：数据驱动的 `active`（应用说“就是当前这页”，不是可访问性状态）、跟着状态换的内容（`●`/`○`、图标的字形）、`Text` 自己的字色字重（状态样式落在 `View` 上，盖不过子节点的 `color`）、需要插值的量（`follow` 的进度、动效），以及上面那种要被低位状态盖过的外观。元素已经 `disabled` 时，`hoverStyle` / `activeStyle` 不必再用 `disabled` 关掉：平台不给 hover，也不给按下。
+
 ## Seams
 
 **Registry**（`registry.json` 的 shadcn 格式）：CLI 只经它拿组件，不读仓库源码

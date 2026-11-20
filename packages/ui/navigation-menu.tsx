@@ -137,8 +137,6 @@ export function navigationMenuLook(): NavigationMenuLook {
 export interface NavigationMenuTriggerLookOptions {
   /** Its panel is open: the chosen fill under it, and its chevron turned. */
   open?: Live<boolean>;
-  /** No presses, no hover, 50%. */
-  disabled?: Live<boolean>;
 }
 
 /**
@@ -147,10 +145,12 @@ export interface NavigationMenuTriggerLookOptions {
  * panel is open (at once with reduced motion, in 200 ms otherwise). At rest it is bare; the chosen
  * `accent` fill sits under it while its panel is open, and the full `accent` under the pointer, the
  * theme's focus ring with the keyboard on it, a press's dimming, 50% while disabled.
+ *
+ * The open fill is in `style`, not `expandedStyle`: nsh ranks `expanded` above `hover`, and the
+ * pointer over an open trigger shows the full fill (shadcn's `data-open:hover:bg-accent`).
  */
 export function navigationMenuTriggerLook(o?: NavigationMenuTriggerLookOptions) {
   const open = () => !!read(o?.open);
-  const disabled = () => !!read(o?.disabled);
   return {
     get style(): ViewStyle {
       return {
@@ -165,11 +165,11 @@ export function navigationMenuTriggerLook(o?: NavigationMenuTriggerLookOptions) 
         ...pressTransition("background-color"),
       };
     },
-    get hoverStyle(): ViewStyle | undefined {
-      return disabled() ? undefined : highlight();
+    get hoverStyle(): ViewStyle {
+      return highlight();
     },
-    get activeStyle(): ViewStyle | undefined {
-      return disabled() ? undefined : pressSink(sink).activeStyle;
+    get activeStyle(): ViewStyle {
+      return pressSink(sink).activeStyle;
     },
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
@@ -533,10 +533,7 @@ export function NavigationMenuTrigger(props: NavigationMenuTriggerProps) {
   // upstream's demos use): built once, here, and placed by the panel without building it again
   // on every layout. Its children are read where they are drawn, below, so a child that reads a
   // signal stays live.
-  const look = navigationMenuTriggerLook({
-    open: item.open,
-    disabled: () => !!props.disabled,
-  });
+  const look = navigationMenuTriggerLook({ open: item.open });
   item.trigger.set(
     <View
       accessible
@@ -548,8 +545,8 @@ export function NavigationMenuTrigger(props: NavigationMenuTriggerProps) {
       }
       onMouseLeave={pointer ? () => item.pointerOver("trigger", false) : undefined}
       style={[look.style, props.style ?? null]}
-      hoverStyle={look.hoverStyle ?? null}
-      activeStyle={look.activeStyle ?? null}
+      hoverStyle={look.hoverStyle}
+      activeStyle={look.activeStyle}
       focusVisibleStyle={look.focusVisibleStyle}
       disabledStyle={look.disabledStyle}
     >

@@ -70,16 +70,17 @@ function Item(props: {
 
 /** A bar's trigger: the look's box, its name in the bar's type. */
 function Trigger(props: { name: string; open: () => boolean; disabled?: boolean }) {
-  const look = menubarTriggerLook({ open: props.open, disabled: () => !!props.disabled });
+  const look = menubarTriggerLook();
   return (
     <View
       accessible
       role="menuitem"
       disabled={props.disabled}
-      accessibilityState={{ disabled: props.disabled }}
+      accessibilityState={{ disabled: props.disabled, expanded: props.open() }}
       style={look.style}
-      hoverStyle={look.hoverStyle ?? null}
-      activeStyle={look.activeStyle ?? null}
+      hoverStyle={look.hoverStyle}
+      activeStyle={look.activeStyle}
+      expandedStyle={look.expandedStyle}
       focusVisibleStyle={look.focusVisibleStyle}
       disabledStyle={look.disabledStyle}
     >

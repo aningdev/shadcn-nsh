@@ -42,10 +42,7 @@ const START = [
 
 /** A trigger: the look's box, its name and its chevron. */
 function Trigger(props: { name: string; open: () => boolean; disabled?: boolean }) {
-  const look = navigationMenuTriggerLook({
-    open: props.open,
-    disabled: () => !!props.disabled,
-  });
+  const look = navigationMenuTriggerLook({ open: props.open });
   return (
     <View
       accessible
@@ -53,8 +50,8 @@ function Trigger(props: { name: string; open: () => boolean; disabled?: boolean 
       disabled={props.disabled}
       accessibilityState={{ disabled: props.disabled }}
       style={look.style}
-      hoverStyle={look.hoverStyle ?? null}
-      activeStyle={look.activeStyle ?? null}
+      hoverStyle={look.hoverStyle}
+      activeStyle={look.activeStyle}
       focusVisibleStyle={look.focusVisibleStyle}
       disabledStyle={look.disabledStyle}
     >
@@ -125,15 +122,15 @@ function PanelLink(props: { title: string; hint?: string; active?: boolean; onPr
 /** The current page in the bar: a link wearing the trigger's box. */
 function BarLink(props: { name: string; onPress: () => void }) {
   const look = () => navigationMenuLinkLook({ active: () => true, disabled: () => false });
-  const bar = navigationMenuTriggerLook({ open: () => false, disabled: () => false });
+  const bar = navigationMenuTriggerLook();
   return (
     <Link
       onPress={props.onPress}
       current
       accessibilityLabel={props.name}
       style={[look().style, bar.style]}
-      hoverStyle={[look().hoverStyle, bar.hoverStyle ?? null]}
-      activeStyle={[look().activeStyle, bar.activeStyle ?? null]}
+      hoverStyle={[look().hoverStyle, bar.hoverStyle]}
+      activeStyle={[look().activeStyle, bar.activeStyle]}
       focusVisibleStyle={[look().focusVisibleStyle, bar.focusVisibleStyle]}
       disabledStyle={[look().disabledStyle, bar.disabledStyle]}
     >

@@ -83,34 +83,23 @@ export function menubarLook(): MenubarLook {
   };
 }
 
-/** Options of `menubarTriggerLook`. */
-export interface MenubarTriggerLookOptions {
-  /** Its menu is open: the trigger wears the chosen fill. */
-  open?: Live<boolean>;
-  /** No presses, no hover, 50%. */
-  disabled?: Live<boolean>;
-}
-
 /**
  * A trigger's look: the bar's trigger (`menubarLook().trigger`) with the states that show it — the
- * neutral `accent` fill while its menu is open or the pointer is over it, a press's dimming, the
- * theme's focus ring with the keyboard on it, 50% while disabled.
+ * neutral `accent` fill while its menu is open (`expandedStyle`, from the trigger's own `expanded`
+ * state) or the pointer is over it, a press's dimming, the theme's focus ring with the keyboard on
+ * it, 50% while disabled (`disabledStyle`).
  */
-export function menubarTriggerLook(o?: MenubarTriggerLookOptions) {
-  const open = () => !!read(o?.open);
-  const disabled = () => !!read(o?.disabled);
+export function menubarTriggerLook() {
   return {
     get style(): ViewStyle {
-      return {
-        ...menubarLook().trigger,
-        ...(open() ? menuHighlight() : {}),
-      };
+      return menubarLook().trigger;
     },
-    get hoverStyle(): ViewStyle | undefined {
-      return disabled() || open() ? undefined : menuHighlight();
+    get hoverStyle(): ViewStyle {
+      return menuHighlight();
     },
-    get activeStyle(): ViewStyle | undefined {
-      return disabled() ? undefined : { opacity: pressDim };
+    activeStyle: { opacity: pressDim },
+    get expandedStyle(): ViewStyle {
+      return menuHighlight();
     },
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
@@ -225,7 +214,7 @@ export function MenubarTrigger(props: MenubarTriggerProps) {
   // upstream's demos use): built once, here, and placed by the menu without building it again on
   // every layout. Its children are read where they are drawn, below, so a child that reads a
   // signal stays live.
-  const look = menubarTriggerLook({ open: ctx.open, disabled: () => !!props.disabled });
+  const look = menubarTriggerLook();
   ctx.trigger.set(
     <View
       accessible
@@ -233,8 +222,9 @@ export function MenubarTrigger(props: MenubarTriggerProps) {
       disabled={props.disabled}
       accessibilityState={{ disabled: props.disabled }}
       style={[look.style, props.style ?? null]}
-      hoverStyle={look.hoverStyle ?? null}
-      activeStyle={look.activeStyle ?? null}
+      hoverStyle={look.hoverStyle}
+      activeStyle={look.activeStyle}
+      expandedStyle={look.expandedStyle}
       focusVisibleStyle={look.focusVisibleStyle}
       disabledStyle={look.disabledStyle}
     >
@@ -314,4 +304,3 @@ export {
   type MenuSubProps as MenubarSubProps,
   type MenuSubTriggerProps as MenubarSubTriggerProps,
 } from "./menu";
-import { type Live, read } from "./lib/utils";

@@ -100,3 +100,33 @@ test("the bar is a navigation landmark holding a list", async () => {
   expect(app.count("role:list")).toBe(1);
   expect(app.count("role:button[Open A]")).toBe(1);
 });
+
+test("an open trigger wears the chosen fill, and the fill leaves with it", async () => {
+  const app = await open("./navigation-menu.fixture.tsx", desktop);
+  const resting = app.viewStyle("role:button[Open A]")?.backgroundColor ?? null;
+  // The keyboard opens it, so no pointer rests on the trigger (hover has a fill of its own).
+  await app.keyboard.press("tab");
+  await app.keyboard.press("enter");
+  await app.waitFor("text:Body A");
+  const chosen = app.viewStyle("role:button[Open A]")?.backgroundColor ?? null;
+  expect(chosen).not.toBe(null);
+  expect(chosen).not.toBe(resting);
+  await app.keyboard.press("escape");
+  await app.wait(400);
+  expect(app.viewStyle("role:button[Open A]")?.backgroundColor ?? null).toBe(resting);
+});
+
+test("the pointer over an open trigger shows the full fill, above the chosen one", async () => {
+  const app = await open("./navigation-menu.fixture.tsx", desktop);
+  await app.keyboard.press("tab");
+  await app.keyboard.press("enter");
+  await app.waitFor("text:Body A");
+  await app.wait(400);
+  const chosen = app.viewStyle("role:button[Open A]")?.backgroundColor ?? null;
+  await app.hover("role:button[Open A]");
+  await app.wait(400);
+  expect(app.count("text:Body A")).toBe(1);
+  const hovered = app.viewStyle("role:button[Open A]")?.backgroundColor ?? null;
+  expect(hovered).not.toBe(null);
+  expect(hovered).not.toBe(chosen);
+});

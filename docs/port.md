@@ -53,6 +53,7 @@ bun run port:new alert --view --family   # 有零件（Title / Description…）
 - 不解构 props：`split(props, [...])` 取走外壳处理的键，其余 `{...rest}` 透传
 - look 的选项传读取函数（`size: () => props.size`），外观随 props 变化
 - 样式类 props 写成数组，使用者在后：`style={[look.style, props.style ?? null]}`；`hoverStyle`、`activeStyle`、`focusVisibleStyle`、`disabledStyle` 同理
+- 状态的外观进对应的 state 样式（`hoverStyle`、`activeStyle`、`focusVisibleStyle`、`disabledStyle`、`selectedStyle`、`expandedStyle`…），不在 `style` 里按 `disabled`、`open`、`selected` 再算一遍；哪些状态留给 JS 见 [`ARCHITECTURE.md`](ARCHITECTURE.md#rules) 的“状态的外观进 state 样式”
 - 字符串 children 渲染成带 look 字体的 `Text`，其他原样渲染
 - 轴的 prop 名用 shadcn 的（`variant`、`size`），取值与默认值用上游组件的
 - 复合控件（**Composition Facade**）：Root 只持有开关状态（`createOpenState`）与生命周期回调；Content 持有 `nsh/base` 根并透传它的全部 props；Trigger / Close 对字符串 child 渲染 `Button`

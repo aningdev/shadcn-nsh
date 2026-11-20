@@ -1269,7 +1269,7 @@
       "type": "registry:ui",
       "title": "Menubar",
       "description": "A row of menus whose triggers stand in one bar.",
-      "registryDependencies": ["as-text", "menu", "open-state", "popup", "theme", "utils"],
+      "registryDependencies": ["as-text", "menu", "open-state", "popup", "theme"],
       "files": [
         {
           "path": "packages/ui/menubar.tsx",

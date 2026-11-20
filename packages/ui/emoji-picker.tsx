@@ -135,6 +135,8 @@ export function EmojiTones(props: {
 }) {
   const open = signal(false);
   const current = () => tones.find((t) => t.tone === props.tone) ?? tones[0];
+  // One hand: the chosen one sits on the page's fill, cut out of the panel — `selectedStyle`,
+  // the same state it announces (`accessibilityState.selected`).
   const hand = (t: (typeof tones)[number], onPress: () => void, selected = false) => (
     <View
       role="button"
@@ -142,7 +144,7 @@ export function EmojiTones(props: {
       accessibilityState={{ selected }}
       onPress={onPress}
       class={`hover:bg-hover items-center justify-center rounded-(--radius-control) active:scale-90 ${platform.desktop ? "size-6" : "size-8"}`}
-      style={selected ? { backgroundColor: colors.background } : undefined}
+      selectedStyle={{ backgroundColor: colors.background }}
     >
       <Text style={{ fontSize: platform.desktop ? 15 : 19 }}>{t.hand}</Text>
     </View>

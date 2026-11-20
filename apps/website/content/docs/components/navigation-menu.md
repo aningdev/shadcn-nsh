@@ -136,6 +136,6 @@ and every base prop passes through except the trigger, the open state and the li
 | `NavigationMenuLink`    | `href`, `openWith`, `onPress`, `active`, `disabled`, `style`            | A link                                                                    |
 
 The look is `navigationMenuLook()` — `root`, `list`, `item`, `panel`, `link`, `linkText`,
-`linkHint` — and `navigationMenuTriggerLook({ open, disabled })` and
+`linkHint` — and `navigationMenuTriggerLook({ open })` and
 `navigationMenuLinkLook({ active, disabled })` for the parts that open and go. Spread them on the
 part they name; `navigationMenuSize` has the numbers.

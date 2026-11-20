@@ -66,8 +66,6 @@ export type PickerVariant = "default" | "outline";
 export interface PickerLookOptions {
   /** The list is open: the edge stays lit. */
   open?: Live<boolean>;
-  /** Dimmed, and no hover (the select is disabled, not the trigger's view). */
-  disabled?: Live<boolean>;
   /** Edged in the danger tone, its focus edge too. */
   invalid?: Live<boolean>;
   /** A clear button lies over the end in place of the chevron: room for it. */
@@ -92,6 +90,11 @@ export interface PickerLookOptions {
  * the pointer and while the list is open, the danger tone while invalid (each
  * after the finish, which has an edge of its own), the fields' focus edge
  * while it has the keys, sunk to 70% while pressed, 50% while disabled.
+ *
+ * Dimmed through `disabledStyle`, on the trigger's own `disabled`. The open
+ * edge is in `style`, not `expandedStyle`: the trigger keeps the keyboard focus
+ * while its list is open, and nsh ranks `expanded` above `focus-visible`, which
+ * would hide the focus edge.
  */
 export function pickerLook(o?: PickerLookOptions) {
   const invalid = () => !!read(o?.invalid);
@@ -135,8 +138,6 @@ export function pickerLook(o?: PickerLookOptions) {
               outlineOffset: -1,
               outlineColor: alpha(invalid() ? colors.destructive : colors.brand, 0),
             }),
-        // Dimmed while the select is: the app knows, as it passes `disabled`.
-        opacity: read(o?.disabled) ? 0.5 : 1,
         transitionProperty: "border-color, outline-color, opacity",
         transitionDuration: reduceMotion() ? 0 : edgeFade,
         // The look is one object (it is spread on the trigger's view), so a list of styles is
@@ -145,7 +146,7 @@ export function pickerLook(o?: PickerLookOptions) {
       };
     },
     get hoverStyle(): ViewStyle | undefined {
-      return read(o?.disabled) || invalid() ? undefined : { borderColor: colors.faint };
+      return invalid() ? undefined : { borderColor: colors.faint };
     },
     activeStyle: { opacity: pressedOpacity },
     // The border with the outline, which not every platform draws over it; `focus-visible` is above `hover` in the
@@ -161,7 +162,9 @@ export function pickerLook(o?: PickerLookOptions) {
 /** The props of `Picker`. */
 export interface PickerProps {
   title: string;
+  /** The list is open: the edge stays lit, and the chevron turns. */
   open: boolean;
+  /** The trigger is off: `disabledStyle` dims it to half, and it takes no press nor hover. */
   disabled?: boolean;
   /** The title stands in for a value (`"No due date"`): in the muted color, as shadcn's placeholders. */
   placeholder?: boolean;
@@ -190,9 +193,11 @@ const triggerIcon = pointer ? 16 : 18;
 export function Picker(props: PickerProps) {
   return (
     <View
+      // Off is the trigger's own state (`disabledStyle`, no presses and no hover); `nsh/base`'s
+      // Select and DatePicker set the same `disabled` on the trigger they are given.
+      disabled={props.disabled}
       {...pickerLook({
         open: () => props.open,
-        disabled: () => !!props.disabled,
         invalid: () => !!props.invalid,
         clearable: () => !!props.clearable,
         variant: props.variant,

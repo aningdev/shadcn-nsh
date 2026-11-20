@@ -67,6 +67,12 @@
   => <MessageScrollerItem>…{item().text}…</MessageScrollerItem>}</MessageScrollerViewport>` — read
   `item()` where the turn is used, since the row is recycled (#57).
 - **Each theme has its own docs page (#44).** `/docs/themes` keeps the overview and links to one page per palette, and each of those pages has the same sections.
+- **Trigger looks leave disabled to the trigger, and a menubar's open fill too (#40).**
+  `pickerLook`, `navigationMenuTriggerLook` and `menubarTriggerLook` no longer take `disabled`: the
+  dim is their `disabledStyle`, on the view's own `disabled` (`Picker` now passes it), and hover and
+  press need no gating there. `menubarTriggerLook` no longer takes `open` either: its open fill is
+  `expandedStyle`, the state `nsh/base`'s Menu sets on the trigger. Spread a look on a view no
+  control disables or expands, and those states are yours to set. No pixel moves.
 - **One radius, three tiers (#38).** A theme now states one base, `radius`: `radius-control` is
   0.8× it and `radius-card` is 1.4×, each rounded to whole points, and `check:theme` rejects a tier
   that is not. In the default theme controls go from 7 to 8 points and cards from 12 to 14, and a
