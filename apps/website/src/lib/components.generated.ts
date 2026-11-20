@@ -255,7 +255,7 @@ export const components: ComponentDoc[] = [
   },
   {
     slug: "radio-group",
-    title: "Radio Group",
+    title: "Radio",
     kind: "official",
     shadcn: "radio-group",
     nshElement: "radio",

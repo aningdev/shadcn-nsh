@@ -29,7 +29,7 @@ function App() {
   const log = (line: string) => events.set([line, ...events()].slice(0, 3));
 
   return (
-    <DemoPage title="Radio Group">
+    <DemoPage title="Radio">
       <Text style={{ color: ui().muted }}>
         {desktop
           ? "Click an option, or Tab to a group and move with the arrow keys"
