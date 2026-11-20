@@ -15,7 +15,7 @@ test("the sidebar opens a demo, and one not built yet says so", async () => {
   await app.waitFor(
     "text:A live watchlist and a stock: candles, depth, the tape, a tick every 50 ms",
   );
-  await app.press("label:AI Chat");
+  await app.press("label:Photos");
   await app.waitFor("text:Not built yet");
   await app.press("label:Button");
   await app.waitFor("text:Pressed 0×");

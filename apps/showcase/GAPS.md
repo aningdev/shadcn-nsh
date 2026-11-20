@@ -9,7 +9,7 @@ and its row leaves this file.
 
 | Issue                                                     | Gap                                                                                               | Scenes that work around it                                  |
 | --------------------------------------------------------- | ------------------------------------------------------------------------------------------------- | ----------------------------------------------------------- |
-| [#83](https://github.com/aningdev/shadcn-nsh/issues/83)   | A `Button`'s text beside an icon is not drawn (`AsText`)                                          | Toast, Popover, HoverCard, Avatar, TextView, Dock           |
+| [#83](https://github.com/aningdev/shadcn-nsh/issues/83)   | A `Button`'s text beside an icon is not drawn (`AsText`)                                          | Toast, Popover, HoverCard, Avatar, TextView, Dock, Stocks   |
 | [#84](https://github.com/aningdev/shadcn-nsh/issues/84)   | Triggers wrap their child instead of making it the trigger                                        | Popover, HoverCard, Menu, Tooltip, Toolbar                  |
 | [#85](https://github.com/aningdev/shadcn-nsh/issues/85)   | No `toast()` API (raise, update, dismiss, stack)                                                  | Toast                                                       |
 | [#86](https://github.com/aningdev/shadcn-nsh/issues/86)   | No `AvatarGroup`, `AvatarGroupCount`, `AvatarBadge`                                               | Avatar                                                      |
@@ -28,6 +28,11 @@ and its row leaves this file.
 | [#101](https://github.com/aningdev/shadcn-nsh/issues/101) | Chart colors and their label ink run opposite ways                                                | Plot (Allocation tints its tiles)                           |
 | [#102](https://github.com/aningdev/shadcn-nsh/issues/102) | `Stat` has no unit or note (upstream's `Figure`)                                                  | Plot                                                        |
 | [#105](https://github.com/aningdev/shadcn-nsh/issues/105) | `editor` is official `rich-editor`; no session API export; `classes` merged shallowly             | RichEditor                                                  |
+| [#116](https://github.com/aningdev/shadcn-nsh/issues/116) | `MessageScroller`: no viewport `alignment`; scroll button has no dot or size                      | AI Chat                                                     |
+| [#117](https://github.com/aningdev/shadcn-nsh/issues/117) | `Plot` has no overlay hook (hatch with the plot's geometry)                                       | Stocks (washes instead of hatching)                         |
+| [#118](https://github.com/aningdev/shadcn-nsh/issues/118) | `DialogContent` has no max height or scrolling body                                               | Stocks (ticket kept short)                                  |
+| [#119](https://github.com/aningdev/shadcn-nsh/issues/119) | `Attachment` has no built-in remove affordance                                                    | AI Chat (`AttachmentAction` pill)                           |
+| [#120](https://github.com/aningdev/shadcn-nsh/issues/120) | `Badge` has no size                                                                               | AI Chat (tool card state)                                   |
 | [#106](https://github.com/aningdev/shadcn-nsh/issues/106) | CodeEditor / DockArea types not exported; `groupClass` can't replace the background               | Editor, Dock                                                |
 | [#107](https://github.com/aningdev/shadcn-nsh/issues/107) | No 32 pt icon size; no bare ghost for a close × or Hide                                           | RichEditor, Dock                                            |
 
