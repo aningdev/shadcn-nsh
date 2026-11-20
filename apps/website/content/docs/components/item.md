@@ -159,6 +159,46 @@ which does).
 </View>
 ```
 
+### A long list
+
+Contacts as `ItemGroup` rows inside a `List` (`nsh`'s virtualized list), with a heading per letter that sticks to the top until the next one pushes it out. Rows are made as they scroll in, so the list can be as long as the data. `stickyHeaderIndices` names the heading rows; a heading needs an opaque background (the surface's own), or the rows show through it while it sticks.
+
+```tsx
+const rows: Row[] = [];
+const headings: number[] = [];
+for (const letter of letters) {
+  headings.push(rows.length);
+  rows.push({ heading: letter, count: byLetter[letter].length });
+  rows.push(...byLetter[letter]);
+}
+
+<ItemGroup style={{ flex: 1 }}>
+  <List each={rows} stickyHeaderIndices={headings} estimatedItemSize={60} style={{ flex: 1 }}>
+    {(row) => (
+      <If when={"heading" in row()} else={<ContactItem contact={row() as Contact} />}>
+        <Heading heading={row() as Heading} />
+      </If>
+    )}
+  </List>
+</ItemGroup>;
+
+function ContactItem(props: { contact: Contact }) {
+  return (
+    <Item>
+      <ItemMedia>
+        <Avatar name={props.contact.name} style={{ width: 36, height: 36 }} />
+      </ItemMedia>
+      <ItemContent>
+        <ItemTitle>{props.contact.name}</ItemTitle>
+        <ItemDescription>{props.contact.note}</ItemDescription>
+      </ItemContent>
+    </Item>
+  );
+}
+```
+
+The heading is the app's: a row of the letter and its count on `colors.card`, 34 points tall. To pull the list down to reload it, put a [`RefreshIndicator`](./refresh-indicator) over it.
+
 ## API
 
 | Part              | Props                                                                           | Description                                                                             |

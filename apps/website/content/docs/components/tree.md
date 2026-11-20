@@ -63,6 +63,31 @@ import { treeRowHeight } from "@/components/ui/tree";
 <Tree items={items} style={{ height: 8 * treeRowHeight + 12 }} />;
 ```
 
+### A large tree
+
+A hundred folders of a hundred files: 10 100 items. The tree is virtualized, so only the rows in view are made; opening a folder adds its hundred rows without a stall. Give it a height (the tree scrolls inside it) and keep `expanded` and `selected` as signals if you read them.
+
+```tsx
+const logs: TreeItem[] = Array.from({ length: 100 }, (_, f) => ({
+  id: `f${f}`,
+  label: `Folder ${String(f + 1).padStart(3, "0")}`,
+  children: Array.from({ length: 100 }, (_, i) => ({
+    id: `f${f}/${i}`,
+    label: `file-${f + 1}-${i + 1}.log`,
+  })),
+}));
+
+<Tree
+  items={logs}
+  expanded={open()}
+  selected={selected()}
+  accessibilityLabel="Logs"
+  style={{ height: 288 }}
+  onExpandedChange={({ expanded }) => open.set(expanded)}
+  onSelectedChange={({ selected }) => selected.set(selected)}
+/>;
+```
+
 ## API
 
 Uses `treeItemClass` and `TreeRow` by default. Every prop of [`nsh/base` Tree](https://nsh.dev/elements/tree) passes through.

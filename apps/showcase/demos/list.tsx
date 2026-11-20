@@ -20,6 +20,7 @@ import { Badge } from "@/packages/ui/badge";
 import { Button, RoundButton } from "@/packages/ui/button";
 import { Input } from "@/packages/ui/input";
 import { Icon } from "@/packages/ui/lib/icons";
+import { REFRESH_INDICATOR_HEIGHT, RefreshIndicator } from "@/packages/ui/refresh-indicator";
 
 import { Caption, DemoCard, DemoPage } from "../kit";
 import { Api, Choice, Meter } from "./primitives-shared";
@@ -643,9 +644,6 @@ function Page() {
 
 const ranges = ["Today", "Yesterday", "This week", "This month", "This year", "All time", "Custom"];
 
-/** How tall the custom indicator is: where a pull refreshes, and the room it keeps while refreshing. */
-const INDICATOR = 72;
-
 /** Pull to refresh (a system spinner or one drawn from `pullValue`), horizontal pills and cards, and an empty list. */
 function More() {
   const refreshing = signal(false);
@@ -675,7 +673,7 @@ function More() {
         refreshing={refreshing()}
         onRefresh={refresh}
         pullValue={pull}
-        refreshIndicator={custom() ? { height: INDICATOR } : undefined}
+        refreshIndicator={custom() ? { height: REFRESH_INDICATOR_HEIGHT } : undefined}
       >
         <View style={{ padding: 16, gap: 16 }}>
           {/* `position: sticky`: in the flow, then at the top while the page scrolls under it. */}
@@ -731,7 +729,7 @@ function More() {
                 </Text>
                 <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
                   {custom()
-                    ? "An indicator the app draws, from pullValue"
+                    ? "RefreshIndicator, drawn from pullValue"
                     : "The system spinner on a plain scroll view"}
                 </Text>
               </View>
@@ -974,58 +972,7 @@ function More() {
         </View>
       </Scroll>
       <If when={custom()}>
-        <View
-          style={{
-            pointerEvents: "none",
-            position: "absolute",
-            top: 0,
-            left: 0,
-            right: 0,
-            height: INDICATOR,
-            alignItems: "center",
-            justifyContent: "center",
-          }}
-        >
-          <View
-            style={{
-              width: 40,
-              height: 40,
-              borderRadius: 20,
-              borderWidth: 1,
-              borderColor: colors.border,
-              backgroundColor: colors.raised,
-              ...finish.raised,
-              alignItems: "center",
-              justifyContent: "center",
-              opacity: pull.interpolate({ inputRange: [0, 24], outputRange: [0, 1] }),
-              transform: [
-                {
-                  translateY: pull.interpolate({
-                    inputRange: [0, INDICATOR],
-                    outputRange: [-28, 0],
-                  }),
-                },
-                { scale: pull.interpolate({ inputRange: [0, INDICATOR], outputRange: [0.6, 1] }) },
-              ],
-            }}
-          >
-            <View
-              style={{
-                transform: [
-                  {
-                    rotate: pull.interpolate({
-                      inputRange: [INDICATOR * 0.5, INDICATOR],
-                      outputRange: ["0deg", "180deg"],
-                    }),
-                  },
-                ],
-                opacity: refreshing() ? 0.35 : 1,
-              }}
-            >
-              <Icon icon={ArrowDown} size={18} tint={colors.brand} />
-            </View>
-          </View>
-        </View>
+        <RefreshIndicator pull={pull} refreshing={refreshing()} />
       </If>
     </View>
   );

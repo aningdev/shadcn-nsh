@@ -9,7 +9,7 @@ import { buttonLabel, buttonLook } from "@/packages/ui/button";
 import { sectionSurface } from "@/packages/ui/lib/surface";
 import { TreeRow, treeItemClass } from "@/packages/ui/tree";
 
-import { DemoPage } from "./kit";
+import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { desktop, Log, Panel, Split, wide } from "./stage";
 
 // A project's files: folders that open with their chevron, files, sizes at the end, a folder the
@@ -72,6 +72,18 @@ const sizes: Record<string, string> = {
   "Cargo.toml": "906 B",
   "README.md": "2.4 KB",
 };
+
+/** 100 folders of 100 files: 10 100 items, of which only the visible rows are ever made. */
+const logs: TreeItem[] = Array.from({ length: 100 }, (_, f) => ({
+  id: `f${f}`,
+  label: `Folder ${String(f + 1).padStart(3, "0")}`,
+  children: Array.from({ length: 100 }, (_, i) => ({
+    id: `f${f}/${i}`,
+    label: `file-${f + 1}-${i + 1}.log`,
+  })),
+}));
+const logsOpen = signal<string[]>(["f0"]);
+const logsSelected = signal<string | null>(null);
 
 const expanded = signal(["src", "src/ui"]);
 const selected = signal<string | null>("src/ui/tree.rs");
@@ -158,6 +170,28 @@ function App() {
           />
         </View>
       </Split>
+
+      <DemoCard>
+        <DemoSection title="A large tree" axis="block">
+          <Tree
+            items={logs}
+            expanded={logsOpen()}
+            selected={logsSelected()}
+            reveal
+            accessibilityLabel="Logs"
+            class="border-border bg-card overflow-hidden rounded-(--radius-card) border"
+            listClass="p-1.5"
+            itemClass={treeItemClass}
+            style={{ height: desktop ? 288 : 320 }}
+            onExpandedChange={({ expanded: next }) => logsOpen.set(next)}
+            onSelectedChange={({ selected: next }) => logsSelected.set(next)}
+            renderItem={(entry) => <TreeRow entry={entry} />}
+          />
+          <Text style={{ color: colors.mutedForeground, fontSize: 13 }}>
+            {`${logsSelected() ?? "Nothing selected"} · ${logsOpen().length} of 100 folders open`}
+          </Text>
+        </DemoSection>
+      </DemoCard>
     </DemoPage>
   );
 }

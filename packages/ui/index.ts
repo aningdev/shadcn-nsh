@@ -78,6 +78,7 @@ export * from "./split-view";
 export * from "./code-block";
 export * from "./image-viewer";
 export * from "./trace";
+export * from "./refresh-indicator";
 export * from "./lib/color-format";
 export * from "./lib/icons";
 export {

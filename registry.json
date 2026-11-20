@@ -1476,6 +1476,21 @@
           "target": "components/ui/trace.tsx"
         }
       ]
+    },
+    {
+      "name": "refresh-indicator",
+      "type": "registry:ui",
+      "title": "RefreshIndicator",
+      "description": "The round chip a pull to refresh draws over a scroll view, traveling in with the pull and spinning while it refreshes.",
+      "registryDependencies": ["icons", "spinner", "theme"],
+      "dependencies": ["lucide@^1.66.0"],
+      "files": [
+        {
+          "path": "packages/ui/refresh-indicator.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/refresh-indicator.tsx"
+        }
+      ]
     }
   ]
 }

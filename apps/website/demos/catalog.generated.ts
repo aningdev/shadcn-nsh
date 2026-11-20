@@ -83,4 +83,5 @@ export const componentIds = [
   "code-block",
   "image-viewer",
   "trace",
+  "refresh-indicator",
 ] as const;

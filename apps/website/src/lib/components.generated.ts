@@ -604,6 +604,15 @@ export const components: ComponentDoc[] = [
       "A row of triggers, each opening a panel of anything under the bar — one at a time.",
   },
   {
+    slug: "refresh-indicator",
+    title: "RefreshIndicator",
+    kind: "own",
+    shadcn: null,
+    nshElement: null,
+    description:
+      "The round chip a pull to refresh draws over a scroll view, traveling in with the pull and spinning while it refreshes.",
+  },
+  {
     slug: "separator",
     title: "Separator",
     kind: "own",
