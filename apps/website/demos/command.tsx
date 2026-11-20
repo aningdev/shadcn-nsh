@@ -4,8 +4,11 @@
 // inspector with the highlight, the query and the events.
 import {
   Download,
+  FileCode,
+  FileJson,
   FileText,
   Folder,
+  Image,
   MessageSquare,
   Moon,
   PanelLeft,
@@ -23,7 +26,7 @@ import type { CommandItem, CommandRef } from "nsh/base";
 import { Command, CommandEmpty, CommandHeading, CommandRow } from "@/packages/ui/command";
 import { Icon } from "@/packages/ui/lib/icons";
 
-import { DemoPage } from "./kit";
+import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { desktop, Log, Panel, Split, ui, wide } from "./stage";
 
 // A command palette: the command owns the filtering, the highlight, the keys and the semantics;
@@ -94,6 +97,32 @@ const items = (): CommandItem[] => [
   { id: "feedback", label: "Send Feedback", group: "Help" },
 ];
 
+// A palette over a list no one reads to the end: fifty folders of a hundred files, found by name
+// or by extension.
+const EXTENSIONS = ["rs", "tsx", "md", "json", "png"] as const;
+const FILES: CommandItem[] = Array.from({ length: 5000 }, (_, index) => {
+  const extension = EXTENSIONS[index % EXTENSIONS.length];
+  const folder = `module-${String(Math.floor(index / 100) + 1).padStart(2, "0")}`;
+  return {
+    id: `file-${index}`,
+    label: `${folder}/file-${index + 1}.${extension}`,
+    group: folder,
+    keywords: [extension],
+  };
+});
+const fileIcons: Record<string, IconNode> = {
+  rs: FileCode,
+  tsx: FileCode,
+  md: FileText,
+  json: FileJson,
+  png: Image,
+};
+const files = signal(FILES.length);
+let archive: CommandRef | undefined;
+
+/** The extension of a file's label: what picks its icon. */
+const extensionOf = (label: string) => label.slice(label.lastIndexOf(".") + 1);
+
 function App() {
   keymap.bind("mod+k", () => palette?.focus());
   return (
@@ -150,6 +179,40 @@ function App() {
           />
         </View>
       </Split>
+
+      <DemoCard>
+        <DemoSection title="A long list" axis="block">
+          <Text style={{ color: ui().muted }}>
+            Five thousand files in fifty folders: the field finds one by name or by extension, and
+            the count under it is the palette's own, from its ref.
+          </Text>
+          <View style={{ width: wide() ? 380 : undefined, alignSelf: "flex-start" }}>
+            <Command
+              ref={(r) => (archive = r)}
+              items={FILES}
+              accessibilityLabel="Files"
+              searchAccessibilityLabel="Search files"
+              placeholder="Search files by name or extension…"
+              listClass="h-60"
+              onQueryChange={() => void archive?.matchedCount().then((count) => files.set(count))}
+              empty={<CommandEmpty label="No file matches" />}
+              renderItem={(entry) => (
+                <CommandRow entry={entry} icon={fileIcons[extensionOf(entry.label)]} />
+              )}
+            />
+            <Text
+              style={{
+                paddingTop: 8,
+                fontSize: 12,
+                color: ui().muted,
+                fontVariant: ["tabular-nums"],
+              }}
+            >
+              {`${files().toLocaleString("en-US")} of ${FILES.length.toLocaleString("en-US")} files, 50 folders`}
+            </Text>
+          </View>
+        </DemoSection>
+      </DemoCard>
     </DemoPage>
   );
 }

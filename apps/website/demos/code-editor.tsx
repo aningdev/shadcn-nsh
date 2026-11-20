@@ -1,12 +1,14 @@
 // The official code editor scene (`references/nsh/website/demos/el-editor.tsx`) with this
 // library's `CodeEditor`: a file per language, a linter's marks, the caret moved, the text
 // reported, and an inspector beside it that follows both.
-import { mount, signal, Text, View } from "nsh";
-import type { EditorDiagnostic } from "nsh/base";
+import { type Bounds, cleanup, mount, Overlay, signal, Text, View } from "nsh";
+import type { EditorDiagnostic, EditorRange } from "nsh/base";
 
+import { Button } from "@/packages/ui/button";
 import { CodeEditor } from "@/packages/ui/code-editor";
+import { popoverLook } from "@/packages/ui/popover";
 
-import { DemoPage } from "./kit";
+import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { desktop, Log, Panel, Segmented, Split, ui, wide } from "./stage";
 
 const SAMPLES = {
@@ -61,9 +63,58 @@ const PROBLEMS: Record<Language, EditorDiagnostic[]> = {
   ],
 };
 
+/** The file the hover card looks at: two problems, each with the fix that clears it. */
+const LINTED = `const items = [4, 9, 12];
+const price = 3;
+
+const total = items.length * prcie;
+
+console.log(total, price);
+`;
+
+/** A fix: how the file reads once it is applied. */
+type Fix = { title: string; apply: (text: string) => string };
+
+/** What a linter would report of that file. */
+const LINT: { range: EditorRange; severity: "error" | "warning"; message: string; fixes: Fix[] }[] =
+  [
+    {
+      range: { start: { line: 3, column: 29 }, end: { line: 3, column: 34 } },
+      severity: "error",
+      message: "Unknown name 'prcie'. Did you mean 'price'?",
+      fixes: [{ title: "Rename to 'price'", apply: (text) => text.replaceAll("prcie", "price") }],
+    },
+    {
+      range: { start: { line: 5, column: 0 }, end: { line: 5, column: 7 } },
+      severity: "warning",
+      message: "'console' is not available in this runtime.",
+      fixes: [
+        {
+          title: "Remove the line",
+          apply: (text) => text.replace("console.log(total, price);\n", ""),
+        },
+      ],
+    },
+  ];
+
 function App() {
   const language = signal<Language>("typescript");
   const sources = signal<Record<Language, string>>({ ...SAMPLES });
+  // The hover card over the linted file: the word's box on the page, and what the linter says there.
+  const linted = signal(LINTED);
+  const card = signal<{ anchor: Bounds; diagnostics: EditorDiagnostic[] } | null>(null);
+  let overCard = false;
+  let closeTimer: ReturnType<typeof setTimeout> | undefined;
+  const closeSoon = () => {
+    clearTimeout(closeTimer);
+    closeTimer = setTimeout(() => {
+      if (!overCard) card.set(null);
+    }, 250);
+  };
+  cleanup(() => clearTimeout(closeTimer));
+  const fixesFor = (message: string) =>
+    LINT.find((problem) => problem.message === message)?.fixes ?? [];
+
   const caret = signal("1:1");
   const events = signal<string[]>([]);
   const log = (line: string) => events.set([line, ...events()].slice(0, 4));
@@ -130,6 +181,78 @@ function App() {
           }}
         </View>
       </Split>
+
+      <DemoCard>
+        <DemoSection title="Hover and quick fixes" axis="block">
+          <Text style={{ color: ui().muted }}>
+            The pointer rests over a marked word: `onHover` hands the app the word's box on the page
+            and the diagnostics there, and the app answers with a card — an `Overlay` anchored to
+            that box, so it follows the word as the text scrolls. The card stays while the pointer
+            is over it, so its fixes can be pressed; a fix rewrites the file, which the app owns.
+          </Text>
+          <View style={{ height: wide() ? 200 : 170, overflow: "hidden" }}>
+            <CodeEditor
+              value={linted()}
+              onChange={({ value }) => linted.set(value)}
+              language="typescript"
+              diagnostics={LINT}
+              accessibilityLabel="Linted code"
+              onHover={(event) => {
+                clearTimeout(closeTimer);
+                if (event.diagnostics.length === 0) {
+                  if (!overCard) card.set(null);
+                  return;
+                }
+                card.set({ anchor: event.pageBounds, diagnostics: event.diagnostics });
+              }}
+              onHoverEnd={closeSoon}
+              style={{ flex: 1 }}
+            />
+          </View>
+        </DemoSection>
+      </DemoCard>
+
+      {card() ? (
+        <Overlay anchor={card()!.anchor} placement="top" align="start" offset={4} margin={8}>
+          <View
+            onMouseEnter={() => {
+              overCard = true;
+              clearTimeout(closeTimer);
+            }}
+            onMouseLeave={() => {
+              overCard = false;
+              closeSoon();
+            }}
+            style={{ ...popoverLook({ compact: true }), maxWidth: 300, gap: 10 }}
+          >
+            {card()!.diagnostics.map((diagnostic) => (
+              <View style={{ gap: 6 }}>
+                <Text
+                  style={{
+                    fontSize: 12,
+                    color: diagnostic.severity === "warning" ? ui().warn : ui().danger,
+                  }}
+                >
+                  {`${diagnostic.severity ?? "error"}: ${diagnostic.message}`}
+                </Text>
+                {fixesFor(diagnostic.message).map((fix) => (
+                  <Button
+                    variant="secondary"
+                    size="sm"
+                    style={{ alignSelf: "flex-start" }}
+                    onPress={() => {
+                      linted.set(fix.apply(linted()));
+                      card.set(null);
+                    }}
+                  >
+                    {fix.title}
+                  </Button>
+                ))}
+              </View>
+            ))}
+          </View>
+        </Overlay>
+      ) : null}
     </DemoPage>
   );
 }

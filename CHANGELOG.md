@@ -19,6 +19,18 @@
   medium with the grabber and a composer's footer; `### A draft the footer applies` edits filters as
   a draft with `Reset` and `Show N results` in the footer, and closing discards it.
   No component API changes; each demo's reference draws the same scene.
+- **Six docs pages show eight examples at work (#166).** `Command` gains `### A long list` (5,000
+  files in fifty folders, searched by name and by extension, the count under the field coming from
+  `matchedCount()`); `Pagination` gains `### A jump menu` (an elided run that opens a menu of the
+  pages it hides); `Carousel` gains `### Autoplay` (a timer the app owns, on hold under the pointer,
+  on focus and while dragging); `Toolbar` gains `### A formatting bar` (the history graying out at
+  its ends, the block as a menu whose trigger is one of the bar's items); `RichEditor` gains
+  `### A formatting toolbar` (every control reading the caret, disabled where its command cannot
+  run), `### A link bubble` (`bubbleMenu`, filled by the app while the caret is in a link, with
+  edit, open and remove) and `### A node in the text` (a `mention` node drawn by the app's own
+  component); `CodeEditor` gains `### Hover and quick fixes` (`onHover`'s word box anchoring an
+  `Overlay` that carries the diagnostics there and their fixes). No component API changes; each
+  demo's reference draws the same scene.
 - **Four docs pages show their parts at work (#158).** The `InputGroup` demo is a real search — typed
   into, settling 300 ms later with a spinner where the work is, the matches under the field — and a
   real composer: `Return` sends and `Shift-Return` breaks the line, the add-on turns to open an

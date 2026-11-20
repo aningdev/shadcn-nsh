@@ -65,13 +65,54 @@ A caller's `searchBarStyle` and `searchStyle` win over those.
 />
 ```
 
+### A long list
+
+The rows are made as they come into view, so five thousand files cost what five do: `listClass`
+gives the list its height and the rest scrolls. `keywords` let the query find a file by its
+extension as well as by its name (`png` finds every image), `renderItem` draws the extension's
+icon, and the ref's `matchedCount()` is what the query left — the count under the palette reads
+it, never the app's guess at the filter.
+
+```tsx
+const EXTENSIONS = ["rs", "tsx", "md", "json", "png"] as const;
+
+const FILES: CommandItem[] = Array.from({ length: 5000 }, (_, index) => {
+  const extension = EXTENSIONS[index % EXTENSIONS.length];
+  const folder = `module-${String(Math.floor(index / 100) + 1).padStart(2, "0")}`;
+  return {
+    id: `file-${index}`,
+    label: `${folder}/file-${index + 1}.${extension}`,
+    group: folder,
+    keywords: [extension],
+  };
+});
+
+const files = signal(FILES.length);
+let palette: CommandRef | undefined;
+
+<Command
+  ref={(ref) => (palette = ref)}
+  items={FILES}
+  listClass="h-60"
+  placeholder="Search files by name or extension…"
+  searchAccessibilityLabel="Search files"
+  empty={<CommandEmpty label="No file matches" />}
+  onQueryChange={() => void palette?.matchedCount().then((count) => files.set(count))}
+  renderItem={(entry) => <CommandRow entry={entry} icon={iconFor(entry.label)} />}
+/>
+
+<Text class="text-muted-foreground" style={{ fontSize: 12 }}>
+  {`${files()} of ${FILES.length} files, 50 folders`}
+</Text>
+```
+
 ## API
 
 Uses `commandClasses`, `CommandRow`, `CommandHeading`, and `CommandEmpty` by default. Every prop of [`nsh/base` Command](https://nsh.dev/elements/command) passes through.
 
-| Part             | Props                             | Description                                                                                                                                                                    |
-| ---------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `Command`        | —                                 | A command palette: a search field over virtualized, natively filtered rows. `searchBarStyle` and `searchStyle` still pass through, over the shell's row and placeholder color. |
-| `CommandRow`     | `entry`, `icon`, `detail`, `note` | A row's content: the icon, the label, a `note` at the end, the shortcut's keys and a check for the item in effect.                                                             |
-| `CommandHeading` | `group`                           | A section's heading: small capitals in the faint color.                                                                                                                        |
-| `CommandEmpty`   | `label`                           | What the palette shows while nothing matches.                                                                                                                                  |
+| Part             | Props                             | Description                                                                                                                                                                                            |
+| ---------------- | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `Command`        | —                                 | A command palette: a search field over virtualized, natively filtered rows, however many there are. `searchBarStyle` and `searchStyle` still pass through, over the shell's row and placeholder color. |
+| `CommandRow`     | `entry`, `icon`, `detail`, `note` | A row's content: the icon, the label, a `note` at the end, the shortcut's keys and a check for the item in effect.                                                                                     |
+| `CommandHeading` | `group`                           | A section's heading: small capitals in the faint color.                                                                                                                                                |
+| `CommandEmpty`   | `label`                           | What the palette shows while nothing matches.                                                                                                                                                          |

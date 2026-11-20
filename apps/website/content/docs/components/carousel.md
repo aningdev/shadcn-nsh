@@ -113,6 +113,81 @@ draws nothing: pass the dot, and tell it which slide it is on.
 </CarouselPagination>
 ```
 
+### Autoplay
+
+The carousel holds no timer: a slide that moves on by itself is the app's — a controlled `index` a
+timer advances, around the ends. Hold it while the user is at the carousel: the pointer over a
+`View` around it (`onMouseEnter` / `onMouseLeave`), the keyboard focus in it (`onFocus` /
+`onBlur`) and a drag (`onDragStart` / `onDragEnd`), and leave it off with `reduceMotion()`. Key the
+effect on the index, so every change — a timer's, an arrow's, a dot's, the rotation control's —
+starts a whole interval, or a press would be cut short by the turn already under way. The rotation
+control comes first in the row, beside the dots, and names itself `Pause announcements` or
+`Play announcements`.
+
+```tsx
+import { Pause, Play } from "lucide";
+import { cleanup, effect, reduceMotion, signal } from "nsh";
+
+import { IconButton } from "@/components/ui/button";
+
+function rotation(count: number, ms: number) {
+  const index = signal(0);
+  const playing = signal(true);
+  const hovered = signal(false);
+  const focused = signal(false);
+  const dragging = signal(false);
+  const held = () => hovered() || focused() || dragging();
+  const running = () => playing() && !held() && !reduceMotion();
+  effect(() => {
+    index();
+    if (!running()) return;
+    const timer = setInterval(() => index.set((index() + 1) % count), ms);
+    cleanup(() => clearInterval(timer));
+  });
+  return {
+    index,
+    playing,
+    // The pointer's half: a view of the app's around the carousel.
+    hover: {
+      onMouseEnter: () => hovered.set(true),
+      onMouseLeave: () => hovered.set(false),
+    },
+    // The carousel's half: its keyboard focus and its drags.
+    carousel: {
+      onFocus: () => focused.set(true),
+      onBlur: () => focused.set(false),
+      onDragStart: () => dragging.set(true),
+      onDragEnd: () => dragging.set(false),
+    },
+  };
+}
+
+const roll = rotation(3, 4000);
+
+<View {...roll.hover}>
+  <Carousel
+    looping
+    index={roll.index()}
+    accessibilityLabel="Announcements"
+    onChange={({ index }) => roll.index.set(index)}
+    {...roll.carousel}
+  >
+    <CarouselContent>{/* the announcements */}</CarouselContent>
+    <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+      <IconButton
+        accessibilityLabel={roll.playing() ? "Pause announcements" : "Play announcements"}
+        onPress={() => roll.playing.set(!roll.playing())}
+      >
+        <Icon icon={roll.playing() ? Pause : Play} size={14} />
+      </IconButton>
+      <CarouselPagination accessibilityLabel="Choose an announcement">
+        {/* one CarouselPaginationItem and CarouselDot per announcement */}
+      </CarouselPagination>
+    </View>
+  </Carousel>
+</View>;
+```
+
 ## API
 
 Uses `carouselArrowLook`, `carouselPaginationLook`, `carouselDotItemLook`, and `CarouselDot`. Every prop of [`nsh/base` Carousel](https://nsh.dev/elements/carousel) parts passes through.

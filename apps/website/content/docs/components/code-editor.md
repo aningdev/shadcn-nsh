@@ -65,6 +65,88 @@ Ranges the app marks, carried through edits until it sets new ones: an error is 
 />
 ```
 
+### Hover and quick fixes
+
+`onHover` reports where the pointer rests: the character, the word it is in, **the word's box on the
+page** (`pageBounds`, what a popup is placed against) and the diagnostics there; `onHoverEnd` says
+it left. The app answers with an `Overlay` anchored to that box, so the card follows the word as the
+text scrolls and flips below it where there is no room. A card that carries buttons is kept alive
+while the pointer is over it — `onMouseEnter` / `onMouseLeave` on the card, a timer that closes it a
+moment after the pointer leaves — or it vanishes under the pointer on the way to them. A fix
+rewrites the file, which the app owns (`value` / `onChange`).
+
+```tsx
+const source = signal(LINTED);
+const card = signal<{ anchor: Bounds; diagnostics: EditorDiagnostic[] } | null>(null);
+let overCard = false;
+let closeTimer: ReturnType<typeof setTimeout> | undefined;
+const closeSoon = () => {
+  clearTimeout(closeTimer);
+  closeTimer = setTimeout(() => {
+    if (!overCard) card.set(null);
+  }, 250);
+};
+cleanup(() => clearTimeout(closeTimer));
+
+<CodeEditor
+  value={source()}
+  onChange={({ value }) => source.set(value)}
+  language="typescript"
+  diagnostics={LINT}
+  onHover={(event) => {
+    clearTimeout(closeTimer);
+    if (event.diagnostics.length === 0) {
+      if (!overCard) card.set(null);
+      return;
+    }
+    card.set({ anchor: event.pageBounds, diagnostics: event.diagnostics });
+  }}
+  onHoverEnd={closeSoon}
+  style={{ height: 200 }}
+/>;
+
+{
+  card() ? (
+    <Overlay anchor={card()!.anchor} placement="top" align="start" offset={4} margin={8}>
+      <View
+        onMouseEnter={() => {
+          overCard = true;
+          clearTimeout(closeTimer);
+        }}
+        onMouseLeave={() => {
+          overCard = false;
+          closeSoon();
+        }}
+        style={{ ...popoverLook({ compact: true }), maxWidth: 300, gap: 10 }}
+      >
+        {card()!.diagnostics.map((diagnostic) => (
+          <View style={{ gap: 6 }}>
+            <Text
+              style={{
+                fontSize: 12,
+                color: diagnostic.severity === "warning" ? colors.warn : colors.danger,
+              }}
+            >
+              {`${diagnostic.severity ?? "error"}: ${diagnostic.message}`}
+            </Text>
+            {fixesOf(diagnostic).map((fix) => (
+              <Button
+                variant="secondary"
+                size="sm"
+                style={{ alignSelf: "flex-start" }}
+                onPress={() => source.set(fix.apply(source()))}
+              >
+                {fix.title}
+              </Button>
+            ))}
+          </View>
+        ))}
+      </View>
+    </Overlay>
+  ) : null;
+}
+```
+
 ### Controlled text
 
 Pass `value` and set it again in `onChange`; the app owns the file, as a formatter's output or a loaded file replaces it.

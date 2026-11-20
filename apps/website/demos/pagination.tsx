@@ -1,12 +1,16 @@
 // The official pagination scene (`references/nsh/website/demos/el-pagination.tsx`) with this
 // library's Pagination: search results paged with a count and a compact pager beside them, and an
-// inspector with the page of the total and the events.
+// archive whose ellipsis opens the pages it leaves out. An inspector holds the page of the total
+// and the events.
 import { mount, signal, Text, View } from "nsh";
 
+import { Button } from "@/packages/ui/button";
 import { sectionSurface } from "@/packages/ui/lib/surface";
-import { Pagination } from "@/packages/ui/pagination";
+import { Menu, MenuContent, MenuItem, MenuLabel, MenuTrigger } from "@/packages/ui/menu";
+import { Pagination, paginationArrows, type PaginationItemState } from "@/packages/ui/pagination";
+import { Toggle } from "@/packages/ui/toggle";
 
-import { DemoPage } from "./kit";
+import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { desktop, Log, Panel, Segmented, Split, ui, wide } from "./stage";
 
 // Five pages show in a narrow frame, seven in a wide one.
@@ -24,6 +28,63 @@ const changed = (next: number) => {
   page.set(next);
   events.set([`onChange({ page: ${next} })`, ...events()].slice(0, 4));
 };
+
+// An archive of ten thousand pages: ten pages show at most, so every run between them is an
+// ellipsis, and a press on one opens the nearest of the pages it leaves out.
+const ARCHIVE = 10000;
+const archivePage = signal(5000);
+const visible = signal<"5" | "7" | "9">("5");
+const offline = signal(false);
+const moves = signal<string[]>([]);
+
+/** Thousands, as the archive counts them: 5,000. */
+const grouped = (value: number) => value.toLocaleString("en-US");
+
+const goTo = (next: number) => {
+  archivePage.set(next);
+  moves.set([`onChange({ page: ${grouped(next)} })`, ...moves()].slice(0, 2));
+};
+
+/**
+ * The pages an ellipsis' menu lists: all of a short run, else the window of 25 at the run's end
+ * nearest the page shown (the run's own start going forward, its end coming back).
+ */
+const nearPages = (start: number, end: number, current: number, limit = 25): number[] => {
+  const [from, to] =
+    end - start <= limit
+      ? [start, end]
+      : start > current
+        ? [start, start + limit]
+        : [end - limit, end];
+  return Array.from({ length: to - from }, (_, i) => from + i);
+};
+
+/** A page's content: its number, the arrows, and the ellipsis a menu of the run it hides. */
+function pageContent(item: PaginationItemState) {
+  if (item.kind === "page")
+    return <Text style={{ fontVariant: ["tabular-nums"] }}>{grouped(item.page)}</Text>;
+  if (item.kind !== "ellipsis") return paginationArrows(item);
+  const start = item.start ?? 1;
+  const end = item.end ?? start + 1;
+  return (
+    <Menu>
+      <MenuTrigger>
+        <View
+          accessibilityLabel={`Pages ${grouped(start)} to ${grouped(end - 1)}`}
+          style={{ flex: 1, alignItems: "center", justifyContent: "center" }}
+        >
+          <Text style={{ color: ui().muted }}>…</Text>
+        </View>
+      </MenuTrigger>
+      <MenuContent>
+        <MenuLabel>{`Pages ${grouped(start)}–${grouped(end - 1)}`}</MenuLabel>
+        {nearPages(start, end, archivePage()).map((at) => (
+          <MenuItem onSelect={() => goTo(at)}>{grouped(at)}</MenuItem>
+        ))}
+      </MenuContent>
+    </Menu>
+  );
+}
 
 function App() {
   return (
@@ -97,6 +158,67 @@ function App() {
           </Pagination>
         </View>
       </Split>
+
+      <DemoCard>
+        <DemoSection title="A jump menu" axis="block">
+          <Text style={{ color: ui().muted }}>
+            Ten thousand pages, at most {visible()} of them in the row: every run left out is an
+            ellipsis, and a press on it opens the pages nearest the one shown.
+          </Text>
+
+          <View
+            style={{
+              flexDirection: "row",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: 8,
+            }}
+          >
+            <Text style={{ fontSize: 13, color: ui().text }}>
+              {`Page ${grouped(archivePage())} of ${grouped(ARCHIVE)}`}
+            </Text>
+            <View style={{ flexDirection: "row", alignItems: "center", gap: 6, flexWrap: "wrap" }}>
+              <Button variant="ghost" size="sm" onPress={() => goTo(1)}>
+                First page
+              </Button>
+              <Button variant="ghost" size="sm" onPress={() => goTo(ARCHIVE)}>
+                Last page
+              </Button>
+              <Toggle
+                size="sm"
+                pressed={offline()}
+                onChange={({ pressed }) => offline.set(pressed)}
+              >
+                Offline
+              </Toggle>
+            </View>
+          </View>
+
+          <Pagination
+            page={archivePage()}
+            totalPages={ARCHIVE}
+            visiblePages={wide() ? Number(visible()) : 5}
+            disabled={offline()}
+            accessibilityLabel="Archive pages"
+            previousAccessibilityLabel="Previous page"
+            nextAccessibilityLabel="Next page"
+            class="flex-wrap gap-1"
+            onChange={({ page: next }) => goTo(next)}
+            renderItem={(item) => pageContent(item)}
+          />
+
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+            <Segmented
+              label="visiblePages"
+              options={["5", "7", "9"] as const}
+              value={visible()}
+              onChange={(next) => visible.set(next)}
+            />
+            <Text style={{ fontSize: 12, color: ui().muted }}>{moves()[0] ?? "No change yet"}</Text>
+          </View>
+        </DemoSection>
+      </DemoCard>
     </DemoPage>
   );
 }
