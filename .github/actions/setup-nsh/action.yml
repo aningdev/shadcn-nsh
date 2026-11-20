@@ -69,6 +69,10 @@ runs:
         mkdir -p "$HOME/.local/bin"
         ln -sfn "$HOME/.nsh/bin/nsh" "$HOME/.local/bin/nsh"
         echo "$HOME/.local/bin" >> "$GITHUB_PATH"
+        # The installer leaves the web runtime out, and `--target web` adds it on
+        # first use. `port:render` runs two pages at once, so both would add it and
+        # one would read it half unpacked; add it here, so the cache holds it too.
+        [ -f "$HOME/.nsh/runtime/web/nsh-syntaxes.bin" ] || "$HOME/.nsh/bin/nsh" component add web
         version="$("$HOME/.local/bin/nsh" --version)"
         echo "version=$version" >> "$GITHUB_OUTPUT"
         printf 'nsh: %s\n' "$version"
