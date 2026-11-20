@@ -109,7 +109,9 @@ until the attachment is done or idle.
 
 `AttachmentActions` holds what can be done to the file — a remove, a retry — beside the text, or
 in the corner of a vertical attachment. `AttachmentAction` is this library's `Button`, ghost and
-small; an icon-only action is an `IconButton`.
+small, for a labeled action such as Retry. Remove is an `IconButton` in that row, the way
+shadcn/ui composes it: there is no `onRemove`. Give the icon button a square `style` (`width` and
+`height` 28) so it sits in the chip; the ghost button's own padding reads as a separate pill.
 
 ```tsx
 <AttachmentActions>

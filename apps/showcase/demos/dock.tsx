@@ -5,9 +5,9 @@ import { colors, mono, radius, rounded } from "@shadcn-nsh/theme";
 // fills it as upstream's does.
 import { Plus, Sparkles } from "lucide";
 import { platform, signal, Text, untracked, View, windowSize } from "nsh";
-import type { DockAreaLayout, DockAreaRef } from "nsh/base";
 
 import { Button, buttonGlyph, buttonLabel, IconButton } from "@/packages/ui/button";
+import type { DockAreaLayout, DockAreaRef } from "@/packages/ui/dock-area";
 import {
   DockArea,
   DockDragPreview,

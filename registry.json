@@ -805,7 +805,7 @@
       "type": "registry:ui",
       "title": "Avatar",
       "description": "A round picture or named initials on the identity ring.",
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["theme", "utils"],
       "files": [
         {
           "path": "packages/ui/avatar.tsx",

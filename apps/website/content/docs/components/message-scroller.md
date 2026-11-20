@@ -98,6 +98,30 @@ of the viewport, and shows only while there is somewhere to go that way. It says
 </MessageScrollerButton>
 ```
 
+### A short thread, and an arrival
+
+`alignment="bottom"` on the viewport passes through to the list, so a conversation shorter than the frame sits at the bottom. `indicator` is a mark at the button's top-end corner; `variant` and `size` are the button's (default `secondary` and `sm`).
+
+```tsx
+<MessageScrollerViewport each={turns()} alignment="bottom" keyExtractor={(turn) => turn.id}>
+  {(item) => <MessageScrollerItem>{item().content}</MessageScrollerItem>}
+</MessageScrollerViewport>
+<MessageScrollerButton
+  indicator={
+    <View
+      style={{
+        width: 10,
+        height: 10,
+        borderRadius: 5,
+        backgroundColor: colors.brand,
+        borderWidth: 2,
+        borderColor: colors.background,
+      }}
+    />
+  }
+/>
+```
+
 ### Commands
 
 `MessageScrollerProvider` shares the scroller with controls outside the frame, such as a list of
@@ -195,24 +219,31 @@ in five places:
 Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `MessageScroller` and
 `MessageScrollerItem`; `MessageScrollerViewport` takes a [`List`](https://nsh.dev/elements/list)'s
 (`keyExtractor`, `estimatedItemSize`, `onViewableItemsChange`, `scrollbar`, …) less the state the
-scroller keeps (`alignment`, `inverted`, `initialScrollIndex`, `initialScrollAtEnd`,
-`maintainVisibleContentPosition`, …), plus `each` and the child that renders a row; and
-`MessageScrollerButton` takes this library's [`Button`](https://nsh.dev/elements/button) props.
+scroller keeps (`inverted`, `initialScrollIndex`, `initialScrollAtEnd`,
+`maintainVisibleContentPosition`, …), plus `each`, `alignment` (passed to the list) and the child
+that renders a row; and `MessageScrollerButton` takes this library's
+[`Button`](https://nsh.dev/elements/button) props (`variant` defaults to `secondary`, `size` to
+`sm`). `alignment="bottom"` pins a short conversation to the bottom of the viewport. `indicator`
+is a mark at the button's top-end corner (an arrival dot); the arrow stays.
 
-| Part                      | Props                                     | Description                                                             |
-| ------------------------- | ----------------------------------------- | ----------------------------------------------------------------------- |
-| `MessageScroller`         | `initialScroll`                           | Renders `View` (`messageScrollerLook().root`)                           |
-| `MessageScrollerViewport` | `each`, `children`, `keyExtractor`, `ref` | Renders `List` (`messageScrollerLook().viewport`); `ref` is a `ListRef` |
-| `MessageScrollerItem`     |                                           | Renders `View` (`messageScrollerLook().item`)                           |
-| `MessageScrollerButton`   | `direction`                               | Renders `Button` (`messageScrollerLook().slot(direction)`)              |
+| Part                      | Props                                                  | Description                                                             |
+| ------------------------- | ------------------------------------------------------ | ----------------------------------------------------------------------- |
+| `MessageScroller`         | `initialScroll`                                        | Renders `View` (`messageScrollerLook().root`)                           |
+| `MessageScrollerViewport` | `each`, `children`, `keyExtractor`, `alignment`, `ref` | Renders `List` (`messageScrollerLook().viewport`); `ref` is a `ListRef` |
+| `MessageScrollerItem`     |                                                        | Renders `View` (`messageScrollerLook().item`)                           |
+| `MessageScrollerButton`   | `direction`, `variant`, `size`, `indicator`            | Renders `Button` (`messageScrollerLook().slot(direction)`)              |
 
 | Prop            | On                        | Type                                                  | Default       |
 | --------------- | ------------------------- | ----------------------------------------------------- | ------------- |
 | `initialScroll` | `MessageScroller`         | `"start" \| "end"`                                    | `end`         |
 | `each`          | `MessageScrollerViewport` | `readonly T[]`                                        |               |
+| `alignment`     | `MessageScrollerViewport` | `"top" \| "bottom"`                                   | the list's    |
 | `children`      | `MessageScrollerViewport` | `(item: () => T, index: () => number) => JSX.Element` |               |
 | `keyExtractor`  | `MessageScrollerViewport` | `(item: T, index: number) => string`                  | the item's id |
 | `direction`     | `MessageScrollerButton`   | `"start" \| "end"`                                    | `end`         |
+| `variant`       | `MessageScrollerButton`   | `Button` variant                                      | `secondary`   |
+| `size`          | `MessageScrollerButton`   | `"sm" \| "default" \| "lg"`                           | `sm`          |
+| `indicator`     | `MessageScrollerButton`   | `JSX.Element`                                         |               |
 
 | Export                    | Props / returns                                          | Description                                                       |
 | ------------------------- | -------------------------------------------------------- | ----------------------------------------------------------------- |

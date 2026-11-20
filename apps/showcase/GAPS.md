@@ -12,19 +12,13 @@ and its row leaves this file.
 | [#83](https://github.com/aningdev/shadcn-nsh/issues/83)   | A `Button`'s text beside an icon is not drawn (`AsText`)                                | Toast, Popover, HoverCard, Avatar, TextView, Dock, Stocks, Animations     |
 | [#84](https://github.com/aningdev/shadcn-nsh/issues/84)   | Triggers wrap their child instead of making it the trigger                              | Popover, HoverCard, Menu, Tooltip, Toolbar                                |
 | [#85](https://github.com/aningdev/shadcn-nsh/issues/85)   | No `toast()` API (raise, update, dismiss, stack)                                        | Toast                                                                     |
-| [#86](https://github.com/aningdev/shadcn-nsh/issues/86)   | No `AvatarGroup`, `AvatarGroupCount`, `AvatarBadge`                                     | Avatar                                                                    |
 | [#87](https://github.com/aningdev/shadcn-nsh/issues/87)   | On macOS a click on the combobox field focuses it and does not open the list            | Combobox                                                                  |
 | [#93](https://github.com/aningdev/shadcn-nsh/issues/93)   | Parts without `testID` / label; ColorPanel outside its root; `choiceTileLook` placement | Date picker, Emoji picker, Combobox, Color picker, Checkbox               |
 | [#94](https://github.com/aningdev/shadcn-nsh/issues/94)   | No theme role for ink over photos                                                       | Carousel (`#ffffff`), TextView (image viewer), Animations (ink on a tone) |
 | [#95](https://github.com/aningdev/shadcn-nsh/issues/95)   | Input motion: shake, autogrow, rolling digits                                           | Input, OTP input, Number input                                            |
 | [#101](https://github.com/aningdev/shadcn-nsh/issues/101) | Chart colors and their label ink run opposite ways                                      | Plot (Allocation tints its tiles)                                         |
-| [#102](https://github.com/aningdev/shadcn-nsh/issues/102) | `Stat` has no unit or note (upstream's `Figure`)                                        | Plot                                                                      |
-| [#116](https://github.com/aningdev/shadcn-nsh/issues/116) | `MessageScroller`: no viewport `alignment`; scroll button has no dot or size            | AI Chat                                                                   |
 | [#117](https://github.com/aningdev/shadcn-nsh/issues/117) | `Plot` has no overlay hook (hatch with the plot's geometry)                             | Stocks (washes instead of hatching)                                       |
-| [#119](https://github.com/aningdev/shadcn-nsh/issues/119) | `Attachment` has no built-in remove affordance                                          | AI Chat (`AttachmentAction` pill)                                         |
 | [#122](https://github.com/aningdev/shadcn-nsh/issues/122) | `nsh/base`'s Button takes no `accessibilityHint`, so no pressable can carry one         | Gestures (accessibility rows draw a `View` with `role="button"`)          |
-| [#123](https://github.com/aningdev/shadcn-nsh/issues/123) | `Card` has no flush form for edge-to-edge content                                       | Animations (Aurora inset)                                                 |
-| [#106](https://github.com/aningdev/shadcn-nsh/issues/106) | CodeEditor / DockArea types not exported; `groupClass` can't replace the background     | Editor, Dock                                                              |
 
 Not gaps: the iOS segmented control is a platform look; a Progress with step dots is app layout;
 `Segmented` / `Button` / `Badge` take children where upstream takes `options` / `label` (shadcn's

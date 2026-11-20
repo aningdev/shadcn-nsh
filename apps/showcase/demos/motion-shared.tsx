@@ -82,6 +82,8 @@ export function Scene(props: {
   title: string;
   subtitle?: string;
   right?: JSX.Element;
+  /** The body meets the card's side and bottom edges (`CardContent` `flush`). */
+  flush?: boolean;
   children: JSX.Element;
 }) {
   return (
@@ -95,7 +97,7 @@ export function Scene(props: {
           <CardAction>{props.right}</CardAction>
         </If>
       </CardHeader>
-      <CardContent>{props.children}</CardContent>
+      <CardContent flush={props.flush}>{props.children}</CardContent>
     </Card>
   );
 }

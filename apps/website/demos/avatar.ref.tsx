@@ -189,7 +189,7 @@ function App() {
                     class="transition-colors duration-200 motion-reduce:transition-none"
                     style={{
                       position: "absolute",
-                      right: -1,
+                      end: -1,
                       bottom: -1,
                       width: 11,
                       height: 11,
@@ -209,15 +209,14 @@ function App() {
             <AvatarGroup
               limit={limit()}
               accessibilityLabel={`${members()} members`}
-              class="flex-row items-center"
-              overflowClass="items-center justify-center rounded-full"
+              class="flex-row items-center -space-x-2"
+              overflowClass="relative shrink-0 items-center justify-center rounded-full"
               overflowStyle={{
+                borderWidth: 2,
+                borderColor: surface(),
                 backgroundColor: ui().raised.backgroundColor,
                 width: side,
                 height: side,
-                marginLeft: -side / 4,
-                borderWidth: 2,
-                borderColor: surface(),
               }}
               overflowAccessibilityLabel={`${more()} more people`}
               overflow={
@@ -234,16 +233,14 @@ function App() {
               }
             >
               <Each of={MEMBERS.slice(0, members())} key={(name) => name}>
-                {(name, i) => (
-                  <View style={{ marginLeft: i() === 0 ? 0 : -side / 4 }}>
-                    <Person
-                      name={name()}
-                      side={side}
-                      ring
-                      src={warmed() ? avatarPortrait(name()) : undefined}
-                      onStatus={settledBy}
-                    />
-                  </View>
+                {(name) => (
+                  <Person
+                    name={name()}
+                    side={side}
+                    ring
+                    src={warmed() ? avatarPortrait(name()) : undefined}
+                    onStatus={settledBy}
+                  />
                 )}
               </Each>
             </AvatarGroup>

@@ -107,6 +107,16 @@ function App() {
             <Text style={{ fontSize: density.note, color: ui().faint }}>Updated 2 hours ago</Text>
           </CardFooter>
         </Card>
+
+        <Card style={cardStyle} accessibilityLabel="Cover">
+          <CardHeader>
+            <CardTitle>Cover</CardTitle>
+            <CardDescription>The picture meets the card's edges.</CardDescription>
+          </CardHeader>
+          <CardContent flush>
+            <View style={{ height: 96, backgroundColor: ui().inset.backgroundColor }} />
+          </CardContent>
+        </Card>
       </View>
     </DemoPage>
   );

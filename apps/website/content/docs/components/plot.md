@@ -69,6 +69,8 @@ import { Plot, seriesColor, plotGrid } from "@/components/ui/plot";
 
 Uses `plotCrossLine` and `plotDotClass` by default. Every prop of [`nsh/base/plot` Plot](https://nsh.dev/elements/plot) passes through.
 
+`Plot` does not expose its scales or a canvas the app can paint on. The geometry, including the insets the axis labels take, is computed in `nsh/base` (`references/nsh/crates/nsh-base/src/plot/mod.rs`: the plot around line 800, the y insets around 803–812, the y map around 902–926, and `.child` around 1361; `axis.rs` `label_insets` around line 474). Copying that inset in JavaScript would drift from the line, so this library does not add an overlay hook. A wash over a band is `plotWash`.
+
 Also export `Legend` for a colored square and label beside a chart.
 
 | Part     | Props              | Description                                        |

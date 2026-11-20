@@ -84,3 +84,48 @@ export function CodeEditor(props: CodeEditorProps) {
     />
   );
 }
+
+/**
+ * The session an app drives the editor with, from `nsh/base`, so `@/components/ui/code-editor` is
+ * the only import. `EditorProps` stays `CodeEditorProps`.
+ */
+export type {
+  EditorBounds,
+  EditorClasses,
+  EditorCodeActionRequest,
+  EditorCommand,
+  EditorCompletionAcceptEvent,
+  EditorCompletionItem,
+  EditorCompletionKind,
+  EditorCompletionRequest,
+  EditorCompletionTrigger,
+  EditorContextMenuEvent,
+  EditorDecoration,
+  EditorDefinitionRequest,
+  EditorDefinitionTrigger,
+  EditorDiagnostic,
+  EditorDiagnosticCodeDescription,
+  EditorDiagnosticRelatedInformation,
+  EditorDiagnosticSeverity,
+  EditorDiagnosticTag,
+  EditorEdit,
+  EditorFoldRange,
+  EditorGutterMark,
+  EditorGutterPlacement,
+  EditorHoverEvent,
+  EditorInlineCompletionRequest,
+  EditorLocation,
+  EditorOverviewRulerLane,
+  EditorOverviewRulerMark,
+  EditorPosition,
+  EditorRange,
+  EditorRect,
+  EditorRef,
+  EditorReplaceAll,
+  EditorSearch,
+  EditorSearchResult,
+  EditorSelection,
+  EditorStyles,
+  EditorTextPressEvent,
+  EditorToken,
+} from "nsh/base";

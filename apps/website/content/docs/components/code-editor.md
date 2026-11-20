@@ -85,3 +85,5 @@ const source = signal(SAMPLE);
 | `CodeEditorProps`   | —                                                               | `nsh/base`'s `EditorProps`, unchanged.                           |
 | `codeEditorClasses` | —                                                               | The look of the editor's parts (classes, by part).               |
 | `codeEditorFrame`   | —                                                               | The surface's style: the field's fill, edge and control corners. |
+
+The session types the props name are re-exported from this file, so an app does not import them from `nsh/base`: `EditorRef`, `EditorDecoration`, `EditorDiagnostic`, `EditorPosition`, `EditorRange`, `EditorSelection`, `EditorSearchResult`, `EditorCommand`, `EditorCompletionItem`, and the rest of the editor's value types.

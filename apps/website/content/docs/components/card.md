@@ -99,20 +99,35 @@ squeezing both.
 </CardFooter>
 ```
 
+### Flush
+
+`flush` on `CardContent` drops the side padding and pulls the body through the card's bottom padding, so a picture meets the rim. The card's `overflow: hidden` clips it to the radius. The header stays padded. Off in the terminal.
+
+```tsx
+<Card>
+  <CardHeader>
+    <CardTitle>Cover</CardTitle>
+  </CardHeader>
+  <CardContent flush>
+    <View style={{ height: 160, backgroundColor: "var(--inset)" }} />
+  </CardContent>
+</Card>
+```
+
 ## API
 
 Each part is the `nsh` element it is drawn with, wearing the look `cardLook()` gives it. Every
 view prop passes through; `style` goes over the look's.
 
-| Part              | Props | Description                                                                             |
-| ----------------- | ----- | --------------------------------------------------------------------------------------- |
-| `Card`            | —     | The flat surface holding related content: `cardLook().card`.                            |
-| `CardHeader`      | —     | Title over description in the first column, the action at the trailing edge: `.header`. |
-| `CardTitle`       | —     | A step larger than body, semibold, the text colour: `.title`.                           |
-| `CardDescription` | —     | Body size in the muted colour: `.description`.                                          |
-| `CardAction`      | —     | The control at the trailing edge, beside title and description: `.action`.              |
-| `CardContent`     | —     | What the card is about — pads its sides and nothing else: `.content`.                   |
-| `CardFooter`      | —     | A wrapping row, centred, 8 apart: `.footer`.                                            |
+| Part              | Props   | Description                                                                             |
+| ----------------- | ------- | --------------------------------------------------------------------------------------- |
+| `Card`            | —       | The flat surface holding related content: `cardLook().card`.                            |
+| `CardHeader`      | —       | Title over description in the first column, the action at the trailing edge: `.header`. |
+| `CardTitle`       | —       | A step larger than body, semibold, the text colour: `.title`.                           |
+| `CardDescription` | —       | Body size in the muted colour: `.description`.                                          |
+| `CardAction`      | —       | The control at the trailing edge, beside title and description: `.action`.              |
+| `CardContent`     | `flush` | What the card is about. `flush` meets the card's side and bottom edges: `.content`.     |
+| `CardFooter`      | —       | A wrapping row, centred, 8 apart: `.footer`.                                            |
 
 `CardTitle` and `CardDescription` are `Text`, so they take text props (`numberOfLines`, `role`).
 `CardHeader` is a grid of two columns: the title over the description in the first and the action

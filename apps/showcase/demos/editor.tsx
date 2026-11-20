@@ -28,16 +28,6 @@ import {
   View,
   windowSize,
 } from "nsh";
-import type {
-  DockAreaRef,
-  EditorDecoration,
-  EditorDiagnostic,
-  EditorPosition,
-  EditorRange,
-  EditorRef,
-  EditorSearchResult,
-  EditorSelection,
-} from "nsh/base";
 import {
   isAvailable as hasMenus,
   Menu as NativeMenu,
@@ -45,8 +35,17 @@ import {
 } from "nsh/desktop";
 
 import { IconButton, iconButtonGlyph } from "@/packages/ui/button";
-import { CodeEditor } from "@/packages/ui/code-editor";
-import { DockArea, type DockTabValue } from "@/packages/ui/dock-area";
+import {
+  CodeEditor,
+  type EditorDecoration,
+  type EditorDiagnostic,
+  type EditorPosition,
+  type EditorRange,
+  type EditorRef,
+  type EditorSearchResult,
+  type EditorSelection,
+} from "@/packages/ui/code-editor";
+import { DockArea, type DockAreaRef, type DockTabValue } from "@/packages/ui/dock-area";
 import { Input } from "@/packages/ui/input";
 import { Icon } from "@/packages/ui/lib/icons";
 import { popupSurface } from "@/packages/ui/lib/popup";
@@ -882,7 +881,7 @@ function EditorScreen() {
             if (placement === "bottom") m.setProblemsShown(open);
           }}
           handleAccessibilityLabel="Resize the problems"
-          groupStyle={{ backgroundColor: colors.card }}
+          groupClass="bg-card"
           renderTab={(tab: DockTabValue) => (
             <View
               style={{

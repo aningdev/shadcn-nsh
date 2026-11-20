@@ -754,12 +754,10 @@ function Aurora() {
   });
   cleanup(() => drifts.forEach((m) => m.stop()));
   return (
-    <Scene title="Aurora" subtitle="Blurred gradients on looping motions">
+    <Scene title="Aurora" subtitle="Blurred gradients on looping motions" flush>
       <View
         style={{
           height: 260,
-          borderRadius: radius.inset,
-          borderCurve: "continuous",
           overflow: "hidden",
           backgroundColor: colors.inset,
         }}

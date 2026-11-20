@@ -26,6 +26,7 @@ import type {
   AccordionProps as BaseAccordionProps,
   AccordionTriggerProps as BaseAccordionTriggerProps,
   AlertDialogOptions as BaseAlertDialogOptions,
+  AvatarGroupProps as BaseAvatarGroupProps,
   AvatarProps as BaseAvatarProps,
   ButtonProps as BaseButtonProps,
   CalendarProps as BaseCalendarProps,
@@ -121,6 +122,7 @@ import type {
   AccordionProps,
   AccordionTriggerProps,
   AlertDialogContentProps,
+  AvatarGroupProps,
   AvatarProps,
   BadgeProps,
   ButtonProps,
@@ -233,6 +235,8 @@ type _alertDialogContent = Assert<
 >;
 /** `AvatarProps`. */
 type _avatar = Assert<KeepsBase<BaseAvatarProps, AvatarProps, never>>;
+/** `AvatarGroupProps`. */
+type _avatarGroup = Assert<KeepsBase<BaseAvatarGroupProps, AvatarGroupProps, never>>;
 /** `ButtonProps`. */
 type _button = Assert<KeepsBase<BaseButtonProps, ButtonProps, never>>;
 /** `IconButtonProps` — every base prop. `accessibilityLabel` is required here, over the base's

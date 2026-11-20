@@ -898,8 +898,8 @@ export function ChatDemo() {
                 each={messages()}
                 keyExtractor={(m) => m.id}
                 estimatedItemSize={140}
+                alignment="bottom"
                 style={{ flex: 1 }}
-                // A cartesian list has no bottom alignment (see GAPS): a short conversation rests at the top.
                 contentStyle={{ gap: 0, paddingTop: 8, paddingBottom: 16 }}
                 keyboardDismissMode="interactive"
               >
@@ -928,7 +928,23 @@ export function ChatDemo() {
               <MessageScrollerButton
                 direction="end"
                 variant="secondary"
+                size="sm"
                 accessibilityLabel="Jump to the latest message"
+                style={{ width: 36, height: 36, paddingHorizontal: 0, borderRadius: 18 }}
+                indicator={
+                  <If when={streaming()}>
+                    <View
+                      style={{
+                        width: 10,
+                        height: 10,
+                        borderRadius: 5,
+                        backgroundColor: colors.brand,
+                        borderWidth: 2,
+                        borderColor: colors.background,
+                      }}
+                    />
+                  </If>
+                }
               />
             </MessageScroller>
           </If>

@@ -197,6 +197,7 @@ export function DockArea(props: DockAreaProps) {
       class={props.class}
       style={props.style}
       handleAccessibilityLabel={props.handleAccessibilityLabel ?? RESIZE_HANDLE_LABEL}
+      // The app's class follows the look's, and a later background utility replaces `bg-inset`.
       groupClass={joinClass(dockClasses.groupClass, props.groupClass)}
       groupStyle={props.groupStyle}
       tabBarClass={joinClass(dockClasses.tabBarClass, props.tabBarClass)}

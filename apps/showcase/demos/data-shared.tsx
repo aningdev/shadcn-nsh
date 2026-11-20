@@ -1,9 +1,9 @@
 // What the Data group's demos share (not shipped anywhere): the gallery's card header over a
-// `sectionSurface`, the segmented choice and its toggle, the figure row under a chart, and the
-// number and axis formatting the charts read. The gallery's `Card` puts a title and its one line
+// `sectionSurface`, the segmented choice and its toggle, and the number and axis formatting the
+// charts read. A chart's figures are `Stat` (`plot.tsx`). The gallery's `Card` puts a title and its one line
 // above a padded surface; our `Card` is header/content, so this draws the gallery's arrangement
 // from the same `sectionSurface` and `density`.
-import { alpha, colors, mono, toneColor, type Tone } from "@shadcn-nsh/theme";
+import { alpha, colors } from "@shadcn-nsh/theme";
 import { Text, View, type ViewStyle } from "nsh";
 import type { JSX } from "nsh";
 
@@ -91,52 +91,6 @@ export function ChartCard(props: {
       >
         {props.children}
       </View>
-    </View>
-  );
-}
-
-/** One figure of a chart's figures: a small caps label over its number, in a tone. */
-export function Figure(props: { label: string; value: string; tone?: Tone }) {
-  return (
-    <View style={{ flexDirection: "column", gap: 4, flexGrow: 1, flexBasis: 108 }}>
-      <Text
-        style={{
-          fontSize: 10,
-          fontFamily: mono(),
-          letterSpacing: 0.8,
-          color: colors.faint,
-        }}
-      >
-        {props.label.toUpperCase()}
-      </Text>
-      <Text
-        style={{
-          fontSize: 14,
-          fontWeight: "500",
-          color: props.tone ? toneColor(props.tone) : colors.foreground,
-          fontVariant: ["tabular-nums"],
-        }}
-      >
-        {props.value}
-      </Text>
-    </View>
-  );
-}
-
-/** The figures under a chart: one row, a hairline above them. */
-export function Figures(props: { children: JSX.Element }) {
-  return (
-    <View
-      style={{
-        flexDirection: "row",
-        flexWrap: "wrap",
-        gap: 12,
-        paddingTop: 12,
-        borderTopWidth: 1,
-        borderColor: colors.line,
-      }}
-    >
-      {props.children}
     </View>
   );
 }

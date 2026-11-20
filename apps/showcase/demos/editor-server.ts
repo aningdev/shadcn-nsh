@@ -4,7 +4,7 @@ import type {
   EditorDiagnostic,
   EditorPosition,
   EditorRange,
-} from "nsh/base";
+} from "@/packages/ui/code-editor";
 
 // A language server for the Editor demo, the gallery's simulator
 // (`references/nsh/examples/gallery/demos/lsp/server.ts`), kept beside the demo because a showcase

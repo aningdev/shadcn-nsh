@@ -14,7 +14,7 @@ npx shadcn-nsh@latest add avatar
 ## Usage
 
 ```tsx
-import { Avatar } from "@/components/ui/avatar";
+import { Avatar, AvatarBadge, AvatarGroup, AvatarGroupCount } from "@/components/ui/avatar";
 ```
 
 ```tsx
@@ -51,12 +51,40 @@ A picture that fails to load leaves the initials on the ring, as a gone picture 
 
 ### Group
 
-Overlap and `limit` use `nsh/base` `AvatarGroup`; size each `Avatar` the same.
+`AvatarGroup` shows the first `limit` and overlaps them (`-space-x-2`). `AvatarGroupCount` is the overflow circle's text. Size each `Avatar` the same, and size the overflow with `overflowStyle`.
+
+```tsx
+<AvatarGroup
+  limit={3}
+  overflowAccessibilityLabel="5 more people"
+  overflow={<AvatarGroupCount>+5</AvatarGroupCount>}
+>
+  <Avatar name="Ada Lovelace" style={{ width: 36, height: 36 }} />
+  <Avatar name="Grace Hopper" style={{ width: 36, height: 36 }} />
+</AvatarGroup>
+```
+
+### Presence
+
+`AvatarBadge` sits on the avatar's end-bottom corner. Pass its color; say the presence in `accessibilityLabel`. The avatar does not clip it.
+
+```tsx
+<Avatar
+  name="Ada Lovelace"
+  accessibilityLabel="Ada Lovelace, online"
+  style={{ width: 36, height: 36 }}
+>
+  <AvatarBadge style={{ backgroundColor: colors.up }} />
+</Avatar>
+```
 
 ## API
 
-Uses `avatarIdentity` and `avatarHue`. Every prop of [`nsh/base` Avatar](https://nsh.dev/elements/avatar) passes through.
+Uses `avatarIdentity` and `avatarHue`. Every prop of [`nsh/base` Avatar](https://nsh.dev/elements/avatar) passes through on `Avatar`, and every prop of [`nsh/base` AvatarGroup](https://nsh.dev/elements/avatar) on `AvatarGroup` (`limit`, `total`, `overflow`, `overflowAccessibilityLabel`).
 
-| Part     | Props         | Description                                                    |
-| -------- | ------------- | -------------------------------------------------------------- |
-| `Avatar` | `name`, `src` | A round picture or name-colored initials on the identity ring. |
+| Part               | Props                        | Description                                                                |
+| ------------------ | ---------------------------- | -------------------------------------------------------------------------- |
+| `Avatar`           | `name`, `src`                | A round picture or name-colored initials on the identity ring.             |
+| `AvatarGroup`      | `limit`, `total`, `overflow` | The first few avatars, overlapped; the rest are `overflow`.                |
+| `AvatarGroupCount` | —                            | The overflow's count, tabular and muted.                                   |
+| `AvatarBadge`      | —                            | A presence circle at the end-bottom corner, ringed in the page background. |

@@ -4,9 +4,8 @@
 // so the page marks itself `images-ready` once all of them have loaded or failed, and the render
 // check waits for that before the screenshot: a run draws the same faces every time.
 import { Image, mount, signal, Text, View } from "nsh";
-import { AvatarGroup } from "nsh/base";
 
-import { Avatar } from "@/packages/ui/avatar";
+import { Avatar, AvatarBadge, AvatarGroup, AvatarGroupCount } from "@/packages/ui/avatar";
 import { Button } from "@/packages/ui/button";
 import { listRow, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
 
@@ -141,16 +140,14 @@ function App() {
                   onStatusChange={({ status }) => settledBy(status)}
                   style={{ width: side, height: side }}
                 >
-                  <View
+                  <AvatarBadge
                     class="transition-colors duration-200 motion-reduce:transition-none"
                     style={{
-                      position: "absolute",
-                      right: -1,
-                      bottom: -1,
                       width: 11,
                       height: 11,
                       borderRadius: 6,
-                      borderWidth: 2,
+                      end: -1,
+                      bottom: -1,
                       borderColor: surface(),
                       backgroundColor: dotColor(presence()[i]),
                     }}
@@ -165,48 +162,35 @@ function App() {
             <AvatarGroup
               limit={limit()}
               accessibilityLabel={`${members()} members`}
-              class="flex-row items-center"
-              overflowClass="items-center justify-center rounded-full"
               overflowStyle={{
                 backgroundColor: ui().raised.backgroundColor,
                 width: side,
                 height: side,
-                marginLeft: -side / 4,
-                borderWidth: 2,
                 borderColor: surface(),
               }}
               overflowAccessibilityLabel={`${more()} more people`}
               overflow={
-                <Text
-                  style={{
-                    fontSize: side / 3.2,
-                    fontWeight: "600",
-                    color: ui().muted,
-                    fontVariant: ["tabular-nums"],
-                  }}
-                >
+                <AvatarGroupCount style={{ fontSize: side / 3.2, color: ui().muted }}>
                   {`+${more()}`}
-                </Text>
+                </AvatarGroupCount>
               }
             >
               <Each of={MEMBERS.slice(0, members())} key={(name) => name}>
-                {(name, i) => (
-                  <View style={{ marginLeft: i() === 0 ? 0 : -side / 4 }}>
-                    <Avatar
-                      name={name()}
-                      src={warmed() ? avatarPortrait(name()) : undefined}
-                      fallbackDelay={300}
-                      onStatusChange={({ status }) => settledBy(status)}
-                      style={{
-                        width: side,
-                        height: side,
-                        borderRadius: side / 2,
-                        borderWidth: 2,
-                        borderColor: surface(),
-                        backgroundColor: surface(),
-                      }}
-                    />
-                  </View>
+                {(name) => (
+                  <Avatar
+                    name={name()}
+                    src={warmed() ? avatarPortrait(name()) : undefined}
+                    fallbackDelay={300}
+                    onStatusChange={({ status }) => settledBy(status)}
+                    style={{
+                      width: side,
+                      height: side,
+                      borderRadius: side / 2,
+                      borderWidth: 2,
+                      borderColor: surface(),
+                      backgroundColor: surface(),
+                    }}
+                  />
                 )}
               </Each>
             </AvatarGroup>

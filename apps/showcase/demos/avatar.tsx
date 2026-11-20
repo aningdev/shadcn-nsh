@@ -2,16 +2,21 @@ import { alpha, colors, focusRing, hovered } from "@shadcn-nsh/theme";
 import { Trash2 } from "lucide";
 // Avatar: the official gallery's scene (`references/nsh/examples/gallery/demos/AvatarDemo.tsx`).
 // The picture, the initials and the identity colors are this library's `Avatar`. A stacked row
-// is `nsh/base`'s `AvatarGroup` (the library has none), and the presence dot is drawn here (the
-// library has no presence part). A team row is `nsh/base`'s `Button`: the library's `Button` is a
-// filled control, not a list row.
+// is `AvatarGroup`, the overflow count `AvatarGroupCount`, and the presence mark `AvatarBadge`.
+// A team row is `nsh/base`'s `Button`: the library's `Button` is a filled control, not a list row.
 import type { JSX } from "nsh";
 import { reduceMotion, signal, Text, View } from "nsh";
-import { AvatarGroup, Button } from "nsh/base";
+import { Button } from "nsh/base";
 
 import { avatarPortrait, AVATAR_BROKEN } from "@/apps/website/demos/avatar-data";
 import { photoUrl } from "@/apps/website/demos/photos";
-import { Avatar, avatarIdentity } from "@/packages/ui/avatar";
+import {
+  Avatar,
+  AvatarBadge,
+  AvatarGroup,
+  AvatarGroupCount,
+  avatarIdentity,
+} from "@/packages/ui/avatar";
 import { Badge } from "@/packages/ui/badge";
 import { Button as UiButton, buttonGlyph, buttonLabel } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
@@ -79,30 +84,10 @@ function Person(props: {
         imageClass={`${round} border border-foreground/10 bg-muted ${props.fadeIn ? fade(300) : ""}`}
         fallbackClass={`${round} items-center justify-center font-semibold text-[${Math.round(props.side / 2.8)}px]${id() ? ` text-[${id()!.foreground}]` : ""}`}
         fallback={props.fallback}
-      />
-      {props.children}
+      >
+        {props.children}
+      </Avatar>
     </View>
-  );
-}
-
-function Dot(props: { presence: Presence; side: number }) {
-  const d = () => Math.max(8, Math.round(props.side / 4));
-  const inset = () => Math.round((props.side / 2) * (1 - 0.62) - d() / 2);
-  return (
-    <View
-      class={reduceMotion() ? "" : "transition-colors duration-200"}
-      style={{
-        position: "absolute",
-        right: inset(),
-        bottom: inset(),
-        width: d(),
-        height: d(),
-        borderRadius: d() / 2,
-        borderWidth: 2,
-        borderColor: props.presence === "offline" ? colors.faint : colors.card,
-        backgroundColor: props.presence === "offline" ? colors.card : presenceColor(props.presence),
-      }}
-    />
   );
 }
 
@@ -226,7 +211,17 @@ function Team(props: { last: { (): string; set: (value: string) => void } }) {
                   src={portrait(member().name)}
                   label={`${member().name}, ${current()}`}
                 >
-                  <Dot presence={current()} side={row} />
+                  <AvatarBadge
+                    class={reduceMotion() ? "" : "transition-colors duration-200"}
+                    style={{
+                      width: Math.max(8, Math.round(row / 4)),
+                      height: Math.max(8, Math.round(row / 4)),
+                      borderRadius: Math.max(8, Math.round(row / 4)) / 2,
+                      borderColor: current() === "offline" ? colors.faint : colors.card,
+                      backgroundColor:
+                        current() === "offline" ? colors.card : presenceColor(current()),
+                    }}
+                  />
                 </Person>
                 <View style={{ flex: 1, gap: 2 }}>
                   <Text style={{ fontSize: body, fontWeight: "500", color: colors.foreground }}>
@@ -264,36 +259,20 @@ function Stacked(props: { last: { (): string; set: (value: string) => void } }) 
         <AvatarGroup
           limit={shown()}
           accessibilityLabel={`${count()} members`}
-          class="flex-row items-center"
-          overflowClass={`items-center justify-center rounded-full ${reduceMotion() ? "" : "transition-colors duration-200"}`}
+          overflowClass={reduceMotion() ? "" : "transition-colors duration-200"}
           overflowStyle={{
             width: side,
             height: side,
-            marginLeft: -side / 4,
-            borderWidth: 2,
             borderColor: colors.card,
             backgroundColor: colors.raised,
           }}
           overflowAccessibilityLabel={`${more()} more people`}
           overflow={
-            <Text
-              style={{
-                fontSize: side / 3.2,
-                fontWeight: "600",
-                color: colors.mutedForeground,
-                fontVariant: ["tabular-nums"],
-              }}
-            >
-              {`+${more()}`}
-            </Text>
+            <AvatarGroupCount style={{ fontSize: side / 3.2 }}>{`+${more()}`}</AvatarGroupCount>
           }
         >
           <Each of={people()}>
-            {(name, i) => (
-              <View style={{ marginLeft: i() === 0 ? 0 : -side / 4 }}>
-                <Person name={name()} side={side} ring src={portrait(name())} />
-              </View>
-            )}
+            {(name) => <Person name={name()} side={side} ring src={portrait(name())} />}
           </Each>
         </AvatarGroup>
         <Text style={{ flex: 1, fontSize: note, color: colors.mutedForeground }}>
@@ -350,35 +329,17 @@ function Stacked(props: { last: { (): string; set: (value: string) => void } }) 
         limit={3}
         total={1284}
         accessibilityLabel="1,284 viewers"
-        class="flex-row items-center"
-        overflowClass="items-center justify-center rounded-full px-2"
+        overflowClass="px-2"
         overflowStyle={{
           height: 28,
-          marginLeft: -6,
-          borderWidth: 2,
           borderColor: colors.card,
           backgroundColor: colors.raised,
         }}
         overflowAccessibilityLabel="1,281 more viewers"
-        overflow={
-          <Text
-            style={{
-              fontSize: 11,
-              fontWeight: "600",
-              color: colors.mutedForeground,
-              fontVariant: ["tabular-nums"],
-            }}
-          >
-            +1.3k
-          </Text>
-        }
+        overflow={<AvatarGroupCount style={{ fontSize: 11 }}>+1.3k</AvatarGroupCount>}
       >
         <Each of={["Jason Lee", "Sunli", "Floyd Wang"]}>
-          {(name, i) => (
-            <View style={{ marginLeft: i() === 0 ? 0 : -6 }}>
-              <Person name={name()} side={28} ring src={portrait(name())} label="" />
-            </View>
-          )}
+          {(name) => <Person name={name()} side={28} ring src={portrait(name())} label="" />}
         </Each>
       </AvatarGroup>
     </SceneCard>

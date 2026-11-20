@@ -292,7 +292,6 @@ export type MessageScrollerViewportProps<T> = Omit<
   | "inverted"
   | "horizontal"
   | "numColumns"
-  | "alignment"
   | "viewport"
   | "stickyHeaderIndices"
   | "initialScrollIndex"
@@ -323,6 +322,11 @@ export type MessageScrollerButtonProps = Omit<ButtonProps, "children"> & {
   direction?: MessageScrollerDirection;
   /** Default: an arrow, and the button's name for screen readers ("Scroll to end"). */
   children?: ButtonProps["children"];
+  /**
+   * A mark at the button's top-end corner, over the arrow (an arrival dot while a reply is still
+   * coming in). The arrow stays; the mark takes no presses.
+   */
+  indicator?: JSX.Element;
 };
 
 /**
@@ -434,7 +438,18 @@ export function MessageScrollerButton(props: MessageScrollerButtonProps) {
   const away = () =>
     direction() === "end" ? !(scroller?.atEnd() ?? true) : !(scroller?.atStart() ?? true);
   const slide = follow(() => (away() ? 1 : 0), motion.move);
-  const [, rest] = split(props, ["direction", "children", "style", "onPress"]);
+  const [, rest] = split(props, [
+    "direction",
+    "children",
+    "style",
+    "onPress",
+    "indicator",
+    "variant",
+    "size",
+    "accessibilityLabel",
+  ]);
+  const variant = () => props.variant ?? "secondary";
+  const size = () => props.size ?? "sm";
   const label =
     props.accessibilityLabel ?? (direction() === "end" ? "Scroll to end" : "Scroll to start");
   return (
@@ -443,29 +458,34 @@ export function MessageScrollerButton(props: MessageScrollerButtonProps) {
       importantForAccessibility={away() ? "auto" : "no-hide-descendants"}
       style={messageScrollerLook().slot(direction())}
     >
-      <Button
-        {...rest}
-        variant="secondary"
-        size="sm"
-        accessibilityLabel={label}
-        onPress={() => {
-          if (direction() === "end") scroller?.scrollToEnd({ animated: true });
-          else scroller?.scrollToStart({ animated: true });
-          props.onPress?.();
-        }}
-        style={[
-          messageScrollerLook().button,
-          { opacity: slide, pointerEvents: away() ? "auto" : "none" },
-          props.style ?? null,
-        ]}
-      >
-        {props.children ?? (
-          <Icon
-            icon={direction() === "end" ? ArrowDown : ArrowUp}
-            {...buttonGlyph("secondary", { size: "sm" })}
-          />
-        )}
-      </Button>
+      <View style={{ pointerEvents: "box-none", opacity: slide }}>
+        <Button
+          {...rest}
+          variant={variant()}
+          size={size()}
+          accessibilityLabel={label}
+          onPress={() => {
+            if (direction() === "end") scroller?.scrollToEnd({ animated: true });
+            else scroller?.scrollToStart({ animated: true });
+            props.onPress?.();
+          }}
+          style={[
+            messageScrollerLook().button,
+            { pointerEvents: away() ? "auto" : "none" },
+            props.style ?? null,
+          ]}
+        >
+          {props.children ?? (
+            <Icon
+              icon={direction() === "end" ? ArrowDown : ArrowUp}
+              {...buttonGlyph(variant, { size })}
+            />
+          )}
+        </Button>
+        <View style={{ position: "absolute", top: 0, end: 0, pointerEvents: "none" }}>
+          {props.indicator}
+        </View>
+      </View>
     </View>
   );
 }

@@ -130,8 +130,15 @@ export type CardDescriptionProps = TextProps;
 /** A control at the header's trailing edge (a button, a badge). */
 export type CardActionProps = ViewProps;
 
-/** The card's body. */
-export type CardContentProps = ViewProps;
+/** The card's body. `flush` lets what it holds meet the card's side and bottom edges. */
+export type CardContentProps = ViewProps & {
+  /**
+   * Drop the side padding and pull the body through the card's bottom padding, so a picture
+   * meets the rim and the card's radius clips it. The header stays padded. Off in the terminal,
+   * where the card has no padding of its own.
+   */
+  flush?: boolean;
+};
 
 /** The card's last row, for actions. */
 export type CardFooterProps = ViewProps;
@@ -186,11 +193,18 @@ export function CardAction(props: CardActionProps) {
   );
 }
 
-/** A card's body. */
+/** A card's body. `flush` meets the card's side and bottom edges; the card clips to its radius. */
 export function CardContent(props: CardContentProps) {
-  const [, rest] = split(props, ["style", "children"]);
+  const [, rest] = split(props, ["style", "children", "flush"]);
   return (
-    <View {...rest} style={[cardLook().content, props.style ?? null]}>
+    <View
+      {...rest}
+      style={[
+        cardLook().content,
+        props.flush && !terminal ? { paddingHorizontal: 0, marginBottom: -pad } : null,
+        props.style ?? null,
+      ]}
+    >
       {props.children}
     </View>
   );

@@ -31,6 +31,7 @@ function App() {
             keyExtractor={(turn) => String(turn.id)}
             accessibilityLabel="Conversation"
             estimatedItemSize={60}
+            alignment="bottom"
           >
             {(item) => (
               <MessageScrollerItem>

@@ -1,6 +1,7 @@
 // The reference of `card.tsx`: the same page with the card's look spread on plain views and
 // texts, the way shadcn writes a card (`cardLook`). The render check requires the two pages to
 // draw the same pixels, so this is what proves the seven parts change nothing.
+import { terminal } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { mount, Text, View } from "nsh";
 
@@ -99,6 +100,21 @@ function App() {
           <View style={cardLook().footer}>
             <Button variant="secondary">View all</Button>
             <Text style={{ fontSize: density.note, color: ui().faint }}>Updated 2 hours ago</Text>
+          </View>
+        </View>
+
+        <View style={[cardLook().card, cardStyle]} accessibilityLabel="Cover">
+          <View style={cardLook().header}>
+            <Text style={cardLook().title}>Cover</Text>
+            <Text style={cardLook().description}>The picture meets the card's edges.</Text>
+          </View>
+          <View
+            style={[
+              cardLook().content,
+              terminal ? null : { paddingHorizontal: 0, marginBottom: -density.pad },
+            ]}
+          >
+            <View style={{ height: 96, backgroundColor: ui().inset.backgroundColor }} />
           </View>
         </View>
       </View>

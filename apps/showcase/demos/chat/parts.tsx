@@ -20,7 +20,6 @@ import { type JSX, Image, Text, View } from "nsh";
 
 import {
   Attachment,
-  AttachmentAction,
   AttachmentActions,
   AttachmentContent,
   AttachmentDescription,
@@ -28,7 +27,7 @@ import {
   AttachmentTitle,
 } from "@/packages/ui/attachment";
 import { Badge } from "@/packages/ui/badge";
-import { buttonGlyph } from "@/packages/ui/button";
+import { IconButton, iconButtonGlyph } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
 import { Pressable } from "@/packages/ui/pressable";
 
@@ -154,9 +153,15 @@ export function FileChip(props: { file: FileRef; onRemove?: () => void }) {
       </AttachmentContent>
       <If when={props.onRemove}>
         <AttachmentActions>
-          <AttachmentAction accessibilityLabel="Remove file" onPress={props.onRemove}>
-            <Icon icon={X} {...buttonGlyph("ghost", { size: "sm" })} />
-          </AttachmentAction>
+          <IconButton
+            variant="ghost"
+            size="sm"
+            accessibilityLabel="Remove file"
+            onPress={props.onRemove}
+            style={{ width: 28, height: 28 }}
+          >
+            <Icon icon={X} {...iconButtonGlyph({ variant: "ghost", size: "sm" })} />
+          </IconButton>
         </AttachmentActions>
       </If>
     </Attachment>

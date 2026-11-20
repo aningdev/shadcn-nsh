@@ -66,6 +66,7 @@ import {
   plotWash,
   seriesColors,
 } from "@/packages/ui/plot";
+import { Stat, StatGroup } from "@/packages/ui/stat";
 
 import { DemoPage } from "../kit";
 import {
@@ -75,8 +76,6 @@ import {
   ChartCard,
   Choice,
   count,
-  Figure,
-  Figures,
   fixed,
   Key,
   LineKey,
@@ -400,12 +399,12 @@ function Live() {
           labelStyle={below()}
         />
       </Plot>
-      <Figures>
-        <Figure label="Open" value={fixed(OPEN)} />
-        <Figure label="High" value={fixed(high().high)} />
-        <Figure label="Low" value={fixed(low().low)} />
-        <Figure label="Range" value={`${fixed((span() / OPEN) * 100)}%`} />
-      </Figures>
+      <StatGroup class="border-line border-t pt-3">
+        <Stat label="Open" value={fixed(OPEN)} />
+        <Stat label="High" value={fixed(high().high)} />
+        <Stat label="Low" value={fixed(low().low)} />
+        <Stat label="Range" value={`${fixed((span() / OPEN) * 100)}%`} />
+      </StatGroup>
     </ChartCard>
   );
 }
@@ -901,12 +900,12 @@ function Drawdown() {
           />
         </Plot>
       </View>
-      <Figures>
-        <Figure label="Return" value={`${signed(total, 1)}%`} tone={total >= 0 ? "up" : "down"} />
-        <Figure label="Worst" value={`${signed(TROUGH.drawdown, 1)}%`} tone="destructive" />
-        <Figure label="Recovery" value={RECOVERED ? `${RECOVERED.day - TROUGH.day} days` : "—"} />
-        <Figure label="Underwater" value={`${fixed(UNDERWATER * 100, 0)}%`} />
-      </Figures>
+      <StatGroup class="border-line border-t pt-3">
+        <Stat label="Return" value={`${signed(total, 1)}%`} tone={total >= 0 ? "up" : "down"} />
+        <Stat label="Worst" value={`${signed(TROUGH.drawdown, 1)}%`} tone="destructive" />
+        <Stat label="Recovery" value={RECOVERED ? `${RECOVERED.day - TROUGH.day} days` : "—"} />
+        <Stat label="Underwater" value={`${fixed(UNDERWATER * 100, 0)}%`} />
+      </StatGroup>
     </ChartCard>
   );
 }
@@ -1709,12 +1708,12 @@ function Bridge() {
         </Plot>
       </View>
       <View style={{ marginTop: size.gap + 4 }}>
-        <Figures>
-          <Figure label="Revenue" value={millions(revenue())} />
-          <Figure label="Gross" value={margin(steps()[2].end)} />
-          <Figure label="Operating" value={margin(operating())} />
-          <Figure label="Net" value={margin(net())} tone="up" />
-        </Figures>
+        <StatGroup class="border-line border-t pt-3">
+          <Stat label="Revenue" value={millions(revenue())} />
+          <Stat label="Gross" value={margin(steps()[2].end)} />
+          <Stat label="Operating" value={margin(operating())} />
+          <Stat label="Net" value={margin(net())} tone="up" />
+        </StatGroup>
       </View>
       <View
         style={{
@@ -2075,11 +2074,11 @@ function Funnel() {
         </View>
       </View>
       <View style={{ marginTop: size.gap + 4 }}>
-        <Figures>
-          <Figure label="Overall" value={percentOf(overall())} tone="up" />
-          <Figure label="Biggest drop" value={leak().name} />
-          <Figure label="Lost there" value={`−${percentOf(1 - leak().kept)}`} tone="down" />
-        </Figures>
+        <StatGroup class="border-line border-t pt-3">
+          <Stat label="Overall" value={percentOf(overall())} tone="up" />
+          <Stat label="Biggest drop" value={leak().name} />
+          <Stat label="Lost there" value={`−${percentOf(1 - leak().kept)}`} tone="down" />
+        </StatGroup>
       </View>
       <View
         style={{
@@ -2416,16 +2415,16 @@ function Candles() {
         </Plot>
       </View>
       <View style={{ marginTop: size.gap + 4 }}>
-        <Figures>
-          <Figure label="High" value={fixed(Math.max(...rows().map((c) => c.high)))} />
-          <Figure label="Low" value={fixed(Math.min(...rows().map((c) => c.low)))} />
-          <Figure
+        <StatGroup class="border-line border-t pt-3">
+          <Stat label="High" value={fixed(Math.max(...rows().map((c) => c.high)))} />
+          <Stat label="Low" value={fixed(Math.min(...rows().map((c) => c.low)))} />
+          <Stat
             label="Change"
             value={`${signed(total(), 1)}%`}
             tone={total() >= 0 ? "up" : "down"}
           />
-          <Figure label="Up days" value={`${ups()} / ${rows().length}`} />
-        </Figures>
+          <Stat label="Up days" value={`${ups()} / ${rows().length}`} />
+        </StatGroup>
       </View>
       <View
         style={{
@@ -2860,15 +2859,11 @@ function RiskReturn() {
         </Text>
       </View>
       <View style={{ marginTop: size.gap + 4 }}>
-        <Figures>
-          <Figure
-            label="Best Sharpe"
-            value={`${best().ticker} ${fixed(sharpe(best()))}`}
-            tone="up"
-          />
-          <Figure label="S&P 500" value={pct(index().ret)} />
-          <Figure label="Ahead" value={`${ahead()} / ${HOLDINGS.length}`} />
-        </Figures>
+        <StatGroup class="border-line border-t pt-3">
+          <Stat label="Best Sharpe" value={`${best().ticker} ${fixed(sharpe(best()))}`} tone="up" />
+          <Stat label="S&P 500" value={pct(index().ret)} />
+          <Stat label="Ahead" value={`${ahead()} / ${HOLDINGS.length}`} />
+        </StatGroup>
       </View>
       <View
         style={{
@@ -3137,15 +3132,15 @@ function Targets() {
         </Plot>
       </View>
       <View style={{ marginTop: size.gap + 4 }}>
-        <Figures>
-          <Figure
+        <StatGroup class="border-line border-t pt-3">
+          <Stat
             label="Most upside"
             value={`${top().ticker} ${pct(top().meanUp, 0)}`}
             tone={top().dir}
           />
-          <Figure label="Widest" value={widest().ticker} />
-          <Figure label="Raised" value={`${raised()} / ${rows().length}`} />
-        </Figures>
+          <Stat label="Widest" value={widest().ticker} />
+          <Stat label="Raised" value={`${raised()} / ${rows().length}`} />
+        </StatGroup>
       </View>
       <View
         style={{
@@ -3410,15 +3405,15 @@ function VolumePrice() {
         />
       </Plot>
       <View style={{ marginTop: size.gap + 4 }}>
-        <Figures>
-          <Figure
+        <StatGroup class="border-line border-t pt-3">
+          <Stat
             label="Change"
             value={`${signed(total(), 1)}%`}
             tone={total() >= 0 ? "up" : "down"}
           />
-          <Figure label={`Avg / ${spec().unit}`} value={shares(average())} />
-          <Figure label="High" value={`$${fixed(Math.max(...rows().map((d) => d.close)))}`} />
-        </Figures>
+          <Stat label={`Avg / ${spec().unit}`} value={shares(average())} />
+          <Stat label="High" value={`$${fixed(Math.max(...rows().map((d) => d.close)))}`} />
+        </StatGroup>
       </View>
       <View
         style={{
@@ -3605,19 +3600,19 @@ function Margins() {
         />
       </Plot>
       <View style={{ marginTop: size.gap + 4 }}>
-        <Figures>
-          <Figure label="Last 4Q" value={`$${fixed(year(), 1)}B`} />
-          <Figure
+        <StatGroup class="border-line border-t pt-3">
+          <Stat label="Last 4Q" value={`$${fixed(year(), 1)}B`} />
+          <Stat
             label="Best margin"
             value={`${signed(Math.max(...rows().map((d) => d.margin)), 1)}%`}
             tone="up"
           />
-          <Figure
+          <Stat
             label="Loss quarters"
             value={`${losses()} / ${rows().length}`}
             tone={losses() > 0 ? "down" : undefined}
           />
-        </Figures>
+        </StatGroup>
       </View>
       <View
         style={{
@@ -3827,14 +3822,10 @@ function Factors() {
             <Key color={chart.chart1} label="Portfolio" value={fixed(ours(), 1)} />
             <Key color={colors.mutedForeground} label={benchName()} value={fixed(theirs(), 1)} />
           </View>
-          <Figures>
-            <Figure
-              label="Spread"
-              value={signed(spread(), 1)}
-              tone={spread() >= 0 ? "up" : "down"}
-            />
-            <Figure label="Lead" value={lead.name} />
-          </Figures>
+          <StatGroup class="border-line border-t pt-3">
+            <Stat label="Spread" value={signed(spread(), 1)} tone={spread() >= 0 ? "up" : "down"} />
+            <Stat label="Lead" value={lead.name} />
+          </StatGroup>
         </View>
       </View>
       <View
@@ -4063,18 +4054,18 @@ function Correlation() {
         </Plot>
       </View>
       <View style={{ marginTop: size.gap + 4 }}>
-        <Figures>
-          <Figure
+        <StatGroup class="border-line border-t pt-3">
+          <Stat
             label="Closest"
             value={`${closest().a}·${closest().b} ${coefficient(closest().r)}`}
           />
-          <Figure
+          <Stat
             label="Best hedge"
             value={`${hedge().a}·${hedge().b} ${coefficient(hedge().r)}`}
             tone={hedge().r < 0 ? "down" : undefined}
           />
-          <Figure label="Mean" value={fixed(mean())} />
-        </Figures>
+          <Stat label="Mean" value={fixed(mean())} />
+        </StatGroup>
       </View>
       <View
         style={{
@@ -4286,19 +4277,19 @@ function Seasonality() {
         </Plot>
       </View>
       <View style={{ marginTop: size.gap + 4 }}>
-        <Figures>
-          <Figure
+        <StatGroup class="border-line border-t pt-3">
+          <Stat
             label="Best month"
             value={`${best().month} ${best().year} ${pct(best().ret)}`}
             tone="up"
           />
-          <Figure
+          <Stat
             label="Worst month"
             value={`${worst().month} ${worst().year} ${pct(worst().ret)}`}
             tone="down"
           />
-          <Figure label="Up months" value={`${gains()} / ${rows().length}`} />
-        </Figures>
+          <Stat label="Up months" value={`${gains()} / ${rows().length}`} />
+        </StatGroup>
       </View>
       <View
         style={{
@@ -4499,11 +4490,11 @@ function Activity() {
         </Plot>
       </View>
       <View style={{ marginTop: size.gap + 4 }}>
-        <Figures>
-          <Figure label="Busiest" value={`${busiest().day} ${busiest().slot}`} />
-          <Figure label="Quietest" value={`${quietest().day} ${quietest().slot}`} />
-          <Figure label="Open vs 13:30" value={`${fixed(meanAt("9:30") / meanAt("13:30"), 1)}×`} />
-        </Figures>
+        <StatGroup class="border-line border-t pt-3">
+          <Stat label="Busiest" value={`${busiest().day} ${busiest().slot}`} />
+          <Stat label="Quietest" value={`${quietest().day} ${quietest().slot}`} />
+          <Stat label="Open vs 13:30" value={`${fixed(meanAt("9:30") / meanAt("13:30"), 1)}×`} />
+        </StatGroup>
       </View>
       <View
         style={{
@@ -4706,12 +4697,12 @@ function Flows() {
         </Plot>
       </View>
       <View style={{ marginTop: size.gap + 4 }}>
-        <Figures>
-          <Figure label="Revenue" value={billions(revenue())} />
-          <Figure label="Gross margin" value={margin(3)} />
-          <Figure label="Operating" value={margin(5)} />
-          <Figure label="Net margin" value={margin(7)} tone="up" />
-        </Figures>
+        <StatGroup class="border-line border-t pt-3">
+          <Stat label="Revenue" value={billions(revenue())} />
+          <Stat label="Gross margin" value={margin(3)} />
+          <Stat label="Operating" value={margin(5)} />
+          <Stat label="Net margin" value={margin(7)} tone="up" />
+        </StatGroup>
       </View>
       <View
         style={{
@@ -5066,13 +5057,13 @@ function Allocation() {
   const weight = (v: number) => `${fixed((v / total()) * 100, 1)}%`;
   return (
     <ChartCard title="Allocation" subtitle="Asset classes and their positions, by value">
-      <Figures>
+      <StatGroup class="border-line border-t pt-3">
         <Each of={ASSET_CLASSES}>
           {(cls) => (
-            <Figure label={cls()} value={weight(valueOf(rows().find((r) => r.id === cls())!))} />
+            <Stat label={cls()} value={weight(valueOf(rows().find((r) => r.id === cls())!))} />
           )}
         </Each>
-      </Figures>
+      </StatGroup>
       <Plot
         data={rows()}
         colorScale={{

@@ -21,6 +21,11 @@
 - **`treeRowHeight` is exported (#92).** A well is as tall as its rows — 28 points with a pointer,
   44 on a touch screen — so `height: 8 * treeRowHeight` plus the list's padding, instead of a copy
   of the number in the app.
+- **`AvatarGroup`, `AvatarGroupCount` and `AvatarBadge` (#86).** A stacked row keeps `nsh/base`'s `limit` and overflow, overlapped with `-space-x-2`; the count is the overflow's text; a presence mark sits on the avatar's end-bottom corner. Pass the presence color; the avatar does not clip the mark.
+- **`Stat` takes `unit` and `note`, and `StatGroup` lays several on one row (#102).** `unit` sits beside the value, smaller and muted; `note` is the line under it. A stat inside `StatGroup` shares the row unless it sets `width`. A hairline above a chart's figures is the group's class.
+- **The message scroller pins a short conversation and marks an arrival (#116).** `MessageScrollerViewport` passes `alignment` through to the list (`"bottom"` holds a short thread at the bottom). `MessageScrollerButton` takes `variant` and `size` (still `secondary` and `sm` when omitted) and an `indicator` at its top-end corner; the arrow stays.
+- **`CardContent` takes `flush` (#123).** It drops the side padding and pulls the body through the card's bottom padding, so a picture meets the rim and the card's radius clips it. The header stays padded. Off in the terminal.
+
 - **`split-view`.** Columns of navigation stacks — a sidebar, a content column and the detail — with the column header and the sidebar button in the theme's look, over `nsh/base`'s `SplitView`.
 - **`Progress` stands a limit with `marker` (#125).** `marker` is where a limit is, a percentage
   along the bar on `value`'s scale: a 2-point hairline in the page's ink, crossing the rail and
@@ -66,6 +71,7 @@
 
 - **`IconButton`'s `lg` is 32 points with a pointer (44 on a touch screen), not 34 (#107).** It is
   the tool square upstream's rich text toolbar draws; `sm` and `default` are unchanged.
+- **The code editor and the dock export the session an app drives them with (#106).** `@/components/ui/code-editor` re-exports the editor's ref, decoration, diagnostic, search and value types; `@/components/ui/dock-area` already re-exports the dock's. `DockArea`'s `groupClass` follows `flex-1 bg-inset`, so `groupClass="bg-card"` replaces the group fill without `groupStyle`.
 - **Breaking:** **a combobox without `multiple` holds one value (#87).** As shadcn's combobox,
   leaving `multiple` out makes `value` / `defaultValue` the chosen item or `null`
   (`string | null`), and `onChange` receives `{ value: string | null }`; `multiple` keeps

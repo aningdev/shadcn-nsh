@@ -5,7 +5,7 @@ import { type Tone } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { sectionSurface } from "@/packages/ui/lib/surface";
-import { Stat } from "@/packages/ui/stat";
+import { Stat, StatGroup } from "@/packages/ui/stat";
 
 import { DemoPage } from "./kit";
 import { Log, Panel, Segmented, Split, ui } from "./stage";
@@ -81,6 +81,11 @@ function App() {
               />
             ))}
           </View>
+          <View style={{ height: 1, backgroundColor: ui().line }} />
+          <StatGroup>
+            <Stat label="Revenue" value="4.2" unit="M" note="vs last month" tone="up" />
+            <Stat label="Latency" value="42" unit="ms" note="p95" tone="accent" />
+          </StatGroup>
           <View style={{ height: 1, backgroundColor: ui().line }} />
           <View style={{ gap: 4 }}>
             <Text style={{ fontSize: 12, color: ui().muted }}>The widest display in the fleet</Text>

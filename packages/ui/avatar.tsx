@@ -1,9 +1,16 @@
 // An avatar: the identity ring (`avatarIdentity`, `avatarHue`) and the `Avatar` that wears it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { isDark } from "@shadcn-nsh/theme";
-import { computed, split } from "nsh";
-import type { ViewStyle } from "nsh";
-import { Avatar as BaseAvatar, type AvatarProps as BaseAvatarProps } from "nsh/base";
+import { colors, isDark } from "@shadcn-nsh/theme";
+import { computed, split, Text, token, View } from "nsh";
+import type { TextProps, ViewProps, ViewStyle } from "nsh";
+import {
+  Avatar as BaseAvatar,
+  AvatarGroup as BaseAvatarGroup,
+  type AvatarGroupProps as BaseAvatarGroupProps,
+  type AvatarProps as BaseAvatarProps,
+} from "nsh/base";
+
+import { joinClass } from "./lib/utils";
 
 // @port avatar.ts
 /** The hues of the identity ring: twelve, evenly spaced. */
@@ -103,5 +110,95 @@ export function Avatar(props: AvatarProps) {
       fallbackClass={props.fallbackClass ?? ringClass()}
       fallbackStyle={[ringStyle(), props.fallbackStyle ?? null]}
     />
+  );
+}
+
+/** Every prop of `nsh/base` AvatarGroup: `limit`, `total` and the overflow's name stay there. */
+export type AvatarGroupProps = BaseAvatarGroupProps;
+
+/**
+ * A row of avatars that shows the first `limit` and stands for the rest, after shadcn/ui's
+ * `AvatarGroup`. The overlap is `-space-x-2`; an app's `class` follows it. The overflow part is
+ * a ringed circle (`overflow` is its content, usually `AvatarGroupCount`); `overflowStyle` goes
+ * over that ring.
+ */
+export function AvatarGroup(props: AvatarGroupProps) {
+  const [, rest] = split(props, ["class", "overflowClass", "overflowStyle", "children"]);
+  return (
+    <BaseAvatarGroup
+      {...rest}
+      class={joinClass("flex-row items-center -space-x-2", props.class)}
+      overflowClass={joinClass(
+        "relative shrink-0 items-center justify-center rounded-full",
+        props.overflowClass,
+      )}
+      overflowStyle={[
+        {
+          borderWidth: 2,
+          borderColor: colors.background,
+          backgroundColor: token("muted"),
+        },
+        props.overflowStyle ?? null,
+      ]}
+    >
+      {props.children}
+    </BaseAvatarGroup>
+  );
+}
+
+/** The count's props: a text's. */
+export type AvatarGroupCountProps = TextProps;
+
+/** The people the group does not show ("+3"), drawn inside `AvatarGroup`'s overflow part. */
+export function AvatarGroupCount(props: AvatarGroupCountProps) {
+  const [, rest] = split(props, ["style", "children"]);
+  return (
+    <Text
+      {...rest}
+      style={[
+        {
+          fontSize: 12,
+          fontWeight: "600",
+          color: colors.mutedForeground,
+          fontVariant: ["tabular-nums"],
+        },
+        props.style ?? null,
+      ]}
+    >
+      {props.children}
+    </Text>
+  );
+}
+
+/** The badge's props: a view's. Put it inside `Avatar`; the avatar does not clip it. */
+export type AvatarBadgeProps = ViewProps;
+
+/**
+ * A presence mark on an avatar's end-bottom corner, after shadcn/ui's `AvatarBadge`: a small
+ * circle ringed in the page's background. Pass `style.backgroundColor` for the presence color.
+ * It is not a status: say the presence in the avatar's `accessibilityLabel`.
+ */
+export function AvatarBadge(props: AvatarBadgeProps) {
+  const [, rest] = split(props, ["style", "children"]);
+  return (
+    <View
+      {...rest}
+      style={[
+        {
+          position: "absolute",
+          end: 0,
+          bottom: 0,
+          width: 10,
+          height: 10,
+          borderRadius: 5,
+          borderWidth: 2,
+          borderColor: colors.background,
+          backgroundColor: colors.primary,
+        },
+        props.style ?? null,
+      ]}
+    >
+      {props.children}
+    </View>
   );
 }
