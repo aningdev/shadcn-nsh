@@ -87,7 +87,7 @@ function NavPage() {
         <Row label="open">
           <View style={fill}>
             <Collapsible open={shown()} onOpenChange={({ open: next }) => shown.set(next)}>
-              <CollapsibleTrigger>Details</CollapsibleTrigger>
+              <CollapsibleTrigger first>Details</CollapsibleTrigger>
               <CollapsibleContent>
                 <Label>More about this row</Label>
               </CollapsibleContent>

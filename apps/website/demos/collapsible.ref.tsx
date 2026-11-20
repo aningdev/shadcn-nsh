@@ -108,20 +108,17 @@ function App() {
             </View>
           </Collapsible>
 
-          <View style={{ height: 1, backgroundColor: colors.line }} />
-
           <Collapsible
             open={advanced()}
             reveal
             content={
-              <View style={disclosurePanel({ start: controlSize.gap, gap: 0 })}>
+              <View
+                style={disclosurePanel({ start: controlSize.gap, end: controlSize.gap, gap: 0 })}
+              >
                 <Switch
                   checked={originals()}
                   onChange={({ checked }) => originals.set(checked)}
-                  {...listRow({
-                    start: controlSize.gap,
-                    style: { flexDirection: "row-reverse" },
-                  })}
+                  {...listRow({ style: { flexDirection: "row-reverse" } })}
                 >
                   <RowDivider show />
                   <RowLabel
@@ -142,6 +139,7 @@ function App() {
               }}
               {...disclosureTriggerLook()}
             >
+              <RowDivider show />
               <RowLabel label="Advanced" detail="Options most people leave alone" />
               <DisclosureChevron open={advanced()} />
             </View>

@@ -39,12 +39,12 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/component
 
 ```tsx
 <Collapsible>
-  <CollapsibleTrigger>Returns</CollapsibleTrigger>
+  <CollapsibleTrigger first>Returns</CollapsibleTrigger>
   <CollapsibleContent>Within 30 days, unused and in its box.</CollapsibleContent>
 </Collapsible>
 ```
 
-`first` drops the row's top divider; `start` lines the trigger and the panel up past a leading icon.
+Every trigger but the `first` draws a divider above it, inside its row, so the hover fill meets the line; `start` lines the trigger and the panel up past a leading icon. A row in the panel (`listRow`) reaches past the content, and the revealed region clips it, so give the panel room on both sides: `panel={{ start: 12, end: 12 }}`.
 
 ## API
 
@@ -54,4 +54,4 @@ Uses `disclosureTriggerLook`, `DisclosureChevron`, and `disclosurePanel` from ac
 | -------------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
 | `Collapsible`        | `open`, `defaultOpen`, `onOpenChange({ open, reason })`, `children` | A disclosure row that reveals a panel beneath it.                                   |
 | `CollapsibleTrigger` | `children`, `first`, `start`                                        | The title row; `first` drops its top divider, `start` lines it past a leading icon. |
-| `CollapsibleContent` | `children`                                                          | The panel beneath, in `disclosurePanel` padding.                                    |
+| `CollapsibleContent` | `children`, `panel` (`start`, `end`, `gap`)                         | The panel beneath, in `disclosurePanel` padding.                                    |

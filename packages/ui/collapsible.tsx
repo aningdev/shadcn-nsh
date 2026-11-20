@@ -16,7 +16,7 @@ import {
   type DisclosurePanelOptions,
 } from "./accordion";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
-import { RowLabel } from "./lib/surface";
+import { RowDivider, RowLabel } from "./lib/surface";
 
 /** Why a collapsible opened or closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */
 export type CollapsibleOpenChangeReason = OpenChangeReason;
@@ -51,6 +51,8 @@ export type CollapsibleTriggerProps = {
   focusVisibleStyle?: StyleProp<ViewStyle>;
   disabledStyle?: StyleProp<ViewStyle>;
   accessibilityLabel?: string | null;
+  /** The first row of its surface: no divider above it. Every other trigger draws one, inside the
+   * row, so its hover fill meets the line. */
   first?: boolean;
   start?: number;
 };
@@ -105,6 +107,7 @@ export function CollapsibleTrigger(props: CollapsibleTriggerProps) {
       focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
       disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     >
+      <RowDivider show={!props.first} />
       <View style={{ flexDirection: "row", alignItems: "center", flexGrow: 1 }}>
         {(() => {
           // Read once, here where the row is drawn (`marker.tsx` reads in the same shape): a

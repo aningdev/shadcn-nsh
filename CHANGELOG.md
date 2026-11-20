@@ -128,6 +128,12 @@
 
 ### Fixed
 
+- **`CollapsibleTrigger` draws its divider inside its row.** Every trigger but the `first` now
+  draws the `RowDivider` its docs promised, so stacked collapsibles need no line between them, the
+  line matches the panel's own row dividers, and the hover fill covers it. `CollapsibleContent`'s
+  `panel` and `AccordionPanel` take `end`, room after the content to match `start`: a `listRow`
+  in a revealed panel reaches past its content, and the region clips it, so with `start` and `end`
+  its fill keeps both rounded ends.
 - **Components mirror under right-to-left layout (#39).** A side that is not the same on both
   sides — padding, margin, border, corner radius, an offset — now uses NSH's start/end form, so
   `direction: "rtl"` moves it to the reading side. A symmetric pair (`left: 0, right: 0`) and an

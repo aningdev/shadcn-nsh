@@ -97,6 +97,9 @@ export function DisclosureChevron(props: DisclosureChevronProps) {
 export interface DisclosurePanelOptions {
   /** Room before the content: to line it up with the title, past a leading icon. */
   start?: number;
+  /** Room after the content: as much as `start` keeps a row's hover fill (`listRow`) off both
+   * edges of the revealed region, which clips what reaches past it. */
+  end?: number;
   /** The gap between its lines, default 6. */
   gap?: number;
 }
@@ -108,7 +111,12 @@ export interface DisclosurePanelOptions {
  * panel's: a revealed panel is zero high while closed.
  */
 export function disclosurePanel(o?: DisclosurePanelOptions): ViewStyle {
-  return { paddingStart: o?.start ?? 0, paddingBottom: controlSize.padding + 6, gap: o?.gap ?? 6 };
+  return {
+    paddingStart: o?.start ?? 0,
+    paddingEnd: o?.end ?? 0,
+    paddingBottom: controlSize.padding + 6,
+    gap: o?.gap ?? 6,
+  };
 }
 // @port end
 
@@ -137,6 +145,8 @@ export type AccordionTriggerProps = Omit<BaseAccordionTriggerProps, "children"> 
 export type AccordionPanelProps = BaseAccordionPanelProps & {
   /** Lines up with content past a leading icon in the trigger. */
   start?: number;
+  /** Room after the content (`disclosurePanel`'s `end`). */
+  end?: number;
   gap?: number;
 };
 
@@ -209,10 +219,12 @@ export function AccordionTrigger(props: AccordionTriggerProps) {
 
 /** Revealed content with `disclosurePanel` padding inside. */
 export function AccordionPanel(props: AccordionPanelProps) {
-  const [, rest] = split(props, ["style", "children", "reveal", "start", "gap"]);
+  const [, rest] = split(props, ["style", "children", "reveal", "start", "end", "gap"]);
   return (
     <BaseAccordionPanel {...rest} reveal={props.reveal ?? true} style={props.style}>
-      <View style={disclosurePanel({ start: props.start, gap: props.gap })}>{props.children}</View>
+      <View style={disclosurePanel({ start: props.start, end: props.end, gap: props.gap })}>
+        {props.children}
+      </View>
     </BaseAccordionPanel>
   );
 }
