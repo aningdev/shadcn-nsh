@@ -81,6 +81,16 @@ test("AI Chat: a scripted scene streams a tool card and its sources", async () =
   await app.waitFor("text:harbor.dev", { timeout: 20000 });
 });
 
+test("AI Chat: a code tool shows its code and, once done, the output in a footer", async () => {
+  const app = await open("../App.tsx", wide);
+  await app.setColorScheme("light");
+  await show(app, "AI Chat", "How can I help?");
+  await app.press("text:Run some code >> nth=1");
+  await app.waitFor("text:Run code", { timeout: 12000 });
+  await app.waitFor("text:Output", { timeout: 20000 });
+  await app.waitFor("text:1229", { timeout: 20000 });
+});
+
 test("AI Chat: going offline says so, and a long conversation loads at once", async () => {
   const app = await open("../App.tsx", wide);
   await app.setColorScheme("light");

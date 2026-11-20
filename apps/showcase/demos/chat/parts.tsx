@@ -28,6 +28,7 @@ import {
 } from "@/packages/ui/attachment";
 import { Badge } from "@/packages/ui/badge";
 import { IconButton, iconButtonGlyph } from "@/packages/ui/button";
+import { CodeBlock, CodeBlockContent, CodeBlockFooter } from "@/packages/ui/code-block";
 import { Icon } from "@/packages/ui/lib/icons";
 import { Pressable } from "@/packages/ui/pressable";
 
@@ -350,34 +351,15 @@ function ToolBody(props: { tool: Tool }) {
         </View>
       </If>
     );
+  // The result sits flush in the card: the block's own edge and corners go, a hairline stays above.
   return (
-    <View style={{ borderTopWidth: 1, borderTopColor: colors.line }}>
-      <View style={{ padding: 12, backgroundColor: colors.inset }}>
-        <Text
-          style={{
-            userSelect: "text",
-            fontFamily: mono(),
-            fontSize: 12,
-            lineHeight: 18,
-            color: colors.code,
-          }}
-        >
-          {code().code}
-        </Text>
-      </View>
+    <CodeBlock
+      style={{ borderWidth: 0, borderTopWidth: 1, borderTopColor: colors.line, borderRadius: 0 }}
+    >
+      <CodeBlockContent wrap>{code().code}</CodeBlockContent>
       <If when={code().state === "done"}>
-        <View
-          style={{
-            flexDirection: "row",
-            alignItems: "center",
-            gap: 10,
-            paddingHorizontal: 12,
-            height: 44,
-            borderTopWidth: 1,
-            borderTopColor: colors.line,
-          }}
-        >
-          <Text style={{ fontSize: 13, color: colors.mutedForeground }}>Output</Text>
+        <CodeBlockFooter style={{ minHeight: 44, columnGap: 10 }}>
+          Output
           <Text
             style={{
               userSelect: "text",
@@ -392,9 +374,9 @@ function ToolBody(props: { tool: Tool }) {
           <Text style={{ fontSize: 12, color: colors.faint, fontVariant: ["tabular-nums"] }}>
             exit 0 · {code().ms} ms
           </Text>
-        </View>
+        </CodeBlockFooter>
       </If>
-    </View>
+    </CodeBlock>
   );
 }
 

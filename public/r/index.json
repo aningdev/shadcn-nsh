@@ -1255,6 +1255,19 @@
           "target": "components/ui/split-view.tsx"
         }
       ]
+    },
+    {
+      "name": "code-block",
+      "type": "registry:ui",
+      "title": "CodeBlock",
+      "description": "Code, a command's output or a log in a block, with a title, a copy button, line numbers and a footer.",
+      "files": [
+        {
+          "path": "packages/ui/code-block.tsx",
+          "type": "registry:ui",
+          "target": "components/ui/code-block.tsx"
+        }
+      ]
     }
   ]
 }

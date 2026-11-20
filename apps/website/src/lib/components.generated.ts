@@ -483,6 +483,15 @@ export const components: ComponentDoc[] = [
       "A flat surface that groups related content: a header with its action, a body and a footer.",
   },
   {
+    slug: "code-block",
+    title: "CodeBlock",
+    kind: "own",
+    shadcn: null,
+    nshElement: null,
+    description:
+      "Code, a command's output or a log in a block, with a title, a copy button, line numbers and a footer.",
+  },
+  {
     slug: "drawer",
     title: "Drawer",
     kind: "own",

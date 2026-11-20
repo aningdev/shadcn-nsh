@@ -25,7 +25,8 @@ const VARIANTS = ["default", "secondary", "outline", "ghost", "destructive", "li
  * and its media (`Item`, `ItemMedia`), as shadcn names them; `tinted` is a bubble's wash of the
  * accent (`Bubble`), and `border` and `separator` a marker's hairline, under it or either side of
  * it (`Marker`); `sidebar`, `floating` and `inset` are how a column meets the window (`Sidebar`),
- * as shadcn names them too.
+ * as shadcn names them too; `highlighted`, `added` and `removed` are a code line's state
+ * (`CodeBlockLine`), as shadcn's code block names them.
  */
 const OWN_VARIANTS: Record<string, string> = {
   tile: "radio-group",
@@ -41,6 +42,9 @@ const OWN_VARIANTS: Record<string, string> = {
   sidebar: "sidebar",
   floating: "sidebar",
   inset: "sidebar",
+  highlighted: "code-block",
+  added: "code-block",
+  removed: "code-block",
 };
 
 /** Every `size` value: the three of a scale, and the icon-only ones a shadcn button takes. */
