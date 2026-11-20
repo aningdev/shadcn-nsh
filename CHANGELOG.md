@@ -4,6 +4,9 @@
 
 ### Changed
 
+- **Command, Select and Combobox highlight in the brand tint again.** The highlighted row is lit in
+  `brand-tint` with a `brand/30` edge, as NSH's official Gallery draws it, instead of the grey
+  `accent` fill; the chosen row keeps its check.
 - **The baseline moves to NSH v0.6.1.** Components are checked against that CLI's `nsh/base`; the
   patch brings its fixes (a resizable drag stops at the next panel's minimum, the data table's
   horizontal scroll bar stays between the fixed columns, lists, carousels and video) and changes

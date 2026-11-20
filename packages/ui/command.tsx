@@ -54,10 +54,10 @@ export const commandClasses = {
   group: "px-2 pt-2.5 pb-1",
   /** Between two sections. */
   separator: "-mx-1.5 my-1 h-px bg-border",
-  /** A row: quiet until hovered, on `accent` while highlighted (as a list's row), dimmed while disabled. */
+  /** A row: quiet until hovered, tinted in the brand with its edge while highlighted, dimmed while disabled. */
   item:
     "group rounded-(--radius-control) border border-transparent transition-colors duration-100 motion-reduce:transition-none " +
-    "hover:bg-hover focus:bg-accent active:opacity-70 disabled:opacity-50",
+    "hover:bg-hover focus:border-brand/30 focus:bg-brand-tint active:opacity-70 disabled:opacity-50",
 };
 
 /** A shortcut's keys, as hints show them here (`entry.shortcutLabel`): the library's one keycap, `kbd`'s. */
