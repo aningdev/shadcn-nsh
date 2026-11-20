@@ -24,7 +24,6 @@ export * from "./input";
 export * from "./item";
 export * from "./link";
 export * from "./menu";
-export * from "./meter";
 export * from "./number-input";
 export * from "./otp-input";
 export * from "./pagination";

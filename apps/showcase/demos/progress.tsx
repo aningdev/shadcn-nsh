@@ -22,19 +22,22 @@ const FILES: { name: string; size: string; icon: IconNode; pace: number }[] = [
 const STEPS = ["Account", "Profile", "Team", "Review"];
 const dot = 18;
 
-const METERS: { name: string; height: number; note: (value: number) => string }[] = [
-  {
-    name: "Battery",
-    height: 4,
-    note: (value) => (value < 20 ? `${value}%, charge soon` : `${value}%`),
-  },
-  {
-    name: "Storage",
-    height: 6,
-    note: (value) => (value > 85 ? `${value}% used, almost full` : `${value}% used`),
-  },
-  { name: "Profile", height: 10, note: (value) => `${value}% complete` },
-];
+const METERS: { name: string; height: number; note: (value: number) => string; limit?: number }[] =
+  [
+    {
+      name: "Battery",
+      height: 4,
+      limit: 20,
+      note: (value) => (value < 20 ? `${value}%, charge soon` : `${value}%`),
+    },
+    {
+      name: "Storage",
+      height: 6,
+      limit: 85,
+      note: (value) => (value > 85 ? `${value}% used, almost full` : `${value}% used`),
+    },
+    { name: "Profile", height: 10, note: (value) => `${value}% complete` },
+  ];
 
 export function ProgressDemo() {
   const last = signal("—");
@@ -419,13 +422,7 @@ function Meters(props: { report: (line: string) => void }) {
       <View style={{ gap: 14 }}>
         <Each of={METERS}>
           {(meter, index) => (
-            <Progress
-              value={values()[index()] ?? 0}
-              height={meter().height}
-              tone={() => tone(index(), values()[index()] ?? 0) ?? "accent"}
-              accessibilityLabel={meter().name}
-              style={{ flexDirection: "column-reverse", alignItems: "stretch", gap: 6 }}
-            >
+            <View style={{ alignItems: "stretch", gap: 6 }}>
               <View style={{ flexDirection: "row", alignItems: "baseline", gap: 8 }}>
                 <Text style={{ flex: 1, fontSize: pointer ? 13 : 15, color: colors.foreground }}>
                   {meter().name}
@@ -442,7 +439,14 @@ function Meters(props: { report: (line: string) => void }) {
                   {meter().note(values()[index()] ?? 0)}
                 </Text>
               </View>
-            </Progress>
+              <Progress
+                value={values()[index()] ?? 0}
+                height={meter().height}
+                marker={meter().limit}
+                tone={() => tone(index(), values()[index()] ?? 0) ?? "accent"}
+                accessibilityLabel={meter().name}
+              />
+            </View>
           )}
         </Each>
       </View>

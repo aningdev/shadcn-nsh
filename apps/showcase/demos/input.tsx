@@ -18,7 +18,7 @@ import {
 } from "@/packages/ui/input-group";
 import { Icon } from "@/packages/ui/lib/icons";
 import { controlSize, narrowWindow } from "@/packages/ui/lib/surface";
-import { Meter } from "@/packages/ui/meter";
+import { Progress } from "@/packages/ui/progress";
 
 import { Caption, DemoCard, DemoPage } from "../kit";
 
@@ -725,8 +725,9 @@ export function InputDemo() {
                 onChange={({ value }) => notes.set(value)}
               />
             </Field>
-            <Meter
-              value={notes().length / 280}
+            {/* The bar's end is the field's 280: no limit to stand on it. */}
+            <Progress
+              value={(notes().length / 280) * 100}
               tone={
                 notes().length >= 280 ? "destructive" : notes().length > 250 ? "warn" : "accent"
               }

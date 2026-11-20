@@ -251,7 +251,7 @@ export const components: ComponentDoc[] = [
     kind: "official",
     shadcn: "progress",
     nshElement: "progress",
-    description: "A determinate or indeterminate bar on the shared meter rail.",
+    description: "A determinate or indeterminate progress bar.",
   },
   {
     slug: "radio-group",
@@ -591,14 +591,6 @@ export const components: ComponentDoc[] = [
     nshElement: null,
     description:
       "A conversation that keeps up with itself: new turns follow the newest message while you are at the end, and wait when you are not.",
-  },
-  {
-    slug: "meter",
-    title: "Meter",
-    kind: "own",
-    shadcn: null,
-    nshElement: null,
-    description: "A horizontal meter with an optional limit marker.",
   },
   {
     slug: "navigation-menu",

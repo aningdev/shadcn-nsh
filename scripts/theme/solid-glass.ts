@@ -493,7 +493,7 @@ function finishes(appearance: Appearance): Record<string, Finish> {
       boxShadow: `inset 0 1px 1.5px ${s("well-shade")}, inset 0 -1px 0 ${s("well-rim")}`,
       borderColor: "transparent",
     },
-    // A run of the ink in a rail, a meter or a progress bar: the small solid pane. One colour, no
+    // A run of the ink in a rail or a progress bar: the small solid pane. One colour, no
     // gradient.
     fill: {
       // The run's colour is the gradient's, at both stops even though it is translucent: the

@@ -37,7 +37,6 @@ export const componentIds = [
   "link",
   "pagination",
   "progress",
-  "meter",
   "stat",
   "status",
   "slider",

@@ -216,7 +216,6 @@ const overrides: Record<string, Override> = {
   badge: { selfReference: "upstream's own Badge, with no shell to compare against" },
   status: { selfReference: "upstream's own Status, with no shell to compare against" },
   stat: { selfReference: "upstream's own Stat, with no shell to compare against" },
-  meter: { selfReference: "upstream's own Meter, with no shell to compare against" },
   "emoji-picker": {
     selfReference: "the static chrome and EmojiPanel are upstream's own components",
   },

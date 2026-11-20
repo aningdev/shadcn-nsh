@@ -38,6 +38,10 @@
 ### Added
 
 - **`split-view`.** Columns of navigation stacks — a sidebar, a content column and the detail — with the column header and the sidebar button in the theme's look, over `nsh/base`'s `SplitView`.
+- **`Progress` stands a limit with `marker` (#125).** `marker` is where a limit is, a percentage
+  along the bar on `value`'s scale: a 2-point hairline in the page's ink, crossing the rail and
+  standing past it, drawn over the bar (`progressMarker(value, height)` is its style). It is drawn
+  on the bar's own frame, so the rail comes first in the bar's row and a label goes after it.
 
 - **The site gains a showcase page (#78).** `/showcase` runs the new `apps/showcase` app — NSH's
   official Gallery shell and its scenes rebuilt with this library's components, with the palette
@@ -149,6 +153,15 @@
   component — over every `.tsx` under `packages/ui` and `packages/ui/lib`, so a new control is
   checked without anyone adding it. Names, looks and props are unchanged.
 - **Theme finishes, the narrow-window test, avatars, the calendar and the sidebar rail do less work per read (#56).** A finish string is resolved once per theme and appearance instead of on every read (about 5× cheaper), `narrowWindow` is one shared `computed`, an avatar hashes its name once, and a calendar day converts its date once instead of four times. The sidebar rail's hairline follows the pointer through `group-hover:` instead of a signal, so hovering it commits no frame; it now lights only while the pointer is on the 8-point strip, not in its `hitSlop` margin.
+
+### Removed
+
+- **Breaking: `Meter` is `Progress` with `marker` (#125).** `Meter` had no role and no look of its
+  own — Progress's rail and fill plus a limit hairline — so it is gone, with no alias: the registry
+  has no `meter` item, `shadcn-nsh add meter` and its `lib/meter.tsx` do not exist, and the docs
+  page, demo, reference page and baselines went with it. **To migrate:** `<Meter value={0.83}
+  marker={0.9} />` is `<Progress value={83} marker={90} />` — `value` and `marker` are percentages
+  (0 to 100), not fractions.
 
 ### Fixed
 

@@ -2,7 +2,7 @@
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import { colors, fillStyle, finish, insetEdge, type Tone, toneColor } from "@shadcn-nsh/theme";
 import type { AnimatedValue, ViewStyle } from "nsh";
-import { cleanup, createAnimatedValue, Easing, effect, reduceMotion, split } from "nsh";
+import { cleanup, createAnimatedValue, Easing, effect, reduceMotion, split, View } from "nsh";
 import { Progress as BaseProgress, type ProgressProps as BaseProgressProps } from "nsh/base";
 
 import { type Live, read } from "./lib/utils";
@@ -41,6 +41,24 @@ export function progressRail(height = 6): ViewStyle {
 export function progressFill(height = 6, tone?: Tone): ViewStyle {
   const fill = tone && tone !== "accent" ? { backgroundColor: toneColor(tone) } : fillStyle();
   return { height, borderRadius: height / 2, ...fill };
+}
+
+/** Where a limit stands on a bar `value` percent along it (0 to 100): a 2-point hairline in the
+ * page's ink, standing past a `height`-point rail on both sides. The rail clips its fill, so the
+ * hairline is a view of its own on the bar's frame: the rail comes first in the bar's row, a
+ * label after it. */
+export function progressMarker(value: number, height = 6): ViewStyle {
+  return {
+    position: "absolute",
+    // physical: the fill is a full-width bar slid by a translate, which keeps the physical left; the
+    // marker reads against that fill rather than the reading direction.
+    left: `${Math.max(0, Math.min(100, value))}%`,
+    top: -4,
+    width: 2,
+    height: height + 6,
+    borderRadius: 1,
+    backgroundColor: colors.foreground,
+  };
 }
 
 /** An indeterminate bar's sweep (`progressSweep()`), for `progressLook`'s `sweep`. */
@@ -133,9 +151,13 @@ export type ProgressProps = BaseProgressProps & {
   tone?: Live<Tone>;
   /** Shared sweep for indeterminate bars. */
   sweep?: ProgressSweep;
+  /** Where a limit stands, `value` percent along the bar (0 to 100, clamped): a hairline crossing
+   * the rail and standing past it (`progressMarker`). It sits on the bar's frame, so the rail comes
+   * first in the bar's row and a label after it (`children`); left out, there is no marker. */
+  marker?: number;
 };
 
-/** A progress bar on the shared meter rail. */
+/** A progress bar on the shared rail: a track, a fill, and where a limit stands. */
 export function Progress(props: ProgressProps) {
   const [, rest] = split(props, [
     "height",
@@ -147,6 +169,8 @@ export function Progress(props: ProgressProps) {
     "indicatorClass",
     "indicatorStyle",
     "onLayout",
+    "marker",
+    "children",
   ]);
   const look = progressLook(() => props.value ?? 0, {
     height: props.height,
@@ -163,6 +187,11 @@ export function Progress(props: ProgressProps) {
       trackStyle={[look.trackStyle, props.trackStyle ?? null]}
       indicatorClass={props.indicatorClass ?? look.indicatorClass}
       indicatorStyle={[look.indicatorStyle, props.indicatorStyle ?? null]}
-    />
+    >
+      <If when={props.marker !== undefined}>
+        <View style={progressMarker(props.marker ?? 0, props.height)} />
+      </If>
+      {props.children}
+    </BaseProgress>
   );
 }

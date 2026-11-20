@@ -354,7 +354,7 @@ export const tints = tokens({
  * hard 1-point drop under what stands up and a 1-point inner shade in what
  * is sunk; only floating surfaces (menus, glass) cast a soft
  * shadow. `hover` and `pressed` are a raised control's states, `fill` a
- * slider's or a meter's run of the accent; `knob` a switch's knob on its
+ * slider's or a progress bar's run of the accent; `knob` a switch's knob on its
  * sunk track, `knobOn` the white one with an olive edge on the citrus.
  * `handle` is a slider's thumb, the knob's twin here; a theme whose thumb
  * wears an edge the switch's knob does not (shadcn's `border-primary`) tells

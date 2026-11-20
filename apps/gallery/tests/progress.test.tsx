@@ -8,8 +8,13 @@ const has = (texts: string[], line: string) => texts.includes(line);
 const find = (texts: string[], prefix: string) =>
   texts.find((t) => t.startsWith(prefix))?.slice(prefix.length);
 
+test("a limit stands on the bar as a hairline past the rail, clamped to it", async () => {
+  const app = await open("./progress.fixture.tsx", tall);
+  expect(has(app.texts(), "limit=85%|12|100%|12|0%|12")).toBe(true);
+});
+
 test("a Progress follows a value set after mount, then an indeterminate flag", async () => {
-  const app = await open("./meter.fixture.tsx", tall);
+  const app = await open("./progress.fixture.tsx", tall);
   expect(has(app.texts(), "sent=10")).toBe(true);
   expect(has(app.texts(), "at=-90% 0")).toBe(true);
   expect(find(app.texts(), "glide=")?.startsWith("w-full")).toBe(true);
@@ -24,7 +29,7 @@ test("a Progress follows a value set after mount, then an indeterminate flag", a
 });
 
 test("a Slider reports a drag of its thumb, and disabled follows a signal", async () => {
-  const app = await open("./meter.fixture.tsx", tall);
+  const app = await open("./progress.fixture.tsx", tall);
   expect(has(app.texts(), "level=10")).toBe(true);
   expect(app.enabled("label:Locked")).toBe(true);
   await app.drag("label:Level", { x: 40 });
@@ -36,7 +41,7 @@ test("a Slider reports a drag of its thumb, and disabled follows a signal", asyn
 });
 
 test("a Slider's shown value follows a value set after mount", async () => {
-  const app = await open("./meter.fixture.tsx", tall);
+  const app = await open("./progress.fixture.tsx", tall);
   expect(has(app.texts(), "10")).toBe(true);
   await app.press("text:Bump");
   await app.wait(50);
@@ -45,7 +50,7 @@ test("a Slider's shown value follows a value set after mount", async () => {
 });
 
 test("an Avatar follows a name set after mount, and a group counts the rest", async () => {
-  const app = await open("./meter.fixture.tsx", tall);
+  const app = await open("./progress.fixture.tsx", tall);
   expect(has(app.texts(), "AL")).toBe(true);
   expect(has(app.texts(), "+4")).toBe(true);
   await app.press("text:Rename");
@@ -55,7 +60,7 @@ test("an Avatar follows a name set after mount, and a group counts the rest", as
 });
 
 test("a Table shows its cells, and a row's selected flag follows a signal", async () => {
-  const app = await open("./meter.fixture.tsx", tall);
+  const app = await open("./progress.fixture.tsx", tall);
   expect(has(app.texts(), "Paid")).toBe(true);
   expect(has(app.texts(), "picked=")).toBe(true);
   await app.press("text:Select");
@@ -64,8 +69,8 @@ test("a Table shows its cells, and a row's selected flag follows a signal", asyn
 });
 
 test("the rail stays 6, and the thumb and avatar grow on a touch screen", async () => {
-  const desktop = await open("./meter.fixture.tsx", { ...tall, platform: "macos" });
-  const touch = await open("./meter.fixture.tsx", { ...tall, platform: "ios" });
+  const desktop = await open("./progress.fixture.tsx", { ...tall, platform: "macos" });
+  const touch = await open("./progress.fixture.tsx", { ...tall, platform: "ios" });
   expect(find(desktop.texts(), "desktop=")).toBe("true");
   expect(find(touch.texts(), "desktop=")).toBe("false");
   expect(find(desktop.texts(), "rail=")).toBe("6");
@@ -79,7 +84,7 @@ test("the rail stays 6, and the thumb and avatar grow on a touch screen", async 
 });
 
 test("reduced motion drops the determinate glide and keeps the indeterminate sweep", async () => {
-  const app = await open("./meter.fixture.tsx", { ...tall, reducedMotion: true });
+  const app = await open("./progress.fixture.tsx", { ...tall, reducedMotion: true });
   expect(find(app.texts(), "motion=")).toBe("true");
   const glide = find(app.texts(), "glide=") ?? "";
   // The 180 ms translate opts out. The class is how `motion-reduce` reaches it.

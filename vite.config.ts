@@ -40,7 +40,8 @@ export default defineConfig({
         files: ["packages/theme/theme.ts"],
         rules: { "typescript/no-floating-promises": "off" },
       },
-      // look/meter.ts: `sweep.keyframes(…)` returns the animation's promise, dropped on purpose.
+      // progress.tsx's sweep (look/meter.ts upstream): `sweep.keyframes(…)` returns the animation's
+      // promise, dropped on purpose.
       {
         files: ["packages/ui/progress.tsx"],
         rules: { "typescript/no-floating-promises": "off" },

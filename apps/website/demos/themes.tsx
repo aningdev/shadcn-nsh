@@ -1,5 +1,5 @@
 // The themes page's showcase: not a component's demo, but one page of the library's controls —
-// buttons, badges, a card with fields, a switch, a slider and a meter — so a palette's colors,
+// buttons, badges, a card with fields, a switch, a slider and a progress bar — so a palette's colors,
 // radii and finishes can be seen together. The palette is the docs site's choice (`kit.tsx`
 // imports `apply-palette.ts`): a page switched to a theme draws it from its first frame.
 import { colors } from "@shadcn-nsh/theme";

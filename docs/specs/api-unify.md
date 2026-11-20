@@ -74,7 +74,6 @@
 | `input.tsx`        | `Input`                                                                                                                                                                                                        | `invalid`                                          |
 | `link.tsx`         | `Link` `LinkText`                                                                                                                                                                                              | `quiet` `current` `visited` `inline` `icon`        |
 | `menu.tsx`         | `Menu` `MenuTrigger` `MenuContent` `MenuItem` `MenuCheckboxItem` `MenuRadioItem` `MenuGroup` `MenuLabel` `MenuSeparator` `MenuShortcut` `MenuSub` `MenuSubTrigger` `MenuSubContent` `SubmenuRow` `SubmenuBack` | `variant`（Trigger）、`danger`（Item）             |
-| `meter.tsx`        | `Meter`                                                                                                                                                                                                        | `tone`、`marker`                                   |
 | `number-input.tsx` | `NumberInput` `NumberStep`                                                                                                                                                                                     | `steps`                                            |
 | `otp-input.tsx`    | `OtpInput`                                                                                                                                                                                                     | `tone`、`cells`                                    |
 | `pagination.tsx`   | `Pagination`                                                                                                                                                                                                   | `outlined`                                         |
@@ -136,7 +135,6 @@
 | `Pagination`                        | `outlined`  | `boolean`                                                     | `false`               | 否     | `paginationItemClass({ outlined })`                          |
 | `Progress`                          | `tone`      | `Tone`                                                        | 无（柑橘）            | 否     | `progressLook(…, { tone })`（`Live<Tone>`）                  |
 | `Progress`                          | `height`    | `number`                                                      | `6`                   | 否     | `progressLook(…, { height })`                                |
-| `Meter`                             | `tone`      | `Tone`                                                        | 无（强调色）          | 否     | `progressFill(6, tone)`                                      |
 | `Stat` `Status`                     | `tone`      | `Tone`                                                        | 无                    | 否     | 组件体内 `toneColor(props.tone)`                             |
 | `OtpInput`                          | `tone`      | `Tone \| (() => Tone)`                                        | 无                    | **是** | `otpCellLook({ tone })`（`Live<Tone>`）                      |
 | `DiffHunkActions`                   | `tone`      | `"up" \| "down"`                                              | 无                    | 否     | `diff-view` 自己的 `solidTint(tone)`（`toneColor` 的实心版） |
@@ -154,7 +152,7 @@
 ### 2.3 现状的六个毛病
 
 1. **`variant` 的取值各不相同。** `ButtonKind`（5 值）算一套；`IconButton` 与 `RoundButton` 各自重写了 2 值联合；`Radio` 是 `ring | tile`；`Badge` 干脆没有 `variant`，只有 `outline` 布尔；`Picker` 用 `kind`。同一个概念在 10 个文件里出现 4 种写法、5 套取值。
-2. **`tone` 四种写法。** `Tone`（`Badge`/`Stat`/`Status`/`Meter`/`Progress`）、`Tone \| (() => Tone)`（`OtpInput` 的 prop）、`Live<Tone>`（`progressLook`/`otpCellLook` 的选项）、`"danger"` 字面量（`IconButton`）；另有 `MenuItem.danger: boolean` 与 `DiffHunkActions.tone: "up" \| "down"` 两套"影子 tone"。
+2. **`tone` 四种写法。** `Tone`（`Badge`/`Stat`/`Status`/`Progress`）、`Tone \| (() => Tone)`（`OtpInput` 的 prop）、`Live<Tone>`（`progressLook`/`otpCellLook` 的选项）、`"danger"` 字面量（`IconButton`）；另有 `MenuItem.danger: boolean` 与 `DiffHunkActions.tone: "up" \| "down"` 两套"影子 tone"。
 3. **`size` 三种含义。** 刻度（`small|regular|large`）、像素（`RoundButton.size: number`、`Spinner.size`、`Icon.size`）、乘数（`Checkbox.scale`、`Radio.scale`）。
 4. **`kind` 还在。** `Picker`/`SelectTrigger`（`field | outline`）、`NumberInput.steps` 与 `paginationItemClass({outlined})` 是同一类"外观开关"，却不叫同一个名字。（原任务书说 "Input 用 `kind`"——实际 `Input` 没有 `kind`，是 `SelectTrigger`/`Picker`。）
 5. **布尔开关与 `variant` 重叠。** `Badge.outline`、`Pagination.outlined` 表达的都是 `variant="outline"`；`IconButton.tone="danger"`、`MenuItem.danger` 表达的都是 `variant="destructive"`。
@@ -205,7 +203,7 @@
 
 ### 3.3 没有 shadcn 对应的（本库特有）
 
-`RoundButton`、`SplitButton`、`Segmented`、`Radio.variant="tile"`、`Picker.kind`（trigger 的"字段井 / 线框按钮"）、`Carousel` 箭头的 `glass`、`DiffHunkActions`、`Meter`、`Stat`、`Status`、`DockArea`、`DiffView`、`ColorPanel`、`EmojiPanel`、`NumberInput`、`TimeField`、`OtpInput`、`Tree`、`Plot`、`TextView`、`CodeEditor`、`Link`、`Pagination`、`Scrollbar`、`Toolbar`。它们的轴**沿用本库自己的名字**，但同名轴（`variant`/`size`/`tone`）的值仍然从上面的词表里取。
+`RoundButton`、`SplitButton`、`Segmented`、`Radio.variant="tile"`、`Picker.kind`（trigger 的"字段井 / 线框按钮"）、`Carousel` 箭头的 `glass`、`DiffHunkActions`、`Stat`、`Status`、`DockArea`、`DiffView`、`ColorPanel`、`EmojiPanel`、`NumberInput`、`TimeField`、`OtpInput`、`Tree`、`Plot`、`TextView`、`CodeEditor`、`Link`、`Pagination`、`Scrollbar`、`Toolbar`。它们的轴**沿用本库自己的名字**，但同名轴（`variant`/`size`/`tone`）的值仍然从上面的词表里取。
 
 ## 4 提案：一张词汇表
 
@@ -263,7 +261,7 @@ export type Tone = "neutral" | "accent" | "info" | "warn" | "danger" | "up" | "d
 
 - **R8 一个类型。** 所有"按语义上色"的 prop 都是 `tone?: Tone`，值只有这七个。`packages/ui/index.ts` 重新导出 `Tone`，用户不必再 import 主题包。
 - **R9 一种写法：每个 `tone` prop 的类型都是 `Live<Tone>`（= `Tone | (() => Tone)`，`lib/utils` 的 `Live`），内部用一处 `read()` 读。** 传值（`tone={verdict()}`）是常规用法；函数形式是**唯一**允许的晚读手段，给"样式只在挂载时算一次"的控件（`OtpInput` 的格子判定、`Progress` 的填充色、`DiffHunkActions` 的行底）。不再有第二套写法。
-- **R10 `danger` 不是 tone。** 危险是**变体**（`variant="destructive"`），不是给按钮染色；`IconButton.tone="danger"` 与 `MenuItem.danger` 都并入 `variant`。`Tone` 里的 `"danger"` 只出现在"一条数据的严重程度"上（`Status`、`Badge`、`Meter`、`DiffHunkActions` 的行底）。
+- **R10 `danger` 不是 tone。** 危险是**变体**（`variant="destructive"`），不是给按钮染色；`IconButton.tone="danger"` 与 `MenuItem.danger` 都并入 `variant`。`Tone` 里的 `"danger"` 只出现在"一条数据的严重程度"上（`Status`、`Badge`、`DiffHunkActions` 的行底）。
 - **R11 影子 tone 归并。** `DiffHunkActions.tone: "up" | "down"` → `tone?: Tone`（`diff-view` 的 `solidTint` 对七值都成立，文档写明常用 `up`/`down`）。`EmojiSkinTone` 是**另一个概念**（肤色），名字不动，文档点明它不是 `Tone`。
 
 ### 4.4 响应式取值：一条规则
@@ -337,7 +335,7 @@ export type Tone = "neutral" | "accent" | "info" | "warn" | "danger" | "up" | "d
 | `NumberInput`                                                                                                                                                       | `steps`            | `pair` `split`                                                   | 不变（结构名）                                                                    | —             | 不用改                                                                                  |
 | `Pagination`                                                                                                                                                        | `variant`          | 无（`outlined: boolean`）                                        | `default` `outline`，默认 `default`                                               | ✓             | `outlined` → `variant="outline"`                                                        |
 | `Progress`                                                                                                                                                          | `tone`             | `Tone`                                                           | `Live<Tone>`（look 已是 `Live`）                                                  | 放宽          | 原样可用                                                                                |
-| `Meter` `Stat` `Status`                                                                                                                                             | `tone`             | `Tone`                                                           | `Live<Tone>`                                                                      | 放宽          | 原样可用（类型放宽）                                                                    |
+| `Stat` `Status`                                                                                                                                                     | `tone`             | `Tone`                                                           | `Live<Tone>`                                                                      | 放宽          | 原样可用（类型放宽）                                                                    |
 | `OtpInput`                                                                                                                                                          | `tone`             | `Live<Tone \| undefined>`                                        | 不变                                                                              | —             | 不用改                                                                                  |
 | `DiffHunkActions`                                                                                                                                                   | `tone`             | `"up" \| "down"`                                                 | `Live<Tone>`（常用 `up`/`down`）                                                  | 放宽          | 原样可用                                                                                |
 | `MenuItem` `ContextMenuItem`                                                                                                                                        | `variant`          | 无（`danger: boolean`）                                          | `default` `destructive`，默认 `default`                                           | ✓             | `danger` → `variant="destructive"`                                                      |

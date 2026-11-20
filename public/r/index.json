@@ -662,25 +662,12 @@
       "name": "progress",
       "type": "registry:ui",
       "title": "Progress",
-      "description": "A determinate or indeterminate bar on the shared meter rail.",
+      "description": "A determinate or indeterminate progress bar.",
       "files": [
         {
           "path": "packages/ui/progress.tsx",
           "type": "registry:ui",
           "target": "components/ui/progress.tsx"
-        }
-      ]
-    },
-    {
-      "name": "meter",
-      "type": "registry:ui",
-      "title": "Meter",
-      "description": "A horizontal meter with optional limit marker.",
-      "files": [
-        {
-          "path": "packages/ui/meter.tsx",
-          "type": "registry:ui",
-          "target": "components/ui/meter.tsx"
         }
       ]
     },

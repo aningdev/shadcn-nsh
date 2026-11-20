@@ -10,6 +10,7 @@ import {
   TableCell,
   TableRow,
   progressLook,
+  progressMarker,
   progressRail,
   progressSweep,
 } from "../../../packages/ui";
@@ -23,6 +24,11 @@ function App() {
   const picked = signal("");
   const sweep = progressSweep();
   const bar = () => progressLook(() => sent(), { indeterminate: () => busy(), sweep });
+  /** A limit's hairline as text: where it stands and how tall it is (`85%|12`). */
+  const hairline = (marker: number) => {
+    const { left, height } = progressMarker(marker);
+    return `${typeof left === "string" ? left : "?"}|${String(height)}`;
+  };
   const place = () => {
     const translate = bar().indicatorStyle.translate;
     return typeof translate === "string" ? translate : "sweep";
@@ -45,6 +51,8 @@ function App() {
       <Text>{`sent=${sent()}`}</Text>
       <Text>{`glide=${bar().indicatorClass}`}</Text>
       <Text>{`at=${place()}`}</Text>
+      <Progress testID="limit" style={{ width: 200 }} value={sent()} marker={85} />
+      <Text>{`limit=${hairline(85)}|${hairline(140)}|${hairline(-5)}`}</Text>
       <BaseButton onPress={() => sent.set(35)}>
         <Text>Add</Text>
       </BaseButton>

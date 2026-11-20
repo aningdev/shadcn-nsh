@@ -93,7 +93,7 @@ const glossary = () => readFileSync(new URL("docs/GLOSSARY.md", root), "utf8");
  * `lib/utils` defines as `Tone | (() => Tone)`). `otp-input` reads a verdict that may be absent,
  * so a tone a look or a prop may not have is `Live<Tone | undefined>` (§4.4).
  */
-const TONE_WRITERS = ["badge", "meter", "stat", "status", "progress", "diff-view"];
+const TONE_WRITERS = ["badge", "stat", "status", "progress", "diff-view"];
 
 /** The two ways a `tone` is written: one that is always there, and one that may be absent. */
 const TONE_WRITINGS = ["tone?: Live<Tone>;", "tone?: Live<Tone | undefined>;"];

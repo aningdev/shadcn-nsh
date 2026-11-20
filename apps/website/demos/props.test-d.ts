@@ -8,7 +8,7 @@
  * list, so the assertion fails.
  *
  * Not applicable, listed here on purpose:
- *   - `badge`, `stat`, `status`, `meter`, `spinner`, `plot`: pure upstream components (and
+ *   - `badge`, `stat`, `status`, `spinner`, `plot`: pure upstream components (and
  *     plot's look helpers) with no `nsh/base` control underneath, so there is no base props
  *     type to keep.
  *   - `card`, `field`, `item`: composed of plain views and texts (`ViewProps`, `TextProps`),

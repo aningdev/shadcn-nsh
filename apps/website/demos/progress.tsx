@@ -21,24 +21,30 @@ import { desktop, Log, Panel, Split, ui } from "./stage";
 
 const TONES: Tone[] = ["neutral", "accent", "info", "warn", "destructive", "up", "down"];
 
+/** A bar with a limit on it: where the limit stands, and what the bar reads beside it. */
+const LIMITS: { label: string; value: number; limit: number; tone?: Tone }[] = [
+  { label: "Quota", value: 83, limit: 90 },
+  { label: "Storage", value: 92, limit: 85, tone: "warn" },
+  { label: "Performance", value: 60, limit: 100 },
+];
+
 function Transfer(props: {
   label: string;
   detail: string;
   value: number;
   indeterminate?: boolean;
+  limit?: number;
   sweep: ProgressSweep;
   first?: boolean;
 }) {
   return (
     // A row has no padding at its sides, so the bar's width is the track's: the sweep crosses two
-    // thirds of it.
-    <Progress
-      value={props.value}
-      indeterminate={props.indeterminate}
-      sweep={props.sweep}
+    // thirds of it. The label is the bar's sibling above it, not a child: a limit is drawn on the
+    // bar's own frame, so the rail comes first in its row.
+    <View
       style={{
         ...plainRow({ first: props.first }),
-        flexDirection: "column-reverse",
+        flexDirection: "column",
         alignItems: "stretch",
         gap: controlSize.padding,
       }}
@@ -56,7 +62,13 @@ function Transfer(props: {
           {props.indeterminate ? "—" : `${Math.round(props.value)}%`}
         </Text>
       </View>
-    </Progress>
+      <Progress
+        value={props.value}
+        indeterminate={props.indeterminate}
+        sweep={props.sweep}
+        marker={props.limit}
+      />
+    </View>
   );
 }
 
@@ -163,7 +175,7 @@ function App() {
             indeterminate
             sweep={sweep}
           />
-          <Transfer label="Library" detail="212 GB of 256 GB" value={83} sweep={sweep} />
+          <Transfer label="Library" detail="212 GB of 256 GB" value={83} limit={90} sweep={sweep} />
         </View>
       </Split>
 
@@ -180,6 +192,30 @@ function App() {
               </View>
               <Text style={{ fontSize: controlSize.detail, color: toneColor(tone), width: 34 }}>
                 {"72%"}
+              </Text>
+            </View>
+          ))}
+        </DemoSection>
+
+        {/* A bar can stand a limit on it: a hairline where the limit is. */}
+        <DemoSection title="Limit" axis="block">
+          {LIMITS.map((limit, i) => (
+            <View style={plainRow({ first: i === 0 })}>
+              <Text style={{ width: 96, fontSize: controlSize.label, color: ui().muted }}>
+                {limit.label}
+              </Text>
+              <View style={{ flex: 1 }}>
+                <Progress value={limit.value} marker={limit.limit} tone={limit.tone} />
+              </View>
+              <Text
+                style={{
+                  fontSize: controlSize.detail,
+                  color: ui().muted,
+                  width: 34,
+                  fontVariant: ["tabular-nums"],
+                }}
+              >
+                {`${limit.limit}`}
               </Text>
             </View>
           ))}
