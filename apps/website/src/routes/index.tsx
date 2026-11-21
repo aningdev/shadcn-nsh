@@ -130,7 +130,9 @@ function Home() {
             Built on Native Shell ↗
           </a>
           <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-balance md:text-6xl">
-            NSH components you copy into your app
+            NSH components
+            <br />
+            you copy into your app
           </h1>
           <p className="text-fd-muted-foreground max-w-2xl text-lg text-balance">
             Styled, themeable UI for Native Shell, built on <code>nsh/base</code>. Add a component
