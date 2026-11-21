@@ -44,8 +44,8 @@ test("double focus, timing motion, state-layer inks, ripple and android material
   expect(expressiveFocus.borderColor).toBeUndefined();
   expect(expressiveFocus.outlineColor).toBe(ring);
   expect(expressiveFocus.outlineWidth).toBe(2);
-  expect(expressiveFocus.outlineOffset).toBe(2);
-  expect(expressiveFocus.boxShadow).toBe(`inset 0 0 0 1px ${ringHalo}`);
+  expect(expressiveFocus.outlineOffset).toBe(3);
+  expect(expressiveFocus.boxShadow).toBe(`0 0 0 1px ${ringHalo}`);
 
   // Timing roles & new platform-neutral curves are resolved reactively.
   expect(read("motionPress")).toBe("timing:150:[0.05,0.7,0.1,1]");

@@ -1097,7 +1097,9 @@ export const hovered = (ink: keyof Tokens = "foreground", under?: string): ViewS
  * The keyboard focus (`focusVisibleStyle`: not after a click or a tap):
  * - `"halo"`: `borderColor` turns `ring` and a halo of `ring-halo` (`focus.width` points, 3 by default) sits outside.
  * - `"outline"`: `borderColor` stays untouched; `outlineColor` is `ring`.
- * - `"double"`: `borderColor` stays untouched; outer `focus.width` outline in `ring` plus an inset 1px inner line in `ring-halo`.
+ * - `"double"`: `borderColor` stays untouched; a 1 px line of `ring-halo` hugs the edge (a spread shadow, which
+ *   stands in for the surface's own shadow while focused) and the `focus.width` outline of `ring` lies just outside
+ *   it, so the outline's offset grows by that 1 px (Fluent's `FocusStrokeColorInner` / `Outer`).
  */
 export const focusRing = (offset?: number): ViewStyle => {
   const { style: look, width, offset: base } = style().focus;
@@ -1116,7 +1118,8 @@ export const focusRing = (offset?: number): ViewStyle => {
   if (look === "double") {
     return {
       ...ringOutline,
-      boxShadow: `inset 0 0 0 1px ${token("ring-halo")}`,
+      outlineOffset: (offset ?? base) + 1,
+      boxShadow: `0 0 0 1px ${token("ring-halo")}`,
     };
   }
   return ringOutline;
