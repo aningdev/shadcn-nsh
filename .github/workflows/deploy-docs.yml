@@ -46,16 +46,19 @@ jobs:
         with:
           channel: ${{ vars.NSH_CHANNEL }}
 
-      # Packaging the demos is most of the build; a commit that leaves them, the
-      # library and the CLI as they were (a docs-site change) reuses the last
-      # packages. The key is exact: no restore-keys, so a stale package is never
-      # deployed.
+      # Packaging the demos and the showcase app is most of the build; a commit
+      # that leaves them, the library and the CLI as they were (a docs-site
+      # change) reuses the last packages. Both outputs are cached together: a
+      # hit skips `docs:demos`, which writes both. The key is exact: no
+      # restore-keys, so a stale package is never deployed.
       - name: Cache packaged demos
         id: demos
         uses: actions/cache@v4
         with:
-          path: apps/website/public/demos
-          key: demos-${{ runner.os }}-${{ steps.nsh.outputs.version }}-${{ hashFiles('apps/website/demos/**', '!apps/website/demos/baseline/**', '!apps/website/demos/shots*/**', 'packages/**', '!packages/**/node_modules/**', 'apps/website/scripts/build-demos.ts', 'apps/website/scripts/player-options.ts', 'scripts/catalog.ts', 'bun.lock') }}
+          path: |
+            apps/website/public/demos
+            apps/website/public/showcase
+          key: demos-showcase-${{ runner.os }}-${{ steps.nsh.outputs.version }}-${{ hashFiles('apps/website/demos/**', '!apps/website/demos/baseline/**', '!apps/website/demos/shots*/**', 'packages/**', '!packages/**/node_modules/**', 'apps/showcase/**', '!apps/showcase/node_modules/**', 'apps/website/scripts/build-demos.ts', 'apps/website/scripts/package-web.ts', 'apps/website/scripts/player-options.ts', 'scripts/catalog.ts', 'bun.lock') }}
 
       - name: Build docs
         if: steps.demos.outputs.cache-hit != 'true'
