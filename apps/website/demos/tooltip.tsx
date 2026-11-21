@@ -39,9 +39,12 @@ function Tool(props: {
         }}
       >
         <TooltipTrigger>
-          <IconButton variant="secondary" accessibilityLabel={props.label} onPress={props.onPress}>
-            <Icon icon={props.icon} {...iconButtonGlyph({ variant: "secondary" })} />
-          </IconButton>
+          <IconButton
+            variant="secondary"
+            accessibilityLabel={props.label}
+            onPress={props.onPress}
+            icon={props.icon}
+          />
         </TooltipTrigger>
         <TooltipContent>{props.hint}</TooltipContent>
       </Tooltip>

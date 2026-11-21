@@ -149,9 +149,8 @@ function App() {
                   size="sm"
                   accessibilityLabel="Remove"
                   onPress={() => log("Remove")}
-                >
-                  <Icon icon={X} {...iconButtonGlyph({ variant: "ghost", size: "sm" })} />
-                </IconButton>
+                  icon={X}
+                />
               </AttachmentActions>
             </Attachment>
           </DemoSection>
@@ -219,9 +218,8 @@ function App() {
                     size="sm"
                     accessibilityLabel="Remove dark mode.png"
                     onPress={() => log("Remove dark mode.png")}
-                  >
-                    <Icon icon={X} {...iconButtonGlyph({ variant: "ghost", size: "sm" })} />
-                  </IconButton>
+                    icon={X}
+                  />
                 </AttachmentActions>
               </Attachment>
               <Attachment orientation="vertical" state="uploading">
@@ -259,9 +257,8 @@ function App() {
                   size="sm"
                   accessibilityLabel="Retry"
                   onPress={() => log("Retry")}
-                >
-                  <Icon icon={RotateCcw} {...iconButtonGlyph({ variant: "ghost", size: "sm" })} />
-                </IconButton>
+                  icon={RotateCcw}
+                />
               </AttachmentActions>
               <AttachmentTrigger
                 accessibilityLabel="Open README.md"

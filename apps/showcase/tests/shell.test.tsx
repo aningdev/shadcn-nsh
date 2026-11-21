@@ -16,7 +16,7 @@ test("the sidebar opens a demo", async () => {
     "text:A live watchlist and a stock: candles, depth, the tape, a tick every 50 ms",
   );
   await app.press("label:Button");
-  await app.waitFor("text:Pressed 0×");
+  await app.waitFor("text:One main action; the others quieter");
   expect(app.texts()).toContain("Kinds");
 });
 
@@ -61,7 +61,7 @@ test("a phone shows the index and pushes a demo onto the stack", async () => {
   await app.setColorScheme("light");
   expect(app.texts()).toContain("ACTIONS");
   await app.press("label:Button");
-  await app.waitFor("text:Pressed 0×");
+  await app.waitFor("text:One main action; the others quieter");
   await app.back();
   await app.waitFor("text:ACTIONS");
 });

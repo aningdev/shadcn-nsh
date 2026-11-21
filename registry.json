@@ -319,14 +319,15 @@
       "type": "registry:ui",
       "title": "Button",
       "description": "A button, an icon button, a round button, and a split button.",
-      "registryDependencies": ["as-text", "press", "spinner", "theme", "utils"],
+      "registryDependencies": ["as-text", "icons", "press", "spinner", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/button.tsx",
           "type": "registry:ui",
           "target": "components/ui/button.tsx"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     },
     {
       "name": "switch",

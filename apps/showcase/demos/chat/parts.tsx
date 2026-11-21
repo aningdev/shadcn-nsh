@@ -25,7 +25,7 @@ import {
   AttachmentMedia,
   AttachmentTitle,
 } from "@/packages/ui/attachment";
-import { IconButton, iconButtonGlyph } from "@/packages/ui/button";
+import { IconButton } from "@/packages/ui/button";
 import { CodeBlock, CodeBlockContent, CodeBlockFooter } from "@/packages/ui/code-block";
 import { ItemMedia } from "@/packages/ui/item";
 import { Icon } from "@/packages/ui/lib/icons";
@@ -153,9 +153,8 @@ export function FileChip(props: { file: FileRef; onRemove?: () => void }) {
             accessibilityLabel="Remove file"
             onPress={props.onRemove}
             style={{ width: 28, height: 28 }}
-          >
-            <Icon icon={X} {...iconButtonGlyph({ variant: "ghost", size: "sm" })} />
-          </IconButton>
+            icon={X}
+          />
         </AttachmentActions>
       </If>
     </Attachment>

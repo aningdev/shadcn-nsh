@@ -6,7 +6,7 @@ import { colors, hovered, mono, rounded, shape } from "@shadcn-nsh/theme";
 import { Plus, Sparkles } from "lucide";
 import { platform, signal, Text, untracked, View, windowSize } from "nsh";
 
-import { Button, buttonGlyph, IconButton } from "@/packages/ui/button";
+import { Button, IconButton } from "@/packages/ui/button";
 import type { DockAreaLayout, DockAreaRef } from "@/packages/ui/dock-area";
 import {
   DockArea,
@@ -92,13 +92,11 @@ function EditorPane(props: { panel: string }) {
         <Button
           variant="secondary"
           size="sm"
+          icon={Plus}
           accessibilityLabel={`Edit ${titleOf(props.panel)}`}
           onPress={() => edits.set(edits() + 1)}
         >
-          <>
-            <Icon icon={Plus} {...buttonGlyph("secondary", { size: "sm" })} />
-            Edit
-          </>
+          Edit
         </Button>
         <Text
           style={{ fontSize: 14, color: colors.mutedForeground, fontVariant: ["tabular-nums"] }}

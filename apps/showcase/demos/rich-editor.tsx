@@ -49,7 +49,7 @@ import {
 } from "lucide";
 import { openUrl, Overlay, signal, Text, View } from "nsh";
 
-import { IconButton, iconButtonGlyph } from "@/packages/ui/button";
+import { IconButton } from "@/packages/ui/button";
 import { Input } from "@/packages/ui/input";
 import { Icon } from "@/packages/ui/lib/icons";
 import { popupSurface } from "@/packages/ui/lib/popup";
@@ -188,16 +188,14 @@ function ToolIcon(props: {
   disabled?: boolean;
   onPress: () => void;
 }) {
-  const glyph = iconButtonGlyph({ size: TOOL, disabled: () => props.disabled });
   return (
     <IconButton
       accessibilityLabel={props.label}
       size={TOOL}
       disabled={props.disabled}
       onPress={props.onPress}
-    >
-      <Icon icon={props.icon} {...glyph} />
-    </IconButton>
+      icon={props.icon}
+    />
   );
 }
 

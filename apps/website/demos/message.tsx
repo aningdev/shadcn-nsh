@@ -329,44 +329,24 @@ function App() {
                     selected={copied()}
                     accessibilityLabel={copied() ? "Copied" : "Copy reply"}
                     onPress={copyReply}
-                  >
-                    <Icon
-                      icon={copied() ? Check : Copy}
-                      {...iconButtonGlyph({ variant: "ghost", size: "sm", selected: copied() })}
-                    />
-                  </IconButton>
+                    icon={copied() ? Check : Copy}
+                  />
                   <IconButton
                     variant="ghost"
                     size="sm"
                     selected={rating() === "up"}
                     accessibilityLabel="Good reply"
                     onPress={() => rate("up")}
-                  >
-                    <Icon
-                      icon={ThumbsUp}
-                      {...iconButtonGlyph({
-                        variant: "ghost",
-                        size: "sm",
-                        selected: rating() === "up",
-                      })}
-                    />
-                  </IconButton>
+                    icon={ThumbsUp}
+                  />
                   <IconButton
                     variant="ghost"
                     size="sm"
                     selected={rating() === "down"}
                     accessibilityLabel="Bad reply"
                     onPress={() => rate("down")}
-                  >
-                    <Icon
-                      icon={ThumbsDown}
-                      {...iconButtonGlyph({
-                        variant: "ghost",
-                        size: "sm",
-                        selected: rating() === "down",
-                      })}
-                    />
-                  </IconButton>
+                    icon={ThumbsDown}
+                  />
                   <If when={rating() !== null}>
                     <Text style={{ fontSize: 12, color: ui().muted }}>
                       {rating() === "up" ? "Thanks for the rating" : "We'll use this to improve"}
@@ -392,17 +372,15 @@ function App() {
                     size="sm"
                     accessibilityLabel="Copy"
                     onPress={() => log("Copy")}
-                  >
-                    <Icon icon={Copy} {...iconButtonGlyph({ variant: "ghost", size: "sm" })} />
-                  </IconButton>
+                    icon={Copy}
+                  />
                   <IconButton
                     variant="ghost"
                     size="sm"
                     accessibilityLabel="Like"
                     onPress={() => log("Like")}
-                  >
-                    <Icon icon={ThumbsUp} {...iconButtonGlyph({ variant: "ghost", size: "sm" })} />
-                  </IconButton>
+                    icon={ThumbsUp}
+                  />
                 </MessageFooter>
               </MessageContent>
             </Message>
@@ -419,12 +397,8 @@ function App() {
                     size="sm"
                     accessibilityLabel="Retry"
                     onPress={() => log("Retry")}
-                  >
-                    <Icon
-                      icon={RefreshCcw}
-                      {...iconButtonGlyph({ variant: "ghost", size: "sm" })}
-                    />
-                  </IconButton>
+                    icon={RefreshCcw}
+                  />
                 </MessageFooter>
               </MessageContent>
             </Message>

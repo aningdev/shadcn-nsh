@@ -18,8 +18,7 @@ import {
   avatarIdentity,
 } from "@/packages/ui/avatar";
 import { Badge } from "@/packages/ui/badge";
-import { Button as UiButton, buttonGlyph } from "@/packages/ui/button";
-import { Icon } from "@/packages/ui/lib/icons";
+import { Button as UiButton } from "@/packages/ui/button";
 
 import { DemoPage } from "../kit";
 import { Choices, pointer, SceneCard } from "./overlays-shared";
@@ -474,18 +473,13 @@ function Profile(props: { last: { (): string; set: (value: string) => void } }) 
           variant="ghost"
           disabled={picture() === null}
           accessibilityLabel="Remove picture"
+          icon={Trash2}
           onPress={() => {
             picture.set(null);
             last.set("Profile picture: removed");
           }}
         >
-          <>
-            <Icon
-              icon={Trash2}
-              {...buttonGlyph("ghost", { size: "sm", disabled: () => picture() === null })}
-            />
-            Remove picture
-          </>
+          Remove picture
         </UiButton>
       </View>
     </SceneCard>

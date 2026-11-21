@@ -6,7 +6,7 @@ import { Code, Play } from "lucide";
 import { cleanup, keymap, signal, Text, View } from "nsh";
 import type { TextViewCustomNode, TextViewImage } from "nsh/base";
 
-import { Button, buttonGlyph } from "@/packages/ui/button";
+import { Button } from "@/packages/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/packages/ui/card";
 import { ImageViewer } from "@/packages/ui/image-viewer";
 import { Icon } from "@/packages/ui/lib/icons";
@@ -546,14 +546,12 @@ function StreamingDoc() {
         />
         <Button
           variant="secondary"
+          icon={Play}
           disabled={streaming()}
           accessibilityLabel={streaming() ? "Streaming…" : "Stream it"}
           onPress={play}
         >
-          <>
-            <Icon icon={Play} {...buttonGlyph("secondary", { disabled: () => streaming() })} />
-            {streaming() ? "Streaming…" : "Stream it"}
-          </>
+          {streaming() ? "Streaming…" : "Stream it"}
         </Button>
       </CardContent>
     </Card>

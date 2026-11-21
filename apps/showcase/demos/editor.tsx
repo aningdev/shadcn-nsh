@@ -26,7 +26,7 @@ import {
   type MenuItem as NativeMenuItem,
 } from "nsh/desktop";
 
-import { IconButton, iconButtonGlyph } from "@/packages/ui/button";
+import { IconButton } from "@/packages/ui/button";
 import {
   CodeEditor,
   CodeEditorFindBar,
@@ -635,9 +635,8 @@ function EditorToolbar() {
         accessibilityLabel="Find and replace"
         selected={m.finding()}
         onPress={() => (m.finding() ? m.closeFind() : m.openFind())}
-      >
-        <Icon icon={Search} {...iconButtonGlyph({ selected: () => m.finding() })} />
-      </IconButton>
+        icon={Search}
+      />
       <Menu onOpenChange={({ open }) => m.setMenuOpen(open ? "options" : null)}>
         <MenuTrigger>
           <View
@@ -767,12 +766,8 @@ function StatusBar() {
         size="sm"
         selected={m.problemsShown()}
         onPress={() => m.area()?.toggleDock("bottom")}
-      >
-        <Icon
-          icon={SlidersHorizontal}
-          {...iconButtonGlyph({ size: () => "sm", selected: () => m.problemsShown() })}
-        />
-      </IconButton>
+        icon={SlidersHorizontal}
+      />
     </View>
   );
 }

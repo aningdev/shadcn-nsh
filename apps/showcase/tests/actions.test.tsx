@@ -9,6 +9,36 @@ const wide = { platform: "macos", width: 1024, height: 700, clock: {} } as const
 /** A phone: the index, demos pushed onto its stack. */
 const phone = { platform: "ios", clock: {} } as const;
 
+test("Button: a press reports itself, the split button merges, and a disabled button shows its reason", async () => {
+  const app = await open("../App.tsx", wide);
+  await app.setColorScheme("light");
+  await app.press("label:Button");
+  await app.waitFor("text:One main action; the others quieter");
+  await app.press("text:Duplicate");
+  await app.waitFor("text:pressed Duplicate");
+  // The menu picks the strategy; the main half merges with it and turns the pair done.
+  await app.press("label:Merge options");
+  await app.press("text:Rebase and merge");
+  await app.waitFor("text:chose Rebase and merge");
+  await app.press("label:Rebase and merge");
+  await app.waitFor("text:Rebase and merge: started");
+  await app.wait(1300);
+  await app.waitFor("text:Rebase and merge: done");
+  await app.waitFor("text:Reopen");
+  await app.press("text:Reopen");
+  await app.waitFor("text:reopened");
+  // Publish stays off until both asks are answered, and says what is missing.
+  expect(app.enabled("text:Publish")).toBe(false);
+  await app.waitFor("text:Add a title first");
+  await app.press("label:The post has a title");
+  await app.waitFor("text:Accept the terms to publish");
+  await app.press("label:I accept the terms");
+  expect(app.enabled("text:Publish")).toBe(true);
+  await app.press("label:Disable all");
+  expect(app.enabled("text:Publish")).toBe(false);
+  expect(app.enabled("text:Archive")).toBe(false);
+});
+
 test("Link: a paragraph's link reports what it opened; a nav link routes its page", async () => {
   const app = await open("../App.tsx", wide);
   await app.setColorScheme("light");

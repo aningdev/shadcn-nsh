@@ -280,12 +280,8 @@ function App() {
             autoFocus
             style={{ width: 220 }}
           />
-          <IconButton accessibilityLabel="Apply link" size="sm" onPress={applyLink}>
-            <Icon icon={Check} {...iconButtonGlyph({ size: "sm" })} />
-          </IconButton>
-          <IconButton accessibilityLabel="Cancel" size="sm" onPress={closeLink}>
-            <Icon icon={X} {...iconButtonGlyph({ size: "sm" })} />
-          </IconButton>
+          <IconButton accessibilityLabel="Apply link" size="sm" onPress={applyLink} icon={Check} />
+          <IconButton accessibilityLabel="Cancel" size="sm" onPress={closeLink} icon={X} />
         </>
       ) : (
         <>
@@ -300,15 +296,19 @@ function App() {
           >
             {href()}
           </Text>
-          <IconButton accessibilityLabel="Edit link" size="sm" onPress={editLink}>
-            <Icon icon={Pencil} {...iconButtonGlyph({ size: "sm" })} />
-          </IconButton>
-          <IconButton accessibilityLabel="Open link" size="sm" onPress={() => void openUrl(href())}>
-            <Icon icon={ExternalLink} {...iconButtonGlyph({ size: "sm" })} />
-          </IconButton>
-          <IconButton accessibilityLabel="Remove link" size="sm" onPress={removeLink}>
-            <Icon icon={Unlink} {...iconButtonGlyph({ size: "sm" })} />
-          </IconButton>
+          <IconButton accessibilityLabel="Edit link" size="sm" onPress={editLink} icon={Pencil} />
+          <IconButton
+            accessibilityLabel="Open link"
+            size="sm"
+            onPress={() => void openUrl(href())}
+            icon={ExternalLink}
+          />
+          <IconButton
+            accessibilityLabel="Remove link"
+            size="sm"
+            onPress={removeLink}
+            icon={Unlink}
+          />
         </>
       )}
     </View>

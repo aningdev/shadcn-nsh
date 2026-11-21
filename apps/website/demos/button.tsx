@@ -2,7 +2,7 @@
 // parts: a counter that reports each press (down, up, press), a switch that disables it, two
 // formatting toggles, and an inspector with what the page heard; a second card lists the kinds,
 // the sizes and the icon buttons.
-import { ChevronDown, Play, Plus, Search, Star, Trash } from "lucide";
+import { ChevronDown, Play, Plus, Save, Search, Star, Trash } from "lucide";
 import { mount, signal, Text, View } from "nsh";
 
 import {
@@ -37,6 +37,7 @@ function App() {
   const italic = signal(false);
   const starred = signal(false);
   const pinned = signal(true);
+  const saving = signal(false);
   const last = signal("—");
   const events = signal<string[]>([]);
   const log = (line: string) => events.set([line, ...events()].slice(0, 3));
@@ -164,20 +165,53 @@ function App() {
             Large
           </Button>
         </DemoSection>
+        {/* `icon` is the glyph before the label, drawn in the button's size and tint; `busy` puts the
+            spinner in its place and takes no second press. */}
+        <DemoSection title="With an icon">
+          <Button variant="secondary" icon={Plus} onPress={() => press("add")}>
+            Add
+          </Button>
+          <Button
+            icon={Save}
+            busy={saving()}
+            onPress={() => {
+              saving.set(true);
+              press("save");
+              setTimeout(() => saving.set(false), 1200);
+            }}
+          >
+            {saving() ? "Saving…" : "Save"}
+          </Button>
+          <Button variant="destructive" icon={Trash} onPress={() => press("delete")}>
+            Delete
+          </Button>
+        </DemoSection>
         {/* The icon button's own scale: 20, 24, 28 and 32 points across. */}
         <DemoSection title="Icon sizes">
-          <IconButton accessibilityLabel="Search, smallest" size="xs" onPress={() => press("xs")}>
-            <Icon icon={Search} {...iconButtonGlyph({ size: "xs" })} />
-          </IconButton>
-          <IconButton accessibilityLabel="Search, small" size="sm" onPress={() => press("sm")}>
-            <Icon icon={Search} {...iconButtonGlyph({ size: "sm" })} />
-          </IconButton>
-          <IconButton accessibilityLabel="Search" size="default" onPress={() => press("search")}>
-            <Icon icon={Search} {...iconButtonGlyph({})} />
-          </IconButton>
-          <IconButton accessibilityLabel="Search, large" size="lg" onPress={() => press("lg")}>
-            <Icon icon={Search} {...iconButtonGlyph({ size: "lg" })} />
-          </IconButton>
+          <IconButton
+            accessibilityLabel="Search, smallest"
+            size="xs"
+            onPress={() => press("xs")}
+            icon={Search}
+          />
+          <IconButton
+            accessibilityLabel="Search, small"
+            size="sm"
+            onPress={() => press("sm")}
+            icon={Search}
+          />
+          <IconButton
+            accessibilityLabel="Search"
+            size="default"
+            onPress={() => press("search")}
+            icon={Search}
+          />
+          <IconButton
+            accessibilityLabel="Search, large"
+            size="lg"
+            onPress={() => press("lg")}
+            icon={Search}
+          />
         </DemoSection>
         <DemoSection title="States">
           <Button
@@ -198,9 +232,7 @@ function App() {
           </Button>
         </DemoSection>
         <DemoSection title="Icon">
-          <IconButton accessibilityLabel="Search" onPress={() => press("search")}>
-            <Icon icon={Search} {...iconButtonGlyph({})} />
-          </IconButton>
+          <IconButton accessibilityLabel="Search" onPress={() => press("search")} icon={Search} />
           <IconButton
             accessibilityLabel="Star"
             variant="secondary"
@@ -209,19 +241,14 @@ function App() {
               starred.set(!starred());
               press("star");
             }}
-          >
-            <Icon
-              icon={Star}
-              {...iconButtonGlyph({ variant: "secondary", selected: () => starred() })}
-            />
-          </IconButton>
+            icon={Star}
+          />
           <IconButton
             accessibilityLabel="Delete"
             variant="destructive"
             onPress={() => press("delete")}
-          >
-            <Icon icon={Trash} {...iconButtonGlyph({ variant: "destructive" })} />
-          </IconButton>
+            icon={Trash}
+          />
           <RoundButton accessibilityLabel="Play" onPress={() => press("play")}>
             <Icon icon={Play} fill {...roundButtonGlyph("default")} />
           </RoundButton>

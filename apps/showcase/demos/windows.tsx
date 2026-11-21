@@ -46,7 +46,7 @@ import {
 } from "nsh/desktop";
 
 import { Badge } from "@/packages/ui/badge";
-import { Button, IconButton, iconButtonGlyph, iconButtonLook } from "@/packages/ui/button";
+import { Button, IconButton, iconButtonLook } from "@/packages/ui/button";
 import { Command, CommandEmpty, CommandRow } from "@/packages/ui/command";
 import { Input } from "@/packages/ui/input";
 import { ItemMedia } from "@/packages/ui/item";
@@ -397,10 +397,9 @@ function WindowRow(props: { win: WindowRef; first: boolean }) {
               accessibilityLabel={`Close ${info().title()}`}
               tooltip={<Tip label="Close" />}
               onPress={() => props.win.close()}
+              icon={X}
               {...iconButtonLook()}
-            >
-              <Icon icon={X} {...iconButtonGlyph()} />
-            </IconButton>
+            />
           </If>
         </View>
       </View>

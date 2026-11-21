@@ -584,7 +584,7 @@ function growOn(key: () => unknown) {
     shown = next;
     if (reduceMotion()) return;
     grow.set(0);
-    grow.spring(1, motion.control);
+    void grow.spring(1, motion.control);
   });
   return {
     opacity: grow,

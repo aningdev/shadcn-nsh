@@ -2,7 +2,7 @@
 // `nsh/base`'s Button, Switch and Toggle. The render check requires the two to draw the same
 // pixels.
 import { colors } from "@shadcn-nsh/theme";
-import { ChevronDown, Play, Plus, Search, Star, Trash, type IconNode } from "lucide";
+import { ChevronDown, Play, Plus, Save, Search, Star, Trash, type IconNode } from "lucide";
 import { mount, signal, Text, View } from "nsh";
 import { Button, Switch, Toggle } from "nsh/base";
 
@@ -21,6 +21,7 @@ import {
   splitButtonLook,
 } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
+import { Spinner } from "@/packages/ui/spinner";
 import { switchLook } from "@/packages/ui/switch";
 import { toggleLabel, toggleLook } from "@/packages/ui/toggle";
 
@@ -37,6 +38,8 @@ function Plain(props: {
   label: string;
   variant?: ButtonVariant;
   size?: "sm" | "default" | "lg";
+  icon?: IconNode;
+  busy?: boolean;
   selected?: boolean;
   disabled?: boolean;
   onPress?: () => void;
@@ -46,14 +49,25 @@ function Plain(props: {
     size: () => props.size,
     selected: () => props.selected,
     disabled: () => props.disabled,
+    busy: () => props.busy,
   };
   return (
     <Button
-      onPress={props.onPress}
+      onPress={() => !props.busy && props.onPress?.()}
       selected={props.selected}
       disabled={props.disabled}
       {...buttonLook(variant, options)}
     >
+      <If when={props.busy || props.icon}>
+        <View>
+          <If
+            when={props.busy}
+            else={<Icon icon={props.icon!} {...buttonGlyph(variant, options)} />}
+          >
+            <Spinner {...buttonGlyph(variant, options)} />
+          </If>
+        </View>
+      </If>
       <Text style={buttonLabel(variant, options)}>{props.label}</Text>
     </Button>
   );
@@ -93,6 +107,7 @@ function App() {
   const italic = signal(false);
   const starred = signal(false);
   const pinned = signal(true);
+  const saving = signal(false);
   const last = signal("—");
   const events = signal<string[]>([]);
   const log = (line: string) => events.set([line, ...events()].slice(0, 3));
@@ -208,6 +223,26 @@ function App() {
           <Plain label="Small" size="sm" onPress={() => press("small")} />
           <Plain label="Regular" size="default" onPress={() => press("regular")} />
           <Plain label="Large" size="lg" onPress={() => press("large")} />
+        </DemoSection>
+        <DemoSection title="With an icon">
+          <Plain label="Add" icon={Plus} onPress={() => press("add")} />
+          <Plain
+            label={saving() ? "Saving…" : "Save"}
+            variant="default"
+            icon={Save}
+            busy={saving()}
+            onPress={() => {
+              saving.set(true);
+              press("save");
+              setTimeout(() => saving.set(false), 1200);
+            }}
+          />
+          <Plain
+            label="Delete"
+            variant="destructive"
+            icon={Trash}
+            onPress={() => press("delete")}
+          />
         </DemoSection>
         {/* The icon button's own scale: 20, 24, 28 and 32 points across. */}
         <DemoSection title="Icon sizes">

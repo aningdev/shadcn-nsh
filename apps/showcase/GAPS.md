@@ -13,7 +13,7 @@ and its row leaves this file.
 | [#117](https://github.com/aningdev/shadcn-nsh/issues/117) | `Plot` has no overlay hook (hatch with the plot's geometry)                     | Stocks (washes instead of hatching)                              |
 | [#122](https://github.com/aningdev/shadcn-nsh/issues/122) | `nsh/base`'s Button takes no `accessibilityHint`, so no pressable can carry one | Gestures (accessibility rows draw a `View` with `role="button"`) |
 
-Not gaps: the iOS segmented control is a platform look;
+Not gaps: the Button scene plays no sounds (the library has none), its hold-to-confirm `FillButton` stays scene-local on a `View` with `role="button"` (base `Button` has no `onLongPress`), and its tooltips are the library's `Tooltip`; the iOS segmented control is a platform look;
 `Segmented` / `Button` / `Badge` take children where upstream takes `options` / `label` (shadcn's
 composition). Upstream's funnel animates drawn `Canvas` geometry with `createAnimatedValue`, which
 `nsh/base` doesn't drive; the necks redraw without an entrance. Editor gutters use the `warn` / `up`

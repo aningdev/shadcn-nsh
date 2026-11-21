@@ -20,7 +20,7 @@ import { keymap, signal, Text, View } from "nsh";
 
 import { Avatar } from "@/packages/ui/avatar";
 import { Badge } from "@/packages/ui/badge";
-import { Button, iconButtonGlyph } from "@/packages/ui/button";
+import { Button, IconButton } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
 import { Separator } from "@/packages/ui/separator";
 import {
@@ -88,25 +88,16 @@ function ToolButton(props: {
   shortcut?: string;
   onPress: () => void;
 }) {
-  const glyph = iconButtonGlyph({ selected: () => props.selected });
   return (
     <Tooltip placement="bottom" disabled={!pointer}>
       <TooltipTrigger>
-        <Button
-          variant="ghost"
-          size="sm"
+        <IconButton
           selected={props.selected}
           disabled={props.disabled}
           accessibilityLabel={props.label}
           onPress={props.onPress}
-          style={{
-            width: pointer ? 28 : 40,
-            height: pointer ? 28 : 40,
-            paddingHorizontal: 0,
-          }}
-        >
-          <Icon icon={props.icon} size={glyph.size} tint={glyph.tint} />
-        </Button>
+          icon={props.icon}
+        />
       </TooltipTrigger>
       <TooltipContent>
         <TipLabel label={props.label} shortcut={props.shortcut} />

@@ -22,7 +22,7 @@ import type { OpenChangeReason, SheetDetent } from "nsh/base";
 
 import { Avatar } from "@/packages/ui/avatar";
 import { Badge } from "@/packages/ui/badge";
-import { Button, iconButtonGlyph } from "@/packages/ui/button";
+import { Button, IconButton } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
 import { Sheet, SheetContent, type SheetSide } from "@/packages/ui/sheet";
 import { Switch } from "@/packages/ui/switch";
@@ -153,7 +153,6 @@ const toggles = [
 ] as const;
 
 function Head(props: { title: string; right?: JSX.Element; onClose: () => void }) {
-  const glyph = iconButtonGlyph({ variant: "ghost" });
   return (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
       <Text
@@ -167,14 +166,7 @@ function Head(props: { title: string; right?: JSX.Element; onClose: () => void }
         {props.title}
       </Text>
       {props.right}
-      <Button
-        variant="ghost"
-        accessibilityLabel="Close"
-        onPress={props.onClose}
-        style={{ width: pointer ? 28 : 40, height: pointer ? 28 : 40, paddingHorizontal: 0 }}
-      >
-        <Icon icon={X} size={glyph.size} tint={glyph.tint} />
-      </Button>
+      <IconButton accessibilityLabel="Close" onPress={props.onClose} icon={X} />
     </View>
   );
 }
