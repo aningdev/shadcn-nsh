@@ -40,6 +40,7 @@
 | ---------------------------------------------- | ------------------------------------------------------------------------------------------------------------------- |
 | [`references/nsh`](references/nsh)             | 上游：`examples/nsh-gallery-ui`（参考规范）；`nsh` / `nsh/base`；文档                                               |
 | [`references/shadcn-ui`](references/shadcn-ui) | 体系模式：registry、文档站、CLI、copy-into-app                                                                      |
+| [`references/design.md`](references/design.md) | DESIGN.md 格式规范（Google Labs）：用 token + 说明向编码代理描述一套设计语言；本库将来的 DESIGN.md 照它写           |
 | [nsh.dev/llms.txt](https://nsh.dev/llms.txt)   | NSH 官方文档索引（在线）：每页的 URL 加 `.md` 即 Markdown 原文；`references/nsh` 的 `website/` 是它的源，以基线为准 |
 
 克隆后若目录为空：`git submodule update --init --recursive`。
@@ -50,6 +51,7 @@
 
 - **某个控件长什么样、有哪些状态** — 上游的 `look/*` 与 `README.md`；它在 NSH 网站上的用法见 `references/nsh/website/demos/el-<id>.tsx`。
 - **控件行为、parts、平台差异** — `references/nsh` 与 [nsh.dev/llms.txt](https://nsh.dev/llms.txt)。
+- **为设计语言写 DESIGN.md** — `references/design.md` 的 `README.md` 与 `docs/spec.md`。
 - **Registry / CLI / 文档页的组织** — `references/shadcn-ui`：先 `CONTRIBUTING.md`，再 `apps/v4/registry`；本仓实现见 `packages/cli`。
 
 ## 分层

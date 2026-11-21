@@ -4,3 +4,6 @@
 [submodule "references/nsh"]
 	path = references/nsh
 	url = https://github.com/longbridge/nsh.git
+[submodule "references/design.md"]
+	path = references/design.md
+	url = https://github.com/google-labs-code/design.md.git
