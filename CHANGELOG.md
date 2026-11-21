@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+## 0.9.0 — the Gallery's parts, style roles in themes, and `lib/ui`
+
 ### Added
 
 - **Toolbar overflow (`ToolbarItem`, `ToolbarOverflow`, and `ToolbarGroup` `priority` / `fold`) (#187).** A bar with `ToolbarOverflow` measures each `ToolbarItem` with `onLayout` and folds lower-priority tools—or whole `fold="unit"` `ToolbarGroup`s—into the `"⋯"` menu in bar order, grouped by the group's `accessibilityLabel`, while owning the rules between visible units, hiding on the first frame until measured, and keeping unmeasured items visible. Bars without `ToolbarOverflow` are unchanged, and the showcase's Toolbar formatting scene drops its hand-written width table for the new parts.

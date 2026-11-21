@@ -49,6 +49,7 @@ npx shadcn-nsh add theme-solid-glass                    # 多带一套，运行�
 
 | shadcn-nsh | NSH CLI |
 | ---------- | ------- |
+| 0.9.x      | v0.6.1  |
 | 0.8.x      | v0.6.0  |
 | 0.7.x      | v0.5.1  |
 | 0.6.x      | v0.5.1  |
