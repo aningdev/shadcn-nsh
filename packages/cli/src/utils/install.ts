@@ -24,9 +24,9 @@ export type InstallResult = {
  * Write `items` into the app at `uiRoot`.
  *
  * A file the app does not have is written; one identical to the registry's is skipped; a
- * `theme.json` that only lacks keys is merged; any other file the app has is its own and is
- * kept, unless `overwrite` replaces it (reporting how much changes). With `dryRun` the same
- * lines are printed as `would …` and nothing is written.
+ * `theme.json` or `semantics.json` that only lacks keys is merged; any other file the app has is
+ * its own and is kept, unless `overwrite` replaces it (reporting how much changes). With `dryRun`
+ * the same lines are printed as `would …` and nothing is written.
  */
 export async function installItems(
   uiRoot: string,
@@ -67,15 +67,18 @@ export async function installItems(
       continue;
     }
 
-    // `differs`, or a `theme.json` the app has changed and `--overwrite` was given.
+    // `differs`, or a `theme.json` / `semantics.json` the app has changed and `--overwrite` was given.
     const summary = changeSummary(file.added, file.removed);
     if (!opts.overwrite) {
-      // A recolored theme is the app's own and `diff` reports no difference for it, so do not
-      // send the reader there.
+      // A recolored or customized theme file is the app's own and `diff` reports no difference for
+      // it, so do not send the reader there.
+      const name = path.basename(file.absolute);
       console.log(
-        isThemeFile(file)
+        name === "theme.json"
           ? `kept ${shown} (the app's colors stay)`
-          : `kept ${shown}, differs (run diff)`,
+          : isThemeFile(file)
+            ? `kept ${shown} (the app's semantics stay)`
+            : `kept ${shown}, differs (run diff)`,
       );
     } else if (opts.dryRun) {
       console.log(`would overwrite ${shown} ${summary}`);
@@ -94,7 +97,7 @@ async function write(file: PlannedFile, content: string) {
   await fs.writeFile(file.absolute, content, "utf8");
 }
 
-/** The app's `theme.json` with the registry's missing keys added, as text. */
+/** The app's `theme.json` or `semantics.json` with the registry's missing keys added, as text. */
 async function merged(file: PlannedFile) {
   if (file.existing == null) return null;
   try {

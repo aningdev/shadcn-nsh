@@ -137,6 +137,32 @@ describe("init --theme", () => {
     expect(recordedTheme(current)).toBe("theme-shadcn");
   });
 
+  test("init --theme without --overwrite merges missing semantics.json keys and keeps app values", async () => {
+    current = fixture();
+    await captured(() => runInit({ cwd: current!.app, registry: current!.url, theme: "shadcn" }));
+    const semantics = JSON.parse(current.read("lib/ui/semantics.json")) as {
+      state: { pressScale: number };
+      indicator: { tabs?: string };
+      finishes: { shared: Record<string, Record<string, unknown>> };
+    };
+    semantics.state.pressScale = 0.95;
+    delete semantics.indicator.tabs;
+    delete semantics.finishes.shared.dialog;
+    current.write("lib/ui/semantics.json", `${JSON.stringify(semantics, null, 2)}\n`);
+
+    const out = await captured(() =>
+      runInit({ cwd: current!.app, registry: current!.url, theme: "shadcn" }),
+    );
+
+    expect(
+      out.lines.some((line) => line.startsWith("merge lib/ui/semantics.json (added 2 keys)")),
+    ).toBe(true);
+    const merged = JSON.parse(current.read("lib/ui/semantics.json")) as typeof semantics;
+    expect(merged.state.pressScale).toBe(0.95);
+    expect(merged.indicator.tabs).toBe("pill");
+    expect(merged.finishes.shared.dialog).toBeDefined();
+  });
+
   test("defaults to the library's own theme, and records that", async () => {
     current = fixture();
     await captured(() => runInit({ cwd: current!.app, registry: current!.url }));

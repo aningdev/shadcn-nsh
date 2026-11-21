@@ -172,6 +172,62 @@ describe("add", () => {
     expect(typeof merged.cssVars.light.primary).toBe("string");
   });
 
+  test("keeps a customized semantics.json without sending the reader to diff", async () => {
+    current = fixture();
+    await captured(() => runAdd(["button"], { cwd: current!.app, registry: current!.url }));
+    const semantics = JSON.parse(current.read("lib/ui/semantics.json")) as {
+      state: { pressScale: number };
+    };
+    semantics.state.pressScale = 1;
+    current.write("lib/ui/semantics.json", `${JSON.stringify(semantics, null, 2)}\n`);
+
+    const again = await captured(() =>
+      runAdd(["button"], { cwd: current!.app, registry: current!.url }),
+    );
+
+    expect(again.lines).toContain("kept lib/ui/semantics.json (the app's semantics stay)");
+    const kept = JSON.parse(current.read("lib/ui/semantics.json")) as {
+      state: { pressScale: number };
+    };
+    expect(kept.state.pressScale).toBe(1);
+  });
+
+  test("merges a semantics.json that lacks keys and keeps existing app values", async () => {
+    current = fixture();
+    await captured(() => runAdd(["button"], { cwd: current!.app, registry: current!.url }));
+    const semantics = JSON.parse(current.read("lib/ui/semantics.json")) as {
+      state: { pressScale: number };
+      indicator: { tabs?: string };
+      finishes: {
+        shared: Record<string, Record<string, unknown>>;
+        light: Record<string, Record<string, unknown>>;
+        dark: Record<string, Record<string, unknown>>;
+      };
+    };
+    semantics.state.pressScale = 1;
+    semantics.finishes.light.card.boxShadow = "none";
+    delete semantics.indicator.tabs;
+    delete semantics.finishes.shared.dialog;
+    delete semantics.finishes.light.dialog;
+    delete semantics.finishes.shared.card.material;
+    current.write("lib/ui/semantics.json", `${JSON.stringify(semantics, null, 2)}\n`);
+
+    const again = await captured(() =>
+      runAdd(["button"], { cwd: current!.app, registry: current!.url }),
+    );
+
+    expect(
+      again.lines.some((line) => line.startsWith("merge lib/ui/semantics.json (added 4 keys)")),
+    ).toBe(true);
+    const merged = JSON.parse(current.read("lib/ui/semantics.json")) as typeof semantics;
+    expect(merged.state.pressScale).toBe(1);
+    expect(merged.finishes.light.card.boxShadow).toBe("none");
+    expect(merged.indicator.tabs).toBe("pill");
+    expect(merged.finishes.shared.dialog).toBeDefined();
+    expect(merged.finishes.light.dialog).toBeDefined();
+    expect(merged.finishes.shared.card.material).toBeNull();
+  });
+
   test("asks for a name when neither components nor --all are given", async () => {
     current = fixture();
     let error: unknown;

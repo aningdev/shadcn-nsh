@@ -16,9 +16,9 @@ export type DiffOptions = {
  * Compare the app's files with the registry's, after the same import rewriting `add` does.
  *
  * Without an item, list the installed items that differ; with items, print the changed files
- * line by line. `theme.json` compares keys, not values: its palette belongs to the app (only
- * `add --overwrite` replaces it), so a theme that is only recolored is not a difference. Of the
- * themes, only the app's own counts as installed: they all land at `theme.json`.
+ * line by line. `theme.json` and `semantics.json` compare keys, not values: both belong to the
+ * app (only `add --overwrite` replaces them), so a theme that is only recolored or restyled is not
+ * a difference. Of the themes, only the app's own counts as installed: they all land at `theme.json`.
  *
  * Returns 1 when anything differs, so it can gate updates. Offline it compares with the
  * registry cached by the last run that reached it; with nothing cached it compares nothing and

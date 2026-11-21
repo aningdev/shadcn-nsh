@@ -77,7 +77,7 @@ function rolesOnly(item: RegistryItem): RegistryItem {
   };
 }
 
-/** A theme item's data at the app's build-time paths: `theme.json`, and `finishes.json` in the lib alias. */
+/** A theme item's data at the app's build-time paths: `theme.json`, and `semantics.json` in the lib alias. */
 function atBuildTime(item: RegistryItem, config: NshUiConfig): RegistryItem {
   const lib = config.aliases.lib.replace(/^\.\//, "");
   return {
@@ -206,7 +206,7 @@ export async function checkRegistryDependencies(
           used.add(themeItems.has(item.name) ? item.name : DEFAULT_THEME);
         } else if (spec.startsWith(".")) {
           // Settled at the target first: a theme item ships `lib/ui/theme.ts` beside its own
-          // `lib/ui/finishes.json`, two themes sharing those paths.
+          // `lib/ui/semantics.json`, two themes sharing those paths.
           const beside = file.target
             ? RESOLVE_SUFFIXES.map(
                 (suffix) =>

@@ -438,6 +438,17 @@ async function installNeutralTheme(template: string, dir: string, items: Item[],
       "      theme.json is not packages/theme/themes/shadcn/theme.json after init --theme shadcn",
     );
   }
+  const installedSemantics = await fs.readFile(path.join(dir, "lib/ui/semantics.json"), "utf8");
+  const sourceSemantics = await fs.readFile(
+    path.join(repo, "packages/theme/themes/shadcn/semantics.json"),
+    "utf8",
+  );
+  if (installedSemantics !== sourceSemantics) {
+    throw new StepFailure(
+      "theme",
+      "      lib/ui/semantics.json is not packages/theme/themes/shadcn/semantics.json after init --theme shadcn",
+    );
+  }
 }
 
 /**
@@ -531,23 +542,36 @@ async function installSecondTheme(template: string, dir: string, nsh: string) {
   if (installed !== source) {
     throw new StepFailure("theme", "      add theme-default wrote no themes/default/theme.json");
   }
+  const sourceSemantics = await fs.readFile(
+    path.join(repo, "packages/theme/themes/default/semantics.json"),
+    "utf8",
+  );
+  const installedSemantics = await fs
+    .readFile(path.join(dir, "themes/default/semantics.json"), "utf8")
+    .catch(() => null);
+  if (installedSemantics !== sourceSemantics) {
+    throw new StepFailure(
+      "theme",
+      "      add theme-default wrote no themes/default/semantics.json",
+    );
+  }
   await fs.writeFile(path.join(dir, "Themes.tsx"), TWO_THEMES_PAGE);
   await step("nsh check", nsh, ["check", "."], dir);
 }
 
 /**
  * One more theme, from the app's side: `add theme-shadcn` must leave the build-time `theme.json`
- * and `lib/ui/finishes.json` as `init` wrote them, add `themes/shadcn/`, and the page that lists it
+ * and `lib/ui/semantics.json` as `init` wrote them, add `themes/shadcn/`, and the page that lists it
  * must type check.
  */
 async function installAnotherTheme(template: string, dir: string, nsh: string) {
   await copyApp(template, dir);
   const before = await fs.readFile(path.join(dir, "theme.json"), "utf8");
-  const finishes = await fs.readFile(path.join(dir, "lib/ui/finishes.json"), "utf8");
+  const semantics = await fs.readFile(path.join(dir, "lib/ui/semantics.json"), "utf8");
   await step("add theme-shadcn", "bun", [cli, "add", "theme-shadcn"], dir);
   for (const [name, want] of [
     ["theme.json", before],
-    ["lib/ui/finishes.json", finishes],
+    ["lib/ui/semantics.json", semantics],
   ] as const) {
     const now = await fs.readFile(path.join(dir, name), "utf8");
     if (now !== want) {
@@ -563,6 +587,16 @@ async function installAnotherTheme(template: string, dir: string, nsh: string) {
     .catch(() => null);
   if (installed !== source) {
     throw new StepFailure("theme", "      add theme-shadcn wrote no themes/shadcn/theme.json");
+  }
+  const sourceSemantics = await fs.readFile(
+    path.join(repo, "packages/theme/themes/shadcn/semantics.json"),
+    "utf8",
+  );
+  const installedSemantics = await fs
+    .readFile(path.join(dir, "themes/shadcn/semantics.json"), "utf8")
+    .catch(() => null);
+  if (installedSemantics !== sourceSemantics) {
+    throw new StepFailure("theme", "      add theme-shadcn wrote no themes/shadcn/semantics.json");
   }
   await fs.writeFile(path.join(dir, "Themes.tsx"), THEMES_PAGE);
   await step("nsh check", nsh, ["check", "."], dir);
@@ -627,6 +661,68 @@ async function installAppleTheme(template: string, dir: string, nsh: string) {
     );
   }
   await step("add --all", "bun", [cli, "add", "--all"], dir);
+  await step("nsh check", nsh, ["check", "."], dir);
+}
+
+const MERGE_PAGE = `// Written by scripts/install-test.ts; this app is temporary.
+import { mount, Text, View } from "nsh";
+
+import { Button } from "@/components/ui/button";
+import { finish, press, style } from "@/lib/ui/theme";
+
+function Page() {
+  return (
+    <View style={{ ...finish.dialog }}>
+      <Text>{style().indicator.tabs}</Text>
+      <Text>{String(press.scale)}</Text>
+      <Button>OK</Button>
+    </View>
+  );
+}
+
+mount(Page);
+`;
+
+/**
+ * Upgrading an older app whose `semantics.json` lacks keys: `add` restores the missing style keys,
+ * finish roles and finish fields while keeping values the app customized, and `nsh check` passes.
+ */
+async function mergeSemanticsOnAdd(template: string, dir: string, nsh: string) {
+  await copyApp(template, dir);
+  const semanticsPath = path.join(dir, "lib/ui/semantics.json");
+  const semantics = JSON.parse(await fs.readFile(semanticsPath, "utf8")) as {
+    state: { pressScale: number };
+    indicator: { tabs?: string };
+    finishes: {
+      shared: Record<string, Record<string, unknown>>;
+      light: Record<string, Record<string, unknown>>;
+    };
+  };
+  semantics.state.pressScale = 1;
+  delete semantics.indicator.tabs;
+  delete semantics.finishes.shared.dialog;
+  delete semantics.finishes.light.dialog;
+  delete semantics.finishes.shared.card.material;
+  await fs.writeFile(semanticsPath, `${JSON.stringify(semantics, null, 2)}\n`);
+
+  await step("add button", "bun", [cli, "add", "button"], dir);
+
+  const merged = JSON.parse(await fs.readFile(semanticsPath, "utf8")) as typeof semantics;
+  if (merged.state.pressScale !== 1) {
+    throw new StepFailure("semantics merge", "      add overwrote customized state.pressScale");
+  }
+  if (
+    merged.indicator.tabs !== "pill" ||
+    merged.finishes.shared.dialog == null ||
+    merged.finishes.light.dialog == null ||
+    !("material" in merged.finishes.shared.card)
+  ) {
+    throw new StepFailure(
+      "semantics merge",
+      "      add did not restore missing keys in lib/ui/semantics.json",
+    );
+  }
+  await fs.writeFile(path.join(dir, "MergeCheck.tsx"), MERGE_PAGE);
   await step("nsh check", nsh, ["check", "."], dir);
 }
 
@@ -900,6 +996,24 @@ async function main(): Promise<number> {
       }
       const label = "init --theme native, init --theme apple, add --all, nsh check";
       console.log(`  ✓ ${label} ${seconds(performance.now() - startedNative)}\n`);
+    }
+
+    if (opts.filter == null) {
+      console.log("semantics merge, on add");
+      const startedMerge = performance.now();
+      try {
+        await mergeSemanticsOnAdd(template, path.join(tmp, "semantics-merge"), nsh);
+      } catch (thrown) {
+        const failure = failureOf(thrown);
+        console.error(`  ✗ ${failure.step} ${seconds(performance.now() - startedMerge)}`);
+        console.error(failure.detail);
+        console.error(
+          "\ninstall test: add does not restore missing keys in semantics.json, or the app does not type check",
+        );
+        return 1;
+      }
+      const label = "add button restores missing semantics.json keys, keeps app values, nsh check";
+      console.log(`  ✓ ${label} ${seconds(performance.now() - startedMerge)}\n`);
     }
 
     const each = `each item in its own app (${items.length} item${items.length === 1 ? "" : "s"}`;

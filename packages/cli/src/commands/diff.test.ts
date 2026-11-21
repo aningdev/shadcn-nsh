@@ -86,6 +86,28 @@ describe("diff", () => {
     expect(missing.text).toContain("  theme.json");
   });
 
+  test("compares semantics.json by key: customized values stay, missing keys differ", async () => {
+    current = await installed();
+    const semantics = JSON.parse(current.read("lib/ui/semantics.json")) as {
+      state: { pressScale: number };
+      finishes: { shared: Record<string, Record<string, unknown>> };
+    };
+    semantics.state.pressScale = 1;
+    current.write("lib/ui/semantics.json", `${JSON.stringify(semantics, null, 2)}\n`);
+
+    const same = await captured(() => runDiff([], { cwd: current!.app, registry: current!.url }));
+    expect(same.result).toBe(0);
+
+    delete semantics.finishes.shared.dialog;
+    current.write("lib/ui/semantics.json", `${JSON.stringify(semantics, null, 2)}\n`);
+    const missing = await captured(() =>
+      runDiff([], { cwd: current!.app, registry: current!.url }),
+    );
+    expect(missing.result).toBe(1);
+    expect(missing.text).toContain("theme (+");
+    expect(missing.text).toContain("  lib/ui/semantics.json");
+  });
+
   test("asks for init when the app has no nsh-ui.json", async () => {
     current = fixture();
     const out = await captured(() => runDiff([], { cwd: current!.app, registry: current!.url }));

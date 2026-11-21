@@ -12,7 +12,7 @@ import { transformContent } from "./transform";
  * What `add` would do with one file:
  * - `create`: the app has none.
  * - `same`: the app's file is byte-identical to the rewritten registry file.
- * - `merge`: a `theme.json` that lacks keys the registry's has; `add` fills those in.
+ * - `merge`: a `theme.json` or `semantics.json` that lacks keys the registry's has; `add` fills those in.
  * - `differs`: the app's file is its own. Only `--overwrite` replaces it.
  */
 export type PlanStatus = "create" | "same" | "merge" | "differs";
@@ -34,13 +34,14 @@ export type PlannedFile = {
   /** Lines each side has alone (`diff` and the overwrite summary). */
   added: number;
   removed: number;
-  /** For `merge`: the dotted key paths the registry has and the app's `theme.json` lacks. */
+  /** For `merge`: the dotted key paths the registry has and the app's theme data lacks. */
   missing?: string[];
 };
 
-/** `theme.json` is merged by key, never compared by value: its palette belongs to the app. */
+/** `theme.json` and `semantics.json` are merged by key, never compared by value: the app owns its look. */
 export function isThemeFile(file: PlannedFile) {
-  return path.basename(file.absolute) === "theme.json";
+  const name = path.basename(file.absolute);
+  return name === "theme.json" || name === "semantics.json";
 }
 
 /** True when the file `add` would write differs from what the app has, by the rule above. */
@@ -108,7 +109,7 @@ export async function planItems(
       if (existing != null) {
         if (existing === content) {
           entry.status = "same";
-        } else if (path.basename(absolute) === "theme.json") {
+        } else if (isThemeFile(entry)) {
           const merged = themeMerge(existing, content);
           if (merged && merged.added > 0) {
             entry.status = "merge";

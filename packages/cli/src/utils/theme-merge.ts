@@ -5,11 +5,13 @@ const isObject = (value: unknown): value is Json =>
 
 /**
  * Adds the keys of `incoming` that `existing` lacks, at any depth; a value `existing` already
- * has stays as it is. Returns the merged theme, how many keys were added, and their dotted
- * paths (`cssVars.light.brand`), which is what `add` reports and `diff` compares.
+ * has stays as it is. Returns the merged JSON, how many keys were added, and their dotted paths
+ * (`cssVars.light.brand`, `indicator.tabs`, `finishes.shared.dialog`), which is what `add` reports
+ * and `diff` compares.
  *
- * An app that brought its own `theme.json` keeps its colors and gains any tokens the copied
- * theme / `theme.ts` reads that it did not already define.
+ * An app that brought its own `theme.json` or customized `semantics.json` keeps its values and
+ * gains any tokens, style keys, finish roles, or finish fields the copied theme / `theme.ts`
+ * reads that it did not already define.
  */
 export function mergeTheme(
   existing: Json,
