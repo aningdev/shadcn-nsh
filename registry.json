@@ -277,7 +277,7 @@
       "type": "registry:lib",
       "title": "Surface",
       "description": "Density, section surfaces, and list rows whose hover fill bleeds.",
-      "registryDependencies": ["theme", "utils"],
+      "registryDependencies": ["press", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/lib/surface.tsx",
@@ -722,7 +722,7 @@
       "type": "registry:ui",
       "title": "Tabs",
       "description": "A pill track or underlined row with a traveling indicator.",
-      "registryDependencies": ["icons", "surface", "theme", "utils"],
+      "registryDependencies": ["icons", "press", "surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/tabs.tsx",
@@ -737,7 +737,7 @@
       "type": "registry:ui",
       "title": "Segmented",
       "description": "A sunk track whose raised thumb springs to the selected segment.",
-      "registryDependencies": ["tabs", "theme", "utils"],
+      "registryDependencies": ["press", "tabs", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/segmented.tsx",
