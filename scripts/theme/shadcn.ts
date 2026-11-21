@@ -1,3 +1,4 @@
+import { withoutMaterial } from "./material";
 /**
  * The shadcn default theme (new-york-v4, `neutral`) as this library's two theme files.
  *
@@ -354,8 +355,8 @@ export function themeFiles(defaults: {
       // A flat theme draws no press of its own: its surfaces change colour under the finger, they
       // do not sink (`press.scale` of 1, which `pressSink` reads as "no sink").
       press: { scale: 1 },
-      dark: orderedFinish(defaults.darkFinishes, finishes("dark", ownDark)),
-      light: orderedFinish(defaults.lightFinishes, finishes("light", ownLight)),
+      dark: orderedFinish(defaults.darkFinishes, withoutMaterial(finishes("dark", ownDark))),
+      light: orderedFinish(defaults.lightFinishes, withoutMaterial(finishes("light", ownLight))),
     },
   };
 }

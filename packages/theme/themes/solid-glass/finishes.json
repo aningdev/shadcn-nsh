@@ -234,217 +234,257 @@
   "dark": {
     "card": {
       "backgroundImage": "linear-gradient(180deg, var(--card) 0%, var(--card) 100%)",
-      "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.16), inset 0 0 0 1px oklch(1 0 0 / 0.04), 0 1px 2px oklch(0 0 0 / 0.1), 0 12px 32px -14px oklch(0 0 0 / 0.6)"
+      "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.16), inset 0 0 0 1px oklch(1 0 0 / 0.04), 0 1px 2px oklch(0 0 0 / 0.1), 0 12px 32px -14px oklch(0 0 0 / 0.6)",
+      "material": null
     },
     "inset": {
-      "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.04)"
+      "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.04)",
+      "material": null
     },
     "field": {
-      "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.15)"
+      "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.15)",
+      "material": null
     },
     "raised": {
       "backgroundColor": "var(--raised)",
       "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.11), 0 1px 2px oklch(0 0 0 / 0.1)",
-      "borderColor": "var(--glass-edge)"
+      "borderColor": "var(--glass-edge)",
+      "material": null
     },
     "hover": {
       "backgroundColor": "var(--hover)",
       "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.11), 0 1px 2px oklch(0 0 0 / 0.1)",
-      "borderColor": "var(--glass-edge)"
+      "borderColor": "var(--glass-edge)",
+      "material": null
     },
     "pressed": {
       "backgroundColor": "oklch(from var(--muted) l c h / 0.11)",
       "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.11)",
-      "borderColor": "var(--glass-edge)"
+      "borderColor": "var(--glass-edge)",
+      "material": null
     },
     "light": {
       "backgroundColor": "oklch(from var(--primary) l c h / 0.86)",
       "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0), inset 0 -1px 0 oklch(0 0 0 / 0.099)",
-      "borderColor": "var(--brand-edge)"
+      "borderColor": "var(--brand-edge)",
+      "material": null
     },
     "accent": {
       "backgroundColor": "oklch(from var(--primary) l c h / 0.86)",
       "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0), inset 0 -1px 0 oklch(0 0 0 / 0.099), inset 0 0 0 1px oklch(0 0 0 / 0.07), 0 1px 2px oklch(0 0 0 / 0.1), 0 8px 18px -9px oklch(0 0 0 / 0.6)",
-      "borderColor": "var(--brand-edge)"
+      "borderColor": "var(--brand-edge)",
+      "material": null
     },
     "track": {
       "boxShadow": "inset 0 1px 1.5px oklch(0 0 0 / 0.38), inset 0 -1px 0 oklch(1 0 0 / 0.09)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "fill": {
       "backgroundColor": "transparent",
       "backgroundImage": "linear-gradient(180deg, oklch(0.94 0 0 / 0.86) 0%, oklch(0.94 0 0 / 0.86) 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0), inset 0 -1px 0 oklch(0 0 0 / 0.099)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "knob": {
       "backgroundColor": "var(--knob)",
       "backgroundImage": "linear-gradient(180deg, var(--knob) 0%, var(--knob) 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0 0 0 / 0.14), 0 1px 2px oklch(0 0 0 / 0.55)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "knobOn": {
       "backgroundColor": "var(--knob)",
       "backgroundImage": "linear-gradient(180deg, var(--knob) 0%, var(--knob) 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0 0 0 / 0.14), 0 1px 2px oklch(0 0 0 / 0.55)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "handle": {
       "backgroundColor": "var(--knob)",
       "backgroundImage": "linear-gradient(180deg, var(--knob) 0%, var(--knob) 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0 0 0 / 0.14), 0 1px 2px oklch(0 0 0 / 0.55)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "pill": {
       "backgroundColor": "var(--raised)",
       "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.11), 0 1px 2px oklch(0 0 0 / 0.1)",
-      "borderColor": "var(--glass-edge)"
+      "borderColor": "var(--glass-edge)",
+      "material": null
     },
     "thumb": {
       "backgroundColor": "var(--raised)",
       "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.11), 0 1px 2px oklch(0 0 0 / 0.1)",
-      "borderColor": "var(--glass-edge)"
+      "borderColor": "var(--glass-edge)",
+      "material": null
     },
     "on": {
       "backgroundColor": "oklch(from var(--muted) l c h / 0.07)",
       "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.11)",
-      "borderColor": "oklch(from var(--muted) l c h / 0.06)"
+      "borderColor": "oklch(from var(--muted) l c h / 0.06)",
+      "material": null
     },
     "chip": {
       "backgroundColor": "var(--raised)",
       "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.11), inset 0 0 0 1px oklch(1 0 0 / 0.06)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "glass": {
       "backgroundColor": "var(--raised)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.11), 0 0 0 1px oklch(1 0 0 / 0.06), 0 1px 2px oklch(0 0 0 / 0.1)",
       "borderColor": "var(--glass-edge)",
-      "backdropFilter": "blur(14px)"
+      "backdropFilter": "blur(14px)",
+      "material": null
     },
     "menu": {
       "backgroundColor": "var(--popover)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.16), inset 0 -1px 0 oklch(0 0 0 / 0), 0 24px 60px -18px oklch(0 0 0 / 0.6), 0 6px 16px -6px oklch(0 0 0 / 0.22)",
-      "borderColor": "oklch(1 0 0 / 0.06)"
+      "borderColor": "oklch(1 0 0 / 0.06)",
+      "material": null
     },
     "groove": {
-      "boxShadow": "0 1px 0 oklch(1 0 0 / 0.04)"
+      "boxShadow": "0 1px 0 oklch(1 0 0 / 0.04)",
+      "material": null
     }
   },
   "light": {
     "card": {
       "backgroundImage": "linear-gradient(180deg, var(--card) 0%, var(--card) 100%)",
-      "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 0 0 1px oklch(1 0 0 / 0.35), 0 1px 2px oklch(0.25 0.03 265 / 0.06), 0 12px 32px -14px oklch(0.3 0.06 265 / 0.28)"
+      "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 0 0 1px oklch(1 0 0 / 0.35), 0 1px 2px oklch(0.25 0.03 265 / 0.06), 0 12px 32px -14px oklch(0.3 0.06 265 / 0.28)",
+      "material": null
     },
     "inset": {
-      "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.35)"
+      "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.35)",
+      "material": null
     },
     "field": {
-      "boxShadow": "inset 0 1px 0 oklch(1 0 0)"
+      "boxShadow": "inset 0 1px 0 oklch(1 0 0)",
+      "material": null
     },
     "raised": {
       "backgroundColor": "var(--raised)",
       "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.8), 0 1px 2px oklch(0.25 0.03 265 / 0.06)",
-      "borderColor": "var(--glass-edge)"
+      "borderColor": "var(--glass-edge)",
+      "material": null
     },
     "hover": {
       "backgroundColor": "var(--hover)",
       "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.8), 0 1px 2px oklch(0.25 0.03 265 / 0.06)",
-      "borderColor": "var(--glass-edge)"
+      "borderColor": "var(--glass-edge)",
+      "material": null
     },
     "pressed": {
       "backgroundColor": "oklch(from var(--muted) l c h / 0.26)",
       "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.8)",
-      "borderColor": "var(--glass-edge)"
+      "borderColor": "var(--glass-edge)",
+      "material": null
     },
     "light": {
       "backgroundColor": "oklch(from var(--primary) l c h / 0.88)",
       "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.3), inset 0 -1px 0 oklch(0 0 0 / 0.203)",
-      "borderColor": "var(--brand-edge)"
+      "borderColor": "var(--brand-edge)",
+      "material": null
     },
     "accent": {
       "backgroundColor": "oklch(from var(--primary) l c h / 0.88)",
       "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.3), inset 0 -1px 0 oklch(0 0 0 / 0.203), inset 0 0 0 1px oklch(1 0 0 / 0.07), 0 1px 2px oklch(0.25 0.03 265 / 0.06), 0 8px 18px -9px oklch(0.3 0.06 265 / 0.28)",
-      "borderColor": "var(--brand-edge)"
+      "borderColor": "var(--brand-edge)",
+      "material": null
     },
     "track": {
       "boxShadow": "inset 0 1px 1.5px oklch(0.3 0.06 265 / 0.14), inset 0 -1px 0 oklch(1 0 0 / 0.85)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "fill": {
       "backgroundColor": "transparent",
       "backgroundImage": "linear-gradient(180deg, oklch(0.2 0 0 / 0.88) 0%, oklch(0.2 0 0 / 0.88) 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.3), inset 0 -1px 0 oklch(0 0 0 / 0.203)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "knob": {
       "backgroundColor": "var(--knob)",
       "backgroundImage": "linear-gradient(180deg, var(--knob) 0%, var(--knob) 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0 0 0 / 0.14), 0 1px 2px oklch(0.3 0.06 265 / 0.3)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "knobOn": {
       "backgroundColor": "var(--knob)",
       "backgroundImage": "linear-gradient(180deg, var(--knob) 0%, var(--knob) 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0 0 0 / 0.14), 0 1px 2px oklch(0.3 0.06 265 / 0.3)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "handle": {
       "backgroundColor": "var(--knob)",
       "backgroundImage": "linear-gradient(180deg, var(--knob) 0%, var(--knob) 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0 0 0 / 0.14), 0 1px 2px oklch(0.3 0.06 265 / 0.3)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "pill": {
       "backgroundColor": "var(--raised)",
       "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.8), 0 1px 2px oklch(0.25 0.03 265 / 0.06)",
-      "borderColor": "var(--glass-edge)"
+      "borderColor": "var(--glass-edge)",
+      "material": null
     },
     "thumb": {
       "backgroundColor": "var(--raised)",
       "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.8), 0 1px 2px oklch(0.25 0.03 265 / 0.06)",
-      "borderColor": "var(--glass-edge)"
+      "borderColor": "var(--glass-edge)",
+      "material": null
     },
     "on": {
       "backgroundColor": "oklch(from var(--muted) l c h / 0.09)",
       "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.85)",
-      "borderColor": "oklch(from var(--muted) l c h / 0.13)"
+      "borderColor": "oklch(from var(--muted) l c h / 0.13)",
+      "material": null
     },
     "chip": {
       "backgroundColor": "var(--raised)",
       "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.8), inset 0 0 0 1px oklch(0.38 0.03 265 / 0.1)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "glass": {
       "backgroundColor": "var(--raised)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.8), 0 0 0 1px oklch(0.38 0.03 265 / 0.1), 0 1px 2px oklch(0.25 0.03 265 / 0.06)",
       "borderColor": "var(--glass-edge)",
-      "backdropFilter": "blur(14px) saturate(180%)"
+      "backdropFilter": "blur(14px) saturate(180%)",
+      "material": null
     },
     "menu": {
       "backgroundColor": "var(--popover)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0.38 0.03 265 / 0.16), 0 24px 60px -18px oklch(0.3 0.06 265 / 0.28), 0 6px 16px -6px oklch(0.25 0.03 265 / 0.14)",
-      "borderColor": "oklch(0.38 0.03 265 / 0.22)"
+      "borderColor": "oklch(0.38 0.03 265 / 0.22)",
+      "material": null
     },
     "groove": {
-      "boxShadow": "0 1px 0 oklch(1 0 0 / 0.35)"
+      "boxShadow": "0 1px 0 oklch(1 0 0 / 0.35)",
+      "material": null
     }
   }
 }

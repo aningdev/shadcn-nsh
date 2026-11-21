@@ -1,7 +1,7 @@
 // The popup families' one surface and the motion they come in with: menus, popovers, a select's
 // list, and the mark of a checkable menu item and the scrim behind what is modal.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { finish, rounded, terminal, shape, stroke } from "@shadcn-nsh/theme";
+import { finish, platformMaterial, rounded, terminal, shape, stroke } from "@shadcn-nsh/theme";
 import type { JSX, MotionSpec, StyleProp, ViewStyle } from "nsh";
 import { createMotion, Easing, reduceMotion, token, View } from "nsh";
 
@@ -125,6 +125,7 @@ export function PopIn(props: {
   const m = createMotion({ enter: popIn(props.side) });
   return (
     <View
+      {...platformMaterial("menu")}
       class={props.class}
       style={[
         props.style ?? null,

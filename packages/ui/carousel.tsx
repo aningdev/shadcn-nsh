@@ -1,7 +1,16 @@
 // A carousel: the look (arrows, the pagination's pill and its dots) and the parts on `nsh/base`'s
 // carousel.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { alpha, colors, finish, focusRing, terminal, stroke, dimmed } from "@shadcn-nsh/theme";
+import {
+  alpha,
+  colors,
+  finish,
+  focusRing,
+  platformMaterial,
+  terminal,
+  stroke,
+  dimmed,
+} from "@shadcn-nsh/theme";
 import { ChevronLeft } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
@@ -261,6 +270,7 @@ export function CarouselPrevious(props: CarouselPreviousProps) {
   const look = carouselArrowLook({ glass: props.glass, side: props.side });
   return (
     <BasePrevious
+      {...(props.glass ? platformMaterial("glass") : {})}
       {...rest}
       accessibilityLabel={props.accessibilityLabel ?? "Previous slide"}
       class={props.class}
@@ -293,6 +303,7 @@ export function CarouselNext(props: CarouselNextProps) {
   const look = carouselArrowLook({ glass: props.glass, side: props.side });
   return (
     <BaseNext
+      {...(props.glass ? platformMaterial("glass") : {})}
       {...rest}
       accessibilityLabel={props.accessibilityLabel ?? "Next slide"}
       class={props.class}

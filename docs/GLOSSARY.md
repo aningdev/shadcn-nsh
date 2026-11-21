@@ -84,7 +84,7 @@ _Avoid_: neutral 映射, `custom-*` 键
 _Avoid_: 用别的词指它；在 B 层另起一个与 A 层槽同义的名字
 
 **Finish（Finish Role）**:
-`finishes.json` 里 `light` / `dark` 下的一个条目（`card`、`raised`、`fill`… 共 20 个；文件顶层另有与 finish 无关的**风格数据** `type`、`shape`、`size`…，见 [`specs/theme-roles.md`](specs/theme-roles.md)）：一个面的底、渐变、边、影、模糊。finish 只管一个面的画法（底、渐变、边、影、模糊），颜色写 alias；每个 finish 在每套主题、每种外观里的字段集合相同（平涂就是同一个颜色在两个 stop，不删 `backgroundImage`）。
+`finishes.json` 里 `light` / `dark` 下的一个条目（`card`、`raised`、`fill`… 共 20 个；文件顶层另有与 finish 无关的**风格数据** `type`、`shape`、`size`…，见 [`specs/theme-roles.md`](specs/theme-roles.md)）：一个面的底、渐变、边、影、模糊，外加它向平台要的原生材质 `material`（`null` 表示不要，见 [`specs/theme-roles.md`](specs/theme-roles.md)）。finish 只管一个面的画法（底、渐变、边、影、模糊、平台材质），颜色写 alias；每个 finish 在每套主题、每种外观里的字段集合相同（平涂就是同一个颜色在两个 stop，不删 `backgroundImage`）。
 _Avoid_: 把 finish 当 token；用别的词指它；删字段表示“没有渐变”
 
 **Alias**:

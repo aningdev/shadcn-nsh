@@ -77,6 +77,14 @@ A finish is light and depth: a gradient over the color, its shadows, its edge. `
 | `menu`                         | A floating surface's soft shadow                          |
 | `groove`                       | The lip of light under a separator                        |
 
+Every finish also carries a `material`: `null` (every theme the library ships), or what the platform's own glass should be. `apple` is `{ glass: "regular" | "clear", tint }` and rides inside `finish.<role>` as `glassEffect` and `glassTintColor`, so a spread of the finish carries it; `ios`, `macos` and `windows` are props, not style keys, which `platformMaterial(role)` returns for the view that draws the finish:
+
+```tsx
+<View {...platformMaterial("menu")} style={{ ...finish.menu }} />
+```
+
+Both follow `selectTheme` and the appearance, and with `material: null` the view is drawn as before. The library's own popovers, hover cards, toasts, the code editor's find bar and a glass carousel arrow spread it; the popups of `Menu`, `Select` and `Popover` on `nsh/base` take only `popupStyle`, so there the glass keys apply and the platform props do not.
+
 Spread one where a control needs that depth:
 
 ```tsx

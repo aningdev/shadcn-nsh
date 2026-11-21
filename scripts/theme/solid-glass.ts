@@ -1,3 +1,4 @@
+import { withoutMaterial } from "./material";
 /**
  * Solid Glass (deeplethe/solid-glass) as this library's two theme files.
  *
@@ -588,8 +589,8 @@ export function themeFiles(defaults: {
       // The material draws no press of its own: a pressed pane loses the shadow it stood on and
       // darkens a step, it does not shrink (`press.scale` of 1, which `pressSink` reads as none).
       press: { scale: 1 },
-      dark: orderedFinish(defaults.darkFinishes, finishes("dark")),
-      light: orderedFinish(defaults.lightFinishes, finishes("light")),
+      dark: orderedFinish(defaults.darkFinishes, withoutMaterial(finishes("dark"))),
+      light: orderedFinish(defaults.lightFinishes, withoutMaterial(finishes("light"))),
     },
   };
 }

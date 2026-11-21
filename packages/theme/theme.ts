@@ -1,6 +1,17 @@
 // The theme's roles, finishes, radii, focus and motion, read from `theme.json` and `finishes.json`.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import type { AnimatedValue, TextStyle, Theme, Tokens, ViewStyle } from "nsh";
+import type {
+  AnimatedValue,
+  BackdropMaterial,
+  MacOsBackdropBlending,
+  MacOsBackdropMaterial,
+  MacOsBackdropState,
+  TextStyle,
+  Theme,
+  Tokens,
+  ViewStyle,
+  WindowsBackdropMaterial,
+} from "nsh";
 import {
   colorScheme,
   computed,
@@ -42,14 +53,50 @@ export const TERMINAL_GAP = 24;
 /** Whether the app shows its dark palette; reactive: reading it subscribes. */
 export const isDark = () => colorScheme() !== "light";
 
-/** A surface's finish: a gradient over its color and its shadows. */
+/**
+ * The platform's own material a finish asks for, one entry per platform that has one (an
+ * absent platform draws the finish as it is: its fill, its blur, its shadow). Values are NSH's:
+ * `styling.md` lists them, the allow-lists of `scripts/theme/material.ts` hold a theme to them.
+ */
+export interface Material {
+  /** Liquid Glass on iOS and macOS 26 and later: it rides in the finish's style as `glassEffect`
+   * and `glassTintColor`, so every platform without it keeps the finish's `backdropFilter`. */
+  apple?: {
+    glass: "regular" | "clear";
+    /** The glass's tint: a color of the theme (`var(--glass)`, an alias), or `null` for the system's own. */
+    tint: string | null;
+  };
+  /** The system blur material of the finish's `backdropFilter` on iOS (`ios={{ backdropMaterial }}`). */
+  ios?: { backdrop: BackdropMaterial };
+  /** An `NSVisualEffectView` below the view on macOS (`macos={{ backdrop }}`). */
+  macos?: {
+    backdrop: MacOsBackdropMaterial;
+    blending?: MacOsBackdropBlending;
+    state?: MacOsBackdropState;
+  };
+  /** The system's blur of what is behind a transparent window on Windows 11 (`windows={{ backdrop }}`). */
+  windows?: { backdrop: WindowsBackdropMaterial };
+}
+
+/** A surface's finish as `finishes.json` writes it: a gradient over its color, its shadows, and the material it asks of the platform (`null`: none). */
 export interface Finish {
   backgroundColor?: string;
   backgroundImage?: string;
   boxShadow: string;
   borderColor?: string;
   backdropFilter?: string;
+  material: Material | null;
 }
+
+/**
+ * What a component reads of a finish (`finish.menu`): the style keys, spread into a `style`. A
+ * finish whose `material` has `apple` also has `glassEffect` (and `glassTintColor`, unless its tint is
+ * `null`); otherwise these keys are not there at all. `material` itself is never a style key.
+ */
+export type FinishStyle = Omit<Finish, "material"> & {
+  glassEffect?: "regular" | "clear";
+  glassTintColor?: string;
+};
 
 /** The finishes' roles: the keys of `finishes.json`'s two appearances. */
 export type FinishRole =
@@ -279,7 +326,11 @@ const alias = (value: string): string =>
     });
 
 /** What one finish role has resolved: the theme it resolved from, and the strings per appearance. */
-type Resolved = { source: AppTheme | null; light: Finish; dark: Finish };
+type Resolved = {
+  source: AppTheme | null;
+  light: Record<string, string>;
+  dark: Record<string, string>;
+};
 
 /**
  * What `alias` has resolved, per role. A finished string is one shadow, gradient or color of
@@ -294,40 +345,131 @@ type Resolved = { source: AppTheme | null; light: Finish; dark: Finish };
  */
 const resolved = new Map<FinishRole, Resolved>();
 
+/** The material one finish role asks for in the finishes in use, in the appearance shown (reactive). */
+const materialOf = (role: FinishRole): Material | null => {
+  const finishes = finishesOf();
+  return (isDark() ? finishes.dark : finishes.light)[role].material;
+};
+
+/** The style keys a finish's glass adds: `glassEffect` always, `glassTintColor` when it names a tint. */
+const glassKeys = (role: FinishRole): readonly string[] => {
+  const glass = materialOf(role)?.apple;
+  if (glass === undefined) return [];
+  return glass.tint === null ? ["glassEffect"] : ["glassEffect", "glassTintColor"];
+};
+
 /**
  * An object whose getters read one finish role of the finishes in use, in
  * the appearance shown: shadows and gradients are no design tokens, so they
  * stay here while every color is the theme's, by alias. Reading one
  * subscribes to the appearance and to the theme `selectTheme` put in.
+ *
+ * `material` is not one of its keys: the glass of `material.apple` is two style keys (NSH's
+ * `glassEffect` and `glassTintColor`), which the object has only while the finish asks for them, so
+ * a finish with `material: null` spreads into exactly the keys it always had. The platform props of
+ * the material (`ios`, `macos`, `windows`) are not style keys and come from `platformMaterial`.
  */
-function themed(role: FinishRole): Finish {
-  const kept: Resolved = { source: null, light: {} as Finish, dark: {} as Finish };
+function themed(role: FinishRole): FinishStyle {
+  const kept: Resolved = { source: null, light: {}, dark: {} };
   resolved.set(role, kept);
-  const out = {} as Finish;
+  /** The strings resolved for the theme and appearance in use: emptied when the theme changed. */
+  const cache = (): Record<string, string> => {
+    const source = selected();
+    if (kept.source !== source) {
+      kept.source = source;
+      kept.light = {};
+      kept.dark = {};
+    }
+    return isDark() ? kept.dark : kept.light;
+  };
+  /** A string of the finish, aliased once per theme and appearance (`name` keys the cache). */
+  const read = (name: string, value: string | undefined): string | undefined => {
+    const done = cache();
+    if (value === undefined) return value;
+    return (done[name] ??= alias(value));
+  };
+  const out = {} as FinishStyle;
   for (const key of Object.keys(builtIn.dark[role]) as (keyof Finish)[]) {
+    if (key === "material") continue;
     Object.defineProperty(out, key, {
       enumerable: true,
+      configurable: true,
       get: () => {
-        const source = selected();
-        if (kept.source !== source) {
-          kept.source = source;
-          kept.light = {} as Finish;
-          kept.dark = {} as Finish;
-        }
-        const finishes = source?.finishes ?? builtIn;
-        const dark = isDark();
-        const value = (dark ? finishes.dark : finishes.light)[role][key];
-        if (value === undefined) return value;
-        const cache = dark ? kept.dark : kept.light;
-        const done = cache[key];
-        if (done !== undefined) return done;
-        const finished = alias(value);
-        cache[key] = finished;
-        return finished;
+        const finishes = finishesOf();
+        const value = (isDark() ? finishes.dark : finishes.light)[role][key];
+        return read(key, value);
       },
     });
   }
-  return out;
+  const glass = (key: string): string | undefined => {
+    const apple = materialOf(role)?.apple;
+    if (apple === undefined) return undefined;
+    if (key === "glassEffect") return apple.glass;
+    return apple.tint === null ? undefined : read("glassTintColor", apple.tint);
+  };
+  return new Proxy(out, {
+    ownKeys: (target) => [...Reflect.ownKeys(target), ...glassKeys(role)],
+    getOwnPropertyDescriptor: (target, key) =>
+      typeof key === "string" && glassKeys(role).includes(key)
+        ? { value: glass(key), enumerable: true, configurable: true, writable: false }
+        : Reflect.getOwnPropertyDescriptor(target, key),
+    has: (target, key) =>
+      Reflect.has(target, key) || (typeof key === "string" && glassKeys(role).includes(key)),
+    get: (target, key, receiver) =>
+      typeof key === "string" && (key === "glassEffect" || key === "glassTintColor")
+        ? glass(key)
+        : Reflect.get(target, key, receiver),
+  });
+}
+
+/** What `platformMaterial` returns: the platform props a finish's `material` asks for. A platform it asks
+ * nothing of has `undefined`. */
+export interface MaterialProps {
+  ios?: { backdropMaterial: BackdropMaterial };
+  macos?: {
+    backdrop: {
+      material: MacOsBackdropMaterial;
+      blending?: MacOsBackdropBlending;
+      state?: MacOsBackdropState;
+    };
+  };
+  windows?: { backdrop: { material: WindowsBackdropMaterial } };
+}
+
+/**
+ * The platform props of a finish's `material`: `ios={{ backdropMaterial }}`, `macos={{ backdrop }}`
+ * and `windows={{ backdrop }}`, for the view that draws the finish. They are props, not style keys, so
+ * a component spreads them on the same view that spreads `finish.<role>` into its `style`:
+ *
+ *     <View {...platformMaterial("menu")} style={{ ...finish.menu }} />
+ *
+ * Its three keys are getters, so they follow `selectTheme` and the appearance as `finish` does, and
+ * a finish with `material: null` (every finish the library ships) gives `undefined` for all three: the
+ * view is drawn as it was. The Liquid Glass of `material.apple` needs no prop: it is in the style.
+ */
+export function platformMaterial(role: FinishRole): MaterialProps {
+  return {
+    get ios() {
+      const ios = materialOf(role)?.ios;
+      return ios === undefined ? undefined : { backdropMaterial: ios.backdrop };
+    },
+    get macos() {
+      const macos = materialOf(role)?.macos;
+      if (macos === undefined) return undefined;
+      const { backdrop: material, blending, state } = macos;
+      return {
+        backdrop: {
+          material,
+          ...(blending === undefined ? {} : { blending }),
+          ...(state === undefined ? {} : { state }),
+        },
+      };
+    },
+    get windows() {
+      const windows = materialOf(role)?.windows;
+      return windows === undefined ? undefined : { backdrop: { material: windows.backdrop } };
+    },
+  };
 }
 
 /** The palette's roles: one color each, a token of the theme's `theme.json`. */
@@ -513,7 +655,7 @@ export const tints = tokens({
  * neutral with an edge. `groove` is a hairline's lip of light under it, a
  * menu's separator cut into the surface.
  */
-export const finish: Record<FinishRole, Finish> = {
+export const finish: Record<FinishRole, FinishStyle> = {
   card: themed("card"),
   inset: themed("inset"),
   field: themed("field"),

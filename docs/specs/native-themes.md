@@ -67,18 +67,18 @@
 
 下表是第 1b 期做完之后的状态：风格数据在 `finishes.json`，组件经 getter 读它（字号、圆角、线宽、状态、尺寸）；Tailwind 类里写死的值（`text-sm`、`rounded-(--radius-control)`、`active:opacity-70`）读不了 getter，留在代码里。
 
-| 维度     | 现在在哪                                                                                                                                                                         | 能否随主题切换                                           |
-| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| 颜色     | `theme.json`：shadcn 的 31 个槽位加本库扩展                                                                                                                                      | ✅                                                       |
-| 质感     | `finishes.json`：20 个 finish，字段有 bg / image / border / shadow / backdropFilter，还有 `press.scale`                                                                          | ✅                                                       |
-| 圆角     | `finishes.json` 的 `shape` 按角色写；组件经 `theme.ts` 的 `shape` 读，`rounded(radius, inset)` 取同心圆角；`theme.json` 的三档留给 `token()` 与 Tailwind 的 `rounded-*` 类（1b） | ✅ 8 个角色                                              |
-| 曲率     | `finishes.json` 的 `shape.curve`，`theme.ts` 的 `cornerCurve` 读它                                                                                                               | ✅                                                       |
-| 字体     | `finishes.json` 的 `type`；组件经 `font.size / weight / line / tracking` 读角色，`type.family` 经 `selectTheme` 写进 `font-sans`（1b 第 1 部分）                                 | ✅ 角色没有对得上的字号留在代码里（见 `theme-roles.md`） |
-| 页面密度 | `finishes.json` 的 `size.density`，`surface.tsx` 的 `density` 读它，按 pointer / touch 两档                                                                                      | ✅                                                       |
-| 控件尺寸 | `finishes.json` 的 `size.control`，`surface.tsx` 的 `controlSize` 读它；terminal 档留在代码里                                                                                    | ✅                                                       |
-| 动效     | `finishes.json` 的 `motion`，`theme.ts` 的 `motion` 读它：press、settle、control、move、enter、shake                                                                             | ✅                                                       |
-| 平台材质 | 组件没有用到 `glassEffect`、`glassTintColor`、`ios.backdropMaterial`、`macos.backdrop`、`windows.backdrop`、`android.ripple`                                                     | ❌                                                       |
-| 主题选择 | `selectTheme(AppTheme)` 只能手动选；`AppTheme` 是 `{ id, label, theme, finishes }`                                                                                               | ❌ 不会按平台自动选                                      |
+| 维度     | 现在在哪                                                                                                                                                                                                                                                                                                                                                                  | 能否随主题切换                                           |
+| -------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
+| 颜色     | `theme.json`：shadcn 的 31 个槽位加本库扩展                                                                                                                                                                                                                                                                                                                               | ✅                                                       |
+| 质感     | `finishes.json`：20 个 finish，字段有 bg / image / border / shadow / backdropFilter，还有 `press.scale`                                                                                                                                                                                                                                                                   | ✅                                                       |
+| 圆角     | `finishes.json` 的 `shape` 按角色写；组件经 `theme.ts` 的 `shape` 读，`rounded(radius, inset)` 取同心圆角；`theme.json` 的三档留给 `token()` 与 Tailwind 的 `rounded-*` 类（1b）                                                                                                                                                                                          | ✅ 8 个角色                                              |
+| 曲率     | `finishes.json` 的 `shape.curve`，`theme.ts` 的 `cornerCurve` 读它                                                                                                                                                                                                                                                                                                        | ✅                                                       |
+| 字体     | `finishes.json` 的 `type`；组件经 `font.size / weight / line / tracking` 读角色，`type.family` 经 `selectTheme` 写进 `font-sans`（1b 第 1 部分）                                                                                                                                                                                                                          | ✅ 角色没有对得上的字号留在代码里（见 `theme-roles.md`） |
+| 页面密度 | `finishes.json` 的 `size.density`，`surface.tsx` 的 `density` 读它，按 pointer / touch 两档                                                                                                                                                                                                                                                                               | ✅                                                       |
+| 控件尺寸 | `finishes.json` 的 `size.control`，`surface.tsx` 的 `controlSize` 读它；terminal 档留在代码里                                                                                                                                                                                                                                                                             | ✅                                                       |
+| 动效     | `finishes.json` 的 `motion`，`theme.ts` 的 `motion` 读它：press、settle、control、move、enter、shake                                                                                                                                                                                                                                                                      | ✅                                                       |
+| 平台材质 | `finishes.json` 每个 finish 的 `material`（`null` 或 `apple` / `ios` / `macos` / `windows`）；`themed()` 把 `apple` 翻成 style 里的 `glassEffect`、`glassTintColor`，`theme.ts` 的 `platformMaterial(role)` 给出 `ios`、`macos`、`windows` props，用到 `glass`、`menu`、`raised` 的浮层与玻璃按钮已经铺开（2a，#199）。`android.ripple` 不属于 finish，留给 material 主题 | ✅ 数据与接线已有，三套现有主题全为 `null`               |
+| 主题选择 | `selectTheme(AppTheme)` 只能手动选；`AppTheme` 是 `{ id, label, theme, finishes }`                                                                                                                                                                                                                                                                                        | ❌ 不会按平台自动选                                      |
 
 **NSH 已经提供的平台能力**（`references/nsh/website/docs/styling.md` 等）：
 
@@ -272,8 +272,8 @@ default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继
 }
 ```
 
-- `themed()` 读 finish 时，把 `material` 翻译成 NSH 的 style 和平台 prop：`glassEffect` 和 `glassTintColor` 放进 style；`ios`、`macos`、`windows` 作为单独的 props 一并返回。
-- 用 finish 的组件需要多铺开一组 props。这是第 2 期里唯一要改组件的地方。
+- `themed()` 读 finish 时，把 `material.apple` 翻译成 style 里的 `glassEffect` 与 `glassTintColor`（色值走 alias 路径，不写字面量），`material` 本身从不进 style；`ios`、`macos`、`windows` 不是 style 键，由 `theme.ts` 的 `platformMaterial(role)` 返回（`{ ios: { backdropMaterial }, macos: { backdrop: { material, blending, state } }, windows: { backdrop: { material } } }`，随 `selectTheme` 与外观响应），组件在同一个 View 上 `{...platformMaterial("menu")}` 铺开。`material` 为 `null` 时 style 的键与以前完全一样。
+- 用 finish 的组件需要多铺开一组 props。这是第 2 期里唯一要改组件的地方。`nsh/base` 的弹层（`Menu`、`Select`、`Popover` 的 popup）只开放 `popupStyle`，所以那里只有 style 里的玻璃键生效，`ios` / `macos` / `windows` 铺不上去；这是已知限制，要用就在应用自己的 View 上铺。
 - 遵守"形状固定"：所有主题、所有 finish 都写 `material`，不用材质的写 `null`。
 - 先接四个浮层或半透明的 finish：`glass`、`menu`、`card`（侧栏和面板）、`raised`（Apple 的玻璃按钮）。
 
@@ -355,12 +355,18 @@ default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继
 - ✅ `state`（`pressedOpacity`、`disabled`，叠色经 `stateLayer`，悬停叠色接在 `hovered()` 上）和 `focus`、`stroke` 接到组件，`stroke.focus` 与 `focus.width` 并成一个（留 `focus.width`）；`icon.size`、`size.height`、`size.hit` 取代按钮与图标里的同名常量。写在 Tailwind 类里的值、没有对应角色的值留在代码里，各处注明原因（见 `theme-roles.md`）。
 - 验收同 1a，画面仍逐像素一致；`apps/gallery/tests/theme-shape.test.tsx` 切到临时主题后圆角、线宽、高度、透明度与触控目标下一帧跟着变。
 
-### 第 2 期：平台材质与 `nativeTheme()`（一个 PR）
+### 第 2 期：平台材质与 `nativeTheme()`（拆成 2a、2b 两个 PR）
+
+#### 2a：材质的数据与接线（完成，#199）
+
+- ✅ finish 增加 `material` 字段，所有主题、所有 finish 都写（现有三套全为 `null`），`check:theme` 检查它存在、取值在 NSH 的白名单里、`apple.tint` 是主题里有的颜色。
+- ✅ `themed()` 翻译 `apple`，`platformMaterial(role)` 给出 `ios`、`macos`、`windows`；`popup` 的 `PopIn`（Popover、HoverCard、NavigationMenu 的面板）、`Toast`、`CodeEditorFindBar`（`menu`）和 `CarouselPrevious` / `CarouselNext` 的 `glass` 铺开平台 props。`listbox`、`menu`、`plot`、`refresh-indicator` 的 look 只交出 style，玻璃键随 style 走，平台 props 由画这个 View 的人铺开。侧栏的 `finish.card` 只取了 `boxShadow`，没有画玻璃，不用铺。
+- ✅ 验收：`port:render` 与 `port:render:theme` 逐像素不变；`apps/gallery/tests/theme-material.test.tsx` 切到临时主题后 View 带上 `glassEffect`、`glassTintColor` 与平台 props，`selectTheme(null)` 后下一帧消失。
+
+#### 2b：`nativeTheme()` 与 `apple` 主题（待做，#200）
 
 内容：
 
-- finish 增加 `material` 字段，`themed()` 负责翻译。
-- 用到 `glass`、`menu`、`card`、`raised` 的组件铺开平台 props。
 - 新增 `themes/native` 和 `apple` 主题。
 - 新增颜色 token：`on-brand-tint`（强调淡底上的字）、`inverse`、`inverse-foreground`，以及可能的 `inverse-brand`（snackbar 的操作按钮）。`on-media`（照片上的白字）和 `chart-foreground`（浅色图块上的深字）已经在 C 层，名字以 `theme-roles.md` 为准，这里不再另起。新增 finish：`dialog`、`tooltip`、`inverse`；先查清现在 dialog、tooltip、toast 借用的是哪个 finish，三个平台在这里本来就不同的才拆开。
 
@@ -398,14 +404,13 @@ C1–C5 各开一个上游 issue，链接记在本节。
 | 3   | 悬停与按下继续"换 finish"，还是统一改成叠色              | **两种并存，主题自己选**                                                                        | 统一改成叠色会改动 default 的画面。default、shadcn、solid-glass 的叠色全是 0；Material 用叠色。                                                                                                                                                                                                |
 | 4   | 外观枚举（`indicator`）开不开                            | **开，只用白名单**：`tabs`（underline / pill）、`nav`（fill / bar）、`field`（box / underline） | 不开则 Fluent、Material 的输入框和标签页画不像；全放开会让主题变成第二套组件 API。                                                                                                                                                                                                             |
 | 5   | 第 1 期是否顺带统一组件里散落的 `fontSize`               | **是，放在 1b**                                                                                 | 不统一的话字号层级形同虚设；改动面大，所以和数据分开一个 PR。                                                                                                                                                                                                                                  |
+| 6   | 原生主题是否进 registry                                  | **进**，作为 `theme-apple`、`theme-material`、`theme-fluent` 发布                               | 和 `theme-shadcn` 一致，复制后归应用所有。                                                                                                                                                                                                                                                     |
+| 7   | 原生主题的强调色是写死，还是等 C1                        | **先写死**                                                                                      | 不阻塞；C1 落地后改成读系统值。                                                                                                                                                                                                                                                                |
+| 8   | 尺寸能否和面分开选（只换尺寸不换面）                     | **暂不**                                                                                        | 先按"一个主题是一套整体"处理，以后再拆。                                                                                                                                                                                                                                                       |
 
 ### 仍待决定
 
-| 问题                                                                               | 建议   | 理由                                     |
-| ---------------------------------------------------------------------------------- | ------ | ---------------------------------------- |
-| 原生主题是否进 registry，作为 `theme-apple`、`theme-material`、`theme-fluent` 发布 | 进     | 和 `theme-shadcn` 一致，复制后归应用所有 |
-| 原生主题的强调色是写死，还是等 C1                                                  | 先写死 | 不阻塞；C1 落地后改成读系统值            |
-| 尺寸能否和面分开选（只换尺寸不换面）                                               | 暂不   | 先按"一个主题是一套整体"处理，以后再拆   |
+暂无。
 
 ## 来源
 

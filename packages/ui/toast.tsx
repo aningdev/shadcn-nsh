@@ -2,6 +2,7 @@
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import {
   alpha,
+  platformMaterial,
   colors,
   finish,
   focusRing,
@@ -130,7 +131,7 @@ const toastTextColumn: ViewStyle = { flex: 1, gap: 2, minWidth: 0 };
 export function Toast(props: ToastProps) {
   const [, rest] = split(props, ["title", "description", "children", "style"]);
   return (
-    <BaseToast {...rest} style={[toastLook(), props.style ?? null]}>
+    <BaseToast {...platformMaterial("menu")} {...rest} style={[toastLook(), props.style ?? null]}>
       {props.children ?? (
         <View style={toastTextColumn}>
           {props.title ? <Text style={toastTitle()}>{props.title}</Text> : null}

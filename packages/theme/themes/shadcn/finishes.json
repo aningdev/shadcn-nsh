@@ -234,217 +234,257 @@
   "dark": {
     "card": {
       "backgroundImage": "linear-gradient(180deg, var(--card) 0%, var(--card) 100%)",
-      "boxShadow": "0 1px 3px 0 oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)"
+      "boxShadow": "0 1px 3px 0 oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)",
+      "material": null
     },
     "inset": {
-      "boxShadow": "none"
+      "boxShadow": "none",
+      "material": null
     },
     "field": {
-      "boxShadow": "0 1px 2px 0 oklch(0 0 0 / 0.05)"
+      "boxShadow": "0 1px 2px 0 oklch(0 0 0 / 0.05)",
+      "material": null
     },
     "raised": {
       "backgroundColor": "var(--raised)",
       "backgroundImage": "linear-gradient(180deg, var(--raised) 0%, var(--raised) 100%)",
       "boxShadow": "0 1px 2px 0 oklch(0 0 0 / 0.05)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "hover": {
       "backgroundColor": "var(--hover)",
       "backgroundImage": "linear-gradient(180deg, var(--hover) 0%, var(--hover) 100%)",
       "boxShadow": "0 1px 2px 0 oklch(0 0 0 / 0.05)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "pressed": {
       "backgroundColor": "oklch(0.34846 0 0)",
       "backgroundImage": "linear-gradient(180deg, oklch(0.34846 0 0) 0%, oklch(0.34846 0 0) 100%)",
       "boxShadow": "none",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "light": {
       "backgroundColor": "var(--primary)",
       "backgroundImage": "linear-gradient(180deg, var(--primary) 0%, var(--primary) 100%)",
       "boxShadow": "none",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "accent": {
       "backgroundColor": "var(--primary)",
       "backgroundImage": "linear-gradient(180deg, var(--primary) 0%, var(--primary) 100%)",
       "boxShadow": "none",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "track": {
       "boxShadow": "none",
-      "borderColor": "var(--border)"
+      "borderColor": "var(--border)",
+      "material": null
     },
     "fill": {
       "backgroundColor": "transparent",
       "backgroundImage": "linear-gradient(180deg, var(--primary) 0%, var(--primary) 100%)",
       "boxShadow": "none",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "knob": {
       "backgroundColor": "var(--knob)",
       "backgroundImage": "linear-gradient(180deg, var(--knob) 0%, var(--knob) 100%)",
       "boxShadow": "0 1px 3px 0 oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "knobOn": {
       "backgroundColor": "var(--primary-foreground)",
       "backgroundImage": "linear-gradient(180deg, var(--primary-foreground) 0%, var(--primary-foreground) 100%)",
       "boxShadow": "0 1px 3px 0 oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "handle": {
       "backgroundColor": "oklch(1 0 0)",
       "backgroundImage": "linear-gradient(180deg, oklch(1 0 0) 0%, oklch(1 0 0) 100%)",
       "boxShadow": "0 1px 3px 0 oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)",
-      "borderColor": "var(--primary)"
+      "borderColor": "var(--primary)",
+      "material": null
     },
     "pill": {
       "backgroundColor": "var(--raised)",
       "backgroundImage": "linear-gradient(180deg, var(--raised) 0%, var(--raised) 100%)",
       "boxShadow": "0 1px 2px 0 oklch(0 0 0 / 0.05)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "thumb": {
       "backgroundColor": "oklch(0.34846 0 0)",
       "backgroundImage": "linear-gradient(180deg, oklch(0.34846 0 0) 0%, oklch(0.34846 0 0) 100%)",
       "boxShadow": "0 1px 3px 0 oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "on": {
       "backgroundColor": "var(--chart-3)",
       "backgroundImage": "linear-gradient(180deg, var(--chart-3) 0%, var(--chart-3) 100%)",
       "boxShadow": "none",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "chip": {
       "backgroundColor": "var(--muted)",
       "backgroundImage": "linear-gradient(180deg, var(--muted) 0%, var(--muted) 100%)",
       "boxShadow": "none",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "glass": {
       "backgroundColor": "oklch(from var(--card) l c h / 0.8)",
       "boxShadow": "none",
       "borderColor": "var(--border)",
-      "backdropFilter": "blur(20px)"
+      "backdropFilter": "blur(20px)",
+      "material": null
     },
     "menu": {
       "backgroundColor": "var(--card)",
       "boxShadow": "0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1)",
-      "borderColor": "var(--border)"
+      "borderColor": "var(--border)",
+      "material": null
     },
     "groove": {
-      "boxShadow": "none"
+      "boxShadow": "none",
+      "material": null
     }
   },
   "light": {
     "card": {
       "backgroundImage": "linear-gradient(180deg, var(--card) 0%, var(--card) 100%)",
-      "boxShadow": "0 1px 3px 0 oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)"
+      "boxShadow": "0 1px 3px 0 oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)",
+      "material": null
     },
     "inset": {
-      "boxShadow": "none"
+      "boxShadow": "none",
+      "material": null
     },
     "field": {
-      "boxShadow": "0 1px 2px 0 oklch(0 0 0 / 0.05)"
+      "boxShadow": "0 1px 2px 0 oklch(0 0 0 / 0.05)",
+      "material": null
     },
     "raised": {
       "backgroundColor": "var(--raised)",
       "backgroundImage": "linear-gradient(180deg, var(--raised) 0%, var(--raised) 100%)",
       "boxShadow": "0 1px 2px 0 oklch(0 0 0 / 0.05)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "hover": {
       "backgroundColor": "var(--hover)",
       "backgroundImage": "linear-gradient(180deg, var(--hover) 0%, var(--hover) 100%)",
       "boxShadow": "0 1px 2px 0 oklch(0 0 0 / 0.05)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "pressed": {
       "backgroundColor": "var(--border)",
       "backgroundImage": "linear-gradient(180deg, var(--border) 0%, var(--border) 100%)",
       "boxShadow": "none",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "light": {
       "backgroundColor": "var(--primary)",
       "backgroundImage": "linear-gradient(180deg, var(--primary) 0%, var(--primary) 100%)",
       "boxShadow": "none",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "accent": {
       "backgroundColor": "var(--primary)",
       "backgroundImage": "linear-gradient(180deg, var(--primary) 0%, var(--primary) 100%)",
       "boxShadow": "none",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "track": {
       "boxShadow": "none",
-      "borderColor": "var(--border)"
+      "borderColor": "var(--border)",
+      "material": null
     },
     "fill": {
       "backgroundColor": "transparent",
       "backgroundImage": "linear-gradient(180deg, var(--primary) 0%, var(--primary) 100%)",
       "boxShadow": "none",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "knob": {
       "backgroundColor": "var(--knob)",
       "backgroundImage": "linear-gradient(180deg, var(--knob) 0%, var(--knob) 100%)",
       "boxShadow": "0 1px 3px 0 oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "knobOn": {
       "backgroundColor": "var(--background)",
       "backgroundImage": "linear-gradient(180deg, var(--background) 0%, var(--background) 100%)",
       "boxShadow": "0 1px 3px 0 oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "handle": {
       "backgroundColor": "oklch(1 0 0)",
       "backgroundImage": "linear-gradient(180deg, oklch(1 0 0) 0%, oklch(1 0 0) 100%)",
       "boxShadow": "0 1px 3px 0 oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)",
-      "borderColor": "var(--primary)"
+      "borderColor": "var(--primary)",
+      "material": null
     },
     "pill": {
       "backgroundColor": "var(--raised)",
       "backgroundImage": "linear-gradient(180deg, var(--raised) 0%, var(--raised) 100%)",
       "boxShadow": "0 1px 2px 0 oklch(0 0 0 / 0.05)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "thumb": {
       "backgroundColor": "oklch(1 0 0)",
       "backgroundImage": "linear-gradient(180deg, oklch(1 0 0) 0%, oklch(1 0 0) 100%)",
       "boxShadow": "0 1px 3px 0 oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "on": {
       "backgroundColor": "var(--chart-1)",
       "backgroundImage": "linear-gradient(180deg, var(--chart-1) 0%, var(--chart-1) 100%)",
       "boxShadow": "none",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "chip": {
       "backgroundColor": "var(--muted)",
       "backgroundImage": "linear-gradient(180deg, var(--muted) 0%, var(--muted) 100%)",
       "boxShadow": "none",
-      "borderColor": "transparent"
+      "borderColor": "transparent",
+      "material": null
     },
     "glass": {
       "backgroundColor": "oklch(from var(--card) l c h / 0.8)",
       "boxShadow": "none",
       "borderColor": "var(--border)",
-      "backdropFilter": "blur(20px)"
+      "backdropFilter": "blur(20px)",
+      "material": null
     },
     "menu": {
       "backgroundColor": "var(--card)",
       "boxShadow": "0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1)",
-      "borderColor": "var(--border)"
+      "borderColor": "var(--border)",
+      "material": null
     },
     "groove": {
-      "boxShadow": "none"
+      "boxShadow": "none",
+      "material": null
     }
   }
 }

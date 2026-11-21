@@ -18,6 +18,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 import { colourFields, readColour } from "./theme/finish-colour";
+import { checkMaterial } from "./theme/material";
 import { parseColor } from "./theme/oklch";
 import { specBlock, specParts, specRows } from "./theme/spec";
 import { checkStyle } from "./theme/style";
@@ -42,6 +43,7 @@ interface Finish {
   boxShadow?: string;
   borderColor?: string;
   backdropFilter?: string;
+  material?: unknown;
 }
 
 interface FinishesFile {
@@ -276,8 +278,9 @@ for (const theme of themes) {
       const have = Object.keys(finish).sort();
       const want = shapeOf.get(`${role}.${appearance}`);
       if (want === undefined) continue;
+      // `material` is judged with its values in rule 4: a finish that leaves it out is named there.
       for (const field of want)
-        if (!have.includes(field))
+        if (field !== "material" && !have.includes(field))
           fail(`${path}: ${role}.${field} is missing, and every finish states a ${field}`);
       for (const field of have)
         if (!want.includes(field))
@@ -315,6 +318,14 @@ for (const theme of themes) {
               : `${path}: ${role}.${field} writes ${problem.literal}, which is no token of the theme, no ink, and not in the spec's pending table`,
           );
       }
+      // The platform material: stated on every finish, from NSH's lists, its tint a token of the theme.
+      for (const problem of checkMaterial(
+        path,
+        `${role}.${appearance}`,
+        finish as Record<string, unknown>,
+        known,
+      ))
+        fail(problem);
       for (const [, name] of (finish.boxShadow ?? "").matchAll(/var\(--([A-Za-z0-9-]+)\)/g))
         if (!known.has(name))
           fail(`${path}: ${role}.boxShadow names token \`${name}\`, which ${theme} does not have`);

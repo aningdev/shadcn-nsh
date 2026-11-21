@@ -2,7 +2,7 @@
 // `CodeEditorFindBar` that finds in it.
 // This library's own: NSH's gallery has a look for the rich editor and none for the code editor,
 // so nothing here is ported and there is no port region. Yours to change.
-import { colors, finish, mono, rounded, shape, stroke } from "@shadcn-nsh/theme";
+import { colors, finish, mono, platformMaterial, rounded, shape, stroke } from "@shadcn-nsh/theme";
 import { ArrowDown, ArrowUp, Replace, ReplaceAll, X } from "lucide";
 import {
   cleanup,
@@ -190,6 +190,7 @@ export function CodeEditorFindBar(props: CodeEditorFindBarProps) {
   const glyph = buttonGlyph("ghost", { size: "sm" });
   return (
     <View
+      {...platformMaterial("menu")}
       {...rest}
       class={props.class}
       style={[{ ...popupSurface(), gap: 4 }, props.style ?? null]}

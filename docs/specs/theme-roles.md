@@ -99,6 +99,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | `boxShadow`       | 内高光、接触影、投影：永远字面（墨色）       |
 | `borderColor`     | 边：`var(--token)` 或 `transparent`          |
 | `backdropFilter`  | 只有模糊，不放颜色                           |
+| `material`        | `null`，或平台自己的材质（见下）             |
 
 颜色字段只有 `backgroundColor`、`backgroundImage`、`borderColor` 三个，规则也管这三个。`boxShadow` 例外：影子是墨色，不为几何、不为对比提供颜色，也就没有对应的 token——它在所有主题里都保留字面（黑或白带 alpha，或强调色的半透明墨）。一条影子里写了一个表面的颜色，是设计问题，不是 lint 能判的。
 
@@ -140,7 +141,18 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 两层不能同时清空：默认主题里画出底色的 finish，在每个主题里都画出底色；默认主题里清空的（`inset`、`field`、`track`、`groove`：靠阴影和边画出来的井与槽），在每个主题里都清空。`theme-lint` 检查这一条。`port:render:theme` 拦不住这种错：组件和参照页读的是同一个 finish，一起变透明时两张图依然相同。
 
-字段顺序固定：`backgroundColor`、`backgroundImage`、`boxShadow`、`borderColor`、`backdropFilter`。`scripts/theme/order.ts` 的 `orderedFinish` 按默认主题的键序写文件，多一个或少一个键都报错。
+**`material`**（2a，#199）是一个 finish 向平台要的原生材质，**每个 finish 都写**，不要就写 `null`（形状固定，不删字段）。值是 `null`，或下面这个形状里写了的几项，取值来自 NSH 的类型：
+
+| 键        | 内容                                                                                                                                                 | 变成                                                                 |
+| --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| `apple`   | `{ glass: "regular" \| "clear", tint: <颜色或 null> }`；`tint` 与别处一样写 `var(--token)`，不写字面量                                               | style 里的 `glassEffect`、`glassTintColor`（`themed()` 随 style 给） |
+| `ios`     | `{ backdrop: "ultraThin" \| "thin" \| "regular" \| "thick" \| "chrome" }`                                                                            | `ios={{ backdropMaterial }}`                                         |
+| `macos`   | `{ backdrop: <NSVisualEffectView 材质>, blending?: "withinWindow" \| "behindWindow", state?: "followsWindowActiveState" \| "active" \| "inactive" }` | `macos={{ backdrop: { material, blending, state } }}`                |
+| `windows` | `{ backdrop: "blur" }`                                                                                                                               | `windows={{ backdrop: { material } }}`                               |
+
+`themed()` 从不把 `material` 放进 style；style 里只多 `glassEffect`（有 `apple` 时）和 `glassTintColor`（`tint` 不为 `null` 时），`material: null` 时键与以前完全一样。`ios`、`macos`、`windows` 不是 style 键，由 `theme.ts` 的 `platformMaterial(role)` 返回，组件在同一个 View 上铺开：`<View {...platformMaterial("menu")} style={{ ...finish.menu }} />`。`check:theme` 检查 `material` 存在于每个 finish，取值在白名单里，`apple.tint` 是该主题有的颜色（`scripts/theme/material.ts`）。
+
+字段顺序固定：`backgroundColor`、`backgroundImage`、`boxShadow`、`borderColor`、`backdropFilter`、`material`。`scripts/theme/order.ts` 的 `orderedFinish` 按默认主题的键序写文件，多一个或少一个键都报错。
 
 ## 4 每个 finish
 
