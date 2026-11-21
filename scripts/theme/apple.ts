@@ -11,7 +11,7 @@
  * sources.
  */
 import { oklchColor, over, toOklchText } from "./oklch";
-import { ordered, orderedFinish } from "./order";
+import { ordered, orderedSplitFinishes } from "./order";
 import { withSurfaces } from "./surfaces";
 
 /** Apple's system colours, per appearance (sRGB, as UIKit documents them). */
@@ -111,6 +111,11 @@ const themeLevel = (): Record<string, string> => ({
   radius: "8px",
   "radius-card": "20px",
   "radius-control": "999px",
+  "radius-field": "8px",
+  "radius-chip": "999px",
+  "radius-overlay": "12px",
+  "radius-dialog": "26px",
+  "radius-sheet": "34px",
   "font-mono": "monospace",
   "brand-fill": "var(--primary)",
   "on-brand": "var(--primary-foreground)",
@@ -194,7 +199,7 @@ function section(p: ReturnType<typeof palette>) {
   };
 }
 
-const alias = (token: string) => `var(--${token})`;
+const alias = (token: string) => `{${token}}`;
 const flat = (color: string) => `linear-gradient(180deg, ${color} 0%, ${color} 100%)`;
 /** A hairline edge in ink: the box shadow's one colour (ink is exempt from the token rule). */
 const edge = (appearance: Appearance) =>
@@ -225,7 +230,7 @@ function finishes(appearance: Appearance) {
     field: { boxShadow: "none" },
     raised: {
       // The glass shows through the fill, so the gradient over it is clear, not the opaque token.
-      ...surface("oklch(from var(--raised) l c h / 0.72)", { boxShadow: hairline }),
+      ...surface("oklch(from {raised} l c h / 0.72)", { boxShadow: hairline }),
       backgroundImage: "linear-gradient(180deg, transparent 0%, transparent 100%)",
       material: { apple: glass },
     },
@@ -248,14 +253,14 @@ function finishes(appearance: Appearance) {
     on: surface(alias("muted")),
     chip: surface(alias("muted")),
     glass: {
-      backgroundColor: "oklch(from var(--popover) l c h / 0.4)",
+      backgroundColor: "oklch(from {popover} l c h / 0.4)",
       boxShadow: "none",
       borderColor: alias("border"),
       backdropFilter: "blur(30px)",
       material: { apple: glass, ios: { backdrop: "thin" } },
     },
     menu: {
-      backgroundColor: "oklch(from var(--popover) l c h / 0.72)",
+      backgroundColor: "oklch(from {popover} l c h / 0.72)",
       boxShadow: `${hairline}, 0 8px 30px ${oklchColor(0, 0, 0, appearance === "light" ? 0.14 : 0.4)}`,
       borderColor: "transparent",
       material: { apple: glass, ios: { backdrop: "regular" } },
@@ -312,14 +317,14 @@ export const style = {
     },
   },
   shape: {
-    control: 999,
-    field: 8,
-    chip: 999,
-    card: 20,
-    overlay: 12,
-    dialog: 26,
-    sheet: 34,
-    inset: 8,
+    control: "{radius-control}",
+    field: "{radius-field}",
+    chip: "{radius-chip}",
+    card: "{radius-card}",
+    overlay: "{radius-overlay}",
+    dialog: "{radius-dialog}",
+    sheet: "{radius-sheet}",
+    inset: "{radius}",
     curve: "continuous",
     corners: { field: "all" },
   },
@@ -362,6 +367,8 @@ export const style = {
   stroke: { hairline: 0.5, control: 1, indicator: 2 },
   focus: { style: "halo", width: 3, offset: 0 },
   state: {
+    // Apple presses by dimming (`state.pressedOpacity`), not by sinking.
+    pressScale: 1,
     overlay: { hover: 0, focus: 0, pressed: 0, dragged: 0 },
     ripple: false,
     pressedOpacity: 0.7,
@@ -398,8 +405,8 @@ export function themeFiles(defaults: {
   theme: Record<string, string>;
   light: Record<string, string>;
   dark: Record<string, string>;
-  lightFinishes: Record<string, string>;
-  darkFinishes: Record<string, string>;
+  lightFinishes: Record<string, Record<string, unknown>>;
+  darkFinishes: Record<string, Record<string, unknown>>;
 }) {
   return {
     theme: {
@@ -410,12 +417,14 @@ export function themeFiles(defaults: {
         dark: ordered(defaults.dark, section(palette("dark"))),
       },
     },
-    finishes: {
-      // Apple presses by dimming (`state.pressedOpacity`), not by sinking.
-      press: { scale: 1 },
-      style,
-      dark: orderedFinish(defaults.darkFinishes, withMaterial(withSurfaces(finishes("dark")))),
-      light: orderedFinish(defaults.lightFinishes, withMaterial(withSurfaces(finishes("light")))),
+    semantics: {
+      ...style,
+      finishes: orderedSplitFinishes(
+        defaults.lightFinishes,
+        defaults.darkFinishes,
+        withMaterial(withSurfaces(finishes("light"))),
+        withMaterial(withSurfaces(finishes("dark"))),
+      ),
     },
   };
 }

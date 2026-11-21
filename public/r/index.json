@@ -6,7 +6,7 @@
       "name": "theme",
       "type": "registry:theme",
       "title": "Theme",
-      "description": "The design tokens (theme.json), the finishes (finishes.json) and the roles that read them (lib/ui/theme.ts).",
+      "description": "The design tokens (theme.json), the finishes (semantics.json) and the roles that read them (lib/ui/theme.ts).",
       "files": [
         {
           "path": "packages/theme/theme.json",
@@ -14,9 +14,9 @@
           "target": "theme.json"
         },
         {
-          "path": "packages/theme/finishes.json",
+          "path": "packages/theme/semantics.json",
           "type": "registry:lib",
-          "target": "lib/ui/finishes.json"
+          "target": "lib/ui/semantics.json"
         },
         {
           "path": "packages/theme/theme.ts",
@@ -29,7 +29,7 @@
       "name": "theme-shadcn",
       "type": "registry:theme",
       "title": "Theme: shadcn neutral",
-      "description": "shadcn's neutral palette and flat finishes as one more theme, installed into themes/shadcn/ (theme.json, finishes.json, index.ts) for `selectTheme` to switch to while the app runs.",
+      "description": "shadcn's neutral palette and flat finishes as one more theme, installed into themes/shadcn/ (theme.json, semantics.json, index.ts) for `selectTheme` to switch to while the app runs.",
       "files": [
         {
           "path": "packages/theme/themes/shadcn/theme.json",
@@ -37,9 +37,9 @@
           "target": "themes/shadcn/theme.json"
         },
         {
-          "path": "packages/theme/themes/shadcn/finishes.json",
+          "path": "packages/theme/themes/shadcn/semantics.json",
           "type": "registry:file",
-          "target": "themes/shadcn/finishes.json"
+          "target": "themes/shadcn/semantics.json"
         },
         {
           "path": "packages/theme/themes/shadcn/index.ts",
@@ -52,7 +52,7 @@
       "name": "theme-solid-glass",
       "type": "registry:theme",
       "title": "Theme: Solid Glass",
-      "description": "Solid Glass (deeplethe/solid-glass, MIT) as one more theme: panes of thick smoky glass — a rim of light on each top edge, a hairline round it, a shadow underneath — installed into themes/solid-glass/ (theme.json, finishes.json, index.ts) for `selectTheme` to switch to while the app runs.",
+      "description": "Solid Glass (deeplethe/solid-glass, MIT) as one more theme: panes of thick smoky glass — a rim of light on each top edge, a hairline round it, a shadow underneath — installed into themes/solid-glass/ (theme.json, semantics.json, index.ts) for `selectTheme` to switch to while the app runs.",
       "files": [
         {
           "path": "packages/theme/themes/solid-glass/theme.json",
@@ -60,9 +60,9 @@
           "target": "themes/solid-glass/theme.json"
         },
         {
-          "path": "packages/theme/themes/solid-glass/finishes.json",
+          "path": "packages/theme/themes/solid-glass/semantics.json",
           "type": "registry:file",
-          "target": "themes/solid-glass/finishes.json"
+          "target": "themes/solid-glass/semantics.json"
         },
         {
           "path": "packages/theme/themes/solid-glass/index.ts",
@@ -75,7 +75,7 @@
       "name": "theme-default",
       "type": "registry:theme",
       "title": "Theme: NSH Gallery UI",
-      "description": "The library's own theme (the build-time one) as one more theme, installed into themes/default/ (theme.json, finishes.json, index.ts) — what an app built on another theme switches back to with `selectTheme` while it runs.",
+      "description": "The library's own theme (the build-time one) as one more theme, installed into themes/default/ (theme.json, semantics.json, index.ts) — what an app built on another theme switches back to with `selectTheme` while it runs.",
       "files": [
         {
           "path": "packages/theme/themes/default/theme.json",
@@ -83,9 +83,9 @@
           "target": "themes/default/theme.json"
         },
         {
-          "path": "packages/theme/themes/default/finishes.json",
+          "path": "packages/theme/themes/default/semantics.json",
           "type": "registry:file",
-          "target": "themes/default/finishes.json"
+          "target": "themes/default/semantics.json"
         },
         {
           "path": "packages/theme/themes/default/index.ts",
@@ -98,7 +98,7 @@
       "name": "theme-apple",
       "type": "registry:theme",
       "title": "Theme: Apple",
-      "description": "Apple's system palette and HIG metrics as one more theme — capsule controls, continuous corners, systemBlue, and Liquid Glass on the glass, menu and raised finishes — installed into themes/apple/ (theme.json, finishes.json, index.ts) for `selectTheme` to switch to while the app runs.",
+      "description": "Apple's system palette and HIG metrics as one more theme — capsule controls, continuous corners, systemBlue, and Liquid Glass on the glass, menu and raised finishes — installed into themes/apple/ (theme.json, semantics.json, index.ts) for `selectTheme` to switch to while the app runs.",
       "files": [
         {
           "path": "packages/theme/themes/apple/theme.json",
@@ -106,9 +106,9 @@
           "target": "themes/apple/theme.json"
         },
         {
-          "path": "packages/theme/themes/apple/finishes.json",
+          "path": "packages/theme/themes/apple/semantics.json",
           "type": "registry:file",
-          "target": "themes/apple/finishes.json"
+          "target": "themes/apple/semantics.json"
         },
         {
           "path": "packages/theme/themes/apple/index.ts",

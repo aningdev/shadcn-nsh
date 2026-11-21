@@ -131,7 +131,7 @@ function rgb(value: string): string | null {
 function themeColors(id: PaletteId): Set<string> {
   const dir = path.join(themeRoot, id);
   const read = (file: string) => JSON.parse(fs.readFileSync(path.join(dir, file), "utf8"));
-  const colors = [...strings(read("theme.json")), ...strings(read("finishes.json"))]
+  const colors = [...strings(read("theme.json")), ...strings(read("semantics.json"))]
     .map(rgb)
     .filter((color): color is string => color !== null);
   return new Set(colors);

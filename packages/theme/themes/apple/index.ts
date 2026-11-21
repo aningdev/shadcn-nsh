@@ -3,7 +3,7 @@
 // app's `themes/apple/`; it is the app's, then, to change.
 import type { AppTheme } from "@shadcn-nsh/theme";
 
-import finishes from "./finishes.json";
+import semantics from "./semantics.json";
 import theme from "./theme.json";
 
 /** Apple's system palette and HIG metrics: capsule controls, continuous corners, systemBlue, and Liquid Glass on the glass, menu and raised finishes. */
@@ -13,7 +13,7 @@ export const apple: AppTheme = {
   theme,
   // JSON types `material.apple.glass` as `string`; the file holds "regular" or "clear", which
   // `check:theme` holds it to.
-  finishes: finishes as AppTheme["finishes"],
+  semantics: semantics as AppTheme["semantics"],
 };
 
 export default apple;

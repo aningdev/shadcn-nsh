@@ -20,24 +20,21 @@ const marked: AppTheme = {
   ...defaultTheme,
   id: "marked",
   label: "marked",
-  finishes: {
-    ...defaultTheme.finishes,
+  semantics: {
+    ...defaultTheme.semantics,
     indicator: { tabs: "underline", nav: "bar", field: "underline" },
     shape: {
-      ...defaultTheme.finishes.shape,
+      ...defaultTheme.semantics.shape,
       corners: { field: "top" },
     },
-    light: {
-      ...defaultTheme.finishes.light,
-      dialog: { ...defaultTheme.finishes.light.dialog, borderColor: "var(--brand)" },
-      tooltip: { ...defaultTheme.finishes.light.tooltip, backgroundColor: "var(--brand)" },
-      inverse: { ...defaultTheme.finishes.light.inverse, backgroundColor: "var(--brand)" },
-    },
-    dark: {
-      ...defaultTheme.finishes.dark,
-      dialog: { ...defaultTheme.finishes.dark.dialog, borderColor: "var(--brand)" },
-      tooltip: { ...defaultTheme.finishes.dark.tooltip, backgroundColor: "var(--brand)" },
-      inverse: { ...defaultTheme.finishes.dark.inverse, backgroundColor: "var(--brand)" },
+    finishes: {
+      ...defaultTheme.semantics.finishes,
+      shared: {
+        ...defaultTheme.semantics.finishes.shared,
+        dialog: { ...defaultTheme.semantics.finishes.shared.dialog, borderColor: "{brand}" },
+        tooltip: { ...defaultTheme.semantics.finishes.shared.tooltip, backgroundColor: "{brand}" },
+        inverse: { ...defaultTheme.semantics.finishes.shared.inverse, backgroundColor: "{brand}" },
+      },
     },
   },
   theme: {

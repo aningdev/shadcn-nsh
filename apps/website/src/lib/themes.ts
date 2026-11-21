@@ -40,11 +40,13 @@ export const FINISH_FIELDS = [
 /** A finish as a theme file writes it: the fields it draws with, and nothing else. */
 export type Finish = Partial<Record<(typeof FINISH_FIELDS)[number], string>>;
 
-/** A theme's finishes, as `finishes.json` writes them. */
-export type FinishesFile = {
-  press: { scale: number };
-  light: Record<string, Finish>;
-  dark: Record<string, Finish>;
+/** A theme's semantics, as `semantics.json` writes them. */
+export type SemanticsFile = {
+  finishes: {
+    shared: Record<string, Finish>;
+    light: Record<string, Finish>;
+    dark: Record<string, Finish>;
+  };
 };
 
 /** One token, in both appearances: the value the theme writes and the one a swatch draws. */
@@ -98,11 +100,11 @@ const FILES = import.meta.glob("../../../../packages/theme/themes/*/theme.json",
   import: "default",
 }) as Record<string, ThemeFile>;
 
-/** `packages/theme/themes/<id>/finishes.json`, every one of them. */
-const FINISHES = import.meta.glob("../../../../packages/theme/themes/*/finishes.json", {
+/** `packages/theme/themes/<id>/semantics.json`, every one of them. */
+const SEMANTICS = import.meta.glob("../../../../packages/theme/themes/*/semantics.json", {
   eager: true,
   import: "default",
-}) as Record<string, FinishesFile>;
+}) as Record<string, SemanticsFile>;
 
 /** The spec, as the page reads it: the A and C layers and every finish's row. */
 const SPEC = specParts(specText);
@@ -114,29 +116,37 @@ function themeFile(id: string): ThemeFile {
   return file;
 }
 
-/** The finishes of a palette: `themes/<id>/finishes.json` below `packages/theme`. */
-function finishesFile(id: string): FinishesFile {
-  const file = FINISHES[`../../../../packages/theme/themes/${id}/finishes.json`];
-  if (!file) throw new Error(`no finishes file for palette "${id}"`);
+/** The semantics of a palette: `themes/<id>/semantics.json` below `packages/theme`. */
+function semanticsFile(id: string): SemanticsFile {
+  const file = SEMANTICS[`../../../../packages/theme/themes/${id}/semantics.json`];
+  if (!file) throw new Error(`no semantics file for palette "${id}"`);
   return file;
 }
 
+/** Merge `shared` with one appearance's sparse overrides into a complete finish map. */
+function mergedFinishes(file: SemanticsFile, scheme: "light" | "dark"): Record<string, Finish> {
+  const overrides = file.finishes[scheme] ?? {};
+  const roles = [...new Set([...Object.keys(file.finishes.shared), ...Object.keys(overrides)])];
+  return Object.fromEntries(
+    roles.map((role) => [role, { ...file.finishes.shared[role], ...overrides[role] }]),
+  );
+}
+
 /**
- * A value with the theme's own references filled in (`var(--card)`), so a swatch can draw it: the
- * appearance's map first, then the `theme` block (a radius-free token may live there). Values the
- * theme does not define are left as written.
+ * A value with the theme's own references filled in (`var(--card)` in `theme.json`, `{card}` in
+ * `semantics.json`), so a swatch can draw it: the appearance's map first, then the `theme` block.
+ * Values the theme does not define are left as written.
  */
 function filled(value: string, vars: Record<string, string>): string {
   let out = value;
   for (let depth = 0; depth < 4; depth += 1) {
-    const next = out.replace(
-      /var\(--([\w-]+)\)/g,
-      (whole: string, name: string) => vars[name] ?? whole,
-    );
+    const next = out
+      .replace(/\{([\w-]+)\}/g, (whole: string, name: string) => vars[name] ?? whole)
+      .replace(/var\(--([\w-]+)\)/g, (whole: string, name: string) => vars[name] ?? whole);
     if (next === out) break;
     out = next;
   }
-  // A relative colour — a token's own colour at another alpha (`oklch(from var(--card) l c h /
+  // A relative colour — a token's own colour at another alpha (`oklch(from {card} l c h /
   // 0.78)`) — is written out whole once its reference is filled in: `theme.ts` draws it as a
   // concrete `oklch(L C H / a)` (NSH's parser reads no relative colour), and the sample should be
   // the colour the theme draws, not one a browser alone can.
@@ -178,25 +188,25 @@ function tokenRows(file: ThemeFile, names: string[], shared: boolean): TokenRow[
 }
 
 /** The tokens a finish names across its values, in the order they first appear. */
-function tokensOf(finishes: FinishesFile, role: string): string[] {
+function tokensOf(semantics: SemanticsFile, role: string): string[] {
   const names = new Set<string>();
   for (const scheme of ["light", "dark"] as const) {
-    const finish = finishes[scheme][role];
+    const finish = mergedFinishes(semantics, scheme)[role];
     if (!finish) continue;
     for (const field of FINISH_FIELDS) {
       const value = finish[field];
       if (value === undefined) continue;
-      for (const match of value.matchAll(/var\(--([\w-]+)\)/g)) names.add(match[1]!);
+      for (const match of value.matchAll(/\{([\w-]+)\}/g)) names.add(match[1]!);
     }
   }
   return [...names];
 }
 
-/** Every palette the demos offer, with its theme and finishes read. */
+/** Every palette the demos offer, with its theme and semantics read. */
 export function themePages(): ThemePage[] {
   return PALETTES.map((palette) => {
     const file = themeFile(palette.id);
-    const finishes = finishesFile(palette.id);
+    const semantics = semanticsFile(palette.id);
     const extension = Object.keys(file.cssVars.light).filter((name) => !SPEC.slots.includes(name));
     return {
       palette,
@@ -227,7 +237,7 @@ export function themePages(): ThemePage[] {
         draws,
         drawsEn,
         reads,
-        tokens: tokensOf(finishes, role),
+        tokens: tokensOf(semantics, role),
       })),
     };
   });
@@ -235,7 +245,7 @@ export function themePages(): ThemePage[] {
 
 /**
  * The stylesheet the finish samples draw with: one rule per finish of every theme, its values
- * taken from that theme's `finishes.json` with the references filled in, and a ground of that
+ * taken from that theme's `semantics.json` with the references filled in, and a ground of that
  * theme's `background` for the sample to sit on. Both follow `html.dark`, so a sample on the page
  * shows the theme it names in the appearance the site is in — not the site's own palette.
  */
@@ -243,7 +253,7 @@ export function finishSampleCss(): string {
   const rules: string[] = [];
   for (const palette of PALETTES) {
     const file = themeFile(palette.id);
-    const finishes = finishesFile(palette.id);
+    const semantics = semanticsFile(palette.id);
     const ground = (scheme: "light" | "dark") => {
       const vars = varsOf(file, scheme);
       return `background-color:${filled(vars.background ?? "transparent", vars)};`;
@@ -253,7 +263,7 @@ export function finishSampleCss(): string {
     for (const scheme of ["light", "dark"] as const) {
       const vars = varsOf(file, scheme);
       const prefix = scheme === "dark" ? "html.dark " : "";
-      for (const [role, finish] of Object.entries(finishes[scheme])) {
+      for (const [role, finish] of Object.entries(mergedFinishes(semantics, scheme))) {
         const declarations: string[] = [];
         const value = (field: (typeof FINISH_FIELDS)[number]) => {
           const written = finish[field];

@@ -217,7 +217,8 @@ const LITERAL = new RegExp(
  */
 export function toOklchText(text: string): string {
   return text.replace(LITERAL, (literal) => {
-    if (literal.toLowerCase() === "transparent") return literal;
+    if (literal.toLowerCase() === "transparent" || /^oklch\(\s*from\b/i.test(literal))
+      return literal;
     const parsed = parseOklch(literal);
     if (parsed) return oklchColor(parsed.l, parsed.c, parsed.h, parsed.a);
     return oklchText(parseColor(literal));

@@ -61,7 +61,7 @@ const out = path.join(shotsDir, "theme");
 fs.mkdirSync(out, { recursive: true });
 
 /** The default files, kept byte for byte: put back whatever happens below. */
-const FILES = ["theme.json", "finishes.json"] as const;
+const FILES = ["theme.json", "semantics.json"] as const;
 const saved = new Map(FILES.map((file) => [file, fs.readFileSync(path.join(theme, file))]));
 
 const run = (args: string[]) => {

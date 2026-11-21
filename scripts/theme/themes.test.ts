@@ -3,21 +3,28 @@ import { readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { toOklchText } from "./oklch";
+import { mergeFinishes, type SplitFinishes } from "./tokens";
 
 const theme = join(import.meta.dir, "../../packages/theme");
 const read = (file: string) => JSON.parse(readFileSync(join(theme, file), "utf8")) as unknown;
 
 type Vars = Record<string, string>;
 type ThemeFile = { cssVars: { theme: Vars; light: Vars; dark: Vars } };
-type Finish = { boxShadow?: string };
-type FinishesFile = {
-  press: { scale: number };
-  light: Record<string, Finish>;
-  dark: Record<string, Finish>;
+type Finish = { [key: string]: unknown; boxShadow?: string };
+type SemanticsFile = {
+  state: { pressScale: number };
+  finishes: SplitFinishes<Finish>;
 };
 
 const defaults = read("theme.json") as ThemeFile;
-const defaultFinishes = read("finishes.json") as FinishesFile;
+const defaultSemantics = read("semantics.json") as SemanticsFile;
+const defaultMerged = {
+  light: mergeFinishes(defaultSemantics.finishes, "light"),
+  dark: mergeFinishes(defaultSemantics.finishes, "dark"),
+};
+
+/** Optional C-layer tokens that a theme may declare only when it sets a family. */
+const optionalThemeTokens = new Set(["font-sans"]);
 
 /** The alternative themes: a directory each, holding the two files of the same shape. */
 const alternatives = readdirSync(join(theme, "themes"), { withFileTypes: true })
@@ -25,6 +32,10 @@ const alternatives = readdirSync(join(theme, "themes"), { withFileTypes: true })
   .map((entry) => entry.name);
 
 const sorted = (value: object) => Object.keys(value).sort();
+const requiredThemeKeys = (vars: Vars) =>
+  Object.keys(vars)
+    .filter((key) => !optionalThemeTokens.has(key))
+    .sort();
 
 /** Every string a theme file holds, at any depth (a gradient's stops and a shadow's colors are in one). */
 function strings(value: unknown): string[] {
@@ -36,9 +47,9 @@ function strings(value: unknown): string[] {
 
 /** The two files of every theme, and the names they are reported under. */
 const themeFiles = [
-  ...["theme.json", "finishes.json"].map((name) => ({ name, value: read(name) })),
+  ...["theme.json", "semantics.json"].map((name) => ({ name, value: read(name) })),
   ...alternatives.flatMap((name) =>
-    ["theme.json", "finishes.json"].map((file) => ({
+    ["theme.json", "semantics.json"].map((file) => ({
       name: `themes/${name}/${file}`,
       value: read(`themes/${name}/${file}`),
     })),
@@ -53,33 +64,38 @@ describe("themes/", () => {
   for (const name of alternatives) {
     describe(name, () => {
       const themeFile = read(`themes/${name}/theme.json`) as ThemeFile;
-      const finishes = read(`themes/${name}/finishes.json`) as FinishesFile;
+      const semantics = read(`themes/${name}/semantics.json`) as SemanticsFile;
 
-      test("declares the default theme's keys, and no others", () => {
-        for (const section of ["theme", "light", "dark"] as const) {
+      test("declares the default theme's keys, and no others (except optional font-sans)", () => {
+        expect(requiredThemeKeys(themeFile.cssVars.theme), "theme").toEqual(
+          requiredThemeKeys(defaults.cssVars.theme),
+        );
+        for (const section of ["light", "dark"] as const) {
           expect(sorted(themeFile.cssVars[section]), section).toEqual(
             sorted(defaults.cssVars[section]),
           );
         }
       });
 
-      test("declares the default finishes' roles, and no others", () => {
+      test("resolves to the default finishes' roles and field sets after merging", () => {
         for (const appearance of ["light", "dark"] as const) {
-          expect(sorted(finishes[appearance]), appearance).toEqual(
-            sorted(defaultFinishes[appearance]),
-          );
+          const merged = mergeFinishes(semantics.finishes, appearance);
+          expect(sorted(merged), appearance).toEqual(sorted(defaultMerged[appearance]));
+          for (const [role, finish] of Object.entries(merged)) {
+            expect(sorted(finish), `${appearance}.${role}`).toEqual(
+              sorted(defaultMerged[appearance][role]!),
+            );
+          }
         }
       });
 
       test("says how far a press sinks, in both appearances", () => {
-        // A control reads it where it is pressed (`pressSink`): 1 is a theme that draws no press
-        // (a flat one), below that the scale a control lands on.
-        expect(typeof finishes.press.scale).toBe("number");
-        expect(finishes.press.scale).toBeGreaterThan(0);
-        expect(finishes.press.scale).toBeLessThanOrEqual(1);
+        expect(typeof semantics.state.pressScale).toBe("number");
+        expect(semantics.state.pressScale).toBeGreaterThan(0);
+        expect(semantics.state.pressScale).toBeLessThanOrEqual(1);
       });
 
-      test("gives every token and every finish a value", () => {
+      test("gives every token and every merged finish a value", () => {
         for (const section of ["theme", "light", "dark"] as const) {
           for (const [key, value] of Object.entries(themeFile.cssVars[section])) {
             expect(typeof value, `${section}.${key}`).toBe("string");
@@ -87,7 +103,9 @@ describe("themes/", () => {
           }
         }
         for (const appearance of ["light", "dark"] as const) {
-          for (const [role, finish] of Object.entries(finishes[appearance])) {
+          for (const [role, finish] of Object.entries(
+            mergeFinishes(semantics.finishes, appearance),
+          )) {
             expect(typeof finish, `${appearance}.${role}`).toBe("object");
             expect(typeof finish.boxShadow, `${appearance}.${role}.boxShadow`).toBe("string");
           }
@@ -99,14 +117,11 @@ describe("themes/", () => {
 
 describe("the default theme", () => {
   test("says how far a press sinks, and says it as the scale a control lands on", () => {
-    expect(defaultFinishes.press.scale).toBe(0.97);
+    expect(defaultSemantics.state.pressScale).toBe(0.97);
   });
 
-  // The build-time theme is also installable as one more theme (`theme-default`, `add
-  // theme-default`): its directory is a copy, and this holds the two together — regenerate with
-  // `cp packages/theme/{theme,finishes}.json packages/theme/themes/default/`.
   test("its files under themes/default/ are the build-time ones, byte for byte", () => {
-    for (const name of ["theme.json", "finishes.json"]) {
+    for (const name of ["theme.json", "semantics.json"]) {
       expect(readFileSync(join(theme, `themes/default/${name}`), "utf8"), name).toBe(
         readFileSync(join(theme, name), "utf8"),
       );
@@ -115,9 +130,6 @@ describe("the default theme", () => {
 });
 
 describe("colors", () => {
-  // A theme stores every color as `oklch()` (NSH reads it wherever a color is a string), so the
-  // conversion `toOklchText` writes is a fixed point of each file: no hex, no `rgb()` / `hsl()`,
-  // and the numbers are the canonical ones (L 5 decimals, C 5, H 3, alpha 3).
   for (const { name, value } of themeFiles) {
     test(`${name}: every color is oklch()`, () => {
       const colors = strings(value).filter((text) => /oklch\(/.test(text));

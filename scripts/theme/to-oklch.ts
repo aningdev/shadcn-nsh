@@ -17,7 +17,7 @@ import { repo } from "../port/lib";
 import { toOklchText } from "./oklch";
 
 const theme = path.join(repo, "packages", "theme");
-const files = ["theme.json", "finishes.json"];
+const files = ["theme.json", "semantics.json"];
 
 /** Every string in a JSON document, its colors converted; keys and numbers stay as they are. */
 const convert = (value: unknown): unknown => {

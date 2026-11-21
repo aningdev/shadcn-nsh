@@ -4,15 +4,15 @@ import { mount, Text, View } from "nsh";
 import defaultTheme from "../../../packages/theme/themes/default/index";
 import { Badge, Button, Label } from "../../../packages/ui";
 
-const { type } = defaultTheme.finishes;
+const { type } = defaultTheme.semantics;
 
 /** A temporary theme with another type scale: a larger, bolder label and a larger body. */
 const scaled: AppTheme = {
   ...defaultTheme,
   id: "scaled",
   label: "Scaled",
-  finishes: {
-    ...defaultTheme.finishes,
+  semantics: {
+    ...defaultTheme.semantics,
     type: {
       ...type,
       label: {

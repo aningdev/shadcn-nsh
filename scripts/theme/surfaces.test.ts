@@ -6,25 +6,27 @@ import { orderedFinish } from "./order";
 import { specBlock, specRows } from "./spec";
 import { checkStyle } from "./style";
 import { withSurfaces } from "./surfaces";
+import { mergeFinishes, splitFinishes, tokenKinds, type ThemeCssVars } from "./tokens";
 
 const root = join(import.meta.dir, "../..");
 const readJson = (file: string) => JSON.parse(readFileSync(join(root, file), "utf8"));
 const spec = readFileSync(join(root, "docs/specs/theme-roles.md"), "utf8");
 
-const finishes = readJson("packages/theme/finishes.json") as Record<string, any>;
-const tokens = readJson("packages/theme/theme.json").cssVars as Record<
-  string,
-  Record<string, string>
->;
+const semantics = readJson("packages/theme/semantics.json") as Record<string, any>;
+const cssVars = readJson("packages/theme/theme.json").cssVars as ThemeCssVars;
+const kinds = tokenKinds(cssVars);
+const mergedLight = mergeFinishes(semantics.finishes, "light");
+const mergedDark = mergeFinishes(semantics.finishes, "dark");
 
 const surfaces = ["dialog", "tooltip", "inverse"];
 const roles = ["inverse", "inverse-foreground", "inverse-brand", "on-brand-tint"];
 
 describe("the colour roles and finishes a theme states for its surfaces", () => {
   test("the default theme states them in both appearances", () => {
-    for (const appearance of ["light", "dark"]) {
-      for (const role of roles) expect(tokens[appearance][role], role).toBeString();
-      for (const finish of surfaces) expect(finishes[appearance][finish], finish).toBeObject();
+    for (const appearance of ["light", "dark"] as const) {
+      const merged = appearance === "light" ? mergedLight : mergedDark;
+      for (const role of roles) expect(cssVars[appearance][role], role).toBeString();
+      for (const finish of surfaces) expect(merged[finish], finish).toBeObject();
     }
   });
 
@@ -35,30 +37,36 @@ describe("the colour roles and finishes a theme states for its surfaces", () => 
   });
 
   test("withSurfaces derives the three finishes from the menu, after it", () => {
-    const menu = finishes.light.menu;
-    const out = withSurfaces({ card: finishes.light.card, menu, flat: finishes.light.flat });
+    const menu = mergedLight.menu;
+    const out = withSurfaces({ card: mergedLight.card, menu, flat: mergedLight.flat });
     expect(Object.keys(out)).toEqual(["card", "menu", "dialog", "tooltip", "inverse", "flat"]);
     expect(out.dialog.boxShadow).toBe(menu.boxShadow);
     expect(out.tooltip.boxShadow).toBe("none");
-    expect(String(out.inverse.backgroundColor)).toContain("var(--inverse)");
+    expect(String(out.inverse.backgroundColor)).toContain("{inverse}");
   });
 
   test("withSurfaces refuses a theme with no menu", () => {
-    expect(() => withSurfaces({ card: finishes.light.card })).toThrow("no menu");
+    expect(() => withSurfaces({ card: mergedLight.card })).toThrow("no menu");
   });
 
   test("a finish that leaves a key out, or adds one, is an error", () => {
-    const { backgroundColor: _omitted, ...short } = finishes.light.dialog;
-    expect(() => orderedFinish(finishes.light.dialog, short)).toThrow("no backgroundColor");
-    expect(() =>
-      orderedFinish(finishes.light.dialog, { ...finishes.light.dialog, glow: 1 }),
-    ).toThrow("glow");
+    const { backgroundColor: _omitted, ...short } = mergedLight.dialog;
+    expect(() => orderedFinish(mergedLight.dialog, short)).toThrow("no backgroundColor");
+    expect(() => orderedFinish(mergedLight.dialog, { ...mergedLight.dialog, glow: 1 })).toThrow(
+      "glow",
+    );
+  });
+
+  test("splitFinishes + mergeFinishes round-trips full light/dark maps", () => {
+    const split = splitFinishes(mergedLight, mergedDark);
+    expect(mergeFinishes(split, "light")).toEqual(mergedLight);
+    expect(mergeFinishes(split, "dark")).toEqual(mergedDark);
   });
 });
 
 describe("the indicator keys", () => {
   const check = (file: Record<string, unknown>) =>
-    checkStyle("fixture/finishes.json", file, finishes, tokens.theme);
+    checkStyle("fixture/semantics.json", file, semantics, kinds);
 
   test("a theme that leaves one out is an error naming it", () => {
     for (const [group, key] of [
@@ -66,12 +74,12 @@ describe("the indicator keys", () => {
       ["indicator", "nav"],
       ["indicator", "field"],
     ]) {
-      const file = structuredClone(finishes);
+      const file = structuredClone(semantics);
       delete file[group][key];
       const problems = check(file);
       expect(problems.join("\n"), `${group}.${key}`).toContain(`${group}.${key}`);
     }
-    const file = structuredClone(finishes);
+    const file = structuredClone(semantics);
     delete file.shape.corners.field;
     expect(check(file).join("\n")).toContain("shape.corners.field");
   });
@@ -82,12 +90,12 @@ describe("the indicator keys", () => {
       ["indicator.nav", "pill"],
       ["indicator.field", "line"],
     ]) {
-      const file = structuredClone(finishes);
+      const file = structuredClone(semantics);
       const [group, key] = path.split(".");
       file[group][key] = value;
       expect(check(file).join("\n"), path).toContain(path);
     }
-    const file = structuredClone(finishes);
+    const file = structuredClone(semantics);
     file.shape.corners.field = "bottom";
     expect(check(file).join("\n")).toContain("shape.corners.field");
   });

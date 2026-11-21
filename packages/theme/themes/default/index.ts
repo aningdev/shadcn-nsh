@@ -5,7 +5,7 @@
 // copied byte for byte.
 import type { AppTheme } from "@shadcn-nsh/theme";
 
-import finishes from "./finishes.json";
+import semantics from "./semantics.json";
 import theme from "./theme.json";
 
 /** The default look (the citrus accent, the graphite surfaces, the 10-point base radius: 8-point controls, 14-point cards) as a theme:
@@ -14,7 +14,7 @@ export const defaultTheme: AppTheme = {
   id: "default",
   label: "NSH Gallery UI",
   theme,
-  finishes,
+  semantics: semantics as AppTheme["semantics"],
 };
 
 export default defaultTheme;

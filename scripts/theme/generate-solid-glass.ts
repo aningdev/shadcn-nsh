@@ -1,5 +1,5 @@
 /**
- * Writes `packages/theme/themes/solid-glass/theme.json` and `finishes.json` from the Solid Glass
+ * Writes `packages/theme/themes/solid-glass/theme.json` and `semantics.json` from the Solid Glass
  * stylesheet (`solid-glass.ts`): the two data files of the third theme the demos can switch to.
  *
  *   bun scripts/theme/generate-solid-glass.ts      # writes them, prints the palette's sRGB
@@ -8,7 +8,7 @@
  * `oklch()`, the form every theme file here holds (`scripts/theme/oklch.ts`); the report below
  * prints what each one lands on in sRGB, which is how a value can be read against the original.
  * The keys and their order come from the default `packages/theme/theme.json` and
- * `finishes.json`, so the three sets stay comparable (`themes.test.ts` checks it).
+ * `semantics.json`, so the three sets stay comparable (`themes.test.ts` checks it).
  *
  * Not part of the check pipeline: it writes a theme, so it runs when the material is re-read, not
  * on every check.
@@ -19,7 +19,8 @@ import path from "node:path";
 import { repo } from "../port/lib";
 import { oklch, toOklchText } from "./oklch";
 import { themeFiles } from "./solid-glass";
-import { finishesWithStyle } from "./style";
+import { semanticsWithStyle } from "./style";
+import { mergeFinishes, type SplitFinishes } from "./tokens";
 
 const theme = path.join(repo, "packages", "theme");
 const outDir = path.join(theme, "themes", "solid-glass");
@@ -33,10 +34,8 @@ const defaults = read("theme.json") as {
     dark: Record<string, string>;
   };
 };
-const finishes = read("finishes.json") as {
-  press: unknown;
-  light: Record<string, Record<string, string>>;
-  dark: Record<string, Record<string, string>>;
+const semantics = read("semantics.json") as Record<string, unknown> & {
+  finishes: SplitFinishes<Record<string, unknown>>;
 };
 
 /** Every string of a document in canonical `oklch()`, as `to-oklch.ts` does for the default files. */
@@ -53,21 +52,22 @@ const files = themeFiles({
   theme: defaults.cssVars.theme,
   light: defaults.cssVars.light,
   dark: defaults.cssVars.dark,
-  lightFinishes: finishes.light!,
-  darkFinishes: finishes.dark!,
+  lightFinishes: mergeFinishes(semantics.finishes, "light"),
+  darkFinishes: mergeFinishes(semantics.finishes, "dark"),
 });
 
 fs.mkdirSync(outDir, { recursive: true });
 const write = (name: string, value: unknown) =>
   fs.writeFileSync(path.join(outDir, name), `${JSON.stringify(canonical(value), null, 2)}\n`);
 write("theme.json", files.theme);
-write("finishes.json", finishesWithStyle(files.finishes, finishes, files.theme.cssVars.theme));
-console.log(`wrote ${path.relative(repo, outDir)}/{theme,finishes}.json`);
+write("semantics.json", semanticsWithStyle(files.semantics, semantics));
+console.log(`wrote ${path.relative(repo, outDir)}/{theme,semantics}.json`);
 
 /** Every distinct `oklch()` a file holds, in the order it first appears. */
 function colors(value: unknown, seen = new Set<string>()): string[] {
   if (typeof value === "string") {
-    for (const match of value.matchAll(/oklch\([^()]*\)/g)) seen.add(match[0]);
+    for (const match of value.matchAll(/oklch\([^()]*\)/g))
+      if (!/^oklch\(\s*from\b/i.test(match[0])) seen.add(match[0]);
   } else if (Array.isArray(value)) {
     for (const item of value) colors(item, seen);
   } else if (value !== null && typeof value === "object") {

@@ -17,22 +17,22 @@ const roomy: AppTheme = {
   ...defaultTheme,
   id: "roomy",
   label: "roomy",
-  finishes: {
-    ...defaultTheme.finishes,
+  semantics: {
+    ...defaultTheme.semantics,
     size: {
-      ...defaultTheme.finishes.size,
+      ...defaultTheme.semantics.size,
       density: {
-        pointer: { ...defaultTheme.finishes.size.density.pointer, row: 60 },
-        touch: { ...defaultTheme.finishes.size.density.touch, row: 60 },
+        pointer: { ...defaultTheme.semantics.size.density.pointer, row: 60 },
+        touch: { ...defaultTheme.semantics.size.density.touch, row: 60 },
       },
       control: {
-        pointer: { ...defaultTheme.finishes.size.control.pointer, row: 52 },
-        touch: { ...defaultTheme.finishes.size.control.touch, row: 52 },
+        pointer: { ...defaultTheme.semantics.size.control.pointer, row: 52 },
+        touch: { ...defaultTheme.semantics.size.control.touch, row: 52 },
       },
     },
-    motion: { ...defaultTheme.finishes.motion, press: { stiffness: 111, damping: 22 } },
-    focus: { ...defaultTheme.finishes.focus, width: 5 },
-    shape: { ...defaultTheme.finishes.shape, curve: "circular" },
+    motion: { ...defaultTheme.semantics.motion, press: { stiffness: 111, damping: 22 } },
+    focus: { ...defaultTheme.semantics.focus, width: 5 },
+    shape: { ...defaultTheme.semantics.shape, curve: "circular" },
   },
 };
 

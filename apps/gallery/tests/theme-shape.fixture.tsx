@@ -15,16 +15,30 @@ import { mount, Text, View } from "nsh";
 import defaultTheme from "../../../packages/theme/themes/default/index";
 import { Button, buttonLook, dialogCard, inputLook } from "../../../packages/ui";
 
-const { shape: corners, size, stroke: lines, state } = defaultTheme.finishes;
+const { size, stroke: lines, state } = defaultTheme.semantics;
 
 /** A temporary theme with other corner roles, control heights, line widths and fades. */
 const reshaped: AppTheme = {
   ...defaultTheme,
   id: "reshaped",
   label: "Reshaped",
-  finishes: {
-    ...defaultTheme.finishes,
-    shape: { ...corners, field: 3, chip: 5, dialog: 28, sheet: 30, overlay: 6, control: 20 },
+  theme: {
+    ...defaultTheme.theme,
+    cssVars: {
+      ...defaultTheme.theme.cssVars,
+      theme: {
+        ...defaultTheme.theme.cssVars?.theme,
+        "radius-control": "20px",
+        "radius-field": "3px",
+        "radius-chip": "5px",
+        "radius-overlay": "6px",
+        "radius-dialog": "28px",
+        "radius-sheet": "30px",
+      },
+    },
+  },
+  semantics: {
+    ...defaultTheme.semantics,
     size: {
       ...size,
       hit: { pointer: 48, touch: 52 },

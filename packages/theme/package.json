@@ -6,6 +6,6 @@
   "exports": {
     ".": "./index.ts",
     "./theme.json": "./theme.json",
-    "./finishes.json": "./finishes.json"
+    "./semantics.json": "./semantics.json"
   }
 }

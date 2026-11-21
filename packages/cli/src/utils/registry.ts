@@ -66,8 +66,8 @@ export async function cacheIndex(config: NshUiConfig, registryOverride?: string)
   }
 }
 
-/** `theme.json` and `finishes.json`: the two data files a theme is. */
-const THEME_DATA = new Set(["theme.json", "finishes.json"]);
+/** `theme.json` and `semantics.json`: the two data files a theme is. */
+const THEME_DATA = new Set(["theme.json", "semantics.json"]);
 
 /** A theme item's look without its data: the roles module (`lib/ui/theme.ts`), which every app has once. */
 function rolesOnly(item: RegistryItem): RegistryItem {
@@ -85,7 +85,7 @@ function atBuildTime(item: RegistryItem, config: NshUiConfig): RegistryItem {
     files: item.files.flatMap((file) => {
       const name = path.posix.basename(file.path);
       if (name === "theme.json") return [{ ...file, target: "theme.json" }];
-      if (name === "finishes.json") return [{ ...file, target: path.posix.join(lib, name) }];
+      if (name === "semantics.json") return [{ ...file, target: path.posix.join(lib, name) }];
       return [];
     }),
   };

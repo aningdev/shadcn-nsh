@@ -41,7 +41,7 @@ const broken: AppTheme = {
   id: "broken",
   label: "broken",
   theme: { cssVars: { light: { primary: "#zz" }, dark: { primary: "#zz" } } },
-  finishes: shadcn.finishes,
+  semantics: shadcn.semantics,
 };
 
 function App() {

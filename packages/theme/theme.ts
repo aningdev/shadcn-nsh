@@ -1,4 +1,4 @@
-// The theme's roles, finishes, radii, focus and motion, read from `theme.json` and `finishes.json`.
+// The theme's roles, finishes, radii, focus and motion, read from `theme.json` and `semantics.json`.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import type {
   AnimatedValue,
@@ -25,7 +25,7 @@ import {
   token,
 } from "nsh";
 
-import finishes from "./finishes.json";
+import semantics from "./semantics.json";
 
 // @port theme.ts
 /**
@@ -63,7 +63,7 @@ export interface Material {
    * and `glassTintColor`, so every platform without it keeps the finish's `backdropFilter`. */
   apple?: {
     glass: "regular" | "clear";
-    /** The glass's tint: a color of the theme (`var(--glass)`, an alias), or `null` for the system's own. */
+    /** The glass's tint: a color of the theme (`{glass}`, an alias), or `null` for the system's own. */
     tint: string | null;
   };
   /** The system blur material of the finish's `backdropFilter` on iOS (`ios={{ backdropMaterial }}`). */
@@ -78,7 +78,7 @@ export interface Material {
   windows?: { backdrop: WindowsBackdropMaterial };
 }
 
-/** A surface's finish as `finishes.json` writes it: a gradient over its color, its shadows, and the material it asks of the platform (`null`: none). */
+/** A surface's finish as `semantics.json` writes it: a gradient over its color, its shadows, and the material it asks of the platform (`null`: none). */
 export interface Finish {
   backgroundColor?: string;
   backgroundImage?: string;
@@ -86,6 +86,13 @@ export interface Finish {
   borderColor?: string;
   backdropFilter?: string;
   material: Material | null;
+}
+
+/** The `finishes` block of `semantics.json`: fields shared by both appearances plus sparse light/dark overrides. */
+export interface SplitFinishes {
+  shared: Record<FinishRole, Partial<Finish>>;
+  light: Partial<Record<FinishRole, Partial<Finish>>>;
+  dark: Partial<Record<FinishRole, Partial<Finish>>>;
 }
 
 /**
@@ -124,11 +131,9 @@ export type FinishRole =
   | "inverse"
   | "groove";
 
-/** What a theme's `finishes.json` holds: its style, then its finishes, one set per appearance. */
-export interface Finishes extends Style {
-  press: Press;
-  dark: Record<FinishRole, Finish>;
-  light: Record<FinishRole, Finish>;
+/** What a theme's `semantics.json` holds: its style groups and its split finishes (`shared` + sparse `light`/`dark`). */
+export interface Semantics extends Style {
+  finishes: SplitFinishes;
 }
 
 /** A value for each tier: a pointer's (a desktop) and a touch screen's. */
@@ -200,14 +205,14 @@ export interface Style {
     display: TypeRole;
   };
   shape: {
-    control: number;
-    field: number;
-    chip: number;
-    card: number;
-    overlay: number;
-    dialog: number;
-    sheet: number;
-    inset: number;
+    control: string;
+    field: string;
+    chip: string;
+    card: string;
+    overlay: string;
+    dialog: string;
+    sheet: string;
+    inset: string;
     curve: string;
     corners: { field: string };
   };
@@ -220,6 +225,7 @@ export interface Style {
   stroke: { hairline: number; control: number; indicator: number };
   focus: { style: string; width: number; offset: number };
   state: {
+    pressScale: number;
     overlay: { hover: number; focus: number; pressed: number; dragged: number };
     ripple: boolean;
     pressedOpacity: number;
@@ -250,34 +256,25 @@ export interface AppTheme {
   label: string;
   /** `theme.json`'s content: the tokens `setTheme` takes. */
   theme: Theme;
-  /** `finishes.json`'s content. */
-  finishes: Finishes;
+  /** `semantics.json`'s content. */
+  semantics: Semantics;
 }
 
-/** How far a press sinks a control in a theme, in both appearances. */
-export interface Press {
-  /**
-   * The scale a pressed control lands on: `0.97` for the default theme, where a press is a small
-   * sink; `1` for a theme whose surfaces are flat and draw no press of their own (shadcn's).
-   */
-  scale: number;
-}
-
-/** The build-time finishes: `finishes.json` beside this file (the app's `nsh-ui.json` names the theme they belong to). */
+/** The build-time semantics: `semantics.json` beside this file (the app's `nsh-ui.json` names the theme they belong to). */
 // JSON types a `material.apple.glass` as `string`; `check:theme` holds the file to "regular" | "clear".
-const builtIn = finishes as Finishes;
+const builtIn = semantics as Semantics;
 
 /** The theme `selectTheme` put in; `null` while the app shows its build-time one. */
 const selected = signal<AppTheme | null>(null);
 
-/** The finishes in use: the selected theme's, else the build-time ones. Reactive: reading it subscribes. */
-const finishesOf = (): Finishes => selected()?.finishes ?? builtIn;
+/** The semantics in use: the selected theme's, else the build-time ones. Reactive: reading it subscribes. */
+const semanticsOf = (): Semantics => selected()?.semantics ?? builtIn;
 
 /**
  * The style in use (type, shape, size, motion…): the selected theme's, else the build-time one's.
  * Reactive: reading it in JSX, a `draw` or an effect follows `selectTheme`.
  */
-export const style = (): Style => finishesOf();
+export const style = (): Style => semanticsOf();
 
 /**
  * An object whose properties are read from the style in use: one getter per key, so `density.row`
@@ -297,8 +294,11 @@ export function reactive<T extends object>(keys: readonly (keyof T)[], read: () 
 /** The tier a pointer's screen (a desktop) or a touch screen reads: `platform.desktop`, fixed for the run. */
 export const tier: "pointer" | "touch" = platform.desktop ? "pointer" : "touch";
 
+/** A bare `{token}` reference (used by `shape.*` and `type.family`). */
+const tokenRef = /^\{([a-z0-9-]+)\}$/;
+
 /** The one relative color a finish writes: a token's color at another alpha. */
-const relative = /oklch\(from var\(--([a-z0-9-]+)\) l c h \/ ([\d.]+)\)/g;
+const relative = /oklch\(from \{([a-z0-9-]+)\} l c h \/ ([\d.]+)\)/g;
 
 /** A token's color, `#rrggbbaa` as `token` gives it, at another alpha. */
 const atAlpha = (color: string, a: number) =>
@@ -306,17 +306,39 @@ const atAlpha = (color: string, a: number) =>
     .toString(16)
     .padStart(2, "0")}`;
 
+/** Resolve a `{token}` dimension reference through `token()` reactively (returns points). */
+const resolveDimension = (value: string): number => {
+  const match = tokenRef.exec(value);
+  if (match) {
+    const resolved = token(match[1] as keyof Tokens);
+    if (typeof resolved === "number") return resolved;
+  }
+  return Number(value);
+};
+
+/** Resolve a `{token}` font family reference through `token()` reactively, or `null` for system default. */
+const resolveFont = (value: string | null): string | null => {
+  if (value === null) return null;
+  const match = tokenRef.exec(value);
+  if (match) {
+    const resolved = token(match[1] as keyof Tokens);
+    return typeof resolved === "string" ? resolved : null;
+  }
+  return value;
+};
+
 /**
- * A finish's strings name the theme's tokens instead of writing their colors (`var(--raised)`, an
+ * A finish's strings name the theme's tokens instead of writing their colors (`{raised}`, an
  * alias): the finishes keep one shape in every theme while the colors they draw are the theme's.
- * `token` reads the same token the rest of the theme does, so an alias follows the appearance and
- * the theme `selectTheme` put in, and a `var()` anywhere in a gradient or a shadow resolves with it.
+ * `token` reads the same token the rest of the theme does, so an alias follows the appearance,
+ * the theme `selectTheme` put in, and host `setThemeOverrides`, and a `{token}` anywhere in a
+ * gradient or a shadow resolves with it.
  *
- * A token named at another alpha (`oklch(from var(--card) l c h / 0.78)`, the one relative color a
+ * A token named at another alpha (`oklch(from {card} l c h / 0.78)`, the one relative color a
  * finish writes) resolves to that token's color with the alpha replaced: NSH reads these strings
  * as plain CSS and has no relative color syntax. It goes through `token` rather than reading the
- * theme file, so this module imports nothing but `finishes.json`: it is `lib/ui/theme.ts` in an app,
- * whose `theme.json` sits at its root.
+ * theme file, so this module imports nothing but `semantics.json`: it is `lib/ui/theme.ts` in an
+ * app, whose `theme.json` sits at its root.
  */
 const alias = (value: string): string =>
   value
@@ -324,36 +346,20 @@ const alias = (value: string): string =>
       const color = token(name as keyof Tokens);
       return typeof color === "string" ? atAlpha(color, Number(a)) : whole;
     })
-    .replace(/var\(--([a-z0-9-]+)\)/g, (whole, name: string) => {
+    .replace(/\{([a-z0-9-]+)\}/g, (whole, name: string) => {
       const color = token(name as keyof Tokens);
       return typeof color === "string" ? color : whole;
     });
 
-/** What one finish role has resolved: the theme it resolved from, and the strings per appearance. */
-type Resolved = {
-  source: AppTheme | null;
-  light: Record<string, string>;
-  dark: Record<string, string>;
+/** Merge `shared` with the active appearance's sparse override for one finish role (reactive). */
+const finishOf = (role: FinishRole): Finish => {
+  const { finishes } = semanticsOf();
+  const overrides = isDark() ? finishes.dark : finishes.light;
+  return { ...finishes.shared[role], ...overrides?.[role] } as Finish;
 };
 
-/**
- * What `alias` has resolved, per role. A finished string is one shadow, gradient or color of
- * `finishes.json` with the theme's tokens put in, so it is the same string on every read until the
- * theme or the appearance changes: a surface that reads its finishes once per binding should pay for
- * the regular expressions once, not once per read.
- *
- * Keyed by the theme the strings came from, not emptied by `selectTheme`: that sets the theme and
- * then the finishes, and a reader may run between the two, so an entry is only ever used for the
- * theme it was resolved from. The appearance picks which half a read takes, and it is the other
- * half of the same theme.
- */
-const resolved = new Map<FinishRole, Resolved>();
-
-/** The material one finish role asks for in the finishes in use, in the appearance shown (reactive). */
-const materialOf = (role: FinishRole): Material | null => {
-  const finishes = finishesOf();
-  return (isDark() ? finishes.dark : finishes.light)[role].material;
-};
+/** The material one finish role asks for in the semantics in use, in the appearance shown (reactive). */
+const materialOf = (role: FinishRole): Material | null => finishOf(role).material;
 
 /** The style keys a finish's glass adds: `glassEffect` always, `glassTintColor` when it names a tint. */
 const glassKeys = (role: FinishRole): readonly string[] => {
@@ -363,10 +369,11 @@ const glassKeys = (role: FinishRole): readonly string[] => {
 };
 
 /**
- * An object whose getters read one finish role of the finishes in use, in
+ * An object whose getters read one finish role of the semantics in use, in
  * the appearance shown: shadows and gradients are no design tokens, so they
  * stay here while every color is the theme's, by alias. Reading one
- * subscribes to the appearance and to the theme `selectTheme` put in.
+ * subscribes to the appearance, to the theme `selectTheme` put in, and to
+ * host token overrides.
  *
  * `material` is not one of its keys: the glass of `material.apple` is two style keys (NSH's
  * `glassEffect` and `glassTintColor`), which the object has only while the finish asks for them, so
@@ -374,34 +381,20 @@ const glassKeys = (role: FinishRole): readonly string[] => {
  * the material (`ios`, `macos`, `windows`) are not style keys and come from `platformMaterial`.
  */
 function themed(role: FinishRole): FinishStyle {
-  const kept: Resolved = { source: null, light: {}, dark: {} };
-  resolved.set(role, kept);
-  /** The strings resolved for the theme and appearance in use: emptied when the theme changed. */
-  const cache = (): Record<string, string> => {
-    const source = selected();
-    if (kept.source !== source) {
-      kept.source = source;
-      kept.light = {};
-      kept.dark = {};
-    }
-    return isDark() ? kept.dark : kept.light;
-  };
-  /** A string of the finish, aliased once per theme and appearance (`name` keys the cache). */
-  const read = (name: string, value: string | undefined): string | undefined => {
-    const done = cache();
-    if (value === undefined) return value;
-    return (done[name] ??= alias(value));
-  };
   const out = {} as FinishStyle;
-  for (const key of Object.keys(builtIn.dark[role]) as (keyof Finish)[]) {
+  const builtInRole = {
+    ...builtIn.finishes.shared[role],
+    ...builtIn.finishes.dark[role],
+    ...builtIn.finishes.light[role],
+  };
+  for (const key of Object.keys(builtInRole) as (keyof Finish)[]) {
     if (key === "material") continue;
     Object.defineProperty(out, key, {
       enumerable: true,
       configurable: true,
       get: () => {
-        const finishes = finishesOf();
-        const value = (isDark() ? finishes.dark : finishes.light)[role][key];
-        return read(key, value);
+        const value = finishOf(role)[key];
+        return typeof value === "string" ? alias(value) : undefined;
       },
     });
   }
@@ -409,7 +402,7 @@ function themed(role: FinishRole): FinishStyle {
     const apple = materialOf(role)?.apple;
     if (apple === undefined) return undefined;
     if (key === "glassEffect") return apple.glass;
-    return apple.tint === null ? undefined : read("glassTintColor", apple.tint);
+    return apple.tint === null ? undefined : alias(apple.tint);
   };
   return new Proxy(out, {
     ownKeys: (target) => [...Reflect.ownKeys(target), ...glassKeys(role)],
@@ -698,44 +691,30 @@ export const finish: Record<FinishRole, FinishStyle> = {
 };
 
 /**
- * How far a press sinks a control, as the theme in use says (`finishes.json`'s `press.scale`):
+ * How far a press sinks a control, as the theme in use says (`semantics.json`'s `state.pressScale`):
  * `0.97` where a press is a small sink, `1` where the theme draws none. A control that sinks
  * deeper than that names its own scale (`pressSink(0.9)`); a theme of `1` turns every sink off.
  * Reactive: reading it follows `selectTheme`.
  */
 export const press = {
   get scale() {
-    return finishesOf().press.scale;
+    return semanticsOf().state.pressScale;
   },
 };
 
 /**
  * Switch the app to `theme` while it runs: the tokens first (`setTheme`),
- * then its finishes, so every component on screen redraws with both on the
+ * then its semantics, so every component on screen redraws with both on the
  * next frame. `null` goes back to the theme the app was built with
- * (`nsh.json`'s `theme.json`, and `finishes.json` beside this file).
+ * (`nsh.json`'s `theme.json`, and `semantics.json` beside this file).
  *
  * A theme NSH refuses to read (a color it does not know) throws
- * `TypeError` and leaves the app as it was: the finishes follow the tokens
+ * `TypeError` and leaves the app as it was: the semantics follow the tokens
  * only once they are in.
  */
 export function selectTheme(theme: AppTheme | null): void {
-  setTheme(theme ? withFamily(theme) : null);
+  setTheme(theme ? theme.theme : null);
   selected.set(theme);
-}
-
-/**
- * The theme's tokens with `font-sans` (the font of every text that names no family) set from the
- * style's `type.family`: `null` leaves it to `theme.json` (the system font unless it names one),
- * `"sans"` is that token as it stands, `"rounded"` the rounded system font, `"mono"` the theme's
- * `font-mono`.
- */
-function withFamily({ theme, finishes }: AppTheme): Theme {
-  const { family } = finishes.type;
-  if (family === null || family === "sans") return theme;
-  const cssVars = theme.cssVars ?? {};
-  const sans = family === "rounded" ? "ui-rounded" : (cssVars.theme?.["font-mono"] ?? "monospace");
-  return { ...theme, cssVars: { ...cssVars, theme: { ...cssVars.theme, "font-sans": sans } } };
 }
 
 /**
@@ -782,6 +761,7 @@ export type TypeName = Exclude<keyof Style["type"], "family">;
  * `size` and `line` take the tier of the screen (`tier`).
  */
 export const font = {
+  family: () => resolveFont(style().type.family),
   size: (role: TypeName) => style().type[role].size[tier],
   line: (role: TypeName) => style().type[role].line[tier],
   weight: (role: TypeName) => style().type[role].weight as NonNullable<TextStyle["fontWeight"]>,
@@ -789,35 +769,36 @@ export const font = {
 };
 
 /**
- * The corner radii by role (`finishes.json`'s `shape`), read from the style in use: what the
- * component is picks the role (`control` a button, `field` an input, `chip` a badge, `card` a card,
- * `overlay` a menu or a popup, `dialog`, `sheet`, `inset` a well inside a card). Reactive: reading
- * one in JSX, a `draw` or an effect follows `selectTheme`.
+ * The corner radii by role (`semantics.json`'s `shape`), resolved from `theme.json`'s `radius-*`
+ * tokens via `token()`: what the component is picks the role (`control` a button, `field` an input,
+ * `chip` a badge, `card` a card, `overlay` a menu or a popup, `dialog`, `sheet`, `inset` a well
+ * inside a card). Reactive: reading one in JSX, a `draw` or an effect follows `selectTheme` and
+ * host token overrides.
  */
 export const shape = {
   get control() {
-    return style().shape.control;
+    return resolveDimension(style().shape.control);
   },
   get field() {
-    return style().shape.field;
+    return resolveDimension(style().shape.field);
   },
   get chip() {
-    return style().shape.chip;
+    return resolveDimension(style().shape.chip);
   },
   get card() {
-    return style().shape.card;
+    return resolveDimension(style().shape.card);
   },
   get overlay() {
-    return style().shape.overlay;
+    return resolveDimension(style().shape.overlay);
   },
   get dialog() {
-    return style().shape.dialog;
+    return resolveDimension(style().shape.dialog);
   },
   get sheet() {
-    return style().shape.sheet;
+    return resolveDimension(style().shape.sheet);
   },
   get inset() {
-    return style().shape.inset;
+    return resolveDimension(style().shape.inset);
   },
 };
 

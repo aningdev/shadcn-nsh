@@ -23,7 +23,8 @@ import { withoutMaterial } from "./material";
  * Read by `generate-solid-glass.ts`, which writes `packages/theme/themes/solid-glass/`.
  */
 import { over } from "./oklch";
-import { ordered, orderedFinish } from "./order";
+import { ordered, orderedSplitFinishes } from "./order";
+import { scaledRadii } from "./style";
 import { withSurfaces } from "./surfaces";
 
 /** One appearance of the stylesheet's variables, by name (without the `--`). */
@@ -251,20 +252,20 @@ function laid(appearance: Appearance) {
   };
 }
 
-/** A finish names the theme's token instead of writing its colour (`var(--raised)`): one shape, the theme's colours. */
-const alias = (token: string) => `var(--${token})`;
+/** A finish names the theme's token instead of writing its colour (`{raised}`): one shape, the theme's colours. */
+const alias = (token: string) => `{${token}}`;
 
 /** Whether a colour lets the surface behind it through (an alpha below 1). */
 const seeThrough = (color: string) => coords(color).a < 1;
 
 /**
- * A pane filled with a token at another alpha — `oklch(from var(--muted) l c h / 0.26)`, the one
+ * A pane filled with a token at another alpha — `oklch(from {muted} l c h / 0.26)`, the one
  * relative colour a finish writes (docs/specs/theme-roles.md) — and the clear gradient an
  * always-translucent pane carries: the engine draws it over the colour, and the same translucent
  * colour twice would double its alpha.
  */
 const paneAt = (token: string, a: number) => ({
-  backgroundColor: `oklch(from var(--${token}) l c h / ${a})`,
+  backgroundColor: `oklch(from {${token}} l c h / ${a})`,
   backgroundImage: "linear-gradient(180deg, transparent 0%, transparent 100%)",
 });
 
@@ -398,9 +399,7 @@ function themeLevel(): Record<string, string> {
   return {
     // `--radius: 0.875rem` (14 px), and `--radius-control: 0.7rem` (11 px) for what is rounded a
     // step down from a pane.
-    radius: "14px",
-    "radius-card": "20px",
-    "radius-control": "11px",
+    ...scaledRadii(14),
     // The monospaced family: NSH's generic `monospace`, the system's own — neither theme ships a
     // font face. A theme that names one states its family here (the app imports the file).
     "font-mono": "monospace",
@@ -535,7 +534,7 @@ function finishes(appearance: Appearance): Record<string, Finish> {
     on: {
       ...paneAt("muted", coords(s("glass-state")).a),
       boxShadow: `inset 0 1px 0 ${s("glass-state-rim")}`,
-      borderColor: `oklch(from var(--muted) l c h / ${coords(s("glass-state-edge")).a})`,
+      borderColor: `oklch(from {muted} l c h / ${coords(s("glass-state-edge")).a})`,
     },
     // A small label that holds something (a key, a chip): clear glass, both lines inside its edge.
     chip: {
@@ -578,8 +577,8 @@ export function themeFiles(defaults: {
   theme: Record<string, string>;
   light: Record<string, string>;
   dark: Record<string, string>;
-  lightFinishes: Record<string, Finish>;
-  darkFinishes: Record<string, Finish>;
+  lightFinishes: Record<string, Record<string, unknown>>;
+  darkFinishes: Record<string, Record<string, unknown>>;
 }) {
   return {
     theme: {
@@ -590,14 +589,15 @@ export function themeFiles(defaults: {
         dark: ordered(defaults.dark, section("dark")),
       },
     },
-    finishes: {
+    semantics: {
       // The material draws no press of its own: a pressed pane loses the shadow it stood on and
-      // darkens a step, it does not shrink (`press.scale` of 1, which `pressSink` reads as none).
-      press: { scale: 1 },
-      dark: orderedFinish(defaults.darkFinishes, withoutMaterial(withSurfaces(finishes("dark")))),
-      light: orderedFinish(
+      // darkens a step, it does not shrink (`state.pressScale` of 1, which `pressSink` reads as none).
+      pressScale: 1,
+      finishes: orderedSplitFinishes(
         defaults.lightFinishes,
+        defaults.darkFinishes,
         withoutMaterial(withSurfaces(finishes("light"))),
+        withoutMaterial(withSurfaces(finishes("dark"))),
       ),
     },
   };

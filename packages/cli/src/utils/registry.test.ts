@@ -19,13 +19,13 @@ fs.writeFileSync(
 
 afterAll(() => fs.rmSync(dir, { recursive: true, force: true }));
 
-// Two themes: the same `lib/ui/theme.ts` beside a `lib/ui/finishes.json` each, as the registry ships them.
+// Two themes: the same `lib/ui/theme.ts` beside a `lib/ui/semantics.json` each, as the registry ships them.
 fs.mkdirSync(path.join(dir, "theme"));
 fs.mkdirSync(path.join(dir, "themes", "shadcn"), { recursive: true });
-fs.writeFileSync(path.join(dir, "theme/theme.ts"), 'import finishes from "./finishes.json";\n');
-fs.writeFileSync(path.join(dir, "theme/finishes.json"), "{}\n");
+fs.writeFileSync(path.join(dir, "theme/theme.ts"), 'import finishes from "./semantics.json";\n');
+fs.writeFileSync(path.join(dir, "theme/semantics.json"), "{}\n");
 fs.writeFileSync(path.join(dir, "themes/shadcn/theme.json"), "{}\n");
-fs.writeFileSync(path.join(dir, "themes/shadcn/finishes.json"), "{}\n");
+fs.writeFileSync(path.join(dir, "themes/shadcn/semantics.json"), "{}\n");
 // A component, whose theme comes from the package the theme items ship.
 fs.writeFileSync(path.join(dir, "themed.tsx"), 'import { colors } from "@shadcn-nsh/theme";\n');
 
@@ -40,7 +40,7 @@ const defaultTheme = {
   type: "registry:theme",
   files: [
     { path: "theme/theme.ts", type: "registry:lib", target: "lib/ui/theme.ts" },
-    { path: "theme/finishes.json", type: "registry:lib", target: "lib/ui/finishes.json" },
+    { path: "theme/semantics.json", type: "registry:lib", target: "lib/ui/semantics.json" },
   ],
 };
 
@@ -49,7 +49,7 @@ const neutralTheme = {
   type: "registry:theme",
   files: [
     { path: "themes/shadcn/theme.json", type: "registry:file", target: "theme.json" },
-    { path: "themes/shadcn/finishes.json", type: "registry:lib", target: "lib/ui/finishes.json" },
+    { path: "themes/shadcn/semantics.json", type: "registry:lib", target: "lib/ui/semantics.json" },
     { path: "theme/theme.ts", type: "registry:lib", target: "lib/ui/theme.ts" },
   ],
 };

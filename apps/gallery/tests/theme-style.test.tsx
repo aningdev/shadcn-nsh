@@ -1,6 +1,6 @@
 import { expect, open, test } from "nsh/test";
 
-import defaults from "../../../packages/theme/finishes.json";
+import defaults from "../../../packages/theme/semantics.json";
 
 const read = (texts: string[], key: string) =>
   texts.find((text) => text.startsWith(`${key}:`))?.slice(key.length + 1);

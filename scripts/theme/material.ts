@@ -8,6 +8,7 @@
  * Pure: no `node:fs`, so `theme-lint.ts`, the theme generators and the unit tests all read it.
  */
 import { readColour } from "./finish-colour";
+import type { TokenKind } from "./tokens";
 
 /** What each platform's entry may hold, key by key: the value a key may take, and whether it must be there. */
 const shape: Record<
@@ -70,7 +71,7 @@ export function checkMaterial(
   path: string,
   where: string,
   finish: Record<string, unknown>,
-  known: Set<string>,
+  known: Map<string, TokenKind> | Set<string>,
 ): string[] {
   const label = `${path}: ${where}.material`;
   if (!("material" in finish))
@@ -114,7 +115,9 @@ export function checkMaterial(
           problems.push(
             problem.kind === "unknown-token"
               ? `${label}.${platform}.${key} names token \`${problem.name}\`, which the theme does not have`
-              : `${label}.${platform}.${key} writes ${problem.literal}, which is no token of the theme`,
+              : problem.kind === "wrong-kind"
+                ? `${label}.${platform}.${key} names token \`${problem.name}\`, which is a ${problem.actual}, not a ${problem.expected}`
+                : `${label}.${platform}.${key} writes ${problem.literal}, which is no token of the theme`,
           );
       } else if (!rule.values.includes(value as string)) {
         problems.push(

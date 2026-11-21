@@ -4,37 +4,40 @@ import { mount, Text, View } from "nsh";
 import defaultTheme from "../../../packages/theme/themes/default/index";
 import { Button } from "../../../packages/ui";
 
-const { light, dark } = defaultTheme.finishes;
+const { finishes } = defaultTheme.semantics;
 
 /** A temporary theme whose `glass` and `menu` finishes ask for the platform's own material. */
 const glassy: AppTheme = {
   ...defaultTheme,
   id: "glassy",
   label: "Glassy",
-  finishes: {
-    ...defaultTheme.finishes,
-    light: {
-      ...light,
-      glass: {
-        ...light.glass,
-        material: {
-          apple: { glass: "regular", tint: "var(--primary)" },
-          ios: { backdrop: "thin" },
-          windows: { backdrop: "blur" },
+  semantics: {
+    ...defaultTheme.semantics,
+    finishes: {
+      ...finishes,
+      light: {
+        ...finishes.light,
+        glass: {
+          ...finishes.light.glass,
+          material: {
+            apple: { glass: "regular", tint: "{primary}" },
+            ios: { backdrop: "thin" },
+            windows: { backdrop: "blur" },
+          },
+        },
+        menu: {
+          ...finishes.light.menu,
+          material: {
+            apple: { glass: "clear", tint: null },
+            macos: { backdrop: "menu", blending: "behindWindow", state: "active" },
+          },
         },
       },
-      menu: {
-        ...light.menu,
-        material: {
-          apple: { glass: "clear", tint: null },
-          macos: { backdrop: "menu", blending: "behindWindow", state: "active" },
-        },
+      dark: {
+        ...finishes.dark,
+        glass: { ...finishes.dark.glass, material: { apple: { glass: "clear", tint: null } } },
+        menu: { ...finishes.dark.menu, material: null },
       },
-    },
-    dark: {
-      ...dark,
-      glass: { ...dark.glass, material: { apple: { glass: "clear", tint: null } } },
-      menu: { ...dark.menu, material: null },
     },
   },
 };

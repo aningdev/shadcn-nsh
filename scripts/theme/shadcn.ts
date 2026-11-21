@@ -23,7 +23,8 @@ import { withoutMaterial } from "./material";
  * holds the mapping tables this file implements.
  */
 import { oklch, oklchColor, over, parseColor, toOklchText, withAlpha } from "./oklch";
-import { ordered, orderedFinish } from "./order";
+import { ordered, orderedSplitFinishes } from "./order";
+import { scaledRadii } from "./style";
 import { withSurfaces } from "./surfaces";
 
 /** shadcn's neutrals, quoted from `registry/themes.ts` (theme `neutral`). */
@@ -82,8 +83,6 @@ const CONTROL = "second" + "ary";
 
 /** shadcn's `--radius: 0.625rem` (10 px) and the steps of it the components use. */
 const RADIUS = 0.625 * 16;
-/** `--radius-md` (0.8) / `--radius-xl` (1.4), as the theme's lengths. */
-const radius = (times: number) => `${Math.round(RADIUS * times)}px`;
 
 /** Tailwind's `white` (`bg-white`), which shadcn names outright rather than through a token. */
 const WHITE = "oklch(1 0 0)";
@@ -164,9 +163,7 @@ function own(appearance: Appearance) {
 
 /** The theme's own tokens, shared by the appearances (a colour may name one: `var(--primary)`). */
 const themeLevel = (light: ReturnType<typeof palette>): Record<string, string> => ({
-  radius: radius(1),
-  "radius-card": radius(1.4),
-  "radius-control": radius(0.8),
+  ...scaledRadii(RADIUS),
   // The monospaced family: NSH's generic `monospace`, the system's own — neither theme ships a
   // font face. A theme that names one states its family here (the app imports the file).
   "font-mono": "monospace",
@@ -261,7 +258,7 @@ function section(p: ReturnType<typeof palette>, o: ReturnType<typeof own>) {
 }
 
 /** A finish names the theme's token instead of writing its colour: one shape, the theme's colours. */
-const alias = (token: string) => `var(--${token})`;
+const alias = (token: string) => `{${token}}`;
 
 /**
  * A flat finish's gradient: its colour at both stops. Every finish states one, so a theme that
@@ -320,7 +317,7 @@ function finishes(appearance: Appearance, o: ReturnType<typeof own>) {
     chip: surface(alias("muted"), { boxShadow: "none" }),
     glass: {
       // A control over a photo: the card's own colour at 80% (`bg-card/80`), named at that alpha.
-      backgroundColor: "oklch(from var(--card) l c h / 0.8)",
+      backgroundColor: "oklch(from {card} l c h / 0.8)",
       boxShadow: "none",
       borderColor: alias("border"),
       backdropFilter: "blur(20px)",
@@ -340,8 +337,8 @@ export function themeFiles(defaults: {
   theme: Record<string, string>;
   light: Record<string, string>;
   dark: Record<string, string>;
-  lightFinishes: Record<string, string>;
-  darkFinishes: Record<string, string>;
+  lightFinishes: Record<string, Record<string, unknown>>;
+  darkFinishes: Record<string, Record<string, unknown>>;
 }) {
   const light = palette("light");
   const dark = palette("dark");
@@ -356,17 +353,15 @@ export function themeFiles(defaults: {
         dark: ordered(defaults.dark, section(dark, ownDark)),
       },
     },
-    finishes: {
+    semantics: {
       // A flat theme draws no press of its own: its surfaces change colour under the finger, they
-      // do not sink (`press.scale` of 1, which `pressSink` reads as "no sink").
-      press: { scale: 1 },
-      dark: orderedFinish(
-        defaults.darkFinishes,
-        withoutMaterial(withSurfaces(finishes("dark", ownDark))),
-      ),
-      light: orderedFinish(
+      // do not sink (`state.pressScale` of 1, which `pressSink` reads as "no sink").
+      pressScale: 1,
+      finishes: orderedSplitFinishes(
         defaults.lightFinishes,
+        defaults.darkFinishes,
         withoutMaterial(withSurfaces(finishes("light", ownLight))),
+        withoutMaterial(withSurfaces(finishes("dark", ownDark))),
       ),
     },
   };

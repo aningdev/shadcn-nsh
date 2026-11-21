@@ -1,7 +1,7 @@
 import { expect, open, test } from "nsh/test";
 
-import plainFinishes from "../../../packages/theme/finishes.json";
-import neutralFinishes from "../../../packages/theme/themes/shadcn/finishes.json";
+import plainSemantics from "../../../packages/theme/semantics.json";
+import neutralSemantics from "../../../packages/theme/themes/shadcn/semantics.json";
 
 type Finish = {
   backgroundColor?: string;
@@ -9,14 +9,17 @@ type Finish = {
   boxShadow: string;
   borderColor?: string;
 };
-type Finishes = {
-  press: { scale: number };
-  light: Record<string, Finish>;
-  dark: Record<string, Finish>;
+type Semantics = {
+  state: { pressScale: number };
+  finishes: {
+    shared: Record<string, Partial<Finish>>;
+    light: Record<string, Partial<Finish>>;
+    dark: Record<string, Partial<Finish>>;
+  };
 };
 
-const plain = plainFinishes as Finishes;
-const neutral = neutralFinishes as Finishes;
+const plain = plainSemantics as unknown as Semantics;
+const neutral = neutralSemantics as unknown as Semantics;
 
 /** What the probe page rendered, by the `key:value` line each reading is. */
 type Look = {
@@ -51,12 +54,15 @@ const resolved = /^#[0-9a-f]{6,8}$/i;
  * theme whose `press.scale` is 1 draws no press: a control asked to sink as ever stands still. Its
  * fill is an alias, so the page reads it out resolved and the shape of it is checked, not a
  * literal. */
-const raisedIn = (finishes: Finishes, appearance: "light" | "dark", radius: string) => {
-  const finish = finishes[appearance].raised;
+const raisedIn = (semantics: Semantics, appearance: "light" | "dark", radius: string) => {
+  const finish = {
+    ...semantics.finishes.shared.raised,
+    ...semantics.finishes[appearance]?.raised,
+  } as Finish;
   return {
     shadow: finish.boxShadow,
     radius,
-    sink: finishes.press.scale >= 1 ? "1" : "0.97",
+    sink: semantics.state.pressScale >= 1 ? "1" : "0.97",
   };
 };
 

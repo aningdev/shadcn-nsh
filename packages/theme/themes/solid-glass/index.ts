@@ -3,7 +3,7 @@
 // directory into the app's `themes/solid-glass/`; it is the app's, then, to change.
 import type { AppTheme } from "@shadcn-nsh/theme";
 
-import finishes from "./finishes.json";
+import semantics from "./semantics.json";
 import theme from "./theme.json";
 
 /** Solid Glass (deeplethe/solid-glass, MIT): panes of thick smoky glass — a rim of light on each top edge, a hairline round it, a shadow underneath, and no gradient across a face. */
@@ -11,7 +11,7 @@ export const solidGlass: AppTheme = {
   id: "solid-glass",
   label: "Solid Glass",
   theme,
-  finishes,
+  semantics: semantics as AppTheme["semantics"],
 };
 
 export default solidGlass;

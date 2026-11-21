@@ -56,7 +56,7 @@
       "owned": "packages/theme/theme.json"
     },
     "finishes.json": {
-      "owned": "packages/theme/finishes.json"
+      "owned": "packages/theme/semantics.json"
     },
     "theme.ts": {
       "to": "packages/theme/theme.ts"

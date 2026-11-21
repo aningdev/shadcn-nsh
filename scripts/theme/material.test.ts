@@ -1,17 +1,22 @@
 import { describe, expect, test } from "bun:test";
 
 import { checkMaterial, withoutMaterial } from "./material";
+import type { TokenKind } from "./tokens";
 
-const known = new Set(["glass", "card"]);
+const known = new Map<string, TokenKind>([
+  ["glass", "color"],
+  ["card", "color"],
+  ["radius-card", "dimension"],
+]);
 const check = (material: unknown) =>
-  checkMaterial("themes/x/finishes.json", "menu.light", { material }, known);
+  checkMaterial("themes/x/semantics.json", "menu.light", { material }, known);
 
 describe("checkMaterial", () => {
   test("null and a full material pass", () => {
     expect(check(null)).toEqual([]);
     expect(
       check({
-        apple: { glass: "regular", tint: "var(--glass)" },
+        apple: { glass: "regular", tint: "{glass}" },
         ios: { backdrop: "thin" },
         macos: { backdrop: "menu", blending: "behindWindow", state: "active" },
         windows: { backdrop: "blur" },
@@ -23,7 +28,7 @@ describe("checkMaterial", () => {
     const finishes = withoutMaterial({ menu: { boxShadow: "none" }, card: { boxShadow: "none" } });
     delete (finishes.menu as Record<string, unknown>).material;
     const problems = Object.entries(finishes).flatMap(([role, finish]) =>
-      checkMaterial("themes/x/finishes.json", `${role}.light`, finish, known),
+      checkMaterial("themes/x/semantics.json", `${role}.light`, finish, known),
     );
     expect(problems).toHaveLength(1);
     expect(problems[0]).toContain("menu.light.material is missing");
@@ -38,11 +43,12 @@ describe("checkMaterial", () => {
     expect(check({ apple: { glass: "clear" } })[0]).toContain("apple.tint is missing");
   });
 
-  test("a tint is a token of the theme, not a literal", () => {
-    expect(check({ apple: { glass: "clear", tint: "var(--nope)" } })[0]).toContain("nope");
+  test("a tint is a colour token of the theme, not a literal or wrong kind", () => {
+    expect(check({ apple: { glass: "clear", tint: "{nope}" } })[0]).toContain("nope");
+    expect(check({ apple: { glass: "clear", tint: "{radius-card}" } })[0]).toContain("dimension");
     expect(check({ apple: { glass: "clear", tint: "#ff0000" } })[0]).toContain("#ff0000");
-    expect(
-      check({ apple: { glass: "clear", tint: "oklch(from var(--card) l c h / 0.5)" } }),
-    ).toEqual([]);
+    expect(check({ apple: { glass: "clear", tint: "oklch(from {card} l c h / 0.5)" } })).toEqual(
+      [],
+    );
   });
 });
