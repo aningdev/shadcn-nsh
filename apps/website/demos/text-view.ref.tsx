@@ -9,7 +9,7 @@ import { TextView } from "nsh/base";
 import { Button } from "@/packages/ui/button";
 import { ImageViewer, type ImageViewerImage } from "@/packages/ui/image-viewer";
 import { Input } from "@/packages/ui/input";
-import { sectionSurface } from "@/packages/ui/lib/surface";
+import { density, sectionSurface } from "@/packages/ui/lib/surface";
 import { textViewCaretClass, textViewLinkClasses } from "@/packages/ui/text-view";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
@@ -130,7 +130,7 @@ function App() {
       </Text>
 
       {/* The website centers a document at 680 points: so does this page. */}
-      <View style={{ width: "100%", maxWidth: 680, alignSelf: "center", gap: 14 }}>
+      <View style={{ width: "100%", maxWidth: 680, alignSelf: "center", gap: density.gap + 2 }}>
         <DemoCard>
           <TextView
             markdown={text()}

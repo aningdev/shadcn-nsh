@@ -24,6 +24,7 @@ import { Collapsible } from "nsh/base";
 import { IconButton, iconButtonGlyph } from "@/packages/ui/button";
 import { Input } from "@/packages/ui/input";
 import { Icon, IconLabel } from "@/packages/ui/lib/icons";
+import { navBar, navBarStyle } from "@/packages/ui/lib/indicator";
 import { insetSurface, narrowWindow } from "@/packages/ui/lib/surface";
 import { Separator } from "@/packages/ui/separator";
 import { Sheet, SheetContent } from "@/packages/ui/sheet";
@@ -186,6 +187,7 @@ function Column(props: { open: () => boolean; expanded: () => string[] }) {
                         }
                       >
                         <View style={rowLook.style}>
+                          {row.active && navBar() ? <View style={navBarStyle()} /> : null}
                           <Icon
                             icon={row.icon}
                             size={rowLook.glyph.size}
