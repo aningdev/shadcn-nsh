@@ -22,7 +22,7 @@ Every `registry:ui` component in `registry.json` (83 total) audited against offi
 
 - **matches**: Theme tokens, tonal finishes, typography, indicators, and focus/state rules apply cleanly within the shared component architecture.
 - **Class A (fixed)**: Theme responsiveness or contrast issue in shared UI code that was fixed for `material` while keeping `default`, `shadcn`, `solid-glass`, and `apple` pixel-identical.
-- **Class B**: Intentional shared-shell structural gap where the component uses a single cross-theme geometry or omits M3-specific sub-parts to preserve registry uniformity across all themes.
+- **Class B**: Intentional shared-shell structural gap where the component uses a single cross-theme geometry or omits M3-specific sub-parts to preserve registry uniformity across all themes. Tracked in [#233](https://github.com/aningdev/shadcn-nsh/issues/233).
 - **Class C**: Component belongs to NSH's desktop, terminal, code, chat, or layout utility layer with no official Material 3 specification; styled consistently using M3 surface, border, typography, and motion tokens.
 
 | #   | Component           | Spec Reference (`m3.material.io`)                                                                                                 | Status                    | Difference & Reason                                                                                                                                                                                                                                                                                                                                                                                                                             |
