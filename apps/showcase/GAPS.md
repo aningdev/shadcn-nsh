@@ -7,11 +7,13 @@ and its row leaves this file.
 
 ## Library
 
-| Issue                                                     | Gap                                                                             | Scenes that work around it                                       |
-| --------------------------------------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
-| [#87](https://github.com/aningdev/shadcn-nsh/issues/87)   | On macOS a click on the combobox field focuses it and does not open the list    | Combobox                                                         |
-| [#117](https://github.com/aningdev/shadcn-nsh/issues/117) | `Plot` has no overlay hook (hatch with the plot's geometry)                     | Stocks (washes instead of hatching)                              |
-| [#122](https://github.com/aningdev/shadcn-nsh/issues/122) | `nsh/base`'s Button takes no `accessibilityHint`, so no pressable can carry one | Gestures (accessibility rows draw a `View` with `role="button"`) |
+| Issue                                                     | Gap                                                                                                                                                       | Scenes that work around it                                           |
+| --------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
+| [#87](https://github.com/aningdev/shadcn-nsh/issues/87)   | On macOS a click on the combobox field focuses it and does not open the list                                                                              | Combobox                                                             |
+| [#117](https://github.com/aningdev/shadcn-nsh/issues/117) | `Plot` has no overlay hook (hatch with the plot's geometry)                                                                                               | Stocks (washes instead of hatching)                                  |
+| [#122](https://github.com/aningdev/shadcn-nsh/issues/122) | `nsh/base`'s Button takes no `accessibilityHint`, so no pressable can carry one                                                                           | Gestures (accessibility rows draw a `View` with `role="button"`)     |
+| —                                                         | `PopoverContent` forwards `style` to `BasePopover` instead of its `PopIn` surface, so `padding: 0` and `overflow: "hidden"` cannot override `popoverLook` | EmojiPicker (`nsh/base` `Popover` with `PopIn` and `popupSurface()`) |
+| —                                                         | `Input` `variant="ghost"` still applies `edgeClass` focus border/outline, so it cannot drop its focus ring inside a composite field                       | EmojiPicker (composer uses `nsh/base` `Input`)                       |
 
 Not gaps: the iOS segmented control is a platform look;
 `Segmented` / `Button` / `Badge` take children where upstream takes `options` / `label` (shadcn's

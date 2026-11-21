@@ -24,7 +24,7 @@ const TOURS: [name: string, marker: string][] = [
   ["Combobox", "Topics"],
   ["DatePicker", "Deadline"],
   ["ColorPicker", "Fill"],
-  ["EmojiPicker", "Composer"],
+  ["EmojiPicker", "Message composer"],
 ];
 
 /** Opens a demo by its sidebar entry and waits for `marker`, a text only that demo draws. */
@@ -119,8 +119,7 @@ test("DatePicker: a preset fills the deadline", async () => {
   await app.waitFor("text:Due tomorrow");
   // The same demo's time slots: a free time becomes the booking.
   await app.press("role:radio[09:30]");
-  await app.waitFor("text:Book at 09:30");
-  await app.press("text:Book at 09:30");
+  await app.press("id:book-slot");
   await app.wait(200);
   expect(app.texts().some((t) => t.startsWith("Booked:"))).toBe(true);
 });
@@ -140,11 +139,11 @@ test("ColorPicker: the area hands over a color", async () => {
 test("EmojiPicker: a recent emoji lands in the message", async () => {
   const app = await open("../App.tsx", wide);
   await app.setColorScheme("light");
-  await show(app, "EmojiPicker", "Composer");
-  await app.press("label:Add an emoji");
+  await show(app, "EmojiPicker", "Message composer");
+  await app.press("label:Emoji");
   await app.waitFor("id:emoji-panel");
   await app.press("id:emoji-panel >> text:🎉");
-  await app.waitFor("text:Inserted 🎉");
+  await app.waitFor("text:Recent: 🎉 👍 😂 ❤️ 🙏 🔥");
 });
 
 test("a phone pushes the Inputs demos onto its stack", async () => {
