@@ -45,7 +45,7 @@ export function listboxPopup(o?: ListboxPopupOptions): ViewStyle {
   return pointer
     ? {
         ...rounded(shape.overlay),
-        borderWidth: stroke.hairline,
+        borderWidth: stroke.surface,
         padding: 6,
         ...finish.menu,
         ...(o?.minWidth ? { minWidth: o.minWidth } : {}),

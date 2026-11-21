@@ -34,7 +34,7 @@ export function sheetPanel(side: SheetSide): ViewStyle {
     const bottom = side === "bottom";
     return {
       ...surface,
-      borderWidth: stroke.hairline,
+      borderWidth: stroke.surface,
       ...(bottom
         ? {
             borderBottomWidth: 0,
@@ -75,12 +75,12 @@ export function sheetPanel(side: SheetSide): ViewStyle {
     // physical: `side` is the window edge the sheet stands on, so its inner edge (the border and the corners) is physical too.
     ...(side === "right"
       ? {
-          borderLeftWidth: stroke.hairline,
+          borderLeftWidth: stroke.surface,
           borderTopLeftRadius: shape.sheet,
           borderBottomLeftRadius: shape.sheet,
         }
       : {
-          borderRightWidth: stroke.hairline,
+          borderRightWidth: stroke.surface,
           borderTopRightRadius: shape.sheet,
           borderBottomRightRadius: shape.sheet,
         }),

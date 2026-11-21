@@ -50,7 +50,7 @@ export function popupSurface(): ViewStyle {
           padding: 4,
           borderColor: finish.menu.borderColor,
         }
-      : { ...rounded(shape.overlay), borderWidth: stroke.hairline, padding: 4, ...finish.menu }
+      : { ...rounded(shape.overlay), borderWidth: stroke.surface, padding: 4, ...finish.menu }
   );
 }
 

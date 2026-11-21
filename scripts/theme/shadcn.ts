@@ -246,6 +246,7 @@ function section(p: ReturnType<typeof palette>, o: ReturnType<typeof own>) {
     "on-brand-tint": "var(--foreground)",
     inverse: "var(--card)",
     "inverse-foreground": "var(--foreground)",
+    "inverse-muted": "var(--muted-foreground)",
     "inverse-brand": "var(--primary-foreground)",
     "info-tint": tints("info"),
     "warn-tint": tints("warn"),

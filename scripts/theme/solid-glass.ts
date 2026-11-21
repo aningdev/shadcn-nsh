@@ -380,6 +380,7 @@ function section(appearance: Appearance): Record<string, string> {
     "on-brand-tint": "var(--foreground)",
     inverse: "var(--popover)",
     "inverse-foreground": "var(--foreground)",
+    "inverse-muted": "var(--muted-foreground)",
     "inverse-brand": "var(--primary-foreground)",
     "info-tint": tint("info"),
     "warn-tint": tint("warn"),

@@ -40,7 +40,7 @@ export function dialogCard(width?: number): ViewStyle {
   return {
     ...(width === undefined ? {} : { margin: "auto", width, maxWidth: "90%" }),
     ...rounded(shape.dialog),
-    borderWidth: stroke.hairline,
+    borderWidth: terminal ? stroke.hairline : stroke.surface,
     padding: 20,
     gap: 12,
     maxHeight: windowSize().height - safeArea().top - safeArea().bottom - 48,

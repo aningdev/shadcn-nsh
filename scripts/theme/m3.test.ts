@@ -233,12 +233,14 @@ describe("m3Roles", () => {
     expect(css(parseColor(baselineRoles.light["inverse-foreground"])).toUpperCase()).toBe(
       "#F5EFF7",
     );
+    expect(baselineRoles.light["inverse-muted"]).toBe("var(--inverse-foreground)");
     expect(css(parseColor(baselineRoles.light["inverse-brand"])).toUpperCase()).toBe("#D0BCFF");
     expect(css(parseColor(baselineRoles.dark.background)).toUpperCase()).toBe("#141218");
     expect(css(parseColor(baselineRoles.dark.primary)).toUpperCase()).toBe("#D0BCFF");
     expect(css(parseColor(baselineRoles.dark["on-brand-tint"])).toUpperCase()).toBe("#E8DEF8");
     expect(css(parseColor(baselineRoles.dark.inverse)).toUpperCase()).toBe("#E6E0E9");
     expect(css(parseColor(baselineRoles.dark["inverse-foreground"])).toUpperCase()).toBe("#322F35");
+    expect(baselineRoles.dark["inverse-muted"]).toBe("var(--inverse-foreground)");
     expect(css(parseColor(baselineRoles.dark["inverse-brand"])).toUpperCase()).toBe("#6750A4");
   });
 
@@ -258,6 +260,7 @@ describe("m3Roles", () => {
       ["on-brand", "brand-fill"],
       ["on-brand-tint", "brand-tint"],
       ["inverse-foreground", "inverse"],
+      ["inverse-muted", "inverse"],
       ["inverse-brand", "inverse"],
       ["destructive", "destructive-tint"],
     ];

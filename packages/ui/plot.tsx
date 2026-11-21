@@ -123,7 +123,7 @@ export const plotAxisText = (): TextStyle => ({
 /** A floating tooltip's card: the menu's surface, the theme's `radius` corners. */
 export const plotTooltip = (): ViewStyle => ({
   ...finish.menu,
-  borderWidth: stroke.hairline,
+  borderWidth: terminal ? stroke.hairline : stroke.surface,
   ...rounded(shape.inset),
   paddingHorizontal: 10,
   paddingVertical: 8,

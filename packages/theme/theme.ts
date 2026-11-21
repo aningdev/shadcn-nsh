@@ -247,7 +247,7 @@ export interface Style {
     control: Tiered<ControlSizes>;
     height: Tiered<Steps>;
   };
-  stroke: { hairline: number; control: number; indicator: number };
+  stroke: { hairline: number; surface: number; control: number; indicator: number };
   focus: { style: string; width: number; offset: number };
   state: {
     pressScale: number;
@@ -573,6 +573,8 @@ export interface Palette {
   inverse: string;
   /** Text on `inverse`. */
   inverseForeground: string;
+  /** Secondary ink on `inverse`: a toast's description, spinner and close icon, a tooltip's note. */
+  inverseMuted: string;
   /** The accent on `inverse`: a toast's action. */
   inverseBrand: string;
   /** The tone colors: information, a warning, a failure, a gain, a loss. */
@@ -643,6 +645,7 @@ export const colors: Palette = tokens<keyof Palette>({
   onBrandTint: "on-brand-tint",
   inverse: "inverse",
   inverseForeground: "inverse-foreground",
+  inverseMuted: "inverse-muted",
   inverseBrand: "inverse-brand",
 });
 
@@ -848,10 +851,13 @@ export const shape = {
   },
 };
 
-/** Line widths in points (`semantics.json`'s `stroke`): `hairline` a surface's edge and a divider, `control` a control's edge, `indicator` a selection's bar. The focus ring's width is `focus.width`. */
+/** Line widths in points (`semantics.json`'s `stroke`): `hairline` a divider or outlined element's edge, `surface` a surface's outline (0 where surfaces stand by tone or shadow alone), `control` a control's edge, `indicator` a selection's bar. The focus ring's width is `focus.width`. */
 export const stroke = {
   get hairline() {
     return style().stroke.hairline;
+  },
+  get surface() {
+    return style().stroke.surface;
   },
   get control() {
     return style().stroke.control;

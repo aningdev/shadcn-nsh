@@ -337,6 +337,10 @@ function appearanceRoles(p: M3Palette, appearance: Appearance): Record<string, s
     "on-brand-tint": c(p.onSecondaryContainer),
     inverse: c(p.inverseSurface),
     "inverse-foreground": c(p.inverseOnSurface),
+    // M3 snackbar supporting text (`SupportingTextColor`) and close icon (`IconColor`) both use
+    // `InverseOnSurface`, so `inverse-muted` maps to `inverse-foreground`:
+    // https://github.com/androidx/androidx/blob/ac364f3c7f575c0e10f089b254a8eedb5b7d705a/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/SnackbarTokens.kt
+    "inverse-muted": "var(--inverse-foreground)",
     "inverse-brand": c(p.inversePrimary),
     "info-tint": tintMix("info"),
     "warn-tint": tintMix("warn"),
@@ -592,7 +596,9 @@ export const m3Style = {
     },
     height: { pointer: { sm: 32, md: 40, lg: 56 }, touch: { sm: 32, md: 40, lg: 56 } },
   },
-  stroke: { hairline: 1, control: 1, indicator: 3 },
+  // M3 elevated/filled surfaces (ElevatedCard, Sheet, NavigationDrawer, Dialog, Menu, Snackbar)
+  // have no outline (`surface: 0`); `hairline: 1` stays for dividers and outlined variants.
+  stroke: { hairline: 1, surface: 0, control: 1, indicator: 3 },
   focus: { style: "outline", width: 3, offset: 2 },
   state: {
     // M3 presses via state layer overlay and Android ripple rather than geometric scale.

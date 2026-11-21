@@ -188,6 +188,7 @@ function section(p: ReturnType<typeof palette>) {
     "on-brand-tint": "var(--foreground)",
     inverse: "var(--popover)",
     "inverse-foreground": "var(--foreground)",
+    "inverse-muted": "var(--muted-foreground)",
     "inverse-brand": "var(--primary-foreground)",
     "info-tint": tints("info"),
     "warn-tint": tints("warn"),
@@ -364,7 +365,7 @@ export const style = {
     },
     height: { pointer: { sm: 24, md: 28, lg: 32 }, touch: { sm: 32, md: 44, lg: 50 } },
   },
-  stroke: { hairline: 0.5, control: 1, indicator: 2 },
+  stroke: { hairline: 0.5, surface: 0.5, control: 1, indicator: 2 },
   focus: { style: "halo", width: 3, offset: 0 },
   state: {
     // Apple presses by dimming (`state.pressedOpacity`), not by sinking.

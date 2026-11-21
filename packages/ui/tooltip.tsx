@@ -50,8 +50,8 @@ export function tooltipLook(o?: TooltipLookOptions) {
 /** A tooltip's text (`class`): 12 points in the inverse foreground (`inverse-foreground`). */
 export const tooltipText = "text-xs text-inverse-foreground";
 
-/** A tooltip's quieter text (`class`): a shortcut's keys, a time. */
-export const tooltipNote = "text-xs text-muted-foreground";
+/** A tooltip's quieter text (`class`): a shortcut's keys, a time, in `inverse-muted`. */
+export const tooltipNote = "text-xs text-inverse-muted";
 // @port end
 
 /** Why a tooltip closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */

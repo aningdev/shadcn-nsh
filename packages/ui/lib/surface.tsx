@@ -144,7 +144,7 @@ export function sectionSurface(o?: SectionSurfaceOptions): ViewStyle {
   return {
     backgroundColor: colors.card,
     ...rounded(density.surface),
-    borderWidth: stroke.hairline,
+    borderWidth: stroke.surface,
     borderColor: colors.border,
     ...(o?.padded ? { padding: density.pad } : {}),
   };
@@ -158,7 +158,7 @@ export function sectionSurface(o?: SectionSurfaceOptions): ViewStyle {
 export function insetSurface(): ViewStyle {
   return {
     backgroundColor: colors.inset,
-    borderWidth: stroke.hairline,
+    borderWidth: terminal ? stroke.hairline : stroke.surface,
     borderColor: colors.line,
     ...rounded(shape.inset),
     ...finish.inset,
