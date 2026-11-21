@@ -55,7 +55,8 @@ export type PopoverProps = {
 
 /**
  * The panel. Every prop of `nsh/base`'s Popover passes through but the ones the root owns;
- * `popoverLook` is the surface of the `PopIn` it comes in with. Defaults: placement `bottom`.
+ * `popoverLook` is the surface of the `PopIn` it comes in with, and `class` and `style` go
+ * over it (shadcn's `className` on the content). Defaults: placement `bottom`.
  */
 export type PopoverContentProps = Omit<
   BasePopoverProps,
@@ -72,6 +73,10 @@ export type PopoverContentProps = Omit<
   compact?: boolean;
   /** The panel's width; unset, as wide as its content. */
   width?: number;
+  /** Classes of the panel's surface, over `popoverLook`. */
+  class?: string;
+  /** The panel's surface, over `popoverLook` (`{ padding: 0 }` for content that brings its own). */
+  style?: StyleProp<ViewStyle>;
   children?: JSX.Element;
 };
 
@@ -173,6 +178,8 @@ export function PopoverContent(props: PopoverContentProps) {
     "children",
     "compact",
     "width",
+    "class",
+    "style",
     "placement",
     "align",
     "offset",
@@ -196,7 +203,8 @@ export function PopoverContent(props: PopoverContentProps) {
       {() => (
         <PopIn
           side={placement()}
-          style={popoverLook({ compact: props.compact, width: props.width })}
+          class={props.class}
+          style={[popoverLook({ compact: props.compact, width: props.width }), props.style ?? null]}
         >
           {/* children-lint: the panel's contents, built when it opens, not before. */}
           {props.children}

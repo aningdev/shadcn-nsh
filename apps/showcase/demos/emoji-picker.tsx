@@ -6,11 +6,11 @@ import { alpha, colors, shape } from "@shadcn-nsh/theme";
 import { Smile } from "lucide";
 import type { JSX } from "nsh";
 import { platform, signal, Text, View } from "nsh";
-import { Input, Popover } from "nsh/base";
 
 import { EmojiPanel } from "@/packages/ui/emoji-picker";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/packages/ui/input-group";
 import { Icon } from "@/packages/ui/lib/icons";
-import { PopIn, popupSurface } from "@/packages/ui/lib/popup";
+import { Popover, PopoverContent, PopoverTrigger } from "@/packages/ui/popover";
 import { Sheet, SheetContent } from "@/packages/ui/sheet";
 
 import { DemoCard, DemoPage } from "../kit";
@@ -40,18 +40,14 @@ function PickerFrom(props: {
   };
   if (pointer) {
     return (
-      <Popover
-        open={props.open}
-        onOpenChange={({ open }) => props.onOpenChange(open)}
-        placement={props.placement ?? "top"}
-        align="start"
-        offset={8}
-        margin={8}
-        trigger={props.trigger}
-      >
-        <PopIn
-          side={props.placement ?? "top"}
-          style={{ ...popupSurface(), padding: 0, overflow: "hidden" }}
+      <Popover open={props.open} onOpenChange={({ open }) => props.onOpenChange(open)}>
+        <PopoverTrigger>{props.trigger}</PopoverTrigger>
+        <PopoverContent
+          placement={props.placement ?? "top"}
+          align="start"
+          offset={8}
+          margin={8}
+          style={{ padding: 0, overflow: "hidden" }}
         >
           <EmojiPanel
             testID="emoji-panel"
@@ -59,7 +55,7 @@ function PickerFrom(props: {
             onSelect={choose}
             onCancel={() => props.onOpenChange(false)}
           />
-        </PopIn>
+        </PopoverContent>
       </Popover>
     );
   }
@@ -116,34 +112,32 @@ function Composer() {
           : "A sheet across the screen, the tabs at its foot"
       }
     >
-      <View
-        class="border-border bg-raised flex-row items-center gap-1 rounded-2xl border"
-        style={{ paddingLeft: 4, paddingRight: 12, minHeight: pointer ? 40 : 48 }}
-      >
-        <PickerFrom
-          open={open()}
-          onOpenChange={(next) => open.set(next)}
-          recent={recent()}
-          onSelect={({ emoji, base }) => {
-            text.set(text() + emoji);
-            recent.set(remember(recent(), base));
-          }}
-          trigger={
-            <SmileButton
-              open={open()}
-              onPress={pointer ? undefined : () => open.set(true)}
-              label="Emoji"
-            />
-          }
-        />
-        <Input
+      <InputGroup style={{ borderRadius: 16, minHeight: pointer ? 40 : 48 }}>
+        <InputGroupAddon style={{ paddingLeft: 4 }}>
+          <PickerFrom
+            open={open()}
+            onOpenChange={(next) => open.set(next)}
+            recent={recent()}
+            onSelect={({ emoji, base }) => {
+              text.set(text() + emoji);
+              recent.set(remember(recent(), base));
+            }}
+            trigger={
+              <SmileButton
+                open={open()}
+                onPress={pointer ? undefined : () => open.set(true)}
+                label="Emoji"
+              />
+            }
+          />
+        </InputGroupAddon>
+        <InputGroupInput
           value={text()}
           onChange={({ value }) => text.set(value)}
           placeholder="Message"
           accessibilityLabel="Message"
-          class={`text-foreground placeholder:text-muted-foreground flex-1 ${pointer ? "text-sm" : "text-base"}`}
         />
-      </View>
+      </InputGroup>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
         <Text style={{ flex: 1, fontSize: 12, color: colors.mutedForeground }}>
           {`Recent: ${recent().slice(0, 9).join(" ")}`}

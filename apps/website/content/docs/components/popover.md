@@ -65,6 +65,17 @@ A line or two: 12 points of padding and 4 between rows.
 <PopoverContent compact>Saved</PopoverContent>
 ```
 
+### Content with its own frame
+
+`style` goes over the surface: a panel that brings its own padding, such as an emoji panel, drops the
+popover's.
+
+```tsx
+<PopoverContent style={{ padding: 0, overflow: "hidden" }}>
+  <EmojiPanel onSelect={choose} />
+</PopoverContent>
+```
+
 ### Placement
 
 ```tsx
@@ -103,13 +114,13 @@ child; an element brings its own (its `disabled` is the one that counts).
 
 ## API
 
-The root owns the open flag; `PopoverContent` mounts [`nsh/base` Popover](https://nsh.dev/elements/popover) and every base prop passes through except those. Its children come in on a `PopIn` with `popoverLook` (the surface, 14 points of padding with a pointer and 16 on a touch screen).
+The root owns the open flag; `PopoverContent` mounts [`nsh/base` Popover](https://nsh.dev/elements/popover) and every base prop passes through except those. Its children come in on a `PopIn` with `popoverLook` (the surface, 14 points of padding with a pointer and 16 on a touch screen); `class` and `style` go over that surface, as shadcn's `className` does.
 
-| Part                 | Props                                                                                                | Description                                                     |
-| -------------------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
-| `Popover`            | `open`, `defaultOpen`, `onOpenChange`, `onOpen`, `onClose`, `onCancel`                               | The root owns the open flag                                     |
-| `PopoverTrigger`     | `variant`, `disabled`, `style`                                                                       | A string child's `Button`; an element child is the trigger      |
-| `PopoverContent`     | `compact`, `width`, `placement`, `align`, `offset`, `margin`, `closeOnEscape`, `closeOnPressOutside` | The panel; `placement` through `closeOnPressOutside` are base's |
-| `PopoverHeader`      | `style`, `class`                                                                                     | A `View` around a title and its description                     |
-| `PopoverTitle`       | `style`, `class`                                                                                     | A string is `Text`                                              |
-| `PopoverDescription` | `style`, `class`                                                                                     | As `PopoverTitle`                                               |
+| Part                 | Props                                                                                                                  | Description                                                     |
+| -------------------- | ---------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |
+| `Popover`            | `open`, `defaultOpen`, `onOpenChange`, `onOpen`, `onClose`, `onCancel`                                                 | The root owns the open flag                                     |
+| `PopoverTrigger`     | `variant`, `disabled`, `style`                                                                                         | A string child's `Button`; an element child is the trigger      |
+| `PopoverContent`     | `compact`, `width`, `class`, `style`, `placement`, `align`, `offset`, `margin`, `closeOnEscape`, `closeOnPressOutside` | The panel; `placement` through `closeOnPressOutside` are base's |
+| `PopoverHeader`      | `style`, `class`                                                                                                       | A `View` around a title and its description                     |
+| `PopoverTitle`       | `style`, `class`                                                                                                       | A string is `Text`                                              |
+| `PopoverDescription` | `style`, `class`                                                                                                       | As `PopoverTitle`                                               |
