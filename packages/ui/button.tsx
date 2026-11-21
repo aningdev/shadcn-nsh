@@ -17,12 +17,24 @@ import {
   dimmed,
   controlHeight,
   iconSize,
+  motion,
 } from "@shadcn-nsh/theme";
+import type { IconNode } from "lucide";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
-import { context, platform, split, token, View } from "nsh";
+import {
+  context,
+  createAnimatedValue,
+  effect,
+  platform,
+  reduceMotion,
+  split,
+  token,
+  View,
+} from "nsh";
 import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/base";
 
 import { AsText } from "./lib/as-text";
+import { Icon, IconLabel } from "./lib/icons";
 import { pressSink, pressTransition, touchSlop } from "./lib/press";
 import { type Live, read } from "./lib/utils";
 import { Spinner } from "./spinner";
@@ -544,7 +556,12 @@ export type ButtonProps = Omit<BaseButtonProps, "children"> & {
   variant?: ButtonVariant;
   /** Default `default`. */
   size?: ButtonSize;
-  /** Work started by it is going on: a spinner before the label, no presses, not dimmed. */
+  /**
+   * The icon before the label (a lucide node, `import { Plus } from "lucide"`), sized and
+   * tinted by the variant, the size and the state (`buttonGlyph`). The terminal draws none.
+   */
+  icon?: IconNode;
+  /** Work started by it is going on: a spinner in the icon's place, no presses, not dimmed. */
   busy?: boolean;
   /**
    * Each string among the children is the label, in `buttonLabel`'s type (an icon before it
@@ -554,9 +571,42 @@ export type ButtonProps = Omit<BaseButtonProps, "children"> & {
   children?: string | JSX.Element;
 };
 
-/** A button of a `variant` and a `size`. `selected` (a base prop) shows it as chosen. */
+/**
+ * A scale for a leading glyph that grows in (from half, out of nothing) on `motion.control` each
+ * time `key` changes: a new icon, or the spinner taking its place. At once with reduced motion.
+ */
+function growOn(key: () => unknown) {
+  const grow = createAnimatedValue(1);
+  let shown = key();
+  effect(() => {
+    const next = key();
+    if (next === shown) return;
+    shown = next;
+    if (reduceMotion()) return;
+    grow.set(0);
+    grow.spring(1, motion.control);
+  });
+  return {
+    opacity: grow,
+    transform: [{ scale: grow.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] }) }],
+  } satisfies ViewStyle;
+}
+
+/**
+ * A button of a `variant` and a `size`. `selected` (a base prop) shows it as chosen. Its width
+ * follows the label at once: a layout animation would move every frame of the update, app-wide,
+ * so the motion stays on the leading glyph.
+ */
 export function Button(props: ButtonProps) {
-  const [, rest] = split(props, [...STYLE_KEYS, "variant", "size", "busy", "children", "onPress"]);
+  const [, rest] = split(props, [
+    ...STYLE_KEYS,
+    "variant",
+    "size",
+    "icon",
+    "busy",
+    "children",
+    "onPress",
+  ]);
   const variant = () => props.variant ?? "default";
   const options: ButtonLookOptions = {
     size: () => props.size,
@@ -565,6 +615,8 @@ export function Button(props: ButtonProps) {
     busy: () => props.busy,
   };
   const look = buttonLook(variant, options);
+  const glyph = buttonGlyph(variant, options);
+  const grow = growOn(() => (props.busy ? "busy" : props.icon));
   return (
     <BaseButton
       {...rest}
@@ -577,8 +629,12 @@ export function Button(props: ButtonProps) {
       focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
       disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     >
-      <If when={props.busy}>
-        <Spinner {...buttonGlyph(variant, options)} />
+      <If when={props.busy || (props.icon && !terminal)}>
+        <View style={grow}>
+          <If when={props.busy} else={<Icon icon={props.icon!} {...glyph} />}>
+            <Spinner {...glyph} />
+          </If>
+        </View>
       </If>
       <AsText style={buttonLabel(variant, options)}>{props.children}</AsText>
     </BaseButton>
@@ -587,7 +643,8 @@ export function Button(props: ButtonProps) {
 
 /**
  * An icon-only button in the look of `iconButtonLook`. Every base prop passes through; the style
- * props go over the look's. Pass an icon (or any content) as `children`; `iconButtonGlyph` sizes it.
+ * props go over the look's. `icon` draws a lucide node sized and tinted by the look
+ * (`iconButtonGlyph`); for anything else, pass it as `children` and spread `iconButtonGlyph` on it.
  */
 export type IconButtonProps = Omit<BaseButtonProps, "children" | "accessibilityLabel"> & {
   /** Default `ghost`: bare until the pointer is over it; `secondary`: raised; `destructive`: a dangerous action's. */
@@ -599,12 +656,19 @@ export type IconButtonProps = Omit<BaseButtonProps, "children" | "accessibilityL
    * name to derive.
    */
   accessibilityLabel: string;
+  /**
+   * The icon (a lucide node), in `iconButtonGlyph`'s size and tint: the accent while selected, the
+   * danger tone as `destructive`. In the terminal, which draws no icons, `accessibilityLabel`
+   * is its text.
+   */
+  icon?: IconNode;
+  /** Drawn after `icon`, as given: an icon of your own, a badge. */
   children?: JSX.Element;
 };
 
 /** A square icon button. `selected` (a base prop) shows it as chosen. */
 export function IconButton(props: IconButtonProps) {
-  const [, rest] = split(props, [...STYLE_KEYS, "variant", "size", "children"]);
+  const [, rest] = split(props, [...STYLE_KEYS, "variant", "size", "icon", "children"]);
   const options: IconButtonLookOptions = {
     selected: () => props.selected,
     variant: props.variant,
@@ -622,6 +686,13 @@ export function IconButton(props: IconButtonProps) {
       focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
       disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     >
+      <If when={props.icon}>
+        <IconLabel
+          icon={props.icon!}
+          label={props.accessibilityLabel}
+          {...iconButtonGlyph(options)}
+        />
+      </If>
       {props.children}
     </BaseButton>
   );

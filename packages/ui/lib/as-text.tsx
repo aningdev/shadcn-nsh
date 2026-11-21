@@ -12,8 +12,9 @@ export type AsTextProps = {
 
 /**
  * One child, drawn as its control's text: a string or number is a `Text`; an array draws its
- * items this way (each string or number a `Text` of its own, an icon as it is); anything else
- * (an element, or a function child the renderer follows) is drawn as given.
+ * items this way (each string or number a `Text` of its own, an icon as it is); a getter (a child
+ * that changes, `{label()}` among other children) is followed the same way where it is drawn;
+ * anything else (an element) is drawn as given.
  */
 function draw(kids: JSX.Element, textClass?: string, style?: StyleProp<TextStyle>): JSX.Element {
   if (typeof kids === "string" || typeof kids === "number") {
@@ -25,6 +26,10 @@ function draw(kids: JSX.Element, textClass?: string, style?: StyleProp<TextStyle
   }
   if (Array.isArray(kids)) {
     return kids.map((kid) => draw(kid, textClass, style));
+  }
+  if (typeof kids === "function") {
+    const getter = kids as () => JSX.Element;
+    return () => draw(getter(), textClass, style);
   }
   return kids;
 }
