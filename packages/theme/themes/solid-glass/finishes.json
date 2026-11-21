@@ -354,6 +354,24 @@
       "borderColor": "oklch(1 0 0 / 0.06)",
       "material": null
     },
+    "dialog": {
+      "backgroundColor": "var(--card)",
+      "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.16), inset 0 -1px 0 oklch(0 0 0 / 0), 0 24px 60px -18px oklch(0 0 0 / 0.6), 0 6px 16px -6px oklch(0 0 0 / 0.22)",
+      "borderColor": "var(--border)",
+      "material": null
+    },
+    "tooltip": {
+      "backgroundColor": "var(--popover)",
+      "boxShadow": "none",
+      "borderColor": "var(--border)",
+      "material": null
+    },
+    "inverse": {
+      "backgroundColor": "var(--inverse)",
+      "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.16), inset 0 -1px 0 oklch(0 0 0 / 0), 0 24px 60px -18px oklch(0 0 0 / 0.6), 0 6px 16px -6px oklch(0 0 0 / 0.22)",
+      "borderColor": "oklch(1 0 0 / 0.06)",
+      "material": null
+    },
     "groove": {
       "boxShadow": "0 1px 0 oklch(1 0 0 / 0.04)",
       "material": null
@@ -478,6 +496,24 @@
     },
     "menu": {
       "backgroundColor": "var(--popover)",
+      "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0.38 0.03 265 / 0.16), 0 24px 60px -18px oklch(0.3 0.06 265 / 0.28), 0 6px 16px -6px oklch(0.25 0.03 265 / 0.14)",
+      "borderColor": "oklch(0.38 0.03 265 / 0.22)",
+      "material": null
+    },
+    "dialog": {
+      "backgroundColor": "var(--card)",
+      "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0.38 0.03 265 / 0.16), 0 24px 60px -18px oklch(0.3 0.06 265 / 0.28), 0 6px 16px -6px oklch(0.25 0.03 265 / 0.14)",
+      "borderColor": "var(--border)",
+      "material": null
+    },
+    "tooltip": {
+      "backgroundColor": "var(--popover)",
+      "boxShadow": "none",
+      "borderColor": "var(--border)",
+      "material": null
+    },
+    "inverse": {
+      "backgroundColor": "var(--inverse)",
       "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0.38 0.03 265 / 0.16), 0 24px 60px -18px oklch(0.3 0.06 265 / 0.28), 0 6px 16px -6px oklch(0.25 0.03 265 / 0.14)",
       "borderColor": "oklch(0.38 0.03 265 / 0.22)",
       "material": null

@@ -354,6 +354,24 @@
       "borderColor": "var(--border)",
       "material": null
     },
+    "dialog": {
+      "backgroundColor": "var(--card)",
+      "boxShadow": "0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1)",
+      "borderColor": "var(--border)",
+      "material": null
+    },
+    "tooltip": {
+      "backgroundColor": "var(--popover)",
+      "boxShadow": "none",
+      "borderColor": "var(--border)",
+      "material": null
+    },
+    "inverse": {
+      "backgroundColor": "var(--inverse)",
+      "boxShadow": "0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1)",
+      "borderColor": "var(--border)",
+      "material": null
+    },
     "groove": {
       "boxShadow": "none",
       "material": null
@@ -478,6 +496,24 @@
     },
     "menu": {
       "backgroundColor": "var(--card)",
+      "boxShadow": "0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1)",
+      "borderColor": "var(--border)",
+      "material": null
+    },
+    "dialog": {
+      "backgroundColor": "var(--card)",
+      "boxShadow": "0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1)",
+      "borderColor": "var(--border)",
+      "material": null
+    },
+    "tooltip": {
+      "backgroundColor": "var(--popover)",
+      "boxShadow": "none",
+      "borderColor": "var(--border)",
+      "material": null
+    },
+    "inverse": {
+      "backgroundColor": "var(--inverse)",
       "boxShadow": "0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1)",
       "borderColor": "var(--border)",
       "material": null

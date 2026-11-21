@@ -98,9 +98,10 @@ function ink(variant: BubbleVariant): string {
       return colors.primaryForeground;
     case "destructive":
       return colors.destructive;
+    case "tinted":
+      return colors.onBrandTint;
     case "secondary":
     case "muted":
-    case "tinted":
     case "outline":
     case "ghost":
       return colors.foreground;

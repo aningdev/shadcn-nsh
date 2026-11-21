@@ -2,7 +2,7 @@
 // `CodeEditorFindBar` that finds in it.
 // This library's own: NSH's gallery has a look for the rich editor and none for the code editor,
 // so nothing here is ported and there is no port region. Yours to change.
-import { colors, finish, mono, platformMaterial, rounded, shape, stroke } from "@shadcn-nsh/theme";
+import { colors, finish, mono, platformMaterial, shape } from "@shadcn-nsh/theme";
 import { ArrowDown, ArrowUp, Replace, ReplaceAll, X } from "lucide";
 import {
   cleanup,
@@ -26,6 +26,7 @@ import {
 import { buttonGlyph } from "./button";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "./input-group";
 import { Icon } from "./lib/icons";
+import { fieldCorners, fieldEdgeWidths, fieldRestColor } from "./lib/indicator";
 import { popupSurface } from "./lib/popup";
 import { mergeClasses } from "./lib/utils";
 import { Toggle } from "./toggle";
@@ -71,9 +72,9 @@ export const codeEditorClasses: EditorClasses = {
 export function codeEditorFrame(): ViewStyle {
   return {
     backgroundColor: colors.field,
-    borderWidth: stroke.control,
-    borderColor: colors.input,
-    ...rounded(shape.field),
+    ...fieldEdgeWidths(),
+    borderColor: fieldRestColor(colors.input),
+    ...fieldCorners(shape.field),
     ...finish.field,
   };
 }

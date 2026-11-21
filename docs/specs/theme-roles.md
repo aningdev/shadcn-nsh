@@ -56,6 +56,10 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | `code`                          | 井里的等宽字                                                     | `theme.ts` 的 `colors.code`                                                  |
 | `info` / `warn` / `up` / `down` | 四状态色：提示、警告、增长、下降                                 | `progress`、`diff-view`、`code-editor`、`status`                             |
 | `brand-tint` 等 `*-tint`        | 状态色的淡底（`info`、`warn`、`destructive`、`up`、`down` 各一） | `theme.ts` 的 `colors` 映射；`brand-tint` 另见 `calendar`、`tree`、`command` |
+| `on-brand-tint`                 | `brand-tint` 上的字：选中的方块、淡底气泡                        | `checkbox`（选择方块）、`bubble`（tinted）                                   |
+| `inverse`                       | 提示与 toast 的反色面（今天的主题与浮层同色）                    | `toast`、`tooltip`（经 `finish.inverse`）                                    |
+| `inverse-foreground`            | `inverse` 上的字                                                 | `toast`、`tooltip`                                                           |
+| `inverse-brand`                 | `inverse` 上的强调色：toast 的操作                               | `toast`                                                                      |
 | `scrollbar-thumb` / `-hover`    | 滚动条滑块及其悬停                                               | `scrollbar`                                                                  |
 | `ring-halo`                     | 焦点环外面的一圈晕                                               | `theme.ts` 的 `focusRing`                                                    |
 | `violet`                        | 第三个数据色：图的一条线、链接                                   | `link`、`plot`                                                               |
@@ -178,7 +182,10 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | `on`      | 选中的开关/勾选框，以及它上面的标记          | A chosen switch or box, and the mark on it                                       | `button`、`toggle`                            |
 | `chip`    | 字段里一个已选值的标签：底色、一道内高光与边 | A chosen value's label inside a field: a fill, an inner highlight and an edge    | `combobox`                                    |
 | `glass`   | 玻璃：半透明底 + 模糊                        | Glass: a translucent fill and a blur                                             | `carousel`                                    |
-| `menu`    | 浮层：菜单、弹层、提示                       | A floating surface: a menu, a popover, a tooltip                                 | `popover`、`dialog`、`toast`、`lib/listbox`   |
+| `menu`    | 浮层：菜单、弹层                             | A floating surface: a menu, a popover                                            | `popover`、`lib/listbox`                      |
+| `dialog`  | 对话框的面：卡片色 + 浮层阴影                | A dialog's face: the card's colour with the menu's shadow                        | `dialog`、`alert-dialog`                      |
+| `tooltip` | 提示的面：浮层的底，不带阴影                 | A tooltip's face: the popover's pane, without a shadow                           | `tooltip`                                     |
+| `inverse` | 反色面：toast 的底（今天等于 `menu`）        | The inverse surface: a toast's face (today the same as `menu`)                   | `toast`                                       |
 | `groove`  | 菜单里一道凹槽                               | A groove cut inside a menu                                                       | `menu`                                        |
 
 <!-- /theme-lint: finishes -->

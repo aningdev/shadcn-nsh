@@ -13,6 +13,7 @@ import {
   shape,
   stroke,
   dimmed,
+  style as themeStyle,
 } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
@@ -197,6 +198,12 @@ export function TabTitle(props: {
   onWidth?: (bare: number) => void;
 }) {
   const on = follow(() => (props.selected ? 1 : 0), motion.move);
+  const listVariant = ListVariantContext();
+  // A theme that marks the chosen tab with an underline also sets its label in the accent.
+  const chosenInk = () =>
+    themeStyle().indicator.tabs === "underline" && listVariant === "line"
+      ? colors.brand
+      : colors.foreground;
   const away = on.interpolate({ inputRange: [0, 1], outputRange: [1, 0] });
   return (
     <View
@@ -211,7 +218,7 @@ export function TabTitle(props: {
             <Icon icon={props.icon!} size={TAB_ICON} tint={colors.mutedForeground} />
           </View>
           <View style={{ position: "absolute", opacity: on }}>
-            <Icon icon={props.icon!} size={TAB_ICON} tint={colors.foreground} />
+            <Icon icon={props.icon!} size={TAB_ICON} tint={chosenInk()} />
           </View>
         </View>
       </If>
@@ -223,7 +230,7 @@ export function TabTitle(props: {
           fontWeight: font.weight("label"),
           color: on.interpolate({
             inputRange: [0, 1],
-            outputRange: [colors.mutedForeground, colors.foreground],
+            outputRange: [colors.mutedForeground, chosenInk()],
           }),
           textDecorationLine: terminal && props.underline && props.selected ? "underline" : "none",
         }}
@@ -314,6 +321,10 @@ type TabsContextValue = {
 const TabsContext = context<TabsContextValue | null>(null);
 const ListVariantContext = context<TabsListVariant>("default");
 
+/** The variant a list wears when it names none: the theme's `indicator.tabs` (an underline, or the pill's capsule). */
+const themeVariant = (): TabsListVariant =>
+  themeStyle().indicator.tabs === "underline" ? "line" : "default";
+
 function useTabs() {
   return TabsContext();
 }
@@ -370,8 +381,9 @@ function listLook(variant: TabsListVariant) {
 /** The tab list: capsule track or underline, with the traveling indicator. */
 export function TabsList(props: TabsListProps) {
   const [, rest] = split(props, ["variant", "style", "indicatorStyle", "children"]);
-  const variant = () => props.variant ?? "default";
+  const variant = () => props.variant ?? themeVariant();
   const look = computed(() => listLook(variant()));
+  // The frame is chosen when the list is made, so a theme switched later shows on the next mount.
 
   const list = (
     <ListVariantContext.Provider value={variant()}>
@@ -388,7 +400,7 @@ export function TabsList(props: TabsListProps) {
   if (variant() !== "line") return list;
   return (
     <View style={{ alignSelf: "stretch" }}>
-      <View style={underlineTabsLook().rule} />
+      <View testID="tabs-rule" style={underlineTabsLook().rule} />
       {list}
     </View>
   );

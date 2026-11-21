@@ -47,6 +47,7 @@ import { IconButton, iconButtonGlyph, type IconButtonProps } from "./button";
 import { Input, type InputProps } from "./input";
 import { AsText } from "./lib/as-text";
 import { IconLabel } from "./lib/icons";
+import { navBar, navBarStyle } from "./lib/indicator";
 import { pressSink, pressTransition } from "./lib/press";
 import { narrowWindow } from "./lib/surface";
 import { type Live, read } from "./lib/utils";
@@ -492,7 +493,8 @@ export function sidebarMenuButtonLook(o?: SidebarMenuButtonLookOptions) {
               borderColor: colors.sidebarBorder,
             }
           : {}),
-        ...(active() ? { backgroundColor: colors.sidebarAccent } : {}),
+        // The selected row's fill; a theme that marks it with a bar (`indicator.nav`) draws none.
+        ...(active() && !navBar() ? { backgroundColor: colors.sidebarAccent } : {}),
         ...pressTransition("background-color"),
       };
     },
@@ -662,7 +664,7 @@ export function sidebarMenuSubButtonLook(o?: SidebarMenuSubButtonLookOptions) {
         paddingHorizontal: sidebarSize.padding,
         overflow: "hidden",
         ...rounded(shape.control),
-        ...(active() ? { backgroundColor: colors.sidebarAccent } : {}),
+        ...(active() && !navBar() ? { backgroundColor: colors.sidebarAccent } : {}),
         ...pressTransition("background-color"),
       };
     },
@@ -1330,6 +1332,9 @@ export function SidebarMenuButton(props: SidebarMenuButtonProps) {
       focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
       disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     >
+      <If when={props.isActive && navBar()}>
+        <View testID="nav-bar" style={navBarStyle()} />
+      </If>
       <AsText style={look.label}>{kids}</AsText>
     </BaseButton>
   );
@@ -1527,6 +1532,9 @@ export function SidebarMenuSubButton(props: SidebarMenuSubButtonProps) {
       focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
       disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     >
+      <If when={props.isActive && navBar()}>
+        <View testID="nav-bar" style={navBarStyle()} />
+      </If>
       <AsText style={look.label}>{props.children}</AsText>
     </BaseButton>
   );

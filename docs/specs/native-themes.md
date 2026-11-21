@@ -257,7 +257,7 @@ default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继
 | `nav`   | `fill` / `bar`       | fill    | fill  | fill                                                      | bar       |
 | `field` | `box` / `underline`  | box     | box   | box（filled 的底线由 `shape.corners.field` 与 finish 画） | underline |
 
-只收组件已经支持、或者改起来很便宜的外观；每加一项都要过评审（决策 4）。
+只收组件已经支持、或者改起来很便宜的外观；每加一项都要过评审（决策 4）。这些键现在有人读了（#224）：`tabs` 由 `Tabs`，`nav` 由侧栏菜单项，`field` 与 `shape.corners.field` 由各字段形控件读取，读取方见第 5 节"第 3 期批 1"。
 
 ### 3.3 平台材质：finish 新增 `material` 字段
 
@@ -308,7 +308,7 @@ default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继
 | Material | FAB、docked toolbar                  | 应用层组合，写配方                                                                                     |
 | Material | 形状变化（按下时改变形状）           | 需要能动画的圆角。先查 NSH 能不能对 `borderRadius` 做动画；能就作为 `state` 的一项，不能就记成上游缺口 |
 | Fluent   | 输入框底部强调线                     | `field` finish 用 `boxShadow` 画内阴影底线，focus 时换成强调色，主题能做到，不加结构                   |
-| Fluent   | 侧栏和标签页的选中指示条             | `Sidebar` 和 `Tabs` 已有指示器，改由 `finishes.json` 加一项指示条样式（bar / fill）控制                |
+| Fluent   | 侧栏和标签页的选中指示条             | ✅ 已做（#224）：`Sidebar` 读 `indicator.nav`，`Tabs` 读 `indicator.tabs`                              |
 | Apple    | 滚动时边缘效果、浮动工具栏、侧栏铺满 | 属于应用和窗口层，写配方                                                                               |
 | Apple    | 同心圆角                             | `rounded()` 加一个可选参数 `inset`，内圆角 = 外圆角 − inset                                            |
 
@@ -379,7 +379,7 @@ default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继
 内容：
 
 - ✅ 新增 `themes/native`（`nativeTheme()`：iOS、macOS 返回 `apple`，其余平台走 `default` 分支返回默认主题）和 `apple` 主题（`scripts/theme/generate-apple.ts` 生成）；registry 增 `theme-apple`、`theme-native`，`init --theme apple` 与 `--theme native` 可用，文档站主题切换器列出 Apple，`test:install` 覆盖。`glass`、`menu`、`raised` 带 `material.apple`，其余 finish 平涂加发丝边，`material` 为 `null`。macOS 不写 `backdrop`：显式的 `macos.backdrop` 会盖过 26+ 的 `glassEffect`；iOS 的 `backdrop` 只给 26 以下回落。
-- **推迟到第 3 期（本期不加，原因）：** 新增颜色 token `on-brand-tint`、`inverse`、`inverse-foreground`、`inverse-brand` 与新增 finish `dialog`、`tooltip`、`inverse`。查过：对话框用 `card` 加 `menu` 的阴影、tooltip 用 popover 的面、toast 用 `finish.menu`，三者在 Apple 上与现在没有差别，不需要拆开；这些 token 要等 `material` 的 snackbar 反色与 `fluent` 的 tooltip 出现才有第二个使用者，现在加只会让三套现有主题多出无人读的键。
+- **已在第 3 期批 1 完成（#224）：** 见下文"第 3 期批 1"。当时推迟的原因：新增颜色 token `on-brand-tint`、`inverse`、`inverse-foreground`、`inverse-brand` 与新增 finish `dialog`、`tooltip`、`inverse`。查过：对话框用 `card` 加 `menu` 的阴影、tooltip 用 popover 的面、toast 用 `finish.menu`，三者在 Apple 上与现在没有差别，不需要拆开；这些 token 要等 `material` 的 snackbar 反色与 `fluent` 的 tooltip 出现才有第二个使用者，现在加只会让三套现有主题多出无人读的键。
 - 原计划（保留作第 3 期的起点）：新增颜色 token：`on-brand-tint`（强调淡底上的字）、`inverse`、`inverse-foreground`，以及可能的 `inverse-brand`（snackbar 的操作按钮）。`on-media`（照片上的白字）和 `chart-foreground`（浅色图块上的深字）已经在 C 层，名字以 `theme-roles.md` 为准，这里不再另起。新增 finish：`dialog`、`tooltip`、`inverse`；先查清现在 dialog、tooltip、toast 借用的是哪个 finish，三个平台在这里本来就不同的才拆开。
 
 验收：
@@ -390,6 +390,16 @@ default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继
 - 低于 26 的系统和非 Apple 平台回落到模糊。
 
 ### 第 3 期：`material` 与 `fluent` 主题（各一个 PR）
+
+#### 批 1：共用的接线（完成，#224）
+
+本批不加主题，只让组件读 `finishes.json` 里已有但没人读的键，并补上 2b 推迟的颜色 token 与 finish。default、shadcn、solid-glass、apple 逐像素不变（`port:render`、`port:render:theme`）。
+
+- ✅ `indicator.tabs`：`Tabs` 的 `TabsList` 在未给 `variant` 时按它选 `default`（胶囊）或 `line`（下划线）。
+- ✅ `indicator.nav`：`bar` 时侧栏菜单项（`SidebarMenuButton`、`SidebarMenuSubButton`）的选中态不填色，改画前缘一条 `stroke.indicator` 宽、强调色的竖条。`NavigationMenu` 是横排的触发器，不读它。
+- ✅ `indicator.field` 与 `shape.corners.field`：共用逻辑在 `lib/indicator`（`fieldCorners`、`fieldEdgeWidths`、`fieldRestColor`），`Input`、`Textarea`、`InputGroup`、`Select`、`DatePicker`、`Combobox`、`CodeEditor` 与 `edgeClass` 读它：`underline` 只画下边线（静止时 `muted-foreground`，聚焦时 `focus.width` 的强调色，不画光环），`top` 只圆上两角。`NumberInput`、`TimeField` 与 OTP 的格子的外框是写死在模块级的 class，不读它们，仍是方框。
+- ✅ 颜色 token `on-brand-tint`、`inverse`、`inverse-foreground`、`inverse-brand`；finish `dialog`、`tooltip`、`inverse`。读取方：`DialogContent`、`Tooltip`、`Toast`、`Bubble` 的淡底变体。`AlertDialog` 不画卡片，没有读取方。
+- 现有四套主题里新增键取值与原来借用的面相同，`on-brand-tint` 取 `foreground`（`Bubble` 的淡底字今天就是它）；选中的图标按钮仍用 `brand`，选择卡片没有自己的字，两处不接 `on-brand-tint`，留给第 3 期用到时再接。
 
 内容：
 

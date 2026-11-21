@@ -375,6 +375,32 @@
         }
       }
     },
+    "dialog": {
+      "backgroundColor": "var(--card)",
+      "boxShadow": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 8px 30px oklch(0 0 0 / 0.4)",
+      "borderColor": "var(--border)",
+      "material": null
+    },
+    "tooltip": {
+      "backgroundColor": "var(--popover)",
+      "boxShadow": "none",
+      "borderColor": "var(--border)",
+      "material": null
+    },
+    "inverse": {
+      "backgroundColor": "oklch(from var(--inverse) l c h / 0.72)",
+      "boxShadow": "0 0 0 0.5px oklch(1 0 0 / 0.1), 0 8px 30px oklch(0 0 0 / 0.4)",
+      "borderColor": "transparent",
+      "material": {
+        "apple": {
+          "glass": "regular",
+          "tint": null
+        },
+        "ios": {
+          "backdrop": "regular"
+        }
+      }
+    },
     "groove": {
       "boxShadow": "none",
       "material": null
@@ -512,6 +538,32 @@
     },
     "menu": {
       "backgroundColor": "oklch(from var(--popover) l c h / 0.72)",
+      "boxShadow": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 8px 30px oklch(0 0 0 / 0.14)",
+      "borderColor": "transparent",
+      "material": {
+        "apple": {
+          "glass": "regular",
+          "tint": null
+        },
+        "ios": {
+          "backdrop": "regular"
+        }
+      }
+    },
+    "dialog": {
+      "backgroundColor": "var(--card)",
+      "boxShadow": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 8px 30px oklch(0 0 0 / 0.14)",
+      "borderColor": "var(--border)",
+      "material": null
+    },
+    "tooltip": {
+      "backgroundColor": "var(--popover)",
+      "boxShadow": "none",
+      "borderColor": "var(--border)",
+      "material": null
+    },
+    "inverse": {
+      "backgroundColor": "oklch(from var(--inverse) l c h / 0.72)",
       "boxShadow": "0 0 0 0.5px oklch(0 0 0 / 0.08), 0 8px 30px oklch(0 0 0 / 0.14)",
       "borderColor": "transparent",
       "material": {

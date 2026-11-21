@@ -24,6 +24,7 @@ import { withoutMaterial } from "./material";
  */
 import { oklch, oklchColor, over, parseColor, toOklchText, withAlpha } from "./oklch";
 import { ordered, orderedFinish } from "./order";
+import { withSurfaces } from "./surfaces";
 
 /** shadcn's neutrals, quoted from `registry/themes.ts` (theme `neutral`). */
 const NEUTRAL = {
@@ -245,6 +246,10 @@ function section(p: ReturnType<typeof palette>, o: ReturnType<typeof own>) {
     up: o.up,
     down: "var(--destructive)",
     "brand-tint": tints("brand"),
+    "on-brand-tint": "var(--foreground)",
+    inverse: "var(--card)",
+    "inverse-foreground": "var(--foreground)",
+    "inverse-brand": "var(--primary-foreground)",
     "info-tint": tints("info"),
     "warn-tint": tints("warn"),
     "destructive-tint": tints("destructive"),
@@ -355,8 +360,14 @@ export function themeFiles(defaults: {
       // A flat theme draws no press of its own: its surfaces change colour under the finger, they
       // do not sink (`press.scale` of 1, which `pressSink` reads as "no sink").
       press: { scale: 1 },
-      dark: orderedFinish(defaults.darkFinishes, withoutMaterial(finishes("dark", ownDark))),
-      light: orderedFinish(defaults.lightFinishes, withoutMaterial(finishes("light", ownLight))),
+      dark: orderedFinish(
+        defaults.darkFinishes,
+        withoutMaterial(withSurfaces(finishes("dark", ownDark))),
+      ),
+      light: orderedFinish(
+        defaults.lightFinishes,
+        withoutMaterial(withSurfaces(finishes("light", ownLight))),
+      ),
     },
   };
 }

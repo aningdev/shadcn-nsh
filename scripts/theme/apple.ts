@@ -12,6 +12,7 @@
  */
 import { oklchColor, over, toOklchText } from "./oklch";
 import { ordered, orderedFinish } from "./order";
+import { withSurfaces } from "./surfaces";
 
 /** Apple's system colours, per appearance (sRGB, as UIKit documents them). */
 const SYSTEM = {
@@ -179,6 +180,10 @@ function section(p: ReturnType<typeof palette>) {
     up: p.up,
     down: "var(--destructive)",
     "brand-tint": tints("brand"),
+    "on-brand-tint": "var(--foreground)",
+    inverse: "var(--popover)",
+    "inverse-foreground": "var(--foreground)",
+    "inverse-brand": "var(--primary-foreground)",
     "info-tint": tints("info"),
     "warn-tint": tints("warn"),
     "destructive-tint": tints("destructive"),
@@ -409,8 +414,8 @@ export function themeFiles(defaults: {
       // Apple presses by dimming (`state.pressedOpacity`), not by sinking.
       press: { scale: 1 },
       style,
-      dark: orderedFinish(defaults.darkFinishes, withMaterial(finishes("dark"))),
-      light: orderedFinish(defaults.lightFinishes, withMaterial(finishes("light"))),
+      dark: orderedFinish(defaults.darkFinishes, withMaterial(withSurfaces(finishes("dark")))),
+      light: orderedFinish(defaults.lightFinishes, withMaterial(withSurfaces(finishes("light")))),
     },
   };
 }

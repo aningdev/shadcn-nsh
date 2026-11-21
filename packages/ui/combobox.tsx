@@ -35,6 +35,7 @@ import {
 import { Button, type ButtonVariant } from "./button";
 import { edgeClass } from "./input";
 import { Icon } from "./lib/icons";
+import { fieldCorners, fieldEdgeWidths } from "./lib/indicator";
 import {
   Chevron,
   clearButtonLook,
@@ -93,8 +94,8 @@ export function comboboxLook(open: Live<boolean>, o?: ComboboxLookOptions) {
         // The query starts where a select's title does, and stops 4 points short of the toggle.
         paddingStart: 10,
         paddingEnd: 4,
-        ...rounded(shape.control),
-        borderWidth: stroke.control,
+        ...fieldCorners(shape.control),
+        ...fieldEdgeWidths(),
         backgroundColor: colors.field,
         ...finish.field,
         ...read(o?.style),

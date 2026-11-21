@@ -1,3 +1,4 @@
+import { finish } from "@shadcn-nsh/theme";
 // A tooltip: the look (`tooltipLook`, `tooltipText`, `tooltipNote`) at the top, and the parts below.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import type { JSX, StyleProp, ViewStyle } from "nsh";
@@ -20,10 +21,9 @@ export interface TooltipLookOptions {
 }
 
 /**
- * A tooltip's bubble (`class`, on the view inside `nsh/base`'s `Tooltip`):
- * the theme's `popover` surface with the border's edge, not the text's
- * color inverted, so it reads as the menus and popovers do in both
- * appearances. One line: a row 8 points apart, 8 by 4 points of padding,
+ * A tooltip's bubble (`class` and `style`, on the view inside `nsh/base`'s `Tooltip`):
+ * the theme's tooltip finish (`finish.tooltip`: today the `popover` surface with the border's
+ * edge, so it reads as the menus and popovers do in both appearances). One line: a row 8 points apart, 8 by 4 points of padding,
  * the theme's control corners (`radius-control`); `rich`: a column, 10 points of
  * padding, the theme's base corners (`radius`).
  * Its text takes `tooltipText`, a shortcut or a note `tooltipNote`.
@@ -31,13 +31,24 @@ export interface TooltipLookOptions {
 export function tooltipLook(o?: TooltipLookOptions) {
   return {
     class: o?.rich
-      ? "gap-2 rounded-(--radius) border border-border bg-popover p-2.5"
-      : "flex-row items-center gap-2 rounded-(--radius-control) border border-border bg-popover px-2 py-1",
+      ? "gap-2 rounded-(--radius) border p-2.5"
+      : "flex-row items-center gap-2 rounded-(--radius-control) border px-2 py-1",
+    style: {
+      get backgroundColor() {
+        return finish.tooltip.backgroundColor;
+      },
+      get boxShadow() {
+        return finish.tooltip.boxShadow;
+      },
+      get borderColor() {
+        return finish.tooltip.borderColor;
+      },
+    } satisfies ViewStyle,
   };
 }
 
-/** A tooltip's text (`class`): 12 points in the popover's foreground. */
-export const tooltipText = "text-xs text-popover-foreground";
+/** A tooltip's text (`class`): 12 points in the inverse foreground (`inverse-foreground`). */
+export const tooltipText = "text-xs text-inverse-foreground";
 
 /** A tooltip's quieter text (`class`): a shortcut's keys, a time. */
 export const tooltipNote = "text-xs text-muted-foreground";
@@ -130,7 +141,11 @@ function Bubble(props: TooltipContentProps) {
   const [, rest] = split(props, ["children", "rich", "class"]);
   const look = tooltipLook({ rich: props.rich });
   return (
-    <BaseTooltip {...rest} class={props.class ? `${look.class} ${props.class}` : look.class}>
+    <BaseTooltip
+      {...rest}
+      class={props.class ? `${look.class} ${props.class}` : look.class}
+      style={[look.style, props.style ?? null]}
+    >
       <AsText class={tooltipText}>{props.children}</AsText>
     </BaseTooltip>
   );

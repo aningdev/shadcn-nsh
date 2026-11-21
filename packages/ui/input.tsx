@@ -7,16 +7,20 @@ import {
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
-  rounded,
   font,
   shape,
-  stroke,
   dimmed,
 } from "@shadcn-nsh/theme";
 import type { InputStyle, ViewStyle } from "nsh";
 import { platform, signal, split } from "nsh";
 import { Input as BaseInput, type InputProps as BaseInputProps } from "nsh/base";
 
+import {
+  fieldCorners,
+  fieldEdgeWidths,
+  fieldUnderline,
+  underlineFocusClass,
+} from "./lib/indicator";
 import { createRejectShake } from "./lib/motion";
 import { type Live, read } from "./lib/utils";
 
@@ -93,11 +97,17 @@ export function edgeClass(o: EdgeOptions): string {
   const tone = o.invalid ? "destructive" : "brand";
   const focus = o.focus ?? "focus-within";
   const hover = o.hoverVariant ?? "hover";
+  // A theme that draws fields as a line: the line is the muted foreground at rest, and the focus is a
+  // wider edge (`focus.width`) of the accent in place of the ring.
+  const line = fieldUnderline() && !terminal && o.rest !== "";
   return [
-    o.rest,
+    line && o.rest === "border-input" ? "border-muted-foreground" : o.rest,
     o.hover ? `${hover}:${o.hover} ${hover}:${focus}:border-${tone}` : "",
     `${focus}:border-${tone}`,
-    terminal ? "" : `outline-2 -outline-offset-1 outline-${tone}/0 ${focus}:outline-${tone}`,
+    line ? underlineFocusClass(focus) : "",
+    terminal || line
+      ? ""
+      : `outline-2 -outline-offset-1 outline-${tone}/0 ${focus}:outline-${tone}`,
     "transition-colors duration-150 motion-reduce:transition-none",
   ]
     .filter(Boolean)
@@ -123,8 +133,8 @@ function frame(o: FieldLookOptions | undefined): ViewStyle {
   const ghost = (read(o?.variant) ?? "default") === "ghost";
   const flat = !!read(o?.readonly) || !!read(o?.disabled);
   return {
-    ...rounded(shape.field),
-    borderWidth: stroke.control,
+    ...fieldCorners(shape.field),
+    ...fieldEdgeWidths(),
     backgroundColor: ghost ? "transparent" : colors.field,
     // Recessed while editable; a read-only, disabled or ghost field lies flat. Its edge is
     // `fieldEdge`'s classes.

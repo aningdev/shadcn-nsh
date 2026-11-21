@@ -119,6 +119,9 @@ export type FinishRole =
   | "chip"
   | "glass"
   | "menu"
+  | "dialog"
+  | "tooltip"
+  | "inverse"
   | "groove";
 
 /** What a theme's `finishes.json` holds: its style, then its finishes, one set per appearance. */
@@ -525,6 +528,14 @@ export interface Palette {
   knob: string;
   /** Code inside insets. */
   code: string;
+  /** The ink on a `brand-tint` surface: a chosen tile, a tinted bubble. */
+  onBrandTint: string;
+  /** The surface of a tip or a toast, read apart from the page's: a flat theme's popover, an inverted pane in Material. */
+  inverse: string;
+  /** Text on `inverse`. */
+  inverseForeground: string;
+  /** The accent on `inverse`: a toast's action. */
+  inverseBrand: string;
   /** The tone colors: information, a warning, a failure, a gain, a loss. */
   info: string;
   warn: string;
@@ -590,6 +601,10 @@ export const colors: Palette = tokens<keyof Palette>({
   media: "media",
   onMedia: "on-media",
   chartForeground: "chart-foreground",
+  onBrandTint: "on-brand-tint",
+  inverse: "inverse",
+  inverseForeground: "inverse-foreground",
+  inverseBrand: "inverse-brand",
 });
 
 /**
@@ -676,6 +691,9 @@ export const finish: Record<FinishRole, FinishStyle> = {
   chip: themed("chip"),
   glass: themed("glass"),
   menu: themed("menu"),
+  dialog: themed("dialog"),
+  tooltip: themed("tooltip"),
+  inverse: themed("inverse"),
   groove: themed("groove"),
 };
 

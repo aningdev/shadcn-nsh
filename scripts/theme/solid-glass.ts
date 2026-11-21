@@ -24,6 +24,7 @@ import { withoutMaterial } from "./material";
  */
 import { over } from "./oklch";
 import { ordered, orderedFinish } from "./order";
+import { withSurfaces } from "./surfaces";
 
 /** One appearance of the stylesheet's variables, by name (without the `--`). */
 type Source = Record<string, string>;
@@ -375,6 +376,10 @@ function section(appearance: Appearance): Record<string, string> {
     up: s("success"),
     down: "var(--destructive)",
     "brand-tint": s("brand-muted"),
+    "on-brand-tint": "var(--foreground)",
+    inverse: "var(--popover)",
+    "inverse-foreground": "var(--foreground)",
+    "inverse-brand": "var(--primary-foreground)",
     "info-tint": tint("info"),
     "warn-tint": tint("warn"),
     "destructive-tint": tint("destructive"),
@@ -589,8 +594,11 @@ export function themeFiles(defaults: {
       // The material draws no press of its own: a pressed pane loses the shadow it stood on and
       // darkens a step, it does not shrink (`press.scale` of 1, which `pressSink` reads as none).
       press: { scale: 1 },
-      dark: orderedFinish(defaults.darkFinishes, withoutMaterial(finishes("dark"))),
-      light: orderedFinish(defaults.lightFinishes, withoutMaterial(finishes("light"))),
+      dark: orderedFinish(defaults.darkFinishes, withoutMaterial(withSurfaces(finishes("dark")))),
+      light: orderedFinish(
+        defaults.lightFinishes,
+        withoutMaterial(withSurfaces(finishes("light"))),
+      ),
     },
   };
 }

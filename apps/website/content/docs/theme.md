@@ -25,20 +25,22 @@ npx shadcn-nsh@latest add theme
 
 `theme.json` is a shadcn theme: `cssVars.theme` holds the radii and the accent's raw values, `cssVars.light` and `cssVars.dark` hold the same semantic keys for the two appearances. The core keys are shadcn's (`background`, `foreground`, `card`, `popover`, `primary`, `secondary`, `muted`, `accent`, `destructive`, `border`, `input`, `ring`, `chart-1` … `chart-5`, `sidebar*`). Upstream adds the roles the gallery needs:
 
-| Role                                                                               | Use                                                        |
-| ---------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| `inset` / `raised`                                                                 | A surface inside a card, and a control on the card         |
-| `field` / `input`                                                                  | An input's well and its edge                               |
-| `line` / `border`                                                                  | Hairlines inside insets, and the edge of a card or control |
-| `hover` / `faint`                                                                  | The pointer's wash, and the quietest text                  |
-| `ring-halo`                                                                        | The keyboard focus's halo around the `ring` edge           |
-| `brand` / `brand-fill`                                                             | The accent as ink, and as a fill with `on-brand` on it     |
-| `track` / `knob`                                                                   | A switch's track when off, and its knob                    |
-| `scrollbar-thumb*`                                                                 | The scroll bars, opaque over the view                      |
-| `code`                                                                             | Code inside insets                                         |
-| `info` / `warn` / `up` / `down` / `violet`                                         | The tones beside the accent                                |
-| `brand-tint`, `info-tint`, `warn-tint`, `destructive-tint`, `up-tint`, `down-tint` | The same tones as fills behind text                        |
-| `window-close`, `window-minimize`, `window-zoom`, `window-control-*`               | The macOS traffic lights                                   |
+| Role                                                                               | Use                                                                 |
+| ---------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| `inset` / `raised`                                                                 | A surface inside a card, and a control on the card                  |
+| `field` / `input`                                                                  | An input's well and its edge                                        |
+| `line` / `border`                                                                  | Hairlines inside insets, and the edge of a card or control          |
+| `hover` / `faint`                                                                  | The pointer's wash, and the quietest text                           |
+| `ring-halo`                                                                        | The keyboard focus's halo around the `ring` edge                    |
+| `brand` / `brand-fill`                                                             | The accent as ink, and as a fill with `on-brand` on it              |
+| `track` / `knob`                                                                   | A switch's track when off, and its knob                             |
+| `scrollbar-thumb*`                                                                 | The scroll bars, opaque over the view                               |
+| `code`                                                                             | Code inside insets                                                  |
+| `info` / `warn` / `up` / `down` / `violet`                                         | The tones beside the accent                                         |
+| `brand-tint`, `info-tint`, `warn-tint`, `destructive-tint`, `up-tint`, `down-tint` | The same tones as fills behind text                                 |
+| `on-brand-tint`                                                                    | Text and icons on the `brand-tint` fill                             |
+| `inverse` / `inverse-foreground` / `inverse-brand`                                 | A toast's and a tooltip's reversed surface, its text and its action |
+| `window-close`, `window-minimize`, `window-zoom`, `window-control-*`               | The macOS traffic lights                                            |
 
 `colors` maps the roles a component names onto those keys:
 
@@ -64,18 +66,19 @@ Read a role where it is drawn (in JSX, a `draw`, or an effect): the getters read
 
 A finish is light and depth: a gradient over the color, its shadows, its edge. `finishes.json` keeps one entry per role for each appearance, and `finish.<role>` returns the one the appearance shows.
 
-| Role                           | Use                                                       |
-| ------------------------------ | --------------------------------------------------------- |
-| `card` / `inset` / `field`     | The three surfaces, each with its own shadow              |
-| `raised` / `hover` / `pressed` | A control at rest, under the pointer, pressed             |
-| `light` / `accent`             | A control on the citrus fill                              |
-| `track` / `fill`               | A rail, and the accent that runs in it                    |
-| `knob` / `knobOn` / `handle`   | A switch's knob off, and on; a slider's thumb             |
-| `pill` / `thumb` / `on`        | A segmented control's track, its thumb, what stays chosen |
-| `chip`                         | A small raised label                                      |
-| `glass`                        | A control over a photo                                    |
-| `menu`                         | A floating surface's soft shadow                          |
-| `groove`                       | The lip of light under a separator                        |
+| Role                             | Use                                                           |
+| -------------------------------- | ------------------------------------------------------------- |
+| `card` / `inset` / `field`       | The three surfaces, each with its own shadow                  |
+| `raised` / `hover` / `pressed`   | A control at rest, under the pointer, pressed                 |
+| `light` / `accent`               | A control on the citrus fill                                  |
+| `track` / `fill`                 | A rail, and the accent that runs in it                        |
+| `knob` / `knobOn` / `handle`     | A switch's knob off, and on; a slider's thumb                 |
+| `pill` / `thumb` / `on`          | A segmented control's track, its thumb, what stays chosen     |
+| `chip`                           | A small raised label                                          |
+| `glass`                          | A control over a photo                                        |
+| `menu`                           | A floating surface's soft shadow                              |
+| `dialog` / `tooltip` / `inverse` | A dialog card, a tooltip's bubble, a toast's reversed surface |
+| `groove`                         | The lip of light under a separator                            |
 
 Every finish also carries a `material`: `null` (every theme the library ships), or what the platform's own glass should be. `apple` is `{ glass: "regular" | "clear", tint }` and rides inside `finish.<role>` as `glassEffect` and `glassTintColor`, so a spread of the finish carries it; `ios`, `macos` and `windows` are props, not style keys, which `platformMaterial(role)` returns for the view that draws the finish:
 

@@ -137,6 +137,20 @@
       "registryDependencies": ["theme-apple", "theme-default"]
     },
     {
+      "name": "indicator",
+      "type": "registry:lib",
+      "title": "Indicator",
+      "description": "How a theme marks the selected row, the focused field and a field's shape: the nav bar, the underline, the top corners.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/lib/indicator.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/indicator.ts"
+        }
+      ]
+    },
+    {
       "name": "press",
       "type": "registry:lib",
       "title": "Press",
@@ -434,7 +448,7 @@
       "type": "registry:ui",
       "title": "Input",
       "description": "A text field — sunk, ghost, multiline, masked, or invalid.",
-      "registryDependencies": ["motion", "theme", "utils"],
+      "registryDependencies": ["indicator", "motion", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/input.tsx",
@@ -491,7 +505,7 @@
       "type": "registry:ui",
       "title": "Tooltip",
       "description": "A popover-coloured hint bubble on any element's tooltip prop.",
-      "registryDependencies": ["as-text", "button", "open-state"],
+      "registryDependencies": ["as-text", "button", "open-state", "theme"],
       "files": [
         {
           "path": "packages/ui/tooltip.tsx",
@@ -622,6 +636,7 @@
       "description": "A list of choices from a field trigger, on the shared listbox look.",
       "registryDependencies": [
         "icons",
+        "indicator",
         "input",
         "listbox",
         "open-state",
@@ -646,6 +661,7 @@
       "registryDependencies": [
         "button",
         "icons",
+        "indicator",
         "input",
         "listbox",
         "open-state",
@@ -1054,6 +1070,7 @@
       "registryDependencies": [
         "button",
         "icons",
+        "indicator",
         "input-group",
         "popup",
         "theme",
@@ -1423,6 +1440,7 @@
         "as-text",
         "button",
         "icons",
+        "indicator",
         "input",
         "press",
         "separator",

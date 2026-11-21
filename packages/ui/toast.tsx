@@ -33,8 +33,8 @@ import { Spinner } from "./spinner";
 const pointer = platform.desktop;
 
 /**
- * A toast (`nsh/base`'s `Toast`'s `style`): a row 12 points apart on the floating finish every
- * popup wears (not the raised one, a control's, which a theme may make a tint over the page),
+ * A toast (`nsh/base`'s `Toast`'s `style`): a row 12 points apart on the inverse finish (`finish.inverse`: the
+ * floating pane every popup wears today, not the raised one, a control's, which a theme may make a tint over the page),
  * 10-point corners (`shape.inset`), 12 by 14 points of padding. Its title takes `toastTitle`,
  * its description `toastText`.
  */
@@ -47,14 +47,14 @@ export function toastLook(): ViewStyle {
     paddingHorizontal: 14,
     ...rounded(shape.overlay),
     borderWidth: stroke.hairline,
-    ...finish.menu,
+    ...finish.inverse,
   };
 }
 
 /** A toast's title: 14 points semibold. */
 export function toastTitle(): TextStyle {
   // No type role has this size: a toast's title is 14 in both tiers.
-  return { fontSize: 14, fontWeight: font.weight("title"), color: colors.foreground };
+  return { fontSize: 14, fontWeight: font.weight("title"), color: colors.inverseForeground };
 }
 
 /** A toast's description: 13 points, muted, its figures tabular. */
@@ -81,7 +81,18 @@ export function toastActionLook() {
 
 /** The label of a `toastActionLook` (`buttonLabel("default")`). */
 export function toastActionLabel(): TextStyle {
-  return buttonLabel("default", toastActionSize);
+  const label = buttonLabel("default", toastActionSize);
+  return {
+    get color() {
+      return colors.inverseBrand;
+    },
+    get fontSize() {
+      return label.fontSize;
+    },
+    get fontWeight() {
+      return label.fontWeight;
+    },
+  };
 }
 
 /** A toast's close button (its cross): a circle 24 points across (the theme's
@@ -131,7 +142,11 @@ const toastTextColumn: ViewStyle = { flex: 1, gap: 2, minWidth: 0 };
 export function Toast(props: ToastProps) {
   const [, rest] = split(props, ["title", "description", "children", "style"]);
   return (
-    <BaseToast {...platformMaterial("menu")} {...rest} style={[toastLook(), props.style ?? null]}>
+    <BaseToast
+      {...platformMaterial("inverse")}
+      {...rest}
+      style={[toastLook(), props.style ?? null]}
+    >
       {props.children ?? (
         <View style={toastTextColumn}>
           {props.title ? <Text style={toastTitle()}>{props.title}</Text> : null}

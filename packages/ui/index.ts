@@ -83,6 +83,7 @@ export * from "./title-bar";
 export * from "./collapsing-header";
 export * from "./lib/color-format";
 export * from "./lib/icons";
+export * from "./lib/indicator";
 export {
   Chevron,
   ListboxEmpty,

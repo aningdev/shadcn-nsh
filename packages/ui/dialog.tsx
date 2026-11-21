@@ -25,8 +25,8 @@ const cardWidth = pointer ? 360 : 320;
 
 /**
  * A dialog shown as a card in the middle of the window, over `backdrop()`:
- * the card's surface with the border's edge and the floating shadow of a
- * menu (`finish.menu`), the theme's card radius, 20 points of
+ * the dialog's face (`finish.dialog`: the card's colour, the border's edge and the
+ * floating shadow of a menu), the theme's card radius, 20 points of
  * padding, its rows 12 apart. Given a `width`, it is `nsh/base`'s `Dialog`'s `style` itself:
  * centered, `width` across and never wider than 90% of the window; without
  * one, the look alone, for a view inside the dialog (one that springs in).
@@ -41,11 +41,16 @@ export function dialogCard(width?: number): ViewStyle {
     ...(width === undefined ? {} : { margin: "auto", width, maxWidth: "90%" }),
     ...rounded(shape.dialog),
     borderWidth: stroke.hairline,
-    borderColor: colors.border,
     padding: 20,
     gap: 12,
     maxHeight: windowSize().height - safeArea().top - safeArea().bottom - 48,
-    ...(terminal ? {} : { backgroundColor: colors.card, boxShadow: finish.menu.boxShadow }),
+    ...(terminal
+      ? { borderColor: colors.border }
+      : {
+          backgroundColor: finish.dialog.backgroundColor,
+          boxShadow: finish.dialog.boxShadow,
+          borderColor: finish.dialog.borderColor,
+        }),
   };
 }
 
