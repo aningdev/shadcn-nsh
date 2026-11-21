@@ -623,8 +623,9 @@ mount(Page);
 
 /**
  * The platform's own theme, from the app's side: `init --theme native` builds the app on the
- * default theme and installs `themes/apple`, `themes/default` and `themes/native`; a page that
- * calls `selectTheme(nativeTheme())` must type check. `init --theme apple` builds on Apple's.
+ * default theme and installs `themes/apple`, `themes/material`, `themes/default` and
+ * `themes/native`; a page that calls `selectTheme(nativeTheme())` must type check.
+ * `init --theme apple` builds on Apple's; `init --theme material` builds on Material's.
  */
 async function installNativeTheme(template: string, dir: string, nsh: string) {
   await copyApp(template, dir);
@@ -632,8 +633,13 @@ async function installNativeTheme(template: string, dir: string, nsh: string) {
     path.join(repo, "packages/theme/themes/apple/theme.json"),
     "utf8",
   );
+  const material = await fs.readFile(
+    path.join(repo, "packages/theme/themes/material/theme.json"),
+    "utf8",
+  );
   for (const [name, want] of [
     ["themes/apple/theme.json", apple],
+    ["themes/material/theme.json", material],
     ["themes/default/theme.json", null],
     ["themes/native/index.ts", null],
   ] as const) {
@@ -658,6 +664,24 @@ async function installAppleTheme(template: string, dir: string, nsh: string) {
     throw new StepFailure(
       "theme",
       "      theme.json is not packages/theme/themes/apple/theme.json after init --theme apple",
+    );
+  }
+  await step("add --all", "bun", [cli, "add", "--all"], dir);
+  await step("nsh check", nsh, ["check", "."], dir);
+}
+
+/** `init --theme material`: the app's own `theme.json` is Material's, and the app type checks. */
+async function installMaterialTheme(template: string, dir: string, nsh: string) {
+  await copyApp(template, dir);
+  const material = await fs.readFile(
+    path.join(repo, "packages/theme/themes/material/theme.json"),
+    "utf8",
+  );
+  const now = await fs.readFile(path.join(dir, "theme.json"), "utf8");
+  if (now !== material) {
+    throw new StepFailure(
+      "theme",
+      "      theme.json is not packages/theme/themes/material/theme.json after init --theme material",
     );
   }
   await step("add --all", "bun", [cli, "add", "--all"], dir);
@@ -976,7 +1000,7 @@ async function main(): Promise<number> {
     }
 
     if (opts.filter == null) {
-      console.log("the platform's own theme: apple, and native choosing it");
+      console.log("the platform's own theme: apple, material, and native choosing them");
       const startedNative = performance.now();
       try {
         const nativeTemplate = path.join(tmp, "template-native");
@@ -985,16 +1009,20 @@ async function main(): Promise<number> {
         const appleTemplate = path.join(tmp, "template-apple");
         await scaffold(appleTemplate, registry, nsh, "apple");
         await installAppleTheme(appleTemplate, path.join(tmp, "apple"), nsh);
+        const materialTemplate = path.join(tmp, "template-material");
+        await scaffold(materialTemplate, registry, nsh, "material");
+        await installMaterialTheme(materialTemplate, path.join(tmp, "material"), nsh);
       } catch (thrown) {
         const failure = failureOf(thrown);
         console.error(`  ✗ ${failure.step} ${seconds(performance.now() - startedNative)}`);
         console.error(failure.detail);
         console.error(
-          "\ninstall test: --theme apple or --theme native does not install, or what it leaves does not type check",
+          "\ninstall test: --theme apple, --theme material, or --theme native does not install, or what it leaves does not type check",
         );
         return 1;
       }
-      const label = "init --theme native, init --theme apple, add --all, nsh check";
+      const label =
+        "init --theme native, init --theme apple, init --theme material, add --all, nsh check";
       console.log(`  ✓ ${label} ${seconds(performance.now() - startedNative)}\n`);
     }
 

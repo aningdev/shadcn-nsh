@@ -16,6 +16,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import { PALETTES } from "../../apps/website/demos/palettes";
 import { antialiasing, cases, schemes } from "../../apps/website/demos/render-cases";
 import { catalog } from "../catalog";
 import { repo } from "./lib";
@@ -65,17 +66,21 @@ const pairsOf = (id: string, self?: string): Pair[] => {
       self,
     });
   }
-  // The theme's pass, where it has run: a fifth and sixth cell, each pair beside its reference.
-  for (const scheme of schemes) {
-    const ours = `${id}-shadcn-${scheme}.png`;
-    if (fs.existsSync(path.join(themeShots, ours))) {
-      pairs.push({
-        pass: "shadcn",
-        scheme,
-        ours,
-        reference: `${id}-shadcn-${scheme}.ref.png`,
-        dir: themeShots,
-      });
+  // Any theme passes that have run (`port:render:theme`): extra cells after the build-time ones.
+  for (const palette of PALETTES) {
+    if (palette.id === "default") continue;
+    for (const scheme of schemes) {
+      const ours = `${id}-${palette.id}-${scheme}.png`;
+      if (fs.existsSync(path.join(themeShots, ours))) {
+        pairs.push({
+          pass: palette.id,
+          scheme,
+          ours,
+          reference: `${id}-${palette.id}-${scheme}.ref.png`,
+          dir: themeShots,
+          self,
+        });
+      }
     }
   }
   return pairs;
@@ -113,14 +118,19 @@ const escape = (s: string) =>
     .replaceAll(">", "&gt;")
     .replaceAll('"', "&quot;");
 
+const imageSrc = (pair: Pair, name: string) =>
+  pair.dir === shots ? name : `${path.relative(shots, pair.dir)}/${name}`;
+
 const cell = (pair: Pair, label: string) => {
   const ours = read(pair.ours, pair.dir);
   const reference = pair.self ? null : read(pair.reference, pair.dir);
   const status = state(pair);
-  const image = (name: string, file: Buffer | null, side: string) =>
-    file
-      ? `<a href="${escape(name)}" target="_blank" rel="noreferrer"><img loading="lazy" src="${escape(name)}" alt="${escape(side)}"></a>`
+  const image = (name: string, file: Buffer | null, side: string) => {
+    const src = imageSrc(pair, name);
+    return file
+      ? `<a href="${escape(src)}" target="_blank" rel="noreferrer"><img loading="lazy" src="${escape(src)}" alt="${escape(side)}"></a>`
       : `<span class="absent">${escape(side)} missing<br><code>${escape(name)}</code></span>`;
+  };
   if (pair.self) {
     return `<figure class="cell ${status} self">
   <figcaption>${escape(label)}<span class="tag">self</span></figcaption>
@@ -170,8 +180,8 @@ for (const { id, selfReference } of cases) {
    ${cell(pairs[3]!, "touch · dark")}
    ${hasSwitched ? cell({ pass: "appearance", scheme: "light→dark", ours: switched, reference: switchedReference, dir: shots }, "appearance · light→dark") : ""}
    ${pairs
-     .filter((pair) => pair.pass === "shadcn")
-     .map((pair) => cell(pair, `shadcn · ${pair.scheme}`))
+     .slice(4)
+     .map((pair) => cell(pair, `${pair.pass} · ${pair.scheme}`))
      .join("\n   ")}
   </div>
  </section>`);
