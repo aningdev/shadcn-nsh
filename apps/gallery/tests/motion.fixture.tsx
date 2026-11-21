@@ -1,7 +1,7 @@
 import { mount, reduceMotion, Text, View, type ViewStyle } from "nsh";
 
 // Motion contract: durations, press sink, popup enter, springs, progress sweep.
-import { motion } from "../../../packages/theme";
+import { isTiming, motion } from "../../../packages/theme";
 import {
   buttonLook,
   commandClasses,
@@ -29,6 +29,9 @@ function moved(style: { transform?: unknown } | undefined) {
   return style?.transform ? "sink" : "still";
 }
 
+const describeMotion = (m: typeof motion.control) =>
+  isTiming(m) ? `${m.duration}|${JSON.stringify(m.easing)}` : `${m.stiffness}|${m.damping}`;
+
 function App() {
   const button = buttonLook("secondary");
   const toggle = toggleLook();
@@ -53,7 +56,7 @@ function App() {
   ].join(" || ");
   return (
     <View>
-      <Text>{`motion=${reduceMotion()}|${motion.control.stiffness}|${motion.control.damping}|${motion.move.stiffness}|${motion.move.damping}`}</Text>
+      <Text>{`motion=${reduceMotion()}|${describeMotion(motion.control)}|${describeMotion(motion.move)}`}</Text>
       <Text>{`press=${line(press.transition)}|${moved(press.activeStyle)}`}</Text>
       <Text>{`button=${line(button.style)}|${moved(button.activeStyle)}|${moved(button.hoverStyle)}`}</Text>
       <Text>{`toggle=${line(toggle.style)}|${moved(toggle.activeStyle)}|${moved(toggle.hoverStyle)}`}</Text>

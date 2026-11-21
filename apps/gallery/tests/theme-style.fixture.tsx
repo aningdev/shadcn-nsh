@@ -2,6 +2,7 @@ import {
   cornerCurve,
   focusRing,
   follow,
+  isTiming,
   motion,
   selectTheme,
   type AppTheme,
@@ -45,7 +46,7 @@ function App() {
       <Text testID="density">{`density:${density.row}`}</Text>
       <Text testID="control">{`control:${controlSize.row}`}</Text>
       <Text testID="plain">{`plain:${plainRow().minHeight}`}</Text>
-      <Text testID="press">{`press:${motion.press.stiffness}|${motion.press.damping}`}</Text>
+      <Text testID="press">{`press:${isTiming(motion.press) ? `${motion.press.duration}|${JSON.stringify(motion.press.easing)}` : `${motion.press.stiffness}|${motion.press.damping}`}`}</Text>
       <Text testID="focus">{`focus:${focusRing().outlineWidth}`}</Text>
       <Text testID="curve">{`curve:${cornerCurve.borderCurve}`}</Text>
       <Button onPress={() => selectTheme(roomy)}>Roomy</Button>

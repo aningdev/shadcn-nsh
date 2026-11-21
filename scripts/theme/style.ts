@@ -25,18 +25,104 @@ export const styleGroups = [
 export const styleOf = (file: Record<string, unknown>): Record<string, unknown> =>
   Object.fromEntries(styleGroups.filter((group) => group in file).map((g) => [g, file[g]]));
 
+/** Every easing name a theme may name in `motion.enter.easing` or a timing `motion.<role>`. */
+export const easingNames = [
+  "out-cubic",
+  "in-cubic",
+  "in-out-cubic",
+  "standard",
+  "emphasized-decelerate",
+  "emphasized-accelerate",
+  "decelerate",
+  "accelerate",
+  "easy-ease",
+  "point-to-point",
+] as const;
+
 /** One theme's strings that must come from a list: the path of the key, and the values it may take. */
 export const whitelists: Record<string, readonly (string | null)[]> = {
   "type.*.weight": ["400", "500", "600", "700"],
   "shape.curve": ["continuous", "circular"],
   "shape.corners.field": ["all", "top"],
   "size.control.*.switch": ["small", "regular"],
-  "focus.style": ["halo", "outline"],
-  "motion.enter.easing": ["out-cubic", "in-cubic", "in-out-cubic"],
+  "focus.style": ["halo", "outline", "double"],
+  "motion.enter.easing": easingNames,
   "indicator.tabs": ["underline", "pill"],
   "indicator.nav": ["fill", "bar"],
   "indicator.field": ["box", "underline"],
 };
+
+const motionRoleNames = ["press", "settle", "control", "move"] as const;
+
+const isObject = (value: unknown): value is Record<string, unknown> =>
+  value !== null && typeof value === "object" && !Array.isArray(value);
+
+const isMotionRolePath = (path: string) =>
+  motionRoleNames.some((role) => path === `motion.${role}` || path.startsWith(`motion.${role}.`));
+
+function checkMotionRole(path: string, role: string, value: unknown): string[] {
+  const key = `motion.${role}`;
+  if (value === undefined) return [`${path}: \`${key}\` is missing`];
+  if (!isObject(value))
+    return [`${path}: \`${key}\` is ${JSON.stringify(value)}, not a Spring or Timing object`];
+
+  const problems: string[] = [];
+  const hasSpring = "stiffness" in value || "damping" in value;
+  const hasTiming = "duration" in value || "easing" in value;
+  if (hasSpring && hasTiming) {
+    return [
+      `${path}: \`${key}\` mixes spring keys (stiffness/damping) and timing keys (duration/easing)`,
+    ];
+  }
+
+  if (hasTiming) {
+    const allowed = new Set(["duration", "easing"]);
+    for (const k of Object.keys(value))
+      if (!allowed.has(k)) problems.push(`${path}: \`${key}.${k}\` is not a key of a Timing`);
+    if (!("duration" in value)) problems.push(`${path}: \`${key}.duration\` is missing`);
+    else if (
+      typeof value.duration !== "number" ||
+      !Number.isFinite(value.duration) ||
+      value.duration < 0
+    ) {
+      problems.push(
+        `${path}: \`${key}.duration\` is ${JSON.stringify(value.duration)}, not a number of 0 or more`,
+      );
+    }
+    if (!("easing" in value)) problems.push(`${path}: \`${key}.easing\` is missing`);
+    else if (typeof value.easing !== "string" || !easingNames.includes(value.easing as never)) {
+      problems.push(
+        `${path}: \`${key}.easing\` is ${JSON.stringify(value.easing)}, not one of ${easingNames.map((v) => JSON.stringify(v)).join(", ")}`,
+      );
+    }
+    return problems;
+  }
+
+  const allowed = new Set(["stiffness", "damping"]);
+  for (const k of Object.keys(value))
+    if (!allowed.has(k)) problems.push(`${path}: \`${key}.${k}\` is not a key of a Spring`);
+  if (!("stiffness" in value)) problems.push(`${path}: \`${key}.stiffness\` is missing`);
+  else if (
+    typeof value.stiffness !== "number" ||
+    !Number.isFinite(value.stiffness) ||
+    value.stiffness < 0
+  ) {
+    problems.push(
+      `${path}: \`${key}.stiffness\` is ${JSON.stringify(value.stiffness)}, not a number of 0 or more`,
+    );
+  }
+  if (!("damping" in value)) problems.push(`${path}: \`${key}.damping\` is missing`);
+  else if (
+    typeof value.damping !== "number" ||
+    !Number.isFinite(value.damping) ||
+    value.damping < 0
+  ) {
+    problems.push(
+      `${path}: \`${key}.damping\` is ${JSON.stringify(value.damping)}, not a number of 0 or more`,
+    );
+  }
+  return problems;
+}
 
 /** The eight corner roles in `shape` that must reference a `dimension` token in `theme.json`. */
 export const shapeRadiusRoles = [
@@ -127,14 +213,21 @@ export function checkStyle(
   const have = leaves(styleOf(file));
   const want = leaves(styleOf(reference));
   for (const key of want.keys())
-    if (!have.has(key))
+    if (!isMotionRolePath(key) && !have.has(key))
       problems.push(`${path}: \`${key}\` is missing, and ${referenceName} states it`);
   for (const key of have.keys())
-    if (!want.has(key)) problems.push(`${path}: \`${key}\` is not a key ${referenceName} states`);
+    if (!isMotionRolePath(key) && !want.has(key))
+      problems.push(`${path}: \`${key}\` is not a key ${referenceName} states`);
+
+  const motion = isObject(file.motion) ? file.motion : undefined;
+  for (const role of motionRoleNames) {
+    problems.push(...checkMotionRole(path, role, motion?.[role]));
+  }
 
   const shapeRadiusKeys = new Set<string>(shapeRadiusRoles.map((role) => `shape.${role}`));
 
   for (const [key, value] of have) {
+    if (isMotionRolePath(key)) continue;
     const other = want.get(key);
     if (other === undefined && !want.has(key)) continue;
 

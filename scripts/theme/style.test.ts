@@ -2,7 +2,15 @@ import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { checkStyle, leaves, scaledRadii, semanticsWithStyle, styleOf, whitelists } from "./style";
+import {
+  checkStyle,
+  easingNames,
+  leaves,
+  scaledRadii,
+  semanticsWithStyle,
+  styleOf,
+  whitelists,
+} from "./style";
 import { tokenKinds, type ThemeCssVars } from "./tokens";
 
 const theme = join(import.meta.dir, "../../packages/theme");
@@ -111,6 +119,36 @@ describe("checkStyle", () => {
     const unknown = copy();
     unknown.type.family = "{font-display}";
     expect(check(unknown, withSans)[0]).toContain("font-display");
+  });
+
+  test("accepts double focus style and timing motion roles, rejecting invalid shapes and easings", () => {
+    const ok = copy();
+    ok.focus.style = "double";
+    ok.motion.press = { duration: 150, easing: "emphasized-decelerate" };
+    ok.motion.control = { duration: 167, easing: "decelerate" };
+    ok.motion.enter = { duration: 250, easing: "point-to-point" };
+    expect(check(ok)).toEqual([]);
+
+    for (const easing of easingNames) {
+      const withEasing = copy();
+      withEasing.motion.move = { duration: 200, easing };
+      withEasing.motion.enter.easing = easing;
+      expect(check(withEasing), easing).toEqual([]);
+    }
+
+    const mixed = copy();
+    mixed.motion.press = { stiffness: 300, duration: 150 };
+    expect(check(mixed).join("\n")).toContain("mixes spring keys");
+
+    const badTiming = copy();
+    badTiming.motion.press = { duration: -10, easing: "unknown-curve" };
+    const timingProblems = check(badTiming).join("\n");
+    expect(timingProblems).toContain("motion.press.duration");
+    expect(timingProblems).toContain("motion.press.easing");
+
+    const missingTimingField = copy();
+    missingTimingField.motion.settle = { duration: 200 };
+    expect(check(missingTimingField).join("\n")).toContain("motion.settle.easing");
   });
 
   test("semanticsWithStyle preserves default style and updates pressScale", () => {

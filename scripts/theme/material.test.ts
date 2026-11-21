@@ -20,6 +20,10 @@ describe("checkMaterial", () => {
         ios: { backdrop: "thin" },
         macos: { backdrop: "menu", blending: "behindWindow", state: "active" },
         windows: { backdrop: "blur" },
+        android: {
+          elevation: 6,
+          ripple: { color: "{card}", borderless: false, radius: 18, foreground: true },
+        },
       }),
     ).toEqual([]);
   });
@@ -50,5 +54,29 @@ describe("checkMaterial", () => {
     expect(check({ apple: { glass: "clear", tint: "oklch(from {card} l c h / 0.5)" } })).toEqual(
       [],
     );
+  });
+
+  test("android material validates elevation, ripple token colour, flags, and rejects unknown keys", () => {
+    expect(check({ android: { elevation: 4 } })).toEqual([]);
+    expect(check({ android: { ripple: { color: "{glass}" } } })).toEqual([]);
+    expect(check({ android: { unknown: true } })[0]).toContain("android.unknown");
+    expect(check({ android: { elevation: -1 } })[0]).toContain("android.elevation");
+    expect(check({ android: { ripple: { color: "{card}", extra: 1 } } })[0]).toContain(
+      "android.ripple.extra",
+    );
+    expect(check({ android: { ripple: {} } })[0]).toContain("android.ripple.color is missing");
+    expect(check({ android: { ripple: { color: "#ff0000" } } })[0]).toContain("#ff0000");
+    expect(
+      check({ android: { ripple: { color: "oklch(from {card} l c h / 0.2)" } } })[0],
+    ).toContain("oklch(from {card} l c h / 0.2)");
+    expect(check({ android: { ripple: { color: "{nope}" } } })[0]).toContain("nope");
+    expect(check({ android: { ripple: { color: "{radius-card}" } } })[0]).toContain("dimension");
+    expect(check({ android: { ripple: { color: "{card}", borderless: "yes" } } })[0]).toContain(
+      "borderless",
+    );
+    expect(check({ android: { ripple: { color: "{card}", foreground: 1 } } })[0]).toContain(
+      "foreground",
+    );
+    expect(check({ android: { ripple: { color: "{card}", radius: -2 } } })[0]).toContain("radius");
   });
 });
