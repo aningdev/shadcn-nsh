@@ -188,16 +188,16 @@ packages/theme/themes/<id>/
 
 #### stroke 与 focus
 
-| 键                 | 含义                                                    | default | Apple           | Material | Fluent         |
-| ------------------ | ------------------------------------------------------- | ------- | --------------- | -------- | -------------- |
-| `stroke.hairline`  | 发丝线                                                  | 1       | 0.5（物理像素） | 1        | 1              |
-| `stroke.control`   | 控件描边                                                | 1       | 1               | 1        | 1              |
-| `stroke.indicator` | 指示条线宽                                              | 2       | —               | 3        | 3              |
-| `focus.style`      | 焦点环样式：`halo`（强调色光晕）、`outline`（实线外框） | halo    | halo            | outline  | double（见下） |
-| `focus.width`      | 焦点环宽                                                | 3       | 3               | 3        | 2              |
-| `focus.offset`     | 焦点环离边多远（`focusRing(offset)` 不传时用它）        | 0       | 0               | 2        | 0              |
+| 键                 | 含义                                                                                  | default | Apple           | Material | Fluent |
+| ------------------ | ------------------------------------------------------------------------------------- | ------- | --------------- | -------- | ------ |
+| `stroke.hairline`  | 发丝线                                                                                | 1       | 0.5（物理像素） | 1        | 1      |
+| `stroke.control`   | 控件描边                                                                              | 1       | 1               | 1        | 1      |
+| `stroke.indicator` | 指示条线宽                                                                            | 2       | —               | 3        | 3      |
+| `focus.style`      | 焦点环样式：`halo`（强调色光晕）、`outline`（实线外框）、`double`（外实线内反色细边） | halo    | halo            | outline  | double |
+| `focus.width`      | 焦点环宽                                                                              | 3       | 3               | 3        | 2      |
+| `focus.offset`     | 焦点环离边多远（`focusRing(offset)` 不传时用它）                                      | 0       | 0               | 2        | 0      |
 
-`focus.style` 白名单现在只有 `halo` 与 `outline`，是代码已经画得出的两种；Fluent 的双线（外 2 内 1）要在第 3 期随绘制代码一起加进白名单。焦点环的线宽只有 `focus.width` 一个键（1b 并掉了 `stroke.focus`）。
+`focus.style` 白名单包含 `halo`、`outline` 与 `double`（#231）：`halo` 给边缘着色并绕 `ring-halo` 光晕，`outline` 只画 `ring` 外框而不改 `borderColor`，`double` 在此基础上以内阴影补一条 1 px 的 `ring-halo` 内边，对应 Fluent 2 的 `FocusStrokeColorOuter` / `FocusStrokeColorInner`。焦点环的线宽只有 `focus.width` 一个键（1b 并掉了 `stroke.focus`）。
 
 #### state
 
@@ -214,21 +214,21 @@ packages/theme/themes/<id>/
 
 Apple 的 `disabled` 取 0.3：HIG 不给数，系统控件禁用时约三成不透明度，与 `pressedOpacity` 0.7 一样是实测近似；`stroke.hairline` 的 0.5 是一个物理像素在 2× 屏上的点数（NSH 没有发丝线 API，按 0.5 点画，在 3× 屏上约 1.5 像素）。
 
-default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继续由 `hover` / `pressed` 两个 finish 表达（"换面"）；原生主题用叠色表达（见决策 3）。禁用与强调色的悬停、按下都不加颜色 token，由透明度推出（见决策 2）。
+default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继续由 `hover` / `pressed` 两个 finish 表达（"换面"）；原生主题用叠色表达（见决策 3）。禁用与强调色的悬停、按下都不加颜色 token，由透明度推出（见决策 2）。`stateLayer(kind, ink?, under?)` 把墨色洗层叠在已有 `backgroundImage` 渐变之上，不覆盖底色，`hovered(ink?, under?)` 仅在 `overlay.hover === 0` 时写 `backgroundColor: token("hover")`，`state.ripple: true` 时可按控件给 Android 加上按压水波 `android.ripple`。
 
 #### motion
 
-| 键               | 含义                                            | default                   | Apple      | Material                             | Fluent                         |
-| ---------------- | ----------------------------------------------- | ------------------------- | ---------- | ------------------------------------ | ------------------------------ |
-| `press`          | 按下（弹簧）                                    | stiffness 520，damping 34 | 同 default | 待核对（expressive 的 spatial 弹簧） | 时长曲线，约 100 ms（第 3 期） |
-| `settle`         | 落定（弹簧）                                    | 320，30                   | 同 default | 待核对                               | 约 150 ms（第 3 期）           |
-| `control`        | 控件的标记、填充出入（弹簧）                    | 1218，70                  | 同 default | 待核对                               | 约 100 ms（第 3 期）           |
-| `move`           | 拇指、指示条的移动（弹簧）                      | 504，38                   | 同 default | 待核对                               | 约 200 ms（第 3 期）           |
-| `enter.duration` | 浮层出现的时长                                  | 420 ms                    | 约         | 约 400（待核对）                     | 约 200（待核对）               |
-| `enter.easing`   | 曲线名：`out-cubic`、`in-cubic`、`in-out-cubic` | out-cubic                 | —          | 待核对（emphasized）                 | 待核对（decelerate）           |
-| `shake.duration` | 拒绝值的横向抖动，对齐 `play("shake")`          | 500 ms                    | 同 default | 同 default                           | 同 default                     |
+| 键               | 含义                                                                | default                   | Apple      | Material                             | Fluent                 |
+| ---------------- | ------------------------------------------------------------------- | ------------------------- | ---------- | ------------------------------------ | ---------------------- |
+| `press`          | 按下（弹簧 `{ stiffness, damping }` 或时序 `{ duration, easing }`） | stiffness 520，damping 34 | 同 default | 待核对（expressive 的 spatial 弹簧） | 时长曲线，约 83–167 ms |
+| `settle`         | 落定（弹簧或时序）                                                  | 320，30                   | 同 default | 待核对                               | 约 167 ms              |
+| `control`        | 控件的标记、填充出入（弹簧或时序）                                  | 1218，70                  | 同 default | 待核对                               | 约 167 ms              |
+| `move`           | 拇指、指示条的移动（弹簧或时序）                                    | 504，38                   | 同 default | 待核对                               | 约 250 ms              |
+| `enter.duration` | 浮层出现的时长                                                      | 420 ms                    | 约         | 约 400（待核对）                     | 约 200（待核对）       |
+| `enter.easing`   | 曲线名（`out-cubic`、`standard`、`decelerate` 等 10 项共享白名单）  | out-cubic                 | —          | emphasized-decelerate                | decelerate             |
+| `shake.duration` | 拒绝值的横向抖动，对齐 `play("shake")`                              | 500 ms                    | 同 default | 同 default                           | 同 default             |
 
-`press`、`settle`、`control`、`move` 现在只能写弹簧（`{ stiffness, damping }`），`follow()` 与 `motion.move` 的调用形状不变，弹簧在每次起跳时读当前主题，所以先建的控件也跟着换。Fluent 基本只用时长加曲线（50–500 ms 八档）：第 3 期把角色扩成"弹簧或时长曲线"二选一（`{ spring }` / `{ timing }`），并把曲线名的白名单加到 decelerate、accelerate 等。`exit`、`enter` 的起点（从哪变来）同属第 3 期。
+`press`、`settle`、`control`、`move` 支持 `{ stiffness, damping }` 弹簧或 `{ duration, easing }` 时序曲线二选一（#231）：`follow()` 与各动效调用点统一经 `animate()`（`Roll` 按 `isTiming()` 切换关键帧时序或弹簧）按当前形状分派，经由响应式代理随 `selectTheme()` 实时切换并在开启减弱动画时立即到位。曲线白名单扩为全平台中性命名：`out-cubic`、`in-cubic`、`in-out-cubic`、`standard`、`emphasized-decelerate`、`emphasized-accelerate`、`decelerate`、`accelerate`、`easy-ease`、`point-to-point`，与 `enter.easing` 共用同一份清单。
 
 #### icon
 
@@ -260,12 +260,13 @@ default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继
     "apple":   { "glass": "regular", "tint": "var(--glass)" },  // → glassEffect、glassTintColor
     "ios":     { "backdrop": "thin" },                           // → ios.backdropMaterial（26 之前）
     "macos":   { "backdrop": "menu", "blending": "behindWindow" },
-    "windows": { "backdrop": "blur" }
+    "windows": { "backdrop": "blur" },
+    "android": { "elevation": 4, "ripple": { "color": "{foreground}" } }
   }
 }
 ```
 
-- `themed()` 读 finish 时，把 `material.apple` 翻译成 style 里的 `glassEffect` 与 `glassTintColor`（色值走 alias 路径，不写字面量），`material` 本身从不进 style；`ios`、`macos`、`windows` 不是 style 键，由 `theme.ts` 的 `platformMaterial(role)` 返回（`{ ios: { backdropMaterial }, macos: { backdrop: { material, blending, state } }, windows: { backdrop: { material } } }`，随 `selectTheme` 与外观响应），组件在同一个 View 上 `{...platformMaterial("menu")}` 铺开。`material` 为 `null` 时 style 的键与以前完全一样。
+- `themed()` 读 finish 时，把 `material.apple` 翻译成 style 里的 `glassEffect` 与 `glassTintColor`（色值走 alias 路径，不写字面量），`material` 本身从不进 style；`ios`、`macos`、`windows`、`android` 不是 style 键，由 `theme.ts` 的 `platformMaterial(role)` 返回（含 Android 的 `elevation` 与解析 `{token}` 后的 `ripple`），组件在同一个 View 上 `{...platformMaterial("menu")}` 铺开。`material` 为 `null` 时 style 的键与以前完全一样。
 - 用 finish 的组件需要多铺开一组 props。这是第 2 期里唯一要改组件的地方。`nsh/base` 的弹层（`Menu`、`Select`、`Popover` 的 popup）只开放 `popupStyle`，所以那里只有 style 里的玻璃键生效，`ios` / `macos` / `windows` 铺不上去；这是已知限制，要用就在应用自己的 View 上铺。
 - 遵守"形状固定"：所有主题、所有 finish 都写 `material`，不用材质的写 `null`。
 - 先接四个浮层或半透明的 finish：`glass`、`menu`、`card`（侧栏和面板）、`raised`（Apple 的玻璃按钮）。
@@ -389,6 +390,16 @@ default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继
 - ✅ `indicator.field` 与 `shape.corners.field`：共用逻辑在 `lib/indicator`（`fieldCorners`、`fieldEdgeWidths`、`fieldRestColor`），`Input`、`Textarea`、`InputGroup`、`Select`、`DatePicker`、`Combobox`、`CodeEditor` 与 `edgeClass` 读它：`underline` 只画下边线（静止时 `muted-foreground`，聚焦时 `focus.width` 的强调色，不画光环），`top` 只圆上两角。`NumberInput`、`TimeField` 与 OTP 的格子的外框是写死在模块级的 class，不读它们，仍是方框。
 - ✅ 颜色 token `on-brand-tint`、`inverse`、`inverse-foreground`、`inverse-brand`；finish `dialog`、`tooltip`、`inverse`。读取方：`DialogContent`、`Tooltip`、`Toast`、`Bubble` 的淡底变体。`AlertDialog` 不画卡片，没有读取方。
 - 现有四套主题里新增键取值与原来借用的面相同，`on-brand-tint` 取 `foreground`（`Bubble` 的淡底字今天就是它）；选中的图标按钮仍用 `brand`，选择卡片没有自己的字，两处不接 `on-brand-tint`，留给第 3 期用到时再接。
+
+#### 批 2：跨平台主题原语（完成，#231）
+
+在 `material`（#224）与 `fluent`（#225）之前补齐剩余跨平台主题原语，四套现有主题保持零像素变化：
+
+- ✅ `focus.style: "double"`：外圈 `focus.width` 宽 `ring` 实线 + 1 px `ring-halo` 内阴影；只有 `halo` 写 `borderColor: token("ring")`，`outline` 与 `double` 均不覆写边框色。
+- ✅ `motion` 时序曲线联合类型：`press` / `settle` / `control` / `move` 均支持 `{ stiffness, damping }` 或 `{ duration, easing }`，响应式随 `selectTheme()` 切换，经 `animate()`、`follow()` 与 `Roll` 统一分发并尊从 `reduceMotion()`。
+- ✅ 曲线白名单扩至 10 项（`out-cubic`、`in-cubic`、`in-out-cubic`、`standard`、`emphasized-decelerate`、`emphasized-accelerate`、`decelerate`、`accelerate`、`easy-ease`、`point-to-point`），`enter.easing` 与时序角色共享一份清单。
+- ✅ `stateLayer(kind, ink?, under?)` 按表面前景墨色（强调/品牌、选中开关、破坏性与反色各传对应 token）把叠色叠在已有 `backgroundImage` 之上；`hovered(ink?, under?)` 仅在 `overlay.hover === 0` 时写 `backgroundColor: token("hover")`。
+- ✅ `state.ripple` 为 `true` 时，可按控件将对应前景墨色按 `overlay.pressed` 透明度写入 `android.ripple.color`；`material.android`（`elevation` 与 `{token}` 水波配置）经 `platformMaterial()` 接入并通过 `scripts/theme/material.ts` 校验。
 
 内容：
 

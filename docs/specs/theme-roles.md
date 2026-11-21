@@ -155,8 +155,9 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | `ios`     | `{ backdrop: "ultraThin" \| "thin" \| "regular" \| "thick" \| "chrome" }`                                                                            | `ios={{ backdropMaterial }}`                                         |
 | `macos`   | `{ backdrop: <NSVisualEffectView 材质>, blending?: "withinWindow" \| "behindWindow", state?: "followsWindowActiveState" \| "active" \| "inactive" }` | `macos={{ backdrop: { material, blending, state } }}`                |
 | `windows` | `{ backdrop: "blur" }`                                                                                                                               | `windows={{ backdrop: { material } }}`                               |
+| `android` | `{ elevation?: number, ripple?: { color: <"{token}">, borderless?: boolean, radius?: number, foreground?: boolean } }`                               | `android={{ elevation, ripple }}`                                    |
 
-`themed()` 从不把 `material` 放进 style；style 里只多 `glassEffect`（有 `apple` 时）和 `glassTintColor`（`tint` 不为 `null` 时），`material: null` 时键与以前完全一样。`ios`、`macos`、`windows` 不是 style 键，由 `theme.ts` 的 `platformMaterial(role)` 返回，组件在同一个 View 上铺开：`<View {...platformMaterial("menu")} style={{ ...finish.menu }} />`。`check:theme` 检查 `material` 存在于每个 finish，取值在白名单里，`apple.tint` 是该主题有的颜色（`scripts/theme/material.ts`）。
+`themed()` 从不把 `material` 放进 style；style 里只多 `glassEffect`（有 `apple` 时）和 `glassTintColor`（`tint` 不为 `null` 时），`material: null` 时键与以前完全一样。`ios`、`macos`、`windows`、`android` 不是 style 键，由 `theme.ts` 的 `platformMaterial(role)` 返回，组件在同一个 View 上铺开：`<View {...platformMaterial("menu")} style={{ ...finish.menu }} />`（按压水波由启用了 `state.ripple` 的可按组件并入 `android`）。`check:theme` 检查 `material` 存在于每个 finish，取值在白名单里，`apple.tint` 与 `android.ripple.color` 是该主题有的颜色（`scripts/theme/material.ts`）。
 
 字段顺序固定：`backgroundColor`、`backgroundImage`、`boxShadow`、`borderColor`、`backdropFilter`、`material`。`scripts/theme/order.ts` 的 `orderedFinish` 按默认主题的键序写文件，多一个或少一个键都报错。
 

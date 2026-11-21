@@ -39,11 +39,11 @@
 
 `bun run check:theme`（`scripts/theme-lint.ts`）对每一处 `{token}` 执行严格的类型与防重复检查，token 种类按 DTCG `$type` 命名：
 
-| 语义层位置                                                                                                               | 要求的 `$type` | 不允许的写法                                                     |
-| ------------------------------------------------------------------------------------------------------------------------ | -------------- | ---------------------------------------------------------------- |
-| `finishes` 颜色字段（`backgroundColor`、`backgroundImage`、`borderColor`、`boxShadow` 中的引用）与 `material.apple.tint` | `color`        | 非墨色/非待定表字面量、旧式 `var(--x)`、引用非 `color` token     |
-| `shape.{control,field,chip,card,overlay,dialog,sheet,inset}`                                                             | `dimension`    | 裸数字字面量、引用非 `dimension` token                           |
-| `type.family`（非 `null` 时）                                                                                            | `fontFamily`   | 裸字符串（如 `"sans"` / `"rounded"`）、引用非 `fontFamily` token |
+| 语义层位置                                                                                                                                                | 要求的 `$type` | 不允许的写法                                                     |
+| --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- | ---------------------------------------------------------------- |
+| `finishes` 颜色字段（`backgroundColor`、`backgroundImage`、`borderColor`、`boxShadow` 中的引用）与 `material.apple.tint`、`material.android.ripple.color` | `color`        | 非墨色/非待定表字面量、旧式 `var(--x)`、引用非 `color` token     |
+| `shape.{control,field,chip,card,overlay,dialog,sheet,inset}`                                                                                              | `dimension`    | 裸数字字面量、引用非 `dimension` token                           |
+| `type.family`（非 `null` 时）                                                                                                                             | `fontFamily`   | 裸字符串（如 `"sans"` / `"rounded"`）、引用非 `fontFamily` token |
 
 ## 3 两档与明暗稀疏覆盖
 
@@ -80,11 +80,12 @@
 
 本标准在概念与命名上对齐 W3C **Design Tokens Format Module 2025.10**（DTCG，[`designtokens.org/tr/2025.10/format/`](https://www.designtokens.org/tr/2025.10/format/)，含其 Color 与 Resolver 模块）：
 
-| 本标准概念                                                                                                                     | DTCG 2025.10 对应                         | 说明                                                                                                                                                   |
-| ------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `{token}` 引用                                                                                                                 | 花括号别名（Curly-brace alias）           | NSH 的 token 命名空间是扁平的，因此语义层写 `{card}` / `{radius-dialog}`；导出 DTCG 时映射到分组路径（如 `{color.card}`、`{dimension.radius.dialog}`） |
-| token 种类                                                                                                                     | `$type`                                   | 直接沿用 DTCG `$type` 词汇：`color`、`dimension`、`fontFamily`、`fontWeight`、`number`、`duration`、`cubicBezier`、`shadow`、`typography`              |
-| `shared` + `light`/`dark`、`pointer`/`touch` 两档及未来的平台主题                                                              | Resolver `sets` 与 `modifiers` / contexts | `shared` 为基础 set，`light`/`dark` 与 `pointer`/`touch`（及后续平台维度）对应 Resolver 的 modifier contexts                                           |
-| 弹簧物理量（`stiffness`/`damping`）、外观枚举（`indicator.*`、`focus.style`、`shape.curve`）、finish 复合配方与平台 `material` | `$extensions`                             | DTCG 标准类型无法表达的运行时语义，归入 `$extensions` 命名空间                                                                                         |
+| 本标准概念                                                                                                                     | DTCG 2025.10 对应                         | 说明                                                                                                                                                                                        |
+| ------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `{token}` 引用                                                                                                                 | 花括号别名（Curly-brace alias）           | NSH 的 token 命名空间是扁平的，因此语义层写 `{card}` / `{radius-dialog}`；导出 DTCG 时映射到分组路径（如 `{color.card}`、`{dimension.radius.dialog}`）                                      |
+| token 种类                                                                                                                     | `$type`                                   | 直接沿用 DTCG `$type` 词汇：`color`、`dimension`、`fontFamily`、`fontWeight`、`number`、`duration`、`cubicBezier`、`shadow`、`typography`                                                   |
+| `shared` + `light`/`dark`、`pointer`/`touch` 两档及未来的平台主题                                                              | Resolver `sets` 与 `modifiers` / contexts | `shared` 为基础 set，`light`/`dark` 与 `pointer`/`touch`（及后续平台维度）对应 Resolver 的 modifier contexts                                                                                |
+| 动效时序（`{ duration, easing }`）                                                                                             | `duration` + `cubicBezier`                | 以 `{ duration }`（ms）与命名 `cubicBezier` 曲线表达时序动效（如 Fluent 动效与 `motion.enter`）；NSH 语义层里先按 `TimingSpec`（毫秒数字 + 白名单曲线名）存储，导出 DTCG 时拆成标准 `$type` |
+| 弹簧物理量（`stiffness`/`damping`）、外观枚举（`indicator.*`、`focus.style`、`shape.curve`）、finish 复合配方与平台 `material` | `$extensions`                             | DTCG 标准类型无法表达的运行时语义，归入 `$extensions` 命名空间                                                                                                                              |
 
 DTCG 标准导出（`.tokens.json` + `.resolver.json`）将在后续与 `DESIGN.md` 生成器一并实现，不在本次重构范围内。
