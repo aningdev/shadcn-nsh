@@ -261,7 +261,8 @@ export interface Press {
 }
 
 /** The build-time finishes: `finishes.json` beside this file (the app's `nsh-ui.json` names the theme they belong to). */
-const builtIn: Finishes = finishes;
+// JSON types a `material.apple.glass` as `string`; `check:theme` holds the file to "regular" | "clear".
+const builtIn = finishes as Finishes;
 
 /** The theme `selectTheme` put in; `null` while the app shows its build-time one. */
 const selected = signal<AppTheme | null>(null);

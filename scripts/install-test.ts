@@ -15,6 +15,9 @@
  * - **the default theme as one more**: `init --theme shadcn`, `add theme-default`, then a page
  *   that lists both and switches between them: the library's own theme installs into
  *   `themes/default/` without touching the build-time one;
+ * - **the platform's own theme**: `init --theme native` (themes/apple, themes/default and
+ *   themes/native installed, a page calling `selectTheme(nativeTheme())` type checks) and
+ *   `init --theme apple` (theme.json is Apple's, `add --all` type checks);
  * - **one at a time**: a fresh app per `registry:ui` item, `add <item>` and `nsh check`: an
  *   import no item delivers (a missing `registryDependencies` entry or lib file), or a file the
  *   transform points at the wrong place, shows up only when the item is installed alone.
@@ -565,6 +568,68 @@ async function installAnotherTheme(template: string, dir: string, nsh: string) {
   await step("nsh check", nsh, ["check", "."], dir);
 }
 
+const NATIVE_PAGE = `// Written by scripts/install-test.ts; this app is temporary.
+import { mount, Text, View } from "nsh";
+
+import { selectTheme } from "@/lib/ui/theme";
+import { nativeTheme } from "./themes/native";
+
+selectTheme(nativeTheme());
+
+function Page() {
+  return (
+    <View>
+      <Text>{nativeTheme().id}</Text>
+    </View>
+  );
+}
+
+mount(Page);
+`;
+
+/**
+ * The platform's own theme, from the app's side: `init --theme native` builds the app on the
+ * default theme and installs `themes/apple`, `themes/default` and `themes/native`; a page that
+ * calls `selectTheme(nativeTheme())` must type check. `init --theme apple` builds on Apple's.
+ */
+async function installNativeTheme(template: string, dir: string, nsh: string) {
+  await copyApp(template, dir);
+  const apple = await fs.readFile(
+    path.join(repo, "packages/theme/themes/apple/theme.json"),
+    "utf8",
+  );
+  for (const [name, want] of [
+    ["themes/apple/theme.json", apple],
+    ["themes/default/theme.json", null],
+    ["themes/native/index.ts", null],
+  ] as const) {
+    const now = await fs.readFile(path.join(dir, name), "utf8").catch(() => null);
+    if (now === null || (want !== null && now !== want)) {
+      throw new StepFailure("theme", `      init --theme native wrote no ${name}`);
+    }
+  }
+  await fs.writeFile(path.join(dir, "Native.tsx"), NATIVE_PAGE);
+  await step("nsh check", nsh, ["check", "."], dir);
+}
+
+/** `init --theme apple`: the app's own `theme.json` is Apple's, and the app type checks. */
+async function installAppleTheme(template: string, dir: string, nsh: string) {
+  await copyApp(template, dir);
+  const apple = await fs.readFile(
+    path.join(repo, "packages/theme/themes/apple/theme.json"),
+    "utf8",
+  );
+  const now = await fs.readFile(path.join(dir, "theme.json"), "utf8");
+  if (now !== apple) {
+    throw new StepFailure(
+      "theme",
+      "      theme.json is not packages/theme/themes/apple/theme.json after init --theme apple",
+    );
+  }
+  await step("add --all", "bun", [cli, "add", "--all"], dir);
+  await step("nsh check", nsh, ["check", "."], dir);
+}
+
 async function installOneItem(template: string, dir: string, item: Item, nsh: string) {
   await copyApp(template, dir);
   // `nsh check` below fails when the item imports a package `add` did not install (`lucide`).
@@ -812,6 +877,29 @@ async function main(): Promise<number> {
       }
       const label = "init --theme shadcn, add theme-default, nsh check";
       console.log(`  ✓ ${label} ${seconds(performance.now() - startedSecond)}\n`);
+    }
+
+    if (opts.filter == null) {
+      console.log("the platform's own theme: apple, and native choosing it");
+      const startedNative = performance.now();
+      try {
+        const nativeTemplate = path.join(tmp, "template-native");
+        await scaffold(nativeTemplate, registry, nsh, "native");
+        await installNativeTheme(nativeTemplate, path.join(tmp, "native"), nsh);
+        const appleTemplate = path.join(tmp, "template-apple");
+        await scaffold(appleTemplate, registry, nsh, "apple");
+        await installAppleTheme(appleTemplate, path.join(tmp, "apple"), nsh);
+      } catch (thrown) {
+        const failure = failureOf(thrown);
+        console.error(`  ✗ ${failure.step} ${seconds(performance.now() - startedNative)}`);
+        console.error(failure.detail);
+        console.error(
+          "\ninstall test: --theme apple or --theme native does not install, or what it leaves does not type check",
+        );
+        return 1;
+      }
+      const label = "init --theme native, init --theme apple, add --all, nsh check";
+      console.log(`  ✓ ${label} ${seconds(performance.now() - startedNative)}\n`);
     }
 
     const each = `each item in its own app (${items.length} item${items.length === 1 ? "" : "s"}`;

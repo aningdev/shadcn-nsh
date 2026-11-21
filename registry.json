@@ -99,6 +99,44 @@
       "registryDependencies": []
     },
     {
+      "name": "theme-apple",
+      "type": "registry:theme",
+      "title": "Theme: Apple",
+      "description": "Apple's system palette and HIG metrics as one more theme — capsule controls, continuous corners, systemBlue, and Liquid Glass on the glass, menu and raised finishes — installed into themes/apple/ (theme.json, finishes.json, index.ts) for `selectTheme` to switch to while the app runs.",
+      "files": [
+        {
+          "path": "packages/theme/themes/apple/theme.json",
+          "type": "registry:file",
+          "target": "themes/apple/theme.json"
+        },
+        {
+          "path": "packages/theme/themes/apple/finishes.json",
+          "type": "registry:file",
+          "target": "themes/apple/finishes.json"
+        },
+        {
+          "path": "packages/theme/themes/apple/index.ts",
+          "type": "registry:lib",
+          "target": "themes/apple/index.ts"
+        }
+      ],
+      "registryDependencies": []
+    },
+    {
+      "name": "theme-native",
+      "type": "registry:theme",
+      "title": "Theme: native (per platform)",
+      "description": "The theme of the platform the app runs on: `nativeTheme()` returns Apple's on iOS and macOS and the default theme elsewhere, for `selectTheme(nativeTheme())`. Installs themes/native/index.ts with the two themes it names (themes/apple/, themes/default/).",
+      "files": [
+        {
+          "path": "packages/theme/themes/native/index.ts",
+          "type": "registry:lib",
+          "target": "themes/native/index.ts"
+        }
+      ],
+      "registryDependencies": ["theme-apple", "theme-default"]
+    },
+    {
       "name": "press",
       "type": "registry:lib",
       "title": "Press",

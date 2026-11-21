@@ -4,12 +4,12 @@
 
 copy-into-app 层的品牌外观：本库所有，起点是上游 gallery UI 主题。**颜色一律 `oklch()`** —— token、渐变的每一站、阴影里的颜色 —— 透明度写成 `oklch(… / a)`。NSH 在颜色是字符串的地方都认 `oklch()`（`references/nsh/website/docs/styling.md#colors`），所以一个文件里只有一种颜色形式，读一个值就是读它的亮度与色相。
 
-| 文件             | 作用                                                                                                                              |
-| ---------------- | --------------------------------------------------------------------------------------------------------------------------------- |
-| `theme.json`     | 颜色、圆角、cssVars                                                                                                               |
-| `finishes.json`  | 风格（字体、形状、尺寸、描边、焦点、状态、动效、图标、指示器：两种外观共用）与每种外观下的表面 finish：渐变、阴影，以及按下缩多少 |
-| `theme.ts`       | `colors` / `finish` / `focusRing` / `selectTheme` / `fillStyle` 等读取器                                                          |
-| `themes/<name>/` | 其它主题，各一个 `AppTheme`：`shadcn/`（shadcn 的 `neutral`）、`solid-glass/`（Solid Glass）、`default/`（本库这套，供多装）      |
+| 文件             | 作用                                                                                                                                                                                                                                   |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `theme.json`     | 颜色、圆角、cssVars                                                                                                                                                                                                                    |
+| `finishes.json`  | 风格（字体、形状、尺寸、描边、焦点、状态、动效、图标、指示器：两种外观共用）与每种外观下的表面 finish：渐变、阴影，以及按下缩多少                                                                                                      |
+| `theme.ts`       | `colors` / `finish` / `focusRing` / `selectTheme` / `fillStyle` 等读取器                                                                                                                                                               |
+| `themes/<name>/` | 其它主题，各一个 `AppTheme`：`shadcn/`（shadcn 的 `neutral`）、`solid-glass/`（Solid Glass）、`apple/`（Apple 系统色与 Liquid Glass）、`native/`（`nativeTheme()`：iOS 与 macOS 用 apple，其余用默认）、`default/`（本库这套，供多装） |
 
 ## 规范
 

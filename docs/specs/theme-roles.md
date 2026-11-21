@@ -84,7 +84,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 <!-- /theme-lint: tokens-c -->
 
-`radius` 是唯一的基础值：`radius-control` = round(0.8 × `radius`)，`radius-card` = round(1.4 × `radius`)，`check:theme` 拒绝不合的档位；对话框用 `radius-card`。读主题圆角的角一律用 `rounded()`，continuous 曲线只在 `packages/theme/theme.ts` 给。
+`radius` 是唯一的基础值：`radius-control` = round(0.8 × `radius`)，`radius-card` = round(1.4 × `radius`)，`check:theme` 拒绝不合的档位；对话框用 `radius-card`。胶囊主题（`radius-control` 为 `999px`，如 apple）不按倍数推：它的 `radius-card` 是基础圆角向外的同心一档，不小于 `radius`。读主题圆角的角一律用 `rounded()`，continuous 曲线只在 `packages/theme/theme.ts` 给。
 
 `font-mono` 是字体不是颜色：NSH 取列表里第一个不是通用名的家族（`theme.rs` 的 `font_family`），写 `monospace` 就是系统的等宽字，不是一套叫这个名字的字体——本库三套主题都写它，所以这份 token 不动一个像素；应用在自己的主题里写 `"JetBrains Mono, monospace"` 并引入字体文件，见[字体](https://shadcn-nsh.aning.dev/docs/theme#fonts)。`font-sans` 故意不写：不写就是系统字，写了就要求应用自带那个家族。
 

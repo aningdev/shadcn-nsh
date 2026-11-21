@@ -60,6 +60,12 @@ export const SIDEBAR_PAGES: SidebarPage[] = [
     parent: "/docs/themes",
   },
   {
+    route: "/docs/themes/apple",
+    title: "Apple",
+    group: "start",
+    parent: "/docs/themes",
+  },
+  {
     route: "/docs/customizing",
     title: "Customizing",
     group: "start",

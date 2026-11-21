@@ -72,6 +72,8 @@ const paints = (finish: Finish) => !clear(finish.backgroundColor) || !clear(fini
 /** The themes: the default one, and every folder under `themes/`. */
 const themes = readdirSync(join(root, "packages/theme/themes"))
   .filter((name) => statSync(join(root, "packages/theme/themes", name)).isDirectory())
+  // `native/` is a chooser, not a theme: it holds no data of its own.
+  .filter((name) => name !== "native")
   .sort();
 
 const spec = read("docs/specs/theme-roles.md");
@@ -244,6 +246,14 @@ for (const theme of themes) {
   const shared = tokensOf.get(theme)?.cssVars.theme ?? {};
   const base = pxOf(shared.radius, path, "radius");
   if (base === undefined) continue;
+  // A capsule theme (`radius-control` 999px: a corner larger than any control is high) has no
+  // scale to derive from: its card is a concentric step out from the base, and no smaller than it.
+  if (shared["radius-control"] === "999px") {
+    const card = pxOf(shared["radius-card"], path, "radius-card");
+    if (card !== undefined && card < base)
+      fail(`${path}: \`radius-card\` is ${card}px, smaller than \`radius\` ${base}px`);
+    continue;
+  }
   for (const [name, factor] of [
     ["radius-control", 0.8],
     ["radius-card", 1.4],

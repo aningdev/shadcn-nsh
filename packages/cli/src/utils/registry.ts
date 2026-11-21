@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import path from "node:path";
 
 import type { NshUiConfig, Registry, RegistryIndex, RegistryItem } from "../types";
-import { DEFAULT_THEME } from "../types";
+import { DEFAULT_THEME, NATIVE_THEME } from "../types";
 import { fetchJson } from "./fetch-cached";
 
 export function itemUrl(config: NshUiConfig, name: string, registryOverride?: string) {
@@ -113,6 +113,13 @@ export async function resolveTree(
     if (seen.has(name)) return;
     seen.add(name);
     const item = await fetchItem(config, name, registryOverride);
+    if (name === DEFAULT_THEME && config.theme === NATIVE_THEME) {
+      // Built on the default theme (the build-time one is one theme), with the others beside it.
+      for (const dep of item.registryDependencies ?? []) await walk(dep);
+      out.push(item);
+      await walk(config.theme);
+      return;
+    }
     if (name === DEFAULT_THEME && config.theme !== DEFAULT_THEME) {
       out.push(rolesOnly(item));
       await walk(config.theme);

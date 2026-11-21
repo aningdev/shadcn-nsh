@@ -85,6 +85,27 @@ Every finish also carries a `material`: `null` (every theme the library ships), 
 
 Both follow `selectTheme` and the appearance, and with `material: null` the view is drawn as before. The library's own popovers, hover cards, toasts, the code editor's find bar and a glass carousel arrow spread it; the popups of `Menu`, `Select` and `Popover` on `nsh/base` take only `popupStyle`, so there the glass keys apply and the platform props do not.
 
+The `apple` theme is the one that fills it in: `glass`, `menu` and `raised` carry `{ glass: "regular" }` (Liquid Glass on iOS and macOS 26+), and every other finish is a flat fill with a hairline edge. `nativeTheme()` from `theme-native` picks the theme of the platform the app runs on — Apple's on iOS and macOS, the default theme everywhere else:
+
+```npm
+npx shadcn-nsh@latest init --theme native
+```
+
+```tsx
+import { nativeTheme } from "./themes/native";
+
+// Before mount: the first frame is already the platform's theme.
+selectTheme(nativeTheme());
+```
+
+`init --theme apple` builds the app on Apple's palette; `--theme native` builds it on the default theme and installs both, for `nativeTheme()` to choose between at run time. On macOS 26+ an explicit `macos.backdrop` wins over `glassEffect`, so `apple` states none; it states `ios.backdrop` as the blur for iOS before 26.
+
+Windows' Mica is not a finish: it is the window's own `backdrop` in `nsh-desktop` (Windows 11 maps it to Mica or Acrylic, macOS to a visual effect material), set once by the app in `nsh.json` and shown through surfaces whose fill is translucent:
+
+```json
+{ "window": { "backdrop": "window" } }
+```
+
 Spread one where a control needs that depth:
 
 ```tsx
@@ -105,7 +126,7 @@ radius.control; // 8
 radius.card; // 14
 ```
 
-A dialog takes the card tier. `rounded()` puts a corner on one of these with the continuous curve
+A capsule theme (`apple`: `radius-control` is `999px`) does not derive its tiers by those multiples; its `radius-card` is 20, one step out from the base. A dialog takes the card tier. `rounded()` puts a corner on one of these with the continuous curve
 every theme corner shares:
 
 ```tsx
@@ -131,6 +152,8 @@ const dim = alpha(colors.foreground, 0.4); // a color at 40%
 ```
 
 `focusRing(offset)` is the shared keyboard outline: the muted `ring` edge and a 3-point halo of `ring-halo`. `hovered()` is the pointer's fill, the `hover` token. `alpha(color, a)` is a `color-mix` of that color with transparency. `colors`, `finish` and `radius` are getters, not snapshots: read them where they are used.
+
+Switching themes at runtime with `selectTheme` has one known limit: if the new theme changes `control.line` (the row height of a `Select` or `DatePicker` trigger), that trigger stops hearing presses until the app restarts ([#203](https://github.com/aningdev/shadcn-nsh/issues/203)). Pick themes whose `control.line` match when you switch live, or choose the theme before mount (as `nativeTheme()` does).
 
 ## Override from nsh.json
 
@@ -191,7 +214,7 @@ Edit the two JSON files; every component follows. Change a brand color in `cssVa
 
 - Add the theme to an app with `shadcn-nsh add theme` (or let `init` do it).
 - Replacing both files together rebrands the whole library; a key added upstream should be added here too.
-- The demos on this site can draw in an installed theme: the **Demo theme** switch in the nav (Default, shadcn or Solid Glass) writes the demo app's palette and loads the panels again. The list is `apps/website/demos/palettes.ts`; a demo reads the palette before it mounts, so its first frame is already the chosen theme. Every palette — its install command and every role it sets — has a page linked from [Themes](./themes).
+- The demos on this site can draw in an installed theme: the **Demo theme** switch in the nav (Default, shadcn, Solid Glass or Apple) writes the demo app's palette and loads the panels again. The list is `apps/website/demos/palettes.ts`; a demo reads the palette before it mounts, so its first frame is already the chosen theme. Every palette — its install command and every role it sets — has a page linked from [Themes](./themes).
 - To change one component's look instead, edit its look function in the copied component; to change structure or API, edit the shell. See [Customizing](./customizing).
 - Maintaining this repository: edit the look in `packages/ui` (a `// @port` region is ours); `port:check` lists upstream's changes and `bun run port:review` marks them read. After editing `packages/theme`, run `bun run registry:build` and commit `public/r`.
 

@@ -19,7 +19,7 @@ export async function runInit(opts: {
   cwd: string;
   overwrite?: boolean;
   registry?: string;
-  /** The theme to install: `default` (the library's own) or `shadcn`; an unknown name throws. */
+  /** The theme to install: `default` (the library's own), `shadcn`, `solid-glass`, `apple` or `native`; an unknown name throws. */
   theme?: string;
 }): Promise<NshUiConfig> {
   const cwd = path.resolve(opts.cwd);
@@ -118,7 +118,11 @@ export const init = new Command()
   .option("-c, --cwd <cwd>", "app or monorepo directory", process.cwd())
   .option("-y, --yes", "skip confirmation", false)
   .option("--overwrite", "overwrite existing files", false)
-  .option("--theme <name>", "theme to install: default (the library's own) or shadcn", "default")
+  .option(
+    "--theme <name>",
+    "theme to install: default (the library's own), shadcn, solid-glass, apple, or native (Apple's on iOS and macOS, the default elsewhere)",
+    "default",
+  )
   .option("--registry <url>", "registry URL template containing {name}")
   .action(
     async (opts: {

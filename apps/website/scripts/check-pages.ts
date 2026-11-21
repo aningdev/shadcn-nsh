@@ -580,6 +580,8 @@ for (const palette of PALETTES) {
 }
 for (const item of themeItems.keys()) {
   if (!item.startsWith("theme-")) continue;
+  // `theme-native` is no palette: it chooses between them at run time (`nativeTheme()`).
+  if (item === "theme-native") continue;
   const id = item.slice("theme-".length);
   if (!PALETTES.some((palette) => palette.id === id)) {
     fail(`registry.json: "${item}" is no palette in apps/website/demos/palettes.ts`);

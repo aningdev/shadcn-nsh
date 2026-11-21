@@ -19,11 +19,11 @@
 本方案之后     ✅      ✅      ✅        ✅     ✅       ✅        ✅       部分      ❌（上游）
 ```
 
-| 平台                     | 只用现有主题 | 做完第 1–3 期 | 剩下的缺口                                          |
-| ------------------------ | ------------ | ------------- | --------------------------------------------------- |
-| Apple iOS / macOS 27     | 约 4 成      | 约 8 成       | 跟随系统强调色、透明度滑杆、减少透明度、增强对比度  |
-| Android（M3 Expressive） | 约 3 成      | 约 7 成       | 动态取色、形状变化、Switch 拇指图标、FAB 等组件结构 |
-| Windows 11（Fluent 2）   | 约 5 成      | 约 8 成       | Mica 材质、系统强调色、输入框底部强调线             |
+| 平台                     | 只用现有主题 | 做完第 1–3 期 | 剩下的缺口                                                            |
+| ------------------------ | ------------ | ------------- | --------------------------------------------------------------------- |
+| Apple iOS / macOS 27     | 约 4 成      | 约 8 成       | 跟随系统强调色、透明度滑杆、减少透明度、增强对比度                    |
+| Android（M3 Expressive） | 约 3 成      | 约 7 成       | 动态取色、形状变化、Switch 拇指图标、FAB 等组件结构                   |
+| Windows 11（Fluent 2）   | 约 5 成      | 约 8 成       | 系统强调色、输入框底部强调线（Mica 是应用的窗口 `backdrop`，见 C 类） |
 
 ## 1 三个平台的设计语言
 
@@ -87,7 +87,7 @@
 - Android：`android={{ ripple }}`；API 31 起支持 `backdropFilter` 模糊。
 - 通用：`borderCurve`、系统字体、`fontFamily` 列表、`registerFont`、`fontScale()`、`colorScheme()`、减少动态效果、`platform.os`。
 
-**NSH 没有的**：读系统强调色、动态取色、减少透明度和增强对比度的信号。
+**NSH 没有的**：读系统强调色、动态取色、减少透明度和增强对比度的信号。（Mica 不在其中：它是窗口的 `backdrop`，应用在 `nsh.json` 里设；Android 的模糊与 `borderRadius` 过渡 NSH 都支持，见 C 类。）
 
 ## 3 设计
 
@@ -140,86 +140,92 @@ packages/theme/themes/<id>/
 
 每个角色是 `{ size, line, weight, tracking }`：`size` 和 `line`（行高）分 pointer / touch，`weight` 是字符串 `"400"`–`"700"`，`tracking` 是字距（点）。SF 和 Material 都按字号调字距，所以 `tracking` 不能省。`type.family` 取 `null`（系统字体）、`"sans"`、`"rounded"` 或 `"mono"`。字号乘以 NSH 的 `fontScale()`，跟随系统字号设置（第 1b 期）。
 
-| 角色（用在）                   | default（pointer / touch） | Apple（macOS / iOS） | Material          | Fluent       |
-| ------------------------------ | -------------------------- | -------------------- | ----------------- | ------------ |
-| `caption`（徽标、时间戳）      | 11 / 12                    | 10 / 12              | label-small 11    | caption1 12  |
-| `detail`（描述、次要信息）     | 12 / 13                    | 11 / 13              | body-small 12     | caption1 12  |
-| `body`（正文）                 | 13 / 15                    | 13 / 17              | body-medium 14    | body1 14     |
-| `label`（控件上的字，500）     | 14 / 15                    | 13 / 17              | label-large 14    | body1 14     |
-| `title`（卡片、区块标题，600） | 13 / 13                    | 13（700）/ 17（600） | title-medium 16   | subtitle2 16 |
-| `headline`（页面标题）         | 20 / 22                    | 22 / 22              | headline-small 24 | title3 24    |
-| `display`（大数字）            | 26 / 28                    | 26 / 34              | display-small 36  | title1 32    |
+| 角色（用在）                   | default（pointer / touch） | Apple（macOS / iOS）       | Material          | Fluent       |
+| ------------------------------ | -------------------------- | -------------------------- | ----------------- | ------------ |
+| `caption`（徽标、时间戳）      | 11 / 12                    | 10 / 12（行 13 / 16）      | label-small 11    | caption1 12  |
+| `detail`（描述、次要信息）     | 12 / 13                    | 11 / 13（行 14 / 18）      | body-small 12     | caption1 12  |
+| `body`（正文）                 | 13 / 15                    | 13 / 17（行 16 / 22）      | body-medium 14    | body1 14     |
+| `label`（控件上的字，500）     | 14 / 15                    | 13 / 17（行 16 / 22）      | label-large 14    | body1 14     |
+| `title`（卡片、区块标题，600） | 13 / 13                    | 13 / 17（600，行 16 / 22） | title-medium 16   | subtitle2 16 |
+| `headline`（页面标题）         | 20 / 22                    | 22 / 22（行 26 / 28）      | headline-small 24 | title3 24    |
+| `display`（大数字）            | 26 / 28                    | 26 / 34（行 32 / 41）      | display-small 36  | title1 32    |
 
-`line` 在 default 里是按现有正文行高（13 配 19、15 配 21）推出的初值，第 1b 期把散在组件里的 `lineHeight` 搬上来时逐项对齐；三个平台的 `line` 和 `tracking` 待核对。`weight` 在 default 里：`label` 500，`title`、`headline`、`display` 600，其余 400。`family`：default 与三个平台都是 `null`（SF、Roboto、Segoe UI Variable 就是各自的系统字）。
+`line` 在 default 里是按现有正文行高（13 配 19、15 配 21）推出的初值，第 1b 期把散在组件里的 `lineHeight` 搬上来时逐项对齐；Apple 的 `line` 与 `tracking` 已核对（第 2b 期，见下）；Material 与 Fluent 的仍待核对。
+
+**Apple 的核对（2b）。** 来源是 HIG 的 [Typography](https://developer.apple.com/design/human-interface-guidelines/typography) 内置文字样式表：macOS 的 body 13 点（行 16）、callout / caption 11 点（行 14）、caption 2 的 10 点（行 13）；iOS 的 body 17 点（行 22）、subheadline 15、footnote 13（行 18）、caption 1 12（行 16）、title 2 22（行 28）、large title 34（行 41）。`caption`、`detail`、`body`、`display` 取这些档；`title` 取 body 的字号加 semibold，不用原表的 700，因为 SF 的 600 与 body 同行高，列表里不会撑行。`tracking` 取 0：SF 的字距随光学尺寸由系统字体内置（`SF Pro` 的 Text / Display 光学尺寸自动切换），应用不再补，所以主题写 0，不写表里每个字号的 tracking。`weight` 在 default 里：`label` 500，`title`、`headline`、`display` 600，其余 400。`family`：default 与三个平台都是 `null`（SF、Roboto、Segoe UI Variable 就是各自的系统字）。
 
 #### shape：8 个圆角角色加两个枚举
 
 圆角单位是点。`shape.control`、`shape.card`、`shape.inset` **就是** `theme.json` 的 `radius-control`、`radius-card`、`radius`（见决策 1 与 [`theme-roles.md`](theme-roles.md)）。
 
-| 键              | 用在                                 | default                 | Apple                  | Material       | Fluent   |
-| --------------- | ------------------------------------ | ----------------------- | ---------------------- | -------------- | -------- |
-| `control`       | 按钮、选择器触发、标签、菜单项       | 8（= `radius-control`） | 胶囊（取一个够大的数） | full（胶囊）   | 4        |
-| `field`         | 输入框                               | 8                       | 约 6–8                 | xs 4           | 4        |
-| `chip`          | 徽标、标签                           | 10                      | 胶囊                   | sm 8           | 4        |
-| `card`          | 卡片、侧栏浮层                       | 14（= `radius-card`）   | 约 16 以上             | md 12          | 8        |
-| `overlay`       | 菜单、弹出层                         | 10                      | 约 12                  | xs 4（待核对） | 8        |
-| `dialog`        | 对话框                               | 14                      | 约 26                  | xl 28          | 8        |
-| `sheet`         | 抽屉                                 | 14                      | 与屏幕同心             | xl 28          | 8        |
-| `inset`         | 卡片里的井、提示、骨架               | 10（= `radius`）        | 待核对                 | 待核对         | 待核对   |
-| `curve`         | 角的曲线：`continuous` 或 `circular` | continuous              | continuous             | circular       | circular |
-| `corners.field` | 输入框圆哪几个角：`all` 或 `top`     | all                     | all                    | top（filled）  | all      |
+| 键              | 用在                                 | default                 | Apple                                                       | Material       | Fluent   |
+| --------------- | ------------------------------------ | ----------------------- | ----------------------------------------------------------- | -------------- | -------- |
+| `control`       | 按钮、选择器触发、标签、菜单项       | 8（= `radius-control`） | 胶囊（999）                                                 | full（胶囊）   | 4        |
+| `field`         | 输入框                               | 8                       | 8                                                           | xs 4           | 4        |
+| `chip`          | 徽标、标签                           | 10                      | 胶囊（999）                                                 | sm 8           | 4        |
+| `card`          | 卡片、侧栏浮层                       | 14（= `radius-card`）   | 20                                                          | md 12          | 8        |
+| `overlay`       | 菜单、弹出层                         | 10                      | 12                                                          | xs 4（待核对） | 8        |
+| `dialog`        | 对话框                               | 14                      | 26                                                          | xl 28          | 8        |
+| `sheet`         | 抽屉                                 | 14                      | 34（与屏幕圆角同心的一档，iPhone 屏角约 55 点，边距 21 点） | xl 28          | 8        |
+| `inset`         | 卡片里的井、提示、骨架               | 10（= `radius`）        | 8（= `radius`）                                             | 待核对         | 待核对   |
+| `curve`         | 角的曲线：`continuous` 或 `circular` | continuous              | continuous                                                  | circular       | circular |
+| `corners.field` | 输入框圆哪几个角：`all` 或 `top`     | all                     | all                                                         | top（filled）  | all      |
 
 `inset` 是本表在方案的七个角色之外加的一个：今天卡片里的井、提示、骨架都读 `radius`（`radius.inset`），它不是 `overlay`，也不是 `card`，不另立一个角色就只能把它们塞进别的角色里。shadcn 与 solid-glass 的 `shape` 圆角由各自 `theme.json` 的三个半径推出：`control` 和 `field` 取 `radius-control`，`card`、`dialog`、`sheet` 取 `radius-card`，`chip`、`overlay`、`inset` 取 `radius`（`withRadii`，`generate-*.ts` 用它）。同心圆角由 `rounded(radius, inset)` 的 `inset` 参数给（内圆角 = 外圆角 − inset，不小于 0）；`corners.sheet` 是后续的事。
 
 #### size：触控目标、密度、控件、控件高度
 
-| 键                    | 含义                                 | default（pointer / touch） | Apple                         | Material     | Fluent       |
-| --------------------- | ------------------------------------ | -------------------------- | ----------------------------- | ------------ | ------------ |
-| `hit`                 | 最小触控目标；0 是不补               | 0 / 44                     | 0 / 44                        | 48 / 48      | 40 / 40      |
-| `density.row`         | 页面里一行的最小高                   | 36 / 48                    | 待核对                        | 待核对       | 待核对       |
-| `density.pad`         | 卡片内边距                           | 14 / 16                    | 待核对                        | 待核对       | 待核对       |
-| `density.gap`         | 内容之间的间距                       | 12 / 12                    | 待核对                        | 待核对       | 待核对       |
-| `density.surface`     | 区块面的圆角                         | 10 / 16                    | 待核对                        | 待核对       | 待核对       |
-| `control.row`         | 可按行的最小高                       | 40 / 44                    | 待核对                        | 约 48        | 约 32        |
-| `control.padding`     | 行的上下内边距                       | 6 / 8                      | 待核对                        | 待核对       | 待核对       |
-| `control.gap`         | 行内元素间距                         | 10 / 12                    | 待核对                        | 待核对       | 待核对       |
-| `control.control`     | 复选框、单选框的边长                 | 16 / 22                    | 待核对                        | 18           | 20           |
-| `control.corner`      | 复选框的圆角                         | 5 / 7                      | 待核对                        | 2            | 4            |
-| `control.check`       | 勾和图标的大小                       | 12 / 16                    | 待核对                        | 待核对       | 待核对       |
-| `control.dot`         | 单选框的点                           | 6 / 8                      | 待核对                        | 待核对       | 待核对       |
-| `control.tabs`        | 标签栏高                             | 30 / 40                    | 待核对                        | 约 48        | 约 32        |
-| `control.line`        | 一行值的高                           | 32 / 44                    | 待核对                        | 待核对       | 待核对       |
-| `control.clear`       | 清除按钮的边长                       | 16 / 20                    | 待核对                        | 待核对       | 待核对       |
-| `control.switch`      | 行旁开关的尺寸：`small` 或 `regular` | small / regular            | regular                       | regular      | small        |
-| `height.sm / md / lg` | 按钮高                               | 24 / 28 / 34；36 / 40 / 48 | macOS 约 20 / 24 / 28；iOS 44 | 32 / 40 / 56 | 24 / 32 / 40 |
+| 键                    | 含义                                 | default（pointer / touch） | Apple                                | Material     | Fluent       |
+| --------------------- | ------------------------------------ | -------------------------- | ------------------------------------ | ------------ | ------------ |
+| `hit`                 | 最小触控目标；0 是不补               | 0 / 44                     | 0 / 44                               | 48 / 48      | 40 / 40      |
+| `density.row`         | 页面里一行的最小高                   | 36 / 48                    | 32 / 44                              | 待核对       | 待核对       |
+| `density.pad`         | 卡片内边距                           | 14 / 16                    | 14 / 16                              | 待核对       | 待核对       |
+| `density.gap`         | 内容之间的间距                       | 12 / 12                    | 12 / 12                              | 待核对       | 待核对       |
+| `density.surface`     | 区块面的圆角                         | 10 / 16                    | 12 / 20                              | 待核对       | 待核对       |
+| `control.row`         | 可按行的最小高                       | 40 / 44                    | 36 / 44                              | 约 48        | 约 32        |
+| `control.padding`     | 行的上下内边距                       | 6 / 8                      | 6 / 8                                | 待核对       | 待核对       |
+| `control.gap`         | 行内元素间距                         | 10 / 12                    | 10 / 12                              | 待核对       | 待核对       |
+| `control.control`     | 复选框、单选框的边长                 | 16 / 22                    | 16 / 22                              | 18           | 20           |
+| `control.corner`      | 复选框的圆角                         | 5 / 7                      | 4 / 11                               | 2            | 4            |
+| `control.check`       | 勾和图标的大小                       | 12 / 16                    | 12 / 16                              | 待核对       | 待核对       |
+| `control.dot`         | 单选框的点                           | 6 / 8                      | 6 / 8                                | 待核对       | 待核对       |
+| `control.tabs`        | 标签栏高                             | 30 / 40                    | 28 / 36                              | 约 48        | 约 32        |
+| `control.line`        | 一行值的高                           | 32 / 44                    | 32 / 44（见下）                      | 待核对       | 待核对       |
+| `control.clear`       | 清除按钮的边长                       | 16 / 20                    | 16 / 20                              | 待核对       | 待核对       |
+| `control.switch`      | 行旁开关的尺寸：`small` 或 `regular` | small / regular            | regular                              | regular      | small        |
+| `height.sm / md / lg` | 按钮高                               | 24 / 28 / 34；36 / 40 / 48 | macOS 24 / 28 / 32；iOS 32 / 44 / 50 | 32 / 40 / 56 | 24 / 32 / 40 |
 
-`density` 和 `control` 的 pointer / touch 两档就是原来的 `density` 与 `controlSize`；它们的 `label`、`detail`、`title`、`note`、`body` 已改读 `type`。三个平台的 `density` 与 `control` 数值方案没有给，第 3 期做主题时核对。
+**`control.line` 的已知限制（2b 发现）。** 运行时 `selectTheme` 之后，若 `Select` / `DatePicker` 触发器的 `control.line` 与构建时主题不同，触发器就收不到点击（按压、键盘、`label:` 都失效；`stroke`、`shape`、`type` 变了不受影响，构建时直接用 28 也正常）。这不是 apple 专有，是引擎沿用首次布局的命中区域。所以 Apple 的 pointer `line` 暂守在默认的 32；等引擎修了再按 HIG 收到 28。
+
+`density` 和 `control` 的 pointer / touch 两档就是原来的 `density` 与 `controlSize`；它们的 `label`、`detail`、`title`、`note`、`body` 已改读 `type`。Apple 的数（第 2b 期）取自 HIG 的 [Layout](https://developer.apple.com/design/human-interface-guidelines/layout) 与 [Buttons](https://developer.apple.com/design/human-interface-guidelines/buttons)：触摸目标最小 44 点，macOS 的标准控件高约 28 点（small 24、large 32），iOS 按钮 44 点（大号 50）；`density.surface` 取与 `shape.card` 相邻的同心一档（pointer 12、touch 20）。Material 与 Fluent 的数第 3 期做主题时核对。
 
 #### stroke 与 focus
 
-| 键                 | 含义                                                    | default | Apple      | Material | Fluent         |
-| ------------------ | ------------------------------------------------------- | ------- | ---------- | -------- | -------------- |
-| `stroke.hairline`  | 发丝线                                                  | 1       | 1 物理像素 | 1        | 1              |
-| `stroke.control`   | 控件描边                                                | 1       | 1          | 1        | 1              |
-| `stroke.indicator` | 指示条线宽                                              | 2       | —          | 3        | 3              |
-| `focus.style`      | 焦点环样式：`halo`（强调色光晕）、`outline`（实线外框） | halo    | halo       | outline  | double（见下） |
-| `focus.width`      | 焦点环宽                                                | 3       | 3          | 3        | 2              |
-| `focus.offset`     | 焦点环离边多远（`focusRing(offset)` 不传时用它）        | 0       | 0          | 2        | 0              |
+| 键                 | 含义                                                    | default | Apple           | Material | Fluent         |
+| ------------------ | ------------------------------------------------------- | ------- | --------------- | -------- | -------------- |
+| `stroke.hairline`  | 发丝线                                                  | 1       | 0.5（物理像素） | 1        | 1              |
+| `stroke.control`   | 控件描边                                                | 1       | 1               | 1        | 1              |
+| `stroke.indicator` | 指示条线宽                                              | 2       | —               | 3        | 3              |
+| `focus.style`      | 焦点环样式：`halo`（强调色光晕）、`outline`（实线外框） | halo    | halo            | outline  | double（见下） |
+| `focus.width`      | 焦点环宽                                                | 3       | 3               | 3        | 2              |
+| `focus.offset`     | 焦点环离边多远（`focusRing(offset)` 不传时用它）        | 0       | 0               | 2        | 0              |
 
 `focus.style` 白名单现在只有 `halo` 与 `outline`，是代码已经画得出的两种；Fluent 的双线（外 2 内 1）要在第 3 期随绘制代码一起加进白名单。焦点环的线宽只有 `focus.width` 一个键（1b 并掉了 `stroke.focus`）。
 
 #### state
 
-| 键                   | 含义                                  | default | Apple            | Material        | Fluent           |
-| -------------------- | ------------------------------------- | ------- | ---------------- | --------------- | ---------------- |
-| `overlay.hover`      | 悬停叠色的透明度                      | 0       | 0                | 0.08            | 0                |
-| `overlay.focus`      | 聚焦叠色                              | 0       | 0                | 0.10            | 0                |
-| `overlay.pressed`    | 按下叠色                              | 0       | 0                | 0.10            | 0                |
-| `overlay.dragged`    | 拖动叠色                              | 0       | 0                | 0.16            | 0                |
-| `ripple`             | 按下是否有水波（接 `android.ripple`） | false   | false            | true            | false            |
-| `pressedOpacity`     | 按下时整体变淡到多少                  | 0.7     | 约 0.7           | 1（用叠色表达） | 约 0.8           |
-| `disabled.content`   | 禁用时内容的透明度                    | 0.5     | 约 0.3（待核对） | 0.38            | 约 0.4（待核对） |
-| `disabled.container` | 禁用时容器的透明度                    | 0.5     | 约 0.3（待核对） | 0.12            | 约 0.4（待核对） |
+| 键                   | 含义                                  | default | Apple | Material        | Fluent           |
+| -------------------- | ------------------------------------- | ------- | ----- | --------------- | ---------------- |
+| `overlay.hover`      | 悬停叠色的透明度                      | 0       | 0     | 0.08            | 0                |
+| `overlay.focus`      | 聚焦叠色                              | 0       | 0     | 0.10            | 0                |
+| `overlay.pressed`    | 按下叠色                              | 0       | 0     | 0.10            | 0                |
+| `overlay.dragged`    | 拖动叠色                              | 0       | 0     | 0.16            | 0                |
+| `ripple`             | 按下是否有水波（接 `android.ripple`） | false   | false | true            | false            |
+| `pressedOpacity`     | 按下时整体变淡到多少                  | 0.7     | 0.7   | 1（用叠色表达） | 约 0.8           |
+| `disabled.content`   | 禁用时内容的透明度                    | 0.5     | 0.3   | 0.38            | 约 0.4（待核对） |
+| `disabled.container` | 禁用时容器的透明度                    | 0.5     | 0.3   | 0.12            | 约 0.4（待核对） |
+
+Apple 的 `disabled` 取 0.3：HIG 不给数，系统控件禁用时约三成不透明度，与 `pressedOpacity` 0.7 一样是实测近似；`stroke.hairline` 的 0.5 是一个物理像素在 2× 屏上的点数（NSH 没有发丝线 API，按 0.5 点画，在 3× 屏上约 1.5 像素）。
 
 default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继续由 `hover` / `pressed` 两个 finish 表达（"换面"）；原生主题用叠色表达（见决策 3）。禁用与强调色的悬停、按下都不加颜色 token，由透明度推出（见决策 2）。
 
@@ -285,11 +291,11 @@ default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继
 
 ### 3.5 三套原生主题
 
-| 主题 id    | 颜色                                                   | 质感与材质                                                 | 风格（finishes 顶层）                                                                                                                |
-| ---------- | ------------------------------------------------------ | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| `apple`    | 系统中性灰，强调色用系统蓝（读不到系统强调色，先写死） | `glass`、`menu`、`raised` 用 Liquid Glass；其余平涂加细边  | 系统字体，`rounded` 关；控件 `capsule`；continuous 曲率；同心圆角；iOS 正文 17、macOS 13                                             |
-| `material` | M3 基线色（tonal roles 映射到我们的 31 个槽位加扩展）  | 平涂，阴影按层级；不用模糊                                 | 系统字体（Roboto）；圆角 xs–xl 用 M3 档位；控件 `capsule`；触控 48；`state` 用 8 / 10 / 10 叠色，`ripple` 开；动效用 expressive 弹簧 |
-| `fluent`   | Fluent 中性灰，强调色用 Windows 默认蓝                 | 卡片平涂；`menu`、`glass` 接 Acrylic（`windows.backdrop`） | 系统字体（Segoe UI Variable）；控件 `rounded` 4、弹层 8；circular 曲率；控件高 32；动效更克制                                        |
+| 主题 id            | 颜色                                                   | 质感与材质                                                 | 风格（finishes 顶层）                                                                                                                |
+| ------------------ | ------------------------------------------------------ | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| `apple`（2b 已做） | 系统中性灰，强调色用系统蓝（读不到系统强调色，先写死） | `glass`、`menu`、`raised` 用 Liquid Glass；其余平涂加细边  | 系统字体，`rounded` 关；控件 `capsule`；continuous 曲率；同心圆角；iOS 正文 17、macOS 13                                             |
+| `material`         | M3 基线色（tonal roles 映射到我们的 31 个槽位加扩展）  | 平涂，阴影按层级；不用模糊                                 | 系统字体（Roboto）；圆角 xs–xl 用 M3 档位；控件 `capsule`；触控 48；`state` 用 8 / 10 / 10 叠色，`ripple` 开；动效用 expressive 弹簧 |
+| `fluent`           | Fluent 中性灰，强调色用 Windows 默认蓝                 | 卡片平涂；`menu`、`glass` 接 Acrylic（`windows.backdrop`） | 系统字体（Segoe UI Variable）；控件 `rounded` 4、弹层 8；circular 曲率；控件高 32；动效更克制                                        |
 
 ## 4 主题做不到的部分
 
@@ -314,9 +320,16 @@ default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继
 | --- | ------------------------------------------------------------- | -------------------------------- |
 | C1  | 读系统强调色（macOS、Windows、Material You 动态取色）         | 三套原生主题的强调色只能先写死   |
 | C2  | 减少透明度、增强对比度两个信号；Liquid Glass 透明度滑杆的状态 | 主题无法在用户关掉透明时换成实底 |
-| C3  | Windows 不透明窗口里的 Mica                                   | `fluent` 主题的窗口底只能平涂    |
-| C4  | Android 上的玻璃和模糊材质（若 Android 17 开放）              | `material` 主题无法跟上          |
-| C5  | `borderRadius` 动画（如果查下来不支持）                       | Material 的形状变化做不了        |
+
+**已查清、不是上游缺口的三项：**
+
+| #   | 原以为的缺口                | 实际                                                                                                                                                                                                                                                    |
+| --- | --------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| C3  | Windows 不透明窗口里的 Mica | Mica 是 `nsh-desktop` 窗口的 `backdrop`（`references/nsh/website/modules/nsh-desktop.md` 的 Look 一行：Windows 11 映射到 Mica 或 Acrylic），在 `nsh.json` 的 `window.backdrop` 里设一次，属于**应用的事**，不是主题的 finish。配方写在站点的 Theme 页。 |
+| C4  | Android 上的玻璃和模糊材质  | `backdropFilter` 的模糊在 Android API 31 起可用（`styling.md`），不是缺口；`material` 主题不用模糊（见 3.5），要用时走 `backdropFilter`。                                                                                                               |
+| C5  | `borderRadius` 动画         | 支持过渡（`animation.md`），不是上游缺口；Material 的形状变化走 `transition`。                                                                                                                                                                          |
+
+所以只有 C1、C2 是真正要向上游提的缺口。
 
 ## 5 分期与验收
 
@@ -363,18 +376,19 @@ default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继
 - ✅ `themed()` 翻译 `apple`，`platformMaterial(role)` 给出 `ios`、`macos`、`windows`；`popup` 的 `PopIn`（Popover、HoverCard、NavigationMenu 的面板）、`Toast`、`CodeEditorFindBar`（`menu`）和 `CarouselPrevious` / `CarouselNext` 的 `glass` 铺开平台 props。`listbox`、`menu`、`plot`、`refresh-indicator` 的 look 只交出 style，玻璃键随 style 走，平台 props 由画这个 View 的人铺开。侧栏的 `finish.card` 只取了 `boxShadow`，没有画玻璃，不用铺。
 - ✅ 验收：`port:render` 与 `port:render:theme` 逐像素不变；`apps/gallery/tests/theme-material.test.tsx` 切到临时主题后 View 带上 `glassEffect`、`glassTintColor` 与平台 props，`selectTheme(null)` 后下一帧消失。
 
-#### 2b：`nativeTheme()` 与 `apple` 主题（待做，#200）
+#### 2b：`nativeTheme()` 与 `apple` 主题（完成，#200）
 
 内容：
 
-- 新增 `themes/native` 和 `apple` 主题。
-- 新增颜色 token：`on-brand-tint`（强调淡底上的字）、`inverse`、`inverse-foreground`，以及可能的 `inverse-brand`（snackbar 的操作按钮）。`on-media`（照片上的白字）和 `chart-foreground`（浅色图块上的深字）已经在 C 层，名字以 `theme-roles.md` 为准，这里不再另起。新增 finish：`dialog`、`tooltip`、`inverse`；先查清现在 dialog、tooltip、toast 借用的是哪个 finish，三个平台在这里本来就不同的才拆开。
+- ✅ 新增 `themes/native`（`nativeTheme()`：iOS、macOS 返回 `apple`，其余平台走 `default` 分支返回默认主题）和 `apple` 主题（`scripts/theme/generate-apple.ts` 生成）；registry 增 `theme-apple`、`theme-native`，`init --theme apple` 与 `--theme native` 可用，文档站主题切换器列出 Apple，`test:install` 覆盖。`glass`、`menu`、`raised` 带 `material.apple`，其余 finish 平涂加发丝边，`material` 为 `null`。macOS 不写 `backdrop`：显式的 `macos.backdrop` 会盖过 26+ 的 `glassEffect`；iOS 的 `backdrop` 只给 26 以下回落。
+- **推迟到第 3 期（本期不加，原因）：** 新增颜色 token `on-brand-tint`、`inverse`、`inverse-foreground`、`inverse-brand` 与新增 finish `dialog`、`tooltip`、`inverse`。查过：对话框用 `card` 加 `menu` 的阴影、tooltip 用 popover 的面、toast 用 `finish.menu`，三者在 Apple 上与现在没有差别，不需要拆开；这些 token 要等 `material` 的 snackbar 反色与 `fluent` 的 tooltip 出现才有第二个使用者，现在加只会让三套现有主题多出无人读的键。
+- 原计划（保留作第 3 期的起点）：新增颜色 token：`on-brand-tint`（强调淡底上的字）、`inverse`、`inverse-foreground`，以及可能的 `inverse-brand`（snackbar 的操作按钮）。`on-media`（照片上的白字）和 `chart-foreground`（浅色图块上的深字）已经在 C 层，名字以 `theme-roles.md` 为准，这里不再另起。新增 finish：`dialog`、`tooltip`、`inverse`；先查清现在 dialog、tooltip、toast 借用的是哪个 finish，三个平台在这里本来就不同的才拆开。
 
 验收：
 
-- 已有三套主题的 `material` 全为 `null`，画面逐像素不变。
-- 在 macOS 26+ 上运行演示：菜单和弹层是 Liquid Glass，截图人眼看过。
-- 在 iOS 上用 `nsh test --target ios` 截图。
+- ✅ 已有三套主题的 `material` 全为 `null`，画面逐像素不变（`port:render` 与 `port:render:theme`，`apple` 加入后只多出它自己的比对）。
+- ✅ 在 macOS 上用 `nsh test --target macos` 截图：无头渲染是 web 画法，看不到 Liquid Glass，只看到半透明回落填充。
+- ✅ 在 iOS 上用 `nsh test --target ios` 截图（模拟器）：popover 是玻璃，能透出下面的字。
 - 低于 26 的系统和非 Apple 平台回落到模糊。
 
 ### 第 3 期：`material` 与 `fluent` 主题（各一个 PR）
@@ -391,7 +405,7 @@ default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继
 
 ### 并行：C 类
 
-C1–C5 各开一个上游 issue，链接记在本节。
+C1、C2 各开一个上游 issue，链接记在本节（C3–C5 已查清，不是缺口）。
 
 ## 6 待决定
 

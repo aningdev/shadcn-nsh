@@ -21,7 +21,7 @@ const defaultFinishes = read("finishes.json") as FinishesFile;
 
 /** The alternative themes: a directory each, holding the two files of the same shape. */
 const alternatives = readdirSync(join(theme, "themes"), { withFileTypes: true })
-  .filter((entry) => entry.isDirectory())
+  .filter((entry) => entry.isDirectory() && entry.name !== "native")
   .map((entry) => entry.name);
 
 const sorted = (value: object) => Object.keys(value).sort();

@@ -61,11 +61,20 @@ export const DEFAULT_REGISTRY = `https://raw.githubusercontent.com/aningdev/shad
 /** The theme item every component depends on, and the one an app gets when it names none. */
 export const DEFAULT_THEME = "theme";
 
+/**
+ * The item that picks a theme per platform at run time (`nativeTheme()`). It ships no data of its
+ * own: an app on it is built on the default theme, and gets Apple's and the default's under
+ * `themes/` for `selectTheme(nativeTheme())`.
+ */
+export const NATIVE_THEME = "theme-native";
+
 /** The themes `init --theme` takes, by the name on the command line: the item each one installs. */
 export const THEMES = {
   default: DEFAULT_THEME,
   shadcn: "theme-shadcn",
   "solid-glass": "theme-solid-glass",
+  apple: "theme-apple",
+  native: NATIVE_THEME,
 } as const;
 
 export type ThemeName = keyof typeof THEMES;

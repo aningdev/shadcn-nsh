@@ -34,6 +34,12 @@ export const PALETTES = [
     description:
       "Panes of thick smoky glass: a rim of light on each top edge, a hairline round it, a shadow underneath, 11-point controls and 20-point cards.",
   },
+  {
+    id: "apple",
+    label: "Apple",
+    description:
+      "Apple's system colors and Liquid Glass: capsule controls, 20-point cards, hairline edges, and glass on the overlays that float.",
+  },
 ] as const;
 
 export type Palette = (typeof PALETTES)[number];

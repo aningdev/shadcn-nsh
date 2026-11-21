@@ -12,6 +12,7 @@
       "@shadcn-nsh/theme-default": ["../../packages/theme/themes/default/index.ts"],
       "@shadcn-nsh/theme-shadcn": ["../../packages/theme/themes/shadcn/index.ts"],
       "@shadcn-nsh/theme-solid-glass": ["../../packages/theme/themes/solid-glass/index.ts"],
+      "@shadcn-nsh/theme-apple": ["../../packages/theme/themes/apple/index.ts"],
       "@/*": ["../../*"]
     }
   },

@@ -30,10 +30,10 @@ The library's own theme comes with `init`. Two more ship as themes:
 
 ```sh
 npx shadcn-nsh init --theme shadcn                      # built with shadcn's neutral palette
-npx shadcn-nsh add theme-solid-glass                    # one more theme to switch to at run time
+npx shadcn-nsh add theme-apple                    # one more theme to switch to at run time
 ```
 
-`init --theme <default|shadcn|solid-glass>` decides the theme the app is **built** with; `add theme-<name>` installs **one more** into `themes/<name>/`, for `selectTheme` to switch to while the app runs (`selectTheme(null)` goes back to the built-in one). `nsh-ui.json` records which theme the app was built with, so `add` never writes another one over it. Tokens, finishes and the switching example: [themes](https://shadcn-nsh.aning.dev/docs/themes).
+`init --theme <default|shadcn|solid-glass|apple|native>` decides the theme the app is **built** with; `add theme-<name>` installs **one more** into `themes/<name>/`, for `selectTheme` to switch to while the app runs (`selectTheme(null)` goes back to the built-in one). `nsh-ui.json` records which theme the app was built with, so `add` never writes another one over it. Tokens, finishes and the switching example: [themes](https://shadcn-nsh.aning.dev/docs/themes).
 
 ## Registry
 

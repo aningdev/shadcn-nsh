@@ -4,12 +4,12 @@
 
 Brand look for the copy-into-app layer: this library's own, started from the upstream gallery UI theme. **Every color is `oklch()`** — tokens, the stops of a gradient, the colors of a shadow — with alpha as `oklch(… / a)`. NSH reads `oklch()` wherever a color is a string (`references/nsh/website/docs/styling.md#colors`), so one file holds one form of color and a value reads as the lightness and the hue it is.
 
-| File             | Role                                                                                                                                                                                      |
-| ---------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `theme.json`     | Colors, radii, cssVars                                                                                                                                                                    |
-| `finishes.json`  | Style (type, shape, size, stroke, focus, state, motion, icon, indicator: the same in both appearances) and the finishes of each appearance: gradients, shadows, and how far a press sinks |
-| `theme.ts`       | Readers: `colors`, `finish`, `mono`, `focusRing`, `selectTheme`, `fillStyle`, …                                                                                                           |
-| `themes/<name>/` | Other themes, one `AppTheme` each: `shadcn/` (shadcn's `neutral`), `solid-glass/` (Solid Glass), and `default/` (this one, to install beside it)                                          |
+| File             | Role                                                                                                                                                                                                                                                                             |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `theme.json`     | Colors, radii, cssVars                                                                                                                                                                                                                                                           |
+| `finishes.json`  | Style (type, shape, size, stroke, focus, state, motion, icon, indicator: the same in both appearances) and the finishes of each appearance: gradients, shadows, and how far a press sinks                                                                                        |
+| `theme.ts`       | Readers: `colors`, `finish`, `mono`, `focusRing`, `selectTheme`, `fillStyle`, …                                                                                                                                                                                                  |
+| `themes/<name>/` | Other themes, one `AppTheme` each: `shadcn/` (shadcn's `neutral`), `solid-glass/` (Solid Glass), `apple/` (Apple's system palette and Liquid Glass), `native/` (`nativeTheme()`: apple on iOS and macOS, the default elsewhere), and `default/` (this one, to install beside it) |
 
 ## Spec
 
