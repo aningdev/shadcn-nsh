@@ -2,22 +2,38 @@ import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { compositeWinui, fluentAccent, fluentRoles, WINUI, type Appearance } from "./fluent";
+import {
+  compositeWinui,
+  fluentAccent,
+  fluentRoles,
+  fluentThemeFiles,
+  WINUI,
+  type Appearance,
+} from "./fluent";
 import { css, parseColor, toOklchText } from "./oklch";
+import { checkStyle } from "./style";
+import { mergeFinishes, tokenKinds, type SplitFinishes, type ThemeCssVars } from "./tokens";
 
-type ThemeJson = {
-  cssVars: {
-    theme: Record<string, string>;
-    light: Record<string, string>;
-    dark: Record<string, string>;
-  };
+type DefaultThemeFile = {
+  cssVars: ThemeCssVars;
 };
 
-const handoffTheme = JSON.parse(
-  readFileSync(join(import.meta.dir, "../../.handoff/theme.json"), "utf8"),
-) as ThemeJson;
+type DefaultSemanticsFile = Record<string, unknown> & {
+  finishes: SplitFinishes<Record<string, unknown>>;
+};
 
-const NON_COLOUR_THEME_KEYS = new Set(["radius", "radius-card", "radius-control", "font-mono"]);
+const defaultTheme = JSON.parse(
+  readFileSync(join(import.meta.dir, "../../packages/theme/theme.json"), "utf8"),
+) as DefaultThemeFile;
+const defaultSemantics = JSON.parse(
+  readFileSync(join(import.meta.dir, "../../packages/theme/semantics.json"), "utf8"),
+) as DefaultSemanticsFile;
+
+const NON_COLOUR_THEME_KEYS = new Set(
+  Object.keys(defaultTheme.cssVars.theme).filter(
+    (key) => key === "radius" || key.startsWith("radius-") || key.startsWith("font-"),
+  ),
+);
 
 const hexOf = (value: string) => css(parseColor(value)).toLowerCase();
 
@@ -72,6 +88,7 @@ const PUBLISHED_ROLES: Record<Appearance, readonly [string, string][]> = {
     ["warn-tint", "#fff4ce"],
     ["destructive-tint", "#fde7e9"],
     ["up-tint", "#dff6dd"],
+    ["inverse-muted", "#5c5c5c"],
   ],
   dark: [
     ["background", "#202020"],
@@ -101,6 +118,7 @@ const PUBLISHED_ROLES: Record<Appearance, readonly [string, string][]> = {
     ["warn-tint", "#433519"],
     ["destructive-tint", "#442726"],
     ["up-tint", "#393d1b"],
+    ["inverse-muted", "#cccccc"],
   ],
 };
 
@@ -129,13 +147,13 @@ describe("WinUI resource compositing", () => {
 
 describe("fluentRoles() key coverage and format", () => {
   const roles = fluentRoles();
-  const expectedThemeKeys = Object.keys(handoffTheme.cssVars.theme)
+  const expectedThemeKeys = Object.keys(defaultTheme.cssVars.theme)
     .filter((key) => !NON_COLOUR_THEME_KEYS.has(key))
     .sort();
-  const expectedLightKeys = Object.keys(handoffTheme.cssVars.light).sort();
-  const expectedDarkKeys = Object.keys(handoffTheme.cssVars.dark).sort();
+  const expectedLightKeys = Object.keys(defaultTheme.cssVars.light).sort();
+  const expectedDarkKeys = Object.keys(defaultTheme.cssVars.dark).sort();
 
-  test("produces every colour key of .handoff/theme.json and no extra key", () => {
+  test("produces every colour key of packages/theme/theme.json and no extra key", () => {
     expect(Object.keys(roles.theme).sort()).toEqual(expectedThemeKeys);
     expect(Object.keys(roles.light).sort()).toEqual(expectedLightKeys);
     expect(Object.keys(roles.dark).sort()).toEqual(expectedDarkKeys);
@@ -192,8 +210,6 @@ describe("fluentAccent()", () => {
     expect(custom.dark.primary).not.toBe(defaults.dark.primary);
     expect(custom.light["brand-tint"]).not.toBe(defaults.light["brand-tint"]);
     expect(custom.dark["brand-tint"]).not.toBe(defaults.dark["brand-tint"]);
-    expect(custom.light["inverse-brand"]).not.toBe(defaults.light["inverse-brand"]);
-    expect(custom.dark["inverse-brand"]).not.toBe(defaults.dark["inverse-brand"]);
     expect(custom.theme["brand-fill"]).not.toBe(defaults.theme["brand-fill"]);
   });
 });
@@ -234,7 +250,8 @@ describe("WCAG contrast for default accent", () => {
           s["sidebar-accent"],
         ],
         ["inverse-foreground/inverse", s["inverse-foreground"], s.inverse],
-        ["inverse-brand/inverse", s["inverse-brand"], s.inverse],
+        ["inverse-muted/inverse", s["inverse-muted"], s.inverse],
+        ["inverse-brand/primary", s["inverse-brand"], s.primary],
         ["on-brand-tint/brand-tint", s["on-brand-tint"], s["brand-tint"]],
         ["code/inset", s.code, s.inset],
         ["code/muted", s.code, s.muted],
@@ -250,4 +267,33 @@ describe("WCAG contrast for default accent", () => {
       }
     });
   }
+});
+
+describe("fluentThemeFiles", () => {
+  test("produces valid theme.json and semantics.json matching default keys and style schema", () => {
+    const files = fluentThemeFiles({
+      theme: defaultTheme.cssVars.theme,
+      light: defaultTheme.cssVars.light,
+      dark: defaultTheme.cssVars.dark,
+      lightFinishes: mergeFinishes(defaultSemantics.finishes, "light"),
+      darkFinishes: mergeFinishes(defaultSemantics.finishes, "dark"),
+    });
+    expect(files.theme.name).toBe("Fluent");
+    expect(Object.keys(files.theme.cssVars.theme)).toEqual([
+      ...Object.keys(defaultTheme.cssVars.theme),
+      "font-sans",
+    ]);
+    expect(Object.keys(files.theme.cssVars.light)).toEqual(Object.keys(defaultTheme.cssVars.light));
+    expect(Object.keys(files.theme.cssVars.dark)).toEqual(Object.keys(defaultTheme.cssVars.dark));
+
+    const kinds = tokenKinds(files.theme.cssVars);
+    expect(
+      checkStyle(
+        "packages/theme/themes/fluent/semantics.json",
+        files.semantics,
+        defaultSemantics,
+        kinds,
+      ),
+    ).toEqual([]);
+  });
 });

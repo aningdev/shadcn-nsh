@@ -29,6 +29,7 @@ import {
   toOklchText,
   withAlpha,
 } from "./oklch";
+import { ordered, orderedSplitFinishes } from "./order";
 
 export type Appearance = "light" | "dark";
 
@@ -259,7 +260,7 @@ export function fluentAccent(accent: string = FLUENT_DEFAULT_ACCENT): FluentAcce
   };
 }
 
-/** Colour keys of `cssVars.theme` in `.handoff/theme.json` (excludes non-colour keys: radii, font-mono). */
+/** Colour keys of `cssVars.theme` in `packages/theme/theme.json` (excludes non-colour keys: radii, fonts). */
 export type FluentThemeRole =
   | "brand-fill"
   | "on-brand"
@@ -273,7 +274,7 @@ export type FluentThemeRole =
   | "window-control-ink"
   | "window-control-edge";
 
-/** Colour keys of `cssVars.light` and `cssVars.dark` in `.handoff/theme.json`. */
+/** Colour keys of `cssVars.light` and `cssVars.dark` in `packages/theme/theme.json`. */
 export type FluentAppearanceRole =
   | "background"
   | "foreground"
@@ -329,6 +330,7 @@ export type FluentAppearanceRole =
   | "on-brand-tint"
   | "inverse"
   | "inverse-foreground"
+  | "inverse-muted"
   | "inverse-brand"
   | "info-tint"
   | "warn-tint"
@@ -454,11 +456,12 @@ function buildAppearance(
     // from `popover` (`SolidBackgroundFillColorQuarternary`).
     inverse: onBase(w.SolidBackgroundFillColorTertiary),
     // Judgement call: both `ToolTipForegroundBrush` and `TeachingTipForegroundBrush` use
-    // `TextFillColorPrimaryBrush`.
+    // `TextFillColorPrimaryBrush`; secondary ink (`inverse-muted`) uses `TextFillColorSecondary`.
     "inverse-foreground": foreground,
-    // Judgement call: interactive brand text/links on `TeachingTip` / `InfoBar` use
-    // `AccentTextFillColorPrimaryBrush` (`SystemAccentColorDark2` light, `Light3` dark).
-    "inverse-brand": appearance === "light" ? tiers.dark2 : tiers.light3,
+    "inverse-muted": mutedForeground,
+    // `Toast`'s action uses `buttonLook("default")` (`finish.accent` = `{primary}`), so its
+    // label (`colors.inverseBrand`) uses `TextOnAccentFillColorPrimary` (matching `apple` / `default`).
+    "inverse-brand": primaryForeground,
     "info-tint": onBase(w.SystemFillColorAttentionBackground),
     "warn-tint": onBase(w.SystemFillColorCautionBackground),
     "destructive-tint": destructiveTint,
@@ -470,7 +473,7 @@ function buildAppearance(
 }
 
 /**
- * Compute every colour role of `.handoff/theme.json` (`theme`, `light`, `dark`) as canonical
+ * Compute every colour role of `packages/theme/theme.json` (`theme`, `light`, `dark`) as canonical
  * `oklch()` strings for Fluent 2, with optional host-supplied `SystemAccentColor`.
  */
 export function fluentRoles(accent: string = FLUENT_DEFAULT_ACCENT): FluentRoles {
@@ -482,7 +485,7 @@ export function fluentRoles(accent: string = FLUENT_DEFAULT_ACCENT): FluentRoles
     theme: {
       // Judgement call: `cssVars.theme` is appearance-independent; `brand-fill` / `on-brand` use
       // light's primary pair (`AccentFillColorDefault` Dark1 + `TextOnAccentFillColorPrimary`),
-      // matching `.handoff/theme.json` where `brand-fill` matches light `primary`.
+      // matching `packages/theme/theme.json` where `brand-fill` matches light `primary`.
       "brand-fill": light.primary,
       "on-brand": light["primary-foreground"],
       // Overlay scrim retains alpha (`SmokeFillColorDefault` #4D000000, identical in light & dark).
@@ -501,5 +504,296 @@ export function fluentRoles(accent: string = FLUENT_DEFAULT_ACCENT): FluentRoles
     },
     light,
     dark,
+  };
+}
+
+const alias = (token: string) => `{${token}}`;
+const flat = (color: string) => `linear-gradient(180deg, ${color} 0%, ${color} 100%)`;
+
+/** Fluent 2 / WinUI elevation shadows mapped onto Fluent Web ambient + key shadow levels in black ink. */
+const shadow2 = (appearance: Appearance) => {
+  const [ambient, key] = appearance === "light" ? [0.12, 0.14] : [0.24, 0.28];
+  return `0 0 2px ${oklchColor(0, 0, 0, ambient)}, 0 1px 2px ${oklchColor(0, 0, 0, key)}`;
+};
+const shadow8 = (appearance: Appearance) => {
+  const [ambient, key] = appearance === "light" ? [0.12, 0.14] : [0.24, 0.28];
+  return `0 0 2px ${oklchColor(0, 0, 0, ambient)}, 0 4px 8px ${oklchColor(0, 0, 0, key)}`;
+};
+const shadow16 = (appearance: Appearance) => {
+  const [ambient, key] = appearance === "light" ? [0.12, 0.14] : [0.24, 0.28];
+  return `0 0 2px ${oklchColor(0, 0, 0, ambient)}, 0 8px 16px ${oklchColor(0, 0, 0, key)}`;
+};
+const shadow28 = (appearance: Appearance) => {
+  const [ambient, key] = appearance === "light" ? [0.2, 0.24] : [0.4, 0.48];
+  return `0 0 8px ${oklchColor(0, 0, 0, ambient)}, 0 14px 28px ${oklchColor(0, 0, 0, key)}`;
+};
+const shadow64 = (appearance: Appearance) => {
+  const [ambient, key] = appearance === "light" ? [0.2, 0.24] : [0.4, 0.48];
+  return `0 0 8px ${oklchColor(0, 0, 0, ambient)}, 0 32px 64px ${oklchColor(0, 0, 0, key)}`;
+};
+
+const surface = (
+  color: string,
+  {
+    boxShadow = "none",
+    borderColor = "transparent",
+    material = null,
+  }: {
+    boxShadow?: string;
+    borderColor?: string;
+    material?: { windows: { backdrop: "blur" } } | null;
+  } = {},
+) => ({
+  backgroundColor: color,
+  backgroundImage: flat(color),
+  boxShadow,
+  borderColor,
+  material,
+});
+
+/**
+ * Shared theme-level tokens (`cssVars.theme`) for Fluent 2: WinUI `ControlCornerRadius` (4 px) for
+ * controls/fields/chips/in-page insets, `OverlayCornerRadius` (8 px) for cards/overlays/dialogs/sheets,
+ * Segoe UI Variable + Cascadia Mono fonts, and Fluent colour tokens from `fluentRoles`.
+ */
+function themeLevel(roles: FluentRoles): Record<string, string> {
+  return {
+    radius: "4px",
+    "radius-card": "8px",
+    "radius-control": "4px",
+    "radius-field": "4px",
+    "radius-chip": "4px",
+    "radius-overlay": "8px",
+    "radius-dialog": "8px",
+    "radius-sheet": "8px",
+    "font-mono": "Cascadia Mono, Consolas, monospace",
+    ...roles.theme,
+    "font-sans": "Segoe UI Variable, Segoe UI, sans-serif",
+  };
+}
+
+/**
+ * All 23 finish roles for Fluent 2 (`{token}` references; `glass` and `menu` ask Windows for
+ * `{ windows: { backdrop: "blur" } }` as the Acrylic stand-in).
+ */
+function finishes(appearance: Appearance): Record<string, Record<string, unknown>> {
+  const controlShadow = shadow2(appearance);
+  const flyoutShadow = shadow28(appearance);
+  const blurMaterial = { windows: { backdrop: "blur" as const } };
+  return {
+    card: {
+      backgroundImage: flat(alias("card")),
+      boxShadow: shadow8(appearance),
+      material: null,
+    },
+    inset: { boxShadow: "none", material: null },
+    field: { boxShadow: "none", material: null },
+    raised: surface(alias("raised"), { boxShadow: controlShadow, borderColor: alias("border") }),
+    hover: surface(alias("hover"), { boxShadow: controlShadow, borderColor: alias("border") }),
+    pressed: surface(alias("muted"), { boxShadow: "none", borderColor: alias("border") }),
+    light: surface(alias("primary"), { boxShadow: "none", borderColor: alias("brand-edge") }),
+    accent: surface(alias("primary"), { boxShadow: "none", borderColor: alias("brand-edge") }),
+    track: { boxShadow: "none", borderColor: alias("input"), material: null },
+    fill: {
+      backgroundColor: "transparent",
+      backgroundImage: flat(alias("primary")),
+      boxShadow: "none",
+      borderColor: "transparent",
+      material: null,
+    },
+    knob: surface(alias("knob")),
+    knobOn: surface(alias("primary-foreground")),
+    handle: surface(alias("popover"), { boxShadow: controlShadow, borderColor: alias("border") }),
+    pill: surface(alias("raised"), { boxShadow: "none", borderColor: alias("border") }),
+    thumb: surface(alias("popover"), { boxShadow: controlShadow, borderColor: alias("border") }),
+    on: surface(alias("brand-tint"), { boxShadow: "none", borderColor: alias("border") }),
+    chip: surface(alias("raised"), { boxShadow: "none", borderColor: alias("border") }),
+    glass: {
+      backgroundColor: "oklch(from {popover} l c h / 0.85)",
+      boxShadow: flyoutShadow,
+      borderColor: alias("glass-edge"),
+      backdropFilter: "blur(30px)",
+      material: blurMaterial,
+    },
+    menu: {
+      backgroundColor: alias("popover"),
+      boxShadow: flyoutShadow,
+      borderColor: alias("glass-edge"),
+      material: blurMaterial,
+    },
+    dialog: {
+      backgroundColor: alias("background"),
+      boxShadow: shadow64(appearance),
+      borderColor: alias("glass-edge"),
+      material: null,
+    },
+    tooltip: {
+      backgroundColor: alias("inverse"),
+      boxShadow: shadow16(appearance),
+      borderColor: alias("glass-edge"),
+      material: null,
+    },
+    inverse: {
+      backgroundColor: alias("inverse"),
+      boxShadow: flyoutShadow,
+      borderColor: alias("glass-edge"),
+      material: null,
+    },
+    groove: { boxShadow: "none", material: null },
+  };
+}
+
+/** Fluent 2 / WinUI 3 style groups (`semantics.json`); verified values in `docs/specs/native-themes.md` §3.2. */
+export const fluentStyle = {
+  type: {
+    family: "{font-sans}",
+    caption: {
+      size: { pointer: 12, touch: 12 },
+      line: { pointer: 16, touch: 16 },
+      weight: "400",
+      tracking: 0,
+    },
+    detail: {
+      size: { pointer: 12, touch: 12 },
+      line: { pointer: 16, touch: 16 },
+      weight: "400",
+      tracking: 0,
+    },
+    body: {
+      size: { pointer: 14, touch: 14 },
+      line: { pointer: 20, touch: 20 },
+      weight: "400",
+      tracking: 0,
+    },
+    label: {
+      size: { pointer: 14, touch: 14 },
+      line: { pointer: 20, touch: 20 },
+      weight: "400",
+      tracking: 0,
+    },
+    title: {
+      size: { pointer: 14, touch: 14 },
+      line: { pointer: 20, touch: 20 },
+      weight: "600",
+      tracking: 0,
+    },
+    headline: {
+      size: { pointer: 20, touch: 20 },
+      line: { pointer: 28, touch: 28 },
+      weight: "600",
+      tracking: 0,
+    },
+    display: {
+      size: { pointer: 28, touch: 28 },
+      line: { pointer: 36, touch: 36 },
+      weight: "600",
+      tracking: 0,
+    },
+  },
+  shape: {
+    control: "{radius-control}",
+    field: "{radius-field}",
+    chip: "{radius-chip}",
+    card: "{radius-card}",
+    overlay: "{radius-overlay}",
+    dialog: "{radius-dialog}",
+    sheet: "{radius-sheet}",
+    inset: "{radius}",
+    curve: "circular",
+    corners: { field: "all" },
+  },
+  size: {
+    hit: { pointer: 0, touch: 40 },
+    density: {
+      pointer: { row: 32, pad: 16, gap: 8, surface: 4 },
+      touch: { row: 40, pad: 16, gap: 8, surface: 8 },
+    },
+    control: {
+      pointer: {
+        row: 32,
+        padding: 6,
+        gap: 8,
+        control: 20,
+        corner: 4,
+        check: 12,
+        dot: 12,
+        tabs: 32,
+        line: 32,
+        clear: 16,
+        switch: "regular",
+      },
+      touch: {
+        row: 40,
+        padding: 8,
+        gap: 8,
+        control: 20,
+        corner: 4,
+        check: 12,
+        dot: 12,
+        tabs: 40,
+        line: 40,
+        clear: 20,
+        switch: "regular",
+      },
+    },
+    height: { pointer: { sm: 24, md: 32, lg: 40 }, touch: { sm: 32, md: 40, lg: 48 } },
+  },
+  stroke: { hairline: 1, surface: 1, control: 1, indicator: 3 },
+  focus: { style: "double", width: 2, offset: 0 },
+  state: {
+    pressScale: 1,
+    overlay: { hover: 0, focus: 0, pressed: 0, dragged: 0 },
+    ripple: false,
+    pressedOpacity: 1,
+    disabled: { content: 0.36, container: 0.45 },
+  },
+  motion: {
+    // WinUI 3 / Fluent 2 timing durations and curves (`motion.md`, `Common_themeresources_any.xaml`).
+    press: { duration: 83, easing: "easy-ease" },
+    settle: { duration: 250, easing: "decelerate" },
+    control: { duration: 167, easing: "point-to-point" },
+    move: { duration: 333, easing: "point-to-point" },
+    enter: { duration: 250, easing: "decelerate" },
+    shake: { duration: 500 },
+  },
+  icon: {
+    size: {
+      pointer: { sm: 12, md: 16, lg: 20 },
+      touch: { sm: 16, md: 20, lg: 24 },
+    },
+  },
+  indicator: { tabs: "underline", nav: "bar", field: "underline" },
+};
+
+/** Both theme files for Fluent 2, in the key order of the default ones. */
+export function fluentThemeFiles(
+  defaults: {
+    theme: Record<string, string>;
+    light: Record<string, string>;
+    dark: Record<string, string>;
+    lightFinishes: Record<string, Record<string, unknown>>;
+    darkFinishes: Record<string, Record<string, unknown>>;
+  },
+  accent: string = FLUENT_DEFAULT_ACCENT,
+) {
+  const roles = fluentRoles(accent);
+  return {
+    theme: {
+      name: "Fluent",
+      cssVars: {
+        theme: ordered(defaults.theme, themeLevel(roles)),
+        light: ordered(defaults.light, roles.light),
+        dark: ordered(defaults.dark, roles.dark),
+      },
+    },
+    semantics: {
+      ...fluentStyle,
+      finishes: orderedSplitFinishes(
+        defaults.lightFinishes,
+        defaults.darkFinishes,
+        finishes("light"),
+        finishes("dark"),
+      ),
+    },
   };
 }

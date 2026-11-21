@@ -41,10 +41,19 @@ test("nativeTheme() is material on Android", async () => {
   expect(find(app.texts(), "native=")).toBe("material");
 });
 
+test("nativeTheme() is fluent on Windows", async () => {
+  const app = await open("./theme-native.fixture.tsx", {
+    platform: "windows",
+    colorScheme: "light",
+  });
+  expect(find(app.texts(), "native=")).toBe("fluent");
+});
+
 test("nativeTheme() is the default theme on the other platforms", async () => {
-  for (const platform of ["windows", "linux"] as const) {
+  for (const platform of ["linux"] as const) {
     const app = await open("./theme-native.fixture.tsx", { platform, colorScheme: "light" });
     expect(find(app.texts(), "native=")).not.toBe("apple");
     expect(find(app.texts(), "native=")).not.toBe("material");
+    expect(find(app.texts(), "native=")).not.toBe("fluent");
   }
 });
