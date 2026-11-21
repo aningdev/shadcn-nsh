@@ -334,9 +334,7 @@ export const style = {
         check: 12,
         dot: 6,
         tabs: 28,
-        // Held at the default theme's 32: a Select or DatePicker trigger whose height changes under a
-        // live `selectTheme` stops hearing presses (the engine keeps the first layout's hit area).
-        line: 32,
+        line: 28,
         clear: 16,
         switch: "regular",
       },

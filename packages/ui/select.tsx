@@ -117,7 +117,7 @@ export function pickerLook(o?: PickerLookOptions) {
         paddingEnd: terminal
           ? (clearable ? 6 : 3) * TERMINAL_COLUMN
           : clearable
-            ? clearInset + controlSize.clear + 8
+            ? clearInset() + controlSize.clear + 8
             : triggerPadding,
         ...rounded(shape.control),
         borderWidth: stroke.control,
@@ -570,7 +570,11 @@ export function SelectContent(props: SelectContentProps) {
     <View style={ctx.triggerLayout.get()?.()}>
       {props.children}
       {() => {
-        const chrome = listboxProps({ minWidth: props.minWidth });
+        const chrome = listboxProps({
+          get minWidth() {
+            return props.minWidth;
+          },
+        });
         // The clear button of a cleanable trigger: over its end, in place of the chevron.
         const clear = clearButtonLook({ over: true });
         return (

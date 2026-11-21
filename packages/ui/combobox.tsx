@@ -582,7 +582,11 @@ export function ComboboxContent(props: ComboboxContentProps) {
       {props.children}
       {() => {
         const look = comboboxLook(ctx.open, { filled: ctx.filled });
-        const chrome = listboxProps({ minWidth: props.minWidth });
+        const chrome = listboxProps({
+          get minWidth() {
+            return props.minWidth;
+          },
+        });
         // The clear button of a cleanable field: in the row, after the input.
         const clear = clearButtonLook();
         const empty = ctx.empty.get();

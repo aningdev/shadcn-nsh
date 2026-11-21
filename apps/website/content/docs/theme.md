@@ -153,8 +153,6 @@ const dim = alpha(colors.foreground, 0.4); // a color at 40%
 
 `focusRing(offset)` is the shared keyboard outline: the muted `ring` edge and a 3-point halo of `ring-halo`. `hovered()` is the pointer's fill, the `hover` token. `alpha(color, a)` is a `color-mix` of that color with transparency. `colors`, `finish` and `radius` are getters, not snapshots: read them where they are used.
 
-Switching themes at runtime with `selectTheme` has one known limit: if the new theme changes `control.line` (the row height of a `Select` or `DatePicker` trigger), that trigger stops hearing presses until the app restarts ([#203](https://github.com/aningdev/shadcn-nsh/issues/203)). Pick themes whose `control.line` match when you switch live, or choose the theme before mount (as `nativeTheme()` does).
-
 ## Override from nsh.json
 
 An app's `nsh.json` sets the look in two places, and the two do not merge:

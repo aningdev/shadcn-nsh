@@ -190,12 +190,10 @@ packages/theme/themes/<id>/
 | `control.check`       | 勾和图标的大小                       | 12 / 16                    | 12 / 16                              | 待核对       | 待核对       |
 | `control.dot`         | 单选框的点                           | 6 / 8                      | 6 / 8                                | 待核对       | 待核对       |
 | `control.tabs`        | 标签栏高                             | 30 / 40                    | 28 / 36                              | 约 48        | 约 32        |
-| `control.line`        | 一行值的高                           | 32 / 44                    | 32 / 44（见下）                      | 待核对       | 待核对       |
+| `control.line`        | 一行值的高                           | 32 / 44                    | 28 / 44                              | 待核对       | 待核对       |
 | `control.clear`       | 清除按钮的边长                       | 16 / 20                    | 16 / 20                              | 待核对       | 待核对       |
 | `control.switch`      | 行旁开关的尺寸：`small` 或 `regular` | small / regular            | regular                              | regular      | small        |
 | `height.sm / md / lg` | 按钮高                               | 24 / 28 / 34；36 / 40 / 48 | macOS 24 / 28 / 32；iOS 32 / 44 / 50 | 32 / 40 / 56 | 24 / 32 / 40 |
-
-**`control.line` 的已知限制（2b 发现）。** 运行时 `selectTheme` 之后，若 `Select` / `DatePicker` 触发器的 `control.line` 与构建时主题不同，触发器就收不到点击（按压、键盘、`label:` 都失效；`stroke`、`shape`、`type` 变了不受影响，构建时直接用 28 也正常）。这不是 apple 专有，是引擎沿用首次布局的命中区域。所以 Apple 的 pointer `line` 暂守在默认的 32；等引擎修了再按 HIG 收到 28。
 
 `density` 和 `control` 的 pointer / touch 两档就是原来的 `density` 与 `controlSize`；它们的 `label`、`detail`、`title`、`note`、`body` 已改读 `type`。Apple 的数（第 2b 期）取自 HIG 的 [Layout](https://developer.apple.com/design/human-interface-guidelines/layout) 与 [Buttons](https://developer.apple.com/design/human-interface-guidelines/buttons)：触摸目标最小 44 点，macOS 的标准控件高约 28 点（small 24、large 32），iOS 按钮 44 点（大号 50）；`density.surface` 取与 `shape.card` 相邻的同心一档（pointer 12、touch 20）。Material 与 Fluent 的数第 3 期做主题时核对。
 

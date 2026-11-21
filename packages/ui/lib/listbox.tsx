@@ -127,7 +127,7 @@ const TRIGGER_PAD_END = 10;
 
 /** The clear button's inset from a trigger's end: centered where the chevron's lane is. The button is in the
  * select's view, outside the trigger, so its inset counts the trigger's 1-point border too. */
-export const clearInset =
+export const clearInset = (): number =>
   TRIGGER_BORDER + TRIGGER_PAD_END + controlSize.check / 4 - controlSize.clear / 2;
 
 /** Options of `clearButtonLook`. */
@@ -145,17 +145,19 @@ export function clearButtonLook(o?: ClearButtonOptions) {
   return {
     clearButtonClass:
       "items-center justify-center rounded-full enabled:hover:bg-foreground/8 active:bg-track",
-    clearButtonStyle: terminal
-      ? undefined
-      : o?.over
-        ? {
-            position: "absolute" as const,
-            top: (controlSize.line - controlSize.clear) / 2,
-            end: clearInset,
-            width: controlSize.clear,
-            height: controlSize.clear,
-          }
-        : { width: controlSize.clear, height: controlSize.clear },
+    get clearButtonStyle(): ViewStyle | undefined {
+      return terminal
+        ? undefined
+        : o?.over
+          ? {
+              position: "absolute",
+              top: (controlSize.line - controlSize.clear) / 2,
+              end: clearInset(),
+              width: controlSize.clear,
+              height: controlSize.clear,
+            }
+          : { width: controlSize.clear, height: controlSize.clear };
+    },
     get clearButton() {
       return terminal ? (
         <Text style={{ color: colors.mutedForeground }}>×</Text>
