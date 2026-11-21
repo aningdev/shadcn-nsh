@@ -123,10 +123,34 @@
       "registryDependencies": []
     },
     {
+      "name": "theme-material",
+      "type": "registry:theme",
+      "title": "Theme: Material",
+      "description": "Material 3 Expressive palette and metrics as one more theme — tonal surfaces, capsule controls, circular corners, 8/10/10% state layers, press ripple, and expressive springs — installed into themes/material/ (theme.json, semantics.json, index.ts) for `selectTheme` to switch to while the app runs.",
+      "files": [
+        {
+          "path": "packages/theme/themes/material/theme.json",
+          "type": "registry:file",
+          "target": "themes/material/theme.json"
+        },
+        {
+          "path": "packages/theme/themes/material/semantics.json",
+          "type": "registry:file",
+          "target": "themes/material/semantics.json"
+        },
+        {
+          "path": "packages/theme/themes/material/index.ts",
+          "type": "registry:lib",
+          "target": "themes/material/index.ts"
+        }
+      ],
+      "registryDependencies": []
+    },
+    {
       "name": "theme-native",
       "type": "registry:theme",
       "title": "Theme: native (per platform)",
-      "description": "The theme of the platform the app runs on: `nativeTheme()` returns Apple's on iOS and macOS and the default theme elsewhere, for `selectTheme(nativeTheme())`. Installs themes/native/index.ts with the two themes it names (themes/apple/, themes/default/).",
+      "description": "The theme of the platform the app runs on: `nativeTheme()` returns Apple's on iOS and macOS, Material on Android, and the default theme elsewhere, for `selectTheme(nativeTheme())`. Installs themes/native/index.ts with the themes it names (themes/apple/, themes/material/, themes/default/).",
       "files": [
         {
           "path": "packages/theme/themes/native/index.ts",
@@ -134,7 +158,7 @@
           "target": "themes/native/index.ts"
         }
       ],
-      "registryDependencies": ["theme-apple", "theme-default"]
+      "registryDependencies": ["theme-apple", "theme-material", "theme-default"]
     },
     {
       "name": "indicator",

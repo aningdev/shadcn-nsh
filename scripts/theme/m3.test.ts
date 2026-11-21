@@ -2,28 +2,37 @@ import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { M3_BASELINE_SEED, m3Roles, m3Scheme, type M3Palette } from "./m3";
+import { M3_BASELINE_SEED, m3Roles, m3Scheme, m3ThemeFiles, type M3Palette } from "./m3";
 import { css, parseColor, toOklchText, type Rgb } from "./oklch";
+import { checkStyle } from "./style";
+import { mergeFinishes, tokenKinds, type SplitFinishes, type ThemeCssVars } from "./tokens";
 
-type HandoffTheme = {
-  cssVars: {
-    theme: Record<string, string>;
-    light: Record<string, string>;
-    dark: Record<string, string>;
-  };
+type DefaultThemeFile = {
+  cssVars: ThemeCssVars;
 };
 
-const handoffTheme = JSON.parse(
-  readFileSync(join(import.meta.dir, "../../.handoff/theme.json"), "utf8"),
-) as HandoffTheme;
+type DefaultSemanticsFile = Record<string, unknown> & {
+  finishes: SplitFinishes<Record<string, unknown>>;
+};
 
-const NON_COLOUR_THEME_KEYS = new Set(["radius", "radius-card", "radius-control", "font-mono"]);
+const defaultTheme = JSON.parse(
+  readFileSync(join(import.meta.dir, "../../packages/theme/theme.json"), "utf8"),
+) as DefaultThemeFile;
+const defaultSemantics = JSON.parse(
+  readFileSync(join(import.meta.dir, "../../packages/theme/semantics.json"), "utf8"),
+) as DefaultSemanticsFile;
 
-const expectedThemeColourKeys = Object.keys(handoffTheme.cssVars.theme)
+const NON_COLOUR_THEME_KEYS = new Set(
+  Object.keys(defaultTheme.cssVars.theme).filter(
+    (key) => key === "radius" || key.startsWith("radius-") || key.startsWith("font-"),
+  ),
+);
+
+const expectedThemeColourKeys = Object.keys(defaultTheme.cssVars.theme)
   .filter((key) => !NON_COLOUR_THEME_KEYS.has(key))
   .sort();
-const expectedLightKeys = Object.keys(handoffTheme.cssVars.light).sort();
-const expectedDarkKeys = Object.keys(handoffTheme.cssVars.dark).sort();
+const expectedLightKeys = Object.keys(defaultTheme.cssVars.light).sort();
+const expectedDarkKeys = Object.keys(defaultTheme.cssVars.dark).sort();
 
 /** Published Material 3 Expressive baseline hexes (`material-web` v34.0.21 / Compose tokens). */
 const PUBLISHED_LIGHT: Partial<Record<keyof M3Palette, string>> = {
@@ -173,7 +182,7 @@ describe("m3Roles", () => {
   const baselineRoles = m3Roles(m3Scheme());
   const tealRoles = m3Roles(m3Scheme("#006A6A"));
 
-  test("produces every colour key of .handoff/theme.json and no extra key", () => {
+  test("produces every colour key of packages/theme/theme.json and no extra key", () => {
     for (const roles of [baselineRoles, tealRoles]) {
       expect(Object.keys(roles.theme).sort()).toEqual(expectedThemeColourKeys);
       expect(Object.keys(roles.light).sort()).toEqual(expectedLightKeys);
@@ -269,5 +278,31 @@ describe("m3Roles", () => {
     const onMedia = parseColor(baselineRoles.theme["on-media"]!);
     const media = parseColor(baselineRoles.theme.media!);
     expect(contrastRatio(onMedia, media)).toBeGreaterThanOrEqual(4.5);
+  });
+});
+
+describe("m3ThemeFiles", () => {
+  test("produces valid theme.json and semantics.json matching default keys and style schema", () => {
+    const files = m3ThemeFiles({
+      theme: defaultTheme.cssVars.theme,
+      light: defaultTheme.cssVars.light,
+      dark: defaultTheme.cssVars.dark,
+      lightFinishes: mergeFinishes(defaultSemantics.finishes, "light"),
+      darkFinishes: mergeFinishes(defaultSemantics.finishes, "dark"),
+    });
+    expect(files.theme.name).toBe("Material");
+    expect(Object.keys(files.theme.cssVars.theme)).toEqual(Object.keys(defaultTheme.cssVars.theme));
+    expect(Object.keys(files.theme.cssVars.light)).toEqual(Object.keys(defaultTheme.cssVars.light));
+    expect(Object.keys(files.theme.cssVars.dark)).toEqual(Object.keys(defaultTheme.cssVars.dark));
+
+    const kinds = tokenKinds(files.theme.cssVars);
+    expect(
+      checkStyle(
+        "packages/theme/themes/material/semantics.json",
+        files.semantics,
+        defaultSemantics,
+        kinds,
+      ),
+    ).toEqual([]);
   });
 });

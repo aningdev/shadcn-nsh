@@ -33,6 +33,7 @@ import {
 } from "@material/material-color-utilities";
 
 import { oklchColor, toOklchText } from "./oklch";
+import { ordered, orderedSplitFinishes } from "./order";
 
 export const M3_BASELINE_SEED = "#6750A4";
 
@@ -369,5 +370,282 @@ export function m3Roles(scheme: M3Scheme): M3Roles {
     },
     light: appearanceRoles(scheme.light, "light"),
     dark: appearanceRoles(scheme.dark, "dark"),
+  };
+}
+
+const alias = (token: string) => `{${token}}`;
+const flat = (color: string) => `linear-gradient(180deg, ${color} 0%, ${color} 100%)`;
+
+/** Material Web `_elevation.scss` key + ambient shadow levels in black ink. */
+const LEVEL_1 = `0 1px 2px 0 ${oklchColor(0, 0, 0, 0.3)}, 0 1px 3px 1px ${oklchColor(0, 0, 0, 0.15)}`;
+const LEVEL_2 = `0 1px 2px 0 ${oklchColor(0, 0, 0, 0.3)}, 0 2px 6px 2px ${oklchColor(0, 0, 0, 0.15)}`;
+const LEVEL_3 = `0 1px 3px 0 ${oklchColor(0, 0, 0, 0.3)}, 0 4px 8px 3px ${oklchColor(0, 0, 0, 0.15)}`;
+
+const surface = (
+  color: string,
+  {
+    boxShadow = "none",
+    borderColor = "transparent",
+    material = null,
+  }: {
+    boxShadow?: string;
+    borderColor?: string;
+    material?: { android: { elevation: number } } | null;
+  } = {},
+) => ({
+  backgroundColor: color,
+  backgroundImage: flat(color),
+  boxShadow,
+  borderColor,
+  material,
+});
+
+/**
+ * Shared theme-level tokens (`cssVars.theme`) for Material 3 Expressive: M3 corner scale mapped
+ * onto the 8 `radius-*` roles, system monospace font, and M3 colour tokens from `m3Roles`.
+ */
+function themeLevel(roles: M3Roles): Record<string, string> {
+  return {
+    radius: "8px",
+    "radius-card": "12px",
+    "radius-control": "999px",
+    "radius-field": "4px",
+    "radius-chip": "12px",
+    "radius-overlay": "4px",
+    "radius-dialog": "28px",
+    "radius-sheet": "28px",
+    "font-mono": "monospace",
+    ...roles.theme,
+  };
+}
+
+/**
+ * All 23 finish roles for Material 3 Expressive (`{token}` references; light/dark polarity comes
+ * from `theme.json`). No frosted glass or blur; elevation maps onto Material Web Level 1–3
+ * shadows and `material.android.elevation` (1 / 3 / 6 dp).
+ */
+function finishes(): Record<string, Record<string, unknown>> {
+  const level1 = { android: { elevation: 1 } };
+  const level2 = { android: { elevation: 3 } };
+  const level3 = { android: { elevation: 6 } };
+  return {
+    card: {
+      backgroundImage: flat(alias("card")),
+      boxShadow: LEVEL_1,
+      material: level1,
+    },
+    inset: { boxShadow: "none", material: null },
+    field: { boxShadow: "none", material: null },
+    raised: surface(alias("raised"), { boxShadow: LEVEL_1, material: level1 }),
+    hover: {
+      backgroundColor: alias("raised"),
+      backgroundImage: flat(alias("hover")),
+      boxShadow: LEVEL_1,
+      borderColor: "transparent",
+      material: level1,
+    },
+    pressed: surface(alias("raised"), { boxShadow: LEVEL_1, material: level1 }),
+    light: surface(alias("primary")),
+    accent: surface(alias("primary")),
+    track: { boxShadow: "none", borderColor: alias("input"), material: null },
+    fill: {
+      backgroundColor: "transparent",
+      backgroundImage: flat(alias("primary")),
+      boxShadow: "none",
+      borderColor: "transparent",
+      material: null,
+    },
+    knob: surface(alias("knob")),
+    knobOn: surface(alias("on-brand")),
+    handle: surface(alias("primary")),
+    pill: surface(alias("raised"), { boxShadow: LEVEL_1, material: level1 }),
+    thumb: surface(alias("secondary")),
+    on: surface(alias("secondary")),
+    chip: surface(alias("background"), { borderColor: alias("border") }),
+    glass: {
+      backgroundColor: alias("popover"),
+      boxShadow: LEVEL_2,
+      borderColor: "transparent",
+      backdropFilter: "none",
+      material: level2,
+    },
+    menu: {
+      backgroundColor: alias("popover"),
+      boxShadow: LEVEL_2,
+      borderColor: "transparent",
+      material: level2,
+    },
+    dialog: {
+      backgroundColor: alias("popover"),
+      boxShadow: LEVEL_3,
+      borderColor: "transparent",
+      material: level3,
+    },
+    tooltip: {
+      backgroundColor: alias("inverse"),
+      boxShadow: "none",
+      borderColor: "transparent",
+      material: null,
+    },
+    inverse: {
+      backgroundColor: alias("inverse"),
+      boxShadow: LEVEL_3,
+      borderColor: "transparent",
+      material: level3,
+    },
+    groove: { boxShadow: "none", material: null },
+  };
+}
+
+/** Material 3 Expressive style groups (`semantics.json`); verified values in `docs/specs/native-themes.md` §3.2. */
+export const m3Style = {
+  type: {
+    family: null,
+    caption: {
+      size: { pointer: 11, touch: 11 },
+      line: { pointer: 16, touch: 16 },
+      weight: "500",
+      tracking: 0.5,
+    },
+    detail: {
+      size: { pointer: 12, touch: 12 },
+      line: { pointer: 16, touch: 16 },
+      weight: "400",
+      tracking: 0.4,
+    },
+    body: {
+      size: { pointer: 14, touch: 14 },
+      line: { pointer: 20, touch: 20 },
+      weight: "400",
+      tracking: 0.25,
+    },
+    label: {
+      size: { pointer: 14, touch: 14 },
+      line: { pointer: 20, touch: 20 },
+      weight: "500",
+      tracking: 0.1,
+    },
+    title: {
+      size: { pointer: 16, touch: 16 },
+      line: { pointer: 24, touch: 24 },
+      weight: "500",
+      tracking: 0.15,
+    },
+    headline: {
+      size: { pointer: 24, touch: 24 },
+      line: { pointer: 32, touch: 32 },
+      weight: "400",
+      tracking: 0,
+    },
+    display: {
+      size: { pointer: 36, touch: 36 },
+      line: { pointer: 44, touch: 44 },
+      weight: "400",
+      tracking: 0,
+    },
+  },
+  shape: {
+    control: "{radius-control}",
+    field: "{radius-field}",
+    chip: "{radius-chip}",
+    card: "{radius-card}",
+    overlay: "{radius-overlay}",
+    dialog: "{radius-dialog}",
+    sheet: "{radius-sheet}",
+    inset: "{radius}",
+    curve: "circular",
+    corners: { field: "top" },
+  },
+  size: {
+    hit: { pointer: 44, touch: 48 },
+    density: {
+      pointer: { row: 48, pad: 16, gap: 12, surface: 12 },
+      touch: { row: 56, pad: 16, gap: 12, surface: 16 },
+    },
+    control: {
+      pointer: {
+        row: 48,
+        padding: 8,
+        gap: 12,
+        control: 18,
+        corner: 2,
+        check: 18,
+        dot: 10,
+        tabs: 48,
+        line: 48,
+        clear: 20,
+        switch: "regular",
+      },
+      touch: {
+        row: 56,
+        padding: 10,
+        gap: 12,
+        control: 18,
+        corner: 2,
+        check: 18,
+        dot: 10,
+        tabs: 48,
+        line: 56,
+        clear: 24,
+        switch: "regular",
+      },
+    },
+    height: { pointer: { sm: 32, md: 40, lg: 56 }, touch: { sm: 32, md: 40, lg: 56 } },
+  },
+  stroke: { hairline: 1, control: 1, indicator: 3 },
+  focus: { style: "outline", width: 3, offset: 2 },
+  state: {
+    // M3 presses via state layer overlay and Android ripple rather than geometric scale.
+    pressScale: 1,
+    overlay: { hover: 0.08, focus: 0.1, pressed: 0.1, dragged: 0.16 },
+    ripple: true,
+    pressedOpacity: 1,
+    disabled: { content: 0.38, container: 0.1 },
+  },
+  motion: {
+    // ExpressiveMotionTokens: FastSpatial (k=800, z=0.6), DefaultSpatial (k=380, z=0.8),
+    // DefaultEffects (k=1600, z=1.0), and DurationLong2 (500ms) with emphasized-decelerate.
+    press: { stiffness: 800, damping: 33.94 },
+    settle: { stiffness: 380, damping: 31.19 },
+    control: { stiffness: 1600, damping: 80 },
+    move: { stiffness: 380, damping: 31.19 },
+    enter: { duration: 500, easing: "emphasized-decelerate" },
+    shake: { duration: 500 },
+  },
+  icon: {
+    size: {
+      pointer: { sm: 18, md: 20, lg: 24 },
+      touch: { sm: 18, md: 20, lg: 24 },
+    },
+  },
+  indicator: { tabs: "underline", nav: "fill", field: "underline" },
+};
+
+/** Both theme files for Material 3 Expressive, in the key order of the default ones. */
+export function m3ThemeFiles(
+  defaults: {
+    theme: Record<string, string>;
+    light: Record<string, string>;
+    dark: Record<string, string>;
+    lightFinishes: Record<string, Record<string, unknown>>;
+    darkFinishes: Record<string, Record<string, unknown>>;
+  },
+  seed?: string,
+) {
+  const roles = m3Roles(m3Scheme(seed));
+  const merged = finishes();
+  return {
+    theme: {
+      name: "Material",
+      cssVars: {
+        theme: ordered(defaults.theme, themeLevel(roles)),
+        light: ordered(defaults.light, roles.light),
+        dark: ordered(defaults.dark, roles.dark),
+      },
+    },
+    semantics: {
+      ...m3Style,
+      finishes: orderedSplitFinishes(defaults.lightFinishes, defaults.darkFinishes, merged, merged),
+    },
   };
 }

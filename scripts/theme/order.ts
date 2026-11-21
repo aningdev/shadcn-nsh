@@ -1,7 +1,7 @@
 /**
  * The key order a generated theme file is written in: the default theme's, so the two diff side by
  * side and a key that drifts is a new line rather than a moved one. All generators write through
- * here (`generate-shadcn.ts`, `generate-solid-glass.ts`, `generate-apple.ts`), and all refuse to
+ * here (`generate-shadcn.ts`, `generate-solid-glass.ts`, `generate-apple.ts`, `generate-material.ts`), and all refuse to
  * write a file that leaves a key out (`themes.test.ts` holds every theme to the default's key set).
  */
 import { splitFinishes, type SplitFinishes } from "./tokens";
