@@ -161,19 +161,31 @@ function ThemeControls(props: { stacked?: boolean }) {
   );
 }
 
-/** The phone's theme control: one button in the index header, the controls in its popover. */
-function ThemeMenu() {
+/** The phone's and folded rail's theme control: one button, the controls in its popover. */
+function ThemeMenu(props: {
+  placement?: "top" | "bottom" | "left" | "right";
+  align?: "start" | "center" | "end";
+  size?: "default" | "lg";
+}) {
   const open = signal(false);
   return (
     <Popover open={open()} onOpenChange={({ open: next }) => open.set(next)}>
       <PopoverTrigger>
-        <IconButton accessibilityLabel="Theme settings" onPress={() => open.set(!open())}>
+        <IconButton size={props.size} accessibilityLabel="Theme settings">
           <Icon icon={Palette} size={17} tint={colors.foreground} />
         </IconButton>
       </PopoverTrigger>
-      <PopoverContent placement="bottom" offset={8} margin={12} width={240}>
+      <PopoverContent
+        placement={props.placement ?? "bottom"}
+        align={props.align}
+        offset={8}
+        margin={12}
+        width={240}
+      >
         <PopoverHeader>
-          <PopoverTitle>Theme</PopoverTitle>
+          <PopoverTitle style={{ fontSize: 14, fontWeight: "600", color: colors.foreground }}>
+            Theme
+          </PopoverTitle>
         </PopoverHeader>
         <ThemeControls stacked />
       </PopoverContent>
@@ -207,6 +219,8 @@ function SidebarRow(props: { demo: DemoEntry }) {
 
 /** The desktop layout's sidebar: the app's name and the search, the demos by group, the theme. */
 function SidebarColumn() {
+  const sidebar = useSidebar();
+  const folded = () => sidebar.state === "collapsed" && !sidebar.isMobile;
   return (
     <Sidebar collapsible="icon">
       <SidebarHeader>
@@ -270,7 +284,9 @@ function SidebarColumn() {
         </If>
       </SidebarContent>
       <SidebarFooter>
-        <ThemeControls />
+        <If when={folded()} else={<ThemeControls />}>
+          <ThemeMenu placement="right" align="end" size="lg" />
+        </If>
       </SidebarFooter>
     </Sidebar>
   );

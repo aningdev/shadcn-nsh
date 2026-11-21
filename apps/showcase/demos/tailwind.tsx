@@ -17,8 +17,8 @@ import {
   type IconNode,
 } from "lucide";
 import { Image, type JSX, platform, signal, Text, View } from "nsh";
+import { Input } from "nsh/base";
 
-import { Input } from "@/packages/ui/input";
 import { Icon } from "@/packages/ui/lib/icons";
 
 import { DemoPage } from "../kit";
@@ -413,7 +413,7 @@ function Motion() {
           <Label>Ping</Label>
         </View>
         <View class="items-center gap-2.5">
-          <View class="bg-brand-fill h-8 w-14 animate-pulse rounded-lg" />
+          <View class="bg-accent h-8 w-14 animate-pulse rounded-lg" />
           <Label>Pulse</Label>
         </View>
         <View class="items-center gap-2.5">

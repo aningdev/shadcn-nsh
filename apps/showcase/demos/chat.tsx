@@ -13,6 +13,7 @@ import {
   alpha,
   colors,
   finish,
+  focusRing,
   follow,
   hovered,
   motion,
@@ -44,6 +45,7 @@ import {
   Scroll,
   signal,
   Text,
+  token,
   View,
   type ViewStyle,
   windowSize,
@@ -53,8 +55,9 @@ import {
 import { Badge } from "@/packages/ui/badge";
 import { Bubble, BubbleContent, BubbleText } from "@/packages/ui/bubble";
 import { Button, roundButtonGlyph, RoundButton } from "@/packages/ui/button";
-import { Input } from "@/packages/ui/input";
+import { InputGroup, InputGroupAddon, InputGroupTextarea } from "@/packages/ui/input-group";
 import { Icon } from "@/packages/ui/lib/icons";
+import { pressSink } from "@/packages/ui/lib/press";
 import { Marker, MarkerContent, MarkerIcon } from "@/packages/ui/marker";
 import {
   MessageScroller,
@@ -979,7 +982,7 @@ export function ChatDemo() {
           {/* The "+" menu: attachments and the scenarios, to replay them. It leaves the tree when
               closed, so nothing hidden sits under the pointer or in front of VoiceOver. */}
           <If when={menu()}>
-            <Pressable
+            <View
               onPress={() => menu.set(false)}
               accessibilityLabel="Close the menu"
               style={{
@@ -1031,8 +1034,9 @@ export function ChatDemo() {
                 <Scroll style={{ flexShrink: 1 }}>
                   <Each of={menuRows}>
                     {(row, i) => (
-                      <Pressable
+                      <View
                         onPress={() => openMenuRow(row().id)}
+                        role="button"
                         accessibilityLabel={row().label}
                         style={{
                           flexDirection: "row",
@@ -1043,6 +1047,7 @@ export function ChatDemo() {
                         }}
                         hoverStyle={hovered()}
                         activeStyle={{ backgroundColor: alpha(colors.foreground, 0.06) }}
+                        focusVisibleStyle={focusRing()}
                       >
                         <Glyph
                           name={row().glyph}
@@ -1052,7 +1057,7 @@ export function ChatDemo() {
                         <Text style={{ flex: 1, fontSize: 15, color: colors.foreground }}>
                           {row().label}
                         </Text>
-                      </Pressable>
+                      </View>
                     )}
                   </Each>
                 </Scroll>
@@ -1109,7 +1114,7 @@ export function ChatDemo() {
               </View>
             </Appear>
           </If>
-          <View
+          <InputGroup
             style={{
               borderRadius: terminal ? 0 : 24,
               ...(terminal ? {} : rounded(24)),
@@ -1121,8 +1126,7 @@ export function ChatDemo() {
               gap: 4,
             }}
           >
-            <Input
-              multiline
+            <InputGroupTextarea
               value={draft()}
               onChange={({ value }) => draft.set(value)}
               // Return sends on desktops, as in chat apps there; phones keep it for line breaks.
@@ -1136,18 +1140,19 @@ export function ChatDemo() {
                 inputHeight.set(Math.min(100, Math.max(20, size.height)))
               }
               style={{
-                placeholderColor: colors.mutedForeground,
-                caretColor: colors.brand,
-                selectionColor: colors.brand,
+                minHeight: 0,
                 height: inputHeight() + 20,
                 fontSize: 15,
                 lineHeight: 20,
-                color: colors.foreground,
                 paddingHorizontal: 10,
-                paddingVertical: 10,
+                paddingTop: 10,
+                paddingBottom: 10,
               }}
             />
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <InputGroupAddon
+              align="block-end"
+              style={{ paddingHorizontal: 0, paddingBottom: 0, gap: 8 }}
+            >
               <View
                 style={{
                   transform: menu() ? "rotate(45deg)" : "rotate(0deg)",
@@ -1193,8 +1198,9 @@ export function ChatDemo() {
                   </View>
                 }
               >
-                <Pressable
+                <View
                   onPress={stop}
+                  role="button"
                   accessibilityLabel="Stop generating"
                   style={{
                     width: 44,
@@ -1205,13 +1211,15 @@ export function ChatDemo() {
                     backgroundColor: colors.primary,
                     ...finish.light,
                   }}
-                  activeStyle={{ transform: [{ scale: 0.9 }] }}
+                  hoverStyle={{ opacity: 0.86 }}
+                  activeStyle={pressSink(0.9).activeStyle}
+                  focusVisibleStyle={focusRing()}
                 >
                   <Icon icon={Square} size={16} tint={colors.primaryForeground} />
-                </Pressable>
+                </View>
               </If>
-            </View>
-          </View>
+            </InputGroupAddon>
+          </InputGroup>
         </View>
       </View>
     </View>
@@ -1283,26 +1291,28 @@ export function ChatDemo() {
           {(chip) => {
             const chosen = () => current() === chip().id;
             return (
-              <Pressable
+              <View
                 onPress={() => openChat(chip().id)}
+                role="button"
                 accessibilityLabel={`Open ${chip().label}`}
-                selected={chosen()}
+                accessibilityState={{ selected: chosen() }}
                 style={{
                   paddingHorizontal: 12,
                   paddingVertical: 9,
                   ...rounded(shape.control),
                   gap: 2,
-                  backgroundColor: chosen() ? colors.brand : "transparent",
+                  backgroundColor: chosen() ? token("accent") : "transparent",
                 }}
-                hoverStyle={chosen() ? { opacity: 0.94 } : { ...finish.hover }}
-                activeStyle={{ ...finish.pressed }}
+                hoverStyle={chosen() ? undefined : { backgroundColor: colors.card }}
+                activeStyle={{ backgroundColor: token("accent") }}
+                focusVisibleStyle={focusRing()}
               >
                 <Text
                   style={{
                     numberOfLines: 1,
                     fontSize: 14,
                     fontWeight: chosen() ? "600" : "400",
-                    color: chosen() ? colors.onBrand : colors.foreground,
+                    color: colors.foreground,
                   }}
                 >
                   {chip().label}
@@ -1311,13 +1321,13 @@ export function ChatDemo() {
                   style={{
                     numberOfLines: 1,
                     fontSize: 12,
-                    color: chosen() ? alpha(colors.onBrand, 0.72) : colors.mutedForeground,
+                    color: colors.mutedForeground,
                   }}
                 >
                   {scenarios.find((x) => x.id === chip().id)?.prompt ??
                     "Weeks of messages, loaded at once"}
                 </Text>
-              </Pressable>
+              </View>
             );
           }}
         </Each>

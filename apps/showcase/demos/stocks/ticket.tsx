@@ -220,11 +220,16 @@ export function Ticket(props: {
       <View style={{ gap: terminal ? 0 : 8 }}>
         <View style={{ flexDirection: "row", alignItems: "baseline" }}>
           <Text style={{ flex: 1, fontSize: 14, color: colors.mutedForeground }}>Limit price</Text>
-          <Pressable onPress={() => limit.set(props.stock.quote().last)} hitSlop={10}>
-            <Text style={{ fontSize: 13, color: colors.brand, fontVariant: ["tabular-nums"] }}>
-              use last {p(props.stock.quote().last)}
-            </Text>
-          </Pressable>
+          <Text
+            onPress={() => limit.set(props.stock.quote().last)}
+            role="button"
+            hitSlop={10}
+            hoverStyle={{ opacity: 0.72 }}
+            activeStyle={{ opacity: 0.5 }}
+            style={{ fontSize: 13, color: colors.brand, fontVariant: ["tabular-nums"] }}
+          >
+            use last {p(props.stock.quote().last)}
+          </Text>
         </View>
         <View
           style={{ flexDirection: "row", alignItems: "center", gap: terminal ? TERMINAL_GAP : 10 }}

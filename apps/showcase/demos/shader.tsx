@@ -1,4 +1,4 @@
-import { alpha, colors, shape } from "@shadcn-nsh/theme";
+import { alpha, colors, focusRing, shape } from "@shadcn-nsh/theme";
 import {
   Animated,
   cleanup,
@@ -18,8 +18,8 @@ import { NavPage } from "nsh/base";
 
 import { Button } from "@/packages/ui/button";
 import { Dialog, DialogClose, DialogContent } from "@/packages/ui/dialog";
+import { pressSink } from "@/packages/ui/lib/press";
 import { createNavStack, NavStack } from "@/packages/ui/nav-stack";
-import { Pressable } from "@/packages/ui/pressable";
 import { Switch } from "@/packages/ui/switch";
 
 import logo from "../assets/logo-dark.svg";
@@ -321,11 +321,15 @@ function Ripple() {
           >
             <Each of={[1, 2, 4]}>
               {(value) => (
-                <Pressable
-                  accessibilityLabel={`${value()}×`}
-                  selected={speed() === value()}
-                  style={{ paddingHorizontal: 6, paddingVertical: 2 }}
+                <View
                   onPress={() => speed.set(value())}
+                  role="button"
+                  accessibilityLabel={`${value()}×`}
+                  accessibilityState={{ selected: speed() === value() }}
+                  hoverStyle={{ opacity: 0.86 }}
+                  activeStyle={pressSink().activeStyle}
+                  focusVisibleStyle={focusRing()}
+                  style={{ paddingHorizontal: 6, paddingVertical: 2 }}
                 >
                   <Text
                     style={{
@@ -338,7 +342,7 @@ function Ripple() {
                   >
                     {`${value()}×`}
                   </Text>
-                </Pressable>
+                </View>
               )}
             </Each>
           </View>

@@ -1,6 +1,7 @@
 import {
   colors,
   finish,
+  focusRing,
   TERMINAL_COLUMN,
   TERMINAL_GAP,
   TERMINAL_ROW,
@@ -27,6 +28,7 @@ import {
 import { Button } from "@/packages/ui/button";
 import { Dialog, DialogContent } from "@/packages/ui/dialog";
 import { Icon } from "@/packages/ui/lib/icons";
+import { pressSink } from "@/packages/ui/lib/press";
 import { Pressable } from "@/packages/ui/pressable";
 import { Sheet, SheetContent } from "@/packages/ui/sheet";
 import { Stat } from "@/packages/ui/stat";
@@ -390,14 +392,18 @@ function PauseButton(props: { market: Market }) {
     );
   }
   return (
-    <Pressable
+    <View
       onPress={pause}
+      role="button"
       hitSlop={6}
       accessibilityLabel={label()}
       hoverStyle={props.market.running() ? finish.hover : { opacity: 0.94 }}
+      activeStyle={pressSink(0.97).activeStyle}
+      focusVisibleStyle={focusRing()}
       style={{
         width: 32,
         height: 32,
+        borderRadius: 16,
         alignItems: "center",
         justifyContent: "center",
         borderWidth: 1,
@@ -409,7 +415,7 @@ function PauseButton(props: { market: Market }) {
         size={13}
         tint={props.market.running() ? colors.mutedForeground : colors.onBrand}
       />
-    </Pressable>
+    </View>
   );
 }
 

@@ -52,10 +52,16 @@ test("Stocks: a stock opens, and its ticket places an order", async () => {
   const app = await open("../App.tsx", wide);
   await app.setColorScheme("light");
   await show(app, "Stocks", "Composite");
+  // The active row wears the neutral accent fill; inactive rows are transparent.
+  const activeFill = app.viewStyle("label:Orbex Freight")?.backgroundColor;
+  expect(activeFill).toBeTruthy();
+  expect(app.viewStyle("label:Halo Robotics")?.backgroundColor).toBeUndefined();
   // Pressing a watchlist row shows that stock beside the list: its code heads the page now.
   await app.press("label:Halo Robotics");
   await app.waitUntil(() => app.texts().filter((text) => text === "HLRB").length >= 2);
   await app.waitFor("text:Order book");
+  expect(app.viewStyle("label:Halo Robotics")?.backgroundColor).toBe(activeFill);
+  expect(app.viewStyle("label:Orbex Freight")?.backgroundColor).toBeUndefined();
   // The trade bar opens the ticket; a limit order is placed, and the banner says so.
   await app.press("text:Buy");
   await app.waitFor("text:Limit price");
@@ -69,15 +75,29 @@ test("AI Chat: a scripted scene streams a tool card and its sources", async () =
   const app = await open("../App.tsx", wide);
   await app.setColorScheme("light");
   await show(app, "AI Chat", "How can I help?");
-  // A scene: the prompt lands as a turn of its own, then the tool runs.
-  await app.press("label:Search the web");
+  // A desktop conversation row uses the neutral accent fill and normal foreground ink when chosen.
+  const unselectedInk = app.spanStyle("label:Open Think it through >> text:Think it through").color;
+  await app.press("label:Open Search the web");
   await app.waitFor("text:What changed in the latest release of the Harbor runtime?", {
     timeout: 8000,
   });
+  expect(app.viewStyle("label:Open Search the web")?.backgroundColor).toBeTruthy();
+  expect(app.spanStyle("label:Open Search the web >> text:Search the web").color).toBe(
+    unselectedInk,
+  );
   await app.waitFor("text:Web search", { timeout: 12000 });
   // Its sources come with it, and the reply is written under them.
   await app.waitFor("text:Harbor 4.2 release notes", { timeout: 20000 });
   await app.waitFor("text:harbor.dev", { timeout: 20000 });
+});
+
+test("AI Chat: typing in the composer sends a message", async () => {
+  const app = await open("../App.tsx", wide);
+  await app.setColorScheme("light");
+  await show(app, "AI Chat", "How can I help?");
+  await app.type("text:Message Swift", "Hello from composer");
+  await app.press("label:Send");
+  await app.waitFor("text:Hello from composer", { timeout: 8000 });
 });
 
 test("AI Chat: a reasoning line counts, then reads what it took and opens onto its text", async () => {

@@ -2,7 +2,7 @@
 // Pan, pinch and rotation on one photo, a PanResponder ball, hover, wheel, raw touches, press
 // events, hit slop, pointer events and accessibility. Recognizers and the responder system are
 // `nsh`'s; buttons, badges, stats and press targets are this library's.
-import { alpha, colors, finish, mono, terminal, tints, shape } from "@shadcn-nsh/theme";
+import { alpha, colors, finish, focusRing, mono, terminal, tints, shape } from "@shadcn-nsh/theme";
 import { Bell, Play, Star, type IconNode } from "lucide";
 import type { GestureResponderEvent, JSX, MouseButton } from "nsh";
 import {
@@ -21,8 +21,9 @@ import { Animated } from "nsh";
 import { Button } from "@/packages/ui/button";
 import { ItemMedia } from "@/packages/ui/item";
 import { Icon } from "@/packages/ui/lib/icons";
+import { pressSink } from "@/packages/ui/lib/press";
 import { density } from "@/packages/ui/lib/surface";
-import { Pressable, pressableLook } from "@/packages/ui/pressable";
+import { pressableLook } from "@/packages/ui/pressable";
 import { Stat } from "@/packages/ui/stat";
 
 import { DemoPage } from "../kit";
@@ -587,11 +588,14 @@ function HitSlop() {
             scale: ring.interpolate({ inputRange: [0, 1], outputRange: [0.96, 1.04] }),
           }}
         />
-        <Pressable
-          hitSlop={30}
-          scale={0.8}
-          accessibilityLabel="Tiny dot"
+        <View
           onPress={() => taps.set(taps() + 1)}
+          role="button"
+          hitSlop={30}
+          accessibilityLabel="Tiny dot"
+          hoverStyle={{ opacity: 0.86 }}
+          activeStyle={pressSink(0.8).activeStyle}
+          focusVisibleStyle={focusRing()}
           style={{ borderRadius: 6 }}
         >
           <View
@@ -603,7 +607,7 @@ function HitSlop() {
               ...knobDrop(),
             }}
           />
-        </Pressable>
+        </View>
       </View>
       <Api
         label={hint("The dashed ring is the touch area", "The dashed ring is the click area")}
@@ -623,7 +627,14 @@ function PointerEvents() {
       right={<StatusBadge label={`${through()}`} tone="up" />}
     >
       <View style={{ height: 88 }}>
-        <Pressable onPress={() => through.set(through() + 1)} style={{ flex: 1 }}>
+        <View
+          onPress={() => through.set(through() + 1)}
+          role="button"
+          hoverStyle={{ opacity: 0.86 }}
+          activeStyle={pressSink(0.98).activeStyle}
+          focusVisibleStyle={focusRing()}
+          style={{ flex: 1 }}
+        >
           <View
             style={{
               flex: 1,
@@ -640,7 +651,7 @@ function PointerEvents() {
               Button under an overlay
             </Text>
           </View>
-        </Pressable>
+        </View>
         <Canvas
           style={{
             pointerEvents: "none",

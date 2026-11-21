@@ -4,6 +4,7 @@
 import {
   colors,
   finish,
+  focusRing,
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
@@ -28,7 +29,7 @@ import {
 import { Badge } from "@/packages/ui/badge";
 import { Button } from "@/packages/ui/button";
 import { Icon } from "@/packages/ui/lib/icons";
-import { Pressable } from "@/packages/ui/pressable";
+import { pressSink } from "@/packages/ui/lib/press";
 import { scrollbarTheme } from "@/packages/ui/scrollbar";
 import { Stat } from "@/packages/ui/stat";
 
@@ -82,12 +83,15 @@ const compact = (value: number) =>
 
 function PhotoRow(props: { photo: Photo }) {
   return (
-    <Pressable
+    <View
+      onPress={() => {}}
+      role="button"
       accessibilityLabel={props.photo.title}
-      scale={0.985}
+      hoverStyle={{ opacity: 0.86 }}
+      activeStyle={pressSink(0.985).activeStyle}
+      focusVisibleStyle={focusRing()}
       style={{
         height: 76,
-        borderRadius: 0,
         flexDirection: "row",
         alignItems: "center",
         gap: 12,
@@ -146,16 +150,20 @@ function PhotoRow(props: { photo: Photo }) {
       <Text style={{ fontSize: 13, color: colors.faint, fontVariant: ["tabular-nums"] }}>
         #{props.photo.id}
       </Text>
-    </Pressable>
+    </View>
   );
 }
 
 /** A photo in the desktop layout's grid: the picture over its title and author. */
 function PhotoTile(props: { photo: Photo }) {
   return (
-    <Pressable
+    <View
+      onPress={() => {}}
+      role="button"
       accessibilityLabel={props.photo.title}
-      scale={0.97}
+      hoverStyle={{ backgroundColor: colors.card }}
+      activeStyle={pressSink(0.97).activeStyle}
+      focusVisibleStyle={focusRing()}
       style={{
         padding: 6,
         gap: 8,
@@ -207,7 +215,7 @@ function PhotoTile(props: { photo: Photo }) {
           </Text>
         </View>
       </View>
-    </Pressable>
+    </View>
   );
 }
 

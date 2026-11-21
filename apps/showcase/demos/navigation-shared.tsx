@@ -133,7 +133,7 @@ export function PageBar(props: {
           role="button"
           accessibilityLabel="Back"
           hitSlop={6}
-          class="hover:bg-hover active:opacity-70"
+          class="hover:bg-hover active:bg-accent"
           focusVisibleStyle={focusRing()}
           style={{
             height: 28,

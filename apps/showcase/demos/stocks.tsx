@@ -2,6 +2,7 @@ import {
   alpha,
   colors,
   finish,
+  focusRing,
   TERMINAL_COLUMN,
   TERMINAL_GAP,
   TERMINAL_ROW,
@@ -22,12 +23,13 @@ import {
   Scroll,
   signal,
   Text,
+  token,
   untracked,
   View,
 } from "nsh";
 
 import { Icon } from "@/packages/ui/lib/icons";
-import { Pressable } from "@/packages/ui/pressable";
+import { pressSink } from "@/packages/ui/lib/press";
 import { Segmented, SegmentedItem, SegmentedList } from "@/packages/ui/segmented";
 
 import { desktop, paneWidth } from "./apps-shared";
@@ -207,8 +209,9 @@ function MarketStrip(props: { market: Market }) {
           height,
         }}
       >
-        <Pressable
+        <View
           onPress={toggle}
+          role="button"
           accessibilityLabel={opened() ? "Hide breadth" : "Show breadth"}
           hoverStyle={{ opacity: 0.72 }}
           style={{
@@ -217,6 +220,8 @@ function MarketStrip(props: { market: Market }) {
             alignItems: "center",
             gap: terminal ? TERMINAL_COLUMN : 8,
             height,
+            transitionProperty: "opacity",
+            transitionDuration: 120,
           }}
         >
           <Text style={{ numberOfLines: 1, fontSize: 13, color: colors.mutedForeground }}>
@@ -252,7 +257,7 @@ function MarketStrip(props: { market: Market }) {
               <Icon icon={ChevronDown} size={12} tint={colors.faint} />
             </View>
           </If>
-        </Pressable>
+        </View>
         <Text
           style={{
             flexShrink: 0,
@@ -267,22 +272,26 @@ function MarketStrip(props: { market: Market }) {
         <If
           when={!terminal}
           else={
-            <Pressable
+            <View
               onPress={pause}
+              role="button"
               accessibilityLabel={pauseLabel()}
               style={{ paddingHorizontal: 8 }}
             >
               <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
                 {running() ? "Pause" : "Resume"}
               </Text>
-            </Pressable>
+            </View>
           }
         >
-          <Pressable
+          <View
             onPress={pause}
+            role="button"
             hitSlop={6}
             accessibilityLabel={pauseLabel()}
             hoverStyle={running() ? finish.hover : { opacity: 0.94 }}
+            activeStyle={pressSink(0.97).activeStyle}
+            focusVisibleStyle={focusRing()}
             style={{
               width: 32,
               height: 32,
@@ -298,7 +307,7 @@ function MarketStrip(props: { market: Market }) {
               size={13}
               tint={running() ? colors.mutedForeground : colors.onBrand}
             />
-          </Pressable>
+          </View>
         </If>
       </View>
       <If when={opened()}>
@@ -475,19 +484,21 @@ function StockRow(props: {
   const q = () => props.stock.quote();
   const change = () => percent(q());
   return (
-    <Pressable
+    <View
       onPress={props.onPress}
-      activeStyle={{ backgroundColor: colors.raised }}
+      role="button"
+      activeStyle={{ backgroundColor: colors.card }}
       hoverStyle={props.wide && !props.active ? { backgroundColor: colors.card } : undefined}
       accessibilityLabel={props.stock.name}
-      selected={props.wide ? !!props.active : undefined}
+      accessibilityState={props.wide ? { selected: !!props.active } : undefined}
       style={{
         height: 64,
         flexDirection: "row",
         alignItems: "center",
         gap: 12,
         paddingHorizontal: 16,
-        backgroundColor: props.active ? colors.card : undefined,
+        cursor: props.wide ? "pointer" : undefined,
+        backgroundColor: props.active ? token("accent") : undefined,
       }}
     >
       <If when={props.active}>
@@ -550,7 +561,7 @@ function StockRow(props: {
           {signed(change())}%
         </Text>
       </View>
-    </Pressable>
+    </View>
   );
 }
 
@@ -564,10 +575,11 @@ function TerminalStockRow(props: {
   const q = () => props.stock.quote();
   const change = () => percent(q());
   return (
-    <Pressable
+    <View
       onPress={props.onPress}
+      role="button"
       accessibilityLabel={props.stock.name}
-      selected={props.wide ? !!props.active : undefined}
+      accessibilityState={props.wide ? { selected: !!props.active } : undefined}
       style={{
         height: TERMINAL_ROW,
         flexDirection: "row",
@@ -616,7 +628,7 @@ function TerminalStockRow(props: {
       >
         {signed(change())}%
       </Text>
-    </Pressable>
+    </View>
   );
 }
 

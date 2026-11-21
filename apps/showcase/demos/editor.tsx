@@ -1,4 +1,4 @@
-import { colors, mono } from "@shadcn-nsh/theme";
+import { colors, focusRing, mono } from "@shadcn-nsh/theme";
 // Editor: the official gallery's scene (`references/nsh/examples/gallery/demos/EditorDemo.tsx`)
 // with this library's code editor and dock. The session around it — find bar, problems, hover,
 // code actions, the simulated language server — is the app's, as upstream's is. The shell gives
@@ -15,6 +15,7 @@ import {
   platform,
   signal,
   Text,
+  token,
   untracked,
   View,
   windowSize,
@@ -50,12 +51,12 @@ import {
   MenuRadioItem,
   MenuSeparator,
   MenuShortcut,
+  menuHighlight,
   menuItemLabel,
   menuItemNote,
   menuItemSize,
   menuPopup,
 } from "@/packages/ui/menu";
-import { Pressable } from "@/packages/ui/pressable";
 import { TextView } from "@/packages/ui/text-view";
 import { toggleGlyph, toggleLabel, toggleLook } from "@/packages/ui/toggle";
 
@@ -427,14 +428,18 @@ function Problems() {
     >
       <List each={m.problems()} estimatedItemSize={24} style={{ flex: 1 }}>
         {(problem) => (
-          <Pressable
-            accessibilityLabel={problem().diagnostic.message}
+          <View
             onPress={() => {
               const at = problem().diagnostic.range.start;
               m.editor()?.setSelections([{ anchor: at, head: at }]);
               m.editor()?.revealPosition(at, true);
               m.editor()?.focus();
             }}
+            role="button"
+            accessibilityLabel={problem().diagnostic.message}
+            hoverStyle={{ backgroundColor: token("accent") }}
+            activeStyle={{ opacity: 0.7 }}
+            focusVisibleStyle={focusRing()}
             style={{ flexDirection: "row", gap: 8, paddingHorizontal: 12, paddingVertical: 4 }}
           >
             <Dot severity={problem().diagnostic.severity} />
@@ -451,7 +456,7 @@ function Problems() {
             >
               {`${problem().diagnostic.range.start.line + 1}:${problem().diagnostic.range.start.column + 1}`}
             </Text>
-          </Pressable>
+          </View>
         )}
       </List>
     </If>
@@ -497,14 +502,19 @@ function HoverCardView() {
                   >
                     <Each of={m.fixesFor(diagnostic())}>
                       {(fix) => (
-                        <Pressable
+                        <View
                           onPress={() => {
                             m.apply(fix());
                             m.setHover(null);
                           }}
+                          role="button"
+                          hoverStyle={{ opacity: 0.8 }}
+                          activeStyle={{ opacity: 0.7 }}
+                          focusVisibleStyle={focusRing()}
+                          style={{ borderRadius: 2 }}
                         >
                           <Text style={{ fontSize: 12, color: colors.info }}>{fix().title}</Text>
-                        </Pressable>
+                        </View>
                       )}
                     </Each>
                   </View>
@@ -550,15 +560,18 @@ function QuickFixMenu() {
           <View role="menu" style={{ ...popupSurface(), minWidth: 224 }}>
             <Each of={menu().actions}>
               {(action) => (
-                <Pressable
+                <View
                   onPress={() => {
                     m.setQuickFixes(null);
                     m.apply(action());
                   }}
-                  style={{ paddingHorizontal: 8, paddingVertical: 4 }}
+                  role="button"
+                  hoverStyle={menuHighlight()}
+                  focusStyle={menuHighlight()}
+                  style={{ paddingHorizontal: 8, paddingVertical: 4, borderRadius: 6 }}
                 >
                   <Text style={menuItemLabel()}>{action().title}</Text>
-                </Pressable>
+                </View>
               )}
             </Each>
           </View>

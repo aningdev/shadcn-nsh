@@ -1,4 +1,4 @@
-import { colors, mono, rounded, shape } from "@shadcn-nsh/theme";
+import { colors, hovered, mono, rounded, shape } from "@shadcn-nsh/theme";
 // Dock: the official gallery's scene (`references/nsh/examples/gallery/demos/Dock.tsx`) with this
 // library's dock — editor tabs dragged between groups, files in a left dock, a terminal under
 // them, closed, zoomed and resized. The shell gives the screen a flex view, so the workspace
@@ -161,6 +161,7 @@ function Panel(props: { panel: string }) {
           <Each of={FILES}>
             {(file) => (
               <View
+                hoverStyle={hovered()}
                 style={{
                   height: 28,
                   flexDirection: "row",

@@ -6,7 +6,7 @@ import {
   alpha,
   colors,
   finish,
-  hovered,
+  focusRing,
   mono,
   rounded,
   type Tone,
@@ -29,7 +29,7 @@ import { IconButton, iconButtonGlyph } from "@/packages/ui/button";
 import { CodeBlock, CodeBlockContent, CodeBlockFooter } from "@/packages/ui/code-block";
 import { ItemMedia } from "@/packages/ui/item";
 import { Icon } from "@/packages/ui/lib/icons";
-import { Pressable } from "@/packages/ui/pressable";
+import { pressSink } from "@/packages/ui/lib/press";
 import {
   Trace,
   TraceCollapsible,
@@ -93,10 +93,11 @@ export function ActionButton(props: {
 }) {
   const tone = () => props.tone ?? "accent";
   return (
-    <Pressable
+    <View
       onPress={props.onPress}
+      role="button"
       accessibilityLabel={props.label}
-      selected={props.active}
+      accessibilityState={props.active === undefined ? undefined : { selected: props.active }}
       style={{
         width: 36,
         height: 36,
@@ -108,13 +109,15 @@ export function ActionButton(props: {
         transitionDuration: 180,
       }}
       hoverStyle={{ opacity: 0.72 }}
+      activeStyle={pressSink(0.85).activeStyle}
+      focusVisibleStyle={focusRing()}
     >
       <Glyph
         name={props.glyph}
         size={17}
         tint={props.active ? toneColor(tone()) : colors.mutedForeground}
       />
-    </Pressable>
+    </View>
   );
 }
 
@@ -397,8 +400,9 @@ export function ErrorRow(props: { message: string; onRetry: () => void }) {
       <Text style={{ flex: 1, fontSize: 14, lineHeight: 19, color: colors.foreground }}>
         {props.message}
       </Text>
-      <Pressable
+      <View
         onPress={props.onRetry}
+        role="button"
         accessibilityLabel="Retry"
         style={{
           height: 36,
@@ -410,13 +414,15 @@ export function ErrorRow(props: { message: string; onRetry: () => void }) {
           backgroundColor: colors.primary,
           ...finish.light,
         }}
-        hoverStyle={hovered()}
+        hoverStyle={{ opacity: 0.86 }}
+        activeStyle={pressSink().activeStyle}
+        focusVisibleStyle={focusRing()}
       >
         <Glyph name="regenerate" size={14} tint={colors.primaryForeground} />
         <Text style={{ fontSize: 13, fontWeight: "600", color: colors.primaryForeground }}>
           Retry
         </Text>
-      </Pressable>
+      </View>
     </View>
   );
 }
