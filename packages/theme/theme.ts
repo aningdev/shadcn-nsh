@@ -3,6 +3,7 @@
 import type {
   AnimatedValue,
   BackdropMaterial,
+  Easing as EasingCurve,
   MacOsBackdropBlending,
   MacOsBackdropMaterial,
   MacOsBackdropState,
@@ -76,6 +77,18 @@ export interface Material {
   };
   /** The system's blur of what is behind a transparent window on Windows 11 (`windows={{ backdrop }}`). */
   windows?: { backdrop: WindowsBackdropMaterial };
+  /** Android's ripple and elevation (`android={{ ripple, elevation }}`). */
+  android?: {
+    /** A press's ripple: `{ color }` is a `{token}` reference; optional shape flags follow NSH's `Ripple`. */
+    ripple?: {
+      color: string;
+      borderless?: boolean;
+      radius?: number;
+      foreground?: boolean;
+    };
+    /** Surface elevation in points (`android={{ elevation }}`). */
+    elevation?: number;
+  };
 }
 
 /** A surface's finish as `semantics.json` writes it: a gradient over its color, its shadows, and the material it asks of the platform (`null`: none). */
@@ -186,6 +199,18 @@ export interface Spring {
   damping: number;
 }
 
+/** A timing specification as written in `semantics.json`: duration in ms and a named easing curve. */
+export interface TimingSpec {
+  duration: number;
+  easing: string;
+}
+
+/** A resolved timing configuration of `motion`, ready for `AnimatedValue.timing` or `createMotion().play`. */
+export interface Timing {
+  duration: number;
+  easing: EasingCurve;
+}
+
 /**
  * The style of a theme: what `semantics.json` states beside its finishes, the same keys in every
  * theme (`check:theme`). A string that names one of a list (a weight, a curve, an easing, an
@@ -232,10 +257,10 @@ export interface Style {
     disabled: { content: number; container: number };
   };
   motion: {
-    press: Spring;
-    settle: Spring;
-    control: Spring;
-    move: Spring;
+    press: Spring | TimingSpec;
+    settle: Spring | TimingSpec;
+    control: Spring | TimingSpec;
+    move: Spring | TimingSpec;
     enter: { duration: number; easing: string };
     /** A rejected value's shake, the length of `nsh`'s `play("shake")` preset. */
     shake: { duration: number };
@@ -431,17 +456,22 @@ export interface MaterialProps {
     };
   };
   windows?: { backdrop: { material: WindowsBackdropMaterial } };
+  android?: {
+    ripple?: { color?: string; borderless?: boolean; radius?: number; foreground?: boolean };
+    elevation?: number;
+  };
 }
 
 /**
- * The platform props of a finish's `material`: `ios={{ backdropMaterial }}`, `macos={{ backdrop }}`
- * and `windows={{ backdrop }}`, for the view that draws the finish. They are props, not style keys, so
- * a component spreads them on the same view that spreads `finish.<role>` into its `style`:
+ * The platform props of a finish's `material`: `ios={{ backdropMaterial }}`, `macos={{ backdrop }}`,
+ * `windows={{ backdrop }}` and `android={{ ripple, elevation }}`, for the view that draws the finish.
+ * They are props, not style keys, so a component spreads them on the same view that spreads `finish.<role>`
+ * into its `style`:
  *
  *     <View {...platformMaterial("menu")} style={{ ...finish.menu }} />
  *
- * Its three keys are getters, so they follow `selectTheme` and the appearance as `finish` does, and
- * a finish with `material: null` (every finish the library ships) gives `undefined` for all three: the
+ * Its four keys are getters, so they follow `selectTheme` and the appearance as `finish` does, and
+ * a finish with `material: null` (every finish the library ships) gives `undefined` for all four: the
  * view is drawn as it was. The Liquid Glass of `material.apple` needs no prop: it is in the style.
  */
 export function platformMaterial(role: FinishRole): MaterialProps {
@@ -465,6 +495,22 @@ export function platformMaterial(role: FinishRole): MaterialProps {
     get windows() {
       const windows = materialOf(role)?.windows;
       return windows === undefined ? undefined : { backdrop: { material: windows.backdrop } };
+    },
+    get android() {
+      const android = materialOf(role)?.android;
+      if (android === undefined) return undefined;
+      const { ripple, elevation } = android;
+      return {
+        ...(ripple === undefined
+          ? {}
+          : {
+              ripple: {
+                ...ripple,
+                color: alias(ripple.color),
+              },
+            }),
+        ...(elevation === undefined ? {} : { elevation }),
+      };
     },
   };
 }
@@ -833,16 +879,34 @@ export const dimmed = {
 };
 
 /**
- * The state layer of a theme that draws its hover, focus, press and drag as a wash of the text
- * color over the surface (`state.overlay`, an opacity; Material's): a gradient of that one color,
- * to spread over a control's style. A theme whose overlay is 0 (the default: its states swap
- * the surface's finish) draws none, so this is an empty style.
+ * The resolved overlay wash color (`atAlpha(token(ink), opacity)`) for a `state.overlay` role,
+ * or `undefined` when the theme's overlay opacity is `<= 0`.
  */
-export function stateLayer(kind: keyof Style["state"]["overlay"]): ViewStyle {
+export function stateLayerColor(
+  kind: keyof Style["state"]["overlay"],
+  ink: keyof Tokens = "foreground",
+): string | undefined {
   const opacity = style().state.overlay[kind];
-  if (opacity <= 0) return {};
-  const wash = atAlpha(token("foreground") as string, opacity);
-  return { backgroundImage: `linear-gradient(180deg, ${wash} 0%, ${wash} 100%)` };
+  if (opacity <= 0) return undefined;
+  return atAlpha(token(ink) as string, opacity);
+}
+
+/**
+ * The state layer of a theme that draws its hover, focus, press and drag as a wash of `ink`
+ * (default `"foreground"`) over the surface (`state.overlay`, an opacity; Material's): a gradient
+ * of that one color, stacked over `under` (an underlying `backgroundImage` fill) so the surface
+ * fill is preserved. A theme whose overlay is 0 (the default: its states swap the surface's
+ * finish) draws none, so this is an empty style.
+ */
+export function stateLayer(
+  kind: keyof Style["state"]["overlay"],
+  ink: keyof Tokens = "foreground",
+  under?: string,
+): ViewStyle {
+  const wash = stateLayerColor(kind, ink);
+  if (!wash) return {};
+  const layer = `linear-gradient(180deg, ${wash} 0%, ${wash} 100%)`;
+  return { backgroundImage: under && under !== "none" ? `${layer}, ${under}` : layer };
 }
 
 /** The smallest target a finger or a pointer gets (`size.hit` of the tier): 0 adds none. */
@@ -901,34 +965,66 @@ export const header = {
   },
 };
 
-/**
- * A spring that reads its stiffness and damping from the style in use whenever a value springs to
- * its target, so a control made before `selectTheme` still moves as the new theme says.
- */
-const spring = (read: () => Spring): Spring => reactive<Spring>(["stiffness", "damping"], read);
+/** Whether a resolved motion role is a `Timing` (`{ duration, easing }`) rather than a `Spring`. */
+export const isTiming = (m: Spring | Timing): m is Timing => "duration" in m;
 
-/** The easings a theme names (`motion.enter.easing`): the curve is code, the name is data. */
-const easings = {
+/** The easings a theme names (`motion.enter.easing` and timing roles): the curve is code, the name is data. */
+const easings: Record<string, EasingCurve> = {
   "out-cubic": Easing.out(Easing.cubic),
   "in-cubic": Easing.in(Easing.cubic),
   "in-out-cubic": Easing.inOut(Easing.cubic),
+  // Material 3 (`md.sys.motion.easing.standard` / single-bezier `emphasized`) & NSH `snappy`
+  standard: Easing.bezier(0.2, 0, 0, 1),
+  // Material 3 (`md.sys.motion.easing.emphasized-decelerate`)
+  "emphasized-decelerate": Easing.bezier(0.05, 0.7, 0.1, 1),
+  // Material 3 (`md.sys.motion.easing.emphasized-accelerate`)
+  "emphasized-accelerate": Easing.bezier(0.3, 0, 0.8, 0.15),
+  // WinUI 3 / Fluent 2 Direct Entrance (`0,0,0,1`), Fluent Web `curveDecelerateMid`, & M3 `standard-decelerate`
+  decelerate: Easing.bezier(0, 0, 0, 1),
+  // WinUI 3 / Fluent 2 Gentle Exit (`1,0,1,1`) & Fluent Web `curveAccelerateMid`
+  accelerate: Easing.bezier(1, 0, 1, 1),
+  // Fluent Web `curveEasyEase` (`@fluentui/tokens`)
+  "easy-ease": Easing.bezier(0.33, 0, 0.67, 1),
+  // WinUI 3 Existing Elements / Point-to-Point (`0.55,0.55,0,1`, windows-dev-docs)
+  "point-to-point": Easing.bezier(0.55, 0.55, 0, 1),
+};
+
+const resolveMotion = (raw: Spring | TimingSpec): Spring | Timing =>
+  "duration" in raw ? { duration: raw.duration, easing: easings[raw.easing] } : raw;
+
+/**
+ * A reactive proxy over a `Spring | Timing` motion role so controls created before `selectTheme`
+ * dynamically pick up shape switches between `Spring` and `Timing` when they animate or render.
+ */
+const motionRole = (read: () => Spring | TimingSpec): Spring | Timing => {
+  const current = computed(() => resolveMotion(read()));
+  return new Proxy({} as Spring | Timing, {
+    get: (_, key) => Reflect.get(current(), key),
+    has: (_, key) => key in current(),
+    ownKeys: () => Reflect.ownKeys(current()),
+    getOwnPropertyDescriptor: (_, key) => {
+      const value = current();
+      if (!(key in value)) return undefined;
+      return { enumerable: true, configurable: true, value: Reflect.get(value, key) };
+    },
+  });
 };
 
 /**
- * The motion every control shares: quick, slightly springy. `control` and
- * `move` are gpui-kit's `spring_control` (a 180 ms response, no overshoot:
- * a mark or a fill coming and going) and `spring_move` (280 ms, a damping
- * ratio of 0.85: a thumb or an indicator traveling) as a unit mass's
- * stiffness (2π / response)² and damping 2 · ratio · 2π / response.
+ * The motion every control shares: quick, slightly springy (or timed when a theme supplies
+ * `{ duration, easing }`). `control` and `move` are gpui-kit's `spring_control` (a 180 ms
+ * response, no overshoot: a mark or a fill coming and going) and `spring_move` (280 ms, a
+ * damping ratio of 0.85: a thumb or an indicator traveling) as a unit mass's stiffness
+ * (2π / response)² and damping 2 · ratio · 2π / response.
  */
 export const motion = {
-  press: spring(() => style().motion.press),
-  settle: spring(() => style().motion.settle),
-  control: spring(() => style().motion.control),
-  move: spring(() => style().motion.move),
+  press: motionRole(() => style().motion.press),
+  settle: motionRole(() => style().motion.settle),
+  control: motionRole(() => style().motion.control),
+  move: motionRole(() => style().motion.move),
   get enter() {
     const { duration, easing } = style().motion.enter;
-    return { duration, easing: easings[easing as keyof typeof easings] };
+    return { duration, easing: easings[easing] };
   },
   get shake() {
     return { duration: style().motion.shake.duration };
@@ -936,16 +1032,41 @@ export const motion = {
 };
 
 /**
- * An animated value that springs to `target` each time it changes (a
+ * Drive `value` to `to` using `config` (a theme `Spring` or `Timing`, `motion.control` by
+ * default). Lands immediately when `reduceMotion()` is active. Optional `springExtra` (such as an
+ * initial `velocity`) applies only when `config` is a spring.
+ */
+export function animate(
+  value: AnimatedValue,
+  to: number,
+  config: Spring | Timing = motion.control,
+  springExtra?: { velocity?: number; mass?: number },
+): Promise<{ finished: boolean }> {
+  if (reduceMotion()) {
+    value.set(to);
+    return Promise.resolve({ finished: true });
+  }
+  if (isTiming(config)) {
+    return value.timing(to, { duration: config.duration, easing: config.easing });
+  }
+  return value.spring(to, {
+    stiffness: config.stiffness,
+    damping: config.damping,
+    ...springExtra,
+  });
+}
+
+/**
+ * An animated value that springs or times to `target` each time it changes (a
  * control's state: 1 while on, 0 while off), natively: JS only starts each
- * spring. A change mid-way turns it from where it is, with its velocity;
- * with reduced motion it lands at once. For discrete changes only: what
+ * animation. A change mid-way turns it from where it is, with its velocity when
+ * springing; with reduced motion it lands at once. For discrete changes only: what
  * the pointer drives (a dragged thumb, a hover's place) is set in the same
- * frame, never sprung toward the pointer.
+ * frame, never animated toward the pointer.
  */
 export function follow(
   target: () => number,
-  spring: { stiffness: number; damping: number } = motion.control,
+  config: Spring | Timing = motion.control,
 ): AnimatedValue {
   const v = createAnimatedValue(target());
   let shown = target();
@@ -953,39 +1074,52 @@ export function follow(
     const next = target();
     if (next === shown) return;
     shown = next;
-    if (reduceMotion()) v.set(next);
-    else v.spring(next, spring);
+    void animate(v, next, config);
   });
   return v;
 }
 
 /**
- * A pressable under the pointer (`hoverStyle`): the theme's `hover` (here a
- * whisper of the text color over its surface, quieter than pressed and than
- * selected; shadcn's `accent`). Leave it off a disabled control and off a
- * selected one, whose own fill shows.
+ * A pressable under the pointer (`hoverStyle`): when `state.overlay.hover` is 0 (the default:
+ * swap fills), returns the theme's `hover` background; when `state.overlay.hover > 0`, returns a
+ * state-layer wash of `ink` (default `"foreground"`), stacked over `under` (any underlying
+ * `backgroundImage`). Leave it off a disabled control and, where a theme uses swap fills, off a
+ * selected one whose own fill shows.
  */
-export const hovered = (): ViewStyle => ({
-  backgroundColor: token("hover"),
-  ...stateLayer("hover"),
-});
+export const hovered = (ink: keyof Tokens = "foreground", under?: string): ViewStyle => {
+  if (style().state.overlay.hover <= 0) {
+    return { backgroundColor: token("hover") };
+  }
+  return stateLayer("hover", ink, under);
+};
 
 /**
- * The keyboard focus (`focusVisibleStyle`: not after a click or a tap): the
- * edge turns the theme's `ring` and a halo of `ring-halo` (`focus.width` points, 3 by
- * default: shadcn/ui's `ring-3`) lies around the view (a faint wash of the ring; shadcn's
- * `ring/50`), `offset` points out from the edge (`focus.offset` when not given). A theme whose
- * `focus.style` is `outline` draws the ring itself, not its halo, as the outline.
+ * The keyboard focus (`focusVisibleStyle`: not after a click or a tap):
+ * - `"halo"`: `borderColor` turns `ring` and a halo of `ring-halo` (`focus.width` points, 3 by default) sits outside.
+ * - `"outline"`: `borderColor` stays untouched; `outlineColor` is `ring`.
+ * - `"double"`: `borderColor` stays untouched; outer `focus.width` outline in `ring` plus an inset 1px inner line in `ring-halo`.
  */
 export const focusRing = (offset?: number): ViewStyle => {
   const { style: look, width, offset: base } = style().focus;
-  return {
-    borderColor: token("ring"),
+  const ringOutline: ViewStyle = {
     outlineStyle: "solid",
     outlineWidth: width,
-    outlineColor: token(look === "outline" ? "ring" : "ring-halo"),
+    outlineColor: token(look === "halo" ? "ring-halo" : "ring"),
     outlineOffset: offset ?? base,
   };
+  if (look === "halo") {
+    return {
+      borderColor: token("ring"),
+      ...ringOutline,
+    };
+  }
+  if (look === "double") {
+    return {
+      ...ringOutline,
+      boxShadow: `inset 0 0 0 1px ${token("ring-halo")}`,
+    };
+  }
+  return ringOutline;
 };
 // @port end
 
