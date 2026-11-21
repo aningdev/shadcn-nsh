@@ -17,6 +17,7 @@ const themes: Record<PaletteId, () => Promise<ThemeModule>> = {
   shadcn: () => import("@shadcn-nsh/theme-shadcn"),
   "solid-glass": () => import("@shadcn-nsh/theme-solid-glass"),
   apple: () => import("@shadcn-nsh/theme-apple"),
+  material: () => import("@shadcn-nsh/theme-material"),
 };
 
 /**

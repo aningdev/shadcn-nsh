@@ -66,6 +66,12 @@ export const SIDEBAR_PAGES: SidebarPage[] = [
     parent: "/docs/themes",
   },
   {
+    route: "/docs/themes/material",
+    title: "Material",
+    group: "start",
+    parent: "/docs/themes",
+  },
+  {
     route: "/docs/customizing",
     title: "Customizing",
     group: "start",

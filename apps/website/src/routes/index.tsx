@@ -84,8 +84,9 @@ const FAQ: { question: string; answer: ReactNode }[] = [
     question: "Which themes are there? Can I make my own?",
     answer: (
       <>
-        Four ship: default, shadcn, solid-glass and apple (Liquid Glass on macOS and iOS 26), and{" "}
-        <code>native</code> picks apple on Apple platforms and default elsewhere. Choose one with{" "}
+        Five ship: default, shadcn, solid-glass, apple (Liquid Glass on macOS and iOS 26), and
+        material (Material 3 Expressive on Android); <code>native</code> picks apple on Apple
+        platforms, material on Android, and default elsewhere. Choose one with{" "}
         <code>init --theme</code>, add more with <code>add theme-&lt;name&gt;</code> and switch at
         run time with <code>selectTheme</code>. A theme is data — <code>theme.json</code> and{" "}
         <code>semantics.json</code> — so yours is an edit away. See{" "}

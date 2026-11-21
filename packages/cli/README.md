@@ -27,7 +27,7 @@ Every command takes `-c, --cwd <dir>` (default: the current directory). `init`, 
 `view` and `diff` also take `--registry <url>`, a template with `{name}` in it; without it, `add`,
 `list`, `view` and `diff` use the one in `nsh-ui.json`, and `init` uses the public registry.
 `init` also takes `--overwrite`, `-y` (accepted; nothing prompts today) and `--theme <name>`,
-`default`, `shadcn`, `solid-glass`, `apple`, or `native` — the theme the app is **built** with:
+`default`, `shadcn`, `solid-glass`, `apple`, `material`, or `native` — the theme the app is **built** with:
 `theme.json`, `lib/ui/semantics.json`, and what `nsh.json` points at.
 
 ## add

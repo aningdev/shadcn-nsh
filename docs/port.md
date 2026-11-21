@@ -127,7 +127,7 @@ bun run port:new alert --view --family   # 有零件（Title / Description…）
 - `port:vendor` 跳过它们（不带 id 时打印一行 `own  …`）；`port:check` 不比对内容，也不要求它们是模块。
 - 颜色一律 `oklch()`：token、渐变的每一站、阴影、`color-mix()` 里的颜色，透明度写成 `oklch(… / a)`；`transparent` 与 `var(--x)` 原样保留。换成 `oklch()` 的换算器是 `bun scripts/theme/to-oklch.ts`，它同时是幂等的规范化器。
 - 数值格式固定（L、C 五位小数，H 三位，alpha 三位）：`oklch()` 与 sRGB 互为逆运算，8-bit 通道完全落回，所以换存储不动一个像素。`scripts/theme/oklch.test.ts` 扫 8-bit 立方体验证这点；`scripts/theme/themes.test.ts` 断言每个主题文件里没有 hex、`rgb()`、`hsl()`。
-- `themes/<name>/` 是生成的：`bun scripts/theme/generate-shadcn.ts` 从 shadcn 的 `oklch()` 调色板写出 `themes/shadcn/`，`bun scripts/theme/generate-solid-glass.ts` 从 Solid Glass 的样式表写出 `themes/solid-glass/`（`scripts/theme/solid-glass.ts` 记着逐项的映射），`bun scripts/theme/generate-apple.ts` 从 Apple 的系统色与 HIG 数值（`scripts/theme/apple.ts`）写出 `themes/apple/`，都不手改；`themes/native/` 是手写的一个小文件。
+- `themes/<name>/` 是生成的：`bun scripts/theme/generate-shadcn.ts` 从 shadcn 的 `oklch()` 调色板写出 `themes/shadcn/`，`bun scripts/theme/generate-solid-glass.ts` 从 Solid Glass 的样式表写出 `themes/solid-glass/`（`scripts/theme/solid-glass.ts` 记着逐项的映射），`bun scripts/theme/generate-apple.ts` 从 Apple 的系统色与 HIG 数值（`scripts/theme/apple.ts`）写出 `themes/apple/`，`bun scripts/theme/generate-material.ts` 从 M3 Expressive 的色彩与规范数值（`scripts/theme/m3.ts`）写出 `themes/material/`，都不手改；`themes/native/` 是手写的一个小文件。
 - 要重新对齐上游时，比对 `references/nsh/examples/nsh-gallery-ui/{theme,finishes}.json` 的差异，按需改这两个文件；`owned` 标记不动。
 
 ## 上游变化

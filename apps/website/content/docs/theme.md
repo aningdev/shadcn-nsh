@@ -88,7 +88,7 @@ Every finish also carries a `material`: `null` (every theme the library ships), 
 
 Both follow `selectTheme` and the appearance, and with `material: null` the view is drawn as before. The library's own popovers, hover cards, toasts, the code editor's find bar and a glass carousel arrow spread it; the popups of `Menu`, `Select` and `Popover` on `nsh/base` take only `popupStyle`, so there the glass keys apply and the platform props do not.
 
-The `apple` theme is the one that fills it in: `glass`, `menu` and `raised` carry `{ glass: "regular" }` (Liquid Glass on iOS and macOS 26+), and every other finish is a flat fill with a hairline edge. `nativeTheme()` from `theme-native` picks the theme of the platform the app runs on — Apple's on iOS and macOS, the default theme everywhere else:
+The `apple` theme fills in `material.apple`: `glass`, `menu` and `raised` carry `{ glass: "regular" }` (Liquid Glass on iOS and macOS 26+), and every other finish is a flat fill with a hairline edge. The `material` theme uses Material 3 Expressive tonal surfaces, circular corners, 8/10/10% state layers, press ripple (`state.ripple: true`), and `material.android.elevation` on elevated surfaces. `nativeTheme()` from `theme-native` picks the theme of the platform the app runs on — Apple's on iOS and macOS, Material on Android, and the default theme everywhere else:
 
 ```npm
 npx shadcn-nsh@latest init --theme native
@@ -132,7 +132,7 @@ shape.dialog; // 14, from radius-dialog
 shape.sheet; // 14, from radius-sheet
 ```
 
-Themes generated from a base radius (`shadcn`, `solid-glass`) derive `radius-control` / `radius-field` at `0.8×` and `radius-card` / `radius-dialog` / `radius-sheet` at `1.4×`, while platform themes (`apple`) state HIG metrics per role (`999px` capsules for `radius-control` / `radius-chip`, `20px` cards, `26px` dialogs, `34px` sheets). `rounded()` puts a corner on one of these with `shape.curve` (`"continuous"` or `"circular"`):
+Themes generated from a base radius (`shadcn`, `solid-glass`) derive `radius-control` / `radius-field` at `0.8×` and `radius-card` / `radius-dialog` / `radius-sheet` at `1.4×`, while platform themes (`apple`, `material`) state their metrics per role (`999px` capsules for `radius-control`, `28px` dialogs and sheets in `material`). `rounded()` puts a corner on one of these with `shape.curve` (`"continuous"` or `"circular"`):
 
 ```tsx
 import { rounded, shape } from "@shadcn-nsh/theme";
@@ -217,7 +217,7 @@ Edit the two JSON files; every component follows. Change a brand color in `cssVa
 
 - Add the theme to an app with `shadcn-nsh add theme` (or let `init` do it); subsequent `add` runs key-merge missing entries into `theme.json` and `semantics.json` while keeping your values.
 - Replacing both files together rebrands the whole library; a key added upstream should be added here too.
-- The demos on this site can draw in an installed theme: the **Demo theme** switch in the nav (Default, shadcn, Solid Glass or Apple) writes the demo app's palette and loads the panels again. The list is `apps/website/demos/palettes.ts`; a demo reads the palette before it mounts, so its first frame is already the chosen theme. Every palette — its install command and every role it sets — has a page linked from [Themes](./themes).
+- The demos on this site can draw in an installed theme: the **Demo theme** switch in the nav (Default, shadcn, Solid Glass, Apple or Material) writes the demo app's palette and loads the panels again. The list is `apps/website/demos/palettes.ts`; a demo reads the palette before it mounts, so its first frame is already the chosen theme. Every palette — its install command and every role it sets — has a page linked from [Themes](./themes).
 - To change one component's look instead, edit its look function in the copied component; to change structure or API, edit the shell. See [Customizing](./customizing).
 - Maintaining this repository: edit the look in `packages/ui` (a `// @port` region is ours); `port:check` lists upstream's changes and `bun run port:review` marks them read. After editing `packages/theme`, run `bun run registry:build` and commit `public/r`.
 

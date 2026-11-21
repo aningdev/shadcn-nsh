@@ -40,6 +40,12 @@ export const PALETTES = [
     description:
       "Apple's system colors and Liquid Glass: capsule controls, 20-point cards, hairline edges, and glass on the overlays that float.",
   },
+  {
+    id: "material",
+    label: "Material",
+    description:
+      "Material 3 Expressive: tonal surfaces, capsule controls, circular corners, 8/10/10% state layers, and expressive springs.",
+  },
 ] as const;
 
 export type Palette = (typeof PALETTES)[number];

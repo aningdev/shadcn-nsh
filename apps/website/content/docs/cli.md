@@ -15,13 +15,13 @@ Writes `nsh-ui.json`, installs the theme, points every `nsh.json` at it, and set
 shadcn-nsh@latest init [options]
 ```
 
-| Flag               | What it does                                                               | Default               |
-| ------------------ | -------------------------------------------------------------------------- | --------------------- |
-| `-c, --cwd <cwd>`  | App or monorepo directory.                                                 | The current directory |
-| `-y, --yes`        | Accepted for scripts; nothing prompts today.                               | `false`               |
-| `--overwrite`      | Overwrite files that already exist.                                        | `false`               |
-| `--theme <name>`   | Theme to install: `default`, `shadcn`, `solid-glass`, `apple` or `native`. | `default`             |
-| `--registry <url>` | Registry URL template containing `{name}`.                                 | The public registry   |
+| Flag               | What it does                                                                           | Default               |
+| ------------------ | -------------------------------------------------------------------------------------- | --------------------- |
+| `-c, --cwd <cwd>`  | App or monorepo directory.                                                             | The current directory |
+| `-y, --yes`        | Accepted for scripts; nothing prompts today.                                           | `false`               |
+| `--overwrite`      | Overwrite files that already exist.                                                    | `false`               |
+| `--theme <name>`   | Theme to install: `default`, `shadcn`, `solid-glass`, `apple`, `material` or `native`. | `default`             |
+| `--registry <url>` | Registry URL template containing `{name}`.                                             | The public registry   |
 
 ```npm
 npx shadcn-nsh@latest init -c apps/web
