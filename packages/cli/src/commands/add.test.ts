@@ -5,7 +5,8 @@ import { runAdd } from "./add";
 
 const fixture = (): Fixture =>
   makeFixture({
-    items: ["theme", "switch-geometry", "press", "spinner", "as-text", "button", "utils"],
+    items: ["theme", "switch-geometry", "press", "spinner", "as-text", "icons", "button", "utils"],
+    installed: true,
   });
 
 let current: Fixture | null = null;

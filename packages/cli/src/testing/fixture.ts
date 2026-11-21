@@ -30,6 +30,11 @@ export function makeFixture(opts: {
   items: string[];
   /** Files to put in the app first, relative to the app root. */
   files?: Record<string, string>;
+  /**
+   * Writes the app a `package.json` that already holds every package the items declare, so
+   * `add` keeps them and runs no package manager: the tests stay off the network.
+   */
+  installed?: boolean;
 }): Fixture {
   const root = fs.mkdtempSync(path.join(os.tmpdir(), "shadcn-nsh-"));
   const app = path.join(root, "app");
@@ -43,6 +48,7 @@ export function makeFixture(opts: {
   );
 
   const catalog: unknown[] = [];
+  const packages: Record<string, string> = {};
   for (const name of opts.items) {
     const item = JSON.parse(
       fs.readFileSync(path.join(repo, "public/r", `${name}.json`), "utf8"),
@@ -52,7 +58,12 @@ export function makeFixture(opts: {
       title?: string;
       description?: string;
       files: { path: string; type: string; target?: string }[];
+      dependencies?: string[];
     };
+    for (const entry of item.dependencies ?? []) {
+      const at = entry.lastIndexOf("@");
+      packages[entry.slice(0, at)] = entry.slice(at + 1);
+    }
     fs.writeFileSync(path.join(registry, `${name}.json`), `${JSON.stringify(item, null, 2)}\n`);
     catalog.push({
       name: item.name,
@@ -61,6 +72,12 @@ export function makeFixture(opts: {
       description: item.description,
       files: item.files.map(({ path: file, type, target }) => ({ path: file, type, target })),
     });
+  }
+  if (opts.installed) {
+    fs.writeFileSync(
+      path.join(app, "package.json"),
+      `${JSON.stringify({ name: "t", private: true, dependencies: packages }, null, 2)}\n`,
+    );
   }
   fs.writeFileSync(
     path.join(registry, "index.json"),

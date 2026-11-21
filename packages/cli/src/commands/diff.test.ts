@@ -9,7 +9,8 @@ import { DIFF_SKIPPED, runDiff } from "./diff";
 
 const fixture = (): Fixture =>
   makeFixture({
-    items: ["theme", "switch-geometry", "press", "spinner", "as-text", "button", "utils"],
+    items: ["theme", "switch-geometry", "press", "spinner", "as-text", "icons", "button", "utils"],
+    installed: true,
   });
 
 /** An app with `button` installed. */

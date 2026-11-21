@@ -32,9 +32,11 @@ const fixture = (): Fixture =>
       "press",
       "spinner",
       "as-text",
+      "icons",
       "button",
       "utils",
     ],
+    installed: true,
   });
 
 let current: Fixture | null = null;
