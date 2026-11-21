@@ -19,16 +19,16 @@
 
 ## 目录
 
-| 路径                                     | 内容                                                                                   |
-| ---------------------------------------- | -------------------------------------------------------------------------------------- |
-| `packages/theme`                         | `theme.json`、`finishes.json`（oklch）、`theme.ts`（角色读取）                         |
-| `packages/ui`                            | 组件（来源于上游的部分以 `// @port` 标注 + 外壳）                                      |
-| `apps/website/demos`                     | 验收演示、演示适配层 `stage.tsx`、渲染比对、`port:render`                              |
-| `apps/website/src/pages/docs/components` | 组件文档页                                                                             |
-| `apps/showcase`                          | 展示应用：Gallery 的壳与本库组件重建的场景（分批实现），`/showcase` 页面嵌入其打包产物 |
-| `registry.json` → `public/r`             | shadcn registry 产物                                                                   |
-| `apps/gallery`                           | 原生行为测试与冒烟页                                                                   |
-| `packages/cli`                           | `shadcn-nsh` CLI                                                                       |
+| 路径                                     | 内容                                                                                         |
+| ---------------------------------------- | -------------------------------------------------------------------------------------------- |
+| `packages/theme`                         | `theme.json`、`finishes.json`（oklch）、`theme.ts`（角色读取）                               |
+| `packages/ui`                            | 组件（来源于上游的部分以 `// @port` 标注 + 外壳）                                            |
+| `apps/website/demos`                     | 验收演示、演示适配层 `stage.tsx`、渲染比对、`port:render`                                    |
+| `apps/website/src/pages/docs/components` | 组件文档页                                                                                   |
+| `apps/showcase`                          | 展示应用：Gallery 的壳与本库组件重建的场景（分批实现），首页 “See it running” 嵌入其打包产物 |
+| `registry.json` → `public/r`             | shadcn registry 产物                                                                         |
+| `apps/gallery`                           | 原生行为测试与冒烟页                                                                         |
+| `packages/cli`                           | `shadcn-nsh` CLI                                                                             |
 
 `port-map.json` 的 `root` 为仓库根；目标路径写全（如 `packages/ui/button.tsx`）。
 

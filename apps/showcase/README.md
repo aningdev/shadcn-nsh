@@ -14,5 +14,5 @@ one batch at a time; what the library lacked is in [`GAPS.md`](GAPS.md). See [#7
 - `assets/` — the images, fonts and media the demos use, copied from the Gallery under their own names.
 - `tests/` — the shell's behavior tests (`nsh test apps/showcase`).
 
-Run it with `bun run dev:showcase` (or `nsh run apps/showcase`); the website serves the packaged
-app at `/showcase`. Types: `nsh check apps/showcase` (part of `bun run prepare:types`).
+Run it with `bun run dev:showcase` (or `nsh run apps/showcase`); the website's home page runs the
+packaged app in a frame. Types: `nsh check apps/showcase` (part of `bun run prepare:types`).

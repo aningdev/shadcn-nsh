@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { HomeLayout } from "fumadocs-ui/layouts/home";
 import type { ReactNode } from "react";
 
-import { DemoPanel } from "@/components/fd/demo-panel";
 import { InstallTabs } from "@/components/fd/install-tabs";
+import { ShowcaseFrame } from "@/components/fd/showcase-frame";
 import { components } from "@/lib/components";
 import {
   baseOptions,
@@ -16,7 +16,7 @@ import {
 import { PALETTES } from "../../demos/palettes";
 
 /**
- * The site's front page: what this is, how to start, and the theme showcase running live. It is
+ * The site's front page: what this is, how to start, and the showcase app running live. It is
  * Fumadocs' home layout (the nav bar, no sidebar); the docs start one link away. The numbers are
  * read from the generated component list, so the page never claims a count by hand.
  */
@@ -137,16 +137,9 @@ function Home() {
         <section className="flex flex-col gap-6">
           <Heading
             title="See it running"
-            body="The theme showcase, live. Switch the theme, or the phone and desktop layouts."
+            body="NSH's official Gallery, rebuilt with these components: its sidebar and its scenes, the theme and the appearance chosen live inside the app."
           />
-          <DemoPanel name="themes" />
-          <p className="text-fd-muted-foreground -mt-3 text-sm">
-            The whole gallery — its shell and its scenes, the theme chosen inside the app —{" "}
-            <a href="/showcase" className="text-fd-foreground font-medium underline">
-              runs on its own page
-            </a>
-            .
-          </p>
+          <ShowcaseFrame />
         </section>
 
         <section className="flex flex-col gap-6">

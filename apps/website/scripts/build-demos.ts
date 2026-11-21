@@ -1,7 +1,7 @@
 /**
  * Package each catalog demo (`apps/website/demos/<id>.tsx`, from `scripts/catalog.ts`), the site's
  * own page demos (`PAGE_DEMOS`: the themes page's showcase) and the showcase app
- * (`apps/showcase/App.tsx`, served at `/showcase`) with `nsh package --target web` into
+ * (`apps/showcase/App.tsx`, framed on the home page) with `nsh package --target web` into
  * apps/website/public/<name>/ (flattened index.html).
  *
  * The catalog's `--check` already guarantees every component has its demo, that the page demos
@@ -57,15 +57,13 @@ const apps: WebPackage[] = [
 }));
 
 // The showcase app is an app of its own (`nsh.json`, `theme.ts`, `tests/`), not a demo file: its
-// entry resolves from its own directory. Its package goes to `public/showcase-app/`, served by the
-// site's `/showcase` page — not `public/showcase/`, because the site's prerenderer writes the
-// route's page to `showcase/index.html`, and a route's output and an app's package cannot share
-// one path (GitHub Pages would serve the directory's index to `/showcase`, never the page).
+// entry resolves from its own directory. Its package goes to `public/showcase/`, which the home
+// page frames (`ShowcaseFrame`).
 apps.push({
   name: "showcase",
   entry: "App.tsx",
   cwd: path.join(repoRoot, "apps/showcase"),
-  outDir: path.join(docsRoot, "public", "showcase-app"),
+  outDir: path.join(docsRoot, "public", "showcase"),
   after: addPlayerOptions,
 });
 
