@@ -72,6 +72,12 @@ export const SIDEBAR_PAGES: SidebarPage[] = [
     parent: "/docs/themes",
   },
   {
+    route: "/docs/themes/fluent",
+    title: "Fluent",
+    group: "start",
+    parent: "/docs/themes",
+  },
+  {
     route: "/docs/customizing",
     title: "Customizing",
     group: "start",

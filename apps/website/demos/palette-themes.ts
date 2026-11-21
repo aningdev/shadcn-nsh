@@ -18,6 +18,7 @@ const themes: Record<PaletteId, () => Promise<ThemeModule>> = {
   "solid-glass": () => import("@shadcn-nsh/theme-solid-glass"),
   apple: () => import("@shadcn-nsh/theme-apple"),
   material: () => import("@shadcn-nsh/theme-material"),
+  fluent: () => import("@shadcn-nsh/theme-fluent"),
 };
 
 /**

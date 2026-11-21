@@ -33,7 +33,7 @@ npx shadcn-nsh init --theme shadcn                      # built with shadcn's ne
 npx shadcn-nsh add theme-apple                    # one more theme to switch to at run time
 ```
 
-`init --theme <default|shadcn|solid-glass|apple|material|native>` decides the theme the app is **built** with; `add theme-<name>` installs **one more** into `themes/<name>/`, for `selectTheme` to switch to while the app runs (`selectTheme(null)` goes back to the built-in one). `nsh-ui.json` records which theme the app was built with, so `add` never writes another one over it. Tokens, semantics and the switching example: [themes](https://shadcn-nsh.aning.dev/docs/themes) and [`docs/specs/design-semantics.md`](docs/specs/design-semantics.md).
+`init --theme <default|shadcn|solid-glass|apple|material|fluent|native>` decides the theme the app is **built** with; `add theme-<name>` installs **one more** into `themes/<name>/`, for `selectTheme` to switch to while the app runs (`selectTheme(null)` goes back to the built-in one). `nsh-ui.json` records which theme the app was built with, so `add` never writes another one over it. Tokens, semantics and the switching example: [themes](https://shadcn-nsh.aning.dev/docs/themes) and [`docs/specs/design-semantics.md`](docs/specs/design-semantics.md).
 
 ## Registry
 

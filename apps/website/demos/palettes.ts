@@ -46,6 +46,12 @@ export const PALETTES = [
     description:
       "Material 3 Expressive: tonal surfaces, capsule controls, circular corners, 8/10/10% state layers, and expressive springs.",
   },
+  {
+    id: "fluent",
+    label: "Fluent",
+    description:
+      "Fluent 2 (Windows 11): WinUI fill and stroke tokens, 4/8-point circular corners, Segoe UI Variable, double focus rings, and timing motion.",
+  },
 ] as const;
 
 export type Palette = (typeof PALETTES)[number];

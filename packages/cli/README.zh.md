@@ -26,7 +26,7 @@ bunx shadcn-nsh@latest add button
 每个命令都接受 `-c, --cwd <dir>`（默认：当前目录）。`init`、`add`、`list`、`view`、`diff`
 另接受 `--registry <url>`（含 `{name}` 的模板）；省略时 `add`、`list`、`view`、`diff` 用
 `nsh-ui.json` 里的，`init` 用公共 registry。`init` 还接受 `--overwrite`、`-y`（接受，当前不弹确认）与 `--theme <name>`：
-`default`、`shadcn`、`solid-glass`、`apple`、`material` 或 `native` —— 这是应用**构建时**的主题：
+`default`、`shadcn`、`solid-glass`、`apple`、`material`、`fluent` 或 `native` —— 这是应用**构建时**的主题：
 `theme.json`、`lib/ui/semantics.json`，以及 `nsh.json` 指向的那份。
 
 ## add

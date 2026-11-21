@@ -15,9 +15,10 @@
  * - **the default theme as one more**: `init --theme shadcn`, `add theme-default`, then a page
  *   that lists both and switches between them: the library's own theme installs into
  *   `themes/default/` without touching the build-time one;
- * - **the platform's own theme**: `init --theme native` (themes/apple, themes/default and
- *   themes/native installed, a page calling `selectTheme(nativeTheme())` type checks) and
- *   `init --theme apple` (theme.json is Apple's, `add --all` type checks);
+ * - **the platform's own theme**: `init --theme native` (themes/apple, themes/material,
+ *   themes/fluent, themes/default and themes/native installed, a page calling
+ *   `selectTheme(nativeTheme())` type checks) and `init --theme apple` / `material` / `fluent`
+ *   (`theme.json` is that theme's, `add --all` type checks);
  * - **one at a time**: a fresh app per `registry:ui` item, `add <item>` and `nsh check`: an
  *   import no item delivers (a missing `registryDependencies` entry or lib file), or a file the
  *   transform points at the wrong place, shows up only when the item is installed alone.
@@ -623,9 +624,9 @@ mount(Page);
 
 /**
  * The platform's own theme, from the app's side: `init --theme native` builds the app on the
- * default theme and installs `themes/apple`, `themes/material`, `themes/default` and
- * `themes/native`; a page that calls `selectTheme(nativeTheme())` must type check.
- * `init --theme apple` builds on Apple's; `init --theme material` builds on Material's.
+ * default theme and installs `themes/apple`, `themes/material`, `themes/fluent`, `themes/default`
+ * and `themes/native`; a page that calls `selectTheme(nativeTheme())` must type check.
+ * `init --theme apple` builds on Apple's; `material` on Material's; `fluent` on Fluent's.
  */
 async function installNativeTheme(template: string, dir: string, nsh: string) {
   await copyApp(template, dir);
@@ -637,9 +638,14 @@ async function installNativeTheme(template: string, dir: string, nsh: string) {
     path.join(repo, "packages/theme/themes/material/theme.json"),
     "utf8",
   );
+  const fluent = await fs.readFile(
+    path.join(repo, "packages/theme/themes/fluent/theme.json"),
+    "utf8",
+  );
   for (const [name, want] of [
     ["themes/apple/theme.json", apple],
     ["themes/material/theme.json", material],
+    ["themes/fluent/theme.json", fluent],
     ["themes/default/theme.json", null],
     ["themes/native/index.ts", null],
   ] as const) {
@@ -682,6 +688,24 @@ async function installMaterialTheme(template: string, dir: string, nsh: string) 
     throw new StepFailure(
       "theme",
       "      theme.json is not packages/theme/themes/material/theme.json after init --theme material",
+    );
+  }
+  await step("add --all", "bun", [cli, "add", "--all"], dir);
+  await step("nsh check", nsh, ["check", "."], dir);
+}
+
+/** `init --theme fluent`: the app's own `theme.json` is Fluent's, and the app type checks. */
+async function installFluentTheme(template: string, dir: string, nsh: string) {
+  await copyApp(template, dir);
+  const fluent = await fs.readFile(
+    path.join(repo, "packages/theme/themes/fluent/theme.json"),
+    "utf8",
+  );
+  const now = await fs.readFile(path.join(dir, "theme.json"), "utf8");
+  if (now !== fluent) {
+    throw new StepFailure(
+      "theme",
+      "      theme.json is not packages/theme/themes/fluent/theme.json after init --theme fluent",
     );
   }
   await step("add --all", "bun", [cli, "add", "--all"], dir);
@@ -1000,7 +1024,7 @@ async function main(): Promise<number> {
     }
 
     if (opts.filter == null) {
-      console.log("the platform's own theme: apple, material, and native choosing them");
+      console.log("the platform's own theme: apple, material, fluent, and native choosing them");
       const startedNative = performance.now();
       try {
         const nativeTemplate = path.join(tmp, "template-native");
@@ -1012,17 +1036,20 @@ async function main(): Promise<number> {
         const materialTemplate = path.join(tmp, "template-material");
         await scaffold(materialTemplate, registry, nsh, "material");
         await installMaterialTheme(materialTemplate, path.join(tmp, "material"), nsh);
+        const fluentTemplate = path.join(tmp, "template-fluent");
+        await scaffold(fluentTemplate, registry, nsh, "fluent");
+        await installFluentTheme(fluentTemplate, path.join(tmp, "fluent"), nsh);
       } catch (thrown) {
         const failure = failureOf(thrown);
         console.error(`  ✗ ${failure.step} ${seconds(performance.now() - startedNative)}`);
         console.error(failure.detail);
         console.error(
-          "\ninstall test: --theme apple, --theme material, or --theme native does not install, or what it leaves does not type check",
+          "\ninstall test: --theme apple, --theme material, --theme fluent, or --theme native does not install, or what it leaves does not type check",
         );
         return 1;
       }
       const label =
-        "init --theme native, init --theme apple, init --theme material, add --all, nsh check";
+        "init --theme native, init --theme apple, init --theme material, init --theme fluent, add --all, nsh check";
       console.log(`  ✓ ${label} ${seconds(performance.now() - startedNative)}\n`);
     }
 

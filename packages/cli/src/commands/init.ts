@@ -19,7 +19,7 @@ export async function runInit(opts: {
   cwd: string;
   overwrite?: boolean;
   registry?: string;
-  /** The theme to install: `default` (the library's own), `shadcn`, `solid-glass`, `apple`, `material` or `native`; an unknown name throws. */
+  /** The theme to install: `default` (the library's own), `shadcn`, `solid-glass`, `apple`, `material`, `fluent` or `native`; an unknown name throws. */
   theme?: string;
 }): Promise<NshUiConfig> {
   const cwd = path.resolve(opts.cwd);
@@ -120,7 +120,7 @@ export const init = new Command()
   .option("--overwrite", "overwrite existing files", false)
   .option(
     "--theme <name>",
-    "theme to install: default (the library's own), shadcn, solid-glass, apple, material, or native (Apple's on iOS and macOS, Material on Android, the default elsewhere)",
+    "theme to install: default (the library's own), shadcn, solid-glass, apple, material, fluent, or native (Apple's on iOS and macOS, Material on Android, Fluent on Windows, the default elsewhere)",
     "default",
   )
   .option("--registry <url>", "registry URL template containing {name}")

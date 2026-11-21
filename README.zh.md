@@ -33,7 +33,7 @@ npx shadcn-nsh init --theme shadcn                      # 用 shadcn 的中性�
 npx shadcn-nsh add theme-apple                    # 多带一套，运行时切换
 ```
 
-`init --theme <default|shadcn|solid-glass|apple|material|native>` 决定应用**构建时**用的主题；`add theme-<name>` 则**多装一套**到 `themes/<name>/`，供应用运行时用 `selectTheme` 切换（`selectTheme(null)` 回到构建时那套）。`nsh-ui.json` 记着构建时用的是哪一套，所以 `add` 不会把别的主题写回去。token、语义层与切换示例见[主题](https://shadcn-nsh.aning.dev/docs/themes)与 [`docs/specs/design-semantics.md`](docs/specs/design-semantics.md)。
+`init --theme <default|shadcn|solid-glass|apple|material|fluent|native>` 决定应用**构建时**用的主题；`add theme-<name>` 则**多装一套**到 `themes/<name>/`，供应用运行时用 `selectTheme` 切换（`selectTheme(null)` 回到构建时那套）。`nsh-ui.json` 记着构建时用的是哪一套，所以 `add` 不会把别的主题写回去。token、语义层与切换示例见[主题](https://shadcn-nsh.aning.dev/docs/themes)与 [`docs/specs/design-semantics.md`](docs/specs/design-semantics.md)。
 
 ## Registry
 

@@ -20,6 +20,8 @@ const appleTheme = source("packages/theme/themes/apple/theme.json");
 const appleFinishes = source("packages/theme/themes/apple/semantics.json");
 const materialTheme = source("packages/theme/themes/material/theme.json");
 const materialFinishes = source("packages/theme/themes/material/semantics.json");
+const fluentTheme = source("packages/theme/themes/fluent/theme.json");
+const fluentFinishes = source("packages/theme/themes/fluent/semantics.json");
 
 const fixture = (): Fixture =>
   makeFixture({
@@ -30,6 +32,7 @@ const fixture = (): Fixture =>
       "theme-solid-glass",
       "theme-apple",
       "theme-material",
+      "theme-fluent",
       "theme-native",
       "switch-geometry",
       "press",
@@ -116,7 +119,18 @@ describe("init --theme", () => {
     expect(recordedTheme(current)).toBe("theme-material");
   });
 
-  test("init --theme native builds the app on the default theme, with Apple's, Material's and the chooser beside it", async () => {
+  test("init --theme fluent builds the app on Fluent's palette, and lists it too", async () => {
+    current = fixture();
+    await captured(() => runInit({ cwd: current!.app, registry: current!.url, theme: "fluent" }));
+
+    expect(current.read("theme.json")).toBe(fluentTheme);
+    expect(current.read("lib/ui/semantics.json")).toBe(fluentFinishes);
+    expect(current.read("themes/fluent/index.ts")).toContain('from "../../lib/ui/theme"');
+    expect(current.exists("lib/ui/theme.ts")).toBe(true);
+    expect(recordedTheme(current)).toBe("theme-fluent");
+  });
+
+  test("init --theme native builds the app on the default theme, with Apple's, Material's, Fluent's and the chooser beside it", async () => {
     current = fixture();
     await captured(() => runInit({ cwd: current!.app, registry: current!.url, theme: "native" }));
 
@@ -125,6 +139,7 @@ describe("init --theme", () => {
     expect(current.read("lib/ui/semantics.json")).toBe(defaultFinishes);
     expect(current.read("themes/apple/theme.json")).toBe(appleTheme);
     expect(current.read("themes/material/theme.json")).toBe(materialTheme);
+    expect(current.read("themes/fluent/theme.json")).toBe(fluentTheme);
     expect(current.exists("themes/default/theme.json")).toBe(true);
     expect(current.read("themes/native/index.ts")).toContain("nativeTheme");
     expect(current.exists("lib/ui/theme.ts")).toBe(true);
@@ -196,7 +211,7 @@ describe("init --theme", () => {
     }
 
     expect(String(error)).toContain(
-      'Unknown theme "solarized". Choose one of: default, shadcn, solid-glass, apple, material, native.',
+      'Unknown theme "solarized". Choose one of: default, shadcn, solid-glass, apple, material, fluent, native.',
     );
     expect(current.exists("nsh-ui.json")).toBe(false);
     expect(current.exists("theme.json")).toBe(false);

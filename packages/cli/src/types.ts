@@ -63,8 +63,8 @@ export const DEFAULT_THEME = "theme";
 
 /**
  * The item that picks a theme per platform at run time (`nativeTheme()`). It ships no data of its
- * own: an app on it is built on the default theme, and gets Apple's, Material's and the default's
- * under `themes/` for `selectTheme(nativeTheme())`.
+ * own: an app on it is built on the default theme, and gets Apple's, Material's, Fluent's and the
+ * default's under `themes/` for `selectTheme(nativeTheme())`.
  */
 export const NATIVE_THEME = "theme-native";
 
@@ -75,6 +75,7 @@ export const THEMES = {
   "solid-glass": "theme-solid-glass",
   apple: "theme-apple",
   material: "theme-material",
+  fluent: "theme-fluent",
   native: NATIVE_THEME,
 } as const;
 
