@@ -63,7 +63,7 @@ const hoverOf = (state: TabState) =>
 export function tabsLook() {
   // The track's padding and border: a tab is a pill inside them.
   const inset = 3;
-  const inner = controlSize.tabs - 2 * (inset + 1);
+  const inner = () => controlSize.tabs - 2 * (inset + 1);
   return {
     get style(): ViewStyle {
       return {
@@ -82,21 +82,23 @@ export function tabsLook() {
       return {
         top: inset,
         bottom: inset,
-        borderRadius: inner / 2,
+        borderRadius: inner() / 2,
         borderWidth: stroke.control,
         ...finish.thumb,
       };
     },
     tab(state: TabState): TabLook {
       return {
-        style: {
-          flex: 1,
-          paddingHorizontal: 6,
-          borderRadius: inner / 2,
-          borderWidth: stroke.control,
-          borderColor: "transparent",
-          alignItems: "center",
-          justifyContent: "center",
+        get style(): ViewStyle {
+          return {
+            flex: 1,
+            paddingHorizontal: 6,
+            borderRadius: inner() / 2,
+            borderWidth: stroke.control,
+            borderColor: "transparent",
+            alignItems: "center",
+            justifyContent: "center",
+          };
         },
         get hoverStyle() {
           return hoverOf(state);
@@ -209,7 +211,7 @@ export function TabTitle(props: {
   const listVariant = ListVariantContext();
   // A theme that marks the chosen tab with an underline also sets its label in the accent.
   const chosenInk = () =>
-    themeStyle().indicator.tabs === "underline" && listVariant === "line"
+    themeStyle().indicator.tabs === "underline" && (listVariant === "line" || props.underline)
       ? colors.brand
       : colors.foreground;
   const away = on.interpolate({ inputRange: [0, 1], outputRange: [1, 0] });

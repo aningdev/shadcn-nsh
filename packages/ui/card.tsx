@@ -7,9 +7,9 @@ import { split, Text, View } from "nsh";
 import { density, sectionSurface } from "./lib/surface";
 
 // @port index.tsx
-/** The padding a card's parts keep from its edge, and the gap between them. */
-const pad = density.pad;
-const gap = density.gap + 4;
+/** The padding a card's parts keep from its edge, and the gap between them (reactive to theme switches). */
+const pad = () => density.pad;
+const gap = () => density.gap + 4;
 
 /** The space between a card's title, description and action. */
 const headGap = 6;
@@ -50,7 +50,7 @@ export function cardLook(): CardLook {
     get card(): ViewStyle {
       return {
         ...sectionSurface(),
-        ...(terminal ? {} : { paddingVertical: pad, overflow: "hidden", gap }),
+        ...(terminal ? {} : { paddingVertical: pad(), overflow: "hidden", gap: gap() }),
         ...(terminal ? { gap: TERMINAL_GAP } : {}),
         flexDirection: "column",
       };
@@ -63,7 +63,7 @@ export function cardLook(): CardLook {
         alignItems: "start",
         columnGap: 12,
         rowGap: headGap,
-        paddingHorizontal: terminal ? 0 : pad,
+        paddingHorizontal: terminal ? 0 : pad(),
       };
     },
     get title(): TextStyle {
@@ -93,8 +93,8 @@ export function cardLook(): CardLook {
     },
     get content(): ViewStyle {
       return {
-        paddingHorizontal: terminal ? 0 : pad,
-        ...(terminal ? {} : { gap }),
+        paddingHorizontal: terminal ? 0 : pad(),
+        ...(terminal ? {} : { gap: gap() }),
         flexDirection: "column",
       };
     },
@@ -104,7 +104,7 @@ export function cardLook(): CardLook {
         flexWrap: "wrap",
         alignItems: "center",
         gap: 8,
-        paddingHorizontal: terminal ? 0 : pad,
+        paddingHorizontal: terminal ? 0 : pad(),
       };
     },
   };
@@ -202,7 +202,7 @@ export function CardContent(props: CardContentProps) {
       {...rest}
       style={[
         cardLook().content,
-        props.flush && !terminal ? { paddingHorizontal: 0, marginBottom: -pad } : null,
+        props.flush && !terminal ? { paddingHorizontal: 0, marginBottom: -pad() } : null,
         props.style ?? null,
       ]}
     >
