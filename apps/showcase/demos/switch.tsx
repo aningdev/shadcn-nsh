@@ -2,13 +2,15 @@ import { colors } from "@shadcn-nsh/theme";
 // Switch: the official gallery's scene (`references/nsh/examples/gallery/demos/Controls.tsx`)
 // with this library's parts — settings that take effect at once, two of them needing another on,
 // the settings row shadcn composes (a Field in a row with the control), and the two sizes.
-import { signal, Text, View } from "nsh";
+import { Bell, Hand, HardDrive, type IconNode, MessageCircle, Sparkles } from "lucide";
+import { platform, signal, Text, View } from "nsh";
 
 import { Field, FieldContent, FieldDescription, FieldGroup, FieldLabel } from "@/packages/ui/field";
-import { listRow, RowDivider, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
+import { listRow, RowDivider, RowLabel } from "@/packages/ui/lib/surface";
 import { Switch } from "@/packages/ui/switch";
 
 import { Caption, DemoCard, DemoPage, DemoSection } from "../kit";
+import { IconTile } from "./apps-shared";
 
 /**
  * A settings row at the call site, as shadcn composes it: a `Field` in a row, its title and its
@@ -42,6 +44,7 @@ export function SwitchDemo() {
   const notifications = signal(true);
   const badges = signal(true);
   const previews = signal(false);
+  const haptics = signal(false);
   const extract = signal(true);
   const usage = signal(false);
   const last = signal("—");
@@ -57,69 +60,56 @@ export function SwitchDemo() {
   return (
     <DemoPage title="Switch" note={() => `Last event: ${last()}`}>
       <DemoCard title="Settings" subtitle="Two groups; two settings need another on">
-        {/* The row is the switch itself, its track at the trailing edge (`listRow`: the hover
-            fill reaching past the content, the keyboard's focus ring, a press that dims). */}
-        <View style={sectionSurface()}>
+        {/* Each row is the switch itself (`listRow`), straight in the card's padding, which the
+            hover fill reaches into: its icon leads, its track at the trailing edge. */}
+        <View>
           <Group first title="Alerts" />
-          <Switch
-            checked={notifications()}
+          <Setting
+            first
+            label="Notifications"
+            icon={Bell}
+            detail={notifications() ? "Banners, sounds and badges" : "Off"}
+            on={notifications()}
             onChange={change("Notifications", (next) => notifications.set(next))}
-            {...listRow({ first: true, style: { flexDirection: "row-reverse" } })}
-          >
-            <RowDivider show={false} />
-            <RowLabel
-              label="Notifications"
-              detail={notifications() ? "Banners, sounds and badges" : "Off"}
-            />
-          </Switch>
-          <Switch
-            checked={badges()}
+          />
+          <Setting
+            label="Badges"
+            icon={Sparkles}
+            detail={notifications() ? "The unread count on the icon" : off}
+            on={badges()}
             disabled={!notifications()}
             onChange={change("Badges", (next) => badges.set(next))}
-            {...listRow({
-              disabled: () => !notifications(),
-              style: { flexDirection: "row-reverse" },
-            })}
-          >
-            <RowDivider show />
-            <RowLabel
-              label="Badges"
-              detail={notifications() ? "The unread count on the icon" : off}
-            />
-          </Switch>
-          <Switch
-            checked={previews()}
+          />
+          <Setting
+            label="Previews"
+            icon={MessageCircle}
+            detail={
+              notifications()
+                ? previews()
+                  ? "The message's text in banners"
+                  : "Only who wrote"
+                : off
+            }
+            on={previews()}
             disabled={!notifications()}
             onChange={change("Previews", (next) => previews.set(next))}
-            {...listRow({
-              disabled: () => !notifications(),
-              style: { flexDirection: "row-reverse" },
-            })}
-          >
-            <RowDivider show />
-            <RowLabel
-              label="Previews"
-              detail={
-                notifications()
-                  ? previews()
-                    ? "The message's text in banners"
-                    : "Only who wrote"
-                  : off
-              }
-            />
-          </Switch>
+          />
           <Group title="Device" />
-          <Switch
-            checked={usage()}
+          <Setting
+            first
+            label="Haptics"
+            icon={Hand}
+            detail="A tap under the finger as values change"
+            on={haptics()}
+            onChange={change("Haptics", (next) => haptics.set(next))}
+          />
+          <Setting
+            label="Low data mode"
+            icon={HardDrive}
+            detail={usage() ? "Images load at a lower quality" : "Images load in full"}
+            on={usage()}
             onChange={change("Low data mode", (next) => usage.set(next))}
-            {...listRow({ first: true, style: { flexDirection: "row-reverse" } })}
-          >
-            <RowDivider show={false} />
-            <RowLabel
-              label="Low data mode"
-              detail={usage() ? "Images load at a lower quality" : "Images load in full"}
-            />
-          </Switch>
+          />
         </View>
         <Caption>
           The settings take effect at once; Badges and Previews need Notifications on
@@ -172,6 +162,42 @@ export function SwitchDemo() {
         </DemoSection>
       </DemoCard>
     </DemoPage>
+  );
+}
+
+/**
+ * A setting that takes effect at once: the row is the switch (`listRow`), its icon tile leading
+ * (lit in the brand while on), its label and detail, the track at the trailing edge; a hairline
+ * above all but a group's first row.
+ */
+function Setting(props: {
+  label: string;
+  detail: string;
+  icon: IconNode;
+  on: boolean;
+  disabled?: boolean;
+  first?: boolean;
+  onChange: (event: { checked: boolean }) => void;
+}) {
+  return (
+    <Switch
+      checked={props.on}
+      disabled={props.disabled}
+      onChange={props.onChange}
+      {...listRow({
+        first: props.first,
+        disabled: () => props.disabled,
+        style: { flexDirection: "row-reverse" },
+      })}
+    >
+      <RowDivider show={!props.first} />
+      <RowLabel label={props.label} detail={props.detail} />
+      <IconTile
+        icon={props.icon}
+        size={platform.desktop ? 26 : 32}
+        tint={props.on ? colors.brand : colors.mutedForeground}
+      />
+    </Switch>
   );
 }
 
