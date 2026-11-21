@@ -1,9 +1,19 @@
 // A navigation menu: a row of triggers, each opening a panel of anything (a grid of links, a card
 // with a description) under itself, one panel open at a time. This library's own: nothing here
 // comes from upstream, so there is no port region. Yours to change.
-import { alpha, colors, focusRing, rounded, font, shape, dimmed } from "@shadcn-nsh/theme";
+import {
+  alpha,
+  colors,
+  focusRing,
+  rounded,
+  font,
+  shape,
+  dimmed,
+  stateLayer,
+  style as themeStyle,
+} from "@shadcn-nsh/theme";
 import { ChevronDown } from "lucide";
-import type { JSX, StyleProp, TextStyle, ViewProps, ViewStyle } from "nsh";
+import type { AndroidProps, JSX, StyleProp, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, platform, reduceMotion, signal, split, token, View } from "nsh";
 import {
   Link as BaseLink,
@@ -17,7 +27,7 @@ import { AsText } from "./lib/as-text";
 import { Icon } from "./lib/icons";
 import { createSlot, type Slot } from "./lib/open-state";
 import { PopIn, popupSurface, type PopupSide } from "./lib/popup";
-import { pressSink, pressTransition } from "./lib/press";
+import { pressHostProps, pressRipple, pressSink, pressTransition } from "./lib/press";
 import { type Live, read } from "./lib/utils";
 
 /** A pointer's compact bar; a touch screen's roomier one, a finger's target in every trigger. */
@@ -166,6 +176,9 @@ export function navigationMenuTriggerLook(o?: NavigationMenuTriggerLookOptions) 
       return highlight();
     },
     get activeStyle(): ViewStyle {
+      if (themeStyle().state.overlay.pressed > 0) {
+        return { ...stateLayer("pressed"), ...pressSink(sink).activeStyle };
+      }
       return pressSink(sink).activeStyle;
     },
     get focusVisibleStyle(): ViewStyle {
@@ -173,6 +186,9 @@ export function navigationMenuTriggerLook(o?: NavigationMenuTriggerLookOptions) 
     },
     get disabledStyle(): ViewStyle {
       return { opacity: dimmed.disabled };
+    },
+    get android(): AndroidProps | undefined {
+      return pressRipple("foreground");
     },
     /** Its name's type: the `body` type, medium, one line. */
     get text(): TextStyle {
@@ -229,13 +245,20 @@ export function navigationMenuLinkLook(o?: NavigationMenuLinkLookOptions) {
       return disabled() ? undefined : highlight();
     },
     get activeStyle(): ViewStyle | undefined {
-      return disabled() ? undefined : pressSink(sink).activeStyle;
+      if (disabled()) return undefined;
+      if (themeStyle().state.overlay.pressed > 0) {
+        return { ...stateLayer("pressed"), ...pressSink(sink).activeStyle };
+      }
+      return pressSink(sink).activeStyle;
     },
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
     },
     get disabledStyle(): ViewStyle {
       return { opacity: dimmed.disabled };
+    },
+    get android(): AndroidProps | undefined {
+      return pressRipple("foreground", o?.disabled);
     },
     /** Its name's type: `navigationMenuLook().linkText`. */
     get text(): TextStyle {
@@ -536,6 +559,7 @@ export function NavigationMenuTrigger(props: NavigationMenuTriggerProps) {
       accessible
       role="button"
       disabled={props.disabled}
+      android={look.android}
       accessibilityState={{ disabled: props.disabled }}
       onMouseEnter={
         pointer && !props.disabled ? () => item.pointerOver("trigger", true) : undefined
@@ -642,6 +666,7 @@ export function NavigationMenuLink(props: NavigationMenuLinkProps) {
       {...rest}
       disabled={props.disabled}
       current={props.active}
+      {...pressHostProps(() => look().android)}
       style={[look().style, props.style ?? null]}
       hoverStyle={styleOver(look().hoverStyle, props.hoverStyle)}
       activeStyle={styleOver(look().activeStyle, props.activeStyle)}

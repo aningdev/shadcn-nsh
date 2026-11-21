@@ -2,10 +2,13 @@
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import {
   alpha,
+  animate,
   colors,
   finish,
   focusRing,
   hovered,
+  stateLayer,
+  style as themeStyle,
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
@@ -20,7 +23,7 @@ import {
   motion,
 } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
-import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
+import type { AndroidProps, JSX, StyleProp, TextStyle, Tokens, ViewStyle } from "nsh";
 import {
   context,
   createAnimatedValue,
@@ -35,7 +38,7 @@ import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/b
 
 import { AsText } from "./lib/as-text";
 import { Icon, IconLabel } from "./lib/icons";
-import { pressSink, pressTransition, touchSlop } from "./lib/press";
+import { pressHostProps, pressRipple, pressSink, pressTransition, touchSlop } from "./lib/press";
 import { type Live, read } from "./lib/utils";
 import { Spinner } from "./spinner";
 
@@ -148,6 +151,9 @@ const dimensions = (o?: ButtonLookOptions) => buttonSizes[read(o?.size) ?? "defa
 
 const filled = (variant: ButtonVariant) => variant === "default";
 
+const buttonInk = (variant: ButtonVariant): keyof Tokens =>
+  filled(variant) ? "on-brand" : variant === "destructive" ? "destructive" : "foreground";
+
 /** The fill, edge and shadow of a variant at rest (or selected). A disabled filled button gives up the citrus for the
  * neutral raised fill: half a lime fill reads as a muddy olive in dark, louder than the enabled buttons beside it. */
 function restLook(variant: ButtonVariant, selected: boolean, disabled = false): ViewStyle {
@@ -206,6 +212,14 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
     get hoverStyle(): ViewStyle | undefined {
       if (idle() || read(o?.selected)) return undefined;
       const variant = v();
+      if (themeStyle().state.overlay.hover > 0) {
+        const under = filled(variant)
+          ? finish.accent.backgroundImage
+          : variant === "secondary"
+            ? finish.raised.backgroundImage
+            : undefined;
+        return hovered(buttonInk(variant), under);
+      }
       if (filled(variant)) return { opacity: 0.94 };
       if (variant === "destructive") return { backgroundColor: alpha(colors.destructive, 0.16) };
       return variant === "ghost" ? hovered() : { ...finish.hover };
@@ -213,11 +227,24 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
     get activeStyle(): ViewStyle | undefined {
       if (idle()) return undefined;
       const variant = v();
-      const shade: ViewStyle = filled(variant)
-        ? { opacity: 0.88 }
-        : variant === "destructive"
-          ? { backgroundColor: alpha(colors.destructive, 0.22), boxShadow: "none" }
-          : { ...finish.pressed };
+      const shade: ViewStyle =
+        themeStyle().state.overlay.pressed > 0
+          ? stateLayer(
+              "pressed",
+              buttonInk(variant),
+              filled(variant)
+                ? finish.accent.backgroundImage
+                : variant === "secondary"
+                  ? read(o?.selected)
+                    ? finish.on.backgroundImage
+                    : finish.raised.backgroundImage
+                  : undefined,
+            )
+          : filled(variant)
+            ? { opacity: 0.88 }
+            : variant === "destructive"
+              ? { backgroundColor: alpha(colors.destructive, 0.22), boxShadow: "none" }
+              : { ...finish.pressed };
       return { ...shade, ...sink(0.97) };
     },
     get focusVisibleStyle(): ViewStyle {
@@ -228,6 +255,9 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
     },
     get hitSlop(): number | undefined {
       return touchSlop(dimensions(o).height);
+    },
+    get android(): AndroidProps | undefined {
+      return pressRipple(buttonInk(v()), idle);
     },
   };
 }
@@ -345,6 +375,12 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
     },
     get hoverStyle(): ViewStyle | undefined {
       if (read(o.selected) || read(o.disabled)) return undefined;
+      if (themeStyle().state.overlay.hover > 0) {
+        return hovered(
+          destructive ? "destructive" : "foreground",
+          raised ? finish.raised.backgroundImage : undefined,
+        );
+      }
       return destructive
         ? { backgroundColor: tints.destructive }
         : raised
@@ -353,8 +389,18 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
     },
     get activeStyle(): ViewStyle | undefined {
       if (read(o.disabled)) return undefined;
+      const shade: ViewStyle =
+        themeStyle().state.overlay.pressed > 0
+          ? stateLayer(
+              "pressed",
+              destructive ? "destructive" : "foreground",
+              raised ? finish.raised.backgroundImage : undefined,
+            )
+          : raised
+            ? { ...finish.pressed }
+            : { backgroundColor: alpha(colors.foreground, 0.1) };
       return {
-        ...(raised ? finish.pressed : { backgroundColor: alpha(colors.foreground, 0.1) }),
+        ...shade,
         ...sink(0.9),
       };
     },
@@ -366,6 +412,9 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
     },
     get hitSlop(): number | undefined {
       return touchSlop(iconButtonDimensions(o).side);
+    },
+    get android(): AndroidProps | undefined {
+      return pressRipple(destructive ? "destructive" : "foreground", o.disabled);
     },
   };
 }
@@ -433,10 +482,27 @@ export function roundButtonLook(
     },
     get hoverStyle(): ViewStyle | undefined {
       if (read(o.disabled)) return undefined;
+      if (themeStyle().state.overlay.hover > 0) {
+        return hovered(
+          primary ? "primary-foreground" : "foreground",
+          primary ? finish.accent.backgroundImage : finish.raised.backgroundImage,
+        );
+      }
       return primary ? { opacity: 0.94 } : { ...finish.hover };
     },
     get activeStyle(): ViewStyle | undefined {
-      return read(o.disabled) ? undefined : sink(0.92);
+      if (read(o.disabled)) return undefined;
+      if (themeStyle().state.overlay.pressed > 0) {
+        return {
+          ...stateLayer(
+            "pressed",
+            primary ? "primary-foreground" : "foreground",
+            primary ? finish.accent.backgroundImage : finish.raised.backgroundImage,
+          ),
+          ...sink(0.92),
+        };
+      }
+      return sink(0.92);
     },
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
@@ -446,6 +512,9 @@ export function roundButtonLook(
     },
     get hitSlop(): number | undefined {
       return touchSlop(roundSide(o));
+    },
+    get android(): AndroidProps | undefined {
+      return pressRipple(primary ? "primary-foreground" : "foreground", o.disabled);
     },
   };
 }
@@ -520,12 +589,18 @@ export function splitButtonLook(variant: Live<ButtonVariant> = "default", o?: Bu
           };
         },
         get hoverStyle(): ViewStyle | undefined {
-          return read(s?.disabled) || read(s?.selected)
-            ? undefined
-            : { backgroundColor: shade(0.06) };
+          if (read(s?.disabled) || read(s?.selected)) return undefined;
+          if (themeStyle().state.overlay.hover > 0) {
+            return hovered(buttonInk(read(variant) ?? "default"));
+          }
+          return { backgroundColor: shade(0.06) };
         },
         get activeStyle(): ViewStyle | undefined {
-          return read(s?.disabled) ? undefined : { backgroundColor: shade(0.12) };
+          if (read(s?.disabled)) return undefined;
+          if (themeStyle().state.overlay.pressed > 0) {
+            return stateLayer("pressed", buttonInk(read(variant) ?? "default"));
+          }
+          return { backgroundColor: shade(0.12) };
         },
         get focusVisibleStyle(): ViewStyle {
           return focusRing(-2);
@@ -537,6 +612,9 @@ export function splitButtonLook(variant: Live<ButtonVariant> = "default", o?: Bu
         get hitSlop() {
           const v = touchSlop(dimensions(o).height);
           return v ? { top: v, bottom: v } : undefined;
+        },
+        get android(): AndroidProps | undefined {
+          return pressRipple(buttonInk(read(variant) ?? "default"), s?.disabled);
         },
       };
     },
@@ -584,7 +662,7 @@ function growOn(key: () => unknown) {
     shown = next;
     if (reduceMotion()) return;
     grow.set(0);
-    void grow.spring(1, motion.control);
+    void animate(grow, 1, motion.control);
   });
   return {
     opacity: grow,
@@ -623,6 +701,7 @@ export function Button(props: ButtonProps) {
       // Busy, it keeps its focus and its look and takes no second press.
       onPress={() => !props.busy && props.onPress?.()}
       hitSlop={props.hitSlop ?? look.hitSlop}
+      {...pressHostProps(() => look.android)}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}
@@ -680,6 +759,7 @@ export function IconButton(props: IconButtonProps) {
     <BaseButton
       {...rest}
       hitSlop={props.hitSlop ?? look.hitSlop}
+      {...pressHostProps(() => look.android)}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}
@@ -731,6 +811,7 @@ export function RoundButton(props: RoundButtonProps) {
     <BaseButton
       {...rest}
       hitSlop={props.hitSlop ?? look.hitSlop}
+      {...pressHostProps(() => look.android)}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}
@@ -807,6 +888,7 @@ export function SplitButtonSegment(props: SplitButtonSegmentProps) {
     <BaseButton
       {...rest}
       hitSlop={props.hitSlop ?? segment.hitSlop}
+      {...pressHostProps(() => segment.android)}
       style={[segment.style, props.style ?? null]}
       hoverStyle={[segment.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[segment.activeStyle ?? null, props.activeStyle ?? null]}

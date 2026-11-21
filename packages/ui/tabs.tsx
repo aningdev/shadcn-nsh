@@ -16,7 +16,7 @@ import {
   style as themeStyle,
 } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
-import type { JSX, StyleProp, ViewStyle } from "nsh";
+import type { AndroidProps, JSX, StyleProp, ViewStyle } from "nsh";
 import { computed, context, signal, split, Text, View } from "nsh";
 import {
   Tab as BaseTab,
@@ -26,6 +26,7 @@ import {
 } from "nsh/base";
 
 import { Icon } from "./lib/icons";
+import { pressHostProps, pressRipple } from "./lib/press";
 import { controlSize } from "./lib/surface";
 import { type Live, read } from "./lib/utils";
 
@@ -44,6 +45,7 @@ export interface TabLook {
   readonly activeStyle?: ViewStyle;
   readonly focusVisibleStyle: ViewStyle;
   readonly disabledStyle: ViewStyle;
+  readonly android?: AndroidProps;
 }
 
 /** Under the pointer, a tab that is neither selected (its thumb shows) nor disabled. */
@@ -104,6 +106,9 @@ export function tabsLook() {
         },
         get disabledStyle(): ViewStyle {
           return { opacity: dimmed.disabled };
+        },
+        get android(): AndroidProps | undefined {
+          return pressRipple("foreground", state.disabled);
         },
       };
     },
@@ -167,6 +172,9 @@ export function underlineTabsLook() {
         },
         get disabledStyle(): ViewStyle {
           return { opacity: dimmed.disabled };
+        },
+        get android(): AndroidProps | undefined {
+          return pressRipple("foreground", state.disabled);
         },
       };
     },
@@ -434,6 +442,7 @@ export function TabsTrigger(props: TabsTriggerProps) {
     <BaseTab
       {...rest}
       selected={selected()}
+      {...pressHostProps(() => tab().android)}
       onPress={() => {
         ctx?.onValueChange(props.value);
         props.onPress?.();
@@ -480,6 +489,7 @@ export function Tab(props: TabProps) {
     <BaseTab
       {...rest}
       selected={props.selected}
+      {...pressHostProps(() => tab().android)}
       style={[tab().style, props.style ?? null]}
       hoverStyle={[tab().hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[tab().activeStyle ?? null, props.activeStyle ?? null]}

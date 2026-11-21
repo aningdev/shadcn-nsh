@@ -1,13 +1,21 @@
 // A pressable: a region that owns its look and gets only the feedback of a press — the sink, the
 // pointer's hover and the keyboard's ring. This library's own: nothing here comes from upstream,
 // so there is no port region. Yours to change.
-import { colors, focusRing, hovered, rounded, shape } from "@shadcn-nsh/theme";
-import type { JSX, ViewStyle } from "nsh";
+import {
+  colors,
+  focusRing,
+  hovered,
+  rounded,
+  shape,
+  stateLayer,
+  style as themeStyle,
+} from "@shadcn-nsh/theme";
+import type { AndroidProps, JSX, ViewStyle } from "nsh";
 import { split } from "nsh";
 import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/base";
 
 import { AsText } from "./lib/as-text";
-import { pressSink, pressTransition } from "./lib/press";
+import { pressHostProps, pressRipple, pressSink, pressTransition } from "./lib/press";
 import { type Live, read } from "./lib/utils";
 
 /** Options of `pressableLook`. */
@@ -43,10 +51,20 @@ export function pressableLook(o?: PressableLookOptions) {
       return read(o?.disabled) ? undefined : hovered();
     },
     get activeStyle(): ViewStyle | undefined {
-      return read(o?.disabled) ? undefined : pressSink(() => read(o?.scale) ?? SINK).activeStyle;
+      if (read(o?.disabled)) return undefined;
+      if (themeStyle().state.overlay.pressed > 0) {
+        return {
+          ...stateLayer("pressed"),
+          ...pressSink(() => read(o?.scale) ?? SINK).activeStyle,
+        };
+      }
+      return pressSink(() => read(o?.scale) ?? SINK).activeStyle;
     },
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
+    },
+    get android(): AndroidProps | undefined {
+      return pressRipple("foreground", o?.disabled);
     },
   };
 }
@@ -80,6 +98,7 @@ export function Pressable(props: PressableProps) {
   return (
     <BaseButton
       {...rest}
+      {...pressHostProps(() => look.android)}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}

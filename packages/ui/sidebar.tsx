@@ -19,6 +19,8 @@ import {
   finish,
   focusRing,
   hovered,
+  stateLayer,
+  style as themeStyle,
   terminal,
   rounded,
   font,
@@ -27,7 +29,7 @@ import {
   dimmed,
 } from "@shadcn-nsh/theme";
 import { PanelLeft } from "lucide";
-import type { JSX, StyleProp, TextStyle, ViewProps, ViewStyle } from "nsh";
+import type { AndroidProps, JSX, StyleProp, TextStyle, ViewProps, ViewStyle } from "nsh";
 import {
   context,
   effect,
@@ -48,7 +50,7 @@ import { Input, type InputProps } from "./input";
 import { AsText } from "./lib/as-text";
 import { IconLabel } from "./lib/icons";
 import { navBar, navBarStyle } from "./lib/indicator";
-import { pressSink, pressTransition } from "./lib/press";
+import { pressHostProps, pressRipple, pressSink, pressTransition } from "./lib/press";
 import { narrowWindow } from "./lib/surface";
 import { type Live, read } from "./lib/utils";
 import { Separator, type SeparatorProps } from "./separator";
@@ -503,13 +505,20 @@ export function sidebarMenuButtonLook(o?: SidebarMenuButtonLookOptions) {
       return hovered();
     },
     get activeStyle(): ViewStyle | undefined {
-      return disabled() ? undefined : pressSink(0.98).activeStyle;
+      if (disabled()) return undefined;
+      if (themeStyle().state.overlay.pressed > 0) {
+        return { ...stateLayer("pressed"), ...pressSink(0.98).activeStyle };
+      }
+      return pressSink(0.98).activeStyle;
     },
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
     },
     get disabledStyle(): ViewStyle {
       return { opacity: dimmed.disabled };
+    },
+    get android(): AndroidProps | undefined {
+      return pressRipple("foreground", o?.disabled);
     },
     /** Its name: `rowLabel`'s size, medium on the page the app is on, one line, the text clipped
      * when the column is folded. */
@@ -564,6 +573,9 @@ export function sidebarMenuActionLook(o?: SidebarMenuActionLookOptions) {
     },
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
+    },
+    get android(): AndroidProps | undefined {
+      return pressRipple("foreground");
     },
     /** Its glyph: 16 points in the muted ink. */
     get glyph(): { size: number; tint: string } {
@@ -673,13 +685,20 @@ export function sidebarMenuSubButtonLook(o?: SidebarMenuSubButtonLookOptions) {
       return hovered();
     },
     get activeStyle(): ViewStyle | undefined {
-      return disabled() ? undefined : pressSink(0.98).activeStyle;
+      if (disabled()) return undefined;
+      if (themeStyle().state.overlay.pressed > 0) {
+        return { ...stateLayer("pressed"), ...pressSink(0.98).activeStyle };
+      }
+      return pressSink(0.98).activeStyle;
     },
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
     },
     get disabledStyle(): ViewStyle {
       return { opacity: dimmed.disabled };
+    },
+    get android(): AndroidProps | undefined {
+      return pressRipple("foreground", o?.disabled);
     },
     /** Its name: `subRowLabel`'s size, one line, the text clipped by a tight row. */
     get label(): TextStyle {
@@ -1319,6 +1338,7 @@ export function SidebarMenuButton(props: SidebarMenuButtonProps) {
     <BaseButton
       {...rest}
       disabled={props.disabled}
+      {...pressHostProps(() => look.android)}
       accessibilityLabel={
         props.accessibilityLabel !== undefined
           ? props.accessibilityLabel
@@ -1384,6 +1404,7 @@ export function SidebarMenuAction(props: SidebarMenuActionProps) {
       <BaseButton
         {...rest}
         disabled={props.disabled}
+        {...pressHostProps(() => look.android)}
         style={[look.style, props.style ?? null]}
         hoverStyle={[look.hoverStyle, props.hoverStyle ?? null]}
         activeStyle={props.activeStyle ?? null}
@@ -1526,6 +1547,7 @@ export function SidebarMenuSubButton(props: SidebarMenuSubButtonProps) {
     <BaseButton
       {...rest}
       disabled={props.disabled}
+      {...pressHostProps(() => look.android)}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}

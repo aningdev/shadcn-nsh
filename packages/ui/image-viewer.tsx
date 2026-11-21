@@ -1,7 +1,7 @@
 // An image viewer: one image full screen over the media ground, fitted, pinched, panned and
 // swiped away. This library's own (drawn on `nsh`'s View, Text and Image, over `Dialog` as a
 // page), so there is no port region. Yours to change.
-import { alpha, colors, font, motion } from "@shadcn-nsh/theme";
+import { alpha, animate, colors, font, motion } from "@shadcn-nsh/theme";
 import { X } from "lucide";
 import type { TextStyle, ViewStyle } from "nsh";
 import {
@@ -156,7 +156,7 @@ export function ImageViewer(props: ImageViewerProps) {
     x.set(0);
     y.set(0);
     enter.set(0);
-    void enter.spring(1, motion.settle);
+    void animate(enter, 1, motion.settle);
   });
 
   /** The image's box at 1×: its aspect ratio fitted into the viewport. */
@@ -178,9 +178,9 @@ export function ImageViewer(props: ImageViewerProps) {
     atScale.set(s);
     atX.set(nextX);
     atY.set(nextY);
-    void scale.spring(s, motion.settle);
-    void x.spring(nextX, motion.settle);
-    void y.spring(nextY, motion.settle);
+    void animate(scale, s, motion.settle);
+    void animate(x, nextX, motion.settle);
+    void animate(y, nextY, motion.settle);
   };
 
   /** A press on the image: the second of two zooms in at the point, or back out. */

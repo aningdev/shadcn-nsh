@@ -8,6 +8,7 @@
 // of color filling it, not a library part. The upstream's sounds are not played.
 import {
   alpha,
+  animate,
   colors,
   finish,
   mono,
@@ -120,7 +121,7 @@ function popOn(key: () => unknown): AnimatedValue {
     const next = key();
     if (next === shown) return;
     shown = next;
-    if (!reduceMotion()) void s.spring(1, { ...motion.move, velocity: 4 });
+    if (!reduceMotion()) void animate(s, 1, motion.move, { velocity: 4 });
   });
   return s;
 }
@@ -130,8 +131,7 @@ function fadeOn(on: () => boolean): AnimatedValue {
   const v = createAnimatedValue(on() ? 1 : 0);
   effect(() => {
     const to = on() ? 1 : 0;
-    if (reduceMotion()) v.set(to);
-    else void v.spring(to, motion.control);
+    void animate(v, to, motion.control);
   });
   return v;
 }
@@ -670,7 +670,7 @@ function Hold(props: Ctx) {
             onPressUp={() => {
               if (state() === "done") return;
               state.set("idle");
-              void fill.spring(0, motion.control);
+              void animate(fill, 0, motion.control);
             }}
             onLongPress={() => {
               resize();

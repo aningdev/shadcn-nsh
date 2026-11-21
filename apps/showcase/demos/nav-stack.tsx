@@ -1,4 +1,5 @@
 import {
+  animate,
   colors,
   finish,
   header,
@@ -1278,7 +1279,7 @@ export function NavStackDemo() {
   effect(() => {
     if (sheet() !== "dialog") return;
     popIn.set(0);
-    void popIn.spring(1, motion.settle);
+    void animate(popIn, 1, motion.settle);
   });
   const current = () => modals.find((m) => m.key === sheet());
   const shown = () =>

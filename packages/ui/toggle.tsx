@@ -7,12 +7,14 @@ import {
   focusRing,
   hovered,
   rounded,
+  stateLayer,
+  style as themeStyle,
   terminal,
   font,
   stroke,
   dimmed,
 } from "@shadcn-nsh/theme";
-import type { JSX, TextStyle, ViewStyle } from "nsh";
+import type { AndroidProps, JSX, TextStyle, ViewStyle } from "nsh";
 import { platform, split, Text } from "nsh";
 import {
   Toggle as BaseToggle,
@@ -21,7 +23,7 @@ import {
   type ToggleProps as BaseToggleProps,
 } from "nsh/base";
 
-import { pressSink, pressTransition, touchSlop } from "./lib/press";
+import { pressHostProps, pressRipple, pressSink, pressTransition, touchSlop } from "./lib/press";
 import { toolbarTrack } from "./lib/tool";
 import { type Live, read } from "./lib/utils";
 
@@ -130,10 +132,23 @@ export function toggleLook(o?: ToggleLookOptions) {
       return { ...finish.on };
     },
     get hoverStyle(): ViewStyle | undefined {
-      return read(o?.on) || read(o?.disabled) ? undefined : hovered();
+      if (read(o?.disabled)) return undefined;
+      if (themeStyle().state.overlay.hover > 0) {
+        return read(o?.on) ? hovered("on-brand", finish.on.backgroundImage) : hovered();
+      }
+      return read(o?.on) ? undefined : hovered();
     },
     get activeStyle(): ViewStyle | undefined {
-      return read(o?.disabled) ? undefined : sink(0.92);
+      if (read(o?.disabled)) return undefined;
+      if (themeStyle().state.overlay.pressed > 0) {
+        return {
+          ...(read(o?.on)
+            ? stateLayer("pressed", "on-brand", finish.on.backgroundImage)
+            : stateLayer("pressed", "foreground")),
+          ...sink(0.92),
+        };
+      }
+      return sink(0.92);
     },
     get focusVisibleStyle(): ViewStyle {
       return focusRing(1);
@@ -143,6 +158,9 @@ export function toggleLook(o?: ToggleLookOptions) {
     },
     get hitSlop(): number | undefined {
       return touchSlop(dimensions(o).side);
+    },
+    get android(): AndroidProps | undefined {
+      return pressRipple(read(o?.on) ? "on-brand" : "foreground", o?.disabled);
     },
   };
 }
@@ -222,6 +240,7 @@ export function Toggle(props: ToggleProps) {
     size: () => props.size,
     variant: props.variant,
     text: props.text ?? typeof kids === "string",
+    on: () => props.pressed,
     disabled: () => props.disabled,
   };
   const look = toggleLook(options);
@@ -229,6 +248,7 @@ export function Toggle(props: ToggleProps) {
     <BaseToggle
       {...rest}
       hitSlop={props.hitSlop ?? look.hitSlop}
+      {...pressHostProps(() => look.android)}
       style={[look.style, props.style ?? null]}
       hoverStyle={[look.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[look.activeStyle ?? null, props.activeStyle ?? null]}

@@ -8,13 +8,15 @@ import {
   focusRing,
   hovered,
   rounded,
+  stateLayer,
+  style as themeStyle,
   terminal,
   font,
   shape,
   stroke,
 } from "@shadcn-nsh/theme";
 import { CircleCheck, CircleX, Info, TriangleAlert, X, type IconNode } from "lucide";
-import type { JSX, TextStyle, ViewStyle } from "nsh";
+import type { AndroidProps, JSX, TextStyle, ViewStyle } from "nsh";
 import { Overlay, platform, safeArea, signal, split, Text, View, windowSize } from "nsh";
 import {
   Toast as BaseToast,
@@ -26,7 +28,7 @@ import {
 
 import { Button, buttonLabel, buttonLook, type ButtonLookOptions } from "./button";
 import { Icon } from "./lib/icons";
-import { pressSink, pressTransition } from "./lib/press";
+import { pressRipple, pressSink, pressTransition } from "./lib/press";
 import { Spinner } from "./spinner";
 
 // @port look/overlay.ts
@@ -110,13 +112,21 @@ export function toastCloseLook() {
       ...pressTransition("background-color"),
     } as ViewStyle,
     get hoverStyle(): ViewStyle {
-      return hovered();
+      return hovered("inverse-foreground");
     },
     get activeStyle(): ViewStyle {
-      return { backgroundColor: alpha(colors.foreground, 0.1), ...pressSink(0.9).activeStyle };
+      return {
+        ...(themeStyle().state.overlay.pressed > 0
+          ? stateLayer("pressed", "inverse-foreground")
+          : { backgroundColor: alpha(colors.foreground, 0.1) }),
+        ...pressSink(0.9).activeStyle,
+      };
     },
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
+    },
+    get android(): AndroidProps | undefined {
+      return pressRipple("inverse-foreground");
     },
   };
 }

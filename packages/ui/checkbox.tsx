@@ -16,13 +16,13 @@ import {
   dimmed,
 } from "@shadcn-nsh/theme";
 import { Check, Minus, type IconNode } from "lucide";
-import type { AnimatedValue, JSX, ViewStyle } from "nsh";
+import type { AnimatedValue, AndroidProps, JSX, ViewStyle } from "nsh";
 import { reduceMotion, split, View } from "nsh";
 import { Checkbox as BaseCheckbox, type CheckboxProps as BaseCheckboxProps } from "nsh/base";
 
 import { AsText } from "./lib/as-text";
 import { Icon } from "./lib/icons";
-import { pressSink } from "./lib/press";
+import { pressRipple, pressSink } from "./lib/press";
 import { controlSize } from "./lib/surface";
 import { type Live, read } from "./lib/utils";
 
@@ -219,6 +219,7 @@ export interface ChoiceTileLook {
   readonly activeStyle: ViewStyle;
   readonly focusVisibleStyle: ViewStyle;
   readonly disabledStyle: ViewStyle;
+  readonly android?: AndroidProps;
 }
 
 /**
@@ -263,6 +264,9 @@ export function choiceTileLook(on: Live<boolean>, o?: ChoiceTileOptions): Choice
     },
     get disabledStyle(): ViewStyle {
       return { opacity: dimmed.disabled };
+    },
+    get android(): AndroidProps | undefined {
+      return pressRipple(lit() ? "on-brand-tint" : "foreground", o?.disabled);
     },
   };
 }

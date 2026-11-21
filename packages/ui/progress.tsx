@@ -1,6 +1,7 @@
 // A progress: the look (`progressLook` and its companions) and the `Progress` that wears it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import {
+  animate,
   colors,
   fillStyle,
   finish,
@@ -329,7 +330,7 @@ export function ProgressStepMark(props: { state: Live<ProgressStepState> }) {
     const next = state();
     if (next === shown) return;
     shown = next;
-    if (!reduceMotion()) pop.spring(1, { ...motion.move, velocity: 4 });
+    if (!reduceMotion()) void animate(pop, 1, motion.move, { velocity: 4 });
   });
   const look = progressStepsLook();
   return (

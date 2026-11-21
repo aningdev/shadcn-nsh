@@ -7,6 +7,7 @@
 // that sinks), a thumb that springs to the tool chosen; none of the motion with reduced motion.
 import {
   alpha,
+  animate,
   chart,
   colors,
   finish,
@@ -844,7 +845,7 @@ function Player() {
     playing();
     if (reduceMotion()) return;
     pop.set(0.7);
-    void pop.spring(1, motion.press);
+    void animate(pop, 1, motion.press);
   });
   const time = (s: number) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
   const cycle = () => {
@@ -1063,8 +1064,7 @@ function Palette() {
   const y = createAnimatedValue(0);
   effect(() => {
     const to = at() * step;
-    if (reduceMotion()) y.set(to);
-    else void y.spring(to, motion.settle);
+    void animate(y, to, motion.settle);
   });
   const current = () => TOOLS[at()];
   return (

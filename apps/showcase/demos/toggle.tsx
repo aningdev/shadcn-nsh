@@ -4,7 +4,16 @@
 // a ring, the sizes and looks, and a group the app locks. `nsh/base`'s Toggle owns the pressed
 // state screen readers hear and the focus; `ToggleGroup` makes one Tab stop of them and the arrow
 // keys move within it. Which toggles are on is the app's.
-import { alpha, colors, finish, focusRing, hovered, motion, terminal } from "@shadcn-nsh/theme";
+import {
+  alpha,
+  animate,
+  colors,
+  finish,
+  focusRing,
+  hovered,
+  motion,
+  terminal,
+} from "@shadcn-nsh/theme";
 import {
   Bell,
   Blocks,
@@ -324,8 +333,7 @@ function Views() {
   const x = createAnimatedValue(0);
   effect(() => {
     const to = view() === "grid" ? 0 : seg;
-    if (reduceMotion()) x.set(to);
-    else void x.spring(to, motion.settle);
+    void animate(x, to, motion.settle);
   });
   const choose = (next: "grid" | "list", on: boolean) => {
     if (!on || next === view()) return;
@@ -492,7 +500,7 @@ function StarToggle(props: {
           void ring.timing(1, { duration: 460, easing: Easing.out(Easing.cubic) });
         } else {
           pop.set(0.8);
-          void pop.spring(1, motion.press);
+          void animate(pop, 1, motion.press);
         }
       }}
       style={{

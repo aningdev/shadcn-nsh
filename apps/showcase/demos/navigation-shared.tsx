@@ -1,4 +1,4 @@
-import { colors, focusRing, motion, rounded, shape } from "@shadcn-nsh/theme";
+import { animate, colors, focusRing, motion, rounded, shape } from "@shadcn-nsh/theme";
 // The Navigation batch's shared bits (its files alone): the platform's line of a hint, the caption
 // row, the labeled switch a card's trailing edge shows, the settle an entrance animates with, and
 // the header bar the pages of a stack draw where the app draws headers (the desktops, the web) —
@@ -27,7 +27,7 @@ export function settleOn(key: () => unknown): AnimatedValue {
     shown = next;
     if (reduceMotion()) return;
     t.set(0);
-    void t.spring(1, motion.control);
+    void animate(t, 1, motion.control);
   });
   return t;
 }

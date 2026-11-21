@@ -1,6 +1,6 @@
 // Shared motion: a control shakes when a value is rejected, and a figure rolls to its next one.
 // This library's own. Yours to change.
-import { motion as themeMotion } from "@shadcn-nsh/theme";
+import { isTiming, motion as themeMotion } from "@shadcn-nsh/theme";
 import type { StyleProp, TextStyle, ViewStyle } from "nsh";
 import { createMotion, effect, reduceMotion, signal, Text } from "nsh";
 
@@ -71,7 +71,14 @@ export function Roll(props: { value: number; style?: StyleProp<TextStyle>; child
     motion.opacity.set(0);
     void motion.play({
       keyframes: { translateY: [away, 0], opacity: [0, 1] },
-      spring: themeMotion.control,
+      ...(isTiming(themeMotion.control)
+        ? { duration: themeMotion.control.duration, easing: themeMotion.control.easing }
+        : {
+            spring: {
+              stiffness: themeMotion.control.stiffness,
+              damping: themeMotion.control.damping,
+            },
+          }),
     });
   });
   return (

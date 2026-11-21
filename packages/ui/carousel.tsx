@@ -6,13 +6,16 @@ import {
   colors,
   finish,
   focusRing,
+  hovered,
   platformMaterial,
+  stateLayer,
+  style as themeStyle,
   terminal,
   stroke,
   dimmed,
 } from "@shadcn-nsh/theme";
 import { ChevronLeft } from "lucide";
-import type { JSX, StyleProp, ViewStyle } from "nsh";
+import type { AndroidProps, JSX, StyleProp, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
 import {
   Carousel as BaseCarousel,
@@ -32,7 +35,7 @@ import {
 } from "nsh/base";
 
 import { Icon } from "./lib/icons";
-import { pressSink, pressTransition } from "./lib/press";
+import { mergeAndroid, pressHostProps, pressRipple, pressSink, pressTransition } from "./lib/press";
 import { joinClass } from "./lib/utils";
 
 // @port look/nav.tsx
@@ -85,9 +88,25 @@ export function carouselArrowLook(o?: CarouselArrowOptions) {
       };
     },
     get hoverStyle(): ViewStyle {
+      if (themeStyle().state.overlay.hover > 0) {
+        return hovered(
+          "foreground",
+          o?.glass ? finish.glass.backgroundImage : finish.raised.backgroundImage,
+        );
+      }
       return { ...finish.hover };
     },
     get activeStyle(): ViewStyle {
+      if (themeStyle().state.overlay.pressed > 0) {
+        return {
+          ...stateLayer(
+            "pressed",
+            "foreground",
+            o?.glass ? finish.glass.backgroundImage : finish.raised.backgroundImage,
+          ),
+          ...pressSink(0.92).activeStyle,
+        };
+      }
       return pressSink(0.92).activeStyle;
     },
     get focusVisibleStyle(): ViewStyle {
@@ -95,6 +114,9 @@ export function carouselArrowLook(o?: CarouselArrowOptions) {
     },
     get disabledStyle(): ViewStyle {
       return { opacity: dimmed.disabled };
+    },
+    get android(): AndroidProps | undefined {
+      return pressRipple("foreground");
     },
   };
 }
@@ -272,6 +294,9 @@ export function CarouselPrevious(props: CarouselPreviousProps) {
     <BasePrevious
       {...(props.glass ? platformMaterial("glass") : {})}
       {...rest}
+      {...pressHostProps(() =>
+        mergeAndroid(props.glass ? platformMaterial("glass").android : undefined, look.android),
+      )}
       accessibilityLabel={props.accessibilityLabel ?? "Previous slide"}
       class={props.class}
       style={over(look.style, props.style)}
@@ -305,6 +330,9 @@ export function CarouselNext(props: CarouselNextProps) {
     <BaseNext
       {...(props.glass ? platformMaterial("glass") : {})}
       {...rest}
+      {...pressHostProps(() =>
+        mergeAndroid(props.glass ? platformMaterial("glass").android : undefined, look.android),
+      )}
       accessibilityLabel={props.accessibilityLabel ?? "Next slide"}
       class={props.class}
       style={over(look.style, props.style)}
