@@ -8,6 +8,10 @@
 - **A finish can ask for the platform's own material (#199).** Every finish in `finishes.json` has `material`: `null` (every theme the library ships), or `apple: { glass, tint }`, `ios: { backdrop }`, `macos: { backdrop, blending, state }` and `windows: { backdrop }` with NSH's values. `themed()` adds `glassEffect` and `glassTintColor` to the finish's style for `apple` and never `material` itself; `platformMaterial(role)` from `@shadcn-nsh/theme` returns the `ios`, `macos` and `windows` props, reactive to `selectTheme` and the appearance, and `PopIn` (popover, hover card, navigation menu), `Toast`, `CodeEditorFindBar` and the glass `CarouselPrevious` / `CarouselNext` spread it. `check:theme` requires `material` on every finish and holds its values to the allow-list. Nothing changes on screen; the `Finish` type gains `material`, so a theme you wrote needs `"material": null` on each finish.
 - **The docs site shows the version it documents (#197).** The nav carries `v<version>` next to the name on every page; while `CHANGELOG.md`'s `Unreleased` has entries the site, which deploys from `main`, is ahead of that release and the label reads `v<version>+`.
 
+### Fixed
+
+- **`SplitViewTrigger`'s icon follows the appearance and the theme (#202).** It read its glyph once at mount, so the icon kept the mount-time color after a switch to dark or a `selectTheme`.
+
 ## 0.9.0 — the Gallery's parts, style roles in themes, and `lib/ui`
 
 ### Added

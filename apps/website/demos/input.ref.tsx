@@ -37,9 +37,8 @@ function strength(value: string): number {
 
 /** Four segments, the word for the score, and the rules: `View` and `Text`, as the look writes it. */
 function Strength(props: { value: string }) {
-  const score = strength(props.value);
-  const tones = [ui().faint, ui().danger, ui().warn, ui().info, ui().up];
-  const tone = tones[score];
+  const score = () => strength(props.value);
+  const tone = () => [ui().faint, ui().danger, ui().warn, ui().info, ui().up][score()];
   return (
     <View style={{ gap: 8, paddingTop: 2 }}>
       <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
@@ -51,7 +50,7 @@ function Strength(props: { value: string }) {
                   flex: 1,
                   height: 6,
                   borderRadius: 3,
-                  backgroundColor: step() < score ? tone : alpha(ui().text, 0.1),
+                  backgroundColor: step() < score() ? tone() : alpha(ui().text, 0.1),
                 }}
               />
             )}
@@ -63,10 +62,10 @@ function Strength(props: { value: string }) {
             textAlign: "right",
             fontSize: 13,
             fontWeight: "500",
-            color: tone,
+            color: tone(),
           }}
         >
-          {STRENGTH_WORDS[score]}
+          {STRENGTH_WORDS[score()]}
         </Text>
       </View>
       <View style={{ flexDirection: "row", flexWrap: "wrap", columnGap: 14, rowGap: 6 }}>

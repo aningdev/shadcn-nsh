@@ -119,7 +119,6 @@ function Trigger(props: {
 }) {
   const shown = () => props.columnVisibility === "automatic" || props.columnVisibility === "all";
   const look = splitViewTriggerLook();
-  const glyph = look.glyph();
   return (
     <View
       onPress={() =>
@@ -136,7 +135,7 @@ function Trigger(props: {
       focusVisibleStyle={look.focusVisibleStyle()}
       style={[look.style(), null]}
     >
-      <Icon icon={PanelLeft} size={glyph.size} tint={glyph.tint} />
+      <Icon icon={PanelLeft} size={look.glyph().size} tint={look.glyph().tint} />
     </View>
   );
 }

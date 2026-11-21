@@ -283,7 +283,6 @@ function sidebarShown(columnVisibility: ColumnVisibility | undefined) {
 export function SplitViewTrigger(props: SplitViewTriggerProps) {
   const shown = () => sidebarShown(props.columnVisibility);
   const look = splitViewTriggerLook();
-  const glyph = look.glyph();
   return (
     <View
       onPress={() => {
@@ -303,7 +302,7 @@ export function SplitViewTrigger(props: SplitViewTriggerProps) {
       focusVisibleStyle={look.focusVisibleStyle()}
       style={[look.style(), props.style ?? null]}
     >
-      <Icon icon={PanelLeft} size={glyph.size} tint={glyph.tint} />
+      <Icon icon={PanelLeft} size={look.glyph().size} tint={look.glyph().tint} />
     </View>
   );
 }

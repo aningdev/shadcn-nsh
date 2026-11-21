@@ -39,7 +39,6 @@ const weeks = rows.flatMap((row, index) => ("week" in row ? [index] : []));
 function Week() {
   const scroll = createAnimatedValue(0);
   const look = collapsingHeaderLook();
-  const ink = look.ink();
   return (
     <Scroll testID="page" scrollValue={scroll} style={{ flex: 1 }}>
       <CollapsingHeader testID="header" scroll={scroll} expandedHeight={OPEN} collapsedHeight={BAR}>
@@ -55,7 +54,7 @@ function Week() {
                   height: n() * 104,
                   borderRadius: n() * 52,
                   borderWidth: 1,
-                  borderColor: alpha(ink, 0.1 - n() * 0.015),
+                  borderColor: alpha(look.ink(), 0.1 - n() * 0.015),
                 }}
               />
             )}
@@ -136,7 +135,6 @@ function Starred() {
   const scroll = createAnimatedValue(0);
   const starred = signal(false);
   const look = collapsingHeaderLook();
-  const ink = look.ink();
   return (
     <View style={{ gap: 10 }}>
       <View style={{ height: 240, ...sectionSurface(), overflow: "hidden" }}>
@@ -159,7 +157,7 @@ function Starred() {
                       height: n() * 104,
                       borderRadius: n() * 52,
                       borderWidth: 1,
-                      borderColor: alpha(ink, 0.1 - n() * 0.015),
+                      borderColor: alpha(look.ink(), 0.1 - n() * 0.015),
                     }}
                   />
                 )}
