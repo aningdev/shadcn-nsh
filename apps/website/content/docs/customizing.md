@@ -7,7 +7,7 @@ description: "The three places to change a copied component: the theme, its look
 
 | Change                 | Where                                                    | Reaches                                   |
 | ---------------------- | -------------------------------------------------------- | ----------------------------------------- |
-| Colors, radii, shadows | `theme.json`, `lib/ui/finishes.json`                     | every component                           |
+| Colors, radii, shadows | `theme.json`, `lib/ui/semantics.json`                    | every component                           |
 | One control's look     | its `*Look` function in `components/ui/<id>.tsx`         | that control's variants, sizes and states |
 | Structure or API       | the component and parts after the look, in the same file | that component's props and parts          |
 
@@ -15,15 +15,15 @@ In a monorepo, every path starts at `packages/ui/` instead of the app root.
 
 ## Colors, radii and shadows
 
-`theme.json` holds the colors for both appearances and the radii; `lib/ui/finishes.json` holds gradients, shadows and edges by role. Every component reads them through `lib/ui/theme.ts`.
+`theme.json` holds the colors for both appearances, the eight `radius-*` lengths, and font families; `lib/ui/semantics.json` holds style groups and surface finishes (`shared` + sparse `light`/`dark`), referencing tokens with `{token}`. Every component reads them through `lib/ui/theme.ts`.
 
 ```sh
-theme.json            # colors and radii
-lib/ui/finishes.json     # gradients, shadows, edges
-lib/ui/theme.ts          # colors, finish, radius, focusRing, alpha
+theme.json               # base tokens: colors, 8 radii, fonts
+lib/ui/semantics.json    # style groups and surface finishes
+lib/ui/theme.ts          # colors, finish, shape, font, focusRing, alpha
 ```
 
-Edit the values and keep the keys: components and finishes refer to them by name, and both appearances need the same set. This is the change that reaches every component at once. [Theme](./theme) lists the roles.
+Edit the values and keep the keys: components and finishes refer to them by name, and both appearances need the same merged finish shape. This is the change that reaches every component at once. [Theme](./theme) lists the roles.
 
 ```json
 {
@@ -47,7 +47,7 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
       const dims = dimensions(o);
       return {
         height: terminal ? TERMINAL_ROW : dims.height,
-        borderRadius: radius.control,
+        borderRadius: shape.control,
         // ...
       };
     },
@@ -79,4 +79,4 @@ Change the shell to change which props a component takes, which parts it exports
 
 ## After an update
 
-`add` keeps a file the app changed and reports it; `diff` shows the lines; `add --overwrite` replaces it. `theme.json` is the exception: one with missing keys is merged, and a recolored one is kept unless `--overwrite`.
+`add` keeps a file the app changed and reports it; `diff` shows the lines; `add --overwrite` replaces it. `theme.json` and `semantics.json` are the exceptions: one with missing keys is merged, and customized values are kept unless `--overwrite`.

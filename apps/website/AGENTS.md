@@ -126,7 +126,7 @@ Adding a component: add or extend the official row if one of theirs answers it (
 
 ## Theme
 
-`packages/theme` is the only look: `theme.json` (colors and radii), `finishes.json` (gradients and shadows), `theme.ts` (`colors`, `finish`, `radius`, `focusRing`, `alpha`). Pages and demos use those readers; no page hand-writes a palette, and no stylesheet in this app carries a color — `src/styles/fd.css` only imports Tailwind, Fumadocs' preset and its neutral colors (usable as `bg-fd-success`, `text-fd-muted-foreground`, …). See `content/docs/theme.md` and [the theme README](../../packages/theme/README.md).
+`packages/theme` is the only look: `theme.json` (colors, 8 radii, fonts), `semantics.json` (style groups and finishes), `theme.ts` (`colors`, `finish`, `shape`, `font`, `focusRing`, `alpha`). Pages and demos use those readers; no page hand-writes a palette, and no stylesheet in this app carries a color — `src/styles/fd.css` only imports Tailwind, Fumadocs' preset and its neutral colors (usable as `bg-fd-success`, `text-fd-muted-foreground`, …). See `content/docs/theme.md` and [the theme README](../../packages/theme/README.md).
 
 ## Checks
 

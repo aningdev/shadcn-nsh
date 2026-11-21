@@ -90,7 +90,7 @@ PR 标题用这个格式，它就是 squash 之后 `main` 上的提交信息；�
 
 1. `bun run port:new <id> --from <上游文件>` 生成骨架（外壳、演示、文档页、registry 条目、路由）。
 2. `bun run port:vendor <id>` 把上游的那段抽进 `// @port <上游文件>` 与 `// @port end` 之间；**这两个标记之间归本库**，可以直接改。
-3. 颜色只来自主题（`theme.json` 的 token 与 `finishes.json` 的 finish），组件文件里不写颜色字面量；外观上的决定写进对应文档。
+3. 颜色只来自主题（`theme.json` 的 token 与 `semantics.json` 的 finish），组件文件里不写颜色字面量；外观上的决定写进对应文档。
 4. 补演示（手机与桌面两种画布）与文档页；`bun run catalog --check` 会查它们与导出是否齐全。
 5. `bun run registry:build`，然后按上一节跑检查。
 

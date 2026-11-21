@@ -12,7 +12,7 @@
 
 /** A finish as the spec's table states it: its name, what it draws, and who reads it. */
 export interface FinishRow {
-  /** The name `finishes.json` spells it by: `knobOn`, `menu`. */
+  /** The name `semantics.json` spells it by: `knobOn`, `menu`. */
   role: string;
   /** What it draws, in the spec's words. */
   draws: string;

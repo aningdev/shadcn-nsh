@@ -102,7 +102,7 @@ packages/theme/themes/<id>/
 
 两文件的分层判定规则、 `{token}` 引用语法与 DTCG 2025.10 映射见 [`design-semantics.md`](design-semantics.md)。全部 8 个圆角与可选 `font-sans` 统一定义在 `theme.json`；`semantics.json` 的 `shape.*` 与 `type.family` 以 `{token}` 引用它们，`finishes` 拆为 `shared` 与稀疏 `light`/`dark` 覆写，按压缩放归入 `state.pressScale`。
 
-### 3.2 `finishes.json` 的风格键表
+### 3.2 `semantics.json` 的风格键表
 
 风格分 **9 组数据**（`type`、`shape`、`size`、`stroke`、`focus`、`state`、`motion`、`icon`、`indicator`），加上 3.3 的 finish `material` 字段，共 10 组。9 组写在顶层，与 `press`（已有，按下缩多少）并列，排在 `light` / `dark`（各 finish 的面）之前：
 

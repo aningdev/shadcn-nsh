@@ -51,7 +51,7 @@ const look = (texts: string[]): Look => ({
 const resolved = /^#[0-9a-f]{6,8}$/i;
 
 /** A raised button's shadow, its corners and how far it sinks, from a theme's finishes and radii. A
- * theme whose `press.scale` is 1 draws no press: a control asked to sink as ever stands still. Its
+ * theme whose `state.pressScale` is 1 draws no press: a control asked to sink as ever stands still. Its
  * fill is an alias, so the page reads it out resolved and the shape of it is checked, not a
  * literal. */
 const raisedIn = (semantics: Semantics, appearance: "light" | "dark", radius: string) => {

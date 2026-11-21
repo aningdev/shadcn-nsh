@@ -21,7 +21,7 @@
 
 | 路径                                     | 内容                                                                                         |
 | ---------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `packages/theme`                         | `theme.json`、`finishes.json`（oklch）、`theme.ts`（角色读取）                               |
+| `packages/theme`                         | `theme.json`、`semantics.json`（oklch）、`theme.ts`（角色读取）                              |
 | `packages/ui`                            | 组件（来源于上游的部分以 `// @port` 标注 + 外壳）                                            |
 | `apps/website/demos`                     | 验收演示、演示适配层 `stage.tsx`、渲染比对、`port:render`                                    |
 | `apps/website/src/pages/docs/components` | 组件文档页                                                                                   |
@@ -60,7 +60,7 @@
 上游 nsh-gallery-ui（参考规范；port:check 提醒变化）
    │  新增组件时 port:vendor 抽取初稿
    ▼
-packages/theme   theme.json + finishes.json + theme.ts
+packages/theme   theme.json + semantics.json + theme.ts
 packages/ui/lib  没有所属控件的共享部分（press、overlay、surface…）
 packages/ui/<id>.tsx  一个组件 = look（来源标注 // @port）+ 外壳，都归本库
 apps/website/demos、docs  演示与文档页
@@ -69,7 +69,7 @@ apps/website/demos、docs  演示与文档页
 registry.json → public/r → shadcn-nsh add
 ```
 
-依赖向下：本库 → `nsh/base` → `nsh`。主题真源是 `theme.json` 与 `finishes.json`，以 oklch 存储、归本库所有（起点取自上游）。
+依赖向下：本库 → `nsh/base` → `nsh`。主题真源是 `theme.json` 与 `semantics.json`，以 oklch 存储、归本库所有（起点取自上游）。
 
 ## 工作约定
 

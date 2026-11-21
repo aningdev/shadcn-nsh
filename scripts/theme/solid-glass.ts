@@ -30,7 +30,7 @@ import { withSurfaces } from "./surfaces";
 /** One appearance of the stylesheet's variables, by name (without the `--`). */
 type Source = Record<string, string>;
 
-/** A finish role, as `finishes.json` writes it: the keys the default theme declares for the role. */
+/** A finish role, as `semantics.json` writes it: the keys the default theme declares for the role. */
 type Finish = Record<string, string>;
 
 /** `:root`: the panes in daylight, on a cool grey page. */
@@ -471,7 +471,7 @@ function finishes(appearance: Appearance): Record<string, Finish> {
       borderColor: alias("glass-edge"),
     },
     // Pressed, it sits down on the page: the shadow under it goes and the pane darkens a step.
-    // The stylesheet draws no press of its own beyond that, so `press.scale` below is 1.
+    // The stylesheet draws no press of its own beyond that, so `state.pressScale` below is 1.
     pressed: {
       ...paneAt("muted", coords(s("glass-state-armed")).a),
       boxShadow: `inset 0 1px 0 ${s("glass-control-rim")}`,

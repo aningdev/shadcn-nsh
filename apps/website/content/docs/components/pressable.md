@@ -98,7 +98,7 @@ A press sinks a pressable to 98%. `scale` is that much and nothing else: `0.8` f
 
 ### The look alone
 
-The look is a function, for a `nsh/base` control of your own. Its `radius.control` corners shape the focus ring; a `style` with its own radius moves the ring with it.
+The look is a function, for a `nsh/base` control of your own. Its `shape.control` corners shape the focus ring; a `style` with its own radius moves the ring with it.
 
 ```tsx
 <Button {...pressableLook()}>Open the note</Button>

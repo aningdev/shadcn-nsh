@@ -190,7 +190,7 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `Bub
 | `children` | `BubbleContent`   | `string \| JSX.Element`                                                                    |           |
 | `children` | `BubbleText`      | `JSX.Element`                                                                              |           |
 
-The frame is `radius.card` (14 points) with 12 points of room either side and 8 above and below;
+The frame is `shape.card` (14 points) with 12 points of room either side and 8 above and below;
 the turn's type is the body's size (13 points with a pointer, 15 on a touch screen) with a step of
 leading, in the ink the fill carries — `primary-foreground` on `default`, the page's text color on
 the neutral fills, `destructive` on `destructive`. Reactions are 6 points either side, 3 above and

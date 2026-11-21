@@ -51,7 +51,7 @@ const shape: Record<
 /** A finish's `material` the way every finish writes it when it asks for nothing. */
 export const noMaterial = null;
 
-/** Every finish of a `finishes.json` document with `material: null`: what a generated theme writes. */
+/** Every finish of a `semantics.json` document with `material: null`: what a generated theme writes. */
 export const withoutMaterial = (
   finishes: Record<string, Record<string, unknown>>,
 ): Record<string, Record<string, unknown>> =>

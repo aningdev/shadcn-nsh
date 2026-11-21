@@ -105,7 +105,7 @@ export type FinishStyle = Omit<Finish, "material"> & {
   glassTintColor?: string;
 };
 
-/** The finishes' roles: the keys of `finishes.json`'s two appearances. */
+/** The finishes' roles: the keys of `semantics.json`'s `finishes` block. */
 export type FinishRole =
   | "card"
   | "inset"
@@ -187,7 +187,7 @@ export interface Spring {
 }
 
 /**
- * The style of a theme: what `finishes.json` states beside its finishes, the same keys in every
+ * The style of a theme: what `semantics.json` states beside its finishes, the same keys in every
  * theme (`check:theme`). A string that names one of a list (a weight, a curve, an easing, an
  * indicator) is typed as a string here, since a JSON import is; `check:theme` holds the list
  * (`scripts/theme/style.ts`). `docs/specs/native-themes.md` §3.2 says what each key is.
@@ -750,7 +750,7 @@ export const toneTint = (tone: Tone) =>
  * use the system font with tabular numbers instead. */
 export const mono = () => token("font-mono");
 
-/** A type role of `finishes.json`'s `type`: every one but the family. */
+/** A type role of `semantics.json`'s `type`: every one but the family. */
 export type TypeName = Exclude<keyof Style["type"], "family">;
 
 /**
@@ -802,7 +802,7 @@ export const shape = {
   },
 };
 
-/** Line widths in points (`finishes.json`'s `stroke`): `hairline` a surface's edge and a divider, `control` a control's edge, `indicator` a selection's bar. The focus ring's width is `focus.width`. */
+/** Line widths in points (`semantics.json`'s `stroke`): `hairline` a surface's edge and a divider, `control` a control's edge, `indicator` a selection's bar. The focus ring's width is `focus.width`. */
 export const stroke = {
   get hairline() {
     return style().stroke.hairline;
@@ -816,7 +816,7 @@ export const stroke = {
 };
 
 /**
- * How far a control fades (`finishes.json`'s `state`): `pressed` is the opacity of a pressed
+ * How far a control fades (`semantics.json`'s `state`): `pressed` is the opacity of a pressed
  * control (`pressedOpacity`), `disabled` and `disabledContainer` those of a disabled control's
  * content (the whole control, when it is drawn as one) and of its container.
  */
@@ -1007,7 +1007,7 @@ export function fillStyle(): ViewStyle {
 
 /**
  * A rail's edge: a `width`-point inset line of `borderColor` inside the theme's `boxShadow`,
- * whichever of the two the theme gives. `finishes.json` may write `boxShadow: "none"` or leave
+ * whichever of the two the theme gives. `semantics.json` may write `boxShadow: "none"` or leave
  * the color out, and a rail that joined the absent one after a comma would void the whole
  * declaration (`none, inset …` is not a shadow).
  */

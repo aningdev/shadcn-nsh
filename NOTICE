@@ -13,7 +13,7 @@ This project adapts the shared UI layer of NSH (Native Shell):
 What was changed: the looks of the shared controls (their state design and
 geometry) are re-expressed as copy-into-app components over `nsh/base`, with this
 library's own theme in place of the original colours — the theme's data is the
-library's (`packages/theme/theme.json` and `finishes.json`, stored in `oklch()`),
+library's (`packages/theme/theme.json` and `semantics.json`, stored in `oklch()`),
 and shadcn's neutral palette is an alternative theme installed by
 `init --theme shadcn`, not the default one. The Terminal idiom, the sounds and the
 website playground adapters are left out, and the API is named and composed the way
@@ -38,7 +38,7 @@ colour and finish values of Solid Glass's stylesheet:
 
 What was changed: the stylesheet's shadcn/ui colour variables and its glass
 finishes (edges, hairlines, shadows) are read into this library's theme files
-(`theme.json`, `finishes.json`), written in `oklch()`, with the roles this
+(`theme.json`, `semantics.json`), written in `oklch()`, with the roles this
 library adds mapped from them. Its components, typefaces and site are not
 taken.
 

@@ -27,8 +27,8 @@ Every command takes `-c, --cwd <dir>` (default: the current directory). `init`, 
 `view` and `diff` also take `--registry <url>`, a template with `{name}` in it; without it, `add`,
 `list`, `view` and `diff` use the one in `nsh-ui.json`, and `init` uses the public registry.
 `init` also takes `--overwrite`, `-y` (accepted; nothing prompts today) and `--theme <name>`,
-`default` (the library's own) or `shadcn` (shadcn's neutral palette and flat finishes) — the theme
-the app is **built** with: `theme.json`, `lib/ui/finishes.json`, and what `nsh.json` points at.
+`default`, `shadcn`, `solid-glass`, `apple`, or `native` — the theme the app is **built** with:
+`theme.json`, `lib/ui/semantics.json`, and what `nsh.json` points at.
 
 ## add
 
@@ -42,8 +42,10 @@ shadcn-nsh add button --overwrite
 - A file the app does not have is written; one identical to the registry's is skipped.
 - A file the app changed is kept and reported: `kept components/ui/button.tsx, differs (run diff)`.
   `--overwrite` (`-o`) replaces it and prints the change: `overwrite components/ui/button.tsx (+2 -1)`.
-- `theme.json` is merged by key: the app keeps its colors and gains the tokens it lacks. A
-  recolored theme is kept as it is (`kept theme.json (the app's colors stay)`).
+- `theme.json` and `semantics.json` are merged by key: the app keeps its colors, style values
+  and finishes and gains any tokens, style keys, or finishes it lacks. Customized theme files
+  with no missing keys are kept as they are (`kept theme.json (the app's colors stay)`,
+  `kept lib/ui/semantics.json (the app's semantics stay)`).
 - `--all` (`-a`) adds every `registry:ui` item the catalog lists, dependencies included.
 - Naming a theme (`add theme-shadcn`) installs **one more theme**: its files land in
   `themes/<name>/` and can be switched to while the app runs (`selectTheme`, see
@@ -51,7 +53,7 @@ shadcn-nsh add button --overwrite
   app's build-time theme, and `nsh-ui.json` stays as it is. To make a theme the build-time one,
   re-run `init --theme <name> --overwrite`.
 - **This library's own theme is one of them**: `add theme-default` installs it into
-  `themes/default/` (its `theme.json` and `finishes.json` are the ones an app is built with, and
+  `themes/default/` (its `theme.json` and `semantics.json` are the ones an app is built with, and
   an `index.ts` exports `defaultTheme`). An app built with `init --theme shadcn` lists both and
   switches between them; `selectTheme(null)` still means its build-time theme.
 - `theme`, named or as a dependency, is the theme in `nsh-ui.json`: in an app on `theme-shadcn`
@@ -88,8 +90,8 @@ shadcn-nsh diff || echo "run shadcn-nsh add <item> --overwrite"
 ```
 
 Lines are the registry's version against the app's: `-` is a line of the app's file that
-overwriting would drop, `+` one it would add. `theme.json` compares keys, not values — a
-recolored theme is the app's own, and only `add --overwrite` replaces it.
+overwriting would drop, `+` one it would add. `theme.json` and `semantics.json` compare keys, not
+values — a recolored or customized theme is the app's own, and only `add --overwrite` replaces it.
 
 ## nsh-ui.json
 
@@ -102,8 +104,8 @@ recolored theme is the app's own, and only `add --overwrite` replaces it.
   "aliases": {
     "components": "./components",
     "ui": "./components/ui",
-    "lib": "./lib",
-    "theme": "./lib/theme"
+    "lib": "./lib/ui",
+    "theme": "./lib/ui/theme"
   }
 }
 ```

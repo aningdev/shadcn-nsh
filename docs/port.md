@@ -122,7 +122,7 @@ bun run port:new alert --view --family   # 有零件（Title / Description…）
 
 ## 主题文件
 
-`packages/theme/theme.json` 与 `finishes.json` 已归本库所有：`port-map.json` 写的是 `"owned": "<路径>"`，起点是上游那两个文件，此后在这里改，不再从上游拷。
+`packages/theme/theme.json` 与 `semantics.json` 已归本库所有：`port-map.json` 写的是 `"owned": "<路径>"`，起点是上游那两个文件，此后在这里改，不再从上游拷。
 
 - `port:vendor` 跳过它们（不带 id 时打印一行 `own  …`）；`port:check` 不比对内容，也不要求它们是模块。
 - 颜色一律 `oklch()`：token、渐变的每一站、阴影、`color-mix()` 里的颜色，透明度写成 `oklch(… / a)`；`transparent` 与 `var(--x)` 原样保留。换成 `oklch()` 的换算器是 `bun scripts/theme/to-oklch.ts`，它同时是幂等的规范化器。

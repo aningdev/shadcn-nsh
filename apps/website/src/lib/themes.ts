@@ -1,6 +1,6 @@
 /**
  * The themes the docs site shows: each palette of the demos (`demos/palettes.ts`) with the theme
- * it draws — `packages/theme/themes/<id>/theme.json` and the `finishes.json` beside it — as the
+ * it draws — `packages/theme/themes/<id>/theme.json` and the `semantics.json` beside it — as the
  * build has them. `import.meta.glob` reads every theme file once, eagerly, so a theme page is
  * drawn from the same JSON at build time and in the browser — no `node:fs`, and the page prerenders
  * like any other. `check:pages` holds the registry items and the theme pages to the same list, so a
@@ -28,7 +28,7 @@ export type ThemeFile = {
   };
 };
 
-/** The fields a finish may draw with, in `finishes.json`'s order. */
+/** The fields a finish may draw with, in `semantics.json`'s order. */
 export const FINISH_FIELDS = [
   "backgroundColor",
   "backgroundImage",

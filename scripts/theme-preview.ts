@@ -6,7 +6,7 @@
  *   bun scripts/theme-preview.ts <name> [--only id,id] [--appearance light|dark]
  *
  * `<name>` is `default` (the files as they are: `<id>-default-…` pictures) or a directory under
- * `packages/theme/themes/` holding `theme.json` and `finishes.json` (e.g. `shadcn`).
+ * `packages/theme/themes/` holding `theme.json` and `semantics.json` (e.g. `shadcn`).
  *
  * The theme is a build input (`nsh.json`'s `theme`), not a runtime switch, so each alternative is
  * a full package run: `scripts/audit/audit.ts build --force --only …` then `shots --only …`, once

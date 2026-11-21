@@ -1,17 +1,17 @@
 ---
 title: Theme
-description: theme.json and finishes.json are the look; lib/ui/theme.ts reads them for every component.
+description: theme.json and semantics.json are the look; lib/ui/theme.ts reads them for every component.
 ---
 
-The theme is the upstream gallery's: a graphite page (paper in light appearance), cards and insets, one citrus accent, compact controls with a pointer and roomier ones on a touch screen. It is two JSON files plus the module that reads them, and every component takes its colors, radii and depth from there — no component writes a color of its own.
+The theme is the upstream gallery's: a graphite page (paper in light appearance), cards and insets, one citrus accent, compact controls with a pointer and roomier ones on a touch screen. It is two JSON files — base tokens in `theme.json` and cross-platform semantics in `semantics.json`, following the [design-semantics standard](https://github.com/aningdev/shadcn-nsh/blob/main/docs/specs/design-semantics.md) — plus the module that reads them, and every component takes its colors, radii, typography, motion and depth from there. No component writes a color of its own.
 
 ## Files
 
-| File              | What it holds                                                                           |
-| ----------------- | --------------------------------------------------------------------------------------- |
-| `theme.json`      | Colors, radii and the monospaced family in shadcn's `cssVars` shape, for light and dark |
-| `finishes.json`   | Gradients, shadows and edges by role, for light and dark                                |
-| `lib/ui/theme.ts` | `colors`, `finish`, `radius`, `mono`, `focusRing` and `alpha`, read from both files     |
+| File              | What it holds                                                                                                                                                                                              |
+| ----------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `theme.json`      | Base tokens: colors (light / dark and shared), all 8 `radius-*` lengths, and font families (`font-mono`, optional `font-sans`) in shadcn's `cssVars` shape                                                 |
+| `semantics.json`  | Semantic layer: 9 style groups (`type`, `shape`, `size`, `stroke`, `focus`, `state`, `motion`, `icon`, `indicator`) and `finishes` (`shared` + sparse `light` / `dark`), referencing tokens with `{token}` |
+| `lib/ui/theme.ts` | `colors`, `finish`, `shape`, `font`, `style`, `mono`, `focusRing` and `alpha`, read reactively from both files                                                                                             |
 
 ## Installation
 
@@ -19,7 +19,7 @@ The theme is the upstream gallery's: a graphite page (paper in light appearance)
 npx shadcn-nsh@latest add theme
 ```
 
-`add theme` writes `theme.json`, `lib/ui/finishes.json` and `lib/ui/theme.ts`, the data of the theme `nsh-ui.json` records (`theme-shadcn` writes shadcn's). `init` writes the same files and also points each `nsh.json` at `theme.json`. In a monorepo they live under `packages/ui`. Every component depends on it.
+`add theme` writes `theme.json`, `lib/ui/semantics.json` and `lib/ui/theme.ts`, the data of the theme `nsh-ui.json` records (`theme-shadcn` writes shadcn's). `init` writes the same files and also points each `nsh.json` at `theme.json`. In a monorepo they live under `packages/ui`. Every component depends on it.
 
 ## Colors
 
@@ -64,7 +64,7 @@ Read a role where it is drawn (in JSX, a `draw`, or an effect): the getters read
 
 ## Finishes
 
-A finish is light and depth: a gradient over the color, its shadows, its edge. `finishes.json` keeps one entry per role for each appearance, and `finish.<role>` returns the one the appearance shows.
+A finish is light and depth: a gradient over the color, its shadows, its edge. `semantics.json` keeps `finishes.shared` (fields identical in both appearances, referencing `{token}` so NSH's `token()` handles light/dark switching) plus sparse `finishes.light` and `finishes.dark` overrides, and `finish.<role>` merges them and resolves every `{token}` (including `oklch(from {card} l c h / 0.78)`) for the active appearance.
 
 | Role                             | Use                                                           |
 | -------------------------------- | ------------------------------------------------------------- |
@@ -112,41 +112,43 @@ Windows' Mica is not a finish: it is the window's own `backdrop` in `nsh-desktop
 Spread one where a control needs that depth:
 
 ```tsx
-<View style={{ backgroundColor: colors.raised, ...finish.raised, borderRadius: radius.control }} />
+<View style={{ backgroundColor: colors.raised, ...finish.raised, borderRadius: shape.control }} />
 ```
 
 ## Radii
 
-`theme.json`'s `theme` block holds one base length, `radius` (10), and the two tiers derived from
-it: `radius-control` (8, 0.8× the base) and `radius-card` (14, 1.4× the base), each rounded to whole
-points. `radius` reads them for JSX:
+`theme.json`'s `cssVars.theme` block defines all eight corner radii once (`radius`, `radius-control`, `radius-field`, `radius-chip`, `radius-card`, `radius-overlay`, `radius-dialog`, `radius-sheet`). In `semantics.json`, `shape.*` references them with `"{radius-…}"` alongside `shape.curve` (`"continuous" | "circular"`) and `shape.corners.field` (`"all" | "top"`). `shape` resolves each role reactively via `token()`:
 
 ```tsx
-import { radius } from "@shadcn-nsh/theme";
+import { shape } from "@shadcn-nsh/theme";
 
-radius.inset; // 10, the base
-radius.control; // 8
-radius.card; // 14
+shape.inset; // 10, from radius
+shape.control; // 8, from radius-control
+shape.field; // 8, from radius-field
+shape.chip; // 10, from radius-chip
+shape.card; // 14, from radius-card
+shape.overlay; // 10, from radius-overlay
+shape.dialog; // 14, from radius-dialog
+shape.sheet; // 14, from radius-sheet
 ```
 
-A capsule theme (`apple`: `radius-control` is `999px`) does not derive its tiers by those multiples; its `radius-card` is 20, one step out from the base. A dialog takes the card tier. `rounded()` puts a corner on one of these with the continuous curve
-every theme corner shares:
+Themes generated from a base radius (`shadcn`, `solid-glass`) derive `radius-control` / `radius-field` at `0.8×` and `radius-card` / `radius-dialog` / `radius-sheet` at `1.4×`, while platform themes (`apple`) state HIG metrics per role (`999px` capsules for `radius-control` / `radius-chip`, `20px` cards, `26px` dialogs, `34px` sheets). `rounded()` puts a corner on one of these with `shape.curve` (`"continuous"` or `"circular"`):
 
 ```tsx
-import { radius, rounded } from "@shadcn-nsh/theme";
+import { rounded, shape } from "@shadcn-nsh/theme";
 
-const card = { ...rounded(radius.card) };
+const card = { ...rounded(shape.card) };
 ```
 
 ## Reading the theme
 
 ```tsx
-import { alpha, colors, finish, focusRing, radius, rounded } from "@shadcn-nsh/theme";
+import { alpha, colors, finish, focusRing, rounded, shape } from "@shadcn-nsh/theme";
 
 const card = {
   backgroundColor: colors.card,
   borderColor: colors.border,
-  ...rounded(radius.card),
+  ...rounded(shape.card),
   boxShadow: finish.card.boxShadow,
 };
 
@@ -154,22 +156,22 @@ const ring = focusRing(); // the keyboard focus outline
 const dim = alpha(colors.foreground, 0.4); // a color at 40%
 ```
 
-`focusRing(offset)` is the shared keyboard outline: the muted `ring` edge and a 3-point halo of `ring-halo`. `hovered()` is the pointer's fill, the `hover` token. `alpha(color, a)` is a `color-mix` of that color with transparency. `colors`, `finish` and `radius` are getters, not snapshots: read them where they are used.
+`focusRing(offset)` is the shared keyboard outline: the muted `ring` edge and a 3-point halo of `ring-halo`. `hovered()` is the pointer's fill, the `hover` token (plus `stateLayer("hover")` when `state.overlay.hover > 0`). `alpha(color, a)` is a `color-mix` of that color with transparency. `colors`, `finish`, `shape` and `style()` are reactive: read them where they are used.
 
 ## Override from nsh.json
 
 An app's `nsh.json` sets the look in two places, and the two do not merge:
 
-| Key in `nsh.json` | What it sets                                                                                      | When it is read                                                                  |
-| ----------------- | ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------- |
-| `"theme"`         | the path to `theme.json`: every token this library reads — colours, `radius` and its tiers, fonts | on each read, at runtime — so `setTheme` and every theme an app carries reach it |
-| `"tailwind"`      | the app's own class strings: `colors`, `fontFamily`, `spacing`, `radius`, …                       | when the app is built, into the class strings — no component here reads it       |
+| Key in `nsh.json` | What it sets                                                                                           | When it is read                                                                                     |
+| ----------------- | ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
+| `"theme"`         | the path to `theme.json`: every base token — colours, all 8 `radius-*` tokens, `font-sans`/`font-mono` | on each read, at runtime — so `setTheme`, `setThemeOverrides`, `shape` and `font.family()` reach it |
+| `"tailwind"`      | the app's own class strings: `colors`, `fontFamily`, `spacing`, `radius`, …                            | when the app is built, into the class strings — no component here reads it                          |
 
-Components take their look from `"theme"`: `colors`, `finish` and `radius` read the tokens where they are used. `"tailwind"` shapes class names — which this library writes too (`bg-muted`, `text-sm`, `h-8`) — but it is fixed at build time, so nothing in it can follow `setTheme`. NSH's [theme tokens](https://nsh.dev/docs/tailwind#theme-tokens) has the rule in full.
+Components take their look from `"theme"`: `colors`, `finish`, `shape` and `font` read the tokens where they are used. `"tailwind"` shapes class names — which this library writes too (`bg-muted`, `text-sm`, `h-8`) — but it is fixed at build time, so nothing in it can follow `setTheme`. NSH's [theme tokens](https://nsh.dev/docs/tailwind#theme-tokens) has the rule in full.
 
 **A colour named in `"tailwind"` wins over the token of the same name.** With `"colors": { "primary": "#3366ff" }`, every `bg-primary` in the app draws blue — pagination's selected page, a data table's move indicator — while `colors.primary` in JSX stays the theme's citrus. One name, two colours, and the panels drawn by class are the ones that differ. Set the role in `"theme"` instead.
 
-The theme file stays complete: copy it, then edit. A shadcn slot it leaves out falls back to shadcn's neutral (see [Colors](#colors)), and `finishes.json` names tokens by key, so both appearances need the same set.
+The theme file stays complete: copy it, then edit. A shadcn slot it leaves out falls back to shadcn's neutral (see [Colors](#colors)), and `semantics.json` names tokens with `{token}`, so both appearances need the same set.
 
 Add a colour the app's own classes use (both appearances — a token in one alone is not a token):
 
@@ -182,11 +184,11 @@ Add a colour the app's own classes use (both appearances — a token in one alon
 }
 ```
 
-Change a role: `primary` in `cssVars.light` and `cssVars.dark`. Change the radius: `radius` in `cssVars.theme`, and with it `radius-control` (0.8× it, rounded) and `radius-card` (1.4×) — the three are one scale, and every corner follows them: `rounded()` in the styles and `rounded-(--radius…)` in the classes, this library's and the app's own alike. Set the fonts in the same block: see [Fonts](#fonts).
+Change a role: `primary` in `cssVars.light` and `cssVars.dark`. Change a radius: any of the 8 `radius-*` tokens in `cssVars.theme` — every corner follows them: `shape.*` and `rounded()` in the styles, and `rounded-(--radius…)` in the classes, this library's and the app's own alike. Set the fonts in the same block: see [Fonts](#fonts).
 
 ## Fonts
 
-Two tokens are fonts. `font-sans` is the app's font — every text that names no family of its own — and `font-mono` is the monospaced family: the `font-mono` class, code in a `Text`, and this library's `mono()`. Both live in `cssVars.theme`. This library sets `font-mono` and leaves `font-sans` out, so both are the system's:
+Two base tokens are fonts: `font-sans` is the app's body font — every text that names no family of its own — and `font-mono` is the monospaced family: the `font-mono` class, code in a `Text`, and this library's `mono()`. Both live in `cssVars.theme`. In `semantics.json`, `type.family` is `"{font-sans}"` (or `"{font-mono}"`), or `null` for the system default; `font.family()` resolves it reactively via `token()`. The shipped themes set `font-mono` and leave `font-sans` out (`type.family: null`), so both use the system's own:
 
 ```json
 {
@@ -211,12 +213,12 @@ This library distributes no font files: `add theme` writes JSON and TypeScript, 
 
 ## Restyling
 
-Edit the two JSON files; every component follows. Change a brand color in `cssVars.light` and `cssVars.dark`, a radius in `cssVars.theme`, a shadow or gradient in `finishes.json`. Keep the keys: components and finishes refer to them by name, and both appearances need the same set.
+Edit the two JSON files; every component follows. Change a brand color in `cssVars.light` and `cssVars.dark`, a radius or font in `cssVars.theme`, a shadow, gradient, style group or material in `semantics.json`. Keep the keys: components and finishes refer to them by name, and both appearances need the same merged finish shape.
 
-- Add the theme to an app with `shadcn-nsh add theme` (or let `init` do it).
+- Add the theme to an app with `shadcn-nsh add theme` (or let `init` do it); subsequent `add` runs key-merge missing entries into `theme.json` and `semantics.json` while keeping your values.
 - Replacing both files together rebrands the whole library; a key added upstream should be added here too.
 - The demos on this site can draw in an installed theme: the **Demo theme** switch in the nav (Default, shadcn, Solid Glass or Apple) writes the demo app's palette and loads the panels again. The list is `apps/website/demos/palettes.ts`; a demo reads the palette before it mounts, so its first frame is already the chosen theme. Every palette — its install command and every role it sets — has a page linked from [Themes](./themes).
 - To change one component's look instead, edit its look function in the copied component; to change structure or API, edit the shell. See [Customizing](./customizing).
 - Maintaining this repository: edit the look in `packages/ui` (a `// @port` region is ours); `port:check` lists upstream's changes and `bun run port:review` marks them read. After editing `packages/theme`, run `bun run registry:build` and commit `public/r`.
 
-Theme rules and decisions: [`packages/theme/README.md`](https://github.com/aningdev/shadcn-nsh/blob/main/packages/theme/README.md). Behavior and accessibility are `nsh/base`'s: [nsh.dev/elements](https://nsh.dev/elements).
+Theme rules and decisions: [`docs/specs/design-semantics.md`](https://github.com/aningdev/shadcn-nsh/blob/main/docs/specs/design-semantics.md), [`docs/specs/theme-roles.md`](https://github.com/aningdev/shadcn-nsh/blob/main/docs/specs/theme-roles.md) and [`packages/theme/README.md`](https://github.com/aningdev/shadcn-nsh/blob/main/packages/theme/README.md). Behavior and accessibility are `nsh/base`'s: [nsh.dev/elements](https://nsh.dev/elements).

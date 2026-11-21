@@ -1,5 +1,5 @@
 /**
- * Rewrites the default theme files (`packages/theme/theme.json`, `finishes.json`) so every color
+ * Rewrites the default theme files (`packages/theme/theme.json`, `semantics.json`) so every color
  * is canonical `oklch()`: tokens, gradients, shadows, `color-mix()` innards. NSH reads `oklch()`
  * wherever a color is a string, and the alternative themes (`themes/shadcn/`) are generated in
  * that form, so the default theme is written the same way.

@@ -88,8 +88,8 @@ const FAQ: { question: string; answer: ReactNode }[] = [
         <code>native</code> picks apple on Apple platforms and default elsewhere. Choose one with{" "}
         <code>init --theme</code>, add more with <code>add theme-&lt;name&gt;</code> and switch at
         run time with <code>selectTheme</code>. A theme is data — <code>theme.json</code> and{" "}
-        <code>finishes.json</code> — so yours is an edit away. See <a href="/docs/themes">Themes</a>
-        .
+        <code>semantics.json</code> — so yours is an edit away. See{" "}
+        <a href="/docs/themes">Themes</a>.
       </>
     ),
   },

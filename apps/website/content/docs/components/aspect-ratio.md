@@ -60,7 +60,7 @@ The content is anything: a chart, a placeholder, a block's fill with its label c
 of your own goes over the look's, so the fill and the corners are the caller's.
 
 ```tsx
-<AspectRatio ratio={16 / 9} style={{ backgroundColor: token("muted"), borderRadius: radius.inset }}>
+<AspectRatio ratio={16 / 9} style={{ backgroundColor: token("muted"), borderRadius: shape.inset }}>
   <Text style={{ color: colors.mutedForeground }}>Weekly review</Text>
 </AspectRatio>
 ```

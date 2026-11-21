@@ -21,7 +21,7 @@
 
 - **跟上游**：`port:vendor` + `port-map.json` 管住来源与去向，`port:check` 提醒上游变化（审阅后采纳，`port:review`），`port:render` 做像素门禁，`test:install` 逐条目在真实应用里装一遍；NSH 发版当天即可适配。
 - **分发**：CLI `init / add / list / view / diff`，registry 随版本发布（`v<version>/public/r`），装到的文件与在跑的 CLI 对得上。
-- **外观是数据**：`theme.json` 的 token 与 `finishes.json` 的 finish，组件只按 token 与 finish 读取；三套主题数据（本库默认、shadcn、solid-glass），运行时可切换（`selectTheme`），文档站的演示也能换着画。
+- **外观是数据**：`theme.json` 的 token 与 `semantics.json` 的语义层及 finish，组件只按 token 与 finish 读取；多套主题数据（本库默认、shadcn、solid-glass、apple），运行时可切换（`selectTheme`），文档站的演示也能换着画。
 - **API 一致**：`variant` / `size` / `tone` 统一，部件名照 shadcn（`Trigger` / `Content` / `Item` …），词表由测试固定。
 - **自适应经验**：Phone / Desktop 画布、idiom、`Split`、终端形态。
 

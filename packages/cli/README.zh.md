@@ -26,8 +26,8 @@ bunx shadcn-nsh@latest add button
 每个命令都接受 `-c, --cwd <dir>`（默认：当前目录）。`init`、`add`、`list`、`view`、`diff`
 另接受 `--registry <url>`（含 `{name}` 的模板）；省略时 `add`、`list`、`view`、`diff` 用
 `nsh-ui.json` 里的，`init` 用公共 registry。`init` 还接受 `--overwrite`、`-y`（接受，当前不弹确认）与 `--theme <name>`：
-`default`（本库自己的主题）或 `shadcn`（shadcn 的 neutral 配色与平面 finish）—— 这是应用**构建时**的主题：
-`theme.json`、`lib/ui/finishes.json`，以及 `nsh.json` 指向的那份。
+`default`、`shadcn`、`solid-glass`、`apple` 或 `native` —— 这是应用**构建时**的主题：
+`theme.json`、`lib/ui/semantics.json`，以及 `nsh.json` 指向的那份。
 
 ## add
 
@@ -41,14 +41,14 @@ shadcn-nsh add button --overwrite
 - 应用没有的文件写入；与 registry 相同的跳过。
 - 应用改过的文件保留并报告 `kept components/ui/button.tsx, differs (run diff)`。
   `--overwrite`（`-o`）替换它并打印改动量：`overwrite components/ui/button.tsx (+2 -1)`。
-- `theme.json` 按 key 合并：应用保留自己的颜色，补上缺的 token；改过颜色的主题原样保留
-  （`kept theme.json (the app's colors stay)`）。
+- `theme.json` 与 `semantics.json` 按 key 合并：应用保留自己的颜色、风格与表面配方，补上缺的 token、风格键或 finish；未缺键的自定义主题原样保留
+  （`kept theme.json (the app's colors stay)`、`kept lib/ui/semantics.json (the app's semantics stay)`）。
 - `--all`（`-a`）加全部 `registry:ui` 条目（含依赖）。
 - 点名一个主题（`add theme-shadcn`）就是**多装一套**：它的文件落在 `themes/<name>/`，应用运行时可以切过去
   （`selectTheme`，见 [`packages/theme/README.zh.md`](../theme/README.zh.md#一套以上主题)）。它不动应用的构建时主题，
   `nsh-ui.json` 也保持原样。要让某套成为构建时主题，用 `init --theme <name> --overwrite`。
 - **本库自己的那套也是其中一员**：`add theme-default` 把它装进 `themes/default/`（里面的 `theme.json` 与
-  `finishes.json` 就是应用"本来会构建成"的那份，另有导出 `defaultTheme` 的 `index.ts`）。用
+  `semantics.json` 就是应用"本来会构建成"的那份，另有导出 `defaultTheme` 的 `index.ts`）。用
   `init --theme shadcn` 构建的应用两项都列、来回切；`selectTheme(null)` 仍指它的构建时主题。
 - `theme` 这个依赖仍按 `nsh-ui.json` 里的条目解析，所以 `add button`、`add button --overwrite`、
   `add --all --overwrite` 都不会把默认主题写回来。
@@ -77,7 +77,7 @@ shadcn-nsh diff || echo "run shadcn-nsh add <item> --overwrite"
 ```
 
 行以 registry 版本对照应用版本：`-` 是覆盖会删掉的应用中的行，`+` 是它会加的行。
-`theme.json` 按 key 比较、不按值——改过颜色的主题是应用自己的，只有 `add --overwrite`
+`theme.json` 与 `semantics.json` 按 key 比较、不按值——改过颜色或语义的主题是应用自己的，只有 `add --overwrite`
 会整体替换。
 
 ## nsh-ui.json
@@ -91,8 +91,8 @@ shadcn-nsh diff || echo "run shadcn-nsh add <item> --overwrite"
   "aliases": {
     "components": "./components",
     "ui": "./components/ui",
-    "lib": "./lib",
-    "theme": "./lib/theme"
+    "lib": "./lib/ui",
+    "theme": "./lib/ui/theme"
   }
 }
 ```
