@@ -79,6 +79,6 @@ git push origin vX.Y.Z
 
 ## 8 发完之后
 
-- 文档站随 `main` 自动部署（`deploy-docs.yml`），不用单独操作。
+- 文档站随 `main` 自动部署（`deploy-docs.yml`），不用单独操作。导航里名字旁的版本标签也跟着走，不用另改：它在构建时读 `packages/cli/package.json` 的版本，`CHANGELOG.md` 的 `Unreleased` 有条目时在版本后加 `+`（站点领先于该版本），发版切空 `Unreleased` 后就是裸版本号。
 - 装不上、文件不对：发一个补丁版本。**不要改已经发出去的标签**——那等于换掉别人已经装进应用的源码。
 - 兼容矩阵与 `upstream.cli` 跟着一起更新，别让它们落后于实际基线。

@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+
+- **The docs site shows the version it documents (#197).** The nav carries `v<version>` next to the name on every page; while `CHANGELOG.md`'s `Unreleased` has entries the site, which deploys from `main`, is ahead of that release and the label reads `v<version>+`.
+
 ## 0.9.0 — the Gallery's parts, style roles in themes, and `lib/ui`
 
 ### Added

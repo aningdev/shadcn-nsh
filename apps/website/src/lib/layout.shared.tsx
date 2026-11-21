@@ -19,16 +19,47 @@ export const EDIT_BASE = `${REPO_URL}/edit/${gitConfig.branch}/`;
 
 export const NSH_SITE_URL = "https://nsh.dev";
 
-const appName = SITE_TITLE;
+/**
+ * The release the site documents, next to the name. The site deploys from `main`, so when the
+ * changelog's `Unreleased` has entries it is ahead of that release and the label says so: `+`
+ * after the version, spelled out for hover and screen readers. Both values are fixed at build time
+ * (`vite.config.ts`). Not a link: the title it sits in already links home.
+ */
+function VersionLabel() {
+  const version = `v${import.meta.env.DOCS_VERSION}`;
+  const ahead = import.meta.env.DOCS_UNRELEASED;
+  return (
+    <span
+      title={ahead ? `${version} with unreleased changes` : version}
+      className="text-fd-muted-foreground rounded-md border px-1.5 py-0.5 font-mono text-xs font-normal"
+    >
+      {version}
+      {ahead && (
+        <>
+          <span aria-hidden>+</span>
+          <span className="sr-only"> with unreleased changes</span>
+        </>
+      )}
+    </span>
+  );
+}
 
 /**
- * The chrome the home layout and the docs layout share: the name, and the repo it is edited in. No
+ * The chrome the home layout and the docs layout share: the name with the version it documents, and
+ * the repo it is edited in. No
  * `links`: the sidebar's tree already starts with Getting started, CLI, Theme and the components,
  * and the docs layout draws `links` in that same sidebar, so they would be listed twice.
  */
 export function baseOptions(): BaseLayoutProps {
   return {
-    nav: { title: appName },
+    nav: {
+      title: (
+        <>
+          {SITE_TITLE}
+          <VersionLabel />
+        </>
+      ),
+    },
     githubUrl: REPO_URL,
   };
 }

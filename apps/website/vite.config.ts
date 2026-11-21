@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+
 import tailwindcss from "@tailwindcss/vite";
 import { tanstackStart } from "@tanstack/react-start/plugin/vite";
 import react from "@vitejs/plugin-react";
@@ -47,6 +49,18 @@ const { docsLlms } = (
 ).module;
 
 /**
+ * The version the site documents, read once at build time so nothing is fetched at run time and the
+ * changelog never ships: the CLI's version, which the library shares (`docs/release.md`), and
+ * whether `CHANGELOG.md`'s `Unreleased` has entries. The site deploys from `main`, so with entries
+ * it documents changes that release does not have yet, and its label says so.
+ */
+const DOCS_VERSION: string = JSON.parse(
+  readFileSync(new URL("../../packages/cli/package.json", import.meta.url), "utf8"),
+).version;
+const changelog = readFileSync(new URL("../../CHANGELOG.md", import.meta.url), "utf8");
+const DOCS_UNRELEASED = /^## Unreleased\n([\s\S]*?)(?=^## )/m.exec(changelog)?.[1]?.trim() !== "";
+
+/**
  * The site is served at the root of its own domain, `https://shadcn-nsh.aning.dev/` (GitHub Pages'
  * custom domain). `base` and `basepath` stay wired, so moving it under a path again is this one
  * constant: Vite's `base` prefixes the URLs it emits, TanStack Router's `basepath` the ones it
@@ -54,6 +68,10 @@ const { docsLlms } = (
  */
 export default defineConfig({
   base: BASE,
+  define: {
+    "import.meta.env.DOCS_VERSION": JSON.stringify(DOCS_VERSION),
+    "import.meta.env.DOCS_UNRELEASED": JSON.stringify(DOCS_UNRELEASED),
+  },
   server: {
     port: 4321,
   },
