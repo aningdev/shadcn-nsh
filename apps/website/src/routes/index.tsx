@@ -16,9 +16,9 @@ import {
 import { PALETTES } from "../../demos/palettes";
 
 /**
- * The site's front page: what this is, how to start, and the showcase app running live. It is
- * Fumadocs' home layout (the nav bar, no sidebar); the docs start one link away. The numbers are
- * read from the generated component list, so the page never claims a count by hand.
+ * The site's front page: what this is, the showcase app running live, and the questions a visitor
+ * asks first. It is Fumadocs' home layout (the nav bar, no sidebar); the docs start one link away.
+ * The numbers are read from the generated component list, so the page never claims a count by hand.
  */
 export const Route = createFileRoute("/")({
   component: Home,
@@ -27,60 +27,85 @@ export const Route = createFileRoute("/")({
   }),
 });
 
-const FEATURES: { title: string; body: ReactNode }[] = [
+/** The questions a visitor asks before trying it; each answer is checked against the repo. */
+const FAQ: { question: string; answer: ReactNode }[] = [
   {
-    title: "Copy into your app",
-    body: (
+    question: "Is this an official NSH project?",
+    answer: (
+      <>
+        No, it is a community project. Behavior, keyboard and accessibility come from NSH&apos;s own{" "}
+        <code>nsh/base</code>, unchanged; the look starts from NSH&apos;s official example UI and is
+        owned and maintained here.
+      </>
+    ),
+  },
+  {
+    question: "How does it relate to shadcn/ui? Can I use it in a React web app?",
+    answer: (
+      <>
+        It follows shadcn/ui&apos;s model — a registry, a CLI, one file per component, and parts
+        named <code>Trigger</code>, <code>Content</code>, <code>Item</code> — but the components
+        draw NSH native views, not the DOM, so they don&apos;t run in a React DOM app. An NSH app
+        reaches the browser through NSH&apos;s web target, which is how every demo on this site
+        runs.
+      </>
+    ),
+  },
+  {
+    question: "Why copy files instead of installing a package? How do I get updates?",
+    answer: (
       <>
         <code>add</code> writes the component, its theme and the looks it imports into your app,
-        then forgets them. No runtime package to keep in sync: the files are yours to change.
+        then forgets them: there is no runtime package of ours to keep in sync, and the files are
+        yours to change. <code>npx shadcn-nsh@latest diff</code> shows which copies differ from the
+        registry; <code>add &lt;name&gt; --overwrite</code> writes the new version over yours.
       </>
     ),
   },
   {
-    title: "Native behavior",
-    body: (
+    question: "Which platforms does it run on?",
+    answer: (
       <>
-        Keyboard, focus, accessibility and platform idioms come from <code>nsh/base</code>. The
-        components only decide how things look.
+        Wherever NSH does: iOS, Android, macOS, Windows, Linux, the web and the terminal. Each
+        component adapts its density and controls to a touch screen, a pointer and a keyboard.
       </>
     ),
   },
   {
-    title: "The look is data",
-    body: (
+    question: "Which NSH version do I need?",
+    answer: (
       <>
-        Colors and surfaces are read from <code>theme.json</code> and <code>finishes.json</code>,
-        never written in a component, so one theme swaps the whole look — even while the app runs.
+        Each release tracks one NSH CLI version — 0.9.x is written against v0.6.1. The{" "}
+        <a href={`${REPO_URL}#compatibility`}>compatibility table</a> lists them all.
       </>
     ),
   },
   {
-    title: "Phone, desktop, terminal",
-    body: (
+    question: "Which themes are there? Can I make my own?",
+    answer: (
       <>
-        Each component adapts its density and controls to a touch screen, a pointer and a keyboard,
-        and draws in the terminal too.
+        Four ship: default, shadcn, solid-glass and apple (Liquid Glass on macOS and iOS 26), and{" "}
+        <code>native</code> picks apple on Apple platforms and default elsewhere. Choose one with{" "}
+        <code>init --theme</code>, add more with <code>add theme-&lt;name&gt;</code> and switch at
+        run time with <code>selectTheme</code>. A theme is data — <code>theme.json</code> and{" "}
+        <code>finishes.json</code> — so yours is an edit away. See <a href="/docs/themes">Themes</a>
+        .
       </>
     ),
   },
   {
-    title: "The shadcn/ui shape",
-    body: (
+    question: "Does it work with AI coding assistants?",
+    answer: (
       <>
-        A registry, a CLI and one file per component, with the composition and names you know from
-        shadcn/ui: <code>Trigger</code>, <code>Content</code>, <code>Item</code>.
+        Every docs page is also Markdown: add <code>.md</code> to its URL.{" "}
+        <a href="/llms.txt">/llms.txt</a> indexes them and{" "}
+        <a href="/llms-full.txt">/llms-full.txt</a> holds them all in one file.
       </>
     ),
   },
   {
-    title: "Every page is live",
-    body: (
-      <>
-        Each component page runs its demo in the browser through NSH&apos;s web target, in the phone
-        or the desktop layout and in any of the themes.
-      </>
-    ),
+    question: "What is the license?",
+    answer: <>MIT. The copied files are yours, with no runtime dependency on this project.</>,
   },
 ];
 
@@ -105,11 +130,11 @@ function Home() {
             Built on Native Shell ↗
           </a>
           <h1 className="max-w-3xl text-4xl font-semibold tracking-tight text-balance md:text-6xl">
-            Native components you copy into your app
+            NSH components you copy into your app
           </h1>
           <p className="text-fd-muted-foreground max-w-2xl text-lg text-balance">
-            Styled UI for NSH, built on <code>nsh/base</code> and handed to you as files you own —
-            what shadcn/ui gives React.
+            Styled, themeable UI for Native Shell, built on <code>nsh/base</code>. Add a component
+            with the CLI and the file is yours — what shadcn/ui does for React.
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <a
@@ -143,40 +168,31 @@ function Home() {
         </section>
 
         <section className="flex flex-col gap-6">
-          <Heading title="Why shadcn-nsh" />
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {FEATURES.map((feature) => (
-              <div
-                key={feature.title}
-                className="border-fd-border bg-fd-card flex flex-col gap-2 rounded-xl border p-5"
-              >
-                <h3 className="font-medium">{feature.title}</h3>
-                <p className="text-fd-muted-foreground text-sm">{feature.body}</p>
-              </div>
+          <Heading title="FAQ" />
+          <div className="border-fd-border divide-fd-border divide-y border-y">
+            {FAQ.map((item) => (
+              <details key={item.question} className="group">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 py-4 font-medium [&::-webkit-details-marker]:hidden">
+                  {item.question}
+                  <span
+                    aria-hidden="true"
+                    className="text-fd-muted-foreground text-xl leading-none transition-transform group-open:rotate-45"
+                  >
+                    +
+                  </span>
+                </summary>
+                <p className="text-fd-muted-foreground pb-4 [&_a]:underline [&_a]:underline-offset-2">
+                  {item.answer}
+                </p>
+              </details>
             ))}
           </div>
-        </section>
-
-        <section className="border-fd-border bg-fd-card flex flex-col items-center gap-4 rounded-2xl border px-6 py-12 text-center">
-          <h2 className="text-2xl font-semibold tracking-tight">Start with one component</h2>
-          <p className="text-fd-muted-foreground max-w-xl">
-            <code>init</code> sets up the theme and the <code>@/</code> alias; <code>add</code>{" "}
-            copies a component and what it needs.
-          </p>
-          <div className="w-full max-w-xl text-left">
-            <InstallTabs command={"npx shadcn-nsh@latest init\nnpx shadcn-nsh@latest add button"} />
-          </div>
-          <div className="flex flex-wrap justify-center gap-4 text-sm">
-            <a href="/docs/getting-started" className="font-medium underline">
-              Getting started
-            </a>
-            <a href="/docs/cli" className="font-medium underline">
-              CLI
-            </a>
-            <a href={REPO_URL} className="font-medium underline">
-              GitHub ↗
-            </a>
-          </div>
+          <a
+            href="/docs/getting-started"
+            className="self-start font-medium underline underline-offset-4"
+          >
+            Get started →
+          </a>
         </section>
       </main>
     </HomeLayout>

@@ -62,9 +62,9 @@ type ToggleOption<T extends string> = { value: T; label: string; id?: string; co
 /**
  * The toolbar's two switches, one look: a bordered group whose chosen item is lifted, like the
  * library's toggle group. `tablist` for Preview | Source (it switches panels), `radiogroup` for
- * Phone | Desktop.
+ * Phone | Desktop. The home page's showcase frame uses it too.
  */
-function ToggleGroup<T extends string>({
+export function ToggleGroup<T extends string>({
   label,
   role,
   options,

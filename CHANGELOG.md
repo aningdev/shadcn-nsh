@@ -10,6 +10,7 @@
 
 ### Changed
 
+- **The home page answers the first questions (#210).** The hero says "NSH components you copy into your app"; "See it running" gains a Desktop | Phone switch and an Open in new tab button over the showcase app; "Why shadcn-nsh" and "Start with one component" give way to an FAQ (official or not, shadcn/ui and React, copying and updates, platforms, NSH version, themes, AI assistants, license) that ends with a Get started link.
 - **The home page runs the showcase app (#208).** “See it running” embeds the showcase app itself, the Gallery shell and its scenes with the theme and appearance switched inside it, in place of the theme demo and a link. The separate `/showcase` page is gone; the app is packaged to `public/showcase/`.
 
 ### Fixed
