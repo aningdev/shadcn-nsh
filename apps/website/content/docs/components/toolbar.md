@@ -36,7 +36,10 @@ Use the following composition to build a `Toolbar`:
 ```text
 Toolbar
 ├── ToolbarGroup
-└── ToolbarSeparator
+│   └── ToolbarItem
+├── ToolbarItem
+├── ToolbarSeparator
+└── ToolbarOverflow
 ```
 
 ## Examples
@@ -164,14 +167,123 @@ const commit = (next, what) => {
 </Toolbar>;
 ```
 
+### Overflow
+
+Add `ToolbarOverflow` and wrap foldable tools in `ToolbarItem` so the bar measures each item with
+`onLayout` and folds lower-priority tools into the `"⋯"` menu as the bar narrows. Give a
+`ToolbarGroup` `fold="unit"` (the default) to fold the whole group together under its
+`accessibilityLabel`, or `fold="none"` to let its `ToolbarItem`s fold individually by their own
+`priority`. The bar draws the hairline rules between visible units and hides until its initial
+measurements arrive.
+
+```tsx
+import { MenuCheckboxItem, MenuItem, MenuRadioItem } from "@/components/ui/menu";
+import { Toolbar, ToolbarGroup, ToolbarItem, ToolbarOverflow } from "@/components/ui/toolbar";
+
+<Toolbar accessibilityLabel="Formatting" style={{ alignSelf: "stretch" }}>
+  <ToolbarGroup accessibilityLabel="History" fold="none">
+    <ToolbarItem
+      priority={4}
+      menu={
+        <MenuItem disabled={past().length === 0} onSelect={undo}>
+          Undo
+        </MenuItem>
+      }
+    >
+      <Button
+        variant="ghost"
+        accessibilityLabel="Undo"
+        disabled={past().length === 0}
+        onPress={undo}
+      >
+        <Icon icon={Undo2} />
+      </Button>
+    </ToolbarItem>
+    <ToolbarItem
+      priority={3}
+      menu={
+        <MenuItem disabled={future().length === 0} onSelect={redo}>
+          Redo
+        </MenuItem>
+      }
+    >
+      <Button
+        variant="ghost"
+        accessibilityLabel="Redo"
+        disabled={future().length === 0}
+        onPress={redo}
+      >
+        <Icon icon={Redo2} />
+      </Button>
+    </ToolbarItem>
+  </ToolbarGroup>
+  <ToolbarGroup accessibilityLabel="Marks" fold="none">
+    {MARKS.map((mark) => (
+      <ToolbarItem
+        foldable={mark !== "bold"}
+        priority={mark === "italic" ? 5 : 1}
+        menu={
+          <MenuCheckboxItem checked={has(mark)} onSelect={() => toggle(mark)}>
+            {mark}
+          </MenuCheckboxItem>
+        }
+      >
+        <Toggle pressed={has(mark)} accessibilityLabel={mark} onChange={() => toggle(mark)}>
+          {mark}
+        </Toggle>
+      </ToolbarItem>
+    ))}
+  </ToolbarGroup>
+  <ToolbarGroup accessibilityLabel="Alignment" priority={2} fold="unit">
+    {ALIGNS.map((align) => (
+      <ToolbarItem
+        menu={
+          <MenuRadioItem checked={doc().align === align} onSelect={() => setAlign(align)}>
+            {align}
+          </MenuRadioItem>
+        }
+      >
+        <Toggle
+          pressed={doc().align === align}
+          accessibilityLabel={align}
+          onChange={() => setAlign(align)}
+        >
+          {align}
+        </Toggle>
+      </ToolbarItem>
+    ))}
+  </ToolbarGroup>
+  <ToolbarOverflow accessibilityLabel="More formatting">
+    <MenuItem onSelect={clear}>Clear formatting</MenuItem>
+  </ToolbarOverflow>
+</Toolbar>;
+```
+
+## Differences from shadcn/ui
+
+- **shadcn/ui has no toolbar.** `Toolbar`, `ToolbarGroup`, `ToolbarSeparator`, `ToolbarItem`, and
+  `ToolbarOverflow` are this library's own parts over `nsh/base`'s toolbar.
+- **Measured overflow.** Because NSH evaluates children lazily and cannot inspect or wrap them
+  implicitly, tools opt into overflow via `ToolbarItem` and `ToolbarOverflow` rather than a prop
+  on `Toolbar`.
+
 ## API
 
 Every prop of [`nsh/base` Toolbar](https://nsh.dev/elements/toolbar), `ToolbarGroup` and `ToolbarSeparator` passes through. `style` goes over the look's. Items keep their own look (`Button`, `Toggle`, …).
 
-| Part               | Props                                     | Description                                                                    |
-| ------------------ | ----------------------------------------- | ------------------------------------------------------------------------------ |
-| `Toolbar`          | `axis`, and every `nsh/base` Toolbar prop | The bar: one toolbar for screen readers, arrow keys along `axis`, on the track |
-| `ToolbarGroup`     | every `nsh/base` ToolbarGroup prop        | A named run of items; its direction follows the bar                            |
-| `ToolbarSeparator` | every `nsh/base` ToolbarSeparator prop    | The hairline between runs, never a tab stop                                    |
+| Part               | Props                                                                                                                                         | Description                                                                                                                                    |
+| ------------------ | --------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Toolbar`          | `axis`, and every `nsh/base` Toolbar prop                                                                                                     | The bar: one toolbar for screen readers, arrow keys along `axis`, on the track                                                                 |
+| `ToolbarGroup`     | `priority`, `fold` (`"unit" \| "none"`), and every `nsh/base` ToolbarGroup prop                                                               | A named run of items; its direction follows the bar, and with `ToolbarOverflow` it folds as one unit or per item                               |
+| `ToolbarSeparator` | every `nsh/base` ToolbarSeparator prop                                                                                                        | The hairline between runs, never a tab stop (omitted when `ToolbarOverflow` manages the rules between visible units)                           |
+| `ToolbarItem`      | `menu`, `priority`, `foldable`                                                                                                                | Wraps one tool so a bar with `ToolbarOverflow` can measure its width and fold it into `"⋯"` when space runs out                                |
+| `ToolbarOverflow`  | `accessibilityLabel`, `label`, `open`, `defaultOpen`, `onOpenChange`, `tooltip`, `disabled`, `align`, `offset`, `margin`, `style`, `children` | The `"⋯"` trigger and menu showing folded tools in bar order (grouped under each `ToolbarGroup`'s `accessibilityLabel`), before any `children` |
+
+A bar without `ToolbarOverflow` behaves identically to a static bar. In a bar with `ToolbarOverflow`
+on a horizontal non-terminal surface, unmeasured items stay visible rather than blocking folding.
+Because `nsh/base`'s `Button`, `Toggle` and `Link` do not forward `onFocus`/`onBlur`, `Toolbar` does
+not expose `onFocusIn`/`onFocusOut`, and `nsh/base`'s roving focus marks non-stop items
+`focusable={false}` (`roving.rs`), focus cannot automatically move to `"⋯"` when a focused tool
+folds while an earlier tool remains visible.
 
 `toolbarTrack({ vertical })` (`@/lib/ui/tool`) and `toolbarRule(vertical)` are the look, for a bar of your own.

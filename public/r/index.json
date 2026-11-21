@@ -355,7 +355,7 @@
       "name": "toolbar",
       "type": "registry:ui",
       "title": "Toolbar",
-      "description": "An inset track of tools, with groups and hairline separators.",
+      "description": "An inset track of tools, with groups, hairline separators and an overflow menu.",
       "files": [
         {
           "path": "packages/ui/toolbar.tsx",

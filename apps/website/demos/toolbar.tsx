@@ -11,17 +11,26 @@ import { sectionSurface } from "@/packages/ui/lib/surface";
 import { toolbarTrack } from "@/packages/ui/lib/tool";
 import {
   Menu,
+  MenuCheckboxItem,
   MenuContent,
+  MenuItem,
   MenuLabel,
   MenuRadioItem,
   MenuSeparator,
   MenuTrigger,
 } from "@/packages/ui/menu";
 import { Toggle, ToggleGroup, toggleGlyph, toggleLabel, toggleLook } from "@/packages/ui/toggle";
-import { Toolbar, ToolbarGroup, ToolbarSeparator, toolbarRule } from "@/packages/ui/toolbar";
+import {
+  Toolbar,
+  ToolbarGroup,
+  ToolbarItem,
+  ToolbarOverflow,
+  ToolbarSeparator,
+  toolbarRule,
+} from "@/packages/ui/toolbar";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
-import { desktop, Log, Split, ui, wide } from "./stage";
+import { desktop, Log, Segmented, Split, ui, wide } from "./stage";
 
 type Mark = "bold" | "italic" | "underline";
 type Align = "left" | "center" | "right";
@@ -80,6 +89,8 @@ function App() {
   const past = signal<Doc[]>([]);
   const future = signal<Doc[]>([]);
   const blockOpen = signal(false);
+  const overflowBlockOpen = signal(false);
+  const overflowWidth = signal<"Full" | "300" | "230">("300");
   const lastEdit = signal("no edits");
   const commit = (next: Partial<Doc>, what: string) => {
     past.set([...past(), doc()].slice(-20));
@@ -358,6 +369,166 @@ function App() {
             <Text style={{ fontSize: 12, color: ui().muted }}>
               {`${doc().block}, ${aligned[doc().align]} · ${doc().marks.join(", ") || "no marks"} · ${lastEdit()} · ${past().length} back, ${future().length} forward`}
             </Text>
+          </View>
+        </DemoSection>
+      </DemoCard>
+
+      <DemoCard>
+        <DemoSection title="Overflow" axis="block">
+          <Text style={{ color: ui().muted }}>
+            When the bar holds a ToolbarOverflow, tools wrapped in ToolbarItem measure themselves
+            and lower-priority items (or whole unit groups) fold into a menu as space narrows.
+          </Text>
+          <Segmented
+            options={["Full", "300", "230"]}
+            value={overflowWidth()}
+            onChange={(v) => overflowWidth.set(v as "Full" | "300" | "230")}
+          />
+          <View
+            style={{
+              width: overflowWidth() === "Full" ? "100%" : Number(overflowWidth()),
+              maxWidth: "100%",
+            }}
+          >
+            <Toolbar accessibilityLabel="Overflow formatting" style={{ alignSelf: "stretch" }}>
+              <ToolbarGroup accessibilityLabel="History" fold="none">
+                <ToolbarItem
+                  priority={4}
+                  menu={
+                    <MenuItem disabled={past().length === 0} onSelect={undo}>
+                      Undo
+                    </MenuItem>
+                  }
+                >
+                  <Button
+                    variant="ghost"
+                    accessibilityLabel="Undo"
+                    disabled={past().length === 0}
+                    onPress={undo}
+                  >
+                    <Icon icon={Undo2} {...toggleGlyph(() => true)} />
+                  </Button>
+                </ToolbarItem>
+                <ToolbarItem
+                  priority={3}
+                  menu={
+                    <MenuItem disabled={future().length === 0} onSelect={redo}>
+                      Redo
+                    </MenuItem>
+                  }
+                >
+                  <Button
+                    variant="ghost"
+                    accessibilityLabel="Redo"
+                    disabled={future().length === 0}
+                    onPress={redo}
+                  >
+                    <Icon icon={Redo2} {...toggleGlyph(() => true)} />
+                  </Button>
+                </ToolbarItem>
+              </ToolbarGroup>
+              <ToolbarItem foldable={false}>
+                <Menu
+                  open={overflowBlockOpen()}
+                  onOpenChange={({ open }) => overflowBlockOpen.set(open)}
+                >
+                  <MenuTrigger>
+                    <View
+                      role="button"
+                      accessibilityLabel={`Block: ${doc().block}`}
+                      accessibilityState={{ expanded: overflowBlockOpen() }}
+                      {...toggleLook({ on: overflowBlockOpen })}
+                    >
+                      <Text style={{ fontSize: 14, color: ui().text }}>
+                        {blocks.find((b) => b.value === doc().block)!.glyph}
+                      </Text>
+                      <Text style={{ fontSize: 9, color: ui().faint }}>
+                        {overflowBlockOpen() ? "▴" : "▾"}
+                      </Text>
+                    </View>
+                  </MenuTrigger>
+                  <MenuContent>
+                    <MenuLabel>Turn into</MenuLabel>
+                    <MenuSeparator />
+                    {blocks.map((b) => (
+                      <MenuRadioItem
+                        checked={doc().block === b.value}
+                        onSelect={() => commit({ block: b.value }, `Block: ${b.value}`)}
+                      >
+                        {b.value}
+                      </MenuRadioItem>
+                    ))}
+                  </MenuContent>
+                </Menu>
+              </ToolbarItem>
+              <ToolbarGroup accessibilityLabel="Marks" fold="none">
+                {marks.map((m) => (
+                  <ToolbarItem
+                    foldable={m.id !== "bold"}
+                    priority={m.id === "italic" ? 5 : 1}
+                    menu={
+                      <MenuCheckboxItem
+                        checked={marked(m.id)}
+                        onSelect={() =>
+                          commit(
+                            {
+                              marks: marked(m.id)
+                                ? doc().marks.filter((x) => x !== m.id)
+                                : [...doc().marks, m.id],
+                            },
+                            `${m.label}: ${marked(m.id) ? "off" : "on"}`,
+                          )
+                        }
+                      >
+                        {m.label}
+                      </MenuCheckboxItem>
+                    }
+                  >
+                    <Toggle
+                      pressed={marked(m.id)}
+                      accessibilityLabel={m.label}
+                      onChange={({ pressed }) =>
+                        commit(
+                          {
+                            marks: pressed
+                              ? [...doc().marks, m.id]
+                              : doc().marks.filter((x) => x !== m.id),
+                          },
+                          `${m.label}: ${pressed ? "on" : "off"}`,
+                        )
+                      }
+                    >
+                      {glyph(m.glyph, () => marked(m.id))}
+                    </Toggle>
+                  </ToolbarItem>
+                ))}
+              </ToolbarGroup>
+              <ToolbarGroup accessibilityLabel="Alignment" priority={2} fold="unit">
+                {aligns.map((a) => (
+                  <ToolbarItem
+                    menu={
+                      <MenuRadioItem
+                        checked={doc().align === a.id}
+                        onSelect={() => commit({ align: a.id }, a.label)}
+                      >
+                        {a.label}
+                      </MenuRadioItem>
+                    }
+                  >
+                    <Toggle
+                      pressed={doc().align === a.id}
+                      accessibilityLabel={a.label}
+                      onChange={({ pressed }) => {
+                        if (pressed) commit({ align: a.id }, a.label);
+                      }}
+                    >
+                      {glyph(a.glyph, () => doc().align === a.id)}
+                    </Toggle>
+                  </ToolbarItem>
+                ))}
+              </ToolbarGroup>
+              <ToolbarOverflow accessibilityLabel="More formatting" />
+            </Toolbar>
           </View>
         </DemoSection>
       </DemoCard>

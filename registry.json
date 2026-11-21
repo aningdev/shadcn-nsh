@@ -379,15 +379,16 @@
       "name": "toolbar",
       "type": "registry:ui",
       "title": "Toolbar",
-      "description": "An inset track of tools, with groups and hairline separators.",
-      "registryDependencies": ["theme", "tool"],
+      "description": "An inset track of tools, with groups, hairline separators and an overflow menu.",
+      "registryDependencies": ["icons", "menu", "open-state", "theme", "toggle", "tool"],
       "files": [
         {
           "path": "packages/ui/toolbar.tsx",
           "type": "registry:ui",
           "target": "components/ui/toolbar.tsx"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     },
     {
       "name": "input",

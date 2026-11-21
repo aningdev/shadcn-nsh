@@ -4,6 +4,7 @@
 
 ### Added
 
+- **Toolbar overflow (`ToolbarItem`, `ToolbarOverflow`, and `ToolbarGroup` `priority` / `fold`) (#187).** A bar with `ToolbarOverflow` measures each `ToolbarItem` with `onLayout` and folds lower-priority tools—or whole `fold="unit"` `ToolbarGroup`s—into the `"⋯"` menu in bar order, grouped by the group's `accessibilityLabel`, while owning the rules between visible units, hiding on the first frame until measured, and keeping unmeasured items visible. Bars without `ToolbarOverflow` are unchanged, and the showcase's Toolbar formatting scene drops its hand-written width table for the new parts.
 - **`iconImage` turns an icon into an image (#149).** A native menu takes an image, not a view:
   `iconImage(icon, { weight, ink })` from `lib/icons` writes a lucide node as an SVG `data:` URL,
   stroked in `currentColor` so a menu draws it in its own text color, or in a fixed `ink` where a
