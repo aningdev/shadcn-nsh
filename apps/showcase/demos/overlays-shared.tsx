@@ -13,9 +13,16 @@ import {
   buttonLook,
   type ButtonVariant,
 } from "@/packages/ui/button";
+import {
+  Card,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/packages/ui/card";
 import { Input, type InputProps } from "@/packages/ui/input";
 import { Icon } from "@/packages/ui/lib/icons";
-import { density, sectionSurface } from "@/packages/ui/lib/surface";
 import { Segmented, SegmentedItem, SegmentedList } from "@/packages/ui/segmented";
 import { Separator } from "@/packages/ui/separator";
 import { toast as raiseToast, Toaster as ToastHost } from "@/packages/ui/toast";
@@ -181,20 +188,18 @@ export function SceneCard(props: {
   children: JSX.Element;
 }) {
   return (
-    <View style={[sectionSurface({ padded: true }), { gap: density.gap + 4 }]}>
-      <View style={{ flexDirection: "row", alignItems: "flex-start", gap: 12 }}>
-        <View style={{ flex: 1, gap: 2 }}>
-          <Text style={{ fontSize: 15, fontWeight: "600", color: colors.foreground }}>
-            {props.title}
-          </Text>
-          <If when={props.subtitle}>
-            <Text style={{ fontSize: 13, color: colors.mutedForeground }}>{props.subtitle}</Text>
-          </If>
-        </View>
-        {props.right}
-      </View>
-      {props.children}
-    </View>
+    <Card>
+      <CardHeader>
+        <CardTitle>{props.title}</CardTitle>
+        <If when={props.subtitle}>
+          <CardDescription>{props.subtitle}</CardDescription>
+        </If>
+        <If when={props.right}>
+          <CardAction>{props.right}</CardAction>
+        </If>
+      </CardHeader>
+      <CardContent>{props.children}</CardContent>
+    </Card>
   );
 }
 

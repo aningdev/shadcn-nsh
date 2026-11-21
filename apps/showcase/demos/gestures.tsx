@@ -2,7 +2,7 @@
 // Pan, pinch and rotation on one photo, a PanResponder ball, hover, wheel, raw touches, press
 // events, hit slop, pointer events and accessibility. Recognizers and the responder system are
 // `nsh`'s; buttons, badges, stats and press targets are this library's.
-import { alpha, colors, finish, mono, tints, shape } from "@shadcn-nsh/theme";
+import { alpha, colors, finish, mono, terminal, tints, shape } from "@shadcn-nsh/theme";
 import { Bell, Play, Star, type IconNode } from "lucide";
 import type { GestureResponderEvent, JSX, MouseButton } from "nsh";
 import {
@@ -19,23 +19,14 @@ import {
 import { Animated } from "nsh";
 
 import { Button } from "@/packages/ui/button";
+import { ItemMedia } from "@/packages/ui/item";
 import { Icon } from "@/packages/ui/lib/icons";
 import { density } from "@/packages/ui/lib/surface";
 import { Pressable, pressableLook } from "@/packages/ui/pressable";
 import { Stat } from "@/packages/ui/stat";
 
 import { DemoPage } from "../kit";
-import {
-  Api,
-  Appear,
-  hint,
-  IconTile,
-  knobDrop,
-  pointer,
-  Scene,
-  stage,
-  StatusBadge,
-} from "./motion-shared";
+import { Api, Appear, hint, knobDrop, pointer, Scene, stage, StatusBadge } from "./motion-shared";
 
 /** The dots of a matrix `step` apart along `length`, centered. */
 function along(length: number, step: number): number[] {
@@ -740,11 +731,18 @@ function Accessibility() {
             {...pressableLook({ style: { borderRadius: 0 } })}
           >
             <Row first={i() === 0}>
-              <IconTile
-                icon={item().icon}
-                size={pointer ? 28 : 36}
-                tint={last() === item().label ? colors.brand : colors.foreground}
-              />
+              <If when={!terminal}>
+                <ItemMedia
+                  variant="icon"
+                  style={{ width: pointer ? 28 : 36, height: pointer ? 28 : 36 }}
+                >
+                  <Icon
+                    icon={item().icon}
+                    size={(pointer ? 28 : 36) * 0.5}
+                    tint={last() === item().label ? colors.brand : colors.foreground}
+                  />
+                </ItemMedia>
+              </If>
               <View style={{ flex: 1, gap: 1 }}>
                 <Text
                   style={{ fontSize: density.body, fontWeight: "500", color: colors.foreground }}

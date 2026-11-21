@@ -5,7 +5,7 @@
 // pops up over everything. Every window reads the same signals, so the inspector's edits show in the
 // document at once. The windows, their state and the palette's search are `nsh/desktop` and
 // `nsh/base`'s; the cards, buttons, badges, stats and command rows are this library's.
-import { colors, alpha, mono, tints, shape } from "@shadcn-nsh/theme";
+import { colors, alpha, mono, terminal, tints, shape } from "@shadcn-nsh/theme";
 import {
   AppWindow,
   Check,
@@ -49,6 +49,7 @@ import { Badge } from "@/packages/ui/badge";
 import { Button, IconButton, iconButtonGlyph, iconButtonLook } from "@/packages/ui/button";
 import { Command, CommandEmpty, CommandRow } from "@/packages/ui/command";
 import { Input } from "@/packages/ui/input";
+import { ItemMedia } from "@/packages/ui/item";
 import { Icon } from "@/packages/ui/lib/icons";
 import { PopIn } from "@/packages/ui/lib/popup";
 import { plainRow } from "@/packages/ui/lib/surface";
@@ -63,7 +64,7 @@ import { toast, Toaster } from "@/packages/ui/toast";
 
 import { DemoPage } from "../kit";
 import { Tip } from "./actions-shared";
-import { Appear, IconTile } from "./apps-shared";
+import { Appear } from "./apps-shared";
 import { CaptionLine, DeskCard } from "./desktop-shared";
 
 /** Windows of the app's own: macOS, Windows and Linux. */
@@ -367,7 +368,11 @@ function WindowRow(props: { win: WindowRef; first: boolean }) {
           activeStyle={{ backgroundColor: alpha(colors.foreground, 0.08) }}
           focusVisibleStyle={{ outlineColor: colors.brand, outlineWidth: 2, outlineOffset: 1 }}
         >
-          <IconTile icon={info().icon} size={size.tile} />
+          <If when={!terminal}>
+            <ItemMedia variant="icon" style={{ width: size.tile, height: size.tile }}>
+              <Icon icon={info().icon} size={size.tile * 0.5} tint={colors.foreground} />
+            </ItemMedia>
+          </If>
           <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
             <Text
               style={{

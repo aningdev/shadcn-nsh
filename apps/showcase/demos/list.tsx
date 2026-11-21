@@ -17,8 +17,10 @@ import {
 } from "nsh";
 
 import { Badge } from "@/packages/ui/badge";
+import { Bubble, BubbleContent } from "@/packages/ui/bubble";
 import { Button, RoundButton } from "@/packages/ui/button";
 import { Input } from "@/packages/ui/input";
+import { ItemMedia } from "@/packages/ui/item";
 import { Icon } from "@/packages/ui/lib/icons";
 import { REFRESH_INDICATOR_HEIGHT, RefreshIndicator } from "@/packages/ui/refresh-indicator";
 import { Toggle } from "@/packages/ui/toggle";
@@ -384,30 +386,22 @@ function Chat() {
         {(m) => (
           <View
             style={{
-              alignSelf: m().mine ? "flex-end" : "flex-start",
-              maxWidth: "78%",
+              width: "100%",
               gap: 3,
               alignItems: m().mine ? "flex-end" : "flex-start",
             }}
           >
-            <View
-              style={{
-                paddingHorizontal: 14,
-                paddingVertical: 9,
-                borderRadius: 18,
-                borderCurve: "continuous",
-                borderBottomRightRadius: m().mine ? 6 : 18,
-                borderBottomLeftRadius: m().mine ? 18 : 6,
-                backgroundColor: m().mine ? colors.brandFill : colors.raised,
-                ...(m().mine ? finish.accent : finish.raised),
-                borderWidth: m().mine ? 0 : 1,
-                borderColor: colors.border,
-              }}
-            >
-              <Text style={{ color: m().mine ? colors.onBrand : colors.foreground, fontSize: 15 }}>
+            <Bubble variant={m().mine ? "default" : "secondary"} align={m().mine ? "end" : "start"}>
+              <BubbleContent
+                style={
+                  m().mine
+                    ? { borderBottomEndRadius: shape.control / 2 }
+                    : { borderBottomStartRadius: shape.control / 2, borderColor: colors.border }
+                }
+              >
                 {m().text}
-              </Text>
-            </View>
+              </BubbleContent>
+            </Bubble>
             <Text
               style={{
                 fontSize: 11,
@@ -704,26 +698,13 @@ function More() {
 
           <View style={{ gap: 10 }}>
             <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
-              <View
-                style={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: 12,
-                  borderCurve: "continuous",
-                  backgroundColor: colors.raised,
-                  ...finish.raised,
-                  borderWidth: 1,
-                  borderColor: colors.border,
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
+              <ItemMedia variant="icon" style={{ width: 40, height: 40, borderRadius: 12 }}>
                 <Icon
                   icon={ArrowDown}
                   size={18}
                   tint={refreshing() ? colors.brand : colors.foreground}
                 />
-              </View>
+              </ItemMedia>
               <View style={{ flex: 1, gap: 2 }}>
                 <Text style={{ fontSize: 15, color: colors.foreground }}>
                   {refreshing() ? "Refreshing…" : desk ? "Refresh below" : "Pull the page down"}

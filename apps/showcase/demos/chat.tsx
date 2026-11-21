@@ -51,9 +51,11 @@ import {
 } from "nsh";
 
 import { Badge } from "@/packages/ui/badge";
+import { Bubble, BubbleContent, BubbleText } from "@/packages/ui/bubble";
 import { Button, roundButtonGlyph, RoundButton } from "@/packages/ui/button";
 import { Input } from "@/packages/ui/input";
 import { Icon } from "@/packages/ui/lib/icons";
+import { Marker, MarkerContent, MarkerIcon } from "@/packages/ui/marker";
 import {
   MessageScroller,
   MessageScrollerButton,
@@ -79,7 +81,6 @@ import {
   ActionButton,
   Avatar,
   Caret,
-  DateSeparator,
   ErrorRow,
   FileChip,
   Photo,
@@ -576,25 +577,13 @@ export function ChatDemo() {
         <FileChip file={m().file!} />
       </If>
       <If when={m().text}>
-        <View
-          style={{
-            maxWidth: "82%",
-            paddingHorizontal: 14,
-            paddingVertical: 10,
-            ...rounded(20),
-            borderBottomRightRadius: 6,
-            // A message is read, not pressed: flat, a hairline around it.
-            backgroundColor: colors.raised,
-            borderWidth: 1,
-            borderColor: colors.border,
-          }}
-        >
-          <Text
-            style={{ userSelect: "text", fontSize: 15, lineHeight: 21, color: colors.foreground }}
+        <Bubble variant="secondary" align="end">
+          <BubbleContent
+            style={{ borderBottomEndRadius: shape.control / 2, borderColor: colors.border }}
           >
-            {m().text}
-          </Text>
-        </View>
+            <BubbleText style={{ userSelect: "text" }}>{m().text}</BubbleText>
+          </BubbleContent>
+        </Bubble>
       </If>
       <If when={m().waiting}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
@@ -677,10 +666,12 @@ export function ChatDemo() {
           <ErrorRow message={m().error ?? "Something went wrong."} onRetry={() => retry(m())} />
         </If>
         <If when={!live() && m().status === "stopped"}>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <Glyph name="stop" size={12} tint={colors.faint} />
-            <Text style={{ fontSize: 13, color: colors.faint }}>You stopped this reply</Text>
-          </View>
+          <Marker>
+            <MarkerIcon>
+              <Glyph name="stop" size={12} tint={colors.faint} />
+            </MarkerIcon>
+            <MarkerContent style={{ color: colors.faint }}>You stopped this reply</MarkerContent>
+          </Marker>
         </If>
         <If when={!live() && m().status !== "error"}>
           <View
@@ -885,9 +876,14 @@ export function ChatDemo() {
                         switch (kind()) {
                           case "date":
                             return (
-                              <DateSeparator
-                                label={(item() as Extract<Msg, { kind: "date" }>).label}
-                              />
+                              <Marker
+                                variant="separator"
+                                style={{ paddingHorizontal: 16, paddingVertical: 12 }}
+                              >
+                                <MarkerContent>
+                                  {(item() as Extract<Msg, { kind: "date" }>).label}
+                                </MarkerContent>
+                              </Marker>
                             );
                           case "user":
                             return userRow(item as () => User);

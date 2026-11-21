@@ -27,6 +27,7 @@ import {
 } from "@/packages/ui/attachment";
 import { IconButton, iconButtonGlyph } from "@/packages/ui/button";
 import { CodeBlock, CodeBlockContent, CodeBlockFooter } from "@/packages/ui/code-block";
+import { ItemMedia } from "@/packages/ui/item";
 import { Icon } from "@/packages/ui/lib/icons";
 import { Pressable } from "@/packages/ui/pressable";
 import {
@@ -114,25 +115,6 @@ export function ActionButton(props: {
         tint={props.active ? toneColor(tone()) : colors.mutedForeground}
       />
     </Pressable>
-  );
-}
-
-/** A row between days. */
-export function DateSeparator(props: { label: string }) {
-  return (
-    <View
-      style={{
-        flexDirection: "row",
-        alignItems: "center",
-        gap: 12,
-        paddingHorizontal: 16,
-        paddingVertical: 12,
-      }}
-    >
-      <View style={{ flex: 1, height: 1, backgroundColor: colors.line }} />
-      <Text style={{ fontSize: 12, fontWeight: "500", color: colors.faint }}>{props.label}</Text>
-      <View style={{ flex: 1, height: 1, backgroundColor: colors.line }} />
-    </View>
   );
 }
 
@@ -369,20 +351,20 @@ function SourceRow(props: { source: Source; index: number }) {
         paddingHorizontal: 12,
       }}
     >
-      <View
+      <ItemMedia
+        variant="icon"
         style={{
           width: 24,
           height: 24,
           ...rounded(6),
+          borderColor: "transparent",
           backgroundColor: toneTint(props.source.tone),
-          alignItems: "center",
-          justifyContent: "center",
         }}
       >
         <Text style={{ fontSize: 12, fontWeight: "700", color: toneColor(props.source.tone) }}>
           {props.source.site[0].toUpperCase()}
         </Text>
-      </View>
+      </ItemMedia>
       <View style={{ flex: 1, gap: 1 }}>
         <Text style={{ numberOfLines: 1, fontSize: 14, color: colors.foreground }}>
           {props.source.title}

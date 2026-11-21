@@ -7,8 +7,17 @@ import { ChevronRight, type IconNode } from "lucide";
 import type { JSX, TextStyle } from "nsh";
 import { Text, View } from "nsh";
 
+import {
+  Card as UiCard,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/packages/ui/card";
+import { ItemMedia } from "@/packages/ui/item";
 import { Icon } from "@/packages/ui/lib/icons";
-import { density, sectionSurface } from "@/packages/ui/lib/surface";
+import { density } from "@/packages/ui/lib/surface";
 
 /** A card of the gallery's shape: a title and a quieter subtitle, a slot on the trailing edge of
  * the head (a badge, a control), then the scene. `kit`'s `DemoCard` has no trailing slot. */
@@ -20,20 +29,18 @@ export function Card(props: {
   children: JSX.Element;
 }) {
   return (
-    <View style={[sectionSurface({ padded: true }), { gap: density.gap + 4 }]}>
-      <View style={{ flexDirection: "row", alignItems: "flex-start", gap: 12 }}>
-        <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
-          <Text style={{ fontSize: 15, fontWeight: "600", color: colors.foreground }}>
-            {props.title}
-          </Text>
-          <If when={props.subtitle}>
-            <Text style={{ fontSize: 13, color: colors.mutedForeground }}>{props.subtitle}</Text>
-          </If>
-        </View>
-        {props.right}
-      </View>
-      {props.children}
-    </View>
+    <UiCard>
+      <CardHeader>
+        <CardTitle>{props.title}</CardTitle>
+        <If when={props.subtitle}>
+          <CardDescription>{props.subtitle}</CardDescription>
+        </If>
+        <If when={props.right}>
+          <CardAction>{props.right}</CardAction>
+        </If>
+      </CardHeader>
+      <CardContent>{props.children}</CardContent>
+    </UiCard>
   );
 }
 
@@ -115,26 +122,6 @@ export function Legend(props: { color: string; label: string }) {
   );
 }
 
-/** A glyph in a tinted tile, the row's leading mark. */
-export function IconTile(props: { icon: IconNode; tint: string; size?: number }) {
-  const size = props.size ?? 34;
-  return (
-    <View
-      style={{
-        width: size,
-        height: size,
-        borderRadius: Math.round(size * 0.28),
-        borderCurve: "continuous",
-        alignItems: "center",
-        justifyContent: "center",
-        backgroundColor: alpha(props.tint, 0.14),
-      }}
-    >
-      <Icon icon={props.icon} size={Math.round(size * 0.48)} tint={props.tint} />
-    </View>
-  );
-}
-
 /** A tappable row with an icon tile, a title, a detail and a chevron. */
 export function ActionRow(props: {
   first?: boolean;
@@ -164,7 +151,18 @@ export function ActionRow(props: {
         borderTopColor: colors.line,
       }}
     >
-      <IconTile icon={props.icon} tint={props.tint} />
+      <ItemMedia
+        variant="icon"
+        style={{
+          width: 34,
+          height: 34,
+          borderRadius: 10,
+          borderColor: "transparent",
+          backgroundColor: alpha(props.tint, 0.14),
+        }}
+      >
+        <Icon icon={props.icon} size={16} tint={props.tint} />
+      </ItemMedia>
       <View style={{ flex: 1, minWidth: 0, gap: 1, paddingVertical: 4 }}>
         <Text style={{ fontSize: 15, color: colors.foreground }}>{props.title}</Text>
         <Text style={{ fontSize: 12, color: colors.mutedForeground }}>{props.detail}</Text>

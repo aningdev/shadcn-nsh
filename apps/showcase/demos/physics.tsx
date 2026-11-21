@@ -2,16 +2,17 @@
 // A card dragged on the UI thread and released into a spring, a decay or the nearest corner,
 // with a canvas tether drawn from the same animated values. The segmented choices, the badge
 // and the figures are this library's; the spring, the decay and the pan are `nsh`'s.
-import { colors, finish, mono, tints, shape } from "@shadcn-nsh/theme";
+import { colors, finish, mono, terminal, tints, shape } from "@shadcn-nsh/theme";
 import { Hand, Orbit } from "lucide";
 import type { AnimatedValue, PanEvent } from "nsh";
 import { Canvas, computed, createAnimatedValue, Scroll, signal, Text, View, windowSize } from "nsh";
 
+import { ItemMedia } from "@/packages/ui/item";
 import { Icon } from "@/packages/ui/lib/icons";
 import { Segmented, SegmentedItem, SegmentedList } from "@/packages/ui/segmented";
 import { Stat } from "@/packages/ui/stat";
 
-import { Appear, hint, IconTile, StatusBadge } from "./motion-shared";
+import { Appear, hint, StatusBadge } from "./motion-shared";
 
 const CARD = 128;
 /** Windows shorter than this scroll the demo, with the stage this tall. */
@@ -105,7 +106,11 @@ export function PhysicsDemo() {
     >
       <Appear index={0}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 12 }}>
-          <IconTile icon={Orbit} tint={colors.brand} />
+          <If when={!terminal}>
+            <ItemMedia variant="icon" style={{ width: 40, height: 40, borderRadius: 12 }}>
+              <Icon icon={Orbit} size={20} tint={colors.brand} />
+            </ItemMedia>
+          </If>
           <View style={{ flex: 1, gap: 2 }}>
             <Text style={{ fontSize: 17, fontWeight: "600", color: colors.foreground }}>
               Drag and release

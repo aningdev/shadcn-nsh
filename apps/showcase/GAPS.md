@@ -19,8 +19,7 @@ composition). Upstream's funnel animates drawn `Canvas` geometry with `createAni
 `nsh/base` doesn't drive; the necks redraw without an entrance. Editor gutters use the `warn` / `up`
 / `destructive` roles, and a terminal's ANSI colors are the program's output, not theme roles. The
 find bar is the library's `CodeEditorFindBar`; quick-fix menus and the editor zoom are `nsh`
-`Overlay`s, the code-action menu is the native `nsh/desktop` `Menu`, and the Gallery's `IconTile` is
-its own kit, as upstream. Animations' ink on a saturated tone is `onBrand` / `knob`, and System's
+`Overlay`s, the code-action menu is the native `nsh/desktop` `Menu`, and Chat's empty-state emblem (`apps-shared` `IconTile`) is its own kit (item rows use `ItemMedia`). Animations' ink on a saturated tone is `onBrand` / `knob`, and System's
 status-bar preview inks with the foreground and background, all theme roles. The Gallery's `Meter`,
 `Toggle` (a switch) and `Field` are this library's `Progress`, `Switch` and a labelled `Input`. The
 block editor imports its editor commands (`setNode`, `wrapIn`, `suggestion`, …) from `nsh/base`,
@@ -37,11 +36,11 @@ Owned by `App.tsx` / `kit.tsx`, not the library:
   RichEditor, Block editor, Terminal, Dock and Resizable skip `DemoPage` to fill it. Only split view is
   `fill: true` upstream, which hides the phone's header; the shell does not do that yet.
 - A page section (heading above a padded surface, with a right slot) is redrawn per batch
-  (`actions-shared` `Card`, `data-shared` `ChartCard`, `desktop-shared` `DeskCard`, `graphics-shared` `SceneCard`); `DemoCard` lacks that
+  (`data-shared` `ChartCard`, `graphics-shared` `SceneCard`); `DemoCard` lacks that
   slot; `Caption` lacks a label + note form (`desktop-shared` `CaptionLine`).
 - `DemoPage` has no multi-column layout (`graphics-shared` `ScenePage` + `columnsFor`, after `gallery/ui.tsx:122`).
 - A demo cannot push onto the shell's stack, so Shader's iris pages play in a `NavStack` of their own.
 - `DemoPage` takes no scroll props, so Scroll's "taps with the keyboard up" scene sets
   `keyboardShouldPersistTaps` on an inner `Scroll`.
-- The Gallery's "Last event" card and its kit parts (page header, section, icon tile, appear,
+- The Gallery's "Last event" card and its kit parts (page header, section, appear,
   action) are rebuilt per demo rather than shared.

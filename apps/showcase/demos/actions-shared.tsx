@@ -6,7 +6,14 @@ import { colors, mono } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { Text, View } from "nsh";
 
-import { density, sectionSurface } from "@/packages/ui/lib/surface";
+import {
+  Card as UiCard,
+  CardAction,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/packages/ui/card";
 import { TooltipContent } from "@/packages/ui/tooltip";
 import { tooltipNote, tooltipText } from "@/packages/ui/tooltip";
 
@@ -23,20 +30,18 @@ export function Card(props: {
   children: JSX.Element;
 }) {
   return (
-    <View style={[sectionSurface({ padded: true }), { gap: density.gap + 4 }]}>
-      <View style={{ flexDirection: "row", alignItems: "flex-start", gap: 12 }}>
-        <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
-          <Text style={{ fontSize: 15, fontWeight: "600", color: colors.foreground }}>
-            {props.title}
-          </Text>
-          <If when={props.subtitle}>
-            <Text style={{ fontSize: 13, color: colors.mutedForeground }}>{props.subtitle}</Text>
-          </If>
-        </View>
-        {props.right}
-      </View>
-      {props.children}
-    </View>
+    <UiCard>
+      <CardHeader>
+        <CardTitle>{props.title}</CardTitle>
+        <If when={props.subtitle}>
+          <CardDescription>{props.subtitle}</CardDescription>
+        </If>
+        <If when={props.right}>
+          <CardAction>{props.right}</CardAction>
+        </If>
+      </CardHeader>
+      <CardContent>{props.children}</CardContent>
+    </UiCard>
   );
 }
 

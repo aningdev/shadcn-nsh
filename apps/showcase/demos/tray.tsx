@@ -15,6 +15,7 @@ import {
 } from "nsh/desktop";
 
 import { Button } from "@/packages/ui/button";
+import { ItemMedia } from "@/packages/ui/item";
 import { Icon } from "@/packages/ui/lib/icons";
 import { PopIn } from "@/packages/ui/lib/popup";
 import { Status } from "@/packages/ui/status";
@@ -182,19 +183,18 @@ function TrayPanel(props: {
       ]}
     >
       <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
-        <View
+        <ItemMedia
+          variant="icon"
           style={{
             width: 32,
             height: 32,
             borderRadius: 9,
-            borderCurve: "continuous",
-            alignItems: "center",
-            justifyContent: "center",
+            borderColor: "transparent",
             backgroundColor: alpha(colors.warn, 0.16),
           }}
         >
           <Icon icon={Star} size={16} tint={colors.warn} fill />
-        </View>
+        </ItemMedia>
         <View style={{ flex: 1, minWidth: 0, gap: 2 }}>
           <Text
             style={{ fontSize: 14, lineHeight: 18, fontWeight: "600", color: colors.foreground }}

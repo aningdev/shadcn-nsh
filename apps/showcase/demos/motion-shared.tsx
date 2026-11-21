@@ -12,7 +12,6 @@ import {
   TERMINAL_GAP,
   shape,
 } from "@shadcn-nsh/theme";
-import type { IconNode } from "lucide";
 import type { JSX, ViewStyle } from "nsh";
 import { createAnimatedValue, platform, Scroll, Text, View } from "nsh";
 
@@ -25,7 +24,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@/packages/ui/card";
-import { Icon } from "@/packages/ui/lib/icons";
 import { density } from "@/packages/ui/lib/surface";
 import { Toggle, ToggleGroup } from "@/packages/ui/toggle";
 
@@ -156,30 +154,6 @@ export function Legend(props: { color: string; label: string; value?: string }) 
           </Text>
         </If>
       </Text>
-    </View>
-  );
-}
-
-/** A rounded icon tile (decoration: none in the terminal). */
-export function IconTile(props: { icon: IconNode; tint?: string; size?: number }) {
-  if (terminal) return null;
-  const size = props.size ?? 40;
-  return (
-    <View
-      style={{
-        width: size,
-        height: size,
-        borderRadius: size * 0.3,
-        borderCurve: "continuous",
-        borderWidth: 1,
-        borderColor: colors.border,
-        backgroundColor: colors.raised,
-        ...finish.raised,
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      <Icon icon={props.icon} size={size * 0.5} tint={props.tint ?? colors.foreground} />
     </View>
   );
 }
