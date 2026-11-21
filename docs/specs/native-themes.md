@@ -2,7 +2,7 @@
 
 本文是方案：目标是**先只用主题数据**，让本库组件分别画出 Apple（Liquid Glass）、Android（Material 3 Expressive）和 Windows（Fluent 2）的外观；同时写清楚主题做不到的部分，以及每一期的验收标准。
 
-它承接 [`positioning.md`](positioning.md) 的差异点 1（多风格 × 主题色），沿用 [`theme-roles.md`](theme-roles.md) 已有的规则（token、finish、alias、形状固定）。调研截止 2026-11。
+它承接 [`positioning.md`](positioning.md) 的差异点 1（多风格 × 主题色），沿用 [`design-semantics.md`](design-semantics.md) 与 [`theme-roles.md`](theme-roles.md) 的规则（基础 token、语义层 `{token}` 引用、形状固定）。调研截止 2026-11。
 
 ## 结论
 
@@ -91,27 +91,16 @@
 
 ## 3 设计
 
-### 3.1 主题仍是两个文件：颜色一层，风格一层
+### 3.1 主题仍是两个文件：基础 token 层与跨平台语义层
 
 ```
 packages/theme/themes/<id>/
-  theme.json     颜色和圆角                     （NSH setTheme 读取，不变）
-  finishes.json  风格：外观无关的部分 + light / dark 的面  （本库读取，扩展）
-  index.ts       AppTheme { id, label, theme, finishes }（不变）
+  theme.json      基础 token：颜色、8 个圆角、字体                （NSH setTheme 读取）
+  semantics.json  语义层：风格数据 + finishes（shared + 稀疏覆盖） （本库读取）
+  index.ts        AppTheme { id, label, theme, semantics }
 ```
 
-`finishes.json` 的顶层是 `press` 与九组风格数据（外观无关）、`light`、`dark`（每个 finish 的面）。本方案在顶层、与 `press` 并列，加上 `type`、`shape`、`size`、`stroke`、`focus`、`state`、`motion`、`icon`、`indicator` 九组风格数据（3.2）；平台材质放在每个 finish 里（3.3）。
-
-**为什么放进 `finishes.json`，不新开文件，也不放进 `theme.json`：**
-
-- **两轴模型不变。** [`positioning.md`](positioning.md) 把主题定为"风格（`finishes.json`）× 颜色（`theme.json`）"，`init` 也按这两轴来选。字体、形状、尺寸、动效都是风格，不是颜色。新开第三个文件就成了三轴，`init`、registry 条目、文档站切换都要跟着改。
-- **先例已在。** `press.scale` 是按下时下沉多少，本身就不是"面"，早已放在 `finishes.json` 顶层。
-- **`theme.json` 不合适。** 它由 NSH 的 `setTheme` 解析，认不出的值会抛 `TypeError`；而且它只按 light / dark 分，表达不了 pointer / touch 两档。
-
-**跟着要改的：**
-
-- [`theme-roles.md`](theme-roles.md) 和 `GLOSSARY.md` 里 `finishes.json` 的定义，从"一个面的样子"改成"风格：外观无关的尺寸、字体、形状、动效，加上每种外观下各个 finish 的面"。finish 这个词仍指一个面，文件名不改。
-- 圆角仍留在 `theme.json`（`radius`、`radius-card`、`radius-control`），因为 NSH 的 `token()` 和 Tailwind 的 `rounded-*` 类都读它。`shape` 按用途角色写圆角，其中 `control`、`card`、`inset` 与这三个 token 是同一个数，`check:theme` 检查两处相等；其余角色（`field`、`chip`、`overlay`、`dialog`、`sheet`）只在 `shape` 里。两处分工写在 `theme-roles.md`。
+两文件的分层判定规则、 `{token}` 引用语法与 DTCG 2025.10 映射见 [`design-semantics.md`](design-semantics.md)。全部 8 个圆角与可选 `font-sans` 统一定义在 `theme.json`；`semantics.json` 的 `shape.*` 与 `type.family` 以 `{token}` 引用它们，`finishes` 拆为 `shared` 与稀疏 `light`/`dark` 覆写，按压缩放归入 `state.pressScale`。
 
 ### 3.2 `finishes.json` 的风格键表
 

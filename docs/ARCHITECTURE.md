@@ -24,7 +24,7 @@ _Avoid_: 发布组件 npm 包、旧 registry id 的别名
 
 - `registry.json`：**Catalog** 的真源，其 `registry:ui` 条目就是组件集合
 - `port-map.json`：**Port Map**，上游每个声明的来源去向表与已审阅的上游提交；目标不一定是组件——`demo.ts` 的 `Stage` / `Split` / `Inspector` / `Panel` / `Log` / `Segmented` 等去向 `apps/website/demos/stage.tsx`（演示适配层，不进 registry）
-- `packages/theme/`：**Theme Source**（两个 JSON，oklch，归本库）与 `theme.ts`（读取 token 与 finish，以及运行时的 `selectTheme` / `currentTheme`）；`themes/<name>/` 是其它主题，一套一个 `AppTheme`（`theme.json`、`finishes.json`、`index.ts`），经 `theme-<name>` 条目分发；不放组件
+- `packages/theme/`：**Theme Source**（`theme.json` 基础 token + `semantics.json` 跨平台语义层，oklch，归本库；标准见 [`specs/design-semantics.md`](specs/design-semantics.md)）与 `theme.ts`（读取 token 与 semantics，以及运行时的 `selectTheme` / `currentTheme`）；`themes/<name>/` 是其它主题，一套一个 `AppTheme`（`theme.json`、`semantics.json`、`index.ts`），经 `theme-<name>` 条目分发；不放组件
 - `packages/ui/<id>.tsx`：一个**组件** = look（源自上游的部分以 **Port Region** 标注来源）+ **Shell**；一个 registry 条目一个文件
 - `packages/ui/lib/`：没有所属控件的上游部分（以上游文件名命名）与多个外壳共用的接线；作为 `registry:lib` 条目分发
 - `apps/website/demos/`：每个组件的 `<id>.tsx` 与 **Reference Page** `<id>.ref.tsx`、渲染比对用例与基线截图；`kit.tsx` 是演示外框，`stage.tsx` 是演示适配层（`Stage` / `Inspector` / `Split` / `Panel` / `Log` / `Segmented` / `Chips` / `desktop` / `wide` / `ui()`，见 [`port.md`](port.md#演示)），`photos.ts` 是照片页用的图（上游 `photos.ts`，原样搬运），都不进 registry；`shots/` 是渲染比对的截图，`shots-audit/` 是诊断脚本的，两者都不提交
@@ -86,14 +86,14 @@ flowchart TD
 
 两件事，名字不混用：
 
-| 词             | 是什么                                                                                  | 谁定                                                                                                       |
-| -------------- | --------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| **构建时主题** | `nsh.json` 的 `theme` 指向的 `theme.json`，以及 `lib/ui/finishes.json`                  | `init --theme <name>`（`nsh-ui.json` 的 `theme` 也记这一个）；换就是重跑 `init --theme <name> --overwrite` |
-| **AppTheme**   | 应用装进 `themes/<name>/` 的一套 `{ id, label, theme, finishes }`，一个 `index.ts` 导出 | registry 的 `theme-<name>` 条目，`add theme-<name>` 多装一套                                               |
+| 词             | 是什么                                                                                   | 谁定                                                                                                       |
+| -------------- | ---------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
+| **构建时主题** | `nsh.json` 的 `theme` 指向的 `theme.json`，以及 `lib/ui/semantics.json`                  | `init --theme <name>`（`nsh-ui.json` 的 `theme` 也记这一个）；换就是重跑 `init --theme <name> --overwrite` |
+| **AppTheme**   | 应用装进 `themes/<name>/` 的一套 `{ id, label, theme, semantics }`，一个 `index.ts` 导出 | registry 的 `theme-<name>` 条目，`add theme-<name>` 多装一套                                               |
 
-- 颜色、圆角、焦点环、悬停经 `token()` 读，`setTheme` 一换就跟；finish（渐变、阴影，以及按下缩到几成 —— `finishes.json` 顶层的 `press.scale`）**不是 token**，所以留在 `finishes.json`，由 `theme.ts` 的一个信号按当前主题取（同一主题的同一个 finish 串只解一次：按主题与角色缓存，主题或外观一换就重解，所以按需读不因此变慢）。两者拼成 `selectTheme(theme)`；`selectTheme(null)` 回到构建时主题。平面主题（shadcn）把 `press.scale` 写成 `1`：按下不缩放。
-- 圆角一律经 `shape.*`（`finishes.json` 的 `shape`，按用途角色：`control`、`field`、`chip`、`card`、`overlay`、`dialog`、`sheet`、`inset`）：组件是什么就读哪个角色，没有写死的数值；读主题圆角的角一律用 `rounded(radius, inset?)`，continuous 曲线只在那里给；嵌在另一个面里的面用 `inset` 参数取同心圆角。线宽读 `stroke`（`hairline`、`control`、`indicator`），按下与禁用的透明度读 `dimmed`，按钮高、图标、触控目标读 `controlHeight`、`iconSize`、`hitTarget()`。
-- `theme` 条目仍是构建时那套的三个文件（`theme.json`、`lib/ui/finishes.json`、`lib/ui/theme.ts`）；`theme-<name>` 只装 `themes/<name>/`，不碰它们。组件条目的 `theme` 依赖按 `nsh-ui.json` 解析，所以装主题不会把默认主题写回来。
+- 颜色、8 个圆角、字体经 `token()` 读，`setTheme` 与宿主 `setThemeOverrides` 一换就跟；语义层（`semantics.json`：风格数据、`state.pressScale` 与 `finishes` 的 `shared` + 稀疏 `light`/`dark`）通过 `{token}` 引用基础层，由 `theme.ts` 响应式解析。两者拼成 `selectTheme(theme)`；`selectTheme(null)` 回到构建时主题。平面主题（shadcn）把 `state.pressScale` 写成 `1`：按下不缩放。标准与分层规则见 [`specs/design-semantics.md`](specs/design-semantics.md)。
+- 圆角一律经 `shape.*`（`semantics.json` 的 `shape` 以 `{radius-…}` 引用 `theme.json` 的 8 个圆角 token，按用途角色：`control`、`field`、`chip`、`card`、`overlay`、`dialog`、`sheet`、`inset`）：组件是什么就读哪个角色，没有写死的数值；读主题圆角的角一律用 `rounded(radius, inset?)`，continuous 曲线只在那里给；嵌在另一个面里的面用 `inset` 参数取同心圆角。线宽读 `stroke`（`hairline`、`control`、`indicator`），按下与禁用的透明度读 `dimmed`，按钮高、图标、触控目标读 `controlHeight`、`iconSize`、`hitTarget()`。
+- `theme` 条目仍是构建时那套的三个文件（`theme.json`、`lib/ui/semantics.json`、`lib/ui/theme.ts`）；`theme-<name>` 只装 `themes/<name>/`，不碰它们。组件条目的 `theme` 依赖按 `nsh-ui.json` 解析，所以装主题不会把默认主题写回来。
 - **构建时主题也能当"多装的一套"**：`theme-default` 装 `themes/default/`，里面是构建时那两个 JSON 的副本（`scripts/theme/themes.test.ts` 保证逐字节相同）加一个导出 `defaultTheme` 的 `index.ts`。构建时用 shadcn 的应用这样就能两边切。
 - 应用的清单与持久化都是应用的：库只给 `selectTheme` / `currentTheme`，不写清单、不存 `id`（示例见 [`packages/theme/README.md`](../packages/theme/README.md)）。
 - finish 在 JSX 里读（见下）；把 `finish.*` 存进模块级常量，运行时切换就不会跟着变。

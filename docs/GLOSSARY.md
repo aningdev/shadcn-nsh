@@ -48,7 +48,7 @@ _Avoid_: 截图前 sleep, 让图片页跳过比对
 _Avoid_: Radix port, 新的 primitive 层, 根上的 `trigger` prop
 
 **Copy-into-app**:
-通过 registry + CLI 把组件源码拷进应用，应用可以直接改。改动点有三个：换颜色、圆角、阴影改 `theme.json` / `finishes.json`；改某个控件的外观改它的 look；改结构或 API 改外壳。
+通过 registry + CLI 把组件源码拷进应用，应用可以直接改。改动点有三个：换颜色、圆角、阴影改 `theme.json` / `semantics.json`；改某个控件的外观改它的 look；改结构或 API 改外壳。
 _Avoid_: 黑盒依赖
 
 **Catalog（组件目录）**:
@@ -76,21 +76,25 @@ _Avoid_: 把 `Label` 组件当作无障碍名、把控件的文字抄进 `access
 _Avoid_: 重写行为, 缩减 props
 
 **Theme Source**:
-`theme.json`（shadcn 的 `cssVars` 格式，含上游的扩展键）与 `finishes.json`（风格：与外观无关的字体、形状、尺寸、动效、状态，加上每种外观下各个 finish 的面），颜色以 oklch 存储、归本库所有（起点取自上游）；`theme.ts` 读取它们。二者的分工与形状见 [`specs/theme-roles.md`](specs/theme-roles.md)。
+`theme.json`（基础 token 层：颜色、8 个 `radius*`、字体，shadcn `cssVars` 格式，颜色以 oklch 存储）与 `semantics.json`（跨平台语义层：风格数据与 `finishes` 的 `shared` + 稀疏 `light`/`dark`，以 `{token}` 引用基础层）；`theme.ts` 读取它们。分层规则与 DTCG 映射见 [`specs/design-semantics.md`](specs/design-semantics.md)，角色清单见 [`specs/theme-roles.md`](specs/theme-roles.md)。
 _Avoid_: neutral 映射, `custom-*` 键
 
+**Design Semantics（语义层 / `semantics.json`）**:
+跨 Apple HIG、Material 3 Expressive、Fluent 2 与 shadcn/ui 的设计语义超集，存放 NSH 原生标量 token 表达不了的结构（`pointer`/`touch` 两档尺寸与字阶、枚举、动效、表面配方 `finishes` 与平台 `material`），通过 `{token}` 引用 `theme.json` 中的基础 token。见 [`specs/design-semantics.md`](specs/design-semantics.md)。
+_Avoid_: `finishes.json`（旧文件名）、在语义层重复写颜色/圆角/字体字面量
+
 **Token**:
-`theme.json` 里的一个颜色键，写法 `var(--token)`（如 `var(--raised)`）。颜色只有这一个来源：`cssVars.light` / `cssVars.dark` 逐外观，`cssVars.theme` 两者共用。A 层是 shadcn 的 31 个槽（NSH 的 `Theme::of` 逐名字解析，缺一个就退回 shadcn 的灰），B 层是本库自己的、组件要用的那些。
+`theme.json` 里的一个基础设计量（按 DTCG `$type` 分 `color`、`dimension`、`fontFamily`）：颜色（`cssVars.light` / `cssVars.dark` 逐外观，或 `cssVars.theme` 共用）、8 个圆角（`radius*`）、字体（`font-mono` 及可选 `font-sans`）。`theme.json` 内部用 `var(--token)`，语义层用 `{token}` 引用。A 层是 shadcn 的 31 个槽（NSH 的 `Theme::of` 逐名字解析，缺一个就退回 shadcn 的灰），B 层是本库自己的颜色扩展，C 层是明暗共用的 token。
 _Avoid_: 用别的词指它；在 B 层另起一个与 A 层槽同义的名字
 
 **Finish（Finish Role）**:
-`finishes.json` 里 `light` / `dark` 下的一个条目（`card`、`raised`、`fill`… 共 20 个；文件顶层另有与 finish 无关的**风格数据** `type`、`shape`、`size`…，见 [`specs/theme-roles.md`](specs/theme-roles.md)）：一个面的底、渐变、边、影、模糊，外加它向平台要的原生材质 `material`（`null` 表示不要，见 [`specs/theme-roles.md`](specs/theme-roles.md)）。finish 只管一个面的画法（底、渐变、边、影、模糊、平台材质），颜色写 alias；每个 finish 在每套主题、每种外观里的字段集合相同（平涂就是同一个颜色在两个 stop，不删 `backgroundImage`）。
+`semantics.json` 里 `finishes`（`shared` + 稀疏 `light` / `dark` 合并后）的一个条目（`card`、`raised`、`fill`… 共 23 个，见 [`specs/theme-roles.md`](specs/theme-roles.md)）：一个面的底、渐变、边、影、模糊，外加它向平台要的原生材质 `material`（`null` 表示不要）。finish 只管一个面的画法，颜色写 `{token}`；合并后每个 finish 在每套主题、每种外观里的字段集合相同（平涂就是同一个颜色在两个 stop，不删 `backgroundImage`）。
 _Avoid_: 把 finish 当 token；用别的词指它；删字段表示“没有渐变”
 
-**Alias**:
-`var(--token)` 这种写法，finish 的颜色只这么写：`theme.ts` 的 `themed()` 在**读的时候**把它换成当前主题与外观的颜色，所以切外观、`selectTheme` 切主题都自动生效。允许的字面量只有墨色（黑或白带 alpha）、`transparent`，以及规范里待定表列出的那些；`boxShadow` 整条豁免。
-_Avoid_: 在 finish 里写色值；用别的词指它
+**Alias（`{token}` 引用）**:
+语义层引用 `theme.json` 基础 token 的花括号写法（对齐 DTCG 2025.10）：`shape.*` 写 `{radius-…}`、`type.family` 写 `{font-…}`、finish 颜色与 `material.apple.tint` 写 `{token}` 或 `oklch(from {token} l c h / a)`。`theme.ts` 在**读的时候**经 `token()` 响应式解析，所以切外观、`selectTheme` 切主题与宿主 `setThemeOverrides` 都自动生效。finish 允许的字面量只有墨色（黑或白带 alpha）、`transparent`，以及规范里待定表列出的那些；`boxShadow` 整条豁免。
+_Avoid_: 在语义层写 `var(--token)` 或重复的色值/圆角数字；用别的词指它
 
 **Build-time Theme / AppTheme**:
-**构建时主题**是 `nsh.json` 指向的 `theme.json` 与 `lib/ui/finishes.json`，由 `init --theme <name>` 定；**AppTheme**（`{ id, label, theme, finishes }`）是运行时可切的一套，装在 `themes/<name>/`，`selectTheme` 切过去、`selectTheme(null)` 回构建时那套、`currentTheme()` 读当前 `id`（还在构建时主题上时为 `null`）。应用清单里的构建时主题就是 `null`。finish（渐变、阴影）不是 token，所以随 `AppTheme` 走。
+**构建时主题**是 `nsh.json` 指向的 `theme.json` 与 `lib/ui/semantics.json`，由 `init --theme <name>` 定；**AppTheme**（`{ id, label, theme, semantics }`）是运行时可切的一套，装在 `themes/<name>/`，`selectTheme` 切过去、`selectTheme(null)` 回构建时那套、`currentTheme()` 读当前 `id`（还在构建时主题上时为 `null`）。应用清单里的构建时主题就是 `null`。
 _Avoid_: 把 `add theme-<x>` 当成换构建时主题、把主题叫“皮肤”、把 finish 当 token

@@ -1,18 +1,18 @@
 # 主题的构成：token、finish 与 alias
 
-本库的颜色只有一个来源，一个面的样子只有一张表，二者之间用 alias 相连：
+本库的颜色、圆角、字体只有一个来源，一个面的样子只有一张表，二者之间用 `{token}` alias 相连。设计语义标准与分层判定规则见 [`design-semantics.md`](design-semantics.md)：
 
-| 文件                           | 管什么                                                                                                   | 不管什么                 |
-| ------------------------------ | -------------------------------------------------------------------------------------------------------- | ------------------------ |
-| `packages/theme/theme.json`    | 颜色：每个 token 在 light / dark 下的值                                                                  | 面、边、影、渐变、模糊   |
-| `packages/theme/finishes.json` | 风格：与外观无关的字体、形状、尺寸、动效、状态，加上每种外观下各个 finish 的面（底、渐变、边、影、模糊） | 颜色字面量（只写 alias） |
-| `packages/theme/theme.ts`      | 读时把 alias 换成当前主题与外观的颜色（`themed()`）                                                      | 具体颜色值               |
-| `packages/ui/*.tsx`            | 只经 `finish.*` 与 `colors.*` 取色                                                                       | 内联颜色                 |
+| 文件                            | 管什么                                                                                                        | 不管什么               |
+| ------------------------------- | ------------------------------------------------------------------------------------------------------------- | ---------------------- |
+| `packages/theme/theme.json`     | 基础 token：颜色（light / dark 与共用）、8 个圆角（`radius*`）、字体（`font-mono` 及可选 `font-sans`）        | 面、边、影、渐变、模糊 |
+| `packages/theme/semantics.json` | 语义层：与外观无关的字体字阶、形状、尺寸、动效、状态、枚举，加上 `finishes`（`shared` + 稀疏 `light`/`dark`） | 颜色/圆角/字体字面量   |
+| `packages/theme/theme.ts`       | 读时把 `{token}` 换成当前主题、外观与宿主覆写的值（`themed()`、`shape.*`、`font.family()`）                   | 具体颜色或圆角值       |
+| `packages/ui/*.tsx`             | 只经 `finish.*`、`colors.*`、`shape.*` 取外观                                                                 | 内联颜色               |
 
 这样定，是为了两件事：
 
-- **改一个颜色只改一处。** 组件里没有颜色字面量，`finishes.json` 里只有 `var(--token)`，改 token 的值同时改到所有用到它的面。
-- **平涂的主题不必删字段。** 一个没有渐变的外观也必须给出 `backgroundImage`（见第 3 节），形状在主题之间不变，渲染时才不需要分支。
+- **改一个值只改一处。** 组件里没有颜色字面量，`semantics.json` 里通过 `{token}` 引用 `theme.json`，改 token（含宿主 `setThemeOverrides`）同时改到所有用到它的面与组件。
+- **平涂的主题不必删字段。** 一个没有渐变的外观也必须给出 `backgroundImage`（见第 3 节），合并 `shared` + `light`/`dark` 后形状在主题之间不变，渲染时才不需要分支。
 
 规则的执行者是 `bun scripts/theme-lint.ts`（在 `bun run check` 里）：下文每一条都在那里有一条检查，写错了会点名文件、finish 和字段。
 
@@ -73,49 +73,51 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 <!-- theme-lint: tokens-c -->
 
-| 键                                                 | 值                      | 用途                                                                       |
-| -------------------------------------------------- | ----------------------- | -------------------------------------------------------------------------- |
-| `radius` / `radius-card` / `radius-control`        | `10px` / `14px` / `8px` | 基础圆角与由它推导的两档                                                   |
-| `font-mono`                                        | `monospace`             | 等宽字：`font-mono` 类、`Text` 里的代码、`theme.ts` 的 `mono()`            |
-| `brand-fill`                                       | 强调色的填充            | `calendar` 的选中日                                                        |
-| `on-brand`                                         | `brand-fill` 上的字     | 同上                                                                       |
-| `scrim`                                            | 遮罩                    | `lib/popup`、`dock-area`                                                   |
-| `media`                                            | 照片与影片的底          | `theme.ts` 的 `colors.media`、`image-viewer` 的 ground；不随外观或主题翻转 |
-| `on-media`                                         | 照片上的白字            | `theme.ts` 的 `colors.onMedia`；不随外观翻转                               |
-| `chart-foreground`                                 | 浅色图块上的深字        | `theme.ts` 的 `colors.chartForeground`；深色块用 `on-media`                |
-| `window-close` / `window-minimize` / `window-zoom` | 三颗窗口按钮各自的色    | `theme.ts` 的窗口按钮映射                                                  |
-| `window-control-ink` / `window-control-edge`       | 窗口按钮的字与边        | 同上                                                                       |
+| 键                                                                                                                                 | 值                                                                  | 用途                                                                       |
+| ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| `radius` / `radius-card` / `radius-control` / `radius-field` / `radius-chip` / `radius-overlay` / `radius-dialog` / `radius-sheet` | `10px` / `14px` / `8px` / `8px` / `10px` / `10px` / `14px` / `14px` | 全部 8 个角色圆角；`semantics.json` 的 `shape.*` 以 `{radius-…}` 引用它们  |
+| `font-mono`                                                                                                                        | `monospace`                                                         | 等宽字：`font-mono` 类、`Text` 里的代码、`theme.ts` 的 `mono()`            |
+| `brand-fill`                                                                                                                       | 强调色的填充                                                        | `calendar` 的选中日                                                        |
+| `on-brand`                                                                                                                         | `brand-fill` 上的字                                                 | 同上                                                                       |
+| `scrim`                                                                                                                            | 遮罩                                                                | `lib/popup`、`dock-area`                                                   |
+| `media`                                                                                                                            | 照片与影片的底                                                      | `theme.ts` 的 `colors.media`、`image-viewer` 的 ground；不随外观或主题翻转 |
+| `on-media`                                                                                                                         | 照片上的白字                                                        | `theme.ts` 的 `colors.onMedia`；不随外观翻转                               |
+| `chart-foreground`                                                                                                                 | 浅色图块上的深字                                                    | `theme.ts` 的 `colors.chartForeground`；深色块用 `on-media`                |
+| `window-close` / `window-minimize` / `window-zoom`                                                                                 | 三颗窗口按钮各自的色                                                | `theme.ts` 的窗口按钮映射                                                  |
+| `window-control-ink` / `window-control-edge`                                                                                       | 窗口按钮的字与边                                                    | 同上                                                                       |
 
 <!-- /theme-lint: tokens-c -->
 
-`radius` 是唯一的基础值：`radius-control` = round(0.8 × `radius`)，`radius-card` = round(1.4 × `radius`)，`check:theme` 拒绝不合的档位；对话框用 `radius-card`。胶囊主题（`radius-control` 为 `999px`，如 apple）不按倍数推：它的 `radius-card` 是基础圆角向外的同心一档，不小于 `radius`。读主题圆角的角一律用 `rounded()`，continuous 曲线只在 `packages/theme/theme.ts` 给。
+8 个圆角均为非负 `px` 长度，读主题圆角的角一律用 `rounded()`，continuous 曲线只在 `packages/theme/theme.ts` 给；shadcn / Solid Glass 这类由基础圆角按 0.8× / 1.4× 推导的主题在生成器（`scripts/theme/style.ts` 的 `scaledRadii`）中计算，不再由 `theme-lint` 跨平台强制。
 
-`font-mono` 是字体不是颜色：NSH 取列表里第一个不是通用名的家族（`theme.rs` 的 `font_family`），写 `monospace` 就是系统的等宽字，不是一套叫这个名字的字体——本库三套主题都写它，所以这份 token 不动一个像素；应用在自己的主题里写 `"JetBrains Mono, monospace"` 并引入字体文件，见[字体](https://shadcn-nsh.aning.dev/docs/theme#fonts)。`font-sans` 故意不写：不写就是系统字，写了就要求应用自带那个家族。
+`font-mono` 是字体不是颜色：NSH 取列表里第一个不是通用名的家族（`theme.rs` 的 `font_family`），写 `monospace` 就是系统的等宽字；设定自定义正文字体的主题可在 `cssVars.theme` 中声明可选的 `font-sans`，并在 `semantics.json` 的 `type.family` 写 `"{font-sans}"`（不设时 `type.family` 为 `null`，留给系统默认字体）。
 
-## 2 finishes.json 的两条线
+## 2 semantics.json 的两条线
 
 一个 finish 是一个面的样子，由这几样拼出来：
 
 | 字段              | 写什么                                       |
 | ----------------- | -------------------------------------------- |
-| `backgroundColor` | 底：`var(--token)`、墨色，或 `transparent`   |
+| `backgroundColor` | 底：`{token}`、墨色，或 `transparent`        |
 | `backgroundImage` | 叠在底上的渐变：`linear-gradient(180deg, …)` |
 | `boxShadow`       | 内高光、接触影、投影：永远字面（墨色）       |
-| `borderColor`     | 边：`var(--token)` 或 `transparent`          |
+| `borderColor`     | 边：`{token}` 或 `transparent`               |
 | `backdropFilter`  | 只有模糊，不放颜色                           |
 | `material`        | `null`，或平台自己的材质（见下）             |
 
 颜色字段只有 `backgroundColor`、`backgroundImage`、`borderColor` 三个，规则也管这三个。`boxShadow` 例外：影子是墨色，不为几何、不为对比提供颜色，也就没有对应的 token——它在所有主题里都保留字面（黑或白带 alpha，或强调色的半透明墨）。一条影子里写了一个表面的颜色，是设计问题，不是 lint 能判的。
 
+`finishes` 块分为 `shared`（明暗共用字段）与稀疏覆写 `light` / `dark`（只写与 `shared` 不同的字段）；合并后每个 finish 的角色集合与字段集合固定。
+
 ## 2b 风格数据
 
-`finishes.json` 的顶层，在 `press` 与 `light` / `dark` 之间，还有九组**风格数据**：`type`（字体角色）、`shape`（圆角角色）、`size`（触控目标、密度、控件、控件高度）、`stroke`、`focus`、`state`（叠色与透明度）、`motion`、`icon`、`indicator`（外观枚举）。它们与 finish 无关，也与外观无关：一个主题写一份，light 和 dark 共用；随设备变的值分 `pointer` / `touch` 两档。每个键的含义和各平台的值在 [`native-themes.md`](native-themes.md) §3.2；`check:theme` 执行的规则是：
+`semantics.json` 的顶层，在 `finishes` 之前，有九组**风格数据**：`type`（字体角色）、`shape`（圆角角色与曲率）、`size`（触控目标、密度、控件、控件高度）、`stroke`、`focus`、`state`（含 `pressScale`、叠色与透明度）、`motion`、`icon`、`indicator`（外观枚举）。它们与 finish 无关，也与外观无关：一个主题写一份，light 和 dark 共用；随设备变的值分 `pointer` / `touch` 两档。每个键的含义和各平台的值在 [`native-themes.md`](native-themes.md) §3.2；`check:theme` 执行的规则是：
 
-- **键集合相同。** 三套主题的风格数据有同样的键、同样类型的叶子，缺一个键就点名它。
+- **键集合相同。** 所有主题的风格数据有同样的键、同样类型的叶子，缺一个键就点名它。
 - **枚举取白名单。** 字重、曲线、焦点样式、easing 名、`indicator` 的值都在 `scripts/theme/style.ts` 的列表里。
-- **圆角一致。** `theme.json` 的 `radius`、`radius-card`、`radius-control` 与 `shape.inset`、`shape.card`、`shape.control` 是同一个数。
+- **`{token}` 引用按 DTCG `$type` 校验。** `shape` 的 8 个圆角必须是 `"{radius-…}"`（`dimension` 类型），不允许写数字字面量；`type.family` 必须是 `null` 或 `fontFamily` 类型的 `{token}`。
 
-**`theme.json` 的圆角与 `shape` 怎么分工。** NSH 的 `token()` 和 Tailwind 的 `rounded-*` 类读 `theme.json`，所以那三档圆角留在那里；`shape` 按用途角色写圆角，是组件读的地方，三个平台的差别（胶囊、同心、只圆上两个角）只有它能表达。两处写同一个数的三个角色（`inset` ↔ `radius`、`card` ↔ `radius-card`、`control` ↔ `radius-control`）由 lint 保证相等；`field`、`chip`、`overlay`、`dialog`、`sheet` 只在 `shape` 里，生成的主题（shadcn、solid-glass）按半径推出它们，见 `scripts/theme/style.ts` 的 `withRadii`。
+**`theme.json` 与 `shape` 的分工。** 全部 8 个圆角值只定义在 `theme.json` 的 `cssVars.theme` 中；`semantics.json` 的 `shape.*` 通过 `{radius-…}` 引用它们，外加非 token 的 `curve` 与 `corners.field`。`theme.ts` 的 `shape.*` 经 `token()` 响应式解析这些引用，因此换主题或宿主覆写圆角 token 都会立即到达组件。
 
 组件经 `style()`（响应式）和保持原形状的 `density`、`controlSize`、`motion`、`cornerCurve`、`focusRing` 读风格数据，换主题后下一帧重画。terminal 档的尺寸由字符格决定，留在代码里，不进主题。
 
@@ -125,14 +127,14 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 **留在代码里的值**，各处有注释：Tailwind 类里的 `rounded-(--radius-control)` / `rounded-(--radius-card)` / `rounded-[4px]`、`active:opacity-70`、`disabled:opacity-50`、`border`（类名读不了 getter，前两者读 `theme.json` 的 token，与 `shape` 同值）；半高或半径推出的圆（`height / 2`、`side / 2`：胶囊、圆点、开关、进度条）；选择器的 2 点焦点边（`select.tsx` 的 `outlineWidth: 2`，它是边的渐显，不是焦点环）；实心按钮悬停与选中的 0.94 / 0.88 不透明度，附件失败时的 0.6，子菜单禁用的 0.35（没有对应的 state 角色）；toast 的 2 点色条、进度的 2 点限位、头像 2 点的环（装饰，不是 stroke 角色）；圆角 1 / 2 / 3 / 4 / 5 的小件（拇指、插入符、进度条端点、日历格的 17 等）。
 
-`type.family` 经 `selectTheme` 写进 `font-sans`（NSH 里每个没写家族的文字取它）：`null` 留给 `theme.json`（默认是系统字），`"sans"` 取 `theme.json` 的 `font-sans`，`"rounded"` 是圆体（`ui-rounded`），`"mono"` 取 `font-mono`。构建时的主题没有 `selectTheme` 这一步，它的家族照 `theme.json` 写。
+`type.family` 在 `semantics.json` 中写 `null`（系统默认）或 `"{font-…}"`（引用 `theme.json` 中 `fontFamily` 类型的 token，如 `"{font-sans}"`）：`font.family()` 通过 `token()` 响应式读取它，构建时与运行时主题行为一致，宿主覆写 `font-sans` 也同样生效。
 
 ## 3 固定形状
 
-**每种主题、每种外观里，同一个 finish 的字段集合完全一样，且等于默认主题的那一份。** 一个主题觉得“我没有渐变”，答案不是删掉 `backgroundImage`，而是把它写成一种颜色：
+**每种主题、每种外观里，合并 `shared` 与稀疏覆写后的同一个 finish 的字段集合完全一样，且等于默认主题的那一份。** 一个主题觉得“我没有渐变”，答案不是删掉 `backgroundImage`，而是把它写成一种颜色：
 
 ```json
-"backgroundImage": "linear-gradient(180deg, var(--primary) 0%, var(--primary) 100%)"
+"backgroundImage": "linear-gradient(180deg, {primary} 0%, {primary} 100%)"
 ```
 
 两个 stop 同色，等于没有渐变，但形状还在，`fillStyle()` 与 `sliderFill` 不需要 `undefined` 分支，换主题也就不会换出另一种结构。
@@ -149,7 +151,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 | 键        | 内容                                                                                                                                                 | 变成                                                                 |
 | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------- |
-| `apple`   | `{ glass: "regular" \| "clear", tint: <颜色或 null> }`；`tint` 与别处一样写 `var(--token)`，不写字面量                                               | style 里的 `glassEffect`、`glassTintColor`（`themed()` 随 style 给） |
+| `apple`   | `{ glass: "regular" \| "clear", tint: <颜色或 null> }`；`tint` 与别处一样写 `{token}`，不写字面量                                                    | style 里的 `glassEffect`、`glassTintColor`（`themed()` 随 style 给） |
 | `ios`     | `{ backdrop: "ultraThin" \| "thin" \| "regular" \| "thick" \| "chrome" }`                                                                            | `ios={{ backdropMaterial }}`                                         |
 | `macos`   | `{ backdrop: <NSVisualEffectView 材质>, blending?: "withinWindow" \| "behindWindow", state?: "followsWindowActiveState" \| "active" \| "inactive" }` | `macos={{ backdrop: { material, blending, state } }}`                |
 | `windows` | `{ backdrop: "blur" }`                                                                                                                               | `windows={{ backdrop: { material } }}`                               |
@@ -194,10 +196,10 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 一个 finish 的颜色这样写：
 
-1. **alias**：`var(--token)`，token 必须在同一主题的 `light`/`dark` 或 `cssVars.theme` 里。`theme.ts` 的 `themed()` 在**读的时候**把它换成当前主题与外观的颜色（`token(name)`，NSH 给的 `#rrggbbaa`），所以切外观、`selectTheme` 切主题都自动生效，一次读一次换。
+1. **alias**：`{token}`，token 必须在同一主题的 `light`/`dark` 或 `cssVars.theme` 里且为 `color` 类型。`theme.ts` 的 `themed()` 在**读的时候**把它换成当前主题、外观与宿主覆写的颜色（`token(name)`，NSH 给的 `#rrggbbaa`），所以切外观、`selectTheme` 切主题与宿主覆写都自动生效。
 2. **墨色**：`oklch(0 0 0 / a)`、`oklch(1 0 0 / a)` 允许字面——内高光、接触影、投影都是它。
 3. **`transparent`**：允许，表示这一面没有边。
-4. **带 alpha 的 token**：`oklch(from var(--token) l c h / a)`——一个 token 的颜色换一个透明度，唯一允许的相对颜色写法（见第 7 节）。`alias()` 在读的时候把它展开成具体的 `oklch(L C H / a)`，因为 NSH 的 CSS 解析器不认相对颜色。
+4. **带 alpha 的 token**：`oklch(from {token} l c h / a)`——一个 token 的颜色换一个透明度，唯一允许的相对颜色写法（见第 7 节）。`alias()` 在读的时候把它展开成具体的颜色，因为 NSH 的 CSS 解析器不认相对颜色。
 5. **`boxShadow` 整条豁免**（见第 2 节）。
 6. 其它字面量一律不许出现，除非它在第 7 节的待定表里：那是一份清单，说明这个颜色还没有 token，暂时留在 finish 里。表里的每一条都是待办，不是许可。
 
@@ -221,8 +223,8 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 一个 finish 里的颜色离开这张表只有三条路，每条的理由不同：
 
-1. **一个 token 的颜色，带别的 alpha**：写 `oklch(from var(--token) l c h / a)`。像素不变：`alias()` 从当前主题里取出那个 token 的声明值，补上它的 L、C、H，写出的就是同一个颜色。`theme-lint` 只认这一种写法，`from` 后面的 `var()` 必须是这个主题真有的 token；别的相对形式（把 alpha 写成 `var()`、在 L/C/H 里用 `calc()`）仍然算“没有 token 的颜色”。
-2. **与某个 token 肉眼无差**：ΔL ≤ 0.015、ΔC ≤ 0.003、色相在同一段灰里，就写 `var(--token)`。像素会有一两个单位的差别，受影响的基线重拍。数值够近但语义不对的不换：`chart-*` 是数据色，`window-control-off` 是窗口按钮的底，一个选中的行不该跟着图表的颜色走。
+1. **一个 token 的颜色，带别的 alpha**：写 `oklch(from {token} l c h / a)`。像素不变：`alias()` 从当前主题里取出那个 token 的值，替换其 alpha。`theme-lint` 只认这一种写法，`from` 后面的 `{token}` 必须是这个主题真有的 `color` 类型 token；别的相对形式（把 alpha 写成 `{token}`、在 L/C/H 里用 `calc()`）仍然算“没有 token 的颜色”。
+2. **与某个 token 肉眼无差**：ΔL ≤ 0.015、ΔC ≤ 0.003、色相在同一段灰里，就写 `{token}`。像素会有一两个单位的差别，受影响的基线重拍。数值够近但语义不对的不换：`chart-*` 是数据色，`window-control-off` 是窗口按钮的底，一个选中的行不该跟着图表的颜色走。
 3. **材质自己的设计色**：同一个主题的两个外观里值相同、语义相同，又出现在两处以上，就进 `theme.json` 的 B 层（第 1 节）。default 用原来的值，另外两个主题取自己同一位置的颜色或最近的 token，零像素变化。只在一处出现的，留在表里。
 
 表里剩下的十七行都是第 3 条没走的、只在一处出现的材质色：`fill` 的渐变末端比 `primary` 深一档或浅一档、开关圆点比 `primary` 淡两档、`track` 的边比 `input` 深一档。其中 `fill` 的那两行只能留在渐变里：NSH 的解析器不认相对颜色，渐变里的颜色写不成 `oklch(from …)`。
