@@ -47,6 +47,7 @@
     "port:baseline": "bun scripts/port/baseline.ts"
   },
   "devDependencies": {
+    "@material/material-color-utilities": "^0.4.0",
     "@types/bun": "^1.4.4",
     "@types/node": "^26.6.6",
     "oxc-parser": "^0.159.0",
