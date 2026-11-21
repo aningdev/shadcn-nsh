@@ -19,7 +19,7 @@ fs.writeFileSync(
 
 afterAll(() => fs.rmSync(dir, { recursive: true, force: true }));
 
-// Two themes: the same `lib/theme.ts` beside a `lib/finishes.json` each, as the registry ships them.
+// Two themes: the same `lib/ui/theme.ts` beside a `lib/ui/finishes.json` each, as the registry ships them.
 fs.mkdirSync(path.join(dir, "theme"));
 fs.mkdirSync(path.join(dir, "themes", "shadcn"), { recursive: true });
 fs.writeFileSync(path.join(dir, "theme/theme.ts"), 'import finishes from "./finishes.json";\n');
@@ -39,8 +39,8 @@ const defaultTheme = {
   name: "theme",
   type: "registry:theme",
   files: [
-    { path: "theme/theme.ts", type: "registry:lib", target: "lib/theme.ts" },
-    { path: "theme/finishes.json", type: "registry:lib", target: "lib/finishes.json" },
+    { path: "theme/theme.ts", type: "registry:lib", target: "lib/ui/theme.ts" },
+    { path: "theme/finishes.json", type: "registry:lib", target: "lib/ui/finishes.json" },
   ],
 };
 
@@ -49,8 +49,8 @@ const neutralTheme = {
   type: "registry:theme",
   files: [
     { path: "themes/shadcn/theme.json", type: "registry:file", target: "theme.json" },
-    { path: "themes/shadcn/finishes.json", type: "registry:lib", target: "lib/finishes.json" },
-    { path: "theme/theme.ts", type: "registry:lib", target: "lib/theme.ts" },
+    { path: "themes/shadcn/finishes.json", type: "registry:lib", target: "lib/ui/finishes.json" },
+    { path: "theme/theme.ts", type: "registry:lib", target: "lib/ui/theme.ts" },
   ],
 };
 
@@ -142,7 +142,7 @@ describe("checkRegistryDependencies", () => {
     expect(await checkRegistryDependencies(registry, dir)).toEqual([]);
   });
 
-  test("a second theme ships lib/theme.ts beside its own finishes, and needs no dependency", async () => {
+  test("a second theme ships lib/ui/theme.ts beside its own finishes, and needs no dependency", async () => {
     const registry: Registry = {
       name: "t",
       homepage: "",

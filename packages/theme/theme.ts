@@ -264,7 +264,7 @@ const atAlpha = (color: string, a: number) =>
  * A token named at another alpha (`oklch(from var(--card) l c h / 0.78)`, the one relative color a
  * finish writes) resolves to that token's color with the alpha replaced: NSH reads these strings
  * as plain CSS and has no relative color syntax. It goes through `token` rather than reading the
- * theme file, so this module imports nothing but `finishes.json`: it is `lib/theme.ts` in an app,
+ * theme file, so this module imports nothing but `finishes.json`: it is `lib/ui/theme.ts` in an app,
  * whose `theme.json` sits at its root.
  */
 const alias = (value: string): string =>

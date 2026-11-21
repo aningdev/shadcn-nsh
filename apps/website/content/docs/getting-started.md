@@ -85,7 +85,7 @@ bun run shadcn-nsh -- add button -c apps/web --registry "http://127.0.0.1:4173/{
 
 ## Theme
 
-The look is `theme.json` (colors and radii) and `lib/finishes.json` (gradients and shadows); `lib/theme.ts` reads both. `init` installs them and points each `nsh.json` at `theme.json`; in a monorepo they live under `packages/ui`. See [Theme](./theme) for the keys, and [Customizing](./customizing) to change colors, one control's look, or its shell after copying.
+The look is `theme.json` (colors and radii) and `lib/ui/finishes.json` (gradients and shadows); `lib/ui/theme.ts` reads both. `init` installs them and points each `nsh.json` at `theme.json`; in a monorepo they live under `packages/ui`. See [Theme](./theme) for the keys, and [Customizing](./customizing) to change colors, one control's look, or its shell after copying.
 
 ## Behavior, previews and native tests
 

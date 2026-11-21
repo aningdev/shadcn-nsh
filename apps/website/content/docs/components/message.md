@@ -18,11 +18,11 @@ import { Bot } from "lucide";
 
 import { Bubble, BubbleContent } from "@/components/ui/bubble";
 import { Message, MessageAvatar, MessageContent } from "@/components/ui/message";
-import { Icon } from "@/lib/icons";
-import { colors } from "@/lib/theme";
+import { Icon } from "@/lib/ui/icons";
+import { colors } from "@/lib/ui/theme";
 ```
 
-The examples draw icons with `Icon` from `lib/icons`; see [Icons](../icons) for adding it and picking a size and color.
+The examples draw icons with `Icon` from `lib/ui/icons`; see [Icons](../icons) for adding it and picking a size and color.
 
 ```tsx
 <Message>

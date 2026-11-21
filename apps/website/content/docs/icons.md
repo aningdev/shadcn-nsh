@@ -3,7 +3,7 @@ title: Icons
 description: "lucide's icons, drawn by `Icon` in the size and color a component gives them."
 ---
 
-The icons are [lucide](https://lucide.dev/icons)'s, drawn by `Icon` from `lib/icons.tsx`: an icon is a lucide node, stroked on a canvas in its 24-unit box, so it reads at the same size and weight as lucide anywhere else.
+The icons are [lucide](https://lucide.dev/icons)'s, drawn by `Icon` from `lib/ui/icons.tsx`: an icon is a lucide node, stroked on a canvas in its 24-unit box, so it reads at the same size and weight as lucide anywhere else.
 
 ## Installation
 
@@ -11,15 +11,15 @@ The icons are [lucide](https://lucide.dev/icons)'s, drawn by `Icon` from `lib/ic
 npx shadcn-nsh@latest add icons
 ```
 
-This copies `lib/icons.tsx`, `lib/icon-canvas.ts` and `lib/icon-image.ts` and installs `lucide`. A component that draws icons of its own (`select`, `menu`, `tabs`, `sidebar`…) brings them when it is added. `button`, `alert`, `empty` and the other components that take an icon as a child do not: add `icons` once before writing the examples on their pages.
+This copies `lib/ui/icons.tsx`, `lib/icon-canvas.ts` and `lib/icon-image.ts` and installs `lucide`. A component that draws icons of its own (`select`, `menu`, `tabs`, `sidebar`…) brings them when it is added. `button`, `alert`, `empty` and the other components that take an icon as a child do not: add `icons` once before writing the examples on their pages.
 
 ## Usage
 
 ```tsx
 import { Plus } from "lucide";
 
-import { Icon } from "@/lib/icons";
-import { colors } from "@/lib/theme";
+import { Icon } from "@/lib/ui/icons";
+import { colors } from "@/lib/ui/theme";
 ```
 
 ```tsx
@@ -36,7 +36,7 @@ Inside a component, the component says how large an icon is and what color it ta
 import { RotateCw, Trash } from "lucide";
 
 import { Button, buttonGlyph, IconButton, iconButtonGlyph } from "@/components/ui/button";
-import { Icon } from "@/lib/icons";
+import { Icon } from "@/lib/ui/icons";
 
 <Button accessibilityLabel="Retry the upload" onPress={retry}>
   <Icon icon={RotateCw} {...buttonGlyph("secondary")} />
@@ -66,7 +66,7 @@ A native menu draws its own items, so it takes an image rather than a view: an i
 import { Copy, Mail, Share2 } from "lucide";
 import { Menu } from "nsh/desktop";
 
-import { iconImage } from "@/lib/icons";
+import { iconImage } from "@/lib/ui/icons";
 
 const shareMenu = () =>
   Menu.popup([
@@ -104,7 +104,7 @@ The arrows and chevrons that point along the line (`ChevronLeft`, `ChevronRight`
 The terminal draws no icons: `Icon` shows nothing there, except `Check`, which is the mark `✓`. An icon-only control uses `IconLabel` instead, which shows a short word in the icon's place:
 
 ```tsx
-import { IconLabel } from "@/lib/icons";
+import { IconLabel } from "@/lib/ui/icons";
 
 <IconButton accessibilityLabel="Close" onPress={close}>
   <IconLabel icon={X} label="close" {...iconButtonGlyph()} />
@@ -113,4 +113,4 @@ import { IconLabel } from "@/lib/icons";
 
 ## Changing them
 
-`lib/icons.tsx` is the app's own after `add`. To use another set, keep `Icon`'s props and change what it draws: the components only ever pass an icon, a size, a tint and a weight.
+`lib/ui/icons.tsx` is the app's own after `add`. To use another set, keep `Icon`'s props and change what it draws: the components only ever pass an icon, a size, a tint and a weight.

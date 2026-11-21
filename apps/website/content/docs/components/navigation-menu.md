@@ -112,7 +112,7 @@ const look = navigationMenuLook();
 It goes somewhere with `href` and `openWith`, or reports a press — and on the web a link with an
 `href` shows no hover of its own, so a navigation menu's links are usually `onPress`. A `style` goes
 over the look's: the demo's leading card is one link on the inset surface of
-`lib/surface` (`insetSurface()`).
+`lib/ui/surface` (`insetSurface()`).
 
 ### A bar item that is a link
 

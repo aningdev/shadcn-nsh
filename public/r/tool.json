@@ -8,7 +8,7 @@
     {
       "path": "packages/ui/lib/tool.ts",
       "type": "registry:lib",
-      "target": "lib/tool.ts",
+      "target": "lib/ui/tool.ts",
       "content": "// The inset track a toolbar and a toggle group share.\n// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.\nimport { colors, rounded, terminal, TERMINAL_GAP, shape, stroke } from \"@shadcn-nsh/theme\";\nimport type { ViewStyle } from \"nsh\";\n\n/** Options of `toolbarTrack`. */\nexport interface ToolbarTrackOptions {\n  /** A column of tools (a `Toolbar`'s `axis=\"vertical\"`). */\n  vertical?: boolean;\n}\n\n/**\n * The inset track a toolbar or a `ToggleGroup` sits in: its tools in a row\n * (a column when `vertical`) 2 points apart, 3 points inside its edge, on\n * the inset with the border's edge. A terminal sets each tool as its label\n * two columns apart and wraps a row too narrow for them.\n */\nexport function toolbarTrack(o?: ToolbarTrackOptions): ViewStyle {\n  return {\n    flexDirection: o?.vertical ? \"column\" : \"row\",\n    alignItems: o?.vertical && terminal ? \"flex-start\" : \"center\",\n    gap: terminal ? TERMINAL_GAP : 2,\n    flexWrap: terminal && !o?.vertical ? \"wrap\" : undefined,\n    padding: 3,\n    ...rounded(shape.inset),\n    borderWidth: stroke.control,\n    borderColor: colors.border,\n    backgroundColor: colors.inset,\n  };\n}\n"
     }
   ]

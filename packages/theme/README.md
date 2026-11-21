@@ -31,7 +31,7 @@ An app sets the look through `nsh.json`'s `"theme"` — the tokens above, read w
 
 ## More than one theme
 
-An app is **built** with one theme — `init --theme <name>`, which writes `theme.json` and `lib/finishes.json` and points `nsh.json` at them — and can **carry** more: `shadcn-nsh add theme-<name>` installs another into `themes/<name>/` and leaves the build-time one as it is. Each is one `AppTheme` module:
+An app is **built** with one theme — `init --theme <name>`, which writes `theme.json` and `lib/ui/finishes.json` and points `nsh.json` at them — and can **carry** more: `shadcn-nsh add theme-<name>` installs another into `themes/<name>/` and leaves the build-time one as it is. Each is one `AppTheme` module:
 
 ```ts
 // themes/shadcn/index.ts, as `add theme-shadcn` copies it in
@@ -53,7 +53,7 @@ export const shadcn: AppTheme = {
 // themes.ts — the app's own file.
 import { Storage } from "nsh";
 
-import { selectTheme, type AppTheme } from "./lib/theme";
+import { selectTheme, type AppTheme } from "./lib/ui/theme";
 import { shadcn } from "./themes/shadcn";
 
 /** One per `shadcn-nsh add theme-<name>`: the build-time theme is not in it. */

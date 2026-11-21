@@ -1,6 +1,6 @@
 import path from "node:path";
 
-/** Resolve a project-relative alias like `./lib/theme` against cwd. */
+/** Resolve a project-relative alias like `./lib/ui/theme` against cwd. */
 export function resolveAlias(cwd: string, alias: string) {
   return path.resolve(cwd, alias);
 }

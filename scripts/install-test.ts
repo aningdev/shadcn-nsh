@@ -325,7 +325,7 @@ function allPage(items: Item[]): string {
     .map((item) => `      ${sampled.get(item.name)!.jsx}`);
   return `// Written by scripts/install-test.ts; this app is temporary.
 import { mount, Text, View } from "nsh";
-import { colors } from "@/lib/theme";
+import { colors } from "@/lib/ui/theme";
 
 ${imports.join("\n")}
 
@@ -390,9 +390,21 @@ async function copyApp(template: string, dir: string) {
   await fs.cp(template, dir, { recursive: true });
 }
 
+/** Everything `add` copies into the app's `lib/` sits in `lib/ui/`, apart from the app's own code (#192). */
+async function onlyLibUi(dir: string) {
+  const entries = await fs.readdir(path.join(dir, "lib"));
+  if (entries.length !== 1 || entries[0] !== "ui") {
+    throw new StepFailure(
+      "add --all",
+      `      expected only lib/ui in the app's lib/, found: ${entries.join(", ")}`,
+    );
+  }
+}
+
 async function installEveryItem(template: string, dir: string, items: Item[], nsh: string) {
   await copyApp(template, dir);
   await step("add --all", "bun", [cli, "add", "--all"], dir);
+  await onlyLibUi(dir);
   await fs.writeFile(path.join(dir, "All.tsx"), allPage(items));
   await fs.writeFile(path.join(dir, "All.test.tsx"), ALL_TEST);
   await step("nsh check", nsh, ["check", "."], dir);
@@ -408,6 +420,7 @@ async function installEveryItem(template: string, dir: string, items: Item[], ns
 async function installNeutralTheme(template: string, dir: string, items: Item[], nsh: string) {
   await copyApp(template, dir);
   await step("add --all", "bun", [cli, "add", "--all"], dir);
+  await onlyLibUi(dir);
   await fs.writeFile(path.join(dir, "All.tsx"), allPage(items));
   await step("nsh check", nsh, ["check", "."], dir);
   await step("add --overwrite", "bun", [cli, "add", "button", "--overwrite"], dir);
@@ -431,7 +444,7 @@ async function installNeutralTheme(template: string, dir: string, items: Item[],
 const THEMES_PAGE = `// Written by scripts/install-test.ts; this app is temporary.
 import { mount, Storage, Text, View } from "nsh";
 
-import { currentTheme, selectTheme } from "@/lib/theme";
+import { currentTheme, selectTheme } from "@/lib/ui/theme";
 import { shadcn } from "./themes/shadcn";
 
 const themes = [shadcn];
@@ -464,7 +477,7 @@ mount(Page);
 const TWO_THEMES_PAGE = `// Written by scripts/install-test.ts; this app is temporary.
 import { mount, Storage, Text, View } from "nsh";
 
-import { currentTheme, selectTheme, type AppTheme } from "@/lib/theme";
+import { currentTheme, selectTheme, type AppTheme } from "@/lib/ui/theme";
 import { defaultTheme } from "./themes/default";
 import { shadcn } from "./themes/shadcn";
 
@@ -521,17 +534,17 @@ async function installSecondTheme(template: string, dir: string, nsh: string) {
 
 /**
  * One more theme, from the app's side: `add theme-shadcn` must leave the build-time `theme.json`
- * and `lib/finishes.json` as `init` wrote them, add `themes/shadcn/`, and the page that lists it
+ * and `lib/ui/finishes.json` as `init` wrote them, add `themes/shadcn/`, and the page that lists it
  * must type check.
  */
 async function installAnotherTheme(template: string, dir: string, nsh: string) {
   await copyApp(template, dir);
   const before = await fs.readFile(path.join(dir, "theme.json"), "utf8");
-  const finishes = await fs.readFile(path.join(dir, "lib/finishes.json"), "utf8");
+  const finishes = await fs.readFile(path.join(dir, "lib/ui/finishes.json"), "utf8");
   await step("add theme-shadcn", "bun", [cli, "add", "theme-shadcn"], dir);
   for (const [name, want] of [
     ["theme.json", before],
-    ["lib/finishes.json", finishes],
+    ["lib/ui/finishes.json", finishes],
   ] as const) {
     const now = await fs.readFile(path.join(dir, name), "utf8");
     if (now !== want) {

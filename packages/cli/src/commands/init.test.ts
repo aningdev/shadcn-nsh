@@ -57,13 +57,13 @@ describe("init --theme", () => {
 
     expect(out.lines).toContain("write theme.json");
     expect(current.read("theme.json")).toBe(neutralTheme);
-    expect(current.read("lib/finishes.json")).toBe(neutralFinishes);
+    expect(current.read("lib/ui/finishes.json")).toBe(neutralFinishes);
     // The same data as a theme the app lists, for `selectTheme` to come back to.
     expect(current.read("themes/shadcn/theme.json")).toBe(neutralTheme);
     expect(current.read("themes/shadcn/finishes.json")).toBe(neutralFinishes);
-    expect(current.read("themes/shadcn/index.ts")).toContain('from "../../lib/theme"');
+    expect(current.read("themes/shadcn/index.ts")).toContain('from "../../lib/ui/theme"');
     // The roles module comes with it: a theme item does not ship one of its own.
-    expect(current.exists("lib/theme.ts")).toBe(true);
+    expect(current.exists("lib/ui/theme.ts")).toBe(true);
     expect(recordedTheme(current)).toBe("theme-shadcn");
     // The app still points its runtime at `theme.json`, whatever theme that is.
     expect((JSON.parse(current.read("nsh.json")) as { theme?: string }).theme).toBe("./theme.json");
@@ -77,11 +77,11 @@ describe("init --theme", () => {
 
     expect(out.lines).toContain("write theme.json");
     expect(current.read("theme.json")).toBe(glassTheme);
-    expect(current.read("lib/finishes.json")).toBe(glassFinishes);
+    expect(current.read("lib/ui/finishes.json")).toBe(glassFinishes);
     // The same data as the theme the app lists, `themes/solid-glass/`, beside the roles module.
     expect(current.read("themes/solid-glass/theme.json")).toBe(glassTheme);
-    expect(current.read("themes/solid-glass/index.ts")).toContain('from "../../lib/theme"');
-    expect(current.exists("lib/theme.ts")).toBe(true);
+    expect(current.read("themes/solid-glass/index.ts")).toContain('from "../../lib/ui/theme"');
+    expect(current.exists("lib/ui/theme.ts")).toBe(true);
     expect(recordedTheme(current)).toBe("theme-solid-glass");
   });
 
@@ -102,7 +102,7 @@ describe("init --theme", () => {
     );
     expect(replaced.lines.some((line) => line.startsWith("overwrite theme.json"))).toBe(true);
     expect(current.read("theme.json")).toBe(neutralTheme);
-    expect(current.read("lib/finishes.json")).toBe(neutralFinishes);
+    expect(current.read("lib/ui/finishes.json")).toBe(neutralFinishes);
     expect(recordedTheme(current)).toBe("theme-shadcn");
   });
 
@@ -164,7 +164,7 @@ describe("the app's theme", () => {
     expect(out.result).toBe(0);
     expect(current.read("theme.json")).toBe(before);
     expect(current.read("theme.json")).toBe(neutralTheme);
-    expect(current.read("lib/finishes.json")).toBe(neutralFinishes);
+    expect(current.read("lib/ui/finishes.json")).toBe(neutralFinishes);
     expect(recordedTheme(current)).toBe("theme-shadcn");
     // The `theme` dependency resolved to the item `nsh-ui.json` names, not the default one.
     expect(out.lines).toContain("skip themes/shadcn/theme.json (identical)");
@@ -178,7 +178,7 @@ describe("the app's theme", () => {
     );
 
     expect(current.read("theme.json")).toBe(neutralTheme);
-    expect(current.read("lib/finishes.json")).toBe(neutralFinishes);
+    expect(current.read("lib/ui/finishes.json")).toBe(neutralFinishes);
     expect(recordedTheme(current)).toBe("theme-shadcn");
   });
 
@@ -197,15 +197,15 @@ describe("the app's theme", () => {
       runAdd(["theme"], { cwd: current!.app, registry: current!.url, overwrite: true }),
     );
     expect(current.read("theme.json")).toBe(neutralTheme);
-    expect(current.read("lib/finishes.json")).toBe(neutralFinishes);
-    expect(current.exists("lib/theme.ts")).toBe(true);
+    expect(current.read("lib/ui/finishes.json")).toBe(neutralFinishes);
+    expect(current.exists("lib/ui/theme.ts")).toBe(true);
 
     await captured(() =>
       runInit({ cwd: current!.app, registry: current!.url, theme: "default", overwrite: true }),
     );
 
     expect(current.read("theme.json")).toBe(defaultTheme);
-    expect(current.read("lib/finishes.json")).toBe(defaultFinishes);
+    expect(current.read("lib/ui/finishes.json")).toBe(defaultFinishes);
     expect(recordedTheme(current)).toBe("theme");
   });
 
@@ -221,9 +221,9 @@ describe("the app's theme", () => {
     expect(current.read("themes/shadcn/theme.json")).toBe(neutralTheme);
     expect(current.read("themes/shadcn/finishes.json")).toBe(neutralFinishes);
     // The roles module it imports is the app's, two directories up from `themes/shadcn/`.
-    expect(current.read("themes/shadcn/index.ts")).toContain('from "../../lib/theme"');
+    expect(current.read("themes/shadcn/index.ts")).toContain('from "../../lib/ui/theme"');
     expect(current.read("theme.json")).toBe(defaultTheme);
-    expect(current.read("lib/finishes.json")).toBe(defaultFinishes);
+    expect(current.read("lib/ui/finishes.json")).toBe(defaultFinishes);
     expect(recordedTheme(current)).toBe("theme");
 
     // Taking it again changes nothing: it is one more theme, not the app's.
@@ -246,7 +246,7 @@ describe("the app's theme", () => {
     expect(current.read("themes/default/theme.json")).toBe(defaultTheme);
     expect(current.read("themes/default/finishes.json")).toBe(defaultFinishes);
     // The roles module it imports is the app's, two directories up from `themes/default/`.
-    expect(current.read("themes/default/index.ts")).toContain('from "../../lib/theme"');
+    expect(current.read("themes/default/index.ts")).toContain('from "../../lib/ui/theme"');
     // The build-time theme is the app's, and adding one more does not touch it.
     expect(current.read("theme.json")).toBe(before);
     expect(recordedTheme(current)).toBe("theme-shadcn");

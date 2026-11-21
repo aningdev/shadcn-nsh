@@ -15,10 +15,10 @@ npx shadcn-nsh@latest add input-group
 
 ```tsx
 import { InputGroup, InputGroupInput } from "@/components/ui/input-group";
-import { Icon } from "@/lib/icons";
+import { Icon } from "@/lib/ui/icons";
 ```
 
-The examples draw icons with `Icon` from `lib/icons`; see [Icons](../icons) for adding it and picking a size and color.
+The examples draw icons with `Icon` from `lib/ui/icons`; see [Icons](../icons) for adding it and picking a size and color.
 
 ```tsx
 <InputGroup>

@@ -28,7 +28,7 @@ describe("list", () => {
   });
 
   test("marks an item the app has a file of", async () => {
-    current = fixture({ "lib/press.ts": "// the app's press\n" });
+    current = fixture({ "lib/ui/press.ts": "// the app's press\n" });
     const out = await captured(() => runList({ cwd: current!.app, registry: current!.url }));
 
     const press = out.lines.find((line) => line.includes("press") && line.includes("registry:lib"));

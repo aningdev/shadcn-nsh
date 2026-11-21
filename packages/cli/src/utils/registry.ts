@@ -69,7 +69,7 @@ export async function cacheIndex(config: NshUiConfig, registryOverride?: string)
 /** `theme.json` and `finishes.json`: the two data files a theme is. */
 const THEME_DATA = new Set(["theme.json", "finishes.json"]);
 
-/** A theme item's look without its data: the roles module (`lib/theme.ts`), which every app has once. */
+/** A theme item's look without its data: the roles module (`lib/ui/theme.ts`), which every app has once. */
 function rolesOnly(item: RegistryItem): RegistryItem {
   return {
     ...item,
@@ -96,7 +96,7 @@ function atBuildTime(item: RegistryItem, config: NshUiConfig): RegistryItem {
  *
  * `theme` — named, or the dependency every component has — is the app's build-time theme,
  * `nsh-ui.json`'s `theme`. For the library's own that is the `theme` item as it is. For another
- * (`theme-shadcn`) it is the roles module (`lib/theme.ts`) from `theme`, that theme in
+ * (`theme-shadcn`) it is the roles module (`lib/ui/theme.ts`) from `theme`, that theme in
  * `themes/<name>/` for `selectTheme`, and its data at the build-time paths `nsh.json` points at:
  * what `init --theme <name>` wrote, so `add` and `add --overwrite` never write the default colors
  * over it. Naming the other theme's item (`add theme-shadcn`) installs `themes/<name>/` alone.
@@ -198,8 +198,8 @@ export async function checkRegistryDependencies(
           // `add` picks from `nsh-ui.json` (`resolveTree`).
           used.add(themeItems.has(item.name) ? item.name : DEFAULT_THEME);
         } else if (spec.startsWith(".")) {
-          // Settled at the target first: a theme item ships `lib/theme.ts` beside its own
-          // `lib/finishes.json`, two themes sharing those paths.
+          // Settled at the target first: a theme item ships `lib/ui/theme.ts` beside its own
+          // `lib/ui/finishes.json`, two themes sharing those paths.
           const beside = file.target
             ? RESOLVE_SUFFIXES.map(
                 (suffix) =>

@@ -27,7 +27,7 @@ bunx shadcn-nsh@latest add button
 另接受 `--registry <url>`（含 `{name}` 的模板）；省略时 `add`、`list`、`view`、`diff` 用
 `nsh-ui.json` 里的，`init` 用公共 registry。`init` 还接受 `--overwrite`、`-y`（接受，当前不弹确认）与 `--theme <name>`：
 `default`（本库自己的主题）或 `shadcn`（shadcn 的 neutral 配色与平面 finish）—— 这是应用**构建时**的主题：
-`theme.json`、`lib/finishes.json`，以及 `nsh.json` 指向的那份。
+`theme.json`、`lib/ui/finishes.json`，以及 `nsh.json` 指向的那份。
 
 ## add
 

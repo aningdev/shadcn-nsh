@@ -28,7 +28,7 @@ Every command takes `-c, --cwd <dir>` (default: the current directory). `init`, 
 `list`, `view` and `diff` use the one in `nsh-ui.json`, and `init` uses the public registry.
 `init` also takes `--overwrite`, `-y` (accepted; nothing prompts today) and `--theme <name>`,
 `default` (the library's own) or `shadcn` (shadcn's neutral palette and flat finishes) — the theme
-the app is **built** with: `theme.json`, `lib/finishes.json`, and what `nsh.json` points at.
+the app is **built** with: `theme.json`, `lib/ui/finishes.json`, and what `nsh.json` points at.
 
 ## add
 

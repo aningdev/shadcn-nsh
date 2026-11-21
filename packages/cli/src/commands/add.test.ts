@@ -26,10 +26,10 @@ describe("add", () => {
     expect(current.exists("nsh-ui.json")).toBe(true);
     expect(current.exists("components/ui/button.tsx")).toBe(true);
     expect(current.exists("components/ui/spinner.tsx")).toBe(true);
-    expect(current.exists("lib/press.ts")).toBe(true);
-    expect(current.exists("lib/theme.ts")).toBe(true);
+    expect(current.exists("lib/ui/press.ts")).toBe(true);
+    expect(current.exists("lib/ui/theme.ts")).toBe(true);
     expect(current.exists("theme.json")).toBe(true);
-    expect(current.read("components/ui/button.tsx")).toContain('from "../../lib/theme"');
+    expect(current.read("components/ui/button.tsx")).toContain('from "../../lib/ui/theme"');
     expect(out.lines).toContain("write components/ui/button.tsx");
   });
 

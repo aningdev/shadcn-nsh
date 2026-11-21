@@ -87,7 +87,7 @@ export const DEFAULT_CONFIG = (): NshUiConfig => ({
   aliases: {
     components: "./components",
     ui: "./components/ui",
-    lib: "./lib",
-    theme: "./lib/theme",
+    lib: "./lib/ui",
+    theme: "./lib/ui/theme",
   },
 });

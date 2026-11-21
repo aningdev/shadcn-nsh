@@ -86,7 +86,7 @@ They sit flush against the window's corner, so the bar's trailing padding goes t
 
 The three parts are the shapes the platforms draw; an app that wants its own draws the same
 `desktop` views itself, and the platform still carries out the press. A round close button
-(`Icon` from `lib/icons`, `windowControls` from `lib/theme`, `X` from `lucide`):
+(`Icon` from `lib/ui/icons`, `windowControls` from `lib/ui/theme`, `X` from `lucide`):
 
 ```tsx
 <View

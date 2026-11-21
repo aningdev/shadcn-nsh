@@ -1,17 +1,17 @@
 ---
 title: Theme
-description: theme.json and finishes.json are the look; lib/theme.ts reads them for every component.
+description: theme.json and finishes.json are the look; lib/ui/theme.ts reads them for every component.
 ---
 
 The theme is the upstream gallery's: a graphite page (paper in light appearance), cards and insets, one citrus accent, compact controls with a pointer and roomier ones on a touch screen. It is two JSON files plus the module that reads them, and every component takes its colors, radii and depth from there — no component writes a color of its own.
 
 ## Files
 
-| File            | What it holds                                                                           |
-| --------------- | --------------------------------------------------------------------------------------- |
-| `theme.json`    | Colors, radii and the monospaced family in shadcn's `cssVars` shape, for light and dark |
-| `finishes.json` | Gradients, shadows and edges by role, for light and dark                                |
-| `lib/theme.ts`  | `colors`, `finish`, `radius`, `mono`, `focusRing` and `alpha`, read from both files     |
+| File              | What it holds                                                                           |
+| ----------------- | --------------------------------------------------------------------------------------- |
+| `theme.json`      | Colors, radii and the monospaced family in shadcn's `cssVars` shape, for light and dark |
+| `finishes.json`   | Gradients, shadows and edges by role, for light and dark                                |
+| `lib/ui/theme.ts` | `colors`, `finish`, `radius`, `mono`, `focusRing` and `alpha`, read from both files     |
 
 ## Installation
 
@@ -19,7 +19,7 @@ The theme is the upstream gallery's: a graphite page (paper in light appearance)
 npx shadcn-nsh@latest add theme
 ```
 
-`add theme` writes `theme.json`, `lib/finishes.json` and `lib/theme.ts`, the data of the theme `nsh-ui.json` records (`theme-shadcn` writes shadcn's). `init` writes the same files and also points each `nsh.json` at `theme.json`. In a monorepo they live under `packages/ui`. Every component depends on it.
+`add theme` writes `theme.json`, `lib/ui/finishes.json` and `lib/ui/theme.ts`, the data of the theme `nsh-ui.json` records (`theme-shadcn` writes shadcn's). `init` writes the same files and also points each `nsh.json` at `theme.json`. In a monorepo they live under `packages/ui`. Every component depends on it.
 
 ## Colors
 

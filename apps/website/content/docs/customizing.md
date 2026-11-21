@@ -7,7 +7,7 @@ description: "The three places to change a copied component: the theme, its look
 
 | Change                 | Where                                                    | Reaches                                   |
 | ---------------------- | -------------------------------------------------------- | ----------------------------------------- |
-| Colors, radii, shadows | `theme.json`, `lib/finishes.json`                        | every component                           |
+| Colors, radii, shadows | `theme.json`, `lib/ui/finishes.json`                     | every component                           |
 | One control's look     | its `*Look` function in `components/ui/<id>.tsx`         | that control's variants, sizes and states |
 | Structure or API       | the component and parts after the look, in the same file | that component's props and parts          |
 
@@ -15,12 +15,12 @@ In a monorepo, every path starts at `packages/ui/` instead of the app root.
 
 ## Colors, radii and shadows
 
-`theme.json` holds the colors for both appearances and the radii; `lib/finishes.json` holds gradients, shadows and edges by role. Every component reads them through `lib/theme.ts`.
+`theme.json` holds the colors for both appearances and the radii; `lib/ui/finishes.json` holds gradients, shadows and edges by role. Every component reads them through `lib/ui/theme.ts`.
 
 ```sh
 theme.json            # colors and radii
-lib/finishes.json     # gradients, shadows, edges
-lib/theme.ts          # colors, finish, radius, focusRing, alpha
+lib/ui/finishes.json     # gradients, shadows, edges
+lib/ui/theme.ts          # colors, finish, radius, focusRing, alpha
 ```
 
 Edit the values and keep the keys: components and finishes refer to them by name, and both appearances need the same set. This is the change that reaches every component at once. [Theme](./theme) lists the roles.

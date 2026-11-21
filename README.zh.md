@@ -20,7 +20,7 @@ npx shadcn-nsh add button           # 一个条目，连同它依赖的文件
 npx shadcn-nsh add --all            # 全部组件
 ```
 
-`init` 的选择记在 `nsh-ui.json`，主题写在 `theme.json` + `lib/finishes.json`，每个 `nsh.json` 指过去；应用里还会配好 `@/` 导入别名（`tsconfig.json` 的 paths 加 `"@/*": ["./*"]`，`nsh.json` 加 `"resolve": { "alias": { "@": "./" } }`），文档示例里的 `@/components/ui/<name>`、`@/lib/theme` 因此可解析。`add` 复制文件，并用你的包管理器装上条目声明的包（含 `lucide`）。从此这些文件归你改。
+`init` 的选择记在 `nsh-ui.json`，主题写在 `theme.json` + `lib/ui/finishes.json`，每个 `nsh.json` 指过去；应用里还会配好 `@/` 导入别名（`tsconfig.json` 的 paths 加 `"@/*": ["./*"]`，`nsh.json` 加 `"resolve": { "alias": { "@": "./" } }`），文档示例里的 `@/components/ui/<name>`、`@/lib/ui/theme` 因此可解析。`add` 复制文件，并用你的包管理器装上条目声明的包（含 `lucide`）。从此这些文件归你改。
 
 `list`、`view`、`diff` 只读不写：`npx shadcn-nsh list`、`view button`、`diff`（应用的副本与 registry 不同时退出码 1）。每个命令都接受 `-c <dir>`，`add` 另有 `--dry-run` 与 `--overwrite`。参数与默认值见 [CLI 参考](https://shadcn-nsh.aning.dev/docs/cli)。
 

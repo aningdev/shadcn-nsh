@@ -6,7 +6,7 @@
       "name": "theme",
       "type": "registry:theme",
       "title": "Theme",
-      "description": "The design tokens (theme.json), the finishes (finishes.json) and the roles that read them (lib/theme.ts).",
+      "description": "The design tokens (theme.json), the finishes (finishes.json) and the roles that read them (lib/ui/theme.ts).",
       "files": [
         {
           "path": "packages/theme/theme.json",
@@ -16,12 +16,12 @@
         {
           "path": "packages/theme/finishes.json",
           "type": "registry:lib",
-          "target": "lib/finishes.json"
+          "target": "lib/ui/finishes.json"
         },
         {
           "path": "packages/theme/theme.ts",
           "type": "registry:lib",
-          "target": "lib/theme.ts"
+          "target": "lib/ui/theme.ts"
         }
       ],
       "registryDependencies": []
@@ -108,7 +108,7 @@
         {
           "path": "packages/ui/lib/press.ts",
           "type": "registry:lib",
-          "target": "lib/press.ts"
+          "target": "lib/ui/press.ts"
         }
       ]
     },
@@ -122,7 +122,7 @@
         {
           "path": "packages/ui/lib/motion.tsx",
           "type": "registry:lib",
-          "target": "lib/motion.tsx"
+          "target": "lib/ui/motion.tsx"
         }
       ]
     },
@@ -136,7 +136,7 @@
         {
           "path": "packages/ui/lib/utils.ts",
           "type": "registry:lib",
-          "target": "lib/utils.ts"
+          "target": "lib/ui/utils.ts"
         }
       ]
     },
@@ -149,7 +149,7 @@
         {
           "path": "packages/ui/lib/as-text.tsx",
           "type": "registry:lib",
-          "target": "lib/as-text.tsx"
+          "target": "lib/ui/as-text.tsx"
         }
       ]
     },
@@ -163,7 +163,7 @@
         {
           "path": "packages/ui/lib/switch-geometry.ts",
           "type": "registry:lib",
-          "target": "lib/switch-geometry.ts"
+          "target": "lib/ui/switch-geometry.ts"
         }
       ]
     },
@@ -177,17 +177,17 @@
         {
           "path": "packages/ui/lib/icons.tsx",
           "type": "registry:lib",
-          "target": "lib/icons.tsx"
+          "target": "lib/ui/icons.tsx"
         },
         {
           "path": "packages/ui/lib/icon-canvas.ts",
           "type": "registry:lib",
-          "target": "lib/icon-canvas.ts"
+          "target": "lib/ui/icon-canvas.ts"
         },
         {
           "path": "packages/ui/lib/icon-image.ts",
           "type": "registry:lib",
-          "target": "lib/icon-image.ts"
+          "target": "lib/ui/icon-image.ts"
         }
       ],
       "dependencies": ["lucide@^1.66.0"]
@@ -202,7 +202,7 @@
         {
           "path": "packages/ui/lib/color-format.ts",
           "type": "registry:lib",
-          "target": "lib/color-format.ts"
+          "target": "lib/ui/color-format.ts"
         }
       ]
     },
@@ -216,7 +216,7 @@
         {
           "path": "packages/ui/lib/popup.tsx",
           "type": "registry:lib",
-          "target": "lib/popup.tsx"
+          "target": "lib/ui/popup.tsx"
         }
       ]
     },
@@ -230,7 +230,7 @@
         {
           "path": "packages/ui/lib/surface.tsx",
           "type": "registry:lib",
-          "target": "lib/surface.tsx"
+          "target": "lib/ui/surface.tsx"
         }
       ]
     },
@@ -244,7 +244,7 @@
         {
           "path": "packages/ui/lib/open-state.ts",
           "type": "registry:lib",
-          "target": "lib/open-state.ts"
+          "target": "lib/ui/open-state.ts"
         }
       ]
     },
@@ -328,7 +328,7 @@
         {
           "path": "packages/ui/lib/tool.ts",
           "type": "registry:lib",
-          "target": "lib/tool.ts"
+          "target": "lib/ui/tool.ts"
         }
       ]
     },
@@ -570,7 +570,7 @@
         {
           "path": "packages/ui/lib/listbox.tsx",
           "type": "registry:lib",
-          "target": "lib/listbox.tsx"
+          "target": "lib/ui/listbox.tsx"
         }
       ],
       "dependencies": ["lucide@^1.66.0"]

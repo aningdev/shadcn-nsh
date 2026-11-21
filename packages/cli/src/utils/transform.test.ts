@@ -19,7 +19,7 @@ describe("transformContent", () => {
       config,
       cwd,
     );
-    expect(out).toBe('import { colors } from "../../lib/theme";');
+    expect(out).toBe('import { colors } from "../../lib/ui/theme";');
   });
 
   test("rewrites ./lib/* relative to the component", () => {
@@ -29,6 +29,6 @@ describe("transformContent", () => {
       config,
       cwd,
     );
-    expect(out).toBe('import { createOpenState } from "../../lib/open-state";');
+    expect(out).toBe('import { createOpenState } from "../../lib/ui/open-state";');
   });
 });

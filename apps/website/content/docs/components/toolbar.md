@@ -73,7 +73,7 @@ and its own behavior inside a locked bar: a `Command` palette, a text field.
 
 ```tsx
 import { Toolbar, ToolbarSeparator, toolbarRule } from "@/components/ui/toolbar";
-import { toolbarTrack } from "@/lib/tool";
+import { toolbarTrack } from "@/lib/ui/tool";
 
 <Toolbar style={toolbarTrack()}>
   <ToolbarSeparator style={toolbarRule()} />
@@ -174,4 +174,4 @@ Every prop of [`nsh/base` Toolbar](https://nsh.dev/elements/toolbar), `ToolbarGr
 | `ToolbarGroup`     | every `nsh/base` ToolbarGroup prop        | A named run of items; its direction follows the bar                            |
 | `ToolbarSeparator` | every `nsh/base` ToolbarSeparator prop    | The hairline between runs, never a tab stop                                    |
 
-`toolbarTrack({ vertical })` (`@/lib/tool`) and `toolbarRule(vertical)` are the look, for a bar of your own.
+`toolbarTrack({ vertical })` (`@/lib/ui/tool`) and `toolbarRule(vertical)` are the look, for a bar of your own.

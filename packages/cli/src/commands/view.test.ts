@@ -26,13 +26,13 @@ describe("view", () => {
     expect(out.text).toContain("button (registry:ui)");
     expect(out.text).toContain("  depends on: as-text, press, spinner, theme, utils");
     expect(out.text).toContain("file components/ui/button.tsx");
-    expect(out.text).toContain("file lib/as-text.tsx");
-    expect(out.text).toContain("file lib/utils.ts");
-    expect(out.text).toContain("file lib/press.ts");
-    expect(out.text).toContain("file lib/theme.ts");
-    // The app's layout decides the import: `@shadcn-nsh/theme` → `lib/theme` two levels up.
+    expect(out.text).toContain("file lib/ui/as-text.tsx");
+    expect(out.text).toContain("file lib/ui/utils.ts");
+    expect(out.text).toContain("file lib/ui/press.ts");
+    expect(out.text).toContain("file lib/ui/theme.ts");
+    // The app's layout decides the import: `@shadcn-nsh/theme` → `lib/ui/theme` two levels up.
     expect(out.text).not.toContain('"@shadcn-nsh/theme"');
-    expect(out.text).toContain('from "../../lib/theme"');
+    expect(out.text).toContain('from "../../lib/ui/theme"');
   });
 
   test("writes nothing", async () => {

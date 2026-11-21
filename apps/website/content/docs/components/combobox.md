@@ -15,10 +15,10 @@ npx shadcn-nsh@latest add combobox
 
 ```tsx
 import { Combobox, ComboboxContent, ComboboxItem, ComboboxTrigger } from "@/components/ui/combobox";
-import { Icon } from "@/lib/icons";
+import { Icon } from "@/lib/ui/icons";
 ```
 
-The examples draw icons with `Icon` from `lib/icons`; see [Icons](../icons) for adding it and picking a size and color.
+The examples draw icons with `Icon` from `lib/ui/icons`; see [Icons](../icons) for adding it and picking a size and color.
 
 ```tsx
 <Combobox value={value} onChange={({ value }) => setValue(value)}>

@@ -31,7 +31,7 @@ copy-into-app 层的品牌外观：本库所有，起点是上游 gallery UI 主
 
 ## 一套以上主题
 
-应用**构建时**只有一套主题 —— `init --theme <name>` 写出 `theme.json` 与 `lib/finishes.json` 并让 `nsh.json` 指向它们 —— 但可以**带**更多套：`shadcn-nsh add theme-<name>` 把另一套装进 `themes/<name>/`，不碰构建时的那套。每套是一个 `AppTheme` 模块：
+应用**构建时**只有一套主题 —— `init --theme <name>` 写出 `theme.json` 与 `lib/ui/finishes.json` 并让 `nsh.json` 指向它们 —— 但可以**带**更多套：`shadcn-nsh add theme-<name>` 把另一套装进 `themes/<name>/`，不碰构建时的那套。每套是一个 `AppTheme` 模块：
 
 ```ts
 // themes/shadcn/index.ts，`add theme-shadcn` 复制进应用的内容
