@@ -275,7 +275,6 @@ spacing:
     thumb-width: 18px
     thumb-height: 18px
     thumb-pressed-width: 18px
-    gap: 0px
     inner-dot: 12px
     inner-dot-hover: 14px
     inner-dot-pressed: 10px

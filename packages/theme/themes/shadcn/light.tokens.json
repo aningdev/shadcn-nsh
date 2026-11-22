@@ -737,13 +737,6 @@
         },
         "$description": "Slider bar handle thickness while pressed when handle-shape is \"bar\"."
       },
-      "gap": {
-        "$value": {
-          "value": 0,
-          "unit": "px"
-        },
-        "$description": "Clearance gap between handle and track segments when handle-shape is \"bar\"."
-      },
       "inner-dot": {
         "$value": {
           "value": 0,

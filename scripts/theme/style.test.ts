@@ -60,9 +60,21 @@ describe("checkStyle", () => {
     const file = copy();
     file.indicator.tabs = "rail";
     file.typography.body.fontWeight = 450;
+    file.dimension.checkbox.well = "filled";
+    file.dimension.switch.pointer["knob-feedback"] = "bounce";
+    file.dimension.slider.pointer["handle-shape"] = "square";
+    file.dimension.radio.pointer.well = "filled";
+    file.dimension.radio.pointer["checked-style"] = "dot";
+    file.dimension.radio.pointer["dot-feedback"] = "bounce";
     const problems = check(file).join("\n");
     expect(problems).toContain('indicator.tabs` is "rail"');
     expect(problems).toContain("typography.body.fontWeight` is 450");
+    expect(problems).toContain('dimension.checkbox.well` is "filled"');
+    expect(problems).toContain('dimension.switch.pointer.knob-feedback` is "bounce"');
+    expect(problems).toContain('dimension.slider.pointer.handle-shape` is "square"');
+    expect(problems).toContain('dimension.radio.pointer.well` is "filled"');
+    expect(problems).toContain('dimension.radio.pointer.checked-style` is "dot"');
+    expect(problems).toContain('dimension.radio.pointer.dot-feedback` is "bounce"');
   });
 
   test("holds every whitelist to the value the default theme states", () => {

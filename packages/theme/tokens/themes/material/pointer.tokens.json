@@ -305,7 +305,7 @@
           "hover-brightness": false
         }
       },
-      "$description": "M3 Expressive Slider: 16dp active/inactive track, 4x44dp bar handle (2dp pressed), 6dp gap (Compose SliderTokens.kt 1.5.0).",
+      "$description": "M3 Expressive Slider: 16dp active/inactive track, 4x44dp bar handle (2dp pressed) (Compose SliderTokens.kt 1.5.0).",
       "band": {
         "$value": {
           "value": 44,
@@ -340,13 +340,6 @@
           "unit": "px"
         },
         "$description": "M3 Expressive Slider 2dp pressed handle width (SliderTokens.PressedHandleWidth)."
-      },
-      "gap": {
-        "$value": {
-          "value": 6,
-          "unit": "px"
-        },
-        "$description": "M3 Expressive Slider 6dp gap between handle and track (SliderTokens.ActiveHandleLeadingSpace)."
       }
     },
     "radio": {

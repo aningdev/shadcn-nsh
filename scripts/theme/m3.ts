@@ -705,7 +705,6 @@ export const m3Style = {
         "thumb-width": 4,
         "thumb-height": 44,
         "thumb-pressed-width": 2,
-        gap: 6,
         "inner-dot": 0,
         "inner-dot-hover": 0,
         "inner-dot-pressed": 0,
@@ -720,7 +719,6 @@ export const m3Style = {
         "thumb-width": 4,
         "thumb-height": 44,
         "thumb-pressed-width": 2,
-        gap: 6,
         "inner-dot": 0,
         "inner-dot-hover": 0,
         "inner-dot-pressed": 0,
@@ -984,7 +982,7 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
         "dimension.switch.knob-pressed-height":
           "M3 Switch 28dp pressed handle height (_md-comp-switch.scss:47).",
         "dimension.slider":
-          "M3 Expressive Slider: 16dp active/inactive track, 4x44dp bar handle (2dp pressed), 6dp gap (Compose SliderTokens.kt 1.5.0).",
+          "M3 Expressive Slider: 16dp active/inactive track, 4x44dp bar handle (2dp pressed) (Compose SliderTokens.kt 1.5.0).",
         "dimension.slider.band":
           "M3 Expressive Slider 44dp hit band matching 44dp bar handle height.",
         "dimension.slider.rail":
@@ -995,8 +993,6 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
           "M3 Expressive Slider 44dp vertical bar handle height (SliderTokens.HandleHeight).",
         "dimension.slider.thumb-pressed-width":
           "M3 Expressive Slider 2dp pressed handle width (SliderTokens.PressedHandleWidth).",
-        "dimension.slider.gap":
-          "M3 Expressive Slider 6dp gap between handle and track (SliderTokens.ActiveHandleLeadingSpace).",
         "dimension.radio":
           "M3 RadioButton: 20dp outer ring (2dp stroke, transparent interior, OnSurfaceVariant/Primary), 10dp inner dot, 40dp state-layer target (_md-comp-radio-button.scss v34.0.21 / Compose RadioButtonTokens.kt).",
         "dimension.radio.size":

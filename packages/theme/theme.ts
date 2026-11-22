@@ -224,10 +224,13 @@ export interface Timing {
   timingFunction: EasingCurve;
 }
 
+/** Surface treatment for an unchecked checkbox box or radio ring well. */
+export type ChoiceWell = "well" | "inset" | "outline";
+
 export interface CheckboxDim {
   border: number;
   target: number;
-  well: string;
+  well: ChoiceWell;
   "has-target": boolean;
 }
 
@@ -245,7 +248,7 @@ export interface SwitchDim {
   "knob-hover": number;
   "knob-pressed-width": number;
   "knob-pressed-height": number;
-  "knob-feedback": string;
+  "knob-feedback": "none" | "expand" | "stretch";
 }
 
 export interface SliderDim {
@@ -254,12 +257,11 @@ export interface SliderDim {
   "thumb-width": number;
   "thumb-height": number;
   "thumb-pressed-width": number;
-  gap: number;
   "inner-dot": number;
   "inner-dot-hover": number;
   "inner-dot-pressed": number;
   "vertical-length": number;
-  "handle-shape": string;
+  "handle-shape": "circle" | "bar" | "ring";
   outlined: boolean;
   "hover-brightness": boolean;
 }
@@ -271,10 +273,10 @@ export interface RadioDim {
   "dot-pressed": number;
   border: number;
   target: number;
-  well: string;
-  "checked-style": string;
+  well: ChoiceWell;
+  "checked-style": "fill" | "ring";
   "has-target": boolean;
-  "dot-feedback": string;
+  "dot-feedback": "none" | "scale";
 }
 
 /**
@@ -1289,6 +1291,21 @@ export function fillStyle(): ViewStyle {
   };
 }
 
+/** Default width in points of the hairline edge drawn by `insetEdge` and `outerEdge`. */
+export const EDGE_WIDTH = 1;
+
+function edgeShadow(
+  borderColor: string | undefined,
+  boxShadow: string | undefined,
+  width: number,
+  inset: boolean,
+): string {
+  const line = borderColor ? `${inset ? "inset " : ""}0 0 0 ${width}px ${borderColor}` : undefined;
+  const shade = boxShadow && boxShadow !== "none" ? boxShadow : undefined;
+  const parts = [line, shade].filter((part) => part !== undefined);
+  return parts.length === 0 ? "none" : parts.join(", ");
+}
+
 /**
  * A rail's edge: a `width`-point inset line of `borderColor` inside the theme's `boxShadow`,
  * whichever of the two the theme gives. `semantics.json` may write `shadow: "none"` or leave
@@ -1298,10 +1315,19 @@ export function fillStyle(): ViewStyle {
 export function insetEdge(
   borderColor: string | undefined,
   boxShadow: string | undefined,
-  width = 1,
+  width = EDGE_WIDTH,
 ): string {
-  const line = borderColor ? `inset 0 0 0 ${width}px ${borderColor}` : undefined;
-  const shade = boxShadow && boxShadow !== "none" ? boxShadow : undefined;
-  const parts = [line, shade].filter((part) => part !== undefined);
-  return parts.length === 0 ? "none" : parts.join(", ");
+  return edgeShadow(borderColor, boxShadow, width, true);
+}
+
+/**
+ * A handle's outer edge: a `width`-point outer line of `borderColor` around the theme's
+ * `boxShadow`, sharing the same border/shadow normalization as `insetEdge`.
+ */
+export function outerEdge(
+  borderColor: string | undefined,
+  boxShadow: string | undefined,
+  width = EDGE_WIDTH,
+): string {
+  return edgeShadow(borderColor, boxShadow, width, false);
 }

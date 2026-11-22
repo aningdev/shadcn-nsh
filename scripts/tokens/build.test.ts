@@ -312,6 +312,35 @@ describe("DTCG source lint", () => {
     expect(text).toContain("missing");
   });
 
+  test("rejects invalid control geometry enum values in $extensions", () => {
+    const problems = withMutatedDefault((tmp) => {
+      const sharedPath = path.join(tmp, "packages/theme/tokens/base/style.shared.tokens.json");
+      const shared = JSON.parse(fs.readFileSync(sharedPath, "utf8"));
+      shared.dimension.checkbox.$extensions["dev.aning.shadcn-nsh"].well = "filled";
+      fs.writeFileSync(sharedPath, JSON.stringify(shared, null, 2));
+
+      const ptrPath = path.join(tmp, "packages/theme/tokens/base/style.pointer.tokens.json");
+      const ptr = JSON.parse(fs.readFileSync(ptrPath, "utf8"));
+      ptr.dimension.switch.$extensions["dev.aning.shadcn-nsh"]["knob-feedback"] = "bounce";
+      ptr.dimension.slider.$extensions["dev.aning.shadcn-nsh"]["handle-shape"] = "square";
+      ptr.dimension.radio.$extensions["dev.aning.shadcn-nsh"].well = "filled";
+      ptr.dimension.radio.$extensions["dev.aning.shadcn-nsh"]["checked-style"] = "dot";
+      ptr.dimension.radio.$extensions["dev.aning.shadcn-nsh"]["dot-feedback"] = "bounce";
+      fs.writeFileSync(ptrPath, JSON.stringify(ptr, null, 2));
+    });
+    const text = problems.join("\n");
+    expect(text).toContain("dimension.checkbox.$extensions");
+    expect(text).toContain("dimension.switch.$extensions");
+    expect(text).toContain("dimension.slider.$extensions");
+    expect(text).toContain("dimension.radio.$extensions");
+    expect(text).toContain('"knob-feedback"]: "bounce"');
+    expect(text).toContain('"handle-shape"]: "square"');
+    expect(text).toContain('.well: "filled"');
+    expect(text).toContain('["well"]: "filled"');
+    expect(text).toContain('["checked-style"]: "dot"');
+    expect(text).toContain('["dot-feedback"]: "bounce"');
+  });
+
   test("rejects reference with mismatched $type", () => {
     const problems = withMutatedDefault((tmp) => {
       const p = path.join(tmp, "packages/theme/tokens/base/style.shared.tokens.json");

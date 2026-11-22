@@ -717,13 +717,6 @@
         },
         "$description": "WinUI 3 Slider 18px outer thumb width stays constant when pressed."
       },
-      "gap": {
-        "$value": {
-          "value": 0,
-          "unit": "px"
-        },
-        "$description": "Clearance gap between handle and track segments when handle-shape is \"bar\"."
-      },
       "inner-dot": {
         "$value": {
           "value": 12,
