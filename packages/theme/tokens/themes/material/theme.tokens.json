@@ -127,70 +127,6 @@
           "unit": "px"
         }
       }
-    },
-    "checkbox": {
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "well": "outline",
-          "has-target": true
-        }
-      },
-      "$description": "M3 Checkbox 18dp outlined box (2dp OnSurfaceVariant outline, 40dp state-layer target; _md-comp-checkbox.scss v34.0.21 / Compose CheckboxTokens.kt).",
-      "border": {
-        "$value": {
-          "value": 2,
-          "unit": "px"
-        },
-        "$description": "M3 unselected checkbox 2dp outline (_md-comp-checkbox.scss:92)."
-      },
-      "target": {
-        "$value": {
-          "value": 40,
-          "unit": "px"
-        },
-        "$description": "M3 checkbox 40dp state-layer target (_md-comp-checkbox.scss:70)."
-      }
-    },
-    "progress": {
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "track-role": "slider-track",
-          "outlined": false
-        }
-      },
-      "$description": "M3 LinearProgressIndicator: 4dp active indicator & SecondaryContainer track without border (LinearProgressIndicatorTokens.kt, ProgressIndicator.kt:817).",
-      "height": {
-        "$value": {
-          "value": 4,
-          "unit": "px"
-        },
-        "$description": "M3 LinearProgressIndicator 4dp bar height (LinearProgressIndicatorTokens.Height / ActiveThickness)."
-      },
-      "track-height": {
-        "$value": {
-          "value": 4,
-          "unit": "px"
-        },
-        "$description": "M3 LinearProgressIndicator 4dp inactive track thickness (LinearProgressIndicatorTokens.TrackThickness)."
-      }
-    },
-    "spinner": {
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "stroke-share": 10,
-          "has-track": false
-        }
-      },
-      "$description": "M3 CircularProgressIndicator: 4dp stroke at 40dp diameter (1/10 share) and transparent indeterminate track (CircularProgressIndicatorTokens.kt, ProgressIndicator.kt:835)."
-    },
-    "tabs": {
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "indicator-span": "label",
-          "indicator-corners": "top"
-        }
-      },
-      "$description": "M3 PrimaryNavigationTab: label-width indicator with 3dp top-only corners (PrimaryNavigationTabTokens.kt, _md-comp-primary-navigation-tab.scss:28, _tab.scss:92-103)."
     }
   },
   "font": {
@@ -592,6 +528,14 @@
       "dev.aning.shadcn-nsh": {
         "tabs": "underline",
         "field": "underline"
+      }
+    }
+  },
+  "controls": {
+    "$description": "Material 3 Expressive control geometry presets.",
+    "$extensions": {
+      "dev.aning.shadcn-nsh": {
+        "preset": "material"
       }
     }
   }

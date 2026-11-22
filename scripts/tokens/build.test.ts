@@ -312,53 +312,16 @@ describe("DTCG source lint", () => {
     expect(text).toContain("missing");
   });
 
-  test("rejects invalid control geometry enum values in $extensions", () => {
+  test("rejects invalid controls preset enum value in $extensions", () => {
     const problems = withMutatedDefault((tmp) => {
       const sharedPath = path.join(tmp, "packages/theme/tokens/base/style.shared.tokens.json");
       const shared = JSON.parse(fs.readFileSync(sharedPath, "utf8"));
-      shared.dimension.checkbox.$extensions["dev.aning.shadcn-nsh"].well = "filled";
-      shared.dimension.progress.$extensions["dev.aning.shadcn-nsh"]["track-role"] = "accent";
-      shared.dimension.progress.$extensions["dev.aning.shadcn-nsh"]["track-shape"] = "dashed";
-      shared.dimension.spinner.$extensions["dev.aning.shadcn-nsh"]["stroke-share"] = 0;
-      shared.dimension.tabs.$extensions["dev.aning.shadcn-nsh"]["indicator-span"] = "word";
-      shared.dimension.tabs.$extensions["dev.aning.shadcn-nsh"]["indicator-corners"] = "square";
+      shared.controls.$extensions["dev.aning.shadcn-nsh"].preset = "cupertin";
       fs.writeFileSync(sharedPath, JSON.stringify(shared, null, 2));
-
-      const ptrPath = path.join(tmp, "packages/theme/tokens/base/style.pointer.tokens.json");
-      const ptr = JSON.parse(fs.readFileSync(ptrPath, "utf8"));
-      ptr.dimension.switch.$extensions["dev.aning.shadcn-nsh"]["knob-feedback"] = "bounce";
-      ptr.dimension.slider.$extensions["dev.aning.shadcn-nsh"]["handle-shape"] = "square";
-      ptr.dimension.radio.$extensions["dev.aning.shadcn-nsh"].well = "filled";
-      ptr.dimension.radio.$extensions["dev.aning.shadcn-nsh"]["checked-style"] = "dot";
-      ptr.dimension.radio.$extensions["dev.aning.shadcn-nsh"]["dot-feedback"] = "bounce";
-      ptr.dimension.calendar.$extensions["dev.aning.shadcn-nsh"]["cell-shape"] = "square";
-      ptr.dimension.calendar.$extensions["dev.aning.shadcn-nsh"].today = "dot";
-      ptr.dimension.calendar.$extensions["dev.aning.shadcn-nsh"].selected = "tint";
-      fs.writeFileSync(ptrPath, JSON.stringify(ptr, null, 2));
     });
     const text = problems.join("\n");
-    expect(text).toContain("dimension.checkbox.$extensions");
-    expect(text).toContain("dimension.progress.$extensions");
-    expect(text).toContain("dimension.spinner.$extensions");
-    expect(text).toContain("dimension.tabs.$extensions");
-    expect(text).toContain("dimension.switch.$extensions");
-    expect(text).toContain("dimension.slider.$extensions");
-    expect(text).toContain("dimension.radio.$extensions");
-    expect(text).toContain("dimension.calendar.$extensions");
-    expect(text).toContain('"knob-feedback"]: "bounce"');
-    expect(text).toContain('"handle-shape"]: "square"');
-    expect(text).toContain('.well: "filled"');
-    expect(text).toContain('["well"]: "filled"');
-    expect(text).toContain('["checked-style"]: "dot"');
-    expect(text).toContain('["dot-feedback"]: "bounce"');
-    expect(text).toContain('["track-role"]: "accent"');
-    expect(text).toContain('["track-shape"]: "dashed"');
-    expect(text).toContain('["stroke-share"] must be a finite number > 0');
-    expect(text).toContain('["indicator-span"]: "word"');
-    expect(text).toContain('["indicator-corners"]: "square"');
-    expect(text).toContain('["cell-shape"]: "square"');
-    expect(text).toContain('["today"]: "dot"');
-    expect(text).toContain('["selected"]: "tint"');
+    expect(text).toContain("controls.$extensions");
+    expect(text).toContain('preset: "cupertin"');
   });
 
   test("rejects reference with mismatched $type", () => {
@@ -704,51 +667,8 @@ describe("per-appearance standalone .tokens.json distribution", () => {
           if (k.startsWith("$")) continue;
           expect(tok.$value.value).toBe(semanticsJson.dimension.grabber[k]);
         }
-        // Control geometry: checkbox (shared) and switch/slider/radio (pointer tier in light/dark resolved)
-        {
-          const cbGroup = resolved.dimension.checkbox as Record<string, any>;
-          expect(cbGroup.$extensions[EXT_NS].well).toBe(semanticsJson.dimension.checkbox.well);
-          expect(cbGroup.$extensions[EXT_NS]["has-target"]).toBe(
-            semanticsJson.dimension.checkbox["has-target"],
-          );
-          for (const [k, tok] of Object.entries(cbGroup)) {
-            if (k.startsWith("$")) continue;
-            expect(tok.$value.value).toBe(semanticsJson.dimension.checkbox[k]);
-          }
-          for (const [ctrl, extKeys] of [
-            ["progress", ["track-role", "track-shape", "outlined"]],
-            ["spinner", ["stroke-share", "has-track", "track-alpha"]],
-            ["tabs", ["indicator-span", "indicator-corners"]],
-          ] as const) {
-            const g = resolved.dimension[ctrl] as Record<string, any>;
-            const sem = semanticsJson.dimension[ctrl] as Record<string, unknown>;
-            for (const ek of extKeys) {
-              expect(g.$extensions[EXT_NS][ek]).toBe(sem[ek]);
-            }
-            for (const [k, tok] of Object.entries(g)) {
-              if (k.startsWith("$")) continue;
-              expect(tok.$value.value).toBe(sem[k]);
-            }
-          }
-          for (const [ctrl, extKeys] of [
-            ["switch", ["knob-feedback"]],
-            ["slider", ["handle-shape", "outlined", "hover-brightness"]],
-            ["radio", ["well", "checked-style", "has-target", "dot-feedback"]],
-            ["calendar", ["cell-shape", "today", "selected"]],
-          ] as const) {
-            const g = resolved.dimension[ctrl] as Record<string, any>;
-            const sem = semanticsJson.dimension[ctrl].pointer as Record<string, unknown>;
-            for (const ek of extKeys) {
-              expect(g.$extensions[EXT_NS][ek]).toBe(sem[ek]);
-            }
-            for (const [k, tok] of Object.entries(g)) {
-              if (k.startsWith("$")) continue;
-              expect(tok.$value.value).toBe(sem[k]);
-            }
-          }
-        }
 
-        // Shape, state, duration, transition, motion, indicator
+        // Shape, state, duration, transition, motion, indicator, controls
         expect(doc.shape.$extensions[EXT_NS]).toEqual(semanticsJson.shape);
         expect(doc.state["press-scale"].$value).toBe(semanticsJson.state["press-scale"]);
         expect(doc.state["pressed-opacity"].$value).toBe(semanticsJson.state["pressed-opacity"]);
@@ -801,6 +721,7 @@ describe("per-appearance standalone .tokens.json distribution", () => {
           }
         }
         expect(doc.indicator.$extensions[EXT_NS]).toEqual(semanticsJson.indicator);
+        expect(doc.controls.$extensions[EXT_NS].preset).toBe(semanticsJson.controls);
 
         // Merged finishes for this appearance
         const toFlatRef = (s: string) => {
@@ -984,19 +905,7 @@ describe("generated DESIGN.md validation and compiled equality", () => {
           );
         }
       }
-      for (const sub of [
-        "stroke",
-        "focus",
-        "icon",
-        "checkbox",
-        "switch",
-        "slider",
-        "radio",
-        "progress",
-        "spinner",
-        "tabs",
-        "calendar",
-      ] as const) {
+      for (const sub of ["stroke", "focus", "icon"] as const) {
         for (const [k, tok] of Object.entries(lightDoc.dimension[sub] as Record<string, any>)) {
           if (k.startsWith("$") || !tok?.$value) continue;
           expect(yaml.spacing[sub][k], `spacing.${sub}.${k}`).toBe(

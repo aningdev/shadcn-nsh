@@ -264,177 +264,6 @@ function validateExtAtPath(
     return;
   }
 
-  if (p === "dimension.switch") {
-    checkUnknownKeys(where, ext, ["knob-feedback"], problems);
-    if ("knob-feedback" in ext) {
-      if (
-        !whitelists["dimension.switch.*.knob-feedback"]!.includes(ext["knob-feedback"] as string)
-      ) {
-        problems.push(
-          `${where}["knob-feedback"]: ${JSON.stringify(ext["knob-feedback"])} is not in whitelist`,
-        );
-      }
-    } else if (mode === "merged") {
-      problems.push(`${where}["knob-feedback"] is missing`);
-    }
-    return;
-  }
-
-  if (p === "dimension.slider") {
-    checkUnknownKeys(where, ext, ["handle-shape", "outlined", "hover-brightness"], problems);
-    if ("handle-shape" in ext) {
-      if (!whitelists["dimension.slider.*.handle-shape"]!.includes(ext["handle-shape"] as string)) {
-        problems.push(
-          `${where}["handle-shape"]: ${JSON.stringify(ext["handle-shape"])} is not in whitelist`,
-        );
-      }
-    } else if (mode === "merged") {
-      problems.push(`${where}["handle-shape"] is missing`);
-    }
-    for (const boolKey of ["outlined", "hover-brightness"] as const) {
-      if (boolKey in ext) {
-        if (typeof ext[boolKey] !== "boolean") {
-          problems.push(`${where}[${JSON.stringify(boolKey)}] must be a boolean`);
-        }
-      } else if (mode === "merged") {
-        problems.push(`${where}[${JSON.stringify(boolKey)}] is missing`);
-      }
-    }
-    return;
-  }
-
-  if (p === "dimension.checkbox") {
-    checkUnknownKeys(where, ext, ["well", "has-target"], problems);
-    if ("well" in ext) {
-      if (!whitelists["dimension.checkbox.well"]!.includes(ext.well as string)) {
-        problems.push(`${where}.well: ${JSON.stringify(ext.well)} is not in whitelist`);
-      }
-    } else if (mode === "merged") {
-      problems.push(`${where}.well is missing`);
-    }
-    if ("has-target" in ext) {
-      if (typeof ext["has-target"] !== "boolean") {
-        problems.push(`${where}["has-target"] must be a boolean`);
-      }
-    } else if (mode === "merged") {
-      problems.push(`${where}["has-target"] is missing`);
-    }
-    return;
-  }
-
-  if (p === "dimension.radio") {
-    checkUnknownKeys(where, ext, ["well", "checked-style", "has-target", "dot-feedback"], problems);
-    for (const enumKey of ["well", "checked-style", "dot-feedback"] as const) {
-      if (enumKey in ext) {
-        if (!whitelists[`dimension.radio.*.${enumKey}`]!.includes(ext[enumKey] as string)) {
-          problems.push(
-            `${where}[${JSON.stringify(enumKey)}]: ${JSON.stringify(ext[enumKey])} is not in whitelist`,
-          );
-        }
-      } else if (mode === "merged") {
-        problems.push(`${where}[${JSON.stringify(enumKey)}] is missing`);
-      }
-    }
-    if ("has-target" in ext) {
-      if (typeof ext["has-target"] !== "boolean") {
-        problems.push(`${where}["has-target"] must be a boolean`);
-      }
-    } else if (mode === "merged") {
-      problems.push(`${where}["has-target"] is missing`);
-    }
-    return;
-  }
-
-  if (p === "dimension.progress") {
-    checkUnknownKeys(where, ext, ["track-role", "track-shape", "outlined"], problems);
-    for (const enumKey of ["track-role", "track-shape"] as const) {
-      if (enumKey in ext) {
-        if (!whitelists[`dimension.progress.${enumKey}`]!.includes(ext[enumKey] as string)) {
-          problems.push(
-            `${where}[${JSON.stringify(enumKey)}]: ${JSON.stringify(ext[enumKey])} is not in whitelist`,
-          );
-        }
-      } else if (mode === "merged") {
-        problems.push(`${where}[${JSON.stringify(enumKey)}] is missing`);
-      }
-    }
-    if ("outlined" in ext) {
-      if (typeof ext.outlined !== "boolean") {
-        problems.push(`${where}.outlined must be a boolean`);
-      }
-    } else if (mode === "merged") {
-      problems.push(`${where}.outlined is missing`);
-    }
-    return;
-  }
-
-  if (p === "dimension.spinner") {
-    checkUnknownKeys(where, ext, ["stroke-share", "has-track", "track-alpha"], problems);
-    if ("stroke-share" in ext) {
-      if (
-        typeof ext["stroke-share"] !== "number" ||
-        !Number.isFinite(ext["stroke-share"]) ||
-        ext["stroke-share"] <= 0
-      ) {
-        problems.push(`${where}["stroke-share"] must be a finite number > 0`);
-      }
-    } else if (mode === "merged") {
-      problems.push(`${where}["stroke-share"] is missing`);
-    }
-    if ("has-track" in ext) {
-      if (typeof ext["has-track"] !== "boolean") {
-        problems.push(`${where}["has-track"] must be a boolean`);
-      }
-    } else if (mode === "merged") {
-      problems.push(`${where}["has-track"] is missing`);
-    }
-    if ("track-alpha" in ext) {
-      if (
-        typeof ext["track-alpha"] !== "number" ||
-        !Number.isFinite(ext["track-alpha"]) ||
-        ext["track-alpha"] < 0 ||
-        ext["track-alpha"] > 1
-      ) {
-        problems.push(`${where}["track-alpha"] must be a number in [0, 1]`);
-      }
-    } else if (mode === "merged") {
-      problems.push(`${where}["track-alpha"] is missing`);
-    }
-    return;
-  }
-
-  if (p === "dimension.tabs") {
-    checkUnknownKeys(where, ext, ["indicator-span", "indicator-corners"], problems);
-    for (const enumKey of ["indicator-span", "indicator-corners"] as const) {
-      if (enumKey in ext) {
-        if (!whitelists[`dimension.tabs.${enumKey}`]!.includes(ext[enumKey] as string)) {
-          problems.push(
-            `${where}[${JSON.stringify(enumKey)}]: ${JSON.stringify(ext[enumKey])} is not in whitelist`,
-          );
-        }
-      } else if (mode === "merged") {
-        problems.push(`${where}[${JSON.stringify(enumKey)}] is missing`);
-      }
-    }
-    return;
-  }
-
-  if (p === "dimension.calendar") {
-    checkUnknownKeys(where, ext, ["cell-shape", "today", "selected"], problems);
-    for (const enumKey of ["cell-shape", "today", "selected"] as const) {
-      if (enumKey in ext) {
-        if (!whitelists[`dimension.calendar.*.${enumKey}`]!.includes(ext[enumKey] as string)) {
-          problems.push(
-            `${where}[${JSON.stringify(enumKey)}]: ${JSON.stringify(ext[enumKey])} is not in whitelist`,
-          );
-        }
-      } else if (mode === "merged") {
-        problems.push(`${where}[${JSON.stringify(enumKey)}] is missing`);
-      }
-    }
-    return;
-  }
-
   if (p === "dimension.focus") {
     checkUnknownKeys(where, ext, ["style"], problems);
     if (!whitelists["dimension.focus.style"]!.includes(ext.style as string)) {
@@ -467,6 +296,16 @@ function validateExtAtPath(
       } else if (!whitelists[`indicator.${field}`]!.includes(ext[field] as string)) {
         problems.push(`${where}.${field}: ${JSON.stringify(ext[field])} is not in whitelist`);
       }
+    }
+    return;
+  }
+
+  if (p === "controls") {
+    checkUnknownKeys(where, ext, ["preset"], problems);
+    if (!("preset" in ext)) {
+      if (mode === "merged") problems.push(`${where}.preset is missing`);
+    } else if (!whitelists.controls!.includes(ext.preset as string)) {
+      problems.push(`${where}.preset: ${JSON.stringify(ext.preset)} is not in whitelist`);
     }
     return;
   }
@@ -896,14 +735,6 @@ function checkMergedSemantics(
     "dimension.size",
     "dimension.icon",
     "dimension.grabber",
-    "dimension.checkbox",
-    "dimension.switch",
-    "dimension.slider",
-    "dimension.radio",
-    "dimension.progress",
-    "dimension.spinner",
-    "dimension.tabs",
-    "dimension.calendar",
   ]) {
     const group = getAtPath(resolved, dimGroupPath);
     if (!isRecord(group)) continue;
@@ -1061,20 +892,13 @@ function checkMergedSemantics(
       "dimension.focus",
       "dimension.size",
       "dimension.icon",
-      "dimension.checkbox",
-      "dimension.switch",
-      "dimension.slider",
-      "dimension.radio",
-      "dimension.progress",
-      "dimension.spinner",
-      "dimension.tabs",
-      "dimension.calendar",
       "shape",
       "state",
       "duration",
       "transition",
       "motion",
       "indicator",
+      "controls",
     ]) {
       const group = getAtPath(merged, groupPath);
       if (isRecord(group) && !isNonEmptyString(group.$description)) {

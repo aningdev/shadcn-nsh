@@ -60,21 +60,11 @@ describe("checkStyle", () => {
     const file = copy();
     file.indicator.tabs = "rail";
     file.typography.body.fontWeight = 450;
-    file.dimension.checkbox.well = "filled";
-    file.dimension.switch.pointer["knob-feedback"] = "bounce";
-    file.dimension.slider.pointer["handle-shape"] = "square";
-    file.dimension.radio.pointer.well = "filled";
-    file.dimension.radio.pointer["checked-style"] = "dot";
-    file.dimension.radio.pointer["dot-feedback"] = "bounce";
+    file.controls = "cupertin";
     const problems = check(file).join("\n");
     expect(problems).toContain('indicator.tabs` is "rail"');
     expect(problems).toContain("typography.body.fontWeight` is 450");
-    expect(problems).toContain('dimension.checkbox.well` is "filled"');
-    expect(problems).toContain('dimension.switch.pointer.knob-feedback` is "bounce"');
-    expect(problems).toContain('dimension.slider.pointer.handle-shape` is "square"');
-    expect(problems).toContain('dimension.radio.pointer.well` is "filled"');
-    expect(problems).toContain('dimension.radio.pointer.checked-style` is "dot"');
-    expect(problems).toContain('dimension.radio.pointer.dot-feedback` is "bounce"');
+    expect(problems).toContain('controls` is "cupertin"');
   });
 
   test("holds every whitelist to the value the default theme states", () => {
@@ -162,30 +152,6 @@ describe("checkStyle", () => {
     const missingTimingField = copy();
     missingTimingField.motion.settle = { duration: 200 };
     expect(check(missingTimingField).join("\n")).toContain("motion.settle.timingFunction");
-  });
-
-  test("rejects unknown enum values and out-of-range spinner numbers on progress/tabs/calendar/spinner", () => {
-    const file = copy();
-    file.dimension.progress["track-role"] = "custom";
-    file.dimension.progress["track-shape"] = "dashed";
-    file.dimension.tabs["indicator-span"] = "word";
-    file.dimension.tabs["indicator-corners"] = "square";
-    file.dimension.calendar.pointer["cell-shape"] = "diamond";
-    file.dimension.calendar.pointer.today = "badge";
-    file.dimension.calendar.pointer.selected = "ring";
-    file.dimension.spinner["stroke-share"] = 0;
-    file.dimension.spinner["track-alpha"] = 1.5;
-
-    const problems = check(file).join("\n");
-    expect(problems).toContain("dimension.progress.track-role");
-    expect(problems).toContain("dimension.progress.track-shape");
-    expect(problems).toContain("dimension.tabs.indicator-span");
-    expect(problems).toContain("dimension.tabs.indicator-corners");
-    expect(problems).toContain("dimension.calendar.pointer.cell-shape");
-    expect(problems).toContain("dimension.calendar.pointer.today");
-    expect(problems).toContain("dimension.calendar.pointer.selected");
-    expect(problems).toContain("dimension.spinner.stroke-share");
-    expect(problems).toContain("dimension.spinner.track-alpha");
   });
 
   test("semanticsWithStyle preserves default style and updates press-scale", () => {

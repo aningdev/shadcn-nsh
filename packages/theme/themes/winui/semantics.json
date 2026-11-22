@@ -183,136 +183,6 @@
     "grabber": {
       "width": 36,
       "height": 5
-    },
-    "checkbox": {
-      "border": 1,
-      "target": 0,
-      "well": "inset",
-      "has-target": false
-    },
-    "switch": {
-      "pointer": {
-        "width": 40,
-        "height": 20,
-        "sm-width": 40,
-        "sm-height": 20,
-        "border": 1,
-        "on-border": 0,
-        "knob": 12,
-        "on-knob": 12,
-        "sm-knob": 12,
-        "sm-on-knob": 12,
-        "knob-hover": 14,
-        "knob-pressed-width": 17,
-        "knob-pressed-height": 14,
-        "knob-feedback": "stretch"
-      },
-      "touch": {
-        "width": 40,
-        "height": 20,
-        "sm-width": 40,
-        "sm-height": 20,
-        "border": 1,
-        "on-border": 0,
-        "knob": 12,
-        "on-knob": 12,
-        "sm-knob": 12,
-        "sm-on-knob": 12,
-        "knob-hover": 14,
-        "knob-pressed-width": 17,
-        "knob-pressed-height": 14,
-        "knob-feedback": "stretch"
-      }
-    },
-    "slider": {
-      "pointer": {
-        "band": 32,
-        "rail": 4,
-        "thumb-width": 18,
-        "thumb-height": 18,
-        "thumb-pressed-width": 18,
-        "inner-dot": 12,
-        "inner-dot-hover": 14,
-        "inner-dot-pressed": 10,
-        "vertical-length": 128,
-        "handle-shape": "ring",
-        "outlined": false,
-        "hover-brightness": false
-      },
-      "touch": {
-        "band": 32,
-        "rail": 4,
-        "thumb-width": 18,
-        "thumb-height": 18,
-        "thumb-pressed-width": 18,
-        "inner-dot": 12,
-        "inner-dot-hover": 14,
-        "inner-dot-pressed": 10,
-        "vertical-length": 144,
-        "handle-shape": "ring",
-        "outlined": false,
-        "hover-brightness": false
-      }
-    },
-    "radio": {
-      "pointer": {
-        "size": 20,
-        "dot": 12,
-        "dot-hover": 14,
-        "dot-pressed": 10,
-        "border": 1,
-        "target": 0,
-        "well": "inset",
-        "checked-style": "fill",
-        "has-target": false,
-        "dot-feedback": "scale"
-      },
-      "touch": {
-        "size": 20,
-        "dot": 12,
-        "dot-hover": 14,
-        "dot-pressed": 10,
-        "border": 1,
-        "target": 0,
-        "well": "inset",
-        "checked-style": "fill",
-        "has-target": false,
-        "dot-feedback": "scale"
-      }
-    },
-    "progress": {
-      "height": 3,
-      "track-height": 1,
-      "track-role": "slider-track",
-      "track-shape": "hairline",
-      "outlined": false
-    },
-    "spinner": {
-      "min-stroke": 1.5,
-      "stroke-share": 8,
-      "has-track": false,
-      "track-alpha": 0.25
-    },
-    "tabs": {
-      "pad-x": 8,
-      "indicator-span": "tab",
-      "indicator-corners": "pill"
-    },
-    "calendar": {
-      "pointer": {
-        "cell": 40,
-        "outline-width": 2,
-        "cell-shape": "pill",
-        "today": "fill",
-        "selected": "outline"
-      },
-      "touch": {
-        "cell": 40,
-        "outline-width": 2,
-        "cell-shape": "pill",
-        "today": "fill",
-        "selected": "outline"
-      }
     }
   },
   "shape": {
@@ -369,6 +239,7 @@
     "nav": "bar",
     "field": "underline"
   },
+  "controls": "winui",
   "finishes": {
     "shared": {
       "card": {

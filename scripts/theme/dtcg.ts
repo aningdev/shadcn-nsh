@@ -86,26 +86,6 @@ export interface ThemeStyleInput {
       touch: { sm: number; md: number; lg: number };
     };
     grabber?: { width: number; height: number };
-    checkbox?: Record<string, number | string | boolean>;
-    switch?: {
-      pointer: Record<string, number | string>;
-      touch: Record<string, number | string>;
-    };
-    slider?: {
-      pointer: Record<string, number | string | boolean>;
-      touch: Record<string, number | string | boolean>;
-    };
-    radio?: {
-      pointer: Record<string, number | string | boolean>;
-      touch: Record<string, number | string | boolean>;
-    };
-    progress?: Record<string, number | string | boolean>;
-    spinner?: Record<string, number | string | boolean>;
-    tabs?: Record<string, number | string>;
-    calendar?: {
-      pointer: Record<string, number | string>;
-      touch: Record<string, number | string>;
-    };
   };
   shape: {
     curve: string;
@@ -128,6 +108,7 @@ export interface ThemeStyleInput {
     move: ThemeMotionRoleStyle;
   };
   indicator: { tabs: string; nav: string; field: string };
+  controls?: "base" | "material" | "winui";
 }
 
 export interface ThemeGeneratorOutput {
@@ -653,41 +634,6 @@ function toDtcgFontFamilyRef(raw: string | null): string | null {
   return m ? `{font.family.${m[1]!}}` : raw;
 }
 
-function diffDimGroupWithExt(
-  groupPath: string,
-  values: Record<string, number | string | boolean> | undefined,
-  baseGroup: Record<string, unknown>,
-  extKeys: readonly string[],
-  desc: (key: string, fallback: unknown) => string,
-  dimDesc: (groupKey: string, tokKey: string) => string | undefined,
-): Record<string, unknown> | undefined {
-  if (!values) return undefined;
-  const baseExt = getExtNs(baseGroup);
-  const extDiff: Record<string, unknown> = {};
-  const dimDiff: Record<string, unknown> = {};
-  for (const k of extKeys) {
-    if (k in values && values[k] !== baseExt[k]) extDiff[k] = values[k];
-  }
-  for (const [k, v] of Object.entries(values)) {
-    if (extKeys.includes(k) || typeof v !== "number") continue;
-    const baseTok = getAt(baseGroup, k);
-    const baseV = (baseTok.$value as { value: number }).value;
-    if (v !== baseV) {
-      const d = dimDesc(groupPath, k);
-      dimDiff[k] = {
-        $value: { value: v, unit: "px" },
-        ...(d ? { $description: d } : {}),
-      };
-    }
-  }
-  if (Object.keys(extDiff).length === 0 && Object.keys(dimDiff).length === 0) return undefined;
-  return {
-    ...(Object.keys(extDiff).length > 0 ? { $extensions: { [EXT_NS]: extDiff } } : {}),
-    $description: desc(groupPath, baseGroup.$description),
-    ...dimDiff,
-  };
-}
-
 function encodeSharedStyleOverrides(
   style: ThemeStyleInput,
   baseShared: Record<string, unknown>,
@@ -701,6 +647,7 @@ function encodeSharedStyleOverrides(
   transition?: Record<string, unknown>;
   motion?: Record<string, unknown>;
   indicator?: Record<string, unknown>;
+  controls?: Record<string, unknown>;
 } {
   const desc = (key: string, fallback: unknown): string =>
     styleDescs?.[key] ?? (typeof fallback === "string" ? fallback : key);
@@ -807,37 +754,6 @@ function encodeSharedStyleOverrides(
         $description: desc("dimension.grabber", baseGrabber.$description),
         ...grabberOverrides,
       };
-    }
-  }
-
-  if (style.dimension.checkbox) {
-    const cbOut = diffDimGroupWithExt(
-      "dimension.checkbox",
-      style.dimension.checkbox,
-      getAt(baseShared, "dimension", "checkbox"),
-      ["well", "has-target"],
-      desc,
-      (gPath, k) => styleDescs?.[`${gPath}.${k}`],
-    );
-    if (cbOut) dimensionExtras.checkbox = cbOut;
-  }
-
-  for (const [key, extKeys] of [
-    ["progress", ["track-role", "track-shape", "outlined"]],
-    ["spinner", ["stroke-share", "has-track", "track-alpha"]],
-    ["tabs", ["indicator-span", "indicator-corners"]],
-  ] as const) {
-    const val = style.dimension[key];
-    if (val) {
-      const out = diffDimGroupWithExt(
-        `dimension.${key}`,
-        val,
-        getAt(baseShared, "dimension", key),
-        extKeys,
-        desc,
-        (gPath, k) => styleDescs?.[`${gPath}.${k}`],
-      );
-      if (out) dimensionExtras[key] = out;
     }
   }
 
@@ -1033,6 +949,18 @@ function encodeSharedStyleOverrides(
         }
       : undefined;
 
+  // 9. controls
+  const baseControls = getAt(baseShared, "controls");
+  const baseControlsPreset = getExtNs(baseControls).preset as string;
+  const preset = style.controls ?? baseControlsPreset;
+  const controls =
+    preset !== baseControlsPreset
+      ? {
+          $description: desc("controls", baseControls.$description),
+          $extensions: { [EXT_NS]: { preset } },
+        }
+      : undefined;
+
   return {
     dimensionExtras,
     ...(typography ? { typography } : {}),
@@ -1042,6 +970,7 @@ function encodeSharedStyleOverrides(
     ...(transition ? { transition } : {}),
     ...(motion ? { motion } : {}),
     ...(indicator ? { indicator } : {}),
+    ...(controls ? { controls } : {}),
   };
 }
 
@@ -1161,43 +1090,8 @@ function encodeInputTierOverrides(
   );
   if (heightOut) sizeGroupOut.height = heightOut;
 
-  const tierDimDesc = (subKey: string, k: string) =>
-    styleDescs?.[`${tier}.${subKey}.${k}`] ?? styleDescs?.[`${subKey}.${k}`];
-
   const baseIcon = getAt(baseDim, "icon");
   const iconOut = diffDimSubgroup("dimension.icon", style.dimension.icon[tier], baseIcon);
-  const switchOut = diffDimGroupWithExt(
-    "dimension.switch",
-    style.dimension.switch?.[tier],
-    getAt(baseDim, "switch"),
-    ["knob-feedback"],
-    desc,
-    tierDimDesc,
-  );
-  const sliderOut = diffDimGroupWithExt(
-    "dimension.slider",
-    style.dimension.slider?.[tier],
-    getAt(baseDim, "slider"),
-    ["handle-shape", "outlined", "hover-brightness"],
-    desc,
-    tierDimDesc,
-  );
-  const radioOut = diffDimGroupWithExt(
-    "dimension.radio",
-    style.dimension.radio?.[tier],
-    getAt(baseDim, "radio"),
-    ["well", "checked-style", "has-target", "dot-feedback"],
-    desc,
-    tierDimDesc,
-  );
-  const calendarOut = diffDimGroupWithExt(
-    "dimension.calendar",
-    style.dimension.calendar?.[tier],
-    getAt(baseDim, "calendar"),
-    ["cell-shape", "today", "selected"],
-    desc,
-    tierDimDesc,
-  );
 
   const dimGroup: Record<string, unknown> = {};
   if (Object.keys(sizeGroupOut).length > 0) {
@@ -1209,10 +1103,6 @@ function encodeInputTierOverrides(
   if (iconOut) {
     dimGroup.icon = iconOut;
   }
-  if (switchOut) dimGroup.switch = switchOut;
-  if (sliderOut) dimGroup.slider = sliderOut;
-  if (radioOut) dimGroup.radio = radioOut;
-  if (calendarOut) dimGroup.calendar = calendarOut;
 
   if (Object.keys(fontGroup).length === 0 && Object.keys(dimGroup).length === 0) {
     return null;
@@ -1434,6 +1324,7 @@ export function emitDtcgTheme(
     ...(sharedStyle?.transition ? { transition: sharedStyle.transition } : {}),
     ...(sharedStyle?.motion ? { motion: sharedStyle.motion } : {}),
     ...(sharedStyle?.indicator ? { indicator: sharedStyle.indicator } : {}),
+    ...(sharedStyle?.controls ? { controls: sharedStyle.controls } : {}),
   };
 
   // 4. Split finishes into shared, light, and dark. Any field whose static DTCG color evaluation

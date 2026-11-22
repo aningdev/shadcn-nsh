@@ -183,136 +183,6 @@
     "grabber": {
       "width": 32,
       "height": 4
-    },
-    "checkbox": {
-      "border": 2,
-      "target": 40,
-      "well": "outline",
-      "has-target": true
-    },
-    "switch": {
-      "pointer": {
-        "width": 52,
-        "height": 32,
-        "sm-width": 52,
-        "sm-height": 32,
-        "border": 2,
-        "on-border": 0,
-        "knob": 16,
-        "on-knob": 24,
-        "sm-knob": 16,
-        "sm-on-knob": 24,
-        "knob-hover": 16,
-        "knob-pressed-width": 28,
-        "knob-pressed-height": 28,
-        "knob-feedback": "expand"
-      },
-      "touch": {
-        "width": 52,
-        "height": 32,
-        "sm-width": 52,
-        "sm-height": 32,
-        "border": 2,
-        "on-border": 0,
-        "knob": 16,
-        "on-knob": 24,
-        "sm-knob": 16,
-        "sm-on-knob": 24,
-        "knob-hover": 16,
-        "knob-pressed-width": 28,
-        "knob-pressed-height": 28,
-        "knob-feedback": "expand"
-      }
-    },
-    "slider": {
-      "pointer": {
-        "band": 44,
-        "rail": 16,
-        "thumb-width": 4,
-        "thumb-height": 44,
-        "thumb-pressed-width": 2,
-        "inner-dot": 0,
-        "inner-dot-hover": 0,
-        "inner-dot-pressed": 0,
-        "vertical-length": 128,
-        "handle-shape": "bar",
-        "outlined": false,
-        "hover-brightness": false
-      },
-      "touch": {
-        "band": 44,
-        "rail": 16,
-        "thumb-width": 4,
-        "thumb-height": 44,
-        "thumb-pressed-width": 2,
-        "inner-dot": 0,
-        "inner-dot-hover": 0,
-        "inner-dot-pressed": 0,
-        "vertical-length": 144,
-        "handle-shape": "bar",
-        "outlined": false,
-        "hover-brightness": false
-      }
-    },
-    "radio": {
-      "pointer": {
-        "size": 20,
-        "dot": 10,
-        "dot-hover": 10,
-        "dot-pressed": 10,
-        "border": 2,
-        "target": 40,
-        "well": "outline",
-        "checked-style": "ring",
-        "has-target": true,
-        "dot-feedback": "none"
-      },
-      "touch": {
-        "size": 20,
-        "dot": 10,
-        "dot-hover": 10,
-        "dot-pressed": 10,
-        "border": 2,
-        "target": 40,
-        "well": "outline",
-        "checked-style": "ring",
-        "has-target": true,
-        "dot-feedback": "none"
-      }
-    },
-    "progress": {
-      "height": 4,
-      "track-height": 4,
-      "track-role": "slider-track",
-      "track-shape": "bar",
-      "outlined": false
-    },
-    "spinner": {
-      "min-stroke": 1.5,
-      "stroke-share": 10,
-      "has-track": false,
-      "track-alpha": 0.25
-    },
-    "tabs": {
-      "pad-x": 8,
-      "indicator-span": "label",
-      "indicator-corners": "top"
-    },
-    "calendar": {
-      "pointer": {
-        "cell": 40,
-        "outline-width": 1,
-        "cell-shape": "pill",
-        "today": "outline",
-        "selected": "fill"
-      },
-      "touch": {
-        "cell": 40,
-        "outline-width": 1,
-        "cell-shape": "pill",
-        "today": "outline",
-        "selected": "fill"
-      }
     }
   },
   "shape": {
@@ -369,6 +239,7 @@
     "nav": "fill",
     "field": "underline"
   },
+  "controls": "material",
   "finishes": {
     "shared": {
       "card": {

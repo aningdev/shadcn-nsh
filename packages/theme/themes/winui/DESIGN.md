@@ -252,50 +252,6 @@ spacing:
     sm: 12px
     md: 16px
     lg: 20px
-  checkbox:
-    border: 1px
-    target: 0px
-  switch:
-    width: 40px
-    height: 20px
-    sm-width: 40px
-    sm-height: 20px
-    border: 1px
-    on-border: 0px
-    knob: 12px
-    on-knob: 12px
-    sm-knob: 12px
-    sm-on-knob: 12px
-    knob-hover: 14px
-    knob-pressed-width: 17px
-    knob-pressed-height: 14px
-  slider:
-    band: 32px
-    rail: 4px
-    thumb-width: 18px
-    thumb-height: 18px
-    thumb-pressed-width: 18px
-    inner-dot: 12px
-    inner-dot-hover: 14px
-    inner-dot-pressed: 10px
-    vertical-length: 128px
-  radio:
-    size: 20px
-    dot: 12px
-    dot-hover: 14px
-    dot-pressed: 10px
-    border: 1px
-    target: 0px
-  progress:
-    height: 3px
-    track-height: 1px
-  spinner:
-    min-stroke: 1.5px
-  tabs:
-    pad-x: 8px
-  calendar:
-    cell: 40px
-    outline-width: 2px
 motion:
   enter:
     duration: 250ms

@@ -513,62 +513,6 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
         touch: readDimMap(ltDim.icon as Record<string, Record<string, unknown>>),
       },
       grabber: readDimMap(lpDim.grabber as Record<string, Record<string, unknown>>),
-      checkbox: {
-        ...readDimMap(lpDim.checkbox as Record<string, Record<string, unknown>>),
-        ...(getExt(lpDim.checkbox) ?? {}),
-      },
-      switch: {
-        pointer: {
-          ...readDimMap(lpDim.switch as Record<string, Record<string, unknown>>),
-          ...(getExt(lpDim.switch) ?? {}),
-        },
-        touch: {
-          ...readDimMap(ltDim.switch as Record<string, Record<string, unknown>>),
-          ...(getExt(ltDim.switch) ?? {}),
-        },
-      },
-      slider: {
-        pointer: {
-          ...readDimMap(lpDim.slider as Record<string, Record<string, unknown>>),
-          ...(getExt(lpDim.slider) ?? {}),
-        },
-        touch: {
-          ...readDimMap(ltDim.slider as Record<string, Record<string, unknown>>),
-          ...(getExt(ltDim.slider) ?? {}),
-        },
-      },
-      radio: {
-        pointer: {
-          ...readDimMap(lpDim.radio as Record<string, Record<string, unknown>>),
-          ...(getExt(lpDim.radio) ?? {}),
-        },
-        touch: {
-          ...readDimMap(ltDim.radio as Record<string, Record<string, unknown>>),
-          ...(getExt(ltDim.radio) ?? {}),
-        },
-      },
-      progress: {
-        ...readDimMap(lpDim.progress as Record<string, Record<string, unknown>>),
-        ...(getExt(lpDim.progress) ?? {}),
-      },
-      spinner: {
-        ...readDimMap(lpDim.spinner as Record<string, Record<string, unknown>>),
-        ...(getExt(lpDim.spinner) ?? {}),
-      },
-      tabs: {
-        ...readDimMap(lpDim.tabs as Record<string, Record<string, unknown>>),
-        ...(getExt(lpDim.tabs) ?? {}),
-      },
-      calendar: {
-        pointer: {
-          ...readDimMap(lpDim.calendar as Record<string, Record<string, unknown>>),
-          ...(getExt(lpDim.calendar) ?? {}),
-        },
-        touch: {
-          ...readDimMap(ltDim.calendar as Record<string, Record<string, unknown>>),
-          ...(getExt(ltDim.calendar) ?? {}),
-        },
-      },
     },
     shape: {
       curve: shapeExt.curve,
@@ -592,6 +536,7 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
     transition: transitionOut,
     motion: motionOut,
     indicator: getExt(lp.indicator) as Record<string, string>,
+    controls: getExt(lp.controls)!.preset as string,
     finishes: finishesOut,
   };
 }

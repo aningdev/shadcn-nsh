@@ -453,6 +453,7 @@ export const style = {
     move: { stiffness: 504, damping: 38 },
   },
   indicator: { tabs: "pill", nav: "fill", field: "box" },
+  controls: "base" as const,
 };
 
 /** Every finish states a material: the one that asks for none says `null`. */
