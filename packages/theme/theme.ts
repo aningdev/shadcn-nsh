@@ -1128,12 +1128,10 @@ const easings: Record<string, EasingCurve> = {
   "emphasized-decelerate": Easing.bezier(0.05, 0.7, 0.1, 1),
   // Material 3 (`md.sys.motion.easing.emphasized-accelerate`)
   "emphasized-accelerate": Easing.bezier(0.3, 0, 0.8, 0.15),
-  // WinUI 3 / Fluent 2 Direct Entrance (`0,0,0,1`), Fluent Web `curveDecelerateMid`, & M3 `standard-decelerate`
+  // WinUI 3 Fast Out, Slow In (`0,0,0,1`) & M3 `standard-decelerate`
   decelerate: Easing.bezier(0, 0, 0, 1),
-  // WinUI 3 / Fluent 2 Gentle Exit (`1,0,1,1`) & Fluent Web `curveAccelerateMid`
+  // WinUI 3 Slow Out, Fast In (`1,0,1,1`)
   accelerate: Easing.bezier(1, 0, 1, 1),
-  // Fluent Web `curveEasyEase` (`@fluentui/tokens`)
-  "easy-ease": Easing.bezier(0.33, 0, 0.67, 1),
   // WinUI 3 Existing Elements / Point-to-Point (`0.55,0.55,0,1`, windows-dev-docs)
   "point-to-point": Easing.bezier(0.55, 0.55, 0, 1),
 };
@@ -1248,7 +1246,7 @@ export const hovered = (ink: keyof Tokens = "foreground", under?: string): ViewS
  * - `"outline"`: `borderColor` stays untouched; `outlineColor` is `ring`.
  * - `"double"`: `borderColor` stays untouched; a 1 px line of `ring-halo` hugs the edge (a spread shadow, which
  *   stands in for the surface's own shadow while focused) and the `focus.width` outline of `ring` lies just outside
- *   it, so the outline's offset grows by that 1 px (Fluent's `FocusStrokeColorInner` / `Outer`).
+ *   it, so the outline's offset grows by that 1 px (WinUI 3's `FocusStrokeColorInner` / `Outer`).
  */
 export const focusRing = (offset?: number): ViewStyle => {
   const { style: look, width, offset: base } = style().dimension.focus;

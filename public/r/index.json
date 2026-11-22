@@ -234,7 +234,7 @@
       "name": "theme-winui",
       "type": "registry:theme",
       "title": "Theme: WinUI 3",
-      "description": "WinUI 3 (Windows 11 / Fluent 2) palette and metrics as one more theme — WinUI fill/stroke tokens, 4/8 px circular corners, Segoe UI Variable, Consolas, double focus ring, timing motion, underline tabs/fields, and Windows blur material — installed into themes/winui/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, DESIGN.md, index.ts) for `selectTheme` to switch to while the app runs.",
+      "description": "WinUI 3 (Windows 11) palette and metrics as one more theme — WinUI fill/stroke tokens, 4/8 px circular corners, Segoe UI Variable, Consolas, double focus ring, timing motion, underline tabs/fields, and Windows blur material — installed into themes/winui/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, DESIGN.md, index.ts) for `selectTheme` to switch to while the app runs.",
       "files": [
         {
           "path": "packages/theme/themes/winui/theme.json",

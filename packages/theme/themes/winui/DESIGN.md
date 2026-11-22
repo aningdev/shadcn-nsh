@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: "WinUI 3"
-description: "WinUI 3 theme (Windows 11 / Fluent 2, winui3/release/2.7.0)."
+description: "WinUI 3 theme (Windows 11, winui3/release/2.7.0)."
 colors:
   scrim: "#0000004d"
   media: "#10131a"
@@ -403,9 +403,9 @@ components:
 
 ## Overview
 
-WinUI 3 theme (Windows 11 / Fluent 2, winui3/release/2.7.0).
+WinUI 3 theme (Windows 11, winui3/release/2.7.0).
 
-WinUI 3 / Fluent 2 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composited over `SolidBackgroundFillColorBase` (`#F3F3F3` light / `#202020` dark) with `#0078D4` accent, `Segoe UI Variable` + `Consolas`, double focus strokes, and deterministic timing curves.
+WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composited over `SolidBackgroundFillColorBase` (`#F3F3F3` light / `#202020` dark) with `#0078D4` accent, `Segoe UI Variable` + `Consolas`, double focus strokes, and deterministic timing curves.
 
 ## Colors
 

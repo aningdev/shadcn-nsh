@@ -80,7 +80,7 @@ _Avoid_: 重写行为, 缩减 props
 _Avoid_: neutral 映射, `custom-*` 键
 
 **Design Semantics（语义层 / `semantics.json`）**:
-跨 Apple HIG、Material 3 Expressive、Fluent 2 与 shadcn/ui 的设计语义超集，存放 NSH 原生标量 token 表达不了的结构（`pointer`/`touch` 两档尺寸与字阶、枚举、动效、表面配方 `finishes` 与平台 `material`），通过 `{token}` 引用 `theme.json` 中的基础 token。见 [`specs/design-semantics.md`](specs/design-semantics.md)。
+跨 Apple HIG、Material 3 Expressive、WinUI 3 与 shadcn/ui 的设计语义超集，存放 NSH 原生标量 token 表达不了的结构（`pointer`/`touch` 两档尺寸与字阶、枚举、动效、表面配方 `finishes` 与平台 `material`），通过 `{token}` 引用 `theme.json` 中的基础 token。见 [`specs/design-semantics.md`](specs/design-semantics.md)。
 _Avoid_: `finishes.json`（旧文件名）、在语义层重复写颜色/圆角/字体字面量
 
 **Token**:

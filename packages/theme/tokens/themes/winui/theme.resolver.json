@@ -2,7 +2,7 @@
   "$schema": "https://www.designtokens.org/schemas/2025.10/resolver.json",
   "name": "WinUI 3",
   "version": "2025.10",
-  "description": "WinUI 3 theme (Windows 11 / Fluent 2, winui3/release/2.7.0).",
+  "description": "WinUI 3 theme (Windows 11, winui3/release/2.7.0).",
   "sets": {
     "base": {
       "description": "Cross-theme semantic defaults and shared typography/motion structure.",

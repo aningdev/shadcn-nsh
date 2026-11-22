@@ -1,6 +1,6 @@
 /**
  * Writes `packages/theme/tokens/themes/winui/` (DTCG 2025.10 source) from the WinUI 3
- * (Windows 11 / Fluent 2) palette and metrics in `winui.ts`, and compiles
+ * (Windows 11) palette and metrics in `winui.ts`, and compiles
  * `packages/theme/themes/winui/{theme,semantics}.json` via `tokens:build`.
  *
  *   bun scripts/theme/generate-winui.ts

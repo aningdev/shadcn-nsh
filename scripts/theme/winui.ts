@@ -1,5 +1,5 @@
 /**
- * WinUI 3 (Windows 11 / Fluent 2) colour core and style metrics for the `winui` theme (#240).
+ * WinUI 3 (Windows 11) colour core and style metrics for the `winui` theme (#240).
  *
  * Baseline sources:
  *   - Primary (wins): `microsoft/microsoft-ui-xaml` tag `winui3/release/2.7.0`
@@ -967,7 +967,7 @@ export const winuiStyle = {
   indicator: { tabs: "underline", nav: "bar", field: "underline" },
 };
 
-/** WinUI 3 (Windows 11 / Fluent 2) theme data and DTCG descriptions ready for `emitDtcgTheme`. */
+/** WinUI 3 (Windows 11) theme data and DTCG descriptions ready for `emitDtcgTheme`. */
 export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGeneratorOutput {
   const roles = winuiRoles(accent);
   const colorDescs = {
@@ -1072,7 +1072,7 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
   return {
     id: "winui",
     name: "WinUI 3",
-    resolverDescription: "WinUI 3 theme (Windows 11 / Fluent 2, winui3/release/2.7.0).",
+    resolverDescription: "WinUI 3 theme (Windows 11, winui3/release/2.7.0).",
     themeDescription:
       "Appearance-invariant base tokens and WinUI 3 style overrides (Segoe UI Variable, Consolas, double focus rings, timing motion).",
     finishesDescription:
@@ -1090,7 +1090,7 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
     style: winuiStyle,
     designMd: {
       overview:
-        "WinUI 3 / Fluent 2 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composited over `SolidBackgroundFillColorBase` (`#F3F3F3` light / `#202020` dark) with `#0078D4` accent, `Segoe UI Variable` + `Consolas`, double focus strokes, and deterministic timing curves.",
+        "WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composited over `SolidBackgroundFillColorBase` (`#F3F3F3` light / `#202020` dark) with `#0078D4` accent, `Segoe UI Variable` + `Consolas`, double focus strokes, and deterministic timing curves.",
       elevation:
         "WinUI 3 ThemeShadow depths (2/8/16/32/128) paired with composited `ControlStrokeColorDefault` / `SurfaceStrokeColorDefault` borders and `material.windows` blur on `glass`, `menu`, and `tooltip` (`AcrylicInAppFillColorDefault` 0.85 light / 0.96 dark).",
       dos: [

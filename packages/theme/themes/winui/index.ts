@@ -6,7 +6,7 @@ import type { AppTheme } from "@shadcn-nsh/theme";
 import semantics from "./semantics.json";
 import theme from "./theme.json";
 
-/** WinUI 3 (Windows 11 / Fluent 2) palette and metrics: WinUI fill/stroke tokens, 4/8 px circular corners, Segoe UI Variable, double focus ring, timing motion, and Windows blur material. */
+/** WinUI 3 (Windows 11) palette and metrics: WinUI fill/stroke tokens, 4/8 px circular corners, Segoe UI Variable, double focus ring, timing motion, and Windows blur material. */
 export const winui: AppTheme = {
   id: "winui",
   label: "WinUI 3",

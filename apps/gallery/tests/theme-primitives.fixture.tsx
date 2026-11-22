@@ -29,7 +29,7 @@ const { finishes } = defaultTheme.semantics;
 
 /**
  * A synthetic theme exercising the Phase 3 cross-platform primitives:
- * `double` focus ring, timing motion roles with M3/Fluent curves, state-layer overlays on
+ * `double` focus ring, timing motion roles with M3/WinUI 3 curves, state-layer overlays on
  * gradient fills with surface-matched ink, `state.ripple`, and `material.android`.
  */
 const expressive: AppTheme = {

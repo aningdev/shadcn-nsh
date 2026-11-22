@@ -35,7 +35,6 @@ export const easingNames = [
   "emphasized-accelerate",
   "decelerate",
   "accelerate",
-  "easy-ease",
   "point-to-point",
 ] as const;
 

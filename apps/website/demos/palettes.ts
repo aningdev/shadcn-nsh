@@ -50,7 +50,7 @@ export const PALETTES = [
     id: "winui",
     label: "WinUI 3",
     description:
-      "WinUI 3 (Windows 11 / Fluent 2): WinUI fill and stroke tokens, 4/8-point circular corners, Segoe UI Variable, Consolas, double focus rings, and timing motion.",
+      "WinUI 3 (Windows 11): WinUI fill and stroke tokens, 4/8-point circular corners, Segoe UI Variable, Consolas, double focus rings, and timing motion.",
   },
 ] as const;
 

@@ -100,15 +100,11 @@ export const NAMED_CUBIC_BEZIERS: Record<
   },
   decelerate: {
     value: [0, 0, 0, 1],
-    description: "WinUI 3 / Fluent 2 Direct Entrance decelerate curve.",
+    description: "WinUI 3 Fast Out, Slow In curve (entering elements).",
   },
   accelerate: {
     value: [1, 0, 1, 1],
-    description: "WinUI 3 / Fluent 2 Gentle Exit accelerate curve.",
-  },
-  "easy-ease": {
-    value: [0.33, 0, 0.67, 1],
-    description: "Fluent Web curveEasyEase.",
+    description: "WinUI 3 Slow Out, Fast In curve (exiting elements).",
   },
   "point-to-point": {
     value: [0.55, 0.55, 0, 1],
