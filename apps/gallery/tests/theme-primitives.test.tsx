@@ -58,12 +58,12 @@ test("double focus, timing motion, state-layer inks, ripple and android material
   expect(read("roll")).toBe("2");
 
   // State-layer hover omits backgroundColor: token("hover") and stacks ink over resting gradients.
-  const [onBrand, primaryForeground, inverseForeground, primary, onForeground] =
+  const [onBrand, primaryForeground, inverseForeground, primary, selectedForeground] =
     read("tokens").split("|");
   const expectedOnBrandHover = atAlpha(onBrand, 0.08);
   const expectedPrimaryFgHover = atAlpha(primaryForeground, 0.08);
   const expectedInverseFgHover = atAlpha(inverseForeground, 0.08);
-  const expectedOnForegroundHover = atAlpha(onForeground, 0.08);
+  const expectedSelectedFgHover = atAlpha(selectedForeground, 0.08);
 
   const btnHover = readJson<Record<string, unknown>>("btnHover");
   expect(btnHover.backgroundColor).toBeUndefined();
@@ -81,7 +81,7 @@ test("double focus, timing motion, state-layer inks, ripple and android material
 
   const toggleOnHover = readJson<Record<string, unknown>>("toggleOnHover");
   expect(toggleOnHover.backgroundColor).toBeUndefined();
-  expect(toggleOnHover.backgroundImage).toContain(expectedOnForegroundHover);
+  expect(toggleOnHover.backgroundImage).toContain(expectedSelectedFgHover);
   expect(toggleOnHover.backgroundImage).toContain(", linear-gradient(");
 
   const toastHover = readJson<Record<string, unknown>>("toastHover");
@@ -98,7 +98,7 @@ test("double focus, timing motion, state-layer inks, ripple and android material
     ripple: { color: atAlpha(primaryForeground, 0.1) },
   });
   expect(readJson("toggleOnAndroid")).toEqual({
-    ripple: { color: atAlpha(onForeground, 0.1) },
+    ripple: { color: atAlpha(selectedForeground, 0.1) },
   });
   expect(readJson("toastAndroid")).toEqual({ ripple: { color: atAlpha(inverseForeground, 0.1) } });
 

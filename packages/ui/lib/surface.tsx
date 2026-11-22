@@ -146,7 +146,7 @@ export function sectionSurface(o?: SectionSurfaceOptions): ViewStyle {
     ...rounded(density.surface),
     borderWidth: stroke.surface,
     borderColor: finish.section.borderColor,
-    ...(finish.section.boxShadow !== "none" ? { boxShadow: finish.section.boxShadow } : {}),
+    boxShadow: finish.section.boxShadow,
     ...(o?.padded ? { padding: density.pad } : {}),
   };
 }

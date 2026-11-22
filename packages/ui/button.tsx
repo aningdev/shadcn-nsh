@@ -153,7 +153,6 @@ const STYLE_KEYS = [
 const dimensions = (o?: ButtonLookOptions) => buttonSizes[read(o?.size) ?? "default"];
 
 const filled = (variant: ButtonVariant) => variant === "default";
-const splitDisabled = () => dimmed.disabled !== dimmed.disabledContainer;
 
 const buttonInk = (variant: ButtonVariant, selected = false): keyof Tokens =>
   filled(variant)
@@ -161,13 +160,13 @@ const buttonInk = (variant: ButtonVariant, selected = false): keyof Tokens =>
     : variant === "destructive"
       ? "destructive"
       : variant === "secondary" && selected
-        ? "on-foreground"
+        ? "selected-foreground"
         : "foreground";
 
 /** The fill, edge and shadow of a variant at rest (or selected). A disabled filled button gives up the citrus for the
- * neutral raised fill (or the theme's split disabled container where `disabled` differs from `disabledContainer`). */
+ * neutral raised fill (or the theme's split disabled container where `state.disabled.fill` is true). */
 function restLook(variant: ButtonVariant, selected: boolean, disabled = false): ViewStyle {
-  if (disabled && splitDisabled()) {
+  if (disabled && themeStyle().state.disabled.fill) {
     if (variant === "ghost") {
       return {
         backgroundColor: ghostFill(),
@@ -261,13 +260,10 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
                   : undefined,
             )
           : filled(variant)
-            ? themeStyle().state["accent-pressed-opacity"] < 1
-              ? { opacity: themeStyle().state["accent-pressed-opacity"] }
-              : {
-                  ...finish.accentPressed,
-                  borderTopColor: finish.accentPressed.borderColor,
-                  borderBottomColor: finish.accentPressed.borderColor,
-                }
+            ? {
+                ...finish.accentPressed,
+                opacity: themeStyle().state["accent-pressed-opacity"],
+              }
             : variant === "destructive"
               ? { backgroundColor: alpha(colors.destructive, 0.22), boxShadow: "none" }
               : { ...finish.pressed };
@@ -277,7 +273,7 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
       return focusRing();
     },
     get disabledStyle(): ViewStyle {
-      return splitDisabled() ? {} : { opacity: dimmed.disabled };
+      return themeStyle().state.disabled.fill ? {} : { opacity: dimmed.disabled };
     },
     get hitSlop(): number | undefined {
       return touchSlop(dimensions(o).height);
@@ -293,18 +289,14 @@ function ink(live: Live<ButtonVariant>, o?: ButtonLookOptions) {
   const variant = read(live) ?? "secondary";
   const disabled = !!read(o?.disabled);
   if (disabled) {
-    if (splitDisabled()) return colors.disabledForeground;
+    if (themeStyle().state.disabled.fill) return colors.disabledForeground;
     if (filled(variant)) return colors.mutedForeground;
   }
   if (filled(variant)) {
-    const swapPressed =
-      !!read(o?.pressed) &&
-      themeStyle().state.overlay.pressed <= 0 &&
-      themeStyle().state["accent-pressed-opacity"] >= 1;
-    return swapPressed ? colors.onAccentPressed : colors.onBrand;
+    return read(o?.pressed) ? colors.onAccentPressed : colors.onBrand;
   }
   if (variant === "destructive") return colors.destructive;
-  if (variant === "secondary" && read(o?.selected)) return colors.onForeground;
+  if (variant === "secondary" && read(o?.selected)) return colors.selectedForeground;
   if (read(o?.pressed)) return colors.pressedForeground;
   return colors.foreground;
 }
@@ -397,7 +389,7 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
       const selected = !!read(o.selected);
       const disabled = !!read(o.disabled);
       const side = iconButtonDimensions(o).side;
-      if (disabled && splitDisabled()) {
+      if (disabled && themeStyle().state.disabled.fill) {
         return {
           width: terminal ? undefined : side,
           height: terminal ? undefined : side,
@@ -459,7 +451,7 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
       return focusRing();
     },
     get disabledStyle(): ViewStyle {
-      return splitDisabled() ? {} : { opacity: dimmed.disabled };
+      return themeStyle().state.disabled.fill ? {} : { opacity: dimmed.disabled };
     },
     get hitSlop(): number | undefined {
       return touchSlop(iconButtonDimensions(o).side);
@@ -477,7 +469,7 @@ export function iconButtonGlyph(o: IconButtonLookOptions = {}) {
       return iconButtonDimensions(o).glyph;
     },
     get tint() {
-      if (read(o.disabled) && splitDisabled()) return colors.disabledForeground;
+      if (read(o.disabled) && themeStyle().state.disabled.fill) return colors.disabledForeground;
       return read(o.selected)
         ? colors.brand
         : o.variant === "destructive"
@@ -529,7 +521,7 @@ export function roundButtonLook(
         alignItems: "center",
         justifyContent: "center",
         borderWidth: stroke.control,
-        ...(disabled && splitDisabled()
+        ...(disabled && themeStyle().state.disabled.fill
           ? finish.disabled
           : primary
             ? finish.accent
@@ -565,7 +557,7 @@ export function roundButtonLook(
       return focusRing();
     },
     get disabledStyle(): ViewStyle {
-      return splitDisabled() ? {} : { opacity: dimmed.disabled };
+      return themeStyle().state.disabled.fill ? {} : { opacity: dimmed.disabled };
     },
     get hitSlop(): number | undefined {
       return touchSlop(roundSide(o));
@@ -587,7 +579,7 @@ export function roundButtonGlyph(
   return {
     size: roundSide(o) * ROUND_GLYPH_RATIO,
     get tint() {
-      if (read(o?.disabled) && splitDisabled()) return colors.disabledForeground;
+      if (read(o?.disabled) && themeStyle().state.disabled.fill) return colors.disabledForeground;
       return variant === "default" ? colors.primaryForeground : colors.foreground;
     },
   };
@@ -664,7 +656,7 @@ export function splitButtonLook(variant: Live<ButtonVariant> = "default", o?: Bu
           return focusRing(-2);
         },
         get disabledStyle(): ViewStyle {
-          return splitDisabled() ? {} : { opacity: dimmed.disabled };
+          return themeStyle().state.disabled.fill ? {} : { opacity: dimmed.disabled };
         },
         // Taller only: the halves touch, so a finger's slop stays off their shared edge.
         get hitSlop() {

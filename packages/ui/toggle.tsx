@@ -102,8 +102,6 @@ const dimensions = (o?: ToggleLookOptions) => toggleSizes[read(o?.size) ?? "defa
  * `toggleLabel` for a label and `toggleGlyph` for an icon: muted while
  * off, the text's color while on.
  */
-const splitDisabled = () => dimmed.disabled !== dimmed.disabledContainer;
-
 export function toggleLook(o?: ToggleLookOptions) {
   const outline = o?.variant === "outline";
   return {
@@ -111,7 +109,7 @@ export function toggleLook(o?: ToggleLookOptions) {
       const dims = dimensions(o);
       const on = !!read(o?.on);
       const disabled = !!read(o?.disabled);
-      const split = disabled && splitDisabled();
+      const split = disabled && themeStyle().state.disabled.fill;
       return {
         // The terminal sizes it to its label, which it never breaks: a
         // track too narrow for its tools wraps them instead.
@@ -133,13 +131,11 @@ export function toggleLook(o?: ToggleLookOptions) {
           ? on
             ? finish.disabled
             : outline
-              ? finish.disabled.borderColor === "transparent"
-                ? {
-                    backgroundColor: "transparent",
-                    borderColor: colors.disabled,
-                    boxShadow: "none",
-                  }
-                : finish.disabled
+              ? {
+                  backgroundColor: "transparent",
+                  borderColor: colors.disabled,
+                  boxShadow: "none",
+                }
               : { backgroundColor: "transparent", borderColor: "transparent", boxShadow: "none" }
           : {}),
         ...transition,
@@ -152,7 +148,7 @@ export function toggleLook(o?: ToggleLookOptions) {
     get hoverStyle(): ViewStyle | undefined {
       if (read(o?.disabled)) return undefined;
       if (themeStyle().state.overlay.hover > 0) {
-        return read(o?.on) ? hovered("on-foreground", finish.on.backgroundImage) : hovered();
+        return read(o?.on) ? hovered("selected-foreground", finish.on.backgroundImage) : hovered();
       }
       return read(o?.on) ? undefined : hovered();
     },
@@ -161,7 +157,7 @@ export function toggleLook(o?: ToggleLookOptions) {
       if (themeStyle().state.overlay.pressed > 0) {
         return {
           ...(read(o?.on)
-            ? stateLayer("pressed", "on-foreground", finish.on.backgroundImage)
+            ? stateLayer("pressed", "selected-foreground", finish.on.backgroundImage)
             : stateLayer("pressed", "foreground")),
           ...sink(0.92),
         };
@@ -172,21 +168,21 @@ export function toggleLook(o?: ToggleLookOptions) {
       return focusRing(1);
     },
     get disabledStyle(): ViewStyle {
-      return splitDisabled() ? {} : { opacity: dimmed.disabled };
+      return themeStyle().state.disabled.fill ? {} : { opacity: dimmed.disabled };
     },
     get hitSlop(): number | undefined {
       return touchSlop(dimensions(o).side);
     },
     get android(): AndroidProps | undefined {
-      return pressRipple(read(o?.on) ? "on-foreground" : "foreground", o?.disabled);
+      return pressRipple(read(o?.on) ? "selected-foreground" : "foreground", o?.disabled);
     },
   };
 }
 
 /** The ink of a toggle's content: the selected color while on, muted while off, disabled ink when disabled apart. */
 const ink = (pressed: Live<boolean | undefined>, disabled?: Live<boolean | undefined>) => {
-  if (read(disabled) && splitDisabled()) return colors.disabledForeground;
-  return read(pressed) ? colors.onForeground : colors.mutedForeground;
+  if (read(disabled) && themeStyle().state.disabled.fill) return colors.disabledForeground;
+  return read(pressed) ? colors.selectedForeground : colors.mutedForeground;
 };
 
 /** The label of a `toggleLook` of the same options: 13 points with a pointer, 15 on a touch screen (`sm` 12 / 13, `lg` 14 / 16), medium weight, muted while off. */
