@@ -98,3 +98,7 @@ _Avoid_: 在语义层写 `var(--token)` 或重复的色值/圆角数字；用别
 **Build-time Theme / AppTheme**:
 **构建时主题**是 `nsh.json` 指向的 `theme.json` 与 `lib/ui/semantics.json`，由 `init --theme <name>` 定；**AppTheme**（`{ id, label, theme, semantics }`）是运行时可切的一套，装在 `themes/<name>/`，`selectTheme` 切过去、`selectTheme(null)` 回构建时那套、`currentTheme()` 读当前 `id`（还在构建时主题上时为 `null`）。应用清单里的构建时主题就是 `null`。
 _Avoid_: 把 `add theme-<x>` 当成换构建时主题、把主题叫“皮肤”、把 finish 当 token
+
+**Control Preset（控件预设 / `controls`）**:
+某个复杂控件私有的、随平台套系切换整套形态与尺寸的命名表，放在组件自己的文件里，不进主题 JSON；主题只声明 `controls` 枚举（`"base" | "material" | "winui"`），组件经 `@shadcn-nsh/theme` 的 `controls()` 读取后在自己的预设表里选用对应参数与形态分支。
+_Avoid_: 为单个控件在 `theme.json` / `semantics.json` 里逐键放宽几何或状态字段、在组件里按主题 `id` 分支

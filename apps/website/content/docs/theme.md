@@ -7,13 +7,13 @@ The theme is the upstream gallery's: a graphite page (paper in light appearance)
 
 ## Files
 
-| File                                    | What it holds                                                                                                                                                                                                                                 |
-| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `theme.json`                            | Base tokens: colors (light / dark and shared), all 8 `radius-*` lengths, and font families (`font-mono`, optional `font-sans`) in shadcn's `cssVars` shape                                                                                    |
-| `light.tokens.json`, `dark.tokens.json` | Standalone W3C DTCG 2025.10 Format files resolved per appearance at the `pointer` tier (in-file aliases, 6-digit `hex` fallbacks) for Figma Variables (Light/Dark modes), Tokens Studio, and Style Dictionary v4; static snapshots as shipped |
-| `DESIGN.md`                             | Generated Google Labs DESIGN.md (`alpha`) specification for coding agents, compiled from DTCG sources and the pointer-tier `light`/`dark` resolutions; static snapshot as shipped                                                             |
-| `semantics.json`                        | Semantic layer in DTCG names: 8 style groups (`typography`, `dimension`, `shape`, `state`, `duration`, `transition`, `motion`, `indicator`) and `finishes` (`shared` + sparse `light` / `dark`), referencing tokens with `{token}`            |
-| `lib/ui/theme.ts`                       | `colors`, `finish`, `shape`, `font`, `style`, `mono`, `focusRing` and `alpha`, read reactively from `theme.json` and `semantics.json`                                                                                                         |
+| File                                    | What it holds                                                                                                                                                                                                                                  |
+| --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `theme.json`                            | Base tokens: colors (light / dark and shared), all 8 `radius-*` lengths, and font families (`font-mono`, optional `font-sans`) in shadcn's `cssVars` shape                                                                                     |
+| `light.tokens.json`, `dark.tokens.json` | Standalone W3C DTCG 2025.10 Format files resolved per appearance at the `pointer` tier (in-file aliases, 6-digit `hex` fallbacks) for Figma Variables (Light/Dark modes), Tokens Studio, and Style Dictionary v4; static snapshots as shipped  |
+| `DESIGN.md`                             | Generated Google Labs DESIGN.md (`alpha`) specification for coding agents, compiled from DTCG sources and the pointer-tier `light`/`dark` resolutions; static snapshot as shipped                                                              |
+| `semantics.json`                        | Semantic layer in DTCG names: 9 style groups (`typography`, `dimension`, `shape`, `state`, `duration`, `transition`, `motion`, `indicator`, `controls`) and `finishes` (`shared` + sparse `light` / `dark`), referencing tokens with `{token}` |
+| `lib/ui/theme.ts`                       | `colors`, `finish`, `shape`, `font`, `style`, `mono`, `focusRing` and `alpha`, read reactively from `theme.json` and `semantics.json`                                                                                                          |
 
 ## Installation
 
