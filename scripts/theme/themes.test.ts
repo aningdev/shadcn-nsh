@@ -121,7 +121,7 @@ describe("the default theme", () => {
   });
 
   test("its files under themes/default/ are the build-time ones, byte for byte", () => {
-    for (const name of ["theme.json", "semantics.json"]) {
+    for (const name of ["theme.json", "semantics.json", "light.tokens.json", "dark.tokens.json"]) {
       expect(readFileSync(join(theme, `themes/default/${name}`), "utf8"), name).toBe(
         readFileSync(join(theme, name), "utf8"),
       );

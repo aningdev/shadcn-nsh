@@ -1,18 +1,20 @@
 /**
- * Compiles a DTCG 2025.10 `theme.resolver.json` into the runtime artifacts consumed by NSH and
- * `packages/theme/theme.ts`:
+ * Compiles a DTCG 2025.10 `theme.resolver.json` into:
  * 1. `theme.json` (`cssVars: { theme, light, dark }`), preserving `var(--x)` and `color-mix(...)`
  *    so host `setThemeOverrides` flows dynamically;
- * 2. `semantics.json` (compiled DTCG-named runtime semantic contract consumed by `theme.ts`).
+ * 2. `semantics.json` (compiled DTCG-named runtime semantic contract consumed by `theme.ts`);
+ * 3. `light.tokens.json` & `dark.tokens.json` (standalone DTCG 2025.10 Format files resolved per
+ *    appearance at the pointer tier with in-file aliases and 6-digit hex fallbacks).
  */
 import fs from "node:fs";
 import path from "node:path";
 
 import { mergeFinishes, splitFinishes } from "../theme/tokens";
-import { formatColorOpToCss, formatDtcgColor } from "./color";
+import { formatColorOpToCss, formatDtcgColor, oklchToHex6 } from "./color";
 import { loadSourceItem, mergeTokenTrees, resolvePermutation, type ResolverDoc } from "./resolver";
 import {
   EXT_NS,
+  FORMAT_SCHEMA_URL,
   NAMED_CUBIC_BEZIERS,
   RADIUS_KEYS,
   SHAPE_ROLES,
@@ -523,4 +525,66 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
     indicator: getExt(lp.indicator) as Record<string, string>,
     finishes: finishesOut,
   };
+}
+
+const HEX6_RE = /^#[0-9a-f]{6}$/i;
+
+function srgbToHex6(r: number, g: number, b: number): string {
+  const hex2 = (n: number) =>
+    Math.round(Math.max(0, Math.min(1, n)) * 255)
+      .toString(16)
+      .padStart(2, "0");
+  return `#${hex2(r)}${hex2(g)}${hex2(b)}`;
+}
+
+function isDtcgColor(val: unknown): val is DtcgColor {
+  return (
+    isRecord(val) &&
+    (val.colorSpace === "oklch" || val.colorSpace === "srgb") &&
+    Array.isArray(val.components) &&
+    val.components.length === 3 &&
+    val.components.every((c) => typeof c === "number")
+  );
+}
+
+/** Ensure every DTCG color object in a token tree carries a 6-digit hex fallback. */
+function ensureHexFallbacks(node: unknown): unknown {
+  if (Array.isArray(node)) return node.map(ensureHexFallbacks);
+  if (!isRecord(node)) return node;
+  if (isDtcgColor(node)) {
+    if (typeof node.hex === "string" && HEX6_RE.test(node.hex)) return node;
+    const [c0, c1, c2] = node.components;
+    const hex = node.colorSpace === "srgb" ? srgbToHex6(c0, c1, c2) : oklchToHex6(c0, c1, c2);
+    return { ...node, hex };
+  }
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(node)) {
+    out[k] = ensureHexFallbacks(v);
+  }
+  return out;
+}
+
+/**
+ * Compile a DTCG resolver into a standalone DTCG 2025.10 Format file for one appearance at the
+ * `pointer` tier, self-contained with in-file `{...}` aliases and 6-digit hex color fallbacks.
+ */
+export function compileAppearanceTokensJson(
+  resolverPath: string,
+  appearance: "light" | "dark",
+): Record<string, unknown> {
+  const absPath = path.resolve(resolverPath);
+  const dir = path.dirname(absPath);
+  const doc = JSON.parse(fs.readFileSync(absPath, "utf8")) as ResolverDoc;
+  const { merged } = resolvePermutation(absPath, { appearance, input: "pointer" });
+  const withHex = ensureHexFallbacks(merged) as Record<string, unknown>;
+
+  const out: Record<string, unknown> = {
+    $schema: FORMAT_SCHEMA_URL,
+    $description: `${doc.name ?? path.basename(dir)} (${appearance} appearance, pointer tier) — standalone W3C DTCG 2025.10 tokens.`,
+  };
+  for (const [k, v] of Object.entries(withHex)) {
+    if (k === "$schema" || k === "$description") continue;
+    out[k] = v;
+  }
+  return out;
 }

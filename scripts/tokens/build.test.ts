@@ -3,11 +3,26 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
+import { mergeFinishes } from "../theme/tokens";
 import { buildAllTokens, checkAllTokens, discoverDtcgThemes } from "./build";
+import { formatColorOpToCss, formatDtcgColor } from "./color";
 import { compileSemanticsJson, compileThemeJson } from "./compile";
 import { lintDtcgSources, lintDtcgTheme } from "./lint";
-import { mergeTokenTrees, resolvePermutation } from "./resolver";
+import { lookupToken, mergeTokenTrees, resolveAliases, resolvePermutation } from "./resolver";
 import { validateResolverDocument, validateTokensDocument } from "./schema-validate";
+import {
+  EXT_NS,
+  NAMED_CUBIC_BEZIERS,
+  RADIUS_KEYS,
+  SHAPE_ROLES,
+  TYPE_ROLES,
+  type ColorOpExtension,
+  type DtcgColor,
+  type DtcgGradientStop,
+  type DtcgShadowItem,
+  type DtcgTransition,
+  type DtcgTypography,
+} from "./types";
 
 const root = path.join(import.meta.dir, "..", "..");
 const readJson = (rel: string) => JSON.parse(fs.readFileSync(path.join(root, rel), "utf8"));
@@ -158,8 +173,11 @@ describe("DTCG 2025.10 build (all six themes)", () => {
 
       const target = path.join(tmp, "packages/theme/themes/shadcn/theme.json");
       fs.writeFileSync(target, `${fs.readFileSync(target, "utf8")}// drift\n`);
+      const tokensTarget = path.join(tmp, "packages/theme/light.tokens.json");
+      fs.writeFileSync(tokensTarget, `${fs.readFileSync(tokensTarget, "utf8")}\n`);
       const drifted = checkAllTokens(tmp);
       expect(drifted.problems).toEqual([
+        "packages/theme/light.tokens.json differs from what packages/theme/tokens builds",
         "packages/theme/themes/shadcn/theme.json differs from what packages/theme/tokens builds",
       ]);
 
@@ -456,4 +474,300 @@ describe("DTCG source lint", () => {
     expect(problems).toContain("dimension.stroke.hairline value -0.5 must be >= 0");
     expect(problems).toContain("duration.shake value -10 must be >= 0");
   });
+});
+
+const EMITTED_TOKEN_FILES = [
+  "packages/theme/light.tokens.json",
+  "packages/theme/dark.tokens.json",
+  ...THEME_IDS.flatMap((id) => [
+    `packages/theme/themes/${id}/light.tokens.json`,
+    `packages/theme/themes/${id}/dark.tokens.json`,
+  ]),
+];
+
+describe("per-appearance standalone .tokens.json distribution", () => {
+  for (const rel of EMITTED_TOKEN_FILES) {
+    test(`${rel}: valid DTCG 2025.10, self-contained, all aliases resolve in-file, all colors have 6-digit hex`, () => {
+      const doc = readJson(rel) as Record<string, unknown>;
+      expect(validateTokensDocument(doc)).toEqual([]);
+
+      // Self-contained: no $ref, every {...} alias resolves within this file, every color has #rrggbb.
+      const walk = (node: unknown, at: string) => {
+        if (typeof node === "string") {
+          const m = /^\{(.+)\}$/.exec(node);
+          if (m) expect(() => lookupToken(doc, m[1]!)).not.toThrow();
+          return;
+        }
+        if (Array.isArray(node)) {
+          node.forEach((item, idx) => walk(item, `${at}[${idx}]`));
+          return;
+        }
+        if (node !== null && typeof node === "object") {
+          const rec = node as Record<string, unknown>;
+          expect(Object.hasOwn(rec, "$ref"), `${at}.$ref`).toBe(false);
+          if ("colorSpace" in rec && Array.isArray(rec.components)) {
+            expect(typeof rec.hex, `${at}.hex`).toBe("string");
+            expect(rec.hex as string, `${at}.hex`).toMatch(/^#[0-9a-f]{6}$/i);
+          }
+          for (const [k, v] of Object.entries(rec)) walk(v, at ? `${at}.${k}` : k);
+        }
+      };
+      walk(doc, "");
+
+      expect(validateTokensDocument(resolveAliases(doc))).toEqual([]);
+    });
+  }
+
+  for (const themeId of THEME_IDS) {
+    for (const appearance of ["light", "dark"] as const) {
+      test(`${themeId} (${appearance}): matches compiled theme.json and semantics.json at pointer tier`, () => {
+        const doc = readJson(
+          `packages/theme/themes/${themeId}/${appearance}.tokens.json`,
+        ) as Record<string, any>;
+        const resolved = resolveAliases(doc) as Record<string, any>;
+        const themeJson = readJson(`packages/theme/themes/${themeId}/theme.json`) as {
+          cssVars: {
+            theme: Record<string, string>;
+            light: Record<string, string>;
+            dark: Record<string, string>;
+          };
+        };
+        const semanticsJson = readJson(`packages/theme/themes/${themeId}/semantics.json`) as Record<
+          string,
+          any
+        >;
+
+        if (themeId === "default") {
+          expect(readText(`packages/theme/${appearance}.tokens.json`)).toBe(
+            readText(`packages/theme/themes/default/${appearance}.tokens.json`),
+          );
+        }
+
+        // Radii & font families in theme.json cssVars.theme
+        for (const { cssVar, dtcg } of RADIUS_KEYS) {
+          const dim = resolved.dimension.radius[dtcg].$value as { value: number; unit: string };
+          expect(`${dim.value}${dim.unit}`).toBe(themeJson.cssVars.theme[cssVar]);
+        }
+        for (const [key, tok] of Object.entries(doc.font.family as Record<string, any>)) {
+          if (key.startsWith("$")) continue;
+          const v = tok.$value;
+          expect(Array.isArray(v) ? v.join(", ") : String(v)).toBe(
+            themeJson.cssVars.theme[`font-${key}`],
+          );
+        }
+
+        // Colors in theme.json cssVars.theme (C-layer) and cssVars[appearance] (A/B-layer)
+        const expectedColors: Record<string, string> = {};
+        for (const [k, v] of Object.entries(themeJson.cssVars.theme)) {
+          if (k === "radius" || k.startsWith("radius-") || k.startsWith("font-")) continue;
+          expectedColors[k] = v;
+        }
+        Object.assign(expectedColors, themeJson.cssVars[appearance]);
+
+        const docColorKeys = Object.keys(doc.color).filter((k) => !k.startsWith("$"));
+        expect(docColorKeys.sort()).toEqual(Object.keys(expectedColors).sort());
+        for (const key of docColorKeys) {
+          const tok = doc.color[key] as Record<string, any>;
+          const ext = tok.$extensions?.[EXT_NS] as Record<string, unknown> | undefined;
+          let cssColor: string;
+          if (ext?.colorOp) {
+            cssColor = formatColorOpToCss(ext.colorOp as ColorOpExtension);
+          } else if (typeof tok.$value === "string") {
+            const m = /^\{color\.([a-z0-9-]+)\}$/.exec(tok.$value);
+            cssColor = m ? `var(--${m[1]})` : tok.$value;
+          } else {
+            cssColor = formatDtcgColor(tok.$value as DtcgColor);
+          }
+          expect(cssColor, `color.${key}`).toBe(expectedColors[key]);
+        }
+
+        // Typography at pointer tier
+        const rawFontFamily = doc.typography.$extensions?.[EXT_NS]?.fontFamily ?? null;
+        const fontMatch =
+          typeof rawFontFamily === "string"
+            ? /^\{font\.family\.([a-z0-9-]+)\}$/.exec(rawFontFamily)
+            : null;
+        expect(fontMatch ? `{font-${fontMatch[1]}}` : rawFontFamily).toBe(
+          semanticsJson.typography.fontFamily,
+        );
+        for (const role of TYPE_ROLES) {
+          const val = resolved.typography[role].$value as DtcgTypography;
+          expect((val.fontSize as { value: number }).value).toBe(
+            semanticsJson.typography[role].fontSize.pointer,
+          );
+          expect(val.lineHeight).toBe(semanticsJson.typography[role].lineHeight.pointer);
+          expect(val.fontWeight).toBe(semanticsJson.typography[role].fontWeight);
+          expect(val.letterSpacing.value).toBe(semanticsJson.typography[role].letterSpacing);
+        }
+
+        // Dimension: shape, size (pointer tier), stroke, focus, icon (pointer tier)
+        for (const role of SHAPE_ROLES) {
+          const ref = doc.dimension.shape[role].$value as string;
+          const m = /^\{dimension\.radius\.([a-z0-9-]+)\}$/.exec(ref)!;
+          expect(m[1] === "base" ? "{radius}" : `{radius-${m[1]}}`).toBe(
+            semanticsJson.dimension.shape[role],
+          );
+        }
+        expect(resolved.dimension.size.hit.$value.value).toBe(
+          semanticsJson.dimension.size.hit.pointer,
+        );
+        for (const section of ["density", "height"] as const) {
+          for (const [k, tok] of Object.entries(
+            resolved.dimension.size[section] as Record<string, any>,
+          )) {
+            if (k.startsWith("$")) continue;
+            expect(tok.$value.value).toBe(semanticsJson.dimension.size[section].pointer[k]);
+          }
+        }
+        for (const [k, tok] of Object.entries(
+          resolved.dimension.size.control as Record<string, any>,
+        )) {
+          if (k.startsWith("$")) continue;
+          expect(tok.$value.value).toBe(semanticsJson.dimension.size.control.pointer[k]);
+        }
+        expect(doc.dimension.size.control.$extensions[EXT_NS].switch).toBe(
+          semanticsJson.dimension.size.control.pointer.switch,
+        );
+        for (const [k, tok] of Object.entries(resolved.dimension.stroke as Record<string, any>)) {
+          if (k.startsWith("$")) continue;
+          expect(tok.$value.value).toBe(semanticsJson.dimension.stroke[k]);
+        }
+        expect(doc.dimension.focus.$extensions[EXT_NS].style).toBe(
+          semanticsJson.dimension.focus.style,
+        );
+        expect(resolved.dimension.focus.width.$value.value).toBe(
+          semanticsJson.dimension.focus.width,
+        );
+        expect(resolved.dimension.focus.offset.$value.value).toBe(
+          semanticsJson.dimension.focus.offset,
+        );
+        for (const [k, tok] of Object.entries(resolved.dimension.icon as Record<string, any>)) {
+          if (k.startsWith("$")) continue;
+          expect(tok.$value.value).toBe(semanticsJson.dimension.icon.pointer[k]);
+        }
+
+        // Shape, state, duration, transition, motion, indicator
+        expect(doc.shape.$extensions[EXT_NS]).toEqual(semanticsJson.shape);
+        expect(doc.state["press-scale"].$value).toBe(semanticsJson.state["press-scale"]);
+        expect(doc.state["pressed-opacity"].$value).toBe(semanticsJson.state["pressed-opacity"]);
+        expect(doc.state.$extensions[EXT_NS].ripple).toBe(semanticsJson.state.ripple);
+        for (const [k, tok] of Object.entries(doc.state.overlay as Record<string, any>)) {
+          if (k.startsWith("$")) continue;
+          expect(tok.$value).toBe(semanticsJson.state.overlay[k]);
+        }
+        for (const [k, tok] of Object.entries(doc.state.disabled as Record<string, any>)) {
+          if (k.startsWith("$")) continue;
+          expect(tok.$value).toBe(semanticsJson.state.disabled[k]);
+        }
+        expect(doc.duration.shake.$value.value).toBe(semanticsJson.duration.shake);
+
+        const bezierNameOf = (tf: [number, number, number, number], ref: string) => {
+          const name = /^\{cubicBezier\.([a-z0-9-]+)\}$/.exec(ref)?.[1];
+          const nsh = name ? doc.cubicBezier[name]?.$extensions?.[EXT_NS]?.nshEasing : undefined;
+          if (nsh) return nsh as string;
+          return Object.entries(NAMED_CUBIC_BEZIERS).find(([, spec]) =>
+            spec.value.every((v, i) => Math.abs(v - tf[i]!) < 1e-6),
+          )?.[0];
+        };
+
+        const enterResolved = resolved.transition.enter.$value as DtcgTransition;
+        expect({
+          duration: enterResolved.duration.value,
+          timingFunction: bezierNameOf(
+            enterResolved.timingFunction as [number, number, number, number],
+            doc.transition.enter.$value.timingFunction,
+          ),
+        }).toEqual(semanticsJson.transition.enter);
+
+        for (const role of ["press", "settle", "control", "move"] as const) {
+          const spring = doc.motion[role].$extensions?.[EXT_NS]?.spring;
+          if (spring) {
+            expect(spring).toEqual(semanticsJson.motion[role]);
+          } else {
+            const tVal = resolved.motion[role].timing.$value as DtcgTransition;
+            expect({
+              duration: tVal.duration.value,
+              timingFunction: bezierNameOf(
+                tVal.timingFunction as [number, number, number, number],
+                doc.motion[role].timing.$value.timingFunction,
+              ),
+            }).toEqual(semanticsJson.motion[role]);
+          }
+        }
+        expect(doc.indicator.$extensions[EXT_NS]).toEqual(semanticsJson.indicator);
+
+        // Merged finishes for this appearance
+        const toFlatRef = (s: string) => {
+          const m = /^\{color\.([a-z0-9-]+)\}$/.exec(s);
+          return m ? `{${m[1]}}` : s;
+        };
+        const toFinishColor = (tok: Record<string, any>) => {
+          const ext = tok.$extensions?.[EXT_NS] as Record<string, unknown> | undefined;
+          if (ext?.transparentKeyword) return "transparent";
+          if (ext?.colorOp) return formatColorOpToCss(ext.colorOp as ColorOpExtension);
+          return typeof tok.$value === "string"
+            ? toFlatRef(tok.$value)
+            : formatDtcgColor(tok.$value as DtcgColor);
+        };
+        const mergedFinishes = mergeFinishes(semanticsJson.finishes, appearance);
+        const docFinishRoles = Object.keys(doc.finish).filter((k) => !k.startsWith("$"));
+        expect(docFinishRoles.sort()).toEqual(Object.keys(mergedFinishes).sort());
+        for (const role of docFinishRoles) {
+          const g = doc.finish[role] as Record<string, any>;
+          const compiled: Record<string, unknown> = {};
+          if (g.background) compiled.background = toFinishColor(g.background);
+          if (g.gradient) {
+            const gExt = g.gradient.$extensions?.[EXT_NS];
+            const angle = (gExt?.angle as number | undefined) ?? 180;
+            const tStops = new Set<number>((gExt?.transparentStops as number[] | undefined) ?? []);
+            const stops = (g.gradient.$value as DtcgGradientStop[]).map((s, idx) => {
+              const col = tStops.has(idx)
+                ? "transparent"
+                : typeof s.color === "string"
+                  ? toFlatRef(s.color)
+                  : formatDtcgColor(s.color);
+              return `${col} ${Math.round(s.position * 10000) / 100}%`;
+            });
+            compiled.gradient = `linear-gradient(${angle}deg, ${stops.join(", ")})`;
+          }
+          if (g.shadow) {
+            if (g.shadow.$extensions?.[EXT_NS]?.none) {
+              compiled.shadow = "none";
+            } else {
+              const raw = g.shadow.$value;
+              const items = (Array.isArray(raw) ? raw : [raw]) as DtcgShadowItem[];
+              compiled.shadow = items
+                .map((s) => {
+                  const fmtLen = (d: { value: number; unit: string }) =>
+                    d.value === 0 ? "0" : `${d.value}${d.unit}`;
+                  const parts: string[] = [];
+                  if (s.inset) parts.push("inset");
+                  parts.push(fmtLen(s.offsetX), fmtLen(s.offsetY), fmtLen(s.blur));
+                  if (s.spread.value !== 0) parts.push(fmtLen(s.spread));
+                  parts.push(
+                    typeof s.color === "string" ? toFlatRef(s.color) : formatDtcgColor(s.color),
+                  );
+                  return parts.join(" ");
+                })
+                .join(", ");
+            }
+          }
+          if (g["border-color"]) compiled["border-color"] = toFinishColor(g["border-color"]);
+          const gExt = g.$extensions?.[EXT_NS];
+          if (gExt && "backdropFilter" in gExt) compiled.backdropFilter = gExt.backdropFilter;
+          if (gExt && "material" in gExt) {
+            const mat = structuredClone(gExt.material);
+            if (mat?.apple && typeof mat.apple.tint === "string") {
+              mat.apple.tint = toFlatRef(mat.apple.tint);
+            }
+            if (mat?.android?.ripple && typeof mat.android.ripple.color === "string") {
+              mat.android.ripple.color = toFlatRef(mat.android.ripple.color);
+            }
+            compiled.material = mat;
+          }
+          expect(compiled, `finish.${role}`).toEqual(mergedFinishes[role]);
+        }
+      });
+    }
+  }
 });

@@ -1,6 +1,7 @@
 /**
- * Build & check compiled theme runtime files (`theme.json`, `semantics.json`) for every theme
- * whose source of truth lives in `packages/theme/tokens/themes/<id>/theme.resolver.json`.
+ * Build & check compiled theme runtime files (`theme.json`, `semantics.json`) and standalone
+ * per-appearance DTCG 2025.10 Format files (`light.tokens.json`, `dark.tokens.json`) for every
+ * theme whose source of truth lives in `packages/theme/tokens/themes/<id>/theme.resolver.json`.
  *
  *   bun run tokens:build          # write compiled files for every DTCG-sourced theme
  *   bun run tokens:build --check  # fail if any committed compiled file differs from its source
@@ -8,9 +9,26 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { compileSemanticsJson, compileThemeJson } from "./compile";
+import { compileAppearanceTokensJson, compileSemanticsJson, compileThemeJson } from "./compile";
 
 const defaultRepoRoot = path.resolve(import.meta.dir, "..", "..");
+
+/** Format JSON matching `vp fmt` (compact single-line primitive arrays up to 100 chars). */
+function formatTokensJson(value: unknown, indent = 0): string {
+  if (value === null || typeof value !== "object") return JSON.stringify(value);
+  const pad = "  ".repeat(indent);
+  if (Array.isArray(value)) {
+    if (value.length === 0) return "[]";
+    if (value.every((item) => item === null || typeof item !== "object")) {
+      const oneLine = `[${value.map((item) => JSON.stringify(item)).join(", ")}]`;
+      if (pad.length + oneLine.length <= 100) return oneLine;
+    }
+    return `[\n${value.map((item) => `${pad}  ${formatTokensJson(item, indent + 1)}`).join(",\n")}\n${pad}]`;
+  }
+  const entries = Object.entries(value);
+  if (entries.length === 0) return "{}";
+  return `{\n${entries.map(([k, v]) => `${pad}  ${JSON.stringify(k)}: ${formatTokensJson(v, indent + 1)}`).join(",\n")}\n${pad}}`;
+}
 
 export interface CompiledTarget {
   /** Path relative to the repo root. */
@@ -31,7 +49,7 @@ export function discoverDtcgThemes(repoRoot = defaultRepoRoot): string[] {
     .sort();
 }
 
-/** Compile a DTCG-sourced theme into all of its shipped runtime JSON targets. */
+/** Compile a DTCG-sourced theme into all of its shipped runtime and DTCG targets. */
 export function buildThemeTargets(themeId: string, repoRoot = defaultRepoRoot): CompiledTarget[] {
   const resolverPath = path.join(
     repoRoot,
@@ -41,10 +59,14 @@ export function buildThemeTargets(themeId: string, repoRoot = defaultRepoRoot): 
   );
   const themeText = `${JSON.stringify(compileThemeJson(resolverPath), null, 2)}\n`;
   const semanticsText = `${JSON.stringify(compileSemanticsJson(resolverPath), null, 2)}\n`;
+  const lightTokensText = `${formatTokensJson(compileAppearanceTokensJson(resolverPath, "light"))}\n`;
+  const darkTokensText = `${formatTokensJson(compileAppearanceTokensJson(resolverPath, "dark"))}\n`;
 
   const targets: CompiledTarget[] = [
     { relPath: `packages/theme/themes/${themeId}/theme.json`, content: themeText },
     { relPath: `packages/theme/themes/${themeId}/semantics.json`, content: semanticsText },
+    { relPath: `packages/theme/themes/${themeId}/light.tokens.json`, content: lightTokensText },
+    { relPath: `packages/theme/themes/${themeId}/dark.tokens.json`, content: darkTokensText },
   ];
 
   // The `default` theme is both the build-time root theme and the `theme-default` copy.
@@ -52,6 +74,8 @@ export function buildThemeTargets(themeId: string, repoRoot = defaultRepoRoot): 
     targets.unshift(
       { relPath: "packages/theme/theme.json", content: themeText },
       { relPath: "packages/theme/semantics.json", content: semanticsText },
+      { relPath: "packages/theme/light.tokens.json", content: lightTokensText },
+      { relPath: "packages/theme/dark.tokens.json", content: darkTokensText },
     );
   }
 
