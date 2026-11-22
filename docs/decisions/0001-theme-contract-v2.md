@@ -1,7 +1,7 @@
 # 0001 主题契约 v2：按层定角色，同类少值
 
 - 日期：2026-11-22
-- 状态：提议（待审）
+- 状态：已采纳（2026-11-22）
 - 规范：[`docs/specs/theme-contract-v2.md`](../specs/theme-contract-v2.md)
 
 ## 背景
