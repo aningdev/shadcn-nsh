@@ -112,6 +112,38 @@
         }
       },
       "$description": "WinUI 3 CheckBox resting ControlAltFillColorSecondary interior with 1px ControlStrongStrokeColorDefault border (CheckBox_themeresources.xaml in winui3/release/2.7.0)."
+    },
+    "progress": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "track-role": "slider-track",
+          "track-shape": "hairline",
+          "outlined": false
+        }
+      },
+      "$description": "WinUI 3 ProgressBar: 3px indicator height centered over 1px ControlStrongStrokeColorDefault hairline track without border (ProgressBar_themeresources.xaml:7,29-32, ProgressBar.xaml:157-163).",
+      "height": {
+        "$value": {
+          "value": 3,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 ProgressBar 3px active indicator height (ProgressBarMinHeight=3)."
+      },
+      "track-height": {
+        "$value": {
+          "value": 1,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 ProgressBar 1px inactive hairline track height (ProgressBarTrackHeight=1)."
+      }
+    },
+    "spinner": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "has-track": false
+        }
+      },
+      "$description": "WinUI 3 ProgressRing: 4px stroke at 32px default size (1/8 share) and transparent background track (ProgressRing_themeresources.xaml:10,17)."
     }
   },
   "font": {

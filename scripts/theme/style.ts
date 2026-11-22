@@ -50,6 +50,13 @@ export const whitelists: Record<string, readonly (string | number | null)[]> = {
   "dimension.radio.*.well": ["well", "inset", "outline"],
   "dimension.radio.*.checked-style": ["fill", "ring"],
   "dimension.radio.*.dot-feedback": ["none", "scale"],
+  "dimension.progress.track-role": ["track", "slider-track"],
+  "dimension.progress.track-shape": ["bar", "hairline"],
+  "dimension.tabs.indicator-span": ["tab", "label"],
+  "dimension.tabs.indicator-corners": ["pill", "top"],
+  "dimension.calendar.*.cell-shape": ["control", "pill"],
+  "dimension.calendar.*.today": ["quiet", "outline", "fill"],
+  "dimension.calendar.*.selected": ["fill", "outline"],
   "dimension.focus.style": ["halo", "outline", "double"],
   "transition.enter.timingFunction": easingNames,
   "indicator.tabs": ["underline", "pill"],
@@ -327,6 +334,24 @@ export function checkStyle(
 
     if (key === "state.press-scale" && typeof value === "number" && !isValidPressScale(value))
       problems.push(`${path}: \`state.press-scale\` is ${value}, not in (0, 1]`);
+
+    if (
+      key === "dimension.spinner.stroke-share" &&
+      (typeof value !== "number" || !Number.isFinite(value) || value <= 0)
+    ) {
+      problems.push(
+        `${path}: \`dimension.spinner.stroke-share\` is ${JSON.stringify(value)}, must be > 0`,
+      );
+    }
+
+    if (
+      key === "dimension.spinner.track-alpha" &&
+      (typeof value !== "number" || !Number.isFinite(value) || value < 0 || value > 1)
+    ) {
+      problems.push(
+        `${path}: \`dimension.spinner.track-alpha\` is ${JSON.stringify(value)}, not in [0, 1]`,
+      );
+    }
 
     for (const [pattern, allowed] of Object.entries(whitelists))
       if (matches(pattern, key) && !allowed.includes(value as string | number | null))

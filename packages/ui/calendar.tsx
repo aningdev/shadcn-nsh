@@ -2,6 +2,7 @@
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import {
   alpha,
+  calendarGeometry,
   colors,
   cornerCurve,
   rounded,
@@ -51,10 +52,10 @@ const WEEKDAY_INITIALS = ["S", "M", "T", "W", "T", "F", "S"];
 const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
 /**
- * A day's cell, shadcn's `--cell-size`: 32 with a pointer (the days, the
- * arrows and the header's height), 42 across a phone's sheet.
+ * A day's cell size (`dimension.calendar[tier].cell`): 32 with a pointer by default (42 on touch),
+ * 40 in Material and WinUI.
  */
-const cell = pointer ? 32 : 42;
+const cell = () => calendarGeometry().cell;
 
 /** The gap between the months of a calendar of two (shadcn's `gap-4`). */
 const monthGap = 16;
@@ -62,9 +63,12 @@ const monthGap = 16;
 /** The gap over each week: rows of 36 with a pointer, as shadcn's Base UI calendar's (28-point cells, `mt-2`). */
 const weekGap = 4;
 
-/** The corners of the days, the arrows and the month view's items: the
- * controls' radius, read where an item is drawn. */
+/** The corners of header arrows and month/year grid buttons (`shape.control`). */
 const cellRadius = () => shape.control;
+
+/** Day cell corner radius: `"pill"` gives a circle (`cell / 2`), `"control"` keeps `shape.control`. */
+const dayRadius = () =>
+  calendarGeometry()["cell-shape"] === "pill" ? calendarGeometry().cell / 2 : shape.control;
 
 /**
  * The quiet fill of today, the hover, a range's band and the arrows' and
@@ -98,7 +102,7 @@ function Weekday(props: { day: number }) {
   return (
     <Text
       style={{
-        minWidth: cell,
+        minWidth: cell(),
         textAlign: "center",
         // No type role has this size: a weekday's 12.8 with a pointer.
         fontSize: pointer ? 12.8 : 13,
@@ -121,8 +125,8 @@ function Arrow(props: { at: "start" | "end" }) {
       class={`transition-colors duration-100 motion-reduce:transition-none group-hover:${quietFill} group-disabled:bg-transparent group-disabled:opacity-50`}
       // At its end of the header, which shares out what the items leave (`calendarLook.itemClass`'s `grow`).
       style={{
-        width: cell,
-        height: cell,
+        width: cell(),
+        height: cell(),
         alignSelf: props.at === "start" ? "flex-start" : "flex-end",
         alignItems: "center",
         justifyContent: "center",
@@ -145,7 +149,7 @@ function MonthOrYear(props: { kind: "month" | "year"; value: number }) {
   return (
     <View
       style={{
-        width: (7 * cell) / (props.kind === "month" ? 3 : 5),
+        width: (7 * cell()) / (props.kind === "month" ? 3 : 5),
         minWidth: 0,
         paddingTop: weekGap,
         paddingHorizontal: 2,
@@ -154,7 +158,7 @@ function MonthOrYear(props: { kind: "month" | "year"; value: number }) {
       <View
         class={`transition-colors duration-100 motion-reduce:transition-none group-hover:${quietFill} group-aria-selected:bg-primary group-disabled:opacity-50`}
         style={{
-          height: cell,
+          height: cell(),
           alignItems: "center",
           justifyContent: "center",
           ...rounded(cellRadius()),
@@ -186,7 +190,7 @@ function Toggle(props: CalendarItemProps & { kind: "monthToggle" | "yearToggle" 
     <Text
       class="text-foreground group-selected:text-brand"
       style={{
-        minWidth: title ? 6 * cell + monthGap / 2 : undefined,
+        minWidth: title ? 6 * cell() + monthGap / 2 : undefined,
         paddingHorizontal: title ? 0 : 2,
         textAlign: title ? "center" : props.kind === "monthToggle" ? "right" : "left",
         fontSize: controlSize.label,
@@ -217,41 +221,76 @@ function Day(props: { item: CalendarEntry; firstDayOfWeek?: number }) {
   const column = computed(() =>
     props.item.date ? columnOf(props.item.date, props.firstDayOfWeek ?? 0) : -1,
   );
+  const boxClass = () => {
+    const g = calendarGeometry();
+    const todayBase =
+      g.today === "fill"
+        ? "bg-primary border-transparent"
+        : g.today === "outline"
+          ? "border-primary bg-transparent"
+          : `${quietFill} border-transparent`;
+    const restBase = props.item.today
+      ? todayBase
+      : "border-transparent group-disabled:bg-transparent";
+    const hoverCls = props.item.today && g.today === "fill" ? "" : `group-hover:${quietFill}`;
+    const selectedCls =
+      g.selected === "outline"
+        ? props.item.today && g.today === "fill"
+          ? "group-aria-selected:bg-primary group-aria-selected:group-focus-visible:bg-primary"
+          : "group-aria-selected:bg-transparent group-aria-selected:border-primary group-aria-selected:group-focus-visible:bg-brand-tint group-data-range-middle:border-transparent"
+        : "group-aria-selected:bg-primary group-aria-selected:border-transparent group-aria-selected:group-focus-visible:bg-primary";
+    const focusCls =
+      props.item.today && g.today === "outline"
+        ? "group-focus-visible:bg-brand-tint"
+        : "group-focus-visible:border-brand/30 group-focus-visible:bg-brand-tint";
+    return `${restBase} transition-colors duration-100 motion-reduce:transition-none ${hoverCls} ${selectedCls} ${focusCls} group-data-range-middle:group-focus-visible:bg-brand-tint group-data-range-middle:bg-transparent`;
+  };
+  const textClass = () => {
+    const g = calendarGeometry();
+    const baseColor =
+      props.item.today && g.today === "fill"
+        ? "text-primary-foreground"
+        : props.item.today && g.today === "outline"
+          ? "text-primary"
+          : own();
+    const selectedColor =
+      g.selected === "outline"
+        ? props.item.today && g.today === "fill"
+          ? "group-aria-selected:text-primary-foreground"
+          : "group-aria-selected:text-brand"
+        : "group-aria-selected:text-primary-foreground";
+    return `${baseColor} ${selectedColor} font-normal group-data-range-middle:${own()} group-disabled:text-muted-foreground group-disabled:opacity-50`;
+  };
   return (
     <View style={{ minWidth: 0, paddingTop: weekGap }}>
-      <View style={{ height: cell, alignItems: "center", justifyContent: "center" }}>
+      <View style={{ height: cell(), alignItems: "center", justifyContent: "center" }}>
         <View
           class={
             `absolute inset-y-0 start-0 end-0 hidden ${quietFill} group-data-range-middle:flex group-data-range-start:start-1/2 group-data-range-start:flex ` +
             "group-data-range-end:end-1/2 group-data-range-end:flex group-data-range-start:group-data-range-end:hidden"
           }
           style={{
-            borderTopStartRadius: column() === 0 ? cellRadius() : 0,
-            borderBottomStartRadius: column() === 0 ? cellRadius() : 0,
-            borderTopEndRadius: column() === 6 ? cellRadius() : 0,
-            borderBottomEndRadius: column() === 6 ? cellRadius() : 0,
+            borderTopStartRadius: column() === 0 ? dayRadius() : 0,
+            borderBottomStartRadius: column() === 0 ? dayRadius() : 0,
+            borderTopEndRadius: column() === 6 ? dayRadius() : 0,
+            borderBottomEndRadius: column() === 6 ? dayRadius() : 0,
             ...cornerCurve,
           }}
         />
         <View
-          class={
-            `${props.item.today ? quietFill : "group-disabled:bg-transparent"} transition-colors duration-100 motion-reduce:transition-none ` +
-            `group-hover:${quietFill} group-aria-selected:bg-primary group-focus-visible:border-brand/30 group-focus-visible:bg-brand-tint group-aria-selected:group-focus-visible:bg-primary group-data-range-middle:group-focus-visible:bg-brand-tint border border-transparent group-data-range-middle:bg-transparent`
-          }
+          class={boxClass()}
           style={{
-            width: cell,
+            width: cell(),
             maxWidth: "100%",
-            height: cell,
-            ...rounded(cellRadius()),
+            height: cell(),
+            borderWidth: calendarGeometry()["outline-width"],
+            ...rounded(dayRadius()),
             alignItems: "center",
             justifyContent: "center",
           }}
         >
           <Text
-            class={
-              `${own()} group-aria-selected:text-primary-foreground font-normal group-data-range-middle:${own()} ` +
-              "group-disabled:text-muted-foreground group-disabled:opacity-50"
-            }
+            class={textClass()}
             style={{ fontSize: pointer ? 14 : 16, fontVariant: ["tabular-nums"] }}
           >
             {String(props.item.value)}
@@ -345,7 +384,9 @@ export function TimeSegment(props: { label: string }) {
  * months. The terminal keeps its own grid.
  */
 export const calendarLook = {
-  cell,
+  get cell() {
+    return cell();
+  },
   monthGap,
   // `grow`: the header's arrows and toggles share out what their content leaves alike (the days' columns share the
   // width already), which keeps the title centered between the arrows at their ends.

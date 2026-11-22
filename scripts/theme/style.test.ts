@@ -164,6 +164,30 @@ describe("checkStyle", () => {
     expect(check(missingTimingField).join("\n")).toContain("motion.settle.timingFunction");
   });
 
+  test("rejects unknown enum values and out-of-range spinner numbers on progress/tabs/calendar/spinner", () => {
+    const file = copy();
+    file.dimension.progress["track-role"] = "custom";
+    file.dimension.progress["track-shape"] = "dashed";
+    file.dimension.tabs["indicator-span"] = "word";
+    file.dimension.tabs["indicator-corners"] = "square";
+    file.dimension.calendar.pointer["cell-shape"] = "diamond";
+    file.dimension.calendar.pointer.today = "badge";
+    file.dimension.calendar.pointer.selected = "ring";
+    file.dimension.spinner["stroke-share"] = 0;
+    file.dimension.spinner["track-alpha"] = 1.5;
+
+    const problems = check(file).join("\n");
+    expect(problems).toContain("dimension.progress.track-role");
+    expect(problems).toContain("dimension.progress.track-shape");
+    expect(problems).toContain("dimension.tabs.indicator-span");
+    expect(problems).toContain("dimension.tabs.indicator-corners");
+    expect(problems).toContain("dimension.calendar.pointer.cell-shape");
+    expect(problems).toContain("dimension.calendar.pointer.today");
+    expect(problems).toContain("dimension.calendar.pointer.selected");
+    expect(problems).toContain("dimension.spinner.stroke-share");
+    expect(problems).toContain("dimension.spinner.track-alpha");
+  });
+
   test("semanticsWithStyle preserves default style and updates press-scale", () => {
     const file = semanticsWithStyle(
       { "press-scale": 1, finishes: { shared: {}, light: {}, dark: {} } },

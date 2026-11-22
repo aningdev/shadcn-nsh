@@ -937,6 +937,40 @@ export const winuiStyle = {
         "dot-feedback": "scale",
       },
     },
+    progress: {
+      height: 3,
+      "track-height": 1,
+      "track-role": "slider-track",
+      "track-shape": "hairline",
+      outlined: false,
+    },
+    spinner: {
+      "min-stroke": 1.5,
+      "stroke-share": 8,
+      "has-track": false,
+      "track-alpha": 0.25,
+    },
+    tabs: {
+      "pad-x": 8,
+      "indicator-span": "tab",
+      "indicator-corners": "pill",
+    },
+    calendar: {
+      pointer: {
+        cell: 40,
+        "outline-width": 2,
+        "cell-shape": "pill",
+        today: "fill",
+        selected: "outline",
+      },
+      touch: {
+        cell: 40,
+        "outline-width": 2,
+        "cell-shape": "pill",
+        today: "fill",
+        selected: "outline",
+      },
+    },
   },
   shape: {
     curve: "circular",
@@ -1226,6 +1260,22 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
           "WinUI 3 RadioButton 14px inner glyph diameter on PointerOver (RadioButtonCheckGlyphPointerOverSize=14, RadioButton_themeresources.xaml:180).",
         "dimension.radio.dot-pressed":
           "WinUI 3 RadioButton 10px inner glyph diameter on Pressed (RadioButton_themeresources.xaml:68-80).",
+        "dimension.progress":
+          "WinUI 3 ProgressBar: 3px indicator height centered over 1px ControlStrongStrokeColorDefault hairline track without border (ProgressBar_themeresources.xaml:7,29-32, ProgressBar.xaml:157-163).",
+        "dimension.progress.height":
+          "WinUI 3 ProgressBar 3px active indicator height (ProgressBarMinHeight=3).",
+        "dimension.progress.track-height":
+          "WinUI 3 ProgressBar 1px inactive hairline track height (ProgressBarTrackHeight=1).",
+        "dimension.spinner":
+          "WinUI 3 ProgressRing: 4px stroke at 32px default size (1/8 share) and transparent background track (ProgressRing_themeresources.xaml:10,17).",
+        "dimension.tabs":
+          "WinUI 3 SelectorBar underline tab geometry with 3px pill-capped active indicator.",
+        "dimension.calendar":
+          "WinUI 3 CalendarView: 40x40px circular cells (RoundedChromeEnabled=True), filled AccentFillColorDefault today cell, 2px accent-outlined selected cell (CalendarView_themeresources.xaml:62,244-245,767).",
+        "dimension.calendar.cell":
+          "WinUI 3 CalendarViewDayItem 40x40px minimum cell size (CalendarView_themeresources.xaml:244-245).",
+        "dimension.calendar.outline-width":
+          "WinUI 3 CalendarView 2px selected cell ring thickness (CalendarView_themeresources.xaml:767).",
         indicator:
           "WinUI 3 underlined tabs, NavigationView leading bar, and bottom-underlined text fields.",
       },

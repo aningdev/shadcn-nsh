@@ -358,6 +358,63 @@
         "$description": "Circular state-layer halo diameter centered on the checkbox (0 when disabled)."
       }
     },
+    "progress": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "track-role": "slider-track",
+          "track-shape": "hairline",
+          "outlined": false
+        }
+      },
+      "$description": "WinUI 3 ProgressBar: 3px indicator height centered over 1px ControlStrongStrokeColorDefault hairline track without border (ProgressBar_themeresources.xaml:7,29-32, ProgressBar.xaml:157-163).",
+      "height": {
+        "$value": {
+          "value": 3,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 ProgressBar 3px active indicator height (ProgressBarMinHeight=3)."
+      },
+      "track-height": {
+        "$value": {
+          "value": 1,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 ProgressBar 1px inactive hairline track height (ProgressBarTrackHeight=1)."
+      }
+    },
+    "spinner": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "stroke-share": 8,
+          "has-track": false,
+          "track-alpha": 0.25
+        }
+      },
+      "$description": "WinUI 3 ProgressRing: 4px stroke at 32px default size (1/8 share) and transparent background track (ProgressRing_themeresources.xaml:10,17).",
+      "min-stroke": {
+        "$value": {
+          "value": 1.5,
+          "unit": "px"
+        },
+        "$description": "Minimum ring border thickness for compact spinners."
+      }
+    },
+    "tabs": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "indicator-span": "tab",
+          "indicator-corners": "pill"
+        }
+      },
+      "$description": "Underline tab horizontal padding and active indicator span and corner treatment.",
+      "pad-x": {
+        "$value": {
+          "value": 8,
+          "unit": "px"
+        },
+        "$description": "Horizontal padding on each underline tab trigger."
+      }
+    },
     "radius": {
       "$type": "dimension",
       "$description": "WinUI 3 corner radius scale: ControlCornerRadius 4px (controls/fields/chips/insets) and OverlayCornerRadius 8px (cards/overlays/dialogs/sheets).",
@@ -788,6 +845,30 @@
           "unit": "px"
         },
         "$description": "Circular state-layer halo diameter centered on the radio ring."
+      }
+    },
+    "calendar": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "cell-shape": "pill",
+          "today": "fill",
+          "selected": "outline"
+        }
+      },
+      "$description": "WinUI 3 CalendarView: 40x40px circular cells (RoundedChromeEnabled=True), filled AccentFillColorDefault today cell, 2px accent-outlined selected cell (CalendarView_themeresources.xaml:62,244-245,767).",
+      "cell": {
+        "$value": {
+          "value": 40,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 CalendarViewDayItem 40x40px minimum cell size (CalendarView_themeresources.xaml:244-245)."
+      },
+      "outline-width": {
+        "$value": {
+          "value": 2,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 CalendarView 2px selected cell ring thickness (CalendarView_themeresources.xaml:767)."
       }
     }
   },

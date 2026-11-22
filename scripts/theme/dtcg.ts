@@ -99,6 +99,13 @@ export interface ThemeStyleInput {
       pointer: Record<string, number | string | boolean>;
       touch: Record<string, number | string | boolean>;
     };
+    progress?: Record<string, number | string | boolean>;
+    spinner?: Record<string, number | string | boolean>;
+    tabs?: Record<string, number | string>;
+    calendar?: {
+      pointer: Record<string, number | string>;
+      touch: Record<string, number | string>;
+    };
   };
   shape: {
     curve: string;
@@ -815,6 +822,25 @@ function encodeSharedStyleOverrides(
     if (cbOut) dimensionExtras.checkbox = cbOut;
   }
 
+  for (const [key, extKeys] of [
+    ["progress", ["track-role", "track-shape", "outlined"]],
+    ["spinner", ["stroke-share", "has-track", "track-alpha"]],
+    ["tabs", ["indicator-span", "indicator-corners"]],
+  ] as const) {
+    const val = style.dimension[key];
+    if (val) {
+      const out = diffDimGroupWithExt(
+        `dimension.${key}`,
+        val,
+        getAt(baseShared, "dimension", key),
+        extKeys,
+        desc,
+        (gPath, k) => styleDescs?.[`${gPath}.${k}`],
+      );
+      if (out) dimensionExtras[key] = out;
+    }
+  }
+
   // 3. shape ($extensions)
   const baseShape = getAt(baseShared, "shape");
   const baseShapeExt = getExtNs(baseShape);
@@ -1164,6 +1190,14 @@ function encodeInputTierOverrides(
     desc,
     tierDimDesc,
   );
+  const calendarOut = diffDimGroupWithExt(
+    "dimension.calendar",
+    style.dimension.calendar?.[tier],
+    getAt(baseDim, "calendar"),
+    ["cell-shape", "today", "selected"],
+    desc,
+    tierDimDesc,
+  );
 
   const dimGroup: Record<string, unknown> = {};
   if (Object.keys(sizeGroupOut).length > 0) {
@@ -1178,6 +1212,7 @@ function encodeInputTierOverrides(
   if (switchOut) dimGroup.switch = switchOut;
   if (sliderOut) dimGroup.slider = sliderOut;
   if (radioOut) dimGroup.radio = radioOut;
+  if (calendarOut) dimGroup.calendar = calendarOut;
 
   if (Object.keys(fontGroup).length === 0 && Object.keys(dimGroup).length === 0) {
     return null;

@@ -279,6 +279,35 @@ export interface RadioDim {
   "dot-feedback": "none" | "scale";
 }
 
+export interface ProgressDim {
+  height: number;
+  "track-height": number;
+  "track-role": "track" | "slider-track";
+  "track-shape": "bar" | "hairline";
+  outlined: boolean;
+}
+
+export interface SpinnerDim {
+  "min-stroke": number;
+  "stroke-share": number;
+  "has-track": boolean;
+  "track-alpha": number;
+}
+
+export interface TabsDim {
+  "pad-x": number;
+  "indicator-span": "tab" | "label";
+  "indicator-corners": "pill" | "top";
+}
+
+export interface CalendarDim {
+  cell: number;
+  "outline-width": number;
+  "cell-shape": "control" | "pill";
+  today: "quiet" | "outline" | "fill";
+  selected: "fill" | "outline";
+}
+
 /**
  * The style of a theme: what `semantics.json` states beside its finishes, in DTCG field naming,
  * the same keys in every theme (`check:theme`). A string that names one of a list (a curve, a
@@ -322,6 +351,10 @@ export interface Style {
     switch: Tiered<SwitchDim>;
     slider: Tiered<SliderDim>;
     radio: Tiered<RadioDim>;
+    progress: ProgressDim;
+    spinner: SpinnerDim;
+    tabs: TabsDim;
+    calendar: Tiered<CalendarDim>;
   };
   shape: {
     curve: string;
@@ -1060,6 +1093,18 @@ export const sliderGeometry = (): SliderDim => style().dimension.slider[tier];
 
 /** Dimensions, checked ring mode, dot feedback, and state-layer target of radio geometry (`dimension.radio[tier]`). */
 export const radioGeometry = (): RadioDim => style().dimension.radio[tier];
+
+/** Dimensions, track role, shape, and rail border flag of linear progress (`dimension.progress`). */
+export const progressGeometry = (): ProgressDim => style().dimension.progress;
+
+/** Stroke ratio floor and background ring visibility of circular spinner (`dimension.spinner`). */
+export const spinnerGeometry = (): SpinnerDim => style().dimension.spinner;
+
+/** Underline tab horizontal padding and indicator span/corner geometry (`dimension.tabs`). */
+export const tabsGeometry = (): TabsDim => style().dimension.tabs;
+
+/** Day cell size, outline width, shape, and today/selected styling (`dimension.calendar[tier]`). */
+export const calendarGeometry = (): CalendarDim => style().dimension.calendar[tier];
 
 /** A button's height by size (`dimension.size.height` of the tier). */
 export const controlHeight = {

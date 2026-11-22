@@ -286,6 +286,16 @@ spacing:
     dot-pressed: 10px
     border: 1px
     target: 0px
+  progress:
+    height: 3px
+    track-height: 1px
+  spinner:
+    min-stroke: 1.5px
+  tabs:
+    pad-x: 8px
+  calendar:
+    cell: 40px
+    outline-width: 2px
 motion:
   enter:
     duration: 250ms

@@ -232,6 +232,10 @@ export function compileDesignMd(resolverPath: string): string {
     switch: readDimLeaves(dimResolved.switch as Record<string, unknown>),
     slider: readDimLeaves(dimResolved.slider as Record<string, unknown>),
     radio: readDimLeaves(dimResolved.radio as Record<string, unknown>),
+    progress: readDimLeaves(dimResolved.progress as Record<string, unknown>),
+    spinner: readDimLeaves(dimResolved.spinner as Record<string, unknown>),
+    tabs: readDimLeaves(dimResolved.tabs as Record<string, unknown>),
+    calendar: readDimLeaves(dimResolved.calendar as Record<string, unknown>),
   };
 
   // Motion (timing transitions and shake duration; springs have no DESIGN.md field and are documented in prose)

@@ -393,6 +393,22 @@
         },
         "$description": "M3 RadioButton 40dp circular state-layer target (_md-comp-radio-button.scss:28)."
       }
+    },
+    "calendar": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "cell-shape": "pill",
+          "today": "outline"
+        }
+      },
+      "$description": "M3 DatePicker modal: 40x40dp circular day cells, 1dp Primary outlined today cell, Primary filled selected cell (DatePickerModalTokens.kt:43-76).",
+      "cell": {
+        "$value": {
+          "value": 40,
+          "unit": "px"
+        },
+        "$description": "M3 DatePicker 40x40dp circular day cell container (DatePickerModalTokens.DateContainerWidth/Height)."
+      }
     }
   }
 }

@@ -547,6 +547,28 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
           ...(getExt(ltDim.radio) ?? {}),
         },
       },
+      progress: {
+        ...readDimMap(lpDim.progress as Record<string, Record<string, unknown>>),
+        ...(getExt(lpDim.progress) ?? {}),
+      },
+      spinner: {
+        ...readDimMap(lpDim.spinner as Record<string, Record<string, unknown>>),
+        ...(getExt(lpDim.spinner) ?? {}),
+      },
+      tabs: {
+        ...readDimMap(lpDim.tabs as Record<string, Record<string, unknown>>),
+        ...(getExt(lpDim.tabs) ?? {}),
+      },
+      calendar: {
+        pointer: {
+          ...readDimMap(lpDim.calendar as Record<string, Record<string, unknown>>),
+          ...(getExt(lpDim.calendar) ?? {}),
+        },
+        touch: {
+          ...readDimMap(ltDim.calendar as Record<string, Record<string, unknown>>),
+          ...(getExt(ltDim.calendar) ?? {}),
+        },
+      },
     },
     shape: {
       curve: shapeExt.curve,

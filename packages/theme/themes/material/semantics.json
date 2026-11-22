@@ -279,6 +279,40 @@
         "has-target": true,
         "dot-feedback": "none"
       }
+    },
+    "progress": {
+      "height": 4,
+      "track-height": 4,
+      "track-role": "slider-track",
+      "track-shape": "bar",
+      "outlined": false
+    },
+    "spinner": {
+      "min-stroke": 1.5,
+      "stroke-share": 10,
+      "has-track": false,
+      "track-alpha": 0.25
+    },
+    "tabs": {
+      "pad-x": 8,
+      "indicator-span": "label",
+      "indicator-corners": "top"
+    },
+    "calendar": {
+      "pointer": {
+        "cell": 40,
+        "outline-width": 1,
+        "cell-shape": "pill",
+        "today": "outline",
+        "selected": "fill"
+      },
+      "touch": {
+        "cell": 40,
+        "outline-width": 1,
+        "cell-shape": "pill",
+        "today": "outline",
+        "selected": "fill"
+      }
     }
   },
   "shape": {

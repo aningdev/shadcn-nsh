@@ -8,6 +8,7 @@ import {
   follow,
   insetEdge,
   motion,
+  progressGeometry,
   stroke,
   type Tone,
   toneColor,
@@ -45,33 +46,48 @@ export const progressGlide =
 /** A determinate fill's `translate` for `value` percent (0 to 100). */
 export const progressRemaining = (value: number) => `${Math.max(0, Math.min(100, value)) - 100}% 0`;
 
-/** A bar's rail, `height` points tall (default 6): the slider's sunk track,
- * its edge drawn inside so the fill keeps the whole height, clipping the
- * fill. */
-export function progressRail(height = 6): ViewStyle {
+/** A bar's rail, `height` points tall (default `dimension.progress.height`): tracks `track-role`,
+ * draws either a full-height bar or a centered hairline strip (`track-shape`), and adds the sunk
+ * inset edge when `outlined`. */
+export function progressRail(height?: number): ViewStyle {
+  const g = progressGeometry();
+  const h = height ?? g.height;
+  const trackColor = g["track-role"] === "slider-track" ? colors.sliderTrack : colors.track;
+  const band = (h - g["track-height"]) / 2;
+  const trackFill: ViewStyle =
+    g["track-shape"] === "hairline"
+      ? {
+          backgroundColor: "transparent",
+          backgroundImage: `linear-gradient(180deg, transparent 0px, transparent ${band}px, ${trackColor} ${band}px, ${trackColor} ${band + g["track-height"]}px, transparent ${band + g["track-height"]}px, transparent ${h}px)`,
+        }
+      : { backgroundColor: trackColor };
   return {
-    height,
-    borderRadius: height / 2,
+    height: h,
+    borderRadius: h / 2,
     overflow: "hidden",
-    backgroundColor: colors.track,
-    boxShadow: insetEdge(finish.track.borderColor, finish.track.boxShadow),
+    ...trackFill,
+    ...(g.outlined
+      ? { boxShadow: insetEdge(finish.track.borderColor, finish.track.boxShadow) }
+      : {}),
   };
 }
 
-/** A bar's fill, `height` points tall (default 6): the slider's citrus run
+/** A bar's fill, `height` points tall (default `dimension.progress.height`): the slider's citrus run
  * (`finish.fill`: its gradient, over a `transparent` bottom), or a tone's color
  * (`up` for done, `warn`, `destructive`; `accent` is the run). Neither has an edge, so a tone's bar and
  * the run read as one kind of bar. */
-export function progressFill(height = 6, tone?: Tone): ViewStyle {
+export function progressFill(height?: number, tone?: Tone): ViewStyle {
+  const h = height ?? progressGeometry().height;
   const fill = tone && tone !== "accent" ? { backgroundColor: toneColor(tone) } : fillStyle();
-  return { height, borderRadius: height / 2, ...fill };
+  return { height: h, borderRadius: h / 2, ...fill };
 }
 
 /** Where a limit stands on a bar `value` percent along it (0 to 100): a 2-point hairline in the
  * page's ink, standing past a `height`-point rail on both sides. The rail clips its fill, so the
  * hairline is a view of its own on the bar's frame: the rail comes first in the bar's row, a
  * label after it. */
-export function progressMarker(value: number, height = 6): ViewStyle {
+export function progressMarker(value: number, height?: number): ViewStyle {
+  const h = height ?? progressGeometry().height;
   return {
     position: "absolute",
     // physical: the fill is a full-width bar slid by a translate, which keeps the physical left; the
@@ -79,7 +95,7 @@ export function progressMarker(value: number, height = 6): ViewStyle {
     left: `${Math.max(0, Math.min(100, value))}%`,
     top: -4,
     width: 2,
-    height: height + 6,
+    height: h + 6,
     borderRadius: 1,
     backgroundColor: colors.foreground,
   };
@@ -144,17 +160,17 @@ export interface ProgressLookOptions {
  * following `sweep`.
  */
 export function progressLook(value: Live<number>, o?: ProgressLookOptions) {
-  const height = o?.height ?? 6;
+  const height = () => o?.height ?? progressGeometry().height;
   const indeterminate = () => !!read(o?.indeterminate);
   return {
     get trackStyle(): ViewStyle {
-      return progressRail(height);
+      return progressRail(height());
     },
     get indicatorClass(): string {
       return indeterminate() ? "w-1/3" : progressGlide;
     },
     get indicatorStyle(): ViewStyle {
-      const fill = progressFill(height, read(o?.tone));
+      const fill = progressFill(height(), read(o?.tone));
       if (!indeterminate()) return { ...fill, translate: progressRemaining(read(value) ?? 0) };
       return o?.sweep
         ? { ...fill, transform: [{ translateX: o.sweep.sweep.mul(o.sweep.travel) }] }
@@ -203,7 +219,7 @@ export function Progress(props: ProgressProps) {
     sweep: props.sweep,
   });
   return (
-    <ProgressContext.Provider value={{ height: () => props.height ?? 6 }}>
+    <ProgressContext.Provider value={{ height: () => props.height ?? progressGeometry().height }}>
       <BaseProgress
         {...rest}
         value={props.value}

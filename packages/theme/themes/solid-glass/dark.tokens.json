@@ -378,6 +378,63 @@
         "$description": "Circular state-layer halo diameter centered on the checkbox (0 when disabled)."
       }
     },
+    "progress": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "track-role": "track",
+          "track-shape": "bar",
+          "outlined": true
+        }
+      },
+      "$description": "Linear progress indicator rail/fill heights, track token role, track shape, and rail border flag.",
+      "height": {
+        "$value": {
+          "value": 6,
+          "unit": "px"
+        },
+        "$description": "Default linear progress bar container and active indicator height."
+      },
+      "track-height": {
+        "$value": {
+          "value": 6,
+          "unit": "px"
+        },
+        "$description": "Linear progress inactive track thickness."
+      }
+    },
+    "spinner": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "stroke-share": 8,
+          "has-track": true,
+          "track-alpha": 0.25
+        }
+      },
+      "$description": "Circular spinner minimum stroke width, size-to-stroke divisor, and background ring visibility.",
+      "min-stroke": {
+        "$value": {
+          "value": 1.5,
+          "unit": "px"
+        },
+        "$description": "Minimum ring border thickness for compact spinners."
+      }
+    },
+    "tabs": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "indicator-span": "tab",
+          "indicator-corners": "pill"
+        }
+      },
+      "$description": "Underline tab horizontal padding and active indicator span and corner treatment.",
+      "pad-x": {
+        "$value": {
+          "value": 8,
+          "unit": "px"
+        },
+        "$description": "Horizontal padding on each underline tab trigger."
+      }
+    },
     "radius": {
       "$type": "dimension",
       "$description": "Base corner radius scale (14px base, 0.8x control, 1.4x card) referenced by semantic shape roles.",
@@ -808,6 +865,30 @@
           "unit": "px"
         },
         "$description": "Circular state-layer halo diameter centered on the radio ring."
+      }
+    },
+    "calendar": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "cell-shape": "control",
+          "today": "quiet",
+          "selected": "fill"
+        }
+      },
+      "$description": "Calendar day cell size, outline width, corner shape, and today/selected state treatment for pointer input.",
+      "cell": {
+        "$value": {
+          "value": 32,
+          "unit": "px"
+        },
+        "$description": "Calendar day cell width and height."
+      },
+      "outline-width": {
+        "$value": {
+          "value": 1,
+          "unit": "px"
+        },
+        "$description": "Calendar day cell outline thickness when today or selected uses \"outline\"."
       }
     }
   },

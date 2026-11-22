@@ -449,6 +449,30 @@
         },
         "$description": "Circular state-layer halo diameter centered on the radio ring."
       }
+    },
+    "calendar": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "cell-shape": "control",
+          "today": "quiet",
+          "selected": "fill"
+        }
+      },
+      "$description": "Calendar day cell size, outline width, corner shape, and today/selected state treatment for pointer input.",
+      "cell": {
+        "$value": {
+          "value": 32,
+          "unit": "px"
+        },
+        "$description": "Calendar day cell width and height."
+      },
+      "outline-width": {
+        "$value": {
+          "value": 1,
+          "unit": "px"
+        },
+        "$description": "Calendar day cell outline thickness when today or selected uses \"outline\"."
+      }
     }
   }
 }

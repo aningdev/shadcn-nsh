@@ -380,6 +380,63 @@
         "$description": "M3 checkbox 40dp state-layer target (_md-comp-checkbox.scss:70)."
       }
     },
+    "progress": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "track-role": "slider-track",
+          "track-shape": "bar",
+          "outlined": false
+        }
+      },
+      "$description": "M3 LinearProgressIndicator: 4dp active indicator & SecondaryContainer track without border (LinearProgressIndicatorTokens.kt, ProgressIndicator.kt:817).",
+      "height": {
+        "$value": {
+          "value": 4,
+          "unit": "px"
+        },
+        "$description": "M3 LinearProgressIndicator 4dp bar height (LinearProgressIndicatorTokens.Height / ActiveThickness)."
+      },
+      "track-height": {
+        "$value": {
+          "value": 4,
+          "unit": "px"
+        },
+        "$description": "M3 LinearProgressIndicator 4dp inactive track thickness (LinearProgressIndicatorTokens.TrackThickness)."
+      }
+    },
+    "spinner": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "stroke-share": 10,
+          "has-track": false,
+          "track-alpha": 0.25
+        }
+      },
+      "$description": "M3 CircularProgressIndicator: 4dp stroke at 40dp diameter (1/10 share) and transparent indeterminate track (CircularProgressIndicatorTokens.kt, ProgressIndicator.kt:835).",
+      "min-stroke": {
+        "$value": {
+          "value": 1.5,
+          "unit": "px"
+        },
+        "$description": "Minimum ring border thickness for compact spinners."
+      }
+    },
+    "tabs": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "indicator-span": "label",
+          "indicator-corners": "top"
+        }
+      },
+      "$description": "M3 PrimaryNavigationTab: label-width indicator with 3dp top-only corners (PrimaryNavigationTabTokens.kt, _md-comp-primary-navigation-tab.scss:28, _tab.scss:92-103).",
+      "pad-x": {
+        "$value": {
+          "value": 8,
+          "unit": "px"
+        },
+        "$description": "Horizontal padding on each underline tab trigger."
+      }
+    },
     "radius": {
       "$type": "dimension",
       "$description": "Material 3 Expressive corner scale (999px CornerFull controls, 4px CornerExtraSmall fields/menus, 12px CornerMedium cards/chips, 28px CornerExtraLarge dialogs/sheets; ShapeTokens.kt).",
@@ -810,6 +867,30 @@
           "unit": "px"
         },
         "$description": "M3 RadioButton 40dp circular state-layer target (_md-comp-radio-button.scss:28)."
+      }
+    },
+    "calendar": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "cell-shape": "pill",
+          "today": "outline",
+          "selected": "fill"
+        }
+      },
+      "$description": "M3 DatePicker modal: 40x40dp circular day cells, 1dp Primary outlined today cell, Primary filled selected cell (DatePickerModalTokens.kt:43-76).",
+      "cell": {
+        "$value": {
+          "value": 40,
+          "unit": "px"
+        },
+        "$description": "M3 DatePicker 40x40dp circular day cell container (DatePickerModalTokens.DateContainerWidth/Height)."
+      },
+      "outline-width": {
+        "$value": {
+          "value": 1,
+          "unit": "px"
+        },
+        "$description": "Calendar day cell outline thickness when today or selected uses \"outline\"."
       }
     }
   },

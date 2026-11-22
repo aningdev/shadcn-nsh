@@ -14,6 +14,7 @@ import {
   stroke,
   dimmed,
   style as themeStyle,
+  tabsGeometry,
 } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
 import type { AndroidProps, JSX, StyleProp, ViewStyle } from "nsh";
@@ -132,10 +133,21 @@ export function underlineTabsLook() {
       return { flexDirection: "row", gap: 2, paddingTop: 3 };
     },
     get indicatorStyle(): ViewStyle {
+      const g = tabsGeometry();
+      const corners: ViewStyle =
+        g["indicator-corners"] === "top"
+          ? {
+              borderTopLeftRadius: stroke.indicator,
+              borderTopRightRadius: stroke.indicator,
+              borderBottomLeftRadius: 0,
+              borderBottomRightRadius: 0,
+            }
+          : { borderRadius: stroke.indicator / 2 };
       return {
         bottom: 0,
         height: stroke.indicator,
-        borderRadius: 1,
+        ...(g["indicator-span"] === "label" ? { marginHorizontal: g["pad-x"] } : {}),
+        ...corners,
         backgroundColor: colors.brand,
       };
     },
@@ -155,7 +167,7 @@ export function underlineTabsLook() {
         get style(): ViewStyle {
           return {
             height: controlSize.tabs,
-            paddingHorizontal: 8,
+            paddingHorizontal: tabsGeometry()["pad-x"],
             marginBottom: 4,
             ...rounded(shape.control),
             borderWidth: stroke.control,

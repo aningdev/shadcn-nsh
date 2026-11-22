@@ -759,6 +759,40 @@ export const m3Style = {
         "dot-feedback": "none",
       },
     },
+    progress: {
+      height: 4,
+      "track-height": 4,
+      "track-role": "slider-track",
+      "track-shape": "bar",
+      outlined: false,
+    },
+    spinner: {
+      "min-stroke": 1.5,
+      "stroke-share": 10,
+      "has-track": false,
+      "track-alpha": 0.25,
+    },
+    tabs: {
+      "pad-x": 8,
+      "indicator-span": "label",
+      "indicator-corners": "top",
+    },
+    calendar: {
+      pointer: {
+        cell: 40,
+        "outline-width": 1,
+        "cell-shape": "pill",
+        today: "outline",
+        selected: "fill",
+      },
+      touch: {
+        cell: 40,
+        "outline-width": 1,
+        "cell-shape": "pill",
+        today: "outline",
+        selected: "fill",
+      },
+    },
   },
   shape: {
     curve: "circular",
@@ -1010,6 +1044,20 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
           "M3 RadioButton 2dp outer ring stroke width (Compose RadioStrokeWidth).",
         "dimension.radio.target":
           "M3 RadioButton 40dp circular state-layer target (_md-comp-radio-button.scss:28).",
+        "dimension.progress":
+          "M3 LinearProgressIndicator: 4dp active indicator & SecondaryContainer track without border (LinearProgressIndicatorTokens.kt, ProgressIndicator.kt:817).",
+        "dimension.progress.height":
+          "M3 LinearProgressIndicator 4dp bar height (LinearProgressIndicatorTokens.Height / ActiveThickness).",
+        "dimension.progress.track-height":
+          "M3 LinearProgressIndicator 4dp inactive track thickness (LinearProgressIndicatorTokens.TrackThickness).",
+        "dimension.spinner":
+          "M3 CircularProgressIndicator: 4dp stroke at 40dp diameter (1/10 share) and transparent indeterminate track (CircularProgressIndicatorTokens.kt, ProgressIndicator.kt:835).",
+        "dimension.tabs":
+          "M3 PrimaryNavigationTab: label-width indicator with 3dp top-only corners (PrimaryNavigationTabTokens.kt, _md-comp-primary-navigation-tab.scss:28, _tab.scss:92-103).",
+        "dimension.calendar":
+          "M3 DatePicker modal: 40x40dp circular day cells, 1dp Primary outlined today cell, Primary filled selected cell (DatePickerModalTokens.kt:43-76).",
+        "dimension.calendar.cell":
+          "M3 DatePicker 40x40dp circular day cell container (DatePickerModalTokens.DateContainerWidth/Height).",
         indicator: "M3 underlined tabs and filled-text-field underline indicator.",
       },
     },

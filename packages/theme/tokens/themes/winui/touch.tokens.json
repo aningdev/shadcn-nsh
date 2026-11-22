@@ -345,6 +345,30 @@
         },
         "$description": "WinUI 3 RadioButton 10px inner glyph diameter on Pressed (RadioButton_themeresources.xaml:68-80)."
       }
+    },
+    "calendar": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "cell-shape": "pill",
+          "today": "fill",
+          "selected": "outline"
+        }
+      },
+      "$description": "WinUI 3 CalendarView: 40x40px circular cells (RoundedChromeEnabled=True), filled AccentFillColorDefault today cell, 2px accent-outlined selected cell (CalendarView_themeresources.xaml:62,244-245,767).",
+      "cell": {
+        "$value": {
+          "value": 40,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 CalendarViewDayItem 40x40px minimum cell size (CalendarView_themeresources.xaml:244-245)."
+      },
+      "outline-width": {
+        "$value": {
+          "value": 2,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 CalendarView 2px selected cell ring thickness (CalendarView_themeresources.xaml:767)."
+      }
     }
   }
 }
