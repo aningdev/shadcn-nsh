@@ -88,4 +88,4 @@
 | 动效时序（`{ duration, easing }`）                                                                                             | `duration` + `cubicBezier`                | 以 `{ duration }`（ms）与命名 `cubicBezier` 曲线表达时序动效（如 Fluent 动效与 `motion.enter`）；NSH 语义层里先按 `TimingSpec`（毫秒数字 + 白名单曲线名）存储，导出 DTCG 时拆成标准 `$type` |
 | 弹簧物理量（`stiffness`/`damping`）、外观枚举（`indicator.*`、`focus.style`、`shape.curve`）、finish 复合配方与平台 `material` | `$extensions`                             | DTCG 标准类型无法表达的运行时语义，归入 `$extensions` 命名空间                                                                                                                              |
 
-DTCG 标准导出（`.tokens.json` + `.resolver.json`）将在后续与 `DESIGN.md` 生成器一并实现，不在本次重构范围内。
+DTCG 标准导出（`.tokens.json` + `.resolver.json`）将在后续与 `DESIGN.md` 生成器一并实现，不在本次重构范围内。完整的 DTCG 2025.10 Token 源提案、键名映射与编译架构见 [`design-tokens.md`](design-tokens.md)。

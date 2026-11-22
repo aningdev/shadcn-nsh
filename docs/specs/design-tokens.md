@@ -1,0 +1,395 @@
+# DTCG 2025.10 Token 源标准与编译架构（提案）
+
+本文定义本库如何以 **W3C Design Tokens Community Group (DTCG) 2025.10** 三份正式报告作为唯一主题源码真源，取代当前手写的 `theme.json` + `semantics.json` 双私有格式（Issue #237）。本文档是第 1 批（Batch 1）提案与技术验证（spike）的规范文本，待审定后按批次迁移全部 6 套主题、生成器、校验器与运行时。
+
+规范依据（第一手来源）：
+
+- **Format Module 2025.10**：[`https://www.designtokens.org/TR/2025.10/format/`](https://www.designtokens.org/TR/2025.10/format/)（Schema：[`format.json`](https://www.designtokens.org/schemas/2025.10/format.json)）
+- **Color Module 2025.10**：[`https://www.designtokens.org/TR/2025.10/color/`](https://www.designtokens.org/TR/2025.10/color/)
+- **Resolver Module 2025.10**：[`https://www.designtokens.org/TR/2025.10/resolver/`](https://www.designtokens.org/TR/2025.10/resolver/)（Schema：[`resolver.json`](https://www.designtokens.org/schemas/2025.10/resolver.json)）
+- **NSH 运行时契约**：[`references/nsh/website/modules/nsh.md`](../../references/nsh/website/modules/nsh.md)（`setTheme` 与 `cssVars { theme, light, dark }`）
+- **语义与角色前置标准**：[`design-semantics.md`](design-semantics.md)、[`theme-roles.md`](theme-roles.md)、[`native-themes.md`](native-themes.md)
+
+---
+
+## 1 工具生态对 DTCG 2025.10 的实际支持现状
+
+W3C DTCG 2025.10 于 2025-10-28 发布为首个稳定版本（[W3C DTCG 发布公告](https://www.w3.org/community/design-tokens/2025/10/28/design-tokens-specification-reaches-first-stable-version/)），但各工具对三个子模块（Format / Color / Resolver）的落地进度存在明确差异：**Terrazzo** 目前支持最完整，其文档明确支持 2025.10 的 `format.json`、包含 `oklch` 等 CSS Color 4 色彩空间的 `colorSpace`/`components` 对象，以及 `resolver.json`（`sets` / `modifiers` / `resolutionOrder` / `$defs`）（[Terrazzo DTCG & Resolvers 文档](https://terrazzo.app/docs/guides/resolvers/)）；**Style Dictionary** 自 v4 起原生识别 `$value` / `$type` / `$description` 语法，但其官方文档明确提示“对 2025.10 完整规范的支持尚在 v5 开发中”（[Style Dictionary DTCG 说明](https://styledictionary.com/info/dtcg/)），目前主要消费已解析的单文件 token 树而不直接执行 2025.10 `.resolver.json`；**Tokens Studio** 作为规范的三个参考实现之一，支持在存储/同步设置中切换为 W3C DTCG 格式，但对颜色修改器（如变亮/透明度运算）与多套主题条件组合仍依赖自有配置或需在导出时求值（[Tokens Studio DTCG 格式说明](https://docs.tokens.studio/)）；**Figma Variables** 已原生支持按 W3C DTCG JSON 格式导入与导出变量模式（按单模式 `.json` 或多模式 `.zip`），但原生面板消费的是按模式展开的单文件 `.tokens.json`，暂不直接解析 `.resolver.json` 编排文件（[Figma Variables 导入导出指南](https://help.figma.com/hc/en-us/articles/15339657135383)）。这一现状直接决定了本库第 7 节“向设计工具分发按外观展开的 `.tokens.json` 并附带 `hex` 回退”的策略。
+
+---
+
+## 2 源文件布局与 Resolver 架构
+
+### 2.1 目录结构
+
+所有 DTCG 源码位于 `packages/theme/tokens/`（`.tokens.json` 遵循 Format §4.2 推荐扩展名）：
+
+```text
+packages/theme/tokens/
+  base/
+    style.shared.tokens.json      # 跨主题共用的基础语义骨架（typography 复合结构、stroke、focus、state、motion 骨架、10 条 cubicBezier）
+    style.pointer.tokens.json     # default / shadcn / solid-glass 共用的 pointer 档字阶、尺寸与图标刻度
+    style.touch.tokens.json       # default / shadcn / solid-glass 共用的 touch 档字阶、尺寸与图标刻度
+  themes/
+    <id>/                         # default | shadcn | solid-glass | apple | material | fluent
+      theme.resolver.json         # 该主题的 DTCG 2025.10 Resolver
+      theme.tokens.json           # 外观与输入档位无关的 token（8 个圆角、字体家族、C 层共用色、shared 状态/枚举等覆写）
+      finishes.shared.tokens.json # 明暗共用的 finish 字段（含 material）
+      light.tokens.json           # 亮色外观：A/B 层 63 个颜色 + light 稀疏 finish 覆写
+      dark.tokens.json            # 暗色外观：A/B 层 63 个颜色 + dark 稀疏 finish 覆写
+      pointer.tokens.json         # （可选，仅平台主题 apple/material/fluent）覆盖 base 的 pointer 档字阶与尺寸
+      touch.tokens.json           # （可选，仅平台主题 apple/material/fluent）覆盖 base 的 touch 档字阶与尺寸
+```
+
+### 2.2 Resolver 设计：单 Resolver vs 每主题一个 Resolver
+
+我们对比了两种 Resolver 组织方式：
+
+| 方案                                                                       | 架构                                                                                                                                                                 | 优势                                                                                                                                                                                                                                                                                    | 规范约束与缺陷                                                                                                                                                                                                                                                                                                                                                                                            |
+| :------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **方案 1：单 Resolver + `theme` modifier**                                 | 单个 `themes.resolver.json`，含 `theme`、`appearance`、`input` 三个 modifiers                                                                                        | 全局只有一个入口文件                                                                                                                                                                                                                                                                    | **违反或绕路 Resolver §4.1.5.1**：该条款规定 _“a modifier MUST NOT reference any other modifier”_ 且不支持二维条件键 `(theme, appearance)`。若先选 `theme` 再选 `appearance`，`appearance.contexts.dark` 无法针对不同主题加载不同暗色文件；若在最终树里保留 `{shadcn.dark.*}` 等中间命名空间，会污染导出给设计工具的 token 树；若合并成 24 个笛卡尔积 context（`default-light-pointer`…），则失去正交性。 |
+| **方案 2：共享 `base` Set + 每主题一个 `theme.resolver.json`**（**推荐**） | 共用 `tokens/base/*` 作为基础 Set；每个主题维护一个仅含 `appearance`（`light` / `dark`）与 `input`（`pointer` / `touch`）两个正交 modifiers 的 `theme.resolver.json` | 1. 100% 遵守 Resolver §2.1 正交性与 §4.1.5.1 无交叉引用约束；<br>2. `base/` 消除 `shadcn` / `solid-glass` 与 `default` 之间全部风格数值重复（仅稀疏覆写 `pressScale`、半径、颜色与 finishes）；<br>3. 解析出的最终 token 树纯净无中间命名空间；<br>4. 与按主题分发的产物目录 1:1 对齐。 | 编译器与 lint 需遍历 `tokens/themes/*/theme.resolver.json`（6 个文件，目录约定即可确定发现）。                                                                                                                                                                                                                                                                                                            |
+
+**结论**：采用 **方案 2（共享 `base` Set + 每主题一个 `theme.resolver.json`）**。
+
+每个 `theme.resolver.json` 的标准 `resolutionOrder`（Resolver §4.1.6 & §6.2，后者覆盖前者）：
+
+```json
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/resolver.json",
+  "name": "NSH Gallery UI",
+  "version": "2025.10",
+  "sets": {
+    "base": { "sources": [{ "$ref": "../../base/style.shared.tokens.json" }] },
+    "theme": {
+      "sources": [{ "$ref": "./theme.tokens.json" }, { "$ref": "./finishes.shared.tokens.json" }]
+    }
+  },
+  "modifiers": {
+    "appearance": {
+      "default": "light",
+      "contexts": {
+        "light": [{ "$ref": "./light.tokens.json" }],
+        "dark": [{ "$ref": "./dark.tokens.json" }]
+      }
+    },
+    "input": {
+      "default": "pointer",
+      "contexts": {
+        "pointer": [{ "$ref": "../../base/style.pointer.tokens.json" }],
+        "touch": [{ "$ref": "../../base/style.touch.tokens.json" }]
+      }
+    }
+  },
+  "resolutionOrder": [
+    { "$ref": "#/sets/base" },
+    { "$ref": "#/sets/theme" },
+    { "$ref": "#/modifiers/appearance" },
+    { "$ref": "#/modifiers/input" }
+  ]
+}
+```
+
+对于平台主题（`apple` / `material` / `fluent`），`modifiers.input.contexts.{pointer,touch}` 在末尾追加 `{ "$ref": "./pointer.tokens.json" }` 与 `{ "$ref": "./touch.tokens.json" }`，按 Resolver §6.2 覆盖 `base` 的默认尺寸与字阶。
+
+---
+
+## 3 组结构与命名规则
+
+### 3.1 DTCG 命名规范（Format §5.1.1）
+
+所有组名与 token 名必须满足官方 schema 正则 `^[^${}.][^{}.]*$`：
+
+- 不得以 `$` 开头（保留给 `$value`、`$type`、`$description`、`$extensions`、`$schema`、`$ref`、`$extends`、`$deprecated`、`$root`）；
+- 不得包含 `.`、`{`、}`。
+
+### 3.2 为什么 `color.*` 保持单层 kebab-case 而不拆成 `{color.card.$root}`
+
+现有 `theme.json` 中存在大量“前缀名称自身也是一个独立颜色 token”的命名对：如 `card` 与 `card-foreground`、`primary` 与 `primary-foreground`、`sidebar` 与 `sidebar-foreground`/`sidebar-accent`/`sidebar-border`、`brand` 与 `brand-fill`/`brand-edge`/`brand-tint`、`ring` 与 `ring-halo`、`info` 与 `info-tint` 等。
+
+在 DTCG Format §6.1–6.2 中，一个 JSON 对象不能同时拥有 `$value`（Token）和子 Token（Group），除非使用 `$root`（`color.card.$root` + `color.card.foreground`）。但目前 **Figma Variables 与多款导出工具对 `$root` 语法支持并不稳定**，而保留 `color.card`、`color.card-foreground`、`color.brand-fill`、`color.sidebar-accent` 这样的扁平单层键名：
+
+1. 100% 合法且与现有 `cssVars` 键名直接一一映射（仅多前缀 `color.`）；
+2. 零 `$root` 兼容风险；
+3. 别名路径清晰：`{color.card}`、`{color.foreground}`、`{color.brand-fill}`。
+
+唯一例外是基础圆角 `radius`（与其余 7 个 `radius-*` 同处 `dimension.radius` 组）：映射到 `dimension.radius.base`（比 `dimension.radius.$root` 工具兼容更好），编译回 `theme.json` 时还原为 `"radius"`。
+
+### 3.3 顶层组树概览
+
+```text
+color.*                  # $type: "color"       全部 74 个颜色（11 个共用 + 63 个明暗自适应）
+dimension.radius.*       # $type: "dimension"   8 个角色圆角（base, card, control, field, chip, overlay, dialog, sheet）
+dimension.shape.*        # $type: "dimension"   8 个语义圆角别名（引用 {dimension.radius.*}）
+dimension.size.hit       # $type: "dimension"   点击/触控最小目标（随 input modifier 变化）
+dimension.size.density.* # $type: "dimension"   页面密度（row, pad, gap, surface）
+dimension.size.control.* # $type: "dimension"   控件几何尺寸（row, padding, gap, control, corner, check, dot, tabs, line, clear）
+dimension.size.height.*  # $type: "dimension"   按钮高度（sm, md, lg）
+dimension.stroke.*       # $type: "dimension"   线宽（hairline, surface, control, indicator）
+dimension.focus.*        # $type: "dimension"   焦点环几何（width, offset）
+dimension.icon.*         # $type: "dimension"   图标尺寸（sm, md, lg）
+font.family.*            # $type: "fontFamily"  mono 及可选 sans
+font.size.*              # $type: "dimension"   7 个字阶字号（随 input modifier 变化，供 typography 引用）
+font.line-height.*       # $type: "number"      7 个字阶无单位行高倍率（line / size，供 typography 引用）
+typography.*             # $type: "typography"  7 个复合字阶角色（caption, detail, body, label, title, headline, display）
+state.*                  # $type: "number"      press-scale, overlay.*, pressed-opacity, disabled.{content,container}
+cubicBezier.*            # $type: "cubicBezier" 10 条命名缓动曲线
+duration.shake           # $type: "duration"    错误抖动时长（ms）
+transition.enter         # $type: "transition"  入场过渡（duration + delay + timingFunction）
+motion.*                 # group                4 个物理/时序动效角色（press, settle, control, move）
+shape                    # group ($extensions)  非数值几何枚举（curve, corners.field）
+indicator                # group ($extensions)  外观指示器枚举（tabs, nav, field）
+finish.<role>.*          # group + tokens       23 个表面配方（background, gradient, border-color, shadow + $extensions）
+```
+
+---
+
+## 4 完整映射表
+
+### 4.1 `theme.json` → DTCG 2025.10（83 个必填 + 1 个可选）
+
+#### A. `cssVars.theme`（20 个必填 + 可选 `font-sans`）
+
+| `theme.json` 键       | DTCG 路径                   | `$type`      | DTCG `$value` 形态 / 示例                                                           | 说明与反向编译                              |
+| :-------------------- | :-------------------------- | :----------- | :---------------------------------------------------------------------------------- | :------------------------------------------ |
+| `radius`              | `dimension.radius.base`     | `dimension`  | `{"value": 10, "unit": "px"}`                                                       | 编译为 `"10px"` 写入 `cssVars.theme.radius` |
+| `radius-card`         | `dimension.radius.card`     | `dimension`  | `{"value": 14, "unit": "px"}`                                                       | 同上，键名还原为 `radius-card`              |
+| `radius-control`      | `dimension.radius.control`  | `dimension`  | `{"value": 8, "unit": "px"}`                                                        | 同上                                        |
+| `radius-field`        | `dimension.radius.field`    | `dimension`  | `{"value": 8, "unit": "px"}`                                                        | 同上                                        |
+| `radius-chip`         | `dimension.radius.chip`     | `dimension`  | `{"value": 10, "unit": "px"}`                                                       | 同上                                        |
+| `radius-overlay`      | `dimension.radius.overlay`  | `dimension`  | `{"value": 10, "unit": "px"}`                                                       | 同上                                        |
+| `radius-dialog`       | `dimension.radius.dialog`   | `dimension`  | `{"value": 14, "unit": "px"}`                                                       | 同上                                        |
+| `radius-sheet`        | `dimension.radius.sheet`    | `dimension`  | `{"value": 14, "unit": "px"}`                                                       | 同上                                        |
+| `font-mono`           | `font.family.mono`          | `fontFamily` | `"monospace"` 或 `["Cascadia Mono", "Consolas", "monospace"]`                       | 若为数组，编译时用 `", "` 拼回 CSS 字符串   |
+| `font-sans`（可选）   | `font.family.sans`          | `fontFamily` | `["Segoe UI Variable", "Segoe UI", "sans-serif"]`                                   | 仅设置自定义正文字体的主题（如 Fluent）声明 |
+| `brand-fill`          | `color.brand-fill`          | `color`      | DTCG oklch 对象或 `"{color.primary}"`                                               | 别名编译为 `"var(--primary)"`               |
+| `on-brand`            | `color.on-brand`            | `color`      | DTCG oklch 对象或 `"{color.primary-foreground}"`                                    | 别名编译为 `"var(--primary-foreground)"`    |
+| `scrim`               | `color.scrim`               | `color`      | `{"colorSpace": "oklch", "components": [0, 0, 0], "alpha": 0.45, "hex": "#000000"}` | 无损还原 `"oklch(0 0 0 / 0.45)"`            |
+| `media`               | `color.media`               | `color`      | DTCG oklch 对象                                                                     | 同上                                        |
+| `on-media`            | `color.on-media`            | `color`      | DTCG oklch 对象                                                                     | 同上                                        |
+| `chart-foreground`    | `color.chart-foreground`    | `color`      | DTCG oklch 对象                                                                     | 同上                                        |
+| `window-close`        | `color.window-close`        | `color`      | DTCG oklch 对象                                                                     | 同上                                        |
+| `window-minimize`     | `color.window-minimize`     | `color`      | DTCG oklch 对象                                                                     | 同上                                        |
+| `window-zoom`         | `color.window-zoom`         | `color`      | DTCG oklch 对象                                                                     | 同上                                        |
+| `window-control-ink`  | `color.window-control-ink`  | `color`      | 静态求值 oklch + `$extensions.colorOp`（mix 50% black, transparent）                | 见第 6 节，编译回 `color-mix(...)`          |
+| `window-control-edge` | `color.window-control-edge` | `color`      | 静态求值 oklch + `$extensions.colorOp`（mix 12% black, transparent）                | 同上                                        |
+
+#### B. `cssVars.light` 与 `cssVars.dark`（各 63 个，进入 `light.tokens.json` / `dark.tokens.json`）
+
+- **A 层（31 个 shadcn 槽位）**：`background`, `foreground`, `card`, `card-foreground`, `popover`, `popover-foreground`, `primary`, `primary-foreground`, `secondary`, `secondary-foreground`, `muted`, `muted-foreground`, `accent`, `accent-foreground`, `destructive`, `border`, `input`, `ring`, `chart-1`, `chart-2`, `chart-3`, `chart-4`, `chart-5`, `sidebar`, `sidebar-foreground`, `sidebar-primary`, `sidebar-primary-foreground`, `sidebar-accent`, `sidebar-accent-foreground`, `sidebar-border`, `sidebar-ring` → 全部映射至 `color.<name>`（`$type: "color"`）。其中直接写 `var(--x)` 的槽位（如 `card-foreground`、`popover-foreground`、`secondary`、`secondary-foreground`、`accent-foreground`、`sidebar-foreground`、`sidebar-primary`、`sidebar-primary-foreground`、`sidebar-accent`、`sidebar-accent-foreground`、`sidebar-ring`）写为 DTCG 花括号别名 `"{color.<x>}"`，编译回 `theme.json` 时还原为 `"var(--<x>)"`。
+- **B 层（32 个本库扩展槽位）**：
+  - 直接 oklch 颜色或 `var(--x)` 别名（22 个）：`inset`, `raised`, `glass-edge`（`{color.border}`）, `field`, `line`, `faint`, `brand`, `brand-edge`, `track`, `knob`, `code`, `info`, `warn`, `up`, `down`（`{color.destructive}`）, `on-brand-tint`（`{color.foreground}`）, `inverse`（`{color.popover}`）, `inverse-foreground`（`{color.foreground}`）, `inverse-muted`（`{color.muted-foreground}`）, `inverse-brand`（`{color.primary-foreground}`）, `violet`, `window-control-off` → `color.<name>`（`$type: "color"`）。
+  - 含 `color-mix(in srgb, ...)` 算术的颜色（10 个）：`scrollbar-thumb`, `scrollbar-thumb-hover`, `hover`, `ring-halo`, `brand-tint`, `info-tint`, `warn-tint`, `destructive-tint`, `up-tint`, `down-tint` → `color.<name>`（`$type: "color"`），`$value` 放静态求值后的 DTCG oklch 对象（含 `hex`），`$extensions["dev.aning.shadcn-nsh"].colorOp` 放混合配方（见第 6 节）。注：在部分平台主题（如 Fluent）中这些键是静态色而非 `color-mix`，此时直接写 DTCG oklch 对象、不附 `colorOp`。
+
+### 4.2 `semantics.json` → DTCG 2025.10
+
+#### A. 风格数据（9 组）
+
+| 现有路径                                                                                    | DTCG 路径                                                                                   | `$type`                    | DTCG `$value` / 规则                                                                                                                                                                       | 备注                                                                                                                                                                                                   |
+| :------------------------------------------------------------------------------------------ | :------------------------------------------------------------------------------------------ | :------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `type.family`                                                                               | `typography.$extensions["dev.aning.shadcn-nsh"].fontFamily`（及 `typography.*.fontFamily`） | `fontFamily`（复合子字段） | 非空时引用 `"{font.family.sans}"`；为 `null` 时 `typography.*.fontFamily` 填 `["system-ui", "sans-serif"]`（Format §9.8 必填）且扩展记 `"fontFamily": null`                                | `fontFamily.json` schema 不允许 `null`                                                                                                                                                                 |
+| `type.<role>`（7 个：`caption`, `detail`, `body`, `label`, `title`, `headline`, `display`） | `typography.<role>`                                                                         | `typography`               | `{"fontFamily": ..., "fontSize": "{font.size.<role>}", "fontWeight": 400\|500\|600\|700, "lineHeight": "{font.line-height.<role>}", "letterSpacing": {"value": <tracking>, "unit": "px"}}` | `fontWeight` 用数字（§8.4 禁 `"400"` 字符串）；`lineHeight` 为倍率 `line / size`（§9.8）；辅助 token `font.size.<role>`（`dimension`）与 `font.line-height.<role>`（`number`）随 `input` modifier 切换 |
+| `shape.{control,field,chip,card,overlay,dialog,sheet}`                                      | `dimension.shape.<role>`                                                                    | `dimension`                | `"{dimension.radius.<role>}"`                                                                                                                                                              | 8 个圆角角色保持独立语义引用                                                                                                                                                                           |
+| `shape.inset`                                                                               | `dimension.shape.inset`                                                                     | `dimension`                | `"{dimension.radius.base}"`                                                                                                                                                                | 引用基础 `radius`                                                                                                                                                                                      |
+| `shape.curve`                                                                               | `shape.$extensions["dev.aning.shadcn-nsh"].curve`                                           | —                          | `"continuous" \| "circular"`                                                                                                                                                               | DTCG 无枚举 `$type`                                                                                                                                                                                    |
+| `shape.corners.field`                                                                       | `shape.$extensions["dev.aning.shadcn-nsh"].corners.field`                                   | —                          | `"all" \| "top"`                                                                                                                                                                           | 同上                                                                                                                                                                                                   |
+| `size.hit.{pointer,touch}`                                                                  | `dimension.size.hit`                                                                        | `dimension`                | `{"value": N, "unit": "px"}`                                                                                                                                                               | `input` modifier 切换                                                                                                                                                                                  |
+| `size.density.{pointer,touch}.{row,pad,gap,surface}`                                        | `dimension.size.density.<k>`                                                                | `dimension`                | `{"value": N, "unit": "px"}`                                                                                                                                                               | 同上                                                                                                                                                                                                   |
+| `size.control.{pointer,touch}.{row,padding,gap,control,corner,check,dot,tabs,line,clear}`   | `dimension.size.control.<k>`                                                                | `dimension`                | `{"value": N, "unit": "px"}`                                                                                                                                                               | 同上                                                                                                                                                                                                   |
+| `size.control.{pointer,touch}.switch`                                                       | `dimension.size.control.$extensions["dev.aning.shadcn-nsh"].switch`                         | —                          | `"small" \| "regular"`                                                                                                                                                                     | `input` modifier 切换                                                                                                                                                                                  |
+| `size.height.{pointer,touch}.{sm,md,lg}`                                                    | `dimension.size.height.<step>`                                                              | `dimension`                | `{"value": N, "unit": "px"}`                                                                                                                                                               | 同上                                                                                                                                                                                                   |
+| `stroke.{hairline,surface,control,indicator}`                                               | `dimension.stroke.<k>`                                                                      | `dimension`                | `{"value": N, "unit": "px"}`                                                                                                                                                               | 4 个线宽                                                                                                                                                                                               |
+| `focus.{width,offset}`                                                                      | `dimension.focus.<k>`                                                                       | `dimension`                | `{"value": N, "unit": "px"}`                                                                                                                                                               | 焦点环几何                                                                                                                                                                                             |
+| `focus.style`                                                                               | `dimension.focus.$extensions["dev.aning.shadcn-nsh"].style`                                 | —                          | `"halo" \| "outline" \| "double"`                                                                                                                                                          | 焦点环样式枚举                                                                                                                                                                                         |
+| `state.pressScale`                                                                          | `state.press-scale`                                                                         | `number`                   | `0 < n <= 1`                                                                                                                                                                               | 无单位比例                                                                                                                                                                                             |
+| `state.overlay.{hover,focus,pressed,dragged}`                                               | `state.overlay.<k>`                                                                         | `number`                   | `0 <= n <= 1`                                                                                                                                                                              | 叠层透明度                                                                                                                                                                                             |
+| `state.pressedOpacity`                                                                      | `state.pressed-opacity`                                                                     | `number`                   | `0 <= n <= 1`                                                                                                                                                                              | 按下透明度                                                                                                                                                                                             |
+| `state.disabled.{content,container}`                                                        | `state.disabled.<k>`                                                                        | `number`                   | `0 <= n <= 1`                                                                                                                                                                              | 禁用透明度                                                                                                                                                                                             |
+| `state.ripple`                                                                              | `state.$extensions["dev.aning.shadcn-nsh"].ripple`                                          | —                          | `boolean`                                                                                                                                                                                  | Android 水波开关                                                                                                                                                                                       |
+| `motion.{press,settle,control,move}`（Timing）                                              | `motion.<role>.timing`                                                                      | `transition`               | `{"duration": {"value": ms, "unit": "ms"}, "delay": {"value": 0, "unit": "ms"}, "timingFunction": "{cubicBezier.<name>}"}`                                                                 | Fluent 等时序主题使用标准 `transition`（§9.5）                                                                                                                                                         |
+| `motion.{press,settle,control,move}`（Spring）                                              | `motion.<role>.$extensions["dev.aning.shadcn-nsh"].spring`                                  | —                          | `{"stiffness": number, "damping": number}`                                                                                                                                                 | 弹簧物理量（§5.2.3 扩展）                                                                                                                                                                              |
+| `motion.enter`                                                                              | `transition.enter`                                                                          | `transition`               | `{"duration": {"value": ms, "unit": "ms"}, "delay": {"value": 0, "unit": "ms"}, "timingFunction": "{cubicBezier.<name>}"}`                                                                 | 标准 `transition`                                                                                                                                                                                      |
+| `motion.shake.duration`                                                                     | `duration.shake`                                                                            | `duration`                 | `{"value": ms, "unit": "ms"}`                                                                                                                                                              | 标准 `duration`（§8.5）                                                                                                                                                                                |
+| 10 条命名缓动（`theme.ts` `easings`）                                                       | `cubicBezier.<name>`                                                                        | `cubicBezier`              | `[x1, y1, x2, y2]`                                                                                                                                                                         | 见表 4.2.B                                                                                                                                                                                             |
+| `icon.size.{pointer,touch}.{sm,md,lg}`                                                      | `dimension.icon.<step>`                                                                     | `dimension`                | `{"value": N, "unit": "px"}`                                                                                                                                                               | `input` modifier 切换                                                                                                                                                                                  |
+| `indicator.{tabs,nav,field}`                                                                | `indicator.$extensions["dev.aning.shadcn-nsh"]`                                             | —                          | `{"tabs": ..., "nav": ..., "field": ...}`                                                                                                                                                  | 三个指示器枚举                                                                                                                                                                                         |
+
+#### B. 10 条命名 `cubicBezier` 曲线（`base/style.shared.tokens.json`）
+
+| 曲线名                  | DTCG `cubicBezier` 控制点    | 来源依据                                                                           |
+| :---------------------- | :--------------------------- | :--------------------------------------------------------------------------------- |
+| `out-cubic`             | `[0.333333, 1, 0.666667, 1]` | 精确等价 `1 - (1-t)^3`（`references/nsh/crates/nsh-core/src/animation/driver.rs`） |
+| `in-cubic`              | `[0.333333, 0, 0.666667, 0]` | 精确等价 `t^3`                                                                     |
+| `in-out-cubic`          | `[0.65, 0, 0.35, 1]`         | 近似分段 `inOut(cubic)`；`$extensions.nshEasing = "in-out-cubic"` 保留原生曲线名   |
+| `standard`              | `[0.2, 0, 0, 1]`             | M3 `md.sys.motion.easing.standard`（`theme.ts:983`）                               |
+| `emphasized-decelerate` | `[0.05, 0.7, 0.1, 1]`        | M3 `emphasized-decelerate`（`theme.ts:985`）                                       |
+| `emphasized-accelerate` | `[0.3, 0, 0.8, 0.15]`        | M3 `emphasized-accelerate`（`theme.ts:987`）                                       |
+| `decelerate`            | `[0, 0, 0, 1]`               | WinUI 3 Direct Entrance（`theme.ts:989`）                                          |
+| `accelerate`            | `[1, 0, 1, 1]`               | WinUI 3 Gentle Exit（`theme.ts:991`）                                              |
+| `easy-ease`             | `[0.33, 0, 0.67, 1]`         | Fluent Web `curveEasyEase`（`theme.ts:993`）                                       |
+| `point-to-point`        | `[0.55, 0.55, 0, 1]`         | WinUI 3 Point-to-Point（`theme.ts:995`）                                           |
+
+#### C. `finishes`（23 个角色，每个角色映射为 `finish.<role>` Group）
+
+23 个角色全部一致：`card`, `inset`, `field`, `raised`, `hover`, `pressed`, `light`, `accent`, `track`, `fill`, `knob`, `knobOn`, `handle`, `pill`, `thumb`, `on`, `chip`, `glass`, `menu`, `dialog`, `tooltip`, `inverse`, `groove`。每个角色按如下字段映射（仅声明该 finish 在 `shared` / `light` / `dark` 实际存在的字段，合并后保持固定形状）：
+
+| `finish` 字段     | DTCG 路径                                                          | `$type`    | DTCG `$value` 形态与细节                                                                                                                                                                                                                                                                            |
+| :---------------- | :----------------------------------------------------------------- | :--------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `backgroundColor` | `finish.<role>.background`                                         | `color`    | `{color.<token>}` 别名、静态 oklch、`transparent`（`alpha: 0` + 扩展标 `"transparentKeyword": true`）、或静态求值色 + `colorOp: { op: "alpha", ... }`                                                                                                                                               |
+| `backgroundImage` | `finish.<role>.gradient`                                           | `gradient` | `[{"color": ..., "position": 0}, {"color": ..., "position": 1}]`（Format §9.7）；角度 `180` 记于 `gradient.$extensions["dev.aning.shadcn-nsh"].angle = 180`；stop 若为 `transparent` 记 `transparentKeyword`                                                                                        |
+| `borderColor`     | `finish.<role>.border-color`                                       | `color`    | `{color.<token>}` 别名、静态 oklch、`transparent`、或 `colorOp`。**不用 `$type: "border"`**：因 `finish` 不拥有线宽（不同组件按场景选 `stroke.control` / `stroke.hairline` / `stroke.surface`），且 `border.json` 要求必填 `width` 与 `style`（Format §9.4）                                        |
+| `boxShadow`       | `finish.<role>.shadow`                                             | `shadow`   | 单个 shadow 对象或 shadow 对象数组（Format §9.6：`color`, `offsetX`, `offsetY`, `blur`, `spread`, `inset`）。当为 `"none"` 时写 0 透明占位 shadow 并于 `shadow.$extensions["dev.aning.shadcn-nsh"].none = true` 标注；编译回 CSS 时 `spread.value === 0` 省略第 4 个长度、`inset: false` 省略关键字 |
+| `backdropFilter`  | `finish.<role>.$extensions["dev.aning.shadcn-nsh"].backdropFilter` | —          | 原字符串或结构化 `{ "blur"?: Dimension, "saturate"?: number } \| "none"`（DTCG 无 filter `$type`）                                                                                                                                                                                                  |
+| `material`        | `finish.<role>.$extensions["dev.aning.shadcn-nsh"].material`       | —          | `null` 或 `{ apple?, ios?, macos?, windows?, android? }`（其中 `apple.tint` 与 `android.ripple.color` 写 `"{color.<token>}"` 别名）                                                                                                                                                                 |
+
+---
+
+## 5 `$extensions` 命名空间与 Schema 规范
+
+### 5.1 命名空间：`dev.aning.shadcn-nsh`
+
+按 DTCG Format §5.2.3 与 Resolver §4.3 要求，`$extensions` 必须使用反向域名（reverse-DNS）供应商键。本库公开域名为 `aning.dev`（文档站 `shadcn-nsh.aning.dev`，仓库 `aningdev/shadcn-nsh`），因此采用 **`dev.aning.shadcn-nsh`**（绝对不占用上游的 `nsh.dev` / `dev.nsh`）。
+
+### 5.2 各扩展结构定义
+
+1. **枚举与开关扩展**（校验值与 `scripts/theme/style.ts` 白名单一致）：
+   - `shape.$extensions["dev.aning.shadcn-nsh"]`: `{ "curve": "continuous" | "circular", "corners": { "field": "all" | "top" } }`
+   - `dimension.size.control.$extensions["dev.aning.shadcn-nsh"]`: `{ "switch": "small" | "regular" }`
+   - `dimension.focus.$extensions["dev.aning.shadcn-nsh"]`: `{ "style": "halo" | "outline" | "double" }`
+   - `state.$extensions["dev.aning.shadcn-nsh"]`: `{ "ripple": boolean }`
+   - `indicator.$extensions["dev.aning.shadcn-nsh"]`: `{ "tabs": "underline" | "pill", "nav": "fill" | "bar", "field": "box" | "underline" }`
+   - `typography.$extensions["dev.aning.shadcn-nsh"]`: `{ "fontFamily": null | string }`（用于区分系统默认字体 `null` 与显式 `{font.family.sans}`）
+2. **弹簧物理量**（`motion.<role>.$extensions["dev.aning.shadcn-nsh"]`）：
+   - `{ "spring": { "stiffness": number (>= 0), "damping": number (>= 0) } }`
+3. **Finish 配方扩展**（`finish.<role>.{gradient,shadow,background}.$extensions["dev.aning.shadcn-nsh"]` 与组扩展）：
+   - `gradient`: `{ "angle": number }`（默认 `180`）
+   - `shadow`: `{ "none": true }`（仅当语义为无阴影 `"none"` 时）
+   - `color` / `gradient` stop: `{ "transparentKeyword": true }`（区分 CSS `transparent` 关键字与 `oklch(0 0 0 / 0)` 零不透明度黑）
+   - `finish.<role>` 组扩展：
+     - `"backdropFilter"`: `string`（`"none"` | `"blur(20px)"` | `"blur(14px) saturate(180%)"`）
+     - `"material"`: `null | { apple?: { glass: "regular" | "clear", tint: string | null }, ios?: { backdrop: ... }, macos?: { backdrop: ..., blending?: ..., state?: ... }, windows?: { backdrop: "blur" }, android?: { elevation?: number, ripple?: { color: string, borderless?: boolean, radius?: number, foreground?: boolean } } }`
+4. **颜色算术**（`color.<name>` 或 `finish.<role>.<field>.$extensions["dev.aning.shadcn-nsh"].colorOp`）：
+   - `mix`（对应 `color-mix`）：`{ "op": "mix", "space": "srgb", "a": ColorOrRef, "percent": number, "b": ColorOrRef | "transparent" }`
+   - `alpha`（对应 `oklch(from ... l c h / a)`）：`{ "op": "alpha", "color": Ref, "alpha": number }`
+
+---
+
+## 6 Colour Arithmetic（颜色算术）规范与宿主覆写穿透
+
+DTCG 2025.10 Color Module 不包含任何颜色运算语法，但本库有两处动态算术需求：
+
+- `theme.json` 中每套主题约 10–22 处 `color-mix(in srgb, <A> <P>%, <B>)`（`hover`, `ring-halo`, `scrollbar-thumb*`, `*-tint`, `window-control-*`）；
+- `semantics.json` 中 `oklch(from {token} l c h / a)`（如 `glass.backgroundColor`、`solid-glass` 的 `pressed`/`light`/`accent`/`on`）。
+
+**规范写法（双重表示：静态回退 + 符号配方）**：
+
+1. **`$value` 写入精确求值后的静态 DTCG Color 对象**（包含 `colorSpace: "oklch"`、`components`、`alpha` 与 6 位 `hex` 回退），保证 Figma / Style Dictionary / Terrazzo 无需理解本库扩展就能直接使用正确颜色。
+2. **`$extensions["dev.aning.shadcn-nsh"].colorOp` 保留符号表达式**：
+
+```json
+"hover": {
+  "$type": "color",
+  "$value": {
+    "colorSpace": "oklch",
+    "components": [0.18636, 0.01318, 264.182],
+    "alpha": 0.05,
+    "hex": "#121317"
+  },
+  "$extensions": {
+    "dev.aning.shadcn-nsh": {
+      "colorOp": {
+        "op": "mix",
+        "space": "srgb",
+        "a": "{color.foreground}",
+        "percent": 5,
+        "b": "transparent"
+      }
+    }
+  }
+}
+```
+
+3. **编译回运行时产物**：
+   - **编译 `theme.json`**：检测到 `colorOp.op === "mix"` 时，编译器还原为 `"color-mix(in srgb, var(--foreground) 5%, transparent)"`。因此当原生宿主调用 `setThemeOverrides` 覆写 `--foreground`、`--ring`、`--muted-foreground` 或 `--info` 时，NSH 运行时依然自动重新混合所有派生色。
+   - **编译语义产物**：检测到 `colorOp.op === "alpha"` 时，还原为 `oklch(from {token} l c h / a)`（方案 a）或输出 `{ op: "alpha", token: "...", alpha: a }` 供 `theme.ts` 经 `token()` 动态 `atAlpha(...)`（方案 b），同样穿透 `setThemeOverrides`。
+4. **`theme-lint` 校验**：校验静态 `$value` 与根据同外观基础 token 现算的结果误差在 `1e-4` 以内（`sRGB` 8-bit 通道完全一致），防止手工修改 `$value` 或基础色后二者脱节。
+
+---
+
+## 7 运行时侧对比与推荐：方案 (a) vs 方案 (b)
+
+| 维度                                     | 方案 (a)：编译器继续发射现行 `semantics.json` 形状                                                        | 方案 (b)：运行时读 DTCG 字段命名产物并对齐 `theme.ts` API（**推荐**）                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| :--------------------------------------- | :-------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **产物形态**                             | `theme.json` + 现行 `semantics.json`                                                                      | `theme.json` + 经 resolver 预按 4 组 context 合并后的 DTCG 命名语义产物（例如 `semantics.resolved.json` 或 `tokens.runtime.json`）                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| **`packages/theme/theme.ts` 变动**       | 零变动                                                                                                    | 接口与内部实现读取 `typography`/`transition`/`shadow`/`gradient`/`dimension`/`state`；**公共访问器去除历史名字**：<br>• `font.line(role)` → `font.lineHeight(role)`（仍返回点数 `Math.round(fontSize * lineHeight)` 给 NSH）<br>• `font.tracking(role)` → `font.letterSpacing(role)`<br>• `Timing.easing` → `Timing.timingFunction`（`animate()` 内部映射到 NSH `value.timing(to, { duration, easing: config.timingFunction })`）<br>• `style()` 返回 DTCG 命名结构（`Style` / `Semantics` 类型重命名）                                                                                                                                                                                                                                                                                                                                                                                                                                      |
+| **组件与演示调用点影响（实测精确计数）** | 0 处                                                                                                      | 全仓受影响符号仅占极少数：<br>• `font.line`：**9 处**（全在 `packages/ui/`，如 `code-block.tsx` 4、`dialog.tsx` 1、`trace.tsx` 2）<br>• `font.tracking`：**1 处**（`packages/ui/collapsing-header.tsx`）<br>• `style()`：**59 处**（`packages/theme/theme.ts` 内部 40、`packages/ui/lib/surface.tsx` 2、`packages/ui/lib/indicator.ts` 4、`apps/showcase` 等外部读取点 13）<br>• `motion.*` 直接解构 `.easing` 传给 `nsh`：`apps/showcase/demos/` 3 处 + `apps/gallery/tests/` 2 处（其余 44 处经 `animate()` / `follow()` 透传，不受影响）<br>• **高频核心 API 零变动**：`colors.*`（2971 处）、`finish.*`（208）、`shape.*`（203）、`focusRing()`（145）、`rounded()`（119）、`stroke.*`（113）、`hovered()`（120）、`chart.*`（68）、`tints.*`（48）、`dimmed.*`（30）、`stateLayer()`（22）、`platformMaterial()`（15）、`cornerCurve`（13）、`controlHeight`（6）、`iconSize`（5）、`hitTarget`（3）、`press.scale`（3）**100% 不改名** |
+| **项目规范契合度**                       | **保留历史债**：源码是 DTCG，产物退回私有 `semantics.json` 形状，永久维护两套语义结构与两套命名           | **零历史债**：符合“不为旧写法留兼容层、废弃代码”原则，源码、编译产物、文档与 `theme.ts` API 统一使用 DTCG 词汇                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               |
+| **应用开发者体验**                       | 应用拷贝到的 `lib/ui/semantics.json` 仍使用 `line`/`tracking`/`easing` 等私有键名，与 `.tokens.json` 割裂 | 应用根 `theme.json` 保持不变；`lib/ui/` 产物与 `.tokens.json` 字段一致，CLI `theme-merge` 同步升级（不留双格式兼容分支）                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+
+**推荐**：采用 **方案 (b)**。全仓需改写的调用点不足 30 处且均可由 TypeScript 编译器静态抓全；`theme.json` 作为 NSH 运行时（`setTheme` / `Tokens`）的唯一边界保持 100% 不变。
+
+---
+
+## 8 分发策略（Distribution）
+
+用户已明确：registry 继续分发编译好的 `theme.json`（及语义运行时产物），同时为每个主题增发 `.tokens.json` 供设计工具消费；应用仍可直接编辑 `theme.json`。
+
+针对“每主题向设计工具分发的 `.tokens.json` 应该是什么形式”，对比两种形态：
+
+1. **每主题一个带 Resolver 的捆绑文件**（按 Resolver §7 内联为一个自包含 `.resolver.json`）：能够一次打包全部 4 种排列，但 **Figma 原生 Variables 导入与 Style Dictionary v4 目前均不直接读取 2025.10 `.resolver.json`**。
+2. **按外观预解析的单文件对：`light.tokens.json` 与 `dark.tokens.json`**（基于默认 `pointer` 档解析、消除跨目录 `base/` 引用、保留组内 `{color.*}` 别名与 6 位 `hex` 回退）：**推荐**。Figma Variables 可直接以“Import mode”分别拖入 Light / Dark 两列，Tokens Studio 与 Style Dictionary v4 亦可直接读取标准 Format 2025.10 文件；若需要 4 维完整源码或 `touch` 档，Terrazzo 等完整工具可直接读取仓库中的 `theme.resolver.json`（也可按需另附自包含 `tokens.resolver.json`）。
+
+---
+
+## 9 生成器、`theme-lint` 与 `DESIGN.md` 生成器预留
+
+### 9.1 主题生成器迁移（`scripts/theme/`）
+
+目前 `scripts/theme/{shadcn,solid-glass,apple,m3,fluent}.ts` 与 `generate-*.ts` 直接生成 `packages/theme/themes/<name>/{theme,semantics}.json`。迁移后：
+
+1. 生成器改为输出或更新 `packages/theme/tokens/themes/<name>/` 下的稀疏 DTCG 文件（`theme.tokens.json`、`light.tokens.json`、`dark.tokens.json`、`finishes.shared.tokens.json` 及平台特有的 `pointer.tokens.json` / `touch.tokens.json`）与 `theme.resolver.json`；
+2. 由统一的编译器 `bun run tokens:build` 读取全部 `tokens/themes/*/theme.resolver.json`，生成各主题与根 `packages/theme/` 的编译产物（`theme.json` + 运行时语义文件 + 分发用 `{light,dark}.tokens.json`）；
+3. `themes/default/` 与 `packages/theme/` 根目录产物由同一 `tokens/themes/default/theme.resolver.json` 编译得出，天然逐字节一致。
+
+### 9.2 `theme-lint` 演进
+
+`scripts/theme-lint.ts` 演进为两阶段：
+
+1. **标准 Schema 校验**：用官方 2025.10 JSON Schema（`format.json`、`resolver.json`）校验全部 `.tokens.json` 与 `.resolver.json`；
+2. **本库语义校验**：解析 4 种 context 排列后执行现有约束——31 个 shadcn A 层槽位完整（`theme.rs`）、C 层键集合与 `radius >= 0`、23 个 finish 合并后角色与字段集合齐一（含 `material` 白名单）、`colorOp` 静态 `$value` 一致性、`unread` / 未使用 token 检查、以及 `$description` 覆盖检查。
+
+### 9.3 为后续 `DESIGN.md` 生成器预留字段
+
+参照 `references/design.md`（Google Labs DESIGN.md 规范），后续脚本将直接从 DTCG 源码投影生成每个主题的 `DESIGN.md`。因此 token 源码需携带：
+
+- **每个核心角色与组上的 `$description`（Format §5.2.1）**：说明色彩职责（如 `card`: _"Elevated surface for cards and panels"_）、字体层级与使用场景、圆角部件归属、以及 finish 的视觉意图；
+- **`color.<name>` 的用途分组或扩展元数据**（可选）：在 `color` 组下或 `$extensions["dev.aning.shadcn-nsh"].role` 标注 `surface` / `ink` / `brand` / `status` / `chrome` 分类，便于 `DESIGN.md` 按调色板章节自动分节；
+- **`theme.resolver.json` 的 `name` 与 `description`**（Resolver §4.1.1, §4.1.3）：作为 `DESIGN.md` 的主题标题与设计理念摘要。
+
+---
+
+## 10 分批迁移计划（每批 ≤ 1 小时，文件尽量正交）
+
+| 批次                | 内容与触及文件集                                                                                                                                                                     | 验收标准                                                                                                                                               |
+| :------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Batch 1（本批）** | 提案文档 `docs/specs/design-tokens.md` + `scripts/tokens/` spike（官方 schema 缓存与 Draft-07 校验器 + `default` 主题 DTCG 源码 + 编译器 + round-trip 单测）                         | `bun test scripts/tokens`、`bun run test:unit`、`vp check`、`bun run check` 全绿，不改任何已分发文件                                                   |
+| **Batch 2**         | 正式化 `scripts/tokens/` 编译器与 `theme-lint` 两阶段校验（接入 `bun run tokens:build` 与 `bun run check:theme`）；`default` 主题源码补全 `$description`                             | `tokens:build` 产出的 `default` `theme.json` 与现行逐字节一致；`bun run check` 通过                                                                    |
+| **Batch 3**         | 按选定方案落地运行时（推荐 Option (b)：更新 `packages/theme/theme.ts`、`packages/ui/*` ~15 处调用、`apps/showcase` & `apps/gallery` ~5 处、`packages/cli/src/utils/theme-merge.ts`） | `bun run test:unit`、`nsh check`（demos / gallery / showcase）、`bun run test:gallery` 通过                                                            |
+| **Batch 4**         | 迁移 `shadcn` 与 `solid-glass` 生成器（`scripts/theme/{shadcn,solid-glass,generate-shadcn,generate-solid-glass}.ts`）至排放 DTCG 稀疏源文件                                          | 生成的产物经 `port:render:theme` 与现行截图逐像素一致                                                                                                  |
+| **Batch 5**         | 迁移 `apple`、`material`、`fluent` 生成器（`scripts/theme/{apple,m3,fluent,generate-*}.ts`）至排放 DTCG 稀疏源文件（含平台 `pointer`/`touch` 覆写与 `material`）                     | 6 套主题全部由 DTCG 编译生成，`themes.test.ts` 与渲染比对逐像素一致                                                                                    |
+| **Batch 6**         | 更新 Registry 分发与 CLI：`registry.json`、`scripts/registry-build.ts`、`packages/cli` 附带各主题 `{light,dark}.tokens.json`；同步文档与 `CHANGELOG.md`                              | `bun run registry:build`、`bun run test:install`、`bun run port:render`、`bun run port:render:theme`、`bun run test:gallery`、`bun run check` 全部通过 |
+
+整体验收基准：全部 6 套主题 `port:render` 与 `port:render:theme` **零像素差异**，`test:gallery` 与 `test:install` 全通过。
+
+---
+
+## 11 待拍板问题（Open Questions）
+
+1. **Runtime 方案选型（第 7 节）**：采用 **Option (b)**（运行时改读 DTCG 字段命名产物，同步将 `font.line` → `font.lineHeight`、`font.tracking` → `font.letterSpacing`、`Timing.easing` → `Timing.timingFunction`），还是 **Option (a)**（保留现行 `semantics.json` 形状，组件零改动）？
+   - **推荐：Option (b)** —— 符合“不留历史兼容层”原则，且全仓影响点不足 30 处、高频 API（`colors`、`finish`、`shape`、`focusRing`、`rounded`）零改动。
+2. **向设计工具分发的 `.tokens.json` 形态（第 8 节）**：为每个主题附带按外观预先解析的两个单文件（`light.tokens.json` + `dark.tokens.json`，基于 `pointer` 档并附 `hex` 回退），还是附带内联好的单个 `.resolver.json`？
+   - **推荐：`light.tokens.json` + `dark.tokens.json`（按外观分开的 `.tokens.json`）** —— Figma Variables 原生导入与 Style Dictionary v4 目前均只直接消费 `.tokens.json`，需要 4 维完整编排的工具可直接读取源码中的 `theme.resolver.json`。
+3. **语义运行时产物的 `theme-merge` 升级策略**：Batch 3/6 切换为新格式后，`shadcn-nsh add` / `init` 的 JSON 合并器（`packages/cli/src/utils/theme-merge.ts`）是否直接按新结构合并而不为旧 `semantics.json` 留降级迁移分支？
+   - **推荐：不留旧格式兼容分支**，在对应发版说明中标注升级步骤（重跑 `shadcn-nsh init --theme <name> --overwrite` 或重新生成）。
+4. **`$root` 与 `dimension.radius.base`（第 3.2 节）**：`radius` 以及 `card` / `primary` 等与派生名同前缀的 token，是否坚持避开 DTCG Format §6.2 的 `$root` 语法以确保跨工具导入最大兼容性？
+   - **推荐：避开 `$root`**，使用 `dimension.radius.base` 与单层 `color.<name>`。

@@ -76,7 +76,7 @@ _Avoid_: 把 `Label` 组件当作无障碍名、把控件的文字抄进 `access
 _Avoid_: 重写行为, 缩减 props
 
 **Theme Source**:
-`theme.json`（基础 token 层：颜色、8 个 `radius*`、字体，shadcn `cssVars` 格式，颜色以 oklch 存储）与 `semantics.json`（跨平台语义层：风格数据与 `finishes` 的 `shared` + 稀疏 `light`/`dark`，以 `{token}` 引用基础层）；`theme.ts` 读取它们。分层规则与 DTCG 映射见 [`specs/design-semantics.md`](specs/design-semantics.md)，角色清单见 [`specs/theme-roles.md`](specs/theme-roles.md)。
+`theme.json`（基础 token 层：颜色、8 个 `radius*`、字体，shadcn `cssVars` 格式，颜色以 oklch 存储）与 `semantics.json`（跨平台语义层：风格数据与 `finishes` 的 `shared` + 稀疏 `light`/`dark`，以 `{token}` 引用基础层）；`theme.ts` 读取它们。分层规则与 DTCG 映射见 [`specs/design-semantics.md`](specs/design-semantics.md)，角色清单见 [`specs/theme-roles.md`](specs/theme-roles.md)，DTCG 2025.10 Token 源提案见 [`specs/design-tokens.md`](specs/design-tokens.md)。
 _Avoid_: neutral 映射, `custom-*` 键
 
 **Design Semantics（语义层 / `semantics.json`）**:
