@@ -405,10 +405,38 @@ async function onlyLibUi(dir: string) {
   }
 }
 
+/** Assert `<dir>/<targetSubdir>/{light,dark}.tokens.json` exist, parse as JSON, and match `<repo>/<sourceSubdir>`. */
+async function assertTokensJsonPair(dir: string, targetSubdir: string, sourceSubdir: string) {
+  for (const name of ["light.tokens.json", "dark.tokens.json"] as const) {
+    const rel = targetSubdir === "." ? name : path.posix.join(targetSubdir, name);
+    const installed = await fs.readFile(path.join(dir, rel), "utf8").catch(() => null);
+    if (installed == null) {
+      throw new StepFailure("theme", `      missing ${rel}`);
+    }
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(installed);
+    } catch (error) {
+      throw new StepFailure(
+        "theme",
+        `      ${rel} is not valid JSON: ${error instanceof Error ? error.message : String(error)}`,
+      );
+    }
+    if (!isRecord(parsed) || !isRecord(parsed.color)) {
+      throw new StepFailure("theme", `      ${rel} is not a DTCG token object`);
+    }
+    const source = await fs.readFile(path.join(repo, sourceSubdir, name), "utf8");
+    if (installed !== source) {
+      throw new StepFailure("theme", `      ${rel} does not match ${sourceSubdir}/${name}`);
+    }
+  }
+}
+
 async function installEveryItem(template: string, dir: string, items: Item[], nsh: string) {
   await copyApp(template, dir);
   await step("add --all", "bun", [cli, "add", "--all"], dir);
   await onlyLibUi(dir);
+  await assertTokensJsonPair(dir, ".", "packages/theme");
   await fs.writeFile(path.join(dir, "All.tsx"), allPage(items));
   await fs.writeFile(path.join(dir, "All.test.tsx"), ALL_TEST);
   await step("nsh check", nsh, ["check", "."], dir);
@@ -450,6 +478,8 @@ async function installNeutralTheme(template: string, dir: string, items: Item[],
       "      lib/ui/semantics.json is not packages/theme/themes/shadcn/semantics.json after init --theme shadcn",
     );
   }
+  await assertTokensJsonPair(dir, ".", "packages/theme/themes/shadcn");
+  await assertTokensJsonPair(dir, "themes/shadcn", "packages/theme/themes/shadcn");
 }
 
 /**
@@ -528,10 +558,18 @@ mount(Page);
 async function installSecondTheme(template: string, dir: string, nsh: string) {
   await copyApp(template, dir);
   const before = await fs.readFile(path.join(dir, "theme.json"), "utf8");
+  const beforeLight = await fs.readFile(path.join(dir, "light.tokens.json"), "utf8");
+  const beforeDark = await fs.readFile(path.join(dir, "dark.tokens.json"), "utf8");
   await step("add theme-default", "bun", [cli, "add", "theme-default"], dir);
-  const after = await fs.readFile(path.join(dir, "theme.json"), "utf8");
-  if (after !== before) {
-    throw new StepFailure("theme", "      add theme-default rewrote the build-time theme.json");
+  for (const [name, want] of [
+    ["theme.json", before],
+    ["light.tokens.json", beforeLight],
+    ["dark.tokens.json", beforeDark],
+  ] as const) {
+    const after = await fs.readFile(path.join(dir, name), "utf8");
+    if (after !== want) {
+      throw new StepFailure("theme", `      add theme-default rewrote the build-time ${name}`);
+    }
   }
   const source = await fs.readFile(
     path.join(repo, "packages/theme/themes/default/theme.json"),
@@ -556,6 +594,7 @@ async function installSecondTheme(template: string, dir: string, nsh: string) {
       "      add theme-default wrote no themes/default/semantics.json",
     );
   }
+  await assertTokensJsonPair(dir, "themes/default", "packages/theme/themes/default");
   await fs.writeFile(path.join(dir, "Themes.tsx"), TWO_THEMES_PAGE);
   await step("nsh check", nsh, ["check", "."], dir);
 }
@@ -569,10 +608,14 @@ async function installAnotherTheme(template: string, dir: string, nsh: string) {
   await copyApp(template, dir);
   const before = await fs.readFile(path.join(dir, "theme.json"), "utf8");
   const semantics = await fs.readFile(path.join(dir, "lib/ui/semantics.json"), "utf8");
+  const beforeLight = await fs.readFile(path.join(dir, "light.tokens.json"), "utf8");
+  const beforeDark = await fs.readFile(path.join(dir, "dark.tokens.json"), "utf8");
   await step("add theme-shadcn", "bun", [cli, "add", "theme-shadcn"], dir);
   for (const [name, want] of [
     ["theme.json", before],
     ["lib/ui/semantics.json", semantics],
+    ["light.tokens.json", beforeLight],
+    ["dark.tokens.json", beforeDark],
   ] as const) {
     const now = await fs.readFile(path.join(dir, name), "utf8");
     if (now !== want) {
@@ -599,6 +642,7 @@ async function installAnotherTheme(template: string, dir: string, nsh: string) {
   if (installedSemantics !== sourceSemantics) {
     throw new StepFailure("theme", "      add theme-shadcn wrote no themes/shadcn/semantics.json");
   }
+  await assertTokensJsonPair(dir, "themes/shadcn", "packages/theme/themes/shadcn");
   await fs.writeFile(path.join(dir, "Themes.tsx"), THEMES_PAGE);
   await step("nsh check", nsh, ["check", "."], dir);
 }
@@ -654,6 +698,10 @@ async function installNativeTheme(template: string, dir: string, nsh: string) {
       throw new StepFailure("theme", `      init --theme native wrote no ${name}`);
     }
   }
+  await assertTokensJsonPair(dir, ".", "packages/theme");
+  for (const id of ["apple", "material", "winui", "default"]) {
+    await assertTokensJsonPair(dir, `themes/${id}`, `packages/theme/themes/${id}`);
+  }
   await fs.writeFile(path.join(dir, "Native.tsx"), NATIVE_PAGE);
   await step("nsh check", nsh, ["check", "."], dir);
 }
@@ -672,6 +720,8 @@ async function installAppleTheme(template: string, dir: string, nsh: string) {
       "      theme.json is not packages/theme/themes/apple/theme.json after init --theme apple",
     );
   }
+  await assertTokensJsonPair(dir, ".", "packages/theme/themes/apple");
+  await assertTokensJsonPair(dir, "themes/apple", "packages/theme/themes/apple");
   await step("add --all", "bun", [cli, "add", "--all"], dir);
   await step("nsh check", nsh, ["check", "."], dir);
 }
@@ -690,6 +740,8 @@ async function installMaterialTheme(template: string, dir: string, nsh: string) 
       "      theme.json is not packages/theme/themes/material/theme.json after init --theme material",
     );
   }
+  await assertTokensJsonPair(dir, ".", "packages/theme/themes/material");
+  await assertTokensJsonPair(dir, "themes/material", "packages/theme/themes/material");
   await step("add --all", "bun", [cli, "add", "--all"], dir);
   await step("nsh check", nsh, ["check", "."], dir);
 }
@@ -708,6 +760,8 @@ async function installWinuiTheme(template: string, dir: string, nsh: string) {
       "      theme.json is not packages/theme/themes/winui/theme.json after init --theme winui",
     );
   }
+  await assertTokensJsonPair(dir, ".", "packages/theme/themes/winui");
+  await assertTokensJsonPair(dir, "themes/winui", "packages/theme/themes/winui");
   await step("add --all", "bun", [cli, "add", "--all"], dir);
   await step("nsh check", nsh, ["check", "."], dir);
 }

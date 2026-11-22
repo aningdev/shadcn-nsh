@@ -30,6 +30,8 @@ describe("add", () => {
     expect(current.exists("lib/ui/press.ts")).toBe(true);
     expect(current.exists("lib/ui/theme.ts")).toBe(true);
     expect(current.exists("theme.json")).toBe(true);
+    expect(current.exists("light.tokens.json")).toBe(true);
+    expect(current.exists("dark.tokens.json")).toBe(true);
     expect(current.read("components/ui/button.tsx")).toContain('from "../../lib/ui/theme"');
     expect(out.lines).toContain("write components/ui/button.tsx");
   });
@@ -81,9 +83,13 @@ describe("add", () => {
     expect(out.result).toBe(0);
     expect(out.lines).toContain("would write components/ui/button.tsx");
     expect(out.lines).toContain("would write theme.json");
+    expect(out.lines).toContain("would write light.tokens.json");
+    expect(out.lines).toContain("would write dark.tokens.json");
     expect(out.text).toContain("Dry run: nothing written.");
     expect(current.exists("components/ui/button.tsx")).toBe(false);
     expect(current.exists("theme.json")).toBe(false);
+    expect(current.exists("light.tokens.json")).toBe(false);
+    expect(current.exists("dark.tokens.json")).toBe(false);
     expect(current.exists("nsh-ui.json")).toBe(false);
   });
 
@@ -226,6 +232,29 @@ describe("add", () => {
     expect(merged.finishes.shared.dialog).toBeDefined();
     expect(merged.finishes.light.dialog).toBeDefined();
     expect(merged.finishes.shared.card.material).toBeNull();
+  });
+
+  test("keeps a modified .tokens.json unless --overwrite replaces it", async () => {
+    current = fixture();
+    await captured(() => runAdd(["button"], { cwd: current!.app, registry: current!.url }));
+    const original = current.read("light.tokens.json");
+    const edited = `${original}\n`;
+    current.write("light.tokens.json", edited);
+
+    const kept = await captured(() =>
+      runAdd(["button"], { cwd: current!.app, registry: current!.url }),
+    );
+    expect(kept.lines).toContain("kept light.tokens.json, differs (run diff)");
+    expect(kept.lines).toContain("skip dark.tokens.json (identical)");
+    expect(current.read("light.tokens.json")).toBe(edited);
+
+    const replaced = await captured(() =>
+      runAdd(["button"], { cwd: current!.app, registry: current!.url, overwrite: true }),
+    );
+    expect(replaced.lines.some((line) => line.startsWith("overwrite light.tokens.json "))).toBe(
+      true,
+    );
+    expect(current.read("light.tokens.json")).toBe(original);
   });
 
   test("asks for a name when neither components nor --all are given", async () => {

@@ -108,6 +108,16 @@ describe("diff", () => {
     expect(missing.text).toContain("  lib/ui/semantics.json");
   });
 
+  test("compares .tokens.json by content like any other registry:file", async () => {
+    current = await installed();
+    current.write("light.tokens.json", `${current.read("light.tokens.json")}// edited\n`);
+
+    const out = await captured(() => runDiff([], { cwd: current!.app, registry: current!.url }));
+    expect(out.result).toBe(1);
+    expect(out.text).toContain("theme (+");
+    expect(out.text).toContain("  light.tokens.json");
+  });
+
   test("asks for init when the app has no nsh-ui.json", async () => {
     current = fixture();
     const out = await captured(() => runDiff([], { cwd: current!.app, registry: current!.url }));
