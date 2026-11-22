@@ -1,6 +1,6 @@
 ---
 title: Themes
-description: "The palettes the demos can draw in: what a theme is, the radius tiers, and a page for each palette."
+description: "The palettes the demos can draw in: what a theme is, the radius layers, and a page for each palette."
 demo: themes
 ---
 
@@ -8,7 +8,7 @@ import { ThemeIndex } from "../../src/components/fd/theme-index";
 
 ## One look, more than one palette
 
-A theme is one `AppTheme`: `theme.json` (base tokens: colours, eight `radius-*` lengths, and fonts),
+A theme is one `AppTheme`: `theme.json` (base tokens: colours, three `radius-*` layer lengths, and fonts),
 `semantics.json` (cross-platform semantics: style groups and `shared` + sparse `light` / `dark`
 finishes, referencing tokens with `{token}`) and the `index.ts` that names it. An app is _built_
 with one theme and can _carry_ more, switching between them while it runs with `selectTheme`.
@@ -24,12 +24,11 @@ and the [theme roles spec](https://github.com/aningdev/shadcn-nsh/blob/main/docs
 
 ## Radii by role
 
-`theme.json` states all eight corner radii (`radius`, `radius-control`, `radius-field`,
-`radius-chip`, `radius-card`, `radius-overlay`, `radius-dialog`, `radius-sheet`) once in
-`cssVars.theme`, and `semantics.json`'s `shape.*` references them with `{radius-…}`. Generated
-themes (`shadcn`, `solid-glass`) derive `control` / `field` at `0.8×` and `card` / `dialog` / `sheet`
-at `1.4×` from `radius`, while platform themes (`apple`, `material`, `winui`) state platform metrics per role. Every corner
-that reads a theme radius uses `shape.curve` (`"continuous"` or `"circular"`), which `rounded()`
-applies in one place.
+`theme.json` states one corner radius per layer in `cssVars.theme` — `radius-control` (in-page
+elements), `radius-container` (cards, menus, popovers, toasts) and `radius-modal` (dialogs, sheets) —
+and `semantics.json`'s `shape.*` references them with `{radius-…}`. `shape.corners.button` makes
+buttons capsules (`apple`, `material`) or gives them `control` (the rest). A surface nested in
+another takes the concentric corner, `rounded(outer, inset)`. Every corner that reads a theme radius
+uses `shape.curve` (`"continuous"` or `"circular"`), which `rounded()` applies in one place.
 
 <ThemeIndex />

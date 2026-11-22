@@ -104,7 +104,7 @@ import { Toolbar } from "@/components/ui/toolbar";
 
 ### Chips
 
-A row of single-select capsules is a recipe, not a part. shadcn/ui has no capsule axis on `ToggleGroup`; where it wants one it puts `rounded-full` on the items. Here the same call-site `style` does it: `inset={false}` drops the track, `gap` spaces the chips, and `borderRadius: 999` makes the capsule. A capsule is geometry, not a theme role (`shape.chip` is the corner of a badge), so the radius is the full one. The base group holds no value: the app presses the chip asked for and keeps the chosen one pressed. For a row that scrolls, put the group in a horizontal `Scroll`.
+A row of single-select capsules is a recipe, not a part. shadcn/ui has no capsule axis on `ToggleGroup`; where it wants one it puts `rounded-full` on the items. Here the same call-site `style` does it: `inset={false}` drops the track, `gap` spaces the chips, and `borderRadius: 999` makes the capsule. A capsule is geometry, not a theme role (`shape.control` is the corner of a badge), so the radius is the full one. The base group holds no value: the app presses the chip asked for and keeps the chosen one pressed. For a row that scrolls, put the group in a horizontal `Scroll`.
 
 ```tsx
 <ToggleGroup inset={false} style={{ gap: 8, flexWrap: "wrap", maxWidth: "100%" }}>

@@ -15,10 +15,10 @@ In a monorepo, every path starts at `packages/ui/` instead of the app root.
 
 ## Colors, radii and shadows
 
-`theme.json` holds the colors for both appearances, the eight `radius-*` lengths, and font families; `lib/ui/semantics.json` holds style groups and surface finishes (`shared` + sparse `light`/`dark`), referencing tokens with `{token}`. Every component reads them through `lib/ui/theme.ts`.
+`theme.json` holds the colors for both appearances, the three `radius-*` layer lengths, and font families; `lib/ui/semantics.json` holds style groups and surface finishes (`shared` + sparse `light`/`dark`), referencing tokens with `{token}`. Every component reads them through `lib/ui/theme.ts`.
 
 ```sh
-theme.json               # base tokens: colors, 8 radii, fonts
+theme.json               # base tokens: colors, 3 radii, fonts
 lib/ui/semantics.json    # style groups and surface finishes
 lib/ui/theme.ts          # colors, finish, shape, font, focusRing, alpha
 ```
@@ -28,7 +28,12 @@ Edit the values and keep the keys: components and finishes refer to them by name
 ```json
 {
   "cssVars": {
-    "theme": { "radius": "10px", "radius-card": "14px", "radius-control": "8px" },
+    "theme": {
+      "radius": "8px",
+      "radius-control": "8px",
+      "radius-container": "12px",
+      "radius-modal": "14px"
+    },
     "light": { "background": "#f6f6f9", "primary": "#c6ef6a" },
     "dark": { "background": "#16191f", "primary": "#c4ec6a" }
   }

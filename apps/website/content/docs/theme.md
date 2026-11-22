@@ -9,7 +9,7 @@ The theme is the upstream gallery's: a graphite page (paper in light appearance)
 
 | File                                    | What it holds                                                                                                                                                                                                                                 |
 | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `theme.json`                            | Base tokens: colors (light / dark and shared), all 8 `radius-*` lengths, and font families (`font-mono`, optional `font-sans`) in shadcn's `cssVars` shape                                                                                    |
+| `theme.json`                            | Base tokens: colors (light / dark and shared), the three `radius-*` layer lengths (plus `radius`), and font families (`font-mono`, optional `font-sans`) in shadcn's `cssVars` shape                                                          |
 | `light.tokens.json`, `dark.tokens.json` | Standalone W3C DTCG 2025.10 Format files resolved per appearance at the `pointer` tier (in-file aliases, 6-digit `hex` fallbacks) for Figma Variables (Light/Dark modes), Tokens Studio, and Style Dictionary v4; static snapshots as shipped |
 | `DESIGN.md`                             | Generated Google Labs DESIGN.md (`alpha`) specification for coding agents, compiled from DTCG sources and the pointer-tier `light`/`dark` resolutions; static snapshot as shipped                                                             |
 | `semantics.json`                        | Semantic layer in DTCG names: 8 style groups (`typography`, `dimension`, `shape`, `state`, `duration`, `transition`, `motion`, `controls`) and `finishes` (`shared` + sparse `light` / `dark`), referencing tokens with `{token}`             |
@@ -121,27 +121,32 @@ Spread one where a control needs that depth:
 
 ## Radii
 
-`theme.json`'s `cssVars.theme` block defines all eight corner radii once (`radius`, `radius-control`, `radius-field`, `radius-chip`, `radius-card`, `radius-overlay`, `radius-dialog`, `radius-sheet`). In `semantics.json`, `dimension.shape.*` references them with `"{radius-…}"` alongside `shape.curve` (`"continuous" | "circular"`). `shape` resolves each role reactively via `token()`:
+`theme.json`'s `cssVars.theme` block defines three corner radii, one per layer: `radius-control` (in-page elements: fields, rows, chips, badges, wells, colour areas, keycaps), `radius-container` (cards, menus, popovers, rich tooltips, list panels, toasts) and `radius-modal` (dialogs, sheets, drawers). shadcn's own `radius` slot equals `radius-control`. In `semantics.json`, `dimension.shape.*` references them with `"{radius-…}"`, and `shape.corners.button` (`"full" | "radius"`) says whether buttons are capsules. `shape` resolves each role reactively via `token()`:
 
 ```tsx
 import { shape } from "@shadcn-nsh/theme";
 
-shape.inset; // 10, from radius
 shape.control; // 8, from radius-control
-shape.field; // 8, from radius-field
-shape.chip; // 10, from radius-chip
-shape.card; // 14, from radius-card
-shape.overlay; // 10, from radius-overlay
-shape.dialog; // 14, from radius-dialog
-shape.sheet; // 14, from radius-sheet
+shape.container; // 12, from radius-container
+shape.modal; // 14, from radius-modal
+shape.button; // 999 when shape.corners.button is "full", else shape.control
 ```
 
-Themes generated from a base radius (`shadcn`, `solid-glass`) derive `radius-control` / `radius-field` at `0.8×` and `radius-card` / `radius-dialog` / `radius-sheet` at `1.4×`, while platform themes (`apple`, `material`, `winui`) state their metrics per role (`999px` capsules for `radius-control`, `28px` dialogs and sheets in `material`, `4px` controls and `8px` cards/overlays in `winui`). `rounded()` puts a corner on one of these with `shape.curve` (`"continuous"` or `"circular"`):
+| Theme               | `control` | `container` | `modal` | Buttons   |
+| ------------------- | --------- | ----------- | ------- | --------- |
+| `default`, `shadcn` | 8         | 12          | 14      | `control` |
+| `solid-glass`       | 11        | 14          | 20      | `control` |
+| `apple`             | 8         | 12          | 26      | capsule   |
+| `material`          | 4         | 12          | 28      | capsule   |
+| `winui`             | 4         | 8           | 8       | `control` |
+
+A surface inside another takes a concentric corner from its outer one: `rounded(outer, inset)` gives `outer − inset`, never below 0. `rounded()` also puts the corner on with `shape.curve` (`"continuous"` or `"circular"`):
 
 ```tsx
 import { rounded, shape } from "@shadcn-nsh/theme";
 
-const card = { ...rounded(shape.card) };
+const card = { ...rounded(shape.container) };
+const thumb = { ...rounded(shape.control, 2) }; // inside a 2-point track
 ```
 
 ## Reading the theme
@@ -152,7 +157,7 @@ import { alpha, colors, finish, focusRing, rounded, shape } from "@shadcn-nsh/th
 const card = {
   backgroundColor: colors.card,
   borderColor: colors.border,
-  ...rounded(shape.card),
+  ...rounded(shape.container),
   boxShadow: finish.card.boxShadow,
 };
 
@@ -166,10 +171,10 @@ const dim = alpha(colors.foreground, 0.4); // a color at 40%
 
 An app's `nsh.json` sets the look in two places, and the two do not merge:
 
-| Key in `nsh.json` | What it sets                                                                                           | When it is read                                                                                     |
-| ----------------- | ------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------- |
-| `"theme"`         | the path to `theme.json`: every base token — colours, all 8 `radius-*` tokens, `font-sans`/`font-mono` | on each read, at runtime — so `setTheme`, `setThemeOverrides`, `shape` and `font.family()` reach it |
-| `"tailwind"`      | the app's own class strings: `colors`, `fontFamily`, `spacing`, `radius`, …                            | when the app is built, into the class strings — no component here reads it                          |
+| Key in `nsh.json` | What it sets                                                                                         | When it is read                                                                                     |
+| ----------------- | ---------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `"theme"`         | the path to `theme.json`: every base token — colours, the `radius-*` tokens, `font-sans`/`font-mono` | on each read, at runtime — so `setTheme`, `setThemeOverrides`, `shape` and `font.family()` reach it |
+| `"tailwind"`      | the app's own class strings: `colors`, `fontFamily`, `spacing`, `radius`, …                          | when the app is built, into the class strings — no component here reads it                          |
 
 Components take their look from `"theme"`: `colors`, `finish`, `shape` and `font` read the tokens where they are used. `"tailwind"` shapes class names — which this library writes too (`bg-muted`, `text-sm`, `h-8`) — but it is fixed at build time, so nothing in it can follow `setTheme`. NSH's [theme tokens](https://nsh.dev/docs/tailwind#theme-tokens) has the rule in full.
 
@@ -188,7 +193,7 @@ Add a colour the app's own classes use (both appearances — a token in one alon
 }
 ```
 
-Change a role: `primary` in `cssVars.light` and `cssVars.dark`. Change a radius: any of the 8 `radius-*` tokens in `cssVars.theme` — every corner follows them: `shape.*` and `rounded()` in the styles, and `rounded-(--radius…)` in the classes, this library's and the app's own alike. Set the fonts in the same block: see [Fonts](#fonts).
+Change a role: `primary` in `cssVars.light` and `cssVars.dark`. Change a radius: `radius-control`, `radius-container` or `radius-modal` in `cssVars.theme` (keep `radius` equal to `radius-control`) — every corner follows them: `shape.*` and `rounded()` in the styles, and `rounded-(--radius…)` in the classes, this library's and the app's own alike. Set the fonts in the same block: see [Fonts](#fonts).
 
 ## Fonts
 
