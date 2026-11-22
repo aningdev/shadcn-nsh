@@ -20,7 +20,7 @@ npx shadcn-nsh add button           # one item, with the files it depends on
 npx shadcn-nsh add --all            # every component
 ```
 
-`init` records the choice in `nsh-ui.json`, installs the theme at `theme.json` + `lib/ui/semantics.json`, points each `nsh.json` at it, and sets up the `@/` import alias in an app (`"@/*": ["./*"]` in `tsconfig.json`'s paths, `"resolve": { "alias": { "@": "./" } }` in `nsh.json`) so the docs' snippets — `@/components/ui/<name>`, `@/lib/ui/theme` — resolve; `add` copies files and installs the packages an item declares (`lucide` among them) with your package manager. From then on the files are yours to change.
+`init` records the choice in `nsh-ui.json`, installs the theme at `theme.json` + `lib/ui/semantics.json` + `lib/ui/theme.ts` alongside standalone `light.tokens.json` and `dark.tokens.json` (W3C DTCG 2025.10 files describing the shipped theme for Figma Variables Light/Dark modes, Tokens Studio, and Style Dictionary v4; static snapshots that do not follow later edits to `theme.json`), points each `nsh.json` at `theme.json`, and sets up the `@/` import alias in an app (`"@/*": ["./*"]` in `tsconfig.json`'s paths, `"resolve": { "alias": { "@": "./" } }` in `nsh.json`) so the docs' snippets — `@/components/ui/<name>`, `@/lib/ui/theme` — resolve; `add` copies files and installs the packages an item declares (`lucide` among them) with your package manager. From then on the files are yours to change.
 
 `list`, `view` and `diff` inspect the registry without writing: `npx shadcn-nsh list`, `view button`, `diff` (exits 1 when the app's copies differ). Every command takes `-c <dir>`, `add` also `--dry-run` and `--overwrite`. The [CLI reference](https://shadcn-nsh.aning.dev/docs/cli) has the flags and defaults.
 
