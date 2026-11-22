@@ -5,7 +5,12 @@
     "$type": "cubicBezier",
     "$description": "Named timing curves shared across themes.",
     "out-cubic": {
-      "$value": [0.333333, 1, 0.666667, 1],
+      "$value": [
+        0.333333,
+        1,
+        0.666667,
+        1
+      ],
       "$description": "Exact cubic-bezier equivalent of NSH Easing.out(Easing.cubic).",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -14,7 +19,12 @@
       }
     },
     "in-cubic": {
-      "$value": [0.333333, 0, 0.666667, 0],
+      "$value": [
+        0.333333,
+        0,
+        0.666667,
+        0
+      ],
       "$description": "Exact cubic-bezier equivalent of NSH Easing.in(Easing.cubic).",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -23,7 +33,12 @@
       }
     },
     "in-out-cubic": {
-      "$value": [0.65, 0, 0.35, 1],
+      "$value": [
+        0.65,
+        0,
+        0.35,
+        1
+      ],
       "$description": "Cubic approximation of NSH Easing.inOut(Easing.cubic).",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -32,31 +47,66 @@
       }
     },
     "standard": {
-      "$value": [0.2, 0, 0, 1],
+      "$value": [
+        0.2,
+        0,
+        0,
+        1
+      ],
       "$description": "Material 3 md.sys.motion.easing.standard."
     },
     "emphasized-decelerate": {
-      "$value": [0.05, 0.7, 0.1, 1],
+      "$value": [
+        0.05,
+        0.7,
+        0.1,
+        1
+      ],
       "$description": "Material 3 emphasized-decelerate curve."
     },
     "emphasized-accelerate": {
-      "$value": [0.3, 0, 0.8, 0.15],
+      "$value": [
+        0.3,
+        0,
+        0.8,
+        0.15
+      ],
       "$description": "Material 3 emphasized-accelerate curve."
     },
     "decelerate": {
-      "$value": [0, 0, 0, 1],
+      "$value": [
+        0,
+        0,
+        0,
+        1
+      ],
       "$description": "WinUI 3 / Fluent 2 Direct Entrance decelerate curve."
     },
     "accelerate": {
-      "$value": [1, 0, 1, 1],
+      "$value": [
+        1,
+        0,
+        1,
+        1
+      ],
       "$description": "WinUI 3 / Fluent 2 Gentle Exit accelerate curve."
     },
     "easy-ease": {
-      "$value": [0.33, 0, 0.67, 1],
+      "$value": [
+        0.33,
+        0,
+        0.67,
+        1
+      ],
       "$description": "Fluent Web curveEasyEase."
     },
     "point-to-point": {
-      "$value": [0.55, 0.55, 0, 1],
+      "$value": [
+        0.55,
+        0.55,
+        0,
+        1
+      ],
       "$description": "WinUI 3 Point-to-Point motion curve."
     }
   },
@@ -632,11 +682,18 @@
       "$type": "fontFamily",
       "$description": "Font family stacks.",
       "mono": {
-        "$value": ["Consolas", "monospace"],
+        "$value": [
+          "Consolas",
+          "monospace"
+        ],
         "$description": "WinUI 3 monospace font stack (Consolas, monospace)."
       },
       "sans": {
-        "$value": ["Segoe UI Variable", "Segoe UI", "sans-serif"],
+        "$value": [
+          "Segoe UI Variable",
+          "Segoe UI",
+          "sans-serif"
+        ],
         "$description": "WinUI 3 primary UI font stack (Segoe UI Variable, Segoe UI, sans-serif; typography.md)."
       }
     },
@@ -726,7 +783,11 @@
     "scrim": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0, 0, 0],
+        "components": [
+          0,
+          0,
+          0
+        ],
         "alpha": 0.302,
         "hex": "#000000"
       },
@@ -735,7 +796,11 @@
     "media": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.1869, 0.0151, 266.766],
+        "components": [
+          0.1869,
+          0.0151,
+          266.766
+        ],
         "hex": "#10131a"
       },
       "$description": "Ground behind photographs and videos; invariant across appearances."
@@ -743,7 +808,11 @@
     "on-media": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [1, 0, 0],
+        "components": [
+          1,
+          0,
+          0
+        ],
         "hex": "#ffffff"
       },
       "$description": "White ink over photographs and dark media surfaces; invariant across appearances."
@@ -751,7 +820,11 @@
     "chart-foreground": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.21779, 0, 0],
+        "components": [
+          0.21779,
+          0,
+          0
+        ],
         "hex": "#1a1a1a"
       },
       "$description": "Dark ink on light chart tiles matching WinUI light TextFillColorPrimary."
@@ -759,7 +832,11 @@
     "window-close": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.6936, 0.19638, 26.364],
+        "components": [
+          0.6936,
+          0.19638,
+          26.364
+        ],
         "hex": "#ff5f57"
       },
       "$description": "macOS window close traffic-light button fill."
@@ -767,7 +844,11 @@
     "window-minimize": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.83478, 0.1612, 80.911],
+        "components": [
+          0.83478,
+          0.1612,
+          80.911
+        ],
         "hex": "#febc2e"
       },
       "$description": "macOS window minimize traffic-light button fill."
@@ -775,7 +856,11 @@
     "window-zoom": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.72803, 0.21734, 144.712],
+        "components": [
+          0.72803,
+          0.21734,
+          144.712
+        ],
         "hex": "#28c840"
       },
       "$description": "macOS window zoom traffic-light button fill."
@@ -783,7 +868,11 @@
     "window-control-ink": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0, 0, 0],
+        "components": [
+          0,
+          0,
+          0
+        ],
         "alpha": 0.5,
         "hex": "#000000"
       },
@@ -792,7 +881,11 @@
     "window-control-edge": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0, 0, 0],
+        "components": [
+          0,
+          0,
+          0
+        ],
         "alpha": 0.12,
         "hex": "#000000"
       },
@@ -801,7 +894,11 @@
     "background": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.24353, 0, 0],
+        "components": [
+          0.24353,
+          0,
+          0
+        ],
         "hex": "#202020"
       },
       "$description": "Window base surface (WinUI SolidBackgroundFillColorBase)."
@@ -809,7 +906,11 @@
     "foreground": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [1, 0, 0],
+        "components": [
+          1,
+          0,
+          0
+        ],
         "hex": "#ffffff"
       },
       "$description": "Primary text and icon ink (WinUI TextFillColorPrimary composited over base)."
@@ -817,7 +918,11 @@
     "card": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.28908, 0, 0],
+        "components": [
+          0.28908,
+          0,
+          0
+        ],
         "hex": "#2b2b2b"
       },
       "$description": "Elevated card background (WinUI CardBackgroundFillColorDefault composited over base)."
@@ -825,7 +930,11 @@
     "popover": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.29313, 0, 0],
+        "components": [
+          0.29313,
+          0,
+          0
+        ],
         "hex": "#2c2c2c"
       },
       "$description": "Acrylic flyout/popover fallback surface (WinUI AcrylicInAppFillColorDefaultFallback)."
@@ -833,7 +942,11 @@
     "primary": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.80403, 0.12199, 230.822],
+        "components": [
+          0.80403,
+          0.12199,
+          230.822
+        ],
         "hex": "#60cdff"
       },
       "$description": "Accent button fill (WinUI AccentFillColorDefault: Dark1 light / Light2 dark from SystemAccentColor)."
@@ -841,7 +954,11 @@
     "primary-foreground": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0, 0, 0],
+        "components": [
+          0,
+          0,
+          0
+        ],
         "hex": "#000000"
       },
       "$description": "Ink on accent fills (WinUI TextOnAccentFillColorPrimary)."
@@ -849,7 +966,11 @@
     "muted": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.22645, 0, 0],
+        "components": [
+          0.22645,
+          0,
+          0
+        ],
         "hex": "#1c1c1c"
       },
       "$description": "Recessed neutral surface (WinUI SolidBackgroundFillColorSecondary composited over base)."
@@ -857,7 +978,11 @@
     "muted-foreground": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.84522, 0, 0],
+        "components": [
+          0.84522,
+          0,
+          0
+        ],
         "hex": "#cccccc"
       },
       "$description": "Secondary label ink (WinUI TextFillColorSecondary composited over base)."
@@ -865,7 +990,11 @@
     "accent": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.29716, 0, 0],
+        "components": [
+          0.29716,
+          0,
+          0
+        ],
         "hex": "#2d2d2d"
       },
       "$description": "Subtle list/menu hover fill (WinUI SubtleFillColorSecondary composited over base)."
@@ -873,7 +1002,11 @@
     "destructive": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.79111, 0.12251, 13.299],
+        "components": [
+          0.79111,
+          0.12251,
+          13.299
+        ],
         "hex": "#ff99a4"
       },
       "$description": "Critical/error status ink (WinUI SystemFillColorCritical)."
@@ -881,7 +1014,11 @@
     "border": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.30919, 0, 0],
+        "components": [
+          0.30919,
+          0,
+          0
+        ],
         "hex": "#303030"
       },
       "$description": "Standard control hairline border (WinUI ControlStrokeColorDefault composited over base)."
@@ -889,7 +1026,11 @@
     "input": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.68622, 0, 0],
+        "components": [
+          0.68622,
+          0,
+          0
+        ],
         "hex": "#9a9a9a"
       },
       "$description": "Input and check control outline (WinUI ControlStrongStrokeColorDefault composited over base)."
@@ -897,7 +1038,11 @@
     "inset": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.23075, 0, 0],
+        "components": [
+          0.23075,
+          0,
+          0
+        ],
         "hex": "#1d1d1d"
       },
       "$description": "Inset well fill (WinUI ControlAltFillColorSecondary composited over base)."
@@ -905,7 +1050,11 @@
     "raised": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.29716, 0, 0],
+        "components": [
+          0.29716,
+          0,
+          0
+        ],
         "hex": "#2d2d2d"
       },
       "$description": "Raised control fill (WinUI ControlFillColorDefault composited over base)."
@@ -913,7 +1062,11 @@
     "glass-edge": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.21779, 0, 0],
+        "components": [
+          0.21779,
+          0,
+          0
+        ],
         "hex": "#1a1a1a"
       },
       "$description": "Flyout and acrylic border (WinUI SurfaceStrokeColorFlyout composited over base)."
@@ -921,7 +1074,11 @@
     "scrollbar-thumb": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.68622, 0, 0],
+        "components": [
+          0.68622,
+          0,
+          0
+        ],
         "hex": "#9a9a9a"
       },
       "$description": "Static scrollbar thumb color (WinUI ControlStrongFillColorDefault)."
@@ -929,7 +1086,11 @@
     "scrollbar-thumb-hover": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.68622, 0, 0],
+        "components": [
+          0.68622,
+          0,
+          0
+        ],
         "hex": "#9a9a9a"
       },
       "$description": "Static scrollbar hover color (WinUI ControlStrongFillColorDefault)."
@@ -937,7 +1098,11 @@
     "field": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.29716, 0, 0],
+        "components": [
+          0.29716,
+          0,
+          0
+        ],
         "hex": "#2d2d2d"
       },
       "$description": "Text input surface (WinUI ControlFillColorDefault composited over base)."
@@ -945,7 +1110,11 @@
     "line": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.31714, 0, 0],
+        "components": [
+          0.31714,
+          0,
+          0
+        ],
         "hex": "#323232"
       },
       "$description": "Hairline divider stroke (WinUI DividerStrokeColorDefault)."
@@ -953,7 +1122,11 @@
     "hover": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.31714, 0, 0],
+        "components": [
+          0.31714,
+          0,
+          0
+        ],
         "hex": "#323232"
       },
       "$description": "Pointer hover fill (WinUI ControlFillColorSecondary composited over base)."
@@ -961,7 +1134,11 @@
     "ring-halo": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.14479, 0, 0],
+        "components": [
+          0.14479,
+          0,
+          0
+        ],
         "hex": "#0a0a0a"
       },
       "$description": "Inner keyboard focus stroke (WinUI FocusStrokeColorInner composited over base)."
@@ -969,7 +1146,11 @@
     "faint": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.67312, 0, 0],
+        "components": [
+          0.67312,
+          0,
+          0
+        ],
         "hex": "#969696"
       },
       "$description": "Tertiary label ink (WinUI TextFillColorTertiary composited over base)."
@@ -977,7 +1158,11 @@
     "brand": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.8943, 0.08425, 214.859],
+        "components": [
+          0.8943,
+          0.08425,
+          214.859
+        ],
         "hex": "#99ebff"
       },
       "$description": "Accent text/link/icon ink (WinUI AccentTextFillColorPrimary: Dark2 light / Light3 dark)."
@@ -985,7 +1170,11 @@
     "brand-edge": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.7208, 0.10826, 230.667],
+        "components": [
+          0.7208,
+          0.10826,
+          230.667
+        ],
         "hex": "#53b1dc"
       },
       "$description": "Accent button bottom bevel stroke (WinUI ControlStrokeColorOnAccentSecondary composited over primary)."
@@ -993,7 +1182,11 @@
     "track": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.23075, 0, 0],
+        "components": [
+          0.23075,
+          0,
+          0
+        ],
         "hex": "#1d1d1d"
       },
       "$description": "Switch and slider track (WinUI ControlAltFillColorSecondary)."
@@ -1001,7 +1194,11 @@
     "knob": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.84522, 0, 0],
+        "components": [
+          0.84522,
+          0,
+          0
+        ],
         "hex": "#cccccc"
       },
       "$description": "Unchecked switch thumb (WinUI TextFillColorSecondary)."
@@ -1009,7 +1206,11 @@
     "code": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [1, 0, 0],
+        "components": [
+          1,
+          0,
+          0
+        ],
         "hex": "#ffffff"
       },
       "$description": "Inline code ink (WinUI TextFillColorPrimary)."
@@ -1017,7 +1218,11 @@
     "info": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.80403, 0.12199, 230.822],
+        "components": [
+          0.80403,
+          0.12199,
+          230.822
+        ],
         "hex": "#60cdff"
       },
       "$description": "Informational semantic color (WinUI SystemFillColorAttentionBrush)."
@@ -1025,7 +1230,11 @@
     "warn": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.90397, 0.18827, 100.526],
+        "components": [
+          0.90397,
+          0.18827,
+          100.526
+        ],
         "hex": "#fce100"
       },
       "$description": "Caution semantic color (WinUI SystemFillColorCaution)."
@@ -1033,7 +1242,11 @@
     "up": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.75934, 0.17155, 141.348],
+        "components": [
+          0.75934,
+          0.17155,
+          141.348
+        ],
         "hex": "#6ccb5f"
       },
       "$description": "Success semantic color (WinUI SystemFillColorSuccess)."
@@ -1041,7 +1254,11 @@
     "brand-tint": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.30508, 0.01746, 227.257],
+        "components": [
+          0.30508,
+          0.01746,
+          227.257
+        ],
         "hex": "#263136"
       },
       "$description": "10% accent wash composited opaque over window base."
@@ -1049,7 +1266,11 @@
     "on-brand-tint": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [1, 0, 0],
+        "components": [
+          1,
+          0,
+          0
+        ],
         "hex": "#ffffff"
       },
       "$description": "Ink on brand-tint surfaces (WinUI TextFillColorPrimary)."
@@ -1057,7 +1278,11 @@
     "inverse": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.27685, 0, 0],
+        "components": [
+          0.27685,
+          0,
+          0
+        ],
         "hex": "#282828"
       },
       "$description": "TeachingTip/toast surface (WinUI SolidBackgroundFillColorTertiary composited over base)."
@@ -1065,7 +1290,11 @@
     "inverse-foreground": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [1, 0, 0],
+        "components": [
+          1,
+          0,
+          0
+        ],
         "hex": "#ffffff"
       },
       "$description": "Ink on inverse surface (WinUI TextFillColorPrimary)."
@@ -1073,7 +1302,11 @@
     "inverse-muted": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.84522, 0, 0],
+        "components": [
+          0.84522,
+          0,
+          0
+        ],
         "hex": "#cccccc"
       },
       "$description": "Secondary ink on inverse surface (WinUI TextFillColorSecondary)."
@@ -1081,7 +1314,11 @@
     "inverse-brand": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0, 0, 0],
+        "components": [
+          0,
+          0,
+          0
+        ],
         "hex": "#000000"
       },
       "$description": "Action ink on inverse surface matching TextOnAccentFillColorPrimary."
@@ -1089,7 +1326,11 @@
     "info-tint": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.27274, 0, 0],
+        "components": [
+          0.27274,
+          0,
+          0
+        ],
         "hex": "#272727"
       },
       "$description": "Informational wash (WinUI SystemFillColorAttentionBackground composited over base)."
@@ -1097,7 +1338,11 @@
     "warn-tint": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.33731, 0.04713, 83.238],
+        "components": [
+          0.33731,
+          0.04713,
+          83.238
+        ],
         "hex": "#433519"
       },
       "$description": "Caution wash (WinUI SystemFillColorCautionBackground composited over base)."
@@ -1105,7 +1350,11 @@
     "destructive-tint": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.30954, 0.04407, 22.054],
+        "components": [
+          0.30954,
+          0.04407,
+          22.054
+        ],
         "hex": "#442726"
       },
       "$description": "Critical wash (WinUI SystemFillColorCriticalBackground composited over base)."
@@ -1113,7 +1362,11 @@
     "up-tint": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.34726, 0.05298, 114.732],
+        "components": [
+          0.34726,
+          0.05298,
+          114.732
+        ],
         "hex": "#393d1b"
       },
       "$description": "Success wash (WinUI SystemFillColorSuccessBackground composited over base)."
@@ -1121,7 +1374,11 @@
     "down-tint": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.30954, 0.04407, 22.054],
+        "components": [
+          0.30954,
+          0.04407,
+          22.054
+        ],
         "hex": "#442726"
       },
       "$description": "Negative trend wash (WinUI SystemFillColorCriticalBackground composited over base)."
@@ -1129,7 +1386,11 @@
     "violet": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.76787, 0.13219, 294.446],
+        "components": [
+          0.76787,
+          0.13219,
+          294.446
+        ],
         "hex": "#b9a2ff"
       },
       "$description": "Library-retained violet data-series hue (no WinUI equivalent)."
@@ -1137,7 +1398,11 @@
     "card-foreground": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [1, 0, 0],
+        "components": [
+          1,
+          0,
+          0
+        ],
         "hex": "#ffffff"
       },
       "$description": "Primary ink on card surfaces (WinUI TextFillColorPrimary)."
@@ -1145,7 +1410,11 @@
     "popover-foreground": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [1, 0, 0],
+        "components": [
+          1,
+          0,
+          0
+        ],
         "hex": "#ffffff"
       },
       "$description": "Primary ink on popover surfaces (WinUI TextFillColorPrimary)."
@@ -1153,7 +1422,11 @@
     "accent-foreground": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [1, 0, 0],
+        "components": [
+          1,
+          0,
+          0
+        ],
         "hex": "#ffffff"
       },
       "$description": "Ink on subtle accent fills (WinUI TextFillColorPrimary)."
@@ -1161,7 +1434,11 @@
     "secondary": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.29716, 0, 0],
+        "components": [
+          0.29716,
+          0,
+          0
+        ],
         "hex": "#2d2d2d"
       },
       "$description": "Standard control fill (WinUI ControlFillColorDefault composited over base)."
@@ -1169,7 +1446,11 @@
     "secondary-foreground": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [1, 0, 0],
+        "components": [
+          1,
+          0,
+          0
+        ],
         "hex": "#ffffff"
       },
       "$description": "Ink on secondary controls (WinUI TextFillColorPrimary)."
@@ -1177,7 +1458,11 @@
     "chart-1": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.80403, 0.12199, 230.822],
+        "components": [
+          0.80403,
+          0.12199,
+          230.822
+        ],
         "hex": "#60cdff"
       },
       "$description": "First chart series color matching WinUI primary accent."
@@ -1185,7 +1470,11 @@
     "chart-2": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.75934, 0.17155, 141.348],
+        "components": [
+          0.75934,
+          0.17155,
+          141.348
+        ],
         "hex": "#6ccb5f"
       },
       "$description": "Second chart series color (WinUI SystemFillColorSuccess)."
@@ -1193,7 +1482,11 @@
     "chart-3": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.90397, 0.18827, 100.526],
+        "components": [
+          0.90397,
+          0.18827,
+          100.526
+        ],
         "hex": "#fce100"
       },
       "$description": "Third chart series color (WinUI SystemFillColorCaution)."
@@ -1201,7 +1494,11 @@
     "chart-4": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.79111, 0.12251, 13.299],
+        "components": [
+          0.79111,
+          0.12251,
+          13.299
+        ],
         "hex": "#ff99a4"
       },
       "$description": "Fourth chart series color (WinUI SystemFillColorCritical)."
@@ -1209,7 +1506,11 @@
     "chart-5": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.68622, 0, 0],
+        "components": [
+          0.68622,
+          0,
+          0
+        ],
         "hex": "#9a9a9a"
       },
       "$description": "Fifth chart series color (WinUI ControlStrongFillColorDefault)."
@@ -1217,7 +1518,11 @@
     "ring": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [1, 0, 0],
+        "components": [
+          1,
+          0,
+          0
+        ],
         "hex": "#ffffff"
       },
       "$description": "Outer keyboard focus stroke (WinUI FocusStrokeColorOuter)."
@@ -1225,7 +1530,11 @@
     "sidebar": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.24353, 0, 0],
+        "components": [
+          0.24353,
+          0,
+          0
+        ],
         "hex": "#202020"
       },
       "$description": "NavigationView expanded pane background matching window base."
@@ -1233,7 +1542,11 @@
     "sidebar-foreground": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [1, 0, 0],
+        "components": [
+          1,
+          0,
+          0
+        ],
         "hex": "#ffffff"
       },
       "$description": "Sidebar primary ink (WinUI TextFillColorPrimary)."
@@ -1241,7 +1554,11 @@
     "sidebar-accent": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.29716, 0, 0],
+        "components": [
+          0.29716,
+          0,
+          0
+        ],
         "hex": "#2d2d2d"
       },
       "$description": "Sidebar active item fill (WinUI SubtleFillColorSecondary)."
@@ -1249,7 +1566,11 @@
     "sidebar-accent-foreground": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [1, 0, 0],
+        "components": [
+          1,
+          0,
+          0
+        ],
         "hex": "#ffffff"
       },
       "$description": "Sidebar active item ink (WinUI TextFillColorPrimary)."
@@ -1257,7 +1578,11 @@
     "sidebar-border": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.31714, 0, 0],
+        "components": [
+          0.31714,
+          0,
+          0
+        ],
         "hex": "#323232"
       },
       "$description": "Sidebar separator stroke (WinUI DividerStrokeColorDefault)."
@@ -1265,7 +1590,11 @@
     "sidebar-primary": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.80403, 0.12199, 230.822],
+        "components": [
+          0.80403,
+          0.12199,
+          230.822
+        ],
         "hex": "#60cdff"
       },
       "$description": "Sidebar primary accent matching AccentFillColorDefault."
@@ -1273,7 +1602,11 @@
     "sidebar-primary-foreground": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0, 0, 0],
+        "components": [
+          0,
+          0,
+          0
+        ],
         "hex": "#000000"
       },
       "$description": "Sidebar primary ink matching TextOnAccentFillColorPrimary."
@@ -1281,7 +1614,11 @@
     "sidebar-ring": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [1, 0, 0],
+        "components": [
+          1,
+          0,
+          0
+        ],
         "hex": "#ffffff"
       },
       "$description": "Sidebar focus stroke (WinUI FocusStrokeColorOuter)."
@@ -1289,7 +1626,11 @@
     "down": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.79111, 0.12251, 13.299],
+        "components": [
+          0.79111,
+          0.12251,
+          13.299
+        ],
         "hex": "#ff99a4"
       },
       "$description": "Negative trend color matching WinUI SystemFillColorCritical."
@@ -1297,7 +1638,11 @@
     "window-control-off": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.40108, 0.01081, 264.446],
+        "components": [
+          0.40108,
+          0.01081,
+          264.446
+        ],
         "hex": "#45484e"
       },
       "$description": "Library-retained unfocused window traffic-light fill (no WinUI equivalent)."
@@ -1336,7 +1681,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.24,
               "hex": "#000000"
             },
@@ -1360,7 +1709,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.28,
               "hex": "#000000"
             },
@@ -1391,7 +1744,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -1431,7 +1788,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -1503,7 +1864,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.24,
               "hex": "#000000"
             },
@@ -1527,7 +1892,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.28,
               "hex": "#000000"
             },
@@ -1590,7 +1959,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.24,
               "hex": "#000000"
             },
@@ -1614,7 +1987,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.28,
               "hex": "#000000"
             },
@@ -1667,7 +2044,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -1733,7 +2114,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -1799,7 +2184,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -1843,7 +2232,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -1886,7 +2279,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0, 0, 0],
+          "components": [
+            0,
+            0,
+            0
+          ],
           "alpha": 0,
           "hex": "#000000"
         },
@@ -1919,7 +2316,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -1950,7 +2351,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0, 0, 0],
+          "components": [
+            0,
+            0,
+            0
+          ],
           "alpha": 0,
           "hex": "#000000"
         },
@@ -1995,7 +2400,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -2026,7 +2435,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0, 0, 0],
+          "components": [
+            0,
+            0,
+            0
+          ],
           "alpha": 0,
           "hex": "#000000"
         },
@@ -2071,7 +2484,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -2102,7 +2519,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0, 0, 0],
+          "components": [
+            0,
+            0,
+            0
+          ],
           "alpha": 0,
           "hex": "#000000"
         },
@@ -2157,7 +2578,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.24,
               "hex": "#000000"
             },
@@ -2181,7 +2606,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.28,
               "hex": "#000000"
             },
@@ -2234,7 +2663,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -2310,7 +2743,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.24,
               "hex": "#000000"
             },
@@ -2334,7 +2771,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.28,
               "hex": "#000000"
             },
@@ -2387,7 +2828,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -2453,7 +2898,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -2510,7 +2959,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.29313, 0, 0],
+          "components": [
+            0.29313,
+            0,
+            0
+          ],
           "alpha": 0.96,
           "hex": "#2c2c2c"
         },
@@ -2530,7 +2983,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.4,
               "hex": "#000000"
             },
@@ -2554,7 +3011,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.48,
               "hex": "#000000"
             },
@@ -2603,7 +3064,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.4,
               "hex": "#000000"
             },
@@ -2627,7 +3092,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.48,
               "hex": "#000000"
             },
@@ -2668,7 +3137,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.4,
               "hex": "#000000"
             },
@@ -2692,7 +3165,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.48,
               "hex": "#000000"
             },
@@ -2719,7 +3196,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.37909, 0, 0],
+          "components": [
+            0.37909,
+            0,
+            0
+          ],
           "hex": "#424242"
         }
       }
@@ -2749,7 +3230,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.24,
               "hex": "#000000"
             },
@@ -2773,7 +3258,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.28,
               "hex": "#000000"
             },
@@ -2818,7 +3307,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.4,
               "hex": "#000000"
             },
@@ -2842,7 +3335,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.48,
               "hex": "#000000"
             },
@@ -2873,7 +3370,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },

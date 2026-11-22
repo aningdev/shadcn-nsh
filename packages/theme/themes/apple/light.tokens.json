@@ -5,7 +5,12 @@
     "$type": "cubicBezier",
     "$description": "Named timing curves shared across themes.",
     "out-cubic": {
-      "$value": [0.333333, 1, 0.666667, 1],
+      "$value": [
+        0.333333,
+        1,
+        0.666667,
+        1
+      ],
       "$description": "Exact cubic-bezier equivalent of NSH Easing.out(Easing.cubic).",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -14,7 +19,12 @@
       }
     },
     "in-cubic": {
-      "$value": [0.333333, 0, 0.666667, 0],
+      "$value": [
+        0.333333,
+        0,
+        0.666667,
+        0
+      ],
       "$description": "Exact cubic-bezier equivalent of NSH Easing.in(Easing.cubic).",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -23,7 +33,12 @@
       }
     },
     "in-out-cubic": {
-      "$value": [0.65, 0, 0.35, 1],
+      "$value": [
+        0.65,
+        0,
+        0.35,
+        1
+      ],
       "$description": "Cubic approximation of NSH Easing.inOut(Easing.cubic).",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -32,31 +47,66 @@
       }
     },
     "standard": {
-      "$value": [0.2, 0, 0, 1],
+      "$value": [
+        0.2,
+        0,
+        0,
+        1
+      ],
       "$description": "Material 3 md.sys.motion.easing.standard."
     },
     "emphasized-decelerate": {
-      "$value": [0.05, 0.7, 0.1, 1],
+      "$value": [
+        0.05,
+        0.7,
+        0.1,
+        1
+      ],
       "$description": "Material 3 emphasized-decelerate curve."
     },
     "emphasized-accelerate": {
-      "$value": [0.3, 0, 0.8, 0.15],
+      "$value": [
+        0.3,
+        0,
+        0.8,
+        0.15
+      ],
       "$description": "Material 3 emphasized-accelerate curve."
     },
     "decelerate": {
-      "$value": [0, 0, 0, 1],
+      "$value": [
+        0,
+        0,
+        0,
+        1
+      ],
       "$description": "WinUI 3 / Fluent 2 Direct Entrance decelerate curve."
     },
     "accelerate": {
-      "$value": [1, 0, 1, 1],
+      "$value": [
+        1,
+        0,
+        1,
+        1
+      ],
       "$description": "WinUI 3 / Fluent 2 Gentle Exit accelerate curve."
     },
     "easy-ease": {
-      "$value": [0.33, 0, 0.67, 1],
+      "$value": [
+        0.33,
+        0,
+        0.67,
+        1
+      ],
       "$description": "Fluent Web curveEasyEase."
     },
     "point-to-point": {
-      "$value": [0.55, 0.55, 0, 1],
+      "$value": [
+        0.55,
+        0.55,
+        0,
+        1
+      ],
       "$description": "WinUI 3 Point-to-Point motion curve."
     }
   },
@@ -70,7 +120,10 @@
     },
     "caption": {
       "$value": {
-        "fontFamily": ["system-ui", "sans-serif"],
+        "fontFamily": [
+          "system-ui",
+          "sans-serif"
+        ],
         "fontSize": "{font.size.caption}",
         "fontWeight": 400,
         "lineHeight": "{font.line-height.caption}",
@@ -83,7 +136,10 @@
     },
     "detail": {
       "$value": {
-        "fontFamily": ["system-ui", "sans-serif"],
+        "fontFamily": [
+          "system-ui",
+          "sans-serif"
+        ],
         "fontSize": "{font.size.detail}",
         "fontWeight": 400,
         "lineHeight": "{font.line-height.detail}",
@@ -96,7 +152,10 @@
     },
     "body": {
       "$value": {
-        "fontFamily": ["system-ui", "sans-serif"],
+        "fontFamily": [
+          "system-ui",
+          "sans-serif"
+        ],
         "fontSize": "{font.size.body}",
         "fontWeight": 400,
         "lineHeight": "{font.line-height.body}",
@@ -109,7 +168,10 @@
     },
     "label": {
       "$value": {
-        "fontFamily": ["system-ui", "sans-serif"],
+        "fontFamily": [
+          "system-ui",
+          "sans-serif"
+        ],
         "fontSize": "{font.size.label}",
         "fontWeight": 500,
         "lineHeight": "{font.line-height.label}",
@@ -122,7 +184,10 @@
     },
     "title": {
       "$value": {
-        "fontFamily": ["system-ui", "sans-serif"],
+        "fontFamily": [
+          "system-ui",
+          "sans-serif"
+        ],
         "fontSize": "{font.size.title}",
         "fontWeight": 600,
         "lineHeight": "{font.line-height.title}",
@@ -135,7 +200,10 @@
     },
     "headline": {
       "$value": {
-        "fontFamily": ["system-ui", "sans-serif"],
+        "fontFamily": [
+          "system-ui",
+          "sans-serif"
+        ],
         "fontSize": "{font.size.headline}",
         "fontWeight": 600,
         "lineHeight": "{font.line-height.headline}",
@@ -148,7 +216,10 @@
     },
     "display": {
       "$value": {
-        "fontFamily": ["system-ui", "sans-serif"],
+        "fontFamily": [
+          "system-ui",
+          "sans-serif"
+        ],
         "fontSize": "{font.size.display}",
         "fontWeight": 600,
         "lineHeight": "{font.line-height.display}",
@@ -694,7 +765,11 @@
     "scrim": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0, 0, 0],
+        "components": [
+          0,
+          0,
+          0
+        ],
         "alpha": 0.4,
         "hex": "#000000"
       },
@@ -703,7 +778,11 @@
     "media": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.1869, 0.0151, 266.766],
+        "components": [
+          0.1869,
+          0.0151,
+          266.766
+        ],
         "hex": "#10131a"
       },
       "$description": "Ground behind photographs and videos; invariant across appearances."
@@ -711,7 +790,11 @@
     "on-media": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [1, 0, 0],
+        "components": [
+          1,
+          0,
+          0
+        ],
         "hex": "#ffffff"
       },
       "$description": "White ink over photographs and dark media surfaces; invariant across appearances."
@@ -719,7 +802,11 @@
     "chart-foreground": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0, 0, 0],
+        "components": [
+          0,
+          0,
+          0
+        ],
         "hex": "#000000"
       },
       "$description": "Dark ink on light chart tiles matching UIKit light label (#000000)."
@@ -727,7 +814,11 @@
     "window-close": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.6936, 0.19638, 26.364],
+        "components": [
+          0.6936,
+          0.19638,
+          26.364
+        ],
         "hex": "#ff5f57"
       },
       "$description": "macOS window close traffic-light button fill."
@@ -735,7 +826,11 @@
     "window-minimize": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.83478, 0.1612, 80.911],
+        "components": [
+          0.83478,
+          0.1612,
+          80.911
+        ],
         "hex": "#febc2e"
       },
       "$description": "macOS window minimize traffic-light button fill."
@@ -743,7 +838,11 @@
     "window-zoom": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.72803, 0.21734, 144.712],
+        "components": [
+          0.72803,
+          0.21734,
+          144.712
+        ],
         "hex": "#28c840"
       },
       "$description": "macOS window zoom traffic-light button fill."
@@ -751,7 +850,11 @@
     "window-control-ink": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0, 0, 0],
+        "components": [
+          0,
+          0,
+          0
+        ],
         "alpha": 0.5,
         "hex": "#000000"
       },
@@ -762,7 +865,11 @@
             "space": "srgb",
             "a": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "hex": "#000000"
             },
             "percent": 50,
@@ -775,7 +882,11 @@
     "window-control-edge": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0, 0, 0],
+        "components": [
+          0,
+          0,
+          0
+        ],
         "alpha": 0.12,
         "hex": "#000000"
       },
@@ -786,7 +897,11 @@
             "space": "srgb",
             "a": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "hex": "#000000"
             },
             "percent": 12,
@@ -799,7 +914,11 @@
     "background": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.96257, 0.00665, 286.274],
+        "components": [
+          0.96257,
+          0.00665,
+          286.274
+        ],
         "hex": "#f2f2f7"
       },
       "$description": "Grouped page canvas background (UIKit systemGroupedBackground)."
@@ -807,7 +926,11 @@
     "foreground": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0, 0, 0],
+        "components": [
+          0,
+          0,
+          0
+        ],
         "hex": "#000000"
       },
       "$description": "Primary label ink (UIKit label)."
@@ -815,7 +938,11 @@
     "card": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [1, 0, 0],
+        "components": [
+          1,
+          0,
+          0
+        ],
         "hex": "#ffffff"
       },
       "$description": "Elevated list and card surface (UIKit systemBackground)."
@@ -827,7 +954,11 @@
     "popover": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [1, 0, 0],
+        "components": [
+          1,
+          0,
+          0
+        ],
         "hex": "#ffffff"
       },
       "$description": "Floating popover and sheet surface (UIKit secondarySystemBackground / popover)."
@@ -839,7 +970,11 @@
     "primary": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.60276, 0.21771, 257.424],
+        "components": [
+          0.60276,
+          0.21771,
+          257.424
+        ],
         "hex": "#007aff"
       },
       "$description": "System accent blue (UIKit systemBlue)."
@@ -847,7 +982,11 @@
     "primary-foreground": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [1, 0, 0],
+        "components": [
+          1,
+          0,
+          0
+        ],
         "hex": "#ffffff"
       },
       "$description": "Text and icon ink on primary brand action fills."
@@ -863,7 +1002,11 @@
     "muted": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.95241, 0.00133, 286.375],
+        "components": [
+          0.95241,
+          0.00133,
+          286.375
+        ],
         "hex": "#efeff0"
       },
       "$description": "Subdued container fill (UIKit tertiarySystemFill composited over card)."
@@ -871,7 +1014,11 @@
     "muted-foreground": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.6347, 0.0059, 286.23],
+        "components": [
+          0.6347,
+          0.0059,
+          286.23
+        ],
         "hex": "#8a8a8e"
       },
       "$description": "Secondary label ink (UIKit secondaryLabel composited over card)."
@@ -879,7 +1026,11 @@
     "accent": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.96743, 0.00133, 286.375],
+        "components": [
+          0.96743,
+          0.00133,
+          286.375
+        ],
         "hex": "#f4f4f5"
       },
       "$description": "Subtle hover/selection fill (UIKit quaternarySystemFill composited over card)."
@@ -891,7 +1042,11 @@
     "destructive": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.65421, 0.23214, 28.659],
+        "components": [
+          0.65421,
+          0.23214,
+          28.659
+        ],
         "hex": "#ff3b30"
       },
       "$description": "System destructive red (UIKit systemRed)."
@@ -899,7 +1054,11 @@
     "border": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.89478, 0.00135, 286.373],
+        "components": [
+          0.89478,
+          0.00135,
+          286.373
+        ],
         "hex": "#dcdcdd"
       },
       "$description": "Hairline separator (UIKit separator hairline composited over card)."
@@ -907,7 +1066,11 @@
     "input": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.82715, 0.00276, 286.339],
+        "components": [
+          0.82715,
+          0.00276,
+          286.339
+        ],
         "hex": "#c6c6c8"
       },
       "$description": "Input control border (UIKit separator composited over card)."
@@ -915,7 +1078,11 @@
     "ring": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.60276, 0.21771, 257.424],
+        "components": [
+          0.60276,
+          0.21771,
+          257.424
+        ],
         "hex": "#007aff"
       },
       "$description": "Focus ring color matching UIKit systemBlue."
@@ -923,7 +1090,11 @@
     "chart-1": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.60276, 0.21771, 257.424],
+        "components": [
+          0.60276,
+          0.21771,
+          257.424
+        ],
         "hex": "#007aff"
       },
       "$description": "First chart series color (UIKit systemBlue)."
@@ -931,7 +1102,11 @@
     "chart-2": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.73032, 0.19438, 147.444],
+        "components": [
+          0.73032,
+          0.19438,
+          147.444
+        ],
         "hex": "#34c759"
       },
       "$description": "Second chart series color (UIKit systemGreen)."
@@ -939,7 +1114,11 @@
     "chart-3": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.76524, 0.17521, 62.574],
+        "components": [
+          0.76524,
+          0.17521,
+          62.574
+        ],
         "hex": "#ff9500"
       },
       "$description": "Third chart series color (UIKit systemOrange)."
@@ -947,7 +1126,11 @@
     "chart-4": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.61489, 0.21292, 312.411],
+        "components": [
+          0.61489,
+          0.21292,
+          312.411
+        ],
         "hex": "#af52de"
       },
       "$description": "Fourth chart series color (UIKit systemPurple)."
@@ -955,7 +1138,11 @@
     "chart-5": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.65421, 0.23214, 28.659],
+        "components": [
+          0.65421,
+          0.23214,
+          28.659
+        ],
         "hex": "#ff3b30"
       },
       "$description": "Fifth chart series color (UIKit systemRed)."
@@ -963,7 +1150,11 @@
     "sidebar": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.96257, 0.00665, 286.274],
+        "components": [
+          0.96257,
+          0.00665,
+          286.274
+        ],
         "hex": "#f2f2f7"
       },
       "$description": "Sidebar surface matching Apple system sidebar/grouped background."
@@ -983,7 +1174,11 @@
     "sidebar-accent": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.96743, 0.00133, 286.375],
+        "components": [
+          0.96743,
+          0.00133,
+          286.375
+        ],
         "hex": "#f4f4f5"
       },
       "$description": "Selected or active row fill in the sidebar."
@@ -995,7 +1190,11 @@
     "sidebar-border": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.89478, 0.00135, 286.373],
+        "components": [
+          0.89478,
+          0.00135,
+          286.373
+        ],
         "hex": "#dcdcdd"
       },
       "$description": "Sidebar divider and toolbar hairline border color."
@@ -1007,7 +1206,11 @@
     "inset": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.96743, 0.00133, 286.375],
+        "components": [
+          0.96743,
+          0.00133,
+          286.375
+        ],
         "hex": "#f4f4f5"
       },
       "$description": "Inset surface (UIKit quaternarySystemFill composited over card)."
@@ -1015,7 +1218,11 @@
     "raised": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.95241, 0.00133, 286.375],
+        "components": [
+          0.95241,
+          0.00133,
+          286.375
+        ],
         "hex": "#efeff0"
       },
       "$description": "Raised control surface (UIKit tertiarySystemFill composited over card)."
@@ -1027,7 +1234,11 @@
     "scrollbar-thumb": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.80286, 0.00626, 286.258],
+        "components": [
+          0.80286,
+          0.00626,
+          286.258
+        ],
         "hex": "#bebec2"
       },
       "$extensions": {
@@ -1046,7 +1257,11 @@
     "scrollbar-thumb-hover": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.70316, 0.00604, 286.243],
+        "components": [
+          0.70316,
+          0.00604,
+          286.243
+        ],
         "hex": "#9f9fa3"
       },
       "$extensions": {
@@ -1065,7 +1280,11 @@
     "field": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.95241, 0.00133, 286.375],
+        "components": [
+          0.95241,
+          0.00133,
+          286.375
+        ],
         "hex": "#efeff0"
       },
       "$description": "Form input background (UIKit tertiarySystemFill composited over card)."
@@ -1073,7 +1292,11 @@
     "line": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.89478, 0.00135, 286.373],
+        "components": [
+          0.89478,
+          0.00135,
+          286.373
+        ],
         "hex": "#dcdcdd"
       },
       "$description": "Inset divider hairline (UIKit hairline composited over card)."
@@ -1081,7 +1304,11 @@
     "hover": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0, 0, 0],
+        "components": [
+          0,
+          0,
+          0
+        ],
         "alpha": 0.06,
         "hex": "#000000"
       },
@@ -1101,7 +1328,11 @@
     "ring-halo": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.60276, 0.21771, 257.424],
+        "components": [
+          0.60276,
+          0.21771,
+          257.424
+        ],
         "alpha": 0.3,
         "hex": "#007aff"
       },
@@ -1121,7 +1352,11 @@
     "faint": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.82403, 0.00276, 286.339],
+        "components": [
+          0.82403,
+          0.00276,
+          286.339
+        ],
         "hex": "#c5c5c7"
       },
       "$description": "Tertiary label ink for placeholders and quiet captions (UIKit tertiaryLabel)."
@@ -1129,7 +1364,11 @@
     "brand": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.60276, 0.21771, 257.424],
+        "components": [
+          0.60276,
+          0.21771,
+          257.424
+        ],
         "hex": "#007aff"
       },
       "$description": "Inline brand accent ink (UIKit systemBlue)."
@@ -1141,7 +1380,11 @@
     "track": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.93459, 0.00268, 286.348],
+        "components": [
+          0.93459,
+          0.00268,
+          286.348
+        ],
         "hex": "#e9e9eb"
       },
       "$description": "Switch and slider track (UIKit secondarySystemFill composited over card)."
@@ -1149,7 +1392,11 @@
     "knob": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [1, 0, 0],
+        "components": [
+          1,
+          0,
+          0
+        ],
         "hex": "#ffffff"
       },
       "$description": "Switch knob and slider handle (pure white)."
@@ -1157,7 +1404,11 @@
     "code": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0, 0, 0],
+        "components": [
+          0,
+          0,
+          0
+        ],
         "hex": "#000000"
       },
       "$description": "Monospace code text ink inside recessed wells."
@@ -1165,7 +1416,11 @@
     "info": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.60276, 0.21771, 257.424],
+        "components": [
+          0.60276,
+          0.21771,
+          257.424
+        ],
         "hex": "#007aff"
       },
       "$description": "Informational semantic color (UIKit systemBlue)."
@@ -1173,7 +1428,11 @@
     "warn": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.76524, 0.17521, 62.574],
+        "components": [
+          0.76524,
+          0.17521,
+          62.574
+        ],
         "hex": "#ff9500"
       },
       "$description": "Warning semantic color (UIKit systemOrange)."
@@ -1181,7 +1440,11 @@
     "up": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.73032, 0.19438, 147.444],
+        "components": [
+          0.73032,
+          0.19438,
+          147.444
+        ],
         "hex": "#34c759"
       },
       "$description": "Positive trend semantic color (UIKit systemGreen)."
@@ -1193,7 +1456,11 @@
     "brand-tint": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.60276, 0.21771, 257.424],
+        "components": [
+          0.60276,
+          0.21771,
+          257.424
+        ],
         "alpha": 0.12,
         "hex": "#007aff"
       },
@@ -1233,7 +1500,11 @@
     "info-tint": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.60276, 0.21771, 257.424],
+        "components": [
+          0.60276,
+          0.21771,
+          257.424
+        ],
         "alpha": 0.12,
         "hex": "#007aff"
       },
@@ -1253,7 +1524,11 @@
     "warn-tint": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.76524, 0.17521, 62.574],
+        "components": [
+          0.76524,
+          0.17521,
+          62.574
+        ],
         "alpha": 0.12,
         "hex": "#ff9500"
       },
@@ -1273,7 +1548,11 @@
     "destructive-tint": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.65421, 0.23214, 28.659],
+        "components": [
+          0.65421,
+          0.23214,
+          28.659
+        ],
         "alpha": 0.12,
         "hex": "#ff3b30"
       },
@@ -1293,7 +1572,11 @@
     "up-tint": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.73032, 0.19438, 147.444],
+        "components": [
+          0.73032,
+          0.19438,
+          147.444
+        ],
         "alpha": 0.12,
         "hex": "#34c759"
       },
@@ -1313,7 +1596,11 @@
     "down-tint": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.65421, 0.23214, 28.659],
+        "components": [
+          0.65421,
+          0.23214,
+          28.659
+        ],
         "alpha": 0.12,
         "hex": "#ff3b30"
       },
@@ -1333,7 +1620,11 @@
     "violet": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.61489, 0.21292, 312.411],
+        "components": [
+          0.61489,
+          0.21292,
+          312.411
+        ],
         "hex": "#af52de"
       },
       "$description": "Accent purple ink (UIKit systemPurple)."
@@ -1341,7 +1632,11 @@
     "window-control-off": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.91944, 0.00269, 286.347],
+        "components": [
+          0.91944,
+          0.00269,
+          286.347
+        ],
         "hex": "#e4e4e6"
       },
       "$description": "Unfocused window traffic-light fill (UIKit systemFill composited over card)."
@@ -1374,7 +1669,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -1414,7 +1713,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -1454,7 +1757,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -1495,7 +1802,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0,
               "hex": "#000000"
             },
@@ -1504,7 +1815,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0,
               "hex": "#000000"
             },
@@ -1514,7 +1829,10 @@
         "$extensions": {
           "dev.aning.shadcn-nsh": {
             "angle": 180,
-            "transparentStops": [0, 1]
+            "transparentStops": [
+              0,
+              1
+            ]
           }
         }
       },
@@ -1522,7 +1840,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0, 0, 0],
+          "components": [
+            0,
+            0,
+            0
+          ],
           "alpha": 0,
           "hex": "#000000"
         },
@@ -1546,7 +1868,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0.95241, 0.00133, 286.375],
+          "components": [
+            0.95241,
+            0.00133,
+            286.375
+          ],
           "alpha": 0.72,
           "hex": "#efeff0"
         },
@@ -1565,7 +1891,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0.08,
             "hex": "#000000"
           },
@@ -1617,7 +1947,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -1648,7 +1982,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0, 0, 0],
+          "components": [
+            0,
+            0,
+            0
+          ],
           "alpha": 0,
           "hex": "#000000"
         },
@@ -1693,7 +2031,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -1724,7 +2066,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0, 0, 0],
+          "components": [
+            0,
+            0,
+            0
+          ],
           "alpha": 0,
           "hex": "#000000"
         },
@@ -1769,7 +2115,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -1800,7 +2150,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0, 0, 0],
+          "components": [
+            0,
+            0,
+            0
+          ],
           "alpha": 0,
           "hex": "#000000"
         },
@@ -1845,7 +2199,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -1876,7 +2234,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0, 0, 0],
+          "components": [
+            0,
+            0,
+            0
+          ],
           "alpha": 0,
           "hex": "#000000"
         },
@@ -1899,7 +2261,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -1930,7 +2296,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0, 0, 0],
+          "components": [
+            0,
+            0,
+            0
+          ],
           "alpha": 0,
           "hex": "#000000"
         },
@@ -1952,7 +2322,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0, 0, 0],
+          "components": [
+            0,
+            0,
+            0
+          ],
           "alpha": 0,
           "hex": "#000000"
         },
@@ -1985,7 +2359,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -2016,7 +2394,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0, 0, 0],
+          "components": [
+            0,
+            0,
+            0
+          ],
           "alpha": 0,
           "hex": "#000000"
         },
@@ -2061,7 +2443,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0.2,
             "hex": "#000000"
           },
@@ -2087,7 +2473,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0, 0, 0],
+          "components": [
+            0,
+            0,
+            0
+          ],
           "alpha": 0,
           "hex": "#000000"
         },
@@ -2132,7 +2522,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0.2,
             "hex": "#000000"
           },
@@ -2158,7 +2552,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0, 0, 0],
+          "components": [
+            0,
+            0,
+            0
+          ],
           "alpha": 0,
           "hex": "#000000"
         },
@@ -2203,7 +2601,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0.2,
             "hex": "#000000"
           },
@@ -2229,7 +2631,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0, 0, 0],
+          "components": [
+            0,
+            0,
+            0
+          ],
           "alpha": 0,
           "hex": "#000000"
         },
@@ -2273,7 +2679,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0, 0, 0],
+          "components": [
+            0,
+            0,
+            0
+          ],
           "alpha": 0,
           "hex": "#000000"
         },
@@ -2293,7 +2703,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0.08,
             "hex": "#000000"
           },
@@ -2323,7 +2737,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0.16,
             "hex": "#000000"
           },
@@ -2349,7 +2767,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0, 0, 0],
+          "components": [
+            0,
+            0,
+            0
+          ],
           "alpha": 0,
           "hex": "#000000"
         },
@@ -2416,7 +2838,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -2447,7 +2873,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0, 0, 0],
+          "components": [
+            0,
+            0,
+            0
+          ],
           "alpha": 0,
           "hex": "#000000"
         },
@@ -2492,7 +2922,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -2523,7 +2957,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0, 0, 0],
+          "components": [
+            0,
+            0,
+            0
+          ],
           "alpha": 0,
           "hex": "#000000"
         },
@@ -2546,7 +2984,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -2595,7 +3037,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [1, 0, 0],
+          "components": [
+            1,
+            0,
+            0
+          ],
           "alpha": 0.4,
           "hex": "#ffffff"
         },
@@ -2616,7 +3062,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0, 0, 0],
+          "components": [
+            0,
+            0,
+            0
+          ],
           "alpha": 0,
           "hex": "#000000"
         },
@@ -2643,7 +3093,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [1, 0, 0],
+          "components": [
+            1,
+            0,
+            0
+          ],
           "alpha": 0.72,
           "hex": "#ffffff"
         },
@@ -2663,7 +3117,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.08,
               "hex": "#000000"
             },
@@ -2687,7 +3145,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.14,
               "hex": "#000000"
             },
@@ -2732,7 +3194,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.08,
               "hex": "#000000"
             },
@@ -2756,7 +3222,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.14,
               "hex": "#000000"
             },
@@ -2791,7 +3261,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
@@ -2834,7 +3308,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [0, 0, 0],
+          "components": [
+            0,
+            0,
+            0
+          ],
           "alpha": 0,
           "hex": "#000000"
         },
@@ -2861,7 +3339,11 @@
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
-          "components": [1, 0, 0],
+          "components": [
+            1,
+            0,
+            0
+          ],
           "alpha": 0.72,
           "hex": "#ffffff"
         },
@@ -2881,7 +3363,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.08,
               "hex": "#000000"
             },
@@ -2905,7 +3391,11 @@
           {
             "color": {
               "colorSpace": "oklch",
-              "components": [0, 0, 0],
+              "components": [
+                0,
+                0,
+                0
+              ],
               "alpha": 0.14,
               "hex": "#000000"
             },
@@ -2936,7 +3426,11 @@
         "$value": {
           "color": {
             "colorSpace": "oklch",
-            "components": [0, 0, 0],
+            "components": [
+              0,
+              0,
+              0
+            ],
             "alpha": 0,
             "hex": "#000000"
           },
