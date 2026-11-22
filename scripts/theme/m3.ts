@@ -32,6 +32,7 @@ import {
   hexFromArgb,
 } from "@material/material-color-utilities";
 
+import type { ThemeGeneratorOutput } from "./dtcg";
 import { oklchColor, toOklchText } from "./oklch";
 import { ordered, orderedSplitFinishes } from "./order";
 
@@ -652,6 +653,151 @@ export function m3ThemeFiles(
     semantics: {
       ...m3Style,
       finishes: orderedSplitFinishes(defaults.lightFinishes, defaults.darkFinishes, merged, merged),
+    },
+  };
+}
+
+/** Material 3 Expressive theme data and DTCG descriptions ready for `emitDtcgTheme`. */
+export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
+  const roles = m3Roles(m3Scheme(seed));
+  const colorDescs = {
+    background: "Primary page surface (M3 surface role, material-web v34.0.21).",
+    foreground: "Default text and icon ink on surfaces (M3 onSurface).",
+    card: "Elevated card container background (M3 surfaceContainerLow).",
+    popover: "Floating popover and menu container background (M3 surfaceContainer).",
+    primary: "Primary brand action fill (M3 primary).",
+    "primary-foreground": "Text and icon ink on primary fills (M3 onPrimary).",
+    secondary: "Secondary tonal container fill (M3 secondaryContainer).",
+    "secondary-foreground":
+      "Text and icon ink on secondary containers (M3 Expressive onSecondaryContainer, Tone 30 in light).",
+    muted: "Muted/highest surface container fill (M3 surfaceContainerHighest).",
+    "muted-foreground": "Secondary supporting text and icon ink (M3 onSurfaceVariant).",
+    accent: "Tonal accent fill (M3 secondaryContainer).",
+    "accent-foreground": "Text and icon ink on accent fills (M3 Expressive onSecondaryContainer).",
+    destructive: "Error and destructive action color (M3 error).",
+    border: "Hairline container border color (M3 outlineVariant).",
+    input: "Input outline color (M3 outline).",
+    ring: "Focus indicator ring color (M3 secondary).",
+    "chart-1": "First chart series color (M3 primary).",
+    "chart-2": "Second chart series color (M3 tertiary).",
+    "chart-3": "Third chart series color (M3 secondary).",
+    "chart-4": "Fourth chart series color (M3 outline).",
+    "chart-5": "Fifth chart series color (M3 outlineVariant).",
+    sidebar: "Sidebar canvas background (M3 surface).",
+    "sidebar-accent": "Sidebar active item fill (M3 secondaryContainer).",
+    "sidebar-accent-foreground":
+      "Sidebar active item text ink (M3 Expressive onSecondaryContainer).",
+    "sidebar-border": "Sidebar divider border (M3 outlineVariant).",
+    inset: "Inset container surface (M3 surfaceContainer).",
+    raised: "Raised control surface (M3 surfaceContainerLow).",
+    "glass-edge": "Overlay outline edge (M3 outlineVariant).",
+    field: "Filled text field background (M3 surfaceContainerHighest).",
+    line: "Inset divider hairline (M3 outlineVariant).",
+    hover: "M3 hover state-layer ink (8% foreground over transparent, StateTokens.kt).",
+    "ring-halo": "Outer focus ring halo (20% ring color over transparent).",
+    faint: "Quiet caption/placeholder ink (M3 outline).",
+    brand: "Inline brand accent ink, aliased to {color.primary}.",
+    "brand-edge": "Brand container outline (M3 outlineVariant).",
+    track: "Switch and slider track fill (M3 surfaceContainerHighest).",
+    knob: "Unchecked switch thumb fill (M3 outline).",
+    info: "Informational semantic color matching M3 primary.",
+    "brand-tint": "Opaque selected chip/tile fill (M3 secondaryContainer).",
+    "on-brand-tint": "Ink on selected chip/tile fills (M3 Expressive onSecondaryContainer).",
+    inverse: "Inverse surface for snackbars and tooltips (M3 inverseSurface).",
+    "inverse-foreground": "Ink on inverse surfaces (M3 inverseOnSurface).",
+    "inverse-muted":
+      "Supporting text and close icon on inverse snackbars, aliased to {color.inverse-foreground} (Compose SnackbarTokens.kt).",
+    "inverse-brand": "Brand action ink on inverse surfaces (M3 inversePrimary).",
+    "info-tint": "Translucent informational wash (12% info over transparent).",
+    "warn-tint": "Translucent warning wash (12% warn over transparent).",
+    "destructive-tint": "Tonal error container background (M3 errorContainer).",
+    "up-tint": "Translucent positive wash (12% up over transparent).",
+    "down-tint": "Translucent negative wash (12% down over transparent).",
+    violet: "Tertiary accent color (M3 tertiary).",
+    "window-control-off": "Unfocused window traffic-light fill (M3 outlineVariant).",
+  };
+
+  return {
+    id: "material",
+    name: "Material",
+    resolverDescription:
+      "DTCG 2025.10 resolver for the Material 3 Expressive theme (material-web v34.0.21 / Compose M3 1.5.0).",
+    themeDescription: "Appearance-invariant base tokens and Material 3 Expressive style overrides.",
+    finishesDescription:
+      "Appearance-invariant surface finish recipes for Material 3 Expressive (Level 1-3 elevations, Android elevation metadata, no blur).",
+    lightDescription:
+      "Light appearance colors for Material 3 Expressive (#6750A4 baseline with Expressive Tone 30 on*Container).",
+    darkDescription: "Dark appearance colors for Material 3 Expressive (#6750A4 baseline).",
+    pointerDescription:
+      "Material 3 Expressive desktop pointer input-tier overrides (M3 Desktop 44dp hit target, 48dp row).",
+    touchDescription:
+      "Material 3 Expressive touch input-tier overrides (Compose InteractiveComponentSize 48dp hit target, ListTokens 56dp row).",
+    radiusGroupDescription:
+      "Material 3 Expressive corner scale (999px CornerFull controls, 4px CornerExtraSmall fields/menus, 12px CornerMedium cards/chips, 28px CornerExtraLarge dialogs/sheets; ShapeTokens.kt).",
+    style: m3Style,
+    cssVars: {
+      theme: themeLevel(roles),
+      light: roles.light,
+      dark: roles.dark,
+    },
+    finishes: {
+      light: finishes(),
+      dark: finishes(),
+    },
+    descriptions: {
+      sharedColors: {
+        "brand-fill": "Primary brand action fill, aliased to {color.primary}.",
+        "on-brand":
+          "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}.",
+        scrim: "Translucent backdrop scrim behind modals and sheets (M3 scrim at 32% opacity).",
+        "chart-foreground": "Dark ink on light chart tiles matching M3 light onSurface.",
+        "window-close": "macOS window close traffic-light fill mapped to M3 light error.",
+        "window-minimize": "macOS window minimize traffic-light fill mapped to NSH light warn.",
+        "window-zoom": "macOS window zoom traffic-light fill mapped to NSH light up.",
+      },
+      lightColors: colorDescs,
+      darkColors: colorDescs,
+      finishes: {
+        card: "Elevated M3 card surface with Material Web Level 1 shadow and 1dp Android elevation.",
+        raised: "Raised surface with Level 1 shadow and 1dp Android elevation.",
+        hover: "Hovered state surface over raised background with Level 1 shadow.",
+        pressed: "Pressed surface at Level 1 elevation (M3 state layer + ripple handles press).",
+        glass:
+          "Floating surface using opaque M3 popover with Level 2 shadow and 3dp elevation (M3 uses no blur).",
+        menu: "M3 menu/popover surface with Level 2 shadow and 3dp Android elevation.",
+        dialog: "M3 dialog surface with Level 3 shadow and 6dp Android elevation.",
+        tooltip: "M3 plain tooltip using inverse surface without shadow.",
+        inverse: "M3 snackbar/inverse surface with Level 3 shadow and 6dp Android elevation.",
+      },
+      style: {
+        typography:
+          "Material 3 Expressive typography scale (TypeScaleTokens.kt / _md-sys-typescale.scss).",
+        "dimension.stroke.surface":
+          "0px surface outline (M3 elevated/filled surfaces rely on elevation rather than outlines).",
+        "dimension.stroke.indicator": "3px active tab/navigation indicator width per M3.",
+        "dimension.focus":
+          "M3 focus indicator: 3px solid outline offset 2px (_md-sys-state-focus-indicator.scss).",
+        "dimension.focus.offset": "2px outward focus indicator offset per M3.",
+        shape:
+          "M3 circular arc corners with top-only rounded corners on filled text fields (FilledTextFieldTokens.kt).",
+        "state.press-scale":
+          "Scale factor applied while pressed (1 disables press shrinking; M3 uses state layer + Android ripple).",
+        "state.overlay":
+          "M3 state-layer ink opacities: hover 0.08, focus 0.10, pressed 0.10, dragged 0.16 (StateTokens.kt).",
+        "state.pressed-opacity":
+          "Content stays full opacity when pressed (1; ripple/state layer shows press).",
+        "state.disabled":
+          "M3 disabled opacities: 0.38 content and 0.10 container (_md-comp-button-filled.scss).",
+        "transition.enter":
+          "M3 DurationLong2 (500ms) with emphasized-decelerate curve (_md-sys-motion.scss).",
+        "motion.press":
+          "M3 Expressive FastSpatial spring (stiffness 800, damping ratio 0.6; ExpressiveMotionTokens.kt).",
+        "motion.settle": "M3 Expressive DefaultSpatial spring (stiffness 380, damping ratio 0.8).",
+        "motion.control":
+          "M3 Expressive DefaultEffects spring (stiffness 1600, damping ratio 1.0).",
+        "motion.move": "M3 Expressive DefaultSpatial spring for layout and indicator movement.",
+        indicator: "M3 underlined tabs and filled-text-field underline indicator.",
+      },
     },
   };
 }

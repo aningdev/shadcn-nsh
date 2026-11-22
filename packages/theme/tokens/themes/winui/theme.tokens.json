@@ -1,0 +1,427 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "$description": "Appearance-invariant base tokens and WinUI 3 style overrides (Segoe UI Variable, Consolas, double focus rings, timing motion).",
+  "dimension": {
+    "$type": "dimension",
+    "$description": "Appearance-invariant base dimensional tokens.",
+    "radius": {
+      "$type": "dimension",
+      "$description": "WinUI 3 corner radius scale: ControlCornerRadius 4px (controls/fields/chips/insets) and OverlayCornerRadius 8px (cards/overlays/dialogs/sheets).",
+      "base": {
+        "$value": {
+          "value": 4,
+          "unit": "px"
+        },
+        "$description": "Base corner radius shared by insets and general rounded elements."
+      },
+      "card": {
+        "$value": {
+          "value": 8,
+          "unit": "px"
+        },
+        "$description": "Corner radius for cards and sidebar floating containers."
+      },
+      "control": {
+        "$value": {
+          "value": 4,
+          "unit": "px"
+        },
+        "$description": "Corner radius for interactive controls such as buttons, triggers, and menu items."
+      },
+      "field": {
+        "$value": {
+          "value": 4,
+          "unit": "px"
+        },
+        "$description": "Corner radius for form input fields and editor wells."
+      },
+      "chip": {
+        "$value": {
+          "value": 4,
+          "unit": "px"
+        },
+        "$description": "Corner radius for badges, chips, and compact tags."
+      },
+      "overlay": {
+        "$value": {
+          "value": 8,
+          "unit": "px"
+        },
+        "$description": "Corner radius for floating menus, popovers, and toasts."
+      },
+      "dialog": {
+        "$value": {
+          "value": 8,
+          "unit": "px"
+        },
+        "$description": "Corner radius for modal dialogs."
+      },
+      "sheet": {
+        "$value": {
+          "value": 8,
+          "unit": "px"
+        },
+        "$description": "Corner radius for drawers and bottom sheets."
+      }
+    },
+    "stroke": {
+      "$description": "Border and indicator stroke widths.",
+      "indicator": {
+        "$value": {
+          "value": 3,
+          "unit": "px"
+        },
+        "$description": "3px active navigation/tab indicator width per WinUI 3."
+      }
+    },
+    "focus": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "style": "double"
+        }
+      },
+      "$description": "WinUI 3 double focus stroke (2px outer FocusStrokeColorOuter + 1px inner FocusStrokeColorInner, 0px offset).",
+      "width": {
+        "$value": {
+          "value": 2,
+          "unit": "px"
+        },
+        "$description": "2px outer focus stroke width per WinUI 3."
+      }
+    }
+  },
+  "font": {
+    "$description": "Base font family tokens.",
+    "family": {
+      "$type": "fontFamily",
+      "$description": "Font family stacks.",
+      "mono": {
+        "$value": ["Consolas", "monospace"],
+        "$description": "WinUI 3 monospace font stack (Consolas, monospace)."
+      },
+      "sans": {
+        "$value": ["Segoe UI Variable", "Segoe UI", "sans-serif"],
+        "$description": "WinUI 3 primary UI font stack (Segoe UI Variable, Segoe UI, sans-serif; typography.md)."
+      }
+    }
+  },
+  "typography": {
+    "$type": "typography",
+    "$description": "WinUI 3 typography scale mapped from TextBlock_themeresources.xaml (400 and 600 weights only).",
+    "$extensions": {
+      "dev.aning.shadcn-nsh": {
+        "fontFamily": "{font.family.sans}"
+      }
+    },
+    "caption": {
+      "$value": {
+        "fontFamily": "{font.family.sans}",
+        "fontSize": "{font.size.caption}",
+        "fontWeight": 400,
+        "lineHeight": "{font.line-height.caption}",
+        "letterSpacing": {
+          "value": 0,
+          "unit": "px"
+        }
+      },
+      "$description": "Small captions and segmented counter labels."
+    },
+    "detail": {
+      "$value": {
+        "fontFamily": "{font.family.sans}",
+        "fontSize": "{font.size.detail}",
+        "fontWeight": 400,
+        "lineHeight": "{font.line-height.detail}",
+        "letterSpacing": {
+          "value": 0,
+          "unit": "px"
+        }
+      },
+      "$description": "Sidebar section labels, counts, and supporting metadata."
+    },
+    "body": {
+      "$value": {
+        "fontFamily": "{font.family.sans}",
+        "fontSize": "{font.size.body}",
+        "fontWeight": 400,
+        "lineHeight": "{font.line-height.body}",
+        "letterSpacing": {
+          "value": 0,
+          "unit": "px"
+        }
+      },
+      "$description": "Standard body copy, list rows, and dialog content."
+    },
+    "label": {
+      "$value": {
+        "fontFamily": "{font.family.sans}",
+        "fontSize": "{font.size.label}",
+        "fontWeight": 400,
+        "lineHeight": "{font.line-height.label}",
+        "letterSpacing": {
+          "value": 0,
+          "unit": "px"
+        }
+      },
+      "$description": "Control labels, form labels, and interactive triggers."
+    },
+    "title": {
+      "$value": {
+        "fontFamily": "{font.family.sans}",
+        "fontSize": "{font.size.title}",
+        "fontWeight": 600,
+        "lineHeight": "{font.line-height.title}",
+        "letterSpacing": {
+          "value": 0,
+          "unit": "px"
+        }
+      },
+      "$description": "Card and section headings."
+    },
+    "headline": {
+      "$value": {
+        "fontFamily": "{font.family.sans}",
+        "fontSize": "{font.size.headline}",
+        "fontWeight": 600,
+        "lineHeight": "{font.line-height.headline}",
+        "letterSpacing": {
+          "value": 0,
+          "unit": "px"
+        }
+      },
+      "$description": "Page-level headings."
+    },
+    "display": {
+      "$value": {
+        "fontFamily": "{font.family.sans}",
+        "fontSize": "{font.size.display}",
+        "fontWeight": 600,
+        "lineHeight": "{font.line-height.display}",
+        "letterSpacing": {
+          "value": 0,
+          "unit": "px"
+        }
+      },
+      "$description": "Large display numerals and hero headings."
+    }
+  },
+  "shape": {
+    "$description": "Circular corner curve (WinUI 3 has no continuous squircle curve; geometry.md).",
+    "$extensions": {
+      "dev.aning.shadcn-nsh": {
+        "curve": "circular"
+      }
+    }
+  },
+  "color": {
+    "$type": "color",
+    "$description": "Appearance-invariant C-layer color roles shared by light and dark modes.",
+    "brand-fill": {
+      "$value": "{color.primary}",
+      "$description": "Primary brand action fill, aliased to {color.primary} (WinUI AccentFillColorDefault)."
+    },
+    "on-brand": {
+      "$value": "{color.primary-foreground}",
+      "$description": "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground} (WinUI TextOnAccentFillColorPrimary)."
+    },
+    "scrim": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0, 0, 0],
+        "alpha": 0.302,
+        "hex": "#000000"
+      },
+      "$description": "Translucent backdrop scrim behind dialogs and overlays (WinUI SmokeFillColorDefault #4D000000)."
+    },
+    "media": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.1869, 0.0151, 266.766],
+        "hex": "#10131a"
+      },
+      "$description": "Ground behind photographs and videos; invariant across appearances."
+    },
+    "on-media": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "hex": "#ffffff"
+      },
+      "$description": "White ink over photographs and dark media surfaces; invariant across appearances."
+    },
+    "chart-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.21779, 0, 0],
+        "hex": "#1a1a1a"
+      },
+      "$description": "Dark ink on light chart tiles matching WinUI light TextFillColorPrimary."
+    },
+    "window-close": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.6936, 0.19638, 26.364],
+        "hex": "#ff5f57"
+      },
+      "$description": "macOS window close traffic-light button fill."
+    },
+    "window-minimize": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.83478, 0.1612, 80.911],
+        "hex": "#febc2e"
+      },
+      "$description": "macOS window minimize traffic-light button fill."
+    },
+    "window-zoom": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.72803, 0.21734, 144.712],
+        "hex": "#28c840"
+      },
+      "$description": "macOS window zoom traffic-light button fill."
+    },
+    "window-control-ink": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0, 0, 0],
+        "alpha": 0.5,
+        "hex": "#000000"
+      },
+      "$description": "Glyph ink inside macOS window traffic-light buttons (50% black literal)."
+    },
+    "window-control-edge": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0, 0, 0],
+        "alpha": 0.12,
+        "hex": "#000000"
+      },
+      "$description": "Hairline border around macOS window traffic-light buttons (12% black literal)."
+    }
+  },
+  "state": {
+    "$type": "number",
+    "$description": "Interaction state opacities, press scale, and ripple switch.",
+    "press-scale": {
+      "$value": 1,
+      "$description": "Scale factor applied while pressed (1 disables press shrinking; WinUI 3 swaps fill brushes instead)."
+    },
+    "pressed-opacity": {
+      "$value": 1,
+      "$description": "Content stays full opacity when pressed (1; fill brush swap shows press)."
+    },
+    "disabled": {
+      "$description": "WinUI 3 disabled opacities (0.36 TextFillColorDisabled content, 0.45 container compromise).",
+      "content": {
+        "$value": 0.36
+      },
+      "container": {
+        "$value": 0.45
+      }
+    }
+  },
+  "transition": {
+    "$type": "transition",
+    "$description": "Named CSS/NSH transition presets.",
+    "enter": {
+      "$value": {
+        "duration": {
+          "value": 250,
+          "unit": "ms"
+        },
+        "delay": {
+          "value": 0,
+          "unit": "ms"
+        },
+        "timingFunction": "{cubicBezier.decelerate}"
+      },
+      "$description": "WinUI 3 250ms entrance transition with Direct Entrance decelerate curve (motion.md)."
+    }
+  },
+  "motion": {
+    "$description": "Interactive spring and timing physics roles.",
+    "press": {
+      "$description": "WinUI 3 ToggleSwitch press timing (83ms decelerate, ToggleSwitch_themeresources.xaml:321).",
+      "timing": {
+        "$type": "transition",
+        "$value": {
+          "duration": {
+            "value": 83,
+            "unit": "ms"
+          },
+          "delay": {
+            "value": 0,
+            "unit": "ms"
+          },
+          "timingFunction": "{cubicBezier.decelerate}"
+        },
+        "$description": "Timing curve and duration for press."
+      }
+    },
+    "settle": {
+      "$description": "WinUI 3 250ms settle timing with Direct Entrance decelerate curve.",
+      "timing": {
+        "$type": "transition",
+        "$value": {
+          "duration": {
+            "value": 250,
+            "unit": "ms"
+          },
+          "delay": {
+            "value": 0,
+            "unit": "ms"
+          },
+          "timingFunction": "{cubicBezier.decelerate}"
+        },
+        "$description": "Timing curve and duration for settle."
+      }
+    },
+    "control": {
+      "$description": "WinUI 3 167ms control timing with Point-to-Point curve.",
+      "timing": {
+        "$type": "transition",
+        "$value": {
+          "duration": {
+            "value": 167,
+            "unit": "ms"
+          },
+          "delay": {
+            "value": 0,
+            "unit": "ms"
+          },
+          "timingFunction": "{cubicBezier.point-to-point}"
+        },
+        "$description": "Timing curve and duration for control."
+      }
+    },
+    "move": {
+      "$description": "WinUI 3 333ms move timing with Point-to-Point curve.",
+      "timing": {
+        "$type": "transition",
+        "$value": {
+          "duration": {
+            "value": 333,
+            "unit": "ms"
+          },
+          "delay": {
+            "value": 0,
+            "unit": "ms"
+          },
+          "timingFunction": "{cubicBezier.point-to-point}"
+        },
+        "$description": "Timing curve and duration for move."
+      }
+    }
+  },
+  "indicator": {
+    "$description": "WinUI 3 underlined tabs, NavigationView leading bar, and bottom-underlined text fields.",
+    "$extensions": {
+      "dev.aning.shadcn-nsh": {
+        "tabs": "underline",
+        "nav": "bar",
+        "field": "underline"
+      }
+    }
+  }
+}

@@ -629,12 +629,60 @@ function checkMergedSemantics(
     }
   }
 
-  // State press-scale & non-negative numbers
+  // State press-scale, unit-interval opacities, and non-negative numeric dimensions/durations
   const pressScaleTok = getAtPath(resolved, "state.press-scale");
   if (isTokenNode(pressScaleTok) && !isValidPressScale(pressScaleTok.$value)) {
     problems.push(
       `${label}: state.press-scale is ${JSON.stringify(pressScaleTok.$value)}, not in (0, 1]`,
     );
+  }
+  for (const unitPath of [
+    "state.overlay.hover",
+    "state.overlay.focus",
+    "state.overlay.pressed",
+    "state.overlay.dragged",
+    "state.pressed-opacity",
+    "state.disabled.content",
+    "state.disabled.container",
+  ]) {
+    const tok = getAtPath(resolved, unitPath);
+    if (isTokenNode(tok)) {
+      const val = tok.$value;
+      if (typeof val !== "number" || !Number.isFinite(val) || val < 0 || val > 1) {
+        problems.push(`${label}: ${unitPath} is ${JSON.stringify(val)}, not in [0, 1]`);
+      }
+    }
+  }
+  for (const dimGroupPath of [
+    "dimension.stroke",
+    "dimension.focus",
+    "dimension.size",
+    "dimension.icon",
+  ]) {
+    const group = getAtPath(resolved, dimGroupPath);
+    if (!isRecord(group)) continue;
+    const walkDim = (node: Record<string, unknown>, prefix: string) => {
+      for (const [k, v] of Object.entries(node)) {
+        if (k.startsWith("$")) continue;
+        const p = `${prefix}.${k}`;
+        if (isTokenNode(v) && isRecord(v.$value)) {
+          const val = v.$value.value;
+          if (typeof val !== "number" || !Number.isFinite(val) || val < 0) {
+            problems.push(`${label}: ${p} value ${JSON.stringify(val)} must be >= 0`);
+          }
+        } else if (isRecord(v)) {
+          walkDim(v, p);
+        }
+      }
+    };
+    walkDim(group, dimGroupPath);
+  }
+  const shakeTok = getAtPath(resolved, "duration.shake");
+  if (isTokenNode(shakeTok) && isRecord(shakeTok.$value)) {
+    const val = shakeTok.$value.value;
+    if (typeof val !== "number" || !Number.isFinite(val) || val < 0) {
+      problems.push(`${label}: duration.shake value ${JSON.stringify(val)} must be >= 0`);
+    }
   }
 
   // Motion roles: spring OR timing (never mixed, never missing)

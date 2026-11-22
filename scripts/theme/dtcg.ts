@@ -1,12 +1,14 @@
 /**
  * Shared DTCG 2025.10 source emitter for theme generators (`generate-shadcn.ts`,
- * `generate-solid-glass.ts`).
+ * `generate-solid-glass.ts`, `generate-apple.ts`, `generate-material.ts`, `generate-winui.ts`).
  *
- * Converts a generator's computed `cssVars` (`theme`, `light`, `dark`), `pressScale`, and
+ * Converts a generator's computed `cssVars` (`theme`, `light`, `dark`), optional `style` overrides
+ * (shared and pointer/touch tiers, diffed sparsely against `packages/theme/tokens/base/*`), and
  * light/dark `finishes` into the sparse DTCG 2025.10 source tree under
  * `packages/theme/tokens/themes/<id>/` (reading role order and baseline `$description`s from
- * `packages/theme/tokens/themes/default/`), then runs `tokens:build` for that theme so one
- * generator command updates both the DTCG source and the compiled runtime files.
+ * `packages/theme/tokens/themes/default/` and `packages/theme/tokens/base/*`), then runs
+ * `tokens:build` for that theme so one generator command updates both the DTCG source and the
+ * compiled runtime files.
  */
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";
@@ -20,10 +22,86 @@ import {
   FORMAT_SCHEMA_URL,
   RADIUS_KEYS,
   RESOLVER_SCHEMA_URL,
+  TYPE_ROLES,
   type DtcgColor,
 } from "../tokens/types";
 import { toOklchText } from "./oklch";
 import { splitFinishes } from "./tokens";
+
+export interface ThemeTypeRoleStyle {
+  size: { pointer: number; touch: number };
+  line: { pointer: number; touch: number };
+  weight: string;
+  tracking: number;
+}
+
+export type ThemeMotionRoleStyle =
+  | { stiffness: number; damping: number }
+  | { duration: number; easing: string };
+
+export interface ThemeStyleInput {
+  type: {
+    family: string | null;
+    caption: ThemeTypeRoleStyle;
+    detail: ThemeTypeRoleStyle;
+    body: ThemeTypeRoleStyle;
+    label: ThemeTypeRoleStyle;
+    title: ThemeTypeRoleStyle;
+    headline: ThemeTypeRoleStyle;
+    display: ThemeTypeRoleStyle;
+  };
+  shape: {
+    control: string;
+    field: string;
+    chip: string;
+    card: string;
+    overlay: string;
+    dialog: string;
+    sheet: string;
+    inset: string;
+    curve: string;
+    corners: { field: string };
+  };
+  size: {
+    hit: { pointer: number; touch: number };
+    density: {
+      pointer: { row: number; pad: number; gap: number; surface: number };
+      touch: { row: number; pad: number; gap: number; surface: number };
+    };
+    control: {
+      pointer: Record<string, number | string>;
+      touch: Record<string, number | string>;
+    };
+    height: {
+      pointer: { sm: number; md: number; lg: number };
+      touch: { sm: number; md: number; lg: number };
+    };
+  };
+  stroke: { hairline: number; surface: number; control: number; indicator: number };
+  focus: { style: string; width: number; offset: number };
+  state: {
+    pressScale: number;
+    overlay: { hover: number; focus: number; pressed: number; dragged: number };
+    ripple: boolean;
+    pressedOpacity: number;
+    disabled: { content: number; container: number };
+  };
+  motion: {
+    press: ThemeMotionRoleStyle;
+    settle: ThemeMotionRoleStyle;
+    control: ThemeMotionRoleStyle;
+    move: ThemeMotionRoleStyle;
+    enter: { duration: number; easing: string };
+    shake: { duration: number };
+  };
+  icon: {
+    size: {
+      pointer: { sm: number; md: number; lg: number };
+      touch: { sm: number; md: number; lg: number };
+    };
+  };
+  indicator: { tabs: string; nav: string; field: string };
+}
 
 export interface ThemeGeneratorOutput {
   id: string;
@@ -33,9 +111,12 @@ export interface ThemeGeneratorOutput {
   finishesDescription: string;
   lightDescription: string;
   darkDescription: string;
-  pressScale: number;
-  pressScaleDescription: string;
+  pointerDescription?: string;
+  touchDescription?: string;
+  pressScale?: number;
+  pressScaleDescription?: string;
   radiusGroupDescription?: string;
+  style?: ThemeStyleInput;
   cssVars: {
     theme: Record<string, string>;
     light: Record<string, string>;
@@ -49,11 +130,15 @@ export interface ThemeGeneratorOutput {
     sharedColors?: Record<string, string>;
     lightColors?: Record<string, string>;
     darkColors?: Record<string, string>;
+    finishes?: Record<string, string>;
+    style?: Record<string, string>;
   };
 }
 
 const isRecord = (v: unknown): v is Record<string, unknown> =>
   v !== null && typeof v === "object" && !Array.isArray(v);
+
+const deepEqual = (a: unknown, b: unknown): boolean => JSON.stringify(a) === JSON.stringify(b);
 
 function readJson(absPath: string): Record<string, unknown> {
   return JSON.parse(fs.readFileSync(absPath, "utf8")) as Record<string, unknown>;
@@ -392,6 +477,24 @@ function encodeFinishShadowToken(raw: string): Record<string, unknown> {
   };
 }
 
+function encodeMaterial(material: unknown): unknown {
+  if (!isRecord(material)) return material;
+  const out = structuredClone(material);
+  if (isRecord(out.apple) && typeof out.apple.tint === "string") {
+    const m = /^\{([a-z0-9-]+)\}$/.exec(out.apple.tint);
+    if (m) out.apple.tint = `{color.${m[1]!}}`;
+  }
+  if (
+    isRecord(out.android) &&
+    isRecord(out.android.ripple) &&
+    typeof out.android.ripple.color === "string"
+  ) {
+    const m = /^\{([a-z0-9-]+)\}$/.exec(out.android.ripple.color);
+    if (m) out.android.ripple.color = `{color.${m[1]!}}`;
+  }
+  return out;
+}
+
 /** Encode a `shared`, `light`, or `dark` finishes map into a DTCG `finish` group. */
 function encodeFinishSection(
   finishes: Record<string, Record<string, unknown>>,
@@ -428,7 +531,7 @@ function encodeFinishSection(
 
     const ext: Record<string, unknown> = {};
     if ("backdropFilter" in finish) ext.backdropFilter = finish.backdropFilter;
-    if ("material" in finish) ext.material = finish.material;
+    if ("material" in finish) ext.material = encodeMaterial(finish.material);
     if (Object.keys(ext).length > 0) {
       group.$extensions = { [EXT_NS]: ext };
     }
@@ -440,10 +543,14 @@ function encodeFinishSection(
 
 function readDefaultMetadata(repoRoot: string) {
   const defDir = path.join(repoRoot, "packages/theme/tokens/themes/default");
+  const baseDir = path.join(repoRoot, "packages/theme/tokens/base");
   const defTheme = readJson(path.join(defDir, "theme.tokens.json"));
   const defFinishes = readJson(path.join(defDir, "finishes.shared.tokens.json"));
   const defLight = readJson(path.join(defDir, "light.tokens.json"));
   const defDark = readJson(path.join(defDir, "dark.tokens.json"));
+  const baseShared = readJson(path.join(baseDir, "style.shared.tokens.json"));
+  const basePointer = readJson(path.join(baseDir, "style.pointer.tokens.json"));
+  const baseTouch = readJson(path.join(baseDir, "style.touch.tokens.json"));
 
   const getDescriptions = (group: unknown): Record<string, string> => {
     if (!isRecord(group)) return {};
@@ -473,6 +580,477 @@ function readDefaultMetadata(repoRoot: string) {
     darkColorDescriptions: getDescriptions(defDark.color),
     finishRoles: getKeys(defFinishes.finish),
     finishDescriptions: getDescriptions(defFinishes.finish),
+    baseShared,
+    basePointer,
+    baseTouch,
+  };
+}
+
+function getAt(root: Record<string, unknown>, ...keys: string[]): Record<string, unknown> {
+  let cur: unknown = root;
+  for (const k of keys) {
+    if (!isRecord(cur) || !isRecord(cur[k])) {
+      throw new Error(`Missing base style path: ${keys.join(".")}`);
+    }
+    cur = cur[k];
+  }
+  return cur as Record<string, unknown>;
+}
+
+function getExtNs(node: Record<string, unknown>): Record<string, unknown> {
+  const exts = node.$extensions;
+  if (!isRecord(exts) || !isRecord(exts[EXT_NS])) return {};
+  return exts[EXT_NS];
+}
+
+function toDtcgFontFamilyRef(raw: string | null): string | null {
+  if (raw === null) return null;
+  const m = /^\{font-([a-z0-9-]+)\}$/.exec(raw);
+  return m ? `{font.family.${m[1]!}}` : raw;
+}
+
+function encodeSharedStyleOverrides(
+  style: ThemeStyleInput,
+  baseShared: Record<string, unknown>,
+  styleDescs: Record<string, string> | undefined,
+): {
+  dimensionExtras: Record<string, unknown>;
+  typography?: Record<string, unknown>;
+  shape?: Record<string, unknown>;
+  state: Record<string, unknown>;
+  duration?: Record<string, unknown>;
+  transition?: Record<string, unknown>;
+  motion?: Record<string, unknown>;
+  indicator?: Record<string, unknown>;
+} {
+  const desc = (key: string, fallback: unknown): string =>
+    styleDescs?.[key] ?? (typeof fallback === "string" ? fallback : key);
+
+  // 1. typography
+  const baseTypoGroup = getAt(baseShared, "typography");
+  const baseFontFamilyExt = (getExtNs(baseTypoGroup).fontFamily as string | null) ?? null;
+  const themeFontFamilyExt = toDtcgFontFamilyRef(style.type.family);
+  const roleFontFamily: string | string[] = themeFontFamilyExt ?? ["system-ui", "sans-serif"];
+  const typoOverrides: Record<string, unknown> = {};
+  for (const role of TYPE_ROLES) {
+    const spec = style.type[role];
+    const baseTok = getAt(baseTypoGroup, role);
+    const baseVal = baseTok.$value as Record<string, unknown>;
+    const nextWeight = Number(spec.weight);
+    const nextTracking = { value: spec.tracking, unit: "px" };
+    if (
+      !deepEqual(roleFontFamily, baseVal.fontFamily) ||
+      nextWeight !== baseVal.fontWeight ||
+      !deepEqual(nextTracking, baseVal.letterSpacing)
+    ) {
+      typoOverrides[role] = {
+        $value: {
+          fontFamily: roleFontFamily,
+          fontSize: `{font.size.${role}}`,
+          fontWeight: nextWeight,
+          lineHeight: `{font.line-height.${role}}`,
+          letterSpacing: nextTracking,
+        },
+        $description: desc(`typography.${role}`, baseTok.$description),
+      };
+    }
+  }
+  const typography =
+    themeFontFamilyExt !== baseFontFamilyExt || Object.keys(typoOverrides).length > 0
+      ? {
+          $type: "typography",
+          $description: desc("typography", baseTypoGroup.$description),
+          ...(themeFontFamilyExt !== baseFontFamilyExt
+            ? { $extensions: { [EXT_NS]: { fontFamily: themeFontFamilyExt } } }
+            : {}),
+          ...typoOverrides,
+        }
+      : undefined;
+
+  // 2. dimension.stroke & dimension.focus
+  const dimensionExtras: Record<string, unknown> = {};
+  const baseStroke = getAt(baseShared, "dimension", "stroke");
+  const strokeOverrides: Record<string, unknown> = {};
+  for (const key of ["hairline", "surface", "control", "indicator"] as const) {
+    const baseTok = getAt(baseStroke, key);
+    const baseVal = (baseTok.$value as { value: number }).value;
+    if (style.stroke[key] !== baseVal) {
+      strokeOverrides[key] = {
+        $value: { value: style.stroke[key], unit: "px" },
+        $description: desc(`dimension.stroke.${key}`, baseTok.$description),
+      };
+    }
+  }
+  if (Object.keys(strokeOverrides).length > 0) {
+    dimensionExtras.stroke = {
+      $description: desc("dimension.stroke", baseStroke.$description),
+      ...strokeOverrides,
+    };
+  }
+
+  const baseFocus = getAt(baseShared, "dimension", "focus");
+  const baseFocusStyle = getExtNs(baseFocus).style as string;
+  const focusOverrides: Record<string, unknown> = {};
+  for (const key of ["width", "offset"] as const) {
+    const baseTok = getAt(baseFocus, key);
+    const baseVal = (baseTok.$value as { value: number }).value;
+    if (style.focus[key] !== baseVal) {
+      focusOverrides[key] = {
+        $value: { value: style.focus[key], unit: "px" },
+        $description: desc(`dimension.focus.${key}`, baseTok.$description),
+      };
+    }
+  }
+  if (style.focus.style !== baseFocusStyle || Object.keys(focusOverrides).length > 0) {
+    dimensionExtras.focus = {
+      ...(style.focus.style !== baseFocusStyle
+        ? { $extensions: { [EXT_NS]: { style: style.focus.style } } }
+        : {}),
+      $description: desc("dimension.focus", baseFocus.$description),
+      ...focusOverrides,
+    };
+  }
+
+  // 3. shape ($extensions)
+  const baseShape = getAt(baseShared, "shape");
+  const baseShapeExt = getExtNs(baseShape);
+  const baseCorners = (baseShapeExt.corners as Record<string, unknown>) ?? {};
+  const shapeExtOut: Record<string, unknown> = {};
+  if (style.shape.curve !== baseShapeExt.curve) shapeExtOut.curve = style.shape.curve;
+  if (style.shape.corners.field !== baseCorners.field) {
+    shapeExtOut.corners = { field: style.shape.corners.field };
+  }
+  const shape =
+    Object.keys(shapeExtOut).length > 0
+      ? {
+          $description: desc("shape", baseShape.$description),
+          $extensions: { [EXT_NS]: shapeExtOut },
+        }
+      : undefined;
+
+  // 4. state
+  const baseState = getAt(baseShared, "state");
+  const baseRipple = getExtNs(baseState).ripple as boolean;
+  const stateOut: Record<string, unknown> = {
+    $type: "number",
+    ...(style.state.ripple !== baseRipple
+      ? { $extensions: { [EXT_NS]: { ripple: style.state.ripple } } }
+      : {}),
+    $description: desc("state", baseState.$description),
+  };
+
+  const basePressScale = getAt(baseState, "press-scale");
+  if (style.state.pressScale !== basePressScale.$value) {
+    stateOut["press-scale"] = {
+      $value: style.state.pressScale,
+      $description: desc("state.press-scale", basePressScale.$description),
+    };
+  }
+
+  const baseOverlay = getAt(baseState, "overlay");
+  const overlayOverrides: Record<string, unknown> = {};
+  for (const key of ["hover", "focus", "pressed", "dragged"] as const) {
+    const baseTok = getAt(baseOverlay, key);
+    if (style.state.overlay[key] !== baseTok.$value) {
+      overlayOverrides[key] = { $value: style.state.overlay[key] };
+    }
+  }
+  if (Object.keys(overlayOverrides).length > 0) {
+    stateOut.overlay = {
+      $description: desc("state.overlay", baseOverlay.$description),
+      ...overlayOverrides,
+    };
+  }
+
+  const basePressedOpacity = getAt(baseState, "pressed-opacity");
+  if (style.state.pressedOpacity !== basePressedOpacity.$value) {
+    stateOut["pressed-opacity"] = {
+      $value: style.state.pressedOpacity,
+      $description: desc("state.pressed-opacity", basePressedOpacity.$description),
+    };
+  }
+
+  const baseDisabled = getAt(baseState, "disabled");
+  const disabledOverrides: Record<string, unknown> = {};
+  for (const key of ["content", "container"] as const) {
+    const baseTok = getAt(baseDisabled, key);
+    if (style.state.disabled[key] !== baseTok.$value) {
+      disabledOverrides[key] = { $value: style.state.disabled[key] };
+    }
+  }
+  if (Object.keys(disabledOverrides).length > 0) {
+    stateOut.disabled = {
+      $description: desc("state.disabled", baseDisabled.$description),
+      ...disabledOverrides,
+    };
+  }
+
+  // 5. duration.shake
+  const baseDuration = getAt(baseShared, "duration");
+  const baseShake = getAt(baseDuration, "shake");
+  const baseShakeVal = (baseShake.$value as { value: number }).value;
+  const duration =
+    style.motion.shake.duration !== baseShakeVal
+      ? {
+          $type: "duration",
+          $description: desc("duration", baseDuration.$description),
+          shake: {
+            $value: { value: style.motion.shake.duration, unit: "ms" },
+            $description: desc("duration.shake", baseShake.$description),
+          },
+        }
+      : undefined;
+
+  // 6. transition.enter
+  const baseTransition = getAt(baseShared, "transition");
+  const baseEnter = getAt(baseTransition, "enter");
+  const baseEnterVal = baseEnter.$value as {
+    duration: { value: number };
+    timingFunction: string;
+  };
+  const nextEnterTf = `{cubicBezier.${style.motion.enter.easing}}`;
+  const transition =
+    style.motion.enter.duration !== baseEnterVal.duration.value ||
+    nextEnterTf !== baseEnterVal.timingFunction
+      ? {
+          $type: "transition",
+          $description: desc("transition", baseTransition.$description),
+          enter: {
+            $value: {
+              duration: { value: style.motion.enter.duration, unit: "ms" },
+              delay: { value: 0, unit: "ms" },
+              timingFunction: nextEnterTf,
+            },
+            $description: desc("transition.enter", baseEnter.$description),
+          },
+        }
+      : undefined;
+
+  // 7. motion.{press,settle,control,move}
+  const baseMotion = getAt(baseShared, "motion");
+  const motionOverrides: Record<string, unknown> = {};
+  for (const role of ["press", "settle", "control", "move"] as const) {
+    const spec = style.motion[role];
+    const baseRole = getAt(baseMotion, role);
+    if ("duration" in spec) {
+      motionOverrides[role] = {
+        $description: desc(`motion.${role}`, baseRole.$description),
+        timing: {
+          $type: "transition",
+          $value: {
+            duration: { value: spec.duration, unit: "ms" },
+            delay: { value: 0, unit: "ms" },
+            timingFunction: `{cubicBezier.${spec.easing}}`,
+          },
+          $description: desc(`motion.${role}.timing`, `Timing curve and duration for ${role}.`),
+        },
+      };
+    } else {
+      const baseSpring = getExtNs(baseRole).spring as { stiffness: number; damping: number };
+      if (spec.stiffness !== baseSpring.stiffness || spec.damping !== baseSpring.damping) {
+        motionOverrides[role] = {
+          $extensions: {
+            [EXT_NS]: {
+              spring: { stiffness: spec.stiffness, damping: spec.damping },
+            },
+          },
+          $description: desc(`motion.${role}`, baseRole.$description),
+        };
+      }
+    }
+  }
+  const motion =
+    Object.keys(motionOverrides).length > 0
+      ? {
+          $description: desc("motion", baseMotion.$description),
+          ...motionOverrides,
+        }
+      : undefined;
+
+  // 8. indicator
+  const baseIndicator = getAt(baseShared, "indicator");
+  const baseIndExt = getExtNs(baseIndicator);
+  const indExtOut: Record<string, unknown> = {};
+  for (const key of ["tabs", "nav", "field"] as const) {
+    if (style.indicator[key] !== baseIndExt[key]) {
+      indExtOut[key] = style.indicator[key];
+    }
+  }
+  const indicator =
+    Object.keys(indExtOut).length > 0
+      ? {
+          $description: desc("indicator", baseIndicator.$description),
+          $extensions: { [EXT_NS]: indExtOut },
+        }
+      : undefined;
+
+  return {
+    dimensionExtras,
+    ...(typography ? { typography } : {}),
+    ...(shape ? { shape } : {}),
+    state: stateOut,
+    ...(duration ? { duration } : {}),
+    ...(transition ? { transition } : {}),
+    ...(motion ? { motion } : {}),
+    ...(indicator ? { indicator } : {}),
+  };
+}
+
+function encodeInputTierOverrides(
+  tier: "pointer" | "touch",
+  style: ThemeStyleInput,
+  baseTier: Record<string, unknown>,
+  docDescription: string,
+  styleDescs: Record<string, string> | undefined,
+): Record<string, unknown> | null {
+  const desc = (key: string, fallback: unknown): string =>
+    styleDescs?.[`${tier}.${key}`] ??
+    styleDescs?.[key] ??
+    (typeof fallback === "string" ? fallback : key);
+
+  // font.size & font.line-height
+  const baseFont = getAt(baseTier, "font");
+  const baseFontSize = getAt(baseFont, "size");
+  const baseLineHeight = getAt(baseFont, "line-height");
+  const fontSizeDiff: Record<string, unknown> = {};
+  const lineHeightDiff: Record<string, unknown> = {};
+
+  for (const role of TYPE_ROLES) {
+    const sizeVal = style.type[role].size[tier];
+    const lineVal = style.type[role].line[tier];
+    const baseSize = (getAt(baseFontSize, role).$value as { value: number }).value;
+    const baseRatio = getAt(baseLineHeight, role).$value as number;
+    const ratio = lineVal / sizeVal;
+    if (sizeVal !== baseSize) {
+      fontSizeDiff[role] = { $value: { value: sizeVal, unit: "px" } };
+    }
+    if (ratio !== baseRatio) {
+      lineHeightDiff[role] = { $value: ratio };
+    }
+  }
+
+  const fontGroup: Record<string, unknown> = {};
+  if (Object.keys(fontSizeDiff).length > 0) {
+    fontGroup.size = {
+      $type: "dimension",
+      $description: desc("font.size", baseFontSize.$description),
+      ...fontSizeDiff,
+    };
+  }
+  if (Object.keys(lineHeightDiff).length > 0) {
+    fontGroup["line-height"] = {
+      $type: "number",
+      $description: desc("font.line-height", baseLineHeight.$description),
+      ...lineHeightDiff,
+    };
+  }
+
+  // dimension.size.* & dimension.icon.*
+  const baseDim = getAt(baseTier, "dimension");
+  const baseSizeGroup = getAt(baseDim, "size");
+  const sizeGroupOut: Record<string, unknown> = {};
+
+  const baseHit = getAt(baseSizeGroup, "hit");
+  if (style.size.hit[tier] !== (baseHit.$value as { value: number }).value) {
+    sizeGroupOut.hit = {
+      $value: { value: style.size.hit[tier], unit: "px" },
+      $description: desc("dimension.size.hit", baseHit.$description),
+    };
+  }
+
+  const diffDimSubgroup = (
+    subKey: string,
+    values: Record<string, number>,
+    baseGroup: Record<string, unknown>,
+  ): Record<string, unknown> | undefined => {
+    const diffs: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(values)) {
+      const baseTok = getAt(baseGroup, k);
+      const baseV = (baseTok.$value as { value: number }).value;
+      if (v !== baseV) {
+        diffs[k] = { $value: { value: v, unit: "px" } };
+      }
+    }
+    if (Object.keys(diffs).length === 0) return undefined;
+    return {
+      $description: desc(subKey, baseGroup.$description),
+      ...diffs,
+    };
+  };
+
+  const densityOut = diffDimSubgroup(
+    "dimension.size.density",
+    style.size.density[tier],
+    getAt(baseSizeGroup, "density"),
+  );
+  if (densityOut) sizeGroupOut.density = densityOut;
+
+  const baseControl = getAt(baseSizeGroup, "control");
+  const baseSwitch = getExtNs(baseControl).switch as string;
+  const controlVals = style.size.control[tier];
+  const controlDiff: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(controlVals)) {
+    if (k === "switch") continue;
+    const baseTok = getAt(baseControl, k);
+    const baseV = (baseTok.$value as { value: number }).value;
+    if (v !== baseV) {
+      controlDiff[k] = { $value: { value: v as number, unit: "px" } };
+    }
+  }
+  const switchDiff = controlVals.switch !== baseSwitch;
+  if (switchDiff || Object.keys(controlDiff).length > 0) {
+    sizeGroupOut.control = {
+      ...(switchDiff ? { $extensions: { [EXT_NS]: { switch: controlVals.switch } } } : {}),
+      $description: desc("dimension.size.control", baseControl.$description),
+      ...controlDiff,
+    };
+  }
+
+  const heightOut = diffDimSubgroup(
+    "dimension.size.height",
+    style.size.height[tier],
+    getAt(baseSizeGroup, "height"),
+  );
+  if (heightOut) sizeGroupOut.height = heightOut;
+
+  const baseIcon = getAt(baseDim, "icon");
+  const iconOut = diffDimSubgroup("dimension.icon", style.icon.size[tier], baseIcon);
+
+  const dimGroup: Record<string, unknown> = {};
+  if (Object.keys(sizeGroupOut).length > 0) {
+    dimGroup.size = {
+      $description: desc("dimension.size", baseSizeGroup.$description),
+      ...sizeGroupOut,
+    };
+  }
+  if (iconOut) {
+    dimGroup.icon = iconOut;
+  }
+
+  if (Object.keys(fontGroup).length === 0 && Object.keys(dimGroup).length === 0) {
+    return null;
+  }
+
+  return {
+    $schema: FORMAT_SCHEMA_URL,
+    $description: docDescription,
+    ...(Object.keys(fontGroup).length > 0
+      ? {
+          font: {
+            $description: desc("font", baseFont.$description),
+            ...fontGroup,
+          },
+        }
+      : {}),
+    ...(Object.keys(dimGroup).length > 0
+      ? {
+          dimension: {
+            $type: "dimension",
+            $description: desc("dimension", baseDim.$description),
+            ...dimGroup,
+          },
+        }
+      : {}),
   };
 }
 
@@ -494,7 +1072,35 @@ export function emitDtcgTheme(
     return path.relative(repoRoot, abs);
   };
 
-  // 1. theme.resolver.json
+  // 1. Style overrides (shared + pointer/touch tiers)
+  const sharedStyle = output.style
+    ? encodeSharedStyleOverrides(output.style, meta.baseShared, output.descriptions?.style)
+    : null;
+  const pointerDoc = output.style
+    ? encodeInputTierOverrides(
+        "pointer",
+        output.style,
+        meta.basePointer,
+        output.pointerDescription ?? `${output.name} pointer input-tier overrides.`,
+        output.descriptions?.style,
+      )
+    : null;
+  const touchDoc = output.style
+    ? encodeInputTierOverrides(
+        "touch",
+        output.style,
+        meta.baseTouch,
+        output.touchDescription ?? `${output.name} touch input-tier overrides.`,
+        output.descriptions?.style,
+      )
+    : null;
+
+  // 2. theme.resolver.json
+  const pointerSources = [{ $ref: "../../base/style.pointer.tokens.json" }];
+  if (pointerDoc) pointerSources.push({ $ref: "./pointer.tokens.json" });
+  const touchSources = [{ $ref: "../../base/style.touch.tokens.json" }];
+  if (touchDoc) touchSources.push({ $ref: "./touch.tokens.json" });
+
   const resolverDoc = {
     $schema: RESOLVER_SCHEMA_URL,
     name: output.name,
@@ -523,8 +1129,8 @@ export function emitDtcgTheme(
         description: "Pointer vs touch ergonomic sizing tier.",
         default: "pointer",
         contexts: {
-          pointer: [{ $ref: "../../base/style.pointer.tokens.json" }],
-          touch: [{ $ref: "../../base/style.touch.tokens.json" }],
+          pointer: pointerSources,
+          touch: touchSources,
         },
       },
     },
@@ -536,7 +1142,7 @@ export function emitDtcgTheme(
     ],
   };
 
-  // 2. theme.tokens.json
+  // 3. theme.tokens.json
   const radiusEntries: Record<string, unknown> = {
     $type: "dimension",
     $description:
@@ -563,9 +1169,10 @@ export function emitDtcgTheme(
     fontFamilyEntries[sub] = {
       $value: items,
       $description:
-        sub === "mono"
+        output.descriptions?.style?.[`font.family.${sub}`] ??
+        (sub === "mono"
           ? "Monospace font family for code blocks and numeric readouts."
-          : "Primary sans-serif font family stack.",
+          : "Primary sans-serif font family stack."),
     };
   }
 
@@ -592,6 +1199,11 @@ export function emitDtcgTheme(
     themeColors[k] = encodeCssColorToken(output.cssVars.theme[k]!, themeColorLookup, desc);
   }
 
+  const pressScale = output.pressScale ?? output.style?.state.pressScale;
+  if (pressScale === undefined) {
+    throw new Error(`${output.id}: either pressScale or style.state.pressScale must be provided`);
+  }
+
   const themeTokensDoc: Record<string, unknown> = {
     $schema: FORMAT_SCHEMA_URL,
     $description: output.themeDescription,
@@ -599,23 +1211,34 @@ export function emitDtcgTheme(
       $type: "dimension",
       $description: "Appearance-invariant base dimensional tokens.",
       radius: radiusEntries,
+      ...(sharedStyle?.dimensionExtras ?? {}),
     },
     font: {
       $description: "Base font family tokens.",
       family: fontFamilyEntries,
     },
+    ...(sharedStyle?.typography ? { typography: sharedStyle.typography } : {}),
+    ...(sharedStyle?.shape ? { shape: sharedStyle.shape } : {}),
     color: themeColors,
-    state: {
-      $type: "number",
-      $description: "Interaction state opacities, press scale, and ripple switch.",
-      "press-scale": {
-        $value: output.pressScale,
-        $description: output.pressScaleDescription,
-      },
-    },
+    state: sharedStyle
+      ? sharedStyle.state
+      : {
+          $type: "number",
+          $description: "Interaction state opacities, press scale, and ripple switch.",
+          "press-scale": {
+            $value: pressScale,
+            $description:
+              output.pressScaleDescription ??
+              "Scale factor applied while a pressable control is pressed.",
+          },
+        },
+    ...(sharedStyle?.duration ? { duration: sharedStyle.duration } : {}),
+    ...(sharedStyle?.transition ? { transition: sharedStyle.transition } : {}),
+    ...(sharedStyle?.motion ? { motion: sharedStyle.motion } : {}),
+    ...(sharedStyle?.indicator ? { indicator: sharedStyle.indicator } : {}),
   };
 
-  // 3. Split finishes into shared, light, and dark. Any field whose static DTCG color evaluation
+  // 4. Split finishes into shared, light, and dark. Any field whose static DTCG color evaluation
   // differs between light and dark (e.g. `oklch(from {card} l c h / 0.8)` when `card` flips) must
   // live in `light` and `dark` so each appearance's DTCG tree holds an accurate static `$value`.
   const split = splitFinishes(output.finishes.light, output.finishes.dark);
@@ -639,22 +1262,22 @@ export function emitDtcgTheme(
     }
   }
 
+  const finishDescs = {
+    ...meta.finishDescriptions,
+    ...(output.descriptions?.finishes ?? {}),
+  };
+
   const finishesSharedDoc = {
     $schema: FORMAT_SCHEMA_URL,
     $description: output.finishesDescription,
     finish: {
       $description:
         "Appearance-invariant surface finish recipes (background, gradient, border, shadow, blur, material).",
-      ...encodeFinishSection(
-        split.shared,
-        themeColorLookup,
-        meta.finishRoles,
-        meta.finishDescriptions,
-      ),
+      ...encodeFinishSection(split.shared, themeColorLookup, meta.finishRoles, finishDescs),
     },
   };
 
-  // 4. light.tokens.json & dark.tokens.json
+  // 5. light.tokens.json & dark.tokens.json
   const buildAppearanceDoc = (
     appearance: "light" | "dark",
     description: string,
@@ -720,6 +1343,17 @@ export function emitDtcgTheme(
     writeFile("light.tokens.json", lightDoc),
     writeFile("dark.tokens.json", darkDoc),
   ];
+  for (const [name, tierDoc] of [
+    ["pointer.tokens.json", pointerDoc],
+    ["touch.tokens.json", touchDoc],
+  ] as const) {
+    const abs = path.join(outDir, name);
+    if (tierDoc) {
+      sourceFiles.push(writeFile(name, tierDoc));
+    } else if (fs.existsSync(abs)) {
+      fs.rmSync(abs);
+    }
+  }
 
   const vpBin = path.join(repoRoot, "node_modules/.bin/vp");
   if (fs.existsSync(vpBin)) {

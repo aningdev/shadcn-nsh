@@ -24,6 +24,7 @@
  * (`#005FB8` light Dark1, `#003E92` light Dark2, `#60CDFF` dark Light2, `#99EBFF` dark Light3).
  * Any other host-supplied accent derives its 6 tiers perceptually in OKLCH.
  */
+import type { ThemeGeneratorOutput } from "./dtcg";
 import {
   oklchColor,
   oklchText,
@@ -807,6 +808,183 @@ export function winuiThemeFiles(
         finishes("light"),
         finishes("dark"),
       ),
+    },
+  };
+}
+
+/** WinUI 3 (Windows 11 / Fluent 2) theme data and DTCG descriptions ready for `emitDtcgTheme`. */
+export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGeneratorOutput {
+  const roles = winuiRoles(accent);
+  const colorDescs = {
+    background: "Window base surface (WinUI SolidBackgroundFillColorBase).",
+    foreground: "Primary text and icon ink (WinUI TextFillColorPrimary composited over base).",
+    card: "Elevated card background (WinUI CardBackgroundFillColorDefault composited over base).",
+    "card-foreground": "Primary ink on card surfaces (WinUI TextFillColorPrimary).",
+    popover:
+      "Acrylic flyout/popover fallback surface (WinUI AcrylicInAppFillColorDefaultFallback).",
+    "popover-foreground": "Primary ink on popover surfaces (WinUI TextFillColorPrimary).",
+    primary:
+      "Accent button fill (WinUI AccentFillColorDefault: Dark1 light / Light2 dark from SystemAccentColor).",
+    "primary-foreground": "Ink on accent fills (WinUI TextOnAccentFillColorPrimary).",
+    secondary: "Standard control fill (WinUI ControlFillColorDefault composited over base).",
+    "secondary-foreground": "Ink on secondary controls (WinUI TextFillColorPrimary).",
+    muted:
+      "Recessed neutral surface (WinUI SolidBackgroundFillColorSecondary composited over base).",
+    "muted-foreground": "Secondary label ink (WinUI TextFillColorSecondary composited over base).",
+    accent: "Subtle list/menu hover fill (WinUI SubtleFillColorSecondary composited over base).",
+    "accent-foreground": "Ink on subtle accent fills (WinUI TextFillColorPrimary).",
+    destructive: "Critical/error status ink (WinUI SystemFillColorCritical).",
+    border:
+      "Standard control hairline border (WinUI ControlStrokeColorDefault composited over base).",
+    input:
+      "Input and check control outline (WinUI ControlStrongStrokeColorDefault composited over base).",
+    ring: "Outer keyboard focus stroke (WinUI FocusStrokeColorOuter).",
+    "chart-1": "First chart series color matching WinUI primary accent.",
+    "chart-2": "Second chart series color (WinUI SystemFillColorSuccess).",
+    "chart-3": "Third chart series color (WinUI SystemFillColorCaution).",
+    "chart-4": "Fourth chart series color (WinUI SystemFillColorCritical).",
+    "chart-5": "Fifth chart series color (WinUI ControlStrongFillColorDefault).",
+    sidebar: "NavigationView expanded pane background matching window base.",
+    "sidebar-foreground": "Sidebar primary ink (WinUI TextFillColorPrimary).",
+    "sidebar-primary": "Sidebar primary accent matching AccentFillColorDefault.",
+    "sidebar-primary-foreground": "Sidebar primary ink matching TextOnAccentFillColorPrimary.",
+    "sidebar-accent": "Sidebar active item fill (WinUI SubtleFillColorSecondary).",
+    "sidebar-accent-foreground": "Sidebar active item ink (WinUI TextFillColorPrimary).",
+    "sidebar-border": "Sidebar separator stroke (WinUI DividerStrokeColorDefault).",
+    "sidebar-ring": "Sidebar focus stroke (WinUI FocusStrokeColorOuter).",
+    inset: "Inset well fill (WinUI ControlAltFillColorSecondary composited over base).",
+    raised: "Raised control fill (WinUI ControlFillColorDefault composited over base).",
+    "glass-edge":
+      "Flyout and acrylic border (WinUI SurfaceStrokeColorFlyout composited over base).",
+    "scrollbar-thumb": "Static scrollbar thumb color (WinUI ControlStrongFillColorDefault).",
+    "scrollbar-thumb-hover": "Static scrollbar hover color (WinUI ControlStrongFillColorDefault).",
+    field: "Text input surface (WinUI ControlFillColorDefault composited over base).",
+    line: "Hairline divider stroke (WinUI DividerStrokeColorDefault).",
+    hover: "Pointer hover fill (WinUI ControlFillColorSecondary composited over base).",
+    "ring-halo": "Inner keyboard focus stroke (WinUI FocusStrokeColorInner composited over base).",
+    faint: "Tertiary label ink (WinUI TextFillColorTertiary composited over base).",
+    brand:
+      "Accent text/link/icon ink (WinUI AccentTextFillColorPrimary: Dark2 light / Light3 dark).",
+    "brand-edge":
+      "Accent button bottom bevel stroke (WinUI ControlStrokeColorOnAccentSecondary composited over primary).",
+    track: "Switch and slider track (WinUI ControlAltFillColorSecondary).",
+    knob: "Unchecked switch thumb (WinUI TextFillColorSecondary).",
+    code: "Inline code ink (WinUI TextFillColorPrimary).",
+    info: "Informational semantic color (WinUI SystemFillColorAttentionBrush).",
+    warn: "Caution semantic color (WinUI SystemFillColorCaution).",
+    up: "Success semantic color (WinUI SystemFillColorSuccess).",
+    down: "Negative trend color matching WinUI SystemFillColorCritical.",
+    "brand-tint": "10% accent wash composited opaque over window base.",
+    "on-brand-tint": "Ink on brand-tint surfaces (WinUI TextFillColorPrimary).",
+    inverse:
+      "TeachingTip/toast surface (WinUI SolidBackgroundFillColorTertiary composited over base).",
+    "inverse-foreground": "Ink on inverse surface (WinUI TextFillColorPrimary).",
+    "inverse-muted": "Secondary ink on inverse surface (WinUI TextFillColorSecondary).",
+    "inverse-brand": "Action ink on inverse surface matching TextOnAccentFillColorPrimary.",
+    "info-tint":
+      "Informational wash (WinUI SystemFillColorAttentionBackground composited over base).",
+    "warn-tint": "Caution wash (WinUI SystemFillColorCautionBackground composited over base).",
+    "destructive-tint":
+      "Critical wash (WinUI SystemFillColorCriticalBackground composited over base).",
+    "up-tint": "Success wash (WinUI SystemFillColorSuccessBackground composited over base).",
+    "down-tint":
+      "Negative trend wash (WinUI SystemFillColorCriticalBackground composited over base).",
+    violet: "Library-retained violet data-series hue (no WinUI equivalent).",
+    "window-control-off":
+      "Library-retained unfocused window traffic-light fill (no WinUI equivalent).",
+  };
+
+  return {
+    id: "winui",
+    name: "WinUI 3",
+    resolverDescription:
+      "DTCG 2025.10 resolver for the WinUI 3 (Windows 11 / Fluent 2, winui3/release/2.7.0) theme.",
+    themeDescription:
+      "Appearance-invariant base tokens and WinUI 3 style overrides (Segoe UI Variable, Consolas, double focus rings, timing motion).",
+    finishesDescription:
+      "Appearance-invariant surface finish recipes for WinUI 3 (Windows backdrop blur on glass/menu/tooltip).",
+    lightDescription:
+      "Light appearance colors and ThemeShadow/Acrylic finish overrides for WinUI 3 (composited over SolidBackgroundFillColorBase #F3F3F3).",
+    darkDescription:
+      "Dark appearance colors and ThemeShadow/Acrylic finish overrides for WinUI 3 (composited over SolidBackgroundFillColorBase #202020).",
+    pointerDescription:
+      "WinUI 3 desktop pointer input-tier overrides (Standard 40px ListViewItemMinHeight, 32px controls, 12/16/20px icons).",
+    touchDescription:
+      "WinUI 3 touch input-tier overrides (40px hit target and controls, 16/20/24px icons).",
+    radiusGroupDescription:
+      "WinUI 3 corner radius scale: ControlCornerRadius 4px (controls/fields/chips/insets) and OverlayCornerRadius 8px (cards/overlays/dialogs/sheets).",
+    style: winuiStyle,
+    cssVars: {
+      theme: themeLevel(roles),
+      light: roles.light,
+      dark: roles.dark,
+    },
+    finishes: {
+      light: finishes("light"),
+      dark: finishes("dark"),
+    },
+    descriptions: {
+      sharedColors: {
+        "brand-fill":
+          "Primary brand action fill, aliased to {color.primary} (WinUI AccentFillColorDefault).",
+        "on-brand":
+          "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground} (WinUI TextOnAccentFillColorPrimary).",
+        scrim:
+          "Translucent backdrop scrim behind dialogs and overlays (WinUI SmokeFillColorDefault #4D000000).",
+        "chart-foreground":
+          "Dark ink on light chart tiles matching WinUI light TextFillColorPrimary.",
+        "window-control-ink":
+          "Glyph ink inside macOS window traffic-light buttons (50% black literal).",
+        "window-control-edge":
+          "Hairline border around macOS window traffic-light buttons (12% black literal).",
+      },
+      lightColors: colorDescs,
+      darkColors: colorDescs,
+      finishes: {
+        card: "WinUI 3 card surface with layering depth-8 two-layer ThemeShadow approximation.",
+        raised:
+          "WinUI 3 standard control surface with depth-2 shadow and ControlStrokeColorDefault.",
+        hover: "WinUI 3 hovered control surface with depth-2 shadow and ControlStrokeColorDefault.",
+        pressed: "WinUI 3 pressed control surface with muted fill and no shadow.",
+        handle: "WinUI 3 slider handle using popover fill, depth-2 shadow, and border.",
+        thumb: "WinUI 3 segmented thumb using popover fill, depth-2 shadow, and border.",
+        on: "WinUI 3 selected pill/tile using opaque brand-tint fill and border.",
+        glass:
+          "WinUI 3 AcrylicInApp surface with per-appearance TintLuminosityOpacity (0.85 light / 0.96 dark), depth-32 shadow, and Windows blur backdrop.",
+        menu: "WinUI 3 Acrylic flyout/menu surface with depth-32 shadow and Windows blur backdrop.",
+        dialog:
+          "WinUI 3 ContentDialog surface with depth-128 shadow and composited SurfaceStrokeColorDefault border.",
+        tooltip:
+          "WinUI 3 ToolTip surface with depth-16 shadow, glass-edge border, and Windows blur backdrop.",
+        inverse: "WinUI 3 TeachingTip/toast surface with depth-32 shadow and glass-edge border.",
+      },
+      style: {
+        "font.family.mono": "WinUI 3 monospace font stack (Consolas, monospace).",
+        "font.family.sans":
+          "WinUI 3 primary UI font stack (Segoe UI Variable, Segoe UI, sans-serif; typography.md).",
+        typography:
+          "WinUI 3 typography scale mapped from TextBlock_themeresources.xaml (400 and 600 weights only).",
+        "dimension.stroke.indicator": "3px active navigation/tab indicator width per WinUI 3.",
+        "dimension.focus":
+          "WinUI 3 double focus stroke (2px outer FocusStrokeColorOuter + 1px inner FocusStrokeColorInner, 0px offset).",
+        "dimension.focus.width": "2px outer focus stroke width per WinUI 3.",
+        shape: "Circular corner curve (WinUI 3 has no continuous squircle curve; geometry.md).",
+        "state.press-scale":
+          "Scale factor applied while pressed (1 disables press shrinking; WinUI 3 swaps fill brushes instead).",
+        "state.pressed-opacity":
+          "Content stays full opacity when pressed (1; fill brush swap shows press).",
+        "state.disabled":
+          "WinUI 3 disabled opacities (0.36 TextFillColorDisabled content, 0.45 container compromise).",
+        "transition.enter":
+          "WinUI 3 250ms entrance transition with Direct Entrance decelerate curve (motion.md).",
+        "motion.press":
+          "WinUI 3 ToggleSwitch press timing (83ms decelerate, ToggleSwitch_themeresources.xaml:321).",
+        "motion.settle": "WinUI 3 250ms settle timing with Direct Entrance decelerate curve.",
+        "motion.control": "WinUI 3 167ms control timing with Point-to-Point curve.",
+        "motion.move": "WinUI 3 333ms move timing with Point-to-Point curve.",
+        indicator:
+          "WinUI 3 underlined tabs, NavigationView leading bar, and bottom-underlined text fields.",
+      },
     },
   };
 }

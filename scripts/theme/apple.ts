@@ -10,6 +10,7 @@
  * Read by `generate-apple.ts`; `docs/specs/native-themes.md` §3.2 holds the style values and their
  * sources.
  */
+import type { ThemeGeneratorOutput } from "./dtcg";
 import { oklchColor, over, toOklchText } from "./oklch";
 import { ordered, orderedSplitFinishes } from "./order";
 import { withSurfaces } from "./surfaces";
@@ -426,6 +427,108 @@ export function themeFiles(defaults: {
         withMaterial(withSurfaces(finishes("light"))),
         withMaterial(withSurfaces(finishes("dark"))),
       ),
+    },
+  };
+}
+
+/** Apple theme data and HIG/UIKit DTCG descriptions ready for `emitDtcgTheme`. */
+export function appleDtcgOutput(): ThemeGeneratorOutput {
+  const appearanceColorDescs = {
+    background: "Grouped page canvas background (UIKit systemGroupedBackground).",
+    foreground: "Primary label ink (UIKit label).",
+    card: "Elevated list and card surface (UIKit systemBackground).",
+    popover: "Floating popover and sheet surface (UIKit secondarySystemBackground / popover).",
+    primary: "System accent blue (UIKit systemBlue).",
+    muted: "Subdued container fill (UIKit tertiarySystemFill composited over card).",
+    "muted-foreground": "Secondary label ink (UIKit secondaryLabel composited over card).",
+    accent: "Subtle hover/selection fill (UIKit quaternarySystemFill composited over card).",
+    destructive: "System destructive red (UIKit systemRed).",
+    border: "Hairline separator (UIKit separator hairline composited over card).",
+    input: "Input control border (UIKit separator composited over card).",
+    ring: "Focus ring color matching UIKit systemBlue.",
+    "chart-1": "First chart series color (UIKit systemBlue).",
+    "chart-2": "Second chart series color (UIKit systemGreen).",
+    "chart-3": "Third chart series color (UIKit systemOrange).",
+    "chart-4": "Fourth chart series color (UIKit systemPurple).",
+    "chart-5": "Fifth chart series color (UIKit systemRed).",
+    sidebar: "Sidebar surface matching Apple system sidebar/grouped background.",
+    inset: "Inset surface (UIKit quaternarySystemFill composited over card).",
+    raised: "Raised control surface (UIKit tertiarySystemFill composited over card).",
+    field: "Form input background (UIKit tertiarySystemFill composited over card).",
+    line: "Inset divider hairline (UIKit hairline composited over card).",
+    hover: "Pointer hover tint (6% foreground ink over transparent).",
+    "ring-halo": "Outer keyboard focus halo (30% ring color over transparent).",
+    faint: "Tertiary label ink for placeholders and quiet captions (UIKit tertiaryLabel).",
+    brand: "Inline brand accent ink (UIKit systemBlue).",
+    track: "Switch and slider track (UIKit secondarySystemFill composited over card).",
+    knob: "Switch knob and slider handle (pure white).",
+    info: "Informational semantic color (UIKit systemBlue).",
+    warn: "Warning semantic color (UIKit systemOrange).",
+    up: "Positive trend semantic color (UIKit systemGreen).",
+    "brand-tint": "Translucent brand wash (12% brand over transparent).",
+    "info-tint": "Translucent informational wash (12% info over transparent).",
+    "warn-tint": "Translucent warning wash (12% warn over transparent).",
+    "destructive-tint": "Translucent destructive wash (12% destructive over transparent).",
+    "up-tint": "Translucent positive wash (12% up over transparent).",
+    "down-tint": "Translucent negative wash (12% destructive over transparent).",
+    violet: "Accent purple ink (UIKit systemPurple).",
+    "window-control-off":
+      "Unfocused window traffic-light fill (UIKit systemFill composited over card).",
+  };
+
+  return {
+    id: "apple",
+    name: "Apple",
+    resolverDescription:
+      "DTCG 2025.10 resolver for the Apple theme (Apple HIG / UIKit system palette and Liquid Glass).",
+    themeDescription:
+      "Appearance-invariant base tokens and Apple HIG / UIKit style overrides for the Apple theme.",
+    finishesDescription:
+      "Appearance-invariant surface finish recipes for the Apple theme (Apple Liquid Glass material and Retina hairlines).",
+    lightDescription:
+      "Light appearance colors and hairline/glass finish overrides for the Apple theme (UIKit light system colors).",
+    darkDescription:
+      "Dark appearance colors and hairline/glass finish overrides for the Apple theme (UIKit dark system colors).",
+    pointerDescription:
+      "Apple macOS pointer input-tier overrides (Apple HIG Layout and Typography).",
+    touchDescription: "Apple iOS touch input-tier overrides (Apple HIG Layout and Typography).",
+    radiusGroupDescription:
+      "Apple HIG concentric corner radius scale (999px capsule controls/chips, 20px card, 26px dialog, 34px sheet).",
+    style,
+    cssVars: {
+      theme: themeLevel(),
+      light: section(palette("light")),
+      dark: section(palette("dark")),
+    },
+    finishes: {
+      light: withMaterial(withSurfaces(finishes("light"))),
+      dark: withMaterial(withSurfaces(finishes("dark"))),
+    },
+    descriptions: {
+      sharedColors: {
+        "brand-fill": "Primary brand action fill, aliased to {color.primary} (UIKit systemBlue).",
+        "on-brand":
+          "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}.",
+        scrim: "Translucent backdrop scrim behind modals and sheets (40% black).",
+        "chart-foreground": "Dark ink on light chart tiles matching UIKit light label (#000000).",
+      },
+      lightColors: appearanceColorDescs,
+      darkColors: appearanceColorDescs,
+      finishes: {
+        raised: "Raised control surface with Liquid Glass material (regular) and hairline shadow.",
+        glass:
+          "Liquid Glass overlay surface with translucent popover fill, 30px blur fallback, and regular/thin Apple material.",
+        menu: "Floating menu/popover surface with translucent popover fill, hairline + drop shadow, and Liquid Glass material.",
+        inverse: "Toast/inverse floating surface using Liquid Glass material over inverse fill.",
+      },
+      style: {
+        "dimension.stroke.hairline": "Retina 0.5px hairline divider width per Apple HIG.",
+        "dimension.stroke.surface": "Retina 0.5px container surface hairline width per Apple HIG.",
+        "state.press-scale":
+          "Scale factor applied while pressed (1 disables press shrinking; Apple dims via pressed-opacity).",
+        "state.disabled":
+          "UIKit disabled opacity multipliers (0.3 for both content and containers).",
+      },
     },
   };
 }

@@ -1,0 +1,449 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "$description": "Appearance-invariant base tokens and Material 3 Expressive style overrides.",
+  "dimension": {
+    "$type": "dimension",
+    "$description": "Appearance-invariant base dimensional tokens.",
+    "radius": {
+      "$type": "dimension",
+      "$description": "Material 3 Expressive corner scale (999px CornerFull controls, 4px CornerExtraSmall fields/menus, 12px CornerMedium cards/chips, 28px CornerExtraLarge dialogs/sheets; ShapeTokens.kt).",
+      "base": {
+        "$value": {
+          "value": 8,
+          "unit": "px"
+        },
+        "$description": "Base corner radius shared by insets and general rounded elements."
+      },
+      "card": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        },
+        "$description": "Corner radius for cards and sidebar floating containers."
+      },
+      "control": {
+        "$value": {
+          "value": 999,
+          "unit": "px"
+        },
+        "$description": "Corner radius for interactive controls such as buttons, triggers, and menu items."
+      },
+      "field": {
+        "$value": {
+          "value": 4,
+          "unit": "px"
+        },
+        "$description": "Corner radius for form input fields and editor wells."
+      },
+      "chip": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        },
+        "$description": "Corner radius for badges, chips, and compact tags."
+      },
+      "overlay": {
+        "$value": {
+          "value": 4,
+          "unit": "px"
+        },
+        "$description": "Corner radius for floating menus, popovers, and toasts."
+      },
+      "dialog": {
+        "$value": {
+          "value": 28,
+          "unit": "px"
+        },
+        "$description": "Corner radius for modal dialogs."
+      },
+      "sheet": {
+        "$value": {
+          "value": 28,
+          "unit": "px"
+        },
+        "$description": "Corner radius for drawers and bottom sheets."
+      }
+    },
+    "stroke": {
+      "$description": "Border and indicator stroke widths.",
+      "surface": {
+        "$value": {
+          "value": 0,
+          "unit": "px"
+        },
+        "$description": "0px surface outline (M3 elevated/filled surfaces rely on elevation rather than outlines)."
+      },
+      "indicator": {
+        "$value": {
+          "value": 3,
+          "unit": "px"
+        },
+        "$description": "3px active tab/navigation indicator width per M3."
+      }
+    },
+    "focus": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "style": "outline"
+        }
+      },
+      "$description": "M3 focus indicator: 3px solid outline offset 2px (_md-sys-state-focus-indicator.scss).",
+      "offset": {
+        "$value": {
+          "value": 2,
+          "unit": "px"
+        },
+        "$description": "2px outward focus indicator offset per M3."
+      }
+    }
+  },
+  "font": {
+    "$description": "Base font family tokens.",
+    "family": {
+      "$type": "fontFamily",
+      "$description": "Font family stacks.",
+      "mono": {
+        "$value": "monospace",
+        "$description": "Monospace font family for code blocks and numeric readouts."
+      }
+    }
+  },
+  "typography": {
+    "$type": "typography",
+    "$description": "Material 3 Expressive typography scale (TypeScaleTokens.kt / _md-sys-typescale.scss).",
+    "caption": {
+      "$value": {
+        "fontFamily": ["system-ui", "sans-serif"],
+        "fontSize": "{font.size.caption}",
+        "fontWeight": 500,
+        "lineHeight": "{font.line-height.caption}",
+        "letterSpacing": {
+          "value": 0.5,
+          "unit": "px"
+        }
+      },
+      "$description": "Small captions and segmented counter labels."
+    },
+    "detail": {
+      "$value": {
+        "fontFamily": ["system-ui", "sans-serif"],
+        "fontSize": "{font.size.detail}",
+        "fontWeight": 400,
+        "lineHeight": "{font.line-height.detail}",
+        "letterSpacing": {
+          "value": 0.4,
+          "unit": "px"
+        }
+      },
+      "$description": "Sidebar section labels, counts, and supporting metadata."
+    },
+    "body": {
+      "$value": {
+        "fontFamily": ["system-ui", "sans-serif"],
+        "fontSize": "{font.size.body}",
+        "fontWeight": 400,
+        "lineHeight": "{font.line-height.body}",
+        "letterSpacing": {
+          "value": 0.25,
+          "unit": "px"
+        }
+      },
+      "$description": "Standard body copy, list rows, and dialog content."
+    },
+    "label": {
+      "$value": {
+        "fontFamily": ["system-ui", "sans-serif"],
+        "fontSize": "{font.size.label}",
+        "fontWeight": 500,
+        "lineHeight": "{font.line-height.label}",
+        "letterSpacing": {
+          "value": 0.1,
+          "unit": "px"
+        }
+      },
+      "$description": "Control labels, form labels, and interactive triggers."
+    },
+    "title": {
+      "$value": {
+        "fontFamily": ["system-ui", "sans-serif"],
+        "fontSize": "{font.size.title}",
+        "fontWeight": 500,
+        "lineHeight": "{font.line-height.title}",
+        "letterSpacing": {
+          "value": 0.15,
+          "unit": "px"
+        }
+      },
+      "$description": "Card and section headings."
+    },
+    "headline": {
+      "$value": {
+        "fontFamily": ["system-ui", "sans-serif"],
+        "fontSize": "{font.size.headline}",
+        "fontWeight": 400,
+        "lineHeight": "{font.line-height.headline}",
+        "letterSpacing": {
+          "value": 0,
+          "unit": "px"
+        }
+      },
+      "$description": "Page-level headings."
+    },
+    "display": {
+      "$value": {
+        "fontFamily": ["system-ui", "sans-serif"],
+        "fontSize": "{font.size.display}",
+        "fontWeight": 400,
+        "lineHeight": "{font.line-height.display}",
+        "letterSpacing": {
+          "value": 0,
+          "unit": "px"
+        }
+      },
+      "$description": "Large display numerals and hero headings."
+    }
+  },
+  "shape": {
+    "$description": "M3 circular arc corners with top-only rounded corners on filled text fields (FilledTextFieldTokens.kt).",
+    "$extensions": {
+      "dev.aning.shadcn-nsh": {
+        "curve": "circular",
+        "corners": {
+          "field": "top"
+        }
+      }
+    }
+  },
+  "color": {
+    "$type": "color",
+    "$description": "Appearance-invariant C-layer color roles shared by light and dark modes.",
+    "brand-fill": {
+      "$value": "{color.primary}",
+      "$description": "Primary brand action fill, aliased to {color.primary}."
+    },
+    "on-brand": {
+      "$value": "{color.primary-foreground}",
+      "$description": "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}."
+    },
+    "scrim": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0, 0, 0],
+        "alpha": 0.32,
+        "hex": "#000000"
+      },
+      "$description": "Translucent backdrop scrim behind modals and sheets (M3 scrim at 32% opacity)."
+    },
+    "media": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.1869, 0.0151, 266.766],
+        "hex": "#10131a"
+      },
+      "$description": "Ground behind photographs and videos; invariant across appearances."
+    },
+    "on-media": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "hex": "#ffffff"
+      },
+      "$description": "White ink over photographs and dark media surfaces; invariant across appearances."
+    },
+    "chart-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.22652, 0.00999, 303.714],
+        "hex": "#1d1b20"
+      },
+      "$description": "Dark ink on light chart tiles matching M3 light onSurface."
+    },
+    "window-close": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.50128, 0.17832, 28.705],
+        "hex": "#b3261e"
+      },
+      "$description": "macOS window close traffic-light fill mapped to M3 light error."
+    },
+    "window-minimize": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.5909, 0.13245, 65.117],
+        "hex": "#b26a00"
+      },
+      "$description": "macOS window minimize traffic-light fill mapped to NSH light warn."
+    },
+    "window-zoom": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.56078, 0.1232, 159.355],
+        "hex": "#138a5a"
+      },
+      "$description": "macOS window zoom traffic-light fill mapped to NSH light up."
+    },
+    "window-control-ink": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0, 0, 0],
+        "alpha": 0.5,
+        "hex": "#000000"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "hex": "#000000"
+            },
+            "percent": 50,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Glyph ink inside macOS window traffic-light buttons."
+    },
+    "window-control-edge": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0, 0, 0],
+        "alpha": 0.12,
+        "hex": "#000000"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "hex": "#000000"
+            },
+            "percent": 12,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Hairline border around macOS window traffic-light buttons."
+    }
+  },
+  "state": {
+    "$type": "number",
+    "$extensions": {
+      "dev.aning.shadcn-nsh": {
+        "ripple": true
+      }
+    },
+    "$description": "Interaction state opacities, press scale, and ripple switch.",
+    "press-scale": {
+      "$value": 1,
+      "$description": "Scale factor applied while pressed (1 disables press shrinking; M3 uses state layer + Android ripple)."
+    },
+    "overlay": {
+      "$description": "M3 state-layer ink opacities: hover 0.08, focus 0.10, pressed 0.10, dragged 0.16 (StateTokens.kt).",
+      "hover": {
+        "$value": 0.08
+      },
+      "focus": {
+        "$value": 0.1
+      },
+      "pressed": {
+        "$value": 0.1
+      },
+      "dragged": {
+        "$value": 0.16
+      }
+    },
+    "pressed-opacity": {
+      "$value": 1,
+      "$description": "Content stays full opacity when pressed (1; ripple/state layer shows press)."
+    },
+    "disabled": {
+      "$description": "M3 disabled opacities: 0.38 content and 0.10 container (_md-comp-button-filled.scss).",
+      "content": {
+        "$value": 0.38
+      },
+      "container": {
+        "$value": 0.1
+      }
+    }
+  },
+  "transition": {
+    "$type": "transition",
+    "$description": "Named CSS/NSH transition presets.",
+    "enter": {
+      "$value": {
+        "duration": {
+          "value": 500,
+          "unit": "ms"
+        },
+        "delay": {
+          "value": 0,
+          "unit": "ms"
+        },
+        "timingFunction": "{cubicBezier.emphasized-decelerate}"
+      },
+      "$description": "M3 DurationLong2 (500ms) with emphasized-decelerate curve (_md-sys-motion.scss)."
+    }
+  },
+  "motion": {
+    "$description": "Interactive spring and timing physics roles.",
+    "press": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "spring": {
+            "stiffness": 800,
+            "damping": 33.94
+          }
+        }
+      },
+      "$description": "M3 Expressive FastSpatial spring (stiffness 800, damping ratio 0.6; ExpressiveMotionTokens.kt)."
+    },
+    "settle": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "spring": {
+            "stiffness": 380,
+            "damping": 31.19
+          }
+        }
+      },
+      "$description": "M3 Expressive DefaultSpatial spring (stiffness 380, damping ratio 0.8)."
+    },
+    "control": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "spring": {
+            "stiffness": 1600,
+            "damping": 80
+          }
+        }
+      },
+      "$description": "M3 Expressive DefaultEffects spring (stiffness 1600, damping ratio 1.0)."
+    },
+    "move": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "spring": {
+            "stiffness": 380,
+            "damping": 31.19
+          }
+        }
+      },
+      "$description": "M3 Expressive DefaultSpatial spring for layout and indicator movement."
+    }
+  },
+  "indicator": {
+    "$description": "M3 underlined tabs and filled-text-field underline indicator.",
+    "$extensions": {
+      "dev.aning.shadcn-nsh": {
+        "tabs": "underline",
+        "field": "underline"
+      }
+    }
+  }
+}

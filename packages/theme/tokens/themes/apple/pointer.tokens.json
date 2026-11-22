@@ -1,0 +1,129 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "$description": "Apple macOS pointer input-tier overrides (Apple HIG Layout and Typography).",
+  "font": {
+    "$description": "Desktop pointer typography metrics.",
+    "size": {
+      "$type": "dimension",
+      "$description": "Font sizes per type role for pointer input.",
+      "caption": {
+        "$value": {
+          "value": 10,
+          "unit": "px"
+        }
+      },
+      "detail": {
+        "$value": {
+          "value": 11,
+          "unit": "px"
+        }
+      },
+      "label": {
+        "$value": {
+          "value": 13,
+          "unit": "px"
+        }
+      },
+      "headline": {
+        "$value": {
+          "value": 22,
+          "unit": "px"
+        }
+      }
+    },
+    "line-height": {
+      "$type": "number",
+      "$description": "Unitless line-height ratios per type role for pointer input.",
+      "caption": {
+        "$value": 1.3
+      },
+      "detail": {
+        "$value": 1.2727272727272727
+      },
+      "body": {
+        "$value": 1.2307692307692308
+      },
+      "label": {
+        "$value": 1.2307692307692308
+      },
+      "title": {
+        "$value": 1.2307692307692308
+      },
+      "headline": {
+        "$value": 1.1818181818181819
+      }
+    }
+  },
+  "dimension": {
+    "$type": "dimension",
+    "$description": "Desktop pointer layout density, control geometry, and icon sizes.",
+    "size": {
+      "$description": "Ergonomic sizing scales for pointer input.",
+      "density": {
+        "$description": "Page-level row, padding, gap, and surface spacing metrics.",
+        "row": {
+          "$value": {
+            "value": 32,
+            "unit": "px"
+          }
+        },
+        "surface": {
+          "$value": {
+            "value": 12,
+            "unit": "px"
+          }
+        }
+      },
+      "control": {
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "switch": "regular"
+          }
+        },
+        "$description": "Control internal geometry and switch size tier.",
+        "row": {
+          "$value": {
+            "value": 36,
+            "unit": "px"
+          }
+        },
+        "corner": {
+          "$value": {
+            "value": 4,
+            "unit": "px"
+          }
+        },
+        "tabs": {
+          "$value": {
+            "value": 28,
+            "unit": "px"
+          }
+        },
+        "line": {
+          "$value": {
+            "value": 28,
+            "unit": "px"
+          }
+        }
+      },
+      "height": {
+        "$description": "Standard control heights (sm, md, lg).",
+        "lg": {
+          "$value": {
+            "value": 32,
+            "unit": "px"
+          }
+        }
+      }
+    },
+    "icon": {
+      "$description": "Standard icon dimensions (sm, md, lg).",
+      "lg": {
+        "$value": {
+          "value": 16,
+          "unit": "px"
+        }
+      }
+    }
+  }
+}

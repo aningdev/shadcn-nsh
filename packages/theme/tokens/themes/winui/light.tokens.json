@@ -1,0 +1,1091 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "$description": "Light appearance colors and ThemeShadow/Acrylic finish overrides for WinUI 3 (composited over SolidBackgroundFillColorBase #F3F3F3).",
+  "color": {
+    "$type": "color",
+    "$description": "Adaptive A-layer and B-layer color roles for light appearance.",
+    "background": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.96415, 0, 0],
+        "hex": "#f3f3f3"
+      },
+      "$description": "Window base surface (WinUI SolidBackgroundFillColorBase)."
+    },
+    "foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.21779, 0, 0],
+        "hex": "#1a1a1a"
+      },
+      "$description": "Primary text and icon ink (WinUI TextFillColorPrimary composited over base)."
+    },
+    "card": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.98809, 0, 0],
+        "hex": "#fbfbfb"
+      },
+      "$description": "Elevated card background (WinUI CardBackgroundFillColorDefault composited over base)."
+    },
+    "card-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.21779, 0, 0],
+        "hex": "#1a1a1a"
+      },
+      "$description": "Primary ink on card surfaces (WinUI TextFillColorPrimary)."
+    },
+    "popover": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.98212, 0, 0],
+        "hex": "#f9f9f9"
+      },
+      "$description": "Acrylic flyout/popover fallback surface (WinUI AcrylicInAppFillColorDefaultFallback)."
+    },
+    "popover-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.21779, 0, 0],
+        "hex": "#1a1a1a"
+      },
+      "$description": "Primary ink on popover surfaces (WinUI TextFillColorPrimary)."
+    },
+    "primary": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.49147, 0.15959, 254.594],
+        "hex": "#005fb8"
+      },
+      "$description": "Accent button fill (WinUI AccentFillColorDefault: Dark1 light / Light2 dark from SystemAccentColor)."
+    },
+    "primary-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "hex": "#ffffff"
+      },
+      "$description": "Ink on accent fills (WinUI TextOnAccentFillColorPrimary)."
+    },
+    "secondary": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.98809, 0, 0],
+        "hex": "#fbfbfb"
+      },
+      "$description": "Standard control fill (WinUI ControlFillColorDefault composited over base)."
+    },
+    "secondary-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.21779, 0, 0],
+        "hex": "#1a1a1a"
+      },
+      "$description": "Ink on secondary controls (WinUI TextFillColorPrimary)."
+    },
+    "muted": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.94912, 0, 0],
+        "hex": "#eeeeee"
+      },
+      "$description": "Recessed neutral surface (WinUI SolidBackgroundFillColorSecondary composited over base)."
+    },
+    "muted-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.47478, 0, 0],
+        "hex": "#5c5c5c"
+      },
+      "$description": "Secondary label ink (WinUI TextFillColorSecondary composited over base)."
+    },
+    "accent": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.93705, 0, 0],
+        "hex": "#eaeaea"
+      },
+      "$description": "Subtle list/menu hover fill (WinUI SubtleFillColorSecondary composited over base)."
+    },
+    "accent-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.21779, 0, 0],
+        "hex": "#1a1a1a"
+      },
+      "$description": "Ink on subtle accent fills (WinUI TextFillColorPrimary)."
+    },
+    "destructive": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.53615, 0.19119, 30.071],
+        "hex": "#c42b1c"
+      },
+      "$description": "Critical/error status ink (WinUI SystemFillColorCritical)."
+    },
+    "border": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.92191, 0, 0],
+        "hex": "#e5e5e5"
+      },
+      "$description": "Standard control hairline border (WinUI ControlStrokeColorDefault composited over base)."
+    },
+    "input": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.62006, 0, 0],
+        "hex": "#868686"
+      },
+      "$description": "Input and check control outline (WinUI ControlStrongStrokeColorDefault composited over base)."
+    },
+    "ring": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.21779, 0, 0],
+        "hex": "#1a1a1a"
+      },
+      "$description": "Outer keyboard focus stroke (WinUI FocusStrokeColorOuter)."
+    },
+    "chart-1": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.49147, 0.15959, 254.594],
+        "hex": "#005fb8"
+      },
+      "$description": "First chart series color matching WinUI primary accent."
+    },
+    "chart-2": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.50725, 0.16489, 142.658],
+        "hex": "#0f7b0f"
+      },
+      "$description": "Second chart series color (WinUI SystemFillColorSuccess)."
+    },
+    "chart-3": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.53885, 0.12069, 65.216],
+        "hex": "#9d5d00"
+      },
+      "$description": "Third chart series color (WinUI SystemFillColorCaution)."
+    },
+    "chart-4": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.53615, 0.19119, 30.071],
+        "hex": "#c42b1c"
+      },
+      "$description": "Fourth chart series color (WinUI SystemFillColorCritical)."
+    },
+    "chart-5": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.62006, 0, 0],
+        "hex": "#868686"
+      },
+      "$description": "Fifth chart series color (WinUI ControlStrongFillColorDefault)."
+    },
+    "sidebar": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.96415, 0, 0],
+        "hex": "#f3f3f3"
+      },
+      "$description": "NavigationView expanded pane background matching window base."
+    },
+    "sidebar-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.21779, 0, 0],
+        "hex": "#1a1a1a"
+      },
+      "$description": "Sidebar primary ink (WinUI TextFillColorPrimary)."
+    },
+    "sidebar-primary": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.49147, 0.15959, 254.594],
+        "hex": "#005fb8"
+      },
+      "$description": "Sidebar primary accent matching AccentFillColorDefault."
+    },
+    "sidebar-primary-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "hex": "#ffffff"
+      },
+      "$description": "Sidebar primary ink matching TextOnAccentFillColorPrimary."
+    },
+    "sidebar-accent": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.93705, 0, 0],
+        "hex": "#eaeaea"
+      },
+      "$description": "Sidebar active item fill (WinUI SubtleFillColorSecondary)."
+    },
+    "sidebar-accent-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.21779, 0, 0],
+        "hex": "#1a1a1a"
+      },
+      "$description": "Sidebar active item ink (WinUI TextFillColorPrimary)."
+    },
+    "sidebar-border": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.92191, 0, 0],
+        "hex": "#e5e5e5"
+      },
+      "$description": "Sidebar separator stroke (WinUI DividerStrokeColorDefault)."
+    },
+    "sidebar-ring": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.21779, 0, 0],
+        "hex": "#1a1a1a"
+      },
+      "$description": "Sidebar focus stroke (WinUI FocusStrokeColorOuter)."
+    },
+    "inset": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.94611, 0, 0],
+        "hex": "#ededed"
+      },
+      "$description": "Inset well fill (WinUI ControlAltFillColorSecondary composited over base)."
+    },
+    "raised": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.98809, 0, 0],
+        "hex": "#fbfbfb"
+      },
+      "$description": "Raised control fill (WinUI ControlFillColorDefault composited over base)."
+    },
+    "glass-edge": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.92191, 0, 0],
+        "hex": "#e5e5e5"
+      },
+      "$description": "Flyout and acrylic border (WinUI SurfaceStrokeColorFlyout composited over base)."
+    },
+    "scrollbar-thumb": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.62006, 0, 0],
+        "hex": "#868686"
+      },
+      "$description": "Static scrollbar thumb color (WinUI ControlStrongFillColorDefault)."
+    },
+    "scrollbar-thumb-hover": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.62006, 0, 0],
+        "hex": "#868686"
+      },
+      "$description": "Static scrollbar hover color (WinUI ControlStrongFillColorDefault)."
+    },
+    "field": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.98809, 0, 0],
+        "hex": "#fbfbfb"
+      },
+      "$description": "Text input surface (WinUI ControlFillColorDefault composited over base)."
+    },
+    "line": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.92191, 0, 0],
+        "hex": "#e5e5e5"
+      },
+      "$description": "Hairline divider stroke (WinUI DividerStrokeColorDefault)."
+    },
+    "hover": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.97315, 0, 0],
+        "hex": "#f6f6f6"
+      },
+      "$description": "Pointer hover fill (WinUI ControlFillColorSecondary composited over base)."
+    },
+    "ring-halo": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.98809, 0, 0],
+        "hex": "#fbfbfb"
+      },
+      "$description": "Inner keyboard focus stroke (WinUI FocusStrokeColorInner composited over base)."
+    },
+    "faint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.62006, 0, 0],
+        "hex": "#868686"
+      },
+      "$description": "Tertiary label ink (WinUI TextFillColorTertiary composited over base)."
+    },
+    "brand": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.38687, 0.14996, 259],
+        "hex": "#003e92"
+      },
+      "$description": "Accent text/link/icon ink (WinUI AccentTextFillColorPrimary: Dark2 light / Light3 dark)."
+    },
+    "brand-edge": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.34485, 0.10621, 252.962],
+        "hex": "#00396e"
+      },
+      "$description": "Accent button bottom bevel stroke (WinUI ControlStrokeColorOnAccentSecondary composited over primary)."
+    },
+    "track": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.94611, 0, 0],
+        "hex": "#ededed"
+      },
+      "$description": "Switch and slider track (WinUI ControlAltFillColorSecondary)."
+    },
+    "knob": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.47478, 0, 0],
+        "hex": "#5c5c5c"
+      },
+      "$description": "Unchecked switch thumb (WinUI TextFillColorSecondary)."
+    },
+    "code": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.21779, 0, 0],
+        "hex": "#1a1a1a"
+      },
+      "$description": "Inline code ink (WinUI TextFillColorPrimary)."
+    },
+    "info": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.56769, 0.16654, 251.313],
+        "hex": "#0078d4"
+      },
+      "$description": "Informational semantic color (WinUI SystemFillColorAttentionBrush)."
+    },
+    "warn": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.53885, 0.12069, 65.216],
+        "hex": "#9d5d00"
+      },
+      "$description": "Caution semantic color (WinUI SystemFillColorCaution)."
+    },
+    "up": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.50725, 0.16489, 142.658],
+        "hex": "#0f7b0f"
+      },
+      "$description": "Success semantic color (WinUI SystemFillColorSuccess)."
+    },
+    "down": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.53615, 0.19119, 30.071],
+        "hex": "#c42b1c"
+      },
+      "$description": "Negative trend color matching WinUI SystemFillColorCritical."
+    },
+    "brand-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.91469, 0.01564, 247.999],
+        "hex": "#dbe4ed"
+      },
+      "$description": "10% accent wash composited opaque over window base."
+    },
+    "on-brand-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.21779, 0, 0],
+        "hex": "#1a1a1a"
+      },
+      "$description": "Ink on brand-tint surfaces (WinUI TextFillColorPrimary)."
+    },
+    "inverse": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.98212, 0, 0],
+        "hex": "#f9f9f9"
+      },
+      "$description": "TeachingTip/toast surface (WinUI SolidBackgroundFillColorTertiary composited over base)."
+    },
+    "inverse-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.21779, 0, 0],
+        "hex": "#1a1a1a"
+      },
+      "$description": "Ink on inverse surface (WinUI TextFillColorPrimary)."
+    },
+    "inverse-muted": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.47478, 0, 0],
+        "hex": "#5c5c5c"
+      },
+      "$description": "Secondary ink on inverse surface (WinUI TextFillColorSecondary)."
+    },
+    "inverse-brand": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "hex": "#ffffff"
+      },
+      "$description": "Action ink on inverse surface matching TextOnAccentFillColorPrimary."
+    },
+    "info-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.97015, 0, 0],
+        "hex": "#f5f5f5"
+      },
+      "$description": "Informational wash (WinUI SystemFillColorAttentionBackground composited over base)."
+    },
+    "warn-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.96621, 0.05066, 93.747],
+        "hex": "#fff4ce"
+      },
+      "$description": "Caution wash (WinUI SystemFillColorCautionBackground composited over base)."
+    },
+    "destructive-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.9462, 0.02418, 11.286],
+        "hex": "#fde7e9"
+      },
+      "$description": "Critical wash (WinUI SystemFillColorCriticalBackground composited over base)."
+    },
+    "up-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.94958, 0.04104, 143.026],
+        "hex": "#dff6dd"
+      },
+      "$description": "Success wash (WinUI SystemFillColorSuccessBackground composited over base)."
+    },
+    "down-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.9462, 0.02418, 11.286],
+        "hex": "#fde7e9"
+      },
+      "$description": "Negative trend wash (WinUI SystemFillColorCriticalBackground composited over base)."
+    },
+    "violet": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.5339, 0.1647, 289.689],
+        "hex": "#6e56c4"
+      },
+      "$description": "Library-retained violet data-series hue (no WinUI equivalent)."
+    },
+    "window-control-off": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.89535, 0.00406, 286.317],
+        "hex": "#dcdcdf"
+      },
+      "$description": "Library-retained unfocused window traffic-light fill (no WinUI equivalent)."
+    }
+  },
+  "finish": {
+    "$description": "Sparse light-mode surface finish overrides.",
+    "card": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.12,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 0,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.14,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 4,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 8,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "raised": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.12,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 0,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.14,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "hover": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.12,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 0,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.14,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "handle": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.12,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 0,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.14,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "thumb": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.12,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 0,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.14,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "glass": {
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.98212, 0, 0],
+          "alpha": 0.85,
+          "hex": "#f9f9f9"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.popover}",
+              "alpha": 0.85
+            }
+          }
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.2,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 0,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 8,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.24,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 16,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 32,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "menu": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.2,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 0,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 8,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.24,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 16,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 32,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "dialog": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.2,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 0,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 8,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.24,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 64,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 128,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.81093, 0, 0],
+          "hex": "#c1c1c1"
+        }
+      }
+    },
+    "tooltip": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.12,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 0,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.14,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 8,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 16,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "inverse": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.2,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 0,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 8,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.24,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 16,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 32,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

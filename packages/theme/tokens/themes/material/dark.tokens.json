@@ -1,0 +1,566 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "$description": "Dark appearance colors for Material 3 Expressive (#6750A4 baseline).",
+  "color": {
+    "$type": "color",
+    "$description": "Adaptive A-layer and B-layer color roles for dark appearance.",
+    "background": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.18738, 0.01241, 300.422],
+        "hex": "#141218"
+      },
+      "$description": "Primary page surface (M3 surface role, material-web v34.0.21)."
+    },
+    "foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.91401, 0.01366, 314.754],
+        "hex": "#e6e0e9"
+      },
+      "$description": "Default text and icon ink on surfaces (M3 onSurface)."
+    },
+    "card": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.22652, 0.00999, 303.714],
+        "hex": "#1d1b20"
+      },
+      "$description": "Elevated card container background (M3 surfaceContainerLow)."
+    },
+    "popover": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.24451, 0.01344, 298.463],
+        "hex": "#211f26"
+      },
+      "$description": "Floating popover and menu container background (M3 surfaceContainer)."
+    },
+    "primary": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.83493, 0.09457, 298.018],
+        "hex": "#d0bcff"
+      },
+      "$description": "Primary brand action fill (M3 primary)."
+    },
+    "primary-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.3251, 0.13529, 291.152],
+        "hex": "#381e72"
+      },
+      "$description": "Text and icon ink on primary fills (M3 onPrimary)."
+    },
+    "muted": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.32979, 0.01247, 298.761],
+        "hex": "#36343b"
+      },
+      "$description": "Muted/highest surface container fill (M3 surfaceContainerHighest)."
+    },
+    "muted-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.82875, 0.01776, 308.223],
+        "hex": "#cac4d0"
+      },
+      "$description": "Secondary supporting text and icon ink (M3 onSurfaceVariant)."
+    },
+    "accent": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.40052, 0.034, 298.591],
+        "hex": "#4a4458"
+      },
+      "$description": "Tonal accent fill (M3 secondaryContainer)."
+    },
+    "destructive": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.83449, 0.06771, 22.012],
+        "hex": "#f2b8b5"
+      },
+      "$description": "Error and destructive action color (M3 error)."
+    },
+    "border": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.39805, 0.01736, 303.721],
+        "hex": "#49454f"
+      },
+      "$description": "Hairline container border color (M3 outlineVariant)."
+    },
+    "input": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.65664, 0.01531, 304.011],
+        "hex": "#938f99"
+      },
+      "$description": "Input outline color (M3 outline)."
+    },
+    "inset": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.24451, 0.01344, 298.463],
+        "hex": "#211f26"
+      },
+      "$description": "Inset container surface (M3 surfaceContainer)."
+    },
+    "raised": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.22652, 0.00999, 303.714],
+        "hex": "#1d1b20"
+      },
+      "$description": "Raised control surface (M3 surfaceContainerLow)."
+    },
+    "glass-edge": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.39805, 0.01736, 303.721],
+        "hex": "#49454f"
+      },
+      "$description": "Overlay outline edge (M3 outlineVariant)."
+    },
+    "scrollbar-thumb": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.53444, 0.01466, 305.844],
+        "hex": "#6f6b74"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.muted-foreground}",
+            "percent": 50,
+            "b": "{color.background}"
+          }
+        }
+      },
+      "$description": "Scrollbar thumb resting fill."
+    },
+    "scrollbar-thumb-hover": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.71477, 0.0165, 307.443],
+        "hex": "#a6a0ab"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.muted-foreground}",
+            "percent": 80,
+            "b": "{color.background}"
+          }
+        }
+      },
+      "$description": "Scrollbar thumb fill on pointer hover."
+    },
+    "field": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.32979, 0.01247, 298.761],
+        "hex": "#36343b"
+      },
+      "$description": "Filled text field background (M3 surfaceContainerHighest)."
+    },
+    "line": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.39805, 0.01736, 303.721],
+        "hex": "#49454f"
+      },
+      "$description": "Inset divider hairline (M3 outlineVariant)."
+    },
+    "hover": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.91401, 0.01366, 314.754],
+        "alpha": 0.08,
+        "hex": "#e6e0e9"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.foreground}",
+            "percent": 8,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "M3 hover state-layer ink (8% foreground over transparent, StateTokens.kt)."
+    },
+    "ring-halo": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.83027, 0.03743, 303.029],
+        "alpha": 0.2,
+        "hex": "#ccc2dc"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.ring}",
+            "percent": 20,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Outer focus ring halo (20% ring color over transparent)."
+    },
+    "faint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.65664, 0.01531, 304.011],
+        "hex": "#938f99"
+      },
+      "$description": "Quiet caption/placeholder ink (M3 outline)."
+    },
+    "brand": {
+      "$value": "{color.primary}",
+      "$description": "Inline brand accent ink, aliased to {color.primary}."
+    },
+    "brand-edge": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.39805, 0.01736, 303.721],
+        "hex": "#49454f"
+      },
+      "$description": "Brand container outline (M3 outlineVariant)."
+    },
+    "track": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.32979, 0.01247, 298.761],
+        "hex": "#36343b"
+      },
+      "$description": "Switch and slider track fill (M3 surfaceContainerHighest)."
+    },
+    "knob": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.65664, 0.01531, 304.011],
+        "hex": "#938f99"
+      },
+      "$description": "Unchecked switch thumb fill (M3 outline)."
+    },
+    "code": {
+      "$value": "{color.foreground}",
+      "$description": "Monospace code text ink inside recessed wells."
+    },
+    "info": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.83493, 0.09457, 298.018],
+        "hex": "#d0bcff"
+      },
+      "$description": "Informational semantic color matching M3 primary."
+    },
+    "warn": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.82449, 0.14865, 73.346],
+        "hex": "#ffb547"
+      },
+      "$description": "Warning semantic status color."
+    },
+    "up": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.77932, 0.14805, 162.141],
+        "hex": "#45d49a"
+      },
+      "$description": "Positive trend and growth semantic color."
+    },
+    "brand-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.40052, 0.034, 298.591],
+        "hex": "#4a4458"
+      },
+      "$description": "Opaque selected chip/tile fill (M3 secondaryContainer)."
+    },
+    "on-brand-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.91633, 0.03651, 303.106],
+        "hex": "#e8def8"
+      },
+      "$description": "Ink on selected chip/tile fills (M3 Expressive onSecondaryContainer)."
+    },
+    "inverse": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.91401, 0.01366, 314.754],
+        "hex": "#e6e0e9"
+      },
+      "$description": "Inverse surface for snackbars and tooltips (M3 inverseSurface)."
+    },
+    "inverse-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.31066, 0.01135, 308.056],
+        "hex": "#322f35"
+      },
+      "$description": "Ink on inverse surfaces (M3 inverseOnSurface)."
+    },
+    "inverse-muted": {
+      "$value": "{color.inverse-foreground}",
+      "$description": "Supporting text and close icon on inverse snackbars, aliased to {color.inverse-foreground} (Compose SnackbarTokens.kt)."
+    },
+    "inverse-brand": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.49552, 0.13046, 293.709],
+        "hex": "#6750a4"
+      },
+      "$description": "Brand action ink on inverse surfaces (M3 inversePrimary)."
+    },
+    "info-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.83493, 0.09457, 298.018],
+        "alpha": 0.12,
+        "hex": "#d0bcff"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.info}",
+            "percent": 12,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Translucent informational wash (12% info over transparent)."
+    },
+    "warn-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.82449, 0.14865, 73.346],
+        "alpha": 0.12,
+        "hex": "#ffb547"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.warn}",
+            "percent": 12,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Translucent warning wash (12% warn over transparent)."
+    },
+    "destructive-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.42005, 0.14731, 28.135],
+        "hex": "#8c1d18"
+      },
+      "$description": "Tonal error container background (M3 errorContainer)."
+    },
+    "up-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.77932, 0.14805, 162.141],
+        "alpha": 0.12,
+        "hex": "#45d49a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.up}",
+            "percent": 12,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Translucent positive wash (12% up over transparent)."
+    },
+    "down-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.83449, 0.06771, 22.012],
+        "alpha": 0.12,
+        "hex": "#f2b8b5"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.down}",
+            "percent": 12,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Translucent negative wash (12% down over transparent)."
+    },
+    "violet": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.8367, 0.06656, 359.427],
+        "hex": "#efb8c8"
+      },
+      "$description": "Tertiary accent color (M3 tertiary)."
+    },
+    "card-foreground": {
+      "$value": "{color.foreground}",
+      "$description": "Primary text and icon ink on card surfaces."
+    },
+    "popover-foreground": {
+      "$value": "{color.foreground}",
+      "$description": "Primary text and icon ink on popover surfaces."
+    },
+    "accent-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.91633, 0.03651, 303.106],
+        "hex": "#e8def8"
+      },
+      "$description": "Text and icon ink on accent fills (M3 Expressive onSecondaryContainer)."
+    },
+    "secondary": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.40052, 0.034, 298.591],
+        "hex": "#4a4458"
+      },
+      "$description": "Secondary tonal container fill (M3 secondaryContainer)."
+    },
+    "secondary-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.91633, 0.03651, 303.106],
+        "hex": "#e8def8"
+      },
+      "$description": "Text and icon ink on secondary containers (M3 Expressive onSecondaryContainer, Tone 30 in light)."
+    },
+    "chart-1": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.83493, 0.09457, 298.018],
+        "hex": "#d0bcff"
+      },
+      "$description": "First chart series color (M3 primary)."
+    },
+    "chart-2": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.8367, 0.06656, 359.427],
+        "hex": "#efb8c8"
+      },
+      "$description": "Second chart series color (M3 tertiary)."
+    },
+    "chart-3": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.83027, 0.03743, 303.029],
+        "hex": "#ccc2dc"
+      },
+      "$description": "Third chart series color (M3 secondary)."
+    },
+    "chart-4": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.65664, 0.01531, 304.011],
+        "hex": "#938f99"
+      },
+      "$description": "Fourth chart series color (M3 outline)."
+    },
+    "chart-5": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.39805, 0.01736, 303.721],
+        "hex": "#49454f"
+      },
+      "$description": "Fifth chart series color (M3 outlineVariant)."
+    },
+    "ring": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.83027, 0.03743, 303.029],
+        "hex": "#ccc2dc"
+      },
+      "$description": "Focus indicator ring color (M3 secondary)."
+    },
+    "sidebar": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.18738, 0.01241, 300.422],
+        "hex": "#141218"
+      },
+      "$description": "Sidebar canvas background (M3 surface)."
+    },
+    "sidebar-foreground": {
+      "$value": "{color.foreground}",
+      "$description": "Primary text and icon ink inside the sidebar."
+    },
+    "sidebar-accent": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.40052, 0.034, 298.591],
+        "hex": "#4a4458"
+      },
+      "$description": "Sidebar active item fill (M3 secondaryContainer)."
+    },
+    "sidebar-accent-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.91633, 0.03651, 303.106],
+        "hex": "#e8def8"
+      },
+      "$description": "Sidebar active item text ink (M3 Expressive onSecondaryContainer)."
+    },
+    "sidebar-border": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.39805, 0.01736, 303.721],
+        "hex": "#49454f"
+      },
+      "$description": "Sidebar divider border (M3 outlineVariant)."
+    },
+    "sidebar-primary": {
+      "$value": "{color.primary}",
+      "$description": "Primary action highlight color in the sidebar."
+    },
+    "sidebar-primary-foreground": {
+      "$value": "{color.primary-foreground}",
+      "$description": "Text and icon ink on sidebar-primary highlights."
+    },
+    "sidebar-ring": {
+      "$value": "{color.ring}",
+      "$description": "Focus indicator ring color inside the sidebar."
+    },
+    "down": {
+      "$value": "{color.destructive}",
+      "$description": "Negative trend and decline semantic color."
+    },
+    "window-control-off": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.39805, 0.01736, 303.721],
+        "hex": "#49454f"
+      },
+      "$description": "Unfocused window traffic-light fill (M3 outlineVariant)."
+    }
+  }
+}

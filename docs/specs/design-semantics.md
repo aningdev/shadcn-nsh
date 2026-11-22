@@ -88,4 +88,4 @@
 | 动效时序（`{ duration, easing }`）                                                                                             | `duration` + `cubicBezier`                | 以 `{ duration }`（ms）与命名 `cubicBezier` 曲线表达时序动效（如 Fluent 动效与 `motion.enter`）；NSH 语义层里先按 `TimingSpec`（毫秒数字 + 白名单曲线名）存储，导出 DTCG 时拆成标准 `$type` |
 | 弹簧物理量（`stiffness`/`damping`）、外观枚举（`indicator.*`、`focus.style`、`shape.curve`）、finish 复合配方与平台 `material` | `$extensions`                             | DTCG 标准类型无法表达的运行时语义，归入 `$extensions` 命名空间                                                                                                                              |
 
-DTCG 2025.10 源码真源（`packages/theme/tokens/`）与编译器（`bun run tokens:build`）已为 `default` 主题落地（Batch 2）；其余主题生成器与运行时切换（Option (b)）、按外观展开的 `.tokens.json` 分发将按 Batch 3–6 分批完成。完整的 DTCG 2025.10 Token 源架构、键名映射与分批计划见 [`design-tokens.md`](design-tokens.md)。
+DTCG 2025.10 源码真源（`packages/theme/tokens/`）与编译器（`bun run tokens:build`）已为全部 6 套主题落地（Batch 2–4）；运行时切换（Option (b)）与按外观展开的 `.tokens.json` 分发将按 Batch 5–6 完成。完整的 DTCG 2025.10 Token 源架构、键名映射与分批计划见 [`design-tokens.md`](design-tokens.md)。

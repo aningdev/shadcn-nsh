@@ -1,0 +1,230 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "$description": "Appearance-invariant base tokens and Apple HIG / UIKit style overrides for the Apple theme.",
+  "dimension": {
+    "$type": "dimension",
+    "$description": "Appearance-invariant base dimensional tokens.",
+    "radius": {
+      "$type": "dimension",
+      "$description": "Apple HIG concentric corner radius scale (999px capsule controls/chips, 20px card, 26px dialog, 34px sheet).",
+      "base": {
+        "$value": {
+          "value": 8,
+          "unit": "px"
+        },
+        "$description": "Base corner radius shared by insets and general rounded elements."
+      },
+      "card": {
+        "$value": {
+          "value": 20,
+          "unit": "px"
+        },
+        "$description": "Corner radius for cards and sidebar floating containers."
+      },
+      "control": {
+        "$value": {
+          "value": 999,
+          "unit": "px"
+        },
+        "$description": "Corner radius for interactive controls such as buttons, triggers, and menu items."
+      },
+      "field": {
+        "$value": {
+          "value": 8,
+          "unit": "px"
+        },
+        "$description": "Corner radius for form input fields and editor wells."
+      },
+      "chip": {
+        "$value": {
+          "value": 999,
+          "unit": "px"
+        },
+        "$description": "Corner radius for badges, chips, and compact tags."
+      },
+      "overlay": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        },
+        "$description": "Corner radius for floating menus, popovers, and toasts."
+      },
+      "dialog": {
+        "$value": {
+          "value": 26,
+          "unit": "px"
+        },
+        "$description": "Corner radius for modal dialogs."
+      },
+      "sheet": {
+        "$value": {
+          "value": 34,
+          "unit": "px"
+        },
+        "$description": "Corner radius for drawers and bottom sheets."
+      }
+    },
+    "stroke": {
+      "$description": "Border and indicator stroke widths.",
+      "hairline": {
+        "$value": {
+          "value": 0.5,
+          "unit": "px"
+        },
+        "$description": "Retina 0.5px hairline divider width per Apple HIG."
+      },
+      "surface": {
+        "$value": {
+          "value": 0.5,
+          "unit": "px"
+        },
+        "$description": "Retina 0.5px container surface hairline width per Apple HIG."
+      }
+    }
+  },
+  "font": {
+    "$description": "Base font family tokens.",
+    "family": {
+      "$type": "fontFamily",
+      "$description": "Font family stacks.",
+      "mono": {
+        "$value": "monospace",
+        "$description": "Monospace font family for code blocks and numeric readouts."
+      }
+    }
+  },
+  "color": {
+    "$type": "color",
+    "$description": "Appearance-invariant C-layer color roles shared by light and dark modes.",
+    "brand-fill": {
+      "$value": "{color.primary}",
+      "$description": "Primary brand action fill, aliased to {color.primary} (UIKit systemBlue)."
+    },
+    "on-brand": {
+      "$value": "{color.primary-foreground}",
+      "$description": "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}."
+    },
+    "scrim": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0, 0, 0],
+        "alpha": 0.4,
+        "hex": "#000000"
+      },
+      "$description": "Translucent backdrop scrim behind modals and sheets (40% black)."
+    },
+    "media": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.1869, 0.0151, 266.766],
+        "hex": "#10131a"
+      },
+      "$description": "Ground behind photographs and videos; invariant across appearances."
+    },
+    "on-media": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "hex": "#ffffff"
+      },
+      "$description": "White ink over photographs and dark media surfaces; invariant across appearances."
+    },
+    "chart-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0, 0, 0],
+        "hex": "#000000"
+      },
+      "$description": "Dark ink on light chart tiles matching UIKit light label (#000000)."
+    },
+    "window-close": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.6936, 0.19638, 26.364],
+        "hex": "#ff5f57"
+      },
+      "$description": "macOS window close traffic-light button fill."
+    },
+    "window-minimize": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.83478, 0.1612, 80.911],
+        "hex": "#febc2e"
+      },
+      "$description": "macOS window minimize traffic-light button fill."
+    },
+    "window-zoom": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.72803, 0.21734, 144.712],
+        "hex": "#28c840"
+      },
+      "$description": "macOS window zoom traffic-light button fill."
+    },
+    "window-control-ink": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0, 0, 0],
+        "alpha": 0.5,
+        "hex": "#000000"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "hex": "#000000"
+            },
+            "percent": 50,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Glyph ink inside macOS window traffic-light buttons."
+    },
+    "window-control-edge": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0, 0, 0],
+        "alpha": 0.12,
+        "hex": "#000000"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "hex": "#000000"
+            },
+            "percent": 12,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Hairline border around macOS window traffic-light buttons."
+    }
+  },
+  "state": {
+    "$type": "number",
+    "$description": "Interaction state opacities, press scale, and ripple switch.",
+    "press-scale": {
+      "$value": 1,
+      "$description": "Scale factor applied while pressed (1 disables press shrinking; Apple dims via pressed-opacity)."
+    },
+    "disabled": {
+      "$description": "UIKit disabled opacity multipliers (0.3 for both content and containers).",
+      "content": {
+        "$value": 0.3
+      },
+      "container": {
+        "$value": 0.3
+      }
+    }
+  }
+}

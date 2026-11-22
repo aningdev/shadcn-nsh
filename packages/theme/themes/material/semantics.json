@@ -239,7 +239,7 @@
             "elevation": 1
           }
         },
-        "boxShadow": "0 1px 2px 0 oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)"
+        "boxShadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)"
       },
       "inset": {
         "material": null,
@@ -257,7 +257,7 @@
             "elevation": 1
           }
         },
-        "boxShadow": "0 1px 2px 0 oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
+        "boxShadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
         "borderColor": "transparent"
       },
       "hover": {
@@ -268,7 +268,7 @@
         },
         "backgroundColor": "{raised}",
         "backgroundImage": "linear-gradient(180deg, {hover} 0%, {hover} 100%)",
-        "boxShadow": "0 1px 2px 0 oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
+        "boxShadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
         "borderColor": "transparent"
       },
       "pressed": {
@@ -279,7 +279,7 @@
         },
         "backgroundColor": "{raised}",
         "backgroundImage": "linear-gradient(180deg, {raised} 0%, {raised} 100%)",
-        "boxShadow": "0 1px 2px 0 oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
+        "boxShadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
         "borderColor": "transparent"
       },
       "light": {
@@ -337,7 +337,7 @@
             "elevation": 1
           }
         },
-        "boxShadow": "0 1px 2px 0 oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
+        "boxShadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
         "borderColor": "transparent"
       },
       "thumb": {
@@ -370,7 +370,7 @@
           }
         },
         "backgroundColor": "{popover}",
-        "boxShadow": "0 1px 2px 0 oklch(0 0 0 / 0.3), 0 2px 6px 2px oklch(0 0 0 / 0.15)"
+        "boxShadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 2px 6px 2px oklch(0 0 0 / 0.15)"
       },
       "menu": {
         "backgroundColor": "{popover}",
@@ -380,7 +380,7 @@
             "elevation": 3
           }
         },
-        "boxShadow": "0 1px 2px 0 oklch(0 0 0 / 0.3), 0 2px 6px 2px oklch(0 0 0 / 0.15)"
+        "boxShadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 2px 6px 2px oklch(0 0 0 / 0.15)"
       },
       "dialog": {
         "backgroundColor": "{popover}",
@@ -390,7 +390,7 @@
             "elevation": 6
           }
         },
-        "boxShadow": "0 1px 3px 0 oklch(0 0 0 / 0.3), 0 4px 8px 3px oklch(0 0 0 / 0.15)"
+        "boxShadow": "0 1px 3px oklch(0 0 0 / 0.3), 0 4px 8px 3px oklch(0 0 0 / 0.15)"
       },
       "tooltip": {
         "backgroundColor": "{inverse}",
@@ -406,7 +406,7 @@
             "elevation": 6
           }
         },
-        "boxShadow": "0 1px 3px 0 oklch(0 0 0 / 0.3), 0 4px 8px 3px oklch(0 0 0 / 0.15)"
+        "boxShadow": "0 1px 3px oklch(0 0 0 / 0.3), 0 4px 8px 3px oklch(0 0 0 / 0.15)"
       },
       "groove": {
         "material": null,

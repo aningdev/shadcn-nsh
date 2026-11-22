@@ -1,0 +1,882 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "$description": "Dark appearance colors and hairline/glass finish overrides for the Apple theme (UIKit dark system colors).",
+  "color": {
+    "$type": "color",
+    "$description": "Adaptive A-layer and B-layer color roles for dark appearance.",
+    "background": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0, 0, 0],
+        "hex": "#000000"
+      },
+      "$description": "Grouped page canvas background (UIKit systemGroupedBackground)."
+    },
+    "foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "hex": "#ffffff"
+      },
+      "$description": "Primary label ink (UIKit label)."
+    },
+    "card": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.22728, 0.00382, 286.092],
+        "hex": "#1c1c1e"
+      },
+      "$description": "Elevated list and card surface (UIKit systemBackground)."
+    },
+    "popover": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.2939, 0.00358, 286.177],
+        "hex": "#2c2c2e"
+      },
+      "$description": "Floating popover and sheet surface (UIKit secondarySystemBackground / popover)."
+    },
+    "primary": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.62425, 0.20558, 255.486],
+        "hex": "#0a84ff"
+      },
+      "$description": "System accent blue (UIKit systemBlue)."
+    },
+    "primary-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "hex": "#ffffff"
+      },
+      "$description": "Text and icon ink on primary brand action fills."
+    },
+    "muted": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.31868, 0.00703, 285.994],
+        "hex": "#323236"
+      },
+      "$description": "Subdued container fill (UIKit tertiarySystemFill composited over card)."
+    },
+    "muted-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.68188, 0.01016, 286.127],
+        "hex": "#98989f"
+      },
+      "$description": "Secondary label ink (UIKit secondaryLabel composited over card)."
+    },
+    "accent": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.29471, 0.00718, 285.951],
+        "hex": "#2c2c30"
+      },
+      "$description": "Subtle hover/selection fill (UIKit quaternarySystemFill composited over card)."
+    },
+    "destructive": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.6633, 0.22361, 28.292],
+        "hex": "#ff453a"
+      },
+      "$description": "System destructive red (UIKit systemRed)."
+    },
+    "border": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.3301, 0.00522, 286.11],
+        "hex": "#353538"
+      },
+      "$description": "Hairline separator (UIKit separator hairline composited over card)."
+    },
+    "input": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.36496, 0.00509, 286.145],
+        "hex": "#3e3e41"
+      },
+      "$description": "Input control border (UIKit separator composited over card)."
+    },
+    "inset": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.29471, 0.00718, 285.951],
+        "hex": "#2c2c30"
+      },
+      "$description": "Inset surface (UIKit quaternarySystemFill composited over card)."
+    },
+    "raised": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.31868, 0.00703, 285.994],
+        "hex": "#323236"
+      },
+      "$description": "Raised control surface (UIKit tertiarySystemFill composited over card)."
+    },
+    "glass-edge": {
+      "$value": "{color.border}",
+      "$description": "Hairline border on glass, pill, and floating overlay surfaces."
+    },
+    "scrollbar-thumb": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.41778, 0.00574, 286.149],
+        "hex": "#4c4c4f"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.muted-foreground}",
+            "percent": 50,
+            "b": "{color.background}"
+          }
+        }
+      },
+      "$description": "Scrollbar thumb resting fill."
+    },
+    "scrollbar-thumb-hover": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.57998, 0.00847, 286.133],
+        "hex": "#7a7a7f"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.muted-foreground}",
+            "percent": 80,
+            "b": "{color.background}"
+          }
+        }
+      },
+      "$description": "Scrollbar thumb fill on pointer hover."
+    },
+    "field": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.31868, 0.00703, 285.994],
+        "hex": "#323236"
+      },
+      "$description": "Form input background (UIKit tertiarySystemFill composited over card)."
+    },
+    "line": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.3301, 0.00522, 286.11],
+        "hex": "#353538"
+      },
+      "$description": "Inset divider hairline (UIKit hairline composited over card)."
+    },
+    "hover": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "alpha": 0.06,
+        "hex": "#ffffff"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.foreground}",
+            "percent": 6,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Pointer hover tint (6% foreground ink over transparent)."
+    },
+    "ring-halo": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.62425, 0.20558, 255.486],
+        "alpha": 0.3,
+        "hex": "#0a84ff"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.ring}",
+            "percent": 30,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Outer keyboard focus halo (30% ring color over transparent)."
+    },
+    "faint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.46933, 0.00797, 286.089],
+        "hex": "#5a5a5f"
+      },
+      "$description": "Tertiary label ink for placeholders and quiet captions (UIKit tertiaryLabel)."
+    },
+    "brand": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.62425, 0.20558, 255.486],
+        "hex": "#0a84ff"
+      },
+      "$description": "Inline brand accent ink (UIKit systemBlue)."
+    },
+    "brand-edge": {
+      "$value": "{color.border}",
+      "$description": "Hairline border on primary accent-filled controls."
+    },
+    "track": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.34609, 0.00689, 286.034],
+        "hex": "#39393d"
+      },
+      "$description": "Switch and slider track (UIKit secondarySystemFill composited over card)."
+    },
+    "knob": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "hex": "#ffffff"
+      },
+      "$description": "Switch knob and slider handle (pure white)."
+    },
+    "code": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "hex": "#ffffff"
+      },
+      "$description": "Monospace code text ink inside recessed wells."
+    },
+    "info": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.62425, 0.20558, 255.486],
+        "hex": "#0a84ff"
+      },
+      "$description": "Informational semantic color (UIKit systemBlue)."
+    },
+    "warn": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.78237, 0.17106, 67.223],
+        "hex": "#ff9f0a"
+      },
+      "$description": "Warning semantic color (UIKit systemOrange)."
+    },
+    "up": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.75555, 0.20825, 146.984],
+        "hex": "#30d158"
+      },
+      "$description": "Positive trend semantic color (UIKit systemGreen)."
+    },
+    "brand-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.62425, 0.20558, 255.486],
+        "alpha": 0.12,
+        "hex": "#0a84ff"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.brand}",
+            "percent": 12,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Translucent brand wash (12% brand over transparent)."
+    },
+    "on-brand-tint": {
+      "$value": "{color.foreground}",
+      "$description": "Text and icon ink on brand-tint surfaces."
+    },
+    "inverse": {
+      "$value": "{color.popover}",
+      "$description": "High-contrast surface for toasts and tooltips."
+    },
+    "inverse-foreground": {
+      "$value": "{color.foreground}",
+      "$description": "Primary text ink on inverse surfaces."
+    },
+    "inverse-muted": {
+      "$value": "{color.muted-foreground}",
+      "$description": "Secondary text, spinner, and close-icon ink on inverse surfaces."
+    },
+    "inverse-brand": {
+      "$value": "{color.primary-foreground}",
+      "$description": "Accent action color on inverse surfaces."
+    },
+    "info-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.62425, 0.20558, 255.486],
+        "alpha": 0.12,
+        "hex": "#0a84ff"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.info}",
+            "percent": 12,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Translucent informational wash (12% info over transparent)."
+    },
+    "warn-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.78237, 0.17106, 67.223],
+        "alpha": 0.12,
+        "hex": "#ff9f0a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.warn}",
+            "percent": 12,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Translucent warning wash (12% warn over transparent)."
+    },
+    "destructive-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.6633, 0.22361, 28.292],
+        "alpha": 0.12,
+        "hex": "#ff453a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.destructive}",
+            "percent": 12,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Translucent destructive wash (12% destructive over transparent)."
+    },
+    "up-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.75555, 0.20825, 146.984],
+        "alpha": 0.12,
+        "hex": "#30d158"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.up}",
+            "percent": 12,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Translucent positive wash (12% up over transparent)."
+    },
+    "down-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.6633, 0.22361, 28.292],
+        "alpha": 0.12,
+        "hex": "#ff453a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.destructive}",
+            "percent": 12,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Translucent negative wash (12% destructive over transparent)."
+    },
+    "violet": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.65605, 0.22741, 312.416],
+        "hex": "#bf5af2"
+      },
+      "$description": "Accent purple ink (UIKit systemPurple)."
+    },
+    "card-foreground": {
+      "$value": "{color.foreground}",
+      "$description": "Primary text and icon ink on card surfaces."
+    },
+    "popover-foreground": {
+      "$value": "{color.foreground}",
+      "$description": "Primary text and icon ink on popover surfaces."
+    },
+    "accent-foreground": {
+      "$value": "{color.foreground}",
+      "$description": "Text and icon ink on accent surfaces."
+    },
+    "secondary": {
+      "$value": "{color.raised}",
+      "$description": "Secondary control surface fill."
+    },
+    "secondary-foreground": {
+      "$value": "{color.foreground}",
+      "$description": "Text and icon ink on secondary control surfaces."
+    },
+    "chart-1": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.62425, 0.20558, 255.486],
+        "hex": "#0a84ff"
+      },
+      "$description": "First chart series color (UIKit systemBlue)."
+    },
+    "chart-2": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.75555, 0.20825, 146.984],
+        "hex": "#30d158"
+      },
+      "$description": "Second chart series color (UIKit systemGreen)."
+    },
+    "chart-3": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.78237, 0.17106, 67.223],
+        "hex": "#ff9f0a"
+      },
+      "$description": "Third chart series color (UIKit systemOrange)."
+    },
+    "chart-4": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.65605, 0.22741, 312.416],
+        "hex": "#bf5af2"
+      },
+      "$description": "Fourth chart series color (UIKit systemPurple)."
+    },
+    "chart-5": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.6633, 0.22361, 28.292],
+        "hex": "#ff453a"
+      },
+      "$description": "Fifth chart series color (UIKit systemRed)."
+    },
+    "ring": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.62425, 0.20558, 255.486],
+        "hex": "#0a84ff"
+      },
+      "$description": "Focus ring color matching UIKit systemBlue."
+    },
+    "sidebar": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.22728, 0.00382, 286.092],
+        "hex": "#1c1c1e"
+      },
+      "$description": "Sidebar surface matching Apple system sidebar/grouped background."
+    },
+    "sidebar-foreground": {
+      "$value": "{color.foreground}",
+      "$description": "Primary text and icon ink inside the sidebar."
+    },
+    "sidebar-accent": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.29471, 0.00718, 285.951],
+        "hex": "#2c2c30"
+      },
+      "$description": "Selected or active row fill in the sidebar."
+    },
+    "sidebar-accent-foreground": {
+      "$value": "{color.foreground}",
+      "$description": "Text and icon ink on active sidebar rows."
+    },
+    "sidebar-border": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.3301, 0.00522, 286.11],
+        "hex": "#353538"
+      },
+      "$description": "Sidebar divider and toolbar hairline border color."
+    },
+    "sidebar-primary": {
+      "$value": "{color.primary}",
+      "$description": "Primary action highlight color in the sidebar."
+    },
+    "sidebar-primary-foreground": {
+      "$value": "{color.primary-foreground}",
+      "$description": "Text and icon ink on sidebar-primary highlights."
+    },
+    "sidebar-ring": {
+      "$value": "{color.ring}",
+      "$description": "Focus indicator ring color inside the sidebar."
+    },
+    "down": {
+      "$value": "{color.destructive}",
+      "$description": "Negative trend and decline semantic color."
+    },
+    "window-control-off": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.36151, 0.00681, 286.054],
+        "hex": "#3d3d41"
+      },
+      "$description": "Unfocused window traffic-light fill (UIKit systemFill composited over card)."
+    }
+  },
+  "finish": {
+    "$description": "Sparse dark-mode surface finish overrides.",
+    "raised": {
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.31868, 0.00703, 285.994],
+          "alpha": 0.72,
+          "hex": "#323236"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.raised}",
+              "alpha": 0.72
+            }
+          }
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": {
+          "color": {
+            "colorSpace": "oklch",
+            "components": [1, 0, 0],
+            "alpha": 0.1,
+            "hex": "#ffffff"
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 0,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 0,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0.5,
+            "unit": "px"
+          }
+        }
+      }
+    },
+    "pill": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": {
+          "color": {
+            "colorSpace": "oklch",
+            "components": [1, 0, 0],
+            "alpha": 0.1,
+            "hex": "#ffffff"
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 0,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 0,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0.5,
+            "unit": "px"
+          }
+        }
+      }
+    },
+    "thumb": {
+      "background": {
+        "$type": "color",
+        "$value": "{color.raised}"
+      },
+      "gradient": {
+        "$type": "gradient",
+        "$value": [
+          {
+            "color": "{color.raised}",
+            "position": 0
+          },
+          {
+            "color": "{color.raised}",
+            "position": 1
+          }
+        ],
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "angle": 180
+          }
+        }
+      }
+    },
+    "glass": {
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.2939, 0.00358, 286.177],
+          "alpha": 0.4,
+          "hex": "#2c2c2e"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.popover}",
+              "alpha": 0.4
+            }
+          }
+        }
+      }
+    },
+    "menu": {
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.2939, 0.00358, 286.177],
+          "alpha": 0.72,
+          "hex": "#2c2c2e"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.popover}",
+              "alpha": 0.72
+            }
+          }
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.1,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 0,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0.5,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.4,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 8,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 30,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "dialog": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.1,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 0,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0.5,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.4,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 8,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 30,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "inverse": {
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.2939, 0.00358, 286.177],
+          "alpha": 0.72,
+          "hex": "#2c2c2e"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.inverse}",
+              "alpha": 0.72
+            }
+          }
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.1,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 0,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0.5,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.4,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 8,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 30,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    }
+  }
+}

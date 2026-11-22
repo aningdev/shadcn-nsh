@@ -5,6 +5,8 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import { EXT_NS } from "./types";
+
 export interface RefObject {
   $ref: string;
 }
@@ -49,6 +51,23 @@ const isRecord = (v: unknown): v is Record<string, unknown> =>
 
 const isTokenNode = (v: unknown): boolean => isRecord(v) && Object.hasOwn(v, "$value");
 
+function hasSpringExtension(node: Record<string, unknown>): boolean {
+  const exts = node.$extensions;
+  if (!isRecord(exts)) return false;
+  const ns = exts[EXT_NS];
+  return isRecord(ns) && "spring" in ns;
+}
+
+function stripSpringExtension(node: Record<string, unknown>): void {
+  const exts = node.$extensions;
+  if (!isRecord(exts)) return;
+  const ns = exts[EXT_NS];
+  if (!isRecord(ns) || !("spring" in ns)) return;
+  delete ns.spring;
+  if (Object.keys(ns).length === 0) delete exts[EXT_NS];
+  if (Object.keys(exts).length === 0) delete node.$extensions;
+}
+
 /** Deep-merge DTCG token trees per Resolver §6.2 (latter token overrides earlier token). */
 export function mergeTokenTrees(
   target: Record<string, unknown>,
@@ -58,7 +77,14 @@ export function mergeTokenTrees(
     if (key === "$schema") continue;
     const prev = target[key];
     if (isRecord(val) && isRecord(prev) && !isTokenNode(val) && !isTokenNode(prev)) {
-      target[key] = mergeTokenTrees({ ...prev }, val);
+      const merged = mergeTokenTrees({ ...prev }, val);
+      // Motion role groups are a mutually-exclusive union of `timing` token or `$extensions.spring`.
+      if (isTokenNode(val.timing)) {
+        stripSpringExtension(merged);
+      } else if (hasSpringExtension(val)) {
+        delete merged.timing;
+      }
+      target[key] = merged;
     } else {
       target[key] = structuredClone(val);
     }

@@ -6,7 +6,7 @@ import path from "node:path";
 import { buildAllTokens, checkAllTokens, discoverDtcgThemes } from "./build";
 import { compileSemanticsJson, compileThemeJson } from "./compile";
 import { lintDtcgSources, lintDtcgTheme } from "./lint";
-import { resolvePermutation } from "./resolver";
+import { mergeTokenTrees, resolvePermutation } from "./resolver";
 import { validateResolverDocument, validateTokensDocument } from "./schema-validate";
 
 const root = path.join(import.meta.dir, "..", "..");
@@ -17,10 +17,22 @@ const TOKEN_FILES = [
   "packages/theme/tokens/base/style.shared.tokens.json",
   "packages/theme/tokens/base/style.pointer.tokens.json",
   "packages/theme/tokens/base/style.touch.tokens.json",
+  "packages/theme/tokens/themes/apple/theme.tokens.json",
+  "packages/theme/tokens/themes/apple/finishes.shared.tokens.json",
+  "packages/theme/tokens/themes/apple/light.tokens.json",
+  "packages/theme/tokens/themes/apple/dark.tokens.json",
+  "packages/theme/tokens/themes/apple/pointer.tokens.json",
+  "packages/theme/tokens/themes/apple/touch.tokens.json",
   "packages/theme/tokens/themes/default/theme.tokens.json",
   "packages/theme/tokens/themes/default/finishes.shared.tokens.json",
   "packages/theme/tokens/themes/default/light.tokens.json",
   "packages/theme/tokens/themes/default/dark.tokens.json",
+  "packages/theme/tokens/themes/material/theme.tokens.json",
+  "packages/theme/tokens/themes/material/finishes.shared.tokens.json",
+  "packages/theme/tokens/themes/material/light.tokens.json",
+  "packages/theme/tokens/themes/material/dark.tokens.json",
+  "packages/theme/tokens/themes/material/pointer.tokens.json",
+  "packages/theme/tokens/themes/material/touch.tokens.json",
   "packages/theme/tokens/themes/shadcn/theme.tokens.json",
   "packages/theme/tokens/themes/shadcn/finishes.shared.tokens.json",
   "packages/theme/tokens/themes/shadcn/light.tokens.json",
@@ -29,10 +41,16 @@ const TOKEN_FILES = [
   "packages/theme/tokens/themes/solid-glass/finishes.shared.tokens.json",
   "packages/theme/tokens/themes/solid-glass/light.tokens.json",
   "packages/theme/tokens/themes/solid-glass/dark.tokens.json",
+  "packages/theme/tokens/themes/winui/theme.tokens.json",
+  "packages/theme/tokens/themes/winui/finishes.shared.tokens.json",
+  "packages/theme/tokens/themes/winui/light.tokens.json",
+  "packages/theme/tokens/themes/winui/dark.tokens.json",
+  "packages/theme/tokens/themes/winui/pointer.tokens.json",
+  "packages/theme/tokens/themes/winui/touch.tokens.json",
 ];
 
 const RESOLVER_PATH = "packages/theme/tokens/themes/default/theme.resolver.json";
-const THEME_IDS = ["default", "shadcn", "solid-glass"] as const;
+const THEME_IDS = ["apple", "default", "material", "shadcn", "solid-glass", "winui"] as const;
 
 describe("DTCG 2025.10 schema validation", () => {
   for (const file of TOKEN_FILES) {
@@ -90,7 +108,7 @@ describe("DTCG 2025.10 schema validation", () => {
   });
 });
 
-describe("DTCG 2025.10 build (default, shadcn, solid-glass)", () => {
+describe("DTCG 2025.10 build (all six themes)", () => {
   test("discovers DTCG-sourced themes", () => {
     expect(discoverDtcgThemes(root)).toEqual([...THEME_IDS]);
   });
@@ -110,7 +128,7 @@ describe("DTCG 2025.10 build (default, shadcn, solid-glass)", () => {
     }
   }
 
-  test("compiles default, shadcn, and solid-glass theme.json and semantics.json byte-identical to committed files", () => {
+  test("compiles all six themes' theme.json and semantics.json byte-identical to committed files", () => {
     for (const themeId of THEME_IDS) {
       const absResolver = path.join(
         root,
@@ -369,5 +387,73 @@ describe("DTCG source lint", () => {
     } finally {
       fs.rmSync(tmp, { recursive: true, force: true });
     }
+  });
+
+  test("resolves per-tier overrides, motion timing/spring replacement, font-sans, and alias colorOps", () => {
+    // 1. Per-tier overrides (apple pointer vs touch)
+    const appleResolver = path.join(root, "packages/theme/tokens/themes/apple/theme.resolver.json");
+    const applePointer = resolvePermutation(appleResolver, {
+      appearance: "light",
+      input: "pointer",
+    }).resolved as Record<string, any>;
+    const appleTouch = resolvePermutation(appleResolver, {
+      appearance: "light",
+      input: "touch",
+    }).resolved as Record<string, any>;
+    expect(applePointer.dimension.size.density.row.$value.value).toBe(32);
+    expect(appleTouch.dimension.size.density.row.$value.value).toBe(44);
+    expect(applePointer.typography.body.$value.fontSize.value).toBe(13);
+    expect(appleTouch.typography.body.$value.fontSize.value).toBe(17);
+
+    // 2. Motion union replacement (winui timing replaces base spring; spring replaces timing)
+    const winuiResolver = path.join(root, "packages/theme/tokens/themes/winui/theme.resolver.json");
+    const winuiMerged = resolvePermutation(winuiResolver, {
+      appearance: "light",
+      input: "pointer",
+    }).merged as Record<string, any>;
+    expect(winuiMerged.motion.press.timing.$value.duration.value).toBe(83);
+    expect(winuiMerged.motion.press.$extensions).toBeUndefined();
+
+    const backToSpring = mergeTokenTrees(structuredClone(winuiMerged), {
+      motion: {
+        press: {
+          $extensions: { "dev.aning.shadcn-nsh": { spring: { stiffness: 500, damping: 30 } } },
+        },
+      },
+    }) as Record<string, any>;
+    expect(backToSpring.motion.press.timing).toBeUndefined();
+    expect(backToSpring.motion.press.$extensions["dev.aning.shadcn-nsh"].spring).toEqual({
+      stiffness: 500,
+      damping: 30,
+    });
+
+    // 3. WinUI font-sans, brand-fill = var(--primary), and Material alias-backed colorOp (down-tint)
+    const winuiTheme = compileThemeJson(winuiResolver);
+    expect(winuiTheme.cssVars.theme["font-sans"]).toBe("Segoe UI Variable, Segoe UI, sans-serif");
+    expect(winuiTheme.cssVars.theme["brand-fill"]).toBe("var(--primary)");
+    expect(Object.keys(winuiTheme.cssVars.theme).at(-1)).toBe("font-sans");
+
+    const matResolver = path.join(
+      root,
+      "packages/theme/tokens/themes/material/theme.resolver.json",
+    );
+    const matTheme = compileThemeJson(matResolver);
+    expect(matTheme.cssVars.light["down-tint"]).toBe(
+      "color-mix(in srgb, var(--down) 12%, transparent)",
+    );
+  });
+
+  test("rejects out-of-range state opacities and negative stroke/shake values", () => {
+    const problems = withMutatedDefault((tmp) => {
+      const p = path.join(tmp, "packages/theme/tokens/base/style.shared.tokens.json");
+      const doc = JSON.parse(fs.readFileSync(p, "utf8"));
+      doc.state.overlay.hover.$value = 1.5;
+      doc.dimension.stroke.hairline.$value.value = -0.5;
+      doc.duration.shake.$value.value = -10;
+      fs.writeFileSync(p, JSON.stringify(doc, null, 2));
+    }).join("\n");
+    expect(problems).toContain("state.overlay.hover is 1.5, not in [0, 1]");
+    expect(problems).toContain("dimension.stroke.hairline value -0.5 must be >= 0");
+    expect(problems).toContain("duration.shake value -10 must be >= 0");
   });
 });

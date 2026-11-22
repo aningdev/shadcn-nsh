@@ -1,0 +1,81 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/resolver.json",
+  "name": "WinUI 3",
+  "version": "2025.10",
+  "description": "DTCG 2025.10 resolver for the WinUI 3 (Windows 11 / Fluent 2, winui3/release/2.7.0) theme.",
+  "sets": {
+    "base": {
+      "description": "Cross-theme semantic defaults and shared typography/motion structure.",
+      "sources": [
+        {
+          "$ref": "../../base/style.shared.tokens.json"
+        }
+      ]
+    },
+    "theme": {
+      "description": "WinUI 3 appearance-invariant base tokens, shared finishes, and state overrides.",
+      "sources": [
+        {
+          "$ref": "./theme.tokens.json"
+        },
+        {
+          "$ref": "./finishes.shared.tokens.json"
+        }
+      ]
+    }
+  },
+  "modifiers": {
+    "appearance": {
+      "description": "Color appearance mode.",
+      "default": "light",
+      "contexts": {
+        "light": [
+          {
+            "$ref": "./light.tokens.json"
+          }
+        ],
+        "dark": [
+          {
+            "$ref": "./dark.tokens.json"
+          }
+        ]
+      }
+    },
+    "input": {
+      "description": "Pointer vs touch ergonomic sizing tier.",
+      "default": "pointer",
+      "contexts": {
+        "pointer": [
+          {
+            "$ref": "../../base/style.pointer.tokens.json"
+          },
+          {
+            "$ref": "./pointer.tokens.json"
+          }
+        ],
+        "touch": [
+          {
+            "$ref": "../../base/style.touch.tokens.json"
+          },
+          {
+            "$ref": "./touch.tokens.json"
+          }
+        ]
+      }
+    }
+  },
+  "resolutionOrder": [
+    {
+      "$ref": "#/sets/base"
+    },
+    {
+      "$ref": "#/sets/theme"
+    },
+    {
+      "$ref": "#/modifiers/appearance"
+    },
+    {
+      "$ref": "#/modifiers/input"
+    }
+  ]
+}
