@@ -131,7 +131,6 @@ export type FinishStyle = {
 export type FinishRole =
   | "card"
   | "section"
-  | "sectionHover"
   | "inset"
   | "field"
   | "raised"
@@ -275,7 +274,7 @@ export interface Style {
     ripple: boolean;
     "pressed-opacity": number;
     "accent-pressed-opacity": number;
-    disabled: { content: number; container: number };
+    disabled: { content: number; fill: boolean };
   };
   duration: {
     /** A rejected value's shake, the length of `nsh`'s `play("shake")` preset. */
@@ -629,7 +628,7 @@ export interface Palette {
   /** Ink on pressed accent control fills. */
   onAccentPressed: string;
   /** Label and icon ink on selected or toggled-on controls. */
-  onForeground: string;
+  selectedForeground: string;
   /** Label and icon ink on pressed neutral or ghost controls. */
   pressedForeground: string;
   /** The tone colors: information, a warning, a failure, a gain, a loss. */
@@ -710,7 +709,7 @@ export const colors: Palette = tokens<keyof Palette>({
   disabledForeground: "disabled-foreground",
   accentPressed: "accent-pressed",
   onAccentPressed: "on-accent-pressed",
-  onForeground: "on-foreground",
+  selectedForeground: "selected-foreground",
   pressedForeground: "pressed-foreground",
 });
 
@@ -781,7 +780,6 @@ export const tints = tokens({
 export const finish: Record<FinishRole, FinishStyle> = {
   card: themed("card"),
   section: themed("section"),
-  sectionHover: themed("sectionHover"),
   inset: themed("inset"),
   field: themed("field"),
   raised: themed("raised"),
@@ -944,8 +942,7 @@ export const stroke = {
 
 /**
  * How far a control fades (`semantics.json`'s `state`): `pressed` is the opacity of a pressed
- * control (`pressed-opacity`), `disabled` and `disabledContainer` those of a disabled control's
- * content (the whole control, when it is drawn as one) and of its container.
+ * control (`pressed-opacity`), `disabled` that of a disabled control's content when drawn as one.
  */
 export const dimmed = {
   get pressed() {
@@ -953,9 +950,6 @@ export const dimmed = {
   },
   get disabled() {
     return style().state.disabled.content;
-  },
-  get disabledContainer() {
-    return style().state.disabled.container;
   },
 };
 

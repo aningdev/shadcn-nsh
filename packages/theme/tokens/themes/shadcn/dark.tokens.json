@@ -886,7 +886,7 @@
       "$description": "Accent control fill while pressed."
     },
     "on-accent-pressed": {
-      "$value": "{color.primary-foreground}",
+      "$value": "{color.on-brand}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "brand"
@@ -894,7 +894,7 @@
       },
       "$description": "Ink on pressed accent control fills."
     },
-    "on-foreground": {
+    "selected-foreground": {
       "$value": "{color.foreground}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {

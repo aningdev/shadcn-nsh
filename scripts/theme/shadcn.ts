@@ -263,8 +263,8 @@ function section(p: ReturnType<typeof palette>, o: ReturnType<typeof own>) {
     disabled: "var(--raised)",
     "disabled-foreground": "var(--muted-foreground)",
     "accent-pressed": "var(--primary)",
-    "on-accent-pressed": "var(--primary-foreground)",
-    "on-foreground": "var(--foreground)",
+    "on-accent-pressed": "var(--on-brand)",
+    "selected-foreground": "var(--foreground)",
     "pressed-foreground": "var(--foreground)",
   };
 }
@@ -306,7 +306,6 @@ function finishes(appearance: Appearance, o: ReturnType<typeof own>) {
   return {
     card: { gradient: flat(alias("card")), shadow: SHADOW.sm },
     section: { background: alias("card"), shadow: "none", "border-color": alias("card-edge") },
-    sectionHover: { shadow: "none" },
     inset: { shadow: "none" },
     field: { shadow: SHADOW.xs },
     raised: surface(alias("raised"), {
@@ -335,7 +334,10 @@ function finishes(appearance: Appearance, o: ReturnType<typeof own>) {
       "border-top-color": "transparent",
       "border-bottom-color": "transparent",
     }),
-    accentPressed: surface(alias("accent-pressed"), { "border-color": alias("brand-edge") }),
+    accentPressed: surface(alias("accent-pressed"), {
+      "border-top-color": "transparent",
+      "border-bottom-color": "transparent",
+    }),
     // A rail has no lip of its own (shadcn draws the track flat): the edge comes from the theme's
     // `border`, and `theme.ts`'s `insetEdge` keeps this `none` from voiding it.
     track: { shadow: "none", "border-color": alias("border") },

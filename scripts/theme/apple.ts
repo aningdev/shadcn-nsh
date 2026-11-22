@@ -204,8 +204,8 @@ function section(p: ReturnType<typeof palette>) {
     disabled: "var(--raised)",
     "disabled-foreground": "var(--muted-foreground)",
     "accent-pressed": "var(--primary)",
-    "on-accent-pressed": "var(--primary-foreground)",
-    "on-foreground": "var(--foreground)",
+    "on-accent-pressed": "var(--on-brand)",
+    "selected-foreground": "var(--foreground)",
     "pressed-foreground": "var(--foreground)",
   };
 }
@@ -252,7 +252,6 @@ function finishes(appearance: Appearance) {
   return {
     card: { gradient: flat(alias("card")), shadow: "none" },
     section: { background: alias("card"), shadow: "none", "border-color": alias("card-edge") },
-    sectionHover: { shadow: "none" },
     inset: { shadow: "none" },
     field: { shadow: "none" },
     raised: {
@@ -282,7 +281,10 @@ function finishes(appearance: Appearance) {
       "border-top-color": "transparent",
       "border-bottom-color": "transparent",
     }),
-    accentPressed: surface(alias("accent-pressed"), { "border-color": alias("brand-edge") }),
+    accentPressed: surface(alias("accent-pressed"), {
+      "border-top-color": "transparent",
+      "border-bottom-color": "transparent",
+    }),
     track: { shadow: "none", "border-color": "transparent" },
     fill: {
       background: "transparent",
@@ -432,7 +434,7 @@ export const style = {
     overlay: { hover: 0, focus: 0, pressed: 0, dragged: 0 },
     ripple: false,
     "pressed-opacity": 0.7,
-    disabled: { content: 0.3, container: 0.3 },
+    disabled: { content: 0.3, fill: false },
   },
   duration: { shake: 500 },
   transition: {
@@ -566,7 +568,7 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
         "state.press-scale":
           "Scale factor applied while pressed (1 disables press shrinking; Apple dims via pressed-opacity).",
         "state.disabled":
-          "UIKit disabled opacity multipliers (0.3 for both content and containers).",
+          "UIKit disabled content opacity multiplier (0.3); containers keep resting fills.",
       },
     },
   };

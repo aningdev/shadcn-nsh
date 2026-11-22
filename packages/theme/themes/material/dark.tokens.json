@@ -621,12 +621,14 @@
       "$description": "Pressed opacity for accent controls when no pressed accent finish replaces it."
     },
     "disabled": {
-      "$description": "M3 disabled opacities: 0.38 content and 0.10 container (_md-comp-button-filled.scss).",
+      "$description": "M3 disabled controls: 0.38 content opacity with fill: true (10% onSurface container, _md-comp-button-filled.scss).",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "fill": true
+        }
+      },
       "content": {
         "$value": 0.38
-      },
-      "container": {
-        "$value": 0.1
       }
     }
   },
@@ -2162,15 +2164,15 @@
       "$description": "Pressed accent fill aliased to {color.primary} (state layer applies press)."
     },
     "on-accent-pressed": {
-      "$value": "{color.primary-foreground}",
+      "$value": "{color.on-brand}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "brand"
         }
       },
-      "$description": "Pressed accent ink aliased to {color.primary-foreground}."
+      "$description": "Pressed accent ink aliased to {color.on-brand}."
     },
-    "on-foreground": {
+    "selected-foreground": {
       "$value": "{color.on-brand-tint}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -2372,79 +2374,6 @@
           "material": {
             "android": {
               "elevation": 1
-            }
-          }
-        }
-      }
-    },
-    "sectionHover": {
-      "$description": "M3 ElevatedCard hovered elevation promotion (Level 2 shadow and 3dp Android elevation).",
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          {
-            "color": {
-              "colorSpace": "oklch",
-              "components": [
-                0,
-                0,
-                0
-              ],
-              "alpha": 0.3,
-              "hex": "#000000"
-            },
-            "offsetX": {
-              "value": 0,
-              "unit": "px"
-            },
-            "offsetY": {
-              "value": 1,
-              "unit": "px"
-            },
-            "blur": {
-              "value": 2,
-              "unit": "px"
-            },
-            "spread": {
-              "value": 0,
-              "unit": "px"
-            }
-          },
-          {
-            "color": {
-              "colorSpace": "oklch",
-              "components": [
-                0,
-                0,
-                0
-              ],
-              "alpha": 0.15,
-              "hex": "#000000"
-            },
-            "offsetX": {
-              "value": 0,
-              "unit": "px"
-            },
-            "offsetY": {
-              "value": 2,
-              "unit": "px"
-            },
-            "blur": {
-              "value": 6,
-              "unit": "px"
-            },
-            "spread": {
-              "value": 2,
-              "unit": "px"
-            }
-          }
-        ]
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": {
-            "android": {
-              "elevation": 3
             }
           }
         }
@@ -3370,6 +3299,42 @@
         }
       },
       "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
+      "border-bottom-color": {
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",

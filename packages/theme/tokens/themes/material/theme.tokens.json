@@ -446,12 +446,14 @@
       "$description": "Pressed opacity for accent controls when no pressed accent finish replaces it."
     },
     "disabled": {
-      "$description": "M3 disabled opacities: 0.38 content and 0.10 container (_md-comp-button-filled.scss).",
+      "$description": "M3 disabled controls: 0.38 content opacity with fill: true (10% onSurface container, _md-comp-button-filled.scss).",
       "content": {
         "$value": 0.38
       },
-      "container": {
-        "$value": 0.1
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "fill": true
+        }
       }
     }
   },

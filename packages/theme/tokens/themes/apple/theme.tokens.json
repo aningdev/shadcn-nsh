@@ -282,11 +282,8 @@
       "$description": "Scale factor applied while pressed (1 disables press shrinking; Apple dims via pressed-opacity)."
     },
     "disabled": {
-      "$description": "UIKit disabled opacity multipliers (0.3 for both content and containers).",
+      "$description": "UIKit disabled content opacity multiplier (0.3); containers keep resting fills.",
       "content": {
-        "$value": 0.3
-      },
-      "container": {
         "$value": 0.3
       }
     }

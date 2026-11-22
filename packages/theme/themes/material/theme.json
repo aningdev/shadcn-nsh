@@ -94,8 +94,8 @@
       "disabled": "color-mix(in srgb, var(--foreground) 10%, transparent)",
       "disabled-foreground": "color-mix(in srgb, var(--foreground) 38%, transparent)",
       "accent-pressed": "var(--primary)",
-      "on-accent-pressed": "var(--primary-foreground)",
-      "on-foreground": "var(--on-brand-tint)",
+      "on-accent-pressed": "var(--on-brand)",
+      "selected-foreground": "var(--on-brand-tint)",
       "pressed-foreground": "var(--foreground)"
     },
     "dark": {
@@ -169,8 +169,8 @@
       "disabled": "color-mix(in srgb, var(--foreground) 10%, transparent)",
       "disabled-foreground": "color-mix(in srgb, var(--foreground) 38%, transparent)",
       "accent-pressed": "var(--primary)",
-      "on-accent-pressed": "var(--primary-foreground)",
-      "on-foreground": "var(--on-brand-tint)",
+      "on-accent-pressed": "var(--on-brand)",
+      "selected-foreground": "var(--on-brand-tint)",
       "pressed-foreground": "var(--foreground)"
     }
   }

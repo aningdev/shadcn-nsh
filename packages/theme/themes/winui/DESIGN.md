@@ -86,7 +86,7 @@ colors:
     disabled-foreground: "#9b9b9b"
     accent-pressed: "#317dc4"
     on-accent-pressed: "#c2d8ed"
-    on-foreground: "#ffffff"
+    selected-foreground: "#ffffff"
     pressed-foreground: "#5c5c5c"
   dark:
     brand-fill: "#60cdff"
@@ -162,7 +162,7 @@ colors:
     disabled-foreground: "#717171"
     accent-pressed: "#53aad2"
     on-accent-pressed: "#295569"
-    on-foreground: "#000000"
+    selected-foreground: "#000000"
     pressed-foreground: "#cccccc"
 typography:
   caption:
@@ -416,8 +416,8 @@ WinUI 3 / Fluent 2 (`winui3/release/2.7.0`): Windows 11 fill and stroke resource
 - **`inverse-foreground`** (light `#1a1a1a`, dark `#ffffff`): Ink on inverse surface (WinUI TextFillColorPrimary).
 - **`inverse-muted`** (light `#5c5c5c`, dark `#cccccc`): Secondary ink on inverse surface (WinUI TextFillColorSecondary).
 - **`disabled-foreground`** (light `#9b9b9b`, dark `#717171`): Disabled control text/icon ink (WinUI TextFillColorDisabled composited over base).
-- **`on-foreground`** (light `#ffffff`, dark `#000000`): Ink on checked ToggleButton / active AccentFillColorDefault controls (TextOnAccentFillColorPrimary).
-- **`pressed-foreground`** (light `#5c5c5c`, dark `#cccccc`): Pressed standard control ink matching WinUI TextFillColorSecondary.
+- **`selected-foreground`** (light `#ffffff`, dark `#000000`): Ink on checked ToggleButton / active AccentFillColorDefault controls aliased to {color.on-brand}.
+- **`pressed-foreground`** (light `#5c5c5c`, dark `#cccccc`): Pressed standard control ink aliased to {color.muted-foreground} (WinUI TextFillColorSecondary).
 
 ### Brand
 
@@ -560,8 +560,7 @@ Voice & Content Strategy is intentionally omitted: this theme defines visual tok
 Appearance-invariant surface finish recipes (background, gradient, border, shadow, blur, material).
 
 - **`finish.card`**: WinUI 3 card surface with layering depth-8 two-layer ThemeShadow approximation.
-- **`finish.section`**: WinUI 3 section card surface with CardStrokeColorDefault border and depth-8 ThemeShadow approximation.
-- **`finish.sectionHover`**: Hover elevation step for a section or card where elevated.
+- **`finish.section`**: WinUI 3 section card surface using CardBackgroundFillColorDefault and CardStrokeColorDefault border (no drop shadow).
 - **`finish.inset`**: The well inside a card: sunk by its inner shadow alone.
 - **`finish.field`**: A field well: its edge and its inner shadow.
 - **`finish.raised`**: WinUI 3 standard control surface with ControlElevationBorderBrush top/bottom bevel and no drop shadow.
@@ -570,7 +569,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.disabled`**: WinUI 3 disabled control container using ControlFillColorDisabled and ControlStrokeColorDefault border.
 - **`finish.light`**: The main action brightest step: the accent gradient.
 - **`finish.accent`**: WinUI 3 accent control surface using AccentFillColorDefault and AccentControlElevationBorderBrush bevel.
-- **`finish.accentPressed`**: WinUI 3 pressed accent control surface using AccentFillColorTertiary and flat border.
+- **`finish.accentPressed`**: WinUI 3 pressed accent control surface using AccentFillColorTertiary and transparent directional borders (AccentButtonBorderBrushPressed -> ControlFillColorTransparentBrush, WinUI 2.7.0 Button_themeresources.xaml).
 - **`finish.track`**: A groove: an inner shadow and an edge.
 - **`finish.fill`**: The filled run: a slider, a progress bar, a switch that is on.
 - **`finish.knob`**: A switch knob, off.
@@ -589,7 +588,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.groove`**: A groove cut inside a menu.
 
 - **Indicators** (`tabs: "underline"`, `nav: "bar"`, `field: "underline"`): WinUI 3 underlined tabs, NavigationView leading bar, and bottom-underlined text fields.
-- **Disabled multipliers** (content=0.36, container=0.45): WinUI 3 disabled opacities (0.36 TextFillColorDisabled content, 0.45 container compromise).
+- **Disabled handling** (content=0.36, fill=true): WinUI 3 disabled styling: 0.36 TextFillColorDisabled content with fill: true container override.
 
 ## Do's and Don'ts
 

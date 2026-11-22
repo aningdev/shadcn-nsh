@@ -672,6 +672,7 @@ describe("per-appearance standalone .tokens.json distribution", () => {
           if (k.startsWith("$")) continue;
           expect(tok.$value).toBe(semanticsJson.state.disabled[k]);
         }
+        expect(doc.state.disabled.$extensions[EXT_NS].fill).toBe(semanticsJson.state.disabled.fill);
         expect(doc.duration.shake.$value.value).toBe(semanticsJson.duration.shake);
 
         const bezierNameOf = (tf: [number, number, number, number], ref: string) => {

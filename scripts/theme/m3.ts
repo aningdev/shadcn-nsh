@@ -356,8 +356,8 @@ function appearanceRoles(p: M3Palette, appearance: Appearance): Record<string, s
     disabled: "color-mix(in srgb, var(--foreground) 10%, transparent)",
     "disabled-foreground": "color-mix(in srgb, var(--foreground) 38%, transparent)",
     "accent-pressed": "var(--primary)",
-    "on-accent-pressed": "var(--primary-foreground)",
-    "on-foreground": "var(--on-brand-tint)",
+    "on-accent-pressed": "var(--on-brand)",
+    "selected-foreground": "var(--on-brand-tint)",
     "pressed-foreground": "var(--foreground)",
   };
 }
@@ -460,10 +460,6 @@ function finishes(): Record<string, Record<string, unknown>> {
       "border-color": "transparent",
       material: level1,
     },
-    sectionHover: {
-      shadow: LEVEL_2,
-      material: level2,
-    },
     inset: { shadow: "none", material: null },
     field: { shadow: "none", material: null },
     raised: surface(alias("raised"), {
@@ -496,7 +492,10 @@ function finishes(): Record<string, Record<string, unknown>> {
       "border-top-color": "transparent",
       "border-bottom-color": "transparent",
     }),
-    accentPressed: surface(alias("accent-pressed")),
+    accentPressed: surface(alias("accent-pressed"), {
+      "border-top-color": "transparent",
+      "border-bottom-color": "transparent",
+    }),
     track: { shadow: "none", "border-color": alias("input"), material: null },
     fill: {
       background: "transparent",
@@ -670,7 +669,7 @@ export const m3Style = {
     ripple: true,
     "pressed-opacity": 1,
     "accent-pressed-opacity": 1,
-    disabled: { content: 0.38, container: 0.1 },
+    disabled: { content: 0.38, fill: true },
   },
   duration: { shake: 500 },
   transition: {
@@ -752,8 +751,8 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
     disabled: "Disabled control container fill (10% onSurface over transparent).",
     "disabled-foreground": "Disabled control content ink (38% onSurface over transparent).",
     "accent-pressed": "Pressed accent fill aliased to {color.primary} (state layer applies press).",
-    "on-accent-pressed": "Pressed accent ink aliased to {color.primary-foreground}.",
-    "on-foreground": "Ink on tonal selected controls (M3 Expressive onSecondaryContainer).",
+    "on-accent-pressed": "Pressed accent ink aliased to {color.on-brand}.",
+    "selected-foreground": "Ink on tonal selected controls (M3 Expressive onSecondaryContainer).",
     "pressed-foreground": "Pressed ink aliased to {color.foreground}.",
   };
 
@@ -815,8 +814,6 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
         card: "Elevated M3 card surface with Material Web Level 1 shadow and 1dp Android elevation.",
         section:
           "M3 ElevatedCard resting surface (Level 1 shadow and 1dp Android elevation, no border).",
-        sectionHover:
-          "M3 ElevatedCard hovered elevation promotion (Level 2 shadow and 3dp Android elevation).",
         raised: "Raised surface with Level 1 shadow and 1dp Android elevation.",
         hover: "Hovered state surface over raised background with Level 1 shadow.",
         pressed: "Pressed surface at Level 1 elevation (M3 state layer + ripple handles press).",
@@ -849,7 +846,7 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
         "state.pressed-opacity":
           "Content stays full opacity when pressed (1; ripple/state layer shows press).",
         "state.disabled":
-          "M3 disabled opacities: 0.38 content and 0.10 container (_md-comp-button-filled.scss).",
+          "M3 disabled controls: 0.38 content opacity with fill: true (10% onSurface container, _md-comp-button-filled.scss).",
         "transition.enter":
           "M3 DurationLong2 (500ms) with emphasized-decelerate curve (_md-sys-motion.scss).",
         "motion.press":

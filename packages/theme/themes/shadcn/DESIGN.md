@@ -86,7 +86,7 @@ colors:
     disabled-foreground: "#737373"
     accent-pressed: "#171717"
     on-accent-pressed: "#fafafa"
-    on-foreground: "#0a0a0a"
+    selected-foreground: "#0a0a0a"
     pressed-foreground: "#0a0a0a"
   dark:
     brand-fill: "#e5e5e5"
@@ -162,7 +162,7 @@ colors:
     disabled-foreground: "#a1a1a1"
     accent-pressed: "#e5e5e5"
     on-accent-pressed: "#171717"
-    on-foreground: "#fafafa"
+    selected-foreground: "#fafafa"
     pressed-foreground: "#fafafa"
 typography:
   caption:
@@ -400,7 +400,7 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 - **`inverse-foreground`** (light `#0a0a0a`, dark `#fafafa`): Primary text ink on inverse surfaces.
 - **`inverse-muted`** (light `#737373`, dark `#a1a1a1`): Secondary text, spinner, and close-icon ink on inverse surfaces.
 - **`disabled-foreground`** (light `#737373`, dark `#a1a1a1`): Disabled control label and icon ink.
-- **`on-foreground`** (light `#0a0a0a`, dark `#fafafa`): Label and icon ink on selected or toggled-on controls.
+- **`selected-foreground`** (light `#0a0a0a`, dark `#fafafa`): Label and icon ink on selected or toggled-on controls.
 - **`pressed-foreground`** (light `#0a0a0a`, dark `#fafafa`): Label and icon ink on pressed neutral or ghost controls.
 
 ### Brand
@@ -544,7 +544,6 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 
 - **`finish.card`**: The card face: an inner highlight, a hairline, a contact shadow and a cast one.
 - **`finish.section`**: The flat surface a section's content or card sits on (no shadow by default).
-- **`finish.sectionHover`**: Hover elevation step for a section or card where elevated.
 - **`finish.inset`**: The well inside a card: sunk by its inner shadow alone.
 - **`finish.field`**: A field well: its edge and its inner shadow.
 - **`finish.raised`**: A control on a card: a gradient, an inner highlight, a hard shadow, an edge.
@@ -553,7 +552,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.disabled`**: A disabled control container surface.
 - **`finish.light`**: The main action brightest step: the accent gradient.
 - **`finish.accent`**: The accent face (the same as light).
-- **`finish.accentPressed`**: The accent control surface while pressed.
+- **`finish.accentPressed`**: The accent control surface while pressed (identical to accent when dimmed via state.accent-pressed-opacity).
 - **`finish.track`**: A groove: an inner shadow and an edge.
 - **`finish.fill`**: The filled run: a slider, a progress bar, a switch that is on.
 - **`finish.knob`**: A switch knob, off.
@@ -572,7 +571,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.groove`**: A groove cut inside a menu.
 
 - **Indicators** (`tabs: "pill"`, `nav: "fill"`, `field: "box"`): Visual indicator style enums.
-- **Disabled multipliers** (content=0.5, container=0.5): Disabled opacity multipliers for content and containers.
+- **Disabled handling** (content=0.5, fill=false): Disabled content opacity multiplier and whether containers switch to a dedicated disabled fill.
 
 ## Do's and Don'ts
 

@@ -280,6 +280,14 @@ function validateExtAtPath(
     return;
   }
 
+  if (p === "state.disabled") {
+    checkUnknownKeys(where, ext, ["fill"], problems);
+    if (typeof ext.fill !== "boolean") {
+      problems.push(`${where}.fill must be a boolean`);
+    }
+    return;
+  }
+
   if (p === "indicator") {
     checkUnknownKeys(where, ext, ["tabs", "nav", "field"], problems);
     for (const field of ["tabs", "nav", "field"] as const) {
@@ -695,7 +703,6 @@ function checkMergedSemantics(
     "state.pressed-opacity",
     "state.accent-pressed-opacity",
     "state.disabled.content",
-    "state.disabled.container",
   ]) {
     const tok = getAtPath(resolved, unitPath);
     if (isTokenNode(tok)) {
@@ -704,6 +711,13 @@ function checkMergedSemantics(
         problems.push(`${label}: ${unitPath} is ${JSON.stringify(val)}, not in [0, 1]`);
       }
     }
+  }
+  const disabledNode = getAtPath(resolved, "state.disabled") as Record<string, unknown> | undefined;
+  const disabledExt = (disabledNode?.$extensions as Record<string, unknown> | undefined)?.[
+    EXT_NS
+  ] as Record<string, unknown> | undefined;
+  if (typeof disabledExt?.fill !== "boolean") {
+    problems.push(`${label}: state.disabled.$extensions.${EXT_NS}.fill must be a boolean`);
   }
   for (const dimGroupPath of [
     "dimension.stroke",

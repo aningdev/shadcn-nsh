@@ -230,7 +230,7 @@ describe("m3Roles", () => {
       "#4A4458",
     );
     expect(css(parseColor(baselineRoles.light["on-brand-tint"])).toUpperCase()).toBe("#4A4458");
-    expect(baselineRoles.light["on-foreground"]).toBe("var(--on-brand-tint)");
+    expect(baselineRoles.light["selected-foreground"]).toBe("var(--on-brand-tint)");
     expect(baselineRoles.light["disabled"]).toBe(
       "color-mix(in srgb, var(--foreground) 10%, transparent)",
     );
@@ -247,7 +247,7 @@ describe("m3Roles", () => {
     expect(css(parseColor(baselineRoles.dark.dialog)).toUpperCase()).toBe("#2B2930");
     expect(css(parseColor(baselineRoles.dark.primary)).toUpperCase()).toBe("#D0BCFF");
     expect(css(parseColor(baselineRoles.dark["on-brand-tint"])).toUpperCase()).toBe("#E8DEF8");
-    expect(baselineRoles.dark["on-foreground"]).toBe("var(--on-brand-tint)");
+    expect(baselineRoles.dark["selected-foreground"]).toBe("var(--on-brand-tint)");
     expect(css(parseColor(baselineRoles.dark.inverse)).toUpperCase()).toBe("#E6E0E9");
     expect(css(parseColor(baselineRoles.dark["inverse-foreground"])).toUpperCase()).toBe("#322F35");
     expect(baselineRoles.dark["inverse-muted"]).toBe("var(--inverse-foreground)");
@@ -329,9 +329,6 @@ describe("compiled material theme files", () => {
     expect(files.semantics.state["accent-pressed-opacity"]).toBe(1);
     expect(files.semantics.finishes.shared.section).toMatchObject({
       material: { android: { elevation: 1 } },
-    });
-    expect(files.semantics.finishes.shared.sectionHover).toMatchObject({
-      material: { android: { elevation: 3 } },
     });
     expect(files.semantics.finishes.shared.dialog).toMatchObject({
       background: "{dialog}",

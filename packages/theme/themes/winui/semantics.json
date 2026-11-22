@@ -204,7 +204,7 @@
     "accent-pressed-opacity": 1,
     "disabled": {
       "content": 0.36,
-      "container": 0.45
+      "fill": true
     }
   },
   "duration": {
@@ -247,11 +247,8 @@
       },
       "section": {
         "background": "{card}",
-        "border-color": "{card-edge}",
-        "material": null
-      },
-      "sectionHover": {
         "shadow": "none",
+        "border-color": "{card-edge}",
         "material": null
       },
       "inset": {
@@ -313,9 +310,11 @@
       "accentPressed": {
         "background": "{accent-pressed}",
         "gradient": "linear-gradient(180deg, {accent-pressed} 0%, {accent-pressed} 100%)",
-        "shadow": "none",
         "border-color": "transparent",
-        "material": null
+        "border-top-color": "transparent",
+        "border-bottom-color": "transparent",
+        "material": null,
+        "shadow": "none"
       },
       "track": {
         "material": null,
@@ -428,9 +427,6 @@
       "card": {
         "shadow": "0 0 2px oklch(0 0 0 / 0.12), 0 4px 8px oklch(0 0 0 / 0.14)"
       },
-      "section": {
-        "shadow": "0 0 2px oklch(0 0 0 / 0.12), 0 4px 8px oklch(0 0 0 / 0.14)"
-      },
       "raised": {
         "border-top-color": "{border}",
         "border-bottom-color": "{bevel}"
@@ -465,9 +461,6 @@
     },
     "dark": {
       "card": {
-        "shadow": "0 0 2px oklch(0 0 0 / 0.24), 0 4px 8px oklch(0 0 0 / 0.28)"
-      },
-      "section": {
         "shadow": "0 0 2px oklch(0 0 0 / 0.24), 0 4px 8px oklch(0 0 0 / 0.28)"
       },
       "raised": {

@@ -88,7 +88,7 @@
       "down-tint": "oklch(0.9462 0.02418 11.286)",
       "violet": "oklch(0.5339 0.1647 289.689)",
       "window-control-off": "oklch(0.89535 0.00406 286.317)",
-      "dialog": "oklch(0.96415 0 0)",
+      "dialog": "var(--background)",
       "card-edge": "oklch(0.92191 0 0)",
       "bevel": "oklch(0.84522 0 0)",
       "accent-bevel": "oklch(0.52768 0.14982 252.341)",
@@ -96,8 +96,8 @@
       "disabled-foreground": "oklch(0.68949 0 0)",
       "accent-pressed": "oklch(0.5773 0.13223 250.006)",
       "on-accent-pressed": "oklch(0.87245 0.03754 247.003)",
-      "on-foreground": "oklch(1 0 0)",
-      "pressed-foreground": "oklch(0.47478 0 0)"
+      "selected-foreground": "var(--on-brand)",
+      "pressed-foreground": "var(--muted-foreground)"
     },
     "dark": {
       "background": "oklch(0.24353 0 0)",
@@ -163,7 +163,7 @@
       "sidebar-ring": "oklch(1 0 0)",
       "down": "oklch(0.79111 0.12251 13.299)",
       "window-control-off": "oklch(0.40108 0.01081 264.446)",
-      "dialog": "oklch(0.24353 0 0)",
+      "dialog": "var(--background)",
       "card-edge": "oklch(0.23075 0 0)",
       "bevel": "oklch(0.32897 0 0)",
       "accent-bevel": "oklch(0.81732 0.11439 230)",
@@ -171,8 +171,8 @@
       "disabled-foreground": "oklch(0.54863 0 0)",
       "accent-pressed": "oklch(0.70029 0.10192 230.522)",
       "on-accent-pressed": "oklch(0.42706 0.05878 229.834)",
-      "on-foreground": "oklch(0 0 0)",
-      "pressed-foreground": "oklch(0.84522 0 0)"
+      "selected-foreground": "var(--on-brand)",
+      "pressed-foreground": "var(--muted-foreground)"
     }
   }
 }

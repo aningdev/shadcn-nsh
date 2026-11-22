@@ -937,15 +937,15 @@
       "$description": "Pressed accent fill aliased to {color.primary} (state layer applies press)."
     },
     "on-accent-pressed": {
-      "$value": "{color.primary-foreground}",
+      "$value": "{color.on-brand}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "brand"
         }
       },
-      "$description": "Pressed accent ink aliased to {color.primary-foreground}."
+      "$description": "Pressed accent ink aliased to {color.on-brand}."
     },
-    "on-foreground": {
+    "selected-foreground": {
       "$value": "{color.on-brand-tint}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {

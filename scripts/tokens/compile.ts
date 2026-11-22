@@ -526,7 +526,11 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
         .$value as number,
       "accent-pressed-opacity": (stateGroup["accent-pressed-opacity"] as Record<string, unknown>)
         .$value as number,
-      disabled: readNumMap(stateGroup.disabled as Record<string, Record<string, unknown>>),
+      disabled: {
+        content: (stateGroup.disabled as Record<string, Record<string, unknown>>).content!
+          .$value as number,
+        fill: getExt(stateGroup.disabled)?.fill as boolean,
+      },
     },
     duration: durationOut,
     transition: transitionOut,

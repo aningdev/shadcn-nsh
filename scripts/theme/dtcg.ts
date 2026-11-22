@@ -97,7 +97,7 @@ export interface ThemeStyleInput {
     ripple: boolean;
     "pressed-opacity": number;
     "accent-pressed-opacity"?: number;
-    disabled: { content: number; container: number };
+    disabled: { content: number; fill: boolean };
   };
   duration: { shake: number };
   transition: { enter: { duration: number; timingFunction: string } };
@@ -826,12 +826,20 @@ function encodeSharedStyleOverrides(
   }
 
   const baseDisabled = getAt(baseState, "disabled");
+  const baseDisabledContent = getAt(baseDisabled, "content");
+  const baseDisabledFill = (
+    (baseDisabled.$extensions as Record<string, Record<string, unknown>> | undefined)?.[EXT_NS] as
+      | Record<string, unknown>
+      | undefined
+  )?.fill;
   const disabledOverrides: Record<string, unknown> = {};
-  for (const key of ["content", "container"] as const) {
-    const baseTok = getAt(baseDisabled, key);
-    if (style.state.disabled[key] !== baseTok.$value) {
-      disabledOverrides[key] = { $value: style.state.disabled[key] };
-    }
+  if (style.state.disabled.content !== baseDisabledContent.$value) {
+    disabledOverrides.content = { $value: style.state.disabled.content };
+  }
+  if (style.state.disabled.fill !== baseDisabledFill) {
+    disabledOverrides.$extensions = {
+      [EXT_NS]: { fill: style.state.disabled.fill },
+    };
   }
   if (Object.keys(disabledOverrides).length > 0) {
     stateOut.disabled = {

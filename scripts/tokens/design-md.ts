@@ -794,8 +794,9 @@ export function compileDesignMd(resolverPath: string): string {
   const disabledDesc = getDesc(stateGroup.disabled);
   if (disabledDesc) {
     const dis = (stateGroup.disabled ?? {}) as Record<string, Record<string, unknown>>;
+    const disExt = (dis.$extensions?.[EXT_NS] ?? {}) as Record<string, unknown>;
     lines.push(
-      `- **Disabled multipliers** (content=${String(dis.content?.$value)}, container=${String(dis.container?.$value)}): ${disabledDesc}`,
+      `- **Disabled handling** (content=${String(dis.content?.$value)}, fill=${String(disExt.fill)}): ${disabledDesc}`,
     );
   }
   lines.push("");

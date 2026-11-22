@@ -824,11 +824,7 @@
       "$description": "Library-retained unfocused window traffic-light fill (no WinUI equivalent)."
     },
     "dialog": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.96415, 0, 0],
-        "hex": "#f3f3f3"
-      },
+      "$value": "{color.background}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "surface"
@@ -927,91 +923,28 @@
       },
       "$description": "Pressed accent control ink (WinUI TextOnAccentFillColorSecondary composited over accent-pressed)."
     },
-    "on-foreground": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [1, 0, 0],
-        "hex": "#ffffff"
-      },
+    "selected-foreground": {
+      "$value": "{color.on-brand}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "ink"
         }
       },
-      "$description": "Ink on checked ToggleButton / active AccentFillColorDefault controls (TextOnAccentFillColorPrimary)."
+      "$description": "Ink on checked ToggleButton / active AccentFillColorDefault controls aliased to {color.on-brand}."
     },
     "pressed-foreground": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.47478, 0, 0],
-        "hex": "#5c5c5c"
-      },
+      "$value": "{color.muted-foreground}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "ink"
         }
       },
-      "$description": "Pressed standard control ink matching WinUI TextFillColorSecondary."
+      "$description": "Pressed standard control ink aliased to {color.muted-foreground} (WinUI TextFillColorSecondary)."
     }
   },
   "finish": {
     "$description": "Sparse light-mode surface finish overrides.",
     "card": {
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          {
-            "color": {
-              "colorSpace": "oklch",
-              "components": [0, 0, 0],
-              "alpha": 0.12,
-              "hex": "#000000"
-            },
-            "offsetX": {
-              "value": 0,
-              "unit": "px"
-            },
-            "offsetY": {
-              "value": 0,
-              "unit": "px"
-            },
-            "blur": {
-              "value": 2,
-              "unit": "px"
-            },
-            "spread": {
-              "value": 0,
-              "unit": "px"
-            }
-          },
-          {
-            "color": {
-              "colorSpace": "oklch",
-              "components": [0, 0, 0],
-              "alpha": 0.14,
-              "hex": "#000000"
-            },
-            "offsetX": {
-              "value": 0,
-              "unit": "px"
-            },
-            "offsetY": {
-              "value": 4,
-              "unit": "px"
-            },
-            "blur": {
-              "value": 8,
-              "unit": "px"
-            },
-            "spread": {
-              "value": 0,
-              "unit": "px"
-            }
-          }
-        ]
-      }
-    },
-    "section": {
       "shadow": {
         "$type": "shadow",
         "$value": [

@@ -192,7 +192,7 @@ export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
   "muted-foreground": "ink",
   "accent-foreground": "ink",
   "disabled-foreground": "ink",
-  "on-foreground": "ink",
+  "selected-foreground": "ink",
   "pressed-foreground": "ink",
   faint: "ink",
   code: "ink",

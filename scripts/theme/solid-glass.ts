@@ -399,8 +399,8 @@ function section(appearance: Appearance): Record<string, string> {
     disabled: "var(--raised)",
     "disabled-foreground": "var(--muted-foreground)",
     "accent-pressed": "var(--primary)",
-    "on-accent-pressed": "var(--primary-foreground)",
-    "on-foreground": "var(--foreground)",
+    "on-accent-pressed": "var(--on-brand)",
+    "selected-foreground": "var(--foreground)",
     "pressed-foreground": "var(--foreground)",
   };
 }
@@ -470,7 +470,6 @@ function finishes(appearance: Appearance): Record<string, Finish> {
       shadow: "none",
       "border-color": alias("card-edge"),
     },
-    sectionHover: { shadow: "none" },
     // The thinnest pane, laid into a card: the faint line of light inside its top edge.
     inset: { shadow: `inset 0 1px 0 ${s("glass-inner")}` },
     // A field is a pane of clear glass to type on: the line of light inside its top edge, and the
@@ -531,10 +530,17 @@ function finishes(appearance: Appearance): Record<string, Finish> {
       "border-bottom-color": alias("brand-edge"),
     },
     accentPressed: {
-      background: alias("accent-pressed"),
-      gradient: `linear-gradient(180deg, ${alias("accent-pressed")} 0%, ${alias("accent-pressed")} 100%)`,
-      shadow: "none",
+      ...paneAt("accent-pressed", Number(s("primary-solid").replace("%", "")) / 100),
+      shadow: [
+        `inset 0 1px 0 ${s("primary-rim")}`,
+        `inset 0 -1px 0 ${m.under}`,
+        `inset 0 0 0 1px ${s("primary-inner")}`,
+        `0 1px 2px ${s("glass-contact")}`,
+        `0 8px 18px -9px ${s("glass-shade")}`,
+      ].join(", "),
       "border-color": alias("brand-edge"),
+      "border-top-color": alias("brand-edge"),
+      "border-bottom-color": alias("brand-edge"),
     },
     // A track is a groove cut into the surface, so the light falls the other way: a shade under
     // its upper lip, a line of light along its lower one. Its edge is the theme's `border`.

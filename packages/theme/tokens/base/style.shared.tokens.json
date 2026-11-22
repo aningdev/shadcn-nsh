@@ -332,11 +332,13 @@
       "$description": "Pressed opacity for accent controls when no pressed accent finish replaces it."
     },
     "disabled": {
-      "$description": "Disabled opacity multipliers for content and containers.",
-      "content": {
-        "$value": 0.5
+      "$description": "Disabled content opacity multiplier and whether containers switch to a dedicated disabled fill.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "fill": false
+        }
       },
-      "container": {
+      "content": {
         "$value": 0.5
       }
     }

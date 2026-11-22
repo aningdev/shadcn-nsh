@@ -86,7 +86,7 @@ colors:
     disabled-foreground: "#8a8a8e"
     accent-pressed: "#007aff"
     on-accent-pressed: "#ffffff"
-    on-foreground: "#000000"
+    selected-foreground: "#000000"
     pressed-foreground: "#000000"
   dark:
     brand-fill: "#0a84ff"
@@ -162,7 +162,7 @@ colors:
     disabled-foreground: "#98989f"
     accent-pressed: "#0a84ff"
     on-accent-pressed: "#ffffff"
-    on-foreground: "#ffffff"
+    selected-foreground: "#ffffff"
     pressed-foreground: "#ffffff"
 typography:
   caption:
@@ -400,7 +400,7 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`inverse-foreground`** (light `#000000`, dark `#ffffff`): Primary text ink on inverse surfaces.
 - **`inverse-muted`** (light `#8a8a8e`, dark `#98989f`): Secondary text, spinner, and close-icon ink on inverse surfaces.
 - **`disabled-foreground`** (light `#8a8a8e`, dark `#98989f`): Disabled control label and icon ink.
-- **`on-foreground`** (light `#000000`, dark `#ffffff`): Label and icon ink on selected or toggled-on controls.
+- **`selected-foreground`** (light `#000000`, dark `#ffffff`): Label and icon ink on selected or toggled-on controls.
 - **`pressed-foreground`** (light `#000000`, dark `#ffffff`): Label and icon ink on pressed neutral or ghost controls.
 
 ### Brand
@@ -544,7 +544,6 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 
 - **`finish.card`**: The card face: an inner highlight, a hairline, a contact shadow and a cast one.
 - **`finish.section`**: The flat surface a section's content or card sits on (no shadow by default).
-- **`finish.sectionHover`**: Hover elevation step for a section or card where elevated.
 - **`finish.inset`**: The well inside a card: sunk by its inner shadow alone.
 - **`finish.field`**: A field well: its edge and its inner shadow.
 - **`finish.raised`** (material: `{"apple":{"glass":"regular","tint":null}}`): Raised control surface with Liquid Glass material (regular) and hairline shadow.
@@ -553,7 +552,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.disabled`**: A disabled control container surface.
 - **`finish.light`**: The main action brightest step: the accent gradient.
 - **`finish.accent`**: The accent face (the same as light).
-- **`finish.accentPressed`**: The accent control surface while pressed.
+- **`finish.accentPressed`**: The accent control surface while pressed (identical to accent when dimmed via state.accent-pressed-opacity).
 - **`finish.track`**: A groove: an inner shadow and an edge.
 - **`finish.fill`**: The filled run: a slider, a progress bar, a switch that is on.
 - **`finish.knob`**: A switch knob, off.
@@ -572,7 +571,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.groove`**: A groove cut inside a menu.
 
 - **Indicators** (`tabs: "pill"`, `nav: "fill"`, `field: "box"`): Visual indicator style enums.
-- **Disabled multipliers** (content=0.3, container=0.3): UIKit disabled opacity multipliers (0.3 for both content and containers).
+- **Disabled handling** (content=0.3, fill=false): UIKit disabled content opacity multiplier (0.3); containers keep resting fills.
 
 ## Do's and Don'ts
 

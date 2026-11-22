@@ -387,12 +387,14 @@
       "$description": "Pressed opacity for accent controls when no pressed accent finish replaces it."
     },
     "disabled": {
-      "$description": "WinUI 3 disabled opacities (0.36 TextFillColorDisabled content, 0.45 container compromise).",
+      "$description": "WinUI 3 disabled styling: 0.36 TextFillColorDisabled content with fill: true container override.",
       "content": {
         "$value": 0.36
       },
-      "container": {
-        "$value": 0.45
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "fill": true
+        }
       }
     }
   },

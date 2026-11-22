@@ -895,7 +895,7 @@
       "$description": "Accent control fill while pressed."
     },
     "on-accent-pressed": {
-      "$value": "{color.primary-foreground}",
+      "$value": "{color.on-brand}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "brand"
@@ -903,7 +903,7 @@
       },
       "$description": "Ink on pressed accent control fills."
     },
-    "on-foreground": {
+    "selected-foreground": {
       "$value": "{color.foreground}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -1337,6 +1337,153 @@
             "colorOp": {
               "op": "alpha",
               "color": "{color.primary}",
+              "alpha": 0.86
+            }
+          }
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.099,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": -1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.07,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 0,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 1,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.1,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.6,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 8,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 18,
+              "unit": "px"
+            },
+            "spread": {
+              "value": -9,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "accentPressed": {
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.94, 0, 0],
+          "alpha": 0.86,
+          "hex": "#ebebeb"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.accent-pressed}",
               "alpha": 0.86
             }
           }

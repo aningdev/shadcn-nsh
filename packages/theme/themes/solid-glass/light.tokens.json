@@ -619,11 +619,13 @@
       "$description": "Pressed opacity for accent controls when no pressed accent finish replaces it."
     },
     "disabled": {
-      "$description": "Disabled opacity multipliers for content and containers.",
-      "content": {
-        "$value": 0.5
+      "$description": "Disabled content opacity multiplier and whether containers switch to a dedicated disabled fill.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "fill": false
+        }
       },
-      "container": {
+      "content": {
         "$value": 0.5
       }
     }
@@ -2078,7 +2080,7 @@
       "$description": "Accent control fill while pressed."
     },
     "on-accent-pressed": {
-      "$value": "{color.primary-foreground}",
+      "$value": "{color.on-brand}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "brand"
@@ -2086,7 +2088,7 @@
       },
       "$description": "Ink on pressed accent control fills."
     },
-    "on-foreground": {
+    "selected-foreground": {
       "$value": "{color.foreground}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -2297,50 +2299,6 @@
       "border-color": {
         "$type": "color",
         "$value": "{color.card-edge}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": null
-        }
-      }
-    },
-    "sectionHover": {
-      "$description": "Hover elevation step for a section or card where elevated.",
-      "shadow": {
-        "$type": "shadow",
-        "$value": {
-          "color": {
-            "colorSpace": "oklch",
-            "components": [
-              0,
-              0,
-              0
-            ],
-            "alpha": 0,
-            "hex": "#000000"
-          },
-          "offsetX": {
-            "value": 0,
-            "unit": "px"
-          },
-          "offsetY": {
-            "value": 0,
-            "unit": "px"
-          },
-          "blur": {
-            "value": 0,
-            "unit": "px"
-          },
-          "spread": {
-            "value": 0,
-            "unit": "px"
-          }
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "none": true
-          }
-        }
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -3239,62 +3197,44 @@
       }
     },
     "accentPressed": {
-      "$description": "The accent control surface while pressed.",
-      "background": {
-        "$type": "color",
-        "$value": "{color.accent-pressed}"
-      },
+      "$description": "The accent control surface while pressed (identical to accent when dimmed via state.accent-pressed-opacity).",
       "gradient": {
         "$type": "gradient",
         "$value": [
           {
-            "color": "{color.accent-pressed}",
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                0,
+                0,
+                0
+              ],
+              "alpha": 0,
+              "hex": "#000000"
+            },
             "position": 0
           },
           {
-            "color": "{color.accent-pressed}",
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                0,
+                0,
+                0
+              ],
+              "alpha": 0,
+              "hex": "#000000"
+            },
             "position": 1
           }
         ],
         "$extensions": {
           "dev.aning.shadcn-nsh": {
-            "angle": 180
-          }
-        }
-      },
-      "shadow": {
-        "$type": "shadow",
-        "$value": {
-          "color": {
-            "colorSpace": "oklch",
-            "components": [
+            "angle": 180,
+            "transparentStops": [
               0,
-              0,
-              0
-            ],
-            "alpha": 0,
-            "hex": "#000000"
-          },
-          "offsetX": {
-            "value": 0,
-            "unit": "px"
-          },
-          "offsetY": {
-            "value": 0,
-            "unit": "px"
-          },
-          "blur": {
-            "value": 0,
-            "unit": "px"
-          },
-          "spread": {
-            "value": 0,
-            "unit": "px"
-          }
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "none": true
+              1
+            ]
           }
         }
       },
@@ -3302,10 +3242,188 @@
         "$type": "color",
         "$value": "{color.brand-edge}"
       },
+      "border-top-color": {
+        "$type": "color",
+        "$value": "{color.brand-edge}"
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": "{color.brand-edge}"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "material": null
         }
+      },
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.2,
+            0,
+            0
+          ],
+          "alpha": 0.88,
+          "hex": "#161616"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.accent-pressed}",
+              "alpha": 0.88
+            }
+          }
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                1,
+                0,
+                0
+              ],
+              "alpha": 0.3,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                0,
+                0,
+                0
+              ],
+              "alpha": 0.203,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": -1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                1,
+                0,
+                0
+              ],
+              "alpha": 0.07,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 0,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 1,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                0.25,
+                0.03,
+                265
+              ],
+              "alpha": 0.06,
+              "hex": "#1b2130"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                0.3,
+                0.06,
+                265
+              ],
+              "alpha": 0.28,
+              "hex": "#1f2d4c"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 8,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 18,
+              "unit": "px"
+            },
+            "spread": {
+              "value": -9,
+              "unit": "px"
+            }
+          }
+        ]
       }
     },
     "track": {

@@ -204,7 +204,7 @@
     "accent-pressed-opacity": 1,
     "disabled": {
       "content": 0.38,
-      "container": 0.1
+      "fill": true
     }
   },
   "duration": {
@@ -257,14 +257,6 @@
         "material": {
           "android": {
             "elevation": 1
-          }
-        }
-      },
-      "sectionHover": {
-        "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 2px 6px 2px oklch(0 0 0 / 0.15)",
-        "material": {
-          "android": {
-            "elevation": 3
           }
         }
       },
@@ -343,9 +335,11 @@
       "accentPressed": {
         "background": "{accent-pressed}",
         "gradient": "linear-gradient(180deg, {accent-pressed} 0%, {accent-pressed} 100%)",
-        "shadow": "none",
         "border-color": "transparent",
-        "material": null
+        "border-top-color": "transparent",
+        "border-bottom-color": "transparent",
+        "material": null,
+        "shadow": "none"
       },
       "track": {
         "material": null,

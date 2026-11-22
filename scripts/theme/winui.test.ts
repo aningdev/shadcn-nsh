@@ -160,16 +160,21 @@ describe("winuiRoles() key coverage and format", () => {
     expect(Object.keys(roles.dark).sort()).toEqual(expectedDarkKeys);
   });
 
-  test("every value is a canonical oklch() string, and only overlays/washes keep alpha", () => {
+  test("every value is a canonical oklch() string or var(--*) alias, and only overlays/washes keep alpha", () => {
     const allowedAlpha = new Set(["scrim", "window-control-ink", "window-control-edge"]);
-    const aliases = new Set(["brand-fill", "on-brand"]);
+    const themeAliases = new Set(["brand-fill", "on-brand"]);
+    const appearanceAliases = new Set(["dialog", "selected-foreground", "pressed-foreground"]);
     for (const [sectionName, section] of [
       ["theme", roles.theme],
       ["light", roles.light],
       ["dark", roles.dark],
     ] as const) {
       for (const [key, value] of Object.entries(section)) {
-        if (sectionName === "theme" && aliases.has(key)) continue;
+        if (sectionName === "theme" && themeAliases.has(key)) continue;
+        if (sectionName !== "theme" && appearanceAliases.has(key)) {
+          expect(value, `${sectionName}.${key} alias`).toMatch(/^var\(--[a-z0-9-]+\)$/);
+          continue;
+        }
         expect(value, `${sectionName}.${key}`).toMatch(/^oklch\(/);
         expect(toOklchText(value), `${sectionName}.${key} canonical`).toBe(value);
         const parsed = parseColor(value);
@@ -243,6 +248,13 @@ describe("WCAG contrast for default accent", () => {
   for (const appearance of ["light", "dark"] as const) {
     test(`${appearance}: all foreground/background pairs have contrast >= 4.5`, () => {
       const s = roles[appearance];
+      const resolveAlias = (val: string): string => {
+        const m = /^var\(--([a-z0-9-]+)\)$/.exec(val);
+        if (!m) return val;
+        const name = m[1]!;
+        if (name in s) return resolveAlias(s[name as keyof typeof s]);
+        return resolveAlias(roles.theme[name as keyof typeof roles.theme]);
+      };
       const pairs: [string, string, string][] = [
         ["foreground/background", s.foreground, s.background],
         ["card-foreground/card", s["card-foreground"], s.card],
@@ -272,8 +284,12 @@ describe("WCAG contrast for default accent", () => {
         ["code/muted", s.code, s.muted],
         ["brand/background", s.brand, s.background],
         ["brand/card", s.brand, s.card],
-        ["pressed-foreground/pressed", s["pressed-foreground"], s.background],
-        ["on-foreground/primary (toggle on)", s["on-foreground"], s.primary],
+        ["pressed-foreground/pressed", resolveAlias(s["pressed-foreground"]), s.background],
+        [
+          "selected-foreground/primary (toggle on)",
+          resolveAlias(s["selected-foreground"]),
+          s.primary,
+        ],
         ["warn/warn-tint", s.warn, s["warn-tint"]],
         ["up/up-tint", s.up, s["up-tint"]],
         ["destructive/destructive-tint", s.destructive, s["destructive-tint"]],
@@ -357,11 +373,13 @@ describe("compiled winui theme files", () => {
     });
     expect(files.semantics.finishes.shared.section).toMatchObject({
       "border-color": "{card-edge}",
+      shadow: "none",
     });
-    expect(files.semantics.finishes.light.section?.shadow).toContain("0 4px 8px");
     expect(files.semantics.finishes.shared.accentPressed).toMatchObject({
       background: "{accent-pressed}",
       "border-color": "transparent",
+      "border-top-color": "transparent",
+      "border-bottom-color": "transparent",
       shadow: "none",
     });
     expect(files.semantics.finishes.shared.disabled).toMatchObject({

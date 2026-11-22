@@ -360,7 +360,7 @@ export type WinuiAppearanceRole =
   | "disabled-foreground"
   | "accent-pressed"
   | "on-accent-pressed"
-  | "on-foreground"
+  | "selected-foreground"
   | "pressed-foreground";
 
 export interface WinuiRoles {
@@ -488,7 +488,7 @@ function buildAppearance(
     "down-tint": destructiveTint,
     violet: LIBRARY_KEPT[appearance].violet,
     "window-control-off": LIBRARY_KEPT[appearance].windowControlOff,
-    dialog: background,
+    dialog: "var(--background)",
     "card-edge": onBase(w.CardStrokeColorDefault),
     bevel: onBase(w.ControlStrokeColorSecondary),
     "accent-bevel": compositeWinui(w.ControlStrokeColorOnAccentDefault, primary),
@@ -496,8 +496,8 @@ function buildAppearance(
     "disabled-foreground": onBase(w.TextFillColorDisabled),
     "accent-pressed": accentPressed,
     "on-accent-pressed": compositeWinui(w.TextOnAccentFillColorSecondary, accentPressed),
-    "on-foreground": primaryForeground,
-    "pressed-foreground": mutedForeground,
+    "selected-foreground": "var(--on-brand)",
+    "pressed-foreground": "var(--muted-foreground)",
   };
 }
 
@@ -627,12 +627,8 @@ function finishes(appearance: Appearance): Record<string, Record<string, unknown
     },
     section: {
       background: alias("card"),
-      shadow: elevationShadow(8, appearance),
-      "border-color": alias("card-edge"),
-      material: null,
-    },
-    sectionHover: {
       shadow: "none",
+      "border-color": alias("card-edge"),
       material: null,
     },
     inset: { shadow: "none", material: null },
@@ -668,9 +664,13 @@ function finishes(appearance: Appearance): Record<string, Record<string, unknown
       "border-top-color": alias("accent-bevel"),
       "border-bottom-color": alias("brand-edge"),
     }),
+    // `AccentButtonBorderBrushPressed` -> `ControlFillColorTransparentBrush`
+    // (`Button_themeresources.xaml` in `winui3/release/2.7.0`).
     accentPressed: surface(alias("accent-pressed"), {
       shadow: "none",
       "border-color": "transparent",
+      "border-top-color": "transparent",
+      "border-bottom-color": "transparent",
     }),
     track: { shadow: "none", "border-color": alias("input"), material: null },
     fill: {
@@ -845,10 +845,9 @@ export const winuiStyle = {
     ripple: false,
     "pressed-opacity": 1,
     "accent-pressed-opacity": 1,
-    // NSH cross-mode single-scalar compromise (WinUI uses per-brush disabled fills:
-    // `ControlFillColorDisabled` 0.302 L / 0.043 D; `AccentFillColorDisabled` 0.216 L / 0.157 D;
-    // `TitleBarDeactivatedOpacity` 0.5).
-    disabled: { content: 0.36, container: 0.45 },
+    // Disabled containers switch to the dedicated disabled brush (`ControlFillColorDisabled` /
+    // `TextFillColorDisabled`) when `fill: true`; `content: 0.36` matches `TextFillColorDisabled`.
+    disabled: { content: 0.36, fill: true },
   },
   duration: { shake: 500 },
   transition: {
@@ -959,9 +958,10 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
       "Pressed accent control fill (WinUI AccentFillColorTertiary composited over base).",
     "on-accent-pressed":
       "Pressed accent control ink (WinUI TextOnAccentFillColorSecondary composited over accent-pressed).",
-    "on-foreground":
-      "Ink on checked ToggleButton / active AccentFillColorDefault controls (TextOnAccentFillColorPrimary).",
-    "pressed-foreground": "Pressed standard control ink matching WinUI TextFillColorSecondary.",
+    "selected-foreground":
+      "Ink on checked ToggleButton / active AccentFillColorDefault controls aliased to {color.on-brand}.",
+    "pressed-foreground":
+      "Pressed standard control ink aliased to {color.muted-foreground} (WinUI TextFillColorSecondary).",
   };
 
   return {
@@ -1026,7 +1026,7 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
       finishes: {
         card: "WinUI 3 card surface with layering depth-8 two-layer ThemeShadow approximation.",
         section:
-          "WinUI 3 section card surface with CardStrokeColorDefault border and depth-8 ThemeShadow approximation.",
+          "WinUI 3 section card surface using CardBackgroundFillColorDefault and CardStrokeColorDefault border (no drop shadow).",
         raised:
           "WinUI 3 standard control surface with ControlElevationBorderBrush top/bottom bevel and no drop shadow.",
         hover:
@@ -1038,7 +1038,7 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
         accent:
           "WinUI 3 accent control surface using AccentFillColorDefault and AccentControlElevationBorderBrush bevel.",
         accentPressed:
-          "WinUI 3 pressed accent control surface using AccentFillColorTertiary and flat border.",
+          "WinUI 3 pressed accent control surface using AccentFillColorTertiary and transparent directional borders (AccentButtonBorderBrushPressed -> ControlFillColorTransparentBrush, WinUI 2.7.0 Button_themeresources.xaml).",
         handle: "WinUI 3 slider handle using popover fill, depth-2 shadow, and border.",
         thumb: "WinUI 3 segmented thumb using popover fill, depth-2 shadow, and border.",
         on: "WinUI 3 checked ToggleButton / active surface using AccentFillColorDefault and AccentControlElevationBorderBrush bevel.",
@@ -1067,7 +1067,7 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
         "state.pressed-opacity":
           "Content stays full opacity when pressed (1; fill brush swap shows press).",
         "state.disabled":
-          "WinUI 3 disabled opacities (0.36 TextFillColorDisabled content, 0.45 container compromise).",
+          "WinUI 3 disabled styling: 0.36 TextFillColorDisabled content with fill: true container override.",
         "transition.enter":
           "WinUI 3 250ms entrance transition with Direct Entrance decelerate curve (motion.md).",
         "motion.press":

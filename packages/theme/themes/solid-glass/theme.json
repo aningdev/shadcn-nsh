@@ -94,8 +94,8 @@
       "disabled": "var(--raised)",
       "disabled-foreground": "var(--muted-foreground)",
       "accent-pressed": "var(--primary)",
-      "on-accent-pressed": "var(--primary-foreground)",
-      "on-foreground": "var(--foreground)",
+      "on-accent-pressed": "var(--on-brand)",
+      "selected-foreground": "var(--foreground)",
       "pressed-foreground": "var(--foreground)"
     },
     "dark": {
@@ -169,8 +169,8 @@
       "disabled": "var(--raised)",
       "disabled-foreground": "var(--muted-foreground)",
       "accent-pressed": "var(--primary)",
-      "on-accent-pressed": "var(--primary-foreground)",
-      "on-foreground": "var(--foreground)",
+      "on-accent-pressed": "var(--on-brand)",
+      "selected-foreground": "var(--foreground)",
       "pressed-foreground": "var(--foreground)"
     }
   }

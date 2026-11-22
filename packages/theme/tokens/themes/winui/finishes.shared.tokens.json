@@ -30,23 +30,11 @@
       }
     },
     "section": {
-      "$description": "WinUI 3 section card surface with CardStrokeColorDefault border and depth-8 ThemeShadow approximation.",
+      "$description": "WinUI 3 section card surface using CardBackgroundFillColorDefault and CardStrokeColorDefault border (no drop shadow).",
       "background": {
         "$type": "color",
         "$value": "{color.card}"
       },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.card-edge}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": null
-        }
-      }
-    },
-    "sectionHover": {
-      "$description": "Hover elevation step for a section or card where elevated.",
       "shadow": {
         "$type": "shadow",
         "$value": {
@@ -78,6 +66,10 @@
             "none": true
           }
         }
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.card-edge}"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -586,7 +578,7 @@
       }
     },
     "accentPressed": {
-      "$description": "WinUI 3 pressed accent control surface using AccentFillColorTertiary and flat border.",
+      "$description": "WinUI 3 pressed accent control surface using AccentFillColorTertiary and transparent directional borders (AccentButtonBorderBrushPressed -> ControlFillColorTransparentBrush, WinUI 2.7.0 Button_themeresources.xaml).",
       "background": {
         "$type": "color",
         "$value": "{color.accent-pressed}"
@@ -642,6 +634,34 @@
         }
       },
       "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0, 0, 0],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0, 0, 0],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
+      "border-bottom-color": {
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",

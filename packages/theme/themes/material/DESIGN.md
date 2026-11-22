@@ -86,7 +86,7 @@ colors:
     disabled-foreground: "#1d1b2061"
     accent-pressed: "#6750a4"
     on-accent-pressed: "#ffffff"
-    on-foreground: "#4a4458"
+    selected-foreground: "#4a4458"
     pressed-foreground: "#1d1b20"
   dark:
     brand-fill: "#d0bcff"
@@ -162,7 +162,7 @@ colors:
     disabled-foreground: "#e6e0e961"
     accent-pressed: "#d0bcff"
     on-accent-pressed: "#381e72"
-    on-foreground: "#e8def8"
+    selected-foreground: "#e8def8"
     pressed-foreground: "#e6e0e9"
 typography:
   caption:
@@ -400,7 +400,7 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`inverse-foreground`** (light `#f5eff7`, dark `#322f35`): Ink on inverse surfaces (M3 inverseOnSurface).
 - **`inverse-muted`** (light `#f5eff7`, dark `#322f35`): Supporting text and close icon on inverse snackbars, aliased to {color.inverse-foreground} (Compose SnackbarTokens.kt).
 - **`disabled-foreground`** (light `#1d1b2061`, dark `#e6e0e961`): Disabled control content ink (38% onSurface over transparent).
-- **`on-foreground`** (light `#4a4458`, dark `#e8def8`): Ink on tonal selected controls (M3 Expressive onSecondaryContainer).
+- **`selected-foreground`** (light `#4a4458`, dark `#e8def8`): Ink on tonal selected controls (M3 Expressive onSecondaryContainer).
 - **`pressed-foreground`** (light `#1d1b20`, dark `#e6e0e9`): Pressed ink aliased to {color.foreground}.
 
 ### Brand
@@ -417,7 +417,7 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`on-brand-tint`** (light `#4a4458`, dark `#e8def8`): Ink on selected chip/tile fills (M3 Expressive onSecondaryContainer).
 - **`inverse-brand`** (light `#d0bcff`, dark `#6750a4`): Brand action ink on inverse surfaces (M3 inversePrimary).
 - **`accent-pressed`** (light `#6750a4`, dark `#d0bcff`): Pressed accent fill aliased to {color.primary} (state layer applies press).
-- **`on-accent-pressed`** (light `#ffffff`, dark `#381e72`): Pressed accent ink aliased to {color.primary-foreground}.
+- **`on-accent-pressed`** (light `#ffffff`, dark `#381e72`): Pressed accent ink aliased to {color.on-brand}.
 
 ### Status
 
@@ -544,7 +544,6 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 
 - **`finish.card`** (material: `{"android":{"elevation":1}}`): Elevated M3 card surface with Material Web Level 1 shadow and 1dp Android elevation.
 - **`finish.section`** (material: `{"android":{"elevation":1}}`): M3 ElevatedCard resting surface (Level 1 shadow and 1dp Android elevation, no border).
-- **`finish.sectionHover`** (material: `{"android":{"elevation":3}}`): M3 ElevatedCard hovered elevation promotion (Level 2 shadow and 3dp Android elevation).
 - **`finish.inset`**: The well inside a card: sunk by its inner shadow alone.
 - **`finish.field`**: A field well: its edge and its inner shadow.
 - **`finish.raised`** (material: `{"android":{"elevation":1}}`): Raised surface with Level 1 shadow and 1dp Android elevation.
@@ -572,7 +571,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.groove`**: A groove cut inside a menu.
 
 - **Indicators** (`tabs: "underline"`, `nav: "fill"`, `field: "underline"`): M3 underlined tabs and filled-text-field underline indicator.
-- **Disabled multipliers** (content=0.38, container=0.1): M3 disabled opacities: 0.38 content and 0.10 container (_md-comp-button-filled.scss).
+- **Disabled handling** (content=0.38, fill=true): M3 disabled controls: 0.38 content opacity with fill: true (10% onSurface container, _md-comp-button-filled.scss).
 
 ## Do's and Don'ts
 

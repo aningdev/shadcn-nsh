@@ -621,11 +621,13 @@
       "$description": "Pressed opacity for accent controls when no pressed accent finish replaces it."
     },
     "disabled": {
-      "$description": "UIKit disabled opacity multipliers (0.3 for both content and containers).",
-      "content": {
-        "$value": 0.3
+      "$description": "UIKit disabled content opacity multiplier (0.3); containers keep resting fills.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "fill": false
+        }
       },
-      "container": {
+      "content": {
         "$value": 0.3
       }
     }
@@ -2074,7 +2076,7 @@
       "$description": "Accent control fill while pressed."
     },
     "on-accent-pressed": {
-      "$value": "{color.primary-foreground}",
+      "$value": "{color.on-brand}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "brand"
@@ -2082,7 +2084,7 @@
       },
       "$description": "Ink on pressed accent control fills."
     },
-    "on-foreground": {
+    "selected-foreground": {
       "$value": "{color.foreground}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -2210,50 +2212,6 @@
       "border-color": {
         "$type": "color",
         "$value": "{color.card-edge}"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": null
-        }
-      }
-    },
-    "sectionHover": {
-      "$description": "Hover elevation step for a section or card where elevated.",
-      "shadow": {
-        "$type": "shadow",
-        "$value": {
-          "color": {
-            "colorSpace": "oklch",
-            "components": [
-              0,
-              0,
-              0
-            ],
-            "alpha": 0,
-            "hex": "#000000"
-          },
-          "offsetX": {
-            "value": 0,
-            "unit": "px"
-          },
-          "offsetY": {
-            "value": 0,
-            "unit": "px"
-          },
-          "blur": {
-            "value": 0,
-            "unit": "px"
-          },
-          "spread": {
-            "value": 0,
-            "unit": "px"
-          }
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "none": true
-          }
-        }
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -3060,7 +3018,7 @@
       }
     },
     "accentPressed": {
-      "$description": "The accent control surface while pressed.",
+      "$description": "The accent control surface while pressed (identical to accent when dimmed via state.accent-pressed-opacity).",
       "background": {
         "$type": "color",
         "$value": "{color.accent-pressed}"
@@ -3121,7 +3079,57 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.brand-edge}"
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {

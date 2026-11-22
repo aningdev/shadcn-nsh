@@ -204,7 +204,7 @@
     "accent-pressed-opacity": 0.88,
     "disabled": {
       "content": 0.5,
-      "container": 0.5
+      "fill": false
     }
   },
   "duration": {
@@ -251,10 +251,6 @@
         "border-color": "{card-edge}",
         "material": null
       },
-      "sectionHover": {
-        "shadow": "none",
-        "material": null
-      },
       "inset": {
         "material": null
       },
@@ -299,8 +295,9 @@
       "accentPressed": {
         "background": "{accent-pressed}",
         "gradient": "linear-gradient(180deg, {accent-pressed} 0%, {accent-pressed} 100%)",
-        "shadow": "none",
         "border-color": "{brand-edge}",
+        "border-top-color": "{accent-bevel}",
+        "border-bottom-color": "{brand-edge}",
         "material": null
       },
       "track": {
@@ -410,6 +407,9 @@
       "accent": {
         "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.55), inset 0 -1px 0 oklch(0.42761 0.11265 128.534 / 0.12), 0 1px 0 oklch(0.42761 0.11265 128.534 / 0.14)"
       },
+      "accentPressed": {
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.55), inset 0 -1px 0 oklch(0.42761 0.11265 128.534 / 0.12), 0 1px 0 oklch(0.42761 0.11265 128.534 / 0.14)"
+      },
       "track": {
         "shadow": "inset 0 1px 1px oklch(0.1686 0.02256 263.693 / 0.05)",
         "border-color": "{border}"
@@ -504,6 +504,9 @@
         "shadow": "inset 0 0 0 1px oklch(1 0 0 / 0.22), inset 0 1px 1px oklch(1 0 0 / 0.35), 0 1px 1px oklch(0 0 0 / 0.12)"
       },
       "accent": {
+        "shadow": "inset 0 0 0 1px oklch(1 0 0 / 0.22), inset 0 1px 1px oklch(1 0 0 / 0.35), 0 1px 1px oklch(0 0 0 / 0.12)"
+      },
+      "accentPressed": {
         "shadow": "inset 0 0 0 1px oklch(1 0 0 / 0.22), inset 0 1px 1px oklch(1 0 0 / 0.35), 0 1px 1px oklch(0 0 0 / 0.12)"
       },
       "track": {

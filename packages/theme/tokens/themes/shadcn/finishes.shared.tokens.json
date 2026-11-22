@@ -130,46 +130,6 @@
         }
       }
     },
-    "sectionHover": {
-      "$description": "Hover elevation step for a section or card where elevated.",
-      "shadow": {
-        "$type": "shadow",
-        "$value": {
-          "color": {
-            "colorSpace": "oklch",
-            "components": [0, 0, 0],
-            "alpha": 0,
-            "hex": "#000000"
-          },
-          "offsetX": {
-            "value": 0,
-            "unit": "px"
-          },
-          "offsetY": {
-            "value": 0,
-            "unit": "px"
-          },
-          "blur": {
-            "value": 0,
-            "unit": "px"
-          },
-          "spread": {
-            "value": 0,
-            "unit": "px"
-          }
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "none": true
-          }
-        }
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "material": null
-        }
-      }
-    },
     "inset": {
       "$description": "The well inside a card: sunk by its inner shadow alone.",
       "shadow": {
@@ -800,7 +760,7 @@
       }
     },
     "accentPressed": {
-      "$description": "The accent control surface while pressed.",
+      "$description": "The accent control surface while pressed (identical to accent when dimmed via state.accent-pressed-opacity).",
       "background": {
         "$type": "color",
         "$value": "{color.accent-pressed}"
@@ -857,7 +817,45 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.brand-edge}"
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0, 0, 0],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0, 0, 0],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0, 0, 0],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {

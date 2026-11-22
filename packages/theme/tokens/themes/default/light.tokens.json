@@ -897,7 +897,7 @@
       }
     },
     "on-accent-pressed": {
-      "$value": "{color.primary-foreground}",
+      "$value": "{color.on-brand}",
       "$description": "Ink on pressed accent control fills.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -905,7 +905,7 @@
         }
       }
     },
-    "on-foreground": {
+    "selected-foreground": {
       "$value": "{color.foreground}",
       "$description": "Label and icon ink on selected or toggled-on controls.",
       "$extensions": {
@@ -1337,6 +1337,87 @@
       }
     },
     "accent": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.55,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.42761, 0.11265, 128.534],
+              "alpha": 0.12,
+              "hex": "#3c5a00"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": -1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.42761, 0.11265, 128.534],
+              "alpha": 0.14,
+              "hex": "#3c5a00"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "accentPressed": {
       "shadow": {
         "$type": "shadow",
         "$value": [
