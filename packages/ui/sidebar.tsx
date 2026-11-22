@@ -16,6 +16,7 @@
 import {
   alpha,
   colors,
+  controls,
   finish,
   focusRing,
   hovered,
@@ -27,6 +28,7 @@ import {
   shape,
   stroke,
   dimmed,
+  type Controls,
 } from "@shadcn-nsh/theme";
 import { PanelLeft } from "lucide";
 import type { AndroidProps, JSX, StyleProp, TextStyle, ViewProps, ViewStyle } from "nsh";
@@ -49,7 +51,6 @@ import { IconButton, iconButtonGlyph, type IconButtonProps } from "./button";
 import { Input, type InputProps } from "./input";
 import { AsText } from "./lib/as-text";
 import { IconLabel } from "./lib/icons";
-import { navBar, navBarStyle } from "./lib/indicator";
 import { pressHostProps, pressRipple, pressSink, pressTransition } from "./lib/press";
 import { narrowWindow } from "./lib/surface";
 import { type Live, read } from "./lib/utils";
@@ -57,6 +58,41 @@ import { Separator, type SeparatorProps } from "./separator";
 import { Sheet, SheetContent } from "./sheet";
 import { Skeleton } from "./skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger, type TooltipContentProps } from "./tooltip";
+
+interface SidebarPreset {
+  navIndicator: "fill" | "bar";
+  indicatorThickness: number;
+}
+
+const sidebarPresets: Record<Controls, SidebarPreset> = {
+  base: { navIndicator: "fill", indicatorThickness: 2 },
+  material: { navIndicator: "fill", indicatorThickness: 3 },
+  // WinUI 3 NavigationView leading 3px accent indicator bar.
+  winui: { navIndicator: "bar", indicatorThickness: 3 },
+};
+
+/** Whether the active preset marks the selected sidebar item with a leading bar instead of a fill. */
+export function navBar(): boolean {
+  return sidebarPresets[controls()].navIndicator === "bar";
+}
+
+/**
+ * The selected item's bar: a short vertical pill, `indicatorThickness` wide, in the accent at the
+ * item's leading edge. Draw it as a child of the item, over its content.
+ */
+export function navBarStyle(): ViewStyle {
+  const width = sidebarPresets[controls()].indicatorThickness;
+  return {
+    pointerEvents: "none",
+    position: "absolute",
+    start: 0,
+    top: 8,
+    bottom: 8,
+    width,
+    borderRadius: width / 2,
+    backgroundColor: colors.brand,
+  };
+}
 
 /** A pointer's density; a touch screen's rows are taller, a finger's target. */
 const pointer = platform.desktop;
@@ -341,7 +377,7 @@ export function sidebarLook(o?: SidebarLookOptions): SidebarLook {
     },
     get railLine(): ViewStyle {
       return {
-        width: stroke.indicator,
+        width: sidebarPresets[controls()].indicatorThickness,
         height: "100%",
         borderRadius: 1,
         backgroundColor: colors.sidebarBorder,
@@ -495,7 +531,7 @@ export function sidebarMenuButtonLook(o?: SidebarMenuButtonLookOptions) {
               borderColor: colors.sidebarBorder,
             }
           : {}),
-        // The selected row's fill; a theme that marks it with a bar (`indicator.nav`) draws none.
+        // The selected row's fill; a preset that marks it with a bar (`navBar()`) draws none.
         ...(active() && !navBar() ? { backgroundColor: colors.sidebarAccent } : {}),
         ...pressTransition("background-color"),
       };

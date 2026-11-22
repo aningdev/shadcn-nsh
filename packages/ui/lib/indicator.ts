@@ -1,38 +1,38 @@
-// How a theme marks what is selected, focused or editable (`indicator.nav`, `indicator.field`,
-// `shape.corners.field`): one place for the shared logic, so every control reads the keys the same way.
-import { colors, cornerCurve, rounded, stroke, style, terminal } from "@shadcn-nsh/theme";
+// How a control preset marks a focused or editable field (`indicator`, `corners`): one place for
+// the shared logic, so every field control reads the preset the same way.
+import {
+  colors,
+  controls,
+  cornerCurve,
+  rounded,
+  stroke,
+  style,
+  terminal,
+  type Controls,
+} from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
 
-/** The theme marks the selected navigation item with a bar (`indicator.nav: "bar"`) instead of a fill. */
-export function navBar(): boolean {
-  return style().indicator.nav === "bar";
+/** Preset options controlling how form fields draw their resting frame and corners. */
+export interface FieldPreset {
+  indicator: "box" | "underline";
+  corners: "all" | "top";
 }
 
-/**
- * The selected item's bar: a short vertical pill, `stroke.indicator` wide, in the accent at the
- * item's leading edge. Draw it as a child of the item, over its content.
- */
-export function navBarStyle(): ViewStyle {
-  return {
-    pointerEvents: "none",
-    position: "absolute",
-    start: 0,
-    top: 8,
-    bottom: 8,
-    width: stroke.indicator,
-    borderRadius: stroke.indicator / 2,
-    backgroundColor: colors.brand,
-  };
-}
+/** Field frame presets keyed by the active theme's `controls()` family. */
+export const fieldPresets: Record<Controls, FieldPreset> = {
+  base: { indicator: "box", corners: "all" },
+  material: { indicator: "underline", corners: "top" },
+  winui: { indicator: "underline", corners: "all" },
+};
 
-/** The theme draws a field as a line under its text (`indicator.field: "underline"`), not a box. */
+/** The active preset draws a field as a line under its text (`indicator: "underline"`), not a box. */
 export function fieldUnderline(): boolean {
-  return !terminal && style().indicator.field === "underline";
+  return !terminal && fieldPresets[controls()].indicator === "underline";
 }
 
-/** A field's corners: all four at `radius`, or the top two only (`shape.corners.field: "top"`). */
+/** A field's corners: all four at `radius`, or the top two only (`corners: "top"`). */
 export function fieldCorners(radius: number): ViewStyle {
-  if (style().shape.corners.field !== "top") return rounded(radius);
+  if (fieldPresets[controls()].corners !== "top") return rounded(radius);
   const top = rounded(radius).borderRadius as number;
   return {
     borderTopLeftRadius: top,

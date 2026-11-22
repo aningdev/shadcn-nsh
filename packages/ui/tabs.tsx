@@ -13,7 +13,6 @@ import {
   shape,
   stroke,
   dimmed,
-  style as themeStyle,
   controls,
   type Controls,
 } from "@shadcn-nsh/theme";
@@ -129,17 +128,37 @@ export function tabsLook() {
  * disabled).
  */
 interface TabsPreset {
+  indicator: "pill" | "underline";
+  indicatorThickness: number;
   padX: number;
   indicatorSpan: "tab" | "label";
   indicatorCorners: "pill" | "top";
 }
 
 const tabsPresets: Record<Controls, TabsPreset> = {
-  base: { padX: 8, indicatorSpan: "tab", indicatorCorners: "pill" },
-  // M3 PrimaryNavigationTab label-width indicator with 3dp top-only corners (PrimaryNavigationTabTokens.kt, _md-comp-primary-navigation-tab.scss:28, _tab.scss:92-103).
-  material: { padX: 8, indicatorSpan: "label", indicatorCorners: "top" },
+  base: {
+    indicator: "pill",
+    indicatorThickness: 2,
+    padX: 8,
+    indicatorSpan: "tab",
+    indicatorCorners: "pill",
+  },
+  // M3 PrimaryNavigationTab label-width 3dp indicator with top-only corners (PrimaryNavigationTabTokens.kt, _md-comp-primary-navigation-tab.scss:28, _tab.scss:92-103).
+  material: {
+    indicator: "underline",
+    indicatorThickness: 3,
+    padX: 8,
+    indicatorSpan: "label",
+    indicatorCorners: "top",
+  },
   // WinUI 3 SelectorBar underline tab geometry with 3px pill-capped active indicator.
-  winui: { padX: 8, indicatorSpan: "tab", indicatorCorners: "pill" },
+  winui: {
+    indicator: "underline",
+    indicatorThickness: 3,
+    padX: 8,
+    indicatorSpan: "tab",
+    indicatorCorners: "pill",
+  },
 };
 
 export function underlineTabsLook() {
@@ -152,15 +171,15 @@ export function underlineTabsLook() {
       const corners: ViewStyle =
         g.indicatorCorners === "top"
           ? {
-              borderTopLeftRadius: stroke.indicator,
-              borderTopRightRadius: stroke.indicator,
+              borderTopLeftRadius: g.indicatorThickness,
+              borderTopRightRadius: g.indicatorThickness,
               borderBottomLeftRadius: 0,
               borderBottomRightRadius: 0,
             }
-          : { borderRadius: stroke.indicator / 2 };
+          : { borderRadius: g.indicatorThickness / 2 };
       return {
         bottom: 0,
-        height: stroke.indicator,
+        height: g.indicatorThickness,
         ...(g.indicatorSpan === "label" ? { marginHorizontal: g.padX } : {}),
         ...corners,
         backgroundColor: colors.brand,
@@ -236,9 +255,9 @@ export function TabTitle(props: {
 }) {
   const on = follow(() => (props.selected ? 1 : 0), motion.move);
   const listVariant = ListVariantContext();
-  // A theme that marks the chosen tab with an underline also sets its label in the accent.
+  // A preset that marks the chosen tab with an underline also sets its label in the accent.
   const chosenInk = () =>
-    themeStyle().indicator.tabs === "underline" && (listVariant === "line" || props.underline)
+    tabsPresets[controls()].indicator === "underline" && (listVariant === "line" || props.underline)
       ? colors.brand
       : colors.foreground;
   const away = on.interpolate({ inputRange: [0, 1], outputRange: [1, 0] });
@@ -358,9 +377,9 @@ type TabsContextValue = {
 const TabsContext = context<TabsContextValue | null>(null);
 const ListVariantContext = context<TabsListVariant>("default");
 
-/** The variant a list wears when it names none: the theme's `indicator.tabs` (an underline, or the pill's capsule). */
+/** The variant a list wears when it names none: `tabsPresets[controls()].indicator` (an underline, or the pill's capsule). */
 const themeVariant = (): TabsListVariant =>
-  themeStyle().indicator.tabs === "underline" ? "line" : "default";
+  tabsPresets[controls()].indicator === "underline" ? "line" : "default";
 
 function useTabs() {
   return TabsContext();

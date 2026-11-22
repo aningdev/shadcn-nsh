@@ -285,7 +285,7 @@
       "name": "indicator",
       "type": "registry:lib",
       "title": "Indicator",
-      "description": "How a theme marks the selected row, the focused field and a field's shape: the nav bar, the underline, the top corners.",
+      "description": "Shared field indicator and corner preset helpers: underline edge widths, rest color, focus class, and top-only corners.",
       "files": [
         {
           "path": "packages/ui/lib/indicator.ts",
