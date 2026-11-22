@@ -1,0 +1,357 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "$description": "Cross-theme base semantic tokens and structural defaults.",
+  "cubicBezier": {
+    "$type": "cubicBezier",
+    "$description": "Named timing curves shared across themes.",
+    "out-cubic": {
+      "$value": [0.333333, 1, 0.666667, 1],
+      "$description": "Exact cubic-bezier equivalent of NSH Easing.out(Easing.cubic).",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "nshEasing": "out-cubic"
+        }
+      }
+    },
+    "in-cubic": {
+      "$value": [0.333333, 0, 0.666667, 0],
+      "$description": "Exact cubic-bezier equivalent of NSH Easing.in(Easing.cubic).",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "nshEasing": "in-cubic"
+        }
+      }
+    },
+    "in-out-cubic": {
+      "$value": [0.65, 0, 0.35, 1],
+      "$description": "Cubic approximation of NSH Easing.inOut(Easing.cubic).",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "nshEasing": "in-out-cubic"
+        }
+      }
+    },
+    "standard": {
+      "$value": [0.2, 0, 0, 1],
+      "$description": "Material 3 md.sys.motion.easing.standard."
+    },
+    "emphasized-decelerate": {
+      "$value": [0.05, 0.7, 0.1, 1],
+      "$description": "Material 3 emphasized-decelerate curve."
+    },
+    "emphasized-accelerate": {
+      "$value": [0.3, 0, 0.8, 0.15],
+      "$description": "Material 3 emphasized-accelerate curve."
+    },
+    "decelerate": {
+      "$value": [0, 0, 0, 1],
+      "$description": "WinUI 3 / Fluent 2 Direct Entrance decelerate curve."
+    },
+    "accelerate": {
+      "$value": [1, 0, 1, 1],
+      "$description": "WinUI 3 / Fluent 2 Gentle Exit accelerate curve."
+    },
+    "easy-ease": {
+      "$value": [0.33, 0, 0.67, 1],
+      "$description": "Fluent Web curveEasyEase."
+    },
+    "point-to-point": {
+      "$value": [0.55, 0.55, 0, 1],
+      "$description": "WinUI 3 Point-to-Point motion curve."
+    }
+  },
+  "typography": {
+    "$type": "typography",
+    "$description": "Semantic typography roles referencing tier-specific font.size and font.line-height.",
+    "$extensions": {
+      "dev.aning.shadcn-nsh": {
+        "fontFamily": null
+      }
+    },
+    "caption": {
+      "$value": {
+        "fontFamily": ["system-ui", "sans-serif"],
+        "fontSize": "{font.size.caption}",
+        "fontWeight": 400,
+        "lineHeight": "{font.line-height.caption}",
+        "letterSpacing": {
+          "value": 0,
+          "unit": "px"
+        }
+      }
+    },
+    "detail": {
+      "$value": {
+        "fontFamily": ["system-ui", "sans-serif"],
+        "fontSize": "{font.size.detail}",
+        "fontWeight": 400,
+        "lineHeight": "{font.line-height.detail}",
+        "letterSpacing": {
+          "value": 0,
+          "unit": "px"
+        }
+      }
+    },
+    "body": {
+      "$value": {
+        "fontFamily": ["system-ui", "sans-serif"],
+        "fontSize": "{font.size.body}",
+        "fontWeight": 400,
+        "lineHeight": "{font.line-height.body}",
+        "letterSpacing": {
+          "value": 0,
+          "unit": "px"
+        }
+      }
+    },
+    "label": {
+      "$value": {
+        "fontFamily": ["system-ui", "sans-serif"],
+        "fontSize": "{font.size.label}",
+        "fontWeight": 500,
+        "lineHeight": "{font.line-height.label}",
+        "letterSpacing": {
+          "value": 0,
+          "unit": "px"
+        }
+      }
+    },
+    "title": {
+      "$value": {
+        "fontFamily": ["system-ui", "sans-serif"],
+        "fontSize": "{font.size.title}",
+        "fontWeight": 600,
+        "lineHeight": "{font.line-height.title}",
+        "letterSpacing": {
+          "value": 0,
+          "unit": "px"
+        }
+      }
+    },
+    "headline": {
+      "$value": {
+        "fontFamily": ["system-ui", "sans-serif"],
+        "fontSize": "{font.size.headline}",
+        "fontWeight": 600,
+        "lineHeight": "{font.line-height.headline}",
+        "letterSpacing": {
+          "value": 0,
+          "unit": "px"
+        }
+      }
+    },
+    "display": {
+      "$value": {
+        "fontFamily": ["system-ui", "sans-serif"],
+        "fontSize": "{font.size.display}",
+        "fontWeight": 600,
+        "lineHeight": "{font.line-height.display}",
+        "letterSpacing": {
+          "value": 0,
+          "unit": "px"
+        }
+      }
+    }
+  },
+  "dimension": {
+    "$type": "dimension",
+    "shape": {
+      "$type": "dimension",
+      "$description": "Semantic corner radius roles referencing base dimension.radius.* tokens.",
+      "control": {
+        "$value": "{dimension.radius.control}"
+      },
+      "field": {
+        "$value": "{dimension.radius.field}"
+      },
+      "chip": {
+        "$value": "{dimension.radius.chip}"
+      },
+      "card": {
+        "$value": "{dimension.radius.card}"
+      },
+      "overlay": {
+        "$value": "{dimension.radius.overlay}"
+      },
+      "dialog": {
+        "$value": "{dimension.radius.dialog}"
+      },
+      "sheet": {
+        "$value": "{dimension.radius.sheet}"
+      },
+      "inset": {
+        "$value": "{dimension.radius.base}"
+      }
+    },
+    "stroke": {
+      "hairline": {
+        "$value": {
+          "value": 1,
+          "unit": "px"
+        }
+      },
+      "surface": {
+        "$value": {
+          "value": 1,
+          "unit": "px"
+        }
+      },
+      "control": {
+        "$value": {
+          "value": 1,
+          "unit": "px"
+        }
+      },
+      "indicator": {
+        "$value": {
+          "value": 2,
+          "unit": "px"
+        }
+      }
+    },
+    "focus": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "style": "halo"
+        }
+      },
+      "width": {
+        "$value": {
+          "value": 3,
+          "unit": "px"
+        }
+      },
+      "offset": {
+        "$value": {
+          "value": 0,
+          "unit": "px"
+        }
+      }
+    }
+  },
+  "shape": {
+    "$description": "Non-dimensional corner curve and field corner geometry.",
+    "$extensions": {
+      "dev.aning.shadcn-nsh": {
+        "curve": "continuous",
+        "corners": {
+          "field": "all"
+        }
+      }
+    }
+  },
+  "state": {
+    "$type": "number",
+    "$extensions": {
+      "dev.aning.shadcn-nsh": {
+        "ripple": false
+      }
+    },
+    "press-scale": {
+      "$value": 0.97
+    },
+    "overlay": {
+      "hover": {
+        "$value": 0
+      },
+      "focus": {
+        "$value": 0
+      },
+      "pressed": {
+        "$value": 0
+      },
+      "dragged": {
+        "$value": 0
+      }
+    },
+    "pressed-opacity": {
+      "$value": 0.7
+    },
+    "disabled": {
+      "content": {
+        "$value": 0.5
+      },
+      "container": {
+        "$value": 0.5
+      }
+    }
+  },
+  "duration": {
+    "$type": "duration",
+    "shake": {
+      "$value": {
+        "value": 500,
+        "unit": "ms"
+      }
+    }
+  },
+  "transition": {
+    "$type": "transition",
+    "enter": {
+      "$value": {
+        "duration": {
+          "value": 420,
+          "unit": "ms"
+        },
+        "delay": {
+          "value": 0,
+          "unit": "ms"
+        },
+        "timingFunction": "{cubicBezier.out-cubic}"
+      }
+    }
+  },
+  "motion": {
+    "$description": "Interactive spring and timing physics roles.",
+    "press": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "spring": {
+            "stiffness": 520,
+            "damping": 34
+          }
+        }
+      }
+    },
+    "settle": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "spring": {
+            "stiffness": 320,
+            "damping": 30
+          }
+        }
+      }
+    },
+    "control": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "spring": {
+            "stiffness": 1218,
+            "damping": 70
+          }
+        }
+      }
+    },
+    "move": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "spring": {
+            "stiffness": 504,
+            "damping": 38
+          }
+        }
+      }
+    }
+  },
+  "indicator": {
+    "$description": "Visual indicator style enums.",
+    "$extensions": {
+      "dev.aning.shadcn-nsh": {
+        "tabs": "pill",
+        "nav": "fill",
+        "field": "box"
+      }
+    }
+  }
+}

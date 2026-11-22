@@ -1,0 +1,219 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "$description": "Default pointer input-tier metrics.",
+  "font": {
+    "size": {
+      "$type": "dimension",
+      "caption": {
+        "$value": {
+          "value": 11,
+          "unit": "px"
+        }
+      },
+      "detail": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        }
+      },
+      "body": {
+        "$value": {
+          "value": 13,
+          "unit": "px"
+        }
+      },
+      "label": {
+        "$value": {
+          "value": 14,
+          "unit": "px"
+        }
+      },
+      "title": {
+        "$value": {
+          "value": 13,
+          "unit": "px"
+        }
+      },
+      "headline": {
+        "$value": {
+          "value": 20,
+          "unit": "px"
+        }
+      },
+      "display": {
+        "$value": {
+          "value": 26,
+          "unit": "px"
+        }
+      }
+    },
+    "line-height": {
+      "$type": "number",
+      "caption": {
+        "$value": 1.3636363636363635
+      },
+      "detail": {
+        "$value": 1.4166666666666667
+      },
+      "body": {
+        "$value": 1.4615384615384615
+      },
+      "label": {
+        "$value": 1.4285714285714286
+      },
+      "title": {
+        "$value": 1.4615384615384615
+      },
+      "headline": {
+        "$value": 1.3
+      },
+      "display": {
+        "$value": 1.2307692307692308
+      }
+    }
+  },
+  "dimension": {
+    "$type": "dimension",
+    "size": {
+      "hit": {
+        "$value": {
+          "value": 0,
+          "unit": "px"
+        }
+      },
+      "density": {
+        "row": {
+          "$value": {
+            "value": 36,
+            "unit": "px"
+          }
+        },
+        "pad": {
+          "$value": {
+            "value": 14,
+            "unit": "px"
+          }
+        },
+        "gap": {
+          "$value": {
+            "value": 12,
+            "unit": "px"
+          }
+        },
+        "surface": {
+          "$value": {
+            "value": 10,
+            "unit": "px"
+          }
+        }
+      },
+      "control": {
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "switch": "small"
+          }
+        },
+        "row": {
+          "$value": {
+            "value": 40,
+            "unit": "px"
+          }
+        },
+        "padding": {
+          "$value": {
+            "value": 6,
+            "unit": "px"
+          }
+        },
+        "gap": {
+          "$value": {
+            "value": 10,
+            "unit": "px"
+          }
+        },
+        "control": {
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          }
+        },
+        "corner": {
+          "$value": {
+            "value": 5,
+            "unit": "px"
+          }
+        },
+        "check": {
+          "$value": {
+            "value": 12,
+            "unit": "px"
+          }
+        },
+        "dot": {
+          "$value": {
+            "value": 6,
+            "unit": "px"
+          }
+        },
+        "tabs": {
+          "$value": {
+            "value": 30,
+            "unit": "px"
+          }
+        },
+        "line": {
+          "$value": {
+            "value": 32,
+            "unit": "px"
+          }
+        },
+        "clear": {
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          }
+        }
+      },
+      "height": {
+        "sm": {
+          "$value": {
+            "value": 24,
+            "unit": "px"
+          }
+        },
+        "md": {
+          "$value": {
+            "value": 28,
+            "unit": "px"
+          }
+        },
+        "lg": {
+          "$value": {
+            "value": 34,
+            "unit": "px"
+          }
+        }
+      }
+    },
+    "icon": {
+      "sm": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        }
+      },
+      "md": {
+        "$value": {
+          "value": 14,
+          "unit": "px"
+        }
+      },
+      "lg": {
+        "$value": {
+          "value": 15,
+          "unit": "px"
+        }
+      }
+    }
+  }
+}

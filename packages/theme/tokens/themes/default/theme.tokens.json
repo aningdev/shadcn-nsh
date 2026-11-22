@@ -1,0 +1,179 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "$description": "Appearance-invariant base tokens for the default NSH Gallery UI theme.",
+  "dimension": {
+    "$type": "dimension",
+    "radius": {
+      "$type": "dimension",
+      "base": {
+        "$value": {
+          "value": 10,
+          "unit": "px"
+        }
+      },
+      "card": {
+        "$value": {
+          "value": 14,
+          "unit": "px"
+        }
+      },
+      "control": {
+        "$value": {
+          "value": 8,
+          "unit": "px"
+        }
+      },
+      "field": {
+        "$value": {
+          "value": 8,
+          "unit": "px"
+        }
+      },
+      "chip": {
+        "$value": {
+          "value": 10,
+          "unit": "px"
+        }
+      },
+      "overlay": {
+        "$value": {
+          "value": 10,
+          "unit": "px"
+        }
+      },
+      "dialog": {
+        "$value": {
+          "value": 14,
+          "unit": "px"
+        }
+      },
+      "sheet": {
+        "$value": {
+          "value": 14,
+          "unit": "px"
+        }
+      }
+    }
+  },
+  "font": {
+    "family": {
+      "$type": "fontFamily",
+      "mono": {
+        "$value": "monospace"
+      }
+    }
+  },
+  "color": {
+    "$type": "color",
+    "brand-fill": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.89637, 0.16627, 124.031],
+        "hex": "#c6ef6a"
+      }
+    },
+    "on-brand": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.19339, 0.0197, 121.819],
+        "hex": "#13160c"
+      }
+    },
+    "scrim": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0, 0, 0],
+        "alpha": 0.45,
+        "hex": "#000000"
+      }
+    },
+    "media": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.1869, 0.0151, 266.766],
+        "hex": "#10131a"
+      }
+    },
+    "on-media": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "hex": "#ffffff"
+      }
+    },
+    "chart-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.18636, 0.01318, 264.182],
+        "hex": "#101319"
+      }
+    },
+    "window-close": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.6936, 0.19638, 26.364],
+        "hex": "#ff5f57"
+      }
+    },
+    "window-minimize": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.83478, 0.1612, 80.911],
+        "hex": "#febc2e"
+      }
+    },
+    "window-zoom": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.72803, 0.21734, 144.712],
+        "hex": "#28c840"
+      }
+    },
+    "window-control-ink": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0, 0, 0],
+        "alpha": 0.5,
+        "hex": "#000000"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "hex": "#000000"
+            },
+            "percent": 50,
+            "b": "transparent"
+          }
+        }
+      }
+    },
+    "window-control-edge": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0, 0, 0],
+        "alpha": 0.12,
+        "hex": "#000000"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "hex": "#000000"
+            },
+            "percent": 12,
+            "b": "transparent"
+          }
+        }
+      }
+    }
+  }
+}
