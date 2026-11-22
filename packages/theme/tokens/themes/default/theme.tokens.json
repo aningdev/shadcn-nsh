@@ -85,7 +85,12 @@
         "components": [0.89637, 0.16627, 124.031],
         "hex": "#c6ef6a"
       },
-      "$description": "Accent fill color for selected calendar days and branded highlights."
+      "$description": "Accent fill color for selected calendar days and branded highlights.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      }
     },
     "on-brand": {
       "$value": {
@@ -93,7 +98,12 @@
         "components": [0.19339, 0.0197, 121.819],
         "hex": "#13160c"
       },
-      "$description": "Foreground text and icons on brand-fill surfaces."
+      "$description": "Foreground text and icons on brand-fill surfaces.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      }
     },
     "scrim": {
       "$value": {
@@ -102,7 +112,12 @@
         "alpha": 0.45,
         "hex": "#000000"
       },
-      "$description": "Translucent backdrop scrim behind modals and sheets."
+      "$description": "Translucent backdrop scrim behind modals and sheets.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      }
     },
     "media": {
       "$value": {
@@ -110,7 +125,12 @@
         "components": [0.1869, 0.0151, 266.766],
         "hex": "#10131a"
       },
-      "$description": "Ground behind photographs and videos; invariant across appearances."
+      "$description": "Ground behind photographs and videos; invariant across appearances.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      }
     },
     "on-media": {
       "$value": {
@@ -118,7 +138,12 @@
         "components": [1, 0, 0],
         "hex": "#ffffff"
       },
-      "$description": "White ink over photographs and dark media surfaces; invariant across appearances."
+      "$description": "White ink over photographs and dark media surfaces; invariant across appearances.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      }
     },
     "chart-foreground": {
       "$value": {
@@ -126,7 +151,12 @@
         "components": [0.18636, 0.01318, 264.182],
         "hex": "#101319"
       },
-      "$description": "Dark ink on light chart tiles; dark tiles use on-media."
+      "$description": "Dark ink on light chart tiles; dark tiles use on-media.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      }
     },
     "window-close": {
       "$value": {
@@ -134,7 +164,12 @@
         "components": [0.6936, 0.19638, 26.364],
         "hex": "#ff5f57"
       },
-      "$description": "macOS window close traffic-light button fill."
+      "$description": "macOS window close traffic-light button fill.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      }
     },
     "window-minimize": {
       "$value": {
@@ -142,7 +177,12 @@
         "components": [0.83478, 0.1612, 80.911],
         "hex": "#febc2e"
       },
-      "$description": "macOS window minimize traffic-light button fill."
+      "$description": "macOS window minimize traffic-light button fill.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      }
     },
     "window-zoom": {
       "$value": {
@@ -150,7 +190,12 @@
         "components": [0.72803, 0.21734, 144.712],
         "hex": "#28c840"
       },
-      "$description": "macOS window zoom traffic-light button fill."
+      "$description": "macOS window zoom traffic-light button fill.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      }
     },
     "window-control-ink": {
       "$value": {
@@ -171,7 +216,8 @@
             },
             "percent": 50,
             "b": "transparent"
-          }
+          },
+          "role": "chrome"
         }
       },
       "$description": "Glyph ink inside macOS window traffic-light buttons."
@@ -195,10 +241,28 @@
             },
             "percent": 12,
             "b": "transparent"
-          }
+          },
+          "role": "chrome"
         }
       },
       "$description": "Hairline border around macOS window traffic-light buttons."
+    }
+  },
+  "$extensions": {
+    "dev.aning.shadcn-nsh": {
+      "designMd": {
+        "overview": "NSH Gallery UI default theme: graphite dark and paper light surfaces with citrus lime (`#c6ef6a`) brand fill, continuous squircle corners, spring motion physics, and layered surface finishes.",
+        "elevation": "Tactile layered elevation: inner top-edge highlights (`inset`), 1px hairline borders, contact + cast drop shadows (`card`, `menu`, `dialog`, `inverse`), and translucent frosted glass (`glass` with 80% popover alpha).",
+        "dos": [
+          "Preserve the citrus accent (`brand-fill` / `primary`) for primary actions, active runs, and focus highlights.",
+          "Use `inset` wells inside cards and `raised` surfaces for controls sitting on cards, paired with continuous squircle corners (`shape.curve: \"continuous\"`).",
+          "Apply tactile spring press feedback (`state.press-scale: 0.97`, `motion.press` / `motion.settle`)."
+        ],
+        "donts": [
+          "Do not flatten shadows or remove inner highlights on `card`, `raised`, `inset`, or `pill` finishes.",
+          "Do not merge distinct semantic finishes (`light` vs `accent`, `thumb` vs `raised`, `knob` vs `handle`, `down` vs `destructive`)."
+        ]
+      }
     }
   }
 }

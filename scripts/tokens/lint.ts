@@ -31,7 +31,15 @@ import { discoverDtcgThemes } from "./build";
 import { evaluateColorMix } from "./color";
 import { loadSourceItem, resolvePermutation, type ResolverDoc } from "./resolver";
 import { validateResolverDocument, validateTokensDocument } from "./schema-validate";
-import { EXT_NS, RADIUS_KEYS, TYPE_ROLES, type ColorOpExtension, type DtcgColor } from "./types";
+import {
+  COLOR_ROLES,
+  EXT_NS,
+  RADIUS_KEYS,
+  TYPE_ROLES,
+  type ColorOpExtension,
+  type ColorRole,
+  type DtcgColor,
+} from "./types";
 
 const defaultRepoRoot = path.resolve(import.meta.dir, "..", "..");
 const CURLY_REF = /^\{([^${}.][^{}.]*(?:\.[^${}.][^{}.]*)*)\}$/;
@@ -356,12 +364,51 @@ function validateExtAtPath(
   }
 
   if (/^color\.[a-z0-9-]+$/.test(p)) {
-    checkUnknownKeys(where, ext, ["colorOp"], problems);
+    checkUnknownKeys(where, ext, ["colorOp", "role"], problems);
     if ("colorOp" in ext) validateColorOpShape(where, ext.colorOp, problems);
+    if ("role" in ext) {
+      if (!COLOR_ROLES.includes(ext.role as ColorRole)) {
+        problems.push(
+          `${where}.role: ${JSON.stringify(ext.role)} must be one of ${COLOR_ROLES.join(", ")}`,
+        );
+      }
+    }
+    return;
+  }
+
+  if (p === "") {
+    checkUnknownKeys(where, ext, ["designMd"], problems);
+    if ("designMd" in ext) validateDesignMdExt(`${where}.designMd`, ext.designMd, problems);
     return;
   }
 
   problems.push(`${label}: unexpected $extensions at "${p || "#"}"`);
+}
+
+function validateDesignMdExt(where: string, val: unknown, problems: string[]): void {
+  if (!isRecord(val)) {
+    problems.push(`${where} must be an object`);
+    return;
+  }
+  checkUnknownKeys(
+    where,
+    val,
+    ["overview", "elevation", "dos", "donts", "sharedDos", "sharedDonts", "voiceOmitted"],
+    problems,
+  );
+  for (const strKey of ["overview", "elevation", "voiceOmitted"] as const) {
+    if (strKey in val && !isNonEmptyString(val[strKey])) {
+      problems.push(`${where}.${strKey} must be a non-empty string`);
+    }
+  }
+  for (const listKey of ["dos", "donts", "sharedDos", "sharedDonts"] as const) {
+    if (listKey in val) {
+      const arr = val[listKey];
+      if (!Array.isArray(arr) || arr.some((item) => !isNonEmptyString(item))) {
+        problems.push(`${where}.${listKey} must be an array of non-empty strings`);
+      }
+    }
+  }
 }
 
 function validateColorOpShape(where: string, op: unknown, problems: string[]): void {

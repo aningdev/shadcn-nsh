@@ -1,6 +1,23 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "$description": "Cross-theme base semantic tokens and structural defaults.",
+  "$extensions": {
+    "dev.aning.shadcn-nsh": {
+      "designMd": {
+        "sharedDos": [
+          "Read all colors, radii, typography, and surface finishes through theme roles (`colors.*`, `shape.*`, `font.*`, `finish.*`) rather than literals in component code.",
+          "Read theme getters inside JSX render expressions or reactive effects so runtime theme switching (`selectTheme`) and light/dark appearance changes take effect on the next frame.",
+          "Use `rounded(shape.<role>, inset)` for concentric nested radii inside cards, switches, and segmented controls."
+        ],
+        "sharedDonts": [
+          "Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.",
+          "Never store `colors.*`, `finish.*`, or `shape.*` values in module-level constants; they freeze on theme or appearance switches.",
+          "Never delete finish fields or alter the merged finish key set across appearances or themes."
+        ],
+        "voiceOmitted": "Voice & Content Strategy is intentionally omitted: this theme defines visual tokens, surface finishes, typography metrics, and motion physics only; product copy, tone, capitalization, and terminology belong to the host application."
+      }
+    }
+  },
   "cubicBezier": {
     "$type": "cubicBezier",
     "$description": "Named timing curves shared across themes.",

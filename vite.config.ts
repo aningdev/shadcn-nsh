@@ -6,13 +6,16 @@ import { defineConfig } from "vite-plus";
 const ignoreVendored = ["references/**", ".agents/**"];
 // TanStack Router writes this file on every build in its own style and asks to
 // be left out of formatters; formatting it would dirty the tree after a build.
-// The compiled per-appearance DTCG files are tokens:build output in its own style
-// (tokens:build --check owns them); the DTCG sources under tokens/ stay formatted.
+// The compiled per-appearance DTCG files and per-theme DESIGN.md docs are
+// tokens:build output in their own style (tokens:build --check owns them);
+// the DTCG sources under tokens/ stay formatted.
 const ignoreFmt = [
   ...ignoreVendored,
   "apps/website/src/routeTree.gen.ts",
   "packages/theme/*.tokens.json",
   "packages/theme/themes/*/*.tokens.json",
+  "packages/theme/DESIGN.md",
+  "packages/theme/themes/*/DESIGN.md",
 ];
 // Docs types authority is `check:docs` (the site's own tsconfig + tsc), which
 // knows Vite's `import.meta.env` and the Fumadocs MDX collections.

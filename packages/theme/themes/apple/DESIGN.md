@@ -1,0 +1,554 @@
+---
+version: alpha
+name: Apple
+description: "DTCG 2025.10 resolver for the Apple theme (Apple HIG / UIKit system palette and Liquid Glass)."
+colors:
+  scrim: "#00000066"
+  media: "#10131a"
+  on-media: "#ffffff"
+  chart-foreground: "#000000"
+  window-close: "#ff5f57"
+  window-minimize: "#febc2e"
+  window-zoom: "#28c840"
+  window-control-ink: "#00000080"
+  window-control-edge: "#0000001f"
+  light:
+    brand-fill: "#007aff"
+    on-brand: "#ffffff"
+    background: "#f2f2f7"
+    foreground: "#000000"
+    card: "#ffffff"
+    card-foreground: "#000000"
+    popover: "#ffffff"
+    popover-foreground: "#000000"
+    primary: "#007aff"
+    primary-foreground: "#ffffff"
+    secondary: "#efeff0"
+    secondary-foreground: "#000000"
+    muted: "#efeff0"
+    muted-foreground: "#8a8a8e"
+    accent: "#f4f4f5"
+    accent-foreground: "#000000"
+    destructive: "#ff3b30"
+    border: "#dcdcdd"
+    input: "#c6c6c8"
+    ring: "#007aff"
+    chart-1: "#007aff"
+    chart-2: "#34c759"
+    chart-3: "#ff9500"
+    chart-4: "#af52de"
+    chart-5: "#ff3b30"
+    sidebar: "#f2f2f7"
+    sidebar-foreground: "#000000"
+    sidebar-primary: "#007aff"
+    sidebar-primary-foreground: "#ffffff"
+    sidebar-accent: "#f4f4f5"
+    sidebar-accent-foreground: "#000000"
+    sidebar-border: "#dcdcdd"
+    sidebar-ring: "#007aff"
+    inset: "#f4f4f5"
+    raised: "#efeff0"
+    glass-edge: "#dcdcdd"
+    scrollbar-thumb: "#bebec2"
+    scrollbar-thumb-hover: "#9f9fa3"
+    field: "#efeff0"
+    line: "#dcdcdd"
+    hover: "#0000000f"
+    ring-halo: "#007aff4d"
+    faint: "#c5c5c7"
+    brand: "#007aff"
+    brand-edge: "#dcdcdd"
+    track: "#e9e9eb"
+    knob: "#ffffff"
+    code: "#000000"
+    info: "#007aff"
+    warn: "#ff9500"
+    up: "#34c759"
+    down: "#ff3b30"
+    brand-tint: "#007aff1f"
+    on-brand-tint: "#000000"
+    inverse: "#ffffff"
+    inverse-foreground: "#000000"
+    inverse-muted: "#8a8a8e"
+    inverse-brand: "#ffffff"
+    info-tint: "#007aff1f"
+    warn-tint: "#ff95001f"
+    destructive-tint: "#ff3b301f"
+    up-tint: "#34c7591f"
+    down-tint: "#ff3b301f"
+    violet: "#af52de"
+    window-control-off: "#e4e4e6"
+  dark:
+    brand-fill: "#0a84ff"
+    on-brand: "#ffffff"
+    background: "#000000"
+    foreground: "#ffffff"
+    card: "#1c1c1e"
+    card-foreground: "#ffffff"
+    popover: "#2c2c2e"
+    popover-foreground: "#ffffff"
+    primary: "#0a84ff"
+    primary-foreground: "#ffffff"
+    secondary: "#323236"
+    secondary-foreground: "#ffffff"
+    muted: "#323236"
+    muted-foreground: "#98989f"
+    accent: "#2c2c30"
+    accent-foreground: "#ffffff"
+    destructive: "#ff453a"
+    border: "#353538"
+    input: "#3e3e41"
+    ring: "#0a84ff"
+    chart-1: "#0a84ff"
+    chart-2: "#30d158"
+    chart-3: "#ff9f0a"
+    chart-4: "#bf5af2"
+    chart-5: "#ff453a"
+    sidebar: "#1c1c1e"
+    sidebar-foreground: "#ffffff"
+    sidebar-primary: "#0a84ff"
+    sidebar-primary-foreground: "#ffffff"
+    sidebar-accent: "#2c2c30"
+    sidebar-accent-foreground: "#ffffff"
+    sidebar-border: "#353538"
+    sidebar-ring: "#0a84ff"
+    inset: "#2c2c30"
+    raised: "#323236"
+    glass-edge: "#353538"
+    scrollbar-thumb: "#4c4c4f"
+    scrollbar-thumb-hover: "#7a7a7f"
+    field: "#323236"
+    line: "#353538"
+    hover: "#ffffff0f"
+    ring-halo: "#0a84ff4d"
+    faint: "#5a5a5f"
+    brand: "#0a84ff"
+    brand-edge: "#353538"
+    track: "#39393d"
+    knob: "#ffffff"
+    code: "#ffffff"
+    info: "#0a84ff"
+    warn: "#ff9f0a"
+    up: "#30d158"
+    down: "#ff453a"
+    brand-tint: "#0a84ff1f"
+    on-brand-tint: "#ffffff"
+    inverse: "#2c2c2e"
+    inverse-foreground: "#ffffff"
+    inverse-muted: "#98989f"
+    inverse-brand: "#ffffff"
+    info-tint: "#0a84ff1f"
+    warn-tint: "#ff9f0a1f"
+    destructive-tint: "#ff453a1f"
+    up-tint: "#30d1581f"
+    down-tint: "#ff453a1f"
+    violet: "#bf5af2"
+    window-control-off: "#3d3d41"
+typography:
+  caption:
+    fontFamily: "system-ui, sans-serif"
+    fontSize: 10px
+    fontWeight: 400
+    lineHeight: 1.3
+    letterSpacing: 0px
+  detail:
+    fontFamily: "system-ui, sans-serif"
+    fontSize: 11px
+    fontWeight: 400
+    lineHeight: 1.2727272727272727
+    letterSpacing: 0px
+  body:
+    fontFamily: "system-ui, sans-serif"
+    fontSize: 13px
+    fontWeight: 400
+    lineHeight: 1.2307692307692308
+    letterSpacing: 0px
+  label:
+    fontFamily: "system-ui, sans-serif"
+    fontSize: 13px
+    fontWeight: 500
+    lineHeight: 1.2307692307692308
+    letterSpacing: 0px
+  title:
+    fontFamily: "system-ui, sans-serif"
+    fontSize: 13px
+    fontWeight: 600
+    lineHeight: 1.2307692307692308
+    letterSpacing: 0px
+  headline:
+    fontFamily: "system-ui, sans-serif"
+    fontSize: 22px
+    fontWeight: 600
+    lineHeight: 1.1818181818181819
+    letterSpacing: 0px
+  display:
+    fontFamily: "system-ui, sans-serif"
+    fontSize: 26px
+    fontWeight: 600
+    lineHeight: 1.2307692307692308
+    letterSpacing: 0px
+rounded:
+  control: 999px
+  field: 8px
+  chip: 999px
+  card: 20px
+  overlay: 12px
+  dialog: 26px
+  sheet: 34px
+  inset: 8px
+spacing:
+  hit: 0px
+  density:
+    row: 32px
+    pad: 14px
+    gap: 12px
+    surface: 12px
+  control:
+    row: 36px
+    padding: 6px
+    gap: 10px
+    control: 16px
+    corner: 4px
+    check: 12px
+    dot: 6px
+    tabs: 28px
+    line: 28px
+    clear: 16px
+  height:
+    sm: 24px
+    md: 28px
+    lg: 32px
+  stroke:
+    hairline: 0.5px
+    surface: 0.5px
+    control: 1px
+    indicator: 2px
+  focus:
+    width: 3px
+    offset: 0px
+  icon:
+    sm: 12px
+    md: 14px
+    lg: 16px
+motion:
+  enter:
+    duration: 420ms
+    delay: 0ms
+    timingFunction: "cubic-bezier(0.333333, 1, 0.666667, 1)"
+  shake:
+    duration: 500ms
+components:
+  button-primary:
+    backgroundColor: "{colors.light.primary}"
+    textColor: "{colors.light.primary-foreground}"
+    typography: "{typography.label}"
+    rounded: "{rounded.control}"
+    height: "{spacing.height.md}"
+    padding: "{spacing.density.gap}"
+  button-secondary:
+    backgroundColor: "#efeff0b8"
+    textColor: "{colors.light.foreground}"
+    typography: "{typography.label}"
+    rounded: "{rounded.control}"
+    height: "{spacing.height.md}"
+    padding: "{spacing.density.gap}"
+  button-secondary-hover:
+    backgroundColor: "{colors.light.hover}"
+  button-secondary-pressed:
+    backgroundColor: "{colors.light.muted}"
+  card:
+    backgroundColor: "{colors.light.card}"
+    textColor: "{colors.light.card-foreground}"
+    typography: "{typography.body}"
+    rounded: "{rounded.card}"
+    padding: "{spacing.density.pad}"
+  card-inset:
+    backgroundColor: "{colors.light.inset}"
+    textColor: "{colors.light.foreground}"
+    rounded: "{rounded.inset}"
+    padding: "{spacing.density.surface}"
+  input-field:
+    backgroundColor: "{colors.light.field}"
+    textColor: "{colors.light.foreground}"
+    typography: "{typography.label}"
+    rounded: "{rounded.field}"
+    height: "{spacing.height.md}"
+    padding: "{spacing.control.padding}"
+  badge-chip:
+    backgroundColor: "{colors.light.muted}"
+    textColor: "{colors.light.secondary-foreground}"
+    typography: "{typography.caption}"
+    rounded: "{rounded.chip}"
+  menu-popover:
+    backgroundColor: "#ffffffb8"
+    textColor: "{colors.light.popover-foreground}"
+    typography: "{typography.body}"
+    rounded: "{rounded.overlay}"
+    padding: "{spacing.control.padding}"
+  dialog:
+    backgroundColor: "{colors.light.card}"
+    textColor: "{colors.light.card-foreground}"
+    typography: "{typography.body}"
+    rounded: "{rounded.dialog}"
+    padding: "{spacing.density.pad}"
+  tooltip:
+    backgroundColor: "{colors.light.popover}"
+    textColor: "{colors.light.inverse-foreground}"
+    typography: "{typography.detail}"
+    rounded: "{rounded.overlay}"
+  toast-inverse:
+    backgroundColor: "#ffffffb8"
+    textColor: "{colors.light.inverse-foreground}"
+    typography: "{typography.body}"
+    rounded: "{rounded.overlay}"
+  switch-track:
+    backgroundColor: "{colors.light.track}"
+    rounded: "{rounded.control}"
+  switch-track-on:
+    backgroundColor: "{colors.light.primary}"
+  switch-knob:
+    backgroundColor: "{colors.light.knob}"
+  switch-knob-on:
+    backgroundColor: "{colors.light.knob}"
+  slider-handle:
+    backgroundColor: "{colors.light.knob}"
+  tabs-thumb:
+    backgroundColor: "{colors.light.knob}"
+    textColor: "{colors.light.foreground}"
+    typography: "{typography.label}"
+    rounded: "{rounded.control}"
+  toggle-on:
+    backgroundColor: "{colors.light.muted}"
+    textColor: "{colors.light.foreground}"
+    rounded: "{rounded.control}"
+  glass-overlay:
+    backgroundColor: "#ffffff66"
+    textColor: "{colors.light.popover-foreground}"
+    rounded: "{rounded.overlay}"
+---
+
+# Apple
+
+## Overview
+
+DTCG 2025.10 resolver for the Apple theme (Apple HIG / UIKit system palette and Liquid Glass).
+
+Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, capsule controls, continuous corners, and Liquid Glass on floating and raised surfaces.
+
+## Colors
+
+- **Shared (C-layer):** Appearance-invariant C-layer color roles shared by light and dark modes.
+- **Light:** Adaptive A-layer and B-layer color roles for light appearance.
+- **Dark:** Adaptive A-layer and B-layer color roles for dark appearance.
+
+### Surface
+
+- **`scrim`** (`#00000066`): Translucent backdrop scrim behind modals and sheets (40% black).
+- **`media`** (`#10131a`): Ground behind photographs and videos; invariant across appearances.
+- **`background`** (light `#f2f2f7`, dark `#000000`): Grouped page canvas background (UIKit systemGroupedBackground).
+- **`card`** (light `#ffffff`, dark `#1c1c1e`): Elevated list and card surface (UIKit systemBackground).
+- **`popover`** (light `#ffffff`, dark `#2c2c2e`): Floating popover and sheet surface (UIKit secondarySystemBackground / popover).
+- **`secondary`** (light `#efeff0`, dark `#323236`): Secondary control surface fill.
+- **`muted`** (light `#efeff0`, dark `#323236`): Subdued container fill (UIKit tertiarySystemFill composited over card).
+- **`accent`** (light `#f4f4f5`, dark `#2c2c30`): Subtle hover/selection fill (UIKit quaternarySystemFill composited over card).
+- **`sidebar`** (light `#f2f2f7`, dark `#1c1c1e`): Sidebar surface matching Apple system sidebar/grouped background.
+- **`sidebar-accent`** (light `#f4f4f5`, dark `#2c2c30`): Selected or active row fill in the sidebar.
+- **`inset`** (light `#f4f4f5`, dark `#2c2c30`): Inset surface (UIKit quaternarySystemFill composited over card).
+- **`raised`** (light `#efeff0`, dark `#323236`): Raised control surface (UIKit tertiarySystemFill composited over card).
+- **`field`** (light `#efeff0`, dark `#323236`): Form input background (UIKit tertiarySystemFill composited over card).
+- **`hover`** (light `#0000000f`, dark `#ffffff0f`): Pointer hover tint (6% foreground ink over transparent).
+- **`track`** (light `#e9e9eb`, dark `#39393d`): Switch and slider track (UIKit secondarySystemFill composited over card).
+- **`knob`** (`#ffffff`): Switch knob and slider handle (pure white).
+- **`inverse`** (light `#ffffff`, dark `#2c2c2e`): High-contrast surface for toasts and tooltips.
+
+### Ink
+
+- **`on-media`** (`#ffffff`): White ink over photographs and dark media surfaces; invariant across appearances.
+- **`chart-foreground`** (`#000000`): Dark ink on light chart tiles matching UIKit light label (#000000).
+- **`foreground`** (light `#000000`, dark `#ffffff`): Primary label ink (UIKit label).
+- **`card-foreground`** (light `#000000`, dark `#ffffff`): Primary text and icon ink on card surfaces.
+- **`popover-foreground`** (light `#000000`, dark `#ffffff`): Primary text and icon ink on popover surfaces.
+- **`secondary-foreground`** (light `#000000`, dark `#ffffff`): Text and icon ink on secondary control surfaces.
+- **`muted-foreground`** (light `#8a8a8e`, dark `#98989f`): Secondary label ink (UIKit secondaryLabel composited over card).
+- **`accent-foreground`** (light `#000000`, dark `#ffffff`): Text and icon ink on accent surfaces.
+- **`sidebar-foreground`** (light `#000000`, dark `#ffffff`): Primary text and icon ink inside the sidebar.
+- **`sidebar-accent-foreground`** (light `#000000`, dark `#ffffff`): Text and icon ink on active sidebar rows.
+- **`faint`** (light `#c5c5c7`, dark `#5a5a5f`): Tertiary label ink for placeholders and quiet captions (UIKit tertiaryLabel).
+- **`code`** (light `#000000`, dark `#ffffff`): Monospace code text ink inside recessed wells.
+- **`inverse-foreground`** (light `#000000`, dark `#ffffff`): Primary text ink on inverse surfaces.
+- **`inverse-muted`** (light `#8a8a8e`, dark `#98989f`): Secondary text, spinner, and close-icon ink on inverse surfaces.
+
+### Brand
+
+- **`brand-fill`** (light `#007aff`, dark `#0a84ff`): Primary brand action fill, aliased to {color.primary} (UIKit systemBlue).
+- **`on-brand`** (`#ffffff`): Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}.
+- **`primary`** (light `#007aff`, dark `#0a84ff`): System accent blue (UIKit systemBlue).
+- **`primary-foreground`** (`#ffffff`): Text and icon ink on primary brand action fills.
+- **`sidebar-primary`** (light `#007aff`, dark `#0a84ff`): Primary action highlight color in the sidebar.
+- **`sidebar-primary-foreground`** (`#ffffff`): Text and icon ink on sidebar-primary highlights.
+- **`brand`** (light `#007aff`, dark `#0a84ff`): Inline brand accent ink (UIKit systemBlue).
+- **`brand-edge`** (light `#dcdcdd`, dark `#353538`): Hairline border on primary accent-filled controls.
+- **`brand-tint`** (light `#007aff1f`, dark `#0a84ff1f`): Translucent brand wash (12% brand over transparent).
+- **`on-brand-tint`** (light `#000000`, dark `#ffffff`): Text and icon ink on brand-tint surfaces.
+- **`inverse-brand`** (`#ffffff`): Accent action color on inverse surfaces.
+
+### Status
+
+- **`destructive`** (light `#ff3b30`, dark `#ff453a`): System destructive red (UIKit systemRed).
+- **`chart-1`** (light `#007aff`, dark `#0a84ff`): First chart series color (UIKit systemBlue).
+- **`chart-2`** (light `#34c759`, dark `#30d158`): Second chart series color (UIKit systemGreen).
+- **`chart-3`** (light `#ff9500`, dark `#ff9f0a`): Third chart series color (UIKit systemOrange).
+- **`chart-4`** (light `#af52de`, dark `#bf5af2`): Fourth chart series color (UIKit systemPurple).
+- **`chart-5`** (light `#ff3b30`, dark `#ff453a`): Fifth chart series color (UIKit systemRed).
+- **`info`** (light `#007aff`, dark `#0a84ff`): Informational semantic color (UIKit systemBlue).
+- **`warn`** (light `#ff9500`, dark `#ff9f0a`): Warning semantic color (UIKit systemOrange).
+- **`up`** (light `#34c759`, dark `#30d158`): Positive trend semantic color (UIKit systemGreen).
+- **`down`** (light `#ff3b30`, dark `#ff453a`): Negative trend and decline semantic color.
+- **`info-tint`** (light `#007aff1f`, dark `#0a84ff1f`): Translucent informational wash (12% info over transparent).
+- **`warn-tint`** (light `#ff95001f`, dark `#ff9f0a1f`): Translucent warning wash (12% warn over transparent).
+- **`destructive-tint`** (light `#ff3b301f`, dark `#ff453a1f`): Translucent destructive wash (12% destructive over transparent).
+- **`up-tint`** (light `#34c7591f`, dark `#30d1581f`): Translucent positive wash (12% up over transparent).
+- **`down-tint`** (light `#ff3b301f`, dark `#ff453a1f`): Translucent negative wash (12% destructive over transparent).
+- **`violet`** (light `#af52de`, dark `#bf5af2`): Accent purple ink (UIKit systemPurple).
+
+### Chrome
+
+- **`window-close`** (`#ff5f57`): macOS window close traffic-light button fill.
+- **`window-minimize`** (`#febc2e`): macOS window minimize traffic-light button fill.
+- **`window-zoom`** (`#28c840`): macOS window zoom traffic-light button fill.
+- **`window-control-ink`** (`#00000080`): Glyph ink inside macOS window traffic-light buttons.
+- **`window-control-edge`** (`#0000001f`): Hairline border around macOS window traffic-light buttons.
+- **`border`** (light `#dcdcdd`, dark `#353538`): Hairline separator (UIKit separator hairline composited over card).
+- **`input`** (light `#c6c6c8`, dark `#3e3e41`): Input control border (UIKit separator composited over card).
+- **`ring`** (light `#007aff`, dark `#0a84ff`): Focus ring color matching UIKit systemBlue.
+- **`sidebar-border`** (light `#dcdcdd`, dark `#353538`): Sidebar divider and toolbar hairline border color.
+- **`sidebar-ring`** (light `#007aff`, dark `#0a84ff`): Focus indicator ring color inside the sidebar.
+- **`glass-edge`** (light `#dcdcdd`, dark `#353538`): Hairline border on glass, pill, and floating overlay surfaces.
+- **`scrollbar-thumb`** (light `#bebec2`, dark `#4c4c4f`): Scrollbar thumb resting fill.
+- **`scrollbar-thumb-hover`** (light `#9f9fa3`, dark `#7a7a7f`): Scrollbar thumb fill on pointer hover.
+- **`line`** (light `#dcdcdd`, dark `#353538`): Inset divider hairline (UIKit hairline composited over card).
+- **`ring-halo`** (light `#007aff4d`, dark `#0a84ff4d`): Outer keyboard focus halo (30% ring color over transparent).
+- **`window-control-off`** (light `#e4e4e6`, dark `#3d3d41`): Unfocused window traffic-light fill (UIKit systemFill composited over card).
+
+## Typography
+
+Semantic typography roles referencing tier-specific font.size and font.line-height.
+
+- **Font stacks:** Font family stacks.
+  - `mono` (`monospace`): Monospace font family for code blocks and numeric readouts.
+  - Semantic body `fontFamily`: `null` (system UI default).
+
+- **`caption`** (10px (touch: 12px), weight 400, line-height 1.30, letter-spacing 0px): Small captions and segmented counter labels.
+- **`detail`** (11px (touch: 13px), weight 400, line-height 1.27, letter-spacing 0px): Sidebar section labels, counts, and supporting metadata.
+- **`body`** (13px (touch: 17px), weight 400, line-height 1.23, letter-spacing 0px): Standard body copy, list rows, and dialog content.
+- **`label`** (13px (touch: 17px), weight 500, line-height 1.23, letter-spacing 0px): Control labels, form labels, and interactive triggers.
+- **`title`** (13px (touch: 17px), weight 600, line-height 1.23, letter-spacing 0px): Card and section headings.
+- **`headline`** (22px, weight 600, line-height 1.18, letter-spacing 0px): Page-level headings.
+- **`display`** (26px (touch: 34px), weight 600, line-height 1.23, letter-spacing 0px): Large display numerals and hero headings.
+
+## Layout
+
+Ergonomic sizing scales for pointer input.
+
+- **Hit target:** Minimum hit target size (0 disables padding expansion).
+- **Density:** Page-level row, padding, gap, and surface spacing metrics.
+- **Control geometry:** Control internal geometry and switch size tier.
+- **Control heights:** Standard control heights (sm, md, lg).
+- **Switch size tier (pointer):** `regular`.
+- **Icons:** Standard icon dimensions (sm, md, lg).
+
+- **Pointer tier:** Apple macOS pointer input-tier overrides (Apple HIG Layout and Typography).
+- **Touch tier:** Apple iOS touch input-tier overrides (Apple HIG Layout and Typography).
+
+## Elevation & Depth
+
+Apple Liquid Glass and Retina hairline depth: `glass`, `menu`, and `raised` finishes request `material.apple` (`glass: "regular"`) with iOS backdrop fallback (`ios.backdrop`) and 0.5px borders; other surfaces stay flat with subtle shadows.
+
+- **Strokes:** Border and indicator stroke widths.
+  - `stroke.hairline` (0.5px): Retina 0.5px hairline divider width per Apple HIG.
+  - `stroke.surface` (0.5px): Retina 0.5px container surface hairline width per Apple HIG.
+  - `stroke.control` (1px): Interactive control border width.
+  - `stroke.indicator` (2px): Active tab and navigation indicator stroke width.
+- **Focus indicator (`style: "halo"`):** Focus ring geometry and style enum.
+  - `focus.width` (3px): Focus ring stroke width.
+  - `focus.offset` (0px): Focus ring outward offset from control bounds.
+- **State overlays (hover=0, focus=0, pressed=0, dragged=0):** State-layer ink opacities for hover, focus, pressed, and dragged states.
+
+## Shapes
+
+Apple HIG concentric corner radius scale (999px capsule controls/chips, 20px card, 26px dialog, 34px sheet).
+
+Non-dimensional corner curve and field corner geometry. (`curve: "continuous"`, `corners.field: "all"`).
+
+Semantic corner radius roles referencing base dimension.radius.* tokens.
+
+- **`control`** (999px): Corner radius for buttons, select triggers, tabs, and menu items.
+- **`field`** (8px): Corner radius for text inputs and editor wells.
+- **`chip`** (999px): Corner radius for badges and chips.
+- **`card`** (20px): Corner radius for cards and sidebar overlays.
+- **`overlay`** (12px): Corner radius for menus, popovers, and toasts.
+- **`dialog`** (26px): Corner radius for dialogs.
+- **`sheet`** (34px): Corner radius for drawers and bottom sheets.
+- **`inset`** (8px): Corner radius for inset wells, alerts, and skeletons inside cards.
+
+## Motion & Micro-interaction
+
+Interactive spring and timing physics roles.
+
+- **`enter`** (420ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Default surface entrance transition.
+- **`shake`** (500ms): Duration of validation-error shake animation.
+- **`press`** (spring: stiffness=520, damping=34 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Spring or timing physics for press-down feedback.
+- **`settle`** (spring: stiffness=320, damping=30 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Spring or timing physics for release settling.
+- **`control`** (spring: stiffness=1218, damping=70 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Spring or timing physics for small control toggles and thumbs.
+- **`move`** (spring: stiffness=504, damping=38 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Spring or timing physics for layout and indicator movement.
+- **Press & ripple** (`press-scale: 1`, `pressed-opacity: 0.7`, `ripple: false`): Interaction state opacities, press scale, and ripple switch.
+- **Timing curves:** Named timing curves shared across themes.
+
+## Voice & Content Strategy
+
+Voice & Content Strategy is intentionally omitted: this theme defines visual tokens, surface finishes, typography metrics, and motion physics only; product copy, tone, capitalization, and terminology belong to the host application.
+
+## Components
+
+Appearance-invariant surface finish recipes (background, gradient, border, shadow, blur, material).
+
+- **`finish.card`**: The card face: an inner highlight, a hairline, a contact shadow and a cast one.
+- **`finish.inset`**: The well inside a card: sunk by its inner shadow alone.
+- **`finish.field`**: A field well: its edge and its inner shadow.
+- **`finish.raised`** (material: `{"apple":{"glass":"regular","tint":null}}`): Raised control surface with Liquid Glass material (regular) and hairline shadow.
+- **`finish.hover`**: The step the surface takes under the pointer.
+- **`finish.pressed`**: The step it takes while pressed.
+- **`finish.light`**: The main action brightest step: the accent gradient.
+- **`finish.accent`**: The accent face (the same as light).
+- **`finish.track`**: A groove: an inner shadow and an edge.
+- **`finish.fill`**: The filled run: a slider, a progress bar, a switch that is on.
+- **`finish.knob`**: A switch knob, off.
+- **`finish.knobOn`**: A switch knob, on.
+- **`finish.handle`**: A slider handle (kept apart from knob).
+- **`finish.pill`**: The upstream capsule, left to the app.
+- **`finish.thumb`**: The chosen segment of a segmented control or a tag.
+- **`finish.on`**: A chosen switch or box, and the mark on it.
+- **`finish.chip`**: A chosen value label inside a field: a fill, an inner highlight and an edge.
+- **`finish.glass`** (backdropFilter: `blur(30px)`; material: `{"apple":{"glass":"regular","tint":null},"ios":{"backdrop":"thin"}}`): Liquid Glass overlay surface with translucent popover fill, 30px blur fallback, and regular/thin Apple material.
+- **`finish.menu`** (material: `{"apple":{"glass":"regular","tint":null},"ios":{"backdrop":"regular"}}`): Floating menu/popover surface with translucent popover fill, hairline + drop shadow, and Liquid Glass material.
+- **`finish.dialog`**: A dialog face: the card colour with the menu shadow.
+- **`finish.tooltip`**: A tooltip face: the popover pane, without a shadow.
+- **`finish.inverse`** (material: `{"apple":{"glass":"regular","tint":null},"ios":{"backdrop":"regular"}}`): Toast/inverse floating surface using Liquid Glass material over inverse fill.
+- **`finish.groove`**: A groove cut inside a menu.
+
+- **Indicators** (`tabs: "pill"`, `nav: "fill"`, `field: "box"`): Visual indicator style enums.
+- **Disabled multipliers** (content=0.3, container=0.3): UIKit disabled opacity multipliers (0.3 for both content and containers).
+
+## Do's and Don'ts
+
+- **Do:** Read all colors, radii, typography, and surface finishes through theme roles (`colors.*`, `shape.*`, `font.*`, `finish.*`) rather than literals in component code.
+- **Do:** Read theme getters inside JSX render expressions or reactive effects so runtime theme switching (`selectTheme`) and light/dark appearance changes take effect on the next frame.
+- **Do:** Use `rounded(shape.<role>, inset)` for concentric nested radii inside cards, switches, and segmented controls.
+- **Do:** Use `999px` capsule corners on controls and chips alongside concentric `20px` cards, `26px` dialogs, and `34px` sheets with `shape.curve: "continuous"`.
+- **Do:** Respect pointer (macOS: 13px body, 32px density row) vs touch (iOS: 17px body, 44px hit target) metrics.
+- **Do:** Keep `material.apple` on `glass`, `menu`, and `raised` finishes and spread `platformMaterial()` on native views.
+- **Don't:** Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.
+- **Don't:** Never store `colors.*`, `finish.*`, or `shape.*` values in module-level constants; they freeze on theme or appearance switches.
+- **Don't:** Never delete finish fields or alter the merged finish key set across appearances or themes.
+- **Don't:** Do not replace Retina `0.5px` `stroke.hairline`/`stroke.surface` with thick borders or `circular` corners.
+- **Don't:** Do not set `macos.backdrop` when Liquid Glass `glassEffect` is active on macOS 26+.

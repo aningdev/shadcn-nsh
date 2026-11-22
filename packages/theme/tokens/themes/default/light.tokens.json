@@ -10,7 +10,12 @@
         "components": [0.97399, 0.00397, 286.326],
         "hex": "#f6f6f9"
       },
-      "$description": "Primary application page canvas background."
+      "$description": "Primary application page canvas background.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      }
     },
     "foreground": {
       "$value": {
@@ -18,7 +23,12 @@
         "components": [0.18636, 0.01318, 264.182],
         "hex": "#101319"
       },
-      "$description": "Default high-contrast text and icon ink on page surfaces."
+      "$description": "Default high-contrast text and icon ink on page surfaces.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      }
     },
     "card": {
       "$value": {
@@ -26,11 +36,21 @@
         "components": [1, 0, 0],
         "hex": "#ffffff"
       },
-      "$description": "Elevated surface background for cards and panels."
+      "$description": "Elevated surface background for cards and panels.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      }
     },
     "card-foreground": {
       "$value": "{color.foreground}",
-      "$description": "Primary text and icon ink on card surfaces."
+      "$description": "Primary text and icon ink on card surfaces.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      }
     },
     "popover": {
       "$value": {
@@ -38,11 +58,21 @@
         "components": [0.97997, 0.00397, 286.326],
         "hex": "#f8f8fb"
       },
-      "$description": "Floating surface background for menus, popovers, and tooltips."
+      "$description": "Floating surface background for menus, popovers, and tooltips.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      }
     },
     "popover-foreground": {
       "$value": "{color.foreground}",
-      "$description": "Primary text and icon ink on popover surfaces."
+      "$description": "Primary text and icon ink on popover surfaces.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      }
     },
     "primary": {
       "$value": {
@@ -50,7 +80,12 @@
         "components": [0.89637, 0.16627, 124.031],
         "hex": "#c6ef6a"
       },
-      "$description": "Primary brand action fill."
+      "$description": "Primary brand action fill.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      }
     },
     "primary-foreground": {
       "$value": {
@@ -58,15 +93,30 @@
         "components": [0.19339, 0.0197, 121.819],
         "hex": "#13160c"
       },
-      "$description": "Text and icon ink on primary brand action fills."
+      "$description": "Text and icon ink on primary brand action fills.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      }
     },
     "secondary": {
       "$value": "{color.raised}",
-      "$description": "Secondary control surface fill."
+      "$description": "Secondary control surface fill.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      }
     },
     "secondary-foreground": {
       "$value": "{color.foreground}",
-      "$description": "Text and icon ink on secondary control surfaces."
+      "$description": "Text and icon ink on secondary control surfaces.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      }
     },
     "muted": {
       "$value": {
@@ -74,7 +124,12 @@
         "components": [0.95222, 0.00415, 271.369],
         "hex": "#eeeff2"
       },
-      "$description": "Subdued container and subtle background surface."
+      "$description": "Subdued container and subtle background surface.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      }
     },
     "muted-foreground": {
       "$value": {
@@ -82,7 +137,12 @@
         "components": [0.49859, 0.01219, 261.766],
         "hex": "#5f636a"
       },
-      "$description": "Secondary and supporting text and icon ink."
+      "$description": "Secondary and supporting text and icon ink.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      }
     },
     "accent": {
       "$value": {
@@ -90,11 +150,21 @@
         "components": [0.93609, 0.00346, 247.86],
         "hex": "#e8eaec"
       },
-      "$description": "Subtle highlight fill for hovered or active items."
+      "$description": "Subtle highlight fill for hovered or active items.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      }
     },
     "accent-foreground": {
       "$value": "{color.foreground}",
-      "$description": "Text and icon ink on accent surfaces."
+      "$description": "Text and icon ink on accent surfaces.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      }
     },
     "destructive": {
       "$value": {
@@ -102,7 +172,12 @@
         "components": [0.58301, 0.18974, 19.874],
         "hex": "#d43a4a"
       },
-      "$description": "Semantic danger color for destructive actions and errors."
+      "$description": "Semantic danger color for destructive actions and errors.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      }
     },
     "border": {
       "$value": {
@@ -110,7 +185,12 @@
         "components": [0.84192, 0.00298, 264.54],
         "hex": "#cacbcd"
       },
-      "$description": "Standard hairline border color for containers and controls."
+      "$description": "Standard hairline border color for containers and controls.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      }
     },
     "input": {
       "$value": {
@@ -118,7 +198,12 @@
         "components": [0.81386, 0.003, 264.54],
         "hex": "#c1c2c4"
       },
-      "$description": "Border and stroke color for form fields and control edges."
+      "$description": "Border and stroke color for form fields and control edges.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      }
     },
     "ring": {
       "$value": {
@@ -126,7 +211,12 @@
         "components": [0.7307, 0.01549, 264.473],
         "hex": "#a3a8b2"
       },
-      "$description": "Focus indicator ring stroke color."
+      "$description": "Focus indicator ring stroke color.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      }
     },
     "chart-1": {
       "$value": {
@@ -134,7 +224,12 @@
         "components": [0.75073, 0.18465, 126.794],
         "hex": "#8fc21f"
       },
-      "$description": "Primary chart series color."
+      "$description": "Primary chart series color.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      }
     },
     "chart-2": {
       "$value": {
@@ -142,7 +237,12 @@
         "components": [0.35944, 0.01112, 264.426],
         "hex": "#3a3d43"
       },
-      "$description": "Second chart series color."
+      "$description": "Second chart series color.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      }
     },
     "chart-3": {
       "$value": {
@@ -150,7 +250,12 @@
         "components": [0.60539, 0.01485, 262.354],
         "hex": "#7d828b"
       },
-      "$description": "Third chart series color."
+      "$description": "Third chart series color.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      }
     },
     "chart-4": {
       "$value": {
@@ -158,7 +263,12 @@
         "components": [0.78155, 0.01087, 261.785],
         "hex": "#b4b8bf"
       },
-      "$description": "Fourth chart series color."
+      "$description": "Fourth chart series color.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      }
     },
     "chart-5": {
       "$value": {
@@ -166,7 +276,12 @@
         "components": [0.90374, 0.00421, 271.366],
         "hex": "#dedfe2"
       },
-      "$description": "Fifth chart series color."
+      "$description": "Fifth chart series color.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      }
     },
     "sidebar": {
       "$value": {
@@ -174,27 +289,57 @@
         "components": [0.94619, 0.00416, 271.368],
         "hex": "#ecedf0"
       },
-      "$description": "Navigation sidebar panel background."
+      "$description": "Navigation sidebar panel background.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      }
     },
     "sidebar-foreground": {
       "$value": "{color.foreground}",
-      "$description": "Primary text and icon ink inside the sidebar."
+      "$description": "Primary text and icon ink inside the sidebar.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      }
     },
     "sidebar-primary": {
       "$value": "{color.primary}",
-      "$description": "Primary action highlight color in the sidebar."
+      "$description": "Primary action highlight color in the sidebar.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      }
     },
     "sidebar-primary-foreground": {
       "$value": "{color.primary-foreground}",
-      "$description": "Text and icon ink on sidebar-primary highlights."
+      "$description": "Text and icon ink on sidebar-primary highlights.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      }
     },
     "sidebar-accent": {
       "$value": "{color.field}",
-      "$description": "Selected or active row fill in the sidebar."
+      "$description": "Selected or active row fill in the sidebar.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      }
     },
     "sidebar-accent-foreground": {
       "$value": "{color.foreground}",
-      "$description": "Text and icon ink on active sidebar rows."
+      "$description": "Text and icon ink on active sidebar rows.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      }
     },
     "sidebar-border": {
       "$value": {
@@ -202,11 +347,21 @@
         "components": [0.90146, 0.00405, 286.318],
         "hex": "#dedee1"
       },
-      "$description": "Sidebar divider and toolbar hairline border color."
+      "$description": "Sidebar divider and toolbar hairline border color.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      }
     },
     "sidebar-ring": {
       "$value": "{color.ring}",
-      "$description": "Focus indicator ring color inside the sidebar."
+      "$description": "Focus indicator ring color inside the sidebar.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      }
     },
     "inset": {
       "$value": {
@@ -214,7 +369,12 @@
         "components": [0.96124, 0.00414, 271.369],
         "hex": "#f1f2f5"
       },
-      "$description": "Recessed well surface nested inside a card."
+      "$description": "Recessed well surface nested inside a card.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      }
     },
     "raised": {
       "$value": {
@@ -222,11 +382,21 @@
         "components": [0.96724, 0.00414, 271.369],
         "hex": "#f3f4f7"
       },
-      "$description": "Raised control surface resting on a card."
+      "$description": "Raised control surface resting on a card.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      }
     },
     "glass-edge": {
       "$value": "{color.border}",
-      "$description": "Hairline border on glass, pill, and floating overlay surfaces."
+      "$description": "Hairline border on glass, pill, and floating overlay surfaces.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      }
     },
     "scrollbar-thumb": {
       "$value": {
@@ -242,7 +412,8 @@
             "a": "{color.muted-foreground}",
             "percent": 50,
             "b": "{color.background}"
-          }
+          },
+          "role": "chrome"
         }
       },
       "$description": "Scrollbar thumb resting fill."
@@ -261,7 +432,8 @@
             "a": "{color.muted-foreground}",
             "percent": 80,
             "b": "{color.background}"
-          }
+          },
+          "role": "chrome"
         }
       },
       "$description": "Scrollbar thumb fill on pointer hover."
@@ -272,7 +444,12 @@
         "components": [1, 0, 0],
         "hex": "#ffffff"
       },
-      "$description": "Input well surface below card and inset layers."
+      "$description": "Input well surface below card and inset layers.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      }
     },
     "line": {
       "$value": {
@@ -280,7 +457,12 @@
         "components": [0.91973, 0.00403, 286.32],
         "hex": "#e4e4e7"
       },
-      "$description": "Hairline divider and grid rule inside recessed wells."
+      "$description": "Hairline divider and grid rule inside recessed wells.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      }
     },
     "hover": {
       "$value": {
@@ -297,7 +479,8 @@
             "a": "{color.foreground}",
             "percent": 5,
             "b": "transparent"
-          }
+          },
+          "role": "surface"
         }
       },
       "$description": "Pointer hover overlay fill on interactive items."
@@ -317,7 +500,8 @@
             "a": "{color.ring}",
             "percent": 14,
             "b": "transparent"
-          }
+          },
+          "role": "chrome"
         }
       },
       "$description": "Translucent outer halo around focused controls."
@@ -328,7 +512,12 @@
         "components": [0.69542, 0.00939, 264.505],
         "hex": "#9a9da3"
       },
-      "$description": "Low-emphasis text for placeholders, units, and tertiary labels."
+      "$description": "Low-emphasis text for placeholders, units, and tertiary labels.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      }
     },
     "brand": {
       "$value": {
@@ -336,7 +525,12 @@
         "components": [0.55192, 0.15368, 133.676],
         "hex": "#4a840a"
       },
-      "$description": "Accent ink for text, icons, and active rules."
+      "$description": "Accent ink for text, icons, and active rules.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      }
     },
     "brand-edge": {
       "$value": {
@@ -344,7 +538,12 @@
         "components": [0.76556, 0.16727, 124.422],
         "hex": "#9cc43a"
       },
-      "$description": "Hairline border on primary accent-filled controls."
+      "$description": "Hairline border on primary accent-filled controls.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      }
     },
     "track": {
       "$value": {
@@ -352,7 +551,12 @@
         "components": [0.93714, 0.00417, 271.368],
         "hex": "#e9eaed"
       },
-      "$description": "Inactive track background for switches, sliders, and progress bars."
+      "$description": "Inactive track background for switches, sliders, and progress bars.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      }
     },
     "knob": {
       "$value": {
@@ -360,7 +564,12 @@
         "components": [1, 0, 0],
         "hex": "#ffffff"
       },
-      "$description": "Switch thumb fill in the off state."
+      "$description": "Switch thumb fill in the off state.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      }
     },
     "code": {
       "$value": {
@@ -368,7 +577,12 @@
         "components": [0.29661, 0.01168, 264.381],
         "hex": "#2a2d33"
       },
-      "$description": "Monospace code text ink inside recessed wells."
+      "$description": "Monospace code text ink inside recessed wells.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      }
     },
     "info": {
       "$value": {
@@ -376,7 +590,12 @@
         "components": [0.53418, 0.17531, 266.181],
         "hex": "#3d63d1"
       },
-      "$description": "Informational semantic status color."
+      "$description": "Informational semantic status color.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      }
     },
     "warn": {
       "$value": {
@@ -384,7 +603,12 @@
         "components": [0.5909, 0.13245, 65.117],
         "hex": "#b26a00"
       },
-      "$description": "Warning semantic status color."
+      "$description": "Warning semantic status color.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      }
     },
     "up": {
       "$value": {
@@ -392,11 +616,21 @@
         "components": [0.56078, 0.1232, 159.355],
         "hex": "#138a5a"
       },
-      "$description": "Positive trend and growth semantic color."
+      "$description": "Positive trend and growth semantic color.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      }
     },
     "down": {
       "$value": "{color.destructive}",
-      "$description": "Negative trend and decline semantic color."
+      "$description": "Negative trend and decline semantic color.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      }
     },
     "brand-tint": {
       "$value": {
@@ -417,30 +651,56 @@
             },
             "percent": 16,
             "b": "transparent"
-          }
+          },
+          "role": "brand"
         }
       },
       "$description": "Translucent brand-accent wash behind selected rows and tinted bubbles."
     },
     "on-brand-tint": {
       "$value": "{color.foreground}",
-      "$description": "Text and icon ink on brand-tint surfaces."
+      "$description": "Text and icon ink on brand-tint surfaces.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      }
     },
     "inverse": {
       "$value": "{color.popover}",
-      "$description": "High-contrast surface for toasts and tooltips."
+      "$description": "High-contrast surface for toasts and tooltips.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      }
     },
     "inverse-foreground": {
       "$value": "{color.foreground}",
-      "$description": "Primary text ink on inverse surfaces."
+      "$description": "Primary text ink on inverse surfaces.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      }
     },
     "inverse-muted": {
       "$value": "{color.muted-foreground}",
-      "$description": "Secondary text, spinner, and close-icon ink on inverse surfaces."
+      "$description": "Secondary text, spinner, and close-icon ink on inverse surfaces.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      }
     },
     "inverse-brand": {
       "$value": "{color.primary-foreground}",
-      "$description": "Accent action color on inverse surfaces."
+      "$description": "Accent action color on inverse surfaces.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      }
     },
     "info-tint": {
       "$value": {
@@ -457,7 +717,8 @@
             "a": "{color.info}",
             "percent": 10,
             "b": "transparent"
-          }
+          },
+          "role": "status"
         }
       },
       "$description": "Translucent informational status background tint."
@@ -477,7 +738,8 @@
             "a": "{color.warn}",
             "percent": 11,
             "b": "transparent"
-          }
+          },
+          "role": "status"
         }
       },
       "$description": "Translucent warning status background tint."
@@ -497,7 +759,8 @@
             "a": "{color.destructive}",
             "percent": 10,
             "b": "transparent"
-          }
+          },
+          "role": "status"
         }
       },
       "$description": "Translucent destructive status background tint."
@@ -517,7 +780,8 @@
             "a": "{color.up}",
             "percent": 10,
             "b": "transparent"
-          }
+          },
+          "role": "status"
         }
       },
       "$description": "Translucent positive trend background tint."
@@ -537,7 +801,8 @@
             "a": "{color.down}",
             "percent": 10,
             "b": "transparent"
-          }
+          },
+          "role": "status"
         }
       },
       "$description": "Translucent negative trend background tint."
@@ -548,7 +813,12 @@
         "components": [0.5339, 0.1647, 289.689],
         "hex": "#6e56c4"
       },
-      "$description": "Accent data-visualization and link color."
+      "$description": "Accent data-visualization and link color.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      }
     },
     "window-control-off": {
       "$value": {
@@ -556,7 +826,12 @@
         "components": [0.89535, 0.00406, 286.317],
         "hex": "#dcdcdf"
       },
-      "$description": "Inactive background for macOS traffic-light buttons when unfocused."
+      "$description": "Inactive background for macOS traffic-light buttons when unfocused.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      }
     }
   },
   "finish": {

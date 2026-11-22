@@ -1,6 +1,22 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "$description": "Appearance-invariant base tokens and WinUI 3 style overrides (Segoe UI Variable, Consolas, double focus rings, timing motion).",
+  "$extensions": {
+    "dev.aning.shadcn-nsh": {
+      "designMd": {
+        "overview": "WinUI 3 / Fluent 2 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composited over `SolidBackgroundFillColorBase` (`#F3F3F3` light / `#202020` dark) with `#0078D4` accent, `Segoe UI Variable` + `Consolas`, double focus strokes, and deterministic timing curves.",
+        "elevation": "WinUI 3 ThemeShadow depths (2/8/16/32/128) paired with composited `ControlStrokeColorDefault` / `SurfaceStrokeColorDefault` borders and `material.windows` blur on `glass`, `menu`, and `tooltip` (`AcrylicInAppFillColorDefault` 0.85 light / 0.96 dark).",
+        "dos": [
+          "Use `4px` `ControlCornerRadius` for controls/fields/chips/insets and `8px` `OverlayCornerRadius` for cards/overlays/dialogs/sheets with `shape.curve: \"circular\"`.",
+          "Use `focus.style: \"double\"` (2px outer `FocusStrokeColorOuter` + 1px inner `FocusStrokeColorInner`) and WinUI timing motion (`decelerate` / `point-to-point`).",
+          "Use `indicator` `underline` tabs/fields and leading `bar` navigation indicators with `Segoe UI Variable` (`{font.family.sans}`)."
+        ],
+        "donts": [
+          "Do not substitute continuous squircle corners or spring physics for WinUI 3's circular corners and timing curves."
+        ]
+      }
+    }
+  },
   "dimension": {
     "$type": "dimension",
     "$description": "Appearance-invariant base dimensional tokens.",
@@ -218,10 +234,20 @@
     "$description": "Appearance-invariant C-layer color roles shared by light and dark modes.",
     "brand-fill": {
       "$value": "{color.primary}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Primary brand action fill, aliased to {color.primary} (WinUI AccentFillColorDefault)."
     },
     "on-brand": {
       "$value": "{color.primary-foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground} (WinUI TextOnAccentFillColorPrimary)."
     },
     "scrim": {
@@ -231,6 +257,11 @@
         "alpha": 0.302,
         "hex": "#000000"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Translucent backdrop scrim behind dialogs and overlays (WinUI SmokeFillColorDefault #4D000000)."
     },
     "media": {
@@ -238,6 +269,11 @@
         "colorSpace": "oklch",
         "components": [0.1869, 0.0151, 266.766],
         "hex": "#10131a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
       },
       "$description": "Ground behind photographs and videos; invariant across appearances."
     },
@@ -247,6 +283,11 @@
         "components": [1, 0, 0],
         "hex": "#ffffff"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "White ink over photographs and dark media surfaces; invariant across appearances."
     },
     "chart-foreground": {
@@ -254,6 +295,11 @@
         "colorSpace": "oklch",
         "components": [0.21779, 0, 0],
         "hex": "#1a1a1a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
       },
       "$description": "Dark ink on light chart tiles matching WinUI light TextFillColorPrimary."
     },
@@ -263,6 +309,11 @@
         "components": [0.6936, 0.19638, 26.364],
         "hex": "#ff5f57"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "macOS window close traffic-light button fill."
     },
     "window-minimize": {
@@ -271,6 +322,11 @@
         "components": [0.83478, 0.1612, 80.911],
         "hex": "#febc2e"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "macOS window minimize traffic-light button fill."
     },
     "window-zoom": {
@@ -278,6 +334,11 @@
         "colorSpace": "oklch",
         "components": [0.72803, 0.21734, 144.712],
         "hex": "#28c840"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "macOS window zoom traffic-light button fill."
     },
@@ -288,6 +349,11 @@
         "alpha": 0.5,
         "hex": "#000000"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "Glyph ink inside macOS window traffic-light buttons (50% black literal)."
     },
     "window-control-edge": {
@@ -296,6 +362,11 @@
         "components": [0, 0, 0],
         "alpha": 0.12,
         "hex": "#000000"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "Hairline border around macOS window traffic-light buttons (12% black literal)."
     }

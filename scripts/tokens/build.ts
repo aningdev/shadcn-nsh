@@ -10,6 +10,7 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { compileAppearanceTokensJson, compileSemanticsJson, compileThemeJson } from "./compile";
+import { compileDesignMd } from "./design-md";
 
 const defaultRepoRoot = path.resolve(import.meta.dir, "..", "..");
 
@@ -44,12 +45,14 @@ export function buildThemeTargets(themeId: string, repoRoot = defaultRepoRoot): 
   const semanticsText = `${JSON.stringify(compileSemanticsJson(resolverPath), null, 2)}\n`;
   const lightTokensText = `${JSON.stringify(compileAppearanceTokensJson(resolverPath, "light"), null, 2)}\n`;
   const darkTokensText = `${JSON.stringify(compileAppearanceTokensJson(resolverPath, "dark"), null, 2)}\n`;
+  const designMdText = compileDesignMd(resolverPath);
 
   const targets: CompiledTarget[] = [
     { relPath: `packages/theme/themes/${themeId}/theme.json`, content: themeText },
     { relPath: `packages/theme/themes/${themeId}/semantics.json`, content: semanticsText },
     { relPath: `packages/theme/themes/${themeId}/light.tokens.json`, content: lightTokensText },
     { relPath: `packages/theme/themes/${themeId}/dark.tokens.json`, content: darkTokensText },
+    { relPath: `packages/theme/themes/${themeId}/DESIGN.md`, content: designMdText },
   ];
 
   // The `default` theme is both the build-time root theme and the `theme-default` copy.
@@ -59,6 +62,7 @@ export function buildThemeTargets(themeId: string, repoRoot = defaultRepoRoot): 
       { relPath: "packages/theme/semantics.json", content: semanticsText },
       { relPath: "packages/theme/light.tokens.json", content: lightTokensText },
       { relPath: "packages/theme/dark.tokens.json", content: darkTokensText },
+      { relPath: "packages/theme/DESIGN.md", content: designMdText },
     );
   }
 

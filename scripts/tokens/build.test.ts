@@ -3,10 +3,13 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 
+import { lint } from "@google/design.md/linter";
+
 import { mergeFinishes } from "../theme/tokens";
 import { buildAllTokens, checkAllTokens, discoverDtcgThemes } from "./build";
 import { formatColorOpToCss, formatDtcgColor } from "./color";
 import { compileSemanticsJson, compileThemeJson } from "./compile";
+import { dtcgColorToHex } from "./design-md";
 import { lintDtcgSources, lintDtcgTheme } from "./lint";
 import { lookupToken, mergeTokenTrees, resolveAliases, resolvePermutation } from "./resolver";
 import { validateResolverDocument, validateTokensDocument } from "./schema-validate";
@@ -175,8 +178,11 @@ describe("DTCG 2025.10 build (all six themes)", () => {
       fs.writeFileSync(target, `${fs.readFileSync(target, "utf8")}// drift\n`);
       const tokensTarget = path.join(tmp, "packages/theme/light.tokens.json");
       fs.writeFileSync(tokensTarget, `${fs.readFileSync(tokensTarget, "utf8")}\n`);
+      const designMdTarget = path.join(tmp, "packages/theme/themes/apple/DESIGN.md");
+      fs.writeFileSync(designMdTarget, `${fs.readFileSync(designMdTarget, "utf8")}drift\n`);
       const drifted = checkAllTokens(tmp);
       expect(drifted.problems).toEqual([
+        "packages/theme/themes/apple/DESIGN.md differs from what packages/theme/tokens builds",
         "packages/theme/light.tokens.json differs from what packages/theme/tokens builds",
         "packages/theme/themes/shadcn/theme.json differs from what packages/theme/tokens builds",
       ]);
@@ -769,5 +775,174 @@ describe("per-appearance standalone .tokens.json distribution", () => {
         }
       });
     }
+  }
+});
+
+const DESIGN_MD_FILES = [
+  "packages/theme/DESIGN.md",
+  ...THEME_IDS.map((id) => `packages/theme/themes/${id}/DESIGN.md`),
+];
+
+function extractFrontmatterYaml(markdown: string): Record<string, any> {
+  const m = /^---\n([\s\S]*?)\n---\n/.exec(markdown);
+  if (!m) throw new Error("DESIGN.md is missing YAML front matter");
+  return Bun.YAML.parse(m[1]!) as Record<string, any>;
+}
+
+describe("generated DESIGN.md validation and compiled equality", () => {
+  test("packages/theme/DESIGN.md matches packages/theme/themes/default/DESIGN.md byte for byte", () => {
+    expect(readText("packages/theme/DESIGN.md")).toBe(
+      readText("packages/theme/themes/default/DESIGN.md"),
+    );
+  });
+
+  for (const rel of DESIGN_MD_FILES) {
+    test(`${rel}: passes @google/design.md linter with 0 errors and valid section order`, () => {
+      const text = readText(rel);
+      const report = lint(text);
+      const errors = report.findings.filter((f) => f.severity === "error");
+      expect(errors).toEqual([]);
+      expect(report.summary.errors).toBe(0);
+      expect(report.findings.some((f) => f.rule === "broken-ref")).toBe(false);
+      expect(report.findings.some((f) => f.rule === "section-order")).toBe(false);
+    });
+  }
+
+  for (const themeId of THEME_IDS) {
+    test(`${themeId}: DESIGN.md YAML matches compiled pointer-tier light & dark theme values`, () => {
+      const resolver = readJson(`packages/theme/tokens/themes/${themeId}/theme.resolver.json`) as {
+        name: string;
+        description: string;
+      };
+      const yaml = extractFrontmatterYaml(readText(`packages/theme/themes/${themeId}/DESIGN.md`));
+      const lightDoc = resolveAliases(
+        readJson(`packages/theme/themes/${themeId}/light.tokens.json`),
+      ) as Record<string, any>;
+      const darkDoc = resolveAliases(
+        readJson(`packages/theme/themes/${themeId}/dark.tokens.json`),
+      ) as Record<string, any>;
+
+      expect(yaml.version).toBe("alpha");
+      expect(yaml.name).toBe(resolver.name);
+      expect(yaml.description).toBe(resolver.description);
+
+      // Colors: every color in light/dark compiled trees must match its DESIGN.md hex entry
+      const colorNames = Object.keys(lightDoc.color).filter((k) => !k.startsWith("$"));
+      const flatYamlColors = new Map<string, string>();
+      for (const [k, v] of Object.entries(yaml.colors as Record<string, unknown>)) {
+        if (k === "light" || k === "dark") continue;
+        flatYamlColors.set(k, v as string);
+      }
+      for (const name of colorNames) {
+        const expectedLight = dtcgColorToHex(lightDoc.color[name].$value as DtcgColor);
+        const expectedDark = dtcgColorToHex(darkDoc.color[name].$value as DtcgColor);
+        if (flatYamlColors.has(name)) {
+          expect(flatYamlColors.get(name), `color.${name}`).toBe(expectedLight);
+          expect(expectedLight, `color.${name} mode invariance`).toBe(expectedDark);
+        } else {
+          expect(yaml.colors.light[name], `colors.light.${name}`).toBe(expectedLight);
+          expect(yaml.colors.dark[name], `colors.dark.${name}`).toBe(expectedDark);
+        }
+      }
+
+      // Typography (pointer tier)
+      for (const role of TYPE_ROLES) {
+        const expected = lightDoc.typography[role].$value as DtcgTypography;
+        const expectedFamily = Array.isArray(expected.fontFamily)
+          ? expected.fontFamily.join(", ")
+          : String(expected.fontFamily);
+        const expectedSize = expected.fontSize as { value: number; unit: string };
+        expect(yaml.typography[role]).toEqual({
+          fontFamily: expectedFamily,
+          fontSize: `${expectedSize.value}${expectedSize.unit}`,
+          fontWeight: expected.fontWeight,
+          lineHeight: expected.lineHeight,
+          letterSpacing: `${expected.letterSpacing.value}${expected.letterSpacing.unit}`,
+        });
+      }
+
+      // Rounded (8 shape roles)
+      for (const role of SHAPE_ROLES) {
+        const dim = lightDoc.dimension.shape[role].$value as { value: number; unit: string };
+        expect(yaml.rounded[role], `rounded.${role}`).toBe(`${dim.value}${dim.unit}`);
+      }
+
+      // Spacing (pointer tier dimension.size, stroke, focus, icon)
+      const hit = lightDoc.dimension.size.hit.$value as { value: number; unit: string };
+      expect(yaml.spacing.hit).toBe(`${hit.value}${hit.unit}`);
+      for (const sub of ["density", "control", "height"] as const) {
+        for (const [k, tok] of Object.entries(
+          lightDoc.dimension.size[sub] as Record<string, any>,
+        )) {
+          if (k.startsWith("$") || !tok?.$value) continue;
+          expect(yaml.spacing[sub][k], `spacing.${sub}.${k}`).toBe(
+            `${tok.$value.value}${tok.$value.unit}`,
+          );
+        }
+      }
+      for (const sub of ["stroke", "focus", "icon"] as const) {
+        for (const [k, tok] of Object.entries(lightDoc.dimension[sub] as Record<string, any>)) {
+          if (k.startsWith("$") || !tok?.$value) continue;
+          expect(yaml.spacing[sub][k], `spacing.${sub}.${k}`).toBe(
+            `${tok.$value.value}${tok.$value.unit}`,
+          );
+        }
+      }
+
+      // Motion (timing transitions & shake duration)
+      const enter = lightDoc.transition.enter.$value as DtcgTransition;
+      expect(yaml.motion.enter).toEqual({
+        duration: `${enter.duration.value}${enter.duration.unit}`,
+        delay: `${enter.delay.value}${enter.delay.unit}`,
+        timingFunction: `cubic-bezier(${(enter.timingFunction as number[]).join(", ")})`,
+      });
+      expect(yaml.motion.shake).toEqual({
+        duration: `${lightDoc.duration.shake.$value.value}${lightDoc.duration.shake.$value.unit}`,
+      });
+      for (const role of ["press", "settle", "control", "move"] as const) {
+        const timingTok = lightDoc.motion[role]?.timing;
+        if (timingTok) {
+          const val = timingTok.$value as DtcgTransition;
+          expect(yaml.motion[role]).toEqual({
+            duration: `${val.duration.value}${val.duration.unit}`,
+            delay: `${val.delay.value}${val.delay.unit}`,
+            timingFunction: `cubic-bezier(${(val.timingFunction as number[]).join(", ")})`,
+          });
+        } else {
+          expect(yaml.motion[role]).toBeUndefined();
+        }
+      }
+
+      // Components: verify every component reference resolves to the exact compiled light/pointer value
+      const parsed = lint(readText(`packages/theme/themes/${themeId}/DESIGN.md`)).designSystem;
+      expect(parsed.components.size).toBeGreaterThan(0);
+      for (const [compName, comp] of parsed.components) {
+        expect(comp.unresolvedRefs, `${themeId}.components.${compName}`).toEqual([]);
+        const roundedProp = comp.properties.get("rounded");
+        if (roundedProp && typeof roundedProp === "object" && roundedProp.type === "dimension") {
+          const rawRef = yaml.components[compName]?.rounded as string | undefined;
+          const m = rawRef ? /^\{rounded\.([a-z0-9-]+)\}$/.exec(rawRef) : null;
+          if (m) {
+            const expectedDim = lightDoc.dimension.shape[m[1]!].$value as {
+              value: number;
+              unit: string;
+            };
+            expect(`${roundedProp.value}${roundedProp.unit}`).toBe(
+              `${expectedDim.value}${expectedDim.unit}`,
+            );
+          }
+        }
+        const bgProp = comp.properties.get("backgroundColor");
+        if (bgProp && typeof bgProp === "object" && bgProp.type === "color") {
+          const rawRef = yaml.components[compName]?.backgroundColor as string | undefined;
+          const m = rawRef ? /^\{colors\.(?:light\.)?([a-z0-9-]+)\}$/.exec(rawRef) : null;
+          if (m) {
+            expect(bgProp.hex.toLowerCase()).toBe(
+              dtcgColorToHex(lightDoc.color[m[1]!].$value as DtcgColor),
+            );
+          }
+        }
+      }
+    });
   }
 });

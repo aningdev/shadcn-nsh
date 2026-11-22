@@ -595,6 +595,19 @@ export function themeFiles(): ThemeGeneratorOutput {
     "press-scale": 1,
     radiusGroupDescription:
       "Base corner radius scale (14px base, 0.8x control, 1.4x card) referenced by semantic shape roles.",
+    designMd: {
+      overview:
+        "Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass with top-edge light rims, hairline glass borders, and ambient drop shadows (`state.press-scale: 1`).",
+      elevation:
+        "Layered glass elevation: surfaces combine translucent fills (`alpha < 1` over page grounds), top-edge inset highlights, `--glass-edge` borders, soft shadows, and backdrop blur (`glass`, `menu`, `dialog`, `tooltip`, `inverse`).",
+      dos: [
+        "Keep press interactions flat (`state.press-scale: 1`); pressed panes deepen and drop shadow rather than shrinking.",
+        "Keep gradient stops `transparent` on translucent `background` finishes so alpha is not doubled by the canvas.",
+      ],
+      donts: [
+        "Do not stack opaque fills behind translucent glass gradients; keep the `background` layer `transparent` when the gradient carries the fill.",
+      ],
+    },
     cssVars: {
       theme: themeLevel(),
       light: section("light"),

@@ -10,6 +10,11 @@
         "components": [0.96415, 0, 0],
         "hex": "#f3f3f3"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Window base surface (WinUI SolidBackgroundFillColorBase)."
     },
     "foreground": {
@@ -17,6 +22,11 @@
         "colorSpace": "oklch",
         "components": [0.21779, 0, 0],
         "hex": "#1a1a1a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
       },
       "$description": "Primary text and icon ink (WinUI TextFillColorPrimary composited over base)."
     },
@@ -26,6 +36,11 @@
         "components": [0.98809, 0, 0],
         "hex": "#fbfbfb"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Elevated card background (WinUI CardBackgroundFillColorDefault composited over base)."
     },
     "card-foreground": {
@@ -33,6 +48,11 @@
         "colorSpace": "oklch",
         "components": [0.21779, 0, 0],
         "hex": "#1a1a1a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
       },
       "$description": "Primary ink on card surfaces (WinUI TextFillColorPrimary)."
     },
@@ -42,6 +62,11 @@
         "components": [0.98212, 0, 0],
         "hex": "#f9f9f9"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Acrylic flyout/popover fallback surface (WinUI AcrylicInAppFillColorDefaultFallback)."
     },
     "popover-foreground": {
@@ -49,6 +74,11 @@
         "colorSpace": "oklch",
         "components": [0.21779, 0, 0],
         "hex": "#1a1a1a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
       },
       "$description": "Primary ink on popover surfaces (WinUI TextFillColorPrimary)."
     },
@@ -58,6 +88,11 @@
         "components": [0.49147, 0.15959, 254.594],
         "hex": "#005fb8"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Accent button fill (WinUI AccentFillColorDefault: Dark1 light / Light2 dark from SystemAccentColor)."
     },
     "primary-foreground": {
@@ -65,6 +100,11 @@
         "colorSpace": "oklch",
         "components": [1, 0, 0],
         "hex": "#ffffff"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
       },
       "$description": "Ink on accent fills (WinUI TextOnAccentFillColorPrimary)."
     },
@@ -74,6 +114,11 @@
         "components": [0.98809, 0, 0],
         "hex": "#fbfbfb"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Standard control fill (WinUI ControlFillColorDefault composited over base)."
     },
     "secondary-foreground": {
@@ -81,6 +126,11 @@
         "colorSpace": "oklch",
         "components": [0.21779, 0, 0],
         "hex": "#1a1a1a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
       },
       "$description": "Ink on secondary controls (WinUI TextFillColorPrimary)."
     },
@@ -90,6 +140,11 @@
         "components": [0.94912, 0, 0],
         "hex": "#eeeeee"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Recessed neutral surface (WinUI SolidBackgroundFillColorSecondary composited over base)."
     },
     "muted-foreground": {
@@ -97,6 +152,11 @@
         "colorSpace": "oklch",
         "components": [0.47478, 0, 0],
         "hex": "#5c5c5c"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
       },
       "$description": "Secondary label ink (WinUI TextFillColorSecondary composited over base)."
     },
@@ -106,6 +166,11 @@
         "components": [0.93705, 0, 0],
         "hex": "#eaeaea"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Subtle list/menu hover fill (WinUI SubtleFillColorSecondary composited over base)."
     },
     "accent-foreground": {
@@ -113,6 +178,11 @@
         "colorSpace": "oklch",
         "components": [0.21779, 0, 0],
         "hex": "#1a1a1a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
       },
       "$description": "Ink on subtle accent fills (WinUI TextFillColorPrimary)."
     },
@@ -122,6 +192,11 @@
         "components": [0.53615, 0.19119, 30.071],
         "hex": "#c42b1c"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Critical/error status ink (WinUI SystemFillColorCritical)."
     },
     "border": {
@@ -129,6 +204,11 @@
         "colorSpace": "oklch",
         "components": [0.92191, 0, 0],
         "hex": "#e5e5e5"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "Standard control hairline border (WinUI ControlStrokeColorDefault composited over base)."
     },
@@ -138,6 +218,11 @@
         "components": [0.62006, 0, 0],
         "hex": "#868686"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "Input and check control outline (WinUI ControlStrongStrokeColorDefault composited over base)."
     },
     "ring": {
@@ -145,6 +230,11 @@
         "colorSpace": "oklch",
         "components": [0.21779, 0, 0],
         "hex": "#1a1a1a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "Outer keyboard focus stroke (WinUI FocusStrokeColorOuter)."
     },
@@ -154,6 +244,11 @@
         "components": [0.49147, 0.15959, 254.594],
         "hex": "#005fb8"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "First chart series color matching WinUI primary accent."
     },
     "chart-2": {
@@ -161,6 +256,11 @@
         "colorSpace": "oklch",
         "components": [0.50725, 0.16489, 142.658],
         "hex": "#0f7b0f"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
       },
       "$description": "Second chart series color (WinUI SystemFillColorSuccess)."
     },
@@ -170,6 +270,11 @@
         "components": [0.53885, 0.12069, 65.216],
         "hex": "#9d5d00"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Third chart series color (WinUI SystemFillColorCaution)."
     },
     "chart-4": {
@@ -177,6 +282,11 @@
         "colorSpace": "oklch",
         "components": [0.53615, 0.19119, 30.071],
         "hex": "#c42b1c"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
       },
       "$description": "Fourth chart series color (WinUI SystemFillColorCritical)."
     },
@@ -186,6 +296,11 @@
         "components": [0.62006, 0, 0],
         "hex": "#868686"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Fifth chart series color (WinUI ControlStrongFillColorDefault)."
     },
     "sidebar": {
@@ -193,6 +308,11 @@
         "colorSpace": "oklch",
         "components": [0.96415, 0, 0],
         "hex": "#f3f3f3"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
       },
       "$description": "NavigationView expanded pane background matching window base."
     },
@@ -202,6 +322,11 @@
         "components": [0.21779, 0, 0],
         "hex": "#1a1a1a"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Sidebar primary ink (WinUI TextFillColorPrimary)."
     },
     "sidebar-primary": {
@@ -209,6 +334,11 @@
         "colorSpace": "oklch",
         "components": [0.49147, 0.15959, 254.594],
         "hex": "#005fb8"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
       },
       "$description": "Sidebar primary accent matching AccentFillColorDefault."
     },
@@ -218,6 +348,11 @@
         "components": [1, 0, 0],
         "hex": "#ffffff"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Sidebar primary ink matching TextOnAccentFillColorPrimary."
     },
     "sidebar-accent": {
@@ -225,6 +360,11 @@
         "colorSpace": "oklch",
         "components": [0.93705, 0, 0],
         "hex": "#eaeaea"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
       },
       "$description": "Sidebar active item fill (WinUI SubtleFillColorSecondary)."
     },
@@ -234,6 +374,11 @@
         "components": [0.21779, 0, 0],
         "hex": "#1a1a1a"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Sidebar active item ink (WinUI TextFillColorPrimary)."
     },
     "sidebar-border": {
@@ -241,6 +386,11 @@
         "colorSpace": "oklch",
         "components": [0.92191, 0, 0],
         "hex": "#e5e5e5"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "Sidebar separator stroke (WinUI DividerStrokeColorDefault)."
     },
@@ -250,6 +400,11 @@
         "components": [0.21779, 0, 0],
         "hex": "#1a1a1a"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "Sidebar focus stroke (WinUI FocusStrokeColorOuter)."
     },
     "inset": {
@@ -257,6 +412,11 @@
         "colorSpace": "oklch",
         "components": [0.94611, 0, 0],
         "hex": "#ededed"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
       },
       "$description": "Inset well fill (WinUI ControlAltFillColorSecondary composited over base)."
     },
@@ -266,6 +426,11 @@
         "components": [0.98809, 0, 0],
         "hex": "#fbfbfb"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Raised control fill (WinUI ControlFillColorDefault composited over base)."
     },
     "glass-edge": {
@@ -273,6 +438,11 @@
         "colorSpace": "oklch",
         "components": [0.92191, 0, 0],
         "hex": "#e5e5e5"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "Flyout and acrylic border (WinUI SurfaceStrokeColorFlyout composited over base)."
     },
@@ -282,6 +452,11 @@
         "components": [0.62006, 0, 0],
         "hex": "#868686"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "Static scrollbar thumb color (WinUI ControlStrongFillColorDefault)."
     },
     "scrollbar-thumb-hover": {
@@ -289,6 +464,11 @@
         "colorSpace": "oklch",
         "components": [0.62006, 0, 0],
         "hex": "#868686"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "Static scrollbar hover color (WinUI ControlStrongFillColorDefault)."
     },
@@ -298,6 +478,11 @@
         "components": [0.98809, 0, 0],
         "hex": "#fbfbfb"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Text input surface (WinUI ControlFillColorDefault composited over base)."
     },
     "line": {
@@ -305,6 +490,11 @@
         "colorSpace": "oklch",
         "components": [0.92191, 0, 0],
         "hex": "#e5e5e5"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "Hairline divider stroke (WinUI DividerStrokeColorDefault)."
     },
@@ -314,6 +504,11 @@
         "components": [0.97315, 0, 0],
         "hex": "#f6f6f6"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Pointer hover fill (WinUI ControlFillColorSecondary composited over base)."
     },
     "ring-halo": {
@@ -321,6 +516,11 @@
         "colorSpace": "oklch",
         "components": [0.98809, 0, 0],
         "hex": "#fbfbfb"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "Inner keyboard focus stroke (WinUI FocusStrokeColorInner composited over base)."
     },
@@ -330,6 +530,11 @@
         "components": [0.62006, 0, 0],
         "hex": "#868686"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Tertiary label ink (WinUI TextFillColorTertiary composited over base)."
     },
     "brand": {
@@ -337,6 +542,11 @@
         "colorSpace": "oklch",
         "components": [0.38687, 0.14996, 259],
         "hex": "#003e92"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
       },
       "$description": "Accent text/link/icon ink (WinUI AccentTextFillColorPrimary: Dark2 light / Light3 dark)."
     },
@@ -346,6 +556,11 @@
         "components": [0.34485, 0.10621, 252.962],
         "hex": "#00396e"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Accent button bottom bevel stroke (WinUI ControlStrokeColorOnAccentSecondary composited over primary)."
     },
     "track": {
@@ -353,6 +568,11 @@
         "colorSpace": "oklch",
         "components": [0.94611, 0, 0],
         "hex": "#ededed"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
       },
       "$description": "Switch and slider track (WinUI ControlAltFillColorSecondary)."
     },
@@ -362,6 +582,11 @@
         "components": [0.47478, 0, 0],
         "hex": "#5c5c5c"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Unchecked switch thumb (WinUI TextFillColorSecondary)."
     },
     "code": {
@@ -369,6 +594,11 @@
         "colorSpace": "oklch",
         "components": [0.21779, 0, 0],
         "hex": "#1a1a1a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
       },
       "$description": "Inline code ink (WinUI TextFillColorPrimary)."
     },
@@ -378,6 +608,11 @@
         "components": [0.56769, 0.16654, 251.313],
         "hex": "#0078d4"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Informational semantic color (WinUI SystemFillColorAttentionBrush)."
     },
     "warn": {
@@ -385,6 +620,11 @@
         "colorSpace": "oklch",
         "components": [0.53885, 0.12069, 65.216],
         "hex": "#9d5d00"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
       },
       "$description": "Caution semantic color (WinUI SystemFillColorCaution)."
     },
@@ -394,6 +634,11 @@
         "components": [0.50725, 0.16489, 142.658],
         "hex": "#0f7b0f"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Success semantic color (WinUI SystemFillColorSuccess)."
     },
     "down": {
@@ -401,6 +646,11 @@
         "colorSpace": "oklch",
         "components": [0.53615, 0.19119, 30.071],
         "hex": "#c42b1c"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
       },
       "$description": "Negative trend color matching WinUI SystemFillColorCritical."
     },
@@ -410,6 +660,11 @@
         "components": [0.91469, 0.01564, 247.999],
         "hex": "#dbe4ed"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "10% accent wash composited opaque over window base."
     },
     "on-brand-tint": {
@@ -417,6 +672,11 @@
         "colorSpace": "oklch",
         "components": [0.21779, 0, 0],
         "hex": "#1a1a1a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
       },
       "$description": "Ink on brand-tint surfaces (WinUI TextFillColorPrimary)."
     },
@@ -426,6 +686,11 @@
         "components": [0.98212, 0, 0],
         "hex": "#f9f9f9"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "TeachingTip/toast surface (WinUI SolidBackgroundFillColorTertiary composited over base)."
     },
     "inverse-foreground": {
@@ -433,6 +698,11 @@
         "colorSpace": "oklch",
         "components": [0.21779, 0, 0],
         "hex": "#1a1a1a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
       },
       "$description": "Ink on inverse surface (WinUI TextFillColorPrimary)."
     },
@@ -442,6 +712,11 @@
         "components": [0.47478, 0, 0],
         "hex": "#5c5c5c"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Secondary ink on inverse surface (WinUI TextFillColorSecondary)."
     },
     "inverse-brand": {
@@ -449,6 +724,11 @@
         "colorSpace": "oklch",
         "components": [1, 0, 0],
         "hex": "#ffffff"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
       },
       "$description": "Action ink on inverse surface matching TextOnAccentFillColorPrimary."
     },
@@ -458,6 +738,11 @@
         "components": [0.97015, 0, 0],
         "hex": "#f5f5f5"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Informational wash (WinUI SystemFillColorAttentionBackground composited over base)."
     },
     "warn-tint": {
@@ -465,6 +750,11 @@
         "colorSpace": "oklch",
         "components": [0.96621, 0.05066, 93.747],
         "hex": "#fff4ce"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
       },
       "$description": "Caution wash (WinUI SystemFillColorCautionBackground composited over base)."
     },
@@ -474,6 +764,11 @@
         "components": [0.9462, 0.02418, 11.286],
         "hex": "#fde7e9"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Critical wash (WinUI SystemFillColorCriticalBackground composited over base)."
     },
     "up-tint": {
@@ -481,6 +776,11 @@
         "colorSpace": "oklch",
         "components": [0.94958, 0.04104, 143.026],
         "hex": "#dff6dd"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
       },
       "$description": "Success wash (WinUI SystemFillColorSuccessBackground composited over base)."
     },
@@ -490,6 +790,11 @@
         "components": [0.9462, 0.02418, 11.286],
         "hex": "#fde7e9"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Negative trend wash (WinUI SystemFillColorCriticalBackground composited over base)."
     },
     "violet": {
@@ -498,6 +803,11 @@
         "components": [0.5339, 0.1647, 289.689],
         "hex": "#6e56c4"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Library-retained violet data-series hue (no WinUI equivalent)."
     },
     "window-control-off": {
@@ -505,6 +815,11 @@
         "colorSpace": "oklch",
         "components": [0.89535, 0.00406, 286.317],
         "hex": "#dcdcdf"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "Library-retained unfocused window traffic-light fill (no WinUI equivalent)."
     }

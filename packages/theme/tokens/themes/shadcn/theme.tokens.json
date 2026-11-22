@@ -1,6 +1,21 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "$description": "Appearance-invariant base tokens and press-scale override for the shadcn neutral theme.",
+  "$extensions": {
+    "dev.aning.shadcn-nsh": {
+      "designMd": {
+        "overview": "shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) and Tailwind-style border/shadow lifts (`references/shadcn-ui` `new-york-v4`).",
+        "elevation": "Flat elevation model: cards and floating surfaces sit on neutral background steps with subtle drop shadows and crisp 1px borders rather than inner specular highlights or glass blur.",
+        "dos": [
+          "Keep press interactions flat (`state.press-scale: 1`); signal hover and press via surface and opacity changes.",
+          "Preserve the 31 shadcn A-layer color slots (`background`, `foreground`, `card`, `primary`, `secondary`, `muted`, `accent`, `destructive`, `border`, `input`, `ring`, `chart-1..5`, `sidebar*`)."
+        ],
+        "donts": [
+          "Do not add backdrop blur, specular rim highlights, or spring press shrink to flat shadcn finishes."
+        ]
+      }
+    }
+  },
   "dimension": {
     "$type": "dimension",
     "$description": "Appearance-invariant base dimensional tokens.",
@@ -81,10 +96,20 @@
     "$description": "Appearance-invariant C-layer color roles shared by light and dark modes.",
     "brand-fill": {
       "$value": "{color.primary}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Primary brand action fill, aliased to {color.primary}."
     },
     "on-brand": {
       "$value": "{color.primary-foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}."
     },
     "scrim": {
@@ -94,6 +119,11 @@
         "alpha": 0.5,
         "hex": "#000000"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Translucent backdrop scrim behind modals and sheets (50% black)."
     },
     "media": {
@@ -101,6 +131,11 @@
         "colorSpace": "oklch",
         "components": [0.1869, 0.0151, 266.766],
         "hex": "#10131a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
       },
       "$description": "Ground behind photographs and videos; invariant across appearances."
     },
@@ -110,6 +145,11 @@
         "components": [1, 0, 0],
         "hex": "#ffffff"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "White ink over photographs and dark media surfaces; invariant across appearances."
     },
     "chart-foreground": {
@@ -117,6 +157,11 @@
         "colorSpace": "oklch",
         "components": [0.145, 0, 0],
         "hex": "#0a0a0a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
       },
       "$description": "Dark ink on light chart tiles; dark tiles use on-media."
     },
@@ -126,6 +171,11 @@
         "components": [0.577, 0.245, 27.325],
         "hex": "#e7000b"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "macOS window close traffic-light fill mapped to shadcn destructive red."
     },
     "window-minimize": {
@@ -134,6 +184,11 @@
         "components": [0.708, 0, 0],
         "hex": "#a1a1a1"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "macOS window minimize traffic-light fill mapped to shadcn ring grey."
     },
     "window-zoom": {
@@ -141,6 +196,11 @@
         "colorSpace": "oklch",
         "components": [0.371, 0, 0],
         "hex": "#404040"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "macOS window zoom traffic-light fill mapped to shadcn chart-4 grey."
     },
@@ -153,6 +213,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "chrome",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -177,6 +238,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "chrome",
           "colorOp": {
             "op": "mix",
             "space": "srgb",

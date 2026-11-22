@@ -1,6 +1,34 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "$description": "Apple (light appearance, pointer tier) — standalone W3C DTCG 2025.10 tokens.",
+  "$extensions": {
+    "dev.aning.shadcn-nsh": {
+      "designMd": {
+        "sharedDos": [
+          "Read all colors, radii, typography, and surface finishes through theme roles (`colors.*`, `shape.*`, `font.*`, `finish.*`) rather than literals in component code.",
+          "Read theme getters inside JSX render expressions or reactive effects so runtime theme switching (`selectTheme`) and light/dark appearance changes take effect on the next frame.",
+          "Use `rounded(shape.<role>, inset)` for concentric nested radii inside cards, switches, and segmented controls."
+        ],
+        "sharedDonts": [
+          "Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.",
+          "Never store `colors.*`, `finish.*`, or `shape.*` values in module-level constants; they freeze on theme or appearance switches.",
+          "Never delete finish fields or alter the merged finish key set across appearances or themes."
+        ],
+        "voiceOmitted": "Voice & Content Strategy is intentionally omitted: this theme defines visual tokens, surface finishes, typography metrics, and motion physics only; product copy, tone, capitalization, and terminology belong to the host application.",
+        "overview": "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, capsule controls, continuous corners, and Liquid Glass on floating and raised surfaces.",
+        "elevation": "Apple Liquid Glass and Retina hairline depth: `glass`, `menu`, and `raised` finishes request `material.apple` (`glass: \"regular\"`) with iOS backdrop fallback (`ios.backdrop`) and 0.5px borders; other surfaces stay flat with subtle shadows.",
+        "dos": [
+          "Use `999px` capsule corners on controls and chips alongside concentric `20px` cards, `26px` dialogs, and `34px` sheets with `shape.curve: \"continuous\"`.",
+          "Respect pointer (macOS: 13px body, 32px density row) vs touch (iOS: 17px body, 44px hit target) metrics.",
+          "Keep `material.apple` on `glass`, `menu`, and `raised` finishes and spread `platformMaterial()` on native views."
+        ],
+        "donts": [
+          "Do not replace Retina `0.5px` `stroke.hairline`/`stroke.surface` with thick borders or `circular` corners.",
+          "Do not set `macos.backdrop` when Liquid Glass `glassEffect` is active on macOS 26+."
+        ]
+      }
+    }
+  },
   "cubicBezier": {
     "$type": "cubicBezier",
     "$description": "Named timing curves shared across themes.",
@@ -756,10 +784,20 @@
     "$description": "Adaptive A-layer and B-layer color roles for light appearance.",
     "brand-fill": {
       "$value": "{color.primary}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Primary brand action fill, aliased to {color.primary} (UIKit systemBlue)."
     },
     "on-brand": {
       "$value": "{color.primary-foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}."
     },
     "scrim": {
@@ -773,6 +811,11 @@
         "alpha": 0.4,
         "hex": "#000000"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Translucent backdrop scrim behind modals and sheets (40% black)."
     },
     "media": {
@@ -784,6 +827,11 @@
           266.766
         ],
         "hex": "#10131a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
       },
       "$description": "Ground behind photographs and videos; invariant across appearances."
     },
@@ -797,6 +845,11 @@
         ],
         "hex": "#ffffff"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "White ink over photographs and dark media surfaces; invariant across appearances."
     },
     "chart-foreground": {
@@ -808,6 +861,11 @@
           0
         ],
         "hex": "#000000"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
       },
       "$description": "Dark ink on light chart tiles matching UIKit light label (#000000)."
     },
@@ -821,6 +879,11 @@
         ],
         "hex": "#ff5f57"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "macOS window close traffic-light button fill."
     },
     "window-minimize": {
@@ -833,6 +896,11 @@
         ],
         "hex": "#febc2e"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "macOS window minimize traffic-light button fill."
     },
     "window-zoom": {
@@ -844,6 +912,11 @@
           144.712
         ],
         "hex": "#28c840"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "macOS window zoom traffic-light button fill."
     },
@@ -860,6 +933,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "chrome",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -892,6 +966,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "chrome",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -921,6 +996,11 @@
         ],
         "hex": "#f2f2f7"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Grouped page canvas background (UIKit systemGroupedBackground)."
     },
     "foreground": {
@@ -932,6 +1012,11 @@
           0
         ],
         "hex": "#000000"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
       },
       "$description": "Primary label ink (UIKit label)."
     },
@@ -945,10 +1030,20 @@
         ],
         "hex": "#ffffff"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Elevated list and card surface (UIKit systemBackground)."
     },
     "card-foreground": {
       "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Primary text and icon ink on card surfaces."
     },
     "popover": {
@@ -961,10 +1056,20 @@
         ],
         "hex": "#ffffff"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Floating popover and sheet surface (UIKit secondarySystemBackground / popover)."
     },
     "popover-foreground": {
       "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Primary text and icon ink on popover surfaces."
     },
     "primary": {
@@ -976,6 +1081,11 @@
           257.424
         ],
         "hex": "#007aff"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
       },
       "$description": "System accent blue (UIKit systemBlue)."
     },
@@ -989,14 +1099,29 @@
         ],
         "hex": "#ffffff"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Text and icon ink on primary brand action fills."
     },
     "secondary": {
       "$value": "{color.raised}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Secondary control surface fill."
     },
     "secondary-foreground": {
       "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Text and icon ink on secondary control surfaces."
     },
     "muted": {
@@ -1008,6 +1133,11 @@
           286.375
         ],
         "hex": "#efeff0"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
       },
       "$description": "Subdued container fill (UIKit tertiarySystemFill composited over card)."
     },
@@ -1021,6 +1151,11 @@
         ],
         "hex": "#8a8a8e"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Secondary label ink (UIKit secondaryLabel composited over card)."
     },
     "accent": {
@@ -1033,10 +1168,20 @@
         ],
         "hex": "#f4f4f5"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Subtle hover/selection fill (UIKit quaternarySystemFill composited over card)."
     },
     "accent-foreground": {
       "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Text and icon ink on accent surfaces."
     },
     "destructive": {
@@ -1048,6 +1193,11 @@
           28.659
         ],
         "hex": "#ff3b30"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
       },
       "$description": "System destructive red (UIKit systemRed)."
     },
@@ -1061,6 +1211,11 @@
         ],
         "hex": "#dcdcdd"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "Hairline separator (UIKit separator hairline composited over card)."
     },
     "input": {
@@ -1072,6 +1227,11 @@
           286.339
         ],
         "hex": "#c6c6c8"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "Input control border (UIKit separator composited over card)."
     },
@@ -1085,6 +1245,11 @@
         ],
         "hex": "#007aff"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "Focus ring color matching UIKit systemBlue."
     },
     "chart-1": {
@@ -1096,6 +1261,11 @@
           257.424
         ],
         "hex": "#007aff"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
       },
       "$description": "First chart series color (UIKit systemBlue)."
     },
@@ -1109,6 +1279,11 @@
         ],
         "hex": "#34c759"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Second chart series color (UIKit systemGreen)."
     },
     "chart-3": {
@@ -1120,6 +1295,11 @@
           62.574
         ],
         "hex": "#ff9500"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
       },
       "$description": "Third chart series color (UIKit systemOrange)."
     },
@@ -1133,6 +1313,11 @@
         ],
         "hex": "#af52de"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Fourth chart series color (UIKit systemPurple)."
     },
     "chart-5": {
@@ -1144,6 +1329,11 @@
           28.659
         ],
         "hex": "#ff3b30"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
       },
       "$description": "Fifth chart series color (UIKit systemRed)."
     },
@@ -1157,18 +1347,38 @@
         ],
         "hex": "#f2f2f7"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Sidebar surface matching Apple system sidebar/grouped background."
     },
     "sidebar-foreground": {
       "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Primary text and icon ink inside the sidebar."
     },
     "sidebar-primary": {
       "$value": "{color.primary}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Primary action highlight color in the sidebar."
     },
     "sidebar-primary-foreground": {
       "$value": "{color.primary-foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Text and icon ink on sidebar-primary highlights."
     },
     "sidebar-accent": {
@@ -1181,10 +1391,20 @@
         ],
         "hex": "#f4f4f5"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Selected or active row fill in the sidebar."
     },
     "sidebar-accent-foreground": {
       "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Text and icon ink on active sidebar rows."
     },
     "sidebar-border": {
@@ -1197,10 +1417,20 @@
         ],
         "hex": "#dcdcdd"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "Sidebar divider and toolbar hairline border color."
     },
     "sidebar-ring": {
       "$value": "{color.ring}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "Focus indicator ring color inside the sidebar."
     },
     "inset": {
@@ -1212,6 +1442,11 @@
           286.375
         ],
         "hex": "#f4f4f5"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
       },
       "$description": "Inset surface (UIKit quaternarySystemFill composited over card)."
     },
@@ -1225,10 +1460,20 @@
         ],
         "hex": "#efeff0"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Raised control surface (UIKit tertiarySystemFill composited over card)."
     },
     "glass-edge": {
       "$value": "{color.border}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "Hairline border on glass, pill, and floating overlay surfaces."
     },
     "scrollbar-thumb": {
@@ -1243,6 +1488,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "chrome",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1266,6 +1512,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "chrome",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1287,6 +1534,11 @@
         ],
         "hex": "#efeff0"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Form input background (UIKit tertiarySystemFill composited over card)."
     },
     "line": {
@@ -1298,6 +1550,11 @@
           286.373
         ],
         "hex": "#dcdcdd"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "Inset divider hairline (UIKit hairline composited over card)."
     },
@@ -1314,6 +1571,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "surface",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1338,6 +1596,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "chrome",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1359,6 +1618,11 @@
         ],
         "hex": "#c5c5c7"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Tertiary label ink for placeholders and quiet captions (UIKit tertiaryLabel)."
     },
     "brand": {
@@ -1371,10 +1635,20 @@
         ],
         "hex": "#007aff"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Inline brand accent ink (UIKit systemBlue)."
     },
     "brand-edge": {
       "$value": "{color.border}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Hairline border on primary accent-filled controls."
     },
     "track": {
@@ -1386,6 +1660,11 @@
           286.348
         ],
         "hex": "#e9e9eb"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
       },
       "$description": "Switch and slider track (UIKit secondarySystemFill composited over card)."
     },
@@ -1399,6 +1678,11 @@
         ],
         "hex": "#ffffff"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Switch knob and slider handle (pure white)."
     },
     "code": {
@@ -1410,6 +1694,11 @@
           0
         ],
         "hex": "#000000"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
       },
       "$description": "Monospace code text ink inside recessed wells."
     },
@@ -1423,6 +1712,11 @@
         ],
         "hex": "#007aff"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Informational semantic color (UIKit systemBlue)."
     },
     "warn": {
@@ -1434,6 +1728,11 @@
           62.574
         ],
         "hex": "#ff9500"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
       },
       "$description": "Warning semantic color (UIKit systemOrange)."
     },
@@ -1447,10 +1746,20 @@
         ],
         "hex": "#34c759"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Positive trend semantic color (UIKit systemGreen)."
     },
     "down": {
       "$value": "{color.destructive}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Negative trend and decline semantic color."
     },
     "brand-tint": {
@@ -1466,6 +1775,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "brand",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1479,22 +1789,47 @@
     },
     "on-brand-tint": {
       "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Text and icon ink on brand-tint surfaces."
     },
     "inverse": {
       "$value": "{color.popover}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "High-contrast surface for toasts and tooltips."
     },
     "inverse-foreground": {
       "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Primary text ink on inverse surfaces."
     },
     "inverse-muted": {
       "$value": "{color.muted-foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Secondary text, spinner, and close-icon ink on inverse surfaces."
     },
     "inverse-brand": {
       "$value": "{color.primary-foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Accent action color on inverse surfaces."
     },
     "info-tint": {
@@ -1510,6 +1845,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "status",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1534,6 +1870,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "status",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1558,6 +1895,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "status",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1582,6 +1920,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "status",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1606,6 +1945,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "status",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1627,6 +1967,11 @@
         ],
         "hex": "#af52de"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Accent purple ink (UIKit systemPurple)."
     },
     "window-control-off": {
@@ -1638,6 +1983,11 @@
           286.347
         ],
         "hex": "#e4e4e6"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "Unfocused window traffic-light fill (UIKit systemFill composited over card)."
     }

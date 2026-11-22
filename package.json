@@ -49,6 +49,7 @@
     "port:baseline": "bun scripts/port/baseline.ts"
   },
   "devDependencies": {
+    "@google/design.md": "0.4.0",
     "@material/material-color-utilities": "^0.4.0",
     "@types/bun": "^1.4.4",
     "@types/node": "^26.6.6",

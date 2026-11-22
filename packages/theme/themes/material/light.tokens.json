@@ -1,6 +1,34 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "$description": "Material (light appearance, pointer tier) — standalone W3C DTCG 2025.10 tokens.",
+  "$extensions": {
+    "dev.aning.shadcn-nsh": {
+      "designMd": {
+        "sharedDos": [
+          "Read all colors, radii, typography, and surface finishes through theme roles (`colors.*`, `shape.*`, `font.*`, `finish.*`) rather than literals in component code.",
+          "Read theme getters inside JSX render expressions or reactive effects so runtime theme switching (`selectTheme`) and light/dark appearance changes take effect on the next frame.",
+          "Use `rounded(shape.<role>, inset)` for concentric nested radii inside cards, switches, and segmented controls."
+        ],
+        "sharedDonts": [
+          "Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.",
+          "Never store `colors.*`, `finish.*`, or `shape.*` values in module-level constants; they freeze on theme or appearance switches.",
+          "Never delete finish fields or alter the merged finish key set across appearances or themes."
+        ],
+        "voiceOmitted": "Voice & Content Strategy is intentionally omitted: this theme defines visual tokens, surface finishes, typography metrics, and motion physics only; product copy, tone, capitalization, and terminology belong to the host application.",
+        "overview": "Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built from the `#6750A4` baseline with tonal surface containers, Expressive Tone 30 `on*Container` roles, state-layer overlays, and Expressive spatial/effects springs.",
+        "elevation": "Tonal surface stepping plus Material Web Level 1–3 shadows and `material.android.elevation` (1dp/3dp/6dp), with `stroke.surface: 0px` and no backdrop blur.",
+        "dos": [
+          "Express interaction states via M3 state-layer ink overlays (`hover: 0.08`, `focus: 0.10`, `pressed: 0.10`, `dragged: 0.16`) and Android press ripples (`state.ripple: true`) with `state.press-scale: 1`.",
+          "Use `shape.curve: \"circular\"`, `shape.corners.field: \"top\"`, and `indicator` `underline` tabs/fields.",
+          "Keep `stroke.surface: 0px` on tonal/elevated containers so depth comes from tonal steps and elevation."
+        ],
+        "donts": [
+          "Do not add backdrop blur (`backdropFilter`) or surface borders (`stroke.surface > 0`) to M3 tonal surfaces.",
+          "Do not replace `outline` focus rings (`3px` width, `2px` offset) with halo rings."
+        ]
+      }
+    }
+  },
   "cubicBezier": {
     "$type": "cubicBezier",
     "$description": "Named timing curves shared across themes.",
@@ -756,10 +784,20 @@
     "$description": "Adaptive A-layer and B-layer color roles for light appearance.",
     "brand-fill": {
       "$value": "{color.primary}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Primary brand action fill, aliased to {color.primary}."
     },
     "on-brand": {
       "$value": "{color.primary-foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}."
     },
     "scrim": {
@@ -773,6 +811,11 @@
         "alpha": 0.32,
         "hex": "#000000"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Translucent backdrop scrim behind modals and sheets (M3 scrim at 32% opacity)."
     },
     "media": {
@@ -784,6 +827,11 @@
           266.766
         ],
         "hex": "#10131a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
       },
       "$description": "Ground behind photographs and videos; invariant across appearances."
     },
@@ -797,6 +845,11 @@
         ],
         "hex": "#ffffff"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "White ink over photographs and dark media surfaces; invariant across appearances."
     },
     "chart-foreground": {
@@ -808,6 +861,11 @@
           303.714
         ],
         "hex": "#1d1b20"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
       },
       "$description": "Dark ink on light chart tiles matching M3 light onSurface."
     },
@@ -821,6 +879,11 @@
         ],
         "hex": "#b3261e"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "macOS window close traffic-light fill mapped to M3 light error."
     },
     "window-minimize": {
@@ -833,6 +896,11 @@
         ],
         "hex": "#b26a00"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "macOS window minimize traffic-light fill mapped to NSH light warn."
     },
     "window-zoom": {
@@ -844,6 +912,11 @@
           159.355
         ],
         "hex": "#138a5a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "macOS window zoom traffic-light fill mapped to NSH light up."
     },
@@ -860,6 +933,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "chrome",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -892,6 +966,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "chrome",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -921,6 +996,11 @@
         ],
         "hex": "#fef7ff"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Primary page surface (M3 surface role, material-web v34.0.21)."
     },
     "foreground": {
@@ -932,6 +1012,11 @@
           303.714
         ],
         "hex": "#1d1b20"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
       },
       "$description": "Default text and icon ink on surfaces (M3 onSurface)."
     },
@@ -945,10 +1030,20 @@
         ],
         "hex": "#f7f2fa"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Elevated card container background (M3 surfaceContainerLow)."
     },
     "card-foreground": {
       "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Primary text and icon ink on card surfaces."
     },
     "popover": {
@@ -961,10 +1056,20 @@
         ],
         "hex": "#f3edf7"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Floating popover and menu container background (M3 surfaceContainer)."
     },
     "popover-foreground": {
       "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Primary text and icon ink on popover surfaces."
     },
     "primary": {
@@ -976,6 +1081,11 @@
           293.709
         ],
         "hex": "#6750a4"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
       },
       "$description": "Primary brand action fill (M3 primary)."
     },
@@ -989,6 +1099,11 @@
         ],
         "hex": "#ffffff"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Text and icon ink on primary fills (M3 onPrimary)."
     },
     "secondary": {
@@ -1000,6 +1115,11 @@
           303.106
         ],
         "hex": "#e8def8"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
       },
       "$description": "Secondary tonal container fill (M3 secondaryContainer)."
     },
@@ -1013,6 +1133,11 @@
         ],
         "hex": "#4a4458"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Text and icon ink on secondary containers (M3 Expressive onSecondaryContainer, Tone 30 in light)."
     },
     "muted": {
@@ -1024,6 +1149,11 @@
           314.754
         ],
         "hex": "#e6e0e9"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
       },
       "$description": "Muted/highest surface container fill (M3 surfaceContainerHighest)."
     },
@@ -1037,6 +1167,11 @@
         ],
         "hex": "#49454f"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Secondary supporting text and icon ink (M3 onSurfaceVariant)."
     },
     "accent": {
@@ -1048,6 +1183,11 @@
           303.106
         ],
         "hex": "#e8def8"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
       },
       "$description": "Tonal accent fill (M3 secondaryContainer)."
     },
@@ -1061,6 +1201,11 @@
         ],
         "hex": "#4a4458"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Text and icon ink on accent fills (M3 Expressive onSecondaryContainer)."
     },
     "destructive": {
@@ -1072,6 +1217,11 @@
           28.705
         ],
         "hex": "#b3261e"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
       },
       "$description": "Error and destructive action color (M3 error)."
     },
@@ -1085,6 +1235,11 @@
         ],
         "hex": "#cac4d0"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "Hairline container border color (M3 outlineVariant)."
     },
     "input": {
@@ -1096,6 +1251,11 @@
           308.142
         ],
         "hex": "#79747e"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "Input outline color (M3 outline)."
     },
@@ -1109,6 +1269,11 @@
         ],
         "hex": "#625b71"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "Focus indicator ring color (M3 secondary)."
     },
     "chart-1": {
@@ -1120,6 +1285,11 @@
           293.709
         ],
         "hex": "#6750a4"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
       },
       "$description": "First chart series color (M3 primary)."
     },
@@ -1133,6 +1303,11 @@
         ],
         "hex": "#7d5260"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Second chart series color (M3 tertiary)."
     },
     "chart-3": {
@@ -1144,6 +1319,11 @@
           299.615
         ],
         "hex": "#625b71"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
       },
       "$description": "Third chart series color (M3 secondary)."
     },
@@ -1157,6 +1337,11 @@
         ],
         "hex": "#79747e"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Fourth chart series color (M3 outline)."
     },
     "chart-5": {
@@ -1168,6 +1353,11 @@
           308.223
         ],
         "hex": "#cac4d0"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
       },
       "$description": "Fifth chart series color (M3 outlineVariant)."
     },
@@ -1181,18 +1371,38 @@
         ],
         "hex": "#fef7ff"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Sidebar canvas background (M3 surface)."
     },
     "sidebar-foreground": {
       "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Primary text and icon ink inside the sidebar."
     },
     "sidebar-primary": {
       "$value": "{color.primary}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Primary action highlight color in the sidebar."
     },
     "sidebar-primary-foreground": {
       "$value": "{color.primary-foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Text and icon ink on sidebar-primary highlights."
     },
     "sidebar-accent": {
@@ -1204,6 +1414,11 @@
           303.106
         ],
         "hex": "#e8def8"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
       },
       "$description": "Sidebar active item fill (M3 secondaryContainer)."
     },
@@ -1217,6 +1432,11 @@
         ],
         "hex": "#4a4458"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Sidebar active item text ink (M3 Expressive onSecondaryContainer)."
     },
     "sidebar-border": {
@@ -1229,10 +1449,20 @@
         ],
         "hex": "#cac4d0"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "Sidebar divider border (M3 outlineVariant)."
     },
     "sidebar-ring": {
       "$value": "{color.ring}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "Focus indicator ring color inside the sidebar."
     },
     "inset": {
@@ -1244,6 +1474,11 @@
           312.243
         ],
         "hex": "#f3edf7"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
       },
       "$description": "Inset container surface (M3 surfaceContainer)."
     },
@@ -1257,6 +1492,11 @@
         ],
         "hex": "#f7f2fa"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Raised control surface (M3 surfaceContainerLow)."
     },
     "glass-edge": {
@@ -1268,6 +1508,11 @@
           308.223
         ],
         "hex": "#cac4d0"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "Overlay outline edge (M3 outlineVariant)."
     },
@@ -1283,6 +1528,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "chrome",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1306,6 +1552,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "chrome",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1327,6 +1574,11 @@
         ],
         "hex": "#e6e0e9"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Filled text field background (M3 surfaceContainerHighest)."
     },
     "line": {
@@ -1338,6 +1590,11 @@
           308.223
         ],
         "hex": "#cac4d0"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "Inset divider hairline (M3 outlineVariant)."
     },
@@ -1354,6 +1611,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "surface",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1378,6 +1636,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "chrome",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1399,10 +1658,20 @@
         ],
         "hex": "#79747e"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Quiet caption/placeholder ink (M3 outline)."
     },
     "brand": {
       "$value": "{color.primary}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Inline brand accent ink, aliased to {color.primary}."
     },
     "brand-edge": {
@@ -1414,6 +1683,11 @@
           308.223
         ],
         "hex": "#cac4d0"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
       },
       "$description": "Brand container outline (M3 outlineVariant)."
     },
@@ -1427,6 +1701,11 @@
         ],
         "hex": "#e6e0e9"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Switch and slider track fill (M3 surfaceContainerHighest)."
     },
     "knob": {
@@ -1439,10 +1718,20 @@
         ],
         "hex": "#79747e"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Unchecked switch thumb fill (M3 outline)."
     },
     "code": {
       "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Monospace code text ink inside recessed wells."
     },
     "info": {
@@ -1454,6 +1743,11 @@
           293.709
         ],
         "hex": "#6750a4"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
       },
       "$description": "Informational semantic color matching M3 primary."
     },
@@ -1467,6 +1761,11 @@
         ],
         "hex": "#b26a00"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Warning semantic status color."
     },
     "up": {
@@ -1479,10 +1778,20 @@
         ],
         "hex": "#138a5a"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Positive trend and growth semantic color."
     },
     "down": {
       "$value": "{color.destructive}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Negative trend and decline semantic color."
     },
     "brand-tint": {
@@ -1494,6 +1803,11 @@
           303.106
         ],
         "hex": "#e8def8"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
       },
       "$description": "Opaque selected chip/tile fill (M3 secondaryContainer)."
     },
@@ -1507,6 +1821,11 @@
         ],
         "hex": "#4a4458"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Ink on selected chip/tile fills (M3 Expressive onSecondaryContainer)."
     },
     "inverse": {
@@ -1518,6 +1837,11 @@
           308.056
         ],
         "hex": "#322f35"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
       },
       "$description": "Inverse surface for snackbars and tooltips (M3 inverseSurface)."
     },
@@ -1531,10 +1855,20 @@
         ],
         "hex": "#f5eff7"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Ink on inverse surfaces (M3 inverseOnSurface)."
     },
     "inverse-muted": {
       "$value": "{color.inverse-foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Supporting text and close icon on inverse snackbars, aliased to {color.inverse-foreground} (Compose SnackbarTokens.kt)."
     },
     "inverse-brand": {
@@ -1546,6 +1880,11 @@
           298.018
         ],
         "hex": "#d0bcff"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
       },
       "$description": "Brand action ink on inverse surfaces (M3 inversePrimary)."
     },
@@ -1562,6 +1901,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "status",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1586,6 +1926,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "status",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1607,6 +1948,11 @@
         ],
         "hex": "#f9dedc"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Tonal error container background (M3 errorContainer)."
     },
     "up-tint": {
@@ -1622,6 +1968,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "status",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1646,6 +1993,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "status",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1667,6 +2015,11 @@
         ],
         "hex": "#7d5260"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Tertiary accent color (M3 tertiary)."
     },
     "window-control-off": {
@@ -1678,6 +2031,11 @@
           308.223
         ],
         "hex": "#cac4d0"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "Unfocused window traffic-light fill (M3 outlineVariant)."
     }

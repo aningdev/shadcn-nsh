@@ -147,3 +147,103 @@ export const SHAPE_ROLES = [
   "sheet",
   "inset",
 ] as const;
+
+export const COLOR_ROLES = ["surface", "ink", "brand", "status", "chrome"] as const;
+export type ColorRole = (typeof COLOR_ROLES)[number];
+
+export interface DesignMdExtension {
+  overview?: string;
+  elevation?: string;
+  dos?: string[];
+  donts?: string[];
+  sharedDos?: string[];
+  sharedDonts?: string[];
+  voiceOmitted?: string;
+}
+
+/** Semantic color-role grouping for every token in `color.*` (74 total: 11 C-layer + 63 A/B-layer). */
+export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
+  // surface (15 A/B-layer + 2 C-layer)
+  background: "surface",
+  card: "surface",
+  popover: "surface",
+  secondary: "surface",
+  muted: "surface",
+  accent: "surface",
+  inset: "surface",
+  raised: "surface",
+  field: "surface",
+  hover: "surface",
+  track: "surface",
+  knob: "surface",
+  inverse: "surface",
+  sidebar: "surface",
+  "sidebar-accent": "surface",
+  media: "surface",
+  scrim: "surface",
+
+  // ink (12 A/B-layer + 2 C-layer)
+  foreground: "ink",
+  "card-foreground": "ink",
+  "popover-foreground": "ink",
+  "secondary-foreground": "ink",
+  "muted-foreground": "ink",
+  "accent-foreground": "ink",
+  faint: "ink",
+  code: "ink",
+  "inverse-foreground": "ink",
+  "inverse-muted": "ink",
+  "sidebar-foreground": "ink",
+  "sidebar-accent-foreground": "ink",
+  "on-media": "ink",
+  "chart-foreground": "ink",
+
+  // brand (9 A/B-layer + 2 C-layer)
+  primary: "brand",
+  "primary-foreground": "brand",
+  brand: "brand",
+  "brand-edge": "brand",
+  "brand-tint": "brand",
+  "on-brand-tint": "brand",
+  "inverse-brand": "brand",
+  "sidebar-primary": "brand",
+  "sidebar-primary-foreground": "brand",
+  "brand-fill": "brand",
+  "on-brand": "brand",
+
+  // status (16 A/B-layer)
+  destructive: "status",
+  "destructive-tint": "status",
+  info: "status",
+  "info-tint": "status",
+  warn: "status",
+  "warn-tint": "status",
+  up: "status",
+  "up-tint": "status",
+  down: "status",
+  "down-tint": "status",
+  violet: "status",
+  "chart-1": "status",
+  "chart-2": "status",
+  "chart-3": "status",
+  "chart-4": "status",
+  "chart-5": "status",
+
+  // chrome (11 A/B-layer + 5 C-layer)
+  border: "chrome",
+  input: "chrome",
+  ring: "chrome",
+  "ring-halo": "chrome",
+  line: "chrome",
+  "glass-edge": "chrome",
+  "scrollbar-thumb": "chrome",
+  "scrollbar-thumb-hover": "chrome",
+  "sidebar-border": "chrome",
+  "sidebar-ring": "chrome",
+  "window-control-off": "chrome",
+  "window-close": "chrome",
+  "window-minimize": "chrome",
+  "window-zoom": "chrome",
+  "window-control-ink": "chrome",
+  "window-control-edge": "chrome",
+};

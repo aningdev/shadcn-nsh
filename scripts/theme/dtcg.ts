@@ -18,11 +18,14 @@ import { repo } from "../port/lib";
 import { buildThemeTargets } from "../tokens/build";
 import { evaluateColorMix, oklchToHex6 } from "../tokens/color";
 import {
+  COLOR_ROLE_BY_NAME,
   EXT_NS,
   FORMAT_SCHEMA_URL,
   RADIUS_KEYS,
   RESOLVER_SCHEMA_URL,
   TYPE_ROLES,
+  type ColorRole,
+  type DesignMdExtension,
   type DtcgColor,
 } from "../tokens/types";
 import { toOklchText } from "./oklch";
@@ -118,6 +121,7 @@ export interface ThemeGeneratorOutput {
   "press-scale"?: number;
   radiusGroupDescription?: string;
   style?: ThemeStyleInput;
+  designMd?: Pick<DesignMdExtension, "overview" | "elevation" | "dos" | "donts">;
   cssVars: {
     theme: Record<string, string>;
     light: Record<string, string>;
@@ -205,14 +209,20 @@ function resolveStaticColor(
 
 /** Convert a `cssVars` color value (`oklch(...)`, `var(--x)`, or `color-mix(...)`) to a DTCG color token. */
 function encodeCssColorToken(
+  name: string,
   value: string,
   colorMap: Record<string, string>,
   description: string,
 ): Record<string, unknown> {
+  const role: ColorRole | undefined = COLOR_ROLE_BY_NAME[name];
+  const extFields: Record<string, unknown> = {};
+  if (role) extFields.role = role;
+
   const varMatch = /^var\(--([a-z0-9-]+)\)$/.exec(value.trim());
   if (varMatch) {
     return {
       $value: `{color.${varMatch[1]!}}`,
+      ...(Object.keys(extFields).length > 0 ? { $extensions: { [EXT_NS]: extFields } } : {}),
       $description: description,
     };
   }
@@ -239,6 +249,7 @@ function encodeCssColorToken(
       $value: staticVal,
       $extensions: {
         [EXT_NS]: {
+          ...extFields,
           colorOp: {
             op: "mix",
             space: "srgb",
@@ -254,6 +265,7 @@ function encodeCssColorToken(
 
   return {
     $value: parseOklchToDtcg(value),
+    ...(Object.keys(extFields).length > 0 ? { $extensions: { [EXT_NS]: extFields } } : {}),
     $description: description,
   };
 }
@@ -1196,7 +1208,7 @@ export function emitDtcgTheme(
   };
   for (const k of sharedColorKeys) {
     const desc = output.descriptions?.sharedColors?.[k] ?? meta.sharedColorDescriptions[k] ?? k;
-    themeColors[k] = encodeCssColorToken(output.cssVars.theme[k]!, themeColorLookup, desc);
+    themeColors[k] = encodeCssColorToken(k, output.cssVars.theme[k]!, themeColorLookup, desc);
   }
 
   const pressScale = output["press-scale"] ?? output.style?.state["press-scale"];
@@ -1209,6 +1221,15 @@ export function emitDtcgTheme(
   const themeTokensDoc: Record<string, unknown> = {
     $schema: FORMAT_SCHEMA_URL,
     $description: output.themeDescription,
+    ...(output.designMd
+      ? {
+          $extensions: {
+            [EXT_NS]: {
+              designMd: output.designMd,
+            },
+          },
+        }
+      : {}),
     dimension: {
       $type: "dimension",
       $description: "Appearance-invariant base dimensional tokens.",
@@ -1300,7 +1321,7 @@ export function emitDtcgTheme(
     ];
     for (const k of orderedKeys) {
       const desc = overrideDescs?.[k] ?? fallbackDescs[k] ?? meta.lightColorDescriptions[k] ?? k;
-      colorGroup[k] = encodeCssColorToken(colors[k]!, colorMap, desc);
+      colorGroup[k] = encodeCssColorToken(k, colors[k]!, colorMap, desc);
     }
 
     const encodedFinishes = encodeFinishSection(sparseFinishes, colorMap, meta.finishRoles);

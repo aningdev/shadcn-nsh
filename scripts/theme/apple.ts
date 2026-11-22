@@ -469,6 +469,21 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
     radiusGroupDescription:
       "Apple HIG concentric corner radius scale (999px capsule controls/chips, 20px card, 26px dialog, 34px sheet).",
     style,
+    designMd: {
+      overview:
+        "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, capsule controls, continuous corners, and Liquid Glass on floating and raised surfaces.",
+      elevation:
+        'Apple Liquid Glass and Retina hairline depth: `glass`, `menu`, and `raised` finishes request `material.apple` (`glass: "regular"`) with iOS backdrop fallback (`ios.backdrop`) and 0.5px borders; other surfaces stay flat with subtle shadows.',
+      dos: [
+        'Use `999px` capsule corners on controls and chips alongside concentric `20px` cards, `26px` dialogs, and `34px` sheets with `shape.curve: "continuous"`.',
+        "Respect pointer (macOS: 13px body, 32px density row) vs touch (iOS: 17px body, 44px hit target) metrics.",
+        "Keep `material.apple` on `glass`, `menu`, and `raised` finishes and spread `platformMaterial()` on native views.",
+      ],
+      donts: [
+        "Do not replace Retina `0.5px` `stroke.hairline`/`stroke.surface` with thick borders or `circular` corners.",
+        "Do not set `macos.backdrop` when Liquid Glass `glassEffect` is active on macOS 26+.",
+      ],
+    },
     cssVars: {
       theme: themeLevel(),
       light: section(palette("light")),

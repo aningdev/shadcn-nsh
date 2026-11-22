@@ -1,6 +1,32 @@
 {
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "$description": "shadcn neutral (light appearance, pointer tier) — standalone W3C DTCG 2025.10 tokens.",
+  "$extensions": {
+    "dev.aning.shadcn-nsh": {
+      "designMd": {
+        "sharedDos": [
+          "Read all colors, radii, typography, and surface finishes through theme roles (`colors.*`, `shape.*`, `font.*`, `finish.*`) rather than literals in component code.",
+          "Read theme getters inside JSX render expressions or reactive effects so runtime theme switching (`selectTheme`) and light/dark appearance changes take effect on the next frame.",
+          "Use `rounded(shape.<role>, inset)` for concentric nested radii inside cards, switches, and segmented controls."
+        ],
+        "sharedDonts": [
+          "Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.",
+          "Never store `colors.*`, `finish.*`, or `shape.*` values in module-level constants; they freeze on theme or appearance switches.",
+          "Never delete finish fields or alter the merged finish key set across appearances or themes."
+        ],
+        "voiceOmitted": "Voice & Content Strategy is intentionally omitted: this theme defines visual tokens, surface finishes, typography metrics, and motion physics only; product copy, tone, capitalization, and terminology belong to the host application.",
+        "overview": "shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) and Tailwind-style border/shadow lifts (`references/shadcn-ui` `new-york-v4`).",
+        "elevation": "Flat elevation model: cards and floating surfaces sit on neutral background steps with subtle drop shadows and crisp 1px borders rather than inner specular highlights or glass blur.",
+        "dos": [
+          "Keep press interactions flat (`state.press-scale: 1`); signal hover and press via surface and opacity changes.",
+          "Preserve the 31 shadcn A-layer color slots (`background`, `foreground`, `card`, `primary`, `secondary`, `muted`, `accent`, `destructive`, `border`, `input`, `ring`, `chart-1..5`, `sidebar*`)."
+        ],
+        "donts": [
+          "Do not add backdrop blur, specular rim highlights, or spring press shrink to flat shadcn finishes."
+        ]
+      }
+    }
+  },
   "cubicBezier": {
     "$type": "cubicBezier",
     "$description": "Named timing curves shared across themes.",
@@ -756,10 +782,20 @@
     "$description": "Adaptive A-layer and B-layer color roles for light appearance.",
     "brand-fill": {
       "$value": "{color.primary}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Primary brand action fill, aliased to {color.primary}."
     },
     "on-brand": {
       "$value": "{color.primary-foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}."
     },
     "scrim": {
@@ -773,6 +809,11 @@
         "alpha": 0.5,
         "hex": "#000000"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Translucent backdrop scrim behind modals and sheets (50% black)."
     },
     "media": {
@@ -784,6 +825,11 @@
           266.766
         ],
         "hex": "#10131a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
       },
       "$description": "Ground behind photographs and videos; invariant across appearances."
     },
@@ -797,6 +843,11 @@
         ],
         "hex": "#ffffff"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "White ink over photographs and dark media surfaces; invariant across appearances."
     },
     "chart-foreground": {
@@ -808,6 +859,11 @@
           0
         ],
         "hex": "#0a0a0a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
       },
       "$description": "Dark ink on light chart tiles; dark tiles use on-media."
     },
@@ -821,6 +877,11 @@
         ],
         "hex": "#e7000b"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "macOS window close traffic-light fill mapped to shadcn destructive red."
     },
     "window-minimize": {
@@ -833,6 +894,11 @@
         ],
         "hex": "#a1a1a1"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "macOS window minimize traffic-light fill mapped to shadcn ring grey."
     },
     "window-zoom": {
@@ -844,6 +910,11 @@
           0
         ],
         "hex": "#404040"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "macOS window zoom traffic-light fill mapped to shadcn chart-4 grey."
     },
@@ -860,6 +931,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "chrome",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -892,6 +964,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "chrome",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -921,6 +994,11 @@
         ],
         "hex": "#ffffff"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Primary application page canvas background."
     },
     "foreground": {
@@ -932,6 +1010,11 @@
           0
         ],
         "hex": "#0a0a0a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
       },
       "$description": "Default high-contrast text and icon ink on page surfaces."
     },
@@ -945,10 +1028,20 @@
         ],
         "hex": "#ffffff"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Elevated surface background for cards and panels."
     },
     "card-foreground": {
       "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Primary text and icon ink on card surfaces."
     },
     "popover": {
@@ -961,10 +1054,20 @@
         ],
         "hex": "#ffffff"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Floating surface background for menus, popovers, and tooltips."
     },
     "popover-foreground": {
       "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Primary text and icon ink on popover surfaces."
     },
     "primary": {
@@ -976,6 +1079,11 @@
           0
         ],
         "hex": "#171717"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
       },
       "$description": "Primary brand action fill."
     },
@@ -989,14 +1097,29 @@
         ],
         "hex": "#fafafa"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Text and icon ink on primary brand action fills."
     },
     "secondary": {
       "$value": "{color.raised}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Secondary control surface fill."
     },
     "secondary-foreground": {
       "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Text and icon ink on secondary control surfaces."
     },
     "muted": {
@@ -1008,6 +1131,11 @@
           0
         ],
         "hex": "#f5f5f5"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
       },
       "$description": "Subdued container and subtle background surface."
     },
@@ -1021,6 +1149,11 @@
         ],
         "hex": "#737373"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Secondary and supporting text and icon ink."
     },
     "accent": {
@@ -1033,10 +1166,20 @@
         ],
         "hex": "#f5f5f5"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Subtle highlight fill for hovered or active items."
     },
     "accent-foreground": {
       "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Text and icon ink on accent surfaces."
     },
     "destructive": {
@@ -1048,6 +1191,11 @@
           27.325
         ],
         "hex": "#e7000b"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
       },
       "$description": "Semantic danger color for destructive actions and errors."
     },
@@ -1061,6 +1209,11 @@
         ],
         "hex": "#e5e5e5"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "Standard hairline border color for containers and controls."
     },
     "input": {
@@ -1072,6 +1225,11 @@
           0
         ],
         "hex": "#e5e5e5"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "Border and stroke color for form fields and control edges."
     },
@@ -1085,6 +1243,11 @@
         ],
         "hex": "#a1a1a1"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "Focus indicator ring stroke color."
     },
     "chart-1": {
@@ -1096,6 +1259,11 @@
           0
         ],
         "hex": "#d4d4d4"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
       },
       "$description": "Primary chart series color."
     },
@@ -1109,6 +1277,11 @@
         ],
         "hex": "#737373"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Second chart series color."
     },
     "chart-3": {
@@ -1120,6 +1293,11 @@
           0
         ],
         "hex": "#525252"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
       },
       "$description": "Third chart series color."
     },
@@ -1133,6 +1311,11 @@
         ],
         "hex": "#404040"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Fourth chart series color."
     },
     "chart-5": {
@@ -1144,6 +1327,11 @@
           0
         ],
         "hex": "#262626"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
       },
       "$description": "Fifth chart series color."
     },
@@ -1157,18 +1345,38 @@
         ],
         "hex": "#fafafa"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Navigation sidebar panel background."
     },
     "sidebar-foreground": {
       "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Primary text and icon ink inside the sidebar."
     },
     "sidebar-primary": {
       "$value": "{color.primary}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Primary action highlight color in the sidebar."
     },
     "sidebar-primary-foreground": {
       "$value": "{color.primary-foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Text and icon ink on sidebar-primary highlights."
     },
     "sidebar-accent": {
@@ -1181,10 +1389,20 @@
         ],
         "hex": "#f5f5f5"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Selected or active row fill in the sidebar."
     },
     "sidebar-accent-foreground": {
       "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Text and icon ink on active sidebar rows."
     },
     "sidebar-border": {
@@ -1197,10 +1415,20 @@
         ],
         "hex": "#e5e5e5"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "Sidebar divider and toolbar hairline border color."
     },
     "sidebar-ring": {
       "$value": "{color.ring}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "Focus indicator ring color inside the sidebar."
     },
     "inset": {
@@ -1212,6 +1440,11 @@
           0
         ],
         "hex": "#f5f5f5"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
       },
       "$description": "Recessed well surface nested inside a card."
     },
@@ -1225,10 +1458,20 @@
         ],
         "hex": "#f5f5f5"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Raised control surface resting on a card."
     },
     "glass-edge": {
       "$value": "{color.border}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "Hairline border aliased to {color.border} (shadcn draws no separate glass edge)."
     },
     "scrollbar-thumb": {
@@ -1243,6 +1486,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "chrome",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1266,6 +1510,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "chrome",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1287,6 +1532,11 @@
         ],
         "hex": "#ffffff"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Input well surface below card and inset layers."
     },
     "line": {
@@ -1299,10 +1549,20 @@
         ],
         "hex": "#e5e5e5"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
       "$description": "Hairline divider and grid rule inside recessed wells."
     },
     "hover": {
       "$value": "{color.accent}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Pointer hover fill aliased to {color.accent} per shadcn hover:bg-accent."
     },
     "ring-halo": {
@@ -1318,6 +1578,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "chrome",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1339,6 +1600,11 @@
         ],
         "hex": "#a1a1a1"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Low-emphasis text for placeholders, units, and tertiary labels."
     },
     "brand": {
@@ -1351,10 +1617,20 @@
         ],
         "hex": "#171717"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Accent ink for text, icons, and active rules."
     },
     "brand-edge": {
       "$value": "{color.border}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Hairline border aliased to {color.border} (shadcn draws no separate brand edge)."
     },
     "track": {
@@ -1366,6 +1642,11 @@
           0
         ],
         "hex": "#f5f5f5"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
       },
       "$description": "Inactive track background for switches, sliders, and progress bars."
     },
@@ -1379,6 +1660,11 @@
         ],
         "hex": "#ffffff"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "Switch thumb fill in the off state."
     },
     "code": {
@@ -1390,6 +1676,11 @@
           0
         ],
         "hex": "#0a0a0a"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
       },
       "$description": "Monospace code text ink inside recessed wells."
     },
@@ -1403,6 +1694,11 @@
         ],
         "hex": "#737373"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Informational semantic status color mapped onto shadcn's neutral grey ramp."
     },
     "warn": {
@@ -1414,6 +1710,11 @@
           0
         ],
         "hex": "#525252"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
       },
       "$description": "Warning semantic status color mapped onto shadcn's neutral chart ramp."
     },
@@ -1427,10 +1728,20 @@
         ],
         "hex": "#404040"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Positive trend color mapped onto shadcn's neutral ramp."
     },
     "down": {
       "$value": "{color.destructive}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Negative trend and decline semantic color."
     },
     "brand-tint": {
@@ -1446,6 +1757,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "brand",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1459,22 +1771,47 @@
     },
     "on-brand-tint": {
       "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Text and icon ink on brand-tint surfaces."
     },
     "inverse": {
       "$value": "{color.card}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
       "$description": "High-contrast surface for toasts and tooltips."
     },
     "inverse-foreground": {
       "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Primary text ink on inverse surfaces."
     },
     "inverse-muted": {
       "$value": "{color.muted-foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
       "$description": "Secondary text, spinner, and close-icon ink on inverse surfaces."
     },
     "inverse-brand": {
       "$value": "{color.primary-foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
       "$description": "Accent action color on inverse surfaces."
     },
     "info-tint": {
@@ -1490,6 +1827,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "status",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1514,6 +1852,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "status",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1538,6 +1877,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "status",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1562,6 +1902,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "status",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1586,6 +1927,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "role": "status",
           "colorOp": {
             "op": "mix",
             "space": "srgb",
@@ -1607,6 +1949,11 @@
         ],
         "hex": "#262626"
       },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "status"
+        }
+      },
       "$description": "Accent data-visualization and link color mapped onto shadcn's neutral ramp."
     },
     "window-control-off": {
@@ -1618,6 +1965,11 @@
           0
         ],
         "hex": "#a1a1a1"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
       },
       "$description": "Inactive background for macOS traffic-light buttons when unfocused."
     }
