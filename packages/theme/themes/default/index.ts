@@ -8,7 +8,7 @@ import type { AppTheme } from "@shadcn-nsh/theme";
 import semantics from "./semantics.json";
 import theme from "./theme.json";
 
-/** The default look (the citrus accent, the graphite surfaces, the 10-point base radius: 8-point controls, 14-point cards) as a theme:
+/** The default look (the citrus accent, the graphite surfaces, 8-point controls, 12-point containers, 14-point modals) as a theme:
  * what an app built on another one switches back to. */
 export const defaultTheme: AppTheme = {
   id: "default",

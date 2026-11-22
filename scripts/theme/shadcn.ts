@@ -82,8 +82,8 @@ type Appearance = keyof typeof NEUTRAL;
 /** The default theme's key for a control's fill (spelled in two halves: it is not a word here). */
 const CONTROL = "second" + "ary";
 
-/** shadcn's `--radius: 0.625rem` (10 px) and the steps of it the components use. */
-const RADIUS = 0.625 * 16;
+/** shadcn's neutral corner radius roles by layer: 8 px control, 12 px container, 14 px modal. */
+const RADII = { control: 8, container: 12, modal: 14 } as const;
 
 /** Tailwind's `white` (`bg-white`), which shadcn names outright rather than through a token. */
 const WHITE = "oklch(1 0 0)";
@@ -164,7 +164,7 @@ function own(appearance: Appearance) {
 
 /** The theme's own tokens, shared by the appearances (a colour may name one: `var(--primary)`). */
 const themeLevel = (light: ReturnType<typeof palette>): Record<string, string> => ({
-  ...scaledRadii(RADIUS),
+  ...scaledRadii(RADII),
   // The monospaced family: NSH's generic `monospace`, the system's own — neither theme ships a
   // font face. A theme that names one states its family here (the app imports the file).
   "font-mono": "monospace",

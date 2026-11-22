@@ -3,13 +3,9 @@
   "cssVars": {
     "theme": {
       "radius": "4px",
-      "radius-card": "8px",
       "radius-control": "4px",
-      "radius-field": "4px",
-      "radius-chip": "4px",
-      "radius-overlay": "8px",
-      "radius-dialog": "8px",
-      "radius-sheet": "8px",
+      "radius-container": "8px",
+      "radius-modal": "8px",
       "font-mono": "Consolas, monospace",
       "brand-fill": "var(--primary)",
       "on-brand": "var(--primary-foreground)",

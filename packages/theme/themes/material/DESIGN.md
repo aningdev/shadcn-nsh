@@ -210,14 +210,9 @@ typography:
     lineHeight: 1.2222222222222223
     letterSpacing: 0px
 rounded:
-  control: 999px
-  field: 4px
-  chip: 12px
-  card: 12px
-  overlay: 4px
-  dialog: 28px
-  sheet: 28px
-  inset: 8px
+  control: 4px
+  container: 12px
+  modal: 28px
 spacing:
   hit: 44px
   density:
@@ -230,7 +225,6 @@ spacing:
     padding: 8px
     gap: 12px
     control: 18px
-    corner: 2px
     check: 18px
     dot: 10px
     tabs: 48px
@@ -281,47 +275,47 @@ components:
     backgroundColor: "{colors.light.card}"
     textColor: "{colors.light.card-foreground}"
     typography: "{typography.body}"
-    rounded: "{rounded.card}"
+    rounded: "{rounded.container}"
     padding: "{spacing.density.pad}"
   card-inset:
     backgroundColor: "{colors.light.inset}"
     textColor: "{colors.light.foreground}"
-    rounded: "{rounded.inset}"
+    rounded: "{rounded.control}"
     padding: "{spacing.density.surface}"
   input-field:
     backgroundColor: "{colors.light.field}"
     textColor: "{colors.light.foreground}"
     typography: "{typography.label}"
-    rounded: "{rounded.field}"
+    rounded: "{rounded.control}"
     height: "{spacing.height.md}"
     padding: "{spacing.control.padding}"
   badge-chip:
     backgroundColor: "{colors.light.background}"
     textColor: "{colors.light.secondary-foreground}"
     typography: "{typography.caption}"
-    rounded: "{rounded.chip}"
+    rounded: "{rounded.control}"
   menu-popover:
     backgroundColor: "{colors.light.popover}"
     textColor: "{colors.light.popover-foreground}"
     typography: "{typography.body}"
-    rounded: "{rounded.overlay}"
+    rounded: "{rounded.container}"
     padding: "{spacing.control.padding}"
   dialog:
     backgroundColor: "{colors.light.dialog}"
     textColor: "{colors.light.card-foreground}"
     typography: "{typography.body}"
-    rounded: "{rounded.dialog}"
+    rounded: "{rounded.modal}"
     padding: "{spacing.density.pad}"
   tooltip:
     backgroundColor: "{colors.light.inverse}"
     textColor: "{colors.light.inverse-foreground}"
     typography: "{typography.detail}"
-    rounded: "{rounded.overlay}"
+    rounded: "{rounded.container}"
   toast-inverse:
     backgroundColor: "{colors.light.inverse}"
     textColor: "{colors.light.inverse-foreground}"
     typography: "{typography.body}"
-    rounded: "{rounded.overlay}"
+    rounded: "{rounded.container}"
   switch-track:
     backgroundColor: "{colors.light.track}"
     rounded: "{rounded.control}"
@@ -345,7 +339,7 @@ components:
   glass-overlay:
     backgroundColor: "{colors.light.popover}"
     textColor: "{colors.light.popover-foreground}"
-    rounded: "{rounded.overlay}"
+    rounded: "{rounded.container}"
 ---
 
 # Material
@@ -507,20 +501,15 @@ Tonal surface stepping plus Material Web Level 1–3 shadows and `material.andro
 
 ## Shapes
 
-Material 3 Expressive corner scale (999px CornerFull controls, 4px CornerExtraSmall fields/menus, 12px CornerMedium cards/chips, 28px CornerExtraLarge dialogs/sheets; ShapeTokens.kt).
+Material 3 Expressive corner scale (Compose tokens at `ac364f3c`: 4px CornerExtraSmall control, 12px CornerMedium/CornerLarge container, 28px CornerExtraLarge modal; capsule buttons via `shape.corners.button: "full"`).
 
-M3 circular arc corners (ShapeTokens.kt). (`curve: "circular"`).
+M3 circular arc corners (ShapeTokens.kt). (`curve: "circular"`, `corners.button: "full"`).
 
-Semantic corner radius roles referencing base dimension.radius.* tokens.
+Semantic corner radius roles by layer, referencing base dimension.radius.* tokens.
 
-- **`control`** (999px): Corner radius for buttons, select triggers, tabs, and menu items.
-- **`field`** (4px): Corner radius for text inputs and editor wells.
-- **`chip`** (12px): Corner radius for badges and chips.
-- **`card`** (12px): Corner radius for cards and sidebar overlays.
-- **`overlay`** (4px): Corner radius for menus, popovers, and toasts.
-- **`dialog`** (28px): Corner radius for dialogs.
-- **`sheet`** (28px): Corner radius for drawers and bottom sheets.
-- **`inset`** (8px): Corner radius for inset wells, alerts, and skeletons inside cards.
+- **`control`** (4px): Corner radius for in-page elements: buttons, fields, rows, chips, badges, wells, color areas, and kbd.
+- **`container`** (12px): Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames.
+- **`modal`** (28px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
 
 ## Motion & Micro-interaction
 

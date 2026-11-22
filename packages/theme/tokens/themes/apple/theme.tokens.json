@@ -4,10 +4,10 @@
   "$extensions": {
     "dev.aning.shadcn-nsh": {
       "designMd": {
-        "overview": "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, capsule controls, continuous corners, and Liquid Glass on floating and raised surfaces.",
+        "overview": "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, capsule buttons, continuous corners, and Liquid Glass on floating and raised surfaces.",
         "elevation": "Apple Liquid Glass and Retina hairline depth: `glass`, `menu`, and `raised` finishes request `material.apple` (`glass: \"regular\"`) with iOS backdrop fallback (`ios.backdrop`) and 0.5px borders; other surfaces stay flat with subtle shadows.",
         "dos": [
-          "Use `999px` capsule corners on controls and chips alongside concentric `20px` cards, `26px` dialogs, and `34px` sheets with `shape.curve: \"continuous\"`.",
+          "Use `999px` capsule corners on button-like controls (`shape.corners.button: \"full\"`) alongside `8px` controls/fields, `12px` containers, and `26px` modals with `shape.curve: \"continuous\"`.",
           "Respect pointer (macOS: 13px body, 32px density row) vs touch (iOS: 17px body, 44px hit target) metrics.",
           "Keep `material.apple` on `glass`, `menu`, and `raised` finishes and spread `platformMaterial()` on native views."
         ],
@@ -23,62 +23,27 @@
     "$description": "Appearance-invariant base dimensional tokens.",
     "radius": {
       "$type": "dimension",
-      "$description": "Apple HIG concentric corner radius scale (999px capsule controls/chips, 20px card, 26px dialog, 34px sheet).",
-      "base": {
-        "$value": {
-          "value": 8,
-          "unit": "px"
-        },
-        "$description": "Base corner radius shared by insets and general rounded elements."
-      },
-      "card": {
-        "$value": {
-          "value": 20,
-          "unit": "px"
-        },
-        "$description": "Corner radius for cards and sidebar floating containers."
-      },
+      "$description": "Apple HIG corner radius scale (8px control, 12px container, 26px modal; capsule buttons via shape.corners.button).",
       "control": {
         "$value": {
-          "value": 999,
-          "unit": "px"
-        },
-        "$description": "Corner radius for interactive controls such as buttons, triggers, and menu items."
-      },
-      "field": {
-        "$value": {
           "value": 8,
           "unit": "px"
         },
-        "$description": "Corner radius for form input fields and editor wells."
+        "$description": "Corner radius for in-page controls, fields, rows, chips, badges, wells, color areas, and kbd."
       },
-      "chip": {
-        "$value": {
-          "value": 999,
-          "unit": "px"
-        },
-        "$description": "Corner radius for badges, chips, and compact tags."
-      },
-      "overlay": {
+      "container": {
         "$value": {
           "value": 12,
           "unit": "px"
         },
-        "$description": "Corner radius for floating menus, popovers, and toasts."
+        "$description": "Corner radius for cards, menus, popovers, tooltips, list panels, toasts, and frames."
       },
-      "dialog": {
+      "modal": {
         "$value": {
           "value": 26,
           "unit": "px"
         },
-        "$description": "Corner radius for modal dialogs."
-      },
-      "sheet": {
-        "$value": {
-          "value": 34,
-          "unit": "px"
-        },
-        "$description": "Corner radius for drawers and bottom sheets."
+        "$description": "Corner radius for dialogs, sheets, and drawers."
       }
     },
     "stroke": {
@@ -107,6 +72,16 @@
       "mono": {
         "$value": "monospace",
         "$description": "Monospace font family for code blocks and numeric readouts."
+      }
+    }
+  },
+  "shape": {
+    "$description": "Non-dimensional corner curve and button capsule flag.",
+    "$extensions": {
+      "dev.aning.shadcn-nsh": {
+        "corners": {
+          "button": "full"
+        }
       }
     }
   },

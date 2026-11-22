@@ -42,6 +42,7 @@ export const easingNames = [
 export const whitelists: Record<string, readonly (string | number | null)[]> = {
   "typography.*.fontWeight": [400, 500, 600, 700],
   "shape.curve": ["continuous", "circular"],
+  "shape.corners.button": ["radius", "full"],
   "dimension.size.control.*.switch": ["small", "regular"],
   "dimension.focus.style": ["halo", "outline", "double"],
   "transition.enter.timingFunction": easingNames,
@@ -149,17 +150,8 @@ function checkMotionRole(path: string, role: string, value: unknown): string[] {
   return problems;
 }
 
-/** The eight corner roles in `shape` that must reference a `dimension` token in `theme.json`. */
-export const shapeRadiusRoles = [
-  "control",
-  "field",
-  "chip",
-  "card",
-  "overlay",
-  "dialog",
-  "sheet",
-  "inset",
-] as const;
+/** The three corner roles in `dimension.shape` that must reference a `dimension` token in `theme.json`. */
+export const shapeRadiusRoles = ["control", "container", "modal"] as const;
 
 /** Every leaf of a document, by dotted path. A leaf is anything that is not a plain object. */
 export function leaves(value: unknown, prefix = ""): Map<string, unknown> {
@@ -180,24 +172,24 @@ const matches = (pattern: string, path: string) => {
 };
 
 /**
- * Derive the 8 `radius-*` tokens of `theme.json` from a base radius in px, using the 0.8× / 1.4×
- * scale shared by generated themes (shadcn, Solid Glass).
+ * Emit the four `radius*` tokens of `theme.json` from the theme's layer values (`control`,
+ * `container`, `modal`, in px), with the shadcn A-layer `radius` slot matching `control`.
  */
-export function scaledRadii(basePx: number): Record<string, string> {
-  if (!Number.isFinite(basePx) || basePx < 0)
-    throw new Error(`radius must be a non-negative number, got ${basePx}`);
-  const control = `${Math.round(basePx * 0.8)}px`;
-  const card = `${Math.round(basePx * 1.4)}px`;
-  const base = `${basePx}px`;
+export function scaledRadii(radii: {
+  control: number;
+  container: number;
+  modal: number;
+}): Record<string, string> {
+  for (const [role, px] of Object.entries(radii)) {
+    if (!Number.isFinite(px) || px < 0) {
+      throw new Error(`radius.${role} must be a non-negative number, got ${px}`);
+    }
+  }
   return {
-    radius: base,
-    "radius-control": control,
-    "radius-field": control,
-    "radius-chip": base,
-    "radius-card": card,
-    "radius-overlay": base,
-    "radius-dialog": card,
-    "radius-sheet": card,
+    radius: `${radii.control}px`,
+    "radius-control": `${radii.control}px`,
+    "radius-container": `${radii.container}px`,
+    "radius-modal": `${radii.modal}px`,
   };
 }
 

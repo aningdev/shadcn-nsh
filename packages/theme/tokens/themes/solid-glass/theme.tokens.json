@@ -21,62 +21,27 @@
     "$description": "Appearance-invariant base dimensional tokens.",
     "radius": {
       "$type": "dimension",
-      "$description": "Base corner radius scale (14px base, 0.8x control, 1.4x card) referenced by semantic shape roles.",
-      "base": {
-        "$value": {
-          "value": 14,
-          "unit": "px"
-        },
-        "$description": "Base corner radius shared by insets and general rounded elements."
-      },
-      "card": {
-        "$value": {
-          "value": 20,
-          "unit": "px"
-        },
-        "$description": "Corner radius for cards and sidebar floating containers."
-      },
+      "$description": "Solid Glass layered corner radius scale (11px control, 14px container, 20px modal) referenced by semantic shape roles.",
       "control": {
         "$value": {
           "value": 11,
           "unit": "px"
         },
-        "$description": "Corner radius for interactive controls such as buttons, triggers, and menu items."
+        "$description": "Corner radius for in-page controls, fields, rows, chips, badges, wells, color areas, and kbd."
       },
-      "field": {
-        "$value": {
-          "value": 11,
-          "unit": "px"
-        },
-        "$description": "Corner radius for form input fields and editor wells."
-      },
-      "chip": {
+      "container": {
         "$value": {
           "value": 14,
           "unit": "px"
         },
-        "$description": "Corner radius for badges, chips, and compact tags."
+        "$description": "Corner radius for cards, menus, popovers, tooltips, list panels, toasts, and frames."
       },
-      "overlay": {
-        "$value": {
-          "value": 14,
-          "unit": "px"
-        },
-        "$description": "Corner radius for floating menus, popovers, and toasts."
-      },
-      "dialog": {
+      "modal": {
         "$value": {
           "value": 20,
           "unit": "px"
         },
-        "$description": "Corner radius for modal dialogs."
-      },
-      "sheet": {
-        "$value": {
-          "value": 20,
-          "unit": "px"
-        },
-        "$description": "Corner radius for drawers and bottom sheets."
+        "$description": "Corner radius for dialogs, sheets, and drawers."
       }
     }
   },

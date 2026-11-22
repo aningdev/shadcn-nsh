@@ -111,12 +111,6 @@
             "unit": "px"
           }
         },
-        "corner": {
-          "$value": {
-            "value": 4,
-            "unit": "px"
-          }
-        },
         "dot": {
           "$value": {
             "value": 12,

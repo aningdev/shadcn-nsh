@@ -64,7 +64,7 @@ export function specRowsRaw(text: string): string[][] {
   return table.slice(1);
 }
 
-/** The names a cell writes in backticks, in order: `` `radius` / `radius-card` `` names two. */
+/** The names a cell writes in backticks, in order: `` `radius` / `radius-control` `` names two. */
 const names = (cell: string): string[] => [...cell.matchAll(/`([a-zA-Z0-9-]+)`/g)].map((m) => m[1]);
 
 /** The names a block writes in backticks, in order and once each. */

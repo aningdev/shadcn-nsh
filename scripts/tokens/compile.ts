@@ -84,6 +84,13 @@ export function compileThemeJson(resolverPath: string): {
   const dimRadius = (sharedTree.dimension as Record<string, unknown> | undefined)?.radius as
     | Record<string, Record<string, unknown>>
     | undefined;
+  const controlTok = dimRadius?.control;
+  if (!controlTok) {
+    throw new Error(`Missing required dimension.radius.control in ${resolverPath}`);
+  }
+  const controlDim = controlTok.$value as { value: number; unit: string };
+  // A-layer `radius` stays as a shadcn base slot aliased to `control` (NSH's `theme.rs` parses CSS lengths).
+  cssTheme.radius = `${controlDim.value}${controlDim.unit}`;
   for (const { cssVar, dtcg } of RADIUS_KEYS) {
     const tok = dimRadius?.[dtcg];
     if (!tok) {
@@ -364,7 +371,7 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
     const ref = shapeGroup[role]!.$value as string;
     const m = /^\{dimension\.radius\.([a-z0-9-]+)\}$/.exec(ref);
     if (!m) throw new Error(`Expected {dimension.radius.*} in dimension.shape.${role}, got ${ref}`);
-    dimShapeOut[role] = m[1] === "base" ? "{radius}" : `{radius-${m[1]}}`;
+    dimShapeOut[role] = `{radius-${m[1]}}`;
   }
   const shapeExt = getExt(lp.shape)!;
 
@@ -515,6 +522,7 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
     },
     shape: {
       curve: shapeExt.curve,
+      corners: shapeExt.corners,
     },
     state: {
       "press-scale": (stateGroup["press-scale"] as Record<string, unknown>).$value as number,

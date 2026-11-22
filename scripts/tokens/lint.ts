@@ -231,13 +231,31 @@ function validateExtAtPath(
   const where = `${label}: ${p}.$extensions["${EXT_NS}"]`;
 
   if (p === "shape") {
-    checkUnknownKeys(where, ext, ["curve"], problems);
+    checkUnknownKeys(where, ext, ["curve", "corners"], problems);
     if ("curve" in ext) {
       if (!whitelists["shape.curve"]!.includes(ext.curve as string)) {
         problems.push(`${where}.curve: ${JSON.stringify(ext.curve)} is not in whitelist`);
       }
     } else if (mode === "merged") {
       problems.push(`${where}.curve is missing`);
+    }
+    if ("corners" in ext) {
+      if (!isRecord(ext.corners)) {
+        problems.push(`${where}.corners must be an object`);
+      } else {
+        checkUnknownKeys(`${where}.corners`, ext.corners, ["button"], problems);
+        if ("button" in ext.corners) {
+          if (!whitelists["shape.corners.button"]!.includes(ext.corners.button as string)) {
+            problems.push(
+              `${where}.corners.button: ${JSON.stringify(ext.corners.button)} is not in whitelist`,
+            );
+          }
+        } else if (mode === "merged") {
+          problems.push(`${where}.corners.button is missing`);
+        }
+      }
+    } else if (mode === "merged") {
+      problems.push(`${where}.corners is missing`);
     }
     return;
   }
@@ -628,11 +646,17 @@ function checkMergedSemantics(
     }
   }
 
-  // Radius tokens (all 8 base radii must exist and be non-negative dimensions)
+  // Radius tokens (only control, container, and modal must exist and be non-negative dimensions)
+  const expectedRadiusKeys = new Set<string>(RADIUS_KEYS.map(({ dtcg }) => dtcg));
   const dimRadius = getAtPath(resolved, "dimension.radius");
   if (!isRecord(dimRadius)) {
     problems.push(`${label}: dimension.radius is missing`);
   } else {
+    for (const k of Object.keys(dimRadius)) {
+      if (!k.startsWith("$") && !expectedRadiusKeys.has(k)) {
+        problems.push(`${label}: dimension.radius has unexpected key "${k}"`);
+      }
+    }
     for (const { dtcg } of RADIUS_KEYS) {
       const tok = dimRadius[dtcg];
       if (!isTokenNode(tok) || !isRecord(tok.$value)) {
@@ -648,9 +672,15 @@ function checkMergedSemantics(
     }
   }
 
-  // Shape references (all 8 shape roles must exist and reference dimension tokens)
+  // Shape references (only control, container, and modal must exist and reference dimension tokens)
+  const expectedShapeRoles = new Set<string>(shapeRadiusRoles);
   const dimShape = getAtPath(merged, "dimension.shape");
   if (isRecord(dimShape)) {
+    for (const k of Object.keys(dimShape)) {
+      if (!k.startsWith("$") && !expectedShapeRoles.has(k)) {
+        problems.push(`${label}: dimension.shape has unexpected key "${k}"`);
+      }
+    }
     for (const role of shapeRadiusRoles) {
       const tok = dimShape[role];
       if (!isTokenNode(tok)) {
@@ -823,7 +853,7 @@ function checkMergedSemantics(
       colorKinds.set(k.slice("color.".length), "color");
     } else if (k.startsWith("dimension.radius.") && t === "dimension") {
       const sub = k.slice("dimension.radius.".length);
-      colorKinds.set(sub === "base" ? "radius" : `radius-${sub}`, "dimension");
+      colorKinds.set(`radius-${sub}`, "dimension");
     }
   }
   const finishGroup = merged.finish;

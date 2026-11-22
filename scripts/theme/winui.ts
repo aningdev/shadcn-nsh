@@ -584,20 +584,16 @@ const surface = (
 });
 
 /**
- * Shared theme-level tokens (`cssVars.theme`) for WinUI 3: `ControlCornerRadius` (4 px) for
- * controls/fields/chips/in-page insets, `OverlayCornerRadius` (8 px) for cards/overlays/dialogs/sheets,
- * Segoe UI Variable + Consolas fonts, and WinUI 3 colour tokens from `winuiRoles`.
+ * Shared theme-level tokens (`cssVars.theme`) for WinUI 3: `ControlCornerRadius` 4 (controls and
+ * in-page elements) and `OverlayCornerRadius` 8 (containers and modals), Segoe UI Variable +
+ * Consolas fonts, and WinUI 3 colour tokens from `winuiRoles`.
  */
 function themeLevel(roles: WinuiRoles): Record<string, string> {
   return {
     radius: "4px",
-    "radius-card": "8px",
     "radius-control": "4px",
-    "radius-field": "4px",
-    "radius-chip": "4px",
-    "radius-overlay": "8px",
-    "radius-dialog": "8px",
-    "radius-sheet": "8px",
+    "radius-container": "8px",
+    "radius-modal": "8px",
     "font-mono": "Consolas, monospace",
     ...roles.theme,
     "font-sans": "Segoe UI Variable, Segoe UI, sans-serif",
@@ -789,13 +785,8 @@ export const winuiStyle = {
   dimension: {
     shape: {
       control: "{radius-control}",
-      field: "{radius-field}",
-      chip: "{radius-chip}",
-      card: "{radius-card}",
-      overlay: "{radius-overlay}",
-      dialog: "{radius-dialog}",
-      sheet: "{radius-sheet}",
-      inset: "{radius}",
+      container: "{radius-container}",
+      modal: "{radius-modal}",
     },
     size: {
       hit: { pointer: 0, touch: 40 },
@@ -810,7 +801,6 @@ export const winuiStyle = {
           padding: 6,
           gap: 8,
           control: 20,
-          corner: 4,
           check: 12,
           dot: 12,
           tabs: 32,
@@ -823,7 +813,6 @@ export const winuiStyle = {
           padding: 8,
           gap: 8,
           control: 20,
-          corner: 4,
           check: 12,
           dot: 12,
           tabs: 40,
@@ -843,6 +832,9 @@ export const winuiStyle = {
   },
   shape: {
     curve: "circular",
+    corners: {
+      button: "radius" as const,
+    },
   },
   state: {
     "press-scale": 1,
@@ -988,7 +980,7 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
     touchDescription:
       "WinUI 3 touch input-tier overrides (40px hit target and controls, 16/20/24px icons).",
     radiusGroupDescription:
-      "WinUI 3 corner radius scale: ControlCornerRadius 4px (controls/fields/chips/insets) and OverlayCornerRadius 8px (cards/overlays/dialogs/sheets).",
+      "WinUI 3 corner radius scale: ControlCornerRadius 4px (control) and OverlayCornerRadius 8px (container and modal).",
     style: winuiStyle,
     designMd: {
       overview:
@@ -996,7 +988,7 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
       elevation:
         "WinUI 3 ThemeShadow depths (2/8/16/32/128) paired with composited `ControlStrokeColorDefault` / `SurfaceStrokeColorDefault` borders and `material.windows` blur on `glass`, `menu`, and `tooltip` (`AcrylicInAppFillColorDefault` 0.85 light / 0.96 dark).",
       dos: [
-        'Use `4px` `ControlCornerRadius` for controls/fields/chips/insets and `8px` `OverlayCornerRadius` for cards/overlays/dialogs/sheets with `shape.curve: "circular"`.',
+        'Use `4px` `ControlCornerRadius` for `control` and `8px` `OverlayCornerRadius` for `container` and `modal` with `shape.curve: "circular"`.',
         'Use `focus.style: "double"` (2px outer `FocusStrokeColorOuter` + 1px inner `FocusStrokeColorInner`) and WinUI timing motion (`decelerate` / `point-to-point`).',
         'Use `controls: "winui"` (underlined tabs/fields and leading navigation bar indicators) with `Segoe UI Variable` (`{font.family.sans}`).',
       ],

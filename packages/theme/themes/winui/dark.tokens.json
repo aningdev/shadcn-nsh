@@ -18,7 +18,7 @@
         "overview": "WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composited over `SolidBackgroundFillColorBase` (`#F3F3F3` light / `#202020` dark) with `#0078D4` accent, `Segoe UI Variable` + `Consolas`, double focus strokes, and deterministic timing curves.",
         "elevation": "WinUI 3 ThemeShadow depths (2/8/16/32/128) paired with composited `ControlStrokeColorDefault` / `SurfaceStrokeColorDefault` borders and `material.windows` blur on `glass`, `menu`, and `tooltip` (`AcrylicInAppFillColorDefault` 0.85 light / 0.96 dark).",
         "dos": [
-          "Use `4px` `ControlCornerRadius` for controls/fields/chips/insets and `8px` `OverlayCornerRadius` for cards/overlays/dialogs/sheets with `shape.curve: \"circular\"`.",
+          "Use `4px` `ControlCornerRadius` for `control` and `8px` `OverlayCornerRadius` for `container` and `modal` with `shape.curve: \"circular\"`.",
           "Use `focus.style: \"double\"` (2px outer `FocusStrokeColorOuter` + 1px inner `FocusStrokeColorInner`) and WinUI timing motion (`decelerate` / `point-to-point`).",
           "Use `controls: \"winui\"` (underlined tabs/fields and leading navigation bar indicators) with `Segoe UI Variable` (`{font.family.sans}`)."
         ],
@@ -233,38 +233,18 @@
     "$description": "Desktop pointer layout density, control geometry, and icon sizes.",
     "shape": {
       "$type": "dimension",
-      "$description": "Semantic corner radius roles referencing base dimension.radius.* tokens.",
+      "$description": "Semantic corner radius roles by layer, referencing base dimension.radius.* tokens.",
       "control": {
         "$value": "{dimension.radius.control}",
-        "$description": "Corner radius for buttons, select triggers, tabs, and menu items."
+        "$description": "Corner radius for in-page elements: buttons, fields, rows, chips, badges, wells, color areas, and kbd."
       },
-      "field": {
-        "$value": "{dimension.radius.field}",
-        "$description": "Corner radius for text inputs and editor wells."
+      "container": {
+        "$value": "{dimension.radius.container}",
+        "$description": "Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames."
       },
-      "chip": {
-        "$value": "{dimension.radius.chip}",
-        "$description": "Corner radius for badges and chips."
-      },
-      "card": {
-        "$value": "{dimension.radius.card}",
-        "$description": "Corner radius for cards and sidebar overlays."
-      },
-      "overlay": {
-        "$value": "{dimension.radius.overlay}",
-        "$description": "Corner radius for menus, popovers, and toasts."
-      },
-      "dialog": {
-        "$value": "{dimension.radius.dialog}",
-        "$description": "Corner radius for dialogs."
-      },
-      "sheet": {
-        "$value": "{dimension.radius.sheet}",
-        "$description": "Corner radius for drawers and bottom sheets."
-      },
-      "inset": {
-        "$value": "{dimension.radius.base}",
-        "$description": "Corner radius for inset wells, alerts, and skeletons inside cards."
+      "modal": {
+        "$value": "{dimension.radius.modal}",
+        "$description": "Corner radius for modal surfaces: dialogs, sheets, and drawers."
       }
     },
     "stroke": {
@@ -315,62 +295,27 @@
     },
     "radius": {
       "$type": "dimension",
-      "$description": "WinUI 3 corner radius scale: ControlCornerRadius 4px (controls/fields/chips/insets) and OverlayCornerRadius 8px (cards/overlays/dialogs/sheets).",
-      "base": {
-        "$value": {
-          "value": 4,
-          "unit": "px"
-        },
-        "$description": "Base corner radius shared by insets and general rounded elements."
-      },
-      "card": {
-        "$value": {
-          "value": 8,
-          "unit": "px"
-        },
-        "$description": "Corner radius for cards and sidebar floating containers."
-      },
+      "$description": "WinUI 3 corner radius scale: ControlCornerRadius 4px (control) and OverlayCornerRadius 8px (container and modal).",
       "control": {
         "$value": {
           "value": 4,
           "unit": "px"
         },
-        "$description": "Corner radius for interactive controls such as buttons, triggers, and menu items."
+        "$description": "Corner radius for in-page controls, fields, rows, chips, badges, wells, color areas, and kbd."
       },
-      "field": {
-        "$value": {
-          "value": 4,
-          "unit": "px"
-        },
-        "$description": "Corner radius for form input fields and editor wells."
-      },
-      "chip": {
-        "$value": {
-          "value": 4,
-          "unit": "px"
-        },
-        "$description": "Corner radius for badges, chips, and compact tags."
-      },
-      "overlay": {
+      "container": {
         "$value": {
           "value": 8,
           "unit": "px"
         },
-        "$description": "Corner radius for floating menus, popovers, and toasts."
+        "$description": "Corner radius for cards, menus, popovers, tooltips, list panels, toasts, and frames."
       },
-      "dialog": {
+      "modal": {
         "$value": {
           "value": 8,
           "unit": "px"
         },
-        "$description": "Corner radius for modal dialogs."
-      },
-      "sheet": {
-        "$value": {
-          "value": 8,
-          "unit": "px"
-        },
-        "$description": "Corner radius for drawers and bottom sheets."
+        "$description": "Corner radius for dialogs, sheets, and drawers."
       }
     },
     "size": {
@@ -437,12 +382,6 @@
         "control": {
           "$value": {
             "value": 20,
-            "unit": "px"
-          }
-        },
-        "corner": {
-          "$value": {
-            "value": 4,
             "unit": "px"
           }
         },
@@ -525,7 +464,10 @@
     "$description": "Circular corner curve (WinUI 3 has no continuous squircle curve; geometry.md).",
     "$extensions": {
       "dev.aning.shadcn-nsh": {
-        "curve": "circular"
+        "curve": "circular",
+        "corners": {
+          "button": "radius"
+        }
       }
     }
   },

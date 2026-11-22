@@ -56,13 +56,8 @@ export interface ThemeStyleInput {
   dimension: {
     shape: {
       control: string;
-      field: string;
-      chip: string;
-      card: string;
-      overlay: string;
-      dialog: string;
-      sheet: string;
-      inset: string;
+      container: string;
+      modal: string;
     };
     size: {
       hit: { pointer: number; touch: number };
@@ -88,6 +83,9 @@ export interface ThemeStyleInput {
   };
   shape: {
     curve: string;
+    corners: {
+      button: "full" | "radius";
+    };
   };
   state: {
     "press-scale": number;
@@ -736,8 +734,12 @@ function encodeSharedStyleOverrides(
   // 3. shape ($extensions)
   const baseShape = getAt(baseShared, "shape");
   const baseShapeExt = getExtNs(baseShape);
+  const baseCorners = (baseShapeExt.corners as Record<string, unknown> | undefined) ?? {};
   const shapeExtOut: Record<string, unknown> = {};
   if (style.shape.curve !== baseShapeExt.curve) shapeExtOut.curve = style.shape.curve;
+  if (style.shape.corners.button !== baseCorners.button) {
+    shapeExtOut.corners = { button: style.shape.corners.button };
+  }
   const shape =
     Object.keys(shapeExtOut).length > 0
       ? {

@@ -93,12 +93,12 @@ describe("checkStyle", () => {
 
   test("rejects literal numbers or wrong-kind tokens on shape radii", () => {
     const file = copy();
-    file.dimension.shape.card = 16;
+    file.dimension.shape.container = 16;
     file.dimension.shape.control = "{primary}";
-    file.dimension.shape.inset = "{radius-missing}";
+    file.dimension.shape.modal = "{radius-missing}";
     const problems = check(file);
     expect(problems).toHaveLength(3);
-    expect(problems.join("\n")).toContain("dimension.shape.card");
+    expect(problems.join("\n")).toContain("dimension.shape.container");
     expect(problems.join("\n")).toContain("not a dimension");
     expect(problems.join("\n")).toContain("radius-missing");
   });
@@ -116,7 +116,7 @@ describe("checkStyle", () => {
     expect(check(literal, withSans)[0]).toContain("typography.fontFamily");
 
     const wrongKind = copy();
-    wrongKind.typography.fontFamily = "{radius-card}";
+    wrongKind.typography.fontFamily = "{radius-container}";
     expect(check(wrongKind, withSans)[0]).toContain("not a fontFamily");
 
     const unknown = copy();
@@ -161,27 +161,23 @@ describe("checkStyle", () => {
     );
     expect(check(file)).toEqual([]);
     expect((file.state as Record<string, unknown>)["press-scale"]).toBe(1);
-    expect(((file.dimension as Record<string, any>).shape as Record<string, unknown>).dialog).toBe(
-      "{radius-dialog}",
+    expect(((file.dimension as Record<string, any>).shape as Record<string, unknown>).modal).toBe(
+      "{radius-modal}",
     );
   });
 });
 
 describe("scaledRadii", () => {
-  test("derives the 0.8x / 1.4x scale from a base radius", () => {
-    expect(scaledRadii(10)).toEqual({
-      radius: "10px",
+  test("emits the four radius tokens for control, container, modal, and A-layer radius", () => {
+    expect(scaledRadii({ control: 8, container: 12, modal: 14 })).toEqual({
+      radius: "8px",
       "radius-control": "8px",
-      "radius-field": "8px",
-      "radius-chip": "10px",
-      "radius-card": "14px",
-      "radius-overlay": "10px",
-      "radius-dialog": "14px",
-      "radius-sheet": "14px",
+      "radius-container": "12px",
+      "radius-modal": "14px",
     });
   });
 
   test("refuses a negative radius", () => {
-    expect(() => scaledRadii(-1)).toThrow();
+    expect(() => scaledRadii({ control: -1, container: 12, modal: 14 })).toThrow();
   });
 });

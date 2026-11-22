@@ -10,7 +10,7 @@ import type { TokenKind } from "./tokens";
 const known = new Map<string, TokenKind>([
   ["card", "color"],
   ["border", "color"],
-  ["radius-card", "dimension"],
+  ["radius-container", "dimension"],
   ["font-mono", "fontFamily"],
 ]);
 const pending = new Set(["default light oklch(0.5 0 0)", "default light oklch(0.4 0 0)"]);
@@ -33,8 +33,8 @@ describe("a finish's colour field", () => {
     expect(judge("oklch(from {glass-edge} l c h / 0.5)").problems).toEqual([
       { kind: "unknown-token", name: "glass-edge" },
     ]);
-    expect(judge("oklch(from {radius-card} l c h / 0.5)").problems).toEqual([
-      { kind: "wrong-kind", name: "radius-card", expected: "color", actual: "dimension" },
+    expect(judge("oklch(from {radius-container} l c h / 0.5)").problems).toEqual([
+      { kind: "wrong-kind", name: "radius-container", expected: "color", actual: "dimension" },
     ]);
   });
 
@@ -48,8 +48,8 @@ describe("a finish's colour field", () => {
   });
 
   test("a `{token}` of the wrong DTCG $type is rejected", () => {
-    expect(judge("{radius-card}").problems).toEqual([
-      { kind: "wrong-kind", name: "radius-card", expected: "color", actual: "dimension" },
+    expect(judge("{radius-container}").problems).toEqual([
+      { kind: "wrong-kind", name: "radius-container", expected: "color", actual: "dimension" },
     ]);
     expect(judge("linear-gradient(180deg, {font-mono} 0%, {card} 100%)").problems).toEqual([
       { kind: "wrong-kind", name: "font-mono", expected: "color", actual: "fontFamily" },

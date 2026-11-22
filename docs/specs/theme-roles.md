@@ -85,18 +85,18 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 <!-- theme-lint: tokens-c -->
 
-| 键                                                                                                                                 | 值                                                                  | 用途                                                                                |
-| ---------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| `radius` / `radius-card` / `radius-control` / `radius-field` / `radius-chip` / `radius-overlay` / `radius-dialog` / `radius-sheet` | `10px` / `14px` / `8px` / `8px` / `10px` / `10px` / `14px` / `14px` | 全部 8 个角色圆角；`semantics.json` 的 `dimension.shape.*` 以 `{radius-…}` 引用它们 |
-| `font-mono`                                                                                                                        | `monospace`                                                         | 等宽字：`font-mono` 类、`Text` 里的代码、`theme.ts` 的 `mono()`                     |
-| `brand-fill`                                                                                                                       | 强调色的填充                                                        | `calendar` 的选中日                                                                 |
-| `on-brand`                                                                                                                         | `brand-fill` 上的字                                                 | 同上                                                                                |
-| `scrim`                                                                                                                            | 遮罩                                                                | `lib/popup`、`dock-area`                                                            |
-| `media`                                                                                                                            | 照片与影片的底                                                      | `theme.ts` 的 `colors.media`、`image-viewer` 的 ground；不随外观或主题翻转          |
-| `on-media`                                                                                                                         | 照片上的白字                                                        | `theme.ts` 的 `colors.onMedia`；不随外观翻转                                        |
-| `chart-foreground`                                                                                                                 | 浅色图块上的深字                                                    | `theme.ts` 的 `colors.chartForeground`；深色块用 `on-media`                         |
-| `window-close` / `window-minimize` / `window-zoom`                                                                                 | 三颗窗口按钮各自的色                                                | `theme.ts` 的窗口按钮映射                                                           |
-| `window-control-ink` / `window-control-edge`                                                                                       | 窗口按钮的字与边                                                    | 同上                                                                                |
+| 键                                                                | 值                              | 用途                                                                                                        |
+| ----------------------------------------------------------------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------- |
+| `radius` / `radius-control` / `radius-container` / `radius-modal` | `8px` / `8px` / `12px` / `14px` | A 层 `radius` 槽与按层划分的 3 个圆角角色；`semantics.json` 的 `dimension.shape.*` 以 `{radius-…}` 引用它们 |
+| `font-mono`                                                       | `monospace`                     | 等宽字：`font-mono` 类、`Text` 里的代码、`theme.ts` 的 `mono()`                                             |
+| `brand-fill`                                                      | 强调色的填充                    | `calendar` 的选中日                                                                                         |
+| `on-brand`                                                        | `brand-fill` 上的字             | 同上                                                                                                        |
+| `scrim`                                                           | 遮罩                            | `lib/popup`、`dock-area`                                                                                    |
+| `media`                                                           | 照片与影片的底                  | `theme.ts` 的 `colors.media`、`image-viewer` 的 ground；不随外观或主题翻转                                  |
+| `on-media`                                                        | 照片上的白字                    | `theme.ts` 的 `colors.onMedia`；不随外观翻转                                                                |
+| `chart-foreground`                                                | 浅色图块上的深字                | `theme.ts` 的 `colors.chartForeground`；深色块用 `on-media`                                                 |
+| `window-close` / `window-minimize` / `window-zoom`                | 三颗窗口按钮各自的色            | `theme.ts` 的窗口按钮映射                                                                                   |
+| `window-control-ink` / `window-control-edge`                      | 窗口按钮的字与边                | 同上                                                                                                        |
 
 <!-- /theme-lint: tokens-c -->
 

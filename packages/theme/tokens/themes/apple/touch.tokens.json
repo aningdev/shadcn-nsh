@@ -70,12 +70,6 @@
       },
       "control": {
         "$description": "Control internal geometry and switch size tier.",
-        "corner": {
-          "$value": {
-            "value": 11,
-            "unit": "px"
-          }
-        },
         "tabs": {
           "$value": {
             "value": 36,

@@ -202,7 +202,7 @@ export function compileDesignMd(resolverPath: string): string {
     };
   }
 
-  // Rounded (8 semantic shape roles from resolved pointer tier)
+  // Rounded (semantic shape roles from resolved pointer tier)
   const dimResolved = (lightResolved.dimension ?? {}) as Record<string, unknown>;
   const shapeDimResolved = (dimResolved.shape ?? {}) as Record<string, Record<string, unknown>>;
   const roundedYaml: Record<string, string> = {};
@@ -355,7 +355,7 @@ export function compileDesignMd(resolverPath: string): string {
         : {}),
       textColor: colorRefOf("card-foreground"),
       typography: "{typography.body}",
-      rounded: "{rounded.card}",
+      rounded: "{rounded.container}",
       padding: "{spacing.density.pad}",
     },
     "card-inset": {
@@ -363,7 +363,7 @@ export function compileDesignMd(resolverPath: string): string {
         ? { backgroundColor: resolveFinishBg("inset", "inset")! }
         : {}),
       textColor: colorRefOf("foreground"),
-      rounded: "{rounded.inset}",
+      rounded: "{rounded.control}",
       padding: "{spacing.density.surface}",
     },
     "input-field": {
@@ -372,7 +372,7 @@ export function compileDesignMd(resolverPath: string): string {
         : {}),
       textColor: colorRefOf("foreground"),
       typography: "{typography.label}",
-      rounded: "{rounded.field}",
+      rounded: "{rounded.control}",
       height: "{spacing.height.md}",
       padding: "{spacing.control.padding}",
     },
@@ -382,7 +382,7 @@ export function compileDesignMd(resolverPath: string): string {
         : {}),
       textColor: colorRefOf("secondary-foreground"),
       typography: "{typography.caption}",
-      rounded: "{rounded.chip}",
+      rounded: "{rounded.control}",
     },
     "menu-popover": {
       ...(resolveFinishBg("menu", "popover")
@@ -390,7 +390,7 @@ export function compileDesignMd(resolverPath: string): string {
         : {}),
       textColor: colorRefOf("popover-foreground"),
       typography: "{typography.body}",
-      rounded: "{rounded.overlay}",
+      rounded: "{rounded.container}",
       padding: "{spacing.control.padding}",
     },
     dialog: {
@@ -399,7 +399,7 @@ export function compileDesignMd(resolverPath: string): string {
         : {}),
       textColor: colorRefOf("card-foreground"),
       typography: "{typography.body}",
-      rounded: "{rounded.dialog}",
+      rounded: "{rounded.modal}",
       padding: "{spacing.density.pad}",
     },
     tooltip: {
@@ -408,7 +408,7 @@ export function compileDesignMd(resolverPath: string): string {
         : {}),
       textColor: colorRefOf("inverse-foreground"),
       typography: "{typography.detail}",
-      rounded: "{rounded.overlay}",
+      rounded: "{rounded.container}",
     },
     "toast-inverse": {
       ...(resolveFinishBg("inverse", "inverse")
@@ -416,7 +416,7 @@ export function compileDesignMd(resolverPath: string): string {
         : {}),
       textColor: colorRefOf("inverse-foreground"),
       typography: "{typography.body}",
-      rounded: "{rounded.overlay}",
+      rounded: "{rounded.container}",
     },
     "switch-track": {
       ...(resolveFinishBg("track", "track")
@@ -460,7 +460,7 @@ export function compileDesignMd(resolverPath: string): string {
         ? { backgroundColor: resolveFinishBg("glass", "popover")! }
         : {}),
       textColor: colorRefOf("popover-foreground"),
-      rounded: "{rounded.overlay}",
+      rounded: "{rounded.container}",
     },
   };
 
@@ -687,7 +687,10 @@ export function compileDesignMd(resolverPath: string): string {
   if (radiusGroupDesc) lines.push(radiusGroupDesc);
   if (shapeExtDesc) {
     if (radiusGroupDesc) lines.push("");
-    lines.push(`${shapeExtDesc} (\`curve: "${String(shapeExt.curve)}"\`).`);
+    const corners = (shapeExt.corners ?? {}) as Record<string, unknown>;
+    lines.push(
+      `${shapeExtDesc} (\`curve: "${String(shapeExt.curve)}"\`, \`corners.button: "${String(corners.button)}"\`).`,
+    );
   }
   if (shapeDimDesc) {
     lines.push("");
@@ -695,8 +698,7 @@ export function compileDesignMd(resolverPath: string): string {
   }
   lines.push("");
   for (const role of SHAPE_ROLES) {
-    const radKey = role === "inset" ? "base" : role;
-    const desc = getDesc(shapeDimGroup[role]) ?? getDesc(radiusGroup[radKey]) ?? "";
+    const desc = getDesc(shapeDimGroup[role]) ?? getDesc(radiusGroup[role]) ?? "";
     lines.push(`- **\`${role}\`** (${roundedYaml[role]}): ${desc}`);
   }
   lines.push("");

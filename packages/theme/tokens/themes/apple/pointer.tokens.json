@@ -87,12 +87,6 @@
             "unit": "px"
           }
         },
-        "corner": {
-          "$value": {
-            "value": 4,
-            "unit": "px"
-          }
-        },
         "tabs": {
           "$value": {
             "value": 28,

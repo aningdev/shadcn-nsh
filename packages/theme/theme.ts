@@ -182,7 +182,6 @@ export interface ControlSizes {
   padding: number;
   gap: number;
   control: number;
-  corner: number;
   check: number;
   dot: number;
   tabs: number;
@@ -248,13 +247,8 @@ export interface Style {
   dimension: {
     shape: {
       control: string;
-      field: string;
-      chip: string;
-      card: string;
-      overlay: string;
-      dialog: string;
-      sheet: string;
-      inset: string;
+      container: string;
+      modal: string;
     };
     size: {
       hit: Tiered<number>;
@@ -268,6 +262,9 @@ export interface Style {
   };
   shape: {
     curve: string;
+    corners: {
+      button: "full" | "radius";
+    };
   };
   state: {
     "press-scale": number;
@@ -894,37 +891,28 @@ export const font = {
   letterSpacing: (role: TypeName) => style().typography[role].letterSpacing,
 };
 
+/** Radius used by `shape.button` when `shape.corners.button === "full"` (capsule-shaped buttons). */
+const CAPSULE_RADIUS = 999;
+
 /**
- * The corner radii by role (`semantics.json`'s `dimension.shape`), resolved from `theme.json`'s `radius-*`
- * tokens via `token()`: what the component is picks the role (`control` a button, `field` an input,
- * `chip` a badge, `card` a card, `overlay` a menu or a popup, `dialog`, `sheet`, `inset` a well
- * inside a card). Reactive: reading one in JSX, a `draw` or an effect follows `selectTheme` and
- * host token overrides.
+ * The corner radii by layer (`semantics.json`'s `dimension.shape`), resolved from `theme.json`'s
+ * `radius-*` tokens via `token()`: `control` (in-page elements), `container` (cards, menus,
+ * popovers, tooltips, list panels, toasts, frames), `modal` (dialogs, sheets, drawers), and
+ * `button` (`CAPSULE_RADIUS` when `shape.corners.button === "full"`, else `control`). Reactive:
+ * reading one in JSX, a `draw` or an effect follows `selectTheme` and host token overrides.
  */
 export const shape = {
   get control() {
     return resolveDimension(style().dimension.shape.control);
   },
-  get field() {
-    return resolveDimension(style().dimension.shape.field);
+  get container() {
+    return resolveDimension(style().dimension.shape.container);
   },
-  get chip() {
-    return resolveDimension(style().dimension.shape.chip);
+  get modal() {
+    return resolveDimension(style().dimension.shape.modal);
   },
-  get card() {
-    return resolveDimension(style().dimension.shape.card);
-  },
-  get overlay() {
-    return resolveDimension(style().dimension.shape.overlay);
-  },
-  get dialog() {
-    return resolveDimension(style().dimension.shape.dialog);
-  },
-  get sheet() {
-    return resolveDimension(style().dimension.shape.sheet);
-  },
-  get inset() {
-    return resolveDimension(style().dimension.shape.inset);
+  get button() {
+    return style().shape.corners.button === "full" ? CAPSULE_RADIUS : shape.control;
   },
 };
 

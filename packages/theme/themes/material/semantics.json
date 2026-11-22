@@ -89,13 +89,8 @@
   "dimension": {
     "shape": {
       "control": "{radius-control}",
-      "field": "{radius-field}",
-      "chip": "{radius-chip}",
-      "card": "{radius-card}",
-      "overlay": "{radius-overlay}",
-      "dialog": "{radius-dialog}",
-      "sheet": "{radius-sheet}",
-      "inset": "{radius}"
+      "container": "{radius-container}",
+      "modal": "{radius-modal}"
     },
     "size": {
       "hit": {
@@ -122,7 +117,6 @@
           "padding": 8,
           "gap": 12,
           "control": 18,
-          "corner": 2,
           "check": 18,
           "dot": 10,
           "tabs": 48,
@@ -135,7 +129,6 @@
           "padding": 10,
           "gap": 12,
           "control": 18,
-          "corner": 2,
           "check": 18,
           "dot": 10,
           "tabs": 48,
@@ -181,7 +174,10 @@
     }
   },
   "shape": {
-    "curve": "circular"
+    "curve": "circular",
+    "corners": {
+      "button": "full"
+    }
   },
   "state": {
     "press-scale": 1,

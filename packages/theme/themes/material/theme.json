@@ -2,14 +2,10 @@
   "name": "Material",
   "cssVars": {
     "theme": {
-      "radius": "8px",
-      "radius-card": "12px",
-      "radius-control": "999px",
-      "radius-field": "4px",
-      "radius-chip": "12px",
-      "radius-overlay": "4px",
-      "radius-dialog": "28px",
-      "radius-sheet": "28px",
+      "radius": "4px",
+      "radius-control": "4px",
+      "radius-container": "12px",
+      "radius-modal": "28px",
       "font-mono": "monospace",
       "brand-fill": "var(--primary)",
       "on-brand": "var(--primary-foreground)",

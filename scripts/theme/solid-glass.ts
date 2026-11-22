@@ -410,9 +410,8 @@ function section(appearance: Appearance): Record<string, string> {
 function themeLevel(): Record<string, string> {
   const s = source("light");
   return {
-    // `--radius: 0.875rem` (14 px), and `--radius-control: 0.7rem` (11 px) for what is rounded a
-    // step down from a pane.
-    ...scaledRadii(14),
+    // Solid Glass stepped corner radii: 11 px controls, 14 px containers, 20 px modals.
+    ...scaledRadii({ control: 11, container: 14, modal: 20 }),
     // The monospaced family: NSH's generic `monospace`, the system's own — neither theme ships a
     // font face. A theme that names one states its family here (the app imports the file).
     "font-mono": "monospace",
@@ -648,7 +647,7 @@ export function themeFiles(): ThemeGeneratorOutput {
     // darkens a step, it does not shrink (`state["press-scale"]` of 1, which `press.scale` reads as none).
     "press-scale": 1,
     radiusGroupDescription:
-      "Base corner radius scale (14px base, 0.8x control, 1.4x card) referenced by semantic shape roles.",
+      "Solid Glass layered corner radius scale (11px control, 14px container, 20px modal) referenced by semantic shape roles.",
     designMd: {
       overview:
         "Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass with top-edge light rims, hairline glass borders, and ambient drop shadows (`state.press-scale: 1`).",

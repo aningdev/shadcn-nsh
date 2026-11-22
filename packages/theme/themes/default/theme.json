@@ -2,14 +2,10 @@
   "name": "NSH Gallery UI",
   "cssVars": {
     "theme": {
-      "radius": "10px",
-      "radius-card": "14px",
+      "radius": "8px",
       "radius-control": "8px",
-      "radius-field": "8px",
-      "radius-chip": "10px",
-      "radius-overlay": "10px",
-      "radius-dialog": "14px",
-      "radius-sheet": "14px",
+      "radius-container": "12px",
+      "radius-modal": "14px",
       "font-mono": "monospace",
       "brand-fill": "oklch(0.89637 0.16627 124.031)",
       "on-brand": "oklch(0.19339 0.0197 121.819)",

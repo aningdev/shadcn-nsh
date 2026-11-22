@@ -253,38 +253,18 @@
     "$description": "Desktop pointer layout density, control geometry, and icon sizes.",
     "shape": {
       "$type": "dimension",
-      "$description": "Semantic corner radius roles referencing base dimension.radius.* tokens.",
+      "$description": "Semantic corner radius roles by layer, referencing base dimension.radius.* tokens.",
       "control": {
         "$value": "{dimension.radius.control}",
-        "$description": "Corner radius for buttons, select triggers, tabs, and menu items."
+        "$description": "Corner radius for in-page elements: buttons, fields, rows, chips, badges, wells, color areas, and kbd."
       },
-      "field": {
-        "$value": "{dimension.radius.field}",
-        "$description": "Corner radius for text inputs and editor wells."
+      "container": {
+        "$value": "{dimension.radius.container}",
+        "$description": "Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames."
       },
-      "chip": {
-        "$value": "{dimension.radius.chip}",
-        "$description": "Corner radius for badges and chips."
-      },
-      "card": {
-        "$value": "{dimension.radius.card}",
-        "$description": "Corner radius for cards and sidebar overlays."
-      },
-      "overlay": {
-        "$value": "{dimension.radius.overlay}",
-        "$description": "Corner radius for menus, popovers, and toasts."
-      },
-      "dialog": {
-        "$value": "{dimension.radius.dialog}",
-        "$description": "Corner radius for dialogs."
-      },
-      "sheet": {
-        "$value": "{dimension.radius.sheet}",
-        "$description": "Corner radius for drawers and bottom sheets."
-      },
-      "inset": {
-        "$value": "{dimension.radius.base}",
-        "$description": "Corner radius for inset wells, alerts, and skeletons inside cards."
+      "modal": {
+        "$value": "{dimension.radius.modal}",
+        "$description": "Corner radius for modal surfaces: dialogs, sheets, and drawers."
       }
     },
     "stroke": {
@@ -335,62 +315,27 @@
     },
     "radius": {
       "$type": "dimension",
-      "$description": "Base corner radius scale (14px base, 0.8x control, 1.4x card) referenced by semantic shape roles.",
-      "base": {
-        "$value": {
-          "value": 14,
-          "unit": "px"
-        },
-        "$description": "Base corner radius shared by insets and general rounded elements."
-      },
-      "card": {
-        "$value": {
-          "value": 20,
-          "unit": "px"
-        },
-        "$description": "Corner radius for cards and sidebar floating containers."
-      },
+      "$description": "Solid Glass layered corner radius scale (11px control, 14px container, 20px modal) referenced by semantic shape roles.",
       "control": {
         "$value": {
           "value": 11,
           "unit": "px"
         },
-        "$description": "Corner radius for interactive controls such as buttons, triggers, and menu items."
+        "$description": "Corner radius for in-page controls, fields, rows, chips, badges, wells, color areas, and kbd."
       },
-      "field": {
-        "$value": {
-          "value": 11,
-          "unit": "px"
-        },
-        "$description": "Corner radius for form input fields and editor wells."
-      },
-      "chip": {
+      "container": {
         "$value": {
           "value": 14,
           "unit": "px"
         },
-        "$description": "Corner radius for badges, chips, and compact tags."
+        "$description": "Corner radius for cards, menus, popovers, tooltips, list panels, toasts, and frames."
       },
-      "overlay": {
-        "$value": {
-          "value": 14,
-          "unit": "px"
-        },
-        "$description": "Corner radius for floating menus, popovers, and toasts."
-      },
-      "dialog": {
+      "modal": {
         "$value": {
           "value": 20,
           "unit": "px"
         },
-        "$description": "Corner radius for modal dialogs."
-      },
-      "sheet": {
-        "$value": {
-          "value": 20,
-          "unit": "px"
-        },
-        "$description": "Corner radius for drawers and bottom sheets."
+        "$description": "Corner radius for dialogs, sheets, and drawers."
       }
     },
     "size": {
@@ -457,12 +402,6 @@
         "control": {
           "$value": {
             "value": 16,
-            "unit": "px"
-          }
-        },
-        "corner": {
-          "$value": {
-            "value": 5,
             "unit": "px"
           }
         },
@@ -542,10 +481,13 @@
     }
   },
   "shape": {
-    "$description": "Non-dimensional corner curve.",
+    "$description": "Non-dimensional corner curve and button capsule flag.",
     "$extensions": {
       "dev.aning.shadcn-nsh": {
-        "curve": "continuous"
+        "curve": "continuous",
+        "corners": {
+          "button": "radius"
+        }
       }
     }
   },

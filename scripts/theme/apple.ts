@@ -106,16 +106,11 @@ const tints = (tone: string) => `color-mix(in srgb, var(--${tone}) 12%, transpar
 
 /** The theme's own tokens, shared by the appearances. */
 const themeLevel = (): Record<string, string> => ({
-  // Concentric radii (HIG, Layout): a control is a capsule, a card the 20 pt corner of an iPhone
-  // grouped list, a field the 8 pt of a macOS text field.
+  // Apple HIG Layout: 8 pt in-page controls/fields, 12 pt containers/menus, 26 pt modals, capsule buttons (`shape.corners.button: "full"`).
   radius: "8px",
-  "radius-card": "20px",
-  "radius-control": "999px",
-  "radius-field": "8px",
-  "radius-chip": "999px",
-  "radius-overlay": "12px",
-  "radius-dialog": "26px",
-  "radius-sheet": "34px",
+  "radius-control": "8px",
+  "radius-container": "12px",
+  "radius-modal": "26px",
   "font-mono": "monospace",
   "brand-fill": "var(--primary)",
   "on-brand": "var(--primary-foreground)",
@@ -379,13 +374,8 @@ export const style = {
   dimension: {
     shape: {
       control: "{radius-control}",
-      field: "{radius-field}",
-      chip: "{radius-chip}",
-      card: "{radius-card}",
-      overlay: "{radius-overlay}",
-      dialog: "{radius-dialog}",
-      sheet: "{radius-sheet}",
-      inset: "{radius}",
+      container: "{radius-container}",
+      modal: "{radius-modal}",
     },
     size: {
       hit: { pointer: 0, touch: 44 },
@@ -399,7 +389,6 @@ export const style = {
           padding: 6,
           gap: 10,
           control: 16,
-          corner: 4,
           check: 12,
           dot: 6,
           tabs: 28,
@@ -412,7 +401,6 @@ export const style = {
           padding: 8,
           gap: 12,
           control: 22,
-          corner: 11,
           check: 16,
           dot: 8,
           tabs: 36,
@@ -432,6 +420,9 @@ export const style = {
   },
   shape: {
     curve: "continuous",
+    corners: {
+      button: "full" as const,
+    },
   },
   state: {
     // Apple presses by dimming (`state["pressed-opacity"]`), not by sinking.
@@ -525,15 +516,15 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
       "Apple macOS pointer input-tier overrides (Apple HIG Layout and Typography).",
     touchDescription: "Apple iOS touch input-tier overrides (Apple HIG Layout and Typography).",
     radiusGroupDescription:
-      "Apple HIG concentric corner radius scale (999px capsule controls/chips, 20px card, 26px dialog, 34px sheet).",
+      "Apple HIG corner radius scale (8px control, 12px container, 26px modal; capsule buttons via shape.corners.button).",
     style,
     designMd: {
       overview:
-        "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, capsule controls, continuous corners, and Liquid Glass on floating and raised surfaces.",
+        "Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, capsule buttons, continuous corners, and Liquid Glass on floating and raised surfaces.",
       elevation:
         'Apple Liquid Glass and Retina hairline depth: `glass`, `menu`, and `raised` finishes request `material.apple` (`glass: "regular"`) with iOS backdrop fallback (`ios.backdrop`) and 0.5px borders; other surfaces stay flat with subtle shadows.',
       dos: [
-        'Use `999px` capsule corners on controls and chips alongside concentric `20px` cards, `26px` dialogs, and `34px` sheets with `shape.curve: "continuous"`.',
+        'Use `999px` capsule corners on button-like controls (`shape.corners.button: "full"`) alongside `8px` controls/fields, `12px` containers, and `26px` modals with `shape.curve: "continuous"`.',
         "Respect pointer (macOS: 13px body, 32px density row) vs touch (iOS: 17px body, 44px hit target) metrics.",
         "Keep `material.apple` on `glass`, `menu`, and `raised` finishes and spread `platformMaterial()` on native views.",
       ],

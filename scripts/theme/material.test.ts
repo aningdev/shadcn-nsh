@@ -6,7 +6,7 @@ import type { TokenKind } from "./tokens";
 const known = new Map<string, TokenKind>([
   ["glass", "color"],
   ["card", "color"],
-  ["radius-card", "dimension"],
+  ["radius-container", "dimension"],
 ]);
 const check = (material: unknown) =>
   checkMaterial("themes/x/semantics.json", "menu.light", { material }, known);
@@ -80,7 +80,9 @@ describe("checkMaterial", () => {
 
   test("a tint is a colour token of the theme, not a literal or wrong kind", () => {
     expect(check({ apple: { glass: "clear", tint: "{nope}" } })[0]).toContain("nope");
-    expect(check({ apple: { glass: "clear", tint: "{radius-card}" } })[0]).toContain("dimension");
+    expect(check({ apple: { glass: "clear", tint: "{radius-container}" } })[0]).toContain(
+      "dimension",
+    );
     expect(check({ apple: { glass: "clear", tint: "#ff0000" } })[0]).toContain("#ff0000");
     expect(check({ apple: { glass: "clear", tint: "oklch(from {card} l c h / 0.5)" } })).toEqual(
       [],
@@ -101,7 +103,9 @@ describe("checkMaterial", () => {
       check({ android: { ripple: { color: "oklch(from {card} l c h / 0.2)" } } })[0],
     ).toContain("oklch(from {card} l c h / 0.2)");
     expect(check({ android: { ripple: { color: "{nope}" } } })[0]).toContain("nope");
-    expect(check({ android: { ripple: { color: "{radius-card}" } } })[0]).toContain("dimension");
+    expect(check({ android: { ripple: { color: "{radius-container}" } } })[0]).toContain(
+      "dimension",
+    );
     expect(check({ android: { ripple: { color: "{card}", borderless: "yes" } } })[0]).toContain(
       "borderless",
     );

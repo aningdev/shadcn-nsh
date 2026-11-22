@@ -7,7 +7,7 @@
         "overview": "WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composited over `SolidBackgroundFillColorBase` (`#F3F3F3` light / `#202020` dark) with `#0078D4` accent, `Segoe UI Variable` + `Consolas`, double focus strokes, and deterministic timing curves.",
         "elevation": "WinUI 3 ThemeShadow depths (2/8/16/32/128) paired with composited `ControlStrokeColorDefault` / `SurfaceStrokeColorDefault` borders and `material.windows` blur on `glass`, `menu`, and `tooltip` (`AcrylicInAppFillColorDefault` 0.85 light / 0.96 dark).",
         "dos": [
-          "Use `4px` `ControlCornerRadius` for controls/fields/chips/insets and `8px` `OverlayCornerRadius` for cards/overlays/dialogs/sheets with `shape.curve: \"circular\"`.",
+          "Use `4px` `ControlCornerRadius` for `control` and `8px` `OverlayCornerRadius` for `container` and `modal` with `shape.curve: \"circular\"`.",
           "Use `focus.style: \"double\"` (2px outer `FocusStrokeColorOuter` + 1px inner `FocusStrokeColorInner`) and WinUI timing motion (`decelerate` / `point-to-point`).",
           "Use `controls: \"winui\"` (underlined tabs/fields and leading navigation bar indicators) with `Segoe UI Variable` (`{font.family.sans}`)."
         ],
@@ -22,62 +22,27 @@
     "$description": "Appearance-invariant base dimensional tokens.",
     "radius": {
       "$type": "dimension",
-      "$description": "WinUI 3 corner radius scale: ControlCornerRadius 4px (controls/fields/chips/insets) and OverlayCornerRadius 8px (cards/overlays/dialogs/sheets).",
-      "base": {
-        "$value": {
-          "value": 4,
-          "unit": "px"
-        },
-        "$description": "Base corner radius shared by insets and general rounded elements."
-      },
-      "card": {
-        "$value": {
-          "value": 8,
-          "unit": "px"
-        },
-        "$description": "Corner radius for cards and sidebar floating containers."
-      },
+      "$description": "WinUI 3 corner radius scale: ControlCornerRadius 4px (control) and OverlayCornerRadius 8px (container and modal).",
       "control": {
         "$value": {
           "value": 4,
           "unit": "px"
         },
-        "$description": "Corner radius for interactive controls such as buttons, triggers, and menu items."
+        "$description": "Corner radius for in-page controls, fields, rows, chips, badges, wells, color areas, and kbd."
       },
-      "field": {
-        "$value": {
-          "value": 4,
-          "unit": "px"
-        },
-        "$description": "Corner radius for form input fields and editor wells."
-      },
-      "chip": {
-        "$value": {
-          "value": 4,
-          "unit": "px"
-        },
-        "$description": "Corner radius for badges, chips, and compact tags."
-      },
-      "overlay": {
+      "container": {
         "$value": {
           "value": 8,
           "unit": "px"
         },
-        "$description": "Corner radius for floating menus, popovers, and toasts."
+        "$description": "Corner radius for cards, menus, popovers, tooltips, list panels, toasts, and frames."
       },
-      "dialog": {
+      "modal": {
         "$value": {
           "value": 8,
           "unit": "px"
         },
-        "$description": "Corner radius for modal dialogs."
-      },
-      "sheet": {
-        "$value": {
-          "value": 8,
-          "unit": "px"
-        },
-        "$description": "Corner radius for drawers and bottom sheets."
+        "$description": "Corner radius for dialogs, sheets, and drawers."
       }
     },
     "focus": {

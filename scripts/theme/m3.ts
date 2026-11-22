@@ -422,19 +422,17 @@ const surface = (
 });
 
 /**
- * Shared theme-level tokens (`cssVars.theme`) for Material 3 Expressive: M3 corner scale mapped
- * onto the 8 `radius-*` roles, system monospace font, and M3 colour tokens from `m3Roles`.
+ * Shared theme-level tokens (`cssVars.theme`) for Material 3 Expressive: M3 Compose tokens at
+ * `ac364f3c` (`CornerExtraSmall` 4dp, `CornerLarge` / medium container 12dp, `CornerExtraLarge`
+ * 28dp; capsule buttons use `shape.corners.button: "full"`), system monospace font, and M3 colour
+ * tokens from `m3Roles`.
  */
 function themeLevel(roles: M3Roles): Record<string, string> {
   return {
-    radius: "8px",
-    "radius-card": "12px",
-    "radius-control": "999px",
-    "radius-field": "4px",
-    "radius-chip": "12px",
-    "radius-overlay": "4px",
-    "radius-dialog": "28px",
-    "radius-sheet": "28px",
+    radius: "4px",
+    "radius-control": "4px",
+    "radius-container": "12px",
+    "radius-modal": "28px",
     "font-mono": "monospace",
     ...roles.theme,
   };
@@ -610,13 +608,8 @@ export const m3Style = {
   dimension: {
     shape: {
       control: "{radius-control}",
-      field: "{radius-field}",
-      chip: "{radius-chip}",
-      card: "{radius-card}",
-      overlay: "{radius-overlay}",
-      dialog: "{radius-dialog}",
-      sheet: "{radius-sheet}",
-      inset: "{radius}",
+      container: "{radius-container}",
+      modal: "{radius-modal}",
     },
     size: {
       hit: { pointer: 44, touch: 48 },
@@ -630,7 +623,6 @@ export const m3Style = {
           padding: 8,
           gap: 12,
           control: 18,
-          corner: 2,
           check: 18,
           dot: 10,
           tabs: 48,
@@ -643,7 +635,6 @@ export const m3Style = {
           padding: 10,
           gap: 12,
           control: 18,
-          corner: 2,
           check: 18,
           dot: 10,
           tabs: 48,
@@ -665,6 +656,9 @@ export const m3Style = {
   },
   shape: {
     curve: "circular",
+    corners: {
+      button: "full" as const,
+    },
   },
   state: {
     // M3 presses via state layer overlay and Android ripple rather than geometric scale.
@@ -777,7 +771,7 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
     touchDescription:
       "Material 3 Expressive touch input-tier overrides (Compose InteractiveComponentSize 48dp hit target, ListTokens 56dp row).",
     radiusGroupDescription:
-      "Material 3 Expressive corner scale (999px CornerFull controls, 4px CornerExtraSmall fields/menus, 12px CornerMedium cards/chips, 28px CornerExtraLarge dialogs/sheets; ShapeTokens.kt).",
+      'Material 3 Expressive corner scale (Compose tokens at `ac364f3c`: 4px CornerExtraSmall control, 12px CornerMedium/CornerLarge container, 28px CornerExtraLarge modal; capsule buttons via `shape.corners.button: "full"`).',
     style: m3Style,
     designMd: {
       overview:

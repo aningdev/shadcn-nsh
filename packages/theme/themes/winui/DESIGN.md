@@ -211,13 +211,8 @@ typography:
     letterSpacing: 0px
 rounded:
   control: 4px
-  field: 4px
-  chip: 4px
-  card: 8px
-  overlay: 8px
-  dialog: 8px
-  sheet: 8px
-  inset: 4px
+  container: 8px
+  modal: 8px
 spacing:
   hit: 0px
   density:
@@ -230,7 +225,6 @@ spacing:
     padding: 6px
     gap: 8px
     control: 20px
-    corner: 4px
     check: 12px
     dot: 12px
     tabs: 32px
@@ -297,47 +291,47 @@ components:
     backgroundColor: "{colors.light.card}"
     textColor: "{colors.light.card-foreground}"
     typography: "{typography.body}"
-    rounded: "{rounded.card}"
+    rounded: "{rounded.container}"
     padding: "{spacing.density.pad}"
   card-inset:
     backgroundColor: "{colors.light.inset}"
     textColor: "{colors.light.foreground}"
-    rounded: "{rounded.inset}"
+    rounded: "{rounded.control}"
     padding: "{spacing.density.surface}"
   input-field:
     backgroundColor: "{colors.light.field}"
     textColor: "{colors.light.foreground}"
     typography: "{typography.label}"
-    rounded: "{rounded.field}"
+    rounded: "{rounded.control}"
     height: "{spacing.height.md}"
     padding: "{spacing.control.padding}"
   badge-chip:
     backgroundColor: "{colors.light.raised}"
     textColor: "{colors.light.secondary-foreground}"
     typography: "{typography.caption}"
-    rounded: "{rounded.chip}"
+    rounded: "{rounded.control}"
   menu-popover:
     backgroundColor: "{colors.light.popover}"
     textColor: "{colors.light.popover-foreground}"
     typography: "{typography.body}"
-    rounded: "{rounded.overlay}"
+    rounded: "{rounded.container}"
     padding: "{spacing.control.padding}"
   dialog:
     backgroundColor: "{colors.light.dialog}"
     textColor: "{colors.light.card-foreground}"
     typography: "{typography.body}"
-    rounded: "{rounded.dialog}"
+    rounded: "{rounded.modal}"
     padding: "{spacing.density.pad}"
   tooltip:
     backgroundColor: "{colors.light.popover}"
     textColor: "{colors.light.inverse-foreground}"
     typography: "{typography.detail}"
-    rounded: "{rounded.overlay}"
+    rounded: "{rounded.container}"
   toast-inverse:
     backgroundColor: "{colors.light.inverse}"
     textColor: "{colors.light.inverse-foreground}"
     typography: "{typography.body}"
-    rounded: "{rounded.overlay}"
+    rounded: "{rounded.container}"
   switch-track:
     backgroundColor: "{colors.light.track}"
     rounded: "{rounded.control}"
@@ -361,7 +355,7 @@ components:
   glass-overlay:
     backgroundColor: "#f9f9f9d9"
     textColor: "{colors.light.popover-foreground}"
-    rounded: "{rounded.overlay}"
+    rounded: "{rounded.container}"
 ---
 
 # WinUI 3
@@ -524,20 +518,15 @@ WinUI 3 ThemeShadow depths (2/8/16/32/128) paired with composited `ControlStroke
 
 ## Shapes
 
-WinUI 3 corner radius scale: ControlCornerRadius 4px (controls/fields/chips/insets) and OverlayCornerRadius 8px (cards/overlays/dialogs/sheets).
+WinUI 3 corner radius scale: ControlCornerRadius 4px (control) and OverlayCornerRadius 8px (container and modal).
 
-Circular corner curve (WinUI 3 has no continuous squircle curve; geometry.md). (`curve: "circular"`).
+Circular corner curve (WinUI 3 has no continuous squircle curve; geometry.md). (`curve: "circular"`, `corners.button: "radius"`).
 
-Semantic corner radius roles referencing base dimension.radius.* tokens.
+Semantic corner radius roles by layer, referencing base dimension.radius.* tokens.
 
-- **`control`** (4px): Corner radius for buttons, select triggers, tabs, and menu items.
-- **`field`** (4px): Corner radius for text inputs and editor wells.
-- **`chip`** (4px): Corner radius for badges and chips.
-- **`card`** (8px): Corner radius for cards and sidebar overlays.
-- **`overlay`** (8px): Corner radius for menus, popovers, and toasts.
-- **`dialog`** (8px): Corner radius for dialogs.
-- **`sheet`** (8px): Corner radius for drawers and bottom sheets.
-- **`inset`** (4px): Corner radius for inset wells, alerts, and skeletons inside cards.
+- **`control`** (4px): Corner radius for in-page elements: buttons, fields, rows, chips, badges, wells, color areas, and kbd.
+- **`container`** (8px): Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames.
+- **`modal`** (8px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
 
 ## Motion & Micro-interaction
 
@@ -594,7 +583,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **Do:** Read all colors, radii, typography, and surface finishes through theme roles (`colors.*`, `shape.*`, `font.*`, `finish.*`) rather than literals in component code.
 - **Do:** Read theme getters inside JSX render expressions or reactive effects so runtime theme switching (`selectTheme`) and light/dark appearance changes take effect on the next frame.
 - **Do:** Use `rounded(shape.<role>, inset)` for concentric nested radii inside cards, switches, and segmented controls.
-- **Do:** Use `4px` `ControlCornerRadius` for controls/fields/chips/insets and `8px` `OverlayCornerRadius` for cards/overlays/dialogs/sheets with `shape.curve: "circular"`.
+- **Do:** Use `4px` `ControlCornerRadius` for `control` and `8px` `OverlayCornerRadius` for `container` and `modal` with `shape.curve: "circular"`.
 - **Do:** Use `focus.style: "double"` (2px outer `FocusStrokeColorOuter` + 1px inner `FocusStrokeColorInner`) and WinUI timing motion (`decelerate` / `point-to-point`).
 - **Do:** Use `controls: "winui"` (underlined tabs/fields and leading navigation bar indicators) with `Segoe UI Variable` (`{font.family.sans}`).
 - **Don't:** Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.

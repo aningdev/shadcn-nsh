@@ -113,14 +113,9 @@ export const NAMED_CUBIC_BEZIERS: Record<
 };
 
 export const RADIUS_KEYS = [
-  { cssVar: "radius", dtcg: "base" },
-  { cssVar: "radius-card", dtcg: "card" },
   { cssVar: "radius-control", dtcg: "control" },
-  { cssVar: "radius-field", dtcg: "field" },
-  { cssVar: "radius-chip", dtcg: "chip" },
-  { cssVar: "radius-overlay", dtcg: "overlay" },
-  { cssVar: "radius-dialog", dtcg: "dialog" },
-  { cssVar: "radius-sheet", dtcg: "sheet" },
+  { cssVar: "radius-container", dtcg: "container" },
+  { cssVar: "radius-modal", dtcg: "modal" },
 ] as const;
 
 export const TYPE_ROLES = [
@@ -133,16 +128,7 @@ export const TYPE_ROLES = [
   "display",
 ] as const;
 
-export const SHAPE_ROLES = [
-  "control",
-  "field",
-  "chip",
-  "card",
-  "overlay",
-  "dialog",
-  "sheet",
-  "inset",
-] as const;
+export const SHAPE_ROLES = ["control", "container", "modal"] as const;
 
 export const COLOR_ROLES = ["surface", "ink", "brand", "status", "chrome"] as const;
 export type ColorRole = (typeof COLOR_ROLES)[number];

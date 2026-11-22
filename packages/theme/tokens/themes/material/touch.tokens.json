@@ -116,12 +116,6 @@
             "unit": "px"
           }
         },
-        "corner": {
-          "$value": {
-            "value": 2,
-            "unit": "px"
-          }
-        },
         "check": {
           "$value": {
             "value": 18,

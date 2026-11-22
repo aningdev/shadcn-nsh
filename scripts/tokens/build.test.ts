@@ -244,7 +244,7 @@ describe("DTCG 2025.10 build (all six themes)", () => {
       const resolverAbs = path.join(themeDir, "theme.resolver.json");
       expect(lintDtcgTheme(resolverAbs, { repoRoot: tmp })).toEqual([]);
       const compiledTheme = compileThemeJson(resolverAbs);
-      expect(compiledTheme.cssVars.theme.radius).toBe("10px");
+      expect(compiledTheme.cssVars.theme.radius).toBe("8px");
       const compiledSemantics = compileSemanticsJson(resolverAbs) as {
         state: { "press-scale": number };
         finishes: { shared: { card: { shadow: string } } };
@@ -312,23 +312,55 @@ describe("DTCG source lint", () => {
     expect(text).toContain("missing");
   });
 
-  test("rejects invalid controls preset enum value in $extensions", () => {
+  test("rejects invalid controls preset enum value and shape.corners.button in $extensions", () => {
     const problems = withMutatedDefault((tmp) => {
       const sharedPath = path.join(tmp, "packages/theme/tokens/base/style.shared.tokens.json");
       const shared = JSON.parse(fs.readFileSync(sharedPath, "utf8"));
       shared.controls.$extensions["dev.aning.shadcn-nsh"].preset = "cupertin";
+      shared.shape.$extensions["dev.aning.shadcn-nsh"].corners.button = "pill";
       fs.writeFileSync(sharedPath, JSON.stringify(shared, null, 2));
     });
     const text = problems.join("\n");
     expect(text).toContain("controls.$extensions");
     expect(text).toContain('preset: "cupertin"');
+    expect(text).toContain('corners.button: "pill"');
+  });
+
+  test("rejects missing or extra radius and shape roles", () => {
+    const extra = withMutatedDefault((tmp) => {
+      const themePath = path.join(tmp, "packages/theme/tokens/themes/default/theme.tokens.json");
+      const themeDoc = JSON.parse(fs.readFileSync(themePath, "utf8"));
+      themeDoc.dimension.radius.extra = { $value: { value: 14, unit: "px" } };
+      fs.writeFileSync(themePath, JSON.stringify(themeDoc, null, 2));
+
+      const sharedPath = path.join(tmp, "packages/theme/tokens/base/style.shared.tokens.json");
+      const shared = JSON.parse(fs.readFileSync(sharedPath, "utf8"));
+      shared.dimension.shape.extra = { $value: "{dimension.radius.extra}" };
+      fs.writeFileSync(sharedPath, JSON.stringify(shared, null, 2));
+    });
+    expect(extra.join("\n")).toContain('dimension.radius has unexpected key "extra"');
+    expect(extra.join("\n")).toContain('dimension.shape has unexpected key "extra"');
+
+    const missing = withMutatedDefault((tmp) => {
+      const themePath = path.join(tmp, "packages/theme/tokens/themes/default/theme.tokens.json");
+      const themeDoc = JSON.parse(fs.readFileSync(themePath, "utf8"));
+      delete themeDoc.dimension.radius.modal;
+      fs.writeFileSync(themePath, JSON.stringify(themeDoc, null, 2));
+
+      const sharedPath = path.join(tmp, "packages/theme/tokens/base/style.shared.tokens.json");
+      const shared = JSON.parse(fs.readFileSync(sharedPath, "utf8"));
+      delete shared.dimension.shape.modal;
+      fs.writeFileSync(sharedPath, JSON.stringify(shared, null, 2));
+    });
+    expect(missing.join("\n")).toContain("dimension.radius.modal is missing");
+    expect(missing.join("\n")).toContain("dimension.shape.modal is missing");
   });
 
   test("rejects reference with mismatched $type", () => {
     const problems = withMutatedDefault((tmp) => {
       const p = path.join(tmp, "packages/theme/tokens/base/style.shared.tokens.json");
       const doc = JSON.parse(fs.readFileSync(p, "utf8"));
-      doc.dimension.shape.card.$value = "{color.card}";
+      doc.dimension.shape.container.$value = "{color.card}";
       fs.writeFileSync(p, JSON.stringify(doc, null, 2));
     });
     expect(problems.join("\n")).toContain('of $type "color", expected "dimension"');
@@ -377,7 +409,7 @@ describe("DTCG source lint", () => {
     const problems = withMutatedDefault((tmp) => {
       const themePath = path.join(tmp, "packages/theme/tokens/themes/default/theme.tokens.json");
       const themeDoc = JSON.parse(fs.readFileSync(themePath, "utf8"));
-      themeDoc.dimension.radius.card.$value.value = -4;
+      themeDoc.dimension.radius.container.$value.value = -4;
       fs.writeFileSync(themePath, JSON.stringify(themeDoc, null, 2));
 
       const finPath = path.join(
@@ -389,7 +421,7 @@ describe("DTCG source lint", () => {
       fs.writeFileSync(finPath, JSON.stringify(finDoc, null, 2));
     });
     const text = problems.join("\n");
-    expect(text).toContain("dimension.radius.card value -4 must be >= 0");
+    expect(text).toContain("dimension.radius.container value -4 must be >= 0");
     expect(text).toContain("none must be true");
   });
 
@@ -622,9 +654,7 @@ describe("per-appearance standalone .tokens.json distribution", () => {
         for (const role of SHAPE_ROLES) {
           const ref = doc.dimension.shape[role].$value as string;
           const m = /^\{dimension\.radius\.([a-z0-9-]+)\}$/.exec(ref)!;
-          expect(m[1] === "base" ? "{radius}" : `{radius-${m[1]}}`).toBe(
-            semanticsJson.dimension.shape[role],
-          );
+          expect(`{radius-${m[1]}}`).toBe(semanticsJson.dimension.shape[role]);
         }
         expect(resolved.dimension.size.hit.$value.value).toBe(
           semanticsJson.dimension.size.hit.pointer,
@@ -881,7 +911,7 @@ describe("generated DESIGN.md validation and compiled equality", () => {
         });
       }
 
-      // Rounded (8 shape roles)
+      // Rounded (semantic shape roles)
       for (const role of SHAPE_ROLES) {
         const dim = lightDoc.dimension.shape[role].$value as { value: number; unit: string };
         expect(yaml.rounded[role], `rounded.${role}`).toBe(`${dim.value}${dim.unit}`);

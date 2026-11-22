@@ -210,14 +210,9 @@ typography:
     lineHeight: 1.2307692307692308
     letterSpacing: 0px
 rounded:
-  control: 999px
-  field: 8px
-  chip: 999px
-  card: 20px
-  overlay: 12px
-  dialog: 26px
-  sheet: 34px
-  inset: 8px
+  control: 8px
+  container: 12px
+  modal: 26px
 spacing:
   hit: 0px
   density:
@@ -230,7 +225,6 @@ spacing:
     padding: 6px
     gap: 10px
     control: 16px
-    corner: 4px
     check: 12px
     dot: 6px
     tabs: 28px
@@ -281,47 +275,47 @@ components:
     backgroundColor: "{colors.light.card}"
     textColor: "{colors.light.card-foreground}"
     typography: "{typography.body}"
-    rounded: "{rounded.card}"
+    rounded: "{rounded.container}"
     padding: "{spacing.density.pad}"
   card-inset:
     backgroundColor: "{colors.light.inset}"
     textColor: "{colors.light.foreground}"
-    rounded: "{rounded.inset}"
+    rounded: "{rounded.control}"
     padding: "{spacing.density.surface}"
   input-field:
     backgroundColor: "{colors.light.field}"
     textColor: "{colors.light.foreground}"
     typography: "{typography.label}"
-    rounded: "{rounded.field}"
+    rounded: "{rounded.control}"
     height: "{spacing.height.md}"
     padding: "{spacing.control.padding}"
   badge-chip:
     backgroundColor: "{colors.light.muted}"
     textColor: "{colors.light.secondary-foreground}"
     typography: "{typography.caption}"
-    rounded: "{rounded.chip}"
+    rounded: "{rounded.control}"
   menu-popover:
     backgroundColor: "#ffffffb8"
     textColor: "{colors.light.popover-foreground}"
     typography: "{typography.body}"
-    rounded: "{rounded.overlay}"
+    rounded: "{rounded.container}"
     padding: "{spacing.control.padding}"
   dialog:
     backgroundColor: "{colors.light.dialog}"
     textColor: "{colors.light.card-foreground}"
     typography: "{typography.body}"
-    rounded: "{rounded.dialog}"
+    rounded: "{rounded.modal}"
     padding: "{spacing.density.pad}"
   tooltip:
     backgroundColor: "{colors.light.popover}"
     textColor: "{colors.light.inverse-foreground}"
     typography: "{typography.detail}"
-    rounded: "{rounded.overlay}"
+    rounded: "{rounded.container}"
   toast-inverse:
     backgroundColor: "#ffffffb8"
     textColor: "{colors.light.inverse-foreground}"
     typography: "{typography.body}"
-    rounded: "{rounded.overlay}"
+    rounded: "{rounded.container}"
   switch-track:
     backgroundColor: "{colors.light.track}"
     rounded: "{rounded.control}"
@@ -345,7 +339,7 @@ components:
   glass-overlay:
     backgroundColor: "#ffffff66"
     textColor: "{colors.light.popover-foreground}"
-    rounded: "{rounded.overlay}"
+    rounded: "{rounded.container}"
 ---
 
 # Apple
@@ -354,7 +348,7 @@ components:
 
 Apple theme (Apple HIG / UIKit system palette and Liquid Glass).
 
-Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, capsule controls, continuous corners, and Liquid Glass on floating and raised surfaces.
+Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, capsule buttons, continuous corners, and Liquid Glass on floating and raised surfaces.
 
 ## Colors
 
@@ -507,20 +501,15 @@ Apple Liquid Glass and Retina hairline depth: `glass`, `menu`, and `raised` fini
 
 ## Shapes
 
-Apple HIG concentric corner radius scale (999px capsule controls/chips, 20px card, 26px dialog, 34px sheet).
+Apple HIG corner radius scale (8px control, 12px container, 26px modal; capsule buttons via shape.corners.button).
 
-Non-dimensional corner curve. (`curve: "continuous"`).
+Non-dimensional corner curve and button capsule flag. (`curve: "continuous"`, `corners.button: "full"`).
 
-Semantic corner radius roles referencing base dimension.radius.* tokens.
+Semantic corner radius roles by layer, referencing base dimension.radius.* tokens.
 
-- **`control`** (999px): Corner radius for buttons, select triggers, tabs, and menu items.
-- **`field`** (8px): Corner radius for text inputs and editor wells.
-- **`chip`** (999px): Corner radius for badges and chips.
-- **`card`** (20px): Corner radius for cards and sidebar overlays.
-- **`overlay`** (12px): Corner radius for menus, popovers, and toasts.
-- **`dialog`** (26px): Corner radius for dialogs.
-- **`sheet`** (34px): Corner radius for drawers and bottom sheets.
-- **`inset`** (8px): Corner radius for inset wells, alerts, and skeletons inside cards.
+- **`control`** (8px): Corner radius for in-page elements: buttons, fields, rows, chips, badges, wells, color areas, and kbd.
+- **`container`** (12px): Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames.
+- **`modal`** (26px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
 
 ## Motion & Micro-interaction
 
@@ -577,7 +566,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **Do:** Read all colors, radii, typography, and surface finishes through theme roles (`colors.*`, `shape.*`, `font.*`, `finish.*`) rather than literals in component code.
 - **Do:** Read theme getters inside JSX render expressions or reactive effects so runtime theme switching (`selectTheme`) and light/dark appearance changes take effect on the next frame.
 - **Do:** Use `rounded(shape.<role>, inset)` for concentric nested radii inside cards, switches, and segmented controls.
-- **Do:** Use `999px` capsule corners on controls and chips alongside concentric `20px` cards, `26px` dialogs, and `34px` sheets with `shape.curve: "continuous"`.
+- **Do:** Use `999px` capsule corners on button-like controls (`shape.corners.button: "full"`) alongside `8px` controls/fields, `12px` containers, and `26px` modals with `shape.curve: "continuous"`.
 - **Do:** Respect pointer (macOS: 13px body, 32px density row) vs touch (iOS: 17px body, 44px hit target) metrics.
 - **Do:** Keep `material.apple` on `glass`, `menu`, and `raised` finishes and spread `platformMaterial()` on native views.
 - **Don't:** Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.

@@ -238,12 +238,21 @@ for (const name of specPartsOf.shared)
   if (!optionalThemeTokens.has(name) && !sharedKeys.includes(name))
     fail(`docs/specs/theme-roles.md: the C layer states \`${name}\`, which cssVars.theme has not`);
 
-// Every `radius*` token in `cssVars.theme` must be a non-negative `px` length.
+// Every `radius*` token in `cssVars.theme` must be the exact 4-slot set and a non-negative `px` length.
+const expectedRadiusTokens = ["radius", "radius-control", "radius-container", "radius-modal"];
 for (const theme of themes) {
   const path = `packages/theme/themes/${theme}/theme.json`;
   const shared = tokensOf.get(theme)?.cssVars.theme ?? {};
+  const radiusKeys = Object.keys(shared).filter((k) => k === "radius" || k.startsWith("radius-"));
+  for (const req of expectedRadiusTokens) {
+    if (!radiusKeys.includes(req)) fail(`${path}: missing \`${req}\``);
+  }
   for (const [name, value] of Object.entries(shared)) {
     if (name !== "radius" && !name.startsWith("radius-")) continue;
+    if (!expectedRadiusTokens.includes(name)) {
+      fail(`${path}: unexpected radius token \`${name}\``);
+      continue;
+    }
     const match = value.match(/^(\d+(?:\.\d+)?)px$/);
     if (!match || !(Number(match[1]) >= 0))
       fail(`${path}: \`${name}\` is \`${value}\`, not a non-negative px length`);
@@ -363,7 +372,8 @@ const isColour = (value: string) => {
   }
 };
 for (const [name, value] of Object.entries(themeBlock)) {
-  if (!readsToken(name) && !unread.has(name))
+  // `radius` is the shadcn A-layer base slot reserved for application Tailwind utilities (`rounded-lg`, `rounded-(--radius)`).
+  if (name !== "radius" && !readsToken(name) && !unread.has(name))
     fail(`packages/theme/theme.json: token \`${name}\` is read nowhere and not left to the app`);
   if (name.startsWith("font-") && isColour(value))
     fail(

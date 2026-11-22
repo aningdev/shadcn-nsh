@@ -145,12 +145,6 @@
             "unit": "px"
           }
         },
-        "corner": {
-          "$value": {
-            "value": 5,
-            "unit": "px"
-          }
-        },
         "check": {
           "$value": {
             "value": 12,

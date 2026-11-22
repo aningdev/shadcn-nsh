@@ -11,7 +11,7 @@ describe("mergeTheme", () => {
     const incoming = {
       name: "gallery",
       cssVars: {
-        theme: { radius: "10px", "radius-card": "12px", scrim: "rgba(0,0,0,0.45)" },
+        theme: { radius: "8px", "radius-container": "12px", scrim: "rgba(0,0,0,0.45)" },
         light: {
           primary: "#c6ef6a",
           brand: "#c6ef6a",
@@ -24,7 +24,7 @@ describe("mergeTheme", () => {
     expect(theme).toEqual({
       name: "mine",
       cssVars: {
-        theme: { radius: "1rem", "radius-card": "12px", scrim: "rgba(0,0,0,0.45)" },
+        theme: { radius: "1rem", "radius-container": "12px", scrim: "rgba(0,0,0,0.45)" },
         light: {
           primary: "#3366ff",
           brand: "#c6ef6a",
@@ -35,7 +35,7 @@ describe("mergeTheme", () => {
     });
     expect(added).toBe(5);
     expect(missing).toEqual([
-      "cssVars.theme.radius-card",
+      "cssVars.theme.radius-container",
       "cssVars.theme.scrim",
       "cssVars.light.brand",
       "cssVars.light.inset",
