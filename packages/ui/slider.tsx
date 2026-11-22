@@ -3,17 +3,102 @@
 import {
   alpha,
   colors,
+  controls,
+  type Controls,
   EDGE_WIDTH,
   fillStyle,
   finish,
   insetEdge,
   outerEdge,
-  sliderGeometry,
   stroke,
+  tier,
+  type Tiered,
 } from "@shadcn-nsh/theme";
 import type { TextStyle, ViewStyle } from "nsh";
 import { split, Text } from "nsh";
 import { Slider as BaseSlider, type SliderProps as BaseSliderProps } from "nsh/base";
+
+interface SliderPreset {
+  band: number;
+  rail: number;
+  thumbWidth: number;
+  thumbHeight: number;
+  thumbPressedWidth: number;
+  innerDot: number;
+  innerDotHover: number;
+  innerDotPressed: number;
+  verticalLength: number;
+  handleShape: "circle" | "bar" | "ring";
+  outlined: boolean;
+  hoverBrightness: boolean;
+}
+
+// M3 Expressive Slider: 16dp track, 4x44dp bar handle (2dp pressed) (Compose SliderTokens.kt 1.5.0).
+const m3SliderBase: SliderPreset = {
+  band: 44,
+  rail: 16,
+  thumbWidth: 4,
+  thumbHeight: 44,
+  thumbPressedWidth: 2,
+  innerDot: 0,
+  innerDotHover: 0,
+  innerDotPressed: 0,
+  verticalLength: 128,
+  handleShape: "bar",
+  outlined: false,
+  hoverBrightness: false,
+};
+
+// WinUI 3 Slider: 18px thumb with 12px inner dot (14px hover, 10px pressed) on 4px track inside 32px band (Slider_themeresources.xaml:6,166-173,221,233 in winui3/release/2.7.0).
+const winuiSliderBase: SliderPreset = {
+  band: 32,
+  rail: 4,
+  thumbWidth: 18,
+  thumbHeight: 18,
+  thumbPressedWidth: 18,
+  innerDot: 12,
+  innerDotHover: 14,
+  innerDotPressed: 10,
+  verticalLength: 128,
+  handleShape: "ring",
+  outlined: false,
+  hoverBrightness: false,
+};
+
+const sliderPresets: Record<Controls, Tiered<SliderPreset>> = {
+  base: {
+    pointer: {
+      band: 20,
+      rail: 6,
+      thumbWidth: 14,
+      thumbHeight: 14,
+      thumbPressedWidth: 14,
+      innerDot: 0,
+      innerDotHover: 0,
+      innerDotPressed: 0,
+      verticalLength: 128,
+      handleShape: "circle",
+      outlined: true,
+      hoverBrightness: true,
+    },
+    touch: {
+      band: 32,
+      rail: 8,
+      thumbWidth: 20,
+      thumbHeight: 20,
+      thumbPressedWidth: 20,
+      innerDot: 0,
+      innerDotHover: 0,
+      innerDotPressed: 0,
+      verticalLength: 144,
+      handleShape: "circle",
+      outlined: true,
+      hoverBrightness: true,
+    },
+  },
+  material: { pointer: m3SliderBase, touch: { ...m3SliderBase, verticalLength: 144 } },
+  winui: { pointer: winuiSliderBase, touch: { ...winuiSliderBase, verticalLength: 144 } },
+};
 
 // @port slider.ts
 /** Options of `sliderLook`. */
@@ -35,7 +120,7 @@ export const sliderValueStyle = (): TextStyle => ({ color: alpha(colors.foregrou
 
 /**
  * A `Slider`'s parts (spread them: `<Slider {...sliderLook()}>`), reading track thickness,
- * hit-band size, border presence, and handle geometry/states from `dimension.slider[tier]`
+ * hit-band size, border presence, and handle geometry/states from `sliderPresets[controls()][tier]`
  * and `colors.sliderTrack`.
  */
 export function sliderLook(o: SliderLookOptions = {}) {
@@ -53,20 +138,20 @@ export function sliderLook(o: SliderLookOptions = {}) {
     },
     // The band keeps half a thumb free at each end, so the thumbs stay inside.
     get trackClass(): string {
-      const s = sliderGeometry();
-      const pad = s["thumb-width"] / 2;
+      const s = sliderPresets[controls()][tier];
+      const pad = s.thumbWidth / 2;
       const band = vertical
-        ? `w-[${s.band}px] h-[${s["vertical-length"]}px] items-center py-[${pad}px]`
+        ? `w-[${s.band}px] h-[${s.verticalLength}px] items-center py-[${pad}px]`
         : `h-[${s.band}px] justify-center px-[${pad}px]`;
       return `${band} ${o.value && !vertical ? "flex-1" : ""} cursor-pointer ${fade} disabled:opacity-50 disabled:cursor-not-allowed`;
     },
     get indicatorClass(): string {
-      const s = sliderGeometry();
+      const s = sliderPresets[controls()][tier];
       const rail = vertical ? `w-[${s.rail}px] h-full` : `h-[${s.rail}px]`;
       return `${rail} rounded-full`;
     },
     get indicatorStyle(): ViewStyle {
-      const s = sliderGeometry();
+      const s = sliderPresets[controls()][tier];
       return {
         backgroundColor: colors.sliderTrack,
         ...(s.outlined
@@ -78,45 +163,45 @@ export function sliderLook(o: SliderLookOptions = {}) {
     // The keyboard's ring on the thumb that has the focus (`focus-visible:`:
     // not after a press or a drag).
     get thumbClass(): string {
-      const s = sliderGeometry();
-      const hoverMods = s["hover-brightness"]
+      const s = sliderPresets[controls()][tier];
+      const hoverMods = s.hoverBrightness
         ? "hover:brightness-105 active:brightness-95 disabled:brightness-100"
         : "";
       const focusRingClass = "focus-visible:outline-3 focus-visible:outline-ring/50";
-      if (s["handle-shape"] === "bar") {
-        const w = vertical ? s["thumb-height"] : s["thumb-width"];
-        const h = vertical ? s["thumb-width"] : s["thumb-height"];
+      if (s.handleShape === "bar") {
+        const w = vertical ? s.thumbHeight : s.thumbWidth;
+        const h = vertical ? s.thumbWidth : s.thumbHeight;
         const pressMod = vertical
-          ? `active:h-[${s["thumb-pressed-width"]}px]`
-          : `active:w-[${s["thumb-pressed-width"]}px]`;
+          ? `active:h-[${s.thumbPressedWidth}px]`
+          : `active:w-[${s.thumbPressedWidth}px]`;
         return `w-[${w}px] h-[${h}px] ${pressMod} rounded-full ${fade} ${focusRingClass}`;
       }
-      if (s["handle-shape"] === "ring") {
-        const outer = s["thumb-width"] - 2 * EDGE_WIDTH;
-        const rim = (outer - s["inner-dot"]) / 2;
-        const hoverRim = (outer - s["inner-dot-hover"]) / 2;
-        const pressRim = (outer - s["inner-dot-pressed"]) / 2;
+      if (s.handleShape === "ring") {
+        const outer = s.thumbWidth - 2 * EDGE_WIDTH;
+        const rim = (outer - s.innerDot) / 2;
+        const hoverRim = (outer - s.innerDotHover) / 2;
+        const pressRim = (outer - s.innerDotPressed) / 2;
         return `w-[${outer}px] h-[${outer}px] rounded-full border-solid border-popover border-[${rim}px] hover:border-[${hoverRim}px] active:border-[${pressRim}px] ${fade} ${focusRingClass}`;
       }
       return `rounded-full ${fade} ${hoverMods} ${focusRingClass}`.trim();
     },
     get thumbStyle(): ViewStyle {
-      const s = sliderGeometry();
-      if (s["handle-shape"] === "bar") {
+      const s = sliderPresets[controls()][tier];
+      if (s.handleShape === "bar") {
         return {
           backgroundColor: finish.handle.backgroundColor,
           borderWidth: 0,
         };
       }
-      if (s["handle-shape"] === "ring") {
+      if (s.handleShape === "ring") {
         return {
           backgroundColor: colors.brandFill,
           boxShadow: outerEdge(finish.handle.borderColor, finish.handle.boxShadow, EDGE_WIDTH),
         };
       }
       return {
-        width: s["thumb-width"],
-        height: s["thumb-height"],
+        width: s.thumbWidth,
+        height: s.thumbHeight,
         borderWidth: stroke.control,
         ...finish.handle,
       };
@@ -127,7 +212,7 @@ export function sliderLook(o: SliderLookOptions = {}) {
 /** The accent's color and edge. A vertical rail turns the theme's gradient a quarter turn. */
 function accentFill(vertical: boolean): ViewStyle {
   const fill = fillStyle();
-  const s = sliderGeometry();
+  const s = sliderPresets[controls()][tier];
   return {
     ...(vertical && fill.backgroundImage
       ? { ...fill, backgroundImage: fill.backgroundImage.replace("180deg", "90deg") }

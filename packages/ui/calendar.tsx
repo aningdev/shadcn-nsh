@@ -2,14 +2,17 @@
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import {
   alpha,
-  calendarGeometry,
   colors,
+  controls,
+  type Controls,
   cornerCurve,
   rounded,
   terminal,
   font,
   shape,
   stroke,
+  tier,
+  type Tiered,
 } from "@shadcn-nsh/theme";
 import { ChevronRight } from "lucide";
 import type { ViewStyle } from "nsh";
@@ -51,11 +54,46 @@ const WEEKDAY_INITIALS = ["S", "M", "T", "W", "T", "F", "S"];
 /** The weekdays over the days elsewhere, shadcn's two letters. */
 const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
+interface CalendarPreset {
+  cell: number;
+  outlineWidth: number;
+  cellShape: "control" | "pill";
+  today: "quiet" | "outline" | "fill";
+  selected: "fill" | "outline";
+}
+
+// M3 DatePicker modal: 40x40dp circular day cells, 1dp outlined today, filled selected (DatePickerModalTokens.kt:43-76, _md-comp-date-picker-modal.scss:65-102).
+const m3CalendarPreset: CalendarPreset = {
+  cell: 40,
+  outlineWidth: 1,
+  cellShape: "pill",
+  today: "outline",
+  selected: "fill",
+};
+
+// WinUI 3 CalendarView: 40x40px circular cells, filled today, 2px accent-outlined selected (CalendarView_themeresources.xaml:62,244-245,767).
+const winuiCalendarPreset: CalendarPreset = {
+  cell: 40,
+  outlineWidth: 2,
+  cellShape: "pill",
+  today: "fill",
+  selected: "outline",
+};
+
+const calendarPresets: Record<Controls, Tiered<CalendarPreset>> = {
+  base: {
+    pointer: { cell: 32, outlineWidth: 1, cellShape: "control", today: "quiet", selected: "fill" },
+    touch: { cell: 42, outlineWidth: 1, cellShape: "control", today: "quiet", selected: "fill" },
+  },
+  material: { pointer: m3CalendarPreset, touch: m3CalendarPreset },
+  winui: { pointer: winuiCalendarPreset, touch: winuiCalendarPreset },
+};
+
 /**
- * A day's cell size (`dimension.calendar[tier].cell`): 32 with a pointer by default (42 on touch),
+ * A day's cell size (`calendarPresets[controls()][tier].cell`): 32 with a pointer by default (42 on touch),
  * 40 in Material and WinUI.
  */
-const cell = () => calendarGeometry().cell;
+const cell = () => calendarPresets[controls()][tier].cell;
 
 /** The gap between the months of a calendar of two (shadcn's `gap-4`). */
 const monthGap = 16;
@@ -67,8 +105,10 @@ const weekGap = 4;
 const cellRadius = () => shape.control;
 
 /** Day cell corner radius: `"pill"` gives a circle (`cell / 2`), `"control"` keeps `shape.control`. */
-const dayRadius = () =>
-  calendarGeometry()["cell-shape"] === "pill" ? calendarGeometry().cell / 2 : shape.control;
+const dayRadius = () => {
+  const g = calendarPresets[controls()][tier];
+  return g.cellShape === "pill" ? g.cell / 2 : shape.control;
+};
 
 /**
  * The quiet fill of today, the hover, a range's band and the arrows' and
@@ -222,7 +262,7 @@ function Day(props: { item: CalendarEntry; firstDayOfWeek?: number }) {
     props.item.date ? columnOf(props.item.date, props.firstDayOfWeek ?? 0) : -1,
   );
   const boxClass = () => {
-    const g = calendarGeometry();
+    const g = calendarPresets[controls()][tier];
     const todayBase =
       g.today === "fill"
         ? "bg-primary border-transparent"
@@ -246,7 +286,7 @@ function Day(props: { item: CalendarEntry; firstDayOfWeek?: number }) {
     return `${restBase} transition-colors duration-100 motion-reduce:transition-none ${hoverCls} ${selectedCls} ${focusCls} group-data-range-middle:group-focus-visible:bg-brand-tint group-data-range-middle:bg-transparent`;
   };
   const textClass = () => {
-    const g = calendarGeometry();
+    const g = calendarPresets[controls()][tier];
     const baseColor =
       props.item.today && g.today === "fill"
         ? "text-primary-foreground"
@@ -283,7 +323,7 @@ function Day(props: { item: CalendarEntry; firstDayOfWeek?: number }) {
             width: cell(),
             maxWidth: "100%",
             height: cell(),
-            borderWidth: calendarGeometry()["outline-width"],
+            borderWidth: calendarPresets[controls()][tier].outlineWidth,
             ...rounded(dayRadius()),
             alignItems: "center",
             justifyContent: "center",

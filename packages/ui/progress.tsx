@@ -3,12 +3,13 @@
 import {
   animate,
   colors,
+  controls,
+  type Controls,
   fillStyle,
   finish,
   follow,
   insetEdge,
   motion,
-  progressGeometry,
   stroke,
   type Tone,
   toneColor,
@@ -46,19 +47,47 @@ export const progressGlide =
 /** A determinate fill's `translate` for `value` percent (0 to 100). */
 export const progressRemaining = (value: number) => `${Math.max(0, Math.min(100, value)) - 100}% 0`;
 
-/** A bar's rail, `height` points tall (default `dimension.progress.height`): tracks `track-role`,
- * draws either a full-height bar or a centered hairline strip (`track-shape`), and adds the sunk
+interface ProgressPreset {
+  height: number;
+  trackHeight: number;
+  trackRole: "track" | "slider-track";
+  trackShape: "bar" | "hairline";
+  outlined: boolean;
+}
+
+const progressPresets: Record<Controls, ProgressPreset> = {
+  base: { height: 6, trackHeight: 6, trackRole: "track", trackShape: "bar", outlined: true },
+  // M3 LinearProgressIndicator 4dp indicator & SecondaryContainer track without border (LinearProgressIndicatorTokens.kt, ProgressIndicator.kt:817).
+  material: {
+    height: 4,
+    trackHeight: 4,
+    trackRole: "slider-track",
+    trackShape: "bar",
+    outlined: false,
+  },
+  // WinUI 3 ProgressBar 3px indicator centered over 1px hairline track without border (ProgressBar_themeresources.xaml:7,29-32, ProgressBar.xaml:157-163).
+  winui: {
+    height: 3,
+    trackHeight: 1,
+    trackRole: "slider-track",
+    trackShape: "hairline",
+    outlined: false,
+  },
+};
+
+/** A bar's rail, `height` points tall (default `progressPresets[controls()].height`): tracks `trackRole`,
+ * draws either a full-height bar or a centered hairline strip (`trackShape`), and adds the sunk
  * inset edge when `outlined`. */
 export function progressRail(height?: number): ViewStyle {
-  const g = progressGeometry();
+  const g = progressPresets[controls()];
   const h = height ?? g.height;
-  const trackColor = g["track-role"] === "slider-track" ? colors.sliderTrack : colors.track;
-  const band = (h - g["track-height"]) / 2;
+  const trackColor = g.trackRole === "slider-track" ? colors.sliderTrack : colors.track;
+  const band = (h - g.trackHeight) / 2;
   const trackFill: ViewStyle =
-    g["track-shape"] === "hairline"
+    g.trackShape === "hairline"
       ? {
           backgroundColor: "transparent",
-          backgroundImage: `linear-gradient(180deg, transparent 0px, transparent ${band}px, ${trackColor} ${band}px, ${trackColor} ${band + g["track-height"]}px, transparent ${band + g["track-height"]}px, transparent ${h}px)`,
+          backgroundImage: `linear-gradient(180deg, transparent 0px, transparent ${band}px, ${trackColor} ${band}px, ${trackColor} ${band + g.trackHeight}px, transparent ${band + g.trackHeight}px, transparent ${h}px)`,
         }
       : { backgroundColor: trackColor };
   return {
@@ -72,12 +101,12 @@ export function progressRail(height?: number): ViewStyle {
   };
 }
 
-/** A bar's fill, `height` points tall (default `dimension.progress.height`): the slider's citrus run
+/** A bar's fill, `height` points tall (default `progressPresets[controls()].height`): the slider's citrus run
  * (`finish.fill`: its gradient, over a `transparent` bottom), or a tone's color
  * (`up` for done, `warn`, `destructive`; `accent` is the run). Neither has an edge, so a tone's bar and
  * the run read as one kind of bar. */
 export function progressFill(height?: number, tone?: Tone): ViewStyle {
-  const h = height ?? progressGeometry().height;
+  const h = height ?? progressPresets[controls()].height;
   const fill = tone && tone !== "accent" ? { backgroundColor: toneColor(tone) } : fillStyle();
   return { height: h, borderRadius: h / 2, ...fill };
 }
@@ -87,7 +116,7 @@ export function progressFill(height?: number, tone?: Tone): ViewStyle {
  * hairline is a view of its own on the bar's frame: the rail comes first in the bar's row, a
  * label after it. */
 export function progressMarker(value: number, height?: number): ViewStyle {
-  const h = height ?? progressGeometry().height;
+  const h = height ?? progressPresets[controls()].height;
   return {
     position: "absolute",
     // physical: the fill is a full-width bar slid by a translate, which keeps the physical left; the
@@ -160,7 +189,7 @@ export interface ProgressLookOptions {
  * following `sweep`.
  */
 export function progressLook(value: Live<number>, o?: ProgressLookOptions) {
-  const height = () => o?.height ?? progressGeometry().height;
+  const height = () => o?.height ?? progressPresets[controls()].height;
   const indeterminate = () => !!read(o?.indeterminate);
   return {
     get trackStyle(): ViewStyle {
@@ -219,7 +248,9 @@ export function Progress(props: ProgressProps) {
     sweep: props.sweep,
   });
   return (
-    <ProgressContext.Provider value={{ height: () => props.height ?? progressGeometry().height }}>
+    <ProgressContext.Provider
+      value={{ height: () => props.height ?? progressPresets[controls()].height }}
+    >
       <BaseProgress
         {...rest}
         value={props.value}

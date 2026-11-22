@@ -2,9 +2,9 @@
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import {
   alpha,
-  checkboxGeometry,
-  type ChoiceWell,
   colors,
+  controls,
+  type Controls,
   finish,
   focusRing,
   follow,
@@ -55,6 +55,24 @@ const dims = (scale = 1) => ({
   corner: Math.round(controlSize.corner * scale),
   dot: Math.round(controlSize.dot * scale),
 });
+
+/** Surface treatment for an unchecked checkbox box or radio ring well. */
+export type ChoiceWell = "well" | "inset" | "outline";
+
+interface CheckboxPreset {
+  border: number;
+  target: number;
+  well: ChoiceWell;
+  hasTarget: boolean;
+}
+
+const checkboxPresets: Record<Controls, CheckboxPreset> = {
+  base: { border: 1, target: 0, well: "well", hasTarget: false },
+  // M3 Checkbox 18dp outlined box (2dp outline, 40dp state-layer target; _md-comp-checkbox.scss v34.0.21:70,92 / CheckboxTokens.kt).
+  material: { border: 2, target: 40, well: "outline", hasTarget: true },
+  // WinUI 3 CheckBox resting ControlAltFillColorSecondary well with 1px ControlStrongStrokeColorDefault border (CheckBox_themeresources.xaml in winui3/release/2.7.0).
+  winui: { border: 1, target: 0, well: "inset", hasTarget: false },
+};
 
 /** The fill of a box or ring that is off: spread it after the box's
  * `borderWidth` (a quick setting's icon lights up from it too, under a
@@ -158,7 +176,7 @@ export function checkboxLook(o?: ChoiceOptions): CheckboxLook {
     indicatorClass: choiceSink,
     get indicatorStyle(): ViewStyle {
       const { control, height, corner } = dims(o?.scale);
-      const g = checkboxGeometry();
+      const g = checkboxPresets[controls()];
       return {
         width: control,
         height,
@@ -229,7 +247,7 @@ export function CheckboxMark(props: { mark: CheckboxMarkKind } & ChoiceOptions) 
       <Icon icon={icon} size={checkSize} tint={colors.onBrand} weight={MARK_WEIGHT} />
     </View>
   );
-  const cb = checkboxGeometry();
+  const cb = checkboxPresets[controls()];
   const innerW = control - 2 * cb.border;
   const innerH = height - 2 * cb.border;
   // One view as large as the box inside its border holds the layers: the
@@ -237,7 +255,7 @@ export function CheckboxMark(props: { mark: CheckboxMarkKind } & ChoiceOptions) 
   // absolutely made it 0 × 0 and the fill a speck at the box's middle.
   return (
     <View style={{ width: innerW, height: innerH }}>
-      {cb["has-target"] ? (
+      {cb.hasTarget ? (
         <ChoiceTarget
           target={Math.round(cb.target * (props.scale ?? 1))}
           innerW={innerW}

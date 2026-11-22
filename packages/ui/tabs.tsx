@@ -14,7 +14,8 @@ import {
   stroke,
   dimmed,
   style as themeStyle,
-  tabsGeometry,
+  controls,
+  type Controls,
 } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
 import type { AndroidProps, JSX, StyleProp, ViewStyle } from "nsh";
@@ -127,15 +128,29 @@ export function tabsLook() {
  * (hover on the others, a press that dims, the focus ring, dimmed while
  * disabled).
  */
+interface TabsPreset {
+  padX: number;
+  indicatorSpan: "tab" | "label";
+  indicatorCorners: "pill" | "top";
+}
+
+const tabsPresets: Record<Controls, TabsPreset> = {
+  base: { padX: 8, indicatorSpan: "tab", indicatorCorners: "pill" },
+  // M3 PrimaryNavigationTab label-width indicator with 3dp top-only corners (PrimaryNavigationTabTokens.kt, _md-comp-primary-navigation-tab.scss:28, _tab.scss:92-103).
+  material: { padX: 8, indicatorSpan: "label", indicatorCorners: "top" },
+  // WinUI 3 SelectorBar underline tab geometry with 3px pill-capped active indicator.
+  winui: { padX: 8, indicatorSpan: "tab", indicatorCorners: "pill" },
+};
+
 export function underlineTabsLook() {
   return {
     get style(): ViewStyle {
       return { flexDirection: "row", gap: 2, paddingTop: 3 };
     },
     get indicatorStyle(): ViewStyle {
-      const g = tabsGeometry();
+      const g = tabsPresets[controls()];
       const corners: ViewStyle =
-        g["indicator-corners"] === "top"
+        g.indicatorCorners === "top"
           ? {
               borderTopLeftRadius: stroke.indicator,
               borderTopRightRadius: stroke.indicator,
@@ -146,7 +161,7 @@ export function underlineTabsLook() {
       return {
         bottom: 0,
         height: stroke.indicator,
-        ...(g["indicator-span"] === "label" ? { marginHorizontal: g["pad-x"] } : {}),
+        ...(g.indicatorSpan === "label" ? { marginHorizontal: g.padX } : {}),
         ...corners,
         backgroundColor: colors.brand,
       };
@@ -167,7 +182,7 @@ export function underlineTabsLook() {
         get style(): ViewStyle {
           return {
             height: controlSize.tabs,
-            paddingHorizontal: tabsGeometry()["pad-x"],
+            paddingHorizontal: tabsPresets[controls()].padX,
             marginBottom: 4,
             ...rounded(shape.control),
             borderWidth: stroke.control,

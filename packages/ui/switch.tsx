@@ -2,16 +2,18 @@
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import {
   colors,
+  controls,
+  type Controls,
   finish,
   follow,
   hitTarget,
   motion,
-  type SwitchDim,
-  switchGeometry,
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
   stroke,
+  tier,
+  type Tiered,
 } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
 import { split } from "nsh";
@@ -33,16 +35,108 @@ export interface SwitchLook {
   readonly thumbStyle: ViewStyle;
 }
 
+interface SwitchPreset {
+  width: number;
+  height: number;
+  smWidth: number;
+  smHeight: number;
+  border: number;
+  onBorder: number;
+  knob: number;
+  onKnob: number;
+  smKnob: number;
+  smOnKnob: number;
+  knobHover: number;
+  knobPressedWidth: number;
+  knobPressedHeight: number;
+  knobFeedback: "none" | "expand" | "stretch";
+}
+
+// M3 Switch 52x32dp track, 2dp off / 0dp on outline, 16/24/28dp handle growth (_md-comp-switch.scss:47-65 v34.0.21 / SwitchTokens.kt).
+const materialSwitchPreset: SwitchPreset = {
+  width: 52,
+  height: 32,
+  smWidth: 52,
+  smHeight: 32,
+  border: 2,
+  onBorder: 0,
+  knob: 16,
+  onKnob: 24,
+  smKnob: 16,
+  smOnKnob: 24,
+  knobHover: 16,
+  knobPressedWidth: 28,
+  knobPressedHeight: 28,
+  knobFeedback: "expand",
+};
+
+// WinUI 3 ToggleSwitch 40x20 track, 1px off / 0px on stroke, 12px knob scaling to 14px hover & 17x14 pressed (ToggleSwitch_themeresources.xaml:5,6,130,269,312,315 in winui3/release/2.7.0).
+const winuiSwitchPreset: SwitchPreset = {
+  width: 40,
+  height: 20,
+  smWidth: 40,
+  smHeight: 20,
+  border: 1,
+  onBorder: 0,
+  knob: 12,
+  onKnob: 12,
+  smKnob: 12,
+  smOnKnob: 12,
+  knobHover: 14,
+  knobPressedWidth: 17,
+  knobPressedHeight: 14,
+  knobFeedback: "stretch",
+};
+
+const switchPresets: Record<Controls, Tiered<SwitchPreset>> = {
+  base: {
+    pointer: {
+      width: 28,
+      height: 16,
+      smWidth: 28,
+      smHeight: 16,
+      border: 1,
+      onBorder: 1,
+      knob: 12,
+      onKnob: 12,
+      smKnob: 12,
+      smOnKnob: 12,
+      knobHover: 12,
+      knobPressedWidth: 12,
+      knobPressedHeight: 12,
+      knobFeedback: "none",
+    },
+    touch: {
+      width: 42,
+      height: 24,
+      smWidth: 34,
+      smHeight: 20,
+      border: 1,
+      onBorder: 1,
+      knob: 20,
+      onKnob: 20,
+      smKnob: 16,
+      smOnKnob: 16,
+      knobHover: 20,
+      knobPressedWidth: 20,
+      knobPressedHeight: 20,
+      knobFeedback: "none",
+    },
+  },
+  material: { pointer: materialSwitchPreset, touch: materialSwitchPreset },
+  winui: { pointer: winuiSwitchPreset, touch: winuiSwitchPreset },
+};
+
 interface ResolvedSwitchGeometry extends SwitchGeometry {
   onBorder: number;
   onKnob: number;
   knobHover: number;
   knobPressedWidth: number;
   knobPressedHeight: number;
-  knobFeedback: SwitchDim["knob-feedback"];
+  knobFeedback: SwitchPreset["knobFeedback"];
 }
 
-/** The track and knob of a size, here (read from the active theme's `dimension.switch`, or the terminal). */
+/** The track and knob of a size, here (read from the active theme's `controls()` preset, or the terminal). */
 function geometry(size: SwitchSize): ResolvedSwitchGeometry {
   if (terminal)
     return {
@@ -58,30 +152,30 @@ function geometry(size: SwitchSize): ResolvedSwitchGeometry {
       knobPressedHeight: TERMINAL_ROW,
       knobFeedback: "none",
     };
-  const g = switchGeometry();
+  const g = switchPresets[controls()][tier];
   const sm = size === "sm";
-  const width = sm ? g["sm-width"] : g.width;
-  const height = sm ? g["sm-height"] : g.height;
-  const knob = sm ? g["sm-knob"] : g.knob;
+  const width = sm ? g.smWidth : g.width;
+  const height = sm ? g.smHeight : g.height;
+  const knob = sm ? g.smKnob : g.knob;
   return {
     width,
     height,
     border: g.border,
     inset: Math.max(0, (height - knob) / 2 - g.border),
     knob,
-    onBorder: g["on-border"],
-    onKnob: sm ? g["sm-on-knob"] : g["on-knob"],
-    knobHover: g["knob-hover"],
-    knobPressedWidth: g["knob-pressed-width"],
-    knobPressedHeight: g["knob-pressed-height"],
-    knobFeedback: g["knob-feedback"],
+    onBorder: g.onBorder,
+    onKnob: sm ? g.smOnKnob : g.onKnob,
+    knobHover: g.knobHover,
+    knobPressedWidth: g.knobPressedWidth,
+    knobPressedHeight: g.knobPressedHeight,
+    knobFeedback: g.knobFeedback,
   };
 }
 
 /**
  * The gallery's switch, as the props of `Switch`'s parts (spread them:
  * `<Switch {...switchLook(() => on())}>`): track, knob geometry, border, and
- * hover/press knob feedback come from `dimension.switch[tier]`. `on` is the value
+ * hover/press knob feedback come from `switchPresets[controls()][tier]`. `on` is the value
  * the app owns: the knob follows it, from a press or from elsewhere.
  */
 export function switchLook(on: () => boolean, size: SwitchSize = "default"): SwitchLook {
