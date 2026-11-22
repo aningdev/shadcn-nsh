@@ -2,12 +2,14 @@
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import {
   alpha,
+  checkboxGeometry,
   colors,
   finish,
   focusRing,
   follow,
   isDark,
   rounded,
+  stateLayerColor,
   terminal,
   TERMINAL_ROW,
   tints,
@@ -60,8 +62,25 @@ const dims = (scale = 1) => ({
  * field's, so an empty box still stands out, dimmed too: `disabled`, its
  * edge twice as strong, so the row's half opacity leaves it as strong as an
  * enabled box's (the mark and the label fade, the box stays drawn). */
-export const choiceWell = (o?: { disabled?: boolean }): ViewStyle =>
-  isDark()
+export const choiceWell = (o?: { disabled?: boolean; well?: string }): ViewStyle => {
+  const well = o?.well ?? "well";
+  if (well === "inset") {
+    return {
+      backgroundColor: colors.track,
+      backgroundImage: "none",
+      borderColor: colors.input,
+      boxShadow: "none",
+    };
+  }
+  if (well === "outline") {
+    return {
+      backgroundColor: "transparent",
+      backgroundImage: "none",
+      borderColor: colors.mutedForeground,
+      boxShadow: "none",
+    };
+  }
+  return isDark()
     ? {
         backgroundColor: alpha(colors.input, 0.3),
         backgroundImage: "none",
@@ -74,6 +93,32 @@ export const choiceWell = (o?: { disabled?: boolean }): ViewStyle =>
         borderColor: colors.input,
         boxShadow: finish.field.boxShadow,
       };
+};
+
+/**
+ * Centered circular state-layer halo for M3 checkboxes and radios (40dp target around 18dp/20dp indicator).
+ * Zero layout impact and opacity 0 at rest; lights up with theme hover overlay on group hover/press.
+ */
+export function ChoiceTarget(props: {
+  target: number;
+  innerW: number;
+  innerH: number;
+  checked: boolean;
+}) {
+  return (
+    <View
+      class="pointer-events-none rounded-full opacity-0 transition-opacity duration-150 group-hover:opacity-100 group-active:opacity-100 motion-reduce:transition-none"
+      style={{
+        position: "absolute",
+        width: props.target,
+        height: props.target,
+        start: (props.innerW - props.target) / 2,
+        top: (props.innerH - props.target) / 2,
+        backgroundColor: stateLayerColor("hover", props.checked ? "primary" : "foreground"),
+      }}
+    />
+  );
+}
 
 /** A layer over the whole of its parent, its content centered: layers that cross over in place. */
 const centered = {
@@ -108,18 +153,19 @@ export interface CheckboxLook {
  * 90% while its row (the `group`) is pressed. `CheckboxMark` fills it.
  */
 export function checkboxLook(o?: ChoiceOptions): CheckboxLook {
-  const { control, height, corner } = dims(o?.scale);
   return {
     indicatorClass: choiceSink,
     get indicatorStyle(): ViewStyle {
+      const { control, height, corner } = dims(o?.scale);
+      const g = checkboxGeometry();
       return {
         width: control,
         height,
         borderRadius: o?.round ? control / 2 : corner,
         alignItems: "center",
         justifyContent: "center",
-        borderWidth: stroke.control,
-        ...choiceWell({ disabled: !!read(o?.disabled) }),
+        borderWidth: g.border,
+        ...choiceWell({ well: g.well, disabled: !!read(o?.disabled) }),
       };
     },
   };
@@ -131,16 +177,17 @@ export function checkboxLook(o?: ChoiceOptions): CheckboxLook {
  * edge: it fades in and out as the value changes. Gradients do not
  * interpolate, so the finish fades whole rather than its colors.
  */
-export function ChoiceLight(props: { on: AnimatedValue; radius: number }) {
+export function ChoiceLight(props: { on: AnimatedValue; radius: number; border?: number }) {
+  const b = props.border ?? stroke.control;
   return (
     <View
       style={{
         pointerEvents: "none",
         position: "absolute",
-        top: -1,
-        left: -1,
-        right: -1,
-        bottom: -1,
+        top: -b,
+        left: -b,
+        right: -b,
+        bottom: -b,
         borderRadius: props.radius,
         borderWidth: stroke.control,
         ...finish.light,
@@ -181,12 +228,23 @@ export function CheckboxMark(props: { mark: CheckboxMarkKind } & ChoiceOptions) 
       <Icon icon={icon} size={checkSize} tint={colors.onBrand} weight={MARK_WEIGHT} />
     </View>
   );
+  const cb = checkboxGeometry();
+  const innerW = control - 2 * cb.border;
+  const innerH = height - 2 * cb.border;
   // One view as large as the box inside its border holds the layers: the
   // slot's content sits in a holder view sized to it, so layers placed only
   // absolutely made it 0 × 0 and the fill a speck at the box's middle.
   return (
-    <View style={{ width: control - 2, height: height - 2 }}>
-      <ChoiceLight on={on} radius={props.round ? control / 2 : corner} />
+    <View style={{ width: innerW, height: innerH }}>
+      {cb["has-target"] ? (
+        <ChoiceTarget
+          target={Math.round(cb.target * (props.scale ?? 1))}
+          innerW={innerW}
+          innerH={innerH}
+          checked={!!props.mark}
+        />
+      ) : null}
+      <ChoiceLight on={on} radius={props.round ? control / 2 : corner} border={cb.border} />
       {glyph(check, Check)}
       {glyph(dash, Minus)}
     </View>

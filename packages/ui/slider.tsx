@@ -1,14 +1,22 @@
 // A slider: the look (`sliderLook` and its companions) and the `Slider` that wears it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { alpha, colors, fillStyle, finish, insetEdge, stroke } from "@shadcn-nsh/theme";
+import {
+  alpha,
+  colors,
+  fillStyle,
+  finish,
+  insetEdge,
+  sliderGeometry,
+  stroke,
+} from "@shadcn-nsh/theme";
 import type { TextStyle, ViewStyle } from "nsh";
-import { platform, split, Text } from "nsh";
+import { split, Text } from "nsh";
 import { Slider as BaseSlider, type SliderProps as BaseSliderProps } from "nsh/base";
 
 // @port slider.ts
 /** Options of `sliderLook`. */
 export interface SliderLookOptions {
-  /** A vertical slider: the rail 8 wide, the thumb 8 × 16. */
+  /** A vertical slider: rotated rail, bar handle, and track band. */
   vertical?: boolean;
   /** The value column after the track (`children`: a 42-point label). */
   value?: boolean;
@@ -24,58 +32,116 @@ export const sliderValueClass = "w-[42px] text-right font-mono text-[11px] leadi
 export const sliderValueStyle = (): TextStyle => ({ color: alpha(colors.foreground, 0.6) });
 
 /**
- * A `Slider`'s parts (spread them: `<Slider {...sliderLook()}>`): a rail
- * sunk into the surface and a round thumb on it: a 6-point rail and a
- * 14-point thumb with a pointer (a 20-point band around the rail takes
- * presses), 8 and 20 on a touch screen (a 32-point band). Under the pointer
- * the thumb lightens, the keyboard's focus rings the thumb in the theme's
- * `ring` (not after a press or a drag), a disabled slider fades to 50%
- * (transitions still with reduced motion).
- *
- * Only what never changes is here, so the spread reads no signal: a spread
- * is evaluated where the slider is made, and a signal read there would make
- * the slider again when it changes (in the middle of a drag). The colors are
- * getters, read by the slider's props as the appearance changes; the fill
- * (`rangeStyle={sliderFill(..)}`) and `disabled` are props of their own.
+ * Horizontal gap cutout shadows separating a vertical M3 Expressive bar handle from the active
+ * and inactive track segments (flipped vertically for vertical sliders).
+ */
+function barGapShadow(gap: number, vertical: boolean): string {
+  const step = Math.max(1, Math.round(gap / 3));
+  const offsets: number[] = [];
+  for (let d = step; d < gap; d += step) offsets.push(d);
+  offsets.push(gap);
+  const bg = colors.card;
+  return offsets
+    .flatMap((d) =>
+      vertical
+        ? [`0 -${d}px 0 0 ${bg}`, `0 ${d}px 0 0 ${bg}`]
+        : [`-${d}px 0 0 0 ${bg}`, `${d}px 0 0 0 ${bg}`],
+    )
+    .join(", ");
+}
+
+/**
+ * A `Slider`'s parts (spread them: `<Slider {...sliderLook()}>`), reading track thickness,
+ * hit-band size, border presence, and handle geometry/states from `dimension.slider[tier]`
+ * and `colors.sliderTrack`.
  */
 export function sliderLook(o: SliderLookOptions = {}) {
   const vertical = !!o.vertical;
-  const pointer = platform.desktop;
-  const thumb = pointer ? 14 : 20;
-  // The band keeps half a thumb free at each end, so the thumbs stay inside.
-  const band = vertical
-    ? pointer
-      ? "w-5 h-32 items-center py-[7px]"
-      : "w-8 h-36 items-center py-[10px]"
-    : pointer
-      ? "h-5 justify-center px-[7px]"
-      : "h-8 justify-center px-[10px]";
-  // The rail: 6 points with a pointer, 8 on a touch screen; vertical, it runs the full height.
-  const rail = vertical ? (pointer ? "w-1.5 h-full" : "w-2 h-full") : pointer ? "h-1.5" : "h-2";
   const fade = "transition duration-150 motion-reduce:transition-none";
   return {
     // A vertical value sits above the rail (`flex-col-reverse`: the track is the first child).
     // It does not take `flex-1`: the rail keeps the height its band asks for.
-    class: o.value
-      ? vertical
-        ? "flex-col-reverse items-center gap-1"
-        : "flex-row items-center gap-2"
-      : undefined,
-    trackClass: `${band} ${o.value && !vertical ? "flex-1" : ""} cursor-pointer ${fade} disabled:opacity-50 disabled:cursor-not-allowed`,
-    indicatorClass: `${rail} rounded-full`,
+    get class(): string | undefined {
+      return o.value
+        ? vertical
+          ? "flex-col-reverse items-center gap-1"
+          : "flex-row items-center gap-2"
+        : undefined;
+    },
+    // The band keeps half a thumb free at each end, so the thumbs stay inside.
+    get trackClass(): string {
+      const s = sliderGeometry();
+      const pad = s["thumb-width"] / 2;
+      const band = vertical
+        ? `w-[${s.band}px] h-[${s["vertical-length"]}px] items-center py-[${pad}px]`
+        : `h-[${s.band}px] justify-center px-[${pad}px]`;
+      return `${band} ${o.value && !vertical ? "flex-1" : ""} cursor-pointer ${fade} disabled:opacity-50 disabled:cursor-not-allowed`;
+    },
+    get indicatorClass(): string {
+      const s = sliderGeometry();
+      const rail = vertical ? `w-[${s.rail}px] h-full` : `h-[${s.rail}px]`;
+      return `${rail} rounded-full`;
+    },
     get indicatorStyle(): ViewStyle {
+      const s = sliderGeometry();
       return {
-        backgroundColor: colors.track,
-        boxShadow: insetEdge(finish.track.borderColor, finish.track.boxShadow),
+        backgroundColor: colors.sliderTrack,
+        ...(s.outlined
+          ? { boxShadow: insetEdge(finish.track.borderColor, finish.track.boxShadow) }
+          : {}),
       };
     },
     rangeClass: "rounded-full",
     // The keyboard's ring on the thumb that has the focus (`focus-visible:`:
-    // not after a press or a drag). An outline, which the handle's shadow in
-    // `thumbStyle` leaves alone.
-    thumbClass: `rounded-full ${fade} hover:brightness-105 active:brightness-95 focus-visible:outline-3 focus-visible:outline-ring/50 disabled:brightness-100`,
+    // not after a press or a drag).
+    get thumbClass(): string {
+      const s = sliderGeometry();
+      const hoverMods = s["hover-brightness"]
+        ? "hover:brightness-105 active:brightness-95 disabled:brightness-100"
+        : "";
+      const focusRingClass = "focus-visible:outline-3 focus-visible:outline-ring/50";
+      if (s["handle-shape"] === "bar") {
+        const w = vertical ? s["thumb-height"] : s["thumb-width"];
+        const h = vertical ? s["thumb-width"] : s["thumb-height"];
+        const pressMod = vertical
+          ? `active:h-[${s["thumb-pressed-width"]}px]`
+          : `active:w-[${s["thumb-pressed-width"]}px]`;
+        return `w-[${w}px] h-[${h}px] ${pressMod} rounded-full ${fade} ${focusRingClass}`;
+      }
+      if (s["handle-shape"] === "ring") {
+        const outer = s["thumb-width"] - 2;
+        const rim = (outer - s["inner-dot"]) / 2;
+        const hoverRim = (outer - s["inner-dot-hover"]) / 2;
+        const pressRim = (outer - s["inner-dot-pressed"]) / 2;
+        return `w-[${outer}px] h-[${outer}px] rounded-full border-solid border-popover border-[${rim}px] hover:border-[${hoverRim}px] active:border-[${pressRim}px] ${fade} ${focusRingClass}`;
+      }
+      return `rounded-full ${fade} ${hoverMods} ${focusRingClass}`.trim();
+    },
     get thumbStyle(): ViewStyle {
-      return { width: thumb, height: thumb, borderWidth: stroke.control, ...finish.handle };
+      const s = sliderGeometry();
+      if (s["handle-shape"] === "bar") {
+        return {
+          backgroundColor: finish.handle.backgroundColor,
+          borderWidth: 0,
+          boxShadow: barGapShadow(s.gap, vertical),
+        };
+      }
+      if (s["handle-shape"] === "ring") {
+        const outerShadow =
+          finish.handle.boxShadow && finish.handle.boxShadow !== "none"
+            ? `0 0 0 1px ${finish.handle.borderColor}, ${finish.handle.boxShadow}`
+            : `0 0 0 1px ${finish.handle.borderColor}`;
+        return {
+          backgroundColor: colors.brandFill,
+          boxShadow: outerShadow,
+        };
+      }
+      return {
+        width: s["thumb-width"],
+        height: s["thumb-height"],
+        borderWidth: stroke.control,
+        ...finish.handle,
+      };
     },
   };
 }
@@ -83,12 +149,14 @@ export function sliderLook(o: SliderLookOptions = {}) {
 /** The accent's color and edge. A vertical rail turns the theme's gradient a quarter turn. */
 function accentFill(vertical: boolean): ViewStyle {
   const fill = fillStyle();
+  const s = sliderGeometry();
   return {
     ...(vertical && fill.backgroundImage
       ? { ...fill, backgroundImage: fill.backgroundImage.replace("180deg", "90deg") }
       : fill),
-    borderWidth: stroke.control,
-    borderColor: finish.fill.borderColor,
+    ...(s.outlined
+      ? { borderWidth: stroke.control, borderColor: finish.fill.borderColor }
+      : { borderWidth: 0 }),
   };
 }
 

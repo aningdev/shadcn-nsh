@@ -1,6 +1,6 @@
 // A radio group: the look (`RadioRing`) and the `Radio` / `RadioGroup` that wear it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, follow, terminal, TERMINAL_ROW, stroke } from "@shadcn-nsh/theme";
+import { colors, follow, radioGeometry, terminal, TERMINAL_ROW } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { split, View } from "nsh";
 import {
@@ -14,53 +14,69 @@ import {
   ChoiceLight,
   choiceScales,
   choiceSink,
+  ChoiceTarget,
   choiceTileLook,
   choiceWell,
   type ChoiceSize,
 } from "./checkbox";
 import { AsText } from "./lib/as-text";
-import { controlSize } from "./lib/surface";
+import { PILL_RADIUS } from "./lib/surface";
 
 // @port look/choice.tsx
-/** A box's or ring's size: `scale` times the page's; one row high in the
- * terminal, where it is a glyph three Cells wide. */
-const dims = (scale = 1) => ({
-  control: Math.round(controlSize.control * scale),
-  height: terminal ? TERMINAL_ROW : Math.round(controlSize.control * scale),
-  check: Math.round(controlSize.check * scale),
-  corner: Math.round(controlSize.corner * scale),
-  dot: Math.round(controlSize.dot * scale),
-});
-
 /**
- * A radio's ring, among the `Radio`'s children (give the radio
- * `class="group"`, so the ring sinks with it): sunk like a field, citrus
- * once checked, with a dot of the ink on the citrus growing in from half
- * its size; 16 points with a pointer, 22 on a touch screen.
+ * A radio's ring, among the `Radio`'s children (give the radio `class="group"`, so the ring
+ * responds to row hover/press): outer diameter, dot diameter, stroke, interior well, checked style
+ * (`"fill"` vs `"ring"`), state-layer target, and dot hover/press scaling come from `dimension.radio[tier]`.
  */
 export function RadioRing(props: { on: boolean; scale?: number; disabled?: boolean }) {
-  const { control, height, dot } = dims(props.scale);
+  const scale = props.scale ?? 1;
+  const g = () => radioGeometry();
+  const size = () => Math.round(g().size * scale);
+  const height = () => (terminal ? TERMINAL_ROW : size());
+  const dot = () => Math.round(g().dot * scale);
+  const dotHover = () => Math.round(g()["dot-hover"] * scale);
+  const dotPressed = () => Math.round(g()["dot-pressed"] * scale);
+  const border = () => g().border;
+  const wellStyle = () => choiceWell({ well: g().well, disabled: props.disabled });
+  const ringBorderColor = () =>
+    g()["checked-style"] === "ring" && props.on ? colors.brand : wellStyle().borderColor;
   const on = follow(() => (props.on ? 1 : 0));
+  const dotClass = () =>
+    g()["dot-feedback"] === "scale"
+      ? `w-[${dot()}px] h-[${dot()}px] group-hover:w-[${dotHover()}px] group-hover:h-[${dotHover()}px] group-active:w-[${dotPressed()}px] group-active:h-[${dotPressed()}px] transition-all duration-100 motion-reduce:transition-none`
+      : undefined;
   return (
     <View
       class={choiceSink}
       style={{
-        width: control,
-        height,
-        borderRadius: control / 2,
+        width: size(),
+        height: height(),
+        borderRadius: size() / 2,
         alignItems: "center",
         justifyContent: "center",
-        borderWidth: stroke.control,
-        ...choiceWell({ disabled: props.disabled }),
+        borderWidth: border(),
+        ...wellStyle(),
+        borderColor: ringBorderColor(),
       }}
     >
-      <ChoiceLight on={on} radius={control / 2} />
+      {g()["has-target"] ? (
+        <ChoiceTarget
+          target={Math.round(g().target * scale)}
+          innerW={size() - 2 * border()}
+          innerH={height() - 2 * border()}
+          checked={props.on}
+        />
+      ) : null}
+      {g()["checked-style"] === "fill" ? (
+        <ChoiceLight on={on} radius={size() / 2} border={border()} />
+      ) : null}
       <View
+        class={dotClass()}
         style={{
-          width: dot,
-          height: dot,
-          borderRadius: dot / 2,
-          backgroundColor: colors.onBrand,
+          ...(g()["dot-feedback"] === "scale"
+            ? { borderRadius: PILL_RADIUS }
+            : { width: dot(), height: dot(), borderRadius: dot() / 2 }),
+          backgroundColor: g()["checked-style"] === "ring" ? colors.brand : colors.onBrand,
           opacity: on,
           transform: [{ scale: on.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] }) }],
         }}

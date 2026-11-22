@@ -501,7 +501,7 @@
       "type": "registry:ui",
       "title": "Switch",
       "description": "A switch whose knob springs across a sunk track.",
-      "registryDependencies": ["switch-geometry", "theme"],
+      "registryDependencies": ["surface", "switch-geometry", "theme"],
       "files": [
         {
           "path": "packages/ui/switch.tsx",

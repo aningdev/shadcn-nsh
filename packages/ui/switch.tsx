@@ -4,23 +4,20 @@ import {
   colors,
   finish,
   follow,
+  hitTarget,
   motion,
+  switchGeometry,
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
   stroke,
-  hitTarget,
 } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
-import { platform, split } from "nsh";
+import { split } from "nsh";
 import { Switch as BaseSwitch, type SwitchProps as BaseSwitchProps } from "nsh/base";
 
-import {
-  knobTravel,
-  type SwitchGeometry,
-  switchGeometries,
-  switchSlop,
-} from "./lib/switch-geometry";
+import { PILL_RADIUS } from "./lib/surface";
+import { type SwitchGeometry, switchSlop } from "./lib/switch-geometry";
 
 // @port look/switch.ts
 /** A switch's size on a touch screen (`sm` 34 × 20); with a pointer both are 28 × 16. */
@@ -31,13 +28,21 @@ export interface SwitchLook {
   /** Mirrors the track right to left, so the knob rests at the start there. */
   readonly trackClass: string;
   readonly trackStyle: ViewStyle;
+  readonly thumbClass: string;
   readonly thumbStyle: ViewStyle;
 }
 
-const pointer = platform.desktop;
+interface ResolvedSwitchGeometry extends SwitchGeometry {
+  onBorder: number;
+  onKnob: number;
+  knobHover: number;
+  knobPressedWidth: number;
+  knobPressedHeight: number;
+  knobFeedback: string;
+}
 
-/** The track and knob of a size, here (a pointer, a touch screen, the terminal). */
-function geometry(size: SwitchSize): SwitchGeometry {
+/** The track and knob of a size, here (read from the active theme's `dimension.switch`, or the terminal). */
+function geometry(size: SwitchSize): ResolvedSwitchGeometry {
   if (terminal)
     return {
       width: 5 * TERMINAL_COLUMN,
@@ -45,35 +50,60 @@ function geometry(size: SwitchSize): SwitchGeometry {
       border: 1,
       inset: 0,
       knob: TERMINAL_ROW,
+      onBorder: 1,
+      onKnob: TERMINAL_ROW,
+      knobHover: TERMINAL_ROW,
+      knobPressedWidth: TERMINAL_ROW,
+      knobPressedHeight: TERMINAL_ROW,
+      knobFeedback: "none",
     };
-  return pointer ? switchGeometries.pointer : switchGeometries[size];
+  const g = switchGeometry();
+  const sm = size === "sm";
+  const width = sm ? g["sm-width"] : g.width;
+  const height = sm ? g["sm-height"] : g.height;
+  const knob = sm ? g["sm-knob"] : g.knob;
+  return {
+    width,
+    height,
+    border: g.border,
+    inset: Math.max(0, (height - knob) / 2 - g.border),
+    knob,
+    onBorder: g["on-border"],
+    onKnob: sm ? g["sm-on-knob"] : g["on-knob"],
+    knobHover: g["knob-hover"],
+    knobPressedWidth: g["knob-pressed-width"],
+    knobPressedHeight: g["knob-pressed-height"],
+    knobFeedback: g["knob-feedback"],
+  };
 }
 
 /**
  * The gallery's switch, as the props of `Switch`'s parts (spread them:
- * `<Switch {...switchLook(() => on())}>`): a track sunk into the surface
- * that turns citrus, and a knob that springs across, both natively. The
- * knob keeps its size on and off; on, it is white with an olive edge
- * (`finish.knobOn`). `on` is the value the app owns: the knob follows it,
- * from a press or from elsewhere. 28 × 16 with a pointer; on a touch screen
- * 42 × 24 (`sm`: 34 × 20); the terminal's is one row, as wide as its
- * glyph (`[off]`). The knob is as far from the track's edge on as off
- * (`knobTravel`). Read the styles in JSX, so the appearance is followed.
- * A switch that stands alone takes `switchHitSlop` too; one that is a row
- * with its label is its own target.
+ * `<Switch {...switchLook(() => on())}>`): track, knob geometry, border, and
+ * hover/press knob feedback come from `dimension.switch[tier]`. `on` is the value
+ * the app owns: the knob follows it, from a press or from elsewhere.
  */
 export function switchLook(on: () => boolean, size: SwitchSize = "default"): SwitchLook {
-  const g = geometry(size);
-  // The knob travels as gpui-kit's does (`spring_move`), the track's color
-  // with it; with reduced motion both change in place.
   const t = follow(() => (on() ? 1 : 0), motion.move);
-  const x = t.interpolate({ inputRange: [0, 1], outputRange: [0, knobTravel(g)] });
+  let cachedTravel = geometry(size).width - geometry(size).height;
+  let cachedX = t.interpolate({ inputRange: [0, 1], outputRange: [0, cachedTravel] });
+  const travelX = () => {
+    const g = geometry(size);
+    const next = g.width - g.height;
+    if (next !== cachedTravel) {
+      cachedTravel = next;
+      cachedX = t.interpolate({ inputRange: [0, 1], outputRange: [0, cachedTravel] });
+    }
+    return cachedX;
+  };
   return {
     // The knob sits at the track's physical left (`left`, which keeps its
     // side) and travels right; right to left the whole track is mirrored, so
     // it rests at the start and springs toward the end in either direction.
     trackClass: "rtl:-scale-x-100",
     get trackStyle(): ViewStyle {
+      const g = geometry(size);
+      const checked = on();
       return {
         width: g.width,
         height: g.height,
@@ -83,25 +113,47 @@ export function switchLook(on: () => boolean, size: SwitchSize = "default"): Swi
           inputRange: [0, 1],
           outputRange: [colors.track, colors.brandFill],
         }),
-        borderWidth: g.border,
-        borderColor: on() ? finish.fill.borderColor : finish.track.borderColor,
-        boxShadow: on() ? finish.fill.boxShadow : finish.track.boxShadow,
+        borderWidth: checked ? g.onBorder : g.border,
+        borderColor: checked ? finish.fill.borderColor : finish.track.borderColor,
+        boxShadow: checked ? finish.fill.boxShadow : finish.track.boxShadow,
         transitionProperty: "border-color, box-shadow",
         transitionDuration: 150,
       };
     },
+    get thumbClass(): string {
+      const g = geometry(size);
+      if (g.knobFeedback === "expand") {
+        const offPad = (g.knobPressedWidth - g.knob) / 2;
+        const onPad = (g.knobPressedWidth - g.onKnob) / 2;
+        return `w-[${g.knob}px] h-[${g.knob}px] checked:w-[${g.onKnob}px] checked:h-[${g.onKnob}px] active:w-[${g.knobPressedWidth}px] active:h-[${g.knobPressedHeight}px] active:-ml-[${offPad}px] active:-mt-[${offPad}px] checked:active:w-[${g.knobPressedWidth}px] checked:active:h-[${g.knobPressedHeight}px] checked:active:-ml-[${onPad}px] checked:active:-mt-[${onPad}px] transition-all duration-150 motion-reduce:transition-none`;
+      }
+      if (g.knobFeedback === "stretch") {
+        const hoverPad = (g.knobHover - g.knob) / 2;
+        const pressV = (g.knobPressedHeight - g.knob) / 2;
+        const pressOnLeft = g.knobPressedWidth - g.knob - hoverPad;
+        return `w-[${g.knob}px] h-[${g.knob}px] hover:w-[${g.knobHover}px] hover:h-[${g.knobHover}px] hover:-ml-[${hoverPad}px] hover:-mt-[${hoverPad}px] active:w-[${g.knobPressedWidth}px] active:h-[${g.knobPressedHeight}px] active:-ml-[${hoverPad}px] active:-mt-[${pressV}px] checked:active:w-[${g.knobPressedWidth}px] checked:active:h-[${g.knobPressedHeight}px] checked:active:-ml-[${pressOnLeft}px] checked:active:-mt-[${pressV}px] transition-all duration-100 motion-reduce:transition-none`;
+      }
+      return "";
+    },
     get thumbStyle(): ViewStyle {
+      const g = geometry(size);
+      const checked = on();
+      const knobNow = checked ? g.onKnob : g.knob;
+      const borderNow = checked ? g.onBorder : g.border;
+      const offset = g.height / 2 - borderNow - knobNow / 2;
+      const sized =
+        g.knobFeedback === "none"
+          ? { width: knobNow, height: knobNow, borderRadius: knobNow / 2 }
+          : { borderRadius: PILL_RADIUS };
       return {
         position: "absolute",
         // physical: the knob's travel is a translateX from the track's left edge, and transforms do not mirror.
-        left: g.inset,
-        top: g.inset,
-        width: g.knob,
-        height: g.knob,
-        borderRadius: g.knob / 2,
+        left: offset,
+        top: offset,
+        ...sized,
         borderWidth: stroke.control,
-        ...(on() ? finish.knobOn : finish.knob),
-        transform: [{ translateX: x }],
+        ...(checked ? finish.knobOn : finish.knob),
+        transform: [{ translateX: travelX() }],
       };
     },
   };
@@ -136,15 +188,28 @@ export type SwitchProps = BaseSwitchProps & {
  * children it is a row with its label, and the row is the target.
  */
 export function Switch(props: SwitchProps) {
-  const [, rest] = split(props, ["size", "trackClass", "trackStyle", "thumbStyle", "hitSlop"]);
+  const [, rest] = split(props, [
+    "size",
+    "trackClass",
+    "trackStyle",
+    "thumbClass",
+    "thumbStyle",
+    "hitSlop",
+  ]);
   const size = props.size ?? "default";
   const look = switchLook(() => props.checked ?? false, size);
+  const resolvedThumbClass = () => {
+    const base = look.thumbClass;
+    if (base && props.thumbClass) return `${base} ${props.thumbClass}`;
+    return props.thumbClass ?? (base || undefined);
+  };
   return (
     <BaseSwitch
       {...rest}
       hitSlop={props.hitSlop ?? (props.children == null ? switchHitSlop(size) : undefined)}
       trackClass={props.trackClass ? `${look.trackClass} ${props.trackClass}` : look.trackClass}
       trackStyle={[look.trackStyle, props.trackStyle ?? null]}
+      thumbClass={resolvedThumbClass()}
       thumbStyle={[look.thumbStyle, props.thumbStyle ?? null]}
     />
   );
