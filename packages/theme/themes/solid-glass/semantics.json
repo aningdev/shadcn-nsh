@@ -179,6 +179,10 @@
         "md": 16,
         "lg": 18
       }
+    },
+    "grabber": {
+      "width": 36,
+      "height": 5
     }
   },
   "shape": {
@@ -197,6 +201,7 @@
     },
     "ripple": false,
     "pressed-opacity": 0.7,
+    "accent-pressed-opacity": 0.88,
     "disabled": {
       "content": 0.5,
       "container": 0.5
@@ -240,6 +245,16 @@
         "gradient": "linear-gradient(180deg, {card} 0%, {card} 100%)",
         "material": null
       },
+      "section": {
+        "background": "{card}",
+        "shadow": "none",
+        "border-color": "{card-edge}",
+        "material": null
+      },
+      "sectionHover": {
+        "shadow": "none",
+        "material": null
+      },
       "inset": {
         "material": null
       },
@@ -250,26 +265,50 @@
         "background": "{raised}",
         "gradient": "linear-gradient(180deg, transparent 0%, transparent 100%)",
         "material": null,
-        "border-color": "{glass-edge}"
+        "border-color": "{glass-edge}",
+        "border-top-color": "{glass-edge}",
+        "border-bottom-color": "{glass-edge}"
       },
       "hover": {
         "material": null,
         "background": "{hover}",
         "gradient": "linear-gradient(180deg, transparent 0%, transparent 100%)",
-        "border-color": "{glass-edge}"
+        "border-color": "{glass-edge}",
+        "border-top-color": "{glass-edge}",
+        "border-bottom-color": "{glass-edge}"
       },
       "pressed": {
         "material": null,
         "gradient": "linear-gradient(180deg, transparent 0%, transparent 100%)",
-        "border-color": "{glass-edge}"
+        "border-color": "{glass-edge}",
+        "border-top-color": "{glass-edge}",
+        "border-bottom-color": "{glass-edge}"
+      },
+      "disabled": {
+        "background": "{disabled}",
+        "gradient": "linear-gradient(180deg, {disabled} 0%, {disabled} 100%)",
+        "shadow": "none",
+        "border-color": "{border}",
+        "material": null
       },
       "light": {
         "gradient": "linear-gradient(180deg, transparent 0%, transparent 100%)",
         "border-color": "{brand-edge}",
+        "border-top-color": "{brand-edge}",
+        "border-bottom-color": "{brand-edge}",
         "material": null
       },
       "accent": {
         "gradient": "linear-gradient(180deg, transparent 0%, transparent 100%)",
+        "border-color": "{brand-edge}",
+        "border-top-color": "{brand-edge}",
+        "border-bottom-color": "{brand-edge}",
+        "material": null
+      },
+      "accentPressed": {
+        "background": "{accent-pressed}",
+        "gradient": "linear-gradient(180deg, {accent-pressed} 0%, {accent-pressed} 100%)",
+        "shadow": "none",
         "border-color": "{brand-edge}",
         "material": null
       },
@@ -332,8 +371,13 @@
         "material": null
       },
       "dialog": {
-        "background": "{card}",
+        "background": "{dialog}",
         "border-color": "{border}",
+        "material": null
+      },
+      "grabber": {
+        "background": "{raised}",
+        "shadow": "none",
         "material": null
       },
       "tooltip": {
@@ -403,7 +447,9 @@
       "on": {
         "background": "oklch(from {muted} l c h / 0.09)",
         "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.85)",
-        "border-color": "oklch(from {muted} l c h / 0.13)"
+        "border-color": "oklch(from {muted} l c h / 0.13)",
+        "border-top-color": "oklch(from {muted} l c h / 0.13)",
+        "border-bottom-color": "oklch(from {muted} l c h / 0.13)"
       },
       "chip": {
         "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.8), inset 0 0 0 1px oklch(0.38 0.03 265 / 0.1)"
@@ -480,7 +526,9 @@
       "on": {
         "background": "oklch(from {muted} l c h / 0.07)",
         "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.11)",
-        "border-color": "oklch(from {muted} l c h / 0.06)"
+        "border-color": "oklch(from {muted} l c h / 0.06)",
+        "border-top-color": "oklch(from {muted} l c h / 0.06)",
+        "border-bottom-color": "oklch(from {muted} l c h / 0.06)"
       },
       "chip": {
         "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.11), inset 0 0 0 1px oklch(1 0 0 / 0.06)"

@@ -179,6 +179,10 @@
         "md": 20,
         "lg": 24
       }
+    },
+    "grabber": {
+      "width": 32,
+      "height": 4
     }
   },
   "shape": {
@@ -197,6 +201,7 @@
     },
     "ripple": true,
     "pressed-opacity": 1,
+    "accent-pressed-opacity": 1,
     "disabled": {
       "content": 0.38,
       "container": 0.1
@@ -245,6 +250,24 @@
         },
         "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)"
       },
+      "section": {
+        "background": "{card}",
+        "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
+        "border-color": "transparent",
+        "material": {
+          "android": {
+            "elevation": 1
+          }
+        }
+      },
+      "sectionHover": {
+        "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 2px 6px 2px oklch(0 0 0 / 0.15)",
+        "material": {
+          "android": {
+            "elevation": 3
+          }
+        }
+      },
       "inset": {
         "material": null,
         "shadow": "none"
@@ -262,7 +285,9 @@
           }
         },
         "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
-        "border-color": "transparent"
+        "border-color": "transparent",
+        "border-top-color": "transparent",
+        "border-bottom-color": "transparent"
       },
       "hover": {
         "material": {
@@ -273,7 +298,9 @@
         "background": "{raised}",
         "gradient": "linear-gradient(180deg, {hover} 0%, {hover} 100%)",
         "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
-        "border-color": "transparent"
+        "border-color": "transparent",
+        "border-top-color": "transparent",
+        "border-bottom-color": "transparent"
       },
       "pressed": {
         "material": {
@@ -284,12 +311,23 @@
         "background": "{raised}",
         "gradient": "linear-gradient(180deg, {raised} 0%, {raised} 100%)",
         "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
-        "border-color": "transparent"
+        "border-color": "transparent",
+        "border-top-color": "transparent",
+        "border-bottom-color": "transparent"
+      },
+      "disabled": {
+        "background": "{disabled}",
+        "gradient": "linear-gradient(180deg, {disabled} 0%, {disabled} 100%)",
+        "shadow": "none",
+        "border-color": "transparent",
+        "material": null
       },
       "light": {
         "background": "{primary}",
         "gradient": "linear-gradient(180deg, {primary} 0%, {primary} 100%)",
         "border-color": "transparent",
+        "border-top-color": "transparent",
+        "border-bottom-color": "transparent",
         "material": null,
         "shadow": "none"
       },
@@ -297,8 +335,17 @@
         "background": "{primary}",
         "gradient": "linear-gradient(180deg, {primary} 0%, {primary} 100%)",
         "border-color": "transparent",
+        "border-top-color": "transparent",
+        "border-bottom-color": "transparent",
         "material": null,
         "shadow": "none"
+      },
+      "accentPressed": {
+        "background": "{accent-pressed}",
+        "gradient": "linear-gradient(180deg, {accent-pressed} 0%, {accent-pressed} 100%)",
+        "shadow": "none",
+        "border-color": "transparent",
+        "material": null
       },
       "track": {
         "material": null,
@@ -356,7 +403,9 @@
         "background": "{secondary}",
         "gradient": "linear-gradient(180deg, {secondary} 0%, {secondary} 100%)",
         "shadow": "none",
-        "border-color": "transparent"
+        "border-color": "transparent",
+        "border-top-color": "transparent",
+        "border-bottom-color": "transparent"
       },
       "chip": {
         "background": "{background}",
@@ -387,7 +436,7 @@
         "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 2px 6px 2px oklch(0 0 0 / 0.15)"
       },
       "dialog": {
-        "background": "{popover}",
+        "background": "{dialog}",
         "border-color": "transparent",
         "material": {
           "android": {
@@ -395,6 +444,11 @@
           }
         },
         "shadow": "0 1px 3px oklch(0 0 0 / 0.3), 0 4px 8px 3px oklch(0 0 0 / 0.15)"
+      },
+      "grabber": {
+        "background": "oklch(from {muted-foreground} l c h / 0.4)",
+        "shadow": "none",
+        "material": null
       },
       "tooltip": {
         "background": "{inverse}",

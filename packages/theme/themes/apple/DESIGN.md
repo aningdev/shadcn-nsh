@@ -78,6 +78,16 @@ colors:
     down-tint: "#ff3b301f"
     violet: "#af52de"
     window-control-off: "#e4e4e6"
+    dialog: "#ffffff"
+    card-edge: "#dcdcdd"
+    bevel: "#dcdcdd"
+    accent-bevel: "#dcdcdd"
+    disabled: "#efeff0"
+    disabled-foreground: "#8a8a8e"
+    accent-pressed: "#007aff"
+    on-accent-pressed: "#ffffff"
+    on-foreground: "#000000"
+    pressed-foreground: "#000000"
   dark:
     brand-fill: "#0a84ff"
     on-brand: "#ffffff"
@@ -144,6 +154,16 @@ colors:
     down-tint: "#ff453a1f"
     violet: "#bf5af2"
     window-control-off: "#3d3d41"
+    dialog: "#1c1c1e"
+    card-edge: "#353538"
+    bevel: "#353538"
+    accent-bevel: "#353538"
+    disabled: "#323236"
+    disabled-foreground: "#98989f"
+    accent-pressed: "#0a84ff"
+    on-accent-pressed: "#ffffff"
+    on-foreground: "#ffffff"
+    pressed-foreground: "#ffffff"
 typography:
   caption:
     fontFamily: "system-ui, sans-serif"
@@ -286,7 +306,7 @@ components:
     rounded: "{rounded.overlay}"
     padding: "{spacing.control.padding}"
   dialog:
-    backgroundColor: "{colors.light.card}"
+    backgroundColor: "{colors.light.dialog}"
     textColor: "{colors.light.card-foreground}"
     typography: "{typography.body}"
     rounded: "{rounded.dialog}"
@@ -360,6 +380,8 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`track`** (light `#e9e9eb`, dark `#39393d`): Switch and slider track (UIKit secondarySystemFill composited over card).
 - **`knob`** (`#ffffff`): Switch knob and slider handle (pure white).
 - **`inverse`** (light `#ffffff`, dark `#2c2c2e`): High-contrast surface for toasts and tooltips.
+- **`dialog`** (light `#ffffff`, dark `#1c1c1e`): Modal dialog container surface.
+- **`disabled`** (light `#efeff0`, dark `#323236`): Disabled control container surface.
 
 ### Ink
 
@@ -377,6 +399,9 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`code`** (light `#000000`, dark `#ffffff`): Monospace code text ink inside recessed wells.
 - **`inverse-foreground`** (light `#000000`, dark `#ffffff`): Primary text ink on inverse surfaces.
 - **`inverse-muted`** (light `#8a8a8e`, dark `#98989f`): Secondary text, spinner, and close-icon ink on inverse surfaces.
+- **`disabled-foreground`** (light `#8a8a8e`, dark `#98989f`): Disabled control label and icon ink.
+- **`on-foreground`** (light `#000000`, dark `#ffffff`): Label and icon ink on selected or toggled-on controls.
+- **`pressed-foreground`** (light `#000000`, dark `#ffffff`): Label and icon ink on pressed neutral or ghost controls.
 
 ### Brand
 
@@ -391,6 +416,8 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`brand-tint`** (light `#007aff1f`, dark `#0a84ff1f`): Translucent brand wash (12% brand over transparent).
 - **`on-brand-tint`** (light `#000000`, dark `#ffffff`): Text and icon ink on brand-tint surfaces.
 - **`inverse-brand`** (`#ffffff`): Accent action color on inverse surfaces.
+- **`accent-pressed`** (light `#007aff`, dark `#0a84ff`): Accent control fill while pressed.
+- **`on-accent-pressed`** (`#ffffff`): Ink on pressed accent control fills.
 
 ### Status
 
@@ -429,6 +456,9 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`line`** (light `#dcdcdd`, dark `#353538`): Inset divider hairline (UIKit hairline composited over card).
 - **`ring-halo`** (light `#007aff4d`, dark `#0a84ff4d`): Outer keyboard focus halo (30% ring color over transparent).
 - **`window-control-off`** (light `#e4e4e6`, dark `#3d3d41`): Unfocused window traffic-light fill (UIKit systemFill composited over card).
+- **`card-edge`** (light `#dcdcdd`, dark `#353538`): Hairline border on card and section containers.
+- **`bevel`** (light `#dcdcdd`, dark `#353538`): Directional control elevation bevel stroke.
+- **`accent-bevel`** (light `#dcdcdd`, dark `#353538`): Accent control elevation top and side bevel stroke.
 
 ## Typography
 
@@ -513,13 +543,17 @@ Voice & Content Strategy is intentionally omitted: this theme defines visual tok
 Appearance-invariant surface finish recipes (background, gradient, border, shadow, blur, material).
 
 - **`finish.card`**: The card face: an inner highlight, a hairline, a contact shadow and a cast one.
+- **`finish.section`**: The flat surface a section's content or card sits on (no shadow by default).
+- **`finish.sectionHover`**: Hover elevation step for a section or card where elevated.
 - **`finish.inset`**: The well inside a card: sunk by its inner shadow alone.
 - **`finish.field`**: A field well: its edge and its inner shadow.
 - **`finish.raised`** (material: `{"apple":{"glass":"regular","tint":null}}`): Raised control surface with Liquid Glass material (regular) and hairline shadow.
 - **`finish.hover`**: The step the surface takes under the pointer.
 - **`finish.pressed`**: The step it takes while pressed.
+- **`finish.disabled`**: A disabled control container surface.
 - **`finish.light`**: The main action brightest step: the accent gradient.
 - **`finish.accent`**: The accent face (the same as light).
+- **`finish.accentPressed`**: The accent control surface while pressed.
 - **`finish.track`**: A groove: an inner shadow and an edge.
 - **`finish.fill`**: The filled run: a slider, a progress bar, a switch that is on.
 - **`finish.knob`**: A switch knob, off.
@@ -532,6 +566,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.glass`** (backdropFilter: `blur(30px)`; material: `{"apple":{"glass":"regular","tint":null},"ios":{"backdrop":"thin"}}`): Liquid Glass overlay surface with translucent popover fill, 30px blur fallback, and regular/thin Apple material.
 - **`finish.menu`** (material: `{"apple":{"glass":"regular","tint":null},"ios":{"backdrop":"regular"}}`): Floating menu/popover surface with translucent popover fill, hairline + drop shadow, and Liquid Glass material.
 - **`finish.dialog`**: A dialog face: the card colour with the menu shadow.
+- **`finish.grabber`**: The drag handle pill at the top of a bottom sheet.
 - **`finish.tooltip`**: A tooltip face: the popover pane, without a shadow.
 - **`finish.inverse`** (material: `{"apple":{"glass":"regular","tint":null},"ios":{"backdrop":"regular"}}`): Toast/inverse floating surface using Liquid Glass material over inverse fill.
 - **`finish.groove`**: A groove cut inside a menu.

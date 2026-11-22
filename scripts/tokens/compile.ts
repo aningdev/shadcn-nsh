@@ -244,6 +244,12 @@ function compileFinishSection(
     if (isRecord(group["border-color"])) {
       item["border-color"] = compileFinishColor(group["border-color"]);
     }
+    if (isRecord(group["border-top-color"])) {
+      item["border-top-color"] = compileFinishColor(group["border-top-color"]);
+    }
+    if (isRecord(group["border-bottom-color"])) {
+      item["border-bottom-color"] = compileFinishColor(group["border-bottom-color"]);
+    }
     const groupExt = getExt(group);
     if (groupExt && "backdropFilter" in groupExt) {
       item.backdropFilter = groupExt.backdropFilter;
@@ -506,6 +512,7 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
         pointer: readDimMap(lpDim.icon as Record<string, Record<string, unknown>>),
         touch: readDimMap(ltDim.icon as Record<string, Record<string, unknown>>),
       },
+      grabber: readDimMap(lpDim.grabber as Record<string, Record<string, unknown>>),
     },
     shape: {
       curve: shapeExt.curve,
@@ -516,6 +523,8 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
       overlay: readNumMap(stateGroup.overlay as Record<string, Record<string, unknown>>),
       ripple: stateExt.ripple as boolean,
       "pressed-opacity": (stateGroup["pressed-opacity"] as Record<string, unknown>)
+        .$value as number,
+      "accent-pressed-opacity": (stateGroup["accent-pressed-opacity"] as Record<string, unknown>)
         .$value as number,
       disabled: readNumMap(stateGroup.disabled as Record<string, Record<string, unknown>>),
     },

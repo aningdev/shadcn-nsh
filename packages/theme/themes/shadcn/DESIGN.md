@@ -78,6 +78,16 @@ colors:
     down-tint: "#e7000b1a"
     violet: "#262626"
     window-control-off: "#a1a1a1"
+    dialog: "#ffffff"
+    card-edge: "#e5e5e5"
+    bevel: "#e5e5e5"
+    accent-bevel: "#e5e5e5"
+    disabled: "#f5f5f5"
+    disabled-foreground: "#737373"
+    accent-pressed: "#171717"
+    on-accent-pressed: "#fafafa"
+    on-foreground: "#0a0a0a"
+    pressed-foreground: "#0a0a0a"
   dark:
     brand-fill: "#e5e5e5"
     on-brand: "#171717"
@@ -144,6 +154,16 @@ colors:
     down-tint: "#ff64671a"
     violet: "#fafafa"
     window-control-off: "#a1a1a1"
+    dialog: "#171717"
+    card-edge: "#ffffff1a"
+    bevel: "#ffffff1a"
+    accent-bevel: "#ffffff1a"
+    disabled: "#262626"
+    disabled-foreground: "#a1a1a1"
+    accent-pressed: "#e5e5e5"
+    on-accent-pressed: "#171717"
+    on-foreground: "#fafafa"
+    pressed-foreground: "#fafafa"
 typography:
   caption:
     fontFamily: "system-ui, sans-serif"
@@ -286,7 +306,7 @@ components:
     rounded: "{rounded.overlay}"
     padding: "{spacing.control.padding}"
   dialog:
-    backgroundColor: "{colors.light.card}"
+    backgroundColor: "{colors.light.dialog}"
     textColor: "{colors.light.card-foreground}"
     typography: "{typography.body}"
     rounded: "{rounded.dialog}"
@@ -360,6 +380,8 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 - **`track`** (light `#f5f5f5`, dark `#262626`): Inactive track background for switches, sliders, and progress bars.
 - **`knob`** (light `#ffffff`, dark `#fafafa`): Switch thumb fill in the off state.
 - **`inverse`** (light `#ffffff`, dark `#171717`): High-contrast surface for toasts and tooltips.
+- **`dialog`** (light `#ffffff`, dark `#171717`): Modal dialog container surface.
+- **`disabled`** (light `#f5f5f5`, dark `#262626`): Disabled control container surface.
 
 ### Ink
 
@@ -377,6 +399,9 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 - **`code`** (light `#0a0a0a`, dark `#fafafa`): Monospace code text ink inside recessed wells.
 - **`inverse-foreground`** (light `#0a0a0a`, dark `#fafafa`): Primary text ink on inverse surfaces.
 - **`inverse-muted`** (light `#737373`, dark `#a1a1a1`): Secondary text, spinner, and close-icon ink on inverse surfaces.
+- **`disabled-foreground`** (light `#737373`, dark `#a1a1a1`): Disabled control label and icon ink.
+- **`on-foreground`** (light `#0a0a0a`, dark `#fafafa`): Label and icon ink on selected or toggled-on controls.
+- **`pressed-foreground`** (light `#0a0a0a`, dark `#fafafa`): Label and icon ink on pressed neutral or ghost controls.
 
 ### Brand
 
@@ -391,6 +416,8 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 - **`brand-tint`** (light `#1717171a`, dark `#e5e5e51a`): Translucent brand-accent wash behind selected rows and tinted bubbles.
 - **`on-brand-tint`** (light `#0a0a0a`, dark `#fafafa`): Text and icon ink on brand-tint surfaces.
 - **`inverse-brand`** (light `#fafafa`, dark `#171717`): Accent action color on inverse surfaces.
+- **`accent-pressed`** (light `#171717`, dark `#e5e5e5`): Accent control fill while pressed.
+- **`on-accent-pressed`** (light `#fafafa`, dark `#171717`): Ink on pressed accent control fills.
 
 ### Status
 
@@ -429,6 +456,9 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 - **`line`** (light `#e5e5e5`, dark `#ffffff1a`): Hairline divider and grid rule inside recessed wells.
 - **`ring-halo`** (light `#a1a1a180`, dark `#73737380`): Translucent outer halo around focused controls.
 - **`window-control-off`** (`#a1a1a1`): Inactive background for macOS traffic-light buttons when unfocused.
+- **`card-edge`** (light `#e5e5e5`, dark `#ffffff1a`): Hairline border on card and section containers.
+- **`bevel`** (light `#e5e5e5`, dark `#ffffff1a`): Directional control elevation bevel stroke.
+- **`accent-bevel`** (light `#e5e5e5`, dark `#ffffff1a`): Accent control elevation top and side bevel stroke.
 
 ## Typography
 
@@ -513,13 +543,17 @@ Voice & Content Strategy is intentionally omitted: this theme defines visual tok
 Appearance-invariant surface finish recipes (background, gradient, border, shadow, blur, material).
 
 - **`finish.card`**: The card face: an inner highlight, a hairline, a contact shadow and a cast one.
+- **`finish.section`**: The flat surface a section's content or card sits on (no shadow by default).
+- **`finish.sectionHover`**: Hover elevation step for a section or card where elevated.
 - **`finish.inset`**: The well inside a card: sunk by its inner shadow alone.
 - **`finish.field`**: A field well: its edge and its inner shadow.
 - **`finish.raised`**: A control on a card: a gradient, an inner highlight, a hard shadow, an edge.
 - **`finish.hover`**: The step the surface takes under the pointer.
 - **`finish.pressed`**: The step it takes while pressed.
+- **`finish.disabled`**: A disabled control container surface.
 - **`finish.light`**: The main action brightest step: the accent gradient.
 - **`finish.accent`**: The accent face (the same as light).
+- **`finish.accentPressed`**: The accent control surface while pressed.
 - **`finish.track`**: A groove: an inner shadow and an edge.
 - **`finish.fill`**: The filled run: a slider, a progress bar, a switch that is on.
 - **`finish.knob`**: A switch knob, off.
@@ -532,6 +566,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.glass`** (backdropFilter: `blur(20px)`): Glass: a translucent fill and a blur.
 - **`finish.menu`**: A floating surface: a menu, a popover.
 - **`finish.dialog`**: A dialog face: the card colour with the menu shadow.
+- **`finish.grabber`**: The drag handle pill at the top of a bottom sheet.
 - **`finish.tooltip`**: A tooltip face: the popover pane, without a shadow.
 - **`finish.inverse`**: The inverse surface: a toast face.
 - **`finish.groove`**: A groove cut inside a menu.

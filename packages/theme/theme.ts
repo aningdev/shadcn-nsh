@@ -97,6 +97,8 @@ export interface Finish {
   gradient?: string;
   shadow: string;
   "border-color"?: string;
+  "border-top-color"?: string;
+  "border-bottom-color"?: string;
   backdropFilter?: string;
   material: Material | null;
 }
@@ -118,6 +120,8 @@ export type FinishStyle = {
   backgroundImage?: string;
   boxShadow: string;
   borderColor?: string;
+  borderTopColor?: string;
+  borderBottomColor?: string;
   backdropFilter?: string;
   glassEffect?: "regular" | "clear";
   glassTintColor?: string;
@@ -126,13 +130,17 @@ export type FinishStyle = {
 /** The finishes' roles: the keys of `semantics.json`'s `finishes` block. */
 export type FinishRole =
   | "card"
+  | "section"
+  | "sectionHover"
   | "inset"
   | "field"
   | "raised"
   | "hover"
   | "pressed"
+  | "disabled"
   | "light"
   | "accent"
+  | "accentPressed"
   | "track"
   | "fill"
   | "knob"
@@ -145,6 +153,7 @@ export type FinishRole =
   | "glass"
   | "menu"
   | "dialog"
+  | "grabber"
   | "tooltip"
   | "inverse"
   | "groove";
@@ -254,6 +263,7 @@ export interface Style {
     stroke: { hairline: number; surface: number; control: number; indicator: number };
     focus: { style: string; width: number; offset: number };
     icon: Tiered<Steps>;
+    grabber: { width: number; height: number };
   };
   shape: {
     curve: string;
@@ -264,6 +274,7 @@ export interface Style {
     overlay: { hover: number; focus: number; pressed: number; dragged: number };
     ripple: boolean;
     "pressed-opacity": number;
+    "accent-pressed-opacity": number;
     disabled: { content: number; container: number };
   };
   duration: {
@@ -423,6 +434,8 @@ const finishStyleKeys: Record<Exclude<keyof Finish, "material">, keyof FinishSty
   gradient: "backgroundImage",
   shadow: "boxShadow",
   "border-color": "borderColor",
+  "border-top-color": "borderTopColor",
+  "border-bottom-color": "borderBottomColor",
   backdropFilter: "backdropFilter",
 };
 
@@ -599,6 +612,26 @@ export interface Palette {
   inverseMuted: string;
   /** The accent on `inverse`: a toast's action. */
   inverseBrand: string;
+  /** Modal dialog container surface. */
+  dialog: string;
+  /** Hairline border on card and section containers. */
+  cardEdge: string;
+  /** Directional control elevation bevel stroke. */
+  bevel: string;
+  /** Accent control elevation top and side bevel stroke. */
+  accentBevel: string;
+  /** Disabled control container surface. */
+  disabled: string;
+  /** Disabled control label and icon ink. */
+  disabledForeground: string;
+  /** Accent control fill while pressed. */
+  accentPressed: string;
+  /** Ink on pressed accent control fills. */
+  onAccentPressed: string;
+  /** Label and icon ink on selected or toggled-on controls. */
+  onForeground: string;
+  /** Label and icon ink on pressed neutral or ghost controls. */
+  pressedForeground: string;
   /** The tone colors: information, a warning, a failure, a gain, a loss. */
   info: string;
   warn: string;
@@ -669,6 +702,16 @@ export const colors: Palette = tokens<keyof Palette>({
   inverseForeground: "inverse-foreground",
   inverseMuted: "inverse-muted",
   inverseBrand: "inverse-brand",
+  dialog: "dialog",
+  cardEdge: "card-edge",
+  bevel: "bevel",
+  accentBevel: "accent-bevel",
+  disabled: "disabled",
+  disabledForeground: "disabled-foreground",
+  accentPressed: "accent-pressed",
+  onAccentPressed: "on-accent-pressed",
+  onForeground: "on-foreground",
+  pressedForeground: "pressed-foreground",
 });
 
 /**
@@ -737,13 +780,17 @@ export const tints = tokens({
  */
 export const finish: Record<FinishRole, FinishStyle> = {
   card: themed("card"),
+  section: themed("section"),
+  sectionHover: themed("sectionHover"),
   inset: themed("inset"),
   field: themed("field"),
   raised: themed("raised"),
   hover: themed("hover"),
   pressed: themed("pressed"),
+  disabled: themed("disabled"),
   light: themed("light"),
   accent: themed("accent"),
+  accentPressed: themed("accentPressed"),
   track: themed("track"),
   fill: themed("fill"),
   knob: themed("knob"),
@@ -756,6 +803,7 @@ export const finish: Record<FinishRole, FinishStyle> = {
   glass: themed("glass"),
   menu: themed("menu"),
   dialog: themed("dialog"),
+  grabber: themed("grabber"),
   tooltip: themed("tooltip"),
   inverse: themed("inverse"),
   groove: themed("groove"),

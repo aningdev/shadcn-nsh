@@ -224,11 +224,19 @@ describe("m3Roles", () => {
     expect(baselineRoles.light.down).toBe("var(--destructive)");
 
     expect(css(parseColor(baselineRoles.light.background)).toUpperCase()).toBe("#FEF7FF");
+    expect(css(parseColor(baselineRoles.light.dialog)).toUpperCase()).toBe("#ECE6F0");
     expect(css(parseColor(baselineRoles.light.primary)).toUpperCase()).toBe("#6750A4");
     expect(css(parseColor(baselineRoles.light["secondary-foreground"])).toUpperCase()).toBe(
       "#4A4458",
     );
     expect(css(parseColor(baselineRoles.light["on-brand-tint"])).toUpperCase()).toBe("#4A4458");
+    expect(baselineRoles.light["on-foreground"]).toBe("var(--on-brand-tint)");
+    expect(baselineRoles.light["disabled"]).toBe(
+      "color-mix(in srgb, var(--foreground) 10%, transparent)",
+    );
+    expect(baselineRoles.light["disabled-foreground"]).toBe(
+      "color-mix(in srgb, var(--foreground) 38%, transparent)",
+    );
     expect(css(parseColor(baselineRoles.light.inverse)).toUpperCase()).toBe("#322F35");
     expect(css(parseColor(baselineRoles.light["inverse-foreground"])).toUpperCase()).toBe(
       "#F5EFF7",
@@ -236,12 +244,15 @@ describe("m3Roles", () => {
     expect(baselineRoles.light["inverse-muted"]).toBe("var(--inverse-foreground)");
     expect(css(parseColor(baselineRoles.light["inverse-brand"])).toUpperCase()).toBe("#D0BCFF");
     expect(css(parseColor(baselineRoles.dark.background)).toUpperCase()).toBe("#141218");
+    expect(css(parseColor(baselineRoles.dark.dialog)).toUpperCase()).toBe("#2B2930");
     expect(css(parseColor(baselineRoles.dark.primary)).toUpperCase()).toBe("#D0BCFF");
     expect(css(parseColor(baselineRoles.dark["on-brand-tint"])).toUpperCase()).toBe("#E8DEF8");
+    expect(baselineRoles.dark["on-foreground"]).toBe("var(--on-brand-tint)");
     expect(css(parseColor(baselineRoles.dark.inverse)).toUpperCase()).toBe("#E6E0E9");
     expect(css(parseColor(baselineRoles.dark["inverse-foreground"])).toUpperCase()).toBe("#322F35");
     expect(baselineRoles.dark["inverse-muted"]).toBe("var(--inverse-foreground)");
     expect(css(parseColor(baselineRoles.dark["inverse-brand"])).toUpperCase()).toBe("#6750A4");
+    expect(css(parseColor(tealRoles.light.dialog)).toUpperCase()).not.toBe("#ECE6F0");
   });
 
   test("foreground/background pairs meet WCAG AA contrast (>= 4.5) for default seed", () => {
@@ -313,5 +324,23 @@ describe("compiled material theme files", () => {
         kinds,
       ),
     ).toEqual([]);
+
+    expect(files.semantics.dimension.grabber).toEqual({ width: 32, height: 4 });
+    expect(files.semantics.state["accent-pressed-opacity"]).toBe(1);
+    expect(files.semantics.finishes.shared.section).toMatchObject({
+      material: { android: { elevation: 1 } },
+    });
+    expect(files.semantics.finishes.shared.sectionHover).toMatchObject({
+      material: { android: { elevation: 3 } },
+    });
+    expect(files.semantics.finishes.shared.dialog).toMatchObject({
+      background: "{dialog}",
+    });
+    expect(files.semantics.finishes.shared.disabled).toMatchObject({
+      background: "{disabled}",
+    });
+    expect(files.semantics.finishes.shared.grabber).toMatchObject({
+      background: "oklch(from {muted-foreground} l c h / 0.4)",
+    });
   });
 });

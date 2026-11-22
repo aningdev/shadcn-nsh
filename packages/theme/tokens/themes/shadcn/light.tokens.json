@@ -816,6 +816,96 @@
         }
       },
       "$description": "Inactive background for macOS traffic-light buttons when unfocused."
+    },
+    "dialog": {
+      "$value": "{color.card}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
+      "$description": "Modal dialog container surface."
+    },
+    "card-edge": {
+      "$value": "{color.border}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
+      "$description": "Hairline border on card and section containers."
+    },
+    "bevel": {
+      "$value": "{color.border}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
+      "$description": "Directional control elevation bevel stroke."
+    },
+    "accent-bevel": {
+      "$value": "{color.brand-edge}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
+      "$description": "Accent control elevation top and side bevel stroke."
+    },
+    "disabled": {
+      "$value": "{color.raised}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
+      "$description": "Disabled control container surface."
+    },
+    "disabled-foreground": {
+      "$value": "{color.muted-foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
+      "$description": "Disabled control label and icon ink."
+    },
+    "accent-pressed": {
+      "$value": "{color.primary}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
+      "$description": "Accent control fill while pressed."
+    },
+    "on-accent-pressed": {
+      "$value": "{color.primary-foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
+      "$description": "Ink on pressed accent control fills."
+    },
+    "on-foreground": {
+      "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
+      "$description": "Label and icon ink on selected or toggled-on controls."
+    },
+    "pressed-foreground": {
+      "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
+      "$description": "Label and icon ink on pressed neutral or ghost controls."
     }
   },
   "finish": {

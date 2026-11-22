@@ -351,6 +351,21 @@
         "$description": "2px outward focus indicator offset per M3."
       }
     },
+    "grabber": {
+      "$description": "Bottom sheet grabber pill dimensions.",
+      "width": {
+        "$value": {
+          "value": 32,
+          "unit": "px"
+        }
+      },
+      "height": {
+        "$value": {
+          "value": 4,
+          "unit": "px"
+        }
+      }
+    },
     "radius": {
       "$type": "dimension",
       "$description": "Material 3 Expressive corner scale (999px CornerFull controls, 4px CornerExtraSmall fields/menus, 12px CornerMedium cards/chips, 28px CornerExtraLarge dialogs/sheets; ShapeTokens.kt).",
@@ -600,6 +615,10 @@
     "pressed-opacity": {
       "$value": 1,
       "$description": "Content stays full opacity when pressed (1; ripple/state layer shows press)."
+    },
+    "accent-pressed-opacity": {
+      "$value": 1,
+      "$description": "Pressed opacity for accent controls when no pressed accent finish replaces it."
     },
     "disabled": {
       "$description": "M3 disabled opacities: 0.38 content and 0.10 container (_md-comp-button-filled.scss).",
@@ -2038,10 +2057,140 @@
         }
       },
       "$description": "Unfocused window traffic-light fill (M3 outlineVariant)."
+    },
+    "dialog": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.93251,
+          0.01479,
+          312.24
+        ],
+        "hex": "#ece6f0"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
+      "$description": "Modal dialog surface (M3 surfaceContainerHigh)."
+    },
+    "card-edge": {
+      "$value": "{color.border}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
+      "$description": "Card border hairline aliased to {color.border}."
+    },
+    "bevel": {
+      "$value": "{color.border}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
+      "$description": "Control elevation bevel stroke aliased to {color.border}."
+    },
+    "accent-bevel": {
+      "$value": "{color.brand-edge}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
+      "$description": "Accent bevel stroke aliased to {color.brand-edge}."
+    },
+    "disabled": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.22652,
+          0.00999,
+          303.714
+        ],
+        "alpha": 0.1,
+        "hex": "#1d1b20"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface",
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.foreground}",
+            "percent": 10,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Disabled control container fill (10% onSurface over transparent)."
+    },
+    "disabled-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.22652,
+          0.00999,
+          303.714
+        ],
+        "alpha": 0.38,
+        "hex": "#1d1b20"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink",
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.foreground}",
+            "percent": 38,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Disabled control content ink (38% onSurface over transparent)."
+    },
+    "accent-pressed": {
+      "$value": "{color.primary}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
+      "$description": "Pressed accent fill aliased to {color.primary} (state layer applies press)."
+    },
+    "on-accent-pressed": {
+      "$value": "{color.primary-foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
+      "$description": "Pressed accent ink aliased to {color.primary-foreground}."
+    },
+    "on-foreground": {
+      "$value": "{color.on-brand-tint}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
+      "$description": "Ink on tonal selected controls (M3 Expressive onSecondaryContainer)."
+    },
+    "pressed-foreground": {
+      "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
+      "$description": "Pressed ink aliased to {color.foreground}."
     }
   },
   "finish": {
-    "$description": "Appearance-invariant surface finish recipes (background, gradient, border, shadow, blur, material).",
+    "$description": "Sparse light-mode surface finish overrides.",
     "card": {
       "$description": "Elevated M3 card surface with Material Web Level 1 shadow and 1dp Android elevation.",
       "gradient": {
@@ -2128,6 +2277,174 @@
           "material": {
             "android": {
               "elevation": 1
+            }
+          }
+        }
+      }
+    },
+    "section": {
+      "$description": "M3 ElevatedCard resting surface (Level 1 shadow and 1dp Android elevation, no border).",
+      "background": {
+        "$type": "color",
+        "$value": "{color.card}"
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                0,
+                0,
+                0
+              ],
+              "alpha": 0.3,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                0,
+                0,
+                0
+              ],
+              "alpha": 0.15,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 3,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 1,
+              "unit": "px"
+            }
+          }
+        ]
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "material": {
+            "android": {
+              "elevation": 1
+            }
+          }
+        }
+      }
+    },
+    "sectionHover": {
+      "$description": "M3 ElevatedCard hovered elevation promotion (Level 2 shadow and 3dp Android elevation).",
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                0,
+                0,
+                0
+              ],
+              "alpha": 0.3,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                0,
+                0,
+                0
+              ],
+              "alpha": 0.15,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 2,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 6,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 2,
+              "unit": "px"
+            }
+          }
+        ]
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "material": {
+            "android": {
+              "elevation": 3
             }
           }
         }
@@ -2324,6 +2641,42 @@
           }
         }
       },
+      "border-top-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "material": {
@@ -2420,6 +2773,42 @@
         ]
       },
       "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
+      "border-bottom-color": {
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
@@ -2550,6 +2939,42 @@
           }
         }
       },
+      "border-top-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "material": {
@@ -2557,6 +2982,90 @@
               "elevation": 1
             }
           }
+        }
+      }
+    },
+    "disabled": {
+      "$description": "M3 disabled filled/tonal button container (10% onSurface, flat with no shadow).",
+      "background": {
+        "$type": "color",
+        "$value": "{color.disabled}"
+      },
+      "gradient": {
+        "$type": "gradient",
+        "$value": [
+          {
+            "color": "{color.disabled}",
+            "position": 0
+          },
+          {
+            "color": "{color.disabled}",
+            "position": 1
+          }
+        ],
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "angle": 180
+          }
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": {
+          "color": {
+            "colorSpace": "oklch",
+            "components": [
+              0,
+              0,
+              0
+            ],
+            "alpha": 0,
+            "hex": "#000000"
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 0,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 0,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          }
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "none": true
+          }
+        }
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "material": null
         }
       }
     },
@@ -2638,6 +3147,42 @@
           }
         }
       },
+      "border-top-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "material": null
@@ -2659,6 +3204,126 @@
           },
           {
             "color": "{color.primary}",
+            "position": 1
+          }
+        ],
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "angle": 180
+          }
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": {
+          "color": {
+            "colorSpace": "oklch",
+            "components": [
+              0,
+              0,
+              0
+            ],
+            "alpha": 0,
+            "hex": "#000000"
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 0,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 0,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          }
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "none": true
+          }
+        }
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "material": null
+        }
+      }
+    },
+    "accentPressed": {
+      "$description": "M3 pressed accent surface (state layer + ripple handles press).",
+      "background": {
+        "$type": "color",
+        "$value": "{color.accent-pressed}"
+      },
+      "gradient": {
+        "$type": "gradient",
+        "$value": [
+          {
+            "color": "{color.accent-pressed}",
+            "position": 0
+          },
+          {
+            "color": "{color.accent-pressed}",
             "position": 1
           }
         ],
@@ -3401,6 +4066,42 @@
           }
         }
       },
+      "border-top-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "material": null
@@ -3669,10 +4370,10 @@
       }
     },
     "dialog": {
-      "$description": "M3 dialog surface with Level 3 shadow and 6dp Android elevation.",
+      "$description": "M3 dialog surface using SurfaceContainerHigh with Level 3 shadow and 6dp Android elevation.",
       "background": {
         "$type": "color",
-        "$value": "{color.popover}"
+        "$value": "{color.dialog}"
       },
       "shadow": {
         "$type": "shadow",
@@ -3758,6 +4459,72 @@
           "material": {
             "android": {
               "elevation": 6
+            }
+          }
+        }
+      }
+    },
+    "grabber": {
+      "$description": "M3 bottom sheet drag handle (40% onSurfaceVariant).",
+      "shadow": {
+        "$type": "shadow",
+        "$value": {
+          "color": {
+            "colorSpace": "oklch",
+            "components": [
+              0,
+              0,
+              0
+            ],
+            "alpha": 0,
+            "hex": "#000000"
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 0,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 0,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          }
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "none": true
+          }
+        }
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "material": null
+        }
+      },
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.39805,
+            0.01736,
+            303.721
+          ],
+          "alpha": 0.4,
+          "hex": "#49454f"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.muted-foreground}",
+              "alpha": 0.4
             }
           }
         }

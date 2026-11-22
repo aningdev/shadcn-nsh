@@ -256,6 +256,16 @@ function section(p: ReturnType<typeof palette>, o: ReturnType<typeof own>) {
     "down-tint": tints("destructive"),
     violet: o.violet,
     "window-control-off": o.faint,
+    dialog: "var(--card)",
+    "card-edge": "var(--border)",
+    bevel: "var(--border)",
+    "accent-bevel": "var(--brand-edge)",
+    disabled: "var(--raised)",
+    "disabled-foreground": "var(--muted-foreground)",
+    "accent-pressed": "var(--primary)",
+    "on-accent-pressed": "var(--primary-foreground)",
+    "on-foreground": "var(--foreground)",
+    "pressed-foreground": "var(--foreground)",
   };
 }
 
@@ -274,23 +284,58 @@ const surface = (
   {
     shadow = "none",
     "border-color": borderColor = "transparent",
-  }: { shadow?: string; "border-color"?: string } = {},
-) => ({ background: color, gradient: flat(color), shadow, "border-color": borderColor });
+    "border-top-color": borderTopColor,
+    "border-bottom-color": borderBottomColor,
+  }: {
+    shadow?: string;
+    "border-color"?: string;
+    "border-top-color"?: string;
+    "border-bottom-color"?: string;
+  } = {},
+) => ({
+  background: color,
+  gradient: flat(color),
+  shadow,
+  "border-color": borderColor,
+  ...(borderTopColor !== undefined ? { "border-top-color": borderTopColor } : {}),
+  ...(borderBottomColor !== undefined ? { "border-bottom-color": borderBottomColor } : {}),
+});
 
 /** One appearance's finishes: flat, the lift of shadcn's own surfaces and no more. */
 function finishes(appearance: Appearance, o: ReturnType<typeof own>) {
   return {
     card: { gradient: flat(alias("card")), shadow: SHADOW.sm },
+    section: { background: alias("card"), shadow: "none", "border-color": alias("card-edge") },
+    sectionHover: { shadow: "none" },
     inset: { shadow: "none" },
     field: { shadow: SHADOW.xs },
-    raised: surface(alias("raised"), { shadow: SHADOW.xs }),
-    hover: surface(alias("hover"), { shadow: SHADOW.xs }),
+    raised: surface(alias("raised"), {
+      shadow: SHADOW.xs,
+      "border-top-color": "transparent",
+      "border-bottom-color": "transparent",
+    }),
+    hover: surface(alias("hover"), {
+      shadow: SHADOW.xs,
+      "border-top-color": "transparent",
+      "border-bottom-color": "transparent",
+    }),
     // Pressed, the lift goes: the one cue a flat theme has left (shadcn styles no press state).
     // Light, `--input` laid on the card is `--border`'s own grey (shadcn's light `input` and `border`
     // are one colour), so the finish names that token; dark, no token holds the fill.
-    pressed: surface(appearance === "light" ? alias("border") : o.pressed),
-    light: surface(alias("primary")),
-    accent: surface(alias("primary")),
+    pressed: surface(appearance === "light" ? alias("border") : o.pressed, {
+      "border-top-color": "transparent",
+      "border-bottom-color": "transparent",
+    }),
+    disabled: surface(alias("disabled"), { "border-color": alias("border") }),
+    light: surface(alias("primary"), {
+      "border-top-color": "transparent",
+      "border-bottom-color": "transparent",
+    }),
+    accent: surface(alias("primary"), {
+      "border-top-color": "transparent",
+      "border-bottom-color": "transparent",
+    }),
+    accentPressed: surface(alias("accent-pressed"), { "border-color": alias("brand-edge") }),
     // A rail has no lip of its own (shadcn draws the track flat): the edge comes from the theme's
     // `border`, and `theme.ts`'s `insetEdge` keeps this `none` from voiding it.
     track: { shadow: "none", "border-color": alias("border") },
@@ -314,7 +359,10 @@ function finishes(appearance: Appearance, o: ReturnType<typeof own>) {
     pill: surface(alias("raised"), { shadow: SHADOW.xs }),
     thumb: surface(o.thumb, { shadow: SHADOW.sm }),
     // What stays chosen: the neutral ramp's step a press is not (shadcn has no fourth grey).
-    on: surface(alias(appearance === "light" ? "chart-1" : "chart-3")),
+    on: surface(alias(appearance === "light" ? "chart-1" : "chart-3"), {
+      "border-top-color": "transparent",
+      "border-bottom-color": "transparent",
+    }),
     // shadcn's combobox chip: a flat `bg-muted` label, no edge and no shadow.
     chip: surface(alias("muted"), { shadow: "none" }),
     glass: {
@@ -325,6 +373,7 @@ function finishes(appearance: Appearance, o: ReturnType<typeof own>) {
       backdropFilter: "blur(20px)",
     },
     menu: { background: alias("card"), shadow: SHADOW.md, "border-color": alias("border") },
+    grabber: { background: alias("raised"), shadow: "none" },
     groove: { shadow: "none" },
   };
 }

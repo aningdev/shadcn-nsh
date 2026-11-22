@@ -651,11 +651,18 @@ describe("per-appearance standalone .tokens.json distribution", () => {
           if (k.startsWith("$")) continue;
           expect(tok.$value.value).toBe(semanticsJson.dimension.icon.pointer[k]);
         }
+        for (const [k, tok] of Object.entries(resolved.dimension.grabber as Record<string, any>)) {
+          if (k.startsWith("$")) continue;
+          expect(tok.$value.value).toBe(semanticsJson.dimension.grabber[k]);
+        }
 
         // Shape, state, duration, transition, motion, indicator
         expect(doc.shape.$extensions[EXT_NS]).toEqual(semanticsJson.shape);
         expect(doc.state["press-scale"].$value).toBe(semanticsJson.state["press-scale"]);
         expect(doc.state["pressed-opacity"].$value).toBe(semanticsJson.state["pressed-opacity"]);
+        expect(doc.state["accent-pressed-opacity"].$value).toBe(
+          semanticsJson.state["accent-pressed-opacity"],
+        );
         expect(doc.state.$extensions[EXT_NS].ripple).toBe(semanticsJson.state.ripple);
         for (const [k, tok] of Object.entries(doc.state.overlay as Record<string, any>)) {
           if (k.startsWith("$")) continue;
@@ -759,6 +766,10 @@ describe("per-appearance standalone .tokens.json distribution", () => {
             }
           }
           if (g["border-color"]) compiled["border-color"] = toFinishColor(g["border-color"]);
+          if (g["border-top-color"])
+            compiled["border-top-color"] = toFinishColor(g["border-top-color"]);
+          if (g["border-bottom-color"])
+            compiled["border-bottom-color"] = toFinishColor(g["border-bottom-color"]);
           const gExt = g.$extensions?.[EXT_NS];
           if (gExt && "backdropFilter" in gExt) compiled.backdropFilter = gExt.backdropFilter;
           if (gExt && "material" in gExt) {

@@ -44,6 +44,8 @@ interface Finish {
   gradient?: string;
   shadow?: string;
   "border-color"?: string;
+  "border-top-color"?: string;
+  "border-bottom-color"?: string;
   backdropFilter?: string;
   material?: unknown;
 }

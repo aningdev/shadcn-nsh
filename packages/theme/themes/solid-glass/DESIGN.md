@@ -78,6 +78,16 @@ colors:
     down-tint: "#e7000b1a"
     violet: "#743c98"
     window-control-off: "#9e9e9e"
+    dialog: "#eff1f5"
+    card-edge: "#292e3821"
+    bevel: "#292e3821"
+    accent-bevel: "#161616af"
+    disabled: "#ffffff8c"
+    disabled-foreground: "#5b5b5b"
+    accent-pressed: "#161616"
+    on-accent-pressed: "#fafafa"
+    on-foreground: "#0d0d0d"
+    pressed-foreground: "#0d0d0d"
   dark:
     brand-fill: "#ebebeb"
     on-brand: "#121212"
@@ -144,6 +154,16 @@ colors:
     down-tint: "#ff64671a"
     violet: "#c8a5f0"
     window-control-off: "#696969"
+    dialog: "#1d1d1d"
+    card-edge: "#ffffff1c"
+    bevel: "#ffffff1c"
+    accent-bevel: "#f4f4f4aa"
+    disabled: "#ffffff12"
+    disabled-foreground: "#a4a4a4"
+    accent-pressed: "#ebebeb"
+    on-accent-pressed: "#121212"
+    on-foreground: "#fafafa"
+    pressed-foreground: "#fafafa"
 typography:
   caption:
     fontFamily: "system-ui, sans-serif"
@@ -286,7 +306,7 @@ components:
     rounded: "{rounded.overlay}"
     padding: "{spacing.control.padding}"
   dialog:
-    backgroundColor: "{colors.light.card}"
+    backgroundColor: "{colors.light.dialog}"
     textColor: "{colors.light.card-foreground}"
     typography: "{typography.body}"
     rounded: "{rounded.dialog}"
@@ -360,6 +380,8 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 - **`track`** (light `#292e3826`, dark `#ffffff21`): Inactive track background for switches, sliders, and progress bars.
 - **`knob`** (light `#ffffff`, dark `#f5f5f5`): Switch thumb fill in the off state.
 - **`inverse`** (light `#f8f9fb`, dark `#1a1a1a`): High-contrast surface for toasts and tooltips.
+- **`dialog`** (light `#eff1f5`, dark `#1d1d1d`): Modal dialog container surface.
+- **`disabled`** (light `#ffffff8c`, dark `#ffffff12`): Disabled control container surface.
 
 ### Ink
 
@@ -377,6 +399,9 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 - **`code`** (light `#0d0d0d`, dark `#fafafa`): Monospace code text ink inside recessed wells.
 - **`inverse-foreground`** (light `#0d0d0d`, dark `#fafafa`): Primary text ink on inverse surfaces.
 - **`inverse-muted`** (light `#5b5b5b`, dark `#a4a4a4`): Secondary text, spinner, and close-icon ink on inverse surfaces.
+- **`disabled-foreground`** (light `#5b5b5b`, dark `#a4a4a4`): Disabled control label and icon ink.
+- **`on-foreground`** (light `#0d0d0d`, dark `#fafafa`): Label and icon ink on selected or toggled-on controls.
+- **`pressed-foreground`** (light `#0d0d0d`, dark `#fafafa`): Label and icon ink on pressed neutral or ghost controls.
 
 ### Brand
 
@@ -391,6 +416,8 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 - **`brand-tint`** (light `#2eb1841f`, dark `#54d2a426`): Static translucent teal brand wash (--brand-muted).
 - **`on-brand-tint`** (light `#0d0d0d`, dark `#fafafa`): Text and icon ink on brand-tint surfaces.
 - **`inverse-brand`** (light `#fafafa`, dark `#121212`): Accent action color on inverse surfaces.
+- **`accent-pressed`** (light `#161616`, dark `#ebebeb`): Accent control fill while pressed.
+- **`on-accent-pressed`** (light `#fafafa`, dark `#121212`): Ink on pressed accent control fills.
 
 ### Status
 
@@ -429,6 +456,9 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 - **`line`** (light `#292e3821`, dark `#ffffff1c`): Hairline divider and grid rule inside recessed wells.
 - **`ring-halo`** (light `#16161639`, dark `#ffffff2e`): Translucent outer halo around focused controls.
 - **`window-control-off`** (light `#9e9e9e`, dark `#696969`): Inactive background for macOS traffic-light buttons when unfocused.
+- **`card-edge`** (light `#292e3821`, dark `#ffffff1c`): Hairline border on card and section containers.
+- **`bevel`** (light `#292e3821`, dark `#ffffff1c`): Directional control elevation bevel stroke.
+- **`accent-bevel`** (light `#161616af`, dark `#f4f4f4aa`): Accent control elevation top and side bevel stroke.
 
 ## Typography
 
@@ -513,13 +543,17 @@ Voice & Content Strategy is intentionally omitted: this theme defines visual tok
 Appearance-invariant surface finish recipes (background, gradient, border, shadow, blur, material).
 
 - **`finish.card`**: The card face: an inner highlight, a hairline, a contact shadow and a cast one.
+- **`finish.section`**: The flat surface a section's content or card sits on (no shadow by default).
+- **`finish.sectionHover`**: Hover elevation step for a section or card where elevated.
 - **`finish.inset`**: The well inside a card: sunk by its inner shadow alone.
 - **`finish.field`**: A field well: its edge and its inner shadow.
 - **`finish.raised`**: A control on a card: a gradient, an inner highlight, a hard shadow, an edge.
 - **`finish.hover`**: The step the surface takes under the pointer.
 - **`finish.pressed`**: The step it takes while pressed.
+- **`finish.disabled`**: A disabled control container surface.
 - **`finish.light`**: The main action brightest step: the accent gradient.
 - **`finish.accent`**: The accent face (the same as light).
+- **`finish.accentPressed`**: The accent control surface while pressed.
 - **`finish.track`**: A groove: an inner shadow and an edge.
 - **`finish.fill`**: The filled run: a slider, a progress bar, a switch that is on.
 - **`finish.knob`**: A switch knob, off.
@@ -532,6 +566,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.glass`** (backdropFilter: `blur(14px) saturate(180%)`): Glass: a translucent fill and a blur.
 - **`finish.menu`**: A floating surface: a menu, a popover.
 - **`finish.dialog`**: A dialog face: the card colour with the menu shadow.
+- **`finish.grabber`**: The drag handle pill at the top of a bottom sheet.
 - **`finish.tooltip`**: A tooltip face: the popover pane, without a shadow.
 - **`finish.inverse`**: The inverse surface: a toast face.
 - **`finish.groove`**: A groove cut inside a menu.

@@ -833,6 +833,96 @@
           "role": "chrome"
         }
       }
+    },
+    "dialog": {
+      "$value": "{color.card}",
+      "$description": "Modal dialog container surface.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      }
+    },
+    "card-edge": {
+      "$value": "{color.border}",
+      "$description": "Hairline border on card and section containers.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      }
+    },
+    "bevel": {
+      "$value": "{color.border}",
+      "$description": "Directional control elevation bevel stroke.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      }
+    },
+    "accent-bevel": {
+      "$value": "{color.brand-edge}",
+      "$description": "Accent control elevation top and side bevel stroke.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      }
+    },
+    "disabled": {
+      "$value": "{color.raised}",
+      "$description": "Disabled control container surface.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      }
+    },
+    "disabled-foreground": {
+      "$value": "{color.muted-foreground}",
+      "$description": "Disabled control label and icon ink.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      }
+    },
+    "accent-pressed": {
+      "$value": "{color.primary}",
+      "$description": "Accent control fill while pressed.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      }
+    },
+    "on-accent-pressed": {
+      "$value": "{color.primary-foreground}",
+      "$description": "Ink on pressed accent control fills.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      }
+    },
+    "on-foreground": {
+      "$value": "{color.foreground}",
+      "$description": "Label and icon ink on selected or toggled-on controls.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      }
+    },
+    "pressed-foreground": {
+      "$value": "{color.foreground}",
+      "$description": "Label and icon ink on pressed neutral or ghost controls.",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      }
     }
   },
   "finish": {
@@ -984,6 +1074,24 @@
           "alpha": 0.5,
           "hex": "#000000"
         }
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0, 0, 0],
+          "alpha": 0.5,
+          "hex": "#000000"
+        }
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0, 0, 0],
+          "alpha": 0.5,
+          "hex": "#000000"
+        }
       }
     },
     "hover": {
@@ -1096,6 +1204,24 @@
           "alpha": 0.5,
           "hex": "#000000"
         }
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0, 0, 0],
+          "alpha": 0.5,
+          "hex": "#000000"
+        }
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0, 0, 0],
+          "alpha": 0.5,
+          "hex": "#000000"
+        }
       }
     },
     "pressed": {
@@ -1150,6 +1276,24 @@
         }
       },
       "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0, 0, 0],
+          "alpha": 0.5,
+          "hex": "#000000"
+        }
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0, 0, 0],
+          "alpha": 0.5,
+          "hex": "#000000"
+        }
+      },
+      "border-bottom-color": {
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",
@@ -1848,6 +1992,24 @@
         ]
       },
       "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0, 0, 0],
+          "alpha": 0.5,
+          "hex": "#000000"
+        }
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0, 0, 0],
+          "alpha": 0.5,
+          "hex": "#000000"
+        }
+      },
+      "border-bottom-color": {
         "$type": "color",
         "$value": {
           "colorSpace": "oklch",

@@ -86,7 +86,17 @@
       "up-tint": "color-mix(in srgb, var(--up) 12%, transparent)",
       "down-tint": "color-mix(in srgb, var(--destructive) 12%, transparent)",
       "violet": "oklch(0.61489 0.21292 312.411)",
-      "window-control-off": "oklch(0.91944 0.00269 286.347)"
+      "window-control-off": "oklch(0.91944 0.00269 286.347)",
+      "dialog": "var(--card)",
+      "card-edge": "var(--border)",
+      "bevel": "var(--border)",
+      "accent-bevel": "var(--brand-edge)",
+      "disabled": "var(--raised)",
+      "disabled-foreground": "var(--muted-foreground)",
+      "accent-pressed": "var(--primary)",
+      "on-accent-pressed": "var(--primary-foreground)",
+      "on-foreground": "var(--foreground)",
+      "pressed-foreground": "var(--foreground)"
     },
     "dark": {
       "background": "oklch(0 0 0)",
@@ -151,7 +161,17 @@
       "sidebar-primary-foreground": "var(--primary-foreground)",
       "sidebar-ring": "var(--ring)",
       "down": "var(--destructive)",
-      "window-control-off": "oklch(0.36151 0.00681 286.054)"
+      "window-control-off": "oklch(0.36151 0.00681 286.054)",
+      "dialog": "var(--card)",
+      "card-edge": "var(--border)",
+      "bevel": "var(--border)",
+      "accent-bevel": "var(--brand-edge)",
+      "disabled": "var(--raised)",
+      "disabled-foreground": "var(--muted-foreground)",
+      "accent-pressed": "var(--primary)",
+      "on-accent-pressed": "var(--primary-foreground)",
+      "on-foreground": "var(--foreground)",
+      "pressed-foreground": "var(--foreground)"
     }
   }
 }

@@ -272,6 +272,8 @@ describe("WCAG contrast for default accent", () => {
         ["code/muted", s.code, s.muted],
         ["brand/background", s.brand, s.background],
         ["brand/card", s.brand, s.card],
+        ["pressed-foreground/pressed", s["pressed-foreground"], s.background],
+        ["on-foreground/primary (toggle on)", s["on-foreground"], s.primary],
         ["warn/warn-tint", s.warn, s["warn-tint"]],
         ["up/up-tint", s.up, s["up-tint"]],
         ["destructive/destructive-tint", s.destructive, s["destructive-tint"]],
@@ -280,6 +282,12 @@ describe("WCAG contrast for default accent", () => {
       for (const [label, fg, bg] of pairs) {
         expect(wcagContrast(fg, bg), `${appearance} ${label}`).toBeGreaterThanOrEqual(4.5);
       }
+      // `TextOnAccentFillColorSecondary` (0.7 white light / 0.5 black dark) on `AccentFillColorTertiary`
+      // is WinUI 3's genuine subtle pressed ink state (~2.95–3.10 contrast).
+      expect(
+        wcagContrast(s["on-accent-pressed"], s["accent-pressed"]),
+        `${appearance} on-accent-pressed/accent-pressed`,
+      ).toBeGreaterThanOrEqual(2.8);
     });
   }
 });
@@ -322,6 +330,44 @@ describe("compiled winui theme files", () => {
     expect(files.semantics.finishes.light.dialog?.shadow).toContain("0 64px 128px");
     expect(hexOf(String(files.semantics.finishes.light.dialog?.["border-color"]))).toBe("#c1c1c1");
     expect(hexOf(String(files.semantics.finishes.dark.dialog?.["border-color"]))).toBe("#424242");
+    expect(files.semantics.state["accent-pressed-opacity"]).toBe(1);
+    expect(files.semantics.finishes.shared.raised).toMatchObject({
+      "border-color": "{border}",
+      shadow: "none",
+    });
+    expect(files.semantics.finishes.light.raised).toMatchObject({
+      "border-top-color": "{border}",
+      "border-bottom-color": "{bevel}",
+    });
+    expect(files.semantics.finishes.dark.raised).toMatchObject({
+      "border-top-color": "{bevel}",
+      "border-bottom-color": "{border}",
+    });
+    expect(files.semantics.finishes.shared.accent).toMatchObject({
+      "border-color": "{accent-bevel}",
+      "border-top-color": "{accent-bevel}",
+      "border-bottom-color": "{brand-edge}",
+      shadow: "none",
+    });
+    expect(files.semantics.finishes.shared.on).toMatchObject({
+      background: "{primary}",
+      "border-color": "{accent-bevel}",
+      "border-top-color": "{accent-bevel}",
+      "border-bottom-color": "{brand-edge}",
+    });
+    expect(files.semantics.finishes.shared.section).toMatchObject({
+      "border-color": "{card-edge}",
+    });
+    expect(files.semantics.finishes.light.section?.shadow).toContain("0 4px 8px");
+    expect(files.semantics.finishes.shared.accentPressed).toMatchObject({
+      background: "{accent-pressed}",
+      "border-color": "transparent",
+      shadow: "none",
+    });
+    expect(files.semantics.finishes.shared.disabled).toMatchObject({
+      background: "{disabled}",
+      "border-color": "{border}",
+    });
 
     const kinds = tokenKinds(files.theme.cssVars);
     expect(

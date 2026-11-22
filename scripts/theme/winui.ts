@@ -52,6 +52,7 @@ export interface WinuiResources {
   readonly TextFillColorDisabled: string;
   readonly TextFillColorInverse: string;
   readonly TextOnAccentFillColorPrimary: string;
+  readonly TextOnAccentFillColorSecondary: string;
   readonly ControlFillColorDefault: string;
   readonly ControlFillColorSecondary: string;
   readonly ControlFillColorTertiary: string;
@@ -101,6 +102,7 @@ export const WINUI: Record<Appearance, WinuiResources> = {
     TextFillColorDisabled: "#5C000000",
     TextFillColorInverse: "#FFFFFF",
     TextOnAccentFillColorPrimary: "#FFFFFF",
+    TextOnAccentFillColorSecondary: "#B3FFFFFF",
     ControlFillColorDefault: "#B3FFFFFF",
     ControlFillColorSecondary: "#80F9F9F9",
     ControlFillColorTertiary: "#4DF9F9F9",
@@ -148,6 +150,7 @@ export const WINUI: Record<Appearance, WinuiResources> = {
     TextFillColorDisabled: "#5DFFFFFF",
     TextFillColorInverse: "#E4000000",
     TextOnAccentFillColorPrimary: "#000000",
+    TextOnAccentFillColorSecondary: "#80000000",
     ControlFillColorDefault: "#0FFFFFFF",
     ControlFillColorSecondary: "#15FFFFFF",
     ControlFillColorTertiary: "#08FFFFFF",
@@ -348,7 +351,17 @@ export type WinuiAppearanceRole =
   | "up-tint"
   | "down-tint"
   | "violet"
-  | "window-control-off";
+  | "window-control-off"
+  | "dialog"
+  | "card-edge"
+  | "bevel"
+  | "accent-bevel"
+  | "disabled"
+  | "disabled-foreground"
+  | "accent-pressed"
+  | "on-accent-pressed"
+  | "on-foreground"
+  | "pressed-foreground";
 
 export interface WinuiRoles {
   theme: Record<WinuiThemeRole, string>;
@@ -398,6 +411,8 @@ function buildAppearance(
   const destructiveTint = onBase(w.SystemFillColorCriticalBackground);
   // 10% accent wash composited opaque over the window base (no WinUI resource equivalent).
   const brandTint = over(withAlpha(primary, 0.1), background);
+  // WinUI `AccentFillColorTertiary` (`AccentFillColorDefault` @ 0.80 alpha) composited over base.
+  const accentPressed = over(withAlpha(primary, 0.8), background);
 
   return {
     background,
@@ -473,6 +488,16 @@ function buildAppearance(
     "down-tint": destructiveTint,
     violet: LIBRARY_KEPT[appearance].violet,
     "window-control-off": LIBRARY_KEPT[appearance].windowControlOff,
+    dialog: background,
+    "card-edge": onBase(w.CardStrokeColorDefault),
+    bevel: onBase(w.ControlStrokeColorSecondary),
+    "accent-bevel": compositeWinui(w.ControlStrokeColorOnAccentDefault, primary),
+    disabled: onBase(w.ControlFillColorDisabled),
+    "disabled-foreground": onBase(w.TextFillColorDisabled),
+    "accent-pressed": accentPressed,
+    "on-accent-pressed": compositeWinui(w.TextOnAccentFillColorSecondary, accentPressed),
+    "on-foreground": primaryForeground,
+    "pressed-foreground": mutedForeground,
   };
 }
 
@@ -536,10 +561,14 @@ const surface = (
   {
     shadow = "none",
     "border-color": borderColor = "transparent",
+    "border-top-color": borderTopColor,
+    "border-bottom-color": borderBottomColor,
     material = null,
   }: {
     shadow?: string;
     "border-color"?: string;
+    "border-top-color"?: string;
+    "border-bottom-color"?: string;
     material?: { windows: { backdrop: "blur" } } | null;
   } = {},
 ) => ({
@@ -547,6 +576,8 @@ const surface = (
   gradient: flat(color),
   shadow,
   "border-color": borderColor,
+  ...(borderTopColor !== undefined ? { "border-top-color": borderTopColor } : {}),
+  ...(borderBottomColor !== undefined ? { "border-bottom-color": borderBottomColor } : {}),
   material,
 });
 
@@ -594,13 +625,53 @@ function finishes(appearance: Appearance): Record<string, Record<string, unknown
       shadow: elevationShadow(8, appearance),
       material: null,
     },
+    section: {
+      background: alias("card"),
+      shadow: elevationShadow(8, appearance),
+      "border-color": alias("card-edge"),
+      material: null,
+    },
+    sectionHover: {
+      shadow: "none",
+      material: null,
+    },
     inset: { shadow: "none", material: null },
     field: { shadow: "none", material: null },
-    raised: surface(alias("raised"), { shadow: controlShadow, "border-color": alias("border") }),
-    hover: surface(alias("hover"), { shadow: controlShadow, "border-color": alias("border") }),
-    pressed: surface(alias("muted"), { shadow: "none", "border-color": alias("border") }),
-    light: surface(alias("primary"), { shadow: "none", "border-color": alias("brand-edge") }),
-    accent: surface(alias("primary"), { shadow: "none", "border-color": alias("brand-edge") }),
+    raised: surface(alias("raised"), {
+      shadow: "none",
+      "border-color": alias("border"),
+      "border-top-color": appearance === "light" ? alias("border") : alias("bevel"),
+      "border-bottom-color": appearance === "light" ? alias("bevel") : alias("border"),
+    }),
+    hover: surface(alias("hover"), {
+      shadow: "none",
+      "border-color": alias("border"),
+      "border-top-color": appearance === "light" ? alias("border") : alias("bevel"),
+      "border-bottom-color": appearance === "light" ? alias("bevel") : alias("border"),
+    }),
+    pressed: surface(alias("muted"), {
+      shadow: "none",
+      "border-color": alias("border"),
+      "border-top-color": alias("border"),
+      "border-bottom-color": alias("border"),
+    }),
+    disabled: surface(alias("disabled"), { shadow: "none", "border-color": alias("border") }),
+    light: surface(alias("primary"), {
+      shadow: "none",
+      "border-color": alias("accent-bevel"),
+      "border-top-color": alias("accent-bevel"),
+      "border-bottom-color": alias("brand-edge"),
+    }),
+    accent: surface(alias("primary"), {
+      shadow: "none",
+      "border-color": alias("accent-bevel"),
+      "border-top-color": alias("accent-bevel"),
+      "border-bottom-color": alias("brand-edge"),
+    }),
+    accentPressed: surface(alias("accent-pressed"), {
+      shadow: "none",
+      "border-color": "transparent",
+    }),
     track: { shadow: "none", "border-color": alias("input"), material: null },
     fill: {
       background: "transparent",
@@ -614,7 +685,12 @@ function finishes(appearance: Appearance): Record<string, Record<string, unknown
     handle: surface(alias("popover"), { shadow: controlShadow, "border-color": alias("border") }),
     pill: surface(alias("raised"), { shadow: "none", "border-color": alias("border") }),
     thumb: surface(alias("popover"), { shadow: controlShadow, "border-color": alias("border") }),
-    on: surface(alias("brand-tint"), { shadow: "none", "border-color": alias("border") }),
+    on: surface(alias("primary"), {
+      shadow: "none",
+      "border-color": alias("accent-bevel"),
+      "border-top-color": alias("accent-bevel"),
+      "border-bottom-color": alias("brand-edge"),
+    }),
     chip: surface(alias("raised"), { shadow: "none", "border-color": alias("border") }),
     glass: {
       background: `oklch(from {popover} l c h / ${glassOpacity})`,
@@ -630,9 +706,14 @@ function finishes(appearance: Appearance): Record<string, Record<string, unknown
       material: blurMaterial,
     },
     dialog: {
-      background: alias("background"),
+      background: alias("dialog"),
       shadow: elevationShadow(128, appearance),
       "border-color": dialogBorder,
+      material: null,
+    },
+    grabber: {
+      background: alias("raised"),
+      shadow: "none",
       material: null,
     },
     tooltip: {
@@ -752,6 +833,7 @@ export const winuiStyle = {
       pointer: { sm: 12, md: 16, lg: 20 },
       touch: { sm: 16, md: 20, lg: 24 },
     },
+    grabber: { width: 36, height: 5 },
   },
   shape: {
     curve: "circular",
@@ -762,6 +844,7 @@ export const winuiStyle = {
     overlay: { hover: 0, focus: 0, pressed: 0, dragged: 0 },
     ripple: false,
     "pressed-opacity": 1,
+    "accent-pressed-opacity": 1,
     // NSH cross-mode single-scalar compromise (WinUI uses per-brush disabled fills:
     // `ControlFillColorDisabled` 0.302 L / 0.043 D; `AccentFillColorDisabled` 0.216 L / 0.157 D;
     // `TitleBarDeactivatedOpacity` 0.5).
@@ -862,6 +945,23 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
     violet: "Library-retained violet data-series hue (no WinUI equivalent).",
     "window-control-off":
       "Library-retained unfocused window traffic-light fill (no WinUI equivalent).",
+    dialog: "ContentDialog surface aliased to {color.background} (SolidBackgroundFillColorBase).",
+    "card-edge": "Card border stroke (WinUI CardStrokeColorDefault composited over base).",
+    bevel:
+      "Standard button elevation bevel stroke (WinUI ControlStrokeColorSecondary composited over base).",
+    "accent-bevel":
+      "Accent button top/side bevel stroke (WinUI ControlStrokeColorOnAccentDefault composited over primary).",
+    disabled:
+      "Disabled control container fill (WinUI ControlFillColorDisabled composited over base).",
+    "disabled-foreground":
+      "Disabled control text/icon ink (WinUI TextFillColorDisabled composited over base).",
+    "accent-pressed":
+      "Pressed accent control fill (WinUI AccentFillColorTertiary composited over base).",
+    "on-accent-pressed":
+      "Pressed accent control ink (WinUI TextOnAccentFillColorSecondary composited over accent-pressed).",
+    "on-foreground":
+      "Ink on checked ToggleButton / active AccentFillColorDefault controls (TextOnAccentFillColorPrimary).",
+    "pressed-foreground": "Pressed standard control ink matching WinUI TextFillColorSecondary.",
   };
 
   return {
@@ -925,13 +1025,23 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
       darkColors: colorDescs,
       finishes: {
         card: "WinUI 3 card surface with layering depth-8 two-layer ThemeShadow approximation.",
+        section:
+          "WinUI 3 section card surface with CardStrokeColorDefault border and depth-8 ThemeShadow approximation.",
         raised:
-          "WinUI 3 standard control surface with depth-2 shadow and ControlStrokeColorDefault.",
-        hover: "WinUI 3 hovered control surface with depth-2 shadow and ControlStrokeColorDefault.",
-        pressed: "WinUI 3 pressed control surface with muted fill and no shadow.",
+          "WinUI 3 standard control surface with ControlElevationBorderBrush top/bottom bevel and no drop shadow.",
+        hover:
+          "WinUI 3 hovered control surface with ControlFillColorSecondary fill and ControlElevationBorderBrush bevel.",
+        pressed:
+          "WinUI 3 pressed control surface with ControlFillColorTertiary/muted fill, flat border, and no shadow.",
+        disabled:
+          "WinUI 3 disabled control container using ControlFillColorDisabled and ControlStrokeColorDefault border.",
+        accent:
+          "WinUI 3 accent control surface using AccentFillColorDefault and AccentControlElevationBorderBrush bevel.",
+        accentPressed:
+          "WinUI 3 pressed accent control surface using AccentFillColorTertiary and flat border.",
         handle: "WinUI 3 slider handle using popover fill, depth-2 shadow, and border.",
         thumb: "WinUI 3 segmented thumb using popover fill, depth-2 shadow, and border.",
-        on: "WinUI 3 selected pill/tile using opaque brand-tint fill and border.",
+        on: "WinUI 3 checked ToggleButton / active surface using AccentFillColorDefault and AccentControlElevationBorderBrush bevel.",
         glass:
           "WinUI 3 AcrylicInApp surface with per-appearance TintLuminosityOpacity (0.85 light / 0.96 dark), depth-32 shadow, and Windows blur backdrop.",
         menu: "WinUI 3 Acrylic flyout/menu surface with depth-32 shadow and Windows blur backdrop.",

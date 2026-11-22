@@ -349,6 +349,16 @@ function appearanceRoles(p: M3Palette, appearance: Appearance): Record<string, s
     "down-tint": tintMix("down"),
     violet: c(p.tertiary),
     "window-control-off": c(p.outlineVariant),
+    dialog: c(p.surfaceContainerHigh),
+    "card-edge": "var(--border)",
+    bevel: "var(--border)",
+    "accent-bevel": "var(--brand-edge)",
+    disabled: "color-mix(in srgb, var(--foreground) 10%, transparent)",
+    "disabled-foreground": "color-mix(in srgb, var(--foreground) 38%, transparent)",
+    "accent-pressed": "var(--primary)",
+    "on-accent-pressed": "var(--primary-foreground)",
+    "on-foreground": "var(--on-brand-tint)",
+    "pressed-foreground": "var(--foreground)",
   };
 }
 
@@ -390,10 +400,14 @@ const surface = (
   {
     shadow = "none",
     "border-color": borderColor = "transparent",
+    "border-top-color": borderTopColor,
+    "border-bottom-color": borderBottomColor,
     material = null,
   }: {
     shadow?: string;
     "border-color"?: string;
+    "border-top-color"?: string;
+    "border-bottom-color"?: string;
     material?: { android: { elevation: number } } | null;
   } = {},
 ) => ({
@@ -401,6 +415,8 @@ const surface = (
   gradient: flat(color),
   shadow,
   "border-color": borderColor,
+  ...(borderTopColor !== undefined ? { "border-top-color": borderTopColor } : {}),
+  ...(borderBottomColor !== undefined ? { "border-bottom-color": borderBottomColor } : {}),
   material,
 });
 
@@ -438,19 +454,49 @@ function finishes(): Record<string, Record<string, unknown>> {
       shadow: LEVEL_1,
       material: level1,
     },
+    section: {
+      background: alias("card"),
+      shadow: LEVEL_1,
+      "border-color": "transparent",
+      material: level1,
+    },
+    sectionHover: {
+      shadow: LEVEL_2,
+      material: level2,
+    },
     inset: { shadow: "none", material: null },
     field: { shadow: "none", material: null },
-    raised: surface(alias("raised"), { shadow: LEVEL_1, material: level1 }),
+    raised: surface(alias("raised"), {
+      shadow: LEVEL_1,
+      "border-top-color": "transparent",
+      "border-bottom-color": "transparent",
+      material: level1,
+    }),
     hover: {
       background: alias("raised"),
       gradient: flat(alias("hover")),
       shadow: LEVEL_1,
       "border-color": "transparent",
+      "border-top-color": "transparent",
+      "border-bottom-color": "transparent",
       material: level1,
     },
-    pressed: surface(alias("raised"), { shadow: LEVEL_1, material: level1 }),
-    light: surface(alias("primary")),
-    accent: surface(alias("primary")),
+    pressed: surface(alias("raised"), {
+      shadow: LEVEL_1,
+      "border-top-color": "transparent",
+      "border-bottom-color": "transparent",
+      material: level1,
+    }),
+    disabled: surface(alias("disabled")),
+    light: surface(alias("primary"), {
+      "border-top-color": "transparent",
+      "border-bottom-color": "transparent",
+    }),
+    accent: surface(alias("primary"), {
+      "border-top-color": "transparent",
+      "border-bottom-color": "transparent",
+    }),
+    accentPressed: surface(alias("accent-pressed")),
     track: { shadow: "none", "border-color": alias("input"), material: null },
     fill: {
       background: "transparent",
@@ -464,7 +510,10 @@ function finishes(): Record<string, Record<string, unknown>> {
     handle: surface(alias("primary")),
     pill: surface(alias("raised"), { shadow: LEVEL_1, material: level1 }),
     thumb: surface(alias("secondary")),
-    on: surface(alias("secondary")),
+    on: surface(alias("secondary"), {
+      "border-top-color": "transparent",
+      "border-bottom-color": "transparent",
+    }),
     chip: surface(alias("background"), { "border-color": alias("border") }),
     glass: {
       background: alias("popover"),
@@ -480,10 +529,15 @@ function finishes(): Record<string, Record<string, unknown>> {
       material: level2,
     },
     dialog: {
-      background: alias("popover"),
+      background: alias("dialog"),
       shadow: LEVEL_3,
       "border-color": "transparent",
       material: level3,
+    },
+    grabber: {
+      background: "oklch(from {muted-foreground} l c h / 0.4)",
+      shadow: "none",
+      material: null,
     },
     tooltip: {
       background: alias("inverse"),
@@ -603,6 +657,7 @@ export const m3Style = {
       pointer: { sm: 18, md: 20, lg: 24 },
       touch: { sm: 18, md: 20, lg: 24 },
     },
+    grabber: { width: 32, height: 4 },
   },
   shape: {
     curve: "circular",
@@ -614,6 +669,7 @@ export const m3Style = {
     overlay: { hover: 0.08, focus: 0.1, pressed: 0.1, dragged: 0.16 },
     ripple: true,
     "pressed-opacity": 1,
+    "accent-pressed-opacity": 1,
     disabled: { content: 0.38, container: 0.1 },
   },
   duration: { shake: 500 },
@@ -689,6 +745,16 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
     "down-tint": "Translucent negative wash (12% down over transparent).",
     violet: "Tertiary accent color (M3 tertiary).",
     "window-control-off": "Unfocused window traffic-light fill (M3 outlineVariant).",
+    dialog: "Modal dialog surface (M3 surfaceContainerHigh).",
+    "card-edge": "Card border hairline aliased to {color.border}.",
+    bevel: "Control elevation bevel stroke aliased to {color.border}.",
+    "accent-bevel": "Accent bevel stroke aliased to {color.brand-edge}.",
+    disabled: "Disabled control container fill (10% onSurface over transparent).",
+    "disabled-foreground": "Disabled control content ink (38% onSurface over transparent).",
+    "accent-pressed": "Pressed accent fill aliased to {color.primary} (state layer applies press).",
+    "on-accent-pressed": "Pressed accent ink aliased to {color.primary-foreground}.",
+    "on-foreground": "Ink on tonal selected controls (M3 Expressive onSecondaryContainer).",
+    "pressed-foreground": "Pressed ink aliased to {color.foreground}.",
   };
 
   return {
@@ -747,13 +813,21 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
       darkColors: colorDescs,
       finishes: {
         card: "Elevated M3 card surface with Material Web Level 1 shadow and 1dp Android elevation.",
+        section:
+          "M3 ElevatedCard resting surface (Level 1 shadow and 1dp Android elevation, no border).",
+        sectionHover:
+          "M3 ElevatedCard hovered elevation promotion (Level 2 shadow and 3dp Android elevation).",
         raised: "Raised surface with Level 1 shadow and 1dp Android elevation.",
         hover: "Hovered state surface over raised background with Level 1 shadow.",
         pressed: "Pressed surface at Level 1 elevation (M3 state layer + ripple handles press).",
+        disabled: "M3 disabled filled/tonal button container (10% onSurface, flat with no shadow).",
+        accentPressed: "M3 pressed accent surface (state layer + ripple handles press).",
         glass:
           "Floating surface using opaque M3 popover with Level 2 shadow and 3dp elevation (M3 uses no blur).",
         menu: "M3 menu/popover surface with Level 2 shadow and 3dp Android elevation.",
-        dialog: "M3 dialog surface with Level 3 shadow and 6dp Android elevation.",
+        dialog:
+          "M3 dialog surface using SurfaceContainerHigh with Level 3 shadow and 6dp Android elevation.",
+        grabber: "M3 bottom sheet drag handle (40% onSurfaceVariant).",
         tooltip: "M3 plain tooltip using inverse surface without shadow.",
         inverse: "M3 snackbar/inverse surface with Level 3 shadow and 6dp Android elevation.",
       },

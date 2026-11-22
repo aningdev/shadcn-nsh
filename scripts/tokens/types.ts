@@ -161,12 +161,13 @@ export interface DesignMdExtension {
   voiceOmitted?: string;
 }
 
-/** Semantic color-role grouping for every token in `color.*` (74 total: 11 C-layer + 63 A/B-layer). */
+/** Semantic color-role grouping for every token in `color.*` (84 total: 11 C-layer + 73 A/B-layer). */
 export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
-  // surface (15 A/B-layer + 2 C-layer)
+  // surface (17 A/B-layer + 2 C-layer)
   background: "surface",
   card: "surface",
   popover: "surface",
+  dialog: "surface",
   secondary: "surface",
   muted: "surface",
   accent: "surface",
@@ -174,6 +175,7 @@ export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
   raised: "surface",
   field: "surface",
   hover: "surface",
+  disabled: "surface",
   track: "surface",
   knob: "surface",
   inverse: "surface",
@@ -182,13 +184,16 @@ export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
   media: "surface",
   scrim: "surface",
 
-  // ink (12 A/B-layer + 2 C-layer)
+  // ink (15 A/B-layer + 2 C-layer)
   foreground: "ink",
   "card-foreground": "ink",
   "popover-foreground": "ink",
   "secondary-foreground": "ink",
   "muted-foreground": "ink",
   "accent-foreground": "ink",
+  "disabled-foreground": "ink",
+  "on-foreground": "ink",
+  "pressed-foreground": "ink",
   faint: "ink",
   code: "ink",
   "inverse-foreground": "ink",
@@ -198,13 +203,15 @@ export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
   "on-media": "ink",
   "chart-foreground": "ink",
 
-  // brand (9 A/B-layer + 2 C-layer)
+  // brand (11 A/B-layer + 2 C-layer)
   primary: "brand",
   "primary-foreground": "brand",
   brand: "brand",
   "brand-edge": "brand",
   "brand-tint": "brand",
   "on-brand-tint": "brand",
+  "accent-pressed": "brand",
+  "on-accent-pressed": "brand",
   "inverse-brand": "brand",
   "sidebar-primary": "brand",
   "sidebar-primary-foreground": "brand",
@@ -229,12 +236,15 @@ export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
   "chart-4": "status",
   "chart-5": "status",
 
-  // chrome (11 A/B-layer + 5 C-layer)
+  // chrome (14 A/B-layer + 5 C-layer)
   border: "chrome",
   input: "chrome",
   ring: "chrome",
   "ring-halo": "chrome",
   line: "chrome",
+  "card-edge": "chrome",
+  bevel: "chrome",
+  "accent-bevel": "chrome",
   "glass-edge": "chrome",
   "scrollbar-thumb": "chrome",
   "scrollbar-thumb-hover": "chrome",

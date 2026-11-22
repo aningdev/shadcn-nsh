@@ -392,6 +392,16 @@ function section(appearance: Appearance): Record<string, string> {
     // The macOS traffic lights are the system's, and the stylesheet has no such tokens: like the
     // text beside them, all three go quiet (the ring's grey) while the window is in the background.
     "window-control-off": s("ring"),
+    dialog: "var(--card)",
+    "card-edge": "var(--border)",
+    bevel: "var(--border)",
+    "accent-bevel": "var(--brand-edge)",
+    disabled: "var(--raised)",
+    "disabled-foreground": "var(--muted-foreground)",
+    "accent-pressed": "var(--primary)",
+    "on-accent-pressed": "var(--primary-foreground)",
+    "on-foreground": "var(--foreground)",
+    "pressed-foreground": "var(--foreground)",
   };
 }
 
@@ -455,6 +465,12 @@ function finishes(appearance: Appearance): Record<string, Finish> {
         `0 12px 32px -14px ${s("glass-shade")}`,
       ].join(", "),
     },
+    section: {
+      background: alias("card"),
+      shadow: "none",
+      "border-color": alias("card-edge"),
+    },
+    sectionHover: { shadow: "none" },
     // The thinnest pane, laid into a card: the faint line of light inside its top edge.
     inset: { shadow: `inset 0 1px 0 ${s("glass-inner")}` },
     // A field is a pane of clear glass to type on: the line of light inside its top edge, and the
@@ -465,12 +481,16 @@ function finishes(appearance: Appearance): Record<string, Finish> {
       ...pane(s("glass-control"), alias("raised")),
       shadow: control,
       "border-color": alias("glass-edge"),
+      "border-top-color": alias("glass-edge"),
+      "border-bottom-color": alias("glass-edge"),
     },
     // Under the pointer the theme's own step fills it; the pane keeps its rim and its shadow.
     hover: {
       ...pane(s("hover"), alias("hover")),
       shadow: control,
       "border-color": alias("glass-edge"),
+      "border-top-color": alias("glass-edge"),
+      "border-bottom-color": alias("glass-edge"),
     },
     // Pressed, it sits down on the page: the shadow under it goes and the pane darkens a step.
     // The stylesheet draws no press of its own beyond that, so `state["press-scale"]` below is 1.
@@ -478,6 +498,14 @@ function finishes(appearance: Appearance): Record<string, Finish> {
       ...paneAt("muted", coords(s("glass-state-armed")).a),
       shadow: `inset 0 1px 0 ${s("glass-control-rim")}`,
       "border-color": alias("glass-edge"),
+      "border-top-color": alias("glass-edge"),
+      "border-bottom-color": alias("glass-edge"),
+    },
+    disabled: {
+      background: alias("disabled"),
+      gradient: `linear-gradient(180deg, ${alias("disabled")} 0%, ${alias("disabled")} 100%)`,
+      shadow: "none",
+      "border-color": alias("border"),
     },
     // Small things filled with the ink — a checked box, a switch that is on, the filled part of a
     // bar — are the solid pane without the shadow a button stands on.
@@ -485,6 +513,8 @@ function finishes(appearance: Appearance): Record<string, Finish> {
       ...paneAt("primary", Number(s("primary-solid").replace("%", "")) / 100),
       shadow: `inset 0 1px 0 ${s("primary-rim")}, inset 0 -1px 0 ${m.under}`,
       "border-color": alias("brand-edge"),
+      "border-top-color": alias("brand-edge"),
+      "border-bottom-color": alias("brand-edge"),
     },
     // The primary button: the same pane, standing on its shadow.
     accent: {
@@ -496,6 +526,14 @@ function finishes(appearance: Appearance): Record<string, Finish> {
         `0 1px 2px ${s("glass-contact")}`,
         `0 8px 18px -9px ${s("glass-shade")}`,
       ].join(", "),
+      "border-color": alias("brand-edge"),
+      "border-top-color": alias("brand-edge"),
+      "border-bottom-color": alias("brand-edge"),
+    },
+    accentPressed: {
+      background: alias("accent-pressed"),
+      gradient: `linear-gradient(180deg, ${alias("accent-pressed")} 0%, ${alias("accent-pressed")} 100%)`,
+      shadow: "none",
       "border-color": alias("brand-edge"),
     },
     // A track is a groove cut into the surface, so the light falls the other way: a shade under
@@ -537,6 +575,8 @@ function finishes(appearance: Appearance): Record<string, Finish> {
       ...paneAt("muted", coords(s("glass-state")).a),
       shadow: `inset 0 1px 0 ${s("glass-state-rim")}`,
       "border-color": `oklch(from {muted} l c h / ${coords(s("glass-state-edge")).a})`,
+      "border-top-color": `oklch(from {muted} l c h / ${coords(s("glass-state-edge")).a})`,
+      "border-bottom-color": `oklch(from {muted} l c h / ${coords(s("glass-state-edge")).a})`,
     },
     // A small label that holds something (a key, a chip): clear glass, both lines inside its edge.
     chip: {
@@ -563,6 +603,10 @@ function finishes(appearance: Appearance): Record<string, Finish> {
         `0 6px 16px -6px ${s("glass-lift")}`,
       ].join(", "),
       "border-color": s("popover-edge"),
+    },
+    grabber: {
+      background: alias("raised"),
+      shadow: "none",
     },
     // The lip of light under a separator cut into the surface: the glass's faint inner line.
     groove: { shadow: `0 1px 0 ${s("glass-inner")}` },

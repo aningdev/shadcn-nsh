@@ -38,7 +38,7 @@ export function withSurfaces(roles: Roles): Roles {
             [
               "dialog",
               {
-                background: "{card}",
+                background: "{dialog}",
                 shadow: menu.shadow,
                 "border-color": "{border}",
                 material: null,

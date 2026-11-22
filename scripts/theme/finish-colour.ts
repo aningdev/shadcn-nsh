@@ -14,7 +14,13 @@ import { parseColor, rgbToOklch } from "./oklch";
 import { findTokenRefs, type TokenKind } from "./tokens";
 
 /** The fields of a finish that hold a colour: `shadow` is ink, and exempt (§2). */
-export const colourFields = ["background", "gradient", "border-color"] as const;
+export const colourFields = [
+  "background",
+  "gradient",
+  "border-color",
+  "border-top-color",
+  "border-bottom-color",
+] as const;
 
 /** One field's colour, and what the spec says about it. */
 export type ColourProblem =

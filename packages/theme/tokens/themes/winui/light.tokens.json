@@ -822,6 +822,136 @@
         }
       },
       "$description": "Library-retained unfocused window traffic-light fill (no WinUI equivalent)."
+    },
+    "dialog": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.96415, 0, 0],
+        "hex": "#f3f3f3"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
+      "$description": "ContentDialog surface aliased to {color.background} (SolidBackgroundFillColorBase)."
+    },
+    "card-edge": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.92191, 0, 0],
+        "hex": "#e5e5e5"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
+      "$description": "Card border stroke (WinUI CardStrokeColorDefault composited over base)."
+    },
+    "bevel": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.84522, 0, 0],
+        "hex": "#cccccc"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
+      "$description": "Standard button elevation bevel stroke (WinUI ControlStrokeColorSecondary composited over base)."
+    },
+    "accent-bevel": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.52768, 0.14982, 252.341],
+        "hex": "#146cbe"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
+      "$description": "Accent button top/side bevel stroke (WinUI ControlStrokeColorOnAccentDefault composited over primary)."
+    },
+    "disabled": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.97015, 0, 0],
+        "hex": "#f5f5f5"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
+      "$description": "Disabled control container fill (WinUI ControlFillColorDisabled composited over base)."
+    },
+    "disabled-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.68949, 0, 0],
+        "hex": "#9b9b9b"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
+      "$description": "Disabled control text/icon ink (WinUI TextFillColorDisabled composited over base)."
+    },
+    "accent-pressed": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.5773, 0.13223, 250.006],
+        "hex": "#317dc4"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
+      "$description": "Pressed accent control fill (WinUI AccentFillColorTertiary composited over base)."
+    },
+    "on-accent-pressed": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.87245, 0.03754, 247.003],
+        "hex": "#c2d8ed"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
+      "$description": "Pressed accent control ink (WinUI TextOnAccentFillColorSecondary composited over accent-pressed)."
+    },
+    "on-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "hex": "#ffffff"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
+      "$description": "Ink on checked ToggleButton / active AccentFillColorDefault controls (TextOnAccentFillColorPrimary)."
+    },
+    "pressed-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.47478, 0, 0],
+        "hex": "#5c5c5c"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
+      "$description": "Pressed standard control ink matching WinUI TextFillColorSecondary."
     }
   },
   "finish": {
@@ -881,7 +1011,7 @@
         ]
       }
     },
-    "raised": {
+    "section": {
       "shadow": {
         "$type": "shadow",
         "$value": [
@@ -921,11 +1051,11 @@
               "unit": "px"
             },
             "offsetY": {
-              "value": 1,
+              "value": 4,
               "unit": "px"
             },
             "blur": {
-              "value": 2,
+              "value": 8,
               "unit": "px"
             },
             "spread": {
@@ -936,59 +1066,24 @@
         ]
       }
     },
+    "raised": {
+      "border-top-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": "{color.bevel}"
+      }
+    },
     "hover": {
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          {
-            "color": {
-              "colorSpace": "oklch",
-              "components": [0, 0, 0],
-              "alpha": 0.12,
-              "hex": "#000000"
-            },
-            "offsetX": {
-              "value": 0,
-              "unit": "px"
-            },
-            "offsetY": {
-              "value": 0,
-              "unit": "px"
-            },
-            "blur": {
-              "value": 2,
-              "unit": "px"
-            },
-            "spread": {
-              "value": 0,
-              "unit": "px"
-            }
-          },
-          {
-            "color": {
-              "colorSpace": "oklch",
-              "components": [0, 0, 0],
-              "alpha": 0.14,
-              "hex": "#000000"
-            },
-            "offsetX": {
-              "value": 0,
-              "unit": "px"
-            },
-            "offsetY": {
-              "value": 1,
-              "unit": "px"
-            },
-            "blur": {
-              "value": 2,
-              "unit": "px"
-            },
-            "spread": {
-              "value": 0,
-              "unit": "px"
-            }
-          }
-        ]
+      "border-top-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": "{color.bevel}"
       }
     },
     "handle": {

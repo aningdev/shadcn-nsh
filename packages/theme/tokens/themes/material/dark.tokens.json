@@ -844,6 +844,147 @@
         }
       },
       "$description": "Unfocused window traffic-light fill (M3 outlineVariant)."
+    },
+    "dialog": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.2859, 0.01293, 298.633],
+        "hex": "#2b2930"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
+      "$description": "Modal dialog surface (M3 surfaceContainerHigh)."
+    },
+    "card-edge": {
+      "$value": "{color.border}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
+      "$description": "Card border hairline aliased to {color.border}."
+    },
+    "bevel": {
+      "$value": "{color.border}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
+      "$description": "Control elevation bevel stroke aliased to {color.border}."
+    },
+    "accent-bevel": {
+      "$value": "{color.brand-edge}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
+      "$description": "Accent bevel stroke aliased to {color.brand-edge}."
+    },
+    "disabled": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.91401, 0.01366, 314.754],
+        "alpha": 0.1,
+        "hex": "#e6e0e9"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface",
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.foreground}",
+            "percent": 10,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Disabled control container fill (10% onSurface over transparent)."
+    },
+    "disabled-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.91401, 0.01366, 314.754],
+        "alpha": 0.38,
+        "hex": "#e6e0e9"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink",
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.foreground}",
+            "percent": 38,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Disabled control content ink (38% onSurface over transparent)."
+    },
+    "accent-pressed": {
+      "$value": "{color.primary}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
+      "$description": "Pressed accent fill aliased to {color.primary} (state layer applies press)."
+    },
+    "on-accent-pressed": {
+      "$value": "{color.primary-foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
+      "$description": "Pressed accent ink aliased to {color.primary-foreground}."
+    },
+    "on-foreground": {
+      "$value": "{color.on-brand-tint}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
+      "$description": "Ink on tonal selected controls (M3 Expressive onSecondaryContainer)."
+    },
+    "pressed-foreground": {
+      "$value": "{color.foreground}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
+      "$description": "Pressed ink aliased to {color.foreground}."
+    }
+  },
+  "finish": {
+    "$description": "Sparse dark-mode surface finish overrides.",
+    "grabber": {
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.82875, 0.01776, 308.223],
+          "alpha": 0.4,
+          "hex": "#cac4d0"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.muted-foreground}",
+              "alpha": 0.4
+            }
+          }
+        }
+      }
     }
   }
 }

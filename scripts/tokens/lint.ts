@@ -354,7 +354,11 @@ function validateExtAtPath(
     return;
   }
 
-  if (/^finish\.[A-Za-z0-9-]+\.(?:background|border-color)$/.test(p)) {
+  if (
+    /^finish\.[A-Za-z0-9-]+\.(?:background|border-color|border-top-color|border-bottom-color)$/.test(
+      p,
+    )
+  ) {
     checkUnknownKeys(where, ext, ["transparentKeyword", "colorOp"], problems);
     if ("transparentKeyword" in ext && ext.transparentKeyword !== true) {
       problems.push(`${where}.transparentKeyword must be true`);
@@ -689,6 +693,7 @@ function checkMergedSemantics(
     "state.overlay.pressed",
     "state.overlay.dragged",
     "state.pressed-opacity",
+    "state.accent-pressed-opacity",
     "state.disabled.content",
     "state.disabled.container",
   ]) {
@@ -705,6 +710,7 @@ function checkMergedSemantics(
     "dimension.focus",
     "dimension.size",
     "dimension.icon",
+    "dimension.grabber",
   ]) {
     const group = getAtPath(resolved, dimGroupPath);
     if (!isRecord(group)) continue;

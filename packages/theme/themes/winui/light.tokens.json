@@ -329,6 +329,21 @@
         "$description": "Focus ring outward offset from control bounds."
       }
     },
+    "grabber": {
+      "$description": "Bottom sheet grabber pill dimensions.",
+      "width": {
+        "$value": {
+          "value": 36,
+          "unit": "px"
+        }
+      },
+      "height": {
+        "$value": {
+          "value": 5,
+          "unit": "px"
+        }
+      }
+    },
     "radius": {
       "$type": "dimension",
       "$description": "WinUI 3 corner radius scale: ControlCornerRadius 4px (controls/fields/chips/insets) and OverlayCornerRadius 8px (cards/overlays/dialogs/sheets).",
@@ -578,6 +593,10 @@
     "pressed-opacity": {
       "$value": 1,
       "$description": "Content stays full opacity when pressed (1; fill brush swap shows press)."
+    },
+    "accent-pressed-opacity": {
+      "$value": 1,
+      "$description": "Pressed opacity for accent controls when no pressed accent finish replaces it."
     },
     "disabled": {
       "$description": "WinUI 3 disabled opacities (0.36 TextFillColorDisabled content, 0.45 container compromise).",
@@ -2043,6 +2062,176 @@
         }
       },
       "$description": "Library-retained unfocused window traffic-light fill (no WinUI equivalent)."
+    },
+    "dialog": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.96415,
+          0,
+          0
+        ],
+        "hex": "#f3f3f3"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
+      "$description": "ContentDialog surface aliased to {color.background} (SolidBackgroundFillColorBase)."
+    },
+    "card-edge": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.92191,
+          0,
+          0
+        ],
+        "hex": "#e5e5e5"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
+      "$description": "Card border stroke (WinUI CardStrokeColorDefault composited over base)."
+    },
+    "bevel": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.84522,
+          0,
+          0
+        ],
+        "hex": "#cccccc"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
+      "$description": "Standard button elevation bevel stroke (WinUI ControlStrokeColorSecondary composited over base)."
+    },
+    "accent-bevel": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.52768,
+          0.14982,
+          252.341
+        ],
+        "hex": "#146cbe"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "chrome"
+        }
+      },
+      "$description": "Accent button top/side bevel stroke (WinUI ControlStrokeColorOnAccentDefault composited over primary)."
+    },
+    "disabled": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.97015,
+          0,
+          0
+        ],
+        "hex": "#f5f5f5"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
+      "$description": "Disabled control container fill (WinUI ControlFillColorDisabled composited over base)."
+    },
+    "disabled-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.68949,
+          0,
+          0
+        ],
+        "hex": "#9b9b9b"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
+      "$description": "Disabled control text/icon ink (WinUI TextFillColorDisabled composited over base)."
+    },
+    "accent-pressed": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.5773,
+          0.13223,
+          250.006
+        ],
+        "hex": "#317dc4"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
+      "$description": "Pressed accent control fill (WinUI AccentFillColorTertiary composited over base)."
+    },
+    "on-accent-pressed": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.87245,
+          0.03754,
+          247.003
+        ],
+        "hex": "#c2d8ed"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "brand"
+        }
+      },
+      "$description": "Pressed accent control ink (WinUI TextOnAccentFillColorSecondary composited over accent-pressed)."
+    },
+    "on-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          1,
+          0,
+          0
+        ],
+        "hex": "#ffffff"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
+      "$description": "Ink on checked ToggleButton / active AccentFillColorDefault controls (TextOnAccentFillColorPrimary)."
+    },
+    "pressed-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [
+          0.47478,
+          0,
+          0
+        ],
+        "hex": "#5c5c5c"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "ink"
+        }
+      },
+      "$description": "Pressed standard control ink matching WinUI TextFillColorSecondary."
     }
   },
   "finish": {
@@ -2134,6 +2323,127 @@
         ]
       }
     },
+    "section": {
+      "$description": "WinUI 3 section card surface with CardStrokeColorDefault border and depth-8 ThemeShadow approximation.",
+      "background": {
+        "$type": "color",
+        "$value": "{color.card}"
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.card-edge}"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "material": null
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                0,
+                0,
+                0
+              ],
+              "alpha": 0.12,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 0,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [
+                0,
+                0,
+                0
+              ],
+              "alpha": 0.14,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 4,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 8,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "sectionHover": {
+      "$description": "Hover elevation step for a section or card where elevated.",
+      "shadow": {
+        "$type": "shadow",
+        "$value": {
+          "color": {
+            "colorSpace": "oklch",
+            "components": [
+              0,
+              0,
+              0
+            ],
+            "alpha": 0,
+            "hex": "#000000"
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 0,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 0,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          }
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "none": true
+          }
+        }
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "material": null
+        }
+      }
+    },
     "inset": {
       "$description": "The well inside a card: sunk by its inner shadow alone.",
       "shadow": {
@@ -2223,7 +2533,7 @@
       }
     },
     "raised": {
-      "$description": "WinUI 3 standard control surface with depth-2 shadow and ControlStrokeColorDefault.",
+      "$description": "WinUI 3 standard control surface with ControlElevationBorderBrush top/bottom bevel and no drop shadow.",
       "background": {
         "$type": "color",
         "$value": "{color.raised}"
@@ -2246,6 +2556,42 @@
           }
         }
       },
+      "shadow": {
+        "$type": "shadow",
+        "$value": {
+          "color": {
+            "colorSpace": "oklch",
+            "components": [
+              0,
+              0,
+              0
+            ],
+            "alpha": 0,
+            "hex": "#000000"
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 0,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 0,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          }
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "none": true
+          }
+        }
+      },
       "border-color": {
         "$type": "color",
         "$value": "{color.border}"
@@ -2255,70 +2601,17 @@
           "material": null
         }
       },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          {
-            "color": {
-              "colorSpace": "oklch",
-              "components": [
-                0,
-                0,
-                0
-              ],
-              "alpha": 0.12,
-              "hex": "#000000"
-            },
-            "offsetX": {
-              "value": 0,
-              "unit": "px"
-            },
-            "offsetY": {
-              "value": 0,
-              "unit": "px"
-            },
-            "blur": {
-              "value": 2,
-              "unit": "px"
-            },
-            "spread": {
-              "value": 0,
-              "unit": "px"
-            }
-          },
-          {
-            "color": {
-              "colorSpace": "oklch",
-              "components": [
-                0,
-                0,
-                0
-              ],
-              "alpha": 0.14,
-              "hex": "#000000"
-            },
-            "offsetX": {
-              "value": 0,
-              "unit": "px"
-            },
-            "offsetY": {
-              "value": 1,
-              "unit": "px"
-            },
-            "blur": {
-              "value": 2,
-              "unit": "px"
-            },
-            "spread": {
-              "value": 0,
-              "unit": "px"
-            }
-          }
-        ]
+      "border-top-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": "{color.bevel}"
       }
     },
     "hover": {
-      "$description": "WinUI 3 hovered control surface with depth-2 shadow and ControlStrokeColorDefault.",
+      "$description": "WinUI 3 hovered control surface with ControlFillColorSecondary fill and ControlElevationBorderBrush bevel.",
       "background": {
         "$type": "color",
         "$value": "{color.hover}"
@@ -2341,6 +2634,42 @@
           }
         }
       },
+      "shadow": {
+        "$type": "shadow",
+        "$value": {
+          "color": {
+            "colorSpace": "oklch",
+            "components": [
+              0,
+              0,
+              0
+            ],
+            "alpha": 0,
+            "hex": "#000000"
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 0,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 0,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          }
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "none": true
+          }
+        }
+      },
       "border-color": {
         "$type": "color",
         "$value": "{color.border}"
@@ -2350,70 +2679,17 @@
           "material": null
         }
       },
-      "shadow": {
-        "$type": "shadow",
-        "$value": [
-          {
-            "color": {
-              "colorSpace": "oklch",
-              "components": [
-                0,
-                0,
-                0
-              ],
-              "alpha": 0.12,
-              "hex": "#000000"
-            },
-            "offsetX": {
-              "value": 0,
-              "unit": "px"
-            },
-            "offsetY": {
-              "value": 0,
-              "unit": "px"
-            },
-            "blur": {
-              "value": 2,
-              "unit": "px"
-            },
-            "spread": {
-              "value": 0,
-              "unit": "px"
-            }
-          },
-          {
-            "color": {
-              "colorSpace": "oklch",
-              "components": [
-                0,
-                0,
-                0
-              ],
-              "alpha": 0.14,
-              "hex": "#000000"
-            },
-            "offsetX": {
-              "value": 0,
-              "unit": "px"
-            },
-            "offsetY": {
-              "value": 1,
-              "unit": "px"
-            },
-            "blur": {
-              "value": 2,
-              "unit": "px"
-            },
-            "spread": {
-              "value": 0,
-              "unit": "px"
-            }
-          }
-        ]
+      "border-top-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": "{color.bevel}"
       }
     },
     "pressed": {
-      "$description": "WinUI 3 pressed control surface with muted fill and no shadow.",
+      "$description": "WinUI 3 pressed control surface with ControlFillColorTertiary/muted fill, flat border, and no shadow.",
       "background": {
         "$type": "color",
         "$value": "{color.muted}"
@@ -2427,6 +2703,84 @@
           },
           {
             "color": "{color.muted}",
+            "position": 1
+          }
+        ],
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "angle": 180
+          }
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": {
+          "color": {
+            "colorSpace": "oklch",
+            "components": [
+              0,
+              0,
+              0
+            ],
+            "alpha": 0,
+            "hex": "#000000"
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 0,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 0,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          }
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "none": true
+          }
+        }
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "material": null
+        }
+      }
+    },
+    "disabled": {
+      "$description": "WinUI 3 disabled control container using ControlFillColorDisabled and ControlStrokeColorDefault border.",
+      "background": {
+        "$type": "color",
+        "$value": "{color.disabled}"
+      },
+      "gradient": {
+        "$type": "gradient",
+        "$value": [
+          {
+            "color": "{color.disabled}",
+            "position": 0
+          },
+          {
+            "color": "{color.disabled}",
             "position": 1
           }
         ],
@@ -2544,6 +2898,14 @@
       },
       "border-color": {
         "$type": "color",
+        "$value": "{color.accent-bevel}"
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": "{color.accent-bevel}"
+      },
+      "border-bottom-color": {
+        "$type": "color",
         "$value": "{color.brand-edge}"
       },
       "$extensions": {
@@ -2553,7 +2915,7 @@
       }
     },
     "accent": {
-      "$description": "The accent face (the same as light).",
+      "$description": "WinUI 3 accent control surface using AccentFillColorDefault and AccentControlElevationBorderBrush bevel.",
       "background": {
         "$type": "color",
         "$value": "{color.primary}"
@@ -2614,7 +2976,99 @@
       },
       "border-color": {
         "$type": "color",
+        "$value": "{color.accent-bevel}"
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": "{color.accent-bevel}"
+      },
+      "border-bottom-color": {
+        "$type": "color",
         "$value": "{color.brand-edge}"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "material": null
+        }
+      }
+    },
+    "accentPressed": {
+      "$description": "WinUI 3 pressed accent control surface using AccentFillColorTertiary and flat border.",
+      "background": {
+        "$type": "color",
+        "$value": "{color.accent-pressed}"
+      },
+      "gradient": {
+        "$type": "gradient",
+        "$value": [
+          {
+            "color": "{color.accent-pressed}",
+            "position": 0
+          },
+          {
+            "color": "{color.accent-pressed}",
+            "position": 1
+          }
+        ],
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "angle": 180
+          }
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": {
+          "color": {
+            "colorSpace": "oklch",
+            "components": [
+              0,
+              0,
+              0
+            ],
+            "alpha": 0,
+            "hex": "#000000"
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 0,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 0,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          }
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "none": true
+          }
+        }
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -3197,20 +3651,20 @@
       }
     },
     "on": {
-      "$description": "WinUI 3 selected pill/tile using opaque brand-tint fill and border.",
+      "$description": "WinUI 3 checked ToggleButton / active surface using AccentFillColorDefault and AccentControlElevationBorderBrush bevel.",
       "background": {
         "$type": "color",
-        "$value": "{color.brand-tint}"
+        "$value": "{color.primary}"
       },
       "gradient": {
         "$type": "gradient",
         "$value": [
           {
-            "color": "{color.brand-tint}",
+            "color": "{color.primary}",
             "position": 0
           },
           {
-            "color": "{color.brand-tint}",
+            "color": "{color.primary}",
             "position": 1
           }
         ],
@@ -3258,7 +3712,15 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.border}"
+        "$value": "{color.accent-bevel}"
+      },
+      "border-top-color": {
+        "$type": "color",
+        "$value": "{color.accent-bevel}"
+      },
+      "border-bottom-color": {
+        "$type": "color",
+        "$value": "{color.brand-edge}"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -3521,7 +3983,7 @@
       "$description": "WinUI 3 ContentDialog surface with depth-128 shadow and composited SurfaceStrokeColorDefault border.",
       "background": {
         "$type": "color",
-        "$value": "{color.background}"
+        "$value": "{color.dialog}"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -3599,6 +4061,54 @@
             0
           ],
           "hex": "#c1c1c1"
+        }
+      }
+    },
+    "grabber": {
+      "$description": "The drag handle pill at the top of a bottom sheet.",
+      "background": {
+        "$type": "color",
+        "$value": "{color.raised}"
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": {
+          "color": {
+            "colorSpace": "oklch",
+            "components": [
+              0,
+              0,
+              0
+            ],
+            "alpha": 0,
+            "hex": "#000000"
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 0,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 0,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          }
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "none": true
+          }
+        }
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "material": null
         }
       }
     },

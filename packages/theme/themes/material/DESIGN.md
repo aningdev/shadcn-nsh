@@ -78,6 +78,16 @@ colors:
     down-tint: "#b3261e1f"
     violet: "#7d5260"
     window-control-off: "#cac4d0"
+    dialog: "#ece6f0"
+    card-edge: "#cac4d0"
+    bevel: "#cac4d0"
+    accent-bevel: "#cac4d0"
+    disabled: "#1d1b201a"
+    disabled-foreground: "#1d1b2061"
+    accent-pressed: "#6750a4"
+    on-accent-pressed: "#ffffff"
+    on-foreground: "#4a4458"
+    pressed-foreground: "#1d1b20"
   dark:
     brand-fill: "#d0bcff"
     on-brand: "#381e72"
@@ -144,6 +154,16 @@ colors:
     down-tint: "#f2b8b51f"
     violet: "#efb8c8"
     window-control-off: "#49454f"
+    dialog: "#2b2930"
+    card-edge: "#49454f"
+    bevel: "#49454f"
+    accent-bevel: "#49454f"
+    disabled: "#e6e0e91a"
+    disabled-foreground: "#e6e0e961"
+    accent-pressed: "#d0bcff"
+    on-accent-pressed: "#381e72"
+    on-foreground: "#e8def8"
+    pressed-foreground: "#e6e0e9"
 typography:
   caption:
     fontFamily: "system-ui, sans-serif"
@@ -286,7 +306,7 @@ components:
     rounded: "{rounded.overlay}"
     padding: "{spacing.control.padding}"
   dialog:
-    backgroundColor: "{colors.light.popover}"
+    backgroundColor: "{colors.light.dialog}"
     textColor: "{colors.light.card-foreground}"
     typography: "{typography.body}"
     rounded: "{rounded.dialog}"
@@ -360,6 +380,8 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`track`** (light `#e6e0e9`, dark `#36343b`): Switch and slider track fill (M3 surfaceContainerHighest).
 - **`knob`** (light `#79747e`, dark `#938f99`): Unchecked switch thumb fill (M3 outline).
 - **`inverse`** (light `#322f35`, dark `#e6e0e9`): Inverse surface for snackbars and tooltips (M3 inverseSurface).
+- **`dialog`** (light `#ece6f0`, dark `#2b2930`): Modal dialog surface (M3 surfaceContainerHigh).
+- **`disabled`** (light `#1d1b201a`, dark `#e6e0e91a`): Disabled control container fill (10% onSurface over transparent).
 
 ### Ink
 
@@ -377,6 +399,9 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`code`** (light `#1d1b20`, dark `#e6e0e9`): Monospace code text ink inside recessed wells.
 - **`inverse-foreground`** (light `#f5eff7`, dark `#322f35`): Ink on inverse surfaces (M3 inverseOnSurface).
 - **`inverse-muted`** (light `#f5eff7`, dark `#322f35`): Supporting text and close icon on inverse snackbars, aliased to {color.inverse-foreground} (Compose SnackbarTokens.kt).
+- **`disabled-foreground`** (light `#1d1b2061`, dark `#e6e0e961`): Disabled control content ink (38% onSurface over transparent).
+- **`on-foreground`** (light `#4a4458`, dark `#e8def8`): Ink on tonal selected controls (M3 Expressive onSecondaryContainer).
+- **`pressed-foreground`** (light `#1d1b20`, dark `#e6e0e9`): Pressed ink aliased to {color.foreground}.
 
 ### Brand
 
@@ -391,6 +416,8 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`brand-tint`** (light `#e8def8`, dark `#4a4458`): Opaque selected chip/tile fill (M3 secondaryContainer).
 - **`on-brand-tint`** (light `#4a4458`, dark `#e8def8`): Ink on selected chip/tile fills (M3 Expressive onSecondaryContainer).
 - **`inverse-brand`** (light `#d0bcff`, dark `#6750a4`): Brand action ink on inverse surfaces (M3 inversePrimary).
+- **`accent-pressed`** (light `#6750a4`, dark `#d0bcff`): Pressed accent fill aliased to {color.primary} (state layer applies press).
+- **`on-accent-pressed`** (light `#ffffff`, dark `#381e72`): Pressed accent ink aliased to {color.primary-foreground}.
 
 ### Status
 
@@ -429,6 +456,9 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`line`** (light `#cac4d0`, dark `#49454f`): Inset divider hairline (M3 outlineVariant).
 - **`ring-halo`** (light `#625b7133`, dark `#ccc2dc33`): Outer focus ring halo (20% ring color over transparent).
 - **`window-control-off`** (light `#cac4d0`, dark `#49454f`): Unfocused window traffic-light fill (M3 outlineVariant).
+- **`card-edge`** (light `#cac4d0`, dark `#49454f`): Card border hairline aliased to {color.border}.
+- **`bevel`** (light `#cac4d0`, dark `#49454f`): Control elevation bevel stroke aliased to {color.border}.
+- **`accent-bevel`** (light `#cac4d0`, dark `#49454f`): Accent bevel stroke aliased to {color.brand-edge}.
 
 ## Typography
 
@@ -513,13 +543,17 @@ Voice & Content Strategy is intentionally omitted: this theme defines visual tok
 Appearance-invariant surface finish recipes (background, gradient, border, shadow, blur, material).
 
 - **`finish.card`** (material: `{"android":{"elevation":1}}`): Elevated M3 card surface with Material Web Level 1 shadow and 1dp Android elevation.
+- **`finish.section`** (material: `{"android":{"elevation":1}}`): M3 ElevatedCard resting surface (Level 1 shadow and 1dp Android elevation, no border).
+- **`finish.sectionHover`** (material: `{"android":{"elevation":3}}`): M3 ElevatedCard hovered elevation promotion (Level 2 shadow and 3dp Android elevation).
 - **`finish.inset`**: The well inside a card: sunk by its inner shadow alone.
 - **`finish.field`**: A field well: its edge and its inner shadow.
 - **`finish.raised`** (material: `{"android":{"elevation":1}}`): Raised surface with Level 1 shadow and 1dp Android elevation.
 - **`finish.hover`** (material: `{"android":{"elevation":1}}`): Hovered state surface over raised background with Level 1 shadow.
 - **`finish.pressed`** (material: `{"android":{"elevation":1}}`): Pressed surface at Level 1 elevation (M3 state layer + ripple handles press).
+- **`finish.disabled`**: M3 disabled filled/tonal button container (10% onSurface, flat with no shadow).
 - **`finish.light`**: The main action brightest step: the accent gradient.
 - **`finish.accent`**: The accent face (the same as light).
+- **`finish.accentPressed`**: M3 pressed accent surface (state layer + ripple handles press).
 - **`finish.track`**: A groove: an inner shadow and an edge.
 - **`finish.fill`**: The filled run: a slider, a progress bar, a switch that is on.
 - **`finish.knob`**: A switch knob, off.
@@ -531,7 +565,8 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.chip`**: A chosen value label inside a field: a fill, an inner highlight and an edge.
 - **`finish.glass`** (backdropFilter: `none`; material: `{"android":{"elevation":3}}`): Floating surface using opaque M3 popover with Level 2 shadow and 3dp elevation (M3 uses no blur).
 - **`finish.menu`** (material: `{"android":{"elevation":3}}`): M3 menu/popover surface with Level 2 shadow and 3dp Android elevation.
-- **`finish.dialog`** (material: `{"android":{"elevation":6}}`): M3 dialog surface with Level 3 shadow and 6dp Android elevation.
+- **`finish.dialog`** (material: `{"android":{"elevation":6}}`): M3 dialog surface using SurfaceContainerHigh with Level 3 shadow and 6dp Android elevation.
+- **`finish.grabber`**: M3 bottom sheet drag handle (40% onSurfaceVariant).
 - **`finish.tooltip`**: M3 plain tooltip using inverse surface without shadow.
 - **`finish.inverse`** (material: `{"android":{"elevation":6}}`): M3 snackbar/inverse surface with Level 3 shadow and 6dp Android elevation.
 - **`finish.groove`**: A groove cut inside a menu.

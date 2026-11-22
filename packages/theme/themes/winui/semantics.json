@@ -179,6 +179,10 @@
         "md": 20,
         "lg": 24
       }
+    },
+    "grabber": {
+      "width": 36,
+      "height": 5
     }
   },
   "shape": {
@@ -197,6 +201,7 @@
     },
     "ripple": false,
     "pressed-opacity": 1,
+    "accent-pressed-opacity": 1,
     "disabled": {
       "content": 0.36,
       "container": 0.45
@@ -240,6 +245,15 @@
         "gradient": "linear-gradient(180deg, {card} 0%, {card} 100%)",
         "material": null
       },
+      "section": {
+        "background": "{card}",
+        "border-color": "{card-edge}",
+        "material": null
+      },
+      "sectionHover": {
+        "shadow": "none",
+        "material": null
+      },
       "inset": {
         "material": null,
         "shadow": "none"
@@ -252,12 +266,14 @@
         "background": "{raised}",
         "gradient": "linear-gradient(180deg, {raised} 0%, {raised} 100%)",
         "material": null,
+        "shadow": "none",
         "border-color": "{border}"
       },
       "hover": {
         "material": null,
         "background": "{hover}",
         "gradient": "linear-gradient(180deg, {hover} 0%, {hover} 100%)",
+        "shadow": "none",
         "border-color": "{border}"
       },
       "pressed": {
@@ -265,21 +281,41 @@
         "background": "{muted}",
         "gradient": "linear-gradient(180deg, {muted} 0%, {muted} 100%)",
         "shadow": "none",
-        "border-color": "{border}"
+        "border-color": "{border}",
+        "border-top-color": "{border}",
+        "border-bottom-color": "{border}"
+      },
+      "disabled": {
+        "background": "{disabled}",
+        "gradient": "linear-gradient(180deg, {disabled} 0%, {disabled} 100%)",
+        "shadow": "none",
+        "border-color": "{border}",
+        "material": null
       },
       "light": {
         "background": "{primary}",
         "gradient": "linear-gradient(180deg, {primary} 0%, {primary} 100%)",
-        "border-color": "{brand-edge}",
+        "border-color": "{accent-bevel}",
+        "border-top-color": "{accent-bevel}",
+        "border-bottom-color": "{brand-edge}",
         "material": null,
         "shadow": "none"
       },
       "accent": {
         "background": "{primary}",
         "gradient": "linear-gradient(180deg, {primary} 0%, {primary} 100%)",
-        "border-color": "{brand-edge}",
+        "border-color": "{accent-bevel}",
+        "border-top-color": "{accent-bevel}",
+        "border-bottom-color": "{brand-edge}",
         "material": null,
         "shadow": "none"
+      },
+      "accentPressed": {
+        "background": "{accent-pressed}",
+        "gradient": "linear-gradient(180deg, {accent-pressed} 0%, {accent-pressed} 100%)",
+        "shadow": "none",
+        "border-color": "transparent",
+        "material": null
       },
       "track": {
         "material": null,
@@ -328,10 +364,12 @@
       },
       "on": {
         "material": null,
-        "background": "{brand-tint}",
-        "gradient": "linear-gradient(180deg, {brand-tint} 0%, {brand-tint} 100%)",
+        "background": "{primary}",
+        "gradient": "linear-gradient(180deg, {primary} 0%, {primary} 100%)",
         "shadow": "none",
-        "border-color": "{border}"
+        "border-color": "{accent-bevel}",
+        "border-top-color": "{accent-bevel}",
+        "border-bottom-color": "{brand-edge}"
       },
       "chip": {
         "background": "{raised}",
@@ -359,7 +397,12 @@
         }
       },
       "dialog": {
-        "background": "{background}",
+        "background": "{dialog}",
+        "material": null
+      },
+      "grabber": {
+        "background": "{raised}",
+        "shadow": "none",
         "material": null
       },
       "tooltip": {
@@ -385,11 +428,16 @@
       "card": {
         "shadow": "0 0 2px oklch(0 0 0 / 0.12), 0 4px 8px oklch(0 0 0 / 0.14)"
       },
+      "section": {
+        "shadow": "0 0 2px oklch(0 0 0 / 0.12), 0 4px 8px oklch(0 0 0 / 0.14)"
+      },
       "raised": {
-        "shadow": "0 0 2px oklch(0 0 0 / 0.12), 0 1px 2px oklch(0 0 0 / 0.14)"
+        "border-top-color": "{border}",
+        "border-bottom-color": "{bevel}"
       },
       "hover": {
-        "shadow": "0 0 2px oklch(0 0 0 / 0.12), 0 1px 2px oklch(0 0 0 / 0.14)"
+        "border-top-color": "{border}",
+        "border-bottom-color": "{bevel}"
       },
       "handle": {
         "shadow": "0 0 2px oklch(0 0 0 / 0.12), 0 1px 2px oklch(0 0 0 / 0.14)"
@@ -419,11 +467,16 @@
       "card": {
         "shadow": "0 0 2px oklch(0 0 0 / 0.24), 0 4px 8px oklch(0 0 0 / 0.28)"
       },
+      "section": {
+        "shadow": "0 0 2px oklch(0 0 0 / 0.24), 0 4px 8px oklch(0 0 0 / 0.28)"
+      },
       "raised": {
-        "shadow": "0 0 2px oklch(0 0 0 / 0.24), 0 1px 2px oklch(0 0 0 / 0.28)"
+        "border-top-color": "{bevel}",
+        "border-bottom-color": "{border}"
       },
       "hover": {
-        "shadow": "0 0 2px oklch(0 0 0 / 0.24), 0 1px 2px oklch(0 0 0 / 0.28)"
+        "border-top-color": "{bevel}",
+        "border-bottom-color": "{border}"
       },
       "handle": {
         "shadow": "0 0 2px oklch(0 0 0 / 0.24), 0 1px 2px oklch(0 0 0 / 0.28)"
