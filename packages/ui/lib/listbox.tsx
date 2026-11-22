@@ -71,12 +71,12 @@ export function listboxPopupStarting(): ViewStyle | undefined {
 /**
  * A row of the list, its look on the row (`itemClass`): lit in the brand
  * tint while highlighted (`focus:`, the keys or the pointer on it), the fill
- * and edge fading between rows as the highlight moves, dimmed while
- * disabled. Every state is the row's class (`group`), so the list draws a
- * row's content once per item and the highlight moves without drawing.
+ * fading between rows as the highlight moves, dimmed while disabled. Every
+ * state is the row's class (`group`), so the list draws a row's content once
+ * per item and the highlight moves without drawing.
  */
 export const optionClass =
-  "group rounded-(--radius-control) border border-transparent transition-colors duration-100 motion-reduce:transition-none focus:border-brand/30 focus:bg-brand-tint active:opacity-70 disabled:opacity-50";
+  "group rounded-(--radius-control) p-px transition-colors duration-100 motion-reduce:transition-none focus:bg-brand-tint active:opacity-70 disabled:opacity-50";
 
 /**
  * What a select's or combobox's list takes besides its items (spread it):
@@ -192,11 +192,11 @@ export function OptionRow(props: {
         flexDirection: "row",
         alignItems: "center",
         gap: 8,
-        // The row's 1-point border on each side.
+        // The row's 1-point padding on each side (`p-px`).
         height: (pointer ? rowHeights.pointer : rowHeights.touch)[
           props.detail ? "detail" : "title"
         ],
-        // With its border and the popup's padding, the trigger's inset: a select's chosen row lies over the trigger, title on title.
+        // With its padding and the popup's padding, the trigger's inset: a select's chosen row lies over the trigger, title on title.
         paddingHorizontal: pointer ? 3 : 7,
       }}
     >

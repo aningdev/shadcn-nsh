@@ -27,9 +27,9 @@ const size = {
 
 // @port command.tsx
 /**
- * The classes of a palette's parts. The highlight is a tint and an inner
- * border, both inside the row: the rows fill the list's width, whose scroll
- * view clips what reaches past its sides.
+ * The classes of a palette's parts. The highlight is a tint inside the row:
+ * the rows fill the list's width, whose scroll view clips what reaches past
+ * its sides.
  */
 export const commandClasses = {
   /** The palette's frame. */
@@ -51,10 +51,10 @@ export const commandClasses = {
   group: "px-2 pt-2.5 pb-1",
   /** Between two sections. */
   separator: "-mx-1.5 my-1 h-px bg-border",
-  /** A row: quiet until hovered, tinted in the brand with its edge while highlighted, dimmed while disabled. */
+  /** A row: quiet until hovered, tinted in the brand while highlighted, dimmed while disabled. */
   item:
-    "group rounded-(--radius-control) border border-transparent transition-colors duration-100 motion-reduce:transition-none " +
-    "hover:bg-hover focus:border-brand/30 focus:bg-brand-tint active:opacity-70 disabled:opacity-50",
+    "group rounded-(--radius-control) p-px transition-colors duration-100 motion-reduce:transition-none " +
+    "hover:bg-hover focus:bg-brand-tint active:opacity-70 disabled:opacity-50",
 };
 
 /** A shortcut's keys, as hints show them here (`entry.shortcutLabel`): the library's one keycap, `kbd`'s. */
