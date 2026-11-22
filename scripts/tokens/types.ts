@@ -177,6 +177,7 @@ export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
   hover: "surface",
   disabled: "surface",
   track: "surface",
+  "slider-track": "surface",
   knob: "surface",
   inverse: "surface",
   sidebar: "surface",

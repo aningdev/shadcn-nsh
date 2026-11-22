@@ -264,6 +264,87 @@ function validateExtAtPath(
     return;
   }
 
+  if (p === "dimension.switch") {
+    checkUnknownKeys(where, ext, ["knob-feedback"], problems);
+    if ("knob-feedback" in ext) {
+      if (
+        !whitelists["dimension.switch.*.knob-feedback"]!.includes(ext["knob-feedback"] as string)
+      ) {
+        problems.push(
+          `${where}["knob-feedback"]: ${JSON.stringify(ext["knob-feedback"])} is not in whitelist`,
+        );
+      }
+    } else if (mode === "merged") {
+      problems.push(`${where}["knob-feedback"] is missing`);
+    }
+    return;
+  }
+
+  if (p === "dimension.slider") {
+    checkUnknownKeys(where, ext, ["handle-shape", "outlined", "hover-brightness"], problems);
+    if ("handle-shape" in ext) {
+      if (!whitelists["dimension.slider.*.handle-shape"]!.includes(ext["handle-shape"] as string)) {
+        problems.push(
+          `${where}["handle-shape"]: ${JSON.stringify(ext["handle-shape"])} is not in whitelist`,
+        );
+      }
+    } else if (mode === "merged") {
+      problems.push(`${where}["handle-shape"] is missing`);
+    }
+    for (const boolKey of ["outlined", "hover-brightness"] as const) {
+      if (boolKey in ext) {
+        if (typeof ext[boolKey] !== "boolean") {
+          problems.push(`${where}[${JSON.stringify(boolKey)}] must be a boolean`);
+        }
+      } else if (mode === "merged") {
+        problems.push(`${where}[${JSON.stringify(boolKey)}] is missing`);
+      }
+    }
+    return;
+  }
+
+  if (p === "dimension.checkbox") {
+    checkUnknownKeys(where, ext, ["well", "has-target"], problems);
+    if ("well" in ext) {
+      if (!whitelists["dimension.checkbox.well"]!.includes(ext.well as string)) {
+        problems.push(`${where}.well: ${JSON.stringify(ext.well)} is not in whitelist`);
+      }
+    } else if (mode === "merged") {
+      problems.push(`${where}.well is missing`);
+    }
+    if ("has-target" in ext) {
+      if (typeof ext["has-target"] !== "boolean") {
+        problems.push(`${where}["has-target"] must be a boolean`);
+      }
+    } else if (mode === "merged") {
+      problems.push(`${where}["has-target"] is missing`);
+    }
+    return;
+  }
+
+  if (p === "dimension.radio") {
+    checkUnknownKeys(where, ext, ["well", "checked-style", "has-target", "dot-feedback"], problems);
+    for (const enumKey of ["well", "checked-style", "dot-feedback"] as const) {
+      if (enumKey in ext) {
+        if (!whitelists[`dimension.radio.*.${enumKey}`]!.includes(ext[enumKey] as string)) {
+          problems.push(
+            `${where}[${JSON.stringify(enumKey)}]: ${JSON.stringify(ext[enumKey])} is not in whitelist`,
+          );
+        }
+      } else if (mode === "merged") {
+        problems.push(`${where}[${JSON.stringify(enumKey)}] is missing`);
+      }
+    }
+    if ("has-target" in ext) {
+      if (typeof ext["has-target"] !== "boolean") {
+        problems.push(`${where}["has-target"] must be a boolean`);
+      }
+    } else if (mode === "merged") {
+      problems.push(`${where}["has-target"] is missing`);
+    }
+    return;
+  }
+
   if (p === "dimension.focus") {
     checkUnknownKeys(where, ext, ["style"], problems);
     if (!whitelists["dimension.focus.style"]!.includes(ext.style as string)) {
@@ -725,6 +806,10 @@ function checkMergedSemantics(
     "dimension.size",
     "dimension.icon",
     "dimension.grabber",
+    "dimension.checkbox",
+    "dimension.switch",
+    "dimension.slider",
+    "dimension.radio",
   ]) {
     const group = getAtPath(resolved, dimGroupPath);
     if (!isRecord(group)) continue;
@@ -882,6 +967,10 @@ function checkMergedSemantics(
       "dimension.focus",
       "dimension.size",
       "dimension.icon",
+      "dimension.checkbox",
+      "dimension.switch",
+      "dimension.slider",
+      "dimension.radio",
       "shape",
       "state",
       "duration",

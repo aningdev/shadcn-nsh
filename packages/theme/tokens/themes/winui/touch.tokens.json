@@ -168,6 +168,183 @@
           "unit": "px"
         }
       }
+    },
+    "switch": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "knob-feedback": "stretch"
+        }
+      },
+      "$description": "WinUI 3 ToggleSwitch 40x20 track, 1px off/0px on stroke, 12px knob scaling to 14px hover and 17x14 pressed (ToggleSwitch_themeresources.xaml:5,6,130,269,312 in winui3/release/2.7.0).",
+      "width": {
+        "$value": {
+          "value": 40,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 ToggleSwitch 40px track width (ToggleSwitch_themeresources.xaml:130)."
+      },
+      "height": {
+        "$value": {
+          "value": 20,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 ToggleSwitch 20px track height (ToggleSwitch_themeresources.xaml:130)."
+      },
+      "sm-width": {
+        "$value": {
+          "value": 40,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 ToggleSwitch keeps 40px track width."
+      },
+      "on-border": {
+        "$value": {
+          "value": 0,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 ToggleSwitch checked stroke thickness 0px (ToggleSwitchOnStrokeThickness=0, ToggleSwitch_themeresources.xaml:5)."
+      },
+      "knob": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        }
+      },
+      "on-knob": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        }
+      },
+      "sm-knob": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        }
+      },
+      "sm-on-knob": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        }
+      },
+      "knob-hover": {
+        "$value": {
+          "value": 14,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 ToggleSwitch knob expands to 14px on PointerOver (ToggleSwitch_themeresources.xaml:269)."
+      },
+      "knob-pressed-width": {
+        "$value": {
+          "value": 17,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 ToggleSwitch knob stretches to 17px wide on Pressed (ToggleSwitch_themeresources.xaml:312)."
+      },
+      "knob-pressed-height": {
+        "$value": {
+          "value": 14,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 ToggleSwitch knob is 14px tall on Pressed (ToggleSwitch_themeresources.xaml:315)."
+      }
+    },
+    "slider": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "handle-shape": "ring",
+          "outlined": false,
+          "hover-brightness": false
+        }
+      },
+      "$description": "WinUI 3 Slider: 18px outer thumb with 12px accent inner dot (14px hover, 10px pressed) on 4px track inside 32px band (Slider_themeresources.xaml in winui3/release/2.7.0).",
+      "rail": {
+        "$value": {
+          "value": 4,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 Slider 4px track thickness (SliderTrackThemeHeight=4, Slider_themeresources.xaml:6)."
+      },
+      "thumb-width": {
+        "$value": {
+          "value": 18,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 Slider 18px outer thumb width (SliderHorizontalThumbWidth=18, Slider_themeresources.xaml:169)."
+      },
+      "thumb-height": {
+        "$value": {
+          "value": 18,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 Slider 18px outer thumb height (SliderHorizontalThumbHeight=18, Slider_themeresources.xaml:170)."
+      },
+      "thumb-pressed-width": {
+        "$value": {
+          "value": 18,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 Slider 18px outer thumb width stays constant when pressed."
+      },
+      "inner-dot": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 Slider 12px inner accent circle (SliderInnerThumbWidth/Height=12, Slider_themeresources.xaml:166,173)."
+      },
+      "inner-dot-hover": {
+        "$value": {
+          "value": 14,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 Slider inner circle scales to 14px on PointerOver (Scale=1.167, Slider_themeresources.xaml:221)."
+      },
+      "inner-dot-pressed": {
+        "$value": {
+          "value": 10,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 Slider inner circle scales to 10px on Pressed (Scale=0.71, Slider_themeresources.xaml:233)."
+      }
+    },
+    "radio": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "well": "inset",
+          "dot-feedback": "scale"
+        }
+      },
+      "$description": "WinUI 3 RadioButton: 20px outer circle with ControlAltFillColorSecondary rest interior and 12px inner dot (14px hover, 10px pressed; RadioButton_themeresources.xaml in winui3/release/2.7.0).",
+      "size": {
+        "$value": {
+          "value": 20,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 RadioButton 20px outer ellipse diameter (RadioButton_themeresources.xaml:147)."
+      },
+      "dot": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 RadioButton 12px inner glyph diameter (RadioButtonCheckGlyphSize=12, RadioButton_themeresources.xaml:179)."
+      },
+      "dot-hover": {
+        "$value": {
+          "value": 14,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 RadioButton 14px inner glyph diameter on PointerOver (RadioButtonCheckGlyphPointerOverSize=14, RadioButton_themeresources.xaml:180)."
+      },
+      "dot-pressed": {
+        "$value": {
+          "value": 10,
+          "unit": "px"
+        },
+        "$description": "WinUI 3 RadioButton 10px inner glyph diameter on Pressed (RadioButton_themeresources.xaml:68-80)."
+      }
     }
   }
 }

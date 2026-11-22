@@ -163,7 +163,12 @@ describe("winuiRoles() key coverage and format", () => {
   test("every value is a canonical oklch() string or var(--*) alias, and only overlays/washes keep alpha", () => {
     const allowedAlpha = new Set(["scrim", "window-control-ink", "window-control-edge"]);
     const themeAliases = new Set(["brand-fill", "on-brand"]);
-    const appearanceAliases = new Set(["dialog", "selected-foreground", "pressed-foreground"]);
+    const appearanceAliases = new Set([
+      "dialog",
+      "selected-foreground",
+      "pressed-foreground",
+      "slider-track",
+    ]);
     for (const [sectionName, section] of [
       ["theme", roles.theme],
       ["light", roles.light],

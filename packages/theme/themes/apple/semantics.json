@@ -183,6 +183,104 @@
     "grabber": {
       "width": 36,
       "height": 5
+    },
+    "checkbox": {
+      "border": 1,
+      "target": 0,
+      "well": "well",
+      "has-target": false
+    },
+    "switch": {
+      "pointer": {
+        "width": 28,
+        "height": 16,
+        "sm-width": 28,
+        "sm-height": 16,
+        "border": 1,
+        "on-border": 1,
+        "knob": 12,
+        "on-knob": 12,
+        "sm-knob": 12,
+        "sm-on-knob": 12,
+        "knob-hover": 12,
+        "knob-pressed-width": 12,
+        "knob-pressed-height": 12,
+        "knob-feedback": "none"
+      },
+      "touch": {
+        "width": 42,
+        "height": 24,
+        "sm-width": 34,
+        "sm-height": 20,
+        "border": 1,
+        "on-border": 1,
+        "knob": 20,
+        "on-knob": 20,
+        "sm-knob": 16,
+        "sm-on-knob": 16,
+        "knob-hover": 20,
+        "knob-pressed-width": 20,
+        "knob-pressed-height": 20,
+        "knob-feedback": "none"
+      }
+    },
+    "slider": {
+      "pointer": {
+        "band": 20,
+        "rail": 6,
+        "thumb-width": 14,
+        "thumb-height": 14,
+        "thumb-pressed-width": 14,
+        "gap": 0,
+        "inner-dot": 0,
+        "inner-dot-hover": 0,
+        "inner-dot-pressed": 0,
+        "vertical-length": 128,
+        "handle-shape": "circle",
+        "outlined": true,
+        "hover-brightness": true
+      },
+      "touch": {
+        "band": 32,
+        "rail": 8,
+        "thumb-width": 20,
+        "thumb-height": 20,
+        "thumb-pressed-width": 20,
+        "gap": 0,
+        "inner-dot": 0,
+        "inner-dot-hover": 0,
+        "inner-dot-pressed": 0,
+        "vertical-length": 144,
+        "handle-shape": "circle",
+        "outlined": true,
+        "hover-brightness": true
+      }
+    },
+    "radio": {
+      "pointer": {
+        "size": 16,
+        "dot": 6,
+        "dot-hover": 6,
+        "dot-pressed": 6,
+        "border": 1,
+        "target": 0,
+        "well": "well",
+        "checked-style": "fill",
+        "has-target": false,
+        "dot-feedback": "none"
+      },
+      "touch": {
+        "size": 22,
+        "dot": 8,
+        "dot-hover": 8,
+        "dot-pressed": 8,
+        "border": 1,
+        "target": 0,
+        "well": "well",
+        "checked-style": "fill",
+        "has-target": false,
+        "dot-feedback": "none"
+      }
     }
   },
   "shape": {

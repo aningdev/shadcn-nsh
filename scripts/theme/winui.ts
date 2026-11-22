@@ -333,6 +333,7 @@ export type WinuiAppearanceRole =
   | "brand"
   | "brand-edge"
   | "track"
+  | "slider-track"
   | "knob"
   | "code"
   | "info"
@@ -465,6 +466,7 @@ function buildAppearance(
     // composited over the accent fill `primary`, not over the base background.
     "brand-edge": compositeWinui(w.ControlStrokeColorOnAccentSecondary, primary),
     track: inset,
+    "slider-track": "var(--input)",
     knob: mutedForeground,
     code: foreground,
     // `SystemFillColorAttentionBrush`: `SystemAccentColor` (`#0078D4`) in light, `SystemAccentColorLight2` in dark.
@@ -834,6 +836,104 @@ export const winuiStyle = {
       touch: { sm: 16, md: 20, lg: 24 },
     },
     grabber: { width: 36, height: 5 },
+    checkbox: {
+      border: 1,
+      target: 0,
+      well: "inset",
+      "has-target": false,
+    },
+    switch: {
+      pointer: {
+        width: 40,
+        height: 20,
+        "sm-width": 40,
+        "sm-height": 20,
+        border: 1,
+        "on-border": 0,
+        knob: 12,
+        "on-knob": 12,
+        "sm-knob": 12,
+        "sm-on-knob": 12,
+        "knob-hover": 14,
+        "knob-pressed-width": 17,
+        "knob-pressed-height": 14,
+        "knob-feedback": "stretch",
+      },
+      touch: {
+        width: 40,
+        height: 20,
+        "sm-width": 40,
+        "sm-height": 20,
+        border: 1,
+        "on-border": 0,
+        knob: 12,
+        "on-knob": 12,
+        "sm-knob": 12,
+        "sm-on-knob": 12,
+        "knob-hover": 14,
+        "knob-pressed-width": 17,
+        "knob-pressed-height": 14,
+        "knob-feedback": "stretch",
+      },
+    },
+    slider: {
+      pointer: {
+        band: 32,
+        rail: 4,
+        "thumb-width": 18,
+        "thumb-height": 18,
+        "thumb-pressed-width": 18,
+        gap: 0,
+        "inner-dot": 12,
+        "inner-dot-hover": 14,
+        "inner-dot-pressed": 10,
+        "vertical-length": 128,
+        "handle-shape": "ring",
+        outlined: false,
+        "hover-brightness": false,
+      },
+      touch: {
+        band: 32,
+        rail: 4,
+        "thumb-width": 18,
+        "thumb-height": 18,
+        "thumb-pressed-width": 18,
+        gap: 0,
+        "inner-dot": 12,
+        "inner-dot-hover": 14,
+        "inner-dot-pressed": 10,
+        "vertical-length": 144,
+        "handle-shape": "ring",
+        outlined: false,
+        "hover-brightness": false,
+      },
+    },
+    radio: {
+      pointer: {
+        size: 20,
+        dot: 12,
+        "dot-hover": 14,
+        "dot-pressed": 10,
+        border: 1,
+        target: 0,
+        well: "inset",
+        "checked-style": "fill",
+        "has-target": false,
+        "dot-feedback": "scale",
+      },
+      touch: {
+        size: 20,
+        dot: 12,
+        "dot-hover": 14,
+        "dot-pressed": 10,
+        border: 1,
+        target: 0,
+        well: "inset",
+        "checked-style": "fill",
+        "has-target": false,
+        "dot-feedback": "scale",
+      },
+    },
   },
   shape: {
     curve: "circular",
@@ -920,6 +1020,8 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
     "brand-edge":
       "Accent button bottom bevel stroke (WinUI ControlStrokeColorOnAccentSecondary composited over primary).",
     track: "Switch and slider track (WinUI ControlAltFillColorSecondary).",
+    "slider-track":
+      "WinUI 3 inactive slider track aliased to {color.input} (SliderTrackFill -> ControlStrongFillColorDefault, Slider_themeresources.xaml:20 in winui3/release/2.7.0).",
     knob: "Unchecked switch thumb (WinUI TextFillColorSecondary).",
     code: "Inline code ink (WinUI TextFillColorPrimary).",
     info: "Informational semantic color (WinUI SystemFillColorAttentionBrush).",
@@ -1075,6 +1177,52 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
         "motion.settle": "WinUI 3 250ms settle timing with Direct Entrance decelerate curve.",
         "motion.control": "WinUI 3 167ms control timing with Point-to-Point curve.",
         "motion.move": "WinUI 3 333ms move timing with Point-to-Point curve.",
+        "dimension.checkbox":
+          "WinUI 3 CheckBox resting ControlAltFillColorSecondary interior with 1px ControlStrongStrokeColorDefault border (CheckBox_themeresources.xaml in winui3/release/2.7.0).",
+        "dimension.switch":
+          "WinUI 3 ToggleSwitch 40x20 track, 1px off/0px on stroke, 12px knob scaling to 14px hover and 17x14 pressed (ToggleSwitch_themeresources.xaml:5,6,130,269,312 in winui3/release/2.7.0).",
+        "dimension.switch.width":
+          "WinUI 3 ToggleSwitch 40px track width (ToggleSwitch_themeresources.xaml:130).",
+        "dimension.switch.height":
+          "WinUI 3 ToggleSwitch 20px track height (ToggleSwitch_themeresources.xaml:130).",
+        "dimension.switch.sm-width": "WinUI 3 ToggleSwitch keeps 40px track width.",
+        "dimension.switch.sm-height": "WinUI 3 ToggleSwitch keeps 20px track height.",
+        "dimension.switch.on-border":
+          "WinUI 3 ToggleSwitch checked stroke thickness 0px (ToggleSwitchOnStrokeThickness=0, ToggleSwitch_themeresources.xaml:5).",
+        "dimension.switch.knob-hover":
+          "WinUI 3 ToggleSwitch knob expands to 14px on PointerOver (ToggleSwitch_themeresources.xaml:269).",
+        "dimension.switch.knob-pressed-width":
+          "WinUI 3 ToggleSwitch knob stretches to 17px wide on Pressed (ToggleSwitch_themeresources.xaml:312).",
+        "dimension.switch.knob-pressed-height":
+          "WinUI 3 ToggleSwitch knob is 14px tall on Pressed (ToggleSwitch_themeresources.xaml:315).",
+        "dimension.slider":
+          "WinUI 3 Slider: 18px outer thumb with 12px accent inner dot (14px hover, 10px pressed) on 4px track inside 32px band (Slider_themeresources.xaml in winui3/release/2.7.0).",
+        "dimension.slider.band":
+          "WinUI 3 Slider 32px hit band (SliderHorizontalHeight / SliderVerticalWidth=32, Slider_themeresources.xaml:167-168).",
+        "dimension.slider.rail":
+          "WinUI 3 Slider 4px track thickness (SliderTrackThemeHeight=4, Slider_themeresources.xaml:6).",
+        "dimension.slider.thumb-width":
+          "WinUI 3 Slider 18px outer thumb width (SliderHorizontalThumbWidth=18, Slider_themeresources.xaml:169).",
+        "dimension.slider.thumb-height":
+          "WinUI 3 Slider 18px outer thumb height (SliderHorizontalThumbHeight=18, Slider_themeresources.xaml:170).",
+        "dimension.slider.thumb-pressed-width":
+          "WinUI 3 Slider 18px outer thumb width stays constant when pressed.",
+        "dimension.slider.inner-dot":
+          "WinUI 3 Slider 12px inner accent circle (SliderInnerThumbWidth/Height=12, Slider_themeresources.xaml:166,173).",
+        "dimension.slider.inner-dot-hover":
+          "WinUI 3 Slider inner circle scales to 14px on PointerOver (Scale=1.167, Slider_themeresources.xaml:221).",
+        "dimension.slider.inner-dot-pressed":
+          "WinUI 3 Slider inner circle scales to 10px on Pressed (Scale=0.71, Slider_themeresources.xaml:233).",
+        "dimension.radio":
+          "WinUI 3 RadioButton: 20px outer circle with ControlAltFillColorSecondary rest interior and 12px inner dot (14px hover, 10px pressed; RadioButton_themeresources.xaml in winui3/release/2.7.0).",
+        "dimension.radio.size":
+          "WinUI 3 RadioButton 20px outer ellipse diameter (RadioButton_themeresources.xaml:147).",
+        "dimension.radio.dot":
+          "WinUI 3 RadioButton 12px inner glyph diameter (RadioButtonCheckGlyphSize=12, RadioButton_themeresources.xaml:179).",
+        "dimension.radio.dot-hover":
+          "WinUI 3 RadioButton 14px inner glyph diameter on PointerOver (RadioButtonCheckGlyphPointerOverSize=14, RadioButton_themeresources.xaml:180).",
+        "dimension.radio.dot-pressed":
+          "WinUI 3 RadioButton 10px inner glyph diameter on Pressed (RadioButton_themeresources.xaml:68-80).",
         indicator:
           "WinUI 3 underlined tabs, NavigationView leading bar, and bottom-underlined text fields.",
       },

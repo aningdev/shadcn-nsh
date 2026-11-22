@@ -59,6 +59,7 @@ colors:
     brand: "#171717"
     brand-edge: "#e5e5e5"
     track: "#f5f5f5"
+    slider-track: "#f5f5f5"
     knob: "#ffffff"
     code: "#0a0a0a"
     info: "#737373"
@@ -135,6 +136,7 @@ colors:
     brand: "#e5e5e5"
     brand-edge: "#ffffff1a"
     track: "#262626"
+    slider-track: "#262626"
     knob: "#fafafa"
     code: "#fafafa"
     info: "#a1a1a1"
@@ -250,6 +252,41 @@ spacing:
     sm: 12px
     md: 14px
     lg: 15px
+  checkbox:
+    border: 1px
+    target: 0px
+  switch:
+    width: 28px
+    height: 16px
+    sm-width: 28px
+    sm-height: 16px
+    border: 1px
+    on-border: 1px
+    knob: 12px
+    on-knob: 12px
+    sm-knob: 12px
+    sm-on-knob: 12px
+    knob-hover: 12px
+    knob-pressed-width: 12px
+    knob-pressed-height: 12px
+  slider:
+    band: 20px
+    rail: 6px
+    thumb-width: 14px
+    thumb-height: 14px
+    thumb-pressed-width: 14px
+    gap: 0px
+    inner-dot: 0px
+    inner-dot-hover: 0px
+    inner-dot-pressed: 0px
+    vertical-length: 128px
+  radio:
+    size: 16px
+    dot: 6px
+    dot-hover: 6px
+    dot-pressed: 6px
+    border: 1px
+    target: 0px
 motion:
   enter:
     duration: 420ms
@@ -378,6 +415,7 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 - **`field`** (light `#ffffff`, dark `#ffffff0b`): Input well surface below card and inset layers.
 - **`hover`** (light `#f5f5f5`, dark `#262626`): Pointer hover fill aliased to {color.accent} per shadcn hover:bg-accent.
 - **`track`** (light `#f5f5f5`, dark `#262626`): Inactive track background for switches, sliders, and progress bars.
+- **`slider-track`** (light `#f5f5f5`, dark `#262626`): Inactive slider track fill aliased to {color.track}.
 - **`knob`** (light `#ffffff`, dark `#fafafa`): Switch thumb fill in the off state.
 - **`inverse`** (light `#ffffff`, dark `#171717`): High-contrast surface for toasts and tooltips.
 - **`dialog`** (light `#ffffff`, dark `#171717`): Modal dialog container surface.

@@ -655,6 +655,33 @@ describe("per-appearance standalone .tokens.json distribution", () => {
           if (k.startsWith("$")) continue;
           expect(tok.$value.value).toBe(semanticsJson.dimension.grabber[k]);
         }
+        // Control geometry: checkbox (shared) and switch/slider/radio (pointer tier in light/dark resolved)
+        {
+          const cbGroup = resolved.dimension.checkbox as Record<string, any>;
+          expect(cbGroup.$extensions[EXT_NS].well).toBe(semanticsJson.dimension.checkbox.well);
+          expect(cbGroup.$extensions[EXT_NS]["has-target"]).toBe(
+            semanticsJson.dimension.checkbox["has-target"],
+          );
+          for (const [k, tok] of Object.entries(cbGroup)) {
+            if (k.startsWith("$")) continue;
+            expect(tok.$value.value).toBe(semanticsJson.dimension.checkbox[k]);
+          }
+          for (const [ctrl, extKeys] of [
+            ["switch", ["knob-feedback"]],
+            ["slider", ["handle-shape", "outlined", "hover-brightness"]],
+            ["radio", ["well", "checked-style", "has-target", "dot-feedback"]],
+          ] as const) {
+            const g = resolved.dimension[ctrl] as Record<string, any>;
+            const sem = semanticsJson.dimension[ctrl].pointer as Record<string, unknown>;
+            for (const ek of extKeys) {
+              expect(g.$extensions[EXT_NS][ek]).toBe(sem[ek]);
+            }
+            for (const [k, tok] of Object.entries(g)) {
+              if (k.startsWith("$")) continue;
+              expect(tok.$value.value).toBe(sem[k]);
+            }
+          }
+        }
 
         // Shape, state, duration, transition, motion, indicator
         expect(doc.shape.$extensions[EXT_NS]).toEqual(semanticsJson.shape);
@@ -892,7 +919,15 @@ describe("generated DESIGN.md validation and compiled equality", () => {
           );
         }
       }
-      for (const sub of ["stroke", "focus", "icon"] as const) {
+      for (const sub of [
+        "stroke",
+        "focus",
+        "icon",
+        "checkbox",
+        "switch",
+        "slider",
+        "radio",
+      ] as const) {
         for (const [k, tok] of Object.entries(lightDoc.dimension[sub] as Record<string, any>)) {
           if (k.startsWith("$") || !tok?.$value) continue;
           expect(yaml.spacing[sub][k], `spacing.${sub}.${k}`).toBe(

@@ -59,6 +59,7 @@ colors:
     brand: "#007aff"
     brand-edge: "#dcdcdd"
     track: "#e9e9eb"
+    slider-track: "#e9e9eb"
     knob: "#ffffff"
     code: "#000000"
     info: "#007aff"
@@ -135,6 +136,7 @@ colors:
     brand: "#0a84ff"
     brand-edge: "#353538"
     track: "#39393d"
+    slider-track: "#39393d"
     knob: "#ffffff"
     code: "#ffffff"
     info: "#0a84ff"
@@ -250,6 +252,41 @@ spacing:
     sm: 12px
     md: 14px
     lg: 16px
+  checkbox:
+    border: 1px
+    target: 0px
+  switch:
+    width: 28px
+    height: 16px
+    sm-width: 28px
+    sm-height: 16px
+    border: 1px
+    on-border: 1px
+    knob: 12px
+    on-knob: 12px
+    sm-knob: 12px
+    sm-on-knob: 12px
+    knob-hover: 12px
+    knob-pressed-width: 12px
+    knob-pressed-height: 12px
+  slider:
+    band: 20px
+    rail: 6px
+    thumb-width: 14px
+    thumb-height: 14px
+    thumb-pressed-width: 14px
+    gap: 0px
+    inner-dot: 0px
+    inner-dot-hover: 0px
+    inner-dot-pressed: 0px
+    vertical-length: 128px
+  radio:
+    size: 16px
+    dot: 6px
+    dot-hover: 6px
+    dot-pressed: 6px
+    border: 1px
+    target: 0px
 motion:
   enter:
     duration: 420ms
@@ -378,6 +415,7 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`field`** (light `#efeff0`, dark `#323236`): Form input background (UIKit tertiarySystemFill composited over card).
 - **`hover`** (light `#0000000f`, dark `#ffffff0f`): Pointer hover tint (6% foreground ink over transparent).
 - **`track`** (light `#e9e9eb`, dark `#39393d`): Switch and slider track (UIKit secondarySystemFill composited over card).
+- **`slider-track`** (light `#e9e9eb`, dark `#39393d`): Inactive slider track fill aliased to {color.track}.
 - **`knob`** (`#ffffff`): Switch knob and slider handle (pure white).
 - **`inverse`** (light `#ffffff`, dark `#2c2c2e`): High-contrast surface for toasts and tooltips.
 - **`dialog`** (light `#ffffff`, dark `#1c1c1e`): Modal dialog container surface.

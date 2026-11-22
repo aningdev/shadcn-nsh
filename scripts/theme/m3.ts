@@ -325,6 +325,7 @@ function appearanceRoles(p: M3Palette, appearance: Appearance): Record<string, s
     brand: "var(--primary)",
     "brand-edge": c(p.outlineVariant),
     track: c(p.surfaceContainerHighest),
+    "slider-track": "var(--brand-tint)",
     knob: c(p.outline),
     code: "var(--foreground)",
     info: c(p.primary),
@@ -657,6 +658,104 @@ export const m3Style = {
       touch: { sm: 18, md: 20, lg: 24 },
     },
     grabber: { width: 32, height: 4 },
+    checkbox: {
+      border: 2,
+      target: 40,
+      well: "outline",
+      "has-target": true,
+    },
+    switch: {
+      pointer: {
+        width: 52,
+        height: 32,
+        "sm-width": 52,
+        "sm-height": 32,
+        border: 2,
+        "on-border": 0,
+        knob: 16,
+        "on-knob": 24,
+        "sm-knob": 16,
+        "sm-on-knob": 24,
+        "knob-hover": 16,
+        "knob-pressed-width": 28,
+        "knob-pressed-height": 28,
+        "knob-feedback": "expand",
+      },
+      touch: {
+        width: 52,
+        height: 32,
+        "sm-width": 52,
+        "sm-height": 32,
+        border: 2,
+        "on-border": 0,
+        knob: 16,
+        "on-knob": 24,
+        "sm-knob": 16,
+        "sm-on-knob": 24,
+        "knob-hover": 16,
+        "knob-pressed-width": 28,
+        "knob-pressed-height": 28,
+        "knob-feedback": "expand",
+      },
+    },
+    slider: {
+      pointer: {
+        band: 44,
+        rail: 16,
+        "thumb-width": 4,
+        "thumb-height": 44,
+        "thumb-pressed-width": 2,
+        gap: 6,
+        "inner-dot": 0,
+        "inner-dot-hover": 0,
+        "inner-dot-pressed": 0,
+        "vertical-length": 128,
+        "handle-shape": "bar",
+        outlined: false,
+        "hover-brightness": false,
+      },
+      touch: {
+        band: 44,
+        rail: 16,
+        "thumb-width": 4,
+        "thumb-height": 44,
+        "thumb-pressed-width": 2,
+        gap: 6,
+        "inner-dot": 0,
+        "inner-dot-hover": 0,
+        "inner-dot-pressed": 0,
+        "vertical-length": 144,
+        "handle-shape": "bar",
+        outlined: false,
+        "hover-brightness": false,
+      },
+    },
+    radio: {
+      pointer: {
+        size: 20,
+        dot: 10,
+        "dot-hover": 10,
+        "dot-pressed": 10,
+        border: 2,
+        target: 40,
+        well: "outline",
+        "checked-style": "ring",
+        "has-target": true,
+        "dot-feedback": "none",
+      },
+      touch: {
+        size: 20,
+        dot: 10,
+        "dot-hover": 10,
+        "dot-pressed": 10,
+        border: 2,
+        target: 40,
+        well: "outline",
+        "checked-style": "ring",
+        "has-target": true,
+        "dot-feedback": "none",
+      },
+    },
   },
   shape: {
     curve: "circular",
@@ -728,6 +827,8 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
     brand: "Inline brand accent ink, aliased to {color.primary}.",
     "brand-edge": "Brand container outline (M3 outlineVariant).",
     track: "Switch and slider track fill (M3 surfaceContainerHighest).",
+    "slider-track":
+      "M3 Expressive inactive slider track fill aliased to {color.brand-tint} (SecondaryContainer, Compose SliderTokens.kt).",
     knob: "Unchecked switch thumb fill (M3 outline).",
     info: "Informational semantic color matching M3 primary.",
     "brand-tint": "Opaque selected chip/tile fill (M3 secondaryContainer).",
@@ -855,6 +956,59 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
         "motion.control":
           "M3 Expressive DefaultEffects spring (stiffness 1600, damping ratio 1.0).",
         "motion.move": "M3 Expressive DefaultSpatial spring for layout and indicator movement.",
+        "dimension.checkbox":
+          "M3 Checkbox 18dp outlined box (2dp OnSurfaceVariant outline, 40dp state-layer target; _md-comp-checkbox.scss v34.0.21 / Compose CheckboxTokens.kt).",
+        "dimension.checkbox.border":
+          "M3 unselected checkbox 2dp outline (_md-comp-checkbox.scss:92).",
+        "dimension.checkbox.target":
+          "M3 checkbox 40dp state-layer target (_md-comp-checkbox.scss:70).",
+        "dimension.switch":
+          "M3 Switch 52x32dp track, 2dp unselected outline, 16/24/28dp handle growth (_md-comp-switch.scss v34.0.21 / Compose SwitchTokens.kt).",
+        "dimension.switch.width": "M3 Switch 52dp track width (_md-comp-switch.scss:63).",
+        "dimension.switch.height": "M3 Switch 32dp track height (_md-comp-switch.scss:59).",
+        "dimension.switch.sm-width": "M3 Switch keeps 52dp width on compact size.",
+        "dimension.switch.sm-height": "M3 Switch keeps 32dp height on compact size.",
+        "dimension.switch.border":
+          "M3 Switch 2dp unselected track outline (_md-comp-switch.scss:61).",
+        "dimension.switch.on-border":
+          "M3 Switch selected track has no outline (0dp; SwitchTokens.kt).",
+        "dimension.switch.knob":
+          "M3 Switch 16dp unselected handle diameter (_md-comp-switch.scss:65).",
+        "dimension.switch.on-knob":
+          "M3 Switch 24dp selected handle diameter (_md-comp-switch.scss:51).",
+        "dimension.switch.sm-knob": "M3 Switch 16dp unselected handle diameter.",
+        "dimension.switch.sm-on-knob": "M3 Switch 24dp selected handle diameter.",
+        "dimension.switch.knob-hover": "M3 Switch handle keeps 16dp diameter on pointer hover.",
+        "dimension.switch.knob-pressed-width":
+          "M3 Switch 28dp pressed handle width (_md-comp-switch.scss:49).",
+        "dimension.switch.knob-pressed-height":
+          "M3 Switch 28dp pressed handle height (_md-comp-switch.scss:47).",
+        "dimension.slider":
+          "M3 Expressive Slider: 16dp active/inactive track, 4x44dp bar handle (2dp pressed), 6dp gap (Compose SliderTokens.kt 1.5.0).",
+        "dimension.slider.band":
+          "M3 Expressive Slider 44dp hit band matching 44dp bar handle height.",
+        "dimension.slider.rail":
+          "M3 Expressive Slider 16dp active/inactive track thickness (SliderTokens.ActiveTrackHeight).",
+        "dimension.slider.thumb-width":
+          "M3 Expressive Slider 4dp vertical bar handle width (SliderTokens.HandleWidth).",
+        "dimension.slider.thumb-height":
+          "M3 Expressive Slider 44dp vertical bar handle height (SliderTokens.HandleHeight).",
+        "dimension.slider.thumb-pressed-width":
+          "M3 Expressive Slider 2dp pressed handle width (SliderTokens.PressedHandleWidth).",
+        "dimension.slider.gap":
+          "M3 Expressive Slider 6dp gap between handle and track (SliderTokens.ActiveHandleLeadingSpace).",
+        "dimension.radio":
+          "M3 RadioButton: 20dp outer ring (2dp stroke, transparent interior, OnSurfaceVariant/Primary), 10dp inner dot, 40dp state-layer target (_md-comp-radio-button.scss v34.0.21 / Compose RadioButtonTokens.kt).",
+        "dimension.radio.size":
+          "M3 RadioButton 20dp outer ring diameter (_md-comp-radio-button.scss:26).",
+        "dimension.radio.dot":
+          "M3 RadioButton 10dp selected inner dot diameter (20dp ring / 10dp dot per m3.material.io Radio button specs).",
+        "dimension.radio.dot-hover": "M3 RadioButton 10dp inner dot (no hover resize).",
+        "dimension.radio.dot-pressed": "M3 RadioButton 10dp inner dot (no press resize).",
+        "dimension.radio.border":
+          "M3 RadioButton 2dp outer ring stroke width (Compose RadioStrokeWidth).",
+        "dimension.radio.target":
+          "M3 RadioButton 40dp circular state-layer target (_md-comp-radio-button.scss:28).",
         indicator: "M3 underlined tabs and filled-text-field underline indicator.",
       },
     },

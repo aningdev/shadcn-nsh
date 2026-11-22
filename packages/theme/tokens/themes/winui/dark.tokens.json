@@ -329,6 +329,15 @@
       },
       "$description": "Switch and slider track (WinUI ControlAltFillColorSecondary)."
     },
+    "slider-track": {
+      "$value": "{color.input}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
+      "$description": "WinUI 3 inactive slider track aliased to {color.input} (SliderTrackFill -> ControlStrongFillColorDefault, Slider_themeresources.xaml:20 in winui3/release/2.7.0)."
+    },
     "knob": {
       "$value": {
         "colorSpace": "oklch",

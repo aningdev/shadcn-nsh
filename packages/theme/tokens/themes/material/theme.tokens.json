@@ -127,6 +127,29 @@
           "unit": "px"
         }
       }
+    },
+    "checkbox": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "well": "outline",
+          "has-target": true
+        }
+      },
+      "$description": "M3 Checkbox 18dp outlined box (2dp OnSurfaceVariant outline, 40dp state-layer target; _md-comp-checkbox.scss v34.0.21 / Compose CheckboxTokens.kt).",
+      "border": {
+        "$value": {
+          "value": 2,
+          "unit": "px"
+        },
+        "$description": "M3 unselected checkbox 2dp outline (_md-comp-checkbox.scss:92)."
+      },
+      "target": {
+        "$value": {
+          "value": 40,
+          "unit": "px"
+        },
+        "$description": "M3 checkbox 40dp state-layer target (_md-comp-checkbox.scss:70)."
+      }
     }
   },
   "font": {

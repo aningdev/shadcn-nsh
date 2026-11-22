@@ -224,6 +224,59 @@ export interface Timing {
   timingFunction: EasingCurve;
 }
 
+export interface CheckboxDim {
+  border: number;
+  target: number;
+  well: string;
+  "has-target": boolean;
+}
+
+export interface SwitchDim {
+  width: number;
+  height: number;
+  "sm-width": number;
+  "sm-height": number;
+  border: number;
+  "on-border": number;
+  knob: number;
+  "on-knob": number;
+  "sm-knob": number;
+  "sm-on-knob": number;
+  "knob-hover": number;
+  "knob-pressed-width": number;
+  "knob-pressed-height": number;
+  "knob-feedback": string;
+}
+
+export interface SliderDim {
+  band: number;
+  rail: number;
+  "thumb-width": number;
+  "thumb-height": number;
+  "thumb-pressed-width": number;
+  gap: number;
+  "inner-dot": number;
+  "inner-dot-hover": number;
+  "inner-dot-pressed": number;
+  "vertical-length": number;
+  "handle-shape": string;
+  outlined: boolean;
+  "hover-brightness": boolean;
+}
+
+export interface RadioDim {
+  size: number;
+  dot: number;
+  "dot-hover": number;
+  "dot-pressed": number;
+  border: number;
+  target: number;
+  well: string;
+  "checked-style": string;
+  "has-target": boolean;
+  "dot-feedback": string;
+}
+
 /**
  * The style of a theme: what `semantics.json` states beside its finishes, in DTCG field naming,
  * the same keys in every theme (`check:theme`). A string that names one of a list (a curve, a
@@ -263,6 +316,10 @@ export interface Style {
     focus: { style: string; width: number; offset: number };
     icon: Tiered<Steps>;
     grabber: { width: number; height: number };
+    checkbox: CheckboxDim;
+    switch: Tiered<SwitchDim>;
+    slider: Tiered<SliderDim>;
+    radio: Tiered<RadioDim>;
   };
   shape: {
     curve: string;
@@ -597,6 +654,8 @@ export interface Palette {
   sidebarBorder: string;
   /** A switch's track when off. */
   track: string;
+  /** A slider's inactive track fill (`{track}` by default; `brand-tint` in Material; `input` in WinUI). */
+  sliderTrack: string;
   /** A switch's knob when off. */
   knob: string;
   /** Code inside insets. */
@@ -686,6 +745,7 @@ export const colors: Palette = tokens<keyof Palette>({
   sidebarAccent: "sidebar-accent",
   sidebarBorder: "sidebar-border",
   track: "track",
+  sliderTrack: "slider-track",
   knob: "knob",
   code: "code",
   info: "info",
@@ -986,6 +1046,18 @@ export function stateLayer(
 
 /** The smallest target a finger or a pointer gets (`dimension.size.hit` of the tier): 0 adds none. */
 export const hitTarget = (): number => style().dimension.size.hit[tier];
+
+/** Dimensions of checkbox geometry and state-layer target (`dimension.checkbox`). */
+export const checkboxGeometry = (): CheckboxDim => style().dimension.checkbox;
+
+/** Dimensions and feedback mode of switch geometry (`dimension.switch[tier]`). */
+export const switchGeometry = (): SwitchDim => style().dimension.switch[tier];
+
+/** Dimensions, handle shape, and track rules of slider geometry (`dimension.slider[tier]`). */
+export const sliderGeometry = (): SliderDim => style().dimension.slider[tier];
+
+/** Dimensions, checked ring mode, dot feedback, and state-layer target of radio geometry (`dimension.radio[tier]`). */
+export const radioGeometry = (): RadioDim => style().dimension.radio[tier];
 
 /** A button's height by size (`dimension.size.height` of the tier). */
 export const controlHeight = {

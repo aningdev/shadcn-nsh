@@ -366,6 +366,29 @@
         }
       }
     },
+    "checkbox": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "well": "outline",
+          "has-target": true
+        }
+      },
+      "$description": "M3 Checkbox 18dp outlined box (2dp OnSurfaceVariant outline, 40dp state-layer target; _md-comp-checkbox.scss v34.0.21 / Compose CheckboxTokens.kt).",
+      "border": {
+        "$value": {
+          "value": 2,
+          "unit": "px"
+        },
+        "$description": "M3 unselected checkbox 2dp outline (_md-comp-checkbox.scss:92)."
+      },
+      "target": {
+        "$value": {
+          "value": 40,
+          "unit": "px"
+        },
+        "$description": "M3 checkbox 40dp state-layer target (_md-comp-checkbox.scss:70)."
+      }
+    },
     "radius": {
       "$type": "dimension",
       "$description": "Material 3 Expressive corner scale (999px CornerFull controls, 4px CornerExtraSmall fields/menus, 12px CornerMedium cards/chips, 28px CornerExtraLarge dialogs/sheets; ShapeTokens.kt).",
@@ -571,6 +594,238 @@
           "value": 24,
           "unit": "px"
         }
+      }
+    },
+    "switch": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "knob-feedback": "expand"
+        }
+      },
+      "$description": "M3 Switch 52x32dp track, 2dp unselected outline, 16/24/28dp handle growth (_md-comp-switch.scss v34.0.21 / Compose SwitchTokens.kt).",
+      "width": {
+        "$value": {
+          "value": 52,
+          "unit": "px"
+        },
+        "$description": "M3 Switch 52dp track width (_md-comp-switch.scss:63)."
+      },
+      "height": {
+        "$value": {
+          "value": 32,
+          "unit": "px"
+        },
+        "$description": "M3 Switch 32dp track height (_md-comp-switch.scss:59)."
+      },
+      "sm-width": {
+        "$value": {
+          "value": 52,
+          "unit": "px"
+        },
+        "$description": "M3 Switch keeps 52dp width on compact size."
+      },
+      "sm-height": {
+        "$value": {
+          "value": 32,
+          "unit": "px"
+        },
+        "$description": "M3 Switch keeps 32dp height on compact size."
+      },
+      "border": {
+        "$value": {
+          "value": 2,
+          "unit": "px"
+        },
+        "$description": "M3 Switch 2dp unselected track outline (_md-comp-switch.scss:61)."
+      },
+      "on-border": {
+        "$value": {
+          "value": 0,
+          "unit": "px"
+        },
+        "$description": "M3 Switch selected track has no outline (0dp; SwitchTokens.kt)."
+      },
+      "knob": {
+        "$value": {
+          "value": 16,
+          "unit": "px"
+        },
+        "$description": "M3 Switch 16dp unselected handle diameter (_md-comp-switch.scss:65)."
+      },
+      "on-knob": {
+        "$value": {
+          "value": 24,
+          "unit": "px"
+        },
+        "$description": "M3 Switch 24dp selected handle diameter (_md-comp-switch.scss:51)."
+      },
+      "sm-knob": {
+        "$value": {
+          "value": 16,
+          "unit": "px"
+        },
+        "$description": "M3 Switch 16dp unselected handle diameter."
+      },
+      "sm-on-knob": {
+        "$value": {
+          "value": 24,
+          "unit": "px"
+        },
+        "$description": "M3 Switch 24dp selected handle diameter."
+      },
+      "knob-hover": {
+        "$value": {
+          "value": 16,
+          "unit": "px"
+        },
+        "$description": "M3 Switch handle keeps 16dp diameter on pointer hover."
+      },
+      "knob-pressed-width": {
+        "$value": {
+          "value": 28,
+          "unit": "px"
+        },
+        "$description": "M3 Switch 28dp pressed handle width (_md-comp-switch.scss:49)."
+      },
+      "knob-pressed-height": {
+        "$value": {
+          "value": 28,
+          "unit": "px"
+        },
+        "$description": "M3 Switch 28dp pressed handle height (_md-comp-switch.scss:47)."
+      }
+    },
+    "slider": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "handle-shape": "bar",
+          "outlined": false,
+          "hover-brightness": false
+        }
+      },
+      "$description": "M3 Expressive Slider: 16dp active/inactive track, 4x44dp bar handle (2dp pressed), 6dp gap (Compose SliderTokens.kt 1.5.0).",
+      "band": {
+        "$value": {
+          "value": 44,
+          "unit": "px"
+        },
+        "$description": "M3 Expressive Slider 44dp hit band matching 44dp bar handle height."
+      },
+      "rail": {
+        "$value": {
+          "value": 16,
+          "unit": "px"
+        },
+        "$description": "M3 Expressive Slider 16dp active/inactive track thickness (SliderTokens.ActiveTrackHeight)."
+      },
+      "thumb-width": {
+        "$value": {
+          "value": 4,
+          "unit": "px"
+        },
+        "$description": "M3 Expressive Slider 4dp vertical bar handle width (SliderTokens.HandleWidth)."
+      },
+      "thumb-height": {
+        "$value": {
+          "value": 44,
+          "unit": "px"
+        },
+        "$description": "M3 Expressive Slider 44dp vertical bar handle height (SliderTokens.HandleHeight)."
+      },
+      "thumb-pressed-width": {
+        "$value": {
+          "value": 2,
+          "unit": "px"
+        },
+        "$description": "M3 Expressive Slider 2dp pressed handle width (SliderTokens.PressedHandleWidth)."
+      },
+      "gap": {
+        "$value": {
+          "value": 6,
+          "unit": "px"
+        },
+        "$description": "M3 Expressive Slider 6dp gap between handle and track (SliderTokens.ActiveHandleLeadingSpace)."
+      },
+      "inner-dot": {
+        "$value": {
+          "value": 0,
+          "unit": "px"
+        },
+        "$description": "Resting inner accent dot diameter when handle-shape is \"ring\"."
+      },
+      "inner-dot-hover": {
+        "$value": {
+          "value": 0,
+          "unit": "px"
+        },
+        "$description": "Hovered inner accent dot diameter when handle-shape is \"ring\"."
+      },
+      "inner-dot-pressed": {
+        "$value": {
+          "value": 0,
+          "unit": "px"
+        },
+        "$description": "Pressed inner accent dot diameter when handle-shape is \"ring\"."
+      },
+      "vertical-length": {
+        "$value": {
+          "value": 128,
+          "unit": "px"
+        },
+        "$description": "Default track length for vertical sliders."
+      }
+    },
+    "radio": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "well": "outline",
+          "checked-style": "ring",
+          "has-target": true,
+          "dot-feedback": "none"
+        }
+      },
+      "$description": "M3 RadioButton: 20dp outer ring (2dp stroke, transparent interior, OnSurfaceVariant/Primary), 10dp inner dot, 40dp state-layer target (_md-comp-radio-button.scss v34.0.21 / Compose RadioButtonTokens.kt).",
+      "size": {
+        "$value": {
+          "value": 20,
+          "unit": "px"
+        },
+        "$description": "M3 RadioButton 20dp outer ring diameter (_md-comp-radio-button.scss:26)."
+      },
+      "dot": {
+        "$value": {
+          "value": 10,
+          "unit": "px"
+        },
+        "$description": "M3 RadioButton 10dp selected inner dot diameter (20dp ring / 10dp dot per m3.material.io Radio button specs)."
+      },
+      "dot-hover": {
+        "$value": {
+          "value": 10,
+          "unit": "px"
+        },
+        "$description": "M3 RadioButton 10dp inner dot (no hover resize)."
+      },
+      "dot-pressed": {
+        "$value": {
+          "value": 10,
+          "unit": "px"
+        },
+        "$description": "M3 RadioButton 10dp inner dot (no press resize)."
+      },
+      "border": {
+        "$value": {
+          "value": 2,
+          "unit": "px"
+        },
+        "$description": "M3 RadioButton 2dp outer ring stroke width (Compose RadioStrokeWidth)."
+      },
+      "target": {
+        "$value": {
+          "value": 40,
+          "unit": "px"
+        },
+        "$description": "M3 RadioButton 40dp circular state-layer target (_md-comp-radio-button.scss:28)."
       }
     }
   },
@@ -1728,6 +1983,15 @@
         }
       },
       "$description": "Switch and slider track fill (M3 surfaceContainerHighest)."
+    },
+    "slider-track": {
+      "$value": "{color.brand-tint}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
+      "$description": "M3 Expressive inactive slider track fill aliased to {color.brand-tint} (SecondaryContainer, Compose SliderTokens.kt)."
     },
     "knob": {
       "$value": {

@@ -59,6 +59,7 @@ colors:
     brand: "#2eb184"
     brand-edge: "#161616af"
     track: "#292e3826"
+    slider-track: "#292e3826"
     knob: "#ffffff"
     code: "#0d0d0d"
     info: "#0078cc"
@@ -135,6 +136,7 @@ colors:
     brand: "#54d2a4"
     brand-edge: "#f4f4f4aa"
     track: "#ffffff21"
+    slider-track: "#ffffff21"
     knob: "#f5f5f5"
     code: "#fafafa"
     info: "#449df0"
@@ -250,6 +252,41 @@ spacing:
     sm: 12px
     md: 14px
     lg: 15px
+  checkbox:
+    border: 1px
+    target: 0px
+  switch:
+    width: 28px
+    height: 16px
+    sm-width: 28px
+    sm-height: 16px
+    border: 1px
+    on-border: 1px
+    knob: 12px
+    on-knob: 12px
+    sm-knob: 12px
+    sm-on-knob: 12px
+    knob-hover: 12px
+    knob-pressed-width: 12px
+    knob-pressed-height: 12px
+  slider:
+    band: 20px
+    rail: 6px
+    thumb-width: 14px
+    thumb-height: 14px
+    thumb-pressed-width: 14px
+    gap: 0px
+    inner-dot: 0px
+    inner-dot-hover: 0px
+    inner-dot-pressed: 0px
+    vertical-length: 128px
+  radio:
+    size: 16px
+    dot: 6px
+    dot-hover: 6px
+    dot-pressed: 6px
+    border: 1px
+    target: 0px
 motion:
   enter:
     duration: 420ms
@@ -378,6 +415,7 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 - **`field`** (light `#ffffff99`, dark `#ffffff0f`): Input well surface below card and inset layers.
 - **`hover`** (light `#292e381a`, dark `#ffffff14`): Pointer hover overlay fill on interactive items.
 - **`track`** (light `#292e3826`, dark `#ffffff21`): Inactive track background for switches, sliders, and progress bars.
+- **`slider-track`** (light `#292e3826`, dark `#ffffff21`): Inactive slider track fill aliased to {color.track}.
 - **`knob`** (light `#ffffff`, dark `#f5f5f5`): Switch thumb fill in the off state.
 - **`inverse`** (light `#f8f9fb`, dark `#1a1a1a`): High-contrast surface for toasts and tooltips.
 - **`dialog`** (light `#eff1f5`, dark `#1d1d1d`): Modal dialog container surface.

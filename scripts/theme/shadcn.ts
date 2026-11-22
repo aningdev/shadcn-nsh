@@ -237,6 +237,7 @@ function section(p: ReturnType<typeof palette>, o: ReturnType<typeof own>) {
     faint: o.faint,
     brand: p.primary,
     track: o.track,
+    "slider-track": "var(--track)",
     knob: o.knob,
     code: o.code,
     info: o.info,
@@ -388,6 +389,7 @@ export function themeFiles(): ThemeGeneratorOutput {
   const ownDark = own("dark");
   const statusAndHoverDescriptions = {
     hover: "Pointer hover fill aliased to {color.accent} per shadcn hover:bg-accent.",
+    "slider-track": "Inactive slider track fill aliased to {color.track}.",
     "brand-edge":
       "Hairline border aliased to {color.border} (shadcn draws no separate brand edge).",
     "glass-edge":

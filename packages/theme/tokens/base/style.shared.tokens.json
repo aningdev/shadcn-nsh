@@ -283,6 +283,29 @@
           "unit": "px"
         }
       }
+    },
+    "checkbox": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "well": "well",
+          "has-target": false
+        }
+      },
+      "$description": "Checkbox outline stroke, circular state-layer target diameter, well style, and target toggle.",
+      "border": {
+        "$value": {
+          "value": 1,
+          "unit": "px"
+        },
+        "$description": "Unchecked checkbox border stroke width."
+      },
+      "target": {
+        "$value": {
+          "value": 0,
+          "unit": "px"
+        },
+        "$description": "Circular state-layer halo diameter centered on the checkbox (0 when disabled)."
+      }
     }
   },
   "shape": {

@@ -367,6 +367,7 @@ function section(appearance: Appearance): Record<string, string> {
     brand: s("brand"),
     // A switch's rail before it is on: shadcn's `bg-input`, cut into the surface as a groove.
     track: s("input"),
+    "slider-track": "var(--track)",
     knob: s("knob"),
     // Code inside insets is set in the text colour; the stylesheet's `--code-inline` (a red) is
     // for a span of inline code, which no role of this library holds.
@@ -626,6 +627,7 @@ export function themeFiles(): ThemeGeneratorOutput {
     popover: "Opaque composite of Solid Glass popover pane over background canvas.",
     sidebar: "Opaque composite of Solid Glass panel pane over background canvas.",
     inset: "Opaque composite of Solid Glass thinnest panel pane laid over card.",
+    "slider-track": "Inactive slider track fill aliased to {color.track}.",
     "brand-edge": "Primary button hairline mixed from --primary and --primary-edge.",
     "glass-edge": "Hairline border on Solid Glass panes (--glass-edge).",
     "brand-tint": "Static translucent teal brand wash (--brand-muted).",

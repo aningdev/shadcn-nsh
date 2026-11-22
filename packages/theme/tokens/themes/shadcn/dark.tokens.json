@@ -343,6 +343,15 @@
       },
       "$description": "Inactive track background for switches, sliders, and progress bars."
     },
+    "slider-track": {
+      "$value": "{color.track}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
+      "$description": "Inactive slider track fill aliased to {color.track}."
+    },
     "knob": {
       "$value": {
         "colorSpace": "oklch",

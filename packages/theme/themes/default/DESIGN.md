@@ -59,6 +59,7 @@ colors:
     brand: "#4a840a"
     brand-edge: "#9cc43a"
     track: "#e9eaed"
+    slider-track: "#e9eaed"
     knob: "#ffffff"
     code: "#2a2d33"
     info: "#3d63d1"
@@ -133,6 +134,7 @@ colors:
     brand: "#c8f26d"
     brand-edge: "#283c008c"
     track: "#33363c"
+    slider-track: "#33363c"
     knob: "#e4e5e8"
     code: "#d9dde3"
     info: "#7ea8ff"
@@ -248,6 +250,41 @@ spacing:
     sm: 12px
     md: 14px
     lg: 15px
+  checkbox:
+    border: 1px
+    target: 0px
+  switch:
+    width: 28px
+    height: 16px
+    sm-width: 28px
+    sm-height: 16px
+    border: 1px
+    on-border: 1px
+    knob: 12px
+    on-knob: 12px
+    sm-knob: 12px
+    sm-on-knob: 12px
+    knob-hover: 12px
+    knob-pressed-width: 12px
+    knob-pressed-height: 12px
+  slider:
+    band: 20px
+    rail: 6px
+    thumb-width: 14px
+    thumb-height: 14px
+    thumb-pressed-width: 14px
+    gap: 0px
+    inner-dot: 0px
+    inner-dot-hover: 0px
+    inner-dot-pressed: 0px
+    vertical-length: 128px
+  radio:
+    size: 16px
+    dot: 6px
+    dot-hover: 6px
+    dot-pressed: 6px
+    border: 1px
+    target: 0px
 motion:
   enter:
     duration: 420ms
@@ -376,6 +413,7 @@ NSH Gallery UI default theme: graphite dark and paper light surfaces with citrus
 - **`field`** (light `#ffffff`, dark `#16191f`): Input well surface below card and inset layers.
 - **`hover`** (light `#1013190d`, dark `#eeeff10d`): Pointer hover overlay fill on interactive items.
 - **`track`** (light `#e9eaed`, dark `#33363c`): Inactive track background for switches, sliders, and progress bars.
+- **`slider-track`** (light `#e9eaed`, dark `#33363c`): Inactive slider rail fill (aliased to track by default; tonal container in M3; ControlStrongFillColorDefault in WinUI 3).
 - **`knob`** (light `#ffffff`, dark `#e4e5e8`): Switch thumb fill in the off state.
 - **`inverse`** (light `#f8f8fb`, dark `#1f2228`): High-contrast surface for toasts and tooltips.
 - **`dialog`** (light `#ffffff`, dark `#1f2228`): Modal dialog container surface.

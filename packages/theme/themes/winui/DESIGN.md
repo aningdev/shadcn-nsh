@@ -59,6 +59,7 @@ colors:
     brand: "#003e92"
     brand-edge: "#00396e"
     track: "#ededed"
+    slider-track: "#868686"
     knob: "#5c5c5c"
     code: "#1a1a1a"
     info: "#0078d4"
@@ -135,6 +136,7 @@ colors:
     brand: "#99ebff"
     brand-edge: "#53b1dc"
     track: "#1d1d1d"
+    slider-track: "#9a9a9a"
     knob: "#cccccc"
     code: "#ffffff"
     info: "#60cdff"
@@ -250,6 +252,41 @@ spacing:
     sm: 12px
     md: 16px
     lg: 20px
+  checkbox:
+    border: 1px
+    target: 0px
+  switch:
+    width: 40px
+    height: 20px
+    sm-width: 40px
+    sm-height: 20px
+    border: 1px
+    on-border: 0px
+    knob: 12px
+    on-knob: 12px
+    sm-knob: 12px
+    sm-on-knob: 12px
+    knob-hover: 14px
+    knob-pressed-width: 17px
+    knob-pressed-height: 14px
+  slider:
+    band: 32px
+    rail: 4px
+    thumb-width: 18px
+    thumb-height: 18px
+    thumb-pressed-width: 18px
+    gap: 0px
+    inner-dot: 12px
+    inner-dot-hover: 14px
+    inner-dot-pressed: 10px
+    vertical-length: 128px
+  radio:
+    size: 20px
+    dot: 12px
+    dot-hover: 14px
+    dot-pressed: 10px
+    border: 1px
+    target: 0px
 motion:
   enter:
     duration: 250ms
@@ -394,6 +431,7 @@ WinUI 3 / Fluent 2 (`winui3/release/2.7.0`): Windows 11 fill and stroke resource
 - **`field`** (light `#fbfbfb`, dark `#2d2d2d`): Text input surface (WinUI ControlFillColorDefault composited over base).
 - **`hover`** (light `#f6f6f6`, dark `#323232`): Pointer hover fill (WinUI ControlFillColorSecondary composited over base).
 - **`track`** (light `#ededed`, dark `#1d1d1d`): Switch and slider track (WinUI ControlAltFillColorSecondary).
+- **`slider-track`** (light `#868686`, dark `#9a9a9a`): WinUI 3 inactive slider track aliased to {color.input} (SliderTrackFill -> ControlStrongFillColorDefault, Slider_themeresources.xaml:20 in winui3/release/2.7.0).
 - **`knob`** (light `#5c5c5c`, dark `#cccccc`): Unchecked switch thumb (WinUI TextFillColorSecondary).
 - **`inverse`** (light `#f9f9f9`, dark `#282828`): TeachingTip/toast surface (WinUI SolidBackgroundFillColorTertiary composited over base).
 - **`dialog`** (light `#f3f3f3`, dark `#202020`): ContentDialog surface aliased to {color.background} (SolidBackgroundFillColorBase).

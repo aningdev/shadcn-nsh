@@ -355,6 +355,15 @@
       },
       "$description": "Switch and slider track fill (M3 surfaceContainerHighest)."
     },
+    "slider-track": {
+      "$value": "{color.brand-tint}",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      },
+      "$description": "M3 Expressive inactive slider track fill aliased to {color.brand-tint} (SecondaryContainer, Compose SliderTokens.kt)."
+    },
     "knob": {
       "$value": {
         "colorSpace": "oklch",

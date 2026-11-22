@@ -356,6 +356,15 @@
         }
       }
     },
+    "slider-track": {
+      "$value": "{color.track}",
+      "$description": "Inactive slider rail fill (aliased to track by default; tonal container in M3; ControlStrongFillColorDefault in WinUI 3).",
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "role": "surface"
+        }
+      }
+    },
     "knob": {
       "$value": {
         "colorSpace": "oklch",

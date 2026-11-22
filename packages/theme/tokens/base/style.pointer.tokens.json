@@ -224,6 +224,238 @@
           "unit": "px"
         }
       }
+    },
+    "switch": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "knob-feedback": "none"
+        }
+      },
+      "$description": "Switch track and knob geometry and interactive knob sizing behavior for pointer input.",
+      "width": {
+        "$value": {
+          "value": 28,
+          "unit": "px"
+        },
+        "$description": "Default switch track width."
+      },
+      "height": {
+        "$value": {
+          "value": 16,
+          "unit": "px"
+        },
+        "$description": "Default switch track height."
+      },
+      "sm-width": {
+        "$value": {
+          "value": 28,
+          "unit": "px"
+        },
+        "$description": "Compact size=\"sm\" switch track width."
+      },
+      "sm-height": {
+        "$value": {
+          "value": 16,
+          "unit": "px"
+        },
+        "$description": "Compact size=\"sm\" switch track height."
+      },
+      "border": {
+        "$value": {
+          "value": 1,
+          "unit": "px"
+        },
+        "$description": "Unchecked switch track border width."
+      },
+      "on-border": {
+        "$value": {
+          "value": 1,
+          "unit": "px"
+        },
+        "$description": "Checked switch track border width."
+      },
+      "knob": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        },
+        "$description": "Unchecked switch knob diameter."
+      },
+      "on-knob": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        },
+        "$description": "Checked switch knob diameter."
+      },
+      "sm-knob": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        },
+        "$description": "Unchecked switch knob diameter for size=\"sm\"."
+      },
+      "sm-on-knob": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        },
+        "$description": "Checked switch knob diameter for size=\"sm\"."
+      },
+      "knob-hover": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        },
+        "$description": "Switch knob diameter while hovered when knob-feedback is \"stretch\"."
+      },
+      "knob-pressed-width": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        },
+        "$description": "Switch knob width while pressed when knob-feedback is \"expand\" or \"stretch\"."
+      },
+      "knob-pressed-height": {
+        "$value": {
+          "value": 12,
+          "unit": "px"
+        },
+        "$description": "Switch knob height while pressed when knob-feedback is \"expand\" or \"stretch\"."
+      }
+    },
+    "slider": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "handle-shape": "circle",
+          "outlined": true,
+          "hover-brightness": true
+        }
+      },
+      "$description": "Slider hit band, track thickness, handle geometry, and track border/hover flags for pointer input.",
+      "band": {
+        "$value": {
+          "value": 20,
+          "unit": "px"
+        },
+        "$description": "Interactive track hit-band cross-axis thickness."
+      },
+      "rail": {
+        "$value": {
+          "value": 6,
+          "unit": "px"
+        },
+        "$description": "Slider rail thickness."
+      },
+      "thumb-width": {
+        "$value": {
+          "value": 14,
+          "unit": "px"
+        },
+        "$description": "Slider thumb width along horizontal track axis."
+      },
+      "thumb-height": {
+        "$value": {
+          "value": 14,
+          "unit": "px"
+        },
+        "$description": "Slider thumb height perpendicular to horizontal track axis."
+      },
+      "thumb-pressed-width": {
+        "$value": {
+          "value": 14,
+          "unit": "px"
+        },
+        "$description": "Slider bar handle thickness while pressed when handle-shape is \"bar\"."
+      },
+      "gap": {
+        "$value": {
+          "value": 0,
+          "unit": "px"
+        },
+        "$description": "Clearance gap between handle and track segments when handle-shape is \"bar\"."
+      },
+      "inner-dot": {
+        "$value": {
+          "value": 0,
+          "unit": "px"
+        },
+        "$description": "Resting inner accent dot diameter when handle-shape is \"ring\"."
+      },
+      "inner-dot-hover": {
+        "$value": {
+          "value": 0,
+          "unit": "px"
+        },
+        "$description": "Hovered inner accent dot diameter when handle-shape is \"ring\"."
+      },
+      "inner-dot-pressed": {
+        "$value": {
+          "value": 0,
+          "unit": "px"
+        },
+        "$description": "Pressed inner accent dot diameter when handle-shape is \"ring\"."
+      },
+      "vertical-length": {
+        "$value": {
+          "value": 128,
+          "unit": "px"
+        },
+        "$description": "Default track length for vertical sliders."
+      }
+    },
+    "radio": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "well": "well",
+          "checked-style": "fill",
+          "has-target": false,
+          "dot-feedback": "none"
+        }
+      },
+      "$description": "Radio outer ring, inner dot geometry, well style, and selection behavior for pointer input.",
+      "size": {
+        "$value": {
+          "value": 16,
+          "unit": "px"
+        },
+        "$description": "Radio outer ring diameter."
+      },
+      "dot": {
+        "$value": {
+          "value": 6,
+          "unit": "px"
+        },
+        "$description": "Checked radio inner dot diameter at rest."
+      },
+      "dot-hover": {
+        "$value": {
+          "value": 6,
+          "unit": "px"
+        },
+        "$description": "Checked radio inner dot diameter on hover when dot-feedback is \"scale\"."
+      },
+      "dot-pressed": {
+        "$value": {
+          "value": 6,
+          "unit": "px"
+        },
+        "$description": "Checked radio inner dot diameter while pressed when dot-feedback is \"scale\"."
+      },
+      "border": {
+        "$value": {
+          "value": 1,
+          "unit": "px"
+        },
+        "$description": "Radio outer ring border stroke width."
+      },
+      "target": {
+        "$value": {
+          "value": 0,
+          "unit": "px"
+        },
+        "$description": "Circular state-layer halo diameter centered on the radio ring."
+      }
     }
   }
 }

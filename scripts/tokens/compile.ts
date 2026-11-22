@@ -513,6 +513,40 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
         touch: readDimMap(ltDim.icon as Record<string, Record<string, unknown>>),
       },
       grabber: readDimMap(lpDim.grabber as Record<string, Record<string, unknown>>),
+      checkbox: {
+        ...readDimMap(lpDim.checkbox as Record<string, Record<string, unknown>>),
+        ...(getExt(lpDim.checkbox) ?? {}),
+      },
+      switch: {
+        pointer: {
+          ...readDimMap(lpDim.switch as Record<string, Record<string, unknown>>),
+          ...(getExt(lpDim.switch) ?? {}),
+        },
+        touch: {
+          ...readDimMap(ltDim.switch as Record<string, Record<string, unknown>>),
+          ...(getExt(ltDim.switch) ?? {}),
+        },
+      },
+      slider: {
+        pointer: {
+          ...readDimMap(lpDim.slider as Record<string, Record<string, unknown>>),
+          ...(getExt(lpDim.slider) ?? {}),
+        },
+        touch: {
+          ...readDimMap(ltDim.slider as Record<string, Record<string, unknown>>),
+          ...(getExt(ltDim.slider) ?? {}),
+        },
+      },
+      radio: {
+        pointer: {
+          ...readDimMap(lpDim.radio as Record<string, Record<string, unknown>>),
+          ...(getExt(lpDim.radio) ?? {}),
+        },
+        touch: {
+          ...readDimMap(ltDim.radio as Record<string, Record<string, unknown>>),
+          ...(getExt(ltDim.radio) ?? {}),
+        },
+      },
     },
     shape: {
       curve: shapeExt.curve,

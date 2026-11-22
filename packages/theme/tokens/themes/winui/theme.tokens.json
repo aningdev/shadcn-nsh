@@ -104,6 +104,14 @@
         },
         "$description": "2px outer focus stroke width per WinUI 3."
       }
+    },
+    "checkbox": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "well": "inset"
+        }
+      },
+      "$description": "WinUI 3 CheckBox resting ControlAltFillColorSecondary interior with 1px ControlStrongStrokeColorDefault border (CheckBox_themeresources.xaml in winui3/release/2.7.0)."
     }
   },
   "font": {

@@ -59,6 +59,7 @@ colors:
     brand: "#6750a4"
     brand-edge: "#cac4d0"
     track: "#e6e0e9"
+    slider-track: "#e8def8"
     knob: "#79747e"
     code: "#1d1b20"
     info: "#6750a4"
@@ -135,6 +136,7 @@ colors:
     brand: "#d0bcff"
     brand-edge: "#49454f"
     track: "#36343b"
+    slider-track: "#4a4458"
     knob: "#938f99"
     code: "#e6e0e9"
     info: "#d0bcff"
@@ -250,6 +252,41 @@ spacing:
     sm: 18px
     md: 20px
     lg: 24px
+  checkbox:
+    border: 2px
+    target: 40px
+  switch:
+    width: 52px
+    height: 32px
+    sm-width: 52px
+    sm-height: 32px
+    border: 2px
+    on-border: 0px
+    knob: 16px
+    on-knob: 24px
+    sm-knob: 16px
+    sm-on-knob: 24px
+    knob-hover: 16px
+    knob-pressed-width: 28px
+    knob-pressed-height: 28px
+  slider:
+    band: 44px
+    rail: 16px
+    thumb-width: 4px
+    thumb-height: 44px
+    thumb-pressed-width: 2px
+    gap: 6px
+    inner-dot: 0px
+    inner-dot-hover: 0px
+    inner-dot-pressed: 0px
+    vertical-length: 128px
+  radio:
+    size: 20px
+    dot: 10px
+    dot-hover: 10px
+    dot-pressed: 10px
+    border: 2px
+    target: 40px
 motion:
   enter:
     duration: 500ms
@@ -378,6 +415,7 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`field`** (light `#e6e0e9`, dark `#36343b`): Filled text field background (M3 surfaceContainerHighest).
 - **`hover`** (light `#1d1b2014`, dark `#e6e0e914`): M3 hover state-layer ink (8% foreground over transparent, StateTokens.kt).
 - **`track`** (light `#e6e0e9`, dark `#36343b`): Switch and slider track fill (M3 surfaceContainerHighest).
+- **`slider-track`** (light `#e8def8`, dark `#4a4458`): M3 Expressive inactive slider track fill aliased to {color.brand-tint} (SecondaryContainer, Compose SliderTokens.kt).
 - **`knob`** (light `#79747e`, dark `#938f99`): Unchecked switch thumb fill (M3 outline).
 - **`inverse`** (light `#322f35`, dark `#e6e0e9`): Inverse surface for snackbars and tooltips (M3 inverseSurface).
 - **`dialog`** (light `#ece6f0`, dark `#2b2930`): Modal dialog surface (M3 surfaceContainerHigh).
