@@ -7,6 +7,7 @@ import {
   focusRing,
   hovered,
   rounded,
+  shape,
   stateLayer,
   style as themeStyle,
   terminal,
@@ -121,7 +122,7 @@ export function toggleLook(o?: ToggleLookOptions) {
         alignItems: "center",
         justifyContent: "center",
         gap: 6,
-        ...rounded(dims.side / 4 + 1),
+        ...rounded(shape.button),
         borderWidth: stroke.control,
         ...(outline
           ? { borderColor: colors.input, backgroundColor: colors.field }

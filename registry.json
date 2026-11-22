@@ -1353,7 +1353,7 @@
       "type": "registry:ui",
       "title": "Kbd",
       "description": "A key of a shortcut: a small cap in the muted fill, alone or in a group.",
-      "registryDependencies": ["as-text", "surface", "theme"],
+      "registryDependencies": ["as-text", "theme"],
       "files": [
         {
           "path": "packages/ui/kbd.tsx",

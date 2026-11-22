@@ -67,7 +67,7 @@ export function createBanner() {
         gap: 12,
         paddingVertical: terminal ? 0 : 14,
         paddingHorizontal: terminal ? TERMINAL_COLUMN : 14,
-        borderRadius: shape.inset + 3,
+        borderRadius: shape.container,
         backgroundColor: colors.primary,
         opacity: t.interpolate({ inputRange: [0, 0.3, 1], outputRange: [0, 1, 1] }),
         translate: [0, t.interpolate({ inputRange: [0, 1], outputRange: [-90, 0] })],
@@ -354,7 +354,7 @@ export function Ticket(props: {
             // The terminal's border takes a row and a column on each side: the rest of them is padding.
             paddingVertical: terminal ? TERMINAL_ROW - 1 : 14,
             paddingHorizontal: terminal ? 2 * TERMINAL_COLUMN - 1 : 14,
-            borderRadius: shape.inset,
+            borderRadius: shape.control,
             borderWidth: 1,
             borderColor: tone(),
             backgroundColor: props.side() === "buy" ? tints.up : tints.down,

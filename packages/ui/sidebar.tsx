@@ -336,7 +336,7 @@ export function sidebarLook(o?: SidebarLookOptions): SidebarLook {
             : { borderLeftWidth: stroke.hairline }
           : {
               borderWidth: stroke.surface,
-              ...rounded(shape.card),
+              ...rounded(shape.container),
               boxShadow: finish.card.boxShadow,
             }),
       };
@@ -355,7 +355,7 @@ export function sidebarLook(o?: SidebarLookOptions): SidebarLook {
               ...(side() === "left" ? { marginLeft: 0 } : { marginRight: 0 }),
               borderWidth: stroke.surface,
               borderColor: colors.line,
-              ...rounded(shape.card),
+              ...rounded(shape.container),
               boxShadow: finish.card.boxShadow,
               overflow: "hidden",
             }

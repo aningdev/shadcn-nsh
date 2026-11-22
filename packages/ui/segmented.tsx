@@ -71,11 +71,9 @@ export function segmentedLook(o?: SegmentedLookOptions) {
   const inset = 2;
   // Small is as tall as a small button with a pointer (24), so the two sit level in a row.
   const height = pointer ? (small ? 24 : 30) : small ? 32 : 36;
-  // The track takes the base radius; the thumb sits a step inside it.
-  const trackInset = pointer ? 1 : 0;
-  const thumbInset = pointer ? 2 : 1;
+  // The track takes the control radius; the thumb sits `inset` points inside it.
   const thumb = (): ViewStyle => ({
-    ...rounded(shape.control, thumbInset),
+    ...rounded(shape.control, inset),
     borderWidth: stroke.control,
     ...finish.thumb,
   });
@@ -86,7 +84,7 @@ export function segmentedLook(o?: SegmentedLookOptions) {
         flexDirection: "row",
         alignSelf: spread ? "stretch" : "flex-start",
         padding: inset,
-        ...rounded(shape.inset, trackInset),
+        ...rounded(shape.control),
         // Sunk like the pill bar's, not the switch's track: in dark the track is
         // raised as the thumb is, which would hide the thumb.
         backgroundColor: colors.inset,
@@ -108,7 +106,7 @@ export function segmentedLook(o?: SegmentedLookOptions) {
         // A clear edge the thumb's takes over, so a checked segment keeps its size.
         style: {
           ...(spread ? { flex: 1, paddingHorizontal: 7 } : { paddingHorizontal: 9 }),
-          ...rounded(shape.control, thumbInset),
+          ...rounded(shape.control, inset),
           borderWidth: stroke.control,
           borderColor: "transparent",
           flexDirection: "row",

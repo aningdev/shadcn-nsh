@@ -124,7 +124,7 @@ export const plotAxisText = (): TextStyle => ({
 export const plotTooltip = (): ViewStyle => ({
   ...finish.menu,
   borderWidth: terminal ? stroke.hairline : stroke.surface,
-  ...rounded(shape.inset),
+  ...rounded(shape.container),
   paddingHorizontal: 10,
   paddingVertical: 8,
   gap: 6,

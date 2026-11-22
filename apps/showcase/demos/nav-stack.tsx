@@ -333,7 +333,7 @@ function LargeTitle(_props: { pop: () => void }) {
       <Page intro={largeTitleIntro(refresh)} refresh={refresh}>
         <View
           style={{
-            ...rounded(shape.card),
+            ...rounded(shape.container),
             backgroundColor: colors.card,
             borderWidth: 1,
             borderColor: colors.border,
@@ -1089,7 +1089,7 @@ function StackedSheet(props: { open: boolean; onClose: () => void }) {
                     ) : null}
                     <View
                       style={{
-                        ...rounded(shape.card),
+                        ...rounded(shape.container),
                         backgroundColor: colors.card,
                         borderWidth: 1,
                         borderColor: colors.border,
@@ -1129,7 +1129,7 @@ function StackedSheet(props: { open: boolean; onClose: () => void }) {
                   <View style={{ padding: 16, gap: 16 }}>
                     <View
                       style={{
-                        ...rounded(shape.card),
+                        ...rounded(shape.container),
                         backgroundColor: colors.card,
                         borderWidth: 1,
                         borderColor: colors.border,
@@ -1197,7 +1197,7 @@ function Addressed() {
       <View
         style={{
           height: 200,
-          ...rounded(shape.inset),
+          ...rounded(shape.control),
           overflow: "hidden",
           borderWidth: 1,
           borderColor: colors.line,

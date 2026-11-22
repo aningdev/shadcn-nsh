@@ -59,7 +59,7 @@ const rowBox = (size: ItemSize) =>
 /**
  * An item family's look, after shadcn/ui's secondary `Item`, written from the
  * theme's roles: a row with the page's density in its padding and its gaps
- * (`density.pad`, 14 or 16), corners of the theme's inset (`shape.inset`),
+ * (`density.pad`, 14 or 16), corners of the theme's control tier (`shape.control`),
  * the title in the text colour at the labels' size and medium weight, the
  * description a step quieter and muted, wrapping to two lines. `default`
  * draws no surface, `outline` the hairline edge of a surface, and `muted` the
@@ -98,7 +98,7 @@ export function itemLook(): ItemLook {
             flexWrap: "wrap",
             alignItems: "center",
             minHeight: controlSize.row,
-            ...rounded(shape.inset),
+            ...rounded(shape.control),
             borderWidth: stroke.hairline,
             borderColor: variant === "outline" ? colors.border : "transparent",
             backgroundColor: variant === "muted" ? token("muted") : "transparent",

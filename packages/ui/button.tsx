@@ -199,7 +199,7 @@ function restLook(variant: ButtonVariant, selected: boolean, disabled = false): 
 /**
  * A button's props (spread them: `<Button {...buttonLook("default")}>`, or
  * on a `View` with `onPress`): its style and its states. One row, its label
- * centered, `shape.control` with continuous corners; 28 points tall with a
+ * centered, `shape.button` with continuous corners; 28 points tall with a
  * pointer, 40 on a touch screen (`sm` 24 / 36, `lg` 34 / 48), a hit
  * slop making a touch target 44 points. Under the pointer a raised button
  * lightens, a ghost gets a whisper of the text color, a filled one a touch
@@ -217,7 +217,7 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
       return {
         height: terminal ? TERMINAL_ROW : dims.height,
         paddingHorizontal: terminal ? TERMINAL_COLUMN : dims.pad,
-        ...rounded(shape.control),
+        ...rounded(shape.button),
         borderWidth: stroke.control,
         flexDirection: "row",
         alignItems: "center",
@@ -395,7 +395,7 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
           height: terminal ? undefined : side,
           alignItems: "center",
           justifyContent: "center",
-          ...rounded(shape.control),
+          ...rounded(shape.button),
           borderWidth: stroke.control,
           ...(raised || selected
             ? finish.disabled
@@ -408,7 +408,7 @@ export function iconButtonLook(o: IconButtonLookOptions = {}) {
         height: terminal ? undefined : side,
         alignItems: "center",
         justifyContent: "center",
-        ...rounded(shape.control),
+        ...rounded(shape.button),
         borderWidth: stroke.control,
         borderColor: "transparent",
         backgroundColor: selected ? tints.brand : ghostFill(),
@@ -613,7 +613,7 @@ export function splitButtonLook(variant: Live<ButtonVariant> = "default", o?: Bu
         return {
           flexDirection: "row",
           alignItems: "stretch",
-          ...rounded(shape.control),
+          ...rounded(shape.button),
           borderWidth: stroke.control,
           overflow: "hidden",
           ...restLook(read(variant) ?? "default", false, !!read(o?.disabled)),

@@ -66,7 +66,6 @@ const terminalSizes: ControlSizeSet = {
   label: 14,
   detail: 12,
   control: 3 * TERMINAL_COLUMN,
-  corner: 0,
   check: 12,
   dot: 6,
   tabs: TERMINAL_ROW,
@@ -83,8 +82,8 @@ const terminalSizes: ControlSizeSet = {
  * row each, an indicator's box three Cells wide for its glyph (`[x]`).
  * `row` is a pressable row's least height, `line` a row of values', `tabs`
  * a tab strip's, `control` a checkbox's or radio's side, `check` its mark's
- * and an icon's size, `dot` a radio's dot, `corner` a box's corners, `clear`
- * a clear button's side, `switch` the switch size beside a row's label.
+ * and an icon's size, `dot` a radio's dot, `clear` a clear button's side,
+ * `switch` the switch size beside a row's label.
  * `label` and `detail` are the theme's type roles of those names. Read from the
  * theme in use (the terminal's are the grid's), so a theme switch redraws
  * what reads them.
@@ -97,7 +96,6 @@ export const controlSize = reactive<ControlSizeSet>(
     "label",
     "detail",
     "control",
-    "corner",
     "check",
     "dot",
     "tabs",
@@ -154,14 +152,14 @@ export function sectionSurface(o?: SectionSurfaceOptions): ViewStyle {
 /**
  * A well inside a section (a preview, a panel of state, an image's frame):
  * the inset color a hair below the card, its hairline and inner shade, the
- * theme's `radius` corners (10).
+ * theme's `control` corners.
  */
 export function insetSurface(): ViewStyle {
   return {
     backgroundColor: colors.inset,
     borderWidth: terminal ? stroke.hairline : stroke.surface,
     borderColor: colors.line,
-    ...rounded(shape.inset),
+    ...rounded(shape.control),
     ...finish.inset,
   };
 }

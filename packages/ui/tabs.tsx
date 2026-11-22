@@ -299,9 +299,7 @@ export function TabTitle(props: {
             minWidth: 18,
             height: 16,
             paddingHorizontal: 5,
-            // A pill: two points inside the inset's corners, which is half this box in the
-            // default theme (`radius` 10).
-            ...rounded(shape.inset, 2),
+            ...rounded(shape.control),
             alignItems: "center",
             justifyContent: "center",
             backgroundColor: colors.inset,

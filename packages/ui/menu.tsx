@@ -87,7 +87,7 @@ export const menuItemSize: MenuItemDimensions = pointer
   : {
       height: 46,
       get radius() {
-        return shape.inset;
+        return shape.control;
       },
       font: 16,
       note: 14,
@@ -220,8 +220,8 @@ export function menuPopup(o?: MenuPopupOptions) {
         ? { ...popupSurface(), minWidth: o?.minWidth ?? 200, ...popInStyles(o?.side).style }
         : {
             backgroundColor: colors.card,
-            borderTopLeftRadius: shape.sheet,
-            borderTopRightRadius: shape.sheet,
+            borderTopLeftRadius: shape.modal,
+            borderTopRightRadius: shape.modal,
             ...cornerCurve,
             paddingHorizontal: 10,
             paddingTop: 10,

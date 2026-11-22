@@ -74,7 +74,7 @@ export function codeEditorFrame(): ViewStyle {
     backgroundColor: colors.field,
     ...fieldEdgeWidths(),
     borderColor: fieldRestColor(colors.input),
-    ...fieldCorners(shape.field),
+    ...fieldCorners(shape.control),
     ...finish.field,
   };
 }

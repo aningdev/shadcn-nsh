@@ -67,7 +67,7 @@ export function terminalLook(o?: TerminalLookOptions) {
         ...finish.field,
         borderWidth: stroke.hairline,
         borderColor: colors.input,
-        ...rounded(shape.inset),
+        ...rounded(shape.control),
         paddingHorizontal: wellPad.x,
         paddingVertical: wellPad.y,
         ...read(o?.style),

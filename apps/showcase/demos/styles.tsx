@@ -585,7 +585,7 @@ function FlipCard() {
     top: 0,
     right: 0,
     bottom: 0,
-    borderRadius: shape.card,
+    borderRadius: shape.container,
     borderCurve: "continuous",
     borderWidth: 1,
     padding: 16,

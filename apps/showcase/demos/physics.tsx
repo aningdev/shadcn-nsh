@@ -130,7 +130,7 @@ export function PhysicsDemo() {
           flex: compact ? undefined : 1,
           height: compact ? SHORT_STAGE : undefined,
           overflow: "hidden",
-          borderRadius: shape.card,
+          borderRadius: shape.container,
           borderCurve: "continuous",
           borderWidth: 1,
           borderColor: colors.border,
@@ -245,7 +245,7 @@ export function PhysicsDemo() {
         style={{
           backgroundColor: colors.card,
           ...finish.card,
-          borderRadius: shape.card,
+          borderRadius: shape.container,
           borderCurve: "continuous",
           borderWidth: 1,
           borderColor: colors.border,

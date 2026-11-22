@@ -152,7 +152,7 @@ function App() {
             selected={selected()}
             reveal
             accessibilityLabel="Project files"
-            class="border-border bg-card overflow-hidden rounded-(--radius-card) border"
+            class="border-border bg-card overflow-hidden rounded-(--radius-container) border"
             listClass="p-1.5"
             itemClass={treeItemClass}
             style={{ ...sectionSurface(), height: desktop ? 320 : 360 }}
@@ -179,7 +179,7 @@ function App() {
             selected={logsSelected()}
             reveal
             accessibilityLabel="Logs"
-            class="border-border bg-card overflow-hidden rounded-(--radius-card) border"
+            class="border-border bg-card overflow-hidden rounded-(--radius-container) border"
             listClass="p-1.5"
             itemClass={treeItemClass}
             style={{ height: desktop ? 288 : 320 }}

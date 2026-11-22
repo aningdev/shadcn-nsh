@@ -277,7 +277,7 @@ function HeldArrows() {
         focusVisibleStyle={{ outlineColor: colors.brand, outlineWidth: 2, outlineOffset: 1 }}
         style={{
           height: 208,
-          borderRadius: shape.inset,
+          borderRadius: shape.control,
           borderCurve: "continuous",
           borderWidth: 1,
           borderColor: focused() ? colors.brand : colors.border,

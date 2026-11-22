@@ -440,7 +440,7 @@ function Index() {
                     borderWidth: 1,
                     borderColor: colors.border,
                     overflow: "hidden",
-                    ...rounded(shape.card),
+                    ...rounded(shape.container),
                   }}
                 >
                   <Each of={group().demos}>

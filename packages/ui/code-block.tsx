@@ -70,7 +70,7 @@ export function codeBlockLook(): CodeBlockLook {
       overflow: "hidden",
       borderWidth: 1,
       borderColor: variant === "destructive" ? alpha(colors.destructive, 0.4) : colors.border,
-      ...rounded(shape.inset),
+      ...rounded(shape.control),
       backgroundColor: variant === "destructive" ? alpha(colors.destructive, 0.06) : colors.inset,
     }),
     header: (variant, size) => ({

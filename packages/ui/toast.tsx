@@ -37,7 +37,7 @@ const pointer = platform.desktop;
 /**
  * A toast (`nsh/base`'s `Toast`'s `style`): a row 12 points apart on the inverse finish (`finish.inverse`: the
  * floating pane every popup wears today, not the raised one, a control's, which a theme may make a tint over the page),
- * 10-point corners (`shape.inset`), 12 by 14 points of padding. Its title takes `toastTitle`,
+ * 12-point corners (`shape.container`), 12 by 14 points of padding. Its title takes `toastTitle`,
  * its description `toastText`.
  */
 export function toastLook(): ViewStyle {
@@ -47,7 +47,7 @@ export function toastLook(): ViewStyle {
     gap: 12,
     paddingVertical: 12,
     paddingHorizontal: 14,
-    ...rounded(shape.overlay),
+    ...rounded(shape.container),
     borderWidth: terminal ? stroke.hairline : stroke.surface,
     ...finish.inverse,
   };
@@ -98,7 +98,7 @@ export function toastActionLabel(): TextStyle {
 }
 
 /** A toast's close button (its cross): a circle 24 points across (the theme's
- * `radius-card` corners, half its side in the default theme), bare until the
+ * `radius-container` corners, half its side in the default theme), bare until the
  * pointer is over it, sinking to 90% while pressed (none with reduced
  * motion); keyboard focus `focusRing()`. */
 export function toastCloseLook() {
@@ -108,7 +108,7 @@ export function toastCloseLook() {
       height: 24,
       alignItems: "center",
       justifyContent: "center",
-      ...rounded(shape.card),
+      ...rounded(shape.container),
       ...pressTransition("background-color"),
     } as ViewStyle,
     get hoverStyle(): ViewStyle {

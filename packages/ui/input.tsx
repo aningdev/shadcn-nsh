@@ -133,7 +133,7 @@ function frame(o: FieldLookOptions | undefined): ViewStyle {
   const ghost = (read(o?.variant) ?? "default") === "ghost";
   const flat = !!read(o?.readonly) || !!read(o?.disabled);
   return {
-    ...fieldCorners(shape.field),
+    ...fieldCorners(shape.control),
     ...fieldEdgeWidths(),
     backgroundColor: ghost ? "transparent" : colors.field,
     // Recessed while editable; a read-only, disabled or ghost field lies flat. Its edge is

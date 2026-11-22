@@ -85,7 +85,7 @@ function Grid(props: { width: () => number }) {
           style={{
             backgroundColor: colors.card,
             ...finish.card,
-            borderRadius: shape.card,
+            borderRadius: shape.container,
             borderCurve: "continuous",
             borderWidth: 1,
             borderColor: colors.border,
@@ -139,7 +139,7 @@ function Grid(props: { width: () => number }) {
         <View
           style={{
             height: item().height,
-            borderRadius: shape.inset,
+            borderRadius: shape.control,
             borderCurve: "continuous",
             borderWidth: 1,
             borderColor: item().id === 60 ? toneColor("accent") : colors.border,
@@ -463,7 +463,7 @@ function EntryRow(props: { entry: Entry; label: string }) {
         alignItems: "center",
         gap: 12,
         paddingHorizontal: 14,
-        borderRadius: shape.inset,
+        borderRadius: shape.control,
         borderCurve: "continuous",
         backgroundColor: colors.raised,
         borderWidth: 1,
@@ -787,7 +787,7 @@ function More() {
                     style={{
                       width: 120,
                       height: 124,
-                      borderRadius: shape.inset,
+                      borderRadius: shape.control,
                       borderCurve: "continuous",
                       backgroundColor: colors.raised,
                       ...finish.raised,
@@ -982,7 +982,7 @@ export function ListDemo() {
           onLayout={({ bounds }) => width.set(bounds.size.width)}
           style={{
             height: desk ? 560 : 520,
-            borderRadius: shape.card,
+            borderRadius: shape.container,
             borderCurve: "continuous",
             borderWidth: 1,
             borderColor: colors.border,

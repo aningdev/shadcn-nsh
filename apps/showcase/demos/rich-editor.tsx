@@ -486,7 +486,7 @@ function DocumentPanel(props: {
         minHeight: 0,
         overflow: "hidden",
         backgroundColor: colors.card,
-        borderRadius: props.zoomed() ? 0 : shape.card,
+        borderRadius: props.zoomed() ? 0 : shape.container,
         borderWidth: props.zoomed() ? 0 : 1,
         borderColor: colors.border,
       }}
@@ -623,7 +623,7 @@ function StockCard(props: RichNodeViewProps) {
         alignItems: "center",
         gap: 16,
         padding: 16,
-        ...rounded(shape.card),
+        ...rounded(shape.container),
         borderWidth: 1,
         borderColor: props.selected ? colors.brand : colors.border,
       }}
@@ -734,7 +734,7 @@ function NodeViews() {
           overflow: "hidden",
           borderWidth: 1,
           borderColor: colors.border,
-          ...rounded(shape.card),
+          ...rounded(shape.container),
           backgroundColor: colors.card,
         }}
       >

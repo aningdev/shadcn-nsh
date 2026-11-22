@@ -173,7 +173,7 @@ export function Photo(props: {
       style={{
         width: props.width,
         height: props.height,
-        ...rounded(shape.inset),
+        ...rounded(shape.control),
         overflow: "hidden",
         backgroundColor: colors.raised,
         borderWidth: 1,
@@ -237,7 +237,7 @@ export function ToolCard(props: { tool: Tool }) {
 /** The card a search or a weather result sits in, under its trace line. */
 const resultCard: ViewStyle = {
   backgroundColor: colors.card,
-  ...rounded(shape.inset),
+  ...rounded(shape.control),
   borderWidth: 1,
   borderColor: colors.border,
   overflow: "hidden",
@@ -389,7 +389,7 @@ export function ErrorRow(props: { message: string; onRetry: () => void }) {
         alignItems: "center",
         gap: 12,
         padding: 12,
-        ...rounded(shape.inset),
+        ...rounded(shape.control),
         backgroundColor: toneTint("destructive"),
         borderWidth: 1,
         borderColor: alpha(colors.destructive, 0.32),

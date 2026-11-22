@@ -38,9 +38,9 @@ export const dockClasses = {
   handleClass: "basis-px bg-line",
   handleThumbClass: handleThumb,
   dockClass: "bg-inset",
-  dropIndicatorClass: "rounded-(--radius) border-2 border-brand bg-brand-tint",
+  dropIndicatorClass: "rounded-(--radius-container) border-2 border-brand bg-brand-tint",
   drawerClass: "border-r border-border bg-card",
-  sheetClass: "rounded-t-(--radius-card) border-t border-border bg-card",
+  sheetClass: "rounded-t-(--radius-modal) border-t border-border bg-card",
   backdropClass: "bg-scrim",
 };
 
@@ -92,7 +92,7 @@ export const dockTabCloseClass = terminal
 export function DockDragPreview(props: { title: string }) {
   return (
     <View
-      class="border-border rounded-(--radius) border px-3 py-1.5"
+      class="border-border rounded-(--radius-control) border px-3 py-1.5"
       style={{ backgroundColor: colors.raised, ...finish.raised }}
     >
       <Text class="text-foreground text-[13px] font-medium">{props.title}</Text>

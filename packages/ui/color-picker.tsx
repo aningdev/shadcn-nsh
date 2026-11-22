@@ -220,7 +220,7 @@ function FormatButton(props: { label: string }) {
         marginStart: terminal ? 0 : 4,
         marginEnd: terminal ? TERMINAL_COLUMN : 4,
         paddingHorizontal: terminal ? 0 : 6,
-        ...rounded(shape.field, 3),
+        ...rounded(shape.control, 3),
       }}
     >
       <Text style={{ fontSize: 12, fontWeight: font.weight("label"), color: colors.foreground }}>

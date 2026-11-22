@@ -51,7 +51,7 @@ export function Stage(props: { children?: __JSX.Element; width?: number; gap?: n
       return {
         flex: 1,
         minWidth: 0,
-        borderRadius: shape.card,
+        borderRadius: shape.container,
         borderWidth: 1,
         borderColor: ui().line,
         backgroundColor: tint(ui().text, 0.02),
@@ -107,7 +107,7 @@ export function Split(props: {
         ? {
             flex: 1,
             minWidth: 0,
-            borderRadius: shape.card,
+            borderRadius: shape.container,
             borderWidth: 1,
             borderColor: ui().line,
             backgroundColor: tint(ui().text, 0.02),

@@ -5,6 +5,7 @@ import {
   colors,
   finish,
   focusRing,
+  rounded,
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
@@ -103,7 +104,7 @@ function PhotoRow(props: { photo: Photo }) {
         style={{
           width: 56,
           height: 56,
-          borderRadius: shape.inset,
+          borderRadius: shape.control,
           borderCurve: "continuous",
           borderWidth: 1,
           borderColor: colors.border,
@@ -167,7 +168,7 @@ function PhotoTile(props: { photo: Photo }) {
       style={{
         padding: 6,
         gap: 8,
-        borderRadius: shape.card,
+        borderRadius: shape.container,
         borderCurve: "continuous",
       }}
     >
@@ -176,7 +177,7 @@ function PhotoTile(props: { photo: Photo }) {
         style={{
           width: "100%",
           aspectRatio: 4 / 3,
-          borderRadius: shape.inset,
+          borderRadius: rounded(shape.container, 6).borderRadius,
           borderCurve: "continuous",
           borderWidth: 1,
           borderColor: colors.border,
@@ -251,7 +252,7 @@ function Hero(props: {
               }
             : {
                 backgroundColor: colors.card,
-                borderRadius: shape.card,
+                borderRadius: shape.container,
                 borderCurve: "continuous",
                 borderWidth: 1,
                 borderColor: colors.border,

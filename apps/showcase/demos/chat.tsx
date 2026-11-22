@@ -812,7 +812,7 @@ export function ChatDemo() {
                         minHeight: 104,
                         padding: 12,
                         gap: 8,
-                        ...rounded(shape.inset),
+                        ...rounded(shape.control),
                         backgroundColor: colors.card,
                         ...finish.card,
                         borderWidth: 1,
@@ -944,7 +944,7 @@ export function ChatDemo() {
                 gap: 12,
                 minHeight: 48,
                 paddingHorizontal: 14,
-                ...rounded(shape.inset),
+                ...rounded(shape.container),
                 ...finish.menu,
                 borderWidth: 1,
                 borderColor: alpha(bannerKind() === "offline" ? colors.warn : colors.up, 0.35),
@@ -1010,7 +1010,7 @@ export function ChatDemo() {
             >
               <View
                 style={{
-                  ...rounded(shape.card),
+                  ...rounded(shape.container),
                   ...finish.menu,
                   borderWidth: 1,
                   paddingVertical: 6,

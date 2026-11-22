@@ -101,8 +101,8 @@ const monthGap = 16;
 /** The gap over each week: rows of 36 with a pointer, as shadcn's Base UI calendar's (28-point cells, `mt-2`). */
 const weekGap = 4;
 
-/** The corners of header arrows and month/year grid buttons (`shape.control`). */
-const cellRadius = () => shape.control;
+/** The corners of header arrows and month/year grid buttons (`shape.button`). */
+const cellRadius = () => shape.button;
 
 /** Day cell corner radius: `"pill"` gives a circle (`cell / 2`), `"control"` keeps `shape.control`. */
 const dayRadius = () => {
@@ -468,7 +468,7 @@ export const calendarLook = {
       return {
         height: 28,
         paddingHorizontal: terminal ? 8 : 10,
-        ...rounded(shape.control),
+        ...rounded(shape.button),
         justifyContent: "center" as const,
         // No type role has this size: a preset's 13 in both tiers.
         fontSize: 13,

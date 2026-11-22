@@ -443,7 +443,7 @@ function Product(props: { log: (text: string) => void }) {
           <CarouselContent
             style={{
               aspectRatio: 4 / 3,
-              ...rounded(shape.inset),
+              ...rounded(shape.control),
               borderCurve: "continuous",
               backgroundColor: colors.raised,
             }}
@@ -586,7 +586,7 @@ function Banners(props: { log: (text: string) => void }) {
           <CarouselContent
             style={{
               height: pointer ? 132 : 156,
-              ...rounded(shape.inset),
+              ...rounded(shape.control),
               borderCurve: "continuous",
             }}
           >
@@ -793,7 +793,7 @@ function Collections(props: { log: (text: string) => void }) {
                     flex: 1,
                     padding: 12,
                     justifyContent: "space-between",
-                    ...rounded(shape.inset),
+                    ...rounded(shape.control),
                     borderCurve: "continuous",
                     borderWidth: 1,
                     borderColor: colors.line,

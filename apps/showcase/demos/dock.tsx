@@ -358,7 +358,7 @@ function Workspace(props: {
           borderWidth: 1,
           borderColor: colors.border,
           backgroundColor: colors.card,
-          ...rounded(shape.card),
+          ...rounded(shape.container),
         }}
       >
         <View style={{ flex: 1, backgroundColor: colors.inset }}>

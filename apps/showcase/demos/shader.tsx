@@ -623,7 +623,7 @@ function Pages() {
           state={pages}
           style={{
             height: 260,
-            borderRadius: shape.card,
+            borderRadius: shape.container,
             borderWidth: 1,
             borderColor: colors.line,
             overflow: "hidden",

@@ -1,8 +1,8 @@
 // A pagination: `paginationItemClass` and `paginationArrows`, and the `Pagination` that wears them.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, terminal } from "@shadcn-nsh/theme";
+import { colors, rounded, shape, terminal } from "@shadcn-nsh/theme";
 import { ChevronRight } from "lucide";
-import type { JSX } from "nsh";
+import type { JSX, TextStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
 import {
   Pagination as BasePagination,
@@ -34,9 +34,12 @@ export interface PaginationItemClassOptions {
  * a color fade (still with reduced motion), the ends dimmed (`disabled:`),
  * the focus ring's outline. */
 const pageItem =
-  "flex-row items-center justify-center gap-1 px-2 rounded-(--radius-control) text-sm text-foreground " +
+  "flex-row items-center justify-center gap-1 px-2 text-sm text-foreground " +
   "transition-colors duration-200 motion-reduce:transition-none hover:bg-hover active:opacity-70 " +
   "selected:bg-primary selected:text-primary-foreground disabled:opacity-50 focus-visible:outline-2 focus-visible:outline-ring";
+
+/** A `Pagination` item's button corners (`shape.button`). */
+export const paginationItemStyle = (): TextStyle => rounded(shape.button) as TextStyle;
 
 /**
  * A `Pagination`'s `itemClass`, over the component's own numbers and
@@ -83,11 +86,12 @@ export type PaginationProps = BasePaginationProps & {
 
 /** A pager of page numbers and arrows. */
 export function Pagination(props: PaginationProps) {
-  const [, rest] = split(props, ["variant", "itemClass", "renderItem"]);
+  const [, rest] = split(props, ["variant", "itemClass", "itemStyle", "renderItem"]);
   return (
     <BasePagination
       {...rest}
       itemClass={props.itemClass ?? paginationItemClass({ variant: props.variant })}
+      itemStyle={[paginationItemStyle(), props.itemStyle ?? null]}
       renderItem={props.renderItem ?? paginationArrows}
     />
   );

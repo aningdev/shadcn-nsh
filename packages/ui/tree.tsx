@@ -128,7 +128,7 @@ function TerminalTreeRow(props: { entry: TreeEntry; detail?: string }) {
 }
 // @port end
 
-const treeFrameClass = "overflow-hidden rounded-(--radius-card) border border-border bg-card";
+const treeFrameClass = "overflow-hidden rounded-(--radius-container) border border-border bg-card";
 
 /** `nsh/base` Tree with row chrome and `TreeRow` by default. */
 export type TreeProps = BaseTreeProps;

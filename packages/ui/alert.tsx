@@ -61,7 +61,7 @@ export function alertLook(): AlertLook {
       paddingVertical: 12,
       borderWidth: stroke.hairline,
       borderColor: colors.border,
-      ...rounded(shape.inset),
+      ...rounded(shape.control),
       backgroundColor: colors.card,
     }),
     title: (variant: AlertVariant): TextStyle => ({

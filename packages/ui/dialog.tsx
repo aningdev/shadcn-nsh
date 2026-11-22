@@ -39,7 +39,7 @@ const cardWidth = pointer ? 360 : 320;
 export function dialogCard(width?: number): ViewStyle {
   return {
     ...(width === undefined ? {} : { margin: "auto", width, maxWidth: "90%" }),
-    ...rounded(shape.dialog),
+    ...rounded(shape.modal),
     borderWidth: terminal ? stroke.hairline : stroke.surface,
     padding: 20,
     gap: 12,

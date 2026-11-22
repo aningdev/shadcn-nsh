@@ -45,12 +45,12 @@ export function popupSurface(): ViewStyle {
     // A terminal draws a popup as its line alone, over no fill of its own.
     terminal
       ? {
-          ...rounded(shape.overlay),
+          ...rounded(shape.container),
           borderWidth: stroke.hairline,
           padding: 4,
           borderColor: finish.menu.borderColor,
         }
-      : { ...rounded(shape.overlay), borderWidth: stroke.surface, padding: 4, ...finish.menu }
+      : { ...rounded(shape.container), borderWidth: stroke.surface, padding: 4, ...finish.menu }
   );
 }
 

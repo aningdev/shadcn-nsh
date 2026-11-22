@@ -59,7 +59,7 @@ export function Badge(props: BadgeProps) {
       style={{
         paddingHorizontal: terminal ? 0 : size.pad,
         height: terminal ? TERMINAL_ROW : size.height,
-        ...rounded(shape.chip),
+        ...rounded(shape.control),
         justifyContent: "center",
         backgroundColor: outline
           ? "transparent"

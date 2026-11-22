@@ -76,7 +76,7 @@ export function emptyLook(): EmptyLook {
         ? {
             width: mediaSide,
             height: mediaSide,
-            ...rounded(shape.inset),
+            ...rounded(shape.control),
             backgroundColor: token("muted"),
           }
         : {}),

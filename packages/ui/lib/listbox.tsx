@@ -44,7 +44,7 @@ const SHEET_FOOT = 34;
 export function listboxPopup(o?: ListboxPopupOptions): ViewStyle {
   return pointer
     ? {
-        ...rounded(shape.overlay),
+        ...rounded(shape.container),
         borderWidth: stroke.surface,
         padding: 6,
         ...finish.menu,
@@ -53,8 +53,8 @@ export function listboxPopup(o?: ListboxPopupOptions): ViewStyle {
       }
     : {
         backgroundColor: colors.card,
-        borderTopLeftRadius: shape.sheet,
-        borderTopRightRadius: shape.sheet,
+        borderTopLeftRadius: shape.modal,
+        borderTopRightRadius: shape.modal,
         ...cornerCurve,
         paddingHorizontal: 10,
         paddingTop: 10,

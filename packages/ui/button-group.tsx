@@ -87,7 +87,7 @@ export function buttonGroupLook(): ButtonGroupLook {
       backgroundColor: token("muted"),
       borderWidth: terminal ? 0 : stroke.control,
       borderColor: colors.border,
-      ...rounded(terminal ? 0 : shape.control),
+      ...rounded(terminal ? 0 : shape.button),
     }),
     text: (): TextStyle => ({
       fontSize: density.body,

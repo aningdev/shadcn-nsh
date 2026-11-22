@@ -46,14 +46,14 @@ export function sheetPanel(side: SheetSide): ViewStyle {
       ...(bottom
         ? {
             borderBottomWidth: 0,
-            borderTopLeftRadius: shape.sheet,
-            borderTopRightRadius: shape.sheet,
+            borderTopLeftRadius: shape.modal,
+            borderTopRightRadius: shape.modal,
             paddingTop: 8,
           }
         : {
             borderTopWidth: 0,
-            borderBottomLeftRadius: shape.sheet,
-            borderBottomRightRadius: shape.sheet,
+            borderBottomLeftRadius: shape.modal,
+            borderBottomRightRadius: shape.modal,
             paddingTop: safeArea().top + 16,
             paddingBottom: 20,
           }),
@@ -84,13 +84,13 @@ export function sheetPanel(side: SheetSide): ViewStyle {
     ...(side === "right"
       ? {
           borderLeftWidth: stroke.surface,
-          borderTopLeftRadius: shape.sheet,
-          borderBottomLeftRadius: shape.sheet,
+          borderTopLeftRadius: shape.modal,
+          borderBottomLeftRadius: shape.modal,
         }
       : {
           borderRightWidth: stroke.surface,
-          borderTopRightRadius: shape.sheet,
-          borderBottomRightRadius: shape.sheet,
+          borderTopRightRadius: shape.modal,
+          borderBottomRightRadius: shape.modal,
         }),
   };
 }

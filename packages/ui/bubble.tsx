@@ -165,7 +165,7 @@ export function bubbleLook(): BubbleLook {
     content: (variant: BubbleVariant): ViewStyle => ({
       minWidth: 0,
       maxWidth: "100%",
-      ...rounded(variant === "ghost" ? 0 : shape.card),
+      ...rounded(variant === "ghost" ? 0 : shape.container),
       borderWidth: stroke.hairline,
       borderColor: variant === "outline" ? colors.border : "transparent",
       backgroundColor: fill(variant),

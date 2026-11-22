@@ -12,7 +12,7 @@ import { createMotion, reduceMotion, split, token, View } from "nsh";
  */
 export function skeletonLook(): ViewStyle {
   return {
-    ...rounded(shape.inset),
+    ...rounded(shape.control),
     backgroundColor: token("accent"),
   };
 }

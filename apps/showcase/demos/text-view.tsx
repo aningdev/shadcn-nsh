@@ -314,7 +314,7 @@ function Chart(props: { source: string }) {
         flexDirection: "row",
         alignItems: "flex-end",
         gap: 8,
-        ...rounded(shape.inset),
+        ...rounded(shape.control),
         borderWidth: 1,
         borderColor: colors.border,
         backgroundColor: colors.inset,
@@ -386,7 +386,7 @@ function renderExtension(node: TextViewCustomNode) {
           style={{
             flexDirection: "row",
             gap: 12,
-            ...rounded(shape.inset),
+            ...rounded(shape.control),
             backgroundColor: tints.up,
             padding: 12,
           }}
@@ -400,7 +400,7 @@ function renderExtension(node: TextViewCustomNode) {
         <View
           style={{
             gap: 4,
-            ...rounded(shape.inset),
+            ...rounded(shape.control),
             borderWidth: 1,
             borderColor: colors.info,
             padding: 12,

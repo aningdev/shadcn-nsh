@@ -12,6 +12,7 @@ import { Menu, MenuContent, MenuItem, MenuLabel, MenuTrigger } from "@/packages/
 import {
   paginationArrows,
   paginationItemClass,
+  paginationItemStyle,
   type PaginationItemState,
 } from "@/packages/ui/pagination";
 import { Toggle } from "@/packages/ui/toggle";
@@ -141,6 +142,7 @@ function App() {
             visiblePages={wide() ? 7 : 5}
             accessibilityLabel="Search results pages"
             itemClass={paginationItemClass({ variant: "default" })}
+            itemStyle={paginationItemStyle()}
             renderItem={paginationArrows}
             previousAccessibilityLabel="Previous"
             nextAccessibilityLabel="Next"
@@ -157,6 +159,7 @@ function App() {
             nextAccessibilityLabel="Next chapter"
             class="items-center justify-between"
             itemClass={paginationItemClass({ variant: "outline" })}
+            itemStyle={paginationItemStyle()}
             renderItem={paginationArrows}
             onChange={({ page: next }) => chapter.set(next)}
           >
@@ -213,6 +216,7 @@ function App() {
             nextAccessibilityLabel="Next page"
             class="flex-wrap gap-1"
             itemClass={paginationItemClass()}
+            itemStyle={paginationItemStyle()}
             renderItem={(item) => pageContent(item)}
             onChange={({ page: next }) => goTo(next)}
           />

@@ -31,7 +31,7 @@ export interface TooltipLookOptions {
 export function tooltipLook(o?: TooltipLookOptions) {
   return {
     class: o?.rich
-      ? "gap-2 rounded-(--radius) border p-2.5"
+      ? "gap-2 rounded-(--radius-container) border p-2.5"
       : "flex-row items-center gap-2 rounded-(--radius-control) border px-2 py-1",
     style: {
       get backgroundColor() {

@@ -23,7 +23,7 @@ export function toolbarTrack(o?: ToolbarTrackOptions): ViewStyle {
     gap: terminal ? TERMINAL_GAP : 2,
     flexWrap: terminal && !o?.vertical ? "wrap" : undefined,
     padding: 3,
-    ...rounded(shape.inset),
+    ...rounded(shape.control),
     borderWidth: stroke.control,
     borderColor: colors.border,
     backgroundColor: colors.inset,

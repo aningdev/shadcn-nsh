@@ -13,6 +13,8 @@ import {
   stateLayerColor,
   terminal,
   TERMINAL_ROW,
+  tier,
+  type Tiered,
   tints,
   shape,
   stroke,
@@ -52,7 +54,6 @@ const dims = (scale = 1) => ({
   control: Math.round(controlSize.control * scale),
   height: terminal ? TERMINAL_ROW : Math.round(controlSize.control * scale),
   check: Math.round(controlSize.check * scale),
-  corner: Math.round(controlSize.corner * scale),
   dot: Math.round(controlSize.dot * scale),
 });
 
@@ -61,17 +62,30 @@ export type ChoiceWell = "well" | "inset" | "outline";
 
 interface CheckboxPreset {
   border: number;
+  corner: Tiered<number>;
   target: number;
   well: ChoiceWell;
   hasTarget: boolean;
 }
 
 const checkboxPresets: Record<Controls, CheckboxPreset> = {
-  base: { border: 1, target: 0, well: "well", hasTarget: false },
-  // M3 Checkbox 18dp outlined box (2dp outline, 40dp state-layer target; _md-comp-checkbox.scss v34.0.21:70,92 / CheckboxTokens.kt).
-  material: { border: 2, target: 40, well: "outline", hasTarget: true },
-  // WinUI 3 CheckBox resting ControlAltFillColorSecondary well with 1px ControlStrongStrokeColorDefault border (CheckBox_themeresources.xaml in winui3/release/2.7.0).
-  winui: { border: 1, target: 0, well: "inset", hasTarget: false },
+  base: { border: 1, corner: { pointer: 5, touch: 7 }, target: 0, well: "well", hasTarget: false },
+  // M3 Checkbox 18dp outlined box (2dp corner, 2dp outline, 40dp state-layer target; _md-comp-checkbox.scss v34.0.21:70,92 / CheckboxTokens.kt).
+  material: {
+    border: 2,
+    corner: { pointer: 2, touch: 2 },
+    target: 40,
+    well: "outline",
+    hasTarget: true,
+  },
+  // WinUI 3 CheckBox resting ControlAltFillColorSecondary well with 4px corner and 1px ControlStrongStrokeColorDefault border (CheckBox_themeresources.xaml in winui3/release/2.7.0).
+  winui: {
+    border: 1,
+    corner: { pointer: 4, touch: 4 },
+    target: 0,
+    well: "inset",
+    hasTarget: false,
+  },
 };
 
 /** The fill of a box or ring that is off: spread it after the box's
@@ -175,8 +189,9 @@ export function checkboxLook(o?: ChoiceOptions): CheckboxLook {
   return {
     indicatorClass: choiceSink,
     get indicatorStyle(): ViewStyle {
-      const { control, height, corner } = dims(o?.scale);
+      const { control, height } = dims(o?.scale);
       const g = checkboxPresets[controls()];
+      const corner = Math.round(g.corner[tier] * (o?.scale ?? 1));
       return {
         width: control,
         height,
@@ -228,7 +243,7 @@ const MARK_WEIGHT = 3.84;
  * reduced motion.
  */
 export function CheckboxMark(props: { mark: CheckboxMarkKind } & ChoiceOptions) {
-  const { control, height, check: checkSize, corner } = dims(props.scale);
+  const { control, height, check: checkSize } = dims(props.scale);
   // Each part stays mounted while it fades out (unmounting it on the value
   // showed only the fade in).
   const on = follow(() => (props.mark ? 1 : 0));
@@ -263,7 +278,11 @@ export function CheckboxMark(props: { mark: CheckboxMarkKind } & ChoiceOptions) 
           checked={!!props.mark}
         />
       ) : null}
-      <ChoiceLight on={on} radius={props.round ? control / 2 : corner} border={cb.border} />
+      <ChoiceLight
+        on={on}
+        radius={props.round ? control / 2 : Math.round(cb.corner[tier] * (props.scale ?? 1))}
+        border={cb.border}
+      />
       {glyph(check, Check)}
       {glyph(dash, Minus)}
     </View>
@@ -319,7 +338,7 @@ export function choiceTileLook(on: Live<boolean>, o?: ChoiceTileOptions): Choice
         minWidth: 0,
         padding: 12,
         paddingTop: 14,
-        ...rounded(shape.inset),
+        ...rounded(shape.control),
         borderWidth: stroke.control,
         borderColor: on ? colors.brand : colors.border,
         backgroundColor: on ? tints.brand : colors.raised,

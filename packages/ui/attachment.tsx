@@ -32,9 +32,9 @@ const sizes = {
   xs: { gap: 6, padX: 6, padY: 4, media: 28, glyph: 14, title: density.note, minWidth: 0 },
 } as const;
 
-/** The frame's corners at a size: a card's, and the inset's at `xs`. Read where the frame is
+/** The frame's corners at a size: container, and control at `xs`. Read where the frame is
  * drawn — `radius` is the theme's. */
-const corners = (size: AttachmentSize): number => (size === "xs" ? shape.inset : shape.card);
+const corners = (size: AttachmentSize): number => (size === "xs" ? shape.control : shape.container);
 
 /** The width of a vertical attachment, and of the row that groups attachments. */
 const verticalWidth = 120;
@@ -147,7 +147,7 @@ export function attachmentLook(): AttachmentLook {
       alignItems: "center",
       justifyContent: "center",
       overflow: "hidden",
-      ...rounded(size === "xs" ? shape.control : shape.inset),
+      ...rounded(corners(size), orientation === "vertical" ? sizes[size].gap : sizes[size].padY),
       backgroundColor: state === "error" ? tints.destructive : token("muted"),
       ...(variant === "image" && state !== "done" && state !== "idle" ? { opacity: 0.6 } : {}),
     }),
@@ -187,7 +187,7 @@ export function attachmentLook(): AttachmentLook {
         bottom: 0,
         left: 0,
         zIndex: 10,
-        ...rounded(shape.card),
+        ...rounded(shape.container),
         borderWidth: 0,
         backgroundColor: "transparent",
       };
