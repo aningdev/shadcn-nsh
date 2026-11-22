@@ -10,7 +10,6 @@ import { compileAppearanceTokensJson } from "./compile";
 import { loadSourceItem, mergeTokenTrees, resolveAliases, type ResolverDoc } from "./resolver";
 import {
   COLOR_ROLES,
-  COLOR_ROLE_BY_NAME,
   EXT_NS,
   SHAPE_ROLES,
   TYPE_ROLES,
@@ -546,7 +545,12 @@ export function compileDesignMd(resolverPath: string): string {
   for (const r of COLOR_ROLES) byRole.set(r, []);
   for (const name of colorKeys) {
     const tokExt = getExt(lightColorsRaw[name]);
-    const role = (tokExt?.role as ColorRole | undefined) ?? COLOR_ROLE_BY_NAME[name] ?? "chrome";
+    const role = tokExt?.role as ColorRole | undefined;
+    if (!role) {
+      throw new Error(
+        `${resolverPath}: color.${name} has no $extensions["dev.aning.shadcn-nsh"].role`,
+      );
+    }
     byRole.get(role)!.push(name);
   }
 

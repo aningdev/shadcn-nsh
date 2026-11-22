@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: "WinUI 3"
-description: "DTCG 2025.10 resolver for the WinUI 3 (Windows 11 / Fluent 2, winui3/release/2.7.0) theme."
+description: "WinUI 3 theme (Windows 11 / Fluent 2, winui3/release/2.7.0)."
 colors:
   scrim: "#0000004d"
   media: "#10131a"
@@ -347,7 +347,7 @@ components:
 
 ## Overview
 
-DTCG 2025.10 resolver for the WinUI 3 (Windows 11 / Fluent 2, winui3/release/2.7.0) theme.
+WinUI 3 theme (Windows 11 / Fluent 2, winui3/release/2.7.0).
 
 WinUI 3 / Fluent 2 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composited over `SolidBackgroundFillColorBase` (`#F3F3F3` light / `#202020` dark) with `#0078D4` accent, `Segoe UI Variable` + `Consolas`, double focus strokes, and deterministic timing curves.
 

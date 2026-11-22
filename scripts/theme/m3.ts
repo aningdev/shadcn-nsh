@@ -694,8 +694,7 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
   return {
     id: "material",
     name: "Material",
-    resolverDescription:
-      "DTCG 2025.10 resolver for the Material 3 Expressive theme (material-web v34.0.21 / Compose M3 1.5.0).",
+    resolverDescription: "Material 3 Expressive theme (material-web v34.0.21 / Compose M3 1.5.0).",
     themeDescription: "Appearance-invariant base tokens and Material 3 Expressive style overrides.",
     finishesDescription:
       "Appearance-invariant surface finish recipes for Material 3 Expressive (Level 1-3 elevations, Android elevation metadata, no blur).",

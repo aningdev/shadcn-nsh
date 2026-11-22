@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: "NSH Gallery UI"
-description: "DTCG 2025.10 resolver for the default NSH Gallery UI theme."
+description: "Default NSH Gallery UI theme."
 colors:
   brand-fill: "#c6ef6a"
   on-brand: "#13160c"
@@ -329,7 +329,7 @@ components:
 
 ## Overview
 
-DTCG 2025.10 resolver for the default NSH Gallery UI theme.
+Default NSH Gallery UI theme.
 
 NSH Gallery UI default theme: graphite dark and paper light surfaces with citrus lime (`#c6ef6a`) brand fill, continuous squircle corners, spring motion physics, and layered surface finishes.
 

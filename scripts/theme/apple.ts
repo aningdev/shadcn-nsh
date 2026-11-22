@@ -453,8 +453,7 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
   return {
     id: "apple",
     name: "Apple",
-    resolverDescription:
-      "DTCG 2025.10 resolver for the Apple theme (Apple HIG / UIKit system palette and Liquid Glass).",
+    resolverDescription: "Apple theme (Apple HIG / UIKit system palette and Liquid Glass).",
     themeDescription:
       "Appearance-invariant base tokens and Apple HIG / UIKit style overrides for the Apple theme.",
     finishesDescription:

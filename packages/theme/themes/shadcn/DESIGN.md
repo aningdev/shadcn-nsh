@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: "shadcn neutral"
-description: "DTCG 2025.10 resolver for the shadcn neutral theme."
+description: "shadcn/ui neutral theme."
 colors:
   scrim: "#00000080"
   media: "#10131a"
@@ -331,7 +331,7 @@ components:
 
 ## Overview
 
-DTCG 2025.10 resolver for the shadcn neutral theme.
+shadcn/ui neutral theme.
 
 shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) and Tailwind-style border/shadow lifts (`references/shadcn-ui` `new-york-v4`).
 

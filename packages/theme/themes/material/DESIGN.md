@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: Material
-description: "DTCG 2025.10 resolver for the Material 3 Expressive theme (material-web v34.0.21 / Compose M3 1.5.0)."
+description: "Material 3 Expressive theme (material-web v34.0.21 / Compose M3 1.5.0)."
 colors:
   scrim: "#00000052"
   media: "#10131a"
@@ -331,7 +331,7 @@ components:
 
 ## Overview
 
-DTCG 2025.10 resolver for the Material 3 Expressive theme (material-web v34.0.21 / Compose M3 1.5.0).
+Material 3 Expressive theme (material-web v34.0.21 / Compose M3 1.5.0).
 
 Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built from the `#6750A4` baseline with tonal surface containers, Expressive Tone 30 `on*Container` roles, state-layer overlays, and Expressive spatial/effects springs.
 

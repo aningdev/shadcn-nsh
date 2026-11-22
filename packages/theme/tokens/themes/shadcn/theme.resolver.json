@@ -2,7 +2,7 @@
   "$schema": "https://www.designtokens.org/schemas/2025.10/resolver.json",
   "name": "shadcn neutral",
   "version": "2025.10",
-  "description": "DTCG 2025.10 resolver for the shadcn neutral theme.",
+  "description": "shadcn/ui neutral theme.",
   "sets": {
     "base": {
       "description": "Cross-theme semantic defaults and shared typography/motion structure.",

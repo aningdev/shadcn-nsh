@@ -867,8 +867,7 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
   return {
     id: "winui",
     name: "WinUI 3",
-    resolverDescription:
-      "DTCG 2025.10 resolver for the WinUI 3 (Windows 11 / Fluent 2, winui3/release/2.7.0) theme.",
+    resolverDescription: "WinUI 3 theme (Windows 11 / Fluent 2, winui3/release/2.7.0).",
     themeDescription:
       "Appearance-invariant base tokens and WinUI 3 style overrides (Segoe UI Variable, Consolas, double focus rings, timing motion).",
     finishesDescription:

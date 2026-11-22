@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: "Solid Glass"
-description: "DTCG 2025.10 resolver for the Solid Glass theme."
+description: "Solid Glass theme."
 colors:
   scrim: "#00000080"
   media: "#10131a"
@@ -331,7 +331,7 @@ components:
 
 ## Overview
 
-DTCG 2025.10 resolver for the Solid Glass theme.
+Solid Glass theme.
 
 Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass with top-edge light rims, hairline glass borders, and ambient drop shadows (`state.press-scale: 1`).
 

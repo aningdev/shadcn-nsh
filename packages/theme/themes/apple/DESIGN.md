@@ -1,7 +1,7 @@
 ---
 version: alpha
 name: Apple
-description: "DTCG 2025.10 resolver for the Apple theme (Apple HIG / UIKit system palette and Liquid Glass)."
+description: "Apple theme (Apple HIG / UIKit system palette and Liquid Glass)."
 colors:
   scrim: "#00000066"
   media: "#10131a"
@@ -331,7 +331,7 @@ components:
 
 ## Overview
 
-DTCG 2025.10 resolver for the Apple theme (Apple HIG / UIKit system palette and Liquid Glass).
+Apple theme (Apple HIG / UIKit system palette and Liquid Glass).
 
 Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGroupedBackground`, `label`) with Retina 0.5px hairlines, capsule controls, continuous corners, and Liquid Glass on floating and raised surfaces.
 

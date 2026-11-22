@@ -2,7 +2,7 @@
   "$schema": "https://www.designtokens.org/schemas/2025.10/resolver.json",
   "name": "Solid Glass",
   "version": "2025.10",
-  "description": "DTCG 2025.10 resolver for the Solid Glass theme.",
+  "description": "Solid Glass theme.",
   "sets": {
     "base": {
       "description": "Cross-theme semantic defaults and shared typography/motion structure.",

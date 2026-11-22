@@ -584,7 +584,7 @@ export function themeFiles(): ThemeGeneratorOutput {
   return {
     id: "solid-glass",
     name: "Solid Glass",
-    resolverDescription: "DTCG 2025.10 resolver for the Solid Glass theme.",
+    resolverDescription: "Solid Glass theme.",
     themeDescription:
       "Appearance-invariant base tokens and press-scale override for the Solid Glass theme.",
     finishesDescription: "Appearance-invariant surface finish recipes for the Solid Glass theme.",

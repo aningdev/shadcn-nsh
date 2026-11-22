@@ -350,7 +350,7 @@ export function themeFiles(): ThemeGeneratorOutput {
   return {
     id: "shadcn",
     name: "shadcn neutral",
-    resolverDescription: "DTCG 2025.10 resolver for the shadcn neutral theme.",
+    resolverDescription: "shadcn/ui neutral theme.",
     themeDescription:
       "Appearance-invariant base tokens and press-scale override for the shadcn neutral theme.",
     finishesDescription:

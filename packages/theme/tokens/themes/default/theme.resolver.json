@@ -2,7 +2,7 @@
   "$schema": "https://www.designtokens.org/schemas/2025.10/resolver.json",
   "name": "NSH Gallery UI",
   "version": "2025.10",
-  "description": "DTCG 2025.10 resolver for the default NSH Gallery UI theme.",
+  "description": "Default NSH Gallery UI theme.",
   "sets": {
     "base": {
       "description": "Cross-theme semantic defaults and shared typography/motion structure.",

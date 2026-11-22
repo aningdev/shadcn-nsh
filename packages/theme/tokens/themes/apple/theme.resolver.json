@@ -2,7 +2,7 @@
   "$schema": "https://www.designtokens.org/schemas/2025.10/resolver.json",
   "name": "Apple",
   "version": "2025.10",
-  "description": "DTCG 2025.10 resolver for the Apple theme (Apple HIG / UIKit system palette and Liquid Glass).",
+  "description": "Apple theme (Apple HIG / UIKit system palette and Liquid Glass).",
   "sets": {
     "base": {
       "description": "Cross-theme semantic defaults and shared typography/motion structure.",
