@@ -167,7 +167,7 @@ export function collapsingHeaderLook(): CollapsingHeaderLook {
       flexShrink: 1,
       fontSize: terminal ? undefined : font.size("display"),
       fontWeight: font.weight("display"),
-      letterSpacing: font.tracking("display"),
+      letterSpacing: font.letterSpacing("display"),
       color: ink(),
       numberOfLines: 1,
       scale: terminal

@@ -25,10 +25,10 @@ const fillToken = (fill: unknown): string => {
 export function withSurfaces(roles: Roles): Roles {
   const menu = roles.menu;
   if (menu === undefined) throw new Error("the finishes state no menu");
-  const token = fillToken(menu.backgroundColor);
+  const token = fillToken(menu.background);
   const inverse = {
     ...menu,
-    backgroundColor: (menu.backgroundColor as string).replace(`{${token}}`, "{inverse}"),
+    background: (menu.background as string).replace(`{${token}}`, "{inverse}"),
   };
   return Object.fromEntries(
     Object.entries(roles).flatMap(([role, finish]) =>
@@ -38,18 +38,18 @@ export function withSurfaces(roles: Roles): Roles {
             [
               "dialog",
               {
-                backgroundColor: "{card}",
-                boxShadow: menu.boxShadow,
-                borderColor: "{border}",
+                background: "{card}",
+                shadow: menu.shadow,
+                "border-color": "{border}",
                 material: null,
               },
             ],
             [
               "tooltip",
               {
-                backgroundColor: "{popover}",
-                boxShadow: "none",
-                borderColor: "{border}",
+                background: "{popover}",
+                shadow: "none",
+                "border-color": "{border}",
                 material: null,
               },
             ],

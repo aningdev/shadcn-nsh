@@ -164,7 +164,11 @@ export function Legend(props: { color: string; label: string; value?: string }) 
  */
 export function Appear(props: { index?: number; flex?: boolean; children: JSX.Element }) {
   const t = createAnimatedValue(0);
-  void t.timing(1, { ...motion.enter, delay: Math.min(8, props.index ?? 0) * 40 });
+  void t.timing(1, {
+    duration: motion.enter.duration,
+    easing: motion.enter.timingFunction,
+    delay: Math.min(8, props.index ?? 0) * 40,
+  });
   return (
     <View
       style={{

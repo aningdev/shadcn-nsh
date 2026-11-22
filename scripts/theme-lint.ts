@@ -40,10 +40,10 @@ interface ThemeFile {
 /** One surface of the material: its fill, the gradient over it, its shadow and its edge. */
 interface Finish {
   [key: string]: unknown;
-  backgroundColor?: string;
-  backgroundImage?: string;
-  boxShadow?: string;
-  borderColor?: string;
+  background?: string;
+  gradient?: string;
+  shadow?: string;
+  "border-color"?: string;
   backdropFilter?: string;
   material?: unknown;
 }
@@ -69,7 +69,7 @@ const clear = (value: string | undefined) =>
       .every((stop) => stop.trim().startsWith("transparent")));
 
 /** Whether a finish paints a fill: its colour or its gradient shows. */
-const paints = (finish: Finish) => !clear(finish.backgroundColor) || !clear(finish.backgroundImage);
+const paints = (finish: Finish) => !clear(finish.background) || !clear(finish.gradient);
 
 /** The themes: every folder under `themes/` except `native` (a platform chooser, not a theme). */
 const themes = readdirSync(join(root, "packages/theme/themes"))
@@ -285,7 +285,7 @@ for (const theme of themes) {
       if (base !== undefined && paints(finish) !== paints(base))
         fail(
           paints(base)
-            ? `${path}: ${role} paints no fill (backgroundColor and backgroundImage both clear), and the default theme's does`
+            ? `${path}: ${role} paints no fill (background and gradient both clear), and the default theme's does`
             : `${path}: ${role} paints a fill, and the default theme's is clear`,
         );
 
@@ -309,24 +309,22 @@ for (const theme of themes) {
       for (const problem of checkMaterial(path, `${role}.${appearance}`, finish, kinds))
         fail(problem);
 
-      // `boxShadow` is ink, except any `{token}` it names must exist and be a `"color"` token.
-      for (const name of findTokenRefs(finish.boxShadow ?? "")) {
+      // `shadow` is ink, except any `{token}` it names must exist and be a `"color"` token.
+      for (const name of findTokenRefs(finish.shadow ?? "")) {
         const kind = kinds.get(name);
         if (kind === undefined)
-          fail(`${path}: ${role}.boxShadow names token \`${name}\`, which ${theme} does not have`);
+          fail(`${path}: ${role}.shadow names token \`${name}\`, which ${theme} does not have`);
         else if (kind !== "color")
-          fail(
-            `${path}: ${role}.boxShadow names token \`${name}\`, which is a ${kind}, not a color`,
-          );
+          fail(`${path}: ${role}.shadow names token \`${name}\`, which is a ${kind}, not a color`);
       }
-      for (const [legacy] of (finish.boxShadow ?? "").matchAll(/var\(--[A-Za-z0-9-]+\)/g))
-        fail(`${path}: ${role}.boxShadow writes ${legacy}; use \`{token}\` syntax`);
+      for (const [legacy] of (finish.shadow ?? "").matchAll(/var\(--[A-Za-z0-9-]+\)/g))
+        fail(`${path}: ${role}.shadow writes ${legacy}; use \`{token}\` syntax`);
     }
   }
 }
 
-// 4b. Every theme states the same style (type, shape, size, stroke, focus, state, motion, icon,
-// indicator), with `{token}` references typed by DTCG `$type`.
+// 4b. Every theme states the same style (typography, dimension, shape, state, duration, transition,
+// motion, indicator), with `{token}` references typed by DTCG `$type`.
 for (const theme of themes) {
   const path = `packages/theme/themes/${theme}/semantics.json`;
   const kinds = tokenKinds(tokensOf.get(theme)!.cssVars);

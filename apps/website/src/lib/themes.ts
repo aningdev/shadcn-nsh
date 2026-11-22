@@ -30,10 +30,10 @@ export type ThemeFile = {
 
 /** The fields a finish may draw with, in `semantics.json`'s order. */
 export const FINISH_FIELDS = [
-  "backgroundColor",
-  "backgroundImage",
-  "boxShadow",
-  "borderColor",
+  "background",
+  "gradient",
+  "shadow",
+  "border-color",
   "backdropFilter",
 ] as const;
 
@@ -269,11 +269,11 @@ export function finishSampleCss(): string {
           const written = finish[field];
           return written === undefined ? undefined : filled(written, vars);
         };
-        const backgroundColor = value("backgroundColor");
-        const backgroundImage = value("backgroundImage");
-        const boxShadow = value("boxShadow");
+        const backgroundColor = value("background");
+        const backgroundImage = value("gradient");
+        const boxShadow = value("shadow");
         const backdropFilter = value("backdropFilter");
-        const borderColor = value("borderColor");
+        const borderColor = value("border-color");
         if (backgroundColor !== undefined)
           declarations.push(`background-color:${backgroundColor};`);
         if (backgroundImage !== undefined)

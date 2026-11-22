@@ -739,14 +739,14 @@ async function mergeSemanticsOnAdd(template: string, dir: string, nsh: string) {
   await copyApp(template, dir);
   const semanticsPath = path.join(dir, "lib/ui/semantics.json");
   const semantics = JSON.parse(await fs.readFile(semanticsPath, "utf8")) as {
-    state: { pressScale: number };
+    state: { "press-scale": number };
     indicator: { tabs?: string };
     finishes: {
       shared: Record<string, Record<string, unknown>>;
       light: Record<string, Record<string, unknown>>;
     };
   };
-  semantics.state.pressScale = 1;
+  semantics.state["press-scale"] = 1;
   delete semantics.indicator.tabs;
   delete semantics.finishes.shared.dialog;
   delete semantics.finishes.light.dialog;
@@ -756,8 +756,8 @@ async function mergeSemanticsOnAdd(template: string, dir: string, nsh: string) {
   await step("add button", "bun", [cli, "add", "button"], dir);
 
   const merged = JSON.parse(await fs.readFile(semanticsPath, "utf8")) as typeof semantics;
-  if (merged.state.pressScale !== 1) {
-    throw new StepFailure("semantics merge", "      add overwrote customized state.pressScale");
+  if (merged.state["press-scale"] !== 1) {
+    throw new StepFailure("semantics merge", "      add overwrote customized state.press-scale");
   }
   if (
     merged.indicator.tabs !== "pill" ||

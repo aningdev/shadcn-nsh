@@ -305,23 +305,23 @@ describe("compiled winui theme files", () => {
     expect(Object.keys(files.theme.cssVars.light)).toEqual(Object.keys(defaultTheme.cssVars.light));
     expect(Object.keys(files.theme.cssVars.dark)).toEqual(Object.keys(defaultTheme.cssVars.dark));
 
-    expect(files.semantics.motion.press).toEqual({ duration: 83, easing: "decelerate" });
-    expect(files.semantics.size.density.pointer.row).toBe(40);
+    expect(files.semantics.motion.press).toEqual({ duration: 83, timingFunction: "decelerate" });
+    expect(files.semantics.dimension.size.density.pointer.row).toBe(40);
     expect(files.semantics.finishes.shared.tooltip).toMatchObject({
-      backgroundColor: "{popover}",
-      borderColor: "{glass-edge}",
+      background: "{popover}",
+      "border-color": "{glass-edge}",
       material: { windows: { backdrop: "blur" } },
     });
     expect(files.semantics.finishes.light.glass).toMatchObject({
-      backgroundColor: "oklch(from {popover} l c h / 0.85)",
+      background: "oklch(from {popover} l c h / 0.85)",
     });
     expect(files.semantics.finishes.dark.glass).toMatchObject({
-      backgroundColor: "oklch(from {popover} l c h / 0.96)",
+      background: "oklch(from {popover} l c h / 0.96)",
     });
-    expect(files.semantics.finishes.light.menu?.boxShadow).toContain("0 16px 32px");
-    expect(files.semantics.finishes.light.dialog?.boxShadow).toContain("0 64px 128px");
-    expect(hexOf(String(files.semantics.finishes.light.dialog?.borderColor))).toBe("#c1c1c1");
-    expect(hexOf(String(files.semantics.finishes.dark.dialog?.borderColor))).toBe("#424242");
+    expect(files.semantics.finishes.light.menu?.shadow).toContain("0 16px 32px");
+    expect(files.semantics.finishes.light.dialog?.shadow).toContain("0 64px 128px");
+    expect(hexOf(String(files.semantics.finishes.light.dialog?.["border-color"]))).toBe("#c1c1c1");
+    expect(hexOf(String(files.semantics.finishes.dark.dialog?.["border-color"]))).toBe("#424242");
 
     const kinds = tokenKinds(files.theme.cssVars);
     expect(

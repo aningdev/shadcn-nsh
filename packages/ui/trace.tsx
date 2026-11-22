@@ -101,7 +101,7 @@ export function traceLook(): TraceLook {
         flexShrink: 1,
         minWidth: 0,
         fontSize: font.size("body"),
-        lineHeight: font.line("body"),
+        lineHeight: font.lineHeight("body"),
         fontWeight: font.weight("body"),
         numberOfLines: 1,
       };
@@ -120,7 +120,7 @@ export function traceLook(): TraceLook {
       return {
         flexShrink: 0,
         fontSize: font.size("body"),
-        lineHeight: font.line("body"),
+        lineHeight: font.lineHeight("body"),
         fontWeight: font.weight("body"),
         fontVariant: ["tabular-nums"],
         color: colors.faint,
@@ -153,7 +153,7 @@ export function traceLook(): TraceLook {
       return {
         userSelect: "text",
         fontSize: font.size("body"),
-        lineHeight: font.line("body"),
+        lineHeight: font.lineHeight("body"),
         fontWeight: font.weight("body"),
         color: colors.mutedForeground,
       };

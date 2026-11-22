@@ -10,9 +10,9 @@ const read = (file: string) => JSON.parse(readFileSync(join(theme, file), "utf8"
 
 type Vars = Record<string, string>;
 type ThemeFile = { cssVars: { theme: Vars; light: Vars; dark: Vars } };
-type Finish = { [key: string]: unknown; boxShadow?: string };
+type Finish = { [key: string]: unknown; shadow?: string };
 type SemanticsFile = {
-  state: { pressScale: number };
+  state: { "press-scale": number };
   finishes: SplitFinishes<Finish>;
 };
 
@@ -90,9 +90,9 @@ describe("themes/", () => {
       });
 
       test("says how far a press sinks, in both appearances", () => {
-        expect(typeof semantics.state.pressScale).toBe("number");
-        expect(semantics.state.pressScale).toBeGreaterThan(0);
-        expect(semantics.state.pressScale).toBeLessThanOrEqual(1);
+        expect(typeof semantics.state["press-scale"]).toBe("number");
+        expect(semantics.state["press-scale"]).toBeGreaterThan(0);
+        expect(semantics.state["press-scale"]).toBeLessThanOrEqual(1);
       });
 
       test("gives every token and every merged finish a value", () => {
@@ -107,7 +107,7 @@ describe("themes/", () => {
             mergeFinishes(semantics.finishes, appearance),
           )) {
             expect(typeof finish, `${appearance}.${role}`).toBe("object");
-            expect(typeof finish.boxShadow, `${appearance}.${role}.boxShadow`).toBe("string");
+            expect(typeof finish.shadow, `${appearance}.${role}.shadow`).toBe("string");
           }
         }
       });
@@ -117,7 +117,7 @@ describe("themes/", () => {
 
 describe("the default theme", () => {
   test("says how far a press sinks, and says it as the scale a control lands on", () => {
-    expect(defaultSemantics.state.pressScale).toBe(0.97);
+    expect(defaultSemantics.state["press-scale"]).toBe(0.97);
   });
 
   test("its files under themes/default/ are the build-time ones, byte for byte", () => {

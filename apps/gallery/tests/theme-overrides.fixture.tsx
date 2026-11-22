@@ -26,9 +26,9 @@ const hostOverridden: AppTheme = {
   },
   semantics: {
     ...defaultTheme.semantics,
-    type: {
-      ...defaultTheme.semantics.type,
-      family: "{font-sans}",
+    typography: {
+      ...defaultTheme.semantics.typography,
+      fontFamily: "{font-sans}",
     },
   },
 };

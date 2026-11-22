@@ -29,7 +29,7 @@ describe("checkMaterial", () => {
   });
 
   test("a finish with no material is named", () => {
-    const finishes = withoutMaterial({ menu: { boxShadow: "none" }, card: { boxShadow: "none" } });
+    const finishes = withoutMaterial({ menu: { shadow: "none" }, card: { shadow: "none" } });
     delete (finishes.menu as Record<string, unknown>).material;
     const problems = Object.entries(finishes).flatMap(([role, finish]) =>
       checkMaterial("themes/x/semantics.json", `${role}.light`, finish, known),

@@ -74,7 +74,7 @@ export function imageViewerLook(): ImageViewerLook {
     }),
     captionText: () => ({
       fontSize: font.size("body"),
-      lineHeight: font.line("body"),
+      lineHeight: font.lineHeight("body"),
       textAlign: "center",
       color: colors.onMedia,
     }),

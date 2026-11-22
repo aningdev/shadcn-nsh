@@ -1,178 +1,194 @@
 {
-  "type": {
-    "family": null,
+  "typography": {
+    "fontFamily": null,
     "caption": {
-      "size": {
+      "fontSize": {
         "pointer": 11,
         "touch": 11
       },
-      "line": {
-        "pointer": 16,
-        "touch": 16
+      "lineHeight": {
+        "pointer": 1.4545454545454546,
+        "touch": 1.4545454545454546
       },
-      "weight": "500",
-      "tracking": 0.5
+      "fontWeight": 500,
+      "letterSpacing": 0.5
     },
     "detail": {
-      "size": {
+      "fontSize": {
         "pointer": 12,
         "touch": 12
       },
-      "line": {
-        "pointer": 16,
-        "touch": 16
+      "lineHeight": {
+        "pointer": 1.3333333333333333,
+        "touch": 1.3333333333333333
       },
-      "weight": "400",
-      "tracking": 0.4
+      "fontWeight": 400,
+      "letterSpacing": 0.4
     },
     "body": {
-      "size": {
+      "fontSize": {
         "pointer": 14,
         "touch": 14
       },
-      "line": {
-        "pointer": 20,
-        "touch": 20
+      "lineHeight": {
+        "pointer": 1.4285714285714286,
+        "touch": 1.4285714285714286
       },
-      "weight": "400",
-      "tracking": 0.25
+      "fontWeight": 400,
+      "letterSpacing": 0.25
     },
     "label": {
-      "size": {
+      "fontSize": {
         "pointer": 14,
         "touch": 14
       },
-      "line": {
-        "pointer": 20,
-        "touch": 20
+      "lineHeight": {
+        "pointer": 1.4285714285714286,
+        "touch": 1.4285714285714286
       },
-      "weight": "500",
-      "tracking": 0.1
+      "fontWeight": 500,
+      "letterSpacing": 0.1
     },
     "title": {
-      "size": {
+      "fontSize": {
         "pointer": 16,
         "touch": 16
       },
-      "line": {
-        "pointer": 24,
-        "touch": 24
+      "lineHeight": {
+        "pointer": 1.5,
+        "touch": 1.5
       },
-      "weight": "500",
-      "tracking": 0.15
+      "fontWeight": 500,
+      "letterSpacing": 0.15
     },
     "headline": {
-      "size": {
+      "fontSize": {
         "pointer": 24,
         "touch": 24
       },
-      "line": {
-        "pointer": 32,
-        "touch": 32
+      "lineHeight": {
+        "pointer": 1.3333333333333333,
+        "touch": 1.3333333333333333
       },
-      "weight": "400",
-      "tracking": 0
+      "fontWeight": 400,
+      "letterSpacing": 0
     },
     "display": {
-      "size": {
+      "fontSize": {
         "pointer": 36,
         "touch": 36
       },
-      "line": {
-        "pointer": 44,
-        "touch": 44
+      "lineHeight": {
+        "pointer": 1.2222222222222223,
+        "touch": 1.2222222222222223
       },
-      "weight": "400",
-      "tracking": 0
+      "fontWeight": 400,
+      "letterSpacing": 0
+    }
+  },
+  "dimension": {
+    "shape": {
+      "control": "{radius-control}",
+      "field": "{radius-field}",
+      "chip": "{radius-chip}",
+      "card": "{radius-card}",
+      "overlay": "{radius-overlay}",
+      "dialog": "{radius-dialog}",
+      "sheet": "{radius-sheet}",
+      "inset": "{radius}"
+    },
+    "size": {
+      "hit": {
+        "pointer": 44,
+        "touch": 48
+      },
+      "density": {
+        "pointer": {
+          "row": 48,
+          "pad": 16,
+          "gap": 12,
+          "surface": 12
+        },
+        "touch": {
+          "row": 56,
+          "pad": 16,
+          "gap": 12,
+          "surface": 16
+        }
+      },
+      "control": {
+        "pointer": {
+          "row": 48,
+          "padding": 8,
+          "gap": 12,
+          "control": 18,
+          "corner": 2,
+          "check": 18,
+          "dot": 10,
+          "tabs": 48,
+          "line": 48,
+          "clear": 20,
+          "switch": "regular"
+        },
+        "touch": {
+          "row": 56,
+          "padding": 10,
+          "gap": 12,
+          "control": 18,
+          "corner": 2,
+          "check": 18,
+          "dot": 10,
+          "tabs": 48,
+          "line": 56,
+          "clear": 24,
+          "switch": "regular"
+        }
+      },
+      "height": {
+        "pointer": {
+          "sm": 32,
+          "md": 40,
+          "lg": 56
+        },
+        "touch": {
+          "sm": 32,
+          "md": 40,
+          "lg": 56
+        }
+      }
+    },
+    "stroke": {
+      "hairline": 1,
+      "surface": 0,
+      "control": 1,
+      "indicator": 3
+    },
+    "focus": {
+      "style": "outline",
+      "width": 3,
+      "offset": 2
+    },
+    "icon": {
+      "pointer": {
+        "sm": 18,
+        "md": 20,
+        "lg": 24
+      },
+      "touch": {
+        "sm": 18,
+        "md": 20,
+        "lg": 24
+      }
     }
   },
   "shape": {
-    "control": "{radius-control}",
-    "field": "{radius-field}",
-    "chip": "{radius-chip}",
-    "card": "{radius-card}",
-    "overlay": "{radius-overlay}",
-    "dialog": "{radius-dialog}",
-    "sheet": "{radius-sheet}",
-    "inset": "{radius}",
     "curve": "circular",
     "corners": {
       "field": "top"
     }
   },
-  "size": {
-    "hit": {
-      "pointer": 44,
-      "touch": 48
-    },
-    "density": {
-      "pointer": {
-        "row": 48,
-        "pad": 16,
-        "gap": 12,
-        "surface": 12
-      },
-      "touch": {
-        "row": 56,
-        "pad": 16,
-        "gap": 12,
-        "surface": 16
-      }
-    },
-    "control": {
-      "pointer": {
-        "row": 48,
-        "padding": 8,
-        "gap": 12,
-        "control": 18,
-        "corner": 2,
-        "check": 18,
-        "dot": 10,
-        "tabs": 48,
-        "line": 48,
-        "clear": 20,
-        "switch": "regular"
-      },
-      "touch": {
-        "row": 56,
-        "padding": 10,
-        "gap": 12,
-        "control": 18,
-        "corner": 2,
-        "check": 18,
-        "dot": 10,
-        "tabs": 48,
-        "line": 56,
-        "clear": 24,
-        "switch": "regular"
-      }
-    },
-    "height": {
-      "pointer": {
-        "sm": 32,
-        "md": 40,
-        "lg": 56
-      },
-      "touch": {
-        "sm": 32,
-        "md": 40,
-        "lg": 56
-      }
-    }
-  },
-  "stroke": {
-    "hairline": 1,
-    "surface": 0,
-    "control": 1,
-    "indicator": 3
-  },
-  "focus": {
-    "style": "outline",
-    "width": 3,
-    "offset": 2
-  },
   "state": {
-    "pressScale": 1,
+    "press-scale": 1,
     "overlay": {
       "hover": 0.08,
       "focus": 0.1,
@@ -180,10 +196,19 @@
       "dragged": 0.16
     },
     "ripple": true,
-    "pressedOpacity": 1,
+    "pressed-opacity": 1,
     "disabled": {
       "content": 0.38,
       "container": 0.1
+    }
+  },
+  "duration": {
+    "shake": 500
+  },
+  "transition": {
+    "enter": {
+      "duration": 500,
+      "timingFunction": "emphasized-decelerate"
     }
   },
   "motion": {
@@ -202,27 +227,6 @@
     "move": {
       "stiffness": 380,
       "damping": 31.19
-    },
-    "enter": {
-      "duration": 500,
-      "easing": "emphasized-decelerate"
-    },
-    "shake": {
-      "duration": 500
-    }
-  },
-  "icon": {
-    "size": {
-      "pointer": {
-        "sm": 18,
-        "md": 20,
-        "lg": 24
-      },
-      "touch": {
-        "sm": 18,
-        "md": 20,
-        "lg": 24
-      }
     }
   },
   "indicator": {
@@ -233,32 +237,32 @@
   "finishes": {
     "shared": {
       "card": {
-        "backgroundImage": "linear-gradient(180deg, {card} 0%, {card} 100%)",
+        "gradient": "linear-gradient(180deg, {card} 0%, {card} 100%)",
         "material": {
           "android": {
             "elevation": 1
           }
         },
-        "boxShadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)"
+        "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)"
       },
       "inset": {
         "material": null,
-        "boxShadow": "none"
+        "shadow": "none"
       },
       "field": {
-        "boxShadow": "none",
+        "shadow": "none",
         "material": null
       },
       "raised": {
-        "backgroundColor": "{raised}",
-        "backgroundImage": "linear-gradient(180deg, {raised} 0%, {raised} 100%)",
+        "background": "{raised}",
+        "gradient": "linear-gradient(180deg, {raised} 0%, {raised} 100%)",
         "material": {
           "android": {
             "elevation": 1
           }
         },
-        "boxShadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
-        "borderColor": "transparent"
+        "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
+        "border-color": "transparent"
       },
       "hover": {
         "material": {
@@ -266,10 +270,10 @@
             "elevation": 1
           }
         },
-        "backgroundColor": "{raised}",
-        "backgroundImage": "linear-gradient(180deg, {hover} 0%, {hover} 100%)",
-        "boxShadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
-        "borderColor": "transparent"
+        "background": "{raised}",
+        "gradient": "linear-gradient(180deg, {hover} 0%, {hover} 100%)",
+        "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
+        "border-color": "transparent"
       },
       "pressed": {
         "material": {
@@ -277,140 +281,140 @@
             "elevation": 1
           }
         },
-        "backgroundColor": "{raised}",
-        "backgroundImage": "linear-gradient(180deg, {raised} 0%, {raised} 100%)",
-        "boxShadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
-        "borderColor": "transparent"
+        "background": "{raised}",
+        "gradient": "linear-gradient(180deg, {raised} 0%, {raised} 100%)",
+        "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
+        "border-color": "transparent"
       },
       "light": {
-        "backgroundColor": "{primary}",
-        "backgroundImage": "linear-gradient(180deg, {primary} 0%, {primary} 100%)",
-        "borderColor": "transparent",
+        "background": "{primary}",
+        "gradient": "linear-gradient(180deg, {primary} 0%, {primary} 100%)",
+        "border-color": "transparent",
         "material": null,
-        "boxShadow": "none"
+        "shadow": "none"
       },
       "accent": {
-        "backgroundColor": "{primary}",
-        "backgroundImage": "linear-gradient(180deg, {primary} 0%, {primary} 100%)",
-        "borderColor": "transparent",
+        "background": "{primary}",
+        "gradient": "linear-gradient(180deg, {primary} 0%, {primary} 100%)",
+        "border-color": "transparent",
         "material": null,
-        "boxShadow": "none"
+        "shadow": "none"
       },
       "track": {
         "material": null,
-        "boxShadow": "none",
-        "borderColor": "{input}"
+        "shadow": "none",
+        "border-color": "{input}"
       },
       "fill": {
-        "backgroundColor": "transparent",
-        "boxShadow": "none",
+        "background": "transparent",
+        "shadow": "none",
         "material": null,
-        "backgroundImage": "linear-gradient(180deg, {primary} 0%, {primary} 100%)",
-        "borderColor": "transparent"
+        "gradient": "linear-gradient(180deg, {primary} 0%, {primary} 100%)",
+        "border-color": "transparent"
       },
       "knob": {
         "material": null,
-        "backgroundColor": "{knob}",
-        "backgroundImage": "linear-gradient(180deg, {knob} 0%, {knob} 100%)",
-        "boxShadow": "none",
-        "borderColor": "transparent"
+        "background": "{knob}",
+        "gradient": "linear-gradient(180deg, {knob} 0%, {knob} 100%)",
+        "shadow": "none",
+        "border-color": "transparent"
       },
       "knobOn": {
-        "backgroundColor": "{on-brand}",
-        "backgroundImage": "linear-gradient(180deg, {on-brand} 0%, {on-brand} 100%)",
-        "boxShadow": "none",
+        "background": "{on-brand}",
+        "gradient": "linear-gradient(180deg, {on-brand} 0%, {on-brand} 100%)",
+        "shadow": "none",
         "material": null,
-        "borderColor": "transparent"
+        "border-color": "transparent"
       },
       "handle": {
         "material": null,
-        "backgroundColor": "{primary}",
-        "backgroundImage": "linear-gradient(180deg, {primary} 0%, {primary} 100%)",
-        "boxShadow": "none",
-        "borderColor": "transparent"
+        "background": "{primary}",
+        "gradient": "linear-gradient(180deg, {primary} 0%, {primary} 100%)",
+        "shadow": "none",
+        "border-color": "transparent"
       },
       "pill": {
-        "backgroundColor": "{raised}",
-        "backgroundImage": "linear-gradient(180deg, {raised} 0%, {raised} 100%)",
+        "background": "{raised}",
+        "gradient": "linear-gradient(180deg, {raised} 0%, {raised} 100%)",
         "material": {
           "android": {
             "elevation": 1
           }
         },
-        "boxShadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
-        "borderColor": "transparent"
+        "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 1px 3px 1px oklch(0 0 0 / 0.15)",
+        "border-color": "transparent"
       },
       "thumb": {
         "material": null,
-        "backgroundColor": "{secondary}",
-        "backgroundImage": "linear-gradient(180deg, {secondary} 0%, {secondary} 100%)",
-        "boxShadow": "none",
-        "borderColor": "transparent"
+        "background": "{secondary}",
+        "gradient": "linear-gradient(180deg, {secondary} 0%, {secondary} 100%)",
+        "shadow": "none",
+        "border-color": "transparent"
       },
       "on": {
         "material": null,
-        "backgroundColor": "{secondary}",
-        "backgroundImage": "linear-gradient(180deg, {secondary} 0%, {secondary} 100%)",
-        "boxShadow": "none",
-        "borderColor": "transparent"
+        "background": "{secondary}",
+        "gradient": "linear-gradient(180deg, {secondary} 0%, {secondary} 100%)",
+        "shadow": "none",
+        "border-color": "transparent"
       },
       "chip": {
-        "backgroundColor": "{background}",
-        "backgroundImage": "linear-gradient(180deg, {background} 0%, {background} 100%)",
-        "borderColor": "{border}",
+        "background": "{background}",
+        "gradient": "linear-gradient(180deg, {background} 0%, {background} 100%)",
+        "border-color": "{border}",
         "material": null,
-        "boxShadow": "none"
+        "shadow": "none"
       },
       "glass": {
-        "borderColor": "transparent",
+        "border-color": "transparent",
         "backdropFilter": "none",
         "material": {
           "android": {
             "elevation": 3
           }
         },
-        "backgroundColor": "{popover}",
-        "boxShadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 2px 6px 2px oklch(0 0 0 / 0.15)"
+        "background": "{popover}",
+        "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 2px 6px 2px oklch(0 0 0 / 0.15)"
       },
       "menu": {
-        "backgroundColor": "{popover}",
-        "borderColor": "transparent",
+        "background": "{popover}",
+        "border-color": "transparent",
         "material": {
           "android": {
             "elevation": 3
           }
         },
-        "boxShadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 2px 6px 2px oklch(0 0 0 / 0.15)"
+        "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 2px 6px 2px oklch(0 0 0 / 0.15)"
       },
       "dialog": {
-        "backgroundColor": "{popover}",
-        "borderColor": "transparent",
+        "background": "{popover}",
+        "border-color": "transparent",
         "material": {
           "android": {
             "elevation": 6
           }
         },
-        "boxShadow": "0 1px 3px oklch(0 0 0 / 0.3), 0 4px 8px 3px oklch(0 0 0 / 0.15)"
+        "shadow": "0 1px 3px oklch(0 0 0 / 0.3), 0 4px 8px 3px oklch(0 0 0 / 0.15)"
       },
       "tooltip": {
-        "backgroundColor": "{inverse}",
-        "boxShadow": "none",
-        "borderColor": "transparent",
+        "background": "{inverse}",
+        "shadow": "none",
+        "border-color": "transparent",
         "material": null
       },
       "inverse": {
-        "backgroundColor": "{inverse}",
-        "borderColor": "transparent",
+        "background": "{inverse}",
+        "border-color": "transparent",
         "material": {
           "android": {
             "elevation": 6
           }
         },
-        "boxShadow": "0 1px 3px oklch(0 0 0 / 0.3), 0 4px 8px 3px oklch(0 0 0 / 0.15)"
+        "shadow": "0 1px 3px oklch(0 0 0 / 0.3), 0 4px 8px 3px oklch(0 0 0 / 0.15)"
       },
       "groove": {
         "material": null,
-        "boxShadow": "none"
+        "shadow": "none"
       }
     },
     "light": {},

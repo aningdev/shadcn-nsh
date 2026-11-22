@@ -88,11 +88,11 @@ _Avoid_: `finishes.json`（旧文件名）、在语义层重复写颜色/圆角/
 _Avoid_: 用别的词指它；在 B 层另起一个与 A 层槽同义的名字
 
 **Finish（Finish Role）**:
-`semantics.json` 里 `finishes`（`shared` + 稀疏 `light` / `dark` 合并后）的一个条目（`card`、`raised`、`fill`… 共 23 个，见 [`specs/theme-roles.md`](specs/theme-roles.md)）：一个面的底、渐变、边、影、模糊，外加它向平台要的原生材质 `material`（`null` 表示不要）。finish 只管一个面的画法，颜色写 `{token}`；合并后每个 finish 在每套主题、每种外观里的字段集合相同（平涂就是同一个颜色在两个 stop，不删 `backgroundImage`）。
+`semantics.json` 里 `finishes`（`shared` + 稀疏 `light` / `dark` 合并后）的一个条目（`card`、`raised`、`fill`… 共 23 个，见 [`specs/theme-roles.md`](specs/theme-roles.md)）：一个面的底、渐变、边、影、模糊，外加它向平台要的原生材质 `material`（`null` 表示不要）。finish 只管一个面的画法，颜色写 `{token}`；合并后每个 finish 在每套主题、每种外观里的字段集合相同（平涂就是同一个颜色在两个 stop，不删 `gradient`）。
 _Avoid_: 把 finish 当 token；用别的词指它；删字段表示“没有渐变”
 
 **Alias（`{token}` 引用）**:
-语义层引用 `theme.json` 基础 token 的花括号写法（对齐 DTCG 2025.10）：`shape.*` 写 `{radius-…}`、`type.family` 写 `{font-…}`、finish 颜色与 `material.apple.tint` 写 `{token}` 或 `oklch(from {token} l c h / a)`。`theme.ts` 在**读的时候**经 `token()` 响应式解析，所以切外观、`selectTheme` 切主题与宿主 `setThemeOverrides` 都自动生效。finish 允许的字面量只有墨色（黑或白带 alpha）、`transparent`，以及规范里待定表列出的那些；`boxShadow` 整条豁免。
+语义层引用 `theme.json` 基础 token 的花括号写法（对齐 DTCG 2025.10）：`dimension.shape.*` 写 `{radius-…}`、`typography.fontFamily` 写 `{font-…}`、finish 颜色与 `material.apple.tint` 写 `{token}` 或 `oklch(from {token} l c h / a)`。`theme.ts` 在**读的时候**经 `token()` 响应式解析，所以切外观、`selectTheme` 切主题与宿主 `setThemeOverrides` 都自动生效。finish 允许的字面量只有墨色（黑或白带 alpha）、`transparent`，以及规范里待定表列出的那些；`shadow` 整条豁免。
 _Avoid_: 在语义层写 `var(--token)` 或重复的色值/圆角数字；用别的词指它
 
 **Build-time Theme / AppTheme**:

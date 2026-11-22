@@ -20,19 +20,22 @@ const roomy: AppTheme = {
   label: "roomy",
   semantics: {
     ...defaultTheme.semantics,
-    size: {
-      ...defaultTheme.semantics.size,
-      density: {
-        pointer: { ...defaultTheme.semantics.size.density.pointer, row: 60 },
-        touch: { ...defaultTheme.semantics.size.density.touch, row: 60 },
+    dimension: {
+      ...defaultTheme.semantics.dimension,
+      size: {
+        ...defaultTheme.semantics.dimension.size,
+        density: {
+          pointer: { ...defaultTheme.semantics.dimension.size.density.pointer, row: 60 },
+          touch: { ...defaultTheme.semantics.dimension.size.density.touch, row: 60 },
+        },
+        control: {
+          pointer: { ...defaultTheme.semantics.dimension.size.control.pointer, row: 52 },
+          touch: { ...defaultTheme.semantics.dimension.size.control.touch, row: 52 },
+        },
       },
-      control: {
-        pointer: { ...defaultTheme.semantics.size.control.pointer, row: 52 },
-        touch: { ...defaultTheme.semantics.size.control.touch, row: 52 },
-      },
+      focus: { ...defaultTheme.semantics.dimension.focus, width: 5 },
     },
     motion: { ...defaultTheme.semantics.motion, press: { stiffness: 111, damping: 22 } },
-    focus: { ...defaultTheme.semantics.focus, width: 5 },
     shape: { ...defaultTheme.semantics.shape, curve: "circular" },
   },
 };
@@ -46,7 +49,7 @@ function App() {
       <Text testID="density">{`density:${density.row}`}</Text>
       <Text testID="control">{`control:${controlSize.row}`}</Text>
       <Text testID="plain">{`plain:${plainRow().minHeight}`}</Text>
-      <Text testID="press">{`press:${isTiming(motion.press) ? `${motion.press.duration}|${JSON.stringify(motion.press.easing)}` : `${motion.press.stiffness}|${motion.press.damping}`}`}</Text>
+      <Text testID="press">{`press:${isTiming(motion.press) ? `${motion.press.duration}|${JSON.stringify(motion.press.timingFunction)}` : `${motion.press.stiffness}|${motion.press.damping}`}`}</Text>
       <Text testID="focus">{`focus:${focusRing().outlineWidth}`}</Text>
       <Text testID="curve">{`curve:${cornerCurve.borderCurve}`}</Text>
       <Button onPress={() => selectTheme(roomy)}>Roomy</Button>

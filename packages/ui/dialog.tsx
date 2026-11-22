@@ -95,7 +95,7 @@ export function dialogTitle(): TextStyle {
 export function dialogText(): TextStyle {
   return {
     fontSize: font.size("body"),
-    lineHeight: font.line("body"),
+    lineHeight: font.lineHeight("body"),
     color: colors.mutedForeground,
   };
 }

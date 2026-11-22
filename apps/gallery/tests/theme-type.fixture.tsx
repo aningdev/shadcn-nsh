@@ -4,7 +4,7 @@ import { mount, Text, View } from "nsh";
 import defaultTheme from "../../../packages/theme/themes/default/index";
 import { Badge, Button, Label } from "../../../packages/ui";
 
-const { type } = defaultTheme.semantics;
+const { typography } = defaultTheme.semantics;
 
 /** A temporary theme with another type scale: a larger, bolder label and a larger body. */
 const scaled: AppTheme = {
@@ -13,14 +13,18 @@ const scaled: AppTheme = {
   label: "Scaled",
   semantics: {
     ...defaultTheme.semantics,
-    type: {
-      ...type,
+    typography: {
+      ...typography,
       label: {
-        ...type.label,
-        size: { pointer: 21, touch: 23 },
-        weight: "700",
+        ...typography.label,
+        fontSize: { pointer: 21, touch: 23 },
+        fontWeight: 700,
       },
-      body: { ...type.body, size: { pointer: 19, touch: 21 }, line: { pointer: 25, touch: 27 } },
+      body: {
+        ...typography.body,
+        fontSize: { pointer: 19, touch: 21 },
+        lineHeight: { pointer: 25 / 19, touch: 27 / 21 },
+      },
     },
   },
 };

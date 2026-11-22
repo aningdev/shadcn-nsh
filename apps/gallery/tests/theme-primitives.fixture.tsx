@@ -38,18 +38,24 @@ const expressive: AppTheme = {
   label: "Expressive",
   semantics: {
     ...defaultTheme.semantics,
-    focus: { style: "double", width: 2, offset: 2 },
+    dimension: {
+      ...defaultTheme.semantics.dimension,
+      focus: { style: "double", width: 2, offset: 2 },
+    },
     state: {
       ...defaultTheme.semantics.state,
       overlay: { hover: 0.08, focus: 0.1, pressed: 0.1, dragged: 0.16 },
       ripple: true,
     },
+    transition: {
+      ...defaultTheme.semantics.transition,
+      enter: { duration: 200, timingFunction: "point-to-point" },
+    },
     motion: {
       ...defaultTheme.semantics.motion,
-      press: { duration: 150, easing: "emphasized-decelerate" },
-      settle: { duration: 250, easing: "decelerate" },
-      control: { duration: 167, easing: "accelerate" },
-      enter: { duration: 200, easing: "point-to-point" },
+      press: { duration: 150, timingFunction: "emphasized-decelerate" },
+      settle: { duration: 250, timingFunction: "decelerate" },
+      control: { duration: 167, timingFunction: "accelerate" },
     },
     finishes: {
       ...finishes,
@@ -57,7 +63,7 @@ const expressive: AppTheme = {
         ...finishes.light,
         accent: {
           ...finishes.light.accent,
-          backgroundImage: "linear-gradient(180deg, {primary} 0%, {brand-fill} 100%)",
+          gradient: "linear-gradient(180deg, {primary} 0%, {brand-fill} 100%)",
         },
         menu: {
           ...finishes.light.menu,
@@ -87,7 +93,7 @@ const expressive: AppTheme = {
 
 const showMotion = (m: typeof motion.press) =>
   isTiming(m)
-    ? `timing:${m.duration}:${JSON.stringify(m.easing)}`
+    ? `timing:${m.duration}:${JSON.stringify(m.timingFunction)}`
     : `spring:${m.stiffness}:${m.damping}`;
 
 function App() {
@@ -109,7 +115,7 @@ function App() {
       <Text>{`motionPress=${showMotion(motion.press)}`}</Text>
       <Text>{`motionControl=${showMotion(motion.control)}`}</Text>
       <Text>{`motionMove=${showMotion(motion.move)}`}</Text>
-      <Text>{`motionEnter=${motion.enter.duration}:${JSON.stringify(motion.enter.easing)}`}</Text>
+      <Text>{`motionEnter=${motion.enter.duration}:${JSON.stringify(motion.enter.timingFunction)}`}</Text>
       <Text>{`btnHover=${JSON.stringify(defaultBtn.hoverStyle ?? null)}`}</Text>
       <Text>{`roundHover=${JSON.stringify(roundBtn.hoverStyle ?? null)}`}</Text>
       <Text>{`splitHover=${JSON.stringify(splitSeg.hoverStyle ?? null)}`}</Text>

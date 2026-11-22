@@ -91,12 +91,12 @@ export interface Material {
   };
 }
 
-/** A surface's finish as `semantics.json` writes it: a gradient over its color, its shadows, and the material it asks of the platform (`null`: none). */
+/** A surface's finish as `semantics.json` writes it: DTCG finish fields (`background`, `gradient`, `shadow`, `border-color`) plus `backdropFilter` and the `material` it asks of the platform (`null`: none). */
 export interface Finish {
-  backgroundColor?: string;
-  backgroundImage?: string;
-  boxShadow: string;
-  borderColor?: string;
+  background?: string;
+  gradient?: string;
+  shadow: string;
+  "border-color"?: string;
   backdropFilter?: string;
   material: Material | null;
 }
@@ -113,7 +113,12 @@ export interface SplitFinishes {
  * finish whose `material` has `apple` also has `glassEffect` (and `glassTintColor`, unless its tint is
  * `null`); otherwise these keys are not there at all. `material` itself is never a style key.
  */
-export type FinishStyle = Omit<Finish, "material"> & {
+export type FinishStyle = {
+  backgroundColor?: string;
+  backgroundImage?: string;
+  boxShadow: string;
+  borderColor?: string;
+  backdropFilter?: string;
   glassEffect?: "regular" | "clear";
   glassTintColor?: string;
 };
@@ -155,12 +160,12 @@ export interface Tiered<T> {
   touch: T;
 }
 
-/** One type role: its size and line height per tier, its weight (`"400"`), its tracking in points. */
-export interface TypeRole {
-  size: Tiered<number>;
-  line: Tiered<number>;
-  weight: string;
-  tracking: number;
+/** One typography role: fontSize and unitless lineHeight multiplier per tier, numeric fontWeight (400..700), letterSpacing in points. */
+export interface TypographyRole {
+  fontSize: Tiered<number>;
+  lineHeight: Tiered<number>;
+  fontWeight: number;
+  letterSpacing: number;
 }
 
 /** The sizes of a list of controls in one tier: see `controlSize`. */
@@ -199,73 +204,81 @@ export interface Spring {
   damping: number;
 }
 
-/** A timing specification as written in `semantics.json`: duration in ms and a named easing curve. */
+/** A timing specification as written in `semantics.json`: duration in ms and a named timing curve. */
 export interface TimingSpec {
   duration: number;
-  easing: string;
+  timingFunction: string;
 }
 
-/** A resolved timing configuration of `motion`, ready for `AnimatedValue.timing` or `createMotion().play`. */
+/** A resolved timing configuration of `motion`, ready for `animate()` or `follow()`. */
 export interface Timing {
   duration: number;
-  easing: EasingCurve;
+  timingFunction: EasingCurve;
 }
 
 /**
- * The style of a theme: what `semantics.json` states beside its finishes, the same keys in every
- * theme (`check:theme`). A string that names one of a list (a weight, a curve, an easing, an
- * indicator) is typed as a string here, since a JSON import is; `check:theme` holds the list
- * (`scripts/theme/style.ts`). `docs/specs/native-themes.md` §3.2 says what each key is.
+ * The style of a theme: what `semantics.json` states beside its finishes, in DTCG field naming,
+ * the same keys in every theme (`check:theme`). A string that names one of a list (a curve, a
+ * timingFunction, an indicator) or numeric fontWeight is checked by `check:theme` (`scripts/theme/style.ts`).
+ * `docs/specs/native-themes.md` §3.2 says what each key is.
  */
 export interface Style {
-  type: {
+  typography: {
     /** `null` is the system font. */
-    family: string | null;
-    caption: TypeRole;
-    detail: TypeRole;
-    body: TypeRole;
-    label: TypeRole;
-    title: TypeRole;
-    headline: TypeRole;
-    display: TypeRole;
+    fontFamily: string | null;
+    caption: TypographyRole;
+    detail: TypographyRole;
+    body: TypographyRole;
+    label: TypographyRole;
+    title: TypographyRole;
+    headline: TypographyRole;
+    display: TypographyRole;
+  };
+  dimension: {
+    shape: {
+      control: string;
+      field: string;
+      chip: string;
+      card: string;
+      overlay: string;
+      dialog: string;
+      sheet: string;
+      inset: string;
+    };
+    size: {
+      hit: Tiered<number>;
+      density: Tiered<DensitySizes>;
+      control: Tiered<ControlSizes>;
+      height: Tiered<Steps>;
+    };
+    stroke: { hairline: number; surface: number; control: number; indicator: number };
+    focus: { style: string; width: number; offset: number };
+    icon: Tiered<Steps>;
   };
   shape: {
-    control: string;
-    field: string;
-    chip: string;
-    card: string;
-    overlay: string;
-    dialog: string;
-    sheet: string;
-    inset: string;
     curve: string;
     corners: { field: string };
   };
-  size: {
-    hit: Tiered<number>;
-    density: Tiered<DensitySizes>;
-    control: Tiered<ControlSizes>;
-    height: Tiered<Steps>;
-  };
-  stroke: { hairline: number; surface: number; control: number; indicator: number };
-  focus: { style: string; width: number; offset: number };
   state: {
-    pressScale: number;
+    "press-scale": number;
     overlay: { hover: number; focus: number; pressed: number; dragged: number };
     ripple: boolean;
-    pressedOpacity: number;
+    "pressed-opacity": number;
     disabled: { content: number; container: number };
+  };
+  duration: {
+    /** A rejected value's shake, the length of `nsh`'s `play("shake")` preset. */
+    shake: number;
+  };
+  transition: {
+    enter: TimingSpec;
   };
   motion: {
     press: Spring | TimingSpec;
     settle: Spring | TimingSpec;
     control: Spring | TimingSpec;
     move: Spring | TimingSpec;
-    enter: { duration: number; easing: string };
-    /** A rejected value's shake, the length of `nsh`'s `play("shake")` preset. */
-    shake: { duration: number };
   };
-  icon: { size: Tiered<Steps> };
   indicator: { tabs: string; nav: string; field: string };
 }
 
@@ -319,7 +332,7 @@ export function reactive<T extends object>(keys: readonly (keyof T)[], read: () 
 /** The tier a pointer's screen (a desktop) or a touch screen reads: `platform.desktop`, fixed for the run. */
 export const tier: "pointer" | "touch" = platform.desktop ? "pointer" : "touch";
 
-/** A bare `{token}` reference (used by `shape.*` and `type.family`). */
+/** A bare `{token}` reference (used by `dimension.shape.*` and `typography.fontFamily`). */
 const tokenRef = /^\{([a-z0-9-]+)\}$/;
 
 /** The one relative color a finish writes: a token's color at another alpha. */
@@ -405,6 +418,14 @@ const glassKeys = (role: FinishRole): readonly string[] => {
  * a finish with `material: null` spreads into exactly the keys it always had. The platform props of
  * the material (`ios`, `macos`, `windows`) are not style keys and come from `platformMaterial`.
  */
+const finishStyleKeys: Record<Exclude<keyof Finish, "material">, keyof FinishStyle> = {
+  background: "backgroundColor",
+  gradient: "backgroundImage",
+  shadow: "boxShadow",
+  "border-color": "borderColor",
+  backdropFilter: "backdropFilter",
+};
+
 function themed(role: FinishRole): FinishStyle {
   const out = {} as FinishStyle;
   const builtInRole = {
@@ -414,7 +435,8 @@ function themed(role: FinishRole): FinishStyle {
   };
   for (const key of Object.keys(builtInRole) as (keyof Finish)[]) {
     if (key === "material") continue;
-    Object.defineProperty(out, key, {
+    const styleKey = finishStyleKeys[key];
+    Object.defineProperty(out, styleKey, {
       enumerable: true,
       configurable: true,
       get: () => {
@@ -740,14 +762,14 @@ export const finish: Record<FinishRole, FinishStyle> = {
 };
 
 /**
- * How far a press sinks a control, as the theme in use says (`semantics.json`'s `state.pressScale`):
+ * How far a press sinks a control, as the theme in use says (`semantics.json`'s `state["press-scale"]`):
  * `0.97` where a press is a small sink, `1` where the theme draws none. A control that sinks
  * deeper than that names its own scale (`pressSink(0.9)`); a theme of `1` turns every sink off.
  * Reactive: reading it follows `selectTheme`.
  */
 export const press = {
   get scale() {
-    return semanticsOf().state.pressScale;
+    return semanticsOf().state["press-scale"];
   },
 };
 
@@ -799,26 +821,31 @@ export const toneTint = (tone: Tone) =>
  * use the system font with tabular numbers instead. */
 export const mono = () => token("font-mono");
 
-/** A type role of `semantics.json`'s `type`: every one but the family. */
-export type TypeName = Exclude<keyof Style["type"], "family">;
+/** A typography role of `semantics.json`'s `typography`: every one but `fontFamily`. */
+export type TypeName = Exclude<keyof Style["typography"], "fontFamily">;
 
 /**
- * One facet of a type role, read from the style in use (reactive: reading it in JSX, a `draw` or
+ * One facet of a typography role, read from the style in use (reactive: reading it in JSX, a `draw` or
  * an effect follows `selectTheme`). A component reads only the facets it set before, so text that
  * leaves its weight or line height to the text around it still does:
  * `style={{ fontSize: font.size("label"), fontWeight: font.weight("label") }}`.
- * `size` and `line` take the tier of the screen (`tier`).
+ * `size` and `lineHeight` take the tier of the screen (`tier`); `lineHeight` resolves the unitless
+ * DTCG ratio to rounded points for NSH.
  */
 export const font = {
-  family: () => resolveFont(style().type.family),
-  size: (role: TypeName) => style().type[role].size[tier],
-  line: (role: TypeName) => style().type[role].line[tier],
-  weight: (role: TypeName) => style().type[role].weight as NonNullable<TextStyle["fontWeight"]>,
-  tracking: (role: TypeName) => style().type[role].tracking,
+  family: () => resolveFont(style().typography.fontFamily),
+  size: (role: TypeName) => style().typography[role].fontSize[tier],
+  lineHeight: (role: TypeName) => {
+    const t = style().typography[role];
+    return Math.round(t.fontSize[tier] * t.lineHeight[tier]);
+  },
+  weight: (role: TypeName) =>
+    style().typography[role].fontWeight as NonNullable<TextStyle["fontWeight"]>,
+  letterSpacing: (role: TypeName) => style().typography[role].letterSpacing,
 };
 
 /**
- * The corner radii by role (`semantics.json`'s `shape`), resolved from `theme.json`'s `radius-*`
+ * The corner radii by role (`semantics.json`'s `dimension.shape`), resolved from `theme.json`'s `radius-*`
  * tokens via `token()`: what the component is picks the role (`control` a button, `field` an input,
  * `chip` a badge, `card` a card, `overlay` a menu or a popup, `dialog`, `sheet`, `inset` a well
  * inside a card). Reactive: reading one in JSX, a `draw` or an effect follows `selectTheme` and
@@ -826,55 +853,55 @@ export const font = {
  */
 export const shape = {
   get control() {
-    return resolveDimension(style().shape.control);
+    return resolveDimension(style().dimension.shape.control);
   },
   get field() {
-    return resolveDimension(style().shape.field);
+    return resolveDimension(style().dimension.shape.field);
   },
   get chip() {
-    return resolveDimension(style().shape.chip);
+    return resolveDimension(style().dimension.shape.chip);
   },
   get card() {
-    return resolveDimension(style().shape.card);
+    return resolveDimension(style().dimension.shape.card);
   },
   get overlay() {
-    return resolveDimension(style().shape.overlay);
+    return resolveDimension(style().dimension.shape.overlay);
   },
   get dialog() {
-    return resolveDimension(style().shape.dialog);
+    return resolveDimension(style().dimension.shape.dialog);
   },
   get sheet() {
-    return resolveDimension(style().shape.sheet);
+    return resolveDimension(style().dimension.shape.sheet);
   },
   get inset() {
-    return resolveDimension(style().shape.inset);
+    return resolveDimension(style().dimension.shape.inset);
   },
 };
 
-/** Line widths in points (`semantics.json`'s `stroke`): `hairline` a divider or outlined element's edge, `surface` a surface's outline (0 where surfaces stand by tone or shadow alone), `control` a control's edge, `indicator` a selection's bar. The focus ring's width is `focus.width`. */
+/** Line widths in points (`semantics.json`'s `dimension.stroke`): `hairline` a divider or outlined element's edge, `surface` a surface's outline (0 where surfaces stand by tone or shadow alone), `control` a control's edge, `indicator` a selection's bar. The focus ring's width is `dimension.focus.width`. */
 export const stroke = {
   get hairline() {
-    return style().stroke.hairline;
+    return style().dimension.stroke.hairline;
   },
   get surface() {
-    return style().stroke.surface;
+    return style().dimension.stroke.surface;
   },
   get control() {
-    return style().stroke.control;
+    return style().dimension.stroke.control;
   },
   get indicator() {
-    return style().stroke.indicator;
+    return style().dimension.stroke.indicator;
   },
 };
 
 /**
  * How far a control fades (`semantics.json`'s `state`): `pressed` is the opacity of a pressed
- * control (`pressedOpacity`), `disabled` and `disabledContainer` those of a disabled control's
+ * control (`pressed-opacity`), `disabled` and `disabledContainer` those of a disabled control's
  * content (the whole control, when it is drawn as one) and of its container.
  */
 export const dimmed = {
   get pressed() {
-    return style().state.pressedOpacity;
+    return style().state["pressed-opacity"];
   },
   get disabled() {
     return style().state.disabled.content;
@@ -915,32 +942,32 @@ export function stateLayer(
   return { backgroundImage: under && under !== "none" ? `${layer}, ${under}` : layer };
 }
 
-/** The smallest target a finger or a pointer gets (`size.hit` of the tier): 0 adds none. */
-export const hitTarget = (): number => style().size.hit[tier];
+/** The smallest target a finger or a pointer gets (`dimension.size.hit` of the tier): 0 adds none. */
+export const hitTarget = (): number => style().dimension.size.hit[tier];
 
-/** A button's height by size (`size.height` of the tier). */
+/** A button's height by size (`dimension.size.height` of the tier). */
 export const controlHeight = {
   get sm() {
-    return style().size.height[tier].sm;
+    return style().dimension.size.height[tier].sm;
   },
   get md() {
-    return style().size.height[tier].md;
+    return style().dimension.size.height[tier].md;
   },
   get lg() {
-    return style().size.height[tier].lg;
+    return style().dimension.size.height[tier].lg;
   },
 };
 
-/** An icon's side by size (`icon.size` of the tier). */
+/** An icon's side by size (`dimension.icon` of the tier). */
 export const iconSize = {
   get sm() {
-    return style().icon.size[tier].sm;
+    return style().dimension.icon[tier].sm;
   },
   get md() {
-    return style().icon.size[tier].md;
+    return style().dimension.icon[tier].md;
   },
   get lg() {
-    return style().icon.size[tier].lg;
+    return style().dimension.icon[tier].lg;
   },
 };
 
@@ -971,10 +998,10 @@ export const header = {
   },
 };
 
-/** Whether a resolved motion role is a `Timing` (`{ duration, easing }`) rather than a `Spring`. */
+/** Whether a resolved motion role is a `Timing` (`{ duration, timingFunction }`) rather than a `Spring`. */
 export const isTiming = (m: Spring | Timing): m is Timing => "duration" in m;
 
-/** The easings a theme names (`motion.enter.easing` and timing roles): the curve is code, the name is data. */
+/** The easings a theme names (`transition.enter.timingFunction` and timing roles): the curve is code, the name is data. */
 const easings: Record<string, EasingCurve> = {
   "out-cubic": Easing.out(Easing.cubic),
   "in-cubic": Easing.in(Easing.cubic),
@@ -996,7 +1023,7 @@ const easings: Record<string, EasingCurve> = {
 };
 
 const resolveMotion = (raw: Spring | TimingSpec): Spring | Timing =>
-  "duration" in raw ? { duration: raw.duration, easing: easings[raw.easing] } : raw;
+  "duration" in raw ? { duration: raw.duration, timingFunction: easings[raw.timingFunction] } : raw;
 
 /**
  * A reactive proxy over a `Spring | Timing` motion role so controls created before `selectTheme`
@@ -1018,7 +1045,7 @@ const motionRole = (read: () => Spring | TimingSpec): Spring | Timing => {
 
 /**
  * The motion every control shares: quick, slightly springy (or timed when a theme supplies
- * `{ duration, easing }`). `control` and `move` are gpui-kit's `spring_control` (a 180 ms
+ * `{ duration, timingFunction }`). `control` and `move` are gpui-kit's `spring_control` (a 180 ms
  * response, no overshoot: a mark or a fill coming and going) and `spring_move` (280 ms, a
  * damping ratio of 0.85: a thumb or an indicator traveling) as a unit mass's stiffness
  * (2π / response)² and damping 2 · ratio · 2π / response.
@@ -1028,12 +1055,12 @@ export const motion = {
   settle: motionRole(() => style().motion.settle),
   control: motionRole(() => style().motion.control),
   move: motionRole(() => style().motion.move),
-  get enter() {
-    const { duration, easing } = style().motion.enter;
-    return { duration, easing: easings[easing] };
+  get enter(): Timing {
+    const { duration, timingFunction } = style().transition.enter;
+    return { duration, timingFunction: easings[timingFunction] };
   },
   get shake() {
-    return { duration: style().motion.shake.duration };
+    return { duration: style().duration.shake };
   },
 };
 
@@ -1053,7 +1080,7 @@ export function animate(
     return Promise.resolve({ finished: true });
   }
   if (isTiming(config)) {
-    return value.timing(to, { duration: config.duration, easing: config.easing });
+    return value.timing(to, { duration: config.duration, easing: config.timingFunction });
   }
   return value.spring(to, {
     stiffness: config.stiffness,
@@ -1108,7 +1135,7 @@ export const hovered = (ink: keyof Tokens = "foreground", under?: string): ViewS
  *   it, so the outline's offset grows by that 1 px (Fluent's `FocusStrokeColorInner` / `Outer`).
  */
 export const focusRing = (offset?: number): ViewStyle => {
-  const { style: look, width, offset: base } = style().focus;
+  const { style: look, width, offset: base } = style().dimension.focus;
   const ringOutline: ViewStyle = {
     outlineStyle: "solid",
     outlineWidth: width,
@@ -1150,8 +1177,8 @@ export function fillStyle(): ViewStyle {
 
 /**
  * A rail's edge: a `width`-point inset line of `borderColor` inside the theme's `boxShadow`,
- * whichever of the two the theme gives. `semantics.json` may write `boxShadow: "none"` or leave
- * the color out, and a rail that joined the absent one after a comma would void the whole
+ * whichever of the two the theme gives. `semantics.json` may write `shadow: "none"` or leave
+ * the border color out, and a rail that joined the absent one after a comma would void the whole
  * declaration (`none, inset …` is not a shadow).
  */
 export function insetEdge(

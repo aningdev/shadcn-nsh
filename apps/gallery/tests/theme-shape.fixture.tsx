@@ -15,7 +15,7 @@ import { mount, Text, View } from "nsh";
 import defaultTheme from "../../../packages/theme/themes/default/index";
 import { Button, buttonLook, dialogCard, inputLook } from "../../../packages/ui";
 
-const { size, stroke: lines, state } = defaultTheme.semantics;
+const { dimension, state } = defaultTheme.semantics;
 
 /** A temporary theme with other corner roles, control heights, line widths and fades. */
 const reshaped: AppTheme = {
@@ -39,18 +39,21 @@ const reshaped: AppTheme = {
   },
   semantics: {
     ...defaultTheme.semantics,
-    size: {
-      ...size,
-      hit: { pointer: 48, touch: 52 },
-      height: { pointer: { sm: 30, md: 36, lg: 44 }, touch: { sm: 40, md: 46, lg: 56 } },
+    dimension: {
+      ...dimension,
+      size: {
+        ...dimension.size,
+        hit: { pointer: 48, touch: 52 },
+        height: { pointer: { sm: 30, md: 36, lg: 44 }, touch: { sm: 40, md: 46, lg: 56 } },
+      },
+      stroke: { ...dimension.stroke, hairline: 2, surface: 2, control: 2 },
+      icon: { pointer: { sm: 16, md: 18, lg: 20 }, touch: { sm: 18, md: 20, lg: 22 } },
     },
-    stroke: { ...lines, hairline: 2, surface: 2, control: 2 },
     state: {
       ...state,
-      pressedOpacity: 0.5,
+      "pressed-opacity": 0.5,
       disabled: { content: 0.3, container: 0.2 },
     },
-    icon: { size: { pointer: { sm: 16, md: 18, lg: 20 }, touch: { sm: 18, md: 20, lg: 22 } } },
   },
 };
 

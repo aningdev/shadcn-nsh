@@ -50,70 +50,70 @@ describe("mergeTheme", () => {
 
   test("merges semantics.json: adds missing style keys, finish roles, and finish fields while keeping app values", () => {
     const existing = {
-      type: { family: "{font-sans}" },
-      state: { pressScale: 1, pressedOpacity: 0.8 },
+      typography: { fontFamily: "{font-sans}" },
+      state: { "press-scale": 1, "pressed-opacity": 0.8 },
       finishes: {
         shared: {
           card: {
-            backgroundImage: "linear-gradient(180deg, {card} 0%, {card} 100%)",
+            gradient: "linear-gradient(180deg, {card} 0%, {card} 100%)",
           },
         },
         light: {
-          card: { boxShadow: "none" },
+          card: { shadow: "none" },
         },
         dark: {},
       },
     };
     const incoming = {
-      type: { family: null },
-      state: { pressScale: 0.97, pressedOpacity: 0.7 },
+      typography: { fontFamily: null },
+      state: { "press-scale": 0.97, "pressed-opacity": 0.7 },
       indicator: { tabs: "pill", nav: "fill", field: "box" },
       finishes: {
         shared: {
           card: {
-            backgroundImage: "linear-gradient(180deg, {popover} 0%, {popover} 100%)",
+            gradient: "linear-gradient(180deg, {popover} 0%, {popover} 100%)",
             material: null,
           },
           dialog: {
-            backgroundColor: "{card}",
-            borderColor: "{border}",
+            background: "{card}",
+            "border-color": "{border}",
             material: null,
           },
         },
         light: {
-          card: { boxShadow: "0 1px 0 oklch(0 0 0 / 0.04)" },
-          dialog: { boxShadow: "0 12px 28px -10px oklch(0 0 0 / 0.22)" },
+          card: { shadow: "0 1px 0 oklch(0 0 0 / 0.04)" },
+          dialog: { shadow: "0 12px 28px -10px oklch(0 0 0 / 0.22)" },
         },
         dark: {
-          card: { boxShadow: "0 1px 0 oklch(0 0 0 / 0.35)" },
-          dialog: { boxShadow: "0 16px 32px -10px oklch(0 0 0 / 0.6)" },
+          card: { shadow: "0 1px 0 oklch(0 0 0 / 0.35)" },
+          dialog: { shadow: "0 16px 32px -10px oklch(0 0 0 / 0.6)" },
         },
       },
     };
     const { theme, added, missing } = mergeTheme(existing, incoming);
     expect(theme).toEqual({
-      type: { family: "{font-sans}" },
-      state: { pressScale: 1, pressedOpacity: 0.8 },
+      typography: { fontFamily: "{font-sans}" },
+      state: { "press-scale": 1, "pressed-opacity": 0.8 },
       indicator: { tabs: "pill", nav: "fill", field: "box" },
       finishes: {
         shared: {
           card: {
-            backgroundImage: "linear-gradient(180deg, {card} 0%, {card} 100%)",
+            gradient: "linear-gradient(180deg, {card} 0%, {card} 100%)",
             material: null,
           },
           dialog: {
-            backgroundColor: "{card}",
-            borderColor: "{border}",
+            background: "{card}",
+            "border-color": "{border}",
             material: null,
           },
         },
         light: {
-          card: { boxShadow: "none" },
-          dialog: { boxShadow: "0 12px 28px -10px oklch(0 0 0 / 0.22)" },
+          card: { shadow: "none" },
+          dialog: { shadow: "0 12px 28px -10px oklch(0 0 0 / 0.22)" },
         },
         dark: {
-          card: { boxShadow: "0 1px 0 oklch(0 0 0 / 0.35)" },
-          dialog: { boxShadow: "0 16px 32px -10px oklch(0 0 0 / 0.6)" },
+          card: { shadow: "0 1px 0 oklch(0 0 0 / 0.35)" },
+          dialog: { shadow: "0 16px 32px -10px oklch(0 0 0 / 0.6)" },
         },
       },
     });

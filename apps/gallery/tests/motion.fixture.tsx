@@ -30,7 +30,7 @@ function moved(style: { transform?: unknown } | undefined) {
 }
 
 const describeMotion = (m: typeof motion.control) =>
-  isTiming(m) ? `${m.duration}|${JSON.stringify(m.easing)}` : `${m.stiffness}|${m.damping}`;
+  isTiming(m) ? `${m.duration}|${JSON.stringify(m.timingFunction)}` : `${m.stiffness}|${m.damping}`;
 
 function App() {
   const button = buttonLook("secondary");

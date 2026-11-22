@@ -29,19 +29,19 @@ import { toOklchText } from "./oklch";
 import { splitFinishes } from "./tokens";
 
 export interface ThemeTypeRoleStyle {
-  size: { pointer: number; touch: number };
-  line: { pointer: number; touch: number };
-  weight: string;
-  tracking: number;
+  fontSize: { pointer: number; touch: number };
+  lineHeight: { pointer: number; touch: number };
+  fontWeight: number;
+  letterSpacing: number;
 }
 
 export type ThemeMotionRoleStyle =
   | { stiffness: number; damping: number }
-  | { duration: number; easing: string };
+  | { duration: number; timingFunction: string };
 
 export interface ThemeStyleInput {
-  type: {
-    family: string | null;
+  typography: {
+    fontFamily: string | null;
     caption: ThemeTypeRoleStyle;
     detail: ThemeTypeRoleStyle;
     body: ThemeTypeRoleStyle;
@@ -50,55 +50,57 @@ export interface ThemeStyleInput {
     headline: ThemeTypeRoleStyle;
     display: ThemeTypeRoleStyle;
   };
-  shape: {
-    control: string;
-    field: string;
-    chip: string;
-    card: string;
-    overlay: string;
-    dialog: string;
-    sheet: string;
-    inset: string;
-    curve: string;
-    corners: { field: string };
-  };
-  size: {
-    hit: { pointer: number; touch: number };
-    density: {
-      pointer: { row: number; pad: number; gap: number; surface: number };
-      touch: { row: number; pad: number; gap: number; surface: number };
+  dimension: {
+    shape: {
+      control: string;
+      field: string;
+      chip: string;
+      card: string;
+      overlay: string;
+      dialog: string;
+      sheet: string;
+      inset: string;
     };
-    control: {
-      pointer: Record<string, number | string>;
-      touch: Record<string, number | string>;
+    size: {
+      hit: { pointer: number; touch: number };
+      density: {
+        pointer: { row: number; pad: number; gap: number; surface: number };
+        touch: { row: number; pad: number; gap: number; surface: number };
+      };
+      control: {
+        pointer: Record<string, number | string>;
+        touch: Record<string, number | string>;
+      };
+      height: {
+        pointer: { sm: number; md: number; lg: number };
+        touch: { sm: number; md: number; lg: number };
+      };
     };
-    height: {
+    stroke: { hairline: number; surface: number; control: number; indicator: number };
+    focus: { style: string; width: number; offset: number };
+    icon: {
       pointer: { sm: number; md: number; lg: number };
       touch: { sm: number; md: number; lg: number };
     };
   };
-  stroke: { hairline: number; surface: number; control: number; indicator: number };
-  focus: { style: string; width: number; offset: number };
+  shape: {
+    curve: string;
+    corners: { field: string };
+  };
   state: {
-    pressScale: number;
+    "press-scale": number;
     overlay: { hover: number; focus: number; pressed: number; dragged: number };
     ripple: boolean;
-    pressedOpacity: number;
+    "pressed-opacity": number;
     disabled: { content: number; container: number };
   };
+  duration: { shake: number };
+  transition: { enter: { duration: number; timingFunction: string } };
   motion: {
     press: ThemeMotionRoleStyle;
     settle: ThemeMotionRoleStyle;
     control: ThemeMotionRoleStyle;
     move: ThemeMotionRoleStyle;
-    enter: { duration: number; easing: string };
-    shake: { duration: number };
-  };
-  icon: {
-    size: {
-      pointer: { sm: number; md: number; lg: number };
-      touch: { sm: number; md: number; lg: number };
-    };
   };
   indicator: { tabs: string; nav: string; field: string };
 }
@@ -113,8 +115,7 @@ export interface ThemeGeneratorOutput {
   darkDescription: string;
   pointerDescription?: string;
   touchDescription?: string;
-  pressScale?: number;
-  pressScaleDescription?: string;
+  "press-scale"?: number;
   radiusGroupDescription?: string;
   style?: ThemeStyleInput;
   cssVars: {
@@ -516,17 +517,17 @@ function encodeFinishSection(
     if (roleDescriptions?.[role]) {
       group.$description = roleDescriptions[role];
     }
-    if (typeof finish.backgroundColor === "string") {
-      group.background = encodeFinishColorToken(finish.backgroundColor, colorMap);
+    if (typeof finish.background === "string") {
+      group.background = encodeFinishColorToken(finish.background, colorMap);
     }
-    if (typeof finish.backgroundImage === "string") {
-      group.gradient = encodeFinishGradientToken(finish.backgroundImage);
+    if (typeof finish.gradient === "string") {
+      group.gradient = encodeFinishGradientToken(finish.gradient);
     }
-    if (typeof finish.boxShadow === "string") {
-      group.shadow = encodeFinishShadowToken(finish.boxShadow);
+    if (typeof finish.shadow === "string") {
+      group.shadow = encodeFinishShadowToken(finish.shadow);
     }
-    if (typeof finish.borderColor === "string") {
-      group["border-color"] = encodeFinishColorToken(finish.borderColor, colorMap);
+    if (typeof finish["border-color"] === "string") {
+      group["border-color"] = encodeFinishColorToken(finish["border-color"], colorMap);
     }
 
     const ext: Record<string, unknown> = {};
@@ -629,15 +630,15 @@ function encodeSharedStyleOverrides(
   // 1. typography
   const baseTypoGroup = getAt(baseShared, "typography");
   const baseFontFamilyExt = (getExtNs(baseTypoGroup).fontFamily as string | null) ?? null;
-  const themeFontFamilyExt = toDtcgFontFamilyRef(style.type.family);
+  const themeFontFamilyExt = toDtcgFontFamilyRef(style.typography.fontFamily);
   const roleFontFamily: string | string[] = themeFontFamilyExt ?? ["system-ui", "sans-serif"];
   const typoOverrides: Record<string, unknown> = {};
   for (const role of TYPE_ROLES) {
-    const spec = style.type[role];
+    const spec = style.typography[role];
     const baseTok = getAt(baseTypoGroup, role);
     const baseVal = baseTok.$value as Record<string, unknown>;
-    const nextWeight = Number(spec.weight);
-    const nextTracking = { value: spec.tracking, unit: "px" };
+    const nextWeight = spec.fontWeight;
+    const nextTracking = { value: spec.letterSpacing, unit: "px" };
     if (
       !deepEqual(roleFontFamily, baseVal.fontFamily) ||
       nextWeight !== baseVal.fontWeight ||
@@ -674,9 +675,9 @@ function encodeSharedStyleOverrides(
   for (const key of ["hairline", "surface", "control", "indicator"] as const) {
     const baseTok = getAt(baseStroke, key);
     const baseVal = (baseTok.$value as { value: number }).value;
-    if (style.stroke[key] !== baseVal) {
+    if (style.dimension.stroke[key] !== baseVal) {
       strokeOverrides[key] = {
-        $value: { value: style.stroke[key], unit: "px" },
+        $value: { value: style.dimension.stroke[key], unit: "px" },
         $description: desc(`dimension.stroke.${key}`, baseTok.$description),
       };
     }
@@ -694,17 +695,17 @@ function encodeSharedStyleOverrides(
   for (const key of ["width", "offset"] as const) {
     const baseTok = getAt(baseFocus, key);
     const baseVal = (baseTok.$value as { value: number }).value;
-    if (style.focus[key] !== baseVal) {
+    if (style.dimension.focus[key] !== baseVal) {
       focusOverrides[key] = {
-        $value: { value: style.focus[key], unit: "px" },
+        $value: { value: style.dimension.focus[key], unit: "px" },
         $description: desc(`dimension.focus.${key}`, baseTok.$description),
       };
     }
   }
-  if (style.focus.style !== baseFocusStyle || Object.keys(focusOverrides).length > 0) {
+  if (style.dimension.focus.style !== baseFocusStyle || Object.keys(focusOverrides).length > 0) {
     dimensionExtras.focus = {
-      ...(style.focus.style !== baseFocusStyle
-        ? { $extensions: { [EXT_NS]: { style: style.focus.style } } }
+      ...(style.dimension.focus.style !== baseFocusStyle
+        ? { $extensions: { [EXT_NS]: { style: style.dimension.focus.style } } }
         : {}),
       $description: desc("dimension.focus", baseFocus.$description),
       ...focusOverrides,
@@ -740,9 +741,9 @@ function encodeSharedStyleOverrides(
   };
 
   const basePressScale = getAt(baseState, "press-scale");
-  if (style.state.pressScale !== basePressScale.$value) {
+  if (style.state["press-scale"] !== basePressScale.$value) {
     stateOut["press-scale"] = {
-      $value: style.state.pressScale,
+      $value: style.state["press-scale"],
       $description: desc("state.press-scale", basePressScale.$description),
     };
   }
@@ -763,9 +764,9 @@ function encodeSharedStyleOverrides(
   }
 
   const basePressedOpacity = getAt(baseState, "pressed-opacity");
-  if (style.state.pressedOpacity !== basePressedOpacity.$value) {
+  if (style.state["pressed-opacity"] !== basePressedOpacity.$value) {
     stateOut["pressed-opacity"] = {
-      $value: style.state.pressedOpacity,
+      $value: style.state["pressed-opacity"],
       $description: desc("state.pressed-opacity", basePressedOpacity.$description),
     };
   }
@@ -790,12 +791,12 @@ function encodeSharedStyleOverrides(
   const baseShake = getAt(baseDuration, "shake");
   const baseShakeVal = (baseShake.$value as { value: number }).value;
   const duration =
-    style.motion.shake.duration !== baseShakeVal
+    style.duration.shake !== baseShakeVal
       ? {
           $type: "duration",
           $description: desc("duration", baseDuration.$description),
           shake: {
-            $value: { value: style.motion.shake.duration, unit: "ms" },
+            $value: { value: style.duration.shake, unit: "ms" },
             $description: desc("duration.shake", baseShake.$description),
           },
         }
@@ -808,16 +809,16 @@ function encodeSharedStyleOverrides(
     duration: { value: number };
     timingFunction: string;
   };
-  const nextEnterTf = `{cubicBezier.${style.motion.enter.easing}}`;
+  const nextEnterTf = `{cubicBezier.${style.transition.enter.timingFunction}}`;
   const transition =
-    style.motion.enter.duration !== baseEnterVal.duration.value ||
+    style.transition.enter.duration !== baseEnterVal.duration.value ||
     nextEnterTf !== baseEnterVal.timingFunction
       ? {
           $type: "transition",
           $description: desc("transition", baseTransition.$description),
           enter: {
             $value: {
-              duration: { value: style.motion.enter.duration, unit: "ms" },
+              duration: { value: style.transition.enter.duration, unit: "ms" },
               delay: { value: 0, unit: "ms" },
               timingFunction: nextEnterTf,
             },
@@ -840,7 +841,7 @@ function encodeSharedStyleOverrides(
           $value: {
             duration: { value: spec.duration, unit: "ms" },
             delay: { value: 0, unit: "ms" },
-            timingFunction: `{cubicBezier.${spec.easing}}`,
+            timingFunction: `{cubicBezier.${spec.timingFunction}}`,
           },
           $description: desc(`motion.${role}.timing`, `Timing curve and duration for ${role}.`),
         },
@@ -916,11 +917,10 @@ function encodeInputTierOverrides(
   const lineHeightDiff: Record<string, unknown> = {};
 
   for (const role of TYPE_ROLES) {
-    const sizeVal = style.type[role].size[tier];
-    const lineVal = style.type[role].line[tier];
+    const sizeVal = style.typography[role].fontSize[tier];
+    const ratio = style.typography[role].lineHeight[tier];
     const baseSize = (getAt(baseFontSize, role).$value as { value: number }).value;
     const baseRatio = getAt(baseLineHeight, role).$value as number;
-    const ratio = lineVal / sizeVal;
     if (sizeVal !== baseSize) {
       fontSizeDiff[role] = { $value: { value: sizeVal, unit: "px" } };
     }
@@ -951,9 +951,9 @@ function encodeInputTierOverrides(
   const sizeGroupOut: Record<string, unknown> = {};
 
   const baseHit = getAt(baseSizeGroup, "hit");
-  if (style.size.hit[tier] !== (baseHit.$value as { value: number }).value) {
+  if (style.dimension.size.hit[tier] !== (baseHit.$value as { value: number }).value) {
     sizeGroupOut.hit = {
-      $value: { value: style.size.hit[tier], unit: "px" },
+      $value: { value: style.dimension.size.hit[tier], unit: "px" },
       $description: desc("dimension.size.hit", baseHit.$description),
     };
   }
@@ -980,14 +980,14 @@ function encodeInputTierOverrides(
 
   const densityOut = diffDimSubgroup(
     "dimension.size.density",
-    style.size.density[tier],
+    style.dimension.size.density[tier],
     getAt(baseSizeGroup, "density"),
   );
   if (densityOut) sizeGroupOut.density = densityOut;
 
   const baseControl = getAt(baseSizeGroup, "control");
   const baseSwitch = getExtNs(baseControl).switch as string;
-  const controlVals = style.size.control[tier];
+  const controlVals = style.dimension.size.control[tier];
   const controlDiff: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(controlVals)) {
     if (k === "switch") continue;
@@ -1008,13 +1008,13 @@ function encodeInputTierOverrides(
 
   const heightOut = diffDimSubgroup(
     "dimension.size.height",
-    style.size.height[tier],
+    style.dimension.size.height[tier],
     getAt(baseSizeGroup, "height"),
   );
   if (heightOut) sizeGroupOut.height = heightOut;
 
   const baseIcon = getAt(baseDim, "icon");
-  const iconOut = diffDimSubgroup("dimension.icon", style.icon.size[tier], baseIcon);
+  const iconOut = diffDimSubgroup("dimension.icon", style.dimension.icon[tier], baseIcon);
 
   const dimGroup: Record<string, unknown> = {};
   if (Object.keys(sizeGroupOut).length > 0) {
@@ -1199,9 +1199,11 @@ export function emitDtcgTheme(
     themeColors[k] = encodeCssColorToken(output.cssVars.theme[k]!, themeColorLookup, desc);
   }
 
-  const pressScale = output.pressScale ?? output.style?.state.pressScale;
+  const pressScale = output["press-scale"] ?? output.style?.state["press-scale"];
   if (pressScale === undefined) {
-    throw new Error(`${output.id}: either pressScale or style.state.pressScale must be provided`);
+    throw new Error(
+      `${output.id}: either "press-scale" or style.state["press-scale"] must be provided`,
+    );
   }
 
   const themeTokensDoc: Record<string, unknown> = {
@@ -1228,7 +1230,7 @@ export function emitDtcgTheme(
           "press-scale": {
             $value: pressScale,
             $description:
-              output.pressScaleDescription ??
+              output.descriptions?.style?.["state.press-scale"] ??
               "Scale factor applied while a pressable control is pressed.",
           },
         },
@@ -1249,7 +1251,7 @@ export function emitDtcgTheme(
   const darkColorMap: Record<string, string> = { ...output.cssVars.theme, ...output.cssVars.dark };
 
   for (const [role, sharedFinish] of Object.entries(split.shared)) {
-    for (const field of ["backgroundColor", "borderColor"] as const) {
+    for (const field of ["background", "border-color"] as const) {
       const val = sharedFinish[field];
       if (typeof val !== "string" || !/^oklch\(\s*from\b/i.test(val.trim())) continue;
       const lightEncoded = JSON.stringify(encodeFinishColorToken(val, lightColorMap));

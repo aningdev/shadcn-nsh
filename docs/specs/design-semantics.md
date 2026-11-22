@@ -20,36 +20,36 @@
 
 凡是不满足上述任一条的设计值，一律进入 **`semantics.json`（语义层）**，并且在消费基础层已存在的颜色、圆角或字体时，**必须引用基础 token**，禁止重复写字面量。
 
-| 类别                                                                                                                                         | 归属                           | 说明                                                                    |
-| -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ | ----------------------------------------------------------------------- |
-| 全部颜色角色（A/B/C 层）                                                                                                                     | `theme.json`                   | 明暗外观放 `light`/`dark`，不随明暗变的放 `theme`                       |
-| 全部 8 个圆角（`radius`、`radius-control`、`radius-field`、`radius-chip`、`radius-card`、`radius-overlay`、`radius-dialog`、`radius-sheet`） | `theme.json` (`cssVars.theme`) | `semantics.json` 的 `shape.*` 通过 `{radius-…}` 引用                    |
-| 字体家族（`font-mono`，以及设定字体时可选的 `font-sans`）                                                                                    | `theme.json` (`cssVars.theme`) | `semantics.json` 的 `type.family` 写 `"{font-…}"` 或 `null`（系统默认） |
-| 字体字阶、页面密度、控件尺寸、按钮高、图标尺寸                                                                                               | `semantics.json`               | 依赖 `pointer`/`touch` 两档                                             |
-| 线宽、焦点环样式与几何、交互状态叠色与透明度、动效、外观枚举                                                                                 | `semantics.json`               | 枚举或非 token 标量                                                     |
-| 表面配方（`finishes`：底色、渐变、边、阴影、模糊、平台 `material`）                                                                          | `semantics.json`               | 复合配方；其中颜色与 `material.apple.tint` 一律以 `{token}` 引用        |
+| 类别                                                                                                                                         | 归属                            | 说明                                                                              |
+| -------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------- | --------------------------------------------------------------------------------- |
+| 全部颜色角色（A/B/C 层）                                                                                                                     | `theme.json`                    | 明暗外观放 `light`/`dark`，不随明暗变的放 `theme`                                 |
+| 全部 8 个圆角（`radius`、`radius-control`、`radius-field`、`radius-chip`、`radius-card`、`radius-overlay`、`radius-dialog`、`radius-sheet`） | `theme.json` (`cssVars.theme`)  | `semantics.json` 的 `shape.*` 通过 `{radius-…}` 引用                              |
+| 字体家族（`font-mono`，以及设定字体时可选的 `font-sans`）                                                                                    | `theme.json` (`cssVars.theme`)  | `semantics.json` 的 `typography.fontFamily` 写 `"{font-…}"` 或 `null`（系统默认） |
+| 字体字阶、页面密度、控件尺寸、按钮高、图标尺寸                                                                                               | `theme.json` / `semantics.json` | 不；该类别属语义层，依 `pointer`/`touch` 两档分别定义                             |
+| 线宽、焦点环样式与几何、交互状态叠色与透明度、动效、外观枚举                                                                                 | `semantics.json`                | 枚举或非 token 标量                                                               |
+| 表面配方（`finishes`：底色、渐变、边、阴影、模糊、平台 `material`）                                                                          | `semantics.json`                | 复合配方；其中颜色与 `material.apple.tint` 一律以 `{token}` 引用                  |
 
 ## 2 `{token}` 引用语法与类型检查
 
 语义层统一使用 `{token}` 花括号语法引用 `theme.json` 中的扁平 token（对应 `token("…")`）：
 
-- **标量引用**：整个字段就是引用，如 `"card": "{radius-card}"`、`"family": "{font-sans}"`、`"backgroundColor": "{raised}"`。
+- **标量引用**：整个字段就是引用，如 `"card": "{radius-card}"`、`"fontFamily": "{font-sans}"`、`"background": "{raised}"`。
 - **CSS 字符串内嵌引用**：渐变或相对颜色中同样写 `{token}`，如 `"linear-gradient(180deg, {card} 0%, {card} 100%)"`、`"oklch(from {card} l c h / 0.78)"`。
 - `theme.json` 内部仍沿用 NSH / CSS 的 `var(--token)` 语法，因为 `theme.json` 直接交由 NSH 运行时解析。
 
 `bun run check:theme`（`scripts/theme-lint.ts`）对每一处 `{token}` 执行严格的类型与防重复检查，token 种类按 DTCG `$type` 命名：
 
-| 语义层位置                                                                                                                                                | 要求的 `$type` | 不允许的写法                                                     |
-| --------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- | ---------------------------------------------------------------- |
-| `finishes` 颜色字段（`backgroundColor`、`backgroundImage`、`borderColor`、`boxShadow` 中的引用）与 `material.apple.tint`、`material.android.ripple.color` | `color`        | 非墨色/非待定表字面量、旧式 `var(--x)`、引用非 `color` token     |
-| `shape.{control,field,chip,card,overlay,dialog,sheet,inset}`                                                                                              | `dimension`    | 裸数字字面量、引用非 `dimension` token                           |
-| `type.family`（非 `null` 时）                                                                                                                             | `fontFamily`   | 裸字符串（如 `"sans"` / `"rounded"`）、引用非 `fontFamily` token |
+| 语义层位置                                                                                                                                  | 要求的 `$type` | 不允许的写法                                                     |
+| ------------------------------------------------------------------------------------------------------------------------------------------- | -------------- | ---------------------------------------------------------------- |
+| `finishes` 颜色字段（`background`、`gradient`、`border-color`、`shadow` 中的引用）与 `material.apple.tint`、`material.android.ripple.color` | `color`        | 非墨色/非待定表字面量、旧式 `var(--x)`、引用非 `color` token     |
+| `dimension.shape.{control,field,chip,card,overlay,dialog,sheet,inset}`                                                                      | `dimension`    | 裸数字字面量、引用非 `dimension` token                           |
+| `typography.fontFamily`（非 `null` 时）                                                                                                     | `fontFamily`   | 裸字符串（如 `"sans"` / `"rounded"`）、引用非 `fontFamily` token |
 
 ## 3 两档与明暗稀疏覆盖
 
 ### `pointer` / `touch` 两档
 
-只对真正随输入形态变化的尺寸与字阶保留 `{ "pointer": V, "touch": V }`（`type.*.size`、`type.*.line`、`size.*`、`icon.size`）。`theme.ts` 通过 `tier`（`platform.desktop ? "pointer" : "touch"`）响应式读取。不要在 `theme.json` 里发明 `pointer`/`touch` 变体。
+只对真正随输入形态变化的尺寸与字阶保留 `{ "pointer": V, "touch": V }`（`typography.*.fontSize`、`typography.*.lineHeight`、`dimension.size.*`、`dimension.icon`）。`theme.ts` 通过 `tier`（`platform.desktop ? "pointer" : "touch"`）响应式读取。不要在 `theme.json` 里发明 `pointer`/`touch` 变体。
 
 ### `finishes` 稀疏覆盖（`shared` + `light` / `dark`）
 
@@ -69,23 +69,23 @@
 
 原生宿主可通过 `setThemeOverrides(cssVarsJson)` 覆写 `theme.json` 中的任意 token。由于语义层通过 `token()` 响应式解析 `{token}`：
 
-| 宿主覆写的内容                                                                                                                                | 能否自动到达语义层与组件 | 原因                                                                                 |
-| --------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | ------------------------------------------------------------------------------------ |
-| 颜色 token（`primary`、`background`、`card`、`ring`、`inverse` 等）                                                                           | **能**                   | Tailwind 类、`colors.*`、`tints.*` 与 `finish.*` 均经 `token()` 响应式读取           |
-| 8 个圆角 token（`radius`、`radius-control`、`radius-field`、`radius-chip`、`radius-card`、`radius-overlay`、`radius-dialog`、`radius-sheet`） | **能**                   | `shape.*` 解析 `{radius-…}` 后调用 `token()`；`rounded-(--radius-*)` 由 NSH 直接读取 |
-| 字体 token（`font-sans`、`font-mono`）                                                                                                        | **能**                   | NSH 原生以 `font-sans` 绘制默认文本，`font.family()` 与 `mono()` 经 `token()` 读取   |
-| 语义层自有结构（`shape.curve`、`indicator.*`、`focus.style`、`boxShadow`、`material.*`、`motion.*`、`pointer`/`touch` 尺寸）                  | **不能**                 | 无法表示为 NSH `Tokens`，属于应用选定的设计语言而非宿主品牌覆写                      |
+| 宿主覆写的内容                                                                                                                                      | 能否自动到达语义层与组件 | 原因                                                                                 |
+| --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------ | ------------------------------------------------------------------------------------ |
+| 颜色 token（`primary`、`background`、`card`、`ring`、`inverse` 等）                                                                                 | **能**                   | Tailwind 类、`colors.*`、`tints.*` 与 `finish.*` 均经 `token()` 响应式读取           |
+| 8 个圆角 token（`radius`、`radius-control`、`radius-field`、`radius-chip`、`radius-card`、`radius-overlay`、`radius-dialog`、`radius-sheet`）       | **能**                   | `shape.*` 解析 `{radius-…}` 后调用 `token()`；`rounded-(--radius-*)` 由 NSH 直接读取 |
+| 字体 token（`font-sans`、`font-mono`）                                                                                                              | **能**                   | NSH 原生以 `font-sans` 绘制默认文本，`font.family()` 与 `mono()` 经 `token()` 读取   |
+| 语义层自有结构（`shape.curve`、`indicator.*`、`dimension.focus.style`、`shadow`、`material.*`、`motion.*`、`transition.*`、`pointer`/`touch` 尺寸） | **不能**                 | 无法表示为 NSH `Tokens`，属于应用选定的设计语言而非宿主品牌覆写                      |
 
 ## 5 与 W3C DTCG 2025.10 的映射
 
 本标准在概念与命名上对齐 W3C **Design Tokens Format Module 2025.10**（DTCG，[`designtokens.org/tr/2025.10/format/`](https://www.designtokens.org/tr/2025.10/format/)，含其 Color 与 Resolver 模块）：
 
-| 本标准概念                                                                                                                     | DTCG 2025.10 对应                         | 说明                                                                                                                                                                                        |
-| ------------------------------------------------------------------------------------------------------------------------------ | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `{token}` 引用                                                                                                                 | 花括号别名（Curly-brace alias）           | NSH 的 token 命名空间是扁平的，因此语义层写 `{card}` / `{radius-dialog}`；导出 DTCG 时映射到分组路径（如 `{color.card}`、`{dimension.radius.dialog}`）                                      |
-| token 种类                                                                                                                     | `$type`                                   | 直接沿用 DTCG `$type` 词汇：`color`、`dimension`、`fontFamily`、`fontWeight`、`number`、`duration`、`cubicBezier`、`shadow`、`typography`                                                   |
-| `shared` + `light`/`dark`、`pointer`/`touch` 两档及未来的平台主题                                                              | Resolver `sets` 与 `modifiers` / contexts | `shared` 为基础 set，`light`/`dark` 与 `pointer`/`touch`（及后续平台维度）对应 Resolver 的 modifier contexts                                                                                |
-| 动效时序（`{ duration, easing }`）                                                                                             | `duration` + `cubicBezier`                | 以 `{ duration }`（ms）与命名 `cubicBezier` 曲线表达时序动效（如 Fluent 动效与 `motion.enter`）；NSH 语义层里先按 `TimingSpec`（毫秒数字 + 白名单曲线名）存储，导出 DTCG 时拆成标准 `$type` |
-| 弹簧物理量（`stiffness`/`damping`）、外观枚举（`indicator.*`、`focus.style`、`shape.curve`）、finish 复合配方与平台 `material` | `$extensions`                             | DTCG 标准类型无法表达的运行时语义，归入 `$extensions` 命名空间                                                                                                                              |
+| 本标准概念                                                                                                                               | DTCG 2025.10 对应                         | 说明                                                                                                                                                               |
+| ---------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `{token}` 引用                                                                                                                           | 花括号别名（Curly-brace alias）           | NSH 的 token 命名空间是扁平的，因此语义层写 `{card}` / `{radius-dialog}`；导出 DTCG 时映射到分组路径（如 `{color.card}`、`{dimension.radius.dialog}`）             |
+| token 种类                                                                                                                               | `$type`                                   | 直接沿用 DTCG `$type` 词汇：`color`、`dimension`、`fontFamily`、`fontWeight`、`number`、`duration`、`cubicBezier`、`shadow`、`typography`                          |
+| `shared` + `light`/`dark`、`pointer`/`touch` 两档及未来的平台主题                                                                        | Resolver `sets` 与 `modifiers` / contexts | `shared` 为基础 set，`light`/`dark` 与 `pointer`/`touch`（及后续平台维度）对应 Resolver 的 modifier contexts                                                       |
+| 动效时序（`{ duration, timingFunction }`）                                                                                               | `duration` + `cubicBezier`                | 以 `{ duration }`（ms）与命名 `cubicBezier` 曲线表达时序动效（如 Fluent 动效与 `transition.enter`）；导出 DTCG 源码时拆成标准 `$type`，运行时再编译回 `TimingSpec` |
+| 弹簧物理量（`stiffness`/`damping`）、外观枚举（`indicator.*`、`dimension.focus.style`、`shape.curve`）、finish 复合配方与平台 `material` | `$extensions`                             | DTCG 标准类型无法表达的运行时语义，归入 `$extensions` 命名空间                                                                                                     |
 
-DTCG 2025.10 源码真源（`packages/theme/tokens/`）与编译器（`bun run tokens:build`）已为全部 6 套主题落地（Batch 2–4）；运行时切换（Option (b)）与按外观展开的 `.tokens.json` 分发将按 Batch 5–6 完成。完整的 DTCG 2025.10 Token 源架构、键名映射与分批计划见 [`design-tokens.md`](design-tokens.md)。
+DTCG 2025.10 源码真源（`packages/theme/tokens/`）、编译器（`bun run tokens:build`）与 Option (b) DTCG 命名运行时（`semantics.json` 与 `theme.ts`）已为全部 6 套主题落地（Batch 2–5）；按外观展开的 `.tokens.json` 分发将在 Batch 6 完成。完整的 DTCG 2025.10 Token 源架构、键名映射与分批计划见 [`design-tokens.md`](design-tokens.md)。

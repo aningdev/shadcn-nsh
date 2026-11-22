@@ -222,11 +222,11 @@ describe("DTCG 2025.10 build (all six themes)", () => {
       const compiledTheme = compileThemeJson(resolverAbs);
       expect(compiledTheme.cssVars.theme.radius).toBe("10px");
       const compiledSemantics = compileSemanticsJson(resolverAbs) as {
-        state: { pressScale: number };
-        finishes: { shared: { card: { boxShadow: string } } };
+        state: { "press-scale": number };
+        finishes: { shared: { card: { shadow: string } } };
       };
-      expect(compiledSemantics.state.pressScale).toBe(1);
-      expect(compiledSemantics.finishes.shared.card.boxShadow).toBe(
+      expect(compiledSemantics.state["press-scale"]).toBe(1);
+      expect(compiledSemantics.finishes.shared.card.shadow).toBe(
         "0 1px 3px oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)",
       );
     } finally {

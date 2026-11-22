@@ -4,13 +4,13 @@ import plainSemantics from "../../../packages/theme/semantics.json";
 import neutralSemantics from "../../../packages/theme/themes/shadcn/semantics.json";
 
 type Finish = {
-  backgroundColor?: string;
-  backgroundImage?: string;
-  boxShadow: string;
-  borderColor?: string;
+  background?: string;
+  gradient?: string;
+  shadow: string;
+  "border-color"?: string;
 };
 type Semantics = {
-  state: { pressScale: number };
+  state: { "press-scale": number };
   finishes: {
     shared: Record<string, Partial<Finish>>;
     light: Record<string, Partial<Finish>>;
@@ -51,7 +51,7 @@ const look = (texts: string[]): Look => ({
 const resolved = /^#[0-9a-f]{6,8}$/i;
 
 /** A raised button's shadow, its corners and how far it sinks, from a theme's finishes and radii. A
- * theme whose `state.pressScale` is 1 draws no press: a control asked to sink as ever stands still. Its
+ * theme whose `state["press-scale"]` is 1 draws no press: a control asked to sink as ever stands still. Its
  * fill is an alias, so the page reads it out resolved and the shape of it is checked, not a
  * literal. */
 const raisedIn = (semantics: Semantics, appearance: "light" | "dark", radius: string) => {
@@ -60,9 +60,9 @@ const raisedIn = (semantics: Semantics, appearance: "light" | "dark", radius: st
     ...semantics.finishes[appearance]?.raised,
   } as Finish;
   return {
-    shadow: finish.boxShadow,
+    shadow: finish.shadow,
     radius,
-    sink: semantics.state.pressScale >= 1 ? "1" : "0.97",
+    sink: semantics.state["press-scale"] >= 1 ? "1" : "0.97",
   };
 };
 

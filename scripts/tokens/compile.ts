@@ -3,8 +3,7 @@
  * `packages/theme/theme.ts`:
  * 1. `theme.json` (`cssVars: { theme, light, dark }`), preserving `var(--x)` and `color-mix(...)`
  *    so host `setThemeOverrides` flows dynamically;
- * 2. `semantics.json` (the current runtime semantic contract; batch 5 moves this artifact and
- *    `theme.ts` together to DTCG field names).
+ * 2. `semantics.json` (compiled DTCG-named runtime semantic contract consumed by `theme.ts`).
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -198,7 +197,7 @@ function compileFinishSection(
     const item: Record<string, unknown> = {};
 
     if (isRecord(group.background)) {
-      item.backgroundColor = compileFinishColor(group.background);
+      item.background = compileFinishColor(group.background);
     }
     if (isRecord(group.gradient)) {
       const ext = getExt(group.gradient);
@@ -215,16 +214,16 @@ function compileFinishSection(
             : formatDtcgColor(s.color);
         return `${col} ${Math.round(s.position * 10000) / 100}%`;
       });
-      item.backgroundImage = `linear-gradient(${angle}deg, ${stops.join(", ")})`;
+      item.gradient = `linear-gradient(${angle}deg, ${stops.join(", ")})`;
     }
     if (isRecord(group.shadow)) {
       const ext = getExt(group.shadow);
       if (ext?.none) {
-        item.boxShadow = "none";
+        item.shadow = "none";
       } else {
         const raw = group.shadow.$value;
         const shadows = (Array.isArray(raw) ? raw : [raw]) as DtcgShadowItem[];
-        item.boxShadow = shadows
+        item.shadow = shadows
           .map((s) => {
             const parts: string[] = [];
             if (s.inset) parts.push("inset");
@@ -241,7 +240,7 @@ function compileFinishSection(
       }
     }
     if (isRecord(group["border-color"])) {
-      item.borderColor = compileFinishColor(group["border-color"]);
+      item["border-color"] = compileFinishColor(group["border-color"]);
     }
     const groupExt = getExt(group);
     if (groupExt && "backdropFilter" in groupExt) {
@@ -322,7 +321,7 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
       : null;
   const fontFamily = fontMatch ? `{font-${fontMatch[1]}}` : rawFontFamily;
 
-  const typeOut: Record<string, unknown> = { family: fontFamily };
+  const typographyOut: Record<string, unknown> = { fontFamily };
   for (const role of TYPE_ROLES) {
     const pTypo = (lpResolved.typography as Record<string, Record<string, unknown>>)[role]!
       .$value as DtcgTypography;
@@ -330,14 +329,14 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
       .$value as DtcgTypography;
     const pSize = (pTypo.fontSize as { value: number }).value;
     const tSize = (tTypo.fontSize as { value: number }).value;
-    typeOut[role] = {
-      size: { pointer: pSize, touch: tSize },
-      line: {
-        pointer: Math.round(pSize * (pTypo.lineHeight as number)),
-        touch: Math.round(tSize * (tTypo.lineHeight as number)),
+    typographyOut[role] = {
+      fontSize: { pointer: pSize, touch: tSize },
+      lineHeight: {
+        pointer: pTypo.lineHeight as number,
+        touch: tTypo.lineHeight as number,
       },
-      weight: String(pTypo.fontWeight),
-      tracking: pTypo.letterSpacing.value,
+      fontWeight: pTypo.fontWeight,
+      letterSpacing: pTypo.letterSpacing.value,
     };
   }
 
@@ -352,16 +351,14 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
     string,
     Record<string, unknown>
   >;
-  const shapeOut: Record<string, unknown> = {};
+  const dimShapeOut: Record<string, unknown> = {};
   for (const role of SHAPE_ROLES) {
     const ref = shapeGroup[role]!.$value as string;
     const m = /^\{dimension\.radius\.([a-z0-9-]+)\}$/.exec(ref);
     if (!m) throw new Error(`Expected {dimension.radius.*} in dimension.shape.${role}, got ${ref}`);
-    shapeOut[role] = m[1] === "base" ? "{radius}" : `{radius-${m[1]}}`;
+    dimShapeOut[role] = m[1] === "base" ? "{radius}" : `{radius-${m[1]}}`;
   }
   const shapeExt = getExt(lp.shape)!;
-  shapeOut.curve = shapeExt.curve;
-  shapeOut.corners = shapeExt.corners;
 
   const lpDim = lp.dimension as Record<string, unknown>;
   const ltDim = lt.dimension as Record<string, unknown>;
@@ -397,7 +394,7 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
         : undefined;
       motionOut[role] = {
         duration: val.duration.value,
-        easing: bezierToEasingName(tf, bezierExt?.nshEasing as string | undefined),
+        timingFunction: bezierToEasingName(tf, bezierExt?.nshEasing as string | undefined),
       };
     }
   }
@@ -411,12 +408,14 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
   const enterBezierExt = enterBezierName
     ? getExt((lp.cubicBezier as Record<string, unknown>)[enterBezierName])
     : undefined;
-  motionOut.enter = {
-    duration: enterVal.duration.value,
-    easing: bezierToEasingName(
-      enterVal.timingFunction as [number, number, number, number],
-      enterBezierExt?.nshEasing as string | undefined,
-    ),
+  const transitionOut = {
+    enter: {
+      duration: enterVal.duration.value,
+      timingFunction: bezierToEasingName(
+        enterVal.timingFunction as [number, number, number, number],
+        enterBezierExt?.nshEasing as string | undefined,
+      ),
+    },
   };
 
   const shakeDur = (
@@ -424,7 +423,7 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
       value: number;
     }
   ).value;
-  motionOut.shake = { duration: shakeDur };
+  const durationOut = { shake: shakeDur };
 
   const sharedFinishesTree = (doc.sets?.theme?.sources ?? []).reduce<Record<string, unknown>>(
     (acc, src) => mergeTokenTrees(acc, loadSourceItem(src, dir, doc)),
@@ -460,60 +459,67 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
       : { shared: rawShared, light: rawLight, dark: rawDark };
 
   return {
-    type: typeOut,
-    shape: shapeOut,
-    size: {
-      hit: {
-        pointer: ((lpSize.hit as Record<string, unknown>).$value as { value: number }).value,
-        touch: ((ltSize.hit as Record<string, unknown>).$value as { value: number }).value,
-      },
-      density: {
-        pointer: readDimMap(lpSize.density as Record<string, Record<string, unknown>>),
-        touch: readDimMap(ltSize.density as Record<string, Record<string, unknown>>),
-      },
-      control: {
-        pointer: {
-          ...readDimMap(lpSize.control as Record<string, Record<string, unknown>>),
-          switch: getExt(lpSize.control)!.switch,
-        },
-        touch: {
-          ...readDimMap(ltSize.control as Record<string, Record<string, unknown>>),
-          switch: getExt(ltSize.control)!.switch,
-        },
-      },
-      height: {
-        pointer: readDimMap(lpSize.height as Record<string, Record<string, unknown>>),
-        touch: readDimMap(ltSize.height as Record<string, Record<string, unknown>>),
-      },
-    },
-    stroke: readDimMap(lpDim.stroke as Record<string, Record<string, unknown>>),
-    focus: {
-      style: focusExt.style,
-      width: (
-        (lpDim.focus as Record<string, Record<string, unknown>>).width!.$value as {
-          value: number;
-        }
-      ).value,
-      offset: (
-        (lpDim.focus as Record<string, Record<string, unknown>>).offset!.$value as {
-          value: number;
-        }
-      ).value,
-    },
-    state: {
-      pressScale: (stateGroup["press-scale"] as Record<string, unknown>).$value as number,
-      overlay: readNumMap(stateGroup.overlay as Record<string, Record<string, unknown>>),
-      ripple: stateExt.ripple as boolean,
-      pressedOpacity: (stateGroup["pressed-opacity"] as Record<string, unknown>).$value as number,
-      disabled: readNumMap(stateGroup.disabled as Record<string, Record<string, unknown>>),
-    },
-    motion: motionOut,
-    icon: {
+    typography: typographyOut,
+    dimension: {
+      shape: dimShapeOut,
       size: {
+        hit: {
+          pointer: ((lpSize.hit as Record<string, unknown>).$value as { value: number }).value,
+          touch: ((ltSize.hit as Record<string, unknown>).$value as { value: number }).value,
+        },
+        density: {
+          pointer: readDimMap(lpSize.density as Record<string, Record<string, unknown>>),
+          touch: readDimMap(ltSize.density as Record<string, Record<string, unknown>>),
+        },
+        control: {
+          pointer: {
+            ...readDimMap(lpSize.control as Record<string, Record<string, unknown>>),
+            switch: getExt(lpSize.control)!.switch,
+          },
+          touch: {
+            ...readDimMap(ltSize.control as Record<string, Record<string, unknown>>),
+            switch: getExt(ltSize.control)!.switch,
+          },
+        },
+        height: {
+          pointer: readDimMap(lpSize.height as Record<string, Record<string, unknown>>),
+          touch: readDimMap(ltSize.height as Record<string, Record<string, unknown>>),
+        },
+      },
+      stroke: readDimMap(lpDim.stroke as Record<string, Record<string, unknown>>),
+      focus: {
+        style: focusExt.style,
+        width: (
+          (lpDim.focus as Record<string, Record<string, unknown>>).width!.$value as {
+            value: number;
+          }
+        ).value,
+        offset: (
+          (lpDim.focus as Record<string, Record<string, unknown>>).offset!.$value as {
+            value: number;
+          }
+        ).value,
+      },
+      icon: {
         pointer: readDimMap(lpDim.icon as Record<string, Record<string, unknown>>),
         touch: readDimMap(ltDim.icon as Record<string, Record<string, unknown>>),
       },
     },
+    shape: {
+      curve: shapeExt.curve,
+      corners: shapeExt.corners,
+    },
+    state: {
+      "press-scale": (stateGroup["press-scale"] as Record<string, unknown>).$value as number,
+      overlay: readNumMap(stateGroup.overlay as Record<string, Record<string, unknown>>),
+      ripple: stateExt.ripple as boolean,
+      "pressed-opacity": (stateGroup["pressed-opacity"] as Record<string, unknown>)
+        .$value as number,
+      disabled: readNumMap(stateGroup.disabled as Record<string, Record<string, unknown>>),
+    },
+    duration: durationOut,
+    transition: transitionOut,
+    motion: motionOut,
     indicator: getExt(lp.indicator) as Record<string, string>,
     finishes: finishesOut,
   };

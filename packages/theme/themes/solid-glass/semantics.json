@@ -1,178 +1,194 @@
 {
-  "type": {
-    "family": null,
+  "typography": {
+    "fontFamily": null,
     "caption": {
-      "size": {
+      "fontSize": {
         "pointer": 11,
         "touch": 12
       },
-      "line": {
-        "pointer": 15,
-        "touch": 16
+      "lineHeight": {
+        "pointer": 1.3636363636363635,
+        "touch": 1.3333333333333333
       },
-      "weight": "400",
-      "tracking": 0
+      "fontWeight": 400,
+      "letterSpacing": 0
     },
     "detail": {
-      "size": {
+      "fontSize": {
         "pointer": 12,
         "touch": 13
       },
-      "line": {
-        "pointer": 17,
-        "touch": 18
+      "lineHeight": {
+        "pointer": 1.4166666666666667,
+        "touch": 1.3846153846153846
       },
-      "weight": "400",
-      "tracking": 0
+      "fontWeight": 400,
+      "letterSpacing": 0
     },
     "body": {
-      "size": {
+      "fontSize": {
         "pointer": 13,
         "touch": 15
       },
-      "line": {
-        "pointer": 19,
-        "touch": 21
+      "lineHeight": {
+        "pointer": 1.4615384615384615,
+        "touch": 1.4
       },
-      "weight": "400",
-      "tracking": 0
+      "fontWeight": 400,
+      "letterSpacing": 0
     },
     "label": {
-      "size": {
+      "fontSize": {
         "pointer": 14,
         "touch": 15
       },
-      "line": {
-        "pointer": 20,
-        "touch": 21
+      "lineHeight": {
+        "pointer": 1.4285714285714286,
+        "touch": 1.4
       },
-      "weight": "500",
-      "tracking": 0
+      "fontWeight": 500,
+      "letterSpacing": 0
     },
     "title": {
-      "size": {
+      "fontSize": {
         "pointer": 13,
         "touch": 13
       },
-      "line": {
-        "pointer": 19,
-        "touch": 19
+      "lineHeight": {
+        "pointer": 1.4615384615384615,
+        "touch": 1.4615384615384615
       },
-      "weight": "600",
-      "tracking": 0
+      "fontWeight": 600,
+      "letterSpacing": 0
     },
     "headline": {
-      "size": {
+      "fontSize": {
         "pointer": 20,
         "touch": 22
       },
-      "line": {
-        "pointer": 26,
-        "touch": 28
+      "lineHeight": {
+        "pointer": 1.3,
+        "touch": 1.2727272727272727
       },
-      "weight": "600",
-      "tracking": 0
+      "fontWeight": 600,
+      "letterSpacing": 0
     },
     "display": {
-      "size": {
+      "fontSize": {
         "pointer": 26,
         "touch": 28
       },
-      "line": {
-        "pointer": 32,
-        "touch": 34
+      "lineHeight": {
+        "pointer": 1.2307692307692308,
+        "touch": 1.2142857142857142
       },
-      "weight": "600",
-      "tracking": 0
+      "fontWeight": 600,
+      "letterSpacing": 0
+    }
+  },
+  "dimension": {
+    "shape": {
+      "control": "{radius-control}",
+      "field": "{radius-field}",
+      "chip": "{radius-chip}",
+      "card": "{radius-card}",
+      "overlay": "{radius-overlay}",
+      "dialog": "{radius-dialog}",
+      "sheet": "{radius-sheet}",
+      "inset": "{radius}"
+    },
+    "size": {
+      "hit": {
+        "pointer": 0,
+        "touch": 44
+      },
+      "density": {
+        "pointer": {
+          "row": 36,
+          "pad": 14,
+          "gap": 12,
+          "surface": 10
+        },
+        "touch": {
+          "row": 48,
+          "pad": 16,
+          "gap": 12,
+          "surface": 16
+        }
+      },
+      "control": {
+        "pointer": {
+          "row": 40,
+          "padding": 6,
+          "gap": 10,
+          "control": 16,
+          "corner": 5,
+          "check": 12,
+          "dot": 6,
+          "tabs": 30,
+          "line": 32,
+          "clear": 16,
+          "switch": "small"
+        },
+        "touch": {
+          "row": 44,
+          "padding": 8,
+          "gap": 12,
+          "control": 22,
+          "corner": 7,
+          "check": 16,
+          "dot": 8,
+          "tabs": 40,
+          "line": 44,
+          "clear": 20,
+          "switch": "regular"
+        }
+      },
+      "height": {
+        "pointer": {
+          "sm": 24,
+          "md": 28,
+          "lg": 34
+        },
+        "touch": {
+          "sm": 36,
+          "md": 40,
+          "lg": 48
+        }
+      }
+    },
+    "stroke": {
+      "hairline": 1,
+      "surface": 1,
+      "control": 1,
+      "indicator": 2
+    },
+    "focus": {
+      "style": "halo",
+      "width": 3,
+      "offset": 0
+    },
+    "icon": {
+      "pointer": {
+        "sm": 12,
+        "md": 14,
+        "lg": 15
+      },
+      "touch": {
+        "sm": 14,
+        "md": 16,
+        "lg": 18
+      }
     }
   },
   "shape": {
-    "control": "{radius-control}",
-    "field": "{radius-field}",
-    "chip": "{radius-chip}",
-    "card": "{radius-card}",
-    "overlay": "{radius-overlay}",
-    "dialog": "{radius-dialog}",
-    "sheet": "{radius-sheet}",
-    "inset": "{radius}",
     "curve": "continuous",
     "corners": {
       "field": "all"
     }
   },
-  "size": {
-    "hit": {
-      "pointer": 0,
-      "touch": 44
-    },
-    "density": {
-      "pointer": {
-        "row": 36,
-        "pad": 14,
-        "gap": 12,
-        "surface": 10
-      },
-      "touch": {
-        "row": 48,
-        "pad": 16,
-        "gap": 12,
-        "surface": 16
-      }
-    },
-    "control": {
-      "pointer": {
-        "row": 40,
-        "padding": 6,
-        "gap": 10,
-        "control": 16,
-        "corner": 5,
-        "check": 12,
-        "dot": 6,
-        "tabs": 30,
-        "line": 32,
-        "clear": 16,
-        "switch": "small"
-      },
-      "touch": {
-        "row": 44,
-        "padding": 8,
-        "gap": 12,
-        "control": 22,
-        "corner": 7,
-        "check": 16,
-        "dot": 8,
-        "tabs": 40,
-        "line": 44,
-        "clear": 20,
-        "switch": "regular"
-      }
-    },
-    "height": {
-      "pointer": {
-        "sm": 24,
-        "md": 28,
-        "lg": 34
-      },
-      "touch": {
-        "sm": 36,
-        "md": 40,
-        "lg": 48
-      }
-    }
-  },
-  "stroke": {
-    "hairline": 1,
-    "surface": 1,
-    "control": 1,
-    "indicator": 2
-  },
-  "focus": {
-    "style": "halo",
-    "width": 3,
-    "offset": 0
-  },
   "state": {
-    "pressScale": 1,
+    "press-scale": 1,
     "overlay": {
       "hover": 0,
       "focus": 0,
@@ -180,10 +196,19 @@
       "dragged": 0
     },
     "ripple": false,
-    "pressedOpacity": 0.7,
+    "pressed-opacity": 0.7,
     "disabled": {
       "content": 0.5,
       "container": 0.5
+    }
+  },
+  "duration": {
+    "shake": 500
+  },
+  "transition": {
+    "enter": {
+      "duration": 420,
+      "timingFunction": "out-cubic"
     }
   },
   "motion": {
@@ -202,27 +227,6 @@
     "move": {
       "stiffness": 504,
       "damping": 38
-    },
-    "enter": {
-      "duration": 420,
-      "easing": "out-cubic"
-    },
-    "shake": {
-      "duration": 500
-    }
-  },
-  "icon": {
-    "size": {
-      "pointer": {
-        "sm": 12,
-        "md": 14,
-        "lg": 15
-      },
-      "touch": {
-        "sm": 14,
-        "md": 16,
-        "lg": 18
-      }
     }
   },
   "indicator": {
@@ -233,7 +237,7 @@
   "finishes": {
     "shared": {
       "card": {
-        "backgroundImage": "linear-gradient(180deg, {card} 0%, {card} 100%)",
+        "gradient": "linear-gradient(180deg, {card} 0%, {card} 100%)",
         "material": null
       },
       "inset": {
@@ -243,103 +247,103 @@
         "material": null
       },
       "raised": {
-        "backgroundColor": "{raised}",
-        "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
+        "background": "{raised}",
+        "gradient": "linear-gradient(180deg, transparent 0%, transparent 100%)",
         "material": null,
-        "borderColor": "{glass-edge}"
+        "border-color": "{glass-edge}"
       },
       "hover": {
         "material": null,
-        "backgroundColor": "{hover}",
-        "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
-        "borderColor": "{glass-edge}"
+        "background": "{hover}",
+        "gradient": "linear-gradient(180deg, transparent 0%, transparent 100%)",
+        "border-color": "{glass-edge}"
       },
       "pressed": {
         "material": null,
-        "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
-        "borderColor": "{glass-edge}"
+        "gradient": "linear-gradient(180deg, transparent 0%, transparent 100%)",
+        "border-color": "{glass-edge}"
       },
       "light": {
-        "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
-        "borderColor": "{brand-edge}",
+        "gradient": "linear-gradient(180deg, transparent 0%, transparent 100%)",
+        "border-color": "{brand-edge}",
         "material": null
       },
       "accent": {
-        "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
-        "borderColor": "{brand-edge}",
+        "gradient": "linear-gradient(180deg, transparent 0%, transparent 100%)",
+        "border-color": "{brand-edge}",
         "material": null
       },
       "track": {
         "material": null,
-        "borderColor": "transparent"
+        "border-color": "transparent"
       },
       "fill": {
-        "backgroundColor": "transparent",
+        "background": "transparent",
         "material": null,
-        "borderColor": "transparent"
+        "border-color": "transparent"
       },
       "knob": {
         "material": null,
-        "backgroundColor": "{knob}",
-        "backgroundImage": "linear-gradient(180deg, {knob} 0%, {knob} 100%)",
-        "borderColor": "transparent"
+        "background": "{knob}",
+        "gradient": "linear-gradient(180deg, {knob} 0%, {knob} 100%)",
+        "border-color": "transparent"
       },
       "knobOn": {
-        "backgroundColor": "{knob}",
-        "backgroundImage": "linear-gradient(180deg, {knob} 0%, {knob} 100%)",
+        "background": "{knob}",
+        "gradient": "linear-gradient(180deg, {knob} 0%, {knob} 100%)",
         "material": null,
-        "borderColor": "transparent"
+        "border-color": "transparent"
       },
       "handle": {
         "material": null,
-        "backgroundColor": "{knob}",
-        "backgroundImage": "linear-gradient(180deg, {knob} 0%, {knob} 100%)",
-        "borderColor": "transparent"
+        "background": "{knob}",
+        "gradient": "linear-gradient(180deg, {knob} 0%, {knob} 100%)",
+        "border-color": "transparent"
       },
       "pill": {
-        "backgroundColor": "{raised}",
-        "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
+        "background": "{raised}",
+        "gradient": "linear-gradient(180deg, transparent 0%, transparent 100%)",
         "material": null,
-        "borderColor": "{glass-edge}"
+        "border-color": "{glass-edge}"
       },
       "thumb": {
         "material": null,
-        "backgroundColor": "{raised}",
-        "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
-        "borderColor": "{glass-edge}"
+        "background": "{raised}",
+        "gradient": "linear-gradient(180deg, transparent 0%, transparent 100%)",
+        "border-color": "{glass-edge}"
       },
       "on": {
         "material": null,
-        "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)"
+        "gradient": "linear-gradient(180deg, transparent 0%, transparent 100%)"
       },
       "chip": {
-        "backgroundColor": "{raised}",
-        "backgroundImage": "linear-gradient(180deg, transparent 0%, transparent 100%)",
-        "borderColor": "transparent",
+        "background": "{raised}",
+        "gradient": "linear-gradient(180deg, transparent 0%, transparent 100%)",
+        "border-color": "transparent",
         "material": null
       },
       "glass": {
-        "borderColor": "{glass-edge}",
+        "border-color": "{glass-edge}",
         "material": null,
-        "backgroundColor": "{raised}"
+        "background": "{raised}"
       },
       "menu": {
-        "backgroundColor": "{popover}",
+        "background": "{popover}",
         "material": null
       },
       "dialog": {
-        "backgroundColor": "{card}",
-        "borderColor": "{border}",
+        "background": "{card}",
+        "border-color": "{border}",
         "material": null
       },
       "tooltip": {
-        "backgroundColor": "{popover}",
-        "boxShadow": "none",
-        "borderColor": "{border}",
+        "background": "{popover}",
+        "shadow": "none",
+        "border-color": "{border}",
         "material": null
       },
       "inverse": {
-        "backgroundColor": "{inverse}",
+        "background": "{inverse}",
         "material": null
       },
       "groove": {
@@ -348,156 +352,156 @@
     },
     "light": {
       "card": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 0 0 1px oklch(1 0 0 / 0.35), 0 1px 2px oklch(0.25 0.03 265 / 0.06), 0 12px 32px -14px oklch(0.3 0.06 265 / 0.28)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 0 0 1px oklch(1 0 0 / 0.35), 0 1px 2px oklch(0.25 0.03 265 / 0.06), 0 12px 32px -14px oklch(0.3 0.06 265 / 0.28)"
       },
       "inset": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.35)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.35)"
       },
       "field": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0)"
       },
       "raised": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.8), 0 1px 2px oklch(0.25 0.03 265 / 0.06)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.8), 0 1px 2px oklch(0.25 0.03 265 / 0.06)"
       },
       "hover": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.8), 0 1px 2px oklch(0.25 0.03 265 / 0.06)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.8), 0 1px 2px oklch(0.25 0.03 265 / 0.06)"
       },
       "pressed": {
-        "backgroundColor": "oklch(from {muted} l c h / 0.26)",
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.8)"
+        "background": "oklch(from {muted} l c h / 0.26)",
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.8)"
       },
       "light": {
-        "backgroundColor": "oklch(from {primary} l c h / 0.88)",
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.3), inset 0 -1px 0 oklch(0 0 0 / 0.203)"
+        "background": "oklch(from {primary} l c h / 0.88)",
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.3), inset 0 -1px 0 oklch(0 0 0 / 0.203)"
       },
       "accent": {
-        "backgroundColor": "oklch(from {primary} l c h / 0.88)",
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.3), inset 0 -1px 0 oklch(0 0 0 / 0.203), inset 0 0 0 1px oklch(1 0 0 / 0.07), 0 1px 2px oklch(0.25 0.03 265 / 0.06), 0 8px 18px -9px oklch(0.3 0.06 265 / 0.28)"
+        "background": "oklch(from {primary} l c h / 0.88)",
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.3), inset 0 -1px 0 oklch(0 0 0 / 0.203), inset 0 0 0 1px oklch(1 0 0 / 0.07), 0 1px 2px oklch(0.25 0.03 265 / 0.06), 0 8px 18px -9px oklch(0.3 0.06 265 / 0.28)"
       },
       "track": {
-        "boxShadow": "inset 0 1px 1.5px oklch(0.3 0.06 265 / 0.14), inset 0 -1px 0 oklch(1 0 0 / 0.85)"
+        "shadow": "inset 0 1px 1.5px oklch(0.3 0.06 265 / 0.14), inset 0 -1px 0 oklch(1 0 0 / 0.85)"
       },
       "fill": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.3), inset 0 -1px 0 oklch(0 0 0 / 0.203)",
-        "backgroundImage": "linear-gradient(180deg, oklch(0.2 0 0 / 0.88) 0%, oklch(0.2 0 0 / 0.88) 100%)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.3), inset 0 -1px 0 oklch(0 0 0 / 0.203)",
+        "gradient": "linear-gradient(180deg, oklch(0.2 0 0 / 0.88) 0%, oklch(0.2 0 0 / 0.88) 100%)"
       },
       "knob": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0 0 0 / 0.14), 0 1px 2px oklch(0.3 0.06 265 / 0.3)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0 0 0 / 0.14), 0 1px 2px oklch(0.3 0.06 265 / 0.3)"
       },
       "knobOn": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0 0 0 / 0.14), 0 1px 2px oklch(0.3 0.06 265 / 0.3)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0 0 0 / 0.14), 0 1px 2px oklch(0.3 0.06 265 / 0.3)"
       },
       "handle": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0 0 0 / 0.14), 0 1px 2px oklch(0.3 0.06 265 / 0.3)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0 0 0 / 0.14), 0 1px 2px oklch(0.3 0.06 265 / 0.3)"
       },
       "pill": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.8), 0 1px 2px oklch(0.25 0.03 265 / 0.06)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.8), 0 1px 2px oklch(0.25 0.03 265 / 0.06)"
       },
       "thumb": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.8), 0 1px 2px oklch(0.25 0.03 265 / 0.06)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.8), 0 1px 2px oklch(0.25 0.03 265 / 0.06)"
       },
       "on": {
-        "backgroundColor": "oklch(from {muted} l c h / 0.09)",
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.85)",
-        "borderColor": "oklch(from {muted} l c h / 0.13)"
+        "background": "oklch(from {muted} l c h / 0.09)",
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.85)",
+        "border-color": "oklch(from {muted} l c h / 0.13)"
       },
       "chip": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.8), inset 0 0 0 1px oklch(0.38 0.03 265 / 0.1)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.8), inset 0 0 0 1px oklch(0.38 0.03 265 / 0.1)"
       },
       "glass": {
         "backdropFilter": "blur(14px) saturate(180%)",
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.8), 0 0 0 1px oklch(0.38 0.03 265 / 0.1), 0 1px 2px oklch(0.25 0.03 265 / 0.06)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.8), 0 0 0 1px oklch(0.38 0.03 265 / 0.1), 0 1px 2px oklch(0.25 0.03 265 / 0.06)"
       },
       "menu": {
-        "borderColor": "oklch(0.38 0.03 265 / 0.22)",
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0.38 0.03 265 / 0.16), 0 24px 60px -18px oklch(0.3 0.06 265 / 0.28), 0 6px 16px -6px oklch(0.25 0.03 265 / 0.14)"
+        "border-color": "oklch(0.38 0.03 265 / 0.22)",
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0.38 0.03 265 / 0.16), 0 24px 60px -18px oklch(0.3 0.06 265 / 0.28), 0 6px 16px -6px oklch(0.25 0.03 265 / 0.14)"
       },
       "dialog": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0.38 0.03 265 / 0.16), 0 24px 60px -18px oklch(0.3 0.06 265 / 0.28), 0 6px 16px -6px oklch(0.25 0.03 265 / 0.14)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0.38 0.03 265 / 0.16), 0 24px 60px -18px oklch(0.3 0.06 265 / 0.28), 0 6px 16px -6px oklch(0.25 0.03 265 / 0.14)"
       },
       "inverse": {
-        "borderColor": "oklch(0.38 0.03 265 / 0.22)",
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0.38 0.03 265 / 0.16), 0 24px 60px -18px oklch(0.3 0.06 265 / 0.28), 0 6px 16px -6px oklch(0.25 0.03 265 / 0.14)"
+        "border-color": "oklch(0.38 0.03 265 / 0.22)",
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0.38 0.03 265 / 0.16), 0 24px 60px -18px oklch(0.3 0.06 265 / 0.28), 0 6px 16px -6px oklch(0.25 0.03 265 / 0.14)"
       },
       "groove": {
-        "boxShadow": "0 1px 0 oklch(1 0 0 / 0.35)"
+        "shadow": "0 1px 0 oklch(1 0 0 / 0.35)"
       }
     },
     "dark": {
       "card": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.16), inset 0 0 0 1px oklch(1 0 0 / 0.04), 0 1px 2px oklch(0 0 0 / 0.1), 0 12px 32px -14px oklch(0 0 0 / 0.6)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.16), inset 0 0 0 1px oklch(1 0 0 / 0.04), 0 1px 2px oklch(0 0 0 / 0.1), 0 12px 32px -14px oklch(0 0 0 / 0.6)"
       },
       "inset": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.04)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.04)"
       },
       "field": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.15)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.15)"
       },
       "raised": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.11), 0 1px 2px oklch(0 0 0 / 0.1)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.11), 0 1px 2px oklch(0 0 0 / 0.1)"
       },
       "hover": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.11), 0 1px 2px oklch(0 0 0 / 0.1)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.11), 0 1px 2px oklch(0 0 0 / 0.1)"
       },
       "pressed": {
-        "backgroundColor": "oklch(from {muted} l c h / 0.11)",
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.11)"
+        "background": "oklch(from {muted} l c h / 0.11)",
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.11)"
       },
       "light": {
-        "backgroundColor": "oklch(from {primary} l c h / 0.86)",
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0), inset 0 -1px 0 oklch(0 0 0 / 0.099)"
+        "background": "oklch(from {primary} l c h / 0.86)",
+        "shadow": "inset 0 1px 0 oklch(1 0 0), inset 0 -1px 0 oklch(0 0 0 / 0.099)"
       },
       "accent": {
-        "backgroundColor": "oklch(from {primary} l c h / 0.86)",
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0), inset 0 -1px 0 oklch(0 0 0 / 0.099), inset 0 0 0 1px oklch(0 0 0 / 0.07), 0 1px 2px oklch(0 0 0 / 0.1), 0 8px 18px -9px oklch(0 0 0 / 0.6)"
+        "background": "oklch(from {primary} l c h / 0.86)",
+        "shadow": "inset 0 1px 0 oklch(1 0 0), inset 0 -1px 0 oklch(0 0 0 / 0.099), inset 0 0 0 1px oklch(0 0 0 / 0.07), 0 1px 2px oklch(0 0 0 / 0.1), 0 8px 18px -9px oklch(0 0 0 / 0.6)"
       },
       "track": {
-        "boxShadow": "inset 0 1px 1.5px oklch(0 0 0 / 0.38), inset 0 -1px 0 oklch(1 0 0 / 0.09)"
+        "shadow": "inset 0 1px 1.5px oklch(0 0 0 / 0.38), inset 0 -1px 0 oklch(1 0 0 / 0.09)"
       },
       "fill": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0), inset 0 -1px 0 oklch(0 0 0 / 0.099)",
-        "backgroundImage": "linear-gradient(180deg, oklch(0.94 0 0 / 0.86) 0%, oklch(0.94 0 0 / 0.86) 100%)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0), inset 0 -1px 0 oklch(0 0 0 / 0.099)",
+        "gradient": "linear-gradient(180deg, oklch(0.94 0 0 / 0.86) 0%, oklch(0.94 0 0 / 0.86) 100%)"
       },
       "knob": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0 0 0 / 0.14), 0 1px 2px oklch(0 0 0 / 0.55)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0 0 0 / 0.14), 0 1px 2px oklch(0 0 0 / 0.55)"
       },
       "knobOn": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0 0 0 / 0.14), 0 1px 2px oklch(0 0 0 / 0.55)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0 0 0 / 0.14), 0 1px 2px oklch(0 0 0 / 0.55)"
       },
       "handle": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0 0 0 / 0.14), 0 1px 2px oklch(0 0 0 / 0.55)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), inset 0 -1px 0 oklch(0 0 0 / 0.14), 0 1px 2px oklch(0 0 0 / 0.55)"
       },
       "pill": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.11), 0 1px 2px oklch(0 0 0 / 0.1)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.11), 0 1px 2px oklch(0 0 0 / 0.1)"
       },
       "thumb": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.11), 0 1px 2px oklch(0 0 0 / 0.1)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.11), 0 1px 2px oklch(0 0 0 / 0.1)"
       },
       "on": {
-        "backgroundColor": "oklch(from {muted} l c h / 0.07)",
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.11)",
-        "borderColor": "oklch(from {muted} l c h / 0.06)"
+        "background": "oklch(from {muted} l c h / 0.07)",
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.11)",
+        "border-color": "oklch(from {muted} l c h / 0.06)"
       },
       "chip": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.11), inset 0 0 0 1px oklch(1 0 0 / 0.06)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.11), inset 0 0 0 1px oklch(1 0 0 / 0.06)"
       },
       "glass": {
         "backdropFilter": "blur(14px)",
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.11), 0 0 0 1px oklch(1 0 0 / 0.06), 0 1px 2px oklch(0 0 0 / 0.1)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.11), 0 0 0 1px oklch(1 0 0 / 0.06), 0 1px 2px oklch(0 0 0 / 0.1)"
       },
       "menu": {
-        "borderColor": "oklch(1 0 0 / 0.06)",
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.16), inset 0 -1px 0 oklch(0 0 0 / 0), 0 24px 60px -18px oklch(0 0 0 / 0.6), 0 6px 16px -6px oklch(0 0 0 / 0.22)"
+        "border-color": "oklch(1 0 0 / 0.06)",
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.16), inset 0 -1px 0 oklch(0 0 0 / 0), 0 24px 60px -18px oklch(0 0 0 / 0.6), 0 6px 16px -6px oklch(0 0 0 / 0.22)"
       },
       "dialog": {
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.16), inset 0 -1px 0 oklch(0 0 0 / 0), 0 24px 60px -18px oklch(0 0 0 / 0.6), 0 6px 16px -6px oklch(0 0 0 / 0.22)"
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.16), inset 0 -1px 0 oklch(0 0 0 / 0), 0 24px 60px -18px oklch(0 0 0 / 0.6), 0 6px 16px -6px oklch(0 0 0 / 0.22)"
       },
       "inverse": {
-        "borderColor": "oklch(1 0 0 / 0.06)",
-        "boxShadow": "inset 0 1px 0 oklch(1 0 0 / 0.16), inset 0 -1px 0 oklch(0 0 0 / 0), 0 24px 60px -18px oklch(0 0 0 / 0.6), 0 6px 16px -6px oklch(0 0 0 / 0.22)"
+        "border-color": "oklch(1 0 0 / 0.06)",
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.16), inset 0 -1px 0 oklch(0 0 0 / 0), 0 24px 60px -18px oklch(0 0 0 / 0.6), 0 6px 16px -6px oklch(0 0 0 / 0.22)"
       },
       "groove": {
-        "boxShadow": "0 1px 0 oklch(1 0 0 / 0.04)"
+        "shadow": "0 1px 0 oklch(1 0 0 / 0.04)"
       }
     }
   }

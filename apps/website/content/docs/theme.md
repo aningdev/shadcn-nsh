@@ -117,7 +117,7 @@ Spread one where a control needs that depth:
 
 ## Radii
 
-`theme.json`'s `cssVars.theme` block defines all eight corner radii once (`radius`, `radius-control`, `radius-field`, `radius-chip`, `radius-card`, `radius-overlay`, `radius-dialog`, `radius-sheet`). In `semantics.json`, `shape.*` references them with `"{radius-…}"` alongside `shape.curve` (`"continuous" | "circular"`) and `shape.corners.field` (`"all" | "top"`). `shape` resolves each role reactively via `token()`:
+`theme.json`'s `cssVars.theme` block defines all eight corner radii once (`radius`, `radius-control`, `radius-field`, `radius-chip`, `radius-card`, `radius-overlay`, `radius-dialog`, `radius-sheet`). In `semantics.json`, `dimension.shape.*` references them with `"{radius-…}"` alongside `shape.curve` (`"continuous" | "circular"`) and `shape.corners.field` (`"all" | "top"`). `shape` resolves each role reactively via `token()`:
 
 ```tsx
 import { shape } from "@shadcn-nsh/theme";
@@ -188,7 +188,7 @@ Change a role: `primary` in `cssVars.light` and `cssVars.dark`. Change a radius:
 
 ## Fonts
 
-Two base tokens are fonts: `font-sans` is the app's body font — every text that names no family of its own — and `font-mono` is the monospaced family: the `font-mono` class, code in a `Text`, and this library's `mono()`. Both live in `cssVars.theme`. In `semantics.json`, `type.family` is `"{font-sans}"` (or `"{font-mono}"`), or `null` for the system default; `font.family()` resolves it reactively via `token()`. The shipped themes set `font-mono` and leave `font-sans` out (`type.family: null`), so both use the system's own:
+Two base tokens are fonts: `font-sans` is the app's body font — every text that names no family of its own — and `font-mono` is the monospaced family: the `font-mono` class, code in a `Text`, and this library's `mono()`. Both live in `cssVars.theme`. In `semantics.json`, `typography.fontFamily` is `"{font-sans}"` (or `"{font-mono}"`), or `null` for the system default; `font.family()` resolves it reactively via `token()`. The shipped themes set `font-mono` and leave `font-sans` out (`typography.fontFamily: null`), so both use the system's own:
 
 ```json
 {

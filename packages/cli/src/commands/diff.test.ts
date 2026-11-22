@@ -89,10 +89,10 @@ describe("diff", () => {
   test("compares semantics.json by key: customized values stay, missing keys differ", async () => {
     current = await installed();
     const semantics = JSON.parse(current.read("lib/ui/semantics.json")) as {
-      state: { pressScale: number };
+      state: { "press-scale": number };
       finishes: { shared: Record<string, Record<string, unknown>> };
     };
-    semantics.state.pressScale = 1;
+    semantics.state["press-scale"] = 1;
     current.write("lib/ui/semantics.json", `${JSON.stringify(semantics, null, 2)}\n`);
 
     const same = await captured(() => runDiff([], { cwd: current!.app, registry: current!.url }));

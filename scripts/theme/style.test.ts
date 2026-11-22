@@ -59,10 +59,10 @@ describe("checkStyle", () => {
   test("names an enum outside its list", () => {
     const file = copy();
     file.indicator.tabs = "rail";
-    file.type.body.weight = "450";
+    file.typography.body.fontWeight = 450;
     const problems = check(file).join("\n");
     expect(problems).toContain('indicator.tabs` is "rail"');
-    expect(problems).toContain('type.body.weight` is "450"');
+    expect(problems).toContain("typography.body.fontWeight` is 450");
   });
 
   test("holds every whitelist to the value the default theme states", () => {
@@ -73,67 +73,68 @@ describe("checkStyle", () => {
         new RegExp(`^${pattern.replace(/\./g, "\\.").replace(/\*/g, "[^.]+")}$`).test(key),
       );
       expect(keys.length, pattern).toBeGreaterThan(0);
-      for (const key of keys) expect(allowed, key).toContain(have.get(key) as string | null);
+      for (const key of keys)
+        expect(allowed, key).toContain(have.get(key) as string | number | null);
     }
   });
 
-  test("names a leaf of another type, a negative size, and pressScale outside (0, 1]", () => {
+  test("names a leaf of another type, a negative size, and press-scale outside (0, 1]", () => {
     const file = copy();
-    file.focus.width = "3";
-    file.stroke.hairline = -1;
-    file.state.pressScale = 1.2;
+    file.dimension.focus.width = "3";
+    file.dimension.stroke.hairline = -1;
+    file.state["press-scale"] = 1.2;
     const problems = check(file).join("\n");
-    expect(problems).toContain("focus.width");
-    expect(problems).toContain("stroke.hairline");
-    expect(problems).toContain("state.pressScale");
+    expect(problems).toContain("dimension.focus.width");
+    expect(problems).toContain("dimension.stroke.hairline");
+    expect(problems).toContain("state.press-scale");
   });
 
   test("rejects literal numbers or wrong-kind tokens on shape radii", () => {
     const file = copy();
-    file.shape.card = 16;
-    file.shape.control = "{primary}";
-    file.shape.inset = "{radius-missing}";
+    file.dimension.shape.card = 16;
+    file.dimension.shape.control = "{primary}";
+    file.dimension.shape.inset = "{radius-missing}";
     const problems = check(file);
     expect(problems).toHaveLength(3);
-    expect(problems.join("\n")).toContain("shape.card");
+    expect(problems.join("\n")).toContain("dimension.shape.card");
     expect(problems.join("\n")).toContain("not a dimension");
     expect(problems.join("\n")).toContain("radius-missing");
   });
 
-  test("accepts null or a fontFamily `{token}` on type.family, rejects literals and wrong kinds", () => {
+  test("accepts null or a fontFamily `{token}` on typography.fontFamily, rejects literals and wrong kinds", () => {
     const withSans = new Map(kinds);
     withSans.set("font-sans", "fontFamily");
 
     const ok = copy();
-    ok.type.family = "{font-sans}";
+    ok.typography.fontFamily = "{font-sans}";
     expect(check(ok, withSans)).toEqual([]);
 
     const literal = copy();
-    literal.type.family = "sans";
-    expect(check(literal, withSans)[0]).toContain("type.family");
+    literal.typography.fontFamily = "sans";
+    expect(check(literal, withSans)[0]).toContain("typography.fontFamily");
 
     const wrongKind = copy();
-    wrongKind.type.family = "{radius-card}";
+    wrongKind.typography.fontFamily = "{radius-card}";
     expect(check(wrongKind, withSans)[0]).toContain("not a fontFamily");
 
     const unknown = copy();
-    unknown.type.family = "{font-display}";
+    unknown.typography.fontFamily = "{font-display}";
     expect(check(unknown, withSans)[0]).toContain("font-display");
   });
 
-  test("accepts double focus style and timing motion roles, rejecting invalid shapes and easings", () => {
+  test("accepts double focus style and timing motion roles, rejecting invalid shapes and timingFunctions", () => {
     const ok = copy();
-    ok.focus.style = "double";
-    ok.motion.press = { duration: 150, easing: "emphasized-decelerate" };
-    ok.motion.control = { duration: 167, easing: "decelerate" };
-    ok.motion.enter = { duration: 250, easing: "point-to-point" };
+    ok.dimension.focus.style = "double";
+    ok.motion.press = { duration: 150, timingFunction: "emphasized-decelerate" };
+    ok.motion.control = { duration: 167, timingFunction: "decelerate" };
+    ok.transition.enter = { duration: 250, timingFunction: "point-to-point" };
     expect(check(ok)).toEqual([]);
 
-    for (const easing of easingNames) {
+    for (const timingFunction of easingNames) {
       const withEasing = copy();
-      withEasing.motion.move = { duration: 200, easing };
-      withEasing.motion.enter.easing = easing;
-      expect(check(withEasing), easing).toEqual([]);
+      withEasing.motion.move = { duration: 200, timingFunction };
+      withEasing.transition.enter.timingFunction = timingFunction;
+      expect(check(withEasing), timingFunction).toEqual([]);
     }
 
     const mixed = copy();
@@ -141,24 +142,26 @@ describe("checkStyle", () => {
     expect(check(mixed).join("\n")).toContain("mixes spring keys");
 
     const badTiming = copy();
-    badTiming.motion.press = { duration: -10, easing: "unknown-curve" };
+    badTiming.motion.press = { duration: -10, timingFunction: "unknown-curve" };
     const timingProblems = check(badTiming).join("\n");
     expect(timingProblems).toContain("motion.press.duration");
-    expect(timingProblems).toContain("motion.press.easing");
+    expect(timingProblems).toContain("motion.press.timingFunction");
 
     const missingTimingField = copy();
     missingTimingField.motion.settle = { duration: 200 };
-    expect(check(missingTimingField).join("\n")).toContain("motion.settle.easing");
+    expect(check(missingTimingField).join("\n")).toContain("motion.settle.timingFunction");
   });
 
-  test("semanticsWithStyle preserves default style and updates pressScale", () => {
+  test("semanticsWithStyle preserves default style and updates press-scale", () => {
     const file = semanticsWithStyle(
-      { pressScale: 1, finishes: { shared: {}, light: {}, dark: {} } },
+      { "press-scale": 1, finishes: { shared: {}, light: {}, dark: {} } },
       reference,
     );
     expect(check(file)).toEqual([]);
-    expect((file.state as Record<string, unknown>).pressScale).toBe(1);
-    expect((file.shape as Record<string, unknown>).dialog).toBe("{radius-dialog}");
+    expect((file.state as Record<string, unknown>)["press-scale"]).toBe(1);
+    expect(((file.dimension as Record<string, any>).shape as Record<string, unknown>).dialog).toBe(
+      "{radius-dialog}",
+    );
   });
 });
 

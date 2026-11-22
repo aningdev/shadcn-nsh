@@ -62,6 +62,6 @@ export function fieldRestColor(input: string): string {
 
 /** The class a field's edge takes at rest and its focus, for an underline: the focus edge is `focus.width` of the accent, in place of the ring. */
 export function underlineFocusClass(focus: string): string {
-  const w = style().focus.width;
+  const w = style().dimension.focus.width;
   return `${focus}:border-b-[${w}px]`;
 }

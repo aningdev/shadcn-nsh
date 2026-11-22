@@ -31,9 +31,9 @@ const marked: AppTheme = {
       ...defaultTheme.semantics.finishes,
       shared: {
         ...defaultTheme.semantics.finishes.shared,
-        dialog: { ...defaultTheme.semantics.finishes.shared.dialog, borderColor: "{brand}" },
-        tooltip: { ...defaultTheme.semantics.finishes.shared.tooltip, backgroundColor: "{brand}" },
-        inverse: { ...defaultTheme.semantics.finishes.shared.inverse, backgroundColor: "{brand}" },
+        dialog: { ...defaultTheme.semantics.finishes.shared.dialog, "border-color": "{brand}" },
+        tooltip: { ...defaultTheme.semantics.finishes.shared.tooltip, background: "{brand}" },
+        inverse: { ...defaultTheme.semantics.finishes.shared.inverse, background: "{brand}" },
       },
     },
   },

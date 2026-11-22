@@ -39,9 +39,9 @@ describe("the colour roles and finishes a theme states for its surfaces", () => 
     const menu = mergedLight.menu;
     const out = withSurfaces({ card: mergedLight.card, menu, flat: mergedLight.flat });
     expect(Object.keys(out)).toEqual(["card", "menu", "dialog", "tooltip", "inverse", "flat"]);
-    expect(out.dialog.boxShadow).toBe(menu.boxShadow);
-    expect(out.tooltip.boxShadow).toBe("none");
-    expect(String(out.inverse.backgroundColor)).toContain("{inverse}");
+    expect(out.dialog.shadow).toBe(menu.shadow);
+    expect(out.tooltip.shadow).toBe("none");
+    expect(String(out.inverse.background)).toContain("{inverse}");
   });
 
   test("withSurfaces refuses a theme with no menu", () => {

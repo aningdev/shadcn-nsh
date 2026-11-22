@@ -16,7 +16,7 @@ const look = (texts: string[]) =>
 
 test("a rendered page follows the style of the theme selected, and of the build-time one again", async () => {
   const app = await open("./theme-style.fixture.tsx", { platform: "macos" });
-  const pointer = defaults.size;
+  const pointer = defaults.dimension.size;
 
   const before = look(app.texts());
   expect(before).toEqual({
@@ -24,7 +24,7 @@ test("a rendered page follows the style of the theme selected, and of the build-
     control: String(pointer.control.pointer.row),
     plain: String(pointer.control.pointer.row),
     press: `${defaults.motion.press.stiffness}|${defaults.motion.press.damping}`,
-    focus: String(defaults.focus.width),
+    focus: String(defaults.dimension.focus.width),
     curve: "continuous",
   });
 

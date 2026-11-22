@@ -72,7 +72,7 @@ export function Roll(props: { value: number; style?: StyleProp<TextStyle>; child
     void motion.play({
       keyframes: { translateY: [away, 0], opacity: [0, 1] },
       ...(isTiming(themeMotion.control)
-        ? { duration: themeMotion.control.duration, easing: themeMotion.control.easing }
+        ? { duration: themeMotion.control.duration, easing: themeMotion.control.timingFunction }
         : {
             spring: {
               stiffness: themeMotion.control.stiffness,

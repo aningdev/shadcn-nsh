@@ -250,7 +250,7 @@ function validateExtAtPath(
 
   if (p === "dimension.size.control") {
     checkUnknownKeys(where, ext, ["switch"], problems);
-    if (!whitelists["size.control.*.switch"]!.includes(ext.switch as string)) {
+    if (!whitelists["dimension.size.control.*.switch"]!.includes(ext.switch as string)) {
       problems.push(`${where}.switch: ${JSON.stringify(ext.switch)} is not in whitelist`);
     }
     return;
@@ -258,7 +258,7 @@ function validateExtAtPath(
 
   if (p === "dimension.focus") {
     checkUnknownKeys(where, ext, ["style"], problems);
-    if (!whitelists["focus.style"]!.includes(ext.style as string)) {
+    if (!whitelists["dimension.focus.style"]!.includes(ext.style as string)) {
       problems.push(`${where}.style: ${JSON.stringify(ext.style)} is not in whitelist`);
     }
     return;
@@ -572,7 +572,7 @@ function checkMergedSemantics(
     for (const role of TYPE_ROLES) {
       const tok = typoGroup[role];
       if (!isTokenNode(tok) || !isRecord(tok.$value)) continue;
-      if (!whitelists["type.*.weight"]!.includes(String(tok.$value.fontWeight))) {
+      if (!whitelists["typography.*.fontWeight"]!.includes(tok.$value.fontWeight as number)) {
         problems.push(
           `${label}: typography.${role}.fontWeight is ${JSON.stringify(tok.$value.fontWeight)}, not in whitelist`,
         );
@@ -730,7 +730,7 @@ function checkMergedSemantics(
           problems.push(
             ...checkTimingSpec(label, `motion.${role}.timing`, {
               duration: durVal,
-              easing: easingName,
+              timingFunction: easingName,
             }),
           );
         }
@@ -759,7 +759,10 @@ function checkMergedSemantics(
       : undefined;
     const easingName = bezierTarget?.replace(/^cubicBezier\./, "");
     problems.push(
-      ...checkTimingSpec(label, "transition.enter", { duration: durVal, easing: easingName }),
+      ...checkTimingSpec(label, "transition.enter", {
+        duration: durVal,
+        timingFunction: easingName,
+      }),
     );
   }
 

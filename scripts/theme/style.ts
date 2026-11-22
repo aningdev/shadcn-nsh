@@ -1,8 +1,9 @@
 /**
- * The style data of a theme, checked: the groups `semantics.json` states beside its finishes (type,
- * shape, size, stroke, focus, state, motion, icon, indicator), which every theme states with the
- * same keys, whose enums come from a list, and whose token references (`shape.*` radii,
- * `type.family`) name tokens of the right DTCG `$type` (`dimension`, `fontFamily`) in `theme.json`.
+ * The style data of a theme, checked: the groups `semantics.json` states beside its finishes
+ * (typography, dimension, shape, state, duration, transition, motion, indicator), which every
+ * theme states with the same keys, whose enums come from a list, and whose token references
+ * (`dimension.shape.*` radii, `typography.fontFamily`) name tokens of the right DTCG `$type`
+ * (`dimension`, `fontFamily`) in `theme.json`.
  *
  * Pure: no `node:fs`, so `theme-lint.ts`, the theme generators and the unit tests all read it.
  */
@@ -10,14 +11,13 @@ import { parseTokenRef, type SplitFinishes, type TokenKind } from "./tokens";
 
 /** The groups of `semantics.json` that are style, in the order the file writes them. */
 export const styleGroups = [
-  "type",
+  "typography",
+  "dimension",
   "shape",
-  "size",
-  "stroke",
-  "focus",
   "state",
+  "duration",
+  "transition",
   "motion",
-  "icon",
   "indicator",
 ] as const;
 
@@ -25,7 +25,7 @@ export const styleGroups = [
 export const styleOf = (file: Record<string, unknown>): Record<string, unknown> =>
   Object.fromEntries(styleGroups.filter((group) => group in file).map((g) => [g, file[g]]));
 
-/** Every easing name a theme may name in `motion.enter.easing` or a timing `motion.<role>`. */
+/** Every easing name a theme may name in `transition.enter.timingFunction` or a timing `motion.<role>`. */
 export const easingNames = [
   "out-cubic",
   "in-cubic",
@@ -39,14 +39,14 @@ export const easingNames = [
   "point-to-point",
 ] as const;
 
-/** One theme's strings that must come from a list: the path of the key, and the values it may take. */
-export const whitelists: Record<string, readonly (string | null)[]> = {
-  "type.*.weight": ["400", "500", "600", "700"],
+/** One theme's values that must come from a list: the path of the key, and the values it may take. */
+export const whitelists: Record<string, readonly (string | number | null)[]> = {
+  "typography.*.fontWeight": [400, 500, 600, 700],
   "shape.curve": ["continuous", "circular"],
   "shape.corners.field": ["all", "top"],
-  "size.control.*.switch": ["small", "regular"],
-  "focus.style": ["halo", "outline", "double"],
-  "motion.enter.easing": easingNames,
+  "dimension.size.control.*.switch": ["small", "regular"],
+  "dimension.focus.style": ["halo", "outline", "double"],
+  "transition.enter.timingFunction": easingNames,
   "indicator.tabs": ["underline", "pill"],
   "indicator.nav": ["fill", "bar"],
   "indicator.field": ["box", "underline"],
@@ -60,7 +60,7 @@ const isObject = (value: unknown): value is Record<string, unknown> =>
 const isMotionRolePath = (path: string) =>
   motionRoleNames.some((role) => path === `motion.${role}` || path.startsWith(`motion.${role}.`));
 
-/** Shared validator for a timing motion spec (`duration` >= 0 and whitelisted `easing`). */
+/** Shared validator for a timing motion spec (`duration` >= 0 and whitelisted `timingFunction`). */
 export function checkTimingSpec(
   path: string,
   key: string,
@@ -77,10 +77,13 @@ export function checkTimingSpec(
       `${path}: \`${key}.duration\` is ${JSON.stringify(value.duration)}, not a number of 0 or more`,
     );
   }
-  if (!("easing" in value)) problems.push(`${path}: \`${key}.easing\` is missing`);
-  else if (typeof value.easing !== "string" || !easingNames.includes(value.easing as never)) {
+  if (!("timingFunction" in value)) problems.push(`${path}: \`${key}.timingFunction\` is missing`);
+  else if (
+    typeof value.timingFunction !== "string" ||
+    !easingNames.includes(value.timingFunction as never)
+  ) {
     problems.push(
-      `${path}: \`${key}.easing\` is ${JSON.stringify(value.easing)}, not one of ${easingNames.map((v) => JSON.stringify(v)).join(", ")}`,
+      `${path}: \`${key}.timingFunction\` is ${JSON.stringify(value.timingFunction)}, not one of ${easingNames.map((v) => JSON.stringify(v)).join(", ")}`,
     );
   }
   return problems;
@@ -116,7 +119,7 @@ export function checkSpringSpec(
   return problems;
 }
 
-/** Shared bounds check for `pressScale` / `state.press-scale` in `(0, 1]`. */
+/** Shared bounds check for `state["press-scale"]` in `(0, 1]`. */
 export const isValidPressScale = (value: unknown): boolean =>
   typeof value === "number" && Number.isFinite(value) && value > 0 && value <= 1;
 
@@ -128,15 +131,15 @@ function checkMotionRole(path: string, role: string, value: unknown): string[] {
 
   const problems: string[] = [];
   const hasSpring = "stiffness" in value || "damping" in value;
-  const hasTiming = "duration" in value || "easing" in value;
+  const hasTiming = "duration" in value || "timingFunction" in value;
   if (hasSpring && hasTiming) {
     return [
-      `${path}: \`${key}\` mixes spring keys (stiffness/damping) and timing keys (duration/easing)`,
+      `${path}: \`${key}\` mixes spring keys (stiffness/damping) and timing keys (duration/timingFunction)`,
     ];
   }
 
   if (hasTiming) {
-    const allowed = new Set(["duration", "easing"]);
+    const allowed = new Set(["duration", "timingFunction"]);
     for (const k of Object.keys(value))
       if (!allowed.has(k)) problems.push(`${path}: \`${key}.${k}\` is not a key of a Timing`);
     problems.push(...checkTimingSpec(path, key, value));
@@ -204,15 +207,15 @@ export function scaledRadii(basePx: number): Record<string, string> {
 
 /**
  * A generated theme's `semantics.json`: the default theme's style (with the theme's own
- * `state.pressScale`), then its split finishes (`{ shared, light, dark }`). The default theme is
+ * `state["press-scale"]`), then its split finishes (`{ shared, light, dark }`). The default theme is
  * the one place the style numbers and `{radius-…}` references are written.
  */
 export function semanticsWithStyle(
-  generated: { pressScale: number; finishes: SplitFinishes },
+  generated: { "press-scale": number; finishes: SplitFinishes },
   defaults: Record<string, unknown>,
 ): Record<string, unknown> {
   const base = structuredClone(styleOf(defaults));
-  (base.state as Record<string, unknown>).pressScale = generated.pressScale;
+  (base.state as Record<string, unknown>)["press-scale"] = generated["press-scale"];
   return {
     ...base,
     finishes: generated.finishes,
@@ -224,9 +227,9 @@ export function semanticsWithStyle(
  * - a key the reference (the default theme) states and this one lacks, or vice versa;
  * - a leaf of another type, or a negative number;
  * - an enum outside its whitelist;
- * - a `shape.<role>` corner that is not a `{token}` reference to a `dimension` token in `theme.json`;
- * - a `type.family` that is neither `null` nor a `{token}` reference to a `fontFamily` token in `theme.json`;
- * - a `state.pressScale` outside `(0, 1]`.
+ * - a `dimension.shape.<role>` corner that is not a `{token}` reference to a `dimension` token in `theme.json`;
+ * - a `typography.fontFamily` that is neither `null` nor a `{token}` reference to a `fontFamily` token in `theme.json`;
+ * - a `state.press-scale` outside `(0, 1]`.
  */
 export function checkStyle(
   path: string,
@@ -250,7 +253,9 @@ export function checkStyle(
     problems.push(...checkMotionRole(path, role, motion?.[role]));
   }
 
-  const shapeRadiusKeys = new Set<string>(shapeRadiusRoles.map((role) => `shape.${role}`));
+  const shapeRadiusKeys = new Set<string>(
+    shapeRadiusRoles.map((role) => `dimension.shape.${role}`),
+  );
 
   for (const [key, value] of have) {
     if (isMotionRolePath(key)) continue;
@@ -281,29 +286,29 @@ export function checkStyle(
       continue;
     }
 
-    if (key === "type.family") {
+    if (key === "typography.fontFamily") {
       if (value === null) continue;
       if (typeof value !== "string") {
         problems.push(
-          `${path}: \`type.family\` is ${JSON.stringify(value)}, not null or a \`{token}\` reference to a fontFamily token`,
+          `${path}: \`typography.fontFamily\` is ${JSON.stringify(value)}, not null or a \`{token}\` reference to a fontFamily token`,
         );
         continue;
       }
       const ref = parseTokenRef(value);
       if (ref === null) {
         problems.push(
-          `${path}: \`type.family\` is ${JSON.stringify(value)}, not null or a \`{token}\` reference to a fontFamily token`,
+          `${path}: \`typography.fontFamily\` is ${JSON.stringify(value)}, not null or a \`{token}\` reference to a fontFamily token`,
         );
         continue;
       }
       const kind = kinds.get(ref);
       if (kind === undefined)
         problems.push(
-          `${path}: \`type.family\` names token \`${ref}\`, which theme.json does not have`,
+          `${path}: \`typography.fontFamily\` names token \`${ref}\`, which theme.json does not have`,
         );
       else if (kind !== "fontFamily")
         problems.push(
-          `${path}: \`type.family\` names token \`${ref}\`, which is a ${kind}, not a fontFamily`,
+          `${path}: \`typography.fontFamily\` names token \`${ref}\`, which is a ${kind}, not a fontFamily`,
         );
       continue;
     }
@@ -315,11 +320,11 @@ export function checkStyle(
     else if (typeof value === "number" && !(Number.isFinite(value) && value >= 0))
       problems.push(`${path}: \`${key}\` is ${value}, not a number of 0 or more`);
 
-    if (key === "state.pressScale" && typeof value === "number" && !isValidPressScale(value))
-      problems.push(`${path}: \`state.pressScale\` is ${value}, not in (0, 1]`);
+    if (key === "state.press-scale" && typeof value === "number" && !isValidPressScale(value))
+      problems.push(`${path}: \`state.press-scale\` is ${value}, not in (0, 1]`);
 
     for (const [pattern, allowed] of Object.entries(whitelists))
-      if (matches(pattern, key) && !allowed.includes(value as string | null))
+      if (matches(pattern, key) && !allowed.includes(value as string | number | null))
         problems.push(
           `${path}: \`${key}\` is ${JSON.stringify(value)}, not one of ${allowed.map((v) => JSON.stringify(v)).join(", ")}`,
         );

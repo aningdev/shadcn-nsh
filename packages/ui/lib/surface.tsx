@@ -31,7 +31,7 @@ const pointer = platform.desktop;
  * The page's density: compact with a pointer (desktops), roomier on a touch
  * screen. Section titles, surfaces, rows and their padding take these, so a
  * demo's sections read the same on every page. The sizes of the text are the
- * theme's type roles (`title`, `detail`, `body`), the rest its `size.density`; read
+ * theme's typography roles (`title`, `detail`, `body`), the rest its `dimension.size.density`; read
  * from the theme in use, so a theme switch redraws what reads them.
  */
 export const density = reactive<{
@@ -43,12 +43,12 @@ export const density = reactive<{
   gap: number;
   surface: number;
 }>(["title", "note", "body", "row", "pad", "gap", "surface"], () => {
-  const { type, size } = style();
+  const { typography, dimension } = style();
   return {
-    title: type.title.size[tier],
-    note: type.detail.size[tier],
-    body: type.body.size[tier],
-    ...size.density[tier],
+    title: typography.title.fontSize[tier],
+    note: typography.detail.fontSize[tier],
+    body: typography.body.fontSize[tier],
+    ...dimension.size.density[tier],
   };
 });
 
@@ -107,11 +107,11 @@ export const controlSize = reactive<ControlSizeSet>(
   ],
   () => {
     if (terminal) return terminalSizes;
-    const { type, size } = style();
+    const { typography, dimension } = style();
     return {
-      ...size.control[tier],
-      label: type.label.size[tier],
-      detail: type.detail.size[tier],
+      ...dimension.size.control[tier],
+      label: typography.label.fontSize[tier],
+      detail: typography.detail.fontSize[tier],
     };
   },
 );
