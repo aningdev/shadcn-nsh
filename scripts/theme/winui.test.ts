@@ -169,12 +169,14 @@ describe("winuiRoles() key coverage and format", () => {
 
   test("every value is a canonical oklch() string, and only overlays/washes keep alpha", () => {
     const allowedAlpha = new Set(["scrim", "window-control-ink", "window-control-edge"]);
+    const aliases = new Set(["brand-fill", "on-brand"]);
     for (const [sectionName, section] of [
       ["theme", roles.theme],
       ["light", roles.light],
       ["dark", roles.dark],
     ] as const) {
       for (const [key, value] of Object.entries(section)) {
+        if (sectionName === "theme" && aliases.has(key)) continue;
         expect(value, `${sectionName}.${key}`).toMatch(/^oklch\(/);
         expect(toOklchText(value), `${sectionName}.${key} canonical`).toBe(value);
         const parsed = parseColor(value);
@@ -203,7 +205,6 @@ describe("winuiAccent()", () => {
     expect(hexOf(roles.dark.brand)).toBe("#99ebff");
     expect(hexOf(roles.light.info)).toBe("#0078d4");
     expect(hexOf(roles.dark.info)).toBe("#60cdff");
-    expect(hexOf(roles.theme["brand-fill"])).toBe("#005fb8");
   });
 
   test("custom accent (#C239B3) produces a complete, ordered set", () => {
@@ -228,7 +229,6 @@ describe("winuiAccent()", () => {
     expect(custom.dark["brand-edge"]).not.toBe(defaults.dark["brand-edge"]);
     expect(custom.light["brand-tint"]).not.toBe(defaults.light["brand-tint"]);
     expect(custom.dark["brand-tint"]).not.toBe(defaults.dark["brand-tint"]);
-    expect(custom.theme["brand-fill"]).not.toBe(defaults.theme["brand-fill"]);
   });
 });
 
@@ -236,9 +236,11 @@ describe("WCAG contrast for default accent", () => {
   const roles = winuiRoles();
 
   test("shared theme pairs have contrast >= 4.5", () => {
-    expect(wcagContrast(roles.theme["on-brand"], roles.theme["brand-fill"])).toBeGreaterThanOrEqual(
-      4.5,
-    );
+    expect(roles.theme["brand-fill"]).toBe("var(--primary)");
+    expect(roles.theme["on-brand"]).toBe("var(--primary-foreground)");
+    for (const s of [roles.light, roles.dark]) {
+      expect(wcagContrast(s["primary-foreground"], s.primary)).toBeGreaterThanOrEqual(4.5);
+    }
     expect(wcagContrast(roles.theme["on-media"], roles.theme.media)).toBeGreaterThanOrEqual(4.5);
     expect(
       wcagContrast(roles.theme["chart-foreground"], roles.light.background),

@@ -487,9 +487,10 @@ export function winuiRoles(accent: string = WINUI_DEFAULT_ACCENT): WinuiRoles {
 
   return {
     theme: {
-      // `brand-fill` / `on-brand` use light's primary pair (`AccentFillColorDefault` + `TextOnAccentFillColorPrimary`).
-      "brand-fill": light.primary,
-      "on-brand": light["primary-foreground"],
+      // `brand-fill` / `on-brand` follow the appearance's primary pair (`AccentFillColorDefault` +
+      // `TextOnAccentFillColorPrimary`): white on Dark1 in light, black on Light2 in dark.
+      "brand-fill": "var(--primary)",
+      "on-brand": "var(--primary-foreground)",
       // Overlay scrim retains alpha (`SmokeFillColorDefault` #4D000000, identical in light & dark).
       scrim: toOklchText(argbToCssHex(WINUI.light.SmokeFillColorDefault)),
       media: "oklch(0.1869 0.0151 266.766)",
