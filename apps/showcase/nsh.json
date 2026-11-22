@@ -49,7 +49,7 @@
       "@shadcn-nsh/theme-solid-glass": "../../packages/theme/themes/solid-glass/index.ts",
       "@shadcn-nsh/theme-apple": "../../packages/theme/themes/apple/index.ts",
       "@shadcn-nsh/theme-material": "../../packages/theme/themes/material/index.ts",
-      "@shadcn-nsh/theme-fluent": "../../packages/theme/themes/fluent/index.ts"
+      "@shadcn-nsh/theme-winui": "../../packages/theme/themes/winui/index.ts"
     }
   }
 }

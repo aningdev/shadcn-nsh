@@ -69,7 +69,7 @@ apps/website/demos、docs  演示与文档页
 registry.json → public/r → shadcn-nsh add
 ```
 
-依赖向下：本库 → `nsh/base` → `nsh`。`default`、`shadcn` 与 `solid-glass` 主题的真源是 `packages/theme/tokens/`（DTCG 2025.10），改后运行 `bun run tokens:build` 编译到 `theme.json`、`semantics.json` 与 `themes/{default,shadcn,solid-glass}/`（`generate-shadcn.ts` 与 `generate-solid-glass.ts` 改为输出 DTCG 源码并自动调用构建）；其余主题（`apple`、`material`、`fluent`）在后续批次迁入 DTCG 前仍由 `scripts/theme/generate-*.ts` 直接生成。编译产物以 oklch 存储、归本库所有（起点取自上游）。
+依赖向下：本库 → `nsh/base` → `nsh`。`default`、`shadcn` 与 `solid-glass` 主题的真源是 `packages/theme/tokens/`（DTCG 2025.10），改后运行 `bun run tokens:build` 编译到 `theme.json`、`semantics.json` 与 `themes/{default,shadcn,solid-glass}/`（`generate-shadcn.ts` 与 `generate-solid-glass.ts` 改为输出 DTCG 源码并自动调用构建）；其余主题（`apple`、`material`、`winui`）在后续批次迁入 DTCG 前仍由 `scripts/theme/generate-*.ts` 直接生成。编译产物以 oklch 存储、归本库所有（起点取自上游）。
 
 ## 工作约定
 

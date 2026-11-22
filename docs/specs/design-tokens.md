@@ -31,14 +31,14 @@ packages/theme/tokens/
     style.pointer.tokens.json     # default / shadcn / solid-glass 共用的 pointer 档字阶、尺寸与图标刻度
     style.touch.tokens.json       # default / shadcn / solid-glass 共用的 touch 档字阶、尺寸与图标刻度
   themes/
-    <id>/                         # default | shadcn | solid-glass | apple | material | fluent
+    <id>/                         # default | shadcn | solid-glass | apple | material | winui
       theme.resolver.json         # 该主题的 DTCG 2025.10 Resolver
       theme.tokens.json           # 外观与输入档位无关的 token（8 个圆角、字体家族、C 层共用色、shared 状态/枚举等覆写）
       finishes.shared.tokens.json # 明暗共用的 finish 字段（含 material）
       light.tokens.json           # 亮色外观：A/B 层 63 个颜色 + light 稀疏 finish 覆写
       dark.tokens.json            # 暗色外观：A/B 层 63 个颜色 + dark 稀疏 finish 覆写
-      pointer.tokens.json         # （可选，仅平台主题 apple/material/fluent）覆盖 base 的 pointer 档字阶与尺寸
-      touch.tokens.json           # （可选，仅平台主题 apple/material/fluent）覆盖 base 的 touch 档字阶与尺寸
+      pointer.tokens.json         # （可选，仅平台主题 apple/material/winui）覆盖 base 的 pointer 档字阶与尺寸
+      touch.tokens.json           # （可选，仅平台主题 apple/material/winui）覆盖 base 的 touch 档字阶与尺寸
 ```
 
 ### 2.2 Resolver 设计：单 Resolver vs 每主题一个 Resolver
@@ -90,7 +90,7 @@ packages/theme/tokens/
 }
 ```
 
-对于平台主题（`apple` / `material` / `fluent`），`modifiers.input.contexts.{pointer,touch}` 在末尾追加 `{ "$ref": "./pointer.tokens.json" }` 与 `{ "$ref": "./touch.tokens.json" }`，按 Resolver §6.2 覆盖 `base` 的默认尺寸与字阶。
+对于平台主题（`apple` / `material` / `winui`），`modifiers.input.contexts.{pointer,touch}` 在末尾追加 `{ "$ref": "./pointer.tokens.json" }` 与 `{ "$ref": "./touch.tokens.json" }`，按 Resolver §6.2 覆盖 `base` 的默认尺寸与字阶。
 
 ---
 
@@ -345,7 +345,7 @@ DTCG 2025.10 Color Module 不包含任何颜色运算语法，但本库有两处
 
 ### 9.1 主题生成器迁移（`scripts/theme/`）
 
-目前 `scripts/theme/{shadcn,solid-glass,apple,m3,fluent}.ts` 与 `generate-*.ts` 直接生成 `packages/theme/themes/<name>/{theme,semantics}.json`。迁移后：
+目前 `scripts/theme/{shadcn,solid-glass,apple,m3,winui}.ts` 与 `generate-*.ts` 直接生成 `packages/theme/themes/<name>/{theme,semantics}.json`。迁移后：
 
 1. 生成器改为输出或更新 `packages/theme/tokens/themes/<name>/` 下的稀疏 DTCG 文件（`theme.tokens.json`、`light.tokens.json`、`dark.tokens.json`、`finishes.shared.tokens.json` 及平台特有的 `pointer.tokens.json` / `touch.tokens.json`）与 `theme.resolver.json`；
 2. 由统一的编译器 `bun run tokens:build` 读取全部 `tokens/themes/*/theme.resolver.json`，生成各主题与根 `packages/theme/` 的编译产物（`theme.json` + 运行时语义文件 + 分发用 `{light,dark}.tokens.json`）；
@@ -377,7 +377,7 @@ DTCG 2025.10 Color Module 不包含任何颜色运算语法，但本库有两处
 | **Batch 1**         | 已完成 | 提案文档 `docs/specs/design-tokens.md` + `scripts/tokens/` spike（官方 schema 缓存与 Draft-07 校验器 + `default` 主题 DTCG 源码 + 编译器 + 单测，PR #238）                                                                                     | `bun test scripts/tokens`、`bun run test:unit`、`vp check`、`bun run check` 全绿，不改任何已分发文件                                                                             |
 | **Batch 2（本批）** | 已完成 | 正式化 `scripts/tokens/` 编译器（`bun run tokens:build` / `--check` 接入 `bun run check` 与 CI）与 `theme-lint` 源码阶段校验；删掉一次性转换脚本；`default` 源码补全 `$description`                                                            | `tokens:build` 产出的 `default` 全部产物（`packages/theme/{theme,semantics}.json` 与 `themes/default/*`）逐字节一致；`bun test scripts/tokens`、`bun run check`、`vp check` 通过 |
 | **Batch 3**         | 已完成 | `shadcn` 与 `solid-glass` 迁至 DTCG 源码（`scripts/theme/{shadcn,solid-glass,generate-shadcn,generate-solid-glass,dtcg}.ts` 改输出 `packages/theme/tokens/themes/{shadcn,solid-glass}/` 并自动调用 `tokens:build`；编译器与 source lint 泛化） | 生成的产物与 `origin/main` 逐字节一致；`bun test scripts/tokens`、`bun run check:theme`、`bun run check`、`vp check` 通过                                                        |
-| **Batch 4**         | 待实施 | `apple`、`material`、`fluent` 迁至 DTCG 源码（`scripts/theme/{apple,m3,fluent,generate-*}.ts` 改输出 DTCG 稀疏源文件，含平台 `pointer`/`touch` 覆写与 `material`）                                                                             | 6 套主题全部由 DTCG 编译生成，`themes.test.ts` 与渲染比对逐像素一致                                                                                                              |
+| **Batch 4**         | 待实施 | `apple`、`material`、`winui` 迁至 DTCG 源码（`scripts/theme/{apple,m3,winui,generate-*}.ts` 改输出 DTCG 稀疏源文件，含平台 `pointer`/`touch` 覆写与 `material`）                                                                               | 6 套主题全部由 DTCG 编译生成，`themes.test.ts` 与渲染比对逐像素一致                                                                                                              |
 | **Batch 5**         | 待实施 | 全部主题统一切换至运行时 Option (b)：编译器语义输出改用 DTCG 字段命名，`packages/theme/theme.ts`、`packages/ui/*` / `apps/showcase` / `apps/gallery` 调用点、CLI `theme-merge` 与 `CHANGELOG.md` 同步更新                                      | `bun run test:unit`、`nsh check`（demos / gallery / showcase）、`bun run test:gallery`、`bun run port:render:theme` 全部通过                                                     |
 | **Batch 6**         | 待实施 | 更新 Registry 分发与 CLI：`registry.json`、`scripts/registry-build.ts`、`packages/cli` 附带各主题 `{light,dark}.tokens.json`；同步文档                                                                                                         | `bun run registry:build`、`bun run test:install`、`bun run port:render`、`bun run port:render:theme`、`bun run test:gallery`、`bun run check` 全部通过                           |
 

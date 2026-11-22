@@ -147,25 +147,25 @@
       "registryDependencies": []
     },
     {
-      "name": "theme-fluent",
+      "name": "theme-winui",
       "type": "registry:theme",
-      "title": "Theme: Fluent",
-      "description": "Fluent 2 (Windows 11 / WinUI 3) palette and metrics as one more theme — WinUI fill/stroke tokens, 4/8 px circular corners, Segoe UI Variable, double focus ring, timing motion, underline tabs/fields, and Windows blur material — installed into themes/fluent/ (theme.json, semantics.json, index.ts) for `selectTheme` to switch to while the app runs.",
+      "title": "Theme: WinUI 3",
+      "description": "WinUI 3 (Windows 11 / Fluent 2) palette and metrics as one more theme — WinUI fill/stroke tokens, 4/8 px circular corners, Segoe UI Variable, Consolas, double focus ring, timing motion, underline tabs/fields, and Windows blur material — installed into themes/winui/ (theme.json, semantics.json, index.ts) for `selectTheme` to switch to while the app runs.",
       "files": [
         {
-          "path": "packages/theme/themes/fluent/theme.json",
+          "path": "packages/theme/themes/winui/theme.json",
           "type": "registry:file",
-          "target": "themes/fluent/theme.json"
+          "target": "themes/winui/theme.json"
         },
         {
-          "path": "packages/theme/themes/fluent/semantics.json",
+          "path": "packages/theme/themes/winui/semantics.json",
           "type": "registry:file",
-          "target": "themes/fluent/semantics.json"
+          "target": "themes/winui/semantics.json"
         },
         {
-          "path": "packages/theme/themes/fluent/index.ts",
+          "path": "packages/theme/themes/winui/index.ts",
           "type": "registry:lib",
-          "target": "themes/fluent/index.ts"
+          "target": "themes/winui/index.ts"
         }
       ],
       "registryDependencies": []
@@ -174,7 +174,7 @@
       "name": "theme-native",
       "type": "registry:theme",
       "title": "Theme: native (per platform)",
-      "description": "The theme of the platform the app runs on: `nativeTheme()` returns Apple's on iOS and macOS, Material on Android, Fluent on Windows, and the default theme elsewhere, for `selectTheme(nativeTheme())`. Installs themes/native/index.ts with the themes it names (themes/apple/, themes/material/, themes/fluent/, themes/default/).",
+      "description": "The theme of the platform the app runs on: `nativeTheme()` returns Apple's on iOS and macOS, Material on Android, WinUI 3 on Windows, and the default theme elsewhere, for `selectTheme(nativeTheme())`. Installs themes/native/index.ts with the themes it names (themes/apple/, themes/material/, themes/winui/, themes/default/).",
       "files": [
         {
           "path": "packages/theme/themes/native/index.ts",
@@ -182,7 +182,7 @@
           "target": "themes/native/index.ts"
         }
       ],
-      "registryDependencies": ["theme-apple", "theme-material", "theme-fluent", "theme-default"]
+      "registryDependencies": ["theme-apple", "theme-material", "theme-winui", "theme-default"]
     },
     {
       "name": "indicator",

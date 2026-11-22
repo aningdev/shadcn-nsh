@@ -2,14 +2,14 @@
   "name": "theme-native",
   "type": "registry:theme",
   "title": "Theme: native (per platform)",
-  "description": "The theme of the platform the app runs on: `nativeTheme()` returns Apple's on iOS and macOS, Material on Android, Fluent on Windows, and the default theme elsewhere, for `selectTheme(nativeTheme())`. Installs themes/native/index.ts with the themes it names (themes/apple/, themes/material/, themes/fluent/, themes/default/).",
+  "description": "The theme of the platform the app runs on: `nativeTheme()` returns Apple's on iOS and macOS, Material on Android, WinUI 3 on Windows, and the default theme elsewhere, for `selectTheme(nativeTheme())`. Installs themes/native/index.ts with the themes it names (themes/apple/, themes/material/, themes/winui/, themes/default/).",
   "files": [
     {
       "path": "packages/theme/themes/native/index.ts",
       "type": "registry:lib",
       "target": "themes/native/index.ts",
-      "content": "import type { AppTheme } from \"@shadcn-nsh/theme\";\n// The theme of the platform the app runs on: Apple's on iOS and macOS, Material on Android,\n// Fluent on Windows, and the default theme elsewhere. `shadcn-nsh add theme-native` copies this\n// file and the themes it names into the app's `themes/`; it is the app's, then, to change.\n//\n//   selectTheme(nativeTheme());\n//\n// `platform.os` is fixed for the run, so the call returns the same theme every time.\nimport { platform } from \"nsh\";\n\nimport apple from \"../apple\";\nimport defaultTheme from \"../default\";\nimport fluent from \"../fluent\";\nimport material from \"../material\";\n\n/** The theme that draws this platform's own look: Apple's on iOS and macOS, Material on Android, Fluent on Windows, and the default theme on every other platform. */\nexport function nativeTheme(): AppTheme {\n  switch (platform.os) {\n    case \"ios\":\n    case \"macos\":\n      return apple;\n    case \"android\":\n      return material;\n    case \"windows\":\n      return fluent;\n    default:\n      return defaultTheme;\n  }\n}\n\nexport default nativeTheme;\n"
+      "content": "import type { AppTheme } from \"@shadcn-nsh/theme\";\n// The theme of the platform the app runs on: Apple's on iOS and macOS, Material on Android,\n// WinUI 3 on Windows, and the default theme elsewhere. `shadcn-nsh add theme-native` copies this\n// file and the themes it names into the app's `themes/`; it is the app's, then, to change.\n//\n//   selectTheme(nativeTheme());\n//\n// `platform.os` is fixed for the run, so the call returns the same theme every time.\nimport { platform } from \"nsh\";\n\nimport apple from \"../apple\";\nimport defaultTheme from \"../default\";\nimport material from \"../material\";\nimport winui from \"../winui\";\n\n/** The theme that draws this platform's own look: Apple's on iOS and macOS, Material on Android, WinUI 3 on Windows, and the default theme on every other platform. */\nexport function nativeTheme(): AppTheme {\n  switch (platform.os) {\n    case \"ios\":\n    case \"macos\":\n      return apple;\n    case \"android\":\n      return material;\n    case \"windows\":\n      return winui;\n    default:\n      return defaultTheme;\n  }\n}\n\nexport default nativeTheme;\n"
     }
   ],
-  "registryDependencies": ["theme-apple", "theme-material", "theme-fluent", "theme-default"]
+  "registryDependencies": ["theme-apple", "theme-material", "theme-winui", "theme-default"]
 }

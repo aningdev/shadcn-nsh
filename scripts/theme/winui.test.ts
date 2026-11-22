@@ -2,17 +2,17 @@ import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import {
-  compositeWinui,
-  fluentAccent,
-  fluentRoles,
-  fluentThemeFiles,
-  WINUI,
-  type Appearance,
-} from "./fluent";
 import { css, parseColor, toOklchText } from "./oklch";
 import { checkStyle } from "./style";
 import { mergeFinishes, tokenKinds, type SplitFinishes, type ThemeCssVars } from "./tokens";
+import {
+  compositeWinui,
+  WINUI,
+  winuiAccent,
+  winuiRoles,
+  winuiThemeFiles,
+  type Appearance,
+} from "./winui";
 
 type DefaultThemeFile = {
   cssVars: ThemeCssVars;
@@ -56,15 +56,15 @@ function wcagContrast(fg: string, bg: string): number {
 }
 
 /**
- * Published WinUI composited hexes from `.handoff/RESEARCH.md` §2.2 & §7.1
- * (26 roles per appearance, composited over `SolidBackgroundFillColorBase`).
+ * Verified WinUI 3 `2.7.0` composited hexes over `SolidBackgroundFillColorBase` (and
+ * `ControlStrokeColorOnAccentSecondary` over `AccentFillColorDefault` for `brand-edge`).
  */
 const PUBLISHED_ROLES: Record<Appearance, readonly [string, string][]> = {
   light: [
     ["background", "#f3f3f3"],
     ["foreground", "#1a1a1a"],
     ["card", "#fbfbfb"],
-    ["popover", "#ffffff"],
+    ["popover", "#f9f9f9"],
     ["primary-foreground", "#ffffff"],
     ["secondary", "#fbfbfb"],
     ["muted", "#eeeeee"],
@@ -83,11 +83,14 @@ const PUBLISHED_ROLES: Record<Appearance, readonly [string, string][]> = {
     ["glass-edge", "#e5e5e5"],
     ["hover", "#f6f6f6"],
     ["faint", "#868686"],
-    ["brand-edge", "#929292"],
+    ["brand", "#003e92"],
+    ["brand-edge", "#00396e"],
+    ["info", "#0078d4"],
     ["info-tint", "#f5f5f5"],
     ["warn-tint", "#fff4ce"],
     ["destructive-tint", "#fde7e9"],
     ["up-tint", "#dff6dd"],
+    ["inverse", "#f9f9f9"],
     ["inverse-muted", "#5c5c5c"],
   ],
   dark: [
@@ -113,19 +116,22 @@ const PUBLISHED_ROLES: Record<Appearance, readonly [string, string][]> = {
     ["glass-edge", "#1a1a1a"],
     ["hover", "#323232"],
     ["faint", "#969696"],
-    ["brand-edge", "#1c1c1c"],
+    ["brand", "#99ebff"],
+    ["brand-edge", "#53b1dc"],
+    ["info", "#60cdff"],
     ["info-tint", "#272727"],
     ["warn-tint", "#433519"],
     ["destructive-tint", "#442726"],
     ["up-tint", "#393d1b"],
+    ["inverse", "#282828"],
     ["inverse-muted", "#cccccc"],
   ],
 };
 
 describe("WinUI resource compositing", () => {
   for (const appearance of ["light", "dark"] as const) {
-    test(`${appearance}: compositing produces the published hex for all ${PUBLISHED_ROLES[appearance].length} RESEARCH rows`, () => {
-      const roles = fluentRoles()[appearance];
+    test(`${appearance}: compositing produces the verified hex for all ${PUBLISHED_ROLES[appearance].length} rows`, () => {
+      const roles = winuiRoles()[appearance];
       expect(PUBLISHED_ROLES[appearance].length).toBeGreaterThanOrEqual(20);
       for (const [role, expectedHex] of PUBLISHED_ROLES[appearance]) {
         expect(hexOf(roles[role as keyof typeof roles]), `${appearance}.${role}`).toBe(expectedHex);
@@ -142,11 +148,13 @@ describe("WinUI resource compositing", () => {
     expect(hexOf(compositeWinui(WINUI.dark.SolidBackgroundFillColorTertiary, "#202020"))).toBe(
       "#282828",
     );
+    expect(hexOf(compositeWinui(WINUI.light.SurfaceStrokeColorDefault, "#F3F3F3"))).toBe("#c1c1c1");
+    expect(hexOf(compositeWinui(WINUI.dark.SurfaceStrokeColorDefault, "#202020"))).toBe("#424242");
   });
 });
 
-describe("fluentRoles() key coverage and format", () => {
-  const roles = fluentRoles();
+describe("winuiRoles() key coverage and format", () => {
+  const roles = winuiRoles();
   const expectedThemeKeys = Object.keys(defaultTheme.cssVars.theme)
     .filter((key) => !NON_COLOUR_THEME_KEYS.has(key))
     .sort();
@@ -180,34 +188,44 @@ describe("fluentRoles() key coverage and format", () => {
   });
 });
 
-describe("fluentAccent()", () => {
-  test("default accent (#0078D4) lands on #005FB8 light and #60CDFF dark", () => {
-    const tiers = fluentAccent();
+describe("winuiAccent()", () => {
+  test("default accent (#0078D4) lands on #005FB8/#003E92 light and #60CDFF/#99EBFF dark", () => {
+    const tiers = winuiAccent();
     expect(hexOf(tiers.base)).toBe("#0078d4");
     expect(hexOf(tiers.dark1)).toBe("#005fb8");
+    expect(hexOf(tiers.dark2)).toBe("#003e92");
     expect(hexOf(tiers.light2)).toBe("#60cdff");
-    const roles = fluentRoles();
+    expect(hexOf(tiers.light3)).toBe("#99ebff");
+    const roles = winuiRoles();
     expect(hexOf(roles.light.primary)).toBe("#005fb8");
     expect(hexOf(roles.dark.primary)).toBe("#60cdff");
+    expect(hexOf(roles.light.brand)).toBe("#003e92");
+    expect(hexOf(roles.dark.brand)).toBe("#99ebff");
+    expect(hexOf(roles.light.info)).toBe("#0078d4");
+    expect(hexOf(roles.dark.info)).toBe("#60cdff");
     expect(hexOf(roles.theme["brand-fill"])).toBe("#005fb8");
   });
 
   test("custom accent (#C239B3) produces a complete, ordered set", () => {
-    const tiers = fluentAccent("#C239B3");
+    const tiers = winuiAccent("#C239B3");
     expect(hexOf(tiers.base)).toBe("#c239b3");
     for (const tier of Object.values(tiers)) {
       expect(tier).toMatch(/^oklch\(/);
       expect(toOklchText(tier)).toBe(tier);
     }
 
-    const custom = fluentRoles("#C239B3");
-    const defaults = fluentRoles();
+    const custom = winuiRoles("#C239B3");
+    const defaults = winuiRoles();
     expect(Object.keys(custom.theme).sort()).toEqual(Object.keys(defaults.theme).sort());
     expect(Object.keys(custom.light).sort()).toEqual(Object.keys(defaults.light).sort());
     expect(Object.keys(custom.dark).sort()).toEqual(Object.keys(defaults.dark).sort());
 
     expect(custom.light.primary).not.toBe(defaults.light.primary);
     expect(custom.dark.primary).not.toBe(defaults.dark.primary);
+    expect(custom.light.brand).not.toBe(defaults.light.brand);
+    expect(custom.dark.brand).not.toBe(defaults.dark.brand);
+    expect(custom.light["brand-edge"]).not.toBe(defaults.light["brand-edge"]);
+    expect(custom.dark["brand-edge"]).not.toBe(defaults.dark["brand-edge"]);
     expect(custom.light["brand-tint"]).not.toBe(defaults.light["brand-tint"]);
     expect(custom.dark["brand-tint"]).not.toBe(defaults.dark["brand-tint"]);
     expect(custom.theme["brand-fill"]).not.toBe(defaults.theme["brand-fill"]);
@@ -215,7 +233,7 @@ describe("fluentAccent()", () => {
 });
 
 describe("WCAG contrast for default accent", () => {
-  const roles = fluentRoles();
+  const roles = winuiRoles();
 
   test("shared theme pairs have contrast >= 4.5", () => {
     expect(wcagContrast(roles.theme["on-brand"], roles.theme["brand-fill"])).toBeGreaterThanOrEqual(
@@ -251,6 +269,8 @@ describe("WCAG contrast for default accent", () => {
         ],
         ["inverse-foreground/inverse", s["inverse-foreground"], s.inverse],
         ["inverse-muted/inverse", s["inverse-muted"], s.inverse],
+        ["inverse-foreground/popover (tooltip)", s["inverse-foreground"], s.popover],
+        ["inverse-muted/popover (tooltip)", s["inverse-muted"], s.popover],
         ["inverse-brand/primary", s["inverse-brand"], s.primary],
         ["on-brand-tint/brand-tint", s["on-brand-tint"], s["brand-tint"]],
         ["code/inset", s.code, s.inset],
@@ -269,16 +289,17 @@ describe("WCAG contrast for default accent", () => {
   }
 });
 
-describe("fluentThemeFiles", () => {
-  test("produces valid theme.json and semantics.json matching default keys and style schema", () => {
-    const files = fluentThemeFiles({
+describe("winuiThemeFiles", () => {
+  test("produces valid theme.json and semantics.json matching default keys, style schema, and WinUI 3 fixes", () => {
+    const files = winuiThemeFiles({
       theme: defaultTheme.cssVars.theme,
       light: defaultTheme.cssVars.light,
       dark: defaultTheme.cssVars.dark,
       lightFinishes: mergeFinishes(defaultSemantics.finishes, "light"),
       darkFinishes: mergeFinishes(defaultSemantics.finishes, "dark"),
     });
-    expect(files.theme.name).toBe("Fluent");
+    expect(files.theme.name).toBe("WinUI 3");
+    expect(files.theme.cssVars.theme["font-mono"]).toBe("Consolas, monospace");
     expect(Object.keys(files.theme.cssVars.theme)).toEqual([
       ...Object.keys(defaultTheme.cssVars.theme),
       "font-sans",
@@ -286,10 +307,28 @@ describe("fluentThemeFiles", () => {
     expect(Object.keys(files.theme.cssVars.light)).toEqual(Object.keys(defaultTheme.cssVars.light));
     expect(Object.keys(files.theme.cssVars.dark)).toEqual(Object.keys(defaultTheme.cssVars.dark));
 
+    expect(files.semantics.motion.press).toEqual({ duration: 83, easing: "decelerate" });
+    expect(files.semantics.size.density.pointer.row).toBe(40);
+    expect(files.semantics.finishes.shared.tooltip).toMatchObject({
+      backgroundColor: "{popover}",
+      borderColor: "{glass-edge}",
+      material: { windows: { backdrop: "blur" } },
+    });
+    expect(files.semantics.finishes.light.glass).toMatchObject({
+      backgroundColor: "oklch(from {popover} l c h / 0.85)",
+    });
+    expect(files.semantics.finishes.dark.glass).toMatchObject({
+      backgroundColor: "oklch(from {popover} l c h / 0.96)",
+    });
+    expect(files.semantics.finishes.light.menu?.boxShadow).toContain("0 16px 32px");
+    expect(files.semantics.finishes.light.dialog?.boxShadow).toContain("0 64px 128px");
+    expect(hexOf(String(files.semantics.finishes.light.dialog?.borderColor))).toBe("#c1c1c1");
+    expect(hexOf(String(files.semantics.finishes.dark.dialog?.borderColor))).toBe("#424242");
+
     const kinds = tokenKinds(files.theme.cssVars);
     expect(
       checkStyle(
-        "packages/theme/themes/fluent/semantics.json",
+        "packages/theme/themes/winui/semantics.json",
         files.semantics,
         defaultSemantics,
         kinds,

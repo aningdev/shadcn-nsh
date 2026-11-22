@@ -27,7 +27,7 @@
 
 ## 差异点（按优先级）
 
-1. **多风格 × 主题色**：`init` 时选风格（`finishes` 一层）与颜色（`theme.json` 一层）；文档站在线切换已可，在线调色未做。原生外观（Apple / Material / Fluent）的方案见 [`native-themes.md`](native-themes.md)。
+1. **多风格 × 主题色**：`init` 时选风格（`finishes` 一层）与颜色（`theme.json` 一层）；文档站在线切换已可，在线调色未做。原生外观（Apple / Material / WinUI 3）的方案见 [`native-themes.md`](native-themes.md)。
 2. **原生应用 Blocks**：不照搬网页 blocks，做原生应用才有的场景：AI 对话、桌面工作区（dock、菜单、快捷键）、手机设置与 sheet 流程、编辑器。每个都手机 / 桌面自适应。Block 只组合现有组件与主题的 token、finish，不写颜色、不自创外观。
 3. **统一、shadcn 式的 API**：`variant` / `size` / `tone` 统一命名，贴近 shadcn；复制后的代码好读好改。外壳与 `// @port` 区域都归本库，都可以改；上游同一处的后续变化变成 `port:check` 的待审阅项，不再是"不一致"。
 4. **模板脚手架**：几套开箱即跑的壳应用（如 AI 对话、桌面工作区、手机标签页应用），`shadcn-nsh create <name> --template <id>`：底层是 `nsh init` + `shadcn-nsh init` + 一组 Blocks，选好的风格与主题色一并写入。

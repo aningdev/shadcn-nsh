@@ -72,8 +72,8 @@ export const SIDEBAR_PAGES: SidebarPage[] = [
     parent: "/docs/themes",
   },
   {
-    route: "/docs/themes/fluent",
-    title: "Fluent",
+    route: "/docs/themes/winui",
+    title: "WinUI 3",
     group: "start",
     parent: "/docs/themes",
   },

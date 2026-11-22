@@ -85,8 +85,8 @@ const FAQ: { question: string; answer: ReactNode }[] = [
     answer: (
       <>
         Six ship: default, shadcn, solid-glass, apple (Liquid Glass on macOS and iOS 26), material
-        (Material 3 Expressive on Android), and fluent (Fluent 2 on Windows); <code>native</code>{" "}
-        picks apple on Apple platforms, material on Android, fluent on Windows, and default
+        (Material 3 Expressive on Android), and winui (WinUI 3 on Windows); <code>native</code>{" "}
+        picks apple on Apple platforms, material on Android, winui on Windows, and default
         elsewhere. Choose one with <code>init --theme</code>, add more with{" "}
         <code>add theme-&lt;name&gt;</code> and switch at run time with <code>selectTheme</code>. A
         theme is data — <code>theme.json</code> and <code>semantics.json</code> — so yours is an

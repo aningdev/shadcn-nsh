@@ -47,10 +47,10 @@ export const PALETTES = [
       "Material 3 Expressive: tonal surfaces, capsule controls, circular corners, 8/10/10% state layers, and expressive springs.",
   },
   {
-    id: "fluent",
-    label: "Fluent",
+    id: "winui",
+    label: "WinUI 3",
     description:
-      "Fluent 2 (Windows 11): WinUI fill and stroke tokens, 4/8-point circular corners, Segoe UI Variable, double focus rings, and timing motion.",
+      "WinUI 3 (Windows 11 / Fluent 2): WinUI fill and stroke tokens, 4/8-point circular corners, Segoe UI Variable, Consolas, double focus rings, and timing motion.",
   },
 ] as const;
 

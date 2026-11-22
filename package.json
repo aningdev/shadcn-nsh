@@ -26,7 +26,7 @@
     "check:first-frame": "bun apps/website/scripts/check-first-frame.ts",
     "catalog": "bun scripts/catalog.ts",
     "registry:build": "bun scripts/registry-build.ts",
-    "theme:fluent": "bun scripts/theme/generate-fluent.ts",
+    "theme:winui": "bun scripts/theme/generate-winui.ts",
     "registry:serve": "bun packages/cli/src/index.ts serve",
     "shadcn-nsh": "bun packages/cli/src/index.ts",
     "cli:build": "bun --filter shadcn-nsh build",

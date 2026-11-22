@@ -41,12 +41,12 @@ test("nativeTheme() is material on Android", async () => {
   expect(find(app.texts(), "native=")).toBe("material");
 });
 
-test("nativeTheme() is fluent on Windows", async () => {
+test("nativeTheme() is winui on Windows", async () => {
   const app = await open("./theme-native.fixture.tsx", {
     platform: "windows",
     colorScheme: "light",
   });
-  expect(find(app.texts(), "native=")).toBe("fluent");
+  expect(find(app.texts(), "native=")).toBe("winui");
 });
 
 test("nativeTheme() is the default theme on the other platforms", async () => {
@@ -54,6 +54,6 @@ test("nativeTheme() is the default theme on the other platforms", async () => {
     const app = await open("./theme-native.fixture.tsx", { platform, colorScheme: "light" });
     expect(find(app.texts(), "native=")).not.toBe("apple");
     expect(find(app.texts(), "native=")).not.toBe("material");
-    expect(find(app.texts(), "native=")).not.toBe("fluent");
+    expect(find(app.texts(), "native=")).not.toBe("winui");
   }
 });

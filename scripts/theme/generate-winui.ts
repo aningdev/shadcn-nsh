@@ -1,18 +1,18 @@
 /**
- * Writes `packages/theme/themes/fluent/theme.json` and `semantics.json` from the Fluent 2
- * (Windows 11 / WinUI 3) palette and metrics in `fluent.ts`.
+ * Writes `packages/theme/themes/winui/theme.json` and `semantics.json` from the WinUI 3
+ * (Windows 11 / Fluent 2) palette and metrics in `winui.ts`.
  *
- *   bun scripts/theme/generate-fluent.ts
+ *   bun scripts/theme/generate-winui.ts
  */
 import fs from "node:fs";
 import path from "node:path";
 
 import { repo } from "../port/lib";
-import { fluentThemeFiles } from "./fluent";
 import { mergeFinishes, type SplitFinishes } from "./tokens";
+import { winuiThemeFiles } from "./winui";
 
 const theme = path.join(repo, "packages", "theme");
-const outDir = path.join(theme, "themes", "fluent");
+const outDir = path.join(theme, "themes", "winui");
 const read = (file: string): Record<string, unknown> =>
   JSON.parse(fs.readFileSync(path.join(theme, file), "utf8"));
 
@@ -27,7 +27,7 @@ const semantics = read("semantics.json") as {
   finishes: SplitFinishes<Record<string, unknown>>;
 };
 
-const files = fluentThemeFiles({
+const files = winuiThemeFiles({
   theme: defaults.cssVars.theme,
   light: defaults.cssVars.light,
   dark: defaults.cssVars.dark,

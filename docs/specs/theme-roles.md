@@ -254,6 +254,8 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | solid-glass | light | `oklch(0.2 0 0 / 0.88)`          | `fill.backgroundImage`                                                                                 | `primary`（ΔL +0.000，ΔC +0.000）            |
 | solid-glass | light | `oklch(0.38 0.03 265 / 0.22)`    | `menu.borderColor`                                                                                     | `muted`（ΔL +0.079，ΔC +0.011）              |
 | solid-glass | dark  | `oklch(0.94 0 0 / 0.86)`         | `fill.backgroundImage`                                                                                 | `primary`（ΔL +0.000，ΔC +0.000）            |
+| winui       | light | `oklch(0.81093 0 0)`             | `dialog.borderColor`（`SurfaceStrokeColorDefault` `#66757575` 在基色上合成）                           | `border`（ΔL -0.107，ΔC 0）                  |
+| winui       | dark  | `oklch(0.37909 0 0)`             | `dialog.borderColor`（`SurfaceStrokeColorDefault` `#66757575` 在基色上合成）                           | `border`（ΔL +0.070，ΔC 0）                  |
 
 <!-- /theme-lint: pending -->
 

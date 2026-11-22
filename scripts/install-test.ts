@@ -16,8 +16,8 @@
  *   that lists both and switches between them: the library's own theme installs into
  *   `themes/default/` without touching the build-time one;
  * - **the platform's own theme**: `init --theme native` (themes/apple, themes/material,
- *   themes/fluent, themes/default and themes/native installed, a page calling
- *   `selectTheme(nativeTheme())` type checks) and `init --theme apple` / `material` / `fluent`
+ *   `themes/winui`, `themes/default` and `themes/native` installed, a page calling
+ *   `selectTheme(nativeTheme())` type checks) and `init --theme apple` / `material` / `winui`
  *   (`theme.json` is that theme's, `add --all` type checks);
  * - **one at a time**: a fresh app per `registry:ui` item, `add <item>` and `nsh check`: an
  *   import no item delivers (a missing `registryDependencies` entry or lib file), or a file the
@@ -624,9 +624,9 @@ mount(Page);
 
 /**
  * The platform's own theme, from the app's side: `init --theme native` builds the app on the
- * default theme and installs `themes/apple`, `themes/material`, `themes/fluent`, `themes/default`
+ * default theme and installs `themes/apple`, `themes/material`, `themes/winui`, `themes/default`
  * and `themes/native`; a page that calls `selectTheme(nativeTheme())` must type check.
- * `init --theme apple` builds on Apple's; `material` on Material's; `fluent` on Fluent's.
+ * `init --theme apple` builds on Apple's; `material` on Material's; `winui` on WinUI 3's.
  */
 async function installNativeTheme(template: string, dir: string, nsh: string) {
   await copyApp(template, dir);
@@ -638,14 +638,14 @@ async function installNativeTheme(template: string, dir: string, nsh: string) {
     path.join(repo, "packages/theme/themes/material/theme.json"),
     "utf8",
   );
-  const fluent = await fs.readFile(
-    path.join(repo, "packages/theme/themes/fluent/theme.json"),
+  const winui = await fs.readFile(
+    path.join(repo, "packages/theme/themes/winui/theme.json"),
     "utf8",
   );
   for (const [name, want] of [
     ["themes/apple/theme.json", apple],
     ["themes/material/theme.json", material],
-    ["themes/fluent/theme.json", fluent],
+    ["themes/winui/theme.json", winui],
     ["themes/default/theme.json", null],
     ["themes/native/index.ts", null],
   ] as const) {
@@ -694,18 +694,18 @@ async function installMaterialTheme(template: string, dir: string, nsh: string) 
   await step("nsh check", nsh, ["check", "."], dir);
 }
 
-/** `init --theme fluent`: the app's own `theme.json` is Fluent's, and the app type checks. */
-async function installFluentTheme(template: string, dir: string, nsh: string) {
+/** `init --theme winui`: the app's own `theme.json` is WinUI 3's, and the app type checks. */
+async function installWinuiTheme(template: string, dir: string, nsh: string) {
   await copyApp(template, dir);
-  const fluent = await fs.readFile(
-    path.join(repo, "packages/theme/themes/fluent/theme.json"),
+  const winui = await fs.readFile(
+    path.join(repo, "packages/theme/themes/winui/theme.json"),
     "utf8",
   );
   const now = await fs.readFile(path.join(dir, "theme.json"), "utf8");
-  if (now !== fluent) {
+  if (now !== winui) {
     throw new StepFailure(
       "theme",
-      "      theme.json is not packages/theme/themes/fluent/theme.json after init --theme fluent",
+      "      theme.json is not packages/theme/themes/winui/theme.json after init --theme winui",
     );
   }
   await step("add --all", "bun", [cli, "add", "--all"], dir);
@@ -1024,7 +1024,7 @@ async function main(): Promise<number> {
     }
 
     if (opts.filter == null) {
-      console.log("the platform's own theme: apple, material, fluent, and native choosing them");
+      console.log("the platform's own theme: apple, material, winui, and native choosing them");
       const startedNative = performance.now();
       try {
         const nativeTemplate = path.join(tmp, "template-native");
@@ -1036,20 +1036,20 @@ async function main(): Promise<number> {
         const materialTemplate = path.join(tmp, "template-material");
         await scaffold(materialTemplate, registry, nsh, "material");
         await installMaterialTheme(materialTemplate, path.join(tmp, "material"), nsh);
-        const fluentTemplate = path.join(tmp, "template-fluent");
-        await scaffold(fluentTemplate, registry, nsh, "fluent");
-        await installFluentTheme(fluentTemplate, path.join(tmp, "fluent"), nsh);
+        const winuiTemplate = path.join(tmp, "template-winui");
+        await scaffold(winuiTemplate, registry, nsh, "winui");
+        await installWinuiTheme(winuiTemplate, path.join(tmp, "winui"), nsh);
       } catch (thrown) {
         const failure = failureOf(thrown);
         console.error(`  ✗ ${failure.step} ${seconds(performance.now() - startedNative)}`);
         console.error(failure.detail);
         console.error(
-          "\ninstall test: --theme apple, --theme material, --theme fluent, or --theme native does not install, or what it leaves does not type check",
+          "\ninstall test: --theme apple, --theme material, --theme winui, or --theme native does not install, or what it leaves does not type check",
         );
         return 1;
       }
       const label =
-        "init --theme native, init --theme apple, init --theme material, init --theme fluent, add --all, nsh check";
+        "init --theme native, init --theme apple, init --theme material, init --theme winui, add --all, nsh check";
       console.log(`  ✓ ${label} ${seconds(performance.now() - startedNative)}\n`);
     }
 

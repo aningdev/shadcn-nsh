@@ -28,7 +28,7 @@ and the [theme roles spec](https://github.com/aningdev/shadcn-nsh/blob/main/docs
 `radius-chip`, `radius-card`, `radius-overlay`, `radius-dialog`, `radius-sheet`) once in
 `cssVars.theme`, and `semantics.json`'s `shape.*` references them with `{radius-…}`. Generated
 themes (`shadcn`, `solid-glass`) derive `control` / `field` at `0.8×` and `card` / `dialog` / `sheet`
-at `1.4×` from `radius`, while platform themes (`apple`, `material`, `fluent`) state platform metrics per role. Every corner
+at `1.4×` from `radius`, while platform themes (`apple`, `material`, `winui`) state platform metrics per role. Every corner
 that reads a theme radius uses `shape.curve` (`"continuous"` or `"circular"`), which `rounded()`
 applies in one place.
 

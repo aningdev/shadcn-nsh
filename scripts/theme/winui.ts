@@ -1,24 +1,28 @@
 /**
- * Fluent 2 (Windows 11) colour core for the `fluent` theme (#225).
+ * WinUI 3 (Windows 11 / Fluent 2) colour core and style metrics for the `winui` theme (#240).
  *
- * Sources (pinned in `.handoff/RESEARCH.md` §1):
+ * Baseline sources:
  *   - Primary (wins): `microsoft/microsoft-ui-xaml` tag `winui3/release/2.7.0`
- *     (Windows App SDK 2.7.0, commit `1b5b1a0ccc05ce5c8b5931dc303666975b57f498`, 2026-11-17),
- *     specifically `src/controls/dev/CommonStyles/Common_themeresources_any.xaml`,
- *     `TeachingTip_themeresources.xaml`, and `ToolTip_themeresources.xaml`.
- *   - Secondary (guidance): `MicrosoftDocs/windows-dev-docs` (`docs` branch, `color.md`,
- *     `layering.md`, `materials.md`), `@fluentui/tokens` `1.0.0-alpha.24`
- *     (`microsoft/fluentui` commit `f47ce10d3350bbe7c70c323b0009c3f53bbfcc64`).
+ *     (Windows App SDK v2.7.0, commit `1b5b1a0ccc05ce5c8b5931dc303666975b57f498`, 2026-11-17),
+ *     `Common_themeresources_any.xaml`, `AcrylicBrush_themeresources.xaml`,
+ *     `ContentDialog_themeresources.xaml`, `ToolTip_themeresources.xaml`,
+ *     `TeachingTip_themeresources.xaml`, `ToggleSwitch_themeresources.xaml`,
+ *     `CornerRadius_themeresources.xaml`, `TextBlock_themeresources.xaml`.
+ *   - Official sample app: `microsoft/WinUI-Gallery` (`6de91fec`).
+ *   - Windows Design Guidance: `MicrosoftDocs/windows-dev-docs` (`color.md`, `typography.md`,
+ *     `geometry.md`, `layering.md`, `shadows.md`, `materials.md`, `motion.md`).
  *
  * WinUI stores colours as `#AARRGGBB` (often translucent). Each surface/text/stroke role is
  * composited opaque over the window base (`SolidBackgroundFillColorBase`: `#F3F3F3` light,
- * `#202020` dark) and emitted as canonical `oklch()` (`oklch.ts`). Alpha is retained only where
- * the role is an overlay or wash (`scrim`, `window-control-ink`, `window-control-edge`).
+ * `#202020` dark) — except `brand-edge`, which composites `ControlStrokeColorOnAccentSecondary`
+ * over the accent fill `primary` — and emitted as canonical `oklch()` (`oklch.ts`). Alpha is
+ * retained only where the role is an overlay or wash (`scrim`, `window-control-ink`,
+ * `window-control-edge`).
  *
- * WinUI XAML does not ship hex values for `SystemAccentColor*`; those are OS-supplied. The
- * default accent `#0078D4` uses Windows 11's default blue ramp (`#005FB8` light Dark1, `#60CDFF`
- * dark Light2 — unverified against WinUI XAML). Any other host-supplied accent derives its 6
- * tiers perceptually in OKLCH.
+ * WinUI XAML does not ship hex values for `SystemAccentColor*`; those come from the OS
+ * `UISettings` at runtime. The default accent `#0078D4` uses Windows 11's default blue ramp
+ * (`#005FB8` light Dark1, `#003E92` light Dark2, `#60CDFF` dark Light2, `#99EBFF` dark Light3).
+ * Any other host-supplied accent derives its 6 tiers perceptually in OKLCH.
  */
 import {
   oklchColor,
@@ -33,12 +37,13 @@ import { ordered, orderedSplitFinishes } from "./order";
 
 export type Appearance = "light" | "dark";
 
-/** Windows' default `SystemAccentColor` (Fluent blue). */
-export const FLUENT_DEFAULT_ACCENT = "#0078D4";
+/** Windows' default `SystemAccentColor` (Windows 11 blue). */
+export const WINUI_DEFAULT_ACCENT = "#0078D4";
 
 /**
  * Published WinUI 3 resource values (`#AARRGGBB` / `#RRGGBB`) verbatim from
- * `Common_themeresources_any.xaml` at `winui3/release/2.7.0` (`1b5b1a0ccc05ce5c8b5931dc303666975b57f498`).
+ * `Common_themeresources_any.xaml` and `AcrylicBrush_themeresources.xaml` at
+ * `winui3/release/2.7.0` (`1b5b1a0ccc05ce5c8b5931dc303666975b57f498`).
  */
 export interface WinuiResources {
   readonly TextFillColorPrimary: string;
@@ -62,6 +67,7 @@ export interface WinuiResources {
   readonly ControlStrongStrokeColorDefault: string;
   readonly CardStrokeColorDefault: string;
   readonly DividerStrokeColorDefault: string;
+  readonly SurfaceStrokeColorDefault: string;
   readonly SurfaceStrokeColorFlyout: string;
   readonly FocusStrokeColorOuter: string;
   readonly FocusStrokeColorInner: string;
@@ -74,6 +80,7 @@ export interface WinuiResources {
   readonly SolidBackgroundFillColorQuarternary: string;
   readonly SolidBackgroundFillColorQuinary: string;
   readonly SolidBackgroundFillColorSenary: string;
+  readonly AcrylicInAppFillColorDefaultFallback: string;
   readonly SystemFillColorSuccess: string;
   readonly SystemFillColorCaution: string;
   readonly SystemFillColorCritical: string;
@@ -109,6 +116,7 @@ export const WINUI: Record<Appearance, WinuiResources> = {
     ControlStrongStrokeColorDefault: "#72000000",
     CardStrokeColorDefault: "#0F000000",
     DividerStrokeColorDefault: "#0F000000",
+    SurfaceStrokeColorDefault: "#66757575",
     SurfaceStrokeColorFlyout: "#0F000000",
     FocusStrokeColorOuter: "#E4000000",
     FocusStrokeColorInner: "#B3FFFFFF",
@@ -121,6 +129,7 @@ export const WINUI: Record<Appearance, WinuiResources> = {
     SolidBackgroundFillColorQuarternary: "#FFFFFF",
     SolidBackgroundFillColorQuinary: "#FDFDFD",
     SolidBackgroundFillColorSenary: "#FFFFFF",
+    AcrylicInAppFillColorDefaultFallback: "#F9F9F9",
     SystemFillColorSuccess: "#0F7B0F",
     SystemFillColorCaution: "#9D5D00",
     SystemFillColorCritical: "#C42B1C",
@@ -154,6 +163,7 @@ export const WINUI: Record<Appearance, WinuiResources> = {
     ControlStrongStrokeColorDefault: "#8BFFFFFF",
     CardStrokeColorDefault: "#19000000",
     DividerStrokeColorDefault: "#15FFFFFF",
+    SurfaceStrokeColorDefault: "#66757575",
     SurfaceStrokeColorFlyout: "#33000000",
     FocusStrokeColorOuter: "#FFFFFF",
     FocusStrokeColorInner: "#B3000000",
@@ -166,6 +176,7 @@ export const WINUI: Record<Appearance, WinuiResources> = {
     SolidBackgroundFillColorQuarternary: "#2C2C2C",
     SolidBackgroundFillColorQuinary: "#333333",
     SolidBackgroundFillColorSenary: "#373737",
+    AcrylicInAppFillColorDefaultFallback: "#2C2C2C",
     SystemFillColorSuccess: "#6CCB5F",
     SystemFillColorCaution: "#FCE100",
     SystemFillColorCritical: "#FF99A4",
@@ -180,7 +191,7 @@ export const WINUI: Record<Appearance, WinuiResources> = {
 } as const;
 
 /** WinUI's seven `SystemAccentColor*` tiers as canonical `oklch()` strings. */
-export interface FluentAccent {
+export interface WinuiAccent {
   base: string;
   light1: string;
   light2: string;
@@ -191,9 +202,8 @@ export interface FluentAccent {
 }
 
 /**
- * Windows 11's curated default blue (`#0078D4`) accent palette (unverified against WinUI XAML,
- * which reads `SystemAccentColor*` from the OS at runtime; `#005FB8` light / `#60CDFF` dark
- * are the decided defaults).
+ * Windows 11's default blue (`#0078D4`) accent ramp from OS runtime `UISettings`
+ * (not published as static hexes in `microsoft-ui-xaml`).
  */
 const DEFAULT_BLUE_RAMP = {
   base: "#0078D4",
@@ -216,20 +226,20 @@ export function argbToCssHex(hex: string): string {
   return aa.toLowerCase() === "ff" ? `#${rrggbb}` : `#${rrggbb}${aa}`;
 }
 
-/** Composite a WinUI `#AARRGGBB` / `#RRGGBB` token over an opaque `#RRGGBB` surface as canonical `oklch()`. */
-export function compositeWinui(winuiHex: string, surfaceHex: string): string {
-  return over(argbToCssHex(winuiHex), surfaceHex);
+/** Composite a WinUI `#AARRGGBB` / `#RRGGBB` token over an opaque `#RRGGBB` or `oklch()` surface as canonical `oklch()`. */
+export function compositeWinui(winuiHex: string, surface: string): string {
+  return over(argbToCssHex(winuiHex), surface);
 }
 
 /**
  * Derive WinUI's seven `SystemAccentColor*` tiers (`base`, `light1`..`light3`, `dark1`..`dark3`)
  * from `accent` (defaulting to `#0078D4`).
  *
- * For `#0078D4`, returns Windows 11's curated default blue ramp (`dark1` = `#005FB8`, `light2` =
- * `#60CDFF`). For any other host accent, steps lightness and tapers chroma in OKLCH using the
- * relative ratios of that ramp so hue and contrast progression stay consistent across inputs.
+ * For `#0078D4`, returns Windows 11's default blue ramp (`dark1` = `#005FB8`, `dark2` = `#003E92`,
+ * `light2` = `#60CDFF`, `light3` = `#99EBFF`). For any other host accent, steps lightness and
+ * tapers chroma in OKLCH using the relative ratios of that ramp.
  */
-export function fluentAccent(accent: string = FLUENT_DEFAULT_ACCENT): FluentAccent {
+export function winuiAccent(accent: string = WINUI_DEFAULT_ACCENT): WinuiAccent {
   const rgb = parseColor(accent);
   if (rgb.r === 0 && rgb.g === 120 && rgb.b === 212) {
     return {
@@ -261,7 +271,7 @@ export function fluentAccent(accent: string = FLUENT_DEFAULT_ACCENT): FluentAcce
 }
 
 /** Colour keys of `cssVars.theme` in `packages/theme/theme.json` (excludes non-colour keys: radii, fonts). */
-export type FluentThemeRole =
+export type WinuiThemeRole =
   | "brand-fill"
   | "on-brand"
   | "scrim"
@@ -275,7 +285,7 @@ export type FluentThemeRole =
   | "window-control-edge";
 
 /** Colour keys of `cssVars.light` and `cssVars.dark` in `packages/theme/theme.json`. */
-export type FluentAppearanceRole =
+export type WinuiAppearanceRole =
   | "background"
   | "foreground"
   | "card"
@@ -340,14 +350,14 @@ export type FluentAppearanceRole =
   | "violet"
   | "window-control-off";
 
-export interface FluentRoles {
-  theme: Record<FluentThemeRole, string>;
-  light: Record<FluentAppearanceRole, string>;
-  dark: Record<FluentAppearanceRole, string>;
+export interface WinuiRoles {
+  theme: Record<WinuiThemeRole, string>;
+  light: Record<WinuiAppearanceRole, string>;
+  dark: Record<WinuiAppearanceRole, string>;
 }
 
-// Judgement call: WinUI has no purple accent-independent data series or macOS window controls;
-// keep the library's `theme.json` values for `violet` and `window-control-off` (RESEARCH §2.2).
+// Library-shared values with no WinUI counterpart (`violet` data series and `window-control-off`
+// used by `title-bar.tsx` macOS traffic lights).
 const LIBRARY_KEPT = {
   light: {
     violet: "oklch(0.5339 0.1647 289.689)",
@@ -361,8 +371,8 @@ const LIBRARY_KEPT = {
 
 function buildAppearance(
   appearance: Appearance,
-  tiers: FluentAccent,
-): Record<FluentAppearanceRole, string> {
+  tiers: WinuiAccent,
+): Record<WinuiAppearanceRole, string> {
   const w = WINUI[appearance];
   const base = w.SolidBackgroundFillColorBase;
   const onBase = (hex: string) => compositeWinui(hex, base);
@@ -371,6 +381,9 @@ function buildAppearance(
   const foreground = onBase(w.TextFillColorPrimary);
   // WinUI `AccentFillColorDefault`: `SystemAccentColorDark1` in light, `SystemAccentColorLight2` in dark.
   const primary = appearance === "light" ? tiers.dark1 : tiers.light2;
+  // WinUI `AccentTextFillColorPrimary`: `SystemAccentColorDark2` in light, `SystemAccentColorLight3` in dark
+  // (`Common_themeresources_any.xaml:93,297`), used for `brand` (accent text, links, icons, lines).
+  const brand = appearance === "light" ? tiers.dark2 : tiers.light3;
   const primaryForeground = onBase(w.TextOnAccentFillColorPrimary);
   const secondary = onBase(w.ControlFillColorDefault);
   const mutedForeground = onBase(w.TextFillColorSecondary);
@@ -383,39 +396,37 @@ function buildAppearance(
   const warn = onBase(w.SystemFillColorCaution);
   const up = onBase(w.SystemFillColorSuccess);
   const destructiveTint = onBase(w.SystemFillColorCriticalBackground);
-  // Judgement call: 10% accent wash composited opaque over the window base (RESEARCH §2.2).
+  // 10% accent wash composited opaque over the window base (no WinUI resource equivalent).
   const brandTint = over(withAlpha(primary, 0.1), background);
 
   return {
     background,
     foreground,
-    // Judgement call: composite translucent `CardBackgroundFillColorDefault` over base (RESEARCH §2.2).
     card: onBase(w.CardBackgroundFillColorDefault),
     "card-foreground": foreground,
-    // Judgement call: solid `SolidBackgroundFillColorQuarternary` stand-in for platform Acrylic flyouts.
-    popover: onBase(w.SolidBackgroundFillColorQuarternary),
+    // `AcrylicInAppFillColorDefaultBrush` fallback (`AcrylicBrush_themeresources.xaml:44,96`).
+    popover: toOklchText(w.AcrylicInAppFillColorDefaultFallback),
     "popover-foreground": foreground,
     primary,
     "primary-foreground": primaryForeground,
     secondary,
     "secondary-foreground": foreground,
-    // Judgement call: `SolidBackgroundFillColorSecondary` as recessed neutral surface (no WinUI "muted").
+    // `SolidBackgroundFillColorSecondary` as recessed neutral surface (no WinUI "muted").
     muted: onBase(w.SolidBackgroundFillColorSecondary),
     "muted-foreground": mutedForeground,
     accent,
     "accent-foreground": foreground,
     destructive,
     border: onBase(w.ControlStrokeColorDefault),
-    // Judgement call: `ControlStrongStrokeColorDefault` (CheckBox/Radio/Switch outline).
+    // `ControlStrongStrokeColorDefault` (CheckBox/Radio/Switch outline).
     input: onBase(w.ControlStrongStrokeColorDefault),
     ring,
-    // Judgement call: chart-1 uses accent; chart-2..4 reuse semantic status tones; chart-5 uses strong fill.
     "chart-1": primary,
     "chart-2": up,
     "chart-3": warn,
     "chart-4": destructive,
     "chart-5": controlStrong,
-    // Judgement call: NavigationView pane is transparent over the Mica window base.
+    // `NavigationViewExpandedPaneBackground` is transparent over the window base.
     sidebar: background,
     "sidebar-foreground": foreground,
     "sidebar-primary": primary,
@@ -434,33 +445,26 @@ function buildAppearance(
     hover: onBase(w.ControlFillColorSecondary),
     "ring-halo": onBase(w.FocusStrokeColorInner),
     faint: onBase(w.TextFillColorTertiary),
-    brand: primary,
-    // Judgement call: accent button bottom elevation stroke (`ControlStrokeColorOnAccentSecondary`).
-    "brand-edge": onBase(w.ControlStrokeColorOnAccentSecondary),
+    brand,
+    // `ControlStrokeColorOnAccentSecondary` (bottom bevel of `AccentControlElevationBorderBrush`)
+    // composited over the accent fill `primary`, not over the base background.
+    "brand-edge": compositeWinui(w.ControlStrokeColorOnAccentSecondary, primary),
     track: inset,
     knob: mutedForeground,
-    // Judgement call: `code` is monospaced text inside inset wells (`theme-roles.md`), so it uses
-    // `TextFillColorPrimary` (matching `apple.ts` / `shadcn.ts` / `solid-glass.ts`) rather than
-    // RESEARCH §2.2's `#EEEEEE`/`#1C1C1C` which copied `muted` and would be illegible on `inset`.
     code: foreground,
-    info: primary,
+    // `SystemFillColorAttentionBrush`: `SystemAccentColor` (`#0078D4`) in light, `SystemAccentColorLight2` in dark.
+    info: appearance === "light" ? tiers.base : tiers.light2,
     warn,
     up,
     down: destructive,
     "brand-tint": brandTint,
-    // Judgement call: `on-brand-tint` uses `TextFillColorPrimary` (`InfoBar` message/title text on
-    // tinted backgrounds; guarantees >= 4.5 contrast across arbitrary host accents).
     "on-brand-tint": foreground,
-    // Judgement call: WinUI ToolTip/TeachingTip keep the app's polarity; `TeachingTipBackgroundBrush`
-    // publishes `SolidBackgroundFillColorTertiary` (`TeachingTip_themeresources.xaml`), distinct
-    // from `popover` (`SolidBackgroundFillColorQuarternary`).
+    // Non-transient `TeachingTipBackgroundBrush` (`SolidBackgroundFillColorTertiary`,
+    // `TeachingTip_themeresources.xaml:9,31`); `tooltip` finish uses Acrylic `{popover}` instead.
     inverse: onBase(w.SolidBackgroundFillColorTertiary),
-    // Judgement call: both `ToolTipForegroundBrush` and `TeachingTipForegroundBrush` use
-    // `TextFillColorPrimaryBrush`; secondary ink (`inverse-muted`) uses `TextFillColorSecondary`.
     "inverse-foreground": foreground,
     "inverse-muted": mutedForeground,
-    // `Toast`'s action uses `buttonLook("default")` (`finish.accent` = `{primary}`), so its
-    // label (`colors.inverseBrand`) uses `TextOnAccentFillColorPrimary` (matching `apple` / `default`).
+    // `Toast`'s action uses `buttonLook("default")` (`finish.accent` = `{primary}`).
     "inverse-brand": primaryForeground,
     "info-tint": onBase(w.SystemFillColorAttentionBackground),
     "warn-tint": onBase(w.SystemFillColorCautionBackground),
@@ -474,28 +478,25 @@ function buildAppearance(
 
 /**
  * Compute every colour role of `packages/theme/theme.json` (`theme`, `light`, `dark`) as canonical
- * `oklch()` strings for Fluent 2, with optional host-supplied `SystemAccentColor`.
+ * `oklch()` strings for WinUI 3, with optional host-supplied `SystemAccentColor`.
  */
-export function fluentRoles(accent: string = FLUENT_DEFAULT_ACCENT): FluentRoles {
-  const tiers = fluentAccent(accent);
+export function winuiRoles(accent: string = WINUI_DEFAULT_ACCENT): WinuiRoles {
+  const tiers = winuiAccent(accent);
   const light = buildAppearance("light", tiers);
   const dark = buildAppearance("dark", tiers);
 
   return {
     theme: {
-      // Judgement call: `cssVars.theme` is appearance-independent; `brand-fill` / `on-brand` use
-      // light's primary pair (`AccentFillColorDefault` Dark1 + `TextOnAccentFillColorPrimary`),
-      // matching `packages/theme/theme.json` where `brand-fill` matches light `primary`.
+      // `brand-fill` / `on-brand` use light's primary pair (`AccentFillColorDefault` + `TextOnAccentFillColorPrimary`).
       "brand-fill": light.primary,
       "on-brand": light["primary-foreground"],
       // Overlay scrim retains alpha (`SmokeFillColorDefault` #4D000000, identical in light & dark).
       scrim: toOklchText(argbToCssHex(WINUI.light.SmokeFillColorDefault)),
-      // Judgement call: library-shared media backdrop and ink (WinUI has no counterpart).
       media: "oklch(0.1869 0.0151 266.766)",
       "on-media": toOklchText("#FFFFFF"),
-      // Judgement call: dark ink on light chart tiles uses light `foreground` (as `shadcn.ts` does).
       "chart-foreground": light.foreground,
-      // Judgement call: macOS traffic lights kept from library `theme.json` (no WinUI counterpart).
+      // `packages/ui/title-bar.tsx` draws macOS traffic lights from `windowControls` regardless of
+      // theme, so the library-shared traffic-light tones stay (Class B gap under #235).
       "window-close": toOklchText("#FF5F57"),
       "window-minimize": toOklchText("#FEBC2E"),
       "window-zoom": toOklchText("#28C840"),
@@ -510,26 +511,23 @@ export function fluentRoles(accent: string = FLUENT_DEFAULT_ACCENT): FluentRoles
 const alias = (token: string) => `{${token}}`;
 const flat = (color: string) => `linear-gradient(180deg, ${color} 0%, ${color} 100%)`;
 
-/** Fluent 2 / WinUI elevation shadows mapped onto Fluent Web ambient + key shadow levels in black ink. */
-const shadow2 = (appearance: Appearance) => {
-  const [ambient, key] = appearance === "light" ? [0.12, 0.14] : [0.24, 0.28];
-  return `0 0 2px ${oklchColor(0, 0, 0, ambient)}, 0 1px 2px ${oklchColor(0, 0, 0, key)}`;
-};
-const shadow8 = (appearance: Appearance) => {
-  const [ambient, key] = appearance === "light" ? [0.12, 0.14] : [0.24, 0.28];
-  return `0 0 2px ${oklchColor(0, 0, 0, ambient)}, 0 4px 8px ${oklchColor(0, 0, 0, key)}`;
-};
-const shadow16 = (appearance: Appearance) => {
-  const [ambient, key] = appearance === "light" ? [0.12, 0.14] : [0.24, 0.28];
-  return `0 0 2px ${oklchColor(0, 0, 0, ambient)}, 0 8px 16px ${oklchColor(0, 0, 0, key)}`;
-};
-const shadow28 = (appearance: Appearance) => {
-  const [ambient, key] = appearance === "light" ? [0.2, 0.24] : [0.4, 0.48];
-  return `0 0 8px ${oklchColor(0, 0, 0, ambient)}, 0 14px 28px ${oklchColor(0, 0, 0, key)}`;
-};
-const shadow64 = (appearance: Appearance) => {
-  const [ambient, key] = appearance === "light" ? [0.2, 0.24] : [0.4, 0.48];
-  return `0 0 8px ${oklchColor(0, 0, 0, ambient)}, 0 32px 64px ${oklchColor(0, 0, 0, key)}`;
+/**
+ * Two-layer ambient + key CSS shadow derived from WinUI 3 layering depths (`layering.md`,
+ * `shadows.md`: control 2, card 8, tooltip 16, flyout/menu/glass 32, dialog 128) using the
+ * two-layer ambient + key formula (`depth <= 16`: ambient 2px at 0.12/0.24, key `depth/2` `depth`
+ * at 0.14/0.28; `depth > 16`: ambient 8px at 0.2/0.4, key `depth/2` `depth` at 0.24/0.48).
+ * Approximates WinUI's dynamic 3D `ThemeShadow` in CSS.
+ */
+const elevationShadow = (depth: 2 | 8 | 16 | 32 | 128, appearance: Appearance) => {
+  const [ambientBlur, ambient, key] =
+    depth <= 16
+      ? appearance === "light"
+        ? [2, 0.12, 0.14]
+        : [2, 0.24, 0.28]
+      : appearance === "light"
+        ? [8, 0.2, 0.24]
+        : [8, 0.4, 0.48];
+  return `0 0 ${ambientBlur}px ${oklchColor(0, 0, 0, ambient)}, 0 ${depth / 2}px ${depth}px ${oklchColor(0, 0, 0, key)}`;
 };
 
 const surface = (
@@ -552,11 +550,11 @@ const surface = (
 });
 
 /**
- * Shared theme-level tokens (`cssVars.theme`) for Fluent 2: WinUI `ControlCornerRadius` (4 px) for
+ * Shared theme-level tokens (`cssVars.theme`) for WinUI 3: `ControlCornerRadius` (4 px) for
  * controls/fields/chips/in-page insets, `OverlayCornerRadius` (8 px) for cards/overlays/dialogs/sheets,
- * Segoe UI Variable + Cascadia Mono fonts, and Fluent colour tokens from `fluentRoles`.
+ * Segoe UI Variable + Consolas fonts, and WinUI 3 colour tokens from `winuiRoles`.
  */
-function themeLevel(roles: FluentRoles): Record<string, string> {
+function themeLevel(roles: WinuiRoles): Record<string, string> {
   return {
     radius: "4px",
     "radius-card": "8px",
@@ -566,24 +564,33 @@ function themeLevel(roles: FluentRoles): Record<string, string> {
     "radius-overlay": "8px",
     "radius-dialog": "8px",
     "radius-sheet": "8px",
-    "font-mono": "Cascadia Mono, Consolas, monospace",
+    "font-mono": "Consolas, monospace",
     ...roles.theme,
     "font-sans": "Segoe UI Variable, Segoe UI, sans-serif",
   };
 }
 
 /**
- * All 23 finish roles for Fluent 2 (`{token}` references; `glass` and `menu` ask Windows for
- * `{ windows: { backdrop: "blur" } }` as the Acrylic stand-in).
+ * All 23 finish roles for WinUI 3 (`{token}` references; `glass`, `menu`, and `tooltip` ask
+ * Windows for `{ windows: { backdrop: "blur" } }` as the Acrylic stand-in).
  */
 function finishes(appearance: Appearance): Record<string, Record<string, unknown>> {
-  const controlShadow = shadow2(appearance);
-  const flyoutShadow = shadow28(appearance);
+  const controlShadow = elevationShadow(2, appearance);
+  const flyoutShadow = elevationShadow(32, appearance);
   const blurMaterial = { windows: { backdrop: "blur" as const } };
+  // `ContentDialogBorderBrush` -> `SurfaceStrokeColorDefault` (`#66757575` composited on base;
+  // flyouts keep `glass-edge` / `SurfaceStrokeColorFlyout`).
+  const dialogBorder = compositeWinui(
+    WINUI[appearance].SurfaceStrokeColorDefault,
+    WINUI[appearance].SolidBackgroundFillColorBase,
+  );
+  // `AcrylicInAppFillColorDefaultBrush` `TintLuminosityOpacity`: 0.85 light / 0.96 dark.
+  // Light TintColor `#FCFCFC` is approximated via `{popover}` (`#F9F9F9` fallback) so `glass` stays token-linked.
+  const glassOpacity = appearance === "light" ? 0.85 : 0.96;
   return {
     card: {
       backgroundImage: flat(alias("card")),
-      boxShadow: shadow8(appearance),
+      boxShadow: elevationShadow(8, appearance),
       material: null,
     },
     inset: { boxShadow: "none", material: null },
@@ -609,7 +616,7 @@ function finishes(appearance: Appearance): Record<string, Record<string, unknown
     on: surface(alias("brand-tint"), { boxShadow: "none", borderColor: alias("border") }),
     chip: surface(alias("raised"), { boxShadow: "none", borderColor: alias("border") }),
     glass: {
-      backgroundColor: "oklch(from {popover} l c h / 0.85)",
+      backgroundColor: `oklch(from {popover} l c h / ${glassOpacity})`,
       boxShadow: flyoutShadow,
       borderColor: alias("glass-edge"),
       backdropFilter: "blur(30px)",
@@ -623,15 +630,15 @@ function finishes(appearance: Appearance): Record<string, Record<string, unknown
     },
     dialog: {
       backgroundColor: alias("background"),
-      boxShadow: shadow64(appearance),
-      borderColor: alias("glass-edge"),
+      boxShadow: elevationShadow(128, appearance),
+      borderColor: dialogBorder,
       material: null,
     },
     tooltip: {
-      backgroundColor: alias("inverse"),
-      boxShadow: shadow16(appearance),
+      backgroundColor: alias("popover"),
+      boxShadow: elevationShadow(16, appearance),
       borderColor: alias("glass-edge"),
-      material: null,
+      material: blurMaterial,
     },
     inverse: {
       backgroundColor: alias("inverse"),
@@ -643,8 +650,8 @@ function finishes(appearance: Appearance): Record<string, Record<string, unknown
   };
 }
 
-/** Fluent 2 / WinUI 3 style groups (`semantics.json`); verified values in `docs/specs/native-themes.md` §3.2. */
-export const fluentStyle = {
+/** WinUI 3 style groups (`semantics.json`); verified values in `docs/specs/native-themes.md` §3.2. */
+export const winuiStyle = {
   type: {
     family: "{font-sans}",
     caption: {
@@ -705,7 +712,8 @@ export const fluentStyle = {
   size: {
     hit: { pointer: 0, touch: 40 },
     density: {
-      pointer: { row: 32, pad: 16, gap: 8, surface: 4 },
+      // Standard WinUI `ListViewItemMinHeight` = 40 (`ListViewItem_themeresources.xaml:14`).
+      pointer: { row: 40, pad: 16, gap: 8, surface: 4 },
       touch: { row: 40, pad: 16, gap: 8, surface: 8 },
     },
     control: {
@@ -745,11 +753,15 @@ export const fluentStyle = {
     overlay: { hover: 0, focus: 0, pressed: 0, dragged: 0 },
     ripple: false,
     pressedOpacity: 1,
+    // NSH cross-mode single-scalar compromise (WinUI uses per-brush disabled fills:
+    // `ControlFillColorDisabled` 0.302 L / 0.043 D; `AccentFillColorDisabled` 0.216 L / 0.157 D;
+    // `TitleBarDeactivatedOpacity` 0.5).
     disabled: { content: 0.36, container: 0.45 },
   },
   motion: {
-    // WinUI 3 / Fluent 2 timing durations and curves (`motion.md`, `Common_themeresources_any.xaml`).
-    press: { duration: 83, easing: "easy-ease" },
+    // WinUI 3 timing durations and curves (`motion.md`, `Common_themeresources_any.xaml:602-606`,
+    // `ToggleSwitch_themeresources.xaml:321`).
+    press: { duration: 83, easing: "decelerate" },
     settle: { duration: 250, easing: "decelerate" },
     control: { duration: 167, easing: "point-to-point" },
     move: { duration: 333, easing: "point-to-point" },
@@ -765,8 +777,8 @@ export const fluentStyle = {
   indicator: { tabs: "underline", nav: "bar", field: "underline" },
 };
 
-/** Both theme files for Fluent 2, in the key order of the default ones. */
-export function fluentThemeFiles(
+/** Both theme files for WinUI 3, in the key order of the default ones. */
+export function winuiThemeFiles(
   defaults: {
     theme: Record<string, string>;
     light: Record<string, string>;
@@ -774,12 +786,12 @@ export function fluentThemeFiles(
     lightFinishes: Record<string, Record<string, unknown>>;
     darkFinishes: Record<string, Record<string, unknown>>;
   },
-  accent: string = FLUENT_DEFAULT_ACCENT,
+  accent: string = WINUI_DEFAULT_ACCENT,
 ) {
-  const roles = fluentRoles(accent);
+  const roles = winuiRoles(accent);
   return {
     theme: {
-      name: "Fluent",
+      name: "WinUI 3",
       cssVars: {
         theme: ordered(defaults.theme, themeLevel(roles)),
         light: ordered(defaults.light, roles.light),
@@ -787,7 +799,7 @@ export function fluentThemeFiles(
       },
     },
     semantics: {
-      ...fluentStyle,
+      ...winuiStyle,
       finishes: orderedSplitFinishes(
         defaults.lightFinishes,
         defaults.darkFinishes,
