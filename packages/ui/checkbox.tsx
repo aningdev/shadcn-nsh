@@ -3,6 +3,7 @@
 import {
   alpha,
   checkboxGeometry,
+  type ChoiceWell,
   colors,
   finish,
   focusRing,
@@ -62,7 +63,7 @@ const dims = (scale = 1) => ({
  * field's, so an empty box still stands out, dimmed too: `disabled`, its
  * edge twice as strong, so the row's half opacity leaves it as strong as an
  * enabled box's (the mark and the label fade, the box stays drawn). */
-export const choiceWell = (o?: { disabled?: boolean; well?: string }): ViewStyle => {
+export const choiceWell = (o?: { disabled?: boolean; well?: ChoiceWell }): ViewStyle => {
   const well = o?.well ?? "well";
   if (well === "inset") {
     return {

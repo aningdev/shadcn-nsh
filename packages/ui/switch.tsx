@@ -6,6 +6,7 @@ import {
   follow,
   hitTarget,
   motion,
+  type SwitchDim,
   switchGeometry,
   terminal,
   TERMINAL_COLUMN,
@@ -38,7 +39,7 @@ interface ResolvedSwitchGeometry extends SwitchGeometry {
   knobHover: number;
   knobPressedWidth: number;
   knobPressedHeight: number;
-  knobFeedback: string;
+  knobFeedback: SwitchDim["knob-feedback"];
 }
 
 /** The track and knob of a size, here (read from the active theme's `dimension.switch`, or the terminal). */

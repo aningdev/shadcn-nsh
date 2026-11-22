@@ -3,9 +3,11 @@
 import {
   alpha,
   colors,
+  EDGE_WIDTH,
   fillStyle,
   finish,
   insetEdge,
+  outerEdge,
   sliderGeometry,
   stroke,
 } from "@shadcn-nsh/theme";
@@ -30,25 +32,6 @@ export const sliderValueClass = "w-[42px] text-right font-mono text-[11px] leadi
 /** The value column label's color: the soft text color (60% of the
  * text's). */
 export const sliderValueStyle = (): TextStyle => ({ color: alpha(colors.foreground, 0.6) });
-
-/**
- * Horizontal gap cutout shadows separating a vertical M3 Expressive bar handle from the active
- * and inactive track segments (flipped vertically for vertical sliders).
- */
-function barGapShadow(gap: number, vertical: boolean): string {
-  const step = Math.max(1, Math.round(gap / 3));
-  const offsets: number[] = [];
-  for (let d = step; d < gap; d += step) offsets.push(d);
-  offsets.push(gap);
-  const bg = colors.card;
-  return offsets
-    .flatMap((d) =>
-      vertical
-        ? [`0 -${d}px 0 0 ${bg}`, `0 ${d}px 0 0 ${bg}`]
-        : [`-${d}px 0 0 0 ${bg}`, `${d}px 0 0 0 ${bg}`],
-    )
-    .join(", ");
-}
 
 /**
  * A `Slider`'s parts (spread them: `<Slider {...sliderLook()}>`), reading track thickness,
@@ -109,7 +92,7 @@ export function sliderLook(o: SliderLookOptions = {}) {
         return `w-[${w}px] h-[${h}px] ${pressMod} rounded-full ${fade} ${focusRingClass}`;
       }
       if (s["handle-shape"] === "ring") {
-        const outer = s["thumb-width"] - 2;
+        const outer = s["thumb-width"] - 2 * EDGE_WIDTH;
         const rim = (outer - s["inner-dot"]) / 2;
         const hoverRim = (outer - s["inner-dot-hover"]) / 2;
         const pressRim = (outer - s["inner-dot-pressed"]) / 2;
@@ -123,17 +106,12 @@ export function sliderLook(o: SliderLookOptions = {}) {
         return {
           backgroundColor: finish.handle.backgroundColor,
           borderWidth: 0,
-          boxShadow: barGapShadow(s.gap, vertical),
         };
       }
       if (s["handle-shape"] === "ring") {
-        const outerShadow =
-          finish.handle.boxShadow && finish.handle.boxShadow !== "none"
-            ? `0 0 0 1px ${finish.handle.borderColor}, ${finish.handle.boxShadow}`
-            : `0 0 0 1px ${finish.handle.borderColor}`;
         return {
           backgroundColor: colors.brandFill,
-          boxShadow: outerShadow,
+          boxShadow: outerEdge(finish.handle.borderColor, finish.handle.boxShadow, EDGE_WIDTH),
         };
       }
       return {
