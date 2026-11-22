@@ -2,10 +2,10 @@ import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { M3_BASELINE_SEED, m3Roles, m3Scheme, m3ThemeFiles, type M3Palette } from "./m3";
+import { M3_BASELINE_SEED, m3Roles, m3Scheme, type M3Palette } from "./m3";
 import { css, parseColor, toOklchText, type Rgb } from "./oklch";
 import { checkStyle } from "./style";
-import { mergeFinishes, tokenKinds, type SplitFinishes, type ThemeCssVars } from "./tokens";
+import { tokenKinds, type SplitFinishes, type ThemeCssVars } from "./tokens";
 
 type DefaultThemeFile = {
   cssVars: ThemeCssVars;
@@ -284,15 +284,21 @@ describe("m3Roles", () => {
   });
 });
 
-describe("m3ThemeFiles", () => {
-  test("produces valid theme.json and semantics.json matching default keys and style schema", () => {
-    const files = m3ThemeFiles({
-      theme: defaultTheme.cssVars.theme,
-      light: defaultTheme.cssVars.light,
-      dark: defaultTheme.cssVars.dark,
-      lightFinishes: mergeFinishes(defaultSemantics.finishes, "light"),
-      darkFinishes: mergeFinishes(defaultSemantics.finishes, "dark"),
-    });
+const shipped = {
+  theme: JSON.parse(
+    readFileSync(join(import.meta.dir, "../../packages/theme/themes/material/theme.json"), "utf8"),
+  ) as { name: string; cssVars: ThemeCssVars },
+  semantics: JSON.parse(
+    readFileSync(
+      join(import.meta.dir, "../../packages/theme/themes/material/semantics.json"),
+      "utf8",
+    ),
+  ),
+};
+
+describe("compiled material theme files", () => {
+  test("match the default keys and the style schema", () => {
+    const files = shipped;
     expect(files.theme.name).toBe("Material");
     expect(Object.keys(files.theme.cssVars.theme)).toEqual(Object.keys(defaultTheme.cssVars.theme));
     expect(Object.keys(files.theme.cssVars.light)).toEqual(Object.keys(defaultTheme.cssVars.light));

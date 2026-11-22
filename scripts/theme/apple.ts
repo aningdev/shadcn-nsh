@@ -12,7 +12,6 @@
  */
 import type { ThemeGeneratorOutput } from "./dtcg";
 import { oklchColor, over, toOklchText } from "./oklch";
-import { ordered, orderedSplitFinishes } from "./order";
 import { withSurfaces } from "./surfaces";
 
 /** Apple's system colours, per appearance (sRGB, as UIKit documents them). */
@@ -401,35 +400,6 @@ const withMaterial = (roles: Record<string, Record<string, unknown>>) =>
       { ...finish, material: finish.material ?? null },
     ]),
   );
-
-/** Both theme files, in the key order of the default ones. */
-export function themeFiles(defaults: {
-  theme: Record<string, string>;
-  light: Record<string, string>;
-  dark: Record<string, string>;
-  lightFinishes: Record<string, Record<string, unknown>>;
-  darkFinishes: Record<string, Record<string, unknown>>;
-}) {
-  return {
-    theme: {
-      name: "Apple",
-      cssVars: {
-        theme: ordered(defaults.theme, themeLevel()),
-        light: ordered(defaults.light, section(palette("light"))),
-        dark: ordered(defaults.dark, section(palette("dark"))),
-      },
-    },
-    semantics: {
-      ...style,
-      finishes: orderedSplitFinishes(
-        defaults.lightFinishes,
-        defaults.darkFinishes,
-        withMaterial(withSurfaces(finishes("light"))),
-        withMaterial(withSurfaces(finishes("dark"))),
-      ),
-    },
-  };
-}
 
 /** Apple theme data and HIG/UIKit DTCG descriptions ready for `emitDtcgTheme`. */
 export function appleDtcgOutput(): ThemeGeneratorOutput {

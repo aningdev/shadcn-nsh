@@ -34,7 +34,6 @@ import {
   toOklchText,
   withAlpha,
 } from "./oklch";
-import { ordered, orderedSplitFinishes } from "./order";
 
 export type Appearance = "light" | "dark";
 
@@ -778,39 +777,6 @@ export const winuiStyle = {
   },
   indicator: { tabs: "underline", nav: "bar", field: "underline" },
 };
-
-/** Both theme files for WinUI 3, in the key order of the default ones. */
-export function winuiThemeFiles(
-  defaults: {
-    theme: Record<string, string>;
-    light: Record<string, string>;
-    dark: Record<string, string>;
-    lightFinishes: Record<string, Record<string, unknown>>;
-    darkFinishes: Record<string, Record<string, unknown>>;
-  },
-  accent: string = WINUI_DEFAULT_ACCENT,
-) {
-  const roles = winuiRoles(accent);
-  return {
-    theme: {
-      name: "WinUI 3",
-      cssVars: {
-        theme: ordered(defaults.theme, themeLevel(roles)),
-        light: ordered(defaults.light, roles.light),
-        dark: ordered(defaults.dark, roles.dark),
-      },
-    },
-    semantics: {
-      ...winuiStyle,
-      finishes: orderedSplitFinishes(
-        defaults.lightFinishes,
-        defaults.darkFinishes,
-        finishes("light"),
-        finishes("dark"),
-      ),
-    },
-  };
-}
 
 /** WinUI 3 (Windows 11 / Fluent 2) theme data and DTCG descriptions ready for `emitDtcgTheme`. */
 export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGeneratorOutput {

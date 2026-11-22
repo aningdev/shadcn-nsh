@@ -4,15 +4,8 @@ import { join } from "node:path";
 
 import { css, parseColor, toOklchText } from "./oklch";
 import { checkStyle } from "./style";
-import { mergeFinishes, tokenKinds, type SplitFinishes, type ThemeCssVars } from "./tokens";
-import {
-  compositeWinui,
-  WINUI,
-  winuiAccent,
-  winuiRoles,
-  winuiThemeFiles,
-  type Appearance,
-} from "./winui";
+import { tokenKinds, type SplitFinishes, type ThemeCssVars } from "./tokens";
+import { compositeWinui, WINUI, winuiAccent, winuiRoles, type Appearance } from "./winui";
 
 type DefaultThemeFile = {
   cssVars: ThemeCssVars;
@@ -291,15 +284,18 @@ describe("WCAG contrast for default accent", () => {
   }
 });
 
-describe("winuiThemeFiles", () => {
-  test("produces valid theme.json and semantics.json matching default keys, style schema, and WinUI 3 fixes", () => {
-    const files = winuiThemeFiles({
-      theme: defaultTheme.cssVars.theme,
-      light: defaultTheme.cssVars.light,
-      dark: defaultTheme.cssVars.dark,
-      lightFinishes: mergeFinishes(defaultSemantics.finishes, "light"),
-      darkFinishes: mergeFinishes(defaultSemantics.finishes, "dark"),
-    });
+const shipped = {
+  theme: JSON.parse(
+    readFileSync(join(import.meta.dir, "../../packages/theme/themes/winui/theme.json"), "utf8"),
+  ) as { name: string; cssVars: ThemeCssVars },
+  semantics: JSON.parse(
+    readFileSync(join(import.meta.dir, "../../packages/theme/themes/winui/semantics.json"), "utf8"),
+  ),
+};
+
+describe("compiled winui theme files", () => {
+  test("match the default keys, the style schema and the WinUI 3 values", () => {
+    const files = shipped;
     expect(files.theme.name).toBe("WinUI 3");
     expect(files.theme.cssVars.theme["font-mono"]).toBe("Consolas, monospace");
     expect(Object.keys(files.theme.cssVars.theme)).toEqual([

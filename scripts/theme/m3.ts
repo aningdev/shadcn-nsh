@@ -34,7 +34,6 @@ import {
 
 import type { ThemeGeneratorOutput } from "./dtcg";
 import { oklchColor, toOklchText } from "./oklch";
-import { ordered, orderedSplitFinishes } from "./order";
 
 export const M3_BASELINE_SEED = "#6750A4";
 
@@ -627,35 +626,6 @@ export const m3Style = {
   },
   indicator: { tabs: "underline", nav: "fill", field: "underline" },
 };
-
-/** Both theme files for Material 3 Expressive, in the key order of the default ones. */
-export function m3ThemeFiles(
-  defaults: {
-    theme: Record<string, string>;
-    light: Record<string, string>;
-    dark: Record<string, string>;
-    lightFinishes: Record<string, Record<string, unknown>>;
-    darkFinishes: Record<string, Record<string, unknown>>;
-  },
-  seed?: string,
-) {
-  const roles = m3Roles(m3Scheme(seed));
-  const merged = finishes();
-  return {
-    theme: {
-      name: "Material",
-      cssVars: {
-        theme: ordered(defaults.theme, themeLevel(roles)),
-        light: ordered(defaults.light, roles.light),
-        dark: ordered(defaults.dark, roles.dark),
-      },
-    },
-    semantics: {
-      ...m3Style,
-      finishes: orderedSplitFinishes(defaults.lightFinishes, defaults.darkFinishes, merged, merged),
-    },
-  };
-}
 
 /** Material 3 Expressive theme data and DTCG descriptions ready for `emitDtcgTheme`. */
 export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {

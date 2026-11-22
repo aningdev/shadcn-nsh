@@ -2,7 +2,6 @@ import { describe, expect, test } from "bun:test";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
-import { orderedFinish } from "./order";
 import { specBlock, specRows } from "./spec";
 import { checkStyle } from "./style";
 import { withSurfaces } from "./surfaces";
@@ -47,14 +46,6 @@ describe("the colour roles and finishes a theme states for its surfaces", () => 
 
   test("withSurfaces refuses a theme with no menu", () => {
     expect(() => withSurfaces({ card: mergedLight.card })).toThrow("no menu");
-  });
-
-  test("a finish that leaves a key out, or adds one, is an error", () => {
-    const { backgroundColor: _omitted, ...short } = mergedLight.dialog;
-    expect(() => orderedFinish(mergedLight.dialog, short)).toThrow("no backgroundColor");
-    expect(() => orderedFinish(mergedLight.dialog, { ...mergedLight.dialog, glow: 1 })).toThrow(
-      "glow",
-    );
   });
 
   test("splitFinishes + mergeFinishes round-trips full light/dark maps", () => {
