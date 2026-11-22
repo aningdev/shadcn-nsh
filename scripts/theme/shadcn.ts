@@ -1,6 +1,7 @@
+import type { ThemeGeneratorOutput } from "./dtcg";
 import { withoutMaterial } from "./material";
 /**
- * The shadcn default theme (new-york-v4, `neutral`) as this library's two theme files.
+ * The shadcn default theme (new-york-v4, `neutral`) as this library's DTCG 2025.10 source.
  *
  * shadcn's palette is `oklch()`, and so is every theme file here (`packages/theme/theme.json` is
  * the upstream gallery theme in the same form). Every value below is quoted from shadcn's
@@ -19,11 +20,11 @@ import { withoutMaterial } from "./material";
  * A color derived here (an `--input` laid on a card, two tones' midpoint) is mixed in 8-bit sRGB
  * and written back as `oklch()`: `oklch.ts` round-trips every channel exactly.
  *
- * Read by `generate-shadcn.ts`, which writes the two JSON files; `docs/archive/theme-shadcn.md`
- * holds the mapping tables this file implements.
+ * Read by `generate-shadcn.ts`, which writes `packages/theme/tokens/themes/shadcn/` and compiles
+ * `packages/theme/themes/shadcn/{theme,semantics}.json`; `docs/archive/theme-shadcn.md` holds the
+ * mapping tables this file implements.
  */
 import { oklch, oklchColor, over, parseColor, toOklchText, withAlpha } from "./oklch";
-import { ordered, orderedSplitFinishes } from "./order";
 import { scaledRadii } from "./style";
 import { withSurfaces } from "./surfaces";
 
@@ -328,42 +329,60 @@ function finishes(appearance: Appearance, o: ReturnType<typeof own>) {
   };
 }
 
-/**
- * Both theme files, in the key order of the default ones (so the two diff side by side).
- *
- * `defaults` are the default files' keys: `theme`, `light`, `dark` and the finishes' two
- * appearances, each role's keys included.
- */
-export function themeFiles(defaults: {
-  theme: Record<string, string>;
-  light: Record<string, string>;
-  dark: Record<string, string>;
-  lightFinishes: Record<string, Record<string, unknown>>;
-  darkFinishes: Record<string, Record<string, unknown>>;
-}) {
+/** Theme data and theme-specific DTCG descriptions ready for `emitDtcgTheme`. */
+export function themeFiles(): ThemeGeneratorOutput {
   const light = palette("light");
   const dark = palette("dark");
   const ownLight = own("light");
   const ownDark = own("dark");
+  const statusAndHoverDescriptions = {
+    hover: "Pointer hover fill aliased to {color.accent} per shadcn hover:bg-accent.",
+    "brand-edge":
+      "Hairline border aliased to {color.border} (shadcn draws no separate brand edge).",
+    "glass-edge":
+      "Hairline border aliased to {color.border} (shadcn draws no separate glass edge).",
+    info: "Informational semantic status color mapped onto shadcn's neutral grey ramp.",
+    warn: "Warning semantic status color mapped onto shadcn's neutral chart ramp.",
+    up: "Positive trend color mapped onto shadcn's neutral ramp.",
+    violet: "Accent data-visualization and link color mapped onto shadcn's neutral ramp.",
+  };
+
   return {
-    theme: {
-      name: "shadcn neutral",
-      cssVars: {
-        theme: ordered(defaults.theme, themeLevel(light)),
-        light: ordered(defaults.light, section(light, ownLight)),
-        dark: ordered(defaults.dark, section(dark, ownDark)),
-      },
+    id: "shadcn",
+    name: "shadcn neutral",
+    resolverDescription: "DTCG 2025.10 resolver for the shadcn neutral theme.",
+    themeDescription:
+      "Appearance-invariant base tokens and press-scale override for the shadcn neutral theme.",
+    finishesDescription:
+      "Appearance-invariant surface finish recipes for the shadcn neutral theme.",
+    lightDescription: "Light appearance colors and finish overrides for the shadcn neutral theme.",
+    darkDescription: "Dark appearance colors and finish overrides for the shadcn neutral theme.",
+    // A flat theme draws no press of its own: its surfaces change colour under the finger, they
+    // do not sink (`state.pressScale` of 1, which `pressSink` reads as "no sink").
+    pressScale: 1,
+    pressScaleDescription:
+      "Scale factor applied while pressed (1 disables press shrinking for flat shadcn surfaces).",
+    cssVars: {
+      theme: themeLevel(light),
+      light: section(light, ownLight),
+      dark: section(dark, ownDark),
     },
-    semantics: {
-      // A flat theme draws no press of its own: its surfaces change colour under the finger, they
-      // do not sink (`state.pressScale` of 1, which `pressSink` reads as "no sink").
-      pressScale: 1,
-      finishes: orderedSplitFinishes(
-        defaults.lightFinishes,
-        defaults.darkFinishes,
-        withoutMaterial(withSurfaces(finishes("light", ownLight))),
-        withoutMaterial(withSurfaces(finishes("dark", ownDark))),
-      ),
+    finishes: {
+      light: withoutMaterial(withSurfaces(finishes("light", ownLight))),
+      dark: withoutMaterial(withSurfaces(finishes("dark", ownDark))),
+    },
+    descriptions: {
+      sharedColors: {
+        "brand-fill": "Primary brand action fill, aliased to {color.primary}.",
+        "on-brand":
+          "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}.",
+        scrim: "Translucent backdrop scrim behind modals and sheets (50% black).",
+        "window-close": "macOS window close traffic-light fill mapped to shadcn destructive red.",
+        "window-minimize": "macOS window minimize traffic-light fill mapped to shadcn ring grey.",
+        "window-zoom": "macOS window zoom traffic-light fill mapped to shadcn chart-4 grey.",
+      },
+      lightColors: statusAndHoverDescriptions,
+      darkColors: statusAndHoverDescriptions,
     },
   };
 }

@@ -31,7 +31,7 @@ import { discoverDtcgThemes } from "./build";
 import { evaluateColorMix } from "./color";
 import { loadSourceItem, resolvePermutation, type ResolverDoc } from "./resolver";
 import { validateResolverDocument, validateTokensDocument } from "./schema-validate";
-import { EXT_NS, TYPE_ROLES, type ColorOpExtension, type DtcgColor } from "./types";
+import { EXT_NS, RADIUS_KEYS, TYPE_ROLES, type ColorOpExtension, type DtcgColor } from "./types";
 
 const defaultRepoRoot = path.resolve(import.meta.dir, "..", "..");
 const CURLY_REF = /^\{([^${}.][^{}.]*(?:\.[^${}.][^{}.]*)*)\}$/;
@@ -339,9 +339,15 @@ function validateExtAtPath(
   }
 
   if (/^finish\.[A-Za-z0-9-]+\.shadow$/.test(p)) {
-    checkUnknownKeys(where, ext, ["none"], problems);
-    if (ext.none !== true) {
+    checkUnknownKeys(where, ext, ["none", "explicitSpread"], problems);
+    if ("none" in ext && ext.none !== true) {
       problems.push(`${where}.none must be true`);
+    }
+    if ("explicitSpread" in ext && ext.explicitSpread !== true) {
+      problems.push(`${where}.explicitSpread must be true`);
+    }
+    if (!("none" in ext) && !("explicitSpread" in ext)) {
+      problems.push(`${where} must set none or explicitSpread`);
     }
     return;
   }
@@ -580,6 +586,26 @@ function checkMergedSemantics(
       if (ext && typeof ext.fontFamily === "string" && tok.$value.fontFamily !== ext.fontFamily) {
         problems.push(
           `${label}: typography.${role}.fontFamily must match typography.$extensions.fontFamily (${ext.fontFamily})`,
+        );
+      }
+    }
+  }
+
+  // Radius tokens (all 8 base radii must exist and be non-negative dimensions)
+  const dimRadius = getAtPath(resolved, "dimension.radius");
+  if (!isRecord(dimRadius)) {
+    problems.push(`${label}: dimension.radius is missing`);
+  } else {
+    for (const { dtcg } of RADIUS_KEYS) {
+      const tok = dimRadius[dtcg];
+      if (!isTokenNode(tok) || !isRecord(tok.$value)) {
+        problems.push(`${label}: dimension.radius.${dtcg} is missing`);
+        continue;
+      }
+      const val = tok.$value.value;
+      if (typeof val !== "number" || !Number.isFinite(val) || val < 0) {
+        problems.push(
+          `${label}: dimension.radius.${dtcg} value ${JSON.stringify(val)} must be >= 0`,
         );
       }
     }

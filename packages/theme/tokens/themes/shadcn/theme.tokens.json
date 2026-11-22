@@ -1,0 +1,204 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "$description": "Appearance-invariant base tokens and press-scale override for the shadcn neutral theme.",
+  "dimension": {
+    "$type": "dimension",
+    "$description": "Appearance-invariant base dimensional tokens.",
+    "radius": {
+      "$type": "dimension",
+      "$description": "Base corner radius scale referenced by semantic shape roles.",
+      "base": {
+        "$value": {
+          "value": 10,
+          "unit": "px"
+        },
+        "$description": "Base corner radius shared by insets and general rounded elements."
+      },
+      "card": {
+        "$value": {
+          "value": 14,
+          "unit": "px"
+        },
+        "$description": "Corner radius for cards and sidebar floating containers."
+      },
+      "control": {
+        "$value": {
+          "value": 8,
+          "unit": "px"
+        },
+        "$description": "Corner radius for interactive controls such as buttons, triggers, and menu items."
+      },
+      "field": {
+        "$value": {
+          "value": 8,
+          "unit": "px"
+        },
+        "$description": "Corner radius for form input fields and editor wells."
+      },
+      "chip": {
+        "$value": {
+          "value": 10,
+          "unit": "px"
+        },
+        "$description": "Corner radius for badges, chips, and compact tags."
+      },
+      "overlay": {
+        "$value": {
+          "value": 10,
+          "unit": "px"
+        },
+        "$description": "Corner radius for floating menus, popovers, and toasts."
+      },
+      "dialog": {
+        "$value": {
+          "value": 14,
+          "unit": "px"
+        },
+        "$description": "Corner radius for modal dialogs."
+      },
+      "sheet": {
+        "$value": {
+          "value": 14,
+          "unit": "px"
+        },
+        "$description": "Corner radius for drawers and bottom sheets."
+      }
+    }
+  },
+  "font": {
+    "$description": "Base font family tokens.",
+    "family": {
+      "$type": "fontFamily",
+      "$description": "Font family stacks.",
+      "mono": {
+        "$value": "monospace",
+        "$description": "Monospace font family for code blocks and numeric readouts."
+      }
+    }
+  },
+  "color": {
+    "$type": "color",
+    "$description": "Appearance-invariant C-layer color roles shared by light and dark modes.",
+    "brand-fill": {
+      "$value": "{color.primary}",
+      "$description": "Primary brand action fill, aliased to {color.primary}."
+    },
+    "on-brand": {
+      "$value": "{color.primary-foreground}",
+      "$description": "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}."
+    },
+    "scrim": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0, 0, 0],
+        "alpha": 0.5,
+        "hex": "#000000"
+      },
+      "$description": "Translucent backdrop scrim behind modals and sheets (50% black)."
+    },
+    "media": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.1869, 0.0151, 266.766],
+        "hex": "#10131a"
+      },
+      "$description": "Ground behind photographs and videos; invariant across appearances."
+    },
+    "on-media": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "hex": "#ffffff"
+      },
+      "$description": "White ink over photographs and dark media surfaces; invariant across appearances."
+    },
+    "chart-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.145, 0, 0],
+        "hex": "#0a0a0a"
+      },
+      "$description": "Dark ink on light chart tiles; dark tiles use on-media."
+    },
+    "window-close": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.577, 0.245, 27.325],
+        "hex": "#e7000b"
+      },
+      "$description": "macOS window close traffic-light fill mapped to shadcn destructive red."
+    },
+    "window-minimize": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.708, 0, 0],
+        "hex": "#a1a1a1"
+      },
+      "$description": "macOS window minimize traffic-light fill mapped to shadcn ring grey."
+    },
+    "window-zoom": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.371, 0, 0],
+        "hex": "#404040"
+      },
+      "$description": "macOS window zoom traffic-light fill mapped to shadcn chart-4 grey."
+    },
+    "window-control-ink": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0, 0, 0],
+        "alpha": 0.5,
+        "hex": "#000000"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "hex": "#000000"
+            },
+            "percent": 50,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Glyph ink inside macOS window traffic-light buttons."
+    },
+    "window-control-edge": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0, 0, 0],
+        "alpha": 0.12,
+        "hex": "#000000"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "hex": "#000000"
+            },
+            "percent": 12,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Hairline border around macOS window traffic-light buttons."
+    }
+  },
+  "state": {
+    "$type": "number",
+    "$description": "Interaction state opacities, press scale, and ripple switch.",
+    "press-scale": {
+      "$value": 1,
+      "$description": "Scale factor applied while pressed (1 disables press shrinking for flat shadcn surfaces)."
+    }
+  }
+}

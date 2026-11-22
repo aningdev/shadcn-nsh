@@ -1,0 +1,2169 @@
+{
+  "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
+  "$description": "Light appearance colors and finish overrides for the Solid Glass theme.",
+  "color": {
+    "$type": "color",
+    "$description": "Adaptive A-layer and B-layer color roles for light appearance.",
+    "background": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.925, 0.007, 265],
+        "hex": "#e4e6eb"
+      },
+      "$description": "Primary application page canvas background."
+    },
+    "foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.16, 0, 0],
+        "hex": "#0d0d0d"
+      },
+      "$description": "Default high-contrast text and icon ink on page surfaces."
+    },
+    "card": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.95776, 0.00577, 264.532],
+        "hex": "#eff1f5"
+      },
+      "$description": "Opaque composite of Solid Glass card pane over background canvas (no blur on card role)."
+    },
+    "card-foreground": {
+      "$value": "{color.foreground}",
+      "$description": "Primary text and icon ink on card surfaces."
+    },
+    "popover": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.98192, 0.00286, 264.542],
+        "hex": "#f8f9fb"
+      },
+      "$description": "Opaque composite of Solid Glass popover pane over background canvas."
+    },
+    "popover-foreground": {
+      "$value": "{color.foreground}",
+      "$description": "Primary text and icon ink on popover surfaces."
+    },
+    "primary": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.2, 0, 0],
+        "hex": "#161616"
+      },
+      "$description": "Primary brand action fill."
+    },
+    "primary-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.985, 0, 0],
+        "hex": "#fafafa"
+      },
+      "$description": "Text and icon ink on primary brand action fills."
+    },
+    "secondary": {
+      "$value": "{color.raised}",
+      "$description": "Secondary control surface fill."
+    },
+    "secondary-foreground": {
+      "$value": "{color.foreground}",
+      "$description": "Text and icon ink on secondary control surfaces."
+    },
+    "muted": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.3, 0.02, 265],
+        "alpha": 0.07,
+        "hex": "#292e38"
+      },
+      "$description": "Subdued container and subtle background surface."
+    },
+    "muted-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.47, 0, 0],
+        "hex": "#5b5b5b"
+      },
+      "$description": "Secondary and supporting text and icon ink."
+    },
+    "accent": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.3, 0.02, 265],
+        "alpha": 0.09,
+        "hex": "#292e38"
+      },
+      "$description": "Subtle highlight fill for hovered or active items."
+    },
+    "accent-foreground": {
+      "$value": "{color.foreground}",
+      "$description": "Text and icon ink on accent surfaces."
+    },
+    "destructive": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.577, 0.245, 27.325],
+        "hex": "#e7000b"
+      },
+      "$description": "Semantic danger color for destructive actions and errors."
+    },
+    "border": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.3, 0.02, 265],
+        "alpha": 0.13,
+        "hex": "#292e38"
+      },
+      "$description": "Standard hairline border color for containers and controls."
+    },
+    "input": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.3, 0.02, 265],
+        "alpha": 0.14,
+        "hex": "#292e38"
+      },
+      "$description": "Border and stroke color for form fields and control edges."
+    },
+    "ring": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.2, 0, 0],
+        "alpha": 0.5,
+        "hex": "#161616"
+      },
+      "$description": "Focus indicator ring stroke color."
+    },
+    "chart-1": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.7, 0, 0],
+        "hex": "#9e9e9e"
+      },
+      "$description": "Primary chart series color."
+    },
+    "chart-2": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.54, 0, 0],
+        "hex": "#6f6f6f"
+      },
+      "$description": "Second chart series color."
+    },
+    "chart-3": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.44, 0, 0],
+        "hex": "#525252"
+      },
+      "$description": "Third chart series color."
+    },
+    "chart-4": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.35, 0, 0],
+        "hex": "#3a3a3a"
+      },
+      "$description": "Fourth chart series color."
+    },
+    "chart-5": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.27, 0, 0],
+        "hex": "#262626"
+      },
+      "$description": "Fifth chart series color."
+    },
+    "sidebar": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.94601, 0.00705, 268.546],
+        "hex": "#ebedf2"
+      },
+      "$description": "Opaque composite of Solid Glass panel pane over background canvas."
+    },
+    "sidebar-foreground": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.25, 0, 0],
+        "hex": "#222222"
+      },
+      "$description": "Primary text and icon ink inside the sidebar."
+    },
+    "sidebar-primary": {
+      "$value": "{color.primary}",
+      "$description": "Primary action highlight color in the sidebar."
+    },
+    "sidebar-primary-foreground": {
+      "$value": "{color.primary-foreground}",
+      "$description": "Text and icon ink on sidebar-primary highlights."
+    },
+    "sidebar-accent": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.3, 0.02, 265],
+        "alpha": 0.09,
+        "hex": "#292e38"
+      },
+      "$description": "Selected or active row fill in the sidebar."
+    },
+    "sidebar-accent-foreground": {
+      "$value": "{color.foreground}",
+      "$description": "Text and icon ink on active sidebar rows."
+    },
+    "sidebar-border": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.3, 0.02, 265],
+        "alpha": 0.12,
+        "hex": "#292e38"
+      },
+      "$description": "Sidebar divider and toolbar hairline border color."
+    },
+    "sidebar-ring": {
+      "$value": "{color.ring}",
+      "$description": "Focus indicator ring color inside the sidebar."
+    },
+    "inset": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.96648, 0.00454, 258.325],
+        "hex": "#f2f4f7"
+      },
+      "$description": "Opaque composite of Solid Glass thinnest panel pane laid over card."
+    },
+    "raised": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "alpha": 0.55,
+        "hex": "#ffffff"
+      },
+      "$description": "Raised control surface resting on a card."
+    },
+    "glass-edge": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.38, 0.03, 265],
+        "alpha": 0.1,
+        "hex": "#3b4253"
+      },
+      "$description": "Hairline border on Solid Glass panes (--glass-edge)."
+    },
+    "scrollbar-thumb": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.70732, 0.00379, 268.561],
+        "hex": "#9fa0a3"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.muted-foreground}",
+            "percent": 50,
+            "b": "{color.background}"
+          }
+        }
+      },
+      "$description": "Scrollbar thumb resting fill."
+    },
+    "scrollbar-thumb-hover": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.56855, 0.0016, 268.579],
+        "hex": "#767778"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.muted-foreground}",
+            "percent": 80,
+            "b": "{color.background}"
+          }
+        }
+      },
+      "$description": "Scrollbar thumb fill on pointer hover."
+    },
+    "field": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "alpha": 0.6,
+        "hex": "#ffffff"
+      },
+      "$description": "Input well surface below card and inset layers."
+    },
+    "line": {
+      "$value": "{color.border}",
+      "$description": "Hairline divider and grid rule inside recessed wells."
+    },
+    "hover": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.3, 0.02, 265],
+        "alpha": 0.1,
+        "hex": "#292e38"
+      },
+      "$description": "Pointer hover overlay fill on interactive items."
+    },
+    "ring-halo": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.2, 0, 0],
+        "alpha": 0.225,
+        "hex": "#161616"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.ring}",
+            "percent": 45,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Translucent outer halo around focused controls."
+    },
+    "faint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.7, 0, 0],
+        "hex": "#9e9e9e"
+      },
+      "$description": "Low-emphasis text for placeholders, units, and tertiary labels."
+    },
+    "brand": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.68, 0.13, 165],
+        "hex": "#2eb184"
+      },
+      "$description": "Accent ink for text, icons, and active rules."
+    },
+    "brand-edge": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.2, 0, 0],
+        "alpha": 0.685,
+        "hex": "#161616"
+      },
+      "$description": "Primary button hairline mixed from --primary and --primary-edge."
+    },
+    "track": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.3, 0.02, 265],
+        "alpha": 0.15,
+        "hex": "#292e38"
+      },
+      "$description": "Inactive track background for switches, sliders, and progress bars."
+    },
+    "knob": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [1, 0, 0],
+        "hex": "#ffffff"
+      },
+      "$description": "Switch thumb fill in the off state."
+    },
+    "code": {
+      "$value": "{color.foreground}",
+      "$description": "Monospace code text ink inside recessed wells."
+    },
+    "info": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.56, 0.16, 248],
+        "hex": "#0078cc"
+      },
+      "$description": "Informational semantic status color."
+    },
+    "warn": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.66, 0.16, 58],
+        "hex": "#d87400"
+      },
+      "$description": "Warning semantic status color."
+    },
+    "up": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.58, 0.15, 152],
+        "hex": "#0a924b"
+      },
+      "$description": "Positive trend and growth semantic color."
+    },
+    "down": {
+      "$value": "{color.destructive}",
+      "$description": "Negative trend and decline semantic color."
+    },
+    "brand-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.68, 0.13, 165],
+        "alpha": 0.12,
+        "hex": "#2eb184"
+      },
+      "$description": "Static translucent teal brand wash (--brand-muted)."
+    },
+    "on-brand-tint": {
+      "$value": "{color.foreground}",
+      "$description": "Text and icon ink on brand-tint surfaces."
+    },
+    "inverse": {
+      "$value": "{color.popover}",
+      "$description": "High-contrast surface for toasts and tooltips."
+    },
+    "inverse-foreground": {
+      "$value": "{color.foreground}",
+      "$description": "Primary text ink on inverse surfaces."
+    },
+    "inverse-muted": {
+      "$value": "{color.muted-foreground}",
+      "$description": "Secondary text, spinner, and close-icon ink on inverse surfaces."
+    },
+    "inverse-brand": {
+      "$value": "{color.primary-foreground}",
+      "$description": "Accent action color on inverse surfaces."
+    },
+    "info-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.56, 0.16, 248],
+        "alpha": 0.1,
+        "hex": "#0078cc"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.info}",
+            "percent": 10,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Translucent informational status background tint."
+    },
+    "warn-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.66, 0.16, 58],
+        "alpha": 0.1,
+        "hex": "#d87400"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.warn}",
+            "percent": 10,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Translucent warning status background tint."
+    },
+    "destructive-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.577, 0.245, 27.325],
+        "alpha": 0.1,
+        "hex": "#e7000b"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.destructive}",
+            "percent": 10,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Translucent destructive status background tint."
+    },
+    "up-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.58, 0.15, 152],
+        "alpha": 0.1,
+        "hex": "#0a924b"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.up}",
+            "percent": 10,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Translucent positive trend background tint."
+    },
+    "down-tint": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.577, 0.245, 27.325],
+        "alpha": 0.1,
+        "hex": "#e7000b"
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "colorOp": {
+            "op": "mix",
+            "space": "srgb",
+            "a": "{color.down}",
+            "percent": 10,
+            "b": "transparent"
+          }
+        }
+      },
+      "$description": "Translucent negative trend background tint."
+    },
+    "violet": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.47, 0.15, 310],
+        "hex": "#743c98"
+      },
+      "$description": "Accent data-visualization and link color."
+    },
+    "window-control-off": {
+      "$value": {
+        "colorSpace": "oklch",
+        "components": [0.7, 0, 0],
+        "hex": "#9e9e9e"
+      },
+      "$description": "Inactive background for macOS traffic-light buttons when unfocused."
+    }
+  },
+  "finish": {
+    "$description": "Sparse light-mode surface finish overrides.",
+    "card": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.9,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.35,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 0,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 1,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.25, 0.03, 265],
+              "alpha": 0.06,
+              "hex": "#1b2130"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.3, 0.06, 265],
+              "alpha": 0.28,
+              "hex": "#1f2d4c"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 12,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 32,
+              "unit": "px"
+            },
+            "spread": {
+              "value": -14,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "inset": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": {
+          "color": {
+            "colorSpace": "oklch",
+            "components": [1, 0, 0],
+            "alpha": 0.35,
+            "hex": "#ffffff"
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 1,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 0,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          },
+          "inset": true
+        }
+      }
+    },
+    "field": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": {
+          "color": {
+            "colorSpace": "oklch",
+            "components": [1, 0, 0],
+            "hex": "#ffffff"
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 1,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 0,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          },
+          "inset": true
+        }
+      }
+    },
+    "raised": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.8,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.25, 0.03, 265],
+              "alpha": 0.06,
+              "hex": "#1b2130"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "hover": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.8,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.25, 0.03, 265],
+              "alpha": 0.06,
+              "hex": "#1b2130"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "pressed": {
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.3, 0.02, 265],
+          "alpha": 0.26,
+          "hex": "#292e38"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.muted}",
+              "alpha": 0.26
+            }
+          }
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": {
+          "color": {
+            "colorSpace": "oklch",
+            "components": [1, 0, 0],
+            "alpha": 0.8,
+            "hex": "#ffffff"
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 1,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 0,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          },
+          "inset": true
+        }
+      }
+    },
+    "light": {
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.2, 0, 0],
+          "alpha": 0.88,
+          "hex": "#161616"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.primary}",
+              "alpha": 0.88
+            }
+          }
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.3,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.203,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": -1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          }
+        ]
+      }
+    },
+    "accent": {
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.2, 0, 0],
+          "alpha": 0.88,
+          "hex": "#161616"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.primary}",
+              "alpha": 0.88
+            }
+          }
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.3,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.203,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": -1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.07,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 0,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 1,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.25, 0.03, 265],
+              "alpha": 0.06,
+              "hex": "#1b2130"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.3, 0.06, 265],
+              "alpha": 0.28,
+              "hex": "#1f2d4c"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 8,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 18,
+              "unit": "px"
+            },
+            "spread": {
+              "value": -9,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "track": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.3, 0.06, 265],
+              "alpha": 0.14,
+              "hex": "#1f2d4c"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 1.5,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.85,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": -1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          }
+        ]
+      }
+    },
+    "fill": {
+      "gradient": {
+        "$type": "gradient",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.2, 0, 0],
+              "alpha": 0.88,
+              "hex": "#161616"
+            },
+            "position": 0
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.2, 0, 0],
+              "alpha": 0.88,
+              "hex": "#161616"
+            },
+            "position": 1
+          }
+        ],
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "angle": 180
+          }
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.3,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.203,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": -1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          }
+        ]
+      }
+    },
+    "knob": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.9,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.14,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": -1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.3, 0.06, 265],
+              "alpha": 0.3,
+              "hex": "#1f2d4c"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "knobOn": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.9,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.14,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": -1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.3, 0.06, 265],
+              "alpha": 0.3,
+              "hex": "#1f2d4c"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "handle": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.9,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0, 0, 0],
+              "alpha": 0.14,
+              "hex": "#000000"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": -1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.3, 0.06, 265],
+              "alpha": 0.3,
+              "hex": "#1f2d4c"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "pill": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.8,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.25, 0.03, 265],
+              "alpha": 0.06,
+              "hex": "#1b2130"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "thumb": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.8,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.25, 0.03, 265],
+              "alpha": 0.06,
+              "hex": "#1b2130"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "on": {
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.3, 0.02, 265],
+          "alpha": 0.09,
+          "hex": "#292e38"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.muted}",
+              "alpha": 0.09
+            }
+          }
+        }
+      },
+      "shadow": {
+        "$type": "shadow",
+        "$value": {
+          "color": {
+            "colorSpace": "oklch",
+            "components": [1, 0, 0],
+            "alpha": 0.85,
+            "hex": "#ffffff"
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 1,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 0,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          },
+          "inset": true
+        }
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.3, 0.02, 265],
+          "alpha": 0.13,
+          "hex": "#292e38"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "colorOp": {
+              "op": "alpha",
+              "color": "{color.muted}",
+              "alpha": 0.13
+            }
+          }
+        }
+      }
+    },
+    "chip": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.8,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.38, 0.03, 265],
+              "alpha": 0.1,
+              "hex": "#3b4253"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 0,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 1,
+              "unit": "px"
+            },
+            "inset": true
+          }
+        ]
+      }
+    },
+    "glass": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.8,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.38, 0.03, 265],
+              "alpha": 0.1,
+              "hex": "#3b4253"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 0,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 1,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.25, 0.03, 265],
+              "alpha": 0.06,
+              "hex": "#1b2130"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 2,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            }
+          }
+        ]
+      },
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "backdropFilter": "blur(14px) saturate(180%)"
+        }
+      }
+    },
+    "menu": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.9,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.38, 0.03, 265],
+              "alpha": 0.16,
+              "hex": "#3b4253"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": -1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.3, 0.06, 265],
+              "alpha": 0.28,
+              "hex": "#1f2d4c"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 24,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 60,
+              "unit": "px"
+            },
+            "spread": {
+              "value": -18,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.25, 0.03, 265],
+              "alpha": 0.14,
+              "hex": "#1b2130"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 6,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 16,
+              "unit": "px"
+            },
+            "spread": {
+              "value": -6,
+              "unit": "px"
+            }
+          }
+        ]
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.38, 0.03, 265],
+          "alpha": 0.22,
+          "hex": "#3b4253"
+        }
+      }
+    },
+    "dialog": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.9,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.38, 0.03, 265],
+              "alpha": 0.16,
+              "hex": "#3b4253"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": -1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.3, 0.06, 265],
+              "alpha": 0.28,
+              "hex": "#1f2d4c"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 24,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 60,
+              "unit": "px"
+            },
+            "spread": {
+              "value": -18,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.25, 0.03, 265],
+              "alpha": 0.14,
+              "hex": "#1b2130"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 6,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 16,
+              "unit": "px"
+            },
+            "spread": {
+              "value": -6,
+              "unit": "px"
+            }
+          }
+        ]
+      }
+    },
+    "inverse": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": [
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [1, 0, 0],
+              "alpha": 0.9,
+              "hex": "#ffffff"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.38, 0.03, 265],
+              "alpha": 0.16,
+              "hex": "#3b4253"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": -1,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 0,
+              "unit": "px"
+            },
+            "spread": {
+              "value": 0,
+              "unit": "px"
+            },
+            "inset": true
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.3, 0.06, 265],
+              "alpha": 0.28,
+              "hex": "#1f2d4c"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 24,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 60,
+              "unit": "px"
+            },
+            "spread": {
+              "value": -18,
+              "unit": "px"
+            }
+          },
+          {
+            "color": {
+              "colorSpace": "oklch",
+              "components": [0.25, 0.03, 265],
+              "alpha": 0.14,
+              "hex": "#1b2130"
+            },
+            "offsetX": {
+              "value": 0,
+              "unit": "px"
+            },
+            "offsetY": {
+              "value": 6,
+              "unit": "px"
+            },
+            "blur": {
+              "value": 16,
+              "unit": "px"
+            },
+            "spread": {
+              "value": -6,
+              "unit": "px"
+            }
+          }
+        ]
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.38, 0.03, 265],
+          "alpha": 0.22,
+          "hex": "#3b4253"
+        }
+      }
+    },
+    "groove": {
+      "shadow": {
+        "$type": "shadow",
+        "$value": {
+          "color": {
+            "colorSpace": "oklch",
+            "components": [1, 0, 0],
+            "alpha": 0.35,
+            "hex": "#ffffff"
+          },
+          "offsetX": {
+            "value": 0,
+            "unit": "px"
+          },
+          "offsetY": {
+            "value": 1,
+            "unit": "px"
+          },
+          "blur": {
+            "value": 0,
+            "unit": "px"
+          },
+          "spread": {
+            "value": 0,
+            "unit": "px"
+          }
+        }
+      }
+    }
+  }
+}

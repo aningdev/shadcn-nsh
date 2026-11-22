@@ -1,6 +1,7 @@
+import type { ThemeGeneratorOutput } from "./dtcg";
 import { withoutMaterial } from "./material";
 /**
- * Solid Glass (deeplethe/solid-glass) as this library's two theme files.
+ * Solid Glass (deeplethe/solid-glass) as this library's DTCG 2025.10 source.
  *
  * Quoted from the theme's own stylesheet, `src/solid-glass.css`, at commit `6e8903e` (MIT, © 2026
  * DeepLethe; the notice is in `NOTICE`): `:root` is the material in daylight, `.dark` the material
@@ -20,10 +21,10 @@ import { withoutMaterial } from "./material";
  * `backdropFilter` outside `glass` is one of those, and a gradient across a face is one this
  * material never wanted.
  *
- * Read by `generate-solid-glass.ts`, which writes `packages/theme/themes/solid-glass/`.
+ * Read by `generate-solid-glass.ts`, which writes `packages/theme/tokens/themes/solid-glass/` and
+ * compiles `packages/theme/themes/solid-glass/{theme,semantics}.json`.
  */
 import { over } from "./oklch";
-import { ordered, orderedSplitFinishes } from "./order";
 import { scaledRadii } from "./style";
 import { withSurfaces } from "./surfaces";
 
@@ -568,38 +569,56 @@ function finishes(appearance: Appearance): Record<string, Finish> {
   };
 }
 
-/**
- * Both theme files, in the key order of the default ones (so the two diff side by side).
- *
- * `defaults` are the default files' keys: `theme`, `light`, `dark` and the finishes' two
- * appearances, each role's keys included.
- */
-export function themeFiles(defaults: {
-  theme: Record<string, string>;
-  light: Record<string, string>;
-  dark: Record<string, string>;
-  lightFinishes: Record<string, Record<string, unknown>>;
-  darkFinishes: Record<string, Record<string, unknown>>;
-}) {
+/** Theme data and theme-specific DTCG descriptions ready for `emitDtcgTheme`. */
+export function themeFiles(): ThemeGeneratorOutput {
+  const paneAndTokenDescriptions = {
+    card: "Opaque composite of Solid Glass card pane over background canvas (no blur on card role).",
+    popover: "Opaque composite of Solid Glass popover pane over background canvas.",
+    sidebar: "Opaque composite of Solid Glass panel pane over background canvas.",
+    inset: "Opaque composite of Solid Glass thinnest panel pane laid over card.",
+    "brand-edge": "Primary button hairline mixed from --primary and --primary-edge.",
+    "glass-edge": "Hairline border on Solid Glass panes (--glass-edge).",
+    "brand-tint": "Static translucent teal brand wash (--brand-muted).",
+  };
+
   return {
-    theme: {
-      name: "Solid Glass",
-      cssVars: {
-        theme: ordered(defaults.theme, themeLevel()),
-        light: ordered(defaults.light, section("light")),
-        dark: ordered(defaults.dark, section("dark")),
-      },
+    id: "solid-glass",
+    name: "Solid Glass",
+    resolverDescription: "DTCG 2025.10 resolver for the Solid Glass theme.",
+    themeDescription:
+      "Appearance-invariant base tokens and press-scale override for the Solid Glass theme.",
+    finishesDescription: "Appearance-invariant surface finish recipes for the Solid Glass theme.",
+    lightDescription: "Light appearance colors and finish overrides for the Solid Glass theme.",
+    darkDescription: "Dark appearance colors and finish overrides for the Solid Glass theme.",
+    // The material draws no press of its own: a pressed pane loses the shadow it stood on and
+    // darkens a step, it does not shrink (`state.pressScale` of 1, which `pressSink` reads as none).
+    pressScale: 1,
+    pressScaleDescription:
+      "Scale factor applied while pressed (1 disables press shrinking for Solid Glass panes).",
+    radiusGroupDescription:
+      "Base corner radius scale (14px base, 0.8x control, 1.4x card) referenced by semantic shape roles.",
+    cssVars: {
+      theme: themeLevel(),
+      light: section("light"),
+      dark: section("dark"),
     },
-    semantics: {
-      // The material draws no press of its own: a pressed pane loses the shadow it stood on and
-      // darkens a step, it does not shrink (`state.pressScale` of 1, which `pressSink` reads as none).
-      pressScale: 1,
-      finishes: orderedSplitFinishes(
-        defaults.lightFinishes,
-        defaults.darkFinishes,
-        withoutMaterial(withSurfaces(finishes("light"))),
-        withoutMaterial(withSurfaces(finishes("dark"))),
-      ),
+    finishes: {
+      light: withoutMaterial(withSurfaces(finishes("light"))),
+      dark: withoutMaterial(withSurfaces(finishes("dark"))),
+    },
+    descriptions: {
+      sharedColors: {
+        "brand-fill": "Primary action fill, aliased to {color.primary}.",
+        "on-brand":
+          "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}.",
+        scrim: "Translucent backdrop scrim behind modals and sheets (50% black).",
+        "window-close": "macOS window close traffic-light fill mapped to destructive red.",
+        "window-minimize":
+          "macOS window minimize traffic-light fill mapped to Solid Glass ring grey.",
+        "window-zoom": "macOS window zoom traffic-light fill mapped to Solid Glass chart-3 grey.",
+      },
+      lightColors: paneAndTokenDescriptions,
+      darkColors: paneAndTokenDescriptions,
     },
   };
 }

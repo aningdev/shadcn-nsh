@@ -9,6 +9,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
+import { mergeFinishes, splitFinishes } from "../theme/tokens";
 import { formatColorOpToCss, formatDtcgColor } from "./color";
 import { loadSourceItem, mergeTokenTrees, resolvePermutation, type ResolverDoc } from "./resolver";
 import {
@@ -61,10 +62,15 @@ export function compileThemeJson(resolverPath: string): {
   const dir = path.dirname(absPath);
   const doc = JSON.parse(fs.readFileSync(absPath, "utf8")) as ResolverDoc;
 
+  const baseSetTree = (doc.sets?.base?.sources ?? []).reduce<Record<string, unknown>>(
+    (acc, src) => mergeTokenTrees(acc, loadSourceItem(src, dir, doc)),
+    {},
+  );
   const themeSetTree = (doc.sets?.theme?.sources ?? []).reduce<Record<string, unknown>>(
     (acc, src) => mergeTokenTrees(acc, loadSourceItem(src, dir, doc)),
     {},
   );
+  const sharedTree = mergeTokenTrees(structuredClone(baseSetTree), themeSetTree);
   const lightTree = (doc.modifiers?.appearance?.contexts.light ?? []).reduce<
     Record<string, unknown>
   >((acc, src) => mergeTokenTrees(acc, loadSourceItem(src, dir, doc)), {});
@@ -74,19 +80,20 @@ export function compileThemeJson(resolverPath: string): {
   );
 
   const cssTheme: Record<string, string> = {};
-  const dimRadius = (themeSetTree.dimension as Record<string, unknown>)?.radius as Record<
-    string,
-    Record<string, unknown>
-  >;
+  const dimRadius = (sharedTree.dimension as Record<string, unknown> | undefined)?.radius as
+    | Record<string, Record<string, unknown>>
+    | undefined;
   for (const { cssVar, dtcg } of RADIUS_KEYS) {
-    const dim = dimRadius[dtcg]!.$value as { value: number; unit: string };
+    const tok = dimRadius?.[dtcg];
+    if (!tok) {
+      throw new Error(`Missing required dimension.radius.${dtcg} in ${resolverPath}`);
+    }
+    const dim = tok.$value as { value: number; unit: string };
     cssTheme[cssVar] = `${dim.value}${dim.unit}`;
   }
 
-  const fontFamilies = ((themeSetTree.font as Record<string, unknown>)?.family ?? {}) as Record<
-    string,
-    Record<string, unknown>
-  >;
+  const fontFamilies = ((sharedTree.font as Record<string, unknown> | undefined)?.family ??
+    {}) as Record<string, Record<string, unknown>>;
   for (const [k, tok] of Object.entries(fontFamilies)) {
     if (k.startsWith("$")) continue;
     const v = tok.$value;
@@ -161,6 +168,21 @@ function compileMaterialValue(material: unknown): unknown {
   return out;
 }
 
+function orderFinishFields(
+  item: Record<string, unknown>,
+  order: readonly string[] | undefined,
+): Record<string, unknown> {
+  if (!order) return item;
+  const out: Record<string, unknown> = {};
+  for (const key of order) {
+    if (key in item) out[key] = item[key];
+  }
+  for (const [key, val] of Object.entries(item)) {
+    if (!(key in out)) out[key] = val;
+  }
+  return out;
+}
+
 function compileFinishSection(
   finishGroup: Record<string, Record<string, unknown>>,
 ): Record<string, Record<string, unknown>> {
@@ -196,6 +218,7 @@ function compileFinishSection(
       } else {
         const raw = group.shadow.$value;
         const shadows = (Array.isArray(raw) ? raw : [raw]) as DtcgShadowItem[];
+        const explicitSpread = ext?.explicitSpread === true;
         item.boxShadow = shadows
           .map((s) => {
             const parts: string[] = [];
@@ -203,7 +226,7 @@ function compileFinishSection(
             const fmtLen = (d: { value: number; unit: string }) =>
               d.value === 0 ? "0" : `${d.value}${d.unit}`;
             parts.push(fmtLen(s.offsetX), fmtLen(s.offsetY), fmtLen(s.blur));
-            if (s.spread.value !== 0) parts.push(fmtLen(s.spread));
+            if (s.spread.value !== 0 || explicitSpread) parts.push(fmtLen(s.spread));
             const colorStr =
               typeof s.color === "string" ? toFlatColorRef(s.color) : formatDtcgColor(s.color);
             parts.push(colorStr);
@@ -224,6 +247,49 @@ function compileFinishSection(
     }
 
     out[role] = item;
+  }
+  return out;
+}
+
+/**
+ * Derive each finish role's canonical merged field order from the sibling `default` theme's
+ * DTCG source so non-default themes emit fields in the exact same order (`scripts/theme/order.ts`).
+ */
+function readDefaultFinishFieldOrder(defaultResolverPath: string): Map<string, string[]> {
+  const dir = path.dirname(defaultResolverPath);
+  const doc = JSON.parse(fs.readFileSync(defaultResolverPath, "utf8")) as ResolverDoc;
+  const sharedTree = (doc.sets?.theme?.sources ?? []).reduce<Record<string, unknown>>(
+    (acc, src) => mergeTokenTrees(acc, loadSourceItem(src, dir, doc)),
+    {},
+  );
+  const lightTree = (doc.modifiers?.appearance?.contexts.light ?? []).reduce<
+    Record<string, unknown>
+  >((acc, src) => mergeTokenTrees(acc, loadSourceItem(src, dir, doc)), {});
+  const shared = compileFinishSection(
+    (sharedTree.finish ?? {}) as Record<string, Record<string, unknown>>,
+  );
+  const light = compileFinishSection(
+    (lightTree.finish ?? {}) as Record<string, Record<string, unknown>>,
+  );
+  const order = new Map<string, string[]>();
+  for (const role of Object.keys(shared)) {
+    order.set(role, Object.keys({ ...shared[role], ...(light[role] ?? {}) }));
+  }
+  return order;
+}
+
+function orderFinishesByDefault(
+  finishes: Record<string, Record<string, unknown>>,
+  fieldOrderByRole: Map<string, string[]>,
+): Record<string, Record<string, unknown>> {
+  const out: Record<string, Record<string, unknown>> = {};
+  for (const role of fieldOrderByRole.keys()) {
+    if (role in finishes) {
+      out[role] = orderFinishFields(finishes[role]!, fieldOrderByRole.get(role));
+    }
+  }
+  for (const [role, val] of Object.entries(finishes)) {
+    if (!(role in out)) out[role] = val;
   }
   return out;
 }
@@ -366,6 +432,28 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
     Record<string, unknown>
   >((acc, src) => mergeTokenTrees(acc, loadSourceItem(src, dir, doc)), {});
 
+  const rawShared = compileFinishSection(
+    (sharedFinishesTree.finish ?? {}) as Record<string, Record<string, unknown>>,
+  );
+  const rawLight = compileFinishSection(
+    (lightFinishesTree.finish ?? {}) as Record<string, Record<string, unknown>>,
+  );
+  const rawDark = compileFinishSection(
+    (darkFinishesTree.finish ?? {}) as Record<string, Record<string, unknown>>,
+  );
+
+  const defaultResolver = path.resolve(dir, "..", "default", "theme.resolver.json");
+  const finishesOut =
+    absPath !== defaultResolver && fs.existsSync(defaultResolver)
+      ? (() => {
+          const order = readDefaultFinishFieldOrder(defaultResolver);
+          const rawSplit = { shared: rawShared, light: rawLight, dark: rawDark };
+          const mergedLight = orderFinishesByDefault(mergeFinishes(rawSplit, "light"), order);
+          const mergedDark = orderFinishesByDefault(mergeFinishes(rawSplit, "dark"), order);
+          return splitFinishes(mergedLight, mergedDark);
+        })()
+      : { shared: rawShared, light: rawLight, dark: rawDark };
+
   return {
     type: typeOut,
     shape: shapeOut,
@@ -422,16 +510,6 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
       },
     },
     indicator: getExt(lp.indicator) as Record<string, string>,
-    finishes: {
-      shared: compileFinishSection(
-        (sharedFinishesTree.finish ?? {}) as Record<string, Record<string, unknown>>,
-      ),
-      light: compileFinishSection(
-        (lightFinishesTree.finish ?? {}) as Record<string, Record<string, unknown>>,
-      ),
-      dark: compileFinishSection(
-        (darkFinishesTree.finish ?? {}) as Record<string, Record<string, unknown>>,
-      ),
-    },
+    finishes: finishesOut,
   };
 }

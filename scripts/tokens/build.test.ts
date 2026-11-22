@@ -21,9 +21,18 @@ const TOKEN_FILES = [
   "packages/theme/tokens/themes/default/finishes.shared.tokens.json",
   "packages/theme/tokens/themes/default/light.tokens.json",
   "packages/theme/tokens/themes/default/dark.tokens.json",
+  "packages/theme/tokens/themes/shadcn/theme.tokens.json",
+  "packages/theme/tokens/themes/shadcn/finishes.shared.tokens.json",
+  "packages/theme/tokens/themes/shadcn/light.tokens.json",
+  "packages/theme/tokens/themes/shadcn/dark.tokens.json",
+  "packages/theme/tokens/themes/solid-glass/theme.tokens.json",
+  "packages/theme/tokens/themes/solid-glass/finishes.shared.tokens.json",
+  "packages/theme/tokens/themes/solid-glass/light.tokens.json",
+  "packages/theme/tokens/themes/solid-glass/dark.tokens.json",
 ];
 
 const RESOLVER_PATH = "packages/theme/tokens/themes/default/theme.resolver.json";
+const THEME_IDS = ["default", "shadcn", "solid-glass"] as const;
 
 describe("DTCG 2025.10 schema validation", () => {
   for (const file of TOKEN_FILES) {
@@ -32,9 +41,12 @@ describe("DTCG 2025.10 schema validation", () => {
     });
   }
 
-  test(`validates ${RESOLVER_PATH} against official 2025.10 resolver.json`, () => {
-    expect(validateResolverDocument(readJson(RESOLVER_PATH))).toEqual([]);
-  });
+  for (const themeId of THEME_IDS) {
+    const resolver = `packages/theme/tokens/themes/${themeId}/theme.resolver.json`;
+    test(`validates ${resolver} against official 2025.10 resolver.json`, () => {
+      expect(validateResolverDocument(readJson(resolver))).toEqual([]);
+    });
+  }
 
   test("rejects invalid DTCG token & resolver fixtures", () => {
     // 1. Hue >= 360 violates Color Module hueComponent exclusiveMaximum: 360
@@ -78,36 +90,46 @@ describe("DTCG 2025.10 schema validation", () => {
   });
 });
 
-describe("DTCG 2025.10 build (default theme)", () => {
+describe("DTCG 2025.10 build (default, shadcn, solid-glass)", () => {
   test("discovers DTCG-sourced themes", () => {
-    expect(discoverDtcgThemes(root)).toEqual(["default"]);
+    expect(discoverDtcgThemes(root)).toEqual([...THEME_IDS]);
   });
 
-  for (const appearance of ["light", "dark"] as const) {
-    for (const input of ["pointer", "touch"] as const) {
-      test(`resolves (${appearance}, ${input}) without dangling/circular aliases and passes format schema`, () => {
-        const { resolved } = resolvePermutation(path.join(root, RESOLVER_PATH), {
-          appearance,
-          input,
+  for (const themeId of THEME_IDS) {
+    const resolver = `packages/theme/tokens/themes/${themeId}/theme.resolver.json`;
+    for (const appearance of ["light", "dark"] as const) {
+      for (const input of ["pointer", "touch"] as const) {
+        test(`${themeId}: resolves (${appearance}, ${input}) without dangling/circular aliases and passes format schema`, () => {
+          const { resolved } = resolvePermutation(path.join(root, resolver), {
+            appearance,
+            input,
+          });
+          expect(validateTokensDocument(resolved)).toEqual([]);
         });
-        expect(validateTokensDocument(resolved)).toEqual([]);
-      });
+      }
     }
   }
 
-  test("compiles default theme.json and semantics.json byte-identical to committed files", () => {
-    const absResolver = path.join(root, RESOLVER_PATH);
-    const builtTheme = `${JSON.stringify(compileThemeJson(absResolver), null, 2)}\n`;
-    const builtSemantics = `${JSON.stringify(compileSemanticsJson(absResolver), null, 2)}\n`;
+  test("compiles default, shadcn, and solid-glass theme.json and semantics.json byte-identical to committed files", () => {
+    for (const themeId of THEME_IDS) {
+      const absResolver = path.join(
+        root,
+        `packages/theme/tokens/themes/${themeId}/theme.resolver.json`,
+      );
+      const builtTheme = `${JSON.stringify(compileThemeJson(absResolver), null, 2)}\n`;
+      const builtSemantics = `${JSON.stringify(compileSemanticsJson(absResolver), null, 2)}\n`;
 
-    expect(builtTheme).toBe(readText("packages/theme/theme.json"));
-    expect(builtTheme).toBe(readText("packages/theme/themes/default/theme.json"));
-    expect(builtSemantics).toBe(readText("packages/theme/semantics.json"));
-    expect(builtSemantics).toBe(readText("packages/theme/themes/default/semantics.json"));
+      expect(builtTheme).toBe(readText(`packages/theme/themes/${themeId}/theme.json`));
+      expect(builtSemantics).toBe(readText(`packages/theme/themes/${themeId}/semantics.json`));
+      if (themeId === "default") {
+        expect(builtTheme).toBe(readText("packages/theme/theme.json"));
+        expect(builtSemantics).toBe(readText("packages/theme/semantics.json"));
+      }
+    }
   });
 
   test("checkAllTokens passes cleanly on repo and detects drift when a compiled file is modified", () => {
-    expect(checkAllTokens(root)).toEqual({ themes: ["default"], problems: [] });
+    expect(checkAllTokens(root)).toEqual({ themes: [...THEME_IDS], problems: [] });
 
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "tokens-build-test-"));
     try {
@@ -116,15 +138,79 @@ describe("DTCG 2025.10 build (default theme)", () => {
       });
       expect(checkAllTokens(tmp).problems).toEqual([]);
 
-      const target = path.join(tmp, "packages/theme/theme.json");
+      const target = path.join(tmp, "packages/theme/themes/shadcn/theme.json");
       fs.writeFileSync(target, `${fs.readFileSync(target, "utf8")}// drift\n`);
       const drifted = checkAllTokens(tmp);
       expect(drifted.problems).toEqual([
-        "packages/theme/theme.json differs from what packages/theme/tokens builds",
+        "packages/theme/themes/shadcn/theme.json differs from what packages/theme/tokens builds",
       ]);
 
       buildAllTokens(tmp);
       expect(checkAllTokens(tmp).problems).toEqual([]);
+    } finally {
+      fs.rmSync(tmp, { recursive: true, force: true });
+    }
+  });
+
+  test("compiles an isolated theme without sibling default and supports sparse sets.base radii", () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "tokens-isolated-test-"));
+    try {
+      fs.cpSync(path.join(root, "packages/theme/tokens/base"), path.join(tmp, "base"), {
+        recursive: true,
+      });
+      const themeDir = path.join(tmp, "themes/custom");
+      fs.mkdirSync(themeDir, { recursive: true });
+      fs.cpSync(
+        path.join(root, "packages/theme/tokens/themes/shadcn/finishes.shared.tokens.json"),
+        path.join(themeDir, "finishes.shared.tokens.json"),
+      );
+      fs.cpSync(
+        path.join(root, "packages/theme/tokens/themes/shadcn/light.tokens.json"),
+        path.join(themeDir, "light.tokens.json"),
+      );
+      fs.cpSync(
+        path.join(root, "packages/theme/tokens/themes/shadcn/dark.tokens.json"),
+        path.join(themeDir, "dark.tokens.json"),
+      );
+      const baseShared = JSON.parse(
+        fs.readFileSync(path.join(tmp, "base/style.shared.tokens.json"), "utf8"),
+      );
+      const shadcnTheme = readJson("packages/theme/tokens/themes/shadcn/theme.tokens.json");
+      baseShared.dimension.radius = shadcnTheme.dimension.radius;
+      fs.writeFileSync(
+        path.join(tmp, "base/style.shared.tokens.json"),
+        `${JSON.stringify(baseShared, null, 2)}\n`,
+      );
+
+      // Sparse theme.tokens.json omits dimension.radius (inherited from base) and overrides state.press-scale.
+      const sparseTheme = {
+        $schema: shadcnTheme.$schema,
+        $description: "Sparse custom theme.",
+        font: shadcnTheme.font,
+        color: shadcnTheme.color,
+        state: shadcnTheme.state,
+      };
+      fs.writeFileSync(
+        path.join(themeDir, "theme.tokens.json"),
+        `${JSON.stringify(sparseTheme, null, 2)}\n`,
+      );
+      fs.cpSync(
+        path.join(root, "packages/theme/tokens/themes/shadcn/theme.resolver.json"),
+        path.join(themeDir, "theme.resolver.json"),
+      );
+
+      const resolverAbs = path.join(themeDir, "theme.resolver.json");
+      expect(lintDtcgTheme(resolverAbs, { repoRoot: tmp })).toEqual([]);
+      const compiledTheme = compileThemeJson(resolverAbs);
+      expect(compiledTheme.cssVars.theme.radius).toBe("10px");
+      const compiledSemantics = compileSemanticsJson(resolverAbs) as {
+        state: { pressScale: number };
+        finishes: { shared: { card: { boxShadow: string } } };
+      };
+      expect(compiledSemantics.state.pressScale).toBe(1);
+      expect(compiledSemantics.finishes.shared.card.boxShadow).toBe(
+        "0 1px 3px 0 oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)",
+      );
     } finally {
       fs.rmSync(tmp, { recursive: true, force: true });
     }
@@ -134,7 +220,7 @@ describe("DTCG 2025.10 build (default theme)", () => {
 describe("DTCG source lint", () => {
   test("passes on packages/theme/tokens/", () => {
     const result = lintDtcgSources(root);
-    expect(result.themes).toEqual(["default"]);
+    expect(result.themes).toEqual([...THEME_IDS]);
     expect(result.problems).toEqual([]);
   });
 
@@ -231,5 +317,57 @@ describe("DTCG source lint", () => {
       fs.writeFileSync(p, JSON.stringify(doc, null, 2));
     });
     expect(problems.join("\n")).toContain("color.background is missing $description");
+  });
+
+  test("rejects negative radius and invalid shadow extension flags", () => {
+    const problems = withMutatedDefault((tmp) => {
+      const themePath = path.join(tmp, "packages/theme/tokens/themes/default/theme.tokens.json");
+      const themeDoc = JSON.parse(fs.readFileSync(themePath, "utf8"));
+      themeDoc.dimension.radius.card.$value.value = -4;
+      fs.writeFileSync(themePath, JSON.stringify(themeDoc, null, 2));
+
+      const finPath = path.join(
+        tmp,
+        "packages/theme/tokens/themes/default/finishes.shared.tokens.json",
+      );
+      const finDoc = JSON.parse(fs.readFileSync(finPath, "utf8"));
+      finDoc.finish.field.shadow.$extensions["dev.aning.shadcn-nsh"] = { explicitSpread: false };
+      fs.writeFileSync(finPath, JSON.stringify(finDoc, null, 2));
+    });
+    const text = problems.join("\n");
+    expect(text).toContain("dimension.radius.card value -4 must be >= 0");
+    expect(text).toContain("explicitSpread must be true");
+  });
+
+  test("validates alpha colorOp on border-color and translucent mix colorOp in solid-glass", () => {
+    const tmp = fs.mkdtempSync(path.join(os.tmpdir(), "tokens-sg-colorop-"));
+    try {
+      fs.cpSync(path.join(root, "packages/theme/tokens"), path.join(tmp, "packages/theme/tokens"), {
+        recursive: true,
+      });
+      const sgDarkPath = path.join(
+        tmp,
+        "packages/theme/tokens/themes/solid-glass/dark.tokens.json",
+      );
+      const sgDark = JSON.parse(fs.readFileSync(sgDarkPath, "utf8"));
+      // Corrupt ring-halo (mix of translucent ring 0.4 alpha and transparent) -> must fail.
+      sgDark.color["ring-halo"].$value.alpha = 0.5;
+      // Corrupt finish.on.border-color (alpha colorOp) -> must fail.
+      sgDark.finish.on["border-color"].$value.alpha = 0.9;
+      fs.writeFileSync(sgDarkPath, JSON.stringify(sgDark, null, 2));
+
+      const problems = lintDtcgTheme(
+        path.join(tmp, "packages/theme/tokens/themes/solid-glass/theme.resolver.json"),
+        { repoRoot: tmp },
+      ).join("\n");
+      expect(problems).toContain(
+        "color.ring-halo: static $value differs from live colorOp evaluation",
+      );
+      expect(problems).toContain(
+        "finish.on.border-color: static $value differs from live colorOp evaluation",
+      );
+    } finally {
+      fs.rmSync(tmp, { recursive: true, force: true });
+    }
   });
 });
