@@ -405,7 +405,7 @@ async function onlyLibUi(dir: string) {
   }
 }
 
-/** Assert `<dir>/<targetSubdir>/{light,dark}.tokens.json` exist, parse as JSON, and match `<repo>/<sourceSubdir>`. */
+/** Assert `<dir>/<targetSubdir>/{light,dark}.tokens.json` and `DESIGN.md` exist and match `<repo>/<sourceSubdir>`. */
 async function assertTokensJsonPair(dir: string, targetSubdir: string, sourceSubdir: string) {
   for (const name of ["light.tokens.json", "dark.tokens.json"] as const) {
     const rel = targetSubdir === "." ? name : path.posix.join(targetSubdir, name);
@@ -429,6 +429,15 @@ async function assertTokensJsonPair(dir: string, targetSubdir: string, sourceSub
     if (installed !== source) {
       throw new StepFailure("theme", `      ${rel} does not match ${sourceSubdir}/${name}`);
     }
+  }
+  const designRel = targetSubdir === "." ? "DESIGN.md" : path.posix.join(targetSubdir, "DESIGN.md");
+  const installedDesign = await fs.readFile(path.join(dir, designRel), "utf8").catch(() => null);
+  if (installedDesign == null) {
+    throw new StepFailure("theme", `      missing ${designRel}`);
+  }
+  const sourceDesign = await fs.readFile(path.join(repo, sourceSubdir, "DESIGN.md"), "utf8");
+  if (installedDesign !== sourceDesign) {
+    throw new StepFailure("theme", `      ${designRel} does not match ${sourceSubdir}/DESIGN.md`);
   }
 }
 
@@ -560,11 +569,13 @@ async function installSecondTheme(template: string, dir: string, nsh: string) {
   const before = await fs.readFile(path.join(dir, "theme.json"), "utf8");
   const beforeLight = await fs.readFile(path.join(dir, "light.tokens.json"), "utf8");
   const beforeDark = await fs.readFile(path.join(dir, "dark.tokens.json"), "utf8");
+  const beforeDesign = await fs.readFile(path.join(dir, "DESIGN.md"), "utf8");
   await step("add theme-default", "bun", [cli, "add", "theme-default"], dir);
   for (const [name, want] of [
     ["theme.json", before],
     ["light.tokens.json", beforeLight],
     ["dark.tokens.json", beforeDark],
+    ["DESIGN.md", beforeDesign],
   ] as const) {
     const after = await fs.readFile(path.join(dir, name), "utf8");
     if (after !== want) {
@@ -610,12 +621,14 @@ async function installAnotherTheme(template: string, dir: string, nsh: string) {
   const semantics = await fs.readFile(path.join(dir, "lib/ui/semantics.json"), "utf8");
   const beforeLight = await fs.readFile(path.join(dir, "light.tokens.json"), "utf8");
   const beforeDark = await fs.readFile(path.join(dir, "dark.tokens.json"), "utf8");
+  const beforeDesign = await fs.readFile(path.join(dir, "DESIGN.md"), "utf8");
   await step("add theme-shadcn", "bun", [cli, "add", "theme-shadcn"], dir);
   for (const [name, want] of [
     ["theme.json", before],
     ["lib/ui/semantics.json", semantics],
     ["light.tokens.json", beforeLight],
     ["dark.tokens.json", beforeDark],
+    ["DESIGN.md", beforeDesign],
   ] as const) {
     const now = await fs.readFile(path.join(dir, name), "utf8");
     if (now !== want) {

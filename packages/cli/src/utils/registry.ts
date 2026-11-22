@@ -66,12 +66,13 @@ export async function cacheIndex(config: NshUiConfig, registryOverride?: string)
   }
 }
 
-/** `theme.json`, `semantics.json`, and standalone `.tokens.json`: the data files a theme carries. */
+/** `theme.json`, `semantics.json`, standalone `.tokens.json`, and `DESIGN.md`: the data files a theme carries. */
 const THEME_DATA = new Set([
   "theme.json",
   "semantics.json",
   "light.tokens.json",
   "dark.tokens.json",
+  "DESIGN.md",
 ]);
 
 /** A theme item's look without its data: the roles module (`lib/ui/theme.ts`), which every app has once. */
@@ -82,14 +83,19 @@ function rolesOnly(item: RegistryItem): RegistryItem {
   };
 }
 
-/** A theme item's data at the app's build-time paths: `theme.json` + `.tokens.json` at root, and `semantics.json` in the lib alias. */
+/** A theme item's data at the app's build-time paths: `theme.json`, `.tokens.json`, and `DESIGN.md` at root, and `semantics.json` in the lib alias. */
 function atBuildTime(item: RegistryItem, config: NshUiConfig): RegistryItem {
   const lib = config.aliases.lib.replace(/^\.\//, "");
   return {
     ...item,
     files: item.files.flatMap((file) => {
       const name = path.posix.basename(file.path);
-      if (name === "theme.json" || name === "light.tokens.json" || name === "dark.tokens.json") {
+      if (
+        name === "theme.json" ||
+        name === "light.tokens.json" ||
+        name === "dark.tokens.json" ||
+        name === "DESIGN.md"
+      ) {
         return [{ ...file, target: name }];
       }
       if (name === "semantics.json") return [{ ...file, target: path.posix.join(lib, name) }];

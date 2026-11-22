@@ -6,7 +6,7 @@
       "name": "theme",
       "type": "registry:theme",
       "title": "Theme",
-      "description": "The design tokens (theme.json), standalone DTCG 2025.10 files (light.tokens.json, dark.tokens.json), the finishes (semantics.json) and the roles that read them (lib/ui/theme.ts).",
+      "description": "The design tokens (theme.json), standalone DTCG 2025.10 files (light.tokens.json, dark.tokens.json), the agent-readable design specification (DESIGN.md), the finishes (semantics.json) and the roles that read them (lib/ui/theme.ts).",
       "files": [
         {
           "path": "packages/theme/theme.json",
@@ -22,6 +22,11 @@
           "path": "packages/theme/dark.tokens.json",
           "type": "registry:file",
           "target": "dark.tokens.json"
+        },
+        {
+          "path": "packages/theme/DESIGN.md",
+          "type": "registry:file",
+          "target": "DESIGN.md"
         },
         {
           "path": "packages/theme/semantics.json",
@@ -40,7 +45,7 @@
       "name": "theme-shadcn",
       "type": "registry:theme",
       "title": "Theme: shadcn neutral",
-      "description": "shadcn's neutral palette and flat finishes as one more theme, installed into themes/shadcn/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, index.ts) for `selectTheme` to switch to while the app runs.",
+      "description": "shadcn's neutral palette and flat finishes as one more theme, installed into themes/shadcn/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, DESIGN.md, index.ts) for `selectTheme` to switch to while the app runs.",
       "files": [
         {
           "path": "packages/theme/themes/shadcn/theme.json",
@@ -63,6 +68,11 @@
           "target": "themes/shadcn/dark.tokens.json"
         },
         {
+          "path": "packages/theme/themes/shadcn/DESIGN.md",
+          "type": "registry:file",
+          "target": "themes/shadcn/DESIGN.md"
+        },
+        {
           "path": "packages/theme/themes/shadcn/index.ts",
           "type": "registry:lib",
           "target": "themes/shadcn/index.ts"
@@ -74,7 +84,7 @@
       "name": "theme-solid-glass",
       "type": "registry:theme",
       "title": "Theme: Solid Glass",
-      "description": "Solid Glass (deeplethe/solid-glass, MIT) as one more theme: panes of thick smoky glass — a rim of light on each top edge, a hairline round it, a shadow underneath — installed into themes/solid-glass/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, index.ts) for `selectTheme` to switch to while the app runs.",
+      "description": "Solid Glass (deeplethe/solid-glass, MIT) as one more theme: panes of thick smoky glass — a rim of light on each top edge, a hairline round it, a shadow underneath — installed into themes/solid-glass/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, DESIGN.md, index.ts) for `selectTheme` to switch to while the app runs.",
       "files": [
         {
           "path": "packages/theme/themes/solid-glass/theme.json",
@@ -97,6 +107,11 @@
           "target": "themes/solid-glass/dark.tokens.json"
         },
         {
+          "path": "packages/theme/themes/solid-glass/DESIGN.md",
+          "type": "registry:file",
+          "target": "themes/solid-glass/DESIGN.md"
+        },
+        {
           "path": "packages/theme/themes/solid-glass/index.ts",
           "type": "registry:lib",
           "target": "themes/solid-glass/index.ts"
@@ -108,7 +123,7 @@
       "name": "theme-default",
       "type": "registry:theme",
       "title": "Theme: NSH Gallery UI",
-      "description": "The library's own theme (the build-time one) as one more theme, installed into themes/default/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, index.ts) — what an app built on another theme switches back to with `selectTheme` while it runs.",
+      "description": "The library's own theme (the build-time one) as one more theme, installed into themes/default/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, DESIGN.md, index.ts) — what an app built on another theme switches back to with `selectTheme` while it runs.",
       "files": [
         {
           "path": "packages/theme/themes/default/theme.json",
@@ -131,6 +146,11 @@
           "target": "themes/default/dark.tokens.json"
         },
         {
+          "path": "packages/theme/themes/default/DESIGN.md",
+          "type": "registry:file",
+          "target": "themes/default/DESIGN.md"
+        },
+        {
           "path": "packages/theme/themes/default/index.ts",
           "type": "registry:lib",
           "target": "themes/default/index.ts"
@@ -142,7 +162,7 @@
       "name": "theme-apple",
       "type": "registry:theme",
       "title": "Theme: Apple",
-      "description": "Apple's system palette and HIG metrics as one more theme — capsule controls, continuous corners, systemBlue, and Liquid Glass on the glass, menu and raised finishes — installed into themes/apple/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, index.ts) for `selectTheme` to switch to while the app runs.",
+      "description": "Apple's system palette and HIG metrics as one more theme — capsule controls, continuous corners, systemBlue, and Liquid Glass on the glass, menu and raised finishes — installed into themes/apple/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, DESIGN.md, index.ts) for `selectTheme` to switch to while the app runs.",
       "files": [
         {
           "path": "packages/theme/themes/apple/theme.json",
@@ -165,6 +185,11 @@
           "target": "themes/apple/dark.tokens.json"
         },
         {
+          "path": "packages/theme/themes/apple/DESIGN.md",
+          "type": "registry:file",
+          "target": "themes/apple/DESIGN.md"
+        },
+        {
           "path": "packages/theme/themes/apple/index.ts",
           "type": "registry:lib",
           "target": "themes/apple/index.ts"
@@ -176,7 +201,7 @@
       "name": "theme-material",
       "type": "registry:theme",
       "title": "Theme: Material",
-      "description": "Material 3 Expressive palette and metrics as one more theme — tonal surfaces, capsule controls, circular corners, 8/10/10% state layers, press ripple, and expressive springs — installed into themes/material/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, index.ts) for `selectTheme` to switch to while the app runs.",
+      "description": "Material 3 Expressive palette and metrics as one more theme — tonal surfaces, capsule controls, circular corners, 8/10/10% state layers, press ripple, and expressive springs — installed into themes/material/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, DESIGN.md, index.ts) for `selectTheme` to switch to while the app runs.",
       "files": [
         {
           "path": "packages/theme/themes/material/theme.json",
@@ -199,6 +224,11 @@
           "target": "themes/material/dark.tokens.json"
         },
         {
+          "path": "packages/theme/themes/material/DESIGN.md",
+          "type": "registry:file",
+          "target": "themes/material/DESIGN.md"
+        },
+        {
           "path": "packages/theme/themes/material/index.ts",
           "type": "registry:lib",
           "target": "themes/material/index.ts"
@@ -210,7 +240,7 @@
       "name": "theme-winui",
       "type": "registry:theme",
       "title": "Theme: WinUI 3",
-      "description": "WinUI 3 (Windows 11 / Fluent 2) palette and metrics as one more theme — WinUI fill/stroke tokens, 4/8 px circular corners, Segoe UI Variable, Consolas, double focus ring, timing motion, underline tabs/fields, and Windows blur material — installed into themes/winui/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, index.ts) for `selectTheme` to switch to while the app runs.",
+      "description": "WinUI 3 (Windows 11 / Fluent 2) palette and metrics as one more theme — WinUI fill/stroke tokens, 4/8 px circular corners, Segoe UI Variable, Consolas, double focus ring, timing motion, underline tabs/fields, and Windows blur material — installed into themes/winui/ (theme.json, semantics.json, light.tokens.json, dark.tokens.json, DESIGN.md, index.ts) for `selectTheme` to switch to while the app runs.",
       "files": [
         {
           "path": "packages/theme/themes/winui/theme.json",
@@ -231,6 +261,11 @@
           "path": "packages/theme/themes/winui/dark.tokens.json",
           "type": "registry:file",
           "target": "themes/winui/dark.tokens.json"
+        },
+        {
+          "path": "packages/theme/themes/winui/DESIGN.md",
+          "type": "registry:file",
+          "target": "themes/winui/DESIGN.md"
         },
         {
           "path": "packages/theme/themes/winui/index.ts",
