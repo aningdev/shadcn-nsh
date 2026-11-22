@@ -19,16 +19,16 @@
 
 ## 目录
 
-| 路径                                     | 内容                                                                                         |
-| ---------------------------------------- | -------------------------------------------------------------------------------------------- |
-| `packages/theme`                         | `theme.json`、`semantics.json`（oklch）、`theme.ts`（角色读取）                              |
-| `packages/ui`                            | 组件（来源于上游的部分以 `// @port` 标注 + 外壳）                                            |
-| `apps/website/demos`                     | 验收演示、演示适配层 `stage.tsx`、渲染比对、`port:render`                                    |
-| `apps/website/src/pages/docs/components` | 组件文档页                                                                                   |
-| `apps/showcase`                          | 展示应用：Gallery 的壳与本库组件重建的场景（分批实现），首页 “See it running” 嵌入其打包产物 |
-| `registry.json` → `public/r`             | shadcn registry 产物                                                                         |
-| `apps/gallery`                           | 原生行为测试与冒烟页                                                                         |
-| `packages/cli`                           | `shadcn-nsh` CLI                                                                             |
+| 路径                                     | 内容                                                                                                                              |
+| ---------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| `packages/theme`                         | `tokens/`（`default` 的 DTCG 2025.10 源码）、编译产物 `theme.json` / `semantics.json`（oklch）、`themes/`、`theme.ts`（角色读取） |
+| `packages/ui`                            | 组件（来源于上游的部分以 `// @port` 标注 + 外壳）                                                                                 |
+| `apps/website/demos`                     | 验收演示、演示适配层 `stage.tsx`、渲染比对、`port:render`                                                                         |
+| `apps/website/src/pages/docs/components` | 组件文档页                                                                                                                        |
+| `apps/showcase`                          | 展示应用：Gallery 的壳与本库组件重建的场景（分批实现），首页 “See it running” 嵌入其打包产物                                      |
+| `registry.json` → `public/r`             | shadcn registry 产物                                                                                                              |
+| `apps/gallery`                           | 原生行为测试与冒烟页                                                                                                              |
+| `packages/cli`                           | `shadcn-nsh` CLI                                                                                                                  |
 
 `port-map.json` 的 `root` 为仓库根；目标路径写全（如 `packages/ui/button.tsx`）。
 
@@ -60,7 +60,7 @@
 上游 nsh-gallery-ui（参考规范；port:check 提醒变化）
    │  新增组件时 port:vendor 抽取初稿
    ▼
-packages/theme   theme.json + semantics.json + theme.ts
+packages/theme   tokens/ (default DTCG) --[tokens:build]--> theme.json + semantics.json + themes/default/；theme.ts 读取
 packages/ui/lib  没有所属控件的共享部分（press、overlay、surface…）
 packages/ui/<id>.tsx  一个组件 = look（来源标注 // @port）+ 外壳，都归本库
 apps/website/demos、docs  演示与文档页
@@ -69,7 +69,7 @@ apps/website/demos、docs  演示与文档页
 registry.json → public/r → shadcn-nsh add
 ```
 
-依赖向下：本库 → `nsh/base` → `nsh`。主题真源是 `theme.json` 与 `semantics.json`，以 oklch 存储、归本库所有（起点取自上游）。
+依赖向下：本库 → `nsh/base` → `nsh`。`default` 主题的真源是 `packages/theme/tokens/`（DTCG 2025.10），改后运行 `bun run tokens:build` 编译到 `theme.json`、`semantics.json` 与 `themes/default/`；其余主题（`shadcn`、`solid-glass`、`apple`、`material`、`fluent`）在后续批次迁入 DTCG 前仍由 `scripts/theme/generate-*.ts` 生成。编译产物以 oklch 存储、归本库所有（起点取自上游）。
 
 ## 工作约定
 
@@ -101,7 +101,9 @@ nsh check apps/website/demos      # 演示与 UI 的类型检查
 nsh run apps/website/demos/button.tsx  # 运行一个演示
 
 bun run nsh:bootstrap          # 校验安装的 CLI 在基线，生成各 .nsh types host
-bun run check                  # port:check + demos/gallery 类型 + docs（会改文件）
+bun run tokens:build           # 编译 DTCG 源码（packages/theme/tokens/）到主题运行时 JSON
+bun run tokens:build --check   # 校验编译产物与 DTCG 源码一致
+bun run check                  # tokens:build --check + check:theme + port:check + demos/gallery 类型 + docs（会改文件）
 bun run test:gallery           # 原生行为测试
 bun run test:install           # 复制即用：真实 NSH app 里 init / add / nsh check（逐条目）
 ```

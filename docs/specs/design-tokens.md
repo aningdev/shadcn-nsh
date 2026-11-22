@@ -1,6 +1,6 @@
-# DTCG 2025.10 Token 源标准与编译架构（提案）
+# DTCG 2025.10 Token 源标准与编译架构
 
-本文定义本库如何以 **W3C Design Tokens Community Group (DTCG) 2025.10** 三份正式报告作为唯一主题源码真源，取代当前手写的 `theme.json` + `semantics.json` 双私有格式（Issue #237）。本文档是第 1 批（Batch 1）提案与技术验证（spike）的规范文本，待审定后按批次迁移全部 6 套主题、生成器、校验器与运行时。
+本文定义本库如何以 **W3C Design Tokens Community Group (DTCG) 2025.10** 三份正式报告作为唯一主题源码真源，取代手写的 `theme.json` + `semantics.json` 双私有格式（Issue #237）。Batch 1（提案与 spike，PR #238）与 Batch 2（正式编译器、源码级 `theme-lint` 与 `default` 主题真源切换）已落地，其余主题与运行时按第 10 节分批推进。
 
 规范依据（第一手来源）：
 
@@ -370,26 +370,26 @@ DTCG 2025.10 Color Module 不包含任何颜色运算语法，但本库有两处
 
 ## 10 分批迁移计划（每批 ≤ 1 小时，文件尽量正交）
 
-| 批次                | 内容与触及文件集                                                                                                                                                                     | 验收标准                                                                                                                                               |
-| :------------------ | :----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :----------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Batch 1（本批）** | 提案文档 `docs/specs/design-tokens.md` + `scripts/tokens/` spike（官方 schema 缓存与 Draft-07 校验器 + `default` 主题 DTCG 源码 + 编译器 + round-trip 单测）                         | `bun test scripts/tokens`、`bun run test:unit`、`vp check`、`bun run check` 全绿，不改任何已分发文件                                                   |
-| **Batch 2**         | 正式化 `scripts/tokens/` 编译器与 `theme-lint` 两阶段校验（接入 `bun run tokens:build` 与 `bun run check:theme`）；`default` 主题源码补全 `$description`                             | `tokens:build` 产出的 `default` `theme.json` 与现行逐字节一致；`bun run check` 通过                                                                    |
-| **Batch 3**         | 按选定方案落地运行时（推荐 Option (b)：更新 `packages/theme/theme.ts`、`packages/ui/*` ~15 处调用、`apps/showcase` & `apps/gallery` ~5 处、`packages/cli/src/utils/theme-merge.ts`） | `bun run test:unit`、`nsh check`（demos / gallery / showcase）、`bun run test:gallery` 通过                                                            |
-| **Batch 4**         | 迁移 `shadcn` 与 `solid-glass` 生成器（`scripts/theme/{shadcn,solid-glass,generate-shadcn,generate-solid-glass}.ts`）至排放 DTCG 稀疏源文件                                          | 生成的产物经 `port:render:theme` 与现行截图逐像素一致                                                                                                  |
-| **Batch 5**         | 迁移 `apple`、`material`、`fluent` 生成器（`scripts/theme/{apple,m3,fluent,generate-*}.ts`）至排放 DTCG 稀疏源文件（含平台 `pointer`/`touch` 覆写与 `material`）                     | 6 套主题全部由 DTCG 编译生成，`themes.test.ts` 与渲染比对逐像素一致                                                                                    |
-| **Batch 6**         | 更新 Registry 分发与 CLI：`registry.json`、`scripts/registry-build.ts`、`packages/cli` 附带各主题 `{light,dark}.tokens.json`；同步文档与 `CHANGELOG.md`                              | `bun run registry:build`、`bun run test:install`、`bun run port:render`、`bun run port:render:theme`、`bun run test:gallery`、`bun run check` 全部通过 |
+为避免过渡期的双格式兼容代码，**运行时切换（Option (b)）排在全部主题源码迁移之后**：在 Batch 5 之前，编译器的语义输出直接以现行 `semantics.json` 形状为运行时目标（这是当前的运行时契约，并非兼容层），Batch 5 再将编译器语义输出与 `theme.ts` / CLI `theme-merge` 一并切换至 Option (b)。
+
+| 批次                | 状态   | 内容与触及文件集                                                                                                                                                                                          | 验收标准                                                                                                                                                                         |
+| :------------------ | :----- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | :------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Batch 1**         | 已完成 | 提案文档 `docs/specs/design-tokens.md` + `scripts/tokens/` spike（官方 schema 缓存与 Draft-07 校验器 + `default` 主题 DTCG 源码 + 编译器 + 单测，PR #238）                                                | `bun test scripts/tokens`、`bun run test:unit`、`vp check`、`bun run check` 全绿，不改任何已分发文件                                                                             |
+| **Batch 2（本批）** | 已完成 | 正式化 `scripts/tokens/` 编译器（`bun run tokens:build` / `--check` 接入 `bun run check` 与 CI）与 `theme-lint` 源码阶段校验；删掉一次性转换脚本；`default` 源码补全 `$description`                       | `tokens:build` 产出的 `default` 全部产物（`packages/theme/{theme,semantics}.json` 与 `themes/default/*`）逐字节一致；`bun test scripts/tokens`、`bun run check`、`vp check` 通过 |
+| **Batch 3**         | 待实施 | `shadcn` 与 `solid-glass` 迁至 DTCG 源码（`scripts/theme/{shadcn,solid-glass,generate-shadcn,generate-solid-glass}.ts` 改输出 DTCG 稀疏源文件，由 `tokens:build` 编译）                                   | 生成的产物经 `port:render:theme` 与现行截图逐像素一致                                                                                                                            |
+| **Batch 4**         | 待实施 | `apple`、`material`、`fluent` 迁至 DTCG 源码（`scripts/theme/{apple,m3,fluent,generate-*}.ts` 改输出 DTCG 稀疏源文件，含平台 `pointer`/`touch` 覆写与 `material`）                                        | 6 套主题全部由 DTCG 编译生成，`themes.test.ts` 与渲染比对逐像素一致                                                                                                              |
+| **Batch 5**         | 待实施 | 全部主题统一切换至运行时 Option (b)：编译器语义输出改用 DTCG 字段命名，`packages/theme/theme.ts`、`packages/ui/*` / `apps/showcase` / `apps/gallery` 调用点、CLI `theme-merge` 与 `CHANGELOG.md` 同步更新 | `bun run test:unit`、`nsh check`（demos / gallery / showcase）、`bun run test:gallery`、`bun run port:render:theme` 全部通过                                                     |
+| **Batch 6**         | 待实施 | 更新 Registry 分发与 CLI：`registry.json`、`scripts/registry-build.ts`、`packages/cli` 附带各主题 `{light,dark}.tokens.json`；同步文档                                                                    | `bun run registry:build`、`bun run test:install`、`bun run port:render`、`bun run port:render:theme`、`bun run test:gallery`、`bun run check` 全部通过                           |
 
 整体验收基准：全部 6 套主题 `port:render` 与 `port:render:theme` **零像素差异**，`test:gallery` 与 `test:install` 全通过。
 
 ---
 
-## 11 待拍板问题（Open Questions）
+## 11 已拍板问题（Adopted Decisions）
 
-1. **Runtime 方案选型（第 7 节）**：采用 **Option (b)**（运行时改读 DTCG 字段命名产物，同步将 `font.line` → `font.lineHeight`、`font.tracking` → `font.letterSpacing`、`Timing.easing` → `Timing.timingFunction`），还是 **Option (a)**（保留现行 `semantics.json` 形状，组件零改动）？
-   - **推荐：Option (b)** —— 符合“不留历史兼容层”原则，且全仓影响点不足 30 处、高频 API（`colors`、`finish`、`shape`、`focusRing`、`rounded`）零改动。
-2. **向设计工具分发的 `.tokens.json` 形态（第 8 节）**：为每个主题附带按外观预先解析的两个单文件（`light.tokens.json` + `dark.tokens.json`，基于 `pointer` 档并附 `hex` 回退），还是附带内联好的单个 `.resolver.json`？
-   - **推荐：`light.tokens.json` + `dark.tokens.json`（按外观分开的 `.tokens.json`）** —— Figma Variables 原生导入与 Style Dictionary v4 目前均只直接消费 `.tokens.json`，需要 4 维完整编排的工具可直接读取源码中的 `theme.resolver.json`。
-3. **语义运行时产物的 `theme-merge` 升级策略**：Batch 3/6 切换为新格式后，`shadcn-nsh add` / `init` 的 JSON 合并器（`packages/cli/src/utils/theme-merge.ts`）是否直接按新结构合并而不为旧 `semantics.json` 留降级迁移分支？
-   - **推荐：不留旧格式兼容分支**，在对应发版说明中标注升级步骤（重跑 `shadcn-nsh init --theme <name> --overwrite` 或重新生成）。
-4. **`$root` 与 `dimension.radius.base`（第 3.2 节）**：`radius` 以及 `card` / `primary` 等与派生名同前缀的 token，是否坚持避开 DTCG Format §6.2 的 `$root` 语法以确保跨工具导入最大兼容性？
-   - **推荐：避开 `$root`**，使用 `dimension.radius.base` 与单层 `color.<name>`。
+以下提案阶段问题已由用户拍板采纳：
+
+1. **Runtime 方案选型（第 7 节）**：采用 **Option (b)**（在 Batch 5 中统一将语义编译产物与 `theme.ts` 切换为 DTCG 字段命名，同步将 `font.line` → `font.lineHeight`、`font.tracking` → `font.letterSpacing`、`Timing.easing` → `Timing.timingFunction`）。
+2. **向设计工具分发的 `.tokens.json` 形态（第 8 节）**：在 Batch 6 中为每个主题附带按外观预先解析的两个单文件（`light.tokens.json` + `dark.tokens.json`，基于 `pointer` 档并附 `hex` 回退）；需要 4 维完整编排的工具可直接读取源码中的 `theme.resolver.json`。
+3. **语义运行时产物的 `theme-merge` 升级策略**：Batch 5 切换为 Option (b) 后，`packages/cli/src/utils/theme-merge.ts` 直接按新结构合并，不留旧格式兼容分支。
+4. **`$root` 与 `dimension.radius.base`（第 3.2 节）**：避开 DTCG Format §6.2 的 `$root` 语法，使用 `dimension.radius.base` 与单层 `color.<name>`。
