@@ -11,6 +11,7 @@ The theme is the upstream gallery's: a graphite page (paper in light appearance)
 | --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `theme.json`                            | Base tokens: colors (light / dark and shared), all 8 `radius-*` lengths, and font families (`font-mono`, optional `font-sans`) in shadcn's `cssVars` shape                                                                                    |
 | `light.tokens.json`, `dark.tokens.json` | Standalone W3C DTCG 2025.10 Format files resolved per appearance at the `pointer` tier (in-file aliases, 6-digit `hex` fallbacks) for Figma Variables (Light/Dark modes), Tokens Studio, and Style Dictionary v4; static snapshots as shipped |
+| `DESIGN.md`                             | Generated Google Labs DESIGN.md (`alpha`) specification for coding agents, compiled from DTCG sources and the pointer-tier `light`/`dark` resolutions; static snapshot as shipped                                                             |
 | `semantics.json`                        | Semantic layer in DTCG names: 8 style groups (`typography`, `dimension`, `shape`, `state`, `duration`, `transition`, `motion`, `indicator`) and `finishes` (`shared` + sparse `light` / `dark`), referencing tokens with `{token}`            |
 | `lib/ui/theme.ts`                       | `colors`, `finish`, `shape`, `font`, `style`, `mono`, `focusRing` and `alpha`, read reactively from `theme.json` and `semantics.json`                                                                                                         |
 
@@ -20,9 +21,9 @@ The theme is the upstream gallery's: a graphite page (paper in light appearance)
 npx shadcn-nsh@latest add theme
 ```
 
-`add theme` writes `theme.json`, `light.tokens.json`, `dark.tokens.json`, `lib/ui/semantics.json` and `lib/ui/theme.ts`, the data of the theme `nsh-ui.json` records (`theme-shadcn` writes shadcn's into `themes/shadcn/`). `init` writes the same files and also points each `nsh.json` at `theme.json`. In a monorepo they live under `packages/ui`. Every component depends on it.
+`add theme` writes `theme.json`, `light.tokens.json`, `dark.tokens.json`, `DESIGN.md`, `lib/ui/semantics.json` and `lib/ui/theme.ts`, the data of the theme `nsh-ui.json` records (`theme-shadcn` writes shadcn's into `themes/shadcn/`). `init` writes the same files and also points each `nsh.json` at `theme.json`. In a monorepo they live under `packages/ui`. Every component depends on it.
 
-`light.tokens.json` and `dark.tokens.json` are generated output for design and token tools: import them into Figma Variables as Light and Dark modes, Tokens Studio, or Style Dictionary v4. Because they describe the theme as shipped, editing `theme.json` or `semantics.json` later does not update them.
+`light.tokens.json`, `dark.tokens.json` and `DESIGN.md` are generated outputs: import `.tokens.json` into Figma Variables as Light and Dark modes, Tokens Studio, or Style Dictionary v4, and let coding agents read `DESIGN.md` for the theme's tokens and design rationale. Because they describe the theme as shipped, editing `theme.json` or `semantics.json` later does not update them.
 
 ## Colors
 

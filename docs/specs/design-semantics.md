@@ -5,7 +5,7 @@
 - **`theme.json`（基础 token 层）**：NSH 原生识别的扁平设计 token（颜色、长度/数值、字体家族），每个值只定义一次，同时面向 Tailwind、TSX 的 `token()`、Rust 的 `theme()` 与宿主覆写（`setThemeOverrides`）。
 - **`semantics.json`（跨平台语义层）**：以 Apple HIG、Material 3 Expressive、Fluent 2（WinUI 3）与 shadcn/ui 的**跨平台超集**建出的设计语义——存放 NSH 原生 token 表达不了的结构（表面配方 finish、枚举、`pointer`/`touch` 两档尺寸与字阶、弹簧与动效、平台材质），凡是基础层已有的颜色、圆角或字体，一律通过 `{token}` 引用，不再重复写字面量。
 
-各平台主题（`default`、`shadcn`、`solid-glass`、`apple`，以及后续的 `material`、`winui`）都按同一份标准填满这两个文件。人类与编码代理阅读的 `DESIGN.md`（参照 [`references/design.md`](../../references/design.md)）是这两个文件的可读投影，将在后续由脚本生成。
+各平台主题（`default`、`shadcn`、`solid-glass`、`apple`，以及后续的 `material`、`winui`）都按同一份标准填满这两个文件。人类与编码代理阅读的 `DESIGN.md`（参照 [`references/design.md`](../../references/design.md)）由 `bun run tokens:build`（`scripts/tokens/design-md.ts`）从 DTCG 源码与按外观编译的 pointer 档解析结果生成，分别落盘于 `packages/theme/DESIGN.md` 与 `packages/theme/themes/<id>/DESIGN.md`。
 
 具体的 token 分层清单与 finish 字段规则见 [`theme-roles.md`](theme-roles.md)；三套原生平台的设计调研与分期路线见 [`native-themes.md`](native-themes.md)。
 
@@ -88,4 +88,4 @@
 | 动效时序（`{ duration, timingFunction }`）                                                                                               | `duration` + `cubicBezier`                | 以 `{ duration }`（ms）与命名 `cubicBezier` 曲线表达时序动效（如 Fluent 动效与 `transition.enter`）；导出 DTCG 源码时拆成标准 `$type`，运行时再编译回 `TimingSpec` |
 | 弹簧物理量（`stiffness`/`damping`）、外观枚举（`indicator.*`、`dimension.focus.style`、`shape.curve`）、finish 复合配方与平台 `material` | `$extensions`                             | DTCG 标准类型无法表达的运行时语义，归入 `$extensions` 命名空间                                                                                                     |
 
-DTCG 2025.10 源码真源（`packages/theme/tokens/`）、编译器（`bun run tokens:build`）与 Option (b) DTCG 命名运行时（`semantics.json` 与 `theme.ts`）已为全部 6 套主题落地（Batch 2–5）；按外观展开的 `.tokens.json` 分发将在 Batch 6 完成。完整的 DTCG 2025.10 Token 源架构、键名映射与分批计划见 [`design-tokens.md`](design-tokens.md)。
+DTCG 2025.10 源码真源（`packages/theme/tokens/`）、编译器（`bun run tokens:build`）与 Option (b) DTCG 命名运行时（`semantics.json` 与 `theme.ts`）已为全部 6 套主题落地（Batch 2–5）；按外观展开的 `.tokens.json` 分发（Batch 6）与每套主题的 `DESIGN.md` 生成及分发（#246，Batch 7）亦已完成。完整的 DTCG 2025.10 Token 源架构、键名映射与分批计划见 [`design-tokens.md`](design-tokens.md)。
