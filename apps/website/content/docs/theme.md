@@ -37,7 +37,7 @@ npx shadcn-nsh@latest add theme
 | `hover` / `faint`                                                                  | The pointer's wash, and the quietest text                                  |
 | `ring-halo`                                                                        | The keyboard focus's halo around the `ring` edge                           |
 | `brand` / `brand-fill`                                                             | The accent as ink, and as a fill with `on-brand` on it                     |
-| `track` / `knob`                                                                   | A switch's track when off, and its knob                                    |
+| `track` / `slider-track` / `knob`                                                  | A switch's track when off, a slider's inactive track, and a switch's knob  |
 | `scrollbar-thumb*`                                                                 | The scroll bars, opaque over the view                                      |
 | `code`                                                                             | Code inside insets                                                         |
 | `info` / `warn` / `up` / `down` / `violet`                                         | The tones beside the accent                                                |
