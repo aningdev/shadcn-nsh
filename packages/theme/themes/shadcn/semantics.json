@@ -359,6 +359,7 @@
       "raised": {
         "background": "{raised}",
         "gradient": "linear-gradient(180deg, {raised} 0%, {raised} 100%)",
+        "backdropFilter": "none",
         "material": null,
         "shadow": "0 1px 2px oklch(0 0 0 / 0.05)",
         "border-color": "transparent",
@@ -482,6 +483,7 @@
       "menu": {
         "background": "{card}",
         "border-color": "{border}",
+        "backdropFilter": "none",
         "material": null,
         "shadow": "0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1)"
       },
@@ -505,6 +507,7 @@
       "inverse": {
         "background": "{inverse}",
         "border-color": "{border}",
+        "backdropFilter": "none",
         "material": null,
         "shadow": "0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1)"
       },

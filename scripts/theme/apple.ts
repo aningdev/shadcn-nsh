@@ -250,6 +250,9 @@ const surface = (
 function finishes(appearance: Appearance) {
   const hairline = edge(appearance);
   const glass = { glass: "regular", tint: null } as const;
+  // Every glass finish carries this blur: without Liquid Glass its translucent fill would show what
+  // is behind it unblurred.
+  const fallbackBlur = "blur(30px)";
   return {
     card: { gradient: flat(alias("card")), shadow: "none" },
     section: { background: alias("card"), shadow: "none", "border-color": alias("card-edge") },
@@ -263,6 +266,7 @@ function finishes(appearance: Appearance) {
         "border-bottom-color": "transparent",
       }),
       gradient: "linear-gradient(180deg, transparent 0%, transparent 100%)",
+      backdropFilter: fallbackBlur,
       material: { apple: glass },
     },
     hover: surface(alias("hover"), {
@@ -307,13 +311,14 @@ function finishes(appearance: Appearance) {
       background: "oklch(from {popover} l c h / 0.4)",
       shadow: "none",
       "border-color": alias("border"),
-      backdropFilter: "blur(30px)",
+      backdropFilter: fallbackBlur,
       material: { apple: glass, ios: { backdrop: "thin" } },
     },
     menu: {
       background: "oklch(from {popover} l c h / 0.72)",
       shadow: `${hairline}, 0 8px 30px ${oklchColor(0, 0, 0, appearance === "light" ? 0.14 : 0.4)}`,
       "border-color": "transparent",
+      backdropFilter: fallbackBlur,
       material: { apple: glass, ios: { backdrop: "regular" } },
     },
     grabber: {

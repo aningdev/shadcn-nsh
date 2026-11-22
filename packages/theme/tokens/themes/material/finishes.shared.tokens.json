@@ -370,6 +370,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
           "material": {
             "android": {
               "elevation": 1
@@ -1888,6 +1889,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
           "material": {
             "android": {
               "elevation": 3
@@ -2152,6 +2154,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
           "material": {
             "android": {
               "elevation": 6

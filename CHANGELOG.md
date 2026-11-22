@@ -45,6 +45,7 @@
 
 ### Fixed
 
+- **`apple` popups blur what is behind them where Liquid Glass is not drawn (#251).** The `menu`, `raised` and `inverse` finishes asked for `glassEffect` over a translucent fill with no `backdropFilter`, so below iOS / macOS 26 (and on other platforms) a `Select`, `Combobox`, `Popover`, menu or toast showed the text behind it unblurred. They now carry `blur(30px)`, which NSH draws when glass is not available. `menu`, `raised` and `inverse` state `backdropFilter` in every shipped theme (`"none"` outside `apple`, so nothing else changes on screen), and `check:theme` rejects a finish that asks for `apple` glass over a translucent fill without a blur. **Breaking for theme authors:** a custom theme needs `backdropFilter` on `menu`, `raised` and `inverse`.
 - **`Select`, `DatePicker` and `Combobox` keep hearing presses after a runtime theme switch (#203).** A `selectTheme` that changed `control.line` remounted their base root, which then ignored the next press. `apple`'s pointer `control.line` is back to the HIG value, 28.
 - **`SplitViewTrigger`'s icon follows the appearance and the theme (#202).** It read its glyph once at mount, so the icon kept the mount-time color after a switch to dark or a `selectTheme`.
 

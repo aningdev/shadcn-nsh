@@ -219,6 +219,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
           "material": null
         }
       }
@@ -1266,6 +1267,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
           "material": {
             "windows": {
               "backdrop": "blur"
@@ -1362,6 +1364,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
           "material": null
         }
       }

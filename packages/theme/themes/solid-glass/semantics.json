@@ -356,6 +356,7 @@
       "raised": {
         "background": "{raised}",
         "gradient": "linear-gradient(180deg, transparent 0%, transparent 100%)",
+        "backdropFilter": "none",
         "material": null,
         "border-color": "{glass-edge}",
         "border-top-color": "{glass-edge}",
@@ -460,6 +461,7 @@
       },
       "menu": {
         "background": "{popover}",
+        "backdropFilter": "none",
         "material": null
       },
       "dialog": {
@@ -480,6 +482,7 @@
       },
       "inverse": {
         "background": "{inverse}",
+        "backdropFilter": "none",
         "material": null
       },
       "groove": {

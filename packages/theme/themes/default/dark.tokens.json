@@ -2606,6 +2606,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
           "material": null
         }
       },
@@ -4511,6 +4512,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
           "material": null
         }
       },
@@ -4765,6 +4767,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "backdropFilter": "none",
           "material": null
         }
       },

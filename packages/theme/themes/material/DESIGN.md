@@ -583,7 +583,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.section`** (material: `{"android":{"elevation":1}}`): M3 ElevatedCard resting surface (Level 1 shadow and 1dp Android elevation, no border).
 - **`finish.inset`**: The well inside a card: sunk by its inner shadow alone.
 - **`finish.field`**: A field well: its edge and its inner shadow.
-- **`finish.raised`** (material: `{"android":{"elevation":1}}`): Raised surface with Level 1 shadow and 1dp Android elevation.
+- **`finish.raised`** (backdropFilter: `none`; material: `{"android":{"elevation":1}}`): Raised surface with Level 1 shadow and 1dp Android elevation.
 - **`finish.hover`** (material: `{"android":{"elevation":1}}`): Hovered state surface over raised background with Level 1 shadow.
 - **`finish.pressed`** (material: `{"android":{"elevation":1}}`): Pressed surface at Level 1 elevation (M3 state layer + ripple handles press).
 - **`finish.disabled`**: M3 disabled filled/tonal button container (10% onSurface, flat with no shadow).
@@ -600,11 +600,11 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.on`**: A chosen switch or box, and the mark on it.
 - **`finish.chip`**: A chosen value label inside a field: a fill, an inner highlight and an edge.
 - **`finish.glass`** (backdropFilter: `none`; material: `{"android":{"elevation":3}}`): Floating surface using opaque M3 popover with Level 2 shadow and 3dp elevation (M3 uses no blur).
-- **`finish.menu`** (material: `{"android":{"elevation":3}}`): M3 menu/popover surface with Level 2 shadow and 3dp Android elevation.
+- **`finish.menu`** (backdropFilter: `none`; material: `{"android":{"elevation":3}}`): M3 menu/popover surface with Level 2 shadow and 3dp Android elevation.
 - **`finish.dialog`** (material: `{"android":{"elevation":6}}`): M3 dialog surface using SurfaceContainerHigh with Level 3 shadow and 6dp Android elevation.
 - **`finish.grabber`**: M3 bottom sheet drag handle (40% onSurfaceVariant).
 - **`finish.tooltip`**: M3 plain tooltip using inverse surface without shadow.
-- **`finish.inverse`** (material: `{"android":{"elevation":6}}`): M3 snackbar/inverse surface with Level 3 shadow and 6dp Android elevation.
+- **`finish.inverse`** (backdropFilter: `none`; material: `{"android":{"elevation":6}}`): M3 snackbar/inverse surface with Level 3 shadow and 6dp Android elevation.
 - **`finish.groove`**: A groove cut inside a menu.
 
 - **Indicators** (`tabs: "underline"`, `nav: "fill"`, `field: "underline"`): M3 underlined tabs and filled-text-field underline indicator.

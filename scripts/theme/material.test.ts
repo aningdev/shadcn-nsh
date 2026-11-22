@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { checkMaterial, withoutMaterial } from "./material";
+import { checkGlassFallback, checkMaterial, withoutMaterial } from "./material";
 import type { TokenKind } from "./tokens";
 
 const known = new Map<string, TokenKind>([
@@ -10,6 +10,37 @@ const known = new Map<string, TokenKind>([
 ]);
 const check = (material: unknown) =>
   checkMaterial("themes/x/semantics.json", "menu.light", { material }, known);
+
+describe("checkGlassFallback", () => {
+  const glass = { apple: { glass: "regular", tint: null } };
+  const fallback = (finish: Record<string, unknown>) =>
+    checkGlassFallback("themes/x/semantics.json", "menu.light", finish);
+
+  test("glass over a translucent fill needs a backdropFilter", () => {
+    const fill = "oklch(from {popover} l c h / 0.72)";
+    expect(fallback({ background: fill, material: glass })[0]).toContain("no backdropFilter");
+    expect(fallback({ background: fill, backdropFilter: "none", material: glass })[0]).toContain(
+      "menu.light",
+    );
+    expect(fallback({ background: "transparent", material: glass })).toHaveLength(1);
+    expect(fallback({ background: fill, backdropFilter: "blur(30px)", material: glass })).toEqual(
+      [],
+    );
+  });
+
+  test("an opaque fill or no glass asks for nothing", () => {
+    expect(fallback({ background: "{popover}", material: glass })).toEqual([]);
+    expect(fallback({ background: "oklch(from {popover} l c h / 0.72)", material: null })).toEqual(
+      [],
+    );
+    expect(
+      fallback({
+        background: "oklch(from {popover} l c h / 0.72)",
+        material: { windows: { backdrop: "blur" } },
+      }),
+    ).toEqual([]);
+  });
+});
 
 describe("checkMaterial", () => {
   test("null and a full material pass", () => {

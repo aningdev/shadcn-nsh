@@ -463,12 +463,15 @@ function finishes(): Record<string, Record<string, unknown>> {
     },
     inset: { shadow: "none", material: null },
     field: { shadow: "none", material: null },
-    raised: surface(alias("raised"), {
-      shadow: LEVEL_1,
-      "border-top-color": "transparent",
-      "border-bottom-color": "transparent",
-      material: level1,
-    }),
+    raised: {
+      ...surface(alias("raised"), {
+        shadow: LEVEL_1,
+        "border-top-color": "transparent",
+        "border-bottom-color": "transparent",
+        material: level1,
+      }),
+      backdropFilter: "none",
+    },
     hover: {
       background: alias("raised"),
       gradient: flat(alias("hover")),
@@ -526,6 +529,7 @@ function finishes(): Record<string, Record<string, unknown>> {
       background: alias("popover"),
       shadow: LEVEL_2,
       "border-color": "transparent",
+      backdropFilter: "none",
       material: level2,
     },
     dialog: {
@@ -549,6 +553,7 @@ function finishes(): Record<string, Record<string, unknown>> {
       background: alias("inverse"),
       shadow: LEVEL_3,
       "border-color": "transparent",
+      backdropFilter: "none",
       material: level3,
     },
     groove: { shadow: "none", material: null },

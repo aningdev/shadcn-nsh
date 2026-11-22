@@ -15,7 +15,7 @@ import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 
 import { colourFields, readColour } from "./theme/finish-colour";
-import { checkMaterial } from "./theme/material";
+import { checkGlassFallback, checkMaterial } from "./theme/material";
 import { parseColor } from "./theme/oklch";
 import { specBlock, specParts, specRows } from "./theme/spec";
 import { checkStyle } from "./theme/style";
@@ -309,6 +309,8 @@ for (const theme of themes) {
 
       // The platform material: stated on every finish, from NSH's lists, its tint a colour token.
       for (const problem of checkMaterial(path, `${role}.${appearance}`, finish, kinds))
+        fail(problem);
+      for (const problem of checkGlassFallback(path, `${role}.${appearance}`, finish))
         fail(problem);
 
       // `shadow` is ink, except any `{token}` it names must exist and be a `"color"` token.

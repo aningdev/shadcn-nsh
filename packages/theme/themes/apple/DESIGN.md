@@ -583,7 +583,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.section`**: The flat surface a section's content or card sits on (no shadow by default).
 - **`finish.inset`**: The well inside a card: sunk by its inner shadow alone.
 - **`finish.field`**: A field well: its edge and its inner shadow.
-- **`finish.raised`** (material: `{"apple":{"glass":"regular","tint":null}}`): Raised control surface with Liquid Glass material (regular) and hairline shadow.
+- **`finish.raised`** (backdropFilter: `blur(30px)`; material: `{"apple":{"glass":"regular","tint":null}}`): Raised control surface with Liquid Glass material (regular) and hairline shadow.
 - **`finish.hover`**: The step the surface takes under the pointer.
 - **`finish.pressed`**: The step it takes while pressed.
 - **`finish.disabled`**: A disabled control container surface.
@@ -600,11 +600,11 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.on`**: A chosen switch or box, and the mark on it.
 - **`finish.chip`**: A chosen value label inside a field: a fill, an inner highlight and an edge.
 - **`finish.glass`** (backdropFilter: `blur(30px)`; material: `{"apple":{"glass":"regular","tint":null},"ios":{"backdrop":"thin"}}`): Liquid Glass overlay surface with translucent popover fill, 30px blur fallback, and regular/thin Apple material.
-- **`finish.menu`** (material: `{"apple":{"glass":"regular","tint":null},"ios":{"backdrop":"regular"}}`): Floating menu/popover surface with translucent popover fill, hairline + drop shadow, and Liquid Glass material.
+- **`finish.menu`** (backdropFilter: `blur(30px)`; material: `{"apple":{"glass":"regular","tint":null},"ios":{"backdrop":"regular"}}`): Floating menu/popover surface with translucent popover fill, hairline + drop shadow, and Liquid Glass material.
 - **`finish.dialog`**: A dialog face: the card colour with the menu shadow.
 - **`finish.grabber`**: The drag handle pill at the top of a bottom sheet.
 - **`finish.tooltip`**: A tooltip face: the popover pane, without a shadow.
-- **`finish.inverse`** (material: `{"apple":{"glass":"regular","tint":null},"ios":{"backdrop":"regular"}}`): Toast/inverse floating surface using Liquid Glass material over inverse fill.
+- **`finish.inverse`** (backdropFilter: `blur(30px)`; material: `{"apple":{"glass":"regular","tint":null},"ios":{"backdrop":"regular"}}`): Toast/inverse floating surface using Liquid Glass material over inverse fill.
 - **`finish.groove`**: A groove cut inside a menu.
 
 - **Indicators** (`tabs: "pill"`, `nav: "fill"`, `field: "box"`): Visual indicator style enums.

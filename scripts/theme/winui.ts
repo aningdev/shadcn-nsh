@@ -635,12 +635,15 @@ function finishes(appearance: Appearance): Record<string, Record<string, unknown
     },
     inset: { shadow: "none", material: null },
     field: { shadow: "none", material: null },
-    raised: surface(alias("raised"), {
-      shadow: "none",
-      "border-color": alias("border"),
-      "border-top-color": appearance === "light" ? alias("border") : alias("bevel"),
-      "border-bottom-color": appearance === "light" ? alias("bevel") : alias("border"),
-    }),
+    raised: {
+      ...surface(alias("raised"), {
+        shadow: "none",
+        "border-color": alias("border"),
+        "border-top-color": appearance === "light" ? alias("border") : alias("bevel"),
+        "border-bottom-color": appearance === "light" ? alias("bevel") : alias("border"),
+      }),
+      backdropFilter: "none",
+    },
     hover: surface(alias("hover"), {
       shadow: "none",
       "border-color": alias("border"),
@@ -705,6 +708,7 @@ function finishes(appearance: Appearance): Record<string, Record<string, unknown
       background: alias("popover"),
       shadow: flyoutShadow,
       "border-color": alias("glass-edge"),
+      backdropFilter: "none",
       material: blurMaterial,
     },
     dialog: {
@@ -728,6 +732,7 @@ function finishes(appearance: Appearance): Record<string, Record<string, unknown
       background: alias("inverse"),
       shadow: flyoutShadow,
       "border-color": alias("glass-edge"),
+      backdropFilter: "none",
       material: null,
     },
     groove: { shadow: "none", material: null },

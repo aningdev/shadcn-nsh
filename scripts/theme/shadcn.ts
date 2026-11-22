@@ -309,11 +309,14 @@ function finishes(appearance: Appearance, o: ReturnType<typeof own>) {
     section: { background: alias("card"), shadow: "none", "border-color": alias("card-edge") },
     inset: { shadow: "none" },
     field: { shadow: SHADOW.xs },
-    raised: surface(alias("raised"), {
-      shadow: SHADOW.xs,
-      "border-top-color": "transparent",
-      "border-bottom-color": "transparent",
-    }),
+    raised: {
+      ...surface(alias("raised"), {
+        shadow: SHADOW.xs,
+        "border-top-color": "transparent",
+        "border-bottom-color": "transparent",
+      }),
+      backdropFilter: "none",
+    },
     hover: surface(alias("hover"), {
       shadow: SHADOW.xs,
       "border-top-color": "transparent",
@@ -375,7 +378,12 @@ function finishes(appearance: Appearance, o: ReturnType<typeof own>) {
       "border-color": alias("border"),
       backdropFilter: "blur(20px)",
     },
-    menu: { background: alias("card"), shadow: SHADOW.md, "border-color": alias("border") },
+    menu: {
+      background: alias("card"),
+      shadow: SHADOW.md,
+      "border-color": alias("border"),
+      backdropFilter: "none",
+    },
     grabber: { background: alias("raised"), shadow: "none" },
     groove: { shadow: "none" },
   };

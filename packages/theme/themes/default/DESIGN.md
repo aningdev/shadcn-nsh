@@ -581,7 +581,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.section`**: The flat surface a section's content or card sits on (no shadow by default).
 - **`finish.inset`**: The well inside a card: sunk by its inner shadow alone.
 - **`finish.field`**: A field well: its edge and its inner shadow.
-- **`finish.raised`**: A control on a card: a gradient, an inner highlight, a hard shadow, an edge.
+- **`finish.raised`** (backdropFilter: `none`): A control on a card: a gradient, an inner highlight, a hard shadow, an edge.
 - **`finish.hover`**: The step the surface takes under the pointer.
 - **`finish.pressed`**: The step it takes while pressed.
 - **`finish.disabled`**: A disabled control container surface.
@@ -598,11 +598,11 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.on`**: A chosen switch or box, and the mark on it.
 - **`finish.chip`**: A chosen value label inside a field: a fill, an inner highlight and an edge.
 - **`finish.glass`** (backdropFilter: `blur(20px)`): Glass: a translucent fill and a blur.
-- **`finish.menu`**: A floating surface: a menu, a popover.
+- **`finish.menu`** (backdropFilter: `none`): A floating surface: a menu, a popover.
 - **`finish.dialog`**: A dialog face: the card colour with the menu shadow.
 - **`finish.grabber`**: The drag handle pill at the top of a bottom sheet.
 - **`finish.tooltip`**: A tooltip face: the popover pane, without a shadow.
-- **`finish.inverse`**: The inverse surface: a toast face.
+- **`finish.inverse`** (backdropFilter: `none`): The inverse surface: a toast face.
 - **`finish.groove`**: A groove cut inside a menu.
 
 - **Indicators** (`tabs: "pill"`, `nav: "fill"`, `field: "box"`): Visual indicator style enums.

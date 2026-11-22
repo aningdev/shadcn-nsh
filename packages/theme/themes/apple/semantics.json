@@ -359,6 +359,7 @@
       "raised": {
         "background": "oklch(from {raised} l c h / 0.72)",
         "gradient": "linear-gradient(180deg, transparent 0%, transparent 100%)",
+        "backdropFilter": "blur(30px)",
         "material": {
           "apple": {
             "glass": "regular",
@@ -499,6 +500,7 @@
       "menu": {
         "background": "oklch(from {popover} l c h / 0.72)",
         "border-color": "transparent",
+        "backdropFilter": "blur(30px)",
         "material": {
           "apple": {
             "glass": "regular",
@@ -528,6 +530,7 @@
       "inverse": {
         "background": "oklch(from {inverse} l c h / 0.72)",
         "border-color": "transparent",
+        "backdropFilter": "blur(30px)",
         "material": {
           "apple": {
             "glass": "regular",

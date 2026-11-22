@@ -367,6 +367,7 @@
       "raised": {
         "background": "{raised}",
         "gradient": "linear-gradient(180deg, {raised} 0%, {raised} 100%)",
+        "backdropFilter": "none",
         "material": {
           "android": {
             "elevation": 1
@@ -518,6 +519,7 @@
       "menu": {
         "background": "{popover}",
         "border-color": "transparent",
+        "backdropFilter": "none",
         "material": {
           "android": {
             "elevation": 3
@@ -549,6 +551,7 @@
       "inverse": {
         "background": "{inverse}",
         "border-color": "transparent",
+        "backdropFilter": "none",
         "material": {
           "android": {
             "elevation": 6

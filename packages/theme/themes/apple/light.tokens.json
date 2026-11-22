@@ -2662,6 +2662,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "backdropFilter": "blur(30px)",
           "material": {
             "apple": {
               "glass": "regular",
@@ -4254,6 +4255,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "backdropFilter": "blur(30px)",
           "material": {
             "apple": {
               "glass": "regular",
@@ -4548,6 +4550,7 @@
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
+          "backdropFilter": "blur(30px)",
           "material": {
             "apple": {
               "glass": "regular",

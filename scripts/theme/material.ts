@@ -150,6 +150,34 @@ function checkAndroidMaterial(
   return problems;
 }
 
+/** The alpha a finish's fill is drawn at: `oklch(from {popover} l c h / 0.72)` is 0.72, a plain token 1. */
+const fillAlpha = (background: unknown): number => {
+  if (background === "transparent") return 0;
+  const match = typeof background === "string" ? /\/\s*([\d.]+)\s*\)\s*$/.exec(background) : null;
+  return match ? Number(match[1]) : 1;
+};
+
+/**
+ * A finish that asks for Apple's glass over a translucent fill without a `backdropFilter`, named.
+ * `glassEffect` draws only on iOS 26 and macOS 26 and later; everywhere else NSH draws the
+ * `backdropFilter` instead (`styling.md`), so without one the fill shows what is behind it unblurred.
+ */
+export function checkGlassFallback(
+  path: string,
+  where: string,
+  finish: { background?: unknown; backdropFilter?: unknown; material?: unknown },
+): string[] {
+  const material = finish.material;
+  if (!isObject(material) || !("apple" in material)) return [];
+  if (fillAlpha(finish.background) >= 1) return [];
+  const blur = finish.backdropFilter;
+  return typeof blur === "string" && blur !== "none"
+    ? []
+    : [
+        `${path}: ${where} asks for apple glass over a translucent fill with no backdropFilter, so platforms without Liquid Glass show what is behind it unblurred`,
+      ];
+}
+
 /**
  * What is wrong with one finish's `material`, each as a line naming the finish: a finish that does
  * not state it, a platform or key outside the shape, a value outside NSH's list, a tint that is

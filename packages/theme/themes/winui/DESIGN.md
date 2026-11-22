@@ -600,7 +600,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.section`**: WinUI 3 section card surface using CardBackgroundFillColorDefault and CardStrokeColorDefault border (no drop shadow).
 - **`finish.inset`**: The well inside a card: sunk by its inner shadow alone.
 - **`finish.field`**: A field well: its edge and its inner shadow.
-- **`finish.raised`**: WinUI 3 standard control surface with ControlElevationBorderBrush top/bottom bevel and no drop shadow.
+- **`finish.raised`** (backdropFilter: `none`): WinUI 3 standard control surface with ControlElevationBorderBrush top/bottom bevel and no drop shadow.
 - **`finish.hover`**: WinUI 3 hovered control surface with ControlFillColorSecondary fill and ControlElevationBorderBrush bevel.
 - **`finish.pressed`**: WinUI 3 pressed control surface with ControlFillColorTertiary/muted fill, flat border, and no shadow.
 - **`finish.disabled`**: WinUI 3 disabled control container using ControlFillColorDisabled and ControlStrokeColorDefault border.
@@ -617,11 +617,11 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.on`**: WinUI 3 checked ToggleButton / active surface using AccentFillColorDefault and AccentControlElevationBorderBrush bevel.
 - **`finish.chip`**: A chosen value label inside a field: a fill, an inner highlight and an edge.
 - **`finish.glass`** (backdropFilter: `blur(30px)`; material: `{"windows":{"backdrop":"blur"}}`): WinUI 3 AcrylicInApp surface with per-appearance TintLuminosityOpacity (0.85 light / 0.96 dark), depth-32 shadow, and Windows blur backdrop.
-- **`finish.menu`** (material: `{"windows":{"backdrop":"blur"}}`): WinUI 3 Acrylic flyout/menu surface with depth-32 shadow and Windows blur backdrop.
+- **`finish.menu`** (backdropFilter: `none`; material: `{"windows":{"backdrop":"blur"}}`): WinUI 3 Acrylic flyout/menu surface with depth-32 shadow and Windows blur backdrop.
 - **`finish.dialog`**: WinUI 3 ContentDialog surface with depth-128 shadow and composited SurfaceStrokeColorDefault border.
 - **`finish.grabber`**: The drag handle pill at the top of a bottom sheet.
 - **`finish.tooltip`** (material: `{"windows":{"backdrop":"blur"}}`): WinUI 3 ToolTip surface with depth-16 shadow, glass-edge border, and Windows blur backdrop.
-- **`finish.inverse`**: WinUI 3 TeachingTip/toast surface with depth-32 shadow and glass-edge border.
+- **`finish.inverse`** (backdropFilter: `none`): WinUI 3 TeachingTip/toast surface with depth-32 shadow and glass-edge border.
 - **`finish.groove`**: A groove cut inside a menu.
 
 - **Indicators** (`tabs: "underline"`, `nav: "bar"`, `field: "underline"`): WinUI 3 underlined tabs, NavigationView leading bar, and bottom-underlined text fields.

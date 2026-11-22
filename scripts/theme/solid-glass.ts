@@ -483,6 +483,7 @@ function finishes(appearance: Appearance): Record<string, Finish> {
       "border-color": alias("glass-edge"),
       "border-top-color": alias("glass-edge"),
       "border-bottom-color": alias("glass-edge"),
+      backdropFilter: "none",
     },
     // Under the pointer the theme's own step fills it; the pane keeps its rim and its shadow.
     hover: {
@@ -610,6 +611,7 @@ function finishes(appearance: Appearance): Record<string, Finish> {
         `0 6px 16px -6px ${s("glass-lift")}`,
       ].join(", "),
       "border-color": s("popover-edge"),
+      backdropFilter: "none",
     },
     grabber: {
       background: alias("raised"),

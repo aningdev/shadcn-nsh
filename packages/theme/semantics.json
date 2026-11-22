@@ -357,6 +357,7 @@
       "raised": {
         "background": "{raised}",
         "gradient": "linear-gradient(180deg, {raised} 0%, {raised} 100%)",
+        "backdropFilter": "none",
         "material": null
       },
       "hover": {
@@ -441,6 +442,7 @@
       "menu": {
         "background": "{popover}",
         "border-color": "{border}",
+        "backdropFilter": "none",
         "material": null
       },
       "dialog": {
@@ -462,6 +464,7 @@
       "inverse": {
         "background": "{inverse}",
         "border-color": "{border}",
+        "backdropFilter": "none",
         "material": null
       },
       "groove": {

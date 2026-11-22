@@ -358,6 +358,7 @@
       "raised": {
         "background": "{raised}",
         "gradient": "linear-gradient(180deg, {raised} 0%, {raised} 100%)",
+        "backdropFilter": "none",
         "material": null,
         "shadow": "none",
         "border-color": "{border}"
@@ -485,6 +486,7 @@
       "menu": {
         "background": "{popover}",
         "border-color": "{glass-edge}",
+        "backdropFilter": "none",
         "material": {
           "windows": {
             "backdrop": "blur"
@@ -512,6 +514,7 @@
       "inverse": {
         "background": "{inverse}",
         "border-color": "{glass-edge}",
+        "backdropFilter": "none",
         "material": null
       },
       "groove": {

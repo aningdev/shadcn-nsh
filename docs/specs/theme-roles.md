@@ -173,6 +173,8 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 `themed()` 从不把 `material` 放进 style；style 里只多 `glassEffect`（有 `apple` 时）和 `glassTintColor`（`tint` 不为 `null` 时），`material: null` 时键与以前完全一样。`ios`、`macos`、`windows`、`android` 不是 style 键，由 `theme.ts` 的 `platformMaterial(role)` 返回，组件在同一个 View 上铺开：`<View {...platformMaterial("menu")} style={{ ...finish.menu }} />`（按压水波由启用了 `state.ripple` 的可按组件并入 `android`）。`check:theme` 检查 `material` 存在于每个 finish，取值在白名单里，`apple.tint` 与 `android.ripple.color` 是该主题有的颜色（`scripts/theme/material.ts`）。
 
+**玻璃要有回落。** `apple.glass` 只在 iOS / macOS 26 及以上画出来，别处画的是 `backdropFilter`。所以写了 `apple`、底又半透明（alpha 小于 1 或 `transparent`）的 finish，`backdropFilter` 必须是一个模糊，不能缺、不能是 `"none"`：否则在 Liquid Glass 之外，面板后面的文字原样透出来（#251）。`check:theme` 拦下这种 finish（`checkGlassFallback`）。
+
 字段顺序固定：`background`、`gradient`、`shadow`、`border-color`、`border-top-color`、`border-bottom-color`、`backdropFilter`、`material`。`tokens:build`（`scripts/tokens/compile.ts`）按默认主题的字段顺序写出编译产物；`check:theme` 拦下比默认主题多一个或少一个字段的 finish。
 
 ## 4 每个 finish
