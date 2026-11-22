@@ -349,7 +349,6 @@ function encodeFinishShadowToken(raw: string): Record<string, unknown> {
     };
   }
 
-  let hasExplicitZeroSpread = false;
   const items = splitTopLevelCommas(trimmed).map((layer) => {
     const tokens = splitTopLevelSpaces(layer);
     let idx = 0;
@@ -366,9 +365,6 @@ function encodeFinishShadowToken(raw: string): Record<string, unknown> {
     }
     if (lengths.length < 3 || lengths.length > 4) {
       throw new Error(`Expected 3 or 4 shadow lengths in "${layer}"`);
-    }
-    if (lengths.length === 4 && lengths[3] === "0") {
-      hasExplicitZeroSpread = true;
     }
     const offsetX = parseDimToken(lengths[0]!);
     const offsetY = parseDimToken(lengths[1]!);
@@ -393,15 +389,6 @@ function encodeFinishShadowToken(raw: string): Record<string, unknown> {
   return {
     $type: "shadow",
     $value: items.length === 1 ? items[0] : items,
-    ...(hasExplicitZeroSpread
-      ? {
-          $extensions: {
-            [EXT_NS]: {
-              explicitSpread: true,
-            },
-          },
-        }
-      : {}),
   };
 }
 

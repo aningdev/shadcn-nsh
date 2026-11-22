@@ -339,15 +339,9 @@ function validateExtAtPath(
   }
 
   if (/^finish\.[A-Za-z0-9-]+\.shadow$/.test(p)) {
-    checkUnknownKeys(where, ext, ["none", "explicitSpread"], problems);
-    if ("none" in ext && ext.none !== true) {
+    checkUnknownKeys(where, ext, ["none"], problems);
+    if (ext.none !== true) {
       problems.push(`${where}.none must be true`);
-    }
-    if ("explicitSpread" in ext && ext.explicitSpread !== true) {
-      problems.push(`${where}.explicitSpread must be true`);
-    }
-    if (!("none" in ext) && !("explicitSpread" in ext)) {
-      problems.push(`${where} must set none or explicitSpread`);
     }
     return;
   }

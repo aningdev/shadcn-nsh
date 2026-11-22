@@ -218,7 +218,6 @@ function compileFinishSection(
       } else {
         const raw = group.shadow.$value;
         const shadows = (Array.isArray(raw) ? raw : [raw]) as DtcgShadowItem[];
-        const explicitSpread = ext?.explicitSpread === true;
         item.boxShadow = shadows
           .map((s) => {
             const parts: string[] = [];
@@ -226,7 +225,7 @@ function compileFinishSection(
             const fmtLen = (d: { value: number; unit: string }) =>
               d.value === 0 ? "0" : `${d.value}${d.unit}`;
             parts.push(fmtLen(s.offsetX), fmtLen(s.offsetY), fmtLen(s.blur));
-            if (s.spread.value !== 0 || explicitSpread) parts.push(fmtLen(s.spread));
+            if (s.spread.value !== 0) parts.push(fmtLen(s.spread));
             const colorStr =
               typeof s.color === "string" ? toFlatColorRef(s.color) : formatDtcgColor(s.color);
             parts.push(colorStr);

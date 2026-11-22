@@ -74,12 +74,7 @@
               "unit": "px"
             }
           }
-        ],
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "explicitSpread": true
-          }
-        }
+        ]
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -154,11 +149,6 @@
             "value": 0,
             "unit": "px"
           }
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "explicitSpread": true
-          }
         }
       },
       "$extensions": {
@@ -215,11 +205,6 @@
           "spread": {
             "value": 0,
             "unit": "px"
-          }
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "explicitSpread": true
           }
         }
       },
@@ -291,11 +276,6 @@
           "spread": {
             "value": 0,
             "unit": "px"
-          }
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "explicitSpread": true
           }
         }
       },
@@ -730,12 +710,7 @@
               "unit": "px"
             }
           }
-        ],
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "explicitSpread": true
-          }
-        }
+        ]
       },
       "border-color": {
         "$type": "color",
@@ -810,12 +785,7 @@
               "unit": "px"
             }
           }
-        ],
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "explicitSpread": true
-          }
-        }
+        ]
       },
       "border-color": {
         "$type": "color",
@@ -924,12 +894,7 @@
               "unit": "px"
             }
           }
-        ],
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "explicitSpread": true
-          }
-        }
+        ]
       },
       "border-color": {
         "$type": "color",
@@ -989,11 +954,6 @@
           "spread": {
             "value": 0,
             "unit": "px"
-          }
-        },
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "explicitSpread": true
           }
         }
       },
@@ -1070,12 +1030,7 @@
               "unit": "px"
             }
           }
-        ],
-        "$extensions": {
-          "dev.aning.shadcn-nsh": {
-            "explicitSpread": true
-          }
-        }
+        ]
       },
       "border-color": {
         "$type": "color",

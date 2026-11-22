@@ -209,7 +209,7 @@ describe("DTCG 2025.10 build (default, shadcn, solid-glass)", () => {
       };
       expect(compiledSemantics.state.pressScale).toBe(1);
       expect(compiledSemantics.finishes.shared.card.boxShadow).toBe(
-        "0 1px 3px 0 oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)",
+        "0 1px 3px oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)",
       );
     } finally {
       fs.rmSync(tmp, { recursive: true, force: true });
@@ -319,7 +319,7 @@ describe("DTCG source lint", () => {
     expect(problems.join("\n")).toContain("color.background is missing $description");
   });
 
-  test("rejects negative radius and invalid shadow extension flags", () => {
+  test("rejects negative radius and non-boolean shadow none flag", () => {
     const problems = withMutatedDefault((tmp) => {
       const themePath = path.join(tmp, "packages/theme/tokens/themes/default/theme.tokens.json");
       const themeDoc = JSON.parse(fs.readFileSync(themePath, "utf8"));
@@ -331,12 +331,12 @@ describe("DTCG source lint", () => {
         "packages/theme/tokens/themes/default/finishes.shared.tokens.json",
       );
       const finDoc = JSON.parse(fs.readFileSync(finPath, "utf8"));
-      finDoc.finish.field.shadow.$extensions["dev.aning.shadcn-nsh"] = { explicitSpread: false };
+      finDoc.finish.field.shadow.$extensions["dev.aning.shadcn-nsh"] = { none: false };
       fs.writeFileSync(finPath, JSON.stringify(finDoc, null, 2));
     });
     const text = problems.join("\n");
     expect(text).toContain("dimension.radius.card value -4 must be >= 0");
-    expect(text).toContain("explicitSpread must be true");
+    expect(text).toContain("none must be true");
   });
 
   test("validates alpha colorOp on border-color and translucent mix colorOp in solid-glass", () => {
