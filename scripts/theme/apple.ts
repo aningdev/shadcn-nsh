@@ -423,7 +423,7 @@ export const style = {
       },
       height: { pointer: { sm: 24, md: 28, lg: 32 }, touch: { sm: 32, md: 44, lg: 50 } },
     },
-    stroke: { hairline: 0.5, surface: 0.5, control: 1, indicator: 2 },
+    stroke: { hairline: 0.5, surface: 0.5, control: 1 },
     focus: { style: "halo", width: 3, offset: 0 },
     icon: {
       pointer: { sm: 12, md: 14, lg: 16 },
@@ -432,7 +432,6 @@ export const style = {
   },
   shape: {
     curve: "continuous",
-    corners: { field: "all" },
   },
   state: {
     // Apple presses by dimming (`state["pressed-opacity"]`), not by sinking.
@@ -452,7 +451,6 @@ export const style = {
     control: { stiffness: 1218, damping: 70 },
     move: { stiffness: 504, damping: 38 },
   },
-  indicator: { tabs: "pill", nav: "fill", field: "box" },
   controls: "base" as const,
 };
 

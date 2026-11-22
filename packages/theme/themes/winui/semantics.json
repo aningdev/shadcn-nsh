@@ -160,8 +160,7 @@
     "stroke": {
       "hairline": 1,
       "surface": 1,
-      "control": 1,
-      "indicator": 3
+      "control": 1
     },
     "focus": {
       "style": "double",
@@ -179,17 +178,10 @@
         "md": 20,
         "lg": 24
       }
-    },
-    "grabber": {
-      "width": 36,
-      "height": 5
     }
   },
   "shape": {
-    "curve": "circular",
-    "corners": {
-      "field": "all"
-    }
+    "curve": "circular"
   },
   "state": {
     "press-scale": 1,
@@ -233,11 +225,6 @@
       "duration": 333,
       "timingFunction": "point-to-point"
     }
-  },
-  "indicator": {
-    "tabs": "underline",
-    "nav": "bar",
-    "field": "underline"
   },
   "controls": "winui",
   "finishes": {

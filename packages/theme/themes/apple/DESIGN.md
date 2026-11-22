@@ -244,7 +244,6 @@ spacing:
     hairline: 0.5px
     surface: 0.5px
     control: 1px
-    indicator: 2px
   focus:
     width: 3px
     offset: 0px
@@ -497,11 +496,10 @@ Ergonomic sizing scales for pointer input.
 
 Apple Liquid Glass and Retina hairline depth: `glass`, `menu`, and `raised` finishes request `material.apple` (`glass: "regular"`) with iOS backdrop fallback (`ios.backdrop`) and 0.5px borders; other surfaces stay flat with subtle shadows.
 
-- **Strokes:** Border and indicator stroke widths.
+- **Strokes:** Border stroke widths.
   - `stroke.hairline` (0.5px): Retina 0.5px hairline divider width per Apple HIG.
   - `stroke.surface` (0.5px): Retina 0.5px container surface hairline width per Apple HIG.
   - `stroke.control` (1px): Interactive control border width.
-  - `stroke.indicator` (2px): Active tab and navigation indicator stroke width.
 - **Focus indicator (`style: "halo"`):** Focus ring geometry and style enum.
   - `focus.width` (3px): Focus ring stroke width.
   - `focus.offset` (0px): Focus ring outward offset from control bounds.
@@ -511,7 +509,7 @@ Apple Liquid Glass and Retina hairline depth: `glass`, `menu`, and `raised` fini
 
 Apple HIG concentric corner radius scale (999px capsule controls/chips, 20px card, 26px dialog, 34px sheet).
 
-Non-dimensional corner curve and field corner geometry. (`curve: "continuous"`, `corners.field: "all"`).
+Non-dimensional corner curve. (`curve: "continuous"`).
 
 Semantic corner radius roles referencing base dimension.radius.* tokens.
 
@@ -572,8 +570,6 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.tooltip`**: A tooltip face: the popover pane, without a shadow.
 - **`finish.inverse`** (backdropFilter: `blur(30px)`; material: `{"apple":{"glass":"regular","tint":null},"ios":{"backdrop":"regular"}}`): Toast/inverse floating surface using Liquid Glass material over inverse fill.
 - **`finish.groove`**: A groove cut inside a menu.
-
-- **Indicators** (`tabs: "pill"`, `nav: "fill"`, `field: "box"`): Visual indicator style enums.
 - **Disabled handling** (content=0.3, fill=false): UIKit disabled content opacity multiplier (0.3); containers keep resting fills.
 
 ## Do's and Don'ts

@@ -206,7 +206,7 @@ describe("add", () => {
     await captured(() => runAdd(["button"], { cwd: current!.app, registry: current!.url }));
     const semantics = JSON.parse(current.read("lib/ui/semantics.json")) as {
       state: { "press-scale": number };
-      indicator: { tabs?: string };
+      controls?: string;
       finishes: {
         shared: Record<string, Record<string, unknown>>;
         light: Record<string, Record<string, unknown>>;
@@ -215,7 +215,7 @@ describe("add", () => {
     };
     semantics.state["press-scale"] = 1;
     semantics.finishes.light.card.shadow = "none";
-    delete semantics.indicator.tabs;
+    delete semantics.controls;
     delete semantics.finishes.shared.dialog;
     delete semantics.finishes.light.dialog;
     delete semantics.finishes.shared.card.material;
@@ -231,7 +231,7 @@ describe("add", () => {
     const merged = JSON.parse(current.read("lib/ui/semantics.json")) as typeof semantics;
     expect(merged.state["press-scale"]).toBe(1);
     expect(merged.finishes.light.card.shadow).toBe("none");
-    expect(merged.indicator.tabs).toBe("pill");
+    expect(merged.controls).toBe("base");
     expect(merged.finishes.shared.dialog).toBeDefined();
     expect(merged.finishes.light.dialog).toBeDefined();
     expect(merged.finishes.shared.card.material).toBeNull();

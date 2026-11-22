@@ -500,10 +500,8 @@ export function compileDesignMd(resolverPath: string): string {
     Record<string, unknown>
   >;
   const shapeExt = getExt(lightMerged.shape) ?? {};
-  const cornersExt = (shapeExt.corners as Record<string, unknown> | undefined) ?? {};
   const focusExt = getExt(focusGroup) ?? {};
   const stateExt = getExt(stateGroup) ?? {};
-  const indicatorExt = getExt(lightMerged.indicator) ?? {};
   const controlSizeExt = getExt(sizeGroup.control) ?? {};
 
   const pointerRaw = resolvePermutationDescriptions(absPath, "pointer");
@@ -647,7 +645,7 @@ export function compileDesignMd(resolverPath: string): string {
   const strokeDesc = getDesc(strokeGroup);
   if (strokeDesc) {
     lines.push(`- **Strokes:** ${strokeDesc}`);
-    for (const k of ["hairline", "surface", "control", "indicator"] as const) {
+    for (const k of ["hairline", "surface", "control"] as const) {
       const tok = strokeGroup[k];
       if (isTokenNode(tok)) {
         const d = fmtDim(tok.$value as DtcgDimension);
@@ -689,9 +687,7 @@ export function compileDesignMd(resolverPath: string): string {
   if (radiusGroupDesc) lines.push(radiusGroupDesc);
   if (shapeExtDesc) {
     if (radiusGroupDesc) lines.push("");
-    lines.push(
-      `${shapeExtDesc} (\`curve: "${String(shapeExt.curve)}"\`, \`corners.field: "${String(cornersExt.field)}"\`).`,
-    );
+    lines.push(`${shapeExtDesc} (\`curve: "${String(shapeExt.curve)}"\`).`);
   }
   if (shapeDimDesc) {
     lines.push("");
@@ -783,13 +779,6 @@ export function compileDesignMd(resolverPath: string): string {
     }
     const suffix = notes.length > 0 ? ` (${notes.join("; ")})` : "";
     lines.push(`- **\`finish.${role}\`**${suffix}: ${roleDesc ?? ""}`);
-  }
-  const indicatorDesc = getDesc(lightMerged.indicator);
-  if (indicatorDesc) {
-    lines.push("");
-    lines.push(
-      `- **Indicators** (\`tabs: "${String(indicatorExt.tabs)}"\`, \`nav: "${String(indicatorExt.nav)}"\`, \`field: "${String(indicatorExt.field)}"\`): ${indicatorDesc}`,
-    );
   }
   const disabledDesc = getDesc(stateGroup.disabled);
   if (disabledDesc) {

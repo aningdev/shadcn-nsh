@@ -293,7 +293,7 @@ describe("DTCG source lint", () => {
     const problems = withMutatedDefault((tmp) => {
       const sharedPath = path.join(tmp, "packages/theme/tokens/base/style.shared.tokens.json");
       const shared = JSON.parse(fs.readFileSync(sharedPath, "utf8"));
-      shared.indicator.$extensions["dev.aning.shadcn-nsh"].tabs = "rail";
+      shared.shape.$extensions["dev.aning.shadcn-nsh"].curve = "squircle";
       fs.writeFileSync(sharedPath, JSON.stringify(shared, null, 2));
 
       const finPath = path.join(
@@ -307,7 +307,7 @@ describe("DTCG source lint", () => {
       fs.writeFileSync(finPath, JSON.stringify(fin, null, 2));
     });
     const text = problems.join("\n");
-    expect(text).toContain("indicator");
+    expect(text).toContain("shape.$extensions");
     expect(text).toContain("apple.glass");
     expect(text).toContain("missing");
   });
@@ -663,12 +663,8 @@ describe("per-appearance standalone .tokens.json distribution", () => {
           if (k.startsWith("$")) continue;
           expect(tok.$value.value).toBe(semanticsJson.dimension.icon.pointer[k]);
         }
-        for (const [k, tok] of Object.entries(resolved.dimension.grabber as Record<string, any>)) {
-          if (k.startsWith("$")) continue;
-          expect(tok.$value.value).toBe(semanticsJson.dimension.grabber[k]);
-        }
 
-        // Shape, state, duration, transition, motion, indicator, controls
+        // Shape, state, duration, transition, motion, controls
         expect(doc.shape.$extensions[EXT_NS]).toEqual(semanticsJson.shape);
         expect(doc.state["press-scale"].$value).toBe(semanticsJson.state["press-scale"]);
         expect(doc.state["pressed-opacity"].$value).toBe(semanticsJson.state["pressed-opacity"]);
@@ -720,7 +716,6 @@ describe("per-appearance standalone .tokens.json distribution", () => {
             }).toEqual(semanticsJson.motion[role]);
           }
         }
-        expect(doc.indicator.$extensions[EXT_NS]).toEqual(semanticsJson.indicator);
         expect(doc.controls.$extensions[EXT_NS].preset).toBe(semanticsJson.controls);
 
         // Merged finishes for this appearance

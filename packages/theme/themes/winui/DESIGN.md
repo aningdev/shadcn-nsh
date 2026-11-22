@@ -244,7 +244,6 @@ spacing:
     hairline: 1px
     surface: 1px
     control: 1px
-    indicator: 3px
   focus:
     width: 2px
     offset: 0px
@@ -514,11 +513,10 @@ Ergonomic sizing scales for pointer input.
 
 WinUI 3 ThemeShadow depths (2/8/16/32/128) paired with composited `ControlStrokeColorDefault` / `SurfaceStrokeColorDefault` borders and `material.windows` blur on `glass`, `menu`, and `tooltip` (`AcrylicInAppFillColorDefault` 0.85 light / 0.96 dark).
 
-- **Strokes:** Border and indicator stroke widths.
+- **Strokes:** Border stroke widths.
   - `stroke.hairline` (1px): Hairline divider and outlined-variant stroke width.
   - `stroke.surface` (1px): Container surface border width (cards, drawers, overlays).
   - `stroke.control` (1px): Interactive control border width.
-  - `stroke.indicator` (3px): 3px active navigation/tab indicator width per WinUI 3.
 - **Focus indicator (`style: "double"`):** WinUI 3 double focus stroke (2px outer FocusStrokeColorOuter + 1px inner FocusStrokeColorInner, 0px offset).
   - `focus.width` (2px): 2px outer focus stroke width per WinUI 3.
   - `focus.offset` (0px): Focus ring outward offset from control bounds.
@@ -528,7 +526,7 @@ WinUI 3 ThemeShadow depths (2/8/16/32/128) paired with composited `ControlStroke
 
 WinUI 3 corner radius scale: ControlCornerRadius 4px (controls/fields/chips/insets) and OverlayCornerRadius 8px (cards/overlays/dialogs/sheets).
 
-Circular corner curve (WinUI 3 has no continuous squircle curve; geometry.md). (`curve: "circular"`, `corners.field: "all"`).
+Circular corner curve (WinUI 3 has no continuous squircle curve; geometry.md). (`curve: "circular"`).
 
 Semantic corner radius roles referencing base dimension.radius.* tokens.
 
@@ -589,8 +587,6 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.tooltip`** (material: `{"windows":{"backdrop":"blur"}}`): WinUI 3 ToolTip surface with depth-16 shadow, glass-edge border, and Windows blur backdrop.
 - **`finish.inverse`** (backdropFilter: `none`): WinUI 3 TeachingTip/toast surface with depth-32 shadow and glass-edge border.
 - **`finish.groove`**: A groove cut inside a menu.
-
-- **Indicators** (`tabs: "underline"`, `nav: "bar"`, `field: "underline"`): WinUI 3 underlined tabs, NavigationView leading bar, and bottom-underlined text fields.
 - **Disabled handling** (content=0.36, fill=true): WinUI 3 disabled styling: 0.36 TextFillColorDisabled content with fill: true container override.
 
 ## Do's and Don'ts
@@ -600,7 +596,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **Do:** Use `rounded(shape.<role>, inset)` for concentric nested radii inside cards, switches, and segmented controls.
 - **Do:** Use `4px` `ControlCornerRadius` for controls/fields/chips/insets and `8px` `OverlayCornerRadius` for cards/overlays/dialogs/sheets with `shape.curve: "circular"`.
 - **Do:** Use `focus.style: "double"` (2px outer `FocusStrokeColorOuter` + 1px inner `FocusStrokeColorInner`) and WinUI timing motion (`decelerate` / `point-to-point`).
-- **Do:** Use `indicator` `underline` tabs/fields and leading `bar` navigation indicators with `Segoe UI Variable` (`{font.family.sans}`).
+- **Do:** Use `controls: "winui"` (underlined tabs/fields and leading navigation bar indicators) with `Segoe UI Variable` (`{font.family.sans}`).
 - **Don't:** Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.
 - **Don't:** Never store `colors.*`, `finish.*`, or `shape.*` values in module-level constants; they freeze on theme or appearance switches.
 - **Don't:** Never delete finish fields or alter the merged finish key set across appearances or themes.

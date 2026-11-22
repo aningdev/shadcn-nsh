@@ -20,7 +20,7 @@
         "dos": [
           "Use `4px` `ControlCornerRadius` for controls/fields/chips/insets and `8px` `OverlayCornerRadius` for cards/overlays/dialogs/sheets with `shape.curve: \"circular\"`.",
           "Use `focus.style: \"double\"` (2px outer `FocusStrokeColorOuter` + 1px inner `FocusStrokeColorInner`) and WinUI timing motion (`decelerate` / `point-to-point`).",
-          "Use `indicator` `underline` tabs/fields and leading `bar` navigation indicators with `Segoe UI Variable` (`{font.family.sans}`)."
+          "Use `controls: \"winui\"` (underlined tabs/fields and leading navigation bar indicators) with `Segoe UI Variable` (`{font.family.sans}`)."
         ],
         "donts": [
           "Do not substitute continuous squircle corners or spring physics for WinUI 3's circular corners and timing curves."
@@ -268,7 +268,7 @@
       }
     },
     "stroke": {
-      "$description": "Border and indicator stroke widths.",
+      "$description": "Border stroke widths.",
       "hairline": {
         "$value": {
           "value": 1,
@@ -289,13 +289,6 @@
           "unit": "px"
         },
         "$description": "Interactive control border width."
-      },
-      "indicator": {
-        "$value": {
-          "value": 3,
-          "unit": "px"
-        },
-        "$description": "3px active navigation/tab indicator width per WinUI 3."
       }
     },
     "focus": {
@@ -318,21 +311,6 @@
           "unit": "px"
         },
         "$description": "Focus ring outward offset from control bounds."
-      }
-    },
-    "grabber": {
-      "$description": "Bottom sheet grabber pill dimensions.",
-      "width": {
-        "$value": {
-          "value": 36,
-          "unit": "px"
-        }
-      },
-      "height": {
-        "$value": {
-          "value": 5,
-          "unit": "px"
-        }
       }
     },
     "radius": {
@@ -547,10 +525,7 @@
     "$description": "Circular corner curve (WinUI 3 has no continuous squircle curve; geometry.md).",
     "$extensions": {
       "dev.aning.shadcn-nsh": {
-        "curve": "circular",
-        "corners": {
-          "field": "all"
-        }
+        "curve": "circular"
       }
     }
   },
@@ -702,16 +677,6 @@
           "timingFunction": "{cubicBezier.point-to-point}"
         },
         "$description": "Timing curve and duration for move."
-      }
-    }
-  },
-  "indicator": {
-    "$description": "WinUI 3 underlined tabs, NavigationView leading bar, and bottom-underlined text fields.",
-    "$extensions": {
-      "dev.aning.shadcn-nsh": {
-        "tabs": "underline",
-        "nav": "bar",
-        "field": "underline"
       }
     }
   },

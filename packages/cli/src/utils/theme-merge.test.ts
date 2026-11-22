@@ -67,7 +67,7 @@ describe("mergeTheme", () => {
     const incoming = {
       typography: { fontFamily: null },
       state: { "press-scale": 0.97, "pressed-opacity": 0.7 },
-      indicator: { tabs: "pill", nav: "fill", field: "box" },
+      controls: "base",
       finishes: {
         shared: {
           card: {
@@ -94,7 +94,7 @@ describe("mergeTheme", () => {
     expect(theme).toEqual({
       typography: { fontFamily: "{font-sans}" },
       state: { "press-scale": 1, "pressed-opacity": 0.8 },
-      indicator: { tabs: "pill", nav: "fill", field: "box" },
+      controls: "base",
       finishes: {
         shared: {
           card: {
@@ -119,7 +119,7 @@ describe("mergeTheme", () => {
     });
     expect(added).toBe(6);
     expect(missing).toEqual([
-      "indicator",
+      "controls",
       "finishes.shared.card.material",
       "finishes.shared.dialog",
       "finishes.light.dialog",

@@ -8,7 +8,7 @@
         "elevation": "Tonal surface stepping plus Material Web Level 1–3 shadows and `material.android.elevation` (1dp/3dp/6dp), with `stroke.surface: 0px` and no backdrop blur.",
         "dos": [
           "Express interaction states via M3 state-layer ink overlays (`hover: 0.08`, `focus: 0.10`, `pressed: 0.10`, `dragged: 0.16`) and Android press ripples (`state.ripple: true`) with `state.press-scale: 1`.",
-          "Use `shape.curve: \"circular\"`, `shape.corners.field: \"top\"`, and `indicator` `underline` tabs/fields.",
+          "Use `shape.curve: \"circular\"` and `controls: \"material\"` for top-rounded underlined fields and underlined tabs.",
           "Keep `stroke.surface: 0px` on tonal/elevated containers so depth comes from tonal steps and elevation."
         ],
         "donts": [
@@ -82,20 +82,13 @@
       }
     },
     "stroke": {
-      "$description": "Border and indicator stroke widths.",
+      "$description": "Border stroke widths.",
       "surface": {
         "$value": {
           "value": 0,
           "unit": "px"
         },
         "$description": "0px surface outline (M3 elevated/filled surfaces rely on elevation rather than outlines)."
-      },
-      "indicator": {
-        "$value": {
-          "value": 3,
-          "unit": "px"
-        },
-        "$description": "3px active tab/navigation indicator width per M3."
       }
     },
     "focus": {
@@ -111,21 +104,6 @@
           "unit": "px"
         },
         "$description": "2px outward focus indicator offset per M3."
-      }
-    },
-    "grabber": {
-      "$description": "Bottom sheet grabber pill dimensions.",
-      "width": {
-        "$value": {
-          "value": 32,
-          "unit": "px"
-        }
-      },
-      "height": {
-        "$value": {
-          "value": 4,
-          "unit": "px"
-        }
       }
     }
   },
@@ -236,13 +214,10 @@
     }
   },
   "shape": {
-    "$description": "M3 circular arc corners with top-only rounded corners on filled text fields (FilledTextFieldTokens.kt).",
+    "$description": "M3 circular arc corners (ShapeTokens.kt).",
     "$extensions": {
       "dev.aning.shadcn-nsh": {
-        "curve": "circular",
-        "corners": {
-          "field": "top"
-        }
+        "curve": "circular"
       }
     }
   },
@@ -520,15 +495,6 @@
         }
       },
       "$description": "M3 Expressive DefaultSpatial spring for layout and indicator movement."
-    }
-  },
-  "indicator": {
-    "$description": "M3 underlined tabs and filled-text-field underline indicator.",
-    "$extensions": {
-      "dev.aning.shadcn-nsh": {
-        "tabs": "underline",
-        "field": "underline"
-      }
     }
   },
   "controls": {

@@ -230,7 +230,7 @@ export type Controls = "base" | "material" | "winui";
 /**
  * The style of a theme: what `semantics.json` states beside its finishes, in DTCG field naming,
  * the same keys in every theme (`check:theme`). A string that names one of a list (a curve, a
- * timingFunction, an indicator) or numeric fontWeight is checked by `check:theme` (`scripts/theme/style.ts`).
+ * timingFunction, controls) or numeric fontWeight is checked by `check:theme` (`scripts/theme/style.ts`).
  * `docs/specs/native-themes.md` §3.2 says what each key is.
  */
 export interface Style {
@@ -262,14 +262,12 @@ export interface Style {
       control: Tiered<ControlSizes>;
       height: Tiered<Steps>;
     };
-    stroke: { hairline: number; surface: number; control: number; indicator: number };
+    stroke: { hairline: number; surface: number; control: number };
     focus: { style: string; width: number; offset: number };
     icon: Tiered<Steps>;
-    grabber: { width: number; height: number };
   };
   shape: {
     curve: string;
-    corners: { field: string };
   };
   state: {
     "press-scale": number;
@@ -292,7 +290,6 @@ export interface Style {
     control: Spring | TimingSpec;
     move: Spring | TimingSpec;
   };
-  indicator: { tabs: string; nav: string; field: string };
   controls: Controls;
 }
 
@@ -931,7 +928,7 @@ export const shape = {
   },
 };
 
-/** Line widths in points (`semantics.json`'s `dimension.stroke`): `hairline` a divider or outlined element's edge, `surface` a surface's outline (0 where surfaces stand by tone or shadow alone), `control` a control's edge, `indicator` a selection's bar. The focus ring's width is `dimension.focus.width`. */
+/** Line widths in points (`semantics.json`'s `dimension.stroke`): `hairline` a divider or outlined element's edge, `surface` a surface's outline (0 where surfaces stand by tone or shadow alone), `control` a control's edge. The focus ring's width is `dimension.focus.width`. */
 export const stroke = {
   get hairline() {
     return style().dimension.stroke.hairline;
@@ -941,9 +938,6 @@ export const stroke = {
   },
   get control() {
     return style().dimension.stroke.control;
-  },
-  get indicator() {
-    return style().dimension.stroke.indicator;
   },
 };
 

@@ -242,7 +242,6 @@ spacing:
     hairline: 1px
     surface: 1px
     control: 1px
-    indicator: 2px
   focus:
     width: 3px
     offset: 0px
@@ -495,11 +494,10 @@ Ergonomic sizing scales for pointer input.
 
 Tactile layered elevation: inner top-edge highlights (`inset`), 1px hairline borders, contact + cast drop shadows (`card`, `menu`, `dialog`, `inverse`), and translucent frosted glass (`glass` with 80% popover alpha).
 
-- **Strokes:** Border and indicator stroke widths.
+- **Strokes:** Border stroke widths.
   - `stroke.hairline` (1px): Hairline divider and outlined-variant stroke width.
   - `stroke.surface` (1px): Container surface border width (cards, drawers, overlays).
   - `stroke.control` (1px): Interactive control border width.
-  - `stroke.indicator` (2px): Active tab and navigation indicator stroke width.
 - **Focus indicator (`style: "halo"`):** Focus ring geometry and style enum.
   - `focus.width` (3px): Focus ring stroke width.
   - `focus.offset` (0px): Focus ring outward offset from control bounds.
@@ -509,7 +507,7 @@ Tactile layered elevation: inner top-edge highlights (`inset`), 1px hairline bor
 
 Base corner radius scale referenced by semantic shape roles.
 
-Non-dimensional corner curve and field corner geometry. (`curve: "continuous"`, `corners.field: "all"`).
+Non-dimensional corner curve. (`curve: "continuous"`).
 
 Semantic corner radius roles referencing base dimension.radius.* tokens.
 
@@ -570,8 +568,6 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.tooltip`**: A tooltip face: the popover pane, without a shadow.
 - **`finish.inverse`** (backdropFilter: `none`): The inverse surface: a toast face.
 - **`finish.groove`**: A groove cut inside a menu.
-
-- **Indicators** (`tabs: "pill"`, `nav: "fill"`, `field: "box"`): Visual indicator style enums.
 - **Disabled handling** (content=0.5, fill=false): Disabled content opacity multiplier and whether containers switch to a dedicated disabled fill.
 
 ## Do's and Don'ts

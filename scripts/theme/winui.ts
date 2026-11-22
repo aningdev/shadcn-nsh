@@ -834,17 +834,15 @@ export const winuiStyle = {
       },
       height: { pointer: { sm: 24, md: 32, lg: 40 }, touch: { sm: 32, md: 40, lg: 48 } },
     },
-    stroke: { hairline: 1, surface: 1, control: 1, indicator: 3 },
+    stroke: { hairline: 1, surface: 1, control: 1 },
     focus: { style: "double", width: 2, offset: 0 },
     icon: {
       pointer: { sm: 12, md: 16, lg: 20 },
       touch: { sm: 16, md: 20, lg: 24 },
     },
-    grabber: { width: 36, height: 5 },
   },
   shape: {
     curve: "circular",
-    corners: { field: "all" },
   },
   state: {
     "press-scale": 1,
@@ -868,7 +866,6 @@ export const winuiStyle = {
     control: { duration: 167, timingFunction: "point-to-point" },
     move: { duration: 333, timingFunction: "point-to-point" },
   },
-  indicator: { tabs: "underline", nav: "bar", field: "underline" },
   controls: "winui" as const,
 };
 
@@ -1001,7 +998,7 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
       dos: [
         'Use `4px` `ControlCornerRadius` for controls/fields/chips/insets and `8px` `OverlayCornerRadius` for cards/overlays/dialogs/sheets with `shape.curve: "circular"`.',
         'Use `focus.style: "double"` (2px outer `FocusStrokeColorOuter` + 1px inner `FocusStrokeColorInner`) and WinUI timing motion (`decelerate` / `point-to-point`).',
-        "Use `indicator` `underline` tabs/fields and leading `bar` navigation indicators with `Segoe UI Variable` (`{font.family.sans}`).",
+        'Use `controls: "winui"` (underlined tabs/fields and leading navigation bar indicators) with `Segoe UI Variable` (`{font.family.sans}`).',
       ],
       donts: [
         "Do not substitute continuous squircle corners or spring physics for WinUI 3's circular corners and timing curves.",
@@ -1067,7 +1064,6 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
           "WinUI 3 primary UI font stack (Segoe UI Variable, Segoe UI, sans-serif; typography.md).",
         typography:
           "WinUI 3 typography scale mapped from TextBlock_themeresources.xaml (400 and 600 weights only).",
-        "dimension.stroke.indicator": "3px active navigation/tab indicator width per WinUI 3.",
         "dimension.focus":
           "WinUI 3 double focus stroke (2px outer FocusStrokeColorOuter + 1px inner FocusStrokeColorInner, 0px offset).",
         "dimension.focus.width": "2px outer focus stroke width per WinUI 3.",
@@ -1085,8 +1081,6 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
         "motion.settle": "WinUI 3 250ms settle timing with Direct Entrance decelerate curve.",
         "motion.control": "WinUI 3 167ms control timing with Point-to-Point curve.",
         "motion.move": "WinUI 3 333ms move timing with Point-to-Point curve.",
-        indicator:
-          "WinUI 3 underlined tabs, NavigationView leading bar, and bottom-underlined text fields.",
         controls: "WinUI 3 (winui3/release/2.7.0) control geometry presets.",
       },
     },

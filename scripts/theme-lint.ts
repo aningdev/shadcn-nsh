@@ -328,7 +328,7 @@ for (const theme of themes) {
 }
 
 // 4b. Every theme states the same style (typography, dimension, shape, state, duration, transition,
-// motion, indicator, controls), with `{token}` references typed by DTCG `$type`.
+// motion, controls), with `{token}` references typed by DTCG `$type`.
 for (const theme of themes) {
   const path = `packages/theme/themes/${theme}/semantics.json`;
   const kinds = tokenKinds(tokensOf.get(theme)!.cssVars);

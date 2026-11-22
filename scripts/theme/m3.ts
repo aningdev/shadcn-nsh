@@ -656,17 +656,15 @@ export const m3Style = {
     },
     // M3 elevated/filled surfaces (ElevatedCard, Sheet, NavigationDrawer, Dialog, Menu, Snackbar)
     // have no outline (`surface: 0`); `hairline: 1` stays for dividers and outlined variants.
-    stroke: { hairline: 1, surface: 0, control: 1, indicator: 3 },
+    stroke: { hairline: 1, surface: 0, control: 1 },
     focus: { style: "outline", width: 3, offset: 2 },
     icon: {
       pointer: { sm: 18, md: 20, lg: 24 },
       touch: { sm: 18, md: 20, lg: 24 },
     },
-    grabber: { width: 32, height: 4 },
   },
   shape: {
     curve: "circular",
-    corners: { field: "top" },
   },
   state: {
     // M3 presses via state layer overlay and Android ripple rather than geometric scale.
@@ -689,7 +687,6 @@ export const m3Style = {
     control: { stiffness: 1600, damping: 80 },
     move: { stiffness: 380, damping: 31.19 },
   },
-  indicator: { tabs: "underline", nav: "fill", field: "underline" },
   controls: "material" as const,
 };
 
@@ -789,7 +786,7 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
         "Tonal surface stepping plus Material Web Level 1–3 shadows and `material.android.elevation` (1dp/3dp/6dp), with `stroke.surface: 0px` and no backdrop blur.",
       dos: [
         "Express interaction states via M3 state-layer ink overlays (`hover: 0.08`, `focus: 0.10`, `pressed: 0.10`, `dragged: 0.16`) and Android press ripples (`state.ripple: true`) with `state.press-scale: 1`.",
-        'Use `shape.curve: "circular"`, `shape.corners.field: "top"`, and `indicator` `underline` tabs/fields.',
+        'Use `shape.curve: "circular"` and `controls: "material"` for top-rounded underlined fields and underlined tabs.',
         "Keep `stroke.surface: 0px` on tonal/elevated containers so depth comes from tonal steps and elevation.",
       ],
       donts: [
@@ -842,12 +839,10 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
           "Material 3 Expressive typography scale (TypeScaleTokens.kt / _md-sys-typescale.scss).",
         "dimension.stroke.surface":
           "0px surface outline (M3 elevated/filled surfaces rely on elevation rather than outlines).",
-        "dimension.stroke.indicator": "3px active tab/navigation indicator width per M3.",
         "dimension.focus":
           "M3 focus indicator: 3px solid outline offset 2px (_md-sys-state-focus-indicator.scss).",
         "dimension.focus.offset": "2px outward focus indicator offset per M3.",
-        shape:
-          "M3 circular arc corners with top-only rounded corners on filled text fields (FilledTextFieldTokens.kt).",
+        shape: "M3 circular arc corners (ShapeTokens.kt).",
         "state.press-scale":
           "Scale factor applied while pressed (1 disables press shrinking; M3 uses state layer + Android ripple).",
         "state.overlay":
@@ -864,7 +859,6 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
         "motion.control":
           "M3 Expressive DefaultEffects spring (stiffness 1600, damping ratio 1.0).",
         "motion.move": "M3 Expressive DefaultSpatial spring for layout and indicator movement.",
-        indicator: "M3 underlined tabs and filled-text-field underline indicator.",
         controls: "Material 3 Expressive control geometry presets.",
       },
     },

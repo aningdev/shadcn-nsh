@@ -1,6 +1,6 @@
 /**
  * The style data of a theme, checked: the groups `semantics.json` states beside its finishes
- * (typography, dimension, shape, state, duration, transition, motion, indicator, controls), which every
+ * (typography, dimension, shape, state, duration, transition, motion, controls), which every
  * theme states with the same keys, whose enums come from a list, and whose token references
  * (`dimension.shape.*` radii, `typography.fontFamily`) name tokens of the right DTCG `$type`
  * (`dimension`, `fontFamily`) in `theme.json`.
@@ -18,7 +18,6 @@ export const styleGroups = [
   "duration",
   "transition",
   "motion",
-  "indicator",
   "controls",
 ] as const;
 
@@ -43,13 +42,9 @@ export const easingNames = [
 export const whitelists: Record<string, readonly (string | number | null)[]> = {
   "typography.*.fontWeight": [400, 500, 600, 700],
   "shape.curve": ["continuous", "circular"],
-  "shape.corners.field": ["all", "top"],
   "dimension.size.control.*.switch": ["small", "regular"],
   "dimension.focus.style": ["halo", "outline", "double"],
   "transition.enter.timingFunction": easingNames,
-  "indicator.tabs": ["underline", "pill"],
-  "indicator.nav": ["fill", "bar"],
-  "indicator.field": ["box", "underline"],
   controls: ["base", "material", "winui"],
 };
 

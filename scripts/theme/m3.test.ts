@@ -325,7 +325,7 @@ describe("compiled material theme files", () => {
       ),
     ).toEqual([]);
 
-    expect(files.semantics.dimension.grabber).toEqual({ width: 32, height: 4 });
+    expect(files.semantics.controls).toBe("material");
     expect(files.semantics.state["accent-pressed-opacity"]).toBe(1);
     expect(files.semantics.finishes.shared.section).toMatchObject({
       material: { android: { elevation: 1 } },

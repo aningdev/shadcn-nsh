@@ -244,7 +244,6 @@ spacing:
     hairline: 1px
     surface: 1px
     control: 1px
-    indicator: 2px
   focus:
     width: 3px
     offset: 0px
@@ -497,11 +496,10 @@ Ergonomic sizing scales for pointer input.
 
 Layered glass elevation: surfaces combine translucent fills (`alpha < 1` over page grounds), top-edge inset highlights, `--glass-edge` borders, soft shadows, and backdrop blur (`glass`, `menu`, `dialog`, `tooltip`, `inverse`).
 
-- **Strokes:** Border and indicator stroke widths.
+- **Strokes:** Border stroke widths.
   - `stroke.hairline` (1px): Hairline divider and outlined-variant stroke width.
   - `stroke.surface` (1px): Container surface border width (cards, drawers, overlays).
   - `stroke.control` (1px): Interactive control border width.
-  - `stroke.indicator` (2px): Active tab and navigation indicator stroke width.
 - **Focus indicator (`style: "halo"`):** Focus ring geometry and style enum.
   - `focus.width` (3px): Focus ring stroke width.
   - `focus.offset` (0px): Focus ring outward offset from control bounds.
@@ -511,7 +509,7 @@ Layered glass elevation: surfaces combine translucent fills (`alpha < 1` over pa
 
 Base corner radius scale (14px base, 0.8x control, 1.4x card) referenced by semantic shape roles.
 
-Non-dimensional corner curve and field corner geometry. (`curve: "continuous"`, `corners.field: "all"`).
+Non-dimensional corner curve. (`curve: "continuous"`).
 
 Semantic corner radius roles referencing base dimension.radius.* tokens.
 
@@ -572,8 +570,6 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.tooltip`**: A tooltip face: the popover pane, without a shadow.
 - **`finish.inverse`** (backdropFilter: `none`): The inverse surface: a toast face.
 - **`finish.groove`**: A groove cut inside a menu.
-
-- **Indicators** (`tabs: "pill"`, `nav: "fill"`, `field: "box"`): Visual indicator style enums.
 - **Disabled handling** (content=0.5, fill=false): Disabled content opacity multiplier and whether containers switch to a dedicated disabled fill.
 
 ## Do's and Don'ts

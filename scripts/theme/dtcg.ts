@@ -79,17 +79,15 @@ export interface ThemeStyleInput {
         touch: { sm: number; md: number; lg: number };
       };
     };
-    stroke: { hairline: number; surface: number; control: number; indicator: number };
+    stroke: { hairline: number; surface: number; control: number };
     focus: { style: string; width: number; offset: number };
     icon: {
       pointer: { sm: number; md: number; lg: number };
       touch: { sm: number; md: number; lg: number };
     };
-    grabber?: { width: number; height: number };
   };
   shape: {
     curve: string;
-    corners: { field: string };
   };
   state: {
     "press-scale": number;
@@ -107,7 +105,6 @@ export interface ThemeStyleInput {
     control: ThemeMotionRoleStyle;
     move: ThemeMotionRoleStyle;
   };
-  indicator: { tabs: string; nav: string; field: string };
   controls?: "base" | "material" | "winui";
 }
 
@@ -646,7 +643,6 @@ function encodeSharedStyleOverrides(
   duration?: Record<string, unknown>;
   transition?: Record<string, unknown>;
   motion?: Record<string, unknown>;
-  indicator?: Record<string, unknown>;
   controls?: Record<string, unknown>;
 } {
   const desc = (key: string, fallback: unknown): string =>
@@ -697,7 +693,7 @@ function encodeSharedStyleOverrides(
   const dimensionExtras: Record<string, unknown> = {};
   const baseStroke = getAt(baseShared, "dimension", "stroke");
   const strokeOverrides: Record<string, unknown> = {};
-  for (const key of ["hairline", "surface", "control", "indicator"] as const) {
+  for (const key of ["hairline", "surface", "control"] as const) {
     const baseTok = getAt(baseStroke, key);
     const baseVal = (baseTok.$value as { value: number }).value;
     if (style.dimension.stroke[key] !== baseVal) {
@@ -737,35 +733,11 @@ function encodeSharedStyleOverrides(
     };
   }
 
-  if (style.dimension.grabber) {
-    const baseGrabber = getAt(baseShared, "dimension", "grabber");
-    const grabberOverrides: Record<string, unknown> = {};
-    for (const key of ["width", "height"] as const) {
-      const baseTok = getAt(baseGrabber, key);
-      const baseVal = (baseTok.$value as { value: number }).value;
-      if (style.dimension.grabber[key] !== baseVal) {
-        grabberOverrides[key] = {
-          $value: { value: style.dimension.grabber[key], unit: "px" },
-        };
-      }
-    }
-    if (Object.keys(grabberOverrides).length > 0) {
-      dimensionExtras.grabber = {
-        $description: desc("dimension.grabber", baseGrabber.$description),
-        ...grabberOverrides,
-      };
-    }
-  }
-
   // 3. shape ($extensions)
   const baseShape = getAt(baseShared, "shape");
   const baseShapeExt = getExtNs(baseShape);
-  const baseCorners = (baseShapeExt.corners as Record<string, unknown>) ?? {};
   const shapeExtOut: Record<string, unknown> = {};
   if (style.shape.curve !== baseShapeExt.curve) shapeExtOut.curve = style.shape.curve;
-  if (style.shape.corners.field !== baseCorners.field) {
-    shapeExtOut.corners = { field: style.shape.corners.field };
-  }
   const shape =
     Object.keys(shapeExtOut).length > 0
       ? {
@@ -932,24 +904,7 @@ function encodeSharedStyleOverrides(
         }
       : undefined;
 
-  // 8. indicator
-  const baseIndicator = getAt(baseShared, "indicator");
-  const baseIndExt = getExtNs(baseIndicator);
-  const indExtOut: Record<string, unknown> = {};
-  for (const key of ["tabs", "nav", "field"] as const) {
-    if (style.indicator[key] !== baseIndExt[key]) {
-      indExtOut[key] = style.indicator[key];
-    }
-  }
-  const indicator =
-    Object.keys(indExtOut).length > 0
-      ? {
-          $description: desc("indicator", baseIndicator.$description),
-          $extensions: { [EXT_NS]: indExtOut },
-        }
-      : undefined;
-
-  // 9. controls
+  // 8. controls
   const baseControls = getAt(baseShared, "controls");
   const baseControlsPreset = getExtNs(baseControls).preset as string;
   const preset = style.controls ?? baseControlsPreset;
@@ -969,7 +924,6 @@ function encodeSharedStyleOverrides(
     ...(duration ? { duration } : {}),
     ...(transition ? { transition } : {}),
     ...(motion ? { motion } : {}),
-    ...(indicator ? { indicator } : {}),
     ...(controls ? { controls } : {}),
   };
 }
@@ -1323,7 +1277,6 @@ export function emitDtcgTheme(
     ...(sharedStyle?.duration ? { duration: sharedStyle.duration } : {}),
     ...(sharedStyle?.transition ? { transition: sharedStyle.transition } : {}),
     ...(sharedStyle?.motion ? { motion: sharedStyle.motion } : {}),
-    ...(sharedStyle?.indicator ? { indicator: sharedStyle.indicator } : {}),
     ...(sharedStyle?.controls ? { controls: sharedStyle.controls } : {}),
   };
 

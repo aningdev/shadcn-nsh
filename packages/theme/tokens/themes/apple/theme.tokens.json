@@ -82,7 +82,7 @@
       }
     },
     "stroke": {
-      "$description": "Border and indicator stroke widths.",
+      "$description": "Border stroke widths.",
       "hairline": {
         "$value": {
           "value": 0.5,

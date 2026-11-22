@@ -41,13 +41,13 @@ describe("checkStyle", () => {
 
   test("names a whole group that was deleted, key by key", () => {
     const file = copy();
-    delete file.indicator;
+    delete file.transition;
     const problems = check(file);
     expect(
       problems
-        .map((p) => p.match(/`([a-z.]+)`/)?.[1])
+        .map((p) => p.match(/`([A-Za-z.]+)`/)?.[1])
         .sort((a, b) => String(a).localeCompare(String(b))),
-    ).toEqual(["indicator.field", "indicator.nav", "indicator.tabs"]);
+    ).toEqual(["transition.enter.duration", "transition.enter.timingFunction"]);
   });
 
   test("names a key the default theme does not state", () => {
@@ -58,11 +58,11 @@ describe("checkStyle", () => {
 
   test("names an enum outside its list", () => {
     const file = copy();
-    file.indicator.tabs = "rail";
+    file.shape.curve = "squircle";
     file.typography.body.fontWeight = 450;
     file.controls = "cupertin";
     const problems = check(file).join("\n");
-    expect(problems).toContain('indicator.tabs` is "rail"');
+    expect(problems).toContain('shape.curve` is "squircle"');
     expect(problems).toContain("typography.body.fontWeight` is 450");
     expect(problems).toContain('controls` is "cupertin"');
   });

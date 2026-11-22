@@ -783,12 +783,12 @@ const MERGE_PAGE = `// Written by scripts/install-test.ts; this app is temporary
 import { mount, Text, View } from "nsh";
 
 import { Button } from "@/components/ui/button";
-import { finish, press, style } from "@/lib/ui/theme";
+import { controls, finish, press } from "@/lib/ui/theme";
 
 function Page() {
   return (
     <View style={{ ...finish.dialog }}>
-      <Text>{style().indicator.tabs}</Text>
+      <Text>{controls()}</Text>
       <Text>{String(press.scale)}</Text>
       <Button>OK</Button>
     </View>
@@ -807,14 +807,14 @@ async function mergeSemanticsOnAdd(template: string, dir: string, nsh: string) {
   const semanticsPath = path.join(dir, "lib/ui/semantics.json");
   const semantics = JSON.parse(await fs.readFile(semanticsPath, "utf8")) as {
     state: { "press-scale": number };
-    indicator: { tabs?: string };
+    controls?: string;
     finishes: {
       shared: Record<string, Record<string, unknown>>;
       light: Record<string, Record<string, unknown>>;
     };
   };
   semantics.state["press-scale"] = 1;
-  delete semantics.indicator.tabs;
+  delete semantics.controls;
   delete semantics.finishes.shared.dialog;
   delete semantics.finishes.light.dialog;
   delete semantics.finishes.shared.card.material;
@@ -827,7 +827,7 @@ async function mergeSemanticsOnAdd(template: string, dir: string, nsh: string) {
     throw new StepFailure("semantics merge", "      add overwrote customized state.press-scale");
   }
   if (
-    merged.indicator.tabs !== "pill" ||
+    merged.controls !== "base" ||
     merged.finishes.shared.dialog == null ||
     merged.finishes.light.dialog == null ||
     !("material" in merged.finishes.shared.card)

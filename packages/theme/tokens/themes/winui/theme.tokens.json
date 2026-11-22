@@ -9,7 +9,7 @@
         "dos": [
           "Use `4px` `ControlCornerRadius` for controls/fields/chips/insets and `8px` `OverlayCornerRadius` for cards/overlays/dialogs/sheets with `shape.curve: \"circular\"`.",
           "Use `focus.style: \"double\"` (2px outer `FocusStrokeColorOuter` + 1px inner `FocusStrokeColorInner`) and WinUI timing motion (`decelerate` / `point-to-point`).",
-          "Use `indicator` `underline` tabs/fields and leading `bar` navigation indicators with `Segoe UI Variable` (`{font.family.sans}`)."
+          "Use `controls: \"winui\"` (underlined tabs/fields and leading navigation bar indicators) with `Segoe UI Variable` (`{font.family.sans}`)."
         ],
         "donts": [
           "Do not substitute continuous squircle corners or spring physics for WinUI 3's circular corners and timing curves."
@@ -78,16 +78,6 @@
           "unit": "px"
         },
         "$description": "Corner radius for drawers and bottom sheets."
-      }
-    },
-    "stroke": {
-      "$description": "Border and indicator stroke widths.",
-      "indicator": {
-        "$value": {
-          "value": 3,
-          "unit": "px"
-        },
-        "$description": "3px active navigation/tab indicator width per WinUI 3."
       }
     },
     "focus": {
@@ -488,16 +478,6 @@
           "timingFunction": "{cubicBezier.point-to-point}"
         },
         "$description": "Timing curve and duration for move."
-      }
-    }
-  },
-  "indicator": {
-    "$description": "WinUI 3 underlined tabs, NavigationView leading bar, and bottom-underlined text fields.",
-    "$extensions": {
-      "dev.aning.shadcn-nsh": {
-        "tabs": "underline",
-        "nav": "bar",
-        "field": "underline"
       }
     }
   },

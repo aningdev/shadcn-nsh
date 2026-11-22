@@ -3,37 +3,60 @@ import { expect, open, test } from "nsh/test";
 const read = (texts: string[], key: string) =>
   texts.find((text) => text.startsWith(`${key}:`))?.slice(key.length + 1);
 
-/** The probe page's lines the indicator keys and the new roles change. */
+/** The probe page's lines the controls preset and the inverse, dialog and tooltip roles change. */
 const look = (texts: string[]) =>
   Object.fromEntries(
-    ["inverse", "dialog", "tooltip", "inverse-fill", "field", "corners"].map((key) => [
-      key,
-      read(texts, key),
-    ]),
+    [
+      "controls",
+      "nav-width",
+      "inverse",
+      "dialog",
+      "tooltip",
+      "inverse-fill",
+      "field",
+      "corners",
+    ].map((key) => [key, read(texts, key)]),
   );
 
-test("the indicator keys and the inverse, dialog and tooltip roles follow the theme selected", async () => {
+test("the indicator presets and the inverse, dialog and tooltip roles follow the theme selected", async () => {
   const app = await open("./theme-indicator.fixture.tsx", { platform: "macos" });
 
-  // The build-time theme: pill tabs, a filled row, boxed fields with all four corners.
+  // The build-time theme ("base"): pill tabs, a filled row, boxed fields with all four corners.
   const before = look(app.texts());
+  expect(before.controls).toBe("base");
+  expect(before["nav-width"]).toBe("2");
   expect(app.count("id:tabs-rule")).toBe(0);
   expect(app.count("id:nav-bar")).toBe(0);
   expect(read(app.texts(), "field")).not.toBe("0|0");
   expect(read(app.texts(), "field")?.endsWith("|0")).toBe(false);
   expect(read(app.texts(), "corners")?.startsWith("0|")).toBe(false);
 
+  // Material ("material"): underline tabs, filled nav row, underlined fields with top corners only.
+  await app.press("text:Material");
+  await app.press("text:Hide tabs");
+  await app.press("text:Show tabs");
+
+  const material = look(app.texts());
+  expect(material.controls).toBe("material");
+  expect(material["nav-width"]).toBe("3");
+  expect(app.count("id:tabs-rule")).toBe(1);
+  expect(app.count("id:nav-bar")).toBe(0);
+  expect(material.field?.endsWith("|0")).toBe(true);
+  expect(material.corners?.startsWith("0|")).toBe(true);
+
+  // Marked ("winui"): underline tabs, a leading nav bar, underlined fields with all four corners.
   await app.press("text:Marked");
   // A tab list picks its frame when it is made: draw it again under the new theme.
   await app.press("text:Hide tabs");
   await app.press("text:Show tabs");
 
   const after = look(app.texts());
+  expect(after.controls).toBe("winui");
+  expect(after["nav-width"]).toBe("3");
   expect(app.count("id:tabs-rule")).toBe(1);
   expect(app.count("id:nav-bar")).toBe(1);
-  // An underline: the bottom edge alone. Top corners only: the bottom ones square.
   expect(after.field?.endsWith("|0")).toBe(true);
-  expect(after.corners?.startsWith("0|")).toBe(true);
+  expect(after.corners?.startsWith("0|")).toBe(false);
   expect(after.inverse).not.toBe(before.inverse);
   expect(after.dialog).not.toBe(before.dialog);
   expect(after.tooltip).not.toBe(before.tooltip);

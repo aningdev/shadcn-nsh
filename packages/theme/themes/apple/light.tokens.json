@@ -290,7 +290,7 @@
       }
     },
     "stroke": {
-      "$description": "Border and indicator stroke widths.",
+      "$description": "Border stroke widths.",
       "hairline": {
         "$value": {
           "value": 0.5,
@@ -311,13 +311,6 @@
           "unit": "px"
         },
         "$description": "Interactive control border width."
-      },
-      "indicator": {
-        "$value": {
-          "value": 2,
-          "unit": "px"
-        },
-        "$description": "Active tab and navigation indicator stroke width."
       }
     },
     "focus": {
@@ -340,21 +333,6 @@
           "unit": "px"
         },
         "$description": "Focus ring outward offset from control bounds."
-      }
-    },
-    "grabber": {
-      "$description": "Bottom sheet grabber pill dimensions.",
-      "width": {
-        "$value": {
-          "value": 36,
-          "unit": "px"
-        }
-      },
-      "height": {
-        "$value": {
-          "value": 5,
-          "unit": "px"
-        }
       }
     },
     "radius": {
@@ -566,13 +544,10 @@
     }
   },
   "shape": {
-    "$description": "Non-dimensional corner curve and field corner geometry.",
+    "$description": "Non-dimensional corner curve.",
     "$extensions": {
       "dev.aning.shadcn-nsh": {
-        "curve": "continuous",
-        "corners": {
-          "field": "all"
-        }
+        "curve": "continuous"
       }
     }
   },
@@ -697,16 +672,6 @@
         }
       },
       "$description": "Spring or timing physics for layout and indicator movement."
-    }
-  },
-  "indicator": {
-    "$description": "Visual indicator style enums.",
-    "$extensions": {
-      "dev.aning.shadcn-nsh": {
-        "tabs": "pill",
-        "nav": "fill",
-        "field": "box"
-      }
     }
   },
   "controls": {

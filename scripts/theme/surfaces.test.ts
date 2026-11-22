@@ -3,9 +3,8 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { specBlock, specRows } from "./spec";
-import { checkStyle } from "./style";
 import { withSurfaces } from "./surfaces";
-import { mergeFinishes, splitFinishes, tokenKinds, type ThemeCssVars } from "./tokens";
+import { mergeFinishes, splitFinishes, type ThemeCssVars } from "./tokens";
 
 const root = join(import.meta.dir, "../..");
 const readJson = (file: string) => JSON.parse(readFileSync(join(root, file), "utf8"));
@@ -13,7 +12,6 @@ const spec = readFileSync(join(root, "docs/specs/theme-roles.md"), "utf8");
 
 const semantics = readJson("packages/theme/semantics.json") as Record<string, any>;
 const cssVars = readJson("packages/theme/theme.json").cssVars as ThemeCssVars;
-const kinds = tokenKinds(cssVars);
 const mergedLight = mergeFinishes(semantics.finishes, "light");
 const mergedDark = mergeFinishes(semantics.finishes, "dark");
 
@@ -52,42 +50,5 @@ describe("the colour roles and finishes a theme states for its surfaces", () => 
     const split = splitFinishes(mergedLight, mergedDark);
     expect(mergeFinishes(split, "light")).toEqual(mergedLight);
     expect(mergeFinishes(split, "dark")).toEqual(mergedDark);
-  });
-});
-
-describe("the indicator keys", () => {
-  const check = (file: Record<string, unknown>) =>
-    checkStyle("fixture/semantics.json", file, semantics, kinds);
-
-  test("a theme that leaves one out is an error naming it", () => {
-    for (const [group, key] of [
-      ["indicator", "tabs"],
-      ["indicator", "nav"],
-      ["indicator", "field"],
-    ]) {
-      const file = structuredClone(semantics);
-      delete file[group][key];
-      const problems = check(file);
-      expect(problems.join("\n"), `${group}.${key}`).toContain(`${group}.${key}`);
-    }
-    const file = structuredClone(semantics);
-    delete file.shape.corners.field;
-    expect(check(file).join("\n")).toContain("shape.corners.field");
-  });
-
-  test("a value outside the list is an error", () => {
-    for (const [path, value] of [
-      ["indicator.tabs", "box"],
-      ["indicator.nav", "pill"],
-      ["indicator.field", "line"],
-    ]) {
-      const file = structuredClone(semantics);
-      const [group, key] = path.split(".");
-      file[group][key] = value;
-      expect(check(file).join("\n"), path).toContain(path);
-    }
-    const file = structuredClone(semantics);
-    file.shape.corners.field = "bottom";
-    expect(check(file).join("\n")).toContain("shape.corners.field");
   });
 });

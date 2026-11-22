@@ -160,8 +160,7 @@
     "stroke": {
       "hairline": 1,
       "surface": 0,
-      "control": 1,
-      "indicator": 3
+      "control": 1
     },
     "focus": {
       "style": "outline",
@@ -179,17 +178,10 @@
         "md": 20,
         "lg": 24
       }
-    },
-    "grabber": {
-      "width": 32,
-      "height": 4
     }
   },
   "shape": {
-    "curve": "circular",
-    "corners": {
-      "field": "top"
-    }
+    "curve": "circular"
   },
   "state": {
     "press-scale": 1,
@@ -233,11 +225,6 @@
       "stiffness": 380,
       "damping": 31.19
     }
-  },
-  "indicator": {
-    "tabs": "underline",
-    "nav": "fill",
-    "field": "underline"
   },
   "controls": "material",
   "finishes": {

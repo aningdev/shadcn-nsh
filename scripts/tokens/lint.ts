@@ -231,27 +231,13 @@ function validateExtAtPath(
   const where = `${label}: ${p}.$extensions["${EXT_NS}"]`;
 
   if (p === "shape") {
-    checkUnknownKeys(where, ext, ["curve", "corners"], problems);
+    checkUnknownKeys(where, ext, ["curve"], problems);
     if ("curve" in ext) {
       if (!whitelists["shape.curve"]!.includes(ext.curve as string)) {
         problems.push(`${where}.curve: ${JSON.stringify(ext.curve)} is not in whitelist`);
       }
     } else if (mode === "merged") {
       problems.push(`${where}.curve is missing`);
-    }
-    if ("corners" in ext) {
-      if (!isRecord(ext.corners)) {
-        problems.push(`${where}.corners must be an object`);
-      } else {
-        checkUnknownKeys(`${where}.corners`, ext.corners, ["field"], problems);
-        if (!whitelists["shape.corners.field"]!.includes(ext.corners.field as string)) {
-          problems.push(
-            `${where}.corners.field: ${JSON.stringify(ext.corners.field)} is not in whitelist`,
-          );
-        }
-      }
-    } else if (mode === "merged") {
-      problems.push(`${where}.corners is missing`);
     }
     return;
   }
@@ -284,18 +270,6 @@ function validateExtAtPath(
     checkUnknownKeys(where, ext, ["fill"], problems);
     if (typeof ext.fill !== "boolean") {
       problems.push(`${where}.fill must be a boolean`);
-    }
-    return;
-  }
-
-  if (p === "indicator") {
-    checkUnknownKeys(where, ext, ["tabs", "nav", "field"], problems);
-    for (const field of ["tabs", "nav", "field"] as const) {
-      if (!(field in ext)) {
-        if (mode === "merged") problems.push(`${where}.${field} is missing`);
-      } else if (!whitelists[`indicator.${field}`]!.includes(ext[field] as string)) {
-        problems.push(`${where}.${field}: ${JSON.stringify(ext[field])} is not in whitelist`);
-      }
     }
     return;
   }
@@ -734,7 +708,6 @@ function checkMergedSemantics(
     "dimension.focus",
     "dimension.size",
     "dimension.icon",
-    "dimension.grabber",
   ]) {
     const group = getAtPath(resolved, dimGroupPath);
     if (!isRecord(group)) continue;
@@ -897,7 +870,6 @@ function checkMergedSemantics(
       "duration",
       "transition",
       "motion",
-      "indicator",
       "controls",
     ]) {
       const group = getAtPath(merged, groupPath);

@@ -512,11 +512,9 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
         pointer: readDimMap(lpDim.icon as Record<string, Record<string, unknown>>),
         touch: readDimMap(ltDim.icon as Record<string, Record<string, unknown>>),
       },
-      grabber: readDimMap(lpDim.grabber as Record<string, Record<string, unknown>>),
     },
     shape: {
       curve: shapeExt.curve,
-      corners: shapeExt.corners,
     },
     state: {
       "press-scale": (stateGroup["press-scale"] as Record<string, unknown>).$value as number,
@@ -535,7 +533,6 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
     duration: durationOut,
     transition: transitionOut,
     motion: motionOut,
-    indicator: getExt(lp.indicator) as Record<string, string>,
     controls: getExt(lp.controls)!.preset as string,
     finishes: finishesOut,
   };

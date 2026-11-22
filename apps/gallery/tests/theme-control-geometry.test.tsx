@@ -25,6 +25,8 @@ test("controls() and component presets follow the active theme", async () => {
     expect(find(app.texts(), "checkbox=")).toBe("1|false|false");
     expect(find(app.texts(), "progress=")).toBe("6/solid/true");
     expect(find(app.texts(), "tabs=")).toBe("0/1");
+    expect(find(app.texts(), "tabs-indicator=")).toBe("2");
+    expect(find(app.texts(), "grabber=")).toBe("36x5");
     expect(find(app.texts(), "calendar=")).toBe("32");
   };
 
@@ -48,6 +50,8 @@ test("controls() and component presets follow the active theme", async () => {
   expect(find(app.texts(), "checkbox=")).toBe("2|true|false");
   expect(find(app.texts(), "progress=")).toBe("4/solid/false");
   expect(find(app.texts(), "tabs=")).toBe("8/3");
+  expect(find(app.texts(), "tabs-indicator=")).toBe("3");
+  expect(find(app.texts(), "grabber=")).toBe("32x4");
   expect(find(app.texts(), "calendar=")).toBe("40");
 
   // WinUI 3 ("winui")
@@ -64,6 +68,8 @@ test("controls() and component presets follow the active theme", async () => {
   expect(find(app.texts(), "checkbox=")).toBe("1|false|true");
   expect(find(app.texts(), "progress=")).toBe("3/gradient/false");
   expect(find(app.texts(), "tabs=")).toBe("0/1.5");
+  expect(find(app.texts(), "tabs-indicator=")).toBe("3");
+  expect(find(app.texts(), "grabber=")).toBe("36x5");
   expect(find(app.texts(), "calendar=")).toBe("40");
 
   // Revert to build-time default ("base")

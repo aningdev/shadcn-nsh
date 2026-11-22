@@ -1,11 +1,14 @@
-import { colors, finish, selectTheme, shape, type AppTheme } from "@shadcn-nsh/theme";
+import { colors, controls, finish, selectTheme, shape, type AppTheme } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { defaultTheme } from "../../../packages/theme/themes/default/index";
+import materialTheme from "../../../packages/theme/themes/material/index";
+import winuiTheme from "../../../packages/theme/themes/winui/index";
 import {
   Button,
   fieldCorners,
   inputLook,
+  navBarStyle,
   SidebarMenuButton,
   SidebarProvider,
   Tabs,
@@ -13,24 +16,17 @@ import {
   TabsTrigger,
 } from "../../../packages/ui";
 
-/** The build-time theme with the indicator keys the library reads (tabs underline, a bar for the
- * selected row, underlined fields with their top corners rounded) and distinct inverse, dialog and
- * tooltip roles. */
+/** A `winui`-controls theme with distinct inverse, dialog and tooltip roles. */
 const marked: AppTheme = {
-  ...defaultTheme,
+  ...winuiTheme,
   id: "marked",
   label: "marked",
   semantics: {
-    ...defaultTheme.semantics,
-    indicator: { tabs: "underline", nav: "bar", field: "underline" },
-    shape: {
-      ...defaultTheme.semantics.shape,
-      corners: { field: "top" },
-    },
+    ...winuiTheme.semantics,
     finishes: {
-      ...defaultTheme.semantics.finishes,
+      ...winuiTheme.semantics.finishes,
       shared: {
-        ...defaultTheme.semantics.finishes.shared,
+        ...winuiTheme.semantics.finishes.shared,
         dialog: { ...defaultTheme.semantics.finishes.shared.dialog, "border-color": "{brand}" },
         tooltip: { ...defaultTheme.semantics.finishes.shared.tooltip, background: "{brand}" },
         inverse: { ...defaultTheme.semantics.finishes.shared.inverse, background: "{brand}" },
@@ -51,6 +47,8 @@ function App() {
   const shown = signal(true);
   return (
     <View>
+      <Text testID="controls">{`controls:${controls()}`}</Text>
+      <Text testID="nav-width">{`nav-width:${navBarStyle().width}`}</Text>
       <Text testID="inverse">{`inverse:${colors.inverseForeground}`}</Text>
       <Text testID="dialog">{`dialog:${finish.dialog.borderColor}`}</Text>
       <Text testID="tooltip">{`tooltip:${finish.tooltip.backgroundColor}`}</Text>
@@ -70,6 +68,7 @@ function App() {
       <SidebarProvider>
         <SidebarMenuButton isActive>Home</SidebarMenuButton>
       </SidebarProvider>
+      <Button onPress={() => selectTheme(materialTheme)}>Material</Button>
       <Button onPress={() => selectTheme(marked)}>Marked</Button>
       <Button onPress={() => selectTheme(null)}>Build-time</Button>
     </View>
