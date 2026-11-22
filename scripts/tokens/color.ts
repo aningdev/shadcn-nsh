@@ -1,8 +1,7 @@
 /**
- * Bidirectional color conversion between NSH CSS strings (`oklch(...)`, `color-mix(...)`,
- * `oklch(from {token} l c h / a)`, `transparent`, `var(--x)`) and W3C DTCG 2025.10 Color objects.
+ * Color formatting and `color-mix()` evaluation for DTCG 2025.10 tokens.
  */
-import { oklchToRgb, parseColor, rgbToOklch } from "../theme/oklch";
+import { oklchToRgb, rgbToOklch } from "../theme/oklch";
 import type { ColorOpExtension, DtcgColor } from "./types";
 
 const hex2 = (n: number) => Math.round(n).toString(16).padStart(2, "0");
@@ -11,24 +10,6 @@ const hex2 = (n: number) => Math.round(n).toString(16).padStart(2, "0");
 export function oklchToHex6(l: number, c: number, h: number): string {
   const { r, g, b } = oklchToRgb(l, c, h, 1);
   return `#${hex2(r)}${hex2(g)}${hex2(b)}`;
-}
-
-/** Parse a literal `oklch(l c h [/ a])` string while preserving exact numeric coordinates. */
-export function parseOklchLiteral(input: string): DtcgColor {
-  const match = /^oklch\(\s*([\d.]+)\s+([\d.]+)\s+([\d.]+)(?:\s*\/\s*([\d.]+))?\s*\)$/.exec(
-    input.trim(),
-  );
-  if (!match) throw new Error(`Expected oklch() literal, got: ${input}`);
-  const l = Number(match[1]);
-  const c = Number(match[2]);
-  const h = Number(match[3]) % 360;
-  const alpha = match[4] !== undefined ? Number(match[4]) : undefined;
-  return {
-    colorSpace: "oklch",
-    components: [l, c, h],
-    ...(alpha !== undefined && alpha < 1 ? { alpha } : {}),
-    hex: oklchToHex6(l, c, h),
-  };
 }
 
 /** Format a DTCG Color object back to canonical NSH `oklch(...)` string. */
@@ -101,78 +82,7 @@ export function evaluateColorMix(
   };
 }
 
-/** Parse a `theme.json` color string (`oklch(...)`, `var(--x)`, or `color-mix(...)`) into DTCG. */
-export function parseThemeColorValue(
-  raw: string,
-  lookupColor: (name: string) => DtcgColor,
-): { value: DtcgColor | string; colorOp?: ColorOpExtension } {
-  const trimmed = raw.trim();
-  const varMatch = /^var\(--([a-z0-9-]+)\)$/.exec(trimmed);
-  if (varMatch) {
-    return { value: `{color.${varMatch[1]}}` };
-  }
-
-  const mixMatch = /^color-mix\(\s*in\s+srgb\s*,\s*(.+?)\s+([\d.]+)%\s*,\s*(.+?)\s*\)$/.exec(
-    trimmed,
-  );
-  if (mixMatch) {
-    const [, rawA, rawPct, rawB] = mixMatch;
-    const percent = Number(rawPct);
-
-    const resolveOperand = (
-      expr: string,
-    ): { refOrColor: DtcgColor | string; resolved: DtcgColor } => {
-      const refM = /^var\(--([a-z0-9-]+)\)$/.exec(expr.trim());
-      if (refM) {
-        return { refOrColor: `{color.${refM[1]}}`, resolved: lookupColor(refM[1]!) };
-      }
-      const parsed = parseOklchLiteral(expr.trim());
-      return { refOrColor: parsed, resolved: parsed };
-    };
-
-    const opA = resolveOperand(rawA!);
-    let opBSpec: DtcgColor | string;
-    let evaluated: DtcgColor;
-    if (rawB!.trim() === "transparent") {
-      opBSpec = "transparent";
-      evaluated = evaluateColorMix(opA.resolved, percent, "transparent");
-    } else {
-      const opB = resolveOperand(rawB!);
-      opBSpec = opB.refOrColor;
-      evaluated = evaluateColorMix(opA.resolved, percent, opB.resolved);
-    }
-
-    return {
-      value: evaluated,
-      colorOp: {
-        op: "mix",
-        space: "srgb",
-        a: opA.refOrColor,
-        percent,
-        b: opBSpec,
-      },
-    };
-  }
-
-  if (trimmed.startsWith("oklch(")) {
-    return { value: parseOklchLiteral(trimmed) };
-  }
-
-  const rgb = parseColor(trimmed);
-  const { l, c, h } = rgbToOklch(rgb);
-  const round5 = (n: number) => Number(n.toFixed(5));
-  const round3 = (n: number) => Number(n.toFixed(3));
-  return {
-    value: {
-      colorSpace: "oklch",
-      components: [round5(l), round5(c), round3(h)],
-      ...(rgb.a !== undefined && rgb.a < 1 ? { alpha: rgb.a } : {}),
-      hex: `#${hex2(rgb.r)}${hex2(rgb.g)}${hex2(rgb.b)}`,
-    },
-  };
-}
-
-/** Format a DTCG `colorOp` (`mix`) back into `color-mix(in srgb, ...)` for `theme.json`. */
+/** Format a DTCG `colorOp` (`mix` or `alpha`) into its runtime CSS string. */
 export function formatColorOpToCss(op: ColorOpExtension): string {
   const formatRefOrColor = (item: DtcgColor | string): string => {
     if (typeof item === "string") {

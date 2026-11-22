@@ -68,6 +68,7 @@ function checkAndroidMaterial(
   label: string,
   entry: unknown,
   known: Map<string, TokenKind> | Set<string>,
+  refFormat: "flat" | "dtcg",
 ): string[] {
   if (!isObject(entry)) return [`${label}.android is ${JSON.stringify(entry)}, not an object`];
   const problems: string[] = [];
@@ -105,7 +106,10 @@ function checkAndroidMaterial(
         `${label}.android.ripple.color is ${JSON.stringify(ripple.color)}, not a \`{token}\` reference to a color token`,
       );
     } else {
-      const ref = parseTokenRef(ripple.color);
+      const ref =
+        refFormat === "dtcg"
+          ? (/^\{color\.([a-z0-9-]+)\}$/.exec(ripple.color)?.[1] ?? null)
+          : parseTokenRef(ripple.color);
       if (ref === null) {
         problems.push(
           `${label}.android.ripple.color writes ${ripple.color}, not a \`{token}\` reference to a color token`,
@@ -156,6 +160,7 @@ export function checkMaterial(
   where: string,
   finish: Record<string, unknown>,
   known: Map<string, TokenKind> | Set<string>,
+  refFormat: "flat" | "dtcg" = "flat",
 ): string[] {
   const label = `${path}: ${where}.material`;
   if (!("material" in finish))
@@ -167,7 +172,7 @@ export function checkMaterial(
   const problems: string[] = [];
   for (const [platform, entry] of Object.entries(material)) {
     if (platform === "android") {
-      problems.push(...checkAndroidMaterial(label, entry, known));
+      problems.push(...checkAndroidMaterial(label, entry, known, refFormat));
       continue;
     }
     const keys = shape[platform];
@@ -198,7 +203,9 @@ export function checkMaterial(
           );
           continue;
         }
-        const verdict = readColour(value, known, new Set(), "material");
+        const normalized =
+          refFormat === "dtcg" ? value.replace(/\{color\.([a-z0-9-]+)\}/g, "{$1}") : value;
+        const verdict = readColour(normalized, known, new Set(), "material");
         for (const problem of verdict.problems)
           problems.push(
             problem.kind === "unknown-token"

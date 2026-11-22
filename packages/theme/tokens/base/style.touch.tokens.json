@@ -2,8 +2,10 @@
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "$description": "Default touch input-tier metrics.",
   "font": {
+    "$description": "Touch typography metrics.",
     "size": {
       "$type": "dimension",
+      "$description": "Font sizes per type role for touch input.",
       "caption": {
         "$value": {
           "value": 12,
@@ -49,6 +51,7 @@
     },
     "line-height": {
       "$type": "number",
+      "$description": "Unitless line-height ratios per type role for touch input.",
       "caption": {
         "$value": 1.3333333333333333
       },
@@ -74,14 +77,18 @@
   },
   "dimension": {
     "$type": "dimension",
+    "$description": "Touch layout density, control geometry, and icon sizes.",
     "size": {
+      "$description": "Ergonomic sizing scales for touch input.",
       "hit": {
         "$value": {
           "value": 44,
           "unit": "px"
-        }
+        },
+        "$description": "Minimum hit target size (0 disables padding expansion)."
       },
       "density": {
+        "$description": "Page-level row, padding, gap, and surface spacing metrics.",
         "row": {
           "$value": {
             "value": 48,
@@ -113,6 +120,7 @@
             "switch": "regular"
           }
         },
+        "$description": "Control internal geometry and switch size tier.",
         "row": {
           "$value": {
             "value": 44,
@@ -175,6 +183,7 @@
         }
       },
       "height": {
+        "$description": "Standard control heights (sm, md, lg).",
         "sm": {
           "$value": {
             "value": 36,
@@ -196,6 +205,7 @@
       }
     },
     "icon": {
+      "$description": "Standard icon dimensions (sm, md, lg).",
       "sm": {
         "$value": {
           "value": 14,

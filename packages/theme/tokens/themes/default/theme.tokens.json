@@ -3,81 +3,97 @@
   "$description": "Appearance-invariant base tokens for the default NSH Gallery UI theme.",
   "dimension": {
     "$type": "dimension",
+    "$description": "Appearance-invariant base dimensional tokens.",
     "radius": {
       "$type": "dimension",
+      "$description": "Base corner radius scale referenced by semantic shape roles.",
       "base": {
         "$value": {
           "value": 10,
           "unit": "px"
-        }
+        },
+        "$description": "Base corner radius shared by insets and general rounded elements."
       },
       "card": {
         "$value": {
           "value": 14,
           "unit": "px"
-        }
+        },
+        "$description": "Corner radius for cards and sidebar floating containers."
       },
       "control": {
         "$value": {
           "value": 8,
           "unit": "px"
-        }
+        },
+        "$description": "Corner radius for interactive controls such as buttons, triggers, and menu items."
       },
       "field": {
         "$value": {
           "value": 8,
           "unit": "px"
-        }
+        },
+        "$description": "Corner radius for form input fields and editor wells."
       },
       "chip": {
         "$value": {
           "value": 10,
           "unit": "px"
-        }
+        },
+        "$description": "Corner radius for badges, chips, and compact tags."
       },
       "overlay": {
         "$value": {
           "value": 10,
           "unit": "px"
-        }
+        },
+        "$description": "Corner radius for floating menus, popovers, and toasts."
       },
       "dialog": {
         "$value": {
           "value": 14,
           "unit": "px"
-        }
+        },
+        "$description": "Corner radius for modal dialogs."
       },
       "sheet": {
         "$value": {
           "value": 14,
           "unit": "px"
-        }
+        },
+        "$description": "Corner radius for drawers and bottom sheets."
       }
     }
   },
   "font": {
+    "$description": "Base font family tokens.",
     "family": {
       "$type": "fontFamily",
+      "$description": "Font family stacks.",
       "mono": {
-        "$value": "monospace"
+        "$value": "monospace",
+        "$description": "Monospace font family for code blocks and numeric readouts."
       }
     }
   },
   "color": {
     "$type": "color",
+    "$description": "Appearance-invariant C-layer color roles shared by light and dark modes.",
     "brand-fill": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.89637, 0.16627, 124.031],
         "hex": "#c6ef6a"
-      }
+      },
+      "$description": "Accent fill color for selected calendar days and branded highlights."
     },
     "on-brand": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.19339, 0.0197, 121.819],
         "hex": "#13160c"
-      }
+      },
+      "$description": "Foreground text and icons on brand-fill surfaces."
     },
     "scrim": {
       "$value": {
@@ -85,49 +101,56 @@
         "components": [0, 0, 0],
         "alpha": 0.45,
         "hex": "#000000"
-      }
+      },
+      "$description": "Translucent backdrop scrim behind modals and sheets."
     },
     "media": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.1869, 0.0151, 266.766],
         "hex": "#10131a"
-      }
+      },
+      "$description": "Ground behind photographs and videos; invariant across appearances."
     },
     "on-media": {
       "$value": {
         "colorSpace": "oklch",
         "components": [1, 0, 0],
         "hex": "#ffffff"
-      }
+      },
+      "$description": "White ink over photographs and dark media surfaces; invariant across appearances."
     },
     "chart-foreground": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.18636, 0.01318, 264.182],
         "hex": "#101319"
-      }
+      },
+      "$description": "Dark ink on light chart tiles; dark tiles use on-media."
     },
     "window-close": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.6936, 0.19638, 26.364],
         "hex": "#ff5f57"
-      }
+      },
+      "$description": "macOS window close traffic-light button fill."
     },
     "window-minimize": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.83478, 0.1612, 80.911],
         "hex": "#febc2e"
-      }
+      },
+      "$description": "macOS window minimize traffic-light button fill."
     },
     "window-zoom": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.72803, 0.21734, 144.712],
         "hex": "#28c840"
-      }
+      },
+      "$description": "macOS window zoom traffic-light button fill."
     },
     "window-control-ink": {
       "$value": {
@@ -150,7 +173,8 @@
             "b": "transparent"
           }
         }
-      }
+      },
+      "$description": "Glyph ink inside macOS window traffic-light buttons."
     },
     "window-control-edge": {
       "$value": {
@@ -173,7 +197,8 @@
             "b": "transparent"
           }
         }
-      }
+      },
+      "$description": "Hairline border around macOS window traffic-light buttons."
     }
   }
 }

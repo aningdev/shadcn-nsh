@@ -60,47 +60,39 @@ const isObject = (value: unknown): value is Record<string, unknown> =>
 const isMotionRolePath = (path: string) =>
   motionRoleNames.some((role) => path === `motion.${role}` || path.startsWith(`motion.${role}.`));
 
-function checkMotionRole(path: string, role: string, value: unknown): string[] {
-  const key = `motion.${role}`;
-  if (value === undefined) return [`${path}: \`${key}\` is missing`];
-  if (!isObject(value))
-    return [`${path}: \`${key}\` is ${JSON.stringify(value)}, not a Spring or Timing object`];
-
+/** Shared validator for a timing motion spec (`duration` >= 0 and whitelisted `easing`). */
+export function checkTimingSpec(
+  path: string,
+  key: string,
+  value: Record<string, unknown>,
+): string[] {
   const problems: string[] = [];
-  const hasSpring = "stiffness" in value || "damping" in value;
-  const hasTiming = "duration" in value || "easing" in value;
-  if (hasSpring && hasTiming) {
-    return [
-      `${path}: \`${key}\` mixes spring keys (stiffness/damping) and timing keys (duration/easing)`,
-    ];
+  if (!("duration" in value)) problems.push(`${path}: \`${key}.duration\` is missing`);
+  else if (
+    typeof value.duration !== "number" ||
+    !Number.isFinite(value.duration) ||
+    value.duration < 0
+  ) {
+    problems.push(
+      `${path}: \`${key}.duration\` is ${JSON.stringify(value.duration)}, not a number of 0 or more`,
+    );
   }
-
-  if (hasTiming) {
-    const allowed = new Set(["duration", "easing"]);
-    for (const k of Object.keys(value))
-      if (!allowed.has(k)) problems.push(`${path}: \`${key}.${k}\` is not a key of a Timing`);
-    if (!("duration" in value)) problems.push(`${path}: \`${key}.duration\` is missing`);
-    else if (
-      typeof value.duration !== "number" ||
-      !Number.isFinite(value.duration) ||
-      value.duration < 0
-    ) {
-      problems.push(
-        `${path}: \`${key}.duration\` is ${JSON.stringify(value.duration)}, not a number of 0 or more`,
-      );
-    }
-    if (!("easing" in value)) problems.push(`${path}: \`${key}.easing\` is missing`);
-    else if (typeof value.easing !== "string" || !easingNames.includes(value.easing as never)) {
-      problems.push(
-        `${path}: \`${key}.easing\` is ${JSON.stringify(value.easing)}, not one of ${easingNames.map((v) => JSON.stringify(v)).join(", ")}`,
-      );
-    }
-    return problems;
+  if (!("easing" in value)) problems.push(`${path}: \`${key}.easing\` is missing`);
+  else if (typeof value.easing !== "string" || !easingNames.includes(value.easing as never)) {
+    problems.push(
+      `${path}: \`${key}.easing\` is ${JSON.stringify(value.easing)}, not one of ${easingNames.map((v) => JSON.stringify(v)).join(", ")}`,
+    );
   }
+  return problems;
+}
 
-  const allowed = new Set(["stiffness", "damping"]);
-  for (const k of Object.keys(value))
-    if (!allowed.has(k)) problems.push(`${path}: \`${key}.${k}\` is not a key of a Spring`);
+/** Shared validator for a spring motion spec (`stiffness` >= 0 and `damping` >= 0). */
+export function checkSpringSpec(
+  path: string,
+  key: string,
+  value: Record<string, unknown>,
+): string[] {
+  const problems: string[] = [];
   if (!("stiffness" in value)) problems.push(`${path}: \`${key}.stiffness\` is missing`);
   else if (
     typeof value.stiffness !== "number" ||
@@ -121,6 +113,40 @@ function checkMotionRole(path: string, role: string, value: unknown): string[] {
       `${path}: \`${key}.damping\` is ${JSON.stringify(value.damping)}, not a number of 0 or more`,
     );
   }
+  return problems;
+}
+
+/** Shared bounds check for `pressScale` / `state.press-scale` in `(0, 1]`. */
+export const isValidPressScale = (value: unknown): boolean =>
+  typeof value === "number" && Number.isFinite(value) && value > 0 && value <= 1;
+
+function checkMotionRole(path: string, role: string, value: unknown): string[] {
+  const key = `motion.${role}`;
+  if (value === undefined) return [`${path}: \`${key}\` is missing`];
+  if (!isObject(value))
+    return [`${path}: \`${key}\` is ${JSON.stringify(value)}, not a Spring or Timing object`];
+
+  const problems: string[] = [];
+  const hasSpring = "stiffness" in value || "damping" in value;
+  const hasTiming = "duration" in value || "easing" in value;
+  if (hasSpring && hasTiming) {
+    return [
+      `${path}: \`${key}\` mixes spring keys (stiffness/damping) and timing keys (duration/easing)`,
+    ];
+  }
+
+  if (hasTiming) {
+    const allowed = new Set(["duration", "easing"]);
+    for (const k of Object.keys(value))
+      if (!allowed.has(k)) problems.push(`${path}: \`${key}.${k}\` is not a key of a Timing`);
+    problems.push(...checkTimingSpec(path, key, value));
+    return problems;
+  }
+
+  const allowed = new Set(["stiffness", "damping"]);
+  for (const k of Object.keys(value))
+    if (!allowed.has(k)) problems.push(`${path}: \`${key}.${k}\` is not a key of a Spring`);
+  problems.push(...checkSpringSpec(path, key, value));
   return problems;
 }
 
@@ -289,7 +315,7 @@ export function checkStyle(
     else if (typeof value === "number" && !(Number.isFinite(value) && value >= 0))
       problems.push(`${path}: \`${key}\` is ${value}, not a number of 0 or more`);
 
-    if (key === "state.pressScale" && typeof value === "number" && (value <= 0 || value > 1))
+    if (key === "state.pressScale" && typeof value === "number" && !isValidPressScale(value))
       problems.push(`${path}: \`state.pressScale\` is ${value}, not in (0, 1]`);
 
     for (const [pattern, allowed] of Object.entries(whitelists))

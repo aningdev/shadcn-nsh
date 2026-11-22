@@ -2,7 +2,9 @@
   "$schema": "https://www.designtokens.org/schemas/2025.10/format.json",
   "$description": "Appearance-invariant surface finish recipes for the default theme.",
   "finish": {
+    "$description": "Appearance-invariant surface finish recipes (background, gradient, border, shadow, blur, material).",
     "card": {
+      "$description": "The card face: an inner highlight, a hairline, a contact shadow and a cast one.",
       "gradient": {
         "$type": "gradient",
         "$value": [
@@ -32,9 +34,11 @@
         "dev.aning.shadcn-nsh": {
           "material": null
         }
-      }
+      },
+      "$description": "The well inside a card: sunk by its inner shadow alone."
     },
     "field": {
+      "$description": "A field well: its edge and its inner shadow.",
       "shadow": {
         "$type": "shadow",
         "$value": {
@@ -74,6 +78,7 @@
       }
     },
     "raised": {
+      "$description": "A control on a card: a gradient, an inner highlight, a hard shadow, an edge.",
       "background": {
         "$type": "color",
         "$value": "{color.raised}"
@@ -107,16 +112,19 @@
         "dev.aning.shadcn-nsh": {
           "material": null
         }
-      }
+      },
+      "$description": "The step the surface takes under the pointer."
     },
     "pressed": {
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "material": null
         }
-      }
+      },
+      "$description": "The step it takes while pressed."
     },
     "light": {
+      "$description": "The main action brightest step: the accent gradient.",
       "background": {
         "$type": "color",
         "$value": "{color.primary}"
@@ -150,6 +158,7 @@
       }
     },
     "accent": {
+      "$description": "The accent face (the same as light).",
       "background": {
         "$type": "color",
         "$value": "{color.primary}"
@@ -187,9 +196,11 @@
         "dev.aning.shadcn-nsh": {
           "material": null
         }
-      }
+      },
+      "$description": "A groove: an inner shadow and an edge."
     },
     "fill": {
+      "$description": "The filled run: a slider, a progress bar, a switch that is on.",
       "background": {
         "$type": "color",
         "$value": {
@@ -243,9 +254,11 @@
         "dev.aning.shadcn-nsh": {
           "material": null
         }
-      }
+      },
+      "$description": "A switch knob, off."
     },
     "knobOn": {
+      "$description": "A switch knob, on.",
       "background": {
         "$type": "color",
         "$value": {
@@ -318,9 +331,11 @@
         "dev.aning.shadcn-nsh": {
           "material": null
         }
-      }
+      },
+      "$description": "A slider handle (kept apart from knob)."
     },
     "pill": {
+      "$description": "The upstream capsule, left to the app.",
       "background": {
         "$type": "color",
         "$value": "{color.raised}"
@@ -354,16 +369,19 @@
         "dev.aning.shadcn-nsh": {
           "material": null
         }
-      }
+      },
+      "$description": "The chosen segment of a segmented control or a tag."
     },
     "on": {
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "material": null
         }
-      }
+      },
+      "$description": "A chosen switch or box, and the mark on it."
     },
     "chip": {
+      "$description": "A chosen value label inside a field: a fill, an inner highlight and an edge.",
       "background": {
         "$type": "color",
         "$value": "{color.raised}"
@@ -397,6 +415,7 @@
       }
     },
     "glass": {
+      "$description": "Glass: a translucent fill and a blur.",
       "border-color": {
         "$type": "color",
         "$value": "{color.border}"
@@ -409,6 +428,7 @@
       }
     },
     "menu": {
+      "$description": "A floating surface: a menu, a popover.",
       "background": {
         "$type": "color",
         "$value": "{color.popover}"
@@ -424,6 +444,7 @@
       }
     },
     "dialog": {
+      "$description": "A dialog face: the card colour with the menu shadow.",
       "background": {
         "$type": "color",
         "$value": "{color.card}"
@@ -439,6 +460,7 @@
       }
     },
     "tooltip": {
+      "$description": "A tooltip face: the popover pane, without a shadow.",
       "background": {
         "$type": "color",
         "$value": "{color.popover}"
@@ -486,6 +508,7 @@
       }
     },
     "inverse": {
+      "$description": "The inverse surface: a toast face.",
       "background": {
         "$type": "color",
         "$value": "{color.inverse}"
@@ -505,7 +528,8 @@
         "dev.aning.shadcn-nsh": {
           "material": null
         }
-      }
+      },
+      "$description": "A groove cut inside a menu."
     }
   }
 }

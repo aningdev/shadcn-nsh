@@ -3,106 +3,122 @@
   "$description": "Dark appearance colors and finish overrides for the default theme.",
   "color": {
     "$type": "color",
+    "$description": "Adaptive A-layer and B-layer color roles for dark appearance.",
     "background": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.21297, 0.01273, 264.257],
         "hex": "#16191f"
-      }
+      },
+      "$description": "Primary application page canvas background."
     },
     "foreground": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.95193, 0.00289, 264.542],
         "hex": "#eeeff1"
-      }
+      },
+      "$description": "Default high-contrast text and icon ink on page surfaces."
     },
     "card": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.25145, 0.01219, 264.328],
         "hex": "#1f2228"
-      }
+      },
+      "$description": "Elevated surface background for cards and panels."
     },
     "popover": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.25145, 0.01219, 264.328],
         "hex": "#1f2228"
-      }
+      },
+      "$description": "Floating surface background for menus, popovers, and tooltips."
     },
     "primary": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.88837, 0.16324, 123.959],
         "hex": "#c4ec6a"
-      }
+      },
+      "$description": "Primary brand action fill."
     },
     "primary-foreground": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.19339, 0.0197, 121.819],
         "hex": "#13160c"
-      }
+      },
+      "$description": "Text and icon ink on primary brand action fills."
     },
     "muted": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.29661, 0.01168, 264.381],
         "hex": "#2a2d33"
-      }
+      },
+      "$description": "Subdued container and subtle background surface."
     },
     "muted-foreground": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.69819, 0.01118, 261.782],
         "hex": "#9a9ea5"
-      }
+      },
+      "$description": "Secondary and supporting text and icon ink."
     },
     "accent": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.32053, 0.01145, 264.401],
         "hex": "#303339"
-      }
+      },
+      "$description": "Subtle highlight fill for hovered or active items."
     },
     "destructive": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.70034, 0.19197, 18.007],
         "hex": "#ff6170"
-      }
+      },
+      "$description": "Semantic danger color for destructive actions and errors."
     },
     "border": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.32447, 0.01141, 264.404],
         "hex": "#31343a"
-      }
+      },
+      "$description": "Standard hairline border color for containers and controls."
     },
     "input": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.3556, 0.01115, 264.424],
         "hex": "#393c42"
-      }
+      },
+      "$description": "Border and stroke color for form fields and control edges."
     },
     "inset": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.23027, 0.01247, 264.293],
         "hex": "#1a1d23"
-      }
+      },
+      "$description": "Recessed well surface nested inside a card."
     },
     "raised": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.32935, 0.01092, 271.072],
         "hex": "#33353b"
-      }
+      },
+      "$description": "Raised control surface resting on a card."
     },
     "glass-edge": {
-      "$value": "{color.border}"
+      "$value": "{color.border}",
+      "$description": "Hairline border on glass, pill, and floating overlay surfaces."
     },
     "scrollbar-thumb": {
       "$value": {
@@ -120,7 +136,8 @@
             "b": "{color.background}"
           }
         }
-      }
+      },
+      "$description": "Scrollbar thumb resting fill."
     },
     "scrollbar-thumb-hover": {
       "$value": {
@@ -138,21 +155,24 @@
             "b": "{color.background}"
           }
         }
-      }
+      },
+      "$description": "Scrollbar thumb fill on pointer hover."
     },
     "field": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.21297, 0.01273, 264.257],
         "hex": "#16191f"
-      }
+      },
+      "$description": "Input well surface below card and inset layers."
     },
     "line": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.30863, 0.01156, 264.391],
         "hex": "#2d3036"
-      }
+      },
+      "$description": "Hairline divider and grid rule inside recessed wells."
     },
     "hover": {
       "$value": {
@@ -171,7 +191,8 @@
             "b": "transparent"
           }
         }
-      }
+      },
+      "$description": "Pointer hover overlay fill on interactive items."
     },
     "ring-halo": {
       "$value": {
@@ -190,21 +211,24 @@
             "b": "transparent"
           }
         }
-      }
+      },
+      "$description": "Translucent outer halo around focused controls."
     },
     "faint": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.54061, 0.01194, 261.771],
         "hex": "#6b6f76"
-      }
+      },
+      "$description": "Low-emphasis text for placeholders, units, and tertiary labels."
     },
     "brand": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.90469, 0.16668, 124.297],
         "hex": "#c8f26d"
-      }
+      },
+      "$description": "Accent ink for text, icons, and active rules."
     },
     "brand-edge": {
       "$value": {
@@ -212,49 +236,56 @@
         "components": [0.32672, 0.08497, 127.611],
         "alpha": 0.55,
         "hex": "#283c00"
-      }
+      },
+      "$description": "Hairline border on primary accent-filled controls."
     },
     "track": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.33232, 0.01134, 264.409],
         "hex": "#33363c"
-      }
+      },
+      "$description": "Inactive track background for switches, sliders, and progress bars."
     },
     "knob": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.92199, 0.00419, 271.367],
         "hex": "#e4e5e8"
-      }
+      },
+      "$description": "Switch thumb fill in the off state."
     },
     "code": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.89621, 0.00927, 258.337],
         "hex": "#d9dde3"
-      }
+      },
+      "$description": "Monospace code text ink inside recessed wells."
     },
     "info": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.7377, 0.13479, 263.817],
         "hex": "#7ea8ff"
-      }
+      },
+      "$description": "Informational semantic status color."
     },
     "warn": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.82449, 0.14865, 73.346],
         "hex": "#ffb547"
-      }
+      },
+      "$description": "Warning semantic status color."
     },
     "up": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.77932, 0.14805, 162.141],
         "hex": "#45d49a"
-      }
+      },
+      "$description": "Positive trend and growth semantic color."
     },
     "brand-tint": {
       "$value": {
@@ -273,22 +304,28 @@
             "b": "transparent"
           }
         }
-      }
+      },
+      "$description": "Translucent brand-accent wash behind selected rows and tinted bubbles."
     },
     "on-brand-tint": {
-      "$value": "{color.foreground}"
+      "$value": "{color.foreground}",
+      "$description": "Text and icon ink on brand-tint surfaces."
     },
     "inverse": {
-      "$value": "{color.popover}"
+      "$value": "{color.popover}",
+      "$description": "High-contrast surface for toasts and tooltips."
     },
     "inverse-foreground": {
-      "$value": "{color.foreground}"
+      "$value": "{color.foreground}",
+      "$description": "Primary text ink on inverse surfaces."
     },
     "inverse-muted": {
-      "$value": "{color.muted-foreground}"
+      "$value": "{color.muted-foreground}",
+      "$description": "Secondary text, spinner, and close-icon ink on inverse surfaces."
     },
     "inverse-brand": {
-      "$value": "{color.primary-foreground}"
+      "$value": "{color.primary-foreground}",
+      "$description": "Accent action color on inverse surfaces."
     },
     "info-tint": {
       "$value": {
@@ -307,7 +344,8 @@
             "b": "transparent"
           }
         }
-      }
+      },
+      "$description": "Translucent informational status background tint."
     },
     "warn-tint": {
       "$value": {
@@ -326,7 +364,8 @@
             "b": "transparent"
           }
         }
-      }
+      },
+      "$description": "Translucent warning status background tint."
     },
     "destructive-tint": {
       "$value": {
@@ -345,7 +384,8 @@
             "b": "transparent"
           }
         }
-      }
+      },
+      "$description": "Translucent destructive status background tint."
     },
     "up-tint": {
       "$value": {
@@ -364,7 +404,8 @@
             "b": "transparent"
           }
         }
-      }
+      },
+      "$description": "Translucent positive trend background tint."
     },
     "down-tint": {
       "$value": {
@@ -383,120 +424,144 @@
             "b": "transparent"
           }
         }
-      }
+      },
+      "$description": "Translucent negative trend background tint."
     },
     "violet": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.76787, 0.13219, 294.446],
         "hex": "#b9a2ff"
-      }
+      },
+      "$description": "Accent data-visualization and link color."
     },
     "card-foreground": {
-      "$value": "{color.foreground}"
+      "$value": "{color.foreground}",
+      "$description": "Primary text and icon ink on card surfaces."
     },
     "popover-foreground": {
-      "$value": "{color.foreground}"
+      "$value": "{color.foreground}",
+      "$description": "Primary text and icon ink on popover surfaces."
     },
     "accent-foreground": {
-      "$value": "{color.foreground}"
+      "$value": "{color.foreground}",
+      "$description": "Text and icon ink on accent surfaces."
     },
     "secondary": {
-      "$value": "{color.raised}"
+      "$value": "{color.raised}",
+      "$description": "Secondary control surface fill."
     },
     "secondary-foreground": {
-      "$value": "{color.foreground}"
+      "$value": "{color.foreground}",
+      "$description": "Text and icon ink on secondary control surfaces."
     },
     "chart-1": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.90469, 0.16668, 124.297],
         "hex": "#c8f26d"
-      }
+      },
+      "$description": "Primary chart series color."
     },
     "chart-2": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.92503, 0.00418, 271.367],
         "hex": "#e5e6e9"
-      }
+      },
+      "$description": "Second chart series color."
     },
     "chart-3": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.71149, 0.01246, 264.489],
         "hex": "#9ea2aa"
-      }
+      },
+      "$description": "Third chart series color."
     },
     "chart-4": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.53054, 0.01343, 264.454],
         "hex": "#686c74"
-      }
+      },
+      "$description": "Fourth chart series color."
     },
     "chart-5": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.39359, 0.01086, 264.443],
         "hex": "#43464c"
-      }
+      },
+      "$description": "Fifth chart series color."
     },
     "ring": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.49837, 0.01905, 262.684],
         "hex": "#5d636e"
-      }
+      },
+      "$description": "Focus indicator ring stroke color."
     },
     "sidebar": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.18636, 0.01318, 264.182],
         "hex": "#101319"
-      }
+      },
+      "$description": "Navigation sidebar panel background."
     },
     "sidebar-foreground": {
-      "$value": "{color.foreground}"
+      "$value": "{color.foreground}",
+      "$description": "Primary text and icon ink inside the sidebar."
     },
     "sidebar-accent": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.27631, 0.0119, 264.36],
         "hex": "#25282e"
-      }
+      },
+      "$description": "Selected or active row fill in the sidebar."
     },
     "sidebar-accent-foreground": {
-      "$value": "{color.foreground}"
+      "$value": "{color.foreground}",
+      "$description": "Text and icon ink on active sidebar rows."
     },
     "sidebar-border": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.27221, 0.01194, 264.355],
         "hex": "#24272d"
-      }
+      },
+      "$description": "Sidebar divider and toolbar hairline border color."
     },
     "sidebar-primary": {
-      "$value": "{color.primary}"
+      "$value": "{color.primary}",
+      "$description": "Primary action highlight color in the sidebar."
     },
     "sidebar-primary-foreground": {
-      "$value": "{color.primary-foreground}"
+      "$value": "{color.primary-foreground}",
+      "$description": "Text and icon ink on sidebar-primary highlights."
     },
     "sidebar-ring": {
-      "$value": "{color.ring}"
+      "$value": "{color.ring}",
+      "$description": "Focus indicator ring color inside the sidebar."
     },
     "down": {
-      "$value": "{color.destructive}"
+      "$value": "{color.destructive}",
+      "$description": "Negative trend and decline semantic color."
     },
     "window-control-off": {
       "$value": {
         "colorSpace": "oklch",
         "components": [0.40108, 0.01081, 264.446],
         "hex": "#45484e"
-      }
+      },
+      "$description": "Inactive background for macOS traffic-light buttons when unfocused."
     }
   },
   "finish": {
+    "$description": "Sparse dark-mode surface finish overrides.",
     "card": {
       "shadow": {
         "$type": "shadow",

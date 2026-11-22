@@ -1,10 +1,10 @@
 /**
- * Compiles a DTCG 2025.10 `theme.resolver.json` back into:
- * 1. NSH's `theme.json` runtime contract (`cssVars: { theme, light, dark }`), preserving `var(--x)`
- *    and `color-mix(...)` so host `setThemeOverrides` continues to flow dynamically;
- * 2. Option (b) DTCG-named runtime semantics artifact; and
- * 3. A documented `toLegacySemantics()` projection to verify exact round-trip parity with
- *    `packages/theme/semantics.json`.
+ * Compiles a DTCG 2025.10 `theme.resolver.json` into the runtime artifacts consumed by NSH and
+ * `packages/theme/theme.ts`:
+ * 1. `theme.json` (`cssVars: { theme, light, dark }`), preserving `var(--x)` and `color-mix(...)`
+ *    so host `setThemeOverrides` flows dynamically;
+ * 2. `semantics.json` (the current runtime semantic contract; batch 5 moves this artifact and
+ *    `theme.ts` together to DTCG field names).
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -119,109 +119,58 @@ export function compileThemeJson(resolverPath: string): {
   };
 }
 
-/** Option (b) runtime semantic artifact using DTCG 2025.10 field names. */
-export interface RuntimeSemanticsDtcg {
-  typography: {
-    fontFamily: string | null;
-    roles: Record<
-      string,
-      {
-        fontSize: { pointer: number; touch: number };
-        lineHeight: { pointer: number; touch: number };
-        fontWeight: number;
-        letterSpacing: number;
-      }
-    >;
-  };
-  dimension: {
-    shape: Record<string, string>;
-    size: {
-      hit: { pointer: number; touch: number };
-      density: { pointer: Record<string, number>; touch: Record<string, number> };
-      control: { pointer: Record<string, number>; touch: Record<string, number> };
-      height: { pointer: Record<string, number>; touch: Record<string, number> };
-    };
-    stroke: Record<string, number>;
-    focus: { width: number; offset: number };
-    icon: { pointer: Record<string, number>; touch: Record<string, number> };
-  };
-  shape: {
-    curve: string;
-    corners: { field: string };
-  };
-  controlSwitch: { pointer: string; touch: string };
-  focus: { style: string };
-  state: {
-    pressScale: number;
-    overlay: Record<string, number>;
-    ripple: boolean;
-    pressedOpacity: number;
-    disabled: Record<string, number>;
-  };
-  motion: Record<
-    string,
-    | { stiffness: number; damping: number }
-    | {
-        duration: number;
-        delay: number;
-        timingFunction: [number, number, number, number];
-        nshEasing?: string;
-      }
-    | { duration: number }
-  >;
-  indicator: Record<string, string>;
-  finishes: {
-    shared: Record<string, DtcgFinishFields>;
-    light: Record<string, DtcgFinishFields>;
-    dark: Record<string, DtcgFinishFields>;
-  };
+function bezierToEasingName(tf: [number, number, number, number], nshEasing?: string): string {
+  if (nshEasing) return nshEasing;
+  for (const [name, spec] of Object.entries(NAMED_CUBIC_BEZIERS)) {
+    if (spec.value.every((v, i) => Math.abs(v - tf[i]!) < 1e-6)) {
+      return name;
+    }
+  }
+  throw new Error(`Unknown cubicBezier array: ${JSON.stringify(tf)}`);
 }
 
-export interface DtcgFinishFields {
-  background?:
-    | DtcgColor
-    | string
-    | { op: "alpha"; color: string; alpha: number; fallback: DtcgColor };
-  gradient?: {
-    angle: number;
-    stops: Array<{ color: DtcgColor | string; position: number; transparentKeyword?: boolean }>;
-  };
-  borderColor?:
-    | DtcgColor
-    | string
-    | { op: "alpha"; color: string; alpha: number; fallback: DtcgColor };
-  shadow?: { none?: boolean; items: DtcgShadowItem[] };
-  backdropFilter?: string;
-  material?: unknown;
+function toFlatColorRef(val: string): string {
+  const m = /^\{color\.([a-z0-9-]+)\}$/.exec(val);
+  return m ? `{${m[1]}}` : val;
 }
 
-function compileFinishMap(
+function compileFinishColor(tok: Record<string, unknown>): string {
+  const ext = getExt(tok);
+  if (ext?.transparentKeyword) return "transparent";
+  if (ext?.colorOp) {
+    return formatColorOpToCss(ext.colorOp as ColorOpExtension);
+  }
+  const val = tok.$value;
+  if (typeof val === "string") return toFlatColorRef(val);
+  return formatDtcgColor(val as DtcgColor);
+}
+
+function compileMaterialValue(material: unknown): unknown {
+  if (!isRecord(material)) return material;
+  const out = structuredClone(material);
+  if (isRecord(out.apple) && typeof out.apple.tint === "string") {
+    out.apple.tint = toFlatColorRef(out.apple.tint);
+  }
+  if (
+    isRecord(out.android) &&
+    isRecord(out.android.ripple) &&
+    typeof out.android.ripple.color === "string"
+  ) {
+    out.android.ripple.color = toFlatColorRef(out.android.ripple.color);
+  }
+  return out;
+}
+
+function compileFinishSection(
   finishGroup: Record<string, Record<string, unknown>>,
-): Record<string, DtcgFinishFields> {
-  const out: Record<string, DtcgFinishFields> = {};
+): Record<string, Record<string, unknown>> {
+  const out: Record<string, Record<string, unknown>> = {};
   for (const [role, group] of Object.entries(finishGroup)) {
     if (role.startsWith("$")) continue;
-    const entry: DtcgFinishFields = {};
-
-    const compileColorLeaf = (tok: Record<string, unknown>) => {
-      const ext = getExt(tok);
-      if (ext?.transparentKeyword) return "transparent";
-      if (ext?.colorOp) {
-        const op = ext.colorOp as ColorOpExtension;
-        if (op.op === "alpha") {
-          return {
-            op: "alpha" as const,
-            color: op.color,
-            alpha: op.alpha,
-            fallback: tok.$value as DtcgColor,
-          };
-        }
-      }
-      return tok.$value as DtcgColor | string;
-    };
+    const item: Record<string, unknown> = {};
 
     if (isRecord(group.background)) {
-      entry.background = compileColorLeaf(group.background);
+      item.backgroundColor = compileFinishColor(group.background);
     }
     if (isRecord(group.gradient)) {
       const ext = getExt(group.gradient);
@@ -230,41 +179,57 @@ function compileFinishMap(
         (ext?.transparentStops as number[] | undefined) ?? [],
       );
       const rawStops = group.gradient.$value as DtcgGradientStop[];
-      entry.gradient = {
-        angle,
-        stops: rawStops.map((s, idx) => ({
-          color: s.color,
-          position: s.position,
-          ...(transparentStops.has(idx) ? { transparentKeyword: true } : {}),
-        })),
-      };
+      const stops = rawStops.map((s, idx) => {
+        const col = transparentStops.has(idx)
+          ? "transparent"
+          : typeof s.color === "string"
+            ? toFlatColorRef(s.color)
+            : formatDtcgColor(s.color);
+        return `${col} ${Math.round(s.position * 10000) / 100}%`;
+      });
+      item.backgroundImage = `linear-gradient(${angle}deg, ${stops.join(", ")})`;
     }
     if (isRecord(group.shadow)) {
       const ext = getExt(group.shadow);
-      const raw = group.shadow.$value;
-      entry.shadow = {
-        ...(ext?.none ? { none: true } : {}),
-        items: (Array.isArray(raw) ? raw : [raw]) as DtcgShadowItem[],
-      };
+      if (ext?.none) {
+        item.boxShadow = "none";
+      } else {
+        const raw = group.shadow.$value;
+        const shadows = (Array.isArray(raw) ? raw : [raw]) as DtcgShadowItem[];
+        item.boxShadow = shadows
+          .map((s) => {
+            const parts: string[] = [];
+            if (s.inset) parts.push("inset");
+            const fmtLen = (d: { value: number; unit: string }) =>
+              d.value === 0 ? "0" : `${d.value}${d.unit}`;
+            parts.push(fmtLen(s.offsetX), fmtLen(s.offsetY), fmtLen(s.blur));
+            if (s.spread.value !== 0) parts.push(fmtLen(s.spread));
+            const colorStr =
+              typeof s.color === "string" ? toFlatColorRef(s.color) : formatDtcgColor(s.color);
+            parts.push(colorStr);
+            return parts.join(" ");
+          })
+          .join(", ");
+      }
     }
     if (isRecord(group["border-color"])) {
-      entry.borderColor = compileColorLeaf(group["border-color"]);
+      item.borderColor = compileFinishColor(group["border-color"]);
     }
     const groupExt = getExt(group);
     if (groupExt && "backdropFilter" in groupExt) {
-      entry.backdropFilter = groupExt.backdropFilter as string;
+      item.backdropFilter = groupExt.backdropFilter;
     }
     if (groupExt && "material" in groupExt) {
-      entry.material = groupExt.material;
+      item.material = compileMaterialValue(groupExt.material);
     }
 
-    out[role] = entry;
+    out[role] = item;
   }
   return out;
 }
 
-/** Compile a resolver into the Option (b) DTCG-named runtime semantic structure. */
-export function compileOptionBSemantics(resolverPath: string): RuntimeSemanticsDtcg {
+/** Compile a DTCG resolver into the runtime `semantics.json` artifact. */
+export function compileSemanticsJson(resolverPath: string): Record<string, unknown> {
   const absPath = path.resolve(resolverPath);
   const dir = path.dirname(absPath);
   const doc = JSON.parse(fs.readFileSync(absPath, "utf8")) as ResolverDoc;
@@ -279,26 +244,29 @@ export function compileOptionBSemantics(resolverPath: string): RuntimeSemanticsD
   });
 
   const typoGroup = lp.typography as Record<string, unknown>;
-  const typoExt = getExt(typoGroup);
-  const fontFamily = (typoExt?.fontFamily as string | null | undefined) ?? null;
+  const rawFontFamily = (getExt(typoGroup)?.fontFamily as string | null | undefined) ?? null;
+  const fontMatch =
+    typeof rawFontFamily === "string"
+      ? /^\{font\.family\.([a-z0-9-]+)\}$/.exec(rawFontFamily)
+      : null;
+  const fontFamily = fontMatch ? `{font-${fontMatch[1]}}` : rawFontFamily;
 
-  const roles: RuntimeSemanticsDtcg["typography"]["roles"] = {};
+  const typeOut: Record<string, unknown> = { family: fontFamily };
   for (const role of TYPE_ROLES) {
     const pTypo = (lpResolved.typography as Record<string, Record<string, unknown>>)[role]!
       .$value as DtcgTypography;
     const tTypo = (ltResolved.typography as Record<string, Record<string, unknown>>)[role]!
       .$value as DtcgTypography;
-    roles[role] = {
-      fontSize: {
-        pointer: (pTypo.fontSize as { value: number }).value,
-        touch: (tTypo.fontSize as { value: number }).value,
+    const pSize = (pTypo.fontSize as { value: number }).value;
+    const tSize = (tTypo.fontSize as { value: number }).value;
+    typeOut[role] = {
+      size: { pointer: pSize, touch: tSize },
+      line: {
+        pointer: Math.round(pSize * (pTypo.lineHeight as number)),
+        touch: Math.round(tSize * (tTypo.lineHeight as number)),
       },
-      lineHeight: {
-        pointer: pTypo.lineHeight as number,
-        touch: tTypo.lineHeight as number,
-      },
-      fontWeight: pTypo.fontWeight,
-      letterSpacing: pTypo.letterSpacing.value,
+      weight: String(pTypo.fontWeight),
+      tracking: pTypo.letterSpacing.value,
     };
   }
 
@@ -313,20 +281,21 @@ export function compileOptionBSemantics(resolverPath: string): RuntimeSemanticsD
     string,
     Record<string, unknown>
   >;
-  const dimShape: Record<string, string> = {};
+  const shapeOut: Record<string, unknown> = {};
   for (const role of SHAPE_ROLES) {
     const ref = shapeGroup[role]!.$value as string;
     const m = /^\{dimension\.radius\.([a-z0-9-]+)\}$/.exec(ref);
     if (!m) throw new Error(`Expected {dimension.radius.*} in dimension.shape.${role}, got ${ref}`);
-    dimShape[role] = m[1] === "base" ? "{radius}" : `{radius-${m[1]}}`;
+    shapeOut[role] = m[1] === "base" ? "{radius}" : `{radius-${m[1]}}`;
   }
+  const shapeExt = getExt(lp.shape)!;
+  shapeOut.curve = shapeExt.curve;
+  shapeOut.corners = shapeExt.corners;
 
   const lpDim = lp.dimension as Record<string, unknown>;
   const ltDim = lt.dimension as Record<string, unknown>;
   const lpSize = lpDim.size as Record<string, unknown>;
   const ltSize = ltDim.size as Record<string, unknown>;
-
-  const shapeExt = getExt(lp.shape)!;
   const focusExt = getExt(lpDim.focus)!;
   const stateGroup = lp.state as Record<string, unknown>;
   const stateExt = getExt(stateGroup)!;
@@ -338,47 +307,54 @@ export function compileOptionBSemantics(resolverPath: string): RuntimeSemanticsD
         .map(([k, tok]) => [k, tok.$value as number]),
     );
 
-  const motionGroup = lpResolved.motion as Record<string, Record<string, unknown>>;
-  const motion: RuntimeSemanticsDtcg["motion"] = {};
+  const motionResolved = lpResolved.motion as Record<string, Record<string, unknown>>;
+  const motionMerged = lp.motion as Record<string, Record<string, unknown>>;
+  const motionOut: Record<string, unknown> = {};
   for (const role of ["press", "settle", "control", "move"] as const) {
-    const m = motionGroup[role]!;
+    const m = motionResolved[role]!;
     const ext = getExt(m);
     if (ext?.spring) {
-      motion[role] = ext.spring as { stiffness: number; damping: number };
+      motionOut[role] = ext.spring;
     } else if (isRecord(m.timing)) {
       const val = m.timing.$value as DtcgTransition;
       const tf = val.timingFunction as [number, number, number, number];
-      motion[role] = {
+      const timingRaw = motionMerged[role]!.timing as Record<string, unknown>;
+      const ref = (timingRaw.$value as DtcgTransition).timingFunction as string;
+      const bezierName = /^\{cubicBezier\.([a-z0-9-]+)\}$/.exec(ref)?.[1];
+      const bezierExt = bezierName
+        ? getExt((lp.cubicBezier as Record<string, unknown>)[bezierName])
+        : undefined;
+      motionOut[role] = {
         duration: val.duration.value,
-        delay: val.delay.value,
-        timingFunction: tf,
+        easing: bezierToEasingName(tf, bezierExt?.nshEasing as string | undefined),
       };
     }
   }
+
   const enterVal = (lpResolved.transition as Record<string, Record<string, unknown>>).enter!
     .$value as DtcgTransition;
-  // Preserve exact NSH easing name when declared on the source bezier token.
   const enterRef = (
     (lp.transition as Record<string, Record<string, unknown>>).enter!.$value as DtcgTransition
   ).timingFunction as string;
-  const bezierName = /^\{cubicBezier\.([a-z0-9-]+)\}$/.exec(enterRef)?.[1];
-  const bezierExt = bezierName
-    ? getExt((lp.cubicBezier as Record<string, unknown>)[bezierName])
+  const enterBezierName = /^\{cubicBezier\.([a-z0-9-]+)\}$/.exec(enterRef)?.[1];
+  const enterBezierExt = enterBezierName
+    ? getExt((lp.cubicBezier as Record<string, unknown>)[enterBezierName])
     : undefined;
-  motion.enter = {
+  motionOut.enter = {
     duration: enterVal.duration.value,
-    delay: enterVal.delay.value,
-    timingFunction: enterVal.timingFunction as [number, number, number, number],
-    ...(bezierExt?.nshEasing ? { nshEasing: bezierExt.nshEasing as string } : {}),
+    easing: bezierToEasingName(
+      enterVal.timingFunction as [number, number, number, number],
+      enterBezierExt?.nshEasing as string | undefined,
+    ),
   };
+
   const shakeDur = (
     (lpResolved.duration as Record<string, Record<string, unknown>>).shake!.$value as {
       value: number;
     }
   ).value;
-  motion.shake = { duration: shakeDur };
+  motionOut.shake = { duration: shakeDur };
 
-  // Keep split shared / light / dark finish maps directly from their DTCG sources.
   const sharedFinishesTree = (doc.sets?.theme?.sources ?? []).reduce<Record<string, unknown>>(
     (acc, src) => mergeTokenTrees(acc, loadSourceItem(src, dir, doc)),
     {},
@@ -391,54 +367,46 @@ export function compileOptionBSemantics(resolverPath: string): RuntimeSemanticsD
   >((acc, src) => mergeTokenTrees(acc, loadSourceItem(src, dir, doc)), {});
 
   return {
-    typography: { fontFamily, roles },
-    dimension: {
-      shape: dimShape,
-      size: {
-        hit: {
-          pointer: ((lpSize.hit as Record<string, unknown>).$value as { value: number }).value,
-          touch: ((ltSize.hit as Record<string, unknown>).$value as { value: number }).value,
+    type: typeOut,
+    shape: shapeOut,
+    size: {
+      hit: {
+        pointer: ((lpSize.hit as Record<string, unknown>).$value as { value: number }).value,
+        touch: ((ltSize.hit as Record<string, unknown>).$value as { value: number }).value,
+      },
+      density: {
+        pointer: readDimMap(lpSize.density as Record<string, Record<string, unknown>>),
+        touch: readDimMap(ltSize.density as Record<string, Record<string, unknown>>),
+      },
+      control: {
+        pointer: {
+          ...readDimMap(lpSize.control as Record<string, Record<string, unknown>>),
+          switch: getExt(lpSize.control)!.switch,
         },
-        density: {
-          pointer: readDimMap(lpSize.density as Record<string, Record<string, unknown>>),
-          touch: readDimMap(ltSize.density as Record<string, Record<string, unknown>>),
-        },
-        control: {
-          pointer: readDimMap(lpSize.control as Record<string, Record<string, unknown>>),
-          touch: readDimMap(ltSize.control as Record<string, Record<string, unknown>>),
-        },
-        height: {
-          pointer: readDimMap(lpSize.height as Record<string, Record<string, unknown>>),
-          touch: readDimMap(ltSize.height as Record<string, Record<string, unknown>>),
+        touch: {
+          ...readDimMap(ltSize.control as Record<string, Record<string, unknown>>),
+          switch: getExt(ltSize.control)!.switch,
         },
       },
-      stroke: readDimMap(lpDim.stroke as Record<string, Record<string, unknown>>),
-      focus: {
-        width: (
-          (lpDim.focus as Record<string, Record<string, unknown>>).width!.$value as {
-            value: number;
-          }
-        ).value,
-        offset: (
-          (lpDim.focus as Record<string, Record<string, unknown>>).offset!.$value as {
-            value: number;
-          }
-        ).value,
-      },
-      icon: {
-        pointer: readDimMap(lpDim.icon as Record<string, Record<string, unknown>>),
-        touch: readDimMap(ltDim.icon as Record<string, Record<string, unknown>>),
+      height: {
+        pointer: readDimMap(lpSize.height as Record<string, Record<string, unknown>>),
+        touch: readDimMap(ltSize.height as Record<string, Record<string, unknown>>),
       },
     },
-    shape: {
-      curve: shapeExt.curve as string,
-      corners: shapeExt.corners as { field: string },
+    stroke: readDimMap(lpDim.stroke as Record<string, Record<string, unknown>>),
+    focus: {
+      style: focusExt.style,
+      width: (
+        (lpDim.focus as Record<string, Record<string, unknown>>).width!.$value as {
+          value: number;
+        }
+      ).value,
+      offset: (
+        (lpDim.focus as Record<string, Record<string, unknown>>).offset!.$value as {
+          value: number;
+        }
+      ).value,
     },
-    controlSwitch: {
-      pointer: getExt(lpSize.control)!.switch as string,
-      touch: getExt(ltSize.control)!.switch as string,
-    },
-    focus: { style: focusExt.style as string },
     state: {
       pressScale: (stateGroup["press-scale"] as Record<string, unknown>).$value as number,
       overlay: readNumMap(stateGroup.overlay as Record<string, Record<string, unknown>>),
@@ -446,146 +414,24 @@ export function compileOptionBSemantics(resolverPath: string): RuntimeSemanticsD
       pressedOpacity: (stateGroup["pressed-opacity"] as Record<string, unknown>).$value as number,
       disabled: readNumMap(stateGroup.disabled as Record<string, Record<string, unknown>>),
     },
-    motion,
+    motion: motionOut,
+    icon: {
+      size: {
+        pointer: readDimMap(lpDim.icon as Record<string, Record<string, unknown>>),
+        touch: readDimMap(ltDim.icon as Record<string, Record<string, unknown>>),
+      },
+    },
     indicator: getExt(lp.indicator) as Record<string, string>,
     finishes: {
-      shared: compileFinishMap(
+      shared: compileFinishSection(
         (sharedFinishesTree.finish ?? {}) as Record<string, Record<string, unknown>>,
       ),
-      light: compileFinishMap(
+      light: compileFinishSection(
         (lightFinishesTree.finish ?? {}) as Record<string, Record<string, unknown>>,
       ),
-      dark: compileFinishMap(
+      dark: compileFinishSection(
         (darkFinishesTree.finish ?? {}) as Record<string, Record<string, unknown>>,
       ),
-    },
-  };
-}
-
-function bezierToEasingName(tf: [number, number, number, number], nshEasing?: string): string {
-  if (nshEasing) return nshEasing;
-  for (const [name, spec] of Object.entries(NAMED_CUBIC_BEZIERS)) {
-    if (spec.value.every((v, i) => Math.abs(v - tf[i]!) < 1e-6)) {
-      return name;
-    }
-  }
-  throw new Error(`Unknown cubicBezier array: ${JSON.stringify(tf)}`);
-}
-
-/**
- * Documented key-renaming / shape projection from Option (b) DTCG runtime semantics back to
- * `packages/theme/semantics.json` for proving lossless round-trip in the spike test.
- */
-export function toLegacySemantics(dtcg: RuntimeSemanticsDtcg): Record<string, unknown> {
-  const typeOut: Record<string, unknown> = { family: dtcg.typography.fontFamily };
-  for (const role of TYPE_ROLES) {
-    const r = dtcg.typography.roles[role]!;
-    typeOut[role] = {
-      size: r.fontSize,
-      line: {
-        pointer: Math.round(r.fontSize.pointer * r.lineHeight.pointer),
-        touch: Math.round(r.fontSize.touch * r.lineHeight.touch),
-      },
-      weight: String(r.fontWeight),
-      tracking: r.letterSpacing,
-    };
-  }
-
-  const formatColorLeaf = (
-    val: DtcgColor | string | { op: "alpha"; color: string; alpha: number; fallback: DtcgColor },
-  ): string => {
-    if (typeof val === "string") {
-      const m = /^\{color\.([a-z0-9-]+)\}$/.exec(val);
-      return m ? `{${m[1]}}` : val;
-    }
-    if ("op" in val) {
-      const m = /^\{color\.([a-z0-9-]+)\}$/.exec(val.color)!;
-      return `oklch(from {${m[1]}} l c h / ${val.alpha})`;
-    }
-    return formatDtcgColor(val);
-  };
-
-  const formatFinishSection = (section: Record<string, DtcgFinishFields>) => {
-    const out: Record<string, Record<string, unknown>> = {};
-    for (const [role, f] of Object.entries(section)) {
-      const item: Record<string, unknown> = {};
-      if (f.background !== undefined) item.backgroundColor = formatColorLeaf(f.background);
-      if (f.gradient !== undefined) {
-        const stops = f.gradient.stops.map((s) => {
-          const col = s.transparentKeyword ? "transparent" : formatColorLeaf(s.color);
-          return `${col} ${Math.round(s.position * 10000) / 100}%`;
-        });
-        item.backgroundImage = `linear-gradient(${f.gradient.angle}deg, ${stops.join(", ")})`;
-      }
-      if (f.shadow !== undefined) {
-        if (f.shadow.none) {
-          item.boxShadow = "none";
-        } else {
-          item.boxShadow = f.shadow.items
-            .map((s) => {
-              const parts: string[] = [];
-              if (s.inset) parts.push("inset");
-              const fmtLen = (d: { value: number; unit: string }) =>
-                d.value === 0 ? "0" : `${d.value}${d.unit}`;
-              parts.push(fmtLen(s.offsetX), fmtLen(s.offsetY), fmtLen(s.blur));
-              if (s.spread.value !== 0) parts.push(fmtLen(s.spread));
-              parts.push(formatColorLeaf(s.color));
-              return parts.join(" ");
-            })
-            .join(", ");
-        }
-      }
-      if (f.borderColor !== undefined) item.borderColor = formatColorLeaf(f.borderColor);
-      if (f.backdropFilter !== undefined) item.backdropFilter = f.backdropFilter;
-      if ("material" in f) item.material = f.material;
-      out[role] = item;
-    }
-    return out;
-  };
-
-  const motionOut: Record<string, unknown> = {};
-  for (const [role, m] of Object.entries(dtcg.motion)) {
-    if ("stiffness" in m) {
-      motionOut[role] = m;
-    } else if ("timingFunction" in m) {
-      motionOut[role] = {
-        duration: m.duration,
-        easing: bezierToEasingName(m.timingFunction, m.nshEasing),
-      };
-    } else {
-      motionOut[role] = m;
-    }
-  }
-
-  return {
-    type: typeOut,
-    shape: {
-      ...dtcg.dimension.shape,
-      curve: dtcg.shape.curve,
-      corners: dtcg.shape.corners,
-    },
-    size: {
-      hit: dtcg.dimension.size.hit,
-      density: dtcg.dimension.size.density,
-      control: {
-        pointer: { ...dtcg.dimension.size.control.pointer, switch: dtcg.controlSwitch.pointer },
-        touch: { ...dtcg.dimension.size.control.touch, switch: dtcg.controlSwitch.touch },
-      },
-      height: dtcg.dimension.size.height,
-    },
-    stroke: dtcg.dimension.stroke,
-    focus: {
-      style: dtcg.focus.style,
-      ...dtcg.dimension.focus,
-    },
-    state: dtcg.state,
-    motion: motionOut,
-    icon: { size: dtcg.dimension.icon },
-    indicator: dtcg.indicator,
-    finishes: {
-      shared: formatFinishSection(dtcg.finishes.shared),
-      light: formatFinishSection(dtcg.finishes.light),
-      dark: formatFinishSection(dtcg.finishes.dark),
     },
   };
 }

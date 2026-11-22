@@ -78,7 +78,8 @@
           "value": 0,
           "unit": "px"
         }
-      }
+      },
+      "$description": "Small captions and segmented counter labels."
     },
     "detail": {
       "$value": {
@@ -90,7 +91,8 @@
           "value": 0,
           "unit": "px"
         }
-      }
+      },
+      "$description": "Sidebar section labels, counts, and supporting metadata."
     },
     "body": {
       "$value": {
@@ -102,7 +104,8 @@
           "value": 0,
           "unit": "px"
         }
-      }
+      },
+      "$description": "Standard body copy, list rows, and dialog content."
     },
     "label": {
       "$value": {
@@ -114,7 +117,8 @@
           "value": 0,
           "unit": "px"
         }
-      }
+      },
+      "$description": "Control labels, form labels, and interactive triggers."
     },
     "title": {
       "$value": {
@@ -126,7 +130,8 @@
           "value": 0,
           "unit": "px"
         }
-      }
+      },
+      "$description": "Card and section headings."
     },
     "headline": {
       "$value": {
@@ -138,7 +143,8 @@
           "value": 0,
           "unit": "px"
         }
-      }
+      },
+      "$description": "Page-level headings."
     },
     "display": {
       "$value": {
@@ -150,63 +156,78 @@
           "value": 0,
           "unit": "px"
         }
-      }
+      },
+      "$description": "Large display numerals and hero headings."
     }
   },
   "dimension": {
     "$type": "dimension",
+    "$description": "Cross-theme semantic dimension scales (shapes, strokes, focus geometry).",
     "shape": {
       "$type": "dimension",
       "$description": "Semantic corner radius roles referencing base dimension.radius.* tokens.",
       "control": {
-        "$value": "{dimension.radius.control}"
+        "$value": "{dimension.radius.control}",
+        "$description": "Corner radius for buttons, select triggers, tabs, and menu items."
       },
       "field": {
-        "$value": "{dimension.radius.field}"
+        "$value": "{dimension.radius.field}",
+        "$description": "Corner radius for text inputs and editor wells."
       },
       "chip": {
-        "$value": "{dimension.radius.chip}"
+        "$value": "{dimension.radius.chip}",
+        "$description": "Corner radius for badges and chips."
       },
       "card": {
-        "$value": "{dimension.radius.card}"
+        "$value": "{dimension.radius.card}",
+        "$description": "Corner radius for cards and sidebar overlays."
       },
       "overlay": {
-        "$value": "{dimension.radius.overlay}"
+        "$value": "{dimension.radius.overlay}",
+        "$description": "Corner radius for menus, popovers, and toasts."
       },
       "dialog": {
-        "$value": "{dimension.radius.dialog}"
+        "$value": "{dimension.radius.dialog}",
+        "$description": "Corner radius for dialogs."
       },
       "sheet": {
-        "$value": "{dimension.radius.sheet}"
+        "$value": "{dimension.radius.sheet}",
+        "$description": "Corner radius for drawers and bottom sheets."
       },
       "inset": {
-        "$value": "{dimension.radius.base}"
+        "$value": "{dimension.radius.base}",
+        "$description": "Corner radius for inset wells, alerts, and skeletons inside cards."
       }
     },
     "stroke": {
+      "$description": "Border and indicator stroke widths.",
       "hairline": {
         "$value": {
           "value": 1,
           "unit": "px"
-        }
+        },
+        "$description": "Hairline divider and outlined-variant stroke width."
       },
       "surface": {
         "$value": {
           "value": 1,
           "unit": "px"
-        }
+        },
+        "$description": "Container surface border width (cards, drawers, overlays)."
       },
       "control": {
         "$value": {
           "value": 1,
           "unit": "px"
-        }
+        },
+        "$description": "Interactive control border width."
       },
       "indicator": {
         "$value": {
           "value": 2,
           "unit": "px"
-        }
+        },
+        "$description": "Active tab and navigation indicator stroke width."
       }
     },
     "focus": {
@@ -215,17 +236,20 @@
           "style": "halo"
         }
       },
+      "$description": "Focus ring geometry and style enum.",
       "width": {
         "$value": {
           "value": 3,
           "unit": "px"
-        }
+        },
+        "$description": "Focus ring stroke width."
       },
       "offset": {
         "$value": {
           "value": 0,
           "unit": "px"
-        }
+        },
+        "$description": "Focus ring outward offset from control bounds."
       }
     }
   },
@@ -247,10 +271,13 @@
         "ripple": false
       }
     },
+    "$description": "Interaction state opacities, press scale, and ripple switch.",
     "press-scale": {
-      "$value": 0.97
+      "$value": 0.97,
+      "$description": "Scale factor applied while a pressable control is pressed."
     },
     "overlay": {
+      "$description": "State-layer ink opacities for hover, focus, pressed, and dragged states.",
       "hover": {
         "$value": 0
       },
@@ -265,9 +292,11 @@
       }
     },
     "pressed-opacity": {
-      "$value": 0.7
+      "$value": 0.7,
+      "$description": "Content opacity when pressed."
     },
     "disabled": {
+      "$description": "Disabled opacity multipliers for content and containers.",
       "content": {
         "$value": 0.5
       },
@@ -278,15 +307,18 @@
   },
   "duration": {
     "$type": "duration",
+    "$description": "Named animation durations.",
     "shake": {
       "$value": {
         "value": 500,
         "unit": "ms"
-      }
+      },
+      "$description": "Duration of validation-error shake animation."
     }
   },
   "transition": {
     "$type": "transition",
+    "$description": "Named CSS/NSH transition presets.",
     "enter": {
       "$value": {
         "duration": {
@@ -298,7 +330,8 @@
           "unit": "ms"
         },
         "timingFunction": "{cubicBezier.out-cubic}"
-      }
+      },
+      "$description": "Default surface entrance transition."
     }
   },
   "motion": {
@@ -311,7 +344,8 @@
             "damping": 34
           }
         }
-      }
+      },
+      "$description": "Spring or timing physics for press-down feedback."
     },
     "settle": {
       "$extensions": {
@@ -321,7 +355,8 @@
             "damping": 30
           }
         }
-      }
+      },
+      "$description": "Spring or timing physics for release settling."
     },
     "control": {
       "$extensions": {
@@ -331,7 +366,8 @@
             "damping": 70
           }
         }
-      }
+      },
+      "$description": "Spring or timing physics for small control toggles and thumbs."
     },
     "move": {
       "$extensions": {
@@ -341,7 +377,8 @@
             "damping": 38
           }
         }
-      }
+      },
+      "$description": "Spring or timing physics for layout and indicator movement."
     }
   },
   "indicator": {
