@@ -2,6 +2,7 @@
 
 - 日期：2026-11-22
 - 状态：已审定（2026-11-22），按第 9 节的顺序逐步实施，每步一个 PR
+- 修订：2026-11-22 补入字体与分发产物（#259）；同日补入 D4–D7（指示器与描边进控件预设、描边两档、交互状态、阴影刻度）与其余风格组的去向
 - 取代：[`theme-roles.md`](theme-roles.md) 中与本文冲突的部分；每一步落地时，`theme-roles.md`、[`native-themes.md`](native-themes.md)、[`design-tokens.md`](design-tokens.md)、[`design-semantics.md`](design-semantics.md)、`docs/GLOSSARY.md`、`docs/ARCHITECTURE.md` 在同一个 PR 里改成新的事实
 - 决定记录：[`docs/decisions/0001-theme-contract-v2.md`](../decisions/0001-theme-contract-v2.md)
 
@@ -96,11 +97,11 @@
 
 **第 3 批：只在一两套主题里有意义的角色。**
 
-| 角色                                  | 去向                                                                               |
-| ------------------------------------- | ---------------------------------------------------------------------------------- |
-| `disabled`、`disabled-foreground`     | `state.disabled` 的颜色字段（material `OnSurface` 0.10 / 0.38，winui `*Disabled`） |
-| `accent-pressed`、`on-accent-pressed` | `state.pressed` 的颜色字段，经 `pressed` finish 叠在 `accent` 上                   |
-| `bevel`、`accent-bevel`               | winui 的 `raised` / `accent` finish 的上下边字段                                   |
+| 角色                                                                  | 去向                                                                                 |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `disabled`、`disabled-foreground`                                     | `state.disabled` 的颜色字段（material `OnSurface` 0.10 / 0.38，winui `*Disabled`）   |
+| `accent-pressed`、`on-accent-pressed`、`state.accent-pressed-opacity` | `state.pressed` 的颜色字段，经 `pressed` finish 叠在 `accent` 上；透明度并入同一字段 |
+| `bevel`、`accent-bevel`                                               | winui 的 `raised` / `accent` finish 的上下边字段                                     |
 
 审完之后，B 层不再出现某个组件的名字。
 
@@ -122,7 +123,7 @@
 
 - `shape.corners.button: "full" | "radius"` 决定按钮类控件是否画成胶囊；除按钮外的元素都不读它。
 - 嵌套元素的圆角按同心推出（内 = 外 − 内边距），不再单独写 `inset` 圆角，也不再写 `size.control.corner`（5 / 7）。
-- `shape.corners.field: "top"` 保留。
+- `shape.corners.field`（M3 填充式输入框只圆上角）移进控件预设（第 4 节）：它以组件命名，取值只随控件形态变。
 - A 层的 `radius`（shadcn 的基准圆角，应用里的 `rounded-lg` 等由它推导）写成 `{radius-control}`。
 
 ## 3 尺度
@@ -136,6 +137,8 @@
 | 字体 | 每套主题只定义两个字体族 `font.family.sans` 与 `font.family.mono`，输出为 A 层的 `font-sans` / `font-mono`；用系统字体的主题写通用族（`system-ui`、`monospace`），NSH 把通用族当作系统字体。NSH 用 `font-sans` 画所有没写字体的文字，所以 `typography` 组上的 `fontFamily` 扩展、`semantics.json` 的 `typography.fontFamily` 和 `font.family()` 一并删除。7 个字阶复合 token 的 `fontFamily` 是 DTCG typography 类型的必填字段，设计工具导入时要用，一律写成 `{font.family.sans}`，不再写死 `["system-ui", "sans-serif"]`（现在 winui 导出的字阶丢了 Segoe UI Variable）。等宽文字只经 `mono()` 读 `font-mono` |
 | 动效 | 3 个弹簧 `fast` / `default` / `slow`，按速度命名，不按组件命名。用途固定：控件状态（开关、勾选）用 `fast`，按压与移动用 `default`，落定与面板进出用 `slow`。winui 从官方时长里取 3 个。material 的 `move` 现在是 380，归到 `default` 后会变快，实施时要对照 M3 motion scheme 核对                                                                                                                                                                                                                                                                                                                              |
 | 时长 | `duration.shake`（6 套主题都是 500）移进组件                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| 描边 | 两档：`hairline`（分隔线、面的边）与 `control`（控件描边）。`surface` 在 5 套主题里等于 `hairline`，并入；material 的面"不画边"改由 finish 表达（`border-color: transparent` 或不写边），布局可能差 1px，要审截图。`indicator`（标签页、侧栏指示条的粗细）移进控件预设                                                                                                                                                                                                                                                                                                                                         |
+| 保留 | `shape.curve`（continuous / circular）、`size.hit`（平台最小点击区）、`dimension.focus`（焦点样式、宽度、偏移，属状态层）、`transition.enter`（一条进场过渡，归动效）照旧，各是一个值或一个枚举                                                                                                                                                                                                                                                                                                                                                                                                                |
 
 验收：
 
@@ -147,6 +150,7 @@
 - 主题里只写一个枚举：`controls: "base" | "material" | "winui"`。
 - 每个控件的几何与形态写在组件里，是这三档的预设表，分指针、触屏两档；预设里引用颜色时，只引用第 1 节的角色。
 - 覆盖的控件：checkbox、switch、slider、radio、progress、spinner、tabs、calendar，以及 sheet 的 grabber。
+- 一并移入的形态选择（D4）：`indicator.tabs` / `nav` / `field`（pill、underline、fill、bar、box）、`shape.corners.field`（all / top）、`stroke.indicator`（2 / 3）。它们以组件命名，6 套主题的取值正好随 base / material / winui 三档变化。
 - 主题作者从"填 100 多个数"变成"选一档"。想要第四种控件形态，要么改组件的预设，要么在应用里覆写组件的样式：控件形态是组件的事，不是主题的事。
 
 验收：
@@ -171,21 +175,31 @@
 
 `grabber` 不再是 finish，归 sheet 的控件预设。
 
-- **阴影刻度。** 每套主题、每种外观最多 4 档 `elevation`：
-  - `flat`
-  - `raised`（卡片、凸起控件）
-  - `overlay`（菜单、浮层、toast）
-  - `modal`
+- **阴影刻度（D7）。** 现在一串 `shadow` 里混着投影、内阴影与边光三样东西（default 有 29 种不同的串）。拆成三条刻度，finish 只引用、不手写：
 
-  finish 的 `shadow` 只引用其中一档；需要内高光的主题，内高光也只有一个值，并且算在这一档里。
+  | 刻度             | 档位                                                      | 用途                                                                                 |
+  | ---------------- | --------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+  | 投影 `elevation` | `sm` / `md` / `lg` / `xl`，每种外观最多 4 个值，可共用    | `sm` 控件凸起与 knob，`md` 卡片，`lg` 浮层（菜单、提示、toast），`xl` 对话框与 sheet |
+  | 内阴影 `inset`   | 每种外观 1 个值                                           | 井、轨道、按下                                                                       |
+  | 边光 `edge`      | 每种外观最多 2 个：`surface`、`accent`；平面主题写 `null` | 斜面高光、内描边（default、solid-glass、apple 的 0.5px 描边）                        |
+
+  官方对照：shadcn 为 `shadow-xs` / `-sm` / `-md` / `-lg`；M3 为 level 1 / 1 / 2 / 3；WinUI 3 为 depth 2 / 8 / 32 / 128（tooltip 的 depth 16 并入 32，按原则 6 记为差异）。
+
+  位置：
+
+  - 源码写在 DTCG 的 `light.tokens.json` / `dark.tokens.json` 的 `shadow` 组（DTCG 标准的 `shadow` 复合类型，支持 `inset` 与多层）。阴影随外观变化，颜色引用颜色角色，不写死 oklch。
+  - 编译进 `semantics.json` 的 `elevation`（按 light / dark，与 finishes 并列），**不进 `theme.json`**：NSH 读 `theme.json` 时丢掉阴影（`theme.rs` 的测试断言 `shadow-sm` 读不到），运行时的 `token()` 读不到。
+  - finish 的 `shadow` 写引用（如 `["{shadow.edge.surface}", "{shadow.sm}"]`），编译时拼成一串 CSS；组件读 finish 的方式不变。
+  - `theme.ts` 加 `elevation(level)`，与 `shape`、`font` 并列；组件与应用要阴影时从这里取，不写字面量。
+  - 导出的 `light.tokens.json` / `dark.tokens.json` 带上 `shadow` 组，设计工具可以导入为效果样式。
 
 - **平涂。** `gradient` 可以写 `null`，删掉所有 `linear-gradient(x 0%, x 100%)`。finish 的字段集合仍然固定，平涂主题写 `null`，不写空渐变。
 
 验收：
 
-- 每套主题 finish ≤ 12 个，`shadow` 的不同取值 ≤ 4 个（每种外观）。
+- 每套主题 finish ≤ 12 个；每种外观的阴影构件 ≤ 7 个（投影 4、内阴影 1、边光 2），finish 里没有手写的阴影串。
 - 全库没有退化渐变。
-- 有可见变化的页面，6 套主题的截图都已审阅。
+- 有可见变化的页面，6 套主题的截图都已审阅。已知会变的：solid-glass 的 knob 阴影（0.3）与 raised（0.06）并到同一档；default 的卡片（0.04）与控件凸起（0.05）并到同一档。
 
 ## 6 材质
 
@@ -219,6 +233,8 @@
 - 不改 `nsh` / `nsh/base`。
 - 不为删掉的角色、finish、圆角、刻度名留 alias 或兼容层（AGENTS.md：不为旧 id 提供别名）。
 - 不改 A 层槽名。
+- 应用里的 Tailwind `shadow-*` 类不跟主题：NSH 不读主题文件里的阴影，这些类用 Tailwind 的默认值。应用要跟随主题的阴影，用 `elevation()`。
+- `state` 组（`press-scale`、M3 的 state layer `overlay` 与 `ripple`、`pressed-opacity`、`disabled`）保留在主题里（D6）：它作用于所有可按的东西，不只是控件，所以不进控件预设。
 - 自定义主题的作者要按 `CHANGELOG.md` 里每一步的 breaking 条目迁移。
 
 ## 8 跨步骤的验收
@@ -227,13 +243,14 @@
 - 标为"逐像素相同"的步骤，用 PNG 逐像素比对作证据；其他步骤，变化的截图在 6 套主题下都已审阅。
 - 规则由 `check:theme` / `theme-lint` 执行，不靠文档约束。
 - 分发产物跟着源码一起变：`packages/theme/themes/<id>/light.tokens.json` / `dark.tokens.json`（给 Figma、Tokens Studio 等设计工具；`init` 也把它们和 `DESIGN.md` 复制进应用）由 `tokens:build` 从 DTCG 源码生成，不手改，由 `tokens:build --check` 保证一致。它们是对外格式：每一步的 `CHANGELOG.md` breaking 条目要写出设计工具一侧的变化（删掉的变量、改名的组、不再导出的控件几何），`design-tokens.md` 里的数量与结构描述在同一个 PR 里改成新的事实。
+- 每一步一起改的地方：读这些值的代码（`packages/ui`、`apps/website/demos`、`apps/showcase`、`apps/gallery`）；`DESIGN.md` 的生成器（`scripts/tokens/design-md.ts`）；宿主 `setThemeOverrides` 能覆写的键；文档站的 `theme.md`、`themes.mdx`、`customizing.md`；`packages/theme/README.md` 与 `README.zh.md`。
 
 ## 9 实施顺序
 
 每步一个 issue、一个 PR，串行：
 
 1. ✅ B2 合并（#256），作为基线
-2. 控件预设（第 4 节），逐像素相同
+2. 控件预设（第 4 节，含 D4 的指示器、输入框圆角与指示条粗细），逐像素相同；输入框 #249 排在这一步之后，直接写进预设
 3. 圆角（第 2 节，#253）
 4. 颜色：第 1 批（逐像素相同）→ 第 2 批 → 第 3 批
 5. 尺度（第 3 节），含字体
@@ -242,8 +259,12 @@
 
 ## 10 已确认的问题
 
-| #   | 问题                                       | 建议                                                                                                                                                                                                                                                                                 |
-| --- | ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| D1  | `sidebar-*`：删掉，还是作为对外格式保留？  | ✅ 已确认（2026-11-22）：**保留为 A 层 alias，组件不读。** NSH 的 `Theme` 就是 shadcn 的 31 个槽，缺一个就退回 neutral 灰，应用里写的 `bg-sidebar` 会变色。这改了之前"第 2 批删掉其余 `sidebar-*`"的计划                                                                             |
-| D2  | 材质是写在 finish 的字段里，还是按层固定？ | ✅ 已确认（2026-11-22）：**写在 finish 的 `material` 字段里，用枚举（方案 A）。** apple 现在在 `raised` 上也用玻璃（#252），按层固定会丢掉这个选择                                                                                                                                   |
-| D3  | finish 数量                                | ✅ 已确认（2026-11-22）：**9 层 + 3 种状态 = 12 个**，M3 中过于个性化的差异按原则 6 裁剪。（比之前说的"约 8 个"多了 `modal` 和 `inverse`）。M3 的对话框（`SurfaceContainerHigh`）与菜单（`SurfaceContainer`）颜色不同，提示与 toast 的反色面也是一层，和第 2 节圆角的 `modal` 对得上 |
+| #   | 问题                                                                                   | 建议                                                                                                                                                                                                                                                                                 |
+| --- | -------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| D1  | `sidebar-*`：删掉，还是作为对外格式保留？                                              | ✅ 已确认（2026-11-22）：**保留为 A 层 alias，组件不读。** NSH 的 `Theme` 就是 shadcn 的 31 个槽，缺一个就退回 neutral 灰，应用里写的 `bg-sidebar` 会变色。这改了之前"第 2 批删掉其余 `sidebar-*`"的计划                                                                             |
+| D2  | 材质是写在 finish 的字段里，还是按层固定？                                             | ✅ 已确认（2026-11-22）：**写在 finish 的 `material` 字段里，用枚举（方案 A）。** apple 现在在 `raised` 上也用玻璃（#252），按层固定会丢掉这个选择                                                                                                                                   |
+| D3  | finish 数量                                                                            | ✅ 已确认（2026-11-22）：**9 层 + 3 种状态 = 12 个**，M3 中过于个性化的差异按原则 6 裁剪。（比之前说的"约 8 个"多了 `modal` 和 `inverse`）。M3 的对话框（`SurfaceContainerHigh`）与菜单（`SurfaceContainer`）颜色不同，提示与 toast 的反色面也是一层，和第 2 节圆角的 `modal` 对得上 |
+| D4  | 以组件命名的形态选择（`indicator.*`、`shape.corners.field`、`stroke.indicator`）放哪？ | ✅ 已确认（2026-11-22）：**并入控件预设**（第 4 节）                                                                                                                                                                                                                                 |
+| D5  | 描边 4 个值                                                                            | ✅ 已确认（2026-11-22）：**收成 `hairline`、`control` 两档**，`surface` 并入 `hairline`，`indicator` 进控件预设（第 3 节）                                                                                                                                                           |
+| D6  | `state` 组                                                                             | ✅ 已确认（2026-11-22）：**保留在主题**，只把 `accent-pressed-opacity` 并入第 3 批的 `state.pressed`（第 7 节）                                                                                                                                                                      |
+| D7  | 阴影                                                                                   | ✅ 已确认（2026-11-22）：**拆成投影 4 档、内阴影 1 个、边光 2 个**；源码在亮暗 DTCG 文件，编译进 `semantics.json`，不进 `theme.json`（第 5 节）                                                                                                                                      |
