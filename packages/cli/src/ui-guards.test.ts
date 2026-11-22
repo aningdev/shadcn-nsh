@@ -141,8 +141,10 @@ describe("component sources (P3: colors come from the theme)", () => {
       expect(rule.test(line), line).toBe(true);
     }
     // The theme's tiers, a pill and a written-out corner are all the radius a class may name.
-    expect(rule.test('class="rounded-(--radius-control) rounded-(--radius-card)"')).toBe(false);
-    expect(rule.test('class="rounded-t-(--radius-card)"')).toBe(false);
+    expect(rule.test('class="rounded-(--radius-control) rounded-(--radius-container)"')).toBe(
+      false,
+    );
+    expect(rule.test('class="rounded-t-(--radius-container)"')).toBe(false);
     expect(rule.test('class="rounded-full rounded-[4px]"')).toBe(false);
   });
 });

@@ -54,7 +54,7 @@ function App() {
       <Text testID="tooltip">{`tooltip:${finish.tooltip.backgroundColor}`}</Text>
       <Text testID="inverse-fill">{`inverse-fill:${finish.inverse.backgroundColor}`}</Text>
       <Text testID="field">{`field:${inputLook().style.borderBottomWidth}|${inputLook().style.borderTopWidth}`}</Text>
-      <Text testID="corners">{`corners:${fieldCorners(shape.field).borderBottomLeftRadius}|${fieldCorners(shape.field).borderTopLeftRadius}`}</Text>
+      <Text testID="corners">{`corners:${fieldCorners(shape.control).borderBottomLeftRadius}|${fieldCorners(shape.control).borderTopLeftRadius}`}</Text>
       <If when={shown()}>
         <Tabs defaultValue="a">
           <TabsList>

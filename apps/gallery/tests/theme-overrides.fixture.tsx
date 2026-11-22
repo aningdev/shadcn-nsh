@@ -5,8 +5,8 @@ import defaultTheme from "../../../packages/theme/themes/default/index";
 import { Button, dialogCard } from "../../../packages/ui";
 
 /**
- * Simulates a host override of `radius-dialog` and `font-sans` through `selectTheme` (which
- * calls `setTheme`): the semantic layer references `{radius-dialog}` and `{font-sans}`, so both
+ * Simulates a host override of `radius-modal` and `font-sans` through `selectTheme` (which
+ * calls `setTheme`): the semantic layer references `{radius-modal}` and `{font-sans}`, so both
  * reach components on the next frame without editing `semantics.json` values directly.
  */
 const hostOverridden: AppTheme = {
@@ -19,7 +19,7 @@ const hostOverridden: AppTheme = {
       ...defaultTheme.theme.cssVars,
       theme: {
         ...defaultTheme.theme.cssVars?.theme,
-        "radius-dialog": "32px",
+        "radius-modal": "32px",
         "font-sans": "ui-rounded",
       },
     },
@@ -37,7 +37,7 @@ function App() {
   return (
     <View>
       <Text testID="dialog-radius">{`dialog-radius:${dialogCard().borderRadius}`}</Text>
-      <Text testID="shape-dialog">{`shape-dialog:${shape.dialog}`}</Text>
+      <Text testID="shape-modal">{`shape-modal:${shape.modal}`}</Text>
       <Text testID="font-family">{`font-family:${font.family() ?? "system"}`}</Text>
       <Text testID="font-token">{`font-token:${String(token("font-sans" as keyof Tokens) ?? "system")}`}</Text>
       <Text testID="sample">Sample</Text>

@@ -31,11 +31,8 @@ const reshaped: AppTheme = {
       theme: {
         ...defaultTheme.theme.cssVars?.theme,
         "radius-control": "20px",
-        "radius-field": "3px",
-        "radius-chip": "5px",
-        "radius-overlay": "6px",
-        "radius-dialog": "28px",
-        "radius-sheet": "30px",
+        "radius-container": "28px",
+        "radius-modal": "30px",
       },
     },
   },
@@ -59,12 +56,26 @@ const reshaped: AppTheme = {
   },
 };
 
+/** Same radii as `reshaped`, with `shape.corners.button: "full"` for capsule buttons. */
+const capsuleButtons: AppTheme = {
+  ...reshaped,
+  id: "capsule-buttons",
+  label: "Capsule",
+  semantics: {
+    ...reshaped.semantics,
+    shape: {
+      ...reshaped.semantics.shape,
+      corners: { button: "full" },
+    },
+  },
+};
+
 function App() {
   const button = buttonLook("secondary");
   const disabledText = buttonLabel("secondary", { disabled: true });
   return (
     <View>
-      <Text>{`roles=${shape.control}|${shape.field}|${shape.chip}|${shape.dialog}|${shape.sheet}|${shape.overlay}`}</Text>
+      <Text>{`roles=${shape.control}|${shape.container}|${shape.modal}|${shape.button}`}</Text>
       <Text>{`dialog=${dialogCard().borderRadius}|${dialogCard().borderWidth}`}</Text>
       <Text>{`field=${inputLook().style.borderRadius}|${inputLook().style.borderWidth}`}</Text>
       <Text>{`concentric=${rounded(shape.control, 3).borderRadius}|${rounded(shape.control, 99).borderRadius}`}</Text>
@@ -74,6 +85,7 @@ function App() {
       <Text>{`sizes=${controlHeight.sm}|${controlHeight.lg}|${iconSize.md}|${hitTarget()}|${stroke.hairline}|${stroke.surface}`}</Text>
       <Text testID="theme">{`theme:${currentTheme() ?? "build-time"}`}</Text>
       <Button onPress={() => selectTheme(reshaped)}>Reshaped</Button>
+      <Button onPress={() => selectTheme(capsuleButtons)}>Capsule</Button>
       <Button onPress={() => selectTheme(null)}>Build-time</Button>
     </View>
   );
