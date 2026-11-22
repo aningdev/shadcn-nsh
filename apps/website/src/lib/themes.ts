@@ -34,6 +34,8 @@ export const FINISH_FIELDS = [
   "gradient",
   "shadow",
   "border-color",
+  "border-top-color",
+  "border-bottom-color",
   "backdropFilter",
 ] as const;
 
@@ -274,6 +276,8 @@ export function finishSampleCss(): string {
         const boxShadow = value("shadow");
         const backdropFilter = value("backdropFilter");
         const borderColor = value("border-color");
+        const borderTopColor = value("border-top-color");
+        const borderBottomColor = value("border-bottom-color");
         if (backgroundColor !== undefined)
           declarations.push(`background-color:${backgroundColor};`);
         if (backgroundImage !== undefined)
@@ -281,6 +285,9 @@ export function finishSampleCss(): string {
         if (boxShadow !== undefined) declarations.push(`box-shadow:${boxShadow};`);
         if (backdropFilter !== undefined) declarations.push(`backdrop-filter:${backdropFilter};`);
         if (borderColor !== undefined) declarations.push(`border:1px solid ${borderColor};`);
+        if (borderTopColor !== undefined) declarations.push(`border-top-color:${borderTopColor};`);
+        if (borderBottomColor !== undefined)
+          declarations.push(`border-bottom-color:${borderBottomColor};`);
         rules.push(`${prefix}[data-sample="${palette.id}-${role}"]{${declarations.join("")}}`);
       }
     }

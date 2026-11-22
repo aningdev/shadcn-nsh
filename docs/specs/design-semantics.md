@@ -39,11 +39,11 @@
 
 `bun run check:theme`（`scripts/theme-lint.ts`）对每一处 `{token}` 执行严格的类型与防重复检查，token 种类按 DTCG `$type` 命名：
 
-| 语义层位置                                                                                                                                  | 要求的 `$type` | 不允许的写法                                                     |
-| ------------------------------------------------------------------------------------------------------------------------------------------- | -------------- | ---------------------------------------------------------------- |
-| `finishes` 颜色字段（`background`、`gradient`、`border-color`、`shadow` 中的引用）与 `material.apple.tint`、`material.android.ripple.color` | `color`        | 非墨色/非待定表字面量、旧式 `var(--x)`、引用非 `color` token     |
-| `dimension.shape.{control,field,chip,card,overlay,dialog,sheet,inset}`                                                                      | `dimension`    | 裸数字字面量、引用非 `dimension` token                           |
-| `typography.fontFamily`（非 `null` 时）                                                                                                     | `fontFamily`   | 裸字符串（如 `"sans"` / `"rounded"`）、引用非 `fontFamily` token |
+| 语义层位置                                                                                                                                                                             | 要求的 `$type` | 不允许的写法                                                     |
+| -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------- | ---------------------------------------------------------------- |
+| `finishes` 颜色字段（`background`、`gradient`、`border-color`、`border-top-color`、`border-bottom-color`、`shadow` 中的引用）与 `material.apple.tint`、`material.android.ripple.color` | `color`        | 非墨色/非待定表字面量、旧式 `var(--x)`、引用非 `color` token     |
+| `dimension.shape.{control,field,chip,card,overlay,dialog,sheet,inset}`                                                                                                                 | `dimension`    | 裸数字字面量、引用非 `dimension` token                           |
+| `typography.fontFamily`（非 `null` 时）                                                                                                                                                | `fontFamily`   | 裸字符串（如 `"sans"` / `"rounded"`）、引用非 `fontFamily` token |
 
 ## 3 两档与明暗稀疏覆盖
 
