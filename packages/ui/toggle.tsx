@@ -102,11 +102,16 @@ const dimensions = (o?: ToggleLookOptions) => toggleSizes[read(o?.size) ?? "defa
  * `toggleLabel` for a label and `toggleGlyph` for an icon: muted while
  * off, the text's color while on.
  */
+const splitDisabled = () => dimmed.disabled !== dimmed.disabledContainer;
+
 export function toggleLook(o?: ToggleLookOptions) {
   const outline = o?.variant === "outline";
   return {
     get style(): ViewStyle {
       const dims = dimensions(o);
+      const on = !!read(o?.on);
+      const disabled = !!read(o?.disabled);
+      const split = disabled && splitDisabled();
       return {
         // The terminal sizes it to its label, which it never breaks: a
         // track too narrow for its tools wraps them instead.
@@ -123,7 +128,20 @@ export function toggleLook(o?: ToggleLookOptions) {
         ...(outline
           ? { borderColor: colors.input, backgroundColor: colors.field }
           : { borderColor: "transparent" }),
-        ...(read(o?.on) ? finish.on : {}),
+        ...(on && !split ? finish.on : {}),
+        ...(split
+          ? on
+            ? finish.disabled
+            : outline
+              ? finish.disabled.borderColor === "transparent"
+                ? {
+                    backgroundColor: "transparent",
+                    borderColor: colors.disabled,
+                    boxShadow: "none",
+                  }
+                : finish.disabled
+              : { backgroundColor: "transparent", borderColor: "transparent", boxShadow: "none" }
+          : {}),
         ...transition,
         ...read(o?.style),
       };
@@ -134,7 +152,7 @@ export function toggleLook(o?: ToggleLookOptions) {
     get hoverStyle(): ViewStyle | undefined {
       if (read(o?.disabled)) return undefined;
       if (themeStyle().state.overlay.hover > 0) {
-        return read(o?.on) ? hovered("on-brand", finish.on.backgroundImage) : hovered();
+        return read(o?.on) ? hovered("on-foreground", finish.on.backgroundImage) : hovered();
       }
       return read(o?.on) ? undefined : hovered();
     },
@@ -143,7 +161,7 @@ export function toggleLook(o?: ToggleLookOptions) {
       if (themeStyle().state.overlay.pressed > 0) {
         return {
           ...(read(o?.on)
-            ? stateLayer("pressed", "on-brand", finish.on.backgroundImage)
+            ? stateLayer("pressed", "on-foreground", finish.on.backgroundImage)
             : stateLayer("pressed", "foreground")),
           ...sink(0.92),
         };
@@ -154,26 +172,28 @@ export function toggleLook(o?: ToggleLookOptions) {
       return focusRing(1);
     },
     get disabledStyle(): ViewStyle {
-      return { opacity: dimmed.disabled };
+      return splitDisabled() ? {} : { opacity: dimmed.disabled };
     },
     get hitSlop(): number | undefined {
       return touchSlop(dimensions(o).side);
     },
     get android(): AndroidProps | undefined {
-      return pressRipple(read(o?.on) ? "on-brand" : "foreground", o?.disabled);
+      return pressRipple(read(o?.on) ? "on-foreground" : "foreground", o?.disabled);
     },
   };
 }
 
-/** The ink of a toggle's content: the text's color while on, muted while off. */
-const ink = (pressed: Live<boolean | undefined>) =>
-  read(pressed) ? colors.foreground : colors.mutedForeground;
+/** The ink of a toggle's content: the selected color while on, muted while off, disabled ink when disabled apart. */
+const ink = (pressed: Live<boolean | undefined>, disabled?: Live<boolean | undefined>) => {
+  if (read(disabled) && splitDisabled()) return colors.disabledForeground;
+  return read(pressed) ? colors.onForeground : colors.mutedForeground;
+};
 
 /** The label of a `toggleLook` of the same options: 13 points with a pointer, 15 on a touch screen (`sm` 12 / 13, `lg` 14 / 16), medium weight, muted while off. */
 export function toggleLabel(pressed: Live<boolean | undefined>, o?: ToggleLookOptions): TextStyle {
   return {
     get color() {
-      return ink(pressed);
+      return ink(pressed, o?.disabled);
     },
     get fontSize() {
       return dimensions(o).text;
@@ -191,7 +211,7 @@ export function toggleGlyph(pressed: Live<boolean | undefined>, o?: ToggleLookOp
       return dimensions(o).icon;
     },
     get tint() {
-      return ink(pressed);
+      return ink(pressed, o?.disabled);
     },
   };
 }

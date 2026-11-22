@@ -1,4 +1,5 @@
 import {
+  colors,
   controlHeight,
   currentTheme,
   dimmed,
@@ -13,7 +14,7 @@ import {
 import { mount, Text, View } from "nsh";
 
 import defaultTheme from "../../../packages/theme/themes/default/index";
-import { Button, buttonLook, dialogCard, inputLook } from "../../../packages/ui";
+import { Button, buttonLabel, buttonLook, dialogCard, inputLook } from "../../../packages/ui";
 
 const { dimension, state } = defaultTheme.semantics;
 
@@ -59,6 +60,7 @@ const reshaped: AppTheme = {
 
 function App() {
   const button = buttonLook("secondary");
+  const disabledText = buttonLabel("secondary", { disabled: true });
   return (
     <View>
       <Text>{`roles=${shape.control}|${shape.field}|${shape.chip}|${shape.dialog}|${shape.sheet}|${shape.overlay}`}</Text>
@@ -66,7 +68,8 @@ function App() {
       <Text>{`field=${inputLook().style.borderRadius}|${inputLook().style.borderWidth}`}</Text>
       <Text>{`concentric=${rounded(shape.control, 3).borderRadius}|${rounded(shape.control, 99).borderRadius}`}</Text>
       <Text>{`button=${button.style.height}|${button.style.borderRadius}|${button.style.borderWidth}`}</Text>
-      <Text>{`fade=${button.disabledStyle.opacity as number}|${dimmed.pressed}|${dimmed.disabledContainer}`}</Text>
+      <Text>{`fade=${dimmed.disabled}|${dimmed.pressed}|${dimmed.disabledContainer}`}</Text>
+      <Text>{`disabledMode=${String(button.disabledStyle.opacity ?? "split")}|${String(disabledText.color === colors.disabledForeground)}`}</Text>
       <Text>{`sizes=${controlHeight.sm}|${controlHeight.lg}|${iconSize.md}|${hitTarget()}|${stroke.hairline}|${stroke.surface}`}</Text>
       <Text testID="theme">{`theme:${currentTheme() ?? "build-time"}`}</Text>
       <Button onPress={() => selectTheme(reshaped)}>Reshaped</Button>

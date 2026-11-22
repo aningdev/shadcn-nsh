@@ -1,6 +1,6 @@
 // A card: the look (`cardLook`) and the seven parts that wear it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, TERMINAL_GAP, terminal, font } from "@shadcn-nsh/theme";
+import { colors, finish, platformMaterial, TERMINAL_GAP, terminal, font } from "@shadcn-nsh/theme";
 import type { TextStyle, TextProps, ViewProps, ViewStyle } from "nsh";
 import { split, Text, View } from "nsh";
 
@@ -31,6 +31,8 @@ export interface CardLook {
   readonly content: ViewStyle;
   /** What goes under the content: a wrapping row, centred, `8` apart. */
   readonly footer: ViewStyle;
+  /** The card surface's elevation step under the pointer where the theme promotes it. */
+  readonly hover: ViewStyle | undefined;
 }
 
 /**
@@ -107,6 +109,11 @@ export function cardLook(): CardLook {
         paddingHorizontal: terminal ? 0 : pad(),
       };
     },
+    get hover(): ViewStyle | undefined {
+      return finish.sectionHover.boxShadow !== "none"
+        ? { boxShadow: finish.sectionHover.boxShadow }
+        : undefined;
+    },
   };
 }
 // @port end
@@ -146,9 +153,27 @@ export type CardFooterProps = ViewProps;
 
 /** A card's surface. */
 export function Card(props: CardProps) {
-  const [, rest] = split(props, ["style", "children"]);
+  const [, rest] = split(props, ["style", "hoverStyle", "children"]);
+  const look = cardLook();
   return (
-    <View {...rest} style={[cardLook().card, props.style ?? null]}>
+    <View
+      {...rest}
+      {...platformMaterial("section")}
+      style={[
+        look.card,
+        look.hover
+          ? {
+              transitionProperty: "boxShadow",
+              transitionDuration: 150,
+              transitionTimingFunction: "ease-out",
+            }
+          : null,
+        props.style ?? null,
+      ]}
+      hoverStyle={
+        look.hover || props.hoverStyle ? [look.hover ?? null, props.hoverStyle ?? null] : undefined
+      }
+    >
       {props.children}
     </View>
   );

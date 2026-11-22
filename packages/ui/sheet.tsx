@@ -1,6 +1,6 @@
 // A sheet: the look (`sheetPanel`, `sheetGrabber`) and the parts that wear it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, cornerCurve, shape, stroke } from "@shadcn-nsh/theme";
+import { colors, cornerCurve, finish, shape, stroke, style } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { context, keyboardFrame, safeArea, split, windowSize } from "nsh";
 import {
@@ -91,12 +91,13 @@ export function sheetPanel(side: SheetSide): ViewStyle {
  * fill, centered. It is the sheet's own handle — the one `nsh/base` lets a press and a screen reader
  * drag between detents — not a picture of one, so a sheet never shows two. */
 export function sheetGrabber(): ViewStyle {
+  const { width, height } = style().dimension.grabber;
   return {
-    width: 36,
-    height: 5,
-    borderRadius: 3,
+    width,
+    height,
+    borderRadius: Math.ceil(height / 2),
     alignSelf: "center",
-    backgroundColor: colors.raised,
+    backgroundColor: finish.grabber.backgroundColor,
   };
 }
 // @port end

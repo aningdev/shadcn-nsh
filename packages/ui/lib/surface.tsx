@@ -142,10 +142,11 @@ export function sectionSurface(o?: SectionSurfaceOptions): ViewStyle {
     };
   }
   return {
-    backgroundColor: colors.card,
+    backgroundColor: finish.section.backgroundColor,
     ...rounded(density.surface),
     borderWidth: stroke.surface,
-    borderColor: colors.border,
+    borderColor: finish.section.borderColor,
+    ...(finish.section.boxShadow !== "none" ? { boxShadow: finish.section.boxShadow } : {}),
     ...(o?.padded ? { padding: density.pad } : {}),
   };
 }

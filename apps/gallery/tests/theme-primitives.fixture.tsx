@@ -128,7 +128,7 @@ function App() {
       <Text>{`toggleOnAndroid=${JSON.stringify(onToggle.android ?? null)}`}</Text>
       <Text>{`toastAndroid=${JSON.stringify(toastClose.android ?? null)}`}</Text>
       <Text>{`menuMaterial=${JSON.stringify(platformMaterial("menu"))}`}</Text>
-      <Text>{`tokens=${colors.onBrand}|${colors.primaryForeground}|${colors.inverseForeground}|${colors.primary}`}</Text>
+      <Text>{`tokens=${colors.onBrand}|${colors.primaryForeground}|${colors.inverseForeground}|${colors.primary}|${colors.onForeground}`}</Text>
       <Roll value={step()}>{`roll=${step()}`}</Roll>
       <View
         style={{

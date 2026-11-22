@@ -19,6 +19,7 @@ test("corners, strokes, heights and fades follow the theme's roles when the them
   expect(find(app.texts(), "concentric=")).toBe("5|0");
   expect(find(app.texts(), "button=")).toBe("28|8|1");
   expect(find(app.texts(), "fade=")).toBe("0.5|0.7|0.5");
+  expect(find(app.texts(), "disabledMode=")).toBe("0.5|false");
   expect(find(app.texts(), "sizes=")).toBe("24|34|14|0|1|1");
 
   await app.press("text:Reshaped");
@@ -29,6 +30,7 @@ test("corners, strokes, heights and fades follow the theme's roles when the them
   expect(find(app.texts(), "concentric=")).toBe("17|0");
   expect(find(app.texts(), "button=")).toBe("36|20|2");
   expect(find(app.texts(), "fade=")).toBe("0.3|0.5|0.2");
+  expect(find(app.texts(), "disabledMode=")).toBe("split|true");
   expect(find(app.texts(), "sizes=")).toBe("30|44|18|48|2|2");
 
   await app.press("text:Build-time");

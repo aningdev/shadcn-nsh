@@ -266,15 +266,7 @@ function App() {
         onCancel={() => log("onCancel")}
       >
         <If when={side() === "bottom"}>
-          <View
-            style={{
-              width: 36,
-              height: 5,
-              borderRadius: 3,
-              alignSelf: "center",
-              backgroundColor: colors.raised,
-            }}
-          />
+          <View style={sheetGrabber()} />
         </If>
         <Text style={{ fontSize: desktop ? 16 : 18, fontWeight: "600", color: colors.foreground }}>
           Filters
