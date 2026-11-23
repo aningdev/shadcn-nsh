@@ -200,8 +200,10 @@ describe("handleLook", () => {
   test("a circle grows under a touch screen's press, and brightens on hover", () => {
     expect(handleLook("circle")).toMatchObject({
       rail: { pointer: 6, touch: 8 },
+      band: { pointer: 20, touch: 32 },
       knob: { pointer: 14, touch: 20 },
       knobPressed: { pointer: 14, touch: 32 },
+      verticalLength: { pointer: 128, touch: 144 },
       brightensOnHover: true,
     });
   });
@@ -216,6 +218,8 @@ describe("handleLook", () => {
       knob: { width: 4, height: 44 },
       knobPressedWidth: 2,
       rail: 16,
+      band: 44,
+      verticalLength: { pointer: 128, touch: 144 },
       endRadius: 2,
       brightensOnHover: false,
     });
@@ -228,8 +232,15 @@ describe("handleLook", () => {
       knobHover: 14,
       knobPressed: 10,
       rail: 4,
+      band: 32,
+      verticalLength: { pointer: 128, touch: 144 },
       brightensOnHover: false,
     });
+  });
+
+  test("a vertical slider is as long on every form", () => {
+    const lengths = handles.map((value) => JSON.stringify(handleLook(value).verticalLength));
+    expect(new Set(lengths).size).toBe(1);
   });
 });
 

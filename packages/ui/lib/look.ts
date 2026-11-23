@@ -362,8 +362,11 @@ export function trackLook(value: Track): TrackLook {
 export interface CircleHandleLook {
   readonly form: "circle";
   readonly rail: Tiered<number>;
+  /** The band a slider keeps around the rail: the knob plus the room it sits in. */
+  readonly band: Tiered<number>;
   readonly knob: Tiered<number>;
   readonly knobPressed: Tiered<number>;
+  readonly verticalLength: Tiered<number>;
   /** The knob and track a switch made from this handle draws: the icon and height scales at `md`. */
   readonly switch: { readonly knob: Scale; readonly track: Scale };
   readonly brightensOnHover: true;
@@ -375,6 +378,9 @@ export interface BarHandleLook {
   readonly knob: { readonly width: number; readonly height: number };
   readonly knobPressedWidth: number;
   readonly rail: number;
+  /** The band is as tall as the knob: M3's run *is* the band's height. */
+  readonly band: number;
+  readonly verticalLength: Tiered<number>;
   readonly endRadius: number;
   /** A switch keeps its circle on a theme whose slider handle is a bar. */
   readonly switch: null;
@@ -389,12 +395,21 @@ export interface RingHandleLook {
   readonly knobHover: number;
   readonly knobPressed: number;
   readonly rail: number;
+  /** The band a slider keeps around the rail: WinUI's 32 px slider band. */
+  readonly band: number;
+  readonly verticalLength: Tiered<number>;
   readonly switch: null;
   readonly brightensOnHover: false;
 }
 
 /** The parts a handle value draws: a slider's knob, and a switch's where the form makes one. */
 export type HandleLook = CircleHandleLook | BarHandleLook | RingHandleLook;
+
+/**
+ * How long a vertical slider's rail is, in points: the same on every handle form, because a slider
+ * is as long as the pane it sits in rather than as its knob is wide.
+ */
+const verticalLength: Tiered<number> = { pointer: 128, touch: 144 };
 
 /**
  * The knob a `control()` value draws. `circle` is the library's disc, the one a switch also uses;
@@ -408,10 +423,13 @@ export function handleLook(value: Handle): HandleLook {
         form: value,
         // 6 points of rail with a pointer, 8 on a touch screen.
         rail: { pointer: 6, touch: 8 },
+        // 20 points of band with a pointer, 32 on a touch screen: the knob plus its rail.
+        band: { pointer: 20, touch: 32 },
         // 14 points of knob with a pointer, 20 on a touch screen.
         knob: { pointer: 14, touch: 20 },
         // A press swells the knob to 32 on a touch screen, and not with a pointer.
         knobPressed: { pointer: 14, touch: 32 },
+        verticalLength,
         switch: { knob: "icon.md", track: "height.md" },
         brightensOnHover: true,
       };
@@ -422,6 +440,8 @@ export function handleLook(value: Handle): HandleLook {
         knob: { width: 4, height: 44 },
         knobPressedWidth: 2,
         rail: 16,
+        band: 44,
+        verticalLength,
         // 2 points: the bar's rounded end.
         endRadius: 2,
         switch: null,
@@ -436,6 +456,8 @@ export function handleLook(value: Handle): HandleLook {
         knobHover: 14,
         knobPressed: 10,
         rail: 4,
+        band: 32,
+        verticalLength,
         switch: null,
         brightensOnHover: false,
       };

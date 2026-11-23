@@ -14,9 +14,11 @@ test("a button is compact with a pointer and roomier, with a hit slop, on a touc
 });
 
 test("the switch knob sits as far from the track's end on as off", async () => {
-  const app = await open("./density.fixture.tsx", { platform: "ios" });
-  // width less two (border + inset) less the knob: 28 - 4 - 12, 42 - 4 - 20, 34 - 4 - 16.
-  expect(find(app.texts(), "travel=")).toBe("12|18|14");
+  const desktop = await open("./density.fixture.tsx", { platform: "macos" });
+  const touch = await open("./density.fixture.tsx", { platform: "ios" });
+  // width less two (border + inset) less the knob: 28 - 4 - 12 twice, then 42 - 4 - 20, 34 - 4 - 16.
+  expect(find(desktop.texts(), "travel=")).toBe("12|12");
+  expect(find(touch.texts(), "travel=")).toBe("18|14");
 });
 
 test("a standalone switch gets a 44 point target on a touch screen", async () => {

@@ -4,8 +4,7 @@
 import {
   alpha,
   colors,
-  controls,
-  type Controls,
+  control,
   EDGE_WIDTH,
   fillStyle,
   finish,
@@ -14,97 +13,32 @@ import {
   stroke,
   tier,
   type Tiered,
+  tints,
 } from "@shadcn-nsh/theme";
 import type { TextStyle, ViewStyle } from "nsh";
-import { split, Text, token } from "nsh";
+import { split, Text } from "nsh";
 import { Slider as BaseSlider, type SliderProps as BaseSliderProps } from "nsh/base";
 
-interface SliderPreset {
-  band: number;
-  rail: number;
-  thumbWidth: number;
-  thumbHeight: number;
-  thumbPressedWidth: number;
-  innerDot: number;
-  innerDotHover: number;
-  innerDotPressed: number;
-  verticalLength: number;
-  handleShape: "circle" | "bar" | "ring";
-  outlined: boolean;
-  hoverBrightness: boolean;
-  trackRole: "track" | "brand-tint" | "input";
+import { joinClass } from "./lib/class-names";
+import { type Fill, type HandleLook, handleLook, trackLook } from "./lib/look";
+
+/** A part's colour: a finish's whole layer, a palette role, or the brand's tint. */
+function fillColour(fill: Fill): string {
+  switch (fill.kind) {
+    case "finish":
+      return finish[fill.role].backgroundColor ?? "transparent";
+    case "tint":
+      return tints[fill.role];
+    case "colour":
+      return colors[fill.role];
+  }
 }
 
-// M3 Expressive Slider: 16dp track, 4x44dp bar handle (2dp pressed) (Compose SliderTokens.kt 1.5.0).
-const m3SliderBase: SliderPreset = {
-  band: 44,
-  rail: 16,
-  thumbWidth: 4,
-  thumbHeight: 44,
-  thumbPressedWidth: 2,
-  innerDot: 0,
-  innerDotHover: 0,
-  innerDotPressed: 0,
-  verticalLength: 128,
-  handleShape: "bar",
-  outlined: false,
-  hoverBrightness: false,
-  trackRole: "brand-tint",
-};
+/** The knob a slider draws: the `handle` its theme's `control()` names. */
+const knob = () => handleLook(control().handle);
 
-// WinUI 3 Slider: 18px thumb with 12px inner dot (14px hover, 10px pressed) on 4px track inside 32px band (Slider_themeresources.xaml:6,166-173,221,233 in winui3/release/2.7.0).
-const winuiSliderBase: SliderPreset = {
-  band: 32,
-  rail: 4,
-  thumbWidth: 18,
-  thumbHeight: 18,
-  thumbPressedWidth: 18,
-  innerDot: 12,
-  innerDotHover: 14,
-  innerDotPressed: 10,
-  verticalLength: 128,
-  handleShape: "ring",
-  outlined: false,
-  hoverBrightness: false,
-  trackRole: "input",
-};
-
-const sliderPresets: Record<Controls, Tiered<SliderPreset>> = {
-  base: {
-    pointer: {
-      band: 20,
-      rail: 6,
-      thumbWidth: 14,
-      thumbHeight: 14,
-      thumbPressedWidth: 14,
-      innerDot: 0,
-      innerDotHover: 0,
-      innerDotPressed: 0,
-      verticalLength: 128,
-      handleShape: "circle",
-      outlined: true,
-      hoverBrightness: true,
-      trackRole: "track",
-    },
-    touch: {
-      band: 32,
-      rail: 8,
-      thumbWidth: 20,
-      thumbHeight: 20,
-      thumbPressedWidth: 20,
-      innerDot: 0,
-      innerDotHover: 0,
-      innerDotPressed: 0,
-      verticalLength: 144,
-      handleShape: "circle",
-      outlined: true,
-      hoverBrightness: true,
-      trackRole: "track",
-    },
-  },
-  material: { pointer: m3SliderBase, touch: { ...m3SliderBase, verticalLength: 144 } },
-  winui: { pointer: winuiSliderBase, touch: { ...winuiSliderBase, verticalLength: 144 } },
-};
+/** The groove the knob runs in: the `track` its theme's `control()` names. */
+const groove = () => trackLook(control().track);
 
 /** Options of `sliderLook`. */
 export interface SliderLookOptions {
@@ -124,13 +58,18 @@ export const sliderValueClass = "w-[42px] text-right font-mono text-[11px] leadi
 export const sliderValueStyle = (): TextStyle => ({ color: alpha(colors.foreground, 0.6) });
 
 /**
- * A `Slider`'s parts (spread them: `<Slider {...sliderLook()}>`), reading track thickness,
- * hit-band size, border presence, and handle geometry/states from `sliderPresets[controls()][tier]`
- * and the preset's `trackRole`.
+ * A `Slider`'s parts (spread them: `<Slider {...sliderLook()}>`), reading its knob from the `handle`
+ * and its groove from the `track` the theme's `control()` names: the rail's thickness, the band
+ * around it, the knob's size and its pressed size, and whether the groove is graved in with an edge.
  */
 export function sliderLook(o: SliderLookOptions = {}) {
   const vertical = !!o.vertical;
   const fade = "transition duration-150 motion-reduce:transition-none";
+  /** A number a form states once, or once per input (`circle`'s knob and band differ by input). */
+  const perTier = (v: Tiered<number> | number) => (typeof v === "number" ? v : v[tier]);
+  /** The knob's width, on a form whose knob is a disc of one size or a bar of its own shape. */
+  const knobWidth = (h: HandleLook) =>
+    h.form === "bar" ? h.knob.width : h.form === "ring" ? h.knob : h.knob[tier];
   return {
     // A vertical value sits above the rail (`flex-col-reverse`: the track is the first child).
     // It does not take `flex-1`: the rail keeps the height its band asks for.
@@ -141,26 +80,37 @@ export function sliderLook(o: SliderLookOptions = {}) {
           : "flex-row items-center gap-2"
         : undefined;
     },
-    // The band keeps half a thumb free at each end, so the thumbs stay inside.
+    // The band keeps half a knob free at each end, so the knob stays inside.
     get trackClass(): string {
-      const s = sliderPresets[controls()][tier];
-      const pad = s.thumbWidth / 2;
-      const band = vertical
-        ? `w-[${s.band}px] h-[${s.verticalLength}px] items-center py-[${pad}px]`
-        : `h-[${s.band}px] justify-center px-[${pad}px]`;
-      return `${band} ${o.value && !vertical ? "flex-1" : ""} cursor-pointer ${fade} disabled:opacity-50 disabled:cursor-not-allowed`;
+      const h = knob();
+      const pad = knobWidth(h) / 2;
+      const length = h.verticalLength[tier];
+      const bandClass = vertical
+        ? `w-[${perTier(h.band)}px] h-[${length}px] items-center py-[${pad}px]`
+        : `h-[${perTier(h.band)}px] justify-center px-[${pad}px]`;
+      return [
+        bandClass,
+        o.value && !vertical ? "flex-1" : "",
+        "cursor-pointer",
+        fade,
+        "disabled:opacity-50 disabled:cursor-not-allowed",
+      ]
+        .filter(Boolean)
+        .join(" ");
     },
     get indicatorClass(): string {
-      const s = sliderPresets[controls()][tier];
-      const rail = vertical ? `w-[${s.rail}px] h-full` : `h-[${s.rail}px]`;
+      const h = knob();
+      const rail = vertical ? `w-[${perTier(h.rail)}px] h-full` : `h-[${perTier(h.rail)}px]`;
       return `${rail} rounded-full`;
     },
     get indicatorStyle(): ViewStyle {
-      const s = sliderPresets[controls()][tier];
+      const g = groove();
+      const face = g.groove ? fillColour(g.groove.fill) : "transparent";
+      const shade = g.groove?.shade ?? null;
       return {
-        backgroundColor: token(s.trackRole),
-        ...(s.outlined
-          ? { boxShadow: insetEdge(finish.inset.borderColor, finish.inset.boxShadow) }
+        backgroundColor: face,
+        ...(shade
+          ? { boxShadow: insetEdge(finish[shade].borderColor, finish[shade].boxShadow) }
           : {}),
       };
     },
@@ -168,45 +118,49 @@ export function sliderLook(o: SliderLookOptions = {}) {
     // The keyboard's ring on the thumb that has the focus (`focus-visible:`:
     // not after a press or a drag).
     get thumbClass(): string {
-      const s = sliderPresets[controls()][tier];
-      const hoverMods = s.hoverBrightness
-        ? "hover:brightness-105 active:brightness-95 disabled:brightness-100"
-        : "";
+      const h = knob();
       const focusRingClass = "focus-visible:outline-3 focus-visible:outline-ring/50";
-      if (s.handleShape === "bar") {
-        const w = vertical ? s.thumbHeight : s.thumbWidth;
-        const h = vertical ? s.thumbWidth : s.thumbHeight;
-        const pressMod = vertical
-          ? `active:h-[${s.thumbPressedWidth}px]`
-          : `active:w-[${s.thumbPressedWidth}px]`;
-        return `w-[${w}px] h-[${h}px] ${pressMod} rounded-full ${fade} ${focusRingClass}`;
+      if (h.form === "bar") {
+        const width = vertical ? h.knob.height : h.knob.width;
+        const height = vertical ? h.knob.width : h.knob.height;
+        const pressed = vertical
+          ? `active:h-[${h.knobPressedWidth}px]`
+          : `active:w-[${h.knobPressedWidth}px]`;
+        return `w-[${width}px] h-[${height}px] ${pressed} rounded-full ${fade} ${focusRingClass}`;
       }
-      if (s.handleShape === "ring") {
-        const outer = s.thumbWidth - 2 * EDGE_WIDTH;
-        const rim = (outer - s.innerDot) / 2;
-        const hoverRim = (outer - s.innerDotHover) / 2;
-        const pressRim = (outer - s.innerDotPressed) / 2;
+      if (h.form === "ring") {
+        const outer = h.knob - 2 * EDGE_WIDTH;
+        const rim = (outer - h.dot) / 2;
+        const hoverRim = (outer - h.knobHover) / 2;
+        const pressRim = (outer - h.knobPressed) / 2;
         return `w-[${outer}px] h-[${outer}px] rounded-full border-solid border-popover border-[${rim}px] hover:border-[${hoverRim}px] active:border-[${pressRim}px] ${fade} ${focusRingClass}`;
       }
-      return `rounded-full ${fade} ${hoverMods} ${focusRingClass}`.trim();
+      const hoverMods = h.brightensOnHover
+        ? "hover:brightness-105 active:brightness-95 disabled:brightness-100"
+        : "";
+      // A press swells the knob (a touch screen's 20 points reach 32): as a transform, so the
+      // thumb grows around its own middle and nothing re-measures the band.
+      const press = Number((h.knobPressed[tier] / h.knob[tier]).toFixed(4));
+      const pressMod = press === 1 ? "" : `active:scale-[${press}]`;
+      return ["rounded-full", fade, hoverMods, pressMod, focusRingClass].filter(Boolean).join(" ");
     },
     get thumbStyle(): ViewStyle {
-      const s = sliderPresets[controls()][tier];
-      if (s.handleShape === "bar") {
+      const h = knob();
+      if (h.form === "bar") {
         return {
           backgroundColor: finish.knob.backgroundColor,
           borderWidth: 0,
         };
       }
-      if (s.handleShape === "ring") {
+      if (h.form === "ring") {
         return {
           backgroundColor: colors.primary,
           boxShadow: outerEdge(finish.knob.borderColor, finish.knob.boxShadow, EDGE_WIDTH),
         };
       }
       return {
-        width: s.thumbWidth,
-        height: s.thumbHeight,
+        width: h.knob[tier],
+        height: h.knob[tier],
         borderWidth: stroke.control,
         ...finish.knob,
       };
@@ -214,15 +168,18 @@ export function sliderLook(o: SliderLookOptions = {}) {
   };
 }
 
-/** The accent's color and edge. A vertical rail turns the theme's gradient a quarter turn. */
+/**
+ * The accent's color and edge. A vertical rail turns the theme's gradient a quarter turn. A groove
+ * that is graved in (`track.sunk`) edges its run, so the run sits in the hollow the rail is.
+ */
 function accentFill(vertical: boolean): ViewStyle {
   const fill = fillStyle();
-  const s = sliderPresets[controls()][tier];
+  const shade = groove().groove?.shade ?? null;
   return {
     ...(vertical && fill.backgroundImage
       ? { ...fill, backgroundImage: fill.backgroundImage.replace("180deg", "90deg") }
       : fill),
-    ...(s.outlined
+    ...(shade
       ? { borderWidth: stroke.control, borderColor: finish.accent.borderColor }
       : { borderWidth: 0 }),
   };
@@ -305,15 +262,15 @@ export function Slider(props: SliderProps) {
     <BaseSlider
       {...rest}
       axis={props.axis}
-      class={props.class ?? look.class}
-      trackClass={props.trackClass ?? look.trackClass}
-      indicatorClass={props.indicatorClass ?? look.indicatorClass}
+      class={joinClass(look.class, props.class)}
+      trackClass={joinClass(look.trackClass, props.trackClass)}
+      indicatorClass={joinClass(look.indicatorClass, props.indicatorClass)}
       indicatorStyle={[look.indicatorStyle, props.indicatorStyle ?? null]}
-      rangeClass={props.rangeClass ?? look.rangeClass}
+      rangeClass={joinClass(look.rangeClass, props.rangeClass)}
       // Color only (`from` is 0): nsh sizes the run to the thumb. A caller's `rangeStyle`
       // can place a run that starts later, and it wins where the two name the same edge.
       rangeStyle={[sliderFill(0, 0, vertical), props.rangeStyle ?? null]}
-      thumbClass={props.thumbClass ?? look.thumbClass}
+      thumbClass={joinClass(look.thumbClass, props.thumbClass)}
       thumbStyle={[look.thumbStyle, props.thumbStyle ?? null]}
     >
       {label}

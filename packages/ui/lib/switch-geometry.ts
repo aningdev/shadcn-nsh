@@ -17,17 +17,6 @@ export interface SwitchGeometry {
 }
 
 /**
- * The switch's sizes, by name: `pointer` is a mouse's 28 × 16, `default` a touch screen's
- * 42 × 24 and `sm` its smaller 34 × 20. The track is exactly the knob plus its border and inset
- * on each side, so the knob sits as far from the top and the bottom as from the near end.
- */
-export const switchGeometries = {
-  pointer: { width: 28, height: 16, border: 1, inset: 1, knob: 12 },
-  default: { width: 42, height: 24, border: 1, inset: 1, knob: 20 },
-  sm: { width: 34, height: 20, border: 1, inset: 1, knob: 16 },
-} satisfies Record<string, SwitchGeometry>;
-
-/**
  * How far the knob travels from off to on. Off, it rests at the start of the
  * track's content box, `border + inset` from the leading edge; on, it must
  * end the same `border + inset` from the trailing edge. So it travels the

@@ -529,7 +529,7 @@
       "type": "registry:ui",
       "title": "Switch",
       "description": "A switch whose knob springs across a sunk track.",
-      "registryDependencies": ["motion", "switch-geometry", "theme"],
+      "registryDependencies": ["class-names", "look", "motion", "switch-geometry", "theme"],
       "files": [
         {
           "path": "packages/ui/switch.tsx",
@@ -1068,7 +1068,7 @@
       "type": "registry:ui",
       "title": "Slider",
       "description": "A sunk rail with a citrus fill and round thumb.",
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["class-names", "look", "theme"],
       "files": [
         {
           "path": "packages/ui/slider.tsx",

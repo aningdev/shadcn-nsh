@@ -36,6 +36,14 @@ const look = sliderLook();
 
 Opacity on the track comes from the look's `disabled:opacity-50` class on `trackClass`.
 
+### The rail and the knob
+
+Both come from the theme, read where the slider draws: the `track` value of `control()` gives the
+groove — its face colour, and, on a graved groove (`sunk`), the inset shade that is also the edge of
+the accent's run — and the `handle` value gives the knob: a disc, Material's bar or WinUI's ring,
+with the rail's thickness, the band around it, the pressed size, and a vertical rail 128 points
+long (144 on a touch screen) on every form.
+
 ### Value column
 
 `showValue` lays the value beside a horizontal rail (a 42-point column) or above a vertical one.

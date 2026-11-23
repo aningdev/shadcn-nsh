@@ -3,8 +3,7 @@
 
 import {
   colors,
-  controls,
-  type Controls,
+  control,
   finish,
   hitTarget,
   motion,
@@ -19,8 +18,10 @@ import type { ViewStyle } from "nsh";
 import { reduceMotion, split } from "nsh";
 import { Switch as BaseSwitch, type SwitchProps as BaseSwitchProps } from "nsh/base";
 
+import { joinClass } from "./lib/class-names";
+import { type HandleLook, handleLook } from "./lib/look";
 import { cssMotion } from "./lib/motion";
-import { type SwitchGeometry, switchSlop } from "./lib/switch-geometry";
+import { type SwitchGeometry, knobTravel, switchSlop } from "./lib/switch-geometry";
 
 /** A switch's size on a touch screen (`sm` 34 × 20); with a pointer both are 28 × 16. */
 export type SwitchSize = "sm" | "default";
@@ -34,7 +35,8 @@ export interface SwitchLook {
   readonly thumbStyle: ViewStyle;
 }
 
-interface SwitchPreset {
+/** One family's switch, in points: one set for a pointer and, where a touch screen differs, its own. */
+interface SwitchShape {
   width: number;
   height: number;
   smWidth: number;
@@ -52,7 +54,7 @@ interface SwitchPreset {
 }
 
 // M3 Switch 52x32dp track, 2dp off / 0dp on outline, 16/24/28dp handle growth (_md-comp-switch.scss:47-65 v34.0.21 / SwitchTokens.kt).
-const materialSwitchPreset: SwitchPreset = {
+const materialSwitch: SwitchShape = {
   width: 52,
   height: 32,
   smWidth: 52,
@@ -70,7 +72,7 @@ const materialSwitchPreset: SwitchPreset = {
 };
 
 // WinUI 3 ToggleSwitch 40x20 track, 1px off / 0px on stroke, 12px knob scaling to 14px hover & 17x14 pressed (ToggleSwitch_themeresources.xaml:5,6,130,269,312,315 in winui3/release/2.7.0).
-const winuiSwitchPreset: SwitchPreset = {
+const winuiSwitch: SwitchShape = {
   width: 40,
   height: 20,
   smWidth: 40,
@@ -87,8 +89,13 @@ const winuiSwitchPreset: SwitchPreset = {
   knobFeedback: "stretch",
 };
 
-const switchPresets: Record<Controls, Tiered<SwitchPreset>> = {
-  base: {
+/**
+ * A switch's numbers, by the form the theme's `handle` names: a switch is always a circle (the
+ * library's disc, `docs/specs/theme-contract-v2.md` §11.4), so the form picks the family whose
+ * switch the theme is — the base one, Material's growing one, or WinUI's stretching one.
+ */
+const switchShapes: Record<HandleLook["form"], Tiered<SwitchShape>> = {
+  circle: {
     pointer: {
       width: 28,
       height: 16,
@@ -122,8 +129,8 @@ const switchPresets: Record<Controls, Tiered<SwitchPreset>> = {
       knobFeedback: "none",
     },
   },
-  material: { pointer: materialSwitchPreset, touch: materialSwitchPreset },
-  winui: { pointer: winuiSwitchPreset, touch: winuiSwitchPreset },
+  bar: { pointer: materialSwitch, touch: materialSwitch },
+  ring: { pointer: winuiSwitch, touch: winuiSwitch },
 };
 
 interface ResolvedSwitchGeometry extends SwitchGeometry {
@@ -132,10 +139,10 @@ interface ResolvedSwitchGeometry extends SwitchGeometry {
   knobHover: number;
   knobPressedWidth: number;
   knobPressedHeight: number;
-  knobFeedback: SwitchPreset["knobFeedback"];
+  knobFeedback: SwitchShape["knobFeedback"];
 }
 
-/** The track and knob of a size, here (read from the active theme's `controls()` preset, or the terminal). */
+/** The track and knob of a size, here (the shape its theme's `control()` handle names, or the terminal). */
 function geometry(size: SwitchSize): ResolvedSwitchGeometry {
   if (terminal)
     return {
@@ -151,7 +158,7 @@ function geometry(size: SwitchSize): ResolvedSwitchGeometry {
       knobPressedHeight: TERMINAL_ROW,
       knobFeedback: "none",
     };
-  const g = switchPresets[controls()][tier];
+  const g = switchShapes[handleLook(control().handle).form][tier];
   const sm = size === "sm";
   const width = sm ? g.smWidth : g.width;
   const height = sm ? g.smHeight : g.height;
@@ -188,7 +195,7 @@ function knobLook(on: boolean): ViewStyle {
 
 /**
  * The knob's size feedback, as transform classes: the knob's box never takes a new size, so a
- * hover, a press and the open state scale it — kept off `switchPresets` so the sizes stay points.
+ * hover, a press and the open state scale it — kept off `switchShapes` so the sizes stay points.
  * A knob that stretches (WinUI) reaches toward the track's centre as it grows: a `shift` past the
  * box it grew from, and `travel - shift` back once it is open — the same pixels as today's box,
  * without moving `transformOrigin`, which a press would jump.
@@ -218,8 +225,8 @@ function knobFeedbackClasses(g: ResolvedSwitchGeometry, travel: number): string[
 /**
  * The gallery's switch, as the props of `Switch`'s parts (spread them:
  * `<Switch {...switchLook(() => on())}>`): track, knob geometry, border, and
- * hover/press knob feedback come from `switchPresets[controls()][tier]`. `on` is the value
- * the app owns: the knob follows it, from a press or from elsewhere.
+ * hover/press knob feedback come from the shape the theme's `control()` handle names. `on` is the
+ * value the app owns: the knob follows it, from a press or from elsewhere.
  *
  * The knob's box stays one size; its travel and its hover/press growth are CSS classes, so a
  * spring or a timing role in the theme paces them and no layout property moves. NSH animates a
@@ -243,13 +250,13 @@ export function switchLook(on: () => boolean, size: SwitchSize = "default"): Swi
         borderWidth: checked ? g.onBorder : g.border,
         borderColor: checked ? finish.accent.borderColor : finish.inset.borderColor,
         boxShadow: checked ? finish.accent.boxShadow : finish.inset.boxShadow,
-        transitionProperty: "background-color, border-color, box-shadow",
+        transitionProperty: reduceMotion() ? "none" : "background-color, border-color, box-shadow",
         ...cssMotion(motion.fast),
       };
     },
     get thumbClass(): string {
       const g = geometry(size);
-      const travel = g.width - g.height;
+      const travel = knobTravel(g);
       return [`checked:translate-x-[${travel}px]`, ...knobFeedbackClasses(g, travel)].join(" ");
     },
     get thumbStyle(): ViewStyle {
@@ -312,18 +319,13 @@ export function Switch(props: SwitchProps) {
   ]);
   const size = props.size ?? "default";
   const look = switchLook(() => props.checked ?? false, size);
-  const resolvedThumbClass = () => {
-    const base = look.thumbClass;
-    if (base && props.thumbClass) return `${base} ${props.thumbClass}`;
-    return props.thumbClass ?? (base || undefined);
-  };
   return (
     <BaseSwitch
       {...rest}
       hitSlop={props.hitSlop ?? (props.children == null ? switchHitSlop(size) : undefined)}
-      trackClass={props.trackClass ? `${look.trackClass} ${props.trackClass}` : look.trackClass}
+      trackClass={joinClass(look.trackClass, props.trackClass)}
       trackStyle={[look.trackStyle, props.trackStyle ?? null]}
-      thumbClass={resolvedThumbClass()}
+      thumbClass={joinClass(look.thumbClass, props.thumbClass)}
       thumbStyle={[look.thumbStyle, props.thumbStyle ?? null]}
     />
   );
