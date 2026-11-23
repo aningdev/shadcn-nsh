@@ -398,7 +398,7 @@ default 与 shadcn、solid-glass 的叠色全是 0：它们的悬停与按下继
 
 - ✅ 标签页指示器：`Tabs` 的 `TabsList` 在未给 `variant` 时按 `tabsPresets[controls()].indicator` 选 `default`（胶囊）或 `line`（下划线），指示条粗细由同表 `indicatorThickness` 给出（`2` / `3`）。
 - ✅ 侧栏选中条：`sidebarPresets[controls()].navIndicator === "bar"` 时侧栏菜单项（`SidebarMenuButton`、`SidebarMenuSubButton`）的选中态不填色，改画前缘一条 `indicatorThickness` 宽、强调色的竖条。`NavigationMenu` 是横排的触发器，不读它。
-- ✅ 字段指示器与圆角：共用逻辑在 `lib/indicator`（`fieldPresets`、`fieldCorners`、`fieldEdgeWidths`、`fieldRestColor`），`Input`、`Textarea`、`InputGroup`、`Select`、`DatePicker`、`Combobox`、`CodeEditor` 与 `edgeClass` 读它：`underline` 只画下边线（静止时 `muted-foreground`，聚焦时 `focus.width` 的强调色，不画光环），`top` 只圆上两角。`NumberInput`、`TimeField` 与 OTP 的格子的外框是写死在模块级的 class，不读它们，仍是方框。
+- ✅ 字段指示器与圆角：共用逻辑在 `lib/indicator`（`fieldPresets`、`fieldIndicator`、`fieldCorners`、`fieldCornerClass`、`fieldEdgeWidths`、`fieldEdgeClass`、`fieldRestEdge`、`fieldFocusClass`、`fieldFocusEdge`），`Input`、`Textarea`、`InputGroup`、`Select`、`DatePicker`、`Combobox`、`CodeEditor`、`NumberInput`、`TimeField` 与 OTP 的格子都读它。`indicator` 三值：`box` 是 `stroke.control` 的方框（`input` 色），聚焦时方框连同光环一起变成强调色；`underline` 只画下边线（静止时 `muted-foreground`，聚焦时 `focus.width` 的强调色，不画光环）；`box-underline` 是方框（`input` 色）加一条 `muted-foreground` 的下边线，悬停时整体变 `faint`，聚焦时只有下边线变成 `focus.width` 的强调色（无效时 `destructive`），方框保持本色、不画光环（WinUI `TextBox`）。`top` 只圆上两角。终端里的字段一律按 `box` 画（`border` 加光环），与之前相同。
 - ✅ 颜色 token `on-brand-tint`、`inverse`、`inverse-foreground`、`inverse-muted`、`inverse-brand`；finish `dialog`、`tooltip`、`inverse`。读取方：`DialogContent`、`Tooltip`、`Toast`、`Bubble` 的淡底变体。`AlertDialog` 不画卡片，没有读取方。
 - 现有四套主题里新增键取值与原来借用的面相同，`on-brand-tint` 取 `foreground`（`Bubble` 的淡底字今天就是它）；选中的图标按钮仍用 `brand`，选择卡片没有自己的字，两处不接 `on-brand-tint`，留给第 3 期用到时再接。
 

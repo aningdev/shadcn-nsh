@@ -150,7 +150,7 @@
 - 主题里只写一个枚举：`controls: "base" | "material" | "winui"`。
 - 每个控件的几何与形态写在组件里，是这三档的预设表，分指针、触屏两档；预设里引用颜色时，只引用第 1 节的角色。
 - 覆盖的控件：checkbox、switch、slider、radio、progress、spinner、tabs、calendar，以及 sheet 的 grabber。
-- 一并移入的形态选择（D4）：`indicator.tabs` / `nav` / `field`（pill、underline、fill、bar、box）、`shape.corners.field`（all / top）、`stroke.indicator`（2 / 3）。它们以组件命名，6 套主题的取值正好随 base / material / winui 三档变化。
+- 一并移入的形态选择（D4）：`indicator.tabs` / `nav` / `field`（pill、underline、fill、bar、box，`field` 另有 box-underline）、`shape.corners.field`（all / top）、`stroke.indicator`（2 / 3）。它们以组件命名，6 套主题的取值正好随 base / material / winui 三档变化。
 - 主题作者从"填 100 多个数"变成"选一档"。想要第四种控件形态，要么改组件的预设，要么在应用里覆写组件的样式：控件形态是组件的事，不是主题的事。
 
 验收：

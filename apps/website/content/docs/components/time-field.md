@@ -26,7 +26,7 @@ import { TimeField } from "@/components/ui/time-field";
 ### The look alone
 
 ```tsx
-<TimeField class={timeFieldClass} value={time()} />
+<TimeField class={timeFieldClass()} value={time()} />
 ```
 
 ## API
