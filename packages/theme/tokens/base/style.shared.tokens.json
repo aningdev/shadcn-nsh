@@ -369,14 +369,5 @@
         "$description": "120 ms out-cubic: upstream nsh-gallery-ui's hover wash (120 ms ease-out)."
       }
     }
-  },
-
-  "controls": {
-    "$description": "Named per-theme control geometry preset family (base | material | winui).",
-    "$extensions": {
-      "dev.aning.shadcn-nsh": {
-        "preset": "base"
-      }
-    }
   }
 }

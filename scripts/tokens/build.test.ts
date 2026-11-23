@@ -311,18 +311,14 @@ describe("DTCG source lint", () => {
     expect(text).toContain("elevation must be a non-negative number");
   });
 
-  test("rejects invalid controls preset enum value and shape.corners.button in $extensions", () => {
+  test("rejects an invalid shape.corners.button in $extensions", () => {
     const problems = withMutatedDefault((tmp) => {
       const sharedPath = path.join(tmp, "packages/theme/tokens/base/style.shared.tokens.json");
       const shared = JSON.parse(fs.readFileSync(sharedPath, "utf8"));
-      shared.controls.$extensions["dev.aning.shadcn-nsh"].preset = "cupertin";
       shared.shape.$extensions["dev.aning.shadcn-nsh"].corners.button = "pill";
       fs.writeFileSync(sharedPath, JSON.stringify(shared, null, 2));
     });
-    const text = problems.join("\n");
-    expect(text).toContain("controls.$extensions");
-    expect(text).toContain('preset: "cupertin"');
-    expect(text).toContain('corners.button: "pill"');
+    expect(problems.join("\n")).toContain('corners.button: "pill"');
   });
 
   test("rejects missing or extra radius and shape roles", () => {
@@ -685,7 +681,7 @@ describe("per-appearance standalone .tokens.json distribution", () => {
           expect(tok.$value.value).toBe(semanticsJson.dimension.icon.pointer[k]);
         }
 
-        // Shape, state, duration, transition, motion, controls
+        // Shape, state, duration, transition, motion
         expect(doc.shape.$extensions[EXT_NS]).toEqual(semanticsJson.shape);
         expect(doc.state["press-scale"].$value).toBe(semanticsJson.state["press-scale"]);
         expect(doc.state["pressed-opacity"].$value).toBe(semanticsJson.state["pressed-opacity"]);
@@ -735,7 +731,6 @@ describe("per-appearance standalone .tokens.json distribution", () => {
             }).toEqual(semanticsJson.motion[role]);
           }
         }
-        expect(doc.controls.$extensions[EXT_NS].preset).toBe(semanticsJson.controls);
 
         // Merged finishes for this appearance
         const toFlatRef = (s: string) => {

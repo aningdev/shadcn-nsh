@@ -783,12 +783,11 @@ const MERGE_PAGE = `// Written by scripts/install-test.ts; this app is temporary
 import { mount, Text, View } from "nsh";
 
 import { Button } from "@/components/ui/button";
-import { controls, finish, press } from "@/lib/ui/theme";
+import { finish, press } from "@/lib/ui/theme";
 
 function Page() {
   return (
     <View style={{ ...finish.modal }}>
-      <Text>{controls()}</Text>
       <Text>{String(press.scale)}</Text>
       <Button>OK</Button>
     </View>
@@ -807,14 +806,14 @@ async function mergeSemanticsOnAdd(template: string, dir: string, nsh: string) {
   const semanticsPath = path.join(dir, "lib/ui/semantics.json");
   const semantics = JSON.parse(await fs.readFile(semanticsPath, "utf8")) as {
     state: { "press-scale": number };
-    controls?: string;
+    shape: { curve?: string };
     finishes: {
       shared: Record<string, Record<string, unknown>>;
       light: Record<string, Record<string, unknown>>;
     };
   };
   semantics.state["press-scale"] = 1;
-  delete semantics.controls;
+  delete semantics.shape.curve;
   delete semantics.finishes.shared.modal;
   delete semantics.finishes.light.modal;
   delete semantics.finishes.shared.card.material;
@@ -827,7 +826,7 @@ async function mergeSemanticsOnAdd(template: string, dir: string, nsh: string) {
     throw new StepFailure("semantics merge", "      add overwrote customized state.press-scale");
   }
   if (
-    merged.controls !== "base" ||
+    merged.shape.curve !== "continuous" ||
     merged.finishes.shared.modal == null ||
     merged.finishes.light.modal == null ||
     !("material" in merged.finishes.shared.card)

@@ -114,7 +114,6 @@ export interface ThemeStyleInput {
     /** The state fade (a hover, a press, a choice): stated only where it differs from the base's 120 ms `out-cubic`. */
     state?: ThemeMotionRoleStyle;
   };
-  controls?: "base" | "material" | "winui";
 }
 
 /** One layer finish as the generators author it: CSS-ish field values plus the extension fields. */
@@ -713,7 +712,6 @@ function encodeSharedStyleOverrides(
   state: Record<string, unknown>;
   transition?: Record<string, unknown>;
   motion?: Record<string, unknown>;
-  controls?: Record<string, unknown>;
 } {
   const desc = (key: string, fallback: unknown): string =>
     styleDescs?.[key] ?? (typeof fallback === "string" ? fallback : key);
@@ -984,18 +982,6 @@ function encodeSharedStyleOverrides(
         }
       : undefined;
 
-  // 8. controls
-  const baseControls = getAt(baseShared, "controls");
-  const baseControlsPreset = getExtNs(baseControls).preset as string;
-  const preset = style.controls ?? baseControlsPreset;
-  const controls =
-    preset !== baseControlsPreset
-      ? {
-          $description: desc("controls", baseControls.$description),
-          $extensions: { [EXT_NS]: { preset } },
-        }
-      : undefined;
-
   return {
     dimensionExtras,
     ...(typography ? { typography } : {}),
@@ -1003,7 +989,6 @@ function encodeSharedStyleOverrides(
     state: stateOut,
     ...(transition ? { transition } : {}),
     ...(motion ? { motion } : {}),
-    ...(controls ? { controls } : {}),
   };
 }
 
@@ -1380,7 +1365,6 @@ export function themeSourceDocs(
         },
     ...(sharedStyle?.transition ? { transition: sharedStyle.transition } : {}),
     ...(sharedStyle?.motion ? { motion: sharedStyle.motion } : {}),
-    ...(sharedStyle?.controls ? { controls: sharedStyle.controls } : {}),
   };
 
   // 4. The finishes are authored the way the sources state them: shared recipes plus each

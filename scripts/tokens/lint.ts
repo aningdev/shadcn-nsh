@@ -305,16 +305,6 @@ function validateExtAtPath(
     return;
   }
 
-  if (p === "controls") {
-    checkUnknownKeys(where, ext, ["preset"], problems);
-    if (!("preset" in ext)) {
-      if (mode === "merged") problems.push(`${where}.preset is missing`);
-    } else if (!whitelists.controls!.includes(ext.preset as string)) {
-      problems.push(`${where}.preset: ${JSON.stringify(ext.preset)} is not in whitelist`);
-    }
-    return;
-  }
-
   if (/^motion\.[a-z0-9-]+$/.test(p)) {
     checkUnknownKeys(where, ext, ["spring"], problems);
     if (!isRecord(ext.spring)) {
@@ -973,7 +963,6 @@ function checkMergedSemantics(
       "duration",
       "transition",
       "motion",
-      "controls",
     ]) {
       const group = getAtPath(merged, groupPath);
       if (isRecord(group) && !isNonEmptyString(group.$description)) {

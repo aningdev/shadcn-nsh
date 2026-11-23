@@ -219,7 +219,6 @@
       "timingFunction": "out-cubic"
     }
   },
-  "controls": "base",
   "finishes": {
     "shared": {
       "card": {

@@ -219,7 +219,6 @@
       "timingFunction": "decelerate"
     }
   },
-  "controls": "winui",
   "finishes": {
     "shared": {
       "card": {

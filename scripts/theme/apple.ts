@@ -281,7 +281,6 @@ export const style = {
     default: { stiffness: 520, damping: 34 },
     slow: { stiffness: 320, damping: 30 },
   },
-  controls: "base" as const,
 };
 
 /** Apple theme data and HIG/UIKit DTCG descriptions ready for `emitDtcgTheme`. */

@@ -1,15 +1,7 @@
 // A sheet: the look (`sheetPanel`, `sheetGrabber`) and the parts that wear it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import {
-  alpha,
-  colors,
-  controls,
-  cornerCurve,
-  shape,
-  stroke,
-  type Controls,
-} from "@shadcn-nsh/theme";
+import { alpha, colors, cornerCurve, shape, stroke } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { context, keyboardFrame, safeArea, split, windowSize } from "nsh";
 import {
@@ -95,29 +87,21 @@ export function sheetPanel(side: SheetSide): ViewStyle {
   };
 }
 
-interface SheetGrabberPreset {
-  width: number;
-  height: number;
-}
-
-const sheetGrabberPresets: Record<Controls, SheetGrabberPreset> = {
-  base: { width: 36, height: 5 },
-  // M3 bottom sheet drag handle (32×4 dp).
-  material: { width: 32, height: 4 },
-  winui: { width: 36, height: 5 },
-};
+/** The grabber's geometry: one 36×5 pill in every theme, the platforms' common size (M3's drag
+ * handle is 32×4; theme contract v2 keeps one grabber rather than a per-theme table). */
+const GRABBER_WIDTH = 36;
+const GRABBER_HEIGHT = 5;
 
 /** The grabber at the top of a bottom sheet (its `grabberStyle`): a pill centered at the top
- * edge, sized by `sheetGrabberPresets[controls()]`, in the muted ink the theme already dims with
- * (`colors.mutedForeground` at 40%), so it reads on the card and on whatever a sheet is dragged
- * over. It is the sheet's own handle — the one `nsh/base` lets a press and a screen reader drag
- * between detents — not a picture of one, so a sheet never shows two. */
+ * edge in the muted ink the theme already dims with (`colors.mutedForeground` at 40%), so it
+ * reads on the card and on whatever a sheet is dragged over. It is the sheet's own handle — the
+ * one `nsh/base` lets a press and a screen reader drag between detents — not a picture of one, so
+ * a sheet never shows two. */
 export function sheetGrabber(): ViewStyle {
-  const { width, height } = sheetGrabberPresets[controls()];
   return {
-    width,
-    height,
-    borderRadius: Math.ceil(height / 2),
+    width: GRABBER_WIDTH,
+    height: GRABBER_HEIGHT,
+    borderRadius: Math.ceil(GRABBER_HEIGHT / 2),
     alignSelf: "center",
     backgroundColor: alpha(colors.mutedForeground, 0.4),
   };

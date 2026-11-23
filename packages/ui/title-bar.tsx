@@ -78,14 +78,14 @@ const cellLabel: Record<WindowControl, string> = {
  * window's discs a light wash of the theme's ink.
  */
 const lightTone: Record<WindowControl, string> = {
-  close: "#FF5F57",
-  minimize: "#FEBC2E",
-  maximize: "#28C840",
+  close: "#FF5F57", // color: macOS's fixed traffic-light hue
+  minimize: "#FEBC2E", // color: macOS's fixed traffic-light hue
+  maximize: "#28C840", // color: macOS's fixed traffic-light hue
 };
 
 /** The ink drawn on a traffic light, and the hairline round it: black at a share, as macOS draws them. */
-export const lightInk = alpha("#000000", 0.5);
-export const lightEdge = alpha("#000000", 0.12);
+export const lightInk = alpha("#000000", 0.5); // color: the traffic lights' own ink, the same under every theme
+export const lightEdge = alpha("#000000", 0.12); // color: the traffic lights' own ink, the same under every theme
 
 /** A title bar's parts as the styles they wear: spread each one. */
 export interface TitleBarLook {

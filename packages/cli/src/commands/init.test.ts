@@ -233,11 +233,11 @@ describe("init --theme", () => {
     await captured(() => runInit({ cwd: current!.app, registry: current!.url, theme: "shadcn" }));
     const semantics = JSON.parse(current.read("lib/ui/semantics.json")) as {
       state: { "press-scale": number };
-      controls?: string;
+      shape: { curve?: string };
       finishes: { shared: Record<string, Record<string, unknown>> };
     };
     semantics.state["press-scale"] = 0.95;
-    delete semantics.controls;
+    delete semantics.shape.curve;
     delete semantics.finishes.shared.modal;
     current.write("lib/ui/semantics.json", `${JSON.stringify(semantics, null, 2)}\n`);
 
@@ -250,7 +250,7 @@ describe("init --theme", () => {
     ).toBe(true);
     const merged = JSON.parse(current.read("lib/ui/semantics.json")) as typeof semantics;
     expect(merged.state["press-scale"]).toBe(0.95);
-    expect(merged.controls).toBe("base");
+    expect(merged.shape.curve).toBe("continuous");
     expect(merged.finishes.shared.modal).toBeDefined();
   });
 

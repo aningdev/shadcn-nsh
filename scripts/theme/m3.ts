@@ -494,7 +494,6 @@ export const m3Style = {
     // `Easing.StandardCubicBezier`; ExpressiveMotionTokens.kt).
     state: { duration: 100, timingFunction: "standard" },
   },
-  controls: "material" as const,
 };
 
 /** Material 3 Expressive theme data and DTCG descriptions ready for `emitDtcgTheme`. */
@@ -578,7 +577,7 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
         "Tonal surface stepping plus Material Web Level 1–3 shadows and `material.android.elevation` (1dp/3dp/6dp), with no edge drawn (each finish's `border-color: transparent`) and no backdrop blur.",
       dos: [
         "Express interaction states via M3 state-layer ink overlays (`hover: 0.08`, `focus: 0.10`, `pressed: 0.10`, `dragged: 0.16`) and Android press ripples (`state.ripple: true`) with `state.press-scale: 1`.",
-        'Use `shape.curve: "circular"` and `controls: "material"` for top-rounded underlined fields and underlined tabs.',
+        'Use `shape.curve: "circular"` with top-rounded underlined fields and underlined tabs.',
         "Keep tonal and elevated containers edge-free through `border-color: transparent` in the finish, so depth comes from tonal steps and elevation.",
       ],
       donts: [
@@ -628,7 +627,6 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
           "M3 Expressive SlowSpatial spring for settling and panels (stiffness 200, damping ratio 0.8).",
         "motion.state":
           "M3 DurationShort2 (100ms) with the standard curve (MotionTokens.DurationShort2, Easing.StandardCubicBezier; ExpressiveMotionTokens.kt).",
-        controls: "Material 3 Expressive control geometry presets.",
         "pointer.dimension.size.height":
           "Standard control heights at M3 density -2 (24, 32, 48dp): each density step reduces height by 4dp (https://m3.material.io/foundations/layout/grids-spacing/density).",
       },

@@ -642,7 +642,6 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
     },
     transition: transitionOut,
     motion: motionOut,
-    controls: getExt(lp.controls)!.preset as string,
     finishes: finishesOut,
     elevation: { light: elevationSet(shadowsLight), dark: elevationSet(shadowsDark) },
   };

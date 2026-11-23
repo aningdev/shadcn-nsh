@@ -116,7 +116,7 @@ export type FinishStyle = {
   glassTintColor?: string;
 };
 
-/** The finishes' roles: the layers a surface can be. A control that differs sits in a control's own preset (`switch`, `slider`, `segmented`, `tabs`, `sheet`), not in a finish. */
+/** The finishes' roles: the layers a surface can be. A control that differs reads its control dimension (`control()`), not a finish. */
 export type FinishRole =
   | "card"
   | "inset"
@@ -213,9 +213,6 @@ export interface Timing {
   timingFunction: EasingCurve;
 }
 
-/** Named per-theme control geometry preset family (`controls` in `semantics.json`). */
-export type Controls = "base" | "material" | "winui";
-
 /**
  * A selection's look (tabs, a sidebar's rows): `pill` a capsule in the track it sits in, `underline`
  * a line under the label only, `bar` a line under the whole item.
@@ -260,7 +257,7 @@ export const CONTROL_DIMENSIONS = [
 /**
  * The style of a theme: what `semantics.json` states beside its finishes, in DTCG field naming,
  * the same keys in every theme (`check:theme`). A string that names one of a list (a curve, a
- * timingFunction, controls) or numeric fontWeight is checked by `check:theme` (`scripts/theme/style.ts`).
+ * timingFunction) or numeric fontWeight is checked by `check:theme` (`scripts/theme/style.ts`).
  * `docs/specs/native-themes.md` §3.2 says what each key is.
  */
 export interface Style {
@@ -317,7 +314,6 @@ export interface Style {
     /** How fast a hover, a press or a choice comes and goes: always timed. */
     state: TimingSpec;
   };
-  controls: Controls;
 }
 
 /**
@@ -926,9 +922,6 @@ export function stateLayer(
 
 /** The smallest target a finger or a pointer gets (`dimension.size.hit` of the tier): 0 adds none. */
 export const hitTarget = (): number => style().dimension.size.hit[tier];
-
-/** The active theme's control geometry preset family (`controls` in `semantics.json`). */
-export const controls = (): Controls => style().controls;
 
 /** The control dimensions in use, made once at import (a `computed` made inside a component would
  * be disposed with it), so `control().selection` follows `selectTheme` and re-runs only when that

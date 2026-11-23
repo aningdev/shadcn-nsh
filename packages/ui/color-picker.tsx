@@ -127,7 +127,7 @@ const TRACK = pointer ? 12 : 14;
  * A thumb: the color in a white ring with a hairline outline and a small shadow, so it shows on any color under it
  * (a color the user picks, not the theme's, so the ring is white in either appearance).
  */
-const thumbClass = "rounded-full border-2 border-white ring-1 ring-black/15 shadow-sm";
+const thumbClass = "rounded-full border-2 border-white ring-1 ring-black/15 shadow-sm"; // color: edge and ring that read on any user colour
 
 const thumbStyle = { width: THUMB, height: THUMB };
 

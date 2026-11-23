@@ -61,11 +61,9 @@ describe("checkStyle", () => {
     const file = copy();
     file.shape.curve = "squircle";
     file.typography.body.fontWeight = 450;
-    file.controls = "cupertin";
     const problems = check(file).join("\n");
     expect(problems).toContain('shape.curve` is "squircle"');
     expect(problems).toContain("typography.body.fontWeight` is 450");
-    expect(problems).toContain('controls` is "cupertin"');
   });
 
   test("names a control dimension outside its list", () => {

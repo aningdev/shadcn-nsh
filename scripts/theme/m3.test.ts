@@ -307,7 +307,6 @@ describe("compiled material theme files", () => {
       ),
     ).toEqual([]);
 
-    expect(files.semantics.controls).toBe("material");
     // M3's disabled container and label are `onSurface` state layers, not tokens.
     expect(files.semantics.finishes.shared.disabled).toMatchObject({
       background: "oklch(from {foreground} l c h / 0.1)",

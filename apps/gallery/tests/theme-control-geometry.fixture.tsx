@@ -1,6 +1,5 @@
 import {
   colors,
-  controls,
   currentTheme,
   EDGE_WIDTH,
   insetEdge,
@@ -34,7 +33,6 @@ const underline = underlineTabsLook();
 function App() {
   return (
     <View>
-      <Text>{`controls=${controls()}`}</Text>
       <Text>{`switch=${sw.trackStyle.width}x${sw.trackStyle.height}|${sw.trackStyle.borderWidth}|${sw.thumbStyle.width}|${sw.thumbClass}`}</Text>
       <Text>{`slider=${sl.indicatorClass}|${sl.trackClass}|${Boolean(sl.indicatorStyle.boxShadow)}|${sl.thumbClass}|${sl.indicatorStyle.backgroundColor === colors.track}|${sl.indicatorStyle.backgroundColor === tints.brand}|${sl.indicatorStyle.backgroundColor === colors.input}`}</Text>
       <Text>{`checkbox=${cb.indicatorStyle.borderWidth}|${cb.indicatorStyle.backgroundColor === "transparent"}|${cb.indicatorStyle.backgroundColor === colors.track}`}</Text>

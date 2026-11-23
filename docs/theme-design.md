@@ -298,8 +298,6 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 
 **参照**：`default` / `shadcn` / `solid-glass` / `apple` 用中性一套（胶囊、盒子、沟槽底、内凹槽、圆点、轨道）；`material` 照 M3 的 PrimaryTabs / outlined、text field / tinted track / SegmentedButton，取 `underline`、`underline`、`outline`、`tint`、`bar`、`cells`；`winui` 照 WinUI 的 NavigationView 指示条、控件描边与 ToggleSwitch，取 `bar`、`box-underline`、`inset`、`hairline`、`ring`，并排仍是 `track`。
 
-> 过渡期：`controls`（`base` / `material` / `winui` 三选一）与各组件的 `Record<Controls, …>` 预设表仍在，直到主题契约 v2 的 P4 把它们删掉。两者并存时，维度是“怎么画”的唯一决定者，`controls` 只留给还没迁完的组件。
-
 ## 3 不属于主题的东西
 
 | 东西                                     | 归谁                    | 为什么                                                               |

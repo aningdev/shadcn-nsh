@@ -1,4 +1,4 @@
-import { colors, control, controls, finish, selectTheme, type AppTheme } from "@shadcn-nsh/theme";
+import { colors, control, finish, selectTheme, type AppTheme } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { defaultTheme } from "../../../packages/theme/themes/default/index";
@@ -17,7 +17,7 @@ import {
 } from "../../../packages/ui";
 import { fieldLook } from "../../../packages/ui/lib/look";
 
-/** A `winui`-controls theme with distinct inverse and modal roles. */
+/** A WinUI-dimension theme with distinct inverse and modal roles. */
 const marked: AppTheme = {
   ...winuiTheme,
   id: "marked",
@@ -47,7 +47,6 @@ function App() {
   const shown = signal(true);
   return (
     <View>
-      <Text testID="controls">{`controls:${controls()}`}</Text>
       <Text testID="nav-width">{`nav-width:${navBarStyle().width}`}</Text>
       <Text testID="inverse">{`inverse:${colors.inverseForeground}`}</Text>
       <Text testID="modal">{`modal:${finish.modal.borderColor}`}</Text>

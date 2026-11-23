@@ -1,6 +1,6 @@
 /**
  * The style data of a theme, checked: the groups `semantics.json` states beside its finishes
- * (typography, dimension, shape, state, transition, motion, controls), which every theme states
+ * (typography, dimension, shape, state, transition, motion), which every theme states
  * with the same keys, whose enums come from a list, whose token references (`dimension.shape.*`
  * radii) name `dimension` tokens in `theme.json`, and whose sizes land on the three scales
  * (`checkScales`): three heights, three icons, spacing on the 4 grid, and a type ramp that never
@@ -19,7 +19,6 @@ export const styleGroups = [
   "state",
   "transition",
   "motion",
-  "controls",
 ] as const;
 
 /** The style groups of a `semantics.json` document: every group, nothing else. */
@@ -63,7 +62,6 @@ export const whitelists: Record<string, readonly (string | number | null)[]> = {
     CONTROL_DIMENSIONS.map((key) => [`dimension.control.${key}`, controlDimensionValues[key]]),
   ),
   "transition.enter.timingFunction": easingNames,
-  controls: ["base", "material", "winui"],
 };
 
 /** The motion roles, named by speed and the state fade (`docs/specs/theme-contract-v2.md` §17). */

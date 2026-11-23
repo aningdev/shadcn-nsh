@@ -63,14 +63,14 @@ export function avatarIdentity(name: string) {
   const h = avatarHue(name);
   return isDark()
     ? {
-        background: oklch(0.3, 0.05, h),
-        foreground: oklch(0.82, 0.11, h),
-        border: oklch(0.36, 0.06, h),
+        background: oklch(0.3, 0.05, h), // color: an identity's own hue, the same under every theme
+        foreground: oklch(0.82, 0.11, h), // color: an identity's own hue, the same under every theme
+        border: oklch(0.36, 0.06, h), // color: an identity's own hue, the same under every theme
       }
     : {
-        background: oklch(0.97, 0.032, h),
-        foreground: oklch(0.5, 0.145, h),
-        border: oklch(0.89, 0.05, h),
+        background: oklch(0.97, 0.032, h), // color: an identity's own hue, the same under every theme
+        foreground: oklch(0.5, 0.145, h), // color: an identity's own hue, the same under every theme
+        border: oklch(0.89, 0.05, h), // color: an identity's own hue, the same under every theme
       };
 }
 

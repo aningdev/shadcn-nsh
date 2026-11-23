@@ -219,7 +219,6 @@
       "timingFunction": "standard"
     }
   },
-  "controls": "material",
   "finishes": {
     "shared": {
       "card": {

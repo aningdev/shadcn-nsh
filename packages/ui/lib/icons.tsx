@@ -93,7 +93,7 @@ export function IconLabel(props: { label: string } & Omit<IconProps, "fill">) {
  * The image's ink when nothing colors it: a template image takes `CheckMark`'s `tintColor`, so this
  * is no color of the interface and not a theme literal.
  */
-const TEMPLATE_INK = "#000";
+const TEMPLATE_INK = "#000"; // color: template ink a drawing is recoloured from, never painted
 
 /** A check mark drawn as SVG, in `tint`; `weight` is the stroke in its 24-unit box (2 by default). */
 export function CheckMark(props: { size?: number; tint: string; weight?: number }) {

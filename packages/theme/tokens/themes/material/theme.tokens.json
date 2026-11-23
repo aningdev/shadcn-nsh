@@ -8,7 +8,7 @@
         "elevation": "Tonal surface stepping plus Material Web Level 1–3 shadows and `material.android.elevation` (1dp/3dp/6dp), with no edge drawn (each finish's `border-color: transparent`) and no backdrop blur.",
         "dos": [
           "Express interaction states via M3 state-layer ink overlays (`hover: 0.08`, `focus: 0.10`, `pressed: 0.10`, `dragged: 0.16`) and Android press ripples (`state.ripple: true`) with `state.press-scale: 1`.",
-          "Use `shape.curve: \"circular\"` and `controls: \"material\"` for top-rounded underlined fields and underlined tabs.",
+          "Use `shape.curve: \"circular\"` with top-rounded underlined fields and underlined tabs.",
           "Keep tonal and elevated containers edge-free through `border-color: transparent` in the finish, so depth comes from tonal steps and elevation."
         ],
         "donts": [
@@ -356,14 +356,6 @@
           "timingFunction": "{cubicBezier.standard}"
         },
         "$description": "Timing curve and duration for state."
-      }
-    }
-  },
-  "controls": {
-    "$description": "Material 3 Expressive control geometry presets.",
-    "$extensions": {
-      "dev.aning.shadcn-nsh": {
-        "preset": "material"
       }
     }
   }

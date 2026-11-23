@@ -559,14 +559,6 @@
       }
     }
   },
-  "controls": {
-    "$description": "Named per-theme control geometry preset family (base | material | winui).",
-    "$extensions": {
-      "dev.aning.shadcn-nsh": {
-        "preset": "base"
-      }
-    }
-  },
   "font": {
     "$description": "Desktop pointer typography metrics.",
     "family": {

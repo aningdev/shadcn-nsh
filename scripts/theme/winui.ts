@@ -610,7 +610,6 @@ export const winuiStyle = {
     // (`Common_themeresources_any.xaml`), the same pair `fast` takes.
     state: { duration: 83, timingFunction: "decelerate" },
   },
-  controls: "winui" as const,
 };
 
 /** WinUI 3 (Windows 11) theme data and DTCG descriptions ready for `emitDtcgTheme`. */
@@ -715,7 +714,7 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
       dos: [
         'Use `4px` `ControlCornerRadius` for `control` and `8px` `OverlayCornerRadius` for `container` and `modal` with `shape.curve: "circular"`.',
         'Use `focus.style: "double"` (2px outer `FocusStrokeColorOuter` + 1px inner `FocusStrokeColorInner`) and WinUI timing motion (`decelerate` / `point-to-point`).',
-        'Use `controls: "winui"` (underlined tabs/fields and leading navigation bar indicators) with `Segoe UI Variable` (`{font.family.sans}`).',
+        "Use underlined tabs and fields with leading navigation bar indicators, and `Segoe UI Variable` (`{font.family.sans}`).",
       ],
       donts: [
         "Do not substitute continuous squircle corners or spring physics for WinUI 3's circular corners and timing curves.",
@@ -764,7 +763,6 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
         "motion.slow": "WinUI 3 ControlNormalAnimationDuration (250ms, decelerate; motion.md).",
         "motion.state":
           "WinUI 3 ControlFasterAnimationDuration (83ms) with ControlFastOutSlowInKeySpline (Common_themeresources_any.xaml).",
-        controls: "WinUI 3 (winui3/release/2.7.0) control geometry presets.",
       },
     },
   };

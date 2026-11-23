@@ -6,7 +6,7 @@ const isObject = (value: unknown): value is Json =>
 /**
  * Adds the keys of `incoming` that `existing` lacks, at any depth; a value `existing` already
  * has stays as it is. Returns the merged JSON, how many keys were added, and their dotted paths
- * (`cssVars.light.brand`, `controls`, `finishes.shared.modal`), which is what `add` reports
+ * (`cssVars.light.brand`, `shape.curve`, `finishes.shared.modal`), which is what `add` reports
  * and `diff` compares.
  *
  * An app that brought its own `theme.json` or customized `semantics.json` keeps its values and

@@ -4,17 +4,16 @@ const find = (texts: string[], prefix: string) =>
   texts.find((t) => t.startsWith(prefix))?.slice(prefix.length);
 
 /**
- * Control preset selection (`controls()`) and per-component preset tables (`checkbox`,
- * `switch`, `slider`, `radio`, `progress`, `spinner`, `tabs`, `calendar`) update reactively on `selectTheme`.
+ * Control dimensions (`control()`, read by the per-component looks: `checkbox`, `switch`,
+ * `slider`, `radio`, `progress`, `spinner`, `tabs`, `calendar`) update reactively on `selectTheme`.
  */
-test("controls() and component presets follow the active theme", async () => {
+test("control dimensions and component looks follow the active theme", async () => {
   const app = await open("./theme-control-geometry.fixture.tsx", {
     platform: "macos",
     colorScheme: "light",
   });
 
   const assertBase = () => {
-    expect(find(app.texts(), "controls=")).toBe("base");
     const sw = find(app.texts(), "switch=") ?? "";
     expect(sw.startsWith("28x16|1|12|")).toBe(true);
     expect(find(app.texts(), "slider=")).toContain(
@@ -39,9 +38,9 @@ test("controls() and component presets follow the active theme", async () => {
   // Material Design 3 ("material")
   await app.press("text:Material");
   expect(app.texts()).toContain("theme:material");
-  expect(find(app.texts(), "controls=")).toBe("material");
-  expect(find(app.texts(), "switch=")).toContain("52x32|2|undefined|w-[16px] h-[16px]");
-  expect(find(app.texts(), "switch=")).toContain("active:w-[28px] active:h-[28px]");
+  expect(find(app.texts(), "switch=")).toBe(
+    "52x32|2|16|checked:translate-x-[20px] checked:scale-[1.5] active:scale-[1.75]",
+  );
   expect(find(app.texts(), "slider=")).toContain(
     "h-[16px] rounded-full|h-[44px] justify-center px-[2px]",
   );
@@ -51,15 +50,15 @@ test("controls() and component presets follow the active theme", async () => {
   expect(find(app.texts(), "progress=")).toBe("4/solid/false");
   expect(find(app.texts(), "tabs=")).toBe("8/3");
   expect(find(app.texts(), "tabs-indicator=")).toBe("3");
-  expect(find(app.texts(), "grabber=")).toBe("32x4");
-  expect(find(app.texts(), "calendar=")).toBe("40");
+  expect(find(app.texts(), "grabber=")).toBe("36x5");
+  expect(find(app.texts(), "calendar=")).toBe("32");
 
   // WinUI 3 ("winui")
   await app.press("text:WinUI");
   expect(app.texts()).toContain("theme:winui");
-  expect(find(app.texts(), "controls=")).toBe("winui");
-  expect(find(app.texts(), "switch=")).toContain("40x20|1|undefined|w-[12px] h-[12px]");
-  expect(find(app.texts(), "switch=")).toContain("active:w-[17px] active:h-[14px]");
+  expect(find(app.texts(), "switch=")).toBe(
+    "40x20|1|12|checked:translate-x-[20px] hover:scale-[1.1667] active:scale-x-[1.4167] active:scale-y-[1.1667] active:translate-x-[1.5px] checked:active:translate-x-[18.5px]",
+  );
   expect(find(app.texts(), "slider=")).toContain(
     "h-[4px] rounded-full|h-[32px] justify-center px-[9px]",
   );
@@ -70,7 +69,7 @@ test("controls() and component presets follow the active theme", async () => {
   expect(find(app.texts(), "tabs=")).toBe("0/1.5");
   expect(find(app.texts(), "tabs-indicator=")).toBe("3");
   expect(find(app.texts(), "grabber=")).toBe("36x5");
-  expect(find(app.texts(), "calendar=")).toBe("40");
+  expect(find(app.texts(), "calendar=")).toBe("32");
 
   // Revert to build-time default ("base")
   await app.press("text:Default");
