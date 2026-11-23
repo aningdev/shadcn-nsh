@@ -253,9 +253,9 @@ describe("groupLook", () => {
       padding: 12,
       gap: 8,
       check: 18,
-      corner: "shape.control",
+      corner: "pill",
       edge: { width: "stroke.hairline", fill: { kind: "colour", role: "border" } },
-      selected: { kind: "finish", role: "raised" },
+      selected: { kind: "tint", role: "brand" },
     });
   });
 });

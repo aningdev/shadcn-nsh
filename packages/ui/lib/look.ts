@@ -464,11 +464,13 @@ export interface GroupCellsLook {
   readonly gap: number;
   /** 18 points: M3's leading check. */
   readonly check: number;
-  /** The corner: the theme's button shape, whose ends the chosen cell is clipped to. */
+  /** The row's corner: a capsule, M3's full shape for the segmented button (§11.3 states no corner
+   * for cells, and material's picture draws one), whose ends the chosen cell is clipped to. */
   readonly corner: Radius;
   /** The edge round the row and between its cells. */
   readonly edge: Edge;
-  /** The chosen cell's face. */
+  /** The chosen cell's face: M3's SecondaryContainer, the brand tint (§11.3 names `finish.raised`,
+   * which material's picture does not draw: P3a keeps its pixels). */
   readonly selected: Fill;
 }
 
@@ -497,9 +499,9 @@ export function groupLook(value: Group): GroupLook {
         padding: 12,
         gap: 8,
         check: 18,
-        corner: "shape.control",
+        corner: "pill",
         edge: { width: "stroke.hairline", fill: { kind: "colour", role: "border" } },
-        selected: { kind: "finish", role: "raised" },
+        selected: { kind: "tint", role: "brand" },
       };
   }
   return unreachable(value);

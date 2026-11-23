@@ -5,7 +5,7 @@
 import {
   alpha,
   colors,
-  controls,
+  control,
   finish,
   focusRing,
   hovered,
@@ -17,7 +17,7 @@ import {
   shape,
   stroke,
   dimmed,
-  type Controls,
+  tints,
 } from "@shadcn-nsh/theme";
 import { PanelLeft } from "lucide";
 import type { AndroidProps, JSX, StyleProp, TextStyle, ViewProps, ViewStyle } from "nsh";
@@ -31,6 +31,7 @@ import {
   Scroll,
   signal,
   split,
+  untracked,
   View,
   windowSize,
 } from "nsh";
@@ -41,6 +42,7 @@ import { Input, type InputProps } from "./input";
 import { AsText } from "./lib/as-text";
 import { IconLabel } from "./lib/icons";
 import { type Live, read } from "./lib/live-value";
+import { type Fill, selectionLook } from "./lib/look";
 import { pressHostProps, pressRipple, pressSink, pressTransition } from "./lib/press";
 import { narrowWindow } from "./lib/surface";
 import { Separator, type SeparatorProps } from "./separator";
@@ -48,29 +50,33 @@ import { Sheet, SheetContent } from "./sheet";
 import { Skeleton } from "./skeleton";
 import { Tooltip, TooltipContent, TooltipTrigger, type TooltipContentProps } from "./tooltip";
 
-interface SidebarPreset {
-  navIndicator: "fill" | "bar";
-  indicatorThickness: number;
-}
+/** The rail line's width where the theme's selection form states none (a fill): 2 points. */
+const RAIL_LINE = 2;
 
-const sidebarPresets: Record<Controls, SidebarPreset> = {
-  base: { navIndicator: "fill", indicatorThickness: 2 },
-  material: { navIndicator: "fill", indicatorThickness: 3 },
-  // WinUI 3 NavigationView leading 3px accent indicator bar.
-  winui: { navIndicator: "bar", indicatorThickness: 3 },
-};
+/** The theme's mark on a selected row: `bar` draws the leading bar, `pill` fills the row's face
+ * (and so does `underline`, which a sidebar's rows fall back from). */
+const selectionMark = () => selectionLook(control().selection);
 
-/** Whether the active preset marks the selected sidebar item with a leading bar instead of a fill. */
+/** What the mark's fill inks a part with: a palette role, a tint, or a finish's own face. */
+const inkOf = (fill: Fill): string | undefined =>
+  fill.kind === "colour"
+    ? colors[fill.role]
+    : fill.kind === "tint"
+      ? tints[fill.role]
+      : finish[fill.role].backgroundColor;
+
+/** Whether the theme marks the selected sidebar item with a leading bar instead of a fill. */
 export function navBar(): boolean {
-  return sidebarPresets[controls()].navIndicator === "bar";
+  return selectionMark().form === "bar";
 }
 
 /**
- * The selected item's bar: a short vertical pill, `indicatorThickness` wide, in the accent at the
- * item's leading edge. Draw it as a child of the item, over its content.
+ * The selected item's bar: a short vertical pill, as wide as the theme's selection line, in its
+ * accent, at the item's leading edge. Draw it as a child of the item, over its content.
  */
 export function navBarStyle(): ViewStyle {
-  const width = sidebarPresets[controls()].indicatorThickness;
+  const mark = selectionMark();
+  const width = mark.thickness ?? RAIL_LINE;
   return {
     pointerEvents: "none",
     position: "absolute",
@@ -79,7 +85,7 @@ export function navBarStyle(): ViewStyle {
     bottom: 8,
     width,
     borderRadius: width / 2,
-    backgroundColor: colors.brand,
+    backgroundColor: inkOf(mark.fill),
   };
 }
 
@@ -241,7 +247,8 @@ export interface SidebarLook {
   readonly inset: ViewStyle;
   /** The rail: a strip down the column's inner edge that takes a press. */
   readonly rail: ViewStyle;
-  /** The line down the rail's middle, in the sidebar's edge color while the pointer is on it. */
+  /** The line down the rail's middle, in the sidebar's edge color while the pointer is on it: as
+   * wide as the theme's selection line. */
   readonly railLine: ViewStyle;
   /** The column's header (`SidebarHeader`): a stack of rows at its top. */
   readonly header: ViewStyle;
@@ -366,7 +373,7 @@ export function sidebarLook(o?: SidebarLookOptions): SidebarLook {
     },
     get railLine(): ViewStyle {
       return {
-        width: sidebarPresets[controls()].indicatorThickness,
+        width: selectionMark().thickness ?? RAIL_LINE,
         height: "100%",
         borderRadius: 1,
         backgroundColor: colors.sidebarBorder,
@@ -1019,14 +1026,24 @@ export function Sidebar(props: SidebarProps) {
   const ctx = useSidebarContext();
   const [, rest] = split(props, ["side", "variant", "collapsible", "style", "children"]);
   // The axes the parts read: published here, kept live for the parts that draw outside this file's
-  // own tree (the page beside the column) when the app changes one.
-  effect(() =>
-    ctx.setAxes({
+  // own tree (the page beside the column) when the app changes one. Written only where a value
+  // changes: the axes are an object, and an equal one would still wake every part that reads them.
+  effect(() => {
+    const next: SidebarAxes = {
       side: props.side ?? "left",
       variant: props.variant ?? "sidebar",
       collapsible: props.collapsible ?? "offcanvas",
-    }),
-  );
+    };
+    const now = untracked(() => ctx.axes());
+    if (
+      next.side === now.side &&
+      next.variant === now.variant &&
+      next.collapsible === now.collapsible
+    ) {
+      return;
+    }
+    ctx.setAxes(next);
+  });
   const look = sidebarLook(useLookOptions());
   const fixed = () => props.collapsible === "none";
   // Read once, for the three branches below: each draws the column in one of them, and only one of
@@ -1436,7 +1453,9 @@ export function SidebarMenuAction(props: SidebarMenuActionProps) {
         focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
         disabledStyle={[{ opacity: dimmed.disabled }, props.disabledStyle ?? null]}
       >
-        <AsText style={{ fontSize: 12, color: colors.mutedForeground }}>{props.children}</AsText>
+        <AsText style={{ fontSize: look.glyph.size, color: look.glyph.tint }}>
+          {props.children}
+        </AsText>
       </BaseButton>
     </If>
   );

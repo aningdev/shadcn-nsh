@@ -3,6 +3,7 @@
 
 import {
   colors,
+  control,
   finish,
   focusRing,
   follow,
@@ -14,8 +15,7 @@ import {
   shape,
   stroke,
   dimmed,
-  controls,
-  type Controls,
+  tints,
 } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
 import type { AndroidProps, JSX, StyleProp, ViewStyle } from "nsh";
@@ -29,6 +29,7 @@ import {
 
 import { Icon } from "./lib/icons";
 import { type Live, read } from "./lib/live-value";
+import { type Fill, type Radius, type SelectionLook, selectionLook } from "./lib/look";
 import { pressHostProps, pressRipple } from "./lib/press";
 import { controlSize } from "./lib/surface";
 
@@ -48,8 +49,11 @@ export interface TabLook {
   readonly android?: AndroidProps;
 }
 
-/** Under the pointer, a tab that is neither selected (its thumb shows) nor disabled. */
-const hoverOf = (state: TabState) =>
+/**
+ * Under the pointer, a tab that is neither selected (its thumb shows) nor disabled. Exported for the
+ * segmented control, which wears a `TabLook` and marks its own selected segment the same way.
+ */
+export const hoverOf = (state: TabState) =>
   read(state.selected) || read(state.disabled) ? undefined : hovered();
 
 /**
@@ -117,71 +121,95 @@ export function tabsLook() {
   };
 }
 
-/**
- * An underlined tab strip's look: tabs as wide as their labels
- * (`controlSize.tabs` high), a 2-point accent line (`indicatorStyle`) at the
- * strip's bottom that travels and stretches to the selected tab, over a
- * hairline (`rule`, a view under the strip: outside a scroll view holding
- * it, so its clipping never cuts the line). `tab(state)`: a tab's props
- * (hover on the others, a press that dims, the focus ring, dimmed while
- * disabled).
- */
-interface TabsPreset {
-  indicator: "pill" | "underline";
-  indicatorThickness: number;
-  padX: number;
-  indicatorSpan: "tab" | "label";
-  indicatorCorners: "pill" | "top";
+/** The pad at a tab's sides, and the line's ends where it spans only the label (fixed, §12 M7). */
+const TAB_PAD = 8;
+
+/** The line `variant="line"` draws where the theme fills the selected item instead (2 points). */
+const PILL_LINE = 2;
+
+/** A line's corner in points: half its thickness (`half-thickness`), the theme's control corner, a
+ * capsule (half its thickness too, a line being all thickness), or the number itself. */
+const radiusOf = (radius: Radius, thickness: number): number =>
+  radius === "shape.control"
+    ? shape.control
+    : radius === "pill" || radius === "half-thickness"
+      ? thickness / 2
+      : radius;
+
+/** The line under an underlined strip: where the theme draws one, its own (3 points: M3's
+ * PrimaryTabs indicator, WinUI's SelectorBar); where it fills the selected item, the strip's — 2
+ * points in the accent over the whole tab — since a fill states no line. */
+function stripLine(): {
+  thickness: number;
+  span: SelectionLook["span"];
+  corners: SelectionLook["corners"];
+  radius: Radius;
+  fill: Fill;
+} {
+  const mark = selectionLook(control().selection);
+  if (mark.form === "pill") {
+    return {
+      thickness: PILL_LINE,
+      span: "item",
+      corners: "all",
+      radius: "half-thickness",
+      fill: { kind: "colour", role: "brand" },
+    };
+  }
+  return {
+    thickness: mark.thickness ?? PILL_LINE,
+    span: mark.span,
+    corners: mark.corners,
+    radius: mark.radius,
+    fill: mark.fill,
+  };
 }
 
-const tabsPresets: Record<Controls, TabsPreset> = {
-  base: {
-    indicator: "pill",
-    indicatorThickness: 2,
-    padX: 8,
-    indicatorSpan: "tab",
-    indicatorCorners: "pill",
-  },
-  // M3 PrimaryNavigationTab label-width 3dp indicator with top-only corners (PrimaryNavigationTabTokens.kt, _md-comp-primary-navigation-tab.scss:28, _tab.scss:92-103).
-  material: {
-    indicator: "underline",
-    indicatorThickness: 3,
-    padX: 8,
-    indicatorSpan: "label",
-    indicatorCorners: "top",
-  },
-  // WinUI 3 SelectorBar underline tab geometry with 3px pill-capped active indicator.
-  winui: {
-    indicator: "underline",
-    indicatorThickness: 3,
-    padX: 8,
-    indicatorSpan: "tab",
-    indicatorCorners: "pill",
-  },
-};
+/** What a fill paints a line with: a palette role, a tint, or a finish's own face. */
+const inkOf = (fill: Fill): string | undefined =>
+  fill.kind === "colour"
+    ? colors[fill.role]
+    : fill.kind === "tint"
+      ? tints[fill.role]
+      : finish[fill.role].backgroundColor;
 
+/**
+ * An underlined tab strip's look: tabs as wide as their labels
+ * (`controlSize.tabs` high), an accent line (`indicatorStyle`) at the
+ * strip's bottom that travels and stretches to the selected tab, over a
+ * hairline (`rule`, a view under the strip: outside a scroll view holding
+ * it, so its clipping never cuts the line). The line's thickness, span,
+ * corners and ink are the theme's `selection` value (`stripLine`).
+ * `tab(state)`: a tab's props (hover on the others, a press that dims, the
+ * focus ring, dimmed while disabled).
+ */
 export function underlineTabsLook() {
   return {
     get style(): ViewStyle {
       return { flexDirection: "row", gap: 2, paddingTop: 3 };
     },
     get indicatorStyle(): ViewStyle {
-      const g = tabsPresets[controls()];
+      const line = stripLine();
+      // Where the line rounds only its top two corners, it takes its own thickness: material's
+      // picture draws it so, and §12 lets no change into this batch (the recipe states half a
+      // thickness). A capsule-ended line rounds both ends at the recipe's radius.
+      const corner =
+        line.corners === "top" ? line.thickness : radiusOf(line.radius, line.thickness);
       const corners: ViewStyle =
-        g.indicatorCorners === "top"
+        line.corners === "top"
           ? {
-              borderTopLeftRadius: g.indicatorThickness,
-              borderTopRightRadius: g.indicatorThickness,
+              borderTopLeftRadius: corner,
+              borderTopRightRadius: corner,
               borderBottomLeftRadius: 0,
               borderBottomRightRadius: 0,
             }
-          : { borderRadius: g.indicatorThickness / 2 };
+          : { borderRadius: corner };
       return {
         bottom: 0,
-        height: g.indicatorThickness,
-        ...(g.indicatorSpan === "label" ? { marginHorizontal: g.padX } : {}),
+        height: line.thickness,
+        ...(line.span === "label" ? { marginHorizontal: TAB_PAD } : {}),
         ...corners,
-        backgroundColor: colors.brand,
+        backgroundColor: inkOf(line.fill),
       };
     },
     get rule(): ViewStyle {
@@ -200,7 +228,7 @@ export function underlineTabsLook() {
         get style(): ViewStyle {
           return {
             height: controlSize.tabs,
-            paddingHorizontal: tabsPresets[controls()].padX,
+            paddingHorizontal: TAB_PAD,
             marginBottom: 4,
             ...rounded(shape.control),
             borderWidth: stroke.control,
@@ -254,9 +282,10 @@ export function TabTitle(props: {
 }) {
   const on = follow(() => (props.selected ? 1 : 0), motion.default);
   const listVariant = ListVariantContext();
-  // A preset that marks the chosen tab with an underline also sets its label in the accent.
+  // A theme that marks the chosen tab with a line also sets its label in the accent.
   const chosenInk = () =>
-    tabsPresets[controls()].indicator === "underline" && (listVariant === "line" || props.underline)
+    selectionLook(control().selection).form !== "pill" &&
+    (listVariant === "line" || props.underline)
       ? colors.brand
       : colors.foreground;
   const away = on.interpolate({ inputRange: [0, 1], outputRange: [1, 0] });
@@ -373,9 +402,10 @@ type TabsContextValue = {
 const TabsContext = context<TabsContextValue | null>(null);
 const ListVariantContext = context<TabsListVariant>("default");
 
-/** The variant a list wears when it names none: `tabsPresets[controls()].indicator` (an underline, or the pill's capsule). */
+/** The variant a list wears when it names none: an underline where the theme's `selection` draws a
+ * line, the pill's capsule where it fills the selected item. */
 const themeVariant = (): TabsListVariant =>
-  tabsPresets[controls()].indicator === "underline" ? "line" : "default";
+  selectionLook(control().selection).form === "pill" ? "default" : "line";
 
 function useTabs() {
   return TabsContext();
@@ -435,7 +465,6 @@ export function TabsList(props: TabsListProps) {
   const [, rest] = split(props, ["variant", "style", "indicatorStyle", "children"]);
   const variant = () => props.variant ?? themeVariant();
   const look = computed(() => listLook(variant()));
-  // The frame is chosen when the list is made, so a theme switched later shows on the next mount.
 
   const list = (
     <ListVariantContext.Provider value={variant()}>

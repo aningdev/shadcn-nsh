@@ -41,7 +41,7 @@ Segmented
 
 `size` is the scale: `default` (30 points high with a pointer) or `sm` (24).
 
-Under a theme whose controls are Material 3 (`controls: "material"`, as the `material` theme sets), the list draws Material 3's connected cells instead: 40 points high, one outline around the row, a divider between the cells, and the chosen cell filled with the theme's secondary-container tint behind a leading check. `size` and `fill` still size the cells; there is no smaller cell.
+Where the theme's `group` is `cells` (the `material` theme's), the list draws connected cells instead: one outline around the row, a divider between the cells, and the chosen cell on the theme's container behind a leading check — 40 points high, 12 of padding, 8 between a cell's parts, an 18-point check, and a capsule at the ends. The numbers are the recipe's (`groupLook(control().group)`), not the list's. `size` and `fill` still size the cells; there is no smaller cell.
 
 ```tsx
 <SegmentedList size="default" fill>

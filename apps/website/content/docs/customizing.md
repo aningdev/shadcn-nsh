@@ -61,7 +61,7 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
 }
 ```
 
-Change the values in that function — a height, a radius, a hover fill — and the shell below still spreads the result. Keep the props it returns; they are what the base control reads. `buttonLook` is one; `iconButtonLook`, `roundButtonLook` and `splitButtonLook` live in the same file, and other components name theirs the same way (`switchLook`, `checkboxLook`). Controls that vary shape and dimensions across platform families (`checkbox`, `switch`, `slider`, `radio-group`, `progress`, `spinner`, `tabs`, `calendar`, `sheet`, `sidebar`, and shared `lib/indicator.ts` for fields) keep their per-preset tables (`base` / `material` / `winui`, keyed by `controls()`) right inside those component or lib files.
+Change the values in that function — a height, a radius, a hover fill — and the shell below still spreads the result. Keep the props it returns; they are what the base control reads. `buttonLook` is one; `iconButtonLook`, `roundButtonLook` and `splitButtonLook` live in the same file, and other components name theirs the same way (`switchLook`, `checkboxLook`). Controls that vary shape and dimensions across platform families (`checkbox`, `switch`, `slider`, `radio-group`, `progress`, `spinner`, `calendar`, `sheet`, and shared `lib/indicator.ts` for fields) keep their per-preset tables (`base` / `material` / `winui`, keyed by `controls()`) right inside those component or lib files.
 
 ## Structure and API
 

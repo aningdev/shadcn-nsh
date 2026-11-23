@@ -922,7 +922,7 @@
       "type": "registry:ui",
       "title": "Tabs",
       "description": "A pill track or underlined row with a traveling indicator.",
-      "registryDependencies": ["icons", "live-value", "press", "surface", "theme"],
+      "registryDependencies": ["icons", "live-value", "look", "press", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/tabs.tsx",
@@ -937,7 +937,7 @@
       "type": "registry:ui",
       "title": "Segmented",
       "description": "A sunk track whose raised thumb springs to the selected segment, or connected cells in a theme that draws them.",
-      "registryDependencies": ["icons", "live-value", "press", "tabs", "theme"],
+      "registryDependencies": ["icons", "live-value", "look", "press", "tabs", "theme"],
       "files": [
         {
           "path": "packages/ui/segmented.tsx",
@@ -1652,6 +1652,7 @@
         "icons",
         "input",
         "live-value",
+        "look",
         "press",
         "separator",
         "sheet",
