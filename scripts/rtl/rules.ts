@@ -2,7 +2,8 @@
  * The right-to-left rule for `packages/ui`: a side that is not the same on both sides belongs to
  * the reading direction, so it is written with NSH's start/end form (`paddingStart`, `end`,
  * `borderStartWidth`, `borderTopStartRadius`, ...); `left` / `right` keep their physical side and
- * do not mirror.
+ * do not mirror. `transformOrigin` has no start/end form: a physical keyword in it
+ * (`transformOrigin: "left"`) becomes Tailwind's pair of classes (`origin-left rtl:origin-right`).
  *
  * Allowed without a marker:
  *   - a symmetric pair in one object literal: `left` and `right` (or `paddingLeft` /
@@ -50,7 +51,8 @@ export interface Violation {
   property: string;
   /** The object literal's own line, where the `// physical:` marker would go. */
   objectLine: number;
-  /** `paddingLeft` → `paddingStart`, `left` → `start`; a radius keeps its corner. */
+  /** `paddingLeft` → `paddingStart`, `left` → `start`; a radius keeps its corner. A
+   *  `transformOrigin` names the classes that mirror it instead. */
   suggestion: string;
 }
 
@@ -86,6 +88,20 @@ function propertyName(node: Node): string | undefined {
 
 /** The text of a property's value, as the author wrote it. */
 const valueText = (source: string, node: Node) => source.slice(node.start, node.end).trim();
+
+/**
+ * The classes that put a `transformOrigin`'s value on the same edge in either direction, or
+ * `undefined` when the value names no side (`[0, 0.5]`, `"50% 0"`).
+ */
+export function originClasses(value: string): string | undefined {
+  const words = value.replace(/["'`]/g, "").split(/\s+/);
+  const side = words.find((word) => word === "left" || word === "right");
+  if (!side) return undefined;
+  const vertical = words.find((word) => word === "top" || word === "bottom");
+  const at = (horizontal: string) =>
+    vertical ? `origin-${vertical}-${horizontal}` : `origin-${horizontal}`;
+  return `${at(side)} rtl:${at(side === "left" ? "right" : "left")}`;
+}
 
 /**
  * Every physical side property in `source` that is neither symmetric nor marked physical.
@@ -140,6 +156,20 @@ export function violations(source: string, file: string): Violation[] {
             property: name,
             objectLine: lineAt(source, object.start),
             suggestion: logicalName(name),
+          });
+        }
+        for (const property of properties) {
+          const name = propertyName(property);
+          if (name !== "transformOrigin") continue;
+          const classes = originClasses(valueText(source, property.value as Node));
+          if (!classes) continue;
+          found.push({
+            file,
+            line: lineAt(source, property.start),
+            column: columnAt(source, property.start),
+            property: name,
+            objectLine: lineAt(source, object.start),
+            suggestion: classes,
           });
         }
       }

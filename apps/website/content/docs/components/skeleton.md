@@ -69,5 +69,5 @@ Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through (`style
 | ---------- | ----------- | --------------------------------------------------------------------- |
 | `Skeleton` | `ViewProps` | The block; its box, corners and breathing are the look's and `style`. |
 
-There is no axis: a skeleton is one look — the theme's `accent` fill, the theme's inset corners,
+There is no axis: a skeleton is one look — the theme's `accent` fill, the theme's control corners,
 the breathing. `skeletonLook()` is exported for a block the app draws (or animates) itself.

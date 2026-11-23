@@ -1,7 +1,7 @@
 // A table: `nsh/base`'s parts in the card look of `data-table.tsx` (`dataTableClasses`).
 
 import type { JSX } from "nsh";
-import { split, Text } from "nsh";
+import { split } from "nsh";
 import {
   Table as BaseTable,
   TableBody as BaseTableBody,
@@ -22,6 +22,7 @@ import {
 } from "nsh/base";
 
 import { dataTableClasses } from "./data-table";
+import { AsText } from "./lib/as-text";
 import { joinClass } from "./lib/class-names";
 
 /** Rows ease their fill. `motion-reduce` drops it. */
@@ -70,11 +71,6 @@ const textClass = {
 /** A head and a cell share it: the look's cell padding, and the same vertical padding so a column's two rows line up. */
 const cellClass = `${dataTableClasses.cell} py-2`;
 
-function textOf(children: string | JSX.Element | undefined, kind: keyof typeof textClass) {
-  if (typeof children !== "string") return children;
-  return <Text class={textClass[kind]}>{children}</Text>;
-}
-
 /** A table of the app's rows: a bordered card. Screen readers hear the base roles. */
 export function Table(props: TableProps) {
   const [, rest] = split(props, ["class"]);
@@ -119,7 +115,7 @@ export function TableHead(props: TableHeadProps) {
   const [, rest] = split(props, ["class", "children"]);
   return (
     <BaseTableHead {...rest} class={joinClass(cellClass, props.class)}>
-      {textOf(props.children, "head")}
+      <AsText class={textClass.head}>{props.children}</AsText>
     </BaseTableHead>
   );
 }
@@ -131,7 +127,7 @@ export function TableCell(props: TableCellProps) {
     // No width of its own: a column's width is the app's, set on its head and its cells
     // alike (`w-24`, `flex-1`), so the two rows line up.
     <BaseTableCell {...rest} class={joinClass(cellClass, props.class)}>
-      {textOf(props.children, "cell")}
+      <AsText class={textClass.cell}>{props.children}</AsText>
     </BaseTableCell>
   );
 }
@@ -141,7 +137,7 @@ export function TableCaption(props: TableCaptionProps) {
   const [, rest] = split(props, ["class", "children"]);
   return (
     <BaseTableCaption {...rest} class={joinClass("px-2 py-2", props.class)}>
-      {textOf(props.children, "caption")}
+      <AsText class={textClass.caption}>{props.children}</AsText>
     </BaseTableCaption>
   );
 }

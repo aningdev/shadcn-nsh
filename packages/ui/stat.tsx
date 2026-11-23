@@ -13,10 +13,8 @@ const StatGroupContext = context(false);
 /** The figure's type: a small muted label over a value a step larger, so the value leads. */
 const type = { label: 12, value: 15 };
 
-/** A label above a value, for grids of figures; on one row in the terminal,
- * the value right-aligned. `truncate` keeps a value that may run long (a
- * display's name) on its one line, ending in an ellipsis. */
-export function Stat(props: {
+/** A figure: its label, its value and the quieter lines around them. */
+export type StatProps = {
   label: string;
   value: string;
   /** A unit drawn smaller, beside the value (`ms`, `%`). */
@@ -27,7 +25,12 @@ export function Stat(props: {
   tone?: Live<Tone>;
   width?: `${number}%`;
   truncate?: boolean;
-}) {
+};
+
+/** A label above a value, for grids of figures; on one row in the terminal,
+ * the value right-aligned. `truncate` keeps a value that may run long (a
+ * display's name) on its one line, ending in an ellipsis. */
+export function Stat(props: StatProps) {
   const grouped = StatGroupContext();
   // The color is read where the value is drawn, so a function follows a value the app changes.
   const valueColor = () => {

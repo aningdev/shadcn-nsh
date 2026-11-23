@@ -70,6 +70,10 @@ export type ToolbarItemProps = {
   priority?: number;
   /** Whether this tool may fold into `ToolbarOverflow` (default true). */
   foldable?: boolean;
+  /** Classes for the box the tool stands in (see `style`). */
+  class?: string;
+  /** The box the tool stands in, after the bar's own (`style` wins). */
+  style?: StyleProp<ViewStyle>;
   /** The tool itself (`Button`, `Toggle`, `Link`, or a `Menu` / `Popover` trigger). */
   children?: JSX.Element;
 };
@@ -549,9 +553,10 @@ export function ToolbarSeparator(props: ToolbarSeparatorProps) {
   const bar = useToolbar();
   const [, rest] = split(props, ["style"]);
   // When `ToolbarOverflow` is present, the bar owns the rules between visible units.
-  if (bar.hasOverflow() && !bar.vertical && !terminal) return null;
   return (
-    <BaseToolbarSeparator {...rest} style={[toolbarRule(bar.vertical), props.style ?? null]} />
+    <If when={!(bar.hasOverflow() && !bar.vertical && !terminal)}>
+      <BaseToolbarSeparator {...rest} style={[toolbarRule(bar.vertical), props.style ?? null]} />
+    </If>
   );
 }
 
@@ -588,7 +593,11 @@ export function ToolbarItem(props: ToolbarItemProps) {
       </If>
       <If when={!isFolded()}>
         <View
-          style={{ flexDirection: bar.vertical ? "column" : "row", alignItems: "center" }}
+          class={props.class}
+          style={[
+            { flexDirection: bar.vertical ? "column" : "row", alignItems: "center" },
+            props.style ?? null,
+          ]}
           onLayout={({ bounds }) => bar.measureItem(itemId, bounds.size.width)}
           onKeyDown={(e) => {
             if (e.key === "tab") bar.clearBarFocus();

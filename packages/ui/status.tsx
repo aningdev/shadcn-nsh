@@ -12,15 +12,18 @@ const dotSide = 7;
 /** The dot's color crosses over as the state changes, rather than snapping. */
 const toneTransition = 160;
 
+/** A state mark: its word and the dot's tone. */
+export type StatusProps = {
+  label: string;
+  /** The dot's and the word's tone: the text's quiet colors by default; a function is read where they are drawn. */
+  tone?: Live<Tone>;
+};
+
 /** A state in a list row or a header, quieter than a `Badge`: a round dot
  * and a word, tinted only for a tone that matters (an active window); the
  * dot's color crosses over as the state changes. The word alone in the
  * terminal. */
-export function Status(props: {
-  label: string;
-  /** The dot's and the word's tone: the text's quiet colors by default; a function is read where they are drawn. */
-  tone?: Live<Tone>;
-}) {
+export function Status(props: StatusProps) {
   // Read where the dot and the word are drawn, so a function follows a value the app changes.
   // Only a tone that matters tints them: the neutral one stays quiet.
   const tint = (): string | undefined => {

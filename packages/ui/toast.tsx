@@ -445,11 +445,13 @@ function ToastItem(props: { entry: ToastEntry }) {
             }}
           >
             <View
+              // The fill's side follows the reading direction: `scaleX` turns about the bar's
+              // reading start, the left edge left to right.
+              class="origin-left rtl:origin-right"
               style={{
                 height: 4,
                 borderRadius: 2,
                 backgroundColor: type() === "success" ? colors.up : colors.primary,
-                transformOrigin: "left",
                 transform: [{ scaleX: Math.max(0, Math.min(1, progress() ?? 0)) }],
               }}
             />
