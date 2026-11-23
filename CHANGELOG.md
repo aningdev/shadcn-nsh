@@ -29,6 +29,7 @@
 ### Changed
 
 - **`winui`'s date-picker trigger is a split button (#275).** Under `winui` the calendar glyph sits in its own 32-wide cell at the trigger's end, with its own hover fill and end-only corners, as WinUI 3's `CalendarDatePicker` draws it; the other themes keep the calendar ahead of the title. `Picker` (select) takes `iconCell`, the date picker reads it from `dateTriggerCell()`, and `clearButtonStyle` takes the cell's width so the clear button sits before it.
+- **`winui`'s carousel arrows are FlipView's edge chevrons (#276).** Under `winui`, `carouselArrowLook()` draws a 16×38 acrylic (`finish.glass`) chevron with `shape.control` corners, no border and a 12-point `mutedForeground` glyph, taking `finish.hover` / `finish.pressed`. The look gains `placement` (`"beside"`, or `"over"` for the edge chevrons, which the app lays over the viewport's edges, as the demo does) and `icon` (the glyph's size and tint). The other themes keep the round arrows.
 
 - **`Segmented` draws connected cells under `material` (#274).** `segmentedPresets` gives each `controls` preset a `structure`: `track` (a sliding thumb, unchanged in every other theme) or `cells`, which `material` uses — M3's segmented button: a 40-point row with one rounded `colors.border` outline, 1px dividers between cells, and the chosen cell tinted `tints.brand` with a leading check. A radio group drawn with `segmentedLook()` follows the preset. `segmentedLook().segment(state, first)` takes whether the cell is first, so the leading cell draws no divider.
 
