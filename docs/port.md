@@ -54,7 +54,9 @@ bun run port:new alert --view --family   # 有零件（Title / Description…）
 - look 的选项传读取函数（`size: () => props.size`），外观随 props 变化
 - 样式类 props 写成数组，使用者在后：`style={[look.style, props.style ?? null]}`；`hoverStyle`、`activeStyle`、`focusVisibleStyle`、`disabledStyle` 同理
 - 状态的外观进对应的 state 样式（`hoverStyle`、`activeStyle`、`focusVisibleStyle`、`disabledStyle`、`selectedStyle`、`expandedStyle`…），不在 `style` 里按 `disabled`、`open`、`selected` 再算一遍；哪些状态留给 JS 见 [`ARCHITECTURE.md`](ARCHITECTURE.md#rules) 的“状态的外观进 state 样式”
+- 状态的外观交给平台的 class 语言（`hover:bg-foreground/8`、`group-hover:opacity-100`）只在它比 state 样式更合适时才用，并在那一行写明理由：`sidebar.tsx` 的 `SidebarRail` 的发丝线用 `opacity-0 group-hover:opacity-100` 跟着指针（class 由平台的合成器追踪 hover，换成一个 signal 会在光标每次掠过时提交一帧），同一个文件其余地方仍用 `hovered()`
 - 字符串 children 渲染成带 look 字体的 `Text`，其他原样渲染
+- **函数 child 是一次响应式插入**：`<View>{() => …}</View>` 里的函数由 NSH 当作动态 child，在它自己的 render effect 里调用，只重跑它读到的那些值，兄弟节点不动（`crates/nsh-js/src/dom.rs` 的 `insert_value` → `insert_effect`，`JSX.Element` 里 `() => Element` 就是一员）。用在“先算出几个值、再交回一个元素”的地方：`combobox.tsx` 的 `ComboboxContent`（look、chrome、空表与 chips 都按这次绘制读一遍，再交给 `BaseCombobox`）、`date-picker.tsx` 的 `DatePickerContent`、`color-picker.tsx` 的 `ColorFields` 的字段行（换格式就换一组字段）。需要自己的状态、`cleanup` 或 context 的部分仍写成组件；它不能用来推迟读 children——读 `props.children` 的函数 child 只有门户的内容构建函数一个（`nsh/base` 每次打开才建它，带 `children-lint: <原因>` 注释）
 - **主题值在绘制时读**：模块作用域不读主题值；look 的成员写成 getter（`get height() { return controlHeight.md; }`，样板 `lib/surface.tsx`）或直接在 JSX / `style` 里读。组件体里的 `const h = controlHeight.md` 只读一次，换主题后留在旧值
 - **几何走刻度**：行高 `controlHeight.*`、图标 `iconSize.*`、边宽 `stroke.hairline` / `stroke.control`、圆角 `rounded()`、字重 `font.weight(<角色>)`、字号走字体角色；控件维度（`selection`、`field`、`choice`、`track`、`handle`、`group`）的形态从 `control()` 取值、交给 `lib/look.ts`，组件里不按主题名比较、不留按主题的表。刻度上没有的数字就地写一行注释说明它是哪来的
 - **时长走 `motion.*`**：状态过渡用 `motion.state`，浮层出现用 `motion.enter`，其余按快慢取 `motion.fast` / `motion.default` / `motion.slow`；只有循环动画留常量，并注释为什么

@@ -5,7 +5,7 @@
 import { colors, control, finish, terminal, TERMINAL_COLUMN, dimmed } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
-import { cleanup, context, platform, reduceMotion, signal, split, Text, View } from "nsh";
+import { cleanup, context, effect, platform, reduceMotion, signal, split, Text, View } from "nsh";
 import {
   Select as BaseSelect,
   type OpenChangeReason,
@@ -527,7 +527,10 @@ export function SelectTrigger(props: SelectTriggerProps) {
 /** Sets the trigger's placeholder. It draws nothing of its own. */
 export function SelectValue(props: SelectValueProps) {
   const ctx = useSelect();
-  ctx.setPrompt(props.placeholder);
+  // The prompt is the trigger's state, not this part's look. Set while the part renders, it lands
+  // whenever this part happens to render relative to the trigger; an effect writes it after the
+  // draw, and again when a placeholder that changes changes.
+  effect(() => ctx.setPrompt(props.placeholder));
   return null;
 }
 

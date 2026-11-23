@@ -22,6 +22,7 @@ import {
 import { PanelLeft } from "lucide";
 import type { AndroidProps, JSX, StyleProp, TextStyle, ViewProps, ViewStyle } from "nsh";
 import {
+  cleanup,
   context,
   effect,
   keymap,
@@ -976,8 +977,10 @@ export function SidebarProvider(props: SidebarProviderProps) {
     side: () => axes().side,
     variant: () => axes().variant,
   });
-  // The app's shortcut, on the desktops and the web: made where the provider draws, gone with it.
-  keymap.bind("mod+b", () => toggle("shortcut"));
+  // The app's shortcut, on the desktops and the web. `keymap.bind` returns the function that takes
+  // the binding away, and NSH also runs it when this provider goes; `cleanup` says so where the
+  // binding is made, so unmounting one of two providers leaves no handler of its own behind.
+  cleanup(keymap.bind("mod+b", () => toggle("shortcut")));
   return (
     <SidebarContext.Provider
       value={{

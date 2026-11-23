@@ -22,7 +22,7 @@ import {
 } from "nsh/base";
 
 import { Button } from "@/packages/ui/button";
-import { DataTable, dataTableClasses, dataTableFitPadding } from "@/packages/ui/data-table";
+import { DataTable, dataTableClasses } from "@/packages/ui/data-table";
 
 import { Choice, ToggleButton, random } from "./data-shared";
 
@@ -155,7 +155,9 @@ const columns: DataTableColumn[] = [
     ...right,
     ...tone,
   })),
-].map((column) => ({ ...column, fitPadding: dataTableFitPadding }));
+  // A fitted column takes the look's room around its content: the cells' `pl-2 pr-1` (8 + 4) and
+  // the header's 4-point title/button gap make 16.
+].map((column) => ({ ...column, fitPadding: 16 }));
 
 /** The cells of stock `id`'s row with quote `n`, in the columns' order. */
 function row(id: number, n: Float64Array): (string | number)[] {

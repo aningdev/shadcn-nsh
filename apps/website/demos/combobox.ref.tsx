@@ -1,12 +1,15 @@
 // The reference of `combobox.tsx`: the same scene as upstream writes it, `comboboxLook`, `chipLook`
 // and the listbox looks spread on `nsh/base`'s Combobox. The render check requires the two to draw
 // the same pixels.
+import { terminal } from "@shadcn-nsh/theme";
+import { X } from "lucide";
 import type { JSX } from "nsh";
 import { mount, signal, Text, View } from "nsh";
 import { Button as BaseButton, Combobox } from "nsh/base";
 
 import { Avatar } from "@/packages/ui/avatar";
 import { chipLook, chipsLook, comboboxLook, ComboToggle } from "@/packages/ui/combobox";
+import { Icon } from "@/packages/ui/lib/icons";
 import {
   clearButtonLook,
   ListboxEmpty,
@@ -79,7 +82,11 @@ function Chip(props: {
           focusVisibleStyle={look.focusVisibleStyle}
           onPress={props.onRemove}
         >
-          {look.removeGlyph}
+          {terminal ? (
+            <Text style={{ color: look.removeGlyph.tint }}>×</Text>
+          ) : (
+            <Icon icon={X} size={look.removeGlyph.size} tint={look.removeGlyph.tint} />
+          )}
         </BaseButton>
       ) : null}
     </View>

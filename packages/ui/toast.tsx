@@ -241,6 +241,10 @@ const TICK = 50;
 /** Sonner's default: four seconds, then it leaves. */
 const DEFAULT_DURATION = 4000;
 
+/**
+ * The toasts there are: one store per process, as sonner's one `Toaster` — an app mounts `Toaster`
+ * once, and a second one would show the same toasts rather than its own.
+ */
 const manager = new ToastManager(terminal ? { exitDuration: 0 } : undefined);
 const shown = signal<ToastEntry[]>([]);
 const expanded = signal(false);

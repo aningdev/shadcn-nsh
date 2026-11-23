@@ -11,9 +11,6 @@ import {
 
 import { mergeClasses } from "./lib/class-names";
 
-/** Extra room for this UI layer's cell padding and title/button gap. */
-export const dataTableFitPadding = 16;
-
 /** The chosen column's arrow: both directions print it at the same strength, so only the arrow's turn says which. */
 const sortChosen = "text-muted-foreground opacity-60 selected:text-foreground selected:opacity-100";
 

@@ -126,8 +126,9 @@ function useAlertDialog() {
 }
 
 /**
- * The box the platform is showing, if one is: `nsh/base` shows one at a time, and the answer it
- * resolves with belongs to the app, not to the part that asked for it.
+ * The box the platform is showing, if one is: one per process, because the platform shows one at a
+ * time — two roots opened together share this key, so the second is not stacked on the first. The
+ * answer it resolves with belongs to the app, not to the part that asked for it.
  */
 const onScreen = signal<string | null>(null);
 

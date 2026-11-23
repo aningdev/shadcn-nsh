@@ -53,10 +53,12 @@ The table fills and scrolls in the box it is given.
 
 ### Fit padding
 
-`dataTableFitPadding` on a column lets its content set the width.
+A column fitted to its content takes `fitPadding` for the room the drawing adds beside the text: a
+column of this look sets **16** — 8 points before a cell's text, 4 after it, and the 4-point gap
+before a header's sort button.
 
 ```tsx
-columns.map((column) => ({ ...column, fitPadding: dataTableFitPadding }));
+columns.map((column) => ({ ...column, fitPadding: 16 }));
 ```
 
 ### Fixed columns
@@ -122,4 +124,4 @@ it with `rowClasses`, `cellClasses` or the columns' `headerClass` / `cellClass`.
 | ----------- | ------------------------------------------------------------------ | --------------------------------------- |
 | `DataTable` | every `nsh/base` DataTable prop; `classes` over `dataTableClasses` | A striped table, sortable and resizable |
 
-Uses `dataTableClasses` and `dataTableFitPadding`. Every prop of [`nsh/base` DataTable](https://nsh.dev/elements/data-table) passes through.
+Uses `dataTableClasses`. Every prop of [`nsh/base` DataTable](https://nsh.dev/elements/data-table) passes through.

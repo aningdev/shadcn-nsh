@@ -49,7 +49,9 @@ The box is the platform's own (`nsh/base`'s `AlertDialog.show`): UIAlertControll
 on macOS, NSH's drawing of the same box on the web, the platform dialog on Android. The parts only
 fill it in — they register a title, a message and buttons, and `AlertDialogContent` shows it when
 the root is open. So the box **does not follow this library's theme**, what it shows is **text
-only** (no views, icons or fields), and an Android alert takes **at most three buttons**.
+only** (no views, icons or fields), and an Android alert takes **at most three buttons**. The
+platform shows one box at a time, so a process has one: two `AlertDialog`s opened together share
+it, and the second is not stacked on the first.
 
 ## Composition
 

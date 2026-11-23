@@ -156,8 +156,8 @@ export interface ChipLookOptions {
  * A chip's look (the gallery's `Chip`): one chosen value as a label of its own, on the theme's
  * `chip` finish (its fill, edge and shadow — a raised label in the default theme, a flat grey one
  * in shadcn, glass in Solid Glass), its corners half its height. `lead` goes at the start, the
- * remove button at the end: a round target lit under the pointer, a muted × (a terminal's text ×).
- * A disabled chip dims to half.
+ * remove button at the end: a round target lit under the pointer, `removeGlyph`'s muted mark at its
+ * middle (a terminal's mark is text, so that part draws it). A disabled chip dims to half.
  */
 export function chipLook(o?: ChipLookOptions) {
   const height = pointer ? 26 : 32;
@@ -193,12 +193,9 @@ export function chipLook(o?: ChipLookOptions) {
     get focusVisibleStyle(): ViewStyle {
       return focusRing();
     },
-    get removeGlyph(): JSX.Element {
-      return terminal ? (
-        <Text style={{ color: colors.mutedForeground }}>×</Text>
-      ) : (
-        <Icon icon={X} size={pointer ? 10 : 12} tint={colors.mutedForeground} />
-      );
+    get removeGlyph(): { size: number; tint: string } {
+      // A mark 10 points across with a pointer, 12 on a touch screen.
+      return { size: pointer ? 10 : 12, tint: colors.mutedForeground };
     },
   };
 }
@@ -545,7 +542,11 @@ export function ComboboxChip(props: ComboboxChipProps) {
           focusVisibleStyle={look.focusVisibleStyle}
           onPress={remove}
         >
-          {look.removeGlyph}
+          {terminal ? (
+            <Text style={{ color: look.removeGlyph.tint }}>×</Text>
+          ) : (
+            <Icon icon={X} size={look.removeGlyph.size} tint={look.removeGlyph.tint} />
+          )}
         </BaseButton>
       ) : null}
     </View>
