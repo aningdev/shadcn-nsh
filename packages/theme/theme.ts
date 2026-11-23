@@ -217,6 +217,47 @@ export interface Timing {
 export type Controls = "base" | "material" | "winui";
 
 /**
+ * A selection's look (tabs, a sidebar's rows): `pill` a capsule in the track it sits in, `underline`
+ * a line under the label only, `bar` a line under the whole item.
+ */
+export type Selection = "pill" | "underline" | "bar";
+
+/** A field's look: `box` four edges, `underline` the bottom edge only, `box-underline` four edges with round corners. */
+export type Field = "box" | "underline" | "box-underline";
+
+/** A choice's look (a radio, a checkbox): `well` a sunk face, `outline` an edge alone, `inset` a flat face. */
+export type Choice = "well" | "outline" | "inset";
+
+/** A track's look (a progress bar, a slider, a segmented control): `sunk` a grooved channel, `tint` a flat band, `hairline` a thin line. */
+export type Track = "sunk" | "tint" | "hairline";
+
+/** A handle's look (a slider's thumb, a switch's knob): `circle` a dot, `bar` a wide bar, `ring` a ring. */
+export type Handle = "circle" | "bar" | "ring";
+
+/** A group's look (a segmented control): `track` choices in a groove, `cells` adjacent cells. */
+export type Group = "track" | "cells";
+
+/** The six control dimensions of `semantics.json`'s `dimension.control`: one value each. */
+export interface ControlDimensions {
+  selection: Selection;
+  field: Field;
+  choice: Choice;
+  track: Track;
+  handle: Handle;
+  group: Group;
+}
+
+/** The keys of `ControlDimensions`, in the order `semantics.json` writes them. */
+export const CONTROL_DIMENSIONS = [
+  "selection",
+  "field",
+  "choice",
+  "track",
+  "handle",
+  "group",
+] as const;
+
+/**
  * The style of a theme: what `semantics.json` states beside its finishes, in DTCG field naming,
  * the same keys in every theme (`check:theme`). A string that names one of a list (a curve, a
  * timingFunction, controls) or numeric fontWeight is checked by `check:theme` (`scripts/theme/style.ts`).
@@ -247,6 +288,8 @@ export interface Style {
     };
     stroke: { hairline: number; control: number };
     focus: { style: string; width: number; offset: number };
+    /** The six axes a theme decides for its controls (`control()`); nothing here names a platform. */
+    control: ControlDimensions;
     icon: Tiered<Steps>;
   };
   shape: {
@@ -271,6 +314,8 @@ export interface Style {
     fast: Spring | TimingSpec;
     default: Spring | TimingSpec;
     slow: Spring | TimingSpec;
+    /** How fast a hover, a press or a choice comes and goes: always timed. */
+    state: TimingSpec;
   };
   controls: Controls;
 }
@@ -885,6 +930,22 @@ export const hitTarget = (): number => style().dimension.size.hit[tier];
 /** The active theme's control geometry preset family (`controls` in `semantics.json`). */
 export const controls = (): Controls => style().controls;
 
+/** The control dimensions in use, made once at import (a `computed` made inside a component would
+ * be disposed with it), so `control().selection` follows `selectTheme` and re-runs only when that
+ * value changes. A control reads the axis it draws and keeps its own fallback where a value cannot
+ * express it; see `docs/specs/theme-contract-v2.md` §11. */
+const controlDimensions = reactive<ControlDimensions>(
+  CONTROL_DIMENSIONS,
+  () => style().dimension.control,
+);
+
+/**
+ * The six control dimensions a theme decides (`semantics.json`'s `dimension.control`): how a
+ * selection, a field, a choice, a track, a handle and a group are drawn. Reactive: reading one in
+ * JSX, a `draw` or an effect follows `selectTheme`.
+ */
+export const control = (): ControlDimensions => controlDimensions;
+
 /** A button's height by size (`dimension.size.height` of the tier). */
 export const controlHeight = {
   get sm() {
@@ -982,15 +1043,17 @@ const motionRole = (read: () => Spring | TimingSpec): Spring | Timing => {
 };
 
 /**
- * The three springs a theme offers: `fast` (a small control's state coming and going), `default`
- * (the one most feedback uses: a press, a release, a modest move) and `slow` (a large surface or a
- * long-travel movement). A spring, unless a theme times them with `{ duration, timingFunction }`.
+ * The theme's motion roles: `fast` (a small control's state coming and going), `default` (the one
+ * most feedback uses: a press, a release, a modest move), `slow` (a large surface or a
+ * long-travel movement) and `state` (a hover, a press or a choice fading in and out, which is
+ * always timed). A spring, unless a theme times the role with `{ duration, timingFunction }`.
  * `enter` is a surface's entrance, which is always timed.
  */
 export const motion = {
   fast: motionRole(() => style().motion.fast),
   default: motionRole(() => style().motion.default),
   slow: motionRole(() => style().motion.slow),
+  state: motionRole(() => style().motion.state),
   get enter(): Timing {
     const { duration, timingFunction } = style().transition.enter;
     return { duration, timingFunction: easings[timingFunction] };

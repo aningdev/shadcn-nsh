@@ -34,6 +34,7 @@ import { loadSourceItem, resolvePermutation, type ResolverDoc } from "./resolver
 import { validateResolverDocument, validateTokensDocument } from "./schema-validate";
 import {
   COLOR_ROLES,
+  CONTROL_DIMENSIONS,
   EXT_NS,
   RADIUS_KEYS,
   TYPE_ROLES,
@@ -270,6 +271,20 @@ function validateExtAtPath(
     checkUnknownKeys(where, ext, ["style"], problems);
     if (!whitelists["dimension.focus.style"]!.includes(ext.style as string)) {
       problems.push(`${where}.style: ${JSON.stringify(ext.style)} is not in whitelist`);
+    }
+    return;
+  }
+
+  if (p === "dimension.control") {
+    checkUnknownKeys(where, ext, CONTROL_DIMENSIONS, problems);
+    for (const key of CONTROL_DIMENSIONS) {
+      if (!(key in ext)) {
+        if (mode === "merged") problems.push(`${where}.${key} is missing`);
+        continue;
+      }
+      if (!whitelists[`dimension.control.${key}`]!.includes(ext[key] as string)) {
+        problems.push(`${where}.${key}: ${JSON.stringify(ext[key])} is not in whitelist`);
+      }
     }
     return;
   }
@@ -950,6 +965,7 @@ function checkMergedSemantics(
       "dimension.shape",
       "dimension.stroke",
       "dimension.focus",
+      "dimension.control",
       "dimension.size",
       "dimension.icon",
       "shape",

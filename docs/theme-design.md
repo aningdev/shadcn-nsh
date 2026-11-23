@@ -23,14 +23,14 @@
 
 ```mermaid
 flowchart LR
-  T["主题（值）<br/>颜色 · finish · 刻度 · 动效"] --> P["控件预设（形态）<br/>controls: base / material / winui"]
+  T["主题（值）<br/>颜色 · finish · 刻度 · 动效"] --> P["控件维度（形态）<br/>selection · field · choice · track · handle · group"]
   T --> C["组件<br/>packages/ui"]
   P --> C
   C --> A["应用<br/>窗口材质 · 文案 · 布局"]
 ```
 
 - **主题**回答“这一层、这种语义长什么样”：页面是什么底色，浮层用什么面，控件多高，按下怎么变。它不回答“某个组件长什么样”。
-- **控件预设**回答“这个控件是哪种形态”：开关、滑杆、标签页、输入框的几何。三种形态按平台分，主题只选一种（第 2.12 节）。
+- **控件维度**回答“一个控件怎么画自己的零件”：选中标记是胶囊、下划线还是竖条，字段是盒子、下划线还是两者，一组控件是沟槽还是格子。六个维度各选一档（第 2.12 节）。
 - **组件**按层读主题：一个按钮读 `accent` finish 和 `control` 圆角，而不是读“按钮色”。
 - **应用**拥有窗口和内容：窗口级材质、文案、布局都不在主题里（第 3 节）。
 
@@ -55,7 +55,7 @@ flowchart LR
 - 出处：原生主题的每个值都能指到官方资源名（M3 的 `SurfaceContainerHigh`、WinUI 的 `ControlFillColorDefault`），写在生成器注释和主题 README 里。
 - 裁剪：某个控件的官方外观个性化太强、放进契约代价太大时，原生主题可以裁剪，写进主题 README 与 [`native-themes.md`](specs/native-themes.md) 的差异表（契约原则 6）。
 
-**约束**：不为一套主题新增层、角色或刻度档。差异先找已有的位置：面的差异进 finish，控件形态进控件预设，实在放不进就裁剪并记下来。
+**约束**：不为一套主题新增层、角色或刻度档。差异先找已有的位置：面的差异进 finish，控件形态进 `dimension.control` 的某一档，实在放不进就裁剪并记下来。
 
 **参照**：`shadcn` 对齐 shadcn/ui 的 `neutral`；`solid-glass` 对齐 Solid Glass；`apple` 对齐 Apple HIG 与 Liquid Glass；`material` 对齐 Material 3 Expressive；`winui` 对齐 WinUI 3（Windows 11）。
 
@@ -269,28 +269,42 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 
 **定义项**
 
-- `motion`：三档 `fast` / `default` / `slow`，按速度命名，不按用途。每档可以是弹簧（`stiffness` / `damping`），也可以是时间曲线（`duration` / `timingFunction`）。
+- `motion`：弹簧三档 `fast` / `default` / `slow`，按速度命名，不按用途。每档可以是弹簧（`stiffness` / `damping`），也可以是时间曲线（`duration` / `timingFunction`）。
+- `motion.state`：一条状态过渡，只有时间曲线。悬停、按下、选中这类小状态来去的时长与曲线（表 2.11）。
 - `transition.enter`：浮层进场的时长与曲线。
 
-**约束**：只有三档。动效解释变化，不做装饰；要能中断；尊重系统的减弱动态效果设置（组件负责）。主题只给档位，不规定哪个组件要动。
+**约束**：弹簧只有三档，状态过渡只有一条。动效解释变化，不做装饰；要能中断；尊重系统的减弱动态效果设置（组件负责）。主题只给档位，不规定哪个组件要动。
 
-**参照**：`default` / `apple` 的弹簧是 1218/70、520/34、320/30；`material` 用 M3 的 `FastSpatial` / `DefaultSpatial` / `SlowSpatial`，进场 500 ms `emphasized-decelerate`；`winui` 用 83 / 167 / 250 ms `decelerate`。
+**参照**：`default` / `apple` 的弹簧是 1218/70、520/34、320/30；`material` 用 M3 的 `FastSpatial` / `DefaultSpatial` / `SlowSpatial`，进场 500 ms `emphasized-decelerate`；`winui` 用 83 / 167 / 250 ms `decelerate`。`motion.state` 在 `default` / `shadcn` / `solid-glass` / `apple` 取上游悬停层的 120 ms `out-cubic`，`material` 取 M3 `DurationShort2` + `Easing.StandardCubicBezier`（100 ms `standard`），`winui` 取 `ControlFasterAnimationDuration`（83 ms `decelerate`）。
 
-### 2.12 控件形态
+### 2.12 控件维度
 
-**设计问题**：开关、滑杆、复选框、单选、进度条、标签页、日历、输入框长什么样？
+**设计问题**：开关、滑杆、复选框、单选、进度条、标签页、日历、输入框怎么画自己的零件？选中标记是胶囊、下划线还是竖条？字段是盒子、下划线，还是盒子上加一道下划线？
 
-**定义项**：`semantics.json` 的 `controls`，三选一：`base`、`material`、`winui`。每个组件文件自带一张 `Record<Controls, …>` 的预设表（尺寸、描边、指示器形态），共享的输入框指示器在 `packages/ui/lib/indicator.ts`。
+**定义项**：`semantics.json` 的 `dimension.control`，六个维度各一档（`control()` 读）：
 
-**约束**：主题只选形态，不在主题里细调某个控件的几何；以组件命名的几何不进主题。要新增一种形态，改的是组件的预设表，不是主题。
+| 维度        | 回答什么                 | 取值                                                                    |
+| ----------- | ------------------------ | ----------------------------------------------------------------------- |
+| `selection` | 一个被选中的项标在哪     | `pill`（胶囊底）、`underline`（下划线）、`bar`（左侧竖条）              |
+| `field`     | 输入框的边界             | `box`（盒子）、`underline`（下划线）、`box-underline`（盒子加强调底边） |
+| `choice`    | 一组里被选中的那一格     | `well`（沟槽底）、`outline`（外包框）、`inset`（内嵌底）                |
+| `track`     | 滑动轨道与进度的剩余部分 | `sunk`（内凹槽）、`tint`（同色淡底）、`hairline`（一条细线）            |
+| `handle`    | 滑杆、开关的可拖部分     | `circle`（圆点）、`bar`（竖条把手）、`ring`（带外圈的圆）               |
+| `group`     | 并排一组控件之间         | `track`（轨道到底）、`cells`（格子分段）                                |
 
-**参照**：自有主题与 `apple` 用 `base`；`material` 用 M3 的开关（52×32）、条形滑杆把手、下划线输入框；`winui` 用 WinUI 的开关（40×20）、带外圈的滑杆把手、带强调底边的输入框。
+每个取值画成什么样、按什么数字，见 [`specs/theme-roles.md`](specs/theme-roles.md) 第 11、14 节；枚举值登记在同文件的枚举表里，`check:theme` 把表、`style.ts` 的白名单和三套平台主题编译出的值三方对账。
+
+**约束**：主题只选维度，不在主题里细调某个控件的几何；以组件命名的值（开关多宽、日历格多大）不进主题——同样大小的开关和复选框，几何由各自组件决定，维度只决定“画成哪一类”。要新增一种形态，先在本表登记一个新取值，再改组件怎么画它。
+
+**参照**：`default` / `shadcn` / `solid-glass` / `apple` 用中性一套（胶囊、盒子、沟槽底、内凹槽、圆点、轨道）；`material` 照 M3 的 PrimaryTabs / outlined、text field / tinted track / SegmentedButton，取 `underline`、`underline`、`outline`、`tint`、`bar`、`cells`；`winui` 照 WinUI 的 NavigationView 指示条、控件描边与 ToggleSwitch，取 `bar`、`box-underline`、`inset`、`hairline`、`ring`，并排仍是 `track`。
+
+> 过渡期：`controls`（`base` / `material` / `winui` 三选一）与各组件的 `Record<Controls, …>` 预设表仍在，直到主题契约 v2 的 P4 把它们删掉。两者并存时，维度是“怎么画”的唯一决定者，`controls` 只留给还没迁完的组件。
 
 ## 3 不属于主题的东西
 
 | 东西                                     | 归谁                    | 为什么                                                               |
 | ---------------------------------------- | ----------------------- | -------------------------------------------------------------------- |
-| 以组件命名的几何（开关多宽、日历格多大） | 组件的控件预设（2.12）  | 主题按层定值，不按组件                                               |
+| 以组件命名的几何（开关多宽、日历格多大） | 组件的控件维度（2.12）  | 主题按层与行为定值，不按组件                                         |
 | 平台固定的身份色（macOS 红绿灯）         | 组件（`title-bar.tsx`） | 它不随主题变；这是“颜色只来自主题”的唯一例外，记在 `ARCHITECTURE.md` |
 | 窗口级材质（Mica、vibrancy）             | 应用                    | 它是窗口的 `backdrop`，不是某一层面                                  |
 | 应用自己的 Tailwind 类（`shadow-*` 等）  | 应用                    | 它们在构建时定型，不跟主题切换                                       |
@@ -311,7 +325,7 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 | `tokens/themes/<id>/finishes.shared.tokens.json`       | 12 个 finish                               |
 | `tokens/themes/<id>/theme.resolver.json`               | 把上面几个文件按外观与档位组合起来         |
 
-除 `default` 外的 5 套主题由生成器写：`scripts/theme/<id>.ts` 写颜色、风格和控件预设，`scripts/theme/finishes/<id>.ts` 写 12 个 finish 与阴影刻度，`bun scripts/theme/generate-<id>.ts` 把它们编码成 DTCG 源码并编译。改这 5 套主题时改生成器，不改生成的源码。
+除 `default` 外的 5 套主题由生成器写：`scripts/theme/<id>.ts` 写颜色、风格和控件维度，`scripts/theme/finishes/<id>.ts` 写 12 个 finish 与阴影刻度，`bun scripts/theme/generate-<id>.ts` 把它们编码成 DTCG 源码并编译。改这 5 套主题时改生成器，不改生成的源码。
 
 ### 4.2 编译与产物
 
@@ -358,7 +372,7 @@ finish 的 `shadow` 只写引用（`["{shadow.edge.surface}", "{shadow.sm}"]`）
 | 8   | 字体与字阶     | `font-sans`、`font-mono`、7 个 `typography` 角色                         | `theme.tokens.json`                                         | `checkScales`                         |
 | 9   | 线与焦点       | `stroke`、`focus`                                                        | `theme.tokens.json`                                         | 截图（键盘焦点）                      |
 | 10  | 交互状态       | `hover` / `pressed` / `disabled` finish、`accent` 的按下字段、`state` 组 | `finishes.shared.tokens.json`、`theme.tokens.json`          | `theme:contrast`、截图                |
-| 11  | 动效           | `motion.{fast,default,slow}`、`transition.enter`                         | `theme.tokens.json`                                         | 真机或演示里看                        |
-| 12  | 控件形态       | `controls`                                                               | `theme.tokens.json`                                         | `port:render:theme`                   |
+| 11  | 动效           | `motion.{fast,default,slow}`、`motion.state`、`transition.enter`         | `theme.tokens.json`                                         | 真机或演示里看                        |
+| 12  | 控件维度       | `dimension.control.{selection,field,choice,track,handle,group}`          | `theme.tokens.json`                                         | `check:theme`                         |
 | —   | 无障碍收尾     | 对比度 AA、不只靠颜色、禁用可辨、touch 触控 ≥ 44、放大字号比例不乱       | —                                                           | `theme:contrast`、`checkScales`、截图 |
 | —   | 产物           | `tokens:build`、`registry:build`                                         | `packages/theme`、`public/r`                                | `tokens:build --check`、`test:unit`   |

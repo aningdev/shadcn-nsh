@@ -563,6 +563,16 @@ export const winuiStyle = {
     },
     stroke: { hairline: 1, control: 1 },
     focus: { style: "double", width: 2, offset: 0 },
+    control: {
+      // WinUI 3's own controls (docs/specs/theme-contract-v2.md §11.2): SelectorBar's bar,
+      // TextBox's box-underline, inset radios and checkboxes, a hairline track and a ring knob.
+      // A group stays in a track, the base's value.
+      selection: "bar",
+      field: "box-underline",
+      choice: "inset",
+      track: "hairline",
+      handle: "ring",
+    },
     icon: {
       pointer: { sm: 12, md: 16, lg: 20 },
       touch: { sm: 16, md: 20, lg: 24 },
@@ -596,6 +606,9 @@ export const winuiStyle = {
     fast: { duration: 83, timingFunction: "decelerate" },
     default: { duration: 167, timingFunction: "decelerate" },
     slow: { duration: 250, timingFunction: "decelerate" },
+    // WinUI 3's control fade: ControlFasterAnimationDuration with ControlFastOutSlowInKeySpline
+    // (`Common_themeresources_any.xaml`), the same pair `fast` takes.
+    state: { duration: 83, timingFunction: "decelerate" },
   },
   controls: "winui" as const,
 };
@@ -733,6 +746,8 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
         "dimension.focus":
           "WinUI 3 double focus stroke (2px outer FocusStrokeColorOuter + 1px inner FocusStrokeColorInner, 0px offset).",
         "dimension.focus.width": "2px outer focus stroke width per WinUI 3.",
+        "dimension.control":
+          "WinUI 3 control dimensions: SelectorBar's bar, TextBox's box-underline, inset selection controls, a hairline track and a ring knob (docs/specs/theme-contract-v2.md §11.2).",
         shape: "Circular corner curve (WinUI 3 has no continuous squircle curve; geometry.md).",
         "state.press-scale":
           "Scale factor applied while pressed (1 disables press shrinking; WinUI 3 swaps fill brushes instead).",
@@ -747,6 +762,8 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
         "motion.default":
           "WinUI 3 ControlFastAnimationDuration (167ms, decelerate; Common_themeresources_any.xaml).",
         "motion.slow": "WinUI 3 ControlNormalAnimationDuration (250ms, decelerate; motion.md).",
+        "motion.state":
+          "WinUI 3 ControlFasterAnimationDuration (83ms) with ControlFastOutSlowInKeySpline (Common_themeresources_any.xaml).",
         controls: "WinUI 3 (winui3/release/2.7.0) control geometry presets.",
       },
     },

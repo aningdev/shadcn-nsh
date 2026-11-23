@@ -163,6 +163,14 @@
         "md": 20,
         "lg": 24
       }
+    },
+    "control": {
+      "selection": "pill",
+      "field": "box",
+      "choice": "well",
+      "track": "sunk",
+      "handle": "circle",
+      "group": "track"
     }
   },
   "shape": {
@@ -205,6 +213,10 @@
     "slow": {
       "stiffness": 320,
       "damping": 30
+    },
+    "state": {
+      "duration": 120,
+      "timingFunction": "out-cubic"
     }
   },
   "controls": "base",

@@ -101,6 +101,75 @@ export function specParts(markdown: string): SpecParts {
   };
 }
 
+/** An enumerated value a theme may take: the style key and the values it allows, in the spec's order. */
+export interface EnumRow {
+  /** The style key the whitelist is under: `dimension.control.selection`, `shape.curve`. */
+  key: string;
+  /** What it may be: `pill`, `underline`, `bar`. */
+  values: string[];
+}
+
+/** The enums the spec registers (`<!-- theme-lint: enums -->`): the one list `style.ts` must match. */
+export function specEnums(markdown: string): EnumRow[] {
+  return specRowsRaw(specBlock(markdown, "enums")).map(([key, values]) => {
+    if (key === undefined || values === undefined)
+      throw new Error(`the spec's enum table writes a row with ${key ?? "no key"}`);
+    return { key: key.replace(/`/g, ""), values: names(values) };
+  });
+}
+
+/** One row of the spec's control-dimensions table: the dimension and what each theme family takes. */
+export interface ControlRow {
+  /** The dimension: `selection`, `field`, `choice`, `track`, `handle`, `group`. */
+  dimension: string;
+  /** What `default`, `shadcn`, `solid-glass` and `apple` take (they share one column). */
+  basic: string;
+  /** What `material` takes. */
+  material: string;
+  /** What `winui` takes. */
+  winui: string;
+}
+
+/** The control dimensions (`<!-- theme-lint: controls -->`): one row per dimension. */
+export function specControlDimensions(markdown: string): ControlRow[] {
+  return specRows(specBlock(markdown, "controls")).map(([dimension, basic, material, winui]) => {
+    if (
+      dimension === undefined ||
+      basic === undefined ||
+      material === undefined ||
+      winui === undefined
+    )
+      throw new Error(`the spec's control table writes a row with ${dimension ?? "no dimension"}`);
+    return { dimension, basic, material, winui };
+  });
+}
+
+/** One row of the spec's recipe numbers: the dimension, its value, the numbers, and the source. */
+export interface RecipeRow {
+  /** The dimension the value belongs to. */
+  dimension: string;
+  /** The value the numbers belong to. */
+  value: string;
+  /** What the value measures off the scales, in the spec's words. */
+  numbers: string;
+  /** Where the numbers come from: M3, WinUI, or this library's own. */
+  source: string;
+}
+
+/** The recipe numbers (`<!-- theme-lint: recipes -->`), each naming a value the enums allow. */
+export function specRecipes(markdown: string): RecipeRow[] {
+  return specRows(specBlock(markdown, "recipes")).map(([dimension, value, numbers, source]) => {
+    if (
+      dimension === undefined ||
+      value === undefined ||
+      numbers === undefined ||
+      source === undefined
+    )
+      throw new Error(`the spec's recipe table writes a row with ${dimension ?? "no dimension"}`);
+    return { dimension, value, numbers, source };
+  });
+}
+
 /** The values the spec cites off the grid (`<!-- theme-lint: scales -->`): a theme, a key, a value, and the source. */
 export function scaleCitations(markdown: string): ScaleCitation[] {
   return specRowsRaw(specBlock(markdown, "scales")).map(([theme, key, value, source]) => {

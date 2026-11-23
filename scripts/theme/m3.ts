@@ -449,6 +449,17 @@ export const m3Style = {
     },
     stroke: { hairline: 1, control: 1 },
     focus: { style: "outline", width: 3, offset: 2 },
+    control: {
+      // M3's own controls (docs/specs/theme-contract-v2.md §11.2): PrimaryTabs' underline,
+      // underlined text fields, outlined radios and checkboxes, a tinted track with a bar handle,
+      // and SegmentedButton's cells.
+      selection: "underline",
+      field: "underline",
+      choice: "outline",
+      track: "tint",
+      handle: "bar",
+      group: "cells",
+    },
     icon: {
       pointer: { sm: 16, md: 20, lg: 24 },
       touch: { sm: 16, md: 20, lg: 24 },
@@ -479,6 +490,9 @@ export const m3Style = {
     fast: { stiffness: 800, damping: 33.94 },
     default: { stiffness: 380, damping: 31.19 },
     slow: { stiffness: 200, damping: 22.63 },
+    // M3 states fade with Short2 and the standard curve (`MotionTokens.DurationShort2`,
+    // `Easing.StandardCubicBezier`; ExpressiveMotionTokens.kt).
+    state: { duration: 100, timingFunction: "standard" },
   },
   controls: "material" as const,
 };
@@ -593,6 +607,8 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
         "dimension.focus":
           "M3 focus indicator: 3px solid outline offset 2px (_md-sys-state-focus-indicator.scss).",
         "dimension.focus.offset": "2px outward focus indicator offset per M3.",
+        "dimension.control":
+          "M3 control dimensions: tabs and fields underlined (PrimaryTabs, _md-comp-filled-text-field.scss), selection controls outlined, tracks tinted with a bar handle, and SegmentedButton's cells (docs/specs/theme-contract-v2.md §11.2).",
         shape: "M3 circular arc corners (ShapeTokens.kt).",
         "state.press-scale":
           "Scale factor applied while pressed (1 disables press shrinking; M3 uses state layer + Android ripple).",
@@ -610,6 +626,8 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
           "M3 Expressive DefaultSpatial spring for presses and movement (stiffness 380, damping ratio 0.8).",
         "motion.slow":
           "M3 Expressive SlowSpatial spring for settling and panels (stiffness 200, damping ratio 0.8).",
+        "motion.state":
+          "M3 DurationShort2 (100ms) with the standard curve (MotionTokens.DurationShort2, Easing.StandardCubicBezier; ExpressiveMotionTokens.kt).",
         controls: "Material 3 Expressive control geometry presets.",
         "pointer.dimension.size.height":
           "Standard control heights at M3 density -2 (24, 32, 48dp): each density step reduces height by 4dp (https://m3.material.io/foundations/layout/grids-spacing/density).",

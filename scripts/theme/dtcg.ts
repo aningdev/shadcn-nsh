@@ -19,12 +19,15 @@ import { buildThemeTargets } from "../tokens/build";
 import { evaluateColorMix, oklchToHex6 } from "../tokens/color";
 import {
   COLOR_ROLE_BY_NAME,
+  CONTROL_DIMENSIONS,
   EXT_NS,
   FORMAT_SCHEMA_URL,
+  MOTION_ROLES,
   RADIUS_KEYS,
   RESOLVER_SCHEMA_URL,
   TYPE_ROLES,
   type ColorRole,
+  type ControlDimension,
   type DesignMdExtension,
   type DtcgColor,
 } from "../tokens/types";
@@ -79,6 +82,11 @@ export interface ThemeStyleInput {
     };
     stroke: { hairline: number; control: number };
     focus: { style: string; width: number; offset: number };
+    /**
+     * The six control dimensions that differ from the base theme's. A theme states all six when it
+     * imitates a platform's controls (Material, WinUI); one that agrees with the base states none.
+     */
+    control?: Partial<Record<ControlDimension, string>>;
     icon: {
       pointer: { sm: number; md: number; lg: number };
       touch: { sm: number; md: number; lg: number };
@@ -103,6 +111,8 @@ export interface ThemeStyleInput {
     fast: ThemeMotionRoleStyle;
     default: ThemeMotionRoleStyle;
     slow: ThemeMotionRoleStyle;
+    /** The state fade (a hover, a press, a choice): stated only where it differs from the base's 120 ms `out-cubic`. */
+    state?: ThemeMotionRoleStyle;
   };
   controls?: "base" | "material" | "winui";
 }
@@ -783,7 +793,22 @@ function encodeSharedStyleOverrides(
     };
   }
 
-  // 3. shape ($extensions)
+  // 3. dimension.control (six enum dimensions, group $extensions)
+  const baseControl = getAt(baseShared, "dimension", "control");
+  const baseControlExt = getExtNs(baseControl);
+  const controlOverrides: Record<string, string> = {};
+  for (const key of CONTROL_DIMENSIONS) {
+    const value = style.dimension.control?.[key];
+    if (value !== undefined && value !== baseControlExt[key]) controlOverrides[key] = value;
+  }
+  if (Object.keys(controlOverrides).length > 0) {
+    dimensionExtras.control = {
+      $description: desc("dimension.control", baseControl.$description),
+      $extensions: { [EXT_NS]: controlOverrides },
+    };
+  }
+
+  // 4. shape ($extensions)
   const baseShape = getAt(baseShared, "shape");
   const baseShapeExt = getExtNs(baseShape);
   const baseCorners = (baseShapeExt.corners as Record<string, unknown> | undefined) ?? {};
@@ -800,7 +825,7 @@ function encodeSharedStyleOverrides(
         }
       : undefined;
 
-  // 4. state
+  // 5. state
   const baseState = getAt(baseShared, "state");
   const baseRipple = getExtNs(baseState).ripple as boolean;
   const stateOut: Record<string, unknown> = {
@@ -873,7 +898,7 @@ function encodeSharedStyleOverrides(
     };
   }
 
-  // 5. transition.enter
+  // 6. transition.enter
   const baseTransition = getAt(baseShared, "transition");
   const baseEnter = getAt(baseTransition, "enter");
   const baseEnterVal = baseEnter.$value as {
@@ -898,13 +923,27 @@ function encodeSharedStyleOverrides(
         }
       : undefined;
 
-  // 6. motion.{fast,default,slow}
+  // 7. motion: the three speeds and the state fade
   const baseMotion = getAt(baseShared, "motion");
   const motionOverrides: Record<string, unknown> = {};
-  for (const role of ["fast", "default", "slow"] as const) {
+  for (const role of MOTION_ROLES) {
     const spec = style.motion[role];
+    if (spec === undefined) continue;
     const baseRole = getAt(baseMotion, role);
     if ("duration" in spec) {
+      const timingFunction = `{cubicBezier.${spec.timingFunction}}`;
+      const baseTiming = isRecord(baseRole.timing)
+        ? (baseRole.timing.$value as {
+            duration: { value: number };
+            timingFunction: string;
+          })
+        : undefined;
+      if (
+        baseTiming !== undefined &&
+        baseTiming.duration.value === spec.duration &&
+        baseTiming.timingFunction === timingFunction
+      )
+        continue;
       motionOverrides[role] = {
         $description: desc(`motion.${role}`, baseRole.$description),
         timing: {
@@ -912,14 +951,20 @@ function encodeSharedStyleOverrides(
           $value: {
             duration: { value: spec.duration, unit: "ms" },
             delay: { value: 0, unit: "ms" },
-            timingFunction: `{cubicBezier.${spec.timingFunction}}`,
+            timingFunction,
           },
           $description: desc(`motion.${role}.timing`, `Timing curve and duration for ${role}.`),
         },
       };
     } else {
-      const baseSpring = getExtNs(baseRole).spring as { stiffness: number; damping: number };
-      if (spec.stiffness !== baseSpring.stiffness || spec.damping !== baseSpring.damping) {
+      const baseSpring = getExtNs(baseRole).spring as
+        | { stiffness: number; damping: number }
+        | undefined;
+      if (
+        baseSpring === undefined ||
+        spec.stiffness !== baseSpring.stiffness ||
+        spec.damping !== baseSpring.damping
+      ) {
         motionOverrides[role] = {
           $extensions: {
             [EXT_NS]: {
@@ -939,7 +984,7 @@ function encodeSharedStyleOverrides(
         }
       : undefined;
 
-  // 7. controls
+  // 8. controls
   const baseControls = getAt(baseShared, "controls");
   const baseControlsPreset = getExtNs(baseControls).preset as string;
   const preset = style.controls ?? baseControlsPreset;

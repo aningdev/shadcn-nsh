@@ -163,6 +163,14 @@
         "md": 20,
         "lg": 24
       }
+    },
+    "control": {
+      "selection": "bar",
+      "field": "box-underline",
+      "choice": "inset",
+      "track": "hairline",
+      "handle": "ring",
+      "group": "track"
     }
   },
   "shape": {
@@ -204,6 +212,10 @@
     },
     "slow": {
       "duration": 250,
+      "timingFunction": "decelerate"
+    },
+    "state": {
+      "duration": 83,
       "timingFunction": "decelerate"
     }
   },

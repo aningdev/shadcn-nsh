@@ -17,8 +17,22 @@ import { join } from "node:path";
 import { colourFields, readColour } from "./theme/finish-colour";
 import { checkMaterial, checkMaterialFill } from "./theme/material";
 import { parseColor } from "./theme/oklch";
-import { scaleCitations, specBlock, specParts, specRows } from "./theme/spec";
-import { checkScales, checkStyle, citedValues } from "./theme/style";
+import {
+  scaleCitations,
+  specBlock,
+  specControlDimensions,
+  specEnums,
+  specParts,
+  specRecipes,
+  specRows,
+} from "./theme/spec";
+import {
+  checkScales,
+  checkStyle,
+  citedValues,
+  controlDimensionValues,
+  whitelists,
+} from "./theme/style";
 import {
   findTokenRefs,
   mergeFinishes,
@@ -27,6 +41,7 @@ import {
   type ThemeCssVars,
 } from "./theme/tokens";
 import { lintDtcgSources } from "./tokens/lint";
+import { isRecord } from "./tokens/types";
 
 const root = join(import.meta.dir, "..");
 const read = (path: string) => readFileSync(join(root, path), "utf8");
@@ -372,6 +387,70 @@ for (const theme of themes) {
   ))
     fail(problem);
   for (const problem of checkScales(path, file, theme, cited)) fail(problem);
+}
+
+// 4c. The spec's enum table is the one list of enumerated values: `style.ts` whitelists exactly
+// its keys with exactly its values, and each of the six control dimensions reads from every theme's
+// `semantics.json` as the spec's second table says.
+for (const row of specEnums(spec)) {
+  const allowed = whitelists[row.key];
+  if (allowed === undefined) {
+    fail(
+      `docs/specs/theme-roles.md: the enum table names \`${row.key}\`, which scripts/theme/style.ts does not whitelist`,
+    );
+    continue;
+  }
+  const stated = [...row.values].sort().join(" ");
+  const held = allowed.map(String).sort().join(" ");
+  if (stated !== held)
+    fail(
+      `docs/specs/theme-roles.md: \`${row.key}\` allows ${row.values.join(", ")}, scripts/theme/style.ts allows ${allowed.map(String).join(", ")}`,
+    );
+}
+const enumKeys = new Set(specEnums(spec).map((row) => row.key));
+for (const key of Object.keys(whitelists))
+  if (!enumKeys.has(key))
+    fail(`scripts/theme/style.ts: whitelist \`${key}\` is not in the spec's enum table`);
+
+const controlRows = specControlDimensions(spec);
+for (const key of Object.keys(controlDimensionValues))
+  if (!controlRows.some((row) => row.dimension === key))
+    fail(`docs/specs/theme-roles.md: the control table states no row for \`${key}\``);
+for (const row of controlRows) {
+  const values = controlDimensionValues[row.dimension as keyof typeof controlDimensionValues];
+  if (values === undefined) {
+    fail(
+      `docs/specs/theme-roles.md: the control table names \`${row.dimension}\`, not one of the six control dimensions`,
+    );
+    continue;
+  }
+  for (const theme of themes) {
+    const expected =
+      theme === "material" ? row.material : theme === "winui" ? row.winui : row.basic;
+    const path = `packages/theme/themes/${theme}/semantics.json`;
+    const dimension = readJson<Record<string, unknown>>(path).dimension;
+    const control = isRecord(dimension) && isRecord(dimension.control) ? dimension.control : {};
+    const actual = control[row.dimension];
+    if (actual !== expected)
+      fail(
+        `${path}: dimension.control.${row.dimension} is ${JSON.stringify(actual)}, the spec states \`${expected}\``,
+      );
+    if (!values.includes(expected))
+      fail(
+        `docs/specs/theme-roles.md: \`${row.dimension}\` takes \`${expected}\`, not in the enum table`,
+      );
+  }
+}
+for (const row of specRecipes(spec)) {
+  const values = controlDimensionValues[row.dimension as keyof typeof controlDimensionValues];
+  if (values === undefined)
+    fail(
+      `docs/specs/theme-roles.md: the recipe table names \`${row.dimension}\`, not one of the six control dimensions`,
+    );
+  else if (!values.includes(row.value as never))
+    fail(
+      `docs/specs/theme-roles.md: the recipe table measures \`${row.value}\`, which \`${row.dimension}\` does not take`,
+    );
 }
 
 // 5. Nothing in the files is written and never read.

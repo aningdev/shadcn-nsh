@@ -104,6 +104,10 @@ _Avoid_: 在语义层写 `var(--token)` 或重复的色值/圆角数字；用别
 **构建时主题**是 `nsh.json` 指向的 `theme.json` 与 `lib/ui/semantics.json`，由 `init --theme <name>` 定；**AppTheme**（`{ id, label, theme, semantics }`）是运行时可切的一套，装在 `themes/<name>/`，`selectTheme` 切过去、`selectTheme(null)` 回构建时那套、`currentTheme()` 读当前 `id`（还在构建时主题上时为 `null`）。应用清单里的构建时主题就是 `null`。
 _Avoid_: 把 `add theme-<x>` 当成换构建时主题、把主题叫“皮肤”、把 finish 当 token
 
+**Control Dimension（控件维度 / `dimension.control`）**:
+主题对“一个控件怎么画自己的零件”的六个按行为命名的答案：`selection`（选中项标在哪：`pill` / `underline` / `bar`）、`field`（输入框边界：`box` / `underline` / `box-underline`）、`choice`（一组里被选中的那一格：`well` / `outline` / `inset`）、`track`（滑动轨道与进度剩余：`sunk` / `tint` / `hairline`）、`handle`（可拖部分：`circle` / `bar` / `ring`）、`group`（并排一组控件之间：`track` / `cells`）。各档画成什么样、按什么数字见 [`specs/theme-roles.md`](specs/theme-roles.md) 第 11、14 节；组件经 `@shadcn-nsh/theme` 的 `control()` 读取，换主题后下一帧重画。
+_Avoid_: 用组件名当维度名、把某个控件的整套尺寸塞进主题、在组件里按主题 `id` 分支
+
 **Control Preset（控件预设 / `controls`）**:
-某个复杂控件私有的、随平台套系切换整套形态与尺寸的命名表，放在组件自己的文件里，不进主题 JSON；主题只声明 `controls` 枚举（`"base" | "material" | "winui"`），组件经 `@shadcn-nsh/theme` 的 `controls()` 读取后在自己的预设表里选用对应参数与形态分支。
+过渡期的旧形态：主题声明 `controls` 枚举（`"base" | "material" | "winui"`），组件经 `controls()` 读取后在自己的 `Record<Controls, …>` 预设表里选一套参数。控件维度接过来之后就删（主题契约 v2 的 P4），新代码读维度、不读它。
 _Avoid_: 为单个控件在 `theme.json` / `semantics.json` 里逐键放宽几何或状态字段、在组件里按主题 `id` 分支

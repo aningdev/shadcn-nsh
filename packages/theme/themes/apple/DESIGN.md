@@ -198,6 +198,10 @@ motion:
     duration: 420ms
     delay: 0ms
     timingFunction: "cubic-bezier(0.333333, 1, 0.666667, 1)"
+  state:
+    duration: 120ms
+    delay: 0ms
+    timingFunction: "cubic-bezier(0.333333, 1, 0.666667, 1)"
 components:
   button-primary:
     backgroundColor: "{colors.light.primary}"
@@ -432,14 +436,23 @@ Semantic corner radius roles by layer, referencing base dimension.radius.* token
 - **`container`** (12px): Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames.
 - **`modal`** (26px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
 
+**Control dimensions** (no DESIGN.md field; they decide how a control's own parts are drawn): Control dimensions: the six behaviour-named axes a theme decides for its controls (selection, field, choice, track, handle, group). Themes override only the axes that differ.
+- **`selection`**: `pill`
+- **`field`**: `box`
+- **`choice`**: `well`
+- **`track`**: `sunk`
+- **`handle`**: `circle`
+- **`group`**: `track`
+
 ## Motion & Micro-interaction
 
-Interactive spring and timing physics roles: fast, default, slow.
+Interactive spring and timing physics roles: fast, default, slow, and the state fade.
 
 - **`enter`** (420ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): Default surface entrance transition.
 - **`fast`** (spring: stiffness=1218, damping=70 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Quickest response: small control toggles and thumbs.
 - **`default`** (spring: stiffness=520, damping=34 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Everyday feedback: presses, releases and modest movement.
 - **`slow`** (spring: stiffness=320, damping=30 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): Slowest: large surfaces and long-travel layout movement.
+- **`state`** (120ms, `cubic-bezier(0.333333, 1, 0.666667, 1)`): State fade: how fast hover, press and choice states come and go (upstream nsh-gallery-ui's hover wash, 120 ms ease-out).
 - **Press & ripple** (`press-scale: 1`, `pressed-opacity: 0.7`, `ripple: false`): Interaction state opacities, press scale, and ripple switch.
 - **Timing curves:** Named timing curves shared across themes.
 

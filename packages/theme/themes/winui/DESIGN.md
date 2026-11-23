@@ -210,6 +210,10 @@ motion:
     duration: 250ms
     delay: 0ms
     timingFunction: "cubic-bezier(0, 0, 0, 1)"
+  state:
+    duration: 83ms
+    delay: 0ms
+    timingFunction: "cubic-bezier(0, 0, 0, 1)"
 components:
   button-primary:
     backgroundColor: "{colors.light.primary}"
@@ -444,14 +448,23 @@ Semantic corner radius roles by layer, referencing base dimension.radius.* token
 - **`container`** (8px): Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames.
 - **`modal`** (8px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
 
+**Control dimensions** (no DESIGN.md field; they decide how a control's own parts are drawn): WinUI 3 control dimensions: SelectorBar's bar, TextBox's box-underline, inset selection controls, a hairline track and a ring knob (docs/specs/theme-contract-v2.md §11.2).
+- **`selection`**: `bar`
+- **`field`**: `box-underline`
+- **`choice`**: `inset`
+- **`track`**: `hairline`
+- **`handle`**: `ring`
+- **`group`**: `track`
+
 ## Motion & Micro-interaction
 
-Interactive spring and timing physics roles: fast, default, slow.
+Interactive spring and timing physics roles: fast, default, slow, and the state fade.
 
 - **`enter`** (250ms, `cubic-bezier(0, 0, 0, 1)`): WinUI 3 250ms entrance transition with Direct Entrance decelerate curve (motion.md).
 - **`fast`** (83ms, `cubic-bezier(0, 0, 0, 1)`): WinUI 3 ControlFasterAnimationDuration (83ms, decelerate; ToggleSwitch_themeresources.xaml:321).
 - **`default`** (167ms, `cubic-bezier(0, 0, 0, 1)`): WinUI 3 ControlFastAnimationDuration (167ms, decelerate; Common_themeresources_any.xaml).
 - **`slow`** (250ms, `cubic-bezier(0, 0, 0, 1)`): WinUI 3 ControlNormalAnimationDuration (250ms, decelerate; motion.md).
+- **`state`** (83ms, `cubic-bezier(0, 0, 0, 1)`): WinUI 3 ControlFasterAnimationDuration (83ms) with ControlFastOutSlowInKeySpline (Common_themeresources_any.xaml).
 - **Press & ripple** (`press-scale: 1`, `pressed-opacity: 1`, `ripple: false`): Interaction state opacities, press scale, and ripple switch.
 - **Timing curves:** Named timing curves shared across themes.
 

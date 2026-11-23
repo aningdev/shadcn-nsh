@@ -225,6 +225,19 @@
         },
         "$description": "Focus ring outward offset from control bounds."
       }
+    },
+    "control": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "selection": "pill",
+          "field": "box",
+          "choice": "well",
+          "track": "sunk",
+          "handle": "circle",
+          "group": "track"
+        }
+      },
+      "$description": "Control dimensions: the six behaviour-named axes a theme decides for its controls (selection, field, choice, track, handle, group). Themes override only the axes that differ."
     }
   },
   "shape": {
@@ -304,7 +317,7 @@
     }
   },
   "motion": {
-    "$description": "Interactive spring and timing physics roles: fast, default, slow.",
+    "$description": "Interactive spring and timing physics roles: fast, default, slow, and the state fade.",
     "fast": {
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -337,6 +350,24 @@
         }
       },
       "$description": "Slowest: large surfaces and long-travel layout movement."
+    },
+    "state": {
+      "$description": "State fade: how fast hover, press and choice states come and go (upstream nsh-gallery-ui's hover wash, 120 ms ease-out).",
+      "timing": {
+        "$type": "transition",
+        "$value": {
+          "duration": {
+            "value": 120,
+            "unit": "ms"
+          },
+          "delay": {
+            "value": 0,
+            "unit": "ms"
+          },
+          "timingFunction": "{cubicBezier.out-cubic}"
+        },
+        "$description": "120 ms out-cubic: upstream nsh-gallery-ui's hover wash (120 ms ease-out)."
+      }
     }
   },
 
