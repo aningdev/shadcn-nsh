@@ -5,7 +5,7 @@
  * what its theme says.
  *
  *   bun scripts/port/render-theme.ts [--only <id,...>] [--changed [<ref>]] [--shard <i>/<n>] [--jobs <n>]
- *                                   [--filter <name>]
+ *                                   [--against <dir>] [--filter <name>]
  *
  * The test opens each page with the palette in its storage, as the site's switch leaves it, and the
  * page reads it before it mounts (`apply-palette.ts`): the theme arrives the way an app gets it,
@@ -20,6 +20,10 @@
  * page differ under a theme exactly when a shell overrides what the theme says.
  *
  * The pictures stay in `demos/shots-theme/`.
+ *
+ * `--against <dir>` also compares every picture with the same one in `<dir>`, a copy of
+ * `shots-theme/` an earlier run left: the proof that a theme refactor moved no pixel under any
+ * theme (`docs/port.md`, 主题改动的验收).
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -30,6 +34,7 @@ import { catalog } from "../catalog";
 import { changedIds, narrowed } from "./affected";
 import { repo } from "./lib";
 import {
+  compareAgainst,
   comparePairs,
   jobCount,
   onlyIds,
@@ -51,6 +56,25 @@ if (ids?.length === 0) {
 }
 /** The themes to check: the build-time one is `render.ts`'s. */
 const palettes = PALETTES.filter((palette) => palette.id !== "default");
+
+/** The earlier run's pictures `--against` names, or nothing. */
+const against = (() => {
+  const at = process.argv.indexOf("--against");
+  if (at < 0) return undefined;
+  const value = process.argv[at + 1];
+  const dir = value ? path.resolve(value) : "";
+  if (!value || !fs.existsSync(dir)) {
+    console.error("theme: --against takes the directory of an earlier run's pictures");
+    process.exit(1);
+  }
+  if (dir === path.resolve(shots)) {
+    console.error(
+      `theme: --against cannot be ${path.relative(repo, shots)}, which this run clears; copy it first`,
+    );
+    process.exit(1);
+  }
+  return dir;
+})();
 const chosen = cases.filter(({ id }) => !ids || ids.includes(id));
 
 // The runtime `nsh test` runs with is the installed CLI's (`docs/toolchain.md`); it finds its
@@ -78,14 +102,17 @@ try {
 }
 
 let differs = 0;
+let moved = 0;
 if (status === 0) {
   for (const palette of palettes) {
-    differs += comparePairs({
+    const check = {
       pass: "theme",
       shots,
-      name: (id, scheme) => `${id}-${palette.id}-${scheme}`,
+      name: (id: string, scheme: string) => `${id}-${palette.id}-${scheme}`,
       only: ids,
-    });
+    };
+    differs += comparePairs(check);
+    if (against) moved += compareAgainst(check, against);
   }
 }
 
@@ -95,10 +122,14 @@ console.log("one page of them all: bun run port:sheet");
 const pairs = chosen.filter(({ selfReference }) => !selfReference).length * 2 * palettes.length;
 if (differs > 0) {
   console.error(`theme: ${differs} of ${pairs} pages differ from their reference under a theme`);
-  process.exit(1);
 }
+if (moved > 0) {
+  console.error(`theme: ${moved} pictures differ from ${path.relative(repo, against!)}`);
+}
+if (differs > 0 || moved > 0) process.exit(1);
 if (status === 0) {
   const themes = palettes.map((palette) => palette.id).join(", ");
   console.log(`theme: ${pairs} pairs match under ${themes}`);
+  if (against) console.log(`theme: every picture matches ${path.relative(repo, against)}`);
 }
 process.exit(status);

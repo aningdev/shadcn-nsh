@@ -103,6 +103,7 @@ nsh run apps/website/demos/button.tsx  # 运行一个演示
 bun run nsh:bootstrap          # 校验安装的 CLI 在基线，生成各 .nsh types host
 bun run tokens:build           # 编译 DTCG 源码（packages/theme/tokens/）到主题运行时 JSON
 bun run tokens:build --check   # 校验编译产物与 DTCG 源码一致
+bun run theme:diff             # 主题解析后的值与 origin/main 比较（--same：值不许变）
 bun run check                  # tokens:build --check + check:theme + port:check + demos/gallery 类型 + docs（会改文件）
 bun run test:gallery           # 原生行为测试
 bun run test:install           # 复制即用：真实 NSH app 里 init / add / nsh check（逐条目）

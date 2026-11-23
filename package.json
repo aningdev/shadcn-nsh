@@ -35,6 +35,7 @@
     "test:install": "bun scripts/install-test.ts",
     "test:unit": "bun test ./packages/cli ./packages/ui/lib ./scripts/children ./scripts/theme ./scripts/tokens ./scripts/rtl ./scripts/catalog.test.ts",
     "tokens:build": "bun scripts/tokens/build.ts",
+    "theme:diff": "bun scripts/theme/diff.ts",
     "shots": "bash scripts/shots.sh",
     "port:vendor": "bun scripts/port/vendor.ts",
     "port:check": "bun scripts/port/check.ts",

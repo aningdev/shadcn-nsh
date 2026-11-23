@@ -96,7 +96,7 @@ TypeScript 为 **7.1**。它不提供 JS 解析 API，`scripts/port` 用 `oxc-pa
 
 ## 渲染比对的两半
 
-`port:render:theme` 是第三趟：同一批页在**三套主题**（shadcn、solid-glass 与 apple）下各画一遍，组件对参照页成对比较（456 对），不进基线。主题从页面自己读到的地方来：`render-theme.test.tsx` 把 palette 放进 storage，演示在 `mount` 之前由 `apply-palette.ts` 读它换主题——与站上的切换器同一路，不是第二份 `nsh.json`，也不复制演示。页面仍是自己的入口，所以它和构建时那一趟画的是同一个应用，差别只有主题；截图留 `apps/website/demos/shots-theme/`。
+`port:render:theme` 是第三趟：同一批页在 `default` 以外的**五套主题**（shadcn、solid-glass、apple、material 与 winui）下各画一遍，组件对参照页成对比较，不进基线；`--against <dir>` 再与先前一次的截图逐张比较，证明主题重构没有动像素（[`port.md`](port.md#主题改动的验收)）。主题从页面自己读到的地方来：`render-theme.test.tsx` 把 palette 放进 storage，演示在 `mount` 之前由 `apply-palette.ts` 读它换主题——与站上的切换器同一路，不是第二份 `nsh.json`，也不复制演示。页面仍是自己的入口，所以它和构建时那一趟画的是同一个应用，差别只有主题；截图留 `apps/website/demos/shots-theme/`。
 
 两趟都由 `scripts/port/render-shared.ts` 的**进程池**画：一个 id 一个 `nsh test --filter id=<id>:` 进程（`nsh` 把一个文件里的测试一个一个跑，所以并发只能跨进程），`--jobs <n>` 个同时开（默认 CPU 核数的一半、至多 6，`--jobs 1` 是逐页串行）；每个进程的输出缓冲到它结束再整块打印，失败的那个先打，后面的 id 不再开，整趟以非零退出。`--changed [<ref>]`（默认 `origin/main`）只画 diff 能走到的那几页（`scripts/port/affected.ts` 用 `Bun.Transpiler` 扫 import 连成的反向图），与 `--only` 取交集。
 

@@ -17,14 +17,14 @@ import { compareWithinTolerance } from "./pixels";
 
 /**
  * The arguments `nsh test` takes: everything but this script's own (`--only`, `--changed`,
- * `--jobs`, `--shard`, `--no-baseline`), each with its value. A caller's `--filter` and `--browser` stay.
+ * `--jobs`, `--shard`, `--against`, `--no-baseline`), each with its value. A caller's `--filter` and `--browser` stay.
  */
 export function testArgs(): string[] {
   const argv = process.argv.slice(2);
   const rest: string[] = [];
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i]!;
-    if (arg === "--only" || arg === "--jobs" || arg === "--shard") {
+    if (arg === "--only" || arg === "--jobs" || arg === "--shard" || arg === "--against") {
       i += 1;
       continue;
     }
@@ -329,6 +329,45 @@ export type PairCheck = {
   /** The ids `--only` ran alone: the other pages' pictures are not there to compare. */
   only?: string[];
 };
+
+/**
+ * Every picture of a run against the same picture of an earlier run (`--against <dir>`): byte for
+ * byte, or within the page's tolerance, as a pair is. It proves a refactor moved no pixel, which
+ * the pairs cannot: a change that moves a component and its reference page alike still pairs.
+ * A picture the earlier run lacks fails, so the earlier run must have drawn every page this one did.
+ */
+export function compareAgainst(check: PairCheck, earlier: string): number {
+  let failed = 0;
+  for (const { id, tolerance, selfReference } of cases) {
+    if (check.only && !check.only.includes(id)) continue;
+    const allowed = tolerance ?? antialiasing;
+    for (const scheme of schemes) {
+      const name = check.name(id, scheme);
+      for (const file of selfReference ? [`${name}.png`] : [`${name}.png`, `${name}.ref.png`]) {
+        const now = path.join(check.shots, file);
+        const then = path.join(earlier, file);
+        if (!fs.existsSync(now) || !fs.existsSync(then)) {
+          console.error(`${check.pass}: ${file}: not in both runs, nothing to compare`);
+          failed += 1;
+          continue;
+        }
+        const a = fs.readFileSync(now);
+        const b = fs.readFileSync(then);
+        if (a.equals(b)) continue;
+        const { ok, report } = compareWithinTolerance(a, b, allowed);
+        if (ok)
+          console.log(
+            `${check.pass}: ${file}: as before, within the antialiasing budget — ${report}`,
+          );
+        else {
+          console.error(`${check.pass}: ${file}: changed since the earlier run — ${report}`);
+          failed += 1;
+        }
+      }
+    }
+  }
+  return failed;
+}
 
 /** Every pair, compared: byte for byte, or within the page's tolerance (`pixels.ts`). */
 export function comparePairs(check: PairCheck): number {
