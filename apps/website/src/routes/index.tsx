@@ -4,6 +4,7 @@ import type { ReactNode } from "react";
 
 import { InstallTabs } from "@/components/fd/install-tabs";
 import { ShowcaseFrame } from "@/components/fd/showcase-frame";
+import { sitePath } from "@/lib/base";
 import { components } from "@/lib/components";
 import {
   baseOptions,
@@ -90,7 +91,7 @@ const FAQ: { question: string; answer: ReactNode }[] = [
         elsewhere. Choose one with <code>init --theme</code>, add more with{" "}
         <code>add theme-&lt;name&gt;</code> and switch at run time with <code>selectTheme</code>. A
         theme is data — <code>theme.json</code> and <code>semantics.json</code> — so yours is an
-        edit away. See <a href="/docs/themes">Themes</a>.
+        edit away. See <a href={sitePath("/docs/themes")}>Themes</a>.
       </>
     ),
   },
@@ -99,8 +100,8 @@ const FAQ: { question: string; answer: ReactNode }[] = [
     answer: (
       <>
         Every docs page is also Markdown: add <code>.md</code> to its URL.{" "}
-        <a href="/llms.txt">/llms.txt</a> indexes them and{" "}
-        <a href="/llms-full.txt">/llms-full.txt</a> holds them all in one file.
+        <a href={sitePath("/llms.txt")}>/llms.txt</a> indexes them and{" "}
+        <a href={sitePath("/llms-full.txt")}>/llms-full.txt</a> holds them all in one file.
       </>
     ),
   },
@@ -141,13 +142,13 @@ function Home() {
           </p>
           <div className="flex flex-wrap justify-center gap-3">
             <a
-              href="/docs/getting-started"
+              href={sitePath("/docs/getting-started")}
               className="bg-fd-primary text-fd-primary-foreground rounded-lg px-5 py-2.5 text-sm font-medium transition-opacity hover:opacity-90"
             >
               Get started
             </a>
             <a
-              href="/docs/components"
+              href={sitePath("/docs/components")}
               className="border-fd-border bg-fd-card hover:bg-fd-accent rounded-lg border px-5 py-2.5 text-sm font-medium transition-colors"
             >
               Browse components
@@ -191,7 +192,7 @@ function Home() {
             ))}
           </div>
           <a
-            href="/docs/getting-started"
+            href={sitePath("/docs/getting-started")}
             className="self-start font-medium underline underline-offset-4"
           >
             Get started →

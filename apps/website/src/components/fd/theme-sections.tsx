@@ -1,5 +1,6 @@
 "use client";
 
+import { sitePath } from "@/lib/base";
 import { REPO_URL } from "@/lib/layout.shared";
 import { choosePalette } from "@/lib/palette";
 import { finishSampleCss, themePages, type ThemePage, type TokenGroup } from "@/lib/themes";
@@ -63,7 +64,7 @@ function Reads({ text }: { text: string }) {
 function ShowInPreview({ id }: { id: PaletteId }) {
   return (
     <a
-      href="/docs/themes#preview"
+      href={sitePath("/docs/themes#preview")}
       className="border-fd-border bg-fd-secondary text-fd-secondary-foreground hover:bg-fd-accent hover:text-fd-accent-foreground inline-block rounded-md border px-2.5 py-1 text-sm font-medium whitespace-nowrap no-underline"
       onClick={() => choosePalette(id)}
     >

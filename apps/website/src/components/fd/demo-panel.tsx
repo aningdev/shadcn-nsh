@@ -25,6 +25,7 @@ import { type ComponentProps, type ComponentType, useEffect, useRef, useState } 
 
 import { PaletteSwitch } from "@/components/fd/palette-switch";
 import { CONTROL_FOCUS, CONTROL_WIDTH } from "@/components/fd/toolbar";
+import { sitePath } from "@/lib/base";
 import { onPaletteChange } from "@/lib/palette";
 
 const LAYOUTS = {
@@ -47,7 +48,7 @@ export const withParam = (href: string, name: string, value: string) => {
   return parsed.href;
 };
 
-const demoHref = (name: string) => `/demos/${name}/index.html`;
+const demoHref = (name: string) => sitePath(`/demos/${name}/index.html`);
 
 function savedLayout(): Layout {
   try {

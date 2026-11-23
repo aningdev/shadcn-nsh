@@ -1,4 +1,7 @@
+import Link from "fumadocs-core/link";
 import type { BaseLayoutProps } from "fumadocs-ui/layouts/shared";
+
+import { OTHER_DOCS } from "@/lib/base";
 
 /** The site's name and description, for the chrome and every page's head. */
 export const SITE_TITLE = "shadcn-nsh";
@@ -20,44 +23,53 @@ export const EDIT_BASE = `${REPO_URL}/edit/${gitConfig.branch}/`;
 export const NSH_SITE_URL = "https://nsh.dev";
 
 /**
- * The release the site documents, next to the name. The site deploys from `main`, so when the
- * changelog's `Unreleased` has entries it is ahead of that release and the label says so: `+`
- * after the version, spelled out for hover and screen readers. Both values are fixed at build time
- * (`vite.config.ts`). Not a link: the title it sits in already links home.
+ * What this build documents, next to the name and linking the other docs site: the release at the
+ * root, `main` under `/dev/`. The release label carries the version (`packages/cli/package.json`),
+ * with `+` when the changelog's `Unreleased` has entries and an explanation for hover and screen
+ * readers; the dev label says it is `main`. Both values are fixed at build time (`vite.config.ts`),
+ * and so is the site the label leads to (`OTHER_DOCS`).
  */
 function VersionLabel() {
+  const dev = import.meta.env.DOCS_CHANNEL === "dev";
   const version = `v${import.meta.env.DOCS_VERSION}`;
-  const ahead = import.meta.env.DOCS_UNRELEASED;
+  const ahead = !dev && import.meta.env.DOCS_UNRELEASED;
+  const label = dev ? "dev (main)" : version;
   return (
-    <span
-      title={ahead ? `${version} with unreleased changes` : version}
-      className="text-fd-muted-foreground rounded-md border px-1.5 py-0.5 font-mono text-xs font-normal"
+    <a
+      href={OTHER_DOCS.href}
+      title={OTHER_DOCS.title}
+      className="text-fd-muted-foreground hover:text-fd-foreground rounded-md border px-1.5 py-0.5 font-mono text-xs font-normal transition-colors"
     >
-      {version}
+      {label}
       {ahead && (
         <>
           <span aria-hidden>+</span>
           <span className="sr-only"> with unreleased changes</span>
         </>
       )}
-    </span>
+      <span className="sr-only"> — {OTHER_DOCS.label}</span>
+    </a>
   );
 }
 
 /**
- * The chrome the home layout and the docs layout share: the name with the version it documents, and
- * the repo it is edited in. No
+ * The chrome the home layout and the docs layout share: the name linking home, what this build
+ * documents, and where the other docs site is, plus the repo it is edited in. No
  * `links`: the sidebar's tree already starts with Getting started, CLI, Theme and the components,
  * and the docs layout draws `links` in that same sidebar, so they would be listed twice.
  */
 export function baseOptions(): BaseLayoutProps {
   return {
     nav: {
-      title: (
-        <>
-          {SITE_TITLE}
+      // A function so the name stays the home link while the label, itself a link to the other
+      // docs site, sits beside it.
+      title: ({ href, ...props }) => (
+        <span className="flex items-center gap-2">
+          <Link href={href} {...props}>
+            {SITE_TITLE}
+          </Link>
           <VersionLabel />
-        </>
+        </span>
       ),
     },
     githubUrl: REPO_URL,

@@ -1,9 +1,23 @@
-name: Deploy docs to GitHub Pages
+name: Deploy docs
+
+# Two docs sites, one Pages site, built from the `site` branch (docs/release.md):
+# the root is the latest `v*` tag — the docs of what `npm i shadcn-nsh` installs — and `/dev/`
+# is `main`. A `main` push rewrites only `dev/`; a `v*` tag rewrites the root and keeps `dev/`.
+#
+# A tag push runs the workflow as that tag has it, so tags cut after this landed publish
+# themselves; an older tag (v0.9.0 predates the `site` branch) is published by dispatching this
+# workflow — main's — with its tag as `ref`.
 
 on:
   push:
     branches: [main]
+    tags: ["v*"]
   workflow_dispatch:
+    inputs:
+      ref:
+        description: The `v*` tag to publish at the root
+        required: true
+        type: string
 
 permissions:
   contents: read
@@ -17,40 +31,75 @@ concurrency:
 jobs:
   build:
     runs-on: ubuntu-latest
+    permissions:
+      contents: write # push the build to the `site` branch
+      pages: write
+      id-token: write
     steps:
-      - name: Checkout
-        uses: actions/checkout@v7
+      - name: Resolve what this run builds
+        id: site
+        env:
+          EVENT: ${{ github.event_name }}
+          REF_NAME: ${{ github.ref_name }}
+          REF_TYPE: ${{ github.ref_type }}
+          INPUT_REF: ${{ inputs.ref }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT" = "workflow_dispatch" ]; then
+            ref="$INPUT_REF"
+          else
+            ref="$REF_NAME"
+          fi
 
-      - name: Setup Bun
-        uses: oven-sh/setup-bun@v2
+          # A push to `main` is the dev docs, at `<base>dev/`.
+          if [ "$EVENT" != "workflow_dispatch" ] && [ "$REF_TYPE" != "tag" ]; then
+            {
+              echo "channel=dev"
+              echo "base=/dev/"
+              echo "ref="
+            } >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          # Everything else is a release: a tag push, or a tag named on dispatch.
+          case "$ref" in
+            v*) ;;
+            *)
+              echo "::error::'$ref' is not a release tag (v*)."
+              exit 1
+              ;;
+          esac
+          {
+            echo "channel=release"
+            echo "base=/"
+            echo "ref=$ref"
+          } >> "$GITHUB_OUTPUT"
+
+      # A release is built from its tag's tree: that tree's toolchain (port-map.json's CLI, its
+      # lockfile, its demos) is what the release documents.
+      - uses: actions/checkout@v7
+        with:
+          # Empty for the dev docs: the push's own commit.
+          ref: ${{ steps.site.outputs.ref }}
+
+      - uses: actions/setup-bun@v2
         with:
           bun-version-file: package.json
 
-      - name: Cache Bun package downloads
+      - name: Cache Bun packages
         uses: actions/cache@v4
         with:
           path: ~/.bun/install/cache
           key: bun-${{ runner.os }}-${{ hashFiles('bun.lock') }}
-          restore-keys: |
-            bun-${{ runner.os }}-
 
-      - name: Install dependencies
-        run: bun install --frozen-lockfile
+      - run: bun install --frozen-lockfile
 
-      # Installed with the official installer, never built; the installed CLI
-      # carries the web runtimes `bun run docs:demos` packages the demos with
-      # (docs/toolchain.md).
-      - name: Setup NSH
+      - uses: ./.github/actions/setup-nsh
         id: nsh
-        uses: ./.github/actions/setup-nsh
         with:
           channel: ${{ vars.NSH_CHANNEL }}
 
-      # Packaging the demos and the showcase app is most of the build; a commit
-      # that leaves them, the library and the CLI as they were (a docs-site
-      # change) reuses the last packages. Both outputs are cached together: a
-      # hit skips `docs:demos`, which writes both. The key is exact: no
-      # restore-keys, so a stale package is never deployed.
+      # The packaged demos cost minutes; nothing in them depends on the docs base.
       - name: Cache packaged demos
         id: demos
         uses: actions/cache@v4
@@ -62,20 +111,69 @@ jobs:
 
       - name: Build docs
         if: steps.demos.outputs.cache-hit != 'true'
+        env:
+          DOCS_BASE: ${{ steps.site.outputs.base }}
         run: bun run build:docs
 
       - name: Build docs (demos from the cache)
         if: steps.demos.outputs.cache-hit == 'true'
+        env:
+          DOCS_BASE: ${{ steps.site.outputs.base }}
         run: nsh check apps/website/demos && bun --filter @shadcn-nsh/website build
 
-      - name: Upload Pages artifact
-        uses: actions/upload-pages-artifact@v5
+      # The `site` branch is the published tree: the release at its root, `dev/` next to it. A
+      # release replaces the root and leaves `dev/`; a dev build replaces only `dev/`. It is
+      # checked out in a repository of its own, so the build's working tree never reaches the
+      # branch.
+      - name: Publish to the site branch
+        env:
+          CHANNEL: ${{ steps.site.outputs.channel }}
+        run: |
+          set -euo pipefail
+          site="$RUNNER_TEMP/site"
+          mkdir -p "$site"
+          git -C "$site" init -q
+          git -C "$site" remote add origin "$(git remote get-url origin)"
+          if git ls-remote --exit-code --heads origin site >/dev/null 2>&1; then
+            git -C "$site" fetch --depth=1 origin site
+            git -C "$site" checkout -q -B site FETCH_HEAD
+          else
+            # First publish: an orphan branch, and the build below is its first commit.
+            git -C "$site" checkout -q --orphan site
+          fi
+
+          if [ "$CHANNEL" = "dev" ]; then
+            mkdir -p "$site/dev"
+            rsync -a --delete --exclude=/.git --exclude=/dev "$PWD/apps/website/.output/public/" "$site/dev/"
+          else
+            rsync -a --delete --exclude=/.git --exclude=/dev "$PWD/apps/website/.output/public/" "$site/"
+          fi
+          touch "$site/.nojekyll"
+
+          git -C "$site" add -A
+          if git -C "$site" diff --cached --quiet; then
+            echo "The $CHANNEL docs are unchanged; nothing to commit."
+            exit 0
+          fi
+          git -C "$site" -c user.name="github-actions[bot]" \
+            -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -m "site: $CHANNEL docs from $GITHUB_SHA"
+          git -C "$site" push origin "HEAD:refs/heads/site"
+
+      # The checkout's repository is not part of the site.
+      - name: Drop the site repository
+        run: rm -rf "$RUNNER_TEMP/site/.git"
+
+      - uses: actions/upload-pages-artifact@v5
         with:
-          path: apps/website/.output/public
+          path: ${{ runner.temp }}/site
 
   deploy:
     needs: build
     runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

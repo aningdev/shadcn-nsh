@@ -10,8 +10,20 @@ import { defineConfig, runnerImport } from "vite";
 import { PALETTES } from "./demos/palettes";
 import { PACKAGE_MANAGER_GROUP, PACKAGE_MANAGERS } from "./src/lib/package-managers";
 
-/** The path the site is served under; both Vite and the router read it. */
-const BASE = "/";
+/**
+ * The path the site is served under, from `DOCS_BASE`; both Vite (assets) and the router
+ * (basepath) read it, and `import.meta.env.BASE_URL` carries it to the code. The deploy workflow
+ * sets it to `/` for a `v*` tag (the release docs at the root) and `/dev/` for `main`.
+ */
+function normalizeBase(value: string): string {
+  const path = value.trim().replace(/^\/+|\/+$/g, "");
+  return path === "" ? "/" : `/${path}/`;
+}
+
+const BASE = normalizeBase(process.env.DOCS_BASE ?? "/");
+
+/** Which of the two docs sites this build is; the label next to the name and its link follow it. */
+const CHANNEL = BASE.endsWith("/dev/") ? "dev" : "release";
 
 /**
  * The one MDX setup: Fumadocs' plugin with the site's npm-tab options. A factory, because it is
@@ -51,8 +63,9 @@ const { docsLlms } = (
 /**
  * The version the site documents, read once at build time so nothing is fetched at run time and the
  * changelog never ships: the CLI's version, which the library shares (`docs/release.md`), and
- * whether `CHANGELOG.md`'s `Unreleased` has entries. The site deploys from `main`, so with entries
- * it documents changes that release does not have yet, and its label says so.
+ * whether `CHANGELOG.md`'s `Unreleased` has entries. The `/dev/` build comes from `main`, so with
+ * entries it documents changes the release does not have yet, and its label says so; a tag build
+ * has none.
  */
 const DOCS_VERSION: string = JSON.parse(
   readFileSync(new URL("../../packages/cli/package.json", import.meta.url), "utf8"),
@@ -61,16 +74,16 @@ const changelog = readFileSync(new URL("../../CHANGELOG.md", import.meta.url), "
 const DOCS_UNRELEASED = /^## Unreleased\n([\s\S]*?)(?=^## )/m.exec(changelog)?.[1]?.trim() !== "";
 
 /**
- * The site is served at the root of its own domain, `https://shadcn-nsh.aning.dev/` (GitHub Pages'
- * custom domain). `base` and `basepath` stay wired, so moving it under a path again is this one
- * constant: Vite's `base` prefixes the URLs it emits, TanStack Router's `basepath` the ones it
- * matches.
+ * Two docs sites, one build: the root holds the latest release (built from its `v*` tag), `/dev/`
+ * holds `main`. `base` and `basepath` are wired to `DOCS_BASE`; `import.meta.env.BASE_URL`
+ * prefixes the URLs written in code.
  */
 export default defineConfig({
   base: BASE,
   define: {
     "import.meta.env.DOCS_VERSION": JSON.stringify(DOCS_VERSION),
     "import.meta.env.DOCS_UNRELEASED": JSON.stringify(DOCS_UNRELEASED),
+    "import.meta.env.DOCS_CHANNEL": JSON.stringify(CHANNEL),
   },
   server: {
     port: 4321,
@@ -105,9 +118,10 @@ export default defineConfig({
       ],
     }),
     react(),
-    // The Markdown files for agents are static output too; Nitro prerenders exactly the paths
-    // `docsLlms` serves, read above.
-    nitro({ prerender: { routes: await docsLlms.files() } }),
+    // The Markdown files for agents are served by routes that read a path, so Nitro prerenders
+    // them with the same base the site is served under; it strips the base before writing them, so
+    // they land beside the HTML.
+    nitro({ baseURL: BASE, prerender: { routes: await docsLlms.files() } }),
   ],
   resolve: {
     tsconfigPaths: true,

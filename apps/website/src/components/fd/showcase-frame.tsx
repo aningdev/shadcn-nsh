@@ -16,9 +16,10 @@ import { useEffect, useRef, useState } from "react";
 
 import { siteTheme, ToggleGroup, withParam } from "@/components/fd/demo-panel";
 import { CONTROL_FOCUS } from "@/components/fd/toolbar";
+import { sitePath } from "@/lib/base";
 
-/** The app's packaged page, under the site's own origin (the packager's output, `build-demos.ts`). */
-const APP_HREF = "/showcase/index.html";
+/** The app's packaged page, under the site's own origin and base (the packager's output, `build-demos.ts`). */
+const APP_HREF = sitePath("/showcase/index.html");
 
 /** Desktop is as wide as the page; phone is a phone's width. Both at a window's height. */
 const LAYOUTS = {

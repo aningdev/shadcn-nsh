@@ -4,6 +4,7 @@ import { pageSchema } from "fumadocs-core/source/schema";
 import { defineDocs } from "fumadocs-mdx/macro";
 import { z } from "zod";
 
+import { sitePath } from "./base";
 import { KIND_LABELS, KINDS } from "./kinds";
 import { SIDEBAR_PAGES, type SidebarPage } from "./nav";
 
@@ -95,7 +96,9 @@ export function pageTree(): Root {
 }
 
 export const docsLlms = llms(source, {
-  renderPage: async (page) => `# ${page.data.title} (${page.url})
+  // The files are served under the base the site is built for, so the links inside them are too.
+  renderUrl: (item) => sitePath(item.url),
+  renderPage: async (page) => `# ${page.data.title} (${sitePath(page.url)})
 
 ${await page.data.getText("processed")}`,
 });

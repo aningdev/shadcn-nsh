@@ -2,6 +2,10 @@
 
 ## Unreleased
 
+### Added
+
+- **The docs publish two sites (#283).** The root holds the latest `v*` tag's docs — the release `npm i shadcn-nsh` installs — and `/dev/` holds `main`'s. A merge to `main` rewrites only `/dev/`; a tag rewrites the root. The label next to the site's name says which one you are reading and links to the other: the release's version, or `dev (main)`.
+
 ### Changed
 
 - **BREAKING: the `default` theme is now NSH Gallery, id `nsh-gallery` (#360).** It is the official NSH look, the one nsh.dev's demos draw, and the name now says so. The registry item `theme-default` is `theme-nsh-gallery`, `init --theme nsh-gallery` installs it (as `init` with no flag still does), and its page moved to `/docs/themes/nsh-gallery`. There is no alias: `--theme default` is an error that lists the ids. An app that installed `theme-default` re-runs `shadcn-nsh add theme-nsh-gallery`; no value changed. Why: [ADR 0011](docs/decisions/0011-nsh-gallery-theme.md).

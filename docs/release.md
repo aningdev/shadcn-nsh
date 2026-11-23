@@ -71,14 +71,35 @@ git tag vX.Y.Z
 git push origin vX.Y.Z
 ```
 
-`publish-cli.yml` 在 `v*` 标签上发布到 npm；发布前它会校验标签与 `packages/cli/package.json` 的版本一致，不一致就失败，不发。
+`publish-cli.yml` 在 `v*` 标签上发布到 npm；发布前它会校验标签与 `packages/cli/package.json` 的版本一致，不一致就失败，不发。同一个标签也会重发根上的文档（§8）：等 `Deploy docs` 绿了，根上就是这一版。
 
 ## 7 GitHub Release
 
 标题 `vX.Y.Z`，正文取 `CHANGELOG.md` 里这一节。Release 是"这次发了什么"的固定链接，也是别人引用某一版时该贴的东西。
 
-## 8 发完之后
+## 8 文档站：release 在根，dev 在 `/dev/`
 
-- 文档站随 `main` 自动部署（`deploy-docs.yml`），不用单独操作。导航里名字旁的版本标签也跟着走，不用另改：它在构建时读 `packages/cli/package.json` 的版本，`CHANGELOG.md` 的 `Unreleased` 有条目时在版本后加 `+`（站点领先于该版本），发版切空 `Unreleased` 后就是裸版本号。
+文档站有两个面，同一份代码、两次构建：
+
+| 位置               | 内容                                                         | 什么时候重建                 |
+| ------------------ | ------------------------------------------------------------ | ---------------------------- |
+| Pages 站点根       | 最新 `v*` 标签的文档，也就是 `npm i shadcn-nsh` 装到的那一版 | 推 `v*` 标签时；也可手动重发 |
+| 同一站点的 `/dev/` | `main` 的文档                                                | 每次合并到 `main`            |
+
+两者都发布在 GitHub Pages 上，发布源是仓库的 `site` 分支：根是 release 构建，`dev/` 是 `main` 构建。Pages 设置里 Source 保持 "GitHub Actions"，`site` 是构建产物，不要手改。`deploy-docs.yml` 每次把构建放进那个分支再上传部署：
+
+- `main` 的推送：`DOCS_BASE=/dev/` 构建，只替换 `site` 里的 `dev/`，根上的 release 不动。
+- `v*` 标签：检出标签的树，用根 base 构建，替换除 `dev/` 以外的全部。工具链（`port-map.json` 的 CLI、lockfile、演示）也来自标签，所以根上的文档与那一版发布的东西一致。
+- 手动重发：Actions 里跑 `Deploy docs`，`ref` 填标签（例如 `v0.9.0`）。YAML 取 `main` 的，构建的树取那个标签。标签推送跑的是**那个标签树里**的 workflow，所以先于这套改动打的标签（`v0.9.0` 就是）只能这样重发；之后的标签推送会自己发布。
+
+导航里名字旁：release 显示版本号（`CHANGELOG.md` 的 `Unreleased` 有条目时加 `+`），并链到 `/dev/`；`/dev/` 显示 `dev (main)`，并链到 release。
+
+站点地址的 base 只有一个入口：构建时的 `DOCS_BASE`（`apps/website/vite.config.ts`）。Vite 的 `base`、TanStack Router 的 `basepath` 与代码里的 `import.meta.env.BASE_URL` 都从它来；页面里写的站点路径过 `sitePath()`（`apps/website/src/lib/base.ts`）。换成项目页地址（没有自定义域名）时，它应是 `/shadcn-nsh/` 与 `/shadcn-nsh/dev/`：改 `deploy-docs.yml` 里两处 `base` 即可。
+
+**一次性引导**：换到这套之前，根上是旧的 `main` 构建。合并后手动跑一次 `Deploy docs`，`ref` 填 `v0.9.0`，根就变成 0.9.0 的文档，`dev/` 保持 `main`；之后不用再手动跑。
+
+## 9 发完之后
+
+- 文档站按 §8 走：根随标签、`/dev/` 随 `main`，不用单独操作；版本标签同理，构建时读 `packages/cli/package.json` 的版本。
 - 装不上、文件不对：发一个补丁版本。**不要改已经发出去的标签**——那等于换掉别人已经装进应用的源码。
 - 兼容矩阵与 `upstream.cli` 跟着一起更新，别让它们落后于实际基线。

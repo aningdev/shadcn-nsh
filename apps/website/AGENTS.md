@@ -12,7 +12,7 @@ Three surfaces share the same components:
 
 ## Stack
 
-TanStack Start + [Fumadocs](https://fumadocs.dev) on React 19 and Tailwind v4, built to a static site: `vite build` prerenders every page under `apps/website/.output/public`, which is what `.github/workflows/deploy-docs.yml` uploads. There is no dev server in production and no server at runtime — server functions are prerendered away by `staticFunctionMiddleware`.
+TanStack Start + [Fumadocs](https://fumadocs.dev) on React 19 and Tailwind v4, built to a static site: `vite build` prerenders every page under `apps/website/.output/public`, which `.github/workflows/deploy-docs.yml` copies into the `site` branch and uploads. There is no dev server in production and no server at runtime — server functions are prerendered away by `staticFunctionMiddleware`.
 
 | Path                 | What it holds                                                                                                                                         |
 | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -24,7 +24,7 @@ TanStack Start + [Fumadocs](https://fumadocs.dev) on React 19 and Tailwind v4, b
 | `demos/`             | The acceptance demos (an NSH app; see below)                                                                                                          |
 | `public/`            | `favicon.svg`, packaged demos (gitignored)                                                                                                            |
 
-`vite.config.ts` sets the base for both Vite and the router (`tanstackStart.router.basepath`). The site is served at the root of its own domain, so internal links are plain absolute paths (`/docs/components`); a move under a path is the one `BASE` constant there, and links written as router paths (the sidebar, the layout's `links`) follow it themselves.
+`vite.config.ts` reads `DOCS_BASE` (default `/`) into one `BASE`: Vite's `base`, the router's `tanstackStart.router.basepath`, `Nitro`'s `baseURL` and `import.meta.env.BASE_URL` in the code all come from it. The deploy builds the release docs at the root (`DOCS_BASE=/`) and `main`'s under `/dev/` (`DOCS_BASE=/dev/`), so a URL written in code goes through `sitePath()` (`src/lib/base.ts`); links written as router paths (the sidebar, the layout's `links`) follow the base themselves, and the MDX `a` override applies `sitePath()` to links written in pages. The routes that serve files by path (`docs/{$}.md`, `{$}.md`, `llms*.txt`) take the base back off with `sitePathname()`, and the generated `llms*.txt` links go through `sitePath()` too. `src/lib/base.ts` also holds the sibling docs URL the version label links to.
 
 Do **not** invent a parallel layout — the chrome is `DocsLayout` / `DocsPage` from `fumadocs-ui`, configured once in `src/routes/__root.tsx` and `src/lib/layout.shared.tsx`. A docs page gets its chrome from the route; nothing in a page writes a sidebar, a TOC or a footer.
 
