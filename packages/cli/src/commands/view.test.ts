@@ -14,6 +14,7 @@ const fixture = (): Fixture =>
       "icons",
       "button",
       "live-value",
+      "look",
     ],
   });
 

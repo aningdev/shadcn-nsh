@@ -486,7 +486,7 @@
       "type": "registry:ui",
       "title": "Spinner",
       "description": "A turning ring: work going on.",
-      "registryDependencies": ["theme"],
+      "registryDependencies": ["look", "theme"],
       "files": [
         {
           "path": "packages/ui/spinner.tsx",
@@ -1026,7 +1026,7 @@
       "type": "registry:ui",
       "title": "Progress",
       "description": "A determinate or indeterminate progress bar.",
-      "registryDependencies": ["checkbox", "live-value", "surface", "theme"],
+      "registryDependencies": ["checkbox", "class-names", "live-value", "look", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/progress.tsx",

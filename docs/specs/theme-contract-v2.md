@@ -297,25 +297,25 @@
 
 规则：**共同几何从刻度取，形态自己的官方数字写进取值的配方。** “共同几何”是高度、图标、圆点、内边距、间隙、描边、圆角；配方里只允许该形态的定义数字（M3 的 16 dp 轨道、WinUI 的 2 px 描边、M3 分段按钮的 40 dp 连格）。
 
-| 维度        | 取值            | 配方                                                                                                                                            |
-| ----------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------- |
-| `selection` | `pill`          | 轨道里的一块胶囊，覆盖整项，读 `finish.raised`；粗细不适用                                                                                      |
-|             | `underline`     | 标签下 3 点线，只覆盖标签，上两角（角半径 = 粗细 / 2）；`stroke.control` 之上，3 点是该形态的数字（M3 PrimaryTabs 3 dp）                        |
-|             | `bar`           | 整项下 3 点线，胶囊端（WinUI SelectorBar/ NavigationView 的指示条）                                                                             |
-| `field`     | `box`           | 四条边 `stroke.control`，四角圆（`shape.control`）                                                                                              |
-|             | `underline`     | 只下边 `stroke.control`，只圆上两角                                                                                                             |
-|             | `box-underline` | 四边都在，四角圆；WinUI TextBox 的形状（色仍由第 1 节的角色定）                                                                                 |
-| `choice`    | `well`          | 井：`finish.inset` 的面，勾选后填 `primary`；尺寸按控件取 `icon` 刻度，点 `size.control.dot`，边 `stroke.control`                               |
-|             | `outline`       | 只描边 2 px（M3 的 outline 2 dp），井里留空；勾选后的记号由控件定（单选是环、复选是勾）；可点范围外扩 `size.target`（M3 40 dp state layer）     |
-|             | `inset`         | 按下色的面（WinUI `ControlFillColorDefault`），勾选后填 `accent`；边框 1 px                                                                     |
-| `track`     | `sunk`          | 凹槽：`colors.inset` + `finish.inset`，progress 6 / slider 6 有沟，spinner 带 0.25 透明度的底                                                   |
-|             | `tint`          | 色带：`brand-tint`，无边无沟，progress 4 / slider 16（M3 16 dp 轨道），spinner 无底                                                             |
-|             | `hairline`      | 一条 `input` 色的细线：progress 3 的条 + 1 的线（WinUI），slider 4，无边                                                                        |
-| `handle`    | `circle`        | 圆钮：slider 6 轨道 / 14 钮 / 按压 14、触屏 8 / 20 / 32；switch 的钮也用它；`hoverBrightness`                                                   |
-|             | `bar`           | 竖条：M3 4×44 钮、按压 2 宽、16 轨道、端点圆 2                                                                                                  |
-|             | `ring`          | 环：WinUI 18 px 钮带 12 的点（悬停 14、按下 10）、4 px 轨道                                                                                     |
-| `group`     | `track`         | 轨道（沟由 `track` 维度定）里一块胶囊覆盖选中项，读 `finish.raised`；轨道高读 `height.md`                                                       |
-|             | `cells`         | 相邻格连成的行，选中的格自己的面（`finish.raised`）并带勾，格间 `stroke.hairline` 分隔；格高 40、内边距 12、间隙 8、勾 18（M3 SegmentedButton） |
+| 维度        | 取值            | 配方                                                                                                                                                              |
+| ----------- | --------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `selection` | `pill`          | 轨道里的一块胶囊，覆盖整项，读 `finish.raised`；粗细不适用                                                                                                        |
+|             | `underline`     | 标签下 3 点线，只覆盖标签，上两角（角半径 = 粗细 / 2）；`stroke.control` 之上，3 点是该形态的数字（M3 PrimaryTabs 3 dp）                                          |
+|             | `bar`           | 整项下 3 点线，胶囊端（WinUI SelectorBar/ NavigationView 的指示条）                                                                                               |
+| `field`     | `box`           | 四条边 `stroke.control`，四角圆（`shape.control`）                                                                                                                |
+|             | `underline`     | 只下边 `stroke.control`，只圆上两角                                                                                                                               |
+|             | `box-underline` | 四边都在，四角圆；WinUI TextBox 的形状（色仍由第 1 节的角色定）                                                                                                   |
+| `choice`    | `well`          | 井：`finish.inset` 的面，勾选后填 `primary`；尺寸按控件取 `icon` 刻度，点 `size.control.dot`，边 `stroke.control`                                                 |
+|             | `outline`       | 只描边 2 px（M3 的 outline 2 dp），井里留空；勾选后的记号由控件定（单选是环、复选是勾）；可点范围外扩 `size.target`（M3 40 dp state layer）                       |
+|             | `inset`         | 按下色的面（WinUI `ControlFillColorDefault`），勾选后填 `accent`；边框 1 px                                                                                       |
+| `track`     | `sunk`          | 凹槽：`colors.track` + `finish.inset`（分段控件的整条仍画 `colors.inset`：暗色下 `track` 与滑块一样抬起），progress 6 / slider 6 有沟，spinner 带 0.25 透明度的底 |
+|             | `tint`          | 色带：`brand-tint`，无边无沟，progress 4 / slider 16（M3 16 dp 轨道），spinner 无底                                                                               |
+|             | `hairline`      | 一条 `input` 色的细线：progress 3 的条 + 1 的线（WinUI），slider 4，无边                                                                                          |
+| `handle`    | `circle`        | 圆钮：slider 6 轨道 / 14 钮 / 按压 14、触屏 8 / 20 / 32；switch 的钮也用它；`hoverBrightness`                                                                     |
+|             | `bar`           | 竖条：M3 4×44 钮、按压 2 宽、16 轨道、端点圆 2                                                                                                                    |
+|             | `ring`          | 环：WinUI 18 px 钮带 12 的点（悬停 14、按下 10）、4 px 轨道                                                                                                       |
+| `group`     | `track`         | 轨道（沟由 `track` 维度定）里一块胶囊覆盖选中项，读 `finish.raised`；轨道高读 `height.md`                                                                         |
+|             | `cells`         | 相邻格连成的行，选中的格自己的面（`finish.raised`）并带勾，格间 `stroke.hairline` 分隔；格高 40、内边距 12、间隙 8、勾 18（M3 SegmentedButton）                   |
 
 数字到刻度的对照只保留一处可查：`docs/theme-roles.md` 的 `theme-lint: scales` 表加一节“维度配方的数字”，每行写值名、数字、出处（M3 / WinUI / 本库自有），`check:theme` 校验配方实现与表里一致（防止代码里改了数字文档没改）。
 

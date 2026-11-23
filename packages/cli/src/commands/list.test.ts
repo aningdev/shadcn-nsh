@@ -5,7 +5,7 @@ import { runList } from "./list";
 
 const fixture = (files?: Record<string, string>): Fixture =>
   makeFixture({
-    items: ["theme", "press", "spinner", "as-text", "icons", "button", "live-value"],
+    items: ["theme", "press", "spinner", "as-text", "icons", "button", "live-value", "look"],
     files,
   });
 
@@ -26,7 +26,7 @@ describe("list", () => {
       true,
     );
     expect(out.text).toContain("A button, an icon button");
-    expect(out.text).toContain("7 items, 0 installed");
+    expect(out.text).toContain("8 items, 0 installed");
     expect(out.lines.some((line) => line.startsWith("✓"))).toBe(false);
   });
 
@@ -56,6 +56,7 @@ describe("list", () => {
       "icons",
       "button",
       "live-value",
+      "look",
     ]);
     expect(catalog.items.find((item) => item.name === "button")?.installed).toBe(true);
     expect(catalog.items.find((item) => item.name === "spinner")?.installed).toBe(false);

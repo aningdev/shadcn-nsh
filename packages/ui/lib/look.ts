@@ -315,15 +315,18 @@ export interface TrackLook {
 /**
  * The track a `control()` value draws. `sunk` is a groove in the surface; `tint` is a band of the
  * accent's tint with no edge; `hairline` is one thin input-coloured line, progress drawing its run
- * 3 points high over a 1-point rail.
+ * 3 points high over a 1-point rail. A track's groove is the `track` colour — the role
+ * [`theme-roles.md`](../../docs/specs/theme-roles.md) gives a switch's, a slider's and a progress
+ * bar's groove — under the inset finish's shade; a segmented control's bar is a deeper well of its
+ * own (`inset`), because in a dark theme `track` is raised as its thumb is.
  */
 export function trackLook(value: Track): TrackLook {
   switch (value) {
     case "sunk":
       return {
         form: value,
-        // A sunk well: the inset colour under the inset finish's shade.
-        groove: { fill: { kind: "colour", role: "inset" }, shade: "inset" },
+        // A sunk well: the track colour under the inset finish's shade.
+        groove: { fill: { kind: "colour", role: "track" }, shade: "inset" },
         edge: null,
         // 6 points: the groove the library's progress and slider draw.
         progress: { height: 6, line: null },

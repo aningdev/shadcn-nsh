@@ -91,11 +91,14 @@ bar's row and a label goes after it.
 ## API
 
 Uses `progressLook`. Every prop of [`nsh/base` Progress](https://nsh.dev/elements/progress) passes through.
+The rail is the theme's track form: a sunk groove 6 points high with the inset shade, an accent-tinted
+band 4 points high, or WinUI's 1-point input line under a 3-point run; `height` overrides the height,
+never the form.
 
-| Part            | Props                                                                                                                                       | Description                                                         |
-| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
-| `Progress`      | `height` (`number`, default `6`), `tone` (`Tone \| (() => Tone)`, default citrus), `sweep` (`ProgressSweep`), `marker` (`number`, 0 to 100) | Uses `progressLook`; `marker` stands a hairline at the limit        |
-| `ProgressSteps` | every `nsh` View prop                                                                                                                       | The row of marks over the bar, centred on it; a child of `Progress` |
-| `ProgressStep`  | `state` (`"done" \| "current" \| "upcoming"`, default `upcoming`), `children` (a string is the label)                                       | One mark, its label under it                                        |
+| Part            | Props                                                                                                                                                                                | Description                                                         |
+| --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------- |
+| `Progress`      | `height` (`number`, default the track form's: 6 sunk, 4 tint, 3 hairline), `tone` (`Tone \| (() => Tone)`, default citrus), `sweep` (`ProgressSweep`), `marker` (`number`, 0 to 100) | Uses `progressLook`; `marker` stands a hairline at the limit        |
+| `ProgressSteps` | every `nsh` View prop                                                                                                                                                                | The row of marks over the bar, centred on it; a child of `Progress` |
+| `ProgressStep`  | `state` (`"done" \| "current" \| "upcoming"`, default `upcoming`), `children` (a string is the label)                                                                                | One mark, its label under it                                        |
 
 `progressStepsLook()`, `ProgressStepMark` and `progressStepSize()` are the look's parts, for a row of your own.

@@ -160,9 +160,9 @@ describe("trackLook", () => {
     for (const value of tracks) expect(trackLook(value).edge).toBeNull();
   });
 
-  test("a sunk track is the inset colour under the inset finish's shade", () => {
+  test("a sunk track is the track colour under the inset finish's shade", () => {
     expect(trackLook("sunk")).toMatchObject({
-      groove: { fill: { kind: "colour", role: "inset" }, shade: "inset" },
+      groove: { fill: { kind: "colour", role: "track" }, shade: "inset" },
       progress: { height: 6, line: null },
       slider: { height: 6 },
       spinner: { groove: true, opacity: 0.25 },
