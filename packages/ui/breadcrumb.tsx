@@ -159,8 +159,12 @@ export type BreadcrumbProps = ViewProps & {
   accessibilityLabel?: string;
 };
 
-/** The trail's steps: a wrapping row. Every `nsh` view prop passes through; `style` goes over the
- * look's. */
+/**
+ * The trail's steps: a wrapping row. Every `nsh` view prop passes through; `style` goes over the
+ * look's. No `role="list"`: `nsh` has no `listitem` role, so the steps could not be its items and
+ * a list without items is worse for a screen reader than a plain row (`ItemGroup` makes the same
+ * call).
+ */
 export type BreadcrumbListProps = ViewProps;
 
 /** One step of the trail. Every `nsh` view prop passes through; `style` goes over the look's. */
@@ -233,7 +237,7 @@ export function Breadcrumb(props: BreadcrumbProps) {
 export function BreadcrumbList(props: BreadcrumbListProps) {
   const [, rest] = split(props, ["style"]);
   return (
-    <View role="list" {...rest} style={[breadcrumbLook().list, props.style ?? null]}>
+    <View {...rest} style={[breadcrumbLook().list, props.style ?? null]}>
       {props.children}
     </View>
   );

@@ -123,19 +123,24 @@ except the trigger, the open state and the lifecycle callbacks, which the root o
 `backdropStyle` and `popupStartingStyle` go over `menuPopup`'s. Defaults: `placement` `"bottom"`,
 `align` `"start"`, `offset` `8` — a menu under the trigger it belongs to, whatever the bar's width.
 
-| Part                  | Props           | Description                                            |
-| --------------------- | --------------- | ------------------------------------------------------ |
-| `Menubar`             |                 | The bar; a row holding its menus                       |
-| `MenubarMenu`         | `onOpenChange`  | Open state + lifecycle; reports `{ open, reason }`     |
-| `MenubarTrigger`      |                 | A string is the name; wears the chosen fill while open |
-| `MenubarContent`      |                 | The popup, over the menu surface                       |
-| `MenubarItem`         | `variant`       | A row; `"destructive"` is the danger tone              |
-| `MenubarCheckboxItem` | `closeOnSelect` | A row with a check; `false` to stay open               |
-| `MenubarRadioItem`    |                 | A row with a dot                                       |
-| `MenubarLabel`        |                 | A group's name (`text`)                                |
-| `MenubarSeparator`    |                 | A hairline between rows                                |
-| `MenubarShortcut`     |                 | The row's trailing note (a key equivalent)             |
-| `MenubarGroup`        |                 | A block grouping rows                                  |
-| `MenubarSub`          |                 | A submenu: `MenubarSubTrigger` and `MenubarSubContent` |
-| `MenubarSubTrigger`   |                 | The row that opens it (a chevron with a string)        |
-| `MenubarSubContent`   |                 | Its popup; a back row on a touch screen                |
+| Part                  | Props                                         | Description                                            |
+| --------------------- | --------------------------------------------- | ------------------------------------------------------ |
+| `Menubar`             | every `nsh` view prop                         | The bar; a row holding its menus                       |
+| `MenubarMenu`         | `onOpenChange`                                | Open state + lifecycle; reports `{ open, reason }`     |
+| `MenubarTrigger`      | `children`, `disabled`; every `nsh` view prop | A string is the name; wears the chosen fill while open |
+| `MenubarContent`      |                                               | The popup, over the menu surface                       |
+| `MenubarItem`         | `variant`                                     | A row; `"destructive"` is the danger tone              |
+| `MenubarCheckboxItem` | `closeOnSelect`                               | A row with a check; `false` to stay open               |
+| `MenubarRadioItem`    |                                               | A row with a dot                                       |
+| `MenubarLabel`        |                                               | A group's name (`text`)                                |
+| `MenubarSeparator`    |                                               | A hairline between rows                                |
+| `MenubarShortcut`     |                                               | The row's trailing note (a key equivalent)             |
+| `MenubarGroup`        |                                               | A block grouping rows                                  |
+| `MenubarSub`          |                                               | A submenu: `MenubarSubTrigger` and `MenubarSubContent` |
+| `MenubarSubTrigger`   |                                               | The row that opens it (a chevron with a string)        |
+| `MenubarSubContent`   |                                               | Its popup; a back row on a touch screen                |
+
+The bar and its triggers spread the view props they are given on the row they draw, after the look
+(`style` included), and merge a given `hoverStyle`, `activeStyle`, `expandedStyle` or `disabledStyle`
+after the look's own. The rows, labels, notes and groups are `menu.tsx`'s, so they take what a menu's
+parts take.

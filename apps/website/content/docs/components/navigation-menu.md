@@ -141,10 +141,16 @@ and every base prop passes through except the trigger, the open state and the li
 | ----------------------- | ----------------------------------------------------------------------- | ------------------------------------------------------------------------- |
 | `NavigationMenu`        | `value`, `defaultValue`, `onValueChange`, `delayDuration`, `closeDelay` | `onValueChange` reports `{ value, reason }`                               |
 | `NavigationMenuList`    |                                                                         | The wrapping row                                                          |
-| `NavigationMenuItem`    | `value`, `style`                                                        | `value` is what the root opens; a trigger and its content, or a link      |
-| `NavigationMenuTrigger` | `disabled`, `style`                                                     | A string is the name, a chevron follows it                                |
+| `NavigationMenuItem`    | `value`; every `nsh` view prop                                          | `value` is what the root opens; a trigger and its content, or a link      |
+| `NavigationMenuTrigger` | `disabled`; every `nsh` view prop                                       | A string is the name, a chevron follows it                                |
 | `NavigationMenuContent` | `width`, `placement`, `align`, `offset`, `margin`, `closeOnEscape`      | The panel; `margin` and `closeOnEscape` are base's, and more pass through |
 | `NavigationMenuLink`    | `href`, `openWith`, `onPress`, `active`, `disabled`, `style`            | A link                                                                    |
+
+`NavigationMenuItem` and `NavigationMenuTrigger` spread the view props they are given on their own
+view, after the look (`style` included), and merge a given `hoverStyle`, `activeStyle`,
+`focusVisibleStyle` or `disabledStyle` after the look's own; the trigger keeps the pointer's enter
+and leave, which drive the item's delays. `NavigationMenu` and `NavigationMenuList` do the same on the root and the
+row.
 
 The look is `navigationMenuLook()` — `root`, `list`, `item`, `panel`, `link`, `linkText`,
 `linkHint` — and `navigationMenuTriggerLook({ open })` and

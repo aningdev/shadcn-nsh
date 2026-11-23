@@ -40,3 +40,10 @@ test("a disabled AlertDialog trigger shows no alert", async () => {
   await app.wait(100);
   expect(app.dialogs().length).toBe(0);
 });
+
+test("a trigger hands its view props to the button it draws", async () => {
+  const app = await open("./alert-dialog.fixture.tsx");
+  app.onDialog((dialog) => (dialog.buttons.includes("Keep") ? "Keep" : null));
+  await app.press("id:open-a");
+  await app.waitFor("text:action cancel");
+});

@@ -10,10 +10,12 @@ import {
   font,
   shape,
   dimmed,
+  stateLayer,
   stroke,
+  style,
 } from "@shadcn-nsh/theme";
 import { ChevronLeft, ChevronRight } from "lucide";
-import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
+import type { JSX, StyleProp, TextStyle, TextProps, ViewProps, ViewStyle } from "nsh";
 import { context, horizontalSizeClass, platform, split, Text, token, View } from "nsh";
 import {
   Menu as BaseMenu,
@@ -29,7 +31,14 @@ import {
   type SubmenuProps as BaseSubmenuProps,
 } from "nsh/base";
 
-import { Button, type ButtonSize, buttonLabel, buttonLook, type ButtonVariant } from "./button";
+import {
+  Button,
+  type ButtonProps,
+  type ButtonSize,
+  buttonLabel,
+  buttonLook,
+  type ButtonVariant,
+} from "./button";
 import { AsText } from "./lib/as-text";
 import { Icon } from "./lib/icons";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
@@ -97,8 +106,12 @@ const markRoom = menuItemSize.icon + 8;
  * flat neutral fill, the theme's `accent`. */
 export const menuHighlight = (): ViewStyle => ({ backgroundColor: token("accent") });
 
-/** A row pressed (`activeStyle`): a shade deeper than the highlight. */
-const menuPressed = (): ViewStyle => ({ backgroundColor: alpha(colors.foreground, 0.1) });
+/** A row pressed (`activeStyle`): the theme's press wash over the highlight, and on a theme
+ * without one, a shade deeper than the highlight. */
+const menuPressed = (): ViewStyle => {
+  if (style().state.overlay.pressed > 0) return stateLayer("pressed");
+  return { backgroundColor: alpha(colors.foreground, 0.1) };
+};
 
 /** Options of `menuItemLook`. */
 export interface MenuItemLookOptions {
@@ -233,8 +246,8 @@ export function menuPopup(o?: MenuPopupOptions) {
   };
 }
 
-/** The props of `MenuLabel`. */
-export type MenuLabelProps = {
+/** The props of `MenuLabel`: the title, plus every text prop (`style`, `numberOfLines`, …), spread after the label's own. */
+export type MenuLabelProps = Omit<TextProps, "children"> & {
   /** The title itself. */
   children?: string;
   /** Lines it up with checkable rows' labels, past the mark they hold. */
@@ -243,19 +256,24 @@ export type MenuLabelProps = {
 
 /** A group's title in a menu: not an item, nothing to press; 11 points semibold with a pointer, 13 on a touch screen, faint. */
 export function MenuLabel(props: MenuLabelProps) {
+  const [, rest] = split(props, ["children", "inset", "style"]);
   return (
     <Text
-      style={{
-        // No type role has this size: a group's heading is 11 / 13.
-        fontSize: pointer ? 11 : 13,
-        fontWeight: font.weight("title"),
-        color: colors.faint,
-        paddingHorizontal: itemSpacing.pad,
-        ...(props.inset ? { paddingStart: itemSpacing.pad + markRoom } : {}),
-        // 6 points down from the group above it, 2 up from its own rows.
-        paddingTop: 6,
-        paddingBottom: 2,
-      }}
+      {...rest}
+      style={[
+        {
+          // No type role has this size: a group's heading is 11 / 13.
+          fontSize: pointer ? 11 : 13,
+          fontWeight: font.weight("title"),
+          color: colors.faint,
+          paddingHorizontal: itemSpacing.pad,
+          ...(props.inset ? { paddingStart: itemSpacing.pad + markRoom } : {}),
+          // 6 points down from the group above it, 2 up from its own rows.
+          paddingTop: 6,
+          paddingBottom: 2,
+        },
+        props.style ?? null,
+      ]}
     >
       {props.children}
     </Text>
@@ -283,41 +301,55 @@ const submenuChevron = pointer ? 12 : 14;
 
 /** A submenu's row, whether `SubmenuRow` drew it or a `MenuSubTrigger`'s own
  * children: `menuItemLook`'s row and its states, dimmed while it takes no presses. */
-function SubmenuRowFrame(props: {
-  disabled?: boolean;
-  inset?: boolean;
-  style?: StyleProp<ViewStyle>;
-  children?: JSX.Element;
-}) {
+function SubmenuRowFrame(
+  props: Omit<ViewProps, "children"> & {
+    disabled?: boolean;
+    inset?: boolean;
+    children?: JSX.Element;
+  },
+) {
+  const [, rest] = split(props, ["disabled", "inset", "style", "children"]);
   const look = menuItemLook({ inset: props.inset });
   return (
     <View
-      hoverStyle={props.disabled ? undefined : look.hoverStyle}
-      focusStyle={look.focusStyle}
-      activeStyle={props.disabled ? undefined : look.activeStyle}
-      style={[{ ...look.style, opacity: props.disabled ? submenuRowDim : 1 }, props.style ?? null]}
+      {...rest}
+      // The row is the submenu's trigger: disabled it takes no presses, and `disabledStyle` dims
+      // it deeper than an item (`nsh` leaves the pointer and keyboard styles off while disabled).
+      disabled={props.disabled}
+      hoverStyle={[look.hoverStyle, props.hoverStyle ?? null]}
+      focusStyle={[look.focusStyle, props.focusStyle ?? null]}
+      activeStyle={[look.activeStyle, props.activeStyle ?? null]}
+      disabledStyle={[{ opacity: submenuRowDim }, props.disabledStyle ?? null]}
+      style={[look.style, props.style ?? null]}
     >
       {props.children ?? <View />}
     </View>
   );
 }
 
+/** The props of `SubmenuRow`: the label, its icon and its state, plus every view prop. */
+export type SubmenuRowProps = Omit<ViewProps, "children"> & {
+  children?: string | JSX.Element;
+  /** An icon before the label. */
+  lead?: JSX.Element;
+  /** No presses: dimmed, the chevron still shown. */
+  disabled?: boolean;
+  /** The label starts where a checkable row's does (shadcn's `inset`). */
+  inset?: boolean;
+};
+
 /**
  * The row that opens a submenu (a `Submenu`'s `trigger`): `menuItemLook`'s
  * row, `lead` (an icon) before the label and a faint chevron at its end;
- * disabled, 35%. `style` goes over the row's own. A string child is the
- * label; anything else is drawn as given, still before the chevron, so a
- * row of the app's own (an icon, a title, a value) keeps the chevron too.
+ * disabled, 35%. `style` goes over the row's own, and every other view prop
+ * with it. A string child is the label; anything else is drawn as given,
+ * still before the chevron, so a row of the app's own (an icon, a title, a
+ * value) keeps the chevron too.
  */
-export function SubmenuRow(props: {
-  children?: string | JSX.Element;
-  lead?: JSX.Element;
-  disabled?: boolean;
-  inset?: boolean;
-  style?: StyleProp<ViewStyle>;
-}) {
+export function SubmenuRow(props: SubmenuRowProps) {
+  const [, rest] = split(props, ["children", "lead", "disabled", "inset", "style"]);
   return (
-    <SubmenuRowFrame disabled={props.disabled} inset={props.inset} style={props.style}>
+    <SubmenuRowFrame {...rest} disabled={props.disabled} inset={props.inset} style={props.style}>
       {props.lead}
       {(() => {
         // Read once, here where the label is drawn (`marker.tsx` reads in the same shape).
@@ -335,10 +367,15 @@ export function SubmenuRow(props: {
 }
 
 /** The row a touch screen's sheet shows above a submenu's items to go back (a `Submenu`'s `back`): a back chevron and the submenu's label in the accent. */
-export function SubmenuBack(props: { label: string }) {
+export function SubmenuBack(props: Omit<ViewProps, "children"> & { label: string }) {
+  const [, rest] = split(props, ["label", "style"]);
   const look = menuItemLook({ style: { gap: 6 } });
   return (
-    <View activeStyle={look.activeStyle} style={look.style}>
+    <View
+      {...rest}
+      activeStyle={[look.activeStyle, props.activeStyle ?? null]}
+      style={[look.style, props.style ?? null]}
+    >
       <Icon icon={ChevronLeft} size={14} tint={colors.brand} />
       <Text
         style={{
@@ -356,7 +393,10 @@ export function SubmenuBack(props: { label: string }) {
 /** Why a menu closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */
 export type MenuOpenChangeReason = OpenChangeReason;
 
-/** The root: it owns whether the menu is open, and the trigger slot. */
+/**
+ * The root: it owns whether the menu is open, and the trigger slot. It draws no view of its own,
+ * so it takes no view props: they go to the trigger and the content.
+ */
 export type MenuProps = {
   open?: boolean | null;
   defaultOpen?: boolean;
@@ -383,14 +423,9 @@ export type MenuContentProps = Omit<
  * What opens the menu: a string is a `Button`'s label; any other single element is the trigger
  * itself (its press, focus, hover and open state land on it, no view in between).
  */
-export type MenuTriggerProps = {
+export type MenuTriggerProps = Omit<ButtonProps, "children"> & {
+  /** The string child's button, or the trigger element itself. */
   children?: string | JSX.Element;
-  /** The button's variant, for a string child (default `secondary`). */
-  variant?: ButtonVariant;
-  /** No press, for a string child; an element carries its own `disabled`. */
-  disabled?: boolean;
-  /** The string child's button style. */
-  style?: StyleProp<ViewStyle>;
 };
 
 /** A menu row: a string child is its label (`menuItemLabel`), anything else is drawn as given. */
@@ -417,22 +452,23 @@ export type MenuRadioItemProps = Omit<MenuItemProps, "checked"> & {
 
 /** A group of rows: `nsh/base` has no group part, so this is the library's own view, `group` to
  * screen readers so its rows are announced as one set. */
-export type MenuGroupProps = {
-  children?: JSX.Element;
-  style?: StyleProp<ViewStyle>;
-};
+export type MenuGroupProps = ViewProps;
 
 /** A hairline between rows (`menuSeparator`). */
 export type MenuSeparatorProps = BaseMenuSeparatorProps;
 
 /** A shortcut shown at a row's trailing edge (`menuItemNote`); anything but a string is drawn as given. */
-export type MenuShortcutProps = {
+export type MenuShortcutProps = Omit<ViewProps, "children" | "style"> & {
   children?: string | JSX.Element;
   /** The note's own style. A shortcut is type: a `TextStyle` is a `ViewStyle`, so an element child takes the same. */
   style?: StyleProp<TextStyle>;
 };
 
-/** The root of a nested menu: it holds the submenu's trigger, its label and its disabled state. */
+/**
+ * The root of a nested menu: it holds the submenu's trigger, its label and its disabled state. It
+ * draws no view of its own, so it takes no view props: its row is `MenuSubTrigger`, its popup
+ * `MenuSubContent`.
+ */
 export type MenuSubProps = {
   children?: JSX.Element;
   disabled?: boolean;
@@ -443,14 +479,9 @@ export type MenuSubProps = {
  * both in `SubmenuRow`'s row, with its chevron at the end. A touch screen's sheet opens with a
  * back row named after a string child (`MenuSubContent`'s `back`).
  */
-export type MenuSubTriggerProps = {
-  children?: string | JSX.Element;
+export type MenuSubTriggerProps = Omit<SubmenuRowProps, "disabled"> & {
+  /** No press: a `MenuSub`'s own `disabled` stands when this is left out. */
   disabled?: boolean;
-  /** The label starts where a checkable row's does (shadcn's `inset`). */
-  inset?: boolean;
-  style?: StyleProp<ViewStyle>;
-  /** An icon before the label, as a row that opens a submenu has in the menus of the platform. */
-  lead?: JSX.Element;
 };
 
 /** The nested menu's popup: `nsh/base`'s Submenu, with the trigger `MenuSubTrigger` sets; on a touch screen its sheet opens with a back row (`back`). */
@@ -598,11 +629,11 @@ export function MenuItem(props: MenuItemProps) {
         ) : undefined)
       }
       style={[look.style, props.style ?? null]}
-      hoverStyle={props.disabled ? props.hoverStyle : [look.hoverStyle, props.hoverStyle ?? null]}
-      focusStyle={props.disabled ? props.focusStyle : [look.focusStyle, props.focusStyle ?? null]}
-      activeStyle={
-        props.disabled ? props.activeStyle : [look.activeStyle, props.activeStyle ?? null]
-      }
+      // `nsh` ranks the states itself: `disabledStyle` wins and the others do not apply while
+      // disabled, so they stay whole here.
+      hoverStyle={[look.hoverStyle, props.hoverStyle ?? null]}
+      focusStyle={[look.focusStyle, props.focusStyle ?? null]}
+      activeStyle={[look.activeStyle, props.activeStyle ?? null]}
       disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     >
       <AsText style={menuItemLabel({ variant: props.variant })}>{props.children}</AsText>
@@ -624,8 +655,9 @@ export function MenuRadioItem(props: MenuRadioItemProps) {
 
 /** Groups related rows. */
 export function MenuGroup(props: MenuGroupProps) {
+  const [, rest] = split(props, ["style"]);
   return (
-    <View role="group" style={props.style}>
+    <View {...rest} role="group" style={props.style}>
       {props.children}
     </View>
   );
@@ -639,6 +671,7 @@ export function MenuSeparator(props: MenuSeparatorProps = {}) {
 
 /** The shortcut shown at a row's trailing edge. */
 export function MenuShortcut(props: MenuShortcutProps) {
+  const [, rest] = split(props, ["children", "style"]);
   return (
     <>
       {(() => {
@@ -646,10 +679,16 @@ export function MenuShortcut(props: MenuShortcutProps) {
         // string is the note, anything else keeps its own layout.
         const kids = props.children;
         if (typeof kids !== "string" && kids != null) {
-          return <View style={[{ marginStart: "auto" }, props.style ?? null]}>{kids}</View>;
+          return (
+            <View {...rest} style={[{ marginStart: "auto" }, props.style ?? null]}>
+              {kids}
+            </View>
+          );
         }
         return (
-          <Text style={[menuItemNote(), { marginStart: "auto" }, props.style ?? null]}>{kids}</Text>
+          <Text {...rest} style={[menuItemNote(), { marginStart: "auto" }, props.style ?? null]}>
+            {kids}
+          </Text>
         );
       })()}
     </>

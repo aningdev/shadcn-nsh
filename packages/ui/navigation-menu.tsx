@@ -13,7 +13,7 @@ import {
   style as themeStyle,
 } from "@shadcn-nsh/theme";
 import { ChevronDown } from "lucide";
-import type { AndroidProps, JSX, StyleProp, TextStyle, ViewProps, ViewStyle } from "nsh";
+import type { AndroidProps, JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, platform, reduceMotion, signal, split, token, View } from "nsh";
 import {
   Link as BaseLink,
@@ -304,11 +304,10 @@ export type NavigationMenuProps = ViewProps & {
  * its own. The trigger is drawn by the item's `NavigationMenuContent` — the popup places it — so a
  * trigger declared after its content would draw nothing.
  */
-export type NavigationMenuItemProps = {
+export type NavigationMenuItemProps = Omit<ViewProps, "children"> & {
   /** What names this item to the root: the open item's `value`. Made up when left out. */
   value?: string;
   children?: JSX.Element;
-  style?: StyleProp<ViewStyle>;
 };
 
 /** The bar's list: a wrapping row of items. Every `nsh` view prop passes through; `style` goes
@@ -321,11 +320,11 @@ export type NavigationMenuListProps = ViewProps;
  * is open, opens it by a press (Return or Space with the keyboard on it) and, on the desktops, by
  * the pointer's rest.
  */
-export type NavigationMenuTriggerProps = {
+export type NavigationMenuTriggerProps = Omit<ViewProps, "children"> & {
+  /** A string is the name, drawn in the bar's type; anything else is drawn as given. */
   children?: string | JSX.Element;
   /** No presses, no hover, 50%: its panel does not open. */
   disabled?: boolean;
-  style?: StyleProp<ViewStyle>;
 };
 
 /**
@@ -475,6 +474,7 @@ export function NavigationMenuList(props: NavigationMenuListProps) {
  */
 export function NavigationMenuItem(props: NavigationMenuItemProps) {
   const root = useNavigationMenu();
+  const [, rest] = split(props, ["value", "children", "style"]);
   const value = props.value ?? `navigation-menu-item-${madeUpCount++}`;
   const trigger = createSlot<JSX.Element>();
   // Where the pointer is (off both parts, the panel closes after `closeDelay`) and the one timer
@@ -539,7 +539,9 @@ export function NavigationMenuItem(props: NavigationMenuItemProps) {
         trigger,
       }}
     >
-      <View style={[navigationMenuLook().item, props.style ?? null]}>{props.children}</View>
+      <View {...rest} style={[navigationMenuLook().item, props.style ?? null]}>
+        {props.children}
+      </View>
     </NavigationMenuItemContext.Provider>
   );
 }
@@ -550,6 +552,7 @@ export function NavigationMenuItem(props: NavigationMenuItemProps) {
  */
 export function NavigationMenuTrigger(props: NavigationMenuTriggerProps) {
   const item = useNavigationMenuItem();
+  const [, rest] = split(props, ["children", "disabled", "style"]);
   // The trigger is an element, as an app hands one to `nsh/base` (`trigger={<View …>}`, the shape
   // upstream's demos use): built once, here, and placed by the panel without building it again
   // on every layout. Its children are read where they are drawn, below, so a child that reads a
@@ -557,6 +560,7 @@ export function NavigationMenuTrigger(props: NavigationMenuTriggerProps) {
   const look = navigationMenuTriggerLook({ open: item.open });
   item.trigger.set(
     <View
+      {...rest}
       accessible
       role="button"
       disabled={props.disabled}
@@ -567,10 +571,10 @@ export function NavigationMenuTrigger(props: NavigationMenuTriggerProps) {
       }
       onMouseLeave={pointer ? () => item.pointerOver("trigger", false) : undefined}
       style={[look.style, props.style ?? null]}
-      hoverStyle={look.hoverStyle}
-      activeStyle={look.activeStyle}
-      focusVisibleStyle={look.focusVisibleStyle}
-      disabledStyle={look.disabledStyle}
+      hoverStyle={[look.hoverStyle, props.hoverStyle ?? null]}
+      activeStyle={[look.activeStyle, props.activeStyle ?? null]}
+      focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
+      disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     >
       <AsText style={look.text}>{props.children}</AsText>
       <View
@@ -634,13 +638,6 @@ export function NavigationMenuContent(props: NavigationMenuContentProps) {
  * The look's state style with the app's over it (the app wins), or the app's alone when the look
  * has none: what a part's `hoverStyle` and `activeStyle` say.
  */
-function styleOver(
-  own: StyleProp<ViewStyle> | undefined,
-  given: StyleProp<ViewStyle> | undefined,
-): StyleProp<ViewStyle> {
-  return own === undefined ? (given ?? null) : [own, given ?? null];
-}
-
 /**
  * A link: it goes somewhere (`href`, `openWith`, `onOpen`) or reports a press (`onPress`), and it
  * wears the navigation menu's link look — a name and, under it, a description the app nests as its
@@ -669,8 +666,8 @@ export function NavigationMenuLink(props: NavigationMenuLinkProps) {
       current={props.active}
       {...pressHostProps(() => look().android)}
       style={[look().style, props.style ?? null]}
-      hoverStyle={styleOver(look().hoverStyle, props.hoverStyle)}
-      activeStyle={styleOver(look().activeStyle, props.activeStyle)}
+      hoverStyle={[look().hoverStyle, props.hoverStyle ?? null]}
+      activeStyle={[look().activeStyle, props.activeStyle ?? null]}
       focusVisibleStyle={[look().focusVisibleStyle, props.focusVisibleStyle ?? null]}
       disabledStyle={[look().disabledStyle, props.disabledStyle ?? null]}
     >

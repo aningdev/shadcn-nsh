@@ -24,7 +24,7 @@ import {
   motion,
 } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
-import type { AndroidProps, JSX, StyleProp, TextStyle, Tokens, ViewStyle } from "nsh";
+import type { AndroidProps, JSX, StyleProp, TextStyle, Tokens, ViewProps, ViewStyle } from "nsh";
 import {
   context,
   createAnimatedValue,
@@ -1004,16 +1004,18 @@ export function SplitButtonDivider(props: SplitButtonDividerProps = {}) {
   return <View style={[ctx.look.divider, props.style ?? null]} />;
 }
 
-/** What a trigger's action takes: a string child wears the button, anything else presses where it is. */
-export interface ActionProps {
+/**
+ * What a trigger's action takes: a string child wears the button, anything else presses where it
+ * is. Every other view prop (`testID`, `class`, state styles, …) lands on the node it draws.
+ */
+export type ActionProps = Omit<ViewProps, "children" | "onPress" | "onPressDown" | "onPressUp"> & {
   children?: string | JSX.Element;
   /** The button's variant, for a string child (default `secondary`). */
   variant?: ButtonVariant;
   disabled?: boolean;
-  style?: StyleProp<ViewStyle>;
   /** Runs when it is pressed; a disabled one does not. */
   onPress: () => void;
-}
+};
 
 /**
  * A trigger's action: a string presses as a `Button` of its variant; anything else (an icon, a
@@ -1021,19 +1023,27 @@ export interface ActionProps {
  * keyboard still rings.
  */
 export function Action(props: ActionProps) {
+  const [own, rest] = split(props, [
+    "children",
+    "variant",
+    "disabled",
+    "onPress",
+    "focusVisibleStyle",
+  ]);
   return (
     <>
       {(() => {
         // Read once, here where the action is drawn (`marker.tsx` reads in the same shape): a
         // string wears a `Button`, anything else presses where it lies.
-        const kids = props.children;
+        const kids = own.children;
         if (typeof kids === "string") {
           return (
             <Button
-              variant={props.variant ?? "secondary"}
-              disabled={props.disabled}
-              style={props.style}
-              onPress={props.onPress}
+              {...rest}
+              variant={own.variant ?? "secondary"}
+              disabled={own.disabled}
+              focusVisibleStyle={own.focusVisibleStyle}
+              onPress={own.onPress}
             >
               {kids}
             </Button>
@@ -1041,12 +1051,12 @@ export function Action(props: ActionProps) {
         }
         return (
           <View
+            {...rest}
             accessible
             role="button"
-            accessibilityState={{ disabled: props.disabled }}
-            focusVisibleStyle={focusRing()}
-            onPress={props.disabled ? undefined : props.onPress}
-            style={props.style}
+            accessibilityState={{ disabled: own.disabled }}
+            focusVisibleStyle={[focusRing(), own.focusVisibleStyle ?? null]}
+            onPress={own.disabled ? undefined : own.onPress}
           >
             {kids}
           </View>

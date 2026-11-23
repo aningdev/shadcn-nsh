@@ -414,7 +414,7 @@ function Preview(props: {
   const { log, changed } = props;
   const site = props.site;
   return (
-    <HoverCard onOpenChange={changed(site.domain)}>
+    <HoverCard openDelay={400} onOpenChange={changed(site.domain)}>
       <HoverCardTrigger>
         <View
           role="link"
@@ -427,14 +427,7 @@ function Preview(props: {
           <Text style={{ fontSize: body, color: colors.brand }}>{props.label}</Text>
         </View>
       </HoverCardTrigger>
-      <HoverCardContent
-        {...exit}
-        placement="top"
-        offset={8}
-        margin={8}
-        openDelay={400}
-        width={pointer ? 300 : 310}
-      >
+      <HoverCardContent {...exit} placement="top" offset={8} margin={8} width={pointer ? 300 : 310}>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 10 }}>
           <View
             style={{
@@ -714,7 +707,11 @@ function Delays(props: {
         </View>
       </View>
       <View style={{ alignItems: "center", paddingVertical: pointer ? 36 : 24 }}>
-        <HoverCard onOpenChange={changed("delays")}>
+        <HoverCard
+          openDelay={Number(open())}
+          closeDelay={Number(close())}
+          onOpenChange={changed("delays")}
+        >
           <HoverCardTrigger>
             <View
               focusable
@@ -739,16 +736,7 @@ function Delays(props: {
               </Text>
             </View>
           </HoverCardTrigger>
-          <HoverCardContent
-            {...exit}
-            openDelay={Number(open())}
-            closeDelay={Number(close())}
-            placement={side()}
-            offset={8}
-            margin={8}
-            compact
-            width={220}
-          >
+          <HoverCardContent {...exit} placement={side()} offset={8} margin={8} compact width={220}>
             <Text style={{ fontSize: 13, fontWeight: "600", color: colors.foreground }}>
               {`${open()} ms in · ${close()} ms out`}
             </Text>

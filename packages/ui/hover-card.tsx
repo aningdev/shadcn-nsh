@@ -22,6 +22,17 @@ export type HoverCardProps = {
   /** Controlled; leave it out and the root keeps the state (`defaultOpen`). */
   open?: boolean | null;
   defaultOpen?: boolean;
+  /**
+   * Milliseconds the pointer rests on the trigger before the card opens (default 600).
+   * `Infinity`: never by itself, only when the app opens it (or a press on a touch screen).
+   */
+  openDelay?: number;
+  /**
+   * Milliseconds the pointer is away from both the trigger and the card before it closes
+   * (default 300): time to move from one to the other. `Infinity`: only Escape, a press outside
+   * or the app closes it.
+   */
+  closeDelay?: number;
   children?: JSX.Element;
   onOpenChange?: (event: { open: boolean; reason: HoverCardOpenChangeReason }) => void;
   onOpen?: () => void;
@@ -29,12 +40,21 @@ export type HoverCardProps = {
 };
 
 /**
- * The card. Every prop of `nsh/base`'s HoverCard passes through but the ones the root owns;
- * `popoverLook` is the surface of the `PopIn` it comes in with. Defaults: placement `bottom`.
+ * The card. Every prop of `nsh/base`'s HoverCard passes through but the ones the root owns (the
+ * open state, the delays and the callbacks); `popoverLook` is the surface of the `PopIn` it comes
+ * in with. Defaults: placement `bottom`.
  */
 export type HoverCardContentProps = Omit<
   BaseHoverCardProps,
-  "trigger" | "open" | "defaultOpen" | "onOpenChange" | "onOpen" | "onClose" | "children"
+  | "trigger"
+  | "open"
+  | "defaultOpen"
+  | "openDelay"
+  | "closeDelay"
+  | "onOpenChange"
+  | "onOpen"
+  | "onClose"
+  | "children"
 > & {
   /** A line or two: 12 points of padding and 4 between rows. */
   compact?: boolean;
@@ -65,6 +85,9 @@ type HoverCardContextValue = OpenState & {
   /** The trigger is disabled: the card stays closed. Reads the trigger's latest value. */
   disabled: () => boolean;
   setDisabled: (read: () => boolean) => void;
+  /** How long the pointer rests before the card opens, and is away before it closes. */
+  openDelay: () => number | undefined;
+  closeDelay: () => number | undefined;
   onOpen?: () => void;
   onClose?: () => void;
 };
@@ -92,6 +115,9 @@ export function HoverCard(props: HoverCardProps) {
         setDisabled: (read) => {
           disabledTrigger.read = read;
         },
+        // Read when the card is placed: a delay the app changes follows without a new root.
+        openDelay: () => props.openDelay,
+        closeDelay: () => props.closeDelay,
         get onOpen() {
           return props.onOpen;
         },
@@ -145,6 +171,8 @@ export function HoverCardContent(props: HoverCardContentProps) {
       open={ctx.disabled() ? false : ctx.open()}
       trigger={ctx.trigger.get() ?? <View />}
       placement={placement()}
+      openDelay={ctx.openDelay()}
+      closeDelay={ctx.closeDelay()}
       align={props.align}
       offset={props.offset}
       margin={props.margin}

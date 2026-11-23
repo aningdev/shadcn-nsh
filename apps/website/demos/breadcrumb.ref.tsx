@@ -67,7 +67,7 @@ function App() {
       <DemoCard>
         <DemoSection title="A trail" axis="block">
           <View role="navigation" accessibilityLabel="Breadcrumb" style={[look.root]}>
-            <View role="list" style={[look.list]}>
+            <View style={[look.list]}>
               {TRAIL.map((step, i) => (
                 <View style={[look.item]}>
                   {i === TRAIL.length - 1 ? (
@@ -88,7 +88,7 @@ function App() {
 
         <DemoSection title="Steps left out" axis="block">
           <View role="navigation" accessibilityLabel="Breadcrumb" style={[look.root]}>
-            <View role="list" style={[look.list]}>
+            <View style={[look.list]}>
               <View style={[look.item]}>
                 {link("Home", "/")}
                 {separator()}
@@ -118,7 +118,7 @@ function App() {
 
         <DemoSection title="A separator of your own" axis="block">
           <View role="navigation" accessibilityLabel="Breadcrumb" style={[look.root]}>
-            <View role="list" style={[look.list]}>
+            <View style={[look.list]}>
               <View style={[look.item]}>
                 {link("Home", "/")}
                 {separator(slash())}

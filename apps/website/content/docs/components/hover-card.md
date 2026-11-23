@@ -77,10 +77,15 @@ the card closed.
 
 ## API
 
-| Part               | Props                                                                                              | Description                                       |
-| ------------------ | -------------------------------------------------------------------------------------------------- | ------------------------------------------------- |
-| `HoverCard`        | `open` / `defaultOpen`, `onOpenChange`, `onOpen`, `onClose`                                        | Open state and the trigger slot                   |
-| `HoverCardTrigger` | `children`, `variant` (a string child's `Button`), `disabled`, `style`                             | What the card previews; an element is the trigger |
-| `HoverCardContent` | `compact`, `width`, and base's `placement`, `align`, `offset`, `margin`, `openDelay`, `closeDelay` | The preview card                                  |
+| Part               | Props                                                                                  | Description                                       |
+| ------------------ | -------------------------------------------------------------------------------------- | ------------------------------------------------- |
+| `HoverCard`        | `open` / `defaultOpen`, `openDelay`, `closeDelay`, `onOpenChange`, `onOpen`, `onClose` | Open state, the delays and the trigger slot       |
+| `HoverCardTrigger` | `children`, `variant` (a string child's `Button`), `disabled`, `style`                 | What the card previews; an element is the trigger |
+| `HoverCardContent` | `compact`, `width`, and base's `placement`, `align`, `offset`, `margin`                | The preview card                                  |
 
-The root owns the open flag; `HoverCardContent` mounts [`nsh/base` HoverCard](https://nsh.dev/elements/hover-card) and every base prop passes through except those. Its children come in on a `PopIn` with `popoverLook`.
+The root owns the open flag and the two delays (`openDelay`, 600 ms by default; `closeDelay`, 300):
+`Infinity` in either makes the card wait for the app, which is how a card a press opens keeps still
+under the pointer. `HoverCardContent` mounts
+[`nsh/base` HoverCard](https://nsh.dev/elements/hover-card) and every base prop passes through
+except the open state, the delays and the lifecycle callbacks, which the root owns. Its children
+come in on a `PopIn` with `popoverLook`.

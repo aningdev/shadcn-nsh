@@ -351,12 +351,19 @@ type _dockArea = Assert<KeepsBase<BaseDockAreaProps, DockAreaProps, never>>;
 type _codeEditor = Assert<KeepsBase<BaseEditorProps, CodeEditorProps, never>>;
 /** `RichEditorProps`. */
 type _richEditor = Assert<KeepsBase<BaseRichEditorProps, RichEditorProps, never>>;
-/** `HoverCardContentProps` — the root holds the trigger and the open state. */
+/** `HoverCardContentProps` — the root holds the trigger, the open state and the two delays. */
 type _hoverCardContent = Assert<
   KeepsBase<
     BaseHoverCardProps,
     HoverCardContentProps,
-    "defaultOpen" | "onClose" | "onOpen" | "onOpenChange" | "open" | "trigger"
+    | "closeDelay"
+    | "defaultOpen"
+    | "onClose"
+    | "onOpen"
+    | "onOpenChange"
+    | "open"
+    | "openDelay"
+    | "trigger"
   >
 >;
 /** `InputProps`. */

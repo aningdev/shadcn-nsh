@@ -63,8 +63,10 @@ import { Badge } from "@/components/ui/badge";
 
 Gallery atom: no `nsh/base` counterpart. The children are the label, and the axes take the vocabulary of [`api-unify.md`](https://github.com/aningdev/shadcn-nsh/blob/main/docs/specs/api-unify.md).
 
-| Part    | Props                                                                                                                                                                             | Description                                                  |
-| ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
-| `Badge` | `children` (a string, required); `tone`: `Tone \| (() => Tone)` (default `"neutral"`); `variant`: `BadgeVariant` (default `"default"`); `size`: `BadgeSize` (default `"default"`) | A small capsule label in a neutral, toned, or outline style. |
+| Part    | Props                                                                                                                                                                                                    | Description                                                  |
+| ------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| `Badge` | `children` (a string, required); `tone`: `Tone \| (() => Tone)` (default `"neutral"`); `variant`: `BadgeVariant` (default `"default"`); `size`: `BadgeSize` (default `"default"`); every `nsh` view prop | A small capsule label in a neutral, toned, or outline style. |
+
+The view props (`style`, `class`, `testID`, `role`, the accessibility ones) are spread on the capsule after the badge's own, so an app can name it to a screen reader or take it out of the layout without a wrapper.
 
 `BadgeVariant` is `"default" | "outline"`: the two the capsule's look has. `BadgeSize` is `"sm" | "default"`, and `badgeSizes` is the table: `height`, `font` and `pad`, by size.

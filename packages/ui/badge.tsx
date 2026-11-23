@@ -13,7 +13,7 @@ import {
   shape,
   stroke,
 } from "@shadcn-nsh/theme";
-import { token, View, Text } from "nsh";
+import { split, token, View, Text, type ViewProps } from "nsh";
 
 import { type Live, read } from "./lib/live-value";
 
@@ -29,8 +29,12 @@ export const badgeSizes: Record<BadgeSize, { height: number; font: number; pad: 
   default: { height: 20, font: 12, pad: 8 },
 };
 
-/** The props of `Badge`. */
-export type BadgeProps = {
+/**
+ * The props of `Badge`: the label and the tone, plus every view prop (`style`,
+ * `class`, `testID`, the accessibility ones), spread on the capsule after
+ * the badge's own.
+ */
+export type BadgeProps = Omit<ViewProps, "children"> & {
   /** The label: a word, a state, a count. */
   children: string;
   /** The tone of the word and its fill, `neutral` unless set; a function is read where the badge is drawn. */
@@ -51,27 +55,32 @@ export type BadgeProps = {
  * follows a value the app changes.
  */
 export function Badge(props: BadgeProps) {
+  const [, rest] = split(props, ["children", "tone", "variant", "size", "style"]);
   const tone = () => read(props.tone) ?? "neutral";
   const outline = props.variant === "outline";
   const size = badgeSizes[props.size ?? "default"];
   return (
     <View
-      style={{
-        paddingHorizontal: terminal ? 0 : size.pad,
-        height: terminal ? TERMINAL_ROW : size.height,
-        ...rounded(shape.control),
-        justifyContent: "center",
-        backgroundColor: outline
-          ? "transparent"
-          : tone() === "neutral"
-            ? token("muted")
-            : toneTint(tone()),
-        borderWidth: outline ? stroke.control : 0,
-        borderColor: outline ? toneColor(tone()) : undefined,
-        // A change of tone (a window turning active) crosses over.
-        transitionProperty: "colors",
-        transitionDuration: 160,
-      }}
+      {...rest}
+      style={[
+        {
+          paddingHorizontal: terminal ? 0 : size.pad,
+          height: terminal ? TERMINAL_ROW : size.height,
+          ...rounded(shape.control),
+          justifyContent: "center",
+          backgroundColor: outline
+            ? "transparent"
+            : tone() === "neutral"
+              ? token("muted")
+              : toneTint(tone()),
+          borderWidth: outline ? stroke.control : 0,
+          borderColor: outline ? toneColor(tone()) : undefined,
+          // A change of tone (a window turning active) crosses over.
+          transitionProperty: "colors",
+          transitionDuration: 160,
+        },
+        props.style ?? null,
+      ]}
     >
       <Text
         style={{

@@ -31,7 +31,7 @@ function App() {
 
       {/* A: every part, the cancel one included, in the order they are written. */}
       <AlertDialog onAction={(event) => action.set(event.action ?? "null")}>
-        <AlertDialogTrigger>Open A</AlertDialogTrigger>
+        <AlertDialogTrigger testID="open-a">Open A</AlertDialogTrigger>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete the photo?</AlertDialogTitle>

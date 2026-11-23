@@ -2,8 +2,8 @@
 // title, a message and button labels, drawn by the platform. There is no card, no scrim and no look
 // of this library to change; the app decides when it shows and what it does with the answer.
 
-import type { JSX, StyleProp, ViewStyle } from "nsh";
-import { cleanup, context, effect, signal, untracked, View } from "nsh";
+import type { JSX } from "nsh";
+import { cleanup, context, effect, signal, untracked } from "nsh";
 import {
   AlertDialog as BaseAlertDialog,
   type AlertDialogOptions,
@@ -11,7 +11,7 @@ import {
   type AlertDialogRole,
 } from "nsh/base";
 
-import { Button, type ButtonVariant } from "./button";
+import { Action, type ActionProps } from "./button";
 import { createOpenState, type OpenState } from "./lib/open-state";
 
 /**
@@ -55,14 +55,12 @@ export type AlertDialogContentProps = {
   children?: JSX.Element;
 };
 
-/** Opens the alert. String children render as a Button; otherwise a pressable View. */
-export type AlertDialogTriggerProps = {
-  children?: string | JSX.Element;
-  /** The button's variant, for a string child (default `secondary`). */
-  variant?: ButtonVariant;
-  disabled?: boolean;
-  style?: StyleProp<ViewStyle>;
-};
+/**
+ * Opens the alert: `Action`'s props without its press (the trigger's own press opens the alert).
+ * A string child wears a `Button`, any other element presses where it lies; either way the
+ * trigger's view props (`testID`, `class`, `style`, state styles) land on that node.
+ */
+export type AlertDialogTriggerProps = Omit<ActionProps, "onPress">;
 
 /**
  * One button of the alert. `id` is what `onAction` reports (the app's name, not the label);
@@ -194,42 +192,10 @@ export function AlertDialog(props: AlertDialogProps) {
   );
 }
 
-/** Opens the alert: a `Button` for a string child, else a pressable view. */
+/** Opens the alert: a `Button` for a string child, else a pressable view (the shared `Action`). */
 export function AlertDialogTrigger(props: AlertDialogTriggerProps) {
   const ctx = useAlertDialog();
-  const open = () => ctx.setOpen(true, "triggerPress");
-  return (
-    <>
-      {(() => {
-        // Read once, here where the trigger is drawn (`marker.tsx` reads in the same shape): a
-        // string wears a `Button`, anything else presses where it lies.
-        const kids = props.children;
-        if (typeof kids === "string") {
-          return (
-            <Button
-              variant={props.variant ?? "secondary"}
-              disabled={props.disabled}
-              style={props.style}
-              onPress={open}
-            >
-              {kids}
-            </Button>
-          );
-        }
-        return (
-          <View
-            accessible
-            role="button"
-            accessibilityState={{ disabled: props.disabled }}
-            onPress={props.disabled ? undefined : open}
-            style={props.style}
-          >
-            {kids}
-          </View>
-        );
-      })()}
-    </>
-  );
+  return <Action {...props} onPress={() => ctx.setOpen(true, "triggerPress")} />;
 }
 
 /**

@@ -2,7 +2,7 @@
 // rows, submenus and popups are `menu.tsx`'s; this file is the bar, its triggers and the shell.
 
 import { colors, focusRing, rounded, font, shape, stroke, dimmed } from "@shadcn-nsh/theme";
-import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
+import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, platform, split, View } from "nsh";
 import { Menu as BaseMenu, type MenuProps as BaseMenuProps, type OpenChangeReason } from "nsh/base";
 
@@ -108,11 +108,11 @@ export function menubarTriggerLook() {
   };
 }
 
-/** The bar. It holds the menus and nothing else, and places nothing itself. */
-export type MenubarProps = {
-  children?: JSX.Element;
-  style?: StyleProp<ViewStyle>;
-};
+/**
+ * The bar. It holds the menus and nothing else, and places nothing itself; every view prop
+ * (`style`, `class`, `testID`, `role`) is spread on the bar's row after its own.
+ */
+export type MenubarProps = ViewProps;
 
 /** Why a menu of the bar closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */
 export type MenubarOpenChangeReason = OpenChangeReason;
@@ -149,10 +149,9 @@ export type MenubarContentProps = Omit<
  * name) is drawn as given. It wears the chosen fill while its menu is open, and takes no presses
  * while disabled.
  */
-export type MenubarTriggerProps = {
+export type MenubarTriggerProps = Omit<ViewProps, "children"> & {
+  /** A string is the name, drawn in the bar's type; anything else is drawn as given. */
   children?: string | JSX.Element;
-  disabled?: boolean;
-  style?: StyleProp<ViewStyle>;
 };
 
 type MenubarMenuContextValue = OpenState & {
@@ -172,8 +171,9 @@ function useMenubarMenu() {
 
 /** The bar: a row of menus, each its trigger and its popup. */
 export function Menubar(props: MenubarProps) {
+  const [, rest] = split(props, ["style"]);
   return (
-    <View role="menubar" style={[menubarLook().bar, props.style ?? null]}>
+    <View {...rest} role="menubar" style={[menubarLook().bar, props.style ?? null]}>
       {props.children}
     </View>
   );
@@ -210,6 +210,7 @@ export function MenubarMenu(props: MenubarMenuProps) {
  */
 export function MenubarTrigger(props: MenubarTriggerProps) {
   const ctx = useMenubarMenu();
+  const [, rest] = split(props, ["children", "disabled", "style"]);
   // The trigger is an element, as an app hands one to `nsh/base` (`trigger={<View …>}`, the shape
   // upstream's demos use): built once, here, and placed by the menu without building it again on
   // every layout. Its children are read where they are drawn, below, so a child that reads a
@@ -217,16 +218,17 @@ export function MenubarTrigger(props: MenubarTriggerProps) {
   const look = menubarTriggerLook();
   ctx.trigger.set(
     <View
+      {...rest}
       accessible
       role="menuitem"
       disabled={props.disabled}
       accessibilityState={{ disabled: props.disabled }}
       style={[look.style, props.style ?? null]}
-      hoverStyle={look.hoverStyle}
-      activeStyle={look.activeStyle}
-      expandedStyle={look.expandedStyle}
-      focusVisibleStyle={look.focusVisibleStyle}
-      disabledStyle={look.disabledStyle}
+      hoverStyle={[look.hoverStyle, props.hoverStyle ?? null]}
+      activeStyle={[look.activeStyle, props.activeStyle ?? null]}
+      expandedStyle={[look.expandedStyle, props.expandedStyle ?? null]}
+      focusVisibleStyle={[look.focusVisibleStyle, props.focusVisibleStyle ?? null]}
+      disabledStyle={[look.disabledStyle, props.disabledStyle ?? null]}
     >
       <AsText style={menubarLook().triggerText}>{props.children}</AsText>
     </View>,

@@ -26,3 +26,31 @@ test("a disabled trigger stays dimmed through its disabled state", async () => {
   const app = await open("./menubar.fixture.tsx", desktop);
   expect(app.viewStyle("role:menuitem[Off]")?.opacity ?? null).toBe(0.5);
 });
+
+test("the bar and its triggers take the app's own view props", async () => {
+  const app = await open("./menubar.fixture.tsx", desktop);
+  expect(app.count("id:bar")).toBe(1);
+  expect(app.count("id:help")).toBe(1);
+  expect(app.count("label:Main")).toBe(1);
+  expect(app.count("label:Help")).toBe(1);
+});
+
+test("the app's hover style reaches the trigger, with the trigger's own", async () => {
+  const app = await open("./menubar.fixture.tsx", desktop);
+  const away = app.viewStyle("id:help")?.effectiveOpacity ?? 1;
+  await app.hover("id:help");
+  // The app's `hoverStyle` merges with the look's: the opacity it set is the one on screen.
+  expect(app.viewStyle("id:help")?.opacity).toBe(0.5);
+  expect(app.viewStyle("id:help")?.effectiveOpacity ?? 1).toBeLessThan(away);
+});
+
+test("a row, its label and its note take the app's view props too", async () => {
+  const app = await open("./menubar.fixture.tsx", desktop);
+  await app.press("text:Help");
+  await app.waitFor("id:label");
+  expect(app.count("id:label")).toBe(1);
+  expect(app.count("label:This file")).toBe(1);
+  expect(app.count("id:new")).toBe(1);
+  expect(app.count("id:note")).toBe(1);
+  await expect(app.press("id:gone")).rejects.toMatchObject({ code: "ERR_NSH_TEST_DISABLED" });
+});
