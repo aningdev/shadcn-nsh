@@ -49,7 +49,7 @@ export const components: ComponentDoc[] = [
     kind: "official",
     shadcn: "carousel",
     nshElement: "carousel",
-    description: "Snapping slides with round arrows and a traveling dot pill.",
+    description: "Snapping slides with arrows and a traveling dot pill.",
   },
   {
     slug: "checkbox",

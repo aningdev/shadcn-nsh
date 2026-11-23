@@ -19,6 +19,7 @@ import {
   CarouselNext,
   CarouselPagination,
   CarouselPaginationItem,
+  carouselArrowLook,
   CarouselPrevious,
 } from "@/packages/ui/carousel";
 import { Icon } from "@/packages/ui/lib/icons";
@@ -113,7 +114,12 @@ function App() {
   const ready = () => loaded() >= shots.length;
   const events = signal<string[]>([]);
   const log = (line: string) => events.set([line, ...events()].slice(0, 3));
+  const arrow = carouselArrowLook();
   const roll = rotation(NEWS.length, TURN);
+  // The arrows, named once: a theme's preset puts them beside the dots or over the viewport's
+  // edges (`placement`).
+  const Previous = () => <CarouselPrevious accessibilityLabel="Previous photo" />;
+  const Next = () => <CarouselNext accessibilityLabel="Next photo" />;
 
   return (
     <DemoPage title="Carousel">
@@ -140,62 +146,86 @@ function App() {
           style={{ gap: 12, borderRadius: 14 }}
         >
           {/* Each card is 85% of the view: the next one peeks in. */}
-          <CarouselContent style={{ height: desktop ? 150 : 170, gap: 10 }}>
-            {shots.map((shot, i) => (
-              <CarouselItem
-                accessibilityLabel={`${i + 1} of ${shots.length}: ${shot.name}`}
-                style={{
-                  width: "85%",
-                  height: "100%",
-                  padding: 16,
-                  alignItems: "stretch",
-                  justifyContent: "flex-end",
-                  gap: 2,
-                  borderRadius: 14,
-                  borderCurve: "continuous",
-                  borderWidth: 1,
-                  borderColor: ui().line,
-                  overflow: "hidden",
-                  backgroundColor: ui().raised.backgroundColor,
-                }}
-              >
-                <Image
-                  src={warmed() ? photoUrl(shot.photo) : undefined}
-                  // Drawn at once: a fade caught halfway would differ between two runs.
-                  fadeDuration={0}
+          <View style={{ position: "relative" }}>
+            <CarouselContent style={{ height: desktop ? 150 : 170, gap: 10 }}>
+              {shots.map((shot, i) => (
+                <CarouselItem
+                  accessibilityLabel={`${i + 1} of ${shots.length}: ${shot.name}`}
                   style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    right: 0,
-                    bottom: 0,
-                    objectFit: "cover",
+                    width: "85%",
+                    height: "100%",
+                    padding: 16,
+                    alignItems: "stretch",
+                    justifyContent: "flex-end",
+                    gap: 2,
+                    borderRadius: 14,
+                    borderCurve: "continuous",
+                    borderWidth: 1,
+                    borderColor: ui().line,
+                    overflow: "hidden",
+                    backgroundColor: ui().raised.backgroundColor,
                   }}
-                  onLoadEnd={() => loaded.update((n) => n + 1)}
-                />
+                >
+                  <Image
+                    src={warmed() ? photoUrl(shot.photo) : undefined}
+                    // Drawn at once: a fade caught halfway would differ between two runs.
+                    fadeDuration={0}
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      objectFit: "cover",
+                    }}
+                    onLoadEnd={() => loaded.update((n) => n + 1)}
+                  />
+                  <View
+                    style={{
+                      position: "absolute",
+                      top: 0,
+                      left: 0,
+                      right: 0,
+                      bottom: 0,
+                      // The theme's scrim at the foot, so the caption reads on any photo.
+                      backgroundImage: `linear-gradient(180deg, transparent 40%, ${token("scrim")} 100%)`,
+                    }}
+                  />
+                  <Text style={{ fontSize: 20, fontWeight: "700", color: colors.onMedia }}>
+                    {shot.name}
+                  </Text>
+                  <Text style={{ fontSize: 13, color: alpha(colors.onMedia, 0.82) }}>
+                    {shot.detail}
+                  </Text>
+                </CarouselItem>
+              ))}
+            </CarouselContent>
+            {/* WinUI's chevrons are flush to the viewport's edges, centred vertically; the row
+                lets the touches fall through to the photos between them. */}
+            {() =>
+              arrow.placement === "over" ? (
                 <View
                   style={{
                     position: "absolute",
                     top: 0,
-                    left: 0,
-                    right: 0,
                     bottom: 0,
-                    // The theme's scrim at the foot, so the caption reads on any photo.
-                    backgroundImage: `linear-gradient(180deg, transparent 40%, ${token("scrim")} 100%)`,
+                    start: 0,
+                    end: 0,
+                    flexDirection: "row",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    pointerEvents: "box-none",
                   }}
-                />
-                <Text style={{ fontSize: 20, fontWeight: "700", color: colors.onMedia }}>
-                  {shot.name}
-                </Text>
-                <Text style={{ fontSize: 13, color: alpha(colors.onMedia, 0.82) }}>
-                  {shot.detail}
-                </Text>
-              </CarouselItem>
-            ))}
-          </CarouselContent>
+                >
+                  <Previous />
+                  <Next />
+                </View>
+              ) : null
+            }
+          </View>
 
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <CarouselPrevious accessibilityLabel="Previous photo" />
+            {() => (arrow.placement === "over" ? null : <Previous />)}
             {/* The dots: a pill springs to the one of the photo shown. */}
             <CarouselPagination
               accessibilityLabel="Choose a photo"
@@ -207,7 +237,7 @@ function App() {
                 </CarouselPaginationItem>
               ))}
             </CarouselPagination>
-            <CarouselNext accessibilityLabel="Next photo" />
+            {() => (arrow.placement === "over" ? null : <Next />)}
           </View>
         </Carousel>
         {/* The render check's cue: every photo has loaded (or failed), so two pages draw the same. */}
