@@ -133,7 +133,7 @@ export const buttonSizes: Record<ButtonSize, ButtonDimensions> = {
 };
 
 /** How far a selected filled control rests: the theme dims a press of its accent by
- * `dimmed.accentPressed`, and a selected one holds the same dim in every theme (Material and WinUI
+ * `finish.accent.pressedOpacity`, and a selected one holds the same dim in every theme (Material and WinUI
  * paint their press instead of dimming it, so the press opacity is not the selected one's). */
 const SELECTED_OPACITY = 0.88;
 
@@ -159,13 +159,13 @@ const dimensions = (o?: ButtonLookOptions) => buttonSizes[read(o?.size) ?? "defa
 
 const filled = (variant: ButtonVariant) => variant === "default";
 
-/** The look a filled control wears while it is held: the accent dimmed to `dimmed.accentPressed`, or
+/** The look a filled control wears while it is held: the accent dimmed to its `pressedOpacity`, or
  * the flat fill and ink the theme paints instead (`finish.accent.pressedBackground` /
  * `pressedForeground`): a theme whose press swaps the accent out paints a plain face, so the accent's
- * gradient and bevels go with it (WinUI's `accent-pressed`: no border of its own). */
+ * gradient and bevels go with it (WinUI's pressed accent: no border of its own). */
 function pressedAccent(): ViewStyle {
   const pressed = finish.accent.pressedBackground;
-  const accent: ViewStyle = { ...finish.accent, opacity: dimmed.accentPressed };
+  const accent: ViewStyle = { ...finish.accent, opacity: finish.accent.pressedOpacity };
   return pressed === undefined
     ? accent
     : {

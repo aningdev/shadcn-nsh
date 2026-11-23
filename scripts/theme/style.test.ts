@@ -3,6 +3,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import {
+  checkScales,
   checkStyle,
   easingNames,
   leaves,
@@ -158,5 +159,17 @@ describe("scaledRadii", () => {
 
   test("refuses a negative radius", () => {
     expect(() => scaledRadii({ control: -1, container: 12, modal: 14 })).toThrow();
+  });
+});
+
+describe("checkScales", () => {
+  test("a touch target under 44 points fails unless the theme cites it", () => {
+    const file = copy();
+    file.dimension.size.hit = { pointer: 0, touch: 40 };
+    expect(checkScales("semantics.json", file, "default")).toContain(
+      "semantics.json: `dimension.size.hit.touch` is 40, below the 44-point touch target",
+    );
+    const cited = new Map([["default:dimension.size.hit.touch", new Set([40])]]);
+    expect(checkScales("semantics.json", file, "default", cited)).toEqual([]);
   });
 });

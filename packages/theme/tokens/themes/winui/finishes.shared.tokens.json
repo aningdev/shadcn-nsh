@@ -124,7 +124,7 @@
       },
       "foreground": {
         "$type": "color",
-        "$value": "{color.muted-foreground}"
+        "$value": "{color.inverse-foreground}"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -171,6 +171,10 @@
       "foreground": {
         "$type": "color",
         "$value": "{color.primary-foreground}"
+      },
+      "pressed-opacity": {
+        "$type": "number",
+        "$value": 1
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {

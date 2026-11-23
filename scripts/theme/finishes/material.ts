@@ -73,6 +73,8 @@ export const finishes: ThemeFinishes = {
       shadow: "{shadow.edge.accent}",
       foreground: "{primary-foreground}",
       material: "none",
+      // M3 presses with a state layer and a ripple, not by dimming.
+      "pressed-opacity": 1,
     },
     knob: {
       background: "{knob}",

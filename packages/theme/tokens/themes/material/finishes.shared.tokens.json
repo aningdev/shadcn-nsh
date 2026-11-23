@@ -312,6 +312,10 @@
         "$type": "color",
         "$value": "{color.primary-foreground}"
       },
+      "pressed-opacity": {
+        "$type": "number",
+        "$value": 1
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "material": "none"

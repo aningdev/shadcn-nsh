@@ -58,8 +58,8 @@ export interface SegmentedLookOptions {
  * `RadioGroup`) as wide as its labels with a pointer (30 points high,
  * 12-point labels, the thumb's corners a step inside the track's), spanning the
  * row on a touch screen or with `fill`; the selected segment's thumb,
- * standing off the track in both appearances (`finish.knob`: white with a
- * soft drop on a light track), as `Tabs`' traveling `indicatorStyle` or as
+ * standing off the track in both appearances (`finish.raised`: a lifted
+ * surface that carries the label's ink; `knob` is the switch's white disc), as `Tabs`' traveling `indicatorStyle` or as
  * a `Radio`'s `checkedStyle` (`thumbStyle`); each segment's props
  * (`segment(state)`: hover, the focus ring, dimmed while disabled) and its
  * label's (`label(selected)`, `count`).
@@ -75,7 +75,7 @@ export function segmentedLook(o?: SegmentedLookOptions) {
   const thumb = (): ViewStyle => ({
     ...rounded(shape.control, inset),
     borderWidth: stroke.control,
-    ...finish.knob,
+    ...finish.raised,
   });
   return {
     get style(): ViewStyle {

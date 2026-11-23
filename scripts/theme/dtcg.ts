@@ -61,8 +61,8 @@ export interface ThemeStyleInput {
     size: {
       hit: { pointer: number; touch: number };
       density: {
-        pointer: { pad: number; gap: number; surface: number };
-        touch: { pad: number; gap: number; surface: number };
+        pointer: { pad: number; gap: number };
+        touch: { pad: number; gap: number };
       };
       control: {
         pointer: Record<string, number | string>;
@@ -91,7 +91,6 @@ export interface ThemeStyleInput {
     overlay: { hover: number; focus: number; pressed: number; dragged: number };
     ripple: boolean;
     "pressed-opacity": number;
-    "accent-pressed-opacity": number;
     "rest-opacity": number;
     disabled: { content: number; fill: boolean };
   };
@@ -593,6 +592,10 @@ function encodeFinishSection(
     if (typeof finish["pressed-foreground"] === "string") {
       group["pressed-foreground"] = encodeFinishColorToken(finish["pressed-foreground"], colorMap);
     }
+    // The accent states how far it dims while a filled control is held (1: it does not).
+    if (typeof finish["pressed-opacity"] === "number") {
+      group["pressed-opacity"] = { $type: "number", $value: finish["pressed-opacity"] };
+    }
 
     const ext: Record<string, unknown> = {};
     if ("backdropFilter" in finish) ext.backdropFilter = finish.backdropFilter;
@@ -832,14 +835,6 @@ function encodeSharedStyleOverrides(
     stateOut["pressed-opacity"] = {
       $value: style.state["pressed-opacity"],
       $description: desc("state.pressed-opacity", basePressedOpacity.$description),
-    };
-  }
-
-  const baseAccentPressedOpacity = getAt(baseState, "accent-pressed-opacity");
-  if (style.state["accent-pressed-opacity"] !== baseAccentPressedOpacity.$value) {
-    stateOut["accent-pressed-opacity"] = {
-      $value: style.state["accent-pressed-opacity"],
-      $description: desc("state.accent-pressed-opacity", baseAccentPressedOpacity.$description),
     };
   }
 

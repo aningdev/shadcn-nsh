@@ -546,8 +546,8 @@ export const winuiStyle = {
     size: {
       hit: { pointer: 0, touch: 40 },
       density: {
-        pointer: { pad: 12, gap: 8, surface: 4 },
-        touch: { pad: 12, gap: 8, surface: 8 },
+        pointer: { pad: 12, gap: 8 },
+        touch: { pad: 12, gap: 8 },
       },
       control: {
         // WinUI's own 6px inset inside a control (`Button_themeresources.xaml`); 8 beside it.
@@ -574,9 +574,6 @@ export const winuiStyle = {
     overlay: { hover: 0, focus: 0, pressed: 0, dragged: 0 },
     ripple: false,
     "pressed-opacity": 1,
-    // WinUI swaps the accent for `AccentFillColorTertiary` on a press instead of dimming it
-    // (`finish.accent`'s `pressed-background` / `pressed-foreground`), so the press is not dimmed.
-    "accent-pressed-opacity": 1,
     "rest-opacity": 0.5,
     // Disabled containers switch to the dedicated disabled brush (`ControlFillColorDisabled` /
     // `TextFillColorDisabled`) when `fill: true`; `content: 0.36` matches `TextFillColorDisabled`.

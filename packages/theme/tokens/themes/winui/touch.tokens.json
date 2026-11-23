@@ -70,14 +70,8 @@
         "$description": "Minimum hit target size (0 disables padding expansion)."
       },
       "density": {
-        "$description": "Page-level padding, gap, and surface spacing metrics.",
+        "$description": "Page-level padding and gap.",
         "gap": {
-          "$value": {
-            "value": 8,
-            "unit": "px"
-          }
-        },
-        "surface": {
           "$value": {
             "value": 8,
             "unit": "px"

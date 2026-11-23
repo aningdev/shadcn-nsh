@@ -269,10 +269,6 @@
       "$value": 0.7,
       "$description": "Content opacity when pressed."
     },
-    "accent-pressed-opacity": {
-      "$value": 0.88,
-      "$description": "Opacity a filled control dims to while it is pressed, fill and ink together. A theme whose press swaps the accent out states 1."
-    },
     "rest-opacity": {
       "$value": 0.5,
       "$description": "Opacity a passive indicator sits at rest (a scrollbar's thumb), before the pointer is on it."

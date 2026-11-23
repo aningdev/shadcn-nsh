@@ -99,13 +99,11 @@
       "density": {
         "pointer": {
           "pad": 16,
-          "gap": 12,
-          "surface": 12
+          "gap": 12
         },
         "touch": {
           "pad": 16,
-          "gap": 12,
-          "surface": 16
+          "gap": 12
         }
       },
       "control": {
@@ -173,7 +171,6 @@
     },
     "ripple": true,
     "pressed-opacity": 1,
-    "accent-pressed-opacity": 1,
     "rest-opacity": 0.38,
     "disabled": {
       "content": 0.38,
@@ -268,6 +265,7 @@
         "border-color": "transparent",
         "border-top-color": "transparent",
         "border-bottom-color": "transparent",
+        "pressed-opacity": 1,
         "material": null
       },
       "knob": {

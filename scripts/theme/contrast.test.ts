@@ -35,7 +35,14 @@ describe("themePairs", () => {
     },
   };
   const semantics = {
-    finishes: { shared: { menu: { background: "#ffffff" } }, light: {}, dark: {} },
+    finishes: {
+      shared: {
+        overlay: { background: "#ffffff", foreground: "{foreground}" },
+        knob: { background: "#ffffff", foreground: "#ffffff" },
+      },
+      light: {},
+      dark: {},
+    },
   };
 
   test("a pair resolves and passes", () => {
@@ -61,6 +68,36 @@ describe("themePairs", () => {
     expect(pair?.ratio).toBeCloseTo(3.03, 2);
   });
 
+  test("a finish is checked with its own ink, and the knob carries none", () => {
+    const results = themePairs(theme, semantics, "fixture", "light");
+    const overlay = results.find(({ bg }) => bg === "finish.overlay");
+    expect(overlay?.fg).toBe("foreground");
+    expect(overlay?.ratio).toBeCloseTo(21, 5);
+    expect(results.some(({ bg }) => bg === "finish.knob")).toBe(false);
+  });
+
+  test("an accent's pressed pair is checked where a theme states one", () => {
+    const pressed = {
+      finishes: {
+        shared: {
+          accent: {
+            background: "#000000",
+            foreground: "#ffffff",
+            "pressed-background": "#ffffff",
+            "pressed-foreground": "#949494",
+          },
+        },
+        light: {},
+        dark: {},
+      },
+    };
+    const pair = themePairs(theme, pressed, "fixture", "light").find(
+      ({ bg }) => bg === "finish.accent.pressed-background",
+    );
+    expect(pair?.fg).toBe("finish.accent.pressed-foreground");
+    expect(pair?.pass).toBe(false);
+  });
+
   test("a finish's alpha fill is composited over the page", () => {
     const glass = {
       cssVars: {
@@ -76,7 +113,12 @@ describe("themePairs", () => {
     };
     const finish = {
       finishes: {
-        shared: { glass: { background: "oklch(from {card} l c h / 0.5)" } },
+        shared: {
+          glass: {
+            background: "oklch(from {card} l c h / 0.5)",
+            foreground: "{popover-foreground}",
+          },
+        },
         light: {},
         dark: {},
       },
@@ -98,11 +140,12 @@ describe("the shipped themes", () => {
     expect(failing.map(({ theme, mode, fg, bg }) => `${theme} ${mode} ${fg}/${bg}`)).toEqual([]);
   });
 
-  test("on-brand is read on brand-fill, and disabled and chart inks are not checked", () => {
+  test("primary-foreground is read on primary, and disabled and chart inks are not checked", () => {
     const pairs = new Set(results.map(({ fg, bg }) => `${fg}/${bg}`));
-    expect(pairs.has("on-brand/brand-fill")).toBe(true);
-    expect(pairs.has("on-brand/brand")).toBe(false);
+    expect(pairs.has("primary-foreground/primary")).toBe(true);
+    expect(pairs.has("primary-foreground/finish.accent")).toBe(true);
     expect([...pairs].some((pair) => /^(disabled|chart)-foreground\//.test(pair))).toBe(false);
+    expect([...pairs].some((pair) => /\/finish\.(disabled|knob)$/.test(pair))).toBe(false);
   });
 
   test("an exception names its source", () => {

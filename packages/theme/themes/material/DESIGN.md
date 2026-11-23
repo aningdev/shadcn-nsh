@@ -172,7 +172,6 @@ spacing:
   density:
     pad: 16px
     gap: 12px
-    surface: 12px
   control:
     padding: 8px
     gap: 8px
@@ -225,9 +224,9 @@ components:
     backgroundColor: "{colors.light.inset}"
     textColor: "{colors.light.foreground}"
     rounded: "{rounded.control}"
-    padding: "{spacing.density.surface}"
+    padding: "{spacing.control.padding}"
   input-field:
-    backgroundColor: "{colors.light.field}"
+    backgroundColor: "{colors.light.inset}"
     textColor: "{colors.light.foreground}"
     typography: "{typography.label}"
     rounded: "{rounded.control}"
@@ -261,14 +260,14 @@ components:
     typography: "{typography.body}"
     rounded: "{rounded.container}"
   switch-track:
-    backgroundColor: "{colors.light.track}"
+    backgroundColor: "{colors.light.inset}"
     rounded: "{rounded.control}"
   switch-track-on:
     backgroundColor: "{colors.light.primary}"
   switch-knob:
     backgroundColor: "{colors.light.knob}"
   switch-knob-on:
-    backgroundColor: "{colors.light.knob}"
+    backgroundColor: "{colors.light.primary-foreground}"
   slider-handle:
     backgroundColor: "{colors.light.knob}"
   tabs-thumb:
@@ -277,8 +276,8 @@ components:
     typography: "{typography.label}"
     rounded: "{rounded.control}"
   toggle-on:
-    backgroundColor: "{colors.light.accent}"
-    textColor: "{colors.light.foreground}"
+    backgroundColor: "{colors.light.primary}"
+    textColor: "{colors.light.primary-foreground}"
     rounded: "{rounded.control}"
   glass-overlay:
     backgroundColor: "{colors.light.popover}"
@@ -396,7 +395,7 @@ Material 3 Expressive typography scale (TypeScaleTokens.kt / _md-sys-typescale.s
 Ergonomic sizing scales for pointer input.
 
 - **Hit target:** Minimum hit target size (0 disables padding expansion).
-- **Density:** Page-level padding, gap, and surface spacing metrics.
+- **Density:** Page-level padding and gap.
 - **Control geometry:** Control internal spacing and switch size tier.
 - **Control heights:** Standard control heights at M3 density -2 (24, 32, 48dp): each density step reduces height by 4dp (https://m3.material.io/foundations/layout/grids-spacing/density).
 - **Switch size tier (pointer):** `regular`.

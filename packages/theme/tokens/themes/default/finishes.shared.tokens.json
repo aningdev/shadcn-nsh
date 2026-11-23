@@ -128,7 +128,7 @@
       },
       "foreground": {
         "$type": "color",
-        "$value": "{color.muted-foreground}"
+        "$value": "{color.inverse-foreground}"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -160,6 +160,11 @@
     },
     "accent": {
       "$description": "The accent's own surface, with its ink.",
+      "pressed-opacity": {
+        "$type": "number",
+        "$value": 0.88,
+        "$description": "How far the accent dims while a filled control is held, fill and ink together."
+      },
       "background": {
         "$type": "color",
         "$value": "{color.primary}"

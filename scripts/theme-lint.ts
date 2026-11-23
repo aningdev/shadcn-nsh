@@ -49,6 +49,7 @@ interface Finish {
   "border-bottom-color"?: string;
   "pressed-background"?: string;
   "pressed-foreground"?: string;
+  "pressed-opacity"?: number;
   backdropFilter?: string;
   material?: unknown;
 }
@@ -308,6 +309,11 @@ for (const theme of themes) {
       for (const field of have)
         if (!want.includes(field) && !optionalFields.has(field))
           fail(`${path}: ${role}.${field} is not a field the default theme's \`${role}\` states`);
+
+      // A press dims the accent to a visible opacity, or not at all (1).
+      const dim = finish["pressed-opacity"];
+      if (dim !== undefined && (typeof dim !== "number" || dim <= 0 || dim > 1))
+        fail(`${path}: ${role}.pressed-opacity is ${String(dim)}, not a number in (0, 1]`);
 
       const base = defaultMerged[appearance][role];
       if (base !== undefined && paints(finish) !== paints(base))

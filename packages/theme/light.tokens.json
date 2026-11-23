@@ -317,7 +317,7 @@
         "$description": "Minimum hit target size (0 disables padding expansion)."
       },
       "density": {
-        "$description": "Page-level padding, gap, and surface spacing metrics.",
+        "$description": "Page-level padding and gap.",
         "pad": {
           "$value": {
             "value": 12,
@@ -327,12 +327,6 @@
         "gap": {
           "$value": {
             "value": 12,
-            "unit": "px"
-          }
-        },
-        "surface": {
-          "$value": {
-            "value": 10,
             "unit": "px"
           }
         }
@@ -448,10 +442,6 @@
     "pressed-opacity": {
       "$value": 0.7,
       "$description": "Content opacity when pressed."
-    },
-    "accent-pressed-opacity": {
-      "$value": 0.88,
-      "$description": "Opacity a filled control dims to while it is pressed, fill and ink together. A theme whose press swaps the accent out states 1."
     },
     "rest-opacity": {
       "$value": 0.5,
@@ -1729,7 +1719,7 @@
       },
       "foreground": {
         "$type": "color",
-        "$value": "{color.muted-foreground}"
+        "$value": "{color.inverse-foreground}"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -1786,6 +1776,11 @@
     },
     "accent": {
       "$description": "The accent's own surface, with its ink.",
+      "pressed-opacity": {
+        "$type": "number",
+        "$value": 0.88,
+        "$description": "How far the accent dims while a filled control is held, fill and ink together."
+      },
       "background": {
         "$type": "color",
         "$value": "{color.primary}"

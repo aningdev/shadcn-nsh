@@ -174,8 +174,8 @@ function geometry(size: SwitchSize): ResolvedSwitchGeometry {
 
 /**
  * A switch's knob: the `knob` layer, and on an open switch the accent's own ink in place of the
- * knob's fill, with no ring of the track's — the pattern `knobOn` used to carry as a finish of its
- * own. A switch is one assembly; what its knob wears open is the switch's business.
+ * knob's fill, with no ring of the track's. A switch is one assembly; what its knob wears open is
+ * the switch's business.
  */
 function knobLook(on: boolean): ViewStyle {
   if (!on) return { ...finish.knob };

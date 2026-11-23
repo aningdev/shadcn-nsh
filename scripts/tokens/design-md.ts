@@ -319,10 +319,17 @@ export function compileDesignMd(resolverPath: string): string {
     return fallbackColor ? colorRefOf(fallbackColor) : undefined;
   };
 
+  /** A finish's ink: its `foreground`, as a colour-role reference where it is one. */
+  const resolveFinishInk = (role: string): string | undefined =>
+    resolveColorField(
+      finishesRaw[role]?.foreground as Record<string, unknown> | undefined,
+      finishesRes[role]?.foreground as Record<string, unknown> | undefined,
+    );
+
   const componentsYaml: Record<string, Record<string, string>> = {
     "button-primary": {
-      ...(resolveFinishBg("light", "primary")
-        ? { backgroundColor: resolveFinishBg("light", "primary")! }
+      ...(resolveFinishBg("accent", "primary")
+        ? { backgroundColor: resolveFinishBg("accent", "primary")! }
         : {}),
       textColor: colorRefOf("primary-foreground"),
       typography: "{typography.label}",
@@ -361,11 +368,11 @@ export function compileDesignMd(resolverPath: string): string {
         : {}),
       textColor: colorRefOf("foreground"),
       rounded: "{rounded.control}",
-      padding: "{spacing.density.surface}",
+      padding: "{spacing.control.padding}",
     },
     "input-field": {
-      ...(resolveFinishBg("field", "field")
-        ? { backgroundColor: resolveFinishBg("field", "field")! }
+      ...(resolveFinishBg("inset", "inset")
+        ? { backgroundColor: resolveFinishBg("inset", "inset")! }
         : {}),
       textColor: colorRefOf("foreground"),
       typography: "{typography.label}",
@@ -374,16 +381,14 @@ export function compileDesignMd(resolverPath: string): string {
       padding: "{spacing.control.padding}",
     },
     "badge-chip": {
-      ...(resolveFinishBg("chip", "secondary")
-        ? { backgroundColor: resolveFinishBg("chip", "secondary")! }
-        : {}),
+      backgroundColor: colorRefOf("secondary"),
       textColor: colorRefOf("secondary-foreground"),
       typography: "{typography.caption}",
       rounded: "{rounded.control}",
     },
     "menu-popover": {
-      ...(resolveFinishBg("menu", "popover")
-        ? { backgroundColor: resolveFinishBg("menu", "popover")! }
+      ...(resolveFinishBg("overlay", "popover")
+        ? { backgroundColor: resolveFinishBg("overlay", "popover")! }
         : {}),
       textColor: colorRefOf("popover-foreground"),
       typography: "{typography.body}",
@@ -400,8 +405,8 @@ export function compileDesignMd(resolverPath: string): string {
       padding: "{spacing.density.pad}",
     },
     tooltip: {
-      ...(resolveFinishBg("tooltip", "inverse")
-        ? { backgroundColor: resolveFinishBg("tooltip", "inverse")! }
+      ...(resolveFinishBg("inverse", "inverse")
+        ? { backgroundColor: resolveFinishBg("inverse", "inverse")! }
         : {}),
       textColor: colorRefOf("inverse-foreground"),
       typography: "{typography.detail}",
@@ -416,40 +421,40 @@ export function compileDesignMd(resolverPath: string): string {
       rounded: "{rounded.container}",
     },
     "switch-track": {
-      ...(resolveFinishBg("track", "track")
-        ? { backgroundColor: resolveFinishBg("track", "track")! }
+      ...(resolveFinishBg("inset", "inset")
+        ? { backgroundColor: resolveFinishBg("inset", "inset")! }
         : {}),
       rounded: "{rounded.control}",
     },
-    ...(resolveFinishBg("fill", "primary")
-      ? { "switch-track-on": { backgroundColor: resolveFinishBg("fill", "primary")! } }
+    ...(resolveFinishBg("accent", "primary")
+      ? { "switch-track-on": { backgroundColor: resolveFinishBg("accent", "primary")! } }
       : {}),
     "switch-knob": {
       ...(resolveFinishBg("knob", "knob")
         ? { backgroundColor: resolveFinishBg("knob", "knob")! }
         : {}),
     },
-    ...(resolveFinishBg("knobOn", "knob")
-      ? { "switch-knob-on": { backgroundColor: resolveFinishBg("knobOn", "knob")! } }
+    ...(resolveFinishInk("accent")
+      ? { "switch-knob-on": { backgroundColor: resolveFinishInk("accent")! } }
       : {}),
     "slider-handle": {
-      ...(resolveFinishBg("handle", "knob")
-        ? { backgroundColor: resolveFinishBg("handle", "knob")! }
+      ...(resolveFinishBg("knob", "knob")
+        ? { backgroundColor: resolveFinishBg("knob", "knob")! }
         : {}),
     },
     "tabs-thumb": {
-      ...(resolveFinishBg("thumb", "raised")
-        ? { backgroundColor: resolveFinishBg("thumb", "raised")! }
+      ...(resolveFinishBg("raised", "raised")
+        ? { backgroundColor: resolveFinishBg("raised", "raised")! }
         : {}),
       textColor: colorRefOf("foreground"),
       typography: "{typography.label}",
       rounded: "{rounded.control}",
     },
     "toggle-on": {
-      ...(resolveFinishBg("on", "accent")
-        ? { backgroundColor: resolveFinishBg("on", "accent")! }
+      ...(resolveFinishBg("accent", "primary")
+        ? { backgroundColor: resolveFinishBg("accent", "primary")! }
         : {}),
-      textColor: colorRefOf("foreground"),
+      textColor: resolveFinishInk("accent") ?? colorRefOf("primary-foreground"),
       rounded: "{rounded.control}",
     },
     "glass-overlay": {

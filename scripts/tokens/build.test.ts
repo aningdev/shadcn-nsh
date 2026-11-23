@@ -834,6 +834,7 @@ describe("per-appearance standalone .tokens.json distribution", () => {
             compiled["pressed-background"] = toFinishColor(g["pressed-background"]);
           if (g["pressed-foreground"])
             compiled["pressed-foreground"] = toFinishColor(g["pressed-foreground"]);
+          if (g["pressed-opacity"]) compiled["pressed-opacity"] = g["pressed-opacity"].$value;
           const gExt = g.$extensions?.[EXT_NS];
           if (gExt && "backdropFilter" in gExt) compiled.backdropFilter = gExt.backdropFilter;
           // A material is the recipe's name; `"none"` compiles to `null`, as an absent gradient does.

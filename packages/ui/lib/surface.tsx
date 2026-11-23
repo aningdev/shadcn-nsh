@@ -42,8 +42,7 @@ export const density = reactive<{
   row: number;
   pad: number;
   gap: number;
-  surface: number;
-}>(["title", "note", "body", "row", "pad", "gap", "surface"], () => {
+}>(["title", "note", "body", "row", "pad", "gap"], () => {
   const { typography, dimension } = style();
   return {
     title: typography.title.fontSize[tier],
@@ -140,8 +139,7 @@ export interface SectionSurfaceOptions {
 
 /**
  * The flat surface a section's content sits on (a card's): the
- * card color, one hairline edge, no shadow, corners of `density.surface`
- * (10 with a pointer, 16 on a touch screen). In the terminal a border whose
+ * card finish, one hairline edge, the container corners (`shape.container`). In the terminal a border whose
  * row and column on each side the padding fills out, so the content starts
  * one Cell inside it. Spread it into a view's `style`, then add the layout
  * (`overflow: "hidden"` for content that reaches its edges).
@@ -157,7 +155,7 @@ export function sectionSurface(o?: SectionSurfaceOptions): ViewStyle {
   }
   return {
     backgroundColor: finish.card.backgroundColor,
-    ...rounded(density.surface),
+    ...rounded(shape.container),
     borderWidth: stroke.hairline,
     borderColor: finish.card.borderColor,
     boxShadow: finish.card.boxShadow,

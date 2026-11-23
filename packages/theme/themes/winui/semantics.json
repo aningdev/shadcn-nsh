@@ -99,13 +99,11 @@
       "density": {
         "pointer": {
           "pad": 12,
-          "gap": 8,
-          "surface": 4
+          "gap": 8
         },
         "touch": {
           "pad": 12,
-          "gap": 8,
-          "surface": 8
+          "gap": 8
         }
       },
       "control": {
@@ -173,7 +171,6 @@
     },
     "ripple": false,
     "pressed-opacity": 1,
-    "accent-pressed-opacity": 1,
     "rest-opacity": 0.5,
     "disabled": {
       "content": 0.36,
@@ -234,7 +231,7 @@
       },
       "inverse": {
         "background": "{inverse}",
-        "foreground": "{muted-foreground}",
+        "foreground": "{inverse-foreground}",
         "border-color": "{glass-edge}",
         "backdropFilter": "none",
         "material": null
@@ -251,6 +248,7 @@
         "shadow": "none",
         "foreground": "{primary-foreground}",
         "border-bottom-color": "{brand-edge}",
+        "pressed-opacity": 1,
         "material": null
       },
       "knob": {

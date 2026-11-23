@@ -150,9 +150,9 @@ export interface DesignMdExtension {
   voiceOmitted?: string;
 }
 
-/** Semantic color-role grouping for every token in `color.*` (65 total: 3 C-layer + 62 A/B-layer). */
+/** Semantic color-role grouping for every token in `color.*` (59 total: 3 C-layer + 56 A/B-layer). */
 export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
-  // surface (16 A/B-layer + 2 C-layer)
+  // surface (15 A/B-layer + 2 C-layer)
   background: "surface",
   card: "surface",
   popover: "surface",
@@ -163,7 +163,6 @@ export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
   raised: "surface",
   field: "surface",
   hover: "surface",
-  disabled: "surface",
   track: "surface",
   knob: "surface",
   inverse: "surface",
@@ -172,28 +171,25 @@ export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
   media: "surface",
   scrim: "surface",
 
-  // ink (11 A/B-layer + 1 C-layer)
+  // ink (10 A/B-layer + 1 C-layer)
   foreground: "ink",
   "card-foreground": "ink",
   "popover-foreground": "ink",
   "secondary-foreground": "ink",
   "muted-foreground": "ink",
   "accent-foreground": "ink",
-  "disabled-foreground": "ink",
   faint: "ink",
   "inverse-foreground": "ink",
   "sidebar-foreground": "ink",
   "sidebar-accent-foreground": "ink",
   "on-media": "ink",
 
-  // brand (10 A/B-layer)
+  // brand (8 A/B-layer)
   primary: "brand",
   "primary-foreground": "brand",
   brand: "brand",
   "brand-edge": "brand",
   "brand-tint": "brand",
-  "accent-pressed": "brand",
-  "on-accent-pressed": "brand",
   "inverse-brand": "brand",
   "sidebar-primary": "brand",
   "sidebar-primary-foreground": "brand",
@@ -215,14 +211,12 @@ export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
   "chart-4": "status",
   "chart-5": "status",
 
-  // chrome (10 A/B-layer)
+  // chrome (8 A/B-layer)
   border: "chrome",
   input: "chrome",
   ring: "chrome",
   "ring-halo": "chrome",
   line: "chrome",
-  bevel: "chrome",
-  "accent-bevel": "chrome",
   "glass-edge": "chrome",
   "sidebar-border": "chrome",
   "sidebar-ring": "chrome",

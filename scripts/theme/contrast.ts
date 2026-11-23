@@ -7,8 +7,8 @@
  * Text needs 4.5:1 and large text (3:1), per WCAG 2.2 SC 1.4.3, which exempts text in an inactive
  * control, so `disabled-foreground` is not checked; `platform` lists the pairs a native theme keeps
  * below AA because its platform does, each with its source. The pairs are
- * semantic (`foreground` on `background`, `primary-foreground` on `primary`, the menu's ink on the
- * menu's fill), not literal: a component that paints a role pair is what this checks, and a value
+ * semantic (`foreground` on `background`, `primary-foreground` on `primary`, each finish's
+ * own `foreground` on its fill, and the accent's pressed pair where a theme states one), not literal: a component that paints a role pair is what this checks, and a value
  * that fails is a theme decision (`docs/specs/theme-roles.md`), not a component's.
  *
  * Each colour is resolved the way `theme.ts` resolves it: `var(--x)`, `{x}`, `oklch(from {x} …)`
@@ -35,36 +35,19 @@ const roles: [string, string][] = [
   ["foreground", "card"],
   ["foreground", "raised"],
   ["foreground", "popover"],
-  ["foreground", "dialog"],
   ["muted-foreground", "background"],
   ["muted-foreground", "muted"],
   ["muted-foreground", "card"],
   ["muted-foreground", "raised"],
-  ["inverse-muted", "inverse"],
-  ["on-brand", "brand-fill"],
   ["brand", "background"],
-  ["on-brand-tint", "brand-tint"],
   ["on-media", "media"],
-  ["on-accent-pressed", "accent-pressed"],
 ];
 
-/** The finishes whose surface carries text, and the ink a component writes on it. */
-const finishes: [role: string, ink: string, required: number, why: string][] = [
-  ["section", "foreground", 4.5, "text on a section"],
-  ["raised", "foreground", 4.5, "text on a raised surface"],
-  ["pressed", "foreground", 4.5, "text on a pressed surface"],
-  ["pill", "foreground", 4.5, "a segmented control's label"],
-  ["chip", "muted-foreground", 4.5, "a chip's label"],
-  ["menu", "popover-foreground", 4.5, "a menu's label"],
-  ["glass", "popover-foreground", 4.5, "a glass panel's label"],
-  ["dialog", "foreground", 4.5, "a dialog's text"],
-  ["tooltip", "inverse-foreground", 4.5, "a tooltip's label"],
-  ["inverse", "inverse-foreground", 4.5, "text on an inverse surface"],
-  ["on", "selected-foreground", 4.5, "text on a selected chip"],
-  ["light", "primary-foreground", 3, "display-size text and icons on a light accent"],
-  ["accent", "primary-foreground", 4.5, "text on an accent surface"],
-  ["accentPressed", "on-accent-pressed", 4.5, "text on a pressed accent"],
-];
+/**
+ * Finishes that carry no text a reader must read: an inactive control's (SC 1.4.3), and the knob,
+ * a switch's disc and a slider's handle (a selected segment carries its label on `raised`).
+ */
+const inkless = new Set(["disabled", "knob"]);
 
 const stem = (name: string) => name.slice(0, -"-foreground".length);
 
@@ -81,41 +64,32 @@ const skipped: Record<string, string> = {
  * with its source; an exception that no longer fails is an error, so the list stays true.
  */
 const platform: { theme: string; fg: string; bg: string; source: string }[] = [
-  ...["background", "muted", "card", "raised", "finish.chip"].map((bg) => ({
+  ...["background", "muted", "card", "raised"].map((bg) => ({
     theme: "apple",
     fg: "muted-foreground",
     bg,
     source: "Apple secondaryLabel (#3C3C43 at 60%)",
   })),
-  {
-    theme: "apple",
-    fg: "inverse-muted",
-    bg: "inverse",
-    source: "Apple secondaryLabel on the inverse surface",
-  },
   ...(
     [
-      ["on-brand", "brand-fill"],
       ["primary-foreground", "primary"],
       ["sidebar-primary-foreground", "sidebar-primary"],
-      ["on-accent-pressed", "accent-pressed"],
       ["primary-foreground", "finish.accent"],
-      ["on-accent-pressed", "finish.accentPressed"],
     ] as const
   ).map(([fg, bg]) => ({ theme: "apple", fg, bg, source: "white on Apple systemBlue" })),
   { theme: "apple", fg: "brand", bg: "background", source: "Apple systemBlue links" },
-  ...["muted", "raised", "finish.chip"].map((bg) => ({
+  ...["muted", "raised"].map((bg) => ({
     theme: "shadcn",
     fg: "muted-foreground",
     bg,
     source: "shadcn neutral muted-foreground on muted",
   })),
-  ...["accent-pressed", "finish.accentPressed"].map((bg) => ({
+  {
     theme: "winui",
-    fg: "on-accent-pressed",
-    bg,
+    fg: "finish.accent.pressed-foreground",
+    bg: "finish.accent.pressed-background",
     source: "WinUI TextOnAccentFillColorSecondary on AccentFillColorTertiary, while pressed",
-  })),
+  },
 ];
 
 /** The platform source that excuses a failing pair, if any. */
@@ -163,10 +137,8 @@ function varsOf(theme: { cssVars?: ThemeCssVars }, mode: Mode): Record<string, s
   return { ...vars?.theme, ...vars?.[mode] };
 }
 
-/** The surface a finish fills, or nothing when it fills none (`inset`, `track`, `groove`). */
-function surface(finish: Record<string, unknown> | undefined, vars: Record<string, string>) {
-  if (!finish) return undefined;
-  const source = finish.background ?? finish.gradient;
+/** The surface a finish field fills, or nothing when it fills none (a transparent `hover`). */
+function surface(source: unknown, vars: Record<string, string>) {
   if (typeof source !== "string") return undefined;
   const value = resolve(source, vars);
   if (/^transparent$|^none$/i.test(value)) return undefined;
@@ -231,25 +203,38 @@ export function themePairs(
       add({ fg, bg, required: 4.5, why: "a text role on its surface" }, fg, bg);
     }
   }
-  const shared = semantics.finishes?.shared ?? {};
-  const sparse = semantics.finishes?.[mode] ?? {};
-  for (const [role, ink, required, why] of finishes) {
-    const finish = { ...shared[role], ...sparse[role] };
-    const filled = surface(finish, vars);
-    if (!filled || !(ink in vars)) continue;
-    const bg = colourOf(over(css(filled), css(page))) ?? filled;
-    const ratio = on(vars[ink]!, bg);
-    if (ratio === undefined) continue;
-    results.push({
-      fg: ink,
-      bg: `finish.${role}`,
-      required,
-      why,
-      theme: id,
-      mode,
-      ratio,
-      pass: ratio >= required,
-    });
+  const check = (fg: string, bg: string, ink: string, fill: Rgb, why: string) => {
+    const back = colourOf(over(css(fill), css(page))) ?? fill;
+    const ratio = on(ink, back);
+    if (ratio === undefined) return;
+    results.push({ fg, bg, required: 4.5, why, theme: id, mode, ratio, pass: ratio >= 4.5 });
+  };
+  /** A finish's ink by the role it names (`{foreground}` → `foreground`), else by its field. */
+  const inkName = (raw: string, field: string) => /^\{([a-z0-9-]+)\}$/.exec(raw)?.[1] ?? field;
+  const finishes = { ...semantics.finishes?.shared, ...semantics.finishes?.[mode] };
+  for (const role of Object.keys(finishes).sort()) {
+    if (inkless.has(role)) continue;
+    const finish = { ...semantics.finishes?.shared?.[role], ...semantics.finishes?.[mode]?.[role] };
+    const ink = finish.foreground;
+    const fill = surface(finish.background ?? finish.gradient, vars);
+    if (typeof ink === "string" && fill)
+      check(
+        inkName(ink, `finish.${role}.foreground`),
+        `finish.${role}`,
+        ink,
+        fill,
+        `text on ${role}`,
+      );
+    const pressedInk = finish["pressed-foreground"];
+    const pressedFill = surface(finish["pressed-background"], vars);
+    if (typeof pressedInk === "string" && pressedFill)
+      check(
+        inkName(pressedInk, `finish.${role}.pressed-foreground`),
+        `finish.${role}.pressed-background`,
+        pressedInk,
+        pressedFill,
+        `text on ${role}, pressed`,
+      );
   }
   return results;
 }

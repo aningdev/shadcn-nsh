@@ -432,8 +432,8 @@ export const m3Style = {
     size: {
       hit: { pointer: 0, touch: 48 },
       density: {
-        pointer: { pad: 16, gap: 12, surface: 12 },
-        touch: { pad: 16, gap: 12, surface: 16 },
+        pointer: { pad: 16, gap: 12 },
+        touch: { pad: 16, gap: 12 },
       },
       control: {
         // M3 spacing steps: 8 inside a control, 12 beside it; a radio's dot is 10dp.
@@ -461,7 +461,6 @@ export const m3Style = {
     overlay: { hover: 0.08, focus: 0.1, pressed: 0.1, dragged: 0.16 },
     ripple: true,
     "pressed-opacity": 1,
-    "accent-pressed-opacity": 1,
     "rest-opacity": 0.38,
     disabled: { content: 0.38, fill: true },
   },

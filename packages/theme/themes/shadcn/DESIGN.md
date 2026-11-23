@@ -172,7 +172,6 @@ spacing:
   density:
     pad: 12px
     gap: 12px
-    surface: 10px
   control:
     padding: 8px
     gap: 8px
@@ -225,9 +224,9 @@ components:
     backgroundColor: "{colors.light.inset}"
     textColor: "{colors.light.foreground}"
     rounded: "{rounded.control}"
-    padding: "{spacing.density.surface}"
+    padding: "{spacing.control.padding}"
   input-field:
-    backgroundColor: "{colors.light.field}"
+    backgroundColor: "{colors.light.inset}"
     textColor: "{colors.light.foreground}"
     typography: "{typography.label}"
     rounded: "{rounded.control}"
@@ -239,7 +238,7 @@ components:
     typography: "{typography.caption}"
     rounded: "{rounded.control}"
   menu-popover:
-    backgroundColor: "{colors.light.popover}"
+    backgroundColor: "{colors.light.card}"
     textColor: "{colors.light.popover-foreground}"
     typography: "{typography.body}"
     rounded: "{rounded.container}"
@@ -261,14 +260,14 @@ components:
     typography: "{typography.body}"
     rounded: "{rounded.container}"
   switch-track:
-    backgroundColor: "{colors.light.track}"
+    backgroundColor: "{colors.light.inset}"
     rounded: "{rounded.control}"
   switch-track-on:
     backgroundColor: "{colors.light.primary}"
   switch-knob:
     backgroundColor: "{colors.light.knob}"
   switch-knob-on:
-    backgroundColor: "{colors.light.knob}"
+    backgroundColor: "{colors.light.primary-foreground}"
   slider-handle:
     backgroundColor: "{colors.light.knob}"
   tabs-thumb:
@@ -277,8 +276,8 @@ components:
     typography: "{typography.label}"
     rounded: "{rounded.control}"
   toggle-on:
-    backgroundColor: "{colors.light.accent}"
-    textColor: "{colors.light.foreground}"
+    backgroundColor: "{colors.light.primary}"
+    textColor: "{colors.light.primary-foreground}"
     rounded: "{rounded.control}"
   glass-overlay:
     backgroundColor: "#ffffffcc"
@@ -396,7 +395,7 @@ Semantic typography roles referencing tier-specific font.size and font.line-heig
 Ergonomic sizing scales for pointer input.
 
 - **Hit target:** Minimum hit target size (0 disables padding expansion).
-- **Density:** Page-level padding, gap, and surface spacing metrics.
+- **Density:** Page-level padding and gap.
 - **Control geometry:** Control internal spacing and switch size tier.
 - **Control heights:** Standard control heights (sm, md, lg).
 - **Switch size tier (pointer):** `small`.

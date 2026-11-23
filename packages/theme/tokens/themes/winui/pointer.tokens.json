@@ -54,16 +54,10 @@
     "size": {
       "$description": "Ergonomic sizing scales for pointer input.",
       "density": {
-        "$description": "Page-level padding, gap, and surface spacing metrics.",
+        "$description": "Page-level padding and gap.",
         "gap": {
           "$value": {
             "value": 8,
-            "unit": "px"
-          }
-        },
-        "surface": {
-          "$value": {
-            "value": 4,
             "unit": "px"
           }
         }

@@ -235,8 +235,8 @@ export const style = {
     size: {
       hit: { pointer: 0, touch: 44 },
       density: {
-        pointer: { pad: 16, gap: 12, surface: 12 },
-        touch: { pad: 16, gap: 12, surface: 20 },
+        pointer: { pad: 16, gap: 12 },
+        touch: { pad: 16, gap: 12 },
       },
       control: {
         pointer: { padding: 8, gap: 8, dot: 6, switch: "regular" },
@@ -263,7 +263,6 @@ export const style = {
     overlay: { hover: 0, focus: 0, pressed: 0, dragged: 0 },
     ripple: false,
     "pressed-opacity": 0.7,
-    "accent-pressed-opacity": 0.88,
     "rest-opacity": 0.5,
     disabled: { content: 0.3, fill: false },
   },

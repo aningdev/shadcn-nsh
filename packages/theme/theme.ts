@@ -62,12 +62,16 @@ export interface Finish {
   "border-bottom-color"?: string;
   backdropFilter?: string;
   /**
-   * The fill and ink a theme paints instead of the accent while a filled control is pressed
-   * (`state["accent-pressed-opacity"]` dims them where the theme keeps the accent). Stated only by a
-   * theme whose press swaps the accent out.
+   * The fill and ink a theme paints instead of the accent while a filled control is pressed. Stated
+   * only by a theme whose press swaps the accent out.
    */
   "pressed-background"?: string;
   "pressed-foreground"?: string;
+  /**
+   * How far the accent dims while a filled control is pressed, fill and ink together: every theme
+   * states it on `accent`, 1 where its press swaps the accent out or lays a state layer over it.
+   */
+  "pressed-opacity"?: number;
   /** The ink on this finish's surface (a color, not a spread style key): every finish states one. */
   foreground: string;
   /** The platform's own material the layer asks for: `null` asks nothing of it (see `materials`).
@@ -106,6 +110,8 @@ export type FinishStyle = {
    */
   pressedBackground?: string;
   pressedForeground?: string;
+  /** How far a filled control dims while it is pressed (`accent` states it; 1: no dimming). */
+  pressedOpacity?: number;
   glassEffect?: "regular" | "clear";
   glassTintColor?: string;
 };
@@ -170,11 +176,10 @@ export interface ControlMetrics {
   switch: string;
 }
 
-/** A page's density in one tier: its padding, its gaps, and the corner radius of its section surfaces. Rows come from the height scale, not from here. */
+/** A page's density in one tier: its padding and its gaps. Rows come from the height scale, a section's corners from `shape.container`. */
 export interface DensitySpacing {
   pad: number;
   gap: number;
-  surface: number;
 }
 
 /** Three steps of one size, small to large. */
@@ -250,11 +255,6 @@ export interface Style {
     /** Opacity of a passive indicator at rest (a scrollbar's thumb), `rest-opacity`. */
     "rest-opacity": number;
     "pressed-opacity": number;
-    /**
-     * How far a filled control dims while it is pressed, fill and ink together
-     * (`accent-pressed-opacity`); 1 where the theme's press swaps the accent out instead.
-     */
-    "accent-pressed-opacity": number;
     disabled: { content: number; fill: boolean };
   };
   transition: {
@@ -460,6 +460,11 @@ function themed(role: FinishRole): FinishStyle {
       const value = finishOf(role)["pressed-foreground"];
       return typeof value === "string" ? alias(value) : undefined;
     },
+  });
+  Object.defineProperty(out, "pressedOpacity", {
+    enumerable: false,
+    configurable: true,
+    get: () => finishOf(role)["pressed-opacity"],
   });
   const glass = (key: string): string | undefined => {
     const recipe = recipeOf(role);
@@ -820,9 +825,9 @@ export const stroke = {
 
 /**
  * How far a control fades (`semantics.json`'s `state`): `rest` is the opacity a passive indicator
- * sits at (`rest-opacity`), `pressed` that of a pressed control (`pressed-opacity`), `accentPressed`
- * how far a filled control dims while it is pressed (`accent-pressed-opacity`), `disabled` that of a
- * disabled control's content when drawn as one.
+ * sits at (`rest-opacity`), `pressed` that of a pressed control (`pressed-opacity`), `disabled` that of
+ * a disabled control's content when drawn as one. How far a filled control dims while it is pressed
+ * is the accent's own (`finish.accent.pressedOpacity`).
  */
 export const dimmed = {
   get rest() {
@@ -830,9 +835,6 @@ export const dimmed = {
   },
   get pressed() {
     return style().state["pressed-opacity"];
-  },
-  get accentPressed() {
-    return style().state["accent-pressed-opacity"];
   },
   get disabled() {
     return style().state.disabled.content;

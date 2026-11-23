@@ -247,6 +247,14 @@ export function checkScales(
   checkSteps("dimension.size", isObject(size.height) ? size.height : {}, "height");
   checkSteps("dimension", isObject(icon) ? icon : {}, "icon");
 
+  // A finger needs 44 points: Apple HIG's minimum hit region, WCAG 2.2 SC 2.5.5 (AAA) and Material's
+  // 48dp both sit at or above it, so a touch tier that pads a control's hit region pads it that far.
+  const hit = isObject(size.hit) ? size.hit.touch : undefined;
+  if (typeof hit === "number" && hit < 44 && !excused("dimension.size.hit.touch", hit))
+    problems.push(
+      `${path}: \`dimension.size.hit.touch\` is ${hit}, below the 44-point touch target`,
+    );
+
   for (const tier of ["pointer", "touch"] as const) {
     const values = new Set<number>();
     for (const key of spacingKeys) {

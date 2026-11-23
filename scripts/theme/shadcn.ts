@@ -133,11 +133,9 @@ function own(appearance: Appearance) {
     inset: p.muted,
     track: p.muted,
     field: appearance === "light" ? p.background : inputThin(p.input),
-    // A switch's knob, a slider's thumb: shadcn's `bg-background` light, `dark:bg-foreground` off and
-    // `dark:bg-primary-foreground` on (`switch.tsx` 19–27); the segment's thumb `dark:bg-input/30`.
+    // A switch's knob, a slider's thumb: shadcn's `bg-background` light, `dark:bg-foreground` off
+    // (`switch.tsx` 19–27); on, the switch reads the accent's ink.
     knob: appearance === "light" ? p.background : p.foreground,
-    knobOn: appearance === "light" ? p.background : p.primaryForeground,
-    thumb: appearance === "light" ? p.background : p.inputOnCard,
     // Statuses: shadcn has one red (`destructive`) and no other hue, so the rest step through its
     // grey ramp; `faint` is the quieter of the two muted greys.
     faint: appearance === "light" ? p.ring : p.mutedForeground,

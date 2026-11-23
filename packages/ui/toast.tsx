@@ -59,7 +59,7 @@ export function toastTitle(): TextStyle {
   return { fontSize: 14, fontWeight: font.weight("title"), color: finish.inverse.foreground };
 }
 
-/** A toast's description: 13 points, muted, its figures tabular. */
+/** A toast's description: 13 points in the inverse finish's ink, its figures tabular. */
 export function toastText(): TextStyle {
   // No type role has this size: a toast's description is 13 in both tiers.
   return {

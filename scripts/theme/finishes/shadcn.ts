@@ -48,7 +48,7 @@ export const finishes: ThemeFinishes = {
       background: "{inverse}",
       "border-color": "{border}",
       shadow: "{shadow.lg}",
-      foreground: "{muted-foreground}",
+      foreground: "{inverse-foreground}",
       backdropFilter: "none",
       material: "none",
     },
@@ -67,6 +67,7 @@ export const finishes: ThemeFinishes = {
       shadow: "{shadow.edge.accent}",
       foreground: "{primary-foreground}",
       material: "none",
+      "pressed-opacity": 0.88,
     },
     knob: {
       background: "{knob}",

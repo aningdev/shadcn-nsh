@@ -44,7 +44,7 @@ export const finishes: ThemeFinishes = {
       background: "{inverse}",
       "border-color": "{glass-edge}",
       shadow: "{shadow.lg}",
-      foreground: "{muted-foreground}",
+      foreground: "{inverse-foreground}",
       backdropFilter: "none",
       material: "none",
     },
@@ -61,6 +61,8 @@ export const finishes: ThemeFinishes = {
       shadow: "{shadow.edge.accent}",
       foreground: "{primary-foreground}",
       material: "none",
+      // WinUI swaps the accent out on a press (`pressed-background` / `pressed-foreground`).
+      "pressed-opacity": 1,
     },
     knob: {
       background: "{knob}",

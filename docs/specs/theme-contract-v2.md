@@ -1,8 +1,9 @@
 # 主题契约 v2：按层定角色，同类少值
 
 - 日期：2026-11-22
-- 状态：已审定（2026-11-22），按第 9 节的顺序逐步实施，每步一个 PR
+- 状态：已实施（2026-11-23），第 9 节的 7 步都已落地
 - 修订：2026-11-22 补入字体与分发产物（#259）；同日补入 D4–D7（指示器与描边进控件预设、描边两档、交互状态、阴影刻度）与其余风格组的去向
+- 修订：2026-11-23 实施审计：`density.surface` 删掉，区块面的圆角读 `shape.container`；填充色按下变淡写成 `accent` 的 `pressed-opacity`，不进 `state`（D6）；`inverse` 的字色是 `{inverse-foreground}`；分段与胶囊标签页选中的那块读 `raised` 而不是 `knob`（`knob` 在暗色下是白色圆点，上面写不了字，第 5 节）；touch 档 `size.hit` 不小于 44，平台例外点名（第 3 节）
 - 取代：[`theme-roles.md`](theme-roles.md) 中与本文冲突的部分；每一步落地时，`theme-roles.md`、[`native-themes.md`](native-themes.md)、[`design-tokens.md`](design-tokens.md)、[`design-semantics.md`](design-semantics.md)、`docs/GLOSSARY.md`、`docs/ARCHITECTURE.md` 在同一个 PR 里改成新的事实
 - 决定记录：[`docs/decisions/0001-theme-contract-v2.md`](../decisions/0001-theme-contract-v2.md)
 
@@ -151,18 +152,18 @@
 
 ## 5 finish：按层，加阴影刻度
 
-| finish（层） | 并入的旧 finish                                      |
-| ------------ | ---------------------------------------------------- |
-| `card`       | `card`、`section`                                    |
-| `inset`      | `inset`、`field`、`track`、`groove`                  |
-| `raised`     | `raised`、`light`、`chip`、`pill`                    |
-| `overlay`    | `menu`（菜单、选择框、弹出面板）                     |
-| `modal`      | `dialog`                                             |
-| `inverse`    | `inverse`、`tooltip`                                 |
-| `glass`      | `glass`                                              |
-| `accent`     | `accent`、`fill`、`on`                               |
-| `knob`       | `knob`；`knobOn`、`handle`、`thumb` 的差异进控件预设 |
-| 状态         | `hover`、`pressed`（含 `accentPressed`）、`disabled` |
+| finish（层） | 并入的旧 finish                                                                  |
+| ------------ | -------------------------------------------------------------------------------- |
+| `card`       | `card`、`section`                                                                |
+| `inset`      | `inset`、`field`、`track`、`groove`                                              |
+| `raised`     | `raised`、`light`、`chip`、`pill`                                                |
+| `overlay`    | `menu`（菜单、选择框、弹出面板）                                                 |
+| `modal`      | `dialog`                                                                         |
+| `inverse`    | `inverse`、`tooltip`                                                             |
+| `glass`      | `glass`                                                                          |
+| `accent`     | `accent`、`fill`、`on`                                                           |
+| `knob`       | `knob`；`knobOn`、`handle` 的差异进控件预设；`thumb` 改归 `raised`（2026-11-23） |
+| 状态         | `hover`、`pressed`（含 `accentPressed`）、`disabled`                             |
 
 `grabber` 不再是 finish，归 sheet 的控件预设。
 
@@ -241,21 +242,21 @@
 每步一个 issue、一个 PR，串行：
 
 1. ✅ B2 合并（#256），作为基线
-2. 控件预设（第 4 节，含 D4 的指示器、输入框圆角与指示条粗细），逐像素相同；输入框 #249 排在这一步之后，直接写进预设
-3. 圆角（第 2 节，#253）
+2. ✅ 控件预设（#268）（第 4 节，含 D4 的指示器、输入框圆角与指示条粗细），逐像素相同；输入框 #249 排在这一步之后，直接写进预设
+3. ✅ 圆角（第 2 节，#253，#269）
 4. 颜色：第 1 批（逐像素相同，✅ #262）→ 第 2 批（✅ #263）→ 第 3 批（✅ #264）
 5. ✅ 尺度（第 3 节），含字体（#265）
-6. finish 按层与阴影刻度（第 5 节）
+6. ✅ finish 按层与阴影刻度（第 5 节，#266）
 7. ✅ 材质（第 6 节， #267）
 
 ## 10 已确认的问题
 
-| #   | 问题                                                                                   | 建议                                                                                                                                                                                                                                                                                                                                                                  |
-| --- | -------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| D1  | `sidebar-*`：删掉，还是作为对外格式保留？                                              | ✅ 已确认（2026-11-22）：**保留为 A 层 alias，组件不读。** NSH 的 `Theme` 就是 shadcn 的 31 个槽，缺一个就退回 neutral 灰，应用里写的 `bg-sidebar` 会变色。这改了之前"第 2 批删掉其余 `sidebar-*`"的计划                                                                                                                                                              |
-| D2  | 材质是写在 finish 的字段里，还是按层固定？                                             | ✅ 已确认（2026-11-22）：**写在 finish 的 `material` 字段里，用枚举（方案 A）。** apple 现在在 `raised` 上也用玻璃（#252），按层固定会丢掉这个选择                                                                                                                                                                                                                    |
-| D3  | finish 数量                                                                            | ✅ 已确认（2026-11-22）：**9 层 + 3 种状态 = 12 个**，M3 中过于个性化的差异按原则 6 裁剪。（比之前说的"约 8 个"多了 `modal` 和 `inverse`）。M3 的对话框（`SurfaceContainerHigh`）与菜单（`SurfaceContainer`）颜色不同，提示与 toast 的反色面也是一层，和第 2 节圆角的 `modal` 对得上                                                                                  |
-| D4  | 以组件命名的形态选择（`indicator.*`、`shape.corners.field`、`stroke.indicator`）放哪？ | ✅ 已确认（2026-11-22）：**并入控件预设**（第 4 节）                                                                                                                                                                                                                                                                                                                  |
-| D5  | 描边 4 个值                                                                            | ✅ 已确认（2026-11-22）：**收成 `hairline`、`control` 两档**，`surface` 并入 `hairline`，`indicator` 进控件预设（第 3 节）                                                                                                                                                                                                                                            |
-| D6  | `state` 组                                                                             | ✅ 已确认（2026-11-22）：**保留在主题**，只把 `accent-pressed-opacity` 并入第 3 批的 `state.pressed`（第 7 节）。**第 3 批实际（#264）：** `state` 只读亮色指针档、不随外观翻转，而 winui 的禁用与按下颜色明暗不同，所以这些颜色落进 `finish.disabled` / `finish.accentPressed` 的 `background`、`foreground`；`accent-pressed-opacity` 合进 `accentPressed` 的底色。 |
-| D7  | 阴影                                                                                   | ✅ 已确认（2026-11-22）：**拆成投影 4 档、内阴影 1 个、边光 2 个**；源码在亮暗 DTCG 文件，编译进 `semantics.json`，不进 `theme.json`（第 5 节）                                                                                                                                                                                                                       |
+| #   | 问题                                                                                   | 建议                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| --- | -------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| D1  | `sidebar-*`：删掉，还是作为对外格式保留？                                              | ✅ 已确认（2026-11-22）：**保留为 A 层 alias，组件不读。** NSH 的 `Theme` 就是 shadcn 的 31 个槽，缺一个就退回 neutral 灰，应用里写的 `bg-sidebar` 会变色。这改了之前"第 2 批删掉其余 `sidebar-*`"的计划                                                                                                                                                                                                                                                                                                                                                                            |
+| D2  | 材质是写在 finish 的字段里，还是按层固定？                                             | ✅ 已确认（2026-11-22）：**写在 finish 的 `material` 字段里，用枚举（方案 A）。** apple 现在在 `raised` 上也用玻璃（#252），按层固定会丢掉这个选择                                                                                                                                                                                                                                                                                                                                                                                                                                  |
+| D3  | finish 数量                                                                            | ✅ 已确认（2026-11-22）：**9 层 + 3 种状态 = 12 个**，M3 中过于个性化的差异按原则 6 裁剪。（比之前说的"约 8 个"多了 `modal` 和 `inverse`）。M3 的对话框（`SurfaceContainerHigh`）与菜单（`SurfaceContainer`）颜色不同，提示与 toast 的反色面也是一层，和第 2 节圆角的 `modal` 对得上                                                                                                                                                                                                                                                                                                |
+| D4  | 以组件命名的形态选择（`indicator.*`、`shape.corners.field`、`stroke.indicator`）放哪？ | ✅ 已确认（2026-11-22）：**并入控件预设**（第 4 节）                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                |
+| D5  | 描边 4 个值                                                                            | ✅ 已确认（2026-11-22）：**收成 `hairline`、`control` 两档**，`surface` 并入 `hairline`，`indicator` 进控件预设（第 3 节）                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+| D6  | `state` 组                                                                             | ✅ 已确认（2026-11-22）：**保留在主题**，只把 `accent-pressed-opacity` 并入第 3 批的 `state.pressed`（第 7 节）。**第 3 批实际（#264）：** `state` 只读亮色指针档、不随外观翻转，而 winui 的禁用与按下颜色明暗不同，所以这些颜色落进 `finish.disabled` / `finish.accentPressed` 的 `background`、`foreground`；`accent-pressed-opacity` 合进 `accentPressed` 的底色。**第 6 步之后（2026-11-23）：** `accentPressed` 并进 `accent`，按下变淡成了 `accent` 的 `pressed-opacity`（数，Material / WinUI 写 1），换面的颜色是 `accent` 的 `pressed-background` / `pressed-foreground`。 |
+| D7  | 阴影                                                                                   | ✅ 已确认（2026-11-22）：**拆成投影 4 档、内阴影 1 个、边光 2 个**；源码在亮暗 DTCG 文件，编译进 `semantics.json`，不进 `theme.json`（第 5 节）                                                                                                                                                                                                                                                                                                                                                                                                                                     |
