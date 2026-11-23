@@ -1077,7 +1077,7 @@
       "type": "registry:ui",
       "title": "Table",
       "description": "A composition table wearing the shared data-table classes.",
-      "registryDependencies": ["class-names", "data-table"],
+      "registryDependencies": ["as-text", "class-names", "data-table"],
       "files": [
         {
           "path": "packages/ui/table.tsx",

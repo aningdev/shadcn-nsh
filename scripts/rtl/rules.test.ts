@@ -56,6 +56,28 @@ const b = { right: 4 };
     expect(scan(`interface Slop { left: number; right: number }`)).toEqual([]);
   });
 
+  test("a transform origin names the classes that mirror it", () => {
+    const found = scan(`const s = { transformOrigin: "left" };`);
+    expect(found.map((v) => [v.property, v.suggestion])).toEqual([
+      ["transformOrigin", "origin-left rtl:origin-right"],
+    ]);
+    expect(scan(`const s = { transformOrigin: "top left" }`)[0]?.suggestion).toBe(
+      "origin-top-left rtl:origin-top-right",
+    );
+  });
+
+  test("a transform origin with no side passes", () => {
+    expect(scan(`const s = { transformOrigin: [0, 0.5] };`)).toEqual([]);
+    expect(scan(`const s = { transformOrigin: "50% 0" };`)).toEqual([]);
+    expect(scan(`const s = { transformOrigin: "center" };`)).toEqual([]);
+  });
+
+  test("a physical marker covers a transform origin too", () => {
+    expect(
+      scan(`const s = {\n  // physical: the screen's edge\n  transformOrigin: "left",\n};`),
+    ).toEqual([]);
+  });
+
   test("a border radius keeps its corner", () => {
     expect(logicalName("borderTopLeftRadius")).toBe("borderTopStartRadius");
     expect(logicalName("borderBottomRightRadius")).toBe("borderBottomEndRadius");

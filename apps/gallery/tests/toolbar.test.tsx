@@ -87,3 +87,10 @@ test("Toolbar is one labelled toolbar and the group is named", async () => {
   expect(app.count("role:group[Marks]")).toBe(1);
   expect(app.count("role:group[Delivery]")).toBe(1);
 });
+
+test("a ToolbarItem's own class and style reach the box it stands in", async () => {
+  const app = await open("./toolbar.fixture.tsx");
+  // Opacity of the item's box carries down to the button in it.
+  expect(Math.round((app.viewStyle("label:Classed")?.effectiveOpacity ?? 0) * 100)).toBe(50);
+  expect(Math.round((app.viewStyle("label:Styled")?.effectiveOpacity ?? 0) * 100)).toBe(25);
+});

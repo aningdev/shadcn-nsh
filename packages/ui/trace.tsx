@@ -4,7 +4,7 @@
 import { colors, dimmed, focusRing, font, rounded, shape, terminal } from "@shadcn-nsh/theme";
 import { ChevronRight } from "lucide";
 import type { JSX, StyleProp, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
-import { context, platform, reduceMotion, signal, split, Text, View } from "nsh";
+import { context, effect, platform, reduceMotion, signal, split, Text, View } from "nsh";
 import {
   Collapsible as BaseCollapsible,
   type CollapsibleProps as BaseCollapsibleProps,
@@ -209,8 +209,8 @@ export type TraceLineProps = ViewProps & {
 export function TraceLine(props: TraceLineProps) {
   const [, rest] = split(props, ["status", "onPress", "style", "accessibilityLabel"]);
   const collapsible = TraceCollapsibleContext();
-  // The trigger's chevron follows the line's state.
-  if (collapsible) collapsible.status.set(props.status);
+  // The trigger's chevron follows the line's state, wherever it changes.
+  effect(() => collapsible?.status.set(props.status));
   const state: TraceLineState = {
     get status() {
       return props.status;
@@ -337,6 +337,8 @@ export function TraceCollapsibleTrigger(props: TraceCollapsibleTriggerProps) {
   const ctx = TraceCollapsibleContext();
   if (!ctx) throw new Error("TraceCollapsibleTrigger must be used within <TraceCollapsible>");
   const disabled = Boolean(props.disabled);
+  // The marker takes the line's status, in a terminal as on a canvas: a failed step's is destructive.
+  const chevronInk = () => (ctx.status() === "error" ? colors.destructive : colors.mutedForeground);
   // Built once and handed to the content, which places it (as `CollapsibleTrigger` does).
   ctx.trigger.set(
     <View
@@ -355,13 +357,9 @@ export function TraceCollapsibleTrigger(props: TraceCollapsibleTriggerProps) {
       {props.children}
       <View style={[traceLook().icon, traceLook().chevron(ctx.open())]}>
         {terminal ? (
-          <Text style={{ color: colors.mutedForeground }}>›</Text>
+          <Text style={{ color: chevronInk() }}>›</Text>
         ) : (
-          <Icon
-            icon={ChevronRight}
-            size={ICON}
-            tint={ctx.status() === "error" ? colors.destructive : colors.mutedForeground}
-          />
+          <Icon icon={ChevronRight} size={ICON} tint={chevronInk()} />
         )}
       </View>
     </View>,
