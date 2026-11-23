@@ -5,6 +5,8 @@ import type { JSX } from "nsh";
 import { Image, mount, signal, Text, View } from "nsh";
 import { Avatar, AvatarGroup } from "nsh/base";
 
+import { font } from "@shadcn-nsh/theme";
+
 import { avatarIdentity } from "@/packages/ui/avatar";
 import { Button } from "@/packages/ui/button";
 import { listRow, RowLabel, sectionSurface } from "@/packages/ui/lib/surface";
@@ -223,7 +225,8 @@ function App() {
                 <Text
                   style={{
                     fontSize: side / 3.2,
-                    fontWeight: "600",
+                    // The count's weight is the theme's title weight (500 in material).
+                    fontWeight: font.weight("title"),
                     color: ui().muted,
                     fontVariant: ["tabular-nums"],
                   }}
