@@ -213,7 +213,7 @@ function Reactions() {
                 style={{
                   height: 26,
                   borderColor: r().mine ? colors.brandEdge : colors.border,
-                  backgroundColor: r().mine ? colors.brandFill : colors.card,
+                  backgroundColor: r().mine ? colors.primary : colors.card,
                 }}
               >
                 <Text style={{ fontSize: 14 }}>{r().emoji}</Text>

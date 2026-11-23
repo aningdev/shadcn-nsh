@@ -166,10 +166,9 @@ describe("winuiRoles() key coverage and format", () => {
   });
 
   test("every value is a canonical oklch() string or var(--*) alias, and only overlays/washes keep alpha", () => {
-    const allowedAlpha = new Set(["scrim", "window-control-ink", "window-control-edge"]);
-    const themeAliases = new Set(["brand-fill", "on-brand"]);
+    const allowedAlpha = new Set(["scrim"]);
+    const themeAliases = new Set<string>();
     const appearanceAliases = new Set([
-      "dialog",
       "sidebar",
       "sidebar-foreground",
       "sidebar-primary",
@@ -249,15 +248,13 @@ describe("WCAG contrast for default accent", () => {
   const roles = winuiRoles();
 
   test("shared theme pairs have contrast >= 4.5", () => {
-    expect(roles.theme["brand-fill"]).toBe("var(--primary)");
-    expect(roles.theme["on-brand"]).toBe("var(--primary-foreground)");
     for (const s of [roles.light, roles.dark]) {
       expect(wcagContrast(s["primary-foreground"], s.primary)).toBeGreaterThanOrEqual(4.5);
     }
     expect(wcagContrast(roles.theme["on-media"], roles.theme.media)).toBeGreaterThanOrEqual(4.5);
-    expect(
-      wcagContrast(roles.theme["chart-foreground"], roles.light.background),
-    ).toBeGreaterThanOrEqual(4.5);
+    expect(wcagContrast(roles.light.foreground, roles.light.background)).toBeGreaterThanOrEqual(
+      4.5,
+    );
   });
 
   for (const appearance of ["light", "dark"] as const) {
@@ -292,8 +289,8 @@ describe("WCAG contrast for default accent", () => {
         ["inverse-foreground/inverse", s["inverse-foreground"], s.inverse],
         ["inverse-foreground/popover (tooltip)", s["inverse-foreground"], s.popover],
         ["inverse-brand/primary", s["inverse-brand"], s.primary],
-        ["code/inset", s.code, s.inset],
-        ["code/muted", s.code, s.muted],
+        ["foreground/inset", s.foreground, s.inset],
+        ["foreground/muted", s.foreground, s.muted],
         ["brand/background", s.brand, s.background],
         ["brand/card", s.brand, s.card],
         ["warn/warn-tint", s.warn, s["warn-tint"]],
@@ -351,9 +348,9 @@ describe("compiled winui theme files", () => {
       background: "oklch(from {popover} l c h / 0.96)",
     });
     expect(files.semantics.finishes.light.menu?.shadow).toContain("0 16px 32px");
-    expect(files.semantics.finishes.light.dialog?.shadow).toContain("0 64px 128px");
-    expect(hexOf(String(files.semantics.finishes.light.dialog?.["border-color"]))).toBe("#c1c1c1");
-    expect(hexOf(String(files.semantics.finishes.dark.dialog?.["border-color"]))).toBe("#424242");
+    expect(files.semantics.finishes.light.modal?.shadow).toContain("0 64px 128px");
+    expect(hexOf(String(files.semantics.finishes.light.modal?.["border-color"]))).toBe("#c1c1c1");
+    expect(hexOf(String(files.semantics.finishes.dark.modal?.["border-color"]))).toBe("#424242");
     expect(files.semantics.state["accent-pressed-opacity"]).toBe(1);
     expect(files.semantics.finishes.shared.raised).toMatchObject({
       "border-color": "{border}",
@@ -378,7 +375,7 @@ describe("compiled winui theme files", () => {
       "border-color": "{accent-bevel}",
       "border-top-color": "{accent-bevel}",
       "border-bottom-color": "{brand-edge}",
-      foreground: "{on-brand}",
+      foreground: "{primary-foreground}",
     });
     expect(files.semantics.finishes.light.card).toMatchObject({
       "border-color": "oklch(0.92191 0 0)",

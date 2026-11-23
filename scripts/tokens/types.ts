@@ -143,13 +143,12 @@ export interface DesignMdExtension {
   voiceOmitted?: string;
 }
 
-/** Semantic color-role grouping for every token in `color.*` (77 total: 11 C-layer + 66 A/B-layer). */
+/** Semantic color-role grouping for every token in `color.*` (65 total: 3 C-layer + 62 A/B-layer). */
 export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
   // surface (16 A/B-layer + 2 C-layer)
   background: "surface",
   card: "surface",
   popover: "surface",
-  dialog: "surface",
   secondary: "surface",
   muted: "surface",
   accent: "surface",
@@ -166,7 +165,7 @@ export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
   media: "surface",
   scrim: "surface",
 
-  // ink (12 A/B-layer + 2 C-layer)
+  // ink (11 A/B-layer + 1 C-layer)
   foreground: "ink",
   "card-foreground": "ink",
   "popover-foreground": "ink",
@@ -175,14 +174,12 @@ export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
   "accent-foreground": "ink",
   "disabled-foreground": "ink",
   faint: "ink",
-  code: "ink",
   "inverse-foreground": "ink",
   "sidebar-foreground": "ink",
   "sidebar-accent-foreground": "ink",
   "on-media": "ink",
-  "chart-foreground": "ink",
 
-  // brand (10 A/B-layer + 2 C-layer)
+  // brand (10 A/B-layer)
   primary: "brand",
   "primary-foreground": "brand",
   brand: "brand",
@@ -193,8 +190,6 @@ export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
   "inverse-brand": "brand",
   "sidebar-primary": "brand",
   "sidebar-primary-foreground": "brand",
-  "brand-fill": "brand",
-  "on-brand": "brand",
 
   // status (15 A/B-layer)
   destructive: "status",
@@ -213,7 +208,7 @@ export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
   "chart-4": "status",
   "chart-5": "status",
 
-  // chrome (13 A/B-layer + 5 C-layer)
+  // chrome (10 A/B-layer)
   border: "chrome",
   input: "chrome",
   ring: "chrome",
@@ -222,14 +217,6 @@ export const COLOR_ROLE_BY_NAME: Record<string, ColorRole> = {
   bevel: "chrome",
   "accent-bevel": "chrome",
   "glass-edge": "chrome",
-  "scrollbar-thumb": "chrome",
-  "scrollbar-thumb-hover": "chrome",
   "sidebar-border": "chrome",
   "sidebar-ring": "chrome",
-  "window-control-off": "chrome",
-  "window-close": "chrome",
-  "window-minimize": "chrome",
-  "window-zoom": "chrome",
-  "window-control-ink": "chrome",
-  "window-control-edge": "chrome",
 };

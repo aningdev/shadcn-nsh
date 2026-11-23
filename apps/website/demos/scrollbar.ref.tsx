@@ -102,6 +102,7 @@ function App() {
             motion={scrollbarTheme.motion}
             class={scrollbarTheme.vertical?.class ?? undefined}
             thumbClass={scrollbarTheme.vertical?.thumbClass ?? undefined}
+            thumbStyle={scrollbarTheme.vertical?.thumbStyle ?? undefined}
             accessibilityLabel="Messages"
           />
         </View>

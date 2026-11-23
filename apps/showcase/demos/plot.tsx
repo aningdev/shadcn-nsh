@@ -3929,7 +3929,7 @@ const kinship = (p: Pair) =>
             ? "Barely related"
             : "Move apart: a hedge";
 /** The cells' labels: the chart's ink on light cells, `on-media` on dark ones (`data-dark`). */
-const CELL_LABEL = "text-chart-foreground/70 data-dark:text-on-media/90";
+const CELL_LABEL = "text-foreground/70 data-dark:text-on-media/90";
 /** The hover cell: a ring in the text's color around the cell, a little out from its edge. */
 const cellRing = () => ({ outlineWidth: 1.5, outlineOffset: 1.5, outlineColor: colors.foreground });
 
@@ -4937,7 +4937,7 @@ function MarketMap() {
           label={(d: MapRow) => d.id}
           valueLabel={(d: MapRow) => pct(d.chg ?? 0, 2)}
           labelPlacement="center"
-          labelClass="p-1 text-chart-foreground data-dark:text-on-media"
+          labelClass="p-1 text-foreground data-dark:text-on-media"
           labelStyle={{ fontSize: 11.5, fontWeight: "600", letterSpacing: 0.2 }}
           valueLabelStyle={{
             fontSize: 10,
@@ -5005,7 +5005,7 @@ const classColor = (cls: string): string =>
         ? chart.chart4
         : chart.chart3;
 /**
- * A position's tile is its class's colour, solid. The label is `chart-foreground` on a light
+ * A position's tile is its class's colour, solid. The label is `foreground` on a light
  * tile and `on-media` on a dark one: `data-dark` follows the cell's OKLab lightness (under 0.65),
  * not the appearance, so one ink pair covers every theme. Five `chart-N-foreground` tokens could
  * not, because a treemap takes a single `labelClass`.
@@ -5129,7 +5129,7 @@ function Allocation() {
           groupClass={(d: AllocationRow) => CLASS_GROUP[ASSET_CLASSES.indexOf(d.cls)]}
           label={(d: AllocationRow) => d.id}
           valueLabel={(_: AllocationRow, value: number) => weight(value)}
-          labelClass="px-2 py-1.5 text-chart-foreground data-dark:text-on-media"
+          labelClass="px-2 py-1.5 text-foreground data-dark:text-on-media"
           labelStyle={{ fontSize: 12, fontWeight: "600" }}
           valueLabelStyle={{
             fontSize: 11,

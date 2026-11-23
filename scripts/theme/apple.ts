@@ -97,7 +97,6 @@ function palette(appearance: Appearance) {
     warn: t(s.orange),
     up: t(s.green),
     violet: t(s.purple),
-    windowControlOff: onCard(s.fill),
   };
 }
 
@@ -112,18 +111,9 @@ const themeLevel = (): Record<string, string> => ({
   "radius-container": "12px",
   "radius-modal": "26px",
   "font-mono": "monospace",
-  "brand-fill": "var(--primary)",
-  "on-brand": "var(--primary-foreground)",
   scrim: oklchColor(0, 0, 0, 0.4),
   media: oklchColor(0.1869, 0.0151, 266.766),
   "on-media": oklchColor(1, 0, 0),
-  "chart-foreground": toOklchText(SYSTEM.light.label),
-  // The macOS traffic lights.
-  "window-close": toOklchText("#FF5F57"),
-  "window-minimize": toOklchText("#FEBC2E"),
-  "window-zoom": toOklchText("#28C840"),
-  "window-control-ink": `color-mix(in srgb, ${oklchColor(0, 0, 0)} 50%, transparent)`,
-  "window-control-edge": `color-mix(in srgb, ${oklchColor(0, 0, 0)} 12%, transparent)`,
 });
 
 /** One appearance's colour tokens. */
@@ -163,8 +153,6 @@ function section(p: ReturnType<typeof palette>) {
     inset: p.inset,
     raised: p.raised,
     "glass-edge": "var(--border)",
-    "scrollbar-thumb": "color-mix(in srgb, var(--muted-foreground) 50%, var(--background))",
-    "scrollbar-thumb-hover": "color-mix(in srgb, var(--muted-foreground) 80%, var(--background))",
     field: p.field,
     line: p.line,
     hover: "color-mix(in srgb, var(--foreground) 6%, transparent)",
@@ -174,7 +162,6 @@ function section(p: ReturnType<typeof palette>) {
     "brand-edge": "var(--border)",
     track: p.track,
     knob: oklchColor(1, 0, 0),
-    code: p.foreground,
     info: p.info,
     warn: p.warn,
     up: p.up,
@@ -188,14 +175,12 @@ function section(p: ReturnType<typeof palette>) {
     "up-tint": tints("up"),
     "down-tint": tints("destructive"),
     violet: p.violet,
-    "window-control-off": p.windowControlOff,
-    dialog: "var(--card)",
     bevel: "var(--border)",
     "accent-bevel": "var(--brand-edge)",
     disabled: "var(--raised)",
     "disabled-foreground": "var(--muted-foreground)",
     "accent-pressed": "var(--primary)",
-    "on-accent-pressed": "var(--on-brand)",
+    "on-accent-pressed": "var(--primary-foreground)",
   };
 }
 
@@ -428,6 +413,7 @@ export const style = {
     overlay: { hover: 0, focus: 0, pressed: 0, dragged: 0 },
     ripple: false,
     "pressed-opacity": 0.7,
+    "rest-opacity": 0.5,
     disabled: { content: 0.3, fill: false },
   },
   duration: { shake: 500 },
@@ -493,8 +479,6 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
     "up-tint": "Translucent positive wash (12% up over transparent).",
     "down-tint": "Translucent negative wash (12% destructive over transparent).",
     violet: "Accent purple ink (UIKit systemPurple).",
-    "window-control-off":
-      "Unfocused window traffic-light fill (UIKit systemFill composited over card).",
   };
 
   return {
@@ -541,11 +525,7 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
     },
     descriptions: {
       sharedColors: {
-        "brand-fill": "Primary brand action fill, aliased to {color.primary} (UIKit systemBlue).",
-        "on-brand":
-          "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}.",
         scrim: "Translucent backdrop scrim behind modals and sheets (40% black).",
-        "chart-foreground": "Dark ink on light chart tiles matching UIKit light label (#000000).",
       },
       lightColors: appearanceColorDescs,
       darkColors: appearanceColorDescs,

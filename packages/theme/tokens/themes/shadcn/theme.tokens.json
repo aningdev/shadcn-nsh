@@ -59,24 +59,6 @@
   "color": {
     "$type": "color",
     "$description": "Appearance-invariant C-layer color roles shared by light and dark modes.",
-    "brand-fill": {
-      "$value": "{color.primary}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Primary brand action fill, aliased to {color.primary}."
-    },
-    "on-brand": {
-      "$value": "{color.primary-foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}."
-    },
     "scrim": {
       "$value": {
         "colorSpace": "oklch",
@@ -116,108 +98,6 @@
         }
       },
       "$description": "White ink over photographs and dark media surfaces; invariant across appearances."
-    },
-    "chart-foreground": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.145, 0, 0],
-        "hex": "#0a0a0a"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Dark ink on light chart tiles; dark tiles use on-media."
-    },
-    "window-close": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.577, 0.245, 27.325],
-        "hex": "#e7000b"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "macOS window close traffic-light fill mapped to shadcn destructive red."
-    },
-    "window-minimize": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.708, 0, 0],
-        "hex": "#a1a1a1"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "macOS window minimize traffic-light fill mapped to shadcn ring grey."
-    },
-    "window-zoom": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.371, 0, 0],
-        "hex": "#404040"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "macOS window zoom traffic-light fill mapped to shadcn chart-4 grey."
-    },
-    "window-control-ink": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0, 0, 0],
-        "alpha": 0.5,
-        "hex": "#000000"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": {
-              "colorSpace": "oklch",
-              "components": [0, 0, 0],
-              "hex": "#000000"
-            },
-            "percent": 50,
-            "b": "transparent"
-          }
-        }
-      },
-      "$description": "Glyph ink inside macOS window traffic-light buttons."
-    },
-    "window-control-edge": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0, 0, 0],
-        "alpha": 0.12,
-        "hex": "#000000"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": {
-              "colorSpace": "oklch",
-              "components": [0, 0, 0],
-              "hex": "#000000"
-            },
-            "percent": 12,
-            "b": "transparent"
-          }
-        }
-      },
-      "$description": "Hairline border around macOS window traffic-light buttons."
     }
   },
   "state": {

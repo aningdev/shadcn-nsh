@@ -58,12 +58,12 @@ function Label(props: { children: string }) {
 function Hero(props: { count: number }) {
   return (
     <View class="border-border from-card via-card to-inset overflow-hidden rounded-2xl border bg-linear-to-br p-5 shadow-[0_6px_20px_rgba(16,20,30,0.08)]">
-      <View class="from-brand-fill/20 absolute -top-24 -right-20 size-72 rounded-full bg-radial to-transparent to-70%" />
+      <View class="from-primary/20 absolute -top-24 -right-20 size-72 rounded-full bg-radial to-transparent to-70%" />
       <View class="flex-row flex-wrap items-center gap-2">
         <View class="bg-raised ring-line h-[26px] flex-row items-center gap-1.5 rounded-full px-2.5 ring-1 ring-inset">
           <View class="size-2 items-center justify-center">
-            <View class="bg-brand-fill absolute size-2 animate-ping rounded-full" />
-            <View class="bg-brand-fill size-1.5 rounded-full" />
+            <View class="bg-primary absolute size-2 animate-ping rounded-full" />
+            <View class="bg-primary size-1.5 rounded-full" />
           </View>
           <Text class="text-foreground text-xs font-medium">Resolved natively</Text>
         </View>
@@ -111,7 +111,7 @@ function Stats() {
       tone: "text-warn",
     },
   ];
-  const legend = ["bg-brand-fill", "bg-up", "bg-info", "bg-warn"];
+  const legend = ["bg-primary", "bg-up", "bg-info", "bg-warn"];
   return (
     <Card icon={LayoutGrid} title="Stat grid" subtitle="grid grid-cols-2 gap-2">
       <View class="grid grid-cols-2 gap-2">
@@ -236,7 +236,7 @@ function Layout() {
         <View class="bg-brand/25 h-12 rounded-lg" />
         <View class="bg-brand/35 h-12 rounded-lg" />
         <View class="bg-brand row-span-2 items-center justify-center rounded-lg">
-          <Text class="text-on-brand font-mono text-[11px]">row-span-2</Text>
+          <Text class="text-primary-foreground font-mono text-[11px]">row-span-2</Text>
         </View>
         <View class="bg-brand/45 h-12 rounded-lg" />
         <View class="bg-brand/55 h-12 rounded-lg" />
@@ -452,7 +452,7 @@ function Inputs() {
     <Card icon={Circle} title="Inputs" subtitle="focus: placeholder: caret-*">
       <Input
         placeholder="Focus me"
-        class="border-border bg-card text-foreground caret-brand focus:border-brand focus:ring-brand-fill/40 h-11 rounded-[10px] border px-3.5 text-[15px] focus:ring-2"
+        class="border-border bg-card text-foreground caret-brand focus:border-brand focus:ring-primary/40 h-11 rounded-[10px] border px-3.5 text-[15px] focus:ring-2"
       />
       <Label>
         Focus adds a border and a ring; the placeholder and caret colors are classes too.

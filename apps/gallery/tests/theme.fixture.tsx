@@ -11,7 +11,7 @@ function App() {
       <Text>{`muted=${colors.mutedForeground}`}</Text>
       <Text>{`media=${colors.media}`}</Text>
       <Text>{`on-media=${colors.onMedia}`}</Text>
-      <Text>{`chart-ink=${colors.chartForeground}`}</Text>
+      <Text>{`chart-ink=${colors.foreground}`}</Text>
     </View>
   );
 }

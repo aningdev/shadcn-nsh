@@ -86,7 +86,9 @@ They sit flush against the window's corner, so the bar's trailing padding goes t
 
 The three parts are the shapes the platforms draw; an app that wants its own draws the same
 `desktop` views itself, and the platform still carries out the press. A round close button
-(`Icon` from `lib/ui/icons`, `windowControls` from `lib/ui/theme`, `X` from `lucide`):
+(`Icon` from `lib/ui/icons`, `lightInk` from `lib/ui/title-bar`, `X` from `lucide`; the
+traffic lights keep macOS's own hues whatever the theme, so the disc's colour is written out
+rather than read from a role):
 
 ```tsx
 <View
@@ -100,9 +102,9 @@ The three parts are the shapes the platforms draw; an app that wants its own dra
     alignItems: "center",
     justifyContent: "center",
   }}
-  hoverStyle={{ backgroundColor: windowControls.close }}
+  hoverStyle={{ backgroundColor: "#FF5F57" }}
 >
-  <Icon icon={X} size={12} tint={windowControls.ink} />
+  <Icon icon={X} size={12} tint={lightInk} />
 </View>
 ```
 
@@ -133,7 +135,7 @@ goes over the look's on `TitleBar` and `WindowControls`.
 
 `TitleBar` is `TITLE_BAR_HEIGHT` (40 points) tall, or the height the system's title bar has, on
 the inset fill with a hairline under it; its children start `12` points after the system's buttons.
-A traffic light is `TRAFFIC_LIGHT` (12 points) wide, in the theme's close, minimize and zoom window-control roles, and `CAPTION_BUTTON` (46) is a caption cell's width; the close cell
+A traffic light is `TRAFFIC_LIGHT` (12 points) wide, in macOS's own close, minimize and zoom hues wherever the theme goes (`lightTone`, with glyphs in `lightInk` and the disc's `lightEdge`), and `CAPTION_BUTTON` (46) is a caption cell's width; the close cell
 washes the destructive tint while the pointer is on it. `WindowResizeEdges` draws eight strips —
 `5` points along the edges, `12` at the corners — as the last child of the window's root.
 `titleBarLook()` is exported for a bar the app lays out itself.

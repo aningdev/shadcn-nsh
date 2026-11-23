@@ -394,8 +394,8 @@ export function compileDesignMd(resolverPath: string): string {
       padding: "{spacing.control.padding}",
     },
     dialog: {
-      ...(resolveFinishBg("dialog", "card")
-        ? { backgroundColor: resolveFinishBg("dialog", "card")! }
+      ...(resolveFinishBg("modal", "card")
+        ? { backgroundColor: resolveFinishBg("modal", "card")! }
         : {}),
       textColor: colorRefOf("card-foreground"),
       typography: "{typography.body}",

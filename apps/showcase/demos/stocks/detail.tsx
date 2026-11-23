@@ -415,7 +415,7 @@ function PauseButton(props: { market: Market }) {
       <Icon
         icon={props.market.running() ? Pause : Play}
         size={13}
-        tint={props.market.running() ? colors.mutedForeground : colors.onBrand}
+        tint={props.market.running() ? colors.mutedForeground : colors.primaryForeground}
       />
     </View>
   );

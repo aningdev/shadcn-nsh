@@ -15,7 +15,7 @@ const cssVars = readJson("packages/theme/theme.json").cssVars as ThemeCssVars;
 const mergedLight = mergeFinishes(semantics.finishes, "light");
 const mergedDark = mergeFinishes(semantics.finishes, "dark");
 
-const surfaces = ["dialog", "tooltip", "inverse"];
+const surfaces = ["modal", "tooltip", "inverse"];
 const roles = ["inverse", "inverse-foreground", "inverse-brand"];
 
 describe("the colour roles and finishes a theme states for its surfaces", () => {
@@ -36,8 +36,8 @@ describe("the colour roles and finishes a theme states for its surfaces", () => 
   test("withSurfaces derives the three finishes from the menu, after it", () => {
     const menu = mergedLight.menu;
     const out = withSurfaces({ card: mergedLight.card, menu, flat: mergedLight.flat });
-    expect(Object.keys(out)).toEqual(["card", "menu", "dialog", "tooltip", "inverse", "flat"]);
-    expect(out.dialog.shadow).toBe(menu.shadow);
+    expect(Object.keys(out)).toEqual(["card", "menu", "modal", "tooltip", "inverse", "flat"]);
+    expect(out.modal.shadow).toBe(menu.shadow);
     expect(out.tooltip.shadow).toBe("none");
     expect(String(out.inverse.background)).toContain("{inverse}");
   });

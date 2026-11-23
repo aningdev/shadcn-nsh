@@ -16,7 +16,7 @@ import {
   TabsTrigger,
 } from "../../../packages/ui";
 
-/** A `winui`-controls theme with distinct inverse, dialog and tooltip roles. */
+/** A `winui`-controls theme with distinct inverse, modal and tooltip roles. */
 const marked: AppTheme = {
   ...winuiTheme,
   id: "marked",
@@ -27,7 +27,7 @@ const marked: AppTheme = {
       ...winuiTheme.semantics.finishes,
       shared: {
         ...winuiTheme.semantics.finishes.shared,
-        dialog: { ...defaultTheme.semantics.finishes.shared.dialog, "border-color": "{brand}" },
+        modal: { ...defaultTheme.semantics.finishes.shared.modal, "border-color": "{brand}" },
         tooltip: { ...defaultTheme.semantics.finishes.shared.tooltip, background: "{brand}" },
         inverse: { ...defaultTheme.semantics.finishes.shared.inverse, background: "{brand}" },
       },
@@ -50,7 +50,7 @@ function App() {
       <Text testID="controls">{`controls:${controls()}`}</Text>
       <Text testID="nav-width">{`nav-width:${navBarStyle().width}`}</Text>
       <Text testID="inverse">{`inverse:${colors.inverseForeground}`}</Text>
-      <Text testID="dialog">{`dialog:${finish.dialog.borderColor}`}</Text>
+      <Text testID="modal">{`modal:${finish.modal.borderColor}`}</Text>
       <Text testID="tooltip">{`tooltip:${finish.tooltip.backgroundColor}`}</Text>
       <Text testID="inverse-fill">{`inverse-fill:${finish.inverse.backgroundColor}`}</Text>
       <Text testID="field">{`field:${inputLook().style.borderBottomWidth ?? inputLook().style.borderWidth}|${inputLook().style.borderTopWidth ?? inputLook().style.borderWidth}`}</Text>

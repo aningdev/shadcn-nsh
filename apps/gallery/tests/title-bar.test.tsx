@@ -26,7 +26,7 @@ test("the traffic lights wear their own roles' tones, and a caption cell fills o
   const tones = ["Close", "Minimize", "Zoom"].map(
     (label) => app.viewStyle(`id:lights >> label:${label}`)?.backgroundColor,
   );
-  // Close, minimize and zoom are three window-control roles, so three different fills.
+  // Close, minimize and zoom are three fixed macOS hues, so three different fills.
   expect(new Set(tones).size).toBe(3);
   expect(tones.every((tone) => tone !== undefined)).toBe(true);
 

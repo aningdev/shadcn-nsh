@@ -406,46 +406,6 @@
       },
       "$description": "Overlay outline edge (M3 outlineVariant)."
     },
-    "scrollbar-thumb": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.70667, 0.01431, 312.635],
-        "hex": "#a39ea7"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.muted-foreground}",
-            "percent": 50,
-            "b": "{color.background}"
-          }
-        }
-      },
-      "$description": "Scrollbar thumb resting fill."
-    },
-    "scrollbar-thumb-hover": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.52684, 0.01583, 307.266],
-        "hex": "#6d6972"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.muted-foreground}",
-            "percent": 80,
-            "b": "{color.background}"
-          }
-        }
-      },
-      "$description": "Scrollbar thumb fill on pointer hover."
-    },
     "field": {
       "$value": {
         "colorSpace": "oklch",
@@ -574,15 +534,6 @@
         }
       },
       "$description": "Unchecked switch thumb fill (M3 outline)."
-    },
-    "code": {
-      "$value": "{color.foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Monospace code text ink inside recessed wells."
     },
     "info": {
       "$value": {
@@ -785,32 +736,6 @@
       },
       "$description": "Tertiary accent color (M3 tertiary)."
     },
-    "window-control-off": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.82875, 0.01776, 308.223],
-        "hex": "#cac4d0"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Unfocused window traffic-light fill (M3 outlineVariant)."
-    },
-    "dialog": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.93251, 0.01479, 312.24],
-        "hex": "#ece6f0"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "Modal dialog surface (M3 surfaceContainerHigh)."
-    },
     "bevel": {
       "$value": "{color.border}",
       "$extensions": {
@@ -881,17 +806,27 @@
       "$description": "Pressed accent fill aliased to {color.primary} (state layer applies press)."
     },
     "on-accent-pressed": {
-      "$value": "{color.on-brand}",
+      "$value": "{color.primary-foreground}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "brand"
         }
       },
-      "$description": "Pressed accent ink aliased to {color.on-brand}."
+      "$description": "Pressed accent ink aliased to {color.primary-foreground}."
     }
   },
   "finish": {
     "$description": "Sparse light-mode surface finish overrides.",
+    "modal": {
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.93251, 0.01479, 312.24],
+          "hex": "#ece6f0"
+        }
+      }
+    },
     "grabber": {
       "background": {
         "$type": "color",

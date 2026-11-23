@@ -237,7 +237,7 @@ describe("init --theme", () => {
     };
     semantics.state["press-scale"] = 0.95;
     delete semantics.controls;
-    delete semantics.finishes.shared.dialog;
+    delete semantics.finishes.shared.modal;
     current.write("lib/ui/semantics.json", `${JSON.stringify(semantics, null, 2)}\n`);
 
     const out = await captured(() =>
@@ -250,7 +250,7 @@ describe("init --theme", () => {
     const merged = JSON.parse(current.read("lib/ui/semantics.json")) as typeof semantics;
     expect(merged.state["press-scale"]).toBe(0.95);
     expect(merged.controls).toBe("base");
-    expect(merged.finishes.shared.dialog).toBeDefined();
+    expect(merged.finishes.shared.modal).toBeDefined();
   });
 
   test("defaults to the library's own theme, and records that", async () => {

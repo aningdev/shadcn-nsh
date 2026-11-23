@@ -7,17 +7,9 @@
       "radius-container": "12px",
       "radius-modal": "28px",
       "font-mono": "monospace",
-      "brand-fill": "var(--primary)",
-      "on-brand": "var(--primary-foreground)",
       "scrim": "oklch(0 0 0 / 0.32)",
       "media": "oklch(0.1869 0.0151 266.766)",
-      "on-media": "oklch(1 0 0)",
-      "chart-foreground": "oklch(0.22652 0.00999 303.714)",
-      "window-close": "oklch(0.50128 0.17832 28.705)",
-      "window-minimize": "oklch(0.5909 0.13245 65.117)",
-      "window-zoom": "oklch(0.56078 0.1232 159.355)",
-      "window-control-ink": "color-mix(in srgb, oklch(0 0 0) 50%, transparent)",
-      "window-control-edge": "color-mix(in srgb, oklch(0 0 0) 12%, transparent)"
+      "on-media": "oklch(1 0 0)"
     },
     "light": {
       "background": "oklch(0.98379 0.01284 321.894)",
@@ -54,8 +46,6 @@
       "inset": "oklch(0.95363 0.01471 312.243)",
       "raised": "oklch(0.96728 0.01181 313.217)",
       "glass-edge": "oklch(0.82875 0.01776 308.223)",
-      "scrollbar-thumb": "color-mix(in srgb, var(--muted-foreground) 50%, var(--background))",
-      "scrollbar-thumb-hover": "color-mix(in srgb, var(--muted-foreground) 80%, var(--background))",
       "field": "oklch(0.91401 0.01366 314.754)",
       "line": "oklch(0.82875 0.01776 308.223)",
       "hover": "color-mix(in srgb, var(--foreground) 8%, transparent)",
@@ -65,7 +55,6 @@
       "brand-edge": "oklch(0.82875 0.01776 308.223)",
       "track": "oklch(0.91401 0.01366 314.754)",
       "knob": "oklch(0.56675 0.01627 308.142)",
-      "code": "var(--foreground)",
       "info": "oklch(0.49552 0.13046 293.709)",
       "warn": "oklch(0.5909 0.13245 65.117)",
       "up": "oklch(0.56078 0.1232 159.355)",
@@ -79,14 +68,12 @@
       "up-tint": "color-mix(in srgb, var(--up) 12%, transparent)",
       "down-tint": "color-mix(in srgb, var(--destructive) 12%, transparent)",
       "violet": "oklch(0.49039 0.06053 358.445)",
-      "window-control-off": "oklch(0.82875 0.01776 308.223)",
-      "dialog": "oklch(0.93251 0.01479 312.24)",
       "bevel": "var(--border)",
       "accent-bevel": "var(--brand-edge)",
       "disabled": "color-mix(in srgb, var(--foreground) 10%, transparent)",
       "disabled-foreground": "color-mix(in srgb, var(--foreground) 38%, transparent)",
       "accent-pressed": "var(--primary)",
-      "on-accent-pressed": "var(--on-brand)"
+      "on-accent-pressed": "var(--primary-foreground)"
     },
     "dark": {
       "background": "oklch(0.18738 0.01241 300.422)",
@@ -104,8 +91,6 @@
       "inset": "oklch(0.24451 0.01344 298.463)",
       "raised": "oklch(0.22652 0.00999 303.714)",
       "glass-edge": "oklch(0.39805 0.01736 303.721)",
-      "scrollbar-thumb": "color-mix(in srgb, var(--muted-foreground) 50%, var(--background))",
-      "scrollbar-thumb-hover": "color-mix(in srgb, var(--muted-foreground) 80%, var(--background))",
       "field": "oklch(0.32979 0.01247 298.761)",
       "line": "oklch(0.39805 0.01736 303.721)",
       "hover": "color-mix(in srgb, var(--foreground) 8%, transparent)",
@@ -115,7 +100,6 @@
       "brand-edge": "oklch(0.39805 0.01736 303.721)",
       "track": "oklch(0.32979 0.01247 298.761)",
       "knob": "oklch(0.65664 0.01531 304.011)",
-      "code": "var(--foreground)",
       "info": "oklch(0.83493 0.09457 298.018)",
       "warn": "oklch(0.82449 0.14865 73.346)",
       "up": "oklch(0.77932 0.14805 162.141)",
@@ -148,14 +132,12 @@
       "sidebar-primary": "var(--primary)",
       "sidebar-primary-foreground": "var(--primary-foreground)",
       "sidebar-ring": "var(--ring)",
-      "window-control-off": "oklch(0.39805 0.01736 303.721)",
-      "dialog": "oklch(0.2859 0.01293 298.633)",
       "bevel": "var(--border)",
       "accent-bevel": "var(--brand-edge)",
       "disabled": "color-mix(in srgb, var(--foreground) 10%, transparent)",
       "disabled-foreground": "color-mix(in srgb, var(--foreground) 38%, transparent)",
       "accent-pressed": "var(--primary)",
-      "on-accent-pressed": "var(--on-brand)"
+      "on-accent-pressed": "var(--primary-foreground)"
     }
   }
 }

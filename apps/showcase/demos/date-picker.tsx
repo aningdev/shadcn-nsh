@@ -228,7 +228,7 @@ export function DatePickerDemo() {
     ...rounded(shape.control),
     borderWidth: 1,
     borderColor: on ? colors.brand : colors.border,
-    backgroundColor: on ? colors.brandFill : colors.raised,
+    backgroundColor: on ? colors.primary : colors.raised,
     boxShadow: on ? "none" : finish.raised.boxShadow,
   });
 

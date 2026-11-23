@@ -137,7 +137,7 @@ export function SliderDemo() {
                       borderTopLeftRadius: 2,
                       borderTopRightRadius: 2,
                       backgroundColor: inRange(i(), price())
-                        ? colors.brandFill
+                        ? colors.primary
                         : alpha(colors.foreground, 0.1),
                     }}
                   />

@@ -2,7 +2,7 @@
 // title bar is hidden, the window buttons of a frameless window, and the edges that resize it. This
 // library's own (drawn on `nsh`'s View and Text, the behavior is `nsh/desktop`'s), so there is no
 // port region. Yours to change.
-import { alpha, colors, stroke, tints, windowControls } from "@shadcn-nsh/theme";
+import { alpha, colors, stroke, tints } from "@shadcn-nsh/theme";
 import { Plus, X } from "lucide";
 import type { ViewProps, ViewStyle } from "nsh";
 import { signal, split, View } from "nsh";
@@ -72,17 +72,21 @@ const cellLabel: Record<WindowControl, string> = {
   maximize: "Maximize",
 };
 
-/** The tone of a traffic light: the zoom button wears the green of the platform's zoom. */
-function lightTone(control: WindowControl): string {
-  switch (control) {
-    case "close":
-      return windowControls.close;
-    case "minimize":
-      return windowControls.minimize;
-    case "maximize":
-      return windowControls.zoom;
-  }
-}
+/**
+ * The traffic lights' hues: macOS's own, fixed whatever the theme (they say which system the window
+ * is on, not which theme the app wears — the one place this library writes colours, `ARCHITECTURE.md`
+ * P3). The glyph's ink is half-black over them, their hairline edge an eighth of it, and an inactive
+ * window's discs a light wash of the theme's ink.
+ */
+const lightTone: Record<WindowControl, string> = {
+  close: "#FF5F57",
+  minimize: "#FEBC2E",
+  maximize: "#28C840",
+};
+
+/** The ink drawn on a traffic light, and the hairline round it: black at a share, as macOS draws them. */
+export const lightInk = alpha("#000000", 0.5);
+export const lightEdge = alpha("#000000", 0.12);
 
 /** A title bar's parts as the styles they wear: spread each one. */
 export interface TitleBarLook {
@@ -136,9 +140,9 @@ export function titleBarLook(): TitleBarLook {
       borderRadius: TRAFFIC_LIGHT / 2,
       alignItems: "center",
       justifyContent: "center",
-      backgroundColor: active ? lightTone(control) : windowControls.off,
+      backgroundColor: active ? lightTone[control] : alpha(colors.foreground, 0.14),
       borderWidth: stroke.hairline,
-      borderColor: windowControls.edge,
+      borderColor: lightEdge,
       transitionProperty: "colors",
       transitionDuration: 120,
     }),
@@ -300,7 +304,7 @@ function Cell(props: { control: WindowControl }) {
 
 /** A traffic light's glyph, in the system's ink: close's cross, minimize's bar and zoom's plus. */
 function lightGlyph(control: WindowControl) {
-  const ink = windowControls.ink;
+  const ink = lightInk;
   switch (control) {
     case "close":
       return <Icon icon={X} size={8} tint={ink} weight={2} />;

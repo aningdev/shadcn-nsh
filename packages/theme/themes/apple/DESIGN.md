@@ -6,15 +6,7 @@ colors:
   scrim: "#00000066"
   media: "#10131a"
   on-media: "#ffffff"
-  chart-foreground: "#000000"
-  window-close: "#ff5f57"
-  window-minimize: "#febc2e"
-  window-zoom: "#28c840"
-  window-control-ink: "#00000080"
-  window-control-edge: "#0000001f"
   light:
-    brand-fill: "#007aff"
-    on-brand: "#ffffff"
     background: "#f2f2f7"
     foreground: "#000000"
     card: "#ffffff"
@@ -49,8 +41,6 @@ colors:
     inset: "#f4f4f5"
     raised: "#efeff0"
     glass-edge: "#dcdcdd"
-    scrollbar-thumb: "#bebec2"
-    scrollbar-thumb-hover: "#9f9fa3"
     field: "#efeff0"
     line: "#dcdcdd"
     hover: "#0000000f"
@@ -60,7 +50,6 @@ colors:
     brand-edge: "#dcdcdd"
     track: "#e9e9eb"
     knob: "#ffffff"
-    code: "#000000"
     info: "#007aff"
     warn: "#ff9500"
     up: "#34c759"
@@ -74,8 +63,6 @@ colors:
     up-tint: "#34c7591f"
     down-tint: "#ff3b301f"
     violet: "#af52de"
-    window-control-off: "#e4e4e6"
-    dialog: "#ffffff"
     bevel: "#dcdcdd"
     accent-bevel: "#dcdcdd"
     disabled: "#efeff0"
@@ -83,8 +70,6 @@ colors:
     accent-pressed: "#007aff"
     on-accent-pressed: "#ffffff"
   dark:
-    brand-fill: "#0a84ff"
-    on-brand: "#ffffff"
     background: "#000000"
     foreground: "#ffffff"
     card: "#1c1c1e"
@@ -119,8 +104,6 @@ colors:
     inset: "#2c2c30"
     raised: "#323236"
     glass-edge: "#353538"
-    scrollbar-thumb: "#4c4c4f"
-    scrollbar-thumb-hover: "#7a7a7f"
     field: "#323236"
     line: "#353538"
     hover: "#ffffff0f"
@@ -130,7 +113,6 @@ colors:
     brand-edge: "#353538"
     track: "#39393d"
     knob: "#ffffff"
-    code: "#ffffff"
     info: "#0a84ff"
     warn: "#ff9f0a"
     up: "#30d158"
@@ -144,8 +126,6 @@ colors:
     up-tint: "#30d1581f"
     down-tint: "#ff453a1f"
     violet: "#bf5af2"
-    window-control-off: "#3d3d41"
-    dialog: "#1c1c1e"
     bevel: "#353538"
     accent-bevel: "#353538"
     disabled: "#323236"
@@ -287,7 +267,7 @@ components:
     rounded: "{rounded.container}"
     padding: "{spacing.control.padding}"
   dialog:
-    backgroundColor: "{colors.light.dialog}"
+    backgroundColor: "{colors.light.card}"
     textColor: "{colors.light.card-foreground}"
     typography: "{typography.body}"
     rounded: "{rounded.modal}"
@@ -361,13 +341,11 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`track`** (light `#e9e9eb`, dark `#39393d`): Switch and slider track (UIKit secondarySystemFill composited over card).
 - **`knob`** (`#ffffff`): Switch knob and slider handle (pure white).
 - **`inverse`** (light `#ffffff`, dark `#2c2c2e`): High-contrast surface for toasts and tooltips.
-- **`dialog`** (light `#ffffff`, dark `#1c1c1e`): Modal dialog container surface.
 - **`disabled`** (light `#efeff0`, dark `#323236`): Disabled control container surface.
 
 ### Ink
 
 - **`on-media`** (`#ffffff`): White ink over photographs and dark media surfaces; invariant across appearances.
-- **`chart-foreground`** (`#000000`): Dark ink on light chart tiles matching UIKit light label (#000000).
 - **`foreground`** (light `#000000`, dark `#ffffff`): Primary label ink (UIKit label).
 - **`card-foreground`** (light `#000000`, dark `#ffffff`): Primary text and icon ink on card surfaces.
 - **`popover-foreground`** (light `#000000`, dark `#ffffff`): Primary text and icon ink on popover surfaces.
@@ -377,14 +355,11 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`sidebar-foreground`** (light `#000000`, dark `#ffffff`): Primary text and icon ink inside the sidebar.
 - **`sidebar-accent-foreground`** (light `#000000`, dark `#ffffff`): Text and icon ink on active sidebar rows.
 - **`faint`** (light `#c5c5c7`, dark `#5a5a5f`): Tertiary label ink for placeholders and quiet captions (UIKit tertiaryLabel).
-- **`code`** (light `#000000`, dark `#ffffff`): Monospace code text ink inside recessed wells.
 - **`inverse-foreground`** (light `#000000`, dark `#ffffff`): Primary text ink on inverse surfaces.
 - **`disabled-foreground`** (light `#8a8a8e`, dark `#98989f`): Disabled control label and icon ink.
 
 ### Brand
 
-- **`brand-fill`** (light `#007aff`, dark `#0a84ff`): Primary brand action fill, aliased to {color.primary} (UIKit systemBlue).
-- **`on-brand`** (`#ffffff`): Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}.
 - **`primary`** (light `#007aff`, dark `#0a84ff`): System accent blue (UIKit systemBlue).
 - **`primary-foreground`** (`#ffffff`): Text and icon ink on primary brand action fills.
 - **`sidebar-primary`** (light `#007aff`, dark `#0a84ff`): Primary action highlight color in the sidebar.
@@ -416,22 +391,14 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 
 ### Chrome
 
-- **`window-close`** (`#ff5f57`): macOS window close traffic-light button fill.
-- **`window-minimize`** (`#febc2e`): macOS window minimize traffic-light button fill.
-- **`window-zoom`** (`#28c840`): macOS window zoom traffic-light button fill.
-- **`window-control-ink`** (`#00000080`): Glyph ink inside macOS window traffic-light buttons.
-- **`window-control-edge`** (`#0000001f`): Hairline border around macOS window traffic-light buttons.
 - **`border`** (light `#dcdcdd`, dark `#353538`): Hairline separator (UIKit separator hairline composited over card).
 - **`input`** (light `#c6c6c8`, dark `#3e3e41`): Input control border (UIKit separator composited over card).
 - **`ring`** (light `#007aff`, dark `#0a84ff`): Focus ring color matching UIKit systemBlue.
 - **`sidebar-border`** (light `#dcdcdd`, dark `#353538`): Sidebar divider and toolbar hairline border color.
 - **`sidebar-ring`** (light `#007aff`, dark `#0a84ff`): Focus indicator ring color inside the sidebar.
 - **`glass-edge`** (light `#dcdcdd`, dark `#353538`): Hairline border on glass, pill, and floating overlay surfaces.
-- **`scrollbar-thumb`** (light `#bebec2`, dark `#4c4c4f`): Scrollbar thumb resting fill.
-- **`scrollbar-thumb-hover`** (light `#9f9fa3`, dark `#7a7a7f`): Scrollbar thumb fill on pointer hover.
 - **`line`** (light `#dcdcdd`, dark `#353538`): Inset divider hairline (UIKit hairline composited over card).
 - **`ring-halo`** (light `#007aff4d`, dark `#0a84ff4d`): Outer keyboard focus halo (30% ring color over transparent).
-- **`window-control-off`** (light `#e4e4e6`, dark `#3d3d41`): Unfocused window traffic-light fill (UIKit systemFill composited over card).
 - **`bevel`** (light `#dcdcdd`, dark `#353538`): Directional control elevation bevel stroke.
 - **`accent-bevel`** (light `#dcdcdd`, dark `#353538`): Accent control elevation top and side bevel stroke.
 
@@ -533,7 +500,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.chip`**: A chosen value label inside a field: a fill, an inner highlight and an edge.
 - **`finish.glass`** (backdropFilter: `blur(30px)`; material: `{"apple":{"glass":"regular","tint":null},"ios":{"backdrop":"thin"}}`): Liquid Glass overlay surface with translucent popover fill, 30px blur fallback, and regular/thin Apple material.
 - **`finish.menu`** (backdropFilter: `blur(30px)`; material: `{"apple":{"glass":"regular","tint":null},"ios":{"backdrop":"regular"}}`): Floating menu/popover surface with translucent popover fill, hairline + drop shadow, and Liquid Glass material.
-- **`finish.dialog`**: A dialog face: the card colour with the menu shadow.
+- **`finish.modal`**: A modal face: the card colour with the menu shadow.
 - **`finish.grabber`**: The drag handle pill at the top of a bottom sheet.
 - **`finish.tooltip`**: A tooltip face: the popover pane, without a shadow.
 - **`finish.inverse`** (backdropFilter: `blur(30px)`; material: `{"apple":{"glass":"regular","tint":null},"ios":{"backdrop":"regular"}}`): Toast/inverse floating surface using Liquid Glass material over inverse fill.

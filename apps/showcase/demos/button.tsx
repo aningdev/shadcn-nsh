@@ -324,7 +324,7 @@ function Split(props: Ctx) {
     state() === "busy" ? "Merging…" : state() === "done" ? strategy().done : strategy().label;
   const done = () => state() === "done";
   // Done, the pair turns the `up` tone: its tint under the word and the hairline.
-  const ink = () => (done() ? colors.up : colors.onBrand);
+  const ink = () => (done() ? colors.up : colors.primaryForeground);
   const doneFrame = () =>
     done()
       ? {
@@ -354,7 +354,7 @@ function Split(props: Ctx) {
                   <Icon icon={done() ? Check : GitMerge} {...buttonGlyph("default")} tint={ink()} />
                 }
               >
-                <Spinner {...buttonGlyph("default")} tint={colors.onBrand} />
+                <Spinner {...buttonGlyph("default")} tint={colors.primaryForeground} />
               </If>
             </View>
             <Text style={[buttonLabel("default"), { color: ink() }]}>{label()}</Text>

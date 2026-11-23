@@ -442,7 +442,9 @@ function Profile(props: { last: { (): string; set: (value: string) => void } }) 
               backgroundColor: colors.brand,
             }}
           >
-            <Text style={{ fontSize: 10, fontWeight: "700", color: colors.onBrand }}>PRO</Text>
+            <Text style={{ fontSize: 10, fontWeight: "700", color: colors.primaryForeground }}>
+              PRO
+            </Text>
           </View>
         </Person>
         <View style={{ flex: 1, gap: 3 }}>

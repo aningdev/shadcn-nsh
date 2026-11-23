@@ -226,7 +226,7 @@ export function PhysicsDemo() {
             gap: 8,
             backgroundColor: pressed.interpolate({
               inputRange: [0, 1],
-              outputRange: [colors.brandFill, colors.info],
+              outputRange: [colors.primary, colors.info],
             }),
             boxShadow: finish.accent.boxShadow,
             transform: [
@@ -237,8 +237,10 @@ export function PhysicsDemo() {
             ],
           }}
         >
-          <Icon icon={Hand} size={28} tint={colors.onBrand} />
-          <Text style={{ color: colors.onBrand, fontSize: 15, fontWeight: "700" }}>Drag me</Text>
+          <Icon icon={Hand} size={28} tint={colors.primaryForeground} />
+          <Text style={{ color: colors.primaryForeground, fontSize: 15, fontWeight: "700" }}>
+            Drag me
+          </Text>
         </View>
       </View>
       <View

@@ -1253,17 +1253,17 @@
       "$description": "A switch knob, on.",
       "background": {
         "$type": "color",
-        "$value": "{color.on-brand}"
+        "$value": "{color.primary-foreground}"
       },
       "gradient": {
         "$type": "gradient",
         "$value": [
           {
-            "color": "{color.on-brand}",
+            "color": "{color.primary-foreground}",
             "position": 0
           },
           {
-            "color": "{color.on-brand}",
+            "color": "{color.primary-foreground}",
             "position": 1
           }
         ],
@@ -1920,12 +1920,8 @@
         }
       }
     },
-    "dialog": {
-      "$description": "M3 dialog surface using SurfaceContainerHigh with Level 3 shadow and 6dp Android elevation.",
-      "background": {
-        "$type": "color",
-        "$value": "{color.dialog}"
-      },
+    "modal": {
+      "$description": "M3 modal surface using SurfaceContainerHigh with Level 3 shadow and 6dp Android elevation.",
       "shadow": {
         "$type": "shadow",
         "$value": [

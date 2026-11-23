@@ -1,12 +1,13 @@
 // The reference of `title-bar.tsx`: the same page, the look spread on `nsh`'s own View instead of
 // worn by the component. The render check requires the two to draw the same pixels.
-import { colors, stroke, windowControls } from "@shadcn-nsh/theme";
+import { colors, stroke } from "@shadcn-nsh/theme";
 import { Plus, X } from "lucide";
 import { mount, Text, View } from "nsh";
 import type { WindowControl } from "nsh/desktop";
 
 import { Icon } from "@/packages/ui/lib/icons";
 import {
+  lightInk,
   TITLE_BAR_HEIGHT,
   titleBarLook,
   type WindowControlsVariant,
@@ -82,7 +83,7 @@ function Light(props: { control: WindowControl }) {
     <View style={[titleBarLook().light(props.control, true)]}>
       <View style={[titleBarLook().glyph(false)]}>
         <If when={props.control === "close"}>
-          <Icon icon={X} size={8} tint={windowControls.ink} weight={2} />
+          <Icon icon={X} size={8} tint={lightInk} weight={2} />
         </If>
         <If when={props.control === "minimize"}>
           <View
@@ -90,12 +91,12 @@ function Light(props: { control: WindowControl }) {
               width: 6,
               height: 1.5,
               borderRadius: 1,
-              backgroundColor: windowControls.ink,
+              backgroundColor: lightInk,
             }}
           />
         </If>
         <If when={props.control === "maximize"}>
-          <Icon icon={Plus} size={8} tint={windowControls.ink} weight={2} />
+          <Icon icon={Plus} size={8} tint={lightInk} weight={2} />
         </If>
       </View>
     </View>

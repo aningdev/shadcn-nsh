@@ -471,15 +471,24 @@ function CustomHeader(props: { pop: () => void }) {
     <Text
       onPress={props.pop}
       hitSlop={10}
-      style={{ color: colors.onBrand, fontSize: 17, fontWeight: "500" }}
+      style={{ color: colors.primaryForeground, fontSize: 17, fontWeight: "500" }}
     >
       Close
     </Text>
   );
   const center = () => (
     <View style={{ flexDirection: "row", alignItems: "center", gap: 7 }}>
-      <View style={{ width: 10, height: 10, borderRadius: 5, backgroundColor: colors.onBrand }} />
-      <Text style={{ color: colors.onBrand, fontSize: 17, fontWeight: "700" }}>Custom title</Text>
+      <View
+        style={{
+          width: 10,
+          height: 10,
+          borderRadius: 5,
+          backgroundColor: colors.primaryForeground,
+        }}
+      />
+      <Text style={{ color: colors.primaryForeground, fontSize: 17, fontWeight: "700" }}>
+        Custom title
+      </Text>
     </View>
   );
   const right = () => (
@@ -488,10 +497,10 @@ function CustomHeader(props: { pop: () => void }) {
       hitSlop={10}
       style={{ flexDirection: "row", alignItems: "center", gap: 5 }}
     >
-      <Icon icon={Star} size={18} tint={colors.onBrand} />
+      <Icon icon={Star} size={18} tint={colors.primaryForeground} />
       <Text
         style={{
-          color: colors.onBrand,
+          color: colors.primaryForeground,
           fontSize: 17,
           fontWeight: "600",
           fontVariant: ["tabular-nums"],
@@ -505,9 +514,9 @@ function CustomHeader(props: { pop: () => void }) {
     <NavPage
       title="Custom"
       headerStyle={{
-        tintColor: colors.onBrand,
-        backgroundColor: colors.brandFill,
-        color: colors.onBrand,
+        tintColor: colors.primaryForeground,
+        backgroundColor: colors.primary,
+        color: colors.primaryForeground,
       }}
       headerBackVisible={false}
       headerLeft={left()}
@@ -517,8 +526,8 @@ function CustomHeader(props: { pop: () => void }) {
         <PageBar
           page={page}
           title="Custom"
-          background={colors.brandFill}
-          tint={colors.onBrand}
+          background={colors.primary}
+          tint={colors.primaryForeground}
           left={left()}
           center={center()}
           right={right()}
@@ -911,7 +920,7 @@ function Deep(props: {
                     justifyContent: "center",
                     borderWidth: level() === props.depth ? 0 : 1,
                     borderColor: colors.border,
-                    backgroundColor: level() === props.depth ? colors.brandFill : colors.raised,
+                    backgroundColor: level() === props.depth ? colors.primary : colors.raised,
                     ...(level() === props.depth ? finish.accent : finish.raised),
                   }}
                 >
@@ -920,7 +929,8 @@ function Deep(props: {
                       fontSize: 13,
                       fontWeight: "600",
                       fontVariant: ["tabular-nums"],
-                      color: level() === props.depth ? colors.onBrand : colors.mutedForeground,
+                      color:
+                        level() === props.depth ? colors.primaryForeground : colors.mutedForeground,
                     }}
                   >
                     {level()}

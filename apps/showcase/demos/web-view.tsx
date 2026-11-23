@@ -21,7 +21,7 @@ const page =
   body { margin: 0; padding: 16px; background: ${colors.inset}; color: ${colors.foreground}; font-family: -apple-system, system-ui, sans-serif; font-size: 15px; line-height: 1.4; }
   h3 { margin: 0 0 4px; font-size: 17px; font-weight: 600; }
   p { margin: 0 0 12px; color: ${colors.mutedForeground}; font-size: 15px; }
-  button { height: 44px; padding: 0 18px; border: 0; border-radius: 10px; background: ${finish.accent.backgroundImage}; color: ${colors.onBrand}; font-family: inherit; font-size: 15px; font-weight: 600; box-shadow: inset 0 1px 0 rgba(255,255,255,${isDark() ? 0.45 : 0.6}); }
+  button { height: 44px; padding: 0 18px; border: 0; border-radius: 10px; background: ${finish.accent.backgroundImage}; color: ${colors.primaryForeground}; font-family: inherit; font-size: 15px; font-weight: 600; box-shadow: inset 0 1px 0 rgba(255,255,255,${isDark() ? 0.45 : 0.6}); }
   #got { margin-top: 12px; padding: 10px 12px; border-radius: 10px; border: 1px solid ${colors.border}; color: ${colors.mutedForeground}; font-size: 15px; }
 </style></head>
 <body>

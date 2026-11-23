@@ -88,24 +88,6 @@
   "color": {
     "$type": "color",
     "$description": "Appearance-invariant C-layer color roles shared by light and dark modes.",
-    "brand-fill": {
-      "$value": "{color.primary}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Primary brand action fill, aliased to {color.primary} (UIKit systemBlue)."
-    },
-    "on-brand": {
-      "$value": "{color.primary-foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}."
-    },
     "scrim": {
       "$value": {
         "colorSpace": "oklch",
@@ -145,108 +127,6 @@
         }
       },
       "$description": "White ink over photographs and dark media surfaces; invariant across appearances."
-    },
-    "chart-foreground": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0, 0, 0],
-        "hex": "#000000"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Dark ink on light chart tiles matching UIKit light label (#000000)."
-    },
-    "window-close": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.6936, 0.19638, 26.364],
-        "hex": "#ff5f57"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "macOS window close traffic-light button fill."
-    },
-    "window-minimize": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.83478, 0.1612, 80.911],
-        "hex": "#febc2e"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "macOS window minimize traffic-light button fill."
-    },
-    "window-zoom": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.72803, 0.21734, 144.712],
-        "hex": "#28c840"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "macOS window zoom traffic-light button fill."
-    },
-    "window-control-ink": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0, 0, 0],
-        "alpha": 0.5,
-        "hex": "#000000"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": {
-              "colorSpace": "oklch",
-              "components": [0, 0, 0],
-              "hex": "#000000"
-            },
-            "percent": 50,
-            "b": "transparent"
-          }
-        }
-      },
-      "$description": "Glyph ink inside macOS window traffic-light buttons."
-    },
-    "window-control-edge": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0, 0, 0],
-        "alpha": 0.12,
-        "hex": "#000000"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": {
-              "colorSpace": "oklch",
-              "components": [0, 0, 0],
-              "hex": "#000000"
-            },
-            "percent": 12,
-            "b": "transparent"
-          }
-        }
-      },
-      "$description": "Hairline border around macOS window traffic-light buttons."
     }
   },
   "state": {

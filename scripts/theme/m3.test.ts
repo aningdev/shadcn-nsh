@@ -211,8 +211,6 @@ describe("m3Roles", () => {
   });
 
   test("default role values round-trip to M3 baseline hexes and preserve RESEARCH var(--x) aliases", () => {
-    expect(baselineRoles.theme["brand-fill"]).toBe("var(--primary)");
-    expect(baselineRoles.theme["on-brand"]).toBe("var(--primary-foreground)");
     expect(baselineRoles.light["card-foreground"]).toBe("var(--foreground)");
     expect(baselineRoles.light["popover-foreground"]).toBe("var(--foreground)");
     expect(baselineRoles.light["sidebar-foreground"]).toBe("var(--foreground)");
@@ -220,10 +218,10 @@ describe("m3Roles", () => {
     expect(baselineRoles.light["sidebar-primary-foreground"]).toBe("var(--primary-foreground)");
     expect(baselineRoles.light["sidebar-ring"]).toBe("var(--ring)");
     expect(baselineRoles.light.brand).toBe("var(--primary)");
-    expect(baselineRoles.light.code).toBe("var(--foreground)");
 
     expect(css(parseColor(baselineRoles.light.background)).toUpperCase()).toBe("#FEF7FF");
-    expect(css(parseColor(baselineRoles.light.dialog)).toUpperCase()).toBe("#ECE6F0");
+    expect(css(parseColor(baselineRoles.light.popover)).toUpperCase()).toBe("#F3EDF7");
+    expect(css(parseColor(baselineRoles.light.field)).toUpperCase()).toBe("#E6E0E9");
     expect(css(parseColor(baselineRoles.light.primary)).toUpperCase()).toBe("#6750A4");
     expect(css(parseColor(baselineRoles.light["secondary-foreground"])).toUpperCase()).toBe(
       "#4A4458",
@@ -240,12 +238,12 @@ describe("m3Roles", () => {
     );
     expect(css(parseColor(baselineRoles.light["inverse-brand"])).toUpperCase()).toBe("#D0BCFF");
     expect(css(parseColor(baselineRoles.dark.background)).toUpperCase()).toBe("#141218");
-    expect(css(parseColor(baselineRoles.dark.dialog)).toUpperCase()).toBe("#2B2930");
+    expect(css(parseColor(baselineRoles.dark.popover)).toUpperCase()).toBe("#211F26");
     expect(css(parseColor(baselineRoles.dark.primary)).toUpperCase()).toBe("#D0BCFF");
     expect(css(parseColor(baselineRoles.dark.inverse)).toUpperCase()).toBe("#E6E0E9");
     expect(css(parseColor(baselineRoles.dark["inverse-foreground"])).toUpperCase()).toBe("#322F35");
     expect(css(parseColor(baselineRoles.dark["inverse-brand"])).toUpperCase()).toBe("#6750A4");
-    expect(css(parseColor(tealRoles.light.dialog)).toUpperCase()).not.toBe("#ECE6F0");
+    expect(css(parseColor(tealRoles.light.popover)).toUpperCase()).not.toBe("#F3EDF7");
   });
 
   test("foreground/background pairs meet WCAG AA contrast (>= 4.5) for default seed", () => {
@@ -261,7 +259,6 @@ describe("m3Roles", () => {
       ["sidebar-foreground", "sidebar"],
       ["sidebar-primary-foreground", "sidebar-primary"],
       ["sidebar-accent-foreground", "sidebar-accent"],
-      ["on-brand", "brand-fill"],
       ["inverse-foreground", "inverse"],
       ["inverse-brand", "inverse"],
       ["destructive", "destructive-tint"],
@@ -321,8 +318,15 @@ describe("compiled material theme files", () => {
     expect(files.semantics.finishes.shared.section).toMatchObject({
       material: { android: { elevation: 1 } },
     });
-    expect(files.semantics.finishes.shared.dialog).toMatchObject({
-      background: "{dialog}",
+    expect(files.semantics.finishes.shared.modal).toMatchObject({
+      shadow: expect.stringContaining("0 "),
+      "border-color": "transparent",
+    });
+    expect(files.semantics.finishes.light.modal).toMatchObject({
+      background: "oklch(0.93251 0.01479 312.24)",
+    });
+    expect(files.semantics.finishes.dark.modal).toMatchObject({
+      background: "oklch(0.2859 0.01293 298.633)",
     });
     expect(files.semantics.finishes.shared.disabled).toMatchObject({
       background: "{disabled}",

@@ -1156,7 +1156,7 @@
       },
       "foreground": {
         "$type": "color",
-        "$value": "{color.on-brand}"
+        "$value": "{color.primary-foreground}"
       },
       "border-color": {
         "$type": "color",
@@ -1280,11 +1280,11 @@
         }
       }
     },
-    "dialog": {
+    "modal": {
       "$description": "WinUI 3 ContentDialog surface with depth-128 shadow and composited SurfaceStrokeColorDefault border.",
       "background": {
         "$type": "color",
-        "$value": "{color.dialog}"
+        "$value": "{color.background}"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {

@@ -394,46 +394,6 @@
       },
       "$description": "Hairline border on glass, pill, and floating overlay surfaces."
     },
-    "scrollbar-thumb": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.80286, 0.00626, 286.258],
-        "hex": "#bebec2"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.muted-foreground}",
-            "percent": 50,
-            "b": "{color.background}"
-          }
-        }
-      },
-      "$description": "Scrollbar thumb resting fill."
-    },
-    "scrollbar-thumb-hover": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.70316, 0.00604, 286.243],
-        "hex": "#9f9fa3"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.muted-foreground}",
-            "percent": 80,
-            "b": "{color.background}"
-          }
-        }
-      },
-      "$description": "Scrollbar thumb fill on pointer hover."
-    },
     "field": {
       "$value": {
         "colorSpace": "oklch",
@@ -562,19 +522,6 @@
         }
       },
       "$description": "Switch knob and slider handle (pure white)."
-    },
-    "code": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0, 0, 0],
-        "hex": "#000000"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Monospace code text ink inside recessed wells."
     },
     "info": {
       "$value": {
@@ -781,28 +728,6 @@
       },
       "$description": "Accent purple ink (UIKit systemPurple)."
     },
-    "window-control-off": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.91944, 0.00269, 286.347],
-        "hex": "#e4e4e6"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Unfocused window traffic-light fill (UIKit systemFill composited over card)."
-    },
-    "dialog": {
-      "$value": "{color.card}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "Modal dialog container surface."
-    },
     "bevel": {
       "$value": "{color.border}",
       "$extensions": {
@@ -849,7 +774,7 @@
       "$description": "Accent control fill while pressed."
     },
     "on-accent-pressed": {
-      "$value": "{color.on-brand}",
+      "$value": "{color.primary-foreground}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "brand"
@@ -1053,7 +978,7 @@
         ]
       }
     },
-    "dialog": {
+    "modal": {
       "shadow": {
         "$type": "shadow",
         "$value": [

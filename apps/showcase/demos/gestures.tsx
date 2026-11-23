@@ -178,7 +178,7 @@ function Ball() {
             justifyContent: "center",
             backgroundColor: grab.interpolate({
               inputRange: [0, 1],
-              outputRange: [colors.info, colors.brandFill],
+              outputRange: [colors.info, colors.primary],
             }),
             ...knobDrop(),
             translate: [pos().x, pos().y],
@@ -190,7 +190,7 @@ function Ball() {
               width: 18,
               height: 18,
               borderRadius: 9,
-              backgroundColor: alpha(colors.onBrand, 0.35),
+              backgroundColor: alpha(colors.primaryForeground, 0.35),
             }}
           />
         </View>
@@ -452,7 +452,7 @@ function PressEvents() {
                 justifyContent: "center",
                 backgroundColor: flashes[i()].interpolate({
                   inputRange: [0, 1],
-                  outputRange: [alpha(colors.foreground, 0), colors.brandFill],
+                  outputRange: [alpha(colors.foreground, 0), colors.primary],
                 }),
               }}
             >
@@ -481,7 +481,7 @@ function PressEvents() {
           delayLongPress={250}
           hoverStyle={{ ...finish.hover }}
           activeStyle={{ ...finish.pressed }}
-          android={{ ripple: { color: alpha(colors.brandFill, 0.25) } }}
+          android={{ ripple: { color: alpha(colors.primary, 0.25) } }}
           role="button"
           style={{
             flex: 1,

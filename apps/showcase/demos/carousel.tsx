@@ -698,7 +698,7 @@ function Banners(props: { log: (text: string) => void }) {
                 top: (size.hit - 4) / 2,
                 bottom: (size.hit - 4) / 2,
                 borderRadius: 2,
-                backgroundColor: colors.brandFill,
+                backgroundColor: colors.primary,
               }}
             >
               <Each of={BANNERS}>

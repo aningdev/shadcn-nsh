@@ -107,7 +107,7 @@ export function codeBlockLook(): CodeBlockLook {
       fontFamily: mono(),
       fontSize: font.size(codeRole(size)),
       lineHeight: font.lineHeight(codeRole(size)),
-      color: variant === "destructive" ? colors.destructive : colors.code,
+      color: variant === "destructive" ? colors.destructive : colors.foreground,
     }),
     line: (variant, size) => ({
       flexDirection: "row",

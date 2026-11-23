@@ -92,6 +92,7 @@ export interface ThemeStyleInput {
     overlay: { hover: number; focus: number; pressed: number; dragged: number };
     ripple: boolean;
     "pressed-opacity": number;
+    "rest-opacity": number;
     "accent-pressed-opacity"?: number;
     disabled: { content: number; fill: boolean };
   };
@@ -790,6 +791,14 @@ function encodeSharedStyleOverrides(
     stateOut["pressed-opacity"] = {
       $value: style.state["pressed-opacity"],
       $description: desc("state.pressed-opacity", basePressedOpacity.$description),
+    };
+  }
+
+  const baseRestOpacity = getAt(baseState, "rest-opacity");
+  if (style.state["rest-opacity"] !== baseRestOpacity.$value) {
+    stateOut["rest-opacity"] = {
+      $value: style.state["rest-opacity"],
+      $description: desc("state.rest-opacity", baseRestOpacity.$description),
     };
   }
 

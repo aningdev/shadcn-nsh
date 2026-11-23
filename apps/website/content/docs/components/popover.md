@@ -98,7 +98,7 @@ child; an element brings its own (its `disabled` is the one that counts).
   <Badge>New</Badge>
 </PopoverTrigger>
 <PopoverTrigger>
-  <View accessibilityLabel="Filters" expandedStyle={{ backgroundColor: colors.accent }}>
+  <View accessibilityLabel="Filters" expandedStyle={{ backgroundColor: colors.brand }}>
     <Icon icon={SlidersHorizontal} size={14} />
     <Text>Filters</Text>
   </View>

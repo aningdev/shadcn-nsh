@@ -6,15 +6,7 @@ colors:
   scrim: "#0000004d"
   media: "#10131a"
   on-media: "#ffffff"
-  chart-foreground: "#1a1a1a"
-  window-close: "#ff5f57"
-  window-minimize: "#febc2e"
-  window-zoom: "#28c840"
-  window-control-ink: "#00000080"
-  window-control-edge: "#0000001f"
   light:
-    brand-fill: "#005fb8"
-    on-brand: "#ffffff"
     background: "#f3f3f3"
     foreground: "#1a1a1a"
     card: "#fbfbfb"
@@ -49,8 +41,6 @@ colors:
     inset: "#ededed"
     raised: "#fbfbfb"
     glass-edge: "#e5e5e5"
-    scrollbar-thumb: "#868686"
-    scrollbar-thumb-hover: "#868686"
     field: "#fbfbfb"
     line: "#e5e5e5"
     hover: "#f6f6f6"
@@ -60,7 +50,6 @@ colors:
     brand-edge: "#00396e"
     track: "#ededed"
     knob: "#5c5c5c"
-    code: "#1a1a1a"
     info: "#0078d4"
     warn: "#9d5d00"
     up: "#0f7b0f"
@@ -74,8 +63,6 @@ colors:
     up-tint: "#dff6dd"
     down-tint: "#fde7e9"
     violet: "#6e56c4"
-    window-control-off: "#dcdcdf"
-    dialog: "#f3f3f3"
     bevel: "#cccccc"
     accent-bevel: "#146cbe"
     disabled: "#f5f5f5"
@@ -83,8 +70,6 @@ colors:
     accent-pressed: "#317dc4"
     on-accent-pressed: "#c2d8ed"
   dark:
-    brand-fill: "#60cdff"
-    on-brand: "#000000"
     background: "#202020"
     foreground: "#ffffff"
     card: "#2b2b2b"
@@ -119,8 +104,6 @@ colors:
     inset: "#1d1d1d"
     raised: "#2d2d2d"
     glass-edge: "#1a1a1a"
-    scrollbar-thumb: "#9a9a9a"
-    scrollbar-thumb-hover: "#9a9a9a"
     field: "#2d2d2d"
     line: "#323232"
     hover: "#323232"
@@ -130,7 +113,6 @@ colors:
     brand-edge: "#53b1dc"
     track: "#1d1d1d"
     knob: "#cccccc"
-    code: "#ffffff"
     info: "#60cdff"
     warn: "#fce100"
     up: "#6ccb5f"
@@ -144,8 +126,6 @@ colors:
     up-tint: "#393d1b"
     down-tint: "#442726"
     violet: "#b9a2ff"
-    window-control-off: "#45484e"
-    dialog: "#202020"
     bevel: "#353535"
     accent-bevel: "#6cd1ff"
     disabled: "#2a2a2a"
@@ -303,7 +283,7 @@ components:
     rounded: "{rounded.container}"
     padding: "{spacing.control.padding}"
   dialog:
-    backgroundColor: "{colors.light.dialog}"
+    backgroundColor: "{colors.light.background}"
     textColor: "{colors.light.card-foreground}"
     typography: "{typography.body}"
     rounded: "{rounded.modal}"
@@ -360,7 +340,7 @@ WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composite
 
 ### Surface
 
-- **`scrim`** (`#0000004d`): Translucent backdrop scrim behind dialogs and overlays (WinUI SmokeFillColorDefault #4D000000).
+- **`scrim`** (`#0000004d`): Translucent backdrop scrim behind modals and overlays (WinUI SmokeFillColorDefault #4D000000).
 - **`media`** (`#10131a`): Ground behind photographs and videos; invariant across appearances.
 - **`background`** (light `#f3f3f3`, dark `#202020`): Window base surface (WinUI SolidBackgroundFillColorBase).
 - **`card`** (light `#fbfbfb`, dark `#2b2b2b`): Elevated card background (WinUI CardBackgroundFillColorDefault composited over base).
@@ -377,13 +357,11 @@ WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composite
 - **`track`** (light `#ededed`, dark `#1d1d1d`): Switch and slider track (WinUI ControlAltFillColorSecondary).
 - **`knob`** (light `#5c5c5c`, dark `#cccccc`): Unchecked switch thumb (WinUI TextFillColorSecondary).
 - **`inverse`** (light `#f9f9f9`, dark `#282828`): TeachingTip/toast surface (WinUI SolidBackgroundFillColorTertiary composited over base).
-- **`dialog`** (light `#f3f3f3`, dark `#202020`): ContentDialog surface aliased to {color.background} (SolidBackgroundFillColorBase).
 - **`disabled`** (light `#f5f5f5`, dark `#2a2a2a`): Disabled control container fill (WinUI ControlFillColorDisabled composited over base).
 
 ### Ink
 
 - **`on-media`** (`#ffffff`): White ink over photographs and dark media surfaces; invariant across appearances.
-- **`chart-foreground`** (`#1a1a1a`): Dark ink on light chart tiles matching WinUI light TextFillColorPrimary.
 - **`foreground`** (light `#1a1a1a`, dark `#ffffff`): Primary text and icon ink (WinUI TextFillColorPrimary composited over base).
 - **`card-foreground`** (light `#1a1a1a`, dark `#ffffff`): Primary ink on card surfaces (WinUI TextFillColorPrimary).
 - **`popover-foreground`** (light `#1a1a1a`, dark `#ffffff`): Primary ink on popover surfaces (WinUI TextFillColorPrimary).
@@ -393,14 +371,11 @@ WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composite
 - **`sidebar-foreground`** (light `#1a1a1a`, dark `#ffffff`): Sidebar primary ink (WinUI TextFillColorPrimary).
 - **`sidebar-accent-foreground`** (light `#1a1a1a`, dark `#ffffff`): Sidebar active item ink (WinUI TextFillColorPrimary).
 - **`faint`** (light `#868686`, dark `#969696`): Tertiary label ink (WinUI TextFillColorTertiary composited over base).
-- **`code`** (light `#1a1a1a`, dark `#ffffff`): Inline code ink (WinUI TextFillColorPrimary).
 - **`inverse-foreground`** (light `#1a1a1a`, dark `#ffffff`): Ink on inverse surface (WinUI TextFillColorPrimary).
 - **`disabled-foreground`** (light `#9b9b9b`, dark `#717171`): Disabled control text/icon ink (WinUI TextFillColorDisabled composited over base).
 
 ### Brand
 
-- **`brand-fill`** (light `#005fb8`, dark `#60cdff`): Primary brand action fill, aliased to {color.primary} (WinUI AccentFillColorDefault).
-- **`on-brand`** (light `#ffffff`, dark `#000000`): Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground} (WinUI TextOnAccentFillColorPrimary).
 - **`primary`** (light `#005fb8`, dark `#60cdff`): Accent button fill (WinUI AccentFillColorDefault: Dark1 light / Light2 dark from SystemAccentColor).
 - **`primary-foreground`** (light `#ffffff`, dark `#000000`): Ink on accent fills (WinUI TextOnAccentFillColorPrimary).
 - **`sidebar-primary`** (light `#005fb8`, dark `#60cdff`): Sidebar primary accent matching AccentFillColorDefault.
@@ -432,22 +407,14 @@ WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composite
 
 ### Chrome
 
-- **`window-close`** (`#ff5f57`): macOS window close traffic-light button fill.
-- **`window-minimize`** (`#febc2e`): macOS window minimize traffic-light button fill.
-- **`window-zoom`** (`#28c840`): macOS window zoom traffic-light button fill.
-- **`window-control-ink`** (`#00000080`): Glyph ink inside macOS window traffic-light buttons (50% black literal).
-- **`window-control-edge`** (`#0000001f`): Hairline border around macOS window traffic-light buttons (12% black literal).
 - **`border`** (light `#e5e5e5`, dark `#303030`): Standard control hairline border (WinUI ControlStrokeColorDefault composited over base).
 - **`input`** (light `#868686`, dark `#9a9a9a`): Input and check control outline (WinUI ControlStrongStrokeColorDefault composited over base).
 - **`ring`** (light `#1a1a1a`, dark `#ffffff`): Outer keyboard focus stroke (WinUI FocusStrokeColorOuter).
 - **`sidebar-border`** (light `#e5e5e5`, dark `#323232`): Sidebar separator stroke (WinUI DividerStrokeColorDefault).
 - **`sidebar-ring`** (light `#1a1a1a`, dark `#ffffff`): Sidebar focus stroke (WinUI FocusStrokeColorOuter).
 - **`glass-edge`** (light `#e5e5e5`, dark `#1a1a1a`): Flyout and acrylic border (WinUI SurfaceStrokeColorFlyout composited over base).
-- **`scrollbar-thumb`** (light `#868686`, dark `#9a9a9a`): Static scrollbar thumb color (WinUI ControlStrongFillColorDefault).
-- **`scrollbar-thumb-hover`** (light `#868686`, dark `#9a9a9a`): Static scrollbar hover color (WinUI ControlStrongFillColorDefault).
 - **`line`** (light `#e5e5e5`, dark `#323232`): Hairline divider stroke (WinUI DividerStrokeColorDefault).
 - **`ring-halo`** (light `#fbfbfb`, dark `#0a0a0a`): Inner keyboard focus stroke (WinUI FocusStrokeColorInner composited over base).
-- **`window-control-off`** (light `#dcdcdf`, dark `#45484e`): Library-retained unfocused window traffic-light fill (no WinUI equivalent).
 - **`bevel`** (light `#cccccc`, dark `#353535`): Standard button elevation bevel stroke (WinUI ControlStrokeColorSecondary composited over base).
 - **`accent-bevel`** (light `#146cbe`, dark `#6cd1ff`): Accent button top/side bevel stroke (WinUI ControlStrokeColorOnAccentDefault composited over primary).
 
@@ -550,7 +517,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.chip`**: A chosen value label inside a field: a fill, an inner highlight and an edge.
 - **`finish.glass`** (backdropFilter: `blur(30px)`; material: `{"windows":{"backdrop":"blur"}}`): WinUI 3 AcrylicInApp surface with per-appearance TintLuminosityOpacity (0.85 light / 0.96 dark), depth-32 shadow, and Windows blur backdrop.
 - **`finish.menu`** (backdropFilter: `none`; material: `{"windows":{"backdrop":"blur"}}`): WinUI 3 Acrylic flyout/menu surface with depth-32 shadow and Windows blur backdrop.
-- **`finish.dialog`**: WinUI 3 ContentDialog surface with depth-128 shadow and composited SurfaceStrokeColorDefault border.
+- **`finish.modal`**: WinUI 3 ContentDialog surface with depth-128 shadow and composited SurfaceStrokeColorDefault border.
 - **`finish.grabber`**: The drag handle pill at the top of a bottom sheet.
 - **`finish.tooltip`** (material: `{"windows":{"backdrop":"blur"}}`): WinUI 3 ToolTip surface with depth-16 shadow, glass-edge border, and Windows blur backdrop.
 - **`finish.inverse`** (backdropFilter: `none`): WinUI 3 TeachingTip/toast surface with depth-32 shadow and glass-edge border.

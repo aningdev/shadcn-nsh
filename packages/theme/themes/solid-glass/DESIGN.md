@@ -6,15 +6,7 @@ colors:
   scrim: "#00000080"
   media: "#10131a"
   on-media: "#ffffff"
-  chart-foreground: "#0d0d0d"
-  window-close: "#e7000b"
-  window-minimize: "#9e9e9e"
-  window-zoom: "#525252"
-  window-control-ink: "#00000080"
-  window-control-edge: "#0000001f"
   light:
-    brand-fill: "#161616"
-    on-brand: "#fafafa"
     background: "#e4e6eb"
     foreground: "#0d0d0d"
     card: "#eff1f5"
@@ -49,8 +41,6 @@ colors:
     inset: "#f2f4f7"
     raised: "#ffffff8c"
     glass-edge: "#3b42531a"
-    scrollbar-thumb: "#9fa0a3"
-    scrollbar-thumb-hover: "#767778"
     field: "#ffffff99"
     line: "#292e3821"
     hover: "#292e381a"
@@ -60,7 +50,6 @@ colors:
     brand-edge: "#161616af"
     track: "#292e3826"
     knob: "#ffffff"
-    code: "#0d0d0d"
     info: "#0078cc"
     warn: "#d87400"
     up: "#0a924b"
@@ -74,8 +63,6 @@ colors:
     up-tint: "#0a924b1a"
     down-tint: "#e7000b1a"
     violet: "#743c98"
-    window-control-off: "#9e9e9e"
-    dialog: "#eff1f5"
     bevel: "#292e3821"
     accent-bevel: "#161616af"
     disabled: "#ffffff8c"
@@ -83,8 +70,6 @@ colors:
     accent-pressed: "#161616"
     on-accent-pressed: "#fafafa"
   dark:
-    brand-fill: "#ebebeb"
-    on-brand: "#121212"
     background: "#0d0d0d"
     foreground: "#fafafa"
     card: "#1d1d1d"
@@ -119,8 +104,6 @@ colors:
     inset: "#272727"
     raised: "#ffffff12"
     glass-edge: "#ffffff0f"
-    scrollbar-thumb: "#595959"
-    scrollbar-thumb-hover: "#868686"
     field: "#ffffff0f"
     line: "#ffffff1c"
     hover: "#ffffff14"
@@ -130,7 +113,6 @@ colors:
     brand-edge: "#f4f4f4aa"
     track: "#ffffff21"
     knob: "#f5f5f5"
-    code: "#fafafa"
     info: "#449df0"
     warn: "#f79c40"
     up: "#4ac777"
@@ -144,8 +126,6 @@ colors:
     up-tint: "#4ac7771a"
     down-tint: "#ff64671a"
     violet: "#c8a5f0"
-    window-control-off: "#696969"
-    dialog: "#1d1d1d"
     bevel: "#ffffff1c"
     accent-bevel: "#f4f4f4aa"
     disabled: "#ffffff12"
@@ -287,7 +267,7 @@ components:
     rounded: "{rounded.container}"
     padding: "{spacing.control.padding}"
   dialog:
-    backgroundColor: "{colors.light.dialog}"
+    backgroundColor: "{colors.light.card}"
     textColor: "{colors.light.card-foreground}"
     typography: "{typography.body}"
     rounded: "{rounded.modal}"
@@ -361,13 +341,11 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 - **`track`** (light `#292e3826`, dark `#ffffff21`): Inactive track background for switches, sliders, and progress bars.
 - **`knob`** (light `#ffffff`, dark `#f5f5f5`): Switch thumb fill in the off state.
 - **`inverse`** (light `#f8f9fb`, dark `#1a1a1a`): High-contrast surface for toasts and tooltips.
-- **`dialog`** (light `#eff1f5`, dark `#1d1d1d`): Modal dialog container surface.
 - **`disabled`** (light `#ffffff8c`, dark `#ffffff12`): Disabled control container surface.
 
 ### Ink
 
 - **`on-media`** (`#ffffff`): White ink over photographs and dark media surfaces; invariant across appearances.
-- **`chart-foreground`** (`#0d0d0d`): Dark ink on light chart tiles; dark tiles use on-media.
 - **`foreground`** (light `#0d0d0d`, dark `#fafafa`): Default high-contrast text and icon ink on page surfaces.
 - **`card-foreground`** (light `#0d0d0d`, dark `#fafafa`): Primary text and icon ink on card surfaces.
 - **`popover-foreground`** (light `#0d0d0d`, dark `#fafafa`): Primary text and icon ink on popover surfaces.
@@ -377,14 +355,11 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 - **`sidebar-foreground`** (light `#222222`, dark `#dedede`): Primary text and icon ink inside the sidebar.
 - **`sidebar-accent-foreground`** (light `#0d0d0d`, dark `#fafafa`): Text and icon ink on active sidebar rows.
 - **`faint`** (light `#9e9e9e`, dark `#696969`): Low-emphasis text for placeholders, units, and tertiary labels.
-- **`code`** (light `#0d0d0d`, dark `#fafafa`): Monospace code text ink inside recessed wells.
 - **`inverse-foreground`** (light `#0d0d0d`, dark `#fafafa`): Primary text ink on inverse surfaces.
 - **`disabled-foreground`** (light `#5b5b5b`, dark `#a4a4a4`): Disabled control label and icon ink.
 
 ### Brand
 
-- **`brand-fill`** (light `#161616`, dark `#ebebeb`): Primary action fill, aliased to {color.primary}.
-- **`on-brand`** (light `#fafafa`, dark `#121212`): Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}.
 - **`primary`** (light `#161616`, dark `#ebebeb`): Primary brand action fill.
 - **`primary-foreground`** (light `#fafafa`, dark `#121212`): Text and icon ink on primary brand action fills.
 - **`sidebar-primary`** (light `#161616`, dark `#ebebeb`): Primary action highlight color in the sidebar.
@@ -416,22 +391,14 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 
 ### Chrome
 
-- **`window-close`** (`#e7000b`): macOS window close traffic-light fill mapped to destructive red.
-- **`window-minimize`** (`#9e9e9e`): macOS window minimize traffic-light fill mapped to Solid Glass ring grey.
-- **`window-zoom`** (`#525252`): macOS window zoom traffic-light fill mapped to Solid Glass chart-3 grey.
-- **`window-control-ink`** (`#00000080`): Glyph ink inside macOS window traffic-light buttons.
-- **`window-control-edge`** (`#0000001f`): Hairline border around macOS window traffic-light buttons.
 - **`border`** (light `#292e3821`, dark `#ffffff1c`): Standard hairline border color for containers and controls.
 - **`input`** (light `#292e3824`, dark `#ffffff14`): Border and stroke color for form fields and control edges.
 - **`ring`** (light `#16161680`, dark `#ffffff66`): Focus indicator ring stroke color.
 - **`sidebar-border`** (light `#292e381f`, dark `#ffffff1a`): Sidebar divider and toolbar hairline border color.
 - **`sidebar-ring`** (light `#16161680`, dark `#ffffff66`): Focus indicator ring color inside the sidebar.
 - **`glass-edge`** (light `#3b42531a`, dark `#ffffff0f`): Hairline border on Solid Glass panes (--glass-edge).
-- **`scrollbar-thumb`** (light `#9fa0a3`, dark `#595959`): Scrollbar thumb resting fill.
-- **`scrollbar-thumb-hover`** (light `#767778`, dark `#868686`): Scrollbar thumb fill on pointer hover.
 - **`line`** (light `#292e3821`, dark `#ffffff1c`): Hairline divider and grid rule inside recessed wells.
 - **`ring-halo`** (light `#16161639`, dark `#ffffff2e`): Translucent outer halo around focused controls.
-- **`window-control-off`** (light `#9e9e9e`, dark `#696969`): Inactive background for macOS traffic-light buttons when unfocused.
 - **`bevel`** (light `#292e3821`, dark `#ffffff1c`): Directional control elevation bevel stroke.
 - **`accent-bevel`** (light `#161616af`, dark `#f4f4f4aa`): Accent control elevation top and side bevel stroke.
 
@@ -467,7 +434,7 @@ Ergonomic sizing scales for pointer input.
 
 ## Elevation & Depth
 
-Layered glass elevation: surfaces combine translucent fills (`alpha < 1` over page grounds), top-edge inset highlights, `--glass-edge` borders, soft shadows, and backdrop blur (`glass`, `menu`, `dialog`, `tooltip`, `inverse`).
+Layered glass elevation: surfaces combine translucent fills (`alpha < 1` over page grounds), top-edge inset highlights, `--glass-edge` borders, soft shadows, and backdrop blur (`glass`, `menu`, `modal`, `tooltip`, `inverse`).
 
 - **Strokes:** Border stroke widths.
   - `stroke.hairline` (1px): Hairline divider and outlined-variant stroke width.
@@ -533,7 +500,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.chip`**: A chosen value label inside a field: a fill, an inner highlight and an edge.
 - **`finish.glass`** (backdropFilter: `blur(14px) saturate(180%)`): Glass: a translucent fill and a blur.
 - **`finish.menu`** (backdropFilter: `none`): A floating surface: a menu, a popover.
-- **`finish.dialog`**: A dialog face: the card colour with the menu shadow.
+- **`finish.modal`**: A modal face: the card colour with the menu shadow.
 - **`finish.grabber`**: The drag handle pill at the top of a bottom sheet.
 - **`finish.tooltip`**: A tooltip face: the popover pane, without a shadow.
 - **`finish.inverse`** (backdropFilter: `none`): The inverse surface: a toast face.

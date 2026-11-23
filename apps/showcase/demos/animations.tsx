@@ -162,13 +162,13 @@ function Hero() {
               justifyContent: "center",
               backgroundColor: breathe.interpolate({
                 inputRange: [0, 1],
-                outputRange: [colors.brandFill, colors.up],
+                outputRange: [colors.primary, colors.up],
               }),
               boxShadow: finish.accent.boxShadow,
               scale: breathe.interpolate({ inputRange: [0, 1], outputRange: [0.9, 1.08] }),
             }}
           >
-            <Icon icon={Activity} size={22} tint={colors.onBrand} />
+            <Icon icon={Activity} size={22} tint={colors.primaryForeground} />
           </View>
         </View>
       </View>

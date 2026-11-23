@@ -38,38 +38,32 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 这些是 shadcn 没有、本库的组件要用的 token。加一个之前先看第 9 节。
 
-| token                        | 管什么                                                                                                                                   | 谁读                                                                         |
-| ---------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
-| `inset`                      | 卡片里凹下去的一层（井）                                                                                                                 | `lib/surface`、`otp-input`、`sidebar`、`menu`、`dock-area`                   |
-| `raised`                     | 卡片上凸起的一层：按钮、字段、轨道                                                                                                       | `button`、`select`、`radio-group`、`carousel`、`dock-area`                   |
-| `dialog`                     | 对话框的表面底（`finish.dialog` 的底层颜色；Material 下用 `SurfaceContainerHigh` `#ECE6F0`/`#2B2930`，其余主题等同 `card`/`background`） | `dialog`（经 `finish.dialog`）                                               |
-| `field`                      | 输入井：比卡片和 inset 更下一层                                                                                                          | `input`、`select`、`combobox`、`checkbox`、`code-editor`                     |
-| `hover`                      | 指针停在可点项上的那一步                                                                                                                 | `button`、`select`、`input`、`command`、`tree`、`menu`                       |
-| `line`                       | 井里的发丝线（分隔、网格）                                                                                                               | `tabs`、`otp-input`、`number-input`、`input`、`lib/surface`                  |
-| `faint`                      | 更弱的字：占位、单位、次要标记                                                                                                           | `input`、`combobox`、`number-input`                                          |
-| `brand`                      | 强调色作为前景：字、图标、线                                                                                                             | `input`、`calendar`、`command`、`otp-input`、`lib/listbox`                   |
-| `brand-edge`                 | 强调色填充的那条边：主按钮的发丝线（WinUI 下作 `AccentControlElevationBorderBrush` 下边斜角）                                            | `theme.ts` 的 `colors.brandEdge`、`finish.accent`                            |
-| `accent-bevel`               | 强调色控件亮边（WinUI 下 `ControlStrokeColorOnAccentDefault` 上/侧边；其余主题等同 `brand-edge`）                                        | `finish.light`、`finish.accent`、`finish.on`                                 |
-| `bevel`                      | 中性控件斜角亮边/暗边（WinUI 下 `ControlStrokeColorSecondary`；其余主题等同 `border`）                                                   | `finish.raised`、`finish.hover`                                              |
-| `disabled`                   | 禁用控件容器底色（`state.disabled.fill` 为 `true` 时启用：`OnSurface 0.10` / `ControlFillColorDisabled`）                                | `button`、`toggle`（经 `finish.disabled`）                                   |
-| `disabled-foreground`        | 禁用控件内容前景色（`state.disabled.fill` 为 `true` 时启用：`OnSurface 0.38` / `TextFillColorDisabled`）                                 | `button`、`toggle`、`theme.ts` 的 `colors.disabledForeground`                |
-| `accent-pressed`             | 强调色按钮按下不淡出整个 View 时的底色（WinUI `AccentFillColorTertiary`；其余主题等同 `primary`）                                        | `button`（经 `finish.accentPressed`）                                        |
-| `on-accent-pressed`          | 强调色按钮按下时的前景色（WinUI `TextOnAccentFillColorSecondary`；其余主题等同 `on-brand`）                                              | `button`、`theme.ts` 的 `colors.onAccentPressed`                             |
-| `brand-fill`                 | 强调色作为填充（见 C 层）                                                                                                                | `calendar`                                                                   |
-| `on-brand`                   | `brand-fill` 上的字（见 C 层）                                                                                                           | `calendar`                                                                   |
-| `glass-edge`                 | 玻璃面上的发丝线：控件、胶囊、玻璃、浮层外框                                                                                             | `theme.ts` 的 `colors.glassEdge`                                             |
-| `track`                      | 关着的开关、滑杆与进度条的底槽（后两者按控件预设也可读 `brand-tint` / `input`）                                                          | `switch`、`slider`、`progress`、`tabs`、`listbox`                            |
-| `knob`                       | 关着的开关圆点（`finish.knob` 的白底）                                                                                                   | `theme.ts` 的 `colors.knob`                                                  |
-| `code`                       | 井里的等宽字                                                                                                                             | `theme.ts` 的 `colors.code`                                                  |
-| `info` / `warn` / `up`       | 三状态色：提示、警告、增长；下降读 `destructive`                                                                                         | `progress`、`diff-view`、`code-editor`、`status`                             |
-| `brand-tint` 等 `*-tint`     | 状态色的淡底（`info`、`warn`、`destructive`、`up` 各一，另留 `down-tint` 给数据的下降）                                                  | `theme.ts` 的 `colors` 映射；`brand-tint` 另见 `calendar`、`tree`、`command` |
-| `inverse`                    | 提示与 toast 的反色面（今天的主题与浮层同色）                                                                                            | `toast`、`tooltip`（经 `finish.inverse`）                                    |
-| `inverse-foreground`         | `inverse` 上的字                                                                                                                         | `toast`、`tooltip`                                                           |
-| `inverse-brand`              | `inverse` 上的强调色：toast 的操作                                                                                                       | `toast`                                                                      |
-| `scrollbar-thumb` / `-hover` | 滚动条滑块及其悬停                                                                                                                       | `scrollbar`                                                                  |
-| `ring-halo`                  | 焦点环外面的一圈晕                                                                                                                       | `theme.ts` 的 `focusRing`                                                    |
-| `violet`                     | 第三个数据色：图的一条线、链接                                                                                                           | `link`、`plot`                                                               |
-| `window-control-off`         | 窗口按钮不可用时的底                                                                                                                     | `theme.ts`                                                                   |
+| token                    | 管什么                                                                                                    | 谁读                                                                         |
+| ------------------------ | --------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------- |
+| `inset`                  | 卡片里凹下去的一层（井）                                                                                  | `lib/surface`、`otp-input`、`sidebar`、`menu`、`dock-area`                   |
+| `raised`                 | 卡片上凸起的一层：按钮、字段、轨道                                                                        | `button`、`select`、`radio-group`、`carousel`、`dock-area`                   |
+| `field`                  | 输入井：比卡片和 inset 更下一层                                                                           | `input`、`select`、`combobox`、`checkbox`、`code-editor`                     |
+| `hover`                  | 指针停在可点项上的那一步                                                                                  | `button`、`select`、`input`、`command`、`tree`、`menu`                       |
+| `line`                   | 井里的发丝线（分隔、网格）                                                                                | `tabs`、`otp-input`、`number-input`、`input`、`lib/surface`                  |
+| `faint`                  | 更弱的字：占位、单位、次要标记                                                                            | `input`、`combobox`、`number-input`                                          |
+| `brand`                  | 强调色作为前景：字、图标、线                                                                              | `input`、`calendar`、`command`、`otp-input`、`lib/listbox`                   |
+| `brand-edge`             | 强调色填充的那条边：主按钮的发丝线（WinUI 下作 `AccentControlElevationBorderBrush` 下边斜角）             | `theme.ts` 的 `colors.brandEdge`、`finish.accent`                            |
+| `accent-bevel`           | 强调色控件亮边（WinUI 下 `ControlStrokeColorOnAccentDefault` 上/侧边；其余主题等同 `brand-edge`）         | `finish.light`、`finish.accent`、`finish.on`                                 |
+| `bevel`                  | 中性控件斜角亮边/暗边（WinUI 下 `ControlStrokeColorSecondary`；其余主题等同 `border`）                    | `finish.raised`、`finish.hover`                                              |
+| `disabled`               | 禁用控件容器底色（`state.disabled.fill` 为 `true` 时启用：`OnSurface 0.10` / `ControlFillColorDisabled`） | `button`、`toggle`（经 `finish.disabled`）                                   |
+| `disabled-foreground`    | 禁用控件内容前景色（`state.disabled.fill` 为 `true` 时启用：`OnSurface 0.38` / `TextFillColorDisabled`）  | `button`、`toggle`、`theme.ts` 的 `colors.disabledForeground`                |
+| `accent-pressed`         | 强调色按钮按下不淡出整个 View 时的底色（WinUI `AccentFillColorTertiary`；其余主题等同 `primary`）         | `button`（经 `finish.accentPressed`）                                        |
+| `on-accent-pressed`      | 强调色按钮按下时的前景色（WinUI `TextOnAccentFillColorSecondary`；其余主题等同 `primary-foreground`）     | `button`、`theme.ts` 的 `colors.onAccentPressed`                             |
+| `glass-edge`             | 玻璃面上的发丝线：控件、胶囊、玻璃、浮层外框                                                              | `theme.ts` 的 `colors.glassEdge`                                             |
+| `track`                  | 关着的开关、滑杆与进度条的底槽（后两者按控件预设也可读 `brand-tint` / `input`）                           | `switch`、`slider`、`progress`、`tabs`、`listbox`                            |
+| `knob`                   | 关着的开关圆点（`finish.knob` 的白底）                                                                    | `theme.ts` 的 `colors.knob`                                                  |
+| `info` / `warn` / `up`   | 三状态色：提示、警告、增长；下降读 `destructive`                                                          | `progress`、`diff-view`、`code-editor`、`status`                             |
+| `brand-tint` 等 `*-tint` | 状态色的淡底（`info`、`warn`、`destructive`、`up` 各一，另留 `down-tint` 给数据的下降）                   | `theme.ts` 的 `colors` 映射；`brand-tint` 另见 `calendar`、`tree`、`command` |
+| `inverse`                | 提示与 toast 的反色面（今天的主题与浮层同色）                                                             | `toast`、`tooltip`（经 `finish.inverse`）                                    |
+| `inverse-foreground`     | `inverse` 上的字                                                                                          | `toast`、`tooltip`                                                           |
+| `inverse-brand`          | `inverse` 上的强调色：toast 的操作                                                                        | `toast`                                                                      |
+| `ring-halo`              | 焦点环外面的一圈晕                                                                                        | `theme.ts` 的 `focusRing`                                                    |
+| `violet`                 | 第三个数据色：图的一条线、链接                                                                            | `link`、`plot`                                                               |
 
 `destructive` 本身是 A 层（shadcn 的），本库的 `colors.destructive` 指向它；数据的下降也读它（`toneColor("down")`），不再单设 `down` 角色，`down-tint` 仍作为下降的淡底保留。
 
@@ -83,14 +77,9 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | ----------------------------------------------------------------- | ------------------------------- | ----------------------------------------------------------------------------------------------------------- |
 | `radius` / `radius-control` / `radius-container` / `radius-modal` | `8px` / `8px` / `12px` / `14px` | A 层 `radius` 槽与按层划分的 3 个圆角角色；`semantics.json` 的 `dimension.shape.*` 以 `{radius-…}` 引用它们 |
 | `font-mono`                                                       | `monospace`                     | 等宽字：`font-mono` 类、`Text` 里的代码、`theme.ts` 的 `mono()`                                             |
-| `brand-fill`                                                      | 强调色的填充                    | `calendar` 的选中日                                                                                         |
-| `on-brand`                                                        | `brand-fill` 上的字             | 同上                                                                                                        |
 | `scrim`                                                           | 遮罩                            | `lib/popup`、`dock-area`                                                                                    |
 | `media`                                                           | 照片与影片的底                  | `theme.ts` 的 `colors.media`、`image-viewer` 的 ground；不随外观或主题翻转                                  |
-| `on-media`                                                        | 照片上的白字                    | `theme.ts` 的 `colors.onMedia`；不随外观翻转                                                                |
-| `chart-foreground`                                                | 浅色图块上的深字                | `theme.ts` 的 `colors.chartForeground`；深色块用 `on-media`                                                 |
-| `window-close` / `window-minimize` / `window-zoom`                | 三颗窗口按钮各自的色            | `theme.ts` 的窗口按钮映射                                                                                   |
-| `window-control-ink` / `window-control-edge`                      | 窗口按钮的字与边                | 同上                                                                                                        |
+| `on-media`                                                        | 照片与深色图块上的白字          | `image-viewer`、`theme.ts` 的 `colors.onMedia`；不随外观翻转                                                |
 
 <!-- /theme-lint: tokens-c -->
 
@@ -120,7 +109,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 ## 2b 风格数据
 
-`semantics.json` 的顶层，在 `finishes` 之前，按 DTCG 2025.10 命名分布以下风格组：`typography`（`fontFamily` 与 7 个字体角色，含 `fontSize`、`lineHeight` 倍率、数值 `fontWeight` 与 `letterSpacing`）、`dimension`（`shape`、`size`、`stroke`、`focus`、`icon`）、`shape`（`curve`、`corners.button`）、`state`（含 `"press-scale"`、`"pressed-opacity"`、`"accent-pressed-opacity"`、叠色、水波开关与禁用透明度）、`duration`（`shake`）、`transition`（`enter`）、`motion`（`press`、`settle`、`control`、`move`，其中 timing 用 `timingFunction`）与 `controls`（控件几何预设家族枚举 `"base" | "material" | "winui"`）。它们与 finish 无关，也与外观无关：一个主题写一份，light 和 dark 共用；随设备变的值分 `pointer` / `touch` 两档。每个键的含义和各平台的值在 [`native-themes.md`](native-themes.md) §3.2；`check:theme` 执行的规则是：
+`semantics.json` 的顶层，在 `finishes` 之前，按 DTCG 2025.10 命名分布以下风格组：`typography`（`fontFamily` 与 7 个字体角色，含 `fontSize`、`lineHeight` 倍率、数值 `fontWeight` 与 `letterSpacing`）、`dimension`（`shape`、`size`、`stroke`、`focus`、`icon`）、`shape`（`curve`、`corners.button`）、`state`（含 `"press-scale"`、`"pressed-opacity"`、`"accent-pressed-opacity"`、`"rest-opacity"`、叠色、水波开关与禁用透明度）、`duration`（`shake`）、`transition`（`enter`）、`motion`（`press`、`settle`、`control`、`move`，其中 timing 用 `timingFunction`）与 `controls`（控件几何预设家族枚举 `"base" | "material" | "winui"`）。它们与 finish 无关，也与外观无关：一个主题写一份，light 和 dark 共用；随设备变的值分 `pointer` / `touch` 两档。每个键的含义和各平台的值在 [`native-themes.md`](native-themes.md) §3.2；`check:theme` 执行的规则是：
 
 - **键集合相同。** 所有主题的风格数据有同样的键、同样类型的叶子，缺一个键就点名它。
 - **枚举取白名单。** 字重（数值 `400`–`700`）、曲线、`corners.button`（`"full" | "radius"`）、焦点样式、`timingFunction`、`controls` 的值都在 `scripts/theme/style.ts` 的列表里。
@@ -132,7 +121,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 **组件怎么读 `typography`。** 组件取字号、字重、行高、字距用 `font.size(role)`、`font.weight(role)`、`font.lineHeight(role)`、`font.letterSpacing(role)`（`theme.ts`，响应式，`size` 与 `lineHeight` 按 `tier` 取 pointer / touch 档，`lineHeight()` 返回四舍五入后的点数 `Math.round(fontSize * lineHeight)`）：只取组件原来写了的那几项，所以没写字重的文字仍继承周围的字重。对应关系：控件上的字（按钮、标签、表单、菜单、标签页）取 `label` 的字重（500）、卡片与区块标题取 `title` 的字重（600）、正文类取 `body`；`body` 的字号（13 / 15）给面包屑、导航菜单、树、命令面板的行与对话框正文，`detail`（12 / 13）给侧栏的分组与计数，`caption`（11 / 12）给分段控件的数量，`label`（14 / 15）给输入框（`fieldSize.font`）。`lineHeight` 倍率按组件今天画的像素行高对齐：`body` 的 19/13、21/15 算出 19 / 21 给对话框正文。**没有角色对得上的字号留在代码里**，各处有一行注释：按钮、徽标、侧栏档位的 12 / 13 / 14，对话框与卡片标题的 17 / 20、`body + 2`，日历格的 12.8 / 14 / 16，图表轴的 10 / 10.5，命令面板分组名的 11 加 0.6 字距，气泡与空状态说明的 1.5 倍行高（取整后 20 / 23，与 `body.lineHeight` 算出的 19 / 21 不同），以及写在 Tailwind 类里的 `text-sm` / `text-base` / `text-xs`、`font-semibold`（类名读不了 getter）。
 
-**组件怎么读 `shape`、`stroke`、`state`、`size`、`controls`。** 圆角按层读 `shape.{control,container,modal,button}`（`theme.ts`，响应式）：页内元素（输入框、行、徽标、标签、井、色区、kbd）读 `shape.control`，按钮类控件（`Button`、`IconButton`、`SplitButton`、`Toggle`、`ButtonGroup`、分页按钮、日历头部按钮）读 `shape.button`（`shape.corners.button` 为 `"full"` 时取 `999` 胶囊，否则取 `shape.control`），容器与浮层（卡片、菜单、弹出层、富提示、列表面板、toast）读 `shape.container`，模态面（对话框、抽屉、底部面板）读 `shape.modal`；嵌套表面不再单设 `inset` 圆角角色，改用 `rounded(outer, inset)` 按同心推出（内 = 外 − inset，不小于 0）：复选框的钩、分段控件的滑块与轨道、组合框的箭头钮、附件缩略图与颜色选择器的色块；复选框小角在组件预设 `checkboxPresets.corner`。线宽读 `stroke`（`dimension.stroke`）：控件的描边 `stroke.control`（按钮、输入框、选择器、复选框、分段、标签页、徽标…），分隔线与描边变体的发丝线 `stroke.hairline`，卡片、面板、浮层与弹窗等表面的描边 `stroke.surface`（Material 下为 `0`）；焦点环宽只有 `dimension.focus.width`，由 `focusRing()` 读。按下的透明度 `dimmed.pressed`（`state["pressed-opacity"]`），强调色按下时统一组合 `finish.accentPressed` 与 `opacity: state["accent-pressed-opacity"]`、前景色取 `colors.onAccentPressed`；禁用时若 `state.disabled.fill` 为 `false` 则沿用统一视图 `opacity: dimmed.disabled`，为 `true`（Material / WinUI）则由 `finish.disabled`（无边/关态另按变体设边）绘容器、由 `colors.disabledForeground` 绘字与图标；`state.overlay` 经 `stateLayer(kind)` 变成一层前景色的渐变，`hovered()` 已带上悬停的那一层（default 的叠色是 0，不画）。尺寸：按钮高 `controlHeight.sm / md / lg`（`dimension.size.height`），按钮的图标 `iconSize`（`dimension.icon`），触控目标 `hitTarget()`（`dimension.size.hit`；`touchSlop`、`switchHitSlop` 按它补点按范围；0 不补）。各控件家族随平台切换的几何、指示条样式与粗细（`checkbox`、`switch`、`slider`、`radio-group`、`progress`、`spinner`、`tabs`、`calendar`、`sheet` 抓取条、`sidebar` 选中条与字段指示器）归属各自组件及共享 `lib/indicator` 的 `Record<Controls, …>` 预设表，经 `controls()` 选用。
+**组件怎么读 `shape`、`stroke`、`state`、`size`、`controls`。** 圆角按层读 `shape.{control,container,modal,button}`（`theme.ts`，响应式）：页内元素（输入框、行、徽标、标签、井、色区、kbd）读 `shape.control`，按钮类控件（`Button`、`IconButton`、`SplitButton`、`Toggle`、`ButtonGroup`、分页按钮、日历头部按钮）读 `shape.button`（`shape.corners.button` 为 `"full"` 时取 `999` 胶囊，否则取 `shape.control`），容器与浮层（卡片、菜单、弹出层、富提示、列表面板、toast）读 `shape.container`，模态面（对话框、抽屉、底部面板）读 `shape.modal`；嵌套表面不再单设 `inset` 圆角角色，改用 `rounded(outer, inset)` 按同心推出（内 = 外 − inset，不小于 0）：复选框的钩、分段控件的滑块与轨道、组合框的箭头钮、附件缩略图与颜色选择器的色块；复选框小角在组件预设 `checkboxPresets.corner`。线宽读 `stroke`（`dimension.stroke`）：控件的描边 `stroke.control`（按钮、输入框、选择器、复选框、分段、标签页、徽标…），分隔线与描边变体的发丝线 `stroke.hairline`，卡片、面板、浮层与弹窗等表面的描边 `stroke.surface`（Material 下为 `0`）；焦点环宽只有 `dimension.focus.width`，由 `focusRing()` 读。按下的透明度 `dimmed.pressed`（`state["pressed-opacity"]`），静止的指示器（滚动条滑块）读 `dimmed.rest`（`state["rest-opacity"]`，默认 `0.5`），强调色按下时统一组合 `finish.accentPressed` 与 `opacity: state["accent-pressed-opacity"]`、前景色取 `colors.onAccentPressed`；禁用时若 `state.disabled.fill` 为 `false` 则沿用统一视图 `opacity: dimmed.disabled`，为 `true`（Material / WinUI）则由 `finish.disabled`（无边/关态另按变体设边）绘容器、由 `colors.disabledForeground` 绘字与图标；`state.overlay` 经 `stateLayer(kind)` 变成一层前景色的渐变，`hovered()` 已带上悬停的那一层（default 的叠色是 0，不画）。尺寸：按钮高 `controlHeight.sm / md / lg`（`dimension.size.height`），按钮的图标 `iconSize`（`dimension.icon`），触控目标 `hitTarget()`（`dimension.size.hit`；`touchSlop`、`switchHitSlop` 按它补点按范围；0 不补）。各控件家族随平台切换的几何、指示条样式与粗细（`checkbox`、`switch`、`slider`、`radio-group`、`progress`、`spinner`、`tabs`、`calendar`、`sheet` 抓取条、`sidebar` 选中条与字段指示器）归属各自组件及共享 `lib/indicator` 的 `Record<Controls, …>` 预设表，经 `controls()` 选用。
 
 **留在代码里的值**，各处有注释：Tailwind 类里的 `rounded-(--radius-control)` / `rounded-(--radius-container)` / `rounded-(--radius-modal)` / `rounded-[4px]`、`active:opacity-70`、`disabled:opacity-50`、`border`（类名读不了 getter，前三者读 `theme.json` 的 token，与 `shape` 同值）；半高或半径推出的圆（`height / 2`、`side / 2`：胶囊、圆点、开关、进度条）；选择器的 2 点焦点边（`select.tsx` 的 `outlineWidth: 2`，它是边的渐显，不是焦点环）；实心按钮悬停与选中的 0.94 / 0.88 不透明度，附件失败时的 0.6，子菜单禁用的 0.35（没有对应的 state 角色）；toast 的 2 点色条、进度的 2 点限位、头像 2 点的环（装饰，不是 stroke 角色）；圆角 1 / 2 / 3 / 4 / 5 的小件（拇指、插入符、进度条端点、日历格的 17 等）。
 
@@ -200,7 +189,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | `chip`          | 字段里一个已选值的标签：底色、一道内高光与边                                            | A chosen value's label inside a field: a fill, an inner highlight and an edge    | `combobox`                                    |
 | `glass`         | 玻璃：半透明底 + 模糊                                                                   | Glass: a translucent fill and a blur                                             | `carousel`                                    |
 | `menu`          | 浮层：菜单、弹层                                                                        | A floating surface: a menu, a popover                                            | `popover`、`lib/listbox`                      |
-| `dialog`        | 对话框的面：卡片色/对话框表面色 + 浮层阴影                                              | A dialog's face: dialog container fill with floating elevation shadow            | `dialog`                                      |
+| `modal`         | 模态面的底：卡片色/模态容器色 + 浮层阴影                                                | A modal's face: the modal container's fill with a floating elevation shadow      | `dialog`                                      |
 | `grabber`       | 底部抽屉顶部的抓取条                                                                    | The drag handle pill centered at the top of a bottom sheet                       | `sheet`                                       |
 | `tooltip`       | 提示的面：浮层的底，不带阴影                                                            | A tooltip's face: the popover's pane, without a shadow                           | `tooltip`                                     |
 | `inverse`       | 反色面：toast 的底（今天等于 `menu`）                                                   | The inverse surface: a toast's face (today the same as `menu`)                   | `toast`                                       |
@@ -226,8 +215,6 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | 两个 finish                          | 今天相同的原因                           | 分开的原因                                                                                         |
 | ------------------------------------ | ---------------------------------------- | -------------------------------------------------------------------------------------------------- |
 | `light` / `accent`                   | 主操作与强调是同一个色                   | 上游留了两档，主题可以只让其中一档更亮                                                             |
-| `primary` / `brand-fill`             | 强调色的填充就是主操作的色               | `primary` 是 shadcn 的槽，`brand-fill` 是本库的填充                                                |
-| `primary-foreground` / `on-brand`    | 同上                                     | 同上：一个是槽，一个是本库的字色                                                                   |
 | `thumb` / `raised`                   | 分段控件选中的那块，与卡片上的控件面同色 | 一个在井里，一个在卡片上，深色下要分开调                                                           |
 | `knob` / `handle`                    | 开关圆点与滑杆把手同色                   | shadcn 的滑杆把手带 `border-primary`，开关圆点不带（`f34fa75` 拆出来的）                           |
 | `pill` / `raised`、`chip` / `raised` | 上游的胶囊与 chip 借了控件的面           | 胶囊是上游规范、本库还没有组件读；chip 是字段里一个标签，和卡片上的控件不在同一层（第 8 节）       |
@@ -240,38 +227,40 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 一个 finish 里的颜色离开这张表只有三条路，每条的理由不同：
 
 1. **一个 token 的颜色，带别的 alpha**：写 `oklch(from {token} l c h / a)`。像素不变：`alias()` 从当前主题里取出那个 token 的值，替换其 alpha。`theme-lint` 只认这一种写法，`from` 后面的 `{token}` 必须是这个主题真有的 `color` 类型 token；别的相对形式（把 alpha 写成 `{token}`、在 L/C/H 里用 `calc()`）仍然算“没有 token 的颜色”。
-2. **与某个 token 肉眼无差**：ΔL ≤ 0.015、ΔC ≤ 0.003、色相在同一段灰里，就写 `{token}`。像素会有一两个单位的差别，受影响的基线重拍。数值够近但语义不对的不换：`chart-*` 是数据色，`window-control-off` 是窗口按钮的底，一个选中的行不该跟着图表的颜色走。
+2. **与某个 token 肉眼无差**：ΔL ≤ 0.015、ΔC ≤ 0.003、色相在同一段灰里，就写 `{token}`。像素会有一两个单位的差别，受影响的基线重拍。数值够近但语义不对的不换：`chart-*` 是数据色，`track` 是槽的底，一个选中的行不该跟着图表的颜色走。
 3. **材质自己的设计色**：同一个主题的两个外观里值相同、语义相同，又出现在两处以上，就进 `theme.json` 的 B 层（第 1 节）。default 用原来的值，另外两个主题取自己同一位置的颜色或最近的 token，零像素变化。只在一处出现的，留在表里。
 
-表里剩下的十九行都是第 3 条没走的、只在一两处出现的材质色：`fill` 的渐变末端比 `primary` 深一档或浅一档、开关圆点比 `primary` 淡两档、`track` 的边比 `input` 深一档。其中 `fill` 的那两行只能留在渐变里：NSH 的解析器不认相对颜色，渐变里的颜色写不成 `oklch(from …)`。
+表里剩下的二十一行都是第 3 条没走的、只在一两处出现的材质色：`fill` 的渐变末端比 `primary` 深一档或浅一档、开关圆点比 `primary` 淡两档、`track` 的边比 `input` 深一档。其中 `fill` 的那两行只能留在渐变里：NSH 的解析器不认相对颜色，渐变里的颜色写不成 `oklch(from …)`。
 
 `theme-lint` 管两头：表外的字面量报错；表里的条目如果哪个主题都不再写它，也报错——留下一行对不上的，等于给那个颜色留了一条悄悄回来的路。
 
 <!-- theme-lint: pending -->
 
-| 主题        | 外观  | 色值                             | 位置                                                                           | 最接近的 token                               |
-| ----------- | ----- | -------------------------------- | ------------------------------------------------------------------------------ | -------------------------------------------- |
-| default     | light | `oklch(0.80472 0.1815 126.061)`  | `fill.gradient`                                                                | `chart-1`（ΔL +0.054，ΔC -0.003）            |
-| default     | light | `oklch(0.69169 0.17204 126.956)` | `fill.border-color`                                                            | `chart-1`（ΔL -0.059，ΔC -0.013）            |
-| default     | light | `oklch(0.97867 0.00945 119.575)` | `knobOn.gradient`                                                              | `primary`（ΔL +0.082，ΔC -0.157）            |
-| default     | light | `oklch(0.72099 0.15728 124.776)` | `knobOn.border-color`                                                          | `chart-1`（ΔL -0.030，ΔC -0.027）            |
-| default     | light | `oklch(0.89487 0.00554 274.959)` | `on.background`, `on.gradient`                                                 | `chart-5`（ΔL -0.009，ΔC +0.001，语义不同）  |
-| default     | dark  | `oklch(0.37091 0.01103 264.432)` | `track.border-color`                                                           | `input`（ΔL +0.015，ΔC -0.000）              |
-| default     | dark  | `oklch(0.88348 0.15928 123.937)` | `fill.gradient`                                                                | `primary`（ΔL -0.005，ΔC -0.004）            |
-| default     | dark  | `oklch(0.83973 0.16469 124.137)` | `fill.gradient`                                                                | `primary`（ΔL -0.049，ΔC +0.001）            |
-| default     | dark  | `oklch(0.71963 0.15821 125.456)` | `fill.border-color`, `knobOn.border-color`                                     | `up`（ΔL -0.060，ΔC +0.010）                 |
-| default     | dark  | `oklch(0.88185 0.00589 264.53)`  | `knob.gradient`, `handle.gradient`                                             | `code`（ΔL -0.014，ΔC -0.003）               |
-| default     | dark  | `oklch(0.8324 0.00597 264.528)`  | `knob.border-color`, `handle.border-color`                                     | `code`（ΔL -0.064，ΔC -0.003）               |
-| default     | dark  | `oklch(0.97867 0.00945 119.575)` | `knobOn.gradient`                                                              | `brand`（ΔL +0.074，ΔC -0.157）              |
-| default     | dark  | `oklch(0.42689 0.01421 264.414)` | `on.background`, `on.gradient`                                                 | `window-control-off`（ΔL +0.026，ΔC +0.003） |
-| shadcn      | dark  | `oklch(0.34846 0 0)`             | `pressed.background`, `pressed.gradient`, `thumb.background`, `thumb.gradient` | `chart-4`（ΔL -0.023，ΔC -0.000，语义不同）  |
-| solid-glass | light | `oklch(0.2 0 0 / 0.88)`          | `fill.gradient`                                                                | `primary`（ΔL +0.000，ΔC +0.000）            |
-| solid-glass | light | `oklch(0.38 0.03 265 / 0.22)`    | `menu.border-color`                                                            | `muted`（ΔL +0.079，ΔC +0.011）              |
-| solid-glass | dark  | `oklch(0.94 0 0 / 0.86)`         | `fill.gradient`                                                                | `primary`（ΔL +0.000，ΔC +0.000）            |
-| winui       | light | `oklch(0.92191 0 0)`             | `card.border-color`, `section.border-color`（`CardStrokeColorDefault`）        | `border`                                     |
-| winui       | light | `oklch(0.81093 0 0)`             | `dialog.border-color`（`SurfaceStrokeColorDefault` `#66757575` 在基色上合成）  | `border`（ΔL -0.107，ΔC 0）                  |
-| winui       | dark  | `oklch(0.23075 0 0)`             | `card.border-color`, `section.border-color`（`CardStrokeColorDefault`）        | `border`                                     |
-| winui       | dark  | `oklch(0.37909 0 0)`             | `dialog.border-color`（`SurfaceStrokeColorDefault` `#66757575` 在基色上合成）  | `border`（ΔL +0.070，ΔC 0）                  |
+| 主题        | 外观  | 色值                             | 位置                                                                           | 最接近的 token                              |
+| ----------- | ----- | -------------------------------- | ------------------------------------------------------------------------------ | ------------------------------------------- |
+| default     | light | `oklch(0.80472 0.1815 126.061)`  | `fill.gradient`                                                                | `chart-1`（ΔL +0.054，ΔC -0.003）           |
+| default     | light | `oklch(0.69169 0.17204 126.956)` | `fill.border-color`                                                            | `chart-1`（ΔL -0.059，ΔC -0.013）           |
+| default     | light | `oklch(0.97867 0.00945 119.575)` | `knobOn.gradient`                                                              | `primary`（ΔL +0.082，ΔC -0.157）           |
+| default     | light | `oklch(0.72099 0.15728 124.776)` | `knobOn.border-color`                                                          | `chart-1`（ΔL -0.030，ΔC -0.027）           |
+| default     | light | `oklch(0.89487 0.00554 274.959)` | `on.background`, `on.gradient`                                                 | `chart-5`（ΔL -0.009，ΔC +0.001，语义不同） |
+| default     | dark  | `oklch(0.37091 0.01103 264.432)` | `track.border-color`                                                           | `input`（ΔL +0.015，ΔC -0.000）             |
+| default     | dark  | `oklch(0.88348 0.15928 123.937)` | `fill.gradient`                                                                | `primary`（ΔL -0.005，ΔC -0.004）           |
+| default     | dark  | `oklch(0.83973 0.16469 124.137)` | `fill.gradient`                                                                | `primary`（ΔL -0.049，ΔC +0.001）           |
+| default     | dark  | `oklch(0.71963 0.15821 125.456)` | `fill.border-color`, `knobOn.border-color`                                     | `up`（ΔL -0.060，ΔC +0.010）                |
+| default     | dark  | `oklch(0.88185 0.00589 264.53)`  | `knob.gradient`, `handle.gradient`                                             | `knob`（ΔL +0.040，ΔC -0.002）              |
+| default     | dark  | `oklch(0.8324 0.00597 264.528)`  | `knob.border-color`, `handle.border-color`                                     | `knob`（ΔL +0.090，ΔC -0.002）              |
+| default     | dark  | `oklch(0.97867 0.00945 119.575)` | `knobOn.gradient`                                                              | `brand`（ΔL +0.074，ΔC -0.157）             |
+| default     | dark  | `oklch(0.42689 0.01421 264.414)` | `on.background`, `on.gradient`                                                 | `chart-5`（ΔL -0.033，ΔC -0.003）           |
+| material    | light | `oklch(0.93251 0.01479 312.24)`  | `modal.background`（`SurfaceContainerHigh`，本库没有同名角色）                 | `field`（ΔL -0.019，ΔC -0.001）             |
+| material    | dark  | `oklch(0.2859 0.01293 298.633)`  | `modal.background`（同上）                                                     | `popover`（ΔL -0.041，ΔC +0.001）           |
+| shadcn      | dark  | `oklch(0.34846 0 0)`             | `pressed.background`, `pressed.gradient`, `thumb.background`, `thumb.gradient` | `chart-4`（ΔL -0.023，ΔC -0.000，语义不同） |
+| solid-glass | light | `oklch(0.2 0 0 / 0.88)`          | `fill.gradient`                                                                | `primary`（ΔL +0.000，ΔC +0.000）           |
+| solid-glass | light | `oklch(0.38 0.03 265 / 0.22)`    | `menu.border-color`                                                            | `muted`（ΔL +0.079，ΔC +0.011）             |
+| solid-glass | dark  | `oklch(0.94 0 0 / 0.86)`         | `fill.gradient`                                                                | `primary`（ΔL +0.000，ΔC +0.000）           |
+| winui       | light | `oklch(0.92191 0 0)`             | `card.border-color`, `section.border-color`（`CardStrokeColorDefault`）        | `border`                                    |
+| winui       | light | `oklch(0.81093 0 0)`             | `modal.border-color`（`SurfaceStrokeColorDefault` `#66757575` 在基色上合成）   | `border`（ΔL -0.107，ΔC 0）                 |
+| winui       | dark  | `oklch(0.23075 0 0)`             | `card.border-color`, `section.border-color`（`CardStrokeColorDefault`）        | `border`                                    |
+| winui       | dark  | `oklch(0.37909 0 0)`             | `modal.border-color`（`SurfaceStrokeColorDefault` `#66757575` 在基色上合成）   | `border`（ΔL +0.070，ΔC 0）                 |
 
 <!-- /theme-lint: pending -->
 
@@ -291,5 +280,5 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 1. 先看上游：`references/nsh/examples/nsh-gallery-ui` 的 `look/*` 里有没有同一个面，`references/nsh/website/demos/el-<id>.tsx` 用它做什么。
 2. 再看 shadcn 的主题有没有：A 层的槽已经覆盖了 shadcn 的全部颜色，能对上就用槽，不要另起一个同义的名字。
 3. 确实要加，就在第 1 节的 B 层（逐外观的颜色）或 C 层（两种外观一样）表格里写清楚：管什么、谁读。同时让组件真的读它，否则 `theme-lint` 会问它被谁读。
-4. 三套主题都要有：默认主题写值；shadcn 与 solid glass 由 `scripts/theme/generate-*.ts` 生成（改生成器，不改产物）。
+4. 六套主题都要有：默认主题手写值；`shadcn`、`solid-glass`、`apple`、`material`、`winui` 由 `scripts/theme/generate-<id>.ts` 生成（改生成器，不改产物）。
 5. 跑 `bun scripts/theme-lint.ts` 与 `bun run port:render:theme`：前者管形状，后者管像素——加 token 不该改一个像素，改了就是形状或颜色出了问题。

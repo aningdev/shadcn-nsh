@@ -402,46 +402,6 @@
       },
       "$description": "Hairline border aliased to {color.border} (shadcn draws no separate glass edge)."
     },
-    "scrollbar-thumb": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.78576, 0, 0],
-        "hex": "#b9b9b9"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.muted-foreground}",
-            "percent": 50,
-            "b": "{color.background}"
-          }
-        }
-      },
-      "$description": "Scrollbar thumb resting fill."
-    },
-    "scrollbar-thumb-hover": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.65004, 0, 0],
-        "hex": "#8f8f8f"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.muted-foreground}",
-            "percent": 80,
-            "b": "{color.background}"
-          }
-        }
-      },
-      "$description": "Scrollbar thumb fill on pointer hover."
-    },
     "field": {
       "$value": {
         "colorSpace": "oklch",
@@ -558,19 +518,6 @@
         }
       },
       "$description": "Switch thumb fill in the off state."
-    },
-    "code": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.145, 0, 0],
-        "hex": "#0a0a0a"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Monospace code text ink inside recessed wells."
     },
     "info": {
       "$value": {
@@ -777,28 +724,6 @@
       },
       "$description": "Accent data-visualization and link color mapped onto shadcn's neutral ramp."
     },
-    "window-control-off": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.708, 0, 0],
-        "hex": "#a1a1a1"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Inactive background for macOS traffic-light buttons when unfocused."
-    },
-    "dialog": {
-      "$value": "{color.card}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "Modal dialog container surface."
-    },
     "bevel": {
       "$value": "{color.border}",
       "$extensions": {
@@ -845,7 +770,7 @@
       "$description": "Accent control fill while pressed."
     },
     "on-accent-pressed": {
-      "$value": "{color.on-brand}",
+      "$value": "{color.primary-foreground}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "brand"

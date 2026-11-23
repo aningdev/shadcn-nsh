@@ -399,7 +399,7 @@ export function CalendarItem(props: CalendarItemProps) {
 export function TimeSegment(props: { label: string }) {
   return (
     <Text
-      class="text-foreground group-focus:text-on-brand"
+      class="text-foreground group-focus:text-primary-foreground"
       style={{
         paddingHorizontal: terminal ? 3 : 2,
         fontSize: controlSize.label,
@@ -433,7 +433,7 @@ export const calendarLook = {
   itemClass: terminal ? "group active:opacity-70" : "group grow active:opacity-70",
   // A time segment's corner is its own small fixed geometry (a digit's mark inside the field's
   // well), not a theme tier.
-  segmentClass: "group rounded-[4px] active:opacity-70 focus:bg-brand-fill",
+  segmentClass: "group rounded-[4px] active:opacity-70 focus:bg-primary",
   // The preset's corners and edge are the theme's, read when the popup is drawn.
   get timeFieldClass(): string {
     return timeFieldClass();

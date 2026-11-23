@@ -524,6 +524,10 @@
       "$value": 0.7,
       "$description": "Content opacity when pressed."
     },
+    "rest-opacity": {
+      "$value": 0.5,
+      "$description": "Opacity a passive indicator sits at rest (a scrollbar's thumb), before the pointer is on it."
+    },
     "accent-pressed-opacity": {
       "$value": 0.88,
       "$description": "Pressed opacity for accent controls when no pressed accent finish replaces it."
@@ -709,24 +713,6 @@
   "color": {
     "$type": "color",
     "$description": "Adaptive A-layer and B-layer color roles for dark appearance.",
-    "brand-fill": {
-      "$value": "{color.primary}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Primary brand action fill, aliased to {color.primary} (UIKit systemBlue)."
-    },
-    "on-brand": {
-      "$value": "{color.primary-foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}."
-    },
     "scrim": {
       "$value": {
         "colorSpace": "oklch",
@@ -778,140 +764,6 @@
         }
       },
       "$description": "White ink over photographs and dark media surfaces; invariant across appearances."
-    },
-    "chart-foreground": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0,
-          0,
-          0
-        ],
-        "hex": "#000000"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Dark ink on light chart tiles matching UIKit light label (#000000)."
-    },
-    "window-close": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.6936,
-          0.19638,
-          26.364
-        ],
-        "hex": "#ff5f57"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "macOS window close traffic-light button fill."
-    },
-    "window-minimize": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.83478,
-          0.1612,
-          80.911
-        ],
-        "hex": "#febc2e"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "macOS window minimize traffic-light button fill."
-    },
-    "window-zoom": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.72803,
-          0.21734,
-          144.712
-        ],
-        "hex": "#28c840"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "macOS window zoom traffic-light button fill."
-    },
-    "window-control-ink": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0,
-          0,
-          0
-        ],
-        "alpha": 0.5,
-        "hex": "#000000"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": {
-              "colorSpace": "oklch",
-              "components": [
-                0,
-                0,
-                0
-              ],
-              "hex": "#000000"
-            },
-            "percent": 50,
-            "b": "transparent"
-          }
-        }
-      },
-      "$description": "Glyph ink inside macOS window traffic-light buttons."
-    },
-    "window-control-edge": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0,
-          0,
-          0
-        ],
-        "alpha": 0.12,
-        "hex": "#000000"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": {
-              "colorSpace": "oklch",
-              "components": [
-                0,
-                0,
-                0
-              ],
-              "hex": "#000000"
-            },
-            "percent": 12,
-            "b": "transparent"
-          }
-        }
-      },
-      "$description": "Hairline border around macOS window traffic-light buttons."
     },
     "background": {
       "$value": {
@@ -1160,54 +1012,6 @@
       },
       "$description": "Hairline border on glass, pill, and floating overlay surfaces."
     },
-    "scrollbar-thumb": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.41778,
-          0.00574,
-          286.149
-        ],
-        "hex": "#4c4c4f"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.muted-foreground}",
-            "percent": 50,
-            "b": "{color.background}"
-          }
-        }
-      },
-      "$description": "Scrollbar thumb resting fill."
-    },
-    "scrollbar-thumb-hover": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.57998,
-          0.00847,
-          286.133
-        ],
-        "hex": "#7a7a7f"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.muted-foreground}",
-            "percent": 80,
-            "b": "{color.background}"
-          }
-        }
-      },
-      "$description": "Scrollbar thumb fill on pointer hover."
-    },
     "field": {
       "$value": {
         "colorSpace": "oklch",
@@ -1368,23 +1172,6 @@
         }
       },
       "$description": "Switch knob and slider handle (pure white)."
-    },
-    "code": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          1,
-          0,
-          0
-        ],
-        "hex": "#ffffff"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Monospace code text ink inside recessed wells."
     },
     "info": {
       "$value": {
@@ -1858,32 +1645,6 @@
       },
       "$description": "Focus indicator ring color inside the sidebar."
     },
-    "window-control-off": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.36151,
-          0.00681,
-          286.054
-        ],
-        "hex": "#3d3d41"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Unfocused window traffic-light fill (UIKit systemFill composited over card)."
-    },
-    "dialog": {
-      "$value": "{color.card}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "Modal dialog container surface."
-    },
     "bevel": {
       "$value": "{color.border}",
       "$extensions": {
@@ -1930,7 +1691,7 @@
       "$description": "Accent control fill while pressed."
     },
     "on-accent-pressed": {
-      "$value": "{color.on-brand}",
+      "$value": "{color.primary-foreground}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "brand"
@@ -3942,11 +3703,11 @@
         ]
       }
     },
-    "dialog": {
-      "$description": "A dialog face: the card colour with the menu shadow.",
+    "modal": {
+      "$description": "A modal face: the card colour with the menu shadow.",
       "background": {
         "$type": "color",
-        "$value": "{color.dialog}"
+        "$value": "{color.card}"
       },
       "border-color": {
         "$type": "color",

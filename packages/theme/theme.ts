@@ -155,7 +155,7 @@ export type FinishRole =
   | "chip"
   | "glass"
   | "menu"
-  | "dialog"
+  | "modal"
   | "grabber"
   | "tooltip"
   | "inverse"
@@ -274,6 +274,8 @@ export interface Style {
     "press-scale": number;
     overlay: { hover: number; focus: number; pressed: number; dragged: number };
     ripple: boolean;
+    /** Opacity of a passive indicator at rest (a scrollbar's thumb), `rest-opacity`. */
+    "rest-opacity": number;
     "pressed-opacity": number;
     "accent-pressed-opacity": number;
     disabled: { content: number; fill: boolean };
@@ -595,10 +597,6 @@ export interface Palette {
   faint: string;
   /** The accent as a foreground: text, icons, lines, small marks. */
   brand: string;
-  /** The accent as a fill (buttons, bubbles), with `onBrand` on it. */
-  brandFill: string;
-  /** Text on the accent fill. */
-  onBrand: string;
   /** The main action's fill (the theme's `primary`): the citrus, in both appearances. */
   primary: string;
   /** Text on `primary`. */
@@ -613,16 +611,12 @@ export interface Palette {
   track: string;
   /** A switch's knob when off. */
   knob: string;
-  /** Code inside insets. */
-  code: string;
   /** The surface of a tip or a toast, read apart from the page's: a flat theme's popover, an inverted pane in Material. */
   inverse: string;
   /** Text on `inverse`. */
   inverseForeground: string;
   /** The accent on `inverse`: a toast's action. */
   inverseBrand: string;
-  /** Modal dialog container surface. */
-  dialog: string;
   /** Directional control elevation bevel stroke. */
   bevel: string;
   /** Accent control elevation top and side bevel stroke. */
@@ -644,11 +638,6 @@ export interface Palette {
   media: string;
   /** White ink on a photograph or any other surface that is not the theme's. It does not flip. */
   onMedia: string;
-  /**
-   * Dark ink on a light chart tile. A dark tile uses `on-media` instead (`data-dark:`), because
-   * `nsh/base` marks a plot cell dark from its own OKLab lightness, not from the appearance.
-   */
-  chartForeground: string;
 }
 
 /** An object whose getters read the theme's tokens: reads in a reactive
@@ -681,8 +670,6 @@ export const colors: Palette = tokens<keyof Palette>({
   mutedForeground: "muted-foreground",
   faint: "faint",
   brand: "brand",
-  brandFill: "brand-fill",
-  onBrand: "on-brand",
   primary: "primary",
   primaryForeground: "primary-foreground",
   sidebar: "sidebar",
@@ -690,39 +677,21 @@ export const colors: Palette = tokens<keyof Palette>({
   sidebarBorder: "sidebar-border",
   track: "track",
   knob: "knob",
-  code: "code",
   info: "info",
   warn: "warn",
   destructive: "destructive",
   up: "up",
   media: "media",
   onMedia: "on-media",
-  chartForeground: "chart-foreground",
   inverse: "inverse",
   inverseForeground: "inverse-foreground",
   inverseBrand: "inverse-brand",
-  dialog: "dialog",
   bevel: "bevel",
   accentBevel: "accent-bevel",
   disabled: "disabled",
   disabledForeground: "disabled-foreground",
   accentPressed: "accent-pressed",
   onAccentPressed: "on-accent-pressed",
-});
-
-/**
- * The window buttons an app draws for a frameless window on macOS (the
- * traffic lights): close, minimize and zoom in the system's hues, the
- * glyphs' ink over them, their hairline edge, and `off`, all three while
- * the window is in the background.
- */
-export const windowControls = tokens<"close" | "minimize" | "zoom" | "ink" | "edge" | "off">({
-  close: "window-close",
-  minimize: "window-minimize",
-  zoom: "window-zoom",
-  ink: "window-control-ink",
-  edge: "window-control-edge",
-  off: "window-control-off",
 });
 
 /**
@@ -797,7 +766,7 @@ export const finish: Record<FinishRole, FinishStyle> = {
   chip: themed("chip"),
   glass: themed("glass"),
   menu: themed("menu"),
-  dialog: themed("dialog"),
+  modal: themed("modal"),
   grabber: themed("grabber"),
   tooltip: themed("tooltip"),
   inverse: themed("inverse"),
@@ -932,10 +901,14 @@ export const stroke = {
 };
 
 /**
- * How far a control fades (`semantics.json`'s `state`): `pressed` is the opacity of a pressed
- * control (`pressed-opacity`), `disabled` that of a disabled control's content when drawn as one.
+ * How far a control fades (`semantics.json`'s `state`): `rest` is the opacity a passive indicator
+ * sits at (`rest-opacity`), `pressed` that of a pressed control (`pressed-opacity`), `disabled`
+ * that of a disabled control's content when drawn as one.
  */
 export const dimmed = {
+  get rest() {
+    return style().state["rest-opacity"];
+  },
   get pressed() {
     return style().state["pressed-opacity"];
   },

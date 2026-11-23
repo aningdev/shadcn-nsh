@@ -1696,11 +1696,11 @@
         }
       }
     },
-    "dialog": {
-      "$description": "A dialog face: the card colour with the menu shadow.",
+    "modal": {
+      "$description": "A modal face: the card colour with the menu shadow.",
       "background": {
         "$type": "color",
-        "$value": "{color.dialog}"
+        "$value": "{color.card}"
       },
       "shadow": {
         "$type": "shadow",

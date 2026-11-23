@@ -1106,7 +1106,7 @@
       "type": "registry:ui",
       "title": "Scrollbar",
       "description": "Hover-reveal scroll bars for scroll views and lists.",
-      "registryDependencies": ["utils"],
+      "registryDependencies": ["theme", "utils"],
       "files": [
         {
           "path": "packages/ui/scrollbar.tsx",

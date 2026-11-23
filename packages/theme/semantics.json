@@ -189,6 +189,7 @@
     },
     "ripple": false,
     "pressed-opacity": 0.7,
+    "rest-opacity": 0.5,
     "accent-pressed-opacity": 0.88,
     "disabled": {
       "content": 0.5,
@@ -336,8 +337,8 @@
         "backdropFilter": "none",
         "material": null
       },
-      "dialog": {
-        "background": "{dialog}",
+      "modal": {
+        "background": "{card}",
         "border-color": "{border}",
         "material": null
       },
@@ -452,7 +453,7 @@
       "menu": {
         "shadow": "0 1px 0 oklch(0.1686 0.02256 263.693 / 0.04), 0 12px 28px -10px oklch(0.1686 0.02256 263.693 / 0.22)"
       },
-      "dialog": {
+      "modal": {
         "shadow": "0 1px 0 oklch(0.1686 0.02256 263.693 / 0.04), 0 12px 28px -10px oklch(0.1686 0.02256 263.693 / 0.22)"
       },
       "inverse": {
@@ -551,7 +552,7 @@
       "menu": {
         "shadow": "0 1px 0 oklch(0 0 0 / 0.4), 0 16px 32px -10px oklch(0 0 0 / 0.6)"
       },
-      "dialog": {
+      "modal": {
         "shadow": "0 1px 0 oklch(0 0 0 / 0.4), 0 16px 32px -10px oklch(0 0 0 / 0.6)"
       },
       "inverse": {

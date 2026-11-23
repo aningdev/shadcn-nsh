@@ -34,8 +34,8 @@ export function Markdown(props: {
           heading1: { fontSize: 20, lineHeight: 26 },
           heading2: { fontSize: 17, lineHeight: 22 },
           heading3: { fontSize: 15, lineHeight: 22 },
-          code: { color: colors.code },
-          codeBlockCode: { color: colors.code },
+          code: { color: colors.foreground },
+          codeBlockCode: { color: colors.foreground },
           link: { color: colors.brand },
         }}
         codeBlockActions={[{ id: "copy", label: "Copy code" }]}

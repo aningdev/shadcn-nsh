@@ -315,8 +315,6 @@ function appearanceRoles(p: M3Palette, appearance: Appearance): Record<string, s
     inset: c(p.surfaceContainer),
     raised: c(p.surfaceContainerLow),
     "glass-edge": c(p.outlineVariant),
-    "scrollbar-thumb": "color-mix(in srgb, var(--muted-foreground) 50%, var(--background))",
-    "scrollbar-thumb-hover": "color-mix(in srgb, var(--muted-foreground) 80%, var(--background))",
     field: c(p.surfaceContainerHighest),
     line: c(p.outlineVariant),
     hover: "color-mix(in srgb, var(--foreground) 8%, transparent)",
@@ -326,7 +324,6 @@ function appearanceRoles(p: M3Palette, appearance: Appearance): Record<string, s
     "brand-edge": c(p.outlineVariant),
     track: c(p.surfaceContainerHighest),
     knob: c(p.outline),
-    code: "var(--foreground)",
     info: c(p.primary),
     warn: toOklchText(NSH_EXTENSIONS.warn[appearance]),
     up: toOklchText(NSH_EXTENSIONS.up[appearance]),
@@ -341,14 +338,12 @@ function appearanceRoles(p: M3Palette, appearance: Appearance): Record<string, s
     "up-tint": tintMix("up"),
     "down-tint": tintMix("destructive"),
     violet: c(p.tertiary),
-    "window-control-off": c(p.outlineVariant),
-    dialog: c(p.surfaceContainerHigh),
     bevel: "var(--border)",
     "accent-bevel": "var(--brand-edge)",
     disabled: "color-mix(in srgb, var(--foreground) 10%, transparent)",
     "disabled-foreground": "color-mix(in srgb, var(--foreground) 38%, transparent)",
     "accent-pressed": "var(--primary)",
-    "on-accent-pressed": "var(--on-brand)",
+    "on-accent-pressed": "var(--primary-foreground)",
   };
 }
 
@@ -360,17 +355,9 @@ function appearanceRoles(p: M3Palette, appearance: Appearance): Record<string, s
 export function m3Roles(scheme: M3Scheme): M3Roles {
   return {
     theme: {
-      "brand-fill": "var(--primary)",
-      "on-brand": "var(--primary-foreground)",
       scrim: oklchColor(0, 0, 0, 0.32),
       media: toOklchText(NSH_EXTENSIONS.media),
       "on-media": toOklchText("#FFFFFF"),
-      "chart-foreground": toOklchText(scheme.light.onSurface),
-      "window-close": toOklchText(scheme.light.error),
-      "window-minimize": toOklchText(NSH_EXTENSIONS.warn.light),
-      "window-zoom": toOklchText(NSH_EXTENSIONS.up.light),
-      "window-control-ink": `color-mix(in srgb, ${oklchColor(0, 0, 0)} 50%, transparent)`,
-      "window-control-edge": `color-mix(in srgb, ${oklchColor(0, 0, 0)} 12%, transparent)`,
     },
     light: appearanceRoles(scheme.light, "light"),
     dark: appearanceRoles(scheme.dark, "dark"),
@@ -435,7 +422,7 @@ function themeLevel(roles: M3Roles): Record<string, string> {
  * from `theme.json`). No frosted glass or blur; elevation maps onto Material Web Level 1–3
  * shadows and `material.android.elevation` (1 / 3 / 6 dp).
  */
-function finishes(): Record<string, Record<string, unknown>> {
+function finishes(modalFill: string): Record<string, Record<string, unknown>> {
   const level1 = { android: { elevation: 1 } };
   const level2 = { android: { elevation: 3 } };
   const level3 = { android: { elevation: 6 } };
@@ -501,7 +488,7 @@ function finishes(): Record<string, Record<string, unknown>> {
       material: null,
     },
     knob: surface(alias("knob")),
-    knobOn: surface(alias("on-brand")),
+    knobOn: surface(alias("primary-foreground")),
     handle: surface(alias("primary")),
     pill: surface(alias("raised"), { shadow: LEVEL_1, material: level1 }),
     thumb: surface(alias("secondary")),
@@ -525,8 +512,8 @@ function finishes(): Record<string, Record<string, unknown>> {
       backdropFilter: "none",
       material: level2,
     },
-    dialog: {
-      background: alias("dialog"),
+    modal: {
+      background: modalFill,
       shadow: LEVEL_3,
       "border-color": "transparent",
       material: level3,
@@ -662,6 +649,7 @@ export const m3Style = {
     overlay: { hover: 0.08, focus: 0.1, pressed: 0.1, dragged: 0.16 },
     ripple: true,
     "pressed-opacity": 1,
+    "rest-opacity": 0.5,
     "accent-pressed-opacity": 1,
     disabled: { content: 0.38, fill: true },
   },
@@ -682,7 +670,8 @@ export const m3Style = {
 
 /** Material 3 Expressive theme data and DTCG descriptions ready for `emitDtcgTheme`. */
 export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
-  const roles = m3Roles(m3Scheme(seed));
+  const scheme = m3Scheme(seed);
+  const roles = m3Roles(scheme);
   const colorDescs = {
     background: "Primary page surface (M3 surface role, material-web v34.0.21).",
     foreground: "Default text and icon ink on surfaces (M3 onSurface).",
@@ -734,14 +723,12 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
     "up-tint": "Translucent positive wash (12% up over transparent).",
     "down-tint": "Translucent negative wash (12% down over transparent).",
     violet: "Tertiary accent color (M3 tertiary).",
-    "window-control-off": "Unfocused window traffic-light fill (M3 outlineVariant).",
-    dialog: "Modal dialog surface (M3 surfaceContainerHigh).",
     bevel: "Control elevation bevel stroke aliased to {color.border}.",
     "accent-bevel": "Accent bevel stroke aliased to {color.brand-edge}.",
     disabled: "Disabled control container fill (10% onSurface over transparent).",
     "disabled-foreground": "Disabled control content ink (38% onSurface over transparent).",
     "accent-pressed": "Pressed accent fill aliased to {color.primary} (state layer applies press).",
-    "on-accent-pressed": "Pressed accent ink aliased to {color.on-brand}.",
+    "on-accent-pressed": "Pressed accent ink aliased to {color.primary-foreground}.",
   };
 
   return {
@@ -782,19 +769,12 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
       dark: roles.dark,
     },
     finishes: {
-      light: finishes(),
-      dark: finishes(),
+      light: finishes(toOklchText(scheme.light.surfaceContainerHigh)),
+      dark: finishes(toOklchText(scheme.dark.surfaceContainerHigh)),
     },
     descriptions: {
       sharedColors: {
-        "brand-fill": "Primary brand action fill, aliased to {color.primary}.",
-        "on-brand":
-          "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}.",
         scrim: "Translucent backdrop scrim behind modals and sheets (M3 scrim at 32% opacity).",
-        "chart-foreground": "Dark ink on light chart tiles matching M3 light onSurface.",
-        "window-close": "macOS window close traffic-light fill mapped to M3 light error.",
-        "window-minimize": "macOS window minimize traffic-light fill mapped to NSH light warn.",
-        "window-zoom": "macOS window zoom traffic-light fill mapped to NSH light up.",
       },
       lightColors: colorDescs,
       darkColors: colorDescs,
@@ -810,8 +790,8 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
         glass:
           "Floating surface using opaque M3 popover with Level 2 shadow and 3dp elevation (M3 uses no blur).",
         menu: "M3 menu/popover surface with Level 2 shadow and 3dp Android elevation.",
-        dialog:
-          "M3 dialog surface using SurfaceContainerHigh with Level 3 shadow and 6dp Android elevation.",
+        modal:
+          "M3 modal surface using SurfaceContainerHigh with Level 3 shadow and 6dp Android elevation.",
         grabber: "M3 bottom sheet drag handle (40% onSurfaceVariant).",
         tooltip: "M3 plain tooltip using inverse surface without shadow.",
         inverse: "M3 snackbar/inverse surface with Level 3 shadow and 6dp Android elevation.",

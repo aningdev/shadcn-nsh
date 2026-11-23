@@ -6,15 +6,7 @@ colors:
   scrim: "#00000052"
   media: "#10131a"
   on-media: "#ffffff"
-  chart-foreground: "#1d1b20"
-  window-close: "#b3261e"
-  window-minimize: "#b26a00"
-  window-zoom: "#138a5a"
-  window-control-ink: "#00000080"
-  window-control-edge: "#0000001f"
   light:
-    brand-fill: "#6750a4"
-    on-brand: "#ffffff"
     background: "#fef7ff"
     foreground: "#1d1b20"
     card: "#f7f2fa"
@@ -49,8 +41,6 @@ colors:
     inset: "#f3edf7"
     raised: "#f7f2fa"
     glass-edge: "#cac4d0"
-    scrollbar-thumb: "#a39ea7"
-    scrollbar-thumb-hover: "#6d6972"
     field: "#e6e0e9"
     line: "#cac4d0"
     hover: "#1d1b2014"
@@ -60,7 +50,6 @@ colors:
     brand-edge: "#cac4d0"
     track: "#e6e0e9"
     knob: "#79747e"
-    code: "#1d1b20"
     info: "#6750a4"
     warn: "#b26a00"
     up: "#138a5a"
@@ -74,8 +63,6 @@ colors:
     up-tint: "#138a5a1f"
     down-tint: "#b3261e1f"
     violet: "#7d5260"
-    window-control-off: "#cac4d0"
-    dialog: "#ece6f0"
     bevel: "#cac4d0"
     accent-bevel: "#cac4d0"
     disabled: "#1d1b201a"
@@ -83,8 +70,6 @@ colors:
     accent-pressed: "#6750a4"
     on-accent-pressed: "#ffffff"
   dark:
-    brand-fill: "#d0bcff"
-    on-brand: "#381e72"
     background: "#141218"
     foreground: "#e6e0e9"
     card: "#1d1b20"
@@ -119,8 +104,6 @@ colors:
     inset: "#211f26"
     raised: "#1d1b20"
     glass-edge: "#49454f"
-    scrollbar-thumb: "#6f6b74"
-    scrollbar-thumb-hover: "#a6a0ab"
     field: "#36343b"
     line: "#49454f"
     hover: "#e6e0e914"
@@ -130,7 +113,6 @@ colors:
     brand-edge: "#49454f"
     track: "#36343b"
     knob: "#938f99"
-    code: "#e6e0e9"
     info: "#d0bcff"
     warn: "#ffb547"
     up: "#45d49a"
@@ -144,8 +126,6 @@ colors:
     up-tint: "#45d49a1f"
     down-tint: "#f2b8b51f"
     violet: "#efb8c8"
-    window-control-off: "#49454f"
-    dialog: "#2b2930"
     bevel: "#49454f"
     accent-bevel: "#49454f"
     disabled: "#e6e0e91a"
@@ -287,7 +267,7 @@ components:
     rounded: "{rounded.container}"
     padding: "{spacing.control.padding}"
   dialog:
-    backgroundColor: "{colors.light.dialog}"
+    backgroundColor: "#ece6f0"
     textColor: "{colors.light.card-foreground}"
     typography: "{typography.body}"
     rounded: "{rounded.modal}"
@@ -310,7 +290,7 @@ components:
   switch-knob:
     backgroundColor: "{colors.light.knob}"
   switch-knob-on:
-    backgroundColor: "{colors.light.on-brand}"
+    backgroundColor: "{colors.light.primary-foreground}"
   slider-handle:
     backgroundColor: "{colors.light.primary}"
   tabs-thumb:
@@ -361,13 +341,11 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`track`** (light `#e6e0e9`, dark `#36343b`): Switch and slider track fill (M3 surfaceContainerHighest).
 - **`knob`** (light `#79747e`, dark `#938f99`): Unchecked switch thumb fill (M3 outline).
 - **`inverse`** (light `#322f35`, dark `#e6e0e9`): Inverse surface for snackbars and tooltips (M3 inverseSurface).
-- **`dialog`** (light `#ece6f0`, dark `#2b2930`): Modal dialog surface (M3 surfaceContainerHigh).
 - **`disabled`** (light `#1d1b201a`, dark `#e6e0e91a`): Disabled control container fill (10% onSurface over transparent).
 
 ### Ink
 
 - **`on-media`** (`#ffffff`): White ink over photographs and dark media surfaces; invariant across appearances.
-- **`chart-foreground`** (`#1d1b20`): Dark ink on light chart tiles matching M3 light onSurface.
 - **`foreground`** (light `#1d1b20`, dark `#e6e0e9`): Default text and icon ink on surfaces (M3 onSurface).
 - **`card-foreground`** (light `#1d1b20`, dark `#e6e0e9`): Primary text and icon ink on card surfaces.
 - **`popover-foreground`** (light `#1d1b20`, dark `#e6e0e9`): Primary text and icon ink on popover surfaces.
@@ -377,14 +355,11 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`sidebar-foreground`** (light `#1d1b20`, dark `#e6e0e9`): Primary text and icon ink inside the sidebar.
 - **`sidebar-accent-foreground`** (light `#4a4458`, dark `#e8def8`): Sidebar active item text ink (M3 Expressive onSecondaryContainer).
 - **`faint`** (light `#79747e`, dark `#938f99`): Quiet caption/placeholder ink (M3 outline).
-- **`code`** (light `#1d1b20`, dark `#e6e0e9`): Monospace code text ink inside recessed wells.
 - **`inverse-foreground`** (light `#f5eff7`, dark `#322f35`): Ink on inverse surfaces (M3 inverseOnSurface).
 - **`disabled-foreground`** (light `#1d1b2061`, dark `#e6e0e961`): Disabled control content ink (38% onSurface over transparent).
 
 ### Brand
 
-- **`brand-fill`** (light `#6750a4`, dark `#d0bcff`): Primary brand action fill, aliased to {color.primary}.
-- **`on-brand`** (light `#ffffff`, dark `#381e72`): Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}.
 - **`primary`** (light `#6750a4`, dark `#d0bcff`): Primary brand action fill (M3 primary).
 - **`primary-foreground`** (light `#ffffff`, dark `#381e72`): Text and icon ink on primary fills (M3 onPrimary).
 - **`sidebar-primary`** (light `#6750a4`, dark `#d0bcff`): Primary action highlight color in the sidebar.
@@ -394,7 +369,7 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`brand-tint`** (light `#e8def8`, dark `#4a4458`): Opaque selected chip/tile fill (M3 secondaryContainer).
 - **`inverse-brand`** (light `#d0bcff`, dark `#6750a4`): Brand action ink on inverse surfaces (M3 inversePrimary).
 - **`accent-pressed`** (light `#6750a4`, dark `#d0bcff`): Pressed accent fill aliased to {color.primary} (state layer applies press).
-- **`on-accent-pressed`** (light `#ffffff`, dark `#381e72`): Pressed accent ink aliased to {color.on-brand}.
+- **`on-accent-pressed`** (light `#ffffff`, dark `#381e72`): Pressed accent ink aliased to {color.primary-foreground}.
 
 ### Status
 
@@ -416,22 +391,14 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 
 ### Chrome
 
-- **`window-close`** (`#b3261e`): macOS window close traffic-light fill mapped to M3 light error.
-- **`window-minimize`** (`#b26a00`): macOS window minimize traffic-light fill mapped to NSH light warn.
-- **`window-zoom`** (`#138a5a`): macOS window zoom traffic-light fill mapped to NSH light up.
-- **`window-control-ink`** (`#00000080`): Glyph ink inside macOS window traffic-light buttons.
-- **`window-control-edge`** (`#0000001f`): Hairline border around macOS window traffic-light buttons.
 - **`border`** (light `#cac4d0`, dark `#49454f`): Hairline container border color (M3 outlineVariant).
 - **`input`** (light `#79747e`, dark `#938f99`): Input outline color (M3 outline).
 - **`ring`** (light `#625b71`, dark `#ccc2dc`): Focus indicator ring color (M3 secondary).
 - **`sidebar-border`** (light `#cac4d0`, dark `#49454f`): Sidebar divider border (M3 outlineVariant).
 - **`sidebar-ring`** (light `#625b71`, dark `#ccc2dc`): Focus indicator ring color inside the sidebar.
 - **`glass-edge`** (light `#cac4d0`, dark `#49454f`): Overlay outline edge (M3 outlineVariant).
-- **`scrollbar-thumb`** (light `#a39ea7`, dark `#6f6b74`): Scrollbar thumb resting fill.
-- **`scrollbar-thumb-hover`** (light `#6d6972`, dark `#a6a0ab`): Scrollbar thumb fill on pointer hover.
 - **`line`** (light `#cac4d0`, dark `#49454f`): Inset divider hairline (M3 outlineVariant).
 - **`ring-halo`** (light `#625b7133`, dark `#ccc2dc33`): Outer focus ring halo (20% ring color over transparent).
-- **`window-control-off`** (light `#cac4d0`, dark `#49454f`): Unfocused window traffic-light fill (M3 outlineVariant).
 - **`bevel`** (light `#cac4d0`, dark `#49454f`): Control elevation bevel stroke aliased to {color.border}.
 - **`accent-bevel`** (light `#cac4d0`, dark `#49454f`): Accent bevel stroke aliased to {color.brand-edge}.
 
@@ -533,7 +500,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.chip`**: A chosen value label inside a field: a fill, an inner highlight and an edge.
 - **`finish.glass`** (backdropFilter: `none`; material: `{"android":{"elevation":3}}`): Floating surface using opaque M3 popover with Level 2 shadow and 3dp elevation (M3 uses no blur).
 - **`finish.menu`** (backdropFilter: `none`; material: `{"android":{"elevation":3}}`): M3 menu/popover surface with Level 2 shadow and 3dp Android elevation.
-- **`finish.dialog`** (material: `{"android":{"elevation":6}}`): M3 dialog surface using SurfaceContainerHigh with Level 3 shadow and 6dp Android elevation.
+- **`finish.modal`** (material: `{"android":{"elevation":6}}`): M3 modal surface using SurfaceContainerHigh with Level 3 shadow and 6dp Android elevation.
 - **`finish.grabber`**: M3 bottom sheet drag handle (40% onSurfaceVariant).
 - **`finish.tooltip`**: M3 plain tooltip using inverse surface without shadow.
 - **`finish.inverse`** (backdropFilter: `none`; material: `{"android":{"elevation":6}}`): M3 snackbar/inverse surface with Level 3 shadow and 6dp Android elevation.

@@ -495,10 +495,10 @@ describe("DTCG source lint", () => {
       damping: 30,
     });
 
-    // 3. WinUI font-sans, brand-fill = var(--primary), and Material alias-backed colorOp (down-tint)
+    // 3. WinUI font-sans, sidebar-primary = var(--primary), and Material alias-backed colorOp (down-tint)
     const winuiTheme = compileThemeJson(winuiResolver);
     expect(winuiTheme.cssVars.theme["font-sans"]).toBe("Segoe UI Variable, Segoe UI, sans-serif");
-    expect(winuiTheme.cssVars.theme["brand-fill"]).toBe("var(--primary)");
+    expect(winuiTheme.cssVars.light["sidebar-primary"]).toBe("var(--primary)");
     expect(Object.keys(winuiTheme.cssVars.theme).at(-1)).toBe("font-sans");
 
     const matResolver = path.join(

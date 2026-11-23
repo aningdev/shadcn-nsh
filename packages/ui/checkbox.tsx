@@ -259,7 +259,7 @@ export function CheckboxMark(props: { mark: CheckboxMarkKind } & ChoiceOptions) 
         transform: [{ scale: amount.interpolate({ inputRange: [0, 1], outputRange: [0.75, 1] }) }],
       }}
     >
-      <Icon icon={icon} size={checkSize} tint={colors.onBrand} weight={MARK_WEIGHT} />
+      <Icon icon={icon} size={checkSize} tint={colors.primaryForeground} weight={MARK_WEIGHT} />
     </View>
   );
   const cb = checkboxPresets[controls()];

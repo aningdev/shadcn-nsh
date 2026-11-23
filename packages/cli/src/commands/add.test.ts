@@ -216,8 +216,8 @@ describe("add", () => {
     semantics.state["press-scale"] = 1;
     semantics.finishes.light.card.shadow = "none";
     delete semantics.controls;
-    delete semantics.finishes.shared.dialog;
-    delete semantics.finishes.light.dialog;
+    delete semantics.finishes.shared.modal;
+    delete semantics.finishes.light.modal;
     delete semantics.finishes.shared.card.material;
     current.write("lib/ui/semantics.json", `${JSON.stringify(semantics, null, 2)}\n`);
 
@@ -232,8 +232,8 @@ describe("add", () => {
     expect(merged.state["press-scale"]).toBe(1);
     expect(merged.finishes.light.card.shadow).toBe("none");
     expect(merged.controls).toBe("base");
-    expect(merged.finishes.shared.dialog).toBeDefined();
-    expect(merged.finishes.light.dialog).toBeDefined();
+    expect(merged.finishes.shared.modal).toBeDefined();
+    expect(merged.finishes.light.modal).toBeDefined();
     expect(merged.finishes.shared.card.material).toBeNull();
   });
 

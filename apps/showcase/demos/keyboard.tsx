@@ -349,7 +349,7 @@ function HeldArrows() {
             cx.save();
             cx.shadowColor = alpha(colors.brand, focusedNow ? 0.6 : 0.32);
             cx.shadowBlur = focusedNow ? 18 : 9;
-            cx.fillStyle = heldNow.length > 0 ? colors.brandFill : colors.brand;
+            cx.fillStyle = heldNow.length > 0 ? colors.primary : colors.brand;
             cx.beginPath();
             cx.arc(puck.x, puck.y, 9.5, 0, TAU);
             cx.fill();
@@ -364,7 +364,7 @@ function HeldArrows() {
               cx.save();
               cx.translate(puck.x, puck.y);
               cx.rotate(Math.atan2(d.y, d.x));
-              cx.fillStyle = colors.onBrand;
+              cx.fillStyle = colors.primaryForeground;
               cx.beginPath();
               cx.moveTo(4.5, 0);
               cx.lineTo(-2.5, -3.6);
@@ -373,7 +373,7 @@ function HeldArrows() {
               cx.fill();
               cx.restore();
             } else {
-              cx.fillStyle = colors.onBrand;
+              cx.fillStyle = colors.primaryForeground;
               cx.beginPath();
               cx.arc(puck.x, puck.y, 2.2, 0, TAU);
               cx.fill();

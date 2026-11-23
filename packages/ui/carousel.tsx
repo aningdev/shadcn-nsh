@@ -142,7 +142,7 @@ export function carouselPaginationLook() {
         bottom: inset,
         marginHorizontal: 1,
         borderRadius: carouselSizes.dot / 2,
-        backgroundColor: colors.brandFill,
+        backgroundColor: colors.primary,
       };
     },
   };

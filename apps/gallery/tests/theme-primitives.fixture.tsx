@@ -64,7 +64,7 @@ const expressive: AppTheme = {
         ...finishes.light,
         accent: {
           ...finishes.light.accent,
-          gradient: "linear-gradient(180deg, {primary} 0%, {brand-fill} 100%)",
+          gradient: "linear-gradient(180deg, {primary} 0%, {brand} 100%)",
         },
         menu: {
           ...finishes.light.menu,
@@ -129,7 +129,7 @@ function App() {
       <Text>{`toggleOnAndroid=${JSON.stringify(onToggle.android ?? null)}`}</Text>
       <Text>{`toastAndroid=${JSON.stringify(toastClose.android ?? null)}`}</Text>
       <Text>{`menuMaterial=${JSON.stringify(platformMaterial("menu"))}`}</Text>
-      <Text>{`tokens=${colors.onBrand}|${colors.primaryForeground}|${colors.inverseForeground}|${colors.primary}|${finish.on.foreground}`}</Text>
+      <Text>{`tokens=${colors.primaryForeground}|${colors.inverseForeground}|${colors.primary}|${finish.on.foreground}`}</Text>
       <Roll value={step()}>{`roll=${step()}`}</Roll>
       <View
         style={{

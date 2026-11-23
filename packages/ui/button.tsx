@@ -156,7 +156,7 @@ const filled = (variant: ButtonVariant) => variant === "default";
 
 const buttonInk = (variant: ButtonVariant, selected = false): keyof Tokens =>
   filled(variant)
-    ? "on-brand"
+    ? "primary-foreground"
     : variant === "destructive"
       ? "destructive"
       : variant === "secondary" && selected
@@ -293,7 +293,7 @@ function ink(live: Live<ButtonVariant>, o?: ButtonLookOptions) {
     if (filled(variant)) return colors.mutedForeground;
   }
   if (filled(variant)) {
-    return read(o?.pressed) ? colors.onAccentPressed : colors.onBrand;
+    return read(o?.pressed) ? colors.onAccentPressed : colors.primaryForeground;
   }
   if (variant === "destructive") return colors.destructive;
   if (variant === "secondary" && read(o?.selected))

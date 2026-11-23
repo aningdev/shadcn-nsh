@@ -414,32 +414,6 @@
       },
       "$description": "Flyout and acrylic border (WinUI SurfaceStrokeColorFlyout composited over base)."
     },
-    "scrollbar-thumb": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.62006, 0, 0],
-        "hex": "#868686"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Static scrollbar thumb color (WinUI ControlStrongFillColorDefault)."
-    },
-    "scrollbar-thumb-hover": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.62006, 0, 0],
-        "hex": "#868686"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Static scrollbar hover color (WinUI ControlStrongFillColorDefault)."
-    },
     "field": {
       "$value": {
         "colorSpace": "oklch",
@@ -556,19 +530,6 @@
         }
       },
       "$description": "Unchecked switch thumb (WinUI TextFillColorSecondary)."
-    },
-    "code": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.21779, 0, 0],
-        "hex": "#1a1a1a"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Inline code ink (WinUI TextFillColorPrimary)."
     },
     "info": {
       "$value": {
@@ -738,28 +699,6 @@
         }
       },
       "$description": "Library-retained violet data-series hue (no WinUI equivalent)."
-    },
-    "window-control-off": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.89535, 0.00406, 286.317],
-        "hex": "#dcdcdf"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Library-retained unfocused window traffic-light fill (no WinUI equivalent)."
-    },
-    "dialog": {
-      "$value": "{color.background}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "ContentDialog surface aliased to {color.background} (SolidBackgroundFillColorBase)."
     },
     "bevel": {
       "$value": {
@@ -1173,7 +1112,7 @@
         ]
       }
     },
-    "dialog": {
+    "modal": {
       "shadow": {
         "$type": "shadow",
         "$value": [

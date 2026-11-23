@@ -106,8 +106,8 @@ function App() {
               <Surface style={insetSurface()}>
                 <Spinner size={16} tint={colors.brand} />
               </Surface>
-              <Surface style={{ backgroundColor: colors.brandFill }}>
-                <Spinner size={16} tint={colors.onBrand} />
+              <Surface style={{ backgroundColor: colors.primary }}>
+                <Spinner size={16} tint={colors.primaryForeground} />
               </Surface>
             </View>
           </DemoSection>

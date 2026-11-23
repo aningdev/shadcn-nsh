@@ -72,10 +72,10 @@ label, a dark one a light label. `nsh/base/plot` sets `data-dark` on a label who
 is dark, so `labelClass` names both:
 
 ```tsx
-<Treemap labelClass="text-chart-foreground data-dark:text-on-media" … />
+<Treemap labelClass="text-foreground data-dark:text-on-media" … />
 ```
 
-`chart-foreground` stays out of the appearance (dark in light and dark alike); `on-media` is the
+`foreground` stays out of the appearance (dark in light and dark alike); `on-media` is the
 white the theme keeps for a dark ground. Keep the scale's midpoint opaque: a fill mixed with the
 background reads as a dark cell, and every label then wears the light ink, pale tiles included.
 

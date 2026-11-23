@@ -1,10 +1,10 @@
 /**
- * The finishes a theme derives from its `menu`: `dialog`, `tooltip` and `inverse` (`docs/specs/theme-roles.md`).
+ * The finishes a theme derives from its `menu`: `modal`, `tooltip` and `inverse` (`docs/specs/theme-roles.md`).
  *
  * The three themes written by generators (shadcn, Solid Glass, Apple) and the default theme paint a
- * dialog, a tooltip and a toast exactly as they paint a card, a popover and a menu, so each of the
+ * modal, a tooltip and a toast exactly as they paint a card, a popover and a menu, so each of the
  * three finishes is stated here from the menu rather than written three times. A theme that paints
- * them differently (material) states them itself.
+ * them differently (material, WinUI) states them itself.
  *
  * Pure: no `node:fs`.
  */
@@ -19,7 +19,7 @@ const fillToken = (fill: unknown): string => {
 };
 
 /**
- * `roles` with `dialog` (the card's colour and the menu's shadow), `tooltip` (the popover's pane,
+ * `roles` with `modal` (the card's colour and the menu's shadow), `tooltip` (the popover's pane,
  * flat) and `inverse` (the menu, its fill read from the `inverse` token) added after `menu`.
  */
 export function withSurfaces(roles: Roles): Roles {
@@ -37,9 +37,9 @@ export function withSurfaces(roles: Roles): Roles {
         ? [
             [role, finish],
             [
-              "dialog",
+              "modal",
               {
-                background: "{dialog}",
+                background: "{card}",
                 shadow: menu.shadow,
                 "border-color": "{border}",
                 material: null,

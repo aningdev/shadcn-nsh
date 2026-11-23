@@ -845,7 +845,7 @@ function Compositing() {
             second + 52,
             centerY + 36,
           );
-          paper.addColorStop(0, colors.brandFill);
+          paper.addColorStop(0, colors.primary);
           paper.addColorStop(1, colors.up);
           cx.fillStyle = paper;
           cx.beginPath();

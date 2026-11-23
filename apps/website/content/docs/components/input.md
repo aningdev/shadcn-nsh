@@ -112,7 +112,7 @@ const WORDS = ["Empty", "Weak", "Fair", "Good", "Strong"];
 
 const score = (value: string) =>
   value === "" ? 0 : PASSWORD_RULES.filter((rule) => rule.test(value)).length;
-const tones = [colors.faint, colors.danger, colors.warn, colors.info, colors.up];
+const tones = [colors.faint, colors.destructive, colors.warn, colors.info, colors.up];
 
 const strength = score(password());
 

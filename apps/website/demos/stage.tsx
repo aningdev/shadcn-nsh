@@ -265,7 +265,7 @@ export const ui = () => ({
   border: colors.border,
   line: colors.line,
   accent: colors.brand,
-  onAccent: colors.onBrand,
+  onAccent: colors.primaryForeground,
   onPrimary: colors.primaryForeground,
   up: colors.up,
   down: colors.destructive,
@@ -294,7 +294,7 @@ export const ui = () => ({
   },
   primary: { backgroundColor: colors.primary, borderWidth: 1, ...finish.light },
   accentFill: {
-    backgroundColor: colors.brandFill,
+    backgroundColor: colors.primary,
     borderWidth: 1,
     borderColor: colors.brand,
     ...finish.accent,

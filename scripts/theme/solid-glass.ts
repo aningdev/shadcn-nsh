@@ -346,8 +346,6 @@ function section(appearance: Appearance): Record<string, string> {
     // A surface inside a card is the thinnest pane; a control on it is clear glass.
     inset: panes.inset,
     raised: s("glass-control"),
-    "scrollbar-thumb": "color-mix(in srgb, var(--muted-foreground) 50%, var(--background))",
-    "scrollbar-thumb-hover": "color-mix(in srgb, var(--muted-foreground) 80%, var(--background))",
     // The edge a filled pane draws: the stylesheet's primary-button hairline,
     // `color-mix(in oklab, var(--primary) 55%, var(--primary-edge))`, mixed here because the two
     // ends are greys and the mix is one value (`mixed`).
@@ -364,14 +362,11 @@ function section(appearance: Appearance): Record<string, string> {
     // pale page, darker on the dark one).
     faint: s("ring"),
     // Links and small marks keep the teal (`--brand`); the main action's fill is the ink's pane
-    // (`--primary`), which is what `brand-fill` below names.
+    // (`--primary`).
     brand: s("brand"),
     // A switch's rail before it is on: shadcn's `bg-input`, cut into the surface as a groove.
     track: s("input"),
     knob: s("knob"),
-    // Code inside insets is set in the text colour; the stylesheet's `--code-inline` (a red) is
-    // for a span of inline code, which no role of this library holds.
-    code: "var(--foreground)",
     // The tones beside the accent: the stylesheet's own status colours ("hue means finished or
     // stopped"), and for `violet` the colour it sets a name in.
     info: s("status-done"),
@@ -387,42 +382,28 @@ function section(appearance: Appearance): Record<string, string> {
     "up-tint": tint("up"),
     "down-tint": tint("destructive"),
     violet: s("syn-name"),
-    // The macOS traffic lights are the system's, and the stylesheet has no such tokens: like the
-    // text beside them, all three go quiet (the ring's grey) while the window is in the background.
-    "window-control-off": s("ring"),
-    dialog: "var(--card)",
     bevel: "var(--border)",
     "accent-bevel": "var(--brand-edge)",
     disabled: "var(--raised)",
     "disabled-foreground": "var(--muted-foreground)",
     "accent-pressed": "var(--primary)",
-    "on-accent-pressed": "var(--on-brand)",
+    "on-accent-pressed": "var(--primary-foreground)",
   };
 }
 
 /** The theme's own tokens, shared by the appearances (a colour may name one: `var(--primary)`). */
 function themeLevel(): Record<string, string> {
-  const s = source("light");
   return {
     // Solid Glass stepped corner radii: 11 px controls, 14 px containers, 20 px modals.
     ...scaledRadii({ control: 11, container: 14, modal: 20 }),
     // The monospaced family: NSH's generic `monospace`, the system's own — neither theme ships a
     // font face. A theme that names one states its family here (the app imports the file).
     "font-mono": "monospace",
-    // The main action is the ink's solid pane; `on-brand` is what reads on it.
-    "brand-fill": "var(--primary)",
-    "on-brand": "var(--primary-foreground)",
-    // The stylesheet has no scrim of its own; shadcn's dialog overlay is `bg-black/50`.
+    // The stylesheet has no scrim of its own; shadcn's modal overlay is `bg-black/50`.
     scrim: "oklch(0 0 0 / 0.5)",
     // The ground a photograph sits on, and white ink on it. Neither flips.
     media: "oklch(0.1869 0.0151 266.766)",
     "on-media": "oklch(1 0 0)",
-    "chart-foreground": s("foreground"),
-    "window-close": s("destructive"),
-    "window-minimize": s("ring"),
-    "window-zoom": s("chart-3"),
-    "window-control-ink": "color-mix(in srgb, oklch(0 0 0) 50%, transparent)",
-    "window-control-edge": "color-mix(in srgb, oklch(0 0 0) 12%, transparent)",
   };
 }
 
@@ -648,7 +629,7 @@ export function themeFiles(): ThemeGeneratorOutput {
       overview:
         "Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass with top-edge light rims, hairline glass borders, and ambient drop shadows (`state.press-scale: 1`).",
       elevation:
-        "Layered glass elevation: surfaces combine translucent fills (`alpha < 1` over page grounds), top-edge inset highlights, `--glass-edge` borders, soft shadows, and backdrop blur (`glass`, `menu`, `dialog`, `tooltip`, `inverse`).",
+        "Layered glass elevation: surfaces combine translucent fills (`alpha < 1` over page grounds), top-edge inset highlights, `--glass-edge` borders, soft shadows, and backdrop blur (`glass`, `menu`, `modal`, `tooltip`, `inverse`).",
       dos: [
         "Keep press interactions flat (`state.press-scale: 1`); pressed panes deepen and drop shadow rather than shrinking.",
         "Keep gradient stops `transparent` on translucent `background` finishes so alpha is not doubled by the canvas.",
@@ -672,14 +653,7 @@ export function themeFiles(): ThemeGeneratorOutput {
           "Scale factor applied while pressed (1 disables press shrinking for Solid Glass panes).",
       },
       sharedColors: {
-        "brand-fill": "Primary action fill, aliased to {color.primary}.",
-        "on-brand":
-          "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}.",
         scrim: "Translucent backdrop scrim behind modals and sheets (50% black).",
-        "window-close": "macOS window close traffic-light fill mapped to destructive red.",
-        "window-minimize":
-          "macOS window minimize traffic-light fill mapped to Solid Glass ring grey.",
-        "window-zoom": "macOS window zoom traffic-light fill mapped to Solid Glass chart-3 grey.",
       },
       lightColors: paneAndTokenDescriptions,
       darkColors: paneAndTokenDescriptions,

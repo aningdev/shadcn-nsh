@@ -36,14 +36,11 @@ npx shadcn-nsh@latest add theme
 | `line` / `border`                                                                  | Hairlines inside insets, and the edge of a card or control                                                  |
 | `hover` / `faint`                                                                  | The pointer's wash, and the quietest text                                                                   |
 | `ring-halo`                                                                        | The keyboard focus's halo around the `ring` edge                                                            |
-| `brand` / `brand-fill`                                                             | The accent as ink, and as a fill with `on-brand` on it                                                      |
+| `brand`                                                                            | The accent as ink                                                                                           |
 | `track` / `knob`                                                                   | A switch's track when off, and a switch's knob; sliders and progress bars read their preset's track role    |
-| `scrollbar-thumb*`                                                                 | The scroll bars, opaque over the view                                                                       |
-| `code`                                                                             | Code inside insets                                                                                          |
 | `info` / `warn` / `up` / `violet`                                                  | The tones beside the accent; a data loss reads `destructive`                                                |
 | `brand-tint`, `info-tint`, `warn-tint`, `destructive-tint`, `up-tint`, `down-tint` | The same tones as fills behind text                                                                         |
 | `inverse` / `inverse-foreground` / `inverse-brand`                                 | A toast's and a tooltip's reversed surface, its text and action; quieter ink is `finish.inverse.foreground` |
-| `window-close`, `window-minimize`, `window-zoom`, `window-control-*`               | The macOS traffic lights                                                                                    |
 
 `colors` maps the roles a component names onto those keys:
 
@@ -58,7 +55,8 @@ colors.field; // an input's well
 colors.foreground; // body text
 colors.mutedForeground; // secondary text
 colors.brand; // the accent as ink
-colors.brandFill; // the accent as a fill
+colors.primary; // the accent as a fill
+colors.primaryForeground; // what reads on that fill
 colors.destructive; // a failure
 colors.up; // additions
 ```
@@ -69,19 +67,19 @@ Read a role where it is drawn (in JSX, a `draw`, or an effect): the getters read
 
 A finish is light and depth: a gradient over the color, its shadows, its edge. `semantics.json` keeps `finishes.shared` (fields identical in both appearances, referencing `{token}` so NSH's `token()` handles light/dark switching) plus sparse `finishes.light` and `finishes.dark` overrides, and `finish.<role>` merges them and resolves every `{token}` (including `oklch(from {card} l c h / 0.78)`) for the active appearance.
 
-| Role                             | Use                                                           |
-| -------------------------------- | ------------------------------------------------------------- |
-| `card` / `inset` / `field`       | The three surfaces, each with its own shadow                  |
-| `raised` / `hover` / `pressed`   | A control at rest, under the pointer, pressed                 |
-| `light` / `accent`               | A control on the citrus fill                                  |
-| `track` / `fill`                 | A rail, and the accent that runs in it                        |
-| `knob` / `knobOn` / `handle`     | A switch's knob off, and on; a slider's thumb                 |
-| `pill` / `thumb` / `on`          | A segmented control's track, its thumb, what stays chosen     |
-| `chip`                           | A small raised label                                          |
-| `glass`                          | A control over a photo                                        |
-| `menu`                           | A floating surface's soft shadow                              |
-| `dialog` / `tooltip` / `inverse` | A dialog card, a tooltip's bubble, a toast's reversed surface |
-| `groove`                         | The lip of light under a separator                            |
+| Role                            | Use                                                          |
+| ------------------------------- | ------------------------------------------------------------ |
+| `card` / `inset` / `field`      | The three surfaces, each with its own shadow                 |
+| `raised` / `hover` / `pressed`  | A control at rest, under the pointer, pressed                |
+| `light` / `accent`              | A control on the citrus fill                                 |
+| `track` / `fill`                | A rail, and the accent that runs in it                       |
+| `knob` / `knobOn` / `handle`    | A switch's knob off, and on; a slider's thumb                |
+| `pill` / `thumb` / `on`         | A segmented control's track, its thumb, what stays chosen    |
+| `chip`                          | A small raised label                                         |
+| `glass`                         | A control over a photo                                       |
+| `menu`                          | A floating surface's soft shadow                             |
+| `modal` / `tooltip` / `inverse` | A modal card, a tooltip's bubble, a toast's reversed surface |
+| `groove`                        | The lip of light under a separator                           |
 
 Every finish also carries a `material`: `null` (every theme the library ships), or what the platform's own glass should be. `apple` is `{ glass: "regular" | "clear", tint }` and rides inside `finish.<role>` as `glassEffect` and `glassTintColor`, so a spread of the finish carries it; `ios`, `macos` and `windows` are props, not style keys, which `platformMaterial(role)` returns for the view that draws the finish:
 

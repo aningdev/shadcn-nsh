@@ -98,7 +98,7 @@ describe("diff", () => {
     const same = await captured(() => runDiff([], { cwd: current!.app, registry: current!.url }));
     expect(same.result).toBe(0);
 
-    delete semantics.finishes.shared.dialog;
+    delete semantics.finishes.shared.modal;
     current.write("lib/ui/semantics.json", `${JSON.stringify(semantics, null, 2)}\n`);
     const missing = await captured(() =>
       runDiff([], { cwd: current!.app, registry: current!.url }),

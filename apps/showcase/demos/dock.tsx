@@ -125,7 +125,7 @@ function EditorPane(props: { panel: string }) {
                   flex: 1,
                   fontFamily: mono(),
                   fontSize: 12,
-                  color: colors.code,
+                  color: colors.foreground,
                   numberOfLines: 1,
                 }}
               >

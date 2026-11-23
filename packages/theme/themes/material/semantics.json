@@ -189,6 +189,7 @@
     },
     "ripple": true,
     "pressed-opacity": 1,
+    "rest-opacity": 0.5,
     "accent-pressed-opacity": 1,
     "disabled": {
       "content": 0.38,
@@ -348,8 +349,8 @@
         "border-color": "transparent"
       },
       "knobOn": {
-        "background": "{on-brand}",
-        "gradient": "linear-gradient(180deg, {on-brand} 0%, {on-brand} 100%)",
+        "background": "{primary-foreground}",
+        "gradient": "linear-gradient(180deg, {primary-foreground} 0%, {primary-foreground} 100%)",
         "shadow": "none",
         "material": null,
         "border-color": "transparent"
@@ -418,8 +419,7 @@
         },
         "shadow": "0 1px 2px oklch(0 0 0 / 0.3), 0 2px 6px 2px oklch(0 0 0 / 0.15)"
       },
-      "dialog": {
-        "background": "{dialog}",
+      "modal": {
         "border-color": "transparent",
         "material": {
           "android": {
@@ -456,7 +456,15 @@
         "shadow": "none"
       }
     },
-    "light": {},
-    "dark": {}
+    "light": {
+      "modal": {
+        "background": "oklch(0.93251 0.01479 312.24)"
+      }
+    },
+    "dark": {
+      "modal": {
+        "background": "oklch(0.2859 0.01293 298.633)"
+      }
+    }
   }
 }

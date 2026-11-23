@@ -58,16 +58,14 @@ test("double focus, timing motion, state-layer inks, ripple and android material
   expect(read("roll")).toBe("2");
 
   // State-layer hover omits backgroundColor: token("hover") and stacks ink over resting gradients.
-  const [onBrand, primaryForeground, inverseForeground, primary, selectedInk] =
-    read("tokens").split("|");
-  const expectedOnBrandHover = atAlpha(onBrand, 0.08);
+  const [primaryForeground, inverseForeground, primary, selectedInk] = read("tokens").split("|");
   const expectedPrimaryFgHover = atAlpha(primaryForeground, 0.08);
   const expectedInverseFgHover = atAlpha(inverseForeground, 0.08);
   const expectedSelectedFgHover = atAlpha(selectedInk, 0.08);
 
   const btnHover = readJson<Record<string, unknown>>("btnHover");
   expect(btnHover.backgroundColor).toBeUndefined();
-  expect(btnHover.backgroundImage).toContain(expectedOnBrandHover);
+  expect(btnHover.backgroundImage).toContain(expectedPrimaryFgHover);
   expect(btnHover.backgroundImage).toContain(", linear-gradient(");
 
   const roundHover = readJson<Record<string, unknown>>("roundHover");
@@ -77,7 +75,7 @@ test("double focus, timing motion, state-layer inks, ripple and android material
 
   const splitHover = readJson<Record<string, unknown>>("splitHover");
   expect(splitHover.backgroundColor).toBeUndefined();
-  expect(splitHover.backgroundImage).toContain(expectedOnBrandHover);
+  expect(splitHover.backgroundImage).toContain(expectedPrimaryFgHover);
 
   const toggleOnHover = readJson<Record<string, unknown>>("toggleOnHover");
   expect(toggleOnHover.backgroundColor).toBeUndefined();
@@ -93,7 +91,9 @@ test("double focus, timing motion, state-layer inks, ripple and android material
   expect(bareHover.backgroundImage).toBeDefined();
 
   // state.ripple: true wires surface-appropriate ripple colors on pressables.
-  expect(readJson("btnAndroid")).toEqual({ ripple: { color: atAlpha(onBrand, 0.1) } });
+  expect(readJson("btnAndroid")).toEqual({
+    ripple: { color: atAlpha(primaryForeground, 0.1) },
+  });
   expect(readJson("roundAndroid")).toEqual({
     ripple: { color: atAlpha(primaryForeground, 0.1) },
   });

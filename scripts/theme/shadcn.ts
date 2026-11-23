@@ -158,32 +158,19 @@ function own(appearance: Appearance) {
     up: appearance === "light" ? p.chart[3] : p.primary,
     violet: appearance === "light" ? p.chart[4] : p.foreground,
     line: p.border,
-    code: p.foreground,
   };
 }
 
 /** The theme's own tokens, shared by the appearances (a colour may name one: `var(--primary)`). */
-const themeLevel = (light: ReturnType<typeof palette>): Record<string, string> => ({
+const themeLevel = (): Record<string, string> => ({
   ...scaledRadii(RADII),
   // The monospaced family: NSH's generic `monospace`, the system's own — neither theme ships a
   // font face. A theme that names one states its family here (the app imports the file).
   "font-mono": "monospace",
-  // The main action: shadcn's `primary`, which differs by appearance, so the token names it.
-  "brand-fill": "var(--primary)",
-  "on-brand": "var(--primary-foreground)",
   scrim: oklchColor(0, 0, 0, 0.5),
-  // The ground a photograph sits on, white ink on it, and the dark ink a light chart tile keeps.
-  // None of the three flips.
+  // The ground a photograph sits on, white ink on it. Neither flips.
   media: oklchColor(0.1869, 0.0151, 266.766),
   "on-media": oklchColor(1, 0, 0),
-  "chart-foreground": light.foreground,
-  // The window buttons are the system's on macOS; shadcn has no such token, so close takes its red
-  // and the other two the grey ramp.
-  "window-close": light.destructive,
-  "window-minimize": light.ring,
-  "window-zoom": light.chart[3],
-  "window-control-ink": `color-mix(in srgb, ${oklchColor(0, 0, 0)} 50%, transparent)`,
-  "window-control-edge": `color-mix(in srgb, ${oklchColor(0, 0, 0)} 12%, transparent)`,
 });
 
 /** One appearance's colour tokens. */
@@ -222,8 +209,6 @@ function section(p: ReturnType<typeof palette>, o: ReturnType<typeof own>) {
     "sidebar-ring": "var(--ring)",
     inset: o.inset,
     raised: o.raised,
-    "scrollbar-thumb": "color-mix(in srgb, var(--muted-foreground) 50%, var(--background))",
-    "scrollbar-thumb-hover": "color-mix(in srgb, var(--muted-foreground) 80%, var(--background))",
     field: o.field,
     line: o.line,
     // A pressable under the pointer: shadcn's `hover:bg-accent`, not an ink over the surface.
@@ -238,7 +223,6 @@ function section(p: ReturnType<typeof palette>, o: ReturnType<typeof own>) {
     brand: p.primary,
     track: o.track,
     knob: o.knob,
-    code: o.code,
     info: o.info,
     warn: o.warn,
     up: o.up,
@@ -252,14 +236,12 @@ function section(p: ReturnType<typeof palette>, o: ReturnType<typeof own>) {
     "up-tint": tints("up"),
     "down-tint": tints("destructive"),
     violet: o.violet,
-    "window-control-off": o.faint,
-    dialog: "var(--card)",
     bevel: "var(--border)",
     "accent-bevel": "var(--brand-edge)",
     disabled: "var(--raised)",
     "disabled-foreground": "var(--muted-foreground)",
     "accent-pressed": "var(--primary)",
-    "on-accent-pressed": "var(--on-brand)",
+    "on-accent-pressed": "var(--primary-foreground)",
   };
 }
 
@@ -436,7 +418,7 @@ export function themeFiles(): ThemeGeneratorOutput {
       ],
     },
     cssVars: {
-      theme: themeLevel(light),
+      theme: themeLevel(),
       light: section(light, ownLight),
       dark: section(dark, ownDark),
     },
@@ -450,13 +432,7 @@ export function themeFiles(): ThemeGeneratorOutput {
           "Scale factor applied while pressed (1 disables press shrinking for flat shadcn surfaces).",
       },
       sharedColors: {
-        "brand-fill": "Primary brand action fill, aliased to {color.primary}.",
-        "on-brand":
-          "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}.",
         scrim: "Translucent backdrop scrim behind modals and sheets (50% black).",
-        "window-close": "macOS window close traffic-light fill mapped to shadcn destructive red.",
-        "window-minimize": "macOS window minimize traffic-light fill mapped to shadcn ring grey.",
-        "window-zoom": "macOS window zoom traffic-light fill mapped to shadcn chart-4 grey.",
       },
       lightColors: statusAndHoverDescriptions,
       darkColors: statusAndHoverDescriptions,

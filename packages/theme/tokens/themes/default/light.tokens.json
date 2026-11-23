@@ -398,46 +398,6 @@
         }
       }
     },
-    "scrollbar-thumb": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.74594, 0.00748, 268.528],
-        "hex": "#abadb1"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.muted-foreground}",
-            "percent": 50,
-            "b": "{color.background}"
-          },
-          "role": "chrome"
-        }
-      },
-      "$description": "Scrollbar thumb resting fill."
-    },
-    "scrollbar-thumb-hover": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.60053, 0.01012, 263.869],
-        "hex": "#7d8087"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.muted-foreground}",
-            "percent": 80,
-            "b": "{color.background}"
-          },
-          "role": "chrome"
-        }
-      },
-      "$description": "Scrollbar thumb fill on pointer hover."
-    },
     "field": {
       "$value": {
         "colorSpace": "oklch",
@@ -568,19 +528,6 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "surface"
-        }
-      }
-    },
-    "code": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.29661, 0.01168, 264.381],
-        "hex": "#2a2d33"
-      },
-      "$description": "Monospace code text ink inside recessed wells.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
         }
       }
     },
@@ -793,28 +740,6 @@
         }
       }
     },
-    "window-control-off": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.89535, 0.00406, 286.317],
-        "hex": "#dcdcdf"
-      },
-      "$description": "Inactive background for macOS traffic-light buttons when unfocused.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      }
-    },
-    "dialog": {
-      "$value": "{color.card}",
-      "$description": "Modal dialog container surface.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      }
-    },
     "bevel": {
       "$value": "{color.border}",
       "$description": "Directional control elevation bevel stroke.",
@@ -861,7 +786,7 @@
       }
     },
     "on-accent-pressed": {
-      "$value": "{color.on-brand}",
+      "$value": "{color.primary-foreground}",
       "$description": "Ink on pressed accent control fills.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -2084,7 +2009,7 @@
         ]
       }
     },
-    "dialog": {
+    "modal": {
       "shadow": {
         "$type": "shadow",
         "$value": [

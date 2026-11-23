@@ -6,15 +6,7 @@ colors:
   scrim: "#00000080"
   media: "#10131a"
   on-media: "#ffffff"
-  chart-foreground: "#0a0a0a"
-  window-close: "#e7000b"
-  window-minimize: "#a1a1a1"
-  window-zoom: "#404040"
-  window-control-ink: "#00000080"
-  window-control-edge: "#0000001f"
   light:
-    brand-fill: "#171717"
-    on-brand: "#fafafa"
     background: "#ffffff"
     foreground: "#0a0a0a"
     card: "#ffffff"
@@ -49,8 +41,6 @@ colors:
     inset: "#f5f5f5"
     raised: "#f5f5f5"
     glass-edge: "#e5e5e5"
-    scrollbar-thumb: "#b9b9b9"
-    scrollbar-thumb-hover: "#8f8f8f"
     field: "#ffffff"
     line: "#e5e5e5"
     hover: "#f5f5f5"
@@ -60,7 +50,6 @@ colors:
     brand-edge: "#e5e5e5"
     track: "#f5f5f5"
     knob: "#ffffff"
-    code: "#0a0a0a"
     info: "#737373"
     warn: "#525252"
     up: "#404040"
@@ -74,8 +63,6 @@ colors:
     up-tint: "#4040401a"
     down-tint: "#e7000b1a"
     violet: "#262626"
-    window-control-off: "#a1a1a1"
-    dialog: "#ffffff"
     bevel: "#e5e5e5"
     accent-bevel: "#e5e5e5"
     disabled: "#f5f5f5"
@@ -83,8 +70,6 @@ colors:
     accent-pressed: "#171717"
     on-accent-pressed: "#fafafa"
   dark:
-    brand-fill: "#e5e5e5"
-    on-brand: "#171717"
     background: "#0a0a0a"
     foreground: "#fafafa"
     card: "#171717"
@@ -119,8 +104,6 @@ colors:
     inset: "#262626"
     raised: "#262626"
     glass-edge: "#ffffff1a"
-    scrollbar-thumb: "#565656"
-    scrollbar-thumb-hover: "#838383"
     field: "#ffffff0b"
     line: "#ffffff1a"
     hover: "#262626"
@@ -130,7 +113,6 @@ colors:
     brand-edge: "#ffffff1a"
     track: "#262626"
     knob: "#fafafa"
-    code: "#fafafa"
     info: "#a1a1a1"
     warn: "#d4d4d4"
     up: "#e5e5e5"
@@ -144,8 +126,6 @@ colors:
     up-tint: "#e5e5e51a"
     down-tint: "#ff64671a"
     violet: "#fafafa"
-    window-control-off: "#a1a1a1"
-    dialog: "#171717"
     bevel: "#ffffff1a"
     accent-bevel: "#ffffff1a"
     disabled: "#262626"
@@ -287,7 +267,7 @@ components:
     rounded: "{rounded.container}"
     padding: "{spacing.control.padding}"
   dialog:
-    backgroundColor: "{colors.light.dialog}"
+    backgroundColor: "{colors.light.card}"
     textColor: "{colors.light.card-foreground}"
     typography: "{typography.body}"
     rounded: "{rounded.modal}"
@@ -361,13 +341,11 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 - **`track`** (light `#f5f5f5`, dark `#262626`): Inactive track background for switches, sliders, and progress bars.
 - **`knob`** (light `#ffffff`, dark `#fafafa`): Switch thumb fill in the off state.
 - **`inverse`** (light `#ffffff`, dark `#171717`): High-contrast surface for toasts and tooltips.
-- **`dialog`** (light `#ffffff`, dark `#171717`): Modal dialog container surface.
 - **`disabled`** (light `#f5f5f5`, dark `#262626`): Disabled control container surface.
 
 ### Ink
 
 - **`on-media`** (`#ffffff`): White ink over photographs and dark media surfaces; invariant across appearances.
-- **`chart-foreground`** (`#0a0a0a`): Dark ink on light chart tiles; dark tiles use on-media.
 - **`foreground`** (light `#0a0a0a`, dark `#fafafa`): Default high-contrast text and icon ink on page surfaces.
 - **`card-foreground`** (light `#0a0a0a`, dark `#fafafa`): Primary text and icon ink on card surfaces.
 - **`popover-foreground`** (light `#0a0a0a`, dark `#fafafa`): Primary text and icon ink on popover surfaces.
@@ -377,14 +355,11 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 - **`sidebar-foreground`** (light `#0a0a0a`, dark `#fafafa`): Primary text and icon ink inside the sidebar.
 - **`sidebar-accent-foreground`** (light `#0a0a0a`, dark `#fafafa`): Text and icon ink on active sidebar rows.
 - **`faint`** (`#a1a1a1`): Low-emphasis text for placeholders, units, and tertiary labels.
-- **`code`** (light `#0a0a0a`, dark `#fafafa`): Monospace code text ink inside recessed wells.
 - **`inverse-foreground`** (light `#0a0a0a`, dark `#fafafa`): Primary text ink on inverse surfaces.
 - **`disabled-foreground`** (light `#737373`, dark `#a1a1a1`): Disabled control label and icon ink.
 
 ### Brand
 
-- **`brand-fill`** (light `#171717`, dark `#e5e5e5`): Primary brand action fill, aliased to {color.primary}.
-- **`on-brand`** (light `#fafafa`, dark `#171717`): Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}.
 - **`primary`** (light `#171717`, dark `#e5e5e5`): Primary brand action fill.
 - **`primary-foreground`** (light `#fafafa`, dark `#171717`): Text and icon ink on primary brand action fills.
 - **`sidebar-primary`** (light `#171717`, dark `#e5e5e5`): Primary action highlight color in the sidebar.
@@ -416,22 +391,14 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 
 ### Chrome
 
-- **`window-close`** (`#e7000b`): macOS window close traffic-light fill mapped to shadcn destructive red.
-- **`window-minimize`** (`#a1a1a1`): macOS window minimize traffic-light fill mapped to shadcn ring grey.
-- **`window-zoom`** (`#404040`): macOS window zoom traffic-light fill mapped to shadcn chart-4 grey.
-- **`window-control-ink`** (`#00000080`): Glyph ink inside macOS window traffic-light buttons.
-- **`window-control-edge`** (`#0000001f`): Hairline border around macOS window traffic-light buttons.
 - **`border`** (light `#e5e5e5`, dark `#ffffff1a`): Standard hairline border color for containers and controls.
 - **`input`** (light `#e5e5e5`, dark `#ffffff26`): Border and stroke color for form fields and control edges.
 - **`ring`** (light `#a1a1a1`, dark `#737373`): Focus indicator ring stroke color.
 - **`sidebar-border`** (light `#e5e5e5`, dark `#ffffff1a`): Sidebar divider and toolbar hairline border color.
 - **`sidebar-ring`** (light `#a1a1a1`, dark `#737373`): Focus indicator ring color inside the sidebar.
 - **`glass-edge`** (light `#e5e5e5`, dark `#ffffff1a`): Hairline border aliased to {color.border} (shadcn draws no separate glass edge).
-- **`scrollbar-thumb`** (light `#b9b9b9`, dark `#565656`): Scrollbar thumb resting fill.
-- **`scrollbar-thumb-hover`** (light `#8f8f8f`, dark `#838383`): Scrollbar thumb fill on pointer hover.
 - **`line`** (light `#e5e5e5`, dark `#ffffff1a`): Hairline divider and grid rule inside recessed wells.
 - **`ring-halo`** (light `#a1a1a180`, dark `#73737380`): Translucent outer halo around focused controls.
-- **`window-control-off`** (`#a1a1a1`): Inactive background for macOS traffic-light buttons when unfocused.
 - **`bevel`** (light `#e5e5e5`, dark `#ffffff1a`): Directional control elevation bevel stroke.
 - **`accent-bevel`** (light `#e5e5e5`, dark `#ffffff1a`): Accent control elevation top and side bevel stroke.
 
@@ -533,7 +500,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.chip`**: A chosen value label inside a field: a fill, an inner highlight and an edge.
 - **`finish.glass`** (backdropFilter: `blur(20px)`): Glass: a translucent fill and a blur.
 - **`finish.menu`** (backdropFilter: `none`): A floating surface: a menu, a popover.
-- **`finish.dialog`**: A dialog face: the card colour with the menu shadow.
+- **`finish.modal`**: A modal face: the card colour with the menu shadow.
 - **`finish.grabber`**: The drag handle pill at the top of a bottom sheet.
 - **`finish.tooltip`**: A tooltip face: the popover pane, without a shadow.
 - **`finish.inverse`** (backdropFilter: `none`): The inverse surface: a toast face.

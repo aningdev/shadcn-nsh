@@ -158,7 +158,7 @@ export function RadioRing(props: { on: boolean; scale?: number; disabled?: boole
           ...(g().dotFeedback === "scale"
             ? { borderRadius: PILL_RADIUS }
             : { width: dot(), height: dot(), borderRadius: dot() / 2 }),
-          backgroundColor: g().checkedStyle === "ring" ? colors.brand : colors.onBrand,
+          backgroundColor: g().checkedStyle === "ring" ? colors.brand : colors.primaryForeground,
           opacity: on,
           transform: [{ scale: on.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] }) }],
         }}

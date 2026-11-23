@@ -200,7 +200,7 @@ export function sliderLook(o: SliderLookOptions = {}) {
       }
       if (s.handleShape === "ring") {
         return {
-          backgroundColor: colors.brandFill,
+          backgroundColor: colors.primary,
           boxShadow: outerEdge(finish.handle.borderColor, finish.handle.boxShadow, EDGE_WIDTH),
         };
       }

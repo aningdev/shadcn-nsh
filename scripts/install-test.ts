@@ -787,7 +787,7 @@ import { controls, finish, press } from "@/lib/ui/theme";
 
 function Page() {
   return (
-    <View style={{ ...finish.dialog }}>
+    <View style={{ ...finish.modal }}>
       <Text>{controls()}</Text>
       <Text>{String(press.scale)}</Text>
       <Button>OK</Button>
@@ -815,8 +815,8 @@ async function mergeSemanticsOnAdd(template: string, dir: string, nsh: string) {
   };
   semantics.state["press-scale"] = 1;
   delete semantics.controls;
-  delete semantics.finishes.shared.dialog;
-  delete semantics.finishes.light.dialog;
+  delete semantics.finishes.shared.modal;
+  delete semantics.finishes.light.modal;
   delete semantics.finishes.shared.card.material;
   await fs.writeFile(semanticsPath, `${JSON.stringify(semantics, null, 2)}\n`);
 
@@ -828,8 +828,8 @@ async function mergeSemanticsOnAdd(template: string, dir: string, nsh: string) {
   }
   if (
     merged.controls !== "base" ||
-    merged.finishes.shared.dialog == null ||
-    merged.finishes.light.dialog == null ||
+    merged.finishes.shared.modal == null ||
+    merged.finishes.light.modal == null ||
     !("material" in merged.finishes.shared.card)
   ) {
     throw new StepFailure(

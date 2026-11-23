@@ -3,14 +3,14 @@ import { expect, open, test } from "nsh/test";
 const read = (texts: string[], key: string) =>
   texts.find((text) => text.startsWith(`${key}:`))?.slice(key.length + 1);
 
-/** The probe page's lines the controls preset and the inverse, dialog and tooltip roles change. */
+/** The probe page's lines the controls preset and the inverse, modal and tooltip roles change. */
 const look = (texts: string[]) =>
   Object.fromEntries(
     [
       "controls",
       "nav-width",
       "inverse",
-      "dialog",
+      "modal",
       "tooltip",
       "inverse-fill",
       "field",
@@ -18,7 +18,7 @@ const look = (texts: string[]) =>
     ].map((key) => [key, read(texts, key)]),
   );
 
-test("the indicator presets and the inverse, dialog and tooltip roles follow the theme selected", async () => {
+test("the indicator presets and the inverse, modal and tooltip roles follow the theme selected", async () => {
   const app = await open("./theme-indicator.fixture.tsx", { platform: "macos" });
 
   // The build-time theme ("base"): pill tabs, a filled row, boxed fields with all four corners.
@@ -71,7 +71,7 @@ test("the indicator presets and the inverse, dialog and tooltip roles follow the
   expect(read(app.texts(), "frame")).toContain("focus-within:border-b-[2px]");
   expect(read(app.texts(), "frame")).not.toContain("outline-2");
   expect(after.inverse).not.toBe(before.inverse);
-  expect(after.dialog).not.toBe(before.dialog);
+  expect(after.modal).not.toBe(before.modal);
   expect(after.tooltip).not.toBe(before.tooltip);
   expect(after["inverse-fill"]).not.toBe(before["inverse-fill"]);
 

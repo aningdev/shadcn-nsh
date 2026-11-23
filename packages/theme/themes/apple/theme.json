@@ -7,17 +7,9 @@
       "radius-container": "12px",
       "radius-modal": "26px",
       "font-mono": "monospace",
-      "brand-fill": "var(--primary)",
-      "on-brand": "var(--primary-foreground)",
       "scrim": "oklch(0 0 0 / 0.4)",
       "media": "oklch(0.1869 0.0151 266.766)",
-      "on-media": "oklch(1 0 0)",
-      "chart-foreground": "oklch(0 0 0)",
-      "window-close": "oklch(0.6936 0.19638 26.364)",
-      "window-minimize": "oklch(0.83478 0.1612 80.911)",
-      "window-zoom": "oklch(0.72803 0.21734 144.712)",
-      "window-control-ink": "color-mix(in srgb, oklch(0 0 0) 50%, transparent)",
-      "window-control-edge": "color-mix(in srgb, oklch(0 0 0) 12%, transparent)"
+      "on-media": "oklch(1 0 0)"
     },
     "light": {
       "background": "oklch(0.96257 0.00665 286.274)",
@@ -54,8 +46,6 @@
       "inset": "oklch(0.96743 0.00133 286.375)",
       "raised": "oklch(0.95241 0.00133 286.375)",
       "glass-edge": "var(--border)",
-      "scrollbar-thumb": "color-mix(in srgb, var(--muted-foreground) 50%, var(--background))",
-      "scrollbar-thumb-hover": "color-mix(in srgb, var(--muted-foreground) 80%, var(--background))",
       "field": "oklch(0.95241 0.00133 286.375)",
       "line": "oklch(0.89478 0.00135 286.373)",
       "hover": "color-mix(in srgb, var(--foreground) 6%, transparent)",
@@ -65,7 +55,6 @@
       "brand-edge": "var(--border)",
       "track": "oklch(0.93459 0.00268 286.348)",
       "knob": "oklch(1 0 0)",
-      "code": "oklch(0 0 0)",
       "info": "oklch(0.60276 0.21771 257.424)",
       "warn": "oklch(0.76524 0.17521 62.574)",
       "up": "oklch(0.73032 0.19438 147.444)",
@@ -79,14 +68,12 @@
       "up-tint": "color-mix(in srgb, var(--up) 12%, transparent)",
       "down-tint": "color-mix(in srgb, var(--destructive) 12%, transparent)",
       "violet": "oklch(0.61489 0.21292 312.411)",
-      "window-control-off": "oklch(0.91944 0.00269 286.347)",
-      "dialog": "var(--card)",
       "bevel": "var(--border)",
       "accent-bevel": "var(--brand-edge)",
       "disabled": "var(--raised)",
       "disabled-foreground": "var(--muted-foreground)",
       "accent-pressed": "var(--primary)",
-      "on-accent-pressed": "var(--on-brand)"
+      "on-accent-pressed": "var(--primary-foreground)"
     },
     "dark": {
       "background": "oklch(0 0 0)",
@@ -104,8 +91,6 @@
       "inset": "oklch(0.29471 0.00718 285.951)",
       "raised": "oklch(0.31868 0.00703 285.994)",
       "glass-edge": "var(--border)",
-      "scrollbar-thumb": "color-mix(in srgb, var(--muted-foreground) 50%, var(--background))",
-      "scrollbar-thumb-hover": "color-mix(in srgb, var(--muted-foreground) 80%, var(--background))",
       "field": "oklch(0.31868 0.00703 285.994)",
       "line": "oklch(0.3301 0.00522 286.11)",
       "hover": "color-mix(in srgb, var(--foreground) 6%, transparent)",
@@ -115,7 +100,6 @@
       "brand-edge": "var(--border)",
       "track": "oklch(0.34609 0.00689 286.034)",
       "knob": "oklch(1 0 0)",
-      "code": "oklch(1 0 0)",
       "info": "oklch(0.62425 0.20558 255.486)",
       "warn": "oklch(0.78237 0.17106 67.223)",
       "up": "oklch(0.75555 0.20825 146.984)",
@@ -148,14 +132,12 @@
       "sidebar-primary": "var(--primary)",
       "sidebar-primary-foreground": "var(--primary-foreground)",
       "sidebar-ring": "var(--ring)",
-      "window-control-off": "oklch(0.36151 0.00681 286.054)",
-      "dialog": "var(--card)",
       "bevel": "var(--border)",
       "accent-bevel": "var(--brand-edge)",
       "disabled": "var(--raised)",
       "disabled-foreground": "var(--muted-foreground)",
       "accent-pressed": "var(--primary)",
-      "on-accent-pressed": "var(--on-brand)"
+      "on-accent-pressed": "var(--primary-foreground)"
     }
   }
 }

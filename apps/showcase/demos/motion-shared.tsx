@@ -42,7 +42,7 @@ export const tones = () =>
  * Ink on a saturated tone fill. Light, the knob (white); dark, the ink that sits on the brand
  * fill. There is no role for ink on an arbitrary tone — the gallery uses `#ffffff` in the light.
  */
-export const onTone = () => (isDark() ? colors.onBrand : colors.knob);
+export const onTone = () => (isDark() ? colors.primaryForeground : colors.knob);
 
 /** A tone's raised fill: the color, a soft top light (the knob, the lightest neutral) and the knob's drop. */
 export function toneFill(color: string): ViewStyle {

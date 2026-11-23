@@ -35,8 +35,8 @@ packages/theme/tokens/
       theme.resolver.json         # 该主题的 DTCG 2025.10 Resolver
       theme.tokens.json           # 外观与输入档位无关的 token（3 个层圆角、字体家族、C 层共用色、shared 状态/枚举等覆写）
       finishes.shared.tokens.json # 明暗共用的 finish 字段（含 material）
-      light.tokens.json           # 亮色外观：A/B 层 67 个颜色 + light 稀疏 finish 覆写
-      dark.tokens.json            # 暗色外观：A/B 层 67 个颜色 + dark 稀疏 finish 覆写
+      light.tokens.json           # 亮色外观：A/B 层 62 个颜色 + light 稀疏 finish 覆写
+      dark.tokens.json            # 暗色外观：A/B 层 62 个颜色 + dark 稀疏 finish 覆写
       pointer.tokens.json         # （可选，仅平台主题 apple/material/winui）覆盖 base 的 pointer 档字阶与尺寸
       touch.tokens.json           # （可选，仅平台主题 apple/material/winui）覆盖 base 的 touch 档字阶与尺寸
 ```
@@ -105,13 +105,13 @@ packages/theme/tokens/
 
 ### 3.2 为什么 `color.*` 保持单层 kebab-case 而不拆成 `{color.card.$root}`
 
-现有 `theme.json` 中存在大量“前缀名称自身也是一个独立颜色 token”的命名对：如 `card` 与 `card-foreground`、`primary` 与 `primary-foreground`、`sidebar` 与 `sidebar-foreground`/`sidebar-accent`/`sidebar-border`、`brand` 与 `brand-fill`/`brand-edge`/`brand-tint`、`ring` 与 `ring-halo`、`info` 与 `info-tint` 等。
+现有 `theme.json` 中存在大量“前缀名称自身也是一个独立颜色 token”的命名对：如 `card` 与 `card-foreground`、`primary` 与 `primary-foreground`、`sidebar` 与 `sidebar-foreground`/`sidebar-accent`/`sidebar-border`、`brand` 与 `brand-edge`/`brand-tint`、`ring` 与 `ring-halo`、`info` 与 `info-tint` 等。
 
-在 DTCG Format §6.1–6.2 中，一个 JSON 对象不能同时拥有 `$value`（Token）和子 Token（Group），除非使用 `$root`（`color.card.$root` + `color.card.foreground`）。但目前 **Figma Variables 与多款导出工具对 `$root` 语法支持并不稳定**，而保留 `color.card`、`color.card-foreground`、`color.brand-fill`、`color.sidebar-accent` 这样的扁平单层键名：
+在 DTCG Format §6.1–6.2 中，一个 JSON 对象不能同时拥有 `$value`（Token）和子 Token（Group），除非使用 `$root`（`color.card.$root` + `color.card.foreground`）。但目前 **Figma Variables 与多款导出工具对 `$root` 语法支持并不稳定**，而保留 `color.card`、`color.card-foreground`、`color.brand-edge`、`color.sidebar-accent` 这样的扁平单层键名：
 
 1. 100% 合法且与现有 `cssVars` 键名直接一一映射（仅多前缀 `color.`）；
 2. 零 `$root` 兼容风险；
-3. 别名路径清晰：`{color.card}`、`{color.foreground}`、`{color.brand-fill}`。
+3. 别名路径清晰：`{color.card}`、`{color.foreground}`、`{color.brand-edge}`。
 
 圆角组 `dimension.radius` 只声明 `control`、`container`、`modal` 三个层角色；编译 `theme.json` 时，除写出 `radius-control`、`radius-container`、`radius-modal` 外，还由 `dimension.radius.control` 派生 A 层 `radius` 槽（满足 NSH `theme.rs` 对长度类型的解析要求）。
 
@@ -148,34 +148,26 @@ finish.<role>.*          # group + tokens       27 个表面配方（background,
 
 ### 4.1 `theme.json` → DTCG 2025.10（79 个必填 + 1 个可选）
 
-#### A. `cssVars.theme`（16 个必填 + 可选 `font-sans`）
+#### A. `cssVars.theme`（8 个必填 + 可选 `font-sans`）
 
-| `theme.json` 键       | DTCG 路径                    | `$type`      | DTCG `$value` 形态 / 示例                                                           | 说明与反向编译                                      |
-| :-------------------- | :--------------------------- | :----------- | :---------------------------------------------------------------------------------- | :-------------------------------------------------- |
-| `radius`              | `dimension.radius.control`   | `dimension`  | `{"value": 8, "unit": "px"}`                                                        | A 层槽位，编译 `theme.json` 时由 `control` 派生写入 |
-| `radius-control`      | `dimension.radius.control`   | `dimension`  | `{"value": 8, "unit": "px"}`                                                        | 编译为 `"8px"` 写入 `cssVars.theme.radius-control`  |
-| `radius-container`    | `dimension.radius.container` | `dimension`  | `{"value": 12, "unit": "px"}`                                                       | 同上，键名还原为 `radius-container`                 |
-| `radius-modal`        | `dimension.radius.modal`     | `dimension`  | `{"value": 14, "unit": "px"}`                                                       | 同上，键名还原为 `radius-modal`                     |
-| `font-mono`           | `font.family.mono`           | `fontFamily` | `"monospace"` 或 `["Cascadia Mono", "Consolas", "monospace"]`                       | 若为数组，编译时用 `", "` 拼回 CSS 字符串           |
-| `font-sans`（可选）   | `font.family.sans`           | `fontFamily` | `["Segoe UI Variable", "Segoe UI", "sans-serif"]`                                   | 仅设置自定义正文字体的主题（如 `winui`）声明        |
-| `brand-fill`          | `color.brand-fill`           | `color`      | DTCG oklch 对象或 `"{color.primary}"`                                               | 别名编译为 `"var(--primary)"`                       |
-| `on-brand`            | `color.on-brand`             | `color`      | DTCG oklch 对象或 `"{color.primary-foreground}"`                                    | 别名编译为 `"var(--primary-foreground)"`            |
-| `scrim`               | `color.scrim`                | `color`      | `{"colorSpace": "oklch", "components": [0, 0, 0], "alpha": 0.45, "hex": "#000000"}` | 无损还原 `"oklch(0 0 0 / 0.45)"`                    |
-| `media`               | `color.media`                | `color`      | DTCG oklch 对象                                                                     | 同上                                                |
-| `on-media`            | `color.on-media`             | `color`      | DTCG oklch 对象                                                                     | 同上                                                |
-| `chart-foreground`    | `color.chart-foreground`     | `color`      | DTCG oklch 对象                                                                     | 同上                                                |
-| `window-close`        | `color.window-close`         | `color`      | DTCG oklch 对象                                                                     | 同上                                                |
-| `window-minimize`     | `color.window-minimize`      | `color`      | DTCG oklch 对象                                                                     | 同上                                                |
-| `window-zoom`         | `color.window-zoom`          | `color`      | DTCG oklch 对象                                                                     | 同上                                                |
-| `window-control-ink`  | `color.window-control-ink`   | `color`      | 静态求值 oklch + `$extensions.colorOp`（mix 50% black, transparent）                | 见第 6 节，编译回 `color-mix(...)`                  |
-| `window-control-edge` | `color.window-control-edge`  | `color`      | 静态求值 oklch + `$extensions.colorOp`（mix 12% black, transparent）                | 同上                                                |
+| `theme.json` 键     | DTCG 路径                    | `$type`      | DTCG `$value` 形态 / 示例                                                           | 说明与反向编译                                      |
+| :------------------ | :--------------------------- | :----------- | :---------------------------------------------------------------------------------- | :-------------------------------------------------- |
+| `radius`            | `dimension.radius.control`   | `dimension`  | `{"value": 8, "unit": "px"}`                                                        | A 层槽位，编译 `theme.json` 时由 `control` 派生写入 |
+| `radius-control`    | `dimension.radius.control`   | `dimension`  | `{"value": 8, "unit": "px"}`                                                        | 编译为 `"8px"` 写入 `cssVars.theme.radius-control`  |
+| `radius-container`  | `dimension.radius.container` | `dimension`  | `{"value": 12, "unit": "px"}`                                                       | 同上，键名还原为 `radius-container`                 |
+| `radius-modal`      | `dimension.radius.modal`     | `dimension`  | `{"value": 14, "unit": "px"}`                                                       | 同上，键名还原为 `radius-modal`                     |
+| `font-mono`         | `font.family.mono`           | `fontFamily` | `"monospace"` 或 `["Cascadia Mono", "Consolas", "monospace"]`                       | 若为数组，编译时用 `", "` 拼回 CSS 字符串           |
+| `font-sans`（可选） | `font.family.sans`           | `fontFamily` | `["Segoe UI Variable", "Segoe UI", "sans-serif"]`                                   | 仅设置自定义正文字体的主题（如 `winui`）声明        |
+| `scrim`             | `color.scrim`                | `color`      | `{"colorSpace": "oklch", "components": [0, 0, 0], "alpha": 0.45, "hex": "#000000"}` | 无损还原 `"oklch(0 0 0 / 0.45)"`                    |
+| `media`             | `color.media`                | `color`      | DTCG oklch 对象                                                                     | 同上                                                |
+| `on-media`          | `color.on-media`             | `color`      | DTCG oklch 对象                                                                     | 同上                                                |
 
-#### B. `cssVars.light` 与 `cssVars.dark`（各 67 个，进入 `light.tokens.json` / `dark.tokens.json`）
+#### B. `cssVars.light` 与 `cssVars.dark`（各 62 个，进入 `light.tokens.json` / `dark.tokens.json`）
 
 - **A 层（31 个 shadcn 槽位）**：`background`, `foreground`, `card`, `card-foreground`, `popover`, `popover-foreground`, `primary`, `primary-foreground`, `secondary`, `secondary-foreground`, `muted`, `muted-foreground`, `accent`, `accent-foreground`, `destructive`, `border`, `input`, `ring`, `chart-1`, `chart-2`, `chart-3`, `chart-4`, `chart-5`, `sidebar`, `sidebar-foreground`, `sidebar-primary`, `sidebar-primary-foreground`, `sidebar-accent`, `sidebar-accent-foreground`, `sidebar-border`, `sidebar-ring` → 全部映射至 `color.<name>`（`$type: "color"`）。其中直接写 `var(--x)` 的槽位（如 `card-foreground`、`popover-foreground`、`secondary`、`secondary-foreground`、`accent-foreground`、`sidebar-foreground`、`sidebar-primary`、`sidebar-primary-foreground`、`sidebar-accent`、`sidebar-accent-foreground`、`sidebar-ring`）写为 DTCG 花括号别名 `"{color.<x>}"`，编译回 `theme.json` 时还原为 `"var(--<x>)"`。
-- **B 层（36 个本库扩展槽位）**：
-  - 直接 oklch 颜色或 `var(--x)` 别名（26 个）：`inset`, `raised`, `glass-edge`（`{color.border}`）, `field`, `line`, `faint`, `brand`, `brand-edge`, `track`, `knob`, `code`, `info`, `warn`, `up`, `inverse`（`{color.popover}`）, `inverse-foreground`（`{color.foreground}`）, `inverse-brand`（`{color.primary-foreground}`）, `violet`, `window-control-off`, `dialog`, `bevel`, `accent-bevel`, `disabled`, `disabled-foreground`, `accent-pressed`, `on-accent-pressed` → `color.<name>`（`$type: "color"`）。
-  - 含 `color-mix(in srgb, ...)` 算术的颜色（10 个）：`scrollbar-thumb`, `scrollbar-thumb-hover`, `hover`, `ring-halo`, `brand-tint`, `info-tint`, `warn-tint`, `destructive-tint`, `up-tint`, `down-tint` → `color.<name>`（`$type: "color"`），`$value` 放静态求值后的 DTCG oklch 对象（含 `hex`），`$extensions["dev.aning.shadcn-nsh"].colorOp` 放混合配方（见第 6 节）。注：在部分平台主题（如 `winui`）中这些键是静态色而非 `color-mix`，此时直接写 DTCG oklch 对象、不附 `colorOp`。
+- **B 层（31 个本库扩展槽位）**：
+  - 直接 oklch 颜色或 `var(--x)` 别名（23 个）：`inset`, `raised`, `glass-edge`（`{color.border}`）, `field`, `line`, `faint`, `brand`, `brand-edge`, `track`, `knob`, `info`, `warn`, `up`, `inverse`（`{color.popover}`）, `inverse-foreground`（`{color.foreground}`）, `inverse-brand`（`{color.primary-foreground}`）, `violet`, `bevel`, `accent-bevel`, `disabled`, `disabled-foreground`, `accent-pressed`, `on-accent-pressed` → `color.<name>`（`$type: "color"`）。
+  - 含 `color-mix(in srgb, ...)` 算术的颜色（8 个）：`hover`, `ring-halo`, `brand-tint`, `info-tint`, `warn-tint`, `destructive-tint`, `up-tint`, `down-tint` → `color.<name>`（`$type: "color"`），`$value` 放静态求值后的 DTCG oklch 对象（含 `hex`），`$extensions["dev.aning.shadcn-nsh"].colorOp` 放混合配方（见第 6 节）。注：在部分平台主题（如 `winui`）中这些键是静态色而非 `color-mix`，此时直接写 DTCG oklch 对象、不附 `colorOp`。
 
 ### 4.2 `semantics.json` → DTCG 2025.10
 
@@ -199,6 +191,7 @@ finish.<role>.*          # group + tokens       27 个表面配方（background,
 | `state.pressScale`                                                                          | `state.press-scale`                                                                         | `number`                   | `0 < n <= 1`                                                                                                                                                                               | 无单位比例                                                                                                                                                                                             |
 | `state.overlay.{hover,focus,pressed,dragged}`                                               | `state.overlay.<k>`                                                                         | `number`                   | `0 <= n <= 1`                                                                                                                                                                              | 叠层透明度                                                                                                                                                                                             |
 | `state.pressedOpacity`                                                                      | `state.pressed-opacity`                                                                     | `number`                   | `0 <= n <= 1`                                                                                                                                                                              | 按下透明度                                                                                                                                                                                             |
+| `state.restOpacity`                                                                         | `state.rest-opacity`                                                                        | `number`                   | `0 <= n <= 1`                                                                                                                                                                              | 静止的指示器（滚动条滑块）的不透明度                                                                                                                                                                   |
 | `state.disabled.content`                                                                    | `state.disabled.content`                                                                    | `number`                   | `0 <= n <= 1`                                                                                                                                                                              | 禁用内容透明度                                                                                                                                                                                         |
 | `state.disabled.fill`                                                                       | `state.disabled.$extensions["dev.aning.shadcn-nsh"].fill`                                   | —                          | `boolean`                                                                                                                                                                                  | 禁用容器是否切换为 `finish.disabled`                                                                                                                                                                   |
 | `state.ripple`                                                                              | `state.$extensions["dev.aning.shadcn-nsh"].ripple`                                          | —                          | `boolean`                                                                                                                                                                                  | Android 水波开关                                                                                                                                                                                       |
@@ -226,7 +219,7 @@ finish.<role>.*          # group + tokens       27 个表面配方（background,
 
 #### C. `finishes`（27 个角色，每个角色映射为 `finish.<role>` Group）
 
-27 个角色全部一致：`card`, `section`, `inset`, `field`, `raised`, `hover`, `pressed`, `light`, `accent`, `track`, `fill`, `knob`, `knobOn`, `handle`, `pill`, `thumb`, `on`, `chip`, `glass`, `menu`, `dialog`, `tooltip`, `inverse`, `groove`, `disabled`, `accentPressed`, `grabber`。每个角色按如下字段映射（仅声明该 finish 在 `shared` / `light` / `dark` 实际存在的字段，合并后保持固定形状）：
+27 个角色全部一致：`card`, `section`, `inset`, `field`, `raised`, `hover`, `pressed`, `light`, `accent`, `track`, `fill`, `knob`, `knobOn`, `handle`, `pill`, `thumb`, `on`, `chip`, `glass`, `menu`, `modal`, `tooltip`, `inverse`, `groove`, `disabled`, `accentPressed`, `grabber`。每个角色按如下字段映射（仅声明该 finish 在 `shared` / `light` / `dark` 实际存在的字段，合并后保持固定形状）：
 
 | `finish` 字段     | DTCG 路径                                                          | `$type`    | DTCG `$value` 形态与细节                                                                                                                                                                                                                                                                            |
 | :---------------- | :----------------------------------------------------------------- | :--------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -277,7 +270,7 @@ finish.<role>.*          # group + tokens       27 个表面配方（background,
 
 DTCG 2025.10 Color Module 不包含任何颜色运算语法，但本库有两处动态算术需求：
 
-- `theme.json` 中每套主题约 10–22 处 `color-mix(in srgb, <A> <P>%, <B>)`（`hover`, `ring-halo`, `scrollbar-thumb*`, `*-tint`, `window-control-*`）；
+- `theme.json` 中每套主题约 8–20 处 `color-mix(in srgb, <A> <P>%, <B>)`（`hover`, `ring-halo`, `*-tint`）；
 - `semantics.json` 中 `oklch(from {token} l c h / a)`（如 `glass.backgroundColor`、`solid-glass` 的 `pressed`/`light`/`accent`/`on`）。
 
 **规范写法（双重表示：静态回退 + 符号配方）**：

@@ -502,6 +502,10 @@
       "$value": 1,
       "$description": "Content stays full opacity when pressed (1; fill brush swap shows press)."
     },
+    "rest-opacity": {
+      "$value": 0.5,
+      "$description": "Opacity a passive indicator sits at rest (a scrollbar's thumb), before the pointer is on it."
+    },
     "accent-pressed-opacity": {
       "$value": 1,
       "$description": "Pressed opacity for accent controls when no pressed accent finish replaces it."
@@ -726,24 +730,6 @@
   "color": {
     "$type": "color",
     "$description": "Adaptive A-layer and B-layer color roles for dark appearance.",
-    "brand-fill": {
-      "$value": "{color.primary}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Primary brand action fill, aliased to {color.primary} (WinUI AccentFillColorDefault)."
-    },
-    "on-brand": {
-      "$value": "{color.primary-foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground} (WinUI TextOnAccentFillColorPrimary)."
-    },
     "scrim": {
       "$value": {
         "colorSpace": "oklch",
@@ -760,7 +746,7 @@
           "role": "surface"
         }
       },
-      "$description": "Translucent backdrop scrim behind dialogs and overlays (WinUI SmokeFillColorDefault #4D000000)."
+      "$description": "Translucent backdrop scrim behind modals and overlays (WinUI SmokeFillColorDefault #4D000000)."
     },
     "media": {
       "$value": {
@@ -795,110 +781,6 @@
         }
       },
       "$description": "White ink over photographs and dark media surfaces; invariant across appearances."
-    },
-    "chart-foreground": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.21779,
-          0,
-          0
-        ],
-        "hex": "#1a1a1a"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Dark ink on light chart tiles matching WinUI light TextFillColorPrimary."
-    },
-    "window-close": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.6936,
-          0.19638,
-          26.364
-        ],
-        "hex": "#ff5f57"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "macOS window close traffic-light button fill."
-    },
-    "window-minimize": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.83478,
-          0.1612,
-          80.911
-        ],
-        "hex": "#febc2e"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "macOS window minimize traffic-light button fill."
-    },
-    "window-zoom": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.72803,
-          0.21734,
-          144.712
-        ],
-        "hex": "#28c840"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "macOS window zoom traffic-light button fill."
-    },
-    "window-control-ink": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0,
-          0,
-          0
-        ],
-        "alpha": 0.5,
-        "hex": "#000000"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Glyph ink inside macOS window traffic-light buttons (50% black literal)."
-    },
-    "window-control-edge": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0,
-          0,
-          0
-        ],
-        "alpha": 0.12,
-        "hex": "#000000"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Hairline border around macOS window traffic-light buttons (12% black literal)."
     },
     "background": {
       "$value": {
@@ -1155,40 +1037,6 @@
       },
       "$description": "Flyout and acrylic border (WinUI SurfaceStrokeColorFlyout composited over base)."
     },
-    "scrollbar-thumb": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.68622,
-          0,
-          0
-        ],
-        "hex": "#9a9a9a"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Static scrollbar thumb color (WinUI ControlStrongFillColorDefault)."
-    },
-    "scrollbar-thumb-hover": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.68622,
-          0,
-          0
-        ],
-        "hex": "#9a9a9a"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Static scrollbar hover color (WinUI ControlStrongFillColorDefault)."
-    },
     "field": {
       "$value": {
         "colorSpace": "oklch",
@@ -1341,23 +1189,6 @@
         }
       },
       "$description": "Unchecked switch thumb (WinUI TextFillColorSecondary)."
-    },
-    "code": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          1,
-          0,
-          0
-        ],
-        "hex": "#ffffff"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Inline code ink (WinUI TextFillColorPrimary)."
     },
     "info": {
       "$value": {
@@ -1838,32 +1669,6 @@
         }
       },
       "$description": "Sidebar focus stroke (WinUI FocusStrokeColorOuter)."
-    },
-    "window-control-off": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.40108,
-          0.01081,
-          264.446
-        ],
-        "hex": "#45484e"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Library-retained unfocused window traffic-light fill (no WinUI equivalent)."
-    },
-    "dialog": {
-      "$value": "{color.background}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "ContentDialog surface aliased to {color.background} (SolidBackgroundFillColorBase)."
     },
     "bevel": {
       "$value": {
@@ -3438,7 +3243,7 @@
       },
       "foreground": {
         "$type": "color",
-        "$value": "{color.on-brand}"
+        "$value": "{color.primary-foreground}"
       },
       "border-color": {
         "$type": "color",
@@ -3710,11 +3515,11 @@
         ]
       }
     },
-    "dialog": {
+    "modal": {
       "$description": "WinUI 3 ContentDialog surface with depth-128 shadow and composited SurfaceStrokeColorDefault border.",
       "background": {
         "$type": "color",
-        "$value": "{color.dialog}"
+        "$value": "{color.background}"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {

@@ -524,6 +524,10 @@
       "$value": 1,
       "$description": "Content stays full opacity when pressed (1; ripple/state layer shows press)."
     },
+    "rest-opacity": {
+      "$value": 0.5,
+      "$description": "Opacity a passive indicator sits at rest (a scrollbar's thumb), before the pointer is on it."
+    },
     "accent-pressed-opacity": {
       "$value": 1,
       "$description": "Pressed opacity for accent controls when no pressed accent finish replaces it."
@@ -709,24 +713,6 @@
   "color": {
     "$type": "color",
     "$description": "Adaptive A-layer and B-layer color roles for light appearance.",
-    "brand-fill": {
-      "$value": "{color.primary}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Primary brand action fill, aliased to {color.primary}."
-    },
-    "on-brand": {
-      "$value": "{color.primary-foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Foreground text and icons on brand-fill surfaces, aliased to {color.primary-foreground}."
-    },
     "scrim": {
       "$value": {
         "colorSpace": "oklch",
@@ -778,140 +764,6 @@
         }
       },
       "$description": "White ink over photographs and dark media surfaces; invariant across appearances."
-    },
-    "chart-foreground": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.22652,
-          0.00999,
-          303.714
-        ],
-        "hex": "#1d1b20"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Dark ink on light chart tiles matching M3 light onSurface."
-    },
-    "window-close": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.50128,
-          0.17832,
-          28.705
-        ],
-        "hex": "#b3261e"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "macOS window close traffic-light fill mapped to M3 light error."
-    },
-    "window-minimize": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.5909,
-          0.13245,
-          65.117
-        ],
-        "hex": "#b26a00"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "macOS window minimize traffic-light fill mapped to NSH light warn."
-    },
-    "window-zoom": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.56078,
-          0.1232,
-          159.355
-        ],
-        "hex": "#138a5a"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "macOS window zoom traffic-light fill mapped to NSH light up."
-    },
-    "window-control-ink": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0,
-          0,
-          0
-        ],
-        "alpha": 0.5,
-        "hex": "#000000"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": {
-              "colorSpace": "oklch",
-              "components": [
-                0,
-                0,
-                0
-              ],
-              "hex": "#000000"
-            },
-            "percent": 50,
-            "b": "transparent"
-          }
-        }
-      },
-      "$description": "Glyph ink inside macOS window traffic-light buttons."
-    },
-    "window-control-edge": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0,
-          0,
-          0
-        ],
-        "alpha": 0.12,
-        "hex": "#000000"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": {
-              "colorSpace": "oklch",
-              "components": [
-                0,
-                0,
-                0
-              ],
-              "hex": "#000000"
-            },
-            "percent": 12,
-            "b": "transparent"
-          }
-        }
-      },
-      "$description": "Hairline border around macOS window traffic-light buttons."
     },
     "background": {
       "$value": {
@@ -1411,54 +1263,6 @@
       },
       "$description": "Overlay outline edge (M3 outlineVariant)."
     },
-    "scrollbar-thumb": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.70667,
-          0.01431,
-          312.635
-        ],
-        "hex": "#a39ea7"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.muted-foreground}",
-            "percent": 50,
-            "b": "{color.background}"
-          }
-        }
-      },
-      "$description": "Scrollbar thumb resting fill."
-    },
-    "scrollbar-thumb-hover": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.52684,
-          0.01583,
-          307.266
-        ],
-        "hex": "#6d6972"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.muted-foreground}",
-            "percent": 80,
-            "b": "{color.background}"
-          }
-        }
-      },
-      "$description": "Scrollbar thumb fill on pointer hover."
-    },
     "field": {
       "$value": {
         "colorSpace": "oklch",
@@ -1619,15 +1423,6 @@
         }
       },
       "$description": "Unchecked switch thumb fill (M3 outline)."
-    },
-    "code": {
-      "$value": "{color.foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Monospace code text ink inside recessed wells."
     },
     "info": {
       "$value": {
@@ -1882,40 +1677,6 @@
       },
       "$description": "Tertiary accent color (M3 tertiary)."
     },
-    "window-control-off": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.82875,
-          0.01776,
-          308.223
-        ],
-        "hex": "#cac4d0"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Unfocused window traffic-light fill (M3 outlineVariant)."
-    },
-    "dialog": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.93251,
-          0.01479,
-          312.24
-        ],
-        "hex": "#ece6f0"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "Modal dialog surface (M3 surfaceContainerHigh)."
-    },
     "bevel": {
       "$value": "{color.border}",
       "$extensions": {
@@ -1994,13 +1755,13 @@
       "$description": "Pressed accent fill aliased to {color.primary} (state layer applies press)."
     },
     "on-accent-pressed": {
-      "$value": "{color.on-brand}",
+      "$value": "{color.primary-foreground}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "brand"
         }
       },
-      "$description": "Pressed accent ink aliased to {color.on-brand}."
+      "$description": "Pressed accent ink aliased to {color.primary-foreground}."
     }
   },
   "finish": {
@@ -3427,17 +3188,17 @@
       "$description": "A switch knob, on.",
       "background": {
         "$type": "color",
-        "$value": "{color.on-brand}"
+        "$value": "{color.primary-foreground}"
       },
       "gradient": {
         "$type": "gradient",
         "$value": [
           {
-            "color": "{color.on-brand}",
+            "color": "{color.primary-foreground}",
             "position": 0
           },
           {
-            "color": "{color.on-brand}",
+            "color": "{color.primary-foreground}",
             "position": 1
           }
         ],
@@ -4174,12 +3935,8 @@
         }
       }
     },
-    "dialog": {
-      "$description": "M3 dialog surface using SurfaceContainerHigh with Level 3 shadow and 6dp Android elevation.",
-      "background": {
-        "$type": "color",
-        "$value": "{color.dialog}"
-      },
+    "modal": {
+      "$description": "M3 modal surface using SurfaceContainerHigh with Level 3 shadow and 6dp Android elevation.",
       "shadow": {
         "$type": "shadow",
         "$value": [
@@ -4266,6 +4023,18 @@
               "elevation": 6
             }
           }
+        }
+      },
+      "background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.93251,
+            0.01479,
+            312.24
+          ],
+          "hex": "#ece6f0"
         }
       }
     },

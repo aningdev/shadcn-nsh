@@ -205,46 +205,6 @@
       },
       "$description": "Hairline border on Solid Glass panes (--glass-edge)."
     },
-    "scrollbar-thumb": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.4622, 0, 0],
-        "hex": "#595959"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.muted-foreground}",
-            "percent": 50,
-            "b": "{color.background}"
-          }
-        }
-      },
-      "$description": "Scrollbar thumb resting fill."
-    },
-    "scrollbar-thumb-hover": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.61939, 0, 0],
-        "hex": "#868686"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome",
-          "colorOp": {
-            "op": "mix",
-            "space": "srgb",
-            "a": "{color.muted-foreground}",
-            "percent": 80,
-            "b": "{color.background}"
-          }
-        }
-      },
-      "$description": "Scrollbar thumb fill on pointer hover."
-    },
     "field": {
       "$value": {
         "colorSpace": "oklch",
@@ -369,15 +329,6 @@
         }
       },
       "$description": "Switch thumb fill in the off state."
-    },
-    "code": {
-      "$value": "{color.foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Monospace code text ink inside recessed wells."
     },
     "info": {
       "$value": {
@@ -786,28 +737,6 @@
       },
       "$description": "Focus indicator ring color inside the sidebar."
     },
-    "window-control-off": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.52, 0, 0],
-        "hex": "#696969"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Inactive background for macOS traffic-light buttons when unfocused."
-    },
-    "dialog": {
-      "$value": "{color.card}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "Modal dialog container surface."
-    },
     "bevel": {
       "$value": "{color.border}",
       "$extensions": {
@@ -854,7 +783,7 @@
       "$description": "Accent control fill while pressed."
     },
     "on-accent-pressed": {
-      "$value": "{color.on-brand}",
+      "$value": "{color.primary-foreground}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "brand"
@@ -2412,7 +2341,7 @@
         }
       }
     },
-    "dialog": {
+    "modal": {
       "shadow": {
         "$type": "shadow",
         "$value": [

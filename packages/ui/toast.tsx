@@ -450,7 +450,7 @@ function ToastItem(props: { entry: ToastEntry }) {
               style={{
                 height: 4,
                 borderRadius: 2,
-                backgroundColor: type() === "success" ? colors.up : colors.brandFill,
+                backgroundColor: type() === "success" ? colors.up : colors.primary,
                 transformOrigin: "left",
                 transform: [{ scaleX: Math.max(0, Math.min(1, progress() ?? 0)) }],
               }}

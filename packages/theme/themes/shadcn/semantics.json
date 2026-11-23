@@ -189,6 +189,7 @@
     },
     "ripple": false,
     "pressed-opacity": 0.7,
+    "rest-opacity": 0.5,
     "accent-pressed-opacity": 0.88,
     "disabled": {
       "content": 0.5,
@@ -378,8 +379,8 @@
         "material": null,
         "shadow": "0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1)"
       },
-      "dialog": {
-        "background": "{dialog}",
+      "modal": {
+        "background": "{card}",
         "border-color": "{border}",
         "material": null,
         "shadow": "0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1)"

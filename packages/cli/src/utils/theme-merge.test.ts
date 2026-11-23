@@ -74,7 +74,7 @@ describe("mergeTheme", () => {
             gradient: "linear-gradient(180deg, {popover} 0%, {popover} 100%)",
             material: null,
           },
-          dialog: {
+          modal: {
             background: "{card}",
             "border-color": "{border}",
             material: null,
@@ -82,11 +82,11 @@ describe("mergeTheme", () => {
         },
         light: {
           card: { shadow: "0 1px 0 oklch(0 0 0 / 0.04)" },
-          dialog: { shadow: "0 12px 28px -10px oklch(0 0 0 / 0.22)" },
+          modal: { shadow: "0 12px 28px -10px oklch(0 0 0 / 0.22)" },
         },
         dark: {
           card: { shadow: "0 1px 0 oklch(0 0 0 / 0.35)" },
-          dialog: { shadow: "0 16px 32px -10px oklch(0 0 0 / 0.6)" },
+          modal: { shadow: "0 16px 32px -10px oklch(0 0 0 / 0.6)" },
         },
       },
     };
@@ -101,7 +101,7 @@ describe("mergeTheme", () => {
             gradient: "linear-gradient(180deg, {card} 0%, {card} 100%)",
             material: null,
           },
-          dialog: {
+          modal: {
             background: "{card}",
             "border-color": "{border}",
             material: null,
@@ -109,11 +109,11 @@ describe("mergeTheme", () => {
         },
         light: {
           card: { shadow: "none" },
-          dialog: { shadow: "0 12px 28px -10px oklch(0 0 0 / 0.22)" },
+          modal: { shadow: "0 12px 28px -10px oklch(0 0 0 / 0.22)" },
         },
         dark: {
           card: { shadow: "0 1px 0 oklch(0 0 0 / 0.35)" },
-          dialog: { shadow: "0 16px 32px -10px oklch(0 0 0 / 0.6)" },
+          modal: { shadow: "0 16px 32px -10px oklch(0 0 0 / 0.6)" },
         },
       },
     });
@@ -121,10 +121,10 @@ describe("mergeTheme", () => {
     expect(missing).toEqual([
       "controls",
       "finishes.shared.card.material",
-      "finishes.shared.dialog",
-      "finishes.light.dialog",
+      "finishes.shared.modal",
+      "finishes.light.modal",
       "finishes.dark.card",
-      "finishes.dark.dialog",
+      "finishes.dark.modal",
     ]);
   });
 });

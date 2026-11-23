@@ -3,17 +3,9 @@ version: alpha
 name: "NSH Gallery UI"
 description: "Default NSH Gallery UI theme."
 colors:
-  brand-fill: "#c6ef6a"
-  on-brand: "#13160c"
   scrim: "#00000073"
   media: "#10131a"
   on-media: "#ffffff"
-  chart-foreground: "#101319"
-  window-close: "#ff5f57"
-  window-minimize: "#febc2e"
-  window-zoom: "#28c840"
-  window-control-ink: "#00000080"
-  window-control-edge: "#0000001f"
   light:
     background: "#f6f6f9"
     foreground: "#101319"
@@ -49,8 +41,6 @@ colors:
     inset: "#f1f2f5"
     raised: "#f3f4f7"
     glass-edge: "#cacbcd"
-    scrollbar-thumb: "#abadb1"
-    scrollbar-thumb-hover: "#7d8087"
     field: "#ffffff"
     line: "#e4e4e7"
     hover: "#1013190d"
@@ -60,7 +50,6 @@ colors:
     brand-edge: "#9cc43a"
     track: "#e9eaed"
     knob: "#ffffff"
-    code: "#2a2d33"
     info: "#3d63d1"
     warn: "#b26a00"
     up: "#138a5a"
@@ -74,8 +63,6 @@ colors:
     up-tint: "#138a5a1a"
     down-tint: "#d43a4a1a"
     violet: "#6e56c4"
-    window-control-off: "#dcdcdf"
-    dialog: "#ffffff"
     bevel: "#cacbcd"
     accent-bevel: "#9cc43a"
     disabled: "#f3f4f7"
@@ -117,8 +104,6 @@ colors:
     inset: "#1a1d23"
     raised: "#33353b"
     glass-edge: "#31343a"
-    scrollbar-thumb: "#585c62"
-    scrollbar-thumb-hover: "#80838a"
     field: "#16191f"
     line: "#2d3036"
     hover: "#eeeff10d"
@@ -128,7 +113,6 @@ colors:
     brand-edge: "#283c008c"
     track: "#33363c"
     knob: "#e4e5e8"
-    code: "#d9dde3"
     info: "#7ea8ff"
     warn: "#ffb547"
     up: "#45d49a"
@@ -142,8 +126,6 @@ colors:
     up-tint: "#45d49a29"
     down-tint: "#ff617029"
     violet: "#b9a2ff"
-    window-control-off: "#45484e"
-    dialog: "#1f2228"
     bevel: "#31343a"
     accent-bevel: "#283c008c"
     disabled: "#33353b"
@@ -285,7 +267,7 @@ components:
     rounded: "{rounded.container}"
     padding: "{spacing.control.padding}"
   dialog:
-    backgroundColor: "{colors.light.dialog}"
+    backgroundColor: "{colors.light.card}"
     textColor: "{colors.light.card-foreground}"
     typography: "{typography.body}"
     rounded: "{rounded.modal}"
@@ -359,13 +341,11 @@ NSH Gallery UI default theme: graphite dark and paper light surfaces with citrus
 - **`track`** (light `#e9eaed`, dark `#33363c`): Inactive track background for switches, sliders, and progress bars.
 - **`knob`** (light `#ffffff`, dark `#e4e5e8`): Switch thumb fill in the off state.
 - **`inverse`** (light `#f8f8fb`, dark `#1f2228`): High-contrast surface for toasts and tooltips.
-- **`dialog`** (light `#ffffff`, dark `#1f2228`): Modal dialog container surface.
 - **`disabled`** (light `#f3f4f7`, dark `#33353b`): Disabled control container surface.
 
 ### Ink
 
 - **`on-media`** (`#ffffff`): White ink over photographs and dark media surfaces; invariant across appearances.
-- **`chart-foreground`** (`#101319`): Dark ink on light chart tiles; dark tiles use on-media.
 - **`foreground`** (light `#101319`, dark `#eeeff1`): Default high-contrast text and icon ink on page surfaces.
 - **`card-foreground`** (light `#101319`, dark `#eeeff1`): Primary text and icon ink on card surfaces.
 - **`popover-foreground`** (light `#101319`, dark `#eeeff1`): Primary text and icon ink on popover surfaces.
@@ -375,14 +355,11 @@ NSH Gallery UI default theme: graphite dark and paper light surfaces with citrus
 - **`sidebar-foreground`** (light `#101319`, dark `#eeeff1`): Primary text and icon ink inside the sidebar.
 - **`sidebar-accent-foreground`** (light `#101319`, dark `#eeeff1`): Text and icon ink on active sidebar rows.
 - **`faint`** (light `#9a9da3`, dark `#6b6f76`): Low-emphasis text for placeholders, units, and tertiary labels.
-- **`code`** (light `#2a2d33`, dark `#d9dde3`): Monospace code text ink inside recessed wells.
 - **`inverse-foreground`** (light `#101319`, dark `#eeeff1`): Primary text ink on inverse surfaces.
 - **`disabled-foreground`** (light `#5f636a`, dark `#9a9ea5`): Disabled control label and icon ink.
 
 ### Brand
 
-- **`brand-fill`** (`#c6ef6a`): Accent fill color for selected calendar days and branded highlights.
-- **`on-brand`** (`#13160c`): Foreground text and icons on brand-fill surfaces.
 - **`primary`** (light `#c6ef6a`, dark `#c4ec6a`): Primary brand action fill.
 - **`primary-foreground`** (`#13160c`): Text and icon ink on primary brand action fills.
 - **`sidebar-primary`** (light `#c6ef6a`, dark `#c4ec6a`): Primary action highlight color in the sidebar.
@@ -414,22 +391,14 @@ NSH Gallery UI default theme: graphite dark and paper light surfaces with citrus
 
 ### Chrome
 
-- **`window-close`** (`#ff5f57`): macOS window close traffic-light button fill.
-- **`window-minimize`** (`#febc2e`): macOS window minimize traffic-light button fill.
-- **`window-zoom`** (`#28c840`): macOS window zoom traffic-light button fill.
-- **`window-control-ink`** (`#00000080`): Glyph ink inside macOS window traffic-light buttons.
-- **`window-control-edge`** (`#0000001f`): Hairline border around macOS window traffic-light buttons.
 - **`border`** (light `#cacbcd`, dark `#31343a`): Standard hairline border color for containers and controls.
 - **`input`** (light `#c1c2c4`, dark `#393c42`): Border and stroke color for form fields and control edges.
 - **`ring`** (light `#a3a8b2`, dark `#5d636e`): Focus indicator ring stroke color.
 - **`sidebar-border`** (light `#dedee1`, dark `#24272d`): Sidebar divider and toolbar hairline border color.
 - **`sidebar-ring`** (light `#a3a8b2`, dark `#5d636e`): Focus indicator ring color inside the sidebar.
 - **`glass-edge`** (light `#cacbcd`, dark `#31343a`): Hairline border on glass, pill, and floating overlay surfaces.
-- **`scrollbar-thumb`** (light `#abadb1`, dark `#585c62`): Scrollbar thumb resting fill.
-- **`scrollbar-thumb-hover`** (light `#7d8087`, dark `#80838a`): Scrollbar thumb fill on pointer hover.
 - **`line`** (light `#e4e4e7`, dark `#2d3036`): Hairline divider and grid rule inside recessed wells.
 - **`ring-halo`** (light `#a3a8b224`, dark `#5d636e24`): Translucent outer halo around focused controls.
-- **`window-control-off`** (light `#dcdcdf`, dark `#45484e`): Inactive background for macOS traffic-light buttons when unfocused.
 - **`bevel`** (light `#cacbcd`, dark `#31343a`): Directional control elevation bevel stroke.
 - **`accent-bevel`** (light `#9cc43a`, dark `#283c008c`): Accent control elevation top and side bevel stroke.
 
@@ -465,7 +434,7 @@ Ergonomic sizing scales for pointer input.
 
 ## Elevation & Depth
 
-Tactile layered elevation: inner top-edge highlights (`inset`), 1px hairline borders, contact + cast drop shadows (`card`, `menu`, `dialog`, `inverse`), and translucent frosted glass (`glass` with 80% popover alpha).
+Tactile layered elevation: inner top-edge highlights (`inset`), 1px hairline borders, contact + cast drop shadows (`card`, `menu`, `modal`, `inverse`), and translucent frosted glass (`glass` with 80% popover alpha).
 
 - **Strokes:** Border stroke widths.
   - `stroke.hairline` (1px): Hairline divider and outlined-variant stroke width.
@@ -531,7 +500,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **`finish.chip`**: A chosen value label inside a field: a fill, an inner highlight and an edge.
 - **`finish.glass`** (backdropFilter: `blur(20px)`): Glass: a translucent fill and a blur.
 - **`finish.menu`** (backdropFilter: `none`): A floating surface: a menu, a popover.
-- **`finish.dialog`**: A dialog face: the card colour with the menu shadow.
+- **`finish.modal`**: A modal face: the card colour with the menu shadow.
 - **`finish.grabber`**: The drag handle pill at the top of a bottom sheet.
 - **`finish.tooltip`**: A tooltip face: the popover pane, without a shadow.
 - **`finish.inverse`** (backdropFilter: `none`): The inverse surface: a toast face.
@@ -543,7 +512,7 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **Do:** Read all colors, radii, typography, and surface finishes through theme roles (`colors.*`, `shape.*`, `font.*`, `finish.*`) rather than literals in component code.
 - **Do:** Read theme getters inside JSX render expressions or reactive effects so runtime theme switching (`selectTheme`) and light/dark appearance changes take effect on the next frame.
 - **Do:** Use `rounded(shape.<role>, inset)` for concentric nested radii inside cards, switches, and segmented controls.
-- **Do:** Preserve the citrus accent (`brand-fill` / `primary`) for primary actions, active runs, and focus highlights.
+- **Do:** Preserve the citrus accent (`primary` / `primary-foreground`) for primary actions, active runs, and focus highlights.
 - **Do:** Use `inset` wells inside cards and `raised` surfaces for controls sitting on cards, paired with continuous squircle corners (`shape.curve: "continuous"`).
 - **Do:** Apply tactile spring press feedback (`state.press-scale: 0.97`, `motion.press` / `motion.settle`).
 - **Don't:** Never write color literals (`#...`, `rgb()`, `oklch()`) in component, lib, or demo-adapter code.

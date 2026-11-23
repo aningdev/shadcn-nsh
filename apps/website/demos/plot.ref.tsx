@@ -901,7 +901,7 @@ function CellsScene() {
               stagger={0.6}
               inactiveOpacity={0.4}
               label={(d: Month) => (d.ret < 0 ? `−${(-d.ret).toFixed(1)}` : d.ret.toFixed(1))}
-              labelClass="text-chart-foreground/70 data-dark:text-on-media/90"
+              labelClass="text-foreground/70 data-dark:text-on-media/90"
               labelStyle={{ fontSize: 10, ...num }}
               hoverCellClass="rounded-[4px]"
               hoverCellStyle={ring()}
@@ -2403,7 +2403,7 @@ function TreemapScene() {
             label={(d: Node) => d.name}
             valueLabel={(d: Node, value: number) => (d.chg != null ? pct(d.chg) : `$${value}k`)}
             labelPlacement={chart() === "market" ? "center" : "start"}
-            labelClass="text-chart-foreground data-dark:text-on-media p-1.5"
+            labelClass="text-foreground data-dark:text-on-media p-1.5"
             labelStyle={{ fontSize: 11, fontWeight: 600 }}
             valueLabelStyle={{ fontSize: 10, fontWeight: 400, opacity: 0.85, ...num }}
             groupLabel="name"

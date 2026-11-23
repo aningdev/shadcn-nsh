@@ -281,6 +281,10 @@
       "$value": 0.7,
       "$description": "Content opacity when pressed."
     },
+    "rest-opacity": {
+      "$value": 0.5,
+      "$description": "Opacity a passive indicator sits at rest (a scrollbar's thumb), before the pointer is on it."
+    },
     "accent-pressed-opacity": {
       "$value": 0.88,
       "$description": "Pressed opacity for accent controls when no pressed accent finish replaces it."

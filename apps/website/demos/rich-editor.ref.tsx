@@ -97,13 +97,13 @@ function MentionChip(props: RichNodeViewProps) {
         gap: 2,
         paddingHorizontal: 5,
         borderRadius: 5,
-        backgroundColor: colors.brandFill,
+        backgroundColor: colors.primary,
         borderWidth: 1,
-        borderColor: props.selected ? colors.onBrand : "transparent",
+        borderColor: props.selected ? colors.primaryForeground : "transparent",
       }}
     >
-      <Text style={{ fontSize: 13, fontWeight: "600", color: colors.onBrand }}>@</Text>
-      <Text style={{ fontSize: 13, color: colors.onBrand }}>
+      <Text style={{ fontSize: 13, fontWeight: "600", color: colors.primaryForeground }}>@</Text>
+      <Text style={{ fontSize: 13, color: colors.primaryForeground }}>
         {String(props.node.attrs.name ?? "")}
       </Text>
     </View>

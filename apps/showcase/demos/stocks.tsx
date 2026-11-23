@@ -305,7 +305,7 @@ function MarketStrip(props: { market: Market }) {
             <Icon
               icon={running() ? Pause : Play}
               size={13}
-              tint={running() ? colors.mutedForeground : colors.onBrand}
+              tint={running() ? colors.mutedForeground : colors.primaryForeground}
             />
           </View>
         </If>
