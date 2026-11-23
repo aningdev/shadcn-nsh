@@ -125,6 +125,10 @@ jobs:
     needs: changes
     if: needs.changes.outputs.render == 'true'
     runs-on: ubuntu-latest
+    env:
+      # `--changed` needs the merge base, so the checkout below is full depth. A pull request
+      # names its base; a push names the commit before it; a dispatch falls back to `origin/main`.
+      BASE: ${{ github.event.pull_request.base.sha || github.event.before || 'origin/main' }}
     strategy:
       fail-fast: false
       matrix:
@@ -134,6 +138,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v7
         with:
+          fetch-depth: 0
           submodules: recursive
 
       - name: Setup
@@ -159,12 +164,26 @@ jobs:
       - name: Render check
         run: bun run port:render --no-baseline --shard ${{ matrix.shard }}/4
 
+      # The five themed passes, narrowed to what this change can move: a colour alone draws
+      # nothing, a dimension only the themes that carry it, a contract every page in every theme.
+      - name: Theme render check
+        run: bun run port:render:theme --shard ${{ matrix.shard }}/4 --changed "$BASE"
+
       - name: Upload render screenshots
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: render-shots-${{ matrix.shard }}
           path: apps/website/demos/shots
+          if-no-files-found: ignore
+          retention-days: 7
+
+      - name: Upload theme screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: theme-shots-${{ matrix.shard }}
+          path: apps/website/demos/shots-theme
           if-no-files-found: ignore
           retention-days: 7
 

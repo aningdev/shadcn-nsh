@@ -97,13 +97,15 @@ bun run port:check             # 上游变化提醒（自上次审阅以来）�
 bun run port:review            # 记下审阅：把 upstream.reviewed 推到基线
 bun run catalog --check        # 组件集合一致（演示、参照页、文档页、导出），catalog.generated.ts 最新
 bun run port:render            # 渲染比对：组件与"look 展开在 nsh/base 上"截图相同
+bun run port:render:theme --list  # 只打印主题渲染会画哪些页 × 主题及原因（--theme 收窄主题）
 nsh check apps/website/demos      # 演示与 UI 的类型检查
 nsh run apps/website/demos/button.tsx  # 运行一个演示
 
 bun run nsh:bootstrap          # 校验安装的 CLI 在基线，生成各 .nsh types host
 bun run tokens:build           # 编译 DTCG 源码（packages/theme/tokens/）到主题运行时 JSON
 bun run tokens:build --check   # 校验编译产物与 DTCG 源码一致
-bun run theme:diff             # 主题解析后的值与 origin/main 比较（--same：值不许变）
+bun run theme:diff             # 主题解析后的值与 origin/main 比较并分类（--same：值不许变）
+bun run theme:contrast         # WCAG 2 AA：每套主题亮暗的角色对与 finish
 bun run check                  # tokens:build --check + check:theme + port:check + demos/gallery 类型 + docs（会改文件）
 bun run test:gallery           # 原生行为测试
 bun run test:install           # 复制即用：真实 NSH app 里 init / add / nsh check（逐条目）

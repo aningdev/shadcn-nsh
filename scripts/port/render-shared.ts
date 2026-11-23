@@ -17,18 +17,25 @@ import { compareWithinTolerance } from "./pixels";
 
 /**
  * The arguments `nsh test` takes: everything but this script's own (`--only`, `--changed`,
- * `--jobs`, `--shard`, `--against`, `--no-baseline`), each with its value. A caller's `--filter` and `--browser` stay.
+ * `--jobs`, `--shard`, `--against`, `--theme`, `--list`, `--no-baseline`), each with its value. A
+ * caller's `--filter` and `--browser` stay.
  */
 export function testArgs(): string[] {
   const argv = process.argv.slice(2);
   const rest: string[] = [];
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i]!;
-    if (arg === "--only" || arg === "--jobs" || arg === "--shard" || arg === "--against") {
+    if (
+      arg === "--only" ||
+      arg === "--jobs" ||
+      arg === "--shard" ||
+      arg === "--against" ||
+      arg === "--theme"
+    ) {
       i += 1;
       continue;
     }
-    if (arg === "--no-baseline") continue;
+    if (arg === "--no-baseline" || arg === "--list") continue;
     if (arg === "--changed") {
       // The ref is optional, so only a non-flag after it comes with the flag.
       if (argv[i + 1] && !argv[i + 1]!.startsWith("-")) i += 1;
@@ -98,6 +105,25 @@ export function onlyIds(): string[] | undefined {
     process.exit(1);
   }
   return ids;
+}
+
+/**
+ * `--list`: what a pass would draw, and why, without drawing it. Prints the count, the reasons a
+ * change narrowed the pass, and one line per page; the caller exits before it opens a browser or
+ * clears a shot.
+ */
+export function listScope(
+  pass: string,
+  ids: string[] | undefined,
+  themes: string[] | undefined,
+  pool: string[],
+): void {
+  const pages = ids ?? cases.map(({ id }) => id);
+  const drawn = themes ?? pool;
+  console.log(
+    `${pass}: --list: ${pages.length} ids × ${drawn.length} themes (${drawn.join(", ")})`,
+  );
+  for (const id of pages) console.log(`${pass}:   ${id} × ${drawn.join(", ")}`);
 }
 
 /** Where Chrome, Edge or Chromium installs, in `nsh`'s own order and paths (cut down). */
@@ -198,8 +224,11 @@ export type PageRun = {
   /** The directory the test runs in: `apps/website/demos`, where its `shots/` go. */
   cwd: string;
   env: Record<string, string | undefined>;
-  /** The ids to draw, or nothing for the whole table. */
+  /** The pages to draw, or nothing for the whole table. */
   ids?: string[];
+  /** The `nsh test --filter` that picks one page, by default `id=<id>:`; a pass that narrows
+   * further than the id (the theme pass) names its own. */
+  filterFor?: (id: string) => string;
   /** `nsh test`'s own arguments (`testArgs()`), and the wrapper `--browser` script. */
   args: string[];
   browser?: string;
@@ -288,7 +317,7 @@ export async function runPages(run: PageRun): Promise<number> {
       : (run.ids ?? cases.map(({ id }) => id)).map((id) => ({
           id,
           label: `id=${id}`,
-          args: base.concat(["--filter", `id=${id}:`]),
+          args: base.concat(["--filter", run.filterFor?.(id) ?? `id=${id}:`]),
         }));
   const jobs = Math.min(run.jobs, tasks.length);
   if (jobs > 1) console.log(`${run.pass}: ${tasks.length} pages, ${jobs} processes at a time`);
@@ -328,6 +357,8 @@ export type PairCheck = {
   name: (id: string, scheme: string) => string;
   /** The ids `--only` ran alone: the other pages' pictures are not there to compare. */
   only?: string[];
+  /** Whether the run drew a reference page beside each page (`--against` draws only the page). */
+  reference?: boolean;
 };
 
 /**
@@ -343,7 +374,9 @@ export function compareAgainst(check: PairCheck, earlier: string): number {
     const allowed = tolerance ?? antialiasing;
     for (const scheme of schemes) {
       const name = check.name(id, scheme);
-      for (const file of selfReference ? [`${name}.png`] : [`${name}.png`, `${name}.ref.png`]) {
+      for (const file of selfReference || check.reference === false
+        ? [`${name}.png`]
+        : [`${name}.png`, `${name}.ref.png`]) {
         const now = path.join(check.shots, file);
         const then = path.join(earlier, file);
         if (!fs.existsSync(now) || !fs.existsSync(then)) {
@@ -375,7 +408,7 @@ export function comparePairs(check: PairCheck): number {
   for (const { id, tolerance, selfReference } of cases) {
     if (check.only && !check.only.includes(id)) continue;
     // A self-reference has no second page: its picture is the only one.
-    if (selfReference) continue;
+    if (selfReference || check.reference === false) continue;
     const allowed = tolerance ?? antialiasing;
     for (const scheme of schemes) {
       const name = check.name(id, scheme);

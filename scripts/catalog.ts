@@ -115,11 +115,11 @@ export function components(root = DEFAULT_ROOT): Component[] {
 }
 
 /**
- * Demo files that are not a component's demo: the app entry `nsh check` / `nsh test` need, the kit, and
- * the demo adapter the official examples are written against (`stage.tsx`, demos only, never a
- * registry entry).
+ * Demo files that are not a component's demo: the app entry `nsh check` / `nsh test` need, the kit, the
+ * demo adapter the official examples are written against (`stage.tsx`, demos only, never a registry
+ * entry), and the page loop the theme render tests share (`render-theme-pages.tsx`).
  */
-const NON_COMPONENT_DEMOS = new Set(["App.tsx", "kit.tsx", "stage.tsx"]);
+const NON_COMPONENT_DEMOS = new Set(["App.tsx", "kit.tsx", "stage.tsx", "render-theme-pages.tsx"]);
 
 /**
  * Demos that belong to a page of the site rather than to a component: the themes page's showcase.

@@ -3,10 +3,12 @@
  * the page measures a finger's idiom (a headless browser always measures a fine pointer). Needs
  * Xcode's iPhone simulator; the run says so and stops when none is available.
  *
- *   bun scripts/port/render-touch.ts [--only <id,...>] [--filter <name>]
+ *   bun scripts/port/render-touch.ts [--only <id,...>] [--changed [<ref>]] [--filter <name>] [--list]
  *
  * `--only` runs the pages of the ids named (matched whole: the test names carry `id=`), the way
- * the pointer pass does.
+ * the pointer pass does. `--changed` narrows the same list to the pages the diff reaches, and a
+ * theme change that moves no page in the default theme moves none here either
+ * (`scripts/port/affected.ts`); `--list` prints what the flags selected and why.
  *
  * The screenshots land in the same `shots/` as the pointer pass, as `<id>-touch-<scheme>.png`.
  */
@@ -16,12 +18,13 @@ import path from "node:path";
 
 import { antialiasing, cases, schemes } from "../../apps/website/demos/render-cases";
 import { catalog } from "../catalog";
+import { changedScope, narrowed } from "./affected";
 import { repo } from "./lib";
 import { compareWithinTolerance } from "./pixels";
+import { listScope } from "./render-shared";
 
 const demos = catalog().paths.demos;
 const shots = path.join(demos, "shots");
-fs.mkdirSync(shots, { recursive: true });
 
 /** The ids `--only` names, validated; and the arguments `nsh test` takes besides them. */
 const onlyAt = process.argv.indexOf("--only");
@@ -41,10 +44,37 @@ if (unknown.length > 0) {
   console.error(`render-touch: no component is called ${unknown.join(", ")}`);
   process.exit(1);
 }
-const passthrough = process.argv.slice(2).filter((arg, index, all) => {
-  if (arg === "--only") return false;
-  return all[index - 1] !== "--only";
-});
+const scope = changedScope("render-touch", ["default"]);
+/** The pages to draw: `--only` and `--changed` both narrow, and together they intersect. */
+const ids = narrowed(only, scope.ids);
+/** The touch pass draws the default theme: another one's change moves no page here. */
+const themes = scope.themes ?? ["default"];
+if (process.argv.includes("--list")) {
+  listScope("render-touch", ids, themes, ["default"]);
+  process.exit(0);
+}
+if (themes.length === 0 || ids?.length === 0) {
+  console.log("render-touch: nothing to draw");
+  process.exit(0);
+}
+fs.mkdirSync(shots, { recursive: true });
+
+/** The arguments `nsh test` takes: this script's own flags and their values are dropped. */
+const passthrough: string[] = [];
+const argv = process.argv.slice(2);
+for (let i = 0; i < argv.length; i += 1) {
+  const arg = argv[i]!;
+  if (arg === "--only" || arg === "--theme") {
+    i += 1;
+    continue;
+  }
+  if (arg === "--list") continue;
+  if (arg === "--changed") {
+    if (argv[i + 1] && !argv[i + 1]!.startsWith("-")) i += 1;
+    continue;
+  }
+  passthrough.push(arg);
+}
 
 // An installed CLI finds its runtimes next to `bin/nsh`, so nothing sets `NSH_RUNTIME`
 // here; a caller that sets it still gets it through `process.env`.
@@ -54,8 +84,8 @@ const env = { ...process.env };
 let status = 0;
 // The render pairs, then the appearance check (a page switched to dark at run time): `--only`
 // runs both files for the ids it names.
-const files: { file: string; filter?: string }[] = only
-  ? only.flatMap((id) => [
+const files: { file: string; filter?: string }[] = ids
+  ? ids.flatMap((id) => [
       { file: "render-touch.test.tsx", filter: `id=${id}:` },
       { file: "appearance-touch.test.tsx", filter: `id=${id}:` },
     ])
@@ -80,8 +110,8 @@ for (const { file, filter } of files) {
 function comparePixels(): number {
   let failed = 0;
   for (const { id, tolerance, selfReference } of cases) {
-    // A self-reference has no second page; `--only` compares the pictures it names.
-    if (selfReference || (only && !only.includes(id))) continue;
+    // A self-reference has no second page; `--only` and `--changed` compare the pictures they name.
+    if (selfReference || (ids && !ids.includes(id))) continue;
     const allowed = tolerance ?? antialiasing;
     for (const scheme of schemes) {
       const name = `${id}-touch-${scheme}`;

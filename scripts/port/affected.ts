@@ -1,29 +1,36 @@
 /**
- * Which render ids a diff can move: what `--changed [<ref>]` runs instead of the whole table.
+ * Which render ids and themes a diff can move: what `--changed [<ref>]` runs instead of the whole
+ * table.
  *
  * A changed `apps/website/demos/<id>.tsx` or `<id>.ref.tsx` is that id; a changed file under
  * `packages/ui` is every id whose demo or reference page imports it, directly or through other
- * files; a changed shared thing (the theme, the render table, the demo adapter, the render check
- * itself) is every id. The graph is read from the working tree with `Bun.Transpiler.scanImports`,
- * resolving the same relative paths and `nsh.json` aliases the demos import by.
+ * files; a changed shared thing (the render table, the demo adapter, the render check itself) is
+ * every id. The graph is read from the working tree with `Bun.Transpiler.scanImports`, resolving
+ * the same relative paths and `nsh.json` aliases the demos import by.
+ *
+ * A changed theme is classified first (`scripts/theme/diff.ts`): a colour moves no page on its
+ * own, a dimension or another value moves every page in the themes that carry it, and a key added
+ * or removed, or a changed source outside the values, moves every page in every theme. A theme
+ * change and a component change add up: the pages keep the whole theme pool when the change moves
+ * them, because a page's colours come from whichever theme it is drawn in.
  *
  * The diff is the merge base of `<ref>` and `HEAD` against the working tree, so a branch behind
  * `main` does not report `main`'s newer files as its own, and uncommitted work counts.
  */
-import { spawnSync } from "node:child_process";
 import fs from "node:fs";
 import path from "node:path";
 
 import { cases } from "../../apps/website/demos/render-cases";
 import { catalog } from "../catalog";
+import { classifyDiff, type ChangeKind, type ThemeDiff } from "../theme/diff";
 import { repo } from "./lib";
 
 /** The ids the render checks draw: a page of each, in `render-cases.ts`'s order. */
 export const pageIds = cases.map(({ id }) => id);
 
 /**
- * A changed file that moves every page, with the reason printed: the theme every page reads, the
- * table of pages, the adapter the demos are drawn in, and the check itself.
+ * A changed file that moves every page, with the reason printed: the table of pages, the adapter
+ * the demos are drawn in, and the check itself.
  */
 const everywhere: { file: string; why: string }[] = [
   { file: "apps/website/demos/nsh.json", why: "the demos' app configuration" },
@@ -32,17 +39,14 @@ const everywhere: { file: string; why: string }[] = [
   { file: "apps/website/demos/stage.tsx", why: "the demo adapter every page draws with" },
   { file: "apps/website/demos/render.test.tsx", why: "the pointer render test" },
   { file: "apps/website/demos/render-theme.test.tsx", why: "the theme render test" },
+  { file: "apps/website/demos/render-theme-components.test.tsx", why: "the theme render test" },
+  { file: "apps/website/demos/render-theme-pages.tsx", why: "the theme render test" },
   { file: "scripts/port/render.ts", why: "the render check" },
   { file: "scripts/port/render-theme.ts", why: "the theme render check" },
   { file: "scripts/port/render-shared.ts", why: "the render checks' shared half" },
   { file: "scripts/port/affected.ts", why: "the render checks' changed-only half" },
   { file: "scripts/port/pixels.ts", why: "the render checks' comparison" },
   { file: "scripts/port/baseline.ts", why: "the baseline comparison" },
-];
-
-/** A changed directory that moves every page: the theme's tokens and finishes. */
-const everywhereIn: { dir: string; why: string }[] = [
-  { dir: "packages/theme/", why: "the theme every page draws with" },
 ];
 
 const isFile = (file: string) => fs.existsSync(file) && fs.statSync(file).isFile();
@@ -162,35 +166,9 @@ export function changedRef(argv = process.argv.slice(2)): string | undefined {
   return next && !next.startsWith("-") ? next : "origin/main";
 }
 
-/** `git`, run at the repo root; its output, or nothing when it fails. */
-function git(args: string[]): string {
-  const result = spawnSync("git", args, { cwd: repo, encoding: "utf8" });
-  return result.status === 0 ? result.stdout : "";
-}
-
-/** The files changed since `<ref>`, repo-relative: committed on the branch, uncommitted, new. */
-function diff(ref: string): string[] {
-  if (!git(["rev-parse", "--verify", "--quiet", `${ref}^{commit}`]).trim()) {
-    console.error(`render: --changed: no such ref: ${ref}`);
-    process.exit(1);
-  }
-  // The merge base, not the ref's tip: a branch behind `main` must not report `main`'s own files.
-  const base = git(["merge-base", ref, "HEAD"]).trim() || ref;
-  const files = [
-    ...git(["diff", "--name-only", base]).split("\n"),
-    ...git(["ls-files", "--others", "--exclude-standard"]).split("\n"),
-  ]
-    .map((file) => file.trim())
-    .filter(Boolean);
-  return [...new Set(files)].sort();
-}
-
-/** Why a changed file moves every page, from the lists above; nothing when it moves none/one. */
+/** Why a changed file moves every page; nothing when it moves none or one. */
 function shared(file: string): string | undefined {
-  return (
-    everywhere.find((entry) => entry.file === file)?.why ??
-    everywhereIn.find((entry) => file.startsWith(entry.dir))?.why
-  );
+  return everywhere.find((entry) => entry.file === file)?.why;
 }
 
 /** Which pages `files` reach, each with its reason. */
@@ -218,32 +196,119 @@ export function reachesFrom(files: string[]): Reach[] {
   return out;
 }
 
+/** Which ids and themes a theme change moves, and why. */
+export type ThemeScope = { ids: "all" | "none"; themes: string[]; why: string[] };
+
 /**
- * The ids `--changed` names, printed with why, or `undefined` when the flag is absent. An empty
- * list is a diff that moves no page: the render checks then run nothing.
+ * Narrow a changed theme: `kinds` maps every theme to the kinds `theme:diff` found in it; `contract`
+ * names the changed sources outside the values; `pool` is the themes the pass draws. A changed key
+ * is `colour` (no page draws it on its own), `value` (every page in that theme) or `contract`
+ * (every page in every theme, the theme's reader and the build included).
  */
-export function changedIds(pass: string): string[] | undefined {
+export function themeScope(
+  kinds: Record<string, readonly ChangeKind[]>,
+  contract: string[],
+  pool: string[],
+): ThemeScope {
+  const contracted = Object.entries(kinds)
+    .filter(([, found]) => found.includes("contract"))
+    .map(([id]) => id);
+  if (contract.length > 0 || contracted.length > 0) {
+    const why = contract.map((source) => `the theme's contract changed: ${source}`);
+    if (contract.length === 0 && contracted.length > 0) {
+      why.push(`keys added or removed in ${contracted.join(", ")}`);
+    }
+    return { ids: "all", themes: [...pool], why };
+  }
+  const valued = Object.entries(kinds)
+    .filter(([, found]) => found.includes("value"))
+    .map(([id]) => id);
+  if (valued.length > 0) {
+    const themes = pool.filter((id) => valued.includes(id));
+    if (themes.length === 0) {
+      return {
+        ids: "none",
+        themes: [],
+        why: [`values changed in ${valued.join(", ")} only; this pass draws ${pool.join(", ")}`],
+      };
+    }
+    return {
+      ids: "all",
+      themes,
+      why: [
+        `${themes.join(", ")}: a dimension, type, shadow, material, state, motion or opacity changed`,
+      ],
+    };
+  }
+  const coloured = Object.entries(kinds)
+    .filter(([, found]) => found.includes("colour"))
+    .map(([id]) => id);
+  if (coloured.length > 0) {
+    return {
+      ids: "none",
+      themes: [],
+      why: [
+        `only colours changed in ${coloured.join(", ")}: no page draws one on its own; \`theme:diff\` checks the values and \`theme:contrast\` the role pairs`,
+      ],
+    };
+  }
+  return { ids: "none", themes: [], why: [] };
+}
+
+/** What `--changed` narrows a pass to; both `undefined` when the flag is absent. */
+export type Scope = { ids: string[] | undefined; themes: string[] | undefined; why: string[] };
+
+/**
+ * The ids and themes `--changed` names, printed with why, or `undefined` for both when the flag is
+ * absent. An empty list is a diff that moves no page: the render checks then run nothing. `pool` is
+ * every theme the pass draws, named in the reason a theme change outside it prints.
+ */
+export function changedScope(pass: string, pool: string[]): Scope {
   const ref = changedRef();
-  if (ref === undefined) return undefined;
-  const files = diff(ref);
-  const reach = reachesFrom(files);
+  if (ref === undefined) return { ids: undefined, themes: undefined, why: [] };
+  let diff: ThemeDiff;
+  try {
+    diff = classifyDiff(ref);
+  } catch (error) {
+    console.error(`${pass}: --changed: ${(error as Error).message}`);
+    process.exit(1);
+  }
+  // Theme files are the classifier's half; only a component file reaches the page graph.
+  const reach = reachesFrom(diff.files.filter((file) => !file.startsWith("packages/theme/")));
   const all = reach.some((entry) => entry.ids === "all");
-  const ids = all
+  const componentIds = all
     ? [...pageIds]
     : [...new Set(reach.flatMap((entry) => (entry.ids === "all" ? [] : entry.ids)))];
-  if (reach.length === 0) {
-    console.log(`${pass}: --changed ${ref}: ${files.length} changed files, none of them a page's`);
-    return [];
+  const theme = themeScope(
+    Object.fromEntries(Object.entries(diff.themes).map(([id, change]) => [id, change.kinds])),
+    diff.contract.map(({ file, why }) => `${file} (${why})`),
+    pool,
+  );
+  const ids = [...new Set([...componentIds, ...(theme.ids === "all" ? pageIds : [])])];
+  const themes = componentIds.length > 0 ? [...pool] : theme.themes;
+  const why = [
+    ...(componentIds.length > 0
+      ? [`${componentIds.length} of ${pageIds.length} pages import the changed code`]
+      : []),
+    ...theme.why,
+  ];
+  if (ids.length === 0) {
+    console.log(
+      `${pass}: --changed ${ref}: ${diff.files.length} changed files reach no page or theme`,
+    );
+    for (const line of why) console.log(`${pass}:   ${line}`);
+    return { ids, themes: [], why };
   }
   console.log(
-    `${pass}: --changed ${ref}: ${files.length} changed files reach ${all ? "all" : `${ids.length} of ${pageIds.length}`} ids`,
+    `${pass}: --changed ${ref}: ${diff.files.length} changed files reach ${ids.length} of ${pageIds.length} ids, ${themes.length} of ${pool.length} themes`,
   );
   for (const entry of reach) {
     const what =
       entry.ids === "all" ? `all ${pageIds.length} ids (${entry.why})` : entry.ids.join(", ");
     console.log(`${pass}:   ${entry.file} → ${what}`);
   }
-  return ids;
+  for (const line of theme.why) console.log(`${pass}:   ${line}`);
+  return { ids, themes, why };
 }
 
 /** `--only` and `--changed` both narrow: the pages both name, in the table's order. */
@@ -252,7 +317,3 @@ export function narrowed(only: string[] | undefined, changed: string[] | undefin
   if (!changed) return only;
   return only.filter((id) => changed.includes(id));
 }
-
-/** The string the checks print for a list of ids (`--changed`'s own lines name the files). */
-export const shortList = (ids: string[]) =>
-  ids.length > 6 ? `${ids.slice(0, 6).join(", ")}, … (${ids.length})` : ids.join(", ");

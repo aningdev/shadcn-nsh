@@ -3,15 +3,18 @@
  * its screenshots to `shots/` beside it, relative to the directory it runs in, so it runs there.
  *
  *   bun scripts/port/render.ts [--only <id,...>] [--changed [<ref>]] [--shard <i>/<n>] [--jobs <n>]
- *                              [--filter <name>] [--no-baseline]
+ *                              [--filter <name>] [--list] [--no-baseline]
  *
  * `--only` runs the pages of the ids named (a comma-separated list of catalog ids, matched
  * whole: `--only table` leaves `data-table` alone), which is what a family's change needs. The
  * test names carry `id=` so `nsh test`'s substring `--filter` can name one alone.
  * `--changed` narrows the same list to the pages the diff since `<ref>` (default `origin/main`)
  * reaches (`scripts/port/affected.ts`); with `--only` it keeps the pages both name. Neither flag
- * runs the whole table. `--shard i/n` then keeps every n-th of those pages (CI's runners split the
- * table this way, `.github/workflows/check.yml`).
+ * runs the whole table. A theme whose change moves these pages is drawn in the default theme,
+ * which is all this pass knows: a changed dimension in one of the other themes moves no page here
+ * (`--changed` says so), and `port:render:theme` draws it. `--shard i/n` then keeps every n-th of
+ * those pages (CI's runners split the table this way, `.github/workflows/check.yml`). `--list`
+ * prints what the flags selected and why, and draws nothing.
  *
  * The pages are drawn by a pool of `nsh test` processes, one id each, `--jobs` at a time (default:
  * half the cores, at most six; `--jobs 1` is one process for the whole table, the run as it was).
@@ -28,11 +31,12 @@ import fs from "node:fs";
 import path from "node:path";
 
 import { catalog } from "../catalog";
-import { changedIds, narrowed } from "./affected";
+import { changedScope, narrowed } from "./affected";
 import { repo } from "./lib";
 import {
   comparePairs,
   jobCount,
+  listScope,
   onlyIds,
   shardIds,
   runPages,
@@ -43,10 +47,16 @@ import {
 const demos = catalog().paths.demos;
 
 const only = onlyIds();
-const changed = changedIds("render");
+const scope = changedScope("render", ["default"]);
 /** The pages to draw: `--only` and `--changed` both narrow, and together they intersect. */
-const ids = shardIds(narrowed(only, changed));
-if (ids?.length === 0) {
+const ids = shardIds(narrowed(only, scope.ids));
+/** This pass draws the default theme: another one's change moves no page here. */
+const themes = scope.themes ?? ["default"];
+if (process.argv.includes("--list")) {
+  listScope("render", ids, themes, ["default"]);
+  process.exit(0);
+}
+if (themes.length === 0 || ids?.length === 0) {
   console.log("render: nothing to draw");
   process.exit(0);
 }
