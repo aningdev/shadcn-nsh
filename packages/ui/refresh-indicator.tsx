@@ -18,6 +18,10 @@ const FADE_IN = 24;
 const FROM_ABOVE = -28;
 const FROM_SCALE = 0.6;
 
+/** The least side of the chip, in points: it is a mark rather than a control, and stays this size
+ * where a theme's mid control is smaller. */
+const CHIP_FLOOR = 40;
+
 /** A refresh indicator's parts as the styles they wear: spread each one. */
 export interface RefreshIndicatorLook {
   /** The strip the chip is centered in: over the top of the scroll view, taking no presses. */
@@ -35,11 +39,11 @@ export interface RefreshIndicatorLook {
 }
 
 /**
- * A refresh indicator's look: a 40-point chip on the raised finish, its opacity, travel and scale
- * driven by `pull` (all of it on the UI thread), the arrow and the ring in the brand's color.
+ * A refresh indicator's look: a chip on the raised finish at least 40 points, its opacity, travel
+ * and scale driven by `pull` (all of it on the UI thread), the arrow and the ring in the brand's
+ * color. The chip takes its size from the theme's mid control height, read where it is drawn.
  */
 export function refreshIndicatorLook(): RefreshIndicatorLook {
-  const chip = Math.max(controlHeight.md, 40);
   return {
     root: (height) => ({
       pointerEvents: "none",
@@ -51,22 +55,30 @@ export function refreshIndicatorLook(): RefreshIndicatorLook {
       alignItems: "center",
       justifyContent: "center",
     }),
-    chip: (pull, height) => ({
-      width: chip,
-      height: chip,
-      borderRadius: chip / 2,
-      borderWidth: stroke.hairline,
-      borderColor: colors.border,
-      backgroundColor: colors.raised,
-      ...finish.raised,
-      alignItems: "center",
-      justifyContent: "center",
-      opacity: pull.interpolate({ inputRange: [0, FADE_IN], outputRange: [0, 1] }),
-      transform: [
-        { translateY: pull.interpolate({ inputRange: [0, height], outputRange: [FROM_ABOVE, 0] }) },
-        { scale: pull.interpolate({ inputRange: [0, height], outputRange: [FROM_SCALE, 1] }) },
-      ],
-    }),
+    chip: (pull, height) => {
+      const chip = Math.max(controlHeight.md, CHIP_FLOOR);
+      return {
+        width: chip,
+        height: chip,
+        borderRadius: chip / 2,
+        borderWidth: stroke.hairline,
+        borderColor: colors.border,
+        backgroundColor: colors.raised,
+        ...finish.raised,
+        alignItems: "center",
+        justifyContent: "center",
+        opacity: pull.interpolate({ inputRange: [0, FADE_IN], outputRange: [0, 1] }),
+        transform: [
+          {
+            translateY: pull.interpolate({
+              inputRange: [0, height],
+              outputRange: [FROM_ABOVE, 0],
+            }),
+          },
+          { scale: pull.interpolate({ inputRange: [0, height], outputRange: [FROM_SCALE, 1] }) },
+        ],
+      };
+    },
     arrow: (pull, height, refreshing) => ({
       position: "absolute",
       opacity: refreshing ? 0 : 1,

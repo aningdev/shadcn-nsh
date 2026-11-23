@@ -43,12 +43,6 @@ export interface ItemLook {
   readonly full: ViewStyle;
 }
 
-/** The side of an icon's tile: a control's box plus 12. */
-const iconTile = controlSize.control + 12;
-
-/** The side of an image's frame: a row's own height at its least. */
-const imageTile = controlSize.row - 8;
-
 /** A row's padding and gaps: `sm` takes four points off each. */
 const rowBox = (size: ItemSize) =>
   size === "sm"
@@ -102,8 +96,12 @@ export function itemLook(): ItemLook {
             borderColor: variant === "outline" ? colors.border : "transparent",
             backgroundColor: variant === "muted" ? token("muted") : "transparent",
           },
-    media: (variant: ItemMediaVariant): ViewStyle =>
-      terminal || variant === "default"
+    media: (variant: ItemMediaVariant): ViewStyle => {
+      // A control's box plus 12; read here so a theme switch redraws the tile.
+      const iconTile = controlSize.control + 12;
+      // A row's own least height less 8.
+      const imageTile = controlSize.row - 8;
+      return terminal || variant === "default"
         ? { flexShrink: 0, alignItems: "center", justifyContent: "center" }
         : variant === "icon"
           ? {
@@ -126,7 +124,8 @@ export function itemLook(): ItemLook {
               overflow: "hidden",
               ...rounded(shape.control),
               backgroundColor: colors.inset,
-            },
+            };
+    },
     get content(): ViewStyle {
       return {
         flexGrow: 1,

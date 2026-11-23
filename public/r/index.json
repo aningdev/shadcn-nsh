@@ -435,6 +435,19 @@
       ]
     },
     {
+      "name": "copied",
+      "type": "registry:lib",
+      "title": "Copied",
+      "description": "The copied flag a copy button flips, cleared on a timer that goes with the component.",
+      "files": [
+        {
+          "path": "packages/ui/lib/copied.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/copied.ts"
+        }
+      ]
+    },
+    {
       "name": "spinner",
       "type": "registry:ui",
       "title": "Spinner",

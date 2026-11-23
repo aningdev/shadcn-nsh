@@ -2,6 +2,7 @@
 // card's header, footer, title and description. The panel is `sheet.tsx`'s (`sheetPanel`); the title
 // and text are `dialog.tsx`'s (`dialogTitle`, `dialogText`).
 
+import { rounded } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, split, token, View } from "nsh";
 import {
@@ -26,7 +27,7 @@ export function drawerGrabber(): ViewStyle {
   return {
     width: 100,
     height: 8,
-    borderRadius: 4,
+    ...rounded(4),
     alignSelf: "center",
     backgroundColor: token("muted"),
   };

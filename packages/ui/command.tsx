@@ -21,10 +21,21 @@ import { itemRadius, itemSpacing, listPadding } from "./lib/popup";
 import { controlSize } from "./lib/surface";
 
 const desktop = platform.desktop;
+
+/**
+ * A palette row's sizes: the theme's tallest control height, 32 with a pointer, and the theme's
+ * detail type size. Read where the row is drawn, so a theme switch redraws them.
+ */
 const size = {
-  row: controlSize.row,
-  rowSm: desktop ? 32 : controlSize.row,
-  detail: controlSize.detail,
+  get row() {
+    return controlSize.row;
+  },
+  get rowSm() {
+    return desktop ? 32 : controlSize.row;
+  },
+  get detail() {
+    return controlSize.detail;
+  },
 };
 
 /**
@@ -110,12 +121,11 @@ export function CommandRow(props: {
   detail?: string;
   note?: string;
 }) {
-  // A second line of text takes the row past its least height, so the row asks for density's height.
-  const height = props.detail ? size.row : size.rowSm;
   return (
     <View
       style={{
-        height,
+        // A second line of text takes the row past its least height, so the row asks for density's height.
+        height: props.detail ? size.row : size.rowSm,
         flexDirection: "row",
         alignItems: "center",
         gap: 10,

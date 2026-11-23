@@ -454,6 +454,20 @@
       ]
     },
     {
+      "name": "copied",
+      "type": "registry:lib",
+      "title": "Copied",
+      "description": "The copied flag a copy button flips, cleared on a timer that goes with the component.",
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "packages/ui/lib/copied.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/copied.ts"
+        }
+      ]
+    },
+    {
       "name": "spinner",
       "type": "registry:ui",
       "title": "Spinner",
@@ -1247,6 +1261,7 @@
       "description": "Area, sliders, joined fields, swatches, and popover trigger.",
       "registryDependencies": [
         "button",
+        "copied",
         "icons",
         "input",
         "menu",
@@ -1466,7 +1481,15 @@
       "type": "registry:ui",
       "title": "Drawer",
       "description": "A panel from the bottom edge, with a grabber, that a swipe closes.",
-      "registryDependencies": ["as-text", "button", "dialog", "open-state", "popup", "sheet"],
+      "registryDependencies": [
+        "as-text",
+        "button",
+        "dialog",
+        "open-state",
+        "popup",
+        "sheet",
+        "theme"
+      ],
       "files": [
         {
           "path": "packages/ui/drawer.tsx",
@@ -1661,7 +1684,7 @@
       "type": "registry:ui",
       "title": "CodeBlock",
       "description": "Code, a command's output or a log in a block, with a title, a copy button, line numbers and a footer.",
-      "registryDependencies": ["as-text", "button", "icons", "surface", "theme"],
+      "registryDependencies": ["as-text", "button", "copied", "icons", "surface", "theme"],
       "dependencies": ["lucide@^1.66.0"],
       "files": [
         {

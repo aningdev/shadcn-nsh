@@ -1,13 +1,23 @@
 // A code block: a titled block of code or output, a copy button that flips to a check, line numbers
 // and a footer.
 
-import { alpha, colors, font, mono, rounded, shape, type TypeName } from "@shadcn-nsh/theme";
+import {
+  alpha,
+  colors,
+  font,
+  mono,
+  rounded,
+  shape,
+  stroke,
+  type TypeName,
+} from "@shadcn-nsh/theme";
 import { Check, Copy } from "lucide";
 import type { JSX, ScrollProps, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
-import { Clipboard, context, Scroll, signal, split, Text, View } from "nsh";
+import { Clipboard, context, Scroll, split, Text, View } from "nsh";
 
 import { IconButton, iconButtonGlyph, type IconButtonProps } from "./button";
 import { AsText } from "./lib/as-text";
+import { useCopied } from "./lib/copied";
 import { IconLabel } from "./lib/icons";
 import { density } from "./lib/surface";
 
@@ -68,7 +78,7 @@ export function codeBlockLook(): CodeBlockLook {
       flexDirection: "column",
       minWidth: 0,
       overflow: "hidden",
-      borderWidth: 1,
+      borderWidth: stroke.hairline,
       borderColor: variant === "destructive" ? alpha(colors.destructive, 0.4) : colors.border,
       ...rounded(shape.control),
       backgroundColor: variant === "destructive" ? alpha(colors.destructive, 0.06) : colors.inset,
@@ -80,14 +90,14 @@ export function codeBlockLook(): CodeBlockLook {
       minHeight: size === "sm" ? 32 : 36,
       paddingStart: size === "sm" ? 10 : 12,
       paddingEnd: size === "sm" ? 4 : 6,
-      borderBottomWidth: 1,
+      borderBottomWidth: stroke.hairline,
       borderBottomColor: rule(variant),
     }),
     title: (variant) => ({
       flexShrink: 1,
       minWidth: 0,
       fontSize: density.note,
-      fontWeight: "500",
+      fontWeight: font.weight("label"),
       color: variant === "destructive" ? colors.destructive : colors.mutedForeground,
       numberOfLines: 1,
     }),
@@ -155,7 +165,7 @@ export function codeBlockLook(): CodeBlockLook {
       columnGap: 10,
       minHeight: size === "sm" ? 32 : 40,
       paddingHorizontal: size === "sm" ? 10 : 12,
-      borderTopWidth: 1,
+      borderTopWidth: stroke.hairline,
       borderTopColor: rule(variant),
     }),
     footerText: (variant) => ({
@@ -261,9 +271,6 @@ export function CodeBlockActions(props: CodeBlockActionsProps) {
   );
 }
 
-/** How long the check stays after a copy, in milliseconds. */
-const COPIED_FOR = 2000;
-
 /** A copy button's props: an `IconButton`'s, without its icon and its label, which the part owns. */
 export type CodeBlockCopyButtonProps = Omit<
   IconButtonProps,
@@ -283,8 +290,7 @@ export type CodeBlockCopyButtonProps = Omit<
 export function CodeBlockCopyButton(props: CodeBlockCopyButtonProps) {
   const [, rest] = split(props, ["value", "size", "onPress"]);
   const block = CodeBlockContext();
-  const copied = signal(false);
-  let timer: ReturnType<typeof setTimeout> | undefined;
+  const { copied, mark } = useCopied();
   const glyph = iconButtonGlyph({ size: () => props.size ?? "sm" });
   return (
     <IconButton
@@ -295,11 +301,7 @@ export function CodeBlockCopyButton(props: CodeBlockCopyButtonProps) {
       onPress={() => {
         props.onPress?.();
         Clipboard.writeText(props.value).then(
-          () => {
-            copied.set(true);
-            clearTimeout(timer);
-            timer = setTimeout(() => copied.set(false), COPIED_FOR);
-          },
+          () => mark(),
           () => {},
         );
       }}

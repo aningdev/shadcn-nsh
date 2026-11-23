@@ -34,6 +34,7 @@ import {
 
 import { iconButtonLook } from "./button";
 import { fieldLook, fieldSize, fieldText } from "./input";
+import { useCopied } from "./lib/copied";
 import { Icon } from "./lib/icons";
 import { MenuMark, menuIndicator, PopIn } from "./lib/popup";
 import { menuItemLabel, menuItemLook, menuItemNote, menuItemSize, menuPopup } from "./menu";
@@ -422,21 +423,15 @@ export function ColorFields(props: ColorFieldsProps) {
   );
 }
 
-/** How long the check stays after a copy, in milliseconds. */
-const COPIED_FOR = 1500;
-
 /** A copy button (the gallery's ghost icon button): it copies `text()` and shows a check for a moment. */
 export function ColorCopy(props: { name: string; text: () => string }) {
-  const copied = signal(false);
-  let timer: ReturnType<typeof setTimeout> | undefined;
+  const { copied, mark } = useCopied();
   return (
     <BaseButton
       accessibilityLabel={copied() ? "Copied" : `Copy ${props.name.toLocaleLowerCase()}`}
       onPress={() => {
         void Clipboard.writeText(props.text());
-        copied.set(true);
-        clearTimeout(timer);
-        timer = setTimeout(() => copied.set(false), COPIED_FOR);
+        mark();
       }}
       {...iconButtonLook()}
     >

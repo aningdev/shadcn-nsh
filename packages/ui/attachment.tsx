@@ -1,7 +1,17 @@
 // An attachment: a file, an image or a link that a message or a composer carries, with what it is
 // called, how it is doing, and what can be done to it.
 
-import { alpha, colors, focusRing, rounded, tints, font, shape, stroke } from "@shadcn-nsh/theme";
+import {
+  alpha,
+  colors,
+  focusRing,
+  hovered,
+  rounded,
+  tints,
+  font,
+  shape,
+  stroke,
+} from "@shadcn-nsh/theme";
 import type { TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, Scroll, split, Text, token, View } from "nsh";
 
@@ -373,7 +383,7 @@ export function AttachmentTrigger(props: AttachmentTriggerProps) {
       {...rest}
       role="button"
       style={[attachmentLook().trigger, props.style ?? null]}
-      hoverStyle={{ backgroundColor: alpha(colors.foreground, 0.04) }}
+      hoverStyle={hovered()}
       focusVisibleStyle={focusRing()}
     />
   );
