@@ -6,8 +6,7 @@ import type { JSX } from "nsh";
 import { signal, Text, View } from "nsh";
 import { type ColorFormat, ColorPicker } from "nsh/base";
 
-import { ColorPanel, ColorPopover } from "@/packages/ui/color-picker";
-import { formatColor, inkOn } from "@/packages/ui/lib/color-format";
+import { ColorPanel, ColorPopover, formatColor, inkOn } from "@/packages/ui/color-picker";
 import { insetSurface } from "@/packages/ui/lib/surface";
 
 import { Caption, DemoCard, DemoPage } from "../kit";

@@ -1,0 +1,15 @@
+{
+  "name": "class-names",
+  "type": "registry:lib",
+  "title": "Class names",
+  "description": "How an app's part classes meet the look's: merged part by part, or joined after them.",
+  "registryDependencies": [],
+  "files": [
+    {
+      "path": "packages/ui/lib/class-names.ts",
+      "type": "registry:lib",
+      "target": "lib/ui/class-names.ts",
+      "content": "// How an app's part classes meet ours: `mergeClasses` merges the parts one by one (a string after\n// ours, `null` dropping ours, a map name by name), and `joinClass` puts one part's classes after the look's.\n\n/** A part's classes by name (`RichEditorClasses`'s `nodes`, `marks`): a node type's, a mark's. */\nexport type PartMap = { [name: string]: string | null | undefined };\n\n/** A part's classes: the classes themselves, or a map of them by name, as a rich document has. */\ntype PartClasses = string | PartMap | null | undefined;\n\n/**\n * `consumer` over `base`, part by part: a string goes after ours, `null` drops ours, and a part it\n * leaves out (or `undefined`) keeps ours. A part that is a map (`RichEditorClasses`'s `nodes`,\n * `marks`) merges name by name the same way, so the app overrides one node or mark and keeps the\n * look's others.\n */\nexport function mergeClasses<C extends { [K in keyof C]?: PartClasses }>(\n  base: C,\n  consumer?: C | null,\n): C {\n  if (consumer == null) return base;\n  const merged: C = { ...base };\n  for (const key of Object.keys(consumer) as (keyof C)[]) {\n    const next = consumer[key];\n    if (next === undefined) continue;\n    if (next === null) {\n      delete merged[key];\n      continue;\n    }\n    const prior = merged[key];\n    const ours = typeof prior === \"string\" && prior ? `${prior} ` : \"\";\n    merged[key] = (\n      typeof next === \"string\"\n        ? `${ours}${next}`\n        : mergePartMap(typeof prior === \"object\" && prior !== null ? prior : undefined, next)\n    ) as C[keyof C];\n  }\n  return merged;\n}\n\n/** `consumer`'s classes over `base`'s, name by name, as `mergeClasses` merges the parts themselves. */\nfunction mergePartMap(base: PartMap | undefined, consumer: PartMap): PartMap {\n  const merged: PartMap = { ...base };\n  for (const [name, classes] of Object.entries(consumer)) {\n    if (classes === undefined) continue;\n    if (classes === null) {\n      delete merged[name];\n      continue;\n    }\n    const prior = merged[name];\n    merged[name] = prior ? `${prior} ${classes}` : classes;\n  }\n  return merged;\n}\n\n/**\n * `base`'s classes with `extra`'s after them: no `extra` keeps `base` as it is, and a `base` that\n * is absent leaves `extra` alone (a part with no default class of its own).\n */\nexport function joinClass(base: string, extra?: string | null): string;\nexport function joinClass(\n  base: string | null | undefined,\n  extra?: string | null,\n): string | undefined;\nexport function joinClass(\n  base: string | null | undefined,\n  extra?: string | null,\n): string | undefined {\n  const prior = base ?? undefined;\n  const next = extra ?? undefined;\n  if (prior && next) return `${prior} ${next}`;\n  return next ?? prior;\n}\n"
+    }
+  ]
+}

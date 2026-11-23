@@ -71,9 +71,9 @@ words, said twice:
 <Label>Accept terms and conditions</Label>
 ```
 
-`lib/ui/utils.ts` compiles into the app beside it and is a different thing: the parts the shells share.
-A `Label` draws type; a control's name for screen readers is its own `accessibilityLabel`, or the
-text it draws — the strings the shells' children are.
+`lib/ui/as-text.tsx` compiles into the app beside it and is a different thing: a `Label` draws
+type, while a control's name for screen readers is its own `accessibilityLabel`, or the text it
+draws — the string child `AsText` hands to a `Text`.
 
 ## Differences from shadcn/ui
 

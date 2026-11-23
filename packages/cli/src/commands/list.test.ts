@@ -5,7 +5,7 @@ import { runList } from "./list";
 
 const fixture = (files?: Record<string, string>): Fixture =>
   makeFixture({
-    items: ["theme", "press", "spinner", "as-text", "icons", "button", "utils"],
+    items: ["theme", "press", "spinner", "as-text", "icons", "button", "live-value"],
     files,
   });
 
@@ -55,7 +55,7 @@ describe("list", () => {
       "as-text",
       "icons",
       "button",
-      "utils",
+      "live-value",
     ]);
     expect(catalog.items.find((item) => item.name === "button")?.installed).toBe(true);
     expect(catalog.items.find((item) => item.name === "spinner")?.installed).toBe(false);

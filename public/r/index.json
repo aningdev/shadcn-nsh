@@ -326,15 +326,28 @@
       ]
     },
     {
-      "name": "utils",
+      "name": "live-value",
       "type": "registry:lib",
-      "title": "Utils",
-      "description": "The small tools the shells share: a look's value or accessor, the name a control gives screen readers, and how an app's part classes meet ours.",
+      "title": "Live value",
+      "description": "A look's value, read where it is applied: a prop or a function of the current state.",
       "files": [
         {
-          "path": "packages/ui/lib/utils.ts",
+          "path": "packages/ui/lib/live-value.ts",
           "type": "registry:lib",
-          "target": "lib/ui/utils.ts"
+          "target": "lib/ui/live-value.ts"
+        }
+      ]
+    },
+    {
+      "name": "class-names",
+      "type": "registry:lib",
+      "title": "Class names",
+      "description": "How an app's part classes meet the look's: merged part by part, or joined after them.",
+      "files": [
+        {
+          "path": "packages/ui/lib/class-names.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/class-names.ts"
         }
       ]
     },
@@ -376,27 +389,9 @@
           "target": "lib/ui/icons.tsx"
         },
         {
-          "path": "packages/ui/lib/icon-canvas.ts",
+          "path": "packages/ui/lib/icon-drawing.ts",
           "type": "registry:lib",
-          "target": "lib/ui/icon-canvas.ts"
-        },
-        {
-          "path": "packages/ui/lib/icon-image.ts",
-          "type": "registry:lib",
-          "target": "lib/ui/icon-image.ts"
-        }
-      ]
-    },
-    {
-      "name": "color-format",
-      "type": "registry:lib",
-      "title": "Color format",
-      "description": "A picked color written in each of the picker's formats, and the ink that reads on it.",
-      "files": [
-        {
-          "path": "packages/ui/lib/color-format.ts",
-          "type": "registry:lib",
-          "target": "lib/ui/color-format.ts"
+          "target": "lib/ui/icon-drawing.ts"
         }
       ]
     },

@@ -25,10 +25,10 @@ import {
 
 import { AsText } from "./lib/as-text";
 import { Icon } from "./lib/icons";
+import { type Live, read } from "./lib/live-value";
 import { createSlot, type Slot } from "./lib/open-state";
 import { itemSpacing, PopIn, popupSurface, type PopupSide } from "./lib/popup";
 import { pressHostProps, pressRipple, pressSink, pressTransition } from "./lib/press";
-import { type Live, read } from "./lib/utils";
 
 /** A pointer's compact bar; a touch screen's roomier one, a finger's target in every trigger. */
 const pointer = platform.desktop;

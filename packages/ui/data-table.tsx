@@ -9,7 +9,7 @@ import {
   type DataTableProps as BaseDataTableProps,
 } from "nsh/base";
 
-import { mergeClasses } from "./lib/utils";
+import { mergeClasses } from "./lib/class-names";
 
 /** Extra room for this UI layer's cell padding and title/button gap. */
 export const dataTableFitPadding = 16;

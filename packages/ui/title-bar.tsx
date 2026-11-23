@@ -14,7 +14,7 @@ import {
 } from "nsh/desktop";
 
 import { Icon } from "./lib/icons";
-import { type Live, read } from "./lib/utils";
+import { type Live, read } from "./lib/live-value";
 
 /** How tall a title bar is when the window reports no height of its own. */
 export const TITLE_BAR_HEIGHT = 40;

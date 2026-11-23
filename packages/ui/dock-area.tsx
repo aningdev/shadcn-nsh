@@ -20,7 +20,7 @@ import {
   type DockTarget,
 } from "nsh/base";
 
-import { joinClass } from "./lib/utils";
+import { joinClass } from "./lib/class-names";
 import { handleThumb, RESIZE_HANDLE_LABEL } from "./resizable";
 
 /**

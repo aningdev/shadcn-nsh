@@ -39,9 +39,23 @@ import {
   type CarouselProps as BaseCarouselProps,
 } from "nsh/base";
 
+import { joinClass } from "./lib/class-names";
 import { Icon } from "./lib/icons";
-import { mergeAndroid, pressHostProps, pressRipple, pressSink, pressTransition } from "./lib/press";
-import { joinClass } from "./lib/utils";
+import { pressHostProps, pressRipple, pressSink, pressTransition } from "./lib/press";
+
+/** The glass slides' `android` props: the material's ripple, with the look's own over it (`over` wins). */
+function mergeAndroid(
+  base: AndroidProps | undefined,
+  over?: AndroidProps,
+): AndroidProps | undefined {
+  if (!base) return over;
+  if (!over) return base;
+  return {
+    ...base,
+    ...over,
+    ripple: base.ripple || over.ripple ? { ...base.ripple, ...over.ripple } : undefined,
+  };
+}
 
 /** A pointer, where a carousel's controls are compact; a touch screen gets roomier ones. */
 const pointer = platform.desktop;
