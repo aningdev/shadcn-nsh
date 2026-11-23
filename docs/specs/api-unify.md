@@ -259,7 +259,7 @@ export type Tone = "neutral" | "accent" | "info" | "warn" | "danger" | "up" | "d
 规则：
 
 - **R8 一个类型。** 所有"按语义上色"的 prop 都是 `tone?: Tone`，值只有这七个。`packages/ui/index.ts` 重新导出 `Tone`，用户不必再 import 主题包。
-- **R9 一种写法：每个 `tone` prop 的类型都是 `Live<Tone>`（= `Tone | (() => Tone)`，`lib/utils` 的 `Live`），内部用一处 `read()` 读。** 传值（`tone={verdict()}`）是常规用法；函数形式是**唯一**允许的晚读手段，给"样式只在挂载时算一次"的控件（`OtpInput` 的格子判定、`Progress` 的填充色、`DiffHunkActions` 的行底）。不再有第二套写法。
+- **R9 一种写法：每个 `tone` prop 的类型都是 `Live<Tone>`（= `Tone | (() => Tone)`，`lib/live-value` 的 `Live`），内部用一处 `read()` 读。** 传值（`tone={verdict()}`）是常规用法；函数形式是**唯一**允许的晚读手段，给"样式只在挂载时算一次"的控件（`OtpInput` 的格子判定、`Progress` 的填充色、`DiffHunkActions` 的行底）。不再有第二套写法。
 - **R10 `danger` 不是 tone。** 危险是**变体**（`variant="destructive"`），不是给按钮染色；`IconButton.tone="danger"` 与 `MenuItem.danger` 都并入 `variant`。`Tone` 里的 `"danger"` 只出现在"一条数据的严重程度"上（`Status`、`Badge`、`DiffHunkActions` 的行底）。
 - **R11 影子 tone 归并。** `DiffHunkActions.tone: "up" | "down"` → `tone?: Tone`（`diff-view` 的 `solidTint` 对七值都成立，文档写明常用 `up`/`down`）。`EmojiSkinTone` 是**另一个概念**（肤色），名字不动，文档点明它不是 `Tone`。
 

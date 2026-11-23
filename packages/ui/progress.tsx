@@ -32,8 +32,8 @@ import {
 import { Progress as BaseProgress, type ProgressProps as BaseProgressProps } from "nsh/base";
 
 import { CheckboxMark, choiceWell } from "./checkbox";
+import { type Live, read } from "./lib/live-value";
 import { controlSize } from "./lib/surface";
-import { type Live, read } from "./lib/utils";
 
 /**
  * A determinate fill's classes: the whole track's width, slid back by what

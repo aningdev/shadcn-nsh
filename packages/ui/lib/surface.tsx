@@ -22,8 +22,8 @@ import {
 import type { AndroidProps, ViewStyle } from "nsh";
 import { computed, platform, Text, token, View, windowSize } from "nsh";
 
+import { type Live, read } from "./live-value";
 import { pressRipple } from "./press";
-import { type Live, read } from "./utils";
 
 const pointer = platform.desktop;
 

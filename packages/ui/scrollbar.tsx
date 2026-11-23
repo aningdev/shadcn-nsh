@@ -9,8 +9,8 @@ import {
   type ScrollbarTheme,
 } from "nsh/base";
 
+import { joinClass } from "./lib/class-names";
 import { cssMotion } from "./lib/motion";
-import { joinClass } from "./lib/utils";
 
 /** Whether the screen is a finger's, which takes a thinner bar and its smaller inset. */
 const touch = !platform.desktop;

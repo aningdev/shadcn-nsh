@@ -24,10 +24,10 @@ import {
 
 import { buttonGlyph } from "./button";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "./input-group";
+import { mergeClasses } from "./lib/class-names";
 import { Icon } from "./lib/icons";
 import { fieldCorners, fieldEdgeWidths, fieldRestEdge } from "./lib/indicator";
 import { popupSurface } from "./lib/popup";
-import { mergeClasses } from "./lib/utils";
 import { Toggle } from "./toggle";
 
 /**

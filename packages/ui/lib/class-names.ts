@@ -1,16 +1,5 @@
-// The small tools the shells share: a look's value read where it is applied (`Live`/`read`) and
-// how an app's part classes meet ours (`mergeClasses`/`joinClass`).
-// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
-
-/**
- * A value, or a function reading it where the look is applied (a signal): read at draw time, a
- * signal's value stays live.
- */
-export type Live<T> = T | (() => T);
-
-/** `v`, read where it is applied: the value itself, or what its accessor returns then. */
-export const read = <T>(v: Live<T> | undefined): T | undefined =>
-  typeof v === "function" ? (v as () => T)() : v;
+// How an app's part classes meet ours: `mergeClasses` merges the parts one by one (a string after
+// ours, `null` dropping ours, a map name by name), and `joinClass` puts one part's classes after the look's.
 
 /** A part's classes by name (`RichEditorClasses`'s `nodes`, `marks`): a node type's, a mark's. */
 export type PartMap = { [name: string]: string | null | undefined };

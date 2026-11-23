@@ -68,10 +68,8 @@ const exempt: Record<string, string> = {
     "the traffic lights keep macOS's own hues (#FF5F57, #FEBC2E, #28C840), their 50% black ink and 12% black edge: a window's close, minimize and zoom are Apple's whatever the theme, the one place a color is written out (ARCHITECTURE.md P3)",
   "packages/ui/lib/icons.tsx":
     "the check mark's SVG carries #000 as template ink; `CheckMark` draws it in the caller's `tint` (`tintColor`), so the color shown is the theme's",
-  "packages/ui/lib/color-format.ts":
-    "spells out a color the user picked (rgb() / hsl() / oklch() built from its value) and picks black or white ink to read on it; the theme cannot name the user's color",
   "packages/ui/color-picker.tsx":
-    'the swatch\'s white ring and black hairline read on the user\'s color in either appearance; "red" / "green" / "blue" here are RGB channel names',
+    'the swatch\'s white ring and black hairline read on the user\'s color in either appearance; "red" / "green" / "blue" here are RGB channel names; `formatColor` spells out a color the user picked (rgb() / hsl() / oklch() built from its value) and `inkOn` picks black or white ink to read on it',
   "apps/website/demos/color-picker.tsx":
     "the palette is the demo's content: the colors the user picks, and the ink that reads on them",
   "apps/website/demos/color-picker.ref.tsx": "the same page, its look expanded onto `nsh/base`",

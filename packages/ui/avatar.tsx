@@ -11,7 +11,7 @@ import {
   type AvatarProps as BaseAvatarProps,
 } from "nsh/base";
 
-import { joinClass } from "./lib/utils";
+import { joinClass } from "./lib/class-names";
 
 /** The hues of the identity ring: twelve, evenly spaced. */
 const HUES = 12;

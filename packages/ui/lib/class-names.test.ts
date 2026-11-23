@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { mergeClasses, type PartMap } from "./utils";
+import { mergeClasses, type PartMap } from "./class-names";
 
 // A shell's parts: strings, a part null (dropped), and a rich document's maps of node and mark
 // classes. Every case below is one shape, so the app may name parts the look does not.

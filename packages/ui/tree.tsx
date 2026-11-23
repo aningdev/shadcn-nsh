@@ -6,9 +6,9 @@ import { ChevronRight, File, Folder, FolderOpen, type IconNode } from "lucide";
 import { platform, split, Text, View } from "nsh";
 import { Tree as BaseTree, type TreeEntry, type TreeProps as BaseTreeProps } from "nsh/base";
 
+import { joinClass } from "./lib/class-names";
 import { Icon } from "./lib/icons";
 import { controlSize } from "./lib/surface";
-import { joinClass } from "./lib/utils";
 
 const desktop = platform.desktop;
 const size = {

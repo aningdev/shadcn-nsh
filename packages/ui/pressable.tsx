@@ -15,8 +15,8 @@ import { split } from "nsh";
 import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/base";
 
 import { AsText } from "./lib/as-text";
+import { type Live, read } from "./lib/live-value";
 import { pressHostProps, pressRipple, pressSink, pressTransition } from "./lib/press";
-import { type Live, read } from "./lib/utils";
 
 /** Options of `pressableLook`. */
 export interface PressableLookOptions {

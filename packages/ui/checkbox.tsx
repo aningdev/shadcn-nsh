@@ -28,9 +28,9 @@ import { Checkbox as BaseCheckbox, type CheckboxProps as BaseCheckboxProps } fro
 
 import { AsText } from "./lib/as-text";
 import { Icon } from "./lib/icons";
+import { type Live, read } from "./lib/live-value";
 import { pressRipple, pressSink } from "./lib/press";
 import { controlSize } from "./lib/surface";
-import { type Live, read } from "./lib/utils";
 
 /** What a checkbox's box shows: a check, a dash (indeterminate) or nothing. */
 export type CheckboxMarkKind = "check" | "dash" | null;

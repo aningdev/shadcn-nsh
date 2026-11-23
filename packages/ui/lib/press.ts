@@ -12,7 +12,7 @@ import {
 import type { AndroidProps, Tokens, ViewStyle } from "nsh";
 import { reduceMotion, token } from "nsh";
 
-import { type Live, read } from "./utils";
+import { type Live, read } from "./live-value";
 
 /** How long a press's sink, and the state changes beside it, take to settle. */
 const PRESS_MS = 150;
@@ -65,20 +65,6 @@ export function pressRipple(
   if (terminal || read(disabled) || !themeStyle().state.ripple) return undefined;
   const color = stateLayerColor("pressed", ink) ?? (token(ink) as string);
   return { ripple: { color } };
-}
-
-/** Merge two optional `AndroidProps` objects, combining `ripple` options cleanly (`over` wins). */
-export function mergeAndroid(
-  base: AndroidProps | undefined,
-  over?: AndroidProps,
-): AndroidProps | undefined {
-  if (!base) return over;
-  if (!over) return base;
-  return {
-    ...base,
-    ...over,
-    ripple: base.ripple || over.ripple ? { ...base.ripple, ...over.ripple } : undefined,
-  };
 }
 
 /**

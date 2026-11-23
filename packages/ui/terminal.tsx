@@ -15,7 +15,7 @@ import type { ViewStyle } from "nsh";
 import { platform, split } from "nsh";
 import { Terminal as BaseTerminal, type TerminalProps as BaseTerminalProps } from "nsh/base";
 
-import { type Live, read } from "./lib/utils";
+import { type Live, read } from "./lib/live-value";
 
 const pointer = platform.desktop;
 

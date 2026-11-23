@@ -46,6 +46,7 @@ import {
   OptionRow,
   triggerPadding,
 } from "./lib/listbox";
+import { type Live, read } from "./lib/live-value";
 import {
   createItemRegistry,
   createOpenState,
@@ -55,7 +56,6 @@ import {
   type Slot,
 } from "./lib/open-state";
 import { controlSize, narrowWindow } from "./lib/surface";
-import { type Live, read } from "./lib/utils";
 
 const pointer = platform.desktop;
 

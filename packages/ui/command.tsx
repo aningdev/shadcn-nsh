@@ -15,10 +15,10 @@ import {
 } from "nsh/base";
 
 import { Kbd } from "./kbd";
+import { joinClass } from "./lib/class-names";
 import { Icon } from "./lib/icons";
 import { itemRadius, itemSpacing, listPadding } from "./lib/popup";
 import { controlSize } from "./lib/surface";
-import { joinClass } from "./lib/utils";
 
 const desktop = platform.desktop;
 const size = {

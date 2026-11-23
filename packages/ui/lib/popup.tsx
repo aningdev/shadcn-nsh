@@ -115,7 +115,7 @@ const origins: Record<PopupSide, string> = {
  * the last `distance` points out of its trigger's edge, decelerating into
  * place. Reduced motion lands it at once.
  */
-export function popIn(side: PopupSide = "bottom", distance = ENTER_DISTANCE): MotionSpec {
+function popIn(side: PopupSide = "bottom", distance = ENTER_DISTANCE): MotionSpec {
   const away = side === "top" || side === "left" ? distance : -distance;
   const axis = side === "top" || side === "bottom" ? "translateY" : "translateX";
   return {
