@@ -55,7 +55,7 @@ mount(() => (
       <Row label="rich">
         <View class={tooltipLook({ rich: true }).class} style={box}>
           <Text class={tooltipText}>Share</Text>
-          <Text class={tooltipNote}>Anyone with the link</Text>
+          <Text style={tooltipNote()}>Anyone with the link</Text>
         </View>
       </Row>
       <Row label="popover">

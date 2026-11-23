@@ -71,7 +71,6 @@ const PUBLISHED_ROLES: Record<Appearance, readonly [string, string][]> = {
     ["chart-2", "#0f7b0f"],
     ["chart-3", "#9d5d00"],
     ["chart-5", "#868686"],
-    ["sidebar-border", "#e5e5e5"],
     ["inset", "#ededed"],
     ["glass-edge", "#e5e5e5"],
     ["hover", "#f6f6f6"],
@@ -84,7 +83,6 @@ const PUBLISHED_ROLES: Record<Appearance, readonly [string, string][]> = {
     ["destructive-tint", "#fde7e9"],
     ["up-tint", "#dff6dd"],
     ["inverse", "#f9f9f9"],
-    ["inverse-muted", "#5c5c5c"],
   ],
   dark: [
     ["background", "#202020"],
@@ -104,7 +102,6 @@ const PUBLISHED_ROLES: Record<Appearance, readonly [string, string][]> = {
     ["chart-2", "#6ccb5f"],
     ["chart-3", "#fce100"],
     ["chart-5", "#9a9a9a"],
-    ["sidebar-border", "#323232"],
     ["inset", "#1d1d1d"],
     ["glass-edge", "#1a1a1a"],
     ["hover", "#323232"],
@@ -117,7 +114,6 @@ const PUBLISHED_ROLES: Record<Appearance, readonly [string, string][]> = {
     ["destructive-tint", "#442726"],
     ["up-tint", "#393d1b"],
     ["inverse", "#282828"],
-    ["inverse-muted", "#cccccc"],
   ],
 };
 
@@ -160,14 +156,28 @@ describe("winuiRoles() key coverage and format", () => {
     expect(Object.keys(roles.dark).sort()).toEqual(expectedDarkKeys);
   });
 
+  test("sidebar slots are aliases to the A/B roles with the same value", () => {
+    for (const appearance of ["light", "dark"] as const) {
+      const roles = winuiRoles()[appearance];
+      expect(roles["sidebar-border"]).toBe("var(--line)");
+      expect(roles["sidebar"]).toBe("var(--background)");
+      expect(roles["sidebar-ring"]).toBe("var(--ring)");
+    }
+  });
+
   test("every value is a canonical oklch() string or var(--*) alias, and only overlays/washes keep alpha", () => {
     const allowedAlpha = new Set(["scrim", "window-control-ink", "window-control-edge"]);
     const themeAliases = new Set(["brand-fill", "on-brand"]);
     const appearanceAliases = new Set([
       "dialog",
-      "selected-foreground",
-      "pressed-foreground",
-      "slider-track",
+      "sidebar",
+      "sidebar-foreground",
+      "sidebar-primary",
+      "sidebar-primary-foreground",
+      "sidebar-accent",
+      "sidebar-accent-foreground",
+      "sidebar-border",
+      "sidebar-ring",
     ]);
     for (const [sectionName, section] of [
       ["theme", roles.theme],
@@ -280,28 +290,21 @@ describe("WCAG contrast for default accent", () => {
           s["sidebar-accent"],
         ],
         ["inverse-foreground/inverse", s["inverse-foreground"], s.inverse],
-        ["inverse-muted/inverse", s["inverse-muted"], s.inverse],
         ["inverse-foreground/popover (tooltip)", s["inverse-foreground"], s.popover],
-        ["inverse-muted/popover (tooltip)", s["inverse-muted"], s.popover],
         ["inverse-brand/primary", s["inverse-brand"], s.primary],
-        ["on-brand-tint/brand-tint", s["on-brand-tint"], s["brand-tint"]],
         ["code/inset", s.code, s.inset],
         ["code/muted", s.code, s.muted],
         ["brand/background", s.brand, s.background],
         ["brand/card", s.brand, s.card],
-        ["pressed-foreground/pressed", resolveAlias(s["pressed-foreground"]), s.background],
-        [
-          "selected-foreground/primary (toggle on)",
-          resolveAlias(s["selected-foreground"]),
-          s.primary,
-        ],
         ["warn/warn-tint", s.warn, s["warn-tint"]],
         ["up/up-tint", s.up, s["up-tint"]],
         ["destructive/destructive-tint", s.destructive, s["destructive-tint"]],
-        ["down/down-tint", s.down, s["down-tint"]],
       ];
       for (const [label, fg, bg] of pairs) {
-        expect(wcagContrast(fg, bg), `${appearance} ${label}`).toBeGreaterThanOrEqual(4.5);
+        expect(
+          wcagContrast(resolveAlias(fg), resolveAlias(bg)),
+          `${appearance} ${label}`,
+        ).toBeGreaterThanOrEqual(4.5);
       }
       // `TextOnAccentFillColorSecondary` (0.7 white light / 0.5 black dark) on `AccentFillColorTertiary`
       // is WinUI 3's genuine subtle pressed ink state (~2.95–3.10 contrast).
@@ -375,10 +378,13 @@ describe("compiled winui theme files", () => {
       "border-color": "{accent-bevel}",
       "border-top-color": "{accent-bevel}",
       "border-bottom-color": "{brand-edge}",
+      foreground: "{on-brand}",
     });
-    expect(files.semantics.finishes.shared.section).toMatchObject({
-      "border-color": "{card-edge}",
-      shadow: "none",
+    expect(files.semantics.finishes.light.card).toMatchObject({
+      "border-color": "oklch(0.92191 0 0)",
+    });
+    expect(files.semantics.finishes.dark.card).toMatchObject({
+      "border-color": "oklch(0.23075 0 0)",
     });
     expect(files.semantics.finishes.shared.accentPressed).toMatchObject({
       background: "{accent-pressed}",

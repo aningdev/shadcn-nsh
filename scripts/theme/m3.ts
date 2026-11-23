@@ -304,13 +304,13 @@ function appearanceRoles(p: M3Palette, appearance: Appearance): Record<string, s
     "chart-3": c(p.secondary),
     "chart-4": c(p.outline),
     "chart-5": c(p.outlineVariant),
-    sidebar: c(p.surface),
+    sidebar: "var(--background)",
     "sidebar-foreground": "var(--foreground)",
     "sidebar-primary": "var(--primary)",
     "sidebar-primary-foreground": "var(--primary-foreground)",
-    "sidebar-accent": c(p.secondaryContainer),
-    "sidebar-accent-foreground": c(p.onSecondaryContainer),
-    "sidebar-border": c(p.outlineVariant),
+    "sidebar-accent": "var(--accent)",
+    "sidebar-accent-foreground": "var(--accent-foreground)",
+    "sidebar-border": "var(--border)",
     "sidebar-ring": "var(--ring)",
     inset: c(p.surfaceContainer),
     raised: c(p.surfaceContainerLow),
@@ -325,41 +325,30 @@ function appearanceRoles(p: M3Palette, appearance: Appearance): Record<string, s
     brand: "var(--primary)",
     "brand-edge": c(p.outlineVariant),
     track: c(p.surfaceContainerHighest),
-    "slider-track": "var(--brand-tint)",
     knob: c(p.outline),
     code: "var(--foreground)",
     info: c(p.primary),
     warn: toOklchText(NSH_EXTENSIONS.warn[appearance]),
     up: toOklchText(NSH_EXTENSIONS.up[appearance]),
-    down: "var(--destructive)",
-    // M3 paints selected chips/tiles/buttons with opaque SecondaryContainer; `on-brand-tint` uses
-    // the matching OnSecondaryContainer ink per RESEARCH §2.2 & §5.1.
+    // M3 paints selected chips/tiles/buttons with opaque SecondaryContainer.
     "brand-tint": c(p.secondaryContainer),
-    "on-brand-tint": c(p.onSecondaryContainer),
     inverse: c(p.inverseSurface),
     "inverse-foreground": c(p.inverseOnSurface),
-    // M3 snackbar supporting text (`SupportingTextColor`) and close icon (`IconColor`) both use
-    // `InverseOnSurface`, so `inverse-muted` maps to `inverse-foreground`:
-    // https://github.com/androidx/androidx/blob/ac364f3c7f575c0e10f089b254a8eedb5b7d705a/compose/material3/material3/src/commonMain/kotlin/androidx/compose/material3/tokens/SnackbarTokens.kt
-    "inverse-muted": "var(--inverse-foreground)",
     "inverse-brand": c(p.inversePrimary),
     "info-tint": tintMix("info"),
     "warn-tint": tintMix("warn"),
     "destructive-tint": c(p.errorContainer),
     "up-tint": tintMix("up"),
-    "down-tint": tintMix("down"),
+    "down-tint": tintMix("destructive"),
     violet: c(p.tertiary),
     "window-control-off": c(p.outlineVariant),
     dialog: c(p.surfaceContainerHigh),
-    "card-edge": "var(--border)",
     bevel: "var(--border)",
     "accent-bevel": "var(--brand-edge)",
     disabled: "color-mix(in srgb, var(--foreground) 10%, transparent)",
     "disabled-foreground": "color-mix(in srgb, var(--foreground) 38%, transparent)",
     "accent-pressed": "var(--primary)",
     "on-accent-pressed": "var(--on-brand)",
-    "selected-foreground": "var(--on-brand-tint)",
-    "pressed-foreground": "var(--foreground)",
   };
 }
 
@@ -403,12 +392,14 @@ const surface = (
     "border-color": borderColor = "transparent",
     "border-top-color": borderTopColor,
     "border-bottom-color": borderBottomColor,
+    foreground,
     material = null,
   }: {
     shadow?: string;
     "border-color"?: string;
     "border-top-color"?: string;
     "border-bottom-color"?: string;
+    foreground?: string;
     material?: { android: { elevation: number } } | null;
   } = {},
 ) => ({
@@ -418,6 +409,7 @@ const surface = (
   "border-color": borderColor,
   ...(borderTopColor !== undefined ? { "border-top-color": borderTopColor } : {}),
   ...(borderBottomColor !== undefined ? { "border-bottom-color": borderBottomColor } : {}),
+  ...(foreground !== undefined ? { foreground } : {}),
   material,
 });
 
@@ -451,6 +443,7 @@ function finishes(): Record<string, Record<string, unknown>> {
     card: {
       gradient: flat(alias("card")),
       shadow: LEVEL_1,
+      "border-color": "transparent",
       material: level1,
     },
     section: {
@@ -483,6 +476,7 @@ function finishes(): Record<string, Record<string, unknown>> {
       shadow: LEVEL_1,
       "border-top-color": "transparent",
       "border-bottom-color": "transparent",
+      foreground: alias("foreground"),
       material: level1,
     }),
     disabled: surface(alias("disabled")),
@@ -514,6 +508,7 @@ function finishes(): Record<string, Record<string, unknown>> {
     on: surface(alias("secondary"), {
       "border-top-color": "transparent",
       "border-bottom-color": "transparent",
+      foreground: alias("accent-foreground"),
     }),
     chip: surface(alias("background"), { "border-color": alias("border") }),
     glass: {
@@ -551,6 +546,7 @@ function finishes(): Record<string, Record<string, unknown>> {
       background: alias("inverse"),
       shadow: LEVEL_3,
       "border-color": "transparent",
+      foreground: alias("inverse-foreground"),
       backdropFilter: "none",
       material: level3,
     },
@@ -726,16 +722,11 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
     brand: "Inline brand accent ink, aliased to {color.primary}.",
     "brand-edge": "Brand container outline (M3 outlineVariant).",
     track: "Switch and slider track fill (M3 surfaceContainerHighest).",
-    "slider-track":
-      "M3 Expressive inactive slider track fill aliased to {color.brand-tint} (SecondaryContainer, Compose SliderTokens.kt).",
     knob: "Unchecked switch thumb fill (M3 outline).",
     info: "Informational semantic color matching M3 primary.",
     "brand-tint": "Opaque selected chip/tile fill (M3 secondaryContainer).",
-    "on-brand-tint": "Ink on selected chip/tile fills (M3 Expressive onSecondaryContainer).",
     inverse: "Inverse surface for snackbars and tooltips (M3 inverseSurface).",
     "inverse-foreground": "Ink on inverse surfaces (M3 inverseOnSurface).",
-    "inverse-muted":
-      "Supporting text and close icon on inverse snackbars, aliased to {color.inverse-foreground} (Compose SnackbarTokens.kt).",
     "inverse-brand": "Brand action ink on inverse surfaces (M3 inversePrimary).",
     "info-tint": "Translucent informational wash (12% info over transparent).",
     "warn-tint": "Translucent warning wash (12% warn over transparent).",
@@ -745,15 +736,12 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
     violet: "Tertiary accent color (M3 tertiary).",
     "window-control-off": "Unfocused window traffic-light fill (M3 outlineVariant).",
     dialog: "Modal dialog surface (M3 surfaceContainerHigh).",
-    "card-edge": "Card border hairline aliased to {color.border}.",
     bevel: "Control elevation bevel stroke aliased to {color.border}.",
     "accent-bevel": "Accent bevel stroke aliased to {color.brand-edge}.",
     disabled: "Disabled control container fill (10% onSurface over transparent).",
     "disabled-foreground": "Disabled control content ink (38% onSurface over transparent).",
     "accent-pressed": "Pressed accent fill aliased to {color.primary} (state layer applies press).",
     "on-accent-pressed": "Pressed accent ink aliased to {color.on-brand}.",
-    "selected-foreground": "Ink on tonal selected controls (M3 Expressive onSecondaryContainer).",
-    "pressed-foreground": "Pressed ink aliased to {color.foreground}.",
   };
 
   return {

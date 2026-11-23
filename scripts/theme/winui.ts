@@ -333,18 +333,14 @@ export type WinuiAppearanceRole =
   | "brand"
   | "brand-edge"
   | "track"
-  | "slider-track"
   | "knob"
   | "code"
   | "info"
   | "warn"
   | "up"
-  | "down"
   | "brand-tint"
-  | "on-brand-tint"
   | "inverse"
   | "inverse-foreground"
-  | "inverse-muted"
   | "inverse-brand"
   | "info-tint"
   | "warn-tint"
@@ -354,15 +350,12 @@ export type WinuiAppearanceRole =
   | "violet"
   | "window-control-off"
   | "dialog"
-  | "card-edge"
   | "bevel"
   | "accent-bevel"
   | "disabled"
   | "disabled-foreground"
   | "accent-pressed"
-  | "on-accent-pressed"
-  | "selected-foreground"
-  | "pressed-foreground";
+  | "on-accent-pressed";
 
 export interface WinuiRoles {
   theme: Record<WinuiThemeRole, string>;
@@ -443,14 +436,14 @@ function buildAppearance(
     "chart-4": destructive,
     "chart-5": controlStrong,
     // `NavigationViewExpandedPaneBackground` is transparent over the window base.
-    sidebar: background,
-    "sidebar-foreground": foreground,
-    "sidebar-primary": primary,
-    "sidebar-primary-foreground": primaryForeground,
-    "sidebar-accent": accent,
-    "sidebar-accent-foreground": foreground,
-    "sidebar-border": divider,
-    "sidebar-ring": ring,
+    sidebar: "var(--background)",
+    "sidebar-foreground": "var(--foreground)",
+    "sidebar-primary": "var(--primary)",
+    "sidebar-primary-foreground": "var(--primary-foreground)",
+    "sidebar-accent": "var(--accent)",
+    "sidebar-accent-foreground": "var(--foreground)",
+    "sidebar-border": "var(--line)",
+    "sidebar-ring": "var(--ring)",
     inset,
     raised: secondary,
     "glass-edge": onBase(w.SurfaceStrokeColorFlyout),
@@ -466,21 +459,17 @@ function buildAppearance(
     // composited over the accent fill `primary`, not over the base background.
     "brand-edge": compositeWinui(w.ControlStrokeColorOnAccentSecondary, primary),
     track: inset,
-    "slider-track": "var(--input)",
     knob: mutedForeground,
     code: foreground,
     // `SystemFillColorAttentionBrush`: `SystemAccentColor` (`#0078D4`) in light, `SystemAccentColorLight2` in dark.
     info: appearance === "light" ? tiers.base : tiers.light2,
     warn,
     up,
-    down: destructive,
     "brand-tint": brandTint,
-    "on-brand-tint": foreground,
     // Non-transient `TeachingTipBackgroundBrush` (`SolidBackgroundFillColorTertiary`,
     // `TeachingTip_themeresources.xaml:9,31`); `tooltip` finish uses Acrylic `{popover}` instead.
     inverse: onBase(w.SolidBackgroundFillColorTertiary),
     "inverse-foreground": foreground,
-    "inverse-muted": mutedForeground,
     // `Toast`'s action uses `buttonLook("default")` (`finish.accent` = `{primary}`).
     "inverse-brand": primaryForeground,
     "info-tint": onBase(w.SystemFillColorAttentionBackground),
@@ -491,15 +480,12 @@ function buildAppearance(
     violet: LIBRARY_KEPT[appearance].violet,
     "window-control-off": LIBRARY_KEPT[appearance].windowControlOff,
     dialog: "var(--background)",
-    "card-edge": onBase(w.CardStrokeColorDefault),
     bevel: onBase(w.ControlStrokeColorSecondary),
     "accent-bevel": compositeWinui(w.ControlStrokeColorOnAccentDefault, primary),
     disabled: onBase(w.ControlFillColorDisabled),
     "disabled-foreground": onBase(w.TextFillColorDisabled),
     "accent-pressed": accentPressed,
     "on-accent-pressed": compositeWinui(w.TextOnAccentFillColorSecondary, accentPressed),
-    "selected-foreground": "var(--on-brand)",
-    "pressed-foreground": "var(--muted-foreground)",
   };
 }
 
@@ -565,12 +551,14 @@ const surface = (
     "border-color": borderColor = "transparent",
     "border-top-color": borderTopColor,
     "border-bottom-color": borderBottomColor,
+    foreground,
     material = null,
   }: {
     shadow?: string;
     "border-color"?: string;
     "border-top-color"?: string;
     "border-bottom-color"?: string;
+    foreground?: string;
     material?: { windows: { backdrop: "blur" } } | null;
   } = {},
 ) => ({
@@ -580,6 +568,7 @@ const surface = (
   "border-color": borderColor,
   ...(borderTopColor !== undefined ? { "border-top-color": borderTopColor } : {}),
   ...(borderBottomColor !== undefined ? { "border-bottom-color": borderBottomColor } : {}),
+  ...(foreground !== undefined ? { foreground } : {}),
   material,
 });
 
@@ -605,6 +594,8 @@ function themeLevel(roles: WinuiRoles): Record<string, string> {
  * Windows for `{ windows: { backdrop: "blur" } }` as the Acrylic stand-in).
  */
 function finishes(appearance: Appearance): Record<string, Record<string, unknown>> {
+  const w = WINUI[appearance];
+  const onBase = (hex: string) => compositeWinui(hex, w.SolidBackgroundFillColorBase);
   const controlShadow = elevationShadow(2, appearance);
   const flyoutShadow = elevationShadow(32, appearance);
   const blurMaterial = { windows: { backdrop: "blur" as const } };
@@ -621,12 +612,13 @@ function finishes(appearance: Appearance): Record<string, Record<string, unknown
     card: {
       gradient: flat(alias("card")),
       shadow: elevationShadow(8, appearance),
+      "border-color": onBase(w.CardStrokeColorDefault),
       material: null,
     },
     section: {
       background: alias("card"),
       shadow: "none",
-      "border-color": alias("card-edge"),
+      "border-color": onBase(w.CardStrokeColorDefault),
       material: null,
     },
     inset: { shadow: "none", material: null },
@@ -651,6 +643,7 @@ function finishes(appearance: Appearance): Record<string, Record<string, unknown
       "border-color": alias("border"),
       "border-top-color": alias("border"),
       "border-bottom-color": alias("border"),
+      foreground: alias("muted-foreground"),
     }),
     disabled: surface(alias("disabled"), { shadow: "none", "border-color": alias("border") }),
     light: surface(alias("primary"), {
@@ -691,6 +684,7 @@ function finishes(appearance: Appearance): Record<string, Record<string, unknown
       "border-color": alias("accent-bevel"),
       "border-top-color": alias("accent-bevel"),
       "border-bottom-color": alias("brand-edge"),
+      foreground: alias("on-brand"),
     }),
     chip: surface(alias("raised"), { shadow: "none", "border-color": alias("border") }),
     glass: {
@@ -728,6 +722,7 @@ function finishes(appearance: Appearance): Record<string, Record<string, unknown
       background: alias("inverse"),
       shadow: flyoutShadow,
       "border-color": alias("glass-edge"),
+      foreground: alias("muted-foreground"),
       backdropFilter: "none",
       material: null,
     },
@@ -917,20 +912,15 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
     "brand-edge":
       "Accent button bottom bevel stroke (WinUI ControlStrokeColorOnAccentSecondary composited over primary).",
     track: "Switch and slider track (WinUI ControlAltFillColorSecondary).",
-    "slider-track":
-      "WinUI 3 inactive slider track aliased to {color.input} (SliderTrackFill -> ControlStrongFillColorDefault, Slider_themeresources.xaml:20 in winui3/release/2.7.0).",
     knob: "Unchecked switch thumb (WinUI TextFillColorSecondary).",
     code: "Inline code ink (WinUI TextFillColorPrimary).",
     info: "Informational semantic color (WinUI SystemFillColorAttentionBrush).",
     warn: "Caution semantic color (WinUI SystemFillColorCaution).",
     up: "Success semantic color (WinUI SystemFillColorSuccess).",
-    down: "Negative trend color matching WinUI SystemFillColorCritical.",
     "brand-tint": "10% accent wash composited opaque over window base.",
-    "on-brand-tint": "Ink on brand-tint surfaces (WinUI TextFillColorPrimary).",
     inverse:
       "TeachingTip/toast surface (WinUI SolidBackgroundFillColorTertiary composited over base).",
     "inverse-foreground": "Ink on inverse surface (WinUI TextFillColorPrimary).",
-    "inverse-muted": "Secondary ink on inverse surface (WinUI TextFillColorSecondary).",
     "inverse-brand": "Action ink on inverse surface matching TextOnAccentFillColorPrimary.",
     "info-tint":
       "Informational wash (WinUI SystemFillColorAttentionBackground composited over base).",
@@ -944,7 +934,6 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
     "window-control-off":
       "Library-retained unfocused window traffic-light fill (no WinUI equivalent).",
     dialog: "ContentDialog surface aliased to {color.background} (SolidBackgroundFillColorBase).",
-    "card-edge": "Card border stroke (WinUI CardStrokeColorDefault composited over base).",
     bevel:
       "Standard button elevation bevel stroke (WinUI ControlStrokeColorSecondary composited over base).",
     "accent-bevel":
@@ -957,10 +946,6 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
       "Pressed accent control fill (WinUI AccentFillColorTertiary composited over base).",
     "on-accent-pressed":
       "Pressed accent control ink (WinUI TextOnAccentFillColorSecondary composited over accent-pressed).",
-    "selected-foreground":
-      "Ink on checked ToggleButton / active AccentFillColorDefault controls aliased to {color.on-brand}.",
-    "pressed-foreground":
-      "Pressed standard control ink aliased to {color.muted-foreground} (WinUI TextFillColorSecondary).",
   };
 
   return {

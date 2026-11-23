@@ -160,7 +160,7 @@ const buttonInk = (variant: ButtonVariant, selected = false): keyof Tokens =>
     : variant === "destructive"
       ? "destructive"
       : variant === "secondary" && selected
-        ? "selected-foreground"
+        ? "accent-foreground"
         : "foreground";
 
 /** The fill, edge and shadow of a variant at rest (or selected). A disabled filled button gives up the citrus for the
@@ -296,8 +296,9 @@ function ink(live: Live<ButtonVariant>, o?: ButtonLookOptions) {
     return read(o?.pressed) ? colors.onAccentPressed : colors.onBrand;
   }
   if (variant === "destructive") return colors.destructive;
-  if (variant === "secondary" && read(o?.selected)) return colors.selectedForeground;
-  if (read(o?.pressed)) return colors.pressedForeground;
+  if (variant === "secondary" && read(o?.selected))
+    return finish.on.foreground ?? colors.foreground;
+  if (read(o?.pressed)) return finish.pressed.foreground ?? colors.foreground;
   return colors.foreground;
 }
 

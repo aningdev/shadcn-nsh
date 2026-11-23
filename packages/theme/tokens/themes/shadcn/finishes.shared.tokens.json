@@ -76,6 +76,10 @@
           }
         ]
       },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "material": null
@@ -122,7 +126,7 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.card-edge}"
+        "$value": "{color.border}"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -437,6 +441,10 @@
             "none": true
           }
         }
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
       },
       "border-color": {
         "$type": "color",
@@ -1445,6 +1453,10 @@
           }
         }
       },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
+      },
       "border-color": {
         "$type": "color",
         "$value": {
@@ -1903,6 +1915,10 @@
             }
           }
         ]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.muted-foreground}"
       },
       "border-color": {
         "$type": "color",

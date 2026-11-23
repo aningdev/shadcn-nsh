@@ -248,6 +248,9 @@ function compileFinishSection(
           .join(", ");
       }
     }
+    if (isRecord(group.foreground)) {
+      item.foreground = compileFinishColor(group.foreground);
+    }
     if (isRecord(group["border-color"])) {
       item["border-color"] = compileFinishColor(group["border-color"]);
     }

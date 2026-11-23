@@ -66,7 +66,7 @@ export function Tip(props: { label: string; shortcut?: string }) {
       <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
         <Text class={tooltipText}>{props.label}</Text>
         <If when={props.shortcut}>
-          <Text class={tooltipNote}>{props.shortcut}</Text>
+          <Text style={tooltipNote()}>{props.shortcut}</Text>
         </If>
       </View>
     </TooltipContent>

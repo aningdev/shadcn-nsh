@@ -59,18 +59,14 @@ colors:
     brand: "#00754f"
     brand-edge: "#161616af"
     track: "#292e3826"
-    slider-track: "#292e3826"
     knob: "#ffffff"
     code: "#0d0d0d"
     info: "#0078cc"
     warn: "#d87400"
     up: "#0a924b"
-    down: "#e7000b"
     brand-tint: "#2eb1841f"
-    on-brand-tint: "#0d0d0d"
     inverse: "#f8f9fb"
     inverse-foreground: "#0d0d0d"
-    inverse-muted: "#5b5b5b"
     inverse-brand: "#fafafa"
     info-tint: "#0078cc1a"
     warn-tint: "#d874001a"
@@ -80,15 +76,12 @@ colors:
     violet: "#743c98"
     window-control-off: "#9e9e9e"
     dialog: "#eff1f5"
-    card-edge: "#292e3821"
     bevel: "#292e3821"
     accent-bevel: "#161616af"
     disabled: "#ffffff8c"
     disabled-foreground: "#5b5b5b"
     accent-pressed: "#161616"
     on-accent-pressed: "#fafafa"
-    selected-foreground: "#0d0d0d"
-    pressed-foreground: "#0d0d0d"
   dark:
     brand-fill: "#ebebeb"
     on-brand: "#121212"
@@ -136,18 +129,14 @@ colors:
     brand: "#54d2a4"
     brand-edge: "#f4f4f4aa"
     track: "#ffffff21"
-    slider-track: "#ffffff21"
     knob: "#f5f5f5"
     code: "#fafafa"
     info: "#449df0"
     warn: "#f79c40"
     up: "#4ac777"
-    down: "#ff6467"
     brand-tint: "#54d2a426"
-    on-brand-tint: "#fafafa"
     inverse: "#1a1a1a"
     inverse-foreground: "#fafafa"
-    inverse-muted: "#a4a4a4"
     inverse-brand: "#121212"
     info-tint: "#449df01a"
     warn-tint: "#f79c401a"
@@ -157,15 +146,12 @@ colors:
     violet: "#c8a5f0"
     window-control-off: "#696969"
     dialog: "#1d1d1d"
-    card-edge: "#ffffff1c"
     bevel: "#ffffff1c"
     accent-bevel: "#f4f4f4aa"
     disabled: "#ffffff12"
     disabled-foreground: "#a4a4a4"
     accent-pressed: "#ebebeb"
     on-accent-pressed: "#121212"
-    selected-foreground: "#fafafa"
-    pressed-foreground: "#fafafa"
 typography:
   caption:
     fontFamily: "system-ui, sans-serif"
@@ -373,7 +359,6 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 - **`field`** (light `#ffffff99`, dark `#ffffff0f`): Input well surface below card and inset layers.
 - **`hover`** (light `#292e381a`, dark `#ffffff14`): Pointer hover overlay fill on interactive items.
 - **`track`** (light `#292e3826`, dark `#ffffff21`): Inactive track background for switches, sliders, and progress bars.
-- **`slider-track`** (light `#292e3826`, dark `#ffffff21`): Inactive slider track fill aliased to {color.track}.
 - **`knob`** (light `#ffffff`, dark `#f5f5f5`): Switch thumb fill in the off state.
 - **`inverse`** (light `#f8f9fb`, dark `#1a1a1a`): High-contrast surface for toasts and tooltips.
 - **`dialog`** (light `#eff1f5`, dark `#1d1d1d`): Modal dialog container surface.
@@ -394,10 +379,7 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 - **`faint`** (light `#9e9e9e`, dark `#696969`): Low-emphasis text for placeholders, units, and tertiary labels.
 - **`code`** (light `#0d0d0d`, dark `#fafafa`): Monospace code text ink inside recessed wells.
 - **`inverse-foreground`** (light `#0d0d0d`, dark `#fafafa`): Primary text ink on inverse surfaces.
-- **`inverse-muted`** (light `#5b5b5b`, dark `#a4a4a4`): Secondary text, spinner, and close-icon ink on inverse surfaces.
 - **`disabled-foreground`** (light `#5b5b5b`, dark `#a4a4a4`): Disabled control label and icon ink.
-- **`selected-foreground`** (light `#0d0d0d`, dark `#fafafa`): Label and icon ink on selected or toggled-on controls.
-- **`pressed-foreground`** (light `#0d0d0d`, dark `#fafafa`): Label and icon ink on pressed neutral or ghost controls.
 
 ### Brand
 
@@ -410,7 +392,6 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 - **`brand`** (light `#00754f`, dark `#54d2a4`): Accent ink for text, icons, and active rules.
 - **`brand-edge`** (light `#161616af`, dark `#f4f4f4aa`): Primary button hairline mixed from --primary and --primary-edge.
 - **`brand-tint`** (light `#2eb1841f`, dark `#54d2a426`): Static translucent teal brand wash (--brand-muted).
-- **`on-brand-tint`** (light `#0d0d0d`, dark `#fafafa`): Text and icon ink on brand-tint surfaces.
 - **`inverse-brand`** (light `#fafafa`, dark `#121212`): Accent action color on inverse surfaces.
 - **`accent-pressed`** (light `#161616`, dark `#ebebeb`): Accent control fill while pressed.
 - **`on-accent-pressed`** (light `#fafafa`, dark `#121212`): Ink on pressed accent control fills.
@@ -426,7 +407,6 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 - **`info`** (light `#0078cc`, dark `#449df0`): Informational semantic status color.
 - **`warn`** (light `#d87400`, dark `#f79c40`): Warning semantic status color.
 - **`up`** (light `#0a924b`, dark `#4ac777`): Positive trend and growth semantic color.
-- **`down`** (light `#e7000b`, dark `#ff6467`): Negative trend and decline semantic color.
 - **`info-tint`** (light `#0078cc1a`, dark `#449df01a`): Translucent informational status background tint.
 - **`warn-tint`** (light `#d874001a`, dark `#f79c401a`): Translucent warning status background tint.
 - **`destructive-tint`** (light `#e7000b1a`, dark `#ff64671a`): Translucent destructive status background tint.
@@ -452,7 +432,6 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 - **`line`** (light `#292e3821`, dark `#ffffff1c`): Hairline divider and grid rule inside recessed wells.
 - **`ring-halo`** (light `#16161639`, dark `#ffffff2e`): Translucent outer halo around focused controls.
 - **`window-control-off`** (light `#9e9e9e`, dark `#696969`): Inactive background for macOS traffic-light buttons when unfocused.
-- **`card-edge`** (light `#292e3821`, dark `#ffffff1c`): Hairline border on card and section containers.
 - **`bevel`** (light `#292e3821`, dark `#ffffff1c`): Directional control elevation bevel stroke.
 - **`accent-bevel`** (light `#161616af`, dark `#f4f4f4aa`): Accent control elevation top and side bevel stroke.
 

@@ -1325,15 +1325,6 @@
       },
       "$description": "Switch and slider track (WinUI ControlAltFillColorSecondary)."
     },
-    "slider-track": {
-      "$value": "{color.input}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "WinUI 3 inactive slider track aliased to {color.input} (SliderTrackFill -> ControlStrongFillColorDefault, Slider_themeresources.xaml:20 in winui3/release/2.7.0)."
-    },
     "knob": {
       "$value": {
         "colorSpace": "oklch",
@@ -1436,23 +1427,6 @@
       },
       "$description": "10% accent wash composited opaque over window base."
     },
-    "on-brand-tint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          1,
-          0,
-          0
-        ],
-        "hex": "#ffffff"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Ink on brand-tint surfaces (WinUI TextFillColorPrimary)."
-    },
     "inverse": {
       "$value": {
         "colorSpace": "oklch",
@@ -1486,23 +1460,6 @@
         }
       },
       "$description": "Ink on inverse surface (WinUI TextFillColorPrimary)."
-    },
-    "inverse-muted": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.84522,
-          0,
-          0
-        ],
-        "hex": "#cccccc"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Secondary ink on inverse surface (WinUI TextFillColorSecondary)."
     },
     "inverse-brand": {
       "$value": {
@@ -1811,15 +1768,7 @@
       "$description": "Outer keyboard focus stroke (WinUI FocusStrokeColorOuter)."
     },
     "sidebar": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.24353,
-          0,
-          0
-        ],
-        "hex": "#202020"
-      },
+      "$value": "{color.background}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "surface"
@@ -1828,15 +1777,7 @@
       "$description": "NavigationView expanded pane background matching window base."
     },
     "sidebar-foreground": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          1,
-          0,
-          0
-        ],
-        "hex": "#ffffff"
-      },
+      "$value": "{color.foreground}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "ink"
@@ -1845,15 +1786,7 @@
       "$description": "Sidebar primary ink (WinUI TextFillColorPrimary)."
     },
     "sidebar-accent": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.29716,
-          0,
-          0
-        ],
-        "hex": "#2d2d2d"
-      },
+      "$value": "{color.accent}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "surface"
@@ -1862,15 +1795,7 @@
       "$description": "Sidebar active item fill (WinUI SubtleFillColorSecondary)."
     },
     "sidebar-accent-foreground": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          1,
-          0,
-          0
-        ],
-        "hex": "#ffffff"
-      },
+      "$value": "{color.foreground}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "ink"
@@ -1879,15 +1804,7 @@
       "$description": "Sidebar active item ink (WinUI TextFillColorPrimary)."
     },
     "sidebar-border": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.31714,
-          0,
-          0
-        ],
-        "hex": "#323232"
-      },
+      "$value": "{color.line}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "chrome"
@@ -1896,15 +1813,7 @@
       "$description": "Sidebar separator stroke (WinUI DividerStrokeColorDefault)."
     },
     "sidebar-primary": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.80403,
-          0.12199,
-          230.822
-        ],
-        "hex": "#60cdff"
-      },
+      "$value": "{color.primary}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "brand"
@@ -1913,15 +1822,7 @@
       "$description": "Sidebar primary accent matching AccentFillColorDefault."
     },
     "sidebar-primary-foreground": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0,
-          0,
-          0
-        ],
-        "hex": "#000000"
-      },
+      "$value": "{color.primary-foreground}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "brand"
@@ -1930,38 +1831,13 @@
       "$description": "Sidebar primary ink matching TextOnAccentFillColorPrimary."
     },
     "sidebar-ring": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          1,
-          0,
-          0
-        ],
-        "hex": "#ffffff"
-      },
+      "$value": "{color.ring}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "chrome"
         }
       },
       "$description": "Sidebar focus stroke (WinUI FocusStrokeColorOuter)."
-    },
-    "down": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.79111,
-          0.12251,
-          13.299
-        ],
-        "hex": "#ff99a4"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status"
-        }
-      },
-      "$description": "Negative trend color matching WinUI SystemFillColorCritical."
     },
     "window-control-off": {
       "$value": {
@@ -1988,23 +1864,6 @@
         }
       },
       "$description": "ContentDialog surface aliased to {color.background} (SolidBackgroundFillColorBase)."
-    },
-    "card-edge": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.23075,
-          0,
-          0
-        ],
-        "hex": "#1d1d1d"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Card border stroke (WinUI CardStrokeColorDefault composited over base)."
     },
     "bevel": {
       "$value": {
@@ -2107,24 +1966,6 @@
         }
       },
       "$description": "Pressed accent control ink (WinUI TextOnAccentFillColorSecondary composited over accent-pressed)."
-    },
-    "selected-foreground": {
-      "$value": "{color.on-brand}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Ink on checked ToggleButton / active AccentFillColorDefault controls aliased to {color.on-brand}."
-    },
-    "pressed-foreground": {
-      "$value": "{color.muted-foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Pressed standard control ink aliased to {color.muted-foreground} (WinUI TextFillColorSecondary)."
     }
   },
   "finish": {
@@ -2214,6 +2055,18 @@
             }
           }
         ]
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.23075,
+            0,
+            0
+          ],
+          "hex": "#1d1d1d"
+        }
       }
     },
     "section": {
@@ -2258,13 +2111,21 @@
           }
         }
       },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.card-edge}"
-      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "material": null
+        }
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.23075,
+            0,
+            0
+          ],
+          "hex": "#1d1d1d"
         }
       }
     },
@@ -2572,6 +2433,10 @@
             "none": true
           }
         }
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.muted-foreground}"
       },
       "border-color": {
         "$type": "color",
@@ -3571,6 +3436,10 @@
           }
         }
       },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.on-brand}"
+      },
       "border-color": {
         "$type": "color",
         "$value": "{color.accent-bevel}"
@@ -4060,6 +3929,10 @@
       "background": {
         "$type": "color",
         "$value": "{color.inverse}"
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.muted-foreground}"
       },
       "border-color": {
         "$type": "color",

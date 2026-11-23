@@ -68,7 +68,7 @@ function App() {
       typing: { text: `${code().length} of 6 digits`, color: colors.mutedForeground },
       checking: { text: "Checking…", color: colors.mutedForeground },
       right: { text: "Verified", color: colors.up },
-      wrong: { text: "That code is not right", color: colors.down },
+      wrong: { text: "That code is not right", color: colors.destructive },
     })[status()];
   const verdict = (): Tone | undefined =>
     status() === "wrong" ? "destructive" : status() === "right" ? "up" : undefined;

@@ -237,18 +237,14 @@ function section(p: ReturnType<typeof palette>, o: ReturnType<typeof own>) {
     faint: o.faint,
     brand: p.primary,
     track: o.track,
-    "slider-track": "var(--track)",
     knob: o.knob,
     code: o.code,
     info: o.info,
     warn: o.warn,
     up: o.up,
-    down: "var(--destructive)",
     "brand-tint": tints("brand"),
-    "on-brand-tint": "var(--foreground)",
     inverse: "var(--card)",
     "inverse-foreground": "var(--foreground)",
-    "inverse-muted": "var(--muted-foreground)",
     "inverse-brand": "var(--primary-foreground)",
     "info-tint": tints("info"),
     "warn-tint": tints("warn"),
@@ -258,15 +254,12 @@ function section(p: ReturnType<typeof palette>, o: ReturnType<typeof own>) {
     violet: o.violet,
     "window-control-off": o.faint,
     dialog: "var(--card)",
-    "card-edge": "var(--border)",
     bevel: "var(--border)",
     "accent-bevel": "var(--brand-edge)",
     disabled: "var(--raised)",
     "disabled-foreground": "var(--muted-foreground)",
     "accent-pressed": "var(--primary)",
     "on-accent-pressed": "var(--on-brand)",
-    "selected-foreground": "var(--foreground)",
-    "pressed-foreground": "var(--foreground)",
   };
 }
 
@@ -287,11 +280,13 @@ const surface = (
     "border-color": borderColor = "transparent",
     "border-top-color": borderTopColor,
     "border-bottom-color": borderBottomColor,
+    foreground,
   }: {
     shadow?: string;
     "border-color"?: string;
     "border-top-color"?: string;
     "border-bottom-color"?: string;
+    foreground?: string;
   } = {},
 ) => ({
   background: color,
@@ -300,13 +295,18 @@ const surface = (
   "border-color": borderColor,
   ...(borderTopColor !== undefined ? { "border-top-color": borderTopColor } : {}),
   ...(borderBottomColor !== undefined ? { "border-bottom-color": borderBottomColor } : {}),
+  ...(foreground !== undefined ? { foreground } : {}),
 });
 
 /** One appearance's finishes: flat, the lift of shadcn's own surfaces and no more. */
 function finishes(appearance: Appearance, o: ReturnType<typeof own>) {
   return {
-    card: { gradient: flat(alias("card")), shadow: SHADOW.sm },
-    section: { background: alias("card"), shadow: "none", "border-color": alias("card-edge") },
+    card: {
+      gradient: flat(alias("card")),
+      shadow: SHADOW.sm,
+      "border-color": alias("border"),
+    },
+    section: { background: alias("card"), shadow: "none", "border-color": alias("border") },
     inset: { shadow: "none" },
     field: { shadow: SHADOW.xs },
     raised: {
@@ -328,6 +328,7 @@ function finishes(appearance: Appearance, o: ReturnType<typeof own>) {
     pressed: surface(appearance === "light" ? alias("border") : o.pressed, {
       "border-top-color": "transparent",
       "border-bottom-color": "transparent",
+      foreground: alias("foreground"),
     }),
     disabled: surface(alias("disabled"), { "border-color": alias("border") }),
     light: surface(alias("primary"), {
@@ -368,6 +369,7 @@ function finishes(appearance: Appearance, o: ReturnType<typeof own>) {
     on: surface(alias(appearance === "light" ? "chart-1" : "chart-3"), {
       "border-top-color": "transparent",
       "border-bottom-color": "transparent",
+      foreground: alias("foreground"),
     }),
     // shadcn's combobox chip: a flat `bg-muted` label, no edge and no shadow.
     chip: surface(alias("muted"), { shadow: "none" }),
@@ -397,7 +399,6 @@ export function themeFiles(): ThemeGeneratorOutput {
   const ownDark = own("dark");
   const statusAndHoverDescriptions = {
     hover: "Pointer hover fill aliased to {color.accent} per shadcn hover:bg-accent.",
-    "slider-track": "Inactive slider track fill aliased to {color.track}.",
     "brand-edge":
       "Hairline border aliased to {color.border} (shadcn draws no separate brand edge).",
     "glass-edge":

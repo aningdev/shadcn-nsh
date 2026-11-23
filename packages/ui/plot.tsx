@@ -41,7 +41,7 @@ export {
 /** The series' colors, in order (`theme.json`'s `chart-1` to `chart-5`):
  * the brand's citrus first, then graphite from dark to light, so one series
  * leads and the rest stay as quiet as the interface. Rises and falls take
- * `colors.up` / `colors.down`. */
+ * `colors.up` / `colors.destructive`. */
 export const seriesColors = (): string[] => [
   chart.chart1,
   chart.chart2,

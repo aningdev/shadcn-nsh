@@ -82,7 +82,7 @@ export function Tape(props: { market: Market; stock: Stock }) {
         style={{ flexDirection: "row", flexWrap: "wrap", columnGap: 16, rowGap: terminal ? 0 : 6 }}
       >
         <Legend color={colors.up} label="At ask" value={compact(stats().buys)} />
-        <Legend color={colors.down} label="At bid" value={compact(stats().sells)} />
+        <Legend color={colors.destructive} label="At bid" value={compact(stats().sells)} />
         <Legend color={colors.brand} label="Blocks" value={`${stats().blocks}`} />
       </View>
       <If when={terminal}>
@@ -108,7 +108,7 @@ export function Tape(props: { market: Market; stock: Stock }) {
             trades.forEach((t, i) => {
               const y = i * ROW + ROW / 2;
               const block = t.size >= BLOCK;
-              const color = t.side > 0 ? colors.up : colors.down;
+              const color = t.side > 0 ? colors.up : colors.destructive;
               if (block) {
                 cx.fillStyle = tints.brand;
                 cx.beginPath();
@@ -186,7 +186,7 @@ function TerminalTape(props: { stock: Stock; trades: Trade[] }) {
                 style={{
                   flex: 1,
                   fontSize: 14,
-                  color: trade().side > 0 ? colors.up : colors.down,
+                  color: trade().side > 0 ? colors.up : colors.destructive,
                   fontVariant: ["tabular-nums"],
                 }}
               >
@@ -238,7 +238,7 @@ function FlowRow(props: {
             {props.note}
           </Text>
         </Text>
-        <Text style={{ fontSize: 12, fontVariant: ["tabular-nums"], color: colors.down }}>
+        <Text style={{ fontSize: 12, fontVariant: ["tabular-nums"], color: colors.destructive }}>
           {compact(props.sell())}
         </Text>
         <Text style={{ fontSize: 12, fontVariant: ["tabular-nums"], color: colors.faint }}>/</Text>
@@ -251,7 +251,7 @@ function FlowRow(props: {
           <View style={{ flex: 1 }}>
             <SpringBar
               share={() => props.sell() / props.max()}
-              color={colors.down}
+              color={colors.destructive}
               from="right"
               height={10}
               radius={3}
@@ -302,7 +302,7 @@ export function Flow(props: { market: Market }) {
             fontSize: 13,
             fontWeight: "400",
             fontVariant: ["tabular-nums"],
-            color: big() >= 0 ? colors.up : colors.down,
+            color: big() >= 0 ? colors.up : colors.destructive,
           }}
         >
           {" "}

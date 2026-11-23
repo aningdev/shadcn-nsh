@@ -23,6 +23,10 @@
           }
         }
       },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "material": null
@@ -69,7 +73,7 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.card-edge}"
+        "$value": "{color.border}"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -170,7 +174,11 @@
           "material": null
         }
       },
-      "$description": "The step it takes while pressed."
+      "$description": "The step it takes while pressed.",
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
+      }
     },
     "disabled": {
       "$description": "A disabled control container surface.",
@@ -551,7 +559,11 @@
           "material": null
         }
       },
-      "$description": "A chosen switch or box, and the mark on it."
+      "$description": "A chosen switch or box, and the mark on it.",
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
+      }
     },
     "chip": {
       "$description": "A chosen value label inside a field: a fill, an inner highlight and an edge.",
@@ -734,6 +746,10 @@
       "border-color": {
         "$type": "color",
         "$value": "{color.border}"
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.muted-foreground}"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {

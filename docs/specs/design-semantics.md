@@ -53,7 +53,7 @@
 
 ### `finishes` 稀疏覆盖（`shared` + `light` / `dark`）
 
-大多数 finish 在明暗外观下使用相同的 `{token}` 引用（由 NSH `token()` 自身完成明暗切换）。为避免把 23 个 finish 在 `light` 与 `dark` 中各抄一遍，`semantics.json` 的 `finishes` 采用三段结构：
+大多数 finish 在明暗外观下使用相同的 `{token}` 引用（由 NSH `token()` 自身完成明暗切换）。为避免把 27 个 finish 在 `light` 与 `dark` 中各抄一遍，`semantics.json` 的 `finishes` 采用三段结构：
 
 ```json
 "finishes": {

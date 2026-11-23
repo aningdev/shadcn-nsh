@@ -35,8 +35,8 @@ packages/theme/tokens/
       theme.resolver.json         # 该主题的 DTCG 2025.10 Resolver
       theme.tokens.json           # 外观与输入档位无关的 token（3 个层圆角、字体家族、C 层共用色、shared 状态/枚举等覆写）
       finishes.shared.tokens.json # 明暗共用的 finish 字段（含 material）
-      light.tokens.json           # 亮色外观：A/B 层 63 个颜色 + light 稀疏 finish 覆写
-      dark.tokens.json            # 暗色外观：A/B 层 63 个颜色 + dark 稀疏 finish 覆写
+      light.tokens.json           # 亮色外观：A/B 层 67 个颜色 + light 稀疏 finish 覆写
+      dark.tokens.json            # 暗色外观：A/B 层 67 个颜色 + dark 稀疏 finish 覆写
       pointer.tokens.json         # （可选，仅平台主题 apple/material/winui）覆盖 base 的 pointer 档字阶与尺寸
       touch.tokens.json           # （可选，仅平台主题 apple/material/winui）覆盖 base 的 touch 档字阶与尺寸
 ```
@@ -139,7 +139,7 @@ transition.enter         # $type: "transition"  入场过渡（duration + delay 
 motion.*                 # group                4 个物理/时序动效角色（press, settle, control, move）
 shape                    # group ($extensions)  非数值几何枚举（curve, corners.button）
 controls                 # group ($extensions)  控件几何预设家族枚举（preset: "base" | "material" | "winui"）
-finish.<role>.*          # group + tokens       27 个表面配方（background, gradient, border-color, shadow + $extensions）
+finish.<role>.*          # group + tokens       27 个表面配方（background, gradient, foreground, border-color, shadow + $extensions）
 ```
 
 ---
@@ -170,11 +170,11 @@ finish.<role>.*          # group + tokens       27 个表面配方（background,
 | `window-control-ink`  | `color.window-control-ink`   | `color`      | 静态求值 oklch + `$extensions.colorOp`（mix 50% black, transparent）                | 见第 6 节，编译回 `color-mix(...)`                  |
 | `window-control-edge` | `color.window-control-edge`  | `color`      | 静态求值 oklch + `$extensions.colorOp`（mix 12% black, transparent）                | 同上                                                |
 
-#### B. `cssVars.light` 与 `cssVars.dark`（各 64 个，进入 `light.tokens.json` / `dark.tokens.json`）
+#### B. `cssVars.light` 与 `cssVars.dark`（各 67 个，进入 `light.tokens.json` / `dark.tokens.json`）
 
 - **A 层（31 个 shadcn 槽位）**：`background`, `foreground`, `card`, `card-foreground`, `popover`, `popover-foreground`, `primary`, `primary-foreground`, `secondary`, `secondary-foreground`, `muted`, `muted-foreground`, `accent`, `accent-foreground`, `destructive`, `border`, `input`, `ring`, `chart-1`, `chart-2`, `chart-3`, `chart-4`, `chart-5`, `sidebar`, `sidebar-foreground`, `sidebar-primary`, `sidebar-primary-foreground`, `sidebar-accent`, `sidebar-accent-foreground`, `sidebar-border`, `sidebar-ring` → 全部映射至 `color.<name>`（`$type: "color"`）。其中直接写 `var(--x)` 的槽位（如 `card-foreground`、`popover-foreground`、`secondary`、`secondary-foreground`、`accent-foreground`、`sidebar-foreground`、`sidebar-primary`、`sidebar-primary-foreground`、`sidebar-accent`、`sidebar-accent-foreground`、`sidebar-ring`）写为 DTCG 花括号别名 `"{color.<x>}"`，编译回 `theme.json` 时还原为 `"var(--<x>)"`。
-- **B 层（33 个本库扩展槽位）**：
-  - 直接 oklch 颜色或 `var(--x)` 别名（23 个）：`inset`, `raised`, `glass-edge`（`{color.border}`）, `field`, `line`, `faint`, `brand`, `brand-edge`, `track`, `slider-track`（默认 `{color.track}`）, `knob`, `code`, `info`, `warn`, `up`, `down`（`{color.destructive}`）, `on-brand-tint`（`{color.foreground}`）, `inverse`（`{color.popover}`）, `inverse-foreground`（`{color.foreground}`）, `inverse-muted`（`{color.muted-foreground}`）, `inverse-brand`（`{color.primary-foreground}`）, `violet`, `window-control-off` → `color.<name>`（`$type: "color"`）。
+- **B 层（36 个本库扩展槽位）**：
+  - 直接 oklch 颜色或 `var(--x)` 别名（26 个）：`inset`, `raised`, `glass-edge`（`{color.border}`）, `field`, `line`, `faint`, `brand`, `brand-edge`, `track`, `knob`, `code`, `info`, `warn`, `up`, `inverse`（`{color.popover}`）, `inverse-foreground`（`{color.foreground}`）, `inverse-brand`（`{color.primary-foreground}`）, `violet`, `window-control-off`, `dialog`, `bevel`, `accent-bevel`, `disabled`, `disabled-foreground`, `accent-pressed`, `on-accent-pressed` → `color.<name>`（`$type: "color"`）。
   - 含 `color-mix(in srgb, ...)` 算术的颜色（10 个）：`scrollbar-thumb`, `scrollbar-thumb-hover`, `hover`, `ring-halo`, `brand-tint`, `info-tint`, `warn-tint`, `destructive-tint`, `up-tint`, `down-tint` → `color.<name>`（`$type: "color"`），`$value` 放静态求值后的 DTCG oklch 对象（含 `hex`），`$extensions["dev.aning.shadcn-nsh"].colorOp` 放混合配方（见第 6 节）。注：在部分平台主题（如 `winui`）中这些键是静态色而非 `color-mix`，此时直接写 DTCG oklch 对象、不附 `colorOp`。
 
 ### 4.2 `semantics.json` → DTCG 2025.10
@@ -224,14 +224,15 @@ finish.<role>.*          # group + tokens       27 个表面配方（background,
 | `accelerate`            | `[1, 0, 1, 1]`               | WinUI 3 Gentle Exit（`theme.ts:991`）                                              |
 | `point-to-point`        | `[0.55, 0.55, 0, 1]`         | WinUI 3 Point-to-Point（`theme.ts:995`）                                           |
 
-#### C. `finishes`（23 个角色，每个角色映射为 `finish.<role>` Group）
+#### C. `finishes`（27 个角色，每个角色映射为 `finish.<role>` Group）
 
-23 个角色全部一致：`card`, `inset`, `field`, `raised`, `hover`, `pressed`, `light`, `accent`, `track`, `fill`, `knob`, `knobOn`, `handle`, `pill`, `thumb`, `on`, `chip`, `glass`, `menu`, `dialog`, `tooltip`, `inverse`, `groove`。每个角色按如下字段映射（仅声明该 finish 在 `shared` / `light` / `dark` 实际存在的字段，合并后保持固定形状）：
+27 个角色全部一致：`card`, `section`, `inset`, `field`, `raised`, `hover`, `pressed`, `light`, `accent`, `track`, `fill`, `knob`, `knobOn`, `handle`, `pill`, `thumb`, `on`, `chip`, `glass`, `menu`, `dialog`, `tooltip`, `inverse`, `groove`, `disabled`, `accentPressed`, `grabber`。每个角色按如下字段映射（仅声明该 finish 在 `shared` / `light` / `dark` 实际存在的字段，合并后保持固定形状）：
 
 | `finish` 字段     | DTCG 路径                                                          | `$type`    | DTCG `$value` 形态与细节                                                                                                                                                                                                                                                                            |
 | :---------------- | :----------------------------------------------------------------- | :--------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `backgroundColor` | `finish.<role>.background`                                         | `color`    | `{color.<token>}` 别名、静态 oklch、`transparent`（`alpha: 0` + 扩展标 `"transparentKeyword": true`）、或静态求值色 + `colorOp: { op: "alpha", ... }`                                                                                                                                               |
 | `backgroundImage` | `finish.<role>.gradient`                                           | `gradient` | `[{"color": ..., "position": 0}, {"color": ..., "position": 1}]`（Format §9.7）；角度 `180` 记于 `gradient.$extensions["dev.aning.shadcn-nsh"].angle = 180`；stop 若为 `transparent` 记 `transparentKeyword`                                                                                        |
+| `color`           | `finish.<role>.foreground`                                         | `color`    | 面上的字与图标：`{color.<token>}` 别名、静态 oklch 或 `transparent`；读取后经 `themed()` 成为文字样式键 `color`                                                                                                                                                                                     |
 | `borderColor`     | `finish.<role>.border-color`                                       | `color`    | `{color.<token>}` 别名、静态 oklch、`transparent`、或 `colorOp`。**不用 `$type: "border"`**：因 `finish` 不拥有线宽（不同组件按场景选 `stroke.control` / `stroke.hairline` / `stroke.surface`），且 `border.json` 要求必填 `width` 与 `style`（Format §9.4）                                        |
 | `boxShadow`       | `finish.<role>.shadow`                                             | `shadow`   | 单个 shadow 对象或 shadow 对象数组（Format §9.6：`color`, `offsetX`, `offsetY`, `blur`, `spread`, `inset`）。当为 `"none"` 时写 0 透明占位 shadow 并于 `shadow.$extensions["dev.aning.shadcn-nsh"].none = true` 标注；编译回 CSS 时 `spread.value === 0` 省略第 4 个长度、`inset: false` 省略关键字 |
 | `backdropFilter`  | `finish.<role>.$extensions["dev.aning.shadcn-nsh"].backdropFilter` | —          | 原字符串或结构化 `{ "blur"?: Dimension, "saturate"?: number } \| "none"`（DTCG 无 filter `$type`）                                                                                                                                                                                                  |
@@ -354,7 +355,7 @@ DTCG 2025.10 Color Module 不包含任何颜色运算语法，但本库有两处
 `scripts/theme-lint.ts` 演进为两阶段：
 
 1. **标准 Schema 校验**：用官方 2025.10 JSON Schema（`format.json`、`resolver.json`）校验全部 `.tokens.json` 与 `.resolver.json`；
-2. **本库语义校验**：解析 4 种 context 排列后执行现有约束——31 个 shadcn A 层槽位完整（`theme.rs`）、C 层键集合与 `radius >= 0`、23 个 finish 合并后角色与字段集合齐一（含 `material` 白名单）、`colorOp` 静态 `$value` 一致性、`unread` / 未使用 token 检查、以及 `$description` 覆盖检查。
+2. **本库语义校验**：解析 4 种 context 排列后执行现有约束——31 个 shadcn A 层槽位完整（`theme.rs`）、C 层键集合与 `radius >= 0`、27 个 finish 合并后角色与字段集合齐一（含 `material` 白名单）、`colorOp` 静态 `$value` 一致性、`unread` / 未使用 token 检查、以及 `$description` 覆盖检查。
 
 ### 9.3 `DESIGN.md` 生成器（`scripts/tokens/design-md.ts`，#246）
 

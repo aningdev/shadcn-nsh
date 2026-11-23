@@ -1,6 +1,7 @@
 import {
   animate,
   colors,
+  finish,
   focusRing,
   follow,
   hovered,
@@ -128,7 +129,7 @@ function App() {
       <Text>{`toggleOnAndroid=${JSON.stringify(onToggle.android ?? null)}`}</Text>
       <Text>{`toastAndroid=${JSON.stringify(toastClose.android ?? null)}`}</Text>
       <Text>{`menuMaterial=${JSON.stringify(platformMaterial("menu"))}`}</Text>
-      <Text>{`tokens=${colors.onBrand}|${colors.primaryForeground}|${colors.inverseForeground}|${colors.primary}|${colors.selectedForeground}`}</Text>
+      <Text>{`tokens=${colors.onBrand}|${colors.primaryForeground}|${colors.inverseForeground}|${colors.primary}|${finish.on.foreground}`}</Text>
       <Roll value={step()}>{`roll=${step()}`}</Roll>
       <View
         style={{

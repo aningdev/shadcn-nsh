@@ -507,7 +507,7 @@ describe("DTCG source lint", () => {
     );
     const matTheme = compileThemeJson(matResolver);
     expect(matTheme.cssVars.light["down-tint"]).toBe(
-      "color-mix(in srgb, var(--down) 12%, transparent)",
+      "color-mix(in srgb, var(--destructive) 12%, transparent)",
     );
   });
 
@@ -809,6 +809,7 @@ describe("per-appearance standalone .tokens.json distribution", () => {
             compiled["border-top-color"] = toFinishColor(g["border-top-color"]);
           if (g["border-bottom-color"])
             compiled["border-bottom-color"] = toFinishColor(g["border-bottom-color"]);
+          if (g.foreground) compiled.foreground = toFinishColor(g.foreground);
           const gExt = g.$extensions?.[EXT_NS];
           if (gExt && "backdropFilter" in gExt) compiled.backdropFilter = gExt.backdropFilter;
           if (gExt && "material" in gExt) {

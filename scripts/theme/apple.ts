@@ -156,9 +156,9 @@ function section(p: ReturnType<typeof palette>) {
     "sidebar-foreground": "var(--foreground)",
     "sidebar-primary": "var(--primary)",
     "sidebar-primary-foreground": "var(--primary-foreground)",
-    "sidebar-accent": p.accent,
-    "sidebar-accent-foreground": "var(--foreground)",
-    "sidebar-border": p.border,
+    "sidebar-accent": "var(--accent)",
+    "sidebar-accent-foreground": "var(--accent-foreground)",
+    "sidebar-border": "var(--border)",
     "sidebar-ring": "var(--ring)",
     inset: p.inset,
     raised: p.raised,
@@ -173,18 +173,14 @@ function section(p: ReturnType<typeof palette>) {
     brand: p.primary,
     "brand-edge": "var(--border)",
     track: p.track,
-    "slider-track": "var(--track)",
     knob: oklchColor(1, 0, 0),
     code: p.foreground,
     info: p.info,
     warn: p.warn,
     up: p.up,
-    down: "var(--destructive)",
     "brand-tint": tints("brand"),
-    "on-brand-tint": "var(--foreground)",
     inverse: "var(--popover)",
     "inverse-foreground": "var(--foreground)",
-    "inverse-muted": "var(--muted-foreground)",
     "inverse-brand": "var(--primary-foreground)",
     "info-tint": tints("info"),
     "warn-tint": tints("warn"),
@@ -194,15 +190,12 @@ function section(p: ReturnType<typeof palette>) {
     violet: p.violet,
     "window-control-off": p.windowControlOff,
     dialog: "var(--card)",
-    "card-edge": "var(--border)",
     bevel: "var(--border)",
     "accent-bevel": "var(--brand-edge)",
     disabled: "var(--raised)",
     "disabled-foreground": "var(--muted-foreground)",
     "accent-pressed": "var(--primary)",
     "on-accent-pressed": "var(--on-brand)",
-    "selected-foreground": "var(--foreground)",
-    "pressed-foreground": "var(--foreground)",
   };
 }
 
@@ -220,11 +213,13 @@ const surface = (
     "border-color": borderColor = "transparent",
     "border-top-color": borderTopColor,
     "border-bottom-color": borderBottomColor,
+    foreground,
   }: {
     shadow?: string;
     "border-color"?: string;
     "border-top-color"?: string;
     "border-bottom-color"?: string;
+    foreground?: string;
   } = {},
 ) => ({
   background: color,
@@ -233,6 +228,7 @@ const surface = (
   "border-color": borderColor,
   ...(borderTopColor !== undefined ? { "border-top-color": borderTopColor } : {}),
   ...(borderBottomColor !== undefined ? { "border-bottom-color": borderBottomColor } : {}),
+  ...(foreground !== undefined ? { foreground } : {}),
 });
 
 /**
@@ -249,8 +245,8 @@ function finishes(appearance: Appearance) {
   // is behind it unblurred.
   const fallbackBlur = "blur(30px)";
   return {
-    card: { gradient: flat(alias("card")), shadow: "none" },
-    section: { background: alias("card"), shadow: "none", "border-color": alias("card-edge") },
+    card: { gradient: flat(alias("card")), shadow: "none", "border-color": alias("border") },
+    section: { background: alias("card"), shadow: "none", "border-color": alias("border") },
     inset: { shadow: "none" },
     field: { shadow: "none" },
     raised: {
@@ -271,6 +267,7 @@ function finishes(appearance: Appearance) {
     pressed: surface(alias("muted"), {
       "border-top-color": "transparent",
       "border-bottom-color": "transparent",
+      foreground: alias("foreground"),
     }),
     disabled: surface(alias("disabled"), { "border-color": alias("border") }),
     light: surface(alias("primary"), {
@@ -300,6 +297,7 @@ function finishes(appearance: Appearance) {
     on: surface(alias("muted"), {
       "border-top-color": "transparent",
       "border-bottom-color": "transparent",
+      foreground: alias("foreground"),
     }),
     chip: surface(alias("muted")),
     glass: {
@@ -484,7 +482,6 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
     faint: "Tertiary label ink for placeholders and quiet captions (UIKit tertiaryLabel).",
     brand: "Inline brand accent ink (UIKit systemBlue).",
     track: "Switch and slider track (UIKit secondarySystemFill composited over card).",
-    "slider-track": "Inactive slider track fill aliased to {color.track}.",
     knob: "Switch knob and slider handle (pure white).",
     info: "Informational semantic color (UIKit systemBlue).",
     warn: "Warning semantic color (UIKit systemOrange).",

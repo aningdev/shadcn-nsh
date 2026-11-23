@@ -100,6 +100,8 @@ export interface Finish {
   "border-top-color"?: string;
   "border-bottom-color"?: string;
   backdropFilter?: string;
+  /** The ink on this finish's surface (a color, not a spread style key). */
+  foreground?: string;
   material: Material | null;
 }
 
@@ -123,6 +125,8 @@ export type FinishStyle = {
   borderTopColor?: string;
   borderBottomColor?: string;
   backdropFilter?: string;
+  /** The ink on this finish's surface, read by what draws text over it. */
+  foreground?: string;
   glassEffect?: "regular" | "clear";
   glassTintColor?: string;
 };
@@ -426,7 +430,10 @@ const glassKeys = (role: FinishRole): readonly string[] => {
  * a finish with `material: null` spreads into exactly the keys it always had. The platform props of
  * the material (`ios`, `macos`, `windows`) are not style keys and come from `platformMaterial`.
  */
-const finishStyleKeys: Record<Exclude<keyof Finish, "material">, keyof FinishStyle> = {
+const finishStyleKeys: Record<
+  Exclude<keyof Finish, "material" | "foreground">,
+  keyof FinishStyle
+> = {
   background: "backgroundColor",
   gradient: "backgroundImage",
   shadow: "boxShadow",
@@ -444,7 +451,7 @@ function themed(role: FinishRole): FinishStyle {
     ...builtIn.finishes.light[role],
   };
   for (const key of Object.keys(builtInRole) as (keyof Finish)[]) {
-    if (key === "material") continue;
+    if (key === "material" || key === "foreground") continue;
     const styleKey = finishStyleKeys[key];
     Object.defineProperty(out, styleKey, {
       enumerable: true,
@@ -455,6 +462,15 @@ function themed(role: FinishRole): FinishStyle {
       },
     });
   }
+  // The surface's ink is a color, not a style key: read it by name, and keep it out of a spread.
+  Object.defineProperty(out, "foreground", {
+    enumerable: false,
+    configurable: true,
+    get: () => {
+      const value = finishOf(role).foreground;
+      return typeof value === "string" ? alias(value) : undefined;
+    },
+  });
   const glass = (key: string): string | undefined => {
     const apple = materialOf(role)?.apple;
     if (apple === undefined) return undefined;
@@ -595,26 +611,18 @@ export interface Palette {
   sidebarBorder: string;
   /** A switch's track when off. */
   track: string;
-  /** A slider's inactive track fill (`{track}` by default; `brand-tint` in Material; `input` in WinUI). */
-  sliderTrack: string;
   /** A switch's knob when off. */
   knob: string;
   /** Code inside insets. */
   code: string;
-  /** The ink on a `brand-tint` surface: a chosen tile, a tinted bubble. */
-  onBrandTint: string;
   /** The surface of a tip or a toast, read apart from the page's: a flat theme's popover, an inverted pane in Material. */
   inverse: string;
   /** Text on `inverse`. */
   inverseForeground: string;
-  /** Secondary ink on `inverse`: a toast's description, spinner and close icon, a tooltip's note. */
-  inverseMuted: string;
   /** The accent on `inverse`: a toast's action. */
   inverseBrand: string;
   /** Modal dialog container surface. */
   dialog: string;
-  /** Hairline border on card and section containers. */
-  cardEdge: string;
   /** Directional control elevation bevel stroke. */
   bevel: string;
   /** Accent control elevation top and side bevel stroke. */
@@ -627,16 +635,11 @@ export interface Palette {
   accentPressed: string;
   /** Ink on pressed accent control fills. */
   onAccentPressed: string;
-  /** Label and icon ink on selected or toggled-on controls. */
-  selectedForeground: string;
-  /** Label and icon ink on pressed neutral or ghost controls. */
-  pressedForeground: string;
   /** The tone colors: information, a warning, a failure, a gain, a loss. */
   info: string;
   warn: string;
   destructive: string;
   up: string;
-  down: string;
   /** The ground a photograph or a video sits on. It does not flip: dark in either appearance. */
   media: string;
   /** White ink on a photograph or any other surface that is not the theme's. It does not flip. */
@@ -686,32 +689,25 @@ export const colors: Palette = tokens<keyof Palette>({
   sidebarAccent: "sidebar-accent",
   sidebarBorder: "sidebar-border",
   track: "track",
-  sliderTrack: "slider-track",
   knob: "knob",
   code: "code",
   info: "info",
   warn: "warn",
   destructive: "destructive",
   up: "up",
-  down: "down",
   media: "media",
   onMedia: "on-media",
   chartForeground: "chart-foreground",
-  onBrandTint: "on-brand-tint",
   inverse: "inverse",
   inverseForeground: "inverse-foreground",
-  inverseMuted: "inverse-muted",
   inverseBrand: "inverse-brand",
   dialog: "dialog",
-  cardEdge: "card-edge",
   bevel: "bevel",
   accentBevel: "accent-bevel",
   disabled: "disabled",
   disabledForeground: "disabled-foreground",
   accentPressed: "accent-pressed",
   onAccentPressed: "on-accent-pressed",
-  selectedForeground: "selected-foreground",
-  pressedForeground: "pressed-foreground",
 });
 
 /**
@@ -852,7 +848,13 @@ export type Tone = "neutral" | "accent" | "info" | "warn" | "destructive" | "up"
  * the token (`brand`).
  */
 export const toneColor = (tone: Tone) =>
-  tone === "neutral" ? colors.mutedForeground : tone === "accent" ? colors.brand : colors[tone];
+  tone === "neutral"
+    ? colors.mutedForeground
+    : tone === "accent"
+      ? colors.brand
+      : tone === "down"
+        ? colors.destructive
+        : colors[tone];
 
 /**
  * The tint of a tone. `accent` reads `tints.brand` (the `brand-tint` token); the other tones share

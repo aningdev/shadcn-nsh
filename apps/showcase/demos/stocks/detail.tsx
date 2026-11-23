@@ -302,7 +302,9 @@ function Ranges(props: { market: Market; stock: Stock }) {
               >
                 {row().label}
               </Text>
-              <Text style={[column, { color: colors.down }]}>{price(row().lo, props.stock)}</Text>
+              <Text style={[column, { color: colors.destructive }]}>
+                {price(row().lo, props.stock)}
+              </Text>
               <Text style={[column, { color: colors.up }]}>{price(row().hi, props.stock)}</Text>
             </View>
           )}
@@ -338,7 +340,7 @@ function Ranges(props: { market: Market; stock: Stock }) {
             cx.lineTo(X(row.hi), y);
             cx.stroke();
             for (const [v, c] of [
-              [row.lo, colors.down],
+              [row.lo, colors.destructive],
               [row.hi, colors.up],
             ] as const) {
               cx.fillStyle = c;

@@ -351,15 +351,6 @@
       },
       "$description": "Switch and slider track (UIKit secondarySystemFill composited over card)."
     },
-    "slider-track": {
-      "$value": "{color.track}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "Inactive slider track fill aliased to {color.track}."
-    },
     "knob": {
       "$value": {
         "colorSpace": "oklch",
@@ -446,15 +437,6 @@
       },
       "$description": "Translucent brand wash (12% brand over transparent)."
     },
-    "on-brand-tint": {
-      "$value": "{color.foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Text and icon ink on brand-tint surfaces."
-    },
     "inverse": {
       "$value": "{color.popover}",
       "$extensions": {
@@ -472,15 +454,6 @@
         }
       },
       "$description": "Primary text ink on inverse surfaces."
-    },
-    "inverse-muted": {
-      "$value": "{color.muted-foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Secondary text, spinner, and close-icon ink on inverse surfaces."
     },
     "inverse-brand": {
       "$value": "{color.primary-foreground}",
@@ -755,11 +728,7 @@
       "$description": "Primary text and icon ink inside the sidebar."
     },
     "sidebar-accent": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.29471, 0.00718, 285.951],
-        "hex": "#2c2c30"
-      },
+      "$value": "{color.accent}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "surface"
@@ -768,7 +737,7 @@
       "$description": "Selected or active row fill in the sidebar."
     },
     "sidebar-accent-foreground": {
-      "$value": "{color.foreground}",
+      "$value": "{color.accent-foreground}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "ink"
@@ -777,11 +746,7 @@
       "$description": "Text and icon ink on active sidebar rows."
     },
     "sidebar-border": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [0.3301, 0.00522, 286.11],
-        "hex": "#353538"
-      },
+      "$value": "{color.border}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "chrome"
@@ -816,15 +781,6 @@
       },
       "$description": "Focus indicator ring color inside the sidebar."
     },
-    "down": {
-      "$value": "{color.destructive}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status"
-        }
-      },
-      "$description": "Negative trend and decline semantic color."
-    },
     "window-control-off": {
       "$value": {
         "colorSpace": "oklch",
@@ -846,15 +802,6 @@
         }
       },
       "$description": "Modal dialog container surface."
-    },
-    "card-edge": {
-      "$value": "{color.border}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Hairline border on card and section containers."
     },
     "bevel": {
       "$value": "{color.border}",
@@ -909,24 +856,6 @@
         }
       },
       "$description": "Ink on pressed accent control fills."
-    },
-    "selected-foreground": {
-      "$value": "{color.foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Label and icon ink on selected or toggled-on controls."
-    },
-    "pressed-foreground": {
-      "$value": "{color.foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Label and icon ink on pressed neutral or ghost controls."
     }
   },
   "finish": {

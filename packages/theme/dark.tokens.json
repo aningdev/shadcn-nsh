@@ -24,7 +24,7 @@
         ],
         "donts": [
           "Do not flatten shadows or remove inner highlights on `card`, `raised`, `inset`, or `pill` finishes.",
-          "Do not merge distinct semantic finishes (`light` vs `accent`, `thumb` vs `raised`, `knob` vs `handle`, `down` vs `destructive`)."
+          "Do not merge distinct semantic finishes (`light` vs `accent`, `thumb` vs `raised`, `knob` vs `handle`)."
         ]
       }
     }
@@ -1377,15 +1377,6 @@
         }
       }
     },
-    "slider-track": {
-      "$value": "{color.track}",
-      "$description": "Inactive slider rail fill (aliased to track by default; tonal container in M3; ControlStrongFillColorDefault in WinUI 3).",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      }
-    },
     "knob": {
       "$value": {
         "colorSpace": "oklch",
@@ -1496,15 +1487,6 @@
       },
       "$description": "Translucent brand-accent wash behind selected rows and tinted bubbles."
     },
-    "on-brand-tint": {
-      "$value": "{color.foreground}",
-      "$description": "Text and icon ink on brand-tint surfaces.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      }
-    },
     "inverse": {
       "$value": "{color.popover}",
       "$description": "High-contrast surface for toasts and tooltips.",
@@ -1517,15 +1499,6 @@
     "inverse-foreground": {
       "$value": "{color.foreground}",
       "$description": "Primary text ink on inverse surfaces.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      }
-    },
-    "inverse-muted": {
-      "$value": "{color.muted-foreground}",
-      "$description": "Secondary text, spinner, and close-icon ink on inverse surfaces.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "ink"
@@ -1657,7 +1630,7 @@
           "colorOp": {
             "op": "mix",
             "space": "srgb",
-            "a": "{color.down}",
+            "a": "{color.destructive}",
             "percent": 16,
             "b": "transparent"
           },
@@ -1874,7 +1847,7 @@
       }
     },
     "sidebar-accent-foreground": {
-      "$value": "{color.foreground}",
+      "$value": "{color.accent-foreground}",
       "$description": "Text and icon ink on active sidebar rows.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -1926,15 +1899,6 @@
         }
       }
     },
-    "down": {
-      "$value": "{color.destructive}",
-      "$description": "Negative trend and decline semantic color.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status"
-        }
-      }
-    },
     "window-control-off": {
       "$value": {
         "colorSpace": "oklch",
@@ -1958,15 +1922,6 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "surface"
-        }
-      }
-    },
-    "card-edge": {
-      "$value": "{color.border}",
-      "$description": "Hairline border on card and section containers.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
         }
       }
     },
@@ -2023,24 +1978,6 @@
           "role": "brand"
         }
       }
-    },
-    "selected-foreground": {
-      "$value": "{color.foreground}",
-      "$description": "Label and icon ink on selected or toggled-on controls.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      }
-    },
-    "pressed-foreground": {
-      "$value": "{color.foreground}",
-      "$description": "Label and icon ink on pressed neutral or ghost controls.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      }
     }
   },
   "finish": {
@@ -2064,6 +2001,10 @@
             "angle": 180
           }
         }
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.border}"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -2146,7 +2087,7 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.card-edge}"
+        "$value": "{color.border}"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -2566,6 +2507,10 @@
         }
       },
       "$description": "The step it takes while pressed.",
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
+      },
       "background": {
         "$type": "color",
         "$value": "{color.line}"
@@ -3819,6 +3764,10 @@
         }
       },
       "$description": "A chosen switch or box, and the mark on it.",
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
+      },
       "background": {
         "$type": "color",
         "$value": {
@@ -4422,6 +4371,10 @@
       "border-color": {
         "$type": "color",
         "$value": "{color.border}"
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.muted-foreground}"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {

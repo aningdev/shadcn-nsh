@@ -17,20 +17,20 @@
 
 ## 现状（`main` 9daf2dcb）
 
-| 类       | 现在                                                                                                                                                     | 问题                                                                                                                                 |
-| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| 颜色     | `cssVars.light` 74 个角色（其中 A 层 31 个），另有 `cssVars.theme` 里 11 个颜色键                                                                        | `sidebar-*`、`slider-track`、`dialog`、`code`、`scrollbar-thumb`、`window-*` 以组件命名；多个角色在 4–5 套主题里只是别的角色的 alias |
-| 圆角     | 8 个（`radius`、`-card`、`-control`、`-field`、`-chip`、`-overlay`、`-dialog`、`-sheet`）                                                                | 按组件族命名；`control` 同时表示"按钮是胶囊"和"页内元素的圆角"（#253）                                                               |
-| 高度     | default 指针档有 7 个：24/28/30/32/34/36/40                                                                                                              | 同类值太多                                                                                                                           |
-| 间距     | default 有 6/10/12/14                                                                                                                                    | 不在 4 的网格上                                                                                                                      |
-| 图标     | default 有 12/14/15/16                                                                                                                                   | 4 个值                                                                                                                               |
-| 字阶     | 7 级；default 的 `title` 13 小于 `label` 14；行高是比例小数                                                                                              | 层级倒挂；行高不在网格上                                                                                                             |
-| 弹簧     | 4 个：`press` 520/34 与 `move` 504/38 几乎相同                                                                                                           | 冗余                                                                                                                                 |
-| 控件几何 | `checkbox` / `switch` / `slider` / `radio` / `progress` / `spinner` / `tabs` / `calendar` 8 组，100 多个值；default、shadcn、solid-glass、apple 完全相同 | 是组件的事，却放在主题里；主题作者只能照抄                                                                                           |
-| finish   | 27 个，多数以组件命名（`knob`、`knobOn`、`handle`、`thumb`、`pill`、`chip`、`grabber`、`tooltip`、`groove`、`on`、`fill`）                               | 按组件分                                                                                                                             |
-| 阴影     | default 28 条不同的 `shadow`，solid-glass 27 条                                                                                                          | 没有层级刻度                                                                                                                         |
-| 平涂渐变 | 每套主题有 13–17 处 `linear-gradient(x 0%, x 100%)`                                                                                                      | 为满足"字段必须有"而写的空值                                                                                                         |
-| 材质     | finish 里直接写平台对象（`material.apple` 等）；fallback 靠 `checkGlassFallback` 在 lint 时兜底（#251、#252）                                            | 每个主题自己拼平台参数，容易漏 fallback                                                                                              |
+| 类       | 现在                                                                                                                                                     | 问题                                                                                                                 |
+| -------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| 颜色     | `cssVars.light` 67 个角色（其中 A 层 31 个），另有 `cssVars.theme` 里 11 个颜色键                                                                        | `sidebar-*`、`dialog`、`code`、`scrollbar-thumb`、`window-*` 以组件命名；多个角色在 4–5 套主题里只是别的角色的 alias |
+| 圆角     | 8 个（`radius`、`-card`、`-control`、`-field`、`-chip`、`-overlay`、`-dialog`、`-sheet`）                                                                | 按组件族命名；`control` 同时表示"按钮是胶囊"和"页内元素的圆角"（#253）                                               |
+| 高度     | default 指针档有 7 个：24/28/30/32/34/36/40                                                                                                              | 同类值太多                                                                                                           |
+| 间距     | default 有 6/10/12/14                                                                                                                                    | 不在 4 的网格上                                                                                                      |
+| 图标     | default 有 12/14/15/16                                                                                                                                   | 4 个值                                                                                                               |
+| 字阶     | 7 级；default 的 `title` 13 小于 `label` 14；行高是比例小数                                                                                              | 层级倒挂；行高不在网格上                                                                                             |
+| 弹簧     | 4 个：`press` 520/34 与 `move` 504/38 几乎相同                                                                                                           | 冗余                                                                                                                 |
+| 控件几何 | `checkbox` / `switch` / `slider` / `radio` / `progress` / `spinner` / `tabs` / `calendar` 8 组，100 多个值；default、shadcn、solid-glass、apple 完全相同 | 是组件的事，却放在主题里；主题作者只能照抄                                                                           |
+| finish   | 27 个，多数以组件命名（`knob`、`knobOn`、`handle`、`thumb`、`pill`、`chip`、`grabber`、`tooltip`、`groove`、`on`、`fill`）                               | 按组件分                                                                                                             |
+| 阴影     | default 28 条不同的 `shadow`，solid-glass 27 条                                                                                                          | 没有层级刻度                                                                                                         |
+| 平涂渐变 | 每套主题有 13–17 处 `linear-gradient(x 0%, x 100%)`                                                                                                      | 为满足"字段必须有"而写的空值                                                                                         |
+| 材质     | finish 里直接写平台对象（`material.apple` 等）；fallback 靠 `checkGlassFallback` 在 lint 时兜底（#251、#252）                                            | 每个主题自己拼平台参数，容易漏 fallback                                                                              |
 
 ## 原则
 
@@ -71,16 +71,7 @@
 
 ### 删除与去向
 
-**第 1 批：纯 alias。** 读这些角色的组件改读去向列中的角色（或 finish）。
-
-| 角色                                        | 去向                                                                                                       |
-| ------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
-| `on-brand-tint`                             | `accent-foreground`（6 套主题都相等）                                                                      |
-| `inverse-muted`                             | `muted-foreground`；material 下 M3 snackbar 辅文取 `inverse-foreground`，这个差异放进 `inverse` finish     |
-| `down`                                      | `destructive`（6 套主题都相等）                                                                            |
-| `card-edge`                                 | `card` finish 的 `border-color`（winui 写 `CardStrokeColorDefault`，material 写 `transparent`）            |
-| `selected-foreground`、`pressed-foreground` | 各主题 finish 的前景字段（`foreground` / `accent-foreground` / `primary-foreground` / `muted-foreground`） |
-| `slider-track`                              | 控件预设引用的角色（base → `track`，material → `brand-tint`，winui → `input`）                             |
+**第 1 批：纯 alias（✅ #262）。** 已删除的七个角色，其读者改读 `accent-foreground`、`destructive`、`card` / `pressed` / `on` / `inverse` finish 的前景字段，以及控件预设的 `trackRole`；`sidebar-*` 保留为 A 层 alias，`down-tint` 与 tone `"down"` 不动。
 
 验收：6 套主题、83 页、亮暗渲染与这一步之前**逐像素相同**。
 
@@ -252,7 +243,7 @@
 1. ✅ B2 合并（#256），作为基线
 2. 控件预设（第 4 节，含 D4 的指示器、输入框圆角与指示条粗细），逐像素相同；输入框 #249 排在这一步之后，直接写进预设
 3. 圆角（第 2 节，#253）
-4. 颜色：第 1 批（逐像素相同）→ 第 2 批 → 第 3 批
+4. 颜色：第 1 批（逐像素相同，✅ #262）→ 第 2 批 → 第 3 批
 5. 尺度（第 3 节），含字体
 6. finish 按层与阴影刻度（第 5 节）
 7. 材质（第 6 节）

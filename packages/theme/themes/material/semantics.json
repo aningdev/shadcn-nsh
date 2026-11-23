@@ -227,6 +227,7 @@
     "shared": {
       "card": {
         "gradient": "linear-gradient(180deg, {card} 0%, {card} 100%)",
+        "border-color": "transparent",
         "material": {
           "android": {
             "elevation": 1
@@ -280,6 +281,7 @@
         "border-bottom-color": "transparent"
       },
       "pressed": {
+        "foreground": "{foreground}",
         "material": {
           "android": {
             "elevation": 1
@@ -378,6 +380,7 @@
         "border-color": "transparent"
       },
       "on": {
+        "foreground": "{accent-foreground}",
         "material": null,
         "background": "{secondary}",
         "gradient": "linear-gradient(180deg, {secondary} 0%, {secondary} 100%)",
@@ -438,6 +441,7 @@
       },
       "inverse": {
         "background": "{inverse}",
+        "foreground": "{inverse-foreground}",
         "border-color": "transparent",
         "backdropFilter": "none",
         "material": {

@@ -16,7 +16,7 @@ const mergedLight = mergeFinishes(semantics.finishes, "light");
 const mergedDark = mergeFinishes(semantics.finishes, "dark");
 
 const surfaces = ["dialog", "tooltip", "inverse"];
-const roles = ["inverse", "inverse-foreground", "inverse-muted", "inverse-brand", "on-brand-tint"];
+const roles = ["inverse", "inverse-foreground", "inverse-brand"];
 
 describe("the colour roles and finishes a theme states for its surfaces", () => {
   test("the default theme states them in both appearances", () => {

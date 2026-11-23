@@ -149,7 +149,7 @@ export function toggleLook(o?: ToggleLookOptions) {
     get hoverStyle(): ViewStyle | undefined {
       if (read(o?.disabled)) return undefined;
       if (themeStyle().state.overlay.hover > 0) {
-        return read(o?.on) ? hovered("selected-foreground", finish.on.backgroundImage) : hovered();
+        return read(o?.on) ? hovered("accent-foreground", finish.on.backgroundImage) : hovered();
       }
       return read(o?.on) ? undefined : hovered();
     },
@@ -158,7 +158,7 @@ export function toggleLook(o?: ToggleLookOptions) {
       if (themeStyle().state.overlay.pressed > 0) {
         return {
           ...(read(o?.on)
-            ? stateLayer("pressed", "selected-foreground", finish.on.backgroundImage)
+            ? stateLayer("pressed", "accent-foreground", finish.on.backgroundImage)
             : stateLayer("pressed", "foreground")),
           ...sink(0.92),
         };
@@ -175,7 +175,7 @@ export function toggleLook(o?: ToggleLookOptions) {
       return touchSlop(dimensions(o).side);
     },
     get android(): AndroidProps | undefined {
-      return pressRipple(read(o?.on) ? "selected-foreground" : "foreground", o?.disabled);
+      return pressRipple(read(o?.on) ? "accent-foreground" : "foreground", o?.disabled);
     },
   };
 }
@@ -183,7 +183,7 @@ export function toggleLook(o?: ToggleLookOptions) {
 /** The ink of a toggle's content: the selected color while on, muted while off, disabled ink when disabled apart. */
 const ink = (pressed: Live<boolean | undefined>, disabled?: Live<boolean | undefined>) => {
   if (read(disabled) && themeStyle().state.disabled.fill) return colors.disabledForeground;
-  return read(pressed) ? colors.selectedForeground : colors.mutedForeground;
+  return read(pressed) ? (finish.on.foreground ?? colors.foreground) : colors.mutedForeground;
 };
 
 /** The label of a `toggleLook` of the same options: 13 points with a pointer, 15 on a touch screen (`sm` 12 / 13, `lg` 14 / 16), medium weight, muted while off. */

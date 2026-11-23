@@ -47,8 +47,8 @@ export function flash(quote: () => Quote): () => AnimatedNode {
     v.interpolate({
       inputRange: [-1, -0.01, 0.01, 1],
       outputRange: [
-        alpha(colors.down, 0.34),
-        alpha(colors.down, 0),
+        alpha(colors.destructive, 0.34),
+        alpha(colors.destructive, 0),
         alpha(colors.up, 0),
         alpha(colors.up, 0.34),
       ],

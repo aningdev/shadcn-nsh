@@ -223,7 +223,11 @@ export function Chart(props: { stock: Stock; height?: number }) {
           data={rows()}
           xScale={{ type: "band", paddingInner: intraday() ? 0.8 : 0.3, paddingOuter: 0.02 }}
           yScale={{ type: "linear", domain: domain() }}
-          colorScale={{ type: "ordinal", domain: ["up", "down"], range: [colors.up, colors.down] }}
+          colorScale={{
+            type: "ordinal",
+            domain: ["up", "down"],
+            range: [colors.up, colors.destructive],
+          }}
           appearGeneration={period()}
           motion={motion}
           accessibilityLabel={`${props.stock.code} ${period()} chart`}
@@ -334,7 +338,7 @@ export function Chart(props: { stock: Stock; height?: number }) {
             cornerRadii={{ topLeft: 1, topRight: 1 }}
             stagger={0.6}
             inactiveOpacity={0.3}
-            style={{ fill: alpha(colors.down, 0.45) }}
+            style={{ fill: alpha(colors.destructive, 0.45) }}
           />
           <Grid y={[0]} style={{ stroke: colors.border }} />
           <PlotAxis

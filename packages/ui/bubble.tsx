@@ -99,7 +99,7 @@ function ink(variant: BubbleVariant): string {
     case "destructive":
       return colors.destructive;
     case "tinted":
-      return colors.onBrandTint;
+      return token("accent-foreground");
     case "secondary":
     case "muted":
     case "outline":

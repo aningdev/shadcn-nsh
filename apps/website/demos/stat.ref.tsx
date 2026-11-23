@@ -55,7 +55,7 @@ const INDEX_SIGNED = `${INDEX_CHANGE >= 0 ? "+" : "−"}${Math.abs(INDEX_CHANGE)
 /** Today in 104 × 38: the line, a wash under it, yesterday's close dotted and the newest point
  * ringed. A sparkline is read, not picked: the plot takes no pointer. */
 function IndexSparkline() {
-  const color = () => (INDEX_CHANGE >= 0 ? colors.up : colors.down);
+  const color = () => (INDEX_CHANGE >= 0 ? colors.up : colors.destructive);
   const values = [INDEX_PREV, ...INDEX_TODAY.map((row) => row.price)];
   const lo = Math.min(...values);
   const hi = Math.max(...values);

@@ -225,7 +225,7 @@
         ],
         "donts": [
           "Do not flatten shadows or remove inner highlights on `card`, `raised`, `inset`, or `pill` finishes.",
-          "Do not merge distinct semantic finishes (`light` vs `accent`, `thumb` vs `raised`, `knob` vs `handle`, `down` vs `destructive`)."
+          "Do not merge distinct semantic finishes (`light` vs `accent`, `thumb` vs `raised`, `knob` vs `handle`)."
         ]
       }
     }

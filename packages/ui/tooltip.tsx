@@ -1,7 +1,7 @@
-import { finish } from "@shadcn-nsh/theme";
+import { colors, finish } from "@shadcn-nsh/theme";
 // A tooltip: the look (`tooltipLook`, `tooltipText`, `tooltipNote`) at the top, and the parts below.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import type { JSX, StyleProp, ViewStyle } from "nsh";
+import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, split, View } from "nsh";
 import {
   Tooltip as BaseTooltip,
@@ -50,8 +50,12 @@ export function tooltipLook(o?: TooltipLookOptions) {
 /** A tooltip's text (`class`): 12 points in the inverse foreground (`inverse-foreground`). */
 export const tooltipText = "text-xs text-inverse-foreground";
 
-/** A tooltip's quieter text (`class`): a shortcut's keys, a time, in `inverse-muted`. */
-export const tooltipNote = "text-xs text-inverse-muted";
+/** A tooltip's quieter text (`style`): a shortcut's keys, a time, 12 points over 16 in the inverse finish's ink. */
+export const tooltipNote = (): TextStyle => ({
+  fontSize: 12,
+  lineHeight: 16,
+  color: finish.inverse.foreground ?? colors.inverseForeground,
+});
 // @port end
 
 /** Why a tooltip closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */

@@ -227,13 +227,14 @@
     "shared": {
       "card": {
         "gradient": "linear-gradient(180deg, {card} 0%, {card} 100%)",
+        "border-color": "{border}",
         "material": null,
         "shadow": "none"
       },
       "section": {
         "background": "{card}",
         "shadow": "none",
-        "border-color": "{card-edge}",
+        "border-color": "{border}",
         "material": null
       },
       "inset": {
@@ -268,6 +269,7 @@
         "border-bottom-color": "transparent"
       },
       "pressed": {
+        "foreground": "{foreground}",
         "material": null,
         "background": "{muted}",
         "gradient": "linear-gradient(180deg, {muted} 0%, {muted} 100%)",
@@ -355,6 +357,7 @@
         "border-color": "transparent"
       },
       "on": {
+        "foreground": "{foreground}",
         "material": null,
         "background": "{muted}",
         "gradient": "linear-gradient(180deg, {muted} 0%, {muted} 100%)",
@@ -417,6 +420,7 @@
       },
       "inverse": {
         "background": "oklch(from {inverse} l c h / 0.72)",
+        "foreground": "{muted-foreground}",
         "border-color": "transparent",
         "backdropFilter": "blur(30px)",
         "material": {

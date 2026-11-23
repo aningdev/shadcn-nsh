@@ -59,18 +59,14 @@ colors:
     brand: "#171717"
     brand-edge: "#e5e5e5"
     track: "#f5f5f5"
-    slider-track: "#f5f5f5"
     knob: "#ffffff"
     code: "#0a0a0a"
     info: "#737373"
     warn: "#525252"
     up: "#404040"
-    down: "#e7000b"
     brand-tint: "#1717171a"
-    on-brand-tint: "#0a0a0a"
     inverse: "#ffffff"
     inverse-foreground: "#0a0a0a"
-    inverse-muted: "#737373"
     inverse-brand: "#fafafa"
     info-tint: "#7373731a"
     warn-tint: "#5252521a"
@@ -80,15 +76,12 @@ colors:
     violet: "#262626"
     window-control-off: "#a1a1a1"
     dialog: "#ffffff"
-    card-edge: "#e5e5e5"
     bevel: "#e5e5e5"
     accent-bevel: "#e5e5e5"
     disabled: "#f5f5f5"
     disabled-foreground: "#737373"
     accent-pressed: "#171717"
     on-accent-pressed: "#fafafa"
-    selected-foreground: "#0a0a0a"
-    pressed-foreground: "#0a0a0a"
   dark:
     brand-fill: "#e5e5e5"
     on-brand: "#171717"
@@ -136,18 +129,14 @@ colors:
     brand: "#e5e5e5"
     brand-edge: "#ffffff1a"
     track: "#262626"
-    slider-track: "#262626"
     knob: "#fafafa"
     code: "#fafafa"
     info: "#a1a1a1"
     warn: "#d4d4d4"
     up: "#e5e5e5"
-    down: "#ff6467"
     brand-tint: "#e5e5e51a"
-    on-brand-tint: "#fafafa"
     inverse: "#171717"
     inverse-foreground: "#fafafa"
-    inverse-muted: "#a1a1a1"
     inverse-brand: "#171717"
     info-tint: "#a1a1a11a"
     warn-tint: "#d4d4d41a"
@@ -157,15 +146,12 @@ colors:
     violet: "#fafafa"
     window-control-off: "#a1a1a1"
     dialog: "#171717"
-    card-edge: "#ffffff1a"
     bevel: "#ffffff1a"
     accent-bevel: "#ffffff1a"
     disabled: "#262626"
     disabled-foreground: "#a1a1a1"
     accent-pressed: "#e5e5e5"
     on-accent-pressed: "#171717"
-    selected-foreground: "#fafafa"
-    pressed-foreground: "#fafafa"
 typography:
   caption:
     fontFamily: "system-ui, sans-serif"
@@ -373,7 +359,6 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 - **`field`** (light `#ffffff`, dark `#ffffff0b`): Input well surface below card and inset layers.
 - **`hover`** (light `#f5f5f5`, dark `#262626`): Pointer hover fill aliased to {color.accent} per shadcn hover:bg-accent.
 - **`track`** (light `#f5f5f5`, dark `#262626`): Inactive track background for switches, sliders, and progress bars.
-- **`slider-track`** (light `#f5f5f5`, dark `#262626`): Inactive slider track fill aliased to {color.track}.
 - **`knob`** (light `#ffffff`, dark `#fafafa`): Switch thumb fill in the off state.
 - **`inverse`** (light `#ffffff`, dark `#171717`): High-contrast surface for toasts and tooltips.
 - **`dialog`** (light `#ffffff`, dark `#171717`): Modal dialog container surface.
@@ -394,10 +379,7 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 - **`faint`** (`#a1a1a1`): Low-emphasis text for placeholders, units, and tertiary labels.
 - **`code`** (light `#0a0a0a`, dark `#fafafa`): Monospace code text ink inside recessed wells.
 - **`inverse-foreground`** (light `#0a0a0a`, dark `#fafafa`): Primary text ink on inverse surfaces.
-- **`inverse-muted`** (light `#737373`, dark `#a1a1a1`): Secondary text, spinner, and close-icon ink on inverse surfaces.
 - **`disabled-foreground`** (light `#737373`, dark `#a1a1a1`): Disabled control label and icon ink.
-- **`selected-foreground`** (light `#0a0a0a`, dark `#fafafa`): Label and icon ink on selected or toggled-on controls.
-- **`pressed-foreground`** (light `#0a0a0a`, dark `#fafafa`): Label and icon ink on pressed neutral or ghost controls.
 
 ### Brand
 
@@ -410,7 +392,6 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 - **`brand`** (light `#171717`, dark `#e5e5e5`): Accent ink for text, icons, and active rules.
 - **`brand-edge`** (light `#e5e5e5`, dark `#ffffff1a`): Hairline border aliased to {color.border} (shadcn draws no separate brand edge).
 - **`brand-tint`** (light `#1717171a`, dark `#e5e5e51a`): Translucent brand-accent wash behind selected rows and tinted bubbles.
-- **`on-brand-tint`** (light `#0a0a0a`, dark `#fafafa`): Text and icon ink on brand-tint surfaces.
 - **`inverse-brand`** (light `#fafafa`, dark `#171717`): Accent action color on inverse surfaces.
 - **`accent-pressed`** (light `#171717`, dark `#e5e5e5`): Accent control fill while pressed.
 - **`on-accent-pressed`** (light `#fafafa`, dark `#171717`): Ink on pressed accent control fills.
@@ -426,7 +407,6 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 - **`info`** (light `#737373`, dark `#a1a1a1`): Informational semantic status color mapped onto shadcn's neutral grey ramp.
 - **`warn`** (light `#525252`, dark `#d4d4d4`): Warning semantic status color mapped onto shadcn's neutral chart ramp.
 - **`up`** (light `#404040`, dark `#e5e5e5`): Positive trend color mapped onto shadcn's neutral ramp.
-- **`down`** (light `#e7000b`, dark `#ff6467`): Negative trend and decline semantic color.
 - **`info-tint`** (light `#7373731a`, dark `#a1a1a11a`): Translucent informational status background tint.
 - **`warn-tint`** (light `#5252521a`, dark `#d4d4d41a`): Translucent warning status background tint.
 - **`destructive-tint`** (light `#e7000b1a`, dark `#ff64671a`): Translucent destructive status background tint.
@@ -452,7 +432,6 @@ shadcn/ui's neutral palette paired with flat surfaces (`state.press-scale: 1`) a
 - **`line`** (light `#e5e5e5`, dark `#ffffff1a`): Hairline divider and grid rule inside recessed wells.
 - **`ring-halo`** (light `#a1a1a180`, dark `#73737380`): Translucent outer halo around focused controls.
 - **`window-control-off`** (`#a1a1a1`): Inactive background for macOS traffic-light buttons when unfocused.
-- **`card-edge`** (light `#e5e5e5`, dark `#ffffff1a`): Hairline border on card and section containers.
 - **`bevel`** (light `#e5e5e5`, dark `#ffffff1a`): Directional control elevation bevel stroke.
 - **`accent-bevel`** (light `#e5e5e5`, dark `#ffffff1a`): Accent control elevation top and side bevel stroke.
 

@@ -209,7 +209,7 @@ function App() {
           <Text
             style={{
               fontSize: 13,
-              color: price() >= 224.1 ? colors.up : colors.down,
+              color: price() >= 224.1 ? colors.up : colors.destructive,
               fontVariant: ["tabular-nums"],
             }}
           >

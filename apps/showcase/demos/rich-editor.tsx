@@ -579,7 +579,7 @@ const QUOTES: Record<string, Quote> = {
 };
 
 const percent = (change: number) => `${change >= 0 ? "+" : ""}${change.toFixed(2)}%`;
-const tone = (change: number) => (change >= 0 ? colors.up : colors.down);
+const tone = (change: number) => (change >= 0 ? colors.up : colors.destructive);
 
 function StockTag(props: RichNodeViewProps) {
   const quote = () => QUOTES[props.node.attrs.symbol as string];

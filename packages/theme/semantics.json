@@ -227,12 +227,13 @@
     "shared": {
       "card": {
         "gradient": "linear-gradient(180deg, {card} 0%, {card} 100%)",
+        "border-color": "{border}",
         "material": null
       },
       "section": {
         "background": "{card}",
         "shadow": "none",
-        "border-color": "{card-edge}",
+        "border-color": "{border}",
         "material": null
       },
       "inset": {
@@ -252,6 +253,7 @@
         "material": null
       },
       "pressed": {
+        "foreground": "{foreground}",
         "material": null
       },
       "disabled": {
@@ -314,6 +316,7 @@
         "material": null
       },
       "on": {
+        "foreground": "{foreground}",
         "material": null
       },
       "chip": {
@@ -351,6 +354,7 @@
       },
       "inverse": {
         "background": "{inverse}",
+        "foreground": "{muted-foreground}",
         "border-color": "{border}",
         "backdropFilter": "none",
         "material": null

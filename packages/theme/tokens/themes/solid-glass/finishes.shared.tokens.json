@@ -23,6 +23,10 @@
           }
         }
       },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.border}"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "material": null
@@ -69,7 +73,7 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.card-edge}"
+        "$value": "{color.border}"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -230,6 +234,10 @@
             "transparentStops": [0, 1]
           }
         }
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
       },
       "border-color": {
         "$type": "color",
@@ -773,6 +781,10 @@
           }
         }
       },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "material": null
@@ -976,6 +988,10 @@
       "background": {
         "$type": "color",
         "$value": "{color.inverse}"
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.muted-foreground}"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {

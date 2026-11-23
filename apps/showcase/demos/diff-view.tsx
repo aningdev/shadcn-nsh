@@ -167,7 +167,7 @@ export function DiffViewDemo() {
         <View class="flex-row flex-wrap items-center gap-2">
           <Text class="text-muted-foreground text-xs tabular-nums">
             <Text style={{ color: colors.up }}>{`+${stats().added}`}</Text>{" "}
-            <Text style={{ color: colors.down }}>{`−${stats().deleted}`}</Text>
+            <Text style={{ color: colors.destructive }}>{`−${stats().deleted}`}</Text>
             {` · ${stats().hunks === 0 ? "No changes" : `Change ${current() + 1} of ${stats().hunks}`}`}
           </Text>
           <View class="flex-1" />

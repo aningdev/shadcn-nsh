@@ -59,18 +59,14 @@ colors:
     brand: "#003e92"
     brand-edge: "#00396e"
     track: "#ededed"
-    slider-track: "#868686"
     knob: "#5c5c5c"
     code: "#1a1a1a"
     info: "#0078d4"
     warn: "#9d5d00"
     up: "#0f7b0f"
-    down: "#c42b1c"
     brand-tint: "#dbe4ed"
-    on-brand-tint: "#1a1a1a"
     inverse: "#f9f9f9"
     inverse-foreground: "#1a1a1a"
-    inverse-muted: "#5c5c5c"
     inverse-brand: "#ffffff"
     info-tint: "#f5f5f5"
     warn-tint: "#fff4ce"
@@ -80,15 +76,12 @@ colors:
     violet: "#6e56c4"
     window-control-off: "#dcdcdf"
     dialog: "#f3f3f3"
-    card-edge: "#e5e5e5"
     bevel: "#cccccc"
     accent-bevel: "#146cbe"
     disabled: "#f5f5f5"
     disabled-foreground: "#9b9b9b"
     accent-pressed: "#317dc4"
     on-accent-pressed: "#c2d8ed"
-    selected-foreground: "#ffffff"
-    pressed-foreground: "#5c5c5c"
   dark:
     brand-fill: "#60cdff"
     on-brand: "#000000"
@@ -136,18 +129,14 @@ colors:
     brand: "#99ebff"
     brand-edge: "#53b1dc"
     track: "#1d1d1d"
-    slider-track: "#9a9a9a"
     knob: "#cccccc"
     code: "#ffffff"
     info: "#60cdff"
     warn: "#fce100"
     up: "#6ccb5f"
-    down: "#ff99a4"
     brand-tint: "#263136"
-    on-brand-tint: "#ffffff"
     inverse: "#282828"
     inverse-foreground: "#ffffff"
-    inverse-muted: "#cccccc"
     inverse-brand: "#000000"
     info-tint: "#272727"
     warn-tint: "#433519"
@@ -157,15 +146,12 @@ colors:
     violet: "#b9a2ff"
     window-control-off: "#45484e"
     dialog: "#202020"
-    card-edge: "#1d1d1d"
     bevel: "#353535"
     accent-bevel: "#6cd1ff"
     disabled: "#2a2a2a"
     disabled-foreground: "#717171"
     accent-pressed: "#53aad2"
     on-accent-pressed: "#295569"
-    selected-foreground: "#000000"
-    pressed-foreground: "#cccccc"
 typography:
   caption:
     fontFamily: "Segoe UI Variable, Segoe UI, sans-serif"
@@ -389,7 +375,6 @@ WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composite
 - **`field`** (light `#fbfbfb`, dark `#2d2d2d`): Text input surface (WinUI ControlFillColorDefault composited over base).
 - **`hover`** (light `#f6f6f6`, dark `#323232`): Pointer hover fill (WinUI ControlFillColorSecondary composited over base).
 - **`track`** (light `#ededed`, dark `#1d1d1d`): Switch and slider track (WinUI ControlAltFillColorSecondary).
-- **`slider-track`** (light `#868686`, dark `#9a9a9a`): WinUI 3 inactive slider track aliased to {color.input} (SliderTrackFill -> ControlStrongFillColorDefault, Slider_themeresources.xaml:20 in winui3/release/2.7.0).
 - **`knob`** (light `#5c5c5c`, dark `#cccccc`): Unchecked switch thumb (WinUI TextFillColorSecondary).
 - **`inverse`** (light `#f9f9f9`, dark `#282828`): TeachingTip/toast surface (WinUI SolidBackgroundFillColorTertiary composited over base).
 - **`dialog`** (light `#f3f3f3`, dark `#202020`): ContentDialog surface aliased to {color.background} (SolidBackgroundFillColorBase).
@@ -410,10 +395,7 @@ WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composite
 - **`faint`** (light `#868686`, dark `#969696`): Tertiary label ink (WinUI TextFillColorTertiary composited over base).
 - **`code`** (light `#1a1a1a`, dark `#ffffff`): Inline code ink (WinUI TextFillColorPrimary).
 - **`inverse-foreground`** (light `#1a1a1a`, dark `#ffffff`): Ink on inverse surface (WinUI TextFillColorPrimary).
-- **`inverse-muted`** (light `#5c5c5c`, dark `#cccccc`): Secondary ink on inverse surface (WinUI TextFillColorSecondary).
 - **`disabled-foreground`** (light `#9b9b9b`, dark `#717171`): Disabled control text/icon ink (WinUI TextFillColorDisabled composited over base).
-- **`selected-foreground`** (light `#ffffff`, dark `#000000`): Ink on checked ToggleButton / active AccentFillColorDefault controls aliased to {color.on-brand}.
-- **`pressed-foreground`** (light `#5c5c5c`, dark `#cccccc`): Pressed standard control ink aliased to {color.muted-foreground} (WinUI TextFillColorSecondary).
 
 ### Brand
 
@@ -426,7 +408,6 @@ WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composite
 - **`brand`** (light `#003e92`, dark `#99ebff`): Accent text/link/icon ink (WinUI AccentTextFillColorPrimary: Dark2 light / Light3 dark).
 - **`brand-edge`** (light `#00396e`, dark `#53b1dc`): Accent button bottom bevel stroke (WinUI ControlStrokeColorOnAccentSecondary composited over primary).
 - **`brand-tint`** (light `#dbe4ed`, dark `#263136`): 10% accent wash composited opaque over window base.
-- **`on-brand-tint`** (light `#1a1a1a`, dark `#ffffff`): Ink on brand-tint surfaces (WinUI TextFillColorPrimary).
 - **`inverse-brand`** (light `#ffffff`, dark `#000000`): Action ink on inverse surface matching TextOnAccentFillColorPrimary.
 - **`accent-pressed`** (light `#317dc4`, dark `#53aad2`): Pressed accent control fill (WinUI AccentFillColorTertiary composited over base).
 - **`on-accent-pressed`** (light `#c2d8ed`, dark `#295569`): Pressed accent control ink (WinUI TextOnAccentFillColorSecondary composited over accent-pressed).
@@ -442,7 +423,6 @@ WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composite
 - **`info`** (light `#0078d4`, dark `#60cdff`): Informational semantic color (WinUI SystemFillColorAttentionBrush).
 - **`warn`** (light `#9d5d00`, dark `#fce100`): Caution semantic color (WinUI SystemFillColorCaution).
 - **`up`** (light `#0f7b0f`, dark `#6ccb5f`): Success semantic color (WinUI SystemFillColorSuccess).
-- **`down`** (light `#c42b1c`, dark `#ff99a4`): Negative trend color matching WinUI SystemFillColorCritical.
 - **`info-tint`** (light `#f5f5f5`, dark `#272727`): Informational wash (WinUI SystemFillColorAttentionBackground composited over base).
 - **`warn-tint`** (light `#fff4ce`, dark `#433519`): Caution wash (WinUI SystemFillColorCautionBackground composited over base).
 - **`destructive-tint`** (light `#fde7e9`, dark `#442726`): Critical wash (WinUI SystemFillColorCriticalBackground composited over base).
@@ -468,7 +448,6 @@ WinUI 3 (`winui3/release/2.7.0`): Windows 11 fill and stroke resources composite
 - **`line`** (light `#e5e5e5`, dark `#323232`): Hairline divider stroke (WinUI DividerStrokeColorDefault).
 - **`ring-halo`** (light `#fbfbfb`, dark `#0a0a0a`): Inner keyboard focus stroke (WinUI FocusStrokeColorInner composited over base).
 - **`window-control-off`** (light `#dcdcdf`, dark `#45484e`): Library-retained unfocused window traffic-light fill (no WinUI equivalent).
-- **`card-edge`** (light `#e5e5e5`, dark `#1d1d1d`): Card border stroke (WinUI CardStrokeColorDefault composited over base).
 - **`bevel`** (light `#cccccc`, dark `#353535`): Standard button elevation bevel stroke (WinUI ControlStrokeColorSecondary composited over base).
 - **`accent-bevel`** (light `#146cbe`, dark `#6cd1ff`): Accent button top/side bevel stroke (WinUI ControlStrokeColorOnAccentDefault composited over primary).
 

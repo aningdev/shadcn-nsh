@@ -142,7 +142,7 @@ export function Depth(props: { market: Market; stock: Stock }) {
               cx.stroke();
             };
             side(b.bids, bids, colors.up, -1);
-            side(b.asks, asks, colors.down, 1);
+            side(b.asks, asks, colors.destructive, 1);
             cx.strokeStyle = colors.mutedForeground;
             cx.setLineDash([2, 3]);
             cx.beginPath();
@@ -167,7 +167,7 @@ export function Depth(props: { market: Market; stock: Stock }) {
         style={{ flexDirection: "row", flexWrap: "wrap", columnGap: 16, rowGap: terminal ? 0 : 6 }}
       >
         <Legend color={colors.up} label="Bids" value={compact(totals().bids)} />
-        <Legend color={colors.down} label="Asks" value={compact(totals().asks)} />
+        <Legend color={colors.destructive} label="Asks" value={compact(totals().asks)} />
         <Legend
           color={colors.border}
           label="Imbalance"
@@ -190,7 +190,7 @@ function LevelRow(props: {
   n: number;
   max: () => number;
 }) {
-  const tint = () => alpha(props.side === "bid" ? colors.up : colors.down, 0.1);
+  const tint = () => alpha(props.side === "bid" ? colors.up : colors.destructive, 0.1);
   const share = () => Math.min(1, props.total() / props.max());
   return (
     <View style={{ height: ROW, flexDirection: "row", alignItems: "center", gap: COLUMN_GAP }}>
@@ -327,7 +327,12 @@ export function OrderBook(props: { market: Market; stock: Stock }) {
       <View style={{ gap: terminal ? 0 : 5 }}>
         <If when={!terminal}>
           <View
-            style={{ height: 6, overflow: "hidden", backgroundColor: colors.down, borderRadius: 3 }}
+            style={{
+              height: 6,
+              overflow: "hidden",
+              backgroundColor: colors.destructive,
+              borderRadius: 3,
+            }}
           >
             <SpringBar share={share} color={colors.up} height={6} radius={0} />
           </View>
@@ -344,7 +349,7 @@ export function OrderBook(props: { market: Market; stock: Stock }) {
               flex: 1,
               textAlign: "right",
               fontSize: 12,
-              color: colors.down,
+              color: colors.destructive,
               fontVariant: ["tabular-nums"],
             }}
           >

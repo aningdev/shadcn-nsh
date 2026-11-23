@@ -362,7 +362,7 @@ export function choiceTileLook(on: Live<boolean>, o?: ChoiceTileOptions): Choice
       return { opacity: dimmed.disabled };
     },
     get android(): AndroidProps | undefined {
-      return pressRipple(lit() ? "on-brand-tint" : "foreground", o?.disabled);
+      return pressRipple(lit() ? "accent-foreground" : "foreground", o?.disabled);
     },
   };
 }

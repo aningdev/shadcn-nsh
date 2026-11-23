@@ -67,10 +67,6 @@
           }
         }
       },
-      "border-color": {
-        "$type": "color",
-        "$value": "{color.card-edge}"
-      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "material": null
@@ -345,6 +341,10 @@
             "none": true
           }
         }
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.muted-foreground}"
       },
       "border-color": {
         "$type": "color",
@@ -1154,6 +1154,10 @@
           }
         }
       },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.on-brand}"
+      },
       "border-color": {
         "$type": "color",
         "$value": "{color.accent-bevel}"
@@ -1357,6 +1361,10 @@
       "background": {
         "$type": "color",
         "$value": "{color.inverse}"
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.muted-foreground}"
       },
       "border-color": {
         "$type": "color",

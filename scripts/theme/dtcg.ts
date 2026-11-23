@@ -536,6 +536,9 @@ function encodeFinishSection(
     if (typeof finish.shadow === "string") {
       group.shadow = encodeFinishShadowToken(finish.shadow);
     }
+    if (typeof finish.foreground === "string") {
+      group.foreground = encodeFinishColorToken(finish.foreground, colorMap);
+    }
     if (typeof finish["border-color"] === "string") {
       group["border-color"] = encodeFinishColorToken(finish["border-color"], colorMap);
     }
@@ -1295,6 +1298,7 @@ export function emitDtcgTheme(
   for (const [role, sharedFinish] of Object.entries(split.shared)) {
     for (const field of [
       "background",
+      "foreground",
       "border-color",
       "border-top-color",
       "border-bottom-color",

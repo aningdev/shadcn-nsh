@@ -59,18 +59,14 @@ colors:
     brand: "#007aff"
     brand-edge: "#dcdcdd"
     track: "#e9e9eb"
-    slider-track: "#e9e9eb"
     knob: "#ffffff"
     code: "#000000"
     info: "#007aff"
     warn: "#ff9500"
     up: "#34c759"
-    down: "#ff3b30"
     brand-tint: "#007aff1f"
-    on-brand-tint: "#000000"
     inverse: "#ffffff"
     inverse-foreground: "#000000"
-    inverse-muted: "#8a8a8e"
     inverse-brand: "#ffffff"
     info-tint: "#007aff1f"
     warn-tint: "#ff95001f"
@@ -80,15 +76,12 @@ colors:
     violet: "#af52de"
     window-control-off: "#e4e4e6"
     dialog: "#ffffff"
-    card-edge: "#dcdcdd"
     bevel: "#dcdcdd"
     accent-bevel: "#dcdcdd"
     disabled: "#efeff0"
     disabled-foreground: "#8a8a8e"
     accent-pressed: "#007aff"
     on-accent-pressed: "#ffffff"
-    selected-foreground: "#000000"
-    pressed-foreground: "#000000"
   dark:
     brand-fill: "#0a84ff"
     on-brand: "#ffffff"
@@ -136,18 +129,14 @@ colors:
     brand: "#0a84ff"
     brand-edge: "#353538"
     track: "#39393d"
-    slider-track: "#39393d"
     knob: "#ffffff"
     code: "#ffffff"
     info: "#0a84ff"
     warn: "#ff9f0a"
     up: "#30d158"
-    down: "#ff453a"
     brand-tint: "#0a84ff1f"
-    on-brand-tint: "#ffffff"
     inverse: "#2c2c2e"
     inverse-foreground: "#ffffff"
-    inverse-muted: "#98989f"
     inverse-brand: "#ffffff"
     info-tint: "#0a84ff1f"
     warn-tint: "#ff9f0a1f"
@@ -157,15 +146,12 @@ colors:
     violet: "#bf5af2"
     window-control-off: "#3d3d41"
     dialog: "#1c1c1e"
-    card-edge: "#353538"
     bevel: "#353538"
     accent-bevel: "#353538"
     disabled: "#323236"
     disabled-foreground: "#98989f"
     accent-pressed: "#0a84ff"
     on-accent-pressed: "#ffffff"
-    selected-foreground: "#ffffff"
-    pressed-foreground: "#ffffff"
 typography:
   caption:
     fontFamily: "system-ui, sans-serif"
@@ -373,7 +359,6 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`field`** (light `#efeff0`, dark `#323236`): Form input background (UIKit tertiarySystemFill composited over card).
 - **`hover`** (light `#0000000f`, dark `#ffffff0f`): Pointer hover tint (6% foreground ink over transparent).
 - **`track`** (light `#e9e9eb`, dark `#39393d`): Switch and slider track (UIKit secondarySystemFill composited over card).
-- **`slider-track`** (light `#e9e9eb`, dark `#39393d`): Inactive slider track fill aliased to {color.track}.
 - **`knob`** (`#ffffff`): Switch knob and slider handle (pure white).
 - **`inverse`** (light `#ffffff`, dark `#2c2c2e`): High-contrast surface for toasts and tooltips.
 - **`dialog`** (light `#ffffff`, dark `#1c1c1e`): Modal dialog container surface.
@@ -394,10 +379,7 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`faint`** (light `#c5c5c7`, dark `#5a5a5f`): Tertiary label ink for placeholders and quiet captions (UIKit tertiaryLabel).
 - **`code`** (light `#000000`, dark `#ffffff`): Monospace code text ink inside recessed wells.
 - **`inverse-foreground`** (light `#000000`, dark `#ffffff`): Primary text ink on inverse surfaces.
-- **`inverse-muted`** (light `#8a8a8e`, dark `#98989f`): Secondary text, spinner, and close-icon ink on inverse surfaces.
 - **`disabled-foreground`** (light `#8a8a8e`, dark `#98989f`): Disabled control label and icon ink.
-- **`selected-foreground`** (light `#000000`, dark `#ffffff`): Label and icon ink on selected or toggled-on controls.
-- **`pressed-foreground`** (light `#000000`, dark `#ffffff`): Label and icon ink on pressed neutral or ghost controls.
 
 ### Brand
 
@@ -410,7 +392,6 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`brand`** (light `#007aff`, dark `#0a84ff`): Inline brand accent ink (UIKit systemBlue).
 - **`brand-edge`** (light `#dcdcdd`, dark `#353538`): Hairline border on primary accent-filled controls.
 - **`brand-tint`** (light `#007aff1f`, dark `#0a84ff1f`): Translucent brand wash (12% brand over transparent).
-- **`on-brand-tint`** (light `#000000`, dark `#ffffff`): Text and icon ink on brand-tint surfaces.
 - **`inverse-brand`** (`#ffffff`): Accent action color on inverse surfaces.
 - **`accent-pressed`** (light `#007aff`, dark `#0a84ff`): Accent control fill while pressed.
 - **`on-accent-pressed`** (`#ffffff`): Ink on pressed accent control fills.
@@ -426,7 +407,6 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`info`** (light `#007aff`, dark `#0a84ff`): Informational semantic color (UIKit systemBlue).
 - **`warn`** (light `#ff9500`, dark `#ff9f0a`): Warning semantic color (UIKit systemOrange).
 - **`up`** (light `#34c759`, dark `#30d158`): Positive trend semantic color (UIKit systemGreen).
-- **`down`** (light `#ff3b30`, dark `#ff453a`): Negative trend and decline semantic color.
 - **`info-tint`** (light `#007aff1f`, dark `#0a84ff1f`): Translucent informational wash (12% info over transparent).
 - **`warn-tint`** (light `#ff95001f`, dark `#ff9f0a1f`): Translucent warning wash (12% warn over transparent).
 - **`destructive-tint`** (light `#ff3b301f`, dark `#ff453a1f`): Translucent destructive wash (12% destructive over transparent).
@@ -452,7 +432,6 @@ Apple Human Interface Guidelines / UIKit system palette (`systemBlue`, `systemGr
 - **`line`** (light `#dcdcdd`, dark `#353538`): Inset divider hairline (UIKit hairline composited over card).
 - **`ring-halo`** (light `#007aff4d`, dark `#0a84ff4d`): Outer keyboard focus halo (30% ring color over transparent).
 - **`window-control-off`** (light `#e4e4e6`, dark `#3d3d41`): Unfocused window traffic-light fill (UIKit systemFill composited over card).
-- **`card-edge`** (light `#dcdcdd`, dark `#353538`): Hairline border on card and section containers.
 - **`bevel`** (light `#dcdcdd`, dark `#353538`): Directional control elevation bevel stroke.
 - **`accent-bevel`** (light `#dcdcdd`, dark `#353538`): Accent control elevation top and side bevel stroke.
 

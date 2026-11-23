@@ -2143,7 +2143,7 @@ export function BlockEditorDemo() {
                   <MenuRow
                     icon="trash"
                     label="Delete"
-                    tone={colors.down}
+                    tone={colors.destructive}
                     onPress={() => remove(m())}
                   />
                 </View>

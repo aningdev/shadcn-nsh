@@ -1360,15 +1360,6 @@
       },
       "$description": "Switch and slider track fill (M3 surfaceContainerHighest)."
     },
-    "slider-track": {
-      "$value": "{color.brand-tint}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "M3 Expressive inactive slider track fill aliased to {color.brand-tint} (SecondaryContainer, Compose SliderTokens.kt)."
-    },
     "knob": {
       "$value": {
         "colorSpace": "oklch",
@@ -1463,23 +1454,6 @@
       },
       "$description": "Opaque selected chip/tile fill (M3 secondaryContainer)."
     },
-    "on-brand-tint": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.91633,
-          0.03651,
-          303.106
-        ],
-        "hex": "#e8def8"
-      },
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Ink on selected chip/tile fills (M3 Expressive onSecondaryContainer)."
-    },
     "inverse": {
       "$value": {
         "colorSpace": "oklch",
@@ -1513,15 +1487,6 @@
         }
       },
       "$description": "Ink on inverse surfaces (M3 inverseOnSurface)."
-    },
-    "inverse-muted": {
-      "$value": "{color.inverse-foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Supporting text and close icon on inverse snackbars, aliased to {color.inverse-foreground} (Compose SnackbarTokens.kt)."
     },
     "inverse-brand": {
       "$value": {
@@ -1649,7 +1614,7 @@
           "colorOp": {
             "op": "mix",
             "space": "srgb",
-            "a": "{color.down}",
+            "a": "{color.destructive}",
             "percent": 12,
             "b": "transparent"
           }
@@ -1846,15 +1811,7 @@
       "$description": "Focus indicator ring color (M3 secondary)."
     },
     "sidebar": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.18738,
-          0.01241,
-          300.422
-        ],
-        "hex": "#141218"
-      },
+      "$value": "{color.background}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "surface"
@@ -1872,15 +1829,7 @@
       "$description": "Primary text and icon ink inside the sidebar."
     },
     "sidebar-accent": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.40052,
-          0.034,
-          298.591
-        ],
-        "hex": "#4a4458"
-      },
+      "$value": "{color.accent}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "surface"
@@ -1889,15 +1838,7 @@
       "$description": "Sidebar active item fill (M3 secondaryContainer)."
     },
     "sidebar-accent-foreground": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.91633,
-          0.03651,
-          303.106
-        ],
-        "hex": "#e8def8"
-      },
+      "$value": "{color.accent-foreground}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "ink"
@@ -1906,15 +1847,7 @@
       "$description": "Sidebar active item text ink (M3 Expressive onSecondaryContainer)."
     },
     "sidebar-border": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.39805,
-          0.01736,
-          303.721
-        ],
-        "hex": "#49454f"
-      },
+      "$value": "{color.border}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "chrome"
@@ -1949,15 +1882,6 @@
       },
       "$description": "Focus indicator ring color inside the sidebar."
     },
-    "down": {
-      "$value": "{color.destructive}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status"
-        }
-      },
-      "$description": "Negative trend and decline semantic color."
-    },
     "window-control-off": {
       "$value": {
         "colorSpace": "oklch",
@@ -1991,15 +1915,6 @@
         }
       },
       "$description": "Modal dialog surface (M3 surfaceContainerHigh)."
-    },
-    "card-edge": {
-      "$value": "{color.border}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Card border hairline aliased to {color.border}."
     },
     "bevel": {
       "$value": "{color.border}",
@@ -2086,24 +2001,6 @@
         }
       },
       "$description": "Pressed accent ink aliased to {color.on-brand}."
-    },
-    "selected-foreground": {
-      "$value": "{color.on-brand-tint}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Ink on tonal selected controls (M3 Expressive onSecondaryContainer)."
-    },
-    "pressed-foreground": {
-      "$value": "{color.foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Pressed ink aliased to {color.foreground}."
     }
   },
   "finish": {
@@ -2188,6 +2085,24 @@
             }
           }
         ]
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0,
+            0,
+            0
+          ],
+          "alpha": 0,
+          "hex": "#000000"
+        },
+        "$extensions": {
+          "dev.aning.shadcn-nsh": {
+            "transparentKeyword": true
+          }
+        }
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -2765,6 +2680,10 @@
             }
           }
         ]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
       },
       "border-color": {
         "$type": "color",
@@ -3929,6 +3848,10 @@
           }
         }
       },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.accent-foreground}"
+      },
       "border-color": {
         "$type": "color",
         "$value": {
@@ -4544,6 +4467,10 @@
             }
           }
         ]
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.inverse-foreground}"
       },
       "border-color": {
         "$type": "color",

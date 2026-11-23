@@ -584,4 +584,4 @@ export const percent = (q: Quote) => ((q.last - q.prevClose) / q.prevClose) * 10
 
 /** Rising, falling and flat colors. */
 export const toneOf = (value: number) =>
-  value > 0 ? colors.up : value < 0 ? colors.down : colors.mutedForeground;
+  value > 0 ? colors.up : value < 0 ? colors.destructive : colors.mutedForeground;

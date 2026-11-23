@@ -1320,16 +1320,7 @@
       "$description": "Text and icon ink on sidebar-primary highlights."
     },
     "sidebar-accent": {
-      "$value": {
-        "colorSpace": "oklch",
-        "components": [
-          0.3,
-          0.02,
-          265
-        ],
-        "alpha": 0.09,
-        "hex": "#292e38"
-      },
+      "$value": "{color.accent}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "surface"
@@ -1338,7 +1329,7 @@
       "$description": "Selected or active row fill in the sidebar."
     },
     "sidebar-accent-foreground": {
-      "$value": "{color.foreground}",
+      "$value": "{color.accent-foreground}",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "ink"
@@ -1614,15 +1605,6 @@
       },
       "$description": "Inactive track background for switches, sliders, and progress bars."
     },
-    "slider-track": {
-      "$value": "{color.track}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      },
-      "$description": "Inactive slider track fill aliased to {color.track}."
-    },
     "knob": {
       "$value": {
         "colorSpace": "oklch",
@@ -1700,15 +1682,6 @@
       },
       "$description": "Positive trend and growth semantic color."
     },
-    "down": {
-      "$value": "{color.destructive}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status"
-        }
-      },
-      "$description": "Negative trend and decline semantic color."
-    },
     "brand-tint": {
       "$value": {
         "colorSpace": "oklch",
@@ -1727,15 +1700,6 @@
       },
       "$description": "Static translucent teal brand wash (--brand-muted)."
     },
-    "on-brand-tint": {
-      "$value": "{color.foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      },
-      "$description": "Text and icon ink on brand-tint surfaces."
-    },
     "inverse": {
       "$value": "{color.popover}",
       "$extensions": {
@@ -1753,15 +1717,6 @@
         }
       },
       "$description": "Primary text ink on inverse surfaces."
-    },
-    "inverse-muted": {
-      "$value": "{color.muted-foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Secondary text, spinner, and close-icon ink on inverse surfaces."
     },
     "inverse-brand": {
       "$value": "{color.primary-foreground}",
@@ -1889,7 +1844,7 @@
           "colorOp": {
             "op": "mix",
             "space": "srgb",
-            "a": "{color.down}",
+            "a": "{color.destructive}",
             "percent": 10,
             "b": "transparent"
           }
@@ -1939,15 +1894,6 @@
         }
       },
       "$description": "Modal dialog container surface."
-    },
-    "card-edge": {
-      "$value": "{color.border}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
-        }
-      },
-      "$description": "Hairline border on card and section containers."
     },
     "bevel": {
       "$value": "{color.border}",
@@ -2002,24 +1948,6 @@
         }
       },
       "$description": "Ink on pressed accent control fills."
-    },
-    "selected-foreground": {
-      "$value": "{color.foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Label and icon ink on selected or toggled-on controls."
-    },
-    "pressed-foreground": {
-      "$value": "{color.foreground}",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      },
-      "$description": "Label and icon ink on pressed neutral or ghost controls."
     }
   },
   "finish": {
@@ -2043,6 +1971,10 @@
             "angle": 180
           }
         }
+      },
+      "border-color": {
+        "$type": "color",
+        "$value": "{color.border}"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -2213,7 +2145,7 @@
       },
       "border-color": {
         "$type": "color",
-        "$value": "{color.card-edge}"
+        "$value": "{color.border}"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -2594,6 +2526,10 @@
             ]
           }
         }
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
       },
       "border-color": {
         "$type": "color",
@@ -4269,6 +4205,10 @@
           }
         }
       },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.foreground}"
+      },
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "material": null
@@ -5020,6 +4960,10 @@
       "background": {
         "$type": "color",
         "$value": "{color.inverse}"
+      },
+      "foreground": {
+        "$type": "color",
+        "$value": "{color.muted-foreground}"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {

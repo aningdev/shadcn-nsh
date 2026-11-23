@@ -333,7 +333,7 @@
       }
     },
     "sidebar-accent-foreground": {
-      "$value": "{color.foreground}",
+      "$value": "{color.accent-foreground}",
       "$description": "Text and icon ink on active sidebar rows.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -558,15 +558,6 @@
         }
       }
     },
-    "slider-track": {
-      "$value": "{color.track}",
-      "$description": "Inactive slider rail fill (aliased to track by default; tonal container in M3; ControlStrongFillColorDefault in WinUI 3).",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "surface"
-        }
-      }
-    },
     "knob": {
       "$value": {
         "colorSpace": "oklch",
@@ -632,15 +623,6 @@
         }
       }
     },
-    "down": {
-      "$value": "{color.destructive}",
-      "$description": "Negative trend and decline semantic color.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "status"
-        }
-      }
-    },
     "brand-tint": {
       "$value": {
         "colorSpace": "oklch",
@@ -666,15 +648,6 @@
       },
       "$description": "Translucent brand-accent wash behind selected rows and tinted bubbles."
     },
-    "on-brand-tint": {
-      "$value": "{color.foreground}",
-      "$description": "Text and icon ink on brand-tint surfaces.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "brand"
-        }
-      }
-    },
     "inverse": {
       "$value": "{color.popover}",
       "$description": "High-contrast surface for toasts and tooltips.",
@@ -687,15 +660,6 @@
     "inverse-foreground": {
       "$value": "{color.foreground}",
       "$description": "Primary text ink on inverse surfaces.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      }
-    },
-    "inverse-muted": {
-      "$value": "{color.muted-foreground}",
-      "$description": "Secondary text, spinner, and close-icon ink on inverse surfaces.",
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "ink"
@@ -807,7 +771,7 @@
           "colorOp": {
             "op": "mix",
             "space": "srgb",
-            "a": "{color.down}",
+            "a": "{color.destructive}",
             "percent": 10,
             "b": "transparent"
           },
@@ -848,15 +812,6 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "surface"
-        }
-      }
-    },
-    "card-edge": {
-      "$value": "{color.border}",
-      "$description": "Hairline border on card and section containers.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "chrome"
         }
       }
     },
@@ -911,24 +866,6 @@
       "$extensions": {
         "dev.aning.shadcn-nsh": {
           "role": "brand"
-        }
-      }
-    },
-    "selected-foreground": {
-      "$value": "{color.foreground}",
-      "$description": "Label and icon ink on selected or toggled-on controls.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
-        }
-      }
-    },
-    "pressed-foreground": {
-      "$value": "{color.foreground}",
-      "$description": "Label and icon ink on pressed neutral or ghost controls.",
-      "$extensions": {
-        "dev.aning.shadcn-nsh": {
-          "role": "ink"
         }
       }
     }

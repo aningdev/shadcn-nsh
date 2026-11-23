@@ -221,7 +221,6 @@ describe("m3Roles", () => {
     expect(baselineRoles.light["sidebar-ring"]).toBe("var(--ring)");
     expect(baselineRoles.light.brand).toBe("var(--primary)");
     expect(baselineRoles.light.code).toBe("var(--foreground)");
-    expect(baselineRoles.light.down).toBe("var(--destructive)");
 
     expect(css(parseColor(baselineRoles.light.background)).toUpperCase()).toBe("#FEF7FF");
     expect(css(parseColor(baselineRoles.light.dialog)).toUpperCase()).toBe("#ECE6F0");
@@ -229,8 +228,6 @@ describe("m3Roles", () => {
     expect(css(parseColor(baselineRoles.light["secondary-foreground"])).toUpperCase()).toBe(
       "#4A4458",
     );
-    expect(css(parseColor(baselineRoles.light["on-brand-tint"])).toUpperCase()).toBe("#4A4458");
-    expect(baselineRoles.light["selected-foreground"]).toBe("var(--on-brand-tint)");
     expect(baselineRoles.light["disabled"]).toBe(
       "color-mix(in srgb, var(--foreground) 10%, transparent)",
     );
@@ -241,16 +238,12 @@ describe("m3Roles", () => {
     expect(css(parseColor(baselineRoles.light["inverse-foreground"])).toUpperCase()).toBe(
       "#F5EFF7",
     );
-    expect(baselineRoles.light["inverse-muted"]).toBe("var(--inverse-foreground)");
     expect(css(parseColor(baselineRoles.light["inverse-brand"])).toUpperCase()).toBe("#D0BCFF");
     expect(css(parseColor(baselineRoles.dark.background)).toUpperCase()).toBe("#141218");
     expect(css(parseColor(baselineRoles.dark.dialog)).toUpperCase()).toBe("#2B2930");
     expect(css(parseColor(baselineRoles.dark.primary)).toUpperCase()).toBe("#D0BCFF");
-    expect(css(parseColor(baselineRoles.dark["on-brand-tint"])).toUpperCase()).toBe("#E8DEF8");
-    expect(baselineRoles.dark["selected-foreground"]).toBe("var(--on-brand-tint)");
     expect(css(parseColor(baselineRoles.dark.inverse)).toUpperCase()).toBe("#E6E0E9");
     expect(css(parseColor(baselineRoles.dark["inverse-foreground"])).toUpperCase()).toBe("#322F35");
-    expect(baselineRoles.dark["inverse-muted"]).toBe("var(--inverse-foreground)");
     expect(css(parseColor(baselineRoles.dark["inverse-brand"])).toUpperCase()).toBe("#6750A4");
     expect(css(parseColor(tealRoles.light.dialog)).toUpperCase()).not.toBe("#ECE6F0");
   });
@@ -269,9 +262,7 @@ describe("m3Roles", () => {
       ["sidebar-primary-foreground", "sidebar-primary"],
       ["sidebar-accent-foreground", "sidebar-accent"],
       ["on-brand", "brand-fill"],
-      ["on-brand-tint", "brand-tint"],
       ["inverse-foreground", "inverse"],
-      ["inverse-muted", "inverse"],
       ["inverse-brand", "inverse"],
       ["destructive", "destructive-tint"],
     ];

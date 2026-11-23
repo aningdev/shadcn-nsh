@@ -29,6 +29,7 @@ export function withSurfaces(roles: Roles): Roles {
   const inverse = {
     ...menu,
     background: (menu.background as string).replace(`{${token}}`, "{inverse}"),
+    foreground: "{muted-foreground}",
   };
   return Object.fromEntries(
     Object.entries(roles).flatMap(([role, finish]) =>

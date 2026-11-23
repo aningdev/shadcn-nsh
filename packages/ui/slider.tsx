@@ -15,7 +15,7 @@ import {
   type Tiered,
 } from "@shadcn-nsh/theme";
 import type { TextStyle, ViewStyle } from "nsh";
-import { split, Text } from "nsh";
+import { split, Text, token } from "nsh";
 import { Slider as BaseSlider, type SliderProps as BaseSliderProps } from "nsh/base";
 
 interface SliderPreset {
@@ -31,6 +31,7 @@ interface SliderPreset {
   handleShape: "circle" | "bar" | "ring";
   outlined: boolean;
   hoverBrightness: boolean;
+  trackRole: "track" | "brand-tint" | "input";
 }
 
 // M3 Expressive Slider: 16dp track, 4x44dp bar handle (2dp pressed) (Compose SliderTokens.kt 1.5.0).
@@ -47,6 +48,7 @@ const m3SliderBase: SliderPreset = {
   handleShape: "bar",
   outlined: false,
   hoverBrightness: false,
+  trackRole: "brand-tint",
 };
 
 // WinUI 3 Slider: 18px thumb with 12px inner dot (14px hover, 10px pressed) on 4px track inside 32px band (Slider_themeresources.xaml:6,166-173,221,233 in winui3/release/2.7.0).
@@ -63,6 +65,7 @@ const winuiSliderBase: SliderPreset = {
   handleShape: "ring",
   outlined: false,
   hoverBrightness: false,
+  trackRole: "input",
 };
 
 const sliderPresets: Record<Controls, Tiered<SliderPreset>> = {
@@ -80,6 +83,7 @@ const sliderPresets: Record<Controls, Tiered<SliderPreset>> = {
       handleShape: "circle",
       outlined: true,
       hoverBrightness: true,
+      trackRole: "track",
     },
     touch: {
       band: 32,
@@ -94,6 +98,7 @@ const sliderPresets: Record<Controls, Tiered<SliderPreset>> = {
       handleShape: "circle",
       outlined: true,
       hoverBrightness: true,
+      trackRole: "track",
     },
   },
   material: { pointer: m3SliderBase, touch: { ...m3SliderBase, verticalLength: 144 } },
@@ -121,7 +126,7 @@ export const sliderValueStyle = (): TextStyle => ({ color: alpha(colors.foregrou
 /**
  * A `Slider`'s parts (spread them: `<Slider {...sliderLook()}>`), reading track thickness,
  * hit-band size, border presence, and handle geometry/states from `sliderPresets[controls()][tier]`
- * and `colors.sliderTrack`.
+ * and the preset's `trackRole`.
  */
 export function sliderLook(o: SliderLookOptions = {}) {
   const vertical = !!o.vertical;
@@ -153,7 +158,7 @@ export function sliderLook(o: SliderLookOptions = {}) {
     get indicatorStyle(): ViewStyle {
       const s = sliderPresets[controls()][tier];
       return {
-        backgroundColor: colors.sliderTrack,
+        backgroundColor: token(s.trackRole),
         ...(s.outlined
           ? { boxShadow: insetEdge(finish.track.borderColor, finish.track.boxShadow) }
           : {}),

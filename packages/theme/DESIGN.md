@@ -59,18 +59,14 @@ colors:
     brand: "#447e00"
     brand-edge: "#9cc43a"
     track: "#e9eaed"
-    slider-track: "#e9eaed"
     knob: "#ffffff"
     code: "#2a2d33"
     info: "#3d63d1"
     warn: "#b26a00"
     up: "#138a5a"
-    down: "#d43a4a"
     brand-tint: "#8cc01d29"
-    on-brand-tint: "#101319"
     inverse: "#f8f8fb"
     inverse-foreground: "#101319"
-    inverse-muted: "#5f636a"
     inverse-brand: "#13160c"
     info-tint: "#3d63d11a"
     warn-tint: "#b26a001c"
@@ -80,15 +76,12 @@ colors:
     violet: "#6e56c4"
     window-control-off: "#dcdcdf"
     dialog: "#ffffff"
-    card-edge: "#cacbcd"
     bevel: "#cacbcd"
     accent-bevel: "#9cc43a"
     disabled: "#f3f4f7"
     disabled-foreground: "#5f636a"
     accent-pressed: "#c6ef6a"
     on-accent-pressed: "#13160c"
-    selected-foreground: "#101319"
-    pressed-foreground: "#101319"
   dark:
     background: "#16191f"
     foreground: "#eeeff1"
@@ -134,18 +127,14 @@ colors:
     brand: "#c8f26d"
     brand-edge: "#283c008c"
     track: "#33363c"
-    slider-track: "#33363c"
     knob: "#e4e5e8"
     code: "#d9dde3"
     info: "#7ea8ff"
     warn: "#ffb547"
     up: "#45d49a"
-    down: "#ff6170"
     brand-tint: "#c8f26d24"
-    on-brand-tint: "#eeeff1"
     inverse: "#1f2228"
     inverse-foreground: "#eeeff1"
-    inverse-muted: "#9a9ea5"
     inverse-brand: "#13160c"
     info-tint: "#7ea8ff29"
     warn-tint: "#ffb54729"
@@ -155,15 +144,12 @@ colors:
     violet: "#b9a2ff"
     window-control-off: "#45484e"
     dialog: "#1f2228"
-    card-edge: "#31343a"
     bevel: "#31343a"
     accent-bevel: "#283c008c"
     disabled: "#33353b"
     disabled-foreground: "#9a9ea5"
     accent-pressed: "#c4ec6a"
     on-accent-pressed: "#13160c"
-    selected-foreground: "#eeeff1"
-    pressed-foreground: "#eeeff1"
 typography:
   caption:
     fontFamily: "system-ui, sans-serif"
@@ -371,7 +357,6 @@ NSH Gallery UI default theme: graphite dark and paper light surfaces with citrus
 - **`field`** (light `#ffffff`, dark `#16191f`): Input well surface below card and inset layers.
 - **`hover`** (light `#1013190d`, dark `#eeeff10d`): Pointer hover overlay fill on interactive items.
 - **`track`** (light `#e9eaed`, dark `#33363c`): Inactive track background for switches, sliders, and progress bars.
-- **`slider-track`** (light `#e9eaed`, dark `#33363c`): Inactive slider rail fill (aliased to track by default; tonal container in M3; ControlStrongFillColorDefault in WinUI 3).
 - **`knob`** (light `#ffffff`, dark `#e4e5e8`): Switch thumb fill in the off state.
 - **`inverse`** (light `#f8f8fb`, dark `#1f2228`): High-contrast surface for toasts and tooltips.
 - **`dialog`** (light `#ffffff`, dark `#1f2228`): Modal dialog container surface.
@@ -392,10 +377,7 @@ NSH Gallery UI default theme: graphite dark and paper light surfaces with citrus
 - **`faint`** (light `#9a9da3`, dark `#6b6f76`): Low-emphasis text for placeholders, units, and tertiary labels.
 - **`code`** (light `#2a2d33`, dark `#d9dde3`): Monospace code text ink inside recessed wells.
 - **`inverse-foreground`** (light `#101319`, dark `#eeeff1`): Primary text ink on inverse surfaces.
-- **`inverse-muted`** (light `#5f636a`, dark `#9a9ea5`): Secondary text, spinner, and close-icon ink on inverse surfaces.
 - **`disabled-foreground`** (light `#5f636a`, dark `#9a9ea5`): Disabled control label and icon ink.
-- **`selected-foreground`** (light `#101319`, dark `#eeeff1`): Label and icon ink on selected or toggled-on controls.
-- **`pressed-foreground`** (light `#101319`, dark `#eeeff1`): Label and icon ink on pressed neutral or ghost controls.
 
 ### Brand
 
@@ -408,7 +390,6 @@ NSH Gallery UI default theme: graphite dark and paper light surfaces with citrus
 - **`brand`** (light `#447e00`, dark `#c8f26d`): Accent ink for text, icons, and active rules.
 - **`brand-edge`** (light `#9cc43a`, dark `#283c008c`): Hairline border on primary accent-filled controls.
 - **`brand-tint`** (light `#8cc01d29`, dark `#c8f26d24`): Translucent brand-accent wash behind selected rows and tinted bubbles.
-- **`on-brand-tint`** (light `#101319`, dark `#eeeff1`): Text and icon ink on brand-tint surfaces.
 - **`inverse-brand`** (`#13160c`): Accent action color on inverse surfaces.
 - **`accent-pressed`** (light `#c6ef6a`, dark `#c4ec6a`): Accent control fill while pressed.
 - **`on-accent-pressed`** (`#13160c`): Ink on pressed accent control fills.
@@ -424,7 +405,6 @@ NSH Gallery UI default theme: graphite dark and paper light surfaces with citrus
 - **`info`** (light `#3d63d1`, dark `#7ea8ff`): Informational semantic status color.
 - **`warn`** (light `#b26a00`, dark `#ffb547`): Warning semantic status color.
 - **`up`** (light `#138a5a`, dark `#45d49a`): Positive trend and growth semantic color.
-- **`down`** (light `#d43a4a`, dark `#ff6170`): Negative trend and decline semantic color.
 - **`info-tint`** (light `#3d63d11a`, dark `#7ea8ff29`): Translucent informational status background tint.
 - **`warn-tint`** (light `#b26a001c`, dark `#ffb54729`): Translucent warning status background tint.
 - **`destructive-tint`** (light `#d43a4a1a`, dark `#ff617029`): Translucent destructive status background tint.
@@ -450,7 +430,6 @@ NSH Gallery UI default theme: graphite dark and paper light surfaces with citrus
 - **`line`** (light `#e4e4e7`, dark `#2d3036`): Hairline divider and grid rule inside recessed wells.
 - **`ring-halo`** (light `#a3a8b224`, dark `#5d636e24`): Translucent outer halo around focused controls.
 - **`window-control-off`** (light `#dcdcdf`, dark `#45484e`): Inactive background for macOS traffic-light buttons when unfocused.
-- **`card-edge`** (light `#cacbcd`, dark `#31343a`): Hairline border on card and section containers.
 - **`bevel`** (light `#cacbcd`, dark `#31343a`): Directional control elevation bevel stroke.
 - **`accent-bevel`** (light `#9cc43a`, dark `#283c008c`): Accent control elevation top and side bevel stroke.
 
@@ -571,4 +550,4 @@ Appearance-invariant surface finish recipes (background, gradient, border, shado
 - **Don't:** Never store `colors.*`, `finish.*`, or `shape.*` values in module-level constants; they freeze on theme or appearance switches.
 - **Don't:** Never delete finish fields or alter the merged finish key set across appearances or themes.
 - **Don't:** Do not flatten shadows or remove inner highlights on `card`, `raised`, `inset`, or `pill` finishes.
-- **Don't:** Do not merge distinct semantic finishes (`light` vs `accent`, `thumb` vs `raised`, `knob` vs `handle`, `down` vs `destructive`).
+- **Don't:** Do not merge distinct semantic finishes (`light` vs `accent`, `thumb` vs `raised`, `knob` vs `handle`).

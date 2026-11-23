@@ -59,18 +59,14 @@ colors:
     brand: "#6750a4"
     brand-edge: "#cac4d0"
     track: "#e6e0e9"
-    slider-track: "#e8def8"
     knob: "#79747e"
     code: "#1d1b20"
     info: "#6750a4"
     warn: "#b26a00"
     up: "#138a5a"
-    down: "#b3261e"
     brand-tint: "#e8def8"
-    on-brand-tint: "#4a4458"
     inverse: "#322f35"
     inverse-foreground: "#f5eff7"
-    inverse-muted: "#f5eff7"
     inverse-brand: "#d0bcff"
     info-tint: "#6750a41f"
     warn-tint: "#b26a001f"
@@ -80,15 +76,12 @@ colors:
     violet: "#7d5260"
     window-control-off: "#cac4d0"
     dialog: "#ece6f0"
-    card-edge: "#cac4d0"
     bevel: "#cac4d0"
     accent-bevel: "#cac4d0"
     disabled: "#1d1b201a"
     disabled-foreground: "#1d1b2061"
     accent-pressed: "#6750a4"
     on-accent-pressed: "#ffffff"
-    selected-foreground: "#4a4458"
-    pressed-foreground: "#1d1b20"
   dark:
     brand-fill: "#d0bcff"
     on-brand: "#381e72"
@@ -136,18 +129,14 @@ colors:
     brand: "#d0bcff"
     brand-edge: "#49454f"
     track: "#36343b"
-    slider-track: "#4a4458"
     knob: "#938f99"
     code: "#e6e0e9"
     info: "#d0bcff"
     warn: "#ffb547"
     up: "#45d49a"
-    down: "#f2b8b5"
     brand-tint: "#4a4458"
-    on-brand-tint: "#e8def8"
     inverse: "#e6e0e9"
     inverse-foreground: "#322f35"
-    inverse-muted: "#322f35"
     inverse-brand: "#6750a4"
     info-tint: "#d0bcff1f"
     warn-tint: "#ffb5471f"
@@ -157,15 +146,12 @@ colors:
     violet: "#efb8c8"
     window-control-off: "#49454f"
     dialog: "#2b2930"
-    card-edge: "#49454f"
     bevel: "#49454f"
     accent-bevel: "#49454f"
     disabled: "#e6e0e91a"
     disabled-foreground: "#e6e0e961"
     accent-pressed: "#d0bcff"
     on-accent-pressed: "#381e72"
-    selected-foreground: "#e8def8"
-    pressed-foreground: "#e6e0e9"
 typography:
   caption:
     fontFamily: "system-ui, sans-serif"
@@ -373,7 +359,6 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`field`** (light `#e6e0e9`, dark `#36343b`): Filled text field background (M3 surfaceContainerHighest).
 - **`hover`** (light `#1d1b2014`, dark `#e6e0e914`): M3 hover state-layer ink (8% foreground over transparent, StateTokens.kt).
 - **`track`** (light `#e6e0e9`, dark `#36343b`): Switch and slider track fill (M3 surfaceContainerHighest).
-- **`slider-track`** (light `#e8def8`, dark `#4a4458`): M3 Expressive inactive slider track fill aliased to {color.brand-tint} (SecondaryContainer, Compose SliderTokens.kt).
 - **`knob`** (light `#79747e`, dark `#938f99`): Unchecked switch thumb fill (M3 outline).
 - **`inverse`** (light `#322f35`, dark `#e6e0e9`): Inverse surface for snackbars and tooltips (M3 inverseSurface).
 - **`dialog`** (light `#ece6f0`, dark `#2b2930`): Modal dialog surface (M3 surfaceContainerHigh).
@@ -394,10 +379,7 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`faint`** (light `#79747e`, dark `#938f99`): Quiet caption/placeholder ink (M3 outline).
 - **`code`** (light `#1d1b20`, dark `#e6e0e9`): Monospace code text ink inside recessed wells.
 - **`inverse-foreground`** (light `#f5eff7`, dark `#322f35`): Ink on inverse surfaces (M3 inverseOnSurface).
-- **`inverse-muted`** (light `#f5eff7`, dark `#322f35`): Supporting text and close icon on inverse snackbars, aliased to {color.inverse-foreground} (Compose SnackbarTokens.kt).
 - **`disabled-foreground`** (light `#1d1b2061`, dark `#e6e0e961`): Disabled control content ink (38% onSurface over transparent).
-- **`selected-foreground`** (light `#4a4458`, dark `#e8def8`): Ink on tonal selected controls (M3 Expressive onSecondaryContainer).
-- **`pressed-foreground`** (light `#1d1b20`, dark `#e6e0e9`): Pressed ink aliased to {color.foreground}.
 
 ### Brand
 
@@ -410,7 +392,6 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`brand`** (light `#6750a4`, dark `#d0bcff`): Inline brand accent ink, aliased to {color.primary}.
 - **`brand-edge`** (light `#cac4d0`, dark `#49454f`): Brand container outline (M3 outlineVariant).
 - **`brand-tint`** (light `#e8def8`, dark `#4a4458`): Opaque selected chip/tile fill (M3 secondaryContainer).
-- **`on-brand-tint`** (light `#4a4458`, dark `#e8def8`): Ink on selected chip/tile fills (M3 Expressive onSecondaryContainer).
 - **`inverse-brand`** (light `#d0bcff`, dark `#6750a4`): Brand action ink on inverse surfaces (M3 inversePrimary).
 - **`accent-pressed`** (light `#6750a4`, dark `#d0bcff`): Pressed accent fill aliased to {color.primary} (state layer applies press).
 - **`on-accent-pressed`** (light `#ffffff`, dark `#381e72`): Pressed accent ink aliased to {color.on-brand}.
@@ -426,7 +407,6 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`info`** (light `#6750a4`, dark `#d0bcff`): Informational semantic color matching M3 primary.
 - **`warn`** (light `#b26a00`, dark `#ffb547`): Warning semantic status color.
 - **`up`** (light `#138a5a`, dark `#45d49a`): Positive trend and growth semantic color.
-- **`down`** (light `#b3261e`, dark `#f2b8b5`): Negative trend and decline semantic color.
 - **`info-tint`** (light `#6750a41f`, dark `#d0bcff1f`): Translucent informational wash (12% info over transparent).
 - **`warn-tint`** (light `#b26a001f`, dark `#ffb5471f`): Translucent warning wash (12% warn over transparent).
 - **`destructive-tint`** (light `#f9dedc`, dark `#8c1d18`): Tonal error container background (M3 errorContainer).
@@ -452,7 +432,6 @@ Material 3 Expressive (`material-web` v34.0.21 / Compose Material 3 1.5.0) built
 - **`line`** (light `#cac4d0`, dark `#49454f`): Inset divider hairline (M3 outlineVariant).
 - **`ring-halo`** (light `#625b7133`, dark `#ccc2dc33`): Outer focus ring halo (20% ring color over transparent).
 - **`window-control-off`** (light `#cac4d0`, dark `#49454f`): Unfocused window traffic-light fill (M3 outlineVariant).
-- **`card-edge`** (light `#cac4d0`, dark `#49454f`): Card border hairline aliased to {color.border}.
 - **`bevel`** (light `#cac4d0`, dark `#49454f`): Control elevation bevel stroke aliased to {color.border}.
 - **`accent-bevel`** (light `#cac4d0`, dark `#49454f`): Accent bevel stroke aliased to {color.brand-edge}.
 

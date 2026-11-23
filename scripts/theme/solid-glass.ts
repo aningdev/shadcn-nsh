@@ -339,8 +339,8 @@ function section(appearance: Appearance): Record<string, string> {
     "sidebar-foreground": s("sidebar-foreground"),
     "sidebar-primary": "var(--primary)",
     "sidebar-primary-foreground": "var(--primary-foreground)",
-    "sidebar-accent": s("sidebar-accent"),
-    "sidebar-accent-foreground": "var(--foreground)",
+    "sidebar-accent": "var(--accent)",
+    "sidebar-accent-foreground": "var(--accent-foreground)",
     "sidebar-border": s("sidebar-border"),
     "sidebar-ring": "var(--ring)",
     // A surface inside a card is the thinnest pane; a control on it is clear glass.
@@ -368,7 +368,6 @@ function section(appearance: Appearance): Record<string, string> {
     brand: s("brand"),
     // A switch's rail before it is on: shadcn's `bg-input`, cut into the surface as a groove.
     track: s("input"),
-    "slider-track": "var(--track)",
     knob: s("knob"),
     // Code inside insets is set in the text colour; the stylesheet's `--code-inline` (a red) is
     // for a span of inline code, which no role of this library holds.
@@ -378,32 +377,26 @@ function section(appearance: Appearance): Record<string, string> {
     info: s("status-done"),
     warn: s("status-interrupted"),
     up: s("success"),
-    down: "var(--destructive)",
     "brand-tint": s("brand-muted"),
-    "on-brand-tint": "var(--foreground)",
     inverse: "var(--popover)",
     "inverse-foreground": "var(--foreground)",
-    "inverse-muted": "var(--muted-foreground)",
     "inverse-brand": "var(--primary-foreground)",
     "info-tint": tint("info"),
     "warn-tint": tint("warn"),
     "destructive-tint": tint("destructive"),
     "up-tint": tint("up"),
-    "down-tint": tint("down"),
+    "down-tint": tint("destructive"),
     violet: s("syn-name"),
     // The macOS traffic lights are the system's, and the stylesheet has no such tokens: like the
     // text beside them, all three go quiet (the ring's grey) while the window is in the background.
     "window-control-off": s("ring"),
     dialog: "var(--card)",
-    "card-edge": "var(--border)",
     bevel: "var(--border)",
     "accent-bevel": "var(--brand-edge)",
     disabled: "var(--raised)",
     "disabled-foreground": "var(--muted-foreground)",
     "accent-pressed": "var(--primary)",
     "on-accent-pressed": "var(--on-brand)",
-    "selected-foreground": "var(--foreground)",
-    "pressed-foreground": "var(--foreground)",
   };
 }
 
@@ -459,6 +452,7 @@ function finishes(appearance: Appearance): Record<string, Finish> {
     // colours: one colour at both stops is what this material states.
     card: {
       gradient: `linear-gradient(180deg, ${alias("card")} 0%, ${alias("card")} 100%)`,
+      "border-color": alias("border"),
       shadow: [
         `inset 0 1px 0 ${s("glass-rim")}`,
         `inset 0 0 0 1px ${s("glass-inner")}`,
@@ -469,7 +463,7 @@ function finishes(appearance: Appearance): Record<string, Finish> {
     section: {
       background: alias("card"),
       shadow: "none",
-      "border-color": alias("card-edge"),
+      "border-color": alias("border"),
     },
     // The thinnest pane, laid into a card: the faint line of light inside its top edge.
     inset: { shadow: `inset 0 1px 0 ${s("glass-inner")}` },
@@ -501,6 +495,7 @@ function finishes(appearance: Appearance): Record<string, Finish> {
       "border-color": alias("glass-edge"),
       "border-top-color": alias("glass-edge"),
       "border-bottom-color": alias("glass-edge"),
+      foreground: alias("foreground"),
     },
     disabled: {
       background: alias("disabled"),
@@ -585,6 +580,7 @@ function finishes(appearance: Appearance): Record<string, Finish> {
       "border-color": `oklch(from {muted} l c h / ${coords(s("glass-state-edge")).a})`,
       "border-top-color": `oklch(from {muted} l c h / ${coords(s("glass-state-edge")).a})`,
       "border-bottom-color": `oklch(from {muted} l c h / ${coords(s("glass-state-edge")).a})`,
+      foreground: alias("foreground"),
     },
     // A small label that holds something (a key, a chip): clear glass, both lines inside its edge.
     chip: {
@@ -629,7 +625,6 @@ export function themeFiles(): ThemeGeneratorOutput {
     popover: "Opaque composite of Solid Glass popover pane over background canvas.",
     sidebar: "Opaque composite of Solid Glass panel pane over background canvas.",
     inset: "Opaque composite of Solid Glass thinnest panel pane laid over card.",
-    "slider-track": "Inactive slider track fill aliased to {color.track}.",
     "brand-edge": "Primary button hairline mixed from --primary and --primary-edge.",
     "glass-edge": "Hairline border on Solid Glass panes (--glass-edge).",
     "brand-tint": "Static translucent teal brand wash (--brand-muted).",

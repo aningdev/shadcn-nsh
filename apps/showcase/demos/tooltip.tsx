@@ -57,7 +57,7 @@ function TipLabel(props: { label: string; shortcut?: string }) {
     <>
       <Text class={tooltipText}>{props.label}</Text>
       <If when={props.shortcut}>
-        <Text class={tooltipNote}>{props.shortcut}</Text>
+        <Text style={tooltipNote()}>{props.shortcut}</Text>
       </If>
     </>
   );
@@ -292,7 +292,7 @@ function Rich() {
                     <Text class={tooltipText} style={{ flex: 1 }}>
                       {name()}
                     </Text>
-                    <Text class={tooltipNote}>2h ago</Text>
+                    <Text style={tooltipNote()}>2h ago</Text>
                   </View>
                 )}
               </Each>

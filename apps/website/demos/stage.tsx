@@ -268,7 +268,7 @@ export const ui = () => ({
   onAccent: colors.onBrand,
   onPrimary: colors.primaryForeground,
   up: colors.up,
-  down: colors.down,
+  down: colors.destructive,
   info: colors.info,
   warn: colors.warn,
   danger: colors.destructive,

@@ -53,7 +53,7 @@ A title and a note in a column, 10 points of padding.
 ```tsx
 <TooltipContent rich>
   <Text class={tooltipText}>Delete forever</Text>
-  <Text class={tooltipNote}>⌘⌫</Text>
+  <Text style={tooltipNote()}>⌘⌫</Text>
 </TooltipContent>
 ```
 
@@ -102,9 +102,9 @@ part, which draws nothing for the hint's host to wrap.
 
 `nsh/base`'s Tooltip is the bubble itself, shown through a host's `tooltip` prop, so the root renders one host view around its trigger. `TooltipContent` mounts [`nsh/base` Tooltip](https://nsh.dev/elements/tooltip); every base prop passes through and `class` goes over `tooltipLook`'s.
 
-| Part                                        | Props                                                                                                                               | Description                                                                            |
-| ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
-| `Tooltip`                                   | `open` / `defaultOpen`, `placement`, `align`, `offset`, `margin`, `delay`, `disabled`, `style`, `onOpenChange`, `onOpen`, `onClose` | The root: it owns whether the hint shows, and renders one host view around its trigger |
-| `TooltipTrigger`                            | The host: `variant` (a string child's `Button`), `disabled`, `style`                                                                | The element the hint hangs on                                                          |
-| `TooltipContent`                            | The bubble: `rich`, and base's `placement`, `align`, `offset`, `margin`, `delay`, `disabled`; alone, it is a host's `tooltip`       | The hint itself, in the look of `tooltipLook`                                          |
-| `tooltipLook`, `tooltipText`, `tooltipNote` | `rich`                                                                                                                              | The look's parts, for a bubble of your own                                             |
+| Part                                          | Props                                                                                                                               | Description                                                                            |
+| --------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `Tooltip`                                     | `open` / `defaultOpen`, `placement`, `align`, `offset`, `margin`, `delay`, `disabled`, `style`, `onOpenChange`, `onOpen`, `onClose` | The root: it owns whether the hint shows, and renders one host view around its trigger |
+| `TooltipTrigger`                              | The host: `variant` (a string child's `Button`), `disabled`, `style`                                                                | The element the hint hangs on                                                          |
+| `TooltipContent`                              | The bubble: `rich`, and base's `placement`, `align`, `offset`, `margin`, `delay`, `disabled`; alone, it is a host's `tooltip`       | The hint itself, in the look of `tooltipLook`                                          |
+| `tooltipLook`, `tooltipText`, `tooltipNote()` | `rich`                                                                                                                              | The look's parts, for a bubble of your own                                             |

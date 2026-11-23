@@ -91,14 +91,14 @@ export function diffViewStyles() {
       return { backgroundColor: alpha(colors.up, 0.28) };
     },
     get wordDeleted() {
-      return { backgroundColor: alpha(colors.down, 0.28) };
+      return { backgroundColor: alpha(colors.destructive, 0.28) };
     },
     // The classic `+` and `−` beside the numbers.
     get indicatorAdded() {
       return { color: colors.up };
     },
     get indicatorDeleted() {
-      return { color: colors.down };
+      return { color: colors.destructive };
     },
   };
 }

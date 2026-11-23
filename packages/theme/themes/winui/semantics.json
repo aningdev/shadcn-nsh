@@ -232,7 +232,6 @@
       "section": {
         "background": "{card}",
         "shadow": "none",
-        "border-color": "{card-edge}",
         "material": null
       },
       "inset": {
@@ -259,6 +258,7 @@
         "border-color": "{border}"
       },
       "pressed": {
+        "foreground": "{muted-foreground}",
         "material": null,
         "background": "{muted}",
         "gradient": "linear-gradient(180deg, {muted} 0%, {muted} 100%)",
@@ -347,6 +347,7 @@
         "border-color": "{border}"
       },
       "on": {
+        "foreground": "{on-brand}",
         "material": null,
         "background": "{primary}",
         "gradient": "linear-gradient(180deg, {primary} 0%, {primary} 100%)",
@@ -401,6 +402,7 @@
       },
       "inverse": {
         "background": "{inverse}",
+        "foreground": "{muted-foreground}",
         "border-color": "{glass-edge}",
         "backdropFilter": "none",
         "material": null
@@ -412,7 +414,11 @@
     },
     "light": {
       "card": {
+        "border-color": "oklch(0.92191 0 0)",
         "shadow": "0 0 2px oklch(0 0 0 / 0.12), 0 4px 8px oklch(0 0 0 / 0.14)"
+      },
+      "section": {
+        "border-color": "oklch(0.92191 0 0)"
       },
       "raised": {
         "border-top-color": "{border}",
@@ -448,7 +454,11 @@
     },
     "dark": {
       "card": {
+        "border-color": "oklch(0.23075 0 0)",
         "shadow": "0 0 2px oklch(0 0 0 / 0.24), 0 4px 8px oklch(0 0 0 / 0.28)"
+      },
+      "section": {
+        "border-color": "oklch(0.23075 0 0)"
       },
       "raised": {
         "border-top-color": "{bevel}",
