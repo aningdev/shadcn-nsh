@@ -10,10 +10,9 @@ and its row leaves this file.
 | Issue                                                     | Gap                                                                             | Scenes that work around it                                       |
 | --------------------------------------------------------- | ------------------------------------------------------------------------------- | ---------------------------------------------------------------- |
 | [#87](https://github.com/aningdev/shadcn-nsh/issues/87)   | On macOS a click on the combobox field focuses it and does not open the list    | Combobox                                                         |
-| [#117](https://github.com/aningdev/shadcn-nsh/issues/117) | `Plot` has no overlay hook (hatch with the plot's geometry)                     | Stocks (washes instead of hatching)                              |
 | [#122](https://github.com/aningdev/shadcn-nsh/issues/122) | `nsh/base`'s Button takes no `accessibilityHint`, so no pressable can carry one | Gestures (accessibility rows draw a `View` with `role="button"`) |
 
-Not gaps: the Button scene plays no sounds (the library has none), its hold-to-confirm `FillButton` stays scene-local on a `View` with `role="button"` (base `Button` has no `onLongPress`), and its tooltips are the library's `Tooltip`; the iOS segmented control is a platform look;
+Not gaps: Stocks' intraday chart washes the area under the price with `Plot`'s own `Area` mark where upstream hatches the rest of the day, since `Plot` draws declared marks and takes no free drawing over its geometry; the Button scene plays no sounds (the library has none), its hold-to-confirm `FillButton` stays scene-local on a `View` with `role="button"` (base `Button` has no `onLongPress`), and its tooltips are the library's `Tooltip`; the iOS segmented control is a platform look;
 `Segmented` / `Button` / `Badge` take children where upstream takes `options` / `label` (shadcn's
 composition). Upstream's funnel animates drawn `Canvas` geometry with `createAnimatedValue`, which
 `nsh/base` doesn't drive; the necks redraw without an entrance. Editor gutters use the `warn` / `up`
