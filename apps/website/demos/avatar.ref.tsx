@@ -1,11 +1,10 @@
+import { font } from "@shadcn-nsh/theme";
 // The reference of `avatar.tsx`: the same scene with the identity look spread on `nsh/base`'s
 // Avatar, the way the official example (`references/nsh/website/demos/el-avatar.tsx`) writes it.
 // It differs from the component page only in the parts it names.
 import type { JSX } from "nsh";
 import { Image, mount, signal, Text, View } from "nsh";
 import { Avatar, AvatarGroup } from "nsh/base";
-
-import { font } from "@shadcn-nsh/theme";
 
 import { avatarIdentity } from "@/packages/ui/avatar";
 import { Button } from "@/packages/ui/button";
