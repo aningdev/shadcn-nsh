@@ -142,11 +142,6 @@ export const clearInset = (): number =>
 export interface ClearButtonOptions {
   /** Over a `Picker`'s end, where its chevron was (a select's, a date picker's); in the row otherwise (a combobox's). */
   over?: boolean;
-  /**
-   * The width of the cell a split trigger ends with (`PickerProps.iconCell`): the button sits before
-   * it, so it lands where it would with no cell, that much further in.
-   */
-  cell?: number;
 }
 
 /**
@@ -165,7 +160,7 @@ export function clearButtonLook(o?: ClearButtonOptions) {
           ? {
               position: "absolute",
               top: (controlSize.line - controlSize.clear) / 2,
-              end: clearInset() + (o?.cell ?? 0),
+              end: clearInset(),
               width: controlSize.clear,
               height: controlSize.clear,
             }

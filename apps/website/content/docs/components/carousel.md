@@ -91,11 +91,8 @@ leaves the caption unreadable in one of them.
 ### Arrows
 
 `CarouselPrevious` and `CarouselNext` draw their own icon and size; `side` and `glass` change the
-chrome. A theme's preset picks the arrow's form: the gallery's floating pill, or — under `winui`,
-after `FlipView` — a narrow chevron sitting at the viewport's edge. `carouselArrowLook().placement`
-says which (`"beside"` or `"over"`); with `"over"`, lay the two arrows in an absolute row over
-the viewport (`top` / `bottom` / `start` / `end` 0, `pointerEvents: "box-none"`), as the demo
-does.
+chrome. Under every theme they are the same floating pill beside the dots; `carouselArrowLook()`
+has no per-theme form to follow.
 
 ```tsx
 <CarouselPrevious accessibilityLabel="Previous slide" />
@@ -195,7 +192,7 @@ const roll = rotation(3, 4000);
 
 ## API
 
-Uses `carouselArrowLook`, `carouselPaginationLook`, `carouselDotItemLook`, and `CarouselDot`. `carouselArrowLook()`'s `placement` says where the arrows go and its `icon` is the glyph they draw. Every prop of [`nsh/base` Carousel](https://nsh.dev/elements/carousel) parts passes through.
+Uses `carouselArrowLook`, `carouselPaginationLook`, `carouselDotItemLook`, and `CarouselDot`. `carouselArrowLook()`'s `icon` is the glyph an arrow draws and its `style` / `hoverStyle` / `activeStyle` / `focusVisibleStyle` are the arrow's chrome. Every prop of [`nsh/base` Carousel](https://nsh.dev/elements/carousel) parts passes through.
 
 | Part                     | Props                                             | Description                                                                                  |
 | ------------------------ | ------------------------------------------------- | -------------------------------------------------------------------------------------------- |

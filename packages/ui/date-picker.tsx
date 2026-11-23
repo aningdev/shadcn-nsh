@@ -1,10 +1,10 @@
 // A date picker: the look (`DateTrigger`, `datePickerLook`) and `DatePicker` that wears it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { controls, terminal, type Controls } from "@shadcn-nsh/theme";
+import { terminal } from "@shadcn-nsh/theme";
 import { Calendar } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
-import { context, platform, signal, split, untracked, View } from "nsh";
+import { context, platform, signal, split, View } from "nsh";
 import {
   DatePicker as BaseDatePicker,
   type CalendarEntry,
@@ -26,40 +26,14 @@ import { Picker, type PickerProps } from "./select";
 const calendarRoom = platform.desktop ? 6 : 10;
 
 /**
- * A theme's date trigger: `winui` splits it (`CalendarDatePicker`), the calendar in a cell of its
- * own at the end; the other themes lead with the calendar, one field.
- */
-const dateTriggerPresets: Record<Controls, { cell: number }> = {
-  base: { cell: 0 },
-  material: { cell: 0 },
-  winui: { cell: 32 },
-};
-
-/**
- * The width of the cell the theme in use puts the date trigger's calendar in: `32` where the
- * trigger splits (`winui`, the drop-down glyph in a column of its own), `0` where the calendar
- * leads the title. The trigger's clear button sits before the cell (`clearButtonLook`'s `cell`).
- *
- * Read once, not followed: the split is structure, and the trigger is an element `nsh/base`
- * decorates (the press handler is its own). A trigger that read the theme would render again on
- * its own when one is selected, and the field would draw a new element without that decoration.
- * A theme reaches an app before it mounts (`apply-palette.ts`), so there is nothing to follow.
- */
-export function dateTriggerCell(): number {
-  return untracked(() => dateTriggerPresets[controls()].cell);
-}
-
-/**
- * A date picker's trigger (`DatePicker`'s `trigger`), shadcn's: `Picker`
+ * A date picker's trigger (`DatePicker`'s `trigger`), shadcn's, under every theme: `Picker`
  * led by a calendar in the muted color, the value in the text color or a
  * muted placeholder, and no chevron (a clear button goes over the end while
- * it has a value, `clearable`). Where the theme splits the trigger, the
- * calendar ends it in a cell of its own instead.
+ * it has a value, `clearable`).
  */
-export function DateTrigger(props: Omit<PickerProps, "icon" | "iconCell" | "chevron" | "lead">) {
-  // The calendar, its cell and the missing chevron are the trigger's own: every other prop is
-  // `Picker`'s.
-  return <Picker {...props} icon={Calendar} iconCell={dateTriggerCell()} chevron={false} />;
+export function DateTrigger(props: Omit<PickerProps, "icon" | "chevron" | "lead">) {
+  // The calendar and the missing chevron are the trigger's own: every other prop is `Picker`'s.
+  return <Picker {...props} icon={Calendar} chevron={false} />;
 }
 
 /** Options of `datePickerLook`. */
@@ -308,9 +282,8 @@ export function DatePickerContent(props: DatePickerContentProps) {
           months: () => props.numberOfMonths ?? 1,
           firstDayOfWeek: () => props.firstDayOfWeek ?? 0,
         });
-        // The clear button of a cleanable trigger: over its end, where the chevron would be, before
-        // the calendar's cell where the theme splits the trigger.
-        const clear = clearButtonLook({ over: true, cell: dateTriggerCell() });
+        // The clear button of a cleanable trigger: over its end, where the chevron would be.
+        const clear = clearButtonLook({ over: true });
         return (
           <BaseDatePicker
             {...rest}

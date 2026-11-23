@@ -5,15 +5,11 @@
 import {
   alpha,
   colors,
-  controls,
-  type Controls,
   dimmed,
   finish,
   focusRing,
   hovered,
   platformMaterial,
-  rounded,
-  shape,
   stateLayer,
   style as themeStyle,
   stroke,
@@ -72,58 +68,28 @@ export const carouselSizes = pointer
 /** The properties a carousel control's states change, eased as a press. */
 const fade: ViewStyle = pressTransition("background-color, border-color, opacity");
 
-/** An arrow's form under a theme's `controls()` preset: the gallery's floating pill, or WinUI
- * FlipView's chevron, a narrow button flush to the viewport's edge. */
-type CarouselArrowPreset =
-  | { shape: "pill" }
-  | { shape: "edge"; width: number; height: number; glyph: number };
-
-const carouselArrowPresets: Record<Controls, CarouselArrowPreset> = {
-  base: { shape: "pill" },
-  material: { shape: "pill" },
-  // `FlipView_themeresources.xaml` (`winui3/release/2.7.0`): `Width="16" Height="38"`, its corners
-  // `ControlCornerRadius`, its fill `FlipViewNextPreviousButtonBackground` (acrylic), its arrow
-  // small (a `FontSize` 8 glyph draws about as large as a 12-point chevron).
-  winui: { shape: "edge", width: 16, height: 38, glyph: 12 },
-};
-
-/** The arrow `controls()` asks for; a terminal draws the pill's glyph. */
-function arrowPreset(): CarouselArrowPreset {
-  return terminal ? { shape: "pill" } : carouselArrowPresets[controls()];
-}
-
-/** The glyph an arrow draws when the app gives it none: its side and tint. */
+/** The glyph an arrow draws when the app gives it none: a chevron in the text color, `carouselSizes.arrowIcon` wide. */
 function arrowIcon(): { size: number; tint: string } {
-  const preset = arrowPreset();
-  return preset.shape === "edge"
-    ? { size: preset.glyph, tint: colors.mutedForeground }
-    : { size: carouselSizes.arrowIcon, tint: colors.foreground };
+  return { size: carouselSizes.arrowIcon, tint: colors.foreground };
 }
 
 /** Options of `carouselArrowLook`. */
 export interface CarouselArrowOptions {
   /** Over a photo: glass (`finish.glass`), so the photo shows through. */
   glass?: boolean;
-  /** Its side, default `carouselSizes.arrow`; an edge chevron's height, default 38. */
+  /** Its side, default `carouselSizes.arrow`. */
   side?: number;
 }
 
 /**
- * A carousel's arrow (spread it on `CarouselPrevious` / `CarouselNext`): the gallery's pill, a
- * circle raised on a card or glass over a photo, or — under WinUI's controls — FlipView's chevron,
- * a narrow button on the acrylic `finish.glass` flush to the viewport's edge, whose `placement`
- * tells the app where the arrows go. `icon` is the glyph an arrow draws (its side and tint). Under
- * the pointer it takes the hover fill; pressed it sinks to 92% (an edge chevron takes
- * `finish.pressed` instead, no sink); keyboard focus: `focusRing(2)`, an edge chevron's at its own
- * edge (`focusRing()`); with nothing to move to it fades to 30%. A terminal sizes it to its glyph.
+ * A carousel's arrow (spread it on `CarouselPrevious` / `CarouselNext`), the same under every
+ * theme: the gallery's pill, a circle raised on a card or glass over a photo, a chevron of
+ * `carouselSizes.arrowIcon` in the text color. `icon` is the glyph an arrow draws (its side and
+ * tint). Under the pointer it takes the hover fill; pressed it sinks to 92%; keyboard focus:
+ * `focusRing(2)`; with nothing to move to it fades to 30%. A terminal sizes it to its glyph.
  */
 export function carouselArrowLook(o?: CarouselArrowOptions) {
   return {
-    /** Where the app puts the arrows: beside the dots, or over the viewport's edges (absolute,
-     * one at each edge and centred vertically), WinUI FlipView's way. */
-    get placement(): "beside" | "over" {
-      return arrowPreset().shape === "edge" ? "over" : "beside";
-    },
     /** The glyph an arrow draws when the app gives it none: its side and tint. */
     get icon(): { size: number; tint: string } {
       return arrowIcon();
@@ -131,20 +97,6 @@ export function carouselArrowLook(o?: CarouselArrowOptions) {
     get style(): ViewStyle {
       if (terminal)
         return { alignItems: "center", justifyContent: "center", flexShrink: 0, ...fade };
-      const preset = arrowPreset();
-      if (preset.shape === "edge") {
-        return {
-          width: preset.width,
-          height: o?.side ?? preset.height,
-          ...rounded(shape.control),
-          alignItems: "center",
-          justifyContent: "center",
-          ...finish.glass,
-          // WinUI's button draws no edge of its own (`FlipViewButtonBorderThemeThickness` 0).
-          borderWidth: 0,
-          ...fade,
-        };
-      }
       const side = o?.side ?? carouselSizes.arrow;
       return {
         width: side,
@@ -158,7 +110,6 @@ export function carouselArrowLook(o?: CarouselArrowOptions) {
       };
     },
     get hoverStyle(): ViewStyle {
-      if (arrowPreset().shape === "edge") return { ...finish.hover };
       if (themeStyle().state.overlay.hover > 0) {
         return hovered(
           "foreground",
@@ -168,7 +119,6 @@ export function carouselArrowLook(o?: CarouselArrowOptions) {
       return { ...finish.hover };
     },
     get activeStyle(): ViewStyle {
-      if (arrowPreset().shape === "edge") return { ...finish.pressed };
       if (themeStyle().state.overlay.pressed > 0) {
         return {
           ...stateLayer(
@@ -182,7 +132,7 @@ export function carouselArrowLook(o?: CarouselArrowOptions) {
       return pressSink(0.92).activeStyle;
     },
     get focusVisibleStyle(): ViewStyle {
-      return arrowPreset().shape === "edge" ? focusRing() : focusRing(2);
+      return focusRing(2);
     },
     get disabledStyle(): ViewStyle {
       return { opacity: dimmed.disabled };

@@ -7,7 +7,7 @@ import { mount, signal, Text, View } from "nsh";
 import type { DatePickerValue, DateRangePreset, HourCycle } from "nsh/base";
 import { DatePicker } from "nsh/base";
 
-import { DateTrigger, datePickerLook, dateTriggerCell } from "@/packages/ui/date-picker";
+import { DateTrigger, datePickerLook } from "@/packages/ui/date-picker";
 import { clearButtonLook } from "@/packages/ui/lib/listbox";
 import { sectionSurface } from "@/packages/ui/lib/surface";
 
@@ -148,7 +148,7 @@ function App() {
                 />
               }
               {...datePickerLook()}
-              {...clearButtonLook({ over: true, cell: dateTriggerCell() })}
+              {...clearButtonLook({ over: true })}
             />
           </Field>
           <Field
