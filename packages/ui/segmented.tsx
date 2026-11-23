@@ -2,6 +2,7 @@
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import {
   colors,
+  controls,
   finish,
   focusRing,
   hovered,
@@ -10,7 +11,10 @@ import {
   shape,
   stroke,
   dimmed,
+  tints,
+  type Controls,
 } from "@shadcn-nsh/theme";
+import { Check } from "lucide";
 import type { AndroidProps, JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { computed, context, platform, signal, split, Text, View } from "nsh";
 import {
@@ -20,6 +24,7 @@ import {
   type TabsProps as BaseTabsProps,
 } from "nsh/base";
 
+import { Icon } from "./lib/icons";
 import { pressHostProps, pressRipple } from "./lib/press";
 import { type Live, read } from "./lib/utils";
 import type { TabLook, TabState } from "./tabs";
@@ -45,6 +50,25 @@ const pointer = platform.desktop;
 /** A segmented control's size: `default` 24 / 30 points with a pointer, 32 / 36 on a touch screen. */
 export type SegmentedSize = "sm" | "default";
 
+/** What the segments sit in: a sunk track with a traveling thumb, or joined outlined cells. */
+type SegmentedStructure = "track" | "cells";
+
+/** The segmented control each theme's `controls` preset draws. */
+const segmentedPresets: Record<Controls, { structure: SegmentedStructure }> = {
+  base: { structure: "track" },
+  // Material 3's segmented button: 40dp connected cells, the chosen one on SecondaryContainer with
+  // a leading check (SegmentedButtonTokens.kt; the ends take the theme's full corner).
+  material: { structure: "cells" },
+  // WinUI's SelectorBar (borderless items, a centered bottom accent) is out of scope.
+  winui: { structure: "track" },
+};
+
+/** M3's cell height and label: 40dp, label large (`SegmentedButtonTokens.kt`). */
+const CELL_HEIGHT = 40;
+const CELL_PADDING = 12;
+const CELL_GAP = 8;
+const CHECK_SIZE = 18;
+
 /** Options of `segmentedLook`. */
 export interface SegmentedLookOptions {
   /** Default `default`: 30 points high with a pointer (`sm`: 24). */
@@ -54,15 +78,16 @@ export interface SegmentedLookOptions {
 }
 
 /**
- * A segmented control's look: a sunk track (`style`, on `Tabs` or a
- * `RadioGroup`) as wide as its labels with a pointer (30 points high,
- * 12-point labels, the thumb's corners a step inside the track's), spanning the
- * row on a touch screen or with `fill`; the selected segment's thumb,
- * standing off the track in both appearances (`finish.raised`: a lifted
- * surface that carries the label's ink; `knob` is the switch's white disc), as `Tabs`' traveling `indicatorStyle` or as
- * a `Radio`'s `checkedStyle` (`thumbStyle`); each segment's props
- * (`segment(state)`: hover, the focus ring, dimmed while disabled) and its
- * label's (`label(selected)`, `count`).
+ * A segmented control's look. On a track (`style`, on `Tabs` or a `RadioGroup`): sunk, as wide as
+ * its labels with a pointer (30 points high, 12-point labels, the thumb's corners a step inside the
+ * track's), spanning the row on a touch screen or with `fill`; the selected segment's thumb,
+ * standing off the track in both appearances (`finish.raised`: a lifted surface that carries the
+ * label's ink; `knob` is the switch's white disc), as `Tabs`' traveling `indicatorStyle` or as a
+ * `Radio`'s `checkedStyle` (`thumbStyle`). A theme whose `controls` are `material` draws Material
+ * 3's connected cells instead: 40 points high, one outline around the row, a divider between the
+ * cells, and the chosen cell on `selectedStyle` behind a leading `check` (its label's
+ * `label(selected)`, `count`). Either way, each segment's props (`segment(state)`: hover, the focus
+ * ring, dimmed while disabled) and `gap` are the look's.
  */
 export function segmentedLook(o?: SegmentedLookOptions) {
   const small = o?.size === "sm";
@@ -71,6 +96,7 @@ export function segmentedLook(o?: SegmentedLookOptions) {
   const inset = 2;
   // Small is as tall as a small button with a pointer (24), so the two sit level in a row.
   const height = pointer ? (small ? 24 : 30) : small ? 32 : 36;
+  const cells = segmentedPresets[controls()].structure === "cells";
   // The track takes the control radius; the thumb sits `inset` points inside it.
   const thumb = (): ViewStyle => ({
     ...rounded(shape.control, inset),
@@ -79,6 +105,21 @@ export function segmentedLook(o?: SegmentedLookOptions) {
   });
   return {
     get style(): ViewStyle {
+      if (cells) {
+        return {
+          height: CELL_HEIGHT,
+          flexDirection: "row",
+          alignSelf: spread ? "stretch" : "flex-start",
+          // The ends are the theme's full corner (M3's `shape.corner.full`); the dividers between
+          // the cells are straight, so only the list draws a rounded edge.
+          ...rounded(shape.button),
+          borderWidth: stroke.control,
+          borderColor: colors.border,
+          // The first cell's divider sits under the list's edge and the chosen cell's tint under
+          // the outline: clipped, both keep the ends the theme's shape.
+          overflow: "hidden",
+        };
+      }
       return {
         height,
         flexDirection: "row",
@@ -95,13 +136,57 @@ export function segmentedLook(o?: SegmentedLookOptions) {
     },
     /** The thumb as `Tabs`' indicator, which the core springs to the selected tab. */
     get indicatorStyle(): ViewStyle {
-      return { top: inset, bottom: inset, ...thumb() };
+      // Connected cells have no thumb: their chosen cell is the indicator.
+      return cells ? {} : { top: inset, bottom: inset, ...thumb() };
     },
-    /** The thumb on the selected segment itself (a `Radio`'s `checkedStyle`). */
+    /**
+     * The selected segment drawn on itself (a `Radio`'s `checkedStyle`): the track's thumb, or the
+     * chosen cell's fill where the theme draws cells.
+     */
     get thumbStyle(): ViewStyle {
-      return thumb();
+      return cells ? { backgroundColor: tints.brand } : thumb();
+    },
+    /**
+     * The chosen cell's fill (`Tab`'s `selectedStyle`), `undefined` on the track, whose thumb is
+     * the indicator. SecondaryContainer in Material 3.
+     */
+    get selectedStyle(): ViewStyle | undefined {
+      return cells ? { backgroundColor: tints.brand } : undefined;
     },
     segment(state: TabState): TabLook {
+      if (cells) {
+        return {
+          style: {
+            ...(spread ? { flex: 1 } : {}),
+            paddingHorizontal: CELL_PADDING,
+            // One divider per cell, shared with the cell before it: the first sits under the
+            // list's own edge, and the last cell ends on the list's trailing edge.
+            borderStartWidth: stroke.control,
+            borderColor: colors.border,
+            marginStart: -stroke.control,
+            flexDirection: "row",
+            alignItems: "center",
+            justifyContent: "center",
+            gap: CELL_GAP,
+          },
+          get hoverStyle() {
+            // M3 washes the chosen cell too: its state layer sits over the container, not instead
+            // of it (SegmentedButtonTokens.kt's selected state layers).
+            return read(state.disabled) ? undefined : hovered();
+          },
+          get focusVisibleStyle() {
+            // Inside the cell, as the split button's halves ring inside their clipping frame: a
+            // ring outside would be cut by the list's outline.
+            return focusRing(-2);
+          },
+          get disabledStyle(): ViewStyle {
+            return { opacity: dimmed.disabled };
+          },
+          get android(): AndroidProps | undefined {
+            return pressRipple("foreground", state.disabled);
+          },
+        };
+      }
       return {
         // A clear edge the thumb's takes over, so a checked segment keeps its size.
         style: {
@@ -129,6 +214,17 @@ export function segmentedLook(o?: SegmentedLookOptions) {
       };
     },
     label(selected: Live<boolean | undefined>): TextStyle {
+      if (cells) {
+        return {
+          numberOfLines: 1,
+          fontSize: font.size("label"),
+          fontWeight: font.weight("label"),
+          letterSpacing: font.letterSpacing("label"),
+          // M3's unselected ink is OnSurface; the chosen cell's OnSecondaryContainer has no role of
+          // its own, so both read the theme's foreground.
+          color: colors.foreground,
+        };
+      }
       return {
         numberOfLines: 1,
         // No type role has this size: a segment's 12, 13 or 14 follow the control's size.
@@ -138,7 +234,19 @@ export function segmentedLook(o?: SegmentedLookOptions) {
       };
     },
     get count(): TextStyle {
-      return { fontSize: font.size("caption"), color: colors.faint, fontVariant: ["tabular-nums"] };
+      return {
+        fontSize: font.size("caption"),
+        color: cells ? colors.mutedForeground : colors.faint,
+        fontVariant: ["tabular-nums"],
+      };
+    },
+    /** The chosen cell's leading check (M3's selected icon); the track has none. */
+    get check(): JSX.Element | null {
+      return cells ? <Icon icon={Check} size={CHECK_SIZE} tint={colors.foreground} /> : null;
+    },
+    /** The gap between a segment's parts: the check, its label, its count. */
+    get gap(): number {
+      return cells ? CELL_GAP : 5;
     },
   };
 }
@@ -154,7 +262,7 @@ export type SegmentedProps = {
   style?: StyleProp<ViewStyle>;
 };
 
-/** The sunk track and traveling thumb (`nsh/base`'s `Tabs`). */
+/** The sink the segments sit in (`nsh/base`'s `Tabs`): the track and its thumb, or connected cells. */
 export type SegmentedListProps = Omit<BaseTabsProps, "children"> & {
   size?: SegmentedSize;
   fill?: boolean;
@@ -247,6 +355,7 @@ export function SegmentedItem(props: SegmentedItemProps) {
     "activeStyle",
     "focusVisibleStyle",
     "disabledStyle",
+    "selectedStyle",
     "onPress",
     "accessibilityLabel",
   ]);
@@ -273,13 +382,17 @@ export function SegmentedItem(props: SegmentedItemProps) {
       activeStyle={[segment().activeStyle ?? null, props.activeStyle ?? null]}
       focusVisibleStyle={[segment().focusVisibleStyle, props.focusVisibleStyle ?? null]}
       disabledStyle={[segment().disabledStyle, props.disabledStyle ?? null]}
+      selectedStyle={[look().selectedStyle ?? null, props.selectedStyle ?? null]}
     >
       {(() => {
         // Read once, here where the segment is drawn (`marker.tsx` reads in the same shape): a
-        // string is the label (with its count), anything else as it is.
+        // string is the label (with its count and, where the theme draws cells, a leading check),
+        // anything else as it is.
         const kids = props.children;
+        const check = look().check;
         return typeof kids === "string" ? (
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: look().gap }}>
+            <If when={selected() && check !== null}>{check}</If>
             <Text style={look().label(selected())}>{kids}</Text>
             <If when={props.count !== undefined}>
               <Text style={look().count}>{props.count}</Text>

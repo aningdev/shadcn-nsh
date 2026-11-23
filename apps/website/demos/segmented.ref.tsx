@@ -47,6 +47,7 @@ function App() {
                 (option) => (
                   <Tab
                     selected={view() === option.value}
+                    selectedStyle={main().selectedStyle}
                     accessibilityLabel={option.value}
                     onPress={() => {
                       view.set(option.value);
@@ -54,7 +55,10 @@ function App() {
                     }}
                     {...main().segment({ selected: () => view() === option.value })}
                   >
-                    <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+                    <View style={{ flexDirection: "row", alignItems: "center", gap: main().gap }}>
+                      <If when={view() === option.value && main().check !== null}>
+                        {main().check}
+                      </If>
                       <Text style={main().label(view() === option.value)}>{option.value}</Text>
                       <If when={option.count !== undefined}>
                         <Text style={main().count}>{option.count}</Text>
@@ -71,6 +75,7 @@ function App() {
               {["Left", "Center", "Right"].map((label) => (
                 <Tab
                   selected={align() === label}
+                  selectedStyle={compact().selectedStyle}
                   accessibilityLabel={label}
                   onPress={() => {
                     align.set(label);
@@ -78,7 +83,8 @@ function App() {
                   }}
                   {...compact().segment({ selected: () => align() === label })}
                 >
-                  <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+                  <View style={{ flexDirection: "row", alignItems: "center", gap: compact().gap }}>
+                    <If when={align() === label && compact().check !== null}>{compact().check}</If>
                     <Text style={compact().label(align() === label)}>{label}</Text>
                   </View>
                 </Tab>
@@ -93,17 +99,22 @@ function App() {
                 disabled
                 {...compact().segment({ selected: () => false, disabled: () => true })}
               >
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: compact().gap }}>
                   <Text style={compact().label(false)}>Day</Text>
                 </View>
               </Tab>
-              <Tab selected {...compact().segment({ selected: () => true })}>
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+              <Tab
+                selected
+                selectedStyle={compact().selectedStyle}
+                {...compact().segment({ selected: () => true })}
+              >
+                <View style={{ flexDirection: "row", alignItems: "center", gap: compact().gap }}>
+                  <If when={compact().check !== null}>{compact().check}</If>
                   <Text style={compact().label(true)}>Week</Text>
                 </View>
               </Tab>
               <Tab selected={false} {...compact().segment({ selected: () => false })}>
-                <View style={{ flexDirection: "row", alignItems: "center", gap: 5 }}>
+                <View style={{ flexDirection: "row", alignItems: "center", gap: compact().gap }}>
                   <Text style={compact().label(false)}>Month</Text>
                 </View>
               </Tab>

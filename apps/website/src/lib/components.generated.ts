@@ -293,7 +293,8 @@ export const components: ComponentDoc[] = [
     kind: "official",
     shadcn: null,
     nshElement: "tabs",
-    description: "A sunk track whose raised thumb springs to the selected segment.",
+    description:
+      "A sunk track whose raised thumb springs to the selected segment, or a theme's connected cells.",
   },
   {
     slug: "select",

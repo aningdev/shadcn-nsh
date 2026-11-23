@@ -807,7 +807,7 @@
       "name": "segmented",
       "type": "registry:ui",
       "title": "Segmented",
-      "description": "A sunk track whose raised thumb springs to the selected segment.",
+      "description": "A sunk track whose raised thumb springs to the selected segment, or connected cells in a theme that draws them.",
       "files": [
         {
           "path": "packages/ui/segmented.tsx",

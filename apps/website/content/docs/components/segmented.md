@@ -1,6 +1,6 @@
 ---
 title: Segmented
-description: A sunk track whose raised thumb springs to the selected segment.
+description: A sunk track whose raised thumb springs to the selected segment, or a theme's connected cells.
 component: true
 demo: segmented
 ---
@@ -40,6 +40,8 @@ Segmented
 ### Fill / small
 
 `size` is the scale: `default` (30 points high with a pointer) or `sm` (24).
+
+Under a theme whose controls are Material 3 (`controls: "material"`, as the `material` theme sets), the list draws Material 3's connected cells instead: 40 points high, one outline around the row, a divider between the cells, and the chosen cell filled with the theme's secondary-container tint behind a leading check. `size` and `fill` still size the cells; there is no smaller cell.
 
 ```tsx
 <SegmentedList size="default" fill>

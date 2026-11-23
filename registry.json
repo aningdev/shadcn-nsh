@@ -894,15 +894,16 @@
       "name": "segmented",
       "type": "registry:ui",
       "title": "Segmented",
-      "description": "A sunk track whose raised thumb springs to the selected segment.",
-      "registryDependencies": ["press", "tabs", "theme", "utils"],
+      "description": "A sunk track whose raised thumb springs to the selected segment, or connected cells in a theme that draws them.",
+      "registryDependencies": ["icons", "press", "tabs", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/segmented.tsx",
           "type": "registry:ui",
           "target": "components/ui/segmented.tsx"
         }
-      ]
+      ],
+      "dependencies": ["lucide@^1.66.0"]
     },
     {
       "name": "accordion",
