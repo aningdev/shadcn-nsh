@@ -89,7 +89,8 @@ const LIGHT: Source = {
   // A knob is the brightest pane there is.
   knob: "oklch(1 0 0)",
   "knob-shade": "oklch(0.3 0.06 265 / 30%)",
-  brand: "oklch(0.68 0.13 165)",
+  // Dark enough for a link on the page (WCAG AA 4.5); the wash below keeps the lighter teal.
+  brand: "oklch(0.49 0.12 165)",
   "brand-foreground": "oklch(0.99 0 0)",
   "brand-muted": "oklch(0.68 0.13 165 / 12%)",
   // Hue means finished or stopped; motion means running.

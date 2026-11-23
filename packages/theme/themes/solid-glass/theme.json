@@ -61,7 +61,7 @@
       "hover": "oklch(0.3 0.02 265 / 0.1)",
       "ring-halo": "color-mix(in srgb, var(--ring) 45%, transparent)",
       "faint": "oklch(0.7 0 0)",
-      "brand": "oklch(0.68 0.13 165)",
+      "brand": "oklch(0.49 0.12 165)",
       "brand-edge": "oklch(0.2 0 0 / 0.685)",
       "track": "oklch(0.3 0.02 265 / 0.15)",
       "slider-track": "var(--track)",

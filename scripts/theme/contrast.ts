@@ -5,7 +5,8 @@
  *   bun scripts/theme/contrast.ts [--themes <id,...>]
  *
  * Text needs 4.5:1 and large text (3:1), per WCAG 2.2 SC 1.4.3, which exempts text in an inactive
- * control: `finish.disabled` is checked for its surface's shape elsewhere, not here. The pairs are
+ * control, so `disabled-foreground` is not checked; `platform` lists the pairs a native theme keeps
+ * below AA because its platform does, each with its source. The pairs are
  * semantic (`foreground` on `background`, `primary-foreground` on `primary`, the menu's ink on the
  * menu's fill), not literal: a component that paints a role pair is what this checks, and a value
  * that fails is a theme decision (`docs/specs/theme-roles.md`), not a component's.
@@ -40,11 +41,11 @@ const roles: [string, string][] = [
   ["muted-foreground", "card"],
   ["muted-foreground", "raised"],
   ["inverse-muted", "inverse"],
-  ["on-brand", "brand"],
+  ["on-brand", "brand-fill"],
+  ["brand", "background"],
   ["on-brand-tint", "brand-tint"],
   ["on-media", "media"],
   ["on-accent-pressed", "accent-pressed"],
-  ...Array.from({ length: 5 }, (_, i): [string, string] => ["chart-foreground", `chart-${i + 1}`]),
 ];
 
 /** The finishes whose surface carries text, and the ink a component writes on it. */
@@ -66,6 +67,63 @@ const finishes: [role: string, ink: string, required: number, why: string][] = [
 ];
 
 const stem = (name: string) => name.slice(0, -"-foreground".length);
+
+/** Foreground roles found by name that are not text a reader must read on their namesake. */
+const skipped: Record<string, string> = {
+  // SC 1.4.3 exempts text in an inactive control.
+  "disabled-foreground": "an inactive control's text",
+  // The chart colours are data, chosen apart from each other; a tile's label is a plot's call.
+  "chart-foreground": "a label over data colours",
+};
+
+/**
+ * Pairs a theme keeps below AA because its platform ships them that way. Each is a known value
+ * with its source; an exception that no longer fails is an error, so the list stays true.
+ */
+const platform: { theme: string; fg: string; bg: string; source: string }[] = [
+  ...["background", "muted", "card", "raised", "finish.chip"].map((bg) => ({
+    theme: "apple",
+    fg: "muted-foreground",
+    bg,
+    source: "Apple secondaryLabel (#3C3C43 at 60%)",
+  })),
+  {
+    theme: "apple",
+    fg: "inverse-muted",
+    bg: "inverse",
+    source: "Apple secondaryLabel on the inverse surface",
+  },
+  ...(
+    [
+      ["on-brand", "brand-fill"],
+      ["primary-foreground", "primary"],
+      ["sidebar-primary-foreground", "sidebar-primary"],
+      ["on-accent-pressed", "accent-pressed"],
+      ["primary-foreground", "finish.accent"],
+      ["on-accent-pressed", "finish.accentPressed"],
+    ] as const
+  ).map(([fg, bg]) => ({ theme: "apple", fg, bg, source: "white on Apple systemBlue" })),
+  { theme: "apple", fg: "brand", bg: "background", source: "Apple systemBlue links" },
+  ...["muted", "raised", "finish.chip"].map((bg) => ({
+    theme: "shadcn",
+    fg: "muted-foreground",
+    bg,
+    source: "shadcn neutral muted-foreground on muted",
+  })),
+  ...["accent-pressed", "finish.accentPressed"].map((bg) => ({
+    theme: "winui",
+    fg: "on-accent-pressed",
+    bg,
+    source: "WinUI TextOnAccentFillColorSecondary on AccentFillColorTertiary, while pressed",
+  })),
+];
+
+/** The platform source that excuses a failing pair, if any. */
+export function exception(result: Pick<Result, "theme" | "fg" | "bg">): string | undefined {
+  return platform.find(
+    ({ theme, fg, bg }) => theme === result.theme && fg === result.fg && bg === result.bg,
+  )?.source;
+}
 
 /** Resolve a theme value to the text it draws, following aliases and relative colours. */
 function resolve(value: string, vars: Record<string, string>, depth = 0): string {
@@ -167,7 +225,7 @@ export function themePairs(
   for (const [fg, bg] of roles)
     add({ fg, bg, required: 4.5, why: "a text role on its surface" }, fg, bg);
   for (const [fg, bg] of Object.entries(vars)
-    .filter(([name]) => name.endsWith("-foreground") && name !== "foreground")
+    .filter(([name]) => name.endsWith("-foreground") && name !== "foreground" && !skipped[name])
     .map(([name]) => [name, stem(name)] as [string, string])) {
     if (tokenKind(bg, vars[bg] ?? "") === "color") {
       add({ fg, bg, required: 4.5, why: "a text role on its surface" }, fg, bg);
@@ -237,7 +295,12 @@ if (import.meta.main) {
   }
   const results = readResults(themes);
   let failed = 0;
+  let excused = 0;
   for (const result of results.filter(({ pass }) => !pass)) {
+    if (exception(result)) {
+      excused += 1;
+      continue;
+    }
     failed += 1;
     console.error(
       `theme:contrast: ${result.theme} ${result.mode}: ${result.fg} on ${result.bg} is ${result.ratio.toFixed(2)}, needs ${result.required} (${result.why})`,
@@ -253,9 +316,28 @@ if (import.meta.main) {
   for (const [id, { pass, total }] of byTheme) {
     console.log(`theme:contrast: ${id}: ${pass} of ${total} pairs pass`);
   }
-  if (failed > 0) {
-    console.error(`theme:contrast: ${failed} of ${results.length} pairs below AA`);
+  const stale = platform.filter(
+    (entry) =>
+      (!themes || themes.includes(entry.theme)) &&
+      !results.some(
+        (result) =>
+          !result.pass &&
+          result.theme === entry.theme &&
+          result.fg === entry.fg &&
+          result.bg === entry.bg,
+      ),
+  );
+  for (const entry of stale)
+    console.error(
+      `theme:contrast: ${entry.theme}: ${entry.fg} on ${entry.bg} passes now; drop its exception (${entry.source})`,
+    );
+  if (failed > 0 || stale.length > 0) {
+    console.error(
+      `theme:contrast: ${failed} of ${results.length} pairs below AA, ${stale.length} stale exceptions`,
+    );
     process.exit(1);
   }
-  console.log(`theme:contrast: every pair passes (${results.length})`);
+  console.log(
+    `theme:contrast: every pair passes (${results.length}; ${excused} kept below AA by their platform)`,
+  );
 }

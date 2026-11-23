@@ -56,7 +56,7 @@ colors:
     hover: "#292e381a"
     ring-halo: "#16161639"
     faint: "#9e9e9e"
-    brand: "#2eb184"
+    brand: "#00754f"
     brand-edge: "#161616af"
     track: "#292e3826"
     slider-track: "#292e3826"
@@ -407,7 +407,7 @@ Solid Glass (`deeplethe/solid-glass`, MIT): panes of smoky translucent glass wit
 - **`primary-foreground`** (light `#fafafa`, dark `#121212`): Text and icon ink on primary brand action fills.
 - **`sidebar-primary`** (light `#161616`, dark `#ebebeb`): Primary action highlight color in the sidebar.
 - **`sidebar-primary-foreground`** (light `#fafafa`, dark `#121212`): Text and icon ink on sidebar-primary highlights.
-- **`brand`** (light `#2eb184`, dark `#54d2a4`): Accent ink for text, icons, and active rules.
+- **`brand`** (light `#00754f`, dark `#54d2a4`): Accent ink for text, icons, and active rules.
 - **`brand-edge`** (light `#161616af`, dark `#f4f4f4aa`): Primary button hairline mixed from --primary and --primary-edge.
 - **`brand-tint`** (light `#2eb1841f`, dark `#54d2a426`): Static translucent teal brand wash (--brand-muted).
 - **`on-brand-tint`** (light `#0d0d0d`, dark `#fafafa`): Text and icon ink on brand-tint surfaces.

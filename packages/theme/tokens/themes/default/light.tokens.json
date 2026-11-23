@@ -522,8 +522,8 @@
     "brand": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.55192, 0.15368, 133.676],
-        "hex": "#4a840a"
+        "components": [0.5325, 0.15368, 133.676],
+        "hex": "#447e00"
       },
       "$description": "Accent ink for text, icons, and active rules.",
       "$extensions": {

@@ -1,6 +1,6 @@
 import { describe, expect, test } from "bun:test";
 
-import { contrastRatio, luminance, themePairs } from "./contrast";
+import { contrastRatio, exception, luminance, readResults, themePairs } from "./contrast";
 import { parseColor } from "./oklch";
 
 const ratio = (a: string, b: string) => contrastRatio(parseColor(a), parseColor(b));
@@ -87,5 +87,30 @@ describe("themePairs", () => {
     // Black at half alpha over white is #808080: 5.32:1 under black text.
     expect(pair?.ratio).toBeCloseTo(5.32, 1);
     expect(pair?.pass).toBe(true);
+  });
+});
+
+describe("the shipped themes", () => {
+  const results = readResults();
+
+  test("every pair passes or is a platform's own value", () => {
+    const failing = results.filter((result) => !result.pass && !exception(result));
+    expect(failing.map(({ theme, mode, fg, bg }) => `${theme} ${mode} ${fg}/${bg}`)).toEqual([]);
+  });
+
+  test("on-brand is read on brand-fill, and disabled and chart inks are not checked", () => {
+    const pairs = new Set(results.map(({ fg, bg }) => `${fg}/${bg}`));
+    expect(pairs.has("on-brand/brand-fill")).toBe(true);
+    expect(pairs.has("on-brand/brand")).toBe(false);
+    expect([...pairs].some((pair) => /^(disabled|chart)-foreground\//.test(pair))).toBe(false);
+  });
+
+  test("an exception names its source", () => {
+    expect(exception({ theme: "apple", fg: "muted-foreground", bg: "background" })).toContain(
+      "secondaryLabel",
+    );
+    expect(exception({ theme: "default", fg: "muted-foreground", bg: "background" })).toBe(
+      undefined,
+    );
   });
 });

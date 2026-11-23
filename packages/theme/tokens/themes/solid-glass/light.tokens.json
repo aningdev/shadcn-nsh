@@ -533,8 +533,8 @@
     "brand": {
       "$value": {
         "colorSpace": "oklch",
-        "components": [0.68, 0.13, 165],
-        "hex": "#2eb184"
+        "components": [0.49, 0.12, 165],
+        "hex": "#00754f"
       },
       "$extensions": {
         "dev.aning.shadcn-nsh": {

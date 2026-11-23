@@ -56,7 +56,7 @@ colors:
     hover: "#1013190d"
     ring-halo: "#a3a8b224"
     faint: "#9a9da3"
-    brand: "#4a840a"
+    brand: "#447e00"
     brand-edge: "#9cc43a"
     track: "#e9eaed"
     slider-track: "#e9eaed"
@@ -405,7 +405,7 @@ NSH Gallery UI default theme: graphite dark and paper light surfaces with citrus
 - **`primary-foreground`** (`#13160c`): Text and icon ink on primary brand action fills.
 - **`sidebar-primary`** (light `#c6ef6a`, dark `#c4ec6a`): Primary action highlight color in the sidebar.
 - **`sidebar-primary-foreground`** (`#13160c`): Text and icon ink on sidebar-primary highlights.
-- **`brand`** (light `#4a840a`, dark `#c8f26d`): Accent ink for text, icons, and active rules.
+- **`brand`** (light `#447e00`, dark `#c8f26d`): Accent ink for text, icons, and active rules.
 - **`brand-edge`** (light `#9cc43a`, dark `#283c008c`): Hairline border on primary accent-filled controls.
 - **`brand-tint`** (light `#8cc01d29`, dark `#c8f26d24`): Translucent brand-accent wash behind selected rows and tinted bubbles.
 - **`on-brand-tint`** (light `#101319`, dark `#eeeff1`): Text and icon ink on brand-tint surfaces.
