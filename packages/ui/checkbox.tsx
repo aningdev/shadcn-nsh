@@ -4,8 +4,7 @@
 import {
   alpha,
   colors,
-  controls,
-  type Controls,
+  control,
   finish,
   focusRing,
   follow,
@@ -15,7 +14,6 @@ import {
   terminal,
   TERMINAL_ROW,
   tier,
-  type Tiered,
   tints,
   shape,
   stroke,
@@ -27,8 +25,10 @@ import { reduceMotion, split, View } from "nsh";
 import { Checkbox as BaseCheckbox, type CheckboxProps as BaseCheckboxProps } from "nsh/base";
 
 import { AsText } from "./lib/as-text";
+import { joinClass } from "./lib/class-names";
 import { Icon } from "./lib/icons";
 import { type Live, read } from "./lib/live-value";
+import { choiceLook, type ChoiceLook, type Fill, HIT_TARGET } from "./lib/look";
 import { pressRipple, pressSink } from "./lib/press";
 import { controlSize } from "./lib/surface";
 
@@ -53,39 +53,46 @@ const dims = (scale = 1) => ({
   control: Math.round(controlSize.control * scale),
   height: terminal ? TERMINAL_ROW : Math.round(controlSize.control * scale),
   check: Math.round(controlSize.check * scale),
-  dot: Math.round(controlSize.dot * scale),
 });
 
-/** Surface treatment for an unchecked checkbox box or radio ring well. */
-export type ChoiceWell = "well" | "inset" | "outline";
-
-interface CheckboxPreset {
-  border: number;
-  corner: Tiered<number>;
-  target: number;
-  well: ChoiceWell;
-  hasTarget: boolean;
-}
-
-const checkboxPresets: Record<Controls, CheckboxPreset> = {
-  base: { border: 1, corner: { pointer: 5, touch: 7 }, target: 0, well: "well", hasTarget: false },
-  // M3 Checkbox 18dp outlined box (2dp corner, 2dp outline, 40dp state-layer target; _md-comp-checkbox.scss v34.0.21:70,92 / CheckboxTokens.kt).
-  material: {
-    border: 2,
-    corner: { pointer: 2, touch: 2 },
-    target: 40,
-    well: "outline",
-    hasTarget: true,
-  },
-  // WinUI 3 CheckBox resting ControlAltFillColorSecondary well with 4px corner and 1px ControlStrongStrokeColorDefault border (CheckBox_themeresources.xaml in winui3/release/2.7.0).
-  winui: {
-    border: 1,
-    corner: { pointer: 4, touch: 4 },
-    target: 0,
-    well: "inset",
-    hasTarget: false,
-  },
+/**
+ * A fill the recipe names, as the style keys it draws: a finish's whole layer (its fill, its shade,
+ * its edge), a palette role, or a brand tint.
+ */
+export const fillOf = (fill: Fill): ViewStyle => {
+  switch (fill.kind) {
+    case "finish":
+      return { ...finish[fill.role] };
+    case "colour":
+      return { backgroundColor: colors[fill.role] };
+    case "tint":
+      return { backgroundColor: tints.brand };
+  }
 };
+
+/** The colour a fill paints, where a part takes one by name (an edge). */
+const colourOf = (fill: Fill): string => {
+  switch (fill.kind) {
+    case "finish":
+      return finish[fill.role].borderColor ?? colors.border;
+    case "colour":
+      return colors[fill.role];
+    case "tint":
+      return tints.brand;
+  }
+};
+
+/**
+ * The edge's width a choice recipe states: its own number, or the control stroke where it names the
+ * scale. Zero where the form draws no edge.
+ */
+export const choiceEdge = (look: ChoiceLook): number => {
+  const width = look.edge?.width ?? 0;
+  return typeof width === "number" ? width : stroke.control;
+};
+
+/** The form's corner in points, per tier. */
+export const choiceCorner = (look: ChoiceLook): number => look.corner[tier];
 
 /** The fill of a box or ring that is off: spread it after the box's
  * `borderWidth` (a quick setting's icon lights up from it too, under a
@@ -93,23 +100,29 @@ const checkboxPresets: Record<Controls, CheckboxPreset> = {
  * (shadcn's `dark:bg-input/30`) inside an edge a step brighter than a
  * field's, so an empty box still stands out, dimmed too: `disabled`, its
  * edge twice as strong, so the row's half opacity leaves it as strong as an
- * enabled box's (the mark and the label fade, the box stays drawn). */
-export const choiceWell = (o?: { disabled?: boolean; well?: ChoiceWell }): ViewStyle => {
-  const well = o?.well ?? "well";
-  if (well === "inset") {
+ * enabled box's (the mark and the label fade, the box stays drawn).
+ *
+ * Which face, edge and shade a form paints is its recipe's (`choiceLook`): WinUI's flat track
+ * face, M3's empty middle with its outline, or the well's own — the library's, whose ground changes
+ * with the appearance because no role names "the field under the inset shade". */
+export const choiceWell = (o?: { disabled?: boolean; look?: ChoiceLook }): ViewStyle => {
+  const look = o?.look ?? choiceLook("well");
+  const shade = look.face === null ? "none" : (fillOf(look.face).boxShadow ?? "none");
+  const edge = look.edge === null ? colors.border : colourOf(look.edge.fill);
+  if (look.form === "inset") {
     return {
-      backgroundColor: colors.track,
+      ...(look.face === null ? {} : fillOf(look.face)),
       backgroundImage: "none",
-      borderColor: colors.input,
-      boxShadow: "none",
+      borderColor: edge,
+      boxShadow: shade,
     };
   }
-  if (well === "outline") {
+  if (look.form === "outline") {
     return {
       backgroundColor: "transparent",
       backgroundImage: "none",
-      borderColor: colors.mutedForeground,
-      boxShadow: "none",
+      borderColor: edge,
+      boxShadow: shade,
     };
   }
   return isDark()
@@ -117,13 +130,13 @@ export const choiceWell = (o?: { disabled?: boolean; well?: ChoiceWell }): ViewS
         backgroundColor: alpha(colors.input, 0.3),
         backgroundImage: "none",
         borderColor: alpha(colors.foreground, o?.disabled ? 0.4 : 0.2),
-        boxShadow: finish.inset.boxShadow,
+        boxShadow: shade,
       }
     : {
         backgroundColor: colors.field,
         backgroundImage: "none",
         borderColor: colors.input,
-        boxShadow: finish.inset.boxShadow,
+        boxShadow: shade,
       };
 };
 
@@ -180,37 +193,42 @@ export interface CheckboxLook {
 /**
  * A checkbox's box, as the props of `Checkbox`'s indicator (spread them:
  * `<Checkbox class="group" {...checkboxLook()} indicator={<CheckboxMark mark={..} />}>`):
- * sunk like a field (`choiceWell`), 16 points with a pointer,
- * 22 on a touch screen, its corners 5 / 7 (`round`: a circle), sinking to
- * 90% while its row (the `group`) is pressed. `CheckboxMark` fills it.
+ * the theme's choice recipe (`choiceLook(control().choice)`), its box the icon scale's `md`
+ * (16 points with a pointer, 20 on a touch screen), its corner the recipe's (`round`: a circle),
+ * sinking to 90% while its row (the `group`) is pressed. `CheckboxMark` fills it.
  */
 export function checkboxLook(o?: ChoiceOptions): CheckboxLook {
   return {
     indicatorClass: choiceSink,
     get indicatorStyle(): ViewStyle {
-      const { control, height } = dims(o?.scale);
-      const g = checkboxPresets[controls()];
-      const corner = Math.round(g.corner[tier] * (o?.scale ?? 1));
+      const { control: box, height } = dims(o?.scale);
+      const look = choiceLook(control().choice);
+      const corner = Math.round(choiceCorner(look) * (o?.scale ?? 1));
       return {
-        width: control,
+        width: box,
         height,
-        borderRadius: o?.round ? control / 2 : corner,
+        borderRadius: o?.round ? box / 2 : corner,
         alignItems: "center",
         justifyContent: "center",
-        borderWidth: g.border,
-        ...choiceWell({ well: g.well, disabled: !!read(o?.disabled) }),
+        borderWidth: choiceEdge(look),
+        ...choiceWell({ look, disabled: !!read(o?.disabled) }),
       };
     },
   };
 }
 
 /**
- * The fill of a box or ring that is on (the main button's citrus finish:
- * its darker olive edge and lit top), over the empty one and covering its
- * edge: it fades in and out as the value changes. Gradients do not
- * interpolate, so the finish fades whole rather than its colors.
+ * The fill of a box or ring that is on, over the empty one and covering its edge: it fades in and out
+ * as the value changes. Gradients do not interpolate, so the finish fades whole rather than its
+ * colors.
  */
-export function ChoiceLight(props: { on: AnimatedValue; radius: number; border?: number }) {
+export function ChoiceLight(props: {
+  on: AnimatedValue;
+  radius: number;
+  border?: number;
+  /** The face the recipe turns over to (`ChoiceLook.checked`); the accent's where it states none. */
+  fill?: Fill;
+}) {
   const b = props.border ?? stroke.control;
   return (
     <View
@@ -223,7 +241,7 @@ export function ChoiceLight(props: { on: AnimatedValue; radius: number; border?:
         bottom: -b,
         borderRadius: props.radius,
         borderWidth: stroke.control,
-        ...finish.accent,
+        ...fillOf(props.fill ?? { kind: "finish", role: "accent" }),
         opacity: props.on,
       }}
     />
@@ -242,7 +260,7 @@ const MARK_WEIGHT = 3.84;
  * reduced motion.
  */
 export function CheckboxMark(props: { mark: CheckboxMarkKind } & ChoiceOptions) {
-  const { control, height, check: checkSize } = dims(props.scale);
+  const { control: box, height, check: checkSize } = dims(props.scale);
   // Each part stays mounted while it fades out (unmounting it on the value
   // showed only the fade in).
   const on = follow(() => (props.mark ? 1 : 0));
@@ -261,17 +279,18 @@ export function CheckboxMark(props: { mark: CheckboxMarkKind } & ChoiceOptions) 
       <Icon icon={icon} size={checkSize} tint={colors.primaryForeground} weight={MARK_WEIGHT} />
     </View>
   );
-  const cb = checkboxPresets[controls()];
-  const innerW = control - 2 * cb.border;
-  const innerH = height - 2 * cb.border;
+  const cb = choiceLook(control().choice);
+  const border = choiceEdge(cb);
+  const innerW = box - 2 * border;
+  const innerH = height - 2 * border;
   // One view as large as the box inside its border holds the layers: the
   // slot's content sits in a holder view sized to it, so layers placed only
   // absolutely made it 0 × 0 and the fill a speck at the box's middle.
   return (
     <View style={{ width: innerW, height: innerH }}>
-      {cb.hasTarget ? (
+      {cb.target !== null ? (
         <ChoiceTarget
-          target={Math.round(cb.target * (props.scale ?? 1))}
+          target={Math.round(HIT_TARGET * (props.scale ?? 1))}
           innerW={innerW}
           innerH={innerH}
           checked={!!props.mark}
@@ -279,8 +298,9 @@ export function CheckboxMark(props: { mark: CheckboxMarkKind } & ChoiceOptions) 
       ) : null}
       <ChoiceLight
         on={on}
-        radius={props.round ? control / 2 : Math.round(cb.corner[tier] * (props.scale ?? 1))}
-        border={cb.border}
+        radius={props.round ? box / 2 : Math.round(choiceCorner(cb) * (props.scale ?? 1))}
+        border={border}
+        fill={cb.checked ?? undefined}
       />
       {glyph(check, Check)}
       {glyph(dash, Minus)}
@@ -404,12 +424,8 @@ export function Checkbox(props: CheckboxProps) {
   return (
     <BaseCheckbox
       {...rest}
-      class={props.class ? `group ${props.class}` : "group"}
-      indicatorClass={
-        props.indicatorClass
-          ? `${look.indicatorClass} ${props.indicatorClass}`
-          : look.indicatorClass
-      }
+      class={joinClass("group", props.class)}
+      indicatorClass={joinClass(look.indicatorClass, props.indicatorClass)}
       indicatorStyle={[look.indicatorStyle, props.indicatorStyle ?? null]}
       indicator={
         props.indicator ?? (

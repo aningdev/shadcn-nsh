@@ -97,18 +97,20 @@ describe("choiceLook", () => {
     expect(choices.map((value) => choiceLook(value).form)).toEqual(choices);
   });
 
-  test("every choice sizes its box from the icon scale and its dot from the control's", () => {
+  test("every choice states the box the recipe gives it and takes its dot from the control's", () => {
     for (const value of choices) {
       const look = choiceLook(value);
-      expect(look.size).toBe("icon");
       expect(look.dot).toBe("size.control.dot");
     }
+    expect(choiceLook("well").size).toEqual({ pointer: 16, touch: 22 });
+    expect(choiceLook("outline").size).toEqual({ pointer: 20, touch: 20 });
+    expect(choiceLook("inset").size).toEqual({ pointer: 20, touch: 20 });
   });
 
-  test("a well is a sunk face that turns primary, inside one control stroke", () => {
+  test("a well is a sunk face that turns the accent, inside one control stroke", () => {
     expect(choiceLook("well")).toMatchObject({
       face: { kind: "finish", role: "inset" },
-      checked: { kind: "colour", role: "primary" },
+      checked: { kind: "finish", role: "accent" },
       edge: { width: "stroke.control", fill: { kind: "colour", role: "input" } },
       corner: { pointer: 5, touch: 7 },
       target: null,
@@ -133,6 +135,15 @@ describe("choiceLook", () => {
       corner: { pointer: 4, touch: 4 },
       target: null,
     });
+  });
+
+  test("only WinUI's inset grows the dot under a pointer and shrinks it while pressed", () => {
+    expect(choiceLook("inset").dotHover).toBe(14);
+    expect(choiceLook("inset").dotPressed).toBe(10);
+    for (const value of ["well", "outline"] as const) {
+      expect(choiceLook(value).dotHover).toBeNull();
+      expect(choiceLook(value).dotPressed).toBeNull();
+    }
   });
 
   test("only the outlined form asks for a hit target past its box", () => {

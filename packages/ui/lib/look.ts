@@ -185,19 +185,36 @@ export interface ChoiceLook {
   readonly form: Choice;
   /** The face at rest, where the form paints one. */
   readonly face: Fill | null;
-  /** The face once chosen, where the form turns it over instead of drawing a mark. */
+  /**
+   * The face once chosen: the accent layer the filled forms turn over to. A form that leaves its face
+   * alone draws its own mark in it instead, and states null.
+   */
   readonly checked: Fill | null;
   /** The edge, where the form draws one. */
   readonly edge: Edge | null;
-  /** The form's corner: a number per tier, or a scale where the theme's shape decides it. */
-  readonly corner: Scale | Tiered<number>;
+  /** The form's corner: a number per tier (each choice form states its own, off the shape scale). */
+  readonly corner: Tiered<number>;
   /** The chosen mark's inner disc, where the form has one: a radio's dot. */
   readonly dot: Scale | null;
-  /** The box's size: the icon scale, the step the control picks. */
-  readonly size: Scale;
+  /** The disc's diameter with a pointer on it, where the form grows the mark; null where it does not. */
+  readonly dotHover: number | null;
+  /** The disc's diameter while it is pressed, where the form grows the mark; null where it does not. */
+  readonly dotPressed: number | null;
+  /**
+   * The radio's box diameter, in points: the form's own numbers (§12 M8 — the well 16 with a pointer,
+   * 22 on a touch screen; M3's and WinUI's 20). A checkbox's box is the icon scale's `md` instead
+   * (§12 M6 states its corner and border, not its size), so a checkbox does not read this.
+   */
+  readonly size: Tiered<number>;
   /** How far the hit area grows past the box, where the form asks for a state layer. */
   readonly target: Scale | null;
 }
+
+/**
+ * The state layer's diameter until the theme carries `size.target` (§12 M11, P5): M3's 40 dp, the
+ * geometry `choiceLook("outline").target` names. It goes when the scale arrives.
+ */
+export const HIT_TARGET = 40;
 
 /**
  * The shape a `control()` value gives a choice. `well` is a sunk well (the library's own 5 / 7-point
@@ -211,12 +228,15 @@ export function choiceLook(value: Choice): ChoiceLook {
       return {
         form: value,
         face: { kind: "finish", role: "inset" },
-        checked: { kind: "colour", role: "primary" },
+        checked: { kind: "finish", role: "accent" },
         edge: { width: "stroke.control", fill: { kind: "colour", role: "input" } },
         // 5 points with a pointer, 7 on a touch screen: the well's own corner, off the shape scale.
         corner: { pointer: 5, touch: 7 },
         dot: "size.control.dot",
-        size: "icon",
+        dotHover: null,
+        dotPressed: null,
+        // 16 points with a pointer, 22 on a touch screen: the well's own box (§12 M8).
+        size: { pointer: 16, touch: 22 },
         target: null,
       };
     case "outline":
@@ -230,7 +250,10 @@ export function choiceLook(value: Choice): ChoiceLook {
         // 2 dp: M3's checkbox corner.
         corner: { pointer: 2, touch: 2 },
         dot: "size.control.dot",
-        size: "icon",
+        dotHover: null,
+        dotPressed: null,
+        // 20 dp: M3's radio and checkbox, both tiers.
+        size: { pointer: 20, touch: 20 },
         target: "size.target",
       };
     case "inset":
@@ -244,7 +267,11 @@ export function choiceLook(value: Choice): ChoiceLook {
         // 4 px: WinUI's control corner.
         corner: { pointer: 4, touch: 4 },
         dot: "size.control.dot",
-        size: "icon",
+        // 14 and 10 px: the radio's dot grows under a pointer and shrinks while pressed.
+        dotHover: 14,
+        dotPressed: 10,
+        // 20 px: WinUI's radio, both tiers.
+        size: { pointer: 20, touch: 20 },
         target: null,
       };
   }

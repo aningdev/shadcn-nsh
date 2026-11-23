@@ -4,16 +4,12 @@
 import {
   alpha,
   colors,
-  controls,
-  type Controls,
   cornerCurve,
   rounded,
   terminal,
   font,
   shape,
   stroke,
-  tier,
-  type Tiered,
 } from "@shadcn-nsh/theme";
 import { ChevronRight } from "lucide";
 import type { ViewStyle } from "nsh";
@@ -54,46 +50,13 @@ const WEEKDAY_INITIALS = ["S", "M", "T", "W", "T", "F", "S"];
 /** The weekdays over the days elsewhere, shadcn's two letters. */
 const WEEKDAYS = ["Su", "Mo", "Tu", "We", "Th", "Fr", "Sa"];
 
-interface CalendarPreset {
-  cell: number;
-  outlineWidth: number;
-  cellShape: "control" | "pill";
-  today: "quiet" | "outline" | "fill";
-  selected: "fill" | "outline";
-}
-
-// M3 DatePicker modal: 40x40dp circular day cells, 1dp outlined today, filled selected (DatePickerModalTokens.kt:43-76, _md-comp-date-picker-modal.scss:65-102).
-const m3CalendarPreset: CalendarPreset = {
-  cell: 40,
-  outlineWidth: 1,
-  cellShape: "pill",
-  today: "outline",
-  selected: "fill",
-};
-
-// WinUI 3 CalendarView: 40x40px circular cells, filled today, 2px accent-outlined selected (CalendarView_themeresources.xaml:62,244-245,767).
-const winuiCalendarPreset: CalendarPreset = {
-  cell: 40,
-  outlineWidth: 2,
-  cellShape: "pill",
-  today: "fill",
-  selected: "outline",
-};
-
-const calendarPresets: Record<Controls, Tiered<CalendarPreset>> = {
-  base: {
-    pointer: { cell: 32, outlineWidth: 1, cellShape: "control", today: "quiet", selected: "fill" },
-    touch: { cell: 42, outlineWidth: 1, cellShape: "control", today: "quiet", selected: "fill" },
-  },
-  material: { pointer: m3CalendarPreset, touch: m3CalendarPreset },
-  winui: { pointer: winuiCalendarPreset, touch: winuiCalendarPreset },
-};
-
 /**
- * A day's cell size (`calendarPresets[controls()][tier].cell`): 32 with a pointer by default (42 on touch),
- * 40 in Material and WinUI.
+ * A day's cell side: 32 points with a pointer, 42 on a touch screen. A calendar does not read the
+ * theme's `control()`: under Material and WinUI it keeps `nsh/base`'s look — its days the same size
+ * as everywhere else, square-cornered in `shape.control`, today quiet (docs/specs/theme-contract-v2.md
+ * §11.4, §11.7).
  */
-const cell = () => calendarPresets[controls()][tier].cell;
+const cell = () => (pointer ? 32 : 42);
 
 /** The gap between the months of a calendar of two (shadcn's `gap-4`). */
 const monthGap = 16;
@@ -104,21 +67,26 @@ const weekGap = 4;
 /** The corners of header arrows and month/year grid buttons (`shape.button`). */
 const cellRadius = () => shape.button;
 
-/** Day cell corner radius: `"pill"` gives a circle (`cell / 2`), `"control"` keeps `shape.control`. */
-const dayRadius = () => {
-  const g = calendarPresets[controls()][tier];
-  return g.cellShape === "pill" ? g.cell / 2 : shape.control;
-};
+/** Day cell corner radius: a day is a control (`shape.control`). */
+const dayRadius = () => shape.control;
 
 /**
  * The quiet fill of today, the hover, a range's band and the arrows' and
  * presets' hover (shadcn's `accent`): the text color at 8%, which stands
  * off the popup in both appearances as shadcn's does (the theme's `accent`
- * is all but the popup's own color in dark); `pressedFill` a step further.
+ * is all but the popup's own color in dark). The states are written whole:
+ * Tailwind reads a class's name, not a template's.
  */
 const quietFill = "bg-foreground/8";
 
-const pressedFill = "bg-foreground/14";
+/** The quiet fill under the pointer, where the pointer is over a group. */
+const quietHover = "group-hover:bg-foreground/8";
+
+/** The quiet fill under the pointer, where the item is the one hovered. */
+const quietHoverEnabled = "enabled:hover:bg-foreground/8";
+
+/** A step further than the quiet fill, while pressed. */
+const pressedActive = "enabled:active:bg-foreground/14";
 
 /** The column of an ISO date in weeks that start on `firstDay` (`0` Sunday). */
 function columnOf(date: string, firstDay: number) {
@@ -162,7 +130,7 @@ function Weekday(props: { day: number }) {
 function Arrow(props: { at: "start" | "end" }) {
   return (
     <View
-      class={`transition-colors duration-100 motion-reduce:transition-none group-hover:${quietFill} group-disabled:bg-transparent group-disabled:opacity-50`}
+      class={`transition-colors duration-100 motion-reduce:transition-none ${quietHover} group-disabled:bg-transparent group-disabled:opacity-50`}
       // At its end of the header, which shares out what the items leave (`calendarLook.itemClass`'s `grow`).
       style={{
         width: cell(),
@@ -196,7 +164,7 @@ function MonthOrYear(props: { kind: "month" | "year"; value: number }) {
       }}
     >
       <View
-        class={`transition-colors duration-100 motion-reduce:transition-none group-hover:${quietFill} group-aria-selected:bg-primary group-disabled:opacity-50`}
+        class={`transition-colors duration-100 motion-reduce:transition-none ${quietHover} group-aria-selected:bg-primary group-disabled:opacity-50`}
         style={{
           height: cell(),
           alignItems: "center",
@@ -251,8 +219,7 @@ function Toggle(props: CalendarItemProps & { kind: "monthToggle" | "yearToggle" 
  * today, `primary` for the selected date and a range's ends (`aria-selected`,
  * which ranks over the hover; a range's middle days keep the band). A disabled
  * day takes no hover fill, unless it is today. The keyboard's day takes the
- * brand tint and edge; on the selected day only the
- * edge, over `primary`.
+ * brand tint and a brand edge.
  */
 function Day(props: { item: CalendarEntry; firstDayOfWeek?: number }) {
   const own = () => (props.item.outside ? "text-muted-foreground" : "text-foreground");
@@ -262,45 +229,15 @@ function Day(props: { item: CalendarEntry; firstDayOfWeek?: number }) {
     props.item.date ? columnOf(props.item.date, props.firstDayOfWeek ?? 0) : -1,
   );
   const boxClass = () => {
-    const g = calendarPresets[controls()][tier];
-    const todayBase =
-      g.today === "fill"
-        ? "bg-primary border-transparent"
-        : g.today === "outline"
-          ? "border-primary bg-transparent"
-          : `${quietFill} border-transparent`;
+    // Today is quiet (the library's look, and `nsh/base`'s under every theme); the selected day is `primary`.
     const restBase = props.item.today
-      ? todayBase
+      ? `${quietFill} border-transparent`
       : "border-transparent group-disabled:bg-transparent";
-    const hoverCls = props.item.today && g.today === "fill" ? "" : `group-hover:${quietFill}`;
-    const selectedCls =
-      g.selected === "outline"
-        ? props.item.today && g.today === "fill"
-          ? "group-aria-selected:bg-primary group-aria-selected:group-focus-visible:bg-primary"
-          : "group-aria-selected:bg-transparent group-aria-selected:border-primary group-aria-selected:group-focus-visible:bg-brand-tint group-data-range-middle:border-transparent"
-        : "group-aria-selected:bg-primary group-aria-selected:border-transparent group-aria-selected:group-focus-visible:bg-primary";
-    const focusCls =
-      props.item.today && g.today === "outline"
-        ? "group-focus-visible:bg-brand-tint"
-        : "group-focus-visible:border-brand/30 group-focus-visible:bg-brand-tint";
-    return `${restBase} transition-colors duration-100 motion-reduce:transition-none ${hoverCls} ${selectedCls} ${focusCls} group-data-range-middle:group-focus-visible:bg-brand-tint group-data-range-middle:bg-transparent`;
+    const hoverCls = props.item.today ? "" : quietHover;
+    return `${restBase} transition-colors duration-100 motion-reduce:transition-none ${hoverCls} group-aria-selected:bg-primary group-aria-selected:border-transparent group-aria-selected:group-focus-visible:bg-primary group-focus-visible:border-brand/30 group-focus-visible:bg-brand-tint group-data-range-middle:group-focus-visible:bg-brand-tint group-data-range-middle:bg-transparent`;
   };
-  const textClass = () => {
-    const g = calendarPresets[controls()][tier];
-    const baseColor =
-      props.item.today && g.today === "fill"
-        ? "text-primary-foreground"
-        : props.item.today && g.today === "outline"
-          ? "text-primary"
-          : own();
-    const selectedColor =
-      g.selected === "outline"
-        ? props.item.today && g.today === "fill"
-          ? "group-aria-selected:text-primary-foreground"
-          : "group-aria-selected:text-brand"
-        : "group-aria-selected:text-primary-foreground";
-    return `${baseColor} ${selectedColor} font-normal group-data-range-middle:${own()} group-disabled:text-muted-foreground group-disabled:opacity-50`;
-  };
+  const textClass = () =>
+    `${own()} font-normal group-aria-selected:text-primary-foreground group-disabled:text-muted-foreground group-disabled:opacity-50`;
   return (
     <View style={{ minWidth: 0, paddingTop: weekGap }}>
       <View style={{ height: cell(), alignItems: "center", justifyContent: "center" }}>
@@ -323,7 +260,7 @@ function Day(props: { item: CalendarEntry; firstDayOfWeek?: number }) {
             width: cell(),
             maxWidth: "100%",
             height: cell(),
-            borderWidth: calendarPresets[controls()][tier].outlineWidth,
+            borderWidth: stroke.control,
             ...rounded(dayRadius()),
             alignItems: "center",
             justifyContent: "center",
@@ -491,7 +428,7 @@ export const calendarLook = {
   },
   presetClass: terminal
     ? "enabled:hover:bg-accent active:opacity-70"
-    : `transition-colors duration-100 motion-reduce:transition-none enabled:hover:${quietFill} enabled:active:${pressedFill}`,
+    : `transition-colors duration-100 motion-reduce:transition-none ${quietHoverEnabled} ${pressedActive}`,
   header: { marginBottom: terminal ? 4 : pointer ? 12 : 8 },
   calendar: terminal ? { padding: 4 } : pointer ? { padding: 6 } : {},
   get time(): ViewStyle {

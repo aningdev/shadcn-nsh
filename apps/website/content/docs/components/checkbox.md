@@ -82,9 +82,9 @@ A string child is the row's label and its name for screen readers, so the box an
 
 Every prop of [`nsh/base` Checkbox](https://nsh.dev/elements/checkbox) passes through. `indicatorClass` and `indicatorStyle` go over the look's. The row is the `group` the box sinks with while pressed.
 
-| Part           | Props                                                                                                      | Description                                                               |
-| -------------- | ---------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| `Checkbox`     | `size`: `ChoiceSize` (default `"default"`), `round` (default `false`), `children`: `string \| JSX.Element` | The sunk box that fills in citrus; the row is the group it sinks with.    |
-| `CheckboxMark` | `mark`: `"check" \| "dash" \| null`, `scale`, `round`                                                      | The check or the dash that springs in, drawn into the look's `indicator`. |
+| Part           | Props                                                                                                      | Description                                                                                         |
+| -------------- | ---------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `Checkbox`     | `size`: `ChoiceSize` (default `"default"`), `round` (default `false`), `children`: `string \| JSX.Element` | The box of the theme's choice recipe, filling as it is checked; the row is the group it sinks with. |
+| `CheckboxMark` | `mark`: `"check" \| "dash" \| null`, `scale`, `round`                                                      | The check or the dash that springs in, drawn into the look's `indicator`.                           |
 
 `ChoiceSize` is `"sm" | "default" | "lg"`: 0.8, 1 or 1.25 times the page's control size, shared with `Radio` (`choiceScales` is the table).

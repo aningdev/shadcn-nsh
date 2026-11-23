@@ -43,7 +43,7 @@ Without `value` the calendar keeps its own, starting at `defaultValue`.
 
 Defaults from `calendarLook` / `CalendarItem`. Every prop of [`nsh/base` Calendar](https://nsh.dev/elements/calendar) passes through.
 
-| Part           | Props                                                  | Description                                                               |
-| -------------- | ------------------------------------------------------ | ------------------------------------------------------------------------- |
-| `Calendar`     | `value`, `defaultValue`, `onChange`, `range`           | A month of days to pick a date or a range, on the shared calendar look.   |
-| `CalendarItem` | `item` (a `CalendarEntry`), `months`, `firstDayOfWeek` | One day of the grid, the look's pill; what `renderItem` draws by default. |
+| Part           | Props                                                  | Description                                                                            |
+| -------------- | ------------------------------------------------------ | -------------------------------------------------------------------------------------- |
+| `Calendar`     | `value`, `defaultValue`, `onChange`, `range`           | A month of days to pick a date or a range, on the shared calendar look.                |
+| `CalendarItem` | `item` (a `CalendarEntry`), `months`, `firstDayOfWeek` | One day of the grid (a square in `shape.control`); what `renderItem` draws by default. |

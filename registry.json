@@ -585,7 +585,16 @@
       "type": "registry:ui",
       "title": "Checkbox",
       "description": "A sunk box that fills in citrus, with a check or a dash springing in.",
-      "registryDependencies": ["as-text", "icons", "live-value", "press", "surface", "theme"],
+      "registryDependencies": [
+        "as-text",
+        "class-names",
+        "icons",
+        "live-value",
+        "look",
+        "press",
+        "surface",
+        "theme"
+      ],
       "files": [
         {
           "path": "packages/ui/checkbox.tsx",
@@ -600,7 +609,15 @@
       "type": "registry:ui",
       "title": "Radio Group",
       "description": "A sunk ring that fills in citrus, with a dot growing in — alone or as a choice tile.",
-      "registryDependencies": ["as-text", "checkbox", "motion", "theme"],
+      "registryDependencies": [
+        "as-text",
+        "checkbox",
+        "class-names",
+        "look",
+        "motion",
+        "surface",
+        "theme"
+      ],
       "files": [
         {
           "path": "packages/ui/radio-group.tsx",

@@ -115,6 +115,9 @@ describe("checkRecipeNumbers", () => {
       "docs/specs/theme-roles.md: `inset`'s recipe row states no number; packages/ui/lib/look.ts cannot be held to it",
       "docs/specs/theme-roles.md: packages/ui/lib/look.ts draws 1 for `inset`; the table does not state it",
       "docs/specs/theme-roles.md: packages/ui/lib/look.ts draws 4 for `inset`; the table does not state it",
+      "docs/specs/theme-roles.md: packages/ui/lib/look.ts draws 14 for `inset`; the table does not state it",
+      "docs/specs/theme-roles.md: packages/ui/lib/look.ts draws 10 for `inset`; the table does not state it",
+      "docs/specs/theme-roles.md: packages/ui/lib/look.ts draws 20 for `inset`; the table does not state it",
     ]);
   });
 });

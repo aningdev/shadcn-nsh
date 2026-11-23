@@ -1,17 +1,7 @@
 // A radio group: the look (`RadioRing`) and the `Radio` / `RadioGroup` that wear it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import {
-  colors,
-  controls,
-  type Controls,
-  follow,
-  motion,
-  terminal,
-  TERMINAL_ROW,
-  tier,
-  type Tiered,
-} from "@shadcn-nsh/theme";
+import { colors, control, follow, motion, terminal, TERMINAL_ROW, tier } from "@shadcn-nsh/theme";
 import type { JSX, ViewStyle } from "nsh";
 import { reduceMotion, split, View } from "nsh";
 import {
@@ -23,120 +13,56 @@ import {
 
 import {
   ChoiceLight,
+  choiceEdge,
   choiceScales,
   choiceSink,
   ChoiceTarget,
   choiceTileLook,
   choiceWell,
   type ChoiceSize,
-  type ChoiceWell,
 } from "./checkbox";
 import { AsText } from "./lib/as-text";
+import { joinClass } from "./lib/class-names";
+import { choiceLook, HIT_TARGET } from "./lib/look";
 import { cssMotion } from "./lib/motion";
-
-interface RadioPreset {
-  size: number;
-  dot: number;
-  dotHover: number;
-  dotPressed: number;
-  border: number;
-  target: number;
-  well: ChoiceWell;
-  checkedStyle: "fill" | "ring";
-  hasTarget: boolean;
-  dotFeedback: "none" | "scale";
-}
-
-// M3 RadioButton 20dp ring (2dp stroke), 10dp inner dot, 40dp state-layer target (_md-comp-radio-button.scss:26,28 v34.0.21 / RadioButtonTokens.kt).
-const m3RadioPreset: RadioPreset = {
-  size: 20,
-  dot: 10,
-  dotHover: 10,
-  dotPressed: 10,
-  border: 2,
-  target: 40,
-  well: "outline",
-  checkedStyle: "ring",
-  hasTarget: true,
-  dotFeedback: "none",
-};
-
-// WinUI 3 RadioButton 20px outer circle with 12px inner dot scaling 14px hover / 10px pressed (RadioButton_themeresources.xaml:68-80,147,179-180 in winui3/release/2.7.0).
-const winuiRadioPreset: RadioPreset = {
-  size: 20,
-  dot: 12,
-  dotHover: 14,
-  dotPressed: 10,
-  border: 1,
-  target: 0,
-  well: "inset",
-  checkedStyle: "fill",
-  hasTarget: false,
-  dotFeedback: "scale",
-};
-
-const radioPresets: Record<Controls, Tiered<RadioPreset>> = {
-  base: {
-    pointer: {
-      size: 16,
-      dot: 6,
-      dotHover: 6,
-      dotPressed: 6,
-      border: 1,
-      target: 0,
-      well: "well",
-      checkedStyle: "fill",
-      hasTarget: false,
-      dotFeedback: "none",
-    },
-    touch: {
-      size: 22,
-      dot: 8,
-      dotHover: 8,
-      dotPressed: 8,
-      border: 1,
-      target: 0,
-      well: "well",
-      checkedStyle: "fill",
-      hasTarget: false,
-      dotFeedback: "none",
-    },
-  },
-  material: { pointer: m3RadioPreset, touch: m3RadioPreset },
-  winui: { pointer: winuiRadioPreset, touch: winuiRadioPreset },
-};
+import { controlSize } from "./lib/surface";
 
 /**
  * A radio's ring, among the `Radio`'s children (give the radio `class="group"`, so the ring
- * responds to row hover/press): outer diameter, dot diameter, stroke, interior well, checked style
- * (`"fill"` vs `"ring"`), state-layer target, and the dot's hover/press growth (a scale of its
- * box, its own view) come from `radioPresets[controls()][tier]`.
+ * responds to row hover/press): outer diameter, dot diameter, stroke, interior well, whether the
+ * face turns over or the ring stays a ring, state-layer target, and the dot's hover/press growth (a
+ * scale of its box, its own view) all come from the theme's choice recipe
+ * (`choiceLook(control().choice)`), read here so the ring follows `selectTheme`.
  */
 export function RadioRing(props: { on: boolean; scale?: number; disabled?: boolean }) {
   const scale = props.scale ?? 1;
-  const g = () => radioPresets[controls()][tier];
-  const size = () => Math.round(g().size * scale);
+  const look = () => choiceLook(control().choice);
+  const size = () => Math.round(look().size[tier] * scale);
   const height = () => (terminal ? TERMINAL_ROW : size());
-  const dot = () => Math.round(g().dot * scale);
-  const dotHover = () => Math.round(g().dotHover * scale);
-  const dotPressed = () => Math.round(g().dotPressed * scale);
-  const border = () => g().border;
-  const wellStyle = () => choiceWell({ well: g().well, disabled: props.disabled });
-  const ringBorderColor = () =>
-    g().checkedStyle === "ring" && props.on ? colors.brand : wellStyle().borderColor;
+  /** The dot: the control's dot scale, or none where the form states none. */
+  const dot = () => (look().dot === null ? 0 : Math.round(controlSize.dot * scale));
+  const dotHover = () => Math.round((look().dotHover ?? 0) * scale);
+  const dotPressed = () => Math.round((look().dotPressed ?? 0) * scale);
+  const border = () => choiceEdge(look());
+  /** A ring form draws its mark as the ring itself, so the ring keeps its edge only while off. */
+  const ringOnly = () => look().checked === null;
+  const wellStyle = () => choiceWell({ look: look(), disabled: props.disabled });
+  const ringBorderColor = () => (ringOnly() && props.on ? colors.brand : wellStyle().borderColor);
   const on = follow(() => (props.on ? 1 : 0));
-  /** The dot's growth under hover and press, as a scale of its box: the ring around it is the
-   * pointer's, so the classes ride the group's states, paced by the theme's `motion.fast`. */
+  /** The dot's growth under hover and press, as a scale of its box, where the recipe states it: the
+   * ring around it is the pointer's, so the classes ride the group's states, paced by the theme's
+   * `motion.fast`. */
+  const grows = () => look().dotHover !== null && look().dotPressed !== null;
   const dotScale = (): string | undefined => {
-    if (g().dotFeedback !== "scale") return undefined;
-    const of = (size: number) => Number((size / dot()).toFixed(4));
+    if (!grows()) return undefined;
+    const of = (diameter: number) => Number((diameter / dot()).toFixed(4));
     return `group-hover:scale-[${of(dotHover())}] group-active:scale-[${of(dotPressed())}]`;
   };
   const dotStyle = (): ViewStyle => ({
     width: dot(),
     height: dot(),
     borderRadius: dot() / 2,
-    backgroundColor: g().checkedStyle === "ring" ? colors.brand : colors.primaryForeground,
+    backgroundColor: ringOnly() ? colors.brand : colors.primaryForeground,
     opacity: on,
     transform: [{ scale: on.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] }) }],
   });
@@ -154,18 +80,23 @@ export function RadioRing(props: { on: boolean; scale?: number; disabled?: boole
         borderColor: ringBorderColor(),
       }}
     >
-      {g().hasTarget ? (
+      {look().target !== null ? (
         <ChoiceTarget
-          target={Math.round(g().target * scale)}
+          target={Math.round(HIT_TARGET * scale)}
           innerW={size() - 2 * border()}
           innerH={height() - 2 * border()}
           checked={props.on}
         />
       ) : null}
-      {g().checkedStyle === "fill" ? (
-        <ChoiceLight on={on} radius={size() / 2} border={border()} />
-      ) : null}
-      {g().dotFeedback === "scale" ? (
+      {look().checked === null ? null : (
+        <ChoiceLight
+          on={on}
+          radius={size() / 2}
+          border={border()}
+          fill={look().checked ?? undefined}
+        />
+      )}
+      {grows() ? (
         // Its own view: the checked scale below is an animated value, and a view takes one transform.
         <View
           class={dotScale()}
@@ -243,7 +174,7 @@ export function Radio(props: RadioProps) {
   return (
     <BaseRadio
       {...rest}
-      class={props.class ? `group ${props.class}` : "group"}
+      class={joinClass("group", props.class)}
       style={[look?.style ?? null, props.style ?? null]}
       hoverStyle={[look?.hoverStyle ?? null, props.hoverStyle ?? null]}
       activeStyle={[look?.activeStyle ?? null, props.activeStyle ?? null]}

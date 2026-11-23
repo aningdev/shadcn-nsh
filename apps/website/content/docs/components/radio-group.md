@@ -85,10 +85,10 @@ A string child is the row's label and its name for screen readers; `accessibilit
 
 Every prop of [`nsh/base` Radio](https://nsh.dev/elements/radio) and [`RadioGroup`](https://nsh.dev/elements/radio) passes through. Style props go over the look's. The row is the `group` the ring sinks with while pressed. `RadioGroupItem` is an alias of `Radio`.
 
-| Part             | Props                                                                                                                                                                      | Description                                        |
-| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------- |
-| `Radio`          | `variant` (`RadioVariant`, default `"default"`), `indicator` (`boolean`, default `true`), `size` (`ChoiceSize`, default `"default"`), `children` (`string \| JSX.Element`) | The sunk ring, or a choice tile                    |
-| `RadioGroup`     |                                                                                                                                                                            | Every prop of `nsh/base` RadioGroup passes through |
-| `RadioGroupItem` |                                                                                                                                                                            | An alias of `Radio`                                |
+| Part             | Props                                                                                                                                                                      | Description                                             |
+| ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `Radio`          | `variant` (`RadioVariant`, default `"default"`), `indicator` (`boolean`, default `true`), `size` (`ChoiceSize`, default `"default"`), `children` (`string \| JSX.Element`) | The ring of the theme's choice recipe, or a choice tile |
+| `RadioGroup`     |                                                                                                                                                                            | Every prop of `nsh/base` RadioGroup passes through      |
+| `RadioGroupItem` |                                                                                                                                                                            | An alias of `Radio`                                     |
 
 `RadioVariant` is `"default"` (the sunk ring) or `"tile"` (the whole surface is the control, this library's own value).
