@@ -1,7 +1,17 @@
 // A select: the trigger's look (`pickerLook`, `Picker`) and the parts of the list (`Select`,
 // `SelectTrigger`, `SelectContent`), which wear the shared listbox look.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { alpha, colors, finish, terminal, TERMINAL_COLUMN, shape, dimmed } from "@shadcn-nsh/theme";
+import {
+  alpha,
+  colors,
+  finish,
+  hovered,
+  rounded,
+  terminal,
+  TERMINAL_COLUMN,
+  shape,
+  dimmed,
+} from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { cleanup, context, platform, reduceMotion, signal, split, Text, View } from "nsh";
@@ -62,6 +72,12 @@ export interface PickerLookOptions {
   invalid?: Live<boolean>;
   /** A clear button lies over the end in place of the chevron: room for it. */
   clearable?: Live<boolean>;
+  /**
+   * A cell at the end for the trigger's icon, its own target (a split trigger's glyph: WinUI's
+   * `CalendarDatePicker` has one): the icon leaves the title's side for it, and the row keeps no
+   * end inset of its own, the cell ending it. `0` or absent: the icon goes before the title.
+   */
+  iconCell?: Live<number>;
   /** Layout over the look (a width), or a function reading it; it may be a list. */
   style?: Live<StyleProp<ViewStyle>>;
   /**
@@ -94,6 +110,7 @@ export function pickerLook(o?: PickerLookOptions) {
   return {
     get style(): ViewStyle {
       const clearable = !!read(o?.clearable);
+      const cell = read(o?.iconCell) ?? 0;
       return {
         flexDirection: "row",
         alignItems: "center",
@@ -105,11 +122,15 @@ export function pickerLook(o?: PickerLookOptions) {
         paddingStart: triggerPadding(),
         // Room for the clear button, which goes over the trigger's end in place of the chevron. In the terminal the
         // select's own marks go over the end, each in a slot of three Cells: ` ▾ `, or ` ×  ▾ `.
-        paddingEnd: terminal
-          ? (clearable ? 6 : 3) * TERMINAL_COLUMN
-          : clearable
-            ? clearInset() + controlSize.clear + 8
-            : triggerPadding(),
+        // A cell at the end ends the row (`iconCell`): the row keeps no inset there, and the title
+        // carries the room the clear button needs instead.
+        paddingEnd: cell
+          ? 0
+          : terminal
+            ? (clearable ? 6 : 3) * TERMINAL_COLUMN
+            : clearable
+              ? clearInset() + controlSize.clear + 8
+              : triggerPadding(),
         ...fieldCorners(shape.control),
         ...fieldEdgeWidths(),
         ...(outline
@@ -166,8 +187,14 @@ export interface PickerProps {
   placeholder?: boolean;
   clearable?: boolean;
   invalid?: boolean;
-  /** An icon before the title, in the muted color (none in the terminal). */
+  /** An icon before the title, in the muted color (none in the terminal), or in a cell at the end (`iconCell`). */
   icon?: IconNode;
+  /**
+   * The width of a cell at the end holding the icon instead of the title's side, its own target:
+   * a split trigger's glyph, as WinUI's `CalendarDatePicker` has (32 there). `0` or absent: the
+   * icon goes before the title.
+   */
+  iconCell?: number;
   lead?: JSX.Element;
   /** The chevron at the end (the default); a date picker's trigger has none, its calendar says what opens. */
   chevron?: boolean;
@@ -185,12 +212,36 @@ export interface PickerProps {
 const triggerIcon = pointer ? 16 : 18;
 
 /**
+ * A trigger's end cell (`PickerProps.iconCell`): the icon's own target, as wide as the theme says,
+ * as high as the trigger inside its edge, rounded on the end side as the frame is and square
+ * against the title, lit under the pointer.
+ */
+function cellLook(width: number, disabled: boolean | undefined) {
+  return {
+    style: {
+      alignSelf: "stretch",
+      width,
+      alignItems: "center",
+      justifyContent: "center",
+      ...rounded(shape.control),
+      borderTopStartRadius: 0,
+      borderBottomStartRadius: 0,
+    } satisfies ViewStyle,
+    // Off a disabled trigger, as `hovered` asks.
+    hoverStyle: disabled ? undefined : hovered(),
+  };
+}
+
+/**
  * A trigger (`Select`'s or `DatePicker`'s `trigger`): `pickerLook` with the
  * title (muted while it is a placeholder) and the chevron; `icon` and `lead`
- * go before the title (a calendar; a flag, a status's dot, faces). The
+ * go before the title (a calendar; a flag, a status's dot, faces), or the
+ * icon alone in a cell at the end (`iconCell`: a split trigger's glyph). The
  * terminal's select draws its own `▾`.
  */
 export function Picker(props: PickerProps) {
+  // The terminal draws no icons, so it has no cell either.
+  const cell = terminal ? 0 : (props.iconCell ?? 0);
   return (
     <View
       // Off is the trigger's own state (`disabledStyle`, no presses and no hover); `nsh/base`'s
@@ -202,11 +253,12 @@ export function Picker(props: PickerProps) {
         open: () => props.open,
         invalid: () => !!props.invalid,
         clearable: () => !!props.clearable,
+        iconCell: () => cell,
         variant: props.variant,
         style: () => props.style ?? {},
       })}
     >
-      <If when={props.icon && !terminal}>
+      <If when={props.icon && !terminal && !cell}>
         <Icon icon={props.icon!} size={triggerIcon} tint={colors.mutedForeground} />
       </If>
       {props.lead}
@@ -216,11 +268,19 @@ export function Picker(props: PickerProps) {
           numberOfLines: 1,
           fontSize: fieldSize.font,
           color: props.placeholder ? colors.mutedForeground : colors.foreground,
+          // The clear button goes before the cell: the title stops short of it, as the row's end
+          // inset leaves room for the button where it lies over the end.
+          paddingEnd: props.clearable && cell ? clearInset() + controlSize.clear : undefined,
         }}
       >
         {props.title}
       </Text>
       <Chevron open={props.open} hidden={props.clearable || props.chevron === false || terminal} />
+      <If when={props.icon && cell}>
+        <View disabled={props.disabled} {...cellLook(cell, props.disabled)}>
+          <Icon icon={props.icon!} size={triggerIcon} tint={colors.mutedForeground} />
+        </View>
+      </If>
     </View>
   );
 }
