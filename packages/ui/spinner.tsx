@@ -1,5 +1,6 @@
 // A spinner: a ring turning with its top arc in one color, the shape of work going on.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { alpha, controls, type Controls } from "@shadcn-nsh/theme";
 import { reduceMotion, View } from "nsh";
 
@@ -18,7 +19,6 @@ const spinnerPresets: Record<Controls, SpinnerPreset> = {
   winui: { minStroke: 1.5, strokeShare: 8, hasTrack: false, trackAlpha: 0.25 },
 };
 
-// @port index.tsx
 /** One turn, in milliseconds: fast enough to read as work going on, slow enough not to blur. */
 const TURN_MS = 800;
 
@@ -54,4 +54,3 @@ export function Spinner(props: SpinnerProps) {
     />
   );
 }
-// @port end

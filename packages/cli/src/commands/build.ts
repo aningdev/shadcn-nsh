@@ -12,11 +12,6 @@ export type BuildOptions = {
   output: string;
   /** Working directory `registryFile` and `output` are resolved against. */
   cwd: string;
-  /**
-   * Rewrites a file's content as it is published: the registry owner's own annotations (this
-   * repository's `// @port` marks) are kept in the sources and dropped from what an app copies.
-   */
-  publish?: (content: string, path: string) => string;
 };
 
 /** Whether the JSON in `file` is a registry item named after the file (`button.json`). */
@@ -42,8 +37,8 @@ async function holdsItem(file: string, name: string): Promise<boolean> {
  * `registry.json` no longer lists: an orphan would still answer `add`, installing a component
  * nothing in the registry keeps up to date any more.
  *
- * A file's content is the source's, after `publish` when the registry passes one: an owner can
- * keep annotations in the sources that an app copying the file has no use for.
+ * A file's content is the source's, byte for byte: what an app copies is what this repository
+ * holds, headers and all.
  *
  * Only this tool's own items are removed: a `.json` whose content is a registry item named after
  * its file. `-o` may point at a directory holding other JSON (`public`, or `.` with
@@ -73,11 +68,7 @@ export async function runBuild(registryFile: string, opts: BuildOptions): Promis
       files: await Promise.all(
         item.files.map(async (file) => {
           const abs = path.resolve(path.dirname(registryPath), file.path);
-          const source = await fs.readFile(abs, "utf8");
-          return {
-            ...file,
-            content: opts.publish ? opts.publish(source, file.path) : source,
-          };
+          return { ...file, content: await fs.readFile(abs, "utf8") };
         }),
       ),
     };

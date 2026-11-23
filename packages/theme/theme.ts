@@ -1,5 +1,6 @@
 // The theme's roles, finishes, radii, focus and motion, read from `theme.json` and `semantics.json`.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import type {
   AnimatedValue,
   BackdropMaterial,
@@ -26,7 +27,6 @@ import {
 import { materials, type FinishMaterial, type MaterialRecipe } from "./materials";
 import semantics from "./semantics.json";
 
-// @port theme.ts
 /**
  * The Terminal idiom (`nsh`'s internal module, so not a public API): a
  * terminal program leaves out what it cannot draw well (charts,
@@ -1087,7 +1087,6 @@ export const focusRing = (offset?: number): ViewStyle => {
   }
   return ringOutline;
 };
-// @port end
 
 /*
  * Below: this library's own, with no upstream origin.

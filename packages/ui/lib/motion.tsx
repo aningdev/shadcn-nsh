@@ -1,5 +1,5 @@
 // Shared motion: a control shakes when a value is rejected, and a figure rolls to its next one.
-// This library's own. Yours to change.
+
 import { isTiming, motion as themeMotion } from "@shadcn-nsh/theme";
 import type { StyleProp, TextStyle, ViewStyle } from "nsh";
 import { createMotion, effect, reduceMotion, signal, Text } from "nsh";

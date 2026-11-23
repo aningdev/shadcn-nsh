@@ -1,6 +1,7 @@
 // An accordion: the disclosure look (`disclosureTriggerLook`, `DisclosureChevron`, `disclosurePanel`)
 // at the top, and the parts that wear it below.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { colors } from "@shadcn-nsh/theme";
 import { ChevronDown, ChevronRight } from "lucide";
 import type { JSX, ViewStyle } from "nsh";
@@ -22,7 +23,6 @@ import { Icon } from "./lib/icons";
 import { controlSize, listRow, RowLabel, type ListRowOptions } from "./lib/surface";
 import { joinClass } from "./lib/utils";
 
-// @port look/disclosure.tsx
 /** Options of `disclosureTriggerLook`: a row's (`listRow`). */
 export type DisclosureTriggerOptions = ListRowOptions;
 
@@ -118,7 +118,6 @@ export function disclosurePanel(o?: DisclosurePanelOptions): ViewStyle {
     gap: o?.gap ?? 6,
   };
 }
-// @port end
 
 /** `nsh/base`'s Accordion. Every base prop passes through. */
 export type AccordionProps = BaseAccordionProps;

@@ -1,7 +1,7 @@
 // An alert dialog: the system's own alert (`nsh/base`'s `AlertDialog.show`), in shadcn's parts — a
 // title, a message and button labels, drawn by the platform. There is no card, no scrim and no look
 // of this library to change; the app decides when it shows and what it does with the answer.
-// This library's own: nothing here comes from upstream, so there is no port region. Yours to change.
+
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { cleanup, context, effect, signal, untracked, View } from "nsh";
 import {

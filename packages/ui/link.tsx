@@ -1,5 +1,6 @@
 // A link: the look (`linkLook` and its companions) and the `Link` that wears it.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { alpha, colors, focusRing, font } from "@shadcn-nsh/theme";
 import { ExternalLink } from "lucide";
 import type { JSX, ViewStyle } from "nsh";
@@ -8,7 +9,6 @@ import { Link as BaseLink, type LinkProps as BaseLinkProps } from "nsh/base";
 
 import { Icon } from "./lib/icons";
 
-// @port look/nav.tsx
 const pointer = platform.desktop;
 
 /** A link's text size: the body's, 13 points with a pointer, 15 on a touch screen. */
@@ -106,7 +106,6 @@ export function LinkText(
     </>
   );
 }
-// @port end
 
 /**
  * `nsh/base`'s Link in the look of `linkLook` with `LinkText` for a string child.

@@ -1,5 +1,6 @@
 // Data table: `dataTableClasses` and the `DataTable` that wears them.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { terminal } from "@shadcn-nsh/theme";
 import { split } from "nsh";
 import {
@@ -10,7 +11,6 @@ import {
 
 import { mergeClasses } from "./lib/utils";
 
-// @port data-table.ts
 /** Extra room for this UI layer's cell padding and title/button gap. */
 export const dataTableFitPadding = 16;
 
@@ -48,7 +48,6 @@ export const dataTableClasses: DataTableClasses = {
   rowHeader: "text-muted-foreground",
   fixedEdge: "bg-border",
 };
-// @port end
 
 /**
  * `nsh/base` DataTable with `dataTableClasses` by default. Sorting, selection,

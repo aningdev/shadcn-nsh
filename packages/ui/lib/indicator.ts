@@ -1,5 +1,6 @@
 // How a control preset marks a focused or editable field (`indicator`, `corners`): one place for
 // the shared logic, so every field control reads the preset the same way.
+
 import {
   alpha,
   colors,

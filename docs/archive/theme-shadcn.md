@@ -215,7 +215,7 @@ bun scripts/theme-sheets.ts   [id,id]        # 对照页
 
 ## 5 限制清单（换数据换不掉的）
 
-按影响排序。按当时的规定，`// @port` 区域里的改动要在 `port-map.json` 的 `replace` 里登记并写 `why`；
+按影响排序。按当时的规矩，搬进来的代码改动要在 `port-map.json` 的 `replace` 里登记并写 `why`；
 `replace` 已随「组件归本库」的改造废弃，现在是 `port:check` 提醒、审阅后采纳（见
 [`ownership.md`](../specs/ownership.md)）。下面注明"要不要动 port 区"。
 
@@ -246,5 +246,5 @@ bun scripts/theme-sheets.ts   [id,id]        # 对照页
 2. **registry 形态** —— **已做，后来改了形**：`theme` 条目给的是 `theme.json` + `lib/finishes.json` + `lib/theme.ts`（构建时主题），`theme-shadcn` 现在只装 `themes/shadcn/`（`theme.json`、`finishes.json`、`index.ts`），`add theme-shadcn` 不再换构建时主题；运行时切换的定稿见 [`runtime-themes.md`](runtime-themes.md)。`nsh.json` 的 `theme` 仍指向 `./theme.json`，不必改。没有为旧 id 起别名（AGENTS.md 的边界）。
 3. **文档站**：`apps/website` 的播放器已经有 `?theme=light|dark`（`player-options.ts`），多主题只需再加一个 `?skin=`/`?palette=`，由构建时生成多份 demo 包（当前 `docs:demos` 只按一个 `nsh.json` 主题打包）。演示页加一个主题切换，和 `Port Map` 无关。
 4. **`port:render` 的基线**：现在的基线是"一个主题 + 亮暗两套"（`apps/website/demos/baseline/`）。多主题要么按主题出基线（目录变 `<theme>/<page>.png`，比较表按主题分），要么只对**默认主题**保持字节基线、其它主题只做"能渲染 + 与 ref 一致"的门（P4 的一半）。倾向前者做门、后者做慢检查，代价是基线体积翻倍。
-5. **限制清单 1–8 是一个 PR 的量**：都是 `// @port` 区域里的小改（判空、token 化、去掉固定 alpha），但每一处都要在 `port-map.json` 的 `replace` 里登记 `why`，并同步上游或接受下次 `port:vendor` 会覆盖的风险。建议按家族分批：先 5/6（结构性 bug），再 2/3/4（交互与焦点），最后 7/8（alpha 清单）。
+5. **限制清单 1–8 是一个 PR 的量**：都是搬来的 look 里的小改（判空、token 化、去掉固定 alpha），但每一处都要在 `port-map.json` 的 `replace` 里登记 `why`，并同步上游或接受下次 `port:vendor` 会覆盖的风险。建议按家族分批：先 5/6（结构性 bug），再 2/3/4（交互与焦点），最后 7/8（alpha 清单）。
 6. 如果只是想让用户"看一眼换主题的样子"，本实验的产物已经够用：`themes/shadcn/` 两个文件 + 两个脚本，随时可删（不碰默认主题、不进 registry）。

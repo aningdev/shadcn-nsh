@@ -1,6 +1,5 @@
-// A button group: buttons joined into one control, in a row or a column. This library's own
-// (drawn on `nsh`'s View and Text, with the `group` role), so there is no port region. Yours to
-// change.
+// A button group: buttons joined into one control, in a row or a column.
+
 import { colors, rounded, TERMINAL_COLUMN, terminal, font, shape, stroke } from "@shadcn-nsh/theme";
 import type { TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, split, token, View } from "nsh";

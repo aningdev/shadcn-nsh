@@ -1,5 +1,6 @@
 // A date picker: the look (`DateTrigger`, `datePickerLook`) and `DatePicker` that wears it.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { controls, terminal, type Controls } from "@shadcn-nsh/theme";
 import { Calendar } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
@@ -20,7 +21,6 @@ import { backdrop } from "./lib/popup";
 import { type Live, read } from "./lib/utils";
 import { Picker, type PickerProps } from "./select";
 
-// @port look/listbox.tsx
 /** The room around the calendar in its popup (6 with a pointer) or sheet (10 on a touch screen): a
  * calendar's grid, not a list's rows, so not `listPadding`. */
 const calendarRoom = platform.desktop ? 6 : 10;
@@ -117,7 +117,6 @@ export function datePickerLook(o?: DatePickerLookOptions) {
     renderSegment: (segment: { label: string }) => <TimeSegment label={segment.label} />,
   };
 }
-// @port end
 
 /** The root: it owns the open flag and the value its parts show. */
 export type DatePickerProps = {

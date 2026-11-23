@@ -1,6 +1,7 @@
-import { finish } from "@shadcn-nsh/theme";
 // A tooltip: the look (`tooltipLook`, `tooltipText`, `tooltipNote`) at the top, and the parts below.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
+import { finish } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, split, View } from "nsh";
 import {
@@ -13,7 +14,6 @@ import { Button, type ButtonVariant } from "./button";
 import { AsText } from "./lib/as-text";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 
-// @port look/overlay.ts
 /** Options of `tooltipLook`. */
 export interface TooltipLookOptions {
   /** More than a line (a title, a list): 10 points of padding, its rows 8 apart, larger corners. */
@@ -56,7 +56,6 @@ export const tooltipNote = (): TextStyle => ({
   lineHeight: 16,
   color: finish.inverse.foreground,
 });
-// @port end
 
 /** Why a tooltip closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */
 export type TooltipOpenChangeReason = OpenChangeReason;

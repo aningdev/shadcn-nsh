@@ -1,9 +1,7 @@
 // The demo adapter the official examples are written against (stage, inspector, split, panel,
 // log, segmented, desktop, wide).
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-//
-// Demos only: it is not a component, has no registry entry, and never goes into `packages/ui`.
-// Its appearance is this library's theme (`@shadcn-nsh/theme`, `packages/ui/lib/surface`).
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { alpha as tint, colors, finish, shape } from "@shadcn-nsh/theme";
 import type { JSX as __JSX, ViewStyle } from "nsh";
 import { Text as __Text, View as __View } from "nsh";
@@ -13,7 +11,6 @@ import { insetSurface, sectionSurface } from "@/packages/ui/lib/surface";
 import { Segmented as SegmentedRoot, SegmentedItem, SegmentedList } from "@/packages/ui/segmented";
 import { Toggle } from "@/packages/ui/toggle";
 
-// @port demo.ts
 // A view this file makes is made once: it holds its children as a value, not behind a `children`
 // getter. A getter is read again whenever the view is (a window resized re-reads the styles), and
 // what it returns is a new view — the engine builds that one, and everything under it, again. The
@@ -232,7 +229,6 @@ export function Segmented<T extends string | number>(props: {
     },
   });
 }
-// @port end
 
 /**
  * A `Button`'s style in a demo, as upstream's demo `button()` gives it (`demo.ts:76-91`): with a

@@ -1,12 +1,6 @@
 // A split view: the columns, the column header and the sidebar button, in the theme's look, over
-// `nsh/base`'s SplitView. This library's own: nothing here comes from upstream, so there is no
-// port region. Yours to change.
-//
-// The names follow the columns `nsh/base` already has (`sidebar`, `content`, `detail`) and shadcn's
-// part roles (`Header`, `Trigger`). The root keeps those columns as props: each one is a `NavStack`,
-// and the platform finds that stack in the slot, so a part must not wrap it. The look lives on the
-// page inside the stack — the column's surface and the hairline after it — and on the header and
-// the button the page puts in it.
+// `nsh/base`'s SplitView.
+
 import {
   alpha,
   colors,

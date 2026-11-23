@@ -1,6 +1,6 @@
 // A marker: one line in a conversation that is not a message — a status, a note, a row with a
-// rule under it, or a label between two rules. This library's own (drawn on `nsh`'s View and
-// Text), so there is no port region. Yours to change.
+// rule under it, or a label between two rules.
+
 import { colors, TERMINAL_COLUMN, TERMINAL_ROW, terminal, stroke } from "@shadcn-nsh/theme";
 import type { IconNode } from "lucide";
 import type { JSX, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";

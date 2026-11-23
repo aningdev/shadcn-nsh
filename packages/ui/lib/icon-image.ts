@@ -1,7 +1,7 @@
 // The elements of a lucide icon, written as an SVG `data:` URL: what takes an image rather than a
 // view (a native menu item's `icon`, a tray's, an `Image`). Apart from `icons.tsx` and free of
-// imports but lucide's types, so a unit test reads the URL it writes instead of running NSH. This
-// library's own: upstream writes this in its gallery's `lucideSvg`. Yours to change.
+// imports but lucide's types, so a unit test reads the URL it writes instead of running NSH.
+
 import type { IconNode } from "lucide";
 
 /** lucide's box: 24 units square, its viewBox and the unit a stroke's weight is measured in. */

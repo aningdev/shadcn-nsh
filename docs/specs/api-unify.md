@@ -2,7 +2,7 @@
 
 阶段 1-A 的设计稿，对应 [`positioning.md`](positioning.md) 路线表"阶段 1 打地基"的第一条。**只定名字，不改代码**；8 条已拍板（§7，全部按建议），另起任务实现，随 CLI / registry `0.3.0` 发布。
 
-**口径**：组件由本库自己抽取并拥有，上游 `nsh-gallery-ui` 是参考规范，`// @port` 区域可以直接改（[`AGENTS.md`](../../AGENTS.md)、[`specs/ownership.md`](ownership.md)）。所以本稿不受"只改外壳"的限制，可以改 look 的参数名与取值；每条注明**改外壳**还是**改原 look 代码**。前置见 [§5.1](#51-前置工具与规则)，其中 `port-map.json` 的 `replace` 需要为零。
+**口径**：组件由本库自己抽取并拥有，上游 `nsh-gallery-ui` 是参考规范，look 可以直接改（[`AGENTS.md`](../../AGENTS.md)、[`specs/ownership.md`](ownership.md)）。所以本稿不受"只改外壳"的限制，可以改 look 的参数名与取值；每条注明**改外壳**还是**改原 look 代码**。前置见 [§5.1](#51-前置工具与规则)，其中 `port-map.json` 的 `replace` 需要为零。
 
 ## 结论
 
@@ -116,7 +116,7 @@
 | `SplitButton`                       | `variant`   | `ButtonKind`                                                  | `primary`             | 否     | `splitButtonLook(kind)`                                      |
 | `SplitButton`                       | `size`      | `ButtonSize`                                                  | `regular`             | 否     | `ButtonLookOptions.size`                                     |
 | 十个触发器的 `variant`\*            | `variant`   | `ButtonKind`                                                  | `secondary`           | 否     | `buttonLook`                                                 |
-| `Badge`                             | `tone`      | `Tone`                                                        | `neutral`             | 否     | 直接在 port 区域里读 `tone()`                                |
+| `Badge`                             | `tone`      | `Tone`                                                        | `neutral`             | 否     | 直接在 look 里读 `tone()`                                    |
 | `Badge`                             | `outline`   | `boolean`                                                     | `false`               | 否     | 同上（`borderColor` + `transparent`）                        |
 | `Toggle`                            | `variant`   | `ghost` `outline`                                             | `ghost`               | 否     | `toggleLook({ variant })`                                    |
 | `Toggle`                            | `size`      | `ToggleSize`：`small` `regular` `large`                       | `regular`             | 否     | `ToggleLookOptions.size`（`Live<ToggleSize>`）               |
@@ -371,7 +371,7 @@ export type Tone = "neutral" | "accent" | "info" | "warn" | "danger" | "up" | "d
 
 ### 5.1 前置：工具与规则
 
-`// @port` 区域是**来源标注**，可以直接改（[`AGENTS.md`](../../AGENTS.md)、[`ARCHITECTURE.md`](../ARCHITECTURE.md) 的 P1–P6）：`port:check` 只提醒"上游改了什么、要不要采纳"，`port:vendor` 只给新组件抽初稿、不覆盖已有代码，`port-map.json` 的 `replace` / `copy` 已废弃（[`specs/ownership.md`](ownership.md)）。所以改 look 不需要任何 `replace`，**本稿需要的 `replace` 为零**。
+文件头的致谢行是**来源标注**，代码本身可以直接改（[`AGENTS.md`](../../AGENTS.md)、[`ARCHITECTURE.md`](../ARCHITECTURE.md) 的 P1–P6）：`port:check` 只提醒"上游改了什么、要不要采纳"，`port:vendor` 只给新组件抽初稿、不覆盖已有代码，`port-map.json` 的 `replace` / `copy` 已废弃（[`specs/ownership.md`](ownership.md)）。所以改 look 不需要任何 `replace`，**本稿需要的 `replace` 为零**。
 
 代价在另一头：改完 look 之后，上游同一处的后续变化会变成"待审阅"而不是"不一致"，得靠人看。这由 `upstream.reviewed` 与 `port:review`（同属 `ownership.md` 的改造）承担，不是本稿要新建的机制。
 
@@ -383,7 +383,7 @@ export type Tone = "neutral" | "accent" | "info" | "warn" | "danger" | "up" | "d
 | `docs/GLOSSARY.md`          | **Variant / Size** 词条现在是"prop 名用 shadcn 的，取值用上游的"，与本稿相反，必须改写 | 词汇的真源           |
 | `docs/specs/positioning.md` | "现状评估"里 API 一致性那一行更新                                                      | 路线表               |
 
-`ownership.md` 的验收第 1 条（"在任意 Port Region 里改一行，`port:check` 仍通过"）与第 3 条（"`port:vendor` 不改动任何已有文件"）是本稿的前提：它们落地之前，改 look 会被下一次搬运冲掉。两件事的顺序写进实现任务的第一个 commit。
+`ownership.md` 的验收第 1 条（"在任意 look 里改一行，`port:check` 仍通过"）与第 3 条（"`port:vendor` 不改动任何已有文件"）是本稿的前提：它们落地之前，改 look 会被下一次搬运冲掉。两件事的顺序写进实现任务的第一个 commit。
 
 ### 5.2 原 look 代码：逐条
 
@@ -503,7 +503,7 @@ grep -rl --include=*.tsx 'variant="danger"' apps packages | xargs sed -i '' 's/v
 | 1   | 删掉 `variant="accent"`（与 `default` 像素相同）还是留作本库特有值？                          | **删**。两个名字一个外观；将来要"更亮一档"再加新值。                                                 |
 | 2   | 0.3.0 是否补 `Button` 的 `outline` / `link`（shadcn 有，本库没有 look）？                     | **不补**。补 = 新外观（要先有 look 与四张截图），不是改名，属阶段 2；文档写明"暂无这两个值"。        |
 | 3   | `Radio.variant` 的默认值叫什么？`ring` 保留还是改 `default`？                                 | **改 `default`**，另一个保留 `tile`。符合 R2（默认值叫 `default`），且 `ring` 是描述不是类别。       |
-| 4   | `tone` 是否全部改成 `Tone \| (() => Tone)`（要改 Badge/Stat/Status/Meter 的 port 区域）？     | **改**。一种写法；代价是 4 个组件要改 port 区域里的 `tone` 读取。                                    |
+| 4   | `tone` 是否全部改成 `Tone \| (() => Tone)`（要改 Badge/Stat/Status/Meter 的 look）？          | **改**。一种写法；代价是 4 个组件要改 look 里的 `tone` 读取。                                        |
 | 5   | `IconButton.tone="danger"` → `variant="destructive"`、`on` → `selected`：接受这两个小破坏吗？ | **接受**。与 shadcn 的 `Button variant="destructive"` 一致，也去掉一个重复的状态 prop。              |
 | 6   | `IconButton` / `RoundButton` 新增 `size` 轴（现在没有）？                                     | **加**（只增不减）。刻度从 `buttonSizes` 推导，默认值等于今天的尺寸，现有代码不受影响。              |
 | 7   | `RoundButton.size` 从数字改成刻度，另留 `side?: number` 精确覆盖？                            | **改**。否则 `size` 有两个意思；`side` 保留精确几何（P5 的精神：不缩减能力）。                       |

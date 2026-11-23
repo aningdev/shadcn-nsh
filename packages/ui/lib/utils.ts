@@ -1,6 +1,6 @@
 // The small tools the shells share: a look's value read where it is applied (`Live`/`read`) and
-// how an app's part classes meet ours (`mergeClasses`/`joinClass`). It is this library's
-// `lib/utils.ts`, as shadcn's is the one file an app's components take their shared helpers from.
+// how an app's part classes meet ours (`mergeClasses`/`joinClass`).
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 /**
  * A value, or a function reading it where the look is applied (a signal): read at draw time, a

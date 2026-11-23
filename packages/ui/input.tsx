@@ -1,6 +1,7 @@
 // A text field: the size, edge and text every field shares (`fieldSize`, `edgeClass`, `fieldLook`,
 // `fieldText`) and the `Input` that wears them as `inputLook`.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   colors,
   finish,
@@ -26,7 +27,6 @@ import {
 import { createRejectShake } from "./lib/motion";
 import { type Live, read } from "./lib/utils";
 
-// @port look/field.tsx
 const pointer = platform.desktop;
 
 /**
@@ -290,7 +290,6 @@ export function timeFieldClass(): string {
     edgeClass({ rest: "border-input", hover: "border-faint", hoverVariant: "enabled:hover" }),
   ].join(" ");
 }
-// @port end
 
 /**
  * `nsh/base`'s Input in the look of `inputLook`. Every base prop passes through; `class`, `style`

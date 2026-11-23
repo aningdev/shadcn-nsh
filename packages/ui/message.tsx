@@ -1,6 +1,6 @@
 // A message: one row of a conversation — its avatar, who sent it, the turn itself, and what is
-// under it. This library's own (drawn on `nsh`'s View and Text; the avatar is `Avatar`, or a round
-// slot when given children), so there is no port region. Yours to change.
+// under it.
+
 import { colors, font } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, platform, split, token, View } from "nsh";

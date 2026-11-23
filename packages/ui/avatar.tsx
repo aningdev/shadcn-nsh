@@ -1,5 +1,6 @@
 // An avatar: the identity ring (`avatarIdentity`, `avatarHue`) and the `Avatar` that wears it.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { colors, isDark, font, stroke } from "@shadcn-nsh/theme";
 import { computed, split, Text, token, View } from "nsh";
 import type { TextProps, ViewProps, ViewStyle } from "nsh";
@@ -12,7 +13,6 @@ import {
 
 import { joinClass } from "./lib/utils";
 
-// @port avatar.ts
 /** The hues of the identity ring: twelve, evenly spaced. */
 const HUES = 12;
 
@@ -73,8 +73,6 @@ export function avatarIdentity(name: string) {
         border: oklch(0.89, 0.05, h),
       };
 }
-
-// @port end
 
 /**
  * `nsh/base`'s Avatar with identity colors for a named fallback. Every base prop passes through.

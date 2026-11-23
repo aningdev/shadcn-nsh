@@ -1,6 +1,5 @@
-// A keyboard key, alone or in a group of them, on `nsh`'s own View and Text. This library's own
-// (upstream has no keycap, and no `nsh/base` control is its behavior): there is no port region.
-// Yours to change.
+// A keyboard key, alone or in a group of them, on `nsh`'s own View and Text.
+
 import { colors, mono, TERMINAL_ROW, terminal, font, shape, stroke } from "@shadcn-nsh/theme";
 import type { JSX, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { split, token, View } from "nsh";

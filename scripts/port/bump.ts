@@ -11,7 +11,7 @@
  * 4. stop when the map does not account for upstream yet; otherwise say what to do next —
  *    `port:review` after reviewing, then `port:check` and `port:render`.
  *
- * It does not refill a region: the components are ours, so adopting a change upstream made is an
+ * It does not draft anything again: the components are ours, so adopting a change upstream made is an
  * edit of ours (`docs/port.md`). It never commits either: the submodule pointer, `port-map.json`
  * and the code that follows are one commit, made by hand.
  */

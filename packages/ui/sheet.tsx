@@ -1,5 +1,6 @@
 // A sheet: the look (`sheetPanel`, `sheetGrabber`) and the parts that wear it.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   alpha,
   colors,
@@ -21,7 +22,6 @@ import { Action, type ButtonVariant } from "./button";
 import { createOpenState, type OpenState } from "./lib/open-state";
 import { backdrop } from "./lib/popup";
 
-// @port look/overlay.ts
 /** The edge of the screen a sheet comes from. */
 export type SheetSide = "bottom" | "top" | "left" | "right";
 
@@ -122,7 +122,6 @@ export function sheetGrabber(): ViewStyle {
     backgroundColor: alpha(colors.mutedForeground, 0.4),
   };
 }
-// @port end
 
 /** The root: it owns whether the sheet is open, and nothing of how it looks. */
 export type SheetProps = {

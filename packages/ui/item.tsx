@@ -1,6 +1,5 @@
 // An item: the look (`itemLook`) and the ten parts that wear it.
-// This library's own (upstream has no item family): the parts and their axes follow shadcn/ui and
-// the look is written from the theme's roles. Yours to change.
+
 import { colors, rounded, TERMINAL_COLUMN, terminal, font, shape, stroke } from "@shadcn-nsh/theme";
 import type { TextStyle, TextProps, ViewProps, ViewStyle } from "nsh";
 import { split, Text, token, View } from "nsh";

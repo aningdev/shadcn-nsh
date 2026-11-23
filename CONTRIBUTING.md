@@ -6,7 +6,7 @@
 
 - [`AGENTS.md`](AGENTS.md) —— 各方的角色、能做什么、不能做什么。
 - [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) —— 目录、分层、规则 P1–P6、归属。
-- [`docs/port.md`](docs/port.md) —— 加一个组件要走的路：外壳怎么写、`// @port` 区域怎么标、怎么检查。
+- [`docs/port.md`](docs/port.md) —— 加一个组件要走的路：外壳怎么写、文件头怎么写、怎么检查。
 - [`docs/GLOSSARY.md`](docs/GLOSSARY.md) —— token / finish / alias 这些词在库里指什么。
 
 ## 环境
@@ -90,7 +90,7 @@ PR 标题用这个格式，它就是 squash 之后 `main` 上的提交信息；�
 ## 加一个组件
 
 1. `bun run port:new <id> --from <上游文件>` 生成骨架（外壳、演示、文档页、registry 条目、路由）。
-2. `bun run port:vendor <id>` 把上游的那段抽进 `// @port <上游文件>` 与 `// @port end` 之间；**这两个标记之间归本库**，可以直接改。
+2. `bun run port:vendor <id>` 把文件里还缺的上游声明抽成初稿（已有的一律不动）；**抽进来就归本库**，可以直接改。
 3. 颜色只来自主题（`theme.json` 的 token 与 `semantics.json` 的 finish），组件文件里不写颜色字面量；外观上的决定写进对应文档。
 4. 补演示（手机与桌面两种画布）与文档页；`bun run catalog --check` 会查它们与导出是否齐全。
 5. `bun run registry:build`，然后按上一节跑检查。

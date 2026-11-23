@@ -1,9 +1,9 @@
 // The inset track a toolbar and a toggle group share.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { colors, rounded, terminal, TERMINAL_GAP, shape, stroke } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
 
-// @port look/tool.ts
 /** Options of `toolbarTrack`. */
 export interface ToolbarTrackOptions {
   /** A column of tools (a `Toolbar`'s `axis="vertical"`). */
@@ -29,4 +29,3 @@ export function toolbarTrack(o?: ToolbarTrackOptions): ViewStyle {
     backgroundColor: colors.inset,
   };
 }
-// @port end

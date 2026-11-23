@@ -25,7 +25,7 @@ _Avoid_: 发布组件 npm 包、旧 registry id 的别名
 - `registry.json`：**Catalog** 的真源，其 `registry:ui` 条目就是组件集合
 - `port-map.json`：**Port Map**，上游每个声明的来源去向表与已审阅的上游提交；目标不一定是组件——`demo.ts` 的 `Stage` / `Split` / `Inspector` / `Panel` / `Log` / `Segmented` 等去向 `apps/website/demos/stage.tsx`（演示适配层，不进 registry）
 - `packages/theme/`：全部 6 套主题（`default`、`shadcn`、`solid-glass`、`apple`、`material`、`winui`）的 **Theme Source** 是 `tokens/`（DTCG 2025.10，`tokens/base/` 与 `tokens/themes/<id>/`），经 `bun run tokens:build` 编译为运行时 `theme.json`、`semantics.json` 与 `themes/<id>/{theme,semantics}.json`（oklch，归本库；标准见 [`specs/design-semantics.md`](specs/design-semantics.md)）；`theme.ts` 读取它们与运行时的 `selectTheme` / `currentTheme`；`themes/<name>/` 一套一个 `AppTheme`（`theme.json`、`semantics.json`、`index.ts`），经 `theme-<name>` 条目分发；不放组件
-- `packages/ui/<id>.tsx`：一个**组件** = look（源自上游的部分以 **Port Region** 标注来源）+ **Shell**；一个 registry 条目一个文件
+- `packages/ui/<id>.tsx`：一个**组件** = look + **Shell**；一个 registry 条目一个文件。起源于上游的文件在文件头一行致谢（**Credit Line**），代码归本库
 - `packages/ui/lib/`：没有所属控件的上游部分（以上游文件名命名）与多个外壳共用的接线；作为 `registry:lib` 条目分发
 - `apps/website/demos/`：每个组件的 `<id>.tsx` 与 **Reference Page** `<id>.ref.tsx`、渲染比对用例与基线截图；`kit.tsx` 是演示外框，`stage.tsx` 是演示适配层（`Stage` / `Inspector` / `Split` / `Panel` / `Log` / `Segmented` / `Chips` / `desktop` / `wide` / `ui()`，见 [`port.md`](port.md#演示)），`photos.ts` 是照片页用的图（上游 `photos.ts`，原样搬运），都不进 registry；`shots/` 与 `shots-theme/` 是渲染比对的截图（`port:render` / `port:render:theme`），不提交
 - `apps/website/public/demos/`：`docs:demos` 的打包产物（页面、运行时、wasm），不进仓库；`apps/website/scripts/build-demos.ts` 打包每个演示，`player-options.ts` 让页面认面板的 `?idiom=` / `?theme=`
@@ -101,17 +101,17 @@ flowchart TD
 
 每条规则都有脚本判定；没有判定的不写进来。判定与命令见 [`port.md`](port.md#检查)。
 
-| #   | 规则                                                                                                                                                                                                                                                                       |
-| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| P1  | **清单唯一。** 上游每个文件、每个顶层声明在 Port Map 里有去向，或是带理由的 `exclude`                                                                                                                                                                                      |
-| P2  | **上游变化必经审阅。** 自 Port Map 记录的已审阅提交以来，上游改动了我们有去向的声明，`port:check` 列为待审阅；审阅后更新记录                                                                                                                                               |
-| P3  | **颜色只来自主题。** 组件、lib 与演示适配层的代码里不出现颜色字面量（含 Port Region）；主题文件以 oklch 存储。唯一例外是平台固定的身份色：`packages/ui/title-bar.tsx` 的三颗窗口按钮（`#FF5F57` / `#FEBC2E` / `#28C840`，字 50% 黑、边 12% 黑）是 macOS 的样子，不随主题变 |
-| P4  | **外壳不改变渲染。** 组件页与它的 Reference Page 截图相同（指针与触屏，亮与暗）；没有外壳的组件声明 `selfReference`                                                                                                                                                        |
-| P5  | **外壳不缩减能力。** 组件 props 是对应 `nsh/base` props 加自己的轴；样式类 props 叠在 look 之上，使用者优先                                                                                                                                                                |
-| P6  | **依赖如实。** registry 条目的依赖等于实际 import，相对 import 的文件必须有条目分发                                                                                                                                                                                        |
-| P7  | **侧向随阅读方向。** `packages/ui` 里不对称的 left/right 侧向属性用 `start`/`end`，`direction: "rtl"` 才会镜像；同一对象里两侧同值的对称对与标了 `// physical: <原因>` 的对象例外                                                                                          |
+| #   | 规则                                                                                                                                                                                                                                                                        |
+| --- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| P1  | **清单唯一。** 上游每个文件、每个顶层声明在 Port Map 里有去向，或是带理由的 `exclude`                                                                                                                                                                                       |
+| P2  | **上游变化必经审阅。** 自 Port Map 记录的已审阅提交以来，上游改动了我们有去向的声明，`port:check` 列为待审阅；审阅后更新记录                                                                                                                                                |
+| P3  | **颜色只来自主题。** 组件、lib 与演示适配层的代码里不出现颜色字面量（look 与外壳同等）；主题文件以 oklch 存储。唯一例外是平台固定的身份色：`packages/ui/title-bar.tsx` 的三颗窗口按钮（`#FF5F57` / `#FEBC2E` / `#28C840`，字 50% 黑、边 12% 黑）是 macOS 的样子，不随主题变 |
+| P4  | **外壳不改变渲染。** 组件页与它的 Reference Page 截图相同（指针与触屏，亮与暗）；没有外壳的组件声明 `selfReference`                                                                                                                                                         |
+| P5  | **外壳不缩减能力。** 组件 props 是对应 `nsh/base` props 加自己的轴；样式类 props 叠在 look 之上，使用者优先                                                                                                                                                                 |
+| P6  | **依赖如实。** registry 条目的依赖等于实际 import，相对 import 的文件必须有条目分发                                                                                                                                                                                         |
+| P7  | **侧向随阅读方向。** `packages/ui` 里不对称的 left/right 侧向属性用 `start`/`end`，`direction: "rtl"` 才会镜像；同一对象里两侧同值的对称对与标了 `// physical: <原因>` 的对象例外                                                                                           |
 
-Port Region 是**来源标注**，不是只读区：可以直接修改；`port:vendor` 只为新组件抽取初稿，不覆盖已有代码。
+**Credit Line** 是**来源标注**，不是只读区：look 与外壳都可以直接修改；`port:vendor` 只为新组件抽取初稿，不覆盖已有代码。
 
 **归属**（抽取时，一个上游声明去哪个文件）：
 

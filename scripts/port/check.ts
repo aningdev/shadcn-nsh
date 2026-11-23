@@ -7,7 +7,7 @@
  *      (`upstream.reviewed`): the changes are listed, and `bun run port:review` marks them read;
  *   4. a scaffold still holds `TODO(port)`.
  *
- * It does **not** compare a region with upstream: the components are this library's, and a look
+ * It does **not** compare our code with upstream: the components are this library's, and a look
  * may differ on purpose (`docs/ARCHITECTURE.md`, `docs/port.md`).
  *
  * Warns when the commit `nsh --version` prints is not the baseline: the baseline follows the

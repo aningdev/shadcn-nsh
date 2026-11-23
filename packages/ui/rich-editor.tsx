@@ -1,7 +1,8 @@
 // Rich editor: `richEditorClasses`, the `RichEditor` that wears them, and the session API an app
 // runs it with (`createRichEditor`, the kits, the commands and their types), so the editor is one
 // import. The code editor is `code-editor.tsx` (`CodeEditor`).
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { split } from "nsh";
 import {
   RichEditor as BaseRichEditor,
@@ -11,7 +12,6 @@ import {
 
 import { mergeClasses } from "./lib/utils";
 
-// @port look/workspace.tsx
 /**
  * A `RichEditor`'s document (its `classes`): roomy padding inside the
  * scroll view, so its scroll bar runs along the editor's edge; relaxed
@@ -46,7 +46,6 @@ export const richEditorClasses: RichEditorClasses = {
     strike: "line-through",
   },
 };
-// @port end
 
 /** Every prop of `nsh/base` RichEditor; the document's chrome is `richEditorClasses`. */
 export type RichEditorProps = BaseRichEditorProps;

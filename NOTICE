@@ -21,10 +21,10 @@ shadcn/ui names and composes its own: a family keeps shadcn's part roles
 (`Trigger`, `Content`, `Item`, …) and the axes it writes (`variant`, `size`,
 `tone`).
 
-Each adapted file says where it came from: a header line citing this notice, and a
-`// @port <file in examples/nsh-gallery-ui>` marker (up to `// @port end`) around
-the region taken from that file. The adapted parts keep this notice's license:
-Apache-2.0. Which file came from which is `port-map.json`'s to say.
+Each adapted file says where it came from in its header (`Derived from NSH
+examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.`). The
+adapted parts keep this notice's license: Apache-2.0. Which file came from which
+is `port-map.json`'s to say.
 
 The Solid Glass theme (`packages/theme/themes/solid-glass/`) is derived from the
 colour and finish values of Solid Glass's stylesheet:

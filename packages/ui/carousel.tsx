@@ -1,6 +1,7 @@
 // A carousel: the look (arrows, the pagination's pill and its dots) and the parts on `nsh/base`'s
 // carousel.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   alpha,
   colors,
@@ -42,7 +43,6 @@ import { Icon } from "./lib/icons";
 import { mergeAndroid, pressHostProps, pressRipple, pressSink, pressTransition } from "./lib/press";
 import { joinClass } from "./lib/utils";
 
-// @port look/nav.tsx
 /** A pointer, where a carousel's controls are compact; a touch screen gets roomier ones. */
 const pointer = platform.desktop;
 
@@ -247,7 +247,6 @@ export function CarouselDot(props: { selected: boolean }) {
     />
   );
 }
-// @port end
 
 /** `top` over `under` as two styles, or `under` alone when there is nothing over it. */
 function over(under: StyleProp<ViewStyle>, top: StyleProp<ViewStyle>): StyleProp<ViewStyle> {

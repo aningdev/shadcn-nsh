@@ -1,6 +1,6 @@
 // A time field: the well of `timeFieldClass` and the segments of the date picker's time row, and the
 // `TimeField` that wears them.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+
 import { split } from "nsh";
 import { TimeField as BaseTimeField, type TimeFieldProps as BaseTimeFieldProps } from "nsh/base";
 

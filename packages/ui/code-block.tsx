@@ -1,6 +1,6 @@
 // A code block: a titled block of code or output, a copy button that flips to a check, line numbers
-// and a footer. This library's own (drawn on `nsh`'s View, Text and Scroll; the clipboard is
-// `nsh`'s), so there is no port region. Yours to change.
+// and a footer.
+
 import { alpha, colors, font, mono, rounded, shape, type TypeName } from "@shadcn-nsh/theme";
 import { Check, Copy } from "lucide";
 import type { JSX, ScrollProps, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";

@@ -1,7 +1,6 @@
 // Icons: lucide's nodes drawn on a canvas, the check mark as one color's SVG, and any icon as an
-// image (`iconImage`) for what takes one (a native menu item). This library's own (upstream's own
-// glyphs are superseded by `lucide`): the icons come from `lucide` as a front end imports them.
-// Yours to change.
+// image (`iconImage`) for what takes one (a native menu item).
+
 import { terminal } from "@shadcn-nsh/theme";
 import { ArrowLeft, ArrowRight, Check, ChevronLeft, ChevronRight, type IconNode } from "lucide";
 import { Canvas, Image, Path2D, Text } from "nsh";

@@ -1,6 +1,6 @@
 // A separator: a hairline between two groups of content, the look (`separatorLook`) and the
-// `Separator` that wears it. This library's own (drawn on `nsh`'s View, no `nsh/base` control is
-// its behavior), so there is no port region. Yours to change.
+// `Separator` that wears it.
+
 import { colors, stroke } from "@shadcn-nsh/theme";
 import type { ViewProps, ViewStyle } from "nsh";
 import { split, View } from "nsh";

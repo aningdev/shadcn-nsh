@@ -17,10 +17,9 @@
  * A component whose demo is missing fails when it has values to cover; one with no axis at all
  * (a spinner) has nothing to check.
  *
- * The same run checks the render cases' `selfReference`: a component whose file is upstream's
- * own (nothing hand-written after its last port region) draws itself on its reference page, so
- * it must declare why (`badge`, `plot`, `emoji-picker`, …); one with a shell must not, because
- * its reference page is a real comparison.
+ * The same run checks the render cases' `selfReference`: a reference page that draws the component
+ * itself proves nothing, so it must declare why it cannot rebuild it (`badge`, `plot`,
+ * `emoji-picker`, …); a component whose page can rebuild it must not claim that.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -29,7 +28,7 @@ import { parseSync } from "oxc-parser";
 
 import { cases } from "../../apps/website/demos/render-cases";
 import { catalog } from "../catalog";
-import { repo } from "./lib";
+import { declarations, portedNames, readMap, repo } from "./lib";
 
 type Node = { type: string; start?: number; end?: number; [key: string]: unknown };
 
@@ -49,7 +48,6 @@ type Value = { axis: string; value: string };
 type Module = {
   file: string;
   source: string;
-  program: Node;
   /** Exported type aliases and interfaces, by name. */
   types: Map<string, Node>;
   /** Every local type alias and interface, by name (a props type may extend a private one). */
@@ -98,28 +96,38 @@ function moduleAt(file: string): Module {
       functions.push(node);
     }
   }
-  return { file, source, program, types, localTypes, imports, functions };
+  return { file, source, types, localTypes, imports, functions };
 }
 
-/**
- * Whether the component has hand-written code after its last port region (a shell). Types after it
- * (`export type { EmojiEntry }`, an alias, an interface) draw nothing, so they are not one.
- */
-function hasShell(module: Module): boolean {
-  const marker = module.source.lastIndexOf("// @port end");
-  if (marker === -1) return true;
-  return (module.program.body as Node[]).some(
-    (node) => (node.start ?? 0) > marker && !typeOnly(node),
+const map = readMap();
+/** What each file of ours got from upstream: the names the port map routes into it. */
+const ported = portedNames(map);
+const demosDir = path.join(repo, "apps/website/demos");
+const pascal = (id: string) =>
+  id
+    .split("-")
+    .map((part) => part[0].toUpperCase() + part.slice(1))
+    .join("");
+
+/** The names a reference page takes from `packages/ui/<id>`: what it draws from the component file. */
+function drawnFrom(page: string, id: string): Set<string> {
+  const source = fs.readFileSync(page, "utf8");
+  const pattern = new RegExp(
+    `import\\s+(?:type\\s+)?\\{([^}]*)\\}\\s+from\\s+"(?:@/packages/ui|\\.\\./ui)/${id}"`,
+    "g",
   );
-}
-
-/** A statement that leaves no code behind: a type, an interface, or an export of types only. */
-function typeOnly(node: Node): boolean {
-  if (node.type === "TSTypeAliasDeclaration" || node.type === "TSInterfaceDeclaration") return true;
-  if (node.type !== "ExportNamedDeclaration") return false;
-  if (node.exportKind === "type") return true;
-  const declaration = node.declaration as Node | null | undefined;
-  return declaration ? typeOnly(declaration) : false;
+  const out = new Set<string>();
+  for (const match of source.matchAll(pattern)) {
+    for (const part of match[1].split(",")) {
+      const name = part
+        .trim()
+        .split(/\s+as\s+/)
+        .pop()
+        ?.trim();
+      if (name) out.add(name);
+    }
+  }
+  return out;
 }
 
 /** The type a type alias declares; an interface is its own (its members are read directly). */
@@ -341,20 +349,35 @@ for (const component of set) {
   }
 }
 
-// The render cases: a component with no shell (upstream's own file) must say why its reference
-// page draws itself; one with a shell must not claim that.
+// The render cases: a reference page that draws the component itself proves nothing, so it must
+// say why it cannot rebuild it (upstream's own component in the file, or ours a re-export); a page
+// that can rebuild it must say nothing.
 for (const { id, selfReference } of cases) {
   const component = byId.get(id);
   if (!component) continue;
-  const shell = hasShell(moduleAt(component.uiFile));
-  if (!shell && !selfReference) {
+  const reference = path.join(demosDir, `${id}.ref.tsx`);
+  if (!fs.existsSync(reference)) {
+    problems.push(`${id}: no ${path.relative(repo, reference)}`);
+    continue;
+  }
+  const drawn = drawnFrom(reference, id);
+  const rel = path
+    .relative(path.join(repo, map.root), path.resolve(repo, component.uiFile))
+    .replaceAll(path.sep, "/");
+  const fromUpstream = ported.get(rel) ?? new Set<string>();
+  const name = pascal(id);
+  if (!selfReference && drawn.has(name)) {
     problems.push(
-      `${id}: no shell, so declare selfReference in apps/website/demos/render-cases.ts`,
+      `${id}: its reference page draws <${name}>; declare selfReference with the reason it cannot rebuild it`,
     );
   }
-  if (shell && selfReference) {
+  const ours = declarations(component.uiFile, fs.readFileSync(component.uiFile, "utf8")).some(
+    (one) => one.names.includes(name),
+  );
+  const upstreams = [...drawn].some((one) => /^[A-Z]/.test(one) && fromUpstream.has(one));
+  if (selfReference && ours && !upstreams) {
     problems.push(
-      `${id}: has a shell, so its reference page is a real comparison; remove selfReference`,
+      `${id}: its reference page draws only what it can rebuild, so it compares; remove selfReference`,
     );
   }
 }

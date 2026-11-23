@@ -7,9 +7,8 @@ import { existsSync, readdirSync, readFileSync } from "node:fs";
  * and a theme change reaches every control. A color written out, or a palette color spliced into a
  * class string, would not.
  *
- * The whole source is read, **port regions included**: a region says where the code came from, not
- * whose colors it uses (`docs/ARCHITECTURE.md`). The look is this library's, so a color in it is
- * the theme's or one of the exemptions below.
+ * The whole source is read, looks included: a look is this library's code, so a color in it is the
+ * theme's or one of the exemptions below.
  *
  * A color the *user* picks cannot be a theme role: an avatar's identity hue, the picker's swatch
  * chrome, the ink that reads on a chosen color, a chart label over a series' fill. Those are
@@ -101,17 +100,13 @@ describe("component sources (P3: colors come from the theme)", () => {
     }
   });
 
-  test("a port region is read with the rest of the file", () => {
-    // The region used to be stripped before the rules ran (`shellCode`); it is the look, so a
-    // color in it is the theme's as well. Take a code line from inside one and check it is read.
+  test("a look is read with the rest of the file", () => {
+    // The rules are about looks, so nothing is cut out of a file before they run: a color in a
+    // look is as much the theme's as one in a shell.
     const path = "packages/ui/button.tsx";
     const text = read(path);
-    const body = text.slice(text.indexOf("// @port look/button.ts"));
-    const line = body
-      .split("\n")
-      .find((value) => /^(?:export|const|function|type|interface)\b/.test(value));
-    expect(line, path).toBeDefined();
-    expect(code(path)).toContain(line!);
+    expect(text, path).toContain("export const buttonSizes");
+    expect(code(path), path).toContain("export const buttonSizes");
   });
 
   test("the guard catches a color literal", () => {

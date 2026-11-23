@@ -1,6 +1,6 @@
 // An image viewer: one image full screen over the media ground, fitted, pinched, panned and
-// swiped away. This library's own (drawn on `nsh`'s View, Text and Image, over `Dialog` as a
-// page), so there is no port region. Yours to change.
+// swiped away.
+
 import { alpha, animate, colors, font, motion } from "@shadcn-nsh/theme";
 import { X } from "lucide";
 import type { TextStyle, ViewStyle } from "nsh";

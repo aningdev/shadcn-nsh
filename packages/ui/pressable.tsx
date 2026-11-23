@@ -1,6 +1,6 @@
 // A pressable: a region that owns its look and gets only the feedback of a press — the sink, the
-// pointer's hover and the keyboard's ring. This library's own: nothing here comes from upstream,
-// so there is no port region. Yours to change.
+// pointer's hover and the keyboard's ring.
+
 import {
   colors,
   focusRing,

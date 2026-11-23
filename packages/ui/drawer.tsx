@@ -1,8 +1,7 @@
-// A drawer: a sheet from the bottom edge with a wide grabber at its top, closed by a swipe, with a
-// card's header, footer, title and description around its content. The panel is `sheet.tsx`'s
-// (`sheetPanel`), the title and text are `dialog.tsx`'s (`dialogTitle`, `dialogText`); this file adds
-// the grabber and the shell. This library's own: nothing here comes from upstream, so there is no
-// port region. Yours to change.
+// A drawer: a sheet from the bottom edge, its grabber wide at the top, closed by a swipe, holding a
+// card's header, footer, title and description. The panel is `sheet.tsx`'s (`sheetPanel`); the title
+// and text are `dialog.tsx`'s (`dialogTitle`, `dialogText`).
+
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, split, token, View } from "nsh";
 import {

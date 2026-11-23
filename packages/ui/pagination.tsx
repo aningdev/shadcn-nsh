@@ -1,5 +1,6 @@
 // A pagination: `paginationItemClass` and `paginationArrows`, and the `Pagination` that wears them.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { colors, rounded, shape, terminal } from "@shadcn-nsh/theme";
 import { ChevronRight } from "lucide";
 import type { JSX, TextStyle } from "nsh";
@@ -12,7 +13,6 @@ import {
 
 import { Icon } from "./lib/icons";
 
-// @port look/nav.tsx
 const pointer = platform.desktop;
 
 /** The side of an arrow's chevron: 14 points with a pointer, 16 on a touch screen. */
@@ -73,7 +73,6 @@ export function paginationArrows(item: PaginationItemState): JSX.Element {
     </View>
   );
 }
-// @port end
 
 /**
  * `nsh/base`'s Pagination with `paginationItemClass` and `paginationArrows` by default.

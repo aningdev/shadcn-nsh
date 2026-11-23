@@ -1,6 +1,7 @@
 /**
- * Shared by `vendor.ts`, `check.ts` and `changes.ts`: reads `port-map.json`, splits an upstream
- * module into its top-level declarations, and renders the region of a target file that holds them.
+ * Shared by `vendor.ts`, `check.ts`, `changes.ts` and `coverage.ts`: reads `port-map.json` and
+ * splits a module into its top-level declarations, so the ones an upstream file routes to a target
+ * can be drafted into it.
  */
 import fs from "node:fs";
 import path from "node:path";
@@ -17,7 +18,7 @@ export type FileEntry = {
    * change to register (the theme files: `docs/port.md`).
    */
   owned?: string;
-  /** Every declaration goes to the region of this file under `root`, unless `symbols` says otherwise. */
+  /** Every declaration goes to this file under `root`, unless `symbols` says otherwise. */
   to?: string;
   /** Per-declaration targets: one file, or several (a private constant two components need). */
   symbols?: Record<string, string | string[]>;
@@ -71,8 +72,8 @@ export function upstreamFiles(map: PortMap): string[] {
   return out.sort();
 }
 
-/** A top-level declaration of a module: its names and its text, leading comments included. */
-export type Declaration = { names: string[]; text: string };
+/** A top-level declaration of a module: its names, its text (leading comments included), and its kind. */
+export type Declaration = { names: string[]; text: string; typeOnly: boolean };
 
 type Node = { type: string; start: number; end: number; [key: string]: unknown };
 
@@ -124,7 +125,11 @@ export function declarations(file: string, source: string): Declaration[] {
       // A statement that declares nothing (`mount(App)`) is routed by its place among them.
       if (names.length === 0) names.push(`<statement ${(unnamed += 1)}>`);
       const lead = comments.find((c) => c.start >= previousEnd && c.end <= node.start);
-      out.push({ names, text: source.slice(lead ? lead.start : node.start, node.end) });
+      out.push({
+        names,
+        text: source.slice(lead ? lead.start : node.start, node.end),
+        typeOnly: typeOnly(node),
+      });
     }
     previousEnd = node.end;
   }
@@ -149,65 +154,90 @@ export function route(entry: FileEntry, name: string): Route {
   return { kind: "unmapped" };
 }
 
-const begin = (upstream: string) => `// @port ${upstream}`;
-const END = "// @port end";
-
-/** The text between the markers of `upstream`'s region in `target`, or null when it has none. */
-export function readRegion(target: string, upstream: string): string | null {
-  const start = target.indexOf(`${begin(upstream)}\n`);
-  if (start === -1) return null;
-  const from = start + begin(upstream).length + 1;
-  const end = target.indexOf(END, from);
-  return end === -1 ? null : target.slice(from, end);
-}
-
-/** `target` with the region of `upstream` replaced by `body`. */
-export function writeRegion(target: string, upstream: string, body: string): string {
-  const start = target.indexOf(`${begin(upstream)}\n`);
-  if (start === -1) throw new Error(`no "${begin(upstream)}" marker`);
-  const from = start + begin(upstream).length + 1;
-  const end = target.indexOf(END, from);
-  if (end === -1) throw new Error(`no "${END}" after "${begin(upstream)}"`);
-  return `${target.slice(0, from)}${body}\n${target.slice(end)}`;
-}
-
-/** What the region of `upstream` in `targetRel` holds: its declarations routed there, in order. */
-export function renderRegion(
-  map: PortMap,
-  upstream: string,
-  targetRel: string,
-): { body: string; names: string[] } {
-  const entry = map.files[upstream];
-  const source = fs.readFileSync(path.join(upstreamDir(map), upstream), "utf8");
-  const parts: string[] = [];
-  const names: string[] = [];
-  for (const declaration of declarations(upstream, source)) {
-    const name = declaration.names[0];
-    const to = route(entry, name);
-    if (to.kind !== "ported" || !to.targets.includes(targetRel)) continue;
-    parts.push(declaration.text);
-    names.push(name);
+/** Types are not code: a declaration that only names a shape is never what a shell is made of. */
+function typeOnly(node: Node): boolean {
+  const inner = node.type === "ExportNamedDeclaration" ? (node.declaration as Node | null) : node;
+  if (inner?.type === "TSTypeAliasDeclaration" || inner?.type === "TSInterfaceDeclaration") {
+    return true;
   }
-  return { body: parts.join("\n\n"), names };
+  return node.type === "ExportNamedDeclaration" && node.exportKind === "type";
 }
 
-/** The (upstream, target) pairs that have a region, from the map alone. */
-export function regions(map: PortMap): { upstream: string; target: string }[] {
+/** Whether a target is a module whose declarations can be drafted: not a README, not a JSON. */
+export const isSource = (rel: string) => /\.(?:ts|tsx|js|jsx)$/.test(rel);
+
+/** The credit line every derived file carries under its description, on line 2 (`NOTICE`). */
+export const CREDIT =
+  "// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.";
+
+/** The (upstream, target) pairs the map routes declarations to: every file of ours that is derived. */
+export function targets(map: PortMap): { upstream: string; target: string }[] {
   const out: { upstream: string; target: string }[] = [];
   for (const [upstream, entry] of Object.entries(map.files)) {
     if (entry.owned || typeof entry.exclude === "string") continue;
-    const targets = new Set<string>();
-    if (entry.to) targets.add(entry.to);
+    const to = new Set<string>();
+    if (entry.to) to.add(entry.to);
     for (const value of Object.values(entry.symbols ?? {})) {
-      for (const target of Array.isArray(value) ? value : [value]) targets.add(target);
+      for (const target of Array.isArray(value) ? value : [value]) to.add(target);
     }
-    for (const target of targets) out.push({ upstream, target });
+    for (const target of to) out.push({ upstream, target });
   }
   return out;
 }
 
+/** The declarations of `upstream` that the map routes to `targetRel`, in upstream's order. */
+export function routed(
+  map: PortMap,
+  upstream: string,
+  targetRel: string,
+): { name: string; text: string }[] {
+  if (!isSource(targetRel)) return [];
+  const entry = map.files[upstream];
+  const source = fs.readFileSync(path.join(upstreamDir(map), upstream), "utf8");
+  const out: { name: string; text: string }[] = [];
+  for (const declaration of declarations(upstream, source)) {
+    const name = declaration.names[0];
+    const to = route(entry, name);
+    if (to.kind !== "ported" || !to.targets.includes(targetRel)) continue;
+    out.push({ name, text: declaration.text });
+  }
+  return out;
+}
+
+/** Every name the map routes to each target: what a derived file got from upstream. */
+export function portedNames(map: PortMap): Map<string, Set<string>> {
+  const out = new Map<string, Set<string>>();
+  for (const [upstream, entry] of Object.entries(map.files)) {
+    const file = path.join(upstreamDir(map), upstream);
+    if (!isSource(upstream) || !fs.existsSync(file)) continue;
+    for (const declaration of declarations(upstream, fs.readFileSync(file, "utf8"))) {
+      const to = route(entry, declaration.names[0]);
+      if (to.kind !== "ported") continue;
+      for (const target of to.targets) {
+        const names = out.get(target) ?? new Set<string>();
+        for (const name of declaration.names) names.add(name);
+        out.set(target, names);
+      }
+    }
+  }
+  return out;
+}
+
+/** `source` with `body` written in under its imports: where the look a file drafts belongs. */
+export function insertDraft(source: string, body: string): string {
+  if (body.trim() === "") return source;
+  const lines = source.split("\n");
+  let at = 0;
+  for (const [index, line] of lines.entries()) {
+    if (line.startsWith("import ") || line.startsWith("} from ")) at = index + 1;
+  }
+  const rest = lines.slice(at);
+  while (rest.length > 0 && rest[0].trim() === "") rest.shift();
+  return [...lines.slice(0, at), "", body, "", ...rest].join("\n");
+}
+
 /**
- * Text as the formatter cannot change it: no whitespace, no trailing commas. Two regions that
+ * Text as the formatter cannot change it: no whitespace, no trailing commas. Two drafts that
  * differ only in line breaks, indentation or a trailing comma compare equal.
  */
 export function normalize(text: string): string {

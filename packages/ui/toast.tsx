@@ -1,5 +1,6 @@
 // A toast: the look (`toastLook` and its companions) at the top, and the `Toast` that wears it below.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   alpha,
   platformMaterial,
@@ -31,7 +32,6 @@ import { Icon } from "./lib/icons";
 import { pressRipple, pressSink, pressTransition } from "./lib/press";
 import { Spinner } from "./spinner";
 
-// @port look/overlay.ts
 const pointer = platform.desktop;
 
 /**
@@ -134,7 +134,6 @@ export function toastCloseLook() {
     },
   };
 }
-// @port end
 
 /**
  * `nsh/base`'s Toast in the look of `toastLook`. Every base prop passes through; `style` goes

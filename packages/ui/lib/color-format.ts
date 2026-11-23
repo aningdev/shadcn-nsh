@@ -1,9 +1,9 @@
 // Color strings for the picker: format a value and pick ink that reads on it. Kept in lib, apart
 // from the picker, so `bun test` checks it without starting NSH.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import type { ColorFormat } from "nsh/base";
 
-// @port color-format.ts
 /** `v` to `decimals` places, trailing zeros dropped (as the picker writes its numbers). */
 function numberText(v: number, decimals: number): string {
   const text = v.toFixed(decimals);
@@ -78,4 +78,3 @@ export function inkOn(value: string): string {
   const [r, g, b] = channels(value).slice(0, 3).map(toLinear);
   return 0.2126 * r + 0.7152 * g + 0.0722 * b > BLACK_INK_FROM ? "black" : "white";
 }
-// @port end

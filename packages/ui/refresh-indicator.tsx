@@ -1,6 +1,5 @@
-// A refresh indicator: the round chip a pull-to-refresh draws over the top of a scroll view. This
-// library's own (drawn on `nsh`'s View, with the library's Icon and Spinner), so there is no port
-// region. Yours to change.
+// A refresh indicator: the round chip a pull-to-refresh draws over the top of a scroll view.
+
 import { colors, controlHeight, finish, iconSize, stroke } from "@shadcn-nsh/theme";
 import { ArrowDown } from "lucide";
 import type { AnimatedValue, ViewProps, ViewStyle } from "nsh";

@@ -11,7 +11,7 @@
 | shadcn                | 分发方式、目录、一组件一文件、组合角色（`Trigger` / `Content` / …）、API 命名的参照 |
 | `nsh/base`            | 行为与无障碍（不改）                                                                |
 
-抽取自上游的代码位于 `// @port <上游文件>` 与 `// @port end` 之间：这是**来源标注**，说明这段起源于上游哪个文件，**可以直接修改**。上游每个声明的去向记在 [`port-map.json`](port-map.json)；`port:vendor` 只在新增组件时抽取初稿，不覆盖已有代码。颜色只来自主题（`packages/theme`），组件代码里不写颜色字面量。
+起源于上游的文件在文件头一行致谢（`Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.`），代码本身归本库、可以直接改。上游每个声明的去向记在 [`port-map.json`](port-map.json)；`port:vendor` 只在新增组件时抽取初稿，不覆盖已有代码。颜色只来自主题（`packages/theme`），组件代码里不写颜色字面量。
 
 **设计或改一套主题之前，先读 [`docs/theme-design.md`](docs/theme-design.md)**（要决定什么、落在哪个文件、哪项检查守住）。
 
@@ -24,7 +24,7 @@
 | 路径                                     | 内容                                                                                                                            |
 | ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------- |
 | `packages/theme`                         | `tokens/`（6 套主题的 DTCG 2025.10 源码）、编译产物 `theme.json` / `semantics.json`（oklch）、`themes/`、`theme.ts`（角色读取） |
-| `packages/ui`                            | 组件（来源于上游的部分以 `// @port` 标注 + 外壳）                                                                               |
+| `packages/ui`                            | 组件（look + 外壳；起源于上游的文件在文件头致谢）                                                                               |
 | `apps/website/demos`                     | 验收演示、演示适配层 `stage.tsx`、渲染比对、`port:render`                                                                       |
 | `apps/website/src/pages/docs/components` | 组件文档页                                                                                                                      |
 | `apps/showcase`                          | 展示应用：Gallery 的壳与本库组件重建的场景（分批实现），首页 “See it running” 嵌入其打包产物                                    |
@@ -64,7 +64,7 @@
    ▼
 packages/theme   tokens/ (DTCG) --[tokens:build]--> theme.json + semantics.json + themes/<id>/；theme.ts 读取
 packages/ui/lib  没有所属控件的共享部分（press、overlay、surface…）
-packages/ui/<id>.tsx  一个组件 = look（来源标注 // @port）+ 外壳，都归本库
+packages/ui/<id>.tsx  一个组件 = look + 外壳，都归本库
 apps/website/demos、docs  演示与文档页
    │
    ▼
@@ -78,7 +78,7 @@ registry.json → public/r → shadcn-nsh add
 - 新组件用脚手架（`bun run port:new`）起步，不从空文件或旧组件复制。
 - `main` 受保护：每个改动一个分支（`<type>/<短描述>`）、一个 PR（标题是约定式提交信息，squash 合并），bug 与新组件先有 issue，PR 写 `Closes #N`；用的人能感知到的改动在同一 PR 里写进 `CHANGELOG.md` 的 `Unreleased`。流程见 [`CONTRIBUTING.md`](CONTRIBUTING.md#分支与-pr)。
 - 一个家族一个 PR；开 PR 前 `port:check`、`nsh check apps/website/demos`、`port:render`、`vp check` 全部通过，四张截图人眼看过。
-- `// @port` 区域可以直接改；有意的外观决定写进对应文档。上游有变化时 `port:check` 会列出待审阅项，审阅后采纳或忽略；`bun run port:review` 把审阅到的上游提交记进 `port-map.json`。
+- look 与外壳都可以直接改；有意的外观决定写进对应文档。上游有变化时 `port:check` 会列出待审阅项，审阅后采纳或忽略；`bun run port:review` 把审阅到的上游提交记进 `port-map.json`。
 - 改 `registry.json` 或组件文件后运行 `bun run registry:build` 更新 `public/r`；`bun run check` 里的 `registry:build --check` 会拦下没重建的提交。
 - 发版按 [`docs/release.md`](docs/release.md) 走：改版号、切 CHANGELOG、重建 registry、打 `v*` 标签。
 

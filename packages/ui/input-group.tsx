@@ -1,6 +1,6 @@
 // An input group: the field's frame around a control and the parts beside it (a leading icon, a
-// trailing button, a unit), after shadcn/ui's InputGroup. This library's own: the parts and their
-// names follow shadcn/ui, the frame is the field's own look. Yours to change.
+// trailing button, a unit), after shadcn/ui's InputGroup.
+
 import { colors, terminal, TERMINAL_COLUMN } from "@shadcn-nsh/theme";
 import type { InputRef, InputStyle, JSX, Signal, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, signal, split, View } from "nsh";

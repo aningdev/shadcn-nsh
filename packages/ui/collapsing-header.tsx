@@ -1,6 +1,6 @@
 // A collapsing header: a page's header, a picture behind its title, that shrinks into a bar as the
-// page scrolls. This library's own (drawn on `nsh`'s View and Text, its motion `interpolate`d from
-// the scroll view's value), so there is no port region. Yours to change.
+// page scrolls.
+
 import { alpha, colors, finish, font, stroke, terminal, TERMINAL_ROW } from "@shadcn-nsh/theme";
 import type { AnimatedNode, AnimatedValue, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, reduceMotion, split, Text, View } from "nsh";

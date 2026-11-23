@@ -1,8 +1,7 @@
 // A switch's sizes and the arithmetic of its knob, apart from `switch.tsx` and free of imports: kept
 // in lib so `bun test` checks it without starting NSH.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-// @port look/switch-geometry.ts
 /** A switch's track and knob, in points. */
 export interface SwitchGeometry {
   /** The track's outer width. */
@@ -55,4 +54,3 @@ export function switchSlop(
   const h = Math.max(0, (hit - g.width) / 2);
   return { top: v, bottom: v, left: h, right: h };
 }
-// @port end

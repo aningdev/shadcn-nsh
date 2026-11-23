@@ -1,5 +1,6 @@
 // Tabs: the looks (`tabsLook`, `underlineTabsLook`, `TabTitle`) and the parts that wear them.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   colors,
   finish,
@@ -30,8 +31,6 @@ import { Icon } from "./lib/icons";
 import { pressHostProps, pressRipple } from "./lib/press";
 import { controlSize } from "./lib/surface";
 import { type Live, read } from "./lib/utils";
-
-// @port look/tabs.tsx
 
 /** The state of one tab or segment, read where the look is applied. */
 export interface TabState {
@@ -323,7 +322,6 @@ export function TabTitle(props: {
     </View>
   );
 }
-// @port end
 
 /** Pill track (`default`) or underlined (`line`) tab list. */
 export type TabsListVariant = "default" | "line";

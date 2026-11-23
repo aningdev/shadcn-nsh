@@ -1,5 +1,6 @@
 // A context menu: `nsh/base`'s ContextMenu with the shared menu look from `menu.tsx`.
 // This file is the shell only; row and popup looks live in `menu.tsx`.
+
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { context, split, View } from "nsh";
 import {

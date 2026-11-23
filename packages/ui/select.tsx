@@ -1,6 +1,7 @@
 // A select: the trigger's look (`pickerLook`, `Picker`) and the parts of the list (`Select`,
 // `SelectTrigger`, `SelectContent`), which wear the shared listbox look.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   alpha,
   colors,
@@ -47,7 +48,6 @@ import {
 import { controlSize } from "./lib/surface";
 import { type Live, read } from "./lib/utils";
 
-// @port look/listbox.tsx
 const pointer = platform.desktop;
 
 /** A trigger's least width with a pointer: room for the list's rows, which are as wide as it. */
@@ -284,7 +284,6 @@ export function Picker(props: PickerProps) {
     </View>
   );
 }
-// @port end
 
 /** The root: it owns the open flag, the value and the items its parts register. */
 export type SelectProps = {

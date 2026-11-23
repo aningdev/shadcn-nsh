@@ -1,5 +1,6 @@
 // What sections, wells and rows look like: density, surfaces, and rows whose hover fill bleeds.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   colors,
   finish,
@@ -24,7 +25,6 @@ import { computed, platform, Text, token, View, windowSize } from "nsh";
 import { pressRipple } from "./press";
 import { type Live, read } from "./utils";
 
-// @port look/surface.tsx
 const pointer = platform.desktop;
 
 /**
@@ -401,4 +401,3 @@ export function RowLabel(props: {
     </View>
   );
 }
-// @port end

@@ -1,5 +1,6 @@
 // A checkbox: the look (`checkboxLook` and its companions) and the `Checkbox` that wears it.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   alpha,
   colors,
@@ -30,8 +31,6 @@ import { Icon } from "./lib/icons";
 import { pressRipple, pressSink } from "./lib/press";
 import { controlSize } from "./lib/surface";
 import { type Live, read } from "./lib/utils";
-
-// @port look/choice.tsx
 
 /** What a checkbox's box shows: a check, a dash (indeterminate) or nothing. */
 export type CheckboxMarkKind = "check" | "dash" | null;
@@ -288,7 +287,6 @@ export function CheckboxMark(props: { mark: CheckboxMarkKind } & ChoiceOptions) 
     </View>
   );
 }
-// @port end
 
 /**
  * A choice control's size: what a checkbox's box or a radio's ring is drawn at, `sm` 0.8,

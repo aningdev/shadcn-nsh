@@ -40,10 +40,9 @@ export default defineConfig({
     options: { typeAware: true, typeCheck: true },
     plugins: ["eslint", "typescript", "react", "import", "promise", "node", "vitest"],
     ignorePatterns: ignoreLint,
-    // A `// @port` region is this library's code that began as upstream text, and it may be
-    // edited (`docs/ARCHITECTURE.md`). These findings are upstream's own patterns, kept as they
-    // are: each entry names the upstream file the text came from, so a change is made against
-    // that look, not around a lint rule.
+    // A look began as upstream text and is this library's code (`docs/ARCHITECTURE.md`); these
+    // findings are upstream's own patterns, kept as they are. Each entry names the upstream file
+    // the text came from, so a change is made against that look, not around a lint rule.
     overrides: [
       // theme.ts: `v.spring(next, spring)` returns the animation's promise, dropped on purpose.
       {

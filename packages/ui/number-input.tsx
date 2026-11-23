@@ -1,6 +1,7 @@
 // A number input: the well, its text and its step buttons (`numberInputClasses`, `numberInputText`,
 // `numberInputSteps`) and the `NumberInput` that wears them.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { colors, terminal } from "@shadcn-nsh/theme";
 import { ChevronDown, ChevronUp, Minus, Plus, type IconNode } from "lucide";
 import type { InputStyle } from "nsh";
@@ -14,7 +15,6 @@ import { edgeClass, fieldSize } from "./input";
 import { Icon } from "./lib/icons";
 import { fieldCornerClass, fieldEdgeClass } from "./lib/indicator";
 
-// @port look/field.tsx
 const pointer = platform.desktop;
 
 /** The step buttons' feedback: lit under the pointer, darker while pressed, faded where a step does nothing. */
@@ -114,7 +114,6 @@ export function numberInputSteps(kind: "split" | "pair", width: string, glyphSiz
     decrementButton: <NumberStep icon={ChevronDown} size={chevron} />,
   };
 }
-// @port end
 
 /**
  * `nsh/base`'s NumberInput in the look of `numberInputClasses` / `numberInputSteps`. Every base

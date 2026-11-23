@@ -1,5 +1,6 @@
 // A small capsule label.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   colors,
   terminal,
@@ -16,7 +17,6 @@ import { token, View, Text } from "nsh";
 
 import { type Live, read } from "./lib/utils";
 
-// @port index.tsx
 /** A badge's variants: `default`, the tone's fill; `outline`, an edge in the tone's color. */
 export type BadgeVariant = "default" | "outline";
 
@@ -87,4 +87,3 @@ export function Badge(props: BadgeProps) {
     </View>
   );
 }
-// @port end

@@ -1,6 +1,6 @@
 // A breadcrumb: the path from where the app starts to the page it shows, as a row of links a
-// separator parts, the page itself last. This library's own (drawn on `nsh`'s View and Text; a
-// step's link is `nsh/base`'s Link), so there is no port region. Yours to change.
+// separator parts, the page itself last.
+
 import { colors, focusRing, rounded, terminal, font, shape } from "@shadcn-nsh/theme";
 import { ChevronRight, Ellipsis } from "lucide";
 import type { JSX, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";

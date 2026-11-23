@@ -1,7 +1,7 @@
 // A navigation stack: `nsh/base`'s NavStack and NavPage, and the header the desktops and the web
 // draw — a back button, the title, a trailing slot — which iOS and Android take from the system
-// instead. The looks are `navStackLook` and `navPageLook` below; the parts only wear them. This
-// library's own: nothing here comes from upstream, so there is no port region. Yours to change.
+// instead. The looks are `navStackLook` and `navPageLook` below; the parts only wear them.
+
 import { colors, header, font, stroke } from "@shadcn-nsh/theme";
 import { ChevronLeft } from "lucide";
 import type { JSX, TextStyle, ViewStyle } from "nsh";

@@ -1,6 +1,6 @@
 // A collapsible: `nsh/base`'s Collapsible in the disclosure look of `accordion.tsx` — a trigger row
-// and the panel it reveals. This library's own: nothing here comes from upstream, so there is no
-// port region. Yours to change.
+// and the panel it reveals.
+
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { context, split, View } from "nsh";
 import {

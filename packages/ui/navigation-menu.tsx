@@ -1,6 +1,6 @@
 // A navigation menu: a row of triggers, each opening a panel of anything (a grid of links, a card
-// with a description) under itself, one panel open at a time. This library's own: nothing here
-// comes from upstream, so there is no port region. Yours to change.
+// with a description) under itself, one panel open at a time.
+
 import {
   alpha,
   colors,

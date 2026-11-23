@@ -1,10 +1,10 @@
-// A quiet state mark (dot + word). From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// A quiet state mark (dot + word).
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { colors, terminal, toneColor, type Tone, font } from "@shadcn-nsh/theme";
 import { Text, View } from "nsh";
 
 import { type Live, read } from "./lib/utils";
-
-// @port index.tsx
 
 /** The dot's diameter; half of it is its corner, a full circle. */
 const dotSide = 7;
@@ -55,4 +55,3 @@ export function Status(props: {
     </View>
   );
 }
-// @port end

@@ -1,13 +1,13 @@
 /**
  * Scaffolds a ported component: routes it in `port-map.json`, writes the shell / demos / docs
- * skeletons, fills the region with `port:vendor`, and registers it.
+ * skeletons, drafts the look in with `port:vendor`, and registers it.
  *
  *   bun run port:new <id> --from <upstream> [--symbols a,b,c] [--base <nsh/base>] [--family]
  *   bun run port:new <id> --base <nsh/base>
  *   bun run port:new <id> --view [--family]
  *
  * Without `--from` the component is the library's own (a pressable built on a `nsh/base` control,
- * say): no upstream file to route or vendor, and the shell starts with no port region. `--view`
+ * say): no upstream file to route or vendor, and its header carries no credit line. `--view`
  * is the same, drawn on `nsh`'s own elements (`View` / `Text`) instead of a `nsh/base` control:
  * a separator, a skeleton, a label — a component that only lays out and styles.
  */
@@ -122,7 +122,7 @@ function updateMap(map: PortMap, args: Args & { from: string }, target: string):
   const allDecls = declarations(args.from, source);
   const allNames = allDecls.map((d) => d.names[0]);
   // With --symbols, also take the file's private declarations that sit with the selected
-  // ones (helpers between the first and last chosen name), so the region type-checks.
+  // ones (helpers between the first and last chosen name), so the draft type-checks.
   let names = args.symbols ?? allNames;
   if (args.symbols) {
     const chosen = new Set(args.symbols);
@@ -171,7 +171,7 @@ function updateMap(map: PortMap, args: Args & { from: string }, target: string):
   return names;
 }
 
-/** Suggest imports the filled region needs, remapped from the upstream module's own imports. */
+/** Suggest the imports the draft needs, remapped from the upstream module's own imports. */
 function suggestImports(map: PortMap, upstream: string, targetFile: string) {
   const upstreamSource = fs.readFileSync(path.join(upstreamDir(map), upstream), "utf8");
   const targetSource = fs.readFileSync(targetFile, "utf8");
@@ -218,7 +218,7 @@ function suggestImports(map: PortMap, upstream: string, targetFile: string) {
     }
   }
   if (suggestions.length > 0) {
-    console.log("hint   add imports the region needs:");
+    console.log("hint   add the imports the look needs:");
     for (const line of suggestions) console.log(`       ${line}`);
   }
 }

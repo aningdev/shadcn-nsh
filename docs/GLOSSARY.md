@@ -17,11 +17,11 @@ _Avoid_: variants helper, `xVariants`, theme layer
 _Avoid_: wrapper, styled layer
 
 **Component（组件）**:
-一个文件：look（源自上游的部分以 Port Region 标注）加外壳，归本库所有。以 Copy-into-app 交付。
+一个文件：look 加外壳，归本库所有；起源于上游的文件在文件头一行致谢。以 Copy-into-app 交付。
 _Avoid_: Styled Component, npm component
 
-**Port Region（移植区域）**:
-组件或 lib 文件里 `// @port <上游文件>` 与 `// @port end` 之间的部分：来源标注，说明这段起源于上游哪个文件。可以直接修改；新组件的初稿由 `bun run port:vendor` 抽取。
+**Credit Line（致谢行）**:
+起源于上游的文件第二行的一句 `// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.`：来源标注，也是该文件唯一的一处来源。代码归本库，可以直接修改；新组件的初稿由 `bun run port:vendor` 抽取。
 _Avoid_: 只读区, 逐字照搬
 
 **Port Map（清单）**:

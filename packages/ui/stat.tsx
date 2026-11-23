@@ -1,5 +1,6 @@
 // A stat: a small muted label over a value, for grids of figures.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { colors, terminal, toneColor, type Tone } from "@shadcn-nsh/theme";
 import { context, split, Text, View } from "nsh";
 import type { ViewProps } from "nsh";
@@ -8,8 +9,6 @@ import { type Live, read } from "./lib/utils";
 
 /** Whether a `Stat` is inside a `StatGroup` (it then shares the row). */
 const StatGroupContext = context(false);
-
-// @port index.tsx
 
 /** The figure's type: a small muted label over a value a step larger, so the value leads. */
 const type = { label: 12, value: 15 };
@@ -94,4 +93,3 @@ export function StatGroup(props: StatGroupProps) {
     </StatGroupContext.Provider>
   );
 }
-// @port end

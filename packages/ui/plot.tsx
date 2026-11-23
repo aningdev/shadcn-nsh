@@ -1,6 +1,7 @@
 // A plot: every mark of `nsh/base/plot` re-exported with the look this library gives them (series
 // and category colors, grid, baseline, cross line, hover dot, wash, axis text, tooltip), plus `Legend`.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   alpha,
   chart,
@@ -37,7 +38,6 @@ export {
   type PlotProps,
 } from "nsh/base/plot";
 
-// @port look/plot.ts
 /** The series' colors, in order (`theme.json`'s `chart-1` to `chart-5`):
  * the brand's citrus first, then graphite from dark to light, so one series
  * leads and the rest stay as quiet as the interface. Rises and falls take
@@ -138,9 +138,7 @@ export const plotTooltipTitle = (): TextStyle => ({
   letterSpacing: 0.8,
   color: colors.mutedForeground,
 });
-// @port end
 
-// @port index.tsx
 /** A colored square and a label, for chart legends (the label alone in the
  * terminal, which draws no charts). */
 export function Legend(props: { color: string; label: string; value?: string }) {
@@ -161,4 +159,3 @@ export function Legend(props: { color: string; label: string; value?: string }) 
     </View>
   );
 }
-// @port end

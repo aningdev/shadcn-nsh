@@ -1,5 +1,6 @@
 // Dock area: `dockClasses`, `DockTab`, and the `DockArea` that spreads them.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { colors, finish, terminal } from "@shadcn-nsh/theme";
 import type { JSX } from "nsh";
 import { platform, split, Text, View } from "nsh";
@@ -22,7 +23,6 @@ import {
 import { joinClass } from "./lib/utils";
 import { handleThumb, RESIZE_HANDLE_LABEL } from "./resizable";
 
-// @port look/workspace.tsx
 /**
  * A `DockArea`'s parts (spread it): groups and docks on the inset, a tab
  * bar over a hairline (its tabs drawn by `DockTab`), the handles' hairlines
@@ -99,7 +99,6 @@ export function DockDragPreview(props: { title: string }) {
     </View>
   );
 }
-// @port end
 
 /** Every prop of `nsh/base` DockArea. */
 export type DockAreaProps = BaseDockAreaProps;

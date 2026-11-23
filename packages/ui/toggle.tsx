@@ -1,6 +1,7 @@
 // A toggle: the look (`toggleLook` and its companions), the `Toggle` that wears it, and
 // `ToggleGroup`, a row or column of them on the inset track (`toolbarTrack` in `lib/tool.ts`).
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   colors,
   finish,
@@ -28,7 +29,6 @@ import { pressHostProps, pressRipple, pressSink, pressTransition, touchSlop } fr
 import { toolbarTrack } from "./lib/tool";
 import { type Live, read } from "./lib/utils";
 
-// @port look/tool.ts
 /** A toggle's size: 24 / 28 / 34 points with a pointer, 32 / 38 / 44 on a touch screen. */
 export type ToggleSize = "sm" | "default" | "lg";
 
@@ -214,7 +214,6 @@ export function toggleGlyph(pressed: Live<boolean | undefined>, o?: ToggleLookOp
     },
   };
 }
-// @port end
 
 /**
  * `nsh/base`'s Toggle in the look of `toggleLook`. Every base prop passes through; the style

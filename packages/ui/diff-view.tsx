@@ -1,5 +1,6 @@
 // Diff view: `diffViewStyles`, `DiffHunkActions`, and the `DiffView` that wears them.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { alpha, colors, isDark, terminal, toneColor, type Tone } from "@shadcn-nsh/theme";
 import { Check, Undo2, type IconNode } from "lucide";
 import { split, Text, View } from "nsh";
@@ -26,8 +27,6 @@ const solidTint = (tone: Tone, base: string = colors.card) =>
   tone === "neutral"
     ? colors.raised
     : `color-mix(in srgb, ${toneColor(tone)} ${isDark() ? SOLID_TINT.dark : SOLID_TINT.light}%, ${base})`;
-
-// @port look/workspace.tsx
 
 /** One action on a diff's change: a chip 20 points high, its label 11
  * points in the interface's font (the diff's text is monospaced), or only
@@ -177,7 +176,6 @@ export function DiffHunkActions(props: {
     </View>
   );
 }
-// @port end
 
 function mergeStyles(base: DiffViewStyles, consumer?: DiffViewStyles | null): DiffViewStyles {
   if (consumer == null) return base;

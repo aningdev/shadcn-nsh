@@ -1,5 +1,6 @@
 // An OTP input: the cells (`otpCells`, `otpCellLook`) and the `OtpInput` that wears them.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { colors, finish, terminal, type Tone, toneColor, toneTint } from "@shadcn-nsh/theme";
 import type { StyleProp, ViewStyle } from "nsh";
 import { platform, split } from "nsh";
@@ -10,7 +11,6 @@ import { fieldCornerClass, fieldEdgeClass } from "./lib/indicator";
 import { createRejectShake } from "./lib/motion";
 import { type Live, read } from "./lib/utils";
 
-// @port look/field.tsx
 const pointer = platform.desktop;
 
 /**
@@ -59,7 +59,6 @@ export function otpCellLook(o?: OtpCellOptions) {
     },
   };
 }
-// @port end
 
 /**
  * `nsh/base`'s OtpInput in the look of `otpCellLook`. Every base prop passes through; the cell

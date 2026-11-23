@@ -1,5 +1,6 @@
 // A slider: the look (`sliderLook` and its companions) and the `Slider` that wears it.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   alpha,
   colors,
@@ -105,7 +106,6 @@ const sliderPresets: Record<Controls, Tiered<SliderPreset>> = {
   winui: { pointer: winuiSliderBase, touch: { ...winuiSliderBase, verticalLength: 144 } },
 };
 
-// @port slider.ts
 /** Options of `sliderLook`. */
 export interface SliderLookOptions {
   /** A vertical slider: rotated rail, bar handle, and track band. */
@@ -263,7 +263,6 @@ export function sliderFill(from: number, to: number, vertical = false): ViewStyl
   if (from <= 0) return color;
   return { ...color, ...fillSpan(from, to, vertical) };
 }
-// @port end
 
 /**
  * `nsh/base`'s Slider with `sliderLook` and `sliderFill`. Every base prop passes through;

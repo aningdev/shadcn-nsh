@@ -1,5 +1,6 @@
 // A hover card: `nsh/base`'s `HoverCard` with `popoverLook` on a `PopIn`.
 // The surface is `popover.tsx`'s (from NSH's look/overlay.ts); the parts here are this library's.
+
 import type { JSX, StyleProp, ViewStyle } from "nsh";
 import { context, split, View } from "nsh";
 import {

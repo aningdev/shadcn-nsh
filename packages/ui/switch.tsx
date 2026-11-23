@@ -1,5 +1,6 @@
 // A switch: the look (`switchLook`) and the `Switch` that wears it.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   colors,
   controls,
@@ -22,7 +23,6 @@ import { Switch as BaseSwitch, type SwitchProps as BaseSwitchProps } from "nsh/b
 import { PILL_RADIUS } from "./lib/surface";
 import { type SwitchGeometry, switchSlop } from "./lib/switch-geometry";
 
-// @port look/switch.ts
 /** A switch's size on a touch screen (`sm` 34 × 20); with a pointer both are 28 × 16. */
 export type SwitchSize = "sm" | "default";
 
@@ -282,7 +282,6 @@ export function switchHitSlop(
   const hit = hitTarget();
   return terminal || hit <= 0 ? undefined : switchSlop(geometry(size), hit);
 }
-// @port end
 
 /**
  * `nsh/base`'s Switch in the look of `switchLook`. Every base prop passes through; `trackClass`,

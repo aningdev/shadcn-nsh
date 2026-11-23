@@ -1,5 +1,6 @@
 // Tree: row look (`treeItemClass`, `TreeRow`) and the `Tree` that wears them.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { colors, terminal, TERMINAL_COLUMN, TERMINAL_GAP, font } from "@shadcn-nsh/theme";
 import { ChevronRight, File, Folder, FolderOpen, type IconNode } from "lucide";
 import { platform, split, Text, View } from "nsh";
@@ -15,7 +16,6 @@ const size = {
   detail: controlSize.detail,
 };
 
-// @port tree.tsx
 /**
  * A row: quiet until hovered, the selected one tinted in the brand color
  * with its label in the strong text color (a color, not a weight: the
@@ -126,7 +126,6 @@ function TerminalTreeRow(props: { entry: TreeEntry; detail?: string }) {
     </View>
   );
 }
-// @port end
 
 const treeFrameClass = "overflow-hidden rounded-(--radius-container) border border-border bg-card";
 

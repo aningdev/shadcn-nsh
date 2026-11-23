@@ -1,7 +1,8 @@
 // A toolbar: the hairline (`toolbarRule`), the inset track (`Toolbar`), groups (`ToolbarGroup`),
 // foldable tools (`ToolbarItem`), and the overflow menu (`ToolbarOverflow`).
 // The track (`toolbarTrack`) is shared with `ToggleGroup` and lives in `lib/tool.ts`.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { colors, stroke, terminal, TERMINAL_GAP } from "@shadcn-nsh/theme";
 import { Ellipsis } from "lucide";
 import type { JSX, StyleProp, ViewRef, ViewStyle } from "nsh";
@@ -28,7 +29,6 @@ import {
 } from "./menu";
 import { toggleGlyph, toggleLabel, toggleLook, toggleSizes } from "./toggle";
 
-// @port look/tool.ts
 /** A hairline between runs of a toolbar's tools (a `ToolbarSeparator`'s or a view's `style`): 18 points tall in a row, across a column. */
 export function toolbarRule(vertical = false): ViewStyle {
   return vertical
@@ -41,7 +41,6 @@ export function toolbarRule(vertical = false): ViewStyle {
       }
     : { width: stroke.hairline, height: 18, marginHorizontal: 4, backgroundColor: colors.line };
 }
-// @port end
 
 /** How a `ToolbarGroup` folds when space runs out: `"unit"` folds the whole group at once; `"none"` lets its `ToolbarItem`s fold individually. */
 export type ToolbarGroupFold = "unit" | "none";

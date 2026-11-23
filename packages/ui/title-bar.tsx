@@ -1,7 +1,6 @@
 // A desktop window's title bar and the window controls it holds: the bar that drags a window whose
-// title bar is hidden, the window buttons of a frameless window, and the edges that resize it. This
-// library's own (drawn on `nsh`'s View and Text, the behavior is `nsh/desktop`'s), so there is no
-// port region. Yours to change.
+// title bar is hidden, the window buttons of a frameless window, and the edges that resize it.
+
 import { alpha, colors, stroke, tints } from "@shadcn-nsh/theme";
 import { Plus, X } from "lucide";
 import type { ViewProps, ViewStyle } from "nsh";

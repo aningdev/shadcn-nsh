@@ -1,5 +1,6 @@
 // Shared list looks: popup, rows, search, chevron, clear — used by select, combobox, calendar, date-picker.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   colors,
   cornerCurve,
@@ -19,7 +20,6 @@ import { Icon } from "./icons";
 import { backdrop, itemRadius, itemSpacing, listPadding, popInStyles } from "./popup";
 import { controlSize } from "./surface";
 
-// @port look/listbox.tsx
 const pointer = platform.desktop;
 
 /** Options of `listboxPopup` and `listboxProps`. */
@@ -329,4 +329,3 @@ export function listboxSearch() {
     },
   };
 }
-// @port end

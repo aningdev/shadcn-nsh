@@ -1,5 +1,6 @@
 // Resizable panels: `resizableHandleLook` and the group / panel that wear it.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { split } from "nsh";
 import {
   ResizablePanel as BasePanel,
@@ -10,7 +11,6 @@ import {
 
 import { joinClass } from "./lib/utils";
 
-// @port look/workspace.tsx
 /**
  * The thumb of a resize handle (`handleThumbClass`), as gpui-component
  * draws it: none at rest, so the hairlines stay quiet; a faint pill grows
@@ -36,7 +36,6 @@ export function resizableHandleLook(axis: "horizontal" | "vertical") {
     handleThumbClass: handleThumb,
   };
 }
-// @port end
 
 /** What a resize handle announces when its group is given no label of its own. */
 export const RESIZE_HANDLE_LABEL = "Resize";

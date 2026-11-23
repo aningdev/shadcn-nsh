@@ -1,5 +1,6 @@
 // Command: palette parts (`commandClasses`, `CommandRow`) and the `Command` that wears them.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { colors, rounded, terminal, font } from "@shadcn-nsh/theme";
 import { Check, Search, type IconNode } from "lucide";
 import type { InputStyle, StyleProp, ViewStyle } from "nsh";
@@ -26,7 +27,6 @@ const size = {
   detail: controlSize.detail,
 };
 
-// @port command.tsx
 /**
  * The classes of a palette's parts. The highlight is a tint inside the row:
  * the rows fill the list's width, whose scroll view clips what reaches past
@@ -162,7 +162,6 @@ export function CommandEmpty(props: { label: string }) {
     </Text>
   );
 }
-// @port end
 
 /** Every prop of `nsh/base` Command. */
 export type CommandProps = BaseCommandProps;

@@ -1,5 +1,6 @@
 // A button: the look (`buttonLook` and its companions) and the `Button` that wears it.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   alpha,
   animate,
@@ -50,7 +51,6 @@ import { Spinner } from "./spinner";
  */
 const ghostFill = () => (terminal ? token("secondary") : "transparent");
 
-// @port look/button.ts
 /**
  * `default`: the citrus fill, the one main action of a decision area.
  * `secondary`: a raised neutral, the ordinary visible action. `ghost`: bare
@@ -695,7 +695,6 @@ export function splitButtonLook(variant: Live<ButtonVariant> = "default", o?: Bu
     },
   };
 }
-// @port end
 
 /**
  * `nsh/base`'s Button in the look of `buttonLook`. Every base prop passes through; the style

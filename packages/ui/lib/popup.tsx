@@ -1,6 +1,7 @@
 // The popup families' one surface and the motion they come in with: menus, popovers, a select's
 // list, and the mark of a checkable menu item and the scrim behind what is modal.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   finish,
   type ItemSpacing,
@@ -19,7 +20,6 @@ import { createMotion, Easing, reduceMotion, token, View } from "nsh";
 
 import { CheckMark } from "./icons";
 
-// @port look/overlay.ts
 /**
  * The scrim behind what is modal (a sheet, a dialog, a menu's sheet on a
  * touch screen): the theme's `scrim`, one dimming for every overlay. Pass
@@ -28,9 +28,7 @@ import { CheckMark } from "./icons";
 export function backdrop(): ViewStyle {
   return { backgroundColor: token("scrim") };
 }
-// @port end
 
-// @port popup.tsx
 /** The side of its trigger a popup is on. */
 export type PopupSide = "top" | "bottom" | "left" | "right";
 
@@ -213,4 +211,3 @@ export function MenuMark(props: { kind?: "check" | "dot"; tint: string; size?: n
     </View>
   );
 }
-// @port end

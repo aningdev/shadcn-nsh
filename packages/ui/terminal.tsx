@@ -1,5 +1,5 @@
 // A terminal: the look (`terminalLook`) and the `Terminal` that wears it.
-// This library's own: nothing here comes from upstream, so there is no port region. Yours to change.
+
 import {
   alpha,
   colors,

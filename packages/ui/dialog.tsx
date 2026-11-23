@@ -1,6 +1,7 @@
 // A card dialog: the look (`dialogCard`, `dialogTitle`, `dialogText`) at the top, and the parts that
 // wear it below. `nsh/base`'s `Dialog` is the box; what this file adds is its card.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { colors, finish, rounded, terminal, font, shape, stroke } from "@shadcn-nsh/theme";
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, platform, safeArea, Scroll, signal, split, View, windowSize } from "nsh";
@@ -16,7 +17,6 @@ import { AsText } from "./lib/as-text";
 import { createOpenState, type OpenState } from "./lib/open-state";
 import { backdrop } from "./lib/popup";
 
-// @port look/overlay.ts
 const pointer = platform.desktop;
 
 /** A card's width where the app gives none: 360 points with a pointer, 320 on a touch screen
@@ -99,7 +99,6 @@ export function dialogText(): TextStyle {
     color: colors.mutedForeground,
   };
 }
-// @port end
 
 /** The root: it owns whether the dialog is open, and nothing of how it looks. */
 export type DialogProps = {

@@ -1,5 +1,6 @@
 // A progress: the look (`progressLook` and its companions) and the `Progress` that wears it.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   animate,
   colors,
@@ -33,8 +34,6 @@ import { Progress as BaseProgress, type ProgressProps as BaseProgressProps } fro
 import { CheckboxMark, choiceWell } from "./checkbox";
 import { controlSize } from "./lib/surface";
 import { type Live, read } from "./lib/utils";
-
-// @port look/meter.ts
 
 /**
  * A determinate fill's classes: the whole track's width, slid back by what
@@ -208,7 +207,6 @@ export function progressLook(value: Live<number>, o?: ProgressLookOptions) {
     },
   };
 }
-// @port end
 
 /**
  * `nsh/base`'s Progress with `progressLook`. Every base prop passes through; track / indicator

@@ -1,5 +1,6 @@
 // A menu: the look (`menuItemLook`, `menuPopup`, …) and the parts that wear it.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   alpha,
   colors,
@@ -44,7 +45,6 @@ import {
   popupSurface,
 } from "./lib/popup";
 
-// @port look/menu.tsx
 const pointer = platform.desktop;
 
 /**
@@ -352,7 +352,6 @@ export function SubmenuBack(props: { label: string }) {
     </View>
   );
 }
-// @port end
 
 /** Why a menu closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */
 export type MenuOpenChangeReason = OpenChangeReason;

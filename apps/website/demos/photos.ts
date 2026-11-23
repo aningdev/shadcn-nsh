@@ -1,10 +1,6 @@
-// The gallery's photographs: SpaceX's launches, one set for every demo, so a session downloads
-// few images. Demo content only (it is not a look): a demo that shows a photo reads `photoUrl`
-// here; the module never goes into the registry.
-//
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// The demo's photographs, by name (`photoUrl`): demo content only, never in the registry.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-// @port photos.ts
 // The gallery's photographs: SpaceX's launches, one set for every demo, so a
 // session downloads few images.
 
@@ -35,4 +31,3 @@ export const photoNames = Object.keys(PHOTOS) as PhotoName[];
 export function photoUrl(name: PhotoName, size: PhotoSize = "medium") {
   return `https://pbs.twimg.com/media/${PHOTOS[name]}?format=jpg&name=${size}`;
 }
-// @port end

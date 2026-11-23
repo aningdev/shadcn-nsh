@@ -1,5 +1,6 @@
 // Text view: the link and caret classes, and the `TextView` that wears them.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { split } from "nsh";
 import {
   TextView as BaseTextView,
@@ -12,7 +13,6 @@ import {
 
 import { mergeClasses } from "./lib/utils";
 
-// @port look/workspace.tsx
 /** A `TextView`'s links (its `classes`): the brand color over a faint
  * underline of it. */
 export const textViewLinkClasses = { link: "text-brand decoration-brand/40" };
@@ -21,7 +21,6 @@ export const textViewLinkClasses = { link: "text-brand decoration-brand/40" };
  * `streamingCaret`): a brand-colored block a line high that pulses. */
 // The caret's corner is its own small fixed geometry (an 8-point-wide block), not a theme tier.
 export const textViewCaretClass = "ml-0.5 h-4 w-2 animate-pulse rounded-[4px] bg-brand";
-// @port end
 
 /** Every prop of `nsh/base` TextView; parsing stays in base. */
 export type TextViewProps = BaseTextViewProps;

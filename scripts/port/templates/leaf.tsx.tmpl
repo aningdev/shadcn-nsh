@@ -1,12 +1,9 @@
 // A {{id}}: the look (`{{lookFn}}` and its companions) and the `{{Id}}` that wears it.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-// TODO(port): add imports the region needs (`@shadcn-nsh/theme`, `nsh`, `./lib/*`).
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+// TODO(port): add the imports the look needs (`@shadcn-nsh/theme`, `nsh`, `./lib/*`).
 import type { JSX } from "nsh";
 import { split, Text } from "nsh";
 import { {{Base}} as Base{{Id}}, type {{Base}}Props as Base{{Id}}Props } from "nsh/base";
-
-// @port {{upstream}}
-// @port end
 
 /**
  * `nsh/base`'s {{Base}} in the look of `{{lookFn}}`. Every base prop passes through; the style

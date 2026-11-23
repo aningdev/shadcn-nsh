@@ -45,7 +45,7 @@
 
 ## 不做
 
-- 改 `nsh` / `nsh/base` / `references`；手改 `// @port` 区域；把演示适配层放进 registry。
+- 改 `nsh` / `nsh/base` / `references`；手改搬来的上游代码；把演示适配层放进 registry。
 
 ## 完成情况
 

@@ -8,7 +8,7 @@
  *   `port:check` insists is reviewed, `port:review` marks reviewed, and `port:bump` prints after
  *   it moves the baseline.
  *
- * Neither compares our code with upstream: a region may differ on purpose (`docs/port.md`).
+ * Neither compares our code with upstream: a file may differ on purpose (`docs/port.md`).
  */
 import { spawnSync } from "node:child_process";
 import fs from "node:fs";

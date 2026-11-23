@@ -1,5 +1,6 @@
 // A radio group: the look (`RadioRing`) and the `Radio` / `RadioGroup` that wear it.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   colors,
   controls,
@@ -104,7 +105,6 @@ const radioPresets: Record<Controls, Tiered<RadioPreset>> = {
   winui: { pointer: winuiRadioPreset, touch: winuiRadioPreset },
 };
 
-// @port look/choice.tsx
 /**
  * A radio's ring, among the `Radio`'s children (give the radio `class="group"`, so the ring
  * responds to row hover/press): outer diameter, dot diameter, stroke, interior well, checked style
@@ -166,8 +166,6 @@ export function RadioRing(props: { on: boolean; scale?: number; disabled?: boole
     </View>
   );
 }
-
-// @port end
 
 /**
  * `nsh/base`'s RadioGroup. Every base prop passes through.

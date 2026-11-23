@@ -1,6 +1,7 @@
 // A combobox: the field's and a chip's look (`comboboxLook`, `ComboToggle`, `chipLook`, `chipsLook`)
 // and the parts that wear them (`Combobox`, `ComboboxTrigger`, `ComboboxContent`, `ComboboxChip`).
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   colors,
   finish,
@@ -56,7 +57,6 @@ import {
 import { controlSize, narrowWindow } from "./lib/surface";
 import { type Live, read } from "./lib/utils";
 
-// @port look/listbox.tsx
 const pointer = platform.desktop;
 
 /** Options of `comboboxLook`. */
@@ -142,9 +142,7 @@ export function ComboToggle(props: { open: boolean; id?: string; label?: string 
     </View>
   );
 }
-// @port end
 
-// @port examples/gallery/demos/Controls.tsx
 /** Options of `chipLook`. */
 export interface ChipLookOptions {
   /** The root is disabled: the chip dims, and its remove button takes no press. */
@@ -218,7 +216,6 @@ export function chipsLook(): ViewStyle {
     paddingEnd: 6,
   };
 }
-// @port end
 
 /** Why a combobox's list closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */
 export type ComboboxOpenChangeReason = OpenChangeReason;

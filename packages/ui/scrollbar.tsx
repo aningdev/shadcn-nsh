@@ -1,5 +1,6 @@
 // Scrollbar: `scrollbarTheme` and the `Scrollbar` that wears it.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { dimmed } from "@shadcn-nsh/theme";
 import { platform, split } from "nsh";
 import {
@@ -10,7 +11,6 @@ import {
 
 import { joinClass } from "./lib/utils";
 
-// @port scrollbar-theme.ts
 /** Whether the screen is a finger's, which takes a thinner bar and its smaller inset. */
 const touch = !platform.desktop;
 
@@ -61,7 +61,6 @@ export const scrollbarTheme: ScrollbarTheme = {
     };
   },
 };
-// @port end
 
 /** Theme layer on `nsh/base` Scrollbar. Every base prop passes through. */
 export type ScrollbarProps = BaseScrollbarProps;

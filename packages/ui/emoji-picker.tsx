@@ -1,7 +1,8 @@
 // An emoji picker panel: the groups and their tabs, the skin tone hand, the preview, and the
 // panel that composes them. All of it is look — the picker itself is `nsh/base`'s, so there is
 // no shell below.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import { colors, font } from "@shadcn-nsh/theme";
 import {
   Car,
@@ -32,7 +33,6 @@ import {
 
 import { Icon } from "./lib/icons";
 
-// @port emoji.tsx
 /** The groups, their names and their tabs' icons. */
 export const emojiGroups: { id: EmojiGroupId; label: string; icon: IconNode }[] = [
   { id: "recent", label: "Frequently used", icon: Clock },
@@ -283,7 +283,6 @@ export function EmojiPanel(props: {
     />
   );
 }
-// @port end
 
 /** An emoji as the picker hands it over (`onSelect`, `renderItem`), from `nsh/base`. */
 export type { EmojiEntry };

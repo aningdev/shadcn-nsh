@@ -1,5 +1,6 @@
 // A segmented control: the look (`segmentedLook`) and the parts that wear it.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   colors,
   controls,
@@ -44,7 +45,6 @@ const hoverOf = (state: TabState) => {
   return selected || disabled ? undefined : hovered();
 };
 
-// @port look/tabs.tsx
 const pointer = platform.desktop;
 
 /** A segmented control's size: `default` 24 / 30 points with a pointer, 32 / 36 on a touch screen. */
@@ -261,7 +261,6 @@ export function segmentedLook(o?: SegmentedLookOptions) {
     },
   };
 }
-// @port end
 
 /** Composition root: the selected segment value. */
 export type SegmentedProps = {

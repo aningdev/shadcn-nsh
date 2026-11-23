@@ -1,6 +1,7 @@
 // The elements of a lucide icon, drawn on a canvas: a `Path2D` per path, an arc or lines for the
 // rest. Apart from `icons.tsx` and free of imports, so a unit test can watch what it draws with a
-// recorder instead of NSH. This library's own: no upstream file draws these. Yours to change.
+// recorder instead of NSH.
+
 import type { IconNode } from "lucide";
 
 /** One element of an `IconNode`: its tag and its SVG attributes. */

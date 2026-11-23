@@ -1,6 +1,6 @@
 // An attachment: a file, an image or a link that a message or a composer carries, with what it is
-// called, how it is doing, and what can be done to it. This library's own (drawn on `nsh`'s View
-// and Text, the buttons on `Button`), so there is no port region. Yours to change.
+// called, how it is doing, and what can be done to it.
+
 import { alpha, colors, focusRing, rounded, tints, font, shape, stroke } from "@shadcn-nsh/theme";
 import type { TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";
 import { context, Scroll, split, Text, token, View } from "nsh";

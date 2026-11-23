@@ -1,6 +1,6 @@
 // An aspect ratio: a box as wide as its column and as tall as its ratio says, holding whatever is
-// put in it (a picture, a chart, a color block). This library's own (drawn on `nsh`'s View, no
-// `nsh/base` control is its behavior), so there is no port region. Yours to change.
+// put in it (a picture, a chart, a color block).
+
 import type { ViewProps, ViewStyle } from "nsh";
 import { split, View } from "nsh";
 

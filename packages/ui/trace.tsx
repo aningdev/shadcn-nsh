@@ -1,7 +1,6 @@
 // A trace: the steps an agent took, one line each — a reasoning, a tool call, a source — and a line
-// that opens onto what it did. This library's own: drawn on `nsh`'s View and Text (the open and
-// close is `nsh/base`'s Collapsible, as `collapsible.tsx`), so there is no port region. Yours to
-// change.
+// that opens onto what it did.
+
 import { colors, dimmed, focusRing, font, rounded, shape, terminal } from "@shadcn-nsh/theme";
 import { ChevronRight } from "lucide";
 import type { JSX, StyleProp, TextProps, TextStyle, ViewProps, ViewStyle } from "nsh";

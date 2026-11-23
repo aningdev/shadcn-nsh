@@ -1,10 +1,6 @@
-// The avatars' people: NSH's maintainers, the GitHub pictures of them, and an image that never
-// loads. Demo content only (it is not a look): a demo that shows a portrait reads
-// `avatarPortrait` here; the module never goes into the registry.
-//
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// The avatars' people, by name (`avatarPortrait`): demo content only, never in the registry.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-// @port avatar.ts
 /** NSH's maintainers, by name: their GitHub logins and account ids. */
 export const MAINTAINERS = [
   { name: "Jason Lee", login: "huacnlee", id: 5518 },
@@ -25,4 +21,3 @@ export function avatarPortrait(name: string): string | undefined {
 /** An image that never loads (bytes no decoder reads): the avatar's
  * fallback shows, as for a picture that is gone. */
 export const AVATAR_BROKEN = "data:image/png;base64,AAAA";
-// @port end

@@ -1,5 +1,5 @@
-// A control's children drawn as its text, where the control draws them. This library's own: no
-// upstream file holds it, so there is no port region. Yours to change.
+// A control's children drawn as its text, where the control draws them.
+
 import type { JSX, StyleProp, TextStyle } from "nsh";
 import { Text } from "nsh";
 

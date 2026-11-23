@@ -1,5 +1,6 @@
 // A popover: the look (`popoverLook`) at the top, and the parts that wear it below.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
 import { context, platform, split, View } from "nsh";
 import {
@@ -13,7 +14,6 @@ import { AsText } from "./lib/as-text";
 import { createOpenState, createSlot, type OpenState, type Slot } from "./lib/open-state";
 import { PopIn, popupSurface } from "./lib/popup";
 
-// @port look/overlay.ts
 const pointer = platform.desktop;
 
 /** Options of `popoverLook`. */
@@ -36,7 +36,6 @@ export function popoverLook(o?: PopoverLookOptions): ViewStyle {
     : { padding: pointer ? 14 : 16, gap: 12 };
   return { ...popupSurface(), ...room, width: o?.width };
 }
-// @port end
 
 /** Why a popover closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */
 export type PopoverOpenChangeReason = OpenChangeReason;

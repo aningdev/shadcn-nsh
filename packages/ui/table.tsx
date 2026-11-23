@@ -1,5 +1,5 @@
 // A table: `nsh/base`'s parts in the card look of `data-table.tsx` (`dataTableClasses`).
-// This library's own shell: the look is the data table's, so there is no port region. Yours to change.
+
 import type { JSX } from "nsh";
 import { split, Text } from "nsh";
 import {

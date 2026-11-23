@@ -28,6 +28,8 @@
 
 ### Changed
 
+- **A component file credits upstream in one header line; the `@port` region marks are gone (#290).** Each file under `packages/ui` opens with one to three lines saying what it is, and a file whose look started in NSH's `examples/nsh-gallery-ui` carries `// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.` on line 2. The `// @port <file>` / `// @port end` markers are removed, so a copied file is exactly the file in the repository (the registry no longer strips anything); which upstream declaration went where is `port-map.json`'s alone. `port:vendor` drafts a new component under its imports with the credit line, and the CLI's `build` loses its `publish` hook.
+
 - **`winui`'s date-picker trigger is a split button (#275).** Under `winui` the calendar glyph sits in its own 32-wide cell at the trigger's end, with its own hover fill and end-only corners, as WinUI 3's `CalendarDatePicker` draws it; the other themes keep the calendar ahead of the title. `Picker` (select) takes `iconCell`, the date picker reads it from `dateTriggerCell()`, and `clearButtonStyle` takes the cell's width so the clear button sits before it.
 - **`winui`'s carousel arrows are FlipView's edge chevrons (#276).** Under `winui`, `carouselArrowLook()` draws a 16×38 acrylic (`finish.glass`) chevron with `shape.control` corners, no border and a 12-point `mutedForeground` glyph, taking `finish.hover` / `finish.pressed`. The look gains `placement` (`"beside"`, or `"over"` for the edge chevrons, which the app lays over the viewport's edges, as the demo does) and `icon` (the glyph's size and tint). The other themes keep the round arrows.
 

@@ -1,8 +1,7 @@
-// A conversation that scrolls, and keeps up with it: new turns follow the newest message while the
+// A conversation that scrolls and keeps up with it: new turns follow the newest message while the
 // reader is at the end, and stay where they are when the reader has scrolled up. The viewport is
-// `nsh`'s virtualized `List`, so only the turns near the screen exist however long the conversation
-// grows; the frame, the row and the button are drawn on `View`, the button on `Button`. This
-// library's own, so there is no port region. Yours to change.
+// `nsh`'s virtualized `List`, so only the turns near the screen exist, however long it grows.
+
 import { follow, motion } from "@shadcn-nsh/theme";
 import { ArrowDown, ArrowUp } from "lucide";
 import type {

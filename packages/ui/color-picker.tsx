@@ -1,6 +1,7 @@
 // A color picker: the look (`colorChecker`, `colorAreaLook`, `colorSliderLook`) and the fields, panel, trigger and
 // popover that wear it.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   colors,
   hovered,
@@ -40,7 +41,6 @@ import { menuItemLabel, menuItemLook, menuItemNote, menuItemSize, menuPopup } fr
 import { popoverLook } from "./popover";
 import { Picker } from "./select";
 
-// @port look/color.tsx
 const pointer = platform.desktop;
 
 /** The thumbs' side and the sliders' tracks' height: 16 and 12 with a pointer, 22 and 14 on a touch screen. */
@@ -586,7 +586,6 @@ export function ColorPopover(props: ColorPopoverProps): JSX.Element {
     </ColorPicker>
   );
 }
-// @port end
 
 /** What a channel of the panel edits (red, hue, chroma…), from `nsh/base`. */
 export type { ColorChannel };

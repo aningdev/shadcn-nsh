@@ -1,18 +1,7 @@
 // A sidebar: an app's navigation column beside its page — folded to a strip of icons, sliding in as
 // a sheet on a phone — the look (`sidebarLook` and the looks of its parts) and the parts that wear
-// it, on `nsh`'s own View and Text. This library's own: nothing here comes from upstream, so there
-// is no port region. Yours to change.
-//
-// What carries it: `nsh/base` has no sidebar — a column and its parts are a layout, not one
-// control — so it is drawn on `nsh`'s View, and brings what it wears: `Sheet` for the phone's
-// slide-in, `Tooltip` for a folded row's name, `IconButton`, `Input`, `Separator`, `Skeleton`, and
-// `keymap` for ⌘B / Ctrl+B.
-//
-// The colors are shadcn's sidebar roles, mapped onto ours (there is no `sidebar-*` role set, and
-// this file does not add one): the column is `colors.sidebar`, its ink `colors.foreground`, its hover and
-// chosen row `colors.sidebarAccent` (shadcn's `sidebar-accent`), its edge `colors.sidebarBorder`,
-// and the keyboard's ring `focusRing()`. shadcn's `sidebar-primary` draws nothing there either, so
-// nothing here reads it.
+// it, on `nsh`'s own View and Text.
+
 import {
   alpha,
   colors,

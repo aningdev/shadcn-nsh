@@ -1,6 +1,7 @@
 // A press's feedback, native: a control sinks while pressed and eases back, from its
 // `activeStyle`, so it never waits for JS.
-// From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
+// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
+
 import {
   hitTarget,
   press,
@@ -13,7 +14,6 @@ import { reduceMotion, token } from "nsh";
 
 import { type Live, read } from "./utils";
 
-// @port look/press.ts
 /** How long a press's sink, and the state changes beside it, take to settle. */
 const PRESS_MS = 150;
 
@@ -106,4 +106,3 @@ export function touchSlop(side: number): number | undefined {
   if (terminal || side >= hit) return undefined;
   return (hit - side) / 2;
 }
-// @port end
