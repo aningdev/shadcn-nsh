@@ -100,6 +100,13 @@ export interface Finish {
   "border-top-color"?: string;
   "border-bottom-color"?: string;
   backdropFilter?: string;
+  /**
+   * The fill and ink a theme paints instead of the accent while a filled control is pressed
+   * (`state["accent-pressed-opacity"]` dims them where the theme keeps the accent). Stated only by a
+   * theme whose press swaps the accent out.
+   */
+  "pressed-background"?: string;
+  "pressed-foreground"?: string;
   /** The ink on this finish's surface (a color, not a spread style key): every finish states one. */
   foreground: string;
   material: Material | null;
@@ -127,6 +134,12 @@ export type FinishStyle = {
   backdropFilter?: string;
   /** The ink on this finish's surface, read by what draws text over it. */
   foreground: string;
+  /**
+   * The fill and ink a theme paints instead of this finish's while a filled control is pressed, read
+   * by what draws the press; absent where the theme keeps the finish and dims it.
+   */
+  pressedBackground?: string;
+  pressedForeground?: string;
   glassEffect?: "regular" | "clear";
   glassTintColor?: string;
 };
@@ -271,6 +284,11 @@ export interface Style {
     /** Opacity of a passive indicator at rest (a scrollbar's thumb), `rest-opacity`. */
     "rest-opacity": number;
     "pressed-opacity": number;
+    /**
+     * How far a filled control dims while it is pressed, fill and ink together
+     * (`accent-pressed-opacity`); 1 where the theme's press swaps the accent out instead.
+     */
+    "accent-pressed-opacity": number;
     disabled: { content: number; fill: boolean };
   };
   transition: {
@@ -410,7 +428,7 @@ const glassKeys = (role: FinishRole): readonly string[] => {
  * the material (`ios`, `macos`, `windows`) are not style keys and come from `platformMaterial`.
  */
 const finishStyleKeys: Record<
-  Exclude<keyof Finish, "material" | "foreground">,
+  Exclude<keyof Finish, "material" | "foreground" | `pressed-${string}`>,
   keyof FinishStyle
 > = {
   background: "backgroundColor",
@@ -429,8 +447,8 @@ function themed(role: FinishRole): FinishStyle {
     ...builtIn.finishes.dark[role],
     ...builtIn.finishes.light[role],
   };
-  for (const key of Object.keys(builtInRole) as (keyof Finish)[]) {
-    if (key === "material" || key === "foreground") continue;
+  for (const key of Object.keys(finishStyleKeys) as (keyof typeof finishStyleKeys)[]) {
+    if (!(key in builtInRole)) continue;
     const styleKey = finishStyleKeys[key];
     Object.defineProperty(out, styleKey, {
       enumerable: true,
@@ -446,6 +464,23 @@ function themed(role: FinishRole): FinishStyle {
     enumerable: false,
     configurable: true,
     get: () => alias(finishOf(role).foreground),
+  });
+  // The theme's own pressed fill and ink, where it states them; a spread never wears them.
+  Object.defineProperty(out, "pressedBackground", {
+    enumerable: false,
+    configurable: true,
+    get: () => {
+      const value = finishOf(role)["pressed-background"];
+      return typeof value === "string" ? alias(value) : undefined;
+    },
+  });
+  Object.defineProperty(out, "pressedForeground", {
+    enumerable: false,
+    configurable: true,
+    get: () => {
+      const value = finishOf(role)["pressed-foreground"];
+      return typeof value === "string" ? alias(value) : undefined;
+    },
   });
   const glass = (key: string): string | undefined => {
     const apple = materialOf(role)?.apple;
@@ -840,8 +875,9 @@ export const stroke = {
 
 /**
  * How far a control fades (`semantics.json`'s `state`): `rest` is the opacity a passive indicator
- * sits at (`rest-opacity`), `pressed` that of a pressed control (`pressed-opacity`), `disabled`
- * that of a disabled control's content when drawn as one.
+ * sits at (`rest-opacity`), `pressed` that of a pressed control (`pressed-opacity`), `accentPressed`
+ * how far a filled control dims while it is pressed (`accent-pressed-opacity`), `disabled` that of a
+ * disabled control's content when drawn as one.
  */
 export const dimmed = {
   get rest() {
@@ -849,6 +885,9 @@ export const dimmed = {
   },
   get pressed() {
     return style().state["pressed-opacity"];
+  },
+  get accentPressed() {
+    return style().state["accent-pressed-opacity"];
   },
   get disabled() {
     return style().state.disabled.content;

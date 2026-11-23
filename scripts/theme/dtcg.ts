@@ -29,7 +29,7 @@ import {
   type DtcgColor,
 } from "../tokens/types";
 import { toOklchText } from "./oklch";
-import { splitFinishes } from "./tokens";
+import type { SplitFinishes } from "./tokens";
 
 export interface ThemeTypeRoleStyle {
   fontSize: { pointer: number; touch: number };
@@ -91,6 +91,7 @@ export interface ThemeStyleInput {
     overlay: { hover: number; focus: number; pressed: number; dragged: number };
     ripple: boolean;
     "pressed-opacity": number;
+    "accent-pressed-opacity": number;
     "rest-opacity": number;
     disabled: { content: number; fill: boolean };
   };
@@ -101,6 +102,23 @@ export interface ThemeStyleInput {
     slow: ThemeMotionRoleStyle;
   };
   controls?: "base" | "material" | "winui";
+}
+
+/** One layer finish as the generators author it: CSS-ish field values plus the extension fields. */
+export type ThemeFinish = Record<string, unknown>;
+
+/** What the twelve layer finishes paint: the shared recipes, plus each appearance's overrides. */
+export type ThemeFinishes = SplitFinishes<ThemeFinish>;
+
+/** The shadow scale: `sm`/`md`/`lg`/`xl`/`inset` parts, each a CSS shadow string, plus `edge`. */
+export interface ShadowScale {
+  [part: string]: string | ShadowScale;
+}
+
+/** The shadow scale, per appearance (a part may be `"none"`). */
+export interface ThemeShadowScale {
+  light: ShadowScale;
+  dark: ShadowScale;
 }
 
 export interface ThemeGeneratorOutput {
@@ -122,10 +140,8 @@ export interface ThemeGeneratorOutput {
     light: Record<string, string>;
     dark: Record<string, string>;
   };
-  finishes: {
-    light: Record<string, Record<string, unknown>>;
-    dark: Record<string, Record<string, unknown>>;
-  };
+  finishes: ThemeFinishes;
+  shadows: ThemeShadowScale;
   descriptions?: {
     sharedColors?: Record<string, string>;
     lightColors?: Record<string, string>;
@@ -421,19 +437,26 @@ function encodeFinishGradientToken(raw: string): Record<string, unknown> {
   };
 }
 
-/** Convert a CSS `boxShadow` string (`"none"` or shadow layers) to a DTCG `shadow` token. */
-function encodeFinishShadowToken(raw: string): Record<string, unknown> {
+/**
+ * Convert a CSS `boxShadow` string to a DTCG `shadow` token: `"none"`, a layer naming another
+ * `{shadow.part}`, or one or more composite layers. `$value` is always a list, so a finish that
+ * names parts of the scale (`"{shadow.edge.surface}, {shadow.sm}"`) and one that paints its own
+ * composite read alike.
+ */
+function encodeShadowToken(raw: string): Record<string, unknown> {
   const trimmed = toOklchText(raw.trim());
   if (trimmed === "none") {
     return {
       $type: "shadow",
-      $value: {
-        color: structuredClone(zeroPlaceholderColor),
-        offsetX: { value: 0, unit: "px" },
-        offsetY: { value: 0, unit: "px" },
-        blur: { value: 0, unit: "px" },
-        spread: { value: 0, unit: "px" },
-      },
+      $value: [
+        {
+          color: structuredClone(zeroPlaceholderColor),
+          offsetX: { value: 0, unit: "px" },
+          offsetY: { value: 0, unit: "px" },
+          blur: { value: 0, unit: "px" },
+          spread: { value: 0, unit: "px" },
+        },
+      ],
       $extensions: {
         [EXT_NS]: {
           none: true,
@@ -443,6 +466,8 @@ function encodeFinishShadowToken(raw: string): Record<string, unknown> {
   }
 
   const items = splitTopLevelCommas(trimmed).map((layer) => {
+    const ref = /^\{shadow\.([a-z0-9.-]+)\}$/.exec(layer.trim());
+    if (ref) return `{shadow.${ref[1]}}`;
     const tokens = splitTopLevelSpaces(layer);
     let idx = 0;
     let inset = false;
@@ -481,8 +506,29 @@ function encodeFinishShadowToken(raw: string): Record<string, unknown> {
 
   return {
     $type: "shadow",
-    $value: items.length === 1 ? items[0] : items,
+    $value: items,
   };
+}
+
+/** Encode a `ThemeShadowScale`'s appearance into the DTCG `shadow` group, part by part. */
+function encodeShadowGroup(
+  scale: ShadowScale,
+  descriptions: Record<string, string>,
+  prefix = "",
+): Record<string, unknown> {
+  const out: Record<string, unknown> = {};
+  for (const [part, value] of Object.entries(scale)) {
+    const description = descriptions[`${prefix}${part}`];
+    if (typeof value === "string") {
+      out[part] = {
+        ...(description !== undefined ? { $description: description } : {}),
+        ...encodeShadowToken(value),
+      };
+    } else {
+      out[part] = encodeShadowGroup(value, descriptions, `${prefix}${part}.`);
+    }
+  }
+  return out;
 }
 
 function encodeMaterial(material: unknown): unknown {
@@ -524,17 +570,13 @@ function encodeFinishSection(
     if (roleDescriptions?.[role]) {
       group.$description = roleDescriptions[role];
     }
+    // Field order is the source's: fill, gradient, the three border colors, shadow, ink, the
+    // pressed fill and ink.
     if (typeof finish.background === "string") {
       group.background = encodeFinishColorToken(finish.background, colorMap);
     }
     if (typeof finish.gradient === "string") {
       group.gradient = encodeFinishGradientToken(finish.gradient);
-    }
-    if (typeof finish.shadow === "string") {
-      group.shadow = encodeFinishShadowToken(finish.shadow);
-    }
-    if (typeof finish.foreground === "string") {
-      group.foreground = encodeFinishColorToken(finish.foreground, colorMap);
     }
     if (typeof finish["border-color"] === "string") {
       group["border-color"] = encodeFinishColorToken(finish["border-color"], colorMap);
@@ -547,6 +589,19 @@ function encodeFinishSection(
         finish["border-bottom-color"],
         colorMap,
       );
+    }
+    if (typeof finish.shadow === "string") {
+      group.shadow = encodeShadowToken(finish.shadow);
+    }
+    if (typeof finish.foreground === "string") {
+      group.foreground = encodeFinishColorToken(finish.foreground, colorMap);
+    }
+    // A theme that swaps the accent out while pressed states the pressed fill and ink here.
+    if (typeof finish["pressed-background"] === "string") {
+      group["pressed-background"] = encodeFinishColorToken(finish["pressed-background"], colorMap);
+    }
+    if (typeof finish["pressed-foreground"] === "string") {
+      group["pressed-foreground"] = encodeFinishColorToken(finish["pressed-foreground"], colorMap);
     }
 
     const ext: Record<string, unknown> = {};
@@ -585,6 +640,21 @@ function readDefaultMetadata(repoRoot: string) {
   const getKeys = (group: unknown): string[] =>
     isRecord(group) ? Object.keys(group).filter((k) => !k.startsWith("$")) : [];
 
+  /** Part descriptions of the shadow scale, `edge.surface` alike, from either appearance. */
+  const shadowDescriptions: Record<string, string> = {};
+  const collectShadowDescriptions = (group: unknown, prefix = ""): void => {
+    if (!isRecord(group)) return;
+    for (const [k, v] of Object.entries(group)) {
+      if (k.startsWith("$") || !isRecord(v)) continue;
+      if (typeof v.$description === "string") {
+        shadowDescriptions[`${prefix}${k}`] = v.$description;
+      } else {
+        collectShadowDescriptions(v, `${prefix}${k}.`);
+      }
+    }
+  };
+  collectShadowDescriptions(defLight.shadow);
+
   const radiusGroup = (defTheme.dimension as Record<string, unknown>).radius as Record<
     string,
     unknown
@@ -600,6 +670,7 @@ function readDefaultMetadata(repoRoot: string) {
     darkColorDescriptions: getDescriptions(defDark.color),
     finishRoles: getKeys(defFinishes.finish),
     finishDescriptions: getDescriptions(defFinishes.finish),
+    shadowDescriptions,
     baseShared,
     basePointer,
     baseTouch,
@@ -770,6 +841,14 @@ function encodeSharedStyleOverrides(
     stateOut["pressed-opacity"] = {
       $value: style.state["pressed-opacity"],
       $description: desc("state.pressed-opacity", basePressedOpacity.$description),
+    };
+  }
+
+  const baseAccentPressedOpacity = getAt(baseState, "accent-pressed-opacity");
+  if (style.state["accent-pressed-opacity"] !== baseAccentPressedOpacity.$value) {
+    stateOut["accent-pressed-opacity"] = {
+      $value: style.state["accent-pressed-opacity"],
+      $description: desc("state.accent-pressed-opacity", baseAccentPressedOpacity.$description),
     };
   }
 
@@ -1054,34 +1133,36 @@ function encodeInputTierOverrides(
 }
 
 /**
- * Write all DTCG 2025.10 source files for `output.id` under `packages/theme/tokens/themes/<id>/`
- * and compile its shipped `packages/theme/themes/<id>/{theme,semantics}.json`.
- *
- * The twelve layers and the shadow scale are hand-authored in those source files since the layer
- * contract (`docs/specs/theme-contract-v2.md` §5): each generator below this one states the
- * twenty-three finishes that came before it, so it refuses to run rather than overwrite them.
+ * What the generator's output says, as the DTCG documents `emitDtcgTheme` writes: file name (relative
+ * to the theme's source directory) to document, `null` for an input-tier document the theme does not
+ * state (and so must not leave behind).
  */
-export function emitDtcgTheme(
+export function themeSourceDocs(
   output: ThemeGeneratorOutput,
   repoRoot = repo,
-): { sourceFiles: string[]; builtFiles: string[] } {
+): Record<string, unknown> {
   const meta = readDefaultMetadata(repoRoot);
-  const stated = Object.keys(output.finishes.light);
+  const stated = Object.keys(output.finishes.shared);
   const unstated = meta.finishRoles.filter((role) => !stated.includes(role));
   if (unstated.length > 0 || stated.length !== meta.finishRoles.length) {
     throw new Error(
       `${output.id}: the generator states ${stated.length} finishes; the contract states ` +
-        `${meta.finishRoles.join(", ")} (${unstated.length} of them missing here). They and the ` +
-        `shadow scale are hand-authored in packages/theme/tokens/themes/${output.id}/.`,
+        `${meta.finishRoles.join(", ")}. It must state all of them (${unstated.length} missing).`,
     );
   }
-  const outDir = path.join(repoRoot, "packages/theme/tokens/themes", output.id);
-  fs.mkdirSync(outDir, { recursive: true });
-
-  const writeFile = (name: string, doc: unknown): string => {
-    const abs = path.join(outDir, name);
-    fs.writeFileSync(abs, `${JSON.stringify(doc, null, 2)}\n`);
-    return path.relative(repoRoot, abs);
+  for (const appearance of ["light", "dark"] as const) {
+    const stated = Object.keys(output.finishes[appearance] ?? {});
+    const unknown = stated.filter((role) => !meta.finishRoles.includes(role));
+    if (unknown.length > 0) {
+      throw new Error(
+        `${output.id}: the ${appearance} overrides name ${unknown.join(", ")}, which the contract ` +
+          `does not state (${meta.finishRoles.join(", ")}).`,
+      );
+    }
+  }
+  const docs: Record<string, unknown> = {};
+  const writeFile = (name: string, doc: unknown): void => {
+    docs[name] = doc;
   };
 
   // 1. Style overrides (shared + pointer/touch tiers)
@@ -1260,36 +1341,10 @@ export function emitDtcgTheme(
     ...(sharedStyle?.controls ? { controls: sharedStyle.controls } : {}),
   };
 
-  // 4. Split finishes into shared, light, and dark. Any field whose static DTCG color evaluation
-  // differs between light and dark (e.g. `oklch(from {card} l c h / 0.8)` when `card` flips) must
-  // live in `light` and `dark` so each appearance's DTCG tree holds an accurate static `$value`.
-  const split = splitFinishes(output.finishes.light, output.finishes.dark);
-  const lightColorMap: Record<string, string> = {
-    ...output.cssVars.theme,
-    ...output.cssVars.light,
-  };
-  const darkColorMap: Record<string, string> = { ...output.cssVars.theme, ...output.cssVars.dark };
-
-  for (const [role, sharedFinish] of Object.entries(split.shared)) {
-    for (const field of [
-      "background",
-      "foreground",
-      "border-color",
-      "border-top-color",
-      "border-bottom-color",
-    ] as const) {
-      const val = sharedFinish[field];
-      if (typeof val !== "string" || !/^oklch\(\s*from\b/i.test(val.trim())) continue;
-      const lightEncoded = JSON.stringify(encodeFinishColorToken(val, lightColorMap));
-      const darkEncoded = JSON.stringify(encodeFinishColorToken(val, darkColorMap));
-      if (lightEncoded !== darkEncoded) {
-        delete sharedFinish[field];
-        (split.light[role] ??= {})[field] = val;
-        (split.dark[role] ??= {})[field] = val;
-      }
-    }
-  }
-
+  // 4. The finishes are authored the way the sources state them: shared recipes plus each
+  // appearance's sparse overrides, so a relative-alpha value that flips with the palette is written
+  // where its appearance states it.
+  const split = output.finishes;
   const finishDescs = {
     ...meta.finishDescriptions,
     ...(output.descriptions?.finishes ?? {}),
@@ -1298,11 +1353,7 @@ export function emitDtcgTheme(
   const finishesSharedDoc = {
     $schema: FORMAT_SCHEMA_URL,
     $description: output.finishesDescription,
-    finish: {
-      $description:
-        "Appearance-invariant surface finish recipes (background, gradient, border, shadow, blur, material).",
-      ...encodeFinishSection(split.shared, themeColorLookup, meta.finishRoles, finishDescs),
-    },
+    finish: encodeFinishSection(split.shared, themeColorLookup, meta.finishRoles, finishDescs),
   };
 
   // 5. light.tokens.json & dark.tokens.json
@@ -1314,6 +1365,7 @@ export function emitDtcgTheme(
     fallbackDescs: Record<string, string>,
     overrideDescs: Record<string, string> | undefined,
     sparseFinishes: Record<string, Record<string, unknown>>,
+    shadowScale: ShadowScale,
   ) => {
     const colorMap: Record<string, string> = { ...output.cssVars.theme, ...colors };
     const colorGroup: Record<string, unknown> = {
@@ -1334,14 +1386,8 @@ export function emitDtcgTheme(
       $schema: FORMAT_SCHEMA_URL,
       $description: description,
       color: colorGroup,
-      ...(Object.keys(encodedFinishes).length > 0
-        ? {
-            finish: {
-              $description: `Sparse ${appearance}-mode surface finish overrides.`,
-              ...encodedFinishes,
-            },
-          }
-        : {}),
+      shadow: encodeShadowGroup(shadowScale, meta.shadowDescriptions),
+      ...(Object.keys(encodedFinishes).length > 0 ? { finish: encodedFinishes } : {}),
     };
   };
 
@@ -1353,6 +1399,7 @@ export function emitDtcgTheme(
     meta.lightColorDescriptions,
     output.descriptions?.lightColors,
     split.light,
+    output.shadows.light,
   );
   const darkDoc = buildAppearanceDoc(
     "dark",
@@ -1362,25 +1409,46 @@ export function emitDtcgTheme(
     meta.darkColorDescriptions,
     output.descriptions?.darkColors,
     split.dark,
+    output.shadows.dark,
   );
 
-  const sourceFiles = [
-    writeFile("theme.resolver.json", resolverDoc),
-    writeFile("theme.tokens.json", themeTokensDoc),
-    writeFile("finishes.shared.tokens.json", finishesSharedDoc),
-    writeFile("light.tokens.json", lightDoc),
-    writeFile("dark.tokens.json", darkDoc),
-  ];
+  writeFile("theme.resolver.json", resolverDoc);
+  writeFile("theme.tokens.json", themeTokensDoc);
+  writeFile("finishes.shared.tokens.json", finishesSharedDoc);
+  writeFile("light.tokens.json", lightDoc);
+  writeFile("dark.tokens.json", darkDoc);
   for (const [name, tierDoc] of [
     ["pointer.tokens.json", pointerDoc],
     ["touch.tokens.json", touchDoc],
   ] as const) {
+    if (tierDoc) writeFile(name, tierDoc);
+    else docs[name] = null;
+  }
+
+  return docs;
+}
+
+/**
+ * Write `packages/theme/tokens/themes/<id>/` from the generator's output (DTCG 2025.10 source), then
+ * compile the theme's runtime files (`theme.json`, `semantics.json`, …) so one command updates both.
+ */
+export function emitDtcgTheme(
+  output: ThemeGeneratorOutput,
+  repoRoot = repo,
+): { sourceFiles: string[]; builtFiles: string[] } {
+  const docs = themeSourceDocs(output, repoRoot);
+  const outDir = path.join(repoRoot, "packages/theme/tokens/themes", output.id);
+  fs.mkdirSync(outDir, { recursive: true });
+
+  const sourceFiles: string[] = [];
+  for (const [name, doc] of Object.entries(docs)) {
     const abs = path.join(outDir, name);
-    if (tierDoc) {
-      sourceFiles.push(writeFile(name, tierDoc));
-    } else if (fs.existsSync(abs)) {
-      fs.rmSync(abs);
+    if (doc === null) {
+      if (fs.existsSync(abs)) fs.rmSync(abs);
+      continue;
     }
+    fs.writeFileSync(abs, `${JSON.stringify(doc, null, 2)}\n`);
+    sourceFiles.push(path.relative(repoRoot, abs));
   }
 
   const vpBin = path.join(repoRoot, "node_modules/.bin/vp");

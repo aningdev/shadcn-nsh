@@ -173,6 +173,7 @@
     },
     "ripple": true,
     "pressed-opacity": 1,
+    "accent-pressed-opacity": 1,
     "rest-opacity": 0.38,
     "disabled": {
       "content": 0.38,

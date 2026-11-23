@@ -1078,6 +1078,22 @@
           "components": [0.52768, 0.14982, 252.341],
           "hex": "#146cbe"
         }
+      },
+      "pressed-background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.5773, 0.13223, 250.006],
+          "hex": "#317dc4"
+        }
+      },
+      "pressed-foreground": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [0.87245, 0.03754, 247.003],
+          "hex": "#c2d8ed"
+        }
       }
     },
     "hover": {

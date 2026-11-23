@@ -830,6 +830,11 @@ describe("per-appearance standalone .tokens.json distribution", () => {
           if (g["border-bottom-color"])
             compiled["border-bottom-color"] = toFinishColor(g["border-bottom-color"]);
           if (g.foreground) compiled.foreground = toFinishColor(g.foreground);
+          // Only a theme that paints its own pressed accent states these.
+          if (g["pressed-background"])
+            compiled["pressed-background"] = toFinishColor(g["pressed-background"]);
+          if (g["pressed-foreground"])
+            compiled["pressed-foreground"] = toFinishColor(g["pressed-foreground"]);
           const gExt = g.$extensions?.[EXT_NS];
           if (gExt && "backdropFilter" in gExt) compiled.backdropFilter = gExt.backdropFilter;
           if (gExt && "material" in gExt) {

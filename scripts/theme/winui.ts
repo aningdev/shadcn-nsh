@@ -24,6 +24,7 @@
  * Any other host-supplied accent derives its 6 tiers perceptually in OKLCH.
  */
 import type { ThemeGeneratorOutput } from "./dtcg";
+import { finishes, shadows } from "./finishes/winui";
 import {
   oklchColor,
   oklchText,
@@ -471,56 +472,6 @@ export function winuiRoles(accent: string = WINUI_DEFAULT_ACCENT): WinuiRoles {
   };
 }
 
-const alias = (token: string) => `{${token}}`;
-const flat = (color: string) => `linear-gradient(180deg, ${color} 0%, ${color} 100%)`;
-
-/**
- * Two-layer ambient + key CSS shadow derived from WinUI 3 layering depths (`layering.md`,
- * `shadows.md`: control 2, card 8, tooltip 16, flyout/menu/glass 32, modal 128) using the
- * two-layer ambient + key formula (`depth <= 16`: ambient 2px at 0.12/0.24, key `depth/2` `depth`
- * at 0.14/0.28; `depth > 16`: ambient 8px at 0.2/0.4, key `depth/2` `depth` at 0.24/0.48).
- * Approximates WinUI's dynamic 3D `ThemeShadow` in CSS.
- */
-const elevationShadow = (depth: 2 | 8 | 16 | 32 | 128, appearance: Appearance) => {
-  const [ambientBlur, ambient, key] =
-    depth <= 16
-      ? appearance === "light"
-        ? [2, 0.12, 0.14]
-        : [2, 0.24, 0.28]
-      : appearance === "light"
-        ? [8, 0.2, 0.24]
-        : [8, 0.4, 0.48];
-  return `0 0 ${ambientBlur}px ${oklchColor(0, 0, 0, ambient)}, 0 ${depth / 2}px ${depth}px ${oklchColor(0, 0, 0, key)}`;
-};
-
-const surface = (
-  color: string,
-  {
-    shadow = "none",
-    "border-color": borderColor = "transparent",
-    "border-top-color": borderTopColor,
-    "border-bottom-color": borderBottomColor,
-    foreground,
-    material = null,
-  }: {
-    shadow?: string;
-    "border-color"?: string;
-    "border-top-color"?: string;
-    "border-bottom-color"?: string;
-    foreground?: string;
-    material?: { windows: { backdrop: "blur" } } | null;
-  } = {},
-) => ({
-  background: color,
-  gradient: flat(color),
-  shadow,
-  "border-color": borderColor,
-  ...(borderTopColor !== undefined ? { "border-top-color": borderTopColor } : {}),
-  ...(borderBottomColor !== undefined ? { "border-bottom-color": borderBottomColor } : {}),
-  ...(foreground !== undefined ? { foreground } : {}),
-  material,
-});
-
 /**
  * Shared theme-level tokens (`cssVars.theme`) for WinUI 3: `ControlCornerRadius` 4 (controls and
  * in-page elements) and `OverlayCornerRadius` 8 (containers and modals), Segoe UI Variable +
@@ -540,164 +491,6 @@ function themeLevel(roles: WinuiRoles): Record<string, string> {
 
 /**
  * All 23 finish roles for WinUI 3 (`{token}` references; `glass`, `menu`, and `tooltip` ask
- * Windows for `{ windows: { backdrop: "blur" } }` as the Acrylic stand-in).
- */
-function finishes(
-  appearance: Appearance,
-  tiers: WinuiAccent,
-): Record<string, Record<string, unknown>> {
-  const w = WINUI[appearance];
-  const onBase = (hex: string) => compositeWinui(hex, w.SolidBackgroundFillColorBase);
-  // The accent fill the accent finishes stand on (`AccentFillColorDefault`: Dark1 light, Light2
-  // dark), and the presses WinUI swaps it for rather than fading the control.
-  const primary = appearance === "light" ? tiers.dark1 : tiers.light2;
-  const accentPressed = over(withAlpha(primary, 0.8), toOklchText(w.SolidBackgroundFillColorBase));
-  // The elevation bevels: `ControlStrokeColorSecondary` on a neutral button and
-  // `ControlStrokeColorOnAccentDefault` composited over the accent on an accent one. They flip
-  // between light and dark, so a finish states the value and the theme splits it per appearance.
-  const bevel = onBase(w.ControlStrokeColorSecondary);
-  const accentBevel = compositeWinui(w.ControlStrokeColorOnAccentDefault, primary);
-  const controlShadow = elevationShadow(2, appearance);
-  const flyoutShadow = elevationShadow(32, appearance);
-  const blurMaterial = { windows: { backdrop: "blur" as const } };
-  // `ContentDialogBorderBrush` -> `SurfaceStrokeColorDefault` (`#66757575` composited on base;
-  // flyouts keep `glass-edge` / `SurfaceStrokeColorFlyout`).
-  const modalBorder = compositeWinui(
-    WINUI[appearance].SurfaceStrokeColorDefault,
-    WINUI[appearance].SolidBackgroundFillColorBase,
-  );
-  // `AcrylicInAppFillColorDefaultBrush` `TintLuminosityOpacity`: 0.85 light / 0.96 dark.
-  // Light TintColor `#FCFCFC` is approximated via `{popover}` (`#F9F9F9` fallback) so `glass` stays token-linked.
-  const glassOpacity = appearance === "light" ? 0.85 : 0.96;
-  return {
-    card: {
-      gradient: flat(alias("card")),
-      shadow: elevationShadow(8, appearance),
-      "border-color": onBase(w.CardStrokeColorDefault),
-      material: null,
-    },
-    section: {
-      background: alias("card"),
-      shadow: "none",
-      "border-color": onBase(w.CardStrokeColorDefault),
-      material: null,
-    },
-    inset: { shadow: "none", material: null },
-    field: { shadow: "none", material: null },
-    raised: {
-      ...surface(alias("raised"), {
-        shadow: "none",
-        "border-color": alias("border"),
-        "border-top-color": appearance === "light" ? alias("border") : bevel,
-        "border-bottom-color": appearance === "light" ? bevel : alias("border"),
-      }),
-      backdropFilter: "none",
-    },
-    hover: surface(alias("hover"), {
-      shadow: "none",
-      "border-color": alias("border"),
-      "border-top-color": appearance === "light" ? alias("border") : bevel,
-      "border-bottom-color": appearance === "light" ? bevel : alias("border"),
-    }),
-    pressed: surface(alias("muted"), {
-      shadow: "none",
-      "border-color": alias("border"),
-      "border-top-color": alias("border"),
-      "border-bottom-color": alias("border"),
-      foreground: alias("muted-foreground"),
-    }),
-    // The disabled fill and the disabled ink are WinUI brushes of their own (they flip between
-    // light and dark), so the finish states them instead of naming a colour.
-    disabled: surface(onBase(w.ControlFillColorDisabled), {
-      shadow: "none",
-      "border-color": alias("border"),
-      foreground: onBase(w.TextFillColorDisabled),
-    }),
-    light: surface(alias("primary"), {
-      shadow: "none",
-      "border-color": accentBevel,
-      "border-top-color": accentBevel,
-      "border-bottom-color": alias("brand-edge"),
-    }),
-    accent: surface(alias("primary"), {
-      shadow: "none",
-      "border-color": accentBevel,
-      "border-top-color": accentBevel,
-      "border-bottom-color": alias("brand-edge"),
-    }),
-    // `AccentButtonBorderBrushPressed` -> `ControlFillColorTransparentBrush`
-    // (`Button_themeresources.xaml` in `winui3/release/2.7.0`).
-    accentPressed: surface(accentPressed, {
-      shadow: "none",
-      "border-color": "transparent",
-      "border-top-color": "transparent",
-      "border-bottom-color": "transparent",
-      foreground: compositeWinui(w.TextOnAccentFillColorSecondary, accentPressed),
-    }),
-    track: { shadow: "none", "border-color": alias("input"), material: null },
-    fill: {
-      background: "transparent",
-      gradient: flat(alias("primary")),
-      shadow: "none",
-      "border-color": "transparent",
-      material: null,
-    },
-    knob: surface(alias("knob")),
-    knobOn: surface(alias("primary-foreground")),
-    handle: surface(alias("popover"), { shadow: controlShadow, "border-color": alias("border") }),
-    pill: surface(alias("raised"), { shadow: "none", "border-color": alias("border") }),
-    thumb: surface(alias("popover"), { shadow: controlShadow, "border-color": alias("border") }),
-    on: surface(alias("primary"), {
-      shadow: "none",
-      "border-color": accentBevel,
-      "border-top-color": accentBevel,
-      "border-bottom-color": alias("brand-edge"),
-      foreground: alias("primary-foreground"),
-    }),
-    chip: surface(alias("raised"), { shadow: "none", "border-color": alias("border") }),
-    glass: {
-      background: `oklch(from {popover} l c h / ${glassOpacity})`,
-      shadow: flyoutShadow,
-      "border-color": alias("glass-edge"),
-      backdropFilter: "blur(30px)",
-      material: blurMaterial,
-    },
-    menu: {
-      background: alias("popover"),
-      shadow: flyoutShadow,
-      "border-color": alias("glass-edge"),
-      backdropFilter: "none",
-      material: blurMaterial,
-    },
-    modal: {
-      background: alias("background"),
-      shadow: elevationShadow(128, appearance),
-      "border-color": modalBorder,
-      material: null,
-    },
-    grabber: {
-      background: alias("raised"),
-      shadow: "none",
-      material: null,
-    },
-    tooltip: {
-      background: alias("popover"),
-      shadow: elevationShadow(16, appearance),
-      "border-color": alias("glass-edge"),
-      material: blurMaterial,
-    },
-    inverse: {
-      background: alias("inverse"),
-      shadow: flyoutShadow,
-      "border-color": alias("glass-edge"),
-      foreground: alias("muted-foreground"),
-      backdropFilter: "none",
-      material: null,
-    },
-    groove: { shadow: "none", material: null },
-  };
-}
-
 /** WinUI 3 style groups (`semantics.json`); verified values in `docs/specs/native-themes.md` §3.2. */
 export const winuiStyle = {
   typography: {
@@ -781,6 +574,9 @@ export const winuiStyle = {
     overlay: { hover: 0, focus: 0, pressed: 0, dragged: 0 },
     ripple: false,
     "pressed-opacity": 1,
+    // WinUI swaps the accent for `AccentFillColorTertiary` on a press instead of dimming it
+    // (`finish.accent`'s `pressed-background` / `pressed-foreground`), so the press is not dimmed.
+    "accent-pressed-opacity": 1,
     "rest-opacity": 0.5,
     // Disabled containers switch to the dedicated disabled brush (`ControlFillColorDisabled` /
     // `TextFillColorDisabled`) when `fill: true`; `content: 0.36` matches `TextFillColorDisabled`.
@@ -805,7 +601,6 @@ export const winuiStyle = {
 /** WinUI 3 (Windows 11) theme data and DTCG descriptions ready for `emitDtcgTheme`. */
 export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGeneratorOutput {
   const roles = winuiRoles(accent);
-  const tiers = winuiAccent(accent);
   const colorDescs = {
     background: "Window base surface (WinUI SolidBackgroundFillColorBase).",
     foreground: "Primary text and icon ink (WinUI TextFillColorPrimary composited over base).",
@@ -916,10 +711,8 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
       light: roles.light,
       dark: roles.dark,
     },
-    finishes: {
-      light: finishes("light", tiers),
-      dark: finishes("dark", tiers),
-    },
+    finishes,
+    shadows,
     descriptions: {
       sharedColors: {
         scrim:
@@ -927,34 +720,6 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
       },
       lightColors: colorDescs,
       darkColors: colorDescs,
-      finishes: {
-        card: "WinUI 3 card surface with layering depth-8 two-layer ThemeShadow approximation.",
-        section:
-          "WinUI 3 section card surface using CardBackgroundFillColorDefault and CardStrokeColorDefault border (no drop shadow).",
-        raised:
-          "WinUI 3 standard control surface with ControlElevationBorderBrush top/bottom bevel and no drop shadow.",
-        hover:
-          "WinUI 3 hovered control surface with ControlFillColorSecondary fill and ControlElevationBorderBrush bevel.",
-        pressed:
-          "WinUI 3 pressed control surface with ControlFillColorTertiary/muted fill, flat border, and no shadow.",
-        disabled:
-          "WinUI 3 disabled control container using ControlFillColorDisabled and ControlStrokeColorDefault border.",
-        accent:
-          "WinUI 3 accent control surface using AccentFillColorDefault and AccentControlElevationBorderBrush bevel.",
-        accentPressed:
-          "WinUI 3 pressed accent control surface using AccentFillColorTertiary and transparent directional borders (AccentButtonBorderBrushPressed -> ControlFillColorTransparentBrush, WinUI 2.7.0 Button_themeresources.xaml).",
-        handle: "WinUI 3 slider handle using popover fill, depth-2 shadow, and border.",
-        thumb: "WinUI 3 segmented thumb using popover fill, depth-2 shadow, and border.",
-        on: "WinUI 3 checked ToggleButton / active surface using AccentFillColorDefault and AccentControlElevationBorderBrush bevel.",
-        glass:
-          "WinUI 3 AcrylicInApp surface with per-appearance TintLuminosityOpacity (0.85 light / 0.96 dark), depth-32 shadow, and Windows blur backdrop.",
-        menu: "WinUI 3 Acrylic flyout/menu surface with depth-32 shadow and Windows blur backdrop.",
-        modal:
-          "WinUI 3 ContentDialog surface with depth-128 shadow and composited SurfaceStrokeColorDefault border.",
-        tooltip:
-          "WinUI 3 ToolTip surface with depth-16 shadow, glass-edge border, and Windows blur backdrop.",
-        inverse: "WinUI 3 TeachingTip/toast surface with depth-32 shadow and glass-edge border.",
-      },
       style: {
         "font.family.mono": "WinUI 3 monospace font stack (Consolas, monospace).",
         "font.family.sans":

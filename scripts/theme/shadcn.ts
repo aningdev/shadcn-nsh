@@ -1,5 +1,3 @@
-import type { ThemeGeneratorOutput } from "./dtcg";
-import { withoutMaterial } from "./material";
 /**
  * The shadcn default theme (new-york-v4, `neutral`) as this library's DTCG 2025.10 source.
  *
@@ -12,10 +10,9 @@ import { withoutMaterial } from "./material";
  *     `oklch(0% 0 0)`, and the registry's `0.205` is used here)
  *   - radii: `apps/v4/app/globals.css` (`--radius: 0.625rem`, and `--radius-sm` … `--radius-2xl`
  *     at 0.6, 0.8, 1, 1.4, 1.8, 2.2, 2.6 times it)
- *   - finishes: the classes of `apps/v4/registry/new-york-v4/ui/*` (which shadow and fill each
- *     surface wears), flattened: no inner highlight, no inner shade, and a gradient of one colour
- *     where the default theme stacks a two-stop one (every finish states a gradient; see
- *     `docs/specs/theme-roles.md`).
+ *   - palette/typography/motion: rewritten from `packages/theme/tokens/themes/shadcn/`.
+ *   - finishes and the shadow scale: `finishes/shadcn.ts` (the classes of
+ *     `apps/v4/registry/new-york-v4/ui/*`, flattened: no inner highlight, no inner shade).
  *
  * A color derived here (an `--input` laid on a card, two tones' midpoint) is mixed in 8-bit sRGB
  * and written back as `oklch()`: `oklch.ts` round-trips every channel exactly.
@@ -24,6 +21,8 @@ import { withoutMaterial } from "./material";
  * `packages/theme/themes/shadcn/{theme,semantics}.json`; `docs/archive/theme-shadcn.md` holds the
  * mapping tables this file implements.
  */
+import type { ThemeGeneratorOutput } from "./dtcg";
+import { finishes, shadows } from "./finishes/shadcn";
 import { oklch, oklchColor, over, parseColor, toOklchText, withAlpha } from "./oklch";
 import { scaledRadii } from "./style";
 
@@ -83,16 +82,6 @@ const CONTROL = "second" + "ary";
 
 /** shadcn's neutral corner radius roles by layer: 8 px control, 12 px container, 14 px modal. */
 const RADII = { control: 8, container: 12, modal: 14 } as const;
-
-/** Tailwind's `white` (`bg-white`), which shadcn names outright rather than through a token. */
-const WHITE = "oklch(1 0 0)";
-
-/** shadcn's Tailwind v4 shadows, its `rgb(0 0 0 / …)` written as the theme's `oklch()`. */
-const SHADOW = {
-  xs: `0 1px 2px 0 ${oklchColor(0, 0, 0, 0.05)}`,
-  sm: `0 1px 3px 0 ${oklchColor(0, 0, 0, 0.1)}, 0 1px 2px -1px ${oklchColor(0, 0, 0, 0.1)}`,
-  md: `0 4px 6px -1px ${oklchColor(0, 0, 0, 0.1)}, 0 2px 4px -2px ${oklchColor(0, 0, 0, 0.1)}`,
-} as const;
 
 /** One appearance's neutrals, canonical `oklch()`; `inputOnCard` is `--input` laid on the card. */
 function palette(appearance: Appearance) {
@@ -239,145 +228,6 @@ function section(p: ReturnType<typeof palette>, o: ReturnType<typeof own>) {
   };
 }
 
-/** A finish names the theme's token instead of writing its colour: one shape, the theme's colours. */
-const alias = (token: string) => `{${token}}`;
-
-/**
- * A flat finish's gradient: its colour at both stops. Every finish states one, so a theme that
- * draws a gradient of one colour says "no gradient" with that, not with a missing key.
- */
-const flat = (color: string) => `linear-gradient(180deg, ${color} 0%, ${color} 100%)`;
-
-/** A surface: its colour, the gradient over it, its shadow and its edge. */
-const surface = (
-  color: string,
-  {
-    shadow = "none",
-    "border-color": borderColor = "transparent",
-    "border-top-color": borderTopColor,
-    "border-bottom-color": borderBottomColor,
-    foreground,
-  }: {
-    shadow?: string;
-    "border-color"?: string;
-    "border-top-color"?: string;
-    "border-bottom-color"?: string;
-    foreground?: string;
-  } = {},
-) => ({
-  background: color,
-  gradient: flat(color),
-  shadow,
-  "border-color": borderColor,
-  ...(borderTopColor !== undefined ? { "border-top-color": borderTopColor } : {}),
-  ...(borderBottomColor !== undefined ? { "border-bottom-color": borderBottomColor } : {}),
-  ...(foreground !== undefined ? { foreground } : {}),
-});
-
-/** One appearance's finishes: flat, the lift of shadcn's own surfaces and no more. */
-function finishes(appearance: Appearance, o: ReturnType<typeof own>) {
-  return {
-    card: {
-      gradient: flat(alias("card")),
-      shadow: SHADOW.sm,
-      "border-color": alias("border"),
-    },
-    section: { background: alias("card"), shadow: "none", "border-color": alias("border") },
-    inset: { shadow: "none" },
-    field: { shadow: SHADOW.xs },
-    raised: {
-      ...surface(alias("raised"), {
-        shadow: SHADOW.xs,
-        "border-top-color": "transparent",
-        "border-bottom-color": "transparent",
-      }),
-      backdropFilter: "none",
-    },
-    hover: surface(alias("hover"), {
-      shadow: SHADOW.xs,
-      "border-top-color": "transparent",
-      "border-bottom-color": "transparent",
-    }),
-    // Pressed, the lift goes: the one cue a flat theme has left (shadcn styles no press state).
-    // Light, `--input` laid on the card is `--border`'s own grey (shadcn's light `input` and `border`
-    // are one colour), so the finish names that token; dark, no token holds the fill.
-    pressed: surface(appearance === "light" ? alias("border") : o.pressed, {
-      "border-top-color": "transparent",
-      "border-bottom-color": "transparent",
-      foreground: alias("foreground"),
-    }),
-    disabled: surface(alias("raised"), {
-      "border-color": alias("border"),
-      foreground: alias("muted-foreground"),
-    }),
-    light: surface(alias("primary"), {
-      "border-top-color": "transparent",
-      "border-bottom-color": "transparent",
-    }),
-    accent: surface(alias("primary"), {
-      "border-top-color": "transparent",
-      "border-bottom-color": "transparent",
-    }),
-    // A press on the accent keeps the fill at 88 %, in the colour itself, so the border and the
-    // shadow stay full where a whole-view opacity used to fade them too.
-    accentPressed: {
-      ...surface("oklch(from {primary} l c h / 0.88)", {
-        "border-top-color": "transparent",
-        "border-bottom-color": "transparent",
-        foreground: alias("primary-foreground"),
-      }),
-      // The fill shows through the clear gradient: the same translucent colour twice would
-      // double its alpha.
-      gradient: "linear-gradient(180deg, transparent 0%, transparent 100%)",
-    },
-    // A rail has no lip of its own (shadcn draws the track flat): the edge comes from the theme's
-    // `border`, and `theme.ts`'s `insetEdge` keeps this `none` from voiding it.
-    track: { shadow: "none", "border-color": alias("border") },
-    // A run's colour is carried by the gradient: the engine draws the gradient over the fill's
-    // colour, so a colour under it shows through and tints the run. `transparent` is the one that
-    // does not.
-    fill: {
-      background: "transparent",
-      gradient: flat(alias("primary")),
-      shadow: "none",
-      "border-color": "transparent",
-    },
-    knob: surface(alias("knob"), { shadow: SHADOW.sm }),
-    // Lit, the knob is `background` light and `primary-foreground` dark: no token of its own.
-    knobOn: surface(alias(appearance === "light" ? "background" : "primary-foreground"), {
-      shadow: SHADOW.sm,
-    }),
-    // A slider's thumb: white with a `primary` edge in both appearances (`slider.tsx`'s
-    // `border-primary bg-white shadow-sm`), where a switch's knob has no edge.
-    handle: surface(WHITE, { shadow: SHADOW.sm, "border-color": alias("primary") }),
-    pill: surface(alias("raised"), { shadow: SHADOW.xs }),
-    thumb: surface(o.thumb, { shadow: SHADOW.sm }),
-    // What stays chosen: the neutral ramp's step a press is not (shadcn has no fourth grey).
-    on: surface(alias(appearance === "light" ? "chart-1" : "chart-3"), {
-      "border-top-color": "transparent",
-      "border-bottom-color": "transparent",
-      foreground: alias("foreground"),
-    }),
-    // shadcn's combobox chip: a flat `bg-muted` label, no edge and no shadow.
-    chip: surface(alias("muted"), { shadow: "none" }),
-    glass: {
-      // A control over a photo: the card's own colour at 80% (`bg-card/80`), named at that alpha.
-      background: "oklch(from {card} l c h / 0.8)",
-      shadow: "none",
-      "border-color": alias("border"),
-      backdropFilter: "blur(20px)",
-    },
-    menu: {
-      background: alias("card"),
-      shadow: SHADOW.md,
-      "border-color": alias("border"),
-      backdropFilter: "none",
-    },
-    grabber: { background: alias("raised"), shadow: "none" },
-    groove: { shadow: "none" },
-  };
-}
-
 /** Theme data and theme-specific DTCG descriptions ready for `emitDtcgTheme`. */
 export function themeFiles(): ThemeGeneratorOutput {
   const light = palette("light");
@@ -427,10 +277,8 @@ export function themeFiles(): ThemeGeneratorOutput {
       light: section(light, ownLight),
       dark: section(dark, ownDark),
     },
-    finishes: {
-      light: withoutMaterial(finishes("light", ownLight)),
-      dark: withoutMaterial(finishes("dark", ownDark)),
-    },
+    finishes,
+    shadows,
     descriptions: {
       style: {
         "state.press-scale":

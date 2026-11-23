@@ -20,7 +20,7 @@ copy-into-app 层的品牌外观：本库所有，起点是上游 gallery UI 主
 
 主题由三样东西组成：**token**（有名字的颜色、长度或字体家族，`theme.json` 写）、**finish**（组件自己画的表面 —— 底、渐变、边、影、模糊、平台材质，`semantics.json` 写）、**alias**（`theme.json` 内写 `var(--x)`，`semantics.json` 内写 `{x}`）。分层标准与 `{token}` 规则见 [`docs/specs/design-semantics.md`](../../docs/specs/design-semantics.md)；有哪些 token、每个 finish 画什么、谁读它，以 [`docs/specs/theme-roles.md`](../../docs/specs/theme-roles.md) 为准；`bun scripts/theme-lint.ts` 拿这两个文件对着它检查。
 
-由 [`@shadcn-nsh/ui`](../ui) 使用，并以 registry 的 `theme` 项（应用的**构建时主题**）与 `theme-<name>` 项（其它主题）分发。改任何主题时编辑 `packages/theme/tokens/` 下的 DTCG 源码（或对由生成器维护的主题运行 `bun scripts/theme/generate-*.ts` 重写对应 DTCG 源码并自动执行编译），手改 `.tokens.json` 后运行 `bun run tokens:build` 编译，再运行 `bun run registry:build` 并提交 `public/r`。
+由 [`@shadcn-nsh/ui`](../ui) 使用，并以 registry 的 `theme` 项（应用的**构建时主题**）与 `theme-<name>` 项（其它主题）分发。改任何主题时编辑 `packages/theme/tokens/` 下的 DTCG 源码，再运行 `bun run tokens:build` 编译、`bun run registry:build` 提交 `public/r`。五套生成的主题（`shadcn`、`solid-glass`、`apple`、`material`、`winui`）改的是 `scripts/theme/generate-<name>.ts`（颜色、风格与控件预置）与 `scripts/theme/finishes/<name>.ts`（十二个层与影子刻度：`finishes`、`shadows`，`shared` 加稀疏 `light` / `dark`），由 `scripts/theme/dtcg.ts` 编码成 DTCG 源码并自动编译；`scripts/theme/generators.test.ts` 逐套断言生成结果与提交的源码逐字节相同。
 
 `default` 的 DTCG 源码（`tokens/`）与编译产物已归本库所有（[`port-map.json`](../../port-map.json) 里的 `"owned"`）：`port:vendor` 不再重填、`port:check` 不再与上游比对，所以像其它源码一样在这里改（[`docs/port.md`](../../docs/port.md#主题文件)）。外观仍以上游 gallery UI 主题为准；变的是数据归谁。
 

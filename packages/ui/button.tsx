@@ -132,10 +132,10 @@ export const buttonSizes: Record<ButtonSize, ButtonDimensions> = {
   },
 };
 
-/** How far a filled control dims while it is held: the accent's press is the control's, not a
- * finish of the theme's (`{ ...finish.accent, opacity: ACCENT_PRESS_OPACITY }`), and the same
- * value a selected one rests at. */
-export const ACCENT_PRESS_OPACITY = 0.88;
+/** How far a selected filled control rests: the theme dims a press of its accent by
+ * `dimmed.accentPressed`, and a selected one holds the same dim in every theme (Material and WinUI
+ * paint their press instead of dimming it, so the press opacity is not the selected one's). */
+const SELECTED_OPACITY = 0.88;
 
 /** How far a press sinks a button (`activeStyle`): none with reduced motion. */
 const sink = (scale: number): ViewStyle => pressSink(scale).activeStyle;
@@ -158,6 +158,25 @@ const STYLE_KEYS = [
 const dimensions = (o?: ButtonLookOptions) => buttonSizes[read(o?.size) ?? "default"];
 
 const filled = (variant: ButtonVariant) => variant === "default";
+
+/** The look a filled control wears while it is held: the accent dimmed to `dimmed.accentPressed`, or
+ * the flat fill and ink the theme paints instead (`finish.accent.pressedBackground` /
+ * `pressedForeground`): a theme whose press swaps the accent out paints a plain face, so the accent's
+ * gradient and bevels go with it (WinUI's `accent-pressed`: no border of its own). */
+function pressedAccent(): ViewStyle {
+  const pressed = finish.accent.pressedBackground;
+  const accent: ViewStyle = { ...finish.accent, opacity: dimmed.accentPressed };
+  return pressed === undefined
+    ? accent
+    : {
+        ...accent,
+        backgroundColor: pressed,
+        backgroundImage: "none",
+        borderColor: "transparent",
+        borderTopColor: "transparent",
+        borderBottomColor: "transparent",
+      };
+}
 
 const buttonInk = (variant: ButtonVariant, selected = false): keyof Tokens =>
   filled(variant)
@@ -182,7 +201,7 @@ function restLook(variant: ButtonVariant, selected: boolean, disabled = false): 
     return { ...finish.disabled };
   }
   if (filled(variant) && disabled) return { ...finish.raised };
-  if (filled(variant)) return { ...finish.accent, opacity: selected ? ACCENT_PRESS_OPACITY : 1 };
+  if (filled(variant)) return { ...finish.accent, opacity: selected ? SELECTED_OPACITY : 1 };
   if (variant === "destructive") {
     return {
       boxShadow: finish.raised.boxShadow,
@@ -265,7 +284,7 @@ export function buttonLook(variant: Live<ButtonVariant> = "secondary", o?: Butto
                   : undefined,
             )
           : filled(variant)
-            ? { ...finish.accent, opacity: ACCENT_PRESS_OPACITY }
+            ? pressedAccent()
             : variant === "destructive"
               ? { backgroundColor: alpha(colors.destructive, 0.22), boxShadow: "none" }
               : { ...finish.pressed };
@@ -294,7 +313,10 @@ function ink(live: Live<ButtonVariant>, o?: ButtonLookOptions) {
     if (themeStyle().state.disabled.fill) return finish.disabled.foreground;
     if (filled(variant)) return colors.mutedForeground;
   }
-  if (filled(variant)) return finish.accent.foreground;
+  if (filled(variant))
+    return read(o?.pressed)
+      ? (finish.accent.pressedForeground ?? finish.accent.foreground)
+      : finish.accent.foreground;
   if (variant === "destructive") return colors.destructive;
   if (variant === "secondary" && read(o?.selected)) return finish.accent.foreground;
   if (read(o?.pressed)) return finish.pressed.foreground;

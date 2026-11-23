@@ -47,6 +47,8 @@ interface Finish {
   "border-color"?: string;
   "border-top-color"?: string;
   "border-bottom-color"?: string;
+  "pressed-background"?: string;
+  "pressed-foreground"?: string;
   backdropFilter?: string;
   material?: unknown;
 }
@@ -263,8 +265,15 @@ for (const theme of themes) {
   }
 }
 
-/** Fields a finish may leave out: a flat look states no gradient, an opaque one no backdrop. */
-const optionalFields = new Set(["material", "gradient", "backdropFilter"]);
+/** Fields a finish may leave out: a flat look states no gradient, an opaque one no backdrop, and
+ * only a theme whose press swaps the accent out states the pressed fill and ink. */
+const optionalFields = new Set([
+  "material",
+  "gradient",
+  "backdropFilter",
+  "pressed-background",
+  "pressed-foreground",
+]);
 const shapeOf = new Map<string, string[]>();
 for (const appearance of appearances)
   for (const [role, finish] of Object.entries(defaultMerged[appearance]))
@@ -295,7 +304,7 @@ for (const theme of themes) {
         if (!optionalFields.has(field) && !have.includes(field))
           fail(`${path}: ${role}.${field} is missing, and every finish states a ${field}`);
       for (const field of have)
-        if (!want.includes(field))
+        if (!want.includes(field) && !optionalFields.has(field))
           fail(`${path}: ${role}.${field} is not a field the default theme's \`${role}\` states`);
 
       const base = defaultMerged[appearance][role];

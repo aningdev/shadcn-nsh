@@ -307,6 +307,12 @@ function compileFinishSection(
     if (isRecord(group["border-bottom-color"])) {
       item["border-bottom-color"] = compileFinishColor(group["border-bottom-color"]);
     }
+    if (isRecord(group["pressed-background"])) {
+      item["pressed-background"] = compileFinishColor(group["pressed-background"]);
+    }
+    if (isRecord(group["pressed-foreground"])) {
+      item["pressed-foreground"] = compileFinishColor(group["pressed-foreground"]);
+    }
     const groupExt = getExt(group);
     if (groupExt && "backdropFilter" in groupExt) {
       item.backdropFilter = groupExt.backdropFilter;
@@ -609,6 +615,8 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
       overlay: readNumMap(stateGroup.overlay as Record<string, Record<string, unknown>>),
       ripple: stateExt.ripple as boolean,
       "pressed-opacity": (stateGroup["pressed-opacity"] as Record<string, unknown>)
+        .$value as number,
+      "accent-pressed-opacity": (stateGroup["accent-pressed-opacity"] as Record<string, unknown>)
         .$value as number,
       "rest-opacity": (stateGroup["rest-opacity"] as Record<string, unknown>).$value as number,
       disabled: {

@@ -448,6 +448,10 @@
       "$value": 1,
       "$description": "Content stays full opacity when pressed (1; fill brush swap shows press)."
     },
+    "accent-pressed-opacity": {
+      "$value": 1,
+      "$description": "Opacity a filled control dims to while it is pressed, fill and ink together. A theme whose press swaps the accent out states 1."
+    },
     "rest-opacity": {
       "$value": 0.5,
       "$description": "Opacity a passive indicator sits at rest (a scrollbar's thumb), before the pointer is on it."
@@ -1870,6 +1874,30 @@
             252.341
           ],
           "hex": "#146cbe"
+        }
+      },
+      "pressed-background": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.5773,
+            0.13223,
+            250.006
+          ],
+          "hex": "#317dc4"
+        }
+      },
+      "pressed-foreground": {
+        "$type": "color",
+        "$value": {
+          "colorSpace": "oklch",
+          "components": [
+            0.87245,
+            0.03754,
+            247.003
+          ],
+          "hex": "#c2d8ed"
         }
       }
     },

@@ -368,14 +368,18 @@ describe("compiled winui theme files", () => {
     expect(files.semantics.finishes.light.accent).toMatchObject({
       "border-color": "oklch(0.52768 0.14982 252.341)",
       "border-top-color": "oklch(0.52768 0.14982 252.341)",
+      // WinUI swaps the accent for `AccentFillColorTertiary` on a press, ink `TextOnAccentFillColorSecondary`.
+      "pressed-background": "oklch(0.5773 0.13223 250.006)",
+      "pressed-foreground": "oklch(0.87245 0.03754 247.003)",
     });
     expect(files.semantics.finishes.dark.accent).toMatchObject({
       "border-color": "oklch(0.81732 0.11439 230)",
       "border-top-color": "oklch(0.81732 0.11439 230)",
+      "pressed-background": "oklch(0.70029 0.10192 230.522)",
+      "pressed-foreground": "oklch(0.42706 0.05878 229.834)",
     });
-    // WinUI swaps the accent for `AccentFillColorTertiary` on a press; the layer contract paints a
-    // press as the accent at `ACCENT_PRESS_OPACITY` (`packages/ui/button.tsx`), so the neutral press
-    // stays the neutral one: `SubtleFillColorSecondary` over the base, in `TextFillColorSecondary`.
+    // The neutral press stays the neutral one: `SubtleFillColorSecondary` over the base, in
+    // `TextFillColorSecondary`.
     expect(files.semantics.finishes.shared.pressed).toMatchObject({
       background: "{muted}",
       foreground: "{muted-foreground}",

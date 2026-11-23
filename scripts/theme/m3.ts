@@ -33,6 +33,7 @@ import {
 } from "@material/material-color-utilities";
 
 import type { ThemeGeneratorOutput } from "./dtcg";
+import { finishes, shadows } from "./finishes/material";
 import { oklchColor, toOklchText } from "./oklch";
 
 export const M3_BASELINE_SEED = "#6750A4";
@@ -358,42 +359,6 @@ export function m3Roles(scheme: M3Scheme): M3Roles {
   };
 }
 
-const alias = (token: string) => `{${token}}`;
-const flat = (color: string) => `linear-gradient(180deg, ${color} 0%, ${color} 100%)`;
-
-/** Material Web `_elevation.scss` key + ambient shadow levels in black ink. */
-const LEVEL_1 = `0 1px 2px 0 ${oklchColor(0, 0, 0, 0.3)}, 0 1px 3px 1px ${oklchColor(0, 0, 0, 0.15)}`;
-const LEVEL_2 = `0 1px 2px 0 ${oklchColor(0, 0, 0, 0.3)}, 0 2px 6px 2px ${oklchColor(0, 0, 0, 0.15)}`;
-const LEVEL_3 = `0 1px 3px 0 ${oklchColor(0, 0, 0, 0.3)}, 0 4px 8px 3px ${oklchColor(0, 0, 0, 0.15)}`;
-
-const surface = (
-  color: string,
-  {
-    shadow = "none",
-    "border-color": borderColor = "transparent",
-    "border-top-color": borderTopColor,
-    "border-bottom-color": borderBottomColor,
-    foreground,
-    material = null,
-  }: {
-    shadow?: string;
-    "border-color"?: string;
-    "border-top-color"?: string;
-    "border-bottom-color"?: string;
-    foreground?: string;
-    material?: { android: { elevation: number } } | null;
-  } = {},
-) => ({
-  background: color,
-  gradient: flat(color),
-  shadow,
-  "border-color": borderColor,
-  ...(borderTopColor !== undefined ? { "border-top-color": borderTopColor } : {}),
-  ...(borderBottomColor !== undefined ? { "border-bottom-color": borderBottomColor } : {}),
-  ...(foreground !== undefined ? { foreground } : {}),
-  material,
-});
-
 /**
  * Shared theme-level tokens (`cssVars.theme`) for Material 3 Expressive: M3 Compose tokens at
  * `ac364f3c` (`CornerExtraSmall` 4dp, `CornerLarge` / medium container 12dp, `CornerExtraLarge`
@@ -409,141 +374,6 @@ function themeLevel(roles: M3Roles): Record<string, string> {
     "font-sans": "system-ui",
     "font-mono": "monospace",
     ...roles.theme,
-  };
-}
-
-/**
- * All 23 finish roles for Material 3 Expressive (`{token}` references; light/dark polarity comes
- * from `theme.json`). No frosted glass or blur; elevation maps onto Material Web Level 1–3
- * shadows and `material.android.elevation` (1 / 3 / 6 dp).
- */
-function finishes(modalFill: string): Record<string, Record<string, unknown>> {
-  const level1 = { android: { elevation: 1 } };
-  const level2 = { android: { elevation: 3 } };
-  const level3 = { android: { elevation: 6 } };
-  return {
-    card: {
-      gradient: flat(alias("card")),
-      shadow: LEVEL_1,
-      "border-color": "transparent",
-      material: level1,
-    },
-    section: {
-      background: alias("card"),
-      shadow: LEVEL_1,
-      "border-color": "transparent",
-      material: level1,
-    },
-    inset: { shadow: "none", material: null },
-    field: { shadow: "none", material: null },
-    raised: {
-      ...surface(alias("raised"), {
-        shadow: LEVEL_1,
-        "border-top-color": "transparent",
-        "border-bottom-color": "transparent",
-        material: level1,
-      }),
-      backdropFilter: "none",
-    },
-    hover: {
-      background: alias("raised"),
-      gradient: flat(alias("hover")),
-      shadow: LEVEL_1,
-      "border-color": "transparent",
-      "border-top-color": "transparent",
-      "border-bottom-color": "transparent",
-      material: level1,
-    },
-    pressed: surface(alias("raised"), {
-      shadow: LEVEL_1,
-      "border-top-color": "transparent",
-      "border-bottom-color": "transparent",
-      foreground: alias("foreground"),
-      material: level1,
-    }),
-    // M3's disabled container: `onSurface` at 10 % over the surface under it, and its label at
-    // 38 %.
-    disabled: {
-      ...surface("oklch(from {foreground} l c h / 0.1)", {
-        foreground: "oklch(from {foreground} l c h / 0.38)",
-      }),
-      // One wash over the surface, so the gradient stays clear instead of stacking the alpha twice.
-      gradient: "linear-gradient(180deg, transparent 0%, transparent 100%)",
-    },
-    light: surface(alias("primary"), {
-      "border-top-color": "transparent",
-      "border-bottom-color": "transparent",
-    }),
-    accent: surface(alias("primary"), {
-      "border-top-color": "transparent",
-      "border-bottom-color": "transparent",
-    }),
-    // A press is the theme's own state layer and ripple over the accent, not a fill of its own: the
-    // accent's fill, undimmed (this theme dims no accent press).
-    accentPressed: surface(alias("primary"), {
-      "border-top-color": "transparent",
-      "border-bottom-color": "transparent",
-      foreground: alias("primary-foreground"),
-    }),
-    track: { shadow: "none", "border-color": alias("input"), material: null },
-    fill: {
-      background: "transparent",
-      gradient: flat(alias("primary")),
-      shadow: "none",
-      "border-color": "transparent",
-      material: null,
-    },
-    knob: surface(alias("knob")),
-    knobOn: surface(alias("primary-foreground")),
-    handle: surface(alias("primary")),
-    pill: surface(alias("raised"), { shadow: LEVEL_1, material: level1 }),
-    thumb: surface(alias("secondary")),
-    on: surface(alias("secondary"), {
-      "border-top-color": "transparent",
-      "border-bottom-color": "transparent",
-      foreground: alias("accent-foreground"),
-    }),
-    chip: surface(alias("background"), { "border-color": alias("border") }),
-    glass: {
-      background: alias("popover"),
-      shadow: LEVEL_2,
-      "border-color": "transparent",
-      backdropFilter: "none",
-      material: level2,
-    },
-    menu: {
-      background: alias("popover"),
-      shadow: LEVEL_2,
-      "border-color": "transparent",
-      backdropFilter: "none",
-      material: level2,
-    },
-    modal: {
-      background: modalFill,
-      shadow: LEVEL_3,
-      "border-color": "transparent",
-      material: level3,
-    },
-    grabber: {
-      background: "oklch(from {muted-foreground} l c h / 0.4)",
-      shadow: "none",
-      material: null,
-    },
-    tooltip: {
-      background: alias("inverse"),
-      shadow: "none",
-      "border-color": "transparent",
-      material: null,
-    },
-    inverse: {
-      background: alias("inverse"),
-      shadow: LEVEL_3,
-      "border-color": "transparent",
-      foreground: alias("inverse-foreground"),
-      backdropFilter: "none",
-      material: level3,
-    },
-    groove: { shadow: "none", material: null },
   };
 }
 
@@ -631,6 +461,7 @@ export const m3Style = {
     overlay: { hover: 0.08, focus: 0.1, pressed: 0.1, dragged: 0.16 },
     ripple: true,
     "pressed-opacity": 1,
+    "accent-pressed-opacity": 1,
     "rest-opacity": 0.38,
     disabled: { content: 0.38, fill: true },
   },
@@ -742,34 +573,14 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
       light: roles.light,
       dark: roles.dark,
     },
-    finishes: {
-      light: finishes(toOklchText(scheme.light.surfaceContainerHigh)),
-      dark: finishes(toOklchText(scheme.dark.surfaceContainerHigh)),
-    },
+    finishes,
+    shadows,
     descriptions: {
       sharedColors: {
         scrim: "Translucent backdrop scrim behind modals and sheets (M3 scrim at 32% opacity).",
       },
       lightColors: colorDescs,
       darkColors: colorDescs,
-      finishes: {
-        card: "Elevated M3 card surface with Material Web Level 1 shadow and 1dp Android elevation.",
-        section:
-          "M3 ElevatedCard resting surface (Level 1 shadow and 1dp Android elevation, no border).",
-        raised: "Raised surface with Level 1 shadow and 1dp Android elevation.",
-        hover: "Hovered state surface over raised background with Level 1 shadow.",
-        pressed: "Pressed surface at Level 1 elevation (M3 state layer + ripple handles press).",
-        disabled: "M3 disabled filled/tonal button container (10% onSurface, flat with no shadow).",
-        accentPressed: "M3 pressed accent surface (state layer + ripple handles press).",
-        glass:
-          "Floating surface using opaque M3 popover with Level 2 shadow and 3dp elevation (M3 uses no blur).",
-        menu: "M3 menu/popover surface with Level 2 shadow and 3dp Android elevation.",
-        modal:
-          "M3 modal surface using SurfaceContainerHigh with Level 3 shadow and 6dp Android elevation.",
-        grabber: "M3 bottom sheet drag handle (40% onSurfaceVariant).",
-        tooltip: "M3 plain tooltip using inverse surface without shadow.",
-        inverse: "M3 snackbar/inverse surface with Level 3 shadow and 6dp Android elevation.",
-      },
       style: {
         typography:
           "Material 3 Expressive typography scale (TypeScaleTokens.kt / _md-sys-typescale.scss).",
