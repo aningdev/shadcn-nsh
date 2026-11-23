@@ -298,8 +298,8 @@
       "name": "indicator",
       "type": "registry:lib",
       "title": "Indicator",
-      "description": "Shared field indicator and corner preset helpers: underline edge widths, rest color, focus class, and top-only corners.",
-      "registryDependencies": ["theme"],
+      "description": "A field's frame from the theme's field: corners, edge widths, rest colors, ring, and the focus edge.",
+      "registryDependencies": ["look", "theme"],
       "files": [
         {
           "path": "packages/ui/lib/indicator.ts",
@@ -646,7 +646,7 @@
       "type": "registry:ui",
       "title": "Input",
       "description": "A text field — sunk, ghost, multiline, masked, or invalid.",
-      "registryDependencies": ["indicator", "live-value", "motion", "theme"],
+      "registryDependencies": ["indicator", "live-value", "look", "motion", "theme"],
       "files": [
         {
           "path": "packages/ui/input.tsx",
@@ -660,7 +660,7 @@
       "type": "registry:ui",
       "title": "Number Input",
       "description": "A sunk number field with − / + or stacked chevron steppers.",
-      "registryDependencies": ["icons", "indicator", "input", "theme"],
+      "registryDependencies": ["icons", "indicator", "input", "look", "theme"],
       "files": [
         {
           "path": "packages/ui/number-input.tsx",
@@ -675,7 +675,7 @@
       "type": "registry:ui",
       "title": "OTP Input",
       "description": "One-time code cells that lift out of sunk wells as digits fill in.",
-      "registryDependencies": ["indicator", "input", "live-value", "motion", "theme"],
+      "registryDependencies": ["indicator", "input", "live-value", "look", "motion", "theme"],
       "files": [
         {
           "path": "packages/ui/otp-input.tsx",
@@ -838,6 +838,7 @@
         "input",
         "listbox",
         "live-value",
+        "look",
         "open-state",
         "surface",
         "theme"
@@ -863,6 +864,7 @@
         "input",
         "listbox",
         "live-value",
+        "look",
         "open-state",
         "surface",
         "theme"
@@ -1272,6 +1274,7 @@
         "icons",
         "indicator",
         "input-group",
+        "look",
         "popup",
         "theme",
         "toggle"

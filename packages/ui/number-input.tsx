@@ -2,7 +2,7 @@
 // `numberInputSteps`) and the `NumberInput` that wears them.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, terminal } from "@shadcn-nsh/theme";
+import { colors, control, terminal } from "@shadcn-nsh/theme";
 import { ChevronDown, ChevronUp, Minus, Plus, type IconNode } from "lucide";
 import type { InputStyle } from "nsh";
 import { platform, split, Text } from "nsh";
@@ -14,6 +14,7 @@ import {
 import { edgeClass, fieldSize } from "./input";
 import { Icon } from "./lib/icons";
 import { fieldCornerClass, fieldEdgeClass } from "./lib/indicator";
+import { fieldLook } from "./lib/look";
 
 const pointer = platform.desktop;
 
@@ -32,17 +33,17 @@ const press = terminal
  * a row high, its steppers at the band's end.
  */
 export const numberInputClasses = {
-  /** The well: its corners and edge are the field preset's, read where it is drawn. */
+  /** The well: its corners and edge are the theme's field, read where it is drawn. */
   get frame(): string {
-    return terminal
-      ? "h-4 flex-row items-stretch bg-field pl-2 disabled:opacity-50"
-      : [
-          pointer ? "h-8" : "h-11",
-          fieldCornerClass(),
-          "flex-row items-stretch overflow-hidden bg-field",
-          fieldEdgeClass(),
-          edgeClass({ rest: "border-input", hover: "border-faint", hoverVariant: "enabled:hover" }),
-        ].join(" ");
+    if (terminal) return "h-4 flex-row items-stretch bg-field pl-2 disabled:opacity-50";
+    const field = fieldLook(control().field);
+    return [
+      pointer ? "h-8" : "h-11",
+      fieldCornerClass(field),
+      "flex-row items-stretch overflow-hidden bg-field",
+      fieldEdgeClass(field),
+      edgeClass({ rest: "border-input", hover: "border-faint", hoverVariant: "enabled:hover" }),
+    ].join(" ");
   },
   press,
   stepBefore: (width: string) => `${width} ${press} border-r border-line`,

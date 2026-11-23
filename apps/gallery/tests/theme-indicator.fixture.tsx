@@ -1,4 +1,4 @@
-import { colors, controls, finish, selectTheme, shape, type AppTheme } from "@shadcn-nsh/theme";
+import { colors, control, controls, finish, selectTheme, type AppTheme } from "@shadcn-nsh/theme";
 import { mount, signal, Text, View } from "nsh";
 
 import { defaultTheme } from "../../../packages/theme/themes/default/index";
@@ -15,6 +15,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "../../../packages/ui";
+import { fieldLook } from "../../../packages/ui/lib/look";
 
 /** A `winui`-controls theme with distinct inverse and modal roles. */
 const marked: AppTheme = {
@@ -54,7 +55,7 @@ function App() {
       <Text testID="inverse-fill">{`inverse-fill:${finish.inverse.backgroundColor}`}</Text>
       <Text testID="field">{`field:${inputLook().style.borderBottomWidth ?? inputLook().style.borderWidth}|${inputLook().style.borderTopWidth ?? inputLook().style.borderWidth}`}</Text>
       <Text testID="frame">{`frame:${inputLook().class}`}</Text>
-      <Text testID="corners">{`corners:${fieldCorners(shape.control).borderBottomLeftRadius}|${fieldCorners(shape.control).borderTopLeftRadius}`}</Text>
+      <Text testID="corners">{`corners:${fieldCorners(fieldLook(control().field)).borderBottomLeftRadius}|${fieldCorners(fieldLook(control().field)).borderTopLeftRadius}`}</Text>
       <If when={shown()}>
         <Tabs defaultValue="a">
           <TabsList>

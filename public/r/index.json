@@ -290,7 +290,7 @@
       "name": "indicator",
       "type": "registry:lib",
       "title": "Indicator",
-      "description": "Shared field indicator and corner preset helpers: underline edge widths, rest color, focus class, and top-only corners.",
+      "description": "A field's frame from the theme's field: corners, edge widths, rest colors, ring, and the focus edge.",
       "files": [
         {
           "path": "packages/ui/lib/indicator.ts",

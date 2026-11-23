@@ -4,12 +4,12 @@
 
 import {
   colors,
+  control,
   finish,
   terminal,
   TERMINAL_COLUMN,
   TERMINAL_ROW,
   font,
-  shape,
   dimmed,
 } from "@shadcn-nsh/theme";
 import type { InputStyle, ViewStyle } from "nsh";
@@ -19,12 +19,14 @@ import { Input as BaseInput, type InputProps as BaseInputProps } from "nsh/base"
 import {
   fieldCornerClass,
   fieldCorners,
+  fieldDrawn,
   fieldEdgeClass,
   fieldEdgeWidths,
-  fieldFocusClass,
-  fieldIndicator,
+  fieldFocusLine,
 } from "./lib/indicator";
 import { type Live, read } from "./lib/live-value";
+// `fieldLook` is the well's own look in this file; the recipe's is read as `fieldRecipe`.
+import { fieldLook as fieldRecipe } from "./lib/look";
 import { createRejectShake } from "./lib/motion";
 
 const pointer = platform.desktop;
@@ -101,7 +103,7 @@ export function edgeClass(o: EdgeOptions): string {
   const tone = o.invalid ? "destructive" : "brand";
   const focus = o.focus ?? "focus-within";
   const hover = o.hoverVariant ?? "hover";
-  const indicator = fieldIndicator();
+  const indicator = fieldDrawn(fieldRecipe(control().field)).form;
   // A field's own edge is the input one, and the preset redraws it: a line in the muted foreground,
   // or a hairline box whose bottom edge stays the input color (and keeps it under the pointer, as
   // WinUI's does). Another color (the danger tone, a flat or a ghost field) is the field's own, and
@@ -122,7 +124,7 @@ export function edgeClass(o: EdgeOptions): string {
     rest,
     hoverEdge ? `${hover}:${hoverEdge} ${hover}:${focus}:${edge}` : "",
     `${focus}:${edge}`,
-    line ? fieldFocusClass(focus) : "",
+    line ? fieldFocusLine(focus) : "",
     terminal || line
       ? ""
       : `outline-2 -outline-offset-1 outline-${tone}/0 ${focus}:outline-${tone}`,
@@ -150,9 +152,10 @@ function fieldEdge(o: FieldLookOptions | undefined): string {
 function frame(o: FieldLookOptions | undefined): ViewStyle {
   const ghost = (read(o?.variant) ?? "default") === "ghost";
   const flat = !!read(o?.readonly) || !!read(o?.disabled);
+  const field = fieldRecipe(control().field);
   return {
-    ...fieldCorners(shape.control),
-    ...fieldEdgeWidths(),
+    ...fieldCorners(field),
+    ...fieldEdgeWidths(field),
     backgroundColor: ghost ? "transparent" : colors.field,
     // Recessed while editable; a read-only, disabled or ghost field lies flat. Its edge is
     // `fieldEdge`'s classes.
@@ -282,11 +285,12 @@ export function inputLook(o?: FieldLookOptions) {
  * edge are the preset's, so read it where it is used: the preset is the theme's, which changes at runtime.
  */
 export function timeFieldClass(): string {
+  const field = fieldRecipe(control().field);
   return [
     pointer ? "h-8 px-2" : "h-11 px-3",
-    fieldCornerClass(),
+    fieldCornerClass(field),
     terminal ? "items-center bg-field" : "items-center bg-field dark:bg-input/30",
-    fieldEdgeClass(),
+    fieldEdgeClass(field),
     edgeClass({ rest: "border-input", hover: "border-faint", hoverVariant: "enabled:hover" }),
   ].join(" ");
 }

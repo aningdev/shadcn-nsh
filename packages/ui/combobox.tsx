@@ -4,6 +4,7 @@
 
 import {
   colors,
+  control,
   finish,
   focusRing,
   rounded,
@@ -47,6 +48,7 @@ import {
   triggerPadding,
 } from "./lib/listbox";
 import { type Live, read } from "./lib/live-value";
+import { fieldLook } from "./lib/look";
 import {
   createItemRegistry,
   createOpenState,
@@ -84,6 +86,7 @@ const fieldMinWidth = 160;
 export function comboboxLook(open: Live<boolean>, o?: ComboboxLookOptions) {
   return {
     get style(): ViewStyle {
+      const field = fieldLook(control().field);
       return {
         flexDirection: "row",
         alignItems: "center",
@@ -95,8 +98,8 @@ export function comboboxLook(open: Live<boolean>, o?: ComboboxLookOptions) {
         // The query starts where a select's title does, and stops 4 points short of the toggle.
         paddingStart: triggerPadding(),
         paddingEnd: 4,
-        ...fieldCorners(shape.control),
-        ...fieldEdgeWidths(),
+        ...fieldCorners(field),
+        ...fieldEdgeWidths(field),
         backgroundColor: colors.field,
         ...finish.inset,
         ...read(o?.style),

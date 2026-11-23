@@ -1,7 +1,15 @@
 // An OTP input: the cells (`otpCells`, `otpCellLook`) and the `OtpInput` that wears them.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { colors, finish, terminal, type Tone, toneColor, toneTint } from "@shadcn-nsh/theme";
+import {
+  colors,
+  control,
+  finish,
+  terminal,
+  type Tone,
+  toneColor,
+  toneTint,
+} from "@shadcn-nsh/theme";
 import type { StyleProp, ViewStyle } from "nsh";
 import { platform, split } from "nsh";
 import { OtpInput as BaseOtpInput, type OtpInputProps as BaseOtpInputProps } from "nsh/base";
@@ -9,6 +17,7 @@ import { OtpInput as BaseOtpInput, type OtpInputProps as BaseOtpInputProps } fro
 import { edgeClass } from "./input";
 import { fieldCornerClass, fieldEdgeClass } from "./lib/indicator";
 import { type Live, read } from "./lib/live-value";
+import { fieldLook } from "./lib/look";
 import { createRejectShake } from "./lib/motion";
 
 const pointer = platform.desktop;
@@ -39,10 +48,11 @@ export interface OtpCellOptions {
  */
 export function otpCellLook(o?: OtpCellOptions) {
   const cells = o?.cells ?? otpCells;
+  const field = fieldLook(control().field);
   return {
     cellClass: terminal
       ? "w-10 h-12 items-center justify-center border border-line font-semibold text-foreground focus:border-brand disabled:opacity-50"
-      : `${cells} items-center justify-center ${fieldCornerClass()} bg-inset font-semibold text-foreground ${fieldEdgeClass()} border-line data-filled:border-input data-filled:bg-card data-filled:focus:border-brand disabled:opacity-50 ${edgeClass({ rest: "", focus: "focus" })}`,
+      : `${cells} items-center justify-center ${fieldCornerClass(field)} bg-inset font-semibold text-foreground ${fieldEdgeClass(field)} border-line data-filled:border-input data-filled:bg-card data-filled:focus:border-brand disabled:opacity-50 ${edgeClass({ rest: "", focus: "focus" })}`,
     get cellStyle(): ViewStyle {
       const tone = read(o?.tone);
       if (terminal) return tone ? { borderColor: toneColor(tone) } : {};

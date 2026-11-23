@@ -3,8 +3,8 @@
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import {
-  alpha,
   colors,
+  control,
   finish,
   hovered,
   rounded,
@@ -26,7 +26,13 @@ import {
 
 import { fieldSize } from "./input";
 import { Icon } from "./lib/icons";
-import { fieldCorners, fieldEdgeWidths, fieldFocusEdge, fieldRestEdge } from "./lib/indicator";
+import {
+  fieldCorners,
+  fieldEdgeWidths,
+  fieldFocusEdge,
+  fieldRestEdge,
+  fieldRing,
+} from "./lib/indicator";
 import {
   Chevron,
   clearButtonLook,
@@ -38,6 +44,7 @@ import {
   triggerPadding,
 } from "./lib/listbox";
 import { type Live, read } from "./lib/live-value";
+import { fieldLook } from "./lib/look";
 import {
   createItemRegistry,
   createOpenState,
@@ -58,8 +65,6 @@ const triggerGap = 8;
 
 /** How long a trigger's edge fades: its border, its ring and its dimming. */
 const edgeFade = 120;
-
-/** How far a pressed trigger sinks to, as a button's does. */
 
 /** A trigger's variants: `default` shadcn's field, `outline` an outline button of shadcn's, on the raised finish. */
 export type PickerVariant = "default" | "outline";
@@ -111,6 +116,7 @@ export function pickerLook(o?: PickerLookOptions) {
     get style(): ViewStyle {
       const clearable = !!read(o?.clearable);
       const cell = read(o?.iconCell) ?? 0;
+      const field = fieldLook(control().field);
       return {
         flexDirection: "row",
         alignItems: "center",
@@ -131,8 +137,8 @@ export function pickerLook(o?: PickerLookOptions) {
             : clearable
               ? clearInset() + controlSize.clear + 8
               : triggerPadding(),
-        ...fieldCorners(shape.control),
-        ...fieldEdgeWidths(),
+        ...fieldCorners(field),
+        ...fieldEdgeWidths(field),
         ...(outline
           ? { backgroundColor: colors.raised, ...finish.raised }
           : { backgroundColor: colors.field, ...finish.inset }),
@@ -142,15 +148,8 @@ export function pickerLook(o?: PickerLookOptions) {
             ? { borderColor: colors.faint }
             : outline
               ? { borderColor: colors.border }
-              : fieldRestEdge(colors.input)),
-        ...(terminal
-          ? {}
-          : {
-              outlineStyle: "solid",
-              outlineWidth: 2,
-              outlineOffset: -1,
-              outlineColor: alpha(invalid() ? colors.destructive : colors.brand, 0),
-            }),
+              : fieldRestEdge(field)),
+        ...(terminal ? {} : fieldRing(invalid() ? colors.destructive : colors.brand)),
         transitionProperty: "border-color, outline-color, opacity",
         transitionDuration: reduceMotion() ? 0 : edgeFade,
         // The look is one object (it is spread on the trigger's view), so a list of styles is
@@ -168,7 +167,7 @@ export function pickerLook(o?: PickerLookOptions) {
     // states' order. Only for the keyboard: a click's focus, and the focus a closing list gives back, draw nothing.
     get focusVisibleStyle(): ViewStyle {
       const tone = invalid() ? colors.destructive : colors.brand;
-      return terminal ? { borderColor: tone } : fieldFocusEdge(tone);
+      return terminal ? { borderColor: tone } : fieldFocusEdge(fieldLook(control().field), tone);
     },
     get disabledStyle(): ViewStyle {
       return { opacity: dimmed.disabled };
@@ -687,10 +686,5 @@ export function SelectItem(props: SelectItemProps) {
   };
   ctx.items.register(item);
   cleanup(() => ctx.items.unregister(item.value));
-  return null;
-}
-
-/** A hairline between sections. `nsh/base`'s Select separates them by their headers alone. */
-export function SelectSeparator() {
   return null;
 }

@@ -47,8 +47,7 @@ Select
     ├── SelectGroup
     │   ├── SelectLabel
     │   └── SelectItem
-    ├── SelectItem
-    └── SelectSeparator
+    └── SelectItem
 ```
 
 ## Examples
@@ -143,13 +142,12 @@ width of its own, and its title ends in an ellipsis instead of overflowing.
 
 The root owns the open flag and the value; `SelectContent` mounts [`nsh/base` Select](https://nsh.dev/elements/select) and every base prop passes through except those. `listboxProps` and `OptionRow` fill the popup, the scrim and the rows by default.
 
-| Part              | Props                                                                                                                                               | Description                                                                                                               |
-| ----------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
-| `Select`          | `value`, `defaultValue`, `open`, `defaultOpen`, `disabled`, `cleanable`, `placeholder`, `onChange`, `onOpenChange`, `onOpen`, `onClose`, `onCancel` | The root owns the open flag and the value                                                                                 |
-| `SelectTrigger`   | `icon`, `lead`, `invalid`, `variant`, `chevron`, `style`                                                                                            | A `Picker`. The layout keys on `style` place it where the app puts it; a `width` there also overrides the 180-point floor |
-| `SelectValue`     | `placeholder`                                                                                                                                       | The placeholder while nothing is chosen                                                                                   |
-| `SelectContent`   | `items`, `minWidth`                                                                                                                                 | The list; `items` instead of `SelectItem` children                                                                        |
-| `SelectItem`      | `value`, `disabled`, `group`                                                                                                                        | A string child is its title                                                                                               |
-| `SelectGroup`     |                                                                                                                                                     | A section                                                                                                                 |
-| `SelectLabel`     |                                                                                                                                                     | The section's name                                                                                                        |
-| `SelectSeparator` |                                                                                                                                                     | Nothing: base's list separates sections by their headers                                                                  |
+| Part            | Props                                                                                                                                               | Description                                                                                                               |
+| --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| `Select`        | `value`, `defaultValue`, `open`, `defaultOpen`, `disabled`, `cleanable`, `placeholder`, `onChange`, `onOpenChange`, `onOpen`, `onClose`, `onCancel` | The root owns the open flag and the value                                                                                 |
+| `SelectTrigger` | `icon`, `lead`, `invalid`, `variant`, `chevron`, `style`                                                                                            | A `Picker`. The layout keys on `style` place it where the app puts it; a `width` there also overrides the 180-point floor |
+| `SelectValue`   | `placeholder`                                                                                                                                       | The placeholder while nothing is chosen                                                                                   |
+| `SelectContent` | `items`, `minWidth`                                                                                                                                 | The list; `items` instead of `SelectItem` children                                                                        |
+| `SelectItem`    | `value`, `disabled`, `group`                                                                                                                        | A string child is its title                                                                                               |
+| `SelectGroup`   |                                                                                                                                                     | A section                                                                                                                 |
+| `SelectLabel`   |                                                                                                                                                     | The section's name                                                                                                        |

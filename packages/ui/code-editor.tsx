@@ -1,7 +1,7 @@
 // Code editor: `codeEditorClasses`, `codeEditorFrame`, the `CodeEditor` that wears them and the
 // `CodeEditorFindBar` that finds in it.
 
-import { colors, finish, mono, platformMaterial, shape } from "@shadcn-nsh/theme";
+import { colors, control, finish, mono, platformMaterial } from "@shadcn-nsh/theme";
 import { ArrowDown, ArrowUp, Replace, ReplaceAll, X } from "lucide";
 import {
   cleanup,
@@ -27,6 +27,7 @@ import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "
 import { mergeClasses } from "./lib/class-names";
 import { Icon } from "./lib/icons";
 import { fieldCorners, fieldEdgeWidths, fieldRestEdge } from "./lib/indicator";
+import { fieldLook } from "./lib/look";
 import { popupSurface } from "./lib/popup";
 import { Toggle } from "./toggle";
 
@@ -69,11 +70,12 @@ export const codeEditorClasses: EditorClasses = {
  * used, so it follows the appearance and the theme; an app's `style` goes over it.
  */
 export function codeEditorFrame(): ViewStyle {
+  const field = fieldLook(control().field);
   return {
     backgroundColor: colors.field,
-    ...fieldEdgeWidths(),
-    ...fieldRestEdge(colors.input),
-    ...fieldCorners(shape.control),
+    ...fieldEdgeWidths(field),
+    ...fieldRestEdge(field),
+    ...fieldCorners(field),
     ...finish.inset,
   };
 }

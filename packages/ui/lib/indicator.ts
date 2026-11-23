@@ -1,53 +1,52 @@
-// How a control preset marks a focused or editable field (`indicator`, `corners`): one place for
-// the shared logic, so every field control reads the preset the same way.
+// How a control's field reads `control().field` (`fieldLook`): one place that turns a field's recipe
+// into the styles and classes every field control draws with, so they all read the recipe the same way.
 
 import {
   alpha,
   colors,
-  controls,
   cornerCurve,
+  finish,
   rounded,
+  shape,
   stroke,
   style,
   terminal,
-  type Controls,
+  tints,
 } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
 
-/**
- * How a preset draws a field's frame: `box` all round in the input color, `underline` a line under
- * the text, or `box-underline` a box in the hairline `border` color whose bottom edge is the input color.
- */
-export type FieldIndicator = "box" | "underline" | "box-underline";
-
-/** Preset options controlling how form fields draw their resting frame and corners. */
-export interface FieldPreset {
-  indicator: FieldIndicator;
-  corners: "all" | "top";
-}
-
-/** Field frame presets keyed by the active theme's `controls()` family. */
-export const fieldPresets: Record<Controls, FieldPreset> = {
-  base: { indicator: "box", corners: "all" },
-  material: { indicator: "underline", corners: "top" },
-  winui: { indicator: "box-underline", corners: "all" },
-};
+import { type FieldLook, type Fill, fieldLook } from "./look";
 
 /**
- * How the active preset draws a field's frame. The terminal keeps its own box whatever the preset:
- * a shell's fields are its own grid's.
+ * The frame a field draws, as the platform reads it: the theme's, or the terminal's box — a shell's
+ * fields are its own grid's, whatever the theme says.
  */
-export function fieldIndicator(): FieldIndicator {
-  return terminal ? "box" : fieldPresets[controls()].indicator;
+export function fieldDrawn(field: FieldLook): FieldLook {
+  return terminal ? fieldLook("box") : field;
 }
 
-/** A field's corners: all four at `radius`, or the top two only (`corners: "top"`). */
-export function fieldCorners(radius: number): ViewStyle {
-  if (fieldPresets[controls()].corners !== "top") return rounded(radius);
-  const top = rounded(radius).borderRadius as number;
+/** What a fill paints, as a color: a finish's own face, a palette role, or a tint. */
+function painted(fill: Fill): string {
+  switch (fill.kind) {
+    case "finish":
+      return finish[fill.role].backgroundColor ?? "transparent";
+    case "colour":
+      return colors[fill.role];
+    case "tint":
+      return tints[fill.role];
+  }
+}
+
+/**
+ * A field's corners: all four at the control radius, or the top two only where the form draws its
+ * bottom edge alone (a line).
+ */
+export function fieldCorners(field: FieldLook): ViewStyle {
+  const radius = shape.control;
+  if (fieldDrawn(field).corners !== "top") return rounded(radius);
   return {
-    borderTopLeftRadius: top,
-    borderTopRightRadius: top,
+    borderTopLeftRadius: radius,
+    borderTopRightRadius: radius,
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
     ...cornerCurve,
@@ -58,15 +57,15 @@ export function fieldCorners(radius: number): ViewStyle {
  * `fieldCorners` for a frame drawn in classes: `rounded-(--radius-control)` names the same token,
  * and a class's corner is a circular one, the curve those frames already draw.
  */
-export function fieldCornerClass(): string {
-  return fieldPresets[controls()].corners === "top"
+export function fieldCornerClass(field: FieldLook): string {
+  return fieldDrawn(field).corners === "top"
     ? "rounded-t-(--radius-control)"
     : "rounded-(--radius-control)";
 }
 
-/** A field's edge widths: `stroke.control` all round, or its bottom edge alone for an underline. */
-export function fieldEdgeWidths(): ViewStyle {
-  return fieldIndicator() === "underline"
+/** A field's edge widths: one control stroke all round, or its bottom edge alone for a line. */
+export function fieldEdgeWidths(field: FieldLook): ViewStyle {
+  return fieldDrawn(field).edges === "bottom"
     ? {
         borderTopWidth: 0,
         borderLeftWidth: 0,
@@ -76,42 +75,64 @@ export function fieldEdgeWidths(): ViewStyle {
     : { borderWidth: stroke.control };
 }
 
-/** `fieldEdgeWidths` for a frame drawn in classes: `border` all round, or `border-b` for an underline. */
-export function fieldEdgeClass(): string {
-  return fieldIndicator() === "underline" ? "border-b" : "border";
+/** `fieldEdgeWidths` for a frame drawn in classes: `border` all round, or `border-b` for a line. */
+export function fieldEdgeClass(field: FieldLook): string {
+  return fieldDrawn(field).edges === "bottom" ? "border-b" : "border";
 }
 
 /**
- * A field's edge at rest, in `style`: a box in the input color, a line in the muted foreground, or
- * a box in `border` whose bottom edge is the input color (WinUI's `TextBox`: `ControlStrokeColorDefault`
- * on three sides, `ControlStrongStrokeColorDefault` below).
+ * A field's edge at rest, in `style`: the sides in the recipe's color where the form draws them, and
+ * the bottom edge in its own (a box carrying an underline reads the input color there).
  */
-export function fieldRestEdge(input: string): ViewStyle {
-  switch (fieldIndicator()) {
-    case "underline":
-      return { borderColor: colors.mutedForeground };
-    case "box-underline":
-      return { borderColor: colors.border, borderBottomColor: input };
-    default:
-      return { borderColor: input };
-  }
+export function fieldRestEdge(field: FieldLook): ViewStyle {
+  const look = fieldDrawn(field);
+  const bottom = { borderBottomColor: painted(look.bottom) };
+  return look.side
+    ? { borderColor: painted(look.side), ...bottom }
+    : { borderColor: painted(look.bottom) };
 }
 
 /**
- * The class a field's line takes with the keys: `focus.width` of the accent, in place of the ring.
+ * A field's ring, invisible until a state lights it (`fieldFocusEdge`): the two numbers its class
+ * form draws (`outline-2 -outline-offset-1`), which are not `focusRing`'s scale.
  */
-export function fieldFocusClass(focus: string): string {
-  const w = style().dimension.focus.width;
-  return `${focus}:border-b-[${w}px]`;
+export function fieldRing(tone: string): ViewStyle {
+  return {
+    outlineStyle: "solid",
+    outlineWidth: 2,
+    outlineOffset: -1,
+    outlineColor: alpha(tone, 0),
+  };
+}
+
+/** A field's states whose edge a class can say (`edgeClass`'s `focus`). */
+export type FieldState = "focus" | "focus-within" | "focus-visible";
+
+/**
+ * The line a field draws with the keys, `focus.width` wide, as classes: each size written whole, so
+ * no class is ever assembled from a number. The scales state 3; WinUI's 2 is the only other step.
+ */
+const focusLine = {
+  focus: { 2: "focus:border-b-[2px]", 3: "focus:border-b-[3px]" },
+  "focus-within": { 2: "focus-within:border-b-[2px]", 3: "focus-within:border-b-[3px]" },
+  "focus-visible": { 2: "focus-visible:border-b-[2px]", 3: "focus-visible:border-b-[3px]" },
+} as const;
+
+/** The line class a state draws (`edgeClass` adds it): `focus.width` wide, never assembled. */
+export function fieldFocusLine(state: FieldState): string {
+  return focusLine[state][style().dimension.focus.width === 2 ? 2 : 3];
 }
 
 /**
- * A field's edge with the keys, in `style`, in `tone`: the border and the outline together, or for a
+ * A field's edge with the keys, in `style`, in `tone`: the border and the ring together, or for a
  * box-underline its bottom edge alone, `focus.width` wide, and no ring.
  */
-export function fieldFocusEdge(tone: string): ViewStyle {
-  if (fieldIndicator() !== "box-underline") return { borderColor: tone, outlineColor: tone };
+export function fieldFocusEdge(field: FieldLook, tone: string): ViewStyle {
+  const look = fieldDrawn(field);
+  const ring = { ...fieldRing(tone), outlineColor: tone };
+  if (look.form !== "box-underline") return { ...ring, borderColor: tone };
   return {
+    ...ring,
     borderBottomColor: tone,
     borderBottomWidth: style().dimension.focus.width,
     outlineColor: alpha(tone, 0),
