@@ -85,7 +85,7 @@ const room = () => {
 />;
 ```
 
-A least height of your own is how the box starts taller than one line, since `style` goes over the look's — 64 points, as shadcn's starts:
+A least height of your own is how the box starts taller than one line, since `style` goes over the look's — 64 points:
 
 ```tsx
 <Input multiline value={notes()} style={{ minHeight: 64 }} />
@@ -190,11 +190,6 @@ keeps a column at the end, so the meter does not reflow as the word changes from
 <Input {...inputLook({ invalid: true })} />
 <Input {...inputLook({ variant: "ghost" })} />
 ```
-
-## Differences from shadcn/ui
-
-- Adds `variant` (`default` | `ghost`) and `invalid`; shadcn styles those with classes and `aria-invalid`.
-- `multiline` turns the same component into a text area; shadcn's is a separate `Textarea`, whose box grows with its content (`field-sizing-content`) and starts at `min-h-16` (64 points). Ours starts at one line. `grow` makes it as tall as its text, up to five lines; a `style` `height` still wins.
 
 ## API
 

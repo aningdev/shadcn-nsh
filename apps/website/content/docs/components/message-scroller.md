@@ -313,29 +313,6 @@ for example.
 `MessageScrollerItem` is the box one turn sits in, sized by what is in it; `MessageScrollerViewport`
 is the list the turns are in, 32 points apart. What a turn is, is `Message`'s business.
 
-## Differences from shadcn/ui
-
-shadcn/ui's message scroller is a wrapper over `@shadcn/react/message-scroller`, a React library of
-state and hooks. This one draws the frame and keeps the behaviour on `nsh`'s `List`, and differs
-in five places:
-
-- **A smaller provider.** `MessageScrollerProvider` only shares one scroller with controls outside
-  it. shadcn/ui's provider also owns opening position, anchoring and visibility, with
-  `autoScroll`, `defaultScrollPosition`, `scrollPreviousItemPeek`, `scrollMargin` and
-  `scrollEdgeThreshold`; there are no counterparts, and `useMessageScrollerScrollable` and
-  `useMessageScrollerVisibility` have none either (the hook's `atStart` / `atEnd` are the edge
-  state).
-- **Anchoring is the list's.** shadcn/ui anchors per item (`scrollAnchor`) so a row holds its place
-  while older turns load above it. Here the list keeps the visible rows still as content changes
-  above and below them, and `onLoadMoreAtStart` loads older turns; there is no per-row anchor.
-- **Virtualized, not `content-visibility`.** shadcn/ui lets the browser skip the layout of turns off
-  screen (`content-visibility: auto`, `contain-intrinsic-size`); here the viewport is a `List`,
-  which mounts only the rows near the screen and recycles their cells.
-- **The button animates its opacity only.** shadcn/ui slides and scales it away as well; NSH's
-  springs animate the opacity (`follow`).
-- **No scrollbar gutter or faded edge.** shadcn/ui reserves the scrollbar's room and fades the
-  content at the top edge (`scroll-fade-b`); the platform's scrollbar is the one you get.
-
 ## API
 
 Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `MessageScroller` and

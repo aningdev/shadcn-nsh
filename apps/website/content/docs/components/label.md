@@ -75,10 +75,6 @@ words, said twice:
 A `Label` draws type; a control's name for screen readers is its own `accessibilityLabel`, or the
 text it draws — the strings the shells' children are.
 
-## Differences from shadcn/ui
-
-- `disabled` is this library's prop, not shadcn's: without a sibling selector to read the control's state, the label takes it itself, where shadcn's `peer-disabled` dims it from the control.
-
 ## API
 
 | Part    | Props                                                                                                                        | Description                   |

@@ -57,7 +57,7 @@ Trace
 
 ### Reasoning
 
-A reasoning line counts while the model thinks (`status="running"`: a `Spinner` in the icon slot, the title pulsing) and then reads what it took. It opens onto the text. `open` with `onOpenChange` lets the app open it when the thought is done.
+A reasoning line counts while the model thinks (`status="running"`: a `Spinner` in the icon slot, the title pulsing) and then reads what it took. The pulse stands still when the user asks for less motion. It opens onto the text. `open` with `onOpenChange` lets the app open it when the thought is done.
 
 ```tsx
 <Trace>
@@ -141,13 +141,6 @@ A `TraceLine` with `onPress` is a pressable: it takes the text color under the p
   </TraceCollapsibleContent>
 </TraceCollapsible>
 ```
-
-## Differences from shadcn/ui
-
-- `TraceCollapsible` takes `open`, `defaultOpen` and `onOpenChange` as [`Collapsible`](./collapsible) does, and opens with `nsh/base`'s layout animation. The trigger is a row of its line and a chevron, not `Collapsible`'s disclosure row, so the parts are this page's own.
-- The icon is yours: shadcn's `TraceIcon` takes any child and so does ours, but an `Icon` draws in the tint it is given, so it does not follow the hover or an `error` line by itself. The `running` spinner is the one exception: `TraceIcon` swaps it in.
-- The pulse of a `running` title is `animate-pulse` where shadcn has a shimmer, and stands still when the user asks for less motion.
-- The streaming engine is the app's: `Trace` draws the state it is given.
 
 ## API
 

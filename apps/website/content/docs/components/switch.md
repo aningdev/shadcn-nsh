@@ -128,10 +128,6 @@ The settings row's looks are the field family's, for a `nsh/base` view of your o
 
 Each part of `fieldFamilyLook()` reads the theme when it is drawn, so a look kept in a `const` still follows the scheme.
 
-## Differences from shadcn/ui
-
-- A settings row is the field family's — `Field`, `FieldContent`, `FieldLabel`, `FieldDescription` — with the switch after them; shadcn ties a label to its switch with `htmlFor`, which NSH has no form of.
-
 ## API
 
 Every prop of [`nsh/base` Switch](https://nsh.dev/elements/switch) passes through. `trackClass`, `trackStyle` and `thumbStyle` go over the look's.

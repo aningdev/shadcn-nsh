@@ -75,12 +75,6 @@ the card closed.
 </HoverCardTrigger>
 ```
 
-## Differences from shadcn/ui
-
-- No `asChild` or `render`: a string child of `HoverCardTrigger` is a `Button` (`variant`, `secondary` by default); a single element child is the trigger itself, since NSH merges the trigger's behavior into it.
-- Adds `compact` and `width` on `HoverCardContent`.
-- `onOpenChange` reports `{ open, reason }`.
-
 ## API
 
 | Part               | Props                                                                                              | Description                                       |

@@ -1,6 +1,6 @@
 ---
 title: Alert Dialog
-description: "A confirmation of the platform's own: shadcn's parts over the system's alert."
+description: "A confirmation of the platform's own."
 component: true
 demo: alert-dialog
 ---
@@ -115,7 +115,7 @@ own, `destructive` in red where the platform has red.
 An app that wants the choice before it draws anything else — `await`, then act — shows the same box
 with `nsh/base`'s own `AlertDialog.show`, which resolves with `{ action }`. That is the app's call.
 The parts above declare a box under a root of the page's, for an alert that is part of what the page
-draws; the library has no imperative `show` of its own, because shadcn has none: a web alert is
+draws; the library has no imperative `show` of its own: a web alert is
 always the app's own drawing, and a second way in would be two APIs for one box.
 
 ```tsx
@@ -167,17 +167,6 @@ const open = signal(false);
 </AlertDialog>;
 ```
 
-## Differences from shadcn/ui
-
-- No imperative `show`: `nsh/base`'s `AlertDialog.show` is the app's to call (see [Awaiting the answer](#awaiting-the-answer)).
-- The box holds strings — `AlertDialogTitle`, `AlertDialogDescription` and the buttons' labels —
-  not any JSX (icons, fields, media).
-- No `AlertDialogMedia`.
-- No `size="sm" | "default"` on the box: the platform picks the size.
-- No `className` or styles on the box: `AlertDialogHeader` / `Footer` draw nothing.
-- `AlertDialogCancel` reports its `id` (`"cancel"`) instead of closing without an action.
-- No `asChild` on the trigger: a `Button` for a string, a pressable view otherwise.
-
 ## API
 
 `AlertDialog` owns the open state and the text its parts registered; `AlertDialogContent` calls
@@ -194,5 +183,5 @@ rebuilds its children does — stacks nothing, and the answer belongs to the app
 | `AlertDialogDescription` | `children` (a string)                                                                      | The message.                                                                                                |
 | `AlertDialogAction`      | `id`, `role`, `children` (a string; the `id` when left out)                                | A choice; `role` is what it means and `onAction` reports its `id`.                                          |
 | `AlertDialogCancel`      | `id` (default `"cancel"`), `children`                                                      | The same button with `role="cancel"`.                                                                       |
-| `AlertDialogHeader`      | `children`                                                                                 | shadcn's block, drawn by nothing.                                                                           |
-| `AlertDialogFooter`      | `children`                                                                                 | shadcn's block; the buttons keep the order they are written in.                                             |
+| `AlertDialogHeader`      | `children`                                                                                 | A group that draws nothing.                                                                                 |
+| `AlertDialogFooter`      | `children`                                                                                 | A group that draws nothing; the buttons keep the order they are written in.                                 |

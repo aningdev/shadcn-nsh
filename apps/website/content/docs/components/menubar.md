@@ -71,7 +71,8 @@ own.
 
 The trigger of the menu that is open wears the neutral `accent` fill — the modal-less bar says which
 menu it belongs to without the bar changing — and the pointer over another trigger whispers the same
-fill. A disabled trigger takes no presses and dims to 50%; a string child is the trigger's name, in
+fill. A press opens one menu and a press closes it; once one is open, the pointer moves between
+menus. A disabled trigger takes no presses and dims to 50%; a string child is the trigger's name, in
 the menu's type; anything else (an icon and a name) is drawn as given.
 
 ### A row with its key equivalent
@@ -96,7 +97,8 @@ import { menuItemLabel } from "@/components/ui/menu";
 `MenubarShortcut`, `MenubarGroup` and `MenubarSub` / `MenubarSubTrigger` / `MenubarSubContent` are
 [`Menu`](./menu)'s parts under the bar's names: a row of a bar wears what a row of a menu wears, down
 to its danger tone, its check and its dot. `MenubarShortcut` is `MenuShortcut` (the row's trailing
-note), and `MenubarLabel` is `MenuLabel`: its child is the title.
+note), and `MenubarLabel` is `MenuLabel`: its child is the title. There is no radio-group part:
+`MenubarGroup` is a `View`, and each `MenubarRadioItem` carries its own `checked`.
 
 ```tsx
 <MenubarMenu>
@@ -113,13 +115,6 @@ note), and `MenubarLabel` is `MenuLabel`: its child is the title.
   </MenubarContent>
 </MenubarMenu>
 ```
-
-## Differences from shadcn/ui
-
-- `MenubarRadioGroup` is not here. One-of-many is a `MenubarRadioItem` with its own `checked`. `MenubarGroup`'s `aria-labelledby` is not here: a group is a `View`.
-- `MenubarPortal` has no part here: the popup is over the screen in `nsh/base`'s Menu already, and `popupStyle` / `backdropStyle` style it.
-- shadcn moves the open menu to the neighbour when the pointer passes over another trigger; here a press opens one menu and a press closes it, and the bar is a `menubar` whose triggers are `menuitem`s, so the pointer moves within the open popup as it does in [`Menu`](./menu).
-- Nothing here is a native menu bar: [`nsh/desktop`](https://nsh.dev/modules/nsh-desktop)'s app menu is the platform's, and this is one drawn in the app. Nor is it an NSH element: `nsh/base` has no menubar (its menu bar is [`Menu`](https://nsh.dev/elements/menu)s whose triggers are items of one [`Toolbar`](https://nsh.dev/elements/toolbar)), so this page is shadcn/ui's menubar over [`menu.tsx`](./menu)'s look.
 
 ## API
 

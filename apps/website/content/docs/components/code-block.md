@@ -38,6 +38,9 @@ import {
 </CodeBlock>
 ```
 
+The code is one color in the theme's monospaced family: there is no syntax highlighting. For
+highlighted, editable code, use [`CodeEditor`](./code-editor), which is `nsh/base`'s.
+
 ## Composition
 
 Use the following composition to build a `CodeBlock`:
@@ -83,7 +86,11 @@ CodeBlock
 
 ### Header and copy
 
-`CodeBlockHeader` holds a `CodeBlockTitle`, which keeps to one line, and `CodeBlockActions`, which sits at the end. `CodeBlockCopyButton` is a ghost `IconButton`: a press writes `value` to the system clipboard and turns the icon into a check for two seconds. Its `accessibilityLabel` reads "Copy", then "Copied". Put other buttons in `CodeBlockActions` beside it; a wrap toggle is the app's state, passed to `wrap`.
+`CodeBlockHeader` holds a `CodeBlockTitle`, which keeps to one line, and `CodeBlockActions`, which
+sits at the end. `CodeBlockCopyButton` is a ghost `IconButton`: a press writes `value` to the system
+clipboard and turns the icon into a check for two seconds. Its `accessibilityLabel` reads "Copy",
+then "Copied". Put other buttons in `CodeBlockActions` beside it; a wrap toggle is the app's state,
+passed to `wrap`. There is no floating placement: the actions belong in a `CodeBlockHeader`.
 
 ```tsx
 <CodeBlock>
@@ -169,14 +176,6 @@ A `CodeBlock` in a card flush against its edges takes its surface off with `styl
   <CodeBlockContent wrap>{code}</CodeBlockContent>
 </CodeBlock>
 ```
-
-## Differences from shadcn/ui
-
-- No syntax highlighting. shadcn's `useHighlightedCode` tokenizes with Shiki; `nsh` has no tokenizer for a `Text`, so the code is one color in the theme's monospaced family. For highlighted, editable code, use [`CodeEditor`](./code-editor), which is `nsh/base`'s.
-- No floating actions: shadcn lets `CodeBlockActions` float over a block with no header, shown on hover. A hover is not a thing a touch screen has, so `CodeBlockActions` belongs in a `CodeBlockHeader`.
-- No `useIsCodeFenceIncomplete` and no Markdown hook: a fenced block in a [`TextView`](./text-view) is drawn by `nsh/base`, with `codeBlockActions` for its copy button.
-- `wrap` and `maxHeight` are props and style on `CodeBlockContent`, where shadcn has classes; `scroll-fade` has no counterpart, the code scrolls sideways under the edge.
-- `CodeBlockCopyButton` is an `IconButton` (`onPress`), not a `Button` with `onClick`.
 
 ## API
 

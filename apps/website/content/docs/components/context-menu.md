@@ -95,7 +95,7 @@ Any view can be the trigger; the menu opens at the pointer on a secondary click 
 
 A checkable row keeps its mark's room whether it is checked or not, so its label stays put as it
 is toggled. `inset` gives the plain rows of the same menu that room too, and their labels line up
-with it — as shadcn's `inset`. `ContextMenuLabel` and `ContextMenuSubTrigger` take it as well.
+with it. `ContextMenuLabel` and `ContextMenuSubTrigger` take it as well.
 
 ```tsx
 <ContextMenuItem checked={pinned()} closeOnSelect={false} onSelect={() => setPinned(!pinned())}>
@@ -111,20 +111,13 @@ with it — as shadcn's `inset`. `ContextMenuLabel` and `ContextMenuSubTrigger` 
 <ContextMenu onOpenChange={({ open, reason }) => log(open, reason)}>…</ContextMenu>
 ```
 
-## Differences from shadcn/ui
-
-- No `ContextMenuPortal`: `nsh/base` draws the popup over the screen.
-- No `ContextMenuRadioGroup`: `ContextMenuGroup` holds the rows, and each `ContextMenuRadioItem` carries its own `checked`.
-- No `asChild`: `ContextMenuTrigger` wraps its children, in a `View` when it takes a `style`.
-- `onOpenChange` reports `{ open, reason }`.
-
 ## API
 
-Row and popup looks come from Menu. Items, separators, labels and submenus are re-exported as `ContextMenu*` parts.
+Row and popup looks come from Menu. Items, separators, labels and submenus are re-exported as `ContextMenu*` parts. There is no radio-group part: a `ContextMenuGroup` holds the rows, and each `ContextMenuRadioItem` carries its own `checked`.
 
-| Part                 | Props                                                                                                                                                    | Description                           |
-| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------- |
-| `ContextMenu`        | `open`, `defaultOpen`, `disabled`, `onOpenChange({ open, reason })`, `onOpen`, `onClose`, `onCancel`                                                     | Open state and the trigger slot       |
-| `ContextMenuTrigger` | `children`, `style`                                                                                                                                      | Secondary click or long press         |
-| `ContextMenuContent` | every `nsh/base` ContextMenu prop but open state, `disabled`, `trigger` and the lifecycle callbacks; `offset` (default 4), `popupStyle`, `backdropStyle` | The popup or sheet                    |
-| `ContextMenuItem` …  | as the Menu counterparts                                                                                                                                 | Rows, labels, separators and submenus |
+| Part                 | Props                                                                                                                                                    | Description                                                                            |
+| -------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------- |
+| `ContextMenu`        | `open`, `defaultOpen`, `disabled`, `onOpenChange({ open, reason })`, `onOpen`, `onClose`, `onCancel`                                                     | Open state and the trigger slot                                                        |
+| `ContextMenuTrigger` | `children`, `style`                                                                                                                                      | Secondary click or long press; wraps its children, in a `View` when it takes a `style` |
+| `ContextMenuContent` | every `nsh/base` ContextMenu prop but open state, `disabled`, `trigger` and the lifecycle callbacks; `offset` (default 4), `popupStyle`, `backdropStyle` | The popup or sheet                                                                     |
+| `ContextMenuItem` …  | as the Menu counterparts                                                                                                                                 | Rows, labels, separators and submenus                                                  |

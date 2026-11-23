@@ -52,8 +52,7 @@ A component page's body has these sections, in this order, and nothing else at `
 2. **Usage** — the import from `@/components/ui/<slug>`, then one minimal use.
 3. **Composition** — optional, for a component built from several parts: one line "Use the following composition to build a `Dialog`:", then one fence tagged `text` with the part tree (`├──`, `└──`, `│`). The tree follows how `packages/ui/<slug>.tsx` and `apps/website/demos/<slug>.tsx` nest the parts, and every name in it is exported by the component's file. A single-part page has none.
 4. **Examples** — one `###` per variant, size, state or common use, each with a short `tsx` snippet, in that order: `Variant` / `Tone`, `Size`, the states (`Disabled`, `Invalid`, `Read-only`, `Loading`), everything else, `Controlled` / `Uncontrolled` last. The sections show what `apps/website/demos/<slug>.tsx` shows, and every prop is one the component really has.
-5. **Differences from shadcn/ui** — optional: what the shadcn/ui component of the same name has that this does not, what this adds, and where behavior differs. Every comparison with shadcn lives here, nowhere else on the page.
-6. **API** — opens with the parts table, header `| Part | Props | Description |`; only the props and parts this package adds; one sentence points to [`nsh/base`](https://nsh.dev/elements/<element>) for the rest.
+5. **API** — opens with the parts table, header `| Part | Props | Description |`; only the props and parts this package adds; one sentence points to [`nsh/base`](https://nsh.dev/elements/<element>) for the rest.
 
 Do **not**:
 

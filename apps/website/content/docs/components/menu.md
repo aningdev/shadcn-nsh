@@ -91,8 +91,8 @@ are laid out between the lead and the chevron, which stays either way.
 `MenuButton` is the platform's pull-down menu — `UIContextMenu` on iOS, the context menu a pointer
 opens on the desktops — with its items as data (`MenuButtonItem`: `id`, `label`, `icon`, `checked`,
 `disabled`, `destructive`, `items`, `inline`). The app decides that is the better menu there; a phone
-without one (Android) draws `Menu` instead. shadcn has no counterpart: on the web a menu is always
-the app's own drawing, so `Menu` and its parts are.
+without one (Android) draws `Menu` instead. On the web a menu is always the app's own drawing, so
+`Menu` and its parts are.
 
 ```tsx
 <MenuButton
@@ -123,16 +123,9 @@ trigger itself, with no wrapper: its look, `testID`, name, own press and hover s
 
 A string child is the row's label and its name for screen readers; `accessibilityLabel` wins when it should differ. Children drawn as given are named by the texts inside them.
 
-## Differences from shadcn/ui
-
-- No portal part (`DropdownMenuPortal` in shadcn): `nsh/base` draws the popup.
-- No radio group part (`DropdownMenuRadioGroup` in shadcn): `MenuGroup` holds the rows, and each `MenuRadioItem` carries its own `checked`.
-- No `asChild` or `render`: a string child of `MenuTrigger` is a `Button` (`variant`, `secondary` by default); a single element child is the trigger itself, since NSH merges the trigger's behavior into it.
-- `onOpenChange` reports `{ open, reason }`.
-
 ## API
 
-Looks are `menuItemLook`, `menuItemLabel`, `menuItemNote`, `menuItemGlyph`, `menuPopup`, `menuSeparator` and `menuHighlight`; `SubmenuRow` and `SubmenuBack` draw a submenu's row and its touch back row. Every prop of [`nsh/base` Menu](https://nsh.dev/elements/menu) on `MenuContent` passes through except open state and `trigger`.
+Looks are `menuItemLook`, `menuItemLabel`, `menuItemNote`, `menuItemGlyph`, `menuPopup`, `menuSeparator` and `menuHighlight`; `SubmenuRow` and `SubmenuBack` draw a submenu's row and its touch back row. Every prop of [`nsh/base` Menu](https://nsh.dev/elements/menu) on `MenuContent` passes through except open state and `trigger`. There is no radio-group part: a `MenuGroup` holds the rows, and each `MenuRadioItem` carries its own `checked`.
 
 | Part               | Props                                                                                                                        | Description                                                                    |
 | ------------------ | ---------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------ |

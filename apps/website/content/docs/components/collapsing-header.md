@@ -136,19 +136,6 @@ still collapses. A terminal draws no picture either way.
 </CollapsingHeader>
 ```
 
-## Differences from shadcn/ui
-
-- **There is no counterpart, and it is a component rather than a recipe.** On the web a collapsing
-  header is the app's own: `position: sticky` plus a scroll listener, or `animation-timeline:
-  scroll()`, written per page. NSH's `scrollValue` feeds an animated value natively, so the look is
-  repeatable here, and the app passes one value instead of writing the animation.
-- **Heights are points, and a terminal counts rows.** shadcn's header heights would be CSS lengths;
-  `expandedHeight` and `collapsedHeight` are numbers, snapped to whole rows where the character grid
-  is the unit.
-- **The title scales, it does not change size.** NSH animates a transform, not a font size, so the
-  title is drawn at the display role and scales down to the label's size — the same ratio shadcn's
-  `font-size` transition would give, on the UI thread.
-
 ## API
 
 `CollapsingHeader` is a [`nsh` View](https://nsh.dev/elements/view) in the library's look; every

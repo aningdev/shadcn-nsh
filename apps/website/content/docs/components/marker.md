@@ -99,12 +99,6 @@ hand.
 </Marker>
 ```
 
-## Differences from shadcn/ui
-
-- **No `asChild` (Slot).** A marker that acts takes `onPress` on itself, where shadcn's renders the marker as a link or a button.
-- **The separator's rules are two real views in the row**, not pseudo-elements, so a `MarkerContent` of your own between them needs no `flex-none` of its own.
-- **No `shimmer` utility.** NSH has no animated gradient over text; a streaming line keeps its look, and `Spinner` in `MarkerIcon` is what shows the work.
-
 ## API
 
 | Part            | Props                                                                   | Description                                    |

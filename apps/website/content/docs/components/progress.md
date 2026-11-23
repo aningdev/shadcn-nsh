@@ -88,10 +88,6 @@ bar's row and a label goes after it.
 </View>
 ```
 
-## Differences from shadcn/ui
-
-shadcn/ui's `Progress` has no step marks; `ProgressSteps` and `ProgressStep` are this library's own.
-
 ## API
 
 Uses `progressLook`. Every prop of [`nsh/base` Progress](https://nsh.dev/elements/progress) passes through.

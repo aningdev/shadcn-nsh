@@ -59,13 +59,6 @@ import { Badge } from "@/components/ui/badge";
 <Badge tone="info">Running</Badge>
 ```
 
-## Differences from shadcn/ui
-
-- shadcn's `ghost`, `link` and `secondary` variants have no look here: `BadgeVariant` is
-  `"default" | "outline"`.
-- shadcn's badge has one height. `size` (`"sm"` and `"default"`) is this library's: the gallery's
-  chat puts a state chip beside a 32 pt tool tile, and 20 points there is a row too tall.
-
 ## API
 
 Gallery atom: no `nsh/base` counterpart. The children are the label, and the axes take the vocabulary of [`api-unify.md`](https://github.com/aningdev/shadcn-nsh/blob/main/docs/specs/api-unify.md).

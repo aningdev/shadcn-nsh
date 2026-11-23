@@ -130,7 +130,9 @@ row for screen readers: NSH reads each glyph without context otherwise.
 
 ### A tail
 
-The sender's bottom corner is squarer than the rest. shadcn/ui does this with a class on the content (`rounded-br-sm`), so it is a recipe here too, not a prop: a `style` on `BubbleContent` that reads the theme's `shape`. Use the logical corner (`borderBottomEndRadius` for what you send, `borderBottomStartRadius` for what came in) so it follows the reading direction.
+The sender's bottom corner is squarer than the rest. It is a recipe, not a prop — a `style` on
+`BubbleContent` that reads the theme's `shape`. Use the logical corner (`borderBottomEndRadius` for
+what you send, `borderBottomStartRadius` for what came in) so it follows the reading direction.
 
 ```tsx
 import { shape } from "@shadcn-nsh/theme";
@@ -150,21 +152,6 @@ The frame itself takes the press.
   <BubbleContent onPress={() => reply("I forgot my password")}>I forgot my password</BubbleContent>
 </Bubble>
 ```
-
-## Differences from shadcn/ui
-
-- **`asChild` on `BubbleContent`.** shadcn renders the content as a link or a button; NSH has no
-  `Slot`, so a frame that acts takes `onPress` on itself.
-- **The hover fill of an interactive content**, picked by the bubble's variant (`hover:bg-primary/80`
-  and its siblings). A pressable frame keeps its fill under the pointer; the hand is the cue.
-- **Text inside the content is not inherited.** shadcn gets a bubble's ink to its content through
-  CSS inheritance. NSH has none, so a turn made of several paragraphs wears `BubbleText` on each.
-- **The bubble keeps room for its reactions.** shadcn's row hangs off the bubble absolutely and
-  leaves the spacing to the app; here a `Bubble` holding a `BubbleReactions` adds the hanging part
-  as a margin on that side (`bubbleLook().reactionsRoom(side)`), so a group's 8-point gap still
-  shows the row whole.
-- **`has-[button]:p-0` on the reaction row.** NSH has no `:has()`; a row that holds a button keeps
-  the pill's padding.
 
 ## API
 

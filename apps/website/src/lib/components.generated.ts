@@ -17,7 +17,7 @@ export const components: ComponentDoc[] = [
     kind: "official",
     shadcn: "alert-dialog",
     nshElement: "alert-dialog",
-    description: "A confirmation of the platform's own: shadcn's parts over the system's alert.",
+    description: "A confirmation of the platform's own.",
   },
   {
     slug: "avatar",

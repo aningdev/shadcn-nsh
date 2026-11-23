@@ -106,11 +106,6 @@ Opening from the bottom by default, the grabber, the swipe, and the four parts a
 title's type are shared: `sheetPanel(side)`, `backdrop()`, `dialogTitle()` and `dialogText()`, so a
 drawer and the rest of the library wear one surface.
 
-## Differences from shadcn/ui
-
-- No `DrawerPortal` or `DrawerOverlay`: the panel is over the screen and the scrim is behind it in `nsh/base`'s Sheet, which this is; `popupStyle` and `backdropStyle` style both.
-- The grabber is drawn by the component (`drawerGrabber`), not by the app.
-
 ## API
 
 | Part                | Props                                                                                                         | Description                                                    |

@@ -54,6 +54,8 @@ InputGroup
 </InputGroup>
 ```
 
+A disabled group disables what it holds and dims it.
+
 ### An addon before and after the input
 
 `InputGroupAddon` holds an icon, a word or a button at the start or at the end of the group's line (`align`: `inline-start`, `inline-end`). A press on an addon puts the keys in the input, so the magnifier works as part of the field; a press on a button in it is the button's alone.
@@ -323,10 +325,6 @@ let search: InputRef | undefined;
 </View>
 ```
 
-## Differences from shadcn/ui
-
-- `disabled` on the group disables what it holds and dims it; shadcn's group leaves each control to its own `disabled`.
-
 ## API
 
 | Part                 | Props                                                                                                                                                                         | Description                                    |
@@ -345,4 +343,4 @@ let search: InputRef | undefined;
 | `invalid` | `boolean`   |         | Edged in the danger tone, its focus edge too.                        |
 | `style`   | `ViewStyle` |         | Over the look's: the radius, the padding and the width of the group. |
 
-`InputGroupInput` and `InputGroupTextarea` take every prop of [`nsh/base` Input](https://nsh.dev/elements/input), `ref` included: `value`, `onChange`, `placeholder`, `keyboardType`, `maxLength`, `readonly`, `disabled` and the rest. `InputGroupTextarea` is the multiline one. Their `style` goes over the look's. A `ref` is the control's `InputRef`, as shadcn's controls forward theirs: `ref.focus()` puts the keys in it from code (a shortcut, a request to focus a draft).
+`InputGroupInput` and `InputGroupTextarea` take every prop of [`nsh/base` Input](https://nsh.dev/elements/input), `ref` included: `value`, `onChange`, `placeholder`, `keyboardType`, `maxLength`, `readonly`, `disabled` and the rest. `InputGroupTextarea` is the multiline one. Their `style` goes over the look's. A `ref` is the control's `InputRef`: `ref.focus()` puts the keys in it from code (a shortcut, a request to focus a draft).

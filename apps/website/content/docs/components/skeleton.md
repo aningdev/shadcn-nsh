@@ -61,10 +61,6 @@ terminal shows it still: nothing to play there.
 <Skeleton style={{ width: 200, height: 14 }} />;
 ```
 
-## Differences from shadcn/ui
-
-- The box is the caller's `style`; shadcn sizes a skeleton with `className`.
-
 ## API
 
 Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through (`style`, `accessibilityLabel`, …); `style` goes over the look's.

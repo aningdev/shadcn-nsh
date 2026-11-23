@@ -259,14 +259,6 @@ import { Toolbar, ToolbarGroup, ToolbarItem, ToolbarOverflow } from "@/component
 </Toolbar>;
 ```
 
-## Differences from shadcn/ui
-
-- **shadcn/ui has no toolbar.** `Toolbar`, `ToolbarGroup`, `ToolbarSeparator`, `ToolbarItem`, and
-  `ToolbarOverflow` are this library's own parts over `nsh/base`'s toolbar.
-- **Measured overflow.** Because NSH evaluates children lazily and cannot inspect or wrap them
-  implicitly, tools opt into overflow via `ToolbarItem` and `ToolbarOverflow` rather than a prop
-  on `Toolbar`.
-
 ## API
 
 Every prop of [`nsh/base` Toolbar](https://nsh.dev/elements/toolbar), `ToolbarGroup` and `ToolbarSeparator` passes through. `style` goes over the look's. Items keep their own look (`Button`, `Toggle`, …).

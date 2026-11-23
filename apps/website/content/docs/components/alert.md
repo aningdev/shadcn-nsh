@@ -131,18 +131,13 @@ Three things are called an alert here, and this is the quiet one:
 - **`nsh/base`'s `AlertDialog`** is the platform's own alert or action sheet
   (`AlertDialog.show(options)`): a system box over the app that asks for an answer and resolves with
   the action chosen. It looks like the operating system, not like the app.
-- **this library's `alert-dialog`** is the same question in shadcn's parts: `Trigger`, `Title`,
-  `Description`, `Footer` and `Action` fill in that system box, so it is the platform's — its look
-  is the operating system's and its content is strings. A confirmation card the app draws itself,
+- **this library's `alert-dialog`** is the same question in `Trigger`, `Title`, `Description`,
+  `Footer` and `Action`: parts that fill in that system box, so it is the platform's — its look is
+  the operating system's and its content is strings. A confirmation card the app draws itself,
   with the app's look and content of its own, is [`dialog`](./dialog).
 
 So: a notice that can wait belongs here; a question that must be answered before anything else is
 an `alert-dialog` (or `dialog`, when the box needs content of the app's own).
-
-## Differences from shadcn/ui
-
-- shadcn moves the text into the icon's column only when there is an icon (`has-[>svg]`); here the
-  text keeps that gutter either way, with or without an icon.
 
 ## API
 

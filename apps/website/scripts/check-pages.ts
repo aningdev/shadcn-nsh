@@ -3,8 +3,8 @@
 /**
  * The docs' page contract, checked:
  *
- * - a page has Installation, Usage, an optional Composition, Examples, an optional Differences
- *   from shadcn/ui, and API, in that order and nothing else; Composition is a one-line lead and
+ * - a page has Installation, Usage, an optional Composition, Examples, and API, in that order
+ *   and nothing else; Composition is a one-line lead and
  *   one `text` fence whose tree names only parts the component exports; Examples' subsections run
  *   variant, size, state, the rest, controlled; API opens with the | Part | Props | Description |
  *   table (docs/port.md, 文档页);
@@ -282,8 +282,6 @@ const old = new Set(["Install", "Differences", "Not forwarded", "Accessibility"]
 const COMPOSITION = "Composition";
 /** The one-line lead that opens Composition. */
 const COMPOSITION_LEAD = /^Use the following composition to build .+:$/;
-/** The one optional section, between Examples and API. */
-const DIFFERENCES = "Differences from shadcn/ui";
 /** The header of the parts table that opens API. */
 const API_HEADER = ["Part", "Props", "Description"];
 
@@ -318,7 +316,6 @@ for (const component of cat.components) {
   const expected = ["Installation", "Usage"];
   if (titles.includes(COMPOSITION)) expected.push(COMPOSITION);
   expected.push("Examples");
-  if (titles.includes(DIFFERENCES)) expected.push(DIFFERENCES);
   expected.push("API");
   if (titles.join("|") !== expected.join("|")) {
     fail(
@@ -389,7 +386,9 @@ for (const component of cat.components) {
       if (/^(Variants|Sizes|Tones)\b/.test(title))
         fail(`${where}: "### ${title}" — write it singular`);
       if (/shadcn|does not have|has that/i.test(title)) {
-        fail(`${where}: "### ${title}" compares with shadcn; that belongs in "## ${DIFFERENCES}"`);
+        fail(
+          `${where}: "### ${title}" compares with shadcn; write it as a fact about this component`,
+        );
       }
     }
   }

@@ -88,12 +88,6 @@ no join, and is hidden from a reader (it is the group's own hairline).
 </ButtonGroup>
 ```
 
-## Differences from shadcn/ui
-
-- shadcn squares the corners that touch and drops the doubled edge between them with a child selector
-  (`[&>*:not(:first-child)]:rounded-l-none`); here each button wears its own place in the group
-  (`first` / `middle` / `last`), because a view styles itself and not its children.
-
 ## API
 
 Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on all three parts;

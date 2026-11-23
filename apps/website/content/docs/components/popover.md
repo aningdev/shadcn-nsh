@@ -105,16 +105,9 @@ child; an element brings its own (its `disabled` is the one that counts).
 </PopoverTrigger>
 ```
 
-## Differences from shadcn/ui
-
-- No `asChild` or `render`: NSH merges the trigger's behavior into the element a slot holds
-  (`references/nsh/crates/nsh-core/src/core/slots.rs`), so a single element child is the
-  trigger already. `shadcn`'s `render` would have nothing left to merge.
-- `onOpenChange` reports `{ open, reason }`.
-
 ## API
 
-The root owns the open flag; `PopoverContent` mounts [`nsh/base` Popover](https://nsh.dev/elements/popover) and every base prop passes through except those. Its children come in on a `PopIn` with `popoverLook` (the surface, 14 points of padding with a pointer and 16 on a touch screen); `class` and `style` go over that surface, as shadcn's `className` does.
+The root owns the open flag; `PopoverContent` mounts [`nsh/base` Popover](https://nsh.dev/elements/popover) and every base prop passes through except those. Its children come in on a `PopIn` with `popoverLook` (the surface, 14 points of padding with a pointer and 16 on a touch screen); `class` and `style` go over that surface.
 
 | Part                 | Props                                                                                                                  | Description                                                     |
 | -------------------- | ---------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------- |

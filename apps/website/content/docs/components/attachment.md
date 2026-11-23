@@ -124,8 +124,7 @@ until the attachment is done or idle.
 
 `AttachmentActions` holds what can be done to the file — a remove, a retry — beside the text, or
 in the corner of a vertical attachment. `AttachmentAction` is this library's `Button`, ghost and
-small, for a labeled action such as Retry. Remove is an `IconButton` in that row, the way
-shadcn/ui composes it: there is no `onRemove`. Give the icon button a square `style` (`width` and
+small, for a labeled action such as Retry. Remove is an `IconButton` in that row; there is no `onRemove`. Give the icon button a square `style` (`width` and
 `height` 28) so it sits in the chip; the ghost button's own padding reads as a separate pill.
 
 ```tsx
@@ -142,7 +141,7 @@ shadcn/ui composes it: there is no `onRemove`. Give the icon button a square `st
 ### A frame that opens
 
 `AttachmentTrigger` is a pressable over the whole frame, above the media and below the actions:
-pressing the file opens it. Name it for screen readers.
+pressing the file opens it, and under the pointer it shows its own wash. Name it for screen readers.
 
 ```tsx
 <Attachment>
@@ -155,7 +154,8 @@ pressing the file opens it. Name it for screen readers.
 ### Group
 
 `AttachmentGroup` is a row of attachments 12 points apart that scrolls sideways when they do not
-fit — the files under a message, the pictures in a composer.
+fit — the files under a message, the pictures in a composer. The row takes the platform's own feel:
+no snapping, and no scrollbar.
 
 ```tsx
 <AttachmentGroup>
@@ -163,20 +163,6 @@ fit — the files under a message, the pictures in a composer.
   <Attachment>…</Attachment>
 </AttachmentGroup>
 ```
-
-## Differences from shadcn/ui
-
-- **`asChild` on `AttachmentTrigger`.** The trigger is the frame's own pressable; a link of yours
-  cannot become it (NSH has no `Slot`).
-- **The frame's padding follows what it holds** (`has-data-[slot=attachment-content]:px-2.5`,
-  `:[slot=media]:p-2`). NSH has no `:has()`, so the frame always pads as if it holds text: a media
-  on its own sits in text's padding.
-- **The hover fill a frame takes when something in it is pressable** (`has-[>a,>button]:hover:bg-muted/50`).
-  The trigger shows its own wash under the pointer instead.
-- **The `shimmer` on a title while it uploads or is processed.** Not reproduced: an uploading
-  title reads as it is, and a `Spinner` in the media says it is moving.
-- **The group's snapping and faded edges** (`snap-x`, `scroll-fade-x`). The row scrolls with the
-  platform's own feel, without snapping, and its scrollbar is hidden.
 
 ## API
 
@@ -208,5 +194,6 @@ truncated.
 The frame is as wide as what it holds (`default` 160 points wide at least, 120 when vertical), in
 the card's fill with a hairline edge and the card's corners (`inset`'s at `xs`), 10 / 8 / 6 points
 in from its edge and 8 / 6 / 4 above and below; the title is medium in the page's ink and the
-description the note's size in the muted ink. `attachmentLook()` and
+description the note's size in the muted ink. The frame always pads as if it holds text, so a
+media on its own sits in that padding. `attachmentLook()` and
 `attachmentGlyph(size, orientation)` are exported for a frame an app draws itself.

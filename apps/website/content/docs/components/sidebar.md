@@ -256,14 +256,6 @@ group.
 `showIcon`, then a line of text as long as `width` says (70% when it says nothing). A length made up
 per mount is a picture that changes between runs, so this one is told.
 
-## Differences from shadcn/ui
-
-- No cookie: shadcn keeps the open state for a year; here storage is the app's, which keeps it where it keeps the rest of its settings and passes it back as `open`.
-- No `SidebarTrigger` in a rail's form, and no `asChild`: the parts take children and draw them, so an icon and a name are an `Icon` and a `Text` in the row, not a rewritten link.
-- A menu action is always there; shadcn's shows on hover only, which a touch screen has no way to do.
-- `SidebarMenuSkeleton`'s `width` is told: shadcn makes a length up between 50% and 90% per row so a loading group looks uneven.
-- The `sidebar-*` roles are not a set of their own: the column is `colors.sidebar`, its ink `colors.foreground`, its hover and chosen row `colors.sidebarAccent` (shadcn's `sidebar-accent`), its edge `colors.sidebarBorder`, and the keyboard's ring `focusRing()`. shadcn's `sidebar-primary` draws nothing in shadcn either, so nothing reads it.
-
 ## API
 
 The provider owns the state and lays the column and the page out; a column and its parts draw on

@@ -120,8 +120,7 @@ combobox's input, and a text field of its own beside the chips is a second contr
 `ComboboxChip` and `ComboboxChips` render only inside `<Combobox>` — as `ComboboxChips` (the field's
 prefix) or anywhere else under that root, including as a sibling of `ComboboxContent`. Outside the
 root they throw. A chip drawn somewhere else, a summary beside the field, is the app's own: read
-`value` and update it from the chip's press. shadcn composes `ComboboxChip` the same way, inside
-`ComboboxChips` under the root, and has no part for a chip outside it.
+`value` and update it from the chip's press.
 
 ### Groups and an empty list
 
@@ -147,10 +146,6 @@ chevron with no text of its own).
 </ComboboxTrigger>
 ```
 
-## Differences from shadcn/ui
-
-- No `ComboboxChipsInput` and no `useComboboxAnchor`: the input is `nsh/base`'s own, drawn beside the prefix, and the popup's anchor is the field.
-
 ## API
 
 The root owns the open flag and the chosen values; `ComboboxContent` mounts [`nsh/base` Combobox](https://nsh.dev/elements/combobox) and every base prop passes through except those. `comboboxLook`, `listboxProps` and `OptionRow` fill the field, the popup and the rows by default.
@@ -159,7 +154,7 @@ The root owns the open flag and the chosen values; `ComboboxContent` mounts [`ns
 | ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
 | `Combobox`        | `value` / `defaultValue` (`string \| null`, or `string[]` with `multiple`), `multiple`, `open` / `defaultOpen`, `disabled`, `cleanable`, `placeholder`, `onChange`, `onOpenChange`, `onOpen`, `onClose`, `onCancel` | The root: one value, or several when `multiple` is set. `onChange` follows that: `{ value: string \| null }` or `{ value: string[] }`. |
 | `ComboboxTrigger` | `children`, `variant`, `disabled`, `testID`, `accessibilityLabel`, `style`                                                                                                                                          | The disclosure at the field's end (a `ComboToggle` by default).                                                                        |
-| `ComboboxContent` | `items` (instead of `ComboboxItem` children), `minWidth`, `children`                                                                                                                                                | The field and its list; it mounts `nsh/base` Combobox.                                                                                 |
+| `ComboboxContent` | `items` (instead of `ComboboxItem` children), `minWidth`, `children`                                                                                                                                                | The field and the list anchored to it; it mounts `nsh/base` Combobox.                                                                  |
 | `ComboboxItem`    | `value`, `disabled`, `group`, `children` (a string is its title)                                                                                                                                                    | One choice in the list.                                                                                                                |
 | `ComboboxChips`   | `children`: a `(value) => JSX.Element` that draws each one, a `ComboboxChip` by default                                                                                                                             | The chosen values as chips at the field's start (NSH's `prefix`).                                                                      |
 | `ComboboxChip`    | `value`, `children` (its text, the item's title by default), `lead`, `showRemove` (default `true`), `style`                                                                                                         | One value's chip. It has to sit inside `<Combobox>`.                                                                                   |

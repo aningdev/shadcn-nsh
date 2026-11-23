@@ -337,19 +337,6 @@ Anything else in `MessageFooter` is drawn as given: a row of `IconButton`s, a re
 </MessageFooter>
 ```
 
-## Differences from shadcn/ui
-
-shadcn/ui's message differs here in three places:
-
-- **`name` and `src` stay.** shadcn/ui's `MessageAvatar` is only the slot; the app puts an `Avatar`
-  inside it. Here `name` and `src` still draw this library's `Avatar`, and `children` is the slot
-  when a mark should sit there instead.
-- **The avatar does not step up for a footer.** shadcn/ui lifts it by the footer's height when a
-  message has one (`group-has-data-[slot=message-footer]`); NSH has no `:has()`, so the avatar
-  sits at the bottom of the whole row, beside the footer rather than the turn.
-- **The `role` shortcut is not there.** shadcn/ui's `Message` reads `role="user"` to mirror the
-  row; here `align` is the only axis, so the app says `align="end"` for what it sent.
-
 ## API
 
 Every prop of [`nsh` View](https://nsh.dev/elements/view) passes through on `MessageGroup`,

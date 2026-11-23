@@ -28,6 +28,8 @@
 
 ### Changed
 
+- **Component pages no longer compare with shadcn/ui (#298).** The `Differences from shadcn/ui` section is gone from all 33 pages that had it; facts about this library's own API it held (no radio-group part in `Menu` / `ContextMenu` / `Menubar`, `Pressable`'s missing hint prop, `CodeBlock`'s single colour, …) now sit in Usage, Examples or API. A page runs Installation, Usage, optional Composition, Examples, API, and `check:pages` rejects the old section. The header's `Official:` links and the coverage page stay.
+
 - **Switch knob, radio dot and scrollbar thumb resize smoothly (#291).** Their size feedback (`material`'s expanding handle, `winui`'s stretching thumb and scaling dot, the scrollbar thumb's hover growth) is a transform instead of a width and height that snapped, and it rides the theme's `motion.fast` with the switch's travel instead of fixed `100`–`300 ms`. `lib/motion` gains `cssMotion()`, a motion role as a CSS transition. Resting, hover, pressed and checked geometry is unchanged.
 
 - **A component file credits upstream in one header line; the `@port` region marks are gone (#290).** Each file under `packages/ui` opens with one to three lines saying what it is, and a file whose look started in NSH's `examples/nsh-gallery-ui` carries `// Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.` on line 2. The `// @port <file>` / `// @port end` markers are removed, so a copied file is exactly the file in the repository (the registry no longer strips anything); which upstream declaration went where is `port-map.json`'s alone. `port:vendor` drafts a new component under its imports with the credit line, and the CLI's `build` loses its `publish` hook.

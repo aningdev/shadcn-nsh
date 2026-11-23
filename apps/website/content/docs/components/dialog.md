@@ -148,16 +148,6 @@ Escape, a backdrop press and a downward swipe close the dialog; turn any of them
 </Dialog>
 ```
 
-## Differences from shadcn/ui
-
-- No `DialogPortal` or `DialogOverlay`: `nsh/base` hosts the popup and draws the backdrop, and `backdropStyle` styles the scrim.
-- No `DialogHeader`: `DialogTitle` and `DialogDescription` are separate parts, and the block that holds them is the app's.
-- No built-in close button: `DialogClose` is the one the app places.
-- Adds `width`, `scroll`, `animation` and `presentation` on `DialogContent`, and `dialogPage` and `dialogCard` for an app's own surface.
-- The body scrolls under a height cap and `DialogFooter` stays at the card's end; shadcn leaves both to the app.
-- No `asChild`: a string child of `DialogTrigger` or `DialogClose` is a `Button` (`variant`, `secondary` by default).
-- `onOpenChange` reports `{ open, reason }`.
-
 ## API
 
 `Dialog` owns the open state. `DialogContent` mounts [`nsh/base` Dialog](https://nsh.dev/elements/dialog); every base prop passes through it, and base owns the backdrop, the popup host and Escape, back and swipe.

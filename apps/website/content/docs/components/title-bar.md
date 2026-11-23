@@ -111,13 +111,6 @@ rather than read from a role):
 A bar of the app's own takes `desktop={{ windowDrag: true }}` to drag the window, and pads by
 `titleBar().left` and `titleBar().right` so its content clears the system's buttons.
 
-## Differences from shadcn/ui
-
-shadcn/ui has no title bar: a web page is drawn inside the browser's window, which the browser
-draws. A desktop window's bar is the app's, and `TitleBar` is the shape of it here — the drag
-region, the padding the system's buttons take, and the platform's window-buttons, spelled with
-`nsh/desktop`'s `windowControl` and `windowResize` rather than a web click.
-
 ## API
 
 | Part                | Props                                                               | Description                                 |

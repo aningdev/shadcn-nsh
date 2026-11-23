@@ -79,7 +79,7 @@ SplitView
 
 ## Examples
 
-shadcn/ui has no split view. The behavior — which columns show, the phone collapsing to one, the system's sidebar button on iOS — is NSH's [`SplitView`](https://nsh.dev/elements/split-view). This component is that view, plus the column's surface, the header a desktop draws, and the button that hides the sidebar.
+The behavior — which columns show, the phone collapsing to one, the system's sidebar button on iOS — is NSH's [`SplitView`](https://nsh.dev/elements/split-view). This component is that view, plus the column's surface, the header a desktop draws, and the button that hides the sidebar.
 
 The columns' widths are the platform's. Panes the user resizes are [`Resizable`](./resizable).
 
@@ -144,10 +144,6 @@ const visibility = signal<ColumnVisibility>("all");
   detail={detail}
 />;
 ```
-
-## Differences from shadcn/ui
-
-shadcn/ui has no split view. Its Sidebar is one navigation column beside a page — collapsing to icons, or to a sheet on a phone — which this library's Sidebar is. `SplitView` is two or three navigation stacks side by side. A phone shows one column at a time, and which columns show is `columnVisibility`, not an open flag.
 
 ## API
 
