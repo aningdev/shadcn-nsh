@@ -18,8 +18,7 @@
  * and written back as `oklch()`: `oklch.ts` round-trips every channel exactly.
  *
  * Read by `generate-shadcn.ts`, which writes `packages/theme/tokens/themes/shadcn/` and compiles
- * `packages/theme/themes/shadcn/{theme,semantics}.json`; `docs/archive/theme-shadcn.md` holds the
- * mapping tables this file implements.
+ * `packages/theme/themes/shadcn/{theme,semantics}.json`.
  */
 import type { ThemeGeneratorOutput } from "./dtcg";
 import { finishes, shadows } from "./finishes/shadcn";

@@ -551,7 +551,7 @@ const _alertDialogRole: AlertDialogRole = "destructive";
 type Row = { id: number; name: string };
 
 /**
- * The three families' axes (`#19`, `docs/archive/card-field-item.md`): each takes the words shadcn
+ * The three families' axes (`#19`): each takes the words shadcn
  * has and no others, so a value from another design system is a type error at the call site.
  */
 const _fieldOrientation: FieldOrientation = "responsive";
