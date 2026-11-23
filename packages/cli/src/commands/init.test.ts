@@ -58,7 +58,7 @@ const fixture = (): Fixture =>
       "as-text",
       "icons",
       "button",
-      "utils",
+      "live-value",
     ],
     installed: true,
   });

@@ -10,7 +10,9 @@ import { compileAppearanceTokensJson } from "./compile";
 import { loadSourceItem, mergeTokenTrees, resolveAliases, type ResolverDoc } from "./resolver";
 import {
   COLOR_ROLES,
+  CONTROL_DIMENSIONS,
   EXT_NS,
+  MOTION_ROLES,
   SHAPE_ROLES,
   TYPE_ROLES,
   getExt,
@@ -226,7 +228,7 @@ export function compileDesignMd(resolverPath: string): string {
     timingFunction: `cubic-bezier(${(enterVal.timingFunction as number[]).join(", ")})`,
   };
   const motionRes = (lightResolved.motion ?? {}) as Record<string, Record<string, unknown>>;
-  for (const role of ["fast", "default", "slow"] as const) {
+  for (const role of MOTION_ROLES) {
     const timingNode = motionRes[role]?.timing;
     if (isTokenNode(timingNode)) {
       const val = timingNode.$value as DtcgTransition;
@@ -687,6 +689,16 @@ export function compileDesignMd(resolverPath: string): string {
     const desc = getDesc(shapeDimGroup[role]) ?? getDesc(radiusGroup[role]) ?? "";
     lines.push(`- **\`${role}\`** (${roundedYaml[role]}): ${desc}`);
   }
+  const controlDesc = getDesc(dimResolved.control);
+  const controlExt = getExt(dimResolved.control) ?? {};
+  if (CONTROL_DIMENSIONS.some((key) => controlExt[key] !== undefined)) {
+    lines.push("");
+    lines.push(
+      `**Control dimensions** (no DESIGN.md field; they decide how a control's own parts are drawn): ${controlDesc ?? ""}`,
+    );
+    for (const key of CONTROL_DIMENSIONS)
+      lines.push(`- **\`${key}\`**: \`${String(controlExt[key])}\``);
+  }
   lines.push("");
 
   // 7. Motion & Micro-interaction
@@ -701,7 +713,7 @@ export function compileDesignMd(resolverPath: string): string {
       `- **\`enter\`** (${motionYaml.enter!.duration}, \`${motionYaml.enter!.timingFunction}\`): ${getDesc(enterNode) ?? ""}`,
     );
   }
-  for (const role of ["fast", "default", "slow"] as const) {
+  for (const role of MOTION_ROLES) {
     const roleNode = motionGroup[role];
     const roleExt = getExt(roleNode);
     const desc = getDesc(roleNode) ?? "";

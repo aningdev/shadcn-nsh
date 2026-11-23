@@ -147,7 +147,7 @@
       }
     },
     "color-format.ts": {
-      "to": "packages/ui/lib/color-format.ts"
+      "to": "packages/ui/color-picker.tsx"
     },
     "command.tsx": {
       "to": "packages/ui/command.tsx"
@@ -198,8 +198,8 @@
         "ChoiceLight": "packages/ui/checkbox.tsx",
         "MARK_WEIGHT": "packages/ui/checkbox.tsx",
         "CheckboxMark": "packages/ui/checkbox.tsx",
-        "Live": "packages/ui/lib/utils.ts",
-        "read": "packages/ui/lib/utils.ts",
+        "Live": "packages/ui/lib/live-value.ts",
+        "read": "packages/ui/lib/live-value.ts",
         "RadioRing": "packages/ui/radio-group.tsx",
         "ChoiceTileOptions": "packages/ui/checkbox.tsx",
         "ChoiceTileLook": "packages/ui/checkbox.tsx",
@@ -225,8 +225,8 @@
           "packages/ui/number-input.tsx",
           "packages/ui/otp-input.tsx"
         ],
-        "Live": "packages/ui/lib/utils.ts",
-        "read": "packages/ui/lib/utils.ts",
+        "Live": "packages/ui/lib/live-value.ts",
+        "read": "packages/ui/lib/live-value.ts",
         "fieldSize": "packages/ui/input.tsx",
         "FieldLookOptions": "packages/ui/input.tsx",
         "EdgeOptions": "packages/ui/input.tsx",
@@ -257,8 +257,8 @@
           "packages/ui/combobox.tsx",
           "packages/ui/calendar.tsx"
         ],
-        "Live": "packages/ui/lib/utils.ts",
-        "read": "packages/ui/lib/utils.ts",
+        "Live": "packages/ui/lib/live-value.ts",
+        "read": "packages/ui/lib/live-value.ts",
         "ListboxPopupOptions": "packages/ui/lib/listbox.tsx",
         "listboxPopup": "packages/ui/lib/listbox.tsx",
         "listboxPopupStarting": "packages/ui/lib/listbox.tsx",
@@ -333,8 +333,8 @@
         "progressSweep": "packages/ui/progress.tsx",
         "ProgressLookOptions": "packages/ui/progress.tsx",
         "progressLook": "packages/ui/progress.tsx",
-        "Live": "packages/ui/lib/utils.ts",
-        "read": "packages/ui/lib/utils.ts"
+        "Live": "packages/ui/lib/live-value.ts",
+        "read": "packages/ui/lib/live-value.ts"
       }
     },
     "look/nav.tsx": {
@@ -382,14 +382,14 @@
         "SegmentedLookOptions": "packages/ui/segmented.tsx",
         "segmentedLook": "packages/ui/segmented.tsx",
         "pointer": "packages/ui/segmented.tsx",
-        "Live": "packages/ui/lib/utils.ts",
-        "read": "packages/ui/lib/utils.ts"
+        "Live": "packages/ui/lib/live-value.ts",
+        "read": "packages/ui/lib/live-value.ts"
       }
     },
     "look/tool.ts": {
       "symbols": {
         "ToggleSize": "packages/ui/toggle.tsx",
-        "Live": "packages/ui/lib/utils.ts",
+        "Live": "packages/ui/lib/live-value.ts",
         "ToggleLookOptions": "packages/ui/toggle.tsx",
         "ToggleDimensions": "packages/ui/toggle.tsx",
         "pointer": "packages/ui/toggle.tsx",
@@ -398,7 +398,7 @@
         "slop": "packages/ui/lib/press.ts",
         "sink": "packages/ui/toggle.tsx",
         "transition": "packages/ui/toggle.tsx",
-        "read": "packages/ui/lib/utils.ts",
+        "read": "packages/ui/lib/live-value.ts",
         "dimensions": "packages/ui/toggle.tsx",
         "toggleLook": "packages/ui/toggle.tsx",
         "ink": "packages/ui/toggle.tsx",

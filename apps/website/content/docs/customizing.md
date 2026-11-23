@@ -20,7 +20,7 @@ In a monorepo, every path starts at `packages/ui/` instead of the app root.
 ```sh
 theme.json               # base tokens: colors, 3 radii, fonts
 lib/ui/semantics.json    # style groups and surface finishes
-lib/ui/theme.ts          # colors, finish, shape, font, focusRing, alpha
+lib/ui/theme.ts          # colors, finish, shape, font, control, focusRing, alpha
 ```
 
 Edit the values and keep the keys: components and finishes refer to them by name, and both appearances need the same merged finish shape. This is the change that reaches every component at once. [Theme](./theme) lists the roles.

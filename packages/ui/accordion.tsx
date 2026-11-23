@@ -19,9 +19,9 @@ import {
   type AccordionTriggerProps as BaseAccordionTriggerProps,
 } from "nsh/base";
 
+import { joinClass } from "./lib/class-names";
 import { Icon } from "./lib/icons";
 import { controlSize, listRow, RowLabel, type ListRowOptions } from "./lib/surface";
-import { joinClass } from "./lib/utils";
 
 /** Options of `disclosureTriggerLook`: a row's (`listRow`). */
 export type DisclosureTriggerOptions = ListRowOptions;

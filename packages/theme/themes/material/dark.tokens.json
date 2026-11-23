@@ -282,6 +282,19 @@
         "$description": "2px outward focus indicator offset per M3."
       }
     },
+    "control": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "selection": "underline",
+          "field": "underline",
+          "choice": "outline",
+          "track": "tint",
+          "handle": "bar",
+          "group": "cells"
+        }
+      },
+      "$description": "M3 control dimensions: tabs and fields underlined (PrimaryTabs, _md-comp-filled-text-field.scss), selection controls outlined, tracks tinted with a bar handle, and SegmentedButton's cells (docs/specs/theme-contract-v2.md §11.2)."
+    },
     "radius": {
       "$type": "dimension",
       "$description": "Material 3 Expressive corner scale (Compose tokens at `ac364f3c`: 4px CornerExtraSmall control, 12px CornerMedium/CornerLarge container, 28px CornerExtraLarge modal; capsule buttons via `shape.corners.button: \"full\"`).",
@@ -493,7 +506,7 @@
     }
   },
   "motion": {
-    "$description": "Interactive spring and timing physics roles: fast, default, slow.",
+    "$description": "Interactive spring and timing physics roles: fast, default, slow, and the state fade.",
     "fast": {
       "$extensions": {
         "dev.aning.shadcn-nsh": {
@@ -526,6 +539,24 @@
         }
       },
       "$description": "M3 Expressive SlowSpatial spring for settling and panels (stiffness 200, damping ratio 0.8)."
+    },
+    "state": {
+      "$description": "M3 DurationShort2 (100ms) with the standard curve (MotionTokens.DurationShort2, Easing.StandardCubicBezier; ExpressiveMotionTokens.kt).",
+      "timing": {
+        "$type": "transition",
+        "$value": {
+          "duration": {
+            "value": 100,
+            "unit": "ms"
+          },
+          "delay": {
+            "value": 0,
+            "unit": "ms"
+          },
+          "timingFunction": "{cubicBezier.standard}"
+        },
+        "$description": "Timing curve and duration for state."
+      }
     }
   },
   "controls": {

@@ -40,8 +40,8 @@ import { Button as BaseButton, type ButtonProps as BaseButtonProps } from "nsh/b
 
 import { AsText } from "./lib/as-text";
 import { Icon, IconLabel } from "./lib/icons";
+import { type Live, read } from "./lib/live-value";
 import { pressHostProps, pressRipple, pressSink, pressTransition, touchSlop } from "./lib/press";
-import { type Live, read } from "./lib/utils";
 import { Spinner } from "./spinner";
 
 /**

@@ -281,6 +281,19 @@
         "$description": "Focus ring outward offset from control bounds."
       }
     },
+    "control": {
+      "$extensions": {
+        "dev.aning.shadcn-nsh": {
+          "selection": "bar",
+          "field": "box-underline",
+          "choice": "inset",
+          "track": "hairline",
+          "handle": "ring",
+          "group": "track"
+        }
+      },
+      "$description": "WinUI 3 control dimensions: SelectorBar's bar, TextBox's box-underline, inset selection controls, a hairline track and a ring knob (docs/specs/theme-contract-v2.md §11.2)."
+    },
     "radius": {
       "$type": "dimension",
       "$description": "WinUI 3 corner radius scale: ControlCornerRadius 4px (control) and OverlayCornerRadius 8px (container and modal).",
@@ -492,7 +505,7 @@
     }
   },
   "motion": {
-    "$description": "Interactive spring and timing physics roles: fast, default, slow.",
+    "$description": "Interactive spring and timing physics roles: fast, default, slow, and the state fade.",
     "fast": {
       "$description": "WinUI 3 ControlFasterAnimationDuration (83ms, decelerate; ToggleSwitch_themeresources.xaml:321).",
       "timing": {
@@ -545,6 +558,24 @@
           "timingFunction": "{cubicBezier.decelerate}"
         },
         "$description": "Timing curve and duration for slow."
+      }
+    },
+    "state": {
+      "$description": "WinUI 3 ControlFasterAnimationDuration (83ms) with ControlFastOutSlowInKeySpline (Common_themeresources_any.xaml).",
+      "timing": {
+        "$type": "transition",
+        "$value": {
+          "duration": {
+            "value": 83,
+            "unit": "ms"
+          },
+          "delay": {
+            "value": 0,
+            "unit": "ms"
+          },
+          "timingFunction": "{cubicBezier.decelerate}"
+        },
+        "$description": "Timing curve and duration for state."
       }
     }
   },

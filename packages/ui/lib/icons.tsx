@@ -5,12 +5,11 @@ import { terminal } from "@shadcn-nsh/theme";
 import { ArrowLeft, ArrowRight, Check, ChevronLeft, ChevronRight, type IconNode } from "lucide";
 import { Canvas, Image, Path2D, Text } from "nsh";
 
-import { drawIcon, type IconCanvas } from "./icon-canvas";
-import { ICON_BOX, ICON_WEIGHT, iconImage } from "./icon-image";
+import { drawIcon, type IconCanvas, ICON_BOX, ICON_WEIGHT, iconImage } from "./icon-drawing";
 
-// The image form of an icon, which a native menu item takes: apart from NSH, in `icon-image.ts`, so
-// a unit test reads the SVG it writes.
-export { iconImage, type IconImageOptions } from "./icon-image";
+// The image form of an icon, which a native menu item takes: apart from NSH, in `icon-drawing.ts`,
+// so a unit test reads the SVG it writes.
+export { iconImage, type IconImageOptions } from "./icon-drawing";
 
 /** SVG path data parsed once per `d` (an icon is redrawn whenever it lays out). */
 const parsed = new Map<string, Path2D>();

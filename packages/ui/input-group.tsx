@@ -9,7 +9,7 @@ import { Input as BaseInput, type InputProps as BaseInputProps } from "nsh/base"
 import { Button, buttonSizes, type ButtonProps, type ButtonSize } from "./button";
 import { fieldLook, fieldSize, fieldText } from "./input";
 import { AsText } from "./lib/as-text";
-import { type Live, read } from "./lib/utils";
+import { type Live, read } from "./lib/live-value";
 
 /** Options of `inputGroupLook`. */
 export interface InputGroupLookOptions {

@@ -163,6 +163,14 @@
         "md": 20,
         "lg": 24
       }
+    },
+    "control": {
+      "selection": "underline",
+      "field": "underline",
+      "choice": "outline",
+      "track": "tint",
+      "handle": "bar",
+      "group": "cells"
     }
   },
   "shape": {
@@ -205,6 +213,10 @@
     "slow": {
       "stiffness": 200,
       "damping": 22.63
+    },
+    "state": {
+      "duration": 100,
+      "timingFunction": "standard"
     }
   },
   "controls": "material",

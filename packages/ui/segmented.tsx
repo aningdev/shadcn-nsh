@@ -26,8 +26,8 @@ import {
 } from "nsh/base";
 
 import { Icon } from "./lib/icons";
+import { type Live, read } from "./lib/live-value";
 import { pressHostProps, pressRipple } from "./lib/press";
-import { type Live, read } from "./lib/utils";
 import type { TabLook, TabState } from "./tabs";
 
 /**

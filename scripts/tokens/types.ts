@@ -152,6 +152,24 @@ export const TYPE_ROLES = [
 
 export const SHAPE_ROLES = ["control", "container", "modal"] as const;
 
+/**
+ * The six control dimensions a theme decides (`dimension.control`): behaviour-named axes, one value
+ * each, not a per-platform preset. A control reads the axis it draws and falls back on its own
+ * where a value cannot express it (`docs/specs/theme-contract-v2.md` §11.4).
+ */
+export const CONTROL_DIMENSIONS = [
+  "selection",
+  "field",
+  "choice",
+  "track",
+  "handle",
+  "group",
+] as const;
+export type ControlDimension = (typeof CONTROL_DIMENSIONS)[number];
+
+/** The motion roles every theme states: the three speeds, then `state`'s fade. */
+export const MOTION_ROLES = ["fast", "default", "slow", "state"] as const;
+
 export const COLOR_ROLES = ["surface", "ink", "brand", "status", "chrome"] as const;
 export type ColorRole = (typeof COLOR_ROLES)[number];
 

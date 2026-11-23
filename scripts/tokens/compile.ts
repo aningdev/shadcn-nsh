@@ -13,8 +13,10 @@ import { splitFinishes } from "../theme/tokens";
 import { formatColorOpToCss, formatDtcgColor, oklchToHex6, srgbToHex6 } from "./color";
 import { loadSourceItem, mergeTokenTrees, resolvePermutation, type ResolverDoc } from "./resolver";
 import {
+  CONTROL_DIMENSIONS,
   EXT_NS,
   FORMAT_SCHEMA_URL,
+  MOTION_ROLES,
   NAMED_CUBIC_BEZIERS,
   RADIUS_KEYS,
   SHAPE_ROLES,
@@ -451,6 +453,20 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
   const lpSize = lpDim.size as Record<string, unknown>;
   const ltSize = ltDim.size as Record<string, unknown>;
   const focusExt = getExt(lpDim.focus)!;
+  const controlExt = getExt(lpDim.control);
+  if (controlExt === undefined) {
+    throw new Error(`${absPath}: dimension.control carries none of the six control dimensions`);
+  }
+  const controlOut: Record<string, string> = {};
+  for (const key of CONTROL_DIMENSIONS) {
+    const value = controlExt[key];
+    if (typeof value !== "string") {
+      throw new Error(
+        `${absPath}: dimension.control.${key} is ${JSON.stringify(value)}, not one of the six control dimensions`,
+      );
+    }
+    controlOut[key] = value;
+  }
   const stateGroup = lp.state as Record<string, unknown>;
   const stateExt = getExt(stateGroup)!;
 
@@ -464,8 +480,9 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
   const motionResolved = lpResolved.motion as Record<string, Record<string, unknown>>;
   const motionMerged = lp.motion as Record<string, Record<string, unknown>>;
   const motionOut: Record<string, unknown> = {};
-  for (const role of ["fast", "default", "slow"] as const) {
-    const m = motionResolved[role]!;
+  for (const role of MOTION_ROLES) {
+    const m = motionResolved[role];
+    if (m === undefined) continue;
     const ext = getExt(m);
     if (ext?.spring) {
       motionOut[role] = ext.spring;
@@ -604,6 +621,7 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
         pointer: readDimMap(lpDim.icon as Record<string, Record<string, unknown>>),
         touch: readDimMap(ltDim.icon as Record<string, Record<string, unknown>>),
       },
+      control: controlOut,
     },
     shape: {
       curve: shapeExt.curve,

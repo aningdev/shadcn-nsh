@@ -5,8 +5,7 @@ import type { JSX } from "nsh";
 import { Image, mount, signal, Text, View } from "nsh";
 import { type ColorFormat, ColorPicker } from "nsh/base";
 
-import { ColorPanel, ColorPopover } from "@/packages/ui/color-picker";
-import { inkOn } from "@/packages/ui/lib/color-format";
+import { ColorPanel, ColorPopover, inkOn } from "@/packages/ui/color-picker";
 import { insetSurface, sectionSurface } from "@/packages/ui/lib/surface";
 
 import { DemoPage } from "./kit";

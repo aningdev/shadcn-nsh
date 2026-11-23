@@ -28,9 +28,9 @@ import {
 } from "nsh/base";
 
 import { Icon } from "./lib/icons";
+import { type Live, read } from "./lib/live-value";
 import { pressHostProps, pressRipple } from "./lib/press";
 import { controlSize } from "./lib/surface";
-import { type Live, read } from "./lib/utils";
 
 /** The state of one tab or segment, read where the look is applied. */
 export interface TabState {

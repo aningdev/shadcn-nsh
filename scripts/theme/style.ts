@@ -8,6 +8,7 @@
  *
  * Pure: no `node:fs`, so `theme-lint.ts`, the theme generators and the unit tests all read it.
  */
+import { CONTROL_DIMENSIONS, MOTION_ROLES, type ControlDimension } from "../tokens/types";
 import { parseTokenRef, type SplitFinishes, type TokenKind } from "./tokens";
 
 /** The groups of `semantics.json` that are style, in the order the file writes them. */
@@ -38,6 +39,19 @@ export const easingNames = [
   "point-to-point",
 ] as const;
 
+/**
+ * The values each control dimension may take (`docs/specs/theme-contract-v2.md` §14): the axes are
+ * behaviour-named, so a name may recur in another dimension with another meaning (`track`).
+ */
+export const controlDimensionValues: Record<ControlDimension, readonly string[]> = {
+  selection: ["pill", "underline", "bar"],
+  field: ["box", "underline", "box-underline"],
+  choice: ["well", "outline", "inset"],
+  track: ["sunk", "tint", "hairline"],
+  handle: ["circle", "bar", "ring"],
+  group: ["track", "cells"],
+};
+
 /** One theme's values that must come from a list: the path of the key, and the values it may take. */
 export const whitelists: Record<string, readonly (string | number | null)[]> = {
   "typography.*.fontWeight": [400, 500, 600, 700],
@@ -45,12 +59,15 @@ export const whitelists: Record<string, readonly (string | number | null)[]> = {
   "shape.corners.button": ["radius", "full"],
   "dimension.size.control.*.switch": ["small", "regular"],
   "dimension.focus.style": ["halo", "outline", "double"],
+  ...Object.fromEntries(
+    CONTROL_DIMENSIONS.map((key) => [`dimension.control.${key}`, controlDimensionValues[key]]),
+  ),
   "transition.enter.timingFunction": easingNames,
   controls: ["base", "material", "winui"],
 };
 
-/** The three springs, named by speed. */
-export const motionRoleNames = ["fast", "default", "slow"] as const;
+/** The motion roles, named by speed and the state fade (`docs/specs/theme-contract-v2.md` §17). */
+export const motionRoleNames = MOTION_ROLES;
 
 const isObject = (value: unknown): value is Record<string, unknown> =>
   value !== null && typeof value === "object" && !Array.isArray(value);

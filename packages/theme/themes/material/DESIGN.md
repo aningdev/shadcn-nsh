@@ -198,6 +198,10 @@ motion:
     duration: 500ms
     delay: 0ms
     timingFunction: "cubic-bezier(0.05, 0.7, 0.1, 1)"
+  state:
+    duration: 100ms
+    delay: 0ms
+    timingFunction: "cubic-bezier(0.2, 0, 0, 1)"
 components:
   button-primary:
     backgroundColor: "{colors.light.primary}"
@@ -432,14 +436,23 @@ Semantic corner radius roles by layer, referencing base dimension.radius.* token
 - **`container`** (12px): Corner radius for containers and overlays: cards, menus, popovers, tooltips, list panels, toasts, and frames.
 - **`modal`** (28px): Corner radius for modal surfaces: dialogs, sheets, and drawers.
 
+**Control dimensions** (no DESIGN.md field; they decide how a control's own parts are drawn): M3 control dimensions: tabs and fields underlined (PrimaryTabs, _md-comp-filled-text-field.scss), selection controls outlined, tracks tinted with a bar handle, and SegmentedButton's cells (docs/specs/theme-contract-v2.md §11.2).
+- **`selection`**: `underline`
+- **`field`**: `underline`
+- **`choice`**: `outline`
+- **`track`**: `tint`
+- **`handle`**: `bar`
+- **`group`**: `cells`
+
 ## Motion & Micro-interaction
 
-Interactive spring and timing physics roles: fast, default, slow.
+Interactive spring and timing physics roles: fast, default, slow, and the state fade.
 
 - **`enter`** (500ms, `cubic-bezier(0.05, 0.7, 0.1, 1)`): M3 DurationLong2 (500ms) with emphasized-decelerate curve (_md-sys-motion.scss).
 - **`fast`** (spring: stiffness=800, damping=33.94 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): M3 Expressive FastSpatial spring for control state (stiffness 800, damping ratio 0.6; ExpressiveMotionTokens.kt).
 - **`default`** (spring: stiffness=380, damping=31.19 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): M3 Expressive DefaultSpatial spring for presses and movement (stiffness 380, damping ratio 0.8).
 - **`slow`** (spring: stiffness=200, damping=22.63 — omitted from YAML `motion` because DESIGN.md `Motion` only accepts `duration`/`delay`/`timingFunction`): M3 Expressive SlowSpatial spring for settling and panels (stiffness 200, damping ratio 0.8).
+- **`state`** (100ms, `cubic-bezier(0.2, 0, 0, 1)`): M3 DurationShort2 (100ms) with the standard curve (MotionTokens.DurationShort2, Easing.StandardCubicBezier; ExpressiveMotionTokens.kt).
 - **Press & ripple** (`press-scale: 1`, `pressed-opacity: 1`, `ripple: true`): Interaction state opacities, press scale, and ripple switch.
 - **Timing curves:** Named timing curves shared across themes.
 

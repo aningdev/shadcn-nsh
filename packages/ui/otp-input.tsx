@@ -8,8 +8,8 @@ import { OtpInput as BaseOtpInput, type OtpInputProps as BaseOtpInputProps } fro
 
 import { edgeClass } from "./input";
 import { fieldCornerClass, fieldEdgeClass } from "./lib/indicator";
+import { type Live, read } from "./lib/live-value";
 import { createRejectShake } from "./lib/motion";
-import { type Live, read } from "./lib/utils";
 
 const pointer = platform.desktop;
 

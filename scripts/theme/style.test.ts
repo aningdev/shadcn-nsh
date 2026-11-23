@@ -68,6 +68,15 @@ describe("checkStyle", () => {
     expect(problems).toContain('controls` is "cupertin"');
   });
 
+  test("names a control dimension outside its list", () => {
+    const file = copy();
+    file.dimension.control.selection = "swatch";
+    file.dimension.control.group = "row";
+    const problems = check(file).join("\n");
+    expect(problems).toContain('dimension.control.selection` is "swatch"');
+    expect(problems).toContain('dimension.control.group` is "row"');
+  });
+
   test("holds every whitelist to the value the default theme states", () => {
     const file = copy();
     const have = leaves(styleOf(file));

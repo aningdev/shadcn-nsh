@@ -25,9 +25,9 @@ import {
   type ToggleProps as BaseToggleProps,
 } from "nsh/base";
 
+import { type Live, read } from "./lib/live-value";
 import { pressHostProps, pressRipple, pressSink, pressTransition, touchSlop } from "./lib/press";
 import { toolbarTrack } from "./lib/tool";
-import { type Live, read } from "./lib/utils";
 
 /** A toggle's size: 24 / 28 / 34 points with a pointer, 32 / 38 / 44 on a touch screen. */
 export type ToggleSize = "sm" | "default" | "lg";

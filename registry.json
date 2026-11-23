@@ -313,7 +313,7 @@
       "type": "registry:lib",
       "title": "Press",
       "description": "A press's feedback: the theme's sink and its ease.",
-      "registryDependencies": ["theme", "utils"],
+      "registryDependencies": ["live-value", "theme"],
       "files": [
         {
           "path": "packages/ui/lib/press.ts",
@@ -337,16 +337,30 @@
       ]
     },
     {
-      "name": "utils",
+      "name": "live-value",
       "type": "registry:lib",
-      "title": "Utils",
-      "description": "The small tools the shells share: a look's value or accessor, the name a control gives screen readers, and how an app's part classes meet ours.",
+      "title": "Live value",
+      "description": "A look's value, read where it is applied: a prop or a function of the current state.",
       "registryDependencies": [],
       "files": [
         {
-          "path": "packages/ui/lib/utils.ts",
+          "path": "packages/ui/lib/live-value.ts",
           "type": "registry:lib",
-          "target": "lib/ui/utils.ts"
+          "target": "lib/ui/live-value.ts"
+        }
+      ]
+    },
+    {
+      "name": "class-names",
+      "type": "registry:lib",
+      "title": "Class names",
+      "description": "How an app's part classes meet the look's: merged part by part, or joined after them.",
+      "registryDependencies": [],
+      "files": [
+        {
+          "path": "packages/ui/lib/class-names.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/class-names.ts"
         }
       ]
     },
@@ -390,31 +404,12 @@
           "target": "lib/ui/icons.tsx"
         },
         {
-          "path": "packages/ui/lib/icon-canvas.ts",
+          "path": "packages/ui/lib/icon-drawing.ts",
           "type": "registry:lib",
-          "target": "lib/ui/icon-canvas.ts"
-        },
-        {
-          "path": "packages/ui/lib/icon-image.ts",
-          "type": "registry:lib",
-          "target": "lib/ui/icon-image.ts"
+          "target": "lib/ui/icon-drawing.ts"
         }
       ],
       "dependencies": ["lucide@^1.66.0"]
-    },
-    {
-      "name": "color-format",
-      "type": "registry:lib",
-      "title": "Color format",
-      "description": "A picked color written in each of the picker's formats, and the ink that reads on it.",
-      "registryDependencies": [],
-      "files": [
-        {
-          "path": "packages/ui/lib/color-format.ts",
-          "type": "registry:lib",
-          "target": "lib/ui/color-format.ts"
-        }
-      ]
     },
     {
       "name": "popup",
@@ -435,7 +430,7 @@
       "type": "registry:lib",
       "title": "Surface",
       "description": "Density, section surfaces, and list rows whose hover fill bleeds.",
-      "registryDependencies": ["press", "theme", "utils"],
+      "registryDependencies": ["live-value", "press", "theme"],
       "files": [
         {
           "path": "packages/ui/lib/surface.tsx",
@@ -477,7 +472,7 @@
       "type": "registry:ui",
       "title": "Badge",
       "description": "A small capsule label in neutral, toned, or outline styles.",
-      "registryDependencies": ["theme", "utils"],
+      "registryDependencies": ["live-value", "theme"],
       "files": [
         {
           "path": "packages/ui/badge.tsx",
@@ -491,7 +486,7 @@
       "type": "registry:ui",
       "title": "Button",
       "description": "A button, an icon button, a round button, and a split button.",
-      "registryDependencies": ["as-text", "icons", "press", "spinner", "theme", "utils"],
+      "registryDependencies": ["as-text", "icons", "live-value", "press", "spinner", "theme"],
       "files": [
         {
           "path": "packages/ui/button.tsx",
@@ -548,7 +543,7 @@
       "type": "registry:ui",
       "title": "Toggle",
       "description": "A two-state button, bare or outlined, and a group of them on the inset track.",
-      "registryDependencies": ["press", "theme", "tool", "utils"],
+      "registryDependencies": ["live-value", "press", "theme", "tool"],
       "files": [
         {
           "path": "packages/ui/toggle.tsx",
@@ -562,7 +557,7 @@
       "type": "registry:ui",
       "title": "Checkbox",
       "description": "A sunk box that fills in citrus, with a check or a dash springing in.",
-      "registryDependencies": ["as-text", "icons", "press", "surface", "theme", "utils"],
+      "registryDependencies": ["as-text", "icons", "live-value", "press", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/checkbox.tsx",
@@ -606,7 +601,7 @@
       "type": "registry:ui",
       "title": "Input",
       "description": "A text field — sunk, ghost, multiline, masked, or invalid.",
-      "registryDependencies": ["indicator", "motion", "theme", "utils"],
+      "registryDependencies": ["indicator", "live-value", "motion", "theme"],
       "files": [
         {
           "path": "packages/ui/input.tsx",
@@ -635,7 +630,7 @@
       "type": "registry:ui",
       "title": "OTP Input",
       "description": "One-time code cells that lift out of sunk wells as digits fill in.",
-      "registryDependencies": ["indicator", "input", "motion", "theme", "utils"],
+      "registryDependencies": ["indicator", "input", "live-value", "motion", "theme"],
       "files": [
         {
           "path": "packages/ui/otp-input.tsx",
@@ -797,10 +792,10 @@
         "indicator",
         "input",
         "listbox",
+        "live-value",
         "open-state",
         "surface",
-        "theme",
-        "utils"
+        "theme"
       ],
       "files": [
         {
@@ -822,10 +817,10 @@
         "indicator",
         "input",
         "listbox",
+        "live-value",
         "open-state",
         "surface",
-        "theme",
-        "utils"
+        "theme"
       ],
       "files": [
         {
@@ -860,11 +855,11 @@
         "calendar",
         "input",
         "listbox",
+        "live-value",
         "open-state",
         "popup",
         "select",
-        "theme",
-        "utils"
+        "theme"
       ],
       "files": [
         {
@@ -880,7 +875,7 @@
       "type": "registry:ui",
       "title": "Tabs",
       "description": "A pill track or underlined row with a traveling indicator.",
-      "registryDependencies": ["icons", "press", "surface", "theme", "utils"],
+      "registryDependencies": ["icons", "live-value", "press", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/tabs.tsx",
@@ -895,7 +890,7 @@
       "type": "registry:ui",
       "title": "Segmented",
       "description": "A sunk track whose raised thumb springs to the selected segment, or connected cells in a theme that draws them.",
-      "registryDependencies": ["icons", "press", "tabs", "theme", "utils"],
+      "registryDependencies": ["icons", "live-value", "press", "tabs", "theme"],
       "files": [
         {
           "path": "packages/ui/segmented.tsx",
@@ -910,7 +905,7 @@
       "type": "registry:ui",
       "title": "Accordion",
       "description": "List rows that reveal panels with a turning chevron.",
-      "registryDependencies": ["icons", "surface", "theme", "utils"],
+      "registryDependencies": ["class-names", "icons", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/accordion.tsx",
@@ -939,7 +934,7 @@
       "type": "registry:ui",
       "title": "Carousel",
       "description": "Snapping slides with round arrows and a traveling dot pill.",
-      "registryDependencies": ["icons", "press", "theme", "utils"],
+      "registryDependencies": ["class-names", "icons", "press", "theme"],
       "files": [
         {
           "path": "packages/ui/carousel.tsx",
@@ -984,7 +979,7 @@
       "type": "registry:ui",
       "title": "Progress",
       "description": "A determinate or indeterminate progress bar.",
-      "registryDependencies": ["checkbox", "surface", "theme", "utils"],
+      "registryDependencies": ["checkbox", "live-value", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/progress.tsx",
@@ -998,7 +993,7 @@
       "type": "registry:ui",
       "title": "Stat",
       "description": "A label above a value for metric grids.",
-      "registryDependencies": ["theme", "utils"],
+      "registryDependencies": ["live-value", "theme"],
       "files": [
         {
           "path": "packages/ui/stat.tsx",
@@ -1012,7 +1007,7 @@
       "type": "registry:ui",
       "title": "Status",
       "description": "A dot and label for quiet row or header state.",
-      "registryDependencies": ["theme", "utils"],
+      "registryDependencies": ["live-value", "theme"],
       "files": [
         {
           "path": "packages/ui/status.tsx",
@@ -1040,7 +1035,7 @@
       "type": "registry:ui",
       "title": "Avatar",
       "description": "A round picture or named initials on the identity ring.",
-      "registryDependencies": ["theme", "utils"],
+      "registryDependencies": ["class-names", "theme"],
       "files": [
         {
           "path": "packages/ui/avatar.tsx",
@@ -1054,7 +1049,7 @@
       "type": "registry:ui",
       "title": "DataTable",
       "description": "A card-styled spreadsheet with sorting, selection, and resize.",
-      "registryDependencies": ["theme", "utils"],
+      "registryDependencies": ["class-names", "theme"],
       "files": [
         {
           "path": "packages/ui/data-table.tsx",
@@ -1068,7 +1063,7 @@
       "type": "registry:ui",
       "title": "Table",
       "description": "A composition table wearing the shared data-table classes.",
-      "registryDependencies": ["data-table", "utils"],
+      "registryDependencies": ["class-names", "data-table"],
       "files": [
         {
           "path": "packages/ui/table.tsx",
@@ -1082,7 +1077,7 @@
       "type": "registry:ui",
       "title": "Tree",
       "description": "A card-framed tree with chevron rows and folder icons.",
-      "registryDependencies": ["icons", "surface", "theme", "utils"],
+      "registryDependencies": ["class-names", "icons", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/tree.tsx",
@@ -1097,7 +1092,7 @@
       "type": "registry:ui",
       "title": "Command",
       "description": "A command palette with search, groups, and shortcut keys.",
-      "registryDependencies": ["icons", "kbd", "popup", "surface", "theme", "utils"],
+      "registryDependencies": ["class-names", "icons", "kbd", "popup", "surface", "theme"],
       "files": [
         {
           "path": "packages/ui/command.tsx",
@@ -1112,7 +1107,7 @@
       "type": "registry:ui",
       "title": "Scrollbar",
       "description": "Hover-reveal scroll bars for scroll views and lists.",
-      "registryDependencies": ["motion", "theme", "utils"],
+      "registryDependencies": ["class-names", "motion", "theme"],
       "files": [
         {
           "path": "packages/ui/scrollbar.tsx",
@@ -1140,7 +1135,7 @@
       "type": "registry:ui",
       "title": "Resizable",
       "description": "Resize handles with a quiet hairline and a growing thumb.",
-      "registryDependencies": ["utils"],
+      "registryDependencies": ["class-names"],
       "files": [
         {
           "path": "packages/ui/resizable.tsx",
@@ -1154,7 +1149,7 @@
       "type": "registry:ui",
       "title": "DockArea",
       "description": "Dockable workspace chrome: tabs, splits, and edge docks.",
-      "registryDependencies": ["resizable", "theme", "utils"],
+      "registryDependencies": ["class-names", "resizable", "theme"],
       "files": [
         {
           "path": "packages/ui/dock-area.tsx",
@@ -1168,7 +1163,7 @@
       "type": "registry:ui",
       "title": "DiffView",
       "description": "Up/down tints for additions and deletions, with hunk actions.",
-      "registryDependencies": ["button", "icons", "theme", "utils"],
+      "registryDependencies": ["button", "icons", "live-value", "theme"],
       "files": [
         {
           "path": "packages/ui/diff-view.tsx",
@@ -1183,7 +1178,7 @@
       "type": "registry:ui",
       "title": "TextView",
       "description": "Brand links and a streaming caret for Markdown documents.",
-      "registryDependencies": ["utils"],
+      "registryDependencies": ["class-names"],
       "files": [
         {
           "path": "packages/ui/text-view.tsx",
@@ -1212,7 +1207,7 @@
       "type": "registry:ui",
       "title": "Rich Editor",
       "description": "Rich document typography and its session API, on nsh/base's RichEditor.",
-      "registryDependencies": ["utils"],
+      "registryDependencies": ["class-names"],
       "files": [
         {
           "path": "packages/ui/rich-editor.tsx",
@@ -1228,13 +1223,13 @@
       "description": "A code editor on the field's well, with line numbers, diagnostics and a find bar.",
       "registryDependencies": [
         "button",
+        "class-names",
         "icons",
         "indicator",
         "input-group",
         "popup",
         "theme",
-        "toggle",
-        "utils"
+        "toggle"
       ],
       "dependencies": ["lucide@^1.66.0"],
       "files": [
@@ -1252,7 +1247,6 @@
       "description": "Area, sliders, joined fields, swatches, and popover trigger.",
       "registryDependencies": [
         "button",
-        "color-format",
         "icons",
         "input",
         "menu",
@@ -1317,7 +1311,7 @@
       "type": "registry:ui",
       "title": "Pressable",
       "description": "A region that takes presses and adds only the feedback: hover, the press's sink, the focus ring.",
-      "registryDependencies": ["as-text", "press", "theme", "utils"],
+      "registryDependencies": ["as-text", "live-value", "press", "theme"],
       "files": [
         {
           "path": "packages/ui/pressable.tsx",
@@ -1429,7 +1423,7 @@
       "type": "registry:ui",
       "title": "InputGroup",
       "description": "A field's frame around an input and what sits beside it — an icon, a unit, a button.",
-      "registryDependencies": ["as-text", "button", "input", "theme", "utils"],
+      "registryDependencies": ["as-text", "button", "input", "live-value", "theme"],
       "files": [
         {
           "path": "packages/ui/input-group.tsx",
@@ -1575,11 +1569,11 @@
       "registryDependencies": [
         "as-text",
         "icons",
+        "live-value",
         "open-state",
         "popup",
         "press",
-        "theme",
-        "utils"
+        "theme"
       ],
       "dependencies": ["lucide@^1.66.0"],
       "files": [
@@ -1600,14 +1594,14 @@
         "button",
         "icons",
         "input",
+        "live-value",
         "press",
         "separator",
         "sheet",
         "skeleton",
         "surface",
         "theme",
-        "tooltip",
-        "utils"
+        "tooltip"
       ],
       "dependencies": ["lucide@^1.66.0"],
       "files": [
@@ -1623,7 +1617,7 @@
       "type": "registry:ui",
       "title": "Terminal",
       "description": "A program's output on the theme's field surface, the keys typed back to it.",
-      "registryDependencies": ["theme", "utils"],
+      "registryDependencies": ["live-value", "theme"],
       "files": [
         {
           "path": "packages/ui/terminal.tsx",
@@ -1727,7 +1721,7 @@
       "type": "registry:ui",
       "title": "TitleBar",
       "description": "The bar that drags a desktop window, the window buttons a frameless one draws for itself, and the edges that resize it.",
-      "registryDependencies": ["icons", "theme", "utils"],
+      "registryDependencies": ["icons", "live-value", "theme"],
       "dependencies": ["lucide@^1.66.0"],
       "files": [
         {

@@ -9,7 +9,7 @@ import {
   type ResizablePanelProps as BasePanelProps,
 } from "nsh/base";
 
-import { joinClass } from "./lib/utils";
+import { joinClass } from "./lib/class-names";
 
 /**
  * The thumb of a resize handle (`handleThumbClass`), as gpui-component
