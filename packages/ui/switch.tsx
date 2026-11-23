@@ -6,7 +6,6 @@ import {
   controls,
   type Controls,
   finish,
-  follow,
   hitTarget,
   motion,
   terminal,
@@ -17,10 +16,10 @@ import {
   type Tiered,
 } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
-import { split } from "nsh";
+import { reduceMotion, split } from "nsh";
 import { Switch as BaseSwitch, type SwitchProps as BaseSwitchProps } from "nsh/base";
 
-import { PILL_RADIUS } from "./lib/surface";
+import { cssMotion } from "./lib/motion";
 import { type SwitchGeometry, switchSlop } from "./lib/switch-geometry";
 
 /** A switch's size on a touch screen (`sm` 34 × 20); with a pointer both are 28 × 16. */
@@ -188,24 +187,45 @@ function knobLook(on: boolean): ViewStyle {
 }
 
 /**
+ * The knob's size feedback, as transform classes: the knob's box never takes a new size, so a
+ * hover, a press and the open state scale it — kept off `switchPresets` so the sizes stay points.
+ * A knob that stretches (WinUI) reaches toward the track's centre as it grows: a `shift` past the
+ * box it grew from, and `travel - shift` back once it is open — the same pixels as today's box,
+ * without moving `transformOrigin`, which a press would jump.
+ */
+function knobFeedbackClasses(g: ResolvedSwitchGeometry, travel: number): string[] {
+  if (g.knobFeedback === "none") return [];
+  /** A size as a scale of the knob's box, to four places (a whole number of points fits). */
+  const of = (size: number) => Number((size / g.knob).toFixed(4));
+  /** Both axes together as `scale`, apart as `scale-x` and `scale-y`. */
+  const scale = (w: number, h: number): string[] =>
+    w === h ? [`scale-[${of(w)}]`] : [`scale-x-[${of(w)}]`, `scale-y-[${of(h)}]`];
+  const under = (variant: string, utilities: string[]): string[] =>
+    utilities.map((utility) => `${variant}:${utility}`);
+  const pressed = under("active", scale(g.knobPressedWidth, g.knobPressedHeight));
+  if (g.knobFeedback === "expand") {
+    return [...under("checked", scale(g.onKnob, g.onKnob)), ...pressed];
+  }
+  const shift = (g.knobPressedWidth - g.knobHover) / 2;
+  return [
+    ...under("hover", scale(g.knobHover, g.knobHover)),
+    ...pressed,
+    ...under("active", [`translate-x-[${shift}px]`]),
+    ...under("checked:active", [`translate-x-[${travel - shift}px]`]),
+  ];
+}
+
+/**
  * The gallery's switch, as the props of `Switch`'s parts (spread them:
  * `<Switch {...switchLook(() => on())}>`): track, knob geometry, border, and
  * hover/press knob feedback come from `switchPresets[controls()][tier]`. `on` is the value
  * the app owns: the knob follows it, from a press or from elsewhere.
+ *
+ * The knob's box stays one size; its travel and its hover/press growth are CSS classes, so a
+ * spring or a timing role in the theme paces them and no layout property moves. NSH animates a
+ * view's translate and scale as one transform, so one transition carries both: `motion.fast`.
  */
 export function switchLook(on: () => boolean, size: SwitchSize = "default"): SwitchLook {
-  const t = follow(() => (on() ? 1 : 0), motion.default);
-  let cachedTravel = geometry(size).width - geometry(size).height;
-  let cachedX = t.interpolate({ inputRange: [0, 1], outputRange: [0, cachedTravel] });
-  const travelX = () => {
-    const g = geometry(size);
-    const next = g.width - g.height;
-    if (next !== cachedTravel) {
-      cachedTravel = next;
-      cachedX = t.interpolate({ inputRange: [0, 1], outputRange: [0, cachedTravel] });
-    }
-    return cachedX;
-  };
   return {
     // The knob sits at the track's physical left (`left`, which keeps its
     // side) and travels right; right to left the whole track is mirrored, so
@@ -219,51 +239,36 @@ export function switchLook(on: () => boolean, size: SwitchSize = "default"): Swi
         height: g.height,
         borderRadius: g.height / 2,
         padding: g.inset,
-        backgroundColor: t.interpolate({
-          inputRange: [0, 1],
-          outputRange: [colors.track, colors.primary],
-        }),
+        backgroundColor: checked ? colors.primary : colors.track,
         borderWidth: checked ? g.onBorder : g.border,
         borderColor: checked ? finish.accent.borderColor : finish.inset.borderColor,
         boxShadow: checked ? finish.accent.boxShadow : finish.inset.boxShadow,
-        transitionProperty: "border-color, box-shadow",
-        transitionDuration: 150,
+        transitionProperty: "background-color, border-color, box-shadow",
+        ...cssMotion(motion.fast),
       };
     },
     get thumbClass(): string {
       const g = geometry(size);
-      if (g.knobFeedback === "expand") {
-        const offPad = (g.knobPressedWidth - g.knob) / 2;
-        const onPad = (g.knobPressedWidth - g.onKnob) / 2;
-        return `w-[${g.knob}px] h-[${g.knob}px] checked:w-[${g.onKnob}px] checked:h-[${g.onKnob}px] active:w-[${g.knobPressedWidth}px] active:h-[${g.knobPressedHeight}px] active:-ml-[${offPad}px] active:-mt-[${offPad}px] checked:active:w-[${g.knobPressedWidth}px] checked:active:h-[${g.knobPressedHeight}px] checked:active:-ml-[${onPad}px] checked:active:-mt-[${onPad}px] transition-all duration-150 motion-reduce:transition-none`;
-      }
-      if (g.knobFeedback === "stretch") {
-        const hoverPad = (g.knobHover - g.knob) / 2;
-        const pressV = (g.knobPressedHeight - g.knob) / 2;
-        const pressOnLeft = g.knobPressedWidth - g.knob - hoverPad;
-        return `w-[${g.knob}px] h-[${g.knob}px] hover:w-[${g.knobHover}px] hover:h-[${g.knobHover}px] hover:-ml-[${hoverPad}px] hover:-mt-[${hoverPad}px] active:w-[${g.knobPressedWidth}px] active:h-[${g.knobPressedHeight}px] active:-ml-[${hoverPad}px] active:-mt-[${pressV}px] checked:active:w-[${g.knobPressedWidth}px] checked:active:h-[${g.knobPressedHeight}px] checked:active:-ml-[${pressOnLeft}px] checked:active:-mt-[${pressV}px] transition-all duration-100 motion-reduce:transition-none`;
-      }
-      return "";
+      const travel = g.width - g.height;
+      return [`checked:translate-x-[${travel}px]`, ...knobFeedbackClasses(g, travel)].join(" ");
     },
     get thumbStyle(): ViewStyle {
       const g = geometry(size);
       const checked = on();
-      const knobNow = checked ? g.onKnob : g.knob;
-      const borderNow = checked ? g.onBorder : g.border;
-      const offset = g.height / 2 - borderNow - knobNow / 2;
-      const sized =
-        g.knobFeedback === "none"
-          ? { width: knobNow, height: knobNow, borderRadius: knobNow / 2 }
-          : { borderRadius: PILL_RADIUS };
+      const border = checked ? g.onBorder : g.border;
+      const offset = g.height / 2 - border - g.knob / 2;
       return {
         position: "absolute",
         // physical: the knob's travel is a translateX from the track's left edge, and transforms do not mirror.
         left: offset,
         top: offset,
-        ...sized,
+        width: g.knob,
+        height: g.knob,
+        borderRadius: g.knob / 2,
         borderWidth: stroke.control,
         ...knobLook(checked),
-        transform: [{ translateX: travelX() }],
+        transitionProperty: reduceMotion() ? "none" : "transform",
+        ...cssMotion(motion.fast),
       };
     },
   };

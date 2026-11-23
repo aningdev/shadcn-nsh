@@ -6,13 +6,14 @@ import {
   controls,
   type Controls,
   follow,
+  motion,
   terminal,
   TERMINAL_ROW,
   tier,
   type Tiered,
 } from "@shadcn-nsh/theme";
-import type { JSX } from "nsh";
-import { split, View } from "nsh";
+import type { JSX, ViewStyle } from "nsh";
+import { reduceMotion, split, View } from "nsh";
 import {
   Radio as BaseRadio,
   RadioGroup as BaseRadioGroup,
@@ -31,7 +32,7 @@ import {
   type ChoiceWell,
 } from "./checkbox";
 import { AsText } from "./lib/as-text";
-import { PILL_RADIUS } from "./lib/surface";
+import { cssMotion } from "./lib/motion";
 
 interface RadioPreset {
   size: number;
@@ -108,7 +109,8 @@ const radioPresets: Record<Controls, Tiered<RadioPreset>> = {
 /**
  * A radio's ring, among the `Radio`'s children (give the radio `class="group"`, so the ring
  * responds to row hover/press): outer diameter, dot diameter, stroke, interior well, checked style
- * (`"fill"` vs `"ring"`), state-layer target, and dot hover/press scaling come from `radioPresets[controls()][tier]`.
+ * (`"fill"` vs `"ring"`), state-layer target, and the dot's hover/press growth (a scale of its
+ * box, its own view) come from `radioPresets[controls()][tier]`.
  */
 export function RadioRing(props: { on: boolean; scale?: number; disabled?: boolean }) {
   const scale = props.scale ?? 1;
@@ -123,10 +125,21 @@ export function RadioRing(props: { on: boolean; scale?: number; disabled?: boole
   const ringBorderColor = () =>
     g().checkedStyle === "ring" && props.on ? colors.brand : wellStyle().borderColor;
   const on = follow(() => (props.on ? 1 : 0));
-  const dotClass = () =>
-    g().dotFeedback === "scale"
-      ? `w-[${dot()}px] h-[${dot()}px] group-hover:w-[${dotHover()}px] group-hover:h-[${dotHover()}px] group-active:w-[${dotPressed()}px] group-active:h-[${dotPressed()}px] transition-all duration-100 motion-reduce:transition-none`
-      : undefined;
+  /** The dot's growth under hover and press, as a scale of its box: the ring around it is the
+   * pointer's, so the classes ride the group's states, paced by the theme's `motion.fast`. */
+  const dotScale = (): string | undefined => {
+    if (g().dotFeedback !== "scale") return undefined;
+    const of = (size: number) => Number((size / dot()).toFixed(4));
+    return `group-hover:scale-[${of(dotHover())}] group-active:scale-[${of(dotPressed())}]`;
+  };
+  const dotStyle = (): ViewStyle => ({
+    width: dot(),
+    height: dot(),
+    borderRadius: dot() / 2,
+    backgroundColor: g().checkedStyle === "ring" ? colors.brand : colors.primaryForeground,
+    opacity: on,
+    transform: [{ scale: on.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] }) }],
+  });
   return (
     <View
       class={choiceSink}
@@ -152,17 +165,24 @@ export function RadioRing(props: { on: boolean; scale?: number; disabled?: boole
       {g().checkedStyle === "fill" ? (
         <ChoiceLight on={on} radius={size() / 2} border={border()} />
       ) : null}
-      <View
-        class={dotClass()}
-        style={{
-          ...(g().dotFeedback === "scale"
-            ? { borderRadius: PILL_RADIUS }
-            : { width: dot(), height: dot(), borderRadius: dot() / 2 }),
-          backgroundColor: g().checkedStyle === "ring" ? colors.brand : colors.primaryForeground,
-          opacity: on,
-          transform: [{ scale: on.interpolate({ inputRange: [0, 1], outputRange: [0.5, 1] }) }],
-        }}
-      />
+      {g().dotFeedback === "scale" ? (
+        // Its own view: the checked scale below is an animated value, and a view takes one transform.
+        <View
+          class={dotScale()}
+          style={{
+            width: dot(),
+            height: dot(),
+            alignItems: "center",
+            justifyContent: "center",
+            transitionProperty: reduceMotion() ? "none" : "transform",
+            ...cssMotion(motion.fast),
+          }}
+        >
+          <View style={dotStyle()} />
+        </View>
+      ) : (
+        <View style={dotStyle()} />
+      )}
     </View>
   );
 }

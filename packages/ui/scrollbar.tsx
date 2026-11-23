@@ -1,18 +1,36 @@
 // Scrollbar: `scrollbarTheme` and the `Scrollbar` that wears it.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
-import { dimmed } from "@shadcn-nsh/theme";
-import { platform, split } from "nsh";
+import { dimmed, motion } from "@shadcn-nsh/theme";
+import { platform, reduceMotion, split } from "nsh";
 import {
   Scrollbar as BaseScrollbar,
   type ScrollbarProps as BaseScrollbarProps,
   type ScrollbarTheme,
 } from "nsh/base";
 
+import { cssMotion } from "./lib/motion";
 import { joinClass } from "./lib/utils";
 
 /** Whether the screen is a finger's, which takes a thinner bar and its smaller inset. */
 const touch = !platform.desktop;
+
+/** The thumb's thickness at rest: 6 points, or 3, the system's indicator, on a touch screen. */
+const thickness = touch ? 3 : 6;
+
+/** The thumb's thickness under the pointer or while dragged: 8 points. It is reached by a scale
+ * from the bar's outer edge, so the thumb keeps its place and no layout property moves; the caps
+ * grow with the box, rounding 4 × 3 instead of 4 × 4 — a third of a point of anisotropy, at rest
+ * again as soon as the pointer leaves. */
+const engaged = 8;
+const engagement = Number((engaged / thickness).toFixed(4));
+
+/** The thumb's transition: its size and its fill, paced by the theme's `motion.fast`, and none of
+ * it when motion is reduced (the thumb then takes the new size and fill at once). */
+const thumbMotion = () => ({
+  transitionProperty: reduceMotion() ? "none" : "transform, background-color",
+  ...cssMotion(motion.fast),
+});
 
 /** The thumb's fill: the muted foreground at `state.rest-opacity`, so it sits quiet over the rows,
  * rising to `state.pressed-opacity` while the pointer is over it or it is dragged, which is the
@@ -34,8 +52,9 @@ const thumbFill = (): string => {
  * The track is 16 points thick over the view's edge (the widest thumb and
  * an inset of 4 on each side, 2 on a touch screen); the thumb is 6 points
  * at rest (3, the system's indicator, on a touch screen), 8 and darker
- * under the pointer or while dragged, its width easing over 300 ms. Its fill is the
- * muted foreground at `state.rest-opacity`, `state.pressed-opacity` under the pointer or dragged.
+ * under the pointer or while dragged, reached by a scale from the edge it sits on, paced by
+ * `motion.fast`. Its fill is the muted foreground at `state.rest-opacity`,
+ * `state.pressed-opacity` under the pointer or dragged.
  */
 export const scrollbarTheme: ScrollbarTheme = {
   mode: "hover",
@@ -51,13 +70,17 @@ export const scrollbarTheme: ScrollbarTheme = {
   get vertical() {
     return {
       class: `absolute inset-y-0 right-0 w-4 items-end ${touch ? "p-0.5" : "p-1"}`,
-      thumbClass: `${touch ? "w-[3px]" : "w-1.5"} rounded-full transition-all duration-300 hover:w-2 active:w-2 motion-reduce:transition-none ${thumbFill()}`,
+      // Grows inward from the bar's right edge, the one it sits on: `origin-right`, so a press and
+      // a hover widen it toward the content instead of off the view's edge.
+      thumbClass: `${touch ? "w-[3px]" : "w-1.5"} rounded-full origin-right hover:scale-x-[${engagement}] active:scale-x-[${engagement}] ${thumbFill()}`,
+      thumbStyle: thumbMotion(),
     };
   },
   get horizontal() {
     return {
       class: `absolute inset-x-0 bottom-0 h-4 items-end ${touch ? "p-0.5" : "p-1"}`,
-      thumbClass: `${touch ? "h-[3px]" : "h-1.5"} rounded-full transition-all duration-300 hover:h-2 active:h-2 motion-reduce:transition-none ${thumbFill()}`,
+      thumbClass: `${touch ? "h-[3px]" : "h-1.5"} rounded-full origin-bottom hover:scale-y-[${engagement}] active:scale-y-[${engagement}] ${thumbFill()}`,
+      thumbStyle: thumbMotion(),
     };
   },
 };

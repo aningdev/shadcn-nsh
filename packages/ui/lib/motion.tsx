@@ -1,8 +1,32 @@
-// Shared motion: a control shakes when a value is rejected, and a figure rolls to its next one.
+// Shared motion: a control shakes when a value is rejected, a figure rolls to its next one, and a
+// theme's motion role becomes the transition a state's transform rides.
 
-import { isTiming, motion as themeMotion } from "@shadcn-nsh/theme";
+import { isTiming, motion as themeMotion, type Spring, type Timing } from "@shadcn-nsh/theme";
 import type { StyleProp, TextStyle, ViewStyle } from "nsh";
 import { createMotion, effect, reduceMotion, signal, Text } from "nsh";
+
+/**
+ * A theme's motion role as a CSS transition: the two properties a `transitionProperty` needs, for
+ * the feedback the CSS states own — a knob's `scale` under `hover:` and `active:` — because an
+ * animated value and a CSS transition cannot both drive one view's transform.
+ *
+ * A spring times itself, so a spring role gives no duration; a timing role gives its own duration
+ * and its curve as `cubic-bezier`. A named curve (`Easing.out(Easing.cubic)`) has no CSS spelling,
+ * so it falls back to `ease-out`: every theme names a spring or a bezier.
+ */
+export function cssMotion(m: Spring | Timing): {
+  transitionDuration?: number;
+  transitionTimingFunction: ViewStyle["transitionTimingFunction"];
+} {
+  if (!isTiming(m)) return { transitionTimingFunction: `spring(${m.stiffness}, ${m.damping})` };
+  const curve = m.timingFunction;
+  return {
+    transitionDuration: m.duration,
+    transitionTimingFunction: Array.isArray(curve)
+      ? `cubic-bezier(${curve.join(", ")})`
+      : "ease-out",
+  };
+}
 
 /**
  * A shake that plays when `tick` changes to a new number (a second submit, a second wrong code).

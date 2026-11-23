@@ -506,7 +506,7 @@
       "type": "registry:ui",
       "title": "Switch",
       "description": "A switch whose knob springs across a sunk track.",
-      "registryDependencies": ["surface", "switch-geometry", "theme"],
+      "registryDependencies": ["motion", "switch-geometry", "theme"],
       "files": [
         {
           "path": "packages/ui/switch.tsx",
@@ -577,7 +577,7 @@
       "type": "registry:ui",
       "title": "Radio Group",
       "description": "A sunk ring that fills in citrus, with a dot growing in — alone or as a choice tile.",
-      "registryDependencies": ["as-text", "checkbox", "surface", "theme"],
+      "registryDependencies": ["as-text", "checkbox", "motion", "theme"],
       "files": [
         {
           "path": "packages/ui/radio-group.tsx",
@@ -1112,7 +1112,7 @@
       "type": "registry:ui",
       "title": "Scrollbar",
       "description": "Hover-reveal scroll bars for scroll views and lists.",
-      "registryDependencies": ["theme", "utils"],
+      "registryDependencies": ["motion", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/scrollbar.tsx",
