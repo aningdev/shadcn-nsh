@@ -177,23 +177,24 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 
 <!-- /theme-lint: controls -->
 
-**维度配方的数字。** 共同几何（高度、图标、圆点、内边距、间隙、描边、圆角）从刻度取；形态自己的官方数字写进取值的配方，也就是实现该取值的控件里。下表是这些数字唯一的一处可查，改了数字就要改这里。
+**维度配方的数字。** 共同几何（高度、图标、圆点、内边距、间隙、描边、圆角）从刻度取；形态自己的官方数字写进取值的配方（`packages/ui/lib/look.ts`），由 `check:theme` 与下表对齐。下表是这些数字唯一的一处可查，改了数字就要改这里。
 
 <!-- theme-lint: recipes -->
 
-| 维度        | 取值        | 数字                                                    | 出处                                      |
-| ----------- | ----------- | ------------------------------------------------------- | ----------------------------------------- |
-| `selection` | `underline` | 标签下 3 点线，只覆盖标签，上两角半径 = 粗细 / 2        | M3 PrimaryTabs 3 dp                       |
-| `selection` | `bar`       | 整项下 3 点线，胶囊端                                   | WinUI SelectorBar / NavigationView 指示条 |
-| `choice`    | `outline`   | 描边 2 px，点按范围外扩 40 dp                           | M3 outline 2 dp、state layer 40 dp        |
-| `choice`    | `inset`     | 边框 1 px                                               | WinUI `ControlStrokeColorDefault`         |
-| `track`     | `sunk`      | 沟：progress 6、slider 6                                | 本库自有                                  |
-| `track`     | `tint`      | 色带：progress 4、slider 16                             | M3 16 dp 轨道                             |
-| `track`     | `hairline`  | progress 3 的条 + 1 的线、slider 4                      | WinUI                                     |
-| `handle`    | `circle`    | slider 6 轨道 / 14 钮（触屏 8 / 20）；switch 的钮也用它 | 本库自有                                  |
-| `handle`    | `bar`       | 4 × 44 钮（按压 2 宽）、16 轨道、端点圆 2               | M3                                        |
-| `handle`    | `ring`      | 18 px 钮带 12 的点（悬停 14、按下 10）、4 px 轨道       | WinUI                                     |
-| `group`     | `cells`     | 格高 40、内边距 12、间隙 8、勾 18                       | M3 SegmentedButton                        |
+| 维度        | 取值        | 数字                                                             | 出处                                      |
+| ----------- | ----------- | ---------------------------------------------------------------- | ----------------------------------------- |
+| `selection` | `underline` | 标签下 3 点线，只覆盖标签，上两角半径 = 粗细的一半               | M3 PrimaryTabs 3 dp                       |
+| `selection` | `bar`       | 整项下 3 点线，胶囊端                                            | WinUI SelectorBar / NavigationView 指示条 |
+| `choice`    | `well`      | 井的角 5 / 7（触屏）                                             | 本库自有                                  |
+| `choice`    | `outline`   | 描边 2 px、角 2，点按范围外扩 `size.target`                      | M3 outline 2 dp、state layer 40 dp        |
+| `choice`    | `inset`     | 边框 1 px、角 4                                                  | WinUI `ControlStrokeColorDefault`         |
+| `track`     | `sunk`      | 沟：progress 6、slider 6，spinner 带 0.25 的底                   | 本库自有                                  |
+| `track`     | `tint`      | 色带：progress 4、slider 16                                      | M3 16 dp 轨道                             |
+| `track`     | `hairline`  | progress 3 的条 + 1 的线、slider 4                               | WinUI                                     |
+| `handle`    | `circle`    | slider 6 轨道 / 14 钮（触屏 8 / 20，按压 32）；switch 的钮也用它 | 本库自有                                  |
+| `handle`    | `bar`       | 4 × 44 钮（按压 2 宽）、16 轨道、端点圆 2                        | M3                                        |
+| `handle`    | `ring`      | 18 px 钮带 12 的点（悬停 14、按下 10）、4 px 轨道                | WinUI                                     |
+| `group`     | `cells`     | 格高 40、内边距 12、间隙 8、勾 18                                | M3 SegmentedButton                        |
 
 <!-- /theme-lint: recipes -->
 

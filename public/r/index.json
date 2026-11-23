@@ -396,6 +396,19 @@
       ]
     },
     {
+      "name": "look",
+      "type": "registry:lib",
+      "title": "Look",
+      "description": "A control's form: one function per control dimension, the roles and scale keys it is drawn to, and the form's own numbers where the recipe states them.",
+      "files": [
+        {
+          "path": "packages/ui/lib/look.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/look.ts"
+        }
+      ]
+    },
+    {
       "name": "popup",
       "type": "registry:lib",
       "title": "Popup",

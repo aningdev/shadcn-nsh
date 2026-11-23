@@ -412,6 +412,20 @@
       "dependencies": ["lucide@^1.66.0"]
     },
     {
+      "name": "look",
+      "type": "registry:lib",
+      "title": "Look",
+      "description": "A control's form: one function per control dimension, the roles and scale keys it is drawn to, and the form's own numbers where the recipe states them.",
+      "registryDependencies": ["theme"],
+      "files": [
+        {
+          "path": "packages/ui/lib/look.ts",
+          "type": "registry:lib",
+          "target": "lib/ui/look.ts"
+        }
+      ]
+    },
+    {
       "name": "popup",
       "type": "registry:lib",
       "title": "Popup",
