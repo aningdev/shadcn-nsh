@@ -93,7 +93,7 @@ function App() {
             </Attachment>
             <Attachment state="uploading">
               <AttachmentMedia>
-                <Spinner size={attachmentGlyph("default", "horizontal")} tint={ui().muted} />
+                <Spinner side={attachmentGlyph("default", "horizontal")} tint={ui().muted} />
               </AttachmentMedia>
               <AttachmentContent>
                 <AttachmentTitle>registry.zip</AttachmentTitle>

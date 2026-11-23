@@ -30,7 +30,7 @@ function Slot(props: { status?: TraceStatus; children: unknown }) {
   return (
     <View style={[traceLook().icon]}>
       {props.status === "running" ? (
-        <Spinner size={14} tint={colors.mutedForeground} />
+        <Spinner side={14} tint={colors.mutedForeground} />
       ) : (
         (props.children as never)
       )}

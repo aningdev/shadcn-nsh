@@ -129,7 +129,7 @@ export function RefreshIndicator(props: RefreshIndicatorProps) {
         </View>
         <If when={mine.refreshing}>
           <View style={look.ring()}>
-            <Spinner size={look.glyph()} tint={look.tint()} />
+            <Spinner side={look.glyph()} tint={look.tint()} />
           </View>
         </If>
       </View>

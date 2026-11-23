@@ -201,7 +201,7 @@ cleanup(() => {
       autoCapitalize="none"
     />
     <InputGroupAddon align="inline-end">
-      {pending() ? <Spinner size={14} tint={colors.faint} /> : null}
+      {pending() ? <Spinner side={14} tint={colors.faint} /> : null}
       {query().length > 0 ? (
         <InputGroupButton
           size="icon-xs"

@@ -473,7 +473,7 @@ function Directory() {
         onSelect={({ id }) => last.set(`Messaged ${PEOPLE[Number(id.slice(1))]}`)}
         listClass="max-h-64"
         searchPrefix={<Icon icon={Search} size={16} tint={colors.mutedForeground} />}
-        searchSuffix={loading() ? <Spinner size={14} tint={colors.mutedForeground} /> : undefined}
+        searchSuffix={loading() ? <Spinner side={14} tint={colors.mutedForeground} /> : undefined}
         empty={
           <CommandEmpty
             label={

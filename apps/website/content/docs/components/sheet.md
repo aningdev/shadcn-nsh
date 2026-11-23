@@ -14,15 +14,29 @@ npx shadcn-nsh@latest add sheet
 ## Usage
 
 ```tsx
-import { Sheet, SheetClose, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from "@/components/ui/sheet";
 ```
 
 ```tsx
 <Sheet>
   <SheetTrigger>Open</SheetTrigger>
   <SheetContent side="bottom">
-    Filters
-    <SheetClose>Done</SheetClose>
+    <SheetHeader>
+      <SheetTitle>Filters</SheetTitle>
+      <SheetDescription>Sort, price and availability.</SheetDescription>
+    </SheetHeader>
+    <SheetFooter>
+      <SheetClose>Done</SheetClose>
+    </SheetFooter>
   </SheetContent>
 </Sheet>
 ```
@@ -35,7 +49,11 @@ Use the following composition to build a `Sheet`:
 Sheet
 ├── SheetTrigger
 └── SheetContent
-    └── SheetClose
+    ├── SheetHeader
+    │   ├── SheetTitle
+    │   └── SheetDescription
+    ├── SheetClose
+    └── SheetFooter
 ```
 
 ## Examples
@@ -79,7 +97,7 @@ const detent = signal<"medium" | "large">("medium");
   onDetentChange={({ detent: next }) => detent.set(next === "large" ? "large" : "medium")}
   closeOnSwipe
   footer={
-    <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+    <SheetFooter>
       <Input
         value={comment()}
         onChange={({ value }) => comment.set(value)}
@@ -91,7 +109,7 @@ const detent = signal<"medium" | "large">("medium");
       <Button variant="default" onPress={send}>
         Send
       </Button>
-    </View>
+    </SheetFooter>
   }
   footerStyle={{ borderTopWidth: 1, borderColor: colors.line, paddingTop: 10 }}
 >
@@ -129,7 +147,7 @@ const apply = () => {
     side={wide() ? "right" : "bottom"}
     closeOnSwipe
     footer={
-      <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+      <SheetFooter>
         <Button variant="ghost" disabled={isNone(draft())} onPress={() => draft.set(NONE)}>
           Reset
         </Button>
@@ -137,7 +155,7 @@ const apply = () => {
         <Button variant="default" onPress={apply}>
           {`Show ${results(draft())} results`}
         </Button>
-      </View>
+      </SheetFooter>
     }
   >
     {/* sort, price and the toggles, each writing the draft */}
@@ -153,6 +171,10 @@ clears the draft only; the footer's other button is still what applies it.
 
 Every prop of [`nsh/base` Sheet](https://nsh.dev/elements/sheet) passes through on `SheetContent`. `popupStyle` and `backdropStyle` go over the look's.
 
-| Part           | Props                                                                                                                                                                                                                  | Description                                                                                                                                                      |
-| -------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `SheetContent` | `side` (`"bottom" \| "top" \| "left" \| "right"`, default `"bottom"`), `grabber` (on for `side="bottom"`), `grabberAccessibilityLabel`, `detents`, `detent`, `onDetentChange`, `closeOnSwipe`, `footer`, `footerStyle` | Every prop of `nsh/base` Sheet passes through; `popupStyle` and `backdropStyle` go over the look's. `footer` stays at the visible panel's bottom at every detent |
+| Part               | Props                                                                                                                                                                                                                  | Description                                                                                                                                                      |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `SheetHeader`      | `style`                                                                                                                                                                                                                | The heading block: a title and its description, 2 points apart                                                                                                   |
+| `SheetFooter`      | `style`                                                                                                                                                                                                                | The actions, in a row 8 points apart                                                                                                                             |
+| `SheetTitle`       | `children`, `style`                                                                                                                                                                                                    | The title in `DialogTitle`'s type; a string also names the sheet's dialog for screen readers, unless `SheetContent`'s `accessibilityLabel` says otherwise        |
+| `SheetDescription` | `children`, `style`                                                                                                                                                                                                    | The description in `DialogDescription`'s type. `nsh/base`'s sheet has no description prop, so it is read as content                                              |
+| `SheetContent`     | `side` (`"bottom" \| "top" \| "left" \| "right"`, default `"bottom"`), `grabber` (on for `side="bottom"`), `grabberAccessibilityLabel`, `detents`, `detent`, `onDetentChange`, `closeOnSwipe`, `footer`, `footerStyle` | Every prop of `nsh/base` Sheet passes through; `popupStyle` and `backdropStyle` go over the look's. `footer` stays at the visible panel's bottom at every detent |

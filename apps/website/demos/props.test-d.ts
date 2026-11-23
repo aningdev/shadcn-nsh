@@ -178,7 +178,6 @@ import type {
   SplitViewColumnProps,
   SplitButtonSegmentProps,
   SwitchProps,
-  TabProps,
   TableBodyProps,
   TableCaptionProps,
   TableCellProps,
@@ -480,8 +479,6 @@ type _tableCaption = Assert<KeepsBase<BaseTableCaptionProps, TableCaptionProps, 
 type _tabsList = Assert<KeepsBase<BaseTabsProps, TabsListProps, never>>;
 /** `TabsTriggerProps` — the list's value selects the tab. */
 type _tabsTrigger = Assert<KeepsBase<BaseTabProps, TabsTriggerProps, "selected">>;
-/** `TabProps`. */
-type _tab = Assert<KeepsBase<BaseTabProps, TabProps, never>>;
 /** `TextViewProps`. */
 type _textView = Assert<KeepsBase<BaseTextViewProps, TextViewProps, never>>;
 /** `TimeFieldProps`. */
@@ -733,7 +730,6 @@ export type {
   _tableCaption,
   _tabsList,
   _tabsTrigger,
-  _tab,
   _textView,
   _timeField,
   _toast,

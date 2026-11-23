@@ -2,8 +2,8 @@
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
 import { alpha, colors, cornerCurve, shape, stroke } from "@shadcn-nsh/theme";
-import type { JSX, StyleProp, ViewStyle } from "nsh";
-import { context, keyboardFrame, safeArea, split, windowSize } from "nsh";
+import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
+import { cleanup, context, keyboardFrame, safeArea, signal, split, View, windowSize } from "nsh";
 import {
   Sheet as BaseSheet,
   type OpenChangeReason,
@@ -11,6 +11,8 @@ import {
 } from "nsh/base";
 
 import { Action, type ButtonVariant } from "./button";
+import { dialogText, dialogTitle } from "./dialog";
+import { AsText } from "./lib/as-text";
 import { createOpenState, type OpenState } from "./lib/open-state";
 import { backdrop } from "./lib/popup";
 
@@ -107,17 +109,17 @@ export function sheetGrabber(): ViewStyle {
   };
 }
 
-/** The root: it owns whether the sheet is open, and nothing of how it looks. */
-export type SheetProps = {
-  /** Controlled; leave it out and the root keeps the state (`defaultOpen`). */
-  open?: boolean | null;
-  defaultOpen?: boolean;
-  children?: JSX.Element;
-  onOpenChange?: (event: { open: boolean; reason: SheetOpenChangeReason }) => void;
-  onOpen?: () => void;
-  onClose?: () => void;
-  onCancel?: () => void;
-};
+/** The root: it owns whether the sheet is open, and nothing of how it looks. */ export type SheetProps =
+  {
+    /** Controlled; leave it out and the root keeps the state (`defaultOpen`). */
+    open?: boolean | null;
+    defaultOpen?: boolean;
+    children?: JSX.Element;
+    onOpenChange?: (event: { open: boolean; reason: SheetOpenChangeReason }) => void;
+    onOpen?: () => void;
+    onClose?: () => void;
+    onCancel?: () => void;
+  };
 
 /**
  * The panel. Every prop of `nsh/base`'s Sheet passes through but the ones the root owns;
@@ -145,7 +147,12 @@ export type SheetCloseProps = SheetTriggerProps & {
   onPress?: () => void;
 };
 
-type SheetContextValue = OpenState & Pick<SheetProps, "onOpen" | "onClose" | "onCancel">;
+type SheetContextValue = OpenState &
+  Pick<SheetProps, "onOpen" | "onClose" | "onCancel"> & {
+    /** The title a `SheetTitle` registered, for the dialog's accessible name. */
+    title: () => string | null;
+    setTitle: (title: string | null) => void;
+  };
 
 const SheetContext = context<SheetContextValue | null>(null);
 
@@ -158,10 +165,15 @@ function useSheet() {
 /** The root of a sheet's parts. */
 export function Sheet(props: SheetProps) {
   const state = createOpenState<OpenChangeReason>(props);
+  // A title's text, so the sheet's dialog can be named by it: `SheetTitle` writes it while the
+  // panel's children are made, and `SheetContent` reads it for `accessibilityLabel`.
+  const title = signal<string | null>(null);
   return (
     <SheetContext.Provider
       value={{
         ...state,
+        title,
+        setTitle: (next) => title.set(next),
         get onOpen() {
           return props.onOpen;
         },
@@ -207,6 +219,7 @@ export function SheetContent(props: SheetContentProps) {
   const ctx = useSheet();
   const [, rest] = split(props, ["side", "children", "popupStyle", "backdropStyle"]);
   const side = () => props.side ?? "bottom";
+  cleanup(() => ctx.setTitle(null));
   return (
     <BaseSheet
       {...rest}
@@ -214,6 +227,7 @@ export function SheetContent(props: SheetContentProps) {
       grabber={props.grabber ?? side() === "bottom"}
       grabberAccessibilityLabel={props.grabberAccessibilityLabel ?? "Sheet"}
       grabberStyle={[sheetGrabber(), props.grabberStyle ?? null]}
+      accessibilityLabel={props.accessibilityLabel ?? ctx.title() ?? undefined}
       open={ctx.open()}
       onOpenChange={({ open, reason }) => ctx.setOpen(open, reason)}
       onOpen={ctx.onOpen}
@@ -225,6 +239,44 @@ export function SheetContent(props: SheetContentProps) {
       {props.children}
     </BaseSheet>
   );
+}
+
+/** The heading block of a sheet: a title and its description, 2 points apart. */
+export function SheetHeader(props: { children?: JSX.Element; style?: StyleProp<ViewStyle> }) {
+  return <View style={[{ gap: 2 }, props.style ?? null]}>{props.children}</View>;
+}
+
+/** The actions of a sheet, in a row 8 points apart. */
+export function SheetFooter(props: { children?: JSX.Element; style?: StyleProp<ViewStyle> }) {
+  return (
+    <View style={[{ flexDirection: "row", alignItems: "center", gap: 8 }, props.style ?? null]}>
+      {props.children}
+    </View>
+  );
+}
+
+/**
+ * A sheet's title, in `DialogTitle`'s type: 17 points with a pointer, 20 on a touch screen. A
+ * string title also names the sheet's dialog for screen readers, unless `SheetContent` has an
+ * `accessibilityLabel` of its own.
+ */
+export function SheetTitle(props: {
+  children?: string | JSX.Element;
+  style?: StyleProp<TextStyle>;
+}) {
+  const ctx = useSheet();
+  const kids = props.children;
+  const text = typeof kids === "string" ? kids : null;
+  if (ctx.title() !== text) ctx.setTitle(text);
+  return <AsText style={[dialogTitle(), props.style ?? null]}>{kids}</AsText>;
+}
+
+/** A sheet's description, in `DialogDescription`'s type: the body size in the muted ink. */
+export function SheetDescription(props: {
+  children?: string | JSX.Element;
+  style?: StyleProp<TextStyle>;
+}) {
+  return <AsText style={[dialogText(), props.style ?? null]}>{props.children}</AsText>;
 }
 
 /** Why a sheet closed (`onOpenChange`'s `reason`): `nsh/base`'s `OpenChangeReason`, under this part's name. */

@@ -1,5 +1,5 @@
 // A toolbar: the hairline (`toolbarRule`), the inset track (`Toolbar`), groups (`ToolbarGroup`),
-// foldable tools (`ToolbarItem`), and the overflow menu (`ToolbarOverflow`).
+// foldable tools (`ToolbarButton`), and the overflow menu (`ToolbarOverflow`).
 // The track (`toolbarTrack`) is shared with `ToggleGroup` and lives in `lib/tool.ts`.
 // Derived from NSH examples/nsh-gallery-ui (Apache-2.0, © Longbridge); modified. See NOTICE.
 
@@ -27,7 +27,7 @@ import {
   MenuTrigger,
   type MenuOpenChangeReason,
 } from "./menu";
-import { toggleGlyph, toggleLabel, toggleLook, toggleSizes } from "./toggle";
+import { Toggle, toggleGlyph, toggleLabel, toggleSizes } from "./toggle";
 
 /** A hairline between runs of a toolbar's tools (a `ToolbarSeparator`'s or a view's `style`): 18 points tall in a row, across a column. */
 export function toolbarRule(vertical = false): ViewStyle {
@@ -42,7 +42,7 @@ export function toolbarRule(vertical = false): ViewStyle {
     : { width: stroke.hairline, height: 18, marginHorizontal: 4, backgroundColor: colors.line };
 }
 
-/** How a `ToolbarGroup` folds when space runs out: `"unit"` folds the whole group at once; `"none"` lets its `ToolbarItem`s fold individually. */
+/** How a `ToolbarGroup` folds when space runs out: `"unit"` folds the whole group at once; `"none"` lets its `ToolbarButton`s fold individually. */
 export type ToolbarGroupFold = "unit" | "none";
 
 /**
@@ -55,7 +55,7 @@ export type ToolbarProps = BaseToolbarProps;
 export type ToolbarGroupProps = BaseToolbarGroupProps & {
   /** Higher values stay visible on the bar longer (default 0). */
   priority?: number;
-  /** `"unit"` (default): the whole group folds at once; `"none"`: its `ToolbarItem`s fold individually by their own priority. */
+  /** `"unit"` (default): the whole group folds at once; `"none"`: its `ToolbarButton`s fold individually by their own priority. */
   fold?: ToolbarGroupFold;
 };
 
@@ -63,7 +63,7 @@ export type ToolbarGroupProps = BaseToolbarGroupProps & {
 export type ToolbarSeparatorProps = BaseToolbarSeparatorProps;
 
 /** A tool wrapped so a bar with `ToolbarOverflow` can measure and fold it. */
-export type ToolbarItemProps = {
+export type ToolbarButtonProps = {
   /** How this tool appears in `ToolbarOverflow` when folded (a `MenuItem`, `MenuCheckboxItem`, `MenuRadioItem`, …). */
   menu?: JSX.Element;
   /** Higher values stay visible on the bar longer; defaults to the enclosing `ToolbarGroup`'s priority (0 outside a group). */
@@ -448,7 +448,7 @@ function createToolbarState(
  * The bar: one toolbar for screen readers, arrow keys along `axis`.
  *
  * When a `ToolbarOverflow` is present inside a horizontal non-terminal bar, items wrapped in
- * `ToolbarItem` measure themselves with `onLayout`, lower-priority tools (or whole `fold="unit"`
+ * `ToolbarButton` measure themselves with `onLayout`, lower-priority tools (or whole `fold="unit"`
  * `ToolbarGroup`s) fold into the overflow menu as space narrows, and the bar draws the rules
  * between visible units while hiding until its initial measurements arrive.
  *
@@ -506,7 +506,7 @@ export function ToolbarGroup(props: ToolbarGroupProps) {
     priority: () => props.priority ?? 0,
   };
 
-  // When a bar uses `ToolbarOverflow` and every `ToolbarItem` in this group folded, hide the
+  // When a bar uses `ToolbarOverflow` and every `ToolbarButton` in this group folded, hide the
   // group container with `display: "none"` (rather than unmounting) so items stay registered.
   const groupHidden = () =>
     bar.hasOverflow() &&
@@ -561,7 +561,7 @@ export function ToolbarSeparator(props: ToolbarSeparatorProps) {
 }
 
 /** One tool wrapped so a bar with `ToolbarOverflow` can measure and fold it. */
-export function ToolbarItem(props: ToolbarItemProps) {
+export function ToolbarButton(props: ToolbarButtonProps) {
   const bar = useToolbar();
   const group = GroupContext();
   const ownUnitId = group
@@ -621,30 +621,23 @@ export function ToolbarOverflow(props: ToolbarOverflowProps) {
   const foldedSections = () => bar.foldedSections();
   const showTrigger = () => hasExtra || foldedSections().length > 0;
   const isDisabled = () => Boolean(props.disabled || bar.disabled());
-  const look = toggleLook({
-    on: state.open,
-    disabled: isDisabled,
-  });
 
   return (
     <If when={showTrigger()}>
       <Menu open={state.open()} onOpenChange={({ open, reason }) => state.setOpen(open, reason)}>
         <MenuTrigger>
-          <View
+          {/* `default` is the width the folding budget reserves (`toggleSizes.default.side`): the
+           * trigger is a toggle now, and the bar must still fold where it did. */}
+          <Toggle
             ref={(node) => bar.setOverflowTrigger(node)}
-            role="button"
+            size="default"
+            pressed={state.open()}
             testID={props.testID}
             accessibilityLabel={props.accessibilityLabel ?? "More"}
-            accessibilityState={{ expanded: state.open(), disabled: isDisabled() }}
             disabled={isDisabled()}
             tooltip={props.tooltip}
             onLayout={({ bounds }) => bar.setOverflowWidth(bounds.size.width)}
-            style={[look.style, props.style ?? null]}
-            hoverStyle={look.hoverStyle}
-            activeStyle={look.activeStyle}
-            focusVisibleStyle={look.focusVisibleStyle}
-            disabledStyle={look.disabledStyle}
-            hitSlop={look.hitSlop}
+            style={props.style ?? null}
           >
             {terminal ? (
               <Text style={toggleLabel(state.open)}>⋯</Text>
@@ -655,7 +648,7 @@ export function ToolbarOverflow(props: ToolbarOverflowProps) {
                 tint={toggleGlyph(state.open).tint}
               />
             )}
-          </View>
+          </Toggle>
         </MenuTrigger>
         <MenuContent
           align={props.align ?? "end"}

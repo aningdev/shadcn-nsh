@@ -7,6 +7,7 @@ import { mount, Scroll, signal, Text, View } from "nsh";
 import { Sheet } from "nsh/base";
 
 import { Button } from "@/packages/ui/button";
+import { dialogText, dialogTitle } from "@/packages/ui/dialog";
 import { Input } from "@/packages/ui/input";
 import { backdrop } from "@/packages/ui/lib/popup";
 import { sectionSurface } from "@/packages/ui/lib/surface";
@@ -268,21 +269,15 @@ function App() {
         <If when={side() === "bottom"}>
           <View style={sheetGrabber()} />
         </If>
-        <Text style={{ fontSize: desktop ? 16 : 18, fontWeight: "600", color: colors.foreground }}>
-          Filters
-        </Text>
-        <Text
-          style={{
-            fontSize: desktop ? 13 : 15,
-            lineHeight: desktop ? 19 : 21,
-            color: colors.mutedForeground,
-          }}
-        >
-          {`A panel at the ${side()} edge. `}
-          {desktop
-            ? "The backdrop and Escape close it."
-            : "The backdrop and Android's back close it."}
-        </Text>
+        <View style={{ gap: 2 }}>
+          <Text style={dialogTitle()}>Filters</Text>
+          <Text style={dialogText()}>
+            {`A panel at the ${side()} edge. `}
+            {desktop
+              ? "The backdrop and Escape close it."
+              : "The backdrop and Android's back close it."}
+          </Text>
+        </View>
         <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
           <Button
             variant="default"
@@ -337,16 +332,7 @@ function App() {
         footerStyle={{ borderTopWidth: 1, borderColor: colors.line, paddingTop: 10 }}
       >
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-          <Text
-            style={{
-              flex: 1,
-              fontSize: desktop ? 16 : 18,
-              fontWeight: "600",
-              color: colors.foreground,
-            }}
-          >
-            Comments
-          </Text>
+          <Text style={{ ...dialogTitle(), flex: 1 }}>Comments</Text>
           <Button
             variant="ghost"
             onPress={() => {
@@ -390,12 +376,12 @@ function App() {
         }}
         onCancel={() => filterLog("onCancel")}
       >
-        <Text style={{ fontSize: desktop ? 16 : 18, fontWeight: "600", color: colors.foreground }}>
-          Filters
-        </Text>
-        <Text style={{ fontSize: 13, lineHeight: 19, color: colors.mutedForeground }}>
-          The footer applies the draft. Closing without applying keeps the old filters.
-        </Text>
+        <View style={{ gap: 2 }}>
+          <Text style={dialogTitle()}>Filters</Text>
+          <Text style={dialogText()}>
+            The footer applies the draft. Closing without applying keeps the old filters.
+          </Text>
+        </View>
         <Segmented
           label="Sort by"
           options={SORTS}

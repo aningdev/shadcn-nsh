@@ -55,7 +55,6 @@ Tabs
 | `TabsList`    | `variant`, and every `nsh/base` Tabs prop                   | The tablist: `default` the pill track of `tabsLook`, `line` the underlined strip       |
 | `TabsTrigger` | `value`, and every `nsh/base` Tab prop                      | One tab; a string child is its label, drawn with `TabTitle`                            |
 | `TabsContent` | `value`                                                     | The panel for one value, hidden (not unmounted) while another is selected              |
-| `Tab`         | every `nsh/base` Tab prop                                   | A tab with the same chrome, for an app that owns `selected` itself                     |
 | `TabTitle`    | `name`, `selected`, `count`, `icon`, `underline`, `onWidth` | The label to pair with a tab: the icon's two tints crossing over, a count in a capsule |
 
 Every prop of [`nsh/base` Tabs / `Tab`](https://nsh.dev/elements/tabs) passes through on the list and triggers.

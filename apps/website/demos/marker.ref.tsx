@@ -95,13 +95,13 @@ function App() {
           <DemoSection title="Status" axis="block">
             <Mark announce>
               <MarkIcon>
-                <Spinner size={12} tint={ui().muted} />
+                <Spinner size="sm" tint={ui().muted} />
               </MarkIcon>
               <MarkText>Thinking…</MarkText>
             </Mark>
             <Mark variant="separator" announce>
               <MarkIcon>
-                <Spinner size={12} tint={ui().muted} />
+                <Spinner size="sm" tint={ui().muted} />
               </MarkIcon>
               <MarkText variant="separator">Running tests</MarkText>
             </Mark>

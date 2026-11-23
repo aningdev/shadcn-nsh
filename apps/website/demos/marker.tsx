@@ -43,13 +43,13 @@ function App() {
           <DemoSection title="Status" axis="block">
             <Marker role="alert">
               <MarkerIcon>
-                <Spinner size={12} tint={ui().muted} />
+                <Spinner size="sm" tint={ui().muted} />
               </MarkerIcon>
               <MarkerContent>Thinking…</MarkerContent>
             </Marker>
             <Marker variant="separator" role="alert">
               <MarkerIcon>
-                <Spinner size={12} tint={ui().muted} />
+                <Spinner size="sm" tint={ui().muted} />
               </MarkerIcon>
               <MarkerContent>Running tests</MarkerContent>
             </Marker>

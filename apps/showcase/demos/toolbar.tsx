@@ -86,7 +86,7 @@ import {
 import {
   Toolbar,
   ToolbarGroup,
-  ToolbarItem,
+  ToolbarButton,
   ToolbarOverflow,
   ToolbarSeparator,
   toolbarRule,
@@ -519,7 +519,7 @@ function Formatting() {
     >
       <Toolbar accessibilityLabel="Formatting" style={track()}>
         <ToolbarGroup accessibilityLabel="History" fold="none" style={{ gap: GAP }}>
-          <ToolbarItem
+          <ToolbarButton
             priority={4}
             menu={<Item label="Undo" icon={Undo2} disabled={past().length === 0} onSelect={undo} />}
           >
@@ -530,8 +530,8 @@ function Formatting() {
               disabled={past().length === 0}
               onPress={undo}
             />
-          </ToolbarItem>
-          <ToolbarItem
+          </ToolbarButton>
+          <ToolbarButton
             priority={3}
             menu={
               <Item label="Redo" icon={Redo2} disabled={future().length === 0} onSelect={redo} />
@@ -544,9 +544,9 @@ function Formatting() {
               disabled={future().length === 0}
               onPress={redo}
             />
-          </ToolbarItem>
+          </ToolbarButton>
         </ToolbarGroup>
-        <ToolbarItem foldable={false}>
+        <ToolbarButton foldable={false}>
           <Menu onOpenChange={({ open }) => blockOpen.set(open)}>
             <MenuTrigger>
               <Trigger
@@ -586,11 +586,11 @@ function Formatting() {
               </Each>
             </MenuContent>
           </Menu>
-        </ToolbarItem>
+        </ToolbarButton>
         <ToolbarGroup accessibilityLabel="Marks" fold="none" style={{ gap: GAP }}>
           <Each of={MARKS}>
             {(m) => (
-              <ToolbarItem
+              <ToolbarButton
                 foldable={m().value !== "bold"}
                 priority={m().value === "italic" ? 5 : m().value === "underline" ? 1 : 0}
                 menu={
@@ -611,14 +611,14 @@ function Formatting() {
                   pressed={has(m().value)}
                   onChange={(on) => toggleMark(m(), on)}
                 />
-              </ToolbarItem>
+              </ToolbarButton>
             )}
           </Each>
         </ToolbarGroup>
         <ToolbarGroup accessibilityLabel="Alignment" priority={2} fold="unit" style={{ gap: GAP }}>
           <Each of={ALIGNS}>
             {(a) => (
-              <ToolbarItem
+              <ToolbarButton
                 menu={
                   <Item
                     label={a().label}
@@ -658,11 +658,11 @@ function Formatting() {
                     </Text>
                   </If>
                 </Toggle>
-              </ToolbarItem>
+              </ToolbarButton>
             )}
           </Each>
         </ToolbarGroup>
-        <ToolbarItem foldable={false}>
+        <ToolbarButton foldable={false}>
           <Popover
             open={linkOpen()}
             onOpenChange={({ open }) => {
@@ -716,7 +716,7 @@ function Formatting() {
               </View>
             </PopoverContent>
           </Popover>
-        </ToolbarItem>
+        </ToolbarButton>
         <ToolbarOverflow
           accessibilityLabel="More formatting"
           tooltip={<Tip label="More" />}

@@ -93,7 +93,7 @@ description). Put a `Spinner` in the media while it travels.
 ```tsx
 <Attachment state="uploading">
   <AttachmentMedia>
-    <Spinner size={16} tint={colors.mutedForeground} />
+    <Spinner size="default" tint={colors.mutedForeground} />
   </AttachmentMedia>
   <AttachmentContent>
     <AttachmentTitle>registry.zip</AttachmentTitle>

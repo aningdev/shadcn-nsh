@@ -408,7 +408,7 @@ function closeLabel(value: boolean | string | undefined): string | undefined {
 
 /** The mark of a type: a spinner while loading, a lucide glyph otherwise. */
 function KindMark(props: { type: ToastType }) {
-  if (props.type === "loading") return <Spinner size={18} tint={finish.inverse.foreground} />;
+  if (props.type === "loading") return <Spinner side={18} tint={finish.inverse.foreground} />;
   const spec = kinds[props.type];
   return <Icon icon={spec.icon} size={18} tint={spec.tint()} />;
 }

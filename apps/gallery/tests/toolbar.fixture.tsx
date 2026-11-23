@@ -8,7 +8,7 @@ import {
   ToggleGroup,
   Toolbar,
   ToolbarGroup,
-  ToolbarItem,
+  ToolbarButton,
   ToolbarSeparator,
   toolbarTrack,
 } from "../../../packages/ui";
@@ -90,14 +90,14 @@ function App() {
         </Toggle>
         <Toggle>I</Toggle>
       </ToggleGroup>
-      {/* A `ToolbarItem`'s own `class` and `style` land on the box it stands in. */}
+      {/* A `ToolbarButton`'s own `class` and `style` land on the box it stands in. */}
       <Toolbar accessibilityLabel="Sizing">
-        <ToolbarItem class="opacity-50">
+        <ToolbarButton class="opacity-50">
           <Button accessibilityLabel="Classed">Classed</Button>
-        </ToolbarItem>
-        <ToolbarItem style={{ opacity: 0.25 }}>
+        </ToolbarButton>
+        <ToolbarButton style={{ opacity: 0.25 }}>
           <Button accessibilityLabel="Styled">Styled</Button>
-        </ToolbarItem>
+        </ToolbarButton>
       </Toolbar>
     </View>
   );

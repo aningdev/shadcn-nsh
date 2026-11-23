@@ -18,17 +18,22 @@ import { Spinner } from "@/components/ui/spinner";
 ```
 
 ```tsx
-<Spinner size={16} tint={colors.brand} />
+<Spinner size="default" tint={colors.brand} />
 ```
 
 ## Examples
 
 ### Size
 
+`size` is the theme's icon tier, so the ring follows the pointer: 12, 16 and 20 points with a
+pointer, 16, 20 and 24 on a touch screen. `side` takes an exact size in points where the scale's
+does not fit.
+
 ```tsx
-<Spinner size={12} tint={colors.mutedForeground} />
-<Spinner size={16} tint={colors.brand} />
-<Spinner size={24} tint={colors.brand} />
+<Spinner size="sm" tint={colors.mutedForeground} />
+<Spinner size="default" tint={colors.brand} />
+<Spinner size="lg" tint={colors.brand} />
+<Spinner side={14} tint={colors.mutedForeground} />
 ```
 
 ### In a button
@@ -43,10 +48,10 @@ import { Spinner } from "@/components/ui/spinner";
 
 ## API
 
-A ring with its top arc in `tint`, turning once every 800 ms; its stroke is an eighth of `size`, at least 1.5 points.
+A ring with its top arc in `tint`, turning once every 800 ms; its stroke is an eighth of its side, at least 1.5 points.
 A groove behind the arc is the theme's track form to say: under the sunk form the rest of the ring follows
 `tint` at a quarter, under the tint and hairline forms there is none.
 
-| Part      | Props          | Description                                                                                                            |
-| --------- | -------------- | ---------------------------------------------------------------------------------------------------------------------- |
-| `Spinner` | `size`, `tint` | The ring: `size` its side in points, `tint` its arc (under a sunk track form, the rest of it that color at a quarter). |
+| Part      | Props                  | Description                                                                                                                                                            |
+| --------- | ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Spinner` | `size`, `side`, `tint` | The ring: `size` the icon tier (`sm`, `default`, `lg`) or `side` its side in points; `tint` its arc (under a sunk track form, the rest of it that color at a quarter). |

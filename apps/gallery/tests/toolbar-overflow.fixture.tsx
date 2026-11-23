@@ -8,7 +8,7 @@ import {
   Toggle,
   Toolbar,
   ToolbarGroup,
-  ToolbarItem,
+  ToolbarButton,
   ToolbarOverflow,
 } from "../../../packages/ui";
 
@@ -40,7 +40,7 @@ function App() {
       <View style={{ width: barWidth() }}>
         <Toolbar accessibilityLabel="Overflowing" style={{ alignSelf: "stretch" }}>
           <ToolbarGroup accessibilityLabel="History" fold="none">
-            <ToolbarItem
+            <ToolbarButton
               priority={4}
               menu={<MenuItem onSelect={() => undoCount.set(undoCount() + 1)}>Undo</MenuItem>}
             >
@@ -51,8 +51,8 @@ function App() {
               >
                 Undo
               </Button>
-            </ToolbarItem>
-            <ToolbarItem
+            </ToolbarButton>
+            <ToolbarButton
               priority={3}
               menu={<MenuItem onSelect={() => redoCount.set(redoCount() + 1)}>Redo</MenuItem>}
             >
@@ -63,10 +63,10 @@ function App() {
               >
                 Redo
               </Button>
-            </ToolbarItem>
+            </ToolbarButton>
           </ToolbarGroup>
           <ToolbarGroup accessibilityLabel="Marks" fold="none">
-            <ToolbarItem foldable={false}>
+            <ToolbarButton foldable={false}>
               <Toggle
                 accessibilityLabel="Bold"
                 pressed={bold()}
@@ -74,8 +74,8 @@ function App() {
               >
                 B
               </Toggle>
-            </ToolbarItem>
-            <ToolbarItem
+            </ToolbarButton>
+            <ToolbarButton
               priority={1}
               menu={
                 <MenuCheckboxItem
@@ -93,12 +93,12 @@ function App() {
               >
                 U
               </Toggle>
-            </ToolbarItem>
+            </ToolbarButton>
           </ToolbarGroup>
           <ToolbarGroup accessibilityLabel="Alignment" priority={2} fold="unit">
             <Each of={["left", "center", "right"] as const}>
               {(a) => (
-                <ToolbarItem
+                <ToolbarButton
                   menu={
                     <MenuRadioItem checked={align() === a()} onSelect={() => align.set(a())}>
                       {`Align ${a()}`}
@@ -112,7 +112,7 @@ function App() {
                   >
                     {a()[0]!.toUpperCase()}
                   </Toggle>
-                </ToolbarItem>
+                </ToolbarButton>
               )}
             </Each>
           </ToolbarGroup>
@@ -125,26 +125,29 @@ function App() {
       {/* Unmeasured item (never laid out): must not block folding of measured items (risk 5). */}
       <View style={{ width: 170 }}>
         <Toolbar accessibilityLabel="Unmeasured guard" style={{ alignSelf: "stretch" }}>
-          <ToolbarItem priority={10} menu={<MenuItem onSelect={() => {}}>Never laid out</MenuItem>}>
+          <ToolbarButton
+            priority={10}
+            menu={<MenuItem onSelect={() => {}}>Never laid out</MenuItem>}
+          >
             <View style={{ display: "none" }} />
-          </ToolbarItem>
-          <ToolbarItem priority={5} menu={<MenuItem onSelect={() => {}}>Keep me</MenuItem>}>
+          </ToolbarButton>
+          <ToolbarButton priority={5} menu={<MenuItem onSelect={() => {}}>Keep me</MenuItem>}>
             <Button accessibilityLabel="Keep tool" variant="ghost" onPress={() => {}}>
               Keep tool
             </Button>
-          </ToolbarItem>
-          <ToolbarItem priority={0} menu={<MenuItem onSelect={() => {}}>Fold me first</MenuItem>}>
+          </ToolbarButton>
+          <ToolbarButton priority={0} menu={<MenuItem onSelect={() => {}}>Fold me first</MenuItem>}>
             <Button accessibilityLabel="Fold tool" variant="ghost" onPress={() => {}}>
               Fold tool
             </Button>
-          </ToolbarItem>
+          </ToolbarButton>
           <ToolbarOverflow accessibilityLabel="Guard more" />
         </Toolbar>
       </View>
 
       <View style={{ width: soloWidth() }}>
         <Toolbar accessibilityLabel="Solo overflow" style={{ alignSelf: "stretch" }}>
-          <ToolbarItem
+          <ToolbarButton
             priority={0}
             menu={
               <MenuCheckboxItem
@@ -162,7 +165,7 @@ function App() {
             >
               Solo
             </Toggle>
-          </ToolbarItem>
+          </ToolbarButton>
           <ToolbarOverflow accessibilityLabel="Solo more" />
         </Toolbar>
       </View>

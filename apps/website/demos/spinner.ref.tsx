@@ -7,12 +7,12 @@ import { cleanup, mount, signal, Text, View } from "nsh";
 
 import { Button } from "@/packages/ui/button";
 import { insetSurface, sectionSurface } from "@/packages/ui/lib/surface";
-import { Spinner } from "@/packages/ui/spinner";
+import { Spinner, type SpinnerSize } from "@/packages/ui/spinner";
 
 import { DemoCard, DemoPage, DemoSection } from "./kit";
 import { Log, Panel, Segmented, Split } from "./stage";
 
-const SIZES = [12, 16, 24] as const;
+const SIZES = ["sm", "default", "lg"] as const;
 
 /** A surface the ring sits on, its size fixed so the three read as one row. */
 function Surface(props: { style?: ViewStyle; children: JSX.Element }) {
@@ -33,7 +33,7 @@ function Surface(props: { style?: ViewStyle; children: JSX.Element }) {
 }
 
 function App() {
-  const size = signal<number>(24);
+  const size = signal<SpinnerSize>("lg");
   const busy = signal(false);
   const events = signal<string[]>([]);
   const log = (line: string) => events.set([line, ...events()].slice(0, 5));
@@ -92,22 +92,22 @@ function App() {
           <View style={{ height: 1, backgroundColor: colors.line }} />
           <DemoSection title="Size">
             <View style={{ flexDirection: "row", alignItems: "center", gap: 20 }}>
-              <Spinner size={12} tint={colors.mutedForeground} />
-              <Spinner size={16} tint={colors.brand} />
-              <Spinner size={24} tint={colors.brand} />
+              <Spinner size="sm" tint={colors.mutedForeground} />
+              <Spinner size="default" tint={colors.brand} />
+              <Spinner size="lg" tint={colors.brand} />
             </View>
           </DemoSection>
           <DemoSection title="Surface">
             {/* Three fixed 88-point surfaces: they wrap in a card narrower than the row. */}
             <View style={{ flexDirection: "row", flexWrap: "wrap", maxWidth: "100%", gap: 12 }}>
               <Surface style={{ backgroundColor: colors.raised }}>
-                <Spinner size={16} tint={colors.foreground} />
+                <Spinner size="default" tint={colors.foreground} />
               </Surface>
               <Surface style={insetSurface()}>
-                <Spinner size={16} tint={colors.brand} />
+                <Spinner size="default" tint={colors.brand} />
               </Surface>
               <Surface style={{ backgroundColor: colors.primary }}>
-                <Spinner size={16} tint={colors.primaryForeground} />
+                <Spinner size="default" tint={colors.primaryForeground} />
               </Surface>
             </View>
           </DemoSection>

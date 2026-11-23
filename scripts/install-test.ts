@@ -304,7 +304,7 @@ const SAMPLES: { item: string; import: string; jsx: string }[] = [
   {
     item: "spinner",
     import: 'import { Spinner } from "@/components/ui/spinner";',
-    jsx: '<Spinner size={16} tint="#000000" />',
+    jsx: '<Spinner size="default" tint="#000000" />',
   },
   {
     item: "switch",

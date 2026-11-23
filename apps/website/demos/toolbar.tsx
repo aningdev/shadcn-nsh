@@ -23,7 +23,7 @@ import { Toggle, ToggleGroup, toggleGlyph, toggleLabel, toggleLook } from "@/pac
 import {
   Toolbar,
   ToolbarGroup,
-  ToolbarItem,
+  ToolbarButton,
   ToolbarOverflow,
   ToolbarSeparator,
   toolbarRule,
@@ -376,7 +376,7 @@ function App() {
       <DemoCard>
         <DemoSection title="Overflow" axis="block">
           <Text style={{ color: ui().muted }}>
-            When the bar holds a ToolbarOverflow, tools wrapped in ToolbarItem measure themselves
+            When the bar holds a ToolbarOverflow, tools wrapped in ToolbarButton measure themselves
             and lower-priority items (or whole unit groups) fold into a menu as space narrows.
           </Text>
           <Segmented
@@ -392,7 +392,7 @@ function App() {
           >
             <Toolbar accessibilityLabel="Overflow formatting" style={{ alignSelf: "stretch" }}>
               <ToolbarGroup accessibilityLabel="History" fold="none">
-                <ToolbarItem
+                <ToolbarButton
                   priority={4}
                   menu={
                     <MenuItem disabled={past().length === 0} onSelect={undo}>
@@ -408,8 +408,8 @@ function App() {
                   >
                     <Icon icon={Undo2} {...toggleGlyph(() => true)} />
                   </Button>
-                </ToolbarItem>
-                <ToolbarItem
+                </ToolbarButton>
+                <ToolbarButton
                   priority={3}
                   menu={
                     <MenuItem disabled={future().length === 0} onSelect={redo}>
@@ -425,9 +425,9 @@ function App() {
                   >
                     <Icon icon={Redo2} {...toggleGlyph(() => true)} />
                   </Button>
-                </ToolbarItem>
+                </ToolbarButton>
               </ToolbarGroup>
-              <ToolbarItem foldable={false}>
+              <ToolbarButton foldable={false}>
                 <Menu
                   open={overflowBlockOpen()}
                   onOpenChange={({ open }) => overflowBlockOpen.set(open)}
@@ -460,10 +460,10 @@ function App() {
                     ))}
                   </MenuContent>
                 </Menu>
-              </ToolbarItem>
+              </ToolbarButton>
               <ToolbarGroup accessibilityLabel="Marks" fold="none">
                 {marks.map((m) => (
-                  <ToolbarItem
+                  <ToolbarButton
                     foldable={m.id !== "bold"}
                     priority={m.id === "italic" ? 5 : 1}
                     menu={
@@ -500,12 +500,12 @@ function App() {
                     >
                       {glyph(m.glyph, () => marked(m.id))}
                     </Toggle>
-                  </ToolbarItem>
+                  </ToolbarButton>
                 ))}
               </ToolbarGroup>
               <ToolbarGroup accessibilityLabel="Alignment" priority={2} fold="unit">
                 {aligns.map((a) => (
-                  <ToolbarItem
+                  <ToolbarButton
                     menu={
                       <MenuRadioItem
                         checked={doc().align === a.id}
@@ -524,7 +524,7 @@ function App() {
                     >
                       {glyph(a.glyph, () => doc().align === a.id)}
                     </Toggle>
-                  </ToolbarItem>
+                  </ToolbarButton>
                 ))}
               </ToolbarGroup>
               <ToolbarOverflow accessibilityLabel="More formatting" />

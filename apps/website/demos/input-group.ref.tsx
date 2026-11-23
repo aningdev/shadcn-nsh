@@ -285,7 +285,7 @@ function App() {
                 {...inputGroupControlLook()}
               />
               <GroupAddon align="inline-end">
-                {pending() ? <Spinner size={desktop ? 12 : 15} tint={ui().faint} /> : null}
+                {pending() ? <Spinner side={desktop ? 12 : 15} tint={ui().faint} /> : null}
                 {query().length > 0 ? (
                   <GroupButton
                     size="icon-xs"

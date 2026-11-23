@@ -7,7 +7,16 @@ import { mount, Scroll, signal, Text, View } from "nsh";
 import { Button } from "@/packages/ui/button";
 import { Input } from "@/packages/ui/input";
 import { sectionSurface } from "@/packages/ui/lib/surface";
-import { Sheet, SheetClose, SheetContent, type SheetSide } from "@/packages/ui/sheet";
+import {
+  Sheet,
+  SheetClose,
+  SheetContent,
+  SheetDescription,
+  SheetFooter,
+  SheetHeader,
+  type SheetSide,
+  SheetTitle,
+} from "@/packages/ui/sheet";
 import { Switch } from "@/packages/ui/switch";
 
 import { DemoPage } from "./kit";
@@ -264,21 +273,16 @@ function App() {
         onCancel={() => log("onCancel")}
       >
         <SheetContent side={side()} closeOnSwipe>
-          <Text style={{ fontSize: desktop ? 16 : 18, fontWeight: "600", color: ui().text }}>
-            Filters
-          </Text>
-          <Text
-            style={{
-              fontSize: desktop ? 13 : 15,
-              lineHeight: desktop ? 19 : 21,
-              color: ui().muted,
-            }}
-          >
-            {`A panel at the ${side()} edge. `}
-            {desktop
-              ? "The backdrop and Escape close it."
-              : "The backdrop and Android's back close it."}
-          </Text>
+          <SheetHeader>
+            <SheetTitle>Filters</SheetTitle>
+            <SheetDescription>
+              {`A panel at the ${side()} edge. ${
+                desktop
+                  ? "The backdrop and Escape close it."
+                  : "The backdrop and Android's back close it."
+              }`}
+            </SheetDescription>
+          </SheetHeader>
           <View style={{ flexDirection: "row", justifyContent: "flex-end" }}>
             <SheetClose variant="default" onPress={() => log("Done pressed")}>
               Done
@@ -307,7 +311,7 @@ function App() {
           }}
           closeOnSwipe
           footer={
-            <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+            <SheetFooter>
               <Input
                 value={comment()}
                 onChange={({ value }) => comment.set(value)}
@@ -320,16 +324,12 @@ function App() {
               <Button variant="default" disabled={comment().trim().length === 0} onPress={send}>
                 Send
               </Button>
-            </View>
+            </SheetFooter>
           }
           footerStyle={{ borderTopWidth: 1, borderColor: ui().line, paddingTop: 10 }}
         >
           <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
-            <Text
-              style={{ flex: 1, fontSize: desktop ? 16 : 18, fontWeight: "600", color: ui().text }}
-            >
-              Comments
-            </Text>
+            <SheetTitle style={{ flex: 1 }}>Comments</SheetTitle>
             <SheetClose variant="ghost" onPress={() => commentLog("Done pressed")}>
               Done
             </SheetClose>
@@ -365,12 +365,12 @@ function App() {
         onCancel={() => filterLog("onCancel")}
       >
         <SheetContent side={wide() ? "right" : "bottom"} closeOnSwipe>
-          <Text style={{ fontSize: desktop ? 16 : 18, fontWeight: "600", color: ui().text }}>
-            Filters
-          </Text>
-          <Text style={{ fontSize: 13, lineHeight: 19, color: ui().muted }}>
-            The footer applies the draft. Closing without applying keeps the old filters.
-          </Text>
+          <SheetHeader>
+            <SheetTitle>Filters</SheetTitle>
+            <SheetDescription>
+              The footer applies the draft. Closing without applying keeps the old filters.
+            </SheetDescription>
+          </SheetHeader>
           <Segmented
             label="Sort by"
             options={SORTS}
@@ -408,7 +408,7 @@ function App() {
               />
             </View>
           </View>
-          <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
+          <SheetFooter>
             <Button
               variant="ghost"
               disabled={
@@ -425,7 +425,7 @@ function App() {
             <Button variant="default" onPress={apply}>
               {`Show ${results(draft())} results`}
             </Button>
-          </View>
+          </SheetFooter>
         </SheetContent>
       </Sheet>
     </DemoPage>

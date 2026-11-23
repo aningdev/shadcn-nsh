@@ -249,7 +249,7 @@ export function TraceIcon(props: TraceIconProps) {
   return (
     <View {...rest} style={[traceLook().icon, props.style ?? null]}>
       {line.status === "running" ? (
-        <Spinner size={SPINNER} tint={colors.mutedForeground} />
+        <Spinner side={SPINNER} tint={colors.mutedForeground} />
       ) : (
         props.children
       )}

@@ -222,7 +222,7 @@ function FillButton(props: {
             when={props.busy}
             else={<Icon icon={props.icon!} {...buttonGlyph("secondary")} tint={tint()} />}
           >
-            <Spinner {...buttonGlyph("secondary")} tint={tint()} />
+            <Spinner side={buttonGlyph("secondary").size} tint={tint()} />
           </If>
         </View>
       </If>
@@ -354,7 +354,7 @@ function Split(props: Ctx) {
                   <Icon icon={done() ? Check : GitMerge} {...buttonGlyph("default")} tint={ink()} />
                 }
               >
-                <Spinner {...buttonGlyph("default")} tint={colors.primaryForeground} />
+                <Spinner side={buttonGlyph("default").size} tint={colors.primaryForeground} />
               </If>
             </View>
             <Text style={[buttonLabel("default"), { color: ink() }]}>{label()}</Text>

@@ -138,8 +138,8 @@ export function NavStack<R>(props: NavStackProps<R>) {
   );
 }
 
-/** The header the desktops and the web draw: the back button, the title, and the trailing slot. */
-function PageHeader(props: {
+/** `PageHeader`'s props: a page's title, its trailing item, and what its back button reads. */
+export type PageHeaderProps = {
   /** The page's `title`: text on iOS and Android's system header, and this header's on the rest. */
   title?: string;
   /** The page's `headerRight`: the system header's trailing item, and this one's. */
@@ -148,7 +148,15 @@ function PageHeader(props: {
   back?: () => void;
   /** Whether it has one: a page below the one shown. */
   above: () => boolean;
-}) {
+};
+
+/**
+ * The header the desktops and the web draw: the back button while `above()` says there is a page
+ * below, the title, and the trailing slot. `NavPage` draws it for you; pass it to
+ * `NavPage`'s `header` when a page's header is a header with something added to it, so Back keeps
+ * the page's `onBackPress` and the stack's pop.
+ */
+export function PageHeader(props: PageHeaderProps) {
   const look = navPageLook();
   return (
     <View style={look.header()}>

@@ -311,7 +311,7 @@ function App() {
                 </Bubble>
                 <If when={turn() === "waiting"}>
                   <Foot align="end">
-                    <Spinner size={12} tint={ui().warn} />
+                    <Spinner size="sm" tint={ui().warn} />
                     <Text style={{ fontSize: 12, color: ui().muted }}>
                       Waiting for a connection
                     </Text>

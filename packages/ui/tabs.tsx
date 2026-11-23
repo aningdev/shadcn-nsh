@@ -388,11 +388,6 @@ export type TabsContentProps = {
   style?: StyleProp<ViewStyle>;
 };
 
-/** `nsh/base`'s Tab with the same chrome, when the app owns `selected`. */
-export type TabProps = Omit<BaseTabProps, "children"> & {
-  children?: string | JSX.Element;
-};
-
 type TabsContextValue = {
   value: () => string;
   onValueChange: (value: string) => void;
@@ -532,53 +527,6 @@ export function TabsTrigger(props: TabsTriggerProps) {
         // string is `TabTitle`, anything else as it is.
         const kids = props.children;
         return typeof kids === "string" ? <TabTitle name={kids} selected={selected()} /> : kids;
-      })()}
-    </BaseTab>
-  );
-}
-
-/** `nsh/base`'s Tab with list chrome when used inside {@link TabsList}. */
-export function Tab(props: TabProps) {
-  const variant = ListVariantContext();
-  const [, rest] = split(props, [
-    "children",
-    "selected",
-    "style",
-    "hoverStyle",
-    "activeStyle",
-    "focusVisibleStyle",
-    "disabledStyle",
-    "selectedStyle",
-  ]);
-  const look = computed(() => listLook(variant));
-  const tab = computed(() =>
-    look().tab({
-      selected: () => !!props.selected,
-      disabled: () => !!props.disabled,
-    }),
-  );
-
-  return (
-    <BaseTab
-      {...rest}
-      selected={props.selected}
-      {...pressHostProps(() => tab().android)}
-      style={[tab().style, props.style ?? null]}
-      hoverStyle={[tab().hoverStyle ?? null, props.hoverStyle ?? null]}
-      activeStyle={[tab().activeStyle ?? null, props.activeStyle ?? null]}
-      focusVisibleStyle={[tab().focusVisibleStyle, props.focusVisibleStyle ?? null]}
-      disabledStyle={[tab().disabledStyle, props.disabledStyle ?? null]}
-      selectedStyle={props.selectedStyle}
-    >
-      {(() => {
-        // Read once, here where the tab is drawn (`marker.tsx` reads in the same shape): a
-        // string is `TabTitle`, anything else as it is.
-        const kids = props.children;
-        return typeof kids === "string" ? (
-          <TabTitle name={kids} selected={!!props.selected} />
-        ) : (
-          kids
-        );
       })()}
     </BaseTab>
   );

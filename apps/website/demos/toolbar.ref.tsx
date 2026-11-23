@@ -437,7 +437,7 @@ function App() {
       <DemoCard>
         <DemoSection title="Overflow" axis="block">
           <Text style={{ color: colors.mutedForeground }}>
-            When the bar holds a ToolbarOverflow, tools wrapped in ToolbarItem measure themselves
+            When the bar holds a ToolbarOverflow, tools wrapped in ToolbarButton measure themselves
             and lower-priority items (or whole unit groups) fold into a menu as space narrows.
           </Text>
           <Segmented

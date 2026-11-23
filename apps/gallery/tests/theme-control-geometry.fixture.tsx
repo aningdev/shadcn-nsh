@@ -45,7 +45,7 @@ function App() {
       <Text testID="theme">{`theme:${currentTheme() ?? "build-time"}`}</Text>
       <CheckboxMark mark="check" />
       <RadioRing on />
-      <Spinner size={40} tint={colors.brand} />
+      <Spinner side={40} tint={colors.brand} />
       <Button onPress={() => selectTheme(materialTheme)}>Material</Button>
       <Button onPress={() => selectTheme(winuiTheme)}>WinUI</Button>
       <Button onPress={() => selectTheme(null)}>Default</Button>

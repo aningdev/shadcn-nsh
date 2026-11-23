@@ -182,7 +182,7 @@ function App() {
                 autoCapitalize="none"
               />
               <InputGroupAddon align="inline-end">
-                {pending() ? <Spinner size={desktop ? 12 : 15} tint={ui().faint} /> : null}
+                {pending() ? <Spinner side={desktop ? 12 : 15} tint={ui().faint} /> : null}
                 {query().length > 0 ? (
                   <InputGroupButton
                     size="icon-xs"

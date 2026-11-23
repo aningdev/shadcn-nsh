@@ -105,7 +105,7 @@ function App() {
             <View style={frame("uploading", "default", "horizontal")}>
               <View style={media("uploading", "default", "horizontal")}>
                 <Spinner
-                  size={attachmentGlyph("default", "horizontal")}
+                  side={attachmentGlyph("default", "horizontal")}
                   tint={colors.mutedForeground}
                 />
               </View>

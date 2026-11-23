@@ -745,7 +745,7 @@
       "type": "registry:ui",
       "title": "Sheet",
       "description": "A panel that slides in from an edge of the screen over a scrim.",
-      "registryDependencies": ["button", "open-state", "popup", "theme"],
+      "registryDependencies": ["as-text", "button", "dialog", "open-state", "popup", "theme"],
       "files": [
         {
           "path": "packages/ui/sheet.tsx",

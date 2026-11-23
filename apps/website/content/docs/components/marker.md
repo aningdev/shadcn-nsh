@@ -81,7 +81,7 @@ for this.
 ```tsx
 <Marker role="alert">
   <MarkerIcon>
-    <Spinner size={12} tint={colors.mutedForeground} />
+    <Spinner size="sm" tint={colors.mutedForeground} />
   </MarkerIcon>
   <MarkerContent>Thinking…</MarkerContent>
 </Marker>

@@ -794,7 +794,7 @@ export function Button(props: ButtonProps) {
       <If when={props.busy || (props.icon && !terminal)}>
         <View style={grow}>
           <If when={props.busy} else={<Icon icon={props.icon!} {...glyph} />}>
-            <Spinner {...glyph} />
+            <Spinner side={glyph.size} tint={glyph.tint} />
           </If>
         </View>
       </If>

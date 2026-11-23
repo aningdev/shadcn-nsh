@@ -88,7 +88,7 @@ function Reload() {
               </View>
               <If when={refreshing()}>
                 <View style={look.ring()}>
-                  <Spinner size={look.glyph()} tint={look.tint()} />
+                  <Spinner side={look.glyph()} tint={look.tint()} />
                 </View>
               </If>
             </View>
@@ -123,7 +123,7 @@ function Steps() {
                     </View>
                     <If when={step().refreshing}>
                       <View style={look.ring()}>
-                        <Spinner size={look.glyph()} tint={look.tint()} />
+                        <Spinner side={look.glyph()} tint={look.tint()} />
                       </View>
                     </If>
                   </View>

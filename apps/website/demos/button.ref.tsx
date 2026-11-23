@@ -64,7 +64,10 @@ function Plain(props: {
             when={props.busy}
             else={<Icon icon={props.icon!} {...buttonGlyph(variant, options)} />}
           >
-            <Spinner {...buttonGlyph(variant, options)} />
+            <Spinner
+              side={buttonGlyph(variant, options).size}
+              tint={buttonGlyph(variant, options).tint}
+            />
           </If>
         </View>
       </If>
