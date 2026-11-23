@@ -47,7 +47,7 @@ export function listboxPopup(o?: ListboxPopupOptions): ViewStyle {
         ...rounded(shape.container),
         borderWidth: stroke.hairline,
         padding: 6,
-        ...finish.menu,
+        ...finish.overlay,
         ...(o?.minWidth ? { minWidth: o.minWidth } : {}),
         ...popInStyles().style,
       }
@@ -299,7 +299,7 @@ export function listboxSearch() {
         ...rounded(shape.control),
         borderWidth: stroke.hairline,
         backgroundColor: colors.field,
-        ...finish.field,
+        ...finish.inset,
         borderColor: colors.input,
       };
     },

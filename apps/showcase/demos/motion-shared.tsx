@@ -62,7 +62,7 @@ export function stage(): ViewStyle {
     backgroundColor: colors.background,
     borderWidth: 1,
     borderColor: colors.line,
-    ...finish.track,
+    ...finish.inset,
   };
 }
 

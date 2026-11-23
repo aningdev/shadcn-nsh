@@ -203,130 +203,31 @@
   "finishes": {
     "shared": {
       "card": {
-        "gradient": "linear-gradient(180deg, {card} 0%, {card} 100%)",
-        "border-color": "{border}",
-        "material": null
-      },
-      "section": {
         "background": "{card}",
-        "shadow": "none",
+        "foreground": "{foreground}",
         "border-color": "{border}",
         "material": null
       },
       "inset": {
-        "material": null
-      },
-      "field": {
-        "shadow": "none",
+        "foreground": "{foreground}",
         "material": null
       },
       "raised": {
         "background": "{raised}",
-        "gradient": "linear-gradient(180deg, {raised} 0%, {raised} 100%)",
+        "foreground": "{foreground}",
         "backdropFilter": "none",
         "material": null
       },
-      "hover": {
-        "material": null
-      },
-      "pressed": {
-        "foreground": "{foreground}",
-        "material": null
-      },
-      "disabled": {
-        "background": "{raised}",
-        "gradient": "linear-gradient(180deg, {raised} 0%, {raised} 100%)",
-        "shadow": "none",
-        "foreground": "{muted-foreground}",
-        "border-color": "{border}",
-        "material": null
-      },
-      "light": {
-        "background": "{primary}",
-        "gradient": "linear-gradient(180deg, {primary} 0%, {primary} 100%)",
-        "border-color": "{brand-edge}",
-        "border-top-color": "{brand-edge}",
-        "border-bottom-color": "{brand-edge}",
-        "material": null
-      },
-      "accent": {
-        "background": "{primary}",
-        "gradient": "linear-gradient(180deg, {primary} 0%, {primary} 100%)",
-        "border-color": "{brand-edge}",
-        "border-top-color": "{brand-edge}",
-        "border-bottom-color": "{brand-edge}",
-        "material": null
-      },
-      "accentPressed": {
-        "gradient": "linear-gradient(180deg, transparent 0%, transparent 100%)",
-        "foreground": "{primary-foreground}",
-        "border-color": "{brand-edge}",
-        "border-top-color": "{brand-edge}",
-        "border-bottom-color": "{brand-edge}",
-        "material": null
-      },
-      "track": {
-        "material": null
-      },
-      "fill": {
-        "background": "transparent",
-        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.3)",
-        "material": null
-      },
-      "knob": {
-        "material": null
-      },
-      "knobOn": {
-        "background": "oklch(1 0 0)",
-        "gradient": "linear-gradient(180deg, oklch(1 0 0) 0%, oklch(0.97867 0.00945 119.575) 100%)",
-        "shadow": "0 1px 0 oklch(0.42761 0.11265 128.534 / 0.18)",
-        "material": null
-      },
-      "handle": {
-        "material": null
-      },
-      "pill": {
-        "background": "{raised}",
-        "gradient": "linear-gradient(180deg, {raised} 0%, {raised} 100%)",
-        "material": null
-      },
-      "thumb": {
-        "material": null
-      },
-      "on": {
-        "foreground": "{foreground}",
-        "material": null
-      },
-      "chip": {
-        "background": "{raised}",
-        "gradient": "linear-gradient(180deg, {raised} 0%, {raised} 100%)",
-        "border-color": "{border}",
-        "material": null
-      },
-      "glass": {
-        "border-color": "{border}",
-        "backdropFilter": "blur(20px)",
-        "material": null
-      },
-      "menu": {
+      "overlay": {
         "background": "{popover}",
+        "foreground": "{foreground}",
         "border-color": "{border}",
         "backdropFilter": "none",
         "material": null
       },
       "modal": {
         "background": "{card}",
-        "border-color": "{border}",
-        "material": null
-      },
-      "grabber": {
-        "background": "{raised}",
-        "shadow": "none",
-        "material": null
-      },
-      "tooltip": {
-        "background": "{popover}",
-        "shadow": "none",
+        "foreground": "{foreground}",
         "border-color": "{border}",
         "material": null
       },
@@ -337,7 +238,36 @@
         "backdropFilter": "none",
         "material": null
       },
-      "groove": {
+      "glass": {
+        "foreground": "{foreground}",
+        "border-color": "{border}",
+        "backdropFilter": "blur(20px)",
+        "material": null
+      },
+      "accent": {
+        "background": "{primary}",
+        "foreground": "{primary-foreground}",
+        "border-color": "{brand-edge}",
+        "border-top-color": "{brand-edge}",
+        "border-bottom-color": "{brand-edge}",
+        "material": null
+      },
+      "knob": {
+        "foreground": "{foreground}",
+        "material": null
+      },
+      "hover": {
+        "foreground": "{foreground}",
+        "material": null
+      },
+      "pressed": {
+        "foreground": "{foreground}",
+        "material": null
+      },
+      "disabled": {
+        "background": "{raised}",
+        "foreground": "{foreground}",
+        "border-color": "{border}",
         "material": null
       }
     },
@@ -346,7 +276,7 @@
         "shadow": "0 1px 0 oklch(0.1686 0.02256 263.693 / 0.04)"
       },
       "inset": {
-        "shadow": "inset 0 1px 1px oklch(0.1686 0.02256 263.693 / 0.03)"
+        "shadow": "inset 0 1px 1px oklch(0.1686 0.02256 263.693 / 0.06)"
       },
       "raised": {
         "shadow": "inset 0 1px 0 oklch(1 0 0), inset 0 2px 0 oklch(1 0 0 / 0.6), 0 1px 0 oklch(0.1686 0.02256 263.693 / 0.05)",
@@ -354,81 +284,7 @@
         "border-top-color": "{border}",
         "border-bottom-color": "{border}"
       },
-      "hover": {
-        "background": "{popover}",
-        "gradient": "linear-gradient(180deg, {popover} 0%, {popover} 100%)",
-        "shadow": "inset 0 1px 0 oklch(1 0 0), inset 0 2px 0 oklch(1 0 0 / 0.6), 0 1px 0 oklch(0.1686 0.02256 263.693 / 0.05)",
-        "border-color": "{border}",
-        "border-top-color": "{border}",
-        "border-bottom-color": "{border}"
-      },
-      "pressed": {
-        "background": "{muted}",
-        "gradient": "linear-gradient(180deg, {muted} 0%, {muted} 100%)",
-        "shadow": "inset 0 1px 1px oklch(0.1686 0.02256 263.693 / 0.1)",
-        "border-color": "{input}",
-        "border-top-color": "{input}",
-        "border-bottom-color": "{input}"
-      },
-      "light": {
-        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.55), inset 0 -1px 0 oklch(0.42761 0.11265 128.534 / 0.12), 0 1px 0 oklch(0.42761 0.11265 128.534 / 0.14)"
-      },
-      "accent": {
-        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.55), inset 0 -1px 0 oklch(0.42761 0.11265 128.534 / 0.12), 0 1px 0 oklch(0.42761 0.11265 128.534 / 0.14)"
-      },
-      "accentPressed": {
-        "background": "oklch(from {primary} l c h / 0.88)",
-        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.55), inset 0 -1px 0 oklch(0.42761 0.11265 128.534 / 0.12), 0 1px 0 oklch(0.42761 0.11265 128.534 / 0.14)"
-      },
-      "track": {
-        "shadow": "inset 0 1px 1px oklch(0.1686 0.02256 263.693 / 0.05)",
-        "border-color": "{border}"
-      },
-      "fill": {
-        "gradient": "linear-gradient(180deg, oklch(0.80472 0.1815 126.061) 0%, {chart-1} 100%)",
-        "border-color": "oklch(0.69169 0.17204 126.956)"
-      },
-      "knob": {
-        "background": "oklch(1 0 0)",
-        "gradient": "linear-gradient(180deg, oklch(1 0 0) 0%, {raised} 100%)",
-        "shadow": "0 1px 0 oklch(0.1686 0.02256 263.693 / 0.08)",
-        "border-color": "{input}"
-      },
-      "knobOn": {
-        "border-color": "oklch(0.72099 0.15728 124.776)"
-      },
-      "handle": {
-        "background": "oklch(1 0 0)",
-        "gradient": "linear-gradient(180deg, oklch(1 0 0) 0%, {raised} 100%)",
-        "shadow": "0 1px 0 oklch(0.1686 0.02256 263.693 / 0.08)",
-        "border-color": "{input}"
-      },
-      "pill": {
-        "shadow": "inset 0 1px 0 oklch(1 0 0), inset 0 2px 0 oklch(1 0 0 / 0.6), 0 1px 0 oklch(0.1686 0.02256 263.693 / 0.05)",
-        "border-color": "{border}"
-      },
-      "thumb": {
-        "background": "oklch(1 0 0)",
-        "gradient": "linear-gradient(180deg, oklch(1 0 0) 0%, oklch(1 0 0) 100%)",
-        "shadow": "0 1px 2px oklch(0.1686 0.02256 263.693 / 0.1), 0 1px 0 oklch(0.1686 0.02256 263.693 / 0.04)",
-        "border-color": "{input}"
-      },
-      "on": {
-        "background": "oklch(0.89487 0.00554 274.959)",
-        "gradient": "linear-gradient(180deg, oklch(0.89487 0.00554 274.959) 0%, oklch(0.89487 0.00554 274.959) 100%)",
-        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.35), 0 1px 0 oklch(0.1686 0.02256 263.693 / 0.05)",
-        "border-color": "{input}",
-        "border-top-color": "{input}",
-        "border-bottom-color": "{input}"
-      },
-      "chip": {
-        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.65)"
-      },
-      "glass": {
-        "background": "oklch(from {popover} l c h / 0.8)",
-        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.9), 0 1px 0 oklch(0.1686 0.02256 263.693 / 0.04)"
-      },
-      "menu": {
+      "overlay": {
         "shadow": "0 1px 0 oklch(0.1686 0.02256 263.693 / 0.04), 0 12px 28px -10px oklch(0.1686 0.02256 263.693 / 0.22)"
       },
       "modal": {
@@ -437,8 +293,35 @@
       "inverse": {
         "shadow": "0 1px 0 oklch(0.1686 0.02256 263.693 / 0.04), 0 12px 28px -10px oklch(0.1686 0.02256 263.693 / 0.22)"
       },
-      "groove": {
-        "shadow": "0 1px 0 oklch(1 0 0)"
+      "glass": {
+        "background": "oklch(from {popover} l c h / 0.8)",
+        "shadow": "inset 0 1px 0 oklch(1 0 0), inset 0 2px 0 oklch(1 0 0 / 0.6), 0 1px 0 oklch(0.1686 0.02256 263.693 / 0.05)"
+      },
+      "accent": {
+        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.55), inset 0 -1px 0 oklch(0.42761 0.11265 128.534 / 0.12), 0 1px 0 oklch(0.42761 0.11265 128.534 / 0.14)"
+      },
+      "knob": {
+        "background": "oklch(1 0 0)",
+        "gradient": "linear-gradient(180deg, oklch(1 0 0) 0%, {raised} 100%)",
+        "shadow": "0 1px 0 oklch(0.1686 0.02256 263.693 / 0.05)",
+        "border-color": "{input}"
+      },
+      "hover": {
+        "background": "{popover}",
+        "shadow": "inset 0 1px 0 oklch(1 0 0), inset 0 2px 0 oklch(1 0 0 / 0.6), 0 1px 0 oklch(0.1686 0.02256 263.693 / 0.05)",
+        "border-color": "{border}",
+        "border-top-color": "{border}",
+        "border-bottom-color": "{border}"
+      },
+      "pressed": {
+        "background": "{muted}",
+        "shadow": "inset 0 1px 1px oklch(0.1686 0.02256 263.693 / 0.06)",
+        "border-color": "{input}",
+        "border-top-color": "{input}",
+        "border-bottom-color": "{input}"
+      },
+      "disabled": {
+        "shadow": "inset 0 1px 0 oklch(1 0 0), inset 0 2px 0 oklch(1 0 0 / 0.6), 0 1px 0 oklch(0.1686 0.02256 263.693 / 0.05)"
       }
     },
     "dark": {
@@ -454,81 +337,7 @@
         "border-top-color": "oklch(0 0 0 / 0.5)",
         "border-bottom-color": "oklch(0 0 0 / 0.5)"
       },
-      "hover": {
-        "background": "{input}",
-        "gradient": "linear-gradient(180deg, {input} 0%, {input} 100%)",
-        "shadow": "inset 0 0 0 1px oklch(1 0 0 / 0.07), inset 0 1px 1px oklch(1 0 0 / 0.09), 0 1px 1px oklch(0 0 0 / 0.12)",
-        "border-color": "oklch(0 0 0 / 0.5)",
-        "border-top-color": "oklch(0 0 0 / 0.5)",
-        "border-bottom-color": "oklch(0 0 0 / 0.5)"
-      },
-      "pressed": {
-        "background": "{line}",
-        "gradient": "linear-gradient(180deg, {line} 0%, {line} 100%)",
-        "shadow": "inset 0 1px 1px oklch(0 0 0 / 0.18)",
-        "border-color": "oklch(0 0 0 / 0.5)",
-        "border-top-color": "oklch(0 0 0 / 0.5)",
-        "border-bottom-color": "oklch(0 0 0 / 0.5)"
-      },
-      "light": {
-        "shadow": "inset 0 0 0 1px oklch(1 0 0 / 0.22), inset 0 1px 1px oklch(1 0 0 / 0.35), 0 1px 1px oklch(0 0 0 / 0.12)"
-      },
-      "accent": {
-        "shadow": "inset 0 0 0 1px oklch(1 0 0 / 0.22), inset 0 1px 1px oklch(1 0 0 / 0.35), 0 1px 1px oklch(0 0 0 / 0.12)"
-      },
-      "accentPressed": {
-        "background": "oklch(from {primary} l c h / 0.88)",
-        "shadow": "inset 0 0 0 1px oklch(1 0 0 / 0.22), inset 0 1px 1px oklch(1 0 0 / 0.35), 0 1px 1px oklch(0 0 0 / 0.12)"
-      },
-      "track": {
-        "shadow": "inset 0 1px 1px oklch(0 0 0 / 0.25)",
-        "border-color": "oklch(0.37091 0.01103 264.432)"
-      },
-      "fill": {
-        "gradient": "linear-gradient(180deg, oklch(0.88348 0.15928 123.937) 0%, oklch(0.83973 0.16469 124.137) 100%)",
-        "border-color": "oklch(0.71963 0.15821 125.456)"
-      },
-      "knob": {
-        "background": "{knob}",
-        "gradient": "linear-gradient(180deg, {foreground} 0%, oklch(0.88185 0.00589 264.53) 100%)",
-        "shadow": "0 1px 1px oklch(0 0 0 / 0.45)",
-        "border-color": "oklch(0.8324 0.00597 264.528)"
-      },
-      "knobOn": {
-        "border-color": "oklch(0.71963 0.15821 125.456)"
-      },
-      "handle": {
-        "background": "{knob}",
-        "gradient": "linear-gradient(180deg, {foreground} 0%, oklch(0.88185 0.00589 264.53) 100%)",
-        "shadow": "0 1px 1px oklch(0 0 0 / 0.45)",
-        "border-color": "oklch(0.8324 0.00597 264.528)"
-      },
-      "pill": {
-        "shadow": "inset 0 0 0 1px oklch(1 0 0 / 0.06), inset 0 1px 1px oklch(1 0 0 / 0.08), 0 1px 1px oklch(0 0 0 / 0.12)",
-        "border-color": "oklch(0 0 0 / 0.5)"
-      },
-      "thumb": {
-        "background": "{raised}",
-        "gradient": "linear-gradient(180deg, {raised} 0%, {raised} 100%)",
-        "shadow": "inset 0 0 0 1px oklch(1 0 0 / 0.06), inset 0 1px 1px oklch(1 0 0 / 0.08), 0 1px 1px oklch(0 0 0 / 0.12)",
-        "border-color": "oklch(0 0 0 / 0.5)"
-      },
-      "on": {
-        "background": "oklch(0.42689 0.01421 264.414)",
-        "gradient": "linear-gradient(180deg, oklch(0.42689 0.01421 264.414) 0%, oklch(0.42689 0.01421 264.414) 100%)",
-        "shadow": "inset 0 0 0 1px oklch(1 0 0 / 0.1), inset 0 1px 1px oklch(1 0 0 / 0.12), 0 1px 1px oklch(0 0 0 / 0.12)",
-        "border-color": "oklch(0 0 0 / 0.5)",
-        "border-top-color": "oklch(0 0 0 / 0.5)",
-        "border-bottom-color": "oklch(0 0 0 / 0.5)"
-      },
-      "chip": {
-        "shadow": "0 1px 0 oklch(0 0 0 / 0.3)"
-      },
-      "glass": {
-        "background": "oklch(from {card} l c h / 0.78)",
-        "shadow": "inset 0 1px 0 oklch(1 0 0 / 0.06), 0 1px 0 oklch(0 0 0 / 0.4)"
-      },
-      "menu": {
+      "overlay": {
         "shadow": "0 1px 0 oklch(0 0 0 / 0.4), 0 16px 32px -10px oklch(0 0 0 / 0.6)"
       },
       "modal": {
@@ -537,8 +346,59 @@
       "inverse": {
         "shadow": "0 1px 0 oklch(0 0 0 / 0.4), 0 16px 32px -10px oklch(0 0 0 / 0.6)"
       },
-      "groove": {
-        "shadow": "0 1px 0 oklch(1 0 0 / 0.05)"
+      "glass": {
+        "background": "oklch(from {card} l c h / 0.78)",
+        "shadow": "inset 0 0 0 1px oklch(1 0 0 / 0.06), inset 0 1px 1px oklch(1 0 0 / 0.08), 0 1px 1px oklch(0 0 0 / 0.12)"
+      },
+      "accent": {
+        "shadow": "inset 0 0 0 1px oklch(1 0 0 / 0.22), inset 0 1px 1px oklch(1 0 0 / 0.35), 0 1px 1px oklch(0 0 0 / 0.12)"
+      },
+      "knob": {
+        "background": "{knob}",
+        "gradient": "linear-gradient(180deg, {foreground} 0%, oklch(0.88185 0.00589 264.53) 100%)",
+        "shadow": "0 1px 1px oklch(0 0 0 / 0.12)",
+        "border-color": "oklch(0.8324 0.00597 264.528)"
+      },
+      "hover": {
+        "background": "{input}",
+        "shadow": "inset 0 0 0 1px oklch(1 0 0 / 0.06), inset 0 1px 1px oklch(1 0 0 / 0.08), 0 1px 1px oklch(0 0 0 / 0.12)",
+        "border-color": "oklch(0 0 0 / 0.5)",
+        "border-top-color": "oklch(0 0 0 / 0.5)",
+        "border-bottom-color": "oklch(0 0 0 / 0.5)"
+      },
+      "pressed": {
+        "background": "{line}",
+        "shadow": "inset 0 1px 1px oklch(0 0 0 / 0.2)",
+        "border-color": "oklch(0 0 0 / 0.5)",
+        "border-top-color": "oklch(0 0 0 / 0.5)",
+        "border-bottom-color": "oklch(0 0 0 / 0.5)"
+      },
+      "disabled": {
+        "shadow": "inset 0 0 0 1px oklch(1 0 0 / 0.06), inset 0 1px 1px oklch(1 0 0 / 0.08), 0 1px 1px oklch(0 0 0 / 0.12)"
+      }
+    }
+  },
+  "elevation": {
+    "light": {
+      "sm": "0 1px 0 oklch(0.1686 0.02256 263.693 / 0.05)",
+      "md": "0 1px 0 oklch(0.1686 0.02256 263.693 / 0.04)",
+      "lg": "0 1px 0 oklch(0.1686 0.02256 263.693 / 0.04), 0 12px 28px -10px oklch(0.1686 0.02256 263.693 / 0.22)",
+      "xl": "0 1px 0 oklch(0.1686 0.02256 263.693 / 0.04), 0 12px 28px -10px oklch(0.1686 0.02256 263.693 / 0.22)",
+      "inset": "inset 0 1px 1px oklch(0.1686 0.02256 263.693 / 0.06)",
+      "edge": {
+        "surface": "inset 0 1px 0 oklch(1 0 0), inset 0 2px 0 oklch(1 0 0 / 0.6)",
+        "accent": "inset 0 1px 0 oklch(1 0 0 / 0.55), inset 0 -1px 0 oklch(0.42761 0.11265 128.534 / 0.12), 0 1px 0 oklch(0.42761 0.11265 128.534 / 0.14)"
+      }
+    },
+    "dark": {
+      "sm": "0 1px 1px oklch(0 0 0 / 0.12)",
+      "md": "0 1px 0 oklch(0 0 0 / 0.35)",
+      "lg": "0 1px 0 oklch(0 0 0 / 0.4), 0 16px 32px -10px oklch(0 0 0 / 0.6)",
+      "xl": "0 1px 0 oklch(0 0 0 / 0.4), 0 16px 32px -10px oklch(0 0 0 / 0.6)",
+      "inset": "inset 0 1px 1px oklch(0 0 0 / 0.2)",
+      "edge": {
+        "surface": "inset 0 0 0 1px oklch(1 0 0 / 0.06), inset 0 1px 1px oklch(1 0 0 / 0.08)",
+        "accent": "inset 0 0 0 1px oklch(1 0 0 / 0.22), inset 0 1px 1px oklch(1 0 0 / 0.35), 0 1px 1px oklch(0 0 0 / 0.12)"
       }
     }
   }

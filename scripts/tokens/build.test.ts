@@ -412,12 +412,9 @@ describe("DTCG source lint", () => {
       themeDoc.dimension.radius.container.$value.value = -4;
       fs.writeFileSync(themePath, JSON.stringify(themeDoc, null, 2));
 
-      const finPath = path.join(
-        tmp,
-        "packages/theme/tokens/themes/default/finishes.shared.tokens.json",
-      );
+      const finPath = path.join(tmp, "packages/theme/tokens/themes/default/light.tokens.json");
       const finDoc = JSON.parse(fs.readFileSync(finPath, "utf8"));
-      finDoc.finish.field.shadow.$extensions["dev.aning.shadcn-nsh"] = { none: false };
+      finDoc.shadow.sm.$extensions = { "dev.aning.shadcn-nsh": { none: false } };
       fs.writeFileSync(finPath, JSON.stringify(finDoc, null, 2));
     });
     const text = problems.join("\n");
@@ -438,8 +435,8 @@ describe("DTCG source lint", () => {
       const sgDark = JSON.parse(fs.readFileSync(sgDarkPath, "utf8"));
       // Corrupt ring-halo (mix of translucent ring 0.4 alpha and transparent) -> must fail.
       sgDark.color["ring-halo"].$value.alpha = 0.5;
-      // Corrupt finish.on.border-color (alpha colorOp) -> must fail.
-      sgDark.finish.on["border-color"].$value.alpha = 0.9;
+      // Corrupt finish.accent.background (alpha colorOp) -> must fail.
+      sgDark.finish.accent.background.$value.alpha = 0.9;
       fs.writeFileSync(sgDarkPath, JSON.stringify(sgDark, null, 2));
 
       const problems = lintDtcgTheme(
@@ -450,7 +447,7 @@ describe("DTCG source lint", () => {
         "color.ring-halo: static $value differs from live colorOp evaluation",
       );
       expect(problems).toContain(
-        "finish.on.border-color: static $value differs from live colorOp evaluation",
+        "finish.accent.background: static $value differs from live colorOp evaluation",
       );
     } finally {
       fs.rmSync(tmp, { recursive: true, force: true });
@@ -754,6 +751,42 @@ describe("per-appearance standalone .tokens.json distribution", () => {
             ? toFlatRef(tok.$value)
             : formatDtcgColor(tok.$value as DtcgColor);
         };
+        // The appearance's shadow scale, decoded the way the compiler joins a finish's refs to it.
+        const fmtLen = (d: { value: number; unit: string }) =>
+          d.value === 0 ? "0" : `${d.value}${d.unit}`;
+        const formatShadowLayers = (raw: DtcgShadowItem | DtcgShadowItem[]): string =>
+          (Array.isArray(raw) ? raw : [raw])
+            .map((s) => {
+              const parts: string[] = [];
+              if (s.inset) parts.push("inset");
+              parts.push(fmtLen(s.offsetX), fmtLen(s.offsetY), fmtLen(s.blur));
+              if (s.spread.value !== 0) parts.push(fmtLen(s.spread));
+              parts.push(
+                typeof s.color === "string" ? toFlatRef(s.color) : formatDtcgColor(s.color),
+              );
+              return parts.join(" ");
+            })
+            .join(", ");
+        const shadowParts = new Map<string, string | null>();
+        const walkShadow = (node: Record<string, any>, prefix: string) => {
+          for (const [key, value] of Object.entries(node)) {
+            if (key.startsWith("$") || value === null || typeof value !== "object") continue;
+            const name = prefix ? `${prefix}.${key}` : key;
+            if ("$value" in value) {
+              shadowParts.set(
+                name,
+                value.$extensions?.[EXT_NS]?.none
+                  ? null
+                  : formatShadowLayers(value.$value as DtcgShadowItem),
+              );
+            } else {
+              walkShadow(value as Record<string, any>, name);
+            }
+          }
+        };
+        walkShadow(doc.shadow as Record<string, any>, "");
+        expect([...shadowParts.keys()].length, "a shadow scale").toBeGreaterThan(0);
+
         const mergedFinishes = mergeFinishes(semanticsJson.finishes, appearance);
         const docFinishRoles = Object.keys(doc.finish).filter((k) => !k.startsWith("$"));
         expect(docFinishRoles.sort()).toEqual(Object.keys(mergedFinishes).sort());
@@ -776,26 +809,20 @@ describe("per-appearance standalone .tokens.json distribution", () => {
             compiled.gradient = `linear-gradient(${angle}deg, ${stops.join(", ")})`;
           }
           if (g.shadow) {
-            if (g.shadow.$extensions?.[EXT_NS]?.none) {
-              compiled.shadow = "none";
-            } else {
-              const raw = g.shadow.$value;
-              const items = (Array.isArray(raw) ? raw : [raw]) as DtcgShadowItem[];
-              compiled.shadow = items
+            const raw = g.shadow.$value;
+            const items = (Array.isArray(raw) ? raw : [raw]) as (DtcgShadowItem | string)[];
+            compiled.shadow =
+              items
                 .map((s) => {
-                  const fmtLen = (d: { value: number; unit: string }) =>
-                    d.value === 0 ? "0" : `${d.value}${d.unit}`;
-                  const parts: string[] = [];
-                  if (s.inset) parts.push("inset");
-                  parts.push(fmtLen(s.offsetX), fmtLen(s.offsetY), fmtLen(s.blur));
-                  if (s.spread.value !== 0) parts.push(fmtLen(s.spread));
-                  parts.push(
-                    typeof s.color === "string" ? toFlatRef(s.color) : formatDtcgColor(s.color),
-                  );
-                  return parts.join(" ");
+                  if (typeof s === "string") {
+                    const name = /^\{shadow\.([a-z0-9.-]+)\}$/.exec(s)?.[1];
+                    expect(name, `finish.${role} names a shadow part`).toBeTruthy();
+                    return shadowParts.get(name!) ?? null;
+                  }
+                  return formatShadowLayers(s);
                 })
-                .join(", ");
-            }
+                .filter((layer): layer is string => layer !== null && layer !== undefined)
+                .join(", ") || "none";
           }
           if (g["border-color"]) compiled["border-color"] = toFinishColor(g["border-color"]);
           if (g["border-top-color"])

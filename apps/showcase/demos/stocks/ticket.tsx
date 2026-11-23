@@ -125,7 +125,7 @@ function Step(props: { plus: boolean; label: string; onPress: () => void }) {
           alignItems: "center",
           justifyContent: "center",
           borderRadius: shape.control,
-          ...finish.pill,
+          ...finish.raised,
           borderWidth: 1,
         }}
       >

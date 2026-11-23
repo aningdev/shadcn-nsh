@@ -160,7 +160,7 @@ export function sliderLook(o: SliderLookOptions = {}) {
       return {
         backgroundColor: token(s.trackRole),
         ...(s.outlined
-          ? { boxShadow: insetEdge(finish.track.borderColor, finish.track.boxShadow) }
+          ? { boxShadow: insetEdge(finish.inset.borderColor, finish.inset.boxShadow) }
           : {}),
       };
     },
@@ -194,21 +194,21 @@ export function sliderLook(o: SliderLookOptions = {}) {
       const s = sliderPresets[controls()][tier];
       if (s.handleShape === "bar") {
         return {
-          backgroundColor: finish.handle.backgroundColor,
+          backgroundColor: finish.knob.backgroundColor,
           borderWidth: 0,
         };
       }
       if (s.handleShape === "ring") {
         return {
           backgroundColor: colors.primary,
-          boxShadow: outerEdge(finish.handle.borderColor, finish.handle.boxShadow, EDGE_WIDTH),
+          boxShadow: outerEdge(finish.knob.borderColor, finish.knob.boxShadow, EDGE_WIDTH),
         };
       }
       return {
         width: s.thumbWidth,
         height: s.thumbHeight,
         borderWidth: stroke.control,
-        ...finish.handle,
+        ...finish.knob,
       };
     },
   };
@@ -223,7 +223,7 @@ function accentFill(vertical: boolean): ViewStyle {
       ? { ...fill, backgroundImage: fill.backgroundImage.replace("180deg", "90deg") }
       : fill),
     ...(s.outlined
-      ? { borderWidth: stroke.control, borderColor: finish.fill.borderColor }
+      ? { borderWidth: stroke.control, borderColor: finish.accent.borderColor }
       : { borderWidth: 0 }),
   };
 }

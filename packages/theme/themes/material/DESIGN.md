@@ -234,7 +234,7 @@ components:
     height: "{spacing.height.md}"
     padding: "{spacing.control.padding}"
   badge-chip:
-    backgroundColor: "{colors.light.background}"
+    backgroundColor: "{colors.light.secondary}"
     textColor: "{colors.light.secondary-foreground}"
     typography: "{typography.caption}"
     rounded: "{rounded.control}"
@@ -268,16 +268,16 @@ components:
   switch-knob:
     backgroundColor: "{colors.light.knob}"
   switch-knob-on:
-    backgroundColor: "{colors.light.primary-foreground}"
+    backgroundColor: "{colors.light.knob}"
   slider-handle:
-    backgroundColor: "{colors.light.primary}"
+    backgroundColor: "{colors.light.knob}"
   tabs-thumb:
-    backgroundColor: "{colors.light.secondary}"
+    backgroundColor: "{colors.light.raised}"
     textColor: "{colors.light.foreground}"
     typography: "{typography.label}"
     rounded: "{rounded.control}"
   toggle-on:
-    backgroundColor: "{colors.light.secondary}"
+    backgroundColor: "{colors.light.accent}"
     textColor: "{colors.light.foreground}"
     rounded: "{rounded.control}"
   glass-overlay:
@@ -446,35 +446,18 @@ Voice & Content Strategy is intentionally omitted: this theme defines visual tok
 
 ## Components
 
-Appearance-invariant surface finish recipes (background, gradient, border, shadow, blur, material).
-
-- **`finish.card`** (material: `{"android":{"elevation":1}}`): Elevated M3 card surface with Material Web Level 1 shadow and 1dp Android elevation.
-- **`finish.section`** (material: `{"android":{"elevation":1}}`): M3 ElevatedCard resting surface (Level 1 shadow and 1dp Android elevation, no border).
-- **`finish.inset`**: The well inside a card: sunk by its inner shadow alone.
-- **`finish.field`**: A field well: its edge and its inner shadow.
-- **`finish.raised`** (backdropFilter: `none`; material: `{"android":{"elevation":1}}`): Raised surface with Level 1 shadow and 1dp Android elevation.
-- **`finish.hover`** (material: `{"android":{"elevation":1}}`): Hovered state surface over raised background with Level 1 shadow.
-- **`finish.pressed`** (material: `{"android":{"elevation":1}}`): Pressed surface at Level 1 elevation (M3 state layer + ripple handles press).
-- **`finish.disabled`**: M3 disabled filled/tonal button container (10% onSurface, flat with no shadow).
-- **`finish.light`**: The main action brightest step: the accent gradient.
-- **`finish.accent`**: The accent face (the same as light).
-- **`finish.accentPressed`**: M3 pressed accent surface (state layer + ripple handles press).
-- **`finish.track`**: A groove: an inner shadow and an edge.
-- **`finish.fill`**: The filled run: a slider, a progress bar, a switch that is on.
-- **`finish.knob`**: A switch knob, off.
-- **`finish.knobOn`**: A switch knob, on.
-- **`finish.handle`**: A slider handle (kept apart from knob).
-- **`finish.pill`** (material: `{"android":{"elevation":1}}`): The upstream capsule, left to the app.
-- **`finish.thumb`**: The chosen segment of a segmented control or a tag.
-- **`finish.on`**: A chosen switch or box, and the mark on it.
-- **`finish.chip`**: A chosen value label inside a field: a fill, an inner highlight and an edge.
-- **`finish.glass`** (backdropFilter: `none`; material: `{"android":{"elevation":3}}`): Floating surface using opaque M3 popover with Level 2 shadow and 3dp elevation (M3 uses no blur).
-- **`finish.menu`** (backdropFilter: `none`; material: `{"android":{"elevation":3}}`): M3 menu/popover surface with Level 2 shadow and 3dp Android elevation.
-- **`finish.modal`** (material: `{"android":{"elevation":6}}`): M3 modal surface using SurfaceContainerHigh with Level 3 shadow and 6dp Android elevation.
-- **`finish.grabber`**: M3 bottom sheet drag handle (40% onSurfaceVariant).
-- **`finish.tooltip`**: M3 plain tooltip using inverse surface without shadow.
-- **`finish.inverse`** (backdropFilter: `none`; material: `{"android":{"elevation":6}}`): M3 snackbar/inverse surface with Level 3 shadow and 6dp Android elevation.
-- **`finish.groove`**: A groove cut inside a menu.
+- **`finish.card`** (material: `{"android":{"elevation":1}}`): A surface that holds content: a card, a section.
+- **`finish.inset`**: A well cut into a surface: an inset, a field, a track, a groove.
+- **`finish.raised`** (backdropFilter: `none`; material: `{"android":{"elevation":1}}`): A control on a surface: a button, a chip, a pill.
+- **`finish.overlay`** (backdropFilter: `none`; material: `{"android":{"elevation":3}}`): A panel floating over the page: a menu, a toast.
+- **`finish.modal`** (material: `{"android":{"elevation":6}}`): A surface the page waits for: a dialog, a sheet.
+- **`finish.inverse`** (backdropFilter: `none`; material: `{"android":{"elevation":6}}`): The page's inverse: an inverse surface, a tooltip.
+- **`finish.glass`** (backdropFilter: `none`; material: `{"android":{"elevation":3}}`): A translucent surface: what is behind it shows through.
+- **`finish.accent`**: The accent's own surface, with its ink.
+- **`finish.knob`**: A knob: a switch's thumb, a slider's handle, a segmented thumb.
+- **`finish.hover`** (material: `{"android":{"elevation":1}}`): A control under the pointer.
+- **`finish.pressed`** (material: `{"android":{"elevation":1}}`): A control held down.
+- **`finish.disabled`**: A control that cannot be used.
 - **Disabled handling** (content=0.38, fill=true): M3 disabled controls: 0.38 content opacity with fill: true (10% onSurface container, _md-comp-button-filled.scss).
 
 ## Do's and Don'ts

@@ -73,12 +73,17 @@ describe("themes/", () => {
       });
 
       test("resolves to the default finishes' roles and field sets after merging", () => {
+        // A flat theme leaves out the gradient, a theme of no platform material the material,
+        // an opaque one the backdropFilter: every other field of a role is the set default states.
+        const optional = new Set(["gradient", "material", "backdropFilter"]);
+        const requiredFields = (finish: Record<string, unknown>) =>
+          sorted(Object.keys(finish).filter((field) => !optional.has(field)));
         for (const appearance of ["light", "dark"] as const) {
           const merged = mergeFinishes(semantics.finishes, appearance);
           expect(sorted(merged), appearance).toEqual(sorted(defaultMerged[appearance]));
           for (const [role, finish] of Object.entries(merged)) {
-            expect(sorted(finish), `${appearance}.${role}`).toEqual(
-              sorted(defaultMerged[appearance][role]!),
+            expect(requiredFields(finish), `${appearance}.${role}`).toEqual(
+              requiredFields(defaultMerged[appearance][role]!),
             );
           }
         }

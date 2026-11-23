@@ -313,21 +313,19 @@ describe("compiled material theme files", () => {
       background: "oklch(from {foreground} l c h / 0.1)",
       foreground: "oklch(from {foreground} l c h / 0.38)",
     });
-    expect(files.semantics.finishes.shared.section).toMatchObject({
+    // Elevated surfaces ask the platform for M3's level 1, and a dialog for level 3.
+    expect(files.semantics.finishes.shared.card).toMatchObject({
       material: { android: { elevation: 1 } },
     });
     expect(files.semantics.finishes.shared.modal).toMatchObject({
-      shadow: expect.stringContaining("0 "),
-      "border-color": "transparent",
+      material: { android: { elevation: 6 } },
     });
+    expect(files.semantics.finishes.shared.modal.shadow).toBe(files.semantics.elevation.light.xl);
     expect(files.semantics.finishes.light.modal).toMatchObject({
       background: "oklch(0.93251 0.01479 312.24)",
     });
     expect(files.semantics.finishes.dark.modal).toMatchObject({
       background: "oklch(0.2859 0.01293 298.633)",
-    });
-    expect(files.semantics.finishes.shared.grabber).toMatchObject({
-      background: "oklch(from {muted-foreground} l c h / 0.4)",
     });
   });
 });

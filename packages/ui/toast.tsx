@@ -56,7 +56,7 @@ export function toastLook(): ViewStyle {
 /** A toast's title: 14 points semibold. */
 export function toastTitle(): TextStyle {
   // No type role has this size: a toast's title is 14 in both tiers.
-  return { fontSize: 14, fontWeight: font.weight("title"), color: colors.inverseForeground };
+  return { fontSize: 14, fontWeight: font.weight("title"), color: finish.inverse.foreground };
 }
 
 /** A toast's description: 13 points, muted, its figures tabular. */
@@ -64,7 +64,7 @@ export function toastText(): TextStyle {
   // No type role has this size: a toast's description is 13 in both tiers.
   return {
     fontSize: 13,
-    color: finish.inverse.foreground ?? colors.inverseForeground,
+    color: finish.inverse.foreground,
     fontVariant: ["tabular-nums"],
   };
 }
@@ -405,8 +405,7 @@ function closeLabel(value: boolean | string | undefined): string | undefined {
 
 /** The mark of a type: a spinner while loading, a lucide glyph otherwise. */
 function KindMark(props: { type: ToastType }) {
-  if (props.type === "loading")
-    return <Spinner size={18} tint={finish.inverse.foreground ?? colors.inverseForeground} />;
+  if (props.type === "loading") return <Spinner size={18} tint={finish.inverse.foreground} />;
   const spec = kinds[props.type];
   return <Icon icon={spec.icon} size={18} tint={spec.tint()} />;
 }
@@ -474,7 +473,7 @@ function ToastItem(props: { entry: ToastEntry }) {
           onPress={() => toast.dismiss(props.entry.id)}
           {...toastCloseLook()}
         >
-          <Icon icon={X} size={14} tint={finish.inverse.foreground ?? colors.inverseForeground} />
+          <Icon icon={X} size={14} tint={finish.inverse.foreground} />
         </View>
       </If>
     </Toast>

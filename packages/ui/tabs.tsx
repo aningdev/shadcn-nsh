@@ -57,7 +57,7 @@ const hoverOf = (state: TabState) =>
  * A tab strip's look, the gallery's section switcher: a capsule track
  * `controlSize.tabs` high (30 with a pointer, 40 on a touch screen), sunk
  * into the surface with a hairline edge, the tabs sharing its width; the
- * selected tab's pill (`indicatorStyle`, `finish.thumb`) springs to the next
+ * selected tab's pill (`indicatorStyle`, `finish.knob`) springs to the next
  * one natively. `tab(state)`: a tab's props (hover on the others, the focus
  * ring, dimmed while disabled). Pair each tab with a `TabTitle`.
  */
@@ -76,7 +76,7 @@ export function tabsLook() {
         borderWidth: stroke.control,
         borderColor: colors.border,
         backgroundColor: colors.inset,
-        boxShadow: finish.track.boxShadow,
+        boxShadow: finish.inset.boxShadow,
       };
     },
     get indicatorStyle(): ViewStyle {
@@ -85,7 +85,7 @@ export function tabsLook() {
         bottom: inset,
         borderRadius: inner() / 2,
         borderWidth: stroke.control,
-        ...finish.thumb,
+        ...finish.knob,
       };
     },
     tab(state: TabState): TabLook {

@@ -58,7 +58,7 @@ export interface SegmentedLookOptions {
  * `RadioGroup`) as wide as its labels with a pointer (30 points high,
  * 12-point labels, the thumb's corners a step inside the track's), spanning the
  * row on a touch screen or with `fill`; the selected segment's thumb,
- * standing off the track in both appearances (`finish.thumb`: white with a
+ * standing off the track in both appearances (`finish.knob`: white with a
  * soft drop on a light track), as `Tabs`' traveling `indicatorStyle` or as
  * a `Radio`'s `checkedStyle` (`thumbStyle`); each segment's props
  * (`segment(state)`: hover, the focus ring, dimmed while disabled) and its
@@ -75,7 +75,7 @@ export function segmentedLook(o?: SegmentedLookOptions) {
   const thumb = (): ViewStyle => ({
     ...rounded(shape.control, inset),
     borderWidth: stroke.control,
-    ...finish.thumb,
+    ...finish.knob,
   });
   return {
     get style(): ViewStyle {
@@ -88,7 +88,7 @@ export function segmentedLook(o?: SegmentedLookOptions) {
         // Sunk like the pill bar's, not the switch's track: in dark the track is
         // raised as the thumb is, which would hide the thumb.
         backgroundColor: colors.inset,
-        boxShadow: finish.track.boxShadow,
+        boxShadow: finish.inset.boxShadow,
         borderWidth: stroke.control,
         borderColor: colors.border,
       };

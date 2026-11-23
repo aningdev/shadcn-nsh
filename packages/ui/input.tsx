@@ -156,7 +156,7 @@ function frame(o: FieldLookOptions | undefined): ViewStyle {
     backgroundColor: ghost ? "transparent" : colors.field,
     // Recessed while editable; a read-only, disabled or ghost field lies flat. Its edge is
     // `fieldEdge`'s classes.
-    ...(flat || ghost ? {} : finish.field),
+    ...(flat || ghost ? {} : finish.inset),
   };
 }
 

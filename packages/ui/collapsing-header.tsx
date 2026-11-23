@@ -75,7 +75,7 @@ function wholeRows(points: number): number {
 }
 
 /**
- * A collapsing header's look: the accent's fill (`finish.light`) as the page's header, its picture
+ * A collapsing header's look: the accent's fill (`finish.accent`) as the page's header, its picture
  * travelling at half the scroll and stretching on over-scroll, a surface of the same fill closing
  * over it, the title the page's display size shrinking to a bar's, and a description just over the
  * bar fading out as the title comes down.
@@ -85,7 +85,7 @@ function wholeRows(points: number): number {
  * frame. With reduced motion the picture stands still; a terminal draws whole rows and no picture.
  */
 export function collapsingHeaderLook(): CollapsingHeaderLook {
-  const ink = (): string => colors.primaryForeground;
+  const ink = (): string => finish.accent.foreground;
   return {
     heights: (expandedHeight: number, collapsedHeight: number): CollapsingHeaderHeights => {
       const open = terminal ? wholeRows(expandedHeight) : expandedHeight;
@@ -97,7 +97,7 @@ export function collapsingHeaderLook(): CollapsingHeaderLook {
       top: -heights.range,
       height: heights.open,
       overflow: "hidden",
-      ...finish.light,
+      ...finish.accent,
       borderBottomWidth: stroke.hairline,
     }),
     backdrop: (scroll: AnimatedValue, heights: CollapsingHeaderHeights): ViewStyle => ({

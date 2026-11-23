@@ -1056,12 +1056,25 @@ function encodeInputTierOverrides(
 /**
  * Write all DTCG 2025.10 source files for `output.id` under `packages/theme/tokens/themes/<id>/`
  * and compile its shipped `packages/theme/themes/<id>/{theme,semantics}.json`.
+ *
+ * The twelve layers and the shadow scale are hand-authored in those source files since the layer
+ * contract (`docs/specs/theme-contract-v2.md` §5): each generator below this one states the
+ * twenty-three finishes that came before it, so it refuses to run rather than overwrite them.
  */
 export function emitDtcgTheme(
   output: ThemeGeneratorOutput,
   repoRoot = repo,
 ): { sourceFiles: string[]; builtFiles: string[] } {
   const meta = readDefaultMetadata(repoRoot);
+  const stated = Object.keys(output.finishes.light);
+  const unstated = meta.finishRoles.filter((role) => !stated.includes(role));
+  if (unstated.length > 0 || stated.length !== meta.finishRoles.length) {
+    throw new Error(
+      `${output.id}: the generator states ${stated.length} finishes; the contract states ` +
+        `${meta.finishRoles.join(", ")} (${unstated.length} of them missing here). They and the ` +
+        `shadow scale are hand-authored in packages/theme/tokens/themes/${output.id}/.`,
+    );
+  }
   const outDir = path.join(repoRoot, "packages/theme/tokens/themes", output.id);
   fs.mkdirSync(outDir, { recursive: true });
 

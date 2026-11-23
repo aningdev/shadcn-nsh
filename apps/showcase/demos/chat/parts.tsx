@@ -411,7 +411,7 @@ export function ErrorRow(props: { message: string; onRetry: () => void }) {
           alignItems: "center",
           gap: 6,
           backgroundColor: colors.primary,
-          ...finish.light,
+          ...finish.accent,
         }}
         hoverStyle={{ opacity: 0.86 }}
         activeStyle={pressSink().activeStyle}

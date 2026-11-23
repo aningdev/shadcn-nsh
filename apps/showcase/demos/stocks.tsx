@@ -299,7 +299,7 @@ function MarketStrip(props: { market: Market }) {
               justifyContent: "center",
               borderWidth: 1,
               borderRadius: 16,
-              ...(running() ? finish.pill : finish.accent),
+              ...(running() ? finish.raised : finish.accent),
             }}
           >
             <Icon

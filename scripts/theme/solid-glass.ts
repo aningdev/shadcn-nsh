@@ -26,7 +26,6 @@ import { withoutMaterial } from "./material";
  */
 import { over } from "./oklch";
 import { scaledRadii } from "./style";
-import { withSurfaces } from "./surfaces";
 
 /** One appearance of the stylesheet's variables, by name (without the `--`). */
 type Source = Record<string, string>;
@@ -643,8 +642,8 @@ export function themeFiles(): ThemeGeneratorOutput {
       dark: section("dark"),
     },
     finishes: {
-      light: withoutMaterial(withSurfaces(finishes("light"))),
-      dark: withoutMaterial(withSurfaces(finishes("dark"))),
+      light: withoutMaterial(finishes("light")),
+      dark: withoutMaterial(finishes("dark")),
     },
     descriptions: {
       style: {

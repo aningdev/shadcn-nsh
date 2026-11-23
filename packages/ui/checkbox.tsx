@@ -118,13 +118,13 @@ export const choiceWell = (o?: { disabled?: boolean; well?: ChoiceWell }): ViewS
         backgroundColor: alpha(colors.input, 0.3),
         backgroundImage: "none",
         borderColor: alpha(colors.foreground, o?.disabled ? 0.4 : 0.2),
-        boxShadow: finish.field.boxShadow,
+        boxShadow: finish.inset.boxShadow,
       }
     : {
         backgroundColor: colors.field,
         backgroundImage: "none",
         borderColor: colors.input,
-        boxShadow: finish.field.boxShadow,
+        boxShadow: finish.inset.boxShadow,
       };
 };
 
@@ -224,7 +224,7 @@ export function ChoiceLight(props: { on: AnimatedValue; radius: number; border?:
         bottom: -b,
         borderRadius: props.radius,
         borderWidth: stroke.control,
-        ...finish.light,
+        ...finish.accent,
         opacity: props.on,
       }}
     />

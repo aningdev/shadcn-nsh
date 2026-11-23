@@ -266,7 +266,7 @@ export function MenuLabel(props: MenuLabelProps) {
   );
 }
 
-/** A separator between a menu's groups (`<MenuSeparator style={menuSeparator()} />`): a groove, a hairline with a lip of light under it (`finish.groove`). */
+/** A separator between a menu's groups (`<MenuSeparator style={menuSeparator()} />`): a groove, a hairline with a lip of light under it (`finish.inset`). */
 export function menuSeparator(): ViewStyle {
   return {
     height: stroke.hairline,
@@ -274,7 +274,7 @@ export function menuSeparator(): ViewStyle {
     marginBottom: 5,
     marginHorizontal: 4,
     backgroundColor: colors.line,
-    boxShadow: finish.groove.boxShadow,
+    boxShadow: finish.inset.boxShadow,
   };
 }
 

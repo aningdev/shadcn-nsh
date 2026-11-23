@@ -1,10 +1,10 @@
 // A sheet: the look (`sheetPanel`, `sheetGrabber`) and the parts that wear it.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import {
+  alpha,
   colors,
   controls,
   cornerCurve,
-  finish,
   shape,
   stroke,
   type Controls,
@@ -108,9 +108,10 @@ const sheetGrabberPresets: Record<Controls, SheetGrabberPreset> = {
 };
 
 /** The grabber at the top of a bottom sheet (its `grabberStyle`): a pill centered at the top
- * edge, sized by `sheetGrabberPresets[controls()]`. It is the sheet's own handle — the one
- * `nsh/base` lets a press and a screen reader drag between detents — not a picture of one, so a
- * sheet never shows two. */
+ * edge, sized by `sheetGrabberPresets[controls()]`, in the muted ink the theme already dims with
+ * (`colors.mutedForeground` at 40%), so it reads on the card and on whatever a sheet is dragged
+ * over. It is the sheet's own handle — the one `nsh/base` lets a press and a screen reader drag
+ * between detents — not a picture of one, so a sheet never shows two. */
 export function sheetGrabber(): ViewStyle {
   const { width, height } = sheetGrabberPresets[controls()];
   return {
@@ -118,7 +119,7 @@ export function sheetGrabber(): ViewStyle {
     height,
     borderRadius: Math.ceil(height / 2),
     alignSelf: "center",
-    backgroundColor: finish.grabber.backgroundColor,
+    backgroundColor: alpha(colors.mutedForeground, 0.4),
   };
 }
 // @port end

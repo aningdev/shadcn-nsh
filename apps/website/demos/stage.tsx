@@ -292,7 +292,7 @@ export const ui = () => ({
     borderColor: colors.border,
     ...finish.raised,
   },
-  primary: { backgroundColor: colors.primary, borderWidth: 1, ...finish.light },
+  primary: { backgroundColor: colors.primary, borderWidth: 1, ...finish.accent },
   accentFill: {
     backgroundColor: colors.primary,
     borderWidth: 1,

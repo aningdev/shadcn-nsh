@@ -203,225 +203,124 @@
   "finishes": {
     "shared": {
       "card": {
-        "gradient": "linear-gradient(180deg, {card} 0%, {card} 100%)",
-        "border-color": "{border}",
-        "material": null,
-        "shadow": "0 1px 3px oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)"
-      },
-      "section": {
         "background": "{card}",
-        "shadow": "none",
+        "shadow": "0 1px 3px oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)",
+        "foreground": "{foreground}",
         "border-color": "{border}",
         "material": null
       },
       "inset": {
-        "material": null,
-        "shadow": "none"
-      },
-      "field": {
-        "shadow": "0 1px 2px oklch(0 0 0 / 0.05)",
+        "shadow": "none",
+        "foreground": "{foreground}",
         "material": null
       },
       "raised": {
         "background": "{raised}",
-        "gradient": "linear-gradient(180deg, {raised} 0%, {raised} 100%)",
+        "shadow": "0 1px 2px oklch(0 0 0 / 0.05)",
+        "foreground": "{foreground}",
         "backdropFilter": "none",
         "material": null,
-        "shadow": "0 1px 2px oklch(0 0 0 / 0.05)",
         "border-color": "transparent",
         "border-top-color": "transparent",
         "border-bottom-color": "transparent"
       },
+      "overlay": {
+        "background": "{card}",
+        "shadow": "0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1)",
+        "foreground": "{foreground}",
+        "border-color": "{border}",
+        "backdropFilter": "none",
+        "material": null
+      },
+      "modal": {
+        "background": "{card}",
+        "shadow": "0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1)",
+        "foreground": "{foreground}",
+        "border-color": "{border}",
+        "material": null
+      },
+      "inverse": {
+        "background": "{inverse}",
+        "shadow": "0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1)",
+        "foreground": "{muted-foreground}",
+        "border-color": "{border}",
+        "backdropFilter": "none",
+        "material": null
+      },
+      "glass": {
+        "shadow": "0 1px 2px oklch(0 0 0 / 0.05)",
+        "foreground": "{foreground}",
+        "border-color": "{border}",
+        "backdropFilter": "blur(20px)",
+        "material": null,
+        "background": "oklch(from {card} l c h / 0.8)"
+      },
+      "accent": {
+        "background": "{primary}",
+        "shadow": "none",
+        "foreground": "{primary-foreground}",
+        "border-color": "transparent",
+        "border-top-color": "transparent",
+        "border-bottom-color": "transparent",
+        "material": null
+      },
+      "knob": {
+        "shadow": "0 1px 2px oklch(0 0 0 / 0.05)",
+        "foreground": "{foreground}",
+        "material": null,
+        "background": "{knob}",
+        "border-color": "transparent"
+      },
       "hover": {
+        "shadow": "0 1px 2px oklch(0 0 0 / 0.05)",
+        "foreground": "{foreground}",
         "material": null,
         "background": "{hover}",
-        "gradient": "linear-gradient(180deg, {hover} 0%, {hover} 100%)",
-        "shadow": "0 1px 2px oklch(0 0 0 / 0.05)",
         "border-color": "transparent",
         "border-top-color": "transparent",
         "border-bottom-color": "transparent"
       },
       "pressed": {
+        "shadow": "none",
         "foreground": "{foreground}",
         "material": null,
-        "shadow": "none",
         "border-color": "transparent",
         "border-top-color": "transparent",
         "border-bottom-color": "transparent"
       },
       "disabled": {
         "background": "{raised}",
-        "gradient": "linear-gradient(180deg, {raised} 0%, {raised} 100%)",
-        "shadow": "none",
-        "foreground": "{muted-foreground}",
-        "border-color": "{border}",
-        "material": null
-      },
-      "light": {
-        "background": "{primary}",
-        "gradient": "linear-gradient(180deg, {primary} 0%, {primary} 100%)",
-        "border-color": "transparent",
-        "border-top-color": "transparent",
-        "border-bottom-color": "transparent",
-        "material": null,
-        "shadow": "none"
-      },
-      "accent": {
-        "background": "{primary}",
-        "gradient": "linear-gradient(180deg, {primary} 0%, {primary} 100%)",
-        "border-color": "transparent",
-        "border-top-color": "transparent",
-        "border-bottom-color": "transparent",
-        "material": null,
-        "shadow": "none"
-      },
-      "accentPressed": {
-        "gradient": "linear-gradient(180deg, transparent 0%, transparent 100%)",
-        "foreground": "{primary-foreground}",
-        "border-color": "transparent",
-        "border-top-color": "transparent",
-        "border-bottom-color": "transparent",
-        "material": null,
-        "background": "oklch(from {primary} l c h / 0.88)",
-        "shadow": "none"
-      },
-      "track": {
-        "material": null,
-        "shadow": "none",
-        "border-color": "{border}"
-      },
-      "fill": {
-        "background": "transparent",
-        "shadow": "none",
-        "material": null,
-        "gradient": "linear-gradient(180deg, {primary} 0%, {primary} 100%)",
-        "border-color": "transparent"
-      },
-      "knob": {
-        "material": null,
-        "background": "{knob}",
-        "gradient": "linear-gradient(180deg, {knob} 0%, {knob} 100%)",
-        "shadow": "0 1px 3px oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)",
-        "border-color": "transparent"
-      },
-      "knobOn": {
-        "shadow": "0 1px 3px oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)",
-        "material": null,
-        "border-color": "transparent"
-      },
-      "handle": {
-        "material": null,
-        "background": "oklch(1 0 0)",
-        "gradient": "linear-gradient(180deg, oklch(1 0 0) 0%, oklch(1 0 0) 100%)",
-        "shadow": "0 1px 3px oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)",
-        "border-color": "{primary}"
-      },
-      "pill": {
-        "background": "{raised}",
-        "gradient": "linear-gradient(180deg, {raised} 0%, {raised} 100%)",
-        "material": null,
         "shadow": "0 1px 2px oklch(0 0 0 / 0.05)",
-        "border-color": "transparent"
-      },
-      "thumb": {
-        "material": null,
-        "shadow": "0 1px 3px oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)",
-        "border-color": "transparent"
-      },
-      "on": {
         "foreground": "{foreground}",
-        "material": null,
-        "shadow": "none",
-        "border-color": "transparent",
-        "border-top-color": "transparent",
-        "border-bottom-color": "transparent"
-      },
-      "chip": {
-        "background": "{muted}",
-        "gradient": "linear-gradient(180deg, {muted} 0%, {muted} 100%)",
-        "border-color": "transparent",
-        "material": null,
-        "shadow": "none"
-      },
-      "glass": {
-        "border-color": "{border}",
-        "backdropFilter": "blur(20px)",
-        "material": null,
-        "background": "oklch(from {card} l c h / 0.8)",
-        "shadow": "none"
-      },
-      "menu": {
-        "background": "{card}",
-        "border-color": "{border}",
-        "backdropFilter": "none",
-        "material": null,
-        "shadow": "0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1)"
-      },
-      "modal": {
-        "background": "{card}",
-        "border-color": "{border}",
-        "material": null,
-        "shadow": "0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1)"
-      },
-      "grabber": {
-        "background": "{raised}",
-        "shadow": "none",
-        "material": null
-      },
-      "tooltip": {
-        "background": "{popover}",
-        "shadow": "none",
         "border-color": "{border}",
         "material": null
-      },
-      "inverse": {
-        "background": "{inverse}",
-        "foreground": "{muted-foreground}",
-        "border-color": "{border}",
-        "backdropFilter": "none",
-        "material": null,
-        "shadow": "0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1)"
-      },
-      "groove": {
-        "material": null,
-        "shadow": "none"
       }
     },
     "light": {
       "pressed": {
-        "background": "{border}",
-        "gradient": "linear-gradient(180deg, {border} 0%, {border} 100%)"
-      },
-      "knobOn": {
-        "background": "{background}",
-        "gradient": "linear-gradient(180deg, {background} 0%, {background} 100%)"
-      },
-      "thumb": {
-        "background": "oklch(1 0 0)",
-        "gradient": "linear-gradient(180deg, oklch(1 0 0) 0%, oklch(1 0 0) 100%)"
-      },
-      "on": {
-        "background": "{chart-1}",
-        "gradient": "linear-gradient(180deg, {chart-1} 0%, {chart-1} 100%)"
+        "background": "{border}"
       }
     },
     "dark": {
       "pressed": {
-        "background": "oklch(0.34846 0 0)",
-        "gradient": "linear-gradient(180deg, oklch(0.34846 0 0) 0%, oklch(0.34846 0 0) 100%)"
-      },
-      "knobOn": {
-        "background": "{primary-foreground}",
-        "gradient": "linear-gradient(180deg, {primary-foreground} 0%, {primary-foreground} 100%)"
-      },
-      "thumb": {
-        "background": "oklch(0.34846 0 0)",
-        "gradient": "linear-gradient(180deg, oklch(0.34846 0 0) 0%, oklch(0.34846 0 0) 100%)"
-      },
-      "on": {
-        "background": "{chart-3}",
-        "gradient": "linear-gradient(180deg, {chart-3} 0%, {chart-3} 100%)"
+        "background": "oklch(0.34846 0 0)"
       }
+    }
+  },
+  "elevation": {
+    "light": {
+      "sm": "0 1px 2px oklch(0 0 0 / 0.05)",
+      "md": "0 1px 3px oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)",
+      "lg": "0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1)",
+      "xl": "0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1)",
+      "inset": null
+    },
+    "dark": {
+      "sm": "0 1px 2px oklch(0 0 0 / 0.05)",
+      "md": "0 1px 3px oklch(0 0 0 / 0.1), 0 1px 2px -1px oklch(0 0 0 / 0.1)",
+      "lg": "0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1)",
+      "xl": "0 4px 6px -1px oklch(0 0 0 / 0.1), 0 2px 4px -2px oklch(0 0 0 / 0.1)",
+      "inset": null
     }
   }
 }

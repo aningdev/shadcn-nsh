@@ -30,12 +30,6 @@ const NON_COLOUR_THEME_KEYS = new Set(
 
 const hexOf = (value: string) => css(parseColor(value)).toLowerCase();
 
-/** `accentPressed`'s fill and ink: `AccentFillColorTertiary` and `TextOnAccentFillColorSecondary` composited. */
-const pressedPair = {
-  light: { fill: "oklch(0.5773 0.13223 250.006)", ink: "oklch(0.87245 0.03754 247.003)" },
-  dark: { fill: "oklch(0.70029 0.10192 230.522)", ink: "oklch(0.42706 0.05878 229.834)" },
-};
-
 function relativeLuminance(oklchValue: string): number {
   const { r, g, b, a } = parseColor(oklchValue);
   if (a !== undefined && a < 1) {
@@ -309,14 +303,6 @@ describe("WCAG contrast for default accent", () => {
           `${appearance} ${label}`,
         ).toBeGreaterThanOrEqual(4.5);
       }
-      // `TextOnAccentFillColorSecondary` (0.7 white light / 0.5 black dark) on `AccentFillColorTertiary`
-      // is WinUI 3's genuine subtle pressed ink state (~2.95–3.10 contrast). Both are the
-      // `accentPressed` finish's fill and ink, which no token holds: they are WinUI's own composites.
-      const pressed = pressedPair[appearance];
-      expect(
-        wcagContrast(pressed.ink, pressed.fill),
-        `${appearance} accentPressed ink/fill`,
-      ).toBeGreaterThanOrEqual(2.8);
     });
   }
 });
@@ -342,10 +328,15 @@ describe("compiled winui theme files", () => {
 
     expect(files.semantics.motion.fast).toEqual({ duration: 83, timingFunction: "decelerate" });
     expect(files.semantics.dimension.size.height.pointer).toEqual({ sm: 24, md: 32, lg: 40 });
-    expect(files.semantics.finishes.shared.tooltip).toMatchObject({
+    // A flyout is the overlay layer: the popover pane, Acrylic's blur, the flyout's stroke.
+    expect(files.semantics.finishes.shared.overlay).toMatchObject({
       background: "{popover}",
       "border-color": "{glass-edge}",
       material: { windows: { backdrop: "blur" } },
+    });
+    expect(files.semantics.finishes.shared.inverse).toMatchObject({
+      background: "{inverse}",
+      "border-color": "{glass-edge}",
     });
     expect(files.semantics.finishes.light.glass).toMatchObject({
       background: "oklch(from {popover} l c h / 0.85)",
@@ -353,7 +344,7 @@ describe("compiled winui theme files", () => {
     expect(files.semantics.finishes.dark.glass).toMatchObject({
       background: "oklch(from {popover} l c h / 0.96)",
     });
-    expect(files.semantics.finishes.light.menu?.shadow).toContain("0 16px 32px");
+    expect(files.semantics.finishes.light.overlay?.shadow).toContain("0 16px 32px");
     expect(files.semantics.finishes.light.modal?.shadow).toContain("0 64px 128px");
     expect(hexOf(String(files.semantics.finishes.light.modal?.["border-color"]))).toBe("#c1c1c1");
     expect(hexOf(String(files.semantics.finishes.dark.modal?.["border-color"]))).toBe("#424242");
@@ -371,6 +362,7 @@ describe("compiled winui theme files", () => {
     });
     expect(files.semantics.finishes.shared.accent).toMatchObject({
       "border-bottom-color": "{brand-edge}",
+      foreground: "{primary-foreground}",
       shadow: "none",
     });
     expect(files.semantics.finishes.light.accent).toMatchObject({
@@ -381,10 +373,13 @@ describe("compiled winui theme files", () => {
       "border-color": "oklch(0.81732 0.11439 230)",
       "border-top-color": "oklch(0.81732 0.11439 230)",
     });
-    expect(files.semantics.finishes.shared.on).toMatchObject({
-      background: "{primary}",
-      "border-bottom-color": "{brand-edge}",
-      foreground: "{primary-foreground}",
+    // WinUI swaps the accent for `AccentFillColorTertiary` on a press; the layer contract paints a
+    // press as the accent at `ACCENT_PRESS_OPACITY` (`packages/ui/button.tsx`), so the neutral press
+    // stays the neutral one: `SubtleFillColorSecondary` over the base, in `TextFillColorSecondary`.
+    expect(files.semantics.finishes.shared.pressed).toMatchObject({
+      background: "{muted}",
+      foreground: "{muted-foreground}",
+      shadow: "none",
     });
     expect(files.semantics.finishes.light.card).toMatchObject({
       "border-color": "oklch(0.92191 0 0)",
@@ -392,18 +387,6 @@ describe("compiled winui theme files", () => {
     expect(files.semantics.finishes.dark.card).toMatchObject({
       "border-color": "oklch(0.23075 0 0)",
     });
-    expect(files.semantics.finishes.shared.accentPressed).toMatchObject({
-      "border-color": "transparent",
-      "border-top-color": "transparent",
-      "border-bottom-color": "transparent",
-      shadow: "none",
-    });
-    for (const appearance of ["light", "dark"] as const) {
-      expect(files.semantics.finishes[appearance].accentPressed).toMatchObject({
-        background: pressedPair[appearance].fill,
-        foreground: pressedPair[appearance].ink,
-      });
-    }
     expect(files.semantics.finishes.shared.disabled).toMatchObject({
       "border-color": "{border}",
     });

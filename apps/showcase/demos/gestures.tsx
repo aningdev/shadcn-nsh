@@ -422,7 +422,7 @@ function PressEvents() {
           borderCurve: "continuous",
           borderWidth: 1,
           backgroundColor: colors.primary,
-          ...finish.light,
+          ...finish.accent,
           alignItems: "center",
           justifyContent: "center",
           transitionProperty: "opacity, transform",

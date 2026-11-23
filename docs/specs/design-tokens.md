@@ -216,19 +216,35 @@ finish.<role>.*          # group + tokens       27 个表面配方（background,
 | `accelerate`            | `[1, 0, 1, 1]`               | WinUI 3 Gentle Exit（`theme.ts:991`）                                              |
 | `point-to-point`        | `[0.55, 0.55, 0, 1]`         | WinUI 3 Point-to-Point（`theme.ts:995`）                                           |
 
-#### C. `finishes`（27 个角色，每个角色映射为 `finish.<role>` Group）
+#### C. `finishes`（12 个图层，每个映射为 `finish.<role>` Group）
 
-27 个角色全部一致：`card`, `section`, `inset`, `field`, `raised`, `hover`, `pressed`, `light`, `accent`, `track`, `fill`, `knob`, `knobOn`, `handle`, `pill`, `thumb`, `on`, `chip`, `glass`, `menu`, `modal`, `tooltip`, `inverse`, `groove`, `disabled`, `accentPressed`, `grabber`。每个角色按如下字段映射（仅声明该 finish 在 `shared` / `light` / `dark` 实际存在的字段，合并后保持固定形状）：
+每层一个 finish，六套主题的集合一致：`card`, `inset`, `raised`, `overlay`, `modal`, `inverse`, `glass`, `accent`, `knob`, `hover`, `pressed`, `disabled`（`section` 并入 `card`，`field` / `track` / `groove` 并入 `inset`，`chip` / `pill` 并入 `raised`，`menu` 并入 `overlay`，`tooltip` 并入 `inverse`，`light` / `fill` / `on` 并入 `accent`，`accentPressed` 并入 `pressed`，`knobOn` / `handle` / `thumb` 并入 `knob`，`grabber` 化为 `sheet` 预设）。每个角色按如下字段映射（`background`、`foreground`、`material` 必写；`gradient`、`backdropFilter` 与三个 border 字段可省，平涂的主题就不写），合并后保持固定形状：
 
-| `finish` 字段     | DTCG 路径                                                          | `$type`    | DTCG `$value` 形态与细节                                                                                                                                                                                                                                                                            |
-| :---------------- | :----------------------------------------------------------------- | :--------- | :-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `backgroundColor` | `finish.<role>.background`                                         | `color`    | `{color.<token>}` 别名、静态 oklch、`transparent`（`alpha: 0` + 扩展标 `"transparentKeyword": true`）、或静态求值色 + `colorOp: { op: "alpha", ... }`                                                                                                                                               |
-| `backgroundImage` | `finish.<role>.gradient`                                           | `gradient` | `[{"color": ..., "position": 0}, {"color": ..., "position": 1}]`（Format §9.7）；角度 `180` 记于 `gradient.$extensions["dev.aning.shadcn-nsh"].angle = 180`；stop 若为 `transparent` 记 `transparentKeyword`                                                                                        |
-| `color`           | `finish.<role>.foreground`                                         | `color`    | 面上的字与图标：`{color.<token>}` 别名、静态 oklch 或 `transparent`；读取后经 `themed()` 成为文字样式键 `color`                                                                                                                                                                                     |
-| `borderColor`     | `finish.<role>.border-color`                                       | `color`    | `{color.<token>}` 别名、静态 oklch、`transparent`、或 `colorOp`。**不用 `$type: "border"`**：因 `finish` 不拥有线宽（不同组件按场景选 `stroke.control` / `stroke.hairline`），且 `border.json` 要求必填 `width` 与 `style`（Format §9.4）                                                           |
-| `boxShadow`       | `finish.<role>.shadow`                                             | `shadow`   | 单个 shadow 对象或 shadow 对象数组（Format §9.6：`color`, `offsetX`, `offsetY`, `blur`, `spread`, `inset`）。当为 `"none"` 时写 0 透明占位 shadow 并于 `shadow.$extensions["dev.aning.shadcn-nsh"].none = true` 标注；编译回 CSS 时 `spread.value === 0` 省略第 4 个长度、`inset: false` 省略关键字 |
-| `backdropFilter`  | `finish.<role>.$extensions["dev.aning.shadcn-nsh"].backdropFilter` | —          | 原字符串或结构化 `{ "blur"?: Dimension, "saturate"?: number } \| "none"`（DTCG 无 filter `$type`）                                                                                                                                                                                                  |
-| `material`        | `finish.<role>.$extensions["dev.aning.shadcn-nsh"].material`       | —          | `null` 或 `{ apple?, ios?, macos?, windows?, android? }`（其中 `apple.tint` 与 `android.ripple.color` 写 `"{color.<token>}"` 别名）                                                                                                                                                                 |
+| `finish` 字段     | DTCG 路径                                                          | `$type`    | DTCG `$value` 形态与细节                                                                                                                                                                                                                  |
+| :---------------- | :----------------------------------------------------------------- | :--------- | :---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `backgroundColor` | `finish.<role>.background`                                         | `color`    | `{color.<token>}` 别名、静态 oklch、`transparent`（`alpha: 0` + 扩展标 `"transparentKeyword": true`）、或静态求值色 + `colorOp: { op: "alpha", ... }`                                                                                     |
+| `backgroundImage` | `finish.<role>.gradient`                                           | `gradient` | `[{"color": ..., "position": 0}, {"color": ..., "position": 1}]`（Format §9.7）；角度 `180` 记于 `gradient.$extensions["dev.aning.shadcn-nsh"].angle = 180`；stop 若为 `transparent` 记 `transparentKeyword`                              |
+| `color`           | `finish.<role>.foreground`                                         | `color`    | 面上的字与图标：`{color.<token>}` 别名、静态 oklch 或 `transparent`；读取后经 `themed()` 成为文字样式键 `color`                                                                                                                           |
+| `borderColor`     | `finish.<role>.border-color`                                       | `color`    | `{color.<token>}` 别名、静态 oklch、`transparent`、或 `colorOp`。**不用 `$type: "border"`**：因 `finish` 不拥有线宽（不同组件按场景选 `stroke.control` / `stroke.hairline`），且 `border.json` 要求必填 `width` 与 `style`（Format §9.4） |
+| `boxShadow`       | `finish.<role>.shadow`                                             | `shadow`   | 只写刻度的引用数组，如 `["{shadow.edge.surface}", "{shadow.sm}"]`，不写自己的阴影；编译时按当前外观取 `shadow.<part>` 的值，`none` 的部件跳过，拼成一条 CSS shadow 字符串。刻度见下面的 `shadow` 组                                       |
+| `backdropFilter`  | `finish.<role>.$extensions["dev.aning.shadcn-nsh"].backdropFilter` | —          | 原字符串或结构化 `{ "blur"?: Dimension, "saturate"?: number } \| "none"`（DTCG 无 filter `$type`）                                                                                                                                        |
+| `material`        | `finish.<role>.$extensions["dev.aning.shadcn-nsh"].material`       | —          | `null` 或 `{ apple?, ios?, macos?, windows?, android? }`（其中 `apple.tint` 与 `android.ripple.color` 写 `"{color.<token>}"` 别名）                                                                                                       |
+
+#### D. `shadow`（影子刻度，每个外观一组）
+
+`shadow` 组不住在 `finish` 里，而是和 `color` 并列写在每套主题的 `light.tokens.json` / `dark.tokens.json` 里——同一层在两种外观下深浅不同。每层最多 7 个部件：
+
+| 部件                  | `$type`  | 用途                                                                     |
+| :-------------------- | :------- | :----------------------------------------------------------------------- |
+| `shadow.sm`           | `shadow` | 控件接触影：`raised` / `knob` / `hover` / `disabled` / `glass`           |
+| `shadow.md`           | `shadow` | 卡片的落下：`card`                                                       |
+| `shadow.lg`           | `shadow` | 浮层：`overlay` / `inverse`（`modal` 在同一档时共用）                    |
+| `shadow.xl`           | `shadow` | 页面等待的层：`modal`                                                    |
+| `shadow.inset`        | `shadow` | 沉下去的一层：`inset` / `pressed`（`inset: true` 的层）                  |
+| `shadow.edge.surface` | `shadow` | 面自己的边：上缘一道光、一圈发丝描边（`edge.accent` 同理，用在强调色上） |
+| `shadow.edge.accent`  | `shadow` | 强调色自己的边                                                           |
+
+值为 `$type: "shadow"` 的 DTCG 复合 token（Format §9.6：`color`、`offsetX`、`offsetY`、`blur`、`spread`、`inset`），没有就是 `$extensions.none = true` 的占位。编译到 `semantics.json` 顶层的 `elevation.{light,dark}`（`sm` / `md` / `lg` / `xl` / `inset` / `edge`），不进 `theme.json`；`theme.ts` 的 `elevation(level)` 读它，finish 只引用它。
 
 ---
 

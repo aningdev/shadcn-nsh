@@ -94,7 +94,7 @@ function Site() {
           paddingHorizontal: 14,
           borderRadius: 20,
           backgroundColor: colors.inset,
-          ...finish.track,
+          ...finish.inset,
           borderWidth: 1,
           borderColor: colors.border,
         }}

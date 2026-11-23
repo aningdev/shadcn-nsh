@@ -192,8 +192,8 @@ describe("component sources (a finish is handed out as a copy)", () => {
     expect(sharedFinishes("hoverStyle: finish.hover,")).toHaveLength(1);
     expect(sharedFinishes("<View style={finish.raised} />")).toHaveLength(1);
     expect(sharedFinishes("return { ...finish.inset };")).toEqual([]);
-    expect(sharedFinishes("...(flat || ghost ? {} : finish.field),")).toEqual([]);
-    expect(sharedFinishes("...(on() ? finish.knobOn : finish.knob),")).toEqual([]);
+    expect(sharedFinishes("...(flat || ghost ? {} : finish.inset),")).toEqual([]);
+    expect(sharedFinishes("...(on() ? finish.accent : finish.knob),")).toEqual([]);
     expect(sharedFinishes("boxShadow: finish.raised.boxShadow,")).toEqual([]);
   });
 });

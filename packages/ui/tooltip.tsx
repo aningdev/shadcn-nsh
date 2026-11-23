@@ -1,4 +1,4 @@
-import { colors, finish } from "@shadcn-nsh/theme";
+import { finish } from "@shadcn-nsh/theme";
 // A tooltip: the look (`tooltipLook`, `tooltipText`, `tooltipNote`) at the top, and the parts below.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
 import type { JSX, StyleProp, TextStyle, ViewStyle } from "nsh";
@@ -22,7 +22,7 @@ export interface TooltipLookOptions {
 
 /**
  * A tooltip's bubble (`class` and `style`, on the view inside `nsh/base`'s `Tooltip`):
- * the theme's tooltip finish (`finish.tooltip`: today the `popover` surface with the border's
+ * the theme's tooltip finish (`finish.inverse`: today the `popover` surface with the border's
  * edge, so it reads as the menus and popovers do in both appearances). One line: a row 8 points apart, 8 by 4 points of padding,
  * the theme's control corners (`radius-control`); `rich`: a column, 10 points of
  * padding, the theme's base corners (`radius`).
@@ -35,13 +35,13 @@ export function tooltipLook(o?: TooltipLookOptions) {
       : "flex-row items-center gap-2 rounded-(--radius-control) border px-2 py-1",
     style: {
       get backgroundColor() {
-        return finish.tooltip.backgroundColor;
+        return finish.inverse.backgroundColor;
       },
       get boxShadow() {
-        return finish.tooltip.boxShadow;
+        return finish.inverse.boxShadow;
       },
       get borderColor() {
-        return finish.tooltip.borderColor;
+        return finish.inverse.borderColor;
       },
     } satisfies ViewStyle,
   };
@@ -54,7 +54,7 @@ export const tooltipText = "text-xs text-inverse-foreground";
 export const tooltipNote = (): TextStyle => ({
   fontSize: 12,
   lineHeight: 16,
-  color: finish.inverse.foreground ?? colors.inverseForeground,
+  color: finish.inverse.foreground,
 });
 // @port end
 

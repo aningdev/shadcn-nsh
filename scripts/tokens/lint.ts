@@ -322,6 +322,14 @@ function validateExtAtPath(
     return;
   }
 
+  if (/^shadow\.[a-z0-9.-]+$/.test(p)) {
+    checkUnknownKeys(where, ext, ["none"], problems);
+    if ("none" in ext && ext.none !== true) {
+      problems.push(`${where}.none must be true`);
+    }
+    return;
+  }
+
   if (/^finish\.[A-Za-z0-9-]+$/.test(p)) {
     checkUnknownKeys(where, ext, ["backdropFilter", "material"], problems);
     if ("backdropFilter" in ext && !isNonEmptyString(ext.backdropFilter)) {
@@ -350,10 +358,9 @@ function validateExtAtPath(
   }
 
   if (/^finish\.[A-Za-z0-9-]+\.shadow$/.test(p)) {
-    checkUnknownKeys(where, ext, ["none"], problems);
-    if (ext.none !== true) {
-      problems.push(`${where}.none must be true`);
-    }
+    problems.push(
+      `${where}: a finish names the shadow scale's parts and writes no shadow of its own`,
+    );
     return;
   }
 
@@ -597,6 +604,83 @@ function checkReferenceTypes(
     }
   };
   walk(merged, "");
+}
+
+/** The parts a theme's shadow scale may hold: four levels, one inset, two edges (7 at most). */
+const SHADOW_LEVELS = ["sm", "md", "lg", "xl", "inset"] as const;
+const SHADOW_EDGES = ["surface", "accent"] as const;
+const FINISH_ROLES_MAX = 12;
+
+function scaleParts(node: Record<string, unknown>, prefix = ""): string[] {
+  return Object.entries(node).flatMap(([k, v]) => {
+    if (k.startsWith("$") || !isRecord(v)) return [];
+    const name = prefix ? `${prefix}.${k}` : k;
+    return isTokenNode(v) ? [name] : scaleParts(v, name);
+  });
+}
+
+/**
+ * The layers: a theme's `shadow` scale is small and named (`sm`…`xl`, `inset`, up to two `edge`s),
+ * every finish names parts of it instead of writing a shadow, and no finish paints a gradient of
+ * one colour twice.
+ */
+function checkFinishLayers(
+  label: string,
+  merged: Record<string, unknown>,
+  problems: string[],
+): void {
+  const scale = isRecord(merged.shadow) ? merged.shadow : {};
+  const parts = scaleParts(scale);
+  const allowed = new Set<string>([...SHADOW_LEVELS, ...SHADOW_EDGES.map((e) => `edge.${e}`)]);
+  for (const part of parts) {
+    if (!allowed.has(part)) {
+      problems.push(`${label}: shadow.${part} is not a scale part (${[...allowed].join(", ")})`);
+    }
+  }
+  if (parts.length > 7) {
+    problems.push(`${label}: the shadow scale has ${parts.length} parts, more than 7`);
+  }
+
+  const finishes = isRecord(merged.finish) ? merged.finish : {};
+  const roles = Object.keys(finishes).filter((k) => !k.startsWith("$"));
+  if (roles.length > FINISH_ROLES_MAX) {
+    problems.push(`${label}: ${roles.length} finishes, more than ${FINISH_ROLES_MAX}`);
+  }
+  for (const role of roles) {
+    const node = finishes[role];
+    if (!isRecord(node)) continue;
+    const shadow = node.shadow;
+    if (!isTokenNode(shadow)) {
+      problems.push(`${label}: finish.${role} has no shadow`);
+      continue;
+    }
+    const value = shadow.$value;
+    const refs = Array.isArray(value) ? value : [value];
+    if (!refs.every((r) => typeof r === "string" && /^\{shadow\.[a-z0-9.-]+\}$/.test(r))) {
+      problems.push(
+        `${label}: finish.${role}.shadow writes its own shadow; name the scale's parts instead, like ["{shadow.edge.surface}", "{shadow.sm}"]`,
+      );
+      continue;
+    }
+    for (const ref of refs as string[]) {
+      const part = ref.slice("{shadow.".length, -1);
+      if (!parts.includes(part)) {
+        problems.push(
+          `${label}: finish.${role}.shadow names {shadow.${part}}, which this theme's scale does not define`,
+        );
+      }
+    }
+
+    const gradient = node.gradient;
+    if (isTokenNode(gradient) && Array.isArray(gradient.$value)) {
+      const stops = gradient.$value.filter(isRecord).map((stop) => JSON.stringify(stop.color));
+      if (stops.length > 1 && new Set(stops).size === 1) {
+        problems.push(
+          `${label}: finish.${role}.gradient is one colour from top to bottom — write a flat fill instead`,
+        );
+      }
+    }
+  }
 }
 
 function checkMergedSemantics(
@@ -960,6 +1044,7 @@ export function lintDtcgTheme(
       checkExtensionNodes(label, merged, problems, "merged");
       checkReferenceTypes(label, merged, tokenTypes, problems);
       checkColorOpAccuracy(label, merged, resolved, tokenTypes, problems);
+      checkFinishLayers(label, merged, problems);
       checkMergedSemantics(label, merged, resolved, tokenTypes, requireDescriptions, problems);
     }
   }

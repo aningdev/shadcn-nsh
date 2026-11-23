@@ -146,7 +146,7 @@ export function Field(props: InputProps & { prefix?: string }) {
         flex: 1,
         ...rounded(shape.control),
         backgroundColor: colors.field,
-        ...finish.field,
+        ...finish.inset,
       }}
     >
       <If when={props.prefix}>

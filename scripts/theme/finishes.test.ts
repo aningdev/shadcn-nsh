@@ -3,7 +3,6 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 
 import { specBlock, specRows } from "./spec";
-import { withSurfaces } from "./surfaces";
 import { mergeFinishes, splitFinishes, type ThemeCssVars } from "./tokens";
 
 const root = join(import.meta.dir, "../..");
@@ -15,35 +14,46 @@ const cssVars = readJson("packages/theme/theme.json").cssVars as ThemeCssVars;
 const mergedLight = mergeFinishes(semantics.finishes, "light");
 const mergedDark = mergeFinishes(semantics.finishes, "dark");
 
-const surfaces = ["modal", "tooltip", "inverse"];
+/** The layers the contract names, in the order it names them. */
+const layers = [
+  "card",
+  "inset",
+  "raised",
+  "overlay",
+  "modal",
+  "inverse",
+  "glass",
+  "accent",
+  "knob",
+  "hover",
+  "pressed",
+  "disabled",
+];
 const roles = ["inverse", "inverse-foreground", "inverse-brand"];
 
-describe("the colour roles and finishes a theme states for its surfaces", () => {
-  test("the default theme states them in both appearances", () => {
+describe("the finishes a theme states, and the surfaces they paint", () => {
+  test("the default theme states every layer in both appearances", () => {
     for (const appearance of ["light", "dark"] as const) {
       const merged = appearance === "light" ? mergedLight : mergedDark;
       for (const role of roles) expect(cssVars[appearance][role], role).toBeString();
-      for (const finish of surfaces) expect(merged[finish], finish).toBeObject();
+      for (const layer of layers) expect(merged[layer], layer).toBeObject();
     }
   });
 
-  test("the spec lists every finish and every colour role, in its table", () => {
+  test("a finish states a shadow and a foreground, the scale's parts carrying the shadow", () => {
+    for (const appearance of ["light", "dark"] as const) {
+      const merged = appearance === "light" ? mergedLight : mergedDark;
+      for (const layer of layers) {
+        expect(merged[layer].shadow, `${appearance} ${layer} shadow`).toBeString();
+        expect(merged[layer].foreground, `${appearance} ${layer} foreground`).toBeString();
+      }
+    }
+  });
+
+  test("the spec lists every layer and every colour role, in its table", () => {
     const finishRows = specRows(specBlock(spec, "finishes")).map((row) => row[0]);
-    for (const finish of surfaces) expect(finishRows.join(" "), finish).toContain(finish);
+    expect(finishRows).toEqual(layers);
     for (const role of roles) expect(spec, role).toContain(`\`${role}\``);
-  });
-
-  test("withSurfaces derives the three finishes from the menu, after it", () => {
-    const menu = mergedLight.menu;
-    const out = withSurfaces({ card: mergedLight.card, menu, flat: mergedLight.flat });
-    expect(Object.keys(out)).toEqual(["card", "menu", "modal", "tooltip", "inverse", "flat"]);
-    expect(out.modal.shadow).toBe(menu.shadow);
-    expect(out.tooltip.shadow).toBe("none");
-    expect(String(out.inverse.background)).toContain("{inverse}");
-  });
-
-  test("withSurfaces refuses a theme with no menu", () => {
-    expect(() => withSurfaces({ card: mergedLight.card })).toThrow("no menu");
   });
 
   test("splitFinishes + mergeFinishes round-trips full light/dark maps", () => {

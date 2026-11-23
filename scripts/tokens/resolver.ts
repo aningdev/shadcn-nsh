@@ -219,7 +219,14 @@ export function resolveAliases(tree: Record<string, unknown>): Record<string, un
         if (m) return resolveTokenValue(m[1]!, nextStack);
         return val;
       }
-      if (Array.isArray(val)) return val.map(resolveField);
+      if (Array.isArray(val)) {
+        // A shadow's value is its layers: a part of the scale named in a finish contributes its own
+        // layers inline, so the resolved array keeps one layer per element.
+        return val.flatMap((item) => {
+          const resolved = resolveField(item);
+          return Array.isArray(resolved) ? resolved : [resolved];
+        });
+      }
       if (isRecord(val)) {
         return Object.fromEntries(Object.entries(val).map(([k, v]) => [k, resolveField(v)]));
       }

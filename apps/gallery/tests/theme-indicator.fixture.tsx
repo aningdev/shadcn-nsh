@@ -16,7 +16,7 @@ import {
   TabsTrigger,
 } from "../../../packages/ui";
 
-/** A `winui`-controls theme with distinct inverse, modal and tooltip roles. */
+/** A `winui`-controls theme with distinct inverse and modal roles. */
 const marked: AppTheme = {
   ...winuiTheme,
   id: "marked",
@@ -28,7 +28,6 @@ const marked: AppTheme = {
       shared: {
         ...winuiTheme.semantics.finishes.shared,
         modal: { ...defaultTheme.semantics.finishes.shared.modal, "border-color": "{brand}" },
-        tooltip: { ...defaultTheme.semantics.finishes.shared.tooltip, background: "{brand}" },
         inverse: { ...defaultTheme.semantics.finishes.shared.inverse, background: "{brand}" },
       },
     },
@@ -51,7 +50,7 @@ function App() {
       <Text testID="nav-width">{`nav-width:${navBarStyle().width}`}</Text>
       <Text testID="inverse">{`inverse:${colors.inverseForeground}`}</Text>
       <Text testID="modal">{`modal:${finish.modal.borderColor}`}</Text>
-      <Text testID="tooltip">{`tooltip:${finish.tooltip.backgroundColor}`}</Text>
+      <Text testID="tooltip">{`tooltip:${finish.inverse.backgroundColor}`}</Text>
       <Text testID="inverse-fill">{`inverse-fill:${finish.inverse.backgroundColor}`}</Text>
       <Text testID="field">{`field:${inputLook().style.borderBottomWidth ?? inputLook().style.borderWidth}|${inputLook().style.borderTopWidth ?? inputLook().style.borderWidth}`}</Text>
       <Text testID="frame">{`frame:${inputLook().class}`}</Text>

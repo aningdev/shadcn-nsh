@@ -26,7 +26,6 @@ import { withoutMaterial } from "./material";
  */
 import { oklch, oklchColor, over, parseColor, toOklchText, withAlpha } from "./oklch";
 import { scaledRadii } from "./style";
-import { withSurfaces } from "./surfaces";
 
 /** shadcn's neutrals, quoted from `registry/themes.ts` (theme `neutral`). */
 const NEUTRAL = {
@@ -429,8 +428,8 @@ export function themeFiles(): ThemeGeneratorOutput {
       dark: section(dark, ownDark),
     },
     finishes: {
-      light: withoutMaterial(withSurfaces(finishes("light", ownLight))),
-      dark: withoutMaterial(withSurfaces(finishes("dark", ownDark))),
+      light: withoutMaterial(finishes("light", ownLight)),
+      dark: withoutMaterial(finishes("dark", ownDark)),
     },
     descriptions: {
       style: {

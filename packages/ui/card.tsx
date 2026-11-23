@@ -151,7 +151,7 @@ export function Card(props: CardProps) {
   return (
     <View
       {...rest}
-      {...platformMaterial("section")}
+      {...platformMaterial("card")}
       style={[look.card, props.style ?? null]}
       hoverStyle={props.hoverStyle}
     >

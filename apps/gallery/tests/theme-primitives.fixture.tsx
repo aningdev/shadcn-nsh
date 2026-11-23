@@ -66,8 +66,8 @@ const expressive: AppTheme = {
           ...finishes.light.accent,
           gradient: "linear-gradient(180deg, {primary} 0%, {brand} 100%)",
         },
-        menu: {
-          ...finishes.light.menu,
+        overlay: {
+          ...finishes.light.overlay,
           material: {
             android: {
               elevation: 6,
@@ -78,8 +78,8 @@ const expressive: AppTheme = {
       },
       dark: {
         ...finishes.dark,
-        menu: {
-          ...finishes.dark.menu,
+        overlay: {
+          ...finishes.dark.overlay,
           material: {
             android: {
               elevation: 8,
@@ -128,8 +128,8 @@ function App() {
       <Text>{`roundAndroid=${JSON.stringify(roundBtn.android ?? null)}`}</Text>
       <Text>{`toggleOnAndroid=${JSON.stringify(onToggle.android ?? null)}`}</Text>
       <Text>{`toastAndroid=${JSON.stringify(toastClose.android ?? null)}`}</Text>
-      <Text>{`menuMaterial=${JSON.stringify(platformMaterial("menu"))}`}</Text>
-      <Text>{`tokens=${colors.primaryForeground}|${colors.inverseForeground}|${colors.primary}|${finish.on.foreground}`}</Text>
+      <Text>{`menuMaterial=${JSON.stringify(platformMaterial("overlay"))}`}</Text>
+      <Text>{`tokens=${colors.primaryForeground}|${colors.inverseForeground}|${colors.primary}|${finish.accent.foreground}`}</Text>
       <Roll value={step()}>{`roll=${step()}`}</Roll>
       <View
         style={{

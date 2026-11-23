@@ -14,13 +14,13 @@ function App() {
   return (
     <View>
       <Text>{`native=${nativeTheme().id}`}</Text>
-      <Text>{`menu=${glassKeys(finish.menu)}`}</Text>
-      <Text>{`menuEffect=${finish.menu.glassEffect ?? "none"}`}</Text>
+      <Text>{`menu=${glassKeys(finish.overlay)}`}</Text>
+      <Text>{`menuEffect=${finish.overlay.glassEffect ?? "none"}`}</Text>
       <Text>{`glassEffect=${finish.glass.glassEffect ?? "none"}`}</Text>
       <Text>{`raisedEffect=${finish.raised.glassEffect ?? "none"}`}</Text>
       <Text>{`card=${glassKeys(finish.card)}|${JSON.stringify(platformMaterial("card"))}`}</Text>
       {/* What a popover draws: PopIn spreads platformMaterial("menu") and the menu finish's keys. */}
-      <PopIn style={{ ...finish.menu }}>
+      <PopIn style={{ ...finish.overlay }}>
         <Text>popover</Text>
       </PopIn>
       <Button onPress={() => selectTheme(nativeTheme())}>Native</Button>

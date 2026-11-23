@@ -165,7 +165,7 @@ prop of View passes through, and `style` goes over the look's. `CollapsingHeader
 | `CollapsingHeaderBar`         | —                                                                                  | The strip at the header's bottom, `collapsedHeight` tall: a row, so it holds actions beside the title.                             |
 | `CollapsingHeaderTitle`       | —                                                                                  | The page's title, shrinking into the bar's type as the header collapses.                                                           |
 
-The fill is `finish.light` on the primary color with `primary-foreground` for its ink, edged in the
+The fill is `finish.accent` — the primary color, its ink from the finish's `foreground`, edged in the
 hairline's `brand-edge`; the title is the display role open and the label role's size collapsed; the
 description is the detail's size; the bar's room either side is `density.pad` and its gap
 `density.gap`. In a terminal the heights snap to whole rows and the title does not scale. Reduced

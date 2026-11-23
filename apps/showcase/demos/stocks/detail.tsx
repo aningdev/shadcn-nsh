@@ -409,7 +409,7 @@ function PauseButton(props: { market: Market }) {
         alignItems: "center",
         justifyContent: "center",
         borderWidth: 1,
-        ...(props.market.running() ? finish.pill : finish.accent),
+        ...(props.market.running() ? finish.raised : finish.accent),
       }}
     >
       <Icon

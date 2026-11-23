@@ -64,7 +64,7 @@ export function terminalLook(o?: TerminalLookOptions) {
       }
       return {
         backgroundColor: colors.field,
-        ...finish.field,
+        ...finish.inset,
         borderWidth: stroke.hairline,
         borderColor: colors.input,
         ...rounded(shape.control),

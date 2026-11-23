@@ -114,7 +114,7 @@ export function pickerLook(o?: PickerLookOptions) {
         ...fieldEdgeWidths(),
         ...(outline
           ? { backgroundColor: colors.raised, ...finish.raised }
-          : { backgroundColor: colors.field, ...finish.field }),
+          : { backgroundColor: colors.field, ...finish.inset }),
         ...(invalid()
           ? { borderColor: colors.destructive }
           : read(o?.open)

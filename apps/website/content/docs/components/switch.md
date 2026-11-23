@@ -149,4 +149,5 @@ Every prop of [`nsh/base` Switch](https://nsh.dev/elements/switch) passes throug
 
 `SwitchSize` is `"sm" | "default"`.
 
-The knob keeps its size on and off; on, it is white with an olive edge (`finish.knobOn`).
+The knob keeps its size on and off: off it is `finish.knob`, and on it takes the accent's own ink
+(`finish.accent.foreground`), as the switch's preset (`packages/ui/switch.tsx`, `knobLook`).

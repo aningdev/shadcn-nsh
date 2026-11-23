@@ -246,7 +246,7 @@ components:
     height: "{spacing.height.md}"
     padding: "{spacing.control.padding}"
   badge-chip:
-    backgroundColor: "{colors.light.raised}"
+    backgroundColor: "{colors.light.secondary}"
     textColor: "{colors.light.secondary-foreground}"
     typography: "{typography.caption}"
     rounded: "{rounded.control}"
@@ -263,7 +263,7 @@ components:
     rounded: "{rounded.modal}"
     padding: "{spacing.density.pad}"
   tooltip:
-    backgroundColor: "{colors.light.popover}"
+    backgroundColor: "{colors.light.inverse}"
     textColor: "{colors.light.inverse-foreground}"
     typography: "{typography.detail}"
     rounded: "{rounded.container}"
@@ -280,16 +280,16 @@ components:
   switch-knob:
     backgroundColor: "{colors.light.knob}"
   switch-knob-on:
-    backgroundColor: "{colors.light.primary-foreground}"
+    backgroundColor: "{colors.light.knob}"
   slider-handle:
-    backgroundColor: "{colors.light.popover}"
+    backgroundColor: "{colors.light.knob}"
   tabs-thumb:
-    backgroundColor: "{colors.light.popover}"
+    backgroundColor: "{colors.light.raised}"
     textColor: "{colors.light.foreground}"
     typography: "{typography.label}"
     rounded: "{rounded.control}"
   toggle-on:
-    backgroundColor: "{colors.light.primary}"
+    backgroundColor: "{colors.light.accent}"
     textColor: "{colors.light.foreground}"
     rounded: "{rounded.control}"
   glass-overlay:
@@ -458,35 +458,18 @@ Voice & Content Strategy is intentionally omitted: this theme defines visual tok
 
 ## Components
 
-Appearance-invariant surface finish recipes (background, gradient, border, shadow, blur, material).
-
-- **`finish.card`**: WinUI 3 card surface with layering depth-8 two-layer ThemeShadow approximation.
-- **`finish.section`**: WinUI 3 section card surface using CardBackgroundFillColorDefault and CardStrokeColorDefault border (no drop shadow).
-- **`finish.inset`**: The well inside a card: sunk by its inner shadow alone.
-- **`finish.field`**: A field well: its edge and its inner shadow.
-- **`finish.raised`** (backdropFilter: `none`): WinUI 3 standard control surface with ControlElevationBorderBrush top/bottom bevel and no drop shadow.
-- **`finish.hover`**: WinUI 3 hovered control surface with ControlFillColorSecondary fill and ControlElevationBorderBrush bevel.
-- **`finish.pressed`**: WinUI 3 pressed control surface with ControlFillColorTertiary/muted fill, flat border, and no shadow.
-- **`finish.disabled`**: WinUI 3 disabled control container using ControlFillColorDisabled and ControlStrokeColorDefault border.
-- **`finish.light`**: The main action brightest step: the accent gradient.
-- **`finish.accent`**: WinUI 3 accent control surface using AccentFillColorDefault and AccentControlElevationBorderBrush bevel.
-- **`finish.accentPressed`**: WinUI 3 pressed accent control surface using AccentFillColorTertiary and transparent directional borders (AccentButtonBorderBrushPressed -> ControlFillColorTransparentBrush, WinUI 2.7.0 Button_themeresources.xaml).
-- **`finish.track`**: A groove: an inner shadow and an edge.
-- **`finish.fill`**: The filled run: a slider, a progress bar, a switch that is on.
-- **`finish.knob`**: A switch knob, off.
-- **`finish.knobOn`**: A switch knob, on.
-- **`finish.handle`**: WinUI 3 slider handle using popover fill, depth-2 shadow, and border.
-- **`finish.pill`**: The upstream capsule, left to the app.
-- **`finish.thumb`**: WinUI 3 segmented thumb using popover fill, depth-2 shadow, and border.
-- **`finish.on`**: WinUI 3 checked ToggleButton / active surface using AccentFillColorDefault and AccentControlElevationBorderBrush bevel.
-- **`finish.chip`**: A chosen value label inside a field: a fill, an inner highlight and an edge.
-- **`finish.glass`** (backdropFilter: `blur(30px)`; material: `{"windows":{"backdrop":"blur"}}`): WinUI 3 AcrylicInApp surface with per-appearance TintLuminosityOpacity (0.85 light / 0.96 dark), depth-32 shadow, and Windows blur backdrop.
-- **`finish.menu`** (backdropFilter: `none`; material: `{"windows":{"backdrop":"blur"}}`): WinUI 3 Acrylic flyout/menu surface with depth-32 shadow and Windows blur backdrop.
-- **`finish.modal`**: WinUI 3 ContentDialog surface with depth-128 shadow and composited SurfaceStrokeColorDefault border.
-- **`finish.grabber`**: The drag handle pill at the top of a bottom sheet.
-- **`finish.tooltip`** (material: `{"windows":{"backdrop":"blur"}}`): WinUI 3 ToolTip surface with depth-16 shadow, glass-edge border, and Windows blur backdrop.
-- **`finish.inverse`** (backdropFilter: `none`): WinUI 3 TeachingTip/toast surface with depth-32 shadow and glass-edge border.
-- **`finish.groove`**: A groove cut inside a menu.
+- **`finish.card`**: A surface that holds content: a card, a section.
+- **`finish.inset`**: A well cut into a surface: an inset, a field, a track, a groove.
+- **`finish.raised`** (backdropFilter: `none`): A control on a surface: a button, a chip, a pill.
+- **`finish.overlay`** (backdropFilter: `none`; material: `{"windows":{"backdrop":"blur"}}`): A panel floating over the page: a menu, a toast.
+- **`finish.modal`**: A surface the page waits for: a dialog, a sheet.
+- **`finish.inverse`** (backdropFilter: `none`): The page's inverse: an inverse surface, a tooltip.
+- **`finish.glass`** (backdropFilter: `blur(30px)`; material: `{"windows":{"backdrop":"blur"}}`): A translucent surface: what is behind it shows through.
+- **`finish.accent`**: The accent's own surface, with its ink.
+- **`finish.knob`**: A knob: a switch's thumb, a slider's handle, a segmented thumb.
+- **`finish.hover`**: A control under the pointer.
+- **`finish.pressed`**: A control held down.
+- **`finish.disabled`**: A control that cannot be used.
 - **Disabled handling** (content=0.36, fill=true): WinUI 3 disabled styling: 0.36 TextFillColorDisabled content with fill: true container override.
 
 ## Do's and Don'ts

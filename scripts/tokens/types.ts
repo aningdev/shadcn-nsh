@@ -32,6 +32,13 @@ export interface DtcgShadowItem {
   inset?: boolean;
 }
 
+/**
+ * A `shadow` token's value: its layers, or — in a finish, which never writes a shadow of its own —
+ * the scale's parts it is made of (`["{shadow.edge.surface}", "{shadow.sm}"]`). The compiler joins
+ * them into one CSS `boxShadow`; a part of `null` (a flat theme's edge) is skipped.
+ */
+export type DtcgShadowValue = DtcgShadowItem[] | string[];
+
 export interface DtcgGradientStop {
   color: DtcgColor | string;
   position: number;

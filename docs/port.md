@@ -127,7 +127,7 @@ bun run port:new alert --view --family   # 有零件（Title / Description…）
 - `port:vendor` 跳过它们（不带 id 时打印一行 `own  …`）；`port:check` 不比对内容，也不要求它们是模块。
 - 颜色一律 `oklch()`：token、渐变的每一站、阴影、`color-mix()` 里的颜色，透明度写成 `oklch(… / a)`；`transparent` 与 `var(--x)` 原样保留。
 - 数值格式固定（L、C 五位小数，H 三位，alpha 三位）：`oklch()` 与 sRGB 互为逆运算，8-bit 通道完全落回，所以换存储不动一个像素。`scripts/theme/oklch.test.ts` 扫 8-bit 立方体验证这点；`scripts/theme/themes.test.ts` 断言每个主题文件里没有 hex、`rgb()`、`hsl()`。
-- `themes/<name>/`（`default` 以外）：真源均已迁入 `packages/theme/tokens/themes/<name>/`（DTCG 2025.10），由生成器输出 DTCG 源码并自动调用 `tokens:build` 编译：`bun scripts/theme/generate-shadcn.ts`、`bun scripts/theme/generate-solid-glass.ts`、`bun scripts/theme/generate-apple.ts`、`bun scripts/theme/generate-material.ts`、`bun scripts/theme/generate-winui.ts`，都不手改；`themes/native/` 是手写的一个小文件。
+- `themes/<name>/`（`default` 以外）：真源是 `packages/theme/tokens/themes/<name>/`（DTCG 2025.10），手写，改后跑 `bun run tokens:build`。`scripts/theme/` 下的生成器是当年把六套主题从各自上游（shadcn、Solid Glass、Apple HIG、M3、WinUI 资源）落成 DTCG 的一次性工具：它们仍能推导配色与样式，但所写的 23 个 finish 是层契约（#266）之前的样子，`emitDtcgTheme` 因此拒绝运行，不会覆盖手写的十二个层与影子刻度。`themes/native/` 也是手写的一个小文件。
 - 要重新对齐上游时，比对 `references/nsh/examples/nsh-gallery-ui/{theme,finishes}.json` 的差异，按需改 `packages/theme/tokens/` 并跑 `bun run tokens:build`；`owned` 标记不动。
 
 ### 主题改动的验收

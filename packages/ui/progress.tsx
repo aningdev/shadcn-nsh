@@ -97,13 +97,13 @@ export function progressRail(height?: number): ViewStyle {
     overflow: "hidden",
     ...trackFill,
     ...(g.outlined
-      ? { boxShadow: insetEdge(finish.track.borderColor, finish.track.boxShadow) }
+      ? { boxShadow: insetEdge(finish.inset.borderColor, finish.inset.boxShadow) }
       : {}),
   };
 }
 
 /** A bar's fill, `height` points tall (default `progressPresets[controls()].height`): the slider's citrus run
- * (`finish.fill`: its gradient, over a `transparent` bottom), or a tone's color
+ * (`finish.accent`: its gradient, over a `transparent` bottom), or a tone's color
  * (`up` for done, `warn`, `destructive`; `accent` is the run). Neither has an edge, so a tone's bar and
  * the run read as one kind of bar. */
 export function progressFill(height?: number, tone?: Tone): ViewStyle {

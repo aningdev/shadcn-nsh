@@ -100,8 +100,8 @@ export interface Finish {
   "border-top-color"?: string;
   "border-bottom-color"?: string;
   backdropFilter?: string;
-  /** The ink on this finish's surface (a color, not a spread style key). */
-  foreground?: string;
+  /** The ink on this finish's surface (a color, not a spread style key): every finish states one. */
+  foreground: string;
   material: Material | null;
 }
 
@@ -113,7 +113,7 @@ export interface SplitFinishes {
 }
 
 /**
- * What a component reads of a finish (`finish.menu`): the style keys, spread into a `style`. A
+ * What a component reads of a finish (`finish.overlay`): the style keys, spread into a `style`. A
  * finish whose `material` has `apple` also has `glassEffect` (and `glassTintColor`, unless its tint is
  * `null`); otherwise these keys are not there at all. `material` itself is never a style key.
  */
@@ -126,44 +126,47 @@ export type FinishStyle = {
   borderBottomColor?: string;
   backdropFilter?: string;
   /** The ink on this finish's surface, read by what draws text over it. */
-  foreground?: string;
+  foreground: string;
   glassEffect?: "regular" | "clear";
   glassTintColor?: string;
 };
 
-/** The finishes' roles: the keys of `semantics.json`'s `finishes` block. */
+/** The finishes' roles: the layers a surface can be. A control that differs sits in a control's own preset (`switch`, `slider`, `segmented`, `tabs`, `sheet`), not in a finish. */
 export type FinishRole =
   | "card"
-  | "section"
   | "inset"
-  | "field"
   | "raised"
+  | "overlay"
+  | "modal"
+  | "inverse"
+  | "glass"
+  | "accent"
+  | "knob"
   | "hover"
   | "pressed"
-  | "disabled"
-  | "light"
-  | "accent"
-  | "accentPressed"
-  | "track"
-  | "fill"
-  | "knob"
-  | "knobOn"
-  | "handle"
-  | "pill"
-  | "thumb"
-  | "on"
-  | "chip"
-  | "glass"
-  | "menu"
-  | "modal"
-  | "grabber"
-  | "tooltip"
-  | "inverse"
-  | "groove";
+  | "disabled";
 
-/** What a theme's `semantics.json` holds: its style groups and its split finishes (`shared` + sparse `light`/`dark`). */
+/** The shadow scale's levels: a control, a card, a floating panel, a dialog. */
+export type ElevationLevel = "sm" | "md" | "lg" | "xl";
+
+/**
+ * One appearance's shadow scale, as `semantics.json` writes it: the steps a finish names, plus the
+ * one `inset` and the two hard edges (`edge.surface`, `edge.accent`). A part a theme has no value
+ * for is `null` — a finish that names it simply does not wear it.
+ */
+export interface Elevation {
+  sm: string | null;
+  md: string | null;
+  lg: string | null;
+  xl: string | null;
+  inset: string | null;
+  edge?: { surface: string | null; accent: string | null };
+}
+
+/** What a theme's `semantics.json` holds: its style groups, its split finishes (`shared` + sparse `light`/`dark`) and the shadow scale per appearance. */
 export interface Semantics extends Style {
   finishes: SplitFinishes;
+  elevation: { light: Elevation; dark: Elevation };
 }
 
 /** A value for each tier: a pointer's (a desktop) and a touch screen's. */
@@ -442,10 +445,7 @@ function themed(role: FinishRole): FinishStyle {
   Object.defineProperty(out, "foreground", {
     enumerable: false,
     configurable: true,
-    get: () => {
-      const value = finishOf(role).foreground;
-      return typeof value === "string" ? alias(value) : undefined;
-    },
+    get: () => alias(finishOf(role).foreground),
   });
   const glass = (key: string): string | undefined => {
     const apple = materialOf(role)?.apple;
@@ -492,7 +492,7 @@ export interface MaterialProps {
  * They are props, not style keys, so a component spreads them on the same view that spreads `finish.<role>`
  * into its `style`:
  *
- *     <View {...platformMaterial("menu")} style={{ ...finish.menu }} />
+ *     <View {...platformMaterial("overlay")} style={{ ...finish.overlay }} />
  *
  * Its four keys are getters, so they follow `selectTheme` and the appearance as `finish` does, and
  * a finish with `material: null` (every finish the library ships) gives `undefined` for all four: the
@@ -680,54 +680,43 @@ export const tints = tokens({
 });
 
 /**
- * Light and depth, kept quiet: one-color edges (corners join cleanly), a
- * hard 1-point drop under what stands up and a 1-point inner shade in what
- * is sunk; only floating surfaces (menus, glass) cast a soft
- * shadow. `hover` and `pressed` are a raised control's states, `fill` a
- * slider's or a progress bar's run of the accent; `knob` a switch's knob on its
- * sunk track, `knobOn` the white one with an olive edge on the citrus.
- * `handle` is a slider's thumb, the knob's twin here; a theme whose thumb
- * wears an edge the switch's knob does not (shadcn's `border-primary`) tells
- * them apart. `thumb` is a segmented control's or a tab strip's selected segment on
- * its sunk track: the raised fill dark; white with a soft drop light, where
- * the raised fill is all but the track's color.
- * `on` is what stays on (a toggle, a chosen tool, a selected button): a
- * fill that stands off every surface it sits on, and off a raised control
- * at rest, further than a hover does, so on and off read apart at a
- * glance. Dark, a step lighter than the raised fill; light, where a raised
- * fill is all but the color of the card and the inset under it, a deeper
- * neutral with an edge. `groove` is a hairline's lip of light under it, a
- * menu's separator cut into the surface.
+ * Light and depth, kept quiet: a control on a card stands off it by a step (`raised`: a hard drop
+ * below, a highlight above, a hairline), a card stands off the page by the next one (`card`), a
+ * panel floats (`overlay`), a dialog waits above the page (`modal`). What is sunk (`inset`: a field,
+ * a track, a groove) is drawn by an inner shade and an edge, never by a fill alone.
+ *
+ * The layers are what a surface is, not what draws it: `accent` is the accent's own face (a filled
+ * button, a chosen switch, a progress run), `inverse` the page's inverse (a toast, a tooltip),
+ * `glass` a translucent pane, `knob` the small thing that moves (a switch's thumb, a slider's
+ * handle, a chosen segment). `hover`, `pressed` and `disabled` are the steps a control takes — a
+ * control that differs (an open switch's thumb, a slider's thumb, a segmented control's thumb, a
+ * sheet's grabber) says so in its own preset, not in a finish of its own.
  */
 export const finish: Record<FinishRole, FinishStyle> = {
   card: themed("card"),
-  section: themed("section"),
   inset: themed("inset"),
-  field: themed("field"),
   raised: themed("raised"),
+  overlay: themed("overlay"),
+  modal: themed("modal"),
+  inverse: themed("inverse"),
+  glass: themed("glass"),
+  accent: themed("accent"),
+  knob: themed("knob"),
   hover: themed("hover"),
   pressed: themed("pressed"),
   disabled: themed("disabled"),
-  light: themed("light"),
-  accent: themed("accent"),
-  accentPressed: themed("accentPressed"),
-  track: themed("track"),
-  fill: themed("fill"),
-  knob: themed("knob"),
-  knobOn: themed("knobOn"),
-  handle: themed("handle"),
-  pill: themed("pill"),
-  thumb: themed("thumb"),
-  on: themed("on"),
-  chip: themed("chip"),
-  glass: themed("glass"),
-  menu: themed("menu"),
-  modal: themed("modal"),
-  grabber: themed("grabber"),
-  tooltip: themed("tooltip"),
-  inverse: themed("inverse"),
-  groove: themed("groove"),
 };
+
+/**
+ * A step of the shadow scale, in the appearance shown (`semantics.json`'s `elevation`): `sm` a
+ * control's cast, `md` a card's, `lg` an overlay's, `xl` a dialog's. A finish already wears the
+ * steps it names, so a component reads this only where it draws a shadow without a finish; a theme
+ * that has no value for a step gives `"none"`. Reactive: reading it follows `selectTheme`.
+ */
+export function elevation(level: ElevationLevel): string {
+  const scale = isDark() ? builtIn.elevation.dark : builtIn.elevation.light;
+  return scale[level] ?? "none";
+}
 
 /**
  * How far a press sinks a control, as the theme in use says (`semantics.json`'s `state["press-scale"]`):
@@ -1112,14 +1101,14 @@ export const focusRing = (offset?: number): ViewStyle => {
  */
 
 /**
- * A theme's fill for a run, a bar or a slider's range: its gradient, and the color under it. The
- * gradient carries the color (a flat theme repeats one color in both stops); the theme keeps its
- * `backgroundColor` transparent, since a color under the gradient shows through and tints the run.
+ * A theme's fill for a run, a bar or a slider's range: the accent's own face, its gradient and the
+ * colour under it. The gradient carries the colour where a theme has one; the colour under it shows
+ * through the translucent stops, so the two never drift apart.
  */
 export function fillStyle(): ViewStyle {
   return {
-    backgroundColor: finish.fill.backgroundColor,
-    backgroundImage: finish.fill.backgroundImage,
+    backgroundColor: finish.accent.backgroundColor,
+    backgroundImage: finish.accent.backgroundImage,
   };
 }
 

@@ -48,9 +48,9 @@ export function popupSurface(): ViewStyle {
           ...rounded(shape.container),
           borderWidth: stroke.hairline,
           padding: 4,
-          borderColor: finish.menu.borderColor,
+          borderColor: finish.overlay.borderColor,
         }
-      : { ...rounded(shape.container), borderWidth: stroke.hairline, padding: 4, ...finish.menu }
+      : { ...rounded(shape.container), borderWidth: stroke.hairline, padding: 4, ...finish.overlay }
   );
 }
 
@@ -125,7 +125,7 @@ export function PopIn(props: {
   const m = createMotion({ enter: popIn(props.side) });
   return (
     <View
-      {...platformMaterial("menu")}
+      {...platformMaterial("overlay")}
       class={props.class}
       style={[
         props.style ?? null,

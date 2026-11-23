@@ -9,7 +9,7 @@
 import fs from "node:fs";
 import path from "node:path";
 
-import { mergeFinishes, splitFinishes } from "../theme/tokens";
+import { splitFinishes } from "../theme/tokens";
 import { formatColorOpToCss, formatDtcgColor, oklchToHex6 } from "./color";
 import { loadSourceItem, mergeTokenTrees, resolvePermutation, type ResolverDoc } from "./resolver";
 import {
@@ -197,8 +197,65 @@ function orderFinishFields(
   return out;
 }
 
+/** The shadow scale an appearance compiles to: one CSS `boxShadow` per part, or `null` for a part the theme has none of. */
+export type CompiledShadows = Record<string, string | null>;
+
+/** A scale part's CSS, resolving `{shadow.edge.surface}` through the appearance's compiled scale. */
+function resolveShadowRef(ref: unknown, shadows: CompiledShadows): string | null {
+  if (typeof ref !== "string")
+    throw new Error(`Expected a {shadow.*} reference, got ${String(ref)}`);
+  const m = /^\{shadow\.([a-z0-9.-]+)\}$/.exec(ref);
+  if (!m) throw new Error(`Expected a {shadow.*} reference, got ${ref}`);
+  const key = m[1]!;
+  if (!(key in shadows)) throw new Error(`Unknown shadow part {shadow.${key}}`);
+  return shadows[key]!;
+}
+
+/** The CSS of one `shadow` composite token, `none` and `null` parts alike. */
+function compileShadowValue(token: Record<string, unknown>): string | null {
+  const ext = getExt(token);
+  if (ext?.none) return null;
+  const raw = token.$value;
+  const shadows = (Array.isArray(raw) ? raw : [raw]) as DtcgShadowItem[];
+  return shadows
+    .map((s) => {
+      const parts: string[] = [];
+      if (s.inset) parts.push("inset");
+      const fmtLen = (d: { value: number; unit: string }) =>
+        d.value === 0 ? "0" : `${d.value}${d.unit}`;
+      parts.push(fmtLen(s.offsetX), fmtLen(s.offsetY), fmtLen(s.blur));
+      if (s.spread.value !== 0) parts.push(fmtLen(s.spread));
+      const colorStr =
+        typeof s.color === "string" ? toFlatColorRef(s.color) : formatDtcgColor(s.color);
+      parts.push(colorStr);
+      return parts.join(" ");
+    })
+    .join(", ");
+}
+
+/**
+ * Compile a theme's `shadow` group (below `color`, beside `finish`) to its scale: the levels
+ * `sm`/`md`/`lg`/`xl`, the one `inset`, and the two edges, keyed by their dotted names, and
+ * `null` where the theme has none (`$extensions[EXT_NS].none`, a flat theme's edge).
+ */
+export function compileShadowGroup(group: Record<string, unknown>): CompiledShadows {
+  const out: CompiledShadows = {};
+  const walk = (node: Record<string, unknown>, prefix: string) => {
+    for (const [k, v] of Object.entries(node)) {
+      if (k.startsWith("$")) continue;
+      if (!isRecord(v)) continue;
+      const name = prefix ? `${prefix}.${k}` : k;
+      if ("$value" in v) out[name] = compileShadowValue(v);
+      else walk(v, name);
+    }
+  };
+  walk(group, "");
+  return out;
+}
+
 function compileFinishSection(
   finishGroup: Record<string, Record<string, unknown>>,
+  shadows: CompiledShadows = {},
 ): Record<string, Record<string, unknown>> {
   const out: Record<string, Record<string, unknown>> = {};
   for (const [role, group] of Object.entries(finishGroup)) {
@@ -226,26 +283,16 @@ function compileFinishSection(
       item.gradient = `linear-gradient(${angle}deg, ${stops.join(", ")})`;
     }
     if (isRecord(group.shadow)) {
-      const ext = getExt(group.shadow);
-      if (ext?.none) {
-        item.shadow = "none";
+      const raw = group.shadow.$value;
+      const items = Array.isArray(raw) ? raw : [raw];
+      if (items.every((i) => typeof i === "string")) {
+        // A finish names the shadow scale's parts; the layers join in the order written.
+        const parts = items
+          .map((ref) => resolveShadowRef(ref, shadows))
+          .filter((part): part is string => part !== null);
+        item.shadow = parts.length > 0 ? parts.join(", ") : "none";
       } else {
-        const raw = group.shadow.$value;
-        const shadows = (Array.isArray(raw) ? raw : [raw]) as DtcgShadowItem[];
-        item.shadow = shadows
-          .map((s) => {
-            const parts: string[] = [];
-            if (s.inset) parts.push("inset");
-            const fmtLen = (d: { value: number; unit: string }) =>
-              d.value === 0 ? "0" : `${d.value}${d.unit}`;
-            parts.push(fmtLen(s.offsetX), fmtLen(s.offsetY), fmtLen(s.blur));
-            if (s.spread.value !== 0) parts.push(fmtLen(s.spread));
-            const colorStr =
-              typeof s.color === "string" ? toFlatColorRef(s.color) : formatDtcgColor(s.color);
-            parts.push(colorStr);
-            return parts.join(" ");
-          })
-          .join(", ");
+        item.shadow = compileShadowValue(group.shadow) ?? "none";
       }
     }
     if (isRecord(group.foreground)) {
@@ -289,9 +336,17 @@ function readDefaultFinishFieldOrder(defaultResolverPath: string): Map<string, s
   >((acc, src) => mergeTokenTrees(acc, loadSourceItem(src, dir, doc)), {});
   const shared = compileFinishSection(
     (sharedTree.finish ?? {}) as Record<string, Record<string, unknown>>,
+    compileShadowGroup({
+      ...((sharedTree.shadow ?? {}) as Record<string, unknown>),
+      ...((lightTree.shadow ?? {}) as Record<string, unknown>),
+    }),
   );
   const light = compileFinishSection(
     (lightTree.finish ?? {}) as Record<string, Record<string, unknown>>,
+    compileShadowGroup({
+      ...((sharedTree.shadow ?? {}) as Record<string, unknown>),
+      ...((lightTree.shadow ?? {}) as Record<string, unknown>),
+    }),
   );
   const order = new Map<string, string[]>();
   for (const role of Object.keys(shared)) {
@@ -314,6 +369,24 @@ function orderFinishesByDefault(
     if (!(role in out)) out[role] = val;
   }
   return out;
+}
+
+/** Merge one appearance's finish group over the shared one. Extensions merge rather than replace:
+ * the shared group states what a layer always is (a material, say), the appearance what differs. */
+function mergeFinishGroup(
+  shared: Record<string, unknown>,
+  own: Record<string, unknown>,
+): Record<string, unknown> {
+  const extensions = {
+    ...((shared.$extensions as Record<string, Record<string, unknown>> | undefined)?.[EXT_NS] ??
+      {}),
+    ...((own.$extensions as Record<string, Record<string, unknown>> | undefined)?.[EXT_NS] ?? {}),
+  };
+  return {
+    ...shared,
+    ...own,
+    ...(Object.keys(extensions).length > 0 ? { $extensions: { [EXT_NS]: extensions } } : {}),
+  };
 }
 
 /** Compile a DTCG resolver into the runtime `semantics.json` artifact. */
@@ -441,27 +514,44 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
     Record<string, unknown>
   >((acc, src) => mergeTokenTrees(acc, loadSourceItem(src, dir, doc)), {});
 
-  const rawShared = compileFinishSection(
-    (sharedFinishesTree.finish ?? {}) as Record<string, Record<string, unknown>>,
-  );
-  const rawLight = compileFinishSection(
-    (lightFinishesTree.finish ?? {}) as Record<string, Record<string, unknown>>,
-  );
-  const rawDark = compileFinishSection(
-    (darkFinishesTree.finish ?? {}) as Record<string, Record<string, unknown>>,
-  );
+  const shadowsOf = (appearanceTree: Record<string, unknown>): CompiledShadows =>
+    compileShadowGroup({
+      ...((sharedFinishesTree.shadow ?? {}) as Record<string, unknown>),
+      ...((appearanceTree.shadow ?? {}) as Record<string, unknown>),
+    });
+  const shadowsLight = shadowsOf(lightFinishesTree);
+  const shadowsDark = shadowsOf(darkFinishesTree);
+
+  /** One appearance's finishes: what both appearances state, then what this one overrides,
+   * resolved against this appearance's shadow scale (a finish names the scale's parts, and the
+   * parts are the scale's per appearance). */
+  const finishesFor = (
+    appearanceTree: Record<string, unknown>,
+    shadows: CompiledShadows,
+  ): Record<string, Record<string, unknown>> => {
+    const shared = (sharedFinishesTree.finish ?? {}) as Record<string, Record<string, unknown>>;
+    const own = (appearanceTree.finish ?? {}) as Record<string, Record<string, unknown>>;
+    const merged: Record<string, Record<string, unknown>> = {};
+    for (const role of new Set([...Object.keys(shared), ...Object.keys(own)])) {
+      merged[role] = mergeFinishGroup(shared[role] ?? {}, own[role] ?? {});
+    }
+    return compileFinishSection(merged, shadows);
+  };
+
+  const mergedLight = finishesFor(lightFinishesTree, shadowsLight);
+  const mergedDark = finishesFor(darkFinishesTree, shadowsDark);
 
   const defaultResolver = path.resolve(dir, "..", "default", "theme.resolver.json");
   const finishesOut =
     absPath !== defaultResolver && fs.existsSync(defaultResolver)
       ? (() => {
           const order = readDefaultFinishFieldOrder(defaultResolver);
-          const rawSplit = { shared: rawShared, light: rawLight, dark: rawDark };
-          const mergedLight = orderFinishesByDefault(mergeFinishes(rawSplit, "light"), order);
-          const mergedDark = orderFinishesByDefault(mergeFinishes(rawSplit, "dark"), order);
-          return splitFinishes(mergedLight, mergedDark);
+          return splitFinishes(
+            orderFinishesByDefault(mergedLight, order),
+            orderFinishesByDefault(mergedDark, order),
+          );
         })()
-      : { shared: rawShared, light: rawLight, dark: rawDark };
+      : splitFinishes(mergedLight, mergedDark);
 
   return {
     typography: typographyOut,
@@ -531,7 +621,24 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
     motion: motionOut,
     controls: getExt(lp.controls)!.preset as string,
     finishes: finishesOut,
+    elevation: { light: elevationSet(shadowsLight), dark: elevationSet(shadowsDark) },
   };
+}
+
+/** One appearance's shadow scale as `semantics.json` writes it: the four levels, the one inset, the two edges. */
+function elevationSet(shadows: CompiledShadows): Record<string, unknown> {
+  const part = (key: string) => shadows[key] ?? null;
+  const set: Record<string, unknown> = {
+    sm: part("sm"),
+    md: part("md"),
+    lg: part("lg"),
+    xl: part("xl"),
+    inset: part("inset"),
+  };
+  const surface = part("edge.surface");
+  const accent = part("edge.accent");
+  if (surface !== null || accent !== null) set.edge = { surface, accent };
+  return set;
 }
 
 const HEX6_RE = /^#[0-9a-f]{6}$/i;

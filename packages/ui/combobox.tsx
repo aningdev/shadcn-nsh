@@ -97,7 +97,7 @@ export function comboboxLook(open: Live<boolean>, o?: ComboboxLookOptions) {
         ...fieldCorners(shape.control),
         ...fieldEdgeWidths(),
         backgroundColor: colors.field,
-        ...finish.field,
+        ...finish.inset,
         ...read(o?.style),
       };
     },
@@ -172,7 +172,7 @@ export function chipLook(o?: ChipLookOptions) {
         paddingRight: 3,
         borderRadius: terminal ? 0 : height / 2,
         borderWidth: stroke.control,
-        ...finish.chip,
+        ...finish.raised,
         opacity: read(o?.disabled) ? dimmed.disabled : 1,
       };
     },

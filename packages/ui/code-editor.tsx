@@ -75,7 +75,7 @@ export function codeEditorFrame(): ViewStyle {
     ...fieldEdgeWidths(),
     ...fieldRestEdge(colors.input),
     ...fieldCorners(shape.control),
-    ...finish.field,
+    ...finish.inset,
   };
 }
 
@@ -191,7 +191,7 @@ export function CodeEditorFindBar(props: CodeEditorFindBarProps) {
   const glyph = buttonGlyph("ghost", { size: "sm" });
   return (
     <View
-      {...platformMaterial("menu")}
+      {...platformMaterial("overlay")}
       {...rest}
       class={props.class}
       style={[{ ...popupSurface(), gap: 4 }, props.style ?? null]}

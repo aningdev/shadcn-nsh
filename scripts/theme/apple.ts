@@ -12,7 +12,6 @@
  */
 import type { ThemeGeneratorOutput } from "./dtcg";
 import { oklchColor, over, toOklchText } from "./oklch";
-import { withSurfaces } from "./surfaces";
 
 /** Apple's system colours, per appearance (sRGB, as UIKit documents them). */
 const SYSTEM = {
@@ -504,8 +503,8 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
       dark: section(palette("dark")),
     },
     finishes: {
-      light: withMaterial(withSurfaces(finishes("light"))),
-      dark: withMaterial(withSurfaces(finishes("dark"))),
+      light: withMaterial(finishes("light")),
+      dark: withMaterial(finishes("dark")),
     },
     descriptions: {
       sharedColors: {

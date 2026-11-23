@@ -156,11 +156,11 @@ export function sectionSurface(o?: SectionSurfaceOptions): ViewStyle {
     };
   }
   return {
-    backgroundColor: finish.section.backgroundColor,
+    backgroundColor: finish.card.backgroundColor,
     ...rounded(density.surface),
     borderWidth: stroke.hairline,
-    borderColor: finish.section.borderColor,
-    boxShadow: finish.section.boxShadow,
+    borderColor: finish.card.borderColor,
+    boxShadow: finish.card.boxShadow,
     ...(o?.padded ? { padding: density.pad } : {}),
   };
 }

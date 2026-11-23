@@ -641,7 +641,7 @@ function Keyframes() {
             borderRadius: 7,
             overflow: "hidden",
             backgroundColor: colors.background,
-            ...finish.track,
+            ...finish.inset,
           }}
         >
           <View
@@ -1316,7 +1316,7 @@ function Springs() {
                 justifyContent: "center",
                 borderRadius: 14,
                 backgroundColor: colors.background,
-                ...finish.track,
+                ...finish.inset,
               }}
             >
               <View
@@ -1423,7 +1423,7 @@ function Interpolations() {
               height: 12,
               borderRadius: 6,
               backgroundColor: colors.primary,
-              ...finish.light,
+              ...finish.accent,
             }}
           />
         </View>
@@ -1501,7 +1501,7 @@ function HidingHeader() {
           borderRadius: shape.control,
           overflow: "hidden",
           backgroundColor: colors.background,
-          ...finish.track,
+          ...finish.inset,
         }}
       >
         <Scroll style={{ flex: 1 }} scrollValue={scroll}>
@@ -1612,7 +1612,7 @@ function BoundedDrag() {
           paddingHorizontal: 14,
           borderRadius: shape.control,
           backgroundColor: colors.background,
-          ...finish.track,
+          ...finish.inset,
         }}
       >
         <View

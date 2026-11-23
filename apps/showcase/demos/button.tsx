@@ -712,7 +712,7 @@ function CopyCard(props: Ctx) {
         ...rounded(shape.control),
         borderWidth: 1,
         backgroundColor: colors.field,
-        ...finish.field,
+        ...finish.inset,
         borderColor: colors.input,
       }}
     >

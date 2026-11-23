@@ -173,6 +173,21 @@ function geometry(size: SwitchSize): ResolvedSwitchGeometry {
 }
 
 /**
+ * A switch's knob: the `knob` layer, and on an open switch the accent's own ink in place of the
+ * knob's fill, with no ring of the track's — the pattern `knobOn` used to carry as a finish of its
+ * own. A switch is one assembly; what its knob wears open is the switch's business.
+ */
+function knobLook(on: boolean): ViewStyle {
+  if (!on) return { ...finish.knob };
+  return {
+    ...finish.knob,
+    backgroundColor: finish.accent.foreground,
+    backgroundImage: "none",
+    borderColor: "transparent",
+  };
+}
+
+/**
  * The gallery's switch, as the props of `Switch`'s parts (spread them:
  * `<Switch {...switchLook(() => on())}>`): track, knob geometry, border, and
  * hover/press knob feedback come from `switchPresets[controls()][tier]`. `on` is the value
@@ -209,8 +224,8 @@ export function switchLook(on: () => boolean, size: SwitchSize = "default"): Swi
           outputRange: [colors.track, colors.primary],
         }),
         borderWidth: checked ? g.onBorder : g.border,
-        borderColor: checked ? finish.fill.borderColor : finish.track.borderColor,
-        boxShadow: checked ? finish.fill.boxShadow : finish.track.boxShadow,
+        borderColor: checked ? finish.accent.borderColor : finish.inset.borderColor,
+        boxShadow: checked ? finish.accent.boxShadow : finish.inset.boxShadow,
         transitionProperty: "border-color, box-shadow",
         transitionDuration: 150,
       };
@@ -247,7 +262,7 @@ export function switchLook(on: () => boolean, size: SwitchSize = "default"): Swi
         top: offset,
         ...sized,
         borderWidth: stroke.control,
-        ...(checked ? finish.knobOn : finish.knob),
+        ...knobLook(checked),
         transform: [{ translateX: travelX() }],
       };
     },

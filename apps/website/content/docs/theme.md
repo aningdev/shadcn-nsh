@@ -7,13 +7,13 @@ The theme is the upstream gallery's: a graphite page (paper in light appearance)
 
 ## Files
 
-| File                                    | What it holds                                                                                                                                                                                                                                 |
-| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `theme.json`                            | Base tokens: colors (light / dark and shared), the three `radius-*` layer lengths (plus `radius`), and font families (`font-mono`, optional `font-sans`) in shadcn's `cssVars` shape                                                          |
-| `light.tokens.json`, `dark.tokens.json` | Standalone W3C DTCG 2025.10 Format files resolved per appearance at the `pointer` tier (in-file aliases, 6-digit `hex` fallbacks) for Figma Variables (Light/Dark modes), Tokens Studio, and Style Dictionary v4; static snapshots as shipped |
-| `DESIGN.md`                             | Generated Google Labs DESIGN.md (`alpha`) specification for coding agents, compiled from DTCG sources and the pointer-tier `light`/`dark` resolutions; static snapshot as shipped                                                             |
-| `semantics.json`                        | Semantic layer in DTCG names: 7 style groups (`typography`, `dimension`, `shape`, `state`, `transition`, `motion`, `controls`) and `finishes` (`shared` + sparse `light` / `dark`), referencing tokens with `{token}`                         |
-| `lib/ui/theme.ts`                       | `colors`, `finish`, `shape`, `font`, `style`, `mono`, `focusRing` and `alpha`, read reactively from `theme.json` and `semantics.json`                                                                                                         |
+| File                                    | What it holds                                                                                                                                                                                                                                                         |
+| --------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `theme.json`                            | Base tokens: colors (light / dark and shared), the three `radius-*` layer lengths (plus `radius`), and font families (`font-mono`, optional `font-sans`) in shadcn's `cssVars` shape                                                                                  |
+| `light.tokens.json`, `dark.tokens.json` | Standalone W3C DTCG 2025.10 Format files resolved per appearance at the `pointer` tier (in-file aliases, 6-digit `hex` fallbacks) for Figma Variables (Light/Dark modes), Tokens Studio, and Style Dictionary v4; static snapshots as shipped                         |
+| `DESIGN.md`                             | Generated Google Labs DESIGN.md (`alpha`) specification for coding agents, compiled from DTCG sources and the pointer-tier `light`/`dark` resolutions; static snapshot as shipped                                                                                     |
+| `semantics.json`                        | Semantic layer in DTCG names: 7 style groups (`typography`, `dimension`, `shape`, `state`, `transition`, `motion`, `controls`), `elevation` (the shadow scale, per appearance) and `finishes` (`shared` + sparse `light` / `dark`), referencing tokens with `{token}` |
+| `lib/ui/theme.ts`                       | `colors`, `finish`, `shape`, `font`, `style`, `mono`, `focusRing` and `alpha`, read reactively from `theme.json` and `semantics.json`                                                                                                                                 |
 
 ## Installation
 
@@ -65,31 +65,34 @@ Read a role where it is drawn (in JSX, a `draw`, or an effect): the getters read
 
 ## Finishes
 
-A finish is light and depth: a gradient over the color, its shadows, its edge. `semantics.json` keeps `finishes.shared` (fields identical in both appearances, referencing `{token}` so NSH's `token()` handles light/dark switching) plus sparse `finishes.light` and `finishes.dark` overrides, and `finish.<role>` merges them and resolves every `{token}` (including `oklch(from {card} l c h / 0.78)`) for the active appearance.
+A finish is light and depth: what a surface is filled with, and how it sits above what is behind it. There are twelve — one per layer a component can be drawn on — and a finish states the same fields in every theme: `background`, `foreground`, `material`, and optionally `gradient`, `backdropFilter` and the three border colours. `semantics.json` keeps `finishes.shared` (fields identical in both appearances, referencing `{token}` so NSH's `token()` handles light/dark switching) plus sparse `finishes.light` and `finishes.dark` overrides, and `finish.<role>` merges them and resolves every `{token}` (including `oklch(from {card} l c h / 0.78)`) for the active appearance.
 
-| Role                            | Use                                                          |
-| ------------------------------- | ------------------------------------------------------------ |
-| `card` / `inset` / `field`      | The three surfaces, each with its own shadow                 |
-| `raised` / `hover` / `pressed`  | A control at rest, under the pointer, pressed                |
-| `light` / `accent`              | A control on the citrus fill                                 |
-| `track` / `fill`                | A rail, and the accent that runs in it                       |
-| `knob` / `knobOn` / `handle`    | A switch's knob off, and on; a slider's thumb                |
-| `pill` / `thumb` / `on`         | A segmented control's track, its thumb, what stays chosen    |
-| `chip`                          | A small raised label                                         |
-| `glass`                         | A control over a photo                                       |
-| `menu`                          | A floating surface's soft shadow                             |
-| `modal` / `tooltip` / `inverse` | A modal card, a tooltip's bubble, a toast's reversed surface |
-| `groove`                        | The lip of light under a separator                           |
+| Role       | Use                                                                |
+| ---------- | ------------------------------------------------------------------ |
+| `card`     | A surface that holds content: a card, a section                    |
+| `inset`    | A surface sunk into its host: a field, a track, a well             |
+| `raised`   | A surface above the page: a button at rest, a chip, a pill         |
+| `overlay`  | A surface the page floats over: a menu, a popover, a select's list |
+| `modal`    | A surface the page waits for: a dialog, a sheet                    |
+| `inverse`  | The reversed surface: a toast, a tooltip                           |
+| `glass`    | A control over a photo                                             |
+| `accent`   | The brand's own surface: a filled button, a switch that is on      |
+| `knob`     | The thumb a control moves: a switch's knob, a slider's handle      |
+| `hover`    | The pointer's treatment of the surface under it                    |
+| `pressed`  | The press's treatment of the surface under it                      |
+| `disabled` | A control that cannot act                                          |
 
-Every finish also carries a `material`: `null` (every theme the library ships), or what the platform's own glass should be. `apple` is `{ glass: "regular" | "clear", tint }` and rides inside `finish.<role>` as `glassEffect` and `glassTintColor`, so a spread of the finish carries it; `ios`, `macos` and `windows` are props, not style keys, which `platformMaterial(role)` returns for the view that draws the finish:
+Every finish states a `foreground` — the ink that sits on it — so a component needs no fallback, and `shadow` names the parts of the theme's scale (`["{shadow.edge.surface}", "{shadow.sm}"]`) instead of writing one: `elevation("md")` gives the same values on its own. `gradient` is optional; a theme that paints flat leaves it out.
+
+The `material` says what the platform's own glass should be: `null` (the four flat themes), or `apple` — `{ glass: "regular" | "clear", tint }` — which rides inside `finish.<role>` as `glassEffect` and `glassTintColor`, so a spread of the finish carries it. `ios`, `macos` and `windows` are props, not style keys, which `platformMaterial(role)` returns for the view that draws the finish:
 
 ```tsx
-<View {...platformMaterial("menu")} style={{ ...finish.menu }} />
+<View {...platformMaterial("overlay")} style={{ ...finish.overlay }} />
 ```
 
 Both follow `selectTheme` and the appearance, and with `material: null` the view is drawn as before. The library's own popovers, hover cards, toasts, the code editor's find bar and a glass carousel arrow spread it; the popups of `Menu`, `Select` and `Popover` on `nsh/base` take only `popupStyle`, so there the glass keys apply and the platform props do not.
 
-The `apple` theme fills in `material.apple`: `glass`, `menu` and `raised` carry `{ glass: "regular" }` (Liquid Glass on iOS and macOS 26+), and every other finish is a flat fill with a hairline edge. The `material` theme uses Material 3 Expressive tonal surfaces, circular corners, 8/10/10% state layers, press ripple (`state.ripple: true`), and `material.android.elevation` on elevated surfaces. The `winui` theme uses WinUI 3 (Windows 11) fill and stroke tokens, 4/8-point circular corners, Segoe UI Variable, Consolas, double focus rings, timing motion, underline tab and box-underline field indicators, and `material.windows` blur on `glass`, `menu` and `tooltip`. `nativeTheme()` from `theme-native` picks the theme of the platform the app runs on — Apple's on iOS and macOS, Material on Android, WinUI 3 on Windows, and the default theme everywhere else:
+The `apple` theme fills in `material.apple`: `glass`, `overlay` and `raised` carry `{ glass: "regular" }` (Liquid Glass on iOS and macOS 26+), and every other finish is a flat fill with a hairline edge. The `material` theme uses Material 3 Expressive tonal surfaces, circular corners, 8/10/10% state layers, press ripple (`state.ripple: true`), and `material.android.elevation` on elevated surfaces. The `winui` theme uses WinUI 3 (Windows 11) fill and stroke tokens, 4/8-point circular corners, Segoe UI Variable, Consolas, double focus rings, timing motion, underline tab and box-underline field indicators, and `material.windows` blur on `glass`, `overlay` and `inverse`. `nativeTheme()` from `theme-native` picks the theme of the platform the app runs on — Apple's on iOS and macOS, Material on Android, WinUI 3 on Windows, and the default theme everywhere else:
 
 ```npm
 npx shadcn-nsh@latest init --theme native
@@ -219,7 +222,7 @@ This library distributes no font files: `add theme` writes JSON and TypeScript, 
 
 ## Restyling
 
-Edit the two JSON files; every component follows. Change a brand color in `cssVars.light` and `cssVars.dark`, a radius or font in `cssVars.theme`, a shadow, gradient, style group or material in `semantics.json`. Keep the keys: components and finishes refer to them by name, and both appearances need the same merged finish shape.
+Edit the sources; every component follows. Change a brand color in `cssVars.light` and `cssVars.dark`, a radius or font in `cssVars.theme`, a shadow part in the DTCG `shadow` group, a gradient, style group or material in the theme's `tokens/` files. Keep the keys: components and finishes refer to them by name, and both appearances need the same merged finish shape.
 
 - Add the theme to an app with `shadcn-nsh add theme` (or let `init` do it); subsequent `add` runs key-merge missing entries into `theme.json` and `semantics.json` while keeping your values.
 - Replacing both files together rebrands the whole library; a key added upstream should be added here too.

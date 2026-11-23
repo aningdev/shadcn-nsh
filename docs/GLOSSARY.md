@@ -88,11 +88,16 @@ _Avoid_: `finishes.json`（旧文件名）、在语义层重复写颜色/圆角/
 _Avoid_: 用别的词指它；在 B 层另起一个与 A 层槽同义的名字
 
 **Finish（Finish Role）**:
-`semantics.json` 里 `finishes`（`shared` + 稀疏 `light` / `dark` 合并后）的一个条目（`card`、`raised`、`fill`… 共 23 个，见 [`specs/theme-roles.md`](specs/theme-roles.md)）：一个面的底、渐变、边、影、模糊，外加它向平台要的原生材质 `material`（`null` 表示不要）。finish 只管一个面的画法，颜色写 `{token}`；合并后每个 finish 在每套主题、每种外观里的字段集合相同（平涂就是同一个颜色在两个 stop，不删 `gradient`）。
+`semantics.json` 里 `finishes`（`shared` + 稀疏 `light` / `dark` 合并后）的一个条目：组件可能画在上面的一个**图层**（`card`、`inset`、`raised`、`overlay`、`modal`、`inverse`、`glass`、`accent`、`knob`、`hover`、`pressed`、`disabled`，共 12 个，见 [`specs/theme-roles.md`](specs/theme-roles.md)）。它写一个面的底、面上的墨 `foreground`、可省的渐变与模糊、三个边色，外加它向平台要的原生材质 `material`（`null` 表示不要）；`shadow` 只写影子刻度（[`影子刻度`](#影子刻度)）的引用，不写自己的影子。finish 只管一个面的画法，颜色写 `{token}`；合并后每个 finish 在每套主题、每种外观里的字段集合相同（`gradient`、`backdropFilter`、`material` 可以省，平涂就不写渐变）。
 _Avoid_: 把 finish 当 token；用别的词指它；删字段表示“没有渐变”
 
+**Shadow Scale（影子刻度）**:
+
+一套主题、一种外观里 `sm` / `md` / `lg` / `xl` / `inset` / `edge.surface` / `edge.accent` 七个影子部件（DTCG `shadow` 复合 token，写在 `light.tokens.json` / `dark.tokens.json` 的 `shadow` 组）。finish 的 `shadow` 只引用它们，编译后落在 `semantics.json` 的 `elevation`，`theme.ts` 的 `elevation(level)` 读它。没有的部件写 `$extensions.none = true`，引用后跳过。见 [`specs/theme-roles.md`](specs/theme-roles.md)。
+_Avoid_: 在 finish 里写阴影字符串；把 `elevation` 放进 `theme.json`
+
 **Alias（`{token}` 引用）**:
-语义层引用 `theme.json` 基础 token 的花括号写法（对齐 DTCG 2025.10）：`dimension.shape.*` 写 `{radius-…}`、7 个 typography 复合 token 的 `fontFamily` 写 `{font.family.sans}`、finish 颜色与 `material.apple.tint` 写 `{token}` 或 `oklch(from {token} l c h / a)`。`theme.ts` 在**读的时候**经 `token()` 响应式解析，所以切外观、`selectTheme` 切主题与宿主 `setThemeOverrides` 都自动生效。finish 允许的字面量只有墨色（黑或白带 alpha）、`transparent`，以及规范里待定表列出的那些；`shadow` 整条豁免。
+语义层引用 `theme.json` 基础 token 的花括号写法（对齐 DTCG 2025.10）：`dimension.shape.*` 写 `{radius-…}`、7 个 typography 复合 token 的 `fontFamily` 写 `{font.family.sans}`、finish 颜色与 `material.apple.tint` 写 `{token}` 或 `oklch(from {token} l c h / a)`。`theme.ts` 在**读的时候**经 `token()` 响应式解析，所以切外观、`selectTheme` 切主题与宿主 `setThemeOverrides` 都自动生效。finish 允许的字面量只有墨色（黑或白带 alpha）、`transparent`，以及规范里待定表列出的那些；`shadow` 不写字面量，只引用影子刻度。
 _Avoid_: 在语义层写 `var(--token)` 或重复的色值/圆角数字；用别的词指它
 
 **Build-time Theme / AppTheme**:

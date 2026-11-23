@@ -133,8 +133,8 @@ function Faq(props: { log: (text: string) => void }) {
                       justifyContent: "center",
                       backgroundColor: open().includes(q().value) ? colors.primary : colors.raised,
                       boxShadow: open().includes(q().value)
-                        ? finish.light.boxShadow
-                        : finish.chip.boxShadow,
+                        ? finish.accent.boxShadow
+                        : finish.raised.boxShadow,
                     }}
                     class="transition-colors duration-200 motion-reduce:transition-none"
                   >

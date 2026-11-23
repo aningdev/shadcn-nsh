@@ -234,7 +234,7 @@ components:
     height: "{spacing.height.md}"
     padding: "{spacing.control.padding}"
   badge-chip:
-    backgroundColor: "{colors.light.raised}"
+    backgroundColor: "{colors.light.secondary}"
     textColor: "{colors.light.secondary-foreground}"
     typography: "{typography.caption}"
     rounded: "{rounded.control}"
@@ -251,7 +251,7 @@ components:
     rounded: "{rounded.modal}"
     padding: "{spacing.density.pad}"
   tooltip:
-    backgroundColor: "{colors.light.popover}"
+    backgroundColor: "{colors.light.inverse}"
     textColor: "{colors.light.inverse-foreground}"
     typography: "{typography.detail}"
     rounded: "{rounded.container}"
@@ -264,20 +264,20 @@ components:
     backgroundColor: "{colors.light.track}"
     rounded: "{rounded.control}"
   switch-track-on:
-    backgroundColor: "#a2d33c"
+    backgroundColor: "{colors.light.primary}"
   switch-knob:
     backgroundColor: "#ffffff"
   switch-knob-on:
-    backgroundColor: "#ffffff"
+    backgroundColor: "{colors.light.knob}"
   slider-handle:
-    backgroundColor: "#ffffff"
+    backgroundColor: "{colors.light.knob}"
   tabs-thumb:
-    backgroundColor: "#ffffff"
+    backgroundColor: "{colors.light.raised}"
     textColor: "{colors.light.foreground}"
     typography: "{typography.label}"
     rounded: "{rounded.control}"
   toggle-on:
-    backgroundColor: "#dbdce0"
+    backgroundColor: "{colors.light.accent}"
     textColor: "{colors.light.foreground}"
     rounded: "{rounded.control}"
   glass-overlay:
@@ -446,35 +446,18 @@ Voice & Content Strategy is intentionally omitted: this theme defines visual tok
 
 ## Components
 
-Appearance-invariant surface finish recipes (background, gradient, border, shadow, blur, material).
-
-- **`finish.card`**: The card face: an inner highlight, a hairline, a contact shadow and a cast one.
-- **`finish.section`**: The flat surface a section's content or card sits on (no shadow by default).
-- **`finish.inset`**: The well inside a card: sunk by its inner shadow alone.
-- **`finish.field`**: A field well: its edge and its inner shadow.
-- **`finish.raised`** (backdropFilter: `none`): A control on a card: a gradient, an inner highlight, a hard shadow, an edge.
-- **`finish.hover`**: The step the surface takes under the pointer.
-- **`finish.pressed`**: The step it takes while pressed.
-- **`finish.disabled`**: A disabled control's container and its ink.
-- **`finish.light`**: The main action brightest step: the accent gradient.
-- **`finish.accent`**: The accent face (the same as light).
-- **`finish.accentPressed`**: The accent control surface while pressed: the accent's own fill at 88 % and ink, so the border and shadow stay full.
-- **`finish.track`**: A groove: an inner shadow and an edge.
-- **`finish.fill`**: The filled run: a slider, a progress bar, a switch that is on.
-- **`finish.knob`**: A switch knob, off.
-- **`finish.knobOn`**: A switch knob, on.
-- **`finish.handle`**: A slider handle (kept apart from knob).
-- **`finish.pill`**: The upstream capsule, left to the app.
-- **`finish.thumb`**: The chosen segment of a segmented control or a tag.
-- **`finish.on`**: A chosen switch or box, and the mark on it.
-- **`finish.chip`**: A chosen value label inside a field: a fill, an inner highlight and an edge.
-- **`finish.glass`** (backdropFilter: `blur(20px)`): Glass: a translucent fill and a blur.
-- **`finish.menu`** (backdropFilter: `none`): A floating surface: a menu, a popover.
-- **`finish.modal`**: A modal face: the card colour with the menu shadow.
-- **`finish.grabber`**: The drag handle pill at the top of a bottom sheet.
-- **`finish.tooltip`**: A tooltip face: the popover pane, without a shadow.
-- **`finish.inverse`** (backdropFilter: `none`): The inverse surface: a toast face.
-- **`finish.groove`**: A groove cut inside a menu.
+- **`finish.card`**: A surface that holds content: a card, a section.
+- **`finish.inset`**: A well cut into a surface: an inset, a field, a track, a groove.
+- **`finish.raised`** (backdropFilter: `none`): A control on a surface: a button, a chip, a pill.
+- **`finish.overlay`** (backdropFilter: `none`): A panel floating over the page: a menu, a toast.
+- **`finish.modal`**: A surface the page waits for: a dialog, a sheet.
+- **`finish.inverse`** (backdropFilter: `none`): The page's inverse: an inverse surface, a tooltip.
+- **`finish.glass`** (backdropFilter: `blur(20px)`): A translucent surface: what is behind it shows through.
+- **`finish.accent`**: The accent's own surface, with its ink.
+- **`finish.knob`**: A knob: a switch's thumb, a slider's handle, a segmented thumb.
+- **`finish.hover`**: A control under the pointer.
+- **`finish.pressed`**: A control held down.
+- **`finish.disabled`**: A control that cannot be used.
 - **Disabled handling** (content=0.5, fill=false): Disabled content opacity multiplier and whether containers switch to a dedicated disabled fill.
 
 ## Do's and Don'ts

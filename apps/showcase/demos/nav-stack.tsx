@@ -815,7 +815,7 @@ function Unsaved(props: { pop: () => void }) {
               borderWidth: 1,
               borderColor: focused() ? colors.brand : colors.input,
               ...rounded(shape.control),
-              ...finish.field,
+              ...finish.inset,
             }}
           />
           <Text style={{ fontSize: 13, color: colors.mutedForeground }}>
