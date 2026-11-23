@@ -26,7 +26,7 @@ export function TimeField(props: TimeFieldProps) {
   return (
     <BaseTimeField
       {...rest}
-      class={props.class ? `${timeFieldClass} ${props.class}` : timeFieldClass}
+      class={props.class ? `${timeFieldClass()} ${props.class}` : timeFieldClass()}
       segmentClass={props.segmentClass ?? calendarLook.segmentClass}
       separatorStyle={[calendarLook.separator, props.separatorStyle ?? null]}
       renderSegment={props.renderSegment ?? ((segment) => <TimeSegment label={segment.label} />)}

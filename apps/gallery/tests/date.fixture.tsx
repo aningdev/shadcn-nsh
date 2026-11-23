@@ -27,7 +27,7 @@ function pickerSize() {
 }
 
 function timeSize() {
-  return timeFieldClass.includes("h-8") ? 32 : 44;
+  return timeFieldClass().includes("h-8") ? 32 : 44;
 }
 
 function App() {

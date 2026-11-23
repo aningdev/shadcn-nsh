@@ -1,6 +1,7 @@
 // How a control preset marks a focused or editable field (`indicator`, `corners`): one place for
 // the shared logic, so every field control reads the preset the same way.
 import {
+  alpha,
   colors,
   controls,
   cornerCurve,
@@ -12,9 +13,15 @@ import {
 } from "@shadcn-nsh/theme";
 import type { ViewStyle } from "nsh";
 
+/**
+ * How a preset draws a field's frame: `box` all round in the input color, `underline` a line under
+ * the text, or `box-underline` a box whose bottom edge is that line.
+ */
+export type FieldIndicator = "box" | "underline" | "box-underline";
+
 /** Preset options controlling how form fields draw their resting frame and corners. */
 export interface FieldPreset {
-  indicator: "box" | "underline";
+  indicator: FieldIndicator;
   corners: "all" | "top";
 }
 
@@ -22,12 +29,15 @@ export interface FieldPreset {
 export const fieldPresets: Record<Controls, FieldPreset> = {
   base: { indicator: "box", corners: "all" },
   material: { indicator: "underline", corners: "top" },
-  winui: { indicator: "underline", corners: "all" },
+  winui: { indicator: "box-underline", corners: "all" },
 };
 
-/** The active preset draws a field as a line under its text (`indicator: "underline"`), not a box. */
-export function fieldUnderline(): boolean {
-  return !terminal && fieldPresets[controls()].indicator === "underline";
+/**
+ * How the active preset draws a field's frame. The terminal keeps its own box whatever the preset:
+ * a shell's fields are its own grid's.
+ */
+export function fieldIndicator(): FieldIndicator {
+  return terminal ? "box" : fieldPresets[controls()].indicator;
 }
 
 /** A field's corners: all four at `radius`, or the top two only (`corners: "top"`). */
@@ -43,9 +53,19 @@ export function fieldCorners(radius: number): ViewStyle {
   };
 }
 
+/**
+ * `fieldCorners` for a frame drawn in classes: `rounded-(--radius-control)` names the same token,
+ * and a class's corner is a circular one, the curve those frames already draw.
+ */
+export function fieldCornerClass(): string {
+  return fieldPresets[controls()].corners === "top"
+    ? "rounded-t-(--radius-control)"
+    : "rounded-(--radius-control)";
+}
+
 /** A field's edge widths: `stroke.control` all round, or its bottom edge alone for an underline. */
 export function fieldEdgeWidths(): ViewStyle {
-  return fieldUnderline()
+  return fieldIndicator() === "underline"
     ? {
         borderTopWidth: 0,
         borderLeftWidth: 0,
@@ -55,13 +75,44 @@ export function fieldEdgeWidths(): ViewStyle {
     : { borderWidth: stroke.control };
 }
 
-/** A field's edge colour at rest: the input line, or for an underline the muted foreground. */
-export function fieldRestColor(input: string): string {
-  return fieldUnderline() ? colors.mutedForeground : input;
+/** `fieldEdgeWidths` for a frame drawn in classes: `border` all round, or `border-b` for an underline. */
+export function fieldEdgeClass(): string {
+  return fieldIndicator() === "underline" ? "border-b" : "border";
 }
 
-/** The class a field's edge takes at rest and its focus, for an underline: the focus edge is `focus.width` of the accent, in place of the ring. */
-export function underlineFocusClass(focus: string): string {
+/**
+ * A field's edge at rest, in `style`: a box in the input color, a line in the muted foreground, or
+ * a box whose bottom edge is that line. Any other color the field draws (the danger tone, a flat or
+ * a ghost field) is the box's, and takes the line with it.
+ */
+export function fieldRestEdge(input: string): ViewStyle {
+  switch (fieldIndicator()) {
+    case "underline":
+      return { borderColor: colors.mutedForeground };
+    case "box-underline":
+      return { borderColor: input, borderBottomColor: colors.mutedForeground };
+    default:
+      return { borderColor: input };
+  }
+}
+
+/**
+ * The class a field's line takes with the keys: `focus.width` of the accent, in place of the ring.
+ */
+export function fieldFocusClass(focus: string): string {
   const w = style().dimension.focus.width;
   return `${focus}:border-b-[${w}px]`;
+}
+
+/**
+ * A field's edge with the keys, in `style`, in `tone`: the border and the outline together, or for a
+ * box-underline its bottom edge alone, `focus.width` wide, and no ring.
+ */
+export function fieldFocusEdge(tone: string): ViewStyle {
+  if (fieldIndicator() !== "box-underline") return { borderColor: tone, outlineColor: tone };
+  return {
+    borderBottomColor: tone,
+    borderBottomWidth: style().dimension.focus.width,
+    outlineColor: alpha(tone, 0),
+  };
 }

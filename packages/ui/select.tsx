@@ -15,7 +15,7 @@ import {
 
 import { fieldSize } from "./input";
 import { Icon } from "./lib/icons";
-import { fieldCorners, fieldEdgeWidths, fieldRestColor } from "./lib/indicator";
+import { fieldCorners, fieldEdgeWidths, fieldFocusEdge, fieldRestEdge } from "./lib/indicator";
 import {
   Chevron,
   clearButtonLook,
@@ -115,13 +115,13 @@ export function pickerLook(o?: PickerLookOptions) {
         ...(outline
           ? { backgroundColor: colors.raised, ...finish.raised }
           : { backgroundColor: colors.field, ...finish.field }),
-        borderColor: invalid()
-          ? colors.destructive
+        ...(invalid()
+          ? { borderColor: colors.destructive }
           : read(o?.open)
-            ? colors.faint
+            ? { borderColor: colors.faint }
             : outline
-              ? colors.border
-              : fieldRestColor(colors.input),
+              ? { borderColor: colors.border }
+              : fieldRestEdge(colors.input)),
         ...(terminal
           ? {}
           : {
@@ -147,7 +147,7 @@ export function pickerLook(o?: PickerLookOptions) {
     // states' order. Only for the keyboard: a click's focus, and the focus a closing list gives back, draw nothing.
     get focusVisibleStyle(): ViewStyle {
       const tone = invalid() ? colors.destructive : colors.brand;
-      return terminal ? { borderColor: tone } : { borderColor: tone, outlineColor: tone };
+      return terminal ? { borderColor: tone } : fieldFocusEdge(tone);
     },
     get disabledStyle(): ViewStyle {
       return { opacity: dimmed.disabled };

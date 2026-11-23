@@ -72,7 +72,7 @@ function App() {
                 start.set(value);
                 log(`start → ${value}`);
               }}
-              class={timeFieldClass}
+              class={timeFieldClass()}
               segmentClass={calendarLook.segmentClass}
               separatorStyle={calendarLook.separator}
               renderSegment={(segment) => <TimeSegment label={segment.label} />}
@@ -88,7 +88,7 @@ function App() {
                 end.set(value);
                 log(`end → ${value}`);
               }}
-              class={timeFieldClass}
+              class={timeFieldClass()}
               segmentClass={calendarLook.segmentClass}
               separatorStyle={calendarLook.separator}
               renderSegment={(segment) => <TimeSegment label={segment.label} />}
@@ -99,7 +99,7 @@ function App() {
               value="12:00"
               disabled
               accessibilityLabel="Disabled time"
-              class={timeFieldClass}
+              class={timeFieldClass()}
               segmentClass={calendarLook.segmentClass}
               separatorStyle={calendarLook.separator}
               renderSegment={(segment) => <TimeSegment label={segment.label} />}

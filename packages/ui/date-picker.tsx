@@ -78,7 +78,9 @@ export function datePickerLook(o?: DatePickerLookOptions) {
     get timeStyle() {
       return calendarLook.time;
     },
-    timeFieldClass,
+    get timeFieldClass(): string {
+      return timeFieldClass();
+    },
     segmentClass: calendarLook.segmentClass,
     get separatorStyle() {
       return calendarLook.separator;

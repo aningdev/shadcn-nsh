@@ -53,7 +53,8 @@ function App() {
       <Text testID="dialog">{`dialog:${finish.dialog.borderColor}`}</Text>
       <Text testID="tooltip">{`tooltip:${finish.tooltip.backgroundColor}`}</Text>
       <Text testID="inverse-fill">{`inverse-fill:${finish.inverse.backgroundColor}`}</Text>
-      <Text testID="field">{`field:${inputLook().style.borderBottomWidth}|${inputLook().style.borderTopWidth}`}</Text>
+      <Text testID="field">{`field:${inputLook().style.borderBottomWidth ?? inputLook().style.borderWidth}|${inputLook().style.borderTopWidth ?? inputLook().style.borderWidth}`}</Text>
+      <Text testID="frame">{`frame:${inputLook().class}`}</Text>
       <Text testID="corners">{`corners:${fieldCorners(shape.control).borderBottomLeftRadius}|${fieldCorners(shape.control).borderTopLeftRadius}`}</Text>
       <If when={shown()}>
         <Tabs defaultValue="a">

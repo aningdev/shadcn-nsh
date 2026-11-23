@@ -26,7 +26,7 @@ import {
 import { buttonGlyph } from "./button";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "./input-group";
 import { Icon } from "./lib/icons";
-import { fieldCorners, fieldEdgeWidths, fieldRestColor } from "./lib/indicator";
+import { fieldCorners, fieldEdgeWidths, fieldRestEdge } from "./lib/indicator";
 import { popupSurface } from "./lib/popup";
 import { mergeClasses } from "./lib/utils";
 import { Toggle } from "./toggle";
@@ -73,7 +73,7 @@ export function codeEditorFrame(): ViewStyle {
   return {
     backgroundColor: colors.field,
     ...fieldEdgeWidths(),
-    borderColor: fieldRestColor(colors.input),
+    ...fieldRestEdge(colors.input),
     ...fieldCorners(shape.control),
     ...finish.field,
   };

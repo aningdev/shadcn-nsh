@@ -30,6 +30,7 @@ test("the indicator presets and the inverse, dialog and tooltip roles follow the
   expect(read(app.texts(), "field")).not.toBe("0|0");
   expect(read(app.texts(), "field")?.endsWith("|0")).toBe(false);
   expect(read(app.texts(), "corners")?.startsWith("0|")).toBe(false);
+  expect(read(app.texts(), "frame")).toContain("outline-2");
 
   // Material ("material"): underline tabs, filled nav row, underlined fields with top corners only.
   await app.press("text:Material");
@@ -43,8 +44,13 @@ test("the indicator presets and the inverse, dialog and tooltip roles follow the
   expect(app.count("id:nav-bar")).toBe(0);
   expect(material.field?.endsWith("|0")).toBe(true);
   expect(material.corners?.startsWith("0|")).toBe(true);
+  expect(read(app.texts(), "frame")).toContain("border-muted-foreground");
+  expect(read(app.texts(), "frame")).not.toContain("border-b-muted-foreground");
+  // The line alone takes the accent, `focus.width` (3) wide, and no ring is drawn.
+  expect(read(app.texts(), "frame")).not.toContain("outline-2");
 
-  // Marked ("winui"): underline tabs, a leading nav bar, underlined fields with all four corners.
+  // Marked ("winui"): underline tabs, a leading nav bar, fields boxed all round like the base's with
+  // the muted line as their bottom edge, and all four corners.
   await app.press("text:Marked");
   // A tab list picks its frame when it is made: draw it again under the new theme.
   await app.press("text:Hide tabs");
@@ -55,8 +61,14 @@ test("the indicator presets and the inverse, dialog and tooltip roles follow the
   expect(after["nav-width"]).toBe("3");
   expect(app.count("id:tabs-rule")).toBe(1);
   expect(app.count("id:nav-bar")).toBe(1);
-  expect(after.field?.endsWith("|0")).toBe(true);
+  expect(after.field).toBe(before.field);
   expect(after.corners?.startsWith("0|")).toBe(false);
+  // The box keeps its color with the keys and its bottom edge takes the accent, `focus.width` (2)
+  // wide, in place of the ring.
+  expect(read(app.texts(), "frame")).toContain("border-b-muted-foreground");
+  expect(read(app.texts(), "frame")).toContain("focus-within:border-b-brand");
+  expect(read(app.texts(), "frame")).toContain("focus-within:border-b-[2px]");
+  expect(read(app.texts(), "frame")).not.toContain("outline-2");
   expect(after.inverse).not.toBe(before.inverse);
   expect(after.dialog).not.toBe(before.dialog);
   expect(after.tooltip).not.toBe(before.tooltip);

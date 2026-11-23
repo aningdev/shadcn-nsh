@@ -12,6 +12,7 @@ import {
 
 import { edgeClass, fieldSize } from "./input";
 import { Icon } from "./lib/icons";
+import { fieldCornerClass, fieldEdgeClass } from "./lib/indicator";
 
 // @port look/field.tsx
 const pointer = platform.desktop;
@@ -31,13 +32,18 @@ const press = terminal
  * a row high, its steppers at the band's end.
  */
 export const numberInputClasses = {
-  frame: terminal
-    ? "h-4 flex-row items-stretch bg-field pl-2 disabled:opacity-50"
-    : [
-        pointer ? "h-8 rounded-(--radius-control)" : "h-11 rounded-(--radius-control)",
-        "flex-row items-stretch overflow-hidden border bg-field",
-        edgeClass({ rest: "border-input", hover: "border-faint", hoverVariant: "enabled:hover" }),
-      ].join(" "),
+  /** The well: its corners and edge are the field preset's, read where it is drawn. */
+  get frame(): string {
+    return terminal
+      ? "h-4 flex-row items-stretch bg-field pl-2 disabled:opacity-50"
+      : [
+          pointer ? "h-8" : "h-11",
+          fieldCornerClass(),
+          "flex-row items-stretch overflow-hidden bg-field",
+          fieldEdgeClass(),
+          edgeClass({ rest: "border-input", hover: "border-faint", hoverVariant: "enabled:hover" }),
+        ].join(" ");
+  },
   press,
   stepBefore: (width: string) => `${width} ${press} border-r border-line`,
   stepAfter: (width: string) => `${width} ${press} border-l border-line`,

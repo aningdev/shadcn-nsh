@@ -16,10 +16,12 @@ import { platform, signal, split } from "nsh";
 import { Input as BaseInput, type InputProps as BaseInputProps } from "nsh/base";
 
 import {
+  fieldCornerClass,
   fieldCorners,
+  fieldEdgeClass,
   fieldEdgeWidths,
-  fieldUnderline,
-  underlineFocusClass,
+  fieldFocusClass,
+  fieldIndicator,
 } from "./lib/indicator";
 import { createRejectShake } from "./lib/motion";
 import { type Live, read } from "./lib/utils";
@@ -89,22 +91,38 @@ interface EdgeOptions {
 
 /**
  * A well's edge as classes: at rest, stronger under the pointer, and while
- * it (or a view in it) has the keys a 2-point edge in the accent, the
- * border and the outline together, hovered or not; in the terminal the
- * border is the field's line, so it takes the accent alone.
+ * it (or a view in it) has the keys the accent, the border and the outline
+ * together, hovered or not; in the terminal the border is the field's line,
+ * so it takes the accent alone. A preset that draws a line (`underline`,
+ * `box-underline`) takes the accent on that edge, `focus.width` wide, in
+ * place of the ring, and its box (if it has one) keeps its color.
  */
 export function edgeClass(o: EdgeOptions): string {
   const tone = o.invalid ? "destructive" : "brand";
   const focus = o.focus ?? "focus-within";
   const hover = o.hoverVariant ?? "hover";
-  // A theme that draws fields as a line: the line is the muted foreground at rest, and the focus is a
-  // wider edge (`focus.width`) of the accent in place of the ring.
-  const line = fieldUnderline() && !terminal && o.rest !== "";
+  const indicator = fieldIndicator();
+  // A field's own edge is the input one, and the preset redraws it: a line in the muted foreground,
+  // or a box whose bottom edge is that line. Another color (the danger tone, a flat or a ghost
+  // field) is the field's own, and the box and its bottom edge both keep it.
+  const own = o.rest === "border-input";
+  const line = indicator !== "box";
+  const rest =
+    !own || indicator === "box"
+      ? o.rest
+      : indicator === "underline"
+        ? "border-muted-foreground"
+        : "border-input border-b-muted-foreground";
+  // The line's color, and the accent under the pointer and with the keys: a line preset lights its
+  // bottom edge alone.
+  const edge = `${line ? "border-b" : "border"}-${tone}`;
   return [
-    line && o.rest === "border-input" ? "border-muted-foreground" : o.rest,
-    o.hover ? `${hover}:${o.hover} ${hover}:${focus}:border-${tone}` : "",
-    `${focus}:border-${tone}`,
-    line ? underlineFocusClass(focus) : "",
+    rest,
+    o.hover
+      ? `${hover}:${o.hover}${own && indicator === "box-underline" ? ` ${hover}:border-b-muted-foreground` : ""} ${hover}:${focus}:${edge}`
+      : "",
+    `${focus}:${edge}`,
+    line ? fieldFocusClass(focus) : "",
     terminal || line
       ? ""
       : `outline-2 -outline-offset-1 outline-${tone}/0 ${focus}:outline-${tone}`,
@@ -260,13 +278,18 @@ export function inputLook(o?: FieldLookOptions) {
 /**
  * A time field's well, the same one in `TimeField` and in the date picker's time row: a number input's frame, the
  * field's segments inside. It sits in the calendar's popup, so in dark it is shadcn's input there (`bg-input/30`, a
- * shade over the popup) rather than the field color, which is the page's and would read as a hole.
+ * shade over the popup) rather than the field color, which is the page's and would read as a hole. Its corners and
+ * edge are the preset's, so read it where it is used: the preset is the theme's, which changes at runtime.
  */
-export const timeFieldClass = [
-  pointer ? "h-8 rounded-(--radius-control) px-2" : "h-11 rounded-(--radius-control) px-3",
-  terminal ? "items-center border bg-field" : "items-center border bg-field dark:bg-input/30",
-  edgeClass({ rest: "border-input", hover: "border-faint", hoverVariant: "enabled:hover" }),
-].join(" ");
+export function timeFieldClass(): string {
+  return [
+    pointer ? "h-8 px-2" : "h-11 px-3",
+    fieldCornerClass(),
+    terminal ? "items-center bg-field" : "items-center bg-field dark:bg-input/30",
+    fieldEdgeClass(),
+    edgeClass({ rest: "border-input", hover: "border-faint", hoverVariant: "enabled:hover" }),
+  ].join(" ");
+}
 // @port end
 
 /**

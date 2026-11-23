@@ -6,6 +6,7 @@ import { platform, split } from "nsh";
 import { OtpInput as BaseOtpInput, type OtpInputProps as BaseOtpInputProps } from "nsh/base";
 
 import { edgeClass } from "./input";
+import { fieldCornerClass, fieldEdgeClass } from "./lib/indicator";
 import { createRejectShake } from "./lib/motion";
 import { type Live, read } from "./lib/utils";
 
@@ -41,7 +42,7 @@ export function otpCellLook(o?: OtpCellOptions) {
   return {
     cellClass: terminal
       ? "w-10 h-12 items-center justify-center border border-line font-semibold text-foreground focus:border-brand disabled:opacity-50"
-      : `${cells} items-center justify-center rounded-(--radius-control) border border-line bg-inset font-semibold text-foreground data-filled:border-input data-filled:bg-card data-filled:focus:border-brand disabled:opacity-50 ${edgeClass({ rest: "", focus: "focus" })}`,
+      : `${cells} items-center justify-center ${fieldCornerClass()} bg-inset font-semibold text-foreground ${fieldEdgeClass()} border-line data-filled:border-input data-filled:bg-card data-filled:focus:border-brand disabled:opacity-50 ${edgeClass({ rest: "", focus: "focus" })}`,
     get cellStyle(): ViewStyle {
       const tone = read(o?.tone);
       if (terminal) return tone ? { borderColor: toneColor(tone) } : {};

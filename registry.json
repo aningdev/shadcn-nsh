@@ -615,7 +615,7 @@
       "type": "registry:ui",
       "title": "Number Input",
       "description": "A sunk number field with − / + or stacked chevron steppers.",
-      "registryDependencies": ["icons", "input", "theme"],
+      "registryDependencies": ["icons", "indicator", "input", "theme"],
       "files": [
         {
           "path": "packages/ui/number-input.tsx",
@@ -630,7 +630,7 @@
       "type": "registry:ui",
       "title": "OTP Input",
       "description": "One-time code cells that lift out of sunk wells as digits fill in.",
-      "registryDependencies": ["input", "motion", "theme", "utils"],
+      "registryDependencies": ["indicator", "input", "motion", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/otp-input.tsx",

@@ -434,7 +434,10 @@ export const calendarLook = {
   // A time segment's corner is its own small fixed geometry (a digit's mark inside the field's
   // well), not a theme tier.
   segmentClass: "group rounded-[4px] active:opacity-70 focus:bg-brand-fill",
-  timeFieldClass,
+  // The preset's corners and edge are the theme's, read when the popup is drawn.
+  get timeFieldClass(): string {
+    return timeFieldClass();
+  },
   content: terminal
     ? { flexDirection: "row" as const, gap: 10 }
     : pointer
