@@ -238,6 +238,11 @@ export const style = {
         pointer: { pad: 16, gap: 12 },
         touch: { pad: 16, gap: 12 },
       },
+      // Our own: a macOS menu's highlight sits inside the menu's edge; an iOS menu's rows span it, the text 16pt in.
+      item: {
+        pointer: { inset: 4, pad: 8 },
+        touch: { inset: 0, pad: 16 },
+      },
       control: {
         pointer: { padding: 8, gap: 8, dot: 6, switch: "regular" },
         touch: { padding: 8, gap: 8, dot: 8, switch: "regular" },
@@ -369,6 +374,8 @@ export function appleDtcgOutput(): ThemeGeneratorOutput {
       lightColors: appearanceColorDescs,
       darkColors: appearanceColorDescs,
       style: {
+        "dimension.size.item":
+          "Our own, from the system menus (the HIG states no numbers): with a pointer a macOS menu's highlight sits 4pt inside the menu's edge, its text 8pt in; on iOS a menu's rows span its width (inset 0) and the text takes the system's 16pt margin.",
         "dimension.stroke.hairline": "Retina 0.5px hairline divider width per Apple HIG.",
         "state.press-scale":
           "Scale factor applied while pressed (1 disables press shrinking; Apple dims via pressed-opacity).",

@@ -53,6 +53,21 @@
           }
         }
       },
+      "item": {
+        "$description": "Material 3 menu rows: the fill spans the menu's width (inset 0; a DropdownMenuItem takes no horizontal margin) and the text sits 12dp in (DropdownMenuItemHorizontalPadding, androidx compose material3 Menu.kt).",
+        "inset": {
+          "$value": {
+            "value": 0,
+            "unit": "px"
+          }
+        },
+        "pad": {
+          "$value": {
+            "value": 12,
+            "unit": "px"
+          }
+        }
+      },
       "control": {
         "$extensions": {
           "dev.aning.shadcn-nsh": {

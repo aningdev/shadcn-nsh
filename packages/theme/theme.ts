@@ -182,6 +182,12 @@ export interface DensitySpacing {
   gap: number;
 }
 
+/** A list's rows in one tier: `inset` from the container's edge to a row's fill, `pad` from the fill's edge to its text. A popup list, a menu and a palette read them. */
+export interface ItemSpacing {
+  inset: number;
+  pad: number;
+}
+
 /** Three steps of one size, small to large. */
 export interface Steps {
   sm: number;
@@ -235,6 +241,7 @@ export interface Style {
     size: {
       hit: Tiered<number>;
       density: Tiered<DensitySpacing>;
+      item: Tiered<ItemSpacing>;
       control: Tiered<ControlMetrics>;
       height: Tiered<Steps>;
     };

@@ -3,7 +3,7 @@
 import { terminal } from "@shadcn-nsh/theme";
 import { Calendar } from "lucide";
 import type { JSX, StyleProp, ViewStyle } from "nsh";
-import { context, signal, split, View } from "nsh";
+import { context, platform, signal, split, View } from "nsh";
 import {
   DatePicker as BaseDatePicker,
   type CalendarEntry,
@@ -21,6 +21,9 @@ import { type Live, read } from "./lib/utils";
 import { Picker, type PickerProps } from "./select";
 
 // @port look/listbox.tsx
+/** The room around the calendar in its popup (6 with a pointer) or sheet (10 on a touch screen): a
+ * calendar's grid, not a list's rows, so not `listPadding`. */
+const calendarRoom = platform.desktop ? 6 : 10;
 
 /**
  * A date picker's trigger (`DatePicker`'s `trigger`), shadcn's: `Picker`
@@ -52,7 +55,7 @@ export function datePickerLook(o?: DatePickerLookOptions) {
     offset: 4,
     margin: 8,
     get popupStyle() {
-      return listboxPopup();
+      return listboxPopup({ padding: calendarRoom });
     },
     get popupStartingStyle() {
       return listboxPopupStarting();

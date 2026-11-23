@@ -331,6 +331,21 @@
           }
         }
       },
+      "item": {
+        "$description": "A list's rows in a popup or a palette: inset, the container's edge to the row's fill; pad, the fill's edge to its text. shadcn's select and menus: 4 (SelectContent p-1) and 8 (SelectItem pl-2).",
+        "inset": {
+          "$value": {
+            "value": 4,
+            "unit": "px"
+          }
+        },
+        "pad": {
+          "$value": {
+            "value": 8,
+            "unit": "px"
+          }
+        }
+      },
       "control": {
         "$extensions": {
           "dev.aning.shadcn-nsh": {

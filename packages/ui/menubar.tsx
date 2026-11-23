@@ -30,7 +30,7 @@ const triggerGap = 6;
 export interface MenubarLook {
   /** The bar (`Menubar`): a row of triggers, its height and its 1-point edge, the card's fill. */
   readonly bar: ViewStyle;
-  /** A trigger (`MenubarTrigger`): one line, its corners of `menuItemSize`. */
+  /** A trigger (`MenubarTrigger`): one line, at the theme's control corners. */
   readonly trigger: ViewStyle;
   /** A trigger's name: the menu rows' type. */
   readonly triggerText: TextStyle;
@@ -39,7 +39,7 @@ export interface MenubarLook {
 /**
  * A menubar's look, after shadcn/ui's: a 36-point bar (50 on a touch screen) around its triggers,
  * inside a 1-point edge, in the card's fill, at the theme's control corners; a trigger as tall as a
- * menu row (`menuItemSize`), its name in the menu's type, its corners and 8 points either side.
+ * menu row (`menuItemSize`), its name in the menu's type, the control corners and 8 points either side.
  */
 export function menubarLook(): MenubarLook {
   return {
@@ -65,7 +65,7 @@ export function menubarLook(): MenubarLook {
         gap: triggerGap,
         height: menubarSize.trigger,
         paddingHorizontal: triggerPad,
-        ...rounded(menuItemSize.radius),
+        ...rounded(shape.control),
       };
     },
     get triggerText(): TextStyle {

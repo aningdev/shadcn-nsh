@@ -204,6 +204,7 @@ export const typeRamp = [
  * What is wrong with a theme's scales, each as a line naming the key:
  * - a height or an icon that is not three steps, climbing, on the 4 px grid;
  * - a spacing value off the grid (`spacingSteps`), and more than three of them in a tier;
+ * - a list row's inset or pad off the grid (0 allowed for an inset), or a pad inside its inset;
  * - a type ramp that steps down, or a line height that is not a whole number of points or is
  *   shorter than its text.
  * A value the platform states itself is excused by a citation (`citedValues`): the spec's list
@@ -272,6 +273,31 @@ export function checkScales(
     if (values.size > 3)
       problems.push(
         `${path}: the ${tier} tier spaces with ${values.size} values (${[...values].join(", ")}), not 3 or fewer`,
+      );
+  }
+
+  // A list's rows: on the spacing steps, or 0 for a fill that spans its container; the text sits
+  // at least as far inside the fill as the fill sits inside its container. Not counted in the
+  // tier's three spacing values: a platform states these beside its page spacing (WinUI's 4 and 11).
+  const item = isObject(size.item) ? size.item : {};
+  for (const tier of ["pointer", "touch"] as const) {
+    const spacing = isObject(item[tier]) ? item[tier] : {};
+    for (const part of ["inset", "pad"] as const) {
+      const value = spacing[part];
+      if (typeof value !== "number") continue;
+      const key = `dimension.size.item.${tier}.${part}`;
+      if (
+        !(value === 0 || (spacingSteps as readonly number[]).includes(value)) &&
+        !excused(key, value)
+      )
+        problems.push(
+          `${path}: \`${key}\` is ${value}, not 0 or one of the spacing steps (${spacingSteps.join(", ")})`,
+        );
+    }
+    const { inset, pad } = spacing;
+    if (typeof inset === "number" && typeof pad === "number" && pad < inset)
+      problems.push(
+        `${path}: \`dimension.size.item.${tier}.pad\` is ${pad}, inside its ${inset} inset: the text would sit closer to the fill's edge than the fill to its container's`,
       );
   }
 

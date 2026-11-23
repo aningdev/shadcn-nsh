@@ -78,6 +78,21 @@
           }
         }
       },
+      "item": {
+        "$description": "WinUI 3 menu rows: the fill 4px in from the flyout's edge (MenuFlyoutItemMargin 4,2,4,2) and the text 11px inside it (MenuFlyoutItemThemePadding 11,8,11,9; ComboBoxItemThemePadding 11,5,11,7), the same with a pen or a finger (microsoft-ui-xaml MenuFlyout_themeresources.xaml).",
+        "inset": {
+          "$value": {
+            "value": 4,
+            "unit": "px"
+          }
+        },
+        "pad": {
+          "$value": {
+            "value": 11,
+            "unit": "px"
+          }
+        }
+      },
       "control": {
         "$description": "Control internal spacing and switch size tier.",
         "padding": {

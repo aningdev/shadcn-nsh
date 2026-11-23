@@ -64,6 +64,10 @@ export interface ThemeStyleInput {
         pointer: { pad: number; gap: number };
         touch: { pad: number; gap: number };
       };
+      item: {
+        pointer: { inset: number; pad: number };
+        touch: { inset: number; pad: number };
+      };
       control: {
         pointer: Record<string, number | string>;
         touch: Record<string, number | string>;
@@ -1048,6 +1052,13 @@ function encodeInputTierOverrides(
     getAt(baseSizeGroup, "density"),
   );
   if (densityOut) sizeGroupOut.density = densityOut;
+
+  const itemOut = diffDimSubgroup(
+    "dimension.size.item",
+    style.dimension.size.item[tier],
+    getAt(baseSizeGroup, "item"),
+  );
+  if (itemOut) sizeGroupOut.item = itemOut;
 
   const baseControl = getAt(baseSizeGroup, "control");
   const baseSwitch = getExtNs(baseControl).switch as string;

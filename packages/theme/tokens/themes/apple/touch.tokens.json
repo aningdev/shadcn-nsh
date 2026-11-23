@@ -65,6 +65,21 @@
           }
         }
       },
+      "item": {
+        "$description": "Our own, from the system menus (the HIG states no numbers): with a pointer a macOS menu's highlight sits 4pt inside the menu's edge, its text 8pt in; on iOS a menu's rows span its width (inset 0) and the text takes the system's 16pt margin.",
+        "inset": {
+          "$value": {
+            "value": 0,
+            "unit": "px"
+          }
+        },
+        "pad": {
+          "$value": {
+            "value": 16,
+            "unit": "px"
+          }
+        }
+      },
       "height": {
         "$description": "Standard control heights (sm, md, lg).",
         "md": {

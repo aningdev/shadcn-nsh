@@ -172,6 +172,9 @@ spacing:
   density:
     pad: 16px
     gap: 12px
+  item:
+    inset: 4px
+    pad: 8px
   control:
     padding: 8px
     gap: 8px
@@ -396,6 +399,7 @@ Ergonomic sizing scales for pointer input.
 
 - **Hit target:** Minimum hit target size (0 disables padding expansion).
 - **Density:** Page-level padding and gap.
+- **List rows:** A list's rows in a popup or a palette: inset, the container's edge to the row's fill; pad, the fill's edge to its text. shadcn's select and menus: 4 (SelectContent p-1) and 8 (SelectItem pl-2).
 - **Control geometry:** Control internal spacing and switch size tier.
 - **Control heights:** Standard control heights (sm, md, lg).
 - **Switch size tier (pointer):** `regular`.

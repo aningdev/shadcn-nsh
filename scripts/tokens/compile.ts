@@ -574,6 +574,10 @@ export function compileSemanticsJson(resolverPath: string): Record<string, unkno
           pointer: readDimMap(lpSize.density as Record<string, Record<string, unknown>>),
           touch: readDimMap(ltSize.density as Record<string, Record<string, unknown>>),
         },
+        item: {
+          pointer: readDimMap(lpSize.item as Record<string, Record<string, unknown>>),
+          touch: readDimMap(ltSize.item as Record<string, Record<string, unknown>>),
+        },
         control: {
           pointer: {
             ...readDimMap(lpSize.control as Record<string, Record<string, unknown>>),

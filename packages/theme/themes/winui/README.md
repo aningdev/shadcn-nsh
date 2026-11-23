@@ -11,6 +11,7 @@ WinUI 3 (**Windows 11**, static baseline with `#0078D4` default Windows accent) 
 > - **Verification environment caveat:** All screenshots (`port:render`, `port:render:theme`, `port:sheet`) were captured on macOS / headless Chromium web rather than on a Windows 11 host. Native Windows backdrop blur (`material.windows.backdrop: "blur"`), `Segoe UI Variable` / `Consolas` font rasterization on Windows, and touch-screen sizing branches (`platform.desktop === false`) are verified via unit and gallery tests (`bun test ./scripts/theme`, `bun run test:gallery`) rather than on Windows hardware.
 
 > - **Input tiers:** The pointer tier is WinUI 3's only published density (Standard); the touch tier is this library's own, adding `8` to each pointer height (`32 / 40 / 48` control heights) to meet Windows' touch-target guidance of ~`7.5mm` / `40×40` effective pixels ([`guidelines-for-targeting`](https://learn.microsoft.com/windows/apps/design/input/guidelines-for-targeting)).
+> - **Popup list rows:** `dimension.size.item` is `inset: 4` and `pad: 11` on both tiers, as `MenuFlyoutPresenter`'s `4px` padding and `MenuFlyoutItem`'s `11px` horizontal padding (`MenuFlyout_themeresources.xaml`); the highlight's corners stay concentric with the `8px` flyout.
 
 ## Token & Style Overview
 

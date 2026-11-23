@@ -6,7 +6,6 @@ import {
   cornerCurve,
   finish,
   rounded,
-  terminal,
   font,
   shape,
   dimmed,
@@ -38,6 +37,9 @@ import {
   MenuMark,
   menuIndicator,
   popInStyles,
+  itemRadius,
+  itemSpacing,
+  listPadding,
   type PopupSide,
   popupSurface,
 } from "./lib/popup";
@@ -61,11 +63,10 @@ export function menuIsPopup(): boolean {
   );
 }
 
-/** A menu row's height, corners and type: compact with a pointer, a
+/** A menu row's height and type: compact with a pointer, a
  * finger's row on a touch screen. */
 export interface MenuItemDimensions {
   height: number;
-  radius: number;
   font: number;
   /** A note's size (a shortcut, a value). */
   note: number;
@@ -73,29 +74,20 @@ export interface MenuItemDimensions {
   icon: number;
 }
 
-/** A menu row's height, corners and type: 26 points tall with a pointer, 46 on a touch screen. */
+/** A menu row's height and type: 26 points tall with a pointer, 46 on a touch screen. */
 export const menuItemSize: MenuItemDimensions = pointer
   ? {
       height: 26,
-      get radius() {
-        return shape.control;
-      },
       font: 13,
       note: 11.5,
       icon: 14,
     }
   : {
       height: 46,
-      get radius() {
-        return shape.control;
-      },
       font: 16,
       note: 14,
       icon: 18,
     };
-
-/** A row's inset from the popup's sides: in a terminal the popup's own padding is its Cell from the frame. */
-const rowInset = terminal ? 0 : 8;
 
 /** The room a checkable row's mark takes before its label: the mark and the row's gap. An `inset`
  * row starts its label that much further in, so it lines up with the checkable rows. */
@@ -119,8 +111,8 @@ export interface MenuItemLookOptions {
 /**
  * A menu row's props (spread them on `nsh/base`'s `MenuItem`, or on a
  * `Submenu`'s trigger): a row 8 points apart, 26 points tall with a
- * pointer and 46 on a touch screen (`menuItemSize`), 8 points in from the
- * popup's sides. Under the pointer and under the keyboard alike it takes
+ * pointer and 46 on a touch screen (`menuItemSize`), its text the theme's
+ * `pad` in from its fill, its corners concentric with the popup's (`itemRadius`). Under the pointer and under the keyboard alike it takes
  * the neutral `accent` fill (`menuHighlight`), so arrow keys show where
  * they are; pressed, a shade deeper; disabled, 50%. Its label takes
  * `menuItemLabel`, a note `menuItemNote`, an icon `menuItemGlyph`.
@@ -133,9 +125,9 @@ export function menuItemLook(o?: MenuItemLookOptions) {
         alignItems: "center",
         gap: 8,
         height: menuItemSize.height,
-        paddingHorizontal: rowInset,
-        ...(o?.inset ? { paddingStart: rowInset + markRoom } : {}),
-        ...rounded(menuItemSize.radius),
+        paddingHorizontal: itemSpacing.pad,
+        ...(o?.inset ? { paddingStart: itemSpacing.pad + markRoom } : {}),
+        ...rounded(itemRadius()),
         ...o?.style,
       };
     },
@@ -217,14 +209,18 @@ export function menuPopup(o?: MenuPopupOptions) {
   return {
     get popupStyle(): ViewStyle {
       return menuIsPopup()
-        ? { ...popupSurface(), minWidth: o?.minWidth ?? 200, ...popInStyles(o?.side).style }
+        ? {
+            ...popupSurface(),
+            ...listPadding(),
+            minWidth: o?.minWidth ?? 200,
+            ...popInStyles(o?.side).style,
+          }
         : {
             backgroundColor: colors.card,
             borderTopLeftRadius: shape.modal,
             borderTopRightRadius: shape.modal,
             ...cornerCurve,
-            paddingHorizontal: 10,
-            paddingTop: 10,
+            ...listPadding(),
             paddingBottom: 34,
           };
     },
@@ -254,8 +250,8 @@ export function MenuLabel(props: MenuLabelProps) {
         fontSize: pointer ? 11 : 13,
         fontWeight: font.weight("title"),
         color: colors.faint,
-        paddingHorizontal: rowInset,
-        ...(props.inset ? { paddingStart: rowInset + markRoom } : {}),
+        paddingHorizontal: itemSpacing.pad,
+        ...(props.inset ? { paddingStart: itemSpacing.pad + markRoom } : {}),
         // 6 points down from the group above it, 2 up from its own rows.
         paddingTop: 6,
         paddingBottom: 2,

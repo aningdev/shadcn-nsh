@@ -26,7 +26,7 @@ import {
 import { AsText } from "./lib/as-text";
 import { Icon } from "./lib/icons";
 import { createSlot, type Slot } from "./lib/open-state";
-import { PopIn, popupSurface, type PopupSide } from "./lib/popup";
+import { itemSpacing, PopIn, popupSurface, type PopupSide } from "./lib/popup";
 import { pressHostProps, pressRipple, pressSink, pressTransition } from "./lib/press";
 import { type Live, read } from "./lib/utils";
 
@@ -117,7 +117,8 @@ export function navigationMenuLook(): NavigationMenuLook {
       return {
         flexDirection: "column",
         gap: 4,
-        padding: 8,
+        // A link's fill to its text: the list rows' `pad`.
+        padding: itemSpacing.pad,
         ...rounded(shape.control),
       };
     },

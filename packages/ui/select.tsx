@@ -24,6 +24,7 @@ import {
   ListboxEmpty,
   ListboxHeader,
   OptionRow,
+  triggerPadding,
 } from "./lib/listbox";
 import {
   createItemRegistry,
@@ -42,8 +43,7 @@ const pointer = platform.desktop;
 /** A trigger's least width with a pointer: room for the list's rows, which are as wide as it. */
 const minTriggerWidth = 180;
 
-/** A trigger's text inset, and the space between its icon, its title and the chevron. */
-const triggerPadding = 10;
+/** The space between a trigger's icon, its title and the chevron. */
 const triggerGap = 8;
 
 /** How long a trigger's edge fades: its border, its ring and its dimming. */
@@ -102,14 +102,14 @@ export function pickerLook(o?: PickerLookOptions) {
         minWidth: pointer ? minTriggerWidth : undefined,
         // With a pointer its title truncates before a row's label is squeezed.
         flexShrink: pointer ? 1 : undefined,
-        paddingStart: triggerPadding,
+        paddingStart: triggerPadding(),
         // Room for the clear button, which goes over the trigger's end in place of the chevron. In the terminal the
         // select's own marks go over the end, each in a slot of three Cells: ` ▾ `, or ` ×  ▾ `.
         paddingEnd: terminal
           ? (clearable ? 6 : 3) * TERMINAL_COLUMN
           : clearable
             ? clearInset() + controlSize.clear + 8
-            : triggerPadding,
+            : triggerPadding(),
         ...fieldCorners(shape.control),
         ...fieldEdgeWidths(),
         ...(outline
@@ -546,6 +546,7 @@ export function SelectContent(props: SelectContentProps) {
     "popupStyle",
     "backdropStyle",
     "itemClass",
+    "itemStyle",
     "offset",
     "margin",
     "renderItem",
@@ -586,6 +587,7 @@ export function SelectContent(props: SelectContentProps) {
             popupStyle={[chrome.popupStyle, props.popupStyle ?? null]}
             backdropStyle={[chrome.backdropStyle, props.backdropStyle ?? null]}
             itemClass={props.itemClass ?? chrome.itemClass}
+            itemStyle={[chrome.itemStyle, props.itemStyle ?? null]}
             renderItem={props.renderItem ?? ((item: SelectEntry) => <OptionRow item={item} />)}
             renderGroup={props.renderGroup ?? ((group) => <ListboxHeader group={group} />)}
             empty={props.empty ?? <ListboxEmpty label="No results" />}

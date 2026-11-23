@@ -28,6 +28,7 @@ import {
   CommandHeading,
   CommandRow,
   commandClasses,
+  commandStyles,
   commandSearchBarStyle,
   commandSearchStyle,
 } from "@/packages/ui/command";
@@ -177,10 +178,13 @@ function App() {
             searchBarStyle={commandSearchBarStyle()}
             searchClass={commandClasses.search}
             searchStyle={commandSearchStyle()}
-            listClass={commandClasses.list}
+            listStyle={commandStyles.list}
             itemClass={commandClasses.item}
+            itemStyle={commandStyles.item}
             groupClass={commandClasses.group}
+            groupStyle={commandStyles.group}
             separatorClass={commandClasses.separator}
+            separatorStyle={commandStyles.separator}
             placeholder="Type a command or search…"
             style={{ height: desktop ? 360 : 400 }}
             searchPrefix={<Icon icon={Search} size={16} tint={colors.mutedForeground} />}
@@ -215,10 +219,14 @@ function App() {
               searchBarStyle={commandSearchBarStyle()}
               searchClass={commandClasses.search}
               searchStyle={commandSearchStyle()}
-              listClass={`${commandClasses.list} h-60`}
+              listClass="h-60"
+              listStyle={commandStyles.list}
               itemClass={commandClasses.item}
+              itemStyle={commandStyles.item}
               groupClass={commandClasses.group}
+              groupStyle={commandStyles.group}
               separatorClass={commandClasses.separator}
+              separatorStyle={commandStyles.separator}
               searchPrefix={<Icon icon={Search} size={16} tint={colors.mutedForeground} />}
               onQueryChange={() => void archive?.matchedCount().then((count) => files.set(count))}
               empty={<CommandEmpty label="No file matches" />}

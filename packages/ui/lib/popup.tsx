@@ -1,7 +1,19 @@
 // The popup families' one surface and the motion they come in with: menus, popovers, a select's
 // list, and the mark of a checkable menu item and the scrim behind what is modal.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { finish, platformMaterial, rounded, terminal, shape, stroke } from "@shadcn-nsh/theme";
+import {
+  finish,
+  type ItemSpacing,
+  platformMaterial,
+  reactive,
+  rounded,
+  shape,
+  stroke,
+  style,
+  terminal,
+  TERMINAL_COLUMN,
+  tier,
+} from "@shadcn-nsh/theme";
 import type { JSX, MotionSpec, StyleProp, ViewStyle } from "nsh";
 import { createMotion, Easing, reduceMotion, token, View } from "nsh";
 
@@ -52,6 +64,38 @@ export function popupSurface(): ViewStyle {
         }
       : { ...rounded(shape.container), borderWidth: stroke.hairline, padding: 4, ...finish.overlay }
   );
+}
+
+/**
+ * The spacing of a list's rows in a popup or a palette, from the theme in use
+ * (`dimension.size.item`): `inset` from the container's edge to a row's fill,
+ * `pad` from the fill's edge to its text. A terminal's rows span the frame,
+ * their text one Cell in. A trigger whose chosen row lies over it (a select's)
+ * sets its text `inset + pad` in, so title lies on title.
+ */
+export const itemSpacing = reactive<ItemSpacing>(["inset", "pad"], () =>
+  terminal ? { inset: 0, pad: TERMINAL_COLUMN } : style().dimension.size.item[tier],
+);
+
+/** The room above and below a full-bleed list's rows (inset 0), so the first and last clear the
+ * container's corners: Material 3's `DropdownMenuVerticalPadding`. */
+const BLEED_VERTICAL = 8;
+
+/** A list's container padding around its rows: `inset` on every side, or `BLEED_VERTICAL`
+ * above and below a full-bleed list. */
+export function listPadding(): ViewStyle {
+  const { inset } = itemSpacing;
+  return {
+    paddingHorizontal: inset,
+    paddingVertical: inset === 0 && !terminal ? BLEED_VERTICAL : inset,
+  };
+}
+
+/** A list row's corners: concentric with its container's (the container's radius less `inset`,
+ * at least 2), square when the container is or the row is full-bleed. */
+export function itemRadius(): number {
+  const { inset } = itemSpacing;
+  return inset === 0 || shape.container === 0 ? 0 : Math.max(2, shape.container - inset);
 }
 
 /**

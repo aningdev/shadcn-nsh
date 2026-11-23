@@ -650,7 +650,7 @@ describe("per-appearance standalone .tokens.json distribution", () => {
         expect(resolved.dimension.size.hit.$value.value).toBe(
           semanticsJson.dimension.size.hit.pointer,
         );
-        for (const section of ["density", "height"] as const) {
+        for (const section of ["density", "item", "height"] as const) {
           for (const [k, tok] of Object.entries(
             resolved.dimension.size[section] as Record<string, any>,
           )) {
@@ -942,7 +942,7 @@ describe("generated DESIGN.md validation and compiled equality", () => {
       // Spacing (pointer tier dimension.size, stroke, focus, icon)
       const hit = lightDoc.dimension.size.hit.$value as { value: number; unit: string };
       expect(yaml.spacing.hit).toBe(`${hit.value}${hit.unit}`);
-      for (const sub of ["density", "control", "height"] as const) {
+      for (const sub of ["density", "item", "control", "height"] as const) {
         for (const [k, tok] of Object.entries(
           lightDoc.dimension.size[sub] as Record<string, any>,
         )) {

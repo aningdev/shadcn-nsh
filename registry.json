@@ -1096,7 +1096,7 @@
       "type": "registry:ui",
       "title": "Command",
       "description": "A command palette with search, groups, and shortcut keys.",
-      "registryDependencies": ["icons", "kbd", "surface", "theme", "utils"],
+      "registryDependencies": ["icons", "kbd", "popup", "surface", "theme", "utils"],
       "files": [
         {
           "path": "packages/ui/command.tsx",

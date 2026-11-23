@@ -16,7 +16,7 @@ import { platform, Text, View } from "nsh";
 import type { SelectEntry, SelectGroup } from "nsh/base";
 
 import { Icon } from "./icons";
-import { backdrop, popInStyles } from "./popup";
+import { backdrop, itemRadius, itemSpacing, listPadding, popInStyles } from "./popup";
 import { controlSize } from "./surface";
 
 // @port look/listbox.tsx
@@ -26,6 +26,8 @@ const pointer = platform.desktop;
 export interface ListboxPopupOptions {
   /** With a pointer, at least this wide (the titles whole); a sheet spans the window anyway. */
   minWidth?: number;
+  /** The room around what the popup holds, in place of a list's (`listPadding`): a calendar's. */
+  padding?: number;
 }
 
 /** The room under a sheet's last row, on a touch screen (the window's bottom edge). */
@@ -33,8 +35,8 @@ const SHEET_FOOT = 34;
 
 /**
  * The list's surface: with a pointer a popup at the trigger that extends
- * it (the floating finish every popup wears, the theme's inset corners, 6
- * points of padding) and comes in as a menu does (`popInStyles`: a fade,
+ * it (the floating finish every popup wears, the theme's container corners, the
+ * list's padding: `listPadding`) and comes in as a menu does (`popInStyles`: a fade,
  * 96% to full size, 4 points of slide, 150 ms); on a touch screen a sheet
  * at the bottom, its top corners rounded, at most 70% of the window high,
  * which slides up on its own. Not the raised finish: that is a control's,
@@ -46,7 +48,7 @@ export function listboxPopup(o?: ListboxPopupOptions): ViewStyle {
     ? {
         ...rounded(shape.container),
         borderWidth: stroke.hairline,
-        padding: 6,
+        ...(o?.padding === undefined ? listPadding() : { padding: o.padding }),
         ...finish.overlay,
         ...(o?.minWidth ? { minWidth: o.minWidth } : {}),
         ...popInStyles().style,
@@ -56,8 +58,7 @@ export function listboxPopup(o?: ListboxPopupOptions): ViewStyle {
         borderTopLeftRadius: shape.modal,
         borderTopRightRadius: shape.modal,
         ...cornerCurve,
-        paddingHorizontal: 10,
-        paddingTop: 10,
+        ...(o?.padding === undefined ? listPadding() : { padding: o.padding }),
         paddingBottom: SHEET_FOOT,
         maxHeight: "70%",
       };
@@ -69,19 +70,20 @@ export function listboxPopupStarting(): ViewStyle | undefined {
 }
 
 /**
- * A row of the list, its look on the row (`itemClass`): lit in the brand
+ * A row of the list, its look on the row (`itemClass`; its corners are
+ * `listboxProps`'s `itemStyle`, concentric with the popup's): lit in the brand
  * tint while highlighted (`focus:`, the keys or the pointer on it), the fill
  * fading between rows as the highlight moves, dimmed while disabled. Every
  * state is the row's class (`group`), so the list draws a row's content once
  * per item and the highlight moves without drawing.
  */
 export const optionClass =
-  "group rounded-(--radius-control) p-px transition-colors duration-100 motion-reduce:transition-none focus:bg-brand-tint active:opacity-70 disabled:opacity-50";
+  "group transition-colors duration-100 motion-reduce:transition-none focus:bg-brand-tint active:opacity-70 disabled:opacity-50";
 
 /**
  * What a select's or combobox's list takes besides its items (spread it):
  * 4 points from the trigger, 8 from the window's edges, the popup or sheet,
- * the scrim behind a sheet, the rows' look.
+ * the scrim behind a sheet, the rows' look and corners (`itemRadius`).
  */
 export function listboxProps(o?: ListboxPopupOptions) {
   return {
@@ -97,6 +99,9 @@ export function listboxProps(o?: ListboxPopupOptions) {
       return backdrop();
     },
     itemClass: optionClass,
+    get itemStyle(): ViewStyle {
+      return rounded(itemRadius());
+    },
   };
 }
 
@@ -120,15 +125,18 @@ export function Chevron(props: { open: boolean; hidden?: boolean }) {
   );
 }
 
-/** A trigger's 1-point border, and the padding at its end (the side the chevron or the clear button
- * sits on). */
+/** A trigger's 1-point border. */
 const TRIGGER_BORDER = 1;
-const TRIGGER_PAD_END = 10;
+
+/** A trigger's text inset, and its padding at the end (the side the chevron or the clear button
+ * sits on): a row's text inset in the list (`inset + pad`), so a chosen row lies title on title
+ * over the trigger. */
+export const triggerPadding = (): number => itemSpacing.inset + itemSpacing.pad;
 
 /** The clear button's inset from a trigger's end: centered where the chevron's lane is. The button is in the
  * select's view, outside the trigger, so its inset counts the trigger's 1-point border too. */
 export const clearInset = (): number =>
-  TRIGGER_BORDER + TRIGGER_PAD_END + controlSize.check / 4 - controlSize.clear / 2;
+  TRIGGER_BORDER + triggerPadding() + controlSize.check / 4 - controlSize.clear / 2;
 
 /** Options of `clearButtonLook`. */
 export interface ClearButtonOptions {
@@ -168,10 +176,10 @@ export function clearButtonLook(o?: ClearButtonOptions) {
   };
 }
 
-/** A row's height: the title alone, and with a line under it; compact with a pointer, roomier on a
- * touch screen. */
+/** A row's height: the title alone, and with a line under it; compact with a pointer (shadcn's
+ * `SelectItem`, `py-1.5` around a 20-point line), a finger's target on a touch screen. */
 const rowHeights = {
-  pointer: { title: 30, detail: 38 },
+  pointer: { title: 32, detail: 40 },
   touch: { title: 44, detail: 52 },
 } as const;
 
@@ -192,30 +200,41 @@ export function OptionRow(props: {
         flexDirection: "row",
         alignItems: "center",
         gap: 8,
-        // The row's 1-point padding on each side (`p-px`).
         height: (pointer ? rowHeights.pointer : rowHeights.touch)[
           props.detail ? "detail" : "title"
         ],
-        // With its padding and the popup's padding, the trigger's inset: a select's chosen row lies over the trigger, title on title.
-        paddingHorizontal: pointer ? 3 : 7,
+        // With the popup's inset, the trigger's text inset (`triggerPadding`): a select's chosen row lies over the trigger, title on title.
+        paddingHorizontal: itemSpacing.pad,
       }}
     >
       {props.lead}
       <View style={{ flex: 1, minWidth: 0 }}>
         <Text
           class="group-selected:font-semibold font-normal"
-          style={{ numberOfLines: 1, fontSize: 14, color: colors.foreground }}
+          style={{ numberOfLines: 1, fontSize: font.size("body"), color: colors.foreground }}
         >
           {props.item.title}
         </Text>
         <If when={props.detail}>
-          <Text style={{ numberOfLines: 1, fontSize: 12, color: colors.mutedForeground }}>
+          <Text
+            style={{
+              numberOfLines: 1,
+              fontSize: font.size("detail"),
+              color: colors.mutedForeground,
+            }}
+          >
             {props.detail}
           </Text>
         </If>
       </View>
       <If when={props.note}>
-        <Text style={{ fontSize: 12, color: colors.faint, fontVariant: ["tabular-nums"] }}>
+        <Text
+          style={{
+            fontSize: font.size("detail"),
+            color: colors.faint,
+            fontVariant: ["tabular-nums"],
+          }}
+        >
           {props.note}
         </Text>
       </If>
@@ -238,7 +257,7 @@ export function ListboxHeader(props: { group: SelectGroup }) {
         fontSize: 12,
         fontWeight: font.weight("title"),
         color: colors.mutedForeground,
-        paddingHorizontal: 9,
+        paddingHorizontal: itemSpacing.pad,
         paddingTop: 8,
         paddingBottom: 4,
       }}
@@ -271,7 +290,7 @@ export const listboxFooter = {
     return {
       marginTop: 6,
       paddingTop: 6,
-      paddingHorizontal: terminal ? 0 : 9,
+      paddingHorizontal: itemSpacing.pad,
       borderTopWidth: stroke.hairline,
       borderColor: colors.border,
     };
@@ -294,7 +313,7 @@ export function listboxSearch() {
     get searchStyle(): ViewStyle {
       return {
         height: pointer ? 32 : 40,
-        paddingHorizontal: 9,
+        paddingHorizontal: itemSpacing.pad,
         marginBottom: 6,
         ...rounded(shape.control),
         borderWidth: stroke.hairline,

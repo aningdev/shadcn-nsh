@@ -43,6 +43,7 @@ import {
   ListboxEmpty,
   ListboxHeader,
   OptionRow,
+  triggerPadding,
 } from "./lib/listbox";
 import {
   createItemRegistry,
@@ -92,7 +93,7 @@ export function comboboxLook(open: Live<boolean>, o?: ComboboxLookOptions) {
           : { alignSelf: "stretch" }),
         minHeight: controlSize.line,
         // The query starts where a select's title does, and stops 4 points short of the toggle.
-        paddingStart: 10,
+        paddingStart: triggerPadding(),
         paddingEnd: 4,
         ...fieldCorners(shape.control),
         ...fieldEdgeWidths(),
@@ -569,6 +570,7 @@ export function ComboboxContent(props: ComboboxContentProps) {
     "popupStyle",
     "backdropStyle",
     "itemClass",
+    "itemStyle",
     "offset",
     "margin",
     "renderItem",
@@ -620,6 +622,7 @@ export function ComboboxContent(props: ComboboxContentProps) {
             popupStyle={[chrome.popupStyle, props.popupStyle ?? null]}
             backdropStyle={[chrome.backdropStyle, props.backdropStyle ?? null]}
             itemClass={props.itemClass ?? chrome.itemClass}
+            itemStyle={[chrome.itemStyle, props.itemStyle ?? null]}
             renderItem={props.renderItem ?? ((item) => <OptionRow item={item} />)}
             renderGroup={props.renderGroup ?? ((group) => <ListboxHeader group={group} />)}
             empty={empty?.() ?? props.empty ?? <ListboxEmpty label="No results" />}

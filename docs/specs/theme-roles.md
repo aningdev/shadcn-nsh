@@ -110,7 +110,7 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 - **键集合相同。** 所有主题的风格数据有同样的键、同样类型的叶子，缺一个键就点名它。
 - **枚举取白名单。** 字重（数值 `400`–`700`）、曲线、`corners.button`（`"full" | "radius"`）、焦点样式、`timingFunction`、`controls` 的值都在 `scripts/theme/style.ts` 的列表里。
 - **`{token}` 引用按 DTCG `$type` 校验。** `dimension.shape` 的 3 个层圆角（`control`、`container`、`modal`）必须是 `"{radius-…}"`（`dimension` 类型），不允许写数字字面量；字体家族只来自 `theme.json` 的 `font-sans` / `font-mono`：7 个字阶复合 token 的 `fontFamily` 一律是 `{font.family.sans}`（DTCG 复合类型的必填字段，设计工具导入要用），`typography` 自己不另设家族。
-- **尺寸落在三把尺子上**（`checkScales`）：高度与图标各三个台阶，逐档递增、都是 4 的整数倍；间距（`density.pad` / `density.gap` / `control.padding` / `control.gap`）取自 `4, 8, 12, 16, 24, 32`，每档最多三个值；字号按 `caption → display` 不递减，行高是不小于字号的整数点数；touch 档的点按区 `dimension.size.hit` 不小于 44（Apple HIG 的最小点按区，WCAG 2.2 SC 2.5.5）。平台自己规定的例外值在下表里点名，附出处；表外的一个都不许。
+- **尺寸落在三把尺子上**（`checkScales`）：高度与图标各三个台阶，逐档递增、都是 4 的整数倍；间距（`density.pad` / `density.gap` / `control.padding` / `control.gap`）取自 `4, 8, 12, 16, 24, 32`，每档最多三个值；列表行的 `item.inset` / `item.pad` 也取这些台阶（`inset` 可为 0，即填充铺满容器），`pad` 不小于 `inset`，不计入每档三个值；字号按 `caption → display` 不递减，行高是不小于字号的整数点数；touch 档的点按区 `dimension.size.hit` 不小于 44（Apple HIG 的最小点按区，WCAG 2.2 SC 2.5.5）。平台自己规定的例外值在下表里点名，附出处；表外的一个都不许。
 
 <!-- theme-lint: scales -->
 
@@ -118,6 +118,8 @@ bun scripts/theme-lint.ts   # 一次跑完本文所有规则
 | ------- | ---------------------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `winui` | `dimension.size.control.pointer.padding` | `6`  | WinUI 3 按钮内边距 6px（`Button_themeresources.xaml`）                                                                                            |
 | `winui` | `dimension.size.control.touch.padding`   | `6`  | 同上                                                                                                                                              |
+| `winui` | `dimension.size.item.pointer.pad`        | `11` | WinUI 3 菜单行文字内边距 11px（`MenuFlyoutItemThemePadding` 11,8,11,9，`MenuFlyout_themeresources.xaml`）                                         |
+| `winui` | `dimension.size.item.touch.pad`          | `11` | 同上（触控沿用同一内边距）                                                                                                                        |
 | `winui` | `dimension.size.hit.touch`               | `40` | Windows 触控目标 40×40 epx（[Touch interactions](https://learn.microsoft.com/en-us/windows/apps/design/input/touch-interactions)，“Target size”） |
 
 <!-- /theme-lint: scales -->

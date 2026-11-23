@@ -225,6 +225,7 @@ export function compileDesignMd(resolverPath: string): string {
   const spacingYaml: Record<string, unknown> = {
     hit: fmtDim((sizeResolved.hit as Record<string, unknown>).$value as DtcgDimension),
     density: readDimLeaves(sizeResolved.density as Record<string, unknown>),
+    item: readDimLeaves(sizeResolved.item as Record<string, unknown>),
     control: readDimLeaves(sizeResolved.control as Record<string, unknown>),
     height: readDimLeaves(sizeResolved.height as Record<string, unknown>),
     stroke: readDimLeaves(dimResolved.stroke as Record<string, unknown>),
@@ -615,6 +616,7 @@ export function compileDesignMd(resolverPath: string): string {
   for (const [label, key] of [
     ["Hit target", "hit"],
     ["Density", "density"],
+    ["List rows", "item"],
     ["Control geometry", "control"],
     ["Control heights", "height"],
   ] as const) {

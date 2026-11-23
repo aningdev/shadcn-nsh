@@ -172,6 +172,9 @@ spacing:
   density:
     pad: 16px
     gap: 12px
+  item:
+    inset: 0px
+    pad: 12px
   control:
     padding: 8px
     gap: 8px
@@ -396,6 +399,7 @@ Ergonomic sizing scales for pointer input.
 
 - **Hit target:** Minimum hit target size (0 disables padding expansion).
 - **Density:** Page-level padding and gap.
+- **List rows:** Material 3 menu rows: the fill spans the menu's width (inset 0; a DropdownMenuItem takes no horizontal margin) and the text sits 12dp in (DropdownMenuItemHorizontalPadding, androidx compose material3 Menu.kt).
 - **Control geometry:** Control internal spacing and switch size tier.
 - **Control heights:** Standard control heights at M3 density -2 (24, 32, 48dp): each density step reduces height by 4dp (https://m3.material.io/foundations/layout/grids-spacing/density).
 - **Switch size tier (pointer):** `regular`.

@@ -435,6 +435,11 @@ export const m3Style = {
         pointer: { pad: 16, gap: 12 },
         touch: { pad: 16, gap: 12 },
       },
+      // M3 menus: the row's fill spans the menu (no horizontal inset), its text 12dp in.
+      item: {
+        pointer: { inset: 0, pad: 12 },
+        touch: { inset: 0, pad: 12 },
+      },
       control: {
         // M3 spacing steps: 8 inside a control, 12 beside it; a radio's dot is 10dp.
         pointer: { padding: 8, gap: 8, dot: 10, switch: "regular" },
@@ -581,6 +586,8 @@ export function m3DtcgOutput(seed?: string): ThemeGeneratorOutput {
       lightColors: colorDescs,
       darkColors: colorDescs,
       style: {
+        "dimension.size.item":
+          "Material 3 menu rows: the fill spans the menu's width (inset 0; a DropdownMenuItem takes no horizontal margin) and the text sits 12dp in (DropdownMenuItemHorizontalPadding, androidx compose material3 Menu.kt).",
         typography:
           "Material 3 Expressive typography scale (TypeScaleTokens.kt / _md-sys-typescale.scss).",
         "dimension.focus":

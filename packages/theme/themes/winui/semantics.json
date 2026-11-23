@@ -106,6 +106,16 @@
           "gap": 8
         }
       },
+      "item": {
+        "pointer": {
+          "inset": 4,
+          "pad": 11
+        },
+        "touch": {
+          "inset": 4,
+          "pad": 11
+        }
+      },
       "control": {
         "pointer": {
           "padding": 6,

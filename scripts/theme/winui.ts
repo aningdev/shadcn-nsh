@@ -549,6 +549,11 @@ export const winuiStyle = {
         pointer: { pad: 12, gap: 8 },
         touch: { pad: 12, gap: 8 },
       },
+      // WinUI menu rows: 4px from the flyout's edge, the text 11px in (MenuFlyout_themeresources.xaml).
+      item: {
+        pointer: { inset: 4, pad: 11 },
+        touch: { inset: 4, pad: 11 },
+      },
       control: {
         // WinUI's own 6px inset inside a control (`Button_themeresources.xaml`); 8 beside it.
         pointer: { padding: 6, gap: 8, dot: 12, switch: "regular" },
@@ -718,6 +723,8 @@ export function winuiDtcgOutput(accent: string = WINUI_DEFAULT_ACCENT): ThemeGen
       lightColors: colorDescs,
       darkColors: colorDescs,
       style: {
+        "dimension.size.item":
+          "WinUI 3 menu rows: the fill 4px in from the flyout's edge (MenuFlyoutItemMargin 4,2,4,2) and the text 11px inside it (MenuFlyoutItemThemePadding 11,8,11,9; ComboBoxItemThemePadding 11,5,11,7), the same with a pen or a finger (microsoft-ui-xaml MenuFlyout_themeresources.xaml).",
         "font.family.mono": "WinUI 3 monospace font stack (Consolas, monospace).",
         "font.family.sans":
           "WinUI 3 primary UI font stack (Segoe UI Variable, Segoe UI, sans-serif; typography.md).",

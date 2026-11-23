@@ -1,6 +1,6 @@
 // Command: palette parts (`commandClasses`, `CommandRow`) and the `Command` that wears them.
 // From NSH's examples/nsh-gallery-ui (Apache-2.0, © Longbridge; see NOTICE): yours to change.
-import { colors, terminal, font } from "@shadcn-nsh/theme";
+import { colors, rounded, terminal, font } from "@shadcn-nsh/theme";
 import { Check, Search, type IconNode } from "lucide";
 import type { InputStyle, StyleProp, ViewStyle } from "nsh";
 import { platform, split, Text, View } from "nsh";
@@ -15,6 +15,7 @@ import {
 
 import { Kbd } from "./kbd";
 import { Icon } from "./lib/icons";
+import { itemRadius, itemSpacing, listPadding } from "./lib/popup";
 import { controlSize } from "./lib/surface";
 import { joinClass } from "./lib/utils";
 
@@ -42,19 +43,36 @@ export const commandClasses = {
   searchBar: `flex-row flex-nowrap items-center gap-2 border-b border-border ${terminal ? "" : "px-3"}`,
   /** The search field. */
   search: `min-w-0 flex-1 ${terminal ? "px-2 " : ""}${desktop ? "h-11 text-sm" : "h-12 text-base"} text-foreground placeholder:text-muted-foreground`,
-  /**
-   * The scroll view of the rows. A terminal's rows set their text off
-   * the edge with their own padding, as the field does.
-   */
-  list: terminal ? "" : "p-1.5",
-  /** A section's header. */
-  group: "px-2 pt-2.5 pb-1",
-  /** Between two sections. */
-  separator: "-mx-1.5 my-1 h-px bg-border",
-  /** A row: quiet until hovered, tinted in the brand while highlighted, dimmed while disabled. */
+  /** A section's header: its sides are `commandStyles.group`'s. */
+  group: "pt-2.5 pb-1",
+  /** Between two sections: its sides are `commandStyles.separator`'s. */
+  separator: "my-1 h-px bg-border",
+  /** A row: quiet until hovered, tinted in the brand while highlighted, dimmed while disabled; its
+   * corners are `commandStyles.item`'s. */
   item:
-    "group rounded-(--radius-control) p-px transition-colors duration-100 motion-reduce:transition-none " +
+    "group transition-colors duration-100 motion-reduce:transition-none " +
     "hover:bg-hover focus:bg-brand-tint active:opacity-70 disabled:opacity-50",
+};
+
+/**
+ * The theme's list spacing on a palette's parts (`itemSpacing`): the rows' scroll view padded by
+ * `listPadding`, a row's corners concentric with the frame (`itemRadius`), a section's header
+ * set where the rows' text starts, a separator spanning the list. A terminal's rows span the frame,
+ * their text one Cell in.
+ */
+export const commandStyles = {
+  get list(): ViewStyle {
+    return listPadding();
+  },
+  get item(): ViewStyle {
+    return rounded(itemRadius());
+  },
+  get group(): ViewStyle {
+    return { paddingHorizontal: itemSpacing.pad };
+  },
+  get separator(): ViewStyle {
+    return { marginHorizontal: -itemSpacing.inset };
+  },
 };
 
 /** A shortcut's keys, as hints show them here (`entry.shortcutLabel`): the library's one keycap, `kbd`'s. */
@@ -96,7 +114,13 @@ export function CommandRow(props: {
   const height = props.detail ? size.row : size.rowSm;
   return (
     <View
-      style={{ height, flexDirection: "row", alignItems: "center", gap: 10, paddingHorizontal: 8 }}
+      style={{
+        height,
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 10,
+        paddingHorizontal: itemSpacing.pad,
+      }}
     >
       {props.icon ? <Icon icon={props.icon} size={16} tint={colors.mutedForeground} /> : null}
       <View style={{ flex: 1, minWidth: 0, gap: 1 }}>
@@ -203,8 +227,11 @@ export function Command(props: CommandProps) {
     "listClass",
     "listStyle",
     "itemClass",
+    "itemStyle",
     "groupClass",
+    "groupStyle",
     "separatorClass",
+    "separatorStyle",
     "renderItem",
     "renderGroup",
     "empty",
@@ -220,10 +247,14 @@ export function Command(props: CommandProps) {
       searchBarStyle={over(commandSearchBarStyle(), props.searchBarStyle)}
       searchClass={joinClass(commandClasses.search, props.searchClass)}
       searchStyle={over(commandSearchStyle(), props.searchStyle)}
-      listClass={joinClass(commandClasses.list, props.listClass)}
+      listClass={props.listClass}
+      listStyle={over(commandStyles.list, props.listStyle)}
       itemClass={joinClass(commandClasses.item, props.itemClass)}
+      itemStyle={over(commandStyles.item, props.itemStyle)}
       groupClass={joinClass(commandClasses.group, props.groupClass)}
+      groupStyle={over(commandStyles.group, props.groupStyle)}
       separatorClass={joinClass(commandClasses.separator, props.separatorClass)}
+      separatorStyle={over(commandStyles.separator, props.separatorStyle)}
       placeholder={props.placeholder ?? "Type a command or search…"}
       searchPrefix={
         props.searchPrefix === undefined ? (

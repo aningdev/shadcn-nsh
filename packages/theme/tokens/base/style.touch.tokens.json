@@ -102,6 +102,21 @@
           }
         }
       },
+      "item": {
+        "$description": "A list's rows in a popup or a palette: inset, the container's edge to the row's fill; pad, the fill's edge to its text. Our own on a touch screen: a sheet's rows 8 in from its edge, their text 8 inside.",
+        "inset": {
+          "$value": {
+            "value": 8,
+            "unit": "px"
+          }
+        },
+        "pad": {
+          "$value": {
+            "value": 8,
+            "unit": "px"
+          }
+        }
+      },
       "control": {
         "$extensions": {
           "dev.aning.shadcn-nsh": {
